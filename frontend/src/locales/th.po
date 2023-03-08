@@ -68,7 +68,7 @@ msgstr "เหว"
 
 #: src/component/navigation.vue:95 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:142 src/page/settings.vue:84
+#: src/model/user.js:139 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "บัญชี"
@@ -97,7 +97,7 @@ msgstr "เปิดใช้งาน"
 msgid "Activation Code"
 msgstr "รหัสเปิดใช้งาน"
 
-#: src/page/admin/users.vue:36
+#: src/page/admin/users.vue:44
 msgid "Add"
 msgstr "เพิ่ม"
 
@@ -345,7 +345,7 @@ msgstr "สร้างไฟล์ JPEG สำหรับไฟล์ประ
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "สร้างอัลบั้มของช่วงเวลาพิเศษ การเดินทาง และสถานที่ต่าง ๆ โดยอัตโนมัติ"
 
-#: src/component/admin/users/edit.vue:321
+#: src/component/admin/users/edit.vue:320
 msgid "Base Folder"
 msgstr ""
 
@@ -432,7 +432,7 @@ msgstr "โหลดเพิ่มไม่ได้แล้ว หมดเ�
 msgid "Can't select more items"
 msgstr "ไม่สามารถเลือกรายการเพิ่มเติมได้"
 
-#: src/component/admin/users/add.vue:17 src/component/admin/users/edit.vue:63
+#: src/component/admin/users/add.vue:19 src/component/admin/users/edit.vue:63
 #: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
@@ -479,7 +479,7 @@ msgstr "เปลี่ยนชื่อรูปภาพ สถานที�
 msgid "Change private flag"
 msgstr "เปลี่ยนแฟล็กส่วนตัว"
 
-#: src/component/admin/users/edit.vue:137 src/page/settings/account.vue:114
+#: src/component/admin/users/edit.vue:135 src/page/settings/account.vue:114
 #: src/page/settings/account.vue:129 src/page/settings/advanced.vue:43
 #: src/page/settings/general.vue:105 src/page/settings/library.vue:50
 msgid "Changes successfully saved"
@@ -534,7 +534,7 @@ msgstr "สแกนใหม่ให้เสร็จ"
 msgid "Confidence"
 msgstr "ค่าความมั่นใจ"
 
-#: src/component/admin/users/add.vue:18 src/dialog/service/add.vue:18
+#: src/component/admin/users/add.vue:20 src/dialog/service/add.vue:18
 #: src/page/settings/services.vue:53
 msgid "Connect"
 msgstr "เชื่อมต่อ"
@@ -612,7 +612,7 @@ msgstr "การสร้างภาพขนาดย่อสำหรับ
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "ลูกบาศก์: คุณภาพปานกลาง ประสิทธิภาพที่ดี"
 
-#: src/dialog/account/password.vue:128
+#: src/dialog/account/password.vue:133
 msgid "Current Password"
 msgstr "รหัสผ่านปัจจุบัน"
 
@@ -863,8 +863,8 @@ msgstr "แก้ไขรูปภาพ"
 msgid "Edited"
 msgstr "แก้ไขแล้ว"
 
-#: src/component/admin/users/edit.vue:294 src/page/settings/account.vue:221
-#: src/page/settings/account.vue:616
+#: src/component/admin/users/add.vue:152 src/component/admin/users/edit.vue:293
+#: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 msgid "Email"
 msgstr "อีเมล"
 
@@ -1230,11 +1230,11 @@ msgstr "รหัสอินสแตนซ์"
 msgid "Interval"
 msgstr "ช่วงเวลา"
 
-#: src/component/admin/users/edit.vue:103
+#: src/component/admin/users/add.vue:155 src/component/admin/users/edit.vue:103
 #: src/component/admin/users/edit.vue:159
 #: src/component/admin/users/edit.vue:187
 #: src/component/admin/users/edit.vue:215
-#: src/component/admin/users/edit.vue:297 src/page/connect.vue:14
+#: src/component/admin/users/edit.vue:296 src/page/connect.vue:14
 #: src/page/settings/account.vue:91 src/page/settings/account.vue:117
 #: src/page/settings/account.vue:143 src/page/settings/account.vue:169
 #: src/page/settings/account.vue:224 src/page/settings/account.vue:281
@@ -1317,6 +1317,10 @@ msgstr "ภาษา"
 #: src/page/admin/sessions.vue:29
 msgid "Last Active"
 msgstr "ใช้งานล่าสุด"
+
+#: src/page/admin/users.vue:43
+msgid "Last Login"
+msgstr ""
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1532,11 +1536,11 @@ msgstr "ที่เกี่ยวข้องมากที่สุด"
 msgid "Move Files"
 msgstr "ย้ายไฟล์"
 
-#: src/dialog/account/password.vue:156
+#: src/dialog/account/password.vue:162
 msgid "Must have at least %{n} characters."
 msgstr "ต้องมีอักขระอย่างน้อย %{n} ตัว"
 
-#: src/page/about/feedback.vue:172 src/page/admin/users.vue:33
+#: src/page/about/feedback.vue:172 src/page/admin/users.vue:34
 #: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
 #: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
 #: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
@@ -1560,7 +1564,7 @@ msgstr "ชื่อยาวเกินไป"
 msgid "Neon"
 msgstr "นีออน"
 
-#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:94
+#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:104
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1570,7 +1574,7 @@ msgstr "ไม่เคย"
 msgid "New"
 msgstr "ใหม่"
 
-#: src/dialog/account/password.vue:153
+#: src/dialog/account/password.vue:159
 msgid "New Password"
 msgstr "รหัสผ่านใหม่"
 
@@ -1661,7 +1665,7 @@ msgstr "โปรดทราบว่าคุณสามารถจัดก
 msgid "Note:"
 msgstr "บันทึก:"
 
-#: src/component/admin/users/add.vue:28 src/dialog/service/add.vue:28
+#: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "หมายเหตุ: เฉพาะเซิร์ฟเวอร์ WebDAV เช่น Nextcloud หรือ PhotoPrism เท่านั้นที่สามารถกำหนดค่าเป็นบริการระยะไกลสำหรับการสำรองข้อมูลและการอัปโหลดไฟล์"
 
@@ -1673,7 +1677,7 @@ msgstr "หมายเหตุ"
 msgid "Nothing to see here yet."
 msgstr "ยังไม่มีอะไรให้ดูที่นี่ อดทน"
 
-#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:37
+#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:42
 msgid "Nothing was found."
 msgstr "ไม่พบสิ่งใด"
 
@@ -1782,13 +1786,13 @@ msgstr "พาโนรามา"
 msgid "Panoramas"
 msgstr "พาโนรามา"
 
-#: src/component/admin/users/add.vue:126 src/dialog/service/add.vue:126
+#: src/component/admin/users/add.vue:105 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
 msgstr "รหัสผ่าน"
 
-#: src/dialog/account/password.vue:31
+#: src/dialog/account/password.vue:47
 msgid "Password changed"
 msgstr "รหัสผ่านเปลี่ยน"
 
@@ -1860,7 +1864,7 @@ msgstr "สถานที่และเวลา"
 msgid "Places"
 msgstr "สถานที่"
 
-#: src/dialog/account/password.vue:182
+#: src/dialog/account/password.vue:188
 msgid "Please confirm your new password."
 msgstr "กรุณายืนยันรหัสผ่านใหม่ของคุณ"
 
@@ -1940,7 +1944,7 @@ msgstr "ตัวกรองคุณภาพ"
 msgid "Quality Score"
 msgstr "คะแนนคุณภาพ"
 
-#: src/page/admin/users.vue:78
+#: src/page/admin/users.vue:77
 msgid "r"
 msgstr "ร"
 
@@ -2054,7 +2058,7 @@ msgstr "คืนค่า"
 msgid "Retry Limit"
 msgstr "ขีดจำกัดการลองใหม่"
 
-#: src/dialog/account/password.vue:179
+#: src/dialog/account/password.vue:185
 msgid "Retype Password"
 msgstr "พิมพ์รหัสผ่านอีกครั้ง"
 
@@ -2062,7 +2066,8 @@ msgstr "พิมพ์รหัสผ่านอีกครั้ง"
 msgid "Review"
 msgstr "ทบทวน"
 
-#: src/component/admin/users/edit.vue:268 src/page/admin/users.vue:34
+#: src/component/admin/users/add.vue:129 src/component/admin/users/edit.vue:268
+#: src/page/admin/users.vue:35
 msgid "Role"
 msgstr "บทบาท"
 
@@ -2136,8 +2141,8 @@ msgstr "ส่ง"
 msgid "Sequential Name"
 msgstr "ชื่อลำดับ"
 
-#: src/component/admin/users/add.vue:82 src/dialog/service/add.vue:82
-#: src/dialog/service/edit.vue:447 src/dialog/share.vue:22
+#: src/dialog/service/add.vue:82 src/dialog/service/edit.vue:447
+#: src/dialog/share.vue:22
 msgid "Service URL"
 msgstr "URL บริการ"
 
@@ -2314,11 +2319,11 @@ msgstr "เรื่อง"
 msgid "Successfully Connected"
 msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 
-#: src/component/admin/users/edit.vue:366 src/page/admin/users.vue:69
+#: src/component/admin/users/edit.vue:365 src/page/admin/users.vue:71
 msgid "Super Admin"
 msgstr "ผู้ดูแลระบบขั้นสูง"
 
-#: src/component/admin/users/add.vue:29 src/dialog/service/add.vue:29
+#: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "การสนับสนุนบริการเพิ่มเติม เช่น Google ไดรฟ์ จะถูกเพิ่มเข้ามาเรื่อยๆ"
 
@@ -2459,7 +2464,7 @@ msgstr "ID ไม่ซ้ำกัน"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
 #: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:128 src/options/options.js:27
+#: src/model/photo.js:896 src/model/user.js:125 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2498,7 +2503,7 @@ msgstr "กำลังอัปเดตดัชนี"
 msgid "Updating moments"
 msgstr "กำลังอัปเดตช่วงเวลา"
 
-#: src/component/admin/users/edit.vue:134 src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:132 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "กำลังอัปเดตตัวอย่าง"
 
@@ -2540,7 +2545,7 @@ msgstr "อัพโหลดเสร็จแล้ว กำลังจั�
 msgid "Upload failed"
 msgstr "การอัพโหลดล้มเหลว"
 
-#: src/component/admin/users/edit.vue:347
+#: src/component/admin/users/edit.vue:346
 msgid "Upload Folder"
 msgstr ""
 
@@ -2581,8 +2586,8 @@ msgid "Use Presets"
 msgstr "ใช้พรีเซ็ต"
 
 #: src/options/admin.js:5 src/options/admin.js:20
-#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:32
-#: src/model/user.js:209
+#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:33
+#: src/model/user.js:210
 msgid "User"
 msgstr "ผู้ใช้"
 
@@ -2594,7 +2599,7 @@ msgstr "คู่มือผู้ใช้"
 msgid "User Interface"
 msgstr "หน้าจอผู้ใช้"
 
-#: src/component/admin/users/add.vue:103 src/dialog/service/add.vue:103
+#: src/component/admin/users/add.vue:83 src/dialog/service/add.vue:103
 #: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
 msgid "Username"
 msgstr "ชื่อผู้ใช้"
@@ -2677,11 +2682,13 @@ msgstr "เราพยายามอย่างเต็มที่ที่
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "เราจะพยายามอย่างเต็มที่เพื่อตอบคำถามของคุณ ในทางกลับกัน เราขอให้คุณสนับสนุนเราใน Patreon หรือผู้สนับสนุน GitHub"
 
-#: src/component/admin/users/edit.vue:383 src/page/admin/users.vue:36
+#: src/component/admin/users/add.vue:170 src/component/admin/users/edit.vue:382
+#: src/page/admin/users.vue:37
 msgid "Web Login"
 msgstr "เข้าสู่ระบบเว็บ"
 
-#: src/component/admin/users/edit.vue:400 src/page/admin/users.vue:43
+#: src/component/admin/users/add.vue:186 src/component/admin/users/edit.vue:399
+#: src/page/admin/users.vue:45
 msgid "WebDAV"
 msgstr "เว็บDAV"
 

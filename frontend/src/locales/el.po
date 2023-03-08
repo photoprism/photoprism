@@ -65,7 +65,7 @@ msgstr "Άβυσσος"
 
 #: src/component/navigation.vue:95 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:142 src/page/settings.vue:84
+#: src/model/user.js:139 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "Λογαριασμός"
@@ -94,7 +94,7 @@ msgstr "Ενεργοποίηση"
 msgid "Activation Code"
 msgstr "Κωδικός ενεργοποίησης"
 
-#: src/page/admin/users.vue:36
+#: src/page/admin/users.vue:44
 msgid "Add"
 msgstr "Προσθέστε"
 
@@ -342,7 +342,7 @@ msgstr "Αυτόματη δημιουργία αρχείων JPEG για άλλ�
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Δημιουργεί αυτόματα άλμπουμ με ιδιαίτερες στιγμές, ταξίδια και τοποθεσίες."
 
-#: src/component/admin/users/edit.vue:321
+#: src/component/admin/users/edit.vue:320
 msgid "Base Folder"
 msgstr "Φάκελος βάσης"
 
@@ -429,7 +429,7 @@ msgstr "Δεν μπορείτε να φορτώσετε περισσότερα �
 msgid "Can't select more items"
 msgstr "Δεν μπορείτε να επιλέξετε περισσότερα αντικείμενα"
 
-#: src/component/admin/users/add.vue:17 src/component/admin/users/edit.vue:63
+#: src/component/admin/users/add.vue:19 src/component/admin/users/edit.vue:63
 #: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
@@ -476,7 +476,7 @@ msgstr "Αλλάξτε τίτλους φωτογραφιών, τοποθεσίε
 msgid "Change private flag"
 msgstr "Αλλαγή ιδιωτικής κατάστασης"
 
-#: src/component/admin/users/edit.vue:137 src/page/settings/account.vue:114
+#: src/component/admin/users/edit.vue:135 src/page/settings/account.vue:114
 #: src/page/settings/account.vue:129 src/page/settings/advanced.vue:43
 #: src/page/settings/general.vue:105 src/page/settings/library.vue:50
 msgid "Changes successfully saved"
@@ -531,7 +531,7 @@ msgstr "Πλήρης σάρωση"
 msgid "Confidence"
 msgstr "Εμπιστοσύνη"
 
-#: src/component/admin/users/add.vue:18 src/dialog/service/add.vue:18
+#: src/component/admin/users/add.vue:20 src/dialog/service/add.vue:18
 #: src/page/settings/services.vue:53
 msgid "Connect"
 msgstr "Σύνδεση"
@@ -609,7 +609,7 @@ msgstr "Δημιουργία μικρογραφιών για"
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Moderate Quality, Good Performance"
 
-#: src/dialog/account/password.vue:128
+#: src/dialog/account/password.vue:133
 msgid "Current Password"
 msgstr "Τρέχων κωδικός πρόσβασης"
 
@@ -860,8 +860,8 @@ msgstr "Επεξεργασία Φωτογραφίας"
 msgid "Edited"
 msgstr "Επεξεργάστηκε"
 
-#: src/component/admin/users/edit.vue:294 src/page/settings/account.vue:221
-#: src/page/settings/account.vue:616
+#: src/component/admin/users/add.vue:152 src/component/admin/users/edit.vue:293
+#: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 msgid "Email"
 msgstr "Ηλεκτρονικό ταχυδρομείο"
 
@@ -1227,11 +1227,11 @@ msgstr "Αναγνωριστικό περίπτωσης"
 msgid "Interval"
 msgstr "Διάστημα"
 
-#: src/component/admin/users/edit.vue:103
+#: src/component/admin/users/add.vue:155 src/component/admin/users/edit.vue:103
 #: src/component/admin/users/edit.vue:159
 #: src/component/admin/users/edit.vue:187
 #: src/component/admin/users/edit.vue:215
-#: src/component/admin/users/edit.vue:297 src/page/connect.vue:14
+#: src/component/admin/users/edit.vue:296 src/page/connect.vue:14
 #: src/page/settings/account.vue:91 src/page/settings/account.vue:117
 #: src/page/settings/account.vue:143 src/page/settings/account.vue:169
 #: src/page/settings/account.vue:224 src/page/settings/account.vue:281
@@ -1314,6 +1314,10 @@ msgstr "Γλώσσα"
 #: src/page/admin/sessions.vue:29
 msgid "Last Active"
 msgstr "Τελευταία ενεργή"
+
+#: src/page/admin/users.vue:43
+msgid "Last Login"
+msgstr ""
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1529,11 +1533,11 @@ msgstr "Το πιο σχετικό"
 msgid "Move Files"
 msgstr "Μετακίνηση αρχείων"
 
-#: src/dialog/account/password.vue:156
+#: src/dialog/account/password.vue:162
 msgid "Must have at least %{n} characters."
 msgstr "Πρέπει να έχει τουλάχιστον %{n} χαρακτήρες."
 
-#: src/page/about/feedback.vue:172 src/page/admin/users.vue:33
+#: src/page/about/feedback.vue:172 src/page/admin/users.vue:34
 #: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
 #: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
 #: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
@@ -1557,7 +1561,7 @@ msgstr "Όνομα πολύ μεγάλο"
 msgid "Neon"
 msgstr "Νέον"
 
-#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:94
+#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:104
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1567,7 +1571,7 @@ msgstr "Ποτέ"
 msgid "New"
 msgstr "Νέο"
 
-#: src/dialog/account/password.vue:153
+#: src/dialog/account/password.vue:159
 msgid "New Password"
 msgstr "Νέος κωδικός πρόσβασης"
 
@@ -1658,7 +1662,7 @@ msgstr "Σημειώστε ότι μπορείτε να διαχειριστεί
 msgid "Note:"
 msgstr "Σημείωση:"
 
-#: src/component/admin/users/add.vue:28 src/dialog/service/add.vue:28
+#: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
 msgstr "Σημείωση: Μόνο οι διακομιστές WebDAV, όπως το Nextcloud ή το PhotoPrism, μπορούν να ρυθμιστούν ως απομακρυσμένη υπηρεσία για τη δημιουργία αντιγράφων ασφαλείας και τη μεταφόρτωση αρχείων."
 
@@ -1670,7 +1674,7 @@ msgstr "Σημειώσεις"
 msgid "Nothing to see here yet."
 msgstr "Δεν υπάρχει τίποτα να δείτε εδώ ακόμα. Κάντε υπομονή."
 
-#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:37
+#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:42
 msgid "Nothing was found."
 msgstr "Δεν βρέθηκε τίποτα."
 
@@ -1779,13 +1783,13 @@ msgstr "Πανόραμα"
 msgid "Panoramas"
 msgstr "Πανοράματα"
 
-#: src/component/admin/users/add.vue:126 src/dialog/service/add.vue:126
+#: src/component/admin/users/add.vue:105 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
 msgstr "Κωδικός πρόσβασης"
 
-#: src/dialog/account/password.vue:31
+#: src/dialog/account/password.vue:47
 msgid "Password changed"
 msgstr "Ο κωδικός πρόσβασης άλλαξε"
 
@@ -1857,7 +1861,7 @@ msgstr "Τόπος και χρόνος"
 msgid "Places"
 msgstr "Μέρη"
 
-#: src/dialog/account/password.vue:182
+#: src/dialog/account/password.vue:188
 msgid "Please confirm your new password."
 msgstr "Επιβεβαιώστε τον νέο σας κωδικό πρόσβασης."
 
@@ -1937,7 +1941,7 @@ msgstr "Φίλτρο ποιότητας"
 msgid "Quality Score"
 msgstr "Βαθμολογία ποιότητας"
 
-#: src/page/admin/users.vue:78
+#: src/page/admin/users.vue:77
 msgid "r"
 msgstr "r"
 
@@ -2051,7 +2055,7 @@ msgstr "Επαναφορά"
 msgid "Retry Limit"
 msgstr "Όριο επανάληψης"
 
-#: src/dialog/account/password.vue:179
+#: src/dialog/account/password.vue:185
 msgid "Retype Password"
 msgstr "Επαναλάβετε τον κωδικό πρόσβασης"
 
@@ -2059,7 +2063,8 @@ msgstr "Επαναλάβετε τον κωδικό πρόσβασης"
 msgid "Review"
 msgstr "Ανασκόπηση"
 
-#: src/component/admin/users/edit.vue:268 src/page/admin/users.vue:34
+#: src/component/admin/users/add.vue:129 src/component/admin/users/edit.vue:268
+#: src/page/admin/users.vue:35
 msgid "Role"
 msgstr "Ρόλος"
 
@@ -2133,8 +2138,8 @@ msgstr "Αποστολή"
 msgid "Sequential Name"
 msgstr "Διαδοχικό όνομα"
 
-#: src/component/admin/users/add.vue:82 src/dialog/service/add.vue:82
-#: src/dialog/service/edit.vue:447 src/dialog/share.vue:22
+#: src/dialog/service/add.vue:82 src/dialog/service/edit.vue:447
+#: src/dialog/share.vue:22
 msgid "Service URL"
 msgstr "URL υπηρεσίας"
 
@@ -2311,11 +2316,11 @@ msgstr "Θέμα"
 msgid "Successfully Connected"
 msgstr "Επιτυχής σύνδεση"
 
-#: src/component/admin/users/edit.vue:366 src/page/admin/users.vue:69
+#: src/component/admin/users/edit.vue:365 src/page/admin/users.vue:71
 msgid "Super Admin"
 msgstr "Super Admin"
 
-#: src/component/admin/users/add.vue:29 src/dialog/service/add.vue:29
+#: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Η υποστήριξη για πρόσθετες υπηρεσίες, όπως το Google Drive, θα προστεθεί με την πάροδο του χρόνου."
 
@@ -2456,7 +2461,7 @@ msgstr "Μοναδικό αναγνωριστικό"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
 #: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:128 src/options/options.js:27
+#: src/model/photo.js:896 src/model/user.js:125 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2495,7 +2500,7 @@ msgstr "Ενημέρωση ευρετηρίου"
 msgid "Updating moments"
 msgstr "Ενημέρωση στιγμών"
 
-#: src/component/admin/users/edit.vue:134 src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:132 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Ενημέρωση προεπισκοπήσεων"
 
@@ -2537,7 +2542,7 @@ msgstr "Το ανέβασμα ολοκληρώθηκε. Δημιουργία ε�
 msgid "Upload failed"
 msgstr "Αποτυχία αποστολής"
 
-#: src/component/admin/users/edit.vue:347
+#: src/component/admin/users/edit.vue:346
 msgid "Upload Folder"
 msgstr "Φόρτωση φακέλου"
 
@@ -2578,8 +2583,8 @@ msgid "Use Presets"
 msgstr "Χρήση Προεπιλογών"
 
 #: src/options/admin.js:5 src/options/admin.js:20
-#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:32
-#: src/model/user.js:209
+#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:33
+#: src/model/user.js:210
 msgid "User"
 msgstr "Χρήστης"
 
@@ -2591,7 +2596,7 @@ msgstr "Οδηγός χρήσης"
 msgid "User Interface"
 msgstr "Διεπαφή χρήστη"
 
-#: src/component/admin/users/add.vue:103 src/dialog/service/add.vue:103
+#: src/component/admin/users/add.vue:83 src/dialog/service/add.vue:103
 #: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
 msgid "Username"
 msgstr "Όνομα χρήστη"
@@ -2674,11 +2679,13 @@ msgstr "Κάνουμε ό,τι μπορούμε για να απαντήσουμ
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Θα κάνουμε ό,τι μπορούμε για να απαντήσουμε σε όλες τις ερωτήσεις σας. Σε αντάλλαγμα, σας ζητάμε να μας υποστηρίξετε στο Patreon ή στο GitHub Sponsors."
 
-#: src/component/admin/users/edit.vue:383 src/page/admin/users.vue:36
+#: src/component/admin/users/add.vue:170 src/component/admin/users/edit.vue:382
+#: src/page/admin/users.vue:37
 msgid "Web Login"
 msgstr "Σύνδεση μέσω Web"
 
-#: src/component/admin/users/edit.vue:400 src/page/admin/users.vue:43
+#: src/component/admin/users/add.vue:186 src/component/admin/users/edit.vue:399
+#: src/page/admin/users.vue:45
 msgid "WebDAV"
 msgstr "WebDAV"
 
