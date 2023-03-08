@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 14:19+0000\n"
+"PO-Revision-Date: 2023-03-08 18:09+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -134,7 +134,7 @@ msgstr "Hinzugefügt"
 
 #: src/options/admin.js:4 src/options/admin.js:16
 msgid "Admin"
-msgstr "Verwaltung"
+msgstr "Admin"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
