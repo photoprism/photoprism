@@ -94,7 +94,7 @@ msgstr "Aktiveer"
 msgid "Activation Code"
 msgstr "Aktiverings kode"
 
-#: src/page/admin/users.vue:44
+#: src/component/admin/users/add.vue:20 src/page/admin/users.vue:44
 msgid "Add"
 msgstr "Voeg by"
 
@@ -531,8 +531,7 @@ msgstr "Voltooi herskandering"
 msgid "Confidence"
 msgstr "Vertroue"
 
-#: src/component/admin/users/add.vue:20 src/dialog/service/add.vue:18
-#: src/page/settings/services.vue:53
+#: src/dialog/service/add.vue:18 src/page/settings/services.vue:53
 msgid "Connect"
 msgstr "Koppel"
 
@@ -860,7 +859,7 @@ msgstr "Redigeer foto"
 msgid "Edited"
 msgstr "Geredigeer"
 
-#: src/component/admin/users/add.vue:152 src/component/admin/users/edit.vue:293
+#: src/component/admin/users/add.vue:174 src/component/admin/users/edit.vue:293
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 msgid "Email"
 msgstr "E-pos"
@@ -1227,7 +1226,8 @@ msgstr "Geval ID"
 msgid "Interval"
 msgstr "Interval"
 
-#: src/component/admin/users/add.vue:155 src/component/admin/users/edit.vue:103
+#: src/component/admin/users/add.vue:153 src/component/admin/users/add.vue:177
+#: src/component/admin/users/edit.vue:103
 #: src/component/admin/users/edit.vue:159
 #: src/component/admin/users/edit.vue:187
 #: src/component/admin/users/edit.vue:215
@@ -1264,7 +1264,7 @@ msgstr "Dit is jou besluit of jy wil inteken om bykomende voordele te geniet."
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr "Dit maak gebruik van die nuutste tegnologie om foto's outomaties te merk en te vind sonder om in jou pad te kom."
 
-#: src/model/rest.js:177
+#: src/model/rest.js:181
 msgid "Item"
 msgstr "Item"
 
@@ -1537,14 +1537,15 @@ msgstr "Skuif lêers"
 msgid "Must have at least %{n} characters."
 msgstr "Moet ten minste %{n} karakters hê."
 
-#: src/page/about/feedback.vue:172 src/page/admin/users.vue:34
-#: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
-#: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
-#: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
-#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159
-#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225
-#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:171
-#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/component/admin/users/add.vue:150 src/page/about/feedback.vue:172
+#: src/page/admin/users.vue:34 src/component/photo/cards.vue:517
+#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
+#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
+#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
+#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
+#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
+#: src/page/about/feedback.vue:171 src/page/albums.vue:87
+#: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
 #: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
@@ -2584,9 +2585,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Gebruik voorafinstellings"
 
-#: src/options/admin.js:5 src/options/admin.js:20
-#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:33
-#: src/model/user.js:210
+#: src/component/admin/users/add.vue:83 src/options/admin.js:5
+#: src/options/admin.js:20 src/page/admin/sessions.vue:27
+#: src/page/admin/users.vue:33 src/model/user.js:204
 msgid "User"
 msgstr "Gebruiker"
 
@@ -2598,8 +2599,8 @@ msgstr "Handleiding"
 msgid "User Interface"
 msgstr "Gebruikerskoppelvlak"
 
-#: src/component/admin/users/add.vue:83 src/dialog/service/add.vue:103
-#: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
+#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
+#: src/dialog/share.vue:23
 msgid "Username"
 msgstr "Gebruikersnaam"
 
@@ -2681,12 +2682,12 @@ msgstr "Ons doen ons bes om binne vyf werksdae of minder te reageer."
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Ons sal ons bes doen om al jou vrae te beantwoord. In ruil daarvoor vra ons u om ons op Patreon- of GitHub-borge te ondersteun."
 
-#: src/component/admin/users/add.vue:170 src/component/admin/users/edit.vue:382
+#: src/component/admin/users/add.vue:192 src/component/admin/users/edit.vue:382
 #: src/page/admin/users.vue:37
 msgid "Web Login"
 msgstr "Web aanmeld"
 
-#: src/component/admin/users/add.vue:186 src/component/admin/users/edit.vue:399
+#: src/component/admin/users/add.vue:208 src/component/admin/users/edit.vue:399
 #: src/page/admin/users.vue:45
 msgid "WebDAV"
 msgstr "WebDAV"

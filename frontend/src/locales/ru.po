@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-08 20:46+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -98,7 +97,7 @@ msgstr "Активировать"
 msgid "Activation Code"
 msgstr "Код активации"
 
-#: src/page/admin/users.vue:44
+#: src/component/admin/users/add.vue:20 src/page/admin/users.vue:44
 msgid "Add"
 msgstr "Добавить"
 
@@ -535,8 +534,7 @@ msgstr "Полный рескан"
 msgid "Confidence"
 msgstr "Уверенность"
 
-#: src/component/admin/users/add.vue:20 src/dialog/service/add.vue:18
-#: src/page/settings/services.vue:53
+#: src/dialog/service/add.vue:18 src/page/settings/services.vue:53
 msgid "Connect"
 msgstr "Соединен"
 
@@ -864,7 +862,7 @@ msgstr "Редактировать фотографию"
 msgid "Edited"
 msgstr "Отредактировано"
 
-#: src/component/admin/users/add.vue:152 src/component/admin/users/edit.vue:293
+#: src/component/admin/users/add.vue:174 src/component/admin/users/edit.vue:293
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 msgid "Email"
 msgstr "Электронная почта"
@@ -1231,7 +1229,8 @@ msgstr "Идентификатор узла"
 msgid "Interval"
 msgstr "Интервал"
 
-#: src/component/admin/users/add.vue:155 src/component/admin/users/edit.vue:103
+#: src/component/admin/users/add.vue:153 src/component/admin/users/add.vue:177
+#: src/component/admin/users/edit.vue:103
 #: src/component/admin/users/edit.vue:159
 #: src/component/admin/users/edit.vue:187
 #: src/component/admin/users/edit.vue:215
@@ -1268,7 +1267,7 @@ msgstr "Вы сами решаете, хотите ли вы подписать�
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr "Оно использует новейшие технологии для автоматической разметки и поиска изображений, не вставая у вас на пути."
 
-#: src/model/rest.js:177
+#: src/model/rest.js:181
 msgid "Item"
 msgstr "Элемент"
 
@@ -1541,14 +1540,15 @@ msgstr "Перемещать файлы"
 msgid "Must have at least %{n} characters."
 msgstr "Должно быть не менее %{n} символов."
 
-#: src/page/about/feedback.vue:172 src/page/admin/users.vue:34
-#: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
-#: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
-#: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
-#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159
-#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225
-#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:171
-#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/component/admin/users/add.vue:150 src/page/about/feedback.vue:172
+#: src/page/admin/users.vue:34 src/component/photo/cards.vue:517
+#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
+#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
+#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
+#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
+#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
+#: src/page/about/feedback.vue:171 src/page/albums.vue:87
+#: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
 #: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
@@ -2588,9 +2588,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Использовать предустановки"
 
-#: src/options/admin.js:5 src/options/admin.js:20
-#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:33
-#: src/model/user.js:210
+#: src/component/admin/users/add.vue:83 src/options/admin.js:5
+#: src/options/admin.js:20 src/page/admin/sessions.vue:27
+#: src/page/admin/users.vue:33 src/model/user.js:204
 msgid "User"
 msgstr "Пользователь"
 
@@ -2602,8 +2602,8 @@ msgstr "Руководство пользователя"
 msgid "User Interface"
 msgstr "Пользовательский интерфейс"
 
-#: src/component/admin/users/add.vue:83 src/dialog/service/add.vue:103
-#: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
+#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
+#: src/dialog/share.vue:23
 msgid "Username"
 msgstr "Имя пользователя"
 
@@ -2685,12 +2685,12 @@ msgstr "Мы делаем все возможное, чтобы ответить
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Мы сделаем все возможное, чтобы ответить на все ваши вопросы. В свою очередь, мы просим вас поддержать нас на Patreon или GitHub Sponsors."
 
-#: src/component/admin/users/add.vue:170 src/component/admin/users/edit.vue:382
+#: src/component/admin/users/add.vue:192 src/component/admin/users/edit.vue:382
 #: src/page/admin/users.vue:37
 msgid "Web Login"
 msgstr "Веб-логин"
 
-#: src/component/admin/users/add.vue:186 src/component/admin/users/edit.vue:399
+#: src/component/admin/users/add.vue:208 src/component/admin/users/edit.vue:399
 #: src/page/admin/users.vue:45
 msgid "WebDAV"
 msgstr "WebDAV"

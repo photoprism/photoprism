@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -95,7 +94,7 @@ msgstr "Aktivacija"
 msgid "Activation Code"
 msgstr "Aktivacijska koda"
 
-#: src/page/admin/users.vue:44
+#: src/component/admin/users/add.vue:20 src/page/admin/users.vue:44
 msgid "Add"
 msgstr "Dodaj"
 
@@ -532,8 +531,7 @@ msgstr "Popolno ponovno skeniranje"
 msgid "Confidence"
 msgstr "Zaupanje"
 
-#: src/component/admin/users/add.vue:20 src/dialog/service/add.vue:18
-#: src/page/settings/services.vue:53
+#: src/dialog/service/add.vue:18 src/page/settings/services.vue:53
 msgid "Connect"
 msgstr "Poveži"
 
@@ -861,7 +859,7 @@ msgstr "Uredi fotografijo"
 msgid "Edited"
 msgstr "Urejeno"
 
-#: src/component/admin/users/add.vue:152 src/component/admin/users/edit.vue:293
+#: src/component/admin/users/add.vue:174 src/component/admin/users/edit.vue:293
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 msgid "Email"
 msgstr "E-pošta"
@@ -1228,7 +1226,8 @@ msgstr "ID instance"
 msgid "Interval"
 msgstr "Interval"
 
-#: src/component/admin/users/add.vue:155 src/component/admin/users/edit.vue:103
+#: src/component/admin/users/add.vue:153 src/component/admin/users/add.vue:177
+#: src/component/admin/users/edit.vue:103
 #: src/component/admin/users/edit.vue:159
 #: src/component/admin/users/edit.vue:187
 #: src/component/admin/users/edit.vue:215
@@ -1265,7 +1264,7 @@ msgstr "Sami se odločite, ali se želite prijaviti in uživati dodatne ugodnost
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 msgstr "Uporablja najnovejše tehnologije za samodejno označevanje in iskanje slik, ne da bi vas pri tem oviral."
 
-#: src/model/rest.js:177
+#: src/model/rest.js:181
 msgid "Item"
 msgstr "Artikel"
 
@@ -1538,14 +1537,15 @@ msgstr "Premikanje datotek"
 msgid "Must have at least %{n} characters."
 msgstr "Imeti mora vsaj %{n} znakov."
 
-#: src/page/about/feedback.vue:172 src/page/admin/users.vue:34
-#: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
-#: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
-#: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
-#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159
-#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225
-#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:171
-#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/component/admin/users/add.vue:150 src/page/about/feedback.vue:172
+#: src/page/admin/users.vue:34 src/component/photo/cards.vue:517
+#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
+#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
+#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
+#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
+#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
+#: src/page/about/feedback.vue:171 src/page/albums.vue:87
+#: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
 #: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
@@ -2583,9 +2583,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Uporaba prednastavitev"
 
-#: src/options/admin.js:5 src/options/admin.js:20
-#: src/page/admin/sessions.vue:27 src/page/admin/users.vue:33
-#: src/model/user.js:210
+#: src/component/admin/users/add.vue:83 src/options/admin.js:5
+#: src/options/admin.js:20 src/page/admin/sessions.vue:27
+#: src/page/admin/users.vue:33 src/model/user.js:204
 msgid "User"
 msgstr "Uporabnik"
 
@@ -2597,8 +2597,8 @@ msgstr "Uporabniški priročnik"
 msgid "User Interface"
 msgstr "Uporabniški vmesnik"
 
-#: src/component/admin/users/add.vue:83 src/dialog/service/add.vue:103
-#: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
+#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
+#: src/dialog/share.vue:23
 msgid "Username"
 msgstr "Uporabniško ime"
 
@@ -2680,12 +2680,12 @@ msgstr "Potrudimo se, da vam odgovorimo v petih delovnih dneh ali manj."
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Potrudili se bomo odgovoriti na vsa vaša vprašanja. V zameno vas prosimo, da nas podprete pri sponzorjih Patreon ali GitHub."
 
-#: src/component/admin/users/add.vue:170 src/component/admin/users/edit.vue:382
+#: src/component/admin/users/add.vue:192 src/component/admin/users/edit.vue:382
 #: src/page/admin/users.vue:37
 msgid "Web Login"
 msgstr "Spletna prijava"
 
-#: src/component/admin/users/add.vue:186 src/component/admin/users/edit.vue:399
+#: src/component/admin/users/add.vue:208 src/component/admin/users/edit.vue:399
 #: src/page/admin/users.vue:45
 msgid "WebDAV"
 msgstr "WebDAV"
