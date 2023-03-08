@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-08 01:10+0000\n"
+"PO-Revision-Date: 2023-03-08 14:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -130,7 +130,7 @@ msgstr "Προστέθηκε"
 
 #: src/options/admin.js:4 src/options/admin.js:16
 msgid "Admin"
-msgstr ""
+msgstr "Διαχειριστής"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
@@ -344,7 +344,7 @@ msgstr "Δημιουργεί αυτόματα άλμπουμ με ιδιαίτε
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Path"
-msgstr ""
+msgstr "Διαδρομή βάσης"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -1098,7 +1098,7 @@ msgstr "Γκρι"
 
 #: src/options/admin.js:8 src/options/admin.js:32
 msgid "Guest"
-msgstr ""
+msgstr "Επισκέπτης"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Hash"
@@ -1939,7 +1939,7 @@ msgstr "Βαθμολογία ποιότητας"
 
 #: src/page/admin/users.vue:78
 msgid "r"
-msgstr ""
+msgstr "r"
 
 #: src/page/discover.vue:16
 msgid "Random"
@@ -2313,7 +2313,7 @@ msgstr "Επιτυχής σύνδεση"
 
 #: src/component/admin/users/edit.vue:366 src/page/admin/users.vue:69
 msgid "Super Admin"
-msgstr ""
+msgstr "Super Admin"
 
 #: src/component/admin/users/add.vue:29 src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2443,7 +2443,7 @@ msgstr "Τύπος"
 
 #: src/options/admin.js:10
 msgid "Unauthorized"
-msgstr ""
+msgstr "Μη εξουσιοδοτημένο"
 
 #: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
@@ -2543,7 +2543,7 @@ msgstr "Ανέβασμα τοπικών αρχείων"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Path"
-msgstr ""
+msgstr "Διαδρομή φόρτωσης"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2551,7 +2551,7 @@ msgstr "Ανεβάστε σε WebDAV και μοιραστείτε συνδέσ�
 
 #: src/options/admin.js:7 src/options/admin.js:28
 msgid "Uploader"
-msgstr ""
+msgstr "Ανεβάζω"
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2643,7 +2643,7 @@ msgstr "Προβολή"
 
 #: src/options/admin.js:6 src/options/admin.js:24
 msgid "Viewer"
-msgstr ""
+msgstr "Πρόγραμμα προβολής"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
@@ -2651,7 +2651,7 @@ msgstr "Επισκεφθείτε το docs.photoprism.app/user-guide για να
 
 #: src/options/admin.js:9
 msgid "Visitor"
-msgstr ""
+msgstr "Επισκέπτης"
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:29

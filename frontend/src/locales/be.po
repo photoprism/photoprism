@@ -2,12 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-08 01:10+0000\n"
+"PO-Revision-Date: 2023-03-08 14:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -130,7 +131,7 @@ msgstr "Дададзена"
 
 #: src/options/admin.js:4 src/options/admin.js:16
 msgid "Admin"
-msgstr ""
+msgstr "Адмін"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
@@ -344,7 +345,7 @@ msgstr "Аўтаматычна стварае альбомы асаблівых 
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Path"
-msgstr ""
+msgstr "Базавы шлях"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -1098,7 +1099,7 @@ msgstr "Шэры"
 
 #: src/options/admin.js:8 src/options/admin.js:32
 msgid "Guest"
-msgstr ""
+msgstr "Госць"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Hash"
@@ -1939,7 +1940,7 @@ msgstr "Паказчык якасці"
 
 #: src/page/admin/users.vue:78
 msgid "r"
-msgstr ""
+msgstr "р"
 
 #: src/page/discover.vue:16
 msgid "Random"
@@ -2313,7 +2314,7 @@ msgstr "Паспяхова падключана"
 
 #: src/component/admin/users/edit.vue:366 src/page/admin/users.vue:69
 msgid "Super Admin"
-msgstr ""
+msgstr "Супер адміністратар"
 
 #: src/component/admin/users/add.vue:29 src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2445,7 +2446,7 @@ msgstr "Тып"
 
 #: src/options/admin.js:10
 msgid "Unauthorized"
-msgstr ""
+msgstr "Несанкцыянаваны"
 
 #: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
@@ -2545,7 +2546,7 @@ msgstr "Загрузіць лакальныя файлы"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Path"
-msgstr ""
+msgstr "Шлях загрузкі"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2553,7 +2554,7 @@ msgstr "Загружайце ў WebDAV і дзяліцеся спасылкам�
 
 #: src/options/admin.js:7 src/options/admin.js:28
 msgid "Uploader"
-msgstr ""
+msgstr "Загрузнік"
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2645,7 +2646,7 @@ msgstr "Выгляд"
 
 #: src/options/admin.js:6 src/options/admin.js:24
 msgid "Viewer"
-msgstr ""
+msgstr "Глядач"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
@@ -2653,7 +2654,7 @@ msgstr "Наведайце docs.photoprism.app/user-guide, каб даведац
 
 #: src/options/admin.js:9
 msgid "Visitor"
-msgstr ""
+msgstr "Наведвальнік"
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:29

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 01:10+0000\n"
+"PO-Revision-Date: 2023-03-08 14:06+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -133,7 +133,7 @@ msgstr "เพิ่มแล้ว"
 
 #: src/options/admin.js:4 src/options/admin.js:16
 msgid "Admin"
-msgstr ""
+msgstr "ผู้ดูแลระบบ"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
@@ -347,7 +347,7 @@ msgstr "สร้างอัลบั้มของช่วงเวลาพ
 
 #: src/component/admin/users/edit.vue:321
 msgid "Base Path"
-msgstr ""
+msgstr "เส้นทางฐาน"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -1101,7 +1101,7 @@ msgstr "สีเทา"
 
 #: src/options/admin.js:8 src/options/admin.js:32
 msgid "Guest"
-msgstr ""
+msgstr "แขก"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Hash"
@@ -1942,7 +1942,7 @@ msgstr "คะแนนคุณภาพ"
 
 #: src/page/admin/users.vue:78
 msgid "r"
-msgstr ""
+msgstr "ร"
 
 #: src/page/discover.vue:16
 msgid "Random"
@@ -2316,7 +2316,7 @@ msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 
 #: src/component/admin/users/edit.vue:366 src/page/admin/users.vue:69
 msgid "Super Admin"
-msgstr ""
+msgstr "ผู้ดูแลระบบขั้นสูง"
 
 #: src/component/admin/users/add.vue:29 src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2446,7 +2446,7 @@ msgstr "พิมพ์"
 
 #: src/options/admin.js:10
 msgid "Unauthorized"
-msgstr ""
+msgstr "ไม่ได้รับอนุญาต"
 
 #: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
@@ -2546,7 +2546,7 @@ msgstr "อัปโหลดไฟล์ในเครื่อง"
 
 #: src/component/admin/users/edit.vue:347
 msgid "Upload Path"
-msgstr ""
+msgstr "อัปโหลดเส้นทาง"
 
 #: src/page/settings/general.vue:297
 msgid "Upload to WebDAV and share links with friends."
@@ -2554,7 +2554,7 @@ msgstr "อัปโหลดไปยัง WebDAV และแชร์ลิ�
 
 #: src/options/admin.js:7 src/options/admin.js:28
 msgid "Uploader"
-msgstr ""
+msgstr "ผู้อัปโหลด"
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2646,7 +2646,7 @@ msgstr "ดู"
 
 #: src/options/admin.js:6 src/options/admin.js:24
 msgid "Viewer"
-msgstr ""
+msgstr "ผู้ดู"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
@@ -2654,7 +2654,7 @@ msgstr "ไปที่ docs.photoprism.app/user-guide เพื่อเรี�
 
 #: src/options/admin.js:9
 msgid "Visitor"
-msgstr ""
+msgstr "ผู้เข้าชม"
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:29
