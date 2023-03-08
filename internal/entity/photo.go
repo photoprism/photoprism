@@ -26,6 +26,7 @@ const (
 	PhotoUID = byte('p')
 )
 
+var IndexUpdateInterval = 3 * time.Hour           // 3 Hours
 var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
 var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
 

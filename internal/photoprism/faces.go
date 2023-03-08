@@ -47,7 +47,7 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 		return fmt.Errorf("face recognition is disabled")
 	}
 
-	if err := mutex.FacesWorker.Start(); err != nil {
+	if err = mutex.FacesWorker.Start(); err != nil {
 		return err
 	}
 
@@ -147,6 +147,8 @@ func (w *Faces) Start(opt FacesOptions) (err error) {
 	} else if count > 0 {
 		log.Debugf("faces: removed %d clusters [%s]", count, time.Since(start))
 	}
+
+	entity.UpdateFaces.Store(false)
 
 	return nil
 }
