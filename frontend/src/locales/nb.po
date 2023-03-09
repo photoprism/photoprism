@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-08 20:46+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
-"photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Et klikk vil kopiere det til utklippstavlen."
 
 #: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:428 src/component/navigation.vue:27
+#: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43
 msgid "About"
 msgstr "Om"
@@ -98,7 +97,7 @@ msgstr "Aktiver"
 msgid "Activation Code"
 msgstr "Aktiveringskode"
 
-#: src/component/admin/users/add.vue:20 src/page/admin/users.vue:44
+#: src/component/admin/users/add.vue:21 src/page/admin/users.vue:45
 msgid "Add"
 msgstr "Legg til"
 
@@ -132,7 +131,7 @@ msgstr "Legg til i album"
 msgid "Added"
 msgstr "Lagt til"
 
-#: src/options/admin.js:4 src/options/admin.js:16
+#: src/options/admin.js:6 src/options/admin.js:19
 msgid "Admin"
 msgstr "Administrasjon"
 
@@ -338,6 +337,11 @@ msgstr "Siden dette hjelper oss med å tilby flere funksjoner til publikum, oppf
 msgid "Aspect Ratio"
 msgstr "Sideforhold"
 
+#: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:369
+#: src/page/admin/users.vue:36
+msgid "Authentication"
+msgstr ""
+
 #: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr "Automatisk lag JPEG-filer for andre filtyper slik at de kan vises i en nettleser."
@@ -433,7 +437,7 @@ msgstr "Kan ikke laste inn mer, grensen nådd"
 msgid "Can't select more items"
 msgstr "Kan ikke velge flere elementer"
 
-#: src/component/admin/users/add.vue:19 src/component/admin/users/edit.vue:63
+#: src/component/admin/users/add.vue:20 src/component/admin/users/edit.vue:67
 #: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
@@ -640,6 +644,7 @@ msgstr "Dag"
 msgid "Debug Logs"
 msgstr "Feilsøkingslogger"
 
+#: src/options/admin.js:43 src/options/admin.js:54 src/page/admin/users.vue:85
 #: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
@@ -739,7 +744,8 @@ msgstr "Deaktiverer videotranskoding og miniatyrbildeekstraksjon."
 msgid "Discover"
 msgstr "Utforsk"
 
-#: src/component/admin/users/edit.vue:128 src/page/settings/account.vue:193
+#: src/component/admin/users/edit.vue:128 src/page/admin/users.vue:34
+#: src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "Vist navn"
 
@@ -863,7 +869,7 @@ msgstr "Rediger Bilde"
 msgid "Edited"
 msgstr "Redigert"
 
-#: src/component/admin/users/add.vue:174 src/component/admin/users/edit.vue:293
+#: src/component/admin/users/add.vue:198 src/component/admin/users/edit.vue:293
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 msgid "Email"
 msgstr "E-post"
@@ -969,7 +975,7 @@ msgstr "Funksjonsforespørsel"
 msgid "Feed"
 msgstr "Feed"
 
-#: src/component/navigation.vue:444 src/component/navigation.vue:43
+#: src/component/navigation.vue:436 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Tilbakemelding"
 
@@ -1099,7 +1105,7 @@ msgstr "Grønn"
 msgid "Grey"
 msgstr "Grå"
 
-#: src/options/admin.js:8 src/options/admin.js:32
+#: src/options/admin.js:10 src/options/admin.js:35
 msgid "Guest"
 msgstr "Gjest"
 
@@ -1230,7 +1236,7 @@ msgstr "Instans-ID"
 msgid "Interval"
 msgstr "Intervall"
 
-#: src/component/admin/users/add.vue:153 src/component/admin/users/add.vue:177
+#: src/component/admin/users/add.vue:177 src/component/admin/users/add.vue:201
 #: src/component/admin/users/edit.vue:103
 #: src/component/admin/users/edit.vue:159
 #: src/component/admin/users/edit.vue:187
@@ -1319,7 +1325,7 @@ msgstr "Språk"
 msgid "Last Active"
 msgstr "Siste aktive"
 
-#: src/page/admin/users.vue:43
+#: src/page/admin/users.vue:44
 msgid "Last Login"
 msgstr "Siste pålogging"
 
@@ -1334,6 +1340,10 @@ msgstr "Breddegrad"
 #: src/options/themes.js:468
 msgid "Lavender"
 msgstr "Lavendel"
+
+#: src/options/admin.js:45 src/options/admin.js:62
+msgid "LDAP/AD"
+msgstr ""
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
@@ -1357,8 +1367,8 @@ msgstr "Linse"
 msgid "Library"
 msgstr "Bibliotek"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:452
-#: src/component/navigation.vue:51 src/dialog/photo/edit/details.vue:559
+#: src/page/connect.vue:4 src/component/navigation.vue:444
+#: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
 msgstr "Lisens"
@@ -1396,6 +1406,10 @@ msgstr "Direkte"
 #: src/component/navigation.vue:204
 msgid "Live Photos"
 msgstr "Fotoer"
+
+#: src/options/admin.js:44 src/options/admin.js:58
+msgid "Local"
+msgstr ""
 
 #: src/dialog/photo/edit/details.vue:194 src/options/options.js:17
 msgid "Local Time"
@@ -1541,15 +1555,14 @@ msgstr "Flytt Filer"
 msgid "Must have at least %{n} characters."
 msgstr "Må ha minst %{n} tegn."
 
-#: src/component/admin/users/add.vue:150 src/page/about/feedback.vue:172
-#: src/page/admin/users.vue:34 src/component/photo/cards.vue:517
-#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
-#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
-#: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
-#: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
-#: src/page/about/feedback.vue:171 src/page/albums.vue:87
-#: src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/component/admin/users/add.vue:174 src/page/about/feedback.vue:172
+#: src/component/photo/cards.vue:517 src/component/photo/list.vue:139
+#: src/component/photo/list.vue:235 src/dialog/album/edit.vue:105
+#: src/dialog/photo/edit/files.vue:34 src/dialog/photo/edit/info.vue:31
+#: src/dialog/photo/edit/labels.vue:43 src/dialog/photo/edit/labels.vue:159
+#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:225
+#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:171
+#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
 #: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
@@ -1566,7 +1579,7 @@ msgstr "Navn for langt"
 msgid "Neon"
 msgstr "Neon"
 
-#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:104
+#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:118
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1651,7 +1664,8 @@ msgstr "Ingen advarsler eller feilmeldinger inneholder dette nøkkelordet. Merk 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Bilder som ikke er fotografiske eller har lav kvalitet må gjennomgås før de kommer i søkeresultater."
 
-#: src/options/options.js:264 src/options/options.js:353
+#: src/options/admin.js:47 src/options/admin.js:66 src/options/options.js:264
+#: src/options/options.js:353
 msgid "None"
 msgstr "Ingen"
 
@@ -1788,7 +1802,7 @@ msgstr "Panorama"
 msgid "Panoramas"
 msgstr "Panoramaer"
 
-#: src/component/admin/users/add.vue:105 src/dialog/service/add.vue:126
+#: src/component/admin/users/add.vue:109 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
@@ -1946,7 +1960,7 @@ msgstr "Kvalitetsfilter"
 msgid "Quality Score"
 msgstr "Kvalitetspoeng"
 
-#: src/page/admin/users.vue:77
+#: src/page/admin/users.vue:78 src/page/admin/users.vue:91
 msgid "r"
 msgstr "r"
 
@@ -2042,6 +2056,7 @@ msgstr "Fjern importerte filer for å spare lagringsplass. Filtyper som ikke st�
 msgid "Request failed - invalid response"
 msgstr "Forespørselen mislyktes - ugyldig svar"
 
+#: src/component/admin/users/add.vue:89 src/component/admin/users/add.vue:113
 #: src/component/admin/users/edit.vue:131 src/page/about/feedback.vue:130
 #: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
@@ -2068,7 +2083,7 @@ msgstr "Gjenta Passord"
 msgid "Review"
 msgstr "Gjennomgang"
 
-#: src/component/admin/users/add.vue:129 src/component/admin/users/edit.vue:268
+#: src/component/admin/users/add.vue:133 src/component/admin/users/edit.vue:268
 #: src/page/admin/users.vue:35
 msgid "Role"
 msgstr "Rolle"
@@ -2077,7 +2092,7 @@ msgstr "Rolle"
 msgid "Satellite"
 msgstr "Satellitt"
 
-#: src/component/admin/users/edit.vue:66 src/dialog/account/password.vue:39
+#: src/component/admin/users/edit.vue:70 src/dialog/account/password.vue:39
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2321,7 +2336,7 @@ msgstr "Emne"
 msgid "Successfully Connected"
 msgstr "Tilkobing vellykket"
 
-#: src/component/admin/users/edit.vue:365 src/page/admin/users.vue:71
+#: src/component/admin/users/edit.vue:387 src/page/admin/users.vue:72
 msgid "Super Admin"
 msgstr "Superadministrator"
 
@@ -2425,7 +2440,7 @@ msgstr "For å oppgradere kan du enten skrive inn en aktiveringskode eller klikk
 msgid "Toggle View"
 msgstr "Veksle Visning"
 
-#: src/dialog/share.vue:208
+#: src/options/admin.js:46 src/dialog/share.vue:208
 msgid "Token"
 msgstr "Token"
 
@@ -2451,7 +2466,7 @@ msgstr "Prøv igjen med andre filtre eller nøkkelord."
 msgid "Type"
 msgstr "Type"
 
-#: src/options/admin.js:10
+#: src/options/admin.js:12
 msgid "Unauthorized"
 msgstr "Uautorisert"
 
@@ -2517,8 +2532,8 @@ msgstr "Oppdaterer forhåndsvisninger"
 msgid "Updating stacks"
 msgstr "Oppdaterer stabler"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:460
-#: src/component/navigation.vue:592 src/component/navigation.vue:59
+#: src/page/connect.vue:17 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
 msgid "Upgrade"
 msgstr "Oppgrader"
 
@@ -2559,7 +2574,7 @@ msgstr "Last opp lokale filer"
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Last opp til WebDAV og del lenker med venner."
 
-#: src/options/admin.js:7 src/options/admin.js:28
+#: src/options/admin.js:9 src/options/admin.js:31
 msgid "Uploader"
 msgstr "Opplasting"
 
@@ -2587,8 +2602,8 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Bruk Forhåndsinnstillinger"
 
-#: src/component/admin/users/add.vue:83 src/options/admin.js:5
-#: src/options/admin.js:20 src/page/admin/sessions.vue:27
+#: src/component/admin/users/add.vue:85 src/options/admin.js:7
+#: src/options/admin.js:23 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:33 src/model/user.js:204
 msgid "User"
 msgstr "Bruker"
@@ -2606,7 +2621,7 @@ msgstr "Brukergrensesnitt"
 msgid "Username"
 msgstr "Brukernavn"
 
-#: src/component/navigation.vue:436 src/component/navigation.vue:35
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
 msgid "Users"
 msgstr "Brukere"
 
@@ -2651,7 +2666,7 @@ msgstr "Videoer"
 msgid "View"
 msgstr "Utseende"
 
-#: src/options/admin.js:6 src/options/admin.js:24
+#: src/options/admin.js:8 src/options/admin.js:27
 msgid "Viewer"
 msgstr "Seer"
 
@@ -2659,7 +2674,7 @@ msgstr "Seer"
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Besøk docs.photoprism.app/user-guide for å lære hvordan du synkroniserer, organiserer og deler bildene dine."
 
-#: src/options/admin.js:9
+#: src/options/admin.js:11
 msgid "Visitor"
 msgstr "Besøkende"
 
@@ -2684,13 +2699,13 @@ msgstr "Vi gjør vårt beste for å svare innen fem virkedager eller mindre."
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Vi skal gjøre vårt beste for å svare på alle spørsmålene dine. Til gjengjeld ber vi deg om å støtte oss på Patreon- eller GitHub-sponsorer."
 
-#: src/component/admin/users/add.vue:192 src/component/admin/users/edit.vue:382
-#: src/page/admin/users.vue:37
+#: src/component/admin/users/add.vue:216 src/component/admin/users/edit.vue:404
+#: src/page/admin/users.vue:38
 msgid "Web Login"
 msgstr "Nettinnlogging"
 
-#: src/component/admin/users/add.vue:208 src/component/admin/users/edit.vue:399
-#: src/page/admin/users.vue:45
+#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:421
+#: src/page/admin/users.vue:46
 msgid "WebDAV"
 msgstr "WebDAV"
 
