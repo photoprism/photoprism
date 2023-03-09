@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestProviderString(t *testing.T) {
-	assert.Equal(t, "default", ProviderString(""))
-	assert.Equal(t, "default", ProviderString(ProviderDefault))
-	assert.Equal(t, "none", ProviderString(ProviderNone))
-	assert.Equal(t, "local", ProviderString(ProviderLocal))
-	assert.Equal(t, "ldap", ProviderString(ProviderLDAP))
+func TestProviderType_String(t *testing.T) {
+	assert.Equal(t, "default", ProviderUnknown.String())
+	assert.Equal(t, "default", ProviderDefault.String())
+	assert.Equal(t, "none", ProviderNone.String())
+	assert.Equal(t, "local", ProviderLocal.String())
+	assert.Equal(t, "ldap", ProviderLDAP.String())
 }

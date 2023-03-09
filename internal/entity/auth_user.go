@@ -39,7 +39,7 @@ type Users []User
 
 // User represents a person that may optionally log in as user.
 type User struct {
-	ID            int           `gorm:"primary_key" json:"-" yaml:"-"`
+	ID            int           `gorm:"primary_key" json:"ID" yaml:"-"`
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
 	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
@@ -83,7 +83,7 @@ func (User) TableName() string {
 	return "auth_users"
 }
 
-// NewUser creates a new user and returns it.
+// NewUser creates a new user entity with defaults.
 func NewUser() (m *User) {
 	uid := rnd.GenerateUID(UserUID)
 
@@ -97,6 +97,15 @@ func NewUser() (m *User) {
 	}
 }
 
+// LdapUser creates an LDAP user entity.
+func LdapUser(username, dn string) User {
+	return User{
+		UserName:     clean.Username(username),
+		AuthID:       dn,
+		AuthProvider: authn.ProviderLDAP.String(),
+	}
+}
+
 // FindUser returns the matching user or nil if it was not found.
 func FindUser(find User) *User {
 	m := &User{}
@@ -107,8 +116,6 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("id = ?", find.ID)
 	} else if rnd.IsUID(find.UserUID, UserUID) {
 		stmt = stmt.Where("user_uid = ?", find.UserUID)
-	} else if find.UserName != "" && find.AuthProvider != "" {
-		stmt = stmt.Where("user_name = ? AND (auth_provider = ? OR auth_provider = '')", find.UserName, find.AuthProvider)
 	} else if find.UserName != "" {
 		stmt = stmt.Where("user_name = ?", find.UserName)
 	} else if find.UserEmail != "" {
@@ -157,13 +164,24 @@ func FindUserByName(userName string) *User {
 
 // FindLocalUser returns the matching local user or nil if it was not found.
 func FindLocalUser(userName string) *User {
-	userName = clean.Username(userName)
+	name := clean.Username(userName)
 
-	if userName == "" {
+	if name == "" {
 		return nil
 	}
 
-	return FindUser(User{UserName: userName, AuthProvider: authn.ProviderLocal})
+	m := &User{}
+	providers := authn.LocalProviders
+
+	// Build query.
+	if err := UnscopedDb().
+		Where("user_name = ? AND auth_provider IN (?)", name, providers).
+		First(m).Error; err != nil {
+		return nil
+	}
+
+	// Return with related records.
+	return m.LoadRelated()
 }
 
 // FindUserByUID returns the matching user or nil if it was not found.
@@ -459,9 +477,9 @@ func (m *User) String() string {
 }
 
 // Provider returns the authentication provider name.
-func (m *User) Provider() string {
+func (m *User) Provider() authn.ProviderType {
 	if m.AuthProvider != "" {
-		return m.AuthProvider
+		return authn.ProviderType(m.AuthProvider)
 	} else if m.ID == Visitor.ID {
 		return authn.ProviderToken
 	} else if m.ID == 1 {
@@ -474,27 +492,16 @@ func (m *User) Provider() string {
 }
 
 // SetProvider set the authentication provider.
-func (m *User) SetProvider(s string) *User {
+func (m *User) SetProvider(t authn.ProviderType) *User {
 	if m == nil {
 		return nil
 	} else if m.ID <= 0 {
 		return m
-	} else if s == authn.ProviderString(authn.ProviderDefault) {
-		s = ""
 	}
 
-	m.AuthProvider = clean.TypeLower(s)
+	m.AuthProvider = t.String()
 
 	return m
-}
-
-// IsLocal checks if the user is authenticated locally.
-func (m *User) IsLocal() bool {
-	if m.UserName == "" || m.ID <= 0 {
-		return false
-	}
-
-	return m.ID == 1 || m.AuthProvider == authn.ProviderDefault || m.AuthProvider == authn.ProviderLocal
 }
 
 // Username returns the user's login name as sanitized string.
@@ -524,7 +531,7 @@ func (m *User) SetUsername(login string) (err error) {
 
 	// Update display name.
 	if m.DisplayName == "" || m.DisplayName == AdminDisplayName && m.ID == 1 {
-		m.DisplayName = clean.NameCapitalized(login)
+		m.DisplayName = m.FullName()
 	}
 
 	return nil
@@ -556,12 +563,15 @@ func (m *User) Handle() string {
 
 // FullName returns the name of the user for display purposes.
 func (m *User) FullName() string {
-	switch {
-	case m.DisplayName != "":
+	if m.DisplayName != "" {
 		return m.DisplayName
-	default:
-		return clean.NameCapitalized(strings.ReplaceAll(m.Handle(), ".", " "))
 	}
+
+	if n := m.Details().DisplayName(); n != "" {
+		return n
+	}
+
+	return clean.NameCapitalized(strings.ReplaceAll(m.Handle(), ".", " "))
 }
 
 // AclRole returns the user role for ACL permission checks.
@@ -805,7 +815,7 @@ func (m *User) Validate() (err error) {
 // SetFormValues sets the values specified in the form.
 func (m *User) SetFormValues(frm form.User) *User {
 	m.UserName = frm.Username()
-	m.SetProvider(frm.AuthProvider)
+	m.SetProvider(frm.Provider())
 	m.UserEmail = frm.Email()
 	m.DisplayName = frm.DisplayName
 	m.SuperAdmin = frm.SuperAdmin
@@ -815,6 +825,11 @@ func (m *User) SetFormValues(frm form.User) *User {
 	m.UserAttr = frm.Attr()
 	m.SetBasePath(frm.BasePath)
 	m.SetUploadPath(frm.UploadPath)
+
+	// Set display name default if empty.
+	if m.DisplayName == "" || m.DisplayName == AdminDisplayName && m.ID == 1 {
+		m.DisplayName = m.FullName()
+	}
 
 	return m
 }
@@ -961,6 +976,11 @@ func (m *User) SaveForm(f form.User, updateRights bool) error {
 		m.SetDisplayName(n, SrcManual)
 	}
 
+	// Set display name default if empty.
+	if m.DisplayName == "" || m.DisplayName == AdminDisplayName && m.ID == 1 {
+		m.DisplayName = m.FullName()
+	}
+
 	// Sanitize email address.
 	if email := clean.Email(f.UserEmail); email != "" && email != m.UserEmail {
 		m.UserEmail = email
@@ -971,14 +991,27 @@ func (m *User) SaveForm(f form.User, updateRights bool) error {
 	// Update user rights only if explicitly requested.
 	if updateRights {
 		m.UserRole = f.UserRole
-		m.UserAttr = f.UserAttr
 		m.SuperAdmin = f.SuperAdmin
+
 		m.CanLogin = f.CanLogin
 		m.WebDAV = f.WebDAV
+		m.UserAttr = f.UserAttr
 
-		m.SetProvider(f.AuthProvider)
+		m.SetProvider(f.Provider())
 		m.SetBasePath(f.BasePath)
 		m.SetUploadPath(f.UploadPath)
+	}
+
+	// Ensure super admins never have a non-admin role.
+	if m.SuperAdmin {
+		m.UserRole = acl.RoleAdmin.String()
+	}
+
+	// Make sure that the initial admin user cannot lock itself out.
+	if m.ID == Admin.ID && (m.AclRole() != acl.RoleAdmin || !m.SuperAdmin || !m.CanLogin) {
+		m.UserRole = acl.RoleAdmin.String()
+		m.SuperAdmin = true
+		m.CanLogin = true
 	}
 
 	return m.Save()
@@ -989,12 +1022,18 @@ func (m *User) SetDisplayName(name, src string) *User {
 	name = clean.Name(name)
 
 	d := m.Details()
+	priority := SrcPriority[src] >= SrcPriority[d.NameSrc]
 
-	if name == "" || SrcPriority[src] < SrcPriority[d.NameSrc] {
+	if name == "" || !priority && m.DisplayName != "" {
 		return m
 	}
 
 	m.DisplayName = name
+
+	if !priority {
+		return m
+	}
+
 	d.NameSrc = src
 
 	// Try to parse name into components.

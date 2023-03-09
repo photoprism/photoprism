@@ -12,6 +12,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -263,17 +264,17 @@ func (m *Session) Username() string {
 }
 
 // Provider returns the authentication provider name.
-func (m *Session) Provider() string {
-	return m.AuthProvider
+func (m *Session) Provider() authn.ProviderType {
+	return authn.Provider(m.AuthProvider)
 }
 
 // SetProvider updates the session's authentication provider.
-func (m *Session) SetProvider(provider string) *Session {
+func (m *Session) SetProvider(provider authn.ProviderType) *Session {
 	if provider == "" {
 		return m
 	}
 
-	m.AuthProvider = provider
+	m.AuthProvider = provider.String()
 
 	return m
 }

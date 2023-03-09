@@ -16,7 +16,7 @@ import (
 )
 
 // Auth checks if the credentials are valid and returns the user and authentication provider.
-var Auth = func(f form.Login, m *Session, c *gin.Context) (user *User, provider string, err error) {
+var Auth = func(f form.Login, m *Session, c *gin.Context) (user *User, provider authn.ProviderType, err error) {
 	name := f.Username()
 
 	user = FindUserByName(name)
@@ -84,7 +84,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 	}
 
 	var user *User
-	var provider string
+	var provider authn.ProviderType
 
 	// Login credentials provided?
 	if f.HasCredentials() {

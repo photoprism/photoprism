@@ -33,6 +33,7 @@ import { config } from "app/session";
 export class User extends RestModel {
   getDefaults() {
     return {
+      ID: 0,
       UID: "",
       UUID: "",
       AuthProvider: "",
@@ -185,8 +186,8 @@ export class User extends RestModel {
     );
   }
 
-  isLocal() {
-    return !this.AuthProvider || this.AuthProvider === "local";
+  isRemote() {
+    return this.AuthProvider && this.AuthProvider === "ldap";
   }
 
   changePassword(oldPassword, newPassword) {

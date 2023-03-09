@@ -3,13 +3,14 @@ package form
 import (
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // User represents a user account form.
 type User struct {
 	UserName     string       `json:"Name,omitempty" yaml:"Name,omitempty"`
-	AuthProvider string       `json:"Provider,omitempty" yaml:"Provider,omitempty"`
+	AuthProvider string       `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
 	UserEmail    string       `json:"Email,omitempty" yaml:"Email,omitempty"`
 	DisplayName  string       `json:"DisplayName,omitempty" yaml:"DisplayName,omitempty"`
 	UserRole     string       `json:"Role,omitempty" yaml:"Role,omitempty"`
@@ -27,7 +28,7 @@ type User struct {
 func NewUserFromCli(ctx *cli.Context) User {
 	return User{
 		UserName:     clean.Username(ctx.Args().First()),
-		AuthProvider: clean.TypeLower(ctx.String("provider")),
+		AuthProvider: clean.TypeLower(ctx.String("auth")),
 		UserEmail:    clean.Email(ctx.String("email")),
 		DisplayName:  clean.Name(ctx.String("name")),
 		UserRole:     clean.Role(ctx.String("role")),
@@ -47,8 +48,8 @@ func (f *User) Username() string {
 }
 
 // Provider returns the sanitized auth provider name.
-func (f *User) Provider() string {
-	return clean.TypeLower(f.AuthProvider)
+func (f *User) Provider() authn.ProviderType {
+	return authn.Provider(f.AuthProvider)
 }
 
 // Email returns the sanitized email in lowercase.

@@ -1,19 +1,75 @@
 package authn
 
-// Authentication providers.
-const (
-	ProviderDefault = ""
-	ProviderNone    = "none"
-	ProviderToken   = "token"
-	ProviderLocal   = "local"
-	ProviderLDAP    = "ldap"
+import (
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/list"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// ProviderString returns the provider name as a string for use in logs and reports.
-func ProviderString(s string) string {
-	if s == ProviderDefault {
-		return "default"
+// ProviderType represents an authentication provider type.
+type ProviderType string
+
+// Authentication providers.
+const (
+	ProviderDefault ProviderType = "default"
+	ProviderLocal   ProviderType = "local"
+	ProviderLDAP    ProviderType = "ldap"
+	ProviderToken   ProviderType = "token"
+	ProviderNone    ProviderType = "none"
+	ProviderUnknown ProviderType = ""
+)
+
+// RemoteProviders lists all remote auth providers.
+var RemoteProviders = list.List{
+	string(ProviderLDAP),
+}
+
+// LocalProviders lists all local auth providers.
+var LocalProviders = list.List{
+	string(ProviderLocal),
+}
+
+// IsRemote checks if the provider is external.
+func (t ProviderType) IsRemote() bool {
+	return list.Contains(RemoteProviders, string(t))
+}
+
+// IsLocal checks if local authentication is possible.
+func (t ProviderType) IsLocal() bool {
+	return list.Contains(LocalProviders, string(t))
+}
+
+// String returns the provider identifier as a string.
+func (t ProviderType) String() string {
+	if t == ProviderUnknown {
+		return string(ProviderDefault)
+	} else if t == "password" {
+		return string(ProviderLocal)
 	}
 
-	return s
+	return string(t)
+}
+
+// Pretty returns the provider identifier in an easy-to-read format.
+func (t ProviderType) Pretty() string {
+	switch t {
+	case ProviderLDAP:
+		return "LDAP/AD"
+	default:
+		return txt.UpperFirst(t.String())
+	}
+}
+
+// Provider casts a string to a normalized provider type.
+func Provider(s string) ProviderType {
+	switch s {
+	case "", "-", "null", "nil", "0", "false":
+		return ProviderDefault
+	case "pass", "passwd", "password":
+		return ProviderLocal
+	case "ldap", "ad", "ldap/ad", "ldap\\ad":
+		return ProviderLDAP
+	default:
+		return ProviderType(clean.TypeLower(s))
+	}
 }
