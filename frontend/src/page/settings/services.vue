@@ -83,6 +83,9 @@
         </v-btn>
       </v-form>
     </v-container>
+
+    <p-about-footer></p-about-footer>
+
     <p-service-add-dialog :show="dialog.add" @cancel="onCancel('add')"
                           @confirm="onAdded"></p-service-add-dialog>
     <p-service-remove-dialog :show="dialog.remove" :model="model" @cancel="onCancel('remove')"
