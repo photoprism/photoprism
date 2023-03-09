@@ -468,14 +468,6 @@
               </v-list-tile>
             </template>
 
-            <v-list-tile :to="{ name: 'about' }" :exact="true" class="nav-about" @click.stop="">
-              <v-list-tile-content>
-                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
-                  <translate>About</translate>
-                </v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-
             <v-list-tile v-if="canManageUsers" :to="{ path: '/admin/users' }" :exact="false" class="nav-admin-users" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
@@ -505,6 +497,14 @@
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate key="Upgrade">Upgrade</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile :to="{ name: 'about' }" :exact="true" class="nav-about" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                  <translate>About</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
