@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-09 17:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -340,8 +339,7 @@ msgstr "長寬比"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "认证"
 
@@ -2633,6 +2631,10 @@ msgstr "使用者介面"
 msgid "Username"
 msgstr "使用者名稱"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "用户"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "奈米碳管黑"
@@ -2817,9 +2819,6 @@ msgstr "縮放"
 
 #~ msgid "Client"
 #~ msgstr "客户"
-
-#~ msgid "Users"
-#~ msgstr "用户"
 
 #~ msgid "Base Path"
 #~ msgstr "基本路径"

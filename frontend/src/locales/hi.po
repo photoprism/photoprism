@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-09 17:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
-"frontend/hi/>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -340,8 +339,7 @@ msgstr "आस्पेक्ट अनुपात"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "प्रमाणीकरण"
 
@@ -2633,6 +2631,10 @@ msgstr "प्रयोक्ता इंटरफ़ेस"
 msgid "Username"
 msgstr "उपयोगकर्ता नाम"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "उपयोगकर्ताओं"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "वांता"
@@ -2817,9 +2819,6 @@ msgstr "ज़ूम इन / आउट करें"
 
 #~ msgid "Client"
 #~ msgstr "ग्राहक"
-
-#~ msgid "Users"
-#~ msgstr "उपयोगकर्ताओं"
 
 #~ msgid "Base Path"
 #~ msgstr "बेस पथ"

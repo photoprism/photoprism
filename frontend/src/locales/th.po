@@ -339,8 +339,7 @@ msgstr "อัตราส่วน"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "การรับรองความถูกต้อง"
 
@@ -2630,6 +2629,10 @@ msgstr "หน้าจอผู้ใช้"
 msgid "Username"
 msgstr "ชื่อผู้ใช้"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "ผู้ใช้"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "วันทา"
@@ -2812,9 +2815,6 @@ msgstr "ซูมเข้า/ออก"
 
 #~ msgid "Client"
 #~ msgstr "ลูกค้า"
-
-#~ msgid "Users"
-#~ msgstr "ผู้ใช้"
 
 #~ msgid "Base Path"
 #~ msgstr "เส้นทางฐาน"

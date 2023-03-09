@@ -5,14 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-09 17:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
-"20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -341,8 +339,7 @@ msgstr "Raportul de aspect"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Autentificare"
 
@@ -2634,6 +2631,10 @@ msgstr "Interfața utilizatorului"
 msgid "Username"
 msgstr "Numele utilizatorului"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "Utilizatori"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "Vanta"
@@ -2818,9 +2819,6 @@ msgstr "Măriți/micșorați"
 
 #~ msgid "Client"
 #~ msgstr "Client"
-
-#~ msgid "Users"
-#~ msgstr "Utilizatori"
 
 #~ msgid "Base Path"
 #~ msgstr "Calea de bază"

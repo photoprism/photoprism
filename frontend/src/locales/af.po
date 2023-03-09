@@ -336,8 +336,7 @@ msgstr "Aspekverhouding"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Stawing"
 
@@ -2629,6 +2628,10 @@ msgstr "Gebruikerskoppelvlak"
 msgid "Username"
 msgstr "Gebruikersnaam"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "Gebruikers"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "Vanta"
@@ -2813,9 +2816,6 @@ msgstr "Zoem in/uit"
 
 #~ msgid "Client"
 #~ msgstr "Kliënt"
-
-#~ msgid "Users"
-#~ msgstr "Gebruikers"
 
 #~ msgid "Base Path"
 #~ msgstr "Basispad"

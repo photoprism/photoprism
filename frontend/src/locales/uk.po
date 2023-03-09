@@ -10,8 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.15.2\n"
 "Generated-By: easygettext\n"
 
@@ -340,8 +339,7 @@ msgstr "Співвідношення сторін"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Аутентифікація"
 
@@ -2633,6 +2631,10 @@ msgstr "Інтерфейс користувача"
 msgid "Username"
 msgstr "Ім'я користувача"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "Користувачі"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "Ванта"
@@ -2817,9 +2819,6 @@ msgstr "Збільшення/зменшення"
 
 #~ msgid "Client"
 #~ msgstr "Клієнт"
-
-#~ msgid "Users"
-#~ msgstr "Користувачі"
 
 #~ msgid "Base Path"
 #~ msgstr "Базовий шлях"

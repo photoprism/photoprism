@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-09 17:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Indonesian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/id/>\n"
+"Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -340,8 +339,7 @@ msgstr "Rasio Aspek"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Otentikasi"
 
@@ -2631,6 +2629,10 @@ msgstr "Tampilan Pengguna"
 msgid "Username"
 msgstr "Nama pengguna"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "Pengguna"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "Vanta"
@@ -2813,9 +2815,6 @@ msgstr "Memperbesar/memperkecil"
 
 #~ msgid "Client"
 #~ msgstr "Klien"
-
-#~ msgid "Users"
-#~ msgstr "Pengguna"
 
 #~ msgid "Base Path"
 #~ msgstr "Jalur Dasar"

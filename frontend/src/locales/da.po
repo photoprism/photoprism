@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-09 17:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/da/>\n"
+"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -340,8 +339,7 @@ msgstr "Billedformat"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Godkendelse"
 
@@ -2633,6 +2631,10 @@ msgstr "Brugergrænseflade"
 msgid "Username"
 msgstr "Brugernavn"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "Brugere"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "indbildsk"
@@ -2817,9 +2819,6 @@ msgstr "Zoom ind/ud"
 
 #~ msgid "Client"
 #~ msgstr "Kunde"
-
-#~ msgid "Users"
-#~ msgstr "Brugere"
 
 #~ msgid "Base Path"
 #~ msgstr "Basis sti"

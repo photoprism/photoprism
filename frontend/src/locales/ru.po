@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-09 17:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -340,8 +339,7 @@ msgstr "Соотношение сторон"
 
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
 #: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
-#: src/page/admin/users.vue:37 src/component/navigation.vue:428
-#: src/component/navigation.vue:27
+#: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Аутентификация"
 
@@ -2633,6 +2631,10 @@ msgstr "Пользовательский интерфейс"
 msgid "Username"
 msgstr "Имя пользователя"
 
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "Пользователи"
+
 #: src/options/themes.js:478
 msgid "Vanta"
 msgstr "Ванта"
@@ -2817,9 +2819,6 @@ msgstr "Увеличение/уменьшение масштаба"
 
 #~ msgid "Client"
 #~ msgstr "Клиент"
-
-#~ msgid "Users"
-#~ msgstr "Пользователи"
 
 #~ msgid "Base Path"
 #~ msgstr "Базовый путь"
