@@ -68,7 +68,7 @@ msgstr "پرتگاه"
 
 #: src/component/navigation.vue:95 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:139 src/page/settings.vue:84
+#: src/model/user.js:140 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "حساب کاربری"
@@ -321,7 +321,7 @@ msgstr "آیا مطمئن هستید که می خواهید این تصاویر 
 msgid "Are you sure you want to permanently delete this file?"
 msgstr "آیا مطمئن هستید که می خواهید این پرونده را به طور دائم حذف کنید؟"
 
-#: src/dialog/confirm.vue:10
+#: src/component/admin/sessions/remove.vue:10 src/dialog/confirm.vue:10
 msgid "Are you sure?"
 msgstr "مطمئن هستی؟"
 
@@ -337,8 +337,10 @@ msgstr "از آنجایی که این به ما کمک می‌کند ویژگی�
 msgid "Aspect Ratio"
 msgstr "نسبت ابعاد"
 
-#: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:369
-#: src/page/admin/users.vue:36
+#: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
+#: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
+#: src/page/admin/users.vue:37 src/component/navigation.vue:428
+#: src/component/navigation.vue:27
 msgid "Authentication"
 msgstr "احراز هویت"
 
@@ -350,7 +352,7 @@ msgstr "به طور خودکار برای انواع فایل های دیگر JP
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "به طور خودکار آلبوم هایی از لحظات، سفرها و مکان های خاص ایجاد می کند."
 
-#: src/component/admin/users/edit.vue:320
+#: src/component/admin/users/edit.vue:333
 msgid "Base Folder"
 msgstr "پوشه پایه"
 
@@ -437,7 +439,8 @@ msgstr "نمی تواند بار بیشتری بارگیری کند ، محدو�
 msgid "Can't select more items"
 msgstr "موارد بیشتری را انتخاب نمی کند"
 
-#: src/component/admin/users/add.vue:20 src/component/admin/users/edit.vue:67
+#: src/component/admin/sessions/remove.vue:15
+#: src/component/admin/users/add.vue:20 src/component/admin/users/edit.vue:69
 #: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
@@ -464,7 +467,7 @@ msgstr "کارت ها"
 msgid "Category"
 msgstr "دسته"
 
-#: src/component/admin/users/edit.vue:244 src/page/settings/account.vue:253
+#: src/component/admin/users/edit.vue:182 src/page/settings/account.vue:253
 msgid "Change Avatar"
 msgstr "تغییر پرچم خصوصی"
 
@@ -498,12 +501,9 @@ msgstr "بررسی شده"
 msgid "Chroma"
 msgstr "کروما"
 
-#: src/page/admin/sessions.vue:28
-msgid "Client"
-msgstr "مشتری"
-
-#: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
-#: src/dialog/share.vue:87 src/page/library/errors.vue:60
+#: src/page/admin/sessions.vue:103 src/component/photo-viewer.vue:71
+#: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
+#: src/page/library/errors.vue:60
 msgid "Close"
 msgstr "نزدیک"
 
@@ -644,7 +644,8 @@ msgstr "روز"
 msgid "Debug Logs"
 msgstr "گزارش‌های اشکال زدایی"
 
-#: src/options/admin.js:43 src/options/admin.js:54 src/page/admin/users.vue:85
+#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:56
+#: src/page/admin/sessions.vue:49 src/page/admin/users.vue:86
 #: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
@@ -654,6 +655,7 @@ msgstr "پیشفرض"
 msgid "Default Folder"
 msgstr "پوشه پیشفرض"
 
+#: src/component/admin/sessions/remove.vue:18
 #: src/component/admin/users/remove.vue:18
 #: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
 #: src/component/photo/clipboard.vue:272 src/dialog/album/delete.vue:18
@@ -744,7 +746,7 @@ msgstr "رمزگذاری ویدیو و استخراج تصاویر کوچک را
 msgid "Discover"
 msgstr "کشف"
 
-#: src/component/admin/users/edit.vue:128 src/page/admin/users.vue:34
+#: src/component/admin/users/edit.vue:99 src/page/admin/users.vue:35
 #: src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "نام نمایشی"
@@ -869,7 +871,7 @@ msgstr "ویرایش تصویر"
 msgid "Edited"
 msgstr "ویرایش شده"
 
-#: src/component/admin/users/add.vue:198 src/component/admin/users/edit.vue:293
+#: src/component/admin/users/add.vue:198 src/component/admin/users/edit.vue:261
 #: src/page/settings/account.vue:221 src/page/settings/account.vue:616
 msgid "Email"
 msgstr "پست الکترونیک"
@@ -950,7 +952,7 @@ msgstr "پیوند حذف نشد"
 msgid "Failed updating link"
 msgstr "پیوند به روز نشد"
 
-#: src/component/admin/users/edit.vue:212 src/page/settings/account.vue:166
+#: src/component/admin/users/edit.vue:235 src/page/settings/account.vue:166
 msgid "Family Name"
 msgstr "خانواده"
 
@@ -1069,7 +1071,7 @@ msgstr "تمام صفحه"
 msgid "Gemstone"
 msgstr "سنگ قیمتی"
 
-#: src/component/admin/users/edit.vue:93 src/page/settings/account.vue:81
+#: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "اسطوخودوس"
 
@@ -1081,7 +1083,7 @@ msgstr "عمومی"
 msgid "Getting Support"
 msgstr "دریافت پشتیبانی"
 
-#: src/component/admin/users/edit.vue:184 src/page/settings/account.vue:140
+#: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "اسم اصلی"
 
@@ -1237,11 +1239,11 @@ msgid "Interval"
 msgstr "وقفه"
 
 #: src/component/admin/users/add.vue:177 src/component/admin/users/add.vue:201
-#: src/component/admin/users/edit.vue:103
-#: src/component/admin/users/edit.vue:159
-#: src/component/admin/users/edit.vue:187
-#: src/component/admin/users/edit.vue:215
-#: src/component/admin/users/edit.vue:296 src/page/connect.vue:14
+#: src/component/admin/users/edit.vue:127
+#: src/component/admin/users/edit.vue:154
+#: src/component/admin/users/edit.vue:211
+#: src/component/admin/users/edit.vue:238
+#: src/component/admin/users/edit.vue:264 src/page/connect.vue:14
 #: src/page/settings/account.vue:91 src/page/settings/account.vue:117
 #: src/page/settings/account.vue:143 src/page/settings/account.vue:169
 #: src/page/settings/account.vue:224 src/page/settings/account.vue:281
@@ -1321,11 +1323,11 @@ msgstr "Lanczos: حفظ جزئیات، حداقل مصنوعات"
 msgid "Language"
 msgstr "زبان"
 
-#: src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "آخرین فعالیت"
 
-#: src/page/admin/users.vue:44
+#: src/page/admin/users.vue:45
 msgid "Last Login"
 msgstr "آخرین ورود"
 
@@ -1341,7 +1343,7 @@ msgstr "عرض جغرافیایی"
 msgid "Lavender"
 msgstr "اسطوخودوس"
 
-#: src/options/admin.js:45 src/options/admin.js:62
+#: src/options/admin.js:47 src/options/admin.js:64
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1407,7 +1409,7 @@ msgstr "زنده"
 msgid "Live Photos"
 msgstr "تصاویر"
 
-#: src/options/admin.js:44 src/options/admin.js:58
+#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:60
 msgid "Local"
 msgstr "محلی"
 
@@ -1579,7 +1581,7 @@ msgstr "نام خیلی طولانی است"
 msgid "Neon"
 msgstr "نئون"
 
-#: src/page/admin/sessions.vue:48 src/page/admin/users.vue:118
+#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:119
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1638,7 +1640,7 @@ msgstr "هیچ عکسی اخیراً ویرایش نشده"
 msgid "No servers configured."
 msgstr "هیچ سروری پیکربندی نشده است."
 
-#: src/page/settings/services.vue:36
+#: src/page/settings/services.vue:37
 msgid "No services configured."
 msgstr "هیچ سروری پیکربندی نشده است."
 
@@ -1664,7 +1666,7 @@ msgstr "هیچ هشدار یا خطایی حاوی این کلمه کلیدی ن
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "تصاویر غیرعکاسی و با کیفیت پایین قبل از اینکه در نتایج جستجو ظاهر شوند نیاز به بررسی دارند."
 
-#: src/options/admin.js:47 src/options/admin.js:66 src/options/options.js:264
+#: src/options/admin.js:49 src/options/admin.js:68 src/options/options.js:264
 #: src/options/options.js:353
 msgid "None"
 msgstr "هیچ یک"
@@ -1693,7 +1695,7 @@ msgstr "یادداشت"
 msgid "Nothing to see here yet."
 msgstr "هنوز چیزی برای دیدن اینجا وجود ندارد."
 
-#: src/page/admin/sessions.vue:32 src/page/admin/users.vue:42
+#: src/page/admin/sessions.vue:45 src/page/admin/users.vue:43
 msgid "Nothing was found."
 msgstr "چیزی پیدا نشد."
 
@@ -1823,6 +1825,8 @@ msgstr "مردم"
 msgid "People you share a link with will be able to view public contents."
 msgstr "افرادی که لینکی را با آنها به اشتراک می گذارید می توانند محتوای عمومی را مشاهده کنند."
 
+#: src/component/admin/sessions/remove.vue:23
+#: src/component/admin/users/remove.vue:23
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
 msgstr "برای همیشه حذف شد"
@@ -1960,7 +1964,8 @@ msgstr "فیلتر کیفیت"
 msgid "Quality Score"
 msgstr "امتیاز کیفیت"
 
-#: src/page/admin/users.vue:78 src/page/admin/users.vue:91
+#: src/page/admin/sessions.vue:55 src/page/admin/users.vue:79
+#: src/page/admin/users.vue:92
 msgid "r"
 msgstr "r"
 
@@ -2057,7 +2062,7 @@ msgid "Request failed - invalid response"
 msgstr "درخواست ناموفق - پاسخ نامعتبر است"
 
 #: src/component/admin/users/add.vue:89 src/component/admin/users/add.vue:113
-#: src/component/admin/users/edit.vue:131 src/page/about/feedback.vue:130
+#: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
 #: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
 msgid "Required"
@@ -2083,8 +2088,8 @@ msgstr "رمز عبور را دوباره تایپ کنید"
 msgid "Review"
 msgstr "بازبینی"
 
-#: src/component/admin/users/add.vue:133 src/component/admin/users/edit.vue:268
-#: src/page/admin/users.vue:35
+#: src/component/admin/users/add.vue:133 src/component/admin/users/edit.vue:285
+#: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "نقش"
 
@@ -2092,7 +2097,7 @@ msgstr "نقش"
 msgid "Satellite"
 msgstr "ماهواره"
 
-#: src/component/admin/users/edit.vue:70 src/dialog/account/password.vue:39
+#: src/component/admin/users/edit.vue:72 src/dialog/account/password.vue:39
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2167,7 +2172,11 @@ msgstr "URL سرویس"
 msgid "Services"
 msgstr "URL سرویس"
 
-#: src/page/admin/sessions.vue:26
+#: src/model/session.js:60
+msgid "Session"
+msgstr ""
+
+#: src/page/admin/sessions.vue:29
 msgid "Session ID"
 msgstr "شناسه جلسه"
 
@@ -2336,7 +2345,7 @@ msgstr "موضوع"
 msgid "Successfully Connected"
 msgstr "با موفقیت وصل شد"
 
-#: src/component/admin/users/edit.vue:387 src/page/admin/users.vue:72
+#: src/component/admin/users/edit.vue:378 src/page/admin/users.vue:73
 msgid "Super Admin"
 msgstr "سوپر ادمین"
 
@@ -2409,7 +2418,7 @@ msgstr "منطقه زمانی"
 msgid "Timeout"
 msgstr "تایم اوت"
 
-#: src/component/admin/users/edit.vue:156 src/page/settings/account.vue:114
+#: src/component/admin/users/edit.vue:151 src/page/settings/account.vue:114
 msgctxt "Account"
 msgid "Title"
 msgstr "عنوان"
@@ -2442,7 +2451,7 @@ msgstr "برای ارتقا، می‌توانید کد فعال‌سازی را 
 msgid "Toggle View"
 msgstr "تغییر حالت نمایش"
 
-#: src/options/admin.js:46 src/dialog/share.vue:208
+#: src/options/admin.js:48 src/dialog/share.vue:208
 msgid "Token"
 msgstr "توکن"
 
@@ -2483,7 +2492,7 @@ msgstr "شناسه منحصربفرد"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
 #: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:125 src/options/options.js:27
+#: src/model/photo.js:896 src/model/user.js:126 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2564,7 +2573,7 @@ msgstr "آپلود کامل شد. در حال نمایه سازی…"
 msgid "Upload failed"
 msgstr "آپلود انجام نشد"
 
-#: src/component/admin/users/edit.vue:346
+#: src/component/admin/users/edit.vue:360
 msgid "Upload Folder"
 msgstr "پوشه آپلود"
 
@@ -2605,8 +2614,7 @@ msgid "Use Presets"
 msgstr "از Presets استفاده کنید"
 
 #: src/component/admin/users/add.vue:85 src/options/admin.js:7
-#: src/options/admin.js:23 src/page/admin/sessions.vue:27
-#: src/page/admin/users.vue:33 src/model/user.js:204
+#: src/options/admin.js:23 src/model/user.js:205
 msgid "User"
 msgstr "کاربر"
 
@@ -2618,14 +2626,11 @@ msgstr "راهنمای کاربر"
 msgid "User Interface"
 msgstr "رابط کاربری"
 
+#: src/page/admin/sessions.vue:30 src/page/admin/users.vue:34
 #: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
 #: src/dialog/share.vue:23
 msgid "Username"
 msgstr "نام کاربری"
-
-#: src/component/navigation.vue:428 src/component/navigation.vue:27
-msgid "Users"
-msgstr "کاربران"
 
 #: src/options/themes.js:478
 msgid "Vanta"
@@ -2701,13 +2706,13 @@ msgstr "ما تمام تلاش خود را می کنیم تا ظرف پنج رو
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "ما تمام تلاش خود را می کنیم تا به تمام سوالات شما پاسخ دهیم. در عوض، ما از شما می خواهیم که از ما در Patreon یا GitHub Sponsors حمایت کنید."
 
-#: src/component/admin/users/add.vue:216 src/component/admin/users/edit.vue:404
-#: src/page/admin/users.vue:38
+#: src/component/admin/users/add.vue:216 src/component/admin/users/edit.vue:395
+#: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "ورود به وب"
 
-#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:421
-#: src/page/admin/users.vue:46
+#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:411
+#: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -2808,6 +2813,12 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Client"
+#~ msgstr "مشتری"
+
+#~ msgid "Users"
+#~ msgstr "کاربران"
 
 #~ msgid "Base Path"
 #~ msgstr "مسیر پایه"
