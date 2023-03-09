@@ -537,8 +537,16 @@ func (m *User) SetUsername(login string) (err error) {
 	return nil
 }
 
-// UpdateUsername changes the login username and saves it to the database.
+// UpdateUsername changes the login name in the database.
 func (m *User) UpdateUsername(login string) (err error) {
+	// Check if the name already exists or has not changed.
+	if m.UserName == login || m.ID <= 0 {
+		return nil
+	} else if user := FindUserByName(login); user != nil {
+		return fmt.Errorf("user %s already exists", clean.LogQuote(login))
+	}
+
+	// Set new username.
 	if err = m.SetUsername(login); err != nil {
 		return err
 	}

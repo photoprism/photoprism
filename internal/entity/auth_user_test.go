@@ -212,7 +212,26 @@ func TestUser_Create(t *testing.T) {
 	})
 }
 
-func TestUser_SetName(t *testing.T) {
+func TestUser_UpdateUsername(t *testing.T) {
+	t.Run("Exists", func(t *testing.T) {
+		var m = User{
+			ID:          2,
+			UserName:    "foo",
+			UserRole:    acl.RoleAdmin.String(),
+			DisplayName: "Admin",
+			SuperAdmin:  false,
+			CanLogin:    true,
+		}
+
+		if err := m.UpdateUsername("admin"); err == nil {
+			t.Fatal("error expected")
+		} else {
+			t.Logf("expected errror: %s", err)
+		}
+	})
+}
+
+func TestUser_SetUsername(t *testing.T) {
 	t.Run("photoprism", func(t *testing.T) {
 		m := FindUserByName("admin")
 
