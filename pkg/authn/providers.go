@@ -41,13 +41,14 @@ func (t ProviderType) IsLocal() bool {
 
 // String returns the provider identifier as a string.
 func (t ProviderType) String() string {
-	if t == ProviderUnknown {
+	switch t {
+	case "":
 		return string(ProviderDefault)
-	} else if t == "password" {
+	case "password":
 		return string(ProviderLocal)
+	default:
+		return string(t)
 	}
-
-	return string(t)
 }
 
 // Pretty returns the provider identifier in an easy-to-read format.

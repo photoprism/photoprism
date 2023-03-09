@@ -331,6 +331,19 @@ func TestFindUser(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
+	t.Run("Admin", func(t *testing.T) {
+		m := FindUser(User{ID: 2, UserName: "admin"})
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, 1, m.ID)
+		assert.NotEmpty(t, m.UserUID)
+		assert.Equal(t, "admin", m.UserName)
+		assert.NotEmpty(t, m.CreatedAt)
+		assert.NotEmpty(t, m.UpdatedAt)
+	})
 	t.Run("UserUID", func(t *testing.T) {
 		m := FindUser(User{UserUID: "u000000000000002"})
 

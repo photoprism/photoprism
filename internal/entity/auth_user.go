@@ -112,7 +112,9 @@ func FindUser(find User) *User {
 
 	// Build query.
 	stmt := UnscopedDb()
-	if find.ID != 0 {
+	if find.ID != 0 && find.UserName != "" {
+		stmt = stmt.Where("id = ? OR user_name = ?", find.ID, find.UserName)
+	} else if find.ID != 0 {
 		stmt = stmt.Where("id = ?", find.ID)
 	} else if rnd.IsUID(find.UserUID, UserUID) {
 		stmt = stmt.Where("user_uid = ?", find.UserUID)
@@ -495,8 +497,6 @@ func (m *User) Provider() authn.ProviderType {
 func (m *User) SetProvider(t authn.ProviderType) *User {
 	if m == nil {
 		return nil
-	} else if m.ID <= 0 {
-		return m
 	}
 
 	m.AuthProvider = t.String()
@@ -781,7 +781,7 @@ func (m *User) Validate() (err error) {
 	if err = Db().
 		Where("user_name = ? AND id <> ?", m.UserName, m.ID).
 		First(&duplicate).Error; err == nil {
-		return fmt.Errorf("username %s already exists", clean.LogQuote(m.UserName))
+		return fmt.Errorf("user %s already exists", clean.LogQuote(m.UserName))
 	} else if err != gorm.ErrRecordNotFound {
 		return err
 	}
