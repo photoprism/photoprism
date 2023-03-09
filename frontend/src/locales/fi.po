@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-09 12:51+0000\n"
+"PO-Revision-Date: 2023-03-09 17:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2171,7 +2171,7 @@ msgstr "Palvelun URL-osoite"
 
 #: src/model/session.js:60
 msgid "Session"
-msgstr ""
+msgstr "Istunto"
 
 #: src/page/admin/sessions.vue:29
 msgid "Session ID"
