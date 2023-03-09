@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 20:46+0000\n"
+"PO-Revision-Date: 2023-03-09 12:50+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
+"frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -340,7 +341,7 @@ msgstr "आस्पेक्ट अनुपात"
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:369
 #: src/page/admin/users.vue:36
 msgid "Authentication"
-msgstr ""
+msgstr "प्रमाणीकरण"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
@@ -1343,7 +1344,7 @@ msgstr "लैवेंडर"
 
 #: src/options/admin.js:45 src/options/admin.js:62
 msgid "LDAP/AD"
-msgstr ""
+msgstr "एलडीएपी/एडी"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
@@ -1409,7 +1410,7 @@ msgstr "लाइव तस्वीरें"
 
 #: src/options/admin.js:44 src/options/admin.js:58
 msgid "Local"
-msgstr ""
+msgstr "स्थानीय"
 
 #: src/dialog/photo/edit/details.vue:194 src/options/options.js:17
 msgid "Local Time"

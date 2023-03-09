@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-08 20:47+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
+"PO-Revision-Date: 2023-03-09 12:50+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
+"frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -340,7 +341,7 @@ msgstr "Seitenverhältnis"
 #: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:369
 #: src/page/admin/users.vue:36
 msgid "Authentication"
-msgstr ""
+msgstr "Authentifizierung"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
@@ -1343,7 +1344,7 @@ msgstr "Lavendel"
 
 #: src/options/admin.js:45 src/options/admin.js:62
 msgid "LDAP/AD"
-msgstr ""
+msgstr "LDAP/AD"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
@@ -2717,7 +2718,9 @@ msgstr "WebDAV-Clients können sich über die folgende URL mit PhotoPrism verbin
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "WebDAV-Clients, wie z.B. der Windows Explorer oder der macOS Finder, können sich direkt mit PhotoPrism verbinden."
+msgstr ""
+"WebDAV-Clients, wie der Windows Explorer von Microsoft oder der Finder von "
+"Apple, können sich direkt mit PhotoPrism verbinden."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2741,7 +2744,7 @@ msgstr "Warum sind einige Funktionen nur für Sponsoren verfügbar?"
 
 #: src/page/settings/account.vue:90
 msgid "Work Details"
-msgstr "Berufliche Details"
+msgstr "Berufliche Angaben"
 
 #: src/page/settings/account.vue:493 src/component/photo/toolbar.vue:275
 #: src/dialog/photo/edit/details.vue:169 src/page/albums.vue:204
