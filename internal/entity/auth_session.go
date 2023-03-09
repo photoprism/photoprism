@@ -29,33 +29,33 @@ type Sessions []Session
 
 // Session represents a User session.
 type Session struct {
-	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
-	ClientIP      string          `gorm:"size:64;column:client_ip;index" json:"-" yaml:"ClientIP,omitempty"`
-	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
-	UserName      string          `gorm:"size:64;index;" json:"UserName,omitempty" yaml:"UserName,omitempty"`
+	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
+	ClientIP      string          `gorm:"size:64;column:client_ip;index" json:"ClientIP" yaml:"ClientIP,omitempty"`
+	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	UserName      string          `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user          *User           `gorm:"-"`
-	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthProvider,omitempty"`
-	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"-" yaml:"AuthMethod,omitempty"`
-	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"-" yaml:"AuthDomain,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"-" yaml:"AuthID,omitempty"`
-	AuthScope     string          `gorm:"size:1024;default:'';" json:"-" yaml:"AuthScope,omitempty"`
-	LastActive    int64           `json:"LastActive,omitempty" yaml:"LastActive,omitempty"`
-	SessExpires   int64           `gorm:"index" json:"Expires,omitempty" yaml:"Expires,omitempty"`
-	SessTimeout   int64           `json:"Timeout,omitempty" yaml:"Timeout,omitempty"`
+	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
+	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
+	LastActive    int64           `json:"LastActive" yaml:"LastActive,omitempty"`
+	SessExpires   int64           `gorm:"index" json:"Expires" yaml:"Expires,omitempty"`
+	SessTimeout   int64           `json:"Timeout" yaml:"Timeout,omitempty"`
 	PreviewToken  string          `gorm:"type:VARBINARY(64);column:preview_token;default:'';" json:"-" yaml:"-"`
 	DownloadToken string          `gorm:"type:VARBINARY(64);column:download_token;default:'';" json:"-" yaml:"-"`
 	AccessToken   string          `gorm:"type:VARBINARY(4096);column:access_token;default:'';" json:"-" yaml:"-"`
 	RefreshToken  string          `gorm:"type:VARBINARY(512);column:refresh_token;default:'';" json:"-" yaml:"-"`
 	IdToken       string          `gorm:"type:VARBINARY(1024);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
-	UserAgent     string          `gorm:"size:512;" json:"-" yaml:"UserAgent,omitempty"`
-	DataJSON      json.RawMessage `gorm:"type:VARBINARY(4096);" json:"Data,omitempty" yaml:"Data,omitempty"`
+	UserAgent     string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
+	DataJSON      json.RawMessage `gorm:"type:VARBINARY(4096);" json:"-" yaml:"Data,omitempty"`
 	data          *SessionData    `gorm:"-"`
-	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"-" yaml:"-"`
-	LoginIP       string          `gorm:"size:64;column:login_ip" json:"-" yaml:"-"`
-	LoginAt       time.Time       `json:"-" yaml:"-"`
+	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"ID" yaml:"-"`
+	LoginIP       string          `gorm:"size:64;column:login_ip" json:"LoginIP" yaml:"-"`
+	LoginAt       time.Time       `json:"LoginAt" yaml:"-"`
 	CreatedAt     time.Time       `json:"CreatedAt" yaml:"CreatedAt"`
 	UpdatedAt     time.Time       `json:"UpdatedAt" yaml:"UpdatedAt"`
-	Status        int             `gorm:"-" json:"Status,omitempty" yaml:"-"`
+	Status        int             `gorm:"-" json:"Status" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -123,6 +123,22 @@ func SessionStatusUnauthorized() *Session {
 // SessionStatusForbidden returns a session with status forbidden (403).
 func SessionStatusForbidden() *Session {
 	return &Session{Status: http.StatusForbidden}
+}
+
+// FindSessionByRefID finds an existing session by ref ID.
+func FindSessionByRefID(refId string) *Session {
+	if !rnd.IsRefID(refId) {
+		return nil
+	}
+
+	m := &Session{}
+
+	// Build query.
+	if err := UnscopedDb().Where("ref_id = ?", refId).First(m).Error; err != nil {
+		return nil
+	}
+
+	return m
 }
 
 // RegenerateID regenerated the random session ID.

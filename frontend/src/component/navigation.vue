@@ -471,7 +471,7 @@
             <v-list-tile v-if="canManageUsers" :to="{ path: '/admin/users' }" :exact="false" class="nav-admin-users" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
-                  <translate>Users</translate>
+                  <translate>Authentication</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>

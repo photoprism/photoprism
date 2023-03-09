@@ -22,7 +22,3 @@ func (f *SearchUsers) SetQuery(q string) {
 func (f *SearchUsers) ParseQueryString() error {
 	return ParseQueryString(f)
 }
-
-func NewSearchUsers(query string) SearchUsers {
-	return SearchUsers{Query: query}
-}
