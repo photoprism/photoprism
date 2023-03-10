@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-03-10 10:34+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "backend/de/>\n"
 "Language: de\n"
@@ -237,15 +237,15 @@ msgstr "%d Einträge aus %s entfernt"
 
 #: messages.go:149
 msgid "Account created"
-msgstr "Server-Konfiguration angelegt"
+msgstr "Konto hinzugefügt"
 
 #: messages.go:150
 msgid "Account saved"
-msgstr "Server-Konfiguration gespeichert"
+msgstr "Konto gespeichert"
 
 #: messages.go:151
 msgid "Account deleted"
-msgstr "Server-Konfiguration gelöscht"
+msgstr "Konto gelöscht"
 
 #: messages.go:152
 msgid "Settings saved"
