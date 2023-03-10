@@ -390,7 +390,7 @@ func (m *User) UpdateLoginTime() *time.Time {
 func (m *User) CanLogIn() bool {
 	if m == nil {
 		return false
-	} else if m.Deleted() {
+	} else if m.Deleted() || m.HasProvider(authn.ProviderNone) {
 		return false
 	} else if !m.CanLogin && !m.SuperAdmin || m.ID <= 0 || m.UserName == "" {
 		return false
@@ -403,7 +403,11 @@ func (m *User) CanLogIn() bool {
 
 // CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
 func (m *User) CanUseWebDAV() bool {
-	if role := m.AclRole(); m.Disabled() || !m.WebDAV || m.ID <= 0 || m.UserName == "" || role == acl.RoleUnknown {
+	if m == nil {
+		return false
+	} else if m.Deleted() || m.HasProvider(authn.ProviderNone) {
+		return false
+	} else if role := m.AclRole(); m.Disabled() || !m.WebDAV || m.ID <= 0 || m.UserName == "" || role == acl.RoleUnknown {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
@@ -412,7 +416,11 @@ func (m *User) CanUseWebDAV() bool {
 
 // CanUpload checks if the user is allowed to upload files.
 func (m *User) CanUpload() bool {
-	if role := m.AclRole(); m.Disabled() || role == acl.RoleUnknown {
+	if m == nil {
+		return false
+	} else if m.Deleted() || m.HasProvider(authn.ProviderNone) {
+		return false
+	} else if role := m.AclRole(); m.Disabled() || role == acl.RoleUnknown {
 		return false
 	} else {
 		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
@@ -491,6 +499,11 @@ func (m *User) Provider() authn.ProviderType {
 	}
 
 	return authn.ProviderNone
+}
+
+// HasProvider checks if the user has the given auth provider.
+func (m *User) HasProvider(t authn.ProviderType) bool {
+	return t.String() == m.Provider().String()
 }
 
 // SetProvider set the authentication provider.

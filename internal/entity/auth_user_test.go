@@ -827,18 +827,36 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 }
 
 func TestUser_CanLogIn(t *testing.T) {
-	assert.True(t, UserFixtures.Pointer("alice").CanLogIn())
+	alice := UserFixtures.Get("alice")
+	assert.True(t, alice.CanLogIn())
+	alice.SetProvider(authn.ProviderNone)
+	assert.False(t, alice.CanLogIn())
+	alice.SetProvider(authn.ProviderLocal)
+	assert.True(t, alice.CanLogIn())
+
 	assert.False(t, UserFixtures.Pointer("deleted").CanLogIn())
 }
 
 func TestUser_CanUseWebDAV(t *testing.T) {
-	assert.True(t, UserFixtures.Pointer("alice").CanUseWebDAV())
+	alice := UserFixtures.Get("alice")
+	assert.True(t, alice.CanUseWebDAV())
+	alice.SetProvider(authn.ProviderNone)
+	assert.False(t, alice.CanUseWebDAV())
+	alice.SetProvider(authn.ProviderLocal)
+	assert.True(t, alice.CanUseWebDAV())
+
 	assert.False(t, UserFixtures.Pointer("deleted").CanUseWebDAV())
 	assert.False(t, UserFixtures.Pointer("friend").CanUseWebDAV())
 }
 
-func TestUser_CanUpdate(t *testing.T) {
-	assert.True(t, UserFixtures.Pointer("alice").CanUpload())
+func TestUser_CanUpload(t *testing.T) {
+	alice := UserFixtures.Get("alice")
+	assert.True(t, alice.CanUpload())
+	alice.SetProvider(authn.ProviderNone)
+	assert.False(t, alice.CanUpload())
+	alice.SetProvider(authn.ProviderLocal)
+	assert.True(t, alice.CanUpload())
+
 	assert.False(t, UserFixtures.Pointer("deleted").CanUpload())
 	assert.True(t, UserFixtures.Pointer("friend").CanUpload())
 }
