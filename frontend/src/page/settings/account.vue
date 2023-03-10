@@ -89,7 +89,7 @@
                 <v-flex xs12 md8 class="pa-2">
                   <v-text-field
                       v-model="user.Email"
-                      hide-details required box flat
+                      hide-details required box flat validate-on-blur
                       type="email"
                       maxlength="250"
                       :disabled="busy"
