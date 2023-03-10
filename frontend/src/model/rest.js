@@ -35,7 +35,7 @@ export class Rest extends Model {
       return this.UID;
     }
 
-    return this.ID ? this.ID : "";
+    return this.ID ? this.ID : false;
   }
 
   hasId() {
