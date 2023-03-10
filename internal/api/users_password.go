@@ -78,10 +78,16 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 			return
 		}
 
-		// Change password.
-		if err := s.ChangePassword(f.NewPassword); err != nil {
+		// Set new password.
+		if err := u.SetPassword(f.NewPassword); err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 			return
+		}
+
+		// Update tokens if user matches with session.
+		if s.User().UserUID == u.UID() {
+			s.SetPreviewToken(u.PreviewToken)
+			s.SetDownloadToken(u.DownloadToken)
 		}
 
 		// Invalidate all other user sessions to protect the account:
