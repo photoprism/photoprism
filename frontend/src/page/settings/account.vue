@@ -105,6 +105,7 @@
                 </v-flex>
               </v-layout>
             </v-flex>
+
             <v-flex
                 class="pa-2 text-xs-center"
                 xs4 sm3 md2 align-self-center
@@ -113,14 +114,25 @@
                 <img :src="$vuetify.breakpoint.xsOnly ? user.getAvatarURL('tile_100') : user.getAvatarURL('tile_224')" :alt="accountInfo" :title="$gettext('Change Avatar')">
               </v-avatar>
             </v-flex>
-            <v-flex xs12 class="pa-2">
+
+            <v-flex v-if="user.Details.Bio" xs12 class="pa-2">
               <v-textarea v-model="user.Details.Bio" auto-grow flat box hide-details
                           rows="2" class="input-bio" color="secondary-dark"
                           autocorrect="off" autocapitalize="none" browser-autocomplete="off"
                           :disabled="busy"
+                          maxlength="2000"
+                          :rules="[v => validLength(v, 0, 2000) || $gettext('Invalid')]"
+                          :label="$gettext('Bio')"
+                          @change="onChange"></v-textarea>
+            </v-flex>
+            <v-flex xs12 class="pa-2">
+              <v-textarea v-model="user.Details.About" auto-grow flat box hide-details
+                          rows="2" class="input-about" color="secondary-dark"
+                          autocorrect="off" autocapitalize="none" browser-autocomplete="off"
+                          :disabled="busy"
                           maxlength="500"
                           :rules="[v => validLength(v, 0, 500) || $gettext('Invalid')]"
-                          :label="$gettext('Bio')"
+                          :label="$gettext('About')"
                           @change="onChange"></v-textarea>
             </v-flex>
           </v-layout>

@@ -23,10 +23,11 @@ type Subject struct {
 	SubjType     string     `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
 	SubjSrc      string     `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
 	SubjSlug     string     `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
-	SubjName     string     `gorm:"type:VARCHAR(160);unique_index;default:'';" json:"Name" yaml:"Name"`
-	SubjAlias    string     `gorm:"type:VARCHAR(160);default:'';" json:"Alias" yaml:"Alias"`
-	SubjBio      string     `gorm:"type:VARCHAR(2048);" json:"Bio" yaml:"Bio,omitempty"`
-	SubjNotes    string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	SubjName     string     `gorm:"size:160;unique_index;default:'';" json:"Name" yaml:"Name"`
+	SubjAlias    string     `gorm:"size:160;default:'';" json:"Alias" yaml:"Alias"`
+	SubjAbout    string     `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
+	SubjBio      string     `gorm:"size:2048;" json:"Bio" yaml:"Bio,omitempty"`
+	SubjNotes    string     `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	SubjFavorite bool       `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
 	SubjHidden   bool       `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
 	SubjPrivate  bool       `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`

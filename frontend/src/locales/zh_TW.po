@@ -56,9 +56,10 @@ msgstr "4 小時"
 msgid "A click will copy it to your clipboard."
 msgstr "點擊以複製到剪貼簿。"
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:220
+#: src/component/admin/users/edit.vue:266 src/page/about/about.vue:4
+#: src/page/about/about.vue:220 src/page/settings/account.vue:312
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43
+#: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
 msgstr "關於"
 
@@ -337,8 +338,8 @@ msgstr "由于这有助于我们向公众提供更多的功能，我们鼓励所
 msgid "Aspect Ratio"
 msgstr "長寬比"
 
-#: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:307
-#: src/page/admin/sessions.vue:53 src/page/admin/sessions.vue:31
+#: src/component/admin/users/add.vue:153 src/component/admin/users/edit.vue:363
+#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "认证"
@@ -351,7 +352,7 @@ msgstr "自動建立 JPEG 縮圖讓其他檔案型態可以顯示在瀏覽器中
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "自動建立特殊時刻、旅行和地點的相冊。"
 
-#: src/component/admin/users/edit.vue:333
+#: src/component/admin/users/edit.vue:389
 msgid "Base Folder"
 msgstr "底层文件夹"
 
@@ -363,11 +364,11 @@ msgstr "在提交支援請求之前，請使用我們的疑難排解清單來確
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "作為 100% 自籌資金和獨立的公司，我們可以向您保證，我們永遠不會出售您的數據，並且我們將始終對我們的軟件和服務保持透明。"
 
-#: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
+#: src/component/admin/users/edit.vue:294 src/page/settings/account.vue:284
 msgid "Bio"
 msgstr "個人資料"
 
-#: src/page/settings/account.vue:67
+#: src/page/settings/account.vue:70 src/page/settings/account.vue:72
 msgid "Birth Date"
 msgstr "出生日期"
 
@@ -439,7 +440,7 @@ msgid "Can't select more items"
 msgstr "無法選取更多項目"
 
 #: src/component/admin/sessions/remove.vue:15
-#: src/component/admin/users/add.vue:20 src/component/admin/users/edit.vue:69
+#: src/component/admin/users/add.vue:20 src/component/admin/users/edit.vue:75
 #: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
@@ -466,11 +467,12 @@ msgstr "卡片"
 msgid "Category"
 msgstr "分類"
 
-#: src/component/admin/users/edit.vue:182 src/page/settings/account.vue:253
+#: src/component/admin/users/edit.vue:183 src/page/settings/account.vue:253
 msgid "Change Avatar"
 msgstr "變更頭像"
 
-#: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:7
+#: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "更改密碼"
 
@@ -542,8 +544,8 @@ msgstr "信心度"
 msgid "Connect"
 msgstr "連線"
 
-#: src/page/settings/account.vue:57 src/dialog/webdav.vue:4
-#: src/page/settings/services.vue:48
+#: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
+#: src/page/settings/account.vue:62 src/page/settings/services.vue:48
 msgid "Connect via WebDAV"
 msgstr "使用 WebDAV 連線"
 
@@ -551,7 +553,7 @@ msgstr "使用 WebDAV 連線"
 msgid "Connected"
 msgstr "已連接"
 
-#: src/page/settings/account.vue:113 src/page/settings/account.vue:90
+#: src/page/settings/account.vue:116 src/page/settings/account.vue:95
 msgid "Contact Details"
 msgstr "聯繫方式"
 
@@ -590,8 +592,8 @@ msgstr "版權"
 msgid "Couldn't find anything."
 msgstr "找不到任何東西。"
 
-#: src/page/settings/account.vue:727 src/component/photo/toolbar.vue:178
-#: src/dialog/photo/edit/details.vue:251 src/page/settings/account.vue:581
+#: src/page/settings/account.vue:757 src/component/photo/toolbar.vue:178
+#: src/dialog/photo/edit/details.vue:251 src/page/settings/account.vue:611
 msgid "Country"
 msgstr "國家"
 
@@ -603,7 +605,7 @@ msgstr "創建賬戶"
 msgid "Create album"
 msgstr "新增相簿"
 
-#: src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:65 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "已新增"
 
@@ -635,7 +637,7 @@ msgstr "深青"
 msgid "Daily"
 msgstr "每日"
 
-#: src/page/settings/account.vue:447 src/dialog/photo/edit/details.vue:117
+#: src/page/settings/account.vue:477 src/dialog/photo/edit/details.vue:117
 msgid "Day"
 msgstr "日"
 
@@ -745,7 +747,7 @@ msgstr "禁用视频转码和缩略图提取。"
 msgid "Discover"
 msgstr "發現"
 
-#: src/component/admin/users/edit.vue:99 src/page/admin/users.vue:35
+#: src/component/admin/users/edit.vue:100 src/page/admin/users.vue:35
 #: src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "顯示名稱"
@@ -858,7 +860,7 @@ msgstr "編輯"
 msgid "Edit %{name}"
 msgstr "編輯 %{name}"
 
-#: src/component/admin/users/edit.vue:58 src/dialog/service/edit.vue:146
+#: src/component/admin/users/edit.vue:59 src/dialog/service/edit.vue:146
 msgid "Edit Account"
 msgstr "編輯帳號"
 
@@ -870,8 +872,8 @@ msgstr "編輯相片"
 msgid "Edited"
 msgstr "已編輯"
 
-#: src/component/admin/users/add.vue:198 src/component/admin/users/edit.vue:261
-#: src/page/settings/account.vue:221 src/page/settings/account.vue:616
+#: src/component/admin/users/add.vue:198 src/component/admin/users/edit.vue:317
+#: src/page/settings/account.vue:221 src/page/settings/account.vue:646
 msgid "Email"
 msgstr "電子郵件"
 
@@ -919,7 +921,8 @@ msgstr "擴展搜尋"
 msgid "Experimental Features"
 msgstr "測試功能"
 
-#: src/dialog/service/edit.vue:249 src/dialog/share.vue:64
+#: src/page/admin/sessions.vue:77 src/dialog/service/edit.vue:249
+#: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "有效期限"
 
@@ -951,7 +954,7 @@ msgstr "移除連結失敗"
 msgid "Failed updating link"
 msgstr "更新連結失敗"
 
-#: src/component/admin/users/edit.vue:235 src/page/settings/account.vue:166
+#: src/component/admin/users/edit.vue:236 src/page/settings/account.vue:166
 msgid "Family Name"
 msgstr "姓氏"
 
@@ -972,7 +975,7 @@ msgstr "我的最愛"
 msgid "Feature Request"
 msgstr "功能要求"
 
-#: src/page/settings/account.vue:818 src/page/settings/account.vue:672
+#: src/page/settings/account.vue:848 src/page/settings/account.vue:702
 msgid "Feed"
 msgstr "訂閱源"
 
@@ -1070,7 +1073,7 @@ msgstr "全螢幕"
 msgid "Gemstone"
 msgstr "寶石"
 
-#: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
+#: src/component/admin/users/edit.vue:118 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "性別"
 
@@ -1082,7 +1085,7 @@ msgstr "一般"
 msgid "Getting Support"
 msgstr "尋找支持"
 
-#: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
+#: src/component/admin/users/edit.vue:209 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "名字"
 
@@ -1238,20 +1241,23 @@ msgid "Interval"
 msgstr "間隔"
 
 #: src/component/admin/users/add.vue:177 src/component/admin/users/add.vue:201
-#: src/component/admin/users/edit.vue:127
-#: src/component/admin/users/edit.vue:154
-#: src/component/admin/users/edit.vue:211
-#: src/component/admin/users/edit.vue:238
-#: src/component/admin/users/edit.vue:264 src/page/connect.vue:14
+#: src/component/admin/users/edit.vue:128
+#: src/component/admin/users/edit.vue:155
+#: src/component/admin/users/edit.vue:212
+#: src/component/admin/users/edit.vue:239
+#: src/component/admin/users/edit.vue:265
+#: src/component/admin/users/edit.vue:293
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
 #: src/page/settings/account.vue:91 src/page/settings/account.vue:117
 #: src/page/settings/account.vue:143 src/page/settings/account.vue:169
-#: src/page/settings/account.vue:224 src/page/settings/account.vue:281
-#: src/page/settings/account.vue:565 src/page/settings/account.vue:591
-#: src/page/settings/account.vue:619 src/page/settings/account.vue:647
-#: src/page/settings/account.vue:711 src/page/settings/account.vue:738
-#: src/page/settings/account.vue:765 src/page/settings/account.vue:793
-#: src/page/settings/account.vue:821 src/page/connect.vue:11
-#: src/page/settings/account.vue:592 src/page/settings/account.vue:675
+#: src/page/settings/account.vue:224 src/page/settings/account.vue:283
+#: src/page/settings/account.vue:311 src/page/settings/account.vue:595
+#: src/page/settings/account.vue:621 src/page/settings/account.vue:649
+#: src/page/settings/account.vue:677 src/page/settings/account.vue:741
+#: src/page/settings/account.vue:768 src/page/settings/account.vue:795
+#: src/page/settings/account.vue:823 src/page/settings/account.vue:851
+#: src/page/connect.vue:11 src/page/settings/account.vue:622
+#: src/page/settings/account.vue:705
 msgid "Invalid"
 msgstr "無效"
 
@@ -1322,7 +1328,7 @@ msgstr "Lanczos：保留細節，減少偽像"
 msgid "Language"
 msgstr "語言"
 
-#: src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "最后一次活动"
 
@@ -1420,9 +1426,9 @@ msgstr "本地時間"
 msgid "location"
 msgstr "地點"
 
-#: src/page/settings/account.vue:708 src/component/photo/cards.vue:529
+#: src/page/settings/account.vue:738 src/component/photo/cards.vue:529
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
-#: src/page/albums.vue:88 src/page/settings/account.vue:562
+#: src/page/albums.vue:88 src/page/settings/account.vue:592
 msgid "Location"
 msgstr "地點"
 
@@ -1518,7 +1524,7 @@ msgstr "回憶時刻"
 msgid "Monochrome"
 msgstr "黑白"
 
-#: src/page/settings/account.vue:470 src/component/photo/toolbar.vue:300
+#: src/page/settings/account.vue:500 src/component/photo/toolbar.vue:300
 #: src/dialog/photo/edit/details.vue:143
 msgid "Month"
 msgstr "月"
@@ -1756,7 +1762,7 @@ msgstr "或在我們的社區聊天中提問"
 msgid "Orange"
 msgstr "橘色"
 
-#: src/page/settings/account.vue:588
+#: src/page/settings/account.vue:618
 msgid "Organization"
 msgstr "組織"
 
@@ -1834,7 +1840,7 @@ msgstr "永久刪除"
 msgid "Permanently remove files to free up storage."
 msgstr "永久刪除文件以釋放儲存空間。"
 
-#: src/page/settings/account.vue:762 src/page/settings/account.vue:616
+#: src/page/settings/account.vue:792 src/page/settings/account.vue:646
 msgid "Phone"
 msgstr "電話"
 
@@ -2061,7 +2067,7 @@ msgid "Request failed - invalid response"
 msgstr "要求失敗 - 無效的回應"
 
 #: src/component/admin/users/add.vue:89 src/component/admin/users/add.vue:113
-#: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
+#: src/component/admin/users/edit.vue:103 src/page/about/feedback.vue:130
 #: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
 msgid "Required"
@@ -2087,7 +2093,7 @@ msgstr "重新輸入密碼"
 msgid "Review"
 msgstr "回顧"
 
-#: src/component/admin/users/add.vue:133 src/component/admin/users/edit.vue:285
+#: src/component/admin/users/add.vue:133 src/component/admin/users/edit.vue:341
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "角色"
@@ -2096,7 +2102,7 @@ msgstr "角色"
 msgid "Satellite"
 msgstr "衛星"
 
-#: src/component/admin/users/edit.vue:72 src/dialog/account/password.vue:39
+#: src/component/admin/users/edit.vue:78 src/dialog/account/password.vue:39
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2130,7 +2136,7 @@ msgstr "季節"
 msgid "Secret"
 msgstr "秘密"
 
-#: src/page/settings/account.vue:44
+#: src/page/settings/account.vue:47 src/page/settings/account.vue:49
 msgid "Security and Access"
 msgstr "安全和存取"
 
@@ -2336,7 +2342,7 @@ msgstr "儲存空間"
 msgid "Streets"
 msgstr "街"
 
-#: src/dialog/photo/edit/details.vue:584 src/model/subject.js:157
+#: src/dialog/photo/edit/details.vue:584 src/model/subject.js:158
 msgid "Subject"
 msgstr "主題"
 
@@ -2344,7 +2350,7 @@ msgstr "主題"
 msgid "Successfully Connected"
 msgstr "成功連接"
 
-#: src/component/admin/users/edit.vue:378 src/page/admin/users.vue:73
+#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:73
 msgid "Super Admin"
 msgstr "超级管理员"
 
@@ -2417,7 +2423,7 @@ msgstr "時區"
 msgid "Timeout"
 msgstr "逾時"
 
-#: src/component/admin/users/edit.vue:151 src/page/settings/account.vue:114
+#: src/component/admin/users/edit.vue:152 src/page/settings/account.vue:114
 msgctxt "Account"
 msgid "Title"
 msgstr "標題"
@@ -2432,7 +2438,7 @@ msgstr "標題"
 msgid "Title"
 msgstr "標題"
 
-#: src/page/settings/account.vue:562
+#: src/page/settings/account.vue:592
 msgid "Title / Position"
 msgstr "職位 / 位置"
 
@@ -2572,7 +2578,7 @@ msgstr "上傳完成。索引中…"
 msgid "Upload failed"
 msgstr "上傳失敗"
 
-#: src/component/admin/users/edit.vue:360
+#: src/component/admin/users/edit.vue:416
 msgid "Upload Folder"
 msgstr "上传文件夹"
 
@@ -2613,7 +2619,7 @@ msgid "Use Presets"
 msgstr "使用預設"
 
 #: src/component/admin/users/add.vue:85 src/options/admin.js:7
-#: src/options/admin.js:23 src/model/user.js:205
+#: src/options/admin.js:23 src/page/admin/sessions.vue:53 src/model/user.js:205
 msgid "User"
 msgstr "使用者"
 
@@ -2625,9 +2631,9 @@ msgstr "使用者指南"
 msgid "User Interface"
 msgstr "使用者介面"
 
-#: src/page/admin/sessions.vue:30 src/page/admin/users.vue:34
-#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
-#: src/dialog/share.vue:23
+#: src/page/admin/sessions.vue:47 src/page/admin/sessions.vue:30
+#: src/page/admin/users.vue:34 src/dialog/service/add.vue:103
+#: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
 msgid "Username"
 msgstr "使用者名稱"
 
@@ -2709,12 +2715,12 @@ msgstr "我們盡最大努力在五個工作日或更短的時間內做出回應
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "我們將盡力回答您的所有問題。作為回報，我們希望您在 Patreon 或 GitHub 贊助商上支持我們。"
 
-#: src/component/admin/users/add.vue:216 src/component/admin/users/edit.vue:395
+#: src/component/admin/users/add.vue:216 src/component/admin/users/edit.vue:451
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "网络登录"
 
-#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:411
+#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:467
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
@@ -2735,7 +2741,7 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr "WebDAV上傳"
 
-#: src/page/settings/account.vue:644 src/page/settings/account.vue:790
+#: src/page/settings/account.vue:674 src/page/settings/account.vue:820
 msgid "Website"
 msgstr "網站"
 
@@ -2751,11 +2757,11 @@ msgstr "白色"
 msgid "Why are some features only available to sponsors?"
 msgstr "為什麼有些功能只對贊助者開放？"
 
-#: src/page/settings/account.vue:90
+#: src/page/settings/account.vue:93
 msgid "Work Details"
 msgstr "作品詳情"
 
-#: src/page/settings/account.vue:493 src/component/photo/toolbar.vue:275
+#: src/page/settings/account.vue:523 src/component/photo/toolbar.vue:275
 #: src/dialog/photo/edit/details.vue:169 src/page/albums.vue:204
 msgid "Year"
 msgstr "年"

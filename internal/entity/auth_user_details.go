@@ -36,7 +36,7 @@ type UserDetails struct {
 	NameSrc      string    `gorm:"type:VARBINARY(8);" json:"NameSrc" yaml:"NameSrc,omitempty"`
 	UserGender   string    `gorm:"size:16;" json:"Gender" yaml:"Gender,omitempty"`
 	UserAbout    string    `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
-	UserBio      string    `gorm:"size:512;" json:"Bio" yaml:"Bio,omitempty"`
+	UserBio      string    `gorm:"size:2048;" json:"Bio" yaml:"Bio,omitempty"`
 	UserLocation string    `gorm:"size:512;" json:"Location" yaml:"Location,omitempty"`
 	UserCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
 	UserPhone    string    `gorm:"size:32;" json:"Phone" yaml:"Phone,omitempty"`

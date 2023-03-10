@@ -975,8 +975,8 @@ func (m *User) SaveForm(f form.User, updateRights bool) error {
 	} else if err := deepcopier.Copy(f.UserDetails).To(m.UserDetails); err != nil {
 		return err
 	} else {
-		m.UserDetails.UserAbout = strings.TrimSpace(m.UserDetails.UserAbout)
-		m.UserDetails.UserBio = strings.TrimSpace(m.UserDetails.UserBio)
+		m.UserDetails.UserAbout = txt.Clip(m.UserDetails.UserAbout, txt.ClipComment)
+		m.UserDetails.UserBio = txt.Clip(m.UserDetails.UserBio, txt.ClipText)
 	}
 
 	// Sanitize display name.
@@ -990,7 +990,7 @@ func (m *User) SaveForm(f form.User, updateRights bool) error {
 	}
 
 	// Sanitize email address.
-	if email := clean.Email(f.UserEmail); email != "" && email != m.UserEmail {
+	if email := f.Email(); email != "" && email != m.UserEmail {
 		m.UserEmail = email
 		m.VerifiedAt = nil
 		m.VerifyToken = GenerateToken()
@@ -998,12 +998,12 @@ func (m *User) SaveForm(f form.User, updateRights bool) error {
 
 	// Update user rights only if explicitly requested.
 	if updateRights {
-		m.UserRole = f.UserRole
+		m.UserRole = f.Role()
 		m.SuperAdmin = f.SuperAdmin
 
 		m.CanLogin = f.CanLogin
 		m.WebDAV = f.WebDAV
-		m.UserAttr = f.UserAttr
+		m.UserAttr = f.Attr()
 
 		m.SetProvider(f.Provider())
 		m.SetBasePath(f.BasePath)
