@@ -28,7 +28,7 @@ func Sessions(f form.SearchSessions) (result entity.Sessions, err error) {
 	}
 
 	if sortOrder == "" {
-		sortOrder = "last_active, user_name"
+		sortOrder = "last_active DESC, user_name"
 	}
 
 	if limit > 0 {

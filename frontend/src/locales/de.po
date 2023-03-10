@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-10 11:05+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
-"frontend/de/>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -340,7 +339,7 @@ msgid "Aspect Ratio"
 msgstr "Seitenverhältnis"
 
 #: src/component/admin/users/add.vue:203 src/component/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:61 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Authentifizierung"
@@ -503,7 +502,7 @@ msgstr "Geprüft"
 msgid "Chroma"
 msgstr "Farbsättigung"
 
-#: src/page/admin/sessions.vue:103 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:105 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
 #: src/page/library/errors.vue:60
 msgid "Close"
@@ -606,7 +605,7 @@ msgstr "Konto erstellen"
 msgid "Create album"
 msgstr "Erstellen"
 
-#: src/page/admin/sessions.vue:65 src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:67 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "Hinzugefügt"
 
@@ -647,7 +646,7 @@ msgid "Debug Logs"
 msgstr "Debug Logs"
 
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:56
-#: src/page/admin/sessions.vue:49 src/page/admin/users.vue:86
+#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:93
 #: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
@@ -922,7 +921,7 @@ msgstr "Suche öffnen"
 msgid "Experimental Features"
 msgstr "Experimentelle Funktionen"
 
-#: src/page/admin/sessions.vue:77 src/dialog/service/edit.vue:249
+#: src/page/admin/sessions.vue:79 src/dialog/service/edit.vue:249
 #: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "Ablaufdatum"
@@ -1329,7 +1328,7 @@ msgstr "Lanczos: Sehr gute Detailerhaltung, minimale Artefakte"
 msgid "Language"
 msgstr "Sprache"
 
-#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:73 src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "Zuletzt aktiv"
 
@@ -1587,7 +1586,7 @@ msgstr "Name zu lang"
 msgid "Neon"
 msgstr "Neon"
 
-#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:119
+#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:126
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1970,8 +1969,8 @@ msgstr "Qualitätsfilter"
 msgid "Quality Score"
 msgstr "Qualität"
 
-#: src/page/admin/sessions.vue:55 src/page/admin/users.vue:79
-#: src/page/admin/users.vue:92
+#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:86
+#: src/page/admin/users.vue:99
 msgid "r"
 msgstr "r"
 
@@ -2351,7 +2350,7 @@ msgstr "Bildinhalt"
 msgid "Successfully Connected"
 msgstr "Erfolgreich verbunden"
 
-#: src/component/admin/users/edit.vue:435 src/page/admin/users.vue:73
+#: src/component/admin/users/edit.vue:435 src/page/admin/users.vue:80
 msgid "Super Admin"
 msgstr "Super-Admin"
 
@@ -2618,7 +2617,7 @@ msgid "Use Presets"
 msgstr "Presets anwenden"
 
 #: src/options/admin.js:7 src/options/admin.js:23
-#: src/page/admin/sessions.vue:53 src/model/user.js:205
+#: src/page/admin/sessions.vue:55 src/model/user.js:205
 msgid "User"
 msgstr "Benutzer"
 
@@ -2630,10 +2629,10 @@ msgstr "Benutzerhandbuch"
 msgid "User Interface"
 msgstr "Benutzeroberfläche"
 
-#: src/component/admin/users/add.vue:85 src/page/admin/sessions.vue:47
-#: src/page/admin/sessions.vue:30 src/page/admin/users.vue:34
-#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
-#: src/dialog/share.vue:23
+#: src/component/admin/users/add.vue:85 src/page/admin/sessions.vue:48
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:30
+#: src/page/admin/users.vue:34 src/dialog/service/add.vue:103
+#: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
 msgid "Username"
 msgstr "Benutzername"
 

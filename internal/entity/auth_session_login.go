@@ -127,6 +127,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 			return i18n.Error(i18n.ErrInvalidLink)
 		} else {
 			m.SetData(data)
+			m.SetProvider(authn.ProviderToken)
 			event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, shares, data)
 		}
 
