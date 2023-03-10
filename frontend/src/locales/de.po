@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-10 08:31+0000\n"
+"PO-Revision-Date: 2023-03-10 08:37+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -76,7 +76,7 @@ msgstr "Konto"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "Accounts"
+msgstr "Benutzerkonten"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -2632,7 +2632,7 @@ msgstr "Benutzername"
 
 #: src/component/navigation.vue:428 src/component/navigation.vue:27
 msgid "Users"
-msgstr "Benutzerkonten"
+msgstr "Benutzer"
 
 #: src/options/themes.js:478
 msgid "Vanta"
