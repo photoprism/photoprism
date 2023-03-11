@@ -38,7 +38,7 @@
                 required counter persistent-hint box flat
                 type="password"
                 :disabled="busy"
-                browser-autocomplete="off"
+                browser-autocomplete="new-password"
                 autocorrect="off"
                 autocapitalize="none"
                 :label="$gettext('New Password')"
@@ -54,7 +54,7 @@
                 required counter persistent-hint box flat
                 type="password"
                 :disabled="busy"
-                browser-autocomplete="off"
+                browser-autocomplete="new-password"
                 autocorrect="off"
                 autocapitalize="none"
                 :label="$gettext('Retype Password')"

@@ -697,6 +697,9 @@ export default {
       appNameSuffix = appNameParts.slice(1, 9).join(" ");
     }
 
+    const isDemo = this.$config.get("demo");
+    const isPublic = this.$config.get("public");
+    const isReadOnly = this.$config.get("readonly");
     const isRestricted = this.$config.deny("photos", "access_library");
 
     return {
@@ -704,7 +707,7 @@ export default {
       canAccessPrivate: !isRestricted && this.$config.allow("photos", "access_private"),
       canManagePhotos: this.$config.allow("photos", "manage"),
       canManagePeople: this.$config.allow("people", "manage"),
-      canManageUsers: this.$config.allow("users", "manage"),
+      canManageUsers: !isPublic && this.$config.allow("users", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
       appAbout: this.$config.getAbout(),
@@ -714,12 +717,12 @@ export default {
       featUpgrade: this.$config.getLicense() === "ce",
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
-      isPublic: this.$config.get("public"),
-      isDemo: this.$config.get("demo"),
+      isDemo: isDemo,
+      isPublic: isPublic,
+      isReadOnly: isReadOnly,
       isAdmin: this.$session.isAdmin(),
       isSponsor: this.$config.isSponsor(),
       isTest: this.$config.test,
-      isReadOnly: this.$config.get("readonly"),
       session: this.$session,
       config: this.$config.values,
       page: this.$config.page,

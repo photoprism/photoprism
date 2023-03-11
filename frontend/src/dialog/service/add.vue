@@ -106,6 +106,7 @@ export default {
 
       this.model.save().then((a) => {
         this.loading = false;
+        this.$notify.success(this.$gettext("Account created"));
         this.$emit('confirm', a.UID);
       });
     },
