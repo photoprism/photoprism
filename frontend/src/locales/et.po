@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"PO-Revision-Date: 2023-03-11 14:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -810,6 +810,8 @@ msgstr "Laadi alla"
 #: src/page/settings/general.vue:561
 msgid "Download only original media files, without any automatically generated files."
 msgstr ""
+"Laadige alla ainult originaalsed meediafailid, ilma automaatselt "
+"genereeritud failideta."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
