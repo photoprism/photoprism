@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 13:57+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
-"frontend/nl/>\n"
+"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,10 +811,8 @@ msgid "Download"
 msgstr "Download"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Download alleen originele mediabestanden, zonder automatisch gegenereerde "
-"zijwaartse bestanden."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2854,6 +2851,9 @@ msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te m
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "In-/uitzoomen"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Download alleen originele mediabestanden, zonder automatisch gegenereerde zijwaartse bestanden."
 
 #~ msgid "Client"
 #~ msgstr "Klant"

@@ -811,10 +811,8 @@ msgid "Download"
 msgstr "بارگیری"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"فقط فایل های رسانه ای اصلی را دانلود کنید، بدون هیچ فایلی که به صورت خودکار "
-"تولید می شود."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2853,6 +2851,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "فقط فایل های رسانه ای اصلی را دانلود کنید، بدون هیچ فایلی که به صورت خودکار تولید می شود."
 
 #~ msgid "Client"
 #~ msgstr "مشتری"

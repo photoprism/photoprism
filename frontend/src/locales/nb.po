@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 13:57+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
-"photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,9 +811,8 @@ msgid "Download"
 msgstr "Last ned"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Last ned bare originale mediefiler, uten automatisk genererte sidevognsfiler."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2849,6 +2847,9 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Last ned bare originale mediefiler, uten automatisk genererte sidevognsfiler."
 
 #~ msgid "Client"
 #~ msgstr "Kunde"

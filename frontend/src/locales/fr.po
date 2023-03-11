@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 13:57+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
-"frontend/fr/>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,10 +811,8 @@ msgid "Download"
 msgstr "Télécharger"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Télécharger uniquement les fichiers multimédias originaux, sans fichiers "
-"secondaires générés automatiquement."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -1233,14 +1230,11 @@ msgstr "Si des images sont manquantes, veuillez réanalyser votre bibliothèque 
 
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr ""
-"Inclure les fichiers d'images RAW lors du téléchargement de piles et "
-"d'archives."
+msgstr "Inclure les fichiers d'images RAW lors du téléchargement de piles et d'archives."
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
-"Inclure les fichiers sidecar lors du téléchargement de piles et d'archives."
+msgstr "Inclure les fichiers sidecar lors du téléchargement de piles et d'archives."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -2857,6 +2851,9 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Télécharger uniquement les fichiers multimédias originaux, sans fichiers secondaires générés automatiquement."
 
 #~ msgid "Client"
 #~ msgstr "Client"

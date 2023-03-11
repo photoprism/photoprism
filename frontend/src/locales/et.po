@@ -808,10 +808,8 @@ msgid "Download"
 msgstr "Laadi alla"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Laadige alla ainult originaalsed meediafailid, ilma automaatselt "
-"genereeritud kõrvalfailideta."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2850,6 +2848,9 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Laadige alla ainult originaalsed meediafailid, ilma automaatselt genereeritud kõrvalfailideta."
 
 #~ msgid "Client"
 #~ msgstr "Klient"

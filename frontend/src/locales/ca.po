@@ -811,10 +811,8 @@ msgid "Download"
 msgstr "Descàrrega"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Baixeu només fitxers multimèdia originals, sense cap fitxer sidecar generat "
-"automàticament."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2853,6 +2851,9 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Baixeu només fitxers multimèdia originals, sense cap fitxer sidecar generat automàticament."
 
 #~ msgid "Client"
 #~ msgstr "Client"

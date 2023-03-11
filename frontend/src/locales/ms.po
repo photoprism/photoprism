@@ -811,10 +811,8 @@ msgid "Download"
 msgstr "Muat turun"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Muat turun hanya fail media asal, tanpa sebarang fail sidecar yang dijana "
-"secara automatik."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2849,6 +2847,9 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Muat turun hanya fail media asal, tanpa sebarang fail sidecar yang dijana secara automatik."
 
 #~ msgid "Client"
 #~ msgstr "Pelanggan"

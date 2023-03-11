@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 13:57+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,10 +811,8 @@ msgid "Download"
 msgstr "Изтегляне"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Изтеглете само оригинални мултимедийни файлове, без автоматично генерирани "
-"странични файлове."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -1233,8 +1230,7 @@ msgstr "В случай че очакваните от вас снимки ли�
 
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr ""
-"Включване на файлове с RAW изображения при изтегляне на стекове и архиви."
+msgstr "Включване на файлове с RAW изображения при изтегляне на стекове и архиви."
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
@@ -2851,6 +2847,9 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Изтеглете само оригинални мултимедийни файлове, без автоматично генерирани странични файлове."
 
 #~ msgid "Client"
 #~ msgstr "Клиент"

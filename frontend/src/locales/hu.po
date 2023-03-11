@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 13:57+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -811,10 +810,8 @@ msgid "Download"
 msgstr "Letöltés"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Csak az eredeti médiafájlok letöltése, automatikusan generált oldalkocsis "
-"fájlok nélkül."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2849,6 +2846,9 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Csak az eredeti médiafájlok letöltése, automatikusan generált oldalkocsis fájlok nélkül."
 
 #~ msgid "Client"
 #~ msgstr "Ügyfél"

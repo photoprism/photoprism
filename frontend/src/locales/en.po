@@ -810,7 +810,7 @@ msgid "Download"
 msgstr ""
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
 
 #: src/dialog/service/edit.vue:338

@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 13:57+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/tr/>\n"
+"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,10 +811,8 @@ msgid "Download"
 msgstr "İndirmek"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Otomatik olarak oluşturulan yan dosyalar olmadan yalnızca orijinal medya "
-"dosyalarını indirin."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2854,6 +2851,9 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Otomatik olarak oluşturulan yan dosyalar olmadan yalnızca orijinal medya dosyalarını indirin."
 
 #~ msgid "Client"
 #~ msgstr "Müşteri"

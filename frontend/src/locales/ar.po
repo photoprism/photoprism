@@ -10,8 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -812,10 +811,8 @@ msgid "Download"
 msgstr "تحميل"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"قم بتنزيل ملفات الوسائط الأصلية فقط ، بدون أي ملفات جانبية يتم إنشاؤها "
-"تلقائيًا."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2850,6 +2847,9 @@ msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبوم�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "قم بتنزيل ملفات الوسائط الأصلية فقط ، بدون أي ملفات جانبية يتم إنشاؤها تلقائيًا."
 
 #~ msgid "Client"
 #~ msgstr "عميل"

@@ -808,10 +808,8 @@ msgid "Download"
 msgstr "Aflaai"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Laai slegs oorspronklike medialêers af, sonder enige outomaties gegenereerde "
-"sidecar-lêers."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2850,6 +2848,9 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Laai slegs oorspronklike medialêers af, sonder enige outomaties gegenereerde sidecar-lêers."
 
 #~ msgid "Client"
 #~ msgstr "Kliënt"

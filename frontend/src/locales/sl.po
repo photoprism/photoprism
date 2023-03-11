@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -809,10 +808,8 @@ msgid "Download"
 msgstr "Prenesi"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Prenesite samo izvirne medijske datoteke brez samodejno ustvarjenih "
-"stranskih datotek."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2847,6 +2844,9 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Prenesite samo izvirne medijske datoteke brez samodejno ustvarjenih stranskih datotek."
 
 #~ msgid "Client"
 #~ msgstr "Stranka"

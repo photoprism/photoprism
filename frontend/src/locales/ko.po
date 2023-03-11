@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 13:57+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ko/>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,8 +811,8 @@ msgid "Download"
 msgstr "다운로드"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
-msgstr "자동으로 생성된 사이드카 파일 없이 원본 미디어 파일만 다운로드하세요."
+msgid "Download only original media files, without any automatically generated files."
+msgstr ""
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2848,6 +2847,9 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "자동으로 생성된 사이드카 파일 없이 원본 미디어 파일만 다운로드하세요."
 
 #~ msgid "Client"
 #~ msgstr "클라이언트"

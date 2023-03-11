@@ -134,7 +134,7 @@
                   class="ma-0 pa-0 input-download-originals"
                   color="secondary-dark"
                   :label="$gettext('Originals')"
-                  :hint="$gettext('Download only original media files, without any automatically generated sidecar files.')"
+                  :hint="$gettext('Download only original media files, without any automatically generated files.')"
                   prepend-icon="camera"
                   persistent-hint
                   @change="onChange"

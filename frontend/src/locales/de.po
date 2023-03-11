@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 14:02+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
-"frontend/de/>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,10 +811,8 @@ msgid "Download"
 msgstr "Download"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Lade nur Original-Mediendateien herunter, ohne automatisch generierte "
-"Sidecar-Dateien."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -1233,13 +1230,11 @@ msgstr "Sollten Bilder fehlen, muss der Index möglicherweise aktualisiert werde
 
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr ""
-"RAW-Bilddateien beim Herunterladen von Stapeln und Archiven miteinbeziehen."
+msgstr "RAW-Bilddateien beim Herunterladen von Stapeln und Archiven miteinbeziehen."
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
-"Sidecar-Dateien beim Herunterladen von Stapeln und Archiven miteinbeziehen."
+msgstr "Sidecar-Dateien beim Herunterladen von Stapeln und Archiven miteinbeziehen."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -2852,6 +2847,9 @@ msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Lade nur Original-Mediendateien herunter, ohne automatisch generierte Sidecar-Dateien."
 
 #~ msgid "Client"
 #~ msgstr "Kunde"

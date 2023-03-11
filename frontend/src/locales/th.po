@@ -811,9 +811,8 @@ msgid "Download"
 msgstr "ดาวน์โหลด"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"ดาวน์โหลดเฉพาะไฟล์มีเดียต้นฉบับ โดยไม่มีไฟล์ sidecar ที่สร้างขึ้นโดยอัตโนมัติ"
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2848,6 +2847,9 @@ msgstr "คลังของคุณได้รับการวิเคร
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "ดาวน์โหลดเฉพาะไฟล์มีเดียต้นฉบับ โดยไม่มีไฟล์ sidecar ที่สร้างขึ้นโดยอัตโนมัติ"
 
 #~ msgid "Client"
 #~ msgstr "ลูกค้า"

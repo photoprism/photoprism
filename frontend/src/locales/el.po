@@ -808,10 +808,8 @@ msgid "Download"
 msgstr "Λήψη"
 
 #: src/page/settings/library.vue:274
-msgid "Download only original media files, without any automatically generated sidecar files."
+msgid "Download only original media files, without any automatically generated files."
 msgstr ""
-"Λήψη μόνο των αρχικών αρχείων πολυμέσων, χωρίς αυτόματα παραγόμενα αρχεία "
-"sidecar."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -2846,6 +2844,9 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "Λήψη μόνο των αρχικών αρχείων πολυμέσων, χωρίς αυτόματα παραγόμενα αρχεία sidecar."
 
 #~ msgid "Client"
 #~ msgstr "Πελάτης"
