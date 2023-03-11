@@ -419,8 +419,8 @@ github.com/yuin/goldmark v1.4.1/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
 github.com/zitadel/logging v0.3.4 h1:9hZsTjMMTE3X2LUi0xcF9Q9EdLo+FAezeu52ireBbHM=
 github.com/zitadel/logging v0.3.4/go.mod h1:aPpLQhE+v6ocNK0TWrBrd363hZ95KcI17Q1ixAQwZF0=
-github.com/zitadel/oidc v1.13.1 h1:SekqWHx2r9RLPuWXZnspjaIsUkCcckFWRZ6QnVUXKQQ=
-github.com/zitadel/oidc v1.13.1/go.mod h1:r9maMz5rcyO1yFhFdwRAQLrT5CR/aou9VTInxyHmvjs=
+github.com/zitadel/oidc v1.13.2 h1:DiwAgHtw1kKcngNzLjgv1/oRL1OjdYf3emEsFzQzraI=
+github.com/zitadel/oidc v1.13.2/go.mod h1:GUywRhXAiTvvjdRdXblmGknDOeMwrsdMxTRCypi6974=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 go.opencensus.io v0.22.0/go.mod h1:+kGneAE2xo2IficOXnaByMWTGM9T73dGwxeWcUqIpI8=
 go.opencensus.io v0.22.2/go.mod h1:yxeiOL68Rb0Xd1ddK5vPZ/oVn4vY4Ynel7k9FzqtOIw=
