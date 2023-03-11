@@ -391,7 +391,7 @@ msgstr ""
 msgid "Authentication"
 msgstr ""
 
-#: src/page/settings/library.vue:112
+#: src/page/settings/library.vue:113
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr ""
 
@@ -674,7 +674,7 @@ msgstr ""
 msgid "Contains one picture."
 msgstr ""
 
-#: src/page/settings/library.vue:111
+#: src/page/settings/library.vue:112
 msgid "Convert to JPEG"
 msgstr ""
 
@@ -934,6 +934,10 @@ msgstr ""
 msgid "Download"
 msgstr ""
 
+#: src/page/settings/library.vue:274
+msgid "Download only original media files, without any automatically generated sidecar files."
+msgstr ""
+
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
 msgstr ""
@@ -954,6 +958,10 @@ msgstr ""
 #: src/dialog/photo/edit/files.vue:69
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
+msgstr ""
+
+#: src/page/settings/library.vue:60
+msgid "Downloads"
 msgstr ""
 
 #: src/page/settings/advanced.vue:279
@@ -1037,11 +1045,11 @@ msgstr ""
 msgid "Errors"
 msgstr ""
 
-#: src/page/settings/library.vue:70
+#: src/page/settings/library.vue:71
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr ""
 
-#: src/page/settings/library.vue:69
+#: src/page/settings/library.vue:70
 msgid "Estimates"
 msgstr ""
 
@@ -1189,7 +1197,7 @@ msgstr ""
 msgid "Files"
 msgstr ""
 
-#: src/page/settings/library.vue:214
+#: src/page/settings/library.vue:215
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr ""
 
@@ -1400,6 +1408,14 @@ msgstr ""
 #: src/page/labels.vue:35
 #: src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr ""
+
+#: src/page/settings/library.vue:295
+msgid "Include RAW image files when downloading stacks and archives."
+msgstr ""
+
+#: src/page/settings/library.vue:316
+msgid "Include sidecar files when downloading stacks and archives."
 msgstr ""
 
 #: src/component/navigation.vue:580
@@ -1971,7 +1987,7 @@ msgstr ""
 #: src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52
-#: src/page/settings/library.vue:91
+#: src/page/settings/library.vue:92
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 
@@ -2098,6 +2114,7 @@ msgstr ""
 #: src/model/file.js:194
 #: src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
+#: src/page/settings/library.vue:273
 msgid "Originals"
 msgstr ""
 
@@ -2200,7 +2217,7 @@ msgid "Place"
 msgstr ""
 
 #: src/page/albums.vue:89
-#: src/page/settings/library.vue:171
+#: src/page/settings/library.vue:172
 msgid "Place & Time"
 msgstr ""
 
@@ -2303,7 +2320,7 @@ msgstr ""
 msgid "Purple"
 msgstr ""
 
-#: src/page/settings/library.vue:90
+#: src/page/settings/library.vue:91
 msgid "Quality Filter"
 msgstr ""
 
@@ -2331,6 +2348,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:286
 #: src/component/photo/mosaic.vue:206
+#: src/page/settings/library.vue:294
 msgid "RAW"
 msgstr ""
 
@@ -2539,7 +2557,7 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: src/page/settings/library.vue:213
+#: src/page/settings/library.vue:214
 msgid "Sequential Name"
 msgstr ""
 
@@ -2641,6 +2659,7 @@ msgid "Shows more detailed log messages. Requires a restart."
 msgstr ""
 
 #: src/model/file.js:212
+#: src/page/settings/library.vue:315
 msgid "Sidecar"
 msgstr ""
 
@@ -2687,11 +2706,11 @@ msgstr ""
 msgid "Stack"
 msgstr ""
 
-#: src/page/settings/library.vue:193
+#: src/page/settings/library.vue:194
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr ""
 
-#: src/page/settings/library.vue:172
+#: src/page/settings/library.vue:173
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr ""
 
@@ -2704,7 +2723,7 @@ msgstr ""
 msgid "Stacks"
 msgstr ""
 
-#: src/page/settings/library.vue:138
+#: src/page/settings/library.vue:139
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr ""
 
@@ -2908,7 +2927,7 @@ msgstr ""
 msgid "Undo"
 msgstr ""
 
-#: src/page/settings/library.vue:192
+#: src/page/settings/library.vue:193
 msgid "Unique ID"
 msgstr ""
 

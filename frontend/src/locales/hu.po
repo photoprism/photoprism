@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 12:44+0000\n"
 "Last-Translator: Krisztián Vanyolai <vanyolai@gmail.com>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -170,9 +169,7 @@ msgstr "Egy év után"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr ""
-"A találokból kiválasztott képeket, tetszőleges albumhoz adni a menü "
-"segítségével lehet."
+msgstr "A találokból kiválasztott képeket, tetszőleges albumhoz adni a menü segítségével lehet."
 
 #: src/options/options.js:402
 msgid "After two months"
@@ -256,9 +253,7 @@ msgstr "Összes év"
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr ""
-"Alternatívaként a fájlok feltölthetők WebDAV szerverekre is, mint például "
-"Nextcloud."
+msgstr "Alternatívaként a fájlok feltölthetők WebDAV szerverekre is, mint például Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -344,9 +339,7 @@ msgstr "Művész"
 
 #: src/page/connect.vue:110
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr ""
-"Mivel ez segít abban, hogy több funkciót tudjunk biztosítani a nyilvánosság "
-"számára, minden felhasználót arra bátorítunk, hogy támogassa küldetésünket."
+msgstr "Mivel ez segít abban, hogy több funkciót tudjunk biztosítani a nyilvánosság számára, minden felhasználót arra bátorítunk, hogy támogassa küldetésünket."
 
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
@@ -358,17 +351,13 @@ msgstr "Képarány"
 msgid "Authentication"
 msgstr "Hitelesítés"
 
-#: src/page/settings/library.vue:112
+#: src/page/settings/library.vue:113
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr ""
-"Automatikusan hozzon létre JPEG-eket más fájltípusokhoz, hogy "
-"megjeleníthetők legyenek a böngészőben."
+msgstr "Automatikusan hozzon létre JPEG-eket más fájltípusokhoz, hogy megjeleníthetők legyenek a böngészőben."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr ""
-"Automatikusan albumokat hoz létre különleges pillanatokról, utazásokról és "
-"helyekről."
+msgstr "Automatikusan albumokat hoz létre különleges pillanatokról, utazásokról és helyekről."
 
 #: src/component/admin/users/edit.vue:389
 msgid "Base Folder"
@@ -376,16 +365,11 @@ msgstr "Bázis mappa"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr ""
-"Mielőtt támogatási kérelmet nyújt be, kérjük, használja hibaelhárítási "
-"ellenőrző listáinkat a probléma okának meghatározásához."
+msgstr "Mielőtt támogatási kérelmet nyújt be, kérjük, használja hibaelhárítási ellenőrző listáinkat a probléma okának meghatározásához."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr ""
-"Mivel 100%-ban önfinanszírozók és függetlenek vagyunk, megígérhetjük, hogy "
-"soha nem adjuk el az adatait, és mindig átláthatóak leszünk a szoftverünkkel "
-"és szolgáltatásainkkal kapcsolatban."
+msgstr "Mivel 100%-ban önfinanszírozók és függetlenek vagyunk, megígérhetjük, hogy soha nem adjuk el az adatait, és mindig átláthatóak leszünk a szoftverünkkel és szolgáltatásainkkal kapcsolatban."
 
 #: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -421,9 +405,7 @@ msgstr "Böngésszen az indexelt fájlok és mappák között a Könyvtárban."
 
 #: src/page/about/about.vue:51
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr ""
-"A Tudásbázisban részletes információkat talál a termék egyes jellemzőiről, "
-"szolgáltatásairól és a kapcsolódó erőforrásokról."
+msgstr "A Tudásbázisban részletes információkat talál a termék egyes jellemzőiről, szolgáltatásairól és a kapcsolódó erőforrásokról."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -435,10 +417,7 @@ msgstr "Elfoglalt, kérem, várjon…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Az általunk biztosított szoftver és szolgáltatások használatával Ön "
-"elfogadja szolgáltatási feltételeinket, adatvédelmi szabályzatunkat és "
-"magatartási kódexünket."
+msgstr "Az általunk biztosított szoftver és szolgáltatások használatával Ön elfogadja szolgáltatási feltételeinket, adatvédelmi szabályzatunkat és magatartási kódexünket."
 
 #: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
@@ -555,9 +534,7 @@ msgstr "Színek"
 
 #: src/page/about/about.vue:46
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr ""
-"A gyakori problémák gyorsan diagnosztizálhatók és megoldhatók az általunk "
-"biztosított hibaelhárítási ellenőrző listák segítségével."
+msgstr "A gyakori problémák gyorsan diagnosztizálhatók és megoldhatók az általunk biztosított hibaelhárítási ellenőrző listák segítségével."
 
 #: src/page/connect.vue:65 src/page/connect.vue:72
 msgid "Compare Editions"
@@ -603,7 +580,7 @@ msgstr "%{n} képet tartalmaz."
 msgid "Contains one picture."
 msgstr "Egy képet tartalmaz."
 
-#: src/page/settings/library.vue:111
+#: src/page/settings/library.vue:112
 msgid "Convert to JPEG"
 msgstr "Konvertálja JPEG formátumba"
 
@@ -785,20 +762,15 @@ msgstr "Megjelenített név"
 
 #: src/page/settings/advanced.vue:141
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr ""
-"Ne készítsen biztonsági másolatot a fényképek és albumok metaadatairól YAML-"
-"fájlokba."
+msgstr "Ne készítsen biztonsági másolatot a fényképek és albumok metaadatairól YAML-fájlokba."
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Ne hozzon létre ExifTool JSON-fájlokat a metaadatok jobb kinyerése érdekében."
+msgstr "Ne hozzon létre ExifTool JSON-fájlokat a metaadatok jobb kinyerése érdekében."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Ne módosítsa az eredeti mappát. Letiltja az importálást, feltöltést és "
-"törlést."
+msgstr "Ne módosítsa az eredeti mappát. Letiltja az importálást, feltöltést és törlést."
 
 #: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
@@ -837,6 +809,10 @@ msgstr "Kész."
 msgid "Download"
 msgstr "Letöltés"
 
+#: src/page/settings/library.vue:274
+msgid "Download only original media files, without any automatically generated sidecar files."
+msgstr ""
+
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
 msgstr "Távoli fájlok letöltése"
@@ -854,15 +830,17 @@ msgstr "Egyedi fájlok és zip-archívumok letöltése."
 msgid "Downloading…"
 msgstr "Letöltés…"
 
+#: src/page/settings/library.vue:60
+msgid "Downloads"
+msgstr ""
+
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
 msgstr "Lekicsinyítési szűrő"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr ""
-"A beérkező e-mailek nagy száma miatt előfordulhat, hogy csapatunk nem tud "
-"azonnal válaszolni Önnek."
+msgstr "A beérkező e-mailek nagy száma miatt előfordulhat, hogy csapatunk nem tud azonnal válaszolni Önnek."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -878,9 +856,7 @@ msgstr "Dinamikus előnézetek"
 
 #: src/page/settings/advanced.vue:303
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr ""
-"A dinamikus megjelenítéshez erős szerverre van szükség. NAS eszközökhöz nem "
-"ajánlott."
+msgstr "A dinamikus megjelenítéshez erős szerverre van szükség. NAS eszközökhöz nem ajánlott."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -923,18 +899,17 @@ msgstr "A jelenleg fejlesztés alatt álló új funkciók engedélyezése."
 
 #: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr ""
-"Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljesítményt."
+msgstr "Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljesítményt."
 
 #: src/app/routes.js:307 src/component/navigation.vue:395
 msgid "Errors"
 msgstr "Hibák"
 
-#: src/page/settings/library.vue:70
+#: src/page/settings/library.vue:71
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "Becsülje meg a képek hozzávetőleges helyét koordináták nélkül."
 
-#: src/page/settings/library.vue:69
+#: src/page/settings/library.vue:70
 msgid "Estimates"
 msgstr "Becslések"
 
@@ -944,9 +919,7 @@ msgstr "Kétnaponta"
 
 #: src/page/settings/general.vue:209
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr ""
-"A privátként megjelölt tartalmak kizárása a keresési eredményekből, a "
-"megosztott albumokból, címkékből és helyekről."
+msgstr "A privátként megjelölt tartalmak kizárása a keresési eredményekből, a megosztott albumokból, címkékből és helyekről."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -1028,9 +1001,7 @@ msgstr "Visszacsatolás"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Kérjük, lépjen kapcsolatba velünk a hello@photoprism.app címen, ha kérdése "
-"van, vagy segítségre van szüksége."
+msgstr "Kérjük, lépjen kapcsolatba velünk a hello@photoprism.app címen, ha kérdése van, vagy segítségre van szüksége."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1067,11 +1038,9 @@ msgstr "Fájlnév"
 msgid "Files"
 msgstr "Fájlok"
 
-#: src/page/settings/library.vue:214
+#: src/page/settings/library.vue:215
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr ""
-"Az olyan szekvenciális nevű fájlok, mint az „IMG_1234 (2)” és „IMG_1234 (3)”"
-", ugyanahhoz a képhez tartoznak."
+msgstr "Az olyan szekvenciális nevű fájlok, mint az „IMG_1234 (2)” és „IMG_1234 (3)”, ugyanahhoz a képhez tartoznak."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1227,14 +1196,11 @@ msgstr "Az importálás sikertelen"
 
 #: src/page/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr ""
-"Az importált fájlok dátum szerint vannak rendezve, és egyedi nevet kapnak a "
-"párhuzamosságok elkerülése érdekében."
+msgstr "Az importált fájlok dátum szerint vannak rendezve, és egyedi nevet kapnak a párhuzamosságok elkerülése érdekében."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"Az importált fájlok dátum szerint vannak rendezve, és egyedi nevet kapnak."
+msgstr "Az importált fájlok dátum szerint vannak rendezve, és egyedi nevet kapnak."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1259,9 +1225,15 @@ msgstr "A szponzorok emellett közvetlen technikai támogatást kapnak e-mailben
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr "Ha hiányoznak a várt képek, kérjük, ellenőrizze újra a könyvtárát, és várja meg, amíg az indexelés befejeződik."
+
+#: src/page/settings/library.vue:295
+msgid "Include RAW image files when downloading stacks and archives."
 msgstr ""
-"Ha hiányoznak a várt képek, kérjük, ellenőrizze újra a könyvtárát, és várja "
-"meg, amíg az indexelés befejeződik."
+
+#: src/page/settings/library.vue:316
+msgid "Include sidecar files when downloading stacks and archives."
+msgstr ""
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1327,15 +1299,11 @@ msgstr "Érvénytelen fénykép kiválasztva"
 
 #: src/page/connect.vue:103
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
-"Az Ön döntése, hogy szeretne-e regisztrálni, hogy további előnyöket "
-"élvezhessen."
+msgstr "Az Ön döntése, hogy szeretne-e regisztrálni, hogy további előnyöket élvezhessen."
 
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr ""
-"A legújabb technológiákat használja a képek automatikus megjelölésére és "
-"megtalálására anélkül, hogy útban lenne."
+msgstr "A legújabb technológiákat használja a képek automatikus megjelölésére és megtalálására anélkül, hogy útban lenne."
 
 #: src/model/rest.js:181
 msgid "Item"
@@ -1490,9 +1458,7 @@ msgstr "Elhelyezkedés"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr ""
-"Naplóüzenetek jelennek meg itt, ha a PhotoPrism hibás fájlokat talál, vagy "
-"más lehetséges problémák merülnek fel."
+msgstr "Naplóüzenetek jelennek meg itt, ha a PhotoPrism hibás fájlokat talál, vagy más lehetséges problémák merülnek fel."
 
 #: src/component/navigation.vue:474 src/component/navigation.vue:1774
 #: src/component/navigation.vue:2048
@@ -1717,9 +1683,7 @@ msgstr "Nincs kijelölt videó"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr ""
-"Nincsenek figyelmeztetések vagy hibák, amelyek ezt a kulcsszót tartalmazzák. "
-"Vegye figyelembe, hogy a keresés megkülönbözteti a kis- és nagybetűket."
+msgstr "Nincsenek figyelmeztetések vagy hibák, amelyek ezt a kulcsszót tartalmazzák. Vegye figyelembe, hogy a keresés megkülönbözteti a kis- és nagybetűket."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1727,11 +1691,9 @@ msgstr ""
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:52 src/page/settings/library.vue:91
+#: src/dialog/upload.vue:52 src/page/settings/library.vue:92
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr ""
-"A rossz minőségű képek ellenörzésre kerülnek, mielőtt megjelennének a "
-"keresési eredmények között."
+msgstr "A rossz minőségű képek ellenörzésre kerülnek, mielőtt megjelennének a keresési eredmények között."
 
 #: src/options/admin.js:49 src/options/admin.js:68 src/options/options.js:264
 #: src/options/options.js:353
@@ -1744,9 +1706,7 @@ msgstr "Nem található"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Vegye figyelembe, hogy manuálisan is kezelheti az eredeti mappát, és az "
-"importálás nem kötelező."
+msgstr "Vegye figyelembe, hogy manuálisan is kezelheti az eredeti mappát, és az importálás nem kötelező."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
@@ -1754,10 +1714,7 @@ msgstr "Megjegyzés:"
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr ""
-"Megjegyzés: Csak a WebDAV-kiszolgálók, például a Nextcloud vagy a PhotoPrism "
-"konfigurálhatók távoli szolgáltatásként biztonsági mentéshez és "
-"fájlfeltöltéshez."
+msgstr "Megjegyzés: Csak a WebDAV-kiszolgálók, például a Nextcloud vagy a PhotoPrism konfigurálhatók távoli szolgáltatásként biztonsági mentéshez és fájlfeltöltéshez."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1782,8 +1739,7 @@ msgstr "Először a legidősebb"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr ""
-"Windows alatt adja meg a következő erőforrást a kapcsolat párbeszédpanelen:"
+msgstr "Windows alatt adja meg a következő erőforrást a kapcsolat párbeszédpanelen:"
 
 #: src/options/options.js:392
 msgid "Once a week"
@@ -1849,7 +1805,7 @@ msgstr "Eredeti Név"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:428
+#: src/page/settings/general.vue:428 src/page/settings/library.vue:273
 msgid "Originals"
 msgstr "Eredetiek"
 
@@ -1859,17 +1815,11 @@ msgstr "Egyéb"
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr ""
-"Csapatunk ezt folyamatosan dönti el, attól függően, hogy mekkora támogatási "
-"erőfeszítésre van szükség, milyen szerver- és licencköltségek merülnek fel, "
-"és hogy a funkciókat általában mindenki igényli-e, vagy elsősorban "
-"szervezetek és haladó felhasználók igénylik."
+msgstr "Csapatunk ezt folyamatosan dönti el, attól függően, hogy mekkora támogatási erőfeszítésre van szükség, milyen szerver- és licencköltségek merülnek fel, és hogy a funkciókat általában mindenki igényli-e, vagy elsősorban szervezetek és haladó felhasználók igénylik."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr ""
-"A Felhasználói útmutató számos haladó témával is foglalkozik, például a "
-"Google Fotókról való áttelepítéssel és a miniatűrök minőségi beállításaival."
+msgstr "A Felhasználói útmutató számos haladó témával is foglalkozik, például a Google Fotókról való áttelepítéssel és a miniatűrök minőségi beállításaival."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1902,8 +1852,7 @@ msgstr "Személyek"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr ""
-"Azok, akikkel megoszt egy linket, nyilvános tartalmakat tekinthetnek meg."
+msgstr "Azok, akikkel megoszt egy linket, nyilvános tartalmakat tekinthetnek meg."
 
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
@@ -1931,9 +1880,7 @@ msgstr "A PhotoPrism 100%-ban önfinanszírozó és független."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
-"A PhotoPrism® egy mesterséges intelligenciával működő fényképalkalmazás a "
-"decentralizált webre."
+msgstr "A PhotoPrism® egy mesterséges intelligenciával működő fényképalkalmazás a decentralizált webre."
 
 #: src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
@@ -1951,7 +1898,7 @@ msgstr "Rózsaszín"
 msgid "Place"
 msgstr "Hely"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:171
+#: src/page/albums.vue:89 src/page/settings/library.vue:172
 msgid "Place & Time"
 msgstr "Hely és idő"
 
@@ -1974,9 +1921,7 @@ msgstr "Kérjük, ne töltsön fel sértő tartalmat tartalmazó fotókat."
 
 #: src/dialog/account/password.vue:17
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr ""
-"Felhívjuk figyelmét, hogy a jelszó megváltoztatása más eszközökön és "
-"böngészőkben is kijelentkezik."
+msgstr "Felhívjuk figyelmét, hogy a jelszó megváltoztatása más eszközökön és böngészőkben is kijelentkezik."
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
@@ -2038,7 +1983,7 @@ msgstr "Kivetítés"
 msgid "Purple"
 msgstr "Lila"
 
-#: src/page/settings/library.vue:90
+#: src/page/settings/library.vue:91
 msgid "Quality Filter"
 msgstr "Minőségi szűrő"
 
@@ -2064,14 +2009,13 @@ msgid "Raw"
 msgstr "Nyers"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
+#: src/page/settings/library.vue:294
 msgid "RAW"
 msgstr "NYERS"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Indexelje újra az összes eredetit, beleértve a már indexelt és változatlan "
-"fájlokat is."
+msgstr "Indexelje újra az összes eredetit, beleértve a már indexelt és változatlan fájlokat is."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -2139,9 +2083,7 @@ msgstr "Eltávolítás az albumból"
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr ""
-"Távolítsa el az importált fájlokat a tárhely megtakarításához. A nem "
-"támogatott fájltípusok soha nem törlődnek, a jelenlegi helyükön maradnak."
+msgstr "Távolítsa el az importált fájlokat a tárhely megtakarításához. A nem támogatott fájltípusok soha nem törlődnek, a jelenlegi helyükön maradnak."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2245,7 +2187,7 @@ msgstr "Kiválasztás visszaállítva"
 msgid "Send"
 msgstr "Küld"
 
-#: src/page/settings/library.vue:213
+#: src/page/settings/library.vue:214
 msgid "Sequential Name"
 msgstr "Sorozati név"
 
@@ -2332,7 +2274,7 @@ msgstr "Szervernaplók megjelenítése a Könyvtárban."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Részletesebb naplóüzeneteket jelenít meg. Újraindítást igényel."
 
-#: src/model/file.js:212
+#: src/model/file.js:212 src/page/settings/library.vue:315
 msgid "Sidecar"
 msgstr "Oldalkocsi"
 
@@ -2374,17 +2316,13 @@ msgstr "Forrás"
 msgid "Stack"
 msgstr "Csoportosítás"
 
-#: src/page/settings/library.vue:193
+#: src/page/settings/library.vue:194
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Fájlok csoportosítása, amelyek ugyanazt az egyedi képet vagy "
-"példányazonosítót tartalmazzák."
+msgstr "Fájlok csoportosítása, amelyek ugyanazt az egyedi képet vagy példányazonosítót tartalmazzák."
 
-#: src/page/settings/library.vue:172
+#: src/page/settings/library.vue:173
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr ""
-"A metaadataik alapján csoportosítsa a pontosan ugyanabban az időben és "
-"helyen készült képeket."
+msgstr "A metaadataik alapján csoportosítsa a pontosan ugyanabban az időben és helyen készült képeket."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2394,11 +2332,9 @@ msgstr "Egymásra rakható"
 msgid "Stacks"
 msgstr "Stackek"
 
-#: src/page/settings/library.vue:138
+#: src/page/settings/library.vue:139
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr ""
-"Csoportosítja a fájlokat hasonló referenciakerettel, de minőségben, "
-"formátumban, méretben vagy színben eltérő."
+msgstr "Csoportosítja a fájlokat hasonló referenciakerettel, de minőségben, formátumban, méretben vagy színben eltérő."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2447,9 +2383,7 @@ msgstr "Super Admin"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr ""
-"A további szolgáltatások, például a Google Drive támogatása jelenleg "
-"fejlesztés alatt áll."
+msgstr "A további szolgáltatások, például a Google Drive támogatása jelenleg fejlesztés alatt áll."
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2482,9 +2416,7 @@ msgstr "Az index jelenleg %{n} rejtett fájlt tartalmaz."
 
 #: src/page/library/index.vue:37
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr ""
-"Előfordulhat, hogy a formátumuk nem támogatott, még nem konvertálták JPEG "
-"formátumba, vagy ismétlődők vannak."
+msgstr "Előfordulhat, hogy a formátumuk nem támogatott, még nem konvertálták JPEG formátumba, vagy ismétlődők vannak."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2494,17 +2426,11 @@ msgstr "Téma"
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr ""
-"Ez hálózati meghajtóként csatlakoztatja az eredeti mappát, és lehetővé teszi "
-"a fájlok megnyitását, szerkesztését és törlését számítógépéről vagy "
-"okostelefonjáról, mintha azok helyi lennének."
+msgstr "Ez hálózati meghajtóként csatlakoztatja az eredeti mappát, és lehetővé teszi a fájlok megnyitását, szerkesztését és törlését számítógépéről vagy okostelefonjáról, mintha azok helyi lennének."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr ""
-"Ez hálózati meghajtóként csatlakoztatja az eredeti mappát, és lehetővé teszi "
-"a fájlok megnyitását, szerkesztését és törlését számítógépéről vagy "
-"okostelefonjáról, mintha azok helyi lennének."
+msgstr "Ez hálózati meghajtóként csatlakoztatja az eredeti mappát, és lehetővé teszi a fájlok megnyitását, szerkesztését és törlését számítógépéről vagy okostelefonjáról, mintha azok helyi lennének."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2547,9 +2473,7 @@ msgstr "A cím túl hosszú"
 
 #: src/page/connect.vue:59 src/page/connect.vue:66
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"A frissítéshez vagy megadhat egy aktiváló kódot, vagy a \"Tovább\" gombra "
-"kattintva regisztrálhat a weboldalunkon:"
+msgstr "A frissítéshez vagy megadhat egy aktiváló kódot, vagy a \"Tovább\" gombra kattintva regisztrálhat a weboldalunkon:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2591,7 +2515,7 @@ msgstr "Jogosulatlan"
 msgid "Undo"
 msgstr "Visszavonás"
 
-#: src/page/settings/library.vue:192
+#: src/page/settings/library.vue:193
 msgid "Unique ID"
 msgstr "Egyéni azonosító"
 
@@ -2709,9 +2633,7 @@ msgstr "Feltöltés…"
 
 #: src/dialog/upload.vue:48
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Az esetlegesen ilyen képeket tartalmazó feltöltések automatikusan "
-"elutasításra kerülnek."
+msgstr "Az esetlegesen ilyen képeket tartalmazó feltöltések automatikusan elutasításra kerülnek."
 
 #: src/dialog/share.vue:157
 msgid "URL"
@@ -2792,9 +2714,7 @@ msgstr "Viewer"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr ""
-"Látogasson el a docs.photoprism.app/user-guide webhelyre, ahol megtudhatja, "
-"hogyan szinkronizálhatja, rendszerezheti és oszthatja meg képeit."
+msgstr "Látogasson el a docs.photoprism.app/user-guide webhelyre, ahol megtudhatja, hogyan szinkronizálhatja, rendszerezheti és oszthatja meg képeit."
 
 #: src/options/admin.js:11
 msgid "Visitor"
@@ -2807,10 +2727,7 @@ msgstr "Csoportosítás hasonlóság szerint"
 
 #: src/page/connect.vue:102
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr ""
-"Az önkéntes adományok nem fedezik egy teljes munkaidőben dolgozó csapat "
-"költségeit, amely frissítésekkel, dokumentációval és támogatással látja el "
-"Önt."
+msgstr "Az önkéntes adományok nem fedezik egy teljes munkaidőben dolgozó csapat költségeit, amely frissítésekkel, dokumentációval és támogatással látja el Önt."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2818,14 +2735,11 @@ msgstr "Nagyra értékeljük visszajelzéseit!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr ""
-"Igyekszünk öt munkanapon belül vagy annál rövidebb időn belül válaszolni."
+msgstr "Igyekszünk öt munkanapon belül vagy annál rövidebb időn belül válaszolni."
 
 #: src/page/about/about.vue:71
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr ""
-"Mindent megteszünk, hogy válaszoljunk minden kérdésére. Cserébe arra kérünk, "
-"hogy támogass minket Patreon vagy GitHub szponzorok."
+msgstr "Mindent megteszünk, hogy válaszoljunk minden kérdésére. Cserébe arra kérünk, hogy támogass minket Patreon vagy GitHub szponzorok."
 
 #: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
 #: src/page/admin/users.vue:39
@@ -2839,16 +2753,13 @@ msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr ""
-"A WebDAV-kliensek a következő URL-címen csatlakozhatnak a PhotoPrism-hez:"
+msgstr "A WebDAV-kliensek a következő URL-címen csatlakozhatnak a PhotoPrism-hez:"
 
 #: src/page/settings/services.vue:37
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr ""
-"A WebDAV-kliensek, mint például a Microsoft Windows Intézője vagy az Apple "
-"Finder, közvetlenül csatlakozhatnak a PhotoPrism-hez."
+msgstr "A WebDAV-kliensek, mint például a Microsoft Windows Intézője vagy az Apple Finder, közvetlenül csatlakozhatnak a PhotoPrism-hez."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2868,8 +2779,7 @@ msgstr "Fehér"
 
 #: src/page/connect.vue:98
 msgid "Why are some features only available to sponsors?"
-msgstr ""
-"Miért vannak olyan funkciók, amelyek csak a szponzorok számára elérhetőek?"
+msgstr "Miért vannak olyan funkciók, amelyek csak a szponzorok számára elérhetőek?"
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2927,15 +2837,11 @@ msgstr "Újra beolvashatja könyvtárát, hogy további arcokat találjon."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Folyamatos támogatása segít nekünk olyan szolgáltatásokat nyújtani, mint a "
-"műholdas térképek és új funkciók fejlesztése."
+msgstr "Folyamatos támogatása segít nekünk olyan szolgáltatásokat nyújtani, mint a műholdas térképek és új funkciók fejlesztése."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr ""
-"Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létrehozza a "
-"különleges pillanatokat, utazásokat és helyeket tartalmazó albumokat."
+msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létrehozza a különleges pillanatokat, utazásokat és helyeket tartalmazó albumokat."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"

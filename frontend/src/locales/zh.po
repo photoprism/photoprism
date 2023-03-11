@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 12:44+0000\n"
 "Last-Translator: Cyra Safia <cyrasafia@gmail.com>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -353,7 +352,7 @@ msgstr "长宽比"
 msgid "Authentication"
 msgstr "认证"
 
-#: src/page/settings/library.vue:112
+#: src/page/settings/library.vue:113
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr "自动为其他文件类型创建 JPEG，以便它们可以显示在浏览器中。"
 
@@ -371,8 +370,7 @@ msgstr "在提交支持请求之前，请使用我们的故障排除清单来确
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "作为 100% 自筹资金和独立的公司，我们可以向您保证，我们永远不会出售您的数据，"
-"并且我们将始终对我们的软件和服务保持透明。"
+msgstr "作为 100% 自筹资金和独立的公司，我们可以向您保证，我们永远不会出售您的数据，并且我们将始终对我们的软件和服务保持透明。"
 
 #: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -583,7 +581,7 @@ msgstr "包含 %{n} 张图片。"
 msgid "Contains one picture."
 msgstr "包含一张图片。"
 
-#: src/page/settings/library.vue:111
+#: src/page/settings/library.vue:112
 msgid "Convert to JPEG"
 msgstr "转换为 JPEG"
 
@@ -812,6 +810,10 @@ msgstr "完成。"
 msgid "Download"
 msgstr "下载"
 
+#: src/page/settings/library.vue:274
+msgid "Download only original media files, without any automatically generated sidecar files."
+msgstr ""
+
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
 msgstr "下载远端文件"
@@ -828,6 +830,10 @@ msgstr "下载单个文件并用 zip 压缩。"
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "下载中…"
+
+#: src/page/settings/library.vue:60
+msgid "Downloads"
+msgstr ""
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -900,11 +906,11 @@ msgstr "启用 RAW 转换器预设，可能会降低性能。"
 msgid "Errors"
 msgstr "错误"
 
-#: src/page/settings/library.vue:70
+#: src/page/settings/library.vue:71
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "在没有坐标的情况下估计图片的大致位置。"
 
-#: src/page/settings/library.vue:69
+#: src/page/settings/library.vue:70
 msgid "Estimates"
 msgstr "估算"
 
@@ -1033,7 +1039,7 @@ msgstr "文件名"
 msgid "Files"
 msgstr "文件"
 
-#: src/page/settings/library.vue:214
+#: src/page/settings/library.vue:215
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "顺序名称的文件如“IMG_1234 (2)”和“IMG_1234 (3)”的文件属于同一图片。"
 
@@ -1221,6 +1227,14 @@ msgstr "此外，赞助者通过电子邮件获得直接的技术支持。"
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "如果缺少你期望的图片，请重新扫描你的库，并等待索引编制完成。"
+
+#: src/page/settings/library.vue:295
+msgid "Include RAW image files when downloading stacks and archives."
+msgstr ""
+
+#: src/page/settings/library.vue:316
+msgid "Include sidecar files when downloading stacks and archives."
+msgstr ""
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1678,7 +1692,7 @@ msgstr "没有包含此关键字的警告或错误，请注意，搜索区分大
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:52 src/page/settings/library.vue:91
+#: src/dialog/upload.vue:52 src/page/settings/library.vue:92
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "非照片和低质量图像出现在搜索结果中前需要进行审查。"
 
@@ -1701,8 +1715,7 @@ msgstr "注意："
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "注意：只能将 WebDAV 服务器（如 Nextcloud 或 "
-"PhotoPrism）配置为远程服务，以进行备份和文件上传。"
+msgstr "注意：只能将 WebDAV 服务器（如 Nextcloud 或 PhotoPrism）配置为远程服务，以进行备份和文件上传。"
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1794,7 +1807,7 @@ msgstr "源文件名"
 # Originals在本项目里有时代表服务器上的照片的储存文件夹，翻译为来源不妥，但我也没想好咋翻译。
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:428
+#: src/page/settings/general.vue:428 src/page/settings/library.vue:273
 msgid "Originals"
 msgstr "源"
 
@@ -1804,8 +1817,7 @@ msgstr "其他"
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是每个人普遍需要"
-"的还是主要由组织和高级用户要求的，持续决定这一点。"
+msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是每个人普遍需要的还是主要由组织和高级用户要求的，持续决定这一点。"
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -1888,7 +1900,7 @@ msgstr "粉红"
 msgid "Place"
 msgstr "地点"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:171
+#: src/page/albums.vue:89 src/page/settings/library.vue:172
 msgid "Place & Time"
 msgstr "地点和时间"
 
@@ -1973,7 +1985,7 @@ msgstr "投影"
 msgid "Purple"
 msgstr "紫"
 
-#: src/page/settings/library.vue:90
+#: src/page/settings/library.vue:91
 msgid "Quality Filter"
 msgstr "质量筛选"
 
@@ -1999,6 +2011,7 @@ msgid "Raw"
 msgstr "Raw"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
+#: src/page/settings/library.vue:294
 msgid "RAW"
 msgstr "RAW"
 
@@ -2073,8 +2086,7 @@ msgstr "从相册中移除"
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "移除导入的文件以节省存储空间，不支持的文件类型将永远不会被删除，它们会保留在"
-"它们当前的位置。"
+msgstr "移除导入的文件以节省存储空间，不支持的文件类型将永远不会被删除，它们会保留在它们当前的位置。"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2178,7 +2190,7 @@ msgstr "所选项已恢复"
 msgid "Send"
 msgstr "发送"
 
-#: src/page/settings/library.vue:213
+#: src/page/settings/library.vue:214
 msgid "Sequential Name"
 msgstr "顺序名称"
 
@@ -2265,7 +2277,7 @@ msgstr "在库中显示服务器日志。"
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "显示更详细的日志信息，需要重新启动。"
 
-#: src/model/file.js:212
+#: src/model/file.js:212 src/page/settings/library.vue:315
 msgid "Sidecar"
 msgstr "附属"
 
@@ -2307,11 +2319,11 @@ msgstr "来源"
 msgid "Stack"
 msgstr "堆"
 
-#: src/page/settings/library.vue:193
+#: src/page/settings/library.vue:194
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "文件堆共享相同的唯一图像或实例标识符。"
 
-#: src/page/settings/library.vue:172
+#: src/page/settings/library.vue:173
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "根据图片的元数据，堆叠在相同的时间和地点拍摄的图片。"
 
@@ -2323,7 +2335,7 @@ msgstr "可堆叠"
 msgid "Stacks"
 msgstr "堆"
 
-#: src/page/settings/library.vue:138
+#: src/page/settings/library.vue:139
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr "堆栈以类似的参考框架来分组文件，但质量、格式、大小或颜色不同。"
 
@@ -2418,14 +2430,12 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"这将原件文件夹挂载为一个网络驱动器，并允许你从你的电脑或智能手机上打开、编辑"
-"和删除文件，就像它们在本地一样。\n"
+"这将原件文件夹挂载为一个网络驱动器，并允许你从你的电脑或智能手机上打开、编辑和删除文件，就像它们在本地一样。\n"
 "          就像它们是本地的一样。"
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "这会将源文件夹安装为网络驱动器，并允许您从计算机或智能手机中打开，编辑和删除"
-"文件，就像它们是本地文件一样。"
+msgstr "这会将源文件夹安装为网络驱动器，并允许您从计算机或智能手机中打开，编辑和删除文件，就像它们是本地文件一样。"
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2510,7 +2520,7 @@ msgstr "未经授权的"
 msgid "Undo"
 msgstr "撤销"
 
-#: src/page/settings/library.vue:192
+#: src/page/settings/library.vue:193
 msgid "Unique ID"
 msgstr "唯一标识符"
 
@@ -2734,8 +2744,7 @@ msgstr "我们尽力在五个工作日或更短时间内作出回应。"
 
 #: src/page/about/about.vue:71
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "我们会尽最大努力回答你的所有问题，作为回报，我们请您在 Patreon 或 GitHub "
-"赞助者上支持我们。"
+msgstr "我们会尽最大努力回答你的所有问题，作为回报，我们请您在 Patreon 或 GitHub 赞助者上支持我们。"
 
 #: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
 #: src/page/admin/users.vue:39
@@ -2835,8 +2844,7 @@ msgstr "你可以重新扫描你的库以找到更多的面部。"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "您的持续支持有助于我们提供定期更新并保持独立，因此我们可以履行我们的使命并保"
-"护您的隐私。"
+msgstr "您的持续支持有助于我们提供定期更新并保持独立，因此我们可以履行我们的使命并保护您的隐私。"
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."

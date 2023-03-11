@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-settings-general">
     <v-form ref="form" lazy-validation
-            dense class="p-form-settings" accept-charset="UTF-8"
+            dense class="p-form-settings pb-1" accept-charset="UTF-8"
             @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-2">
@@ -251,7 +251,7 @@
                   color="secondary-dark"
                   :label="$gettext('Originals')"
                   :hint="$gettext('Browse indexed files and folders in Library.')"
-                  prepend-icon="snippet_folder"
+                  prepend-icon="account_tree"
                   persistent-hint
                   @change="onChange"
               >

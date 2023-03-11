@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 12:44+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: Indonesian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/id/>\n"
+"Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -171,9 +170,7 @@ msgstr "Setelah 1 tahun"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr ""
-"Setelah memilah gambar dari hasil pencarian, Anda dapat menambahkannya ke "
-"album menggunakan menu kontek."
+msgstr "Setelah memilah gambar dari hasil pencarian, Anda dapat menambahkannya ke album menggunakan menu kontek."
 
 #: src/options/options.js:402
 msgid "After two months"
@@ -257,9 +254,7 @@ msgstr "Dalam semua tahun"
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr ""
-"Sebagai kemungkinan lain, Anda dapat mengunggah berkas langsung ke WebDAV "
-"server seperti Nextcloud."
+msgstr "Sebagai kemungkinan lain, Anda dapat mengunggah berkas langsung ke WebDAV server seperti Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -345,9 +340,7 @@ msgstr "Artis"
 
 #: src/page/connect.vue:110
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr ""
-"Karena hal ini membantu kami menyediakan lebih banyak fitur kepada publik, "
-"kami mendorong semua pengguna untuk mendukung misi kami."
+msgstr "Karena hal ini membantu kami menyediakan lebih banyak fitur kepada publik, kami mendorong semua pengguna untuk mendukung misi kami."
 
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
@@ -359,11 +352,9 @@ msgstr "Rasio Aspek"
 msgid "Authentication"
 msgstr "Otentikasi"
 
-#: src/page/settings/library.vue:112
+#: src/page/settings/library.vue:113
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr ""
-"Secara otomatis membuat JPEG untuk jenis file lain sehingga dapat "
-"ditampilkan di browser."
+msgstr "Secara otomatis membuat JPEG untuk jenis file lain sehingga dapat ditampilkan di browser."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -375,16 +366,11 @@ msgstr "Folder Dasar"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr ""
-"Sebelum mengirimkan permintaan dukungan, harap gunakan Daftar Periksa "
-"Pemecahan Masalah kami untuk menentukan penyebab masalah Anda."
+msgstr "Sebelum mengirimkan permintaan dukungan, harap gunakan Daftar Periksa Pemecahan Masalah kami untuk menentukan penyebab masalah Anda."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr ""
-"Karena 100% didanai sendiri dan independen, kami bisa menjanjikan kepada "
-"Anda bahwa kami tidak akan pernah menjual data Anda dan kami akan selalu "
-"transparan tentang perangkat lunak dan layanan kami."
+msgstr "Karena 100% didanai sendiri dan independen, kami bisa menjanjikan kepada Anda bahwa kami tidak akan pernah menjual data Anda dan kami akan selalu transparan tentang perangkat lunak dan layanan kami."
 
 #: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -420,9 +406,7 @@ msgstr "Jelajahi file dan folder yang diindeks di Perpustakaan."
 
 #: src/page/about/about.vue:51
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr ""
-"Jelajahi Basis Pengetahuan untuk informasi terperinci mengenai fitur produk "
-"tertentu, layanan, dan sumber daya terkait."
+msgstr "Jelajahi Basis Pengetahuan untuk informasi terperinci mengenai fitur produk tertentu, layanan, dan sumber daya terkait."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -434,9 +418,7 @@ msgstr "Sibuk, harap tunggu…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Dengan menggunakan perangkat lunak dan layanan yang kami sediakan, Anda "
-"menyetujui ketentuan layanan, kebijakan privasi, dan kode etik kami."
+msgstr "Dengan menggunakan perangkat lunak dan layanan yang kami sediakan, Anda menyetujui ketentuan layanan, kebijakan privasi, dan kode etik kami."
 
 #: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
@@ -553,9 +535,7 @@ msgstr "Warna"
 
 #: src/page/about/about.vue:46
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr ""
-"Masalah umum dapat dengan cepat didiagnosis dan dipecahkan dengan "
-"menggunakan daftar periksa pemecahan masalah yang kami sediakan."
+msgstr "Masalah umum dapat dengan cepat didiagnosis dan dipecahkan dengan menggunakan daftar periksa pemecahan masalah yang kami sediakan."
 
 #: src/page/connect.vue:65 src/page/connect.vue:72
 msgid "Compare Editions"
@@ -601,7 +581,7 @@ msgstr "Berisi %{n} gambar."
 msgid "Contains one picture."
 msgstr "Berisi satu gambar."
 
-#: src/page/settings/library.vue:111
+#: src/page/settings/library.vue:112
 msgid "Convert to JPEG"
 msgstr "Konversi ke JPEG"
 
@@ -787,8 +767,7 @@ msgstr "Jangan backup foto dan metadata album ke file YAML."
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr ""
-"Jangan buat file ExifTool JSON untuk ekstraksi metadata yang lebih baik."
+msgstr "Jangan buat file ExifTool JSON untuk ekstraksi metadata yang lebih baik."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
@@ -831,6 +810,10 @@ msgstr "Selesai."
 msgid "Download"
 msgstr "Unduh"
 
+#: src/page/settings/library.vue:274
+msgid "Download only original media files, without any automatically generated sidecar files."
+msgstr ""
+
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
 msgstr "Unduh file jarak jauh"
@@ -848,15 +831,17 @@ msgstr "Unduh file tunggal dan arsip zip."
 msgid "Downloading…"
 msgstr "Mengunduh…"
 
+#: src/page/settings/library.vue:60
+msgid "Downloads"
+msgstr ""
+
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
 msgstr "Filter Penurunan Skala"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr ""
-"Karena tingginya volume email yang kami terima, tim kami mungkin tidak dapat "
-"segera menghubungi Anda."
+msgstr "Karena tingginya volume email yang kami terima, tim kami mungkin tidak dapat segera menghubungi Anda."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -872,9 +857,7 @@ msgstr "Pratinjau Dinamis"
 
 #: src/page/settings/advanced.vue:303
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr ""
-"Perenderan dinamis memerlukan server yang kuat. Tidak disarankan untuk "
-"perangakat NAS."
+msgstr "Perenderan dinamis memerlukan server yang kuat. Tidak disarankan untuk perangakat NAS."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -917,18 +900,17 @@ msgstr "Aktifkan fitur baru yang sedang dikembangkan."
 
 #: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr ""
-"Aktifkan preset untuk RAW konverter. Memungkinkan adanya penurunan performa."
+msgstr "Aktifkan preset untuk RAW konverter. Memungkinkan adanya penurunan performa."
 
 #: src/app/routes.js:307 src/component/navigation.vue:395
 msgid "Errors"
 msgstr "Kesalahan"
 
-#: src/page/settings/library.vue:70
+#: src/page/settings/library.vue:71
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "Perkiraan lokasi gambar tanpa menggunakan koordinat."
 
-#: src/page/settings/library.vue:69
+#: src/page/settings/library.vue:70
 msgid "Estimates"
 msgstr "Perkiraan"
 
@@ -938,9 +920,7 @@ msgstr "Setiap dua hari"
 
 #: src/page/settings/general.vue:209
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr ""
-"Pengecualian untuk konten yang ditAndai sebagai privasi dari hasil "
-"pencarian, album yang dibagikan, label, dan tempat."
+msgstr "Pengecualian untuk konten yang ditAndai sebagai privasi dari hasil pencarian, album yang dibagikan, label, dan tempat."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -1022,9 +1002,7 @@ msgstr "Umpan Balik"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-"Silakan hubungi kami di hello@photoprism.app jika Anda memiliki pertanyaan "
-"atau butuh bantuan."
+msgstr "Silakan hubungi kami di hello@photoprism.app jika Anda memiliki pertanyaan atau butuh bantuan."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1061,11 +1039,9 @@ msgstr "Nama Berkas"
 msgid "Files"
 msgstr "Berkas"
 
-#: src/page/settings/library.vue:214
+#: src/page/settings/library.vue:215
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr ""
-"File dengan nama berurutan seperti 'IMG_1234 (2)' dan 'IMG_1234 (3)' milik "
-"gambar yang sama."
+msgstr "File dengan nama berurutan seperti 'IMG_1234 (2)' dan 'IMG_1234 (3)' milik gambar yang sama."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1221,15 +1197,11 @@ msgstr "Impor gagal"
 
 #: src/page/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr ""
-"File yang diimpor akan diurutkan berdasarkan tanggal dan diberi nama yang "
-"unik untuk menghindari duplikat."
+msgstr "File yang diimpor akan diurutkan berdasarkan tanggal dan diberi nama yang unik untuk menghindari duplikat."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"File yang diimpor akan diurutkan berdasarkan tanggal dan diberi nama yang "
-"unik."
+msgstr "File yang diimpor akan diurutkan berdasarkan tanggal dan diberi nama yang unik."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1254,9 +1226,15 @@ msgstr "Selain itu, sponsor menerima dukungan teknis langsung melalui email."
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
+msgstr "Jika gambar yang Anda harapkan hilang, silakan pindai ulang perpustakaan Anda dan tunggu."
+
+#: src/page/settings/library.vue:295
+msgid "Include RAW image files when downloading stacks and archives."
 msgstr ""
-"Jika gambar yang Anda harapkan hilang, silakan pindai ulang perpustakaan "
-"Anda dan tunggu."
+
+#: src/page/settings/library.vue:316
+msgid "Include sidecar files when downloading stacks and archives."
+msgstr ""
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1322,15 +1300,11 @@ msgstr "Foto yang dipilih tidak valid"
 
 #: src/page/connect.vue:103
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
-"Adalah keputusan Anda apakah Anda ingin mendaftar untuk menikmati manfaat "
-"tambahan."
+msgstr "Adalah keputusan Anda apakah Anda ingin mendaftar untuk menikmati manfaat tambahan."
 
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr ""
-"Ini memanfaatkan teknologi terbaru untuk menandai dan menemukan gambar "
-"secara otomatis tanpa menghalangi Anda."
+msgstr "Ini memanfaatkan teknologi terbaru untuk menandai dan menemukan gambar secara otomatis tanpa menghalangi Anda."
 
 #: src/model/rest.js:181
 msgid "Item"
@@ -1485,9 +1459,7 @@ msgstr "Lokasi"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr ""
-"Pesan log muncul di sini setiap kali PhotoPrism menemukan file yang rusak, "
-"atau ada masalah potensial lainnya."
+msgstr "Pesan log muncul di sini setiap kali PhotoPrism menemukan file yang rusak, atau ada masalah potensial lainnya."
 
 #: src/component/navigation.vue:474 src/component/navigation.vue:1774
 #: src/component/navigation.vue:2048
@@ -1712,9 +1684,7 @@ msgstr "Tidak ada video yang dipilih"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr ""
-"Tidak ada peringatan atau kesalahan yang mengandung kata kunci ini. "
-"Perhatikan bahwa pencarian adalah case-sensitive."
+msgstr "Tidak ada peringatan atau kesalahan yang mengandung kata kunci ini. Perhatikan bahwa pencarian adalah case-sensitive."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1722,11 +1692,9 @@ msgstr ""
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:52 src/page/settings/library.vue:91
+#: src/dialog/upload.vue:52 src/page/settings/library.vue:92
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr ""
-"Gambar non-fotografis dan berkualitas rendah memerlukan peninjauan sebelum "
-"muncul di hasil pencarian."
+msgstr "Gambar non-fotografis dan berkualitas rendah memerlukan peninjauan sebelum muncul di hasil pencarian."
 
 #: src/options/admin.js:49 src/options/admin.js:68 src/options/options.js:264
 #: src/options/options.js:353
@@ -1739,9 +1707,7 @@ msgstr "Tidak ditemukan"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Perhatikan bahwa Anda dapat mengelola folder asli secara manual dan "
-"mengimpor adalah opsional."
+msgstr "Perhatikan bahwa Anda dapat mengelola folder asli secara manual dan mengimpor adalah opsional."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
@@ -1749,10 +1715,7 @@ msgstr "Catatan:"
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr ""
-"Catatan: Hanya server WebDAV, seperti Nextcloud atau PhotoPrism, yang dapat "
-"dikonfigurasi sebagai layanan jarak jauh untuk pencadangan dan pengunggahan "
-"file."
+msgstr "Catatan: Hanya server WebDAV, seperti Nextcloud atau PhotoPrism, yang dapat dikonfigurasi sebagai layanan jarak jauh untuk pencadangan dan pengunggahan file."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1843,7 +1806,7 @@ msgstr "Nama Asli"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:428
+#: src/page/settings/general.vue:428 src/page/settings/library.vue:273
 msgid "Originals"
 msgstr "Asli"
 
@@ -1853,17 +1816,11 @@ msgstr "Lainnya"
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr ""
-"Tim kami memutuskan hal ini secara berkelanjutan tergantung pada upaya "
-"dukungan yang diperlukan, biaya server dan lisensi, dan apakah fitur-fitur "
-"tersebut secara umum dibutuhkan oleh semua orang atau terutama diminta oleh "
-"organisasi dan pengguna tingkat lanjut."
+msgstr "Tim kami memutuskan hal ini secara berkelanjutan tergantung pada upaya dukungan yang diperlukan, biaya server dan lisensi, dan apakah fitur-fitur tersebut secara umum dibutuhkan oleh semua orang atau terutama diminta oleh organisasi dan pengguna tingkat lanjut."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr ""
-"Panduan Pengguna kami juga mencakup banyak topik tingkat lanjut, seperti "
-"migrasi dari Google Foto dan pengaturan kualitas thumbnail."
+msgstr "Panduan Pengguna kami juga mencakup banyak topik tingkat lanjut, seperti migrasi dari Google Foto dan pengaturan kualitas thumbnail."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1896,8 +1853,7 @@ msgstr "Orang"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr ""
-"Orang lain yang Anda bagikan tautan ini dapat melihat konten secara publik."
+msgstr "Orang lain yang Anda bagikan tautan ini dapat melihat konten secara publik."
 
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
@@ -1925,8 +1881,7 @@ msgstr "PhotoPrism 100% didanai sendiri dan independen."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr ""
-"PhotoPrism® adalah Aplikasi Foto Bertenaga AI untuk Web Terdesentralisasi."
+msgstr "PhotoPrism® adalah Aplikasi Foto Bertenaga AI untuk Web Terdesentralisasi."
 
 #: src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
@@ -1944,7 +1899,7 @@ msgstr "Merah Muda"
 msgid "Place"
 msgstr "Tempat"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:171
+#: src/page/albums.vue:89 src/page/settings/library.vue:172
 msgid "Place & Time"
 msgstr "Tempat & Waktu"
 
@@ -1967,9 +1922,7 @@ msgstr "Jangan mengunggah foto yang mengandung konten SARA."
 
 #: src/dialog/account/password.vue:17
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr ""
-"Harap diperhatikan bahwa mengubah kata sandi Anda akan membuat Anda log out "
-"pada perangkat dan browser lain."
+msgstr "Harap diperhatikan bahwa mengubah kata sandi Anda akan membuat Anda log out pada perangkat dan browser lain."
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
@@ -2031,7 +1984,7 @@ msgstr "Proyeksi"
 msgid "Purple"
 msgstr "Ungu"
 
-#: src/page/settings/library.vue:90
+#: src/page/settings/library.vue:91
 msgid "Quality Filter"
 msgstr "Filter Kualitas"
 
@@ -2057,14 +2010,13 @@ msgid "Raw"
 msgstr "Raw"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
+#: src/page/settings/library.vue:294
 msgid "RAW"
 msgstr "RAW"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Indeks ulang semua dokumen asli, termasuk file yang sudah diindeks dan tidak "
-"diubah."
+msgstr "Indeks ulang semua dokumen asli, termasuk file yang sudah diindeks dan tidak diubah."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -2132,9 +2084,7 @@ msgstr "Hapus dari album"
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr ""
-"Hapus file yang diimpor untuk menghemat penyimpanan. Jenis file yang tidak "
-"didukung tidak akan pernah dihapus, mereka tetap di lokasi mereka saat ini."
+msgstr "Hapus file yang diimpor untuk menghemat penyimpanan. Jenis file yang tidak didukung tidak akan pernah dihapus, mereka tetap di lokasi mereka saat ini."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2238,7 +2188,7 @@ msgstr "Pilihan dipulihkan"
 msgid "Send"
 msgstr "Kirim"
 
-#: src/page/settings/library.vue:213
+#: src/page/settings/library.vue:214
 msgid "Sequential Name"
 msgstr "Nama Urutan"
 
@@ -2325,7 +2275,7 @@ msgstr "Tampilkan log server di Perpustakaan."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Menampilkan pesan log yang lebih detail. Memerlukan restart."
 
-#: src/model/file.js:212
+#: src/model/file.js:212 src/page/settings/library.vue:315
 msgid "Sidecar"
 msgstr "Sespan"
 
@@ -2367,17 +2317,13 @@ msgstr "Sumber"
 msgid "Stack"
 msgstr "Tumpukan"
 
-#: src/page/settings/library.vue:193
+#: src/page/settings/library.vue:194
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Tumpuk file untuk berbagi yang gambarnya unik atau pengenal instans yang "
-"sama."
+msgstr "Tumpuk file untuk berbagi yang gambarnya unik atau pengenal instans yang sama."
 
-#: src/page/settings/library.vue:172
+#: src/page/settings/library.vue:173
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr ""
-"Stack gambar yang diambil pada waktu dan lokasi yang sama persis berdasarkan "
-"metadata."
+msgstr "Stack gambar yang diambil pada waktu dan lokasi yang sama persis berdasarkan metadata."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2387,11 +2333,9 @@ msgstr "Dapat ditumpuk"
 msgid "Stacks"
 msgstr "Tumpukan"
 
-#: src/page/settings/library.vue:138
+#: src/page/settings/library.vue:139
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr ""
-"Menumpukan file grup dengan kerangka acuan yang serupa, namun dengan "
-"perbedaan kualitas, format, ukuran atau warna."
+msgstr "Menumpukan file grup dengan kerangka acuan yang serupa, namun dengan perbedaan kualitas, format, ukuran atau warna."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2440,9 +2384,7 @@ msgstr "Super Admin"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr ""
-"Dukungan untuk layanan tambahan, seperti Google Drive, akan ditambahkan "
-"seiring waktu."
+msgstr "Dukungan untuk layanan tambahan, seperti Google Drive, akan ditambahkan seiring waktu."
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2475,9 +2417,7 @@ msgstr "Indeks saat ini berisi %{n} file tersembunyi."
 
 #: src/page/library/index.vue:37
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr ""
-"Format mereka mungkin tidak didukung, mereka belum dikonversi ke JPEG atau "
-"ada duplikat."
+msgstr "Format mereka mungkin tidak didukung, mereka belum dikonversi ke JPEG atau ada duplikat."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2487,17 +2427,11 @@ msgstr "Tema"
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr ""
-"Ini memasang folder asli sebagai drive tersambung dan memungkinkan Anda "
-"untuk membuka, mengubah, dan menghapus file dari komputer atau ponsel cerdas "
-"Anda."
+msgstr "Ini memasang folder asli sebagai drive tersambung dan memungkinkan Anda untuk membuka, mengubah, dan menghapus file dari komputer atau ponsel cerdas Anda."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr ""
-"Ini memasang folder asli sebagai drive tersambung dan memungkinkan Anda "
-"untuk membuka, mengubah, dan menghapus file dari komputer atau ponsel cerdas "
-"Anda."
+msgstr "Ini memasang folder asli sebagai drive tersambung dan memungkinkan Anda untuk membuka, mengubah, dan menghapus file dari komputer atau ponsel cerdas Anda."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2540,9 +2474,7 @@ msgstr "Judul terlalu panjang"
 
 #: src/page/connect.vue:59 src/page/connect.vue:66
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr ""
-"Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik \"Proceed\""
-" untuk mendaftar di situs web kami:"
+msgstr "Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik \"Proceed\" untuk mendaftar di situs web kami:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2584,7 +2516,7 @@ msgstr "Tidak sah"
 msgid "Undo"
 msgstr "Batalkan"
 
-#: src/page/settings/library.vue:192
+#: src/page/settings/library.vue:193
 msgid "Unique ID"
 msgstr "ID Unik"
 
@@ -2702,8 +2634,7 @@ msgstr "Memuat ulang…"
 
 #: src/dialog/upload.vue:48
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr ""
-"Unggahan yang mungkin berisi gambar seperti itu akan ditolak secara otomatis."
+msgstr "Unggahan yang mungkin berisi gambar seperti itu akan ditolak secara otomatis."
 
 #: src/dialog/share.vue:157
 msgid "URL"
@@ -2784,9 +2715,7 @@ msgstr "Penampil"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr ""
-"Kunjungi docs.photoprism.app/user-guide untuk mempelajari cara "
-"menyinkronkan, mengatur, dan berbagi foto Anda."
+msgstr "Kunjungi docs.photoprism.app/user-guide untuk mempelajari cara menyinkronkan, mengatur, dan berbagi foto Anda."
 
 #: src/options/admin.js:11
 msgid "Visitor"
@@ -2799,9 +2728,7 @@ msgstr "Kelompokkan menurut kesamaan"
 
 #: src/page/connect.vue:102
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr ""
-"Donasi sukarela tidak mencakup biaya tim yang bekerja penuh waktu untuk "
-"menyediakan pembaruan, dokumentasi, dan dukungan kepada Anda."
+msgstr "Donasi sukarela tidak mencakup biaya tim yang bekerja penuh waktu untuk menyediakan pembaruan, dokumentasi, dan dukungan kepada Anda."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2809,16 +2736,11 @@ msgstr "Kami menghargai umpan balik Anda!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr ""
-"Kami melakukan yang terbaik untuk merespons dalam waktu lima hari kerja atau "
-"kurang."
+msgstr "Kami melakukan yang terbaik untuk merespons dalam waktu lima hari kerja atau kurang."
 
 #: src/page/about/about.vue:71
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr ""
-"Kami akan melakukan yang terbaik untuk menjawab semua pertanyaan Anda. "
-"Sebagai imbalannya, kami meminta Anda untuk mendukung kami di Patreon atau "
-"Sponsor GitHub."
+msgstr "Kami akan melakukan yang terbaik untuk menjawab semua pertanyaan Anda. Sebagai imbalannya, kami meminta Anda untuk mendukung kami di Patreon atau Sponsor GitHub."
 
 #: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
 #: src/page/admin/users.vue:39
@@ -2838,9 +2760,7 @@ msgstr "Klien WebDAV dapat terhubung ke PhotoPrism menggunakan URL berikut:"
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr ""
-"Klien WebDAV, seperti Microsoft Windows Explorer atau Apple's Finder, dapat "
-"terhubung langsung ke PhotoPrism."
+msgstr "Klien WebDAV, seperti Microsoft Windows Explorer atau Apple's Finder, dapat terhubung langsung ke PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2914,20 +2834,15 @@ msgstr "Anda hanya dapat memilih satu item"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr ""
-"Anda dapat memindai ulang perpustakaan Anda untuk menemukan wajah tambahan."
+msgstr "Anda dapat memindai ulang perpustakaan Anda untuk menemukan wajah tambahan."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Dukungan Anda yang berkelanjutan membantu kami menyediakan layanan seperti "
-"peta satelit dan mengembangkan fitur-fitur terbaru."
+msgstr "Dukungan Anda yang berkelanjutan membantu kami menyediakan layanan seperti peta satelit dan mengembangkan fitur-fitur terbaru."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr ""
-"Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat album "
-"momen spesial, perjalanan, dan tempat."
+msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat album momen spesial, perjalanan, dan tempat."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
