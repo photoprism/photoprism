@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 12:44+0000\n"
-"Last-Translator: Hristian Dimitrov <hristiyan.dimitrov6dm5@gmail.com>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
+"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -813,6 +814,8 @@ msgstr "Изтегляне"
 #: src/page/settings/library.vue:274
 msgid "Download only original media files, without any automatically generated sidecar files."
 msgstr ""
+"Изтеглете само оригинални мултимедийни файлове, без автоматично генерирани "
+"странични файлове."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -833,7 +836,7 @@ msgstr "Изтегляне…"
 
 #: src/page/settings/library.vue:60
 msgid "Downloads"
-msgstr ""
+msgstr "Изтегляне"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -1231,10 +1234,11 @@ msgstr "В случай че очакваните от вас снимки ли�
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr ""
+"Включване на файлове с RAW изображения при изтегляне на стекове и архиви."
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
+msgstr "Включване на странични файлове при изтегляне на стекове и архиви."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
