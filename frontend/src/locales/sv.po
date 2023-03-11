@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"PO-Revision-Date: 2023-03-11 14:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
+"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,7 +813,7 @@ msgstr "Ladda ner"
 
 #: src/page/settings/general.vue:561
 msgid "Download only original media files, without any automatically generated files."
-msgstr ""
+msgstr "Hämta endast originalmediefiler, utan automatiskt genererade filer."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"

@@ -2,12 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"PO-Revision-Date: 2023-03-11 14:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -810,6 +811,7 @@ msgstr "Prenesi"
 #: src/page/settings/general.vue:561
 msgid "Download only original media files, without any automatically generated files."
 msgstr ""
+"Prenesite samo izvirne medijske datoteke brez samodejno ustvarjenih datotek."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
