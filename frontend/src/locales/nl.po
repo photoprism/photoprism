@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 12:44+0000\n"
-"Last-Translator: LyssaK <a.y.kurasova@gmail.com>\n"
-"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
+"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
+"frontend/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -813,6 +814,8 @@ msgstr "Download"
 #: src/page/settings/library.vue:274
 msgid "Download only original media files, without any automatically generated sidecar files."
 msgstr ""
+"Download alleen originele mediabestanden, zonder automatisch gegenereerde "
+"zijwaartse bestanden."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -833,7 +836,7 @@ msgstr "Downloaden…"
 
 #: src/page/settings/library.vue:60
 msgid "Downloads"
-msgstr ""
+msgstr "Downloads"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -1230,11 +1233,11 @@ msgstr "Mochten er foto's ontbreken die u verwacht, scan dan uw bibliotheek opni
 
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr ""
+msgstr "RAW-beeldbestanden opnemen bij het downloaden van stacks en archieven."
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
+msgstr "Inclusief sidecar-bestanden bij het downloaden van stacks en archieven."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6

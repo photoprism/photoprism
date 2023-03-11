@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 12:44+0000\n"
-"Last-Translator: nikhilhurule <nikhilhurule@gmail.com>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
+"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
+"frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -813,6 +814,8 @@ msgstr "डाउनलोड"
 #: src/page/settings/library.vue:274
 msgid "Download only original media files, without any automatically generated sidecar files."
 msgstr ""
+"बिना किसी स्वचालित रूप से जेनरेट की गई साइडकार फ़ाइलों के बिना केवल मूल "
+"मीडिया फ़ाइलें डाउनलोड करें।"
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -833,7 +836,7 @@ msgstr "डाउनलोड कर रहा है …"
 
 #: src/page/settings/library.vue:60
 msgid "Downloads"
-msgstr ""
+msgstr "डाउनलोड"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -1230,11 +1233,11 @@ msgstr "यदि आपके द्वारा अपेक्षित च�
 
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr ""
+msgstr "ढेर और संग्रह डाउनलोड करते समय RAW छवि फ़ाइलें शामिल करें।"
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
+msgstr "ढेर और संग्रह डाउनलोड करते समय साइडकार फ़ाइलें शामिल करें।"
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6

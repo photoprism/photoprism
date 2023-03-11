@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 12:44+0000\n"
-"Last-Translator: Cyra Safia <cyrasafia@gmail.com>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
+"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,7 +813,7 @@ msgstr "下载"
 
 #: src/page/settings/library.vue:274
 msgid "Download only original media files, without any automatically generated sidecar files."
-msgstr ""
+msgstr "只下载原始的媒体文件，没有任何自动生成的边卡文件。"
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -833,7 +834,7 @@ msgstr "下载中…"
 
 #: src/page/settings/library.vue:60
 msgid "Downloads"
-msgstr ""
+msgstr "下载"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -1230,11 +1231,11 @@ msgstr "如果缺少你期望的图片，请重新扫描你的库，并等待索
 
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr ""
+msgstr "在下载堆栈和档案时包括RAW图像文件。"
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
+msgstr "在下载堆栈和档案时包括sidecar文件。"
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6

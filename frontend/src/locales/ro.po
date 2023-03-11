@@ -3,14 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 12:44+0000\n"
-"Last-Translator: Sabin Oana <sabin.oana@gmail.com>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
+"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -813,6 +815,8 @@ msgstr "Descărcați"
 #: src/page/settings/library.vue:274
 msgid "Download only original media files, without any automatically generated sidecar files."
 msgstr ""
+"Descărcați numai fișierele media originale, fără fișiere secundare generate "
+"automat."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -833,7 +837,7 @@ msgstr "Descărcarea…"
 
 #: src/page/settings/library.vue:60
 msgid "Downloads"
-msgstr ""
+msgstr "Descărcări"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -1231,10 +1235,11 @@ msgstr "În cazul în care imaginile pe care le așteptați lipsesc, vă rugăm 
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr ""
+"Includeți fișiere de imagine RAW atunci când descărcați stive și arhive."
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
+msgstr "Includeți fișiere sidecar atunci când descărcați stive și arhive."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6

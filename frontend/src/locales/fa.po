@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 12:45+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
@@ -813,6 +813,8 @@ msgstr "بارگیری"
 #: src/page/settings/library.vue:274
 msgid "Download only original media files, without any automatically generated sidecar files."
 msgstr ""
+"فقط فایل های رسانه ای اصلی را دانلود کنید، بدون هیچ فایلی که به صورت خودکار "
+"تولید می شود."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -833,7 +835,7 @@ msgstr "درحال دانلود…"
 
 #: src/page/settings/library.vue:60
 msgid "Downloads"
-msgstr ""
+msgstr "دانلودها"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -1230,11 +1232,11 @@ msgstr "در صورتی که تصاویری که انتظار دارید گم ش
 
 #: src/page/settings/library.vue:295
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr ""
+msgstr "هنگام بارگیری پشته ها و بایگانی ها، فایل های تصویری RAW را اضافه کنید."
 
 #: src/page/settings/library.vue:316
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr ""
+msgstr "هنگام بارگیری پشته ها و بایگانی ها، فایل های sidecar را اضافه کنید."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
