@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 13:57+0000\n"
+"PO-Revision-Date: 2023-03-11 14:08+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
+"Language-Team: Japanese <https://translate.photoprism.app/projects/"
+"photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -812,7 +813,8 @@ msgstr "ダウンロード"
 
 #: src/page/settings/library.vue:274
 msgid "Download only original media files, without any automatically generated files."
-msgstr ""
+msgstr "自動生成されたファイルを一切使用せず、オリジナルのメディアファイルのみをダウ"
+"ンロードすることができます。"
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
