@@ -70,7 +70,7 @@ msgstr "Avgrund"
 #: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:140 src/page/settings.vue:84
-#: src/page/settings/general.vue:472
+#: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "Konto"
 
@@ -118,7 +118,7 @@ msgstr "Redigera konto"
 msgid "Add Album"
 msgstr "Lägg till album"
 
-#: src/page/settings/general.vue:231
+#: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
 msgstr "Lägg till filer till ditt bibliotek via webbuppladdning."
 
@@ -275,7 +275,7 @@ msgstr "Ett fel inträffade - är du offline?"
 msgid "Animated"
 msgstr "Animerad"
 
-#: src/page/settings/general.vue:581
+#: src/page/settings/general.vue:686
 msgid "Animation"
 msgstr "Animering"
 
@@ -298,7 +298,7 @@ msgstr "Godkänn"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
-#: src/page/settings/general.vue:340
+#: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "Arkiv"
 
@@ -352,11 +352,11 @@ msgstr "Bildförhållande"
 msgid "Authentication"
 msgstr "Autentisering"
 
-#: src/page/settings/library.vue:113
+#: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr "Skapa automatiskt JPEG-filer för andra filtyper så att de kan visas i en webbläsare."
 
-#: src/page/settings/general.vue:165
+#: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Skapa automatiskt album med speciella ögonblick, resor och platser."
 
@@ -396,11 +396,11 @@ msgstr "Blå"
 msgid "Brown"
 msgstr "Brun"
 
-#: src/page/settings/general.vue:187
+#: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "Bläddra och redigera etiketter för bildklassificering."
 
-#: src/page/settings/general.vue:429
+#: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "Bläddra bland indexerade filer och mappar i biblioteket."
 
@@ -484,11 +484,11 @@ msgstr "Ändra den privata flaggan"
 msgid "Change Password"
 msgstr "Nytt lösenord"
 
-#: src/page/settings/general.vue:473
+#: src/page/settings/general.vue:474
 msgid "Change personal profile and security settings."
 msgstr "Ändra personliga profil- och säkerhetsinställningar."
 
-#: src/page/settings/general.vue:319
+#: src/page/settings/general.vue:320
 msgid "Change photo titles, locations, and other metadata."
 msgstr "Ändra bildtitlar, platser och andra metadata."
 
@@ -581,7 +581,7 @@ msgstr "Innehåller %{n} bilder."
 msgid "Contains one picture."
 msgstr "Innehåller en bild."
 
-#: src/page/settings/library.vue:112
+#: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
 msgstr "Konvertera till JPEG"
 
@@ -673,7 +673,7 @@ msgstr "Standardmapp"
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
 #: src/dialog/share.vue:228 src/page/library/errors.vue:88
-#: src/page/settings/general.vue:362
+#: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Radera"
 
@@ -806,11 +806,11 @@ msgstr "Klart."
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:252
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "Ladda ner"
 
-#: src/page/settings/library.vue:274
+#: src/page/settings/general.vue:561
 msgid "Download only original media files, without any automatically generated files."
 msgstr ""
 
@@ -818,7 +818,7 @@ msgstr ""
 msgid "Download remote files"
 msgstr "Hämta fjärrfiler"
 
-#: src/page/settings/general.vue:253
+#: src/page/settings/general.vue:254
 msgid "Download single files and zip archives."
 msgstr "Ladda ner enskilda filer och zip-arkiv."
 
@@ -830,10 +830,6 @@ msgstr "Ladda ner enskilda filer och zip-arkiv."
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "Hämtar…"
-
-#: src/page/settings/library.vue:60
-msgid "Downloads"
-msgstr "Nedladdningar"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -869,7 +865,7 @@ msgstr "E-post"
 
 #: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:82
 #: src/component/photo-viewer.vue:97 src/component/photo/clipboard.vue:111
-#: src/page/settings/general.vue:318
+#: src/page/settings/general.vue:319
 msgid "Edit"
 msgstr "Redigera"
 
@@ -906,11 +902,11 @@ msgstr "Aktiverar förinställningar för RAW-omvandlare. Kan minska prestandan.
 msgid "Errors"
 msgstr "Fel"
 
-#: src/page/settings/library.vue:71
+#: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "Uppskatta den ungefärliga placeringen av bilder utan koordinater."
 
-#: src/page/settings/library.vue:70
+#: src/page/settings/library.vue:69
 msgid "Estimates"
 msgstr "Uppskattningar"
 
@@ -918,7 +914,7 @@ msgstr "Uppskattningar"
 msgid "Every two days"
 msgstr "Varannan dag"
 
-#: src/page/settings/general.vue:209
+#: src/page/settings/general.vue:210
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Undanta innehåll som markerats som privat från sökresultat, delade album, etiketter och platser."
 
@@ -1039,7 +1035,7 @@ msgstr "Filnamn"
 msgid "Files"
 msgstr "Filer"
 
-#: src/page/settings/library.vue:215
+#: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "Filer med sekventiella namn som 'IMG_1234 (2)' och 'IMG_1234 (3)' tillhör samma bild."
 
@@ -1154,7 +1150,7 @@ msgstr "Dolda filer"
 msgid "Hide"
 msgstr "Dölj"
 
-#: src/page/settings/general.vue:341
+#: src/page/settings/general.vue:342
 msgid "Hide photos that have been moved to archive."
 msgstr "Dölj foton som har flyttats till arkivet."
 
@@ -1187,7 +1183,7 @@ msgid "Image Quality"
 msgstr "Bildkvalitet"
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
-#: src/page/settings/general.vue:274
+#: src/page/settings/general.vue:275
 msgid "Import"
 msgstr "Import"
 
@@ -1199,7 +1195,7 @@ msgstr "Importen misslyckades"
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "Importerade filer sorteras efter datum och får ett unikt namn för att undvika dubbletter."
 
-#: src/page/settings/general.vue:275
+#: src/page/settings/general.vue:276
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr "Importerade filer sorteras efter datum och får ett unikt namn."
 
@@ -1228,11 +1224,11 @@ msgstr "Dessutom får sponsorer direkt teknisk support via e-post."
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Om du upplever att bilder saknas, vänligen skanna om biblioteket och vänta tills indexeringen är slutförd."
 
-#: src/page/settings/library.vue:295
+#: src/page/settings/general.vue:582
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "Inkludera RAW-bildfiler när du laddar ner staplar och arkiv."
 
-#: src/page/settings/library.vue:316
+#: src/page/settings/general.vue:603
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Inkludera sidecar-filer när du laddar ner stackar och arkiv."
 
@@ -1241,7 +1237,7 @@ msgstr "Inkludera sidecar-filer när du laddar ner stackar och arkiv."
 msgid "Index"
 msgstr "Index"
 
-#: src/page/settings/general.vue:407
+#: src/page/settings/general.vue:408
 msgid "Index and import files through the user interface."
 msgstr "Indexera och importera filer via användargränssnittet."
 
@@ -1337,7 +1333,7 @@ msgstr "Etikett"
 #: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
-#: src/page/settings/general.vue:186
+#: src/page/settings/general.vue:187
 msgid "Labels"
 msgstr "Etiketter"
 
@@ -1349,7 +1345,7 @@ msgstr "Etiketter raderade"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Bevarande av detaljer, minimala artefakter"
 
-#: src/page/settings/general.vue:93
+#: src/page/settings/general.vue:94
 msgid "Language"
 msgstr "Språk"
 
@@ -1395,7 +1391,7 @@ msgstr "Objektiv"
 #: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
-#: src/page/settings.vue:48 src/page/settings/general.vue:406
+#: src/page/settings.vue:48 src/page/settings/general.vue:407
 msgid "Library"
 msgstr "Bibliotek"
 
@@ -1472,7 +1468,7 @@ msgid "Logout"
 msgstr "Logga ut"
 
 #: src/component/navigation.vue:586 src/page/library.vue:58
-#: src/page/settings/general.vue:450
+#: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "Loggar"
 
@@ -1512,7 +1508,7 @@ msgstr "manuellt"
 msgid "Manual Upload"
 msgstr "Manuell uppladdning"
 
-#: src/page/settings/general.vue:558
+#: src/page/settings/general.vue:663
 msgid "Maps"
 msgstr "Kartor"
 
@@ -1541,7 +1537,7 @@ msgid "Missing"
 msgstr "Saknas"
 
 #: src/app/routes.js:162 src/component/navigation.vue:244
-#: src/component/navigation.vue:971 src/page/settings/general.vue:164
+#: src/component/navigation.vue:971 src/page/settings/general.vue:165
 msgid "Moments"
 msgstr "Stunder"
 
@@ -1692,7 +1688,7 @@ msgstr "Inga varningar eller fel som innehåller detta nyckelord. Observera att 
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:52 src/page/settings/library.vue:92
+#: src/dialog/upload.vue:52 src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Bilder som inte är fotografiska eller av låg kvalitet måste granskas innan de visas i sökresultaten."
 
@@ -1806,7 +1802,7 @@ msgstr "Ursprungligt namn"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:428 src/page/settings/library.vue:273
+#: src/page/settings/general.vue:429 src/page/settings/general.vue:560
 msgid "Originals"
 msgstr "Original"
 
@@ -1847,7 +1843,7 @@ msgstr "Lösenordet har ändrats"
 #: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
 #: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
+#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
 msgstr "Människor"
 
@@ -1859,7 +1855,7 @@ msgstr "Personer som du delar en länk med kan se det offentliga innehållet."
 msgid "Permanently deleted"
 msgstr "Permanent borttagen"
 
-#: src/page/settings/general.vue:363
+#: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "Ta bort filer permanent för att frigöra lagringsutrymme."
 
@@ -1899,7 +1895,7 @@ msgstr "Rosa"
 msgid "Place"
 msgstr "Plats"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:172
+#: src/page/albums.vue:89 src/page/settings/library.vue:171
 msgid "Place & Time"
 msgstr "Plats och Tid"
 
@@ -1908,7 +1904,7 @@ msgstr "Plats och Tid"
 #: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:496
+#: src/page/settings/general.vue:145 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "Platser"
 
@@ -1964,7 +1960,7 @@ msgstr "Primär"
 
 #: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
+#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "Privat"
 
@@ -1984,7 +1980,7 @@ msgstr "Projektion"
 msgid "Purple"
 msgstr "Lila"
 
-#: src/page/settings/library.vue:91
+#: src/page/settings/library.vue:90
 msgid "Quality Filter"
 msgstr "Kvalitetsfilter"
 
@@ -2010,7 +2006,7 @@ msgid "Raw"
 msgstr "Rå"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
-#: src/page/settings/library.vue:294
+#: src/page/settings/general.vue:581
 msgid "RAW"
 msgstr "RAW"
 
@@ -2045,7 +2041,7 @@ msgstr "Identifieringen börjar när indexeringen har slutförts."
 msgid "Recognized"
 msgstr "Igenkänd"
 
-#: src/page/settings/general.vue:143
+#: src/page/settings/general.vue:144
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Känner igen ansikten så att specifika personer kan hittas."
 
@@ -2148,7 +2144,7 @@ msgstr "Skannar"
 msgid "Search"
 msgstr "Sök"
 
-#: src/page/settings/general.vue:497
+#: src/page/settings/general.vue:498
 msgid "Search and display photos on a map."
 msgstr "Sök och visa foton på en karta."
 
@@ -2188,7 +2184,7 @@ msgstr "Urvalet har återställts"
 msgid "Send"
 msgstr "Skicka"
 
-#: src/page/settings/library.vue:214
+#: src/page/settings/library.vue:213
 msgid "Sequential Name"
 msgstr "Sekventiellt namn"
 
@@ -2197,7 +2193,7 @@ msgstr "Sekventiellt namn"
 msgid "Service URL"
 msgstr "Tjänstens URL"
 
-#: src/page/settings.vue:72 src/page/settings/general.vue:384
+#: src/page/settings.vue:72 src/page/settings/general.vue:385
 msgid "Services"
 msgstr "Tjänstens URL"
 
@@ -2235,7 +2231,7 @@ msgid "Shadow"
 msgstr "Skugga"
 
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
-#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:296
+#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
 msgstr "Dela"
 
@@ -2243,7 +2239,7 @@ msgstr "Dela"
 msgid "Share %{name}"
 msgstr "Dela %{name}"
 
-#: src/page/settings/general.vue:385
+#: src/page/settings/general.vue:386
 msgid "Share your pictures with other apps and services."
 msgstr "Dela dina bilder med andra appar och tjänster."
 
@@ -2267,7 +2263,7 @@ msgstr "Visa mindre"
 msgid "Show more"
 msgstr "Visa mer"
 
-#: src/page/settings/general.vue:451
+#: src/page/settings/general.vue:452
 msgid "Show server logs in Library."
 msgstr "Visa serverloggar i biblioteket."
 
@@ -2275,7 +2271,7 @@ msgstr "Visa serverloggar i biblioteket."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Visar mer detaljerade loggmeddelanden. Kräver en omstart."
 
-#: src/model/file.js:212 src/page/settings/library.vue:315
+#: src/model/file.js:212 src/page/settings/general.vue:602
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2317,11 +2313,11 @@ msgstr "Källa"
 msgid "Stack"
 msgstr "Samling"
 
-#: src/page/settings/library.vue:194
+#: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "Stapla filer som har samma unika bild- eller instansidentifierare."
 
-#: src/page/settings/library.vue:173
+#: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Stapla bilder som tagits vid exakt samma tidpunkt och plats baserat på deras metadata."
 
@@ -2333,7 +2329,7 @@ msgstr "Stapelbar"
 msgid "Stacks"
 msgstr "Staplar"
 
-#: src/page/settings/library.vue:139
+#: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr "Staplar grupperar filer med liknande referensramar, men med skillnader i kvalitet, format, storlek eller färg."
 
@@ -2419,7 +2415,7 @@ msgstr "Indexet innehåller för närvarande %{n} dolda filer."
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "Formatet kanske inte stöds, de har ännu inte konverterats till JPEG eller det finns dubbletter."
 
-#: src/page/settings/general.vue:70
+#: src/page/settings/general.vue:71
 msgid "Theme"
 msgstr "Tema"
 
@@ -2518,7 +2514,7 @@ msgstr "Obehörig"
 msgid "Undo"
 msgstr "Ångra"
 
-#: src/page/settings/library.vue:193
+#: src/page/settings/library.vue:192
 msgid "Unique ID"
 msgstr "Unikt ID"
 
@@ -2589,7 +2585,7 @@ msgstr "Uppgradera nu"
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
-#: src/page/library/import.vue:38 src/page/settings/general.vue:230
+#: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
 msgstr "Ladda upp"
@@ -2614,7 +2610,7 @@ msgstr "Ladda upp en mapp"
 msgid "Upload local files"
 msgstr "Ladda upp lokala filer"
 
-#: src/page/settings/general.vue:297
+#: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Ladda upp till WebDAV och dela länkar med vänner."
 
@@ -2851,6 +2847,9 @@ msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
+
+#~ msgid "Downloads"
+#~ msgstr "Nedladdningar"
 
 #~ msgid "Download only original media files, without any automatically generated sidecar files."
 #~ msgstr "Hämta endast originalmediefiler, utan automatiskt genererade sidokörningsfiler."

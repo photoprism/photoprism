@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 14:08+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -71,7 +70,7 @@ msgstr "深渊"
 #: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:140 src/page/settings.vue:84
-#: src/page/settings/general.vue:472
+#: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "账户"
 
@@ -119,7 +118,7 @@ msgstr "添加账户"
 msgid "Add Album"
 msgstr "添加相册"
 
-#: src/page/settings/general.vue:231
+#: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
 msgstr "从网页上传文件到库。"
 
@@ -276,7 +275,7 @@ msgstr "发生错误——您离线了？"
 msgid "Animated"
 msgstr "动画"
 
-#: src/page/settings/general.vue:581
+#: src/page/settings/general.vue:686
 msgid "Animation"
 msgstr "动画"
 
@@ -299,7 +298,7 @@ msgstr "批准"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
-#: src/page/settings/general.vue:340
+#: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "归档"
 
@@ -353,11 +352,11 @@ msgstr "长宽比"
 msgid "Authentication"
 msgstr "认证"
 
-#: src/page/settings/library.vue:113
+#: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr "自动为其他文件类型创建 JPEG，以便它们可以显示在浏览器中。"
 
-#: src/page/settings/general.vue:165
+#: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "自动创建特殊时刻、旅行和地点的相册。"
 
@@ -397,11 +396,11 @@ msgstr "蓝"
 msgid "Brown"
 msgstr "棕"
 
-#: src/page/settings/general.vue:187
+#: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "浏览和编辑图像分类标签。"
 
-#: src/page/settings/general.vue:429
+#: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "浏览库中已索引的文件和文件夹。"
 
@@ -485,11 +484,11 @@ msgstr "改变头像"
 msgid "Change Password"
 msgstr "更改密码"
 
-#: src/page/settings/general.vue:473
+#: src/page/settings/general.vue:474
 msgid "Change personal profile and security settings."
 msgstr "修改个人资料及安全设置。"
 
-#: src/page/settings/general.vue:319
+#: src/page/settings/general.vue:320
 msgid "Change photo titles, locations, and other metadata."
 msgstr "更改照片标题、位置及其他元数据。"
 
@@ -582,7 +581,7 @@ msgstr "包含 %{n} 张图片。"
 msgid "Contains one picture."
 msgstr "包含一张图片。"
 
-#: src/page/settings/library.vue:112
+#: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
 msgstr "转换为 JPEG"
 
@@ -674,7 +673,7 @@ msgstr "默认文件夹"
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
 #: src/dialog/share.vue:228 src/page/library/errors.vue:88
-#: src/page/settings/general.vue:362
+#: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "删除"
 
@@ -807,11 +806,11 @@ msgstr "完成。"
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:252
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "下载"
 
-#: src/page/settings/library.vue:274
+#: src/page/settings/general.vue:561
 msgid "Download only original media files, without any automatically generated files."
 msgstr "只下载原始媒体文件，没有任何自动生成的文件。"
 
@@ -819,7 +818,7 @@ msgstr "只下载原始媒体文件，没有任何自动生成的文件。"
 msgid "Download remote files"
 msgstr "下载远端文件"
 
-#: src/page/settings/general.vue:253
+#: src/page/settings/general.vue:254
 msgid "Download single files and zip archives."
 msgstr "下载单个文件并用 zip 压缩。"
 
@@ -831,10 +830,6 @@ msgstr "下载单个文件并用 zip 压缩。"
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "下载中…"
-
-#: src/page/settings/library.vue:60
-msgid "Downloads"
-msgstr "下载"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -870,7 +865,7 @@ msgstr "电子邮件"
 
 #: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:82
 #: src/component/photo-viewer.vue:97 src/component/photo/clipboard.vue:111
-#: src/page/settings/general.vue:318
+#: src/page/settings/general.vue:319
 msgid "Edit"
 msgstr "编辑"
 
@@ -907,11 +902,11 @@ msgstr "启用 RAW 转换器预设，可能会降低性能。"
 msgid "Errors"
 msgstr "错误"
 
-#: src/page/settings/library.vue:71
+#: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "在没有坐标的情况下估计图片的大致位置。"
 
-#: src/page/settings/library.vue:70
+#: src/page/settings/library.vue:69
 msgid "Estimates"
 msgstr "估算"
 
@@ -919,7 +914,7 @@ msgstr "估算"
 msgid "Every two days"
 msgstr "每两天"
 
-#: src/page/settings/general.vue:209
+#: src/page/settings/general.vue:210
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "排除搜索结果中标记私有的内容，已共享的相册、标签和地点。"
 
@@ -1040,7 +1035,7 @@ msgstr "文件名"
 msgid "Files"
 msgstr "文件"
 
-#: src/page/settings/library.vue:215
+#: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "顺序名称的文件如“IMG_1234 (2)”和“IMG_1234 (3)”的文件属于同一图片。"
 
@@ -1155,7 +1150,7 @@ msgstr "隐藏文件"
 msgid "Hide"
 msgstr "隐藏"
 
-#: src/page/settings/general.vue:341
+#: src/page/settings/general.vue:342
 msgid "Hide photos that have been moved to archive."
 msgstr "隐藏已归档的照片。"
 
@@ -1188,7 +1183,7 @@ msgid "Image Quality"
 msgstr "图像质量"
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
-#: src/page/settings/general.vue:274
+#: src/page/settings/general.vue:275
 msgid "Import"
 msgstr "导入"
 
@@ -1200,7 +1195,7 @@ msgstr "导入失败"
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "导入的文件将被全部重新命名以避免重名，并按照日期重新排序。"
 
-#: src/page/settings/general.vue:275
+#: src/page/settings/general.vue:276
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr "导入的文件将按日期排序，并给出唯一的名称。"
 
@@ -1229,11 +1224,11 @@ msgstr "此外，赞助者通过电子邮件获得直接的技术支持。"
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "如果缺少你期望的图片，请重新扫描你的库，并等待索引编制完成。"
 
-#: src/page/settings/library.vue:295
+#: src/page/settings/general.vue:582
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "在下载堆栈和档案时包括RAW图像文件。"
 
-#: src/page/settings/library.vue:316
+#: src/page/settings/general.vue:603
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "在下载堆栈和档案时包括sidecar文件。"
 
@@ -1242,7 +1237,7 @@ msgstr "在下载堆栈和档案时包括sidecar文件。"
 msgid "Index"
 msgstr "索引"
 
-#: src/page/settings/general.vue:407
+#: src/page/settings/general.vue:408
 msgid "Index and import files through the user interface."
 msgstr "通过用户界面索引和导入文件。"
 
@@ -1338,7 +1333,7 @@ msgstr "标签"
 #: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
-#: src/page/settings/general.vue:186
+#: src/page/settings/general.vue:187
 msgid "Labels"
 msgstr "标签"
 
@@ -1350,7 +1345,7 @@ msgstr "标签已移除"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos：保留细节，虚影较小"
 
-#: src/page/settings/general.vue:93
+#: src/page/settings/general.vue:94
 msgid "Language"
 msgstr "语言"
 
@@ -1396,7 +1391,7 @@ msgstr "镜头"
 #: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
-#: src/page/settings.vue:48 src/page/settings/general.vue:406
+#: src/page/settings.vue:48 src/page/settings/general.vue:407
 msgid "Library"
 msgstr "资料库"
 
@@ -1473,7 +1468,7 @@ msgid "Logout"
 msgstr "登出"
 
 #: src/component/navigation.vue:586 src/page/library.vue:58
-#: src/page/settings/general.vue:450
+#: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "日志"
 
@@ -1513,7 +1508,7 @@ msgstr "手动标注"
 msgid "Manual Upload"
 msgstr "手动上传"
 
-#: src/page/settings/general.vue:558
+#: src/page/settings/general.vue:663
 msgid "Maps"
 msgstr "地图"
 
@@ -1542,7 +1537,7 @@ msgid "Missing"
 msgstr "缺失"
 
 #: src/app/routes.js:162 src/component/navigation.vue:244
-#: src/component/navigation.vue:971 src/page/settings/general.vue:164
+#: src/component/navigation.vue:971 src/page/settings/general.vue:165
 msgid "Moments"
 msgstr "瞬间"
 
@@ -1693,7 +1688,7 @@ msgstr "没有包含此关键字的警告或错误，请注意，搜索区分大
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:52 src/page/settings/library.vue:92
+#: src/dialog/upload.vue:52 src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "非照片和低质量图像出现在搜索结果中前需要进行审查。"
 
@@ -1808,7 +1803,7 @@ msgstr "源文件名"
 # Originals在本项目里有时代表服务器上的照片的储存文件夹，翻译为来源不妥，但我也没想好咋翻译。
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:428 src/page/settings/library.vue:273
+#: src/page/settings/general.vue:429 src/page/settings/general.vue:560
 msgid "Originals"
 msgstr "源"
 
@@ -1849,7 +1844,7 @@ msgstr "密码已更改"
 #: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
 #: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
+#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
 msgstr "人物"
 
@@ -1861,7 +1856,7 @@ msgstr "与您共享链接的人将可以查看公共内容。"
 msgid "Permanently deleted"
 msgstr "已永久删除"
 
-#: src/page/settings/general.vue:363
+#: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "永久删除文件以释放存储空间。"
 
@@ -1901,7 +1896,7 @@ msgstr "粉红"
 msgid "Place"
 msgstr "地点"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:172
+#: src/page/albums.vue:89 src/page/settings/library.vue:171
 msgid "Place & Time"
 msgstr "地点和时间"
 
@@ -1910,7 +1905,7 @@ msgstr "地点和时间"
 #: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:496
+#: src/page/settings/general.vue:145 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "地点"
 
@@ -1966,7 +1961,7 @@ msgstr "主文件"
 
 #: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
+#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "私有"
 
@@ -1986,7 +1981,7 @@ msgstr "投影"
 msgid "Purple"
 msgstr "紫"
 
-#: src/page/settings/library.vue:91
+#: src/page/settings/library.vue:90
 msgid "Quality Filter"
 msgstr "质量筛选"
 
@@ -2012,7 +2007,7 @@ msgid "Raw"
 msgstr "Raw"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
-#: src/page/settings/library.vue:294
+#: src/page/settings/general.vue:581
 msgid "RAW"
 msgstr "RAW"
 
@@ -2048,7 +2043,7 @@ msgstr "识别工作在索引完成后开始。"
 msgid "Recognized"
 msgstr "已识别"
 
-#: src/page/settings/general.vue:143
+#: src/page/settings/general.vue:144
 msgid "Recognizes faces so that specific people can be found."
 msgstr "识别人脸，以便能够找到特定的人。"
 
@@ -2151,7 +2146,7 @@ msgstr "扫描"
 msgid "Search"
 msgstr "搜索"
 
-#: src/page/settings/general.vue:497
+#: src/page/settings/general.vue:498
 msgid "Search and display photos on a map."
 msgstr "在地图上搜索并显示照片。"
 
@@ -2191,7 +2186,7 @@ msgstr "所选项已恢复"
 msgid "Send"
 msgstr "发送"
 
-#: src/page/settings/library.vue:214
+#: src/page/settings/library.vue:213
 msgid "Sequential Name"
 msgstr "顺序名称"
 
@@ -2200,7 +2195,7 @@ msgstr "顺序名称"
 msgid "Service URL"
 msgstr "服务 URL"
 
-#: src/page/settings.vue:72 src/page/settings/general.vue:384
+#: src/page/settings.vue:72 src/page/settings/general.vue:385
 msgid "Services"
 msgstr "服务"
 
@@ -2238,7 +2233,7 @@ msgid "Shadow"
 msgstr "阴影"
 
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
-#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:296
+#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
 msgstr "分享"
 
@@ -2246,7 +2241,7 @@ msgstr "分享"
 msgid "Share %{name}"
 msgstr "分享 %{name}"
 
-#: src/page/settings/general.vue:385
+#: src/page/settings/general.vue:386
 msgid "Share your pictures with other apps and services."
 msgstr "与其他应用程序和服务分享你的图片。"
 
@@ -2270,7 +2265,7 @@ msgstr "显示更少"
 msgid "Show more"
 msgstr "显示更多"
 
-#: src/page/settings/general.vue:451
+#: src/page/settings/general.vue:452
 msgid "Show server logs in Library."
 msgstr "在库中显示服务器日志。"
 
@@ -2278,7 +2273,7 @@ msgstr "在库中显示服务器日志。"
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "显示更详细的日志信息，需要重新启动。"
 
-#: src/model/file.js:212 src/page/settings/library.vue:315
+#: src/model/file.js:212 src/page/settings/general.vue:602
 msgid "Sidecar"
 msgstr "附属"
 
@@ -2320,11 +2315,11 @@ msgstr "来源"
 msgid "Stack"
 msgstr "堆"
 
-#: src/page/settings/library.vue:194
+#: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "文件堆共享相同的唯一图像或实例标识符。"
 
-#: src/page/settings/library.vue:173
+#: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "根据图片的元数据，堆叠在相同的时间和地点拍摄的图片。"
 
@@ -2336,7 +2331,7 @@ msgstr "可堆叠"
 msgid "Stacks"
 msgstr "堆"
 
-#: src/page/settings/library.vue:139
+#: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr "堆栈以类似的参考框架来分组文件，但质量、格式、大小或颜色不同。"
 
@@ -2422,7 +2417,7 @@ msgstr "该索引当前包含 %{n} 个隐藏文件。"
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "它们的格式可能不受支持，它们尚未转换为 JPEG 或存在重复项。"
 
-#: src/page/settings/general.vue:70
+#: src/page/settings/general.vue:71
 msgid "Theme"
 msgstr "主题"
 
@@ -2521,7 +2516,7 @@ msgstr "未经授权的"
 msgid "Undo"
 msgstr "撤销"
 
-#: src/page/settings/library.vue:193
+#: src/page/settings/library.vue:192
 msgid "Unique ID"
 msgstr "唯一标识符"
 
@@ -2592,7 +2587,7 @@ msgstr "立即升级"
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
-#: src/page/library/import.vue:38 src/page/settings/general.vue:230
+#: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
 msgstr "上传"
@@ -2617,7 +2612,7 @@ msgstr "上传文件夹"
 msgid "Upload local files"
 msgstr "上传本地文件"
 
-#: src/page/settings/general.vue:297
+#: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "上传到 WebDAV 并与朋友共享链接。"
 
@@ -2854,6 +2849,9 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Downloads"
+#~ msgstr "下载"
 
 #~ msgid "Download only original media files, without any automatically generated sidecar files."
 #~ msgstr "只下载原始的媒体文件，没有任何自动生成的边卡文件。"

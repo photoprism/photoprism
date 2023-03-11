@@ -70,7 +70,7 @@ msgstr "پرتگاه"
 #: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:140 src/page/settings.vue:84
-#: src/page/settings/general.vue:472
+#: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "حساب کاربری"
 
@@ -118,7 +118,7 @@ msgstr "ویرایش حساب کاربری"
 msgid "Add Album"
 msgstr "افزودن آلبوم"
 
-#: src/page/settings/general.vue:231
+#: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
 msgstr "از طریق بارگذاری وب فایلها را به کتابخانه خود اضافه کنید."
 
@@ -275,7 +275,7 @@ msgstr "خطایی رخ داده است - آیا شما آفلاین هستید�
 msgid "Animated"
 msgstr "متحرک"
 
-#: src/page/settings/general.vue:581
+#: src/page/settings/general.vue:686
 msgid "Animation"
 msgstr "انیمیشن"
 
@@ -298,7 +298,7 @@ msgstr "تأیید"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
-#: src/page/settings/general.vue:340
+#: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "بایگانی"
 
@@ -352,11 +352,11 @@ msgstr "نسبت ابعاد"
 msgid "Authentication"
 msgstr "احراز هویت"
 
-#: src/page/settings/library.vue:113
+#: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr "به طور خودکار برای انواع فایل های دیگر JPEG ایجاد کنید تا بتوان آنها را در مرورگر نمایش داد."
 
-#: src/page/settings/general.vue:165
+#: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "به طور خودکار آلبوم هایی از لحظات، سفرها و مکان های خاص ایجاد می کند."
 
@@ -396,11 +396,11 @@ msgstr "آبی"
 msgid "Brown"
 msgstr "قهوه ای"
 
-#: src/page/settings/general.vue:187
+#: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "مرور و ویرایش برچسب های طبقه بندی تصویر."
 
-#: src/page/settings/general.vue:429
+#: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "پرونده ها و پوشه های فهرست بندی شده را در کتابخانه مرور کنید."
 
@@ -484,11 +484,11 @@ msgstr "تغییر پرچم خصوصی"
 msgid "Change Password"
 msgstr "رمزعبور جدید"
 
-#: src/page/settings/general.vue:473
+#: src/page/settings/general.vue:474
 msgid "Change personal profile and security settings."
 msgstr "پروفایل شخصی و تنظیمات امنیتی را تغییر دهید."
 
-#: src/page/settings/general.vue:319
+#: src/page/settings/general.vue:320
 msgid "Change photo titles, locations, and other metadata."
 msgstr "تغییر عناوین عکس ، مکان ها و سایر ابرداده ها."
 
@@ -581,7 +581,7 @@ msgstr "حاوی %{n} عکس است."
 msgid "Contains one picture."
 msgstr "حاوی یک تصویر است."
 
-#: src/page/settings/library.vue:112
+#: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
 msgstr "تبدیل به jpeg"
 
@@ -673,7 +673,7 @@ msgstr "پوشه پیشفرض"
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
 #: src/dialog/share.vue:228 src/page/library/errors.vue:88
-#: src/page/settings/general.vue:362
+#: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "حذف"
 
@@ -806,11 +806,11 @@ msgstr "انجام شده است."
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:252
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "بارگیری"
 
-#: src/page/settings/library.vue:274
+#: src/page/settings/general.vue:561
 msgid "Download only original media files, without any automatically generated files."
 msgstr ""
 
@@ -818,7 +818,7 @@ msgstr ""
 msgid "Download remote files"
 msgstr "بارگیری پرونده های از راه دور"
 
-#: src/page/settings/general.vue:253
+#: src/page/settings/general.vue:254
 msgid "Download single files and zip archives."
 msgstr "بارگیری پرونده های تک و بایگانی زیپ."
 
@@ -830,10 +830,6 @@ msgstr "بارگیری پرونده های تک و بایگانی زیپ."
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "درحال دانلود…"
-
-#: src/page/settings/library.vue:60
-msgid "Downloads"
-msgstr "دانلودها"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -869,7 +865,7 @@ msgstr "ایمیل"
 
 #: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:82
 #: src/component/photo-viewer.vue:97 src/component/photo/clipboard.vue:111
-#: src/page/settings/general.vue:318
+#: src/page/settings/general.vue:319
 msgid "Edit"
 msgstr "ویرایش"
 
@@ -906,11 +902,11 @@ msgstr "فعال کردن RAW converter presets  . ممکن است عملکرد 
 msgid "Errors"
 msgstr "خطا ها"
 
-#: src/page/settings/library.vue:71
+#: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "محل تقریبی تصاویر را بدون مختصات تخمین بزنید."
 
-#: src/page/settings/library.vue:70
+#: src/page/settings/library.vue:69
 msgid "Estimates"
 msgstr "برآوردها"
 
@@ -918,7 +914,7 @@ msgstr "برآوردها"
 msgid "Every two days"
 msgstr "هر دو روز"
 
-#: src/page/settings/general.vue:209
+#: src/page/settings/general.vue:210
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "محتوای علامت‌گذاری‌شده به‌عنوان خصوصی را از نتایج جستجو، آلبوم‌های مشترک، برچسب‌ها و مکان‌ها حذف کنید."
 
@@ -1039,7 +1035,7 @@ msgstr "نام فایل"
 msgid "Files"
 msgstr "فایل ها"
 
-#: src/page/settings/library.vue:215
+#: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "فایل‌هایی با نام‌های متوالی مانند «IMG_1234 (2)» و «IMG_1234 (3)» متعلق به یک تصویر هستند."
 
@@ -1154,7 +1150,7 @@ msgstr "فایل های مخفی"
 msgid "Hide"
 msgstr "مخفی"
 
-#: src/page/settings/general.vue:341
+#: src/page/settings/general.vue:342
 msgid "Hide photos that have been moved to archive."
 msgstr "عکس هایی که به آرشیو منتقل شده اند را مخفی کنید."
 
@@ -1187,7 +1183,7 @@ msgid "Image Quality"
 msgstr "کیفیت تصویر"
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
-#: src/page/settings/general.vue:274
+#: src/page/settings/general.vue:275
 msgid "Import"
 msgstr "وارد کردن"
 
@@ -1199,7 +1195,7 @@ msgstr "خطا در وارد کردن"
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "فایل‌های وارد شده بر اساس تاریخ مرتب می‌شوند و برای جلوگیری از تکرار نامی منحصر به فرد به آن‌ها داده می‌شود."
 
-#: src/page/settings/general.vue:275
+#: src/page/settings/general.vue:276
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr "فایل های وارد شده بر اساس تاریخ مرتب شده و یک نام منحصر به فرد داده می شود."
 
@@ -1228,11 +1224,11 @@ msgstr "علاوه بر این، حامیان مالی، پشتیبانی فنی
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "در صورتی که تصاویری که انتظار دارید گم شدند، لطفاً کتابخانه خود را مجدداً اسکن کنید و منتظر بمانید تا نمایه سازی کامل شود."
 
-#: src/page/settings/library.vue:295
+#: src/page/settings/general.vue:582
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "هنگام بارگیری پشته ها و بایگانی ها، فایل های تصویری RAW را اضافه کنید."
 
-#: src/page/settings/library.vue:316
+#: src/page/settings/general.vue:603
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "هنگام بارگیری پشته ها و بایگانی ها، فایل های sidecar را اضافه کنید."
 
@@ -1241,7 +1237,7 @@ msgstr "هنگام بارگیری پشته ها و بایگانی ها، فای�
 msgid "Index"
 msgstr "نمایه"
 
-#: src/page/settings/general.vue:407
+#: src/page/settings/general.vue:408
 msgid "Index and import files through the user interface."
 msgstr "فهرست و وارد کردن فایل ها از طریق رابط کاربری."
 
@@ -1337,7 +1333,7 @@ msgstr "برچسب"
 #: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
-#: src/page/settings/general.vue:186
+#: src/page/settings/general.vue:187
 msgid "Labels"
 msgstr "برچسب ها"
 
@@ -1349,7 +1345,7 @@ msgstr "برچسب ها حذف شدند"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: حفظ جزئیات، حداقل مصنوعات"
 
-#: src/page/settings/general.vue:93
+#: src/page/settings/general.vue:94
 msgid "Language"
 msgstr "زبان"
 
@@ -1395,7 +1391,7 @@ msgstr "لنز"
 #: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
-#: src/page/settings.vue:48 src/page/settings/general.vue:406
+#: src/page/settings.vue:48 src/page/settings/general.vue:407
 msgid "Library"
 msgstr "کتابخانه"
 
@@ -1472,7 +1468,7 @@ msgid "Logout"
 msgstr "خارج شدن"
 
 #: src/component/navigation.vue:586 src/page/library.vue:58
-#: src/page/settings/general.vue:450
+#: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "گزارش ها"
 
@@ -1512,7 +1508,7 @@ msgstr "دستی"
 msgid "Manual Upload"
 msgstr "آپلود دستی"
 
-#: src/page/settings/general.vue:558
+#: src/page/settings/general.vue:663
 msgid "Maps"
 msgstr "نقشه ها"
 
@@ -1541,7 +1537,7 @@ msgid "Missing"
 msgstr "گم شده"
 
 #: src/app/routes.js:162 src/component/navigation.vue:244
-#: src/component/navigation.vue:971 src/page/settings/general.vue:164
+#: src/component/navigation.vue:971 src/page/settings/general.vue:165
 msgid "Moments"
 msgstr "لحظه ها"
 
@@ -1692,7 +1688,7 @@ msgstr "هیچ هشدار یا خطایی حاوی این کلمه کلیدی ن
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:52 src/page/settings/library.vue:92
+#: src/dialog/upload.vue:52 src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "تصاویر غیرعکاسی و با کیفیت پایین قبل از اینکه در نتایج جستجو ظاهر شوند نیاز به بررسی دارند."
 
@@ -1806,7 +1802,7 @@ msgstr "اسم اصلی"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:428 src/page/settings/library.vue:273
+#: src/page/settings/general.vue:429 src/page/settings/general.vue:560
 msgid "Originals"
 msgstr "اصلی ها"
 
@@ -1847,7 +1843,7 @@ msgstr "رمز عبور تغییر کرد"
 #: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
 #: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
+#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
 msgstr "مردم"
 
@@ -1859,7 +1855,7 @@ msgstr "افرادی که لینکی را با آنها به اشتراک می �
 msgid "Permanently deleted"
 msgstr "برای همیشه حذف شد"
 
-#: src/page/settings/general.vue:363
+#: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "برای آزاد کردن فضای ذخیره سازی، فایل ها را برای همیشه حذف کنید."
 
@@ -1899,7 +1895,7 @@ msgstr "صورتی"
 msgid "Place"
 msgstr "مکان"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:172
+#: src/page/albums.vue:89 src/page/settings/library.vue:171
 msgid "Place & Time"
 msgstr "مکان و زمان"
 
@@ -1908,7 +1904,7 @@ msgstr "مکان و زمان"
 #: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:496
+#: src/page/settings/general.vue:145 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "مکان ها"
 
@@ -1964,7 +1960,7 @@ msgstr "اولیه"
 
 #: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
+#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "خصوصی"
 
@@ -1984,7 +1980,7 @@ msgstr "طرح ها"
 msgid "Purple"
 msgstr "بنفش"
 
-#: src/page/settings/library.vue:91
+#: src/page/settings/library.vue:90
 msgid "Quality Filter"
 msgstr "فیلتر کیفیت"
 
@@ -2010,7 +2006,7 @@ msgid "Raw"
 msgstr "خام"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
-#: src/page/settings/library.vue:294
+#: src/page/settings/general.vue:581
 msgid "RAW"
 msgstr "خام"
 
@@ -2045,7 +2041,7 @@ msgstr "پس از تکمیل نمایه سازی، شناسایی شروع می 
 msgid "Recognized"
 msgstr "شناسایی شده"
 
-#: src/page/settings/general.vue:143
+#: src/page/settings/general.vue:144
 msgid "Recognizes faces so that specific people can be found."
 msgstr "چهره ها را می شناسد تا افراد خاصی پیدا شوند."
 
@@ -2148,7 +2144,7 @@ msgstr "اسکن ها"
 msgid "Search"
 msgstr "جستجو"
 
-#: src/page/settings/general.vue:497
+#: src/page/settings/general.vue:498
 msgid "Search and display photos on a map."
 msgstr "جستجو و نمایش عکس ها روی نقشه."
 
@@ -2188,7 +2184,7 @@ msgstr "انتخاب بازگردانده شد"
 msgid "Send"
 msgstr "ارسال"
 
-#: src/page/settings/library.vue:214
+#: src/page/settings/library.vue:213
 msgid "Sequential Name"
 msgstr "نام ترتیبی"
 
@@ -2197,7 +2193,7 @@ msgstr "نام ترتیبی"
 msgid "Service URL"
 msgstr "URL سرویس"
 
-#: src/page/settings.vue:72 src/page/settings/general.vue:384
+#: src/page/settings.vue:72 src/page/settings/general.vue:385
 msgid "Services"
 msgstr "URL سرویس"
 
@@ -2235,7 +2231,7 @@ msgid "Shadow"
 msgstr "سایه"
 
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
-#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:296
+#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
 msgstr "اشتراک گذاری"
 
@@ -2243,7 +2239,7 @@ msgstr "اشتراک گذاری"
 msgid "Share %{name}"
 msgstr "اشتراک گذاری %{name}"
 
-#: src/page/settings/general.vue:385
+#: src/page/settings/general.vue:386
 msgid "Share your pictures with other apps and services."
 msgstr "تصاویر خود را با سایر برنامه ها و سرویس ها به اشتراک بگذارید."
 
@@ -2267,7 +2263,7 @@ msgstr "نمایش کمتر"
 msgid "Show more"
 msgstr "نمایش بیشتر"
 
-#: src/page/settings/general.vue:451
+#: src/page/settings/general.vue:452
 msgid "Show server logs in Library."
 msgstr "نمایش گزارش‌های سرور در کتابخانه."
 
@@ -2275,7 +2271,7 @@ msgstr "نمایش گزارش‌های سرور در کتابخانه."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "پیام های گزارش دقیق تر را نشان می دهد. نیاز به راه اندازی مجدد دارد."
 
-#: src/model/file.js:212 src/page/settings/library.vue:315
+#: src/model/file.js:212 src/page/settings/general.vue:602
 msgid "Sidecar"
 msgstr "جانبی"
 
@@ -2317,11 +2313,11 @@ msgstr "منبع"
 msgid "Stack"
 msgstr "پشته"
 
-#: src/page/settings/library.vue:194
+#: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "پشته فایل هایی که همان تصویر منحصر به فرد یا شناسه نمونه را به اشتراک می گذارند."
 
-#: src/page/settings/library.vue:173
+#: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "عکس‌هایی را که دقیقاً در همان زمان و مکان گرفته شده‌اند، بر اساس ابرداده‌هایشان روی هم قرار دهید."
 
@@ -2333,7 +2329,7 @@ msgstr "قابل انباشته شدن"
 msgid "Stacks"
 msgstr "پشته ها"
 
-#: src/page/settings/library.vue:139
+#: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr "دسته بندی فایل ها با قاب یا مرجع مشابه، اما متفاوت در کیفیت، فرمت، اندازه یا رنگ."
 
@@ -2419,7 +2415,7 @@ msgstr "این فهرست در حال حاضر حاوی %{n} فایل پنهان
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "ممکن است فرمت آنها پشتیبانی نشود، هنوز به JPEG تبدیل نشده اند یا موارد تکراری وجود دارد."
 
-#: src/page/settings/general.vue:70
+#: src/page/settings/general.vue:71
 msgid "Theme"
 msgstr "قالب"
 
@@ -2518,7 +2514,7 @@ msgstr "غیرمجاز"
 msgid "Undo"
 msgstr "باطل کردن"
 
-#: src/page/settings/library.vue:193
+#: src/page/settings/library.vue:192
 msgid "Unique ID"
 msgstr "شناسه منحصربفرد"
 
@@ -2589,7 +2585,7 @@ msgstr "اکنون ارتقا دهید"
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
-#: src/page/library/import.vue:38 src/page/settings/general.vue:230
+#: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
 msgstr "آپلود"
@@ -2614,7 +2610,7 @@ msgstr "پوشه آپلود"
 msgid "Upload local files"
 msgstr "فایل های محلی را آپلود کنید"
 
-#: src/page/settings/general.vue:297
+#: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "در WebDAV آپلود کنید و پیوندها را با دوستان خود به اشتراک بگذارید."
 
@@ -2851,6 +2847,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Downloads"
+#~ msgstr "دانلودها"
 
 #~ msgid "Download only original media files, without any automatically generated sidecar files."
 #~ msgstr "فقط فایل های رسانه ای اصلی را دانلود کنید، بدون هیچ فایلی که به صورت خودکار تولید می شود."

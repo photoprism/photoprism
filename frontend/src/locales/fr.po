@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 14:08+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
-"frontend/fr/>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -71,7 +70,7 @@ msgstr "Abysse"
 #: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:140 src/page/settings.vue:84
-#: src/page/settings/general.vue:472
+#: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "Compte"
 
@@ -119,7 +118,7 @@ msgstr "Ajouter un compte"
 msgid "Add Album"
 msgstr "Ajouter un album"
 
-#: src/page/settings/general.vue:231
+#: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
 msgstr "Ajouter des fichiers à votre bibliothèque par Web Upload."
 
@@ -276,7 +275,7 @@ msgstr "Un problème est survenu - êtes-vous hors ligne ?"
 msgid "Animated"
 msgstr "Animé"
 
-#: src/page/settings/general.vue:581
+#: src/page/settings/general.vue:686
 msgid "Animation"
 msgstr "Animation"
 
@@ -299,7 +298,7 @@ msgstr "Approuver"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
-#: src/page/settings/general.vue:340
+#: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "Archives"
 
@@ -353,11 +352,11 @@ msgstr "Format d'image"
 msgid "Authentication"
 msgstr "Authentification"
 
-#: src/page/settings/library.vue:113
+#: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr "Crée automatiquement des fichiers JPEG pour les autres types de fichiers afin de les rendre affichables dans le navigateur."
 
-#: src/page/settings/general.vue:165
+#: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Création automatique d'albums regroupant des moments, des voyages et des lieux spéciaux."
 
@@ -397,11 +396,11 @@ msgstr "Bleu"
 msgid "Brown"
 msgstr "Marron"
 
-#: src/page/settings/general.vue:187
+#: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "Parcourir et modifier les étiquettes de classification d'images."
 
-#: src/page/settings/general.vue:429
+#: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "Parcourir les dossiers et fichiers indexés dans la bibliothèque."
 
@@ -485,11 +484,11 @@ msgstr "Changer d'avatar"
 msgid "Change Password"
 msgstr "Changer le mot de passe"
 
-#: src/page/settings/general.vue:473
+#: src/page/settings/general.vue:474
 msgid "Change personal profile and security settings."
 msgstr "Modifier le profil personnel et les paramètres de sécurité."
 
-#: src/page/settings/general.vue:319
+#: src/page/settings/general.vue:320
 msgid "Change photo titles, locations, and other metadata."
 msgstr "Modifier les titres, les lieux et d'autres métadonnées."
 
@@ -582,7 +581,7 @@ msgstr "Contient %{n} images."
 msgid "Contains one picture."
 msgstr "Contient une image."
 
-#: src/page/settings/library.vue:112
+#: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
 msgstr "Convertir en JPEG"
 
@@ -674,7 +673,7 @@ msgstr "Dossier par défaut"
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
 #: src/dialog/share.vue:228 src/page/library/errors.vue:88
-#: src/page/settings/general.vue:362
+#: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -807,21 +806,19 @@ msgstr "Terminé."
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:252
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "Télécharger"
 
-#: src/page/settings/library.vue:274
+#: src/page/settings/general.vue:561
 msgid "Download only original media files, without any automatically generated files."
-msgstr ""
-"Télécharger uniquement les fichiers multimédias originaux, sans fichiers "
-"générés automatiquement."
+msgstr "Télécharger uniquement les fichiers multimédias originaux, sans fichiers générés automatiquement."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
 msgstr "Télécharger les fichiers distants"
 
-#: src/page/settings/general.vue:253
+#: src/page/settings/general.vue:254
 msgid "Download single files and zip archives."
 msgstr "Téléchargement de fichiers et d'archives zip."
 
@@ -833,10 +830,6 @@ msgstr "Téléchargement de fichiers et d'archives zip."
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "Téléchargement en cours…"
-
-#: src/page/settings/library.vue:60
-msgid "Downloads"
-msgstr "Téléchargements"
 
 #: src/page/settings/advanced.vue:279
 msgid "Downscaling Filter"
@@ -872,7 +865,7 @@ msgstr "Courriel"
 
 #: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:82
 #: src/component/photo-viewer.vue:97 src/component/photo/clipboard.vue:111
-#: src/page/settings/general.vue:318
+#: src/page/settings/general.vue:319
 msgid "Edit"
 msgstr "Modifier"
 
@@ -909,11 +902,11 @@ msgstr "Active les préréglages du convertisseur RAW. Cela peut réduire les pe
 msgid "Errors"
 msgstr "Erreurs"
 
-#: src/page/settings/library.vue:71
+#: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
 msgstr "Déterminer approximativement la localisation d'une image sans coordonnées."
 
-#: src/page/settings/library.vue:70
+#: src/page/settings/library.vue:69
 msgid "Estimates"
 msgstr "Estimations"
 
@@ -921,7 +914,7 @@ msgstr "Estimations"
 msgid "Every two days"
 msgstr "Tous les deux jours"
 
-#: src/page/settings/general.vue:209
+#: src/page/settings/general.vue:210
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Exclure le contenu marqué comme privé des résultats de recherche, des albums partagés, des étiquettes et des lieux."
 
@@ -1042,7 +1035,7 @@ msgstr "Nom du fichier"
 msgid "Files"
 msgstr "Fichiers"
 
-#: src/page/settings/library.vue:215
+#: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
 msgstr "Des fichiers ayant des noms séquentiels tels que 'IMG_1234 (2)' et 'IMG_1234 (3)' appartiennent à la même image."
 
@@ -1157,7 +1150,7 @@ msgstr "Fichiers cachés"
 msgid "Hide"
 msgstr "Cacher"
 
-#: src/page/settings/general.vue:341
+#: src/page/settings/general.vue:342
 msgid "Hide photos that have been moved to archive."
 msgstr "Masquer les photos archivées."
 
@@ -1190,7 +1183,7 @@ msgid "Image Quality"
 msgstr "Qualité de l'image"
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
-#: src/page/settings/general.vue:274
+#: src/page/settings/general.vue:275
 msgid "Import"
 msgstr "Importer"
 
@@ -1202,7 +1195,7 @@ msgstr "Échec de l'importation"
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "Les fichiers importés seront classés par date et recevront un nom unique pour éviter les doublons."
 
-#: src/page/settings/general.vue:275
+#: src/page/settings/general.vue:276
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr "Les fichiers importés seront classés par date et recevront un nom unique."
 
@@ -1231,11 +1224,11 @@ msgstr "En outre, les sponsors bénéficient d'une assistance technique directe 
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Si des images sont manquantes, veuillez réanalyser votre bibliothèque et attendre que l'indexation soit terminée."
 
-#: src/page/settings/library.vue:295
+#: src/page/settings/general.vue:582
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "Inclure les fichiers d'images RAW lors du téléchargement de piles et d'archives."
 
-#: src/page/settings/library.vue:316
+#: src/page/settings/general.vue:603
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Inclure les fichiers sidecar lors du téléchargement de piles et d'archives."
 
@@ -1244,7 +1237,7 @@ msgstr "Inclure les fichiers sidecar lors du téléchargement de piles et d'arch
 msgid "Index"
 msgstr "Index"
 
-#: src/page/settings/general.vue:407
+#: src/page/settings/general.vue:408
 msgid "Index and import files through the user interface."
 msgstr "Indexer et importer des fichiers via l'interface utilisateur."
 
@@ -1340,7 +1333,7 @@ msgstr "Etiquette"
 #: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
-#: src/page/settings/general.vue:186
+#: src/page/settings/general.vue:187
 msgid "Labels"
 msgstr "Étiquettes"
 
@@ -1352,7 +1345,7 @@ msgstr "Étiquettes supprimées"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos : Préservation des détails, artefacts minimaux"
 
-#: src/page/settings/general.vue:93
+#: src/page/settings/general.vue:94
 msgid "Language"
 msgstr "Langue"
 
@@ -1398,7 +1391,7 @@ msgstr "Objectif"
 #: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
-#: src/page/settings.vue:48 src/page/settings/general.vue:406
+#: src/page/settings.vue:48 src/page/settings/general.vue:407
 msgid "Library"
 msgstr "Bibliothèque"
 
@@ -1475,7 +1468,7 @@ msgid "Logout"
 msgstr "Déconnexion"
 
 #: src/component/navigation.vue:586 src/page/library.vue:58
-#: src/page/settings/general.vue:450
+#: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "Journaux"
 
@@ -1515,7 +1508,7 @@ msgstr "manuel"
 msgid "Manual Upload"
 msgstr "Chargement manuel"
 
-#: src/page/settings/general.vue:558
+#: src/page/settings/general.vue:663
 msgid "Maps"
 msgstr "Cartes"
 
@@ -1544,7 +1537,7 @@ msgid "Missing"
 msgstr "Manquant"
 
 #: src/app/routes.js:162 src/component/navigation.vue:244
-#: src/component/navigation.vue:971 src/page/settings/general.vue:164
+#: src/component/navigation.vue:971 src/page/settings/general.vue:165
 msgid "Moments"
 msgstr "Moments"
 
@@ -1695,7 +1688,7 @@ msgstr "Aucun avertissement ou erreur contenant ce mot-clé. Notez que la recher
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:52 src/page/settings/library.vue:92
+#: src/dialog/upload.vue:52 src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Les images non photographiques ou de mauvaise qualité doivent faire l'objet d'un examen avant d'apparaître dans les résultats de recherche."
 
@@ -1809,7 +1802,7 @@ msgstr "Nom original"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:428 src/page/settings/library.vue:273
+#: src/page/settings/general.vue:429 src/page/settings/general.vue:560
 msgid "Originals"
 msgstr "Originaux"
 
@@ -1850,7 +1843,7 @@ msgstr "Mot de passe modifié"
 #: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
 #: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
+#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
 msgstr "Personnes"
 
@@ -1862,7 +1855,7 @@ msgstr "Les personnes avec qui vous partagez un lien pourront voir le contenu pu
 msgid "Permanently deleted"
 msgstr "Supprimé définitivement"
 
-#: src/page/settings/general.vue:363
+#: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "Supprimer définitivement les fichiers pour récupérer de la place de stockage."
 
@@ -1902,7 +1895,7 @@ msgstr "Rose"
 msgid "Place"
 msgstr "Lieu"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:172
+#: src/page/albums.vue:89 src/page/settings/library.vue:171
 msgid "Place & Time"
 msgstr "Unité de lieu et de temps"
 
@@ -1911,7 +1904,7 @@ msgstr "Unité de lieu et de temps"
 #: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:496
+#: src/page/settings/general.vue:145 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "Lieux"
 
@@ -1967,7 +1960,7 @@ msgstr "Primaire"
 
 #: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
+#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "Privée"
 
@@ -1987,7 +1980,7 @@ msgstr "Projection"
 msgid "Purple"
 msgstr "Violet"
 
-#: src/page/settings/library.vue:91
+#: src/page/settings/library.vue:90
 msgid "Quality Filter"
 msgstr "Filtre de qualité"
 
@@ -2013,7 +2006,7 @@ msgid "Raw"
 msgstr "Brut"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
-#: src/page/settings/library.vue:294
+#: src/page/settings/general.vue:581
 msgid "RAW"
 msgstr "RAW"
 
@@ -2048,7 +2041,7 @@ msgstr "La reconnaissance démarrera après la fin de l'indexation."
 msgid "Recognized"
 msgstr "Reconnues"
 
-#: src/page/settings/general.vue:143
+#: src/page/settings/general.vue:144
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Recherche les visages pour permettre de trouver des personnes données."
 
@@ -2151,7 +2144,7 @@ msgstr "Numérisées"
 msgid "Search"
 msgstr "Rechercher"
 
-#: src/page/settings/general.vue:497
+#: src/page/settings/general.vue:498
 msgid "Search and display photos on a map."
 msgstr "Rechercher et afficher des images sur une carte."
 
@@ -2191,7 +2184,7 @@ msgstr "Sélection restaurée"
 msgid "Send"
 msgstr "Envoyé"
 
-#: src/page/settings/library.vue:214
+#: src/page/settings/library.vue:213
 msgid "Sequential Name"
 msgstr "Suite logique de noms"
 
@@ -2200,7 +2193,7 @@ msgstr "Suite logique de noms"
 msgid "Service URL"
 msgstr "URL du service"
 
-#: src/page/settings.vue:72 src/page/settings/general.vue:384
+#: src/page/settings.vue:72 src/page/settings/general.vue:385
 msgid "Services"
 msgstr "Services"
 
@@ -2238,7 +2231,7 @@ msgid "Shadow"
 msgstr "Ombre"
 
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
-#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:296
+#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
 msgstr "Partager"
 
@@ -2246,7 +2239,7 @@ msgstr "Partager"
 msgid "Share %{name}"
 msgstr "Partager %{name}"
 
-#: src/page/settings/general.vue:385
+#: src/page/settings/general.vue:386
 msgid "Share your pictures with other apps and services."
 msgstr "Partagez vos photos avec d'autres applications et services."
 
@@ -2270,7 +2263,7 @@ msgstr "Montrer moins"
 msgid "Show more"
 msgstr "Montre plus"
 
-#: src/page/settings/general.vue:451
+#: src/page/settings/general.vue:452
 msgid "Show server logs in Library."
 msgstr "Afficher les journaux serveurs dans Bibliothèque."
 
@@ -2278,7 +2271,7 @@ msgstr "Afficher les journaux serveurs dans Bibliothèque."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Rend les journaux plus détaillés. Requiert un redémarrage."
 
-#: src/model/file.js:212 src/page/settings/library.vue:315
+#: src/model/file.js:212 src/page/settings/general.vue:602
 msgid "Sidecar"
 msgstr "Fichier annexe"
 
@@ -2320,11 +2313,11 @@ msgstr "Source"
 msgid "Stack"
 msgstr "Groupe"
 
-#: src/page/settings/library.vue:194
+#: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "Images partageant le même identifiant unique d'image."
 
-#: src/page/settings/library.vue:173
+#: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Images prises exactement au même moment et au même endroit, en se fondant sur les métadonnées."
 
@@ -2336,7 +2329,7 @@ msgstr "Groupable"
 msgid "Stacks"
 msgstr "Groupes"
 
-#: src/page/settings/library.vue:139
+#: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr "Les groupes associent des images partageant le même contexte, mais dont la qualité, le format, les dimensions ou les couleurs peuvent différer."
 
@@ -2422,7 +2415,7 @@ msgstr "L'index contient actuellement %{n} fichiers cachés."
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "Leur format n'est peut-être pas pris en charge, ils n'ont pas encore été convertis en JPEG ou ce sont des doublons."
 
-#: src/page/settings/general.vue:70
+#: src/page/settings/general.vue:71
 msgid "Theme"
 msgstr "Thème"
 
@@ -2521,7 +2514,7 @@ msgstr "Non autorisé"
 msgid "Undo"
 msgstr "Annuler"
 
-#: src/page/settings/library.vue:193
+#: src/page/settings/library.vue:192
 msgid "Unique ID"
 msgstr "Identifiant unique"
 
@@ -2592,7 +2585,7 @@ msgstr "Mettre à niveau maintenant"
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
-#: src/page/library/import.vue:38 src/page/settings/general.vue:230
+#: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
 msgstr "Chargement"
@@ -2617,7 +2610,7 @@ msgstr "Télécharger le dossier"
 msgid "Upload local files"
 msgstr "Charger des fichiers locaux"
 
-#: src/page/settings/general.vue:297
+#: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Charger via le protocole WebDAV et partager des liens avec des amis."
 
@@ -2854,6 +2847,9 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "Downloads"
+#~ msgstr "Téléchargements"
 
 #~ msgid "Download only original media files, without any automatically generated sidecar files."
 #~ msgstr "Télécharger uniquement les fichiers multimédias originaux, sans fichiers secondaires générés automatiquement."
