@@ -7,7 +7,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -74,8 +73,6 @@ func UpdateUser(router *gin.RouterGroup) {
 
 		// Clear the session cache, as it contains user information.
 		s.ClearCache()
-
-		event.SuccessMsg(i18n.MsgChangesSaved)
 
 		m = entity.FindUserByUID(uid)
 

@@ -41,7 +41,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 
 		// Users may only change their own avatar.
 		if !isPrivileged && s.User().UserUID != uid {
-			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "user uid does not match"}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "user does not match"}, s.RefID)
 			AbortForbidden(c)
 			return
 		}

@@ -76,6 +76,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	photoExists := false
 
 	event.Publish("index.indexing", event.Data{
+		"uid":      o.UID,
+		"action":   o.Action,
 		"fileHash": fileHash,
 		"fileSize": fileSize,
 		"fileName": fileName,

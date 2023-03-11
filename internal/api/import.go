@@ -105,7 +105,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Set user UID if known.
 		if s.UserUID != "" {
-			opt.UserUID = s.UserUID
+			opt.UID = s.UserUID
 		}
 
 		// Start import.
@@ -138,8 +138,16 @@ func StartImport(router *gin.RouterGroup) {
 		msg := i18n.Msg(i18n.MsgImportCompletedIn, elapsed)
 
 		event.Success(msg)
-		event.Publish("import.completed", event.Data{"path": importPath, "seconds": elapsed})
-		event.Publish("index.completed", event.Data{"path": importPath, "seconds": elapsed})
+
+		eventData := event.Data{
+			"uid":     opt.UID,
+			"action":  opt.Action,
+			"path":    importPath,
+			"seconds": elapsed,
+		}
+
+		event.Publish("import.completed", eventData)
+		event.Publish("index.completed", eventData)
 
 		for _, uid := range f.Albums {
 			PublishAlbumEvent(EntityUpdated, uid, c)
