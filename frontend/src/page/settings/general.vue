@@ -307,6 +307,48 @@
         </v-card-actions>
       </v-card>
 
+      <v-card v-if="settings.features.places && !config.disable.places" flat tile class="mt-0 px-1 application">
+        <v-card-title primary-title class="pb-2">
+          <h3 class="body-2 mb-0">
+            <translate key="Places">Places</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 sm6 class="px-2 pb-2">
+              <v-select
+                  v-model="settings.maps.style"
+                  :disabled="busy"
+                  :items="options.MapsStyle()"
+                  :label="$gettext('Maps')"
+                  :menu-props="{'maxHeight':346}"
+                  color="secondary-dark"
+                  background-color="secondary-light"
+                  hide-details
+                  box class="input-style"
+                  @change="onChangeMapsStyle"
+              ></v-select>
+            </v-flex>
+
+            <v-flex xs12 sm6 class="px-2 pb-2">
+              <v-select
+                  v-model="settings.maps.animate"
+                  :disabled="busy"
+                  :items="options.MapsAnimate()"
+                  :label="$gettext('Animation')"
+                  :menu-props="{'maxHeight':346}"
+                  color="secondary-dark"
+                  background-color="secondary-light"
+                  hide-details
+                  box class="input-animate"
+                  @change="onChange"
+              ></v-select>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+
       <v-card v-if="settings.features.download" flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
@@ -359,48 +401,6 @@
                   @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
-        </v-card-actions>
-      </v-card>
-
-      <v-card v-if="settings.features.places && !config.disable.places" flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-2">
-          <h3 class="body-2 mb-0">
-            <translate key="Places">Places</translate>
-          </h3>
-        </v-card-title>
-
-        <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select
-                  v-model="settings.maps.style"
-                  :disabled="busy"
-                  :items="options.MapsStyle()"
-                  :label="$gettext('Maps')"
-                  :menu-props="{'maxHeight':346}"
-                  color="secondary-dark"
-                  background-color="secondary-light"
-                  hide-details
-                  box class="input-style"
-                  @change="onChangeMapsStyle"
-              ></v-select>
-            </v-flex>
-
-            <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select
-                  v-model="settings.maps.animate"
-                  :disabled="busy"
-                  :items="options.MapsAnimate()"
-                  :label="$gettext('Animation')"
-                  :menu-props="{'maxHeight':346}"
-                  color="secondary-dark"
-                  background-color="secondary-light"
-                  hide-details
-                  box class="input-animate"
-                  @change="onChange"
-              ></v-select>
             </v-flex>
           </v-layout>
         </v-card-actions>
