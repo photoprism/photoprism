@@ -269,7 +269,7 @@
                   color="secondary-dark"
                   :label="$gettext('Disable Darktable')"
                   :hint="$gettext('Don\'t use Darktable to convert RAW images.')"
-                  prepend-icon="no_photography"
+                  prepend-icon="raw_off"
                   persistent-hint
                   @change="onChange"
               >
