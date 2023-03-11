@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-09 17:51+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
+"PO-Revision-Date: 2023-03-11 12:44+0000\n"
+"Last-Translator: Poky Leung <pyleungae@connect.ust.hk>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:494
@@ -76,11 +77,11 @@ msgstr "帳號"
 
 #: src/component/admin/users/add.vue:60 src/dialog/service/add.vue:35
 msgid "Account created"
-msgstr ""
+msgstr "帳號已建立"
 
 #: src/component/admin/users/remove.vue:24 src/dialog/service/remove.vue:24
 msgid "Account deleted"
-msgstr ""
+msgstr "帳號已刪除"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
@@ -370,7 +371,8 @@ msgstr "在提交支援請求之前，請使用我們的疑難排解清單來確
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "作為 100% 自籌資金和獨立的公司，我們可以向您保證，我們永遠不會出售您的數據，並且我們將始終對我們的軟件和服務保持透明。"
+msgstr "作為 100% 自籌資金和獨立的公司，我們可以向您保證，我們永遠不會出售您的數據，"
+"並且我們將始終對我們的軟件和服務保持透明。"
 
 #: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -418,7 +420,8 @@ msgstr "忙碌中，請稍候…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "當您開始使用我們提供的軟體及服務時，即表示您同意我們的服務條款、隱私權政策和行為準則。"
+msgstr "當您開始使用我們提供的軟體及服務時，即表示您同意我們的服務條款、隱私權政策和"
+"行為準則。"
 
 #: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
@@ -1699,7 +1702,8 @@ msgstr "注意："
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "注意：只能將WebDAV伺服器（如Nextcloud或PhotoPrism）設定為遠端服務，以進行備份和文件上傳。"
+msgstr "注意：只能將WebDAV伺服器（如Nextcloud或PhotoPrism）設定為遠端服務，以進行備份"
+"和文件上傳。"
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1800,7 +1804,8 @@ msgstr "其他"
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是每个人普遍需要的还是主要由组织和高级用户要求的，持续决定这一点。"
+msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是每个人普遍需要"
+"的还是主要由组织和高级用户要求的，持续决定这一点。"
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
@@ -2067,7 +2072,8 @@ msgstr "從相簿中刪除"
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "刪除已匯入的檔案以節省儲存空間。不支援的檔案類型將不會被刪除，它們會保留在當前位置。"
+msgstr "刪除已匯入的檔案以節省儲存空間。不支援的檔案類型將不會被刪除，它們會保留在當"
+"前位置。"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2359,7 +2365,7 @@ msgstr "成功連接"
 
 #: src/component/admin/sessions/remove.vue:23
 msgid "Successfully deleted"
-msgstr ""
+msgstr "已成功删除"
 
 #: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:80
 msgid "Super Admin"
@@ -2411,12 +2417,14 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，\n"
+"這會將\"originals\"資料夾安裝為網絡硬碟"
+"，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，\n"
 "          就像它們是本地文件一樣。"
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
+msgstr "這會將\"originals\"資料夾安裝為網絡硬碟"
+"，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2725,7 +2733,8 @@ msgstr "我們盡最大努力在五個工作日或更短的時間內做出回應
 
 #: src/page/about/about.vue:71
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "我們將盡力回答您的所有問題。作為回報，我們希望您在 Patreon 或 GitHub 贊助商上支持我們。"
+msgstr "我們將盡力回答您的所有問題。作為回報，我們希望您在 Patreon 或 GitHub "
+"贊助商上支持我們。"
 
 #: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
 #: src/page/admin/users.vue:39
@@ -2746,7 +2755,8 @@ msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"WebDAV客戶端（例如Microsoft Windows的檔案總管或Apple的Finder）可以直接連接到\n"
+"WebDAV客戶端（例如Microsoft Windows的檔案總管或Apple的Finder）"
+"可以直接連接到\n"
 "PhotoPrism。"
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
@@ -2825,7 +2835,8 @@ msgstr "您可以重新掃描您的收藏庫以查找其他面孔。"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "您的持續支持有助於我們提供定期更新並保持獨立，因此我們可以完成我們的使命並保護您的隱私。"
+msgstr "您的持續支持有助於我們提供定期更新並保持獨立，因此我們可以完成我們的使命並保"
+"護您的隱私。"
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."

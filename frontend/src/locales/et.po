@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-09 17:51+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-03-11 12:45+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:494
@@ -73,11 +73,11 @@ msgstr "Konto"
 
 #: src/component/admin/users/add.vue:60 src/dialog/service/add.vue:35
 msgid "Account created"
-msgstr ""
+msgstr "Konto loodud"
 
 #: src/component/admin/users/remove.vue:24 src/dialog/service/remove.vue:24
 msgid "Account deleted"
-msgstr ""
+msgstr "Konto kustutatud"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
@@ -167,7 +167,9 @@ msgstr "Ühe aasta pärast"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Pärast piltide valimist otsingutulemustest saad need kontekstimenüü abil albumisse lisada."
+msgstr ""
+"Pärast piltide valimist otsingutulemustest saad need kontekstimenüü abil "
+"albumisse lisada."
 
 #: src/options/options.js:402
 msgid "After two months"
@@ -251,7 +253,9 @@ msgstr "Kõik aastad"
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternatiivina saad faile üles laadida otse WebDAV serveritesse nagu Nextcloud."
+msgstr ""
+"Alternatiivina saad faile üles laadida otse WebDAV serveritesse nagu "
+"Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -337,7 +341,9 @@ msgstr "Kunstnik"
 
 #: src/page/connect.vue:110
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "Kuna see aitab meil pakkuda avalikkusele rohkem funktsioone, julgustame kõiki kasutajaid meie missiooni toetama."
+msgstr ""
+"Kuna see aitab meil pakkuda avalikkusele rohkem funktsioone, julgustame "
+"kõiki kasutajaid meie missiooni toetama."
 
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
@@ -351,7 +357,9 @@ msgstr "Autentimine"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Loo automaatselt teistest failitüüpidest JPEG-failid, et neid saaks brauseris kuvada."
+msgstr ""
+"Loo automaatselt teistest failitüüpidest JPEG-failid, et neid saaks "
+"brauseris kuvada."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -363,11 +371,16 @@ msgstr "Aluskaustik"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Enne tugitaotluse esitamist kasuta palun meie tõrkeotsingu meelespead, et probleemi põhjus kindlaks teha."
+msgstr ""
+"Enne tugitaotluse esitamist kasuta palun meie tõrkeotsingu meelespead, et "
+"probleemi põhjus kindlaks teha."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Kuna me oleme 100% isefinantseeritud ja sõltumatud, võime lubada, et me ei müü kunagi su andmeid ja et oleme oma tarkvara ja teenuste osas alati läbipaistvad."
+msgstr ""
+"Kuna me oleme 100% isefinantseeritud ja sõltumatud, võime lubada, et me ei "
+"müü kunagi su andmeid ja et oleme oma tarkvara ja teenuste osas alati "
+"läbipaistvad."
 
 #: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -403,7 +416,9 @@ msgstr "Sirvi fototeegis olevaid indekseeritud faile ja kaustu."
 
 #: src/page/about/about.vue:51
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud ressursside kohta leiad teadmistebaasist."
+msgstr ""
+"Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud "
+"ressursside kohta leiad teadmistebaasist."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -415,7 +430,9 @@ msgstr "Hõivatud, palun oota…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Meie poolt pakutavat tarkvara ja teenuseid kasutades nõustud kasutustingimuste, privaatsuspoliitika ja käitumiskoodeksiga."
+msgstr ""
+"Meie poolt pakutavat tarkvara ja teenuseid kasutades nõustud "
+"kasutustingimuste, privaatsuspoliitika ja käitumiskoodeksiga."
 
 #: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
@@ -532,7 +549,9 @@ msgstr "Värvid"
 
 #: src/page/about/about.vue:46
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie poolt pakutavat tõrkeotsingu meelespead."
+msgstr ""
+"Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie "
+"poolt pakutavat tõrkeotsingu meelespead."
 
 #: src/page/connect.vue:65 src/page/connect.vue:72
 msgid "Compare Editions"
@@ -768,7 +787,9 @@ msgstr "Ära loo ExifTool JSON-faile metaandmete ekstraktimise parandamiseks."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Ära muuda originaalide kausta. Keelab importimise, üleslaadimise ja kustutamise."
+msgstr ""
+"Ära muuda originaalide kausta. Keelab importimise, üleslaadimise ja "
+"kustutamise."
 
 #: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
@@ -830,7 +851,9 @@ msgstr "Skaleerimisfilter"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Meile saabuvate e-kirjade suure hulga tõttu ei pruugi meie meeskond olla võimeline kohe vastama."
+msgstr ""
+"Meile saabuvate e-kirjade suure hulga tõttu ei pruugi meie meeskond olla "
+"võimeline kohe vastama."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -846,7 +869,9 @@ msgstr "Dünaamilised eelvaated"
 
 #: src/page/settings/advanced.vue:303
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-seadmete jaoks."
+msgstr ""
+"Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-"
+"seadmete jaoks."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -909,7 +934,9 @@ msgstr "Iga kahe päeva tagant"
 
 #: src/page/settings/general.vue:209
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Välista otsingutulemustest, jagatud albumitest, siltidest ja kohtadest isiklikuks märgitud sisu."
+msgstr ""
+"Välista otsingutulemustest, jagatud albumitest, siltidest ja kohtadest "
+"isiklikuks märgitud sisu."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -991,7 +1018,8 @@ msgstr "Tagasiside"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
+msgstr ""
+"Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1030,7 +1058,9 @@ msgstr "Failid"
 
 #: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Järjestikuste nimedega failid nagu 'IMG_1234 (2)' ja 'IMG_1234 (3)' kuuluvad samale pildile."
+msgstr ""
+"Järjestikuste nimedega failid nagu 'IMG_1234 (2)' ja 'IMG_1234 (3)' kuuluvad "
+"samale pildile."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1186,11 +1216,15 @@ msgstr "Import ebaõnnestus"
 
 #: src/page/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse duplikaatide vältimiseks unikaalne nimi."
+msgstr ""
+"Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse duplikaatide "
+"vältimiseks unikaalne nimi."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse unikaalne nimi."
+msgstr ""
+"Imporditud failid sorteeritakse kuupäeva järgi ja neile antakse unikaalne "
+"nimi."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1215,7 +1249,9 @@ msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Kui pildid, mida ootasid, on puudu, skanni oma fototeek uuesti ja oota, kuni indekseerimine on lõpetatud."
+msgstr ""
+"Kui pildid, mida ootasid, on puudu, skanni oma fototeek uuesti ja oota, kuni "
+"indekseerimine on lõpetatud."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1285,7 +1321,9 @@ msgstr "Teie otsustate, kas soovite registreeruda, et nautida lisahüvesid."
 
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "See kasutab uusimaid tehnoloogiaid, et märgistada ja leida pilte automaatselt, ilma sulle jalgu jäämata."
+msgstr ""
+"See kasutab uusimaid tehnoloogiaid, et märgistada ja leida pilte "
+"automaatselt, ilma sulle jalgu jäämata."
 
 #: src/model/rest.js:181
 msgid "Item"
@@ -1440,7 +1478,9 @@ msgstr "Asukoht"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Siia ilmuvad logiteated, kui PhotoPrism leiab katkiseid faile või kui esineb muid probleeme."
+msgstr ""
+"Siia ilmuvad logiteated, kui PhotoPrism leiab katkiseid faile või kui esineb "
+"muid probleeme."
 
 #: src/component/navigation.vue:474 src/component/navigation.vue:1774
 #: src/component/navigation.vue:2048
@@ -1665,7 +1705,9 @@ msgstr "Ühtegi videot pole valitud"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et otsing on tõusutundlik."
+msgstr ""
+"Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et otsing "
+"on tõusutundlik."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1675,7 +1717,9 @@ msgstr "Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et 
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52 src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne kui nad otsingutulemustes ilmuvad."
+msgstr ""
+"Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne "
+"kui nad otsingutulemustes ilmuvad."
 
 #: src/options/admin.js:49 src/options/admin.js:68 src/options/options.js:264
 #: src/options/options.js:353
@@ -1688,7 +1732,9 @@ msgstr "Ei leitud"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Pane tähele, et võid originaalide kausta käsitsi hallata, importimine on vabatahtlik."
+msgstr ""
+"Pane tähele, et võid originaalide kausta käsitsi hallata, importimine on "
+"vabatahtlik."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
@@ -1696,7 +1742,9 @@ msgstr "Märkus:"
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Märkus: Ainult WebDAV servereid, nagu Nextcloud või PhotoPrism, saab seadistada kaugteenusena varundamiseks ja failide üleslaadimiseks."
+msgstr ""
+"Märkus: Ainult WebDAV servereid, nagu Nextcloud või PhotoPrism, saab "
+"seadistada kaugteenusena varundamiseks ja failide üleslaadimiseks."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1797,11 +1845,17 @@ msgstr "Muu"
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Meie meeskond otsustab seda jooksvalt, sõltuvalt vajalikust tugitegevusest, serveri- ja litsentsikuludest ning sellest, kas funktsioone vajavad üldiselt kõik või on neid peamiselt taotlenud organisatsioonid ja edasijõudnud kasutajad."
+msgstr ""
+"Meie meeskond otsustab seda jooksvalt, sõltuvalt vajalikust tugitegevusest, "
+"serveri- ja litsentsikuludest ning sellest, kas funktsioone vajavad üldiselt "
+"kõik või on neid peamiselt taotlenud organisatsioonid ja edasijõudnud "
+"kasutajad."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Meie kasutajajuhend hõlmab ka paljusid edasijõudnute teemasid, näiteks Google Photos'ist migreerimine ja pisipiltide kvaliteediseaded."
+msgstr ""
+"Meie kasutajajuhend hõlmab ka paljusid edasijõudnute teemasid, näiteks "
+"Google Photos'ist migreerimine ja pisipiltide kvaliteediseaded."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1862,7 +1916,9 @@ msgstr "PhotoPrism on 100% omafinantseeringuline ja sõltumatu."
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® on tehisintellektipõhine fotorakendus detsentraliseeritud veebi jaoks."
+msgstr ""
+"PhotoPrism® on tehisintellektipõhine fotorakendus detsentraliseeritud veebi "
+"jaoks."
 
 #: src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
@@ -1903,7 +1959,9 @@ msgstr "Palun ära laadi üles solvava sisuga fotosid."
 
 #: src/dialog/account/password.vue:17
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Pane tähele, et parooli muutmine logib sind teistes seadmetes ja brauserites välja."
+msgstr ""
+"Pane tähele, et parooli muutmine logib sind teistes seadmetes ja brauserites "
+"välja."
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
@@ -1996,7 +2054,9 @@ msgstr "RAW"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Indekseeri uuesti kõik originaalid, sealhulgas juba indekseeritud ja muutmata failid."
+msgstr ""
+"Indekseeri uuesti kõik originaalid, sealhulgas juba indekseeritud ja "
+"muutmata failid."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -2064,7 +2124,9 @@ msgstr "Eemalda albumist"
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Eemalda imporditud failid salvestusruumi säästmiseks. Mittetoetatud failitüüpe ei kustutata kunagi, need jäävad oma praegusesse asukohta."
+msgstr ""
+"Eemalda imporditud failid salvestusruumi säästmiseks. Mittetoetatud "
+"failitüüpe ei kustutata kunagi, need jäävad oma praegusesse asukohta."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2299,11 +2361,14 @@ msgstr "Virn"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Pane virna failid, mis jagavad sama unikaalset kujutist või identifikaatorit."
+msgstr ""
+"Pane virna failid, mis jagavad sama unikaalset kujutist või identifikaatorit."
 
 #: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Pane virna metaandmete alusel täpselt samal ajal ja samas kohas tehtud pildid."
+msgstr ""
+"Pane virna metaandmete alusel täpselt samal ajal ja samas kohas tehtud "
+"pildid."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2315,7 +2380,9 @@ msgstr "Virnad"
 
 #: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Failide virnad grupeerivad faile, millel on sarnane võrdlusraamistik, kuid erinevused kvaliteedis, formaadis, suuruses või värvitoonis."
+msgstr ""
+"Failide virnad grupeerivad faile, millel on sarnane võrdlusraamistik, kuid "
+"erinevused kvaliteedis, formaadis, suuruses või värvitoonis."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2356,7 +2423,7 @@ msgstr "Edukalt ühendatud"
 
 #: src/component/admin/sessions/remove.vue:23
 msgid "Successfully deleted"
-msgstr ""
+msgstr "Edukalt kustutatud"
 
 #: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:80
 msgid "Super Admin"
@@ -2397,7 +2464,9 @@ msgstr "Indeks sisaldab praegu %{n} peidetud faili."
 
 #: src/page/library/index.vue:37
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse konverteeritud või on olemas duplikaadid."
+msgstr ""
+"Nende formaat ei pruugi olla toetatud, neid ei ole veel JPEG-vormingusse "
+"konverteeritud või on olemas duplikaadid."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2408,12 +2477,15 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja kustutada faile\n"
+"See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja "
+"kustutada faile\n"
 "          oma arvutist või nutitelefonist, nagu oleksid need kohalikud."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
+msgstr ""
+"See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja "
+"kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2456,7 +2528,9 @@ msgstr "Pealkiri on liiga pikk"
 
 #: src/page/connect.vue:59 src/page/connect.vue:66
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Uuendamiseks võid sisestada aktiveerimiskoodi või klõpsata \"Jätka\", et registreeruda meie veebilehel:"
+msgstr ""
+"Uuendamiseks võid sisestada aktiveerimiskoodi või klõpsata \"Jätka\", et "
+"registreeruda meie veebilehel:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2616,7 +2690,8 @@ msgstr "Üleslaadimine…"
 
 #: src/dialog/upload.vue:48
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
+msgstr ""
+"Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
 
 #: src/dialog/share.vue:157
 msgid "URL"
@@ -2697,7 +2772,9 @@ msgstr "Vaataja"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Aadressilt docs.photoprism.app/user-guide saad teada, kuidas oma pilte sünkroonida, organiseerida ja jagada."
+msgstr ""
+"Aadressilt docs.photoprism.app/user-guide saad teada, kuidas oma pilte "
+"sünkroonida, organiseerida ja jagada."
 
 #: src/options/admin.js:11
 msgid "Visitor"
@@ -2710,7 +2787,9 @@ msgstr "Visuaalne sarnasus"
 
 #: src/page/connect.vue:102
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr "Vabatahtlikud annetused ei kata täiskohaga töötava meeskonna kulusid, et pakkuda teile uuendusi, dokumentatsiooni ja tuge."
+msgstr ""
+"Vabatahtlikud annetused ei kata täiskohaga töötava meeskonna kulusid, et "
+"pakkuda teile uuendusi, dokumentatsiooni ja tuge."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2722,7 +2801,9 @@ msgstr "Anname endast parima, et vastata viie tööpäeva jooksul või vähem."
 
 #: src/page/about/about.vue:71
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Anname endast parima, et vastata kõigile küsimustele. Vastutasuks palume meid toetada Patreoni või GitHub Sponsors kaudu."
+msgstr ""
+"Anname endast parima, et vastata kõigile küsimustele. Vastutasuks palume "
+"meid toetada Patreoni või GitHub Sponsors kaudu."
 
 #: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
 #: src/page/admin/users.vue:39
@@ -2743,7 +2824,8 @@ msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"WebDAV kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad \n"
+"WebDAV kliendid, nagu Microsofti Windows Explorer või Apple'i Finder, saavad "
+"\n"
 "PhotoPrismiga otse ühenduda."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
@@ -2822,11 +2904,15 @@ msgstr "Võid oma fototeeki uuesti skaneerida, et veel nägusid leida."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda sõltumatuks, et me saaksime täita oma missiooni ja kaitsta sinu privaatsust."
+msgstr ""
+"Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda "
+"sõltumatuks, et me saaksime täita oma missiooni ja kaitsta sinu privaatsust."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied erilistest hetkedest, reisidest ja kohtadest."
+msgstr ""
+"Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied "
+"erilistest hetkedest, reisidest ja kohtadest."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"

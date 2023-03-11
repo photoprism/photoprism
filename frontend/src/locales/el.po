@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-09 17:51+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-03-11 12:45+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:494
@@ -73,11 +73,11 @@ msgstr "Λογαριασμός"
 
 #: src/component/admin/users/add.vue:60 src/dialog/service/add.vue:35
 msgid "Account created"
-msgstr ""
+msgstr "Ο Λογαριασμός δημιουργήθηκε"
 
 #: src/component/admin/users/remove.vue:24 src/dialog/service/remove.vue:24
 msgid "Account deleted"
-msgstr ""
+msgstr "Ο Λογαριασμός διαγράφηκε"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
@@ -167,7 +167,9 @@ msgstr "Μετά από ένα έτος"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Αφού επιλέξετε εικόνες από τα αποτελέσματα αναζήτησης, μπορείτε να τις προσθέσετε σε ένα άλμπουμ χρησιμοποιώντας το αναδυόμενο μενού."
+msgstr ""
+"Αφού επιλέξετε εικόνες από τα αποτελέσματα αναζήτησης, μπορείτε να τις "
+"προσθέσετε σε ένα άλμπουμ χρησιμοποιώντας το αναδυόμενο μενού."
 
 #: src/options/options.js:402
 msgid "After two months"
@@ -251,7 +253,9 @@ msgstr "Όλα τα έτη"
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Εναλλακτικά, μπορείτε να μεταφορτώσετε αρχεία απευθείας σε διακομιστές WebDAV όπως το Nextcloud."
+msgstr ""
+"Εναλλακτικά, μπορείτε να μεταφορτώσετε αρχεία απευθείας σε διακομιστές "
+"WebDAV όπως το Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -278,7 +282,9 @@ msgstr "Animation"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Οποιεσδήποτε ιδιωτικές φωτογραφίες και βίντεο παραμένουν ιδιωτικές και δεν θα κοινοποιηθούν."
+msgstr ""
+"Οποιεσδήποτε ιδιωτικές φωτογραφίες και βίντεο παραμένουν ιδιωτικές και δεν "
+"θα κοινοποιηθούν."
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -337,7 +343,9 @@ msgstr "Καλλιτέχνης"
 
 #: src/page/connect.vue:110
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "Καθώς αυτό μας βοηθά να παρέχουμε περισσότερες δυνατότητες στο κοινό, ενθαρρύνουμε όλους τους χρήστες να στηρίξουν την αποστολή μας."
+msgstr ""
+"Καθώς αυτό μας βοηθά να παρέχουμε περισσότερες δυνατότητες στο κοινό, "
+"ενθαρρύνουμε όλους τους χρήστες να στηρίξουν την αποστολή μας."
 
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
@@ -351,11 +359,14 @@ msgstr "Αυθεντικοποίηση"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Αυτόματη δημιουργία αρχείων JPEG για άλλους τύπους αρχείων, ώστε να μπορούν να εμφανιστούν σε ένα πρόγραμμα περιήγησης."
+msgstr ""
+"Αυτόματη δημιουργία αρχείων JPEG για άλλους τύπους αρχείων, ώστε να μπορούν "
+"να εμφανιστούν σε ένα πρόγραμμα περιήγησης."
 
 #: src/page/settings/general.vue:165
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "Δημιουργεί αυτόματα άλμπουμ με ιδιαίτερες στιγμές, ταξίδια και τοποθεσίες."
+msgstr ""
+"Δημιουργεί αυτόματα άλμπουμ με ιδιαίτερες στιγμές, ταξίδια και τοποθεσίες."
 
 #: src/component/admin/users/edit.vue:389
 msgid "Base Folder"
@@ -363,11 +374,16 @@ msgstr "Φάκελος βάσης"
 
 #: src/page/about/about.vue:59
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Πριν υποβάλετε αίτημα υποστήριξης, χρησιμοποιήστε τις Λίστες Αντιμετώπισης Προβλημάτων για να προσδιορίσετε την αιτία του προβλήματός σας."
+msgstr ""
+"Πριν υποβάλετε αίτημα υποστήριξης, χρησιμοποιήστε τις Λίστες Αντιμετώπισης "
+"Προβλημάτων για να προσδιορίσετε την αιτία του προβλήματός σας."
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Όντας 100% αυτοχρηματοδοτούμενοι και ανεξάρτητοι, μπορούμε να σας υποσχεθούμε ότι δεν θα πουλήσουμε ποτέ τα δεδομένα σας και ότι θα είμαστε πάντα διαφανείς σχετικά με το λογισμικό και τις υπηρεσίες μας."
+msgstr ""
+"Όντας 100% αυτοχρηματοδοτούμενοι και ανεξάρτητοι, μπορούμε να σας "
+"υποσχεθούμε ότι δεν θα πουλήσουμε ποτέ τα δεδομένα σας και ότι θα είμαστε "
+"πάντα διαφανείς σχετικά με το λογισμικό και τις υπηρεσίες μας."
 
 #: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -403,7 +419,9 @@ msgstr "Περιήγηση σε αρχεία και φακέλους στη Βι
 
 #: src/page/about/about.vue:51
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Περιηγηθείτε στη Βάση Γνώσεων για λεπτομερείς πληροφορίες σχετικά με συγκεκριμένα χαρακτηριστικά του προϊόντος, υπηρεσίες και σχετικούς πόρους."
+msgstr ""
+"Περιηγηθείτε στη Βάση Γνώσεων για λεπτομερείς πληροφορίες σχετικά με "
+"συγκεκριμένα χαρακτηριστικά του προϊόντος, υπηρεσίες και σχετικούς πόρους."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -415,7 +433,9 @@ msgstr "Απασχολημένος, παρακαλώ περιμένετε…"
 
 #: src/page/connect.vue:83 src/page/connect.vue:90
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Χρησιμοποιώντας το λογισμικό και τις υπηρεσίες που παρέχουμε, συμφωνείτε με τους όρους χρήσης, την πολιτική απορρήτου και τον κώδικα δεοντολογίας."
+msgstr ""
+"Χρησιμοποιώντας το λογισμικό και τις υπηρεσίες που παρέχουμε, συμφωνείτε με "
+"τους όρους χρήσης, την πολιτική απορρήτου και τον κώδικα δεοντολογίας."
 
 #: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
@@ -532,7 +552,9 @@ msgstr "Χρώματα"
 
 #: src/page/about/about.vue:46
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Τα συνήθη προβλήματα μπορούν να διαγνωστούν και να επιλυθούν γρήγορα χρησιμοποιώντας τις λίστες ελέγχου αντιμετώπισης προβλημάτων που παρέχουμε."
+msgstr ""
+"Τα συνήθη προβλήματα μπορούν να διαγνωστούν και να επιλυθούν γρήγορα "
+"χρησιμοποιώντας τις λίστες ελέγχου αντιμετώπισης προβλημάτων που παρέχουμε."
 
 #: src/page/connect.vue:65 src/page/connect.vue:72
 msgid "Compare Editions"
@@ -698,7 +720,8 @@ msgstr "Απενεργοποίηση αντιγράφων ασφαλείας"
 
 #: src/page/settings/advanced.vue:163
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Απενεργοποίηση του ενσωματωμένου διακομιστή WebDAV. Απαιτεί επανεκκίνηση."
+msgstr ""
+"Απενεργοποίηση του ενσωματωμένου διακομιστή WebDAV. Απαιτεί επανεκκίνηση."
 
 #: src/page/settings/advanced.vue:491
 msgid "Disable Darktable"
@@ -764,11 +787,14 @@ msgstr "Μην δημιουργείτε αντίγραφα ασφαλείας σ
 
 #: src/page/settings/advanced.vue:207
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Μην δημιουργείτε αρχεία ExifTool JSON για βελτιωμένη εξαγωγή μεταδεδομένων."
+msgstr ""
+"Μην δημιουργείτε αρχεία ExifTool JSON για βελτιωμένη εξαγωγή μεταδεδομένων."
 
 #: src/page/settings/advanced.vue:97
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Μην τροποποιείτε το φάκελο πρωτοτύπων. Απενεργοποιεί την εισαγωγή, τη μεταφόρτωση και τη διαγραφή."
+msgstr ""
+"Μην τροποποιείτε το φάκελο πρωτοτύπων. Απενεργοποιεί την εισαγωγή, τη "
+"μεταφόρτωση και τη διαγραφή."
 
 #: src/page/settings/advanced.vue:492
 msgid "Don't use Darktable to convert RAW images."
@@ -830,7 +856,9 @@ msgstr "Φίλτρο υποβιβασμού κλίμακας"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Λόγω του μεγάλου όγκου μηνυμάτων ηλεκτρονικού ταχυδρομείου που λαμβάνουμε, η ομάδα μας ενδέχεται να μην είναι σε θέση να σας απαντήσει αμέσως."
+msgstr ""
+"Λόγω του μεγάλου όγκου μηνυμάτων ηλεκτρονικού ταχυδρομείου που λαμβάνουμε, η "
+"ομάδα μας ενδέχεται να μην είναι σε θέση να σας απαντήσει αμέσως."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -846,7 +874,9 @@ msgstr "Δυναμικές προεπισκοπήσεις"
 
 #: src/page/settings/advanced.vue:303
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Η δυναμική απόδοση απαιτεί έναν ισχυρό διακομιστή. Δεν συνιστάται για συσκευές NAS."
+msgstr ""
+"Η δυναμική απόδοση απαιτεί έναν ισχυρό διακομιστή. Δεν συνιστάται για "
+"συσκευές NAS."
 
 #: src/page/settings/advanced.vue:345
 msgid "Dynamic Size Limit: %{n}px"
@@ -889,7 +919,8 @@ msgstr "Ενεργοποίηση νέων χαρακτηριστικών που 
 
 #: src/page/settings/advanced.vue:536
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "Ενεργοποιεί τις προεπιλογές μετατροπέα RAW. Μπορεί να μειώσει την απόδοση."
+msgstr ""
+"Ενεργοποιεί τις προεπιλογές μετατροπέα RAW. Μπορεί να μειώσει την απόδοση."
 
 #: src/app/routes.js:307 src/component/navigation.vue:395
 msgid "Errors"
@@ -909,7 +940,10 @@ msgstr "Κάθε δύο ημέρες"
 
 #: src/page/settings/general.vue:209
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Εξαίρεση του περιεχομένου που έχει χαρακτηριστεί ως ιδιωτικό από τα αποτελέσματα αναζήτησης, τα κοινόχρηστα άλμπουμ, τις ετικέτες και τις τοποθεσίες."
+msgstr ""
+"Εξαίρεση του περιεχομένου που έχει χαρακτηριστεί ως ιδιωτικό από τα "
+"αποτελέσματα αναζήτησης, τα κοινόχρηστα άλμπουμ, τις ετικέτες και τις "
+"τοποθεσίες."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -991,7 +1025,9 @@ msgstr "Ανατροφοδότηση"
 
 #: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μας στο hello@photoprism.app αν έχετε οποιεσδήποτε ερωτήσεις."
+msgstr ""
+"Μη διστάσετε να επικοινωνήσετε μαζί μας στο hello@photoprism.app αν έχετε "
+"οποιεσδήποτε ερωτήσεις."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1030,7 +1066,9 @@ msgstr "Αρχεία"
 
 #: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "Αρχεία με διαδοχικά ονόματα όπως 'IMG_1234 (2)' και 'IMG_1234 (3)' ανήκουν στην ίδια εικόνα."
+msgstr ""
+"Αρχεία με διαδοχικά ονόματα όπως 'IMG_1234 (2)' και 'IMG_1234 (3)' ανήκουν "
+"στην ίδια εικόνα."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1186,11 +1224,15 @@ msgstr "Η εισαγωγή απέτυχε"
 
 #: src/page/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Τα εισαγόμενα αρχεία θα ταξινομούνται ανά ημερομηνία και θα λαμβάνουν ένα μοναδικό όνομα για να αποφεύγονται οι διπλές εγγραφές."
+msgstr ""
+"Τα εισαγόμενα αρχεία θα ταξινομούνται ανά ημερομηνία και θα λαμβάνουν ένα "
+"μοναδικό όνομα για να αποφεύγονται οι διπλές εγγραφές."
 
 #: src/page/settings/general.vue:275
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Τα εισαγόμενα αρχεία θα ταξινομηθούν κατά ημερομηνία και θα τους δοθεί ένα μοναδικό όνομα."
+msgstr ""
+"Τα εισαγόμενα αρχεία θα ταξινομηθούν κατά ημερομηνία και θα τους δοθεί ένα "
+"μοναδικό όνομα."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1207,7 +1249,9 @@ msgstr "στο"
 
 #: src/page/about/about.vue:69
 msgid "In addition, sponsors receive direct technical support via email."
-msgstr "Επιπλέον, οι χορηγοί λαμβάνουν άμεση τεχνική υποστήριξη μέσω ηλεκτρονικού ταχυδρομείου."
+msgstr ""
+"Επιπλέον, οι χορηγοί λαμβάνουν άμεση τεχνική υποστήριξη μέσω ηλεκτρονικού "
+"ταχυδρομείου."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1215,7 +1259,10 @@ msgstr "Επιπλέον, οι χορηγοί λαμβάνουν άμεση τε
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Σε περίπτωση που λείπουν οι εικόνες που περιμένατε, παρακαλούμε σαρώστε εκ νέου τη βιβλιοθήκη σας και περιμένετε μέχρι να ολοκληρωθεί η δημιουργία ευρετηρίου."
+msgstr ""
+"Σε περίπτωση που λείπουν οι εικόνες που περιμένατε, παρακαλούμε σαρώστε εκ "
+"νέου τη βιβλιοθήκη σας και περιμένετε μέχρι να ολοκληρωθεί η δημιουργία "
+"ευρετηρίου."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1281,11 +1328,15 @@ msgstr "Επιλογή μη έγκυρης φωτογραφίας"
 
 #: src/page/connect.vue:103
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "Είναι δική σας απόφαση αν θέλετε να εγγραφείτε για να απολαμβάνετε πρόσθετα οφέλη."
+msgstr ""
+"Είναι δική σας απόφαση αν θέλετε να εγγραφείτε για να απολαμβάνετε πρόσθετα "
+"οφέλη."
 
 #: src/page/about/about.vue:16
 msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Χρησιμοποιεί τις τελευταίες τεχνολογίες για την αυτόματη επισήμανση και εύρεση φωτογραφιών χωρίς να σας εμποδίζει."
+msgstr ""
+"Χρησιμοποιεί τις τελευταίες τεχνολογίες για την αυτόματη επισήμανση και "
+"εύρεση φωτογραφιών χωρίς να σας εμποδίζει."
 
 #: src/model/rest.js:181
 msgid "Item"
@@ -1440,7 +1491,9 @@ msgstr "Τοποθεσία"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Τα μηνύματα καταγραφής εμφανίζονται εδώ κάθε φορά που το PhotoPrism συναντά προβληματικά αρχεία ή υπάρχουν άλλα πιθανά προβλήματα."
+msgstr ""
+"Τα μηνύματα καταγραφής εμφανίζονται εδώ κάθε φορά που το PhotoPrism συναντά "
+"προβληματικά αρχεία ή υπάρχουν άλλα πιθανά προβλήματα."
 
 #: src/component/navigation.vue:474 src/component/navigation.vue:1774
 #: src/component/navigation.vue:2048
@@ -1665,7 +1718,9 @@ msgstr "Δεν έχει επιλεγεί βίντεο"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Δεν υπάρχουν προειδοποιήσεις ή σφάλματα που περιέχουν αυτή τη λέξη-κλειδί. Σημειώστε ότι η αναζήτηση είναι ευαίσθητη σε κεφαλαία-πεζά."
+msgstr ""
+"Δεν υπάρχουν προειδοποιήσεις ή σφάλματα που περιέχουν αυτή τη λέξη-κλειδί. "
+"Σημειώστε ότι η αναζήτηση είναι ευαίσθητη σε κεφαλαία-πεζά."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1675,7 +1730,9 @@ msgstr "Δεν υπάρχουν προειδοποιήσεις ή σφάλματ
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52 src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Οι μη φωτογραφικές εικόνες και οι εικόνες χαμηλής ποιότητας απαιτούν επανεξέταση προτού εμφανιστούν στα αποτελέσματα αναζήτησης."
+msgstr ""
+"Οι μη φωτογραφικές εικόνες και οι εικόνες χαμηλής ποιότητας απαιτούν "
+"επανεξέταση προτού εμφανιστούν στα αποτελέσματα αναζήτησης."
 
 #: src/options/admin.js:49 src/options/admin.js:68 src/options/options.js:264
 #: src/options/options.js:353
@@ -1688,7 +1745,9 @@ msgstr "Δεν βρέθηκε"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Σημειώστε ότι μπορείτε να διαχειριστείτε χειροκίνητα το φάκελο πρωτοτύπων σας και η εισαγωγή είναι προαιρετική."
+msgstr ""
+"Σημειώστε ότι μπορείτε να διαχειριστείτε χειροκίνητα το φάκελο πρωτοτύπων "
+"σας και η εισαγωγή είναι προαιρετική."
 
 #: src/page/settings/services.vue:36
 msgid "Note:"
@@ -1696,7 +1755,10 @@ msgstr "Σημείωση:"
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Σημείωση: Μόνο οι διακομιστές WebDAV, όπως το Nextcloud ή το PhotoPrism, μπορούν να ρυθμιστούν ως απομακρυσμένη υπηρεσία για τη δημιουργία αντιγράφων ασφαλείας και τη μεταφόρτωση αρχείων."
+msgstr ""
+"Σημείωση: Μόνο οι διακομιστές WebDAV, όπως το Nextcloud ή το PhotoPrism, "
+"μπορούν να ρυθμιστούν ως απομακρυσμένη υπηρεσία για τη δημιουργία αντιγράφων "
+"ασφαλείας και τη μεταφόρτωση αρχείων."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1721,7 +1783,8 @@ msgstr "Ο παλαιότερος πρώτος"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr "Στα Windows, εισαγάγετε τον ακόλουθο πόρο στο παράθυρο διαλόγου σύνδεσης:"
+msgstr ""
+"Στα Windows, εισαγάγετε τον ακόλουθο πόρο στο παράθυρο διαλόγου σύνδεσης:"
 
 #: src/options/options.js:392
 msgid "Once a week"
@@ -1797,11 +1860,18 @@ msgstr "Άλλα"
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Η ομάδα μας το αποφασίζει αυτό σε συνεχή βάση ανάλογα με την απαιτούμενη προσπάθεια υποστήριξης, το κόστος του διακομιστή και των αδειών χρήσης και το αν οι λειτουργίες χρειάζονται γενικά από όλους ή ζητούνται κυρίως από οργανισμούς και προχωρημένους χρήστες."
+msgstr ""
+"Η ομάδα μας το αποφασίζει αυτό σε συνεχή βάση ανάλογα με την απαιτούμενη "
+"προσπάθεια υποστήριξης, το κόστος του διακομιστή και των αδειών χρήσης και "
+"το αν οι λειτουργίες χρειάζονται γενικά από όλους ή ζητούνται κυρίως από "
+"οργανισμούς και προχωρημένους χρήστες."
 
 #: src/page/about/about.vue:45
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Ο Οδηγός χρήστη καλύπτει επίσης πολλά θέματα για προχωρημένους, όπως η μετανάστευση από τις Φωτογραφίες Google και οι ρυθμίσεις ποιότητας μικρογραφιών."
+msgstr ""
+"Ο Οδηγός χρήστη καλύπτει επίσης πολλά θέματα για προχωρημένους, όπως η "
+"μετανάστευση από τις Φωτογραφίες Google και οι ρυθμίσεις ποιότητας "
+"μικρογραφιών."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1834,7 +1904,9 @@ msgstr "Άνθρωποι"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr "Τα άτομα με τα οποία μοιράζεστε έναν σύνδεσμο θα μπορούν να βλέπουν το δημόσιο περιεχόμενο."
+msgstr ""
+"Τα άτομα με τα οποία μοιράζεστε έναν σύνδεσμο θα μπορούν να βλέπουν το "
+"δημόσιο περιεχόμενο."
 
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
@@ -1862,7 +1934,9 @@ msgstr "Η PhotoPrism είναι 100% αυτοχρηματοδοτούμενη �
 
 #: src/page/about/about.vue:15
 msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "Το PhotoPrism® είναι μια εφαρμογή φωτογραφιών με τεχνητή νοημοσύνη για τον αποκεντρωμένο ιστό."
+msgstr ""
+"Το PhotoPrism® είναι μια εφαρμογή φωτογραφιών με τεχνητή νοημοσύνη για τον "
+"αποκεντρωμένο ιστό."
 
 #: src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
@@ -1899,11 +1973,14 @@ msgstr "Επιβεβαιώστε τον νέο σας κωδικό πρόσβα�
 
 #: src/dialog/upload.vue:47
 msgid "Please don't upload photos containing offensive content."
-msgstr "Παρακαλούμε μην ανεβάζετε φωτογραφίες που περιέχουν προσβλητικό περιεχόμενο."
+msgstr ""
+"Παρακαλούμε μην ανεβάζετε φωτογραφίες που περιέχουν προσβλητικό περιεχόμενο."
 
 #: src/dialog/account/password.vue:17
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Λάβετε υπόψη ότι η αλλαγή του κωδικού πρόσβασής σας θα σας αποσυνδέσει από άλλες συσκευές και προγράμματα περιήγησης."
+msgstr ""
+"Λάβετε υπόψη ότι η αλλαγή του κωδικού πρόσβασής σας θα σας αποσυνδέσει από "
+"άλλες συσκευές και προγράμματα περιήγησης."
 
 #: src/page/settings/advanced.vue:456
 msgid "PNG Size Limit: %{n}px"
@@ -1996,7 +2073,9 @@ msgstr "RAW"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Δημιουργία ευρετηρίου όλων των πρωτοτύπων, συμπεριλαμβανομένων των ήδη καταχωρημένων και αμετάβλητων αρχείων."
+msgstr ""
+"Δημιουργία ευρετηρίου όλων των πρωτοτύπων, συμπεριλαμβανομένων των ήδη "
+"καταχωρημένων και αμετάβλητων αρχείων."
 
 #: src/page/about/about.vue:48
 msgid "Read the Docs"
@@ -2064,7 +2143,10 @@ msgstr "Αφαιρέση από τη συλλογή"
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Αφαιρέστε τα εισαγόμενα αρχεία για εξοικονόμηση χώρου αποθήκευσης. Οι μη υποστηριζόμενοι τύποι αρχείων δεν διαγράφονται ποτέ, παραμένουν στην τρέχουσα θέση τους."
+msgstr ""
+"Αφαιρέστε τα εισαγόμενα αρχεία για εξοικονόμηση χώρου αποθήκευσης. Οι μη "
+"υποστηριζόμενοι τύποι αρχείων δεν διαγράφονται ποτέ, παραμένουν στην "
+"τρέχουσα θέση τους."
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2299,11 +2381,15 @@ msgstr "Στοίβα"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Αρχεία στοίβας που μοιράζονται το ίδιο μοναδικό αναγνωριστικό εικόνας ή περίπτωσης."
+msgstr ""
+"Αρχεία στοίβας που μοιράζονται το ίδιο μοναδικό αναγνωριστικό εικόνας ή "
+"περίπτωσης."
 
 #: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Στοιβάζετε φωτογραφίες που τραβήχτηκαν ακριβώς την ίδια ώρα και στην ίδια τοποθεσία με βάση τα μεταδεδομένα τους."
+msgstr ""
+"Στοιβάζετε φωτογραφίες που τραβήχτηκαν ακριβώς την ίδια ώρα και στην ίδια "
+"τοποθεσία με βάση τα μεταδεδομένα τους."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2315,7 +2401,9 @@ msgstr "Στοίβες"
 
 #: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Οι στοίβες ομαδοποιούν αρχεία με παρόμοιο πλαίσιο αναφοράς, αλλά με διαφορές στην ποιότητα, τη μορφή, το μέγεθος ή το χρώμα."
+msgstr ""
+"Οι στοίβες ομαδοποιούν αρχεία με παρόμοιο πλαίσιο αναφοράς, αλλά με διαφορές "
+"στην ποιότητα, τη μορφή, το μέγεθος ή το χρώμα."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2356,7 +2444,7 @@ msgstr "Επιτυχής σύνδεση"
 
 #: src/component/admin/sessions/remove.vue:23
 msgid "Successfully deleted"
-msgstr ""
+msgstr "Διαγράφηκε επιτυχώς"
 
 #: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:80
 msgid "Super Admin"
@@ -2364,7 +2452,9 @@ msgstr "Super Admin"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Η υποστήριξη για πρόσθετες υπηρεσίες, όπως το Google Drive, θα προστεθεί με την πάροδο του χρόνου."
+msgstr ""
+"Η υποστήριξη για πρόσθετες υπηρεσίες, όπως το Google Drive, θα προστεθεί με "
+"την πάροδο του χρόνου."
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2397,7 +2487,9 @@ msgstr "Το ευρετήριο περιέχει επί του παρόντος 
 
 #: src/page/library/index.vue:37
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Μπορεί να μην υποστηρίζεται η μορφή τους, να μην έχουν μετατραπεί ακόμη σε JPEG ή να υπάρχουν αντίγραφα."
+msgstr ""
+"Μπορεί να μην υποστηρίζεται η μορφή τους, να μην έχουν μετατραπεί ακόμη σε "
+"JPEG ή να υπάρχουν αντίγραφα."
 
 #: src/page/settings/general.vue:70
 msgid "Theme"
@@ -2407,11 +2499,17 @@ msgstr "Θέμα"
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Αυτό προσαρτά το φάκελο πρωτοτύπων ως μονάδα δίσκου δικτύου και σας επιτρέπει να ανοίγετε, να επεξεργάζεστε και να διαγράφετε αρχεία από τον υπολογιστή ή το smartphone σας σαν να ήταν τοπικά."
+msgstr ""
+"Αυτό προσαρτά το φάκελο πρωτοτύπων ως μονάδα δίσκου δικτύου και σας "
+"επιτρέπει να ανοίγετε, να επεξεργάζεστε και να διαγράφετε αρχεία από τον "
+"υπολογιστή ή το smartphone σας σαν να ήταν τοπικά."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Αυτό προσαρτά το φάκελο πρωτοτύπων ως μονάδα δίσκου δικτύου και σας επιτρέπει να ανοίγετε, να επεξεργάζεστε και να διαγράφετε αρχεία από τον υπολογιστή ή το smartphone σας σαν να ήταν τοπικά."
+msgstr ""
+"Αυτό προσαρτά το φάκελο πρωτοτύπων ως μονάδα δίσκου δικτύου και σας "
+"επιτρέπει να ανοίγετε, να επεξεργάζεστε και να διαγράφετε αρχεία από τον "
+"υπολογιστή ή το smartphone σας σαν να ήταν τοπικά."
 
 #: src/page/settings/advanced.vue:250
 msgid "Thumbnail Generation"
@@ -2454,7 +2552,9 @@ msgstr "Πολύ μεγάλος τίτλος"
 
 #: src/page/connect.vue:59 src/page/connect.vue:66
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Για να αναβαθμίσετε, μπορείτε είτε να εισαγάγετε έναν κωδικό ενεργοποίησης είτε να κάνετε κλικ στο \"Προχωρήστε\" για να εγγραφείτε στην ιστοσελίδα μας:"
+msgstr ""
+"Για να αναβαθμίσετε, μπορείτε είτε να εισαγάγετε έναν κωδικό ενεργοποίησης "
+"είτε να κάνετε κλικ στο \"Προχωρήστε\" για να εγγραφείτε στην ιστοσελίδα μας:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2614,7 +2714,9 @@ msgstr "Επαναγέμισμα…"
 
 #: src/dialog/upload.vue:48
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "Οι μεταφορτώσεις που ενδέχεται να περιέχουν τέτοιες εικόνες θα απορρίπτονται αυτόματα."
+msgstr ""
+"Οι μεταφορτώσεις που ενδέχεται να περιέχουν τέτοιες εικόνες θα απορρίπτονται "
+"αυτόματα."
 
 #: src/dialog/share.vue:157
 msgid "URL"
@@ -2695,7 +2797,9 @@ msgstr "Πρόγραμμα προβολής"
 
 #: src/page/about/about.vue:44
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Επισκεφθείτε το docs.photoprism.app/user-guide για να μάθετε πώς να συγχρονίζετε, να οργανώνετε και να μοιράζεστε τις φωτογραφίες σας."
+msgstr ""
+"Επισκεφθείτε το docs.photoprism.app/user-guide για να μάθετε πώς να "
+"συγχρονίζετε, να οργανώνετε και να μοιράζεστε τις φωτογραφίες σας."
 
 #: src/options/admin.js:11
 msgid "Visitor"
@@ -2708,7 +2812,9 @@ msgstr "Ομαδοποίηση με βάση την ομοιότητα"
 
 #: src/page/connect.vue:102
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr "Οι εθελοντικές δωρεές δεν καλύπτουν το κόστος μιας ομάδας που εργάζεται με πλήρες ωράριο για να σας παρέχει ενημερώσεις, τεκμηρίωση και υποστήριξη."
+msgstr ""
+"Οι εθελοντικές δωρεές δεν καλύπτουν το κόστος μιας ομάδας που εργάζεται με "
+"πλήρες ωράριο για να σας παρέχει ενημερώσεις, τεκμηρίωση και υποστήριξη."
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
@@ -2716,11 +2822,15 @@ msgstr "Εκτιμούμε τα σχόλιά σας!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr "Κάνουμε ό,τι μπορούμε για να απαντήσουμε εντός πέντε εργάσιμων ημερών ή λιγότερο."
+msgstr ""
+"Κάνουμε ό,τι μπορούμε για να απαντήσουμε εντός πέντε εργάσιμων ημερών ή "
+"λιγότερο."
 
 #: src/page/about/about.vue:71
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Θα κάνουμε ό,τι μπορούμε για να απαντήσουμε σε όλες τις ερωτήσεις σας. Σε αντάλλαγμα, σας ζητάμε να μας υποστηρίξετε στο Patreon ή στο GitHub Sponsors."
+msgstr ""
+"Θα κάνουμε ό,τι μπορούμε για να απαντήσουμε σε όλες τις ερωτήσεις σας. Σε "
+"αντάλλαγμα, σας ζητάμε να μας υποστηρίξετε στο Patreon ή στο GitHub Sponsors."
 
 #: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
 #: src/page/admin/users.vue:39
@@ -2734,13 +2844,17 @@ msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "Οι πελάτες WebDAV μπορούν να συνδεθούν στο PhotoPrism χρησιμοποιώντας την ακόλουθη διεύθυνση URL:"
+msgstr ""
+"Οι πελάτες WebDAV μπορούν να συνδεθούν στο PhotoPrism χρησιμοποιώντας την "
+"ακόλουθη διεύθυνση URL:"
 
 #: src/page/settings/services.vue:37
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "Οι πελάτες WebDAV, όπως ο Windows Explorer της Microsoft ή το Finder της Apple, μπορούν να συνδεθούν απευθείας στο PhotoPrism."
+msgstr ""
+"Οι πελάτες WebDAV, όπως ο Windows Explorer της Microsoft ή το Finder της "
+"Apple, μπορούν να συνδεθούν απευθείας στο PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2805,7 +2919,8 @@ msgstr "Μπορείτε να κατεβάσετε μόνο μία ετικέτ�
 
 #: src/page/about/about.vue:17
 msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "Μπορείτε να το εκτελέσετε στο σπίτι, σε ιδιωτικό διακομιστή ή στο cloud."
+msgstr ""
+"Μπορείτε να το εκτελέσετε στο σπίτι, σε ιδιωτικό διακομιστή ή στο cloud."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2814,15 +2929,21 @@ msgstr "Μπορείτε να επιλέξετε μόνο ένα στοιχεί�
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr "Μπορείτε να σαρώσετε εκ νέου τη βιβλιοθήκη σας για να βρείτε επιπλέον πρόσωπα."
+msgstr ""
+"Μπορείτε να σαρώσετε εκ νέου τη βιβλιοθήκη σας για να βρείτε επιπλέον "
+"πρόσωπα."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Η συνεχής υποστήριξή σας μας βοηθά να παρέχουμε τακτικές ενημερώσεις και υπηρεσίες όπως οι παγκόσμιοι χάρτες."
+msgstr ""
+"Η συνεχής υποστήριξή σας μας βοηθά να παρέχουμε τακτικές ενημερώσεις και "
+"υπηρεσίες όπως οι παγκόσμιοι χάρτες."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για να δημιουργούνται αυτόματα συλλογές με ιδιαίτερες στιγμές, ταξίδια και τοπθεσίες."
+msgstr ""
+"Η βιβλιοθήκη σας αναλύεται συνεχώς για να δημιουργούνται αυτόματα συλλογές "
+"με ιδιαίτερες στιγμές, ταξίδια και τοπθεσίες."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
