@@ -56,7 +56,7 @@ msgstr "4시간"
 msgid "A click will copy it to your clipboard."
 msgstr "클릭하면 클립보드에 복사됩니다."
 
-#: src/component/admin/users/edit.vue:266 src/page/about/about.vue:4
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
 #: src/page/about/about.vue:220 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
@@ -67,12 +67,20 @@ msgstr "정보"
 msgid "Abyss"
 msgstr "어비스"
 
-#: src/component/navigation.vue:95 src/component/navigation.vue:1996
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:140 src/page/settings.vue:84
 #: src/page/settings/general.vue:472
 msgid "Account"
 msgstr "계정"
+
+#: src/component/admin/users/add.vue:60 src/dialog/service/add.vue:35
+msgid "Account created"
+msgstr ""
+
+#: src/component/admin/users/remove.vue:24 src/dialog/service/remove.vue:24
+msgid "Account deleted"
+msgstr ""
 
 #: src/page/admin.vue:33
 msgid "Accounts"
@@ -98,11 +106,11 @@ msgstr "활성화"
 msgid "Activation Code"
 msgstr "활성화 코드"
 
-#: src/component/admin/users/add.vue:21 src/page/admin/users.vue:45
+#: src/component/admin/users/add.vue:22 src/page/admin/users.vue:45
 msgid "Add"
 msgstr "추가"
 
-#: src/component/admin/users/add.vue:7 src/dialog/service/add.vue:7
+#: src/component/admin/users/add.vue:8 src/dialog/service/add.vue:7
 msgid "Add Account"
 msgstr "계정 등록"
 
@@ -338,8 +346,8 @@ msgstr "이를 통해 더 많은 기능을 대중에게 제공할 수 있으므�
 msgid "Aspect Ratio"
 msgstr "종횡비"
 
-#: src/component/admin/users/add.vue:203 src/component/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:61 src/page/admin/sessions.vue:31
+#: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
+#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "인증"
@@ -352,7 +360,7 @@ msgstr "브라우저에 표시할 수 있도록 다른 파일 형식에 대한 J
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "특별한 순간, 여행 및 장소의 앨범을 자동으로 생성합니다."
 
-#: src/component/admin/users/edit.vue:390
+#: src/component/admin/users/edit.vue:389
 msgid "Base Folder"
 msgstr "기본 폴더"
 
@@ -364,7 +372,7 @@ msgstr "지원 요청을 제출하기 전에 문제 해결 체크리스트를 �
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "100% 자체 자금으로 운영되며 독립되었기에, 우리는 귀하의 데이터를 절대 판매하지 않으며 소프트웨어와 서비스에 대해 항상 투명할 것임을 약속할 수 있습니다."
 
-#: src/component/admin/users/edit.vue:294 src/page/settings/account.vue:285
+#: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
 msgstr "바이오"
 
@@ -440,7 +448,7 @@ msgid "Can't select more items"
 msgstr "더 많은 아이템을 선택할 수 없습니다"
 
 #: src/component/admin/sessions/remove.vue:15
-#: src/component/admin/users/add.vue:20 src/component/admin/users/edit.vue:75
+#: src/component/admin/users/add.vue:21 src/component/admin/users/edit.vue:75
 #: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
@@ -467,7 +475,7 @@ msgstr "카드"
 msgid "Category"
 msgstr "범주"
 
-#: src/component/admin/users/edit.vue:183 src/page/settings/account.vue:254
+#: src/component/admin/users/edit.vue:182 src/page/settings/account.vue:254
 msgid "Change Avatar"
 msgstr "아바타 변경"
 
@@ -488,7 +496,8 @@ msgstr "사진 제목, 위치 및 기타 메타데이터를 변경합니다."
 msgid "Change private flag"
 msgstr "비공개 플래그 변경하기"
 
-#: src/component/admin/users/edit.vue:135 src/page/settings/account.vue:114
+#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:152
+#: src/dialog/service/edit.vue:102 src/page/settings/account.vue:114
 #: src/page/settings/account.vue:129 src/page/settings/advanced.vue:43
 #: src/page/settings/general.vue:105 src/page/settings/library.vue:50
 msgid "Changes successfully saved"
@@ -502,7 +511,7 @@ msgstr "확인됨"
 msgid "Chroma"
 msgstr "채도"
 
-#: src/page/admin/sessions.vue:105 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:103 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
 #: src/page/library/errors.vue:60
 msgid "Close"
@@ -605,7 +614,7 @@ msgstr "계정 만들기"
 msgid "Create album"
 msgstr "앨범 만들기"
 
-#: src/page/admin/sessions.vue:67 src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:65 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "만듦"
 
@@ -747,7 +756,7 @@ msgstr "동영상 트랜스코딩 및 썸네일 추출을 비활성화합니다.
 msgid "Discover"
 msgstr "디스커버"
 
-#: src/component/admin/users/add.vue:110 src/component/admin/users/edit.vue:100
+#: src/component/admin/users/add.vue:120 src/component/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "닉네임"
@@ -860,7 +869,7 @@ msgstr "편집"
 msgid "Edit %{name}"
 msgstr "%{name} 편집하기"
 
-#: src/component/admin/users/edit.vue:59 src/dialog/service/edit.vue:146
+#: src/component/admin/users/edit.vue:58 src/dialog/service/edit.vue:146
 msgid "Edit Account"
 msgstr "계정 편집"
 
@@ -872,7 +881,7 @@ msgstr "사진 편집"
 msgid "Edited"
 msgstr "편집됨"
 
-#: src/component/admin/users/add.vue:135 src/component/admin/users/edit.vue:318
+#: src/component/admin/users/add.vue:145 src/component/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "이메일"
@@ -921,7 +930,7 @@ msgstr "확장 검색"
 msgid "Experimental Features"
 msgstr "실험실 기능"
 
-#: src/page/admin/sessions.vue:79 src/dialog/service/edit.vue:249
+#: src/page/admin/sessions.vue:77 src/dialog/service/edit.vue:249
 #: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "만료"
@@ -954,7 +963,7 @@ msgstr "링크를 제거하지 못했습니다"
 msgid "Failed updating link"
 msgstr "링크를 업데이트하지 못했습니다"
 
-#: src/component/admin/users/edit.vue:236 src/page/settings/account.vue:166
+#: src/component/admin/users/edit.vue:235 src/page/settings/account.vue:166
 msgid "Family Name"
 msgstr "성"
 
@@ -1073,7 +1082,7 @@ msgstr "전체 화면"
 msgid "Gemstone"
 msgstr "보석"
 
-#: src/component/admin/users/edit.vue:118 src/page/settings/account.vue:81
+#: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "성별"
 
@@ -1085,7 +1094,7 @@ msgstr "일반"
 msgid "Getting Support"
 msgstr "지원 받기"
 
-#: src/component/admin/users/edit.vue:209 src/page/settings/account.vue:140
+#: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "이름"
 
@@ -1240,14 +1249,14 @@ msgstr "인스턴스 ID"
 msgid "Interval"
 msgstr "간격"
 
-#: src/component/admin/users/add.vue:113 src/component/admin/users/add.vue:138
-#: src/component/admin/users/edit.vue:128
-#: src/component/admin/users/edit.vue:155
-#: src/component/admin/users/edit.vue:212
-#: src/component/admin/users/edit.vue:239
-#: src/component/admin/users/edit.vue:265
-#: src/component/admin/users/edit.vue:293
-#: src/component/admin/users/edit.vue:321 src/page/connect.vue:14
+#: src/component/admin/users/add.vue:123 src/component/admin/users/add.vue:148
+#: src/component/admin/users/edit.vue:127
+#: src/component/admin/users/edit.vue:154
+#: src/component/admin/users/edit.vue:211
+#: src/component/admin/users/edit.vue:238
+#: src/component/admin/users/edit.vue:264
+#: src/component/admin/users/edit.vue:292
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
 #: src/page/settings/account.vue:91 src/page/settings/account.vue:117
 #: src/page/settings/account.vue:143 src/page/settings/account.vue:169
 #: src/page/settings/account.vue:225 src/page/settings/account.vue:284
@@ -1328,7 +1337,7 @@ msgstr "Lanczos: 디테일 보존, 최소한의 인공물"
 msgid "Language"
 msgstr "언어"
 
-#: src/page/admin/sessions.vue:73 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "마지막 활성"
 
@@ -1645,7 +1654,7 @@ msgstr "최근에 편집한 사진이 없습니다"
 msgid "No servers configured."
 msgstr "구성된 서버가 없습니다."
 
-#: src/page/settings/services.vue:37
+#: src/page/settings/services.vue:36
 msgid "No services configured."
 msgstr "구성된 서비스가 없습니다."
 
@@ -1700,7 +1709,7 @@ msgstr "노트"
 msgid "Nothing to see here yet."
 msgstr "아직 볼 것이 없습니다. 인내심을 가지세요."
 
-#: src/page/admin/sessions.vue:45 src/page/admin/users.vue:43
+#: src/page/admin/sessions.vue:44 src/page/admin/users.vue:42
 msgid "Nothing was found."
 msgstr "아무것도 발견되지 않았습니다."
 
@@ -1779,7 +1788,7 @@ msgstr "원본 파일 이름은 저장하고 색인됩니다."
 msgid "Original Name"
 msgstr "원본 이름"
 
-#: src/component/navigation.vue:377 src/dialog/service/edit.vue:107
+#: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:428
 msgid "Originals"
@@ -1809,7 +1818,7 @@ msgstr "파노라마"
 msgid "Panoramas"
 msgstr "파노라마"
 
-#: src/component/admin/users/add.vue:159 src/dialog/service/add.vue:126
+#: src/component/admin/users/add.vue:168 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
@@ -1830,8 +1839,6 @@ msgstr "사람"
 msgid "People you share a link with will be able to view public contents."
 msgstr "링크를 공유한 사람들은 공개 콘텐츠를 볼 수 있습니다."
 
-#: src/component/admin/sessions/remove.vue:23
-#: src/component/admin/users/remove.vue:23
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
 msgstr "영구 삭제됨"
@@ -2037,7 +2044,7 @@ msgstr "빨간색"
 msgid "Reload"
 msgstr "새로고침"
 
-#: src/component/navigation.vue:126 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "새로고침 중…"
@@ -2066,8 +2073,8 @@ msgstr "가져온 파일을 제거하여 저장 공간을 절약하십시오. �
 msgid "Request failed - invalid response"
 msgstr "요청 실패 - 잘못된 응답"
 
-#: src/component/admin/users/add.vue:90 src/component/admin/users/add.vue:163
-#: src/component/admin/users/edit.vue:103 src/page/about/feedback.vue:130
+#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:172
+#: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
 #: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
 msgid "Required"
@@ -2093,7 +2100,7 @@ msgstr "비밀번호 다시 입력"
 msgid "Review"
 msgstr "리뷰"
 
-#: src/component/admin/users/add.vue:183 src/component/admin/users/edit.vue:342
+#: src/component/admin/users/add.vue:192 src/component/admin/users/edit.vue:341
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "역할"
@@ -2350,7 +2357,11 @@ msgstr "주제"
 msgid "Successfully Connected"
 msgstr "성공적으로 연결됨"
 
-#: src/component/admin/users/edit.vue:435 src/page/admin/users.vue:80
+#: src/component/admin/sessions/remove.vue:23
+msgid "Successfully deleted"
+msgstr ""
+
+#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:80
 msgid "Super Admin"
 msgstr "슈퍼 관리자"
 
@@ -2421,7 +2432,7 @@ msgstr "시간대"
 msgid "Timeout"
 msgstr "타임아웃"
 
-#: src/component/admin/users/edit.vue:152 src/page/settings/account.vue:114
+#: src/component/admin/users/edit.vue:151 src/page/settings/account.vue:114
 msgctxt "Account"
 msgid "Title"
 msgstr "주제"
@@ -2504,7 +2515,7 @@ msgid "Unknown"
 msgstr "알 수 없는"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:84 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "미등록"
@@ -2534,7 +2545,7 @@ msgstr "색인을 업데이트 중"
 msgid "Updating moments"
 msgstr "\"나의 순간\" 업데이트 중"
 
-#: src/component/admin/users/edit.vue:132 src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:149 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "사진 업데이트 중…"
 
@@ -2576,7 +2587,7 @@ msgstr "업로드 완료. 색인중…"
 msgid "Upload failed"
 msgstr "업로드 실패"
 
-#: src/component/admin/users/edit.vue:417
+#: src/component/admin/users/edit.vue:416
 msgid "Upload Folder"
 msgstr "폴더 업로드"
 
@@ -2617,7 +2628,7 @@ msgid "Use Presets"
 msgstr "사전 설정 사용"
 
 #: src/options/admin.js:7 src/options/admin.js:23
-#: src/page/admin/sessions.vue:55 src/model/user.js:205
+#: src/page/admin/sessions.vue:53 src/model/user.js:205
 msgid "User"
 msgstr "사용자"
 
@@ -2629,7 +2640,7 @@ msgstr "사용자 가이드"
 msgid "User Interface"
 msgstr "사용자 인터페이스"
 
-#: src/component/admin/users/add.vue:85 src/page/admin/sessions.vue:48
+#: src/component/admin/users/add.vue:94 src/page/admin/sessions.vue:46
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:30
 #: src/page/admin/users.vue:34 src/dialog/service/add.vue:103
 #: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
@@ -2714,12 +2725,12 @@ msgstr "영업일 기준 5일 이내로 답변을 드리기 위해 최선을 다
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "귀하의 모든 질문에 최선을 다해 답변해 드리겠습니다. 그 대가로 Patreon 또는 GitHub 후원자를 후원해 주시기 바랍니다."
 
-#: src/component/admin/users/add.vue:219 src/component/admin/users/edit.vue:452
+#: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "웹 로그인"
 
-#: src/component/admin/users/add.vue:235 src/component/admin/users/edit.vue:468
+#: src/component/admin/users/add.vue:244 src/component/admin/users/edit.vue:468
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
