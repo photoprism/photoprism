@@ -436,8 +436,8 @@ func (m *User) GetBasePath() string {
 func (m *User) SetBasePath(dir string) *User {
 	if list.Contains(list.List{"", ".", "./", "/", "\\"}, dir) {
 		m.BasePath = ""
-	} else if dir == "~" && m.UserUID != "" {
-		m.BasePath = fmt.Sprintf("users/%s", m.UserUID)
+	} else if dir == "~" && m.UserName != "" {
+		m.BasePath = fmt.Sprintf("users/%s", m.UserName)
 	} else {
 		m.BasePath = clean.UserPath(dir)
 	}
@@ -453,8 +453,8 @@ func (m *User) GetUploadPath() string {
 		return basePath
 	} else if basePath != "" && strings.HasPrefix(m.UploadPath, basePath+"/") {
 		return m.UploadPath
-	} else if basePath == "" && m.UploadPath == "~" && m.UserUID != "" {
-		return fmt.Sprintf("users/%s", m.UserUID)
+	} else if basePath == "" && m.UploadPath == "~" && m.UserName != "" {
+		return fmt.Sprintf("users/%s", m.UserName)
 	}
 
 	return path.Join(basePath, m.UploadPath)
@@ -466,8 +466,8 @@ func (m *User) SetUploadPath(dir string) *User {
 
 	if list.Contains(list.List{"", ".", "./", "/", "\\"}, dir) {
 		m.UploadPath = ""
-	} else if basePath == "" && dir == "~" && m.UserUID != "" {
-		m.UploadPath = fmt.Sprintf("users/%s", m.UserUID)
+	} else if basePath == "" && dir == "~" && m.UserName != "" {
+		m.UploadPath = fmt.Sprintf("users/%s", m.UserName)
 	} else {
 		m.UploadPath = clean.UserPath(dir)
 	}

@@ -1038,8 +1038,8 @@ func TestUser_SetBasePath(t *testing.T) {
 		}
 
 		assert.Equal(t, "base", u.SetBasePath("base").GetBasePath())
-		assert.Equal(t, "users/urqdrfb72479n047", u.SetBasePath("~").GetBasePath())
-		assert.Equal(t, "users/urqdrfb72479n047", u.GetUploadPath())
+		assert.Equal(t, "users/test", u.SetBasePath("~").GetBasePath())
+		assert.Equal(t, "users/test", u.GetUploadPath())
 	})
 }
 
@@ -1072,7 +1072,7 @@ func TestUser_SetUploadPath(t *testing.T) {
 		assert.Equal(t, "upload", u.SetUploadPath("upload").GetUploadPath())
 		assert.Equal(t, "base/upload", u.SetBasePath("base").GetUploadPath())
 		assert.Equal(t, "base", u.SetUploadPath("~").GetUploadPath())
-		assert.Equal(t, "users/urqdrfb72479n047", u.SetBasePath("~").GetUploadPath())
+		assert.Equal(t, "users/test", u.SetBasePath("~").GetUploadPath())
 	})
 }
 
