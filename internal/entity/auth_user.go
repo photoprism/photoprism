@@ -491,7 +491,7 @@ func (m *User) Provider() authn.ProviderType {
 	if m.AuthProvider != "" {
 		return authn.ProviderType(m.AuthProvider)
 	} else if m.ID == Visitor.ID {
-		return authn.ProviderToken
+		return authn.ProviderLink
 	} else if m.ID == 1 {
 		return authn.ProviderLocal
 	} else if m.UserName != "" && m.ID > 0 {
@@ -593,6 +593,20 @@ func (m *User) FullName() string {
 	}
 
 	return clean.NameCapitalized(strings.ReplaceAll(m.Handle(), ".", " "))
+}
+
+// SetRole sets the user role specified as string.
+func (m *User) SetRole(role string) *User {
+	role = clean.Role(role)
+
+	switch role {
+	case "", "0", "false", "nil", "null", "nan":
+		m.UserRole = acl.RoleUnknown.String()
+	default:
+		m.UserRole = acl.ValidRoles[role].String()
+	}
+
+	return m
 }
 
 // AclRole returns the user role for ACL permission checks.
@@ -842,7 +856,7 @@ func (m *User) SetFormValues(frm form.User) *User {
 	m.SuperAdmin = frm.SuperAdmin
 	m.CanLogin = frm.CanLogin
 	m.WebDAV = frm.WebDAV
-	m.UserRole = frm.Role()
+	m.SetRole(frm.Role())
 	m.UserAttr = frm.Attr()
 	m.SetBasePath(frm.BasePath)
 	m.SetUploadPath(frm.UploadPath)
@@ -1011,7 +1025,7 @@ func (m *User) SaveForm(f form.User, updateRights bool) error {
 
 	// Update user rights only if explicitly requested.
 	if updateRights {
-		m.UserRole = f.Role()
+		m.SetRole(f.Role())
 		m.SuperAdmin = f.SuperAdmin
 
 		m.CanLogin = f.CanLogin
@@ -1025,12 +1039,12 @@ func (m *User) SaveForm(f form.User, updateRights bool) error {
 
 	// Ensure super admins never have a non-admin role.
 	if m.SuperAdmin {
-		m.UserRole = acl.RoleAdmin.String()
+		m.SetRole(acl.RoleAdmin.String())
 	}
 
 	// Make sure that the initial admin user cannot lock itself out.
 	if m.ID == Admin.ID && (m.AclRole() != acl.RoleAdmin || !m.SuperAdmin || !m.CanLogin) {
-		m.UserRole = acl.RoleAdmin.String()
+		m.SetRole(acl.RoleAdmin.String())
 		m.SuperAdmin = true
 		m.CanLogin = true
 	}

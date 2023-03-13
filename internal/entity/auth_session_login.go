@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -49,7 +50,15 @@ func AuthLocal(user *User, f form.Login, m *Session) (err error) {
 	}
 
 	// Login allowed?
-	if !user.CanLogIn() {
+	if !user.Provider().IsDefault() && !user.Provider().IsLocal() {
+		message := fmt.Sprintf("%s authentication disabled", authn.ProviderLocal.String())
+		if m != nil {
+			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
+			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
+			m.Status = http.StatusUnauthorized
+		}
+		return i18n.Error(i18n.ErrInvalidCredentials)
+	} else if !user.CanLogIn() {
 		message := "account disabled"
 		if m != nil {
 			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
@@ -102,7 +111,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 		m.SetProvider(provider)
 	}
 
-	// Share token provided?
+	// Link token provided?
 	if f.HasToken() {
 		user = m.User()
 
@@ -127,7 +136,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 			return i18n.Error(i18n.ErrInvalidLink)
 		} else {
 			m.SetData(data)
-			m.SetProvider(authn.ProviderToken)
+			m.SetProvider(authn.ProviderLink)
 			event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, shares, data)
 		}
 

@@ -51,7 +51,7 @@ var Visitor = User{
 	ID:            -2,
 	UserUID:       "u000000000000002",
 	UserName:      "",
-	AuthProvider:  authn.ProviderToken.String(),
+	AuthProvider:  authn.ProviderLink.String(),
 	UserRole:      acl.RoleVisitor.String(),
 	DisplayName:   VisitorDisplayName,
 	CanLogin:      false,

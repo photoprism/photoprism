@@ -23,7 +23,7 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 
 	// User role.
 	if ctx.IsSet("role") {
-		m.UserRole = frm.Role()
+		m.SetRole(frm.Role())
 	}
 
 	// Super-admin status.

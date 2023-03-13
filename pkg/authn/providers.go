@@ -14,7 +14,7 @@ const (
 	ProviderDefault ProviderType = "default"
 	ProviderLocal   ProviderType = "local"
 	ProviderLDAP    ProviderType = "ldap"
-	ProviderToken   ProviderType = "token"
+	ProviderLink    ProviderType = "link"
 	ProviderNone    ProviderType = "none"
 	ProviderUnknown ProviderType = ""
 )
@@ -39,11 +39,18 @@ func (t ProviderType) IsLocal() bool {
 	return list.Contains(LocalProviders, string(t))
 }
 
+// IsDefault checks if this is the default provider.
+func (t ProviderType) IsDefault() bool {
+	return t.String() == ProviderDefault.String()
+}
+
 // String returns the provider identifier as a string.
 func (t ProviderType) String() string {
 	switch t {
 	case "":
 		return string(ProviderDefault)
+	case "token":
+		return string(ProviderLink)
 	case "password":
 		return string(ProviderLocal)
 	default:
@@ -66,6 +73,8 @@ func Provider(s string) ProviderType {
 	switch s {
 	case "", "-", "null", "nil", "0", "false":
 		return ProviderDefault
+	case "token", "url":
+		return ProviderLink
 	case "pass", "passwd", "password":
 		return ProviderLocal
 	case "ldap", "ad", "ldap/ad", "ldap\\ad":

@@ -1001,7 +1001,7 @@ func TestUser_Username(t *testing.T) {
 
 func TestUser_Provider(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
-		assert.Equal(t, authn.ProviderToken, Visitor.Provider())
+		assert.Equal(t, authn.ProviderLink, Visitor.Provider())
 	})
 	t.Run("UnknownUser", func(t *testing.T) {
 		assert.Equal(t, authn.ProviderNone, UnknownUser.Provider())
