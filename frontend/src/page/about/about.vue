@@ -12,32 +12,21 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
-      <p class="subheading font-weight-bold text-selectable">
-        <translate>PhotoPrism® is an AI-Powered Photos App for the Decentralized Web.</translate>
-        <translate>It makes use of the latest technologies to tag and find pictures automatically without getting in your way.</translate>
-        <translate>You can run it at home, on a private server, or in the cloud.</translate>
+      <h3 class="title text-selectable font-weight-bold py-2">
+        PhotoPrism® - AI-Powered Photos App for the Decentralized Web
+      </h3>
+
+      <p class="body-2 pt-2 text-selectable">
+        <translate>At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come.</translate>
       </p>
 
-      <p class="subheading text-selectable">
+      <h3 class="subheading py-2"><translate>PhotoPrism+ Membership</translate></h3>
+      <p class="text-selectable">
         <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
         <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
       </p>
 
-      <div v-if="isPublic">
-        <p class="text-xs-center my-4">
-          <v-btn
-              href="https://www.photoprism.app/"
-              target="_blank"
-              color="primary-button"
-              class="white--text px-3 py-2 action-upgrade"
-              round depressed
-          >
-            <translate>Learn more</translate>
-            <v-icon :left="rtl" :right="!rtl" size="18" class="ml-2" dark>diamond</v-icon>
-          </v-btn>
-        </p>
-      </div>
-      <div v-else-if="isAdmin && !isSponsor">
+      <div v-if="isAdmin && !isSponsor && !isPublic">
         <p class="text-xs-center my-4">
           <v-btn
               to="/upgrade"
@@ -47,6 +36,20 @@
           >
             <translate>Upgrade Now</translate>
             <v-icon :left="rtl" :right="!rtl" size="18" class="ml-2" dark>verified</v-icon>
+          </v-btn>
+        </p>
+      </div>
+      <div v-else>
+        <p class="text-xs-center my-4">
+          <v-btn
+              href="https://www.photoprism.app/membership"
+              target="_blank"
+              color="primary-button"
+              class="white--text px-3 py-2 action-upgrade"
+              round depressed
+          >
+            <translate>Learn more</translate>
+            <v-icon :left="rtl" :right="!rtl" size="18" class="ml-2" dark>diamond</v-icon>
           </v-btn>
         </p>
       </div>
