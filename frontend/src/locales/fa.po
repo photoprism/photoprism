@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:494
+#: src/page/albums.vue:493
 msgid "%{n} albums found"
 msgstr "%{n} آلبوم پیدا شد"
 
@@ -74,7 +74,7 @@ msgstr "پرتگاه"
 msgid "Account"
 msgstr "حساب کاربری"
 
-#: src/component/admin/users/add.vue:60 src/dialog/service/add.vue:35
+#: src/component/admin/users/add.vue:81 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "حساب کاربری ایجاد شد"
 
@@ -184,6 +184,10 @@ msgstr "بعد از دو هفته"
 msgid "Album"
 msgstr "آلبوم"
 
+#: src/page/albums.vue:544
+msgid "Album created"
+msgstr ""
+
 #: src/dialog/photo/album.vue:67 src/dialog/photo/album.vue:77
 msgid "Album Name"
 msgstr "نام آلبوم"
@@ -199,7 +203,7 @@ msgstr "آلبوم ها"
 msgid "Albums deleted"
 msgstr "آلبوم ها حذف شدند"
 
-#: src/page/albums.vue:360
+#: src/page/albums.vue:359
 msgid "All %{n} albums loaded"
 msgstr "همه %{n} آلبوم بارگیری شد"
 
@@ -216,7 +220,7 @@ msgid "All Cameras"
 msgstr "همه دوربین ها"
 
 #: src/component/photo/toolbar.vue:39 src/page/albums.vue:37
-#: src/page/albums.vue:147 src/page/albums.vue:604
+#: src/page/albums.vue:146 src/page/albums.vue:616
 msgid "All Categories"
 msgstr "همه دسته بندی ها"
 
@@ -348,12 +352,9 @@ msgstr "نسبت ابعاد"
 
 #: src/page/about/about.vue:19
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-msgstr ""
-"در PhotoPrism، ما معتقدیم که هر لحظه ثبت شده از طریق یک عکس ارزشمند است و "
-"ماموریت ما این است که مردم را قادر کنیم آن لحظات را برای نسل‌های آینده گرامی "
-"بدارند."
+msgstr "در PhotoPrism، ما معتقدیم که هر لحظه ثبت شده از طریق یک عکس ارزشمند است و ماموریت ما این است که مردم را قادر کنیم آن لحظات را برای نسل‌های آینده گرامی بدارند."
 
-#: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
+#: src/component/admin/users/add.vue:213 src/component/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
@@ -367,11 +368,11 @@ msgstr "به طور خودکار برای انواع فایل های دیگر JP
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "به طور خودکار آلبوم هایی از لحظات، سفرها و مکان های خاص ایجاد می کند."
 
-#: src/component/admin/users/edit.vue:389
+#: src/component/admin/users/edit.vue:391
 msgid "Base Folder"
 msgstr "پوشه پایه"
 
-#: src/page/about/about.vue:63
+#: src/page/about/about.vue:62
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "قبل از ارسال درخواست پشتیبانی، لطفاً از چک لیست های عیب یابی ما برای تعیین علت مشکل خود استفاده کنید."
 
@@ -411,7 +412,7 @@ msgstr "مرور و ویرایش برچسب های طبقه بندی تصویر.
 msgid "Browse indexed files and folders in Library."
 msgstr "پرونده ها و پوشه های فهرست بندی شده را در کتابخانه مرور کنید."
 
-#: src/page/about/about.vue:55
+#: src/page/about/about.vue:54
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "برای اطلاعات دقیق در مورد ویژگی‌های خاص محصول، خدمات و منابع مرتبط، پایگاه دانش را مرور کنید."
 
@@ -446,7 +447,7 @@ msgid "Can't load more, limit reached"
 msgstr "نمی تواند بار بیشتری بارگیری کند ، محدود شود"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:542 src/page/albums.vue:558 src/page/labels.vue:204
+#: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:294
@@ -455,7 +456,7 @@ msgid "Can't select more items"
 msgstr "موارد بیشتری را انتخاب نمی کند"
 
 #: src/component/admin/sessions/remove.vue:15
-#: src/component/admin/users/add.vue:21 src/component/admin/users/edit.vue:75
+#: src/component/admin/users/add.vue:21 src/component/admin/users/edit.vue:74
 #: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
@@ -503,10 +504,12 @@ msgstr "تغییر عناوین عکس ، مکان ها و سایر ابرداد
 msgid "Change private flag"
 msgstr "تغییر پرچم خصوصی"
 
-#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:152
-#: src/dialog/service/edit.vue:102 src/page/settings/account.vue:114
-#: src/page/settings/account.vue:129 src/page/settings/advanced.vue:43
-#: src/page/settings/general.vue:105 src/page/settings/library.vue:50
+#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:164
+#: src/dialog/album/edit.vue:56 src/dialog/service/edit.vue:102
+#: src/dialog/share.vue:88 src/dialog/share.vue:104 src/page/albums.vue:547
+#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
+#: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "تغییرات با موفقیت ذخیره شد"
 
@@ -540,7 +543,7 @@ msgstr "مشخصات رنگ"
 msgid "Colors"
 msgstr "رنگ ها"
 
-#: src/page/about/about.vue:50
+#: src/page/about/about.vue:49
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "مشکلات رایج را می توان با استفاده از چک لیست های عیب یابی که ارائه می دهیم، به سرعت تشخیص داده و حل کرد."
 
@@ -833,7 +836,7 @@ msgstr "بارگیری پرونده های از راه دور"
 msgid "Download single files and zip archives."
 msgstr "بارگیری پرونده های تک و بایگانی زیپ."
 
-#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:114
+#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:109
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
 #: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
@@ -970,7 +973,7 @@ msgstr "صورت ها"
 msgid "Failed copying to clipboard"
 msgstr "کپی در کلیپ بورد ناموفق بود"
 
-#: src/dialog/share.vue:93
+#: src/dialog/share.vue:97
 msgid "Failed removing link"
 msgstr "پیوند حذف نشد"
 
@@ -1105,7 +1108,7 @@ msgstr "اسطوخودوس"
 msgid "General"
 msgstr "عمومی"
 
-#: src/page/about/about.vue:59
+#: src/page/about/about.vue:58
 msgid "Getting Support"
 msgstr "دریافت پشتیبانی"
 
@@ -1177,7 +1180,7 @@ msgstr "محدوده دینامیکی بالا (HDR)"
 msgid "How can we help?"
 msgstr "چطور میتوانیم کمک کنیم؟"
 
-#: src/page/about/about.vue:64
+#: src/page/about/about.vue:63
 msgid "If this doesn't help, or you have other questions:"
 msgstr "اگر این کمک نمی کند یا سؤالات دیگری دارید:"
 
@@ -1223,7 +1226,7 @@ msgstr "در حال وارد کردن فایل‌ها به نسخه اصلی…"
 msgid "in"
 msgstr "به"
 
-#: src/page/about/about.vue:73
+#: src/page/about/about.vue:72
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "علاوه بر این، حامیان مالی، پشتیبانی فنی مستقیم دریافت می کنند."
 
@@ -1329,7 +1332,7 @@ msgstr "JPEG ها و  تامبنیل ها به صورت خودکار در صور
 msgid "Keywords"
 msgstr "کلید واژه ها"
 
-#: src/page/about/about.vue:54
+#: src/page/about/about.vue:53
 msgid "Knowledge Base"
 msgstr "دانش محور"
 
@@ -1381,8 +1384,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:40
-#: src/page/about/about.vue:56 src/page/about/about.vue:163
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
+#: src/page/about/about.vue:55 src/page/about/about.vue:163
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "بیشتر بدانید"
@@ -1561,7 +1564,7 @@ msgstr "ماه"
 msgid "More than %{n} pictures found"
 msgstr "بیش از %{n} تصاویر یافت شده"
 
-#: src/page/albums.vue:497
+#: src/page/albums.vue:496
 msgid "More than 20 albums found"
 msgstr "بیش از 20 آلبوم پیدا شد"
 
@@ -1629,7 +1632,7 @@ msgid "New Password"
 msgstr "رمزعبور جدید"
 
 #: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:50
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:90
+#: src/dialog/album/edit.vue:21 src/page/albums.vue:89
 msgid "Newest First"
 msgstr "اول جدیدترین ها"
 
@@ -1640,7 +1643,7 @@ msgstr "اول جدیدترین ها"
 msgid "No"
 msgstr "خیر"
 
-#: src/page/albums.vue:54 src/page/albums.vue:490
+#: src/page/albums.vue:54 src/page/albums.vue:489
 msgid "No albums found"
 msgstr "هیچ آلبومی پیدا نشد"
 
@@ -1737,7 +1740,7 @@ msgid "Offline"
 msgstr "آفلاین"
 
 #: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:51
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:91
+#: src/dialog/album/edit.vue:22 src/page/albums.vue:90
 msgid "Oldest First"
 msgstr "اول قدیمی‌تر ها"
 
@@ -1749,7 +1752,7 @@ msgstr "در ویندوز، منبع زیر را در گفتگوی اتصال و
 msgid "Once a week"
 msgstr "یک بار در هفته"
 
-#: src/page/albums.vue:492
+#: src/page/albums.vue:491
 msgid "One album found"
 msgstr "یک آلبوم پیدا شد"
 
@@ -1782,7 +1785,7 @@ msgstr "یک تصویر پیدا شد"
 msgid "Onyx"
 msgstr "اونیکس"
 
-#: src/page/about/about.vue:70
+#: src/page/about/about.vue:69
 msgid "or ask in our Community Chat"
 msgstr "یا در چت انجمن ما بپرسید"
 
@@ -1821,7 +1824,7 @@ msgstr "دیگر"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "تیم ما بسته به تلاش پشتیبانی مورد نیاز، هزینه‌های سرور و مجوز، و اینکه آیا ویژگی‌ها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته درخواست می‌شوند، این موضوع را به‌طور مداوم تصمیم می‌گیرند."
 
-#: src/page/about/about.vue:49
+#: src/page/about/about.vue:48
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "راهنمای کاربر ما همچنین بسیاری از موضوعات پیشرفته مانند مهاجرت از Google Photos و تنظیمات کیفیت تصاویر بندانگشتی را پوشش می‌دهد."
 
@@ -1898,7 +1901,7 @@ msgstr "صورتی"
 msgid "Place"
 msgstr "مکان"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:171
+#: src/page/settings/library.vue:171
 msgid "Place & Time"
 msgstr "مکان و زمان"
 
@@ -1931,7 +1934,7 @@ msgstr "محدودیت اندازه PNG: %{n}px"
 msgid "Portrait"
 msgstr "پرتره"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:68
 msgid "post your question in GitHub Discussions"
 msgstr "سوال خود را در بحث های GitHub مطرح کنید"
 
@@ -2017,7 +2020,7 @@ msgstr "خام"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "نمایه سازی مجدد همه نسخه های اصلی، از جمله فایل های از قبل نمایه شده و بدون تغییر."
 
-#: src/page/about/about.vue:52
+#: src/page/about/about.vue:51
 msgid "Read the Docs"
 msgstr "اسناد را بخوانید"
 
@@ -2026,12 +2029,12 @@ msgid "Read-Only Mode"
 msgstr "حالت فقط خواندنی"
 
 #: src/component/album/toolbar.vue:67 src/component/photo/toolbar.vue:52
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:92
+#: src/dialog/album/edit.vue:23 src/page/albums.vue:91
 msgid "Recently Added"
 msgstr "به تازگی اضافه شده"
 
 #: src/component/album/toolbar.vue:68 src/component/photo/toolbar.vue:53
-#: src/dialog/album/edit.vue:24 src/page/albums.vue:93
+#: src/dialog/album/edit.vue:24 src/page/albums.vue:92
 msgid "Recently Edited"
 msgstr "به تازگی ویرایش شده است"
 
@@ -2125,7 +2128,7 @@ msgstr "نقش"
 msgid "Satellite"
 msgstr "ماهواره"
 
-#: src/component/admin/users/edit.vue:78 src/dialog/account/password.vue:39
+#: src/component/admin/users/edit.vue:77 src/dialog/account/password.vue:39
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2377,7 +2380,7 @@ msgstr "با موفقیت وصل شد"
 msgid "Successfully deleted"
 msgstr "با موفقیت حذف شد"
 
-#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:87
+#: src/component/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "سوپر ادمین"
 
@@ -2563,7 +2566,7 @@ msgstr "به روزرسانی نمایه ها"
 msgid "Updating moments"
 msgstr "به روزرسانی لحظه ها"
 
-#: src/component/admin/users/edit.vue:149 src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:161 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "به روزرسانی پیش نمایش ها"
 
@@ -2580,7 +2583,7 @@ msgstr "به روزرسانی پشته ها"
 msgid "Upgrade"
 msgstr "ارتقا دهید"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:31
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "اکنون ارتقا دهید"
@@ -2605,7 +2608,7 @@ msgstr "آپلود کامل شد. در حال نمایه سازی…"
 msgid "Upload failed"
 msgstr "آپلود انجام نشد"
 
-#: src/component/admin/users/edit.vue:416
+#: src/component/admin/users/edit.vue:418
 msgid "Upload Folder"
 msgstr "پوشه آپلود"
 
@@ -2646,7 +2649,7 @@ msgstr "از Presets استفاده کنید"
 msgid "User"
 msgstr "کاربر"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:46
+#: src/component/navigation.vue:597 src/page/about/about.vue:45
 msgid "User Guide"
 msgstr "راهنمای کاربر"
 
@@ -2710,7 +2713,7 @@ msgstr "نمایش"
 msgid "Viewer"
 msgstr "بیننده"
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:47
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "از docs.photoprism.app/user-guide دیدن کنید تا نحوه همگام سازی، سازماندهی و اشتراک گذاری تصاویر خود را بیاموزید."
 
@@ -2735,16 +2738,16 @@ msgstr "ما از بازخورد شما قدردانی می کنیم!"
 msgid "We do our best to respond within five business days or less."
 msgstr "ما تمام تلاش خود را می کنیم تا ظرف پنج روز کاری یا کمتر پاسخ دهیم."
 
-#: src/page/about/about.vue:75
+#: src/page/about/about.vue:74
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "ما تمام تلاش خود را می کنیم تا به تمام سوالات شما پاسخ دهیم. در عوض، ما از شما می خواهیم که از ما در Patreon یا GitHub Sponsors حمایت کنید."
 
-#: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
+#: src/component/admin/users/add.vue:231 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "ورود به وب"
 
-#: src/component/admin/users/add.vue:244 src/component/admin/users/edit.vue:468
+#: src/component/admin/users/add.vue:248 src/component/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
@@ -2810,7 +2813,7 @@ msgstr "یلوستون"
 msgid "Yes"
 msgstr "بله"
 
-#: src/page/about/about.vue:68
+#: src/page/about/about.vue:67
 msgid "you are welcome to join us on Reddit"
 msgstr "به شما برای پیوستن به ما در Reddit می گوییم"
 

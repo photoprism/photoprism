@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:494
+#: src/page/albums.vue:493
 msgid "%{n} albums found"
 msgstr "%{n} album ditemui"
 
@@ -74,7 +74,7 @@ msgstr "Abyss"
 msgid "Account"
 msgstr "Akaun"
 
-#: src/component/admin/users/add.vue:60 src/dialog/service/add.vue:35
+#: src/component/admin/users/add.vue:81 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "Akaun dibuat"
 
@@ -184,6 +184,10 @@ msgstr "Selepas dua minggu"
 msgid "Album"
 msgstr "Album"
 
+#: src/page/albums.vue:544
+msgid "Album created"
+msgstr ""
+
 #: src/dialog/photo/album.vue:67 src/dialog/photo/album.vue:77
 msgid "Album Name"
 msgstr "Nama Album"
@@ -199,7 +203,7 @@ msgstr "Album"
 msgid "Albums deleted"
 msgstr "Album dipadamkan"
 
-#: src/page/albums.vue:360
+#: src/page/albums.vue:359
 msgid "All %{n} albums loaded"
 msgstr "Semua %{n} album telah dimuatkan"
 
@@ -216,7 +220,7 @@ msgid "All Cameras"
 msgstr "Semua Kamera"
 
 #: src/component/photo/toolbar.vue:39 src/page/albums.vue:37
-#: src/page/albums.vue:147 src/page/albums.vue:604
+#: src/page/albums.vue:146 src/page/albums.vue:616
 msgid "All Categories"
 msgstr "Semua Kategori"
 
@@ -348,12 +352,9 @@ msgstr "Nisbah aspek"
 
 #: src/page/about/about.vue:19
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-msgstr ""
-"Di PhotoPrism, kami percaya bahawa setiap detik yang dirakam melalui gambar "
-"adalah berharga, dan misi kami adalah untuk membolehkan orang ramai "
-"menghargai detik tersebut untuk generasi akan datang."
+msgstr "Di PhotoPrism, kami percaya bahawa setiap detik yang dirakam melalui gambar adalah berharga, dan misi kami adalah untuk membolehkan orang ramai menghargai detik tersebut untuk generasi akan datang."
 
-#: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
+#: src/component/admin/users/add.vue:213 src/component/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
@@ -367,11 +368,11 @@ msgstr "Hasilkan JPEG secara automatik untuk fail jenis lain supaya ia boleh dip
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara automatik."
 
-#: src/component/admin/users/edit.vue:389
+#: src/component/admin/users/edit.vue:391
 msgid "Base Folder"
 msgstr "Folder Asas"
 
-#: src/page/about/about.vue:63
+#: src/page/about/about.vue:62
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Sebelum menghantar permintaan sokongan, sila gunakan Senarai Semak Penyelesaian Masalah (Troubleshooting Checklists) kami untuk cuba mengenal pasti punca masalah anda."
 
@@ -411,7 +412,7 @@ msgstr "Semak imbas dan kemaskini label klasifikasi imej."
 msgid "Browse indexed files and folders in Library."
 msgstr "Semak imbas fail dan folder yang telah diindeks dalam Perpustakaan."
 
-#: src/page/about/about.vue:55
+#: src/page/about/about.vue:54
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Semak imbas Pangkalan Pengetahuan untuk mendapatkan maklumat terperinci tentang ciri produk tertentu, perkhidmatan dan sumber berkaitan."
 
@@ -446,7 +447,7 @@ msgid "Can't load more, limit reached"
 msgstr "Tidak dapat memuatkan lagi, had dicapai"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:542 src/page/albums.vue:558 src/page/labels.vue:204
+#: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:294
@@ -455,7 +456,7 @@ msgid "Can't select more items"
 msgstr "Tidak dapat memilih lebih banyak item"
 
 #: src/component/admin/sessions/remove.vue:15
-#: src/component/admin/users/add.vue:21 src/component/admin/users/edit.vue:75
+#: src/component/admin/users/add.vue:21 src/component/admin/users/edit.vue:74
 #: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
@@ -503,10 +504,12 @@ msgstr "Tukar tajuk foto, lokasi dan metadata lain."
 msgid "Change private flag"
 msgstr "Tukar petanda peribadi"
 
-#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:152
-#: src/dialog/service/edit.vue:102 src/page/settings/account.vue:114
-#: src/page/settings/account.vue:129 src/page/settings/advanced.vue:43
-#: src/page/settings/general.vue:105 src/page/settings/library.vue:50
+#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:164
+#: src/dialog/album/edit.vue:56 src/dialog/service/edit.vue:102
+#: src/dialog/share.vue:88 src/dialog/share.vue:104 src/page/albums.vue:547
+#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
+#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
+#: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Perubahan berjaya disimpan"
 
@@ -540,7 +543,7 @@ msgstr "Profil Warna"
 msgid "Colors"
 msgstr "Warna"
 
-#: src/page/about/about.vue:50
+#: src/page/about/about.vue:49
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Isu biasa boleh didiagnosis dan diselesaikan dengan cepat menggunakan senarai semak penyelesaian masalah yang kami sediakan."
 
@@ -833,7 +836,7 @@ msgstr "Muat turun fail jauh"
 msgid "Download single files and zip archives."
 msgstr "Muat turun fail tunggal dan arkib zip."
 
-#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:114
+#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:109
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
 #: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
@@ -970,7 +973,7 @@ msgstr "Muka"
 msgid "Failed copying to clipboard"
 msgstr "Gagal menyalin ke papan keratan"
 
-#: src/dialog/share.vue:93
+#: src/dialog/share.vue:97
 msgid "Failed removing link"
 msgstr "Gagal mengalih keluar pautan"
 
@@ -1105,7 +1108,7 @@ msgstr "Lavender"
 msgid "General"
 msgstr "Am"
 
-#: src/page/about/about.vue:59
+#: src/page/about/about.vue:58
 msgid "Getting Support"
 msgstr "Mendapat Sokongan"
 
@@ -1177,7 +1180,7 @@ msgstr "Julat Dinamik Tinggi (HDR)"
 msgid "How can we help?"
 msgstr "Bagaimana kami boleh membantu?"
 
-#: src/page/about/about.vue:64
+#: src/page/about/about.vue:63
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Jika ini tidak membantu, atau anda mempunyai soalan lain:"
 
@@ -1223,7 +1226,7 @@ msgstr "Mengimport fail ke asal…"
 msgid "in"
 msgstr "dalam"
 
-#: src/page/about/about.vue:73
+#: src/page/about/about.vue:72
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Selain itu, penaja menerima sokongan teknikal langsung melalui e-mel."
 
@@ -1329,7 +1332,7 @@ msgstr "JPEG dan lakaran kecil dipaparkan secara automatik mengikut keperluan."
 msgid "Keywords"
 msgstr "Kata Kunci"
 
-#: src/page/about/about.vue:54
+#: src/page/about/about.vue:53
 msgid "Knowledge Base"
 msgstr "Asas pengetahuan"
 
@@ -1381,8 +1384,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:40
-#: src/page/about/about.vue:56 src/page/about/about.vue:163
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
+#: src/page/about/about.vue:55 src/page/about/about.vue:163
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "Ketahui lebih lanjut"
@@ -1561,7 +1564,7 @@ msgstr "Bulan"
 msgid "More than %{n} pictures found"
 msgstr "Lebih daripada %{n} gambar ditemui"
 
-#: src/page/albums.vue:497
+#: src/page/albums.vue:496
 msgid "More than 20 albums found"
 msgstr "Lebih daripada 20 album ditemui"
 
@@ -1629,7 +1632,7 @@ msgid "New Password"
 msgstr "jauna parole"
 
 #: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:50
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:90
+#: src/dialog/album/edit.vue:21 src/page/albums.vue:89
 msgid "Newest First"
 msgstr "Terbaharu dahulu"
 
@@ -1640,7 +1643,7 @@ msgstr "Terbaharu dahulu"
 msgid "No"
 msgstr "Tidak"
 
-#: src/page/albums.vue:54 src/page/albums.vue:490
+#: src/page/albums.vue:54 src/page/albums.vue:489
 msgid "No albums found"
 msgstr "Tiada album ditemui"
 
@@ -1737,7 +1740,7 @@ msgid "Offline"
 msgstr "Luar Talian"
 
 #: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:51
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:91
+#: src/dialog/album/edit.vue:22 src/page/albums.vue:90
 msgid "Oldest First"
 msgstr "Tertua dahulu"
 
@@ -1749,7 +1752,7 @@ msgstr "Pada Windows, masukkan sumber berikut dalam dialog sambungan:"
 msgid "Once a week"
 msgstr "Sekali seminggu"
 
-#: src/page/albums.vue:492
+#: src/page/albums.vue:491
 msgid "One album found"
 msgstr "Satu album ditemui"
 
@@ -1782,7 +1785,7 @@ msgstr "Satu gambar ditemui"
 msgid "Onyx"
 msgstr "Onyx"
 
-#: src/page/about/about.vue:70
+#: src/page/about/about.vue:69
 msgid "or ask in our Community Chat"
 msgstr "atau tanya dalam Sembang Komuniti kami"
 
@@ -1821,7 +1824,7 @@ msgstr "Lain-lain"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Pasukan kami memutuskan perkara ini secara berterusan bergantung pada usaha sokongan yang diperlukan, pelayan dan kos pelesenan, dan sama ada ciri tersebut secara amnya diperlukan oleh semua orang atau terutamanya diminta oleh organisasi dan pengguna lanjutan."
 
-#: src/page/about/about.vue:49
+#: src/page/about/about.vue:48
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Panduan Pengguna kami juga merangkumi banyak topik lanjutan, seperti berhijrah daripada Google Photos dan tetapan kualiti lakaran kecil."
 
@@ -1898,7 +1901,7 @@ msgstr "merah jambu"
 msgid "Place"
 msgstr "tempat"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:171
+#: src/page/settings/library.vue:171
 msgid "Place & Time"
 msgstr "Tempat & Masa"
 
@@ -1931,7 +1934,7 @@ msgstr "Had Saiz PNG: %{n}px"
 msgid "Portrait"
 msgstr "Potret"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:68
 msgid "post your question in GitHub Discussions"
 msgstr "siarkan soalan anda dalam Perbincangan GitHub"
 
@@ -2017,7 +2020,7 @@ msgstr "MENTAH"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indeks semula semua yang asal, termasuk fail yang telah diindeks dan tidak berubah."
 
-#: src/page/about/about.vue:52
+#: src/page/about/about.vue:51
 msgid "Read the Docs"
 msgstr "Baca Dokumen"
 
@@ -2026,12 +2029,12 @@ msgid "Read-Only Mode"
 msgstr "Mod Baca Sahaja"
 
 #: src/component/album/toolbar.vue:67 src/component/photo/toolbar.vue:52
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:92
+#: src/dialog/album/edit.vue:23 src/page/albums.vue:91
 msgid "Recently Added"
 msgstr "Baru sahaja ditambah"
 
 #: src/component/album/toolbar.vue:68 src/component/photo/toolbar.vue:53
-#: src/dialog/album/edit.vue:24 src/page/albums.vue:93
+#: src/dialog/album/edit.vue:24 src/page/albums.vue:92
 msgid "Recently Edited"
 msgstr "Baru-baru ini disunting"
 
@@ -2125,7 +2128,7 @@ msgstr "Peranan"
 msgid "Satellite"
 msgstr "Satelit"
 
-#: src/component/admin/users/edit.vue:78 src/dialog/account/password.vue:39
+#: src/component/admin/users/edit.vue:77 src/dialog/account/password.vue:39
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2377,7 +2380,7 @@ msgstr "Berjaya Disambungkan"
 msgid "Successfully deleted"
 msgstr "Berjaya dipadamkan"
 
-#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:87
+#: src/component/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "Super Admin"
 
@@ -2561,7 +2564,7 @@ msgstr "Mengemas kini indeks"
 msgid "Updating moments"
 msgstr "Mengemas kini detik"
 
-#: src/component/admin/users/edit.vue:149 src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:161 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Mengemas kini pratonton"
 
@@ -2578,7 +2581,7 @@ msgstr "Mengemas kini tindanan"
 msgid "Upgrade"
 msgstr "Naik taraf"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:31
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "Menaiktaraf sekarang"
@@ -2603,7 +2606,7 @@ msgstr "Muat naik selesai. Pengindeksan…"
 msgid "Upload failed"
 msgstr "Muat naik gagal"
 
-#: src/component/admin/users/edit.vue:416
+#: src/component/admin/users/edit.vue:418
 msgid "Upload Folder"
 msgstr "Muat naik Folder"
 
@@ -2644,7 +2647,7 @@ msgstr "Gunakan Pratetap"
 msgid "User"
 msgstr "Pengguna"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:46
+#: src/component/navigation.vue:597 src/page/about/about.vue:45
 msgid "User Guide"
 msgstr "Panduan pengguna"
 
@@ -2708,7 +2711,7 @@ msgstr "Lihat"
 msgid "Viewer"
 msgstr "Penonton"
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:47
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Lawati docs.photoprism.app/user-guide untuk mengetahui cara menyegerak, mengatur dan berkongsi gambar anda."
 
@@ -2733,16 +2736,16 @@ msgstr "Kami menghargai maklumbalas anda!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Kami melakukan yang terbaik untuk membalas dalam tempoh lima hari perniagaan atau kurang."
 
-#: src/page/about/about.vue:75
+#: src/page/about/about.vue:74
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Kami akan melakukan yang terbaik untuk menjawab semua soalan anda. Sebagai balasan, kami meminta anda menyokong kami di Patreon atau Penaja GitHub."
 
-#: src/component/admin/users/add.vue:228 src/component/admin/users/edit.vue:451
+#: src/component/admin/users/add.vue:231 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Log Masuk Web"
 
-#: src/component/admin/users/add.vue:244 src/component/admin/users/edit.vue:468
+#: src/component/admin/users/add.vue:248 src/component/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
@@ -2806,7 +2809,7 @@ msgstr "Batu kuning"
 msgid "Yes"
 msgstr "Ya"
 
-#: src/page/about/about.vue:68
+#: src/page/about/about.vue:67
 msgid "you are welcome to join us on Reddit"
 msgstr "anda dialu-alukan untuk menyertai kami di Reddit"
 
