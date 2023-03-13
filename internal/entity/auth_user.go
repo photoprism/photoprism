@@ -427,8 +427,21 @@ func (m *User) CanUpload() bool {
 	}
 }
 
+// DefaultBasePath returns the default base path of the user based on the user name.
+func (m *User) DefaultBasePath() string {
+	if m.UserName == "" {
+		return ""
+	}
+
+	return fmt.Sprintf("users/%s", m.UserName)
+}
+
 // GetBasePath returns the user's relative base path.
 func (m *User) GetBasePath() string {
+	if m.BasePath == "" && m.HasRole("contributor") {
+		m.BasePath = m.DefaultBasePath()
+	}
+
 	return m.BasePath
 }
 
@@ -437,7 +450,7 @@ func (m *User) SetBasePath(dir string) *User {
 	if list.Contains(list.List{"", ".", "./", "/", "\\"}, dir) {
 		m.BasePath = ""
 	} else if dir == "~" && m.UserName != "" {
-		m.BasePath = fmt.Sprintf("users/%s", m.UserName)
+		m.BasePath = m.DefaultBasePath()
 	} else {
 		m.BasePath = clean.UserPath(dir)
 	}
@@ -454,7 +467,7 @@ func (m *User) GetUploadPath() string {
 	} else if basePath != "" && strings.HasPrefix(m.UploadPath, basePath+"/") {
 		return m.UploadPath
 	} else if basePath == "" && m.UploadPath == "~" && m.UserName != "" {
-		return fmt.Sprintf("users/%s", m.UserName)
+		return m.DefaultBasePath()
 	}
 
 	return path.Join(basePath, m.UploadPath)
@@ -467,7 +480,7 @@ func (m *User) SetUploadPath(dir string) *User {
 	if list.Contains(list.List{"", ".", "./", "/", "\\"}, dir) {
 		m.UploadPath = ""
 	} else if basePath == "" && dir == "~" && m.UserName != "" {
-		m.UploadPath = fmt.Sprintf("users/%s", m.UserName)
+		m.UploadPath = m.DefaultBasePath()
 	} else {
 		m.UploadPath = clean.UserPath(dir)
 	}
@@ -607,6 +620,11 @@ func (m *User) SetRole(role string) *User {
 	}
 
 	return m
+}
+
+// HasRole checks the user role specified as string.
+func (m *User) HasRole(role string) bool {
+	return m.AclRole().String() == acl.ValidRoles[clean.Role(role)].String()
 }
 
 // AclRole returns the user role for ACL permission checks.
