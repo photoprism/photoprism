@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 14:39+0000\n"
+"PO-Revision-Date: 2023-03-13 15:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
+"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -349,6 +350,9 @@ msgstr "Bildförhållande"
 #: src/page/about/about.vue:19
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
 msgstr ""
+"På PhotoPrism tror vi att varje ögonblick som fångas genom ett fotografi är "
+"värdefullt, och vårt uppdrag är att göra det möjligt för människor att "
+"bevara dessa ögonblick för kommande generationer."
 
 #: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
@@ -587,7 +591,7 @@ msgstr "Innehåller en bild."
 
 #: src/options/admin.js:9 src/options/admin.js:31
 msgid "Contributor"
-msgstr ""
+msgstr "Bidragsgivare"
 
 #: src/page/settings/library.vue:111
 msgid "Convert to JPEG"

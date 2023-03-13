@@ -2,12 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-11 14:39+0000\n"
+"PO-Revision-Date: 2023-03-13 15:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -346,6 +347,9 @@ msgstr "Razmerje stranic"
 #: src/page/about/about.vue:19
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
 msgstr ""
+"V podjetju PhotoPrism verjamemo, da je vsak trenutek, ujet na fotografiji, "
+"dragocen, naše poslanstvo pa je omogočiti ljudem, da te trenutke ohranijo za "
+"prihodnje generacije."
 
 #: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
@@ -584,7 +588,7 @@ msgstr "Vsebuje eno sliko."
 
 #: src/options/admin.js:9 src/options/admin.js:31
 msgid "Contributor"
-msgstr ""
+msgstr "Sodelujoči"
 
 #: src/page/settings/library.vue:111
 msgid "Convert to JPEG"

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 14:39+0000\n"
+"PO-Revision-Date: 2023-03-13 15:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -349,6 +349,9 @@ msgstr "نسبت ابعاد"
 #: src/page/about/about.vue:19
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
 msgstr ""
+"در PhotoPrism، ما معتقدیم که هر لحظه ثبت شده از طریق یک عکس ارزشمند است و "
+"ماموریت ما این است که مردم را قادر کنیم آن لحظات را برای نسل‌های آینده گرامی "
+"بدارند."
 
 #: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-11 14:08+0000\n"
+"PO-Revision-Date: 2023-03-13 15:51+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -349,6 +349,8 @@ msgstr "อัตราส่วน"
 #: src/page/about/about.vue:19
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
 msgstr ""
+"ที่ PhotoPrism เราเชื่อว่าทุกช่วงเวลาที่บันทึกผ่านภาพถ่ายนั้นมีค่า และพันธกิจ"
+"ของเราคือการช่วยให้ผู้คนสามารถรักษาช่วงเวลาเหล่านั้นไว้ชั่วลูกชั่วหลาน"
 
 #: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
@@ -587,7 +589,7 @@ msgstr "ประกอบด้วยหนึ่งภาพ"
 
 #: src/options/admin.js:9 src/options/admin.js:31
 msgid "Contributor"
-msgstr ""
+msgstr "ผู้ให้ข้อมูล"
 
 #: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
