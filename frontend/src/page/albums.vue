@@ -343,7 +343,6 @@ export default {
           {value: 'favorites', text: this.$gettext('Favorites')},
           {value: 'name', text: this.$gettext('Name')},
           {value: 'place', text: this.$gettext('Location')},
-          {value: 'moment', text: this.$gettext('Place & Time')},
           {value: 'newest', text: this.$gettext('Newest First')},
           {value: 'oldest', text: this.$gettext('Oldest First')},
           {value: 'added', text: this.$gettext('Recently Added')},
@@ -777,19 +776,32 @@ export default {
       this.loadMore();
     },
     create() {
+      // Use month and year as default title.
       let title = DateTime.local().toFormat("LLLL yyyy");
 
+      // Add suffix if the album title already exists.
       if (this.results.findIndex(a => a.Title.startsWith(title)) !== -1) {
-        const existing = this.results.filter(a => a.Title.startsWith(title));
-        title = `${title} (${existing.length + 1})`;
+        const re = new RegExp(`${title} \\((\\d?)\\)`, 'i');
+        let i = 1;
+        this.results.forEach(a => {
+          const found = a.Title.match(re);
+          if (found[1]) {
+            const n = parseInt(found[1]);
+            if (n > i) {
+              i = n;
+            }
+          }
+        });
+
+        title = `${title} (${i + 1})`;
       }
 
       const album = new Album({"Title": title, "Favorite": false});
 
-      album.save();
+      album.save().then(() => this.$notify.success(this.$gettext("Album created")));
     },
     onSave(album) {
-      album.update();
+      album.update().then(() => this.$notify.success(this.$gettext("Changes successfully saved")));
     },
     addSelection(uid) {
       const pos = this.selection.indexOf(uid);

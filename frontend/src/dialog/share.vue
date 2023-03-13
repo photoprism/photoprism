@@ -217,7 +217,11 @@ export default {
 
       this.loading = true;
 
-      this.model.updateLink(link).finally(() => this.loading = false);
+      this.model.updateLink(link).then(() => {
+        this.$notify.success(this.$gettext("Changes successfully saved"));
+      }).finally(() => {
+        this.loading = false;
+      });
     },
     remove(index) {
       const link = this.links[index];
@@ -230,6 +234,7 @@ export default {
       this.loading = true;
 
       this.model.removeLink(link).then(() => {
+        this.$notify.success(this.$gettext("Changes successfully saved"));
         this.links.splice(index, 1);
       }).finally(() => this.loading = false);
     },

@@ -14,10 +14,10 @@ import (
 // Moment contains photo counts per month and year
 type Moment struct {
 	Label      string `json:"Label"`
-	Country    string `json:"Country"`
-	State      string `json:"State"`
 	Year       int    `json:"Year"`
 	Month      int    `json:"Month"`
+	State      string `json:"State"`
+	Country    string `json:"Country"`
 	PhotoCount int    `json:"PhotoCount"`
 }
 
@@ -101,6 +101,15 @@ func (m Moment) CountryName() string {
 	}
 
 	return maps.CountryName(m.Country)
+}
+
+// Location returns the location name for the moment.
+func (m Moment) Location() string {
+	if state := clean.State(m.State, m.Country); state != "" {
+		return fmt.Sprintf("%s, %s", state, m.CountryName())
+	}
+
+	return m.CountryName()
 }
 
 // Slug returns an identifier string for a moment.
@@ -201,7 +210,7 @@ func MomentsTime(threshold int, public bool) (results Moments, err error) {
 // MomentsCountries returns the most popular countries by year.
 func MomentsCountries(threshold int, public bool) (results Moments, err error) {
 	db := UnscopedDb().Table("photos").
-		Select("photo_country AS country, photo_year AS year, COUNT(*) AS photo_count ").
+		Select("photo_year AS year, photo_country AS country, COUNT(*) AS photo_count").
 		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_country <> 'zz' AND photo_year > 0")
 
 	// Ignore private pictures?
@@ -209,7 +218,7 @@ func MomentsCountries(threshold int, public bool) (results Moments, err error) {
 		db = db.Where("photo_private = 0")
 	}
 
-	db = db.Group("photo_country, photo_year").
+	db = db.Group("photo_year, photo_country").
 		Having("photo_count >= ?", threshold)
 
 	if err := db.Scan(&results).Error; err != nil {

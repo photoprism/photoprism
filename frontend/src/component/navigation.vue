@@ -821,11 +821,6 @@ export default {
         this.isMini = this.isRestricted;
       }
     },
-    createAlbum() {
-      let name = "New Album";
-      const album = new Album({Title: name, Favorite: false});
-      album.save();
-    },
     toggleIsMini() {
       this.isMini = !this.isMini;
       localStorage.setItem('last_navigation_mode', `${this.isMini}`);

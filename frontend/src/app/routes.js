@@ -160,7 +160,7 @@ export default [
     path: "/moments",
     component: Albums,
     meta: { title: $gettext("Moments"), auth: true },
-    props: { view: "moment", defaultOrder: "moment", staticFilter: { type: "moment" } },
+    props: { view: "moment", defaultOrder: "newest", staticFilter: { type: "moment" } },
   },
   {
     name: "moment",

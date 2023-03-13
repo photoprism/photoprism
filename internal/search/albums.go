@@ -31,7 +31,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Base query.
 	s := UnscopedDb().Table("albums").
-		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year").
+		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year, CASE WHEN albums.album_location = '' THEN 1 ELSE 0 END AS no_location").
 		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 AND missing = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.deleted_at IS NULL")
@@ -84,15 +84,19 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	switch f.Order {
 	case sortby.Count:
 		s = s.Order("photo_count DESC, albums.album_title, albums.album_uid DESC")
-	case sortby.Newest:
+	case sortby.Moment, sortby.Newest:
 		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid DESC")
+		} else if f.Type == entity.AlbumMoment {
+			s = s.Order("has_year, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		}
 	case sortby.Oldest:
 		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid ASC")
+		} else if f.Type == entity.AlbumMoment {
+			s = s.Order("has_year, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
 		} else {
 			s = s.Order("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
 		}
@@ -100,10 +104,8 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		s = s.Order("albums.album_uid DESC")
 	case sortby.Edited:
 		s = s.Order("albums.updated_at DESC, albums.album_uid DESC")
-	case sortby.Moment:
-		s = s.Order("albums.album_favorite DESC, has_year, albums.album_year DESC, albums.album_month DESC, albums.album_title ASC, albums.album_uid DESC")
 	case sortby.Place:
-		s = s.Order("albums.album_location, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
+		s = s.Order("no_location, albums.album_location, has_year, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid DESC")
 	case sortby.Path:
 		s = s.Order("albums.album_path, albums.album_uid DESC")
 	case sortby.Category:
@@ -123,6 +125,12 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 			s = s.Order("albums.album_path ASC, albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_title ASC, albums.album_uid DESC")
+		}
+	case sortby.NameReverse:
+		if f.Type == entity.AlbumFolder {
+			s = s.Order("albums.album_path DESC, albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_title DESC, albums.album_uid DESC")
 		}
 	default:
 		s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
