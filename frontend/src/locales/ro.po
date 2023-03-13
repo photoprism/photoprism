@@ -5,14 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 14:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
-"20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -59,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Un clic îl va copia în clipboard."
 
 #: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:220 src/page/settings/account.vue:313
+#: src/page/about/about.vue:222 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -277,7 +275,7 @@ msgstr "A apărut o eroare - sunteți offline?"
 msgid "Animated"
 msgstr "Animat"
 
-#: src/page/settings/general.vue:686
+#: src/page/settings/general.vue:582
 msgid "Animation"
 msgstr "Animație"
 
@@ -348,6 +346,10 @@ msgstr "Deoarece acest lucru ne ajută să oferim mai multe funcții publicului,
 msgid "Aspect Ratio"
 msgstr "Raportul de aspect"
 
+#: src/page/about/about.vue:19
+msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+msgstr ""
+
 #: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
@@ -366,11 +368,11 @@ msgstr "Creează automat albume cu momente, călătorii și locuri speciale."
 msgid "Base Folder"
 msgstr "Dosar de bază"
 
-#: src/page/about/about.vue:59
+#: src/page/about/about.vue:63
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Înainte de a trimite o solicitare de asistență, vă rugăm să utilizați listele noastre de verificare pentru depanare pentru a determina cauza problemei dumneavoastră."
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:25
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Fiind 100% autofinanțați și independenți, vă putem promite că nu vă vom vinde niciodată datele și că vom fi întotdeauna transparenți în ceea ce privește software-ul și serviciile noastre."
 
@@ -406,7 +408,7 @@ msgstr "Răsfoiți și editați etichetele de clasificare a imaginilor."
 msgid "Browse indexed files and folders in Library."
 msgstr "Răsfoiți fișierele și folderele indexate din Bibliotecă."
 
-#: src/page/about/about.vue:51
+#: src/page/about/about.vue:55
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Răsfoiți Baza de cunoștințe pentru informații detaliate despre caracteristicile specifice ale produselor, servicii și resurse conexe."
 
@@ -535,7 +537,7 @@ msgstr "Profil de culoare"
 msgid "Colors"
 msgstr "Culori"
 
-#: src/page/about/about.vue:46
+#: src/page/about/about.vue:50
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Problemele obișnuite pot fi diagnosticate și rezolvate rapid cu ajutorul listelor de verificare pentru depanare pe care le oferim."
 
@@ -582,6 +584,10 @@ msgstr "Conține %{n} imagini."
 #: src/page/people/recognized.vue:87
 msgid "Contains one picture."
 msgstr "Conține o imagine."
+
+#: src/options/admin.js:9 src/options/admin.js:31
+msgid "Contributor"
+msgstr ""
 
 #: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
@@ -656,8 +662,8 @@ msgstr "Ziua"
 msgid "Debug Logs"
 msgstr "Jurnalele de depanare"
 
-#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:56
-#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:93
+#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
+#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
@@ -808,14 +814,13 @@ msgstr "S-a făcut."
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:253
+#: src/page/settings/general.vue:138 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "Descărcați"
 
-#: src/page/settings/general.vue:561
+#: src/page/settings/general.vue:648
 msgid "Download only original media files, without any automatically generated files."
-msgstr ""
-"Descărcați numai fișiere media originale, fără fișiere generate automat."
+msgstr "Descărcați numai fișiere media originale, fără fișiere generate automat."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -1097,7 +1102,7 @@ msgstr "Sex"
 msgid "General"
 msgstr "General"
 
-#: src/page/about/about.vue:55
+#: src/page/about/about.vue:59
 msgid "Getting Support"
 msgstr "Obținerea sprijinului"
 
@@ -1169,7 +1174,7 @@ msgstr "Gama dinamică înaltă (HDR)"
 msgid "How can we help?"
 msgstr "Cum vă putem ajuta?"
 
-#: src/page/about/about.vue:60
+#: src/page/about/about.vue:64
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Dacă acest lucru nu vă ajută sau dacă aveți alte întrebări:"
 
@@ -1215,7 +1220,7 @@ msgstr "Importul de fișiere în originale…"
 msgid "in"
 msgstr "în"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:73
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "În plus, sponsorii primesc asistență tehnică directă prin e-mail."
 
@@ -1227,11 +1232,11 @@ msgstr "În plus, sponsorii primesc asistență tehnică directă prin e-mail."
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "În cazul în care imaginile pe care le așteptați lipsesc, vă rugăm să scanați din nou biblioteca dvs. și să așteptați până când indexarea va fi finalizată."
 
-#: src/page/settings/general.vue:582
+#: src/page/settings/general.vue:669
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "Includeți fișiere de imagine RAW atunci când descărcați stive și arhive."
 
-#: src/page/settings/general.vue:603
+#: src/page/settings/general.vue:690
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Includeți fișiere sidecar atunci când descărcați stive și arhive."
 
@@ -1301,10 +1306,6 @@ msgstr "Fotografie invalidă selectată"
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Este decizia dumneavoastră dacă doriți să vă înscrieți pentru a vă bucura de beneficii suplimentare."
 
-#: src/page/about/about.vue:16
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Folosește cele mai recente tehnologii pentru a eticheta și găsi automat imagini fără a vă încurca."
-
 #: src/model/rest.js:181
 msgid "Item"
 msgstr "Articolul"
@@ -1325,7 +1326,7 @@ msgstr "JPEG-urile și miniaturile sunt redate automat, după cum este necesar."
 msgid "Keywords"
 msgstr "Cuvinte cheie"
 
-#: src/page/about/about.vue:50
+#: src/page/about/about.vue:54
 msgid "Knowledge Base"
 msgstr "Baza de cunoștințe"
 
@@ -1372,13 +1373,13 @@ msgstr "Latitudine"
 msgid "Lavender"
 msgstr "Lavandă"
 
-#: src/options/admin.js:47 src/options/admin.js:64
+#: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
-#: src/page/about/about.vue:52 src/page/about/about.vue:161
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:40
+#: src/page/about/about.vue:56 src/page/about/about.vue:163
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "Aflați mai multe"
@@ -1420,7 +1421,7 @@ msgstr "Limita a fost atinsă, afișând primele %{n} fișiere"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Liniare: Foarte netedă, cea mai bună performanță"
 
-#: src/model/link.js:119
+#: src/options/admin.js:48 src/options/admin.js:49 src/model/link.js:119
 msgid "Link"
 msgstr "Legătură"
 
@@ -1438,7 +1439,7 @@ msgstr "Live"
 msgid "Live Photos"
 msgstr "Fotografii în direct"
 
-#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:60
+#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:61
 msgid "Local"
 msgstr "Local"
 
@@ -1511,7 +1512,7 @@ msgstr "manual"
 msgid "Manual Upload"
 msgstr "Încărcare manuală"
 
-#: src/page/settings/general.vue:663
+#: src/page/settings/general.vue:559
 msgid "Maps"
 msgstr "Hărți"
 
@@ -1610,7 +1611,7 @@ msgstr "Nume prea lung"
 msgid "Neon"
 msgstr "Neon"
 
-#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:126
+#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1695,7 +1696,7 @@ msgstr "Nu există avertismente sau erori care să conțină acest cuvânt cheie
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Imaginile nefotografice și de slabă calitate necesită o revizuire înainte de a apărea în rezultatele căutării."
 
-#: src/options/admin.js:49 src/options/admin.js:68 src/options/options.js:264
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
 #: src/options/options.js:353
 msgid "None"
 msgstr "Nici unul"
@@ -1778,7 +1779,7 @@ msgstr "O imagine găsită"
 msgid "Onyx"
 msgstr "Onyx"
 
-#: src/page/about/about.vue:66
+#: src/page/about/about.vue:70
 msgid "or ask in our Community Chat"
 msgstr "sau întrebați în chat-ul nostru comunitar"
 
@@ -1805,7 +1806,7 @@ msgstr "Denumire originală"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:429 src/page/settings/general.vue:560
+#: src/page/settings/general.vue:429 src/page/settings/general.vue:647
 msgid "Originals"
 msgstr "Originale"
 
@@ -1817,7 +1818,7 @@ msgstr "Altele"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Echipa noastră decide acest lucru în permanență, în funcție de efortul de asistență necesar, de costurile serverului și ale licențelor și de faptul dacă funcțiile sunt în general necesare pentru toată lumea sau sunt solicitate în principal de organizații și utilizatori avansați."
 
-#: src/page/about/about.vue:45
+#: src/page/about/about.vue:49
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Ghidul nostru de utilizare acoperă, de asemenea, multe subiecte avansate, cum ar fi migrarea de la Google Photos și setările de calitate ale miniaturilor."
 
@@ -1878,11 +1879,7 @@ msgstr "PhotoPrism a fost actualizat…"
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism este 100% autofinanțat și independent."
 
-#: src/page/about/about.vue:15
-msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® este o aplicație de fotografii cu inteligență artificială pentru Web-ul descentralizat."
-
-#: src/page/connect.vue:14
+#: src/page/about/about.vue:22 src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
 msgstr "Abonament PhotoPrism+"
 
@@ -1907,7 +1904,7 @@ msgstr "Locul și Ora"
 #: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
-#: src/page/settings/general.vue:145 src/page/settings/general.vue:497
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "Locuri"
 
@@ -1931,7 +1928,7 @@ msgstr "Limita de dimensiune PNG: %{n}px"
 msgid "Portrait"
 msgstr "Portret"
 
-#: src/page/about/about.vue:65
+#: src/page/about/about.vue:69
 msgid "post your question in GitHub Discussions"
 msgstr "postați întrebarea dvs. în Discuții GitHub"
 
@@ -1991,8 +1988,8 @@ msgstr "Filtru de calitate"
 msgid "Quality Score"
 msgstr "Scorul de calitate"
 
-#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:86
-#: src/page/admin/users.vue:99
+#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:93
+#: src/page/admin/users.vue:106
 msgid "r"
 msgstr "r"
 
@@ -2009,7 +2006,7 @@ msgid "Raw"
 msgstr "Raw"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
-#: src/page/settings/general.vue:581
+#: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "RAW"
 
@@ -2017,7 +2014,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Reindexarea tuturor documentelor originale, inclusiv a fișierelor deja indexate și neschimbate."
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:52
 msgid "Read the Docs"
 msgstr "Citiți documentele"
 
@@ -2274,7 +2271,7 @@ msgstr "Afișați jurnalele serverului în Bibliotecă."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Afișează mesaje de jurnal mai detaliate. Necesită o repornire."
 
-#: src/model/file.js:212 src/page/settings/general.vue:602
+#: src/model/file.js:212 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2377,7 +2374,7 @@ msgstr "Conectat cu succes"
 msgid "Successfully deleted"
 msgstr "Eliminat cu succes"
 
-#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:80
+#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "Super Admin"
 
@@ -2483,7 +2480,7 @@ msgstr "Pentru a face upgrade, puteți introduce un cod de activare sau puteți 
 msgid "Toggle View"
 msgstr "Schimbă vizualizarea"
 
-#: src/options/admin.js:48 src/dialog/share.vue:208
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Jeton"
 
@@ -2580,7 +2577,7 @@ msgstr "Actualizarea stivelor"
 msgid "Upgrade"
 msgstr "Actualizare"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "Actualizați acum"
@@ -2617,10 +2614,6 @@ msgstr "Încărcați fișiere locale"
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Încărcați pe WebDAV și partajați linkuri cu prietenii."
 
-#: src/options/admin.js:9 src/options/admin.js:31
-msgid "Uploader"
-msgstr "Uploader"
-
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
 msgstr "Se încarcă %{n} din %{t}…"
@@ -2650,7 +2643,7 @@ msgstr "Utilizați presetări"
 msgid "User"
 msgstr "Utilizator"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:42
+#: src/component/navigation.vue:597 src/page/about/about.vue:46
 msgid "User Guide"
 msgstr "Ghidul utilizatorului"
 
@@ -2714,7 +2707,7 @@ msgstr "Vedere"
 msgid "Viewer"
 msgstr "Vizualizator"
 
-#: src/page/about/about.vue:44
+#: src/page/about/about.vue:48
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Vizitați docs.photoprism.app/user-guide pentru a afla cum să vă sincronizați, organizați și partajați fotografiile."
 
@@ -2739,7 +2732,7 @@ msgstr "Apreciem feedback-ul dumneavoastră!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Facem tot posibilul să răspundem în termen de cinci zile lucrătoare sau mai puțin."
 
-#: src/page/about/about.vue:71
+#: src/page/about/about.vue:75
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Vom face tot posibilul să vă răspundem la toate întrebările. În schimb, vă rugăm să ne susțineți pe Patreon sau GitHub Sponsors."
 
@@ -2814,7 +2807,7 @@ msgstr "Piatră Galbenă"
 msgid "Yes"
 msgstr "Da"
 
-#: src/page/about/about.vue:64
+#: src/page/about/about.vue:68
 msgid "you are welcome to join us on Reddit"
 msgstr "ești binevenit să ni te alături pe Reddit"
 
@@ -2826,10 +2819,6 @@ msgstr "Poți descărca doar un singur album"
 msgid "You can only download one label"
 msgstr "Puteți descărca doar o singură etichetă"
 
-#: src/page/about/about.vue:17
-msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "Îl puteți rula acasă, pe un server privat sau în cloud."
-
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
 msgstr "Puteți selecta doar un singur element"
@@ -2839,7 +2828,7 @@ msgstr "Puteți selecta doar un singur element"
 msgid "You may rescan your library to find additional faces."
 msgstr "Puteți să scanați din nou biblioteca dumneavoastră pentru a găsi alte fețe."
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:24
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Sprijinul dvs. continuu ne ajută să furnizăm actualizări regulate și să rămânem independenți, astfel încât să ne putem îndeplini misiunea și să vă protejăm confidențialitatea."
 
@@ -2850,6 +2839,18 @@ msgstr "Biblioteca dvs. este analizată în permanență pentru a crea automat a
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
+
+#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+#~ msgstr "Folosește cele mai recente tehnologii pentru a eticheta și găsi automat imagini fără a vă încurca."
+
+#~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
+#~ msgstr "PhotoPrism® este o aplicație de fotografii cu inteligență artificială pentru Web-ul descentralizat."
+
+#~ msgid "Uploader"
+#~ msgstr "Uploader"
+
+#~ msgid "You can run it at home, on a private server, or in the cloud."
+#~ msgstr "Îl puteți rula acasă, pe un server privat sau în cloud."
 
 #~ msgid "Downloads"
 #~ msgstr "Descărcări"

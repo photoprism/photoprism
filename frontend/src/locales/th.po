@@ -57,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "คลิกเพื่อคัดลอกไปยังคลิปบอร์ด"
 
 #: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:220 src/page/settings/account.vue:313
+#: src/page/about/about.vue:222 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -275,7 +275,7 @@ msgstr "เกิดข้อผิดพลาด คุณออฟไลน�
 msgid "Animated"
 msgstr "เคลื่อนไหว"
 
-#: src/page/settings/general.vue:686
+#: src/page/settings/general.vue:582
 msgid "Animation"
 msgstr "แอนิเมชัน"
 
@@ -346,6 +346,10 @@ msgstr "เนื่องจากสิ่งนี้ช่วยให้เ
 msgid "Aspect Ratio"
 msgstr "อัตราส่วน"
 
+#: src/page/about/about.vue:19
+msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+msgstr ""
+
 #: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
@@ -364,11 +368,11 @@ msgstr "สร้างอัลบั้มของช่วงเวลาพ
 msgid "Base Folder"
 msgstr "โฟลเดอร์ฐาน"
 
-#: src/page/about/about.vue:59
+#: src/page/about/about.vue:63
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "ก่อนส่งคำขอรับการสนับสนุน โปรดใช้รายการตรวจสอบการแก้ไขปัญหาของเราเพื่อระบุสาเหตุของปัญหา"
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:25
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "ด้วยการจัดหาเงินทุนด้วยตนเองและเป็นอิสระ 100% เราสามารถสัญญากับคุณได้ว่าเราจะไม่ขายข้อมูลของคุณและเราจะมีความโปร่งใสเกี่ยวกับซอฟต์แวร์และบริการของเราเสมอ"
 
@@ -404,7 +408,7 @@ msgstr "เรียกดูและแก้ไขป้ายกำกับ
 msgid "Browse indexed files and folders in Library."
 msgstr "เรียกดูไฟล์และโฟลเดอร์ที่จัดทำดัชนีในไลบรารี"
 
-#: src/page/about/about.vue:51
+#: src/page/about/about.vue:55
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "เรียกดูฐานข้อมูลสำหรับข้อมูลโดยละเอียดเกี่ยวกับคุณลักษณะเฉพาะของผลิตภัณฑ์ บริการ และทรัพยากรที่เกี่ยวข้อง"
 
@@ -533,7 +537,7 @@ msgstr "สีโปรไฟล์"
 msgid "Colors"
 msgstr "สี"
 
-#: src/page/about/about.vue:46
+#: src/page/about/about.vue:50
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "ปัญหาทั่วไปสามารถวินิจฉัยและแก้ไขได้อย่างรวดเร็วโดยใช้รายการตรวจสอบการแก้ไขปัญหาที่เรามีให้"
 
@@ -580,6 +584,10 @@ msgstr "มี %{n} รูป"
 #: src/page/people/recognized.vue:87
 msgid "Contains one picture."
 msgstr "ประกอบด้วยหนึ่งภาพ"
+
+#: src/options/admin.js:9 src/options/admin.js:31
+msgid "Contributor"
+msgstr ""
 
 #: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
@@ -654,8 +662,8 @@ msgstr "วัน"
 msgid "Debug Logs"
 msgstr "บันทึกการดีบัก"
 
-#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:56
-#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:93
+#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
+#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
@@ -806,11 +814,11 @@ msgstr "เสร็จแล้ว."
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:253
+#: src/page/settings/general.vue:138 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "ดาวน์โหลด"
 
-#: src/page/settings/general.vue:561
+#: src/page/settings/general.vue:648
 msgid "Download only original media files, without any automatically generated files."
 msgstr "ดาวน์โหลดเฉพาะไฟล์มีเดียต้นฉบับ โดยไม่มีไฟล์ที่สร้างขึ้นโดยอัตโนมัติ"
 
@@ -1094,7 +1102,7 @@ msgstr "ลาเวนเดอร์"
 msgid "General"
 msgstr "ทั่วไป"
 
-#: src/page/about/about.vue:55
+#: src/page/about/about.vue:59
 msgid "Getting Support"
 msgstr "การขอช่วยเหลือ"
 
@@ -1166,7 +1174,7 @@ msgstr "ช่วงไดนามิกสูง (HDR)"
 msgid "How can we help?"
 msgstr "เราจะช่วยได้อย่างไร?"
 
-#: src/page/about/about.vue:60
+#: src/page/about/about.vue:64
 msgid "If this doesn't help, or you have other questions:"
 msgstr "หากวิธีนี้ใช้ไม่ได้ผล หรือคุณมีคำถามอื่นๆ ให้ทำดังนี้"
 
@@ -1212,7 +1220,7 @@ msgstr "กำลังนำเข้าไฟล์ไปยังต้นฉ
 msgid "in"
 msgstr "ใน"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:73
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "นอกจากนี้ ผู้สนับสนุนยังได้รับการสนับสนุนด้านเทคนิคโดยตรงผ่านอีเมล"
 
@@ -1224,11 +1232,11 @@ msgstr "นอกจากนี้ ผู้สนับสนุนยัง�
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "ในกรณีที่รูปภาพที่คุณคาดว่าจะหายไป โปรดสแกนไลบรารีของคุณอีกครั้งและรอจนกว่าการจัดทำดัชนีจะเสร็จสมบูรณ์"
 
-#: src/page/settings/general.vue:582
+#: src/page/settings/general.vue:669
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "รวมไฟล์ภาพ RAW เมื่อดาวน์โหลดสแต็คและไฟล์เก็บถาวร"
 
-#: src/page/settings/general.vue:603
+#: src/page/settings/general.vue:690
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "รวมไฟล์ sidecar เมื่อดาวน์โหลดสแต็คและไฟล์เก็บถาวร"
 
@@ -1298,10 +1306,6 @@ msgstr "เลือกรูปภาพไม่ถูกต้อง"
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "เป็นการตัดสินใจของคุณว่าคุณต้องการสมัครเพื่อรับสิทธิประโยชน์เพิ่มเติมหรือไม่"
 
-#: src/page/about/about.vue:16
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "ใช้เทคโนโลยีล่าสุดในการแท็กและค้นหารูปภาพโดยอัตโนมัติโดยไม่รบกวนคุณ"
-
 #: src/model/rest.js:181
 msgid "Item"
 msgstr "สิ่งของ"
@@ -1322,7 +1326,7 @@ msgstr "JPEG และภาพขนาดย่อจะแสดงผลโ�
 msgid "Keywords"
 msgstr "คีย์เวิร์ด"
 
-#: src/page/about/about.vue:50
+#: src/page/about/about.vue:54
 msgid "Knowledge Base"
 msgstr "ฐานความรู้"
 
@@ -1369,13 +1373,13 @@ msgstr "ละติจูด"
 msgid "Lavender"
 msgstr "ลาเวนเดอร์"
 
-#: src/options/admin.js:47 src/options/admin.js:64
+#: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "แอลดีเอพี/ค.ศ"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
-#: src/page/about/about.vue:52 src/page/about/about.vue:161
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:40
+#: src/page/about/about.vue:56 src/page/about/about.vue:163
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "เรียนรู้เพิ่มเติม"
@@ -1417,7 +1421,7 @@ msgstr "ถึงขีดจำกัดแล้ว กำลังแสด�
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "เชิงเส้น: ราบรื่นมาก ประสิทธิภาพดีที่สุด"
 
-#: src/model/link.js:119
+#: src/options/admin.js:48 src/options/admin.js:49 src/model/link.js:119
 msgid "Link"
 msgstr "ลิงค์"
 
@@ -1435,7 +1439,7 @@ msgstr "สด"
 msgid "Live Photos"
 msgstr "ภาพถ่าย"
 
-#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:60
+#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:61
 msgid "Local"
 msgstr "ท้องถิ่น"
 
@@ -1508,7 +1512,7 @@ msgstr "คู่มือ"
 msgid "Manual Upload"
 msgstr "อัพโหลดด้วยตนเอง"
 
-#: src/page/settings/general.vue:663
+#: src/page/settings/general.vue:559
 msgid "Maps"
 msgstr "แผนที่"
 
@@ -1607,7 +1611,7 @@ msgstr "ชื่อยาวเกินไป"
 msgid "Neon"
 msgstr "นีออน"
 
-#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:126
+#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1692,7 +1696,7 @@ msgstr "ไม่มีคำเตือนหรือข้อผิดพล
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "รูปภาพที่ไม่ใช่ภาพถ่ายและคุณภาพต่ำต้องได้รับการตรวจสอบก่อนที่จะปรากฏในผลการค้นหา"
 
-#: src/options/admin.js:49 src/options/admin.js:68 src/options/options.js:264
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
 #: src/options/options.js:353
 msgid "None"
 msgstr "ไม่มี"
@@ -1775,7 +1779,7 @@ msgstr "พบหนึ่งภาพ"
 msgid "Onyx"
 msgstr "โอนิกซ์"
 
-#: src/page/about/about.vue:66
+#: src/page/about/about.vue:70
 msgid "or ask in our Community Chat"
 msgstr "หรือถามในแชทชุมชนของเรา"
 
@@ -1802,7 +1806,7 @@ msgstr "ชื่อจริง"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:429 src/page/settings/general.vue:560
+#: src/page/settings/general.vue:429 src/page/settings/general.vue:647
 msgid "Originals"
 msgstr "ต้นฉบับ"
 
@@ -1814,7 +1818,7 @@ msgstr "อื่น"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "ทีมงานของเราจะตัดสินใจเรื่องนี้อย่างต่อเนื่องโดยขึ้นอยู่กับความพยายามในการสนับสนุนที่จำเป็น เซิร์ฟเวอร์และค่าสิทธิ์การใช้งาน และดูว่าคุณสมบัตินั้นจำเป็นสำหรับทุกคนหรือส่วนใหญ่ร้องขอโดยองค์กรและผู้ใช้ขั้นสูง"
 
-#: src/page/about/about.vue:45
+#: src/page/about/about.vue:49
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "คู่มือผู้ใช้ของเรายังครอบคลุมหัวข้อขั้นสูงมากมาย เช่น การย้ายข้อมูลจาก Google Photos และการตั้งค่าคุณภาพของภาพขนาดย่อ"
 
@@ -1875,11 +1879,7 @@ msgstr "PhotoPrism ได้รับการอัพเดต…"
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism ใช้เงินตัวเอง 100% และเป็นอิสระ"
 
-#: src/page/about/about.vue:15
-msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® คือแอปรูปภาพที่ขับเคลื่อนโดย AI สำหรับเว็บแบบกระจายอำนาจ"
-
-#: src/page/connect.vue:14
+#: src/page/about/about.vue:22 src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+ การเป็นสมาชิก"
 
@@ -1904,7 +1904,7 @@ msgstr "สถานที่และเวลา"
 #: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
-#: src/page/settings/general.vue:145 src/page/settings/general.vue:497
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "สถานที่"
 
@@ -1928,7 +1928,7 @@ msgstr "ขีดจำกัดขนาด PNG: %{n}px"
 msgid "Portrait"
 msgstr "ภาพเหมือน"
 
-#: src/page/about/about.vue:65
+#: src/page/about/about.vue:69
 msgid "post your question in GitHub Discussions"
 msgstr "โพสต์คำถามของคุณใน GitHub Discussions"
 
@@ -1988,8 +1988,8 @@ msgstr "ตัวกรองคุณภาพ"
 msgid "Quality Score"
 msgstr "คะแนนคุณภาพ"
 
-#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:86
-#: src/page/admin/users.vue:99
+#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:93
+#: src/page/admin/users.vue:106
 msgid "r"
 msgstr "ร"
 
@@ -2006,7 +2006,7 @@ msgid "Raw"
 msgstr "ดิบ"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
-#: src/page/settings/general.vue:581
+#: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "ดิบ"
 
@@ -2014,7 +2014,7 @@ msgstr "ดิบ"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "จัดทำดัชนีต้นฉบับทั้งหมดใหม่ รวมทั้งไฟล์ที่จัดทำดัชนีแล้วและไม่เปลี่ยนแปลง"
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:52
 msgid "Read the Docs"
 msgstr "อ่านเอกสาร"
 
@@ -2271,7 +2271,7 @@ msgstr "แสดงบันทึกเซิร์ฟเวอร์ในไ
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "แสดงข้อความบันทึกโดยละเอียดเพิ่มเติม ต้องรีสตาร์ท"
 
-#: src/model/file.js:212 src/page/settings/general.vue:602
+#: src/model/file.js:212 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "ไซด์คาร์"
 
@@ -2374,7 +2374,7 @@ msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 msgid "Successfully deleted"
 msgstr "ลบเรียบร้อยแล้ว"
 
-#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:80
+#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "ผู้ดูแลระบบขั้นสูง"
 
@@ -2478,7 +2478,7 @@ msgstr "หากต้องการอัปเกรด คุณอาจ�
 msgid "Toggle View"
 msgstr "สลับมุมมอง"
 
-#: src/options/admin.js:48 src/dialog/share.vue:208
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "โทเค็น"
 
@@ -2575,7 +2575,7 @@ msgstr "กำลังอัปเดตกอง"
 msgid "Upgrade"
 msgstr "อัปเกรด"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "อัพเกรดเดี๋ยวนี้"
@@ -2612,10 +2612,6 @@ msgstr "อัปโหลดไฟล์ในเครื่อง"
 msgid "Upload to WebDAV and share links with friends."
 msgstr "อัปโหลดไปยัง WebDAV และแชร์ลิงก์กับเพื่อน"
 
-#: src/options/admin.js:9 src/options/admin.js:31
-msgid "Uploader"
-msgstr "ผู้อัปโหลด"
-
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
 msgstr "กำลังอัปโหลด %{n} จาก %{t}…"
@@ -2645,7 +2641,7 @@ msgstr "ใช้พรีเซ็ต"
 msgid "User"
 msgstr "ผู้ใช้"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:42
+#: src/component/navigation.vue:597 src/page/about/about.vue:46
 msgid "User Guide"
 msgstr "คู่มือผู้ใช้"
 
@@ -2709,7 +2705,7 @@ msgstr "ดู"
 msgid "Viewer"
 msgstr "ผู้ดู"
 
-#: src/page/about/about.vue:44
+#: src/page/about/about.vue:48
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "ไปที่ docs.photoprism.app/user-guide เพื่อเรียนรู้วิธีซิงค์ จัดระเบียบ และแบ่งปันรูปภาพของคุณ"
 
@@ -2734,7 +2730,7 @@ msgstr "ขอขอบคุณสำหรับความคิดเห็
 msgid "We do our best to respond within five business days or less."
 msgstr "เราพยายามอย่างเต็มที่ที่จะตอบกลับภายในห้าวันทำการหรือน้อยกว่านั้น"
 
-#: src/page/about/about.vue:71
+#: src/page/about/about.vue:75
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "เราจะพยายามอย่างเต็มที่เพื่อตอบคำถามของคุณ ในทางกลับกัน เราขอให้คุณสนับสนุนเราใน Patreon หรือผู้สนับสนุน GitHub"
 
@@ -2807,7 +2803,7 @@ msgstr "เยลโลว์สโตน"
 msgid "Yes"
 msgstr "ใช่"
 
-#: src/page/about/about.vue:64
+#: src/page/about/about.vue:68
 msgid "you are welcome to join us on Reddit"
 msgstr "คุณสามารถเข้าร่วมกับเราใน Reddit"
 
@@ -2819,10 +2815,6 @@ msgstr "ดาวน์โหลดได้เพียงอัลบั้ม
 msgid "You can only download one label"
 msgstr "คุณสามารถดาวน์โหลดป้ายกำกับได้เพียงป้ายเดียว"
 
-#: src/page/about/about.vue:17
-msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "คุณสามารถเรียกใช้ที่บ้าน บนเซิร์ฟเวอร์ส่วนตัว หรือในระบบคลาวด์"
-
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
 msgstr "เลือกได้เพียงรายการเดียวเท่านั้น"
@@ -2832,7 +2824,7 @@ msgstr "เลือกได้เพียงรายการเดียว
 msgid "You may rescan your library to find additional faces."
 msgstr "คุณสามารถสแกนคลังของคุณเพื่อค้นหาใบหน้าเพิ่มเติม"
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:24
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "การสนับสนุนอย่างต่อเนื่องของคุณช่วยให้เราอัปเดตและบริการต่างๆ เป็นประจำ เช่น แผนที่โลก"
 
@@ -2843,6 +2835,18 @@ msgstr "คลังของคุณได้รับการวิเคร
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+#~ msgstr "ใช้เทคโนโลยีล่าสุดในการแท็กและค้นหารูปภาพโดยอัตโนมัติโดยไม่รบกวนคุณ"
+
+#~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
+#~ msgstr "PhotoPrism® คือแอปรูปภาพที่ขับเคลื่อนโดย AI สำหรับเว็บแบบกระจายอำนาจ"
+
+#~ msgid "Uploader"
+#~ msgstr "ผู้อัปโหลด"
+
+#~ msgid "You can run it at home, on a private server, or in the cloud."
+#~ msgstr "คุณสามารถเรียกใช้ที่บ้าน บนเซิร์ฟเวอร์ส่วนตัว หรือในระบบคลาวด์"
 
 #~ msgid "Downloads"
 #~ msgstr "ดาวน์โหลด"

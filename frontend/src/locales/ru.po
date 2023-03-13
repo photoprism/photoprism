@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-11 14:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -58,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Клик скопирует это в буфер обмена."
 
 #: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:220 src/page/settings/account.vue:313
+#: src/page/about/about.vue:222 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -276,7 +275,7 @@ msgstr "Возникла ошибка - вы отключены от сети?"
 msgid "Animated"
 msgstr "Анимированный"
 
-#: src/page/settings/general.vue:686
+#: src/page/settings/general.vue:582
 msgid "Animation"
 msgstr "Анимация"
 
@@ -347,6 +346,10 @@ msgstr "Поскольку это помогает нам предоставля
 msgid "Aspect Ratio"
 msgstr "Соотношение сторон"
 
+#: src/page/about/about.vue:19
+msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+msgstr ""
+
 #: src/component/admin/users/add.vue:212 src/component/admin/users/edit.vue:363
 #: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
@@ -365,11 +368,11 @@ msgstr "Автоматически создает альбомы особых м
 msgid "Base Folder"
 msgstr "Базовая папка"
 
-#: src/page/about/about.vue:59
+#: src/page/about/about.vue:63
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Прежде чем отправлять запрос в службу поддержки, воспользуйтесь нашими списками поиска и устранения неисправностей, чтобы определить причину проблемы."
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:25
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Будучи на 100% самофинансируемыми и независимыми, мы можем пообещать вам, что никогда не будем продавать ваши данные и что мы всегда будем прозрачны в отношении нашего программного обеспечения и услуг."
 
@@ -405,7 +408,7 @@ msgstr "Просматривайте и редактируйте метки кл
 msgid "Browse indexed files and folders in Library."
 msgstr "Просматривайте проиндексированные файлы и папки в Библиотеке."
 
-#: src/page/about/about.vue:51
+#: src/page/about/about.vue:55
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Просмотрите базу знаний для получения подробной информации о конкретных функциях продукта, услугах и связанных с ними ресурсах."
 
@@ -534,7 +537,7 @@ msgstr "Цветовой профиль"
 msgid "Colors"
 msgstr "Цвета"
 
-#: src/page/about/about.vue:46
+#: src/page/about/about.vue:50
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Распространенные проблемы могут быть быстро диагностированы и решены с помощью предоставляемых нами контрольных списков устранения неполадок."
 
@@ -581,6 +584,10 @@ msgstr "Содержит %{n} фотографий."
 #: src/page/people/recognized.vue:87
 msgid "Contains one picture."
 msgstr "Содержит одну фотографию."
+
+#: src/options/admin.js:9 src/options/admin.js:31
+msgid "Contributor"
+msgstr ""
 
 #: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
@@ -655,8 +662,8 @@ msgstr "День"
 msgid "Debug Logs"
 msgstr "Отладочные Логи"
 
-#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:56
-#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:93
+#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
+#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
@@ -807,15 +814,13 @@ msgstr "Готово."
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:253
+#: src/page/settings/general.vue:138 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "Скачать"
 
-#: src/page/settings/general.vue:561
+#: src/page/settings/general.vue:648
 msgid "Download only original media files, without any automatically generated files."
-msgstr ""
-"Загружайте только оригинальные медиафайлы, без каких-либо автоматически "
-"сгенерированных файлов."
+msgstr "Загружайте только оригинальные медиафайлы, без каких-либо автоматически сгенерированных файлов."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -1097,7 +1102,7 @@ msgstr "Пол"
 msgid "General"
 msgstr "Основные"
 
-#: src/page/about/about.vue:55
+#: src/page/about/about.vue:59
 msgid "Getting Support"
 msgstr "Получение помощи"
 
@@ -1169,7 +1174,7 @@ msgstr "Высокий динамический диапазон (HDR)"
 msgid "How can we help?"
 msgstr "Как мы можем помочь?"
 
-#: src/page/about/about.vue:60
+#: src/page/about/about.vue:64
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Если это не помогло или у вас есть другие вопросы:"
 
@@ -1215,7 +1220,7 @@ msgstr "Импорт файлов в оригиналы…"
 msgid "in"
 msgstr "в"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:73
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Кроме того, спонсоры получают прямую техническую поддержку по электронной почте."
 
@@ -1227,11 +1232,11 @@ msgstr "Кроме того, спонсоры получают прямую те
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Если ожидаемые вами фотографии отсутствуют, пожалуйста, повторно просканируйте библиотеку и дождитесь окончания индексации."
 
-#: src/page/settings/general.vue:582
+#: src/page/settings/general.vue:669
 msgid "Include RAW image files when downloading stacks and archives."
 msgstr "Включать файлы изображений RAW при загрузке стопок и архивов."
 
-#: src/page/settings/general.vue:603
+#: src/page/settings/general.vue:690
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Включать файлы sidecar при загрузке стеков и архивов."
 
@@ -1301,10 +1306,6 @@ msgstr "Выбрана недопустимая фотография"
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Вы сами решаете, хотите ли вы подписаться, чтобы воспользоваться дополнительными преимуществами."
 
-#: src/page/about/about.vue:16
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "Оно использует новейшие технологии для автоматической разметки и поиска изображений, не вставая у вас на пути."
-
 #: src/model/rest.js:181
 msgid "Item"
 msgstr "Элемент"
@@ -1325,7 +1326,7 @@ msgstr "JPEG и эскизы автоматически отображаются
 msgid "Keywords"
 msgstr "Ключевые слова"
 
-#: src/page/about/about.vue:50
+#: src/page/about/about.vue:54
 msgid "Knowledge Base"
 msgstr "База знаний"
 
@@ -1372,13 +1373,13 @@ msgstr "Широта"
 msgid "Lavender"
 msgstr "Лаванда"
 
-#: src/options/admin.js:47 src/options/admin.js:64
+#: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
-#: src/page/about/about.vue:52 src/page/about/about.vue:161
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:40
+#: src/page/about/about.vue:56 src/page/about/about.vue:163
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "Узнать больше"
@@ -1420,7 +1421,7 @@ msgstr "Лимит превышен, отображение первых %{n} ф
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Линейный: очень сглаженный, лучшая производительность"
 
-#: src/model/link.js:119
+#: src/options/admin.js:48 src/options/admin.js:49 src/model/link.js:119
 msgid "Link"
 msgstr "Ссылка"
 
@@ -1438,7 +1439,7 @@ msgstr "Прямой эфир"
 msgid "Live Photos"
 msgstr "Живые фотографии"
 
-#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:60
+#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:61
 msgid "Local"
 msgstr "Местный"
 
@@ -1511,7 +1512,7 @@ msgstr "ручной"
 msgid "Manual Upload"
 msgstr "Загрузка вручную"
 
-#: src/page/settings/general.vue:663
+#: src/page/settings/general.vue:559
 msgid "Maps"
 msgstr "Карты"
 
@@ -1610,7 +1611,7 @@ msgstr "Название слишком длинное"
 msgid "Neon"
 msgstr "Неон"
 
-#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:126
+#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1695,7 +1696,7 @@ msgstr "Нет предупреждений или ошибок содержащ
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Файлы, не являющиеся фотографиями, или изображения низкого качества нужно одобрить, чтобы они появились в результатах поиска."
 
-#: src/options/admin.js:49 src/options/admin.js:68 src/options/options.js:264
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
 #: src/options/options.js:353
 msgid "None"
 msgstr "Ничего"
@@ -1778,7 +1779,7 @@ msgstr "Найдена одна фотография"
 msgid "Onyx"
 msgstr "Оникс"
 
-#: src/page/about/about.vue:66
+#: src/page/about/about.vue:70
 msgid "or ask in our Community Chat"
 msgstr "или задайте вопрос в нашем чате сообщества"
 
@@ -1805,7 +1806,7 @@ msgstr "Оригинальное Название"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
 #: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:429 src/page/settings/general.vue:560
+#: src/page/settings/general.vue:429 src/page/settings/general.vue:647
 msgid "Originals"
 msgstr "Оригиналы"
 
@@ -1817,7 +1818,7 @@ msgstr "Другой"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Наша команда решает этот вопрос на постоянной основе в зависимости от требуемых усилий по поддержке, стоимости сервера и лицензирования, а также от того, нужны ли эти функции в целом всем или в основном запрашиваются организациями и продвинутыми пользователями."
 
-#: src/page/about/about.vue:45
+#: src/page/about/about.vue:49
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "В нашем руководстве пользователя также рассматриваются многие дополнительные темы, такие как миграция из Google Фото и настройки качества миниатюр."
 
@@ -1878,11 +1879,7 @@ msgstr "PhotoPrism был обновлен…"
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism является на 100% самофинансируемой и независимой компанией."
 
-#: src/page/about/about.vue:15
-msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® - это фотоприложение на базе искусственного интеллекта для децентрализованной сети."
-
-#: src/page/connect.vue:14
+#: src/page/about/about.vue:22 src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
 msgstr "Членство в программе PhotoPrism+"
 
@@ -1907,7 +1904,7 @@ msgstr "Место и время"
 #: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
-#: src/page/settings/general.vue:145 src/page/settings/general.vue:497
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "Места"
 
@@ -1931,7 +1928,7 @@ msgstr "Ограничение по размеру в формате PNG: %{n}px
 msgid "Portrait"
 msgstr "Портрет"
 
-#: src/page/about/about.vue:65
+#: src/page/about/about.vue:69
 msgid "post your question in GitHub Discussions"
 msgstr "опубликуйте свой вопрос в GitHub Discussions"
 
@@ -1991,8 +1988,8 @@ msgstr "Фильтр Качества"
 msgid "Quality Score"
 msgstr "Показатель Качества"
 
-#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:86
-#: src/page/admin/users.vue:99
+#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:93
+#: src/page/admin/users.vue:106
 msgid "r"
 msgstr "r"
 
@@ -2009,7 +2006,7 @@ msgid "Raw"
 msgstr "Исходный"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
-#: src/page/settings/general.vue:581
+#: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "RAW"
 
@@ -2017,7 +2014,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Повторное индексирование всех оригиналов, включая уже проиндексированные и неизмененные файлы."
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:52
 msgid "Read the Docs"
 msgstr "Документация"
 
@@ -2274,7 +2271,7 @@ msgstr "Показывать журналы сервера в Библиотек
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Показывает более подробные сообщения журнала. Требуется перезапуск."
 
-#: src/model/file.js:212 src/page/settings/general.vue:602
+#: src/model/file.js:212 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Сопутствующий файл"
 
@@ -2377,7 +2374,7 @@ msgstr "Успешно подключено"
 msgid "Successfully deleted"
 msgstr "Успешно удалено"
 
-#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:80
+#: src/component/admin/users/edit.vue:434 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "Супер-администратор"
 
@@ -2483,7 +2480,7 @@ msgstr "Для обновления вы можете ввести код акт
 msgid "Toggle View"
 msgstr "Переключить вид"
 
-#: src/options/admin.js:48 src/dialog/share.vue:208
+#: src/dialog/share.vue:208
 msgid "Token"
 msgstr "Токен"
 
@@ -2580,7 +2577,7 @@ msgstr "Обновление серий"
 msgid "Upgrade"
 msgstr "Обновление"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "Обновить сейчас"
@@ -2617,10 +2614,6 @@ msgstr "Загрузка локальных файлов"
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Загружайте WebDAV и делитесь ссылками с друзьями."
 
-#: src/options/admin.js:9 src/options/admin.js:31
-msgid "Uploader"
-msgstr "Uploader"
-
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
 msgstr "Загрузка %{n} из %{t}…"
@@ -2650,7 +2643,7 @@ msgstr "Использовать предустановки"
 msgid "User"
 msgstr "Пользователь"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:42
+#: src/component/navigation.vue:597 src/page/about/about.vue:46
 msgid "User Guide"
 msgstr "Руководство пользователя"
 
@@ -2714,7 +2707,7 @@ msgstr "Обзор"
 msgid "Viewer"
 msgstr "Просмотрщик"
 
-#: src/page/about/about.vue:44
+#: src/page/about/about.vue:48
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Посетите docs.photoprism.app/user-guide, чтобы узнать, как синхронизировать, упорядочивать свои фотографии и делиться ими."
 
@@ -2739,7 +2732,7 @@ msgstr "Мы признательны за ваш отзыв!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Мы делаем все возможное, чтобы ответить в течение пяти рабочих дней или меньше."
 
-#: src/page/about/about.vue:71
+#: src/page/about/about.vue:75
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Мы сделаем все возможное, чтобы ответить на все ваши вопросы. В свою очередь, мы просим вас поддержать нас на Patreon или GitHub Sponsors."
 
@@ -2814,7 +2807,7 @@ msgstr "Йеллоустоун"
 msgid "Yes"
 msgstr "Да"
 
-#: src/page/about/about.vue:64
+#: src/page/about/about.vue:68
 msgid "you are welcome to join us on Reddit"
 msgstr "приглашаем вас присоединиться к нам на Reddit"
 
@@ -2826,10 +2819,6 @@ msgstr "Вы можете загрузить только один альбом"
 msgid "You can only download one label"
 msgstr "Вы можете загрузить только одну метку"
 
-#: src/page/about/about.vue:17
-msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "Вы можете запустить его дома, на частном сервере или в облаке."
-
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
 msgstr "Вы можете выбрать только один элемент"
@@ -2839,7 +2828,7 @@ msgstr "Вы можете выбрать только один элемент"
 msgid "You may rescan your library to find additional faces."
 msgstr "Вы можете повторно просканировать свою библиотеку, чтобы найти дополнительные лица."
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:24
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Ваша постоянная поддержка помогает нам предоставлять регулярные обновления и оставаться независимыми, чтобы мы могли выполнять нашу миссию и защищать вашу частную жизнь."
 
@@ -2850,6 +2839,18 @@ msgstr "Ваша библиотека постоянно анализирует�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+#~ msgstr "Оно использует новейшие технологии для автоматической разметки и поиска изображений, не вставая у вас на пути."
+
+#~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
+#~ msgstr "PhotoPrism® - это фотоприложение на базе искусственного интеллекта для децентрализованной сети."
+
+#~ msgid "Uploader"
+#~ msgstr "Uploader"
+
+#~ msgid "You can run it at home, on a private server, or in the cloud."
+#~ msgstr "Вы можете запустить его дома, на частном сервере или в облаке."
 
 #~ msgid "Downloads"
 #~ msgstr "Загрузки"
