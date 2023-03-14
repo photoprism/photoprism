@@ -12,7 +12,7 @@
     >
       <template #items="props">
         <td class="p-account">
-          <button class="secondary-dark--text" @click.stop.prevent="edit(props.item)">
+          <button class="secondary-dark--text text--lighten-1" @click.stop.prevent="edit(props.item)">
             {{ props.item.AccName }}
           </button>
         </td>
