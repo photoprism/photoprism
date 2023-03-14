@@ -55,3 +55,15 @@ button.v-btn.compact  {
 .lh-20 {
     line-height: 2.0rem !important;
 }
+
+figure.quote {
+    padding: 0;
+    text-align: center;
+    font-size: 1.2em;
+    line-height: 2.0rem;
+}
+
+figure.quote figcaption,
+figure.quote blockquote {
+    margin: 0.5em 0;
+}
