@@ -173,6 +173,9 @@ func (c *Config) Propagate() {
 	// Set minimum password length.
 	entity.PasswordLength = c.PasswordLength()
 
+	// Set path for user assets.
+	entity.UsersPath = c.UsersPath()
+
 	// Set API preview and download default tokens.
 	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
 	entity.DownloadToken.Set(c.DownloadToken(), entity.TokenConfig)

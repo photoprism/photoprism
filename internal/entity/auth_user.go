@@ -34,6 +34,9 @@ var UsernameLength = 1
 // PasswordLength specifies the minimum length of the password in characters.
 var PasswordLength = 4
 
+// UsersPath is the relative path for user assets.
+var UsersPath = "users"
+
 // Users represents a list of users.
 type Users []User
 
@@ -118,6 +121,8 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("id = ?", find.ID)
 	} else if rnd.IsUID(find.UserUID, UserUID) {
 		stmt = stmt.Where("user_uid = ?", find.UserUID)
+	} else if find.AuthProvider != "" && find.AuthID != "" && find.UserName != "" {
+		stmt = stmt.Where("auth_provider = ? AND auth_id = ? OR user_name = ?", find.AuthProvider, find.AuthID, find.UserName)
 	} else if find.UserName != "" {
 		stmt = stmt.Where("user_name = ?", find.UserName)
 	} else if find.UserEmail != "" {
@@ -432,7 +437,7 @@ func (m *User) DefaultBasePath() string {
 	if s := m.Handle(); s == "" {
 		return ""
 	} else {
-		return fmt.Sprintf("users/%s", s)
+		return path.Join(UsersPath, s)
 	}
 }
 

@@ -57,10 +57,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
 		{"resolution-limit", fmt.Sprintf("%d", c.ResolutionLimit())},
 
-		// Other paths.
+		// Storage.
 		{"storage-path", c.StoragePath()},
 		{"sidecar-path", c.SidecarPath()},
-		{"users-path", c.UsersPath()},
 		{"albums-path", c.AlbumsPath()},
 		{"backup-path", c.BackupPath()},
 		{"cache-path", c.CachePath()},
@@ -69,6 +68,9 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"thumb-cache-path", c.ThumbCachePath()},
 		{"import-path", c.ImportPath()},
 		{"import-dest", c.ImportDest()},
+		{"users-path", c.UsersPath()},
+		{"users-storage-path", c.UsersStoragePath()},
+		{"users-originals-path", c.UsersOriginalsPath()},
 		{"assets-path", c.AssetsPath()},
 		{"static-path", c.StaticPath()},
 		{"build-path", c.BuildPath()},

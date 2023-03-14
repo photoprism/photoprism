@@ -121,6 +121,22 @@ export class User extends RestModel {
     return s[0].trim();
   }
 
+  defaultBasePath() {
+    const handle = this.getHandle();
+
+    if (!handle) {
+      return "";
+    }
+
+    let dir = config.get("usersPath");
+
+    if (dir) {
+      return `${dir}/${handle}`;
+    } else {
+      return `users/${handle}`;
+    }
+  }
+
   getDisplayName() {
     if (this.DisplayName) {
       return this.DisplayName;

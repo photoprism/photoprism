@@ -31,11 +31,11 @@ func registerWebDAVRoutes(router *gin.Engine, conf *config.Config) {
 			info = ""
 		}
 
-		WebDAV(conf.OriginalsPath(), router.Group(conf.BaseUri(WebDAVOriginals), BasicAuth()), conf)
+		WebDAV(conf.OriginalsPath(), router.Group(conf.BaseUri(WebDAVOriginals), BasicAuth(conf)), conf)
 		log.Infof("webdav: shared %s/%s", conf.BaseUri(WebDAVOriginals), info)
 
 		if conf.ImportPath() != "" {
-			WebDAV(conf.ImportPath(), router.Group(conf.BaseUri(WebDAVImport), BasicAuth()), conf)
+			WebDAV(conf.ImportPath(), router.Group(conf.BaseUri(WebDAVImport), BasicAuth(conf)), conf)
 			log.Infof("webdav: shared %s/%s", conf.BaseUri(WebDAVImport), info)
 		}
 	}

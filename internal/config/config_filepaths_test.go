@@ -25,14 +25,14 @@ func TestConfig_SidecarPath(t *testing.T) {
 
 func TestConfig_UsersPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Contains(t, c.UsersPath(), "testdata/users")
+	assert.Contains(t, c.UsersPath(), "users")
 }
 
-func TestConfig_UserPath(t *testing.T) {
+func TestConfig_UserStoragePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "", c.UserPath(""))
-	assert.Equal(t, "", c.UserPath("etaetyget"))
-	assert.Contains(t, c.UserPath("urjult03ceelhw6k"), "testdata/users/urjult03ceelhw6k")
+	assert.Equal(t, "", c.UserStoragePath(""))
+	assert.Equal(t, "", c.UserStoragePath("etaetyget"))
+	assert.Contains(t, c.UserStoragePath("urjult03ceelhw6k"), "users/urjult03ceelhw6k")
 }
 
 func TestConfig_UserUploadPath(t *testing.T) {
@@ -50,12 +50,12 @@ func TestConfig_UserUploadPath(t *testing.T) {
 	if dir, err := c.UserUploadPath("urjult03ceelhw6k", ""); err != nil {
 		t.Fatal(err)
 	} else {
-		assert.Contains(t, dir, "testdata/users/urjult03ceelhw6k/upload")
+		assert.Contains(t, dir, "users/urjult03ceelhw6k/upload")
 	}
 	if dir, err := c.UserUploadPath("urjult03ceelhw6k", "foo"); err != nil {
 		t.Fatal(err)
 	} else {
-		assert.Contains(t, dir, "testdata/users/urjult03ceelhw6k/upload/foo")
+		assert.Contains(t, dir, "users/urjult03ceelhw6k/upload/foo")
 	}
 }
 
