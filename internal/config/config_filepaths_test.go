@@ -28,6 +28,16 @@ func TestConfig_UsersPath(t *testing.T) {
 	assert.Contains(t, c.UsersPath(), "users")
 }
 
+func TestConfig_UsersOriginalsPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.UsersOriginalsPath(), "users")
+}
+
+func TestConfig_UsersStoragePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Contains(t, c.UsersStoragePath(), "users")
+}
+
 func TestConfig_UserStoragePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, "", c.UserStoragePath(""))

@@ -335,14 +335,14 @@ func (c *Config) UsersPath() string {
 	return clean.UserPath(c.options.UsersPath)
 }
 
-// UsersStoragePath returns the users storage base path.
-func (c *Config) UsersStoragePath() string {
-	return filepath.Join(c.StoragePath(), c.UsersPath())
-}
-
 // UsersOriginalsPath returns the users originals base path.
 func (c *Config) UsersOriginalsPath() string {
 	return filepath.Join(c.OriginalsPath(), c.UsersPath())
+}
+
+// UsersStoragePath returns the users storage base path.
+func (c *Config) UsersStoragePath() string {
+	return filepath.Join(c.StoragePath(), "users")
 }
 
 // UserStoragePath returns the storage path for user assets.

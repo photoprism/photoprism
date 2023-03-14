@@ -133,6 +133,12 @@ var Flags = CliFlags{
 			EnvVar: "PHOTOPRISM_RESOLUTION_LIMIT",
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "users-path",
+			Usage:  "relative `PATH` to create base and upload subdirectories for users",
+			EnvVar: "PHOTOPRISM_USERS_PATH",
+			Value:  "users",
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "storage-path, s",
 			Usage:  "writable storage `PATH` for sidecar, cache, and database files",
 			EnvVar: "PHOTOPRISM_STORAGE_PATH",
@@ -161,12 +167,6 @@ var Flags = CliFlags{
 			Name:   "import-dest",
 			Usage:  "relative originals `PATH` to which the files should be imported by default *optional*",
 			EnvVar: "PHOTOPRISM_IMPORT_DEST",
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "users-path",
-			Usage:  "relative `PATH` to create base and upload subdirectories for users",
-			EnvVar: "PHOTOPRISM_USERS_PATH",
-			Value:  "users",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "assets-path, as",

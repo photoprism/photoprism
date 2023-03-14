@@ -46,9 +46,9 @@ type Options struct {
 	OriginalsPath         string        `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
 	OriginalsLimit        int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
+	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
