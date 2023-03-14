@@ -351,7 +351,7 @@ func (c *Config) UserStoragePath(userUid string) string {
 		return ""
 	}
 
-	dir := filepath.Join(c.UsersPath(), userUid)
+	dir := filepath.Join(c.UsersStoragePath(), userUid)
 
 	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
 		return ""
