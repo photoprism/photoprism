@@ -8,7 +8,7 @@ import (
 )
 
 // AvcConvertCommand returns the command for converting video files to MPEG-4 AVC.
-func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder AvcEncoder) (result *exec.Cmd, useMutex bool, err error) {
+func AvcConvertCommand(fileName, avcName string, opt Options) (result *exec.Cmd, useMutex bool, err error) {
 	if fileName == "" {
 		return nil, false, fmt.Errorf("empty input filename")
 	} else if avcName == "" {
@@ -21,7 +21,7 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 	// Don't use hardware transcoding for animated images.
 	if fs.TypeAnimated[fs.FileType(fileName)] != "" {
 		result = exec.Command(
-			ffmpegBin,
+			opt.Bin,
 			"-i", fileName,
 			"-movflags", "faststart",
 			"-pix_fmt", "yuv420p",
@@ -35,27 +35,27 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 	}
 
 	// Display encoder info.
-	if encoder != SoftwareEncoder {
-		log.Infof("convert: ffmpeg encoder %s selected", string(encoder))
+	if opt.Encoder != SoftwareEncoder {
+		log.Infof("convert: ffmpeg encoder %s selected", opt.Encoder.String())
 	}
 
-	switch encoder {
+	switch opt.Encoder {
 	case IntelEncoder:
 		// ffmpeg -hide_banner -h encoder=h264_qsv
 		format := "format=rgb32"
 		result = exec.Command(
-			ffmpegBin,
+			opt.Bin,
 			"-qsv_device", "/dev/dri/renderD128",
 			"-i", fileName,
 			"-c:a", "aac",
 			"-vf", format,
-			"-c:v", string(encoder),
-			"-map", "0:v:0",
-			"-map", "0:a:0?",
+			"-c:v", opt.Encoder.String(),
+			"-map", opt.MapVideo,
+			"-map", opt.MapAudio,
 			"-vsync", "vfr",
 			"-r", "30",
-			"-b:v", bitrate,
-			"-bitrate", bitrate,
+			"-b:v", opt.Bitrate,
+			"-bitrate", opt.Bitrate,
 			"-f", "mp4",
 			"-y",
 			avcName,
@@ -65,18 +65,18 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 		// ffmpeg -hide_banner -h encoder=h264_videotoolbox
 		format := "format=yuv420p"
 		result = exec.Command(
-			ffmpegBin,
+			opt.Bin,
 			"-i", fileName,
-			"-c:v", string(encoder),
-			"-map", "0:v:0",
-			"-map", "0:a:0?",
+			"-c:v", opt.Encoder.String(),
+			"-map", opt.MapVideo,
+			"-map", opt.MapAudio,
 			"-c:a", "aac",
 			"-vf", format,
 			"-profile", "high",
 			"-level", "51",
 			"-vsync", "vfr",
 			"-r", "30",
-			"-b:v", bitrate,
+			"-b:v", opt.Bitrate,
 			"-f", "mp4",
 			"-y",
 			avcName,
@@ -85,17 +85,17 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 	case VAAPIEncoder:
 		format := "format=nv12,hwupload"
 		result = exec.Command(
-			ffmpegBin,
+			opt.Bin,
 			"-hwaccel", "vaapi",
 			"-i", fileName,
 			"-c:a", "aac",
 			"-vf", format,
-			"-c:v", string(encoder),
-			"-map", "0:v:0",
-			"-map", "0:a:0?",
+			"-c:v", opt.Encoder.String(),
+			"-map", opt.MapVideo,
+			"-map", opt.MapAudio,
 			"-vsync", "vfr",
 			"-r", "30",
-			"-b:v", bitrate,
+			"-b:v", opt.Bitrate,
 			"-f", "mp4",
 			"-y",
 			avcName,
@@ -104,13 +104,13 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 	case NvidiaEncoder:
 		// ffmpeg -hide_banner -h encoder=h264_nvenc
 		result = exec.Command(
-			ffmpegBin,
+			opt.Bin,
 			"-hwaccel", "auto",
 			"-i", fileName,
 			"-pix_fmt", "yuv420p",
-			"-c:v", string(encoder),
-			"-map", "0:v:0",
-			"-map", "0:a:0?",
+			"-c:v", opt.Encoder.String(),
+			"-map", opt.MapVideo,
+			"-map", opt.MapAudio,
 			"-c:a", "aac",
 			"-preset", "15",
 			"-pixel_format", "yuv420p",
@@ -120,7 +120,7 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-cq", "0",
 			"-tune", "2",
 			"-r", "30",
-			"-b:v", bitrate,
+			"-b:v", opt.Bitrate,
 			"-profile:v", "1",
 			"-level:v", "auto",
 			"-coder:v", "1",
@@ -133,11 +133,11 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 		// ffmpeg -hide_banner -h encoder=h264_v4l2m2m
 		format := "format=yuv420p"
 		result = exec.Command(
-			ffmpegBin,
+			opt.Bin,
 			"-i", fileName,
-			"-c:v", string(encoder),
-			"-map", "0:v:0",
-			"-map", "0:a:0?",
+			"-c:v", opt.Encoder.String(),
+			"-map", opt.MapVideo,
+			"-map", opt.MapAudio,
 			"-c:a", "aac",
 			"-vf", format,
 			"-num_output_buffers", "72",
@@ -146,7 +146,7 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 			"-crf", "23",
 			"-vsync", "vfr",
 			"-r", "30",
-			"-b:v", bitrate,
+			"-b:v", opt.Bitrate,
 			"-f", "mp4",
 			"-y",
 			avcName,
@@ -155,18 +155,18 @@ func AvcConvertCommand(fileName, avcName, ffmpegBin, bitrate string, encoder Avc
 	default:
 		format := "format=yuv420p"
 		result = exec.Command(
-			ffmpegBin,
+			opt.Bin,
 			"-i", fileName,
-			"-c:v", string(encoder),
-			"-map", "0:v:0",
-			"-map", "0:a:0?",
+			"-c:v", opt.Encoder.String(),
+			"-map", opt.MapVideo,
+			"-map", opt.MapAudio,
 			"-c:a", "aac",
 			"-vf", format,
 			"-max_muxing_queue_size", "1024",
 			"-crf", "23",
 			"-vsync", "vfr",
 			"-r", "30",
-			"-b:v", bitrate,
+			"-b:v", opt.Bitrate,
 			"-f", "mp4",
 			"-y",
 			avcName,

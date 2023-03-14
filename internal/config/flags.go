@@ -3,6 +3,8 @@ package config
 import (
 	"fmt"
 
+	"github.com/photoprism/photoprism/internal/ffmpeg"
+
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
 
@@ -565,6 +567,18 @@ var Flags = CliFlags{
 			Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
 			Value:  50,
 			EnvVar: "PHOTOPRISM_FFMPEG_BITRATE",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "ffmpeg-map-video",
+			Usage:  "video `STREAMS` that should be transcoded",
+			Value:  ffmpeg.MapVideoDefault,
+			EnvVar: "PHOTOPRISM_FFMPEG_MAP_VIDEO",
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "ffmpeg-map-audio",
+			Usage:  "audio `STREAMS` that should be transcoded",
+			Value:  ffmpeg.MapAudioDefault,
+			EnvVar: "PHOTOPRISM_FFMPEG_MAP_AUDIO",
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "exiftool-bin",
