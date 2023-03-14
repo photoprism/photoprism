@@ -11,10 +11,16 @@ func TestHandle(t *testing.T) {
 		assert.Equal(t, "admin", Handle("Admin "))
 	})
 	t.Run(" Admin ", func(t *testing.T) {
-		assert.Equal(t, "adminfoo", Handle(" Admin@foo "))
+		assert.Equal(t, "admin", Handle(" Admin@foo "))
+	})
+	t.Run(" Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin foo", Handle(" Admin foo "))
 	})
 	t.Run(" admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Handle(" admin "))
+	})
+	t.Run("admin/user", func(t *testing.T) {
+		assert.Equal(t, "adminuser", Handle("admin/user"))
 	})
 }
 
@@ -25,8 +31,14 @@ func TestUsername(t *testing.T) {
 	t.Run(" Admin ", func(t *testing.T) {
 		assert.Equal(t, "admin@foo", Username(" Admin@foo "))
 	})
+	t.Run(" Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin foo", Username(" Admin foo "))
+	})
 	t.Run(" admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Username(" admin "))
+	})
+	t.Run("admin/user", func(t *testing.T) {
+		assert.Equal(t, "adminuser", Username("admin/user"))
 	})
 }
 

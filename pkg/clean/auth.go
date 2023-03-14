@@ -12,13 +12,16 @@ var EmailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0
 
 // Handle returns the sanitized username with trimmed whitespace and in lowercase.
 func Handle(s string) string {
+	s, _, _ = strings.Cut(s, "@")
+	s = strings.TrimSpace(s)
+
 	// Remove unwanted characters.
 	s = strings.Map(func(r rune) rune {
-		if r <= 42 || r == 127 {
+		if r <= 31 || r == 127 {
 			return -1
 		}
 		switch r {
-		case '`', '~', '?', '|', '*', '\\', '%', '$', '@', ':', ';', '<', '>', '{', '}':
+		case '"', '\'', '(', ')', '#', '&', '$', ',', '+', '=', '`', '~', '?', '|', '*', '\\', '/', ':', ';', '<', '>', '{', '}':
 			return -1
 		}
 		return r
@@ -42,7 +45,7 @@ func Username(s string) string {
 			return -1
 		}
 		switch r {
-		case '"', ',', '+', '=', '`', '~', '?', '|', '*', '\\', ':', ';', '<', '>', '{', '}':
+		case '"', '\'', '(', ')', '#', '&', '$', ',', '+', '=', '`', '~', '?', '|', '*', '\\', '/', ':', ';', '<', '>', '{', '}':
 			return -1
 		}
 		return r

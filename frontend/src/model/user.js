@@ -112,6 +112,15 @@ export class User extends RestModel {
     };
   }
 
+  getHandle() {
+    if (!this.Name) {
+      return "";
+    }
+
+    const s = this.Name.split("@");
+    return s[0].trim();
+  }
+
   getDisplayName() {
     if (this.DisplayName) {
       return this.DisplayName;

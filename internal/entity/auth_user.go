@@ -429,11 +429,11 @@ func (m *User) CanUpload() bool {
 
 // DefaultBasePath returns the default base path of the user based on the user name.
 func (m *User) DefaultBasePath() string {
-	if m.UserName == "" {
+	if s := m.Handle(); s == "" {
 		return ""
+	} else {
+		return fmt.Sprintf("users/%s", s)
 	}
-
-	return fmt.Sprintf("users/%s", m.UserName)
 }
 
 // GetBasePath returns the user's relative base path.
@@ -591,8 +591,7 @@ func (m *User) Email() string {
 
 // Handle returns the user's login handle.
 func (m *User) Handle() string {
-	handle, _, _ := strings.Cut(m.UserName, "@")
-	return handle
+	return clean.Handle(m.UserName)
 }
 
 // FullName returns the name of the user for display purposes.
