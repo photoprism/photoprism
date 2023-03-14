@@ -785,7 +785,7 @@ export default {
         let i = 1;
         this.results.forEach(a => {
           const found = a.Title.match(re);
-          if (found[1]) {
+          if (found && found.length > 0 && found[1]) {
             const n = parseInt(found[1]);
             if (n > i) {
               i = n;
