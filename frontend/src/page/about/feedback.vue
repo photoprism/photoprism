@@ -74,13 +74,6 @@
           </v-btn>
         </v-flex>
       </v-layout>
-
-      <figure class="quote mt-3 mx-2 mb-0">
-        <blockquote>
-          Photography is the only language that can be understood anywhere in the world.
-        </blockquote>
-        <figcaption>&mdash; Bruno Barbey</figcaption>
-      </figure>
     </v-form>
 
     <p-about-footer></p-about-footer>
