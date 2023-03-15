@@ -6,10 +6,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-03-15 15:58+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.2\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
@@ -25,7 +25,7 @@ msgstr "Quelque chose s'est mal passé, réessayez"
 
 #: messages.go:95
 msgid "Unable to do that"
-msgstr "Impossible de le faire"
+msgstr "Impossible de faire cela"
 
 #: messages.go:96
 msgid "Changes could not be saved"
@@ -106,7 +106,7 @@ msgstr "Non disponible en mode lecture seule"
 
 #: messages.go:115
 msgid "Please log in to your account"
-msgstr "Veuillez vous identifier"
+msgstr "Veuillez vous connecter avec votre compte"
 
 #: messages.go:116
 msgid "Permission denied"
@@ -126,13 +126,11 @@ msgstr "Aucun élément sélectionné"
 
 #: messages.go:120
 msgid "Failed creating file, please check permissions"
-msgstr ""
-"Échec lors de la création du fichier, veuillez vérifier les autorisations"
+msgstr "La création du fichier a échoué, veuillez vérifier les permissions"
 
 #: messages.go:121
 msgid "Failed creating folder, please check permissions"
-msgstr ""
-"Échec lors de la création du dossier, veuillez vérifier les autorisations"
+msgstr "Échec de la création du dossier, veuillez vérifier les permissions"
 
 #: messages.go:122
 msgid "Could not connect, please try again"
@@ -160,7 +158,7 @@ msgstr "Aucun fichier disponible au téléchargement"
 
 #: messages.go:128
 msgid "Failed to create zip file"
-msgstr "Échec de la création de l'archive zip"
+msgstr "Échec de la création du fichier zip"
 
 #: messages.go:129
 msgid "Invalid credentials"
@@ -338,7 +336,7 @@ msgstr "%d fichiers chargés en %d s"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr "Téléchargement en cours ..."
+msgstr "Traitement du téléchargement..."
 
 #: messages.go:172
 msgid "Upload has been processed"
