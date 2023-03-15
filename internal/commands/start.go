@@ -9,8 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/report"
-
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 
@@ -22,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/report"
 )
 
 // StartCommand configures the command name, flags, and action.

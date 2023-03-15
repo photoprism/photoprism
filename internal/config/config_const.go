@@ -11,14 +11,6 @@ const StaticUri = "/static"
 // CustomStaticUri is the relative path for serving custom static content.
 const CustomStaticUri = "/c/static"
 
-// MsgSponsor and MsgSignUp provide sponsorship info messages;
-// SignUpURL a signup link.
-const MsgSponsor = "PhotoPrism® needs your support!"
-const SignUpURL = "https://www.photoprism.app/membership"
-const MsgSignUp = "Visit " + SignUpURL + " to learn more."
-const MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
-	" we unfortunately can only offer it to sponsors."
-
 // DefaultAutoIndexDelay and DefaultAutoImportDelay set the default safety delay duration
 // before starting to index/import in the background.
 const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
