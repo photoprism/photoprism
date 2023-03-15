@@ -50,10 +50,17 @@ func msgParams(msg string, params ...interface{}) string {
 	return msg
 }
 
+// Msg returns a translated message string.
 func Msg(id Message, params ...interface{}) string {
 	return msgParams(gotext.Get(Messages[id]), params...)
 }
 
+// Error returns a translated error message.
 func Error(id Message, params ...interface{}) error {
 	return errors.New(Msg(id, params...))
+}
+
+// Lower returns the untranslated message as a lowercase string for use in logs.
+func Lower(id Message, params ...interface{}) string {
+	return strings.ToLower(msgParams(Messages[id], params...))
 }
