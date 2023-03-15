@@ -184,7 +184,7 @@ dep-list:
 dep-npm:
 	sudo npm install -g npm
 dep-js:
-	(cd frontend &&	npm ci --no-update-notifier --no-audit)
+	(cd frontend && npm ci --no-update-notifier --no-audit)
 dep-go:
 	go build -v ./...
 dep-upgrade:
