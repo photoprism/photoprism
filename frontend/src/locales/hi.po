@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-13 21:26+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
-"frontend/hi/>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -70,12 +69,12 @@ msgstr "रसातल"
 
 #: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:140 src/page/settings.vue:84
+#: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "लेखा"
 
-#: src/component/admin/users/add.vue:81 src/dialog/service/add.vue:35
+#: src/component/admin/users/add.vue:86 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "खाता बन गया"
 
@@ -355,8 +354,8 @@ msgstr "आस्पेक्ट अनुपात"
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
 msgstr "PhotoPrism में, हम मानते हैं कि एक तस्वीर के माध्यम से कैप्चर किया गया हर पल अनमोल है, और हमारा मिशन लोगों को आने वाली पीढ़ियों के लिए उन पलों को संजोने में सक्षम बनाना है।"
 
-#: src/component/admin/users/add.vue:213 src/component/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
+#: src/component/admin/users/add.vue:214 src/component/admin/users/edit.vue:364
+#: src/page/admin/sessions.vue:69 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "प्रमाणीकरण"
@@ -505,7 +504,7 @@ msgstr "फोटो शीर्षक, स्थान और अन्य म
 msgid "Change private flag"
 msgstr "निजी ध्वज बदलें"
 
-#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:164
+#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:162
 #: src/dialog/album/edit.vue:56 src/dialog/service/edit.vue:102
 #: src/dialog/share.vue:88 src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
@@ -522,7 +521,7 @@ msgstr "चेक किए गए"
 msgid "Chroma"
 msgstr "क्रोमा"
 
-#: src/page/admin/sessions.vue:103 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:113 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
 #: src/page/library/errors.vue:60
 msgid "Close"
@@ -629,7 +628,7 @@ msgstr "खाता बनाएं"
 msgid "Create album"
 msgstr "एल्बम बनाओ"
 
-#: src/page/admin/sessions.vue:65 src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:75 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "बनाया था"
 
@@ -771,7 +770,7 @@ msgstr "वीडियो ट्रांसकोडिंग और थंब
 msgid "Discover"
 msgstr "डिस्कवर"
 
-#: src/component/admin/users/add.vue:120 src/component/admin/users/edit.vue:99
+#: src/component/admin/users/add.vue:121 src/component/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "प्रदर्शित होने वाला नाम"
@@ -900,7 +899,7 @@ msgstr "फ़ोटो संपादित करें"
 msgid "Edited"
 msgstr "संपादित"
 
-#: src/component/admin/users/add.vue:145 src/component/admin/users/edit.vue:317
+#: src/component/admin/users/add.vue:146 src/component/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "ईमेल"
@@ -949,7 +948,7 @@ msgstr "खोज का विस्तार करें"
 msgid "Experimental Features"
 msgstr "प्रायोगिक विशेषताएं"
 
-#: src/page/admin/sessions.vue:77 src/dialog/service/edit.vue:249
+#: src/page/admin/sessions.vue:87 src/dialog/service/edit.vue:249
 #: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "समय-सीमा समाप्त"
@@ -1276,7 +1275,7 @@ msgstr "इंस्टेंस आईडी"
 msgid "Interval"
 msgstr "मध्यान्तर"
 
-#: src/component/admin/users/add.vue:123 src/component/admin/users/add.vue:148
+#: src/component/admin/users/add.vue:124 src/component/admin/users/add.vue:149
 #: src/component/admin/users/edit.vue:127
 #: src/component/admin/users/edit.vue:154
 #: src/component/admin/users/edit.vue:211
@@ -1360,7 +1359,7 @@ msgstr "लैंक्ज़ोस: विस्तार संरक्षण
 msgid "Language"
 msgstr "भाषा"
 
-#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:81 src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "अंतिम सक्रिय"
 
@@ -1841,7 +1840,7 @@ msgstr "चित्रमाला"
 msgid "Panoramas"
 msgstr "पैनोरामा"
 
-#: src/component/admin/users/add.vue:168 src/dialog/service/add.vue:126
+#: src/component/admin/users/add.vue:169 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
@@ -2093,7 +2092,7 @@ msgstr "स्टोरेज को सेव करने के लिए इ
 msgid "Request failed - invalid response"
 msgstr "अनुरोध विफल - अमान्य प्रतिक्रिया"
 
-#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:172
+#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:173
 #: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
 #: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
@@ -2120,7 +2119,8 @@ msgstr "पासवर्ड फिर से लिखें"
 msgid "Review"
 msgstr "समीक्षा"
 
-#: src/component/admin/users/add.vue:192 src/component/admin/users/edit.vue:341
+#: src/component/admin/users/add.vue:193 src/component/admin/users/edit.vue:341
+#: src/page/admin/sessions.vue:62 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "भूमिका"
@@ -2528,7 +2528,7 @@ msgstr "एक अलग पहचान"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
 #: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:126 src/options/options.js:27
+#: src/model/photo.js:896 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2567,7 +2567,7 @@ msgstr "इंडेक्स अपडेट कर रहा है"
 msgid "Updating moments"
 msgstr "पल-पल का अपडेट"
 
-#: src/component/admin/users/edit.vue:161 src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:159 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "चित्र अपडेट किया जा रहा है…"
 
@@ -2646,7 +2646,8 @@ msgid "Use Presets"
 msgstr "प्रीसेट का उपयोग करें"
 
 #: src/options/admin.js:7 src/options/admin.js:23
-#: src/page/admin/sessions.vue:53 src/model/user.js:205
+#: src/page/admin/sessions.vue:54 src/page/admin/sessions.vue:2
+#: src/model/user.js:230
 msgid "User"
 msgstr "उपयोगकर्ता"
 
@@ -2718,7 +2719,8 @@ msgstr "दर्शक"
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "अपने चित्रों को सिंक, व्यवस्थित और साझा करने का तरीका जानने के लिए docs.photoprism.app/user-guide पर जाएं।"
 
-#: src/options/admin.js:11
+#: src/options/admin.js:11 src/page/admin/sessions.vue:65
+#: src/page/admin/sessions.vue:5
 msgid "Visitor"
 msgstr "आगंतुक"
 
@@ -2743,12 +2745,12 @@ msgstr "हम पांच व्यावसायिक दिनों य�
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "हम आपके सभी सवालों के जवाब देने की पूरी कोशिश करेंगे। बदले में, हम आपको Patreon या GitHub प्रायोजकों पर हमारा समर्थन करने के लिए कहते हैं।"
 
-#: src/component/admin/users/add.vue:231 src/component/admin/users/edit.vue:453
+#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "वेब लॉगिन"
 
-#: src/component/admin/users/add.vue:248 src/component/admin/users/edit.vue:470
+#: src/component/admin/users/add.vue:249 src/component/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"

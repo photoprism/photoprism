@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -67,12 +66,12 @@ msgstr "Brezno"
 
 #: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:140 src/page/settings.vue:84
+#: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "Račun"
 
-#: src/component/admin/users/add.vue:81 src/dialog/service/add.vue:35
+#: src/component/admin/users/add.vue:86 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "Ustvarjen račun"
 
@@ -352,8 +351,8 @@ msgstr "Razmerje stranic"
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
 msgstr "V podjetju PhotoPrism verjamemo, da je vsak trenutek, ujet na fotografiji, dragocen, naše poslanstvo pa je omogočiti ljudem, da te trenutke ohranijo za prihodnje generacije."
 
-#: src/component/admin/users/add.vue:213 src/component/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
+#: src/component/admin/users/add.vue:214 src/component/admin/users/edit.vue:364
+#: src/page/admin/sessions.vue:69 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Preverjanje pristnosti"
@@ -502,7 +501,7 @@ msgstr "Spremenite naslove fotografij, lokacije in druge metapodatke."
 msgid "Change private flag"
 msgstr "Sprememba zasebne zastave"
 
-#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:164
+#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:162
 #: src/dialog/album/edit.vue:56 src/dialog/service/edit.vue:102
 #: src/dialog/share.vue:88 src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
@@ -519,7 +518,7 @@ msgstr "Izbrano"
 msgid "Chroma"
 msgstr "Chroma"
 
-#: src/page/admin/sessions.vue:103 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:113 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
 #: src/page/library/errors.vue:60
 msgid "Close"
@@ -626,7 +625,7 @@ msgstr "Ustvarjanje računa"
 msgid "Create album"
 msgstr "Ustvari album"
 
-#: src/page/admin/sessions.vue:65 src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:75 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "Ustvarjeno"
 
@@ -768,7 +767,7 @@ msgstr "Onemogoči prekodiranje videoposnetkov in pridobivanje sličic."
 msgid "Discover"
 msgstr "Odkrijte"
 
-#: src/component/admin/users/add.vue:120 src/component/admin/users/edit.vue:99
+#: src/component/admin/users/add.vue:121 src/component/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "Prikazno ime"
@@ -897,7 +896,7 @@ msgstr "Uredi fotografijo"
 msgid "Edited"
 msgstr "Urejeno"
 
-#: src/component/admin/users/add.vue:145 src/component/admin/users/edit.vue:317
+#: src/component/admin/users/add.vue:146 src/component/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "E-pošta"
@@ -946,7 +945,7 @@ msgstr "Razširiti iskanje"
 msgid "Experimental Features"
 msgstr "Eksperimentalne funkcije"
 
-#: src/page/admin/sessions.vue:77 src/dialog/service/edit.vue:249
+#: src/page/admin/sessions.vue:87 src/dialog/service/edit.vue:249
 #: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "Velja do"
@@ -1273,7 +1272,7 @@ msgstr "ID instance"
 msgid "Interval"
 msgstr "Interval"
 
-#: src/component/admin/users/add.vue:123 src/component/admin/users/add.vue:148
+#: src/component/admin/users/add.vue:124 src/component/admin/users/add.vue:149
 #: src/component/admin/users/edit.vue:127
 #: src/component/admin/users/edit.vue:154
 #: src/component/admin/users/edit.vue:211
@@ -1357,7 +1356,7 @@ msgstr "Lanczos: ohranjanje podrobnosti, minimalni artefakti"
 msgid "Language"
 msgstr "Jezik"
 
-#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:81 src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "Zadnji aktivni"
 
@@ -1838,7 +1837,7 @@ msgstr "Panorama"
 msgid "Panoramas"
 msgstr "Panorame"
 
-#: src/component/admin/users/add.vue:168 src/dialog/service/add.vue:126
+#: src/component/admin/users/add.vue:169 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
@@ -2090,7 +2089,7 @@ msgstr "Odstranite uvožene datoteke, da prihranite prostor za shranjevanje. Nep
 msgid "Request failed - invalid response"
 msgstr "Zahteva ni uspela - neveljaven odgovor"
 
-#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:172
+#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:173
 #: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
 #: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
@@ -2117,7 +2116,8 @@ msgstr "Ponovite geslo"
 msgid "Review"
 msgstr "Pregled"
 
-#: src/component/admin/users/add.vue:192 src/component/admin/users/edit.vue:341
+#: src/component/admin/users/add.vue:193 src/component/admin/users/edit.vue:341
+#: src/page/admin/sessions.vue:62 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "Vloga"
@@ -2523,7 +2523,7 @@ msgstr "Edinstven ID"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
 #: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:126 src/options/options.js:27
+#: src/model/photo.js:896 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2562,7 +2562,7 @@ msgstr "Posodabljanje indeksa"
 msgid "Updating moments"
 msgstr "Posodabljanje trenutkov"
 
-#: src/component/admin/users/edit.vue:161 src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:159 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Posodabljanje predogledov"
 
@@ -2641,7 +2641,8 @@ msgid "Use Presets"
 msgstr "Uporaba prednastavitev"
 
 #: src/options/admin.js:7 src/options/admin.js:23
-#: src/page/admin/sessions.vue:53 src/model/user.js:205
+#: src/page/admin/sessions.vue:54 src/page/admin/sessions.vue:2
+#: src/model/user.js:230
 msgid "User"
 msgstr "Uporabnik"
 
@@ -2713,7 +2714,8 @@ msgstr "Pregledovalnik"
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Obiščite dok.photoprism.app/user-guide in se naučite, kako sinhronizirati, organizirati in deliti slike."
 
-#: src/options/admin.js:11
+#: src/options/admin.js:11 src/page/admin/sessions.vue:65
+#: src/page/admin/sessions.vue:5
 msgid "Visitor"
 msgstr "Obiskovalec"
 
@@ -2738,12 +2740,12 @@ msgstr "Potrudimo se, da vam odgovorimo v petih delovnih dneh ali manj."
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Potrudili se bomo odgovoriti na vsa vaša vprašanja. V zameno vas prosimo, da nas podprete pri sponzorjih Patreon ali GitHub."
 
-#: src/component/admin/users/add.vue:231 src/component/admin/users/edit.vue:453
+#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Spletna prijava"
 
-#: src/component/admin/users/add.vue:248 src/component/admin/users/edit.vue:470
+#: src/component/admin/users/add.vue:249 src/component/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"

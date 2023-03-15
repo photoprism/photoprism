@@ -10,8 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -70,12 +69,12 @@ msgstr "Усі піддиректорії"
 
 #: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:140 src/page/settings.vue:84
+#: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "Обліковий запис"
 
-#: src/component/admin/users/add.vue:81 src/dialog/service/add.vue:35
+#: src/component/admin/users/add.vue:86 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "Обліковий запис створено"
 
@@ -355,8 +354,8 @@ msgstr "Співвідношення сторін"
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
 msgstr "У PhotoPrism ми віримо, що кожна мить, зафіксована на фотографії, є безцінною, і наша місія полягає в тому, щоб дати людям можливість зберігати ці моменти для наступних поколінь."
 
-#: src/component/admin/users/add.vue:213 src/component/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:31
+#: src/component/admin/users/add.vue:214 src/component/admin/users/edit.vue:364
+#: src/page/admin/sessions.vue:69 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Аутентифікація"
@@ -505,7 +504,7 @@ msgstr "Змінити назви фотографій, розташування
 msgid "Change private flag"
 msgstr "Змінити означку приватності"
 
-#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:164
+#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:162
 #: src/dialog/album/edit.vue:56 src/dialog/service/edit.vue:102
 #: src/dialog/share.vue:88 src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
@@ -522,7 +521,7 @@ msgstr "Перевірено"
 msgid "Chroma"
 msgstr "Колірність"
 
-#: src/page/admin/sessions.vue:103 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:113 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
 #: src/page/library/errors.vue:60
 msgid "Close"
@@ -629,7 +628,7 @@ msgstr "Створити обліковий запис"
 msgid "Create album"
 msgstr "Створити альбом"
 
-#: src/page/admin/sessions.vue:65 src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:75 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "Створено"
 
@@ -771,7 +770,7 @@ msgstr "Вимикає перекодування відео та вилучен
 msgid "Discover"
 msgstr "Огляд"
 
-#: src/component/admin/users/add.vue:120 src/component/admin/users/edit.vue:99
+#: src/component/admin/users/add.vue:121 src/component/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "Ім'я користувача"
@@ -900,7 +899,7 @@ msgstr "Редагувати фото"
 msgid "Edited"
 msgstr "Відредаговано"
 
-#: src/component/admin/users/add.vue:145 src/component/admin/users/edit.vue:317
+#: src/component/admin/users/add.vue:146 src/component/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "Електронна пошта"
@@ -949,7 +948,7 @@ msgstr "Розширений пошук"
 msgid "Experimental Features"
 msgstr "Експериментальні можливості"
 
-#: src/page/admin/sessions.vue:77 src/dialog/service/edit.vue:249
+#: src/page/admin/sessions.vue:87 src/dialog/service/edit.vue:249
 #: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "Закінчується"
@@ -1276,7 +1275,7 @@ msgstr "Ідентифікатор екземпляра"
 msgid "Interval"
 msgstr "Інтервал"
 
-#: src/component/admin/users/add.vue:123 src/component/admin/users/add.vue:148
+#: src/component/admin/users/add.vue:124 src/component/admin/users/add.vue:149
 #: src/component/admin/users/edit.vue:127
 #: src/component/admin/users/edit.vue:154
 #: src/component/admin/users/edit.vue:211
@@ -1360,7 +1359,7 @@ msgstr "Lanczos: збереження деталей, мінімум артеф�
 msgid "Language"
 msgstr "Мова"
 
-#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:81 src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "Останній активний"
 
@@ -1841,7 +1840,7 @@ msgstr "Панорама"
 msgid "Panoramas"
 msgstr "Панорами"
 
-#: src/component/admin/users/add.vue:168 src/dialog/service/add.vue:126
+#: src/component/admin/users/add.vue:169 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
@@ -2093,7 +2092,7 @@ msgstr "Вилучіть імпортовані файли, щоб заощад�
 msgid "Request failed - invalid response"
 msgstr "Запит не виконано – недійсна відповідь"
 
-#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:172
+#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:173
 #: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
 #: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
@@ -2120,7 +2119,8 @@ msgstr "Введіть пароль повторно"
 msgid "Review"
 msgstr "Потребують перевірки"
 
-#: src/component/admin/users/add.vue:192 src/component/admin/users/edit.vue:341
+#: src/component/admin/users/add.vue:193 src/component/admin/users/edit.vue:341
+#: src/page/admin/sessions.vue:62 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "Роль"
@@ -2528,7 +2528,7 @@ msgstr "Унікальний ідентифікатор"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
 #: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:126 src/options/options.js:27
+#: src/model/photo.js:896 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2567,7 +2567,7 @@ msgstr "Оновлення індексу"
 msgid "Updating moments"
 msgstr "Оновлення моментів"
 
-#: src/component/admin/users/edit.vue:161 src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:159 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Оновлення зображення…"
 
@@ -2646,7 +2646,8 @@ msgid "Use Presets"
 msgstr "Використовуйте попередні налаштування"
 
 #: src/options/admin.js:7 src/options/admin.js:23
-#: src/page/admin/sessions.vue:53 src/model/user.js:205
+#: src/page/admin/sessions.vue:54 src/page/admin/sessions.vue:2
+#: src/model/user.js:230
 msgid "User"
 msgstr "Користувач"
 
@@ -2718,7 +2719,8 @@ msgstr "Глядач"
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Відвідайте docs.photoprism.app/user-guide, щоб дізнатися, як синхронізувати, упорядковувати та ділитися своїми фотографіями."
 
-#: src/options/admin.js:11
+#: src/options/admin.js:11 src/page/admin/sessions.vue:65
+#: src/page/admin/sessions.vue:5
 msgid "Visitor"
 msgstr "Відвідувач"
 
@@ -2743,12 +2745,12 @@ msgstr "Ми намагаємося відповідати протягом п'�
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Ми зробимо все можливе, щоб відповісти на всі ваші запитання. У свою чергу ми просимо вас підтримати нас на Patreon або спонсорах GitHub."
 
-#: src/component/admin/users/add.vue:231 src/component/admin/users/edit.vue:453
+#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Веб-логін"
 
-#: src/component/admin/users/add.vue:248 src/component/admin/users/edit.vue:470
+#: src/component/admin/users/add.vue:249 src/component/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
