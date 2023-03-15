@@ -1137,4 +1137,21 @@ func TestUser_FullName(t *testing.T) {
 
 		assert.Equal(t, "Jane Doe", u.FullName())
 	})
+	t.Run("Windows", func(t *testing.T) {
+		u := User{
+			ID:          1234567,
+			UserUID:     "urqdrfb72479n047",
+			UserName:    "DOMAIN\\Jens Mander",
+			UserRole:    acl.RoleAdmin.String(),
+			DisplayName: "",
+			SuperAdmin:  false,
+			CanLogin:    true,
+			WebDAV:      true,
+			CanInvite:   false,
+		}
+
+		assert.Equal(t, "jens.mander", u.Handle())
+		assert.Equal(t, "domain\\jens mander", u.Username())
+		assert.Equal(t, "Jens Mander", u.FullName())
+	})
 }
