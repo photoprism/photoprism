@@ -83,17 +83,17 @@ func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
 
-// HttpCacheTTL returns the HTTP response cache time in seconds.
-func (c *Config) HttpCacheTTL() thumb.MaxAge {
-	if c.options.HttpCacheTTL < 1 || c.options.HttpCacheTTL > 31536000 {
+// HttpCacheMaxAge returns the time in seconds until cached content expires.
+func (c *Config) HttpCacheMaxAge() thumb.MaxAge {
+	if c.options.HttpCacheMaxAge < 1 || c.options.HttpCacheMaxAge > 31536000 {
 		// Default to one month.
-		return thumb.CacheTTL
+		return thumb.CacheMaxAge
 	}
 
-	return thumb.MaxAge(c.options.HttpCacheTTL)
+	return thumb.MaxAge(c.options.HttpCacheMaxAge)
 }
 
-// HttpCachePublic checks whether HTTP responses may be cached publicly, e.g. by a CDN.
+// HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
 func (c *Config) HttpCachePublic() bool {
 	if c.options.HttpCachePublic {
 		return true

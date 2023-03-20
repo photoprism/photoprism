@@ -165,7 +165,7 @@ func (c *Config) Propagate() {
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
-	thumb.CacheTTL = c.HttpCacheTTL()
+	thumb.CacheMaxAge = c.HttpCacheMaxAge()
 	thumb.CachePublic = c.HttpCachePublic()
 
 	// Set geocoding parameters.

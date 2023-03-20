@@ -10,8 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
-// CoverCacheTTL specifies the number of seconds to cache album covers.
-var CoverCacheTTL thumb.MaxAge = 3600 // 1 hour
+// CoverMaxAge specifies the number of seconds to cache album covers.
+var CoverMaxAge thumb.MaxAge = 3600 // 1 hour
 
 type ThumbCache struct {
 	FileName  string
@@ -81,14 +81,14 @@ func AddCacheHeader(c *gin.Context, maxAge thumb.MaxAge, public bool) {
 
 // AddCoverCacheHeader adds cover image cache control headers to the response.
 func AddCoverCacheHeader(c *gin.Context) {
-	AddCacheHeader(c, CoverCacheTTL, thumb.CachePublic)
+	AddCacheHeader(c, CoverMaxAge, thumb.CachePublic)
 }
 
 // AddThumbCacheHeader adds thumbnail cache control headers to the response.
 func AddThumbCacheHeader(c *gin.Context) {
 	if thumb.CachePublic {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, no-transform, immutable", thumb.CacheTTL.String()))
+		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, no-transform, immutable", thumb.CacheMaxAge.String()))
 	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform, immutable", thumb.CacheTTL.String()))
+		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform, immutable", thumb.CacheMaxAge.String()))
 	}
 }

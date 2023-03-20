@@ -484,14 +484,14 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("HTTP_COMPRESSION"),
 		}}, {
 		Flag: cli.IntFlag{
-			Name:   "http-cache-ttl",
-			Value:  int(thumb.CacheTTL),
-			Usage:  "number of `SECONDS` that a browser or CDN is allowed to cache HTTP responses",
-			EnvVar: EnvVar("HTTP_CACHE_TTL"),
+			Name:   "http-cache-maxage",
+			Value:  int(thumb.CacheMaxAge),
+			Usage:  "time in `SECONDS` until cached content expires",
+			EnvVar: EnvVar("HTTP_CACHE_MAXAGE"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "http-cache-public",
-			Usage:  "allow HTTP responses to be stored in a public cache, e.g. a CDN or caching proxy",
+			Usage:  "allow static content to be cached by a CDN or caching proxy",
 			EnvVar: EnvVar("HTTP_CACHE_PUBLIC"),
 		}}, {
 		Flag: cli.StringFlag{

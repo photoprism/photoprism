@@ -52,14 +52,14 @@ func TestConfig_HttpCompression(t *testing.T) {
 	assert.Equal(t, "", c.HttpCompression())
 }
 
-func TestConfig_HttpCacheTTL(t *testing.T) {
+func TestConfig_HttpCacheMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, thumb.MaxAge(2592000), c.HttpCacheTTL())
-	c.Options().HttpCacheTTL = 23
-	assert.Equal(t, thumb.MaxAge(23), c.HttpCacheTTL())
-	c.Options().HttpCacheTTL = 0
-	assert.Equal(t, thumb.MaxAge(2592000), c.HttpCacheTTL())
+	assert.Equal(t, thumb.MaxAge(2592000), c.HttpCacheMaxAge())
+	c.Options().HttpCacheMaxAge = 23
+	assert.Equal(t, thumb.MaxAge(23), c.HttpCacheMaxAge())
+	c.Options().HttpCacheMaxAge = 0
+	assert.Equal(t, thumb.MaxAge(2592000), c.HttpCacheMaxAge())
 }
 
 func TestConfig_HttpCachePublic(t *testing.T) {
