@@ -69,7 +69,7 @@ func FindLocation(id string) (result Location, err error) {
 	}
 
 	// Location details cached?
-	if hit, ok := cache.Get(id); ok {
+	if hit, ok := clientCache.Get(id); ok {
 		log.Tracef("places: cache hit for lat %f, lng %f", lat, lng)
 		cached := hit.(Location)
 		cached.Cached = true
@@ -106,7 +106,7 @@ func FindLocation(id string) (result Location, err error) {
 		return result, fmt.Errorf("no result for %s", id)
 	}
 
-	cache.SetDefault(id, result)
+	clientCache.SetDefault(id, result)
 	log.Tracef("places: cached cell %s [%s]", clean.Log(id), time.Since(start))
 
 	result.Cached = false

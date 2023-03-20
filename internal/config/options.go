@@ -110,6 +110,8 @@ type Options struct {
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
 	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
+	HttpCacheTTL          int           `yaml:"HttpCacheTTL" json:"HttpCacheTTL" flag:"http-cache-ttl"`
+	HttpCachePublic       bool          `yaml:"HttpCachePublic" json:"HttpCachePublic" flag:"http-cache-public"`
 	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`

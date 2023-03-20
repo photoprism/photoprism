@@ -2,27 +2,16 @@ package api
 
 import (
 	"fmt"
-	"strconv"
 
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
-// MaxAge represents a cache TTL in seconds.
-type MaxAge int
-
-// String returns the cache TTL in seconds as string.
-func (a MaxAge) String() string {
-	return strconv.Itoa(int(a))
-}
-
-// Default cache TTL times in seconds.
-var (
-	CoverCacheTTL MaxAge = 3600           // 1 hour
-	ThumbCacheTTL MaxAge = 3600 * 24 * 90 // ~ 3 months
-)
+// CoverCacheTTL specifies the number of seconds to cache album covers.
+var CoverCacheTTL thumb.MaxAge = 3600 // 1 hour
 
 type ThumbCache struct {
 	FileName  string
@@ -79,4 +68,27 @@ func FlushCoverCache() {
 	}
 
 	log.Debugf("albums: flushed cover cache")
+}
+
+// AddCacheHeader adds a cache control header to the response.
+func AddCacheHeader(c *gin.Context, maxAge thumb.MaxAge, public bool) {
+	if public {
+		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, no-transform", maxAge.String()))
+	} else {
+		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform", maxAge.String()))
+	}
+}
+
+// AddCoverCacheHeader adds cover image cache control headers to the response.
+func AddCoverCacheHeader(c *gin.Context) {
+	AddCacheHeader(c, CoverCacheTTL, thumb.CachePublic)
+}
+
+// AddThumbCacheHeader adds thumbnail cache control headers to the response.
+func AddThumbCacheHeader(c *gin.Context) {
+	if thumb.CachePublic {
+		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, no-transform, immutable", thumb.CacheTTL.String()))
+	} else {
+		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform, immutable", thumb.CacheTTL.String()))
+	}
 }

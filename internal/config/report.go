@@ -158,6 +158,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tls-key", c.TLSKey()},
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
+		{"http-cache-ttl", fmt.Sprintf("%d", c.HttpCacheTTL())},
+		{"http-cache-public", fmt.Sprintf("%t", c.HttpCachePublic())},
 		{"http-host", c.HttpHost()},
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
 

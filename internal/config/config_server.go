@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/server/header"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -80,6 +81,25 @@ func (c *Config) HttpMode() string {
 // HttpCompression returns the http compression method (gzip, or none).
 func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
+}
+
+// HttpCacheTTL returns the HTTP response cache time in seconds.
+func (c *Config) HttpCacheTTL() thumb.MaxAge {
+	if c.options.HttpCacheTTL < 1 || c.options.HttpCacheTTL > 31536000 {
+		// Default to one month.
+		return 2630000
+	}
+
+	return thumb.MaxAge(c.options.HttpCacheTTL)
+}
+
+// HttpCachePublic checks whether HTTP responses may be cached publicly, e.g. by a CDN.
+func (c *Config) HttpCachePublic() bool {
+	if c.options.HttpCachePublic {
+		return true
+	}
+
+	return c.options.CdnUrl != ""
 }
 
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).

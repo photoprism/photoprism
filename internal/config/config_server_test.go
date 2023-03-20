@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 func TestConfig_HttpServerHost2(t *testing.T) {
@@ -48,4 +50,28 @@ func TestConfig_HttpCompression(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "", c.HttpCompression())
+}
+
+func TestConfig_HttpCacheTTL(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, thumb.MaxAge(2630000), c.HttpCacheTTL())
+	c.Options().HttpCacheTTL = 23
+	assert.Equal(t, thumb.MaxAge(23), c.HttpCacheTTL())
+	c.Options().HttpCacheTTL = 0
+	assert.Equal(t, thumb.MaxAge(2630000), c.HttpCacheTTL())
+}
+
+func TestConfig_HttpCachePublic(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.HttpCachePublic())
+	c.Options().CdnUrl = "https://cdn.com/"
+	assert.True(t, c.HttpCachePublic())
+	c.Options().CdnUrl = ""
+	assert.False(t, c.HttpCachePublic())
+	c.Options().HttpCachePublic = true
+	assert.True(t, c.HttpCachePublic())
+	c.Options().HttpCachePublic = false
+	assert.False(t, c.HttpCachePublic())
 }
