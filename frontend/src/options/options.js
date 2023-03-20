@@ -443,3 +443,10 @@ export const Gender = () => [
   { value: "female", text: $gettext("Female") },
   { value: "other", text: $gettext("Other") },
 ];
+
+export const Orientations = () => [
+  { value: 1, text: "" },
+  { value: 6, text: "90°" },
+  { value: 3, text: "180°" },
+  { value: 8, text: "270°" },
+];

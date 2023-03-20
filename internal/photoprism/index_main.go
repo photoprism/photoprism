@@ -32,7 +32,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 
 	// Extract metadata to a JSON file with Exiftool.
 	if f.NeedsExifToolJson() {
-		if jsonName, err := ind.convert.ToJson(f); err != nil {
+		if jsonName, err := ind.convert.ToJson(f, false); err != nil {
 			log.Tracef("exiftool: %s", clean.Log(err.Error()))
 			log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 		} else {

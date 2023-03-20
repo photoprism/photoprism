@@ -941,6 +941,26 @@ export class Photo extends RestModel {
     );
   }
 
+  changeFileOrientation(file) {
+    // Return if no file was provided.
+    if (!file) {
+      return Promise.resolve(this);
+    }
+
+    // Get updated values.
+    const values = file.getValues(true);
+
+    // Return if no values were changed.
+    if (Object.keys(values).length === 0) {
+      return Promise.resolve(this);
+    }
+
+    // Change file orientation.
+    return Api.put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values).then((r) =>
+      Promise.resolve(this.setValues(r.data))
+    );
+  }
+
   like() {
     this.Favorite = true;
     return Api.post(this.getEntityResource() + "/like");

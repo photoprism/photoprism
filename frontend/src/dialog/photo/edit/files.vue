@@ -42,23 +42,27 @@
                           </td>
                           <td>
                             <v-btn v-if="features.download" small depressed dark color="primary-button" class="btn-action action-download"
+                                   :disabled="busy"
                                    @click.stop.prevent="downloadFile(file)">
                               <translate>Download</translate>
                             </v-btn>
                             <v-btn v-if="features.edit && (file.FileType === 'jpg' || file.FileType === 'png') && !file.Error && !file.Primary" small depressed dark
                                    color="primary-button"
                                    class="btn-action action-primary"
+                                   :disabled="busy"
                                    @click.stop.prevent="primaryFile(file)">
                               <translate>Primary</translate>
                             </v-btn>
                             <v-btn v-if="features.edit && !file.Sidecar && !file.Error && !file.Primary && file.Root === '/'" small
                                    depressed dark color="primary-button"
                                    class="btn-action action-unstack"
+                                   :disabled="busy"
                                    @click.stop.prevent="unstackFile(file)">
                               <translate>Unstack</translate>
                             </v-btn>
                             <v-btn v-if="features.delete && !file.Primary" small depressed dark color="primary-button"
                                    class="btn-action action-delete"
+                                   :disabled="busy"
                                    @click.stop.prevent="showDeleteDialog(file)">
                               <translate>Delete</translate>
                             </v-btn>
@@ -191,7 +195,24 @@
                             <translate>Orientation</translate>
                           </td>
                           <td>
-                            <v-icon :class="`orientation-${file.Orientation}`">portrait</v-icon>
+                            <v-select
+                                v-model="file.Orientation"
+                                flat solo
+                                browser-autocomplete="off"
+                                hide-details
+                                color="secondary-dark"
+                                :items="options.Orientations()"
+                                :readonly="!features.edit || (file.FileType !== 'jpg' && file.FileType !== 'png') || file.Error"
+                                :disabled="busy"
+                                class="input-orientation"
+                                @change="changeOrientation(file)">
+                              <template #selection="{ item }">
+                                <span :title="item.text"><v-icon :class="`orientation-${item.value}`">portrait</v-icon></span>
+                              </template>
+                              <template #item="{ item }">
+                                <span :title="item.text"><v-icon :class="`orientation-${item.value}`">portrait</v-icon></span>
+                              </template>
+                            </v-select>
                           </td>
                         </tr>
                         <tr v-if="file.ColorProfile">
@@ -259,6 +280,7 @@ import Thumb from "model/thumb";
 import {DateTime} from "luxon";
 import Notify from "common/notify";
 import Util from "common/util";
+import * as options from "options/options";
 
 export default {
   name: 'PTabPhotoFiles',
@@ -279,6 +301,8 @@ export default {
       features: this.$config.settings().features,
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
+      options: options,
+      busy: false,
       selected: [],
       listColumns: [
         {
@@ -347,6 +371,20 @@ export default {
     },
     primaryFile(file) {
       this.model.primaryFile(file.UID);
+    },
+    changeOrientation(file) {
+      if (!file) {
+        return;
+      }
+
+      this.busy = true;
+
+      this.model.changeFileOrientation(file).then(() => {
+        this.$notify.success(this.$gettext("Changes successfully saved"));
+        this.busy = false;
+      }).catch(() => {
+        this.busy = false;
+      });
     },
     formatTime(s) {
       return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_MED);

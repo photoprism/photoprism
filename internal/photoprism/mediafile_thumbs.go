@@ -1,8 +1,12 @@
 package photoprism
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"image"
+	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
@@ -146,6 +150,38 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 			}
 
 			count++
+		}
+	}
+
+	return nil
+}
+
+// ChangeOrientation changes the file orientation.
+func (m *MediaFile) ChangeOrientation(val int) (err error) {
+	if !m.IsPreviewImage() {
+		// Skip.
+		return fmt.Errorf("not a preview image")
+	}
+
+	cnf := Config()
+	cmd := exec.Command(cnf.ExifToolBin(), "-overwrite_original", "-P", "-n", "-ModifyDate<FileModifyDate", "-Orientation="+strconv.Itoa(val), m.FileName())
+
+	// Fetch command output.
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	cmd.Env = []string{fmt.Sprintf("HOME=%s", cnf.CmdCachePath())}
+
+	// Log exact command for debugging in trace mode.
+	log.Trace(cmd.String())
+
+	// Run exiftool command.
+	if err = cmd.Run(); err != nil {
+		if stderr.String() != "" {
+			return errors.New(stderr.String())
+		} else {
+			return err
 		}
 	}
 

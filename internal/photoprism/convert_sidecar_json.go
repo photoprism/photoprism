@@ -13,7 +13,7 @@ import (
 )
 
 // ToJson uses exiftool to export metadata to a json file.
-func (c *Convert) ToJson(f *MediaFile) (jsonName string, err error) {
+func (c *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) {
 	if f == nil {
 		return "", fmt.Errorf("exiftool: file is nil - possible bug")
 	}

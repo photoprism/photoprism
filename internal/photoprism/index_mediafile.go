@@ -751,7 +751,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	file.FileType = m.FileType().String()
 	file.MediaType = m.Media().String()
 	file.FileMime = m.MimeType()
-	file.FileOrientation = m.Orientation()
+	file.SetOrientation(m.Orientation(), entity.SrcMeta)
 	file.ModTime = modTime.UTC().Truncate(time.Second).Unix()
 
 	// Detect ICC color profile for JPEGs if still unknown at this point.
