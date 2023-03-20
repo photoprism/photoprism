@@ -11,6 +11,6 @@ func (a MaxAge) String() string {
 }
 
 var (
-	CacheTTL    MaxAge = 2630000
+	CacheTTL    MaxAge = 2592000
 	CachePublic        = false
 )
