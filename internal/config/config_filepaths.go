@@ -567,6 +567,15 @@ func (c *Config) CustomStaticUri() string {
 	}
 }
 
+// CustomStaticAssetUri returns the resource URI of the custom static file asset.
+func (c *Config) CustomStaticAssetUri(res string) string {
+	if dir := c.CustomAssetsPath(); dir == "" {
+		return ""
+	} else {
+		return c.CdnUrl(c.BaseUri(CustomStaticUri)) + "/" + res
+	}
+}
+
 // LocalesPath returns the translation locales path.
 func (c *Config) LocalesPath() string {
 	return filepath.Join(c.AssetsPath(), "locales")

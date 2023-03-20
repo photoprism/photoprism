@@ -424,6 +424,11 @@ func (c *Config) StaticUri() string {
 	return c.CdnUrl(c.BaseUri(StaticUri))
 }
 
+// StaticAssetUri returns the resource URI of the static file asset.
+func (c *Config) StaticAssetUri(res string) string {
+	return c.StaticUri() + "/" + res
+}
+
 // SiteUrl returns the public server URL (default is "http://photoprism.me:2342/").
 func (c *Config) SiteUrl() string {
 	if c.options.SiteUrl == "" {
