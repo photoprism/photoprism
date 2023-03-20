@@ -87,7 +87,7 @@ func (c *Config) HttpCompression() string {
 func (c *Config) HttpCacheTTL() thumb.MaxAge {
 	if c.options.HttpCacheTTL < 1 || c.options.HttpCacheTTL > 31536000 {
 		// Default to one month.
-		return 2630000
+		return thumb.CacheTTL
 	}
 
 	return thumb.MaxAge(c.options.HttpCacheTTL)
