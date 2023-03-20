@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-13 21:26+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
+"PO-Revision-Date: 2023-03-20 22:58+0000\n"
+"Last-Translator: Arnie97 <arnie97@gmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -84,7 +85,7 @@ msgstr "账户已删除"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "帐户"
+msgstr "账户"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -1224,7 +1225,7 @@ msgstr "导入文件到源…"
 #: src/dialog/photo/edit/files.vue:206 src/dialog/photo/edit/files.vue:215
 #: src/dialog/photo/edit/files.vue:203 src/dialog/photo/edit/files.vue:212
 msgid "in"
-msgstr "在"
+msgstr "于"
 
 #: src/page/about/about.vue:72
 msgid "In addition, sponsors receive direct technical support via email."
