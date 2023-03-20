@@ -21,7 +21,7 @@
                     <div class="v-table__overflow">
                       <table class="v-datatable v-table theme--light photo-files">
                         <tbody>
-                        <tr v-if="file.FileType === 'jpg'">
+                        <tr v-if="file.FileType === 'jpg' || file.FileType === 'png'">
                           <td>
                             <translate>Preview</translate>
                           </td>
@@ -207,10 +207,10 @@
                                 class="input-orientation"
                                 @change="changeOrientation(file)">
                               <template #selection="{ item }">
-                                <span :title="item.text"><v-icon :class="`orientation-${item.value}`">portrait</v-icon></span>
+                                <span :title="item.text"><v-icon :class="orientationClass(item)">portrait</v-icon></span>
                               </template>
                               <template #item="{ item }">
-                                <span :title="item.text"><v-icon :class="`orientation-${item.value}`">portrait</v-icon></span>
+                                <span :title="item.text"><v-icon :class="orientationClass(item)">portrait</v-icon></span>
                               </template>
                             </v-select>
                           </td>
@@ -303,7 +303,6 @@ export default {
       readonly: this.$config.get("readonly"),
       options: options,
       busy: false,
-      selected: [],
       listColumns: [
         {
           text: this.$gettext('Primary'),
@@ -322,6 +321,12 @@ export default {
   },
   computed: {},
   methods: {
+    orientationClass(file) {
+      if (!file) {
+        return [];
+      }
+      return [`orientation-${file.value}`];
+    },
     formatDuration(file) {
       if (!file || !file.Duration) {
         return "";

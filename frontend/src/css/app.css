@@ -167,6 +167,10 @@ ol, ul {
     padding: 1px 0 1px 8px !important;
 }
 
+#photoprism .v-list__tile .v-icon {
+    color: inherit!important;
+}
+
 /* Image Orientation */
 
 .orientation-0 {
