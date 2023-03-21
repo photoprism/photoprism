@@ -73,6 +73,12 @@ You are welcome to [contact us](https://www.photoprism.app/contact) for [crypto 
 Visit [photoprism.app/membership](https://www.photoprism.app/membership) to learn more. Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
 It provides additional motivation to keep going.
 
+## Project Sponsors ##
+
+[**A big thank you to all of our sponsors**](SPONSORS.md), whose generous support has been and continues to be essential to the success of the project!
+
+[View Sponsors ›](SPONSORS.md) [View Credits ›](https://docs.photoprism.app/credits/)
+
 ## Getting Support ##
 
 Visit [docs.photoprism.app/user-guide](https://docs.photoprism.app/user-guide/) to learn how to [sync](https://docs.photoprism.app/user-guide/sync/webdav/), [organize](https://docs.photoprism.app/user-guide/library/), and [share](https://docs.photoprism.app/user-guide/share/) your pictures. If you need help installing our software at home, you can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions).
