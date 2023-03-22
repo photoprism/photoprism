@@ -1,18 +1,20 @@
-PhotoPrism for Cloud Servers running Ubuntu 20.04 LTS (Focal Fossa)
-===================================================================
+========================================================================
+PhotoPrism for Cloud Servers
+Based on Ubuntu 22.04 LTS (Jammy Jellyfish)
+========================================================================
 
 SOFTWARE INCLUDED
--------------------------------------------------------------------
+------------------------------------------------------------------------
 
 PhotoPrism latest, AGPL 3
-Docker CE 20.10, Apache 2
-Traefik 2.4, MIT
-MariaDB 10.5, GPL 2
-Ofelia 0.3.4, MIT
-Watchtower 1.3, Apache 2
+Docker CE 23.0.1, Apache 2
+Traefik 2.9, MIT
+MariaDB 10.10, GPL 2
+Ofelia 0.3.7, MIT
+Watchtower 1.5.3, Apache 2
 
 GETTING STARTED
--------------------------------------------------------------------
+------------------------------------------------------------------------
 
 Run this script as root to install PhotoPrism on a cloud server e.g.
 at DigitalOcean:
@@ -52,7 +54,7 @@ Configuring multiple apps on the same server is beyond the scope of this base
 config and for advanced users only.
 
 SYSTEM REQUIREMENTS
--------------------------------------------------------------------
+------------------------------------------------------------------------
 
 We recommend hosting PhotoPrism on a server with at least 2 cores and
 4 GB of memory. Beyond these minimum requirements, the amount of RAM
@@ -63,7 +65,7 @@ RAW image conversion and automatic image classification using TensorFlow
 will be disabled on servers with 1 GB or less memory.
 
 USING LET'S ENCRYPT HTTPS
--------------------------------------------------------------------
+------------------------------------------------------------------------
 
 By default, a self-signed certificate will be used for HTTPS connections.
 Browsers are going to show a security warning because of that. Depending

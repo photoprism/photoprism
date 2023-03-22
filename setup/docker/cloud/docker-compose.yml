@@ -1,7 +1,9 @@
 version: '3.5'
 
-#  PhotoPrism for Cloud Servers running Ubuntu 20.04 LTS (Focal Fossa)
-#  ===================================================================
+#  ========================================================================
+#  PhotoPrism for Cloud Servers
+#  Based on Ubuntu 22.04 LTS (Jammy Jellyfish)
+#  ========================================================================
 #
 #  Run this script as root to install PhotoPrism on a cloud server e.g. at DigitalOcean:
 #
@@ -46,7 +48,7 @@ version: '3.5'
 #  See jobs.ini for details.
 #
 #  SYSTEM REQUIREMENTS
-#  --------------------------------------------------------------------------
+#  ------------------------------------------------------------------------
 #
 #  We recommend hosting PhotoPrism on a server with at least 2 cores and
 #  4 GB of memory. Beyond these minimum requirements, the amount of RAM
@@ -57,7 +59,7 @@ version: '3.5'
 #  will be disabled on servers with 1 GB or less memory.
 #
 #  DOCKER COMPOSE COMMAND REFERENCE
-#  --------------------------------------------------------------------------
+#  ------------------------------------------------------------------------
 #  Start    | docker compose up -d
 #  Stop     | docker compose stop
 #  Update   | docker compose pull
@@ -78,7 +80,7 @@ version: '3.5'
 #  More examples: https://docs.photoprism.app/getting-started/docker-compose/#command-line-interface
 #
 #  USING LET'S ENCRYPT HTTPS
-#  --------------------------------------------------------------------------
+#  ------------------------------------------------------------------------
 #
 #  If your server has a public domain name, please disable the self-signed
 #  certificate and enable domain based routing in docker-compose.yml and
