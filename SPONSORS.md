@@ -1,14 +1,16 @@
 # Thank You to All Current and Past Sponsors 💎 #
 
-**PhotoPrism is 100% self-funded and independent.** Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent!
+Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent! 💜
 
-Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors. We currently have the following sponsorship options:
+Our sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors. We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available this year, so you can sign up directly in the app
 
-Feel free to [reach out to us](https://www.photoprism.app/contact) if you have change requests. You are also welcome to contact us for bank account details and business partnerships.
+You are welcome to [contact us](https://www.photoprism.app/contact) for change requests, account details, and business partnerships.
+
+[Become a Sponsor ›](https://link.photoprism.app/membership) [Contact Us ›](https://www.photoprism.app/contact)
 
 ## Platinum Sponsors ##
 
@@ -17,8 +19,6 @@ Feel free to [reach out to us](https://www.photoprism.app/contact) if you have c
 **Andrew** (Patreon, October 2021)
 
 [**@ppibburr**](https://github.com/ppibburr) (GitHub Sponsors, December 2021)
-
-[Sign Up ›](https://link.photoprism.app/patreon)
 
 ## Gold Sponsors ##
 
@@ -65,8 +65,6 @@ Feel free to [reach out to us](https://www.photoprism.app/contact) if you have c
 **Sandro Petruzzi** (Patreon, May 2022)
 
 [**Toly Rugalev**](https://github.com/AnatolyRugalev) (GitHub Sponsors, March 2023)
-
-[Sign Up ›](https://link.photoprism.app/membership)
 
 ## Infrastructure Sponsors ##
 
