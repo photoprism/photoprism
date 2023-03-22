@@ -42,7 +42,7 @@
       <div v-else>
         <p class="text-xs-center my-4">
           <v-btn
-              href="https://www.photoprism.app/membership"
+              href="https://link.photoprism.app/membership"
               target="_blank"
               color="primary-button"
               class="white--text px-3 py-2 action-upgrade"
