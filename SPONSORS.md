@@ -70,13 +70,12 @@ Feel free to [reach out to us](https://www.photoprism.app/contact) if you have c
 
 ## Infrastructure Sponsors ##
 
-[**GitHub**](https://github.com/) hosts our [code repositories](https://github.com/photoprism/photoprism) and also provides many other important services
+Our project infrastructure is provided by the following companies:
 
-[**Docker**](https://www.docker.com/) approved us for their [Open Source Program](https://www.docker.com/community/open-source/application/) and hosts all of our app images
-
-[**Element**](https://element.io/) develops and [operates the infrastructure](https://matrix.org/) that our [community chat](https://link.photoprism.app/chat) is based on
-
-[**BrowserStack**](https://www.browserstack.com/) provides [free access](https://www.browserstack.com/open-source) to their device and browser testing infrastructure
+- [**GitHub**](https://github.com/) hosts our [code repositories](https://github.com/photoprism/photoprism) and also provides many other important services
+- [**Docker**](https://www.docker.com/) approved us for their [Open Source Program](https://www.docker.com/community/open-source/application/) and hosts all of our app images
+- [**Element**](https://element.io/) develops and [operates the infrastructure](https://matrix.org/) that our [community chat](https://link.photoprism.app/chat) is based on
+- [**BrowserStack**](https://www.browserstack.com/) provides [free access](https://www.browserstack.com/open-source) to their device and browser testing infrastructure
 
 [View Credits ›](https://docs.photoprism.app/credits/)
 
