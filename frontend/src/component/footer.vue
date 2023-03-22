@@ -12,7 +12,7 @@
             <a v-if="evaluation" href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"
                target="_blank" class="text-link">3rd-party software packages</a>
             <a v-else href="https://my.photoprism.app/" target="_blank" class="text-link">Licensed to {{ customer }}</a>
-            <a href="https://www.photoprism.app/team/" target="_blank" class="body-link">© 2018-2023 PhotoPrism UG</a>
+            <a href="https://www.photoprism.app/about/team/" target="_blank" class="body-link">© 2018-2023 PhotoPrism UG</a>
           </div>
         </v-flex>
       </v-layout>
