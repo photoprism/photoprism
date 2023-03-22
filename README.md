@@ -64,7 +64,9 @@ Our sponsors enjoy additional features, including access to [interactive world m
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available this year, so you can sign up directly in the app
 
-[Become a Sponsor ›](https://link.photoprism.app/membership)
+You are welcome to [contact us](https://www.photoprism.app/contact) for change requests, account details, and business partnerships.
+
+[Become a Sponsor ›](https://link.photoprism.app/membership) [Contact Us ›](https://www.photoprism.app/contact)
 
 ### Why Your Support Matters ###
 
