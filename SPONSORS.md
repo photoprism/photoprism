@@ -2,7 +2,7 @@
 
 **PhotoPrism is 100% self-funded and independent.** Your [continued support](https://www.photoprism.app/membership) helps us provide [regular updates](https://docs.photoprism.app/release-notes/) and remain independent.
 
-Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/team) and other sponsors. We currently have the following sponsorship options:
+Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors. We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments

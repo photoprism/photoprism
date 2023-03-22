@@ -2,7 +2,7 @@ PhotoPrism: Browse Your Life in Pictures
 ========================================
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)](https://docs.photoprism.app/license/agpl/)
-[![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://www.photoprism.app/team)
+[![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://www.photoprism.app/about/team)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)](https://docs.photoprism.app/)
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)](https://link.photoprism.app/chat)
 [![GitHub Discussions](https://img.shields.io/badge/ask-%20on%20github-4d6a91.svg)](https://link.photoprism.app/discussions)
@@ -57,7 +57,7 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 ## Support Our Mission 💎 ##
 
 As this helps us to [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available) and remain independent, we encourage all users to [support our mission](https://www.photoprism.app/membership).
-Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/team) and other sponsors.
+Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors.
 
 [Become a Sponsor ›](https://link.photoprism.app/membership)
 
