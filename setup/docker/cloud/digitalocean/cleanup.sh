@@ -14,6 +14,9 @@ if [[ ! -d /tmp ]]; then
 fi
 chmod 1777 /tmp
 
+# Remove DigitalOcean Agent
+apt-get -y purge droplet-agent
+
 if [ -n "$(command -v yum)" ]; then
   yum update -y
   yum clean all

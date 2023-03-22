@@ -34,6 +34,7 @@
       "type": "shell",
       "environment_vars": [
         "DEBIAN_FRONTEND=noninteractive",
+        "UA_LOG_LEVEL=info",
         "LC_ALL=C",
         "LANG=en_US.UTF-8",
         "LC_CTYPE=en_US.UTF-8"

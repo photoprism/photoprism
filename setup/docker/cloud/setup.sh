@@ -14,6 +14,7 @@ set -eu
 
 # disable user interactions
 export DEBIAN_FRONTEND="noninteractive"
+export UA_LOG_LEVEL="info"
 export TMPDIR="/tmp"
 
 # add 4 GB of swap if no swap was configured yet
