@@ -58,19 +58,13 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 **PhotoPrism is 100% self-funded and independent.** Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent!
 
-Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors.
-
-[Become a Sponsor ›](https://link.photoprism.app/membership)
-
-We currently have the following sponsorship options:
+Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors. We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available this year, so you can sign up directly in the app
 
-A big thank you to all current and past sponsors, whose generous support has been and continues to be essential to the success of the project!
-
-[View Sponsors ›](SPONSORS.md) [View Credits ›](https://docs.photoprism.app/credits/)
+[Become a Sponsor ›](https://link.photoprism.app/membership)
 
 ### Why Your Support Matters ###
 
@@ -79,6 +73,10 @@ A big thank you to all current and past sponsors, whose generous support has bee
 - Being self-funded and independent, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
 
 Please also leave [a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. It provides additional motivation to keep going.
+
+**A big thank you to all current and past sponsors, whose generous support has been and continues to be essential to the success of the project!**
+
+[View Sponsors ›](SPONSORS.md) [View Credits ›](https://docs.photoprism.app/credits/)
 
 ## Getting Support ##
 
