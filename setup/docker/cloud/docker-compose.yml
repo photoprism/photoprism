@@ -139,6 +139,7 @@ services:
       PHOTOPRISM_LOG_LEVEL: "info"                     # log level: trace, debug, info, warning, error, fatal, or panic
       PHOTOPRISM_READONLY: "false"                     # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"                 # enables experimental features
+      PHOTOPRISM_DISABLE_TLS: "true"                   # disables HTTPS even if a certificate is available
       PHOTOPRISM_DISABLE_CHOWN: "false"                # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_WEBDAV: "false"               # disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"             # disables Settings in Web UI
@@ -169,7 +170,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
-    image: traefik:v2.8
+    image: traefik:v2.9
     container_name: traefik
     ports:
       - "80:80"

@@ -32,34 +32,39 @@ echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
 echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
 echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
 echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing
+echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
+echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold
 
 # update operating system
 apt-get update
 apt dist-upgrade 2>/dev/null
 
 # install dependencies
-apt-get -qq install --no-install-recommends apt-transport-https ca-certificates \
-        curl software-properties-common openssl
+apt-get -qq install --no-install-recommends apt-utils apt-transport-https ca-certificates \
+        curl software-properties-common openssl gnupg lsb-release
 
-# install docker if needed
-if ! command -v docker &> /dev/null; then
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/download.docker.com.gpg
-  add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-  apt-get update
-  apt-get -qq install docker-ce
-fi
+echo "Installing Docker..."
 
-# install docker-compose if needed
-if ! command -v docker-compose &> /dev/null; then
-  apt-get update
-  apt-get -qq install docker-compose
-fi
+# add docker repository key
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# install docker incl compose plugin
+apt-get update
+apt-get -qq install docker-ce docker-ce-cli docker-ce-rootless-extras containerd.io docker-compose-plugin cgroupfs-mount libltdl7 pigz
+
+echo "Adding user..."
 
 # create user
 useradd -o -m -U -u 1000 -G docker -d /opt/photoprism photoprism || echo "User 'photoprism' already exists. Proceeding."
 mkdir -p /opt/photoprism/originals /opt/photoprism/import /opt/photoprism/storage /opt/photoprism/backup \
       /opt/photoprism/database /opt/photoprism/traefik /opt/photoprism/certs
+
+echo "Generating certificates..."
 
 # download ssl config
 curl -fsSL https://dl.photoprism.app/docker/cloud/certs/ca.conf > /opt/photoprism/certs/ca.conf
@@ -92,6 +97,8 @@ chmod 600 /root/.initial-password.txt
 # detect public server ip address
 PUBLIC_IP=$(curl -sfSL ifconfig.me)
 
+echo "Downloading configuration..."
+
 # download service config
 COMPOSE_CONFIG=$(curl -fsSL https://dl.photoprism.app/docker/cloud/docker-compose.yml)
 COMPOSE_CONFIG=${COMPOSE_CONFIG//_public_ip_/$PUBLIC_IP}
@@ -102,6 +109,8 @@ curl -fsSL https://dl.photoprism.app/docker/cloud/traefik.yaml > /opt/photoprism
 
 # change permissions
 chown -Rf photoprism:photoprism /opt/photoprism
+
+echo "Cleaning up..."
 
 # clear package cache
 apt-get autoclean
