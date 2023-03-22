@@ -6,7 +6,7 @@ Sponsors enjoy additional features, including access to [interactive world maps]
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
-- Stripe will be available in 2022, so you can sign up directly in the app
+- Stripe will be available this year, so you can sign up directly in the app
 
 Feel free to [reach out to us](https://www.photoprism.app/contact) if you have change requests. You are also welcome to contact us for bank account details and business partnerships.
 
