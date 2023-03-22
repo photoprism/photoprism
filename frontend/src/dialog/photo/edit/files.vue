@@ -202,7 +202,7 @@
                                 hide-details
                                 color="secondary-dark"
                                 :items="options.Orientations()"
-                                :readonly="!features.edit || (file.FileType !== 'jpg' && file.FileType !== 'png') || file.Error"
+                                :readonly="readonly || !features.edit || (file.FileType !== 'jpg' && file.FileType !== 'png') || file.Error"
                                 :disabled="busy"
                                 class="input-orientation"
                                 @change="changeOrientation(file)">
