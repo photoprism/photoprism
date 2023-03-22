@@ -54,7 +54,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "Ένα κλικ θα το αντιγράψει στο πρόχειρο."
 
 #: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:222 src/page/settings/account.vue:313
+#: src/page/about/about.vue:204 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -133,7 +133,7 @@ msgstr "Προσθέστε εικόνες από τα αποτελέσματα �
 msgid "Add to album"
 msgstr "Προσθήκη στο άλμπουμ"
 
-#: src/dialog/photo/edit/files.vue:203 src/dialog/photo/edit/files.vue:200
+#: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:207
 msgid "Added"
 msgstr "Προστέθηκε"
 
@@ -347,10 +347,6 @@ msgstr "Καθώς αυτό μας βοηθά να παρέχουμε περισ
 msgid "Aspect Ratio"
 msgstr "Αναλογία διαστάσεων"
 
-#: src/page/about/about.vue:19
-msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-msgstr "Στη PhotoPrism, πιστεύουμε ότι κάθε στιγμή που αποτυπώνεται σε μια φωτογραφία είναι πολύτιμη και η αποστολή μας είναι να δώσουμε στους ανθρώπους τη δυνατότητα να διατηρήσουν αυτές τις στιγμές για τις επόμενες γενιές."
-
 #: src/component/admin/users/add.vue:214 src/component/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:69 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
@@ -502,8 +498,9 @@ msgid "Change private flag"
 msgstr "Αλλαγή ιδιωτικής κατάστασης"
 
 #: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:162
-#: src/dialog/album/edit.vue:56 src/dialog/service/edit.vue:102
-#: src/dialog/share.vue:88 src/dialog/share.vue:104 src/page/albums.vue:547
+#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:110
+#: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
+#: src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
@@ -514,7 +511,7 @@ msgstr "Οι αλλαγές αποθηκεύτηκαν επιτυχώς"
 msgid "Checked"
 msgstr "Σημειωμένο"
 
-#: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
+#: src/dialog/photo/edit/files.vue:196 src/dialog/photo/edit/files.vue:193
 msgid "Chroma"
 msgstr "Chroma"
 
@@ -532,7 +529,7 @@ msgstr "Codec"
 msgid "Color"
 msgstr "Χρώμα"
 
-#: src/dialog/photo/edit/files.vue:177 src/dialog/photo/edit/files.vue:174
+#: src/dialog/photo/edit/files.vue:184 src/dialog/photo/edit/files.vue:181
 msgid "Color Profile"
 msgstr "Προφίλ χρώματος"
 
@@ -702,7 +699,7 @@ msgstr "Λεπτομερείς οδηγίες μπορείτε να βρείτε
 msgid "Details"
 msgstr "Λεπτομέρειες"
 
-#: src/dialog/photo/edit/files.vue:35
+#: src/dialog/photo/edit/files.vue:37
 msgid "Dimensions"
 msgstr "Διαστάσεις"
 
@@ -837,7 +834,7 @@ msgstr "Λήψη μεμονωμένων αρχείων και αρχείων σ�
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
 #: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
-#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:69
+#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:77
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "Λήψη…"
@@ -1015,7 +1012,7 @@ msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μα�
 msgid "Female"
 msgstr "Γυναίκα"
 
-#: src/model/file.js:294
+#: src/model/file.js:295
 msgid "File"
 msgstr "Αρχείο"
 
@@ -1185,7 +1182,7 @@ msgstr "Εάν αυτό δεν βοηθά ή έχετε άλλες ερωτήσ�
 msgid "image"
 msgstr "εικόνα"
 
-#: src/model/file.js:216 src/options/options.js:314
+#: src/model/file.js:217 src/options/options.js:314
 msgid "Image"
 msgstr "Εικόνα"
 
@@ -1218,8 +1215,8 @@ msgstr "Εισαγωγή %{name}…"
 msgid "Importing files to originals…"
 msgstr "Εισαγωγή αρχείων σε πρωτότυπα…"
 
-#: src/dialog/photo/edit/files.vue:206 src/dialog/photo/edit/files.vue:215
-#: src/dialog/photo/edit/files.vue:203 src/dialog/photo/edit/files.vue:212
+#: src/dialog/photo/edit/files.vue:213 src/dialog/photo/edit/files.vue:222
+#: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "στο"
 
@@ -1495,7 +1492,7 @@ msgstr "Χαμηλή ανάλυση"
 msgid "Magenta"
 msgstr "Ματζέντα"
 
-#: src/dialog/photo/edit/files.vue:183 src/dialog/photo/edit/files.vue:180
+#: src/dialog/photo/edit/files.vue:190 src/dialog/photo/edit/files.vue:187
 msgid "Main Color"
 msgstr "Κύριο χρώμα"
 
@@ -1539,7 +1536,7 @@ msgstr "Αποστολή μηνύματος"
 msgid "Minimize"
 msgstr "Ελαχιστοποίηση"
 
-#: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/files.vue:192
+#: src/dialog/photo/edit/files.vue:202 src/dialog/photo/edit/files.vue:199
 msgid "Missing"
 msgstr "Απουασιάζει"
 
@@ -1592,7 +1589,7 @@ msgstr "Πρέπει να έχει τουλάχιστον %{n} χαρακτήρ�
 
 #: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
+#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:36
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
 #: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
 #: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
@@ -1808,7 +1805,7 @@ msgid "Original Name"
 msgstr "Αρχικό όνομα"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
-#: src/model/file.js:194 src/page/library/browse.vue:6
+#: src/model/file.js:195 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:429 src/page/settings/general.vue:647
 msgid "Originals"
 msgstr "Πρωτότυπα"
@@ -1816,6 +1813,10 @@ msgstr "Πρωτότυπα"
 #: src/options/options.js:431 src/options/options.js:444
 msgid "Other"
 msgstr "Άλλα"
+
+#: src/page/about/about.vue:19
+msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+msgstr "Αποστολή μας είναι να παρέχουμε την πιο φιλική προς το χρήστη και την προστασία της ιδιωτικής ζωής λύση για να διατηρείτε τις φωτογραφίες σας οργανωμένες και προσβάσιμες."
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
@@ -1870,7 +1871,7 @@ msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερ�
 msgid "Phone"
 msgstr "Τηλέφωνο"
 
-#: src/model/photo.js:1091
+#: src/model/photo.js:1111
 msgid "Photo"
 msgstr "Φωτογραφία"
 
@@ -1957,7 +1958,7 @@ msgstr "Προεπισκόπηση"
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:130
-#: src/dialog/photo/edit/files.vue:28
+#: src/dialog/photo/edit/files.vue:30
 msgid "Primary"
 msgstr "Βασικό"
 
@@ -2275,7 +2276,7 @@ msgstr "Εμφάνιση των αρχείων καταγραφής του δι�
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Εμφανίζει πιο λεπτομερή μηνύματα καταγραφής. Απαιτεί επανεκκίνηση."
 
-#: src/model/file.js:212 src/page/settings/general.vue:689
+#: src/model/file.js:213 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidecar"
 
@@ -2288,7 +2289,7 @@ msgid "Similar"
 msgstr "Παρόμοια"
 
 #: src/dialog/photo/edit/files.vue:83 src/dialog/photo/edit/files.vue:80
-#: src/dialog/photo/edit/files.vue:36 src/dialog/service/edit.vue:226
+#: src/dialog/photo/edit/files.vue:38 src/dialog/service/edit.vue:226
 msgid "Size"
 msgstr "Μέγεθος"
 
@@ -2354,7 +2355,7 @@ msgstr "Κράτη"
 msgid "Static Size Limit: %{n}px"
 msgstr "Όριο στατικού μεγέθους: %{n}px"
 
-#: src/dialog/photo/edit/files.vue:38
+#: src/dialog/photo/edit/files.vue:40
 msgid "Status"
 msgstr "Κατάσταση"
 
@@ -2503,7 +2504,7 @@ msgid "Try again using other filters or keywords."
 msgstr "Δοκιμάστε ξανά χρησιμοποιώντας άλλα φίλτρα ή λέξεις-κλειδιά."
 
 #: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
-#: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
+#: src/dialog/photo/edit/files.vue:39 src/dialog/photo/edit/info.vue:15
 #: src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "Τύπος"
@@ -2545,7 +2546,7 @@ msgstr "Μη ταξινομημένο"
 msgid "Unstack"
 msgstr "Αποσυσκευασία"
 
-#: src/dialog/photo/edit/files.vue:212 src/dialog/photo/edit/files.vue:209
+#: src/dialog/photo/edit/files.vue:219 src/dialog/photo/edit/files.vue:216
 #: src/dialog/photo/edit/info.vue:175
 msgid "Updated"
 msgstr "Ενημερωμένο"
@@ -2685,7 +2686,7 @@ msgstr "Επαληθευμένο"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:219 src/model/photo.js:828 src/model/photo.js:844
+#: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
 #: src/options/options.js:330
 msgid "Video"
 msgstr "Βίντεο"
@@ -2800,10 +2801,10 @@ msgstr "Yellowstone"
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
-#: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:198
+#: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:205
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:141 src/dialog/photo/edit/files.vue:149
-#: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/info.vue:259
+#: src/dialog/photo/edit/files.vue:202 src/dialog/photo/edit/info.vue:259
 #: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301
 #: src/dialog/photo/edit/info.vue:322 src/dialog/photo/edit/info.vue:342
 msgid "Yes"
@@ -2841,6 +2842,9 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+#~ msgstr "Στη PhotoPrism, πιστεύουμε ότι κάθε στιγμή που αποτυπώνεται σε μια φωτογραφία είναι πολύτιμη και η αποστολή μας είναι να δώσουμε στους ανθρώπους τη δυνατότητα να διατηρήσουν αυτές τις στιγμές για τις επόμενες γενιές."
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Χρησιμοποιεί τις τελευταίες τεχνολογίες για την αυτόματη επισήμανση και εύρεση φωτογραφιών χωρίς να σας εμποδίζει."
@@ -3026,9 +3030,6 @@ msgstr "Μεγέθυνση/ σμίκρυνση"
 
 #~ msgid "Note: Updating the password will not revoke access from already authenticated users."
 #~ msgstr "Σημείωση: Η ενημέρωση του κωδικού πρόσβασης δεν θα ανακαλέσει την πρόσβαση των ήδη πιστοποιημένων χρηστών."
-
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "Αποστολή μας είναι να παρέχουμε την πιο φιλική προς το χρήστη και την προστασία της ιδιωτικής ζωής λύση για να διατηρείτε τις φωτογραφίες σας οργανωμένες και προσβάσιμες."
 
 #~ msgid "Server"
 #~ msgstr "Διακομιστής"

@@ -57,7 +57,7 @@ msgid "A click will copy it to your clipboard."
 msgstr "یک کلیک آن را در کلیپ بورد شما کپی می کند."
 
 #: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:222 src/page/settings/account.vue:313
+#: src/page/about/about.vue:204 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -136,7 +136,7 @@ msgstr "با انتخاب آنها ، تصاویر را از نتایج جستج
 msgid "Add to album"
 msgstr "افزودن به آلبوم"
 
-#: src/dialog/photo/edit/files.vue:203 src/dialog/photo/edit/files.vue:200
+#: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:207
 msgid "Added"
 msgstr "اضافه شده"
 
@@ -350,10 +350,6 @@ msgstr "از آنجایی که این به ما کمک می‌کند ویژگی�
 msgid "Aspect Ratio"
 msgstr "نسبت ابعاد"
 
-#: src/page/about/about.vue:19
-msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-msgstr "در PhotoPrism، ما معتقدیم که هر لحظه ثبت شده از طریق یک عکس ارزشمند است و ماموریت ما این است که مردم را قادر کنیم آن لحظات را برای نسل‌های آینده گرامی بدارند."
-
 #: src/component/admin/users/add.vue:214 src/component/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:69 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
@@ -505,8 +501,9 @@ msgid "Change private flag"
 msgstr "تغییر پرچم خصوصی"
 
 #: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:162
-#: src/dialog/album/edit.vue:56 src/dialog/service/edit.vue:102
-#: src/dialog/share.vue:88 src/dialog/share.vue:104 src/page/albums.vue:547
+#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:110
+#: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
+#: src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
@@ -517,7 +514,7 @@ msgstr "تغییرات با موفقیت ذخیره شد"
 msgid "Checked"
 msgstr "بررسی شده"
 
-#: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
+#: src/dialog/photo/edit/files.vue:196 src/dialog/photo/edit/files.vue:193
 msgid "Chroma"
 msgstr "کروما"
 
@@ -535,7 +532,7 @@ msgstr "کدک"
 msgid "Color"
 msgstr "رنگ"
 
-#: src/dialog/photo/edit/files.vue:177 src/dialog/photo/edit/files.vue:174
+#: src/dialog/photo/edit/files.vue:184 src/dialog/photo/edit/files.vue:181
 msgid "Color Profile"
 msgstr "مشخصات رنگ"
 
@@ -705,7 +702,7 @@ msgstr "دستورالعمل های دقیق را می توانید در راه�
 msgid "Details"
 msgstr "جزئیات"
 
-#: src/dialog/photo/edit/files.vue:35
+#: src/dialog/photo/edit/files.vue:37
 msgid "Dimensions"
 msgstr "ابعاد"
 
@@ -840,7 +837,7 @@ msgstr "بارگیری پرونده های تک و بایگانی زیپ."
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
 #: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
-#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:69
+#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:77
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "درحال دانلود…"
@@ -1018,7 +1015,7 @@ msgstr "در صورت داشتن هرگونه سوال می توانید از ط
 msgid "Female"
 msgstr "زن"
 
-#: src/model/file.js:294
+#: src/model/file.js:295
 msgid "File"
 msgstr "فایل"
 
@@ -1188,7 +1185,7 @@ msgstr "اگر این کمک نمی کند یا سؤالات دیگری داری
 msgid "image"
 msgstr "تصویر"
 
-#: src/model/file.js:216 src/options/options.js:314
+#: src/model/file.js:217 src/options/options.js:314
 msgid "Image"
 msgstr "تصویر"
 
@@ -1221,8 +1218,8 @@ msgstr "وارد کردن %{name}…"
 msgid "Importing files to originals…"
 msgstr "در حال وارد کردن فایل‌ها به نسخه اصلی…"
 
-#: src/dialog/photo/edit/files.vue:206 src/dialog/photo/edit/files.vue:215
-#: src/dialog/photo/edit/files.vue:203 src/dialog/photo/edit/files.vue:212
+#: src/dialog/photo/edit/files.vue:213 src/dialog/photo/edit/files.vue:222
+#: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "به"
 
@@ -1498,7 +1495,7 @@ msgstr "وضوح کم"
 msgid "Magenta"
 msgstr "ارغوانی"
 
-#: src/dialog/photo/edit/files.vue:183 src/dialog/photo/edit/files.vue:180
+#: src/dialog/photo/edit/files.vue:190 src/dialog/photo/edit/files.vue:187
 msgid "Main Color"
 msgstr "رنگ اصلی"
 
@@ -1542,7 +1539,7 @@ msgstr "پیغام فرستاده شد"
 msgid "Minimize"
 msgstr "کوچک کردن"
 
-#: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/files.vue:192
+#: src/dialog/photo/edit/files.vue:202 src/dialog/photo/edit/files.vue:199
 msgid "Missing"
 msgstr "گم شده"
 
@@ -1595,7 +1592,7 @@ msgstr "باید حداقل %{n} حرف داشته باشد."
 
 #: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
+#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:36
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
 #: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
 #: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
@@ -1811,7 +1808,7 @@ msgid "Original Name"
 msgstr "اسم اصلی"
 
 #: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
-#: src/model/file.js:194 src/page/library/browse.vue:6
+#: src/model/file.js:195 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:429 src/page/settings/general.vue:647
 msgid "Originals"
 msgstr "اصلی ها"
@@ -1819,6 +1816,10 @@ msgstr "اصلی ها"
 #: src/options/options.js:431 src/options/options.js:444
 msgid "Other"
 msgstr "دیگر"
+
+#: src/page/about/about.vue:19
+msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+msgstr ""
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
@@ -1873,7 +1874,7 @@ msgstr "برای آزاد کردن فضای ذخیره سازی، فایل ها 
 msgid "Phone"
 msgstr "تلفن"
 
-#: src/model/photo.js:1091
+#: src/model/photo.js:1111
 msgid "Photo"
 msgstr "تصویر"
 
@@ -1960,7 +1961,7 @@ msgstr "پیش نمایش"
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:130
-#: src/dialog/photo/edit/files.vue:28
+#: src/dialog/photo/edit/files.vue:30
 msgid "Primary"
 msgstr "اولیه"
 
@@ -2278,7 +2279,7 @@ msgstr "نمایش گزارش‌های سرور در کتابخانه."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "پیام های گزارش دقیق تر را نشان می دهد. نیاز به راه اندازی مجدد دارد."
 
-#: src/model/file.js:212 src/page/settings/general.vue:689
+#: src/model/file.js:213 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "جانبی"
 
@@ -2291,7 +2292,7 @@ msgid "Similar"
 msgstr "مشابه"
 
 #: src/dialog/photo/edit/files.vue:83 src/dialog/photo/edit/files.vue:80
-#: src/dialog/photo/edit/files.vue:36 src/dialog/service/edit.vue:226
+#: src/dialog/photo/edit/files.vue:38 src/dialog/service/edit.vue:226
 msgid "Size"
 msgstr "سایز"
 
@@ -2357,7 +2358,7 @@ msgstr "ایالت ها"
 msgid "Static Size Limit: %{n}px"
 msgstr "محدودیت اندازه ثابت: %{n}px"
 
-#: src/dialog/photo/edit/files.vue:38
+#: src/dialog/photo/edit/files.vue:40
 msgid "Status"
 msgstr "وضعیت"
 
@@ -2508,7 +2509,7 @@ msgid "Try again using other filters or keywords."
 msgstr "دوباره با استفاده از فیلترها یا کلمات کلیدی دیگر امتحان کنید."
 
 #: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
-#: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
+#: src/dialog/photo/edit/files.vue:39 src/dialog/photo/edit/info.vue:15
 #: src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "نوع"
@@ -2550,7 +2551,7 @@ msgstr "مرتب نشده است"
 msgid "Unstack"
 msgstr "باز کردن پشته"
 
-#: src/dialog/photo/edit/files.vue:212 src/dialog/photo/edit/files.vue:209
+#: src/dialog/photo/edit/files.vue:219 src/dialog/photo/edit/files.vue:216
 #: src/dialog/photo/edit/info.vue:175
 msgid "Updated"
 msgstr "به روز شد"
@@ -2690,7 +2691,7 @@ msgstr "تایید شده است"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:219 src/model/photo.js:828 src/model/photo.js:844
+#: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
 #: src/options/options.js:330
 msgid "Video"
 msgstr "ویدیو"
@@ -2807,10 +2808,10 @@ msgstr "یلوستون"
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
-#: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:198
+#: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:205
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:141 src/dialog/photo/edit/files.vue:149
-#: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/info.vue:259
+#: src/dialog/photo/edit/files.vue:202 src/dialog/photo/edit/info.vue:259
 #: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301
 #: src/dialog/photo/edit/info.vue:322 src/dialog/photo/edit/info.vue:342
 msgid "Yes"
@@ -2848,6 +2849,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+#~ msgstr "در PhotoPrism، ما معتقدیم که هر لحظه ثبت شده از طریق یک عکس ارزشمند است و ماموریت ما این است که مردم را قادر کنیم آن لحظات را برای نسل‌های آینده گرامی بدارند."
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "از جدیدترین فناوری‌ها برای برچسب‌گذاری و یافتن خودکار عکس‌ها بدون ایجاد مانع استفاده می‌کند."
