@@ -52,9 +52,9 @@ Pull requests solving ["help wanted"](https://github.com/photoprism/photoprism/l
 
 After you submit your first pull request, you will be asked to accept our Contributor License Agreement (CLA). Visit [photoprism.app/cla](https://www.photoprism.app/cla) and [photoprism.app/oss/faq](https://www.photoprism.app/oss/faq#cla) to learn more.
 
-## Thank You to All Current and Past Sponsors ##
+## Thank You to All Current and Past Sponsors 💎 ##
 
-[A big thank you to all of our sponsors](SPONSORS.md), whose generous support has been and continues to be essential to the success of the project!
+[A big thank you to all of our sponsors](SPONSORS.md), whose generous support has been and continues to be essential to the success of the project! 💜
 
 Our project infrastructure is provided by the following companies:
 
