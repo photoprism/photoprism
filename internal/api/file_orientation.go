@@ -32,7 +32,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 
 		// Abort in read-only mode or if editing is disabled.
 		if conf.ReadOnly() || !conf.Settings().Features.Edit {
-			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
+			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrReadOnly))
 			return
 		} else if conf.DisableExifTool() {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, "exiftool is disabled")

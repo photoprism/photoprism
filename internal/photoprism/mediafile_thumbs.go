@@ -160,11 +160,11 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 func (m *MediaFile) ChangeOrientation(val int) (err error) {
 	if !m.IsPreviewImage() {
 		// Skip.
-		return fmt.Errorf("not a preview image")
+		return fmt.Errorf("orientation can currently only be changed for jpeg and png files")
 	}
 
 	cnf := Config()
-	cmd := exec.Command(cnf.ExifToolBin(), "-overwrite_original", "-P", "-n", "-ModifyDate<FileModifyDate", "-Orientation="+strconv.Itoa(val), m.FileName())
+	cmd := exec.Command(cnf.ExifToolBin(), "-overwrite_original", "-n", "-Orientation="+strconv.Itoa(val), m.FileName())
 
 	// Fetch command output.
 	var out bytes.Buffer
