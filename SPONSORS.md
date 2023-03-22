@@ -8,7 +8,7 @@ Sponsors enjoy additional features, including access to [interactive world maps]
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available in 2022, so you can sign up directly in the app
 
-Feel free to [reach out to us](https://www.photoprism.app/contact) if you have change requests. You are also welcome to contact us for [crypto donations](https://www.photoprism.app/crypto-donations), bank account details, and business partnerships.
+Feel free to [reach out to us](https://www.photoprism.app/contact) if you have change requests. You are also welcome to contact us for bank account details and business partnerships.
 
 ## Platinum Sponsors ##
 

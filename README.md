@@ -56,28 +56,28 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 ## Support Our Mission 💎 ##
 
-**We encourage all of our users to [become a sponsor](https://www.photoprism.app/membership), as this allows us to make more features available to the public and remain independent.**
+As this helps us to [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available) and remain independent, we encourage all users to [support our mission](https://www.photoprism.app/membership).
+Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/team) and other sponsors.
 
-Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/team) and other sponsors. We currently have the following sponsorship options:
+[Become a Sponsor ›](https://link.photoprism.app/membership)
+
+We currently have the following sponsorship options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available in 2022, so you can sign up directly in the app
 
-You are welcome to [contact us](https://www.photoprism.app/contact) for [crypto donations](https://www.photoprism.app/crypto-donations), bank account details, and business partnerships. Why your support matters:
+A big thank you to all current and past sponsors, whose generous support has been and continues to be essential to the success of the project!
+
+[View Sponsors ›](SPONSORS.md) [View Credits ›](https://docs.photoprism.app/credits/)
+
+### Why Your Support Matters ###
 
 - Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy
 - Sustained funding is key to quickly releasing new features requested by you and other community members
 - Being **100% self-funded and independent**, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
 
-Visit [photoprism.app/membership](https://www.photoprism.app/membership) to learn more. Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
-It provides additional motivation to keep going.
-
-## Project Sponsors ##
-
-[**A big thank you to all of our sponsors**](SPONSORS.md), whose generous support has been and continues to be essential to the success of the project!
-
-[View Sponsors ›](SPONSORS.md) [View Credits ›](https://docs.photoprism.app/credits/)
+Please also leave [a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. It provides additional motivation to keep going.
 
 ## Getting Support ##
 
