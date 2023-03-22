@@ -11,7 +11,7 @@
     {
       "type": "digitalocean",
       "api_token": "{{user `do_token`}}",
-      "image": "ubuntu-20-04-x64",
+      "image": "ubuntu-22-04-x64",
       "region": "fra1",
       "size": "s-1vcpu-1gb",
       "ssh_username": "root",
@@ -44,6 +44,7 @@
         "echo 'APT::Install-Suggests \"false\";' > /etc/apt/apt.conf.d/80suggests",
         "echo 'APT::Get::Assume-Yes \"true\";' > /etc/apt/apt.conf.d/80forceyes",
         "echo 'APT::Get::Fix-Missing \"true\";' > /etc/apt/apt.conf.d/80fixmissing",
+        "echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold",
         "apt-get -qq update",
         "apt dist-upgrade 2>/dev/null",
         "apt-get -qq install {{user `apt_packages`}}",
