@@ -1,6 +1,6 @@
-# A Big Thank You to All Our Sponsors! 💎 #
+# Thank You to All Current and Past Sponsors 💎 #
 
-**PhotoPrism is 100% self-funded and independent.** Your [continued support](https://www.photoprism.app/membership) helps us provide [regular updates](https://docs.photoprism.app/release-notes/) and remain independent.
+**PhotoPrism is 100% self-funded and independent.** Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent!
 
 Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors. We currently have the following sponsorship options:
 
