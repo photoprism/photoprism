@@ -17,7 +17,7 @@
       </h3>
 
       <p class="body-2 pt-2 text-selectable">
-        <translate>At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come.</translate>
+        <translate>Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
       </p>
 
       <h3 class="subheading py-2"><translate>PhotoPrism+ Membership</translate></h3>
