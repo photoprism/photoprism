@@ -9,21 +9,21 @@ let assert = chai.assert;
 
 describe("model/abstract", () => {
   it("should set values", () => {
-    const values = { id: 5, Name: "Black Cat", Slug: "black-cat" };
+    const values = { ID: 5, Name: "Black Cat", Slug: "black-cat" };
     const label = new Label(values);
     assert.equal(label.Name, "Black Cat");
     assert.equal(label.Slug, "black-cat");
     label.setValues();
     assert.equal(label.Name, "Black Cat");
     assert.equal(label.Slug, "black-cat");
-    const values2 = { id: 6, Name: "White Cat", Slug: "white-cat" };
+    const values2 = { ID: 6, Name: "White Cat", Slug: "white-cat" };
     label.setValues(values2);
     assert.equal(label.Name, "White Cat");
     assert.equal(label.Slug, "white-cat");
   });
 
   it("should get values", () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = album.getValues();
     assert.equal(result.Name, "Christmas 2019");
@@ -31,14 +31,14 @@ describe("model/abstract", () => {
   });
 
   it("should get id", () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = album.getId();
     assert.equal(result, 66);
   });
 
   it("should test if id exists", () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = album.hasId();
     assert.equal(result, true);
@@ -50,7 +50,7 @@ describe("model/abstract", () => {
   });
 
   it("should update album", async () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     assert.equal(album.Description, undefined);
     album.Name = "Christmas 2020";
@@ -111,19 +111,19 @@ describe("model/abstract", () => {
   });
 
   it("should get slug", () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = album.getSlug();
     assert.equal(result, "christmas-2019");
   });
 
   it("should get slug", () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = album.clone();
     assert.equal(result.Slug, "christmas-2019");
     assert.equal(result.Name, "Christmas 2019");
-    assert.equal(result.id, 5);
+    assert.equal(result.ID, 5);
   });
 
   it("should find album", async () => {
@@ -141,21 +141,21 @@ describe("model/abstract", () => {
   });
 
   it("should get entity name", () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = album.getEntityName();
     assert.equal(result, "christmas-2019");
   });
 
   it("should return model name", () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = album.modelName();
     assert.equal(result, "Album");
   });
 
   it("should return limit", () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     const result = Rest.limit();
     assert.equal(result, 10000);
@@ -163,7 +163,7 @@ describe("model/abstract", () => {
   });
 
   it("should create link", async () => {
-    const values = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values);
     album
       .createLink("passwd", 8000)
@@ -186,7 +186,7 @@ describe("model/abstract", () => {
       Token: "abchhgftryue2345",
     };
     const link = new Link(values);
-    const values2 = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values2 = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values2);
     return album
       .updateLink(link)
@@ -208,7 +208,7 @@ describe("model/abstract", () => {
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const link = new Link(values);
-    const values2 = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values2 = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values2);
     return album
       .removeLink(link)
@@ -222,7 +222,7 @@ describe("model/abstract", () => {
   });
 
   it("should return links", async () => {
-    const values2 = { id: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
+    const values2 = { ID: 5, Name: "Christmas 2019", Slug: "christmas-2019", UID: 66 };
     const album = new Album(values2);
     return album
       .links()

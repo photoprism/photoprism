@@ -62,6 +62,7 @@ export class File extends RestModel {
       Width: 0,
       Height: 0,
       Orientation: 0,
+      OrientationSrc: "",
       Projection: "",
       AspectRatio: 1.0,
       HDR: false,

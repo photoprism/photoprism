@@ -423,7 +423,7 @@ func (m *Album) IsDefault() bool {
 }
 
 // SetTitle changes the album name.
-func (m *Album) SetTitle(title string) {
+func (m *Album) SetTitle(title string) *Album {
 	title = strings.Trim(title, "_&|{}<>: \n\r\t\\")
 	title = strings.ReplaceAll(title, "\"", "“")
 	title = txt.Shorten(title, txt.ClipDefault, txt.Ellipsis)
@@ -445,10 +445,26 @@ func (m *Album) SetTitle(title string) {
 	if m.AlbumSlug == "" {
 		m.AlbumSlug = "-"
 	}
+
+	return m
 }
 
-// UpdateSlug updates title and slug of generated albums if needed.
-func (m *Album) UpdateSlug(title, slug string) error {
+// SetLocation sets a new album location.
+func (m *Album) SetLocation(location, state, country string) *Album {
+	if location != "" {
+		m.AlbumLocation = txt.Shorten(location, txt.ClipDefault, txt.Ellipsis)
+	}
+
+	if state != "" || country != "" && country != "zz" {
+		m.AlbumCountry = txt.Clip(country, txt.ClipCountry)
+		m.AlbumState = txt.Clip(clean.State(state, country), txt.ClipCategory)
+	}
+
+	return m
+}
+
+// UpdateTitleAndLocation updates title, location, and slug of generated albums if needed.
+func (m *Album) UpdateTitleAndLocation(title, location, state, country, slug string) error {
 	title = txt.Clip(title, txt.ClipDefault)
 	slug = txt.Clip(slug, txt.ClipSlug)
 
@@ -463,7 +479,7 @@ func (m *Album) UpdateSlug(title, slug string) error {
 		changed = true
 	}
 
-	if !changed {
+	if !changed && state == m.AlbumState && country == m.AlbumCountry {
 		return nil
 	}
 
@@ -471,11 +487,27 @@ func (m *Album) UpdateSlug(title, slug string) error {
 		m.SetTitle(title)
 	}
 
-	return m.Updates(Values{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug})
+	// Skip location?
+	if location == "" && state == "" && (country == "" || country == "zz") {
+		return m.Updates(Values{
+			"album_title": m.AlbumTitle,
+			"album_slug":  m.AlbumSlug,
+		})
+	}
+
+	m.SetLocation(location, state, country)
+
+	return m.Updates(Values{
+		"album_title":    m.AlbumTitle,
+		"album_location": m.AlbumLocation,
+		"album_state":    m.AlbumState,
+		"album_country":  m.AlbumCountry,
+		"album_slug":     m.AlbumSlug,
+	})
 }
 
-// UpdateState updates the album location.
-func (m *Album) UpdateState(title, slug, stateName, countryCode string) error {
+// UpdateTitleAndState updates the album location.
+func (m *Album) UpdateTitleAndState(title, slug, stateName, countryCode string) error {
 	title = txt.Clip(title, txt.ClipDefault)
 	slug = txt.Clip(slug, txt.ClipSlug)
 
@@ -536,7 +568,6 @@ func (m *Album) SaveForm(f form.Album) error {
 
 // Update sets a new value for a database column.
 func (m *Album) Update(attr string, value interface{}) error {
-
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 

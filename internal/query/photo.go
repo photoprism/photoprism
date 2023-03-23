@@ -185,7 +185,7 @@ func FlagHiddenPhotos() (err error) {
 		return err
 	} else {
 		// Log result.
-		log.Infof("index: flagged %s as hidden or missing [%s]", english.Plural(int(n), "photo", "photos"), time.Since(start))
+		log.Infof("index: flagged %s as hidden [%s]", english.Plural(int(n), "photo", "photos"), time.Since(start))
 	}
 
 	return nil

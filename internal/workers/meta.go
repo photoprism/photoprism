@@ -7,6 +7,8 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
@@ -16,7 +18,8 @@ import (
 
 // Meta represents a background metadata optimization worker.
 type Meta struct {
-	conf *config.Config
+	conf    *config.Config
+	lastRun time.Time
 }
 
 // NewMeta returns a new Meta worker.
@@ -25,44 +28,48 @@ func NewMeta(conf *config.Config) *Meta {
 }
 
 // originalsPath returns the original media files path as string.
-func (m *Meta) originalsPath() string {
-	return m.conf.OriginalsPath()
+func (w *Meta) originalsPath() string {
+	return w.conf.OriginalsPath()
 }
 
 // Start metadata optimization routine.
-func (m *Meta) Start(delay, interval time.Duration, force bool) (err error) {
+func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("metadata: %s (panic)\nstack: %s", r, debug.Stack())
+			err = fmt.Errorf("index: %s (worker panic)\nstack: %s", r, debug.Stack())
 			log.Error(err)
 		}
 	}()
 
-	if err := mutex.MetaWorker.Start(); err != nil {
+	if err = mutex.MetaWorker.Start(); err != nil {
 		return err
 	}
 
 	defer mutex.MetaWorker.Stop()
 
-	log.Debugf("metadata: running face recognition")
+	// Check time when worker was last executed.
+	updateIndex := force || w.lastRun.Before(time.Now().Add(-1*entity.IndexUpdateInterval))
 
-	// Run faces worker.
-	if w := photoprism.NewFaces(m.conf); w.Disabled() {
-		log.Debugf("metadata: skipping face recognition")
-	} else if err := w.Start(photoprism.FacesOptions{}); err != nil {
-		log.Warn(err)
+	// Run faces worker if needed.
+	if updateIndex || entity.UpdateFaces.Load() {
+		log.Debugf("index: running face recognition")
+		if faces := photoprism.NewFaces(w.conf); faces.Disabled() {
+			log.Debugf("index: skipping face recognition")
+		} else if err := faces.Start(photoprism.FacesOptions{}); err != nil {
+			log.Warn(err)
+		}
 	}
 
-	log.Debugf("metadata: starting routine check")
+	// Refresh index metadata.
+	log.Debugf("index: updating metadata")
 
-	settings := m.conf.Settings()
+	start := time.Now()
+	settings := w.conf.Settings()
 	done := make(map[string]bool)
-
-	limit := 50
+	limit := 1000
 	offset := 0
 	optimized := 0
 
-	// Run index optimization.
 	for {
 		photos, err := query.PhotosMetadataUpdate(limit, offset, delay, interval)
 
@@ -72,13 +79,11 @@ func (m *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 		if len(photos) == 0 {
 			break
-		} else if offset == 0 {
-
 		}
 
 		for _, photo := range photos {
 			if mutex.MetaWorker.Canceled() {
-				return errors.New("metadata: check canceled")
+				return errors.New("index: metadata update canceled")
 			}
 
 			if done[photo.PhotoUID] {
@@ -90,52 +95,57 @@ func (m *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 			updated, merged, err := photo.Optimize(settings.StackMeta(), settings.StackUUID(), settings.Features.Estimates, force)
 
 			if err != nil {
-				log.Errorf("metadata: %s (optimize photo)", err)
+				log.Errorf("index: %s (metadata update)", err)
 			} else if updated {
 				optimized++
-				log.Debugf("metadata: updated photo %s", photo.String())
+				log.Debugf("index: updated photo %s", photo.String())
 			}
 
 			for _, p := range merged {
-				log.Infof("metadata: merged %s", p.PhotoUID)
+				log.Infof("index: merged %s", p.PhotoUID)
 				done[p.PhotoUID] = true
 			}
 		}
 
 		if mutex.MetaWorker.Canceled() {
-			return errors.New("metadata: check canceled")
+			return errors.New("index: metadata update canceled")
 		}
 
 		offset += limit
-
-		time.Sleep(100 * time.Millisecond)
 	}
 
 	if optimized > 0 {
-		log.Infof("metadata: updated %d photos", optimized)
+		log.Infof("index: updated %s [%s]", english.Plural(optimized, "photo", "photos"), time.Since(start))
+		updateIndex = true
 	}
 
-	// Set photo quality scores to -1 if files are missing.
-	if err := query.FlagHiddenPhotos(); err != nil {
-		log.Warnf("metadata: %s (reset quality)", err.Error())
+	// Only update index if necessary.
+	if updateIndex {
+		// Set photo quality scores to -1 if files are missing.
+		if err = query.FlagHiddenPhotos(); err != nil {
+			log.Warnf("index: %s (reset quality)", err.Error())
+		}
+
+		// Run moments worker.
+		if moments := photoprism.NewMoments(w.conf); moments == nil {
+			log.Errorf("index: failed updating moments")
+		} else if err = moments.Start(); err != nil {
+			log.Warn(err)
+		}
+
+		// Update precalculated photo and file counts.
+		if err = entity.UpdateCounts(); err != nil {
+			log.Warnf("index: %s (update counts)", err.Error())
+		}
+
+		// Update album, subject, and label cover thumbs.
+		if err = query.UpdateCovers(); err != nil {
+			log.Warnf("index: %s (update covers)", err)
+		}
 	}
 
-	// Run moments worker.
-	if w := photoprism.NewMoments(m.conf); w == nil {
-		log.Errorf("metadata: failed updating moments")
-	} else if err := w.Start(); err != nil {
-		log.Warn(err)
-	}
-
-	// Update precalculated photo and file counts.
-	if err := entity.UpdateCounts(); err != nil {
-		log.Warnf("index: %s (update counts)", err.Error())
-	}
-
-	// Update album, subject, and label cover thumbs.
-	if err := query.UpdateCovers(); err != nil {
-		log.Warnf("index: %s (update covers)", err)
-	}
+	// Update time when worker was last executed.
+	w.lastRun = entity.TimeStamp()
 
 	// Run garbage collection.
 	runtime.GC()

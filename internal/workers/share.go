@@ -39,7 +39,7 @@ func (w *Share) logError(err error) {
 func (w *Share) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("share: %s (panic)\nstack: %s", r, debug.Stack())
+			err = fmt.Errorf("share: %s (worker panic)\nstack: %s", r, debug.Stack())
 			log.Error(err)
 		}
 	}()

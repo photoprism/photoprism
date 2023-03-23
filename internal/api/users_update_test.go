@@ -31,6 +31,6 @@ func TestUpdateUser(t *testing.T) {
 		reqUrl := fmt.Sprintf("/api/v1/users/%s", adminUid)
 		UpdateUser(router)
 		r := PerformRequestWithBody(app, "PUT", reqUrl, "{foo:123}")
-		assert.Equal(t, http.StatusBadRequest, r.Code)
+		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 }

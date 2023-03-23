@@ -56,11 +56,13 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"originals-path", c.OriginalsPath()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
 		{"resolution-limit", fmt.Sprintf("%d", c.ResolutionLimit())},
-
-		// Other paths.
-		{"storage-path", c.StoragePath()},
-		{"sidecar-path", c.SidecarPath()},
 		{"users-path", c.UsersPath()},
+		{"users-originals-path", c.UsersOriginalsPath()},
+
+		// Storage.
+		{"storage-path", c.StoragePath()},
+		{"users-storage-path", c.UsersStoragePath()},
+		{"sidecar-path", c.SidecarPath()},
 		{"albums-path", c.AlbumsPath()},
 		{"backup-path", c.BackupPath()},
 		{"cache-path", c.CachePath()},
@@ -156,6 +158,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tls-key", c.TLSKey()},
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
+		{"http-cache-maxage", fmt.Sprintf("%d", c.HttpCacheMaxAge())},
+		{"http-cache-public", fmt.Sprintf("%t", c.HttpCachePublic())},
 		{"http-host", c.HttpHost()},
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
 
@@ -176,6 +180,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-bin", c.FFmpegBin()},
 		{"ffmpeg-encoder", c.FFmpegEncoder().String()},
 		{"ffmpeg-bitrate", fmt.Sprintf("%d", c.FFmpegBitrate())},
+		{"ffmpeg-map-video", c.FFmpegMapVideo()},
+		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
 		{"exiftool-bin", c.ExifToolBin()},
 		{"darktable-bin", c.DarktableBin()},
 		{"darktable-cache-path", c.DarktableCachePath()},

@@ -79,7 +79,6 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		// TODO: Proof-of-concept for form handling - might need refactoring
 		// 1) Init form with model values
 		f, err := form.NewPhoto(m)
 

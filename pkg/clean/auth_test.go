@@ -6,15 +6,45 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestHandle(t *testing.T) {
+	t.Run("Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin", Handle("Admin "))
+	})
+	t.Run(" Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin", Handle(" Admin@foo "))
+	})
+	t.Run(" Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin.foo", Handle(" Admin foo "))
+	})
+	t.Run(" admin ", func(t *testing.T) {
+		assert.Equal(t, "admin", Handle(" admin "))
+	})
+	t.Run("admin/user", func(t *testing.T) {
+		assert.Equal(t, "admin.user", Handle("admin/user"))
+	})
+	t.Run("Windows", func(t *testing.T) {
+		assert.Equal(t, "jens.mander", Handle("DOMAIN\\Jens Mander "))
+	})
+}
+
 func TestUsername(t *testing.T) {
 	t.Run("Admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Username("Admin "))
 	})
 	t.Run(" Admin ", func(t *testing.T) {
-		assert.Equal(t, "admin", Username(" Admin "))
+		assert.Equal(t, "admin@foo", Username(" Admin@foo "))
+	})
+	t.Run(" Admin ", func(t *testing.T) {
+		assert.Equal(t, "admin foo", Username(" Admin foo "))
 	})
 	t.Run(" admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Username(" admin "))
+	})
+	t.Run("admin/user", func(t *testing.T) {
+		assert.Equal(t, "adminuser", Username("admin/user"))
+	})
+	t.Run("Windows", func(t *testing.T) {
+		assert.Equal(t, "domain\\jens mander", Username("DOMAIN\\Jens Mander "))
 	})
 }
 

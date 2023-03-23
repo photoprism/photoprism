@@ -61,7 +61,7 @@ func passwdAction(ctx *cli.Context) error {
 		return fmt.Errorf("user %s has been deleted", clean.LogQuote(id))
 	}
 
-	log.Infof("please enter a new password for %s (minimum %d characters)\n", clean.Log(m.Name()), entity.PasswordLength)
+	log.Infof("please enter a new password for %s (minimum %d characters)\n", clean.Log(m.Username()), entity.PasswordLength)
 
 	newPassword := getPassword("New Password: ")
 
@@ -79,7 +79,7 @@ func passwdAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("changed password for %s\n", clean.Log(m.Name()))
+	log.Infof("changed password for %s\n", clean.Log(m.Username()))
 
 	return nil
 }

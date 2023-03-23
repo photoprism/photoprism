@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestCreateAlbumLink(t *testing.T) {

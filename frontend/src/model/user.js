@@ -33,6 +33,7 @@ import { config } from "app/session";
 export class User extends RestModel {
   getDefaults() {
     return {
+      ID: 0,
       UID: "",
       UUID: "",
       AuthProvider: "",
@@ -101,6 +102,7 @@ export class User extends RestModel {
         CreatedAt: "",
         UpdatedAt: "",
       },
+      LoginAt: "",
       VerifiedAt: "",
       ConsentAt: "",
       BornAt: "",
@@ -108,6 +110,31 @@ export class User extends RestModel {
       UpdatedAt: "",
       ExpiresAt: "",
     };
+  }
+
+  getHandle() {
+    if (!this.Name) {
+      return "";
+    }
+
+    const s = this.Name.split("@");
+    return s[0].trim();
+  }
+
+  defaultBasePath() {
+    const handle = this.getHandle();
+
+    if (!handle) {
+      return "";
+    }
+
+    let dir = config.get("usersPath");
+
+    if (dir) {
+      return `${dir}/${handle}`;
+    } else {
+      return `users/${handle}`;
+    }
   }
 
   getDisplayName() {
@@ -184,17 +211,15 @@ export class User extends RestModel {
     );
   }
 
+  isRemote() {
+    return this.AuthProvider && this.AuthProvider === "ldap";
+  }
+
   changePassword(oldPassword, newPassword) {
     return Api.put(this.getEntityResource() + "/password", {
       old: oldPassword,
       new: newPassword,
     }).then((response) => Promise.resolve(response.data));
-  }
-
-  save() {
-    return Api.post(this.getEntityResource(), this.getValues()).then((response) =>
-      Promise.resolve(this.setValues(response.data))
-    );
   }
 
   static getCollectionResource() {

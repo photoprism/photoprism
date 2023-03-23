@@ -9,7 +9,8 @@ import (
 var Cache = gc.New(time.Hour, 15*time.Minute)
 
 const (
-	CacheKeyAppManifest = "app-manifest"
+	CacheKeyAppManifest  = "app-manifest"
+	CacheKeyWallpaperUri = "wallpaper-uri"
 )
 
 // FlushCache clears the config cache.
