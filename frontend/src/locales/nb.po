@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-13 21:26+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
+"PO-Revision-Date: 2023-03-23 23:58+0000\n"
+"Last-Translator: Marcus Foshaug <marcus@ofoten.net>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
+"photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -567,11 +568,11 @@ msgstr "Koble til via WebDAV"
 
 #: src/page/connect.vue:56
 msgid "Connected"
-msgstr "Koble til"
+msgstr "Tilkoblet"
 
 #: src/page/settings/account.vue:116 src/page/settings/account.vue:95
 msgid "Contact Details"
-msgstr "Kontakt Oss"
+msgstr "Kontaktinformasjon"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:44
 #: src/page/connect.vue:41
@@ -980,7 +981,7 @@ msgstr "Fikk ikke til å oppdatere lenke"
 
 #: src/component/admin/users/edit.vue:235 src/page/settings/account.vue:166
 msgid "Family Name"
-msgstr "Merkelappnavn"
+msgstr "Familienavn"
 
 #: src/options/options.js:268
 msgid "Fast"
@@ -1099,7 +1100,7 @@ msgstr "Edelsten"
 
 #: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
-msgstr "Lavendel"
+msgstr "Kjønn"
 
 #: src/page/settings.vue:36
 msgid "General"
