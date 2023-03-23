@@ -25,7 +25,7 @@ func TestConvert_ToJson(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jsonName, err := convert.ToJson(mf)
+		jsonName, err := convert.ToJson(mf, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -50,7 +50,7 @@ func TestConvert_ToJson(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jsonName, err := convert.ToJson(mf)
+		jsonName, err := convert.ToJson(mf, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -76,7 +76,7 @@ func TestConvert_ToJson(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jsonName, err := convert.ToJson(mf)
+		jsonName, err := convert.ToJson(mf, false)
 
 		if err != nil {
 			t.Fatal(err)

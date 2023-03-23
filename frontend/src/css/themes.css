@@ -70,6 +70,11 @@ body.dark-theme #photoprism .map-control .theme--light.v-input:not(.v-input--is-
     color: #333333;
 }
 
+body:not(.dark-theme) .theme--dark.v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat):not(.v-btn--outline) {
+    color: rgb(51, 51, 51)!important;
+    background-color: #d9dadc!important;
+}
+
 body.dark-theme #photoprism .theme--light.v-chip,
 body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__control>.v-input__slot {
     background: #00000033;

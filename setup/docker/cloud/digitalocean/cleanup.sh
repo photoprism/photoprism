@@ -14,6 +14,9 @@ if [[ ! -d /tmp ]]; then
 fi
 chmod 1777 /tmp
 
+# Remove DigitalOcean Agent
+apt-get -y purge droplet-agent
+
 if [ -n "$(command -v yum)" ]; then
   yum update -y
   yum clean all
@@ -35,7 +38,7 @@ rm -rf /var/lib/cloud/instances/*
 rm -f /root/.ssh/authorized_keys /etc/ssh/*key*
 touch /etc/ssh/revoked_keys
 chmod 600 /etc/ssh/revoked_keys
-rm -f /var/log/kern.log /var/log/ufw.log
+rm -f /var/log/*.log
 
 # Securely erase the unused portion of the filesystem
 GREEN='\033[0;32m'

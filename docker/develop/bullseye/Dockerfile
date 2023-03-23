@@ -48,6 +48,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
+    echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
       apt-utils \

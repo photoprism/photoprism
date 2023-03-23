@@ -49,6 +49,7 @@ export default {
 
       this.model.remove().then(() => {
         this.loading = false;
+        this.$notify.success(this.$gettext("Account deleted"));
         this.$emit('confirm');
       });
     },

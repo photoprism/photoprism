@@ -41,7 +41,7 @@ type SearchPhotos struct {
 	Archived  bool      `form:"archived" notes:"Finds archived pictures"`
 	Public    bool      `form:"public" notes:"Excludes private pictures"`
 	Private   bool      `form:"private" notes:"Finds private pictures"`
-	Favorite  bool      `form:"favorite" notes:"Finds pictures marked as favorite"`
+	Favorite  bool      `form:"favorite" notes:"Finds favorites only"`
 	Unsorted  bool      `form:"unsorted" notes:"Finds pictures not in an album"`
 	Lat       float32   `form:"lat" notes:"Latitude (GPS Position)"`
 	Lng       float32   `form:"lng" notes:"Longitude (GPS Position)"`

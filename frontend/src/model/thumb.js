@@ -47,7 +47,11 @@ export class Thumb extends Model {
   }
 
   getId() {
-    return this.UID;
+    if (this.UID) {
+      return this.UID;
+    }
+
+    return this.ID ? this.ID : false;
   }
 
   hasId() {

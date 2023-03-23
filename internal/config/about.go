@@ -23,3 +23,10 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
 package config
+
+// MsgSponsor provides membership information.
+var MsgSponsor = "Upgrade now to support our mission! 💎"
+var SignUpURL = "https://www.photoprism.app/editions"
+var MsgSignUp = "Visit " + SignUpURL + " to learn more."
+var MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
+	" we unfortunately can only offer it to sponsors."

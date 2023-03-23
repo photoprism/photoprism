@@ -43,6 +43,7 @@ import PWebdavDialog from "dialog/webdav.vue";
 import PReloadDialog from "dialog/reload.vue";
 import PSponsorDialog from "dialog/sponsor.vue";
 import PConfirmDialog from "dialog/confirm.vue";
+import PAccountPasswordDialog from "dialog/account/password.vue";
 
 const dialogs = {};
 
@@ -67,6 +68,7 @@ dialogs.install = (Vue) => {
   Vue.component("PReloadDialog", PReloadDialog);
   Vue.component("PSponsorDialog", PSponsorDialog);
   Vue.component("PConfirmDialog", PConfirmDialog);
+  Vue.component("PAccountPasswordDialog", PAccountPasswordDialog);
 };
 
 export default dialogs;

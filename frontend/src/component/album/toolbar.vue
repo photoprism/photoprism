@@ -173,11 +173,6 @@ export default {
       this.searchExpanded = !this.searchExpanded;
       this.growDesc = !this.growDesc;
     },
-    updateAlbum() {
-      if (this.album.wasChanged()) {
-        this.album.update();
-      }
-    },
     setView(name) {
       if (name) {
         this.refresh({'view': name});

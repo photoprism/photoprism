@@ -9,8 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/report"
-
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 
@@ -22,6 +20,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/report"
 )
 
 // StartCommand configures the command name, flags, and action.
@@ -61,6 +60,8 @@ func startAction(ctx *cli.Context) error {
 			{"detach-server", fmt.Sprintf("%t", conf.DetachServer())},
 			{"http-mode", conf.HttpMode()},
 			{"http-compression", conf.HttpCompression()},
+			{"http-cache-maxage", fmt.Sprintf("%d", conf.HttpCacheMaxAge())},
+			{"http-cache-public", fmt.Sprintf("%t", conf.HttpCachePublic())},
 			{"http-host", conf.HttpHost()},
 			{"http-port", fmt.Sprintf("%d", conf.HttpPort())},
 		}

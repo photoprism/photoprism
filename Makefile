@@ -52,6 +52,7 @@ endif
 # Declare "make" targets.
 all: dep build-js
 dep: dep-tensorflow dep-js
+biuld: build
 build: build-go
 pull: docker-pull
 test: test-js test-go
@@ -183,7 +184,7 @@ dep-list:
 dep-npm:
 	sudo npm install -g npm
 dep-js:
-	(cd frontend &&	npm ci --no-update-notifier --no-audit)
+	(cd frontend && npm ci --no-update-notifier --no-audit)
 dep-go:
 	go build -v ./...
 dep-upgrade:

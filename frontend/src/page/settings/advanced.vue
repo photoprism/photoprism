@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-settings-advanced">
     <v-form ref="form" lazy-validation
-            dense class="p-form-settings" accept-charset="UTF-8"
+            dense class="p-form-settings pb-1" accept-charset="UTF-8"
             @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-0">
@@ -269,7 +269,7 @@
                   color="secondary-dark"
                   :label="$gettext('Disable Darktable')"
                   :hint="$gettext('Don\'t use Darktable to convert RAW images.')"
-                  prepend-icon="no_photography"
+                  prepend-icon="raw_off"
                   persistent-hint
                   @change="onChange"
               >

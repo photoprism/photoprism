@@ -153,4 +153,16 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"ALTER TABLE files MODIFY IF EXISTS file_colors VARBINARY(18);", "ALTER TABLE files MODIFY IF EXISTS File_luminance VARBINARY(18);"},
 	},
+	{
+		ID:         "20230309-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"UPDATE auth_users SET auth_provider = 'local' WHERE id = 1;", "UPDATE auth_users SET auth_provider = 'none' WHERE id = -1;", "UPDATE auth_users SET auth_provider = 'token' WHERE id = -2;", "UPDATE auth_users SET auth_provider = 'default' WHERE auth_provider = '' OR auth_provider = 'password' OR auth_provider IS NULL;"},
+	},
+	{
+		ID:         "20230313-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"UPDATE auth_users SET user_role = 'contributor' WHERE user_role = 'uploader';", "UPDATE auth_sessions SET auth_provider = 'link' WHERE auth_provider = 'token';"},
+	},
 }

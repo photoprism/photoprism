@@ -60,6 +60,7 @@ type ClientConfig struct {
 	UploadNSFW       bool                `json:"uploadNSFW"`
 	Public           bool                `json:"public"`
 	AuthMode         string              `json:"authMode"`
+	UsersPath        string              `json:"usersPath"`
 	LoginUri         string              `json:"loginUri"`
 	RegisterUri      string              `json:"registerUri"`
 	PasswordLength   int                 `json:"passwordLength"`
@@ -278,6 +279,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		ReadOnly:         c.ReadOnly(),
 		Public:           c.Public(),
 		AuthMode:         c.AuthMode(),
+		UsersPath:        c.UsersPath(),
 		LoginUri:         c.LoginUri(),
 		RegisterUri:      c.RegisterUri(),
 		PasswordResetUri: c.PasswordResetUri(),
@@ -364,6 +366,7 @@ func (c *Config) ClientShare() ClientConfig {
 		UploadNSFW:       c.UploadNSFW(),
 		Public:           c.Public(),
 		AuthMode:         c.AuthMode(),
+		UsersPath:        "",
 		LoginUri:         c.LoginUri(),
 		RegisterUri:      c.RegisterUri(),
 		PasswordResetUri: c.PasswordResetUri(),
@@ -455,6 +458,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		UploadNSFW:       c.UploadNSFW(),
 		Public:           c.Public(),
 		AuthMode:         c.AuthMode(),
+		UsersPath:        c.UsersPath(),
 		LoginUri:         c.LoginUri(),
 		RegisterUri:      c.RegisterUri(),
 		PasswordLength:   c.PasswordLength(),

@@ -83,7 +83,7 @@ func TestAlbum_UpdateSlug(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := album.UpdateSlug("November / 2002", "november-2002"); err != nil {
+		if err := album.UpdateTitleAndLocation("November / 2002", "", "", "", "november-2002"); err != nil {
 			t.Fatal(err)
 		}
 
@@ -110,7 +110,7 @@ func TestAlbum_UpdateState(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := album.UpdateState("Alberta", "canada-alberta", "Alberta", "ca"); err != nil {
+		if err := album.UpdateTitleAndState("Alberta", "canada-alberta", "Alberta", "ca"); err != nil {
 			t.Fatal(err)
 		}
 

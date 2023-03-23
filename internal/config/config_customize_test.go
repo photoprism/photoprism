@@ -44,9 +44,10 @@ func TestConfig_WallpaperUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "", c.WallpaperUri())
-	c.options.WallpaperUri = "kashmir"
+	assert.Equal(t, "", c.Options().WallpaperUri)
+	c.SetWallpaperUri("kashmir")
 	assert.Equal(t, "/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
-	c.options.WallpaperUri = "https://cdn.photoprism.app/wallpaper/welcome.jpg"
+	c.SetWallpaperUri("https://cdn.photoprism.app/wallpaper/welcome.jpg")
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.Test = false
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
@@ -56,8 +57,16 @@ func TestConfig_WallpaperUri(t *testing.T) {
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.Sponsor = true
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
-	c.options.WallpaperUri = "kashmir"
+	c.SetWallpaperUri("kashmir")
 	assert.Equal(t, "/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
-	c.options.WallpaperUri = ""
+	c.SetWallpaperUri("kashmir")
+	c.options.CdnUrl = "https://bunny.net/cdn/"
+	assert.Equal(t, "https://bunny.net/cdn/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
+	assert.Equal(t, "kashmir", c.Options().WallpaperUri)
+	c.SetWallpaperUri("kashmir")
+	c.options.CdnUrl = ""
+	assert.Equal(t, "/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
+	c.SetWallpaperUri("")
 	assert.Equal(t, "", c.WallpaperUri())
+	assert.Equal(t, "", c.Options().WallpaperUri)
 }

@@ -10,9 +10,8 @@ import (
 const (
 	UserNameUsage     = "full `NAME` for display in the interface"
 	UserEmailUsage    = "unique `EMAIL` address of the user"
-	UserPasswordUsage = "`PASSWORD` for authentication"
-	UserRoleUsage     = "user account `ROLE`"
-	UserAttrUsage     = "custom user account `ATTRIBUTES`"
+	UserPasswordUsage = "`PASSWORD` for local authentication"
+	UserRoleUsage     = "user role `NAME` (leave blank for default)"
 	UserAdminUsage    = "make user super admin with full access"
 	UserNoLoginUsage  = "disable login on the web interface"
 	UserWebDAVUsage   = "allow to sync files via WebDAV"
@@ -52,10 +51,6 @@ var UserFlags = []cli.Flag{
 		Name:  "role, r",
 		Usage: UserRoleUsage,
 		Value: acl.RoleAdmin.String(),
-	},
-	cli.StringFlag{
-		Name:  "attr, a",
-		Usage: UserAttrUsage,
 	},
 	cli.BoolFlag{
 		Name:  "superadmin, s",

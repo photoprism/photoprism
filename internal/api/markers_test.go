@@ -6,11 +6,10 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/form"
-
+	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestUpdateMarker(t *testing.T) {

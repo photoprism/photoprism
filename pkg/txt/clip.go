@@ -6,6 +6,7 @@ import (
 
 const (
 	Ellipsis      = "…"
+	ClipCountry   = 2
 	ClipRole      = 32
 	ClipKeyword   = 40
 	ClipIP        = 48

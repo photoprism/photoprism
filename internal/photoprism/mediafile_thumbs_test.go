@@ -201,3 +201,40 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 		assert.NoError(t, m.CreateThumbnails(thumbsPath, false))
 	})
 }
+
+func TestMediaFile_ChangeOrientation(t *testing.T) {
+	t.Run("JPEG", func(t *testing.T) {
+		m, err := NewMediaFile("testdata/orientation.jpg")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		orig := m.Orientation()
+
+		if err = m.ChangeOrientation(8); err != nil {
+			t.Fatal(err)
+		}
+
+		if err = m.ChangeOrientation(orig); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("PNG", func(t *testing.T) {
+		m, err := NewMediaFile("testdata/orientation.png")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		orig := m.Orientation()
+
+		if err = m.ChangeOrientation(8); err != nil {
+			t.Fatal(err)
+		}
+
+		if err = m.ChangeOrientation(orig); err != nil {
+			t.Fatal(err)
+		}
+	})
+}

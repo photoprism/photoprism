@@ -1,10 +1,10 @@
 package report
 
 const (
-	Enabled  = "enabled"
-	Disabled = "disabled"
-	Yes      = "yes"
-	No       = "no"
+	Enabled  = "Enabled"
+	Disabled = ""
+	Yes      = "Yes"
+	No       = ""
 )
 
 // Bool returns t or f, depending on the value of b.

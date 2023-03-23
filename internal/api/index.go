@@ -53,6 +53,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		skipArchived := settings.Index.SkipArchived
 
 		indOpt := photoprism.NewIndexOptions(filepath.Clean(f.Path), f.Rescan, convert, true, false, skipArchived)
+		indOpt.SetUser(s.User())
 
 		if len(indOpt.Path) > 1 {
 			event.InfoMsg(i18n.MsgIndexingFiles, clean.Log(indOpt.Path))
@@ -76,13 +77,17 @@ func StartIndexing(router *gin.RouterGroup) {
 		// Update index?
 		if updateIndex {
 			event.Publish("index.updating", event.Data{
-				"step": "folders",
+				"uid":    indOpt.UID,
+				"action": indOpt.Action,
+				"step":   "folders",
 			})
 
 			RemoveFromFolderCache(entity.RootOriginals)
 
 			event.Publish("index.updating", event.Data{
-				"step": "purge",
+				"uid":    indOpt.UID,
+				"action": indOpt.Action,
+				"step":   "purge",
 			})
 
 			// Configure purge options.
@@ -107,7 +112,9 @@ func StartIndexing(router *gin.RouterGroup) {
 		// Update moments?
 		if forceUpdate {
 			event.Publish("index.updating", event.Data{
-				"step": "moments",
+				"uid":    indOpt.UID,
+				"action": indOpt.Action,
+				"step":   "moments",
 			})
 
 			moments := get.Moments()
@@ -122,7 +129,12 @@ func StartIndexing(router *gin.RouterGroup) {
 		msg := i18n.Msg(i18n.MsgIndexingCompletedIn, elapsed)
 
 		event.Success(msg)
-		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("index.completed", event.Data{
+			"uid":     indOpt.UID,
+			"action":  indOpt.Action,
+			"path":    path,
+			"seconds": elapsed,
+		})
 
 		UpdateClientConfig()
 

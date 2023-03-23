@@ -62,6 +62,7 @@ func Index() error {
 
 	convert := settings.Index.Convert && conf.SidecarWritable()
 	indOpt := photoprism.NewIndexOptions(entity.RootPath, false, convert, true, false, true)
+	indOpt.Action = photoprism.ActionAutoIndex
 
 	lastRun, lastFound := ind.LastRun()
 	found, indexed := ind.Start(indOpt)
@@ -87,7 +88,9 @@ func Index() error {
 	}
 
 	event.Publish("index.updating", event.Data{
-		"step": "moments",
+		"uid":    indOpt.UID,
+		"action": indOpt.Action,
+		"step":   "moments",
 	})
 
 	moments := get.Moments()
@@ -101,7 +104,15 @@ func Index() error {
 	msg := i18n.Msg(i18n.MsgIndexingCompletedIn, elapsed)
 
 	event.Success(msg)
-	event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+
+	eventData := event.Data{
+		"uid":     indOpt.UID,
+		"action":  indOpt.Action,
+		"path":    path,
+		"seconds": elapsed,
+	}
+
+	event.Publish("index.completed", eventData)
 
 	api.UpdateClientConfig()
 

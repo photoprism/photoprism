@@ -94,18 +94,13 @@ func CreateAlbum(router *gin.RouterGroup) {
 				AbortUnexpected(c)
 				return
 			}
-
-			event.SuccessMsg(i18n.MsgAlbumCreated)
 		} else {
 			// Exists, restore if necessary.
 			a = found
 			if !a.Deleted() {
-				event.InfoMsg(i18n.ErrAlreadyExists, a.Title())
 				c.JSON(http.StatusOK, a)
 				return
-			} else if err := a.Restore(); err == nil {
-				event.SuccessMsg(i18n.MsgRestored, a.Title())
-			} else {
+			} else if err := a.Restore(); err != nil {
 				// Report unexpected error.
 				log.Errorf("album: %s (restore)", err)
 				AbortUnexpected(c)
@@ -167,8 +162,6 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		event.SuccessMsg(i18n.MsgAlbumSaved)
-
 		// PublishAlbumEvent(EntityUpdated, uid, c)
 
 		SaveAlbumAsYaml(a)
@@ -220,8 +213,6 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		UpdateClientConfig()
 
 		SaveAlbumAsYaml(a)
-
-		event.SuccessMsg(i18n.MsgAlbumDeleted, clean.Log(a.AlbumTitle))
 
 		c.JSON(http.StatusOK, a)
 	})

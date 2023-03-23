@@ -9,7 +9,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
@@ -145,8 +144,6 @@ func AddService(router *gin.RouterGroup) {
 			return
 		}
 
-		event.SuccessMsg(i18n.MsgAccountCreated)
-
 		c.JSON(http.StatusOK, m)
 	})
 }
@@ -201,8 +198,6 @@ func UpdateService(router *gin.RouterGroup) {
 			return
 		}
 
-		event.SuccessMsg(i18n.MsgAccountSaved)
-
 		m, err = query.AccountByID(id)
 
 		if err != nil {
@@ -249,8 +244,6 @@ func DeleteService(router *gin.RouterGroup) {
 			Error(c, http.StatusInternalServerError, err, i18n.ErrDeleteFailed)
 			return
 		}
-
-		event.SuccessMsg(i18n.MsgAccountDeleted)
 
 		c.JSON(http.StatusOK, m)
 	})
