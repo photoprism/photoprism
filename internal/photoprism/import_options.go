@@ -1,21 +1,35 @@
 package photoprism
 
+import "github.com/photoprism/photoprism/internal/entity"
+
 // ImportOptions represents file import options.
 type ImportOptions struct {
+	UID                    string
+	Action                 string
 	Albums                 []string
 	Path                   string
 	Move                   bool
 	NonBlocking            bool
-	UserUID                string
 	DestFolder             string
 	RemoveDotFiles         bool
 	RemoveExistingFiles    bool
 	RemoveEmptyDirectories bool
 }
 
+// SetUser sets the user who performs the import operation.
+func (o *ImportOptions) SetUser(user *entity.User) *ImportOptions {
+	if o != nil && user != nil {
+		o.UID = user.UID()
+	}
+
+	return o
+}
+
 // ImportOptionsCopy returns import options for copying files to originals (read-only).
 func ImportOptionsCopy(importPath, destFolder string) ImportOptions {
 	result := ImportOptions{
+		UID:                    entity.Admin.UID(),
+		Action:                 ActionImport,
 		Path:                   importPath,
 		Move:                   false,
 		NonBlocking:            false,
@@ -31,6 +45,8 @@ func ImportOptionsCopy(importPath, destFolder string) ImportOptions {
 // ImportOptionsMove returns import options for moving files to originals (modifies import directory).
 func ImportOptionsMove(importPath, destFolder string) ImportOptions {
 	result := ImportOptions{
+		UID:                    entity.Admin.UID(),
+		Action:                 ActionImport,
 		Path:                   importPath,
 		Move:                   true,
 		NonBlocking:            false,
@@ -46,6 +62,8 @@ func ImportOptionsMove(importPath, destFolder string) ImportOptions {
 // ImportOptionsUpload returns options for importing user uploads.
 func ImportOptionsUpload(uploadPath, destFolder string) ImportOptions {
 	result := ImportOptions{
+		UID:                    entity.Admin.UID(),
+		Action:                 ActionUpload,
 		Path:                   uploadPath,
 		Move:                   true,
 		NonBlocking:            true,

@@ -6,4 +6,4 @@ import (
 	gc "github.com/patrickmn/go-cache"
 )
 
-var cache = gc.New(time.Hour*4, 10*time.Minute)
+var clientCache = gc.New(time.Hour*4, 10*time.Minute)

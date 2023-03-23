@@ -1,7 +1,7 @@
 <template>
   <div class="p-tab p-settings-general">
     <v-form ref="form" lazy-validation
-            dense class="p-form-settings" accept-charset="UTF-8"
+            dense class="p-form-settings pb-1" accept-charset="UTF-8"
             @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-2">
@@ -251,7 +251,7 @@
                   color="secondary-dark"
                   :label="$gettext('Originals')"
                   :hint="$gettext('Browse indexed files and folders in Library.')"
-                  prepend-icon="snippet_folder"
+                  prepend-icon="account_tree"
                   persistent-hint
                   @change="onChange"
               >
@@ -344,6 +344,63 @@
                   box class="input-animate"
                   @change="onChange"
               ></v-select>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+      </v-card>
+
+      <v-card v-if="settings.features.download" flat tile class="mt-0 px-1 application">
+        <v-card-title primary-title class="pb-0">
+          <h3 class="body-2 mb-0">
+            <translate>Download</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.download.originals"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-download-originals"
+                  color="secondary-dark"
+                  :label="$gettext('Originals')"
+                  :hint="$gettext('Download only original media files, without any automatically generated files.')"
+                  prepend-icon="camera"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.download.mediaRaw"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-download-raw"
+                  color="secondary-dark"
+                  :label="$gettext('RAW')"
+                  :hint="$gettext('Include RAW image files when downloading stacks and archives.')"
+                  prepend-icon="raw_on"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                  v-model="settings.download.mediaSidecar"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-download-sidecar"
+                  color="secondary-dark"
+                  :label="$gettext('Sidecar')"
+                  :hint="$gettext('Include sidecar files when downloading stacks and archives.')"
+                  prepend-icon="attach_file"
+                  persistent-hint
+                  @change="onChange"
+              >
+              </v-checkbox>
             </v-flex>
           </v-layout>
         </v-card-actions>

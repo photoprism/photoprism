@@ -43,6 +43,9 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Register common middleware.
 	router.Use(Recovery(), Security(conf), Logger())
 
+	// Create REST API router group.
+	APIv1 = router.Group(conf.BaseUri(config.ApiUri))
+
 	// Initialize package extensions.
 	Ext().Init(router, conf)
 

@@ -19,7 +19,7 @@ func (m *Session) Report(skipEmpty bool) (rows [][]string, cols []string) {
 	rows = make([][]string, 0, len(values))
 
 	for k, v := range values {
-		s := fmt.Sprintf("%v", v)
+		s := fmt.Sprintf("%#v", v)
 
 		// Skip empty values?
 		if !skipEmpty || s != "" {

@@ -176,6 +176,7 @@ export default {
       }
 
       this.model.update().then((m) => {
+        this.$notify.success(this.$gettext("Changes successfully saved"));
         this.categories = this.$config.albumCategories();
         this.$emit('close');
       });

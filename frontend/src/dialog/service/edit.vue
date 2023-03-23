@@ -396,6 +396,7 @@ export default {
 
       this.model.update().then(() => {
         this.loading = false;
+        this.$notify.success(this.$gettext("Changes successfully saved"));
         this.$emit('confirm');
       });
     },

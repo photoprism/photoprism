@@ -73,9 +73,7 @@
             <v-icon :right="!rtl" :left="rtl" dark>send</v-icon>
           </v-btn>
         </v-flex>
-
       </v-layout>
-
     </v-form>
 
     <p-about-footer></p-about-footer>

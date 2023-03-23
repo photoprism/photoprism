@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -13,11 +15,13 @@ import (
 	gc "github.com/patrickmn/go-cache"
 
 	"github.com/photoprism/photoprism/internal/api"
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Authentication cache with an expiration time of 5 minutes.
@@ -38,7 +42,7 @@ func GetAuthUser(key string) *entity.User {
 }
 
 // BasicAuth implements an HTTP request handler that adds basic authentication.
-func BasicAuth() gin.HandlerFunc {
+func BasicAuth(conf *config.Config) gin.HandlerFunc {
 	var validate = func(c *gin.Context) (name, password, key string, valid bool) {
 		name, password, key = GetCredentials(c)
 
@@ -105,6 +109,11 @@ func BasicAuth() gin.HandlerFunc {
 		} else if !user.CanUseWebDAV() {
 			// Sync disabled for this account.
 			message := "sync disabled"
+
+			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
+			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
+		} else if err = os.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath()), fs.ModeDir); err != nil {
+			message := "failed to create user upload path"
 
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
 			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)

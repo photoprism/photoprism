@@ -6,6 +6,7 @@ import "github.com/ulule/deepcopier"
 type Subject struct {
 	SubjName     string `json:"Name"`
 	SubjAlias    string `json:"Alias"`
+	SubjAbout    string `json:"About"`
 	SubjBio      string `json:"Bio"`
 	SubjNotes    string `json:"Notes"`
 	SubjFavorite bool   `json:"Favorite"`

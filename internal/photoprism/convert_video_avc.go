@@ -134,14 +134,10 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg.AvcEncoder) (result *exec.Cmd, useMutex bool, err error) {
 	fileExt := f.Extension()
 	fileName := f.FileName()
-	bitrate := c.AvcBitrate(f)
-	ffmpegBin := c.conf.FFmpegBin()
 
 	switch {
 	case fileName == "":
 		return nil, false, fmt.Errorf("convert: %s video filename is empty - possible bug", f.FileType())
-	case bitrate == "":
-		return nil, false, fmt.Errorf("convert: transcoding bitrate is empty - possible bug")
 	case !f.IsAnimated():
 		return nil, false, fmt.Errorf("convert: file type %s of %s cannot be transcoded", f.FileType(), clean.Log(f.BaseName()))
 	}
@@ -152,13 +148,13 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg
 	}
 
 	// Transcode all other formats with FFmpeg.
-	if ffmpegBin == "" {
-		return nil, false, fmt.Errorf("convert: ffmpeg must be installed to transcode %s", clean.Log(f.BaseName()))
-	} else if c.conf.DisableFFmpeg() {
-		return nil, false, fmt.Errorf("convert: ffmpeg must be enabled to transcode %s", clean.Log(f.BaseName()))
-	}
+	var opt ffmpeg.Options
 
-	return ffmpeg.AvcConvertCommand(fileName, avcName, ffmpegBin, c.AvcBitrate(f), encoder)
+	if opt, err = c.conf.FFmpegOptions(encoder, c.AvcBitrate(f)); err != nil {
+		return nil, false, fmt.Errorf("convert: failed to transcode %s (%s)", clean.Log(f.BaseName()), err)
+	} else {
+		return ffmpeg.AvcConvertCommand(fileName, avcName, opt)
+	}
 }
 
 // AvcBitrate returns the ideal AVC encoding bitrate in megabits per second.

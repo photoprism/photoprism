@@ -69,6 +69,7 @@ func Import() error {
 	event.InfoMsg(i18n.MsgCopyingFilesFrom, clean.Log(filepath.Base(path)))
 
 	var opt photoprism.ImportOptions
+	opt.Action = photoprism.ActionAutoImport
 
 	if conf.Settings().Import.Move {
 		opt = photoprism.ImportOptionsMove(path, conf.ImportDest())
@@ -93,8 +94,16 @@ func Import() error {
 	msg := i18n.Msg(i18n.MsgImportCompletedIn, elapsed)
 
 	event.Success(msg)
-	event.Publish("import.completed", event.Data{"path": path, "seconds": elapsed})
-	event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+
+	eventData := event.Data{
+		"uid":     opt.UID,
+		"action":  opt.Action,
+		"path":    path,
+		"seconds": elapsed,
+	}
+
+	event.Publish("import.completed", eventData)
+	event.Publish("index.completed", eventData)
 
 	api.UpdateClientConfig()
 

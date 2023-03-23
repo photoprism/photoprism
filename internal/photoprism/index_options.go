@@ -1,7 +1,11 @@
 package photoprism
 
+import "github.com/photoprism/photoprism/internal/entity"
+
 // IndexOptions represents file indexing options.
 type IndexOptions struct {
+	UID             string
+	Action          string
 	Path            string
 	Rescan          bool
 	Convert         bool
@@ -15,6 +19,8 @@ type IndexOptions struct {
 // NewIndexOptions returns new index options instance.
 func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchived bool) IndexOptions {
 	result := IndexOptions{
+		UID:             entity.Admin.UID(),
+		Action:          ActionIndex,
 		Path:            path,
 		Rescan:          rescan,
 		Convert:         convert,
@@ -31,6 +37,15 @@ func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchive
 // SkipUnchanged checks if unchanged media files should be skipped.
 func (o *IndexOptions) SkipUnchanged() bool {
 	return !o.Rescan
+}
+
+// SetUser sets the user who performs the index operation.
+func (o *IndexOptions) SetUser(user *entity.User) *IndexOptions {
+	if o != nil && user != nil {
+		o.UID = user.UID()
+	}
+
+	return o
 }
 
 // IndexOptionsAll returns new index options with all options set to true.

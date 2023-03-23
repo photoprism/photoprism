@@ -14,18 +14,18 @@ func TestUser(t *testing.T) {
 	assert.Equal(t, "passwd", form.Password)
 }
 
-func TestUser_Name(t *testing.T) {
+func TestUser_Username(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		form := &User{UserName: "", UserEmail: "test@test.com", Password: "passwd"}
-		assert.Equal(t, "", form.Name())
+		assert.Equal(t, "", form.Username())
 	})
 	t.Run("Valid", func(t *testing.T) {
 		form := &User{UserName: "foobar", UserEmail: "test@test.com", Password: "passwd"}
-		assert.Equal(t, "foobar", form.Name())
+		assert.Equal(t, "foobar", form.Username())
 	})
 	t.Run("Invalid", func(t *testing.T) {
 		form := &User{UserName: " Foo Bar4w45 !", UserEmail: "test@test.com", Password: "passwd"}
-		assert.Equal(t, "foobar4w45", form.Name())
+		assert.Equal(t, "foo bar4w45 !", form.Username())
 	})
 }
 

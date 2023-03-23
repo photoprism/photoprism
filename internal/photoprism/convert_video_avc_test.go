@@ -30,7 +30,7 @@ func TestConvert_ToAvc(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		avcFile, err := convert.ToAvc(mf, "", false, false)
+		avcFile, err := convert.ToAvc(mf, ffmpeg.SoftwareEncoder, false, false)
 
 		if err != nil {
 			t.Fatal(err)
@@ -149,7 +149,7 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		r, _, err := convert.AvcConvertCommand(mf, "avc1", "")
+		r, _, err := convert.AvcConvertCommand(mf, "avc1", ffmpeg.SoftwareEncoder)
 
 		if err != nil {
 			t.Fatal(err)
@@ -166,7 +166,7 @@ func TestConvert_AvcConvertCommand(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		r, useMutex, err := convert.AvcConvertCommand(mf, "avc1", "")
+		r, useMutex, err := convert.AvcConvertCommand(mf, "avc1", ffmpeg.SoftwareEncoder)
 
 		assert.False(t, useMutex)
 		assert.Error(t, err)

@@ -3,19 +3,18 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-02-21 12:35+0000\n"
+"PO-Revision-Date: 2023-03-13 21:26+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
-"frontend/hi/>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:494
+#: src/page/albums.vue:493
 msgid "%{n} albums found"
 msgstr "%{n} एल्बम मिले"
 
@@ -41,15 +40,15 @@ msgstr "%{n} लोग मिले"
 msgid "%{n} pictures found"
 msgstr "%{n} चित्र मिले"
 
-#: src/options/options.js:383
+#: src/options/options.js:387
 msgid "1 hour"
 msgstr "1 घंटा"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "12 hours"
 msgstr "12 घंटा"
 
-#: src/options/options.js:384
+#: src/options/options.js:388
 msgid "4 hours"
 msgstr "4 घंटा"
 
@@ -57,9 +56,10 @@ msgstr "4 घंटा"
 msgid "A click will copy it to your clipboard."
 msgstr "एक क्लिक इसे आपके क्लिपबोर्ड पर कॉपी कर देगा।"
 
-#: src/page/about/about.vue:4 src/page/about/about.vue:220
-#: src/component/navigation.vue:428 src/component/navigation.vue:27
-#: src/page/help.vue:43
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
+#: src/page/about/about.vue:204 src/page/settings/account.vue:313
+#: src/component/navigation.vue:460 src/component/navigation.vue:59
+#: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
 msgstr "के बारे में"
 
@@ -67,12 +67,24 @@ msgstr "के बारे में"
 msgid "Abyss"
 msgstr "रसातल"
 
-#: src/component/navigation.vue:94 src/component/navigation.vue:1965
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:138 src/page/settings.vue:84
-#: src/page/settings/general.vue:472
+#: src/model/user.js:165 src/page/settings.vue:84
+#: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "लेखा"
+
+#: src/component/admin/users/add.vue:86 src/dialog/service/add.vue:35
+msgid "Account created"
+msgstr "खाता बन गया"
+
+#: src/component/admin/users/remove.vue:24 src/dialog/service/remove.vue:24
+msgid "Account deleted"
+msgstr "खाता हटाया गया"
+
+#: src/page/admin.vue:33
+msgid "Accounts"
+msgstr "हिसाब किताब"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -94,7 +106,11 @@ msgstr "सक्रिय"
 msgid "Activation Code"
 msgstr "एक्टिवेशन कोड"
 
-#: src/dialog/service/add.vue:7
+#: src/component/admin/users/add.vue:22 src/page/admin/users.vue:45
+msgid "Add"
+msgstr "जोड़ना"
+
+#: src/component/admin/users/add.vue:8 src/dialog/service/add.vue:7
 msgid "Add Account"
 msgstr "खाता जोड़ो"
 
@@ -102,7 +118,7 @@ msgstr "खाता जोड़ो"
 msgid "Add Album"
 msgstr "एल्बम जोड़ें"
 
-#: src/page/settings/general.vue:231
+#: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
 msgstr "वेब अपलोड के माध्यम से अपनी लाइब्रेरी में फाइलें जोड़ें।"
 
@@ -120,31 +136,35 @@ msgstr "खोज परिणामों से चित्रों का �
 msgid "Add to album"
 msgstr "एल्बम में जोड़ें"
 
-#: src/dialog/photo/edit/files.vue:203 src/dialog/photo/edit/files.vue:200
+#: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:207
 msgid "Added"
 msgstr "जोड़ा गया"
+
+#: src/options/admin.js:6 src/options/admin.js:19
+msgid "Admin"
+msgstr "व्यवस्थापक"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
 msgstr "उन्नत"
 
-#: src/options/options.js:393
+#: src/options/options.js:397
 msgid "After 1 day"
 msgstr "1 दिन बाद"
 
-#: src/options/options.js:394
+#: src/options/options.js:398
 msgid "After 3 days"
 msgstr "3 दिन बाद"
 
-#: src/options/options.js:395
+#: src/options/options.js:399
 msgid "After 7 days"
 msgstr "7 दिन बाद"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After one month"
 msgstr "एक महिने बाद"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After one year"
 msgstr "एक साल बाद"
 
@@ -152,11 +172,11 @@ msgstr "एक साल बाद"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "खोज परिणामों से चित्रों का चयन करने के बाद, आप उन्हें संदर्भ मेनू का उपयोग करके किसी एल्बम में जोड़ सकते हैं।"
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After two months"
 msgstr "दो महीने के बाद"
 
-#: src/options/options.js:396
+#: src/options/options.js:400
 msgid "After two weeks"
 msgstr "दो हफ्ते बाद"
 
@@ -164,13 +184,17 @@ msgstr "दो हफ्ते बाद"
 msgid "Album"
 msgstr "एल्बम"
 
+#: src/page/albums.vue:544
+msgid "Album created"
+msgstr "एल्बम बनाया गया"
+
 #: src/dialog/photo/album.vue:67 src/dialog/photo/album.vue:77
 msgid "Album Name"
 msgstr "एल्बम का नाम"
 
-#: src/app/routes.js:162 src/component/album/toolbar.vue:52
+#: src/app/routes.js:175 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:151 src/component/navigation.vue:161
-#: src/component/navigation.vue:548 src/component/navigation.vue:4
+#: src/component/navigation.vue:556 src/component/navigation.vue:4
 #: src/component/navigation.vue:648
 msgid "Albums"
 msgstr "एल्बम"
@@ -179,7 +203,7 @@ msgstr "एल्बम"
 msgid "Albums deleted"
 msgstr "एल्बम हटाए गए"
 
-#: src/page/albums.vue:360
+#: src/page/albums.vue:359
 msgid "All %{n} albums loaded"
 msgstr "सभी %{n} एल्बम लोड किए गए"
 
@@ -196,7 +220,7 @@ msgid "All Cameras"
 msgstr "सभी कैमरे"
 
 #: src/component/photo/toolbar.vue:39 src/page/albums.vue:37
-#: src/page/albums.vue:147 src/page/albums.vue:604
+#: src/page/albums.vue:146 src/page/albums.vue:616
 msgid "All Categories"
 msgstr "सब वर्ग"
 
@@ -250,12 +274,12 @@ msgstr "एक त्रुटि हुई - क्या आप ऑफ़ल�
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:92 src/options/options.js:318
+#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
 msgid "Animated"
 msgstr "एनिमेटेड"
 
-#: src/page/settings/general.vue:581
+#: src/page/settings/general.vue:582
 msgid "Animation"
 msgstr "एनीमेशन"
 
@@ -276,9 +300,9 @@ msgstr "लागू"
 msgid "Approve"
 msgstr "मंजूर"
 
-#: src/app/routes.js:243 src/component/navigation.vue:138
+#: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
-#: src/page/settings/general.vue:340
+#: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "पुरालेख"
 
@@ -298,7 +322,7 @@ msgstr "क्या आप वाकई इन एल्बम को हटा
 msgid "Are you sure you want to delete these labels?"
 msgstr "क्या आप वाकई इन लेबल को हटाना चाहते हैं?"
 
-#: src/dialog/service/remove.vue:10
+#: src/component/admin/users/remove.vue:10 src/dialog/service/remove.vue:10
 msgid "Are you sure you want to delete this account?"
 msgstr "क्या आप वाकई इस खाते को हटाना चाहते हैं?"
 
@@ -310,7 +334,7 @@ msgstr "क्या आप वाकई इन चित्रों को स
 msgid "Are you sure you want to permanently delete this file?"
 msgstr "क्या आप वाकई इस फ़ाइल को स्थायी रूप से हटाना चाहते हैं?"
 
-#: src/dialog/confirm.vue:10
+#: src/component/admin/sessions/remove.vue:10 src/dialog/confirm.vue:10
 msgid "Are you sure?"
 msgstr "क्या आपको यकीन है?"
 
@@ -326,60 +350,69 @@ msgstr "चूंकि इससे हमें जनता को अधि�
 msgid "Aspect Ratio"
 msgstr "आस्पेक्ट अनुपात"
 
+#: src/component/admin/users/add.vue:214 src/component/admin/users/edit.vue:364
+#: src/page/admin/sessions.vue:69 src/page/admin/sessions.vue:31
+#: src/page/admin/users.vue:37
+msgid "Authentication"
+msgstr "प्रमाणीकरण"
+
 #: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 msgstr "स्वचालित रूप से अन्य फ़ाइल प्रकारों के लिए JPEG बनाएं ताकि उन्हें एक ब्राउज़र में प्रदर्शित किया जा सके।"
 
-#: src/page/settings/general.vue:165
+#: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "स्वचालित रूप से विशेष क्षणों, यात्राओं और स्थानों के एल्बम बनाता है।"
 
-#: src/page/about/about.vue:59
+#: src/component/admin/users/edit.vue:391
+msgid "Base Folder"
+msgstr "बेस फोल्डर"
+
+#: src/page/about/about.vue:62
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "सहायता अनुरोध सबमिट करने से पहले, कृपया अपनी समस्या के कारण का पता लगाने के लिए हमारी समस्या निवारण जाँच सूची का उपयोग करें।"
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:22
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:25
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "100% स्व-वित्त पोषित और स्वतंत्र होने के नाते, हम आपसे वादा कर सकते हैं कि हम आपका डेटा कभी नहीं बेचेंगे और हम अपने सॉफ़्टवेयर और सेवाओं के बारे में हमेशा पारदर्शी रहेंगे।"
 
-#: src/page/settings/account.vue:282 src/page/people/recognized.vue:434
-#: src/page/settings/account.vue:281
+#: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
 msgstr "जैव"
 
-#: src/page/settings/account.vue:67
+#: src/page/settings/account.vue:70 src/page/settings/account.vue:72
 msgid "Birth Date"
 msgstr "जन्म तिथि"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Black"
 msgstr "काली"
 
-#: src/options/options.js:431
+#: src/options/options.js:435
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "ब्लैकमैन: लैंक्ज़ोस संशोधन, कम बजने वाली कलाकृतियाँ"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Blue"
 msgstr "नीला"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Brown"
 msgstr "भूरा"
 
-#: src/page/settings/general.vue:187
+#: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "छवि वर्गीकरण लेबल ब्राउज़ करें और संपादित करें।"
 
-#: src/page/settings/general.vue:429
+#: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "लाइब्रेरी में अनुक्रमित फ़ाइलों और फ़ोल्डरों को ब्राउज़ करें।"
 
-#: src/page/about/about.vue:51
+#: src/page/about/about.vue:54
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "विशिष्ट उत्पाद सुविधाओं, सेवाओं और संबंधित संसाधनों के बारे में विस्तृत जानकारी के लिए नॉलेज बेस ब्राउज़ करें।"
 
-#: src/page/about/feedback.vue:8 src/options/options.js:425
+#: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
 msgstr "बग रिपोर्ट"
 
@@ -391,7 +424,7 @@ msgstr "व्यस्त, कृपया प्रतीक्षा कर�
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "हमारे द्वारा प्रदान किए जाने वाले सॉफ़्टवेयर और सेवाओं का उपयोग करके, आप हमारी सेवा की शर्तों, गोपनीयता नीति और आचार संहिता से सहमत होते हैं।"
 
-#: src/app/routes.js:175 src/component/navigation.vue:257
+#: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1016
 msgid "Calendar"
 msgstr "पंचांग"
@@ -410,7 +443,7 @@ msgid "Can't load more, limit reached"
 msgstr "अधिक लोड नहीं किया जा सकता, सीमा तक पहुंच गया"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:542 src/page/albums.vue:558 src/page/labels.vue:204
+#: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:294
@@ -418,15 +451,18 @@ msgstr "अधिक लोड नहीं किया जा सकता, �
 msgid "Can't select more items"
 msgstr "अधिक आइटम का चयन नहीं किया जा सकता"
 
-#: src/page/connect.vue:41 src/dialog/account/password.vue:36
-#: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
-#: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
-#: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
-#: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
-#: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
-#: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/page/connect.vue:38
-#: src/page/library/import.vue:34 src/page/library/index.vue:27
+#: src/component/admin/sessions/remove.vue:15
+#: src/component/admin/users/add.vue:21 src/component/admin/users/edit.vue:74
+#: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
+#: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
+#: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
+#: src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15
+#: src/dialog/photo/album.vue:18 src/dialog/photo/delete.vue:15
+#: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
+#: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
+#: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
+#: src/page/connect.vue:38 src/page/library/import.vue:34
+#: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "रद्द करना"
 
@@ -443,19 +479,20 @@ msgstr "पत्ते"
 msgid "Category"
 msgstr "वर्ग"
 
-#: src/page/settings/account.vue:253 src/page/settings/account.vue:252
+#: src/component/admin/users/edit.vue:182 src/page/settings/account.vue:254
 msgid "Change Avatar"
 msgstr "अवतार परिवर्तन"
 
-#: src/page/settings/account.vue:51 src/dialog/account/password.vue:7
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:7
+#: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "पासवर्ड बदलें"
 
-#: src/page/settings/general.vue:473
+#: src/page/settings/general.vue:474
 msgid "Change personal profile and security settings."
 msgstr "व्यक्तिगत प्रोफ़ाइल और सुरक्षा सेटिंग्स बदलें।"
 
-#: src/page/settings/general.vue:319
+#: src/page/settings/general.vue:320
 msgid "Change photo titles, locations, and other metadata."
 msgstr "फोटो शीर्षक, स्थान और अन्य मेटाडेटा बदलें।"
 
@@ -463,6 +500,10 @@ msgstr "फोटो शीर्षक, स्थान और अन्य म
 msgid "Change private flag"
 msgstr "निजी ध्वज बदलें"
 
+#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:162
+#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:110
+#: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
+#: src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
@@ -473,12 +514,13 @@ msgstr "परिवर्तन सफलतापूर्वक सहेज�
 msgid "Checked"
 msgstr "चेक किए गए"
 
-#: src/dialog/photo/edit/files.vue:189 src/dialog/photo/edit/files.vue:186
+#: src/dialog/photo/edit/files.vue:196 src/dialog/photo/edit/files.vue:193
 msgid "Chroma"
 msgstr "क्रोमा"
 
-#: src/component/photo-viewer.vue:71 src/dialog/photo/edit/details.vue:113
-#: src/dialog/share.vue:87 src/page/library/errors.vue:60
+#: src/page/admin/sessions.vue:113 src/component/photo-viewer.vue:71
+#: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
+#: src/page/library/errors.vue:60
 msgid "Close"
 msgstr "बंद करे"
 
@@ -490,7 +532,7 @@ msgstr "कोडेक"
 msgid "Color"
 msgstr "रंग"
 
-#: src/dialog/photo/edit/files.vue:177 src/dialog/photo/edit/files.vue:174
+#: src/dialog/photo/edit/files.vue:184 src/dialog/photo/edit/files.vue:181
 msgid "Color Profile"
 msgstr "रंग प्रोफ़ाइल"
 
@@ -498,7 +540,7 @@ msgstr "रंग प्रोफ़ाइल"
 msgid "Colors"
 msgstr "रंग की"
 
-#: src/page/about/about.vue:46
+#: src/page/about/about.vue:49
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "हमारे द्वारा प्रदान की जाने वाली समस्या निवारण जाँच सूची का उपयोग करके सामान्य समस्याओं का शीघ्र निदान और समाधान किया जा सकता है।"
 
@@ -518,8 +560,8 @@ msgstr "आत्मविश्वास"
 msgid "Connect"
 msgstr "जुडिये"
 
-#: src/page/settings/account.vue:57 src/dialog/webdav.vue:4
-#: src/page/settings/services.vue:48
+#: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
+#: src/page/settings/account.vue:62 src/page/settings/services.vue:48
 msgid "Connect via WebDAV"
 msgstr "WebDAV के माध्यम से कनेक्ट करें"
 
@@ -527,7 +569,7 @@ msgstr "WebDAV के माध्यम से कनेक्ट करें"
 msgid "Connected"
 msgstr "जुड़े हुए"
 
-#: src/page/settings/account.vue:113 src/page/settings/account.vue:90
+#: src/page/settings/account.vue:116 src/page/settings/account.vue:95
 msgid "Contact Details"
 msgstr "सम्पर्क करने का विवरण"
 
@@ -545,6 +587,10 @@ msgstr "इसमें %{n} चित्र हैं।"
 #: src/page/people/recognized.vue:87
 msgid "Contains one picture."
 msgstr "एक तस्वीर शामिल है।"
+
+#: src/options/admin.js:9 src/options/admin.js:31
+msgid "Contributor"
+msgstr "योगदान देने वाला"
 
 #: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
@@ -566,12 +612,12 @@ msgstr "कॉपीराइट"
 msgid "Couldn't find anything."
 msgstr "कुछ नहीं मिला।"
 
-#: src/page/settings/account.vue:727 src/component/photo/toolbar.vue:178
-#: src/dialog/photo/edit/details.vue:251 src/page/settings/account.vue:580
+#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:178
+#: src/dialog/photo/edit/details.vue:251 src/page/settings/account.vue:612
 msgid "Country"
 msgstr "देश"
 
-#: src/page/login.vue:19
+#: src/page/auth/login.vue:19
 msgid "Create Account"
 msgstr "खाता बनाएं"
 
@@ -579,7 +625,7 @@ msgstr "खाता बनाएं"
 msgid "Create album"
 msgstr "एल्बम बनाओ"
 
-#: src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:75 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "बनाया था"
 
@@ -587,19 +633,19 @@ msgstr "बनाया था"
 msgid "Creating thumbnails for"
 msgstr "के लिए थंबनेल बनाना"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "घन: मध्यम गुणवत्ता, अच्छा प्रदर्शन"
 
-#: src/dialog/account/password.vue:128
+#: src/dialog/account/password.vue:133
 msgid "Current Password"
 msgstr "वर्तमान पासवर्ड"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:422
+#: src/page/about/feedback.vue:5 src/options/options.js:426
 msgid "Customer Support"
 msgstr "ग्राहक सहेयता"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Cyan"
 msgstr "सियान"
 
@@ -607,12 +653,11 @@ msgstr "सियान"
 msgid "Cyano"
 msgstr "सायनो"
 
-#: src/options/options.js:386
+#: src/options/options.js:390
 msgid "Daily"
 msgstr "रोज"
 
-#: src/page/settings/account.vue:447 src/dialog/photo/edit/details.vue:117
-#: src/page/settings/account.vue:446
+#: src/page/settings/account.vue:478 src/dialog/photo/edit/details.vue:117
 msgid "Day"
 msgstr "दिन"
 
@@ -620,7 +665,9 @@ msgstr "दिन"
 msgid "Debug Logs"
 msgstr "दोषमार्जन लॉग"
 
-#: src/options/options.js:279 src/options/options.js:337
+#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
+#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
+#: src/options/options.js:283 src/options/options.js:341
 #: src/options/themes.js:448
 msgid "Default"
 msgstr "चूक"
@@ -629,13 +676,15 @@ msgstr "चूक"
 msgid "Default Folder"
 msgstr "डिफ़ॉल्ट फ़ोल्डर"
 
+#: src/component/admin/sessions/remove.vue:18
+#: src/component/admin/users/remove.vue:18
 #: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
 #: src/component/photo/clipboard.vue:272 src/dialog/album/delete.vue:18
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
 #: src/dialog/share.vue:228 src/page/library/errors.vue:88
-#: src/page/settings/general.vue:362
+#: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "हटाएं"
 
@@ -653,7 +702,7 @@ msgstr "विस्तृत निर्देश हमारे उपयो
 msgid "Details"
 msgstr "विवरण"
 
-#: src/dialog/photo/edit/files.vue:35
+#: src/dialog/photo/edit/files.vue:37
 msgid "Dimensions"
 msgstr "आयाम"
 
@@ -713,12 +762,13 @@ msgstr "वेक्टर ग्राफ़िक्स समर्थन अ
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "वीडियो ट्रांसकोडिंग और थंबनेल निष्कर्षण अक्षम करता है।"
 
-#: src/app/routes.js:419 src/app/routes.js:426 src/app/routes.js:433
-#: src/app/routes.js:440
+#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
+#: src/app/routes.js:453
 msgid "Discover"
 msgstr "डिस्कवर"
 
-#: src/page/settings/account.vue:193 src/page/settings/account.vue:192
+#: src/component/admin/users/add.vue:121 src/component/admin/users/edit.vue:99
+#: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "प्रदर्शित होने वाला नाम"
 
@@ -750,7 +800,7 @@ msgstr "RAW फ़ाइलों को कनवर्ट करने के 
 msgid "Don't use TensorFlow for image classification."
 msgstr "छवि वर्गीकरण लेबल ब्राउज़ करें और संपादित करें।"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Donations"
 msgstr "दान"
 
@@ -767,23 +817,27 @@ msgstr "किया हुआ |"
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:252
+#: src/page/settings/general.vue:138 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "डाउनलोड"
+
+#: src/page/settings/general.vue:648
+msgid "Download only original media files, without any automatically generated files."
+msgstr "बिना किसी स्वचालित रूप से जेनरेट की गई फ़ाइलों के केवल मूल मीडिया फ़ाइलें डाउनलोड करें।"
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
 msgstr "दूरस्थ फ़ाइलें डाउनलोड करें"
 
-#: src/page/settings/general.vue:253
+#: src/page/settings/general.vue:254
 msgid "Download single files and zip archives."
 msgstr "एकल फाइलें और ज़िप अभिलेखागार डाउनलोड करें।"
 
-#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:114
+#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:109
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
 #: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
-#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:69
+#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:77
 #: src/page/library/browse.vue:107
 msgid "Downloading…"
 msgstr "डाउनलोड कर रहा है …"
@@ -822,7 +876,7 @@ msgstr "ईमेल"
 
 #: src/component/album/clipboard.vue:86 src/component/album/toolbar.vue:82
 #: src/component/photo-viewer.vue:97 src/component/photo/clipboard.vue:111
-#: src/page/settings/general.vue:318
+#: src/page/settings/general.vue:319
 msgid "Edit"
 msgstr "संपादित करें"
 
@@ -830,7 +884,7 @@ msgstr "संपादित करें"
 msgid "Edit %{name}"
 msgstr "%{name} संपादित करें"
 
-#: src/dialog/service/edit.vue:146
+#: src/component/admin/users/edit.vue:58 src/dialog/service/edit.vue:146
 msgid "Edit Account"
 msgstr "खाता संपादित करें"
 
@@ -842,8 +896,8 @@ msgstr "फ़ोटो संपादित करें"
 msgid "Edited"
 msgstr "संपादित"
 
-#: src/page/settings/account.vue:221 src/page/settings/account.vue:616
-#: src/page/settings/account.vue:220
+#: src/component/admin/users/add.vue:146 src/component/admin/users/edit.vue:317
+#: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "ईमेल"
 
@@ -855,7 +909,7 @@ msgstr "वर्तमान में विकास के तहत नई 
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "रॉ कनवर्टर प्रीसेट सक्षम करता है। प्रदर्शन को कम कर सकता है।"
 
-#: src/app/routes.js:294 src/component/navigation.vue:395
+#: src/app/routes.js:307 src/component/navigation.vue:395
 msgid "Errors"
 msgstr "त्रुटियाँ"
 
@@ -867,11 +921,11 @@ msgstr "निर्देशांक के बिना चित्रों
 msgid "Estimates"
 msgstr "अनुमान"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "Every two days"
 msgstr "हेर दो दिनों"
 
-#: src/page/settings/general.vue:209
+#: src/page/settings/general.vue:210
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "खोज परिणामों, साझा एल्बम, लेबल और स्थानों से निजी के रूप में चिह्नित सामग्री को बाहर निकालें।"
 
@@ -891,7 +945,8 @@ msgstr "खोज का विस्तार करें"
 msgid "Experimental Features"
 msgstr "प्रायोगिक विशेषताएं"
 
-#: src/dialog/service/edit.vue:249 src/dialog/share.vue:64
+#: src/page/admin/sessions.vue:87 src/dialog/service/edit.vue:249
+#: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "समय-सीमा समाप्त"
 
@@ -915,7 +970,7 @@ msgstr "चेहरे के"
 msgid "Failed copying to clipboard"
 msgstr "क्लिपबोर्ड पर प्रतिलिपि बनाना विफल रहा"
 
-#: src/dialog/share.vue:93
+#: src/dialog/share.vue:97
 msgid "Failed removing link"
 msgstr "लिंक हटाने में विफल"
 
@@ -923,11 +978,11 @@ msgstr "लिंक हटाने में विफल"
 msgid "Failed updating link"
 msgstr "लिंक अपडेट करने में विफल"
 
-#: src/page/settings/account.vue:166 src/page/settings/account.vue:165
+#: src/component/admin/users/edit.vue:235 src/page/settings/account.vue:166
 msgid "Family Name"
 msgstr "परिवार का नाम"
 
-#: src/options/options.js:264
+#: src/options/options.js:268
 msgid "Fast"
 msgstr "तेज"
 
@@ -935,16 +990,16 @@ msgstr "तेज"
 msgid "Favorite"
 msgstr "पसंदीदा"
 
-#: src/app/routes.js:208 src/component/navigation.vue:231
+#: src/app/routes.js:221 src/component/navigation.vue:231
 #: src/component/navigation.vue:926 src/page/albums.vue:86
 msgid "Favorites"
 msgstr "पसंदीदा"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:424
+#: src/page/about/feedback.vue:7 src/options/options.js:428
 msgid "Feature Request"
 msgstr "महत्वपूर्ण लेख मांगना"
 
-#: src/page/settings/account.vue:818 src/page/settings/account.vue:671
+#: src/page/settings/account.vue:849 src/page/settings/account.vue:703
 msgid "Feed"
 msgstr "फ़ीड"
 
@@ -956,15 +1011,15 @@ msgstr "प्रतिपुष्टि"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "यदि आपके कोई प्रश्न हैं या सहायता चाहिए तो कृपया hello@photoprism.app पर हमसे संपर्क करें।"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "Female"
 msgstr "मादा"
 
-#: src/model/file.js:296
+#: src/model/file.js:295
 msgid "File"
 msgstr "फ़ाइल"
 
-#: src/app/routes.js:281
+#: src/app/routes.js:294
 msgid "File Browser"
 msgstr "फ़ाइल ब्राउज़र"
 
@@ -986,7 +1041,7 @@ msgstr "फ़ाइल का साइज़"
 msgid "Filename"
 msgstr "फ़ाइल का नाम"
 
-#: src/component/navigation.vue:566 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:574 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "फ़ाइलें"
@@ -1013,12 +1068,12 @@ msgstr "फ़ोल्डर में %{n} फाइलें हैं"
 msgid "Folder is empty"
 msgstr "फ़ोल्डर खाली है"
 
-#: src/app/routes.js:188 src/component/navigation.vue:332
+#: src/app/routes.js:201 src/component/navigation.vue:332
 #: src/component/navigation.vue:1281
 msgid "Folders"
 msgstr "फ़ोल्डर"
 
-#: src/page/login.vue:29
+#: src/page/auth/login.vue:29
 msgid "Forgot password?"
 msgstr "पासवर्ड भूल गए?"
 
@@ -1042,7 +1097,7 @@ msgstr "पूर्ण स्क्रीन"
 msgid "Gemstone"
 msgstr "मणि पत्थर"
 
-#: src/page/settings/account.vue:81 src/page/settings/account.vue:80
+#: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "लिंग"
 
@@ -1050,11 +1105,11 @@ msgstr "लिंग"
 msgid "General"
 msgstr "सामान्य"
 
-#: src/page/about/about.vue:55
+#: src/page/about/about.vue:58
 msgid "Getting Support"
 msgstr "समर्थन प्राप्त करना"
 
-#: src/page/settings/account.vue:140 src/page/settings/account.vue:139
+#: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "प्रदत्त नाम"
 
@@ -1062,7 +1117,7 @@ msgstr "प्रदत्त नाम"
 msgid "Global Options"
 msgstr "वैश्विक विकल्प"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Gold"
 msgstr "सोना"
 
@@ -1070,13 +1125,17 @@ msgstr "सोना"
 msgid "Grayscale"
 msgstr "धूसर"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Green"
 msgstr "हरा"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Grey"
 msgstr "धूसर"
+
+#: src/options/admin.js:10 src/options/admin.js:35
+msgid "Guest"
+msgstr "अतिथि"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Hash"
@@ -1086,7 +1145,7 @@ msgstr "हैश"
 msgid "Help"
 msgstr "मदद"
 
-#: src/app/routes.js:77
+#: src/app/routes.js:78
 msgid "Help & Support"
 msgstr "मदद समर्थन"
 
@@ -1094,7 +1153,7 @@ msgstr "मदद समर्थन"
 msgid "Hidden"
 msgstr "छिपा हुआ"
 
-#: src/app/routes.js:287
+#: src/app/routes.js:300
 msgid "Hidden Files"
 msgstr "छिपी हुई फाइलें"
 
@@ -1102,11 +1161,11 @@ msgstr "छिपी हुई फाइलें"
 msgid "Hide"
 msgstr "छिपाना"
 
-#: src/page/settings/general.vue:341
+#: src/page/settings/general.vue:342
 msgid "Hide photos that have been moved to archive."
 msgstr "उन तस्वीरों को छिपाएं जिन्हें संग्रह में स्थानांतरित किया गया है।"
 
-#: src/options/options.js:341
+#: src/options/options.js:345
 msgid "High"
 msgstr "उच्च"
 
@@ -1118,7 +1177,7 @@ msgstr "उच्च गतिशील रेंज (एचडीआर)"
 msgid "How can we help?"
 msgstr "हम आपकी सहायता किस तरह से कर सकते है?"
 
-#: src/page/about/about.vue:60
+#: src/page/about/about.vue:63
 msgid "If this doesn't help, or you have other questions:"
 msgstr "अगर यह मदद नहीं करता है, या आपके पास अन्य प्रश्न हैं:"
 
@@ -1126,7 +1185,7 @@ msgstr "अगर यह मदद नहीं करता है, या आ�
 msgid "image"
 msgstr "छवि"
 
-#: src/model/file.js:218 src/options/options.js:310
+#: src/model/file.js:217 src/options/options.js:314
 msgid "Image"
 msgstr "छवि"
 
@@ -1135,7 +1194,7 @@ msgid "Image Quality"
 msgstr "छवि के गुणवत्ता"
 
 #: src/page/library.vue:45 src/page/library/import.vue:43
-#: src/page/settings/general.vue:274
+#: src/page/settings/general.vue:275
 msgid "Import"
 msgstr "आयात"
 
@@ -1147,7 +1206,7 @@ msgstr "आयात विफल रहा"
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "आयातित फ़ाइलों को दिनांक के अनुसार क्रमबद्ध किया जाएगा और डुप्लिकेट से बचने के लिए एक अनूठा नाम दिया जाएगा।"
 
-#: src/page/settings/general.vue:275
+#: src/page/settings/general.vue:276
 msgid "Imported files will be sorted by date and given a unique name."
 msgstr "आयातित फ़ाइलों को तिथि के अनुसार हल किया जाएगा और एक अनूठा नाम दिया जाएगा।"
 
@@ -1159,12 +1218,12 @@ msgstr "%{name} आयात कर रहा है…"
 msgid "Importing files to originals…"
 msgstr "मूल करने के लिए फ़ाइलें आयात कर रहा है …"
 
-#: src/dialog/photo/edit/files.vue:206 src/dialog/photo/edit/files.vue:215
-#: src/dialog/photo/edit/files.vue:203 src/dialog/photo/edit/files.vue:212
+#: src/dialog/photo/edit/files.vue:213 src/dialog/photo/edit/files.vue:222
+#: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "में"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:72
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "इसके अलावा, प्रायोजकों को ईमेल के माध्यम से प्रत्यक्ष तकनीकी सहायता प्राप्त होती है।"
 
@@ -1176,12 +1235,20 @@ msgstr "इसके अलावा, प्रायोजकों को ई�
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "यदि आपके द्वारा अपेक्षित चित्र गायब हैं, तो कृपया अपनी लाइब्रेरी को फिर से स्कैन करें और अनुक्रमण पूरा होने तक प्रतीक्षा करें।"
 
-#: src/component/navigation.vue:572 src/page/library.vue:35
+#: src/page/settings/general.vue:669
+msgid "Include RAW image files when downloading stacks and archives."
+msgstr "ढेर और संग्रह डाउनलोड करते समय RAW छवि फ़ाइलें शामिल करें।"
+
+#: src/page/settings/general.vue:690
+msgid "Include sidecar files when downloading stacks and archives."
+msgstr "ढेर और संग्रह डाउनलोड करते समय साइडकार फ़ाइलें शामिल करें।"
+
+#: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "सूची"
 
-#: src/page/settings/general.vue:407
+#: src/page/settings/general.vue:408
 msgid "Index and import files through the user interface."
 msgstr "उपयोगकर्ता इंटरफ़ेस के माध्यम से फ़ाइलों को अनुक्रमित और आयात करें।"
 
@@ -1205,20 +1272,24 @@ msgstr "इंस्टेंस आईडी"
 msgid "Interval"
 msgstr "मध्यान्तर"
 
-#: src/page/connect.vue:14 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:224
-#: src/page/settings/account.vue:281 src/page/settings/account.vue:565
-#: src/page/settings/account.vue:591 src/page/settings/account.vue:619
-#: src/page/settings/account.vue:647 src/page/settings/account.vue:711
-#: src/page/settings/account.vue:738 src/page/settings/account.vue:765
-#: src/page/settings/account.vue:793 src/page/settings/account.vue:821
-#: src/page/connect.vue:11 src/page/settings/account.vue:90
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:142
-#: src/page/settings/account.vue:168 src/page/settings/account.vue:223
-#: src/page/settings/account.vue:280 src/page/settings/account.vue:564
-#: src/page/settings/account.vue:618 src/page/settings/account.vue:646
-#: src/page/settings/account.vue:674
+#: src/component/admin/users/add.vue:124 src/component/admin/users/add.vue:149
+#: src/component/admin/users/edit.vue:127
+#: src/component/admin/users/edit.vue:154
+#: src/component/admin/users/edit.vue:211
+#: src/component/admin/users/edit.vue:238
+#: src/component/admin/users/edit.vue:264
+#: src/component/admin/users/edit.vue:292
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/connect.vue:11 src/page/settings/account.vue:623
+#: src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "अमान्य"
 
@@ -1238,11 +1309,7 @@ msgstr "अमान्य फ़ोटो चयनित"
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "यह आपका निर्णय है कि आप अतिरिक्त लाभों का आनंद लेने के लिए साइन अप करना चाहते हैं या नहीं।"
 
-#: src/page/about/about.vue:16
-msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-msgstr "यह आपके रास्ते में आए बिना स्वचालित रूप से चित्रों को टैग करने और खोजने के लिए नवीनतम तकनीकों का उपयोग करता है।"
-
-#: src/model/rest.js:167
+#: src/model/rest.js:181
 msgid "Item"
 msgstr "मद"
 
@@ -1262,7 +1329,7 @@ msgstr "JPEG और थंबनेल स्वचालित रूप से
 msgid "Keywords"
 msgstr "कीवर्ड"
 
-#: src/page/about/about.vue:50
+#: src/page/about/about.vue:53
 msgid "Knowledge Base"
 msgstr "ज्ञानधार"
 
@@ -1270,10 +1337,10 @@ msgstr "ज्ञानधार"
 msgid "Label"
 msgstr "लेबल"
 
-#: src/app/routes.js:300 src/component/navigation.vue:319
+#: src/app/routes.js:313 src/component/navigation.vue:319
 #: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
-#: src/page/settings/general.vue:186
+#: src/page/settings/general.vue:187
 msgid "Labels"
 msgstr "लेबल"
 
@@ -1281,13 +1348,21 @@ msgstr "लेबल"
 msgid "Labels deleted"
 msgstr "लेबल हटा दिए गए"
 
-#: src/options/options.js:432
+#: src/options/options.js:436
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "लैंक्ज़ोस: विस्तार संरक्षण, न्यूनतम कलाकृतियाँ"
 
-#: src/page/settings/general.vue:93
+#: src/page/settings/general.vue:94
 msgid "Language"
 msgstr "भाषा"
+
+#: src/page/admin/sessions.vue:81 src/page/admin/sessions.vue:33
+msgid "Last Active"
+msgstr "अंतिम सक्रिय"
+
+#: src/page/admin/users.vue:45
+msgid "Last Login"
+msgstr "आखरी लॉगइन"
 
 #: src/page/settings/services.vue:30
 msgid "Last Sync"
@@ -1301,14 +1376,18 @@ msgstr "अक्षांश"
 msgid "Lavender"
 msgstr "लैवेंडर"
 
+#: src/options/admin.js:47 src/options/admin.js:65
+msgid "LDAP/AD"
+msgstr "एलडीएपी/एडी"
+
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:28
-#: src/page/about/about.vue:52 src/page/about/about.vue:161
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
+#: src/page/about/about.vue:55 src/page/about/about.vue:163
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "और अधिक जानें"
 
-#: src/component/navigation.vue:593
+#: src/component/navigation.vue:601
 msgid "Legal Information"
 msgstr "कानूनी जानकारी"
 
@@ -1316,10 +1395,10 @@ msgstr "कानूनी जानकारी"
 msgid "Lens"
 msgstr "लेंस"
 
-#: src/app/routes.js:336 src/app/routes.js:343 src/app/routes.js:350
+#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
 #: src/component/navigation.vue:4 src/component/navigation.vue:1373
-#: src/page/settings.vue:48 src/page/settings/general.vue:406
+#: src/page/settings.vue:48 src/page/settings/general.vue:407
 msgid "Library"
 msgstr "पुस्तकालय"
 
@@ -1333,7 +1412,7 @@ msgstr "लाइसेंस"
 msgid "Like"
 msgstr "पसंद"
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Lime"
 msgstr "चूना"
 
@@ -1341,11 +1420,11 @@ msgstr "चूना"
 msgid "Limit reached, showing first %{n} files"
 msgstr "पहले %{n} फ़ाइलों को दिखाते हुए, सीमा समाप्त हो गई"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "रैखिक: बहुत चिकना, सर्वश्रेष्ठ प्रदर्शन"
 
-#: src/model/link.js:115
+#: src/options/admin.js:48 src/options/admin.js:49 src/model/link.js:119
 msgid "Link"
 msgstr "संपर्क"
 
@@ -1353,15 +1432,19 @@ msgstr "संपर्क"
 msgid "List"
 msgstr "सूची"
 
-#: src/app/routes.js:215 src/component/photo/cards.vue:293
+#: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:322
+#: src/options/options.js:326
 msgid "Live"
 msgstr "लाइव"
 
 #: src/component/navigation.vue:204
 msgid "Live Photos"
 msgstr "लाइव तस्वीरें"
+
+#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:61
+msgid "Local"
+msgstr "स्थानीय"
 
 #: src/dialog/photo/edit/details.vue:194 src/options/options.js:17
 msgid "Local Time"
@@ -1371,9 +1454,9 @@ msgstr "स्थानीय समय"
 msgid "location"
 msgstr "स्थान"
 
-#: src/page/settings/account.vue:708 src/component/photo/cards.vue:529
+#: src/page/settings/account.vue:739 src/component/photo/cards.vue:529
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
-#: src/page/albums.vue:88 src/page/settings/account.vue:561
+#: src/page/albums.vue:88 src/page/settings/account.vue:593
 msgid "Location"
 msgstr "स्थान"
 
@@ -1381,18 +1464,18 @@ msgstr "स्थान"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "जब भी PhotoPrism टूटी हुई फ़ाइलों में आता है, या अन्य संभावित मुद्दे हैं, तो लॉग संदेश यहां दिखाई देते हैं।"
 
-#: src/component/navigation.vue:466 src/component/navigation.vue:1743
-#: src/component/navigation.vue:2017
+#: src/component/navigation.vue:474 src/component/navigation.vue:1774
+#: src/component/navigation.vue:2048
 msgid "Login"
 msgstr "लॉग इन करें"
 
-#: src/component/navigation.vue:510 src/component/navigation.vue:1854
-#: src/component/navigation.vue:1885 src/component/navigation.vue:1936
+#: src/component/navigation.vue:518 src/component/navigation.vue:1885
+#: src/component/navigation.vue:1916 src/component/navigation.vue:1967
 msgid "Logout"
 msgstr "लॉग आउट"
 
-#: src/component/navigation.vue:578 src/page/library.vue:58
-#: src/page/settings/general.vue:450
+#: src/component/navigation.vue:586 src/page/library.vue:58
+#: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "लॉग्स"
 
@@ -1400,23 +1483,23 @@ msgstr "लॉग्स"
 msgid "Longitude"
 msgstr "देशान्तर"
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "Low"
 msgstr "कम"
 
-#: src/options/options.js:283
+#: src/options/options.js:287
 msgid "Low Resolution"
 msgstr "कम दृश्यता"
 
-#: src/options/options.js:404
+#: src/options/options.js:408
 msgid "Magenta"
 msgstr "मैजेंटा"
 
-#: src/dialog/photo/edit/files.vue:183 src/dialog/photo/edit/files.vue:180
+#: src/dialog/photo/edit/files.vue:190 src/dialog/photo/edit/files.vue:187
 msgid "Main Color"
 msgstr "मुखय रंग"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Male"
 msgstr "पुरुष"
 
@@ -1432,7 +1515,7 @@ msgstr "गाइड"
 msgid "Manual Upload"
 msgstr "मैनुअल अपलोड"
 
-#: src/page/settings/general.vue:558
+#: src/page/settings/general.vue:559
 msgid "Maps"
 msgstr "एमएपीएस"
 
@@ -1440,7 +1523,7 @@ msgstr "एमएपीएस"
 msgid "Marker"
 msgstr "निशान"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Medium"
 msgstr "मध्यम"
 
@@ -1456,12 +1539,12 @@ msgstr "मैसेज बेजा गया"
 msgid "Minimize"
 msgstr "छोटा करना"
 
-#: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/files.vue:192
+#: src/dialog/photo/edit/files.vue:202 src/dialog/photo/edit/files.vue:199
 msgid "Missing"
 msgstr "लापता"
 
-#: src/app/routes.js:149 src/component/navigation.vue:244
-#: src/component/navigation.vue:971 src/page/settings/general.vue:164
+#: src/app/routes.js:162 src/component/navigation.vue:244
+#: src/component/navigation.vue:971 src/page/settings/general.vue:165
 msgid "Moments"
 msgstr "लम्हें"
 
@@ -1469,8 +1552,8 @@ msgstr "लम्हें"
 msgid "Monochrome"
 msgstr "एक रंग का"
 
-#: src/page/settings/account.vue:470 src/component/photo/toolbar.vue:300
-#: src/dialog/photo/edit/details.vue:143 src/page/settings/account.vue:469
+#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:300
+#: src/dialog/photo/edit/details.vue:143
 msgid "Month"
 msgstr "महीना"
 
@@ -1478,7 +1561,7 @@ msgstr "महीना"
 msgid "More than %{n} pictures found"
 msgstr "%{n} से अधिक चित्र मिले"
 
-#: src/page/albums.vue:497
+#: src/page/albums.vue:496
 msgid "More than 20 albums found"
 msgstr "20 से अधिक एल्बम मिले"
 
@@ -1503,20 +1586,20 @@ msgstr "सबसे अधिक प्रासंगिक"
 msgid "Move Files"
 msgstr "फ़ाइलें ले जाएँ"
 
-#: src/dialog/account/password.vue:156
+#: src/dialog/account/password.vue:162
 msgid "Must have at least %{n} characters."
 msgstr "कम से कम %{n} अक्षर होने चाहिए।"
 
 #: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:34
+#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:36
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
 #: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
 #: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
 #: src/page/about/feedback.vue:171 src/page/albums.vue:87
-#: src/page/labels.vue:339 src/page/login.vue:89 src/page/people/new.vue:52
-#: src/page/people/new.vue:299 src/page/people/recognized.vue:396
-#: src/page/settings/services.vue:26
+#: src/page/auth/login.vue:89 src/page/labels.vue:339
+#: src/page/people/new.vue:52 src/page/people/new.vue:297
+#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "नाम"
 
@@ -1531,7 +1614,8 @@ msgstr "नाम बहुत लंबा"
 msgid "Neon"
 msgstr "नीयन"
 
-#: src/options/options.js:382 src/options/options.js:392
+#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
+#: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "कभी नहीँ"
@@ -1540,12 +1624,12 @@ msgstr "कभी नहीँ"
 msgid "New"
 msgstr "नई"
 
-#: src/dialog/account/password.vue:153
+#: src/dialog/account/password.vue:159
 msgid "New Password"
 msgstr "नया पासवर्ड"
 
 #: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:50
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:90
+#: src/dialog/album/edit.vue:21 src/page/albums.vue:89
 msgid "Newest First"
 msgstr "नवीनतम पहले"
 
@@ -1556,7 +1640,7 @@ msgstr "नवीनतम पहले"
 msgid "No"
 msgstr "नहीं"
 
-#: src/page/albums.vue:54 src/page/albums.vue:490
+#: src/page/albums.vue:54 src/page/albums.vue:489
 msgid "No albums found"
 msgstr "कोई एल्बम नहीं मिला"
 
@@ -1615,11 +1699,12 @@ msgstr "इस कीवर्ड से कोई चेतावनी या 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "गैर-फोटोग्राफिक और निम्न-गुणवत्ता वाली छवियों को खोज परिणामों में प्रदर्शित होने से पहले समीक्षा की आवश्यकता होती है।"
 
-#: src/options/options.js:260 src/options/options.js:349
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
+#: src/options/options.js:353
 msgid "None"
 msgstr "कोई नहीं"
 
-#: src/model/thumb.js:70
+#: src/model/thumb.js:74
 msgid "Not Found"
 msgstr "नहीं मिला"
 
@@ -1643,12 +1728,16 @@ msgstr "नोट्स"
 msgid "Nothing to see here yet."
 msgstr "यहां देखने के लिए अभी कुछ भी नहीं है।"
 
-#: src/component/navigation.vue:481 src/component/navigation.vue:1788
+#: src/page/admin/sessions.vue:44 src/page/admin/users.vue:42
+msgid "Nothing was found."
+msgstr "कुछ न मिला।"
+
+#: src/component/navigation.vue:489 src/component/navigation.vue:1819
 msgid "Offline"
 msgstr "ऑफलाइन"
 
 #: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:51
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:91
+#: src/dialog/album/edit.vue:22 src/page/albums.vue:90
 msgid "Oldest First"
 msgstr "सबसे पुराना पहले"
 
@@ -1656,11 +1745,11 @@ msgstr "सबसे पुराना पहले"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "विंडोज़ पर, कनेक्शन संवाद में निम्न संसाधन दर्ज करें:"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "Once a week"
 msgstr "सप्ताह मेँ एक बार"
 
-#: src/page/albums.vue:492
+#: src/page/albums.vue:491
 msgid "One album found"
 msgstr "एक एल्बम मिला"
 
@@ -1693,15 +1782,15 @@ msgstr "एक तस्वीर मिली"
 msgid "Onyx"
 msgstr "गोमेद"
 
-#: src/page/about/about.vue:66
+#: src/page/about/about.vue:69
 msgid "or ask in our Community Chat"
 msgstr "या हमारे समुदाय चैट में पूछें"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Orange"
 msgstr "संतरा"
 
-#: src/page/settings/account.vue:588
+#: src/page/settings/account.vue:619
 msgid "Organization"
 msgstr "संगठन"
 
@@ -1718,25 +1807,29 @@ msgstr "मूल फ़ाइल नाम संग्रहीत और अ�
 msgid "Original Name"
 msgstr "मूल नाम"
 
-#: src/component/navigation.vue:377 src/dialog/service/edit.vue:107
-#: src/model/file.js:194 src/page/library/browse.vue:6
-#: src/page/settings/general.vue:428
+#: src/component/navigation.vue:377 src/dialog/service/edit.vue:108
+#: src/model/file.js:195 src/page/library/browse.vue:6
+#: src/page/settings/general.vue:429 src/page/settings/general.vue:647
 msgid "Originals"
 msgstr "मूल"
 
-#: src/options/options.js:427 src/options/options.js:440
+#: src/options/options.js:431 src/options/options.js:444
 msgid "Other"
 msgstr "अन्य"
+
+#: src/page/about/about.vue:19
+msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+msgstr "हमारा मिशन आपके चित्रों को व्यवस्थित और सुलभ रखने के लिए सबसे अधिक उपयोगकर्ता- और गोपनीयता के अनुकूल समाधान प्रदान करना है।"
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "हमारी टीम आवश्यक समर्थन प्रयास, सर्वर और लाइसेंसिंग लागत के आधार पर निरंतर आधार पर इसका निर्णय लेती है, और क्या सुविधाओं की आम तौर पर सभी को आवश्यकता होती है या मुख्य रूप से संगठनों और उन्नत उपयोगकर्ताओं द्वारा अनुरोध किया जाता है।"
 
-#: src/page/about/about.vue:45
+#: src/page/about/about.vue:48
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "हमारी उपयोगकर्ता मार्गदर्शिका में कई उन्नत विषय भी शामिल हैं, जैसे कि Google फ़ोटो से माइग्रेट करना और थंबनेल गुणवत्ता सेटिंग।"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Outdoor"
 msgstr "घर के बाहर"
 
@@ -1748,19 +1841,20 @@ msgstr "चित्रमाला"
 msgid "Panoramas"
 msgstr "पैनोरामा"
 
-#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/login.vue:118
+#: src/component/admin/users/add.vue:169 src/dialog/service/add.vue:126
+#: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
+#: src/page/auth/login.vue:118
 msgid "Password"
 msgstr "कुंजिका"
 
-#: src/dialog/account/password.vue:31
+#: src/dialog/account/password.vue:47
 msgid "Password changed"
 msgstr "पासवर्ड बदला गया"
 
-#: src/app/routes.js:306 src/app/routes.js:330 src/component/navigation.vue:218
-#: src/component/navigation.vue:554 src/component/navigation.vue:881
+#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
+#: src/component/navigation.vue:562 src/component/navigation.vue:881
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:142
+#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
 msgstr "लोग"
 
@@ -1772,15 +1866,15 @@ msgstr "जिन लोगों के साथ आप लिंक साझ
 msgid "Permanently deleted"
 msgstr "स्थायी रूप से हटा दिया गया"
 
-#: src/page/settings/general.vue:363
+#: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "मेमोरी खाली करने के लिए फ़ाइलें हमेशा के लिए हटाएं."
 
-#: src/page/settings/account.vue:762 src/page/settings/account.vue:615
+#: src/page/settings/account.vue:793 src/page/settings/account.vue:647
 msgid "Phone"
 msgstr "फ़ोन"
 
-#: src/model/photo.js:1091
+#: src/model/photo.js:1111
 msgid "Photo"
 msgstr "तस्वीर"
 
@@ -1792,19 +1886,15 @@ msgstr "PhotoPrism अपडेट किया गया है …"
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism 100% स्व-वित्तपोषित और स्वतंत्र है।"
 
-#: src/page/about/about.vue:15
-msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-msgstr "PhotoPrism® विकेंद्रीकृत वेब के लिए एक AI-संचालित फोटो ऐप है।"
-
-#: src/page/connect.vue:14
+#: src/page/about/about.vue:22 src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
 msgstr "फोटोप्रिज्म+ सदस्यता"
 
-#: src/app/routes.js:142
+#: src/app/routes.js:155
 msgid "Photos"
 msgstr "तस्वीरें"
 
-#: src/options/options.js:405
+#: src/options/options.js:409
 msgid "Pink"
 msgstr "गुलाबी"
 
@@ -1812,20 +1902,20 @@ msgstr "गुलाबी"
 msgid "Place"
 msgstr "स्थान"
 
-#: src/page/albums.vue:89 src/page/settings/library.vue:171
+#: src/page/settings/library.vue:171
 msgid "Place & Time"
 msgstr "स्थान और समय"
 
-#: src/app/routes.js:250 src/app/routes.js:256 src/app/routes.js:262
-#: src/app/routes.js:268 src/component/navigation.vue:284
-#: src/component/navigation.vue:294 src/component/navigation.vue:560
+#: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
+#: src/app/routes.js:281 src/component/navigation.vue:284
+#: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1116
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:496
+#: src/page/settings/general.vue:118 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "स्थान"
 
-#: src/dialog/account/password.vue:182
+#: src/dialog/account/password.vue:188
 msgid "Please confirm your new password."
 msgstr "कृपया अपने नए पासवर्ड की पुष्टि करें।"
 
@@ -1845,7 +1935,7 @@ msgstr "PNG आकार सीमा: %{n} px"
 msgid "Portrait"
 msgstr "चित्र"
 
-#: src/page/about/about.vue:65
+#: src/page/about/about.vue:68
 msgid "post your question in GitHub Discussions"
 msgstr "GitHub चर्चाओं में अपना प्रश्न पोस्ट करें"
 
@@ -1871,13 +1961,13 @@ msgstr "पूर्वावलोकन"
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:130
-#: src/dialog/photo/edit/files.vue:28
+#: src/dialog/photo/edit/files.vue:30
 msgid "Primary"
 msgstr "मुख्य"
 
-#: src/app/routes.js:236 src/component/navigation.vue:345
+#: src/app/routes.js:249 src/component/navigation.vue:345
 #: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:208
+#: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "निजी"
 
@@ -1885,7 +1975,7 @@ msgstr "निजी"
 msgid "Proceed"
 msgstr "आगे बढ़ना"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:423
+#: src/page/about/feedback.vue:6 src/options/options.js:427
 msgid "Product Feedback"
 msgstr "उत्पाद प्रतिक्रिया"
 
@@ -1893,7 +1983,7 @@ msgstr "उत्पाद प्रतिक्रिया"
 msgid "Projection"
 msgstr "प्रक्षेपण"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "Purple"
 msgstr "बैंगनी"
 
@@ -1905,6 +1995,11 @@ msgstr "गुणवत्ता फ़िल्टर"
 msgid "Quality Score"
 msgstr "गुणवत्ता स्कोर"
 
+#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:93
+#: src/page/admin/users.vue:106
+msgid "r"
+msgstr "आर"
+
 #: src/page/discover.vue:16
 msgid "Random"
 msgstr "बिना सोचे समझे"
@@ -1913,11 +2008,12 @@ msgstr "बिना सोचे समझे"
 msgid "Raspberry"
 msgstr "रसभरी"
 
-#: src/options/options.js:314
+#: src/options/options.js:318
 msgid "Raw"
 msgstr "कच्चा"
 
 #: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
+#: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "कच्चा"
 
@@ -1925,7 +2021,7 @@ msgstr "कच्चा"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "पहले से अनुक्रमित और अपरिवर्तित फ़ाइलों सहित सभी मूल पुन: अनुक्रमित करें।"
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:51
 msgid "Read the Docs"
 msgstr "डॉक्स पढ़ें"
 
@@ -1934,12 +2030,12 @@ msgid "Read-Only Mode"
 msgstr "पढ़ें- केवल मोड"
 
 #: src/component/album/toolbar.vue:67 src/component/photo/toolbar.vue:52
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:92
+#: src/dialog/album/edit.vue:23 src/page/albums.vue:91
 msgid "Recently Added"
 msgstr "हाल ही में जोड़ा"
 
 #: src/component/album/toolbar.vue:68 src/component/photo/toolbar.vue:53
-#: src/dialog/album/edit.vue:24 src/page/albums.vue:93
+#: src/dialog/album/edit.vue:24 src/page/albums.vue:92
 msgid "Recently Edited"
 msgstr "हाल ही में संपादित"
 
@@ -1952,15 +2048,15 @@ msgstr "अनुक्रमण पूरा होने के बाद म�
 msgid "Recognized"
 msgstr "मान्यता प्राप्त"
 
-#: src/page/settings/general.vue:143
+#: src/page/settings/general.vue:144
 msgid "Recognizes faces so that specific people can be found."
 msgstr "चेहरों को पहचानता है ताकि विशिष्ट लोगों को ढूंढा जा सके।"
 
-#: src/options/options.js:406
+#: src/options/options.js:410
 msgid "Red"
 msgstr "लाल"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1950
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1968,7 +2064,7 @@ msgstr "लाल"
 msgid "Reload"
 msgstr "पुनः लोड करें"
 
-#: src/component/navigation.vue:125 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "पुन: लोड …"
@@ -1997,9 +2093,10 @@ msgstr "स्टोरेज को सेव करने के लिए इ
 msgid "Request failed - invalid response"
 msgstr "अनुरोध विफल - अमान्य प्रतिक्रिया"
 
-#: src/page/about/feedback.vue:130 src/page/about/feedback.vue:150
-#: src/page/about/feedback.vue:193 src/page/settings/account.vue:196
-#: src/page/about/feedback.vue:192 src/page/settings/account.vue:195
+#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:173
+#: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
+#: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
+#: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
 msgid "Required"
 msgstr "अपेक्षित"
 
@@ -2015,20 +2112,27 @@ msgstr "पुनर्स्थापित"
 msgid "Retry Limit"
 msgstr "पुनः प्रयास सीमा"
 
-#: src/dialog/account/password.vue:179
+#: src/dialog/account/password.vue:185
 msgid "Retype Password"
 msgstr "पासवर्ड फिर से लिखें"
 
-#: src/app/routes.js:229 src/component/navigation.vue:129
+#: src/app/routes.js:242 src/component/navigation.vue:129
 msgid "Review"
 msgstr "समीक्षा"
 
-#: src/options/options.js:292
+#: src/component/admin/users/add.vue:193 src/component/admin/users/edit.vue:341
+#: src/page/admin/sessions.vue:62 src/page/admin/sessions.vue:2
+#: src/page/admin/users.vue:36
+msgid "Role"
+msgstr "भूमिका"
+
+#: src/options/options.js:296
 msgid "Satellite"
 msgstr "उपग्रह"
 
-#: src/dialog/account/password.vue:39 src/dialog/album/edit.vue:53
-#: src/dialog/service/edit.vue:107 src/dialog/share.vue:61
+#: src/component/admin/users/edit.vue:77 src/dialog/account/password.vue:39
+#: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
+#: src/dialog/share.vue:61
 msgid "Save"
 msgstr "सहेजें"
 
@@ -2041,14 +2145,14 @@ msgid "Scans"
 msgstr "स्कैन"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:542 src/component/navigation.vue:4
+#: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:78 src/page/places.vue:38
 msgid "Search"
 msgstr "खोज"
 
-#: src/page/settings/general.vue:497
+#: src/page/settings/general.vue:498
 msgid "Search and display photos on a map."
 msgstr "मानचित्र पर फ़ोटो खोजें और प्रदर्शित करें।"
 
@@ -2060,7 +2164,7 @@ msgstr "मौसम"
 msgid "Secret"
 msgstr "गुप्त"
 
-#: src/page/settings/account.vue:44
+#: src/page/settings/account.vue:47 src/page/settings/account.vue:49
 msgid "Security and Access"
 msgstr "सुरक्षा और पहुंच"
 
@@ -2097,15 +2201,28 @@ msgstr "अनुक्रमिक नाम"
 msgid "Service URL"
 msgstr "सेवा URL"
 
-#: src/page/settings.vue:72 src/page/settings/general.vue:384
+#: src/page/settings.vue:72 src/page/settings/general.vue:385
 msgid "Services"
 msgstr "सेवाएं"
 
-#: src/app/routes.js:358 src/app/routes.js:370 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:408 src/component/navigation.vue:409
-#: src/component/navigation.vue:419 src/component/navigation.vue:8
-#: src/component/navigation.vue:18 src/component/navigation.vue:4
-#: src/component/navigation.vue:1547 src/component/navigation.vue:1983
+#: src/model/session.js:60
+msgid "Session"
+msgstr "सत्र"
+
+#: src/page/admin/sessions.vue:29
+msgid "Session ID"
+msgstr "सत्र आईडी"
+
+#: src/page/admin.vue:45
+msgid "Sessions"
+msgstr "सत्र"
+
+#: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
+#: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
+#: src/component/navigation.vue:409 src/component/navigation.vue:419
+#: src/component/navigation.vue:8 src/component/navigation.vue:18
+#: src/component/navigation.vue:4 src/component/navigation.vue:1547
+#: src/component/navigation.vue:2014
 msgid "Settings"
 msgstr "समायोजन"
 
@@ -2122,7 +2239,7 @@ msgid "Shadow"
 msgstr "साया"
 
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
-#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:296
+#: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
 msgstr "शेयर"
 
@@ -2130,7 +2247,7 @@ msgstr "शेयर"
 msgid "Share %{name}"
 msgstr "शेयर %{name}"
 
-#: src/page/settings/general.vue:385
+#: src/page/settings/general.vue:386
 msgid "Share your pictures with other apps and services."
 msgstr "अन्य ऐप्स और सेवाओं के साथ अपनी तस्वीरें साझा करें।"
 
@@ -2154,7 +2271,7 @@ msgstr "कम दिखाएं"
 msgid "Show more"
 msgstr "और दिखाओ"
 
-#: src/page/settings/general.vue:451
+#: src/page/settings/general.vue:452
 msgid "Show server logs in Library."
 msgstr "लायब्रेरी में सर्वर लॉग दिखाएं।"
 
@@ -2162,11 +2279,11 @@ msgstr "लायब्रेरी में सर्वर लॉग दि�
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "अधिक विस्तृत लॉग संदेश दिखाता है। पुनः आरंभ करने की आवश्यकता है।"
 
-#: src/model/file.js:214
+#: src/model/file.js:213 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "एक प्रकार का मादक द्रव्य"
 
-#: src/page/login.vue:22
+#: src/page/auth/login.vue:22
 msgid "Sign in"
 msgstr "साइन इन करें"
 
@@ -2175,11 +2292,11 @@ msgid "Similar"
 msgstr "समान"
 
 #: src/dialog/photo/edit/files.vue:83 src/dialog/photo/edit/files.vue:80
-#: src/dialog/photo/edit/files.vue:36 src/dialog/service/edit.vue:226
+#: src/dialog/photo/edit/files.vue:38 src/dialog/service/edit.vue:226
 msgid "Size"
 msgstr "आकार"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Slow"
 msgstr "धीरे"
 
@@ -2187,7 +2304,7 @@ msgstr "धीरे"
 msgid "Snow"
 msgstr "बर्फ़"
 
-#: src/dialog/photo/edit/files.vue:103 src/dialog/photo/edit/files.vue:100
+#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
 msgstr "सॉफ़्टवेयर"
 
@@ -2216,7 +2333,7 @@ msgstr "उनके मेटाडेटा के आधार पर ठी�
 msgid "Stackable"
 msgstr "ढेर"
 
-#: src/component/navigation.vue:113 src/page/settings/library.vue:34
+#: src/component/navigation.vue:113 src/page/settings/library.vue:33
 msgid "Stacks"
 msgstr "ढेर"
 
@@ -2241,7 +2358,7 @@ msgstr "राज्य अमेरिका"
 msgid "Static Size Limit: %{n}px"
 msgstr "प्री-रेंडर आकार सीमा: %{n} px"
 
-#: src/dialog/photo/edit/files.vue:38
+#: src/dialog/photo/edit/files.vue:40
 msgid "Status"
 msgstr "स्थिति"
 
@@ -2249,17 +2366,25 @@ msgstr "स्थिति"
 msgid "Storage"
 msgstr "भंडारण"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Streets"
 msgstr "सड़कें"
 
-#: src/dialog/photo/edit/details.vue:584 src/model/subject.js:157
+#: src/dialog/photo/edit/details.vue:584 src/model/subject.js:158
 msgid "Subject"
 msgstr "विषय"
 
 #: src/page/connect.vue:51 src/page/connect.vue:48
 msgid "Successfully Connected"
 msgstr "सफलतापूर्वक कनेक्ट किया गया"
+
+#: src/component/admin/sessions/remove.vue:23
+msgid "Successfully deleted"
+msgstr "सफलतापूर्वक हटा दिया गया"
+
+#: src/component/admin/users/edit.vue:436 src/page/admin/users.vue:87
+msgid "Super Admin"
+msgstr "सुपर एडमिन"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
@@ -2282,7 +2407,7 @@ msgstr "कच्ची छवियों को सिंक करें"
 msgid "Taken"
 msgstr "लिया"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Teal"
 msgstr "टील"
 
@@ -2298,7 +2423,7 @@ msgstr "सूचकांक में वर्तमान में %{n} छ
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "उनके प्रारूप का समर्थन नहीं किया जा सकता है, वे अभी तक जेपीईजी में परिवर्तित नहीं हुए हैं या डुप्लिकेट हैं।"
 
-#: src/page/settings/general.vue:70
+#: src/page/settings/general.vue:71
 msgid "Theme"
 msgstr "विषय"
 
@@ -2330,7 +2455,7 @@ msgstr "समय क्षेत्र"
 msgid "Timeout"
 msgstr "समय समाप्त"
 
-#: src/page/settings/account.vue:113
+#: src/component/admin/users/edit.vue:151 src/page/settings/account.vue:114
 msgctxt "Account"
 msgid "Title"
 msgstr "शीर्षक"
@@ -2345,7 +2470,7 @@ msgstr "शीर्षक"
 msgid "Title"
 msgstr "शीर्षक"
 
-#: src/page/settings/account.vue:562
+#: src/page/settings/account.vue:593
 msgid "Title / Position"
 msgstr "शीर्षक स्थिति"
 
@@ -2367,7 +2492,7 @@ msgstr "टॉगल दृश्य"
 msgid "Token"
 msgstr "टोकन"
 
-#: src/options/options.js:302
+#: src/options/options.js:306
 msgid "Topographic"
 msgstr "स्थलाकृतिक"
 
@@ -2383,11 +2508,15 @@ msgstr "समस्या निवारण चेकलिस्ट"
 msgid "Try again using other filters or keywords."
 msgstr "अन्य फ़िल्टर या कीवर्ड का उपयोग करके फिर से प्रयास करें।"
 
-#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
-#: src/dialog/photo/edit/files.vue:37 src/dialog/photo/edit/info.vue:15
+#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
+#: src/dialog/photo/edit/files.vue:39 src/dialog/photo/edit/info.vue:15
 #: src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "प्रकार"
+
+#: src/options/admin.js:12
+msgid "Unauthorized"
+msgstr "अनधिकृत"
 
 #: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
@@ -2400,7 +2529,7 @@ msgstr "एक अलग पहचान"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
 #: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
 #: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:124 src/options/options.js:27
+#: src/model/photo.js:896 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2409,12 +2538,12 @@ msgid "Unknown"
 msgstr "अनजान"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:83 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "अपंजीकृत"
 
-#: src/app/routes.js:201 src/component/navigation.vue:171
+#: src/app/routes.js:214 src/component/navigation.vue:171
 msgid "Unsorted"
 msgstr "अवर्गीकृत"
 
@@ -2422,7 +2551,7 @@ msgstr "अवर्गीकृत"
 msgid "Unstack"
 msgstr "अनस्टैक"
 
-#: src/dialog/photo/edit/files.vue:212 src/dialog/photo/edit/files.vue:209
+#: src/dialog/photo/edit/files.vue:219 src/dialog/photo/edit/files.vue:216
 #: src/dialog/photo/edit/info.vue:175
 msgid "Updated"
 msgstr "अपडेट किया गया"
@@ -2439,7 +2568,7 @@ msgstr "इंडेक्स अपडेट कर रहा है"
 msgid "Updating moments"
 msgstr "पल-पल का अपडेट"
 
-#: src/page/settings/account.vue:124
+#: src/component/admin/users/edit.vue:159 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "चित्र अपडेट किया जा रहा है…"
 
@@ -2452,19 +2581,19 @@ msgid "Updating stacks"
 msgstr "ढेर अद्यतन कर रहा है"
 
 #: src/page/connect.vue:17 src/component/navigation.vue:452
-#: src/component/navigation.vue:584 src/component/navigation.vue:51
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
 msgid "Upgrade"
 msgstr "उन्नत करना"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:36
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:31
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "अभी अपग्रेड करें"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2001
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
-#: src/page/library/import.vue:38 src/page/settings/general.vue:230
+#: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
 msgstr "डालना"
@@ -2481,11 +2610,15 @@ msgstr "अपलोड पूरा हुआ। अनुक्रमण …"
 msgid "Upload failed"
 msgstr "अपलोड विफल"
 
+#: src/component/admin/users/edit.vue:418
+msgid "Upload Folder"
+msgstr "फ़ोल्डर अपलोड करें"
+
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "स्थानीय फ़ाइलें अपलोड करें"
 
-#: src/page/settings/general.vue:297
+#: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "WebDAV पर अपलोड करें और दोस्तों के साथ लिंक साझा करें।"
 
@@ -2513,11 +2646,13 @@ msgstr "यूआरएल"
 msgid "Use Presets"
 msgstr "प्रीसेट का उपयोग करें"
 
-#: src/model/user.js:205
+#: src/options/admin.js:7 src/options/admin.js:23
+#: src/page/admin/sessions.vue:54 src/page/admin/sessions.vue:2
+#: src/model/user.js:230
 msgid "User"
 msgstr "उपयोगकर्ता"
 
-#: src/component/navigation.vue:589 src/page/about/about.vue:42
+#: src/component/navigation.vue:597 src/page/about/about.vue:45
 msgid "User Guide"
 msgstr "उपयोगकर्ता गाइड"
 
@@ -2525,10 +2660,16 @@ msgstr "उपयोगकर्ता गाइड"
 msgid "User Interface"
 msgstr "प्रयोक्ता इंटरफ़ेस"
 
-#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
-#: src/dialog/share.vue:23
+#: src/component/admin/users/add.vue:94 src/page/admin/sessions.vue:46
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:30
+#: src/page/admin/users.vue:34 src/dialog/service/add.vue:103
+#: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
 msgid "Username"
 msgstr "उपयोगकर्ता नाम"
+
+#: src/component/navigation.vue:428 src/component/navigation.vue:27
+msgid "Users"
+msgstr "उपयोगकर्ताओं"
 
 #: src/options/themes.js:478
 msgid "Vanta"
@@ -2536,7 +2677,7 @@ msgstr "वांता"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:330
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
 msgid "Vector"
 msgstr "वेक्टर"
 
@@ -2550,8 +2691,8 @@ msgstr "सत्यापित"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:221 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:326
+#: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
+#: src/options/options.js:330
 msgid "Video"
 msgstr "वीडियो"
 
@@ -2560,7 +2701,7 @@ msgstr "वीडियो"
 msgid "Video Duration"
 msgstr "वीडियो अवधि"
 
-#: src/app/routes.js:222 src/component/navigation.vue:184
+#: src/app/routes.js:235 src/component/navigation.vue:184
 #: src/component/navigation.vue:194 src/component/navigation.vue:4
 #: src/component/navigation.vue:765
 msgid "Videos"
@@ -2571,9 +2712,18 @@ msgstr "वीडियो"
 msgid "View"
 msgstr "राय"
 
-#: src/page/about/about.vue:44
+#: src/options/admin.js:8 src/options/admin.js:27
+msgid "Viewer"
+msgstr "दर्शक"
+
+#: src/page/about/about.vue:47
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "अपने चित्रों को सिंक, व्यवस्थित और साझा करने का तरीका जानने के लिए docs.photoprism.app/user-guide पर जाएं।"
+
+#: src/options/admin.js:11 src/page/admin/sessions.vue:65
+#: src/page/admin/sessions.vue:5
+msgid "Visitor"
+msgstr "आगंतुक"
 
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:58
 #: src/dialog/album/edit.vue:29
@@ -2592,9 +2742,19 @@ msgstr "हम आपके फ़ीडबैक की सराहना क�
 msgid "We do our best to respond within five business days or less."
 msgstr "हम पांच व्यावसायिक दिनों या उससे कम समय में जवाब देने की पूरी कोशिश करते हैं।"
 
-#: src/page/about/about.vue:71
+#: src/page/about/about.vue:74
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "हम आपके सभी सवालों के जवाब देने की पूरी कोशिश करेंगे। बदले में, हम आपको Patreon या GitHub प्रायोजकों पर हमारा समर्थन करने के लिए कहते हैं।"
+
+#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:453
+#: src/page/admin/users.vue:39
+msgid "Web Login"
+msgstr "वेब लॉगिन"
+
+#: src/component/admin/users/add.vue:249 src/component/admin/users/edit.vue:470
+#: src/page/admin/users.vue:47
+msgid "WebDAV"
+msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
@@ -2612,8 +2772,7 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr "WebDAV अपलोड करें"
 
-#: src/page/settings/account.vue:644 src/page/settings/account.vue:790
-#: src/page/settings/account.vue:643
+#: src/page/settings/account.vue:675 src/page/settings/account.vue:821
 msgid "Website"
 msgstr "वेबसाइट"
 
@@ -2621,7 +2780,7 @@ msgstr "वेबसाइट"
 msgid "What functionality is generally available?"
 msgstr "आम तौर पर कौन सी कार्यक्षमता उपलब्ध होती है?"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "White"
 msgstr "सफेद"
 
@@ -2629,17 +2788,16 @@ msgstr "सफेद"
 msgid "Why are some features only available to sponsors?"
 msgstr "कुछ सुविधाएँ केवल प्रायोजकों के लिए ही क्यों उपलब्ध हैं?"
 
-#: src/page/settings/account.vue:90
+#: src/page/settings/account.vue:93
 msgid "Work Details"
 msgstr "कार्य विवरण"
 
-#: src/page/settings/account.vue:493 src/component/photo/toolbar.vue:275
+#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:275
 #: src/dialog/photo/edit/details.vue:169 src/page/albums.vue:204
-#: src/page/settings/account.vue:492
 msgid "Year"
 msgstr "साल"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Yellow"
 msgstr "पीला"
 
@@ -2648,18 +2806,18 @@ msgid "Yellowstone"
 msgstr "येलोस्टोन"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:98
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
-#: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:198
-#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:133
+#: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:205
+#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:141 src/dialog/photo/edit/files.vue:149
-#: src/dialog/photo/edit/files.vue:195 src/dialog/photo/edit/info.vue:259
+#: src/dialog/photo/edit/files.vue:202 src/dialog/photo/edit/info.vue:259
 #: src/dialog/photo/edit/info.vue:280 src/dialog/photo/edit/info.vue:301
 #: src/dialog/photo/edit/info.vue:322 src/dialog/photo/edit/info.vue:342
 msgid "Yes"
 msgstr "हाँ"
 
-#: src/page/about/about.vue:64
+#: src/page/about/about.vue:67
 msgid "you are welcome to join us on Reddit"
 msgstr "रेडिट पर हमसे जुड़ने के लिए आपका स्वागत है"
 
@@ -2671,10 +2829,6 @@ msgstr "आप केवल एक एल्बम डाउनलोड कर 
 msgid "You can only download one label"
 msgstr "आप केवल एक लेबल डाउनलोड कर सकते हैं"
 
-#: src/page/about/about.vue:17
-msgid "You can run it at home, on a private server, or in the cloud."
-msgstr "आप इसे घर पर, निजी सर्वर पर या क्लाउड में चला सकते हैं।"
-
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
 msgstr "आप केवल एक आइटम का चयन कर सकते हैं"
@@ -2684,7 +2838,7 @@ msgstr "आप केवल एक आइटम का चयन कर सक�
 msgid "You may rescan your library to find additional faces."
 msgstr "अतिरिक्त चेहरों को खोजने के लिए आप अपनी लाइब्रेरी को फिर से स्कैन कर सकते हैं।"
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:21
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:24
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "आपका निरंतर समर्थन हमें नियमित अपडेट प्रदान करने और स्वतंत्र रहने में मदद करता है, इसलिए हम अपने मिशन को पूरा कर सकते हैं और आपकी गोपनीयता की रक्षा कर सकते हैं।"
 
@@ -2695,6 +2849,39 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+#~ msgstr "PhotoPrism में, हम मानते हैं कि एक तस्वीर के माध्यम से कैप्चर किया गया हर पल अनमोल है, और हमारा मिशन लोगों को आने वाली पीढ़ियों के लिए उन पलों को संजोने में सक्षम बनाना है।"
+
+#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
+#~ msgstr "यह आपके रास्ते में आए बिना स्वचालित रूप से चित्रों को टैग करने और खोजने के लिए नवीनतम तकनीकों का उपयोग करता है।"
+
+#~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
+#~ msgstr "PhotoPrism® विकेंद्रीकृत वेब के लिए एक AI-संचालित फोटो ऐप है।"
+
+#~ msgid "Uploader"
+#~ msgstr "अपलोडर"
+
+#~ msgid "You can run it at home, on a private server, or in the cloud."
+#~ msgstr "आप इसे घर पर, निजी सर्वर पर या क्लाउड में चला सकते हैं।"
+
+#~ msgid "Downloads"
+#~ msgstr "डाउनलोड"
+
+#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgstr "बिना किसी स्वचालित रूप से जेनरेट की गई साइडकार फ़ाइलों के बिना केवल मूल मीडिया फ़ाइलें डाउनलोड करें।"
+
+#~ msgid "Client"
+#~ msgstr "ग्राहक"
+
+#~ msgid "Base Path"
+#~ msgstr "बेस पथ"
+
+#~ msgid "Upload Path"
+#~ msgstr "अपलोड पथ"
+
+#~ msgid "Web Login "
+#~ msgstr "वेब लॉगिन "
 
 #~ msgid "Options"
 #~ msgstr "क्रिया"
@@ -2850,9 +3037,6 @@ msgstr "ज़ूम इन / आउट करें"
 
 #~ msgid "Note: Updating the password will not revoke access from already authenticated users."
 #~ msgstr "नोट: पासवर्ड अपडेट करने से पहले से ही प्रमाणित उपयोगकर्ताओं तक पहुंच रद्द नहीं होगी।"
-
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "हमारा मिशन आपके चित्रों को व्यवस्थित और सुलभ रखने के लिए सबसे अधिक उपयोगकर्ता- और गोपनीयता के अनुकूल समाधान प्रदान करना है।"
 
 #~ msgid "Play"
 #~ msgstr "खेल"

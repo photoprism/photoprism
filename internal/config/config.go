@@ -165,6 +165,8 @@ func (c *Config) Propagate() {
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
+	thumb.CacheMaxAge = c.HttpCacheMaxAge()
+	thumb.CachePublic = c.HttpCachePublic()
 
 	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()
@@ -172,6 +174,9 @@ func (c *Config) Propagate() {
 
 	// Set minimum password length.
 	entity.PasswordLength = c.PasswordLength()
+
+	// Set path for user assets.
+	entity.UsersPath = c.UsersPath()
 
 	// Set API preview and download default tokens.
 	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
@@ -419,6 +424,11 @@ func (c *Config) ContentUri() string {
 // StaticUri returns the static content URI.
 func (c *Config) StaticUri() string {
 	return c.CdnUrl(c.BaseUri(StaticUri))
+}
+
+// StaticAssetUri returns the resource URI of the static file asset.
+func (c *Config) StaticAssetUri(res string) string {
+	return c.StaticUri() + "/" + res
 }
 
 // SiteUrl returns the public server URL (default is "http://photoprism.me:2342/").

@@ -6,7 +6,7 @@ let assert = chai.assert;
 
 describe("model/album", () => {
   it("should get route view", () => {
-    const values = { id: 5, Title: "Christmas 2019", Slug: "christmas-2019" };
+    const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019" };
     const album = new Album(values);
     const result = album.route("test");
     assert.equal(result.name, "test");
@@ -217,7 +217,7 @@ describe("model/album", () => {
   });
 
   it("should like album", () => {
-    const values = { id: 5, Title: "Christmas 2019", Slug: "christmas-2019", Favorite: false };
+    const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", Favorite: false };
     const album = new Album(values);
     assert.equal(album.Favorite, false);
     album.like();
@@ -225,7 +225,7 @@ describe("model/album", () => {
   });
 
   it("should unlike album", () => {
-    const values = { id: 5, Title: "Christmas 2019", Slug: "christmas-2019", Favorite: true };
+    const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", Favorite: true };
     const album = new Album(values);
     assert.equal(album.Favorite, true);
     album.unlike();
@@ -233,7 +233,7 @@ describe("model/album", () => {
   });
 
   it("should toggle like", () => {
-    const values = { id: 5, Title: "Christmas 2019", Slug: "christmas-2019", Favorite: true };
+    const values = { ID: 5, Title: "Christmas 2019", Slug: "christmas-2019", Favorite: true };
     const album = new Album(values);
     assert.equal(album.Favorite, true);
     album.toggleLike();

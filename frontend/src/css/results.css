@@ -63,6 +63,14 @@ body.chrome #photoprism .search-results .result {
     top: 12px;
 }
 
+#photoprism .list-view .action-secondary {
+    opacity: 0.4;
+}
+
+#photoprism .list-view tr:hover .action-secondary {
+    opacity: 1;
+}
+
 #photoprism .p-clipboard.--ltr {
     right: 8px;
     bottom: 12px;

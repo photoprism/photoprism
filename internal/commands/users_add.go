@@ -47,7 +47,7 @@ func usersAddAction(ctx *cli.Context) error {
 				return err
 			}
 
-			frm.UserName = clean.DN(res)
+			frm.UserName = clean.Username(res)
 		}
 
 		// Check if account exists but is deleted.

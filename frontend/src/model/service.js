@@ -67,7 +67,7 @@ export class Service extends RestModel {
   }
 
   getId() {
-    return this.ID;
+    return this.ID ? this.ID : false;
   }
 
   Folders() {

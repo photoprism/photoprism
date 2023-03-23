@@ -177,6 +177,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				}
 
 				event.Publish("index.folder", event.Data{
+					"uid":      o.UID,
 					"filePath": relName,
 				})
 
@@ -291,6 +292,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 	if updated > 0 {
 		event.Publish("index.updating", event.Data{
+			"uid":  o.UID,
 			"step": "faces",
 		})
 
@@ -302,6 +304,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		}
 
 		event.Publish("index.updating", event.Data{
+			"uid":  o.UID,
 			"step": "counts",
 		})
 

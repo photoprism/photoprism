@@ -52,6 +52,7 @@ func TestConfig_ClientAssets(t *testing.T) {
 
 	c.options.AssetsPath = "testdata"
 	c.options.CdnUrl = "https://mycdn.com/foo/"
+	c.SetWallpaperUri("kashmir")
 
 	a := c.ClientAssets()
 
@@ -64,10 +65,12 @@ func TestConfig_ClientAssets(t *testing.T) {
 	assert.Equal(t, "https://mycdn.com/foo/static/build/share.2259c0edcc020e7af593.css", a.ShareCssUri())
 	assert.Equal(t, "share.7aaf321a984ae545e4e5.js", a.ShareJs)
 	assert.Equal(t, "https://mycdn.com/foo/static/build/share.7aaf321a984ae545e4e5.js", a.ShareJsUri())
+	assert.Equal(t, "https://mycdn.com/foo/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
 
 	c.options.AssetsPath = "testdata/invalid"
 	c.options.CdnUrl = ""
 	c.options.SiteUrl = "http://myhost/foo"
+	c.SetWallpaperUri("kashmir")
 
 	a = c.ClientAssets()
 
@@ -80,6 +83,7 @@ func TestConfig_ClientAssets(t *testing.T) {
 	assert.Equal(t, "", a.ShareCssUri())
 	assert.Equal(t, "", a.ShareJs)
 	assert.Equal(t, "", a.ShareJsUri())
+	assert.Equal(t, "", c.WallpaperUri())
 }
 
 func TestClientManifestUri(t *testing.T) {
