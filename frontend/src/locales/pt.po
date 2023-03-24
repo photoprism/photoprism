@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-13 21:26+0000\n"
+"PO-Revision-Date: 2023-03-24 18:40+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Portuguese <https://translate.photoprism.app/projects/photoprism/frontend/pt/>\n"
+"Language-Team: Portuguese <https://translate.photoprism.app/projects/"
+"photoprism/frontend/pt/>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -372,6 +373,8 @@ msgstr "Pasta base"
 #: src/page/about/about.vue:27 src/page/about/about.vue:3
 msgid "Become a member today, support our mission and enjoy our member benefits!"
 msgstr ""
+"Torne-se um membro hoje, apoie nossa missão e aproveite nossos benefícios "
+"para membros!"
 
 #: src/page/about/about.vue:67
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2424,6 +2427,9 @@ msgstr "Texto muito longo"
 #: src/page/about/about.vue:20
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr ""
+"É por isso que o PhotoPrism foi desenvolvido desde o início para ser "
+"executado onde você precisar, sem comprometer a liberdade, privacidade ou "
+"funcionalidade."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."

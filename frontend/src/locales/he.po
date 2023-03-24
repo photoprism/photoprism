@@ -3,14 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-13 21:26+0000\n"
+"PO-Revision-Date: 2023-03-24 18:40+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
+"frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -371,7 +373,7 @@ msgstr "תיקיית בסיס"
 
 #: src/page/about/about.vue:27 src/page/about/about.vue:3
 msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr ""
+msgstr "הפוך לחבר עוד היום, תמכו במשימתנו ותיהנו מהטבות החברים שלנו!"
 
 #: src/page/about/about.vue:67
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2424,6 +2426,8 @@ msgstr "טקסט ארוך מדי"
 #: src/page/about/about.vue:20
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr ""
+"זו הסיבה ש-PhotoPrism נבנתה מהיסוד לרוץ בכל מקום שתזדקק לו, מבלי להתפשר על "
+"חופש, פרטיות או פונקציונליות."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."

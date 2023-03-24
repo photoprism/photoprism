@@ -2,12 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-22 16:54+0000\n"
+"PO-Revision-Date: 2023-03-24 18:40+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -369,6 +370,8 @@ msgstr "Osnovna mapa"
 #: src/page/about/about.vue:27 src/page/about/about.vue:3
 msgid "Become a member today, support our mission and enjoy our member benefits!"
 msgstr ""
+"Postanite član še danes, podprite naše poslanstvo in uživajte v naših "
+"članskih ugodnostih!"
 
 #: src/page/about/about.vue:67
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2421,6 +2424,9 @@ msgstr "Predolgo besedilo"
 #: src/page/about/about.vue:20
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr ""
+"Zato je bil PhotoPrism od samega začetka zasnovan tako, da deluje, kjer koli "
+"ga potrebujete, ne da bi pri tem ogrožal svobodo, zasebnost ali "
+"funkcionalnost."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-22 16:54+0000\n"
+"PO-Revision-Date: 2023-03-24 18:40+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -368,7 +368,7 @@ msgstr "Basisgids"
 
 #: src/page/about/about.vue:27 src/page/about/about.vue:3
 msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr ""
+msgstr "Word vandag 'n lid, ondersteun ons missie en geniet ons ledevoordele!"
 
 #: src/page/about/about.vue:67
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -2421,6 +2421,9 @@ msgstr "Teks te lank"
 #: src/page/about/about.vue:20
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr ""
+"Dit is hoekom PhotoPrism van die grond af gebou is om te werk waar jy dit "
+"ook al nodig het, sonder om vryheid, privaatheid of funksionaliteit in te "
+"boet."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
