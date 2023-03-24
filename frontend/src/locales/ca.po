@@ -56,10 +56,11 @@ msgstr "4 hores"
 msgid "A click will copy it to your clipboard."
 msgstr "Un clic ho copiarà al porta-retalls."
 
-#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:204 src/page/settings/account.vue:313
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:7
+#: src/page/about/about.vue:213 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/about/about.vue:4 src/page/help.vue:43
+#: src/page/people/recognized.vue:434
 msgid "About"
 msgstr "Quant a"
 
@@ -67,7 +68,7 @@ msgstr "Quant a"
 msgid "Abyss"
 msgstr "Abisme"
 
-#: src/component/navigation.vue:98 src/component/navigation.vue:1996
+#: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -368,11 +369,15 @@ msgstr "Crea automàticament àlbums de moments, viatges i llocs especials."
 msgid "Base Folder"
 msgstr "Carpeta base"
 
-#: src/page/about/about.vue:62
+#: src/page/about/about.vue:27 src/page/about/about.vue:3
+msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+
+#: src/page/about/about.vue:67
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Abans d'enviar una sol·licitud d'assistència, utilitzeu les nostres Llistes de verificació de resolució de problemes per determinar la causa del vostre problema."
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:25
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:21
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "En ser 100% sautofinançats i independents, us podem prometre que mai vendrem les vostres dades i que sempre serem transparents sobre el nostre programari i serveis."
 
@@ -408,7 +413,7 @@ msgstr "Exploreu i editeu les etiquetes de classificació d'imatges."
 msgid "Browse indexed files and folders in Library."
 msgstr "Exploreu fitxers i carpetes indexats a la biblioteca."
 
-#: src/page/about/about.vue:54
+#: src/page/about/about.vue:59
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Navegueu per la base de coneixement per obtenir informació detallada sobre característiques específiques del producte, serveis i recursos relacionats."
 
@@ -540,7 +545,7 @@ msgstr "Perfil de color"
 msgid "Colors"
 msgstr "Colors"
 
-#: src/page/about/about.vue:49
+#: src/page/about/about.vue:54
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Els problemes habituals es poden diagnosticar i resoldre ràpidament mitjançant les llistes de verificació de resolució de problemes que oferim."
 
@@ -1105,7 +1110,7 @@ msgstr "Gènere"
 msgid "General"
 msgstr "General"
 
-#: src/page/about/about.vue:58
+#: src/page/about/about.vue:63
 msgid "Getting Support"
 msgstr "Obtenint suport"
 
@@ -1177,7 +1182,7 @@ msgstr "Alt rang dinàmic (HDR)"
 msgid "How can we help?"
 msgstr "Com podem ajudar?"
 
-#: src/page/about/about.vue:63
+#: src/page/about/about.vue:68
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Si això no ajuda o tens altres preguntes:"
 
@@ -1223,7 +1228,7 @@ msgstr "S'estan important fitxers als originals..."
 msgid "in"
 msgstr "polçades"
 
-#: src/page/about/about.vue:72
+#: src/page/about/about.vue:77
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "A més, els patrocinadors reben suport tècnic directe per correu electrònic."
 
@@ -1329,7 +1334,7 @@ msgstr "Els JPEG i les miniatures es representen automàticament segons sigui ne
 msgid "Keywords"
 msgstr "Paraules clau"
 
-#: src/page/about/about.vue:53
+#: src/page/about/about.vue:58
 msgid "Knowledge Base"
 msgstr "Knowledge Base"
 
@@ -1381,8 +1386,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:55 src/page/about/about.vue:163
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
+#: src/page/about/about.vue:60 src/page/about/about.vue:151
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "Saber-ne més"
@@ -1782,7 +1787,7 @@ msgstr "S'ha trobat una imatge"
 msgid "Onyx"
 msgstr "Ònix"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:74
 msgid "or ask in our Community Chat"
 msgstr "o preguntar al nostre xat de la comunitat"
 
@@ -1819,15 +1824,13 @@ msgstr "Altres"
 
 #: src/page/about/about.vue:19
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr ""
-"La nostra missió és proporcionar la solució més fàcil d'utilitzar i de "
-"privadesa per mantenir les vostres imatges organitzades i accessibles."
+msgstr "La nostra missió és proporcionar la solució més fàcil d'utilitzar i de privadesa per mantenir les vostres imatges organitzades i accessibles."
 
 #: src/page/connect.vue:109
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "El nostre equip ho decideix de manera contínua en funció de l'esforç de suport requerit, dels costos del servidor i de la llicència, i si les funcions són generalment necessàries per tothom o principalment sol·licitades per organitzacions i usuaris avançats."
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:53
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "La nostra Guia d'usuari també cobreix molts temes avançats, com ara la migració des de Google Fotos i la configuració de la qualitat de les miniatures."
 
@@ -1888,7 +1891,8 @@ msgstr "PhotoPrism s'ha actualitzat..."
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism és 100% autofinançat i independent."
 
-#: src/page/about/about.vue:22 src/page/connect.vue:14
+#: src/page/about/about.vue:25 src/page/about/about.vue:1
+#: src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
 msgstr "Membre de PhotoPrism+"
 
@@ -1937,7 +1941,7 @@ msgstr "Límit de mida del PNG: %{n}px"
 msgid "Portrait"
 msgstr "Retrat"
 
-#: src/page/about/about.vue:68
+#: src/page/about/about.vue:73
 msgid "post your question in GitHub Discussions"
 msgstr "publica la teva pregunta a les discussions de GitHub"
 
@@ -2023,7 +2027,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Torneu a indexar tots els originals, inclosos els fitxers ja indexats i sense canvis."
 
-#: src/page/about/about.vue:51
+#: src/page/about/about.vue:56
 msgid "Read the Docs"
 msgstr "Llegeix els documents"
 
@@ -2066,7 +2070,7 @@ msgstr "Vermell"
 msgid "Reload"
 msgstr "Recarrega"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:128 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "S'està tornant a carregar…"
@@ -2417,6 +2421,10 @@ msgstr "Blau Cerseta"
 msgid "Text too long"
 msgstr "Text massa llarg"
 
+#: src/page/about/about.vue:20
+msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Actualment, l'índex conté %{n} fitxers ocults."
@@ -2540,7 +2548,7 @@ msgid "Unknown"
 msgstr "Desconegut"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:86 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "No registrat"
@@ -2587,7 +2595,7 @@ msgstr "Actualització de les piles"
 msgid "Upgrade"
 msgstr "Actualitza"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:31
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:35
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "Actualitza ara"
@@ -2654,7 +2662,7 @@ msgstr "Utilitzeu presets"
 msgid "User"
 msgstr "Usuari"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:45
+#: src/component/navigation.vue:597 src/page/about/about.vue:50
 msgid "User Guide"
 msgstr "Guia de l'usuari"
 
@@ -2718,7 +2726,7 @@ msgstr "Veure"
 msgid "Viewer"
 msgstr "Visor"
 
-#: src/page/about/about.vue:47
+#: src/page/about/about.vue:52
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Visiteu docs.photoprism.app/user-guide per saber com sincronitzar, organitzar i compartir les vostres imatges."
 
@@ -2744,7 +2752,7 @@ msgstr "Agraïm els vostres comentaris!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Fem tot el possible per respondre en un termini de cinc dies laborables o menys."
 
-#: src/page/about/about.vue:74
+#: src/page/about/about.vue:79
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Farem tot el possible per respondre totes les vostres preguntes. A canvi, us demanem que ens recolzeu a Patrocinadors de Patreon o GitHub."
 
@@ -2819,7 +2827,7 @@ msgstr "Yellowstone"
 msgid "Yes"
 msgstr "Si"
 
-#: src/page/about/about.vue:67
+#: src/page/about/about.vue:72
 msgid "you are welcome to join us on Reddit"
 msgstr "Et convidem a unir-te a nosaltres a Reddit"
 
@@ -2840,7 +2848,8 @@ msgstr "Només podeu seleccionar un element"
 msgid "You may rescan your library to find additional faces."
 msgstr "Podeu tornar a escanejar la vostra biblioteca per trobar cares addicionals."
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:24
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:28
+#: src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "El vostre suport continuat ens ajuda a oferir actualitzacions periòdiques i a mantenir-nos independents, de manera que podem complir la nostra missió i protegir la vostra privadesa."
 

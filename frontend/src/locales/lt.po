@@ -56,10 +56,11 @@ msgstr "4 valandos"
 msgid "A click will copy it to your clipboard."
 msgstr "Paspaudę jį nukopijuosite į iškarpinę."
 
-#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:204 src/page/settings/account.vue:313
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:7
+#: src/page/about/about.vue:213 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/about/about.vue:4 src/page/help.vue:43
+#: src/page/people/recognized.vue:434
 msgid "About"
 msgstr "Apie"
 
@@ -67,7 +68,7 @@ msgstr "Apie"
 msgid "Abyss"
 msgstr "Bedugnė"
 
-#: src/component/navigation.vue:98 src/component/navigation.vue:1996
+#: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -368,11 +369,15 @@ msgstr "Automatiškai sukuria ypatingų akimirkų, kelionių ir vietų albumus."
 msgid "Base Folder"
 msgstr "Bazinis aplankas"
 
-#: src/page/about/about.vue:62
+#: src/page/about/about.vue:27 src/page/about/about.vue:3
+msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+
+#: src/page/about/about.vue:67
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Prieš pateikdami pagalbos užklausą, pasinaudokite mūsų trikčių šalinimo kontroliniais sąrašais, kad nustatytumėte problemos priežastį."
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:25
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:21
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Kadangi esame 100 % savarankiškai finansuojami ir nepriklausomi, galime pažadėti, kad niekada neparduosime jūsų duomenų ir visada skaidriai informuosime apie savo programinę įrangą ir paslaugas."
 
@@ -408,7 +413,7 @@ msgstr "Naršykite ir redaguokite vaizdų klasifikavimo etiketes."
 msgid "Browse indexed files and folders in Library."
 msgstr "Naršykite po bibliotekos indeksuotus failus ir aplankus."
 
-#: src/page/about/about.vue:54
+#: src/page/about/about.vue:59
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Žinių bazėje rasite išsamios informacijos apie konkrečias gaminio funkcijas, paslaugas ir susijusius išteklius."
 
@@ -540,7 +545,7 @@ msgstr "Spalvų profilis"
 msgid "Colors"
 msgstr "Spalvos"
 
-#: src/page/about/about.vue:49
+#: src/page/about/about.vue:54
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Dažniausiai pasitaikančias problemas galima greitai diagnozuoti ir išspręsti naudojantis mūsų pateiktais trikčių šalinimo kontroliniais sąrašais."
 
@@ -1105,7 +1110,7 @@ msgstr "Levandų"
 msgid "General"
 msgstr "Bendra"
 
-#: src/page/about/about.vue:58
+#: src/page/about/about.vue:63
 msgid "Getting Support"
 msgstr "Paramos gavimas"
 
@@ -1177,7 +1182,7 @@ msgstr "Didelis dinaminis diapazonas (HDR)"
 msgid "How can we help?"
 msgstr "Kaip galime padėti?"
 
-#: src/page/about/about.vue:63
+#: src/page/about/about.vue:68
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Jei tai nepadeda arba turite kitų klausimų:"
 
@@ -1223,7 +1228,7 @@ msgstr "Failų importavimas į originalus…"
 msgid "in"
 msgstr "svetainėje"
 
-#: src/page/about/about.vue:72
+#: src/page/about/about.vue:77
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Be to, rėmėjai gauna tiesioginę techninę pagalbą el. paštu."
 
@@ -1329,7 +1334,7 @@ msgstr "JPEG ir miniatiūros prireikus atvaizduojamos automatiškai."
 msgid "Keywords"
 msgstr "Raktiniai žodžiai"
 
-#: src/page/about/about.vue:53
+#: src/page/about/about.vue:58
 msgid "Knowledge Base"
 msgstr "Žinių bazė"
 
@@ -1381,8 +1386,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:55 src/page/about/about.vue:163
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
+#: src/page/about/about.vue:60 src/page/about/about.vue:151
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "Sužinokite daugiau"
@@ -1782,7 +1787,7 @@ msgstr "Vienas rastas paveikslėlis"
 msgid "Onyx"
 msgstr "Oniksas"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:74
 msgid "or ask in our Community Chat"
 msgstr "arba klauskite mūsų bendruomenės pokalbyje"
 
@@ -1825,7 +1830,7 @@ msgstr "Mūsų misija - pateikti vartotojui patogiausią ir privatumą užtikrin
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Mūsų komanda tai sprendžia nuolat, atsižvelgdama į reikalingas palaikymo pastangas, serverio ir licencijavimo išlaidas ir į tai, ar funkcijos paprastai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai."
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:53
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Mūsų naudotojo vadove taip pat aptariama daug išplėstinių temų, pavyzdžiui, migravimas iš \"Google Photos\" ir miniatiūrų kokybės nustatymai."
 
@@ -1886,7 +1891,8 @@ msgstr "\"PhotoPrism\" buvo atnaujintas…"
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "\"PhotoPrism\" yra 100 % savarankiškai finansuojama ir nepriklausoma."
 
-#: src/page/about/about.vue:22 src/page/connect.vue:14
+#: src/page/about/about.vue:25 src/page/about/about.vue:1
+#: src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
 msgstr "\"PhotoPrism+\" narystė"
 
@@ -1935,7 +1941,7 @@ msgstr "PNG dydžio riba: %{n}px"
 msgid "Portrait"
 msgstr "Portretas"
 
-#: src/page/about/about.vue:68
+#: src/page/about/about.vue:73
 msgid "post your question in GitHub Discussions"
 msgstr "paskelbkite savo klausimą \"GitHub\" diskusijose"
 
@@ -2021,7 +2027,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Iš naujo indeksuokite visus originalus, įskaitant jau indeksuotus ir nepakeistus failus."
 
-#: src/page/about/about.vue:51
+#: src/page/about/about.vue:56
 msgid "Read the Docs"
 msgstr "Skaitykite dokumentus"
 
@@ -2064,7 +2070,7 @@ msgstr "Raudona"
 msgid "Reload"
 msgstr "Perkrauti"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:128 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Perkrovimas…"
@@ -2415,6 +2421,10 @@ msgstr "Teal"
 msgid "Text too long"
 msgstr "Per ilgas tekstas"
 
+#: src/page/about/about.vue:20
+msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Šiuo metu rodyklėje yra %{n} paslėptų failų."
@@ -2536,7 +2546,7 @@ msgid "Unknown"
 msgstr "Nežinomas"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:86 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Neregistruotas"
@@ -2583,7 +2593,7 @@ msgstr "Kaminų atnaujinimas"
 msgid "Upgrade"
 msgstr "Atnaujinti"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:31
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:35
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "Atnaujinti dabar"
@@ -2650,7 +2660,7 @@ msgstr "Naudokite išankstinius nustatymus"
 msgid "User"
 msgstr "Vartotojas"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:45
+#: src/component/navigation.vue:597 src/page/about/about.vue:50
 msgid "User Guide"
 msgstr "Naudotojo vadovas"
 
@@ -2714,7 +2724,7 @@ msgstr "Peržiūrėti"
 msgid "Viewer"
 msgstr "Peržiūrėtojas"
 
-#: src/page/about/about.vue:47
+#: src/page/about/about.vue:52
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Apsilankykite docs.photoprism.app/user-guide ir sužinokite, kaip sinchronizuoti, tvarkyti ir bendrinti nuotraukas."
 
@@ -2740,7 +2750,7 @@ msgstr "Vertiname jūsų atsiliepimus!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Stengiamės atsakyti per penkias darbo dienas ar greičiau."
 
-#: src/page/about/about.vue:74
+#: src/page/about/about.vue:79
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Stengsimės atsakyti į visus jūsų klausimus. Mainais prašome paremti mus \"Patreon\" arba \"GitHub\" rėmėjų sąskaita."
 
@@ -2813,7 +2823,7 @@ msgstr "Yellowstone"
 msgid "Yes"
 msgstr "Taip"
 
-#: src/page/about/about.vue:67
+#: src/page/about/about.vue:72
 msgid "you are welcome to join us on Reddit"
 msgstr "kviečiame prisijungti prie mūsų \"Reddit"
 
@@ -2834,7 +2844,8 @@ msgstr "Galite pasirinkti tik vieną elementą"
 msgid "You may rescan your library to find additional faces."
 msgstr "Norėdami rasti papildomų veidų, galite iš naujo nuskaityti savo biblioteką."
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:24
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:28
+#: src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Jūsų nuolatinė parama padeda mums reguliariai teikti atnaujinimus ir tokias paslaugas kaip pasaulio žemėlapiai."
 

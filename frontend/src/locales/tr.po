@@ -56,10 +56,11 @@ msgstr "4 saat"
 msgid "A click will copy it to your clipboard."
 msgstr "Tıklayarak panoya kopyalayabilirsiniz."
 
-#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:204 src/page/settings/account.vue:313
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:7
+#: src/page/about/about.vue:213 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/about/about.vue:4 src/page/help.vue:43
+#: src/page/people/recognized.vue:434
 msgid "About"
 msgstr "Hakkında"
 
@@ -67,7 +68,7 @@ msgstr "Hakkında"
 msgid "Abyss"
 msgstr "Uçurum"
 
-#: src/component/navigation.vue:98 src/component/navigation.vue:1996
+#: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -368,11 +369,15 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 msgid "Base Folder"
 msgstr "Temel Klasör"
 
-#: src/page/about/about.vue:62
+#: src/page/about/about.vue:27 src/page/about/about.vue:3
+msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+
+#: src/page/about/about.vue:67
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Bir destek talebi göndermeden önce, sorununuzun nedenini belirlemek için lütfen Sorun Giderme Kontrol Listelerimizi kullanın."
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:25
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:21
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "100% self tarafından finanse edilen ve bağımsız bir şirket olarak, verilerinizi asla satmayacağımıza ve yazılım ve hizmetlerimiz konusunda her zaman şeffaf olacağımıza dair size söz verebiliriz."
 
@@ -408,7 +413,7 @@ msgstr "Görüntü sınıflandırma etiketlerine göz atın ve düzenleyin."
 msgid "Browse indexed files and folders in Library."
 msgstr "Kitaplık'ta dizine alınmış dosya ve klasörlere göz atın."
 
-#: src/page/about/about.vue:54
+#: src/page/about/about.vue:59
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "Belirli ürün özellikleri, hizmetler ve ilgili kaynaklar hakkında ayrıntılı bilgi için Bilgi Tabanına göz atın."
 
@@ -540,7 +545,7 @@ msgstr "Renk Profili"
 msgid "Colors"
 msgstr "Renkler"
 
-#: src/page/about/about.vue:49
+#: src/page/about/about.vue:54
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Yaygın sorunlar, sağladığımız sorun giderme kontrol listeleri kullanılarak hızlı bir şekilde teşhis edilebilir ve çözülebilir."
 
@@ -1105,7 +1110,7 @@ msgstr "Cinsiyet"
 msgid "General"
 msgstr "Genel"
 
-#: src/page/about/about.vue:58
+#: src/page/about/about.vue:63
 msgid "Getting Support"
 msgstr "Destek Alma"
 
@@ -1177,7 +1182,7 @@ msgstr "Yüksek Dinamik Aralık (HDR)"
 msgid "How can we help?"
 msgstr "Nasıl yardımcı olabiliriz?"
 
-#: src/page/about/about.vue:63
+#: src/page/about/about.vue:68
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Bu yardımcı olmazsa veya başka sorularınız varsa:"
 
@@ -1223,7 +1228,7 @@ msgstr "Dosyalar orijinallere aktarılıyor…"
 msgid "in"
 msgstr "içinde"
 
-#: src/page/about/about.vue:72
+#: src/page/about/about.vue:77
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Ayrıca, sponsorlar e-posta yoluyla doğrudan teknik destek alırlar."
 
@@ -1329,7 +1334,7 @@ msgstr "JPEG'ler ve küçük resimler, gerektiğinde otomatik olarak oluşturulu
 msgid "Keywords"
 msgstr "Anahtar Kelimeler"
 
-#: src/page/about/about.vue:53
+#: src/page/about/about.vue:58
 msgid "Knowledge Base"
 msgstr "Bilgi Bankası"
 
@@ -1381,8 +1386,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:55 src/page/about/about.vue:163
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
+#: src/page/about/about.vue:60 src/page/about/about.vue:151
 #: src/page/connect.vue:113 src/page/connect.vue:91
 msgid "Learn more"
 msgstr "Daha fazla bilgi edin"
@@ -1782,7 +1787,7 @@ msgstr "Bir resim bulundu"
 msgid "Onyx"
 msgstr "Onyx"
 
-#: src/page/about/about.vue:69
+#: src/page/about/about.vue:74
 msgid "or ask in our Community Chat"
 msgstr "veya Topluluk Sohbetimizde sorun"
 
@@ -1825,7 +1830,7 @@ msgstr "Misyonumuz, resimlerinizi düzenli ve erişilebilir tutmak için en kull
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Ekibimiz, gerekli destek çabasına, sunucu ve lisans maliyetlerine ve özelliklerin genel olarak herkes tarafından ihtiyaç duyulup duyulmadığına veya çoğunlukla kuruluşlar ve ileri düzey kullanıcılar tarafından talep edilip edilmediğine bağlı olarak buna sürekli olarak karar verir."
 
-#: src/page/about/about.vue:48
+#: src/page/about/about.vue:53
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Kullanıcı Kılavuzumuz ayrıca Google Fotoğraflar'dan geçiş ve küçük resim kalitesi ayarları gibi birçok gelişmiş konuyu da kapsamaktadır."
 
@@ -1886,7 +1891,8 @@ msgstr "PhotoPrism güncellendi.."
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism %100 kendi kendini finanse eder ve bağımsızdır."
 
-#: src/page/about/about.vue:22 src/page/connect.vue:14
+#: src/page/about/about.vue:25 src/page/about/about.vue:1
+#: src/page/connect.vue:14
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+ Üyeliği"
 
@@ -1935,7 +1941,7 @@ msgstr "PNG Boyut Sınırı: %{n}px"
 msgid "Portrait"
 msgstr "Portre"
 
-#: src/page/about/about.vue:68
+#: src/page/about/about.vue:73
 msgid "post your question in GitHub Discussions"
 msgstr "sorunuzu GitHub Tartışmaları'na gönderin"
 
@@ -2021,7 +2027,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Önceden indekslenmiş ve değişmemiş dosyalar da dahil olmak üzere tüm orijinalleri yeniden indeksleyin."
 
-#: src/page/about/about.vue:51
+#: src/page/about/about.vue:56
 msgid "Read the Docs"
 msgstr "Belgeleri Okuyun"
 
@@ -2064,7 +2070,7 @@ msgstr "Kırmızı"
 msgid "Reload"
 msgstr "Tekrar yükle"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:128 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Yeniden doldurma.."
@@ -2415,6 +2421,10 @@ msgstr "Turkuaz"
 msgid "Text too long"
 msgstr "Metin çok uzun"
 
+#: src/page/about/about.vue:20
+msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Dizin şu anda %{n} gizli dosya içermektedir."
@@ -2538,7 +2548,7 @@ msgid "Unknown"
 msgstr "Bilinmeyen"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:86 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Kaydedilmemiş"
@@ -2585,7 +2595,7 @@ msgstr "Yığınları güncelleme"
 msgid "Upgrade"
 msgstr "Yükseltme"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:31
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:35
 #: src/page/connect.vue:56
 msgid "Upgrade Now"
 msgstr "Şimdi Yükselt"
@@ -2652,7 +2662,7 @@ msgstr "Ön Ayarları Kullan"
 msgid "User"
 msgstr "Kullanıcı"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:45
+#: src/component/navigation.vue:597 src/page/about/about.vue:50
 msgid "User Guide"
 msgstr "Kullanıcı rehberi"
 
@@ -2716,7 +2726,7 @@ msgstr "Görünüm"
 msgid "Viewer"
 msgstr "Görüntüleyici"
 
-#: src/page/about/about.vue:47
+#: src/page/about/about.vue:52
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Fotoğraflarınızı nasıl senkronize edeceğinizi, düzenleyeceğinizi ve paylaşacağınızı öğrenmek için docs.photoprism.app/user-guide adresini ziyaret edin."
 
@@ -2742,7 +2752,7 @@ msgstr "Görüşleriniz için teşekkür ederiz!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Beş iş günü veya daha kısa bir süre içinde yanıt vermek için elimizden geleni yapıyoruz."
 
-#: src/page/about/about.vue:74
+#: src/page/about/about.vue:79
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Tüm sorularınızı yanıtlamak için elimizden geleni yapacağız. Karşılığında sizden bizi Patreon veya GitHub Sponsorları üzerinden desteklemenizi rica ediyoruz."
 
@@ -2817,7 +2827,7 @@ msgstr "Yellowstone"
 msgid "Yes"
 msgstr "Evet"
 
-#: src/page/about/about.vue:67
+#: src/page/about/about.vue:72
 msgid "you are welcome to join us on Reddit"
 msgstr "reddit'te bize katılabilirsiniz"
 
@@ -2838,7 +2848,8 @@ msgstr "Yalnızca bir öğe seçebilirsiniz"
 msgid "You may rescan your library to find additional faces."
 msgstr "Başka yüzler bulmak için kütüphanenizi yeniden tarayabilirsiniz."
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:24
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:28
+#: src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Devam eden desteğiniz düzenli güncellemeler sağlamamıza ve bağımsız kalmamıza yardımcı olur, böylece misyonumuzu yerine getirebilir ve gizliliğinizi koruyabiliriz."
 

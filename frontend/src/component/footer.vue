@@ -3,7 +3,7 @@
     <v-card-actions class="footer-actions">
       <v-layout wrap align-top pt-3>
         <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-selectable text-xs-left">
-          <strong><router-link to="/about" class="text-link">{{ about }}</router-link></strong>
+          <strong><router-link to="/about" class="text-link text-selectable">{{ about }}&nbsp;{{ getMembership() }}</router-link></strong>
           <span class="body-link text-selectable">Build&nbsp;<a href="https://docs.photoprism.app/release-notes/" target="_blank" :title="version" class="body-link">{{ build }}</a></span>
         </v-flex>
 
@@ -27,19 +27,35 @@ export default {
     const ver = this.$config.getVersion().split("-");
     const build = ver.slice(0, 2).join("-");
     const about = this.$config.getAbout();
-    const customer = this.$config.get("customer");
+    const membership = this.$config.getMembership();
+    const customer = this.$config.getCustomer();
     const evaluation = !customer;
 
     return {
       rtl: this.$rtl,
       build: build,
       about: about,
-      version: this.$config.getVersion(),
-      sponsor: this.$config.isSponsor(),
+      membership: membership,
       customer: customer,
       evaluation: evaluation,
+      version: this.$config.getVersion(),
+      sponsor: this.$config.isSponsor(),
     };
   },
-  methods: {},
+  methods: {
+    getMembership() {
+      const m = this.$config.getMembership();
+      switch (m) {
+        case "ce":
+          return "CE";
+        case "cloud":
+          return "Cloud";
+        case "essentials":
+          return "Essentials";
+        default:
+          return "Plus";
+      }
+    }
+  },
 };
 </script>

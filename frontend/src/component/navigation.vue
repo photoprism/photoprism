@@ -671,7 +671,6 @@
 </template>
 
 <script>
-import Album from "model/album";
 import Event from "pubsub-js";
 
 export default {
@@ -714,7 +713,7 @@ export default {
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,
-      featUpgrade: this.$config.getLicense() === "ce",
+      featUpgrade: this.$config.getMembership() === "ce",
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
       isDemo: isDemo,

@@ -87,6 +87,8 @@ body.dark-theme #photoprism .theme--light.v-expansion-panel .v-expansion-panel__
 body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
 body.dark-theme #photoprism .theme--light {
     color: #ffffff;
+    caret-color: #ffffff;
+    stroke: #ffffff;
 }
 
 body.dark-theme #photoprism .theme--light.v-label {

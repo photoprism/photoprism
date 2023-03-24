@@ -602,8 +602,6 @@ export default class Config {
 
     if (!s) {
       return "PhotoPrism";
-    } else if (s === "PhotoPrism" && this.values.sponsor) {
-      return "PhotoPrism+";
     }
 
     return s;
@@ -613,7 +611,7 @@ export default class Config {
     const s = this.get("about");
 
     if (!s) {
-      return "PhotoPrism® Dev";
+      return "PhotoPrism®";
     }
 
     return s;
@@ -633,11 +631,13 @@ export default class Config {
     return this.getEdition() === "ce";
   }
 
-  getLicense() {
-    const s = this.get("license");
+  getMembership() {
+    const s = this.get("membership");
 
     if (!s) {
       return "ce";
+    } else if (s === "ce" && this.isSponsor()) {
+      return "essentials";
     }
 
     return s;
