@@ -73,7 +73,7 @@ type ClientConfig struct {
 	Countries        entity.Countries    `json:"countries"`
 	People           entity.People       `json:"people"`
 	Thumbs           ThumbSizes          `json:"thumbs"`
-	License          string              `json:"license"`
+	Membership       string              `json:"membership"`
 	Customer         string              `json:"customer"`
 	MapKey           string              `json:"mapKey"`
 	DownloadToken    string              `json:"downloadToken,omitempty"`
@@ -289,7 +289,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
 		People:           entity.People{},
-		License:          c.Hub().Status,
+		Membership:       c.Hub().Membership(),
 		Customer:         "",
 		MapKey:           "",
 		Thumbs:           Thumbs,
@@ -378,7 +378,7 @@ func (c *Config) ClientShare() ClientConfig {
 		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
-		License:          c.Hub().Status,
+		Membership:       c.Hub().Membership(),
 		Customer:         c.Hub().Customer(),
 		MapKey:           c.Hub().MapKey(),
 		DownloadToken:    c.DownloadToken(),
@@ -471,7 +471,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
-		License:          c.Hub().Status,
+		Membership:       c.Hub().Membership(),
 		Customer:         c.Hub().Customer(),
 		MapKey:           c.Hub().MapKey(),
 		DownloadToken:    c.DownloadToken(),

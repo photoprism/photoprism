@@ -350,9 +350,7 @@ func (c *Config) Name() string {
 // About returns the app about string.
 func (c *Config) About() string {
 	if c.options.About == "" {
-		return "PhotoPrism® Dev"
-	} else if strings.HasSuffix(c.options.About, "CE") && c.Sponsor() {
-		return strings.Replace(c.options.About, "CE", "Plus", 1)
+		return "PhotoPrism®"
 	}
 
 	return c.options.About
@@ -563,7 +561,7 @@ func (c *Config) Sponsor() bool {
 	if Sponsor || c.options.Sponsor {
 		return true
 	} else if c.hub != nil {
-		Sponsor = c.Hub().Plus()
+		Sponsor = c.Hub().Sponsor()
 	}
 
 	return Sponsor
@@ -757,13 +755,25 @@ func (c *Config) ResolutionLimit() int {
 	return result
 }
 
-// UpdateHub renews backend api credentials for maps and places without a token.
+// UpdateHub renews backend api credentials with an optional activation code.
 func (c *Config) UpdateHub() {
-	_ = c.ResyncHub("")
+	if c.hub == nil {
+		return
+	}
+
+	if token := os.Getenv(EnvVar("CONNECT")); token != "" && !c.Hub().Sponsor() {
+		_ = c.ResyncHub(token)
+	} else {
+		_ = c.ResyncHub("")
+	}
 }
 
 // ResyncHub renews backend api credentials for maps and places with an optional token.
 func (c *Config) ResyncHub(token string) error {
+	if c.hub == nil {
+		return fmt.Errorf("hub is not initialized")
+	}
+
 	if err := c.hub.ReSync(token); err != nil {
 		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
 		if token != "" {

@@ -24,10 +24,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+type Status string
+
 const (
-	StatusUnknown   = ""
-	StatusNew       = "unregistered"
-	StatusCommunity = "ce"
+	StatusUnknown   Status = ""
+	StatusNew       Status = "unregistered"
+	StatusCommunity Status = "ce"
 )
 
 // Config represents backend api credentials for maps & geodata.
@@ -39,7 +41,7 @@ type Config struct {
 	Session   string     `json:"session" yaml:"Session"`
 	session   *Session   `json:"-" yaml:"-"`
 	sessionMu sync.Mutex `json:"-" yaml:"-"`
-	Status    string     `json:"status" yaml:"Status"`
+	Status    Status     `json:"status" yaml:"Status"`
 	Serial    string     `json:"serial" yaml:"Serial"`
 	Env       string     `json:"-" yaml:"-"`
 	UserAgent string     `json:"-" yaml:"-"`
@@ -71,6 +73,15 @@ func (c *Config) MapKey() string {
 	}
 }
 
+// Membership returns the membership level as string.
+func (c *Config) Membership() string {
+	if !c.Sponsor() {
+		return string(StatusCommunity)
+	}
+
+	return string(c.Status)
+}
+
 // Customer returns the customer name.
 func (c *Config) Customer() string {
 	if sess, err := c.DecodeSession(true); err != nil {
@@ -86,8 +97,8 @@ func (c *Config) Propagate() {
 	places.Secret = c.Secret
 }
 
-// Plus reports if you have a community membership.
-func (c *Config) Plus() bool {
+// Sponsor reports if you support the project.
+func (c *Config) Sponsor() bool {
 	switch c.Status {
 	case StatusUnknown, StatusNew, StatusCommunity:
 		return false
