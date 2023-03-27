@@ -126,6 +126,11 @@ func (c *Config) Unsafe() bool {
 	return c.options.Unsafe
 }
 
+// Restart checks if the application should be restarted, e.g. after an update or a config changes.
+func (c *Config) Restart() bool {
+	return mutex.Restart.Load()
+}
+
 // CliContext returns the cli context if set.
 func (c *Config) CliContext() *cli.Context {
 	if c.cliCtx == nil {

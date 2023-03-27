@@ -26,12 +26,13 @@ services:
   photoprism:
     ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
-    depends_on:
-      - mariadb
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     # restart: unless-stopped
+    stop_grace_period: 10s
+    depends_on:
+      - mariadb
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -79,8 +80,9 @@ services:
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
-    restart: unless-stopped
     image: mariadb:10.10
+    restart: unless-stopped
+    stop_grace_period: 5s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined

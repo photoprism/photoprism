@@ -38,12 +38,13 @@ services:
   photoprism:
     ## Use photoprism/photoprism:preview-arm64 for testing preview builds:
     image: photoprism/photoprism:arm64
-    depends_on:
-      - mariadb
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     # restart: unless-stopped
+    stop_grace_period: 10s
+    depends_on:
+      - mariadb
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -105,10 +106,11 @@ services:
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
+    image: arm64v8/mariadb:10.10 # ARM64 IMAGE ONLY, DOES NOT WORK ON ARMv7, AMD or Intel
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped
-    image: arm64v8/mariadb:10.10 # ARM64 IMAGE ONLY, DOES NOT WORK ON ARMv7, AMD or Intel
+    stop_grace_period: 5s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined

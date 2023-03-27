@@ -14,6 +14,10 @@ msgstr ""
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
+#: src/page/connect.vue:17
+msgid "{{ getMembership() }}"
+msgstr ""
+
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
 msgstr "%{n} àlbums trobats"
@@ -98,17 +102,13 @@ msgstr "Acció"
 msgid "Actions"
 msgstr "Accions"
 
-#: src/page/connect.vue:90 src/page/connect.vue:92
+#: src/page/connect.vue:90 src/page/connect.vue:98
 msgid "Activate"
 msgstr "Activar"
 
-#: src/page/connect.vue:359 src/page/connect.vue:399
+#: src/page/connect.vue:359 src/page/connect.vue:428
 msgid "Activation Code"
 msgstr "Codi d'activació"
-
-#: src/page/connect.vue:14 src/page/connect.vue:11
-msgid "Activation Failed"
-msgstr "L'activació ha fallat"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -346,7 +346,7 @@ msgstr "N'esteu segur?"
 msgid "Artist"
 msgstr "Artista"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:128
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Com que això ens ajuda a oferir més funcions al públic, animem a tots els usuaris a donar suport a la nostra missió."
 
@@ -378,9 +378,7 @@ msgstr "Carpeta base"
 
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
-msgstr ""
-"Fes-te membre avui per gaudir de funcions addicionals i donar suport a la "
-"nostra missió!"
+msgstr "Fes-te membre avui per gaudir de funcions addicionals i donar suport a la nostra missió!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -431,11 +429,11 @@ msgstr "Navegueu per la base de coneixement per obtenir informació detallada so
 msgid "Bug Report"
 msgstr "Informe d'error"
 
-#: src/common/notify.js:101
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "Ocupat, si us plau, espera..."
 
-#: src/page/connect.vue:100 src/page/connect.vue:102
+#: src/page/connect.vue:100 src/page/connect.vue:108
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "En utilitzar el programari i els serveis que oferim, accepteu les nostres condicions de servei, política de privadesa i codi de conducta."
 
@@ -476,7 +474,7 @@ msgstr "No es poden seleccionar més elements"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/connect.vue:47 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Cancel·lar"
@@ -559,7 +557,7 @@ msgstr "Colors"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Els problemes habituals es poden diagnosticar i resoldre ràpidament mitjançant les llistes de verificació de resolució de problemes que oferim."
 
-#: src/page/connect.vue:81 src/page/connect.vue:83
+#: src/page/connect.vue:81 src/page/connect.vue:89
 msgid "Compare Editions"
 msgstr "Compara Edicions"
 
@@ -575,16 +573,12 @@ msgstr "Confiança"
 msgid "Connect"
 msgstr "Connecta"
 
-#: src/page/connect.vue:20
-msgid "Connect Customer Account"
-msgstr "Connecteu el compte del client"
-
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Connecteu-vos mitjançant WebDAV"
 
-#: src/page/connect.vue:61
+#: src/page/connect.vue:62 src/page/connect.vue:61
 msgid "Connected"
 msgstr "Connectat"
 
@@ -593,7 +587,7 @@ msgid "Contact Details"
 msgstr "Dades de contacte"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
-#: src/page/connect.vue:44
+#: src/page/connect.vue:50
 msgid "Contact Us"
 msgstr "Contacta'ns"
 
@@ -1026,7 +1020,7 @@ msgstr "Alimenta"
 msgid "Feedback"
 msgstr "Opinions"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "No dubteu a contactar amb nosaltres a hello@photoprism.app si teniu cap pregunta."
 
@@ -1104,7 +1098,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Marcs"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:113
 msgid "Frequently Asked Questions"
 msgstr "Preguntes freqüents"
 
@@ -1298,16 +1292,16 @@ msgstr "Interval"
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "Adreça de correu no vàlida"
 
@@ -1315,7 +1309,8 @@ msgstr "Adreça de correu no vàlida"
 msgid "Invalid date"
 msgstr "Data no vàlida"
 
-#: src/page/connect.vue:73 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
+#: src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "Paràmetres no és vàlida"
 
@@ -1323,7 +1318,7 @@ msgstr "Paràmetres no és vàlida"
 msgid "Invalid photo selected"
 msgstr "S'ha seleccionat una foto no vàlida"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:121
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "És la vostra decisió si voleu registrar-vos per gaudir d'avantatges addicionals."
 
@@ -1400,8 +1395,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:125
-#: src/page/connect.vue:102
+#: src/page/about/about.vue:146 src/page/connect.vue:131
 msgid "Learn more"
 msgstr "Saber-ne més"
 
@@ -1521,8 +1515,8 @@ msgstr "Color principal"
 msgid "Male"
 msgstr "Home"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
-#: src/page/connect.vue:80
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
+#: src/page/connect.vue:86
 msgid "Manage account"
 msgstr "Gestiona el compte"
 
@@ -1545,6 +1539,10 @@ msgstr "Marcador"
 #: src/options/options.js:272
 msgid "Medium"
 msgstr "Mitja"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "Pertinença"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1836,7 +1834,7 @@ msgstr "Originals"
 msgid "Other"
 msgstr "Altres"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:127
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "El nostre equip ho decideix de manera contínua en funció de l'esforç de suport requerit, dels costos del servidor i de la llicència, i si les funcions són generalment necessàries per tothom o principalment sol·licitades per organitzacions i usuaris avançats."
 
@@ -1897,7 +1895,7 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism s'ha actualitzat..."
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism és 100% autofinançat i independent."
 
@@ -1938,12 +1936,11 @@ msgstr "Si us plau, no carregueu fotos que continguin contingut ofensiu."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Tingueu en compte que si canvieu la contrasenya, tanqueu la sessió en altres dispositius i navegadors."
 
-#: src/page/connect.vue:55 src/page/connect.vue:52
+#: src/page/connect.vue:55 src/page/connect.vue:58
 msgid "Please restart your instance for the changes to take effect."
-msgstr ""
-"Si us plau, reinicieu la vostra instància perquè els canvis tinguin efecte."
+msgstr "Si us plau, reinicieu la vostra instància perquè els canvis tinguin efecte."
 
-#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+#: src/common/notify.js:98
 msgid "Please wait…"
 msgstr "Si us plau, espereu…"
 
@@ -1991,7 +1988,7 @@ msgstr "Primari"
 msgid "Private"
 msgstr "Privada"
 
-#: src/page/connect.vue:85 src/page/connect.vue:87
+#: src/page/connect.vue:85 src/page/connect.vue:93
 msgid "Proceed"
 msgstr "Continuar"
 
@@ -2124,7 +2121,7 @@ msgstr "Requerit"
 msgid "Resolution"
 msgstr "Resolució"
 
-#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/connect.vue:63 src/page/connect.vue:66
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Reinicia"
@@ -2399,8 +2396,7 @@ msgstr "Carrers"
 msgid "Subject"
 msgstr "Assumpte"
 
-#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
-#: src/page/connect.vue:14
+#: src/page/connect.vue:11 src/page/connect.vue:20
 msgid "Successfully Connected"
 msgstr "Connectat correctament"
 
@@ -2417,7 +2413,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Amb el temps s'afegirà suport per a serveis addicionals, com ara Google Drive."
 
 #: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1 src/page/connect.vue:17
+#: src/page/about/about.vue:1 src/page/connect.vue:23
 msgid "Support Our Mission"
 msgstr "Donar suport a la nostra missió"
 
@@ -2505,7 +2501,7 @@ msgstr "Títol / posició"
 msgid "Title too long"
 msgstr "Títol massa llarg"
 
-#: src/page/connect.vue:72 src/page/connect.vue:74
+#: src/page/connect.vue:72 src/page/connect.vue:80
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Per actualitzar, podeu introduir un codi d'activació o fer clic a \"Continua\" per registrar-vos al nostre lloc web:"
 
@@ -2607,13 +2603,14 @@ msgstr "S'estan actualitzant les previsualitzacions"
 msgid "Updating stacks"
 msgstr "Actualització de les piles"
 
-#: src/component/navigation.vue:452 src/component/navigation.vue:592
-#: src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Actualitza"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:64
+#: src/page/about/about.vue:9 src/page/connect.vue:70
 msgid "Upgrade Now"
 msgstr "Actualitza ara"
 
@@ -2712,6 +2709,10 @@ msgstr "Vector"
 msgid "Vectors"
 msgstr "Vectors"
 
+#: src/page/connect.vue:11
+msgid "Verified"
+msgstr "Verificat"
+
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2753,7 +2754,7 @@ msgstr "Visitant"
 msgid "Visual Similarity"
 msgstr "Similitud visual"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:120
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Les donacions voluntàries no cobreixen el cost d'un equip que treballa a temps complet per oferir-vos actualitzacions, documentació i suport."
 
@@ -2799,7 +2800,7 @@ msgstr "Càrrega WebDAV"
 msgid "Website"
 msgstr "Pàgina web"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:124
 msgid "What functionality is generally available?"
 msgstr "Quina funcionalitat està disponible en general?"
 
@@ -2807,7 +2808,7 @@ msgstr "Quina funcionalitat està disponible en general?"
 msgid "White"
 msgstr "Blanc"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr "Per què algunes funcions només estan disponibles per als patrocinadors?"
 
@@ -2861,7 +2862,7 @@ msgstr "Només podeu seleccionar un element"
 msgid "You may rescan your library to find additional faces."
 msgstr "Podeu tornar a escanejar la vostra biblioteca per trobar cares addicionals."
 
-#: src/page/connect.vue:54 src/page/connect.vue:51
+#: src/page/connect.vue:54 src/page/connect.vue:57
 msgid "Your account has been successfully connected."
 msgstr "El vostre compte s'ha connectat correctament."
 
@@ -2878,6 +2879,12 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
 
+#~ msgid "Activation Failed"
+#~ msgstr "L'activació ha fallat"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "Connecteu el compte del client"
+
 #~ msgid "Become a member today, support our mission and enjoy our member benefits!"
 #~ msgstr "Fes-te soci avui, dóna suport a la nostra missió i gaudeix dels nostres avantatges per a membres!"
 
@@ -2889,9 +2896,6 @@ msgstr "Apropa o redueix"
 
 #~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 #~ msgstr "És per això que PhotoPrism es va crear des de zero per funcionar allà on ho necessitis, sense comprometre la llibertat, la privadesa o la funcionalitat."
-
-#~ msgid "Verified"
-#~ msgstr "Verificat"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Fa ús de les últimes tecnologies per etiquetar i trobar imatges automàticament sense interposar-vos en el vostre camí."
@@ -2940,9 +2944,6 @@ msgstr "Apropa o redueix"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Fes-te patrocinador avui, recolza la nostra missió i gaudeix dels avantatges dels nostres membres!"
-
-#~ msgid "Membership"
-#~ msgstr "Pertinença"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "El nostre equip l'avalua de manera continuada, depenent de l'esforç de suport que requereixin les funcions, del cost per a nosaltres i de si són necessàries generalment per tothom o principalment sol·licitades per organitzacions i usuaris avançats. Com que això ens permet oferir més funcions al públic, animem a tots els usuaris a donar suport a la nostra missió."

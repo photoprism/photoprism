@@ -81,6 +81,19 @@ main {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
+#busy-overlay.progress {
+    cursor: wait;
+    background-color: rgba(0, 0, 0, 0.32);
+}
+
+#busy-overlay.progress .splash-center {
+    display: block;
+}
+
+#busy-overlay .splash-center {
+    display: none;
+}
+
 /* General App Styles */
 
 #photoprism .v-badge__badge {

@@ -14,6 +14,10 @@ msgstr ""
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
+#: src/page/connect.vue:17
+msgid "{{ getMembership() }}"
+msgstr ""
+
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
 msgstr "%{n} آلبوم پیدا شد"
@@ -98,17 +102,13 @@ msgstr "عمل"
 msgid "Actions"
 msgstr "اقدامات"
 
-#: src/page/connect.vue:90 src/page/connect.vue:92
+#: src/page/connect.vue:90 src/page/connect.vue:98
 msgid "Activate"
 msgstr "فعال کنید"
 
-#: src/page/connect.vue:359 src/page/connect.vue:399
+#: src/page/connect.vue:359 src/page/connect.vue:428
 msgid "Activation Code"
 msgstr "کد فعال سازی"
-
-#: src/page/connect.vue:14 src/page/connect.vue:11
-msgid "Activation Failed"
-msgstr "فعال سازی انجام نشد"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -346,7 +346,7 @@ msgstr "مطمئن هستی؟"
 msgid "Artist"
 msgstr "هنرمند"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:128
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "از آنجایی که این به ما کمک می‌کند ویژگی‌های بیشتری را برای عموم ارائه کنیم، همه کاربران را تشویق می‌کنیم از ماموریت ما حمایت کنند."
 
@@ -378,8 +378,7 @@ msgstr "پوشه پایه"
 
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
-msgstr ""
-"برای لذت بردن از ویژگی های اضافی و حمایت از ماموریت ما، همین امروز عضو شوید!"
+msgstr "برای لذت بردن از ویژگی های اضافی و حمایت از ماموریت ما، همین امروز عضو شوید!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -430,11 +429,11 @@ msgstr "برای اطلاعات دقیق در مورد ویژگی‌های خا�
 msgid "Bug Report"
 msgstr "گزارش اشکال"
 
-#: src/common/notify.js:101
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "مشغول است ، لطفا صبر کنید…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:102
+#: src/page/connect.vue:100 src/page/connect.vue:108
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "با استفاده از نرم‌افزار و خدماتی که ما ارائه می‌کنیم، با شرایط خدمات، خط‌مشی رازداری و آیین‌نامه رفتار ما موافقت می‌کنید."
 
@@ -475,7 +474,7 @@ msgstr "موارد بیشتری را انتخاب نمی کند"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/connect.vue:47 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "لغو"
@@ -558,7 +557,7 @@ msgstr "رنگ ها"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "مشکلات رایج را می توان با استفاده از چک لیست های عیب یابی که ارائه می دهیم، به سرعت تشخیص داده و حل کرد."
 
-#: src/page/connect.vue:81 src/page/connect.vue:83
+#: src/page/connect.vue:81 src/page/connect.vue:89
 msgid "Compare Editions"
 msgstr "مقایسه نسخه ها"
 
@@ -574,16 +573,12 @@ msgstr "اعتماد"
 msgid "Connect"
 msgstr "اتصال"
 
-#: src/page/connect.vue:20
-msgid "Connect Customer Account"
-msgstr "اتصال حساب مشتری"
-
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "از طریق WebDav وصل کنید"
 
-#: src/page/connect.vue:61
+#: src/page/connect.vue:62 src/page/connect.vue:61
 msgid "Connected"
 msgstr "متصل"
 
@@ -592,7 +587,7 @@ msgid "Contact Details"
 msgstr "با ما تماس بگیرید"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
-#: src/page/connect.vue:44
+#: src/page/connect.vue:50
 msgid "Contact Us"
 msgstr "با ما تماس بگیرید"
 
@@ -1025,7 +1020,7 @@ msgstr "بازخورد"
 msgid "Feedback"
 msgstr "بازخورد"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "در صورت داشتن هرگونه سوال می توانید از طریق ایمیل hello@photoprism.app با تماس بگیرید."
 
@@ -1103,7 +1098,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "قاب‌ها"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:113
 msgid "Frequently Asked Questions"
 msgstr "سوالات متداول"
 
@@ -1297,16 +1292,16 @@ msgstr "وقفه"
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "تاریخ نامعتبر است"
 
@@ -1314,7 +1309,8 @@ msgstr "تاریخ نامعتبر است"
 msgid "Invalid date"
 msgstr "تاریخ نامعتبر است"
 
-#: src/page/connect.vue:73 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
+#: src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "پارامترهای نامعتبر"
 
@@ -1322,7 +1318,7 @@ msgstr "پارامترهای نامعتبر"
 msgid "Invalid photo selected"
 msgstr "عکس نامعتبر انتخاب شد"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:121
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "این شما هستید که می خواهید برای بهره مندی از مزایای اضافی ثبت نام کنید یا خیر."
 
@@ -1399,8 +1395,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:125
-#: src/page/connect.vue:102
+#: src/page/about/about.vue:146 src/page/connect.vue:131
 msgid "Learn more"
 msgstr "بیشتر بدانید"
 
@@ -1520,8 +1515,8 @@ msgstr "رنگ اصلی"
 msgid "Male"
 msgstr "نر"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
-#: src/page/connect.vue:80
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
+#: src/page/connect.vue:86
 msgid "Manage account"
 msgstr "مدیریت حساب"
 
@@ -1544,6 +1539,10 @@ msgstr "نشانگر"
 #: src/options/options.js:272
 msgid "Medium"
 msgstr "متوسط"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "عضویت"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1835,7 +1834,7 @@ msgstr "اصلی ها"
 msgid "Other"
 msgstr "دیگر"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:127
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "تیم ما بسته به تلاش پشتیبانی مورد نیاز، هزینه‌های سرور و مجوز، و اینکه آیا ویژگی‌ها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته درخواست می‌شوند، این موضوع را به‌طور مداوم تصمیم می‌گیرند."
 
@@ -1896,7 +1895,7 @@ msgstr "تصویر"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism به روز شد…"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism 100٪ با بودجه شخصی و مستقل است."
 
@@ -1937,11 +1936,11 @@ msgstr "لطفا عکس های حاوی محتوای توهین آمیز آپل�
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "لطفاً توجه داشته باشید که تغییر رمز عبور شما را از سایر دستگاه ها و مرورگرها خارج می کند."
 
-#: src/page/connect.vue:55 src/page/connect.vue:52
+#: src/page/connect.vue:55 src/page/connect.vue:58
 msgid "Please restart your instance for the changes to take effect."
 msgstr "لطفاً نمونه خود را مجدداً راه اندازی کنید تا تغییرات اعمال شوند."
 
-#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+#: src/common/notify.js:98
 msgid "Please wait…"
 msgstr "لطفا صبر کنید…"
 
@@ -1989,7 +1988,7 @@ msgstr "اولیه"
 msgid "Private"
 msgstr "خصوصی"
 
-#: src/page/connect.vue:85 src/page/connect.vue:87
+#: src/page/connect.vue:85 src/page/connect.vue:93
 msgid "Proceed"
 msgstr "ادامه دهید"
 
@@ -2122,7 +2121,7 @@ msgstr "اجباری"
 msgid "Resolution"
 msgstr "رزولوشن"
 
-#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/connect.vue:63 src/page/connect.vue:66
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "راه اندازی مجدد"
@@ -2397,8 +2396,7 @@ msgstr "خیابان ها"
 msgid "Subject"
 msgstr "موضوع"
 
-#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
-#: src/page/connect.vue:14
+#: src/page/connect.vue:11 src/page/connect.vue:20
 msgid "Successfully Connected"
 msgstr "با موفقیت وصل شد"
 
@@ -2415,7 +2413,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "پشتیبانی از خدمات اضافی، مانند Google Drive، به مرور اضافه خواهد شد."
 
 #: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1 src/page/connect.vue:17
+#: src/page/about/about.vue:1 src/page/connect.vue:23
 msgid "Support Our Mission"
 msgstr "از ماموریت ما حمایت کنید"
 
@@ -2503,7 +2501,7 @@ msgstr "عنوان خیلی طولانی است"
 msgid "Title too long"
 msgstr "عنوان خیلی طولانی است"
 
-#: src/page/connect.vue:72 src/page/connect.vue:74
+#: src/page/connect.vue:72 src/page/connect.vue:80
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "برای ارتقا، می‌توانید کد فعال‌سازی را وارد کنید یا روی «ادامه» کلیک کنید تا در وب‌سایت ما ثبت‌نام کنید:"
 
@@ -2605,13 +2603,14 @@ msgstr "به روزرسانی پیش نمایش ها"
 msgid "Updating stacks"
 msgstr "به روزرسانی پشته ها"
 
-#: src/component/navigation.vue:452 src/component/navigation.vue:592
-#: src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "ارتقا دهید"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:64
+#: src/page/about/about.vue:9 src/page/connect.vue:70
 msgid "Upgrade Now"
 msgstr "اکنون ارتقا دهید"
 
@@ -2710,6 +2709,10 @@ msgstr "بردار"
 msgid "Vectors"
 msgstr "بردارها"
 
+#: src/page/connect.vue:11
+msgid "Verified"
+msgstr "تایید شده است"
+
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2751,7 +2754,7 @@ msgstr "بازدید کننده"
 msgid "Visual Similarity"
 msgstr "گروه بندی بر اساس شباهت"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:120
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "کمک های داوطلبانه هزینه های یک تیم کار تمام وقت برای ارائه به روز رسانی ها، اسناد و پشتیبانی شما را پوشش نمی دهد."
 
@@ -2797,7 +2800,7 @@ msgstr "آپلود WebDAV"
 msgid "Website"
 msgstr "سایت اینترنتی"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:124
 msgid "What functionality is generally available?"
 msgstr "چه عملکردی به طور کلی در دسترس است؟"
 
@@ -2805,7 +2808,7 @@ msgstr "چه عملکردی به طور کلی در دسترس است؟"
 msgid "White"
 msgstr "سفید"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr "چرا برخی از ویژگی ها فقط در اختیار حامیان مالی هستند؟"
 
@@ -2859,7 +2862,7 @@ msgstr "شما فقط می توانید یک مورد را انتخاب کنید
 msgid "You may rescan your library to find additional faces."
 msgstr "می‌توانید کتابخانه خود را مجدداً اسکن کنید تا چهره‌های دیگری را پیدا کنید."
 
-#: src/page/connect.vue:54 src/page/connect.vue:51
+#: src/page/connect.vue:54 src/page/connect.vue:57
 msgid "Your account has been successfully connected."
 msgstr "حساب شما با موفقیت متصل شد."
 
@@ -2876,6 +2879,12 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
 
+#~ msgid "Activation Failed"
+#~ msgstr "فعال سازی انجام نشد"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "اتصال حساب مشتری"
+
 #~ msgid "Become a member today, support our mission and enjoy our member benefits!"
 #~ msgstr "همین امروز عضو شوید، از ماموریت ما حمایت کنید و از مزایای عضویت ما لذت ببرید!"
 
@@ -2887,9 +2896,6 @@ msgstr "بزرگنمایی/کوچک کردن"
 
 #~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 #~ msgstr "به همین دلیل است که PhotoPrism از ابتدا ساخته شده است تا در هر کجا که به آن نیاز دارید اجرا شود، بدون اینکه آزادی، حریم خصوصی یا عملکرد به خطر بیفتد."
-
-#~ msgid "Verified"
-#~ msgstr "تایید شده است"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "از جدیدترین فناوری‌ها برای برچسب‌گذاری و یافتن خودکار عکس‌ها بدون ایجاد مانع استفاده می‌کند."
@@ -2944,9 +2950,6 @@ msgstr "بزرگنمایی/کوچک کردن"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "امروز یک حامی شوید، از ماموریت ما حمایت کنید و از مزایای عضویت ما لذت ببرید!"
-
-#~ msgid "Membership"
-#~ msgstr "عضویت"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "تیم ما این را به صورت مستمر ارزیابی می‌کند، بسته به تلاش پشتیبانی که ویژگی‌ها نیاز دارند، هزینه‌ای که برای ما دارد، و اینکه آیا آنها عموماً مورد نیاز همه هستند یا عمدتاً توسط سازمان‌ها و کاربران پیشرفته درخواست می‌شوند. از آنجایی که این امکان را به ما می دهد تا ویژگی های بیشتری را در اختیار عموم قرار دهیم، همه کاربران را تشویق می کنیم که از ماموریت ما حمایت کنند."

@@ -51,6 +51,7 @@ type ClientConfig struct {
 	AppMode          string              `json:"appMode"`
 	AppIcon          string              `json:"appIcon"`
 	AppColor         string              `json:"appColor"`
+	Restart          bool                `json:"restart"`
 	Debug            bool                `json:"debug"`
 	Trace            bool                `json:"trace"`
 	Test             bool                `json:"test"`
@@ -271,6 +272,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		WallpaperUri:     c.WallpaperUri(),
 		Version:          c.Version(),
 		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
 		Debug:            c.Debug(),
 		Trace:            c.Trace(),
 		Test:             c.Test(),
@@ -357,6 +359,7 @@ func (c *Config) ClientShare() ClientConfig {
 		WallpaperUri:     c.WallpaperUri(),
 		Version:          c.Version(),
 		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
 		Debug:            c.Debug(),
 		Trace:            c.Trace(),
 		Test:             c.Test(),
@@ -449,6 +452,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		WallpaperUri:     c.WallpaperUri(),
 		Version:          c.Version(),
 		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
 		Debug:            c.Debug(),
 		Trace:            c.Trace(),
 		Test:             c.Test(),

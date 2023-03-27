@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-27 16:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,6 +13,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
+
+#: src/page/connect.vue:17
+msgid "{{ getMembership() }}"
+msgstr ""
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
@@ -99,17 +102,13 @@ msgstr "Действие"
 msgid "Actions"
 msgstr "Действия"
 
-#: src/page/connect.vue:90 src/page/connect.vue:92
+#: src/page/connect.vue:90 src/page/connect.vue:98
 msgid "Activate"
 msgstr "Активиране на"
 
-#: src/page/connect.vue:359 src/page/connect.vue:399
+#: src/page/connect.vue:359 src/page/connect.vue:428
 msgid "Activation Code"
 msgstr "Код за активиране"
-
-#: src/page/connect.vue:14 src/page/connect.vue:11
-msgid "Activation Failed"
-msgstr "Активирането е неуспешно"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -347,7 +346,7 @@ msgstr "Сигурен ли сте?"
 msgid "Artist"
 msgstr "Художник"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:128
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Тъй като това ни помага да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."
 
@@ -379,9 +378,7 @@ msgstr "Базова папка"
 
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
-msgstr ""
-"Станете член днес, за да се възползвате от допълнителни функции и да "
-"подкрепите нашата мисия!"
+msgstr "Станете член днес, за да се възползвате от допълнителни функции и да подкрепите нашата мисия!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -432,11 +429,11 @@ msgstr "Разгледайте Базата с познания за подро�
 msgid "Bug Report"
 msgstr "Доклад за грешка"
 
-#: src/common/notify.js:101
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "Заето, моля, изчакайте…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:102
+#: src/page/connect.vue:100 src/page/connect.vue:108
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "С използването на софтуера и услугите, които предоставяме, вие се съгласявате с нашите условия за ползване, политика за поверителност и кодекс на поведение."
 
@@ -477,7 +474,7 @@ msgstr "Не мога да избера повече елементи"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/connect.vue:47 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Отмяна на"
@@ -560,7 +557,7 @@ msgstr "Цветове"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Често срещаните проблеми могат да бъдат бързо диагностицирани и решени с помощта на предоставените от нас контролни списъци за отстраняване на неизправности."
 
-#: src/page/connect.vue:81 src/page/connect.vue:83
+#: src/page/connect.vue:81 src/page/connect.vue:89
 msgid "Compare Editions"
 msgstr "Сравняване на изданията"
 
@@ -576,16 +573,12 @@ msgstr "Доверие"
 msgid "Connect"
 msgstr "Свържете"
 
-#: src/page/connect.vue:20
-msgid "Connect Customer Account"
-msgstr "Свързване на клиентски акаунт"
-
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Свързване чрез WebDAV"
 
-#: src/page/connect.vue:61
+#: src/page/connect.vue:62 src/page/connect.vue:61
 msgid "Connected"
 msgstr "Свържете"
 
@@ -594,7 +587,7 @@ msgid "Contact Details"
 msgstr "Свържете се с нас"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
-#: src/page/connect.vue:44
+#: src/page/connect.vue:50
 msgid "Contact Us"
 msgstr "Свържете се с нас"
 
@@ -1027,7 +1020,7 @@ msgstr "Обратна връзка"
 msgid "Feedback"
 msgstr "Обратна връзка"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Не се колебайте да се свържете с нас на hello@photoprism.app, ако имате някакви въпроси."
 
@@ -1105,7 +1098,7 @@ msgstr "Кадър в секунда"
 msgid "Frames"
 msgstr "Рамки"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:113
 msgid "Frequently Asked Questions"
 msgstr "Често задавани въпроси"
 
@@ -1299,16 +1292,16 @@ msgstr "Интервал"
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "Невалидна дата"
 
@@ -1316,7 +1309,8 @@ msgstr "Невалидна дата"
 msgid "Invalid date"
 msgstr "Невалидна дата"
 
-#: src/page/connect.vue:73 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
+#: src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "Невалидна дата"
 
@@ -1324,7 +1318,7 @@ msgstr "Невалидна дата"
 msgid "Invalid photo selected"
 msgstr "Избрана е невалидна снимка"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:121
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Вие решавате дали искате да се регистрирате, за да се възползвате от допълнителни ползи."
 
@@ -1401,8 +1395,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:125
-#: src/page/connect.vue:102
+#: src/page/about/about.vue:146 src/page/connect.vue:131
 msgid "Learn more"
 msgstr "Научете повече"
 
@@ -1522,8 +1515,8 @@ msgstr "Основен цвят"
 msgid "Male"
 msgstr "Мъжки"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
-#: src/page/connect.vue:80
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
+#: src/page/connect.vue:86
 msgid "Manage account"
 msgstr "Управление на акаунт"
 
@@ -1546,6 +1539,10 @@ msgstr "Маркер"
 #: src/options/options.js:272
 msgid "Medium"
 msgstr "Среден"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "Членство"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1837,7 +1834,7 @@ msgstr "Оригинали"
 msgid "Other"
 msgstr "Други"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:127
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Екипът ни решава това текущо в зависимост от необходимите усилия за поддръжка, разходите за сървър и лицензиране, както и от това дали функциите са необходими на всички или се изискват предимно от организации и напреднали потребители."
 
@@ -1898,7 +1895,7 @@ msgstr "Снимка"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism е актуализиран…"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism е 100% независима и самофинансираща се компания."
 
@@ -1939,11 +1936,11 @@ msgstr "Моля, не качвайте снимки с обидно съдър�
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Моля, имайте предвид, че промяната на паролата ви ще доведе до излизане от системата на други устройства и браузъри."
 
-#: src/page/connect.vue:55 src/page/connect.vue:52
+#: src/page/connect.vue:55 src/page/connect.vue:58
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Моля, рестартирайте инстанцията си, за да влязат в сила промените."
 
-#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+#: src/common/notify.js:98
 msgid "Please wait…"
 msgstr "Моля, изчакайте…"
 
@@ -1991,7 +1988,7 @@ msgstr "Първичен"
 msgid "Private"
 msgstr "Частна"
 
-#: src/page/connect.vue:85 src/page/connect.vue:87
+#: src/page/connect.vue:85 src/page/connect.vue:93
 msgid "Proceed"
 msgstr "Продължете"
 
@@ -2124,7 +2121,7 @@ msgstr "Изисква се"
 msgid "Resolution"
 msgstr "Резолюция"
 
-#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/connect.vue:63 src/page/connect.vue:66
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Рестартиране на"
@@ -2399,8 +2396,7 @@ msgstr "Улици"
 msgid "Subject"
 msgstr "Тема"
 
-#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
-#: src/page/connect.vue:14
+#: src/page/connect.vue:11 src/page/connect.vue:20
 msgid "Successfully Connected"
 msgstr "Успешно свързване"
 
@@ -2417,7 +2413,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Поддръжката на допълнителни услуги, като например Google Drive, ще бъде добавена с течение на времето."
 
 #: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1 src/page/connect.vue:17
+#: src/page/about/about.vue:1 src/page/connect.vue:23
 msgid "Support Our Mission"
 msgstr "Подкрепете нашата мисия"
 
@@ -2503,7 +2499,7 @@ msgstr "Твърде дълго заглавие"
 msgid "Title too long"
 msgstr "Твърде дълго заглавие"
 
-#: src/page/connect.vue:72 src/page/connect.vue:74
+#: src/page/connect.vue:72 src/page/connect.vue:80
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "За да извършите ъпгрейд, можете да въведете код за активиране или да кликнете върху \"Продължи\", за да се регистрирате на нашия уебсайт:"
 
@@ -2605,13 +2601,14 @@ msgstr "Актуализиране на визуализациите"
 msgid "Updating stacks"
 msgstr "Актуализиране на стекове"
 
-#: src/component/navigation.vue:452 src/component/navigation.vue:592
-#: src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Надграждане"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:64
+#: src/page/about/about.vue:9 src/page/connect.vue:70
 msgid "Upgrade Now"
 msgstr "Актуализирайте сега"
 
@@ -2710,6 +2707,10 @@ msgstr "Вектор"
 msgid "Vectors"
 msgstr "Вектори"
 
+#: src/page/connect.vue:11
+msgid "Verified"
+msgstr "Проверено"
+
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2751,7 +2752,7 @@ msgstr "Посетител"
 msgid "Visual Similarity"
 msgstr "Групиране по сходство"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:120
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Доброволните дарения не покриват разходите на екипа, който работи на пълен работен ден, за да ви предоставя актуализации, документация и поддръжка."
 
@@ -2795,7 +2796,7 @@ msgstr "Качване на WebDAV"
 msgid "Website"
 msgstr "Уебсайт"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:124
 msgid "What functionality is generally available?"
 msgstr "Каква функционалност е общодостъпна?"
 
@@ -2803,7 +2804,7 @@ msgstr "Каква функционалност е общодостъпна?"
 msgid "White"
 msgstr "Бял"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr "Защо някои функции са достъпни само за спонсори?"
 
@@ -2857,7 +2858,7 @@ msgstr "Можете да изберете само един елемент."
 msgid "You may rescan your library to find additional faces."
 msgstr "Можете да сканирате отново библиотеката си, за да намерите допълнителни лица."
 
-#: src/page/connect.vue:54 src/page/connect.vue:51
+#: src/page/connect.vue:54 src/page/connect.vue:57
 msgid "Your account has been successfully connected."
 msgstr "Вашият акаунт е успешно свързан."
 
@@ -2874,6 +2875,12 @@ msgstr "Библиотеката ви се анализира непрекъсн
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
 
+#~ msgid "Activation Failed"
+#~ msgstr "Активирането е неуспешно"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "Свързване на клиентски акаунт"
+
 #~ msgid "Become a member today, support our mission and enjoy our member benefits!"
 #~ msgstr "Станете член днес, подкрепете нашата мисия и се възползвайте от нашите ползи за членовете!"
 
@@ -2885,9 +2892,6 @@ msgstr "Увеличаване/намаляване на мащаба"
 
 #~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 #~ msgstr "Ето защо PhotoPrism е създадена от самото начало, за да работи навсякъде, където ви е необходима, без да прави компромиси със свободата, поверителността или функционалността."
-
-#~ msgid "Verified"
-#~ msgstr "Проверено"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Той използва най-новите технологии за автоматично маркиране и намиране на снимки, без да ви пречи."
@@ -2942,9 +2946,6 @@ msgstr "Увеличаване/намаляване на мащаба"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Станете спонсор днес, подкрепете мисията ни и се възползвайте от предимствата за членовете ни!"
-
-#~ msgid "Membership"
-#~ msgstr "Членство"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "Екипът ни преценява това постоянно, в зависимост от усилията за поддръжка, които изискват функциите, разходите за нас и дали те са необходими на всички или се изискват предимно от организации и напреднали потребители. Тъй като това ни позволява да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."

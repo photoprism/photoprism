@@ -212,24 +212,29 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("EXPERIMENTAL"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-webdav",
-			Usage:  "disable built-in WebDAV server",
-			EnvVar: EnvVar("DISABLE_WEBDAV"),
-		}}, {
-		Flag: cli.BoolFlag{
 			Name:   "disable-settings",
 			Usage:  "disable settings UI and API",
 			EnvVar: EnvVar("DISABLE_SETTINGS"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-places",
-			Usage:  "disable reverse geocoding and maps",
-			EnvVar: EnvVar("DISABLE_PLACES"),
+			Name:   "disable-restart",
+			Usage:  "disable restarting the server from the user interface",
+			EnvVar: EnvVar("DISABLE_RESTART"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-backups",
 			Usage:  "disable backing up albums and photo metadata to YAML files",
 			EnvVar: EnvVar("DISABLE_BACKUPS"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-webdav",
+			Usage:  "disable built-in WebDAV server",
+			EnvVar: EnvVar("DISABLE_WEBDAV"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-places",
+			Usage:  "disable reverse geocoding and maps",
+			EnvVar: EnvVar("DISABLE_PLACES"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-tensorflow",

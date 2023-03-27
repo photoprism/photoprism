@@ -10,10 +10,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
+
+#: src/page/connect.vue:17
+msgid "{{ getMembership() }}"
+msgstr ""
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
@@ -99,17 +102,13 @@ msgstr "Radnja"
 msgid "Actions"
 msgstr "Radnje"
 
-#: src/page/connect.vue:90 src/page/connect.vue:92
+#: src/page/connect.vue:90 src/page/connect.vue:98
 msgid "Activate"
 msgstr "Aktivirati"
 
-#: src/page/connect.vue:359 src/page/connect.vue:399
+#: src/page/connect.vue:359 src/page/connect.vue:428
 msgid "Activation Code"
 msgstr "Aktivacijski kod"
-
-#: src/page/connect.vue:14 src/page/connect.vue:11
-msgid "Activation Failed"
-msgstr "Aktivacija nije uspjela"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -347,7 +346,7 @@ msgstr "Jeste li sigurni?"
 msgid "Artist"
 msgstr "Umjetnik"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:128
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Budući da nam to pomaže pružiti više značajki javnosti, potičemo sve korisnike da podrže našu misiju."
 
@@ -379,9 +378,7 @@ msgstr "Osnovna mapa"
 
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
-msgstr ""
-"Postanite član danas kako biste uživali u dodatnim značajkama i podržali "
-"našu misiju!"
+msgstr "Postanite član danas kako biste uživali u dodatnim značajkama i podržali našu misiju!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -432,11 +429,11 @@ msgstr "Pregledajte bazu znanja za detaljne informacije o određenim značajkama
 msgid "Bug Report"
 msgstr "Izvješće o greškama"
 
-#: src/common/notify.js:101
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "Zauzeto, pričekajte…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:102
+#: src/page/connect.vue:100 src/page/connect.vue:108
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Korištenjem softvera i usluga koje pružamo, slažete se s našim uvjetima pružanja usluge, politikom privatnosti i kodeksom ponašanja."
 
@@ -477,7 +474,7 @@ msgstr "Nije moguće odabrati više stavki"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/connect.vue:47 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Otkazati"
@@ -560,7 +557,7 @@ msgstr "Boje"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Uobičajeni problemi mogu se brzo dijagnosticirati i riješiti pomoću kontrolnih popisa za rješavanje problema koje nudimo."
 
-#: src/page/connect.vue:81 src/page/connect.vue:83
+#: src/page/connect.vue:81 src/page/connect.vue:89
 msgid "Compare Editions"
 msgstr "Usporedite izdanja"
 
@@ -576,16 +573,12 @@ msgstr "Samouvjerenost"
 msgid "Connect"
 msgstr "Spojiti"
 
-#: src/page/connect.vue:20
-msgid "Connect Customer Account"
-msgstr "Povežite korisnički račun"
-
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Povežite se putem WebDAV-a"
 
-#: src/page/connect.vue:61
+#: src/page/connect.vue:62 src/page/connect.vue:61
 msgid "Connected"
 msgstr "Spojiti"
 
@@ -594,7 +587,7 @@ msgid "Contact Details"
 msgstr "Kontaktirajte nas"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
-#: src/page/connect.vue:44
+#: src/page/connect.vue:50
 msgid "Contact Us"
 msgstr "Kontaktirajte nas"
 
@@ -1027,7 +1020,7 @@ msgstr "Povratne informacije"
 msgid "Feedback"
 msgstr "Povratne informacije"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Slobodno nas kontaktirajte na hello@photoprism.app ako imate bilo kakvih pitanja."
 
@@ -1105,7 +1098,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Okviri"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:113
 msgid "Frequently Asked Questions"
 msgstr "Često postavljana pitanja"
 
@@ -1299,16 +1292,16 @@ msgstr "Interval"
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "Nevažeći datum"
 
@@ -1316,7 +1309,8 @@ msgstr "Nevažeći datum"
 msgid "Invalid date"
 msgstr "Nevažeći datum"
 
-#: src/page/connect.vue:73 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
+#: src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "Nevažeći datum"
 
@@ -1324,7 +1318,7 @@ msgstr "Nevažeći datum"
 msgid "Invalid photo selected"
 msgstr "Odabrana je nevažeća fotografija"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:121
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Vaša je odluka želite li se prijaviti i uživati u dodatnim pogodnostima."
 
@@ -1401,8 +1395,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:125
-#: src/page/connect.vue:102
+#: src/page/about/about.vue:146 src/page/connect.vue:131
 msgid "Learn more"
 msgstr "Saznajte više"
 
@@ -1522,8 +1515,8 @@ msgstr "Glavna Boja"
 msgid "Male"
 msgstr "Muški"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
-#: src/page/connect.vue:80
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
+#: src/page/connect.vue:86
 msgid "Manage account"
 msgstr "Upravljaj računom"
 
@@ -1546,6 +1539,10 @@ msgstr "Marker"
 #: src/options/options.js:272
 msgid "Medium"
 msgstr "Srednje"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "Članstvo"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1837,7 +1834,7 @@ msgstr "Originali"
 msgid "Other"
 msgstr "Ostalo"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:127
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Naš tim o tome odlučuje kontinuirano, ovisno o potrebnoj podršci, troškovima poslužitelja i licenciranja te jesu li značajke općenito potrebne svima ili ih uglavnom zahtijevaju organizacije i napredni korisnici."
 
@@ -1898,7 +1895,7 @@ msgstr "Fotografija"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism je ažuriran…"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism je 100% samofinancirajući i neovisan."
 
@@ -1939,11 +1936,11 @@ msgstr "Nemojte učitavati fotografije koje sadrže uvredljiv sadržaj."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Imajte na umu da ćete se promjenom lozinke odjaviti s drugih uređaja i preglednika."
 
-#: src/page/connect.vue:55 src/page/connect.vue:52
+#: src/page/connect.vue:55 src/page/connect.vue:58
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Ponovno pokrenite svoju instancu kako bi promjene stupile na snagu."
 
-#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+#: src/common/notify.js:98
 msgid "Please wait…"
 msgstr "Molimo pričekajte…"
 
@@ -1991,7 +1988,7 @@ msgstr "Glavni"
 msgid "Private"
 msgstr "Privatno"
 
-#: src/page/connect.vue:85 src/page/connect.vue:87
+#: src/page/connect.vue:85 src/page/connect.vue:93
 msgid "Proceed"
 msgstr "Nastavi"
 
@@ -2124,7 +2121,7 @@ msgstr "Obavezno"
 msgid "Resolution"
 msgstr "Rezolucija"
 
-#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/connect.vue:63 src/page/connect.vue:66
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Ponovno pokretanje"
@@ -2399,8 +2396,7 @@ msgstr "Ulice"
 msgid "Subject"
 msgstr "Predmet"
 
-#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
-#: src/page/connect.vue:14
+#: src/page/connect.vue:11 src/page/connect.vue:20
 msgid "Successfully Connected"
 msgstr "Uspješno spojen"
 
@@ -2417,7 +2413,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Podrška za dodatne usluge, poput Google diska, bit će dodana s vremenom."
 
 #: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1 src/page/connect.vue:17
+#: src/page/about/about.vue:1 src/page/connect.vue:23
 msgid "Support Our Mission"
 msgstr "Podržite našu misiju"
 
@@ -2503,7 +2499,7 @@ msgstr "Naslov predug"
 msgid "Title too long"
 msgstr "Naslov predug"
 
-#: src/page/connect.vue:72 src/page/connect.vue:74
+#: src/page/connect.vue:72 src/page/connect.vue:80
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Za nadogradnju možete unijeti aktivacijski kod ili kliknuti na \"Nastavi\" da se prijavite na našoj web stranici:"
 
@@ -2605,13 +2601,14 @@ msgstr "Ažuriranje pregleda"
 msgid "Updating stacks"
 msgstr "Ažuriranje hrpa"
 
-#: src/component/navigation.vue:452 src/component/navigation.vue:592
-#: src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Nadogradnja"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:64
+#: src/page/about/about.vue:9 src/page/connect.vue:70
 msgid "Upgrade Now"
 msgstr "Nadograditi sada"
 
@@ -2710,6 +2707,10 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vektori"
 
+#: src/page/connect.vue:11
+msgid "Verified"
+msgstr "Provjereno"
+
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2751,7 +2752,7 @@ msgstr "Posjetitelj"
 msgid "Visual Similarity"
 msgstr "Grupirajte po sličnosti"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:120
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Dobrovoljne donacije ne pokrivaju troškove tima koji radi puno radno vrijeme kako bi vam pružio ažuriranja, dokumentaciju i podršku."
 
@@ -2795,7 +2796,7 @@ msgstr "WebDAV Upload"
 msgid "Website"
 msgstr "Web stranica"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:124
 msgid "What functionality is generally available?"
 msgstr "Koja je funkcionalnost općenito dostupna?"
 
@@ -2803,7 +2804,7 @@ msgstr "Koja je funkcionalnost općenito dostupna?"
 msgid "White"
 msgstr "Bijelo"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr "Zašto su neke značajke dostupne samo sponzorima?"
 
@@ -2857,7 +2858,7 @@ msgstr "Možete odabrati samo jednu stavku"
 msgid "You may rescan your library to find additional faces."
 msgstr "Možete ponovno skenirati svoju biblioteku kako biste pronašli dodatna lica."
 
-#: src/page/connect.vue:54 src/page/connect.vue:51
+#: src/page/connect.vue:54 src/page/connect.vue:57
 msgid "Your account has been successfully connected."
 msgstr "Vaš račun je uspješno povezan."
 
@@ -2874,6 +2875,12 @@ msgstr "Vaša se knjižnica kontinuirano analizira kako bi se automatski izradil
 msgid "Zoom in/out"
 msgstr "Povećavanje/smanjivanje"
 
+#~ msgid "Activation Failed"
+#~ msgstr "Aktivacija nije uspjela"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "Povežite korisnički račun"
+
 #~ msgid "Become a member today, support our mission and enjoy our member benefits!"
 #~ msgstr "Postanite član već danas, podržite našu misiju i uživajte u pogodnostima za članove!"
 
@@ -2885,9 +2892,6 @@ msgstr "Povećavanje/smanjivanje"
 
 #~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 #~ msgstr "Zato je PhotoPrism napravljen od temelja da radi gdje god vam je potreban, bez ugrožavanja slobode, privatnosti ili funkcionalnosti."
-
-#~ msgid "Verified"
-#~ msgstr "Provjereno"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Koristi najnovije tehnologije za označavanje i automatsko pronalaženje slika, a da vam ne smeta."
@@ -2942,9 +2946,6 @@ msgstr "Povećavanje/smanjivanje"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Postanite sponzor već danas, podržite našu misiju i uživajte u našim pogodnostima za članove!"
-
-#~ msgid "Membership"
-#~ msgstr "Članstvo"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "Naš tim to kontinuirano procjenjuje, ovisno o podršci koju značajke zahtijevaju, troškovima za nas i jesu li općenito potrebne svima ili ih uglavnom traže organizacije i napredni korisnici. Budući da nam to omogućuje pružanje više značajki javnosti, potičemo sve korisnike da podrže našu misiju."

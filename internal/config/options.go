@@ -62,9 +62,10 @@ type Options struct {
 	AutoImport            int           `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
 	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
-	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
-	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
 	DisableSettings       bool          `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
+	DisableRestart        bool          `yaml:"DisableRestart" json:"-" flag:"disable-restart"`
+	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
+	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
 	DisablePlaces         bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableTensorFlow     bool          `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
 	DisableFaces          bool          `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`

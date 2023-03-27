@@ -12,7 +12,8 @@ body.chrome #photoprism .search-results .result {
     contain: layout style paint;
 }
 
-#photoprism .v-alert.no-results.v-alert--outline {
+#photoprism .v-alert.no-results.v-alert--outline,
+#photoprism .v-alert.no-outline.v-alert--outline {
     border: 0 !important;
 }
 

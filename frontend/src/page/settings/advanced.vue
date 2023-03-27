@@ -353,6 +353,18 @@
           </v-layout>
         </v-card-actions>
 
+        <v-card-actions class="pt-2">
+          <v-layout wrap align-top>
+            <v-flex xs12 sm6 class="pa-2">
+              <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly" :disabled="busy || !$config.values.restart"
+                     class="white--text ml-0" depressed @click.stop.p.prevent="onRestart">
+                <translate>Restart</translate>
+                <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
+              </v-btn>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+
         <!--
         TODO: Remaining options
 
@@ -377,6 +389,7 @@
 <script>
 import ConfigOptions from "model/config-options";
 import * as options from "options/options";
+import {restart} from "common/server";
 
 export default {
   name: 'PSettingsAdvanced',
@@ -389,6 +402,7 @@ export default {
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
       config: this.$config.values,
+      rtl: this.$rtl,
       settings: new ConfigOptions(false),
       options: options,
     };
@@ -401,6 +415,12 @@ export default {
     }
   },
   methods: {
+    onRestart() {
+      this.busy = true;
+      restart().finally(() => {
+        this.busy = false;
+      });
+    },
     load() {
       if (this.busy || this.isDemo) {
         return;

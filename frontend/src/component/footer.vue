@@ -46,8 +46,9 @@ export default {
     getMembership() {
       const m = this.$config.getMembership();
       switch (m) {
+        case "":
         case "ce":
-          return "CE";
+          return "Community Edition";
         case "cloud":
           return "Cloud";
         case "essentials":
@@ -55,7 +56,7 @@ export default {
         default:
           return "Plus";
       }
-    }
+    },
   },
 };
 </script>

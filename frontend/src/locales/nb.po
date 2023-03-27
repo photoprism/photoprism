@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-27 16:47+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
-"photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,6 +13,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
+
+#: src/page/connect.vue:17
+msgid "{{ getMembership() }}"
+msgstr ""
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
@@ -99,17 +102,13 @@ msgstr "Handling"
 msgid "Actions"
 msgstr "Handlinger"
 
-#: src/page/connect.vue:90 src/page/connect.vue:92
+#: src/page/connect.vue:90 src/page/connect.vue:98
 msgid "Activate"
 msgstr "Aktiver"
 
-#: src/page/connect.vue:359 src/page/connect.vue:399
+#: src/page/connect.vue:359 src/page/connect.vue:428
 msgid "Activation Code"
 msgstr "Aktiveringskode"
-
-#: src/page/connect.vue:14 src/page/connect.vue:11
-msgid "Activation Failed"
-msgstr "Aktivering mislyktes"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -347,7 +346,7 @@ msgstr "Er du sikker?"
 msgid "Artist"
 msgstr "Kunstner"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:128
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Siden dette hjelper oss med å tilby flere funksjoner til publikum, oppfordrer vi alle brukere til å støtte vårt oppdrag."
 
@@ -379,8 +378,7 @@ msgstr "Basismappe"
 
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
-msgstr ""
-"Bli medlem i dag for å dra nytte av flere funksjoner og støtte vårt oppdrag!"
+msgstr "Bli medlem i dag for å dra nytte av flere funksjoner og støtte vårt oppdrag!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -431,11 +429,11 @@ msgstr "Bla gjennom kunnskapsbasen for detaljert informasjon om spesifikke produ
 msgid "Bug Report"
 msgstr "Feilmelding"
 
-#: src/common/notify.js:101
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "Opptatt, vennligst vent…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:102
+#: src/page/connect.vue:100 src/page/connect.vue:108
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Ved å bruke programvaren og tjenestene vi tilbyr, godtar du våre vilkår for bruk, personvernerklæring og etiske retningslinjer."
 
@@ -476,7 +474,7 @@ msgstr "Kan ikke velge flere elementer"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/connect.vue:47 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Avbryt"
@@ -559,7 +557,7 @@ msgstr "Farger"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Vanlige problemer kan raskt diagnostiseres og løses ved hjelp av feilsøkingssjekklistene vi tilbyr."
 
-#: src/page/connect.vue:81 src/page/connect.vue:83
+#: src/page/connect.vue:81 src/page/connect.vue:89
 msgid "Compare Editions"
 msgstr "Sammenlign utgaver"
 
@@ -575,16 +573,12 @@ msgstr "Konfidens"
 msgid "Connect"
 msgstr "Koble til"
 
-#: src/page/connect.vue:20
-msgid "Connect Customer Account"
-msgstr "Koble til kundekonto"
-
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Koble til via WebDAV"
 
-#: src/page/connect.vue:61
+#: src/page/connect.vue:62 src/page/connect.vue:61
 msgid "Connected"
 msgstr "Tilkoblet"
 
@@ -593,7 +587,7 @@ msgid "Contact Details"
 msgstr "Kontaktinformasjon"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
-#: src/page/connect.vue:44
+#: src/page/connect.vue:50
 msgid "Contact Us"
 msgstr "Kontakt Oss"
 
@@ -1026,7 +1020,7 @@ msgstr "Feed"
 msgid "Feedback"
 msgstr "Tilbakemelding"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Vennligst kontakt oss på hello@photoprism.app hvis du har noen spørsmål eller trenger hjelp."
 
@@ -1104,7 +1098,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Rammer"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:113
 msgid "Frequently Asked Questions"
 msgstr "Ofte stilte spørsmål"
 
@@ -1298,16 +1292,16 @@ msgstr "Intervall"
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "Ugyldig dato"
 
@@ -1315,7 +1309,8 @@ msgstr "Ugyldig dato"
 msgid "Invalid date"
 msgstr "Ugyldig dato"
 
-#: src/page/connect.vue:73 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
+#: src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "Ugyldige verdier"
 
@@ -1323,7 +1318,7 @@ msgstr "Ugyldige verdier"
 msgid "Invalid photo selected"
 msgstr "Ugyldig bilde er valgt"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:121
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Det er opp til deg om du vil registrere deg for å få ytterligere fordeler."
 
@@ -1400,8 +1395,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:125
-#: src/page/connect.vue:102
+#: src/page/about/about.vue:146 src/page/connect.vue:131
 msgid "Learn more"
 msgstr "Lær mer"
 
@@ -1521,8 +1515,8 @@ msgstr "Hovedfarge"
 msgid "Male"
 msgstr "Mann"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
-#: src/page/connect.vue:80
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
+#: src/page/connect.vue:86
 msgid "Manage account"
 msgstr "Administrer konto"
 
@@ -1545,6 +1539,10 @@ msgstr "Markør"
 #: src/options/options.js:272
 msgid "Medium"
 msgstr "Medium"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "Medlemskap"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1836,7 +1834,7 @@ msgstr "Originaler"
 msgid "Other"
 msgstr "Andre"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:127
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Teamet vårt avgjør dette fortløpende, avhengig av støtteinnsatsen som kreves, server- og lisenskostnader, og om funksjonene generelt trengs av alle eller hovedsakelig etterspørres av organisasjoner og avanserte brukere."
 
@@ -1897,7 +1895,7 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism har blitt oppdatert…"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism er 100 % selvfinansiert og uavhengig."
 
@@ -1938,11 +1936,11 @@ msgstr "Vennligst ikke last opp bilder som inneholder støtende innhold."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Vær oppmerksom på at endring av passord vil logge deg ut på andre enheter og nettlesere."
 
-#: src/page/connect.vue:55 src/page/connect.vue:52
+#: src/page/connect.vue:55 src/page/connect.vue:58
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Start instansen på nytt for at endringene skal tre i kraft."
 
-#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+#: src/common/notify.js:98
 msgid "Please wait…"
 msgstr "Vennligst vent…"
 
@@ -1990,7 +1988,7 @@ msgstr "Primær"
 msgid "Private"
 msgstr "Privat"
 
-#: src/page/connect.vue:85 src/page/connect.vue:87
+#: src/page/connect.vue:85 src/page/connect.vue:93
 msgid "Proceed"
 msgstr "Fortsett"
 
@@ -2123,7 +2121,7 @@ msgstr "Nødvendig"
 msgid "Resolution"
 msgstr "Oppløsning"
 
-#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/connect.vue:63 src/page/connect.vue:66
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Start på nytt"
@@ -2398,8 +2396,7 @@ msgstr "Gater"
 msgid "Subject"
 msgstr "Emne"
 
-#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
-#: src/page/connect.vue:14
+#: src/page/connect.vue:11 src/page/connect.vue:20
 msgid "Successfully Connected"
 msgstr "Tilkobing vellykket"
 
@@ -2416,7 +2413,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Støtte for tilleggstjenester som Google Drive vil bli lagt til over tid."
 
 #: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1 src/page/connect.vue:17
+#: src/page/about/about.vue:1 src/page/connect.vue:23
 msgid "Support Our Mission"
 msgstr "Støtt oppdraget vårt"
 
@@ -2502,7 +2499,7 @@ msgstr "Tittelen er for lang"
 msgid "Title too long"
 msgstr "Tittelen er for lang"
 
-#: src/page/connect.vue:72 src/page/connect.vue:74
+#: src/page/connect.vue:72 src/page/connect.vue:80
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "For å oppgradere kan du enten skrive inn en aktiveringskode eller klikke på \"Fortsett\" for å registrere deg på nettstedet vårt:"
 
@@ -2604,13 +2601,14 @@ msgstr "Oppdaterer forhåndsvisninger"
 msgid "Updating stacks"
 msgstr "Oppdaterer stabler"
 
-#: src/component/navigation.vue:452 src/component/navigation.vue:592
-#: src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Oppgrader"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:64
+#: src/page/about/about.vue:9 src/page/connect.vue:70
 msgid "Upgrade Now"
 msgstr "Oppgrader nå"
 
@@ -2709,6 +2707,10 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vektorer"
 
+#: src/page/connect.vue:11
+msgid "Verified"
+msgstr "Verifisert"
+
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2750,7 +2752,7 @@ msgstr "Besøkende"
 msgid "Visual Similarity"
 msgstr "Gruppér etter likhet"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:120
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Frivillige donasjoner dekker ikke kostnadene til et team som jobber fulltid med å gi deg oppdateringer, dokumentasjon og støtte."
 
@@ -2794,7 +2796,7 @@ msgstr "WebDAV-opplasting"
 msgid "Website"
 msgstr "Nettsted"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:124
 msgid "What functionality is generally available?"
 msgstr "Hvilken funksjonalitet er generelt tilgjengelig?"
 
@@ -2802,7 +2804,7 @@ msgstr "Hvilken funksjonalitet er generelt tilgjengelig?"
 msgid "White"
 msgstr "Hvit"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr "Hvorfor er enkelte funksjoner kun tilgjengelige for sponsorer?"
 
@@ -2856,7 +2858,7 @@ msgstr "Du kan bare velge ett element"
 msgid "You may rescan your library to find additional faces."
 msgstr "Du kan skanne biblioteket ditt på nytt for å finne flere ansikter."
 
-#: src/page/connect.vue:54 src/page/connect.vue:51
+#: src/page/connect.vue:54 src/page/connect.vue:57
 msgid "Your account has been successfully connected."
 msgstr "Kontoen din har blitt koblet til."
 
@@ -2873,6 +2875,12 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
 
+#~ msgid "Activation Failed"
+#~ msgstr "Aktivering mislyktes"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "Koble til kundekonto"
+
 #~ msgid "Become a member today, support our mission and enjoy our member benefits!"
 #~ msgstr "Bli en sponsor i dag, støtt oppdraget vårt og nyt medlemsfordelene våre!"
 
@@ -2884,9 +2892,6 @@ msgstr "Zoom inn/ut"
 
 #~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 #~ msgstr "Derfor ble PhotoPrism bygget fra grunnen av for å kjøre der du trenger det, uten at det går på bekostning av frihet, personvern eller funksjonalitet."
-
-#~ msgid "Verified"
-#~ msgstr "Verifisert"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Den bruker den nyeste teknologien for å merke og finne bilder automatisk uten å komme i veien for deg."
@@ -2941,9 +2946,6 @@ msgstr "Zoom inn/ut"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Bli en sponsor i dag, støtt oppdraget vårt og nyt medlemsfordelene våre!"
-
-#~ msgid "Membership"
-#~ msgstr "Medlemskap"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "Teamet vårt evaluerer dette fortløpende, avhengig av støtteinnsatsen funksjonene krever, kostnadene for oss, og om de er generelt nødvendige av alle eller hovedsakelig etterspurt av organisasjoner og avanserte brukere. Siden dette lar oss tilby flere funksjoner til publikum, oppfordrer vi alle brukere til å støtte oppdraget vårt."

@@ -2,17 +2,26 @@
   <div class="p-page p-page-upgrade">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
+        <translate>Membership</translate>
+        <v-icon v-if="rtl">navigate_before</v-icon>
+        <v-icon v-else>navigate_next</v-icon>
         <span v-if="busy">
           <translate>Busy, please wait…</translate>
         </span>
         <span v-else-if="success">
-          <translate>Verified</translate>
+          <translate>Successfully Connected</translate>
         </span>
         <span v-else-if="error">
           <translate>Invalid</translate>
         </span>
+        <span v-else-if="form.token">
+          <translate>Upgrade</translate>
+        </span>
+        <span v-else-if="membership && membership !== 'ce'">
+          <translate>Successfully Connected</translate>
+        </span>
         <span v-else>
-          <translate>PhotoPrism+ Membership</translate>
+          <translate>Support Our Mission</translate>
         </span>
       </v-toolbar-title>
 
@@ -58,29 +67,25 @@
           </v-btn>
         </v-flex>
       </v-layout>
-      <v-layout v-else-if="success" row wrap>
-        <v-flex xs12 d-flex class="text-sm-left pa-2">
-          <v-alert
-              :value="true"
-              color="success"
-              icon="diamond"
-              class="mt-3"
-              outline
-          >
-            <translate>Successfully Connected</translate>
-          </v-alert>
+      <v-layout v-else-if="success || $config.values.restart" row wrap>
+        <v-flex xs12 d-flex class="pa-2">
+          <p class="subheading text-xs-left">
+            <translate>Your account has been successfully connected.</translate>
+            <translate>Please restart your instance for the changes to take effect.</translate>
+          </p>
         </v-flex>
         <v-flex xs12 grow class="pa-2">
           <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
-                 class="ml-0"
-                 outline
-                 :disabled="busy">
+                 class="ml-0" outline :disabled="busy">
               <translate>Manage account</translate>
           </v-btn>
-          <v-btn v-if="!isSponsor" href="https://my.photoprism.app/get-started" target="_blank" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
-                 class="white--text ml-0"
-                 depressed
-                 :disabled="busy">
+          <v-btn v-if="$config.values.restart" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
+                 class="white--text ml-0" depressed :disabled="busy" @click.stop.p.prevent="onRestart">
+            <translate>Restart</translate>
+            <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
+          </v-btn>
+          <v-btn v-if="membership === ''" href="https://my.photoprism.app/get-started" target="_blank" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
+                 class="white--text ml-0" depressed :disabled="busy">
             <translate>Upgrade Now</translate>
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
             <v-icon v-else right dark>navigate_next</v-icon>
@@ -103,13 +108,20 @@
                         background-color="secondary-light" :label="$gettext('Activation Code')" type="text">
           </v-text-field>
           <div class="action-buttons text-xs-left mt-3">
-            <v-btn color="secondary-dark" :block="$vuetify.breakpoint.xsOnly"
+            <v-btn v-if="membership && membership !== 'ce'" href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
+                   class="ml-0"
+                   outline
+                   :disabled="busy">
+              <translate>Manage account</translate>
+            </v-btn>
+            <v-btn v-else color="secondary-dark" :block="$vuetify.breakpoint.xsOnly"
                    class="ml-0"
                    outline
                    :disabled="busy"
                    @click.stop="compare">
               <translate>Compare Editions</translate>
             </v-btn>
+
             <v-btn v-if="!form.token.length" color="primary-button"
                    class="white--text ml-0 action-proceed" :block="$vuetify.breakpoint.xsOnly"
                    depressed
@@ -169,6 +181,7 @@
 <script>
 import * as options from "options/options";
 import Api from "common/api";
+import {restart} from "common/server";
 
 export default {
   name: 'PPageConnect',
@@ -184,6 +197,7 @@ export default {
       isAdmin: this.$session.isAdmin(),
       isDemo: this.$config.isDemo(),
       isSponsor: this.$config.isSponsor(),
+      membership: this.$config.getMembership(),
       showInfo: !token,
       rtl: this.$rtl,
       tokenMask: 'nnnn-nnnn-nnnn',
@@ -200,6 +214,9 @@ export default {
     });
   },
   methods: {
+    onRestart() {
+      restart();
+    },
     reset() {
       this.success = false;
       this.busy = false;
@@ -244,6 +261,20 @@ export default {
         this.$router.push({name: "upgrade"});
       }
 
+    },
+    getMembership() {
+      const m = this.$config.getMembership();
+      switch (m) {
+        case "":
+        case "ce":
+          return "Community";
+        case "cloud":
+          return "Cloud";
+        case "essentials":
+          return "Essentials";
+        default:
+          return "Plus";
+      }
     },
   },
 };

@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-27 16:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,6 +13,10 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
+
+#: src/page/connect.vue:17
+msgid "{{ getMembership() }}"
+msgstr ""
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
@@ -99,17 +102,13 @@ msgstr "動作"
 msgid "Actions"
 msgstr "動作"
 
-#: src/page/connect.vue:90 src/page/connect.vue:92
+#: src/page/connect.vue:90 src/page/connect.vue:98
 msgid "Activate"
 msgstr "激活"
 
-#: src/page/connect.vue:359 src/page/connect.vue:399
+#: src/page/connect.vue:359 src/page/connect.vue:428
 msgid "Activation Code"
 msgstr "激活碼"
-
-#: src/page/connect.vue:14 src/page/connect.vue:11
-msgid "Activation Failed"
-msgstr "激活失败"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -347,7 +346,7 @@ msgstr "你確定嗎？"
 msgid "Artist"
 msgstr "作者"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:128
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "由于这有助于我们向公众提供更多的功能，我们鼓励所有用户支持我们的使命。"
 
@@ -430,11 +429,11 @@ msgstr "瀏覽知識庫以獲取有關特定產品功能、服務和相關資源
 msgid "Bug Report"
 msgstr "回報問題"
 
-#: src/common/notify.js:101
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "忙碌中，請稍候…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:102
+#: src/page/connect.vue:100 src/page/connect.vue:108
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "當您開始使用我們提供的軟體及服務時，即表示您同意我們的服務條款、隱私權政策和行為準則。"
 
@@ -475,7 +474,7 @@ msgstr "無法選取更多項目"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/connect.vue:47 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "取消"
@@ -558,7 +557,7 @@ msgstr "顏色"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "使用我們提供的故障排除清單可以快速診斷和解決常見問題。"
 
-#: src/page/connect.vue:81 src/page/connect.vue:83
+#: src/page/connect.vue:81 src/page/connect.vue:89
 msgid "Compare Editions"
 msgstr "比較版本"
 
@@ -574,16 +573,12 @@ msgstr "信心度"
 msgid "Connect"
 msgstr "連線"
 
-#: src/page/connect.vue:20
-msgid "Connect Customer Account"
-msgstr "连接客户账户"
-
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "使用 WebDAV 連線"
 
-#: src/page/connect.vue:61
+#: src/page/connect.vue:62 src/page/connect.vue:61
 msgid "Connected"
 msgstr "已連接"
 
@@ -592,7 +587,7 @@ msgid "Contact Details"
 msgstr "聯繫方式"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
-#: src/page/connect.vue:44
+#: src/page/connect.vue:50
 msgid "Contact Us"
 msgstr "聯繫我們"
 
@@ -1025,7 +1020,7 @@ msgstr "訂閱源"
 msgid "Feedback"
 msgstr "回饋"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "如果您有任何問題或需要幫助，請通過 hello@photoprism.app 與我們聯繫。"
 
@@ -1103,7 +1098,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "框架"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:113
 msgid "Frequently Asked Questions"
 msgstr "常見問題"
 
@@ -1297,16 +1292,16 @@ msgstr "間隔"
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "無效"
 
@@ -1314,7 +1309,8 @@ msgstr "無效"
 msgid "Invalid date"
 msgstr "無效的日期"
 
-#: src/page/connect.vue:73 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
+#: src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "無效的參數"
 
@@ -1322,7 +1318,7 @@ msgstr "無效的參數"
 msgid "Invalid photo selected"
 msgstr "選擇的照片無效"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:121
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "你可以决定是否要注册以享受额外的好处。"
 
@@ -1399,8 +1395,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:125
-#: src/page/connect.vue:102
+#: src/page/about/about.vue:146 src/page/connect.vue:131
 msgid "Learn more"
 msgstr "了解更多"
 
@@ -1520,8 +1515,8 @@ msgstr "主要顏色"
 msgid "Male"
 msgstr "男性"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
-#: src/page/connect.vue:80
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
+#: src/page/connect.vue:86
 msgid "Manage account"
 msgstr "管理帳號"
 
@@ -1544,6 +1539,10 @@ msgstr "標記"
 #: src/options/options.js:272
 msgid "Medium"
 msgstr "中"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "會員資格"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1835,7 +1834,7 @@ msgstr "來源"
 msgid "Other"
 msgstr "其他"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:127
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是每个人普遍需要的还是主要由组织和高级用户要求的，持续决定这一点。"
 
@@ -1896,7 +1895,7 @@ msgstr "相片"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism更新囉…"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism是100%自筹资金和独立的。"
 
@@ -1937,11 +1936,11 @@ msgstr "請不要上傳包含冒犯性內容的照片。"
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "請注意，更改密碼將使您在其他設備和瀏覽器上登出。"
 
-#: src/page/connect.vue:55 src/page/connect.vue:52
+#: src/page/connect.vue:55 src/page/connect.vue:58
 msgid "Please restart your instance for the changes to take effect."
 msgstr "请重新启动您的实例以使变化生效。"
 
-#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+#: src/common/notify.js:98
 msgid "Please wait…"
 msgstr "请等待…"
 
@@ -1989,7 +1988,7 @@ msgstr "主要的"
 msgid "Private"
 msgstr "私人的"
 
-#: src/page/connect.vue:85 src/page/connect.vue:87
+#: src/page/connect.vue:85 src/page/connect.vue:93
 msgid "Proceed"
 msgstr "繼續"
 
@@ -2122,7 +2121,7 @@ msgstr "必填"
 msgid "Resolution"
 msgstr "解析度"
 
-#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/connect.vue:63 src/page/connect.vue:66
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "重新启动"
@@ -2397,8 +2396,7 @@ msgstr "街"
 msgid "Subject"
 msgstr "主題"
 
-#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
-#: src/page/connect.vue:14
+#: src/page/connect.vue:11 src/page/connect.vue:20
 msgid "Successfully Connected"
 msgstr "成功連接"
 
@@ -2415,7 +2413,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "隨著時間的推移，將增加對其他服務的支援，例如Google雲端硬碟。"
 
 #: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1 src/page/connect.vue:17
+#: src/page/about/about.vue:1 src/page/connect.vue:23
 msgid "Support Our Mission"
 msgstr "支持我們的使命"
 
@@ -2503,7 +2501,7 @@ msgstr "職位 / 位置"
 msgid "Title too long"
 msgstr "標題太長"
 
-#: src/page/connect.vue:72 src/page/connect.vue:74
+#: src/page/connect.vue:72 src/page/connect.vue:80
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "要升級，你需要輸入金鑰或按下\"繼續\"來登入我們的網站:"
 
@@ -2605,13 +2603,14 @@ msgstr "更新預覽"
 msgid "Updating stacks"
 msgstr "更新堆疊"
 
-#: src/component/navigation.vue:452 src/component/navigation.vue:592
-#: src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "升級"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:64
+#: src/page/about/about.vue:9 src/page/connect.vue:70
 msgid "Upgrade Now"
 msgstr "立即升級"
 
@@ -2710,6 +2709,10 @@ msgstr "矢量"
 msgid "Vectors"
 msgstr "媒介物"
 
+#: src/page/connect.vue:11
+msgid "Verified"
+msgstr "已驗證"
+
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2751,7 +2754,7 @@ msgstr "访客"
 msgid "Visual Similarity"
 msgstr "視覺相似度"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:120
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "自愿捐款并不包括一个全职工作的团队为你提供更新、文件和支持的费用。"
 
@@ -2797,7 +2800,7 @@ msgstr "WebDAV上傳"
 msgid "Website"
 msgstr "網站"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:124
 msgid "What functionality is generally available?"
 msgstr "什麼功能是普遍可用的？"
 
@@ -2805,7 +2808,7 @@ msgstr "什麼功能是普遍可用的？"
 msgid "White"
 msgstr "白色"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr "為什麼有些功能只對贊助者開放？"
 
@@ -2859,7 +2862,7 @@ msgstr "你只能選取一個項目"
 msgid "You may rescan your library to find additional faces."
 msgstr "您可以重新掃描您的收藏庫以查找其他面孔。"
 
-#: src/page/connect.vue:54 src/page/connect.vue:51
+#: src/page/connect.vue:54 src/page/connect.vue:57
 msgid "Your account has been successfully connected."
 msgstr "您的账户已成功连接。"
 
@@ -2876,6 +2879,12 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 msgid "Zoom in/out"
 msgstr "縮放"
 
+#~ msgid "Activation Failed"
+#~ msgstr "激活失败"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "连接客户账户"
+
 #~ msgid "Become a member today, support our mission and enjoy our member benefits!"
 #~ msgstr "今天就成为会员，支持我们的使命，享受我们的会员福利"
 
@@ -2887,9 +2896,6 @@ msgstr "縮放"
 
 #~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 #~ msgstr "这就是为什么PhotoPrism从一开始就能在你需要的地方运行，而不影响自由、隐私或功能。"
-
-#~ msgid "Verified"
-#~ msgstr "已驗證"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "它利用最新技術自動標記和查找圖片，而不會妨礙您。"
@@ -2938,9 +2944,6 @@ msgstr "縮放"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "今天就成为赞助商，支持我们的使命，享受我们的会员福利"
-
-#~ msgid "Membership"
-#~ msgstr "會員資格"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "我們的團隊會根據開發這些功能所需要付出的時間及精神，伺服器和認證成本，以及這些功能是每個人普遍都會需要的功能，還是主要是由組織和專業用戶的請求來持續的評估。由於這使我們能夠向大眾提供更多功能，因此我們鼓勵所有用戶支持我們的專案。"

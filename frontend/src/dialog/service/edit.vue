@@ -388,7 +388,7 @@ export default {
     },
     save() {
       if (this.loading) {
-        this.$notify.wait();
+        this.$notify.busy();
         return;
       }
 

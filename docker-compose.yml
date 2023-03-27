@@ -11,6 +11,7 @@ services:
     depends_on:
       - mariadb
       - dummy-webdav
+    stop_grace_period: 10s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined

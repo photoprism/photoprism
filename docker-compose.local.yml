@@ -8,6 +8,7 @@ services:
   ## Docs: https://docs.photoprism.org/
   photoprism-local:
     image: photoprism/photoprism:local
+    stop_grace_period: 10s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -61,7 +62,7 @@ services:
       PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
       PHOTOPRISM_JPEG_QUALITY: 85             # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
       TF_CPP_MIN_LOG_LEVEL: 0                 # show TensorFlow log messages for development
-      PHOTOPRISM_INIT: "http gpu tensorflow"  # Options: "update https gpu tensorflow davfs clitools clean"
+      # PHOTOPRISM_INIT: "http gpu tensorflow"  # Options: "update https gpu tensorflow davfs clitools clean"
       PHOTOPRISM_FFMPEG_ENCODER: "nvidia"     # Options: "software", "intel", "nvidia", "apple", "raspberry"
       PHOTOPRISM_STORAGE_PATH: "/photoprism/storage"
       PHOTOPRISM_ORIGINALS_PATH: "/photoprism/storage/originals"

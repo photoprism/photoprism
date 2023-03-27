@@ -14,6 +14,10 @@ msgstr ""
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
+#: src/page/connect.vue:17
+msgid "{{ getMembership() }}"
+msgstr ""
+
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
 msgstr "%{n} album ditemui"
@@ -98,17 +102,13 @@ msgstr "Tindakan"
 msgid "Actions"
 msgstr "Tindakan"
 
-#: src/page/connect.vue:90 src/page/connect.vue:92
+#: src/page/connect.vue:90 src/page/connect.vue:98
 msgid "Activate"
 msgstr "Aktifkan"
 
-#: src/page/connect.vue:359 src/page/connect.vue:399
+#: src/page/connect.vue:359 src/page/connect.vue:428
 msgid "Activation Code"
 msgstr "Kod pengaktifan"
-
-#: src/page/connect.vue:14 src/page/connect.vue:11
-msgid "Activation Failed"
-msgstr "Pengaktifan Gagal"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -346,7 +346,7 @@ msgstr "Adakah anda pasti?"
 msgid "Artist"
 msgstr "Artis"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:128
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Oleh kerana ini membantu kami menyediakan lebih banyak ciri kepada orang ramai, kami menggalakkan semua pengguna untuk menyokong misi kami."
 
@@ -378,8 +378,7 @@ msgstr "Folder Asas"
 
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
-msgstr ""
-"Jadi ahli hari ini untuk menikmati ciri tambahan dan menyokong misi kami!"
+msgstr "Jadi ahli hari ini untuk menikmati ciri tambahan dan menyokong misi kami!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -430,11 +429,11 @@ msgstr "Semak imbas Pangkalan Pengetahuan untuk mendapatkan maklumat terperinci 
 msgid "Bug Report"
 msgstr "Laporan Pepijat"
 
-#: src/common/notify.js:101
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "Tengah sibuk, sila tunggu…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:102
+#: src/page/connect.vue:100 src/page/connect.vue:108
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Dengan menggunakan perisian dan perkhidmatan yang kami sediakan, anda bersetuju menerima syarat perkhidmatan, dasar privasi dan tatakelakuan kami."
 
@@ -475,7 +474,7 @@ msgstr "Tidak dapat memilih lebih banyak item"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/connect.vue:47 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Batal"
@@ -558,7 +557,7 @@ msgstr "Warna"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Isu biasa boleh didiagnosis dan diselesaikan dengan cepat menggunakan senarai semak penyelesaian masalah yang kami sediakan."
 
-#: src/page/connect.vue:81 src/page/connect.vue:83
+#: src/page/connect.vue:81 src/page/connect.vue:89
 msgid "Compare Editions"
 msgstr "Bandingkan Edisi"
 
@@ -574,16 +573,12 @@ msgstr "Keyakinan"
 msgid "Connect"
 msgstr "Sambung"
 
-#: src/page/connect.vue:20
-msgid "Connect Customer Account"
-msgstr "Sambungkan Akaun Pelanggan"
-
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Sambung melalui WebDAV"
 
-#: src/page/connect.vue:61
+#: src/page/connect.vue:62 src/page/connect.vue:61
 msgid "Connected"
 msgstr "Sambung"
 
@@ -592,7 +587,7 @@ msgid "Contact Details"
 msgstr "Hubungi Kami"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
-#: src/page/connect.vue:44
+#: src/page/connect.vue:50
 msgid "Contact Us"
 msgstr "Hubungi Kami"
 
@@ -1025,7 +1020,7 @@ msgstr "Maklumbalas"
 msgid "Feedback"
 msgstr "Maklumbalas"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Sila hubungi kami di hello@photoprism.app jika anda mempunyai sebarang pertanyaan."
 
@@ -1103,7 +1098,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Bingkai"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:113
 msgid "Frequently Asked Questions"
 msgstr "Soalan Lazim"
 
@@ -1297,16 +1292,16 @@ msgstr "Interval"
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "Tarikh tidak sah"
 
@@ -1314,7 +1309,8 @@ msgstr "Tarikh tidak sah"
 msgid "Invalid date"
 msgstr "Tarikh tidak sah"
 
-#: src/page/connect.vue:73 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
+#: src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "Tarikh tidak sah"
 
@@ -1322,7 +1318,7 @@ msgstr "Tarikh tidak sah"
 msgid "Invalid photo selected"
 msgstr "Foto tidak sah dipilih"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:121
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Ia adalah keputusan anda sama ada anda ingin mendaftar untuk menikmati faedah tambahan."
 
@@ -1399,8 +1395,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:125
-#: src/page/connect.vue:102
+#: src/page/about/about.vue:146 src/page/connect.vue:131
 msgid "Learn more"
 msgstr "Ketahui lebih lanjut"
 
@@ -1520,8 +1515,8 @@ msgstr "Warna Utama"
 msgid "Male"
 msgstr "jantan"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
-#: src/page/connect.vue:80
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
+#: src/page/connect.vue:86
 msgid "Manage account"
 msgstr "Urus akaun"
 
@@ -1544,6 +1539,10 @@ msgstr "Penanda"
 #: src/options/options.js:272
 msgid "Medium"
 msgstr "Sederhana"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "Keahlian"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1835,7 +1834,7 @@ msgstr "Asal"
 msgid "Other"
 msgstr "Lain-lain"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:127
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Pasukan kami memutuskan perkara ini secara berterusan bergantung pada usaha sokongan yang diperlukan, pelayan dan kos pelesenan, dan sama ada ciri tersebut secara amnya diperlukan oleh semua orang atau terutamanya diminta oleh organisasi dan pengguna lanjutan."
 
@@ -1896,7 +1895,7 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism telah dikemas kini…"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism adalah 100% dibiayai sendiri dan bebas."
 
@@ -1937,11 +1936,11 @@ msgstr "Tolong jangan muat naik foto yang mengandungi kandungan yang menyinggung
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Sila ambil perhatian bahawa menukar kata laluan anda akan log keluar anda pada peranti dan penyemak imbas lain."
 
-#: src/page/connect.vue:55 src/page/connect.vue:52
+#: src/page/connect.vue:55 src/page/connect.vue:58
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Sila mulakan semula contoh anda untuk perubahan berkuat kuasa."
 
-#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+#: src/common/notify.js:98
 msgid "Please wait…"
 msgstr "Sila tunggu…"
 
@@ -1989,7 +1988,7 @@ msgstr "Utama"
 msgid "Private"
 msgstr "Sulit"
 
-#: src/page/connect.vue:85 src/page/connect.vue:87
+#: src/page/connect.vue:85 src/page/connect.vue:93
 msgid "Proceed"
 msgstr "Teruskan"
 
@@ -2122,7 +2121,7 @@ msgstr "Diperlukan"
 msgid "Resolution"
 msgstr "Resolusi"
 
-#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/connect.vue:63 src/page/connect.vue:66
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Mula semula"
@@ -2397,8 +2396,7 @@ msgstr "Jalan-jalan"
 msgid "Subject"
 msgstr "Subjek"
 
-#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
-#: src/page/connect.vue:14
+#: src/page/connect.vue:11 src/page/connect.vue:20
 msgid "Successfully Connected"
 msgstr "Berjaya Disambungkan"
 
@@ -2415,7 +2413,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Sokongan untuk perkhidmatan tambahan, seperti Google Drive, akan ditambahkan dari semasa ke semasa."
 
 #: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1 src/page/connect.vue:17
+#: src/page/about/about.vue:1 src/page/connect.vue:23
 msgid "Support Our Mission"
 msgstr "Sokong Misi Kami"
 
@@ -2501,7 +2499,7 @@ msgstr "Tajuk terlalu panjang"
 msgid "Title too long"
 msgstr "Tajuk terlalu panjang"
 
-#: src/page/connect.vue:72 src/page/connect.vue:74
+#: src/page/connect.vue:72 src/page/connect.vue:80
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Untuk menaik taraf, anda boleh memasukkan kod pengaktifan atau klik pada \"Teruskan\" untuk mendaftar di tapak web kami:"
 
@@ -2603,13 +2601,14 @@ msgstr "Mengemas kini pratonton"
 msgid "Updating stacks"
 msgstr "Mengemas kini tindanan"
 
-#: src/component/navigation.vue:452 src/component/navigation.vue:592
-#: src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Naik taraf"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:64
+#: src/page/about/about.vue:9 src/page/connect.vue:70
 msgid "Upgrade Now"
 msgstr "Menaiktaraf sekarang"
 
@@ -2708,6 +2707,10 @@ msgstr "vektor"
 msgid "Vectors"
 msgstr "vektor"
 
+#: src/page/connect.vue:11
+msgid "Verified"
+msgstr "Disahkan"
+
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2749,7 +2752,7 @@ msgstr "Pelawat"
 msgid "Visual Similarity"
 msgstr "Kumpulan mengikut persamaan"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:120
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Derma sukarela tidak meliputi kos pasukan yang bekerja sepenuh masa untuk memberi anda kemas kini, dokumentasi dan sokongan."
 
@@ -2793,7 +2796,7 @@ msgstr "Muat Naik WebDAV"
 msgid "Website"
 msgstr "laman web"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:124
 msgid "What functionality is generally available?"
 msgstr "Apakah fungsi yang tersedia secara umum?"
 
@@ -2801,7 +2804,7 @@ msgstr "Apakah fungsi yang tersedia secara umum?"
 msgid "White"
 msgstr "Putih"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr "Mengapakah beberapa ciri hanya tersedia untuk penaja?"
 
@@ -2855,7 +2858,7 @@ msgstr "Anda hanya boleh memilih satu item"
 msgid "You may rescan your library to find additional faces."
 msgstr "Anda boleh mengimbas semula pustaka anda untuk mencari wajah tambahan."
 
-#: src/page/connect.vue:54 src/page/connect.vue:51
+#: src/page/connect.vue:54 src/page/connect.vue:57
 msgid "Your account has been successfully connected."
 msgstr "Akaun anda telah berjaya disambungkan."
 
@@ -2872,6 +2875,12 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
 
+#~ msgid "Activation Failed"
+#~ msgstr "Pengaktifan Gagal"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "Sambungkan Akaun Pelanggan"
+
 #~ msgid "Become a member today, support our mission and enjoy our member benefits!"
 #~ msgstr "Jadi ahli hari ini, sokong misi kami dan nikmati faedah ahli kami!"
 
@@ -2883,9 +2892,6 @@ msgstr "Zum masuk/keluar"
 
 #~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 #~ msgstr "Itulah sebabnya PhotoPrism dibina dari bawah untuk dijalankan di mana sahaja anda memerlukannya, tanpa menjejaskan kebebasan, privasi atau kefungsian."
-
-#~ msgid "Verified"
-#~ msgstr "Disahkan"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Ia menggunakan teknologi terkini untuk menandakan dan mencari gambar secara automatik tanpa menghalang anda."
@@ -2940,9 +2946,6 @@ msgstr "Zum masuk/keluar"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Jadi penaja hari ini, sokong misi kami dan nikmati faedah ahli kami!"
-
-#~ msgid "Membership"
-#~ msgstr "Keahlian"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "Pasukan kami menilai perkara ini secara berterusan, bergantung pada usaha sokongan yang diperlukan oleh ciri, kos kepada kami dan sama ada ia secara amnya diperlukan oleh semua orang atau terutamanya diminta oleh organisasi dan pengguna lanjutan. Oleh kerana ini membolehkan kami menyediakan lebih banyak ciri kepada orang ramai, kami menggalakkan semua pengguna untuk menyokong misi kami."

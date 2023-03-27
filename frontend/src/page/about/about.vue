@@ -2,7 +2,7 @@
   <div class="p-page p-page-about">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        <translate>About</translate>
+        {{ $config.getAbout() }} {{ getMembership() }}
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -12,26 +12,18 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
-      <h3 class="title text-selectable font-weight-bold py-2">
-        PhotoPrism® - AI-Powered Photos App for the Decentralized Web
-      </h3>
-
-      <p class="subheading pt-2 text-selectable">
-        <translate>Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
-        <translate>That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality.</translate>
-        <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
+      <p class="subheading py-2 text-selectable">
+        <strong><translate>At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come.</translate></strong>
       </p>
 
       <template v-if="canUpgrade">
-      <h3 class="subheading py-2"><translate>PhotoPrism+ Membership</translate></h3>
-      <p class="text-selectable">
-        <translate>Become a member today, support our mission and enjoy our member benefits!</translate>
-        <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-      </p>
-      </template>
-
-      <div v-if="isAdmin && canUpgrade && !isPublic">
-        <p class="text-xs-center my-4">
+        <h3 class="subheading py-2"><translate>Support Our Mission</translate></h3>
+        <p class="text-selectable">
+          <span v-if="membership !== 'essentials'"><translate>Become a member today to enjoy additional features and support our mission!</translate></span>
+          <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
+          <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
+        </p>
+        <p v-if="isAdmin && !isPublic" class="text-xs-center my-4">
           <v-btn
               to="/upgrade"
               color="primary-button"
@@ -43,21 +35,7 @@
             <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
         </p>
-      </div>
-      <div v-else>
-        <p class="text-xs-center my-4">
-          <v-btn
-              href="https://www.photoprism.app/"
-              target="_blank"
-              color="primary-button"
-              class="white--text px-3 py-2 action-upgrade"
-              round depressed
-          >
-            <translate>Learn more</translate>
-            <v-icon :left="rtl" :right="!rtl" size="18" class="ml-2" dark>diamond</v-icon>
-          </v-btn>
-        </p>
-      </div>
+      </template>
 
       <h3 class="subheading py-2"><translate>User Guide</translate></h3>
       <p class="text-selectable">
@@ -138,6 +116,19 @@ export default {
       isSponsor: this.$config.isSponsor(),
     };
   },
-  methods: {},
+  methods: {
+    getMembership() {
+      const m = this.$config.getMembership();
+      switch (m) {
+        case "ce":
+        case "cloud":
+          return "";
+        case "essentials":
+          return "Essentials";
+        default:
+          return "Plus";
+      }
+    }
+  },
 };
 </script>

@@ -11,6 +11,10 @@ msgstr ""
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
+#: src/page/connect.vue:17
+msgid "{{ getMembership() }}"
+msgstr ""
+
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
 msgstr "%{n} albumit leitud"
@@ -95,17 +99,13 @@ msgstr "Tegevus"
 msgid "Actions"
 msgstr "Tegevused"
 
-#: src/page/connect.vue:90 src/page/connect.vue:92
+#: src/page/connect.vue:90 src/page/connect.vue:98
 msgid "Activate"
 msgstr "Aktiveeri"
 
-#: src/page/connect.vue:359 src/page/connect.vue:399
+#: src/page/connect.vue:359 src/page/connect.vue:428
 msgid "Activation Code"
 msgstr "Aktiveerimiskood"
-
-#: src/page/connect.vue:14 src/page/connect.vue:11
-msgid "Activation Failed"
-msgstr "Aktiveerimine ebaõnnestus"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -343,7 +343,7 @@ msgstr "Kas sa oled kindel?"
 msgid "Artist"
 msgstr "Kunstnik"
 
-#: src/page/connect.vue:122
+#: src/page/connect.vue:128
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Kuna see aitab meil pakkuda avalikkusele rohkem funktsioone, julgustame kõiki kasutajaid meie missiooni toetama."
 
@@ -375,9 +375,7 @@ msgstr "Aluskaustik"
 
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
-msgstr ""
-"Astu liikmeks juba täna, et nautida lisafunktsioone ja toetada meie "
-"missiooni!"
+msgstr "Astu liikmeks juba täna, et nautida lisafunktsioone ja toetada meie missiooni!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -428,11 +426,11 @@ msgstr "Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega s
 msgid "Bug Report"
 msgstr "Vearaport"
 
-#: src/common/notify.js:101
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "Hõivatud, palun oota…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:102
+#: src/page/connect.vue:100 src/page/connect.vue:108
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Meie poolt pakutavat tarkvara ja teenuseid kasutades nõustud kasutustingimuste, privaatsuspoliitika ja käitumiskoodeksiga."
 
@@ -473,7 +471,7 @@ msgstr "Rohkem objekte ei saa valida"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/connect.vue:47 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Katkesta"
@@ -556,7 +554,7 @@ msgstr "Värvid"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie poolt pakutavat tõrkeotsingu meelespead."
 
-#: src/page/connect.vue:81 src/page/connect.vue:83
+#: src/page/connect.vue:81 src/page/connect.vue:89
 msgid "Compare Editions"
 msgstr "Võrdle versioone"
 
@@ -572,16 +570,12 @@ msgstr "Kindlus"
 msgid "Connect"
 msgstr "Ühenda"
 
-#: src/page/connect.vue:20
-msgid "Connect Customer Account"
-msgstr "Ühenda kliendikonto"
-
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Ühenda WebDAV-i kaudu"
 
-#: src/page/connect.vue:61
+#: src/page/connect.vue:62 src/page/connect.vue:61
 msgid "Connected"
 msgstr "Ühendatud"
 
@@ -590,7 +584,7 @@ msgid "Contact Details"
 msgstr "Kontaktandmed"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
-#: src/page/connect.vue:44
+#: src/page/connect.vue:50
 msgid "Contact Us"
 msgstr "Võta meiega ühendust"
 
@@ -1023,7 +1017,7 @@ msgstr "Kanal"
 msgid "Feedback"
 msgstr "Tagasiside"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
 
@@ -1101,7 +1095,7 @@ msgstr "Kaadrisagedus"
 msgid "Frames"
 msgstr "Kaadrid"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:113
 msgid "Frequently Asked Questions"
 msgstr "Korduma kippuvad küsimused"
 
@@ -1295,16 +1289,16 @@ msgstr "Intervall"
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
+#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
+#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
+#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
+#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
+#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
+#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
+#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "Vigane"
 
@@ -1312,7 +1306,8 @@ msgstr "Vigane"
 msgid "Invalid date"
 msgstr "Vigane kuupäev"
 
-#: src/page/connect.vue:73 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
+#: src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "Vigased parameetrid"
 
@@ -1320,7 +1315,7 @@ msgstr "Vigased parameetrid"
 msgid "Invalid photo selected"
 msgstr "Vigane foto valitud"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:121
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Teie otsustate, kas soovite registreeruda, et nautida lisahüvesid."
 
@@ -1397,8 +1392,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:125
-#: src/page/connect.vue:102
+#: src/page/about/about.vue:146 src/page/connect.vue:131
 msgid "Learn more"
 msgstr "Lisateave"
 
@@ -1518,8 +1512,8 @@ msgstr "Põhivärv"
 msgid "Male"
 msgstr "Mees"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
-#: src/page/connect.vue:80
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
+#: src/page/connect.vue:86
 msgid "Manage account"
 msgstr "Halda kontot"
 
@@ -1542,6 +1536,10 @@ msgstr "Märk"
 #: src/options/options.js:272
 msgid "Medium"
 msgstr "Keskmine"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "Liikmelisus"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1833,7 +1831,7 @@ msgstr "Originaalid"
 msgid "Other"
 msgstr "Muu"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:127
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Meie meeskond otsustab seda jooksvalt, sõltuvalt vajalikust tugitegevusest, serveri- ja litsentsikuludest ning sellest, kas funktsioone vajavad üldiselt kõik või on neid peamiselt taotlenud organisatsioonid ja edasijõudnud kasutajad."
 
@@ -1894,7 +1892,7 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on uuendatud…"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:119
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism on 100% omafinantseeringuline ja sõltumatu."
 
@@ -1935,11 +1933,11 @@ msgstr "Palun ära laadi üles solvava sisuga fotosid."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Pane tähele, et parooli muutmine logib sind teistes seadmetes ja brauserites välja."
 
-#: src/page/connect.vue:55 src/page/connect.vue:52
+#: src/page/connect.vue:55 src/page/connect.vue:58
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Palun taaskäivitage oma instants, et muudatused jõustuksid."
 
-#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+#: src/common/notify.js:98
 msgid "Please wait…"
 msgstr "Palun oodake…"
 
@@ -1987,7 +1985,7 @@ msgstr "Primaarne"
 msgid "Private"
 msgstr "Isiklik"
 
-#: src/page/connect.vue:85 src/page/connect.vue:87
+#: src/page/connect.vue:85 src/page/connect.vue:93
 msgid "Proceed"
 msgstr "Jätka"
 
@@ -2120,7 +2118,7 @@ msgstr "Kohustuslik"
 msgid "Resolution"
 msgstr "Resolutsioon"
 
-#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/connect.vue:63 src/page/connect.vue:66
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Restart"
@@ -2395,8 +2393,7 @@ msgstr "Tänavad"
 msgid "Subject"
 msgstr "Subjekt"
 
-#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
-#: src/page/connect.vue:14
+#: src/page/connect.vue:11 src/page/connect.vue:20
 msgid "Successfully Connected"
 msgstr "Edukalt ühendatud"
 
@@ -2413,7 +2410,7 @@ msgid "Support for additional services, like Google Drive, will be added over ti
 msgstr "Tugi täiendavatele teenustele nagu Google Drive lisandub aja jooksul."
 
 #: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1 src/page/connect.vue:17
+#: src/page/about/about.vue:1 src/page/connect.vue:23
 msgid "Support Our Mission"
 msgstr "Toeta meie missiooni"
 
@@ -2501,7 +2498,7 @@ msgstr "Tiitel / ametikoht"
 msgid "Title too long"
 msgstr "Pealkiri on liiga pikk"
 
-#: src/page/connect.vue:72 src/page/connect.vue:74
+#: src/page/connect.vue:72 src/page/connect.vue:80
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Uuendamiseks võid sisestada aktiveerimiskoodi või klõpsata \"Jätka\", et registreeruda meie veebilehel:"
 
@@ -2603,13 +2600,14 @@ msgstr "Eelvaadete uuendamine"
 msgid "Updating stacks"
 msgstr "Virnade uuendamine"
 
-#: src/component/navigation.vue:452 src/component/navigation.vue:592
-#: src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:452
+#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Uuendamine"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:64
+#: src/page/about/about.vue:9 src/page/connect.vue:70
 msgid "Upgrade Now"
 msgstr "Uuenda nüüd"
 
@@ -2708,6 +2706,10 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vektorid"
 
+#: src/page/connect.vue:11
+msgid "Verified"
+msgstr "Kinnitatud"
+
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2749,7 +2751,7 @@ msgstr "Külastaja"
 msgid "Visual Similarity"
 msgstr "Visuaalne sarnasus"
 
-#: src/page/connect.vue:114
+#: src/page/connect.vue:120
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Vabatahtlikud annetused ei kata täiskohaga töötava meeskonna kulusid, et pakkuda teile uuendusi, dokumentatsiooni ja tuge."
 
@@ -2795,7 +2797,7 @@ msgstr "WebDAV üleslaadimine"
 msgid "Website"
 msgstr "Veebileht"
 
-#: src/page/connect.vue:118
+#: src/page/connect.vue:124
 msgid "What functionality is generally available?"
 msgstr "Milline funktsionaalsus on kõigile kättesaadav?"
 
@@ -2803,7 +2805,7 @@ msgstr "Milline funktsionaalsus on kõigile kättesaadav?"
 msgid "White"
 msgstr "Valge"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:116
 msgid "Why are some features only available to sponsors?"
 msgstr "Miks on mõned funktsioonid kättesaadavad ainult sponsoritele?"
 
@@ -2857,7 +2859,7 @@ msgstr "Võid valida ainult ühe objekti"
 msgid "You may rescan your library to find additional faces."
 msgstr "Võid oma fototeeki uuesti skaneerida, et veel nägusid leida."
 
-#: src/page/connect.vue:54 src/page/connect.vue:51
+#: src/page/connect.vue:54 src/page/connect.vue:57
 msgid "Your account has been successfully connected."
 msgstr "Teie konto on edukalt ühendatud."
 
@@ -2874,6 +2876,12 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
 
+#~ msgid "Activation Failed"
+#~ msgstr "Aktiveerimine ebaõnnestus"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "Ühenda kliendikonto"
+
 #~ msgid "Become a member today, support our mission and enjoy our member benefits!"
 #~ msgstr "Astu liikmeks juba täna, toeta meie missiooni ja naudi meie liikmete soodustusi!"
 
@@ -2885,9 +2893,6 @@ msgstr "Suumi sisse/välja"
 
 #~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 #~ msgstr "Seepärast on PhotoPrism loodud algusest peale nii, et see töötab kõikjal, kus te seda vajate, ilma et see ohustaks vabadust, privaatsust või funktsionaalsust."
-
-#~ msgid "Verified"
-#~ msgstr "Kinnitatud"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "See kasutab uusimaid tehnoloogiaid, et märgistada ja leida pilte automaatselt, ilma sulle jalgu jäämata."
@@ -2942,9 +2947,6 @@ msgstr "Suumi sisse/välja"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Hakka sponsoriks juba täna, toeta meie missiooni ja naudi meie liikmete soodustusi!"
-
-#~ msgid "Membership"
-#~ msgstr "Liikmelisus"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "Meie meeskond otsustab seda jooksvalt, lähtudes tugitegevuse mahust, serverite ja litsentside maksumusest ning sellest, kas neid funktsioone vajavad üldiselt kõik või soovivad neid peamiselt organisatsioonid ja edasijõudnud kasutajad. Kuna see võimaldab meil pakkuda üldsusele rohkem funktsioone, julgustame kõiki kasutajaid meie missiooni toetama."

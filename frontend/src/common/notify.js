@@ -76,11 +76,14 @@ const Notify = {
       }
     });
   },
-  blockUI: function () {
+  blockUI: function (className) {
     const el = document.getElementById("busy-overlay");
 
     if (el) {
       el.style.display = "block";
+      if (className) {
+        el.className = className;
+      }
     }
   },
   unblockUI: function () {
@@ -88,9 +91,13 @@ const Notify = {
 
     if (el) {
       el.style.display = "none";
+      el.className = "";
     }
   },
   wait: function () {
+    this.info($gettext("Please wait…"));
+  },
+  busy: function () {
     this.warn($gettext("Busy, please wait…"));
   },
 };

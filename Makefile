@@ -307,6 +307,10 @@ docker-pull:
 docker-build:
 	$(DOCKER_COMPOSE) pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) build
+docker-local-up:
+	$(DOCKER_COMPOSE) -f docker-compose.local.yml up --force-recreate
+docker-local-down:
+	$(DOCKER_COMPOSE) -f docker-compose.local.yml down -V
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu

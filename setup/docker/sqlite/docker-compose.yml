@@ -32,6 +32,7 @@ services:
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     # restart: unless-stopped
+    stop_grace_period: 10s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
