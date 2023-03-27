@@ -36,8 +36,17 @@ function poll(interval, maxAttempts) {
     try {
       const xhr = new XMLHttpRequest();
       xhr.open("GET", config.apiUri + "/status", false);
+      xhr.onload = function () {
+        if (this.status === 200) {
+          return resolve();
+        } else {
+          throw new Error("request failed");
+        }
+      };
+      xhr.onerror = function () {
+        throw new Error("request failed");
+      };
       xhr.send();
-      return resolve();
     } catch {
       if (maxAttempts && attempts === maxAttempts) {
         return reject(new Error("exceeded max attempts"));
