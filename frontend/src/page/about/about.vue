@@ -63,28 +63,25 @@
         <li><a target="_blank" href="https://link.photoprism.app/discussions"><translate>post your question in GitHub Discussions</translate></a></li>
         <li><a target="_blank" href="https://link.photoprism.app/chat"><translate>or ask in our Community Chat</translate></a></li>
       </ul>
-      <p class="body-1 text-selectable pb-2">
+      <p class="body-1 text-selectable">
         <a target="_blank" href="https://www.photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
         <span v-if="!isSponsor">
           <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
         </span>
       </p>
 
-      <p class="text-xs-center pt-2 ma-0 pb-0">
+      <p class="text-xs-center pt-4 ma-0 pb-0">
         <router-link to="/license">
           <img :src="$config.staticUri + '/img/badge-agpl.svg'" alt="License AGPL v3" style="max-width:100%;"/>
         </router-link>
-        <a target="_blank" href="https://docs.photoprism.app/"><img :src="$config.staticUri + '/img/badge-docs.svg'"
-                                                                                   alt="Official Documentation"
-                                                                                   style="max-width:100%;"></a>
         <a target="_blank" href="https://link.photoprism.app/chat" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-chat.svg'" alt="Community Chat" style="max-width:100%;"></a>
         <a target="_blank" href="https://link.photoprism.app/discussions" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-ask-on-github.svg'" alt="GitHub Discussions" style="max-width:100%;"></a>
         <a target="_blank" href="https://link.photoprism.app/pixls-us" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-pixls-us.svg'" alt="PIXLS.US" style="max-width:100%;"></a>
-        <a target="_blank" href="https://link.photoprism.app/twitter" rel="nofollow"><img
-            :src="$config.staticUri + '/img/badge-twitter.svg'" alt="Twitter" style="max-width:100%;"></a>
+        <a target="_blank" href="https://link.photoprism.app/mastodon" rel="nofollow"><img
+            :src="$config.staticUri + '/img/badge-mastodon.svg'" alt="Twitter" style="max-width:100%;"></a>
         <a target="_blank" href="https://link.photoprism.app/reddit" rel="nofollow"><img
             :src="$config.staticUri + '/img/badge-reddit.svg'" alt="Reddit" style="max-width:100%;"></a>
       </p>

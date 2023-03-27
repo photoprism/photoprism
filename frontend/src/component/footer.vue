@@ -9,9 +9,8 @@
 
         <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-xs-center text-sm-right">
           <div class="hidden-xs-only">
-            <a v-if="evaluation" href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"
+            <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE"
                target="_blank" class="text-link">3rd-party software packages</a>
-            <a v-else href="https://my.photoprism.app/" target="_blank" class="text-link">Licensed to {{ customer }}</a>
             <a href="https://www.photoprism.app/about/team/" target="_blank" class="body-link">© 2018-2023 PhotoPrism UG</a>
           </div>
         </v-flex>
