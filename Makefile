@@ -348,12 +348,24 @@ docker-develop-jammy-slim:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy-slim /jammy-slim
+docker-develop-lunar:
+	docker pull --platform=amd64 ubuntu:lunar
+	docker pull --platform=arm64 ubuntu:lunar
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 lunar /lunar
+docker-develop-lunar-slim:
+	docker pull --platform=amd64 ubuntu:lunar
+	docker pull --platform=arm64 ubuntu:lunar
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 lunar-slim /lunar-slim
 unstable: docker-unstable
 docker-unstable: docker-unstable-jammy
 docker-unstable-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable /jammy
+docker-unstable-lunar:
+	docker pull --platform=amd64 photoprism/develop:lunar
+	docker pull --platform=amd64 photoprism/develop:lunar-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable /lunar
 preview: docker-preview
 docker-preview: docker-preview-latest
 docker-preview-all: docker-preview-latest docker-preview-other
@@ -394,6 +406,12 @@ docker-preview-jammy:
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /jammy "-t photoprism/photoprism:preview-ubuntu"
+docker-preview-lunar:
+	docker pull --platform=amd64 photoprism/develop:lunar
+	docker pull --platform=amd64 photoprism/develop:lunar-slim
+	docker pull --platform=arm64 photoprism/develop:lunar
+	docker pull --platform=arm64 photoprism/develop:lunar-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /lunar
 docker-preview-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
@@ -440,6 +458,12 @@ docker-release-jammy:
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy "-t photoprism/photoprism:latest -t photoprism/photoprism:ubuntu"
+docker-release-lunar:
+	docker pull --platform=amd64 photoprism/develop:lunar
+	docker pull --platform=amd64 photoprism/develop:lunar-slim
+	docker pull --platform=arm64 photoprism/develop:lunar
+	docker pull --platform=arm64 photoprism/develop:lunar-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 lunar /lunar
 docker-release-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
@@ -490,6 +514,10 @@ docker-local-jammy:
 	docker pull photoprism/develop:jammy
 	docker pull ubuntu:jammy
 	scripts/docker/build.sh photoprism jammy /jammy "-t photoprism/photoprism:local"
+docker-local-lunar:
+	docker pull photoprism/develop:lunar
+	docker pull ubuntu:lunar
+	scripts/docker/build.sh photoprism lunar /lunar "-t photoprism/photoprism:local"
 docker-local-impish:
 	docker pull photoprism/develop:impish
 	docker pull ubuntu:impish
@@ -508,6 +536,9 @@ docker-local-develop-buster:
 docker-local-develop-jammy:
 	docker pull ubuntu:jammy
 	scripts/docker/build.sh develop jammy /jammy
+docker-local-develop-lunar:
+	docker pull ubuntu:lunar
+	scripts/docker/build.sh develop lunar /lunar
 docker-local-develop-impish:
 	docker pull ubuntu:impish
 	scripts/docker/build.sh develop impish /impish

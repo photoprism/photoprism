@@ -25,20 +25,20 @@ set -e
 
 . /etc/os-release
 
-ARCHIVE="jxl-debs-${DESTARCH}-ubuntu-22.04-${LIB_VERSION}.tar.gz"
-URL="https://github.com/libjxl/libjxl/releases/download/${LIB_VERSION}/${ARCHIVE}"
-TMPDIR="/tmp/jpegxl"
-
-echo "------------------------------------------------"
-echo "VERSION: $LIB_VERSION"
-echo "ARCHIVE: $ARCHIVE"
-echo "------------------------------------------------"
-
-echo "Installing JPEG XL for ${DESTARCH^^}..."
-
 case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)
     if [[ $VERSION_CODENAME == "jammy" ]]; then
+      ARCHIVE="jxl-debs-${DESTARCH}-ubuntu-22.04-${LIB_VERSION}.tar.gz"
+      URL="https://github.com/libjxl/libjxl/releases/download/${LIB_VERSION}/${ARCHIVE}"
+      TMPDIR="/tmp/jpegxl"
+
+      echo "------------------------------------------------"
+      echo "VERSION: $LIB_VERSION"
+      echo "ARCHIVE: $ARCHIVE"
+      echo "------------------------------------------------"
+
+      echo "Installing JPEG XL for ${DESTARCH^^}..."
+
       apt-get update
       apt-get install -f libtcmalloc-minimal4 libhwy-dev libhwy0
       rm -rf /tmp/jpegxl
@@ -48,8 +48,20 @@ case $DESTARCH in
       (cd "$TMPDIR" && dpkg -i jxl_0.8.1_amd64.deb libjxl_0.8.1_amd64.deb libjxl-dev_0.8.1_amd64.deb)
       apt --fix-broken install
       rm -rf /tmp/jpegxl
+    elif [[ $VERSION_CODENAME == "lunar" ]]; then
+      echo "Installing JPEG XL distribution packages for amd64 (Intel 64-bit)"
+      apt-get -qq install libjxl-dev libjxl-tools
     else
-      echo "install-jxl: target distribution currently unsupported"
+      echo "JPEG XL is currently unsupported."
+    fi
+    ;;
+
+  arm64 | ARM64 | aarch64)
+    if [[ $VERSION_CODENAME == "lunar" ]]; then
+      echo "Installing JPEG XL distribution packages for arm64 (ARM 64-bit)"
+      apt-get -qq install libjxl-dev libjxl-tools
+    else
+      echo "JPEG XL is currently unsupported."
     fi
     ;;
 

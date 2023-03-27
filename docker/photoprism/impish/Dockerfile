@@ -23,7 +23,7 @@ FROM ubuntu:impish
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Community Edition (Ubuntu 21.10)"
+LABEL org.opencontainers.image.title="PhotoPrism® (Ubuntu 21.10)"
 LABEL org.opencontainers.image.description="Ubuntu 21.10 (Impish Indri)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"

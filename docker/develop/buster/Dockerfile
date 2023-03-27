@@ -8,7 +8,7 @@ FROM golang:1-buster
 
 # Open Container Initiative (OCI) Annotations
 # see https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Dev (Debian 10)"
+LABEL org.opencontainers.image.title="PhotoPrism® Build Image (Debian 10)"
 LABEL org.opencontainers.image.description="Debian 10 (Buster)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"

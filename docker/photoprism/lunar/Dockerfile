@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:buster as build
+FROM photoprism/develop:lunar as build
 
 # Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
@@ -8,6 +8,7 @@ FROM photoprism/develop:buster as build
 
 # Declare build parameters.
 ARG TARGETARCH
+ARG TARGETPLATFORM
 ARG BUILD_TAG
 
 # Copy source to image.
@@ -18,13 +19,13 @@ COPY . .
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Debian 10 (Buster)
-FROM debian:buster-slim
+#### Base Image: Ubuntu 23.04 (Lunar Lobster)
+FROM photoprism/develop:lunar-slim
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® (Debian 10)"
-LABEL org.opencontainers.image.description="Debian 10 (Buster)"
+LABEL org.opencontainers.image.title="PhotoPrism® (Ubuntu 23.04)"
+LABEL org.opencontainers.image.description="Ubuntu 23.04 (Lunar Lobster)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
@@ -39,9 +40,6 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PS1="\u@$DOCKER_TAG:\w\$ " \
-    PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
-    LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
@@ -91,55 +89,12 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_AUTO_INDEX=300 \
     PHOTOPRISM_AUTO_IMPORT=300
 
-# Copy dist files, scripts, and debian backports sources list.
-COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
+# Copy scripts.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
-COPY --chown=root:root --chmod=644 /docker/develop/buster/sources.list /etc/apt/sources.list.d/buster.list
 
-# Update base image and add dependencies.
-RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
-    echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
-    echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
-    echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
-    echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
-    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
-      ca-certificates \
-      jq \
-      gpg \
-      lshw \
-      wget \
-      curl \
-      make \
-      sudo \
-      bash \
-      mariadb-client \
-      sqlite3 \
-      tzdata \
-      libc6 \
-      libatomic1 \
-      libheif-examples \
-      exiftool \
-      rawtherapee \
-      ffmpeg \
-      libavcodec-extra \
-    && \
-    /scripts/install-darktable.sh && \
-    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
-    echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
-    cp /etc/skel/.bashrc /root/.bashrc && \
-    /scripts/create-users.sh && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
-    install -d -m 0777 -o 1000 -g 1000 \
-      /photoprism/originals \
-      /photoprism/import \
-      /photoprism/storage \
-      /photoprism/storage/sidecar \
-      /photoprism/storage/albums \
-      /photoprism/storage/backups \
-      /photoprism/storage/config \
-      /photoprism/storage/cache && \
+# Update pre-installed packages.
+RUN apt-get update && \
+    apt-get -qq upgrade && \
     /scripts/cleanup.sh
 
 # Default working directory.
@@ -147,6 +102,9 @@ WORKDIR /photoprism
 
 # Expose HTTP(S) ports.
 EXPOSE 2342 2443
+
+# Copy app files.
+COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism
 
 # Declare container entrypoint script.
 ENTRYPOINT ["/scripts/entrypoint.sh"]
