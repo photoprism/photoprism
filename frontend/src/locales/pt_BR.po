@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-27 16:48+0000\n"
+"PO-Revision-Date: 2023-03-27 17:33+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/projects/photoprism/frontend/pt_BR/>\n"
+"Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/pt_BR/>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,7 +17,7 @@ msgstr ""
 
 #: src/page/connect.vue:17
 msgid "{{ getMembership() }}"
-msgstr ""
+msgstr "{{aquirir membro() }}}"
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
