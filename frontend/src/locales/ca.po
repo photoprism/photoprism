@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-27 16:48+0000\n"
+"PO-Revision-Date: 2023-03-27 17:33+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 #: src/page/connect.vue:17
 msgid "{{ getMembership() }}"
-msgstr ""
+msgstr "{{ getMembership() }}"
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
