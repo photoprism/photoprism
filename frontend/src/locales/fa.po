@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-24 18:40+0000\n"
+"PO-Revision-Date: 2023-03-27 16:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
@@ -108,7 +108,7 @@ msgstr "کد فعال سازی"
 
 #: src/page/connect.vue:14 src/page/connect.vue:11
 msgid "Activation Failed"
-msgstr ""
+msgstr "فعال سازی انجام نشد"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -379,6 +379,7 @@ msgstr "پوشه پایه"
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr ""
+"برای لذت بردن از ویژگی های اضافی و حمایت از ماموریت ما، همین امروز عضو شوید!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -575,7 +576,7 @@ msgstr "اتصال"
 
 #: src/page/connect.vue:20
 msgid "Connect Customer Account"
-msgstr ""
+msgstr "اتصال حساب مشتری"
 
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
@@ -1938,11 +1939,11 @@ msgstr "لطفاً توجه داشته باشید که تغییر رمز عبو�
 
 #: src/page/connect.vue:55 src/page/connect.vue:52
 msgid "Please restart your instance for the changes to take effect."
-msgstr ""
+msgstr "لطفاً نمونه خود را مجدداً راه اندازی کنید تا تغییرات اعمال شوند."
 
 #: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
 msgid "Please wait…"
-msgstr ""
+msgstr "لطفا صبر کنید…"
 
 #: src/page/settings/advanced.vue:458
 msgid "PNG Size Limit: %{n}px"
@@ -2124,7 +2125,7 @@ msgstr "رزولوشن"
 #: src/page/connect.vue:63 src/page/connect.vue:60
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
-msgstr ""
+msgstr "راه اندازی مجدد"
 
 #: src/component/photo/clipboard.vue:227
 msgid "Restore"
@@ -2860,7 +2861,7 @@ msgstr "می‌توانید کتابخانه خود را مجدداً اسکن �
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
-msgstr ""
+msgstr "حساب شما با موفقیت متصل شد."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
 #: src/page/about/about.vue:4

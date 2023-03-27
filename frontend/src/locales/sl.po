@@ -2,12 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-24 18:40+0000\n"
+"PO-Revision-Date: 2023-03-27 16:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -105,7 +106,7 @@ msgstr "Aktivacijska koda"
 
 #: src/page/connect.vue:14 src/page/connect.vue:11
 msgid "Activation Failed"
-msgstr ""
+msgstr "Aktivacija ni uspela"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -376,6 +377,7 @@ msgstr "Osnovna mapa"
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr ""
+"Postanite član in uživajte v dodatnih funkcijah ter podprite naše poslanstvo!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -572,7 +574,7 @@ msgstr "Poveži"
 
 #: src/page/connect.vue:20
 msgid "Connect Customer Account"
-msgstr ""
+msgstr "Povezovanje računa stranke"
 
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
@@ -1935,11 +1937,11 @@ msgstr "Upoštevajte, da se boste s spremembo gesla odjavili tudi v drugih napra
 
 #: src/page/connect.vue:55 src/page/connect.vue:52
 msgid "Please restart your instance for the changes to take effect."
-msgstr ""
+msgstr "Da bodo spremembe začele veljati, znova zaženite svoj primer."
 
 #: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
 msgid "Please wait…"
-msgstr ""
+msgstr "Počakajte…"
 
 #: src/page/settings/advanced.vue:458
 msgid "PNG Size Limit: %{n}px"
@@ -2121,7 +2123,7 @@ msgstr "Resolucija"
 #: src/page/connect.vue:63 src/page/connect.vue:60
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
-msgstr ""
+msgstr "Ponovni zagon"
 
 #: src/component/photo/clipboard.vue:227
 msgid "Restore"
@@ -2853,7 +2855,7 @@ msgstr "Če želite najti dodatne obraze, lahko knjižnico ponovno preiščete."
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
-msgstr ""
+msgstr "Vaš račun je bil uspešno povezan."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
 #: src/page/about/about.vue:4

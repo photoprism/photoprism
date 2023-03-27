@@ -3,14 +3,17 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-24 18:40+0000\n"
+"PO-Revision-Date: 2023-03-27 16:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
+"Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
+"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
+"1 : 2);\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -108,7 +111,7 @@ msgstr "Aktyvinimo kodas"
 
 #: src/page/connect.vue:14 src/page/connect.vue:11
 msgid "Activation Failed"
-msgstr ""
+msgstr "Aktyvavimas nepavyko"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -379,6 +382,8 @@ msgstr "Bazinis aplankas"
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr ""
+"Tapkite nariu šiandien, kad galėtumėte naudotis papildomomis funkcijomis ir "
+"paremti mūsų misiją!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -575,7 +580,7 @@ msgstr "Prisijungti"
 
 #: src/page/connect.vue:20
 msgid "Connect Customer Account"
-msgstr ""
+msgstr "Prisijungti prie kliento paskyros"
 
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
@@ -1938,11 +1943,11 @@ msgstr "Atkreipkite dėmesį, kad pakeitę slaptažodį atsijungsite kituose įr
 
 #: src/page/connect.vue:55 src/page/connect.vue:52
 msgid "Please restart your instance for the changes to take effect."
-msgstr ""
+msgstr "Kad pakeitimai įsigaliotų, iš naujo paleiskite savo instanciją."
 
 #: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
 msgid "Please wait…"
-msgstr ""
+msgstr "Palaukite…"
 
 #: src/page/settings/advanced.vue:458
 msgid "PNG Size Limit: %{n}px"
@@ -2124,7 +2129,7 @@ msgstr "Rezoliucija"
 #: src/page/connect.vue:63 src/page/connect.vue:60
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
-msgstr ""
+msgstr "Iš naujo paleiskite"
 
 #: src/component/photo/clipboard.vue:227
 msgid "Restore"
@@ -2856,7 +2861,7 @@ msgstr "Norėdami rasti papildomų veidų, galite iš naujo nuskaityti savo bibl
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
-msgstr ""
+msgstr "Jūsų paskyra sėkmingai prijungta."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
 #: src/page/about/about.vue:4

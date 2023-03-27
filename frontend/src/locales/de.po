@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-24 18:41+0000\n"
+"PO-Revision-Date: 2023-03-27 17:14+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
+"frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -108,7 +109,7 @@ msgstr "Aktivierungscode"
 
 #: src/page/connect.vue:14 src/page/connect.vue:11
 msgid "Activation Failed"
-msgstr ""
+msgstr "Aktivierung fehlgeschlagen"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -379,6 +380,8 @@ msgstr "Basis-Ordner"
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr ""
+"Werde noch heute Mitglied, um zusätzliche Funktionen nutzen zu können und "
+"unsere Mission zu unterstützen!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -575,7 +578,7 @@ msgstr "Verbinden"
 
 #: src/page/connect.vue:20
 msgid "Connect Customer Account"
-msgstr ""
+msgstr "Kundenkonto verbinden"
 
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
@@ -1938,11 +1941,11 @@ msgstr "Bitte beachte, dass du beim Ändern deines Passworts auf anderen Geräte
 
 #: src/page/connect.vue:55 src/page/connect.vue:52
 msgid "Please restart your instance for the changes to take effect."
-msgstr ""
+msgstr "Bitte starte deine Instanz neu, damit die Änderungen wirksam werden."
 
 #: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
 msgid "Please wait…"
-msgstr ""
+msgstr "Bitte warten…"
 
 #: src/page/settings/advanced.vue:458
 msgid "PNG Size Limit: %{n}px"
@@ -2124,7 +2127,7 @@ msgstr "Auflösung"
 #: src/page/connect.vue:63 src/page/connect.vue:60
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
-msgstr ""
+msgstr "Neustart"
 
 #: src/component/photo/clipboard.vue:227
 msgid "Restore"
@@ -2856,7 +2859,7 @@ msgstr "Der Index kann aktualisiert werden, um weitere Gesichter zu finden."
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
-msgstr ""
+msgstr "Dein Konto wurde erfolgreich verbunden."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
 #: src/page/about/about.vue:4
