@@ -38,7 +38,7 @@
             <v-text-field
                 v-model="model.AccPass"
                 hide-details box flat
-                autocorrect="off"
+                browser-autocomplete="new-password"
                 autocapitalize="none"
                 :label="$gettext('Password')"
                 placeholder="optional"
