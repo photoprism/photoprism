@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-24 18:40+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/sv/>\n"
+"Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/frontend/sv/>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -60,8 +59,7 @@ msgstr "Ett klick kopierar den till urklippshanteraren."
 #: src/component/admin/users/edit.vue:265 src/page/about/about.vue:7
 #: src/page/about/about.vue:213 src/page/settings/account.vue:313
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/about/about.vue:4 src/page/help.vue:43
-#: src/page/people/recognized.vue:434
+#: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
 msgstr "Om"
 
@@ -100,15 +98,19 @@ msgstr "Åtgärd"
 msgid "Actions"
 msgstr "Åtgärder"
 
-#: src/page/connect.vue:73 src/page/connect.vue:80
+#: src/page/connect.vue:90 src/page/connect.vue:92
 msgid "Activate"
 msgstr "Aktivera"
 
-#: src/page/connect.vue:292 src/page/connect.vue:360
+#: src/page/connect.vue:359 src/page/connect.vue:399
 msgid "Activation Code"
 msgstr "Aktiveringskod"
 
-#: src/component/admin/users/add.vue:22 src/page/admin/users.vue:45
+#: src/page/connect.vue:14 src/page/connect.vue:11
+msgid "Activation Failed"
+msgstr ""
+
+#: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
 msgstr "Lägg till"
 
@@ -344,7 +346,7 @@ msgstr "Är du säker?"
 msgid "Artist"
 msgstr "Fotograf"
 
-#: src/page/connect.vue:110
+#: src/page/connect.vue:122
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Eftersom detta hjälper oss att tillhandahålla fler funktioner till allmänheten, uppmanar vi alla användare att stödja vårt uppdrag."
 
@@ -352,8 +354,12 @@ msgstr "Eftersom detta hjälper oss att tillhandahålla fler funktioner till all
 msgid "Aspect Ratio"
 msgstr "Bildförhållande"
 
-#: src/component/admin/users/add.vue:214 src/component/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:69 src/page/admin/sessions.vue:31
+#: src/page/about/about.vue:15
+msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+msgstr "På PhotoPrism tror vi att varje ögonblick som fångas genom ett fotografi är värdefullt, och vårt uppdrag är att göra det möjligt för människor att bevara dessa ögonblick för kommande generationer."
+
+#: src/component/admin/users/add.vue:216 src/component/admin/users/edit.vue:364
+#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Autentisering"
@@ -370,15 +376,16 @@ msgstr "Skapa automatiskt album med speciella ögonblick, resor och platser."
 msgid "Base Folder"
 msgstr "Grundmapp"
 
-#: src/page/about/about.vue:27 src/page/about/about.vue:3
-msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr "Bli medlem i dag, stöd vårt uppdrag och ta del av våra medlemsförmåner!"
+#: src/page/about/about.vue:21 src/page/about/about.vue:3
+msgid "Become a member today to enjoy additional features and support our mission!"
+msgstr ""
 
-#: src/page/about/about.vue:67
+#: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
 msgstr "Innan du skickar in en supportbegäran kan du använda våra checklistor för felsökning för att fastställa orsaken till ditt problem."
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:21
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
+#: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Eftersom vi är 100 % självfinansierade och oberoende kan vi lova dig att vi aldrig kommer att sälja dina uppgifter och att vi alltid kommer att vara transparenta när det gäller vår programvara och våra tjänster."
 
@@ -414,7 +421,7 @@ msgstr "Bläddra och redigera etiketter för bildklassificering."
 msgid "Browse indexed files and folders in Library."
 msgstr "Bläddra bland indexerade filer och mappar i biblioteket."
 
-#: src/page/about/about.vue:59
+#: src/page/about/about.vue:43
 msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr "I kunskapsbasen hittar du detaljerad information om specifika produktfunktioner, tjänster och relaterade resurser."
 
@@ -422,11 +429,11 @@ msgstr "I kunskapsbasen hittar du detaljerad information om specifika produktfun
 msgid "Bug Report"
 msgstr "Buggrapport"
 
-#: src/page/connect.vue:8 src/common/notify.js:94 src/page/connect.vue:5
+#: src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "Upptagen, vänligen vänta…"
 
-#: src/page/connect.vue:83 src/page/connect.vue:90
+#: src/page/connect.vue:100 src/page/connect.vue:102
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Genom att använda den programvara och de tjänster som vi tillhandahåller godkänner du våra användarvillkor, vår sekretesspolicy och vår uppförandekod."
 
@@ -459,7 +466,7 @@ msgstr "Kan inte välja fler objekt"
 
 #: src/component/admin/sessions/remove.vue:15
 #: src/component/admin/users/add.vue:21 src/component/admin/users/edit.vue:74
-#: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
+#: src/component/admin/users/remove.vue:15 src/page/connect.vue:44
 #: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
 #: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
 #: src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15
@@ -467,7 +474,7 @@ msgstr "Kan inte välja fler objekt"
 #: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
 #: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
 #: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:38 src/page/library/import.vue:34
+#: src/page/connect.vue:41 src/page/library/import.vue:34
 #: src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Avbryt"
@@ -511,7 +518,7 @@ msgstr "Ändra den privata flaggan"
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
 #: src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:51 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Ändringarna har sparats"
@@ -524,7 +531,7 @@ msgstr "Kontrollerad"
 msgid "Chroma"
 msgstr "Chroma"
 
-#: src/page/admin/sessions.vue:113 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
 #: src/page/library/errors.vue:60
 msgid "Close"
@@ -546,11 +553,11 @@ msgstr "Färgprofil"
 msgid "Colors"
 msgstr "Färger"
 
-#: src/page/about/about.vue:54
+#: src/page/about/about.vue:38
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Vanliga problem kan snabbt diagnostiseras och lösas med hjälp av de checklistor för felsökning som vi tillhandahåller."
 
-#: src/page/connect.vue:65 src/page/connect.vue:72
+#: src/page/connect.vue:81 src/page/connect.vue:83
 msgid "Compare Editions"
 msgstr "Jämför utgåvor"
 
@@ -562,16 +569,20 @@ msgstr "Fullständig omskanning"
 msgid "Confidence"
 msgstr "Tillit"
 
-#: src/dialog/service/add.vue:18 src/page/settings/services.vue:53
+#: src/dialog/service/add.vue:18 src/page/settings/services.vue:55
 msgid "Connect"
 msgstr "Anslut"
 
+#: src/page/connect.vue:20
+msgid "Connect Customer Account"
+msgstr ""
+
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
-#: src/page/settings/account.vue:62 src/page/settings/services.vue:48
+#: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Anslut via WebDAV"
 
-#: src/page/connect.vue:56
+#: src/page/connect.vue:61
 msgid "Connected"
 msgstr "Anslut"
 
@@ -579,8 +590,8 @@ msgstr "Anslut"
 msgid "Contact Details"
 msgstr "Kontakta oss"
 
-#: src/page/about/feedback.vue:4 src/page/connect.vue:44
-#: src/page/connect.vue:41
+#: src/page/about/feedback.vue:4 src/page/connect.vue:47
+#: src/page/connect.vue:44
 msgid "Contact Us"
 msgstr "Kontakta oss"
 
@@ -631,7 +642,7 @@ msgstr "Skapa ett konto"
 msgid "Create album"
 msgstr "Skapa album"
 
-#: src/page/admin/sessions.vue:75 src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:77 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "Skapad"
 
@@ -667,7 +678,7 @@ msgstr "Dagligen"
 msgid "Day"
 msgstr "Dag"
 
-#: src/page/settings/advanced.vue:74
+#: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
 msgstr "Felsökningsloggar"
 
@@ -712,59 +723,59 @@ msgstr "Detaljer"
 msgid "Dimensions"
 msgstr "Mått"
 
-#: src/page/settings/advanced.vue:140
+#: src/page/settings/advanced.vue:142
 msgid "Disable Backups"
 msgstr "Inaktivera säkerhetskopiering"
 
-#: src/page/settings/advanced.vue:163
+#: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Inaktivera den inbyggda WebDAV-servern. Kräver en omstart."
 
-#: src/page/settings/advanced.vue:491
+#: src/page/settings/advanced.vue:493
 msgid "Disable Darktable"
 msgstr "Inaktivera Darktable"
 
-#: src/page/settings/advanced.vue:206
+#: src/page/settings/advanced.vue:208
 msgid "Disable ExifTool"
 msgstr "Inaktivera ExifTool"
 
-#: src/page/settings/advanced.vue:579
+#: src/page/settings/advanced.vue:581
 msgid "Disable FFmpeg"
 msgstr "Inaktivera FFmpeg"
 
-#: src/page/settings/advanced.vue:557
+#: src/page/settings/advanced.vue:559
 msgid "Disable ImageMagick"
 msgstr "Inaktivera ImageMagick"
 
-#: src/page/settings/advanced.vue:184
+#: src/page/settings/advanced.vue:186
 msgid "Disable Places"
 msgstr "Inaktivera platser"
 
-#: src/page/settings/advanced.vue:513
+#: src/page/settings/advanced.vue:515
 msgid "Disable RawTherapee"
 msgstr "Inaktivera RawTherapee"
 
-#: src/page/settings/advanced.vue:228
+#: src/page/settings/advanced.vue:230
 msgid "Disable TensorFlow"
 msgstr "Inaktivera TensorFlow"
 
-#: src/page/settings/advanced.vue:603
+#: src/page/settings/advanced.vue:605
 msgid "Disable Vectors"
 msgstr "Inaktivera vektorer"
 
-#: src/page/settings/advanced.vue:162
+#: src/page/settings/advanced.vue:164
 msgid "Disable WebDAV"
 msgstr "Inaktivera WebDAV"
 
-#: src/page/settings/advanced.vue:185
+#: src/page/settings/advanced.vue:187
 msgid "Disables reverse geocoding and maps."
 msgstr "Inaktiverar omvänd geokodning och kartor."
 
-#: src/page/settings/advanced.vue:604
+#: src/page/settings/advanced.vue:606
 msgid "Disables vector graphics support."
 msgstr "Inaktiverar stöd för vektorgrafik."
 
-#: src/page/settings/advanced.vue:580
+#: src/page/settings/advanced.vue:582
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Inaktiverar omkodning av video och utvinning av miniatyrbilder."
 
@@ -773,36 +784,36 @@ msgstr "Inaktiverar omkodning av video och utvinning av miniatyrbilder."
 msgid "Discover"
 msgstr "Upptäck"
 
-#: src/component/admin/users/add.vue:121 src/component/admin/users/edit.vue:99
+#: src/component/admin/users/add.vue:122 src/component/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "Visningsnamn"
 
-#: src/page/settings/advanced.vue:141
+#: src/page/settings/advanced.vue:143
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "Säkerhetskopiera inte metadata för foton och album till YAML-filer."
 
-#: src/page/settings/advanced.vue:207
+#: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "Skapa inte ExifTool JSON-filer för bättre utvinning av metadata."
 
-#: src/page/settings/advanced.vue:97
+#: src/page/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Ändra inte mappen med original. Inaktiverar import, uppladdning och radering."
 
-#: src/page/settings/advanced.vue:492
+#: src/page/settings/advanced.vue:494
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Använd inte Darktable för att konvertera RAW-bilder."
 
-#: src/page/settings/advanced.vue:558
+#: src/page/settings/advanced.vue:560
 msgid "Don't use ImageMagick to convert images."
 msgstr "Använd inte ImageMagick för att konvertera bilder."
 
-#: src/page/settings/advanced.vue:514
+#: src/page/settings/advanced.vue:516
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Använd inte RawTherapee för att konvertera RAW-bilder."
 
-#: src/page/settings/advanced.vue:229
+#: src/page/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
 msgstr "Använd inte TensorFlow för bildklassificering."
 
@@ -848,7 +859,7 @@ msgstr "Ladda ner enskilda filer och zip-arkiv."
 msgid "Downloading…"
 msgstr "Hämtar…"
 
-#: src/page/settings/advanced.vue:279
+#: src/page/settings/advanced.vue:281
 msgid "Downscaling Filter"
 msgstr "Filter för nedskalning"
 
@@ -864,15 +875,15 @@ msgstr "Dubletter kommer att hoppas över och visas endast en gång."
 msgid "Duration"
 msgstr "Varaktighet"
 
-#: src/page/settings/advanced.vue:302
+#: src/page/settings/advanced.vue:304
 msgid "Dynamic Previews"
 msgstr "Dynamiska förhandsgranskningar"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:305
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "Dynamisk rendering kräver en kraftfull server. Den rekommenderas inte för NAS-enheter."
 
-#: src/page/settings/advanced.vue:345
+#: src/page/settings/advanced.vue:347
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Begränsning av dynamisk storlek: %{n}px"
 
@@ -902,16 +913,16 @@ msgstr "Redigera foto"
 msgid "Edited"
 msgstr "Redigerad"
 
-#: src/component/admin/users/add.vue:146 src/component/admin/users/edit.vue:317
+#: src/component/admin/users/add.vue:147 src/component/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "E-post"
 
-#: src/page/settings/advanced.vue:119
+#: src/page/settings/advanced.vue:121
 msgid "Enable new features currently under development."
 msgstr "Aktivera nya funktioner som är under utveckling."
 
-#: src/page/settings/advanced.vue:536
+#: src/page/settings/advanced.vue:538
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverar förinställningar för RAW-omvandlare. Kan minska prestandan."
 
@@ -947,11 +958,11 @@ msgstr "Expandera"
 msgid "Expand Search"
 msgstr "Utöka sökningen"
 
-#: src/page/settings/advanced.vue:118
+#: src/page/settings/advanced.vue:120
 msgid "Experimental Features"
 msgstr "Experimentella funktioner"
 
-#: src/page/admin/sessions.vue:87 src/dialog/service/edit.vue:249
+#: src/page/admin/sessions.vue:89 src/dialog/service/edit.vue:249
 #: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "Upphör att gälla"
@@ -1013,7 +1024,7 @@ msgstr "Återkoppling"
 msgid "Feedback"
 msgstr "Återkoppling"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
+#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:101
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kontakta oss gärna på hello@photoprism.app om du har några frågor."
 
@@ -1091,7 +1102,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Bildrutor"
 
-#: src/page/connect.vue:95
+#: src/page/connect.vue:107
 msgid "Frequently Asked Questions"
 msgstr "Ofta ställda frågor"
 
@@ -1111,7 +1122,7 @@ msgstr "Lavendel"
 msgid "General"
 msgstr "Allmänt"
 
-#: src/page/about/about.vue:63
+#: src/page/about/about.vue:47
 msgid "Getting Support"
 msgstr "Få stöd"
 
@@ -1183,7 +1194,7 @@ msgstr "Högt dynamiskt omfång (HDR)"
 msgid "How can we help?"
 msgstr "Hur kan vi hjälpa till?"
 
-#: src/page/about/about.vue:68
+#: src/page/about/about.vue:52
 msgid "If this doesn't help, or you have other questions:"
 msgstr "Om detta inte hjälper dig eller om du har andra frågor:"
 
@@ -1229,7 +1240,7 @@ msgstr "Importera filer till original…"
 msgid "in"
 msgstr "i"
 
-#: src/page/about/about.vue:77
+#: src/page/about/about.vue:61
 msgid "In addition, sponsors receive direct technical support via email."
 msgstr "Dessutom får sponsorer direkt teknisk support via e-post."
 
@@ -1278,23 +1289,22 @@ msgstr "Instans-ID"
 msgid "Interval"
 msgstr "Intervall"
 
-#: src/component/admin/users/add.vue:124 src/component/admin/users/add.vue:149
+#: src/component/admin/users/add.vue:125 src/component/admin/users/add.vue:150
 #: src/component/admin/users/edit.vue:127
 #: src/component/admin/users/edit.vue:154
 #: src/component/admin/users/edit.vue:211
 #: src/component/admin/users/edit.vue:238
 #: src/component/admin/users/edit.vue:264
 #: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
-#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
-#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
-#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
-#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
-#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
-#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
-#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
-#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
-#: src/page/connect.vue:11 src/page/settings/account.vue:623
+#: src/component/admin/users/edit.vue:320 src/page/settings/account.vue:91
+#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
+#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
+#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
+#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
+#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
+#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
+#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
+#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
 #: src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "Ogiltigt datum"
@@ -1303,7 +1313,7 @@ msgstr "Ogiltigt datum"
 msgid "Invalid date"
 msgstr "Ogiltigt datum"
 
-#: src/page/connect.vue:68 src/page/connect.vue:74
+#: src/page/connect.vue:73 src/page/connect.vue:79
 msgid "Invalid parameters"
 msgstr "Ogiltigt datum"
 
@@ -1311,7 +1321,7 @@ msgstr "Ogiltigt datum"
 msgid "Invalid photo selected"
 msgstr "Ett ogiltigt foto har valts"
 
-#: src/page/connect.vue:103
+#: src/page/connect.vue:115
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Du bestämmer själv om du vill registrera dig för att få ytterligare förmåner."
 
@@ -1319,11 +1329,11 @@ msgstr "Du bestämmer själv om du vill registrera dig för att få ytterligare 
 msgid "Item"
 msgstr "Artikel"
 
-#: src/page/settings/advanced.vue:320
+#: src/page/settings/advanced.vue:322
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-kvalitet: %{n}"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:428
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Begränsning av JPEG-storlek: %{n}px"
 
@@ -1335,7 +1345,7 @@ msgstr "JPEG-bilder och miniatyrbilder skapas automatiskt vid behov."
 msgid "Keywords"
 msgstr "Nyckelord"
 
-#: src/page/about/about.vue:58
+#: src/page/about/about.vue:42
 msgid "Knowledge Base"
 msgstr "Kunskapsbas"
 
@@ -1362,7 +1372,7 @@ msgstr "Lanczos: Bevarande av detaljer, minimala artefakter"
 msgid "Language"
 msgstr "Språk"
 
-#: src/page/admin/sessions.vue:81 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:83 src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "Senast aktiv"
 
@@ -1386,10 +1396,10 @@ msgstr "Lavendel"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:99 src/component/auth/footer.vue:24
+#: src/page/connect.vue:110 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:60 src/page/about/about.vue:151
-#: src/page/connect.vue:113 src/page/connect.vue:91
+#: src/page/about/about.vue:146 src/page/connect.vue:125
+#: src/page/connect.vue:102
 msgid "Learn more"
 msgstr "Läs mer"
 
@@ -1509,7 +1519,8 @@ msgstr "Huvudfärg"
 msgid "Male"
 msgstr "Man"
 
-#: src/page/connect.vue:53
+#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:57
+#: src/page/connect.vue:80
 msgid "Manage account"
 msgstr "Hantera konto"
 
@@ -1679,7 +1690,7 @@ msgstr "Inga nyligen redigerade bilder"
 msgid "No servers configured."
 msgstr "Inga servrar har konfigurerats."
 
-#: src/page/settings/services.vue:36
+#: src/page/settings/services.vue:37
 msgid "No services configured."
 msgstr "Inga servrar har konfigurerats."
 
@@ -1718,7 +1729,7 @@ msgstr "Ej hittad"
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr "Observera att du kan hantera mappen med original manuellt och att import är valfritt."
 
-#: src/page/settings/services.vue:36
+#: src/page/settings/services.vue:38
 msgid "Note:"
 msgstr "Observera:"
 
@@ -1734,7 +1745,7 @@ msgstr "Anteckningar"
 msgid "Nothing to see here yet."
 msgstr "Inget att se här ännu. Ha tålamod."
 
-#: src/page/admin/sessions.vue:44 src/page/admin/users.vue:42
+#: src/page/admin/sessions.vue:45 src/page/admin/users.vue:43
 msgid "Nothing was found."
 msgstr "Ingenting hittades."
 
@@ -1788,7 +1799,7 @@ msgstr "En bild hittades"
 msgid "Onyx"
 msgstr "Onyx"
 
-#: src/page/about/about.vue:74
+#: src/page/about/about.vue:58
 msgid "or ask in our Community Chat"
 msgstr "eller fråga i vår gemenskapschatt"
 
@@ -1823,15 +1834,11 @@ msgstr "Original"
 msgid "Other"
 msgstr "Övrigt"
 
-#: src/page/about/about.vue:19
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "Vårt uppdrag är att tillhandahålla den mest användar- och integritetsvänliga lösningen för att hålla dina bilder organiserade och tillgängliga."
-
-#: src/page/connect.vue:109
+#: src/page/connect.vue:121
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Vårt team beslutar detta löpande beroende på hur mycket support som krävs, server- och licenskostnader och om funktionerna behövs av alla eller om de främst efterfrågas av organisationer och avancerade användare."
 
-#: src/page/about/about.vue:53
+#: src/page/about/about.vue:37
 msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr "Vår användarhandbok täcker också många avancerade ämnen, t.ex. migrering från Google Photos och inställningar för miniatyrbildernas kvalitet."
 
@@ -1847,7 +1854,7 @@ msgstr "Panorama"
 msgid "Panoramas"
 msgstr "Panoraman"
 
-#: src/component/admin/users/add.vue:169 src/dialog/service/add.vue:126
+#: src/component/admin/users/add.vue:170 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
@@ -1888,14 +1895,9 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism har uppdaterats…"
 
-#: src/page/connect.vue:101
+#: src/page/connect.vue:113
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism är till 100 % självfinansierad och oberoende."
-
-#: src/page/about/about.vue:25 src/page/about/about.vue:1
-#: src/page/connect.vue:14
-msgid "PhotoPrism+ Membership"
-msgstr "Medlemskap i PhotoPrism+"
 
 #: src/app/routes.js:155
 msgid "Photos"
@@ -1934,7 +1936,15 @@ msgstr "Ladda inte upp bilder med stötande innehåll."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Observera att om du ändrar ditt lösenord kommer du att logga ut på andra enheter och webbläsare."
 
-#: src/page/settings/advanced.vue:456
+#: src/page/connect.vue:55 src/page/connect.vue:52
+msgid "Please restart your instance for the changes to take effect."
+msgstr ""
+
+#: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
+msgid "Please wait…"
+msgstr ""
+
+#: src/page/settings/advanced.vue:458
 msgid "PNG Size Limit: %{n}px"
 msgstr "Begränsning av PNG-storlek: %{n}px"
 
@@ -1942,7 +1952,7 @@ msgstr "Begränsning av PNG-storlek: %{n}px"
 msgid "Portrait"
 msgstr "Porträtt"
 
-#: src/page/about/about.vue:73
+#: src/page/about/about.vue:57
 msgid "post your question in GitHub Discussions"
 msgstr "ställa din fråga i GitHub Discussions"
 
@@ -1978,7 +1988,7 @@ msgstr "Primär"
 msgid "Private"
 msgstr "Privat"
 
-#: src/page/connect.vue:68 src/page/connect.vue:75
+#: src/page/connect.vue:85 src/page/connect.vue:87
 msgid "Proceed"
 msgstr "Fortsätt"
 
@@ -2028,11 +2038,11 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Återindexera alla original, inklusive redan indexerade och oförändrade filer."
 
-#: src/page/about/about.vue:56
+#: src/page/about/about.vue:40
 msgid "Read the Docs"
 msgstr "Läs dokumenten"
 
-#: src/page/settings/advanced.vue:96
+#: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "Skrivskyddat läge"
 
@@ -2100,7 +2110,7 @@ msgstr "Ta bort importerade filer för att spara lagringsutrymme. Filer som inte
 msgid "Request failed - invalid response"
 msgstr "Förfrågan misslyckades - ogiltigt svar"
 
-#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:173
+#: src/component/admin/users/add.vue:101 src/component/admin/users/add.vue:175
 #: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
 #: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
@@ -2110,6 +2120,11 @@ msgstr "Krävs"
 #: src/dialog/photo/edit/info.vue:67
 msgid "Resolution"
 msgstr "Upplösning"
+
+#: src/page/connect.vue:63 src/page/connect.vue:60
+#: src/page/settings/advanced.vue:156
+msgid "Restart"
+msgstr ""
 
 #: src/component/photo/clipboard.vue:227
 msgid "Restore"
@@ -2127,8 +2142,8 @@ msgstr "Upprepa lösenordet"
 msgid "Review"
 msgstr "Granska"
 
-#: src/component/admin/users/add.vue:193 src/component/admin/users/edit.vue:341
-#: src/page/admin/sessions.vue:62 src/page/admin/sessions.vue:2
+#: src/component/admin/users/add.vue:195 src/component/admin/users/edit.vue:341
+#: src/page/admin/sessions.vue:64 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "Roll"
@@ -2282,7 +2297,7 @@ msgstr "Visa mer"
 msgid "Show server logs in Library."
 msgstr "Visa serverloggar i biblioteket."
 
-#: src/page/settings/advanced.vue:75
+#: src/page/settings/advanced.vue:77
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Visar mer detaljerade loggmeddelanden. Kräver en omstart."
 
@@ -2361,7 +2376,7 @@ msgstr "Starta/stoppa bildspel"
 msgid "States"
 msgstr "Stater"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:373
 msgid "Static Size Limit: %{n}px"
 msgstr "Statisk storleksgräns: %{n}px"
 
@@ -2381,7 +2396,8 @@ msgstr "Gator"
 msgid "Subject"
 msgstr "Ämne"
 
-#: src/page/connect.vue:51 src/page/connect.vue:48
+#: src/page/connect.vue:11 src/page/connect.vue:17 src/page/connect.vue:8
+#: src/page/connect.vue:14
 msgid "Successfully Connected"
 msgstr "Framgångsrikt ansluten"
 
@@ -2397,7 +2413,8 @@ msgstr "Super Admin"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Stöd för ytterligare tjänster, som Google Drive, kommer att läggas till med tiden."
 
-#: src/dialog/sponsor.vue:7
+#: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
+#: src/page/about/about.vue:1 src/page/connect.vue:17
 msgid "Support Our Mission"
 msgstr "Stöd vårt uppdrag"
 
@@ -2422,13 +2439,6 @@ msgstr "Blågrön"
 msgid "Text too long"
 msgstr "Texten är för lång"
 
-#: src/page/about/about.vue:20
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr ""
-"Därför har PhotoPrism byggts upp från grunden för att kunna användas där du "
-"behöver det, utan att kompromissa med frihet, integritet eller "
-"funktionalitet."
-
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Indexet innehåller för närvarande %{n} dolda filer."
@@ -2441,7 +2451,7 @@ msgstr "Formatet kanske inte stöds, de har ännu inte konverterats till JPEG el
 msgid "Theme"
 msgstr "Tema"
 
-#: src/page/settings/services.vue:40
+#: src/page/settings/services.vue:42
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
@@ -2453,7 +2463,7 @@ msgstr ""
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Detta gör att mappen med originalen monteras som en nätverksenhet, så att du kan öppna, redigera och ta bort filer från din dator eller smartphone som om de vore lokala."
 
-#: src/page/settings/advanced.vue:250
+#: src/page/settings/advanced.vue:252
 msgid "Thumbnail Generation"
 msgstr "Generering av miniatyrbilder"
 
@@ -2492,7 +2502,7 @@ msgstr "Rubriken är för lång"
 msgid "Title too long"
 msgstr "Rubriken är för lång"
 
-#: src/page/connect.vue:59 src/page/connect.vue:66
+#: src/page/connect.vue:72 src/page/connect.vue:74
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "För att uppgradera kan du antingen ange en aktiveringskod eller klicka på \"Fortsätt\" för att registrera dig på vår webbplats:"
 
@@ -2594,13 +2604,13 @@ msgstr "Uppdatering av förhandsgranskningar"
 msgid "Updating stacks"
 msgstr "Uppdatering av staplar"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:452
-#: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/component/navigation.vue:452 src/component/navigation.vue:592
+#: src/component/navigation.vue:51
 msgid "Upgrade"
 msgstr "Uppgradera"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:35
-#: src/page/connect.vue:56
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
+#: src/page/about/about.vue:9 src/page/connect.vue:64
 msgid "Upgrade Now"
 msgstr "Uppgradera nu"
 
@@ -2656,17 +2666,17 @@ msgstr "Uppladdningar som kan innehålla sådana bilder kommer automatiskt att a
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:535
+#: src/page/settings/advanced.vue:537
 msgid "Use Presets"
 msgstr "Använd förinställningar"
 
 #: src/options/admin.js:7 src/options/admin.js:23
-#: src/page/admin/sessions.vue:54 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:56 src/page/admin/sessions.vue:2
 #: src/model/user.js:230
 msgid "User"
 msgstr "Användare"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:50
+#: src/component/navigation.vue:597 src/page/about/about.vue:34
 msgid "User Guide"
 msgstr "Användarhandbok"
 
@@ -2674,7 +2684,7 @@ msgstr "Användarhandbok"
 msgid "User Interface"
 msgstr "Användargränssnitt"
 
-#: src/component/admin/users/add.vue:94 src/page/admin/sessions.vue:46
+#: src/component/admin/users/add.vue:94 src/page/admin/sessions.vue:48
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:30
 #: src/page/admin/users.vue:34 src/dialog/service/add.vue:103
 #: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
@@ -2698,10 +2708,6 @@ msgstr "Vektor"
 #: src/component/navigation.vue:105
 msgid "Vectors"
 msgstr "Vektorer"
-
-#: src/page/connect.vue:11 src/page/connect.vue:8
-msgid "Verified"
-msgstr "Verifierad"
 
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
@@ -2730,11 +2736,11 @@ msgstr "Visa"
 msgid "Viewer"
 msgstr "Visare"
 
-#: src/page/about/about.vue:52
+#: src/page/about/about.vue:36
 msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
 msgstr "Besök docs.photoprism.app/user-guide för att lära dig hur du synkroniserar, organiserar och delar dina bilder."
 
-#: src/options/admin.js:11 src/page/admin/sessions.vue:65
+#: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
 msgstr "Besökare"
@@ -2744,7 +2750,7 @@ msgstr "Besökare"
 msgid "Visual Similarity"
 msgstr "Gruppera efter likhet"
 
-#: src/page/connect.vue:102
+#: src/page/connect.vue:114
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Frivilliga donationer täcker inte kostnaderna för ett team som arbetar heltid för att ge dig uppdateringar, dokumentation och support."
 
@@ -2756,16 +2762,16 @@ msgstr "Vi uppskattar din feedback!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Vi gör vårt bästa för att svara inom fem arbetsdagar eller mindre."
 
-#: src/page/about/about.vue:79
+#: src/page/about/about.vue:63
 msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr "Vi gör vårt bästa för att besvara alla dina frågor. I gengäld ber vi dig att stödja oss på Patreon eller GitHub Sponsors."
 
-#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:453
+#: src/component/admin/users/add.vue:234 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Webinloggning"
 
-#: src/component/admin/users/add.vue:249 src/component/admin/users/edit.vue:470
+#: src/component/admin/users/add.vue:251 src/component/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
@@ -2774,7 +2780,7 @@ msgstr "WebDAV"
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV-klienter kan ansluta till PhotoPrism via följande URL:"
 
-#: src/page/settings/services.vue:37
+#: src/page/settings/services.vue:39
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
@@ -2790,7 +2796,7 @@ msgstr "WebDAV-uppladdning"
 msgid "Website"
 msgstr "Webbplats"
 
-#: src/page/connect.vue:106
+#: src/page/connect.vue:118
 msgid "What functionality is generally available?"
 msgstr "Vilken funktionalitet är allmänt tillgänglig?"
 
@@ -2798,7 +2804,7 @@ msgstr "Vilken funktionalitet är allmänt tillgänglig?"
 msgid "White"
 msgstr "Vit"
 
-#: src/page/connect.vue:98
+#: src/page/connect.vue:110
 msgid "Why are some features only available to sponsors?"
 msgstr "Varför är vissa funktioner endast tillgängliga för sponsorer?"
 
@@ -2831,7 +2837,7 @@ msgstr "Yellowstone"
 msgid "Yes"
 msgstr "Ja"
 
-#: src/page/about/about.vue:72
+#: src/page/about/about.vue:56
 msgid "you are welcome to join us on Reddit"
 msgstr "du är välkommen att hänga med oss på Reddit"
 
@@ -2852,7 +2858,11 @@ msgstr "Du kan bara välja ett objekt"
 msgid "You may rescan your library to find additional faces."
 msgstr "Du kan söka igenom ditt bibliotek på nytt för att hitta fler ansikten."
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:28
+#: src/page/connect.vue:54 src/page/connect.vue:51
+msgid "Your account has been successfully connected."
+msgstr ""
+
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
 #: src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Ditt fortsatta stöd hjälper oss att tillhandahålla regelbundna uppdateringar och tjänster som t ex världskartor."
@@ -2865,8 +2875,20 @@ msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
 
-#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-#~ msgstr "På PhotoPrism tror vi att varje ögonblick som fångas genom ett fotografi är värdefullt, och vårt uppdrag är att göra det möjligt för människor att bevara dessa ögonblick för kommande generationer."
+#~ msgid "Become a member today, support our mission and enjoy our member benefits!"
+#~ msgstr "Bli medlem i dag, stöd vårt uppdrag och ta del av våra medlemsförmåner!"
+
+#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+#~ msgstr "Vårt uppdrag är att tillhandahålla den mest användar- och integritetsvänliga lösningen för att hålla dina bilder organiserade och tillgängliga."
+
+#~ msgid "PhotoPrism+ Membership"
+#~ msgstr "Medlemskap i PhotoPrism+"
+
+#~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
+#~ msgstr "Därför har PhotoPrism byggts upp från grunden för att kunna användas där du behöver det, utan att kompromissa med frihet, integritet eller funktionalitet."
+
+#~ msgid "Verified"
+#~ msgstr "Verifierad"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Den använder sig av den senaste tekniken för att tagga och hitta bilder automatiskt utan att vara i vägen för dig."
