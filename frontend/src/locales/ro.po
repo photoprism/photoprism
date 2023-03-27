@@ -3,14 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-24 18:40+0000\n"
+"PO-Revision-Date: 2023-03-27 16:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -108,7 +110,7 @@ msgstr "Cod de activare"
 
 #: src/page/connect.vue:14 src/page/connect.vue:11
 msgid "Activation Failed"
-msgstr ""
+msgstr "Activare eșuată"
 
 #: src/component/admin/users/add.vue:22 src/page/admin/users.vue:47
 msgid "Add"
@@ -379,6 +381,8 @@ msgstr "Dosar de bază"
 #: src/page/about/about.vue:21 src/page/about/about.vue:3
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr ""
+"Deveniți membru astăzi pentru a vă bucura de funcții suplimentare și pentru "
+"a ne susține misiunea!"
 
 #: src/page/about/about.vue:51
 msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
@@ -575,7 +579,7 @@ msgstr "Conectați-vă"
 
 #: src/page/connect.vue:20
 msgid "Connect Customer Account"
-msgstr ""
+msgstr "Conectați contul de client"
 
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:62 src/page/settings/services.vue:50
@@ -1939,10 +1943,11 @@ msgstr "Vă rugăm să rețineți că schimbarea parolei vă va deconecta de pe 
 #: src/page/connect.vue:55 src/page/connect.vue:52
 msgid "Please restart your instance for the changes to take effect."
 msgstr ""
+"Vă rugăm să reporniți instanța pentru ca modificările să intre în vigoare."
 
 #: src/page/connect.vue:8 src/common/notify.js:98 src/page/connect.vue:5
 msgid "Please wait…"
-msgstr ""
+msgstr "Vă rugăm să așteptați…"
 
 #: src/page/settings/advanced.vue:458
 msgid "PNG Size Limit: %{n}px"
@@ -2124,7 +2129,7 @@ msgstr "Rezoluție"
 #: src/page/connect.vue:63 src/page/connect.vue:60
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
-msgstr ""
+msgstr "Reporniți"
 
 #: src/component/photo/clipboard.vue:227
 msgid "Restore"
@@ -2860,7 +2865,7 @@ msgstr "Puteți să scanați din nou biblioteca dumneavoastră pentru a găsi al
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
-msgstr ""
+msgstr "Contul dvs. a fost conectat cu succes."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
 #: src/page/about/about.vue:4
