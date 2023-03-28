@@ -2,7 +2,6 @@ package workers
 
 import (
 	"path"
-	"path/filepath"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -31,8 +30,11 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		return true, nil
 	}
 
-	client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
-	existingDirs := make(map[string]string)
+	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+
+	if err != nil {
+		return false, err
+	}
 
 	for _, file := range files {
 		if mutex.SyncWorker.Canceled() {
@@ -41,14 +43,10 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 
 		fileName := photoprism.FileName(file.FileRoot, file.FileName)
 		remoteName := path.Join(a.SyncPath, file.FileName)
-		remoteDir := filepath.Dir(remoteName)
+		remoteDir := path.Dir(remoteName)
 
-		if _, ok := existingDirs[remoteDir]; !ok {
-			if err := client.CreateDir(remoteDir); err != nil {
-				log.Errorf("sync: failed creating remote folder %s", remoteDir)
-				continue // try again next time
-			}
-		}
+		// Ensure destination folder exists.
+		_ = client.MkdirAll(remoteDir)
 
 		if err := client.Upload(fileName, remoteName); err != nil {
 			w.logError(err)

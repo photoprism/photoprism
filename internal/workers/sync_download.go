@@ -76,7 +76,11 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 
 	log.Infof("sync: downloading from %s", a.AccName)
 
-	client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+
+	if err != nil {
+		return false, err
+	}
 
 	var baseDir string
 

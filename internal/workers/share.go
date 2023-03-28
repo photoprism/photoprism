@@ -2,7 +2,7 @@ package workers
 
 import (
 	"fmt"
-	"path/filepath"
+	"path"
 	"runtime/debug"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -89,22 +89,21 @@ func (w *Share) Start() (err error) {
 			}
 		}
 
-		client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
-		existingDirs := make(map[string]string)
+		client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+
+		if err != nil {
+			return err
+		}
 
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {
 				return nil
 			}
 
-			dir := filepath.Dir(file.RemoteName)
+			dir := path.Dir(file.RemoteName)
 
-			if _, ok := existingDirs[dir]; !ok {
-				if err := client.CreateDir(dir); err != nil {
-					log.Errorf("share: failed creating folder %s", dir)
-					continue
-				}
-			}
+			// Ensure destination folder exists.
+			_ = client.MkdirAll(dir)
 
 			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
 
@@ -163,7 +162,11 @@ func (w *Share) Start() (err error) {
 			continue
 		}
 
-		client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+		client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+
+		if err != nil {
+			return err
+		}
 
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {

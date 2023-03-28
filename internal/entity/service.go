@@ -193,7 +193,11 @@ func (m *Service) Delete() error {
 // Directories returns a list of directories or albums in an account.
 func (m *Service) Directories() (result fs.FileInfos, err error) {
 	if m.AccType == remote.ServiceWebDAV {
-		client := webdav.New(m.AccURL, m.AccUser, m.AccPass, webdav.Timeout(m.AccTimeout))
+		var client *webdav.Client
+		if client, err = webdav.NewClient(m.AccURL, m.AccUser, m.AccPass, webdav.Timeout(m.AccTimeout)); err != nil {
+			return result, err
+		}
+
 		result, err = client.Directories("/", true, 0)
 	}
 
@@ -202,7 +206,7 @@ func (m *Service) Directories() (result fs.FileInfos, err error) {
 
 	// Update error count and message.
 	if err := m.LogError(err); err != nil {
-		log.Warnf("account: %s", err)
+		log.Warnf("service: %s", err)
 	}
 
 	return result, err

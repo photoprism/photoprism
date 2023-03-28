@@ -14,7 +14,11 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		return false, nil
 	}
 
-	client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+
+	if err != nil {
+		return false, err
+	}
 
 	subDirs, err := client.Directories(a.SyncPath, true, webdav.MaxRequestDuration)
 
@@ -30,7 +34,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			return false, nil
 		}
 
-		files, err := client.Files(dir)
+		files, err := client.Files(dir, false)
 
 		if err != nil {
 			log.Error(err)

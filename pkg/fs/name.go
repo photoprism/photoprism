@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// FileName returns the a relative filename with the same base and a given extension in a directory.
+// FileName returns the relative filename with the same base and a given extension in a directory.
 func FileName(fileName, dirName, baseDir, fileExt string) string {
 	fileDir := filepath.Dir(fileName)
 
