@@ -63,10 +63,6 @@ msgstr "Satu klik akan menyalinnya ke papan klip anda."
 msgid "About"
 msgstr "Mengenai"
 
-#: src/options/themes.js:473
-msgid "Abyss"
-msgstr "Abyss"
-
 #: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
@@ -474,10 +470,6 @@ msgstr "Tidak dapat memilih lebih banyak item"
 msgid "Cancel"
 msgstr "Batal"
 
-#: src/options/themes.js:463
-msgid "Carbon"
-msgstr "Carbon"
-
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "Kad"
@@ -656,10 +648,6 @@ msgstr "Sokongan Pengguna"
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/themes.js:503
-msgid "Cyano"
-msgstr "Cyano"
-
 #: src/options/options.js:390
 msgid "Daily"
 msgstr "Setiap hari"
@@ -675,7 +663,7 @@ msgstr "Log Nyahpepijat"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
-#: src/options/themes.js:448
+#: src/options/themes.js:417
 msgid "Default"
 msgstr "Lalai"
 
@@ -1102,10 +1090,6 @@ msgstr "Soalan Lazim"
 msgid "Fullscreen"
 msgstr "Skrin Penuh"
 
-#: src/options/themes.js:458
-msgid "Gemstone"
-msgstr "Batu permata"
-
 #: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "Lavender"
@@ -1129,10 +1113,6 @@ msgstr "Pilihan Global"
 #: src/options/options.js:412
 msgid "Gold"
 msgstr "emas"
-
-#: src/options/themes.js:453
-msgid "Grayscale"
-msgstr "Skala kelabu"
 
 #: src/options/options.js:415
 msgid "Green"
@@ -1380,10 +1360,6 @@ msgstr "Penyegerakan Terakhir"
 msgid "Latitude"
 msgstr "Latitud"
 
-#: src/options/themes.js:468
-msgid "Lavender"
-msgstr "Lavender"
-
 #: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
@@ -1624,10 +1600,6 @@ msgstr "Nama"
 msgid "Name too long"
 msgstr "Nama terlalu panjang"
 
-#: src/options/themes.js:483
-msgid "Neon"
-msgstr "Neon"
-
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
@@ -1791,10 +1763,6 @@ msgstr "Seorang ditemui"
 #: src/page/album/photos.vue:391 src/page/photos.vue:488
 msgid "One picture found"
 msgstr "Satu gambar ditemui"
-
-#: src/options/themes.js:498
-msgid "Onyx"
-msgstr "Onyx"
 
 #: src/page/about/about.vue:78
 msgid "or ask in our Community Chat"
@@ -2018,10 +1986,6 @@ msgstr "r"
 #: src/page/discover.vue:16
 msgid "Random"
 msgstr "Rawak"
-
-#: src/options/themes.js:508
-msgid "Raspberry"
-msgstr "Raspberi"
 
 #: src/options/options.js:318
 msgid "Raw"
@@ -2253,10 +2217,6 @@ msgstr "Tetapan Disimpan"
 msgid "Setup"
 msgstr "Persediaan"
 
-#: src/options/themes.js:488
-msgid "Shadow"
-msgstr "Bayang-bayang"
-
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
@@ -2318,10 +2278,6 @@ msgstr "Saiz"
 #: src/options/options.js:276
 msgid "Slow"
 msgstr "Lambat"
-
-#: src/options/themes.js:493
-msgid "Snow"
-msgstr "salji"
 
 #: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
@@ -2690,10 +2646,6 @@ msgstr "Nama Pengguna"
 msgid "Users"
 msgstr "Pengguna"
 
-#: src/options/themes.js:478
-msgid "Vanta"
-msgstr "Vanta"
-
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
@@ -2818,10 +2770,6 @@ msgstr "Viti"
 msgid "Yellow"
 msgstr "Kuning"
 
-#: src/options/themes.js:513
-msgid "Yellowstone"
-msgstr "Batu kuning"
-
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
@@ -2871,6 +2819,45 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Abyss"
+#~ msgstr "Abyss"
+
+#~ msgid "Carbon"
+#~ msgstr "Carbon"
+
+#~ msgid "Cyano"
+#~ msgstr "Cyano"
+
+#~ msgid "Gemstone"
+#~ msgstr "Batu permata"
+
+#~ msgid "Grayscale"
+#~ msgstr "Skala kelabu"
+
+#~ msgid "Lavender"
+#~ msgstr "Lavender"
+
+#~ msgid "Neon"
+#~ msgstr "Neon"
+
+#~ msgid "Onyx"
+#~ msgstr "Onyx"
+
+#~ msgid "Raspberry"
+#~ msgstr "Raspberi"
+
+#~ msgid "Shadow"
+#~ msgstr "Bayang-bayang"
+
+#~ msgid "Snow"
+#~ msgstr "salji"
+
+#~ msgid "Vanta"
+#~ msgstr "Vanta"
+
+#~ msgid "Yellowstone"
+#~ msgstr "Batu kuning"
 
 #~ msgid "{{ getMembership() }}"
 #~ msgstr "{{ getMembership() }}"

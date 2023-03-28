@@ -60,10 +60,6 @@ msgstr "Ένα κλικ θα το αντιγράψει στο πρόχειρο."
 msgid "About"
 msgstr "Σχετικά"
 
-#: src/options/themes.js:473
-msgid "Abyss"
-msgstr "Άβυσσος"
-
 #: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
@@ -471,10 +467,6 @@ msgstr "Δεν μπορείτε να επιλέξετε περισσότερα �
 msgid "Cancel"
 msgstr "Ακύρωση"
 
-#: src/options/themes.js:463
-msgid "Carbon"
-msgstr "Carbon"
-
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "Κάρτες"
@@ -653,10 +645,6 @@ msgstr "Υποστήριξη πελατών"
 msgid "Cyan"
 msgstr "Κυανό"
 
-#: src/options/themes.js:503
-msgid "Cyano"
-msgstr "Κυανό"
-
 #: src/options/options.js:390
 msgid "Daily"
 msgstr "Καθημερινά"
@@ -672,7 +660,7 @@ msgstr "Αρχεία καταγραφής σφαλμάτων"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
-#: src/options/themes.js:448
+#: src/options/themes.js:417
 msgid "Default"
 msgstr "Προεπιλογή"
 
@@ -1099,10 +1087,6 @@ msgstr "Συχνές ερωτήσεις"
 msgid "Fullscreen"
 msgstr "Πλήρης οθόνη"
 
-#: src/options/themes.js:458
-msgid "Gemstone"
-msgstr "Gemstone"
-
 #: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "Λεβάντα"
@@ -1126,10 +1110,6 @@ msgstr "Παγκόσμιες επιλογές"
 #: src/options/options.js:412
 msgid "Gold"
 msgstr "Χρυσό"
-
-#: src/options/themes.js:453
-msgid "Grayscale"
-msgstr "Κλίμακα του γκρι"
 
 #: src/options/options.js:415
 msgid "Green"
@@ -1377,10 +1357,6 @@ msgstr "Τελευταίος συγχρονισμός"
 msgid "Latitude"
 msgstr "Γεωγραφικό πλάτος"
 
-#: src/options/themes.js:468
-msgid "Lavender"
-msgstr "Λεβάντα"
-
 #: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
@@ -1621,10 +1597,6 @@ msgstr "Όνομα"
 msgid "Name too long"
 msgstr "Όνομα πολύ μεγάλο"
 
-#: src/options/themes.js:483
-msgid "Neon"
-msgstr "Νέον"
-
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
@@ -1788,10 +1760,6 @@ msgstr "Ένα άτομο βρήκε"
 #: src/page/album/photos.vue:391 src/page/photos.vue:488
 msgid "One picture found"
 msgstr "Μια εικόνα που βρέθηκε"
-
-#: src/options/themes.js:498
-msgid "Onyx"
-msgstr "Onyx"
 
 #: src/page/about/about.vue:78
 msgid "or ask in our Community Chat"
@@ -2015,10 +1983,6 @@ msgstr "r"
 #: src/page/discover.vue:16
 msgid "Random"
 msgstr "Τυχαίο"
-
-#: src/options/themes.js:508
-msgid "Raspberry"
-msgstr "Raspberry"
 
 #: src/options/options.js:318
 msgid "Raw"
@@ -2250,10 +2214,6 @@ msgstr "Οι ρυθμίσεις αποθηκεύτηκαν"
 msgid "Setup"
 msgstr "Ρύθμιση"
 
-#: src/options/themes.js:488
-msgid "Shadow"
-msgstr "Σκιά"
-
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
@@ -2315,10 +2275,6 @@ msgstr "Μέγεθος"
 #: src/options/options.js:276
 msgid "Slow"
 msgstr "Αργή"
-
-#: src/options/themes.js:493
-msgid "Snow"
-msgstr "Χιόνι"
 
 #: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
@@ -2687,10 +2643,6 @@ msgstr "Όνομα χρήστη"
 msgid "Users"
 msgstr "Χρήστες"
 
-#: src/options/themes.js:478
-msgid "Vanta"
-msgstr "Vanta"
-
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
@@ -2815,10 +2767,6 @@ msgstr "Έτος"
 msgid "Yellow"
 msgstr "Κίτρινο"
 
-#: src/options/themes.js:513
-msgid "Yellowstone"
-msgstr "Yellowstone"
-
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
@@ -2868,6 +2816,45 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Abyss"
+#~ msgstr "Άβυσσος"
+
+#~ msgid "Carbon"
+#~ msgstr "Carbon"
+
+#~ msgid "Cyano"
+#~ msgstr "Κυανό"
+
+#~ msgid "Gemstone"
+#~ msgstr "Gemstone"
+
+#~ msgid "Grayscale"
+#~ msgstr "Κλίμακα του γκρι"
+
+#~ msgid "Lavender"
+#~ msgstr "Λεβάντα"
+
+#~ msgid "Neon"
+#~ msgstr "Νέον"
+
+#~ msgid "Onyx"
+#~ msgstr "Onyx"
+
+#~ msgid "Raspberry"
+#~ msgstr "Raspberry"
+
+#~ msgid "Shadow"
+#~ msgstr "Σκιά"
+
+#~ msgid "Snow"
+#~ msgstr "Χιόνι"
+
+#~ msgid "Vanta"
+#~ msgstr "Vanta"
+
+#~ msgid "Yellowstone"
+#~ msgstr "Yellowstone"
 
 #~ msgid "{{ getMembership() }}"
 #~ msgstr "{{ getMembership() }}"

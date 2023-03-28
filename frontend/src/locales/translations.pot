@@ -62,10 +62,6 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/options/themes.js:473
-msgid "Abyss"
-msgstr ""
-
 #: src/component/navigation.vue:97
 #: src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108
@@ -542,10 +538,6 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: src/options/themes.js:463
-msgid "Carbon"
-msgstr ""
-
 #: src/component/album/toolbar.vue:59
 #: src/component/photo/toolbar.vue:46
 msgid "Cards"
@@ -759,10 +751,6 @@ msgstr ""
 msgid "Cyan"
 msgstr ""
 
-#: src/options/themes.js:503
-msgid "Cyano"
-msgstr ""
-
 #: src/options/options.js:390
 msgid "Daily"
 msgstr ""
@@ -784,7 +772,7 @@ msgstr ""
 #: src/page/admin/users.vue:100
 #: src/options/options.js:283
 #: src/options/options.js:341
-#: src/options/themes.js:448
+#: src/options/themes.js:417
 msgid "Default"
 msgstr ""
 
@@ -1272,10 +1260,6 @@ msgstr ""
 msgid "Fullscreen"
 msgstr ""
 
-#: src/options/themes.js:458
-msgid "Gemstone"
-msgstr ""
-
 #: src/component/admin/users/edit.vue:117
 #: src/page/settings/account.vue:81
 #: src/page/settings/account.vue:81
@@ -1302,10 +1286,6 @@ msgstr ""
 
 #: src/options/options.js:412
 msgid "Gold"
-msgstr ""
-
-#: src/options/themes.js:453
-msgid "Grayscale"
 msgstr ""
 
 #: src/options/options.js:415
@@ -1601,10 +1581,6 @@ msgstr ""
 #: src/dialog/photo/edit/details.vue:310
 #: src/dialog/photo/edit/info.vue:135
 msgid "Latitude"
-msgstr ""
-
-#: src/options/themes.js:468
-msgid "Lavender"
 msgstr ""
 
 #: src/options/admin.js:47
@@ -1906,10 +1882,6 @@ msgstr ""
 msgid "Name too long"
 msgstr ""
 
-#: src/options/themes.js:483
-msgid "Neon"
-msgstr ""
-
 #: src/page/admin/sessions.vue:69
 #: src/page/admin/users.vue:133
 #: src/options/options.js:386
@@ -2109,10 +2081,6 @@ msgstr ""
 #: src/page/album/photos.vue:391
 #: src/page/photos.vue:488
 msgid "One picture found"
-msgstr ""
-
-#: src/options/themes.js:498
-msgid "Onyx"
 msgstr ""
 
 #: src/page/about/about.vue:78
@@ -2371,10 +2339,6 @@ msgstr ""
 
 #: src/page/discover.vue:16
 msgid "Random"
-msgstr ""
-
-#: src/options/themes.js:508
-msgid "Raspberry"
 msgstr ""
 
 #: src/options/options.js:318
@@ -2652,10 +2616,6 @@ msgstr ""
 msgid "Setup"
 msgstr ""
 
-#: src/options/themes.js:488
-msgid "Shadow"
-msgstr ""
-
 #: src/component/album/clipboard.vue:63
 #: src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65
@@ -2723,10 +2683,6 @@ msgstr ""
 
 #: src/options/options.js:276
 msgid "Slow"
-msgstr ""
-
-#: src/options/themes.js:493
-msgid "Snow"
 msgstr ""
 
 #: src/dialog/photo/edit/files.vue:89
@@ -3158,10 +3114,6 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: src/options/themes.js:478
-msgid "Vanta"
-msgstr ""
-
 #: src/component/photo/cards.vue:316
 #: src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199
@@ -3309,10 +3261,6 @@ msgstr ""
 
 #: src/options/options.js:413
 msgid "Yellow"
-msgstr ""
-
-#: src/options/themes.js:513
-msgid "Yellowstone"
 msgstr ""
 
 #: src/dialog/confirm.vue:18

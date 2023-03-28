@@ -62,10 +62,6 @@ msgstr "A kattintás egy másolatot helyez a vágólapra."
 msgid "About"
 msgstr "Rólunk"
 
-#: src/options/themes.js:473
-msgid "Abyss"
-msgstr "Abyss"
-
 #: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
@@ -473,10 +469,6 @@ msgstr "Nem lehet több elemet kiválasztani"
 msgid "Cancel"
 msgstr "Mégsem"
 
-#: src/options/themes.js:463
-msgid "Carbon"
-msgstr "Carbon"
-
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "Kártyák"
@@ -655,10 +647,6 @@ msgstr "Vevőszolgálat"
 msgid "Cyan"
 msgstr "Cián"
 
-#: src/options/themes.js:503
-msgid "Cyano"
-msgstr "Cyano"
-
 #: src/options/options.js:390
 msgid "Daily"
 msgstr "Napi"
@@ -674,7 +662,7 @@ msgstr "Hibakeresési naplók"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
-#: src/options/themes.js:448
+#: src/options/themes.js:417
 msgid "Default"
 msgstr "Alapértelmezett"
 
@@ -1101,10 +1089,6 @@ msgstr "Gyakran ismételt kérdések"
 msgid "Fullscreen"
 msgstr "Teljes képernyő"
 
-#: src/options/themes.js:458
-msgid "Gemstone"
-msgstr "Drágakő"
-
 #: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "Nem"
@@ -1128,10 +1112,6 @@ msgstr "Globális lehetőségek"
 #: src/options/options.js:412
 msgid "Gold"
 msgstr "Arany"
-
-#: src/options/themes.js:453
-msgid "Grayscale"
-msgstr "Szürkeárnyalatos"
 
 #: src/options/options.js:415
 msgid "Green"
@@ -1379,10 +1359,6 @@ msgstr "Utolsó szinkronizálás"
 msgid "Latitude"
 msgstr "Szélességi kör"
 
-#: src/options/themes.js:468
-msgid "Lavender"
-msgstr "Levendula"
-
 #: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
@@ -1623,10 +1599,6 @@ msgstr "Név"
 msgid "Name too long"
 msgstr "A név túl hosszú"
 
-#: src/options/themes.js:483
-msgid "Neon"
-msgstr "Neon"
-
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
@@ -1790,10 +1762,6 @@ msgstr "Egy személyt találtak"
 #: src/page/album/photos.vue:391 src/page/photos.vue:488
 msgid "One picture found"
 msgstr "Egy kép található"
-
-#: src/options/themes.js:498
-msgid "Onyx"
-msgstr "Ónix"
 
 #: src/page/about/about.vue:78
 msgid "or ask in our Community Chat"
@@ -2017,10 +1985,6 @@ msgstr "r"
 #: src/page/discover.vue:16
 msgid "Random"
 msgstr "Véletlen"
-
-#: src/options/themes.js:508
-msgid "Raspberry"
-msgstr "Málna"
 
 #: src/options/options.js:318
 msgid "Raw"
@@ -2252,10 +2216,6 @@ msgstr "Beállítások elmentve"
 msgid "Setup"
 msgstr "Beállít"
 
-#: src/options/themes.js:488
-msgid "Shadow"
-msgstr "Árnyék"
-
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
@@ -2317,10 +2277,6 @@ msgstr "Méret"
 #: src/options/options.js:276
 msgid "Slow"
 msgstr "Lassú"
-
-#: src/options/themes.js:493
-msgid "Snow"
-msgstr "Hó"
 
 #: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
@@ -2689,10 +2645,6 @@ msgstr "Felhasználónév"
 msgid "Users"
 msgstr "Felhasználók"
 
-#: src/options/themes.js:478
-msgid "Vanta"
-msgstr "Vanta"
-
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
@@ -2817,10 +2769,6 @@ msgstr "Év"
 msgid "Yellow"
 msgstr "Sárga"
 
-#: src/options/themes.js:513
-msgid "Yellowstone"
-msgstr "Yellowstone"
-
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
@@ -2870,6 +2818,45 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "Abyss"
+#~ msgstr "Abyss"
+
+#~ msgid "Carbon"
+#~ msgstr "Carbon"
+
+#~ msgid "Cyano"
+#~ msgstr "Cyano"
+
+#~ msgid "Gemstone"
+#~ msgstr "Drágakő"
+
+#~ msgid "Grayscale"
+#~ msgstr "Szürkeárnyalatos"
+
+#~ msgid "Lavender"
+#~ msgstr "Levendula"
+
+#~ msgid "Neon"
+#~ msgstr "Neon"
+
+#~ msgid "Onyx"
+#~ msgstr "Ónix"
+
+#~ msgid "Raspberry"
+#~ msgstr "Málna"
+
+#~ msgid "Shadow"
+#~ msgstr "Árnyék"
+
+#~ msgid "Snow"
+#~ msgstr "Hó"
+
+#~ msgid "Vanta"
+#~ msgstr "Vanta"
+
+#~ msgid "Yellowstone"
+#~ msgstr "Yellowstone"
 
 #~ msgid "{{ getMembership() }}"
 #~ msgstr "{{ getMembership() }}"

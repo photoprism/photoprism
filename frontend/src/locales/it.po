@@ -63,10 +63,6 @@ msgstr "Un click lo copierà negli appunti."
 msgid "About"
 msgstr "Informazioni"
 
-#: src/options/themes.js:473
-msgid "Abyss"
-msgstr "Abisso"
-
 #: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
@@ -474,10 +470,6 @@ msgstr "Impossibile selezionare ulteriori elementi"
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/options/themes.js:463
-msgid "Carbon"
-msgstr "Carbone"
-
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "Carte"
@@ -656,10 +648,6 @@ msgstr "Supporto Clienti"
 msgid "Cyan"
 msgstr "Ciano"
 
-#: src/options/themes.js:503
-msgid "Cyano"
-msgstr "Ciano"
-
 #: src/options/options.js:390
 msgid "Daily"
 msgstr "Giornalmente"
@@ -675,7 +663,7 @@ msgstr "Registri di debug"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
-#: src/options/themes.js:448
+#: src/options/themes.js:417
 msgid "Default"
 msgstr "Predefinito"
 
@@ -1102,10 +1090,6 @@ msgstr "Domande frequenti"
 msgid "Fullscreen"
 msgstr "Schermo intero"
 
-#: src/options/themes.js:458
-msgid "Gemstone"
-msgstr "Pietra preziosa"
-
 #: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "Genere"
@@ -1129,10 +1113,6 @@ msgstr "Opzioni globali"
 #: src/options/options.js:412
 msgid "Gold"
 msgstr "Oro"
-
-#: src/options/themes.js:453
-msgid "Grayscale"
-msgstr "Scala di grigi"
 
 #: src/options/options.js:415
 msgid "Green"
@@ -1380,10 +1360,6 @@ msgstr "Ultima sincronizzazione"
 msgid "Latitude"
 msgstr "Latitudine"
 
-#: src/options/themes.js:468
-msgid "Lavender"
-msgstr "Lavanda"
-
 #: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
@@ -1624,10 +1600,6 @@ msgstr "Nome"
 msgid "Name too long"
 msgstr "Nome troppo lungo"
 
-#: src/options/themes.js:483
-msgid "Neon"
-msgstr "Neon"
-
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
@@ -1791,10 +1763,6 @@ msgstr "Una persona trovata"
 #: src/page/album/photos.vue:391 src/page/photos.vue:488
 msgid "One picture found"
 msgstr "Una foto trovata"
-
-#: src/options/themes.js:498
-msgid "Onyx"
-msgstr "Onice"
 
 #: src/page/about/about.vue:78
 msgid "or ask in our Community Chat"
@@ -2018,10 +1986,6 @@ msgstr "r"
 #: src/page/discover.vue:16
 msgid "Random"
 msgstr "Casuale"
-
-#: src/options/themes.js:508
-msgid "Raspberry"
-msgstr "Lampone"
 
 #: src/options/options.js:318
 msgid "Raw"
@@ -2253,10 +2217,6 @@ msgstr "Impostazioni salvate"
 msgid "Setup"
 msgstr "Setup"
 
-#: src/options/themes.js:488
-msgid "Shadow"
-msgstr "Ombra"
-
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
@@ -2318,10 +2278,6 @@ msgstr "Dimensione"
 #: src/options/options.js:276
 msgid "Slow"
 msgstr "Lento"
-
-#: src/options/themes.js:493
-msgid "Snow"
-msgstr "La neve"
 
 #: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
@@ -2690,10 +2646,6 @@ msgstr "Nome utente"
 msgid "Users"
 msgstr "Utenti"
 
-#: src/options/themes.js:478
-msgid "Vanta"
-msgstr "Vanta"
-
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
@@ -2818,10 +2770,6 @@ msgstr "Anno"
 msgid "Yellow"
 msgstr "Giallo"
 
-#: src/options/themes.js:513
-msgid "Yellowstone"
-msgstr "Yellowstone"
-
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
@@ -2871,6 +2819,45 @@ msgstr "La tua libreria viene continuamente analizzata per creare automaticament
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom in/out"
+
+#~ msgid "Abyss"
+#~ msgstr "Abisso"
+
+#~ msgid "Carbon"
+#~ msgstr "Carbone"
+
+#~ msgid "Cyano"
+#~ msgstr "Ciano"
+
+#~ msgid "Gemstone"
+#~ msgstr "Pietra preziosa"
+
+#~ msgid "Grayscale"
+#~ msgstr "Scala di grigi"
+
+#~ msgid "Lavender"
+#~ msgstr "Lavanda"
+
+#~ msgid "Neon"
+#~ msgstr "Neon"
+
+#~ msgid "Onyx"
+#~ msgstr "Onice"
+
+#~ msgid "Raspberry"
+#~ msgstr "Lampone"
+
+#~ msgid "Shadow"
+#~ msgstr "Ombra"
+
+#~ msgid "Snow"
+#~ msgstr "La neve"
+
+#~ msgid "Vanta"
+#~ msgstr "Vanta"
+
+#~ msgid "Yellowstone"
+#~ msgstr "Yellowstone"
 
 #~ msgid "{{ getMembership() }}"
 #~ msgstr "{{ getMembership() }}"

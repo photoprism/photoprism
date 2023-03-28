@@ -63,10 +63,6 @@ msgstr "एक क्लिक इसे आपके क्लिपबोर�
 msgid "About"
 msgstr "के बारे में"
 
-#: src/options/themes.js:473
-msgid "Abyss"
-msgstr "रसातल"
-
 #: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
@@ -474,10 +470,6 @@ msgstr "अधिक आइटम का चयन नहीं किया ज
 msgid "Cancel"
 msgstr "रद्द करना"
 
-#: src/options/themes.js:463
-msgid "Carbon"
-msgstr "कार्बन"
-
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "पत्ते"
@@ -656,10 +648,6 @@ msgstr "ग्राहक सहेयता"
 msgid "Cyan"
 msgstr "सियान"
 
-#: src/options/themes.js:503
-msgid "Cyano"
-msgstr "सायनो"
-
 #: src/options/options.js:390
 msgid "Daily"
 msgstr "रोज"
@@ -675,7 +663,7 @@ msgstr "दोषमार्जन लॉग"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
-#: src/options/themes.js:448
+#: src/options/themes.js:417
 msgid "Default"
 msgstr "चूक"
 
@@ -1102,10 +1090,6 @@ msgstr "अधिकतर पूछे जाने वाले सवाल"
 msgid "Fullscreen"
 msgstr "पूर्ण स्क्रीन"
 
-#: src/options/themes.js:458
-msgid "Gemstone"
-msgstr "मणि पत्थर"
-
 #: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "लिंग"
@@ -1129,10 +1113,6 @@ msgstr "वैश्विक विकल्प"
 #: src/options/options.js:412
 msgid "Gold"
 msgstr "सोना"
-
-#: src/options/themes.js:453
-msgid "Grayscale"
-msgstr "धूसर"
 
 #: src/options/options.js:415
 msgid "Green"
@@ -1380,10 +1360,6 @@ msgstr "अंतिम सिंक"
 msgid "Latitude"
 msgstr "अक्षांश"
 
-#: src/options/themes.js:468
-msgid "Lavender"
-msgstr "लैवेंडर"
-
 #: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "एलडीएपी/एडी"
@@ -1624,10 +1600,6 @@ msgstr "नाम"
 msgid "Name too long"
 msgstr "नाम बहुत लंबा"
 
-#: src/options/themes.js:483
-msgid "Neon"
-msgstr "नीयन"
-
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
@@ -1791,10 +1763,6 @@ msgstr "एक व्यक्ति मिला"
 #: src/page/album/photos.vue:391 src/page/photos.vue:488
 msgid "One picture found"
 msgstr "एक तस्वीर मिली"
-
-#: src/options/themes.js:498
-msgid "Onyx"
-msgstr "गोमेद"
 
 #: src/page/about/about.vue:78
 msgid "or ask in our Community Chat"
@@ -2018,10 +1986,6 @@ msgstr "आर"
 #: src/page/discover.vue:16
 msgid "Random"
 msgstr "बिना सोचे समझे"
-
-#: src/options/themes.js:508
-msgid "Raspberry"
-msgstr "रसभरी"
 
 #: src/options/options.js:318
 msgid "Raw"
@@ -2253,10 +2217,6 @@ msgstr "सेटिंग्स को सहेजा गया"
 msgid "Setup"
 msgstr "सेट अप"
 
-#: src/options/themes.js:488
-msgid "Shadow"
-msgstr "साया"
-
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
@@ -2318,10 +2278,6 @@ msgstr "आकार"
 #: src/options/options.js:276
 msgid "Slow"
 msgstr "धीरे"
-
-#: src/options/themes.js:493
-msgid "Snow"
-msgstr "बर्फ़"
 
 #: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
@@ -2692,10 +2648,6 @@ msgstr "उपयोगकर्ता नाम"
 msgid "Users"
 msgstr "उपयोगकर्ताओं"
 
-#: src/options/themes.js:478
-msgid "Vanta"
-msgstr "वांता"
-
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
@@ -2822,10 +2774,6 @@ msgstr "साल"
 msgid "Yellow"
 msgstr "पीला"
 
-#: src/options/themes.js:513
-msgid "Yellowstone"
-msgstr "येलोस्टोन"
-
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
@@ -2875,6 +2823,45 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "Abyss"
+#~ msgstr "रसातल"
+
+#~ msgid "Carbon"
+#~ msgstr "कार्बन"
+
+#~ msgid "Cyano"
+#~ msgstr "सायनो"
+
+#~ msgid "Gemstone"
+#~ msgstr "मणि पत्थर"
+
+#~ msgid "Grayscale"
+#~ msgstr "धूसर"
+
+#~ msgid "Lavender"
+#~ msgstr "लैवेंडर"
+
+#~ msgid "Neon"
+#~ msgstr "नीयन"
+
+#~ msgid "Onyx"
+#~ msgstr "गोमेद"
+
+#~ msgid "Raspberry"
+#~ msgstr "रसभरी"
+
+#~ msgid "Shadow"
+#~ msgstr "साया"
+
+#~ msgid "Snow"
+#~ msgstr "बर्फ़"
+
+#~ msgid "Vanta"
+#~ msgstr "वांता"
+
+#~ msgid "Yellowstone"
+#~ msgstr "येलोस्टोन"
 
 #~ msgid "{{ getMembership() }}"
 #~ msgstr "{{getMembership ()}}"

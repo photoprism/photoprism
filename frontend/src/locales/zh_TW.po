@@ -63,10 +63,6 @@ msgstr "點擊以複製到剪貼簿。"
 msgid "About"
 msgstr "關於"
 
-#: src/options/themes.js:473
-msgid "Abyss"
-msgstr "深淵"
-
 #: src/component/navigation.vue:97 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
@@ -474,10 +470,6 @@ msgstr "無法選取更多項目"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/options/themes.js:463
-msgid "Carbon"
-msgstr "碳黑"
-
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "卡片"
@@ -656,10 +648,6 @@ msgstr "客戶支援"
 msgid "Cyan"
 msgstr "青色"
 
-#: src/options/themes.js:503
-msgid "Cyano"
-msgstr "深青"
-
 #: src/options/options.js:390
 msgid "Daily"
 msgstr "每日"
@@ -675,7 +663,7 @@ msgstr "除錯紀錄"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:283 src/options/options.js:341
-#: src/options/themes.js:448
+#: src/options/themes.js:417
 msgid "Default"
 msgstr "預設"
 
@@ -1102,10 +1090,6 @@ msgstr "常見問題"
 msgid "Fullscreen"
 msgstr "全螢幕"
 
-#: src/options/themes.js:458
-msgid "Gemstone"
-msgstr "寶石"
-
 #: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "性別"
@@ -1129,10 +1113,6 @@ msgstr "全球选项"
 #: src/options/options.js:412
 msgid "Gold"
 msgstr "金色"
-
-#: src/options/themes.js:453
-msgid "Grayscale"
-msgstr "灰階"
 
 #: src/options/options.js:415
 msgid "Green"
@@ -1380,10 +1360,6 @@ msgstr "上次同步"
 msgid "Latitude"
 msgstr "緯度"
 
-#: src/options/themes.js:468
-msgid "Lavender"
-msgstr "薰衣草"
-
 #: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
@@ -1624,10 +1600,6 @@ msgstr "名稱"
 msgid "Name too long"
 msgstr "名稱太長了"
 
-#: src/options/themes.js:483
-msgid "Neon"
-msgstr "霓虹"
-
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
 #: src/options/options.js:386 src/options/options.js:396
 #: src/page/settings/services.vue:54
@@ -1791,10 +1763,6 @@ msgstr "找到一個人"
 #: src/page/album/photos.vue:391 src/page/photos.vue:488
 msgid "One picture found"
 msgstr "找到一張圖片"
-
-#: src/options/themes.js:498
-msgid "Onyx"
-msgstr "瑪瑙"
 
 #: src/page/about/about.vue:78
 msgid "or ask in our Community Chat"
@@ -2018,10 +1986,6 @@ msgstr "r"
 #: src/page/discover.vue:16
 msgid "Random"
 msgstr "隨機"
-
-#: src/options/themes.js:508
-msgid "Raspberry"
-msgstr "樹梅"
 
 #: src/options/options.js:318
 msgid "Raw"
@@ -2253,10 +2217,6 @@ msgstr "設定已儲存"
 msgid "Setup"
 msgstr "設定"
 
-#: src/options/themes.js:488
-msgid "Shadow"
-msgstr "陰影"
-
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
 msgid "Share"
@@ -2318,10 +2278,6 @@ msgstr "尺寸"
 #: src/options/options.js:276
 msgid "Slow"
 msgstr "慢"
-
-#: src/options/themes.js:493
-msgid "Snow"
-msgstr "雪"
 
 #: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
@@ -2692,10 +2648,6 @@ msgstr "使用者名稱"
 msgid "Users"
 msgstr "用户"
 
-#: src/options/themes.js:478
-msgid "Vanta"
-msgstr "奈米碳管黑"
-
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
@@ -2822,10 +2774,6 @@ msgstr "年"
 msgid "Yellow"
 msgstr "黃色"
 
-#: src/options/themes.js:513
-msgid "Yellowstone"
-msgstr "黃石"
-
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:136 src/dialog/photo/edit/files.vue:144
@@ -2875,6 +2823,45 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Abyss"
+#~ msgstr "深淵"
+
+#~ msgid "Carbon"
+#~ msgstr "碳黑"
+
+#~ msgid "Cyano"
+#~ msgstr "深青"
+
+#~ msgid "Gemstone"
+#~ msgstr "寶石"
+
+#~ msgid "Grayscale"
+#~ msgstr "灰階"
+
+#~ msgid "Lavender"
+#~ msgstr "薰衣草"
+
+#~ msgid "Neon"
+#~ msgstr "霓虹"
+
+#~ msgid "Onyx"
+#~ msgstr "瑪瑙"
+
+#~ msgid "Raspberry"
+#~ msgstr "樹梅"
+
+#~ msgid "Shadow"
+#~ msgstr "陰影"
+
+#~ msgid "Snow"
+#~ msgstr "雪"
+
+#~ msgid "Vanta"
+#~ msgstr "奈米碳管黑"
+
+#~ msgid "Yellowstone"
+#~ msgstr "黃石"
 
 #~ msgid "{{ getMembership() }}"
 #~ msgstr "{{ getMembership() }}."
