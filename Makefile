@@ -84,7 +84,7 @@ logs:
 help:
 	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
 fix-permissions:
-	$(info Updating filesystem permissions...)
+	$(info Updating filesystem permissions…)
 	@if [ $(UID) != 0 ]; then\
 		echo "Running \"chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism\". Please wait."; \
 		sudo chown --preserve-root -Rcf $(UID):$(GID) /go /photoprism /opt/photoprism /tmp/photoprism || true;\
@@ -106,10 +106,10 @@ clean:
 	[ ! -d "$(BUILD_PATH)" ] || rm -rf --preserve-root $(BUILD_PATH)
 	[ ! -d "$(JS_BUILD_PATH)" ] || rm -rf --preserve-root $(JS_BUILD_PATH)
 tar.gz:
-	$(info Creating tar.gz archives from the directories in "$(BUILD_PATH)"...)
+	$(info Creating tar.gz archives from the directories in "$(BUILD_PATH)"…)
 	find "$(BUILD_PATH)" -maxdepth 1 -mindepth 1 -type d -exec tar --exclude='.[^/]*' -C {} -czf {}.tar.gz . \;
 install:
-	$(info Installing in "$(DESTDIR)"...)
+	$(info Installing in "$(DESTDIR)"…)
 	@[ ! -d "$(DESTDIR)" ] || (echo "ERROR: Install path '$(DESTDIR)' already exists!"; exit 1)
 	mkdir --mode=$(INSTALL_MODE) -p $(DESTDIR)
 	env TMPDIR="$(BUILD_PATH)" ./scripts/dist/install-tensorflow.sh $(DESTDIR)
@@ -228,46 +228,46 @@ build-tensorflow-arm64:
 watch-js:
 	(cd frontend &&	env NODE_ENV=development npm run watch)
 test-js:
-	$(info Running JS unit tests...)
+	$(info Running JS unit tests…)
 	(cd frontend && env TZ=UTC NODE_ENV=development BABEL_ENV=test npm run test)
 acceptance:
-	$(info Running public-mode tests in 'chromium:headless'...)
+	$(info Running public-mode tests in 'chromium:headless'…)
 	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-short:
-	$(info Running JS acceptance tests in Chrome...)
+	$(info Running JS acceptance tests in Chrome…)
 	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-firefox:
-	$(info Running JS acceptance tests in Firefox...)
+	$(info Running JS acceptance tests in Firefox…)
 	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth:
-	$(info Running JS acceptance-auth tests in Chrome...)
+	$(info Running JS acceptance-auth tests in Chrome…)
 	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-short:
-	$(info Running JS acceptance-auth tests in Chrome...)
+	$(info Running JS acceptance-auth tests in Chrome…)
 	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-firefox:
-	$(info Running JS acceptance-auth tests in Firefox...)
+	$(info Running JS acceptance-auth tests in Firefox…)
 	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 reset-mariadb:
-	$(info Resetting photoprism database...)
+	$(info Resetting photoprism database…)
 	mysql < scripts/sql/reset-photoprism.sql
 reset-mariadb-testdb:
-	$(info Resetting testdb database...)
+	$(info Resetting testdb database…)
 	mysql < scripts/sql/reset-testdb.sql
 reset-mariadb-local:
-	$(info Resetting local database...)
+	$(info Resetting local database…)
 	mysql < scripts/sql/reset-local.sql
 reset-mariadb-acceptance:
-	$(info Resetting acceptance database...)
+	$(info Resetting acceptance database…)
 	mysql < scripts/sql/reset-acceptance.sql
 reset-mariadb-all: reset-mariadb-testdb reset-mariadb-local reset-mariadb-acceptance reset-mariadb-photoprism
 reset-testdb: reset-sqlite reset-mariadb-testdb
 reset-acceptance: reset-mariadb-acceptance
 reset-sqlite:
-	$(info Removing test database files...)
+	$(info Removing test database files…)
 	find ./internal -type f -name ".test.*" -delete
 run-test-short:
-	$(info Running short Go tests in parallel mode...)
+	$(info Running short Go tests in parallel mode…)
 	$(GOTEST) -parallel 2 -count 1 -cpu 2 -short -timeout 5m ./pkg/... ./internal/...
 run-test-go:
 	$(info Running all Go tests...)

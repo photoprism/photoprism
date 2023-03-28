@@ -10,7 +10,7 @@ MODEL_HASH="f18b801354e95cade497b4f12e8d2537d04c04f6  $MODEL_ZIP"
 MODEL_VERSION="$MODEL_PATH/version.txt"
 MODEL_BACKUP="storage/backup/nasnet-$TODAY"
 
-echo "Installing $MODEL_NAME model for TensorFlow..."
+echo "Installing $MODEL_NAME model for TensorFlow…"
 
 # Create directories
 mkdir -p /tmp/photoprism
@@ -24,7 +24,7 @@ if [[ -f ${MODEL_ZIP} ]] && [[ $(sha1sum ${MODEL_ZIP}) == "${MODEL_HASH}" ]]; th
   fi
 else
   # Download model
-  echo "Downloading latest model from $MODEL_URL..."
+  echo "Downloading latest model from $MODEL_URL…"
   wget --inet4-only -c "${MODEL_URL}" -O ${MODEL_ZIP}
 
   TMP_HASH=$(sha1sum ${MODEL_ZIP})
