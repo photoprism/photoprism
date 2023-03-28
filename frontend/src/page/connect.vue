@@ -67,11 +67,13 @@
           </v-btn>
         </v-flex>
       </v-layout>
-      <v-layout v-else-if="success || $config.values.restart" row wrap>
+      <v-layout v-else-if="success" row wrap>
         <v-flex xs12 d-flex class="pa-2">
           <p class="subheading text-xs-left">
             <translate>Your account has been successfully connected.</translate>
+            <span v-if="$config.values.restart">
             <translate>Please restart your instance for the changes to take effect.</translate>
+            </span>
           </p>
         </v-flex>
         <v-flex xs12 grow class="pa-2">
@@ -187,6 +189,7 @@ export default {
   name: 'PPageConnect',
   data() {
     const token = this.$route.params.token ? this.$route.params.token : "";
+    const membership = this.$config.getMembership();
     return {
       success: false,
       busy: false,
@@ -197,8 +200,8 @@ export default {
       isAdmin: this.$session.isAdmin(),
       isDemo: this.$config.isDemo(),
       isSponsor: this.$config.isSponsor(),
-      membership: this.$config.getMembership(),
-      showInfo: !token,
+      membership: membership,
+      showInfo: !token && membership === "ce",
       rtl: this.$rtl,
       tokenMask: 'nnnn-nnnn-nnnn',
       form: {
@@ -215,7 +218,7 @@ export default {
   },
   methods: {
     onRestart() {
-      restart();
+      restart(this.$router.resolve({ name: "about" }).href);
     },
     reset() {
       this.success = false;

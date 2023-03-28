@@ -36,30 +36,27 @@ function poll(interval, maxAttempts) {
     try {
       const xhr = new XMLHttpRequest();
       xhr.open("GET", config.apiUri + "/status", false);
-      xhr.onload = function () {
-        if (this.status === 200) {
-          return resolve();
-        } else {
-          throw new Error("request failed");
-        }
-      };
-      xhr.onerror = function () {
-        throw new Error("request failed");
-      };
-      xhr.send();
-    } catch {
-      if (maxAttempts && attempts === maxAttempts) {
-        return reject(new Error("exceeded max attempts"));
-      } else {
-        setTimeout(executePoll, interval, resolve, reject);
+      xhr.send(null);
+
+      if (xhr.status === 200 && xhr.response && xhr.response.includes("operational")) {
+        // console.log("response:", xhr.response);
+        return resolve();
       }
+    } catch (e) {
+      // console.log("status:", e);
     }
+
+    if (maxAttempts && attempts === maxAttempts) {
+      return reject(new Error("exceeded max attempts"));
+    }
+
+    setTimeout(executePoll, interval, resolve, reject);
   };
 
   return new Promise(executePoll);
 }
 
-export function restart() {
+export function restart(uri) {
   Notify.blockUI("progress");
   Notify.wait();
   Notify.ajaxStart();
@@ -68,7 +65,11 @@ export function restart() {
     .then(() => {
       return poll(1000, 180)
         .then(() => {
-          window.location.reload();
+          if (uri) {
+            window.location.href = uri;
+          } else {
+            window.location.reload();
+          }
         })
         .catch(() => {
           Notify.ajaxEnd();
