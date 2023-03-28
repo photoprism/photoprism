@@ -5,18 +5,13 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-27 17:33+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.16.2\n"
-
-#: src/page/connect.vue:17
-msgid "{{ getMembership() }}"
-msgstr "{{ getMembership() }}"
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
@@ -60,8 +55,8 @@ msgstr "4 óra"
 msgid "A click will copy it to your clipboard."
 msgstr "A kattintás egy másolatot helyez a vágólapra."
 
-#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:7
-#: src/page/about/about.vue:213 src/page/settings/account.vue:313
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:204
+#: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -102,11 +97,11 @@ msgstr "Művelet"
 msgid "Actions"
 msgstr "Műveletek"
 
-#: src/page/connect.vue:90 src/page/connect.vue:98
+#: src/page/connect.vue:92 src/page/connect.vue:100
 msgid "Activate"
 msgstr "Aktiválja a  címet."
 
-#: src/page/connect.vue:359 src/page/connect.vue:428
+#: src/page/connect.vue:357 src/page/connect.vue:433
 msgid "Activation Code"
 msgstr "Aktiválási kód"
 
@@ -346,7 +341,7 @@ msgstr "Biztos benne?"
 msgid "Artist"
 msgstr "Művész"
 
-#: src/page/connect.vue:128
+#: src/page/connect.vue:130
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Mivel ez segít abban, hogy több funkciót tudjunk biztosítani a nyilvánosság számára, minden felhasználót arra bátorítunk, hogy támogassa küldetésünket."
 
@@ -433,7 +428,7 @@ msgstr "Hibajelentés"
 msgid "Busy, please wait…"
 msgstr "Elfoglalt, kérem, várjon…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:108
+#: src/page/connect.vue:102 src/page/connect.vue:110
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Az általunk biztosított szoftver és szolgáltatások használatával Ön elfogadja szolgáltatási feltételeinket, adatvédelmi szabályzatunkat és magatartási kódexünket."
 
@@ -557,7 +552,7 @@ msgstr "Színek"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "A gyakori problémák gyorsan diagnosztizálhatók és megoldhatók az általunk biztosított hibaelhárítási ellenőrző listák segítségével."
 
-#: src/page/connect.vue:81 src/page/connect.vue:89
+#: src/page/connect.vue:83 src/page/connect.vue:91
 msgid "Compare Editions"
 msgstr "Edíciók összehasonlítása"
 
@@ -578,7 +573,7 @@ msgstr "Csatlakozás"
 msgid "Connect via WebDAV"
 msgstr "Csatlakozás WebDAV-on keresztül"
 
-#: src/page/connect.vue:62 src/page/connect.vue:61
+#: src/page/connect.vue:62
 msgid "Connected"
 msgstr "Csatlakozva"
 
@@ -1020,7 +1015,7 @@ msgstr "Visszacsatolás"
 msgid "Feedback"
 msgstr "Visszacsatolás"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
+#: src/page/connect.vue:101 src/dialog/sponsor.vue:25 src/page/connect.vue:109
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kérjük, lépjen kapcsolatba velünk a hello@photoprism.app címen, ha kérdése van, vagy segítségre van szüksége."
 
@@ -1098,7 +1093,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Keretek"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:115
 msgid "Frequently Asked Questions"
 msgstr "Gyakran ismételt kérdések"
 
@@ -1158,7 +1153,7 @@ msgstr "Hash"
 msgid "Help"
 msgstr "Segítség"
 
-#: src/app/routes.js:78
+#: src/app/routes.js:72 src/app/routes.js:78
 msgid "Help & Support"
 msgstr "Segítség & Támogatás"
 
@@ -1309,8 +1304,7 @@ msgstr "Érvénytelen"
 msgid "Invalid date"
 msgstr "Érvénytelen dátum"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
-#: src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80
 msgid "Invalid parameters"
 msgstr "Érvénytelen paraméterek"
 
@@ -1318,7 +1312,7 @@ msgstr "Érvénytelen paraméterek"
 msgid "Invalid photo selected"
 msgstr "Érvénytelen fénykép kiválasztva"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:123
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Az Ön döntése, hogy szeretne-e regisztrálni, hogy további előnyöket élvezhessen."
 
@@ -1393,9 +1387,10 @@ msgstr "Levendula"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:110 src/component/auth/footer.vue:24
+#: src/page/connect.vue:104 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:131
+#: src/page/about/about.vue:141 src/page/connect.vue:133
+#: src/page/connect.vue:132
 msgid "Learn more"
 msgstr "Tudjon meg többet"
 
@@ -1414,7 +1409,7 @@ msgstr "Lencse"
 msgid "Library"
 msgstr "Könyvtár"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
+#: src/page/connect.vue:4 src/app/routes.js:66 src/component/navigation.vue:444
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1515,8 +1510,8 @@ msgstr "Fő szín"
 msgid "Male"
 msgstr "Férfi"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
-#: src/page/connect.vue:86
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/connect.vue:65
+#: src/page/connect.vue:88
 msgid "Manage account"
 msgstr "Számla kezelése"
 
@@ -1834,7 +1829,7 @@ msgstr "Eredetiek"
 msgid "Other"
 msgstr "Egyéb"
 
-#: src/page/connect.vue:127
+#: src/page/connect.vue:129
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Csapatunk ezt folyamatosan dönti el, attól függően, hogy mekkora támogatási erőfeszítésre van szükség, milyen szerver- és licencköltségek merülnek fel, és hogy a funkciókat általában mindenki igényli-e, vagy elsősorban szervezetek és haladó felhasználók igénylik."
 
@@ -1895,7 +1890,7 @@ msgstr "Fénykép"
 msgid "PhotoPrism has been updated…"
 msgstr "A PhotoPrism frissítve lett…"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:121
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "A PhotoPrism 100%-ban önfinanszírozó és független."
 
@@ -1936,7 +1931,7 @@ msgstr "Kérjük, ne töltsön fel sértő tartalmat tartalmazó fotókat."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Felhívjuk figyelmét, hogy a jelszó megváltoztatása más eszközökön és böngészőkben is kijelentkezik."
 
-#: src/page/connect.vue:55 src/page/connect.vue:58
+#: src/page/connect.vue:56 src/page/connect.vue:59
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Kérjük, indítsa újra a példányt, hogy a módosítások hatályba lépjenek."
 
@@ -1988,7 +1983,7 @@ msgstr "Elsődleges"
 msgid "Private"
 msgstr "Privát"
 
-#: src/page/connect.vue:85 src/page/connect.vue:93
+#: src/page/connect.vue:87 src/page/connect.vue:95
 msgid "Proceed"
 msgstr "Folytassa a"
 
@@ -2121,7 +2116,7 @@ msgstr "Kívánt"
 msgid "Resolution"
 msgstr "Felbontás"
 
-#: src/page/connect.vue:63 src/page/connect.vue:66
+#: src/page/connect.vue:65 src/page/connect.vue:68
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Újraindítás"
@@ -2499,7 +2494,7 @@ msgstr "Cím / Pozíció"
 msgid "Title too long"
 msgstr "A cím túl hosszú"
 
-#: src/page/connect.vue:72 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:82
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "A frissítéshez vagy megadhat egy aktiváló kódot, vagy a \"Tovább\" gombra kattintva regisztrálhat a weboldalunkon:"
 
@@ -2608,7 +2603,7 @@ msgid "Upgrade"
 msgstr "Frissítés"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:70
+#: src/page/about/about.vue:9 src/page/connect.vue:72
 msgid "Upgrade Now"
 msgstr "Frissítés most"
 
@@ -2752,7 +2747,7 @@ msgstr "Látogató"
 msgid "Visual Similarity"
 msgstr "Csoportosítás hasonlóság szerint"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:122
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Az önkéntes adományok nem fedezik egy teljes munkaidőben dolgozó csapat költségeit, amely frissítésekkel, dokumentációval és támogatással látja el Önt."
 
@@ -2796,7 +2791,7 @@ msgstr "WebDAV feltöltés"
 msgid "Website"
 msgstr "Weboldal"
 
-#: src/page/connect.vue:124
+#: src/page/connect.vue:126
 msgid "What functionality is generally available?"
 msgstr "Milyen funkciók állnak általában rendelkezésre?"
 
@@ -2804,7 +2799,7 @@ msgstr "Milyen funkciók állnak általában rendelkezésre?"
 msgid "White"
 msgstr "Fehér"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:118
 msgid "Why are some features only available to sponsors?"
 msgstr "Miért vannak olyan funkciók, amelyek csak a szponzorok számára elérhetőek?"
 
@@ -2874,6 +2869,9 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "{{ getMembership() }}"
+#~ msgstr "{{ getMembership() }}"
 
 #~ msgid "Activation Failed"
 #~ msgstr "Aktiválás sikertelen"

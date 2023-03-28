@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-27 17:33+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/tr/>\n"
+"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -14,10 +13,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
-
-#: src/page/connect.vue:17
-msgid "{{ getMembership() }}"
-msgstr "{{ getMembership() }}"
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
@@ -61,8 +56,8 @@ msgstr "4 saat"
 msgid "A click will copy it to your clipboard."
 msgstr "Tıklayarak panoya kopyalayabilirsiniz."
 
-#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:7
-#: src/page/about/about.vue:213 src/page/settings/account.vue:313
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:204
+#: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -103,11 +98,11 @@ msgstr "Aksiyon"
 msgid "Actions"
 msgstr "Hareketler"
 
-#: src/page/connect.vue:90 src/page/connect.vue:98
+#: src/page/connect.vue:92 src/page/connect.vue:100
 msgid "Activate"
 msgstr "Etkinleştir"
 
-#: src/page/connect.vue:359 src/page/connect.vue:428
+#: src/page/connect.vue:357 src/page/connect.vue:433
 msgid "Activation Code"
 msgstr "Aktivasyon Kodu"
 
@@ -347,7 +342,7 @@ msgstr "Emin misiniz?"
 msgid "Artist"
 msgstr "Sanatçı"
 
-#: src/page/connect.vue:128
+#: src/page/connect.vue:130
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Bu, halka daha fazla özellik sunmamıza yardımcı olduğundan, tüm kullanıcıları misyonumuzu desteklemeye teşvik ediyoruz."
 
@@ -434,7 +429,7 @@ msgstr "Hata raporu"
 msgid "Busy, please wait…"
 msgstr "Meşgul, lütfen bekleyin…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:108
+#: src/page/connect.vue:102 src/page/connect.vue:110
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Sağladığımız yazılım ve hizmetleri kullanarak hizmet şartlarımızı, gizlilik politikamızı ve davranış kurallarımızı kabul etmiş olursunuz."
 
@@ -558,7 +553,7 @@ msgstr "Renkler"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "Yaygın sorunlar, sağladığımız sorun giderme kontrol listeleri kullanılarak hızlı bir şekilde teşhis edilebilir ve çözülebilir."
 
-#: src/page/connect.vue:81 src/page/connect.vue:89
+#: src/page/connect.vue:83 src/page/connect.vue:91
 msgid "Compare Editions"
 msgstr "Baskıları Karşılaştırın"
 
@@ -579,7 +574,7 @@ msgstr "Bağlan"
 msgid "Connect via WebDAV"
 msgstr "WebDAV ile bağlan"
 
-#: src/page/connect.vue:62 src/page/connect.vue:61
+#: src/page/connect.vue:62
 msgid "Connected"
 msgstr "Bağlandı"
 
@@ -1021,7 +1016,7 @@ msgstr "Besleme"
 msgid "Feedback"
 msgstr "Geri bildirim"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
+#: src/page/connect.vue:101 src/dialog/sponsor.vue:25 src/page/connect.vue:109
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Herhangi bir sorunuz varsa bizimle hello@photoprism.app adresinden iletişime geçmekten çekinmeyin."
 
@@ -1099,7 +1094,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Çerçeveler"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:115
 msgid "Frequently Asked Questions"
 msgstr "Sıkça Sorulan Sorular"
 
@@ -1159,7 +1154,7 @@ msgstr "Karma"
 msgid "Help"
 msgstr "Yardım"
 
-#: src/app/routes.js:78
+#: src/app/routes.js:72 src/app/routes.js:78
 msgid "Help & Support"
 msgstr "Yardım & Destek"
 
@@ -1310,8 +1305,7 @@ msgstr "Geçersiz"
 msgid "Invalid date"
 msgstr "Geçersiz tarih"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
-#: src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80
 msgid "Invalid parameters"
 msgstr "Geçersiz parametreler"
 
@@ -1319,7 +1313,7 @@ msgstr "Geçersiz parametreler"
 msgid "Invalid photo selected"
 msgstr "Geçersiz fotoğraf seçildi"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:123
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Ek avantajlardan yararlanmak için kaydolmak isteyip istemediğiniz sizin kararınızdır."
 
@@ -1394,9 +1388,10 @@ msgstr "Lavanta"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:110 src/component/auth/footer.vue:24
+#: src/page/connect.vue:104 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:131
+#: src/page/about/about.vue:141 src/page/connect.vue:133
+#: src/page/connect.vue:132
 msgid "Learn more"
 msgstr "Daha fazla bilgi edin"
 
@@ -1415,7 +1410,7 @@ msgstr "Lens"
 msgid "Library"
 msgstr "Kütüphane"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
+#: src/page/connect.vue:4 src/app/routes.js:66 src/component/navigation.vue:444
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1516,8 +1511,8 @@ msgstr "Ana renk"
 msgid "Male"
 msgstr "Erkek"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
-#: src/page/connect.vue:86
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/connect.vue:65
+#: src/page/connect.vue:88
 msgid "Manage account"
 msgstr "Hesabı yönet"
 
@@ -1835,7 +1830,7 @@ msgstr "Orijinaller"
 msgid "Other"
 msgstr "Diğer"
 
-#: src/page/connect.vue:127
+#: src/page/connect.vue:129
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Ekibimiz, gerekli destek çabasına, sunucu ve lisans maliyetlerine ve özelliklerin genel olarak herkes tarafından ihtiyaç duyulup duyulmadığına veya çoğunlukla kuruluşlar ve ileri düzey kullanıcılar tarafından talep edilip edilmediğine bağlı olarak buna sürekli olarak karar verir."
 
@@ -1896,7 +1891,7 @@ msgstr "Fotoğraf"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism güncellendi.."
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:121
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism %100 kendi kendini finanse eder ve bağımsızdır."
 
@@ -1937,7 +1932,7 @@ msgstr "Lütfen saldırgan içerik barındıran fotoğraflar yüklemeyin."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Lütfen şifrenizi değiştirdiğinizde diğer cihazlarda ve tarayıcılarda oturumunuzu kapatacağınızı unutmayın."
 
-#: src/page/connect.vue:55 src/page/connect.vue:58
+#: src/page/connect.vue:56 src/page/connect.vue:59
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Değişikliklerin etkili olması için lütfen örneğinizi yeniden başlatın."
 
@@ -1989,7 +1984,7 @@ msgstr "Birincil"
 msgid "Private"
 msgstr "Özel"
 
-#: src/page/connect.vue:85 src/page/connect.vue:93
+#: src/page/connect.vue:87 src/page/connect.vue:95
 msgid "Proceed"
 msgstr "Devam edin"
 
@@ -2122,7 +2117,7 @@ msgstr "Gerekli"
 msgid "Resolution"
 msgstr "Çözünürlük"
 
-#: src/page/connect.vue:63 src/page/connect.vue:66
+#: src/page/connect.vue:65 src/page/connect.vue:68
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Yeniden Başlat"
@@ -2502,7 +2497,7 @@ msgstr "Başlık / Pozisyon"
 msgid "Title too long"
 msgstr "Başlık çok uzun"
 
-#: src/page/connect.vue:72 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:82
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "Yükseltmek için, bir aktivasyon kodu girebilir veya web sitemizde yükseltmek için \"Kaydol\" seçeneğine tıklayabilirsiniz:"
 
@@ -2611,7 +2606,7 @@ msgid "Upgrade"
 msgstr "Yükseltme"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:70
+#: src/page/about/about.vue:9 src/page/connect.vue:72
 msgid "Upgrade Now"
 msgstr "Şimdi Yükselt"
 
@@ -2755,7 +2750,7 @@ msgstr "Ziyaretçi"
 msgid "Visual Similarity"
 msgstr "Görsel Benzerlik"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:122
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Gönüllü bağışlar, size güncellemeler, dokümantasyon ve destek sağlamak için tam zamanlı çalışan bir ekibin maliyetini karşılamaz."
 
@@ -2801,7 +2796,7 @@ msgstr "WebDAV Yükleme"
 msgid "Website"
 msgstr "Website"
 
-#: src/page/connect.vue:124
+#: src/page/connect.vue:126
 msgid "What functionality is generally available?"
 msgstr "Genel olarak hangi işlevler kullanılabilir?"
 
@@ -2809,7 +2804,7 @@ msgstr "Genel olarak hangi işlevler kullanılabilir?"
 msgid "White"
 msgstr "Beyaz"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:118
 msgid "Why are some features only available to sponsors?"
 msgstr "Neden bazı özellikler sadece sponsorlar tarafından kullanılabiliyor?"
 
@@ -2879,6 +2874,9 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
+
+#~ msgid "{{ getMembership() }}"
+#~ msgstr "{{ getMembership() }}"
 
 #~ msgid "Activation Failed"
 #~ msgstr "Etkinleştirme Başarısız"

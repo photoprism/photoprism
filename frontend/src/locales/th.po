@@ -14,10 +14,6 @@ msgstr ""
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/connect.vue:17
-msgid "{{ getMembership() }}"
-msgstr "{{ getMembership() }}"
-
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
 msgstr "พบ %{n} อัลบั้ม"
@@ -60,8 +56,8 @@ msgstr "4 ชั่วโมง"
 msgid "A click will copy it to your clipboard."
 msgstr "คลิกเพื่อคัดลอกไปยังคลิปบอร์ด"
 
-#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:7
-#: src/page/about/about.vue:213 src/page/settings/account.vue:313
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:204
+#: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -102,11 +98,11 @@ msgstr "การกระทำ"
 msgid "Actions"
 msgstr "การกระทำ"
 
-#: src/page/connect.vue:90 src/page/connect.vue:98
+#: src/page/connect.vue:92 src/page/connect.vue:100
 msgid "Activate"
 msgstr "เปิดใช้งาน"
 
-#: src/page/connect.vue:359 src/page/connect.vue:428
+#: src/page/connect.vue:357 src/page/connect.vue:433
 msgid "Activation Code"
 msgstr "รหัสเปิดใช้งาน"
 
@@ -346,7 +342,7 @@ msgstr "คุณแน่ใจหรือไม่?"
 msgid "Artist"
 msgstr "ศิลปิน"
 
-#: src/page/connect.vue:128
+#: src/page/connect.vue:130
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "เนื่องจากสิ่งนี้ช่วยให้เรานำเสนอคุณสมบัติเพิ่มเติมแก่สาธารณะ เราจึงสนับสนุนให้ผู้ใช้ทุกคนสนับสนุนภารกิจของเรา"
 
@@ -433,7 +429,7 @@ msgstr "รายงานข้อผิดพลาด"
 msgid "Busy, please wait…"
 msgstr "ไม่ว่าง โปรดรอ…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:108
+#: src/page/connect.vue:102 src/page/connect.vue:110
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "โดยการใช้ซอฟต์แวร์และบริการที่เรามอบให้ แสดงว่าคุณยอมรับข้อกำหนดในการให้บริการ นโยบายความเป็นส่วนตัว และจรรยาบรรณของเรา"
 
@@ -557,7 +553,7 @@ msgstr "สี"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "ปัญหาทั่วไปสามารถวินิจฉัยและแก้ไขได้อย่างรวดเร็วโดยใช้รายการตรวจสอบการแก้ไขปัญหาที่เรามีให้"
 
-#: src/page/connect.vue:81 src/page/connect.vue:89
+#: src/page/connect.vue:83 src/page/connect.vue:91
 msgid "Compare Editions"
 msgstr "เปรียบเทียบรุ่น"
 
@@ -578,7 +574,7 @@ msgstr "เชื่อมต่อ"
 msgid "Connect via WebDAV"
 msgstr "เชื่อมต่อผ่าน WebDAV"
 
-#: src/page/connect.vue:62 src/page/connect.vue:61
+#: src/page/connect.vue:62
 msgid "Connected"
 msgstr "เชื่อมต่อ"
 
@@ -1020,7 +1016,7 @@ msgstr "ข้อเสนอแนะ"
 msgid "Feedback"
 msgstr "ข้อเสนอแนะ"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
+#: src/page/connect.vue:101 src/dialog/sponsor.vue:25 src/page/connect.vue:109
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "โปรดติดต่อเราที่ hello@photoprism.app หากคุณมีคำถามใด ๆ"
 
@@ -1098,7 +1094,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "เฟรม"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:115
 msgid "Frequently Asked Questions"
 msgstr "คำถามที่พบบ่อย"
 
@@ -1158,7 +1154,7 @@ msgstr "กัญชา"
 msgid "Help"
 msgstr "ช่วย"
 
-#: src/app/routes.js:78
+#: src/app/routes.js:72 src/app/routes.js:78
 msgid "Help & Support"
 msgstr "ช่วยเหลือและสนับสนุน"
 
@@ -1309,8 +1305,7 @@ msgstr "วันที่ไม่ถูกต้อง"
 msgid "Invalid date"
 msgstr "วันที่ไม่ถูกต้อง"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
-#: src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80
 msgid "Invalid parameters"
 msgstr "วันที่ไม่ถูกต้อง"
 
@@ -1318,7 +1313,7 @@ msgstr "วันที่ไม่ถูกต้อง"
 msgid "Invalid photo selected"
 msgstr "เลือกรูปภาพไม่ถูกต้อง"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:123
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "เป็นการตัดสินใจของคุณว่าคุณต้องการสมัครเพื่อรับสิทธิประโยชน์เพิ่มเติมหรือไม่"
 
@@ -1393,9 +1388,10 @@ msgstr "ลาเวนเดอร์"
 msgid "LDAP/AD"
 msgstr "แอลดีเอพี/ค.ศ"
 
-#: src/page/connect.vue:110 src/component/auth/footer.vue:24
+#: src/page/connect.vue:104 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:131
+#: src/page/about/about.vue:141 src/page/connect.vue:133
+#: src/page/connect.vue:132
 msgid "Learn more"
 msgstr "เรียนรู้เพิ่มเติม"
 
@@ -1414,7 +1410,7 @@ msgstr "เลนส์"
 msgid "Library"
 msgstr "ห้องสมุด"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
+#: src/page/connect.vue:4 src/app/routes.js:66 src/component/navigation.vue:444
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1515,8 +1511,8 @@ msgstr "สีหลัก"
 msgid "Male"
 msgstr "ชาย"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
-#: src/page/connect.vue:86
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/connect.vue:65
+#: src/page/connect.vue:88
 msgid "Manage account"
 msgstr "จัดการบัญชี"
 
@@ -1834,7 +1830,7 @@ msgstr "ต้นฉบับ"
 msgid "Other"
 msgstr "อื่น"
 
-#: src/page/connect.vue:127
+#: src/page/connect.vue:129
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "ทีมงานของเราจะตัดสินใจเรื่องนี้อย่างต่อเนื่องโดยขึ้นอยู่กับความพยายามในการสนับสนุนที่จำเป็น เซิร์ฟเวอร์และค่าสิทธิ์การใช้งาน และดูว่าคุณสมบัตินั้นจำเป็นสำหรับทุกคนหรือส่วนใหญ่ร้องขอโดยองค์กรและผู้ใช้ขั้นสูง"
 
@@ -1895,7 +1891,7 @@ msgstr "รูปถ่าย"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism ได้รับการอัพเดต…"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:121
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism ใช้เงินตัวเอง 100% และเป็นอิสระ"
 
@@ -1936,7 +1932,7 @@ msgstr "กรุณาอย่าอัปโหลดรูปภาพที
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "โปรดทราบว่าการเปลี่ยนรหัสผ่านจะทำให้คุณออกจากระบบบนอุปกรณ์และเบราว์เซอร์อื่นๆ"
 
-#: src/page/connect.vue:55 src/page/connect.vue:58
+#: src/page/connect.vue:56 src/page/connect.vue:59
 msgid "Please restart your instance for the changes to take effect."
 msgstr "โปรดรีสตาร์ทอินสแตนซ์ของคุณเพื่อให้การเปลี่ยนแปลงมีผล"
 
@@ -1988,7 +1984,7 @@ msgstr "หลัก"
 msgid "Private"
 msgstr "ส่วนตัว"
 
-#: src/page/connect.vue:85 src/page/connect.vue:93
+#: src/page/connect.vue:87 src/page/connect.vue:95
 msgid "Proceed"
 msgstr "ดำเนินการ"
 
@@ -2121,7 +2117,7 @@ msgstr "ที่จำเป็น"
 msgid "Resolution"
 msgstr "ปณิธาน"
 
-#: src/page/connect.vue:63 src/page/connect.vue:66
+#: src/page/connect.vue:65 src/page/connect.vue:68
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "เริ่มต้นใหม่"
@@ -2499,7 +2495,7 @@ msgstr "ชื่อเรื่องยาวเกินไป"
 msgid "Title too long"
 msgstr "ชื่อเรื่องยาวเกินไป"
 
-#: src/page/connect.vue:72 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:82
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "หากต้องการอัปเกรด คุณอาจป้อนรหัสเปิดใช้งานหรือคลิก \"ดำเนินการต่อ\" เพื่อลงทะเบียนบนเว็บไซต์ของเรา:"
 
@@ -2608,7 +2604,7 @@ msgid "Upgrade"
 msgstr "อัปเกรด"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:70
+#: src/page/about/about.vue:9 src/page/connect.vue:72
 msgid "Upgrade Now"
 msgstr "อัพเกรดเดี๋ยวนี้"
 
@@ -2752,7 +2748,7 @@ msgstr "ผู้เข้าชม"
 msgid "Visual Similarity"
 msgstr "จัดกลุ่มตามความเหมือน"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:122
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "การบริจาคโดยสมัครใจไม่ครอบคลุมค่าใช้จ่ายของทีมที่ทำงานเต็มเวลาเพื่อแจ้งข้อมูลอัปเดต เอกสาร และการสนับสนุนแก่คุณ"
 
@@ -2796,7 +2792,7 @@ msgstr "อัพโหลด WebDAV"
 msgid "Website"
 msgstr "เว็บไซต์"
 
-#: src/page/connect.vue:124
+#: src/page/connect.vue:126
 msgid "What functionality is generally available?"
 msgstr "โดยทั่วไปมีฟังก์ชันอะไรบ้าง?"
 
@@ -2804,7 +2800,7 @@ msgstr "โดยทั่วไปมีฟังก์ชันอะไรบ
 msgid "White"
 msgstr "สีขาว"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:118
 msgid "Why are some features only available to sponsors?"
 msgstr "เหตุใดฟีเจอร์บางอย่างจึงมีให้เฉพาะผู้สนับสนุนเท่านั้น"
 
@@ -2874,6 +2870,9 @@ msgstr "คลังของคุณได้รับการวิเคร
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#~ msgid "{{ getMembership() }}"
+#~ msgstr "{{ getMembership() }}"
 
 #~ msgid "Activation Failed"
 #~ msgstr "การเปิดใช้งานล้มเหลว"

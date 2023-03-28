@@ -5,20 +5,14 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-27 17:33+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
-"frontend/he/>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
-"n % 10 == 0) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
-
-#: src/page/connect.vue:17
-msgid "{{ getMembership() }}"
-msgstr "{{ getMembership() }}"
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
@@ -62,8 +56,8 @@ msgstr "4 שעות"
 msgid "A click will copy it to your clipboard."
 msgstr "לחיצה תעתיק את זה ללוח."
 
-#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:7
-#: src/page/about/about.vue:213 src/page/settings/account.vue:313
+#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:204
+#: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
 msgid "About"
@@ -104,11 +98,11 @@ msgstr "פעולה"
 msgid "Actions"
 msgstr "פעולות"
 
-#: src/page/connect.vue:90 src/page/connect.vue:98
+#: src/page/connect.vue:92 src/page/connect.vue:100
 msgid "Activate"
 msgstr "לְהַפְעִיל"
 
-#: src/page/connect.vue:359 src/page/connect.vue:428
+#: src/page/connect.vue:357 src/page/connect.vue:433
 msgid "Activation Code"
 msgstr "קוד הפעלה"
 
@@ -348,7 +342,7 @@ msgstr "האם אתה בטוח?"
 msgid "Artist"
 msgstr "אמן"
 
-#: src/page/connect.vue:128
+#: src/page/connect.vue:130
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "מכיוון שזה עוזר לנו לספק יותר תכונות לציבור, אנו מעודדים את כל המשתמשים לתמוך במשימתנו."
 
@@ -435,7 +429,7 @@ msgstr "דיווח באג"
 msgid "Busy, please wait…"
 msgstr "עסוק, בבקשה המתן…"
 
-#: src/page/connect.vue:100 src/page/connect.vue:108
+#: src/page/connect.vue:102 src/page/connect.vue:110
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "על ידי שימוש בתוכנה ובשירותים שאנו מספקים, אתה מסכים לתנאי השירות, מדיניות הפרטיות וקוד ההתנהגות שלנו."
 
@@ -559,7 +553,7 @@ msgstr "צבעים"
 msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr "ניתן לאבחן ולפתור בעיות נפוצות במהירות באמצעות רשימות הבדיקה לפתרון בעיות שאנו מספקים."
 
-#: src/page/connect.vue:81 src/page/connect.vue:89
+#: src/page/connect.vue:83 src/page/connect.vue:91
 msgid "Compare Editions"
 msgstr "השווה מהדורות"
 
@@ -580,7 +574,7 @@ msgstr "התחבר"
 msgid "Connect via WebDAV"
 msgstr "התחבר באמצעות WebDAV"
 
-#: src/page/connect.vue:62 src/page/connect.vue:61
+#: src/page/connect.vue:62
 msgid "Connected"
 msgstr "מחובר"
 
@@ -1022,7 +1016,7 @@ msgstr "פיד"
 msgid "Feedback"
 msgstr "משוב"
 
-#: src/page/connect.vue:99 src/dialog/sponsor.vue:25 src/page/connect.vue:107
+#: src/page/connect.vue:101 src/dialog/sponsor.vue:25 src/page/connect.vue:109
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "אנא צור איתנו קשר בכתובת hello@photoprism.app אם יש לך שאלות או שאתה זקוק לעזרה."
 
@@ -1100,7 +1094,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "מסגרות"
 
-#: src/page/connect.vue:113
+#: src/page/connect.vue:115
 msgid "Frequently Asked Questions"
 msgstr "שאלות נפוצות"
 
@@ -1160,7 +1154,7 @@ msgstr "Hash"
 msgid "Help"
 msgstr "עזרה"
 
-#: src/app/routes.js:78
+#: src/app/routes.js:72 src/app/routes.js:78
 msgid "Help & Support"
 msgstr "עזרה ותמיכה"
 
@@ -1311,8 +1305,7 @@ msgstr "לא תקין"
 msgid "Invalid date"
 msgstr "תאריך לא תקין"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:73
-#: src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:80
 msgid "Invalid parameters"
 msgstr "פרמטרים שגויים"
 
@@ -1320,7 +1313,7 @@ msgstr "פרמטרים שגויים"
 msgid "Invalid photo selected"
 msgstr "נבחרה תמונה לא חוקית"
 
-#: src/page/connect.vue:121
+#: src/page/connect.vue:123
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "זו החלטה שלך אם אתה רוצה להירשם כדי ליהנות מהטבות נוספות."
 
@@ -1395,9 +1388,10 @@ msgstr "לבנדר"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:110 src/component/auth/footer.vue:24
+#: src/page/connect.vue:104 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:44
-#: src/page/about/about.vue:146 src/page/connect.vue:131
+#: src/page/about/about.vue:141 src/page/connect.vue:133
+#: src/page/connect.vue:132
 msgid "Learn more"
 msgstr "הצג עוד"
 
@@ -1416,7 +1410,7 @@ msgstr "עדשה"
 msgid "Library"
 msgstr "ספריה"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
+#: src/page/connect.vue:4 src/app/routes.js:66 src/component/navigation.vue:444
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1517,8 +1511,8 @@ msgstr "צבע עיקרי"
 msgid "Male"
 msgstr "זכר"
 
-#: src/page/connect.vue:60 src/page/connect.vue:78 src/page/connect.vue:63
-#: src/page/connect.vue:86
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/connect.vue:65
+#: src/page/connect.vue:88
 msgid "Manage account"
 msgstr "נהל חשבון"
 
@@ -1836,7 +1830,7 @@ msgstr "קבצי מקור"
 msgid "Other"
 msgstr "אחר"
 
-#: src/page/connect.vue:127
+#: src/page/connect.vue:129
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "הצוות שלנו מחליט על כך באופן שוטף בהתאם למאמץ התמיכה הנדרש, עלויות השרת והרישוי, והאם התכונות נחוצות בדרך כלל על ידי כולם או מתבקשות בעיקר על ידי ארגונים ומשתמשים מתקדמים."
 
@@ -1897,7 +1891,7 @@ msgstr "תמונה"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism עודכן…"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:121
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism הוא 100% מימון עצמי ועצמאי."
 
@@ -1938,7 +1932,7 @@ msgstr "נא לא להעלות תמונות המכילות תוכן פוגעני
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "שים לב ששינוי הסיסמה שלך יגרום לך להתנתק ממכשירים ודפדפנים אחרים."
 
-#: src/page/connect.vue:55 src/page/connect.vue:58
+#: src/page/connect.vue:56 src/page/connect.vue:59
 msgid "Please restart your instance for the changes to take effect."
 msgstr "הפעל מחדש את המופע שלך כדי שהשינויים ייכנסו לתוקף."
 
@@ -1990,7 +1984,7 @@ msgstr "ראשי"
 msgid "Private"
 msgstr "פרטי"
 
-#: src/page/connect.vue:85 src/page/connect.vue:93
+#: src/page/connect.vue:87 src/page/connect.vue:95
 msgid "Proceed"
 msgstr "להמשיך"
 
@@ -2123,7 +2117,7 @@ msgstr "נדרש"
 msgid "Resolution"
 msgstr "רזולוציה"
 
-#: src/page/connect.vue:63 src/page/connect.vue:66
+#: src/page/connect.vue:65 src/page/connect.vue:68
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "איתחול"
@@ -2501,7 +2495,7 @@ msgstr "שם / מיקום"
 msgid "Title too long"
 msgstr "הכותרת ארוכה מדי"
 
-#: src/page/connect.vue:72 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:82
 msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
 msgstr "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר האינטרנט שלנו:"
 
@@ -2610,7 +2604,7 @@ msgid "Upgrade"
 msgstr "שדרוג"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
-#: src/page/about/about.vue:9 src/page/connect.vue:70
+#: src/page/about/about.vue:9 src/page/connect.vue:72
 msgid "Upgrade Now"
 msgstr "שדרג עכשיו"
 
@@ -2754,7 +2748,7 @@ msgstr "אורח"
 msgid "Visual Similarity"
 msgstr "דמיון חזותי"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:122
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "תרומות מרצון אינן מכסות את העלות של צוות שעובד במשרה מלאה כדי לספק לך עדכונים, תיעוד ותמיכה."
 
@@ -2798,7 +2792,7 @@ msgstr "העלאת WebDAV"
 msgid "Website"
 msgstr "אתר"
 
-#: src/page/connect.vue:124
+#: src/page/connect.vue:126
 msgid "What functionality is generally available?"
 msgstr "איזו פונקציונליות זמינה בדרך כלל?"
 
@@ -2806,7 +2800,7 @@ msgstr "איזו פונקציונליות זמינה בדרך כלל?"
 msgid "White"
 msgstr "לבן"
 
-#: src/page/connect.vue:116
+#: src/page/connect.vue:118
 msgid "Why are some features only available to sponsors?"
 msgstr "מדוע תכונות מסוימות זמינות רק לנותני חסות?"
 
@@ -2876,6 +2870,9 @@ msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אל
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "זום פנימה\\החוצה"
+
+#~ msgid "{{ getMembership() }}"
+#~ msgstr "{{ getMembership() }}"
 
 #~ msgid "Activation Failed"
 #~ msgstr "הפעלה נכשלה"
