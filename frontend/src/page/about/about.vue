@@ -36,39 +36,67 @@
           </v-btn>
         </p>
       </template>
+      <template v-else-if="isAdmin && !isPublic">
+        <h3 class="subheading py-2"><translate>Membership</translate></h3>
+        <p class="text-selectable">
+          <translate>PhotoPrism is 100% self-funded and independent.</translate>
+          <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
+          <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
+        </p>
+        <p class="text-xs-center my-4">
+          <v-btn
+              href="https://my.photoprism.app/dashboard" target="_blank"
+              color="primary-button"
+              class="white--text px-3 py-2 action-upgrade"
+              round depressed
+          >
+            <translate>Manage account</translate>
+            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
+            <v-icon v-else right dark>navigate_next</v-icon>
+          </v-btn>
+        </p>
+      </template>
 
-      <h3 class="subheading py-2"><translate>User Guide</translate></h3>
-      <p class="text-selectable">
-        <translate>Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures.</translate>
-        <translate>Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings.</translate>
-        <translate>Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide.</translate>
-      </p>
-      <p><a href="https://link.photoprism.app/docs" class="text-link" target="_blank"><translate>Read the Docs</translate> ›</a></p>
+      <div class="text-columns py-2">
+        <h3 class="subheading py-2"><translate>User Guide</translate></h3>
+        <p class="text-selectable" style="break-inside: avoid-column">
+          <translate>Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures.</translate>
+          <translate>Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings.</translate>
+          <translate>Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide.</translate>
+          <br>
+          <a href="https://link.photoprism.app/docs" class="text-link d-inline-block pt-2" target="_blank"><translate>Read the Docs</translate> ›</a>
+        </p>
 
-      <h3 class="subheading py-2"><translate>Knowledge Base</translate></h3>
-      <p class="text-selectable"><translate>Browse the Knowledge Base for detailed information on specific product features, services, and related resources.</translate></p>
-      <p><a href="https://www.photoprism.app/kb" class="text-link" target="_blank"><translate>Learn more</translate> ›</a></p>
+        <h3 class="subheading py-2"><translate>Knowledge Base</translate></h3>
+        <p class="text-selectable" style="break-inside: avoid-column">
+          <translate>Browse the Knowledge Base for detailed information on specific product features, services, and related resources.</translate>
+          <br>
+          <a href="https://www.photoprism.app/kb" class="text-link d-inline-block pt-2" target="_blank"><translate>Learn more</translate> ›</a>
+        </p>
 
-      <h3 class="subheading py-2">
-        <translate>Getting Support</translate>
-      </h3>
-      <p class="body-1 text-selectable">
-        <a target="_blank" href="https://docs.photoprism.app/getting-started/troubleshooting/">
-          <translate>Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem.</translate>
-          <translate>If this doesn't help, or you have other questions:</translate>
-        </a>
-      </p>
-      <ul class="body-1 mb-3">
-        <li><a target="_blank" href="https://link.photoprism.app/reddit"><translate>you are welcome to join us on Reddit</translate></a></li>
-        <li><a target="_blank" href="https://link.photoprism.app/discussions"><translate>post your question in GitHub Discussions</translate></a></li>
-        <li><a target="_blank" href="https://link.photoprism.app/chat"><translate>or ask in our Community Chat</translate></a></li>
-      </ul>
-      <p class="body-1 text-selectable">
-        <a target="_blank" href="https://www.photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
-        <span v-if="!isSponsor">
-          <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
-        </span>
-      </p>
+        <h3 class="subheading py-2">
+          <translate>Getting Support</translate>
+        </h3>
+        <p class="body-1 text-selectable">
+          <a target="_blank" href="https://docs.photoprism.app/getting-started/troubleshooting/">
+            <translate>Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem.</translate>
+            <translate>If this doesn't help, or you have other questions:</translate>
+          </a>
+        </p>
+        <ul class="body-1 mb-3">
+          <li><a target="_blank" href="https://link.photoprism.app/reddit"><translate>you are welcome to join us on Reddit</translate></a></li>
+          <li><a target="_blank" href="https://link.photoprism.app/discussions"><translate>post your question in GitHub Discussions</translate></a></li>
+          <li><a target="_blank" href="https://link.photoprism.app/chat"><translate>or ask in our Community Chat</translate></a></li>
+        </ul>
+        <p class="body-1 text-selectable" style="break-inside: avoid-column">
+          <a target="_blank" href="https://www.photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
+          <span v-if="!isSponsor">
+            <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
+          </span>
+          <br>
+          <a href="https://www.photoprism.app/kb/getting-support" class="text-link d-inline-block pt-2" target="_blank"><translate>Learn more</translate> ›</a>
+        </p>
+      </div>
 
       <p class="text-xs-center pt-4 ma-0 pb-0">
         <router-link to="/license">

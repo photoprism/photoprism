@@ -14,14 +14,11 @@
         <span v-else-if="error">
           <translate>Invalid</translate>
         </span>
-        <span v-else-if="form.token">
+        <span v-else-if="form.token || !membership || membership === 'ce'">
           <translate>Upgrade</translate>
         </span>
-        <span v-else-if="membership && membership !== 'ce'">
-          <translate>Successfully Connected</translate>
-        </span>
         <span v-else>
-          <translate>Support Our Mission</translate>
+          <translate>Successfully Connected</translate>
         </span>
       </v-toolbar-title>
 
@@ -116,7 +113,7 @@
                    :disabled="busy">
               <translate>Manage account</translate>
             </v-btn>
-            <v-btn v-else color="secondary-dark" :block="$vuetify.breakpoint.xsOnly"
+            <v-btn v-else color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
                    class="ml-0"
                    outline
                    :disabled="busy"
