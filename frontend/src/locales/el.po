@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-27 17:33+0000\n"
+"PO-Revision-Date: 2023-03-29 10:42+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -995,6 +995,8 @@ msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μα�
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"Μη διστάσετε να επικοινωνήσετε μαζί μας στο members@photoprism.app για "
+"ερωτήσεις σχετικά με τη συνδρομή σας."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1461,7 +1463,7 @@ msgstr "Αρσενικό"
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
-msgstr ""
+msgstr "Διαχείριση λογαριασμού"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -2347,7 +2349,7 @@ msgstr "Πολύ μεγάλο κείμενο"
 
 #: src/page/about/about.vue:34 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
-msgstr ""
+msgstr "Ευχαριστούμε για την υποστήριξή σας!"
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."

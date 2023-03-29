@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-27 17:33+0000\n"
+"PO-Revision-Date: 2023-03-29 10:42+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -998,6 +998,8 @@ msgstr "No dubteu a contactar amb nosaltres a hello@photoprism.app si teniu cap 
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"No dubteu a contactar amb nosaltres a members@photoprism.app per a preguntes "
+"sobre la vostra pertinença."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1464,7 +1466,7 @@ msgstr "Home"
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
-msgstr ""
+msgstr "Gestiona el compte"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -2350,7 +2352,7 @@ msgstr "Text massa llarg"
 
 #: src/page/about/about.vue:34 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
-msgstr ""
+msgstr "Gràcies pel teu recolzament!"
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."

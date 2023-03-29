@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-27 17:33+0000\n"
+"PO-Revision-Date: 2023-03-29 10:42+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
+"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -998,6 +999,8 @@ msgstr "Kontakt os venligst på hello@photoprism.app, hvis du har spørgsmål el
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"Du er velkommen til at kontakte os på members@photoprism.app, hvis du har "
+"spørgsmål om dit medlemskab."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1464,7 +1467,7 @@ msgstr "Mand"
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
-msgstr ""
+msgstr "Administrer konto"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -2350,7 +2353,7 @@ msgstr "Teksten er for lang"
 
 #: src/page/about/about.vue:34 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
-msgstr ""
+msgstr "Tak for din støtte!"
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
