@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-03-09 13:14+0000\n"
-"PO-Revision-Date: 2023-03-10 10:34+0000\n"
+"PO-Revision-Date: 2023-03-29 12:10+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "backend/de/>\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.2\n"
 "X-Poedit-Basepath: .\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr "Etwas ist schief gelaufen, versuchen Sie es erneut"
+msgstr "Etwas ist schief gelaufen, versuche es noch einmal"
 
 #: messages.go:95
 msgid "Unable to do that"
