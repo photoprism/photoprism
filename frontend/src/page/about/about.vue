@@ -50,7 +50,7 @@
         </p>
       </template>
       <template v-else-if="isSuperAdmin">
-        <h3 class="subheading py-2"><translate>Thanks for Your Support!</translate> <v-icon size="20" color="primary">favorite</v-icon></h3>
+        <h3 class="subheading py-2"><translate>Thank You for Your Support!</translate> <v-icon size="20" color="primary">favorite</v-icon></h3>
         <p class="text-selectable">
           <translate>PhotoPrism is 100% self-funded and independent.</translate>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>

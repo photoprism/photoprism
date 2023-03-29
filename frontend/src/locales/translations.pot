@@ -563,8 +563,8 @@ msgstr ""
 msgid "Change private flag"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:66
-#: src/dialog/admin/users/edit.vue:162
+#: src/dialog/admin/users/edit.vue:67
+#: src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56
 #: src/dialog/photo/edit/files.vue:110
 #: src/dialog/service/edit.vue:102
@@ -2769,7 +2769,7 @@ msgstr ""
 
 #: src/page/about/about.vue:41
 #: src/page/about/about.vue:1
-msgid "Thanks for Your Support!"
+msgid "Thank You for Your Support!"
 msgstr ""
 
 #: src/page/library/index.vue:36
@@ -2950,7 +2950,7 @@ msgstr ""
 msgid "Updating moments"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:159
+#: src/dialog/admin/users/edit.vue:160
 #: src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr ""

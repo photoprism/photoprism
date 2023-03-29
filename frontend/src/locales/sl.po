@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -486,7 +485,7 @@ msgstr "Spremenite naslove fotografij, lokacije in druge metapodatke."
 msgid "Change private flag"
 msgstr "Sprememba zasebne zastave"
 
-#: src/dialog/admin/users/edit.vue:66 src/dialog/admin/users/edit.vue:162
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:110
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
 #: src/dialog/share.vue:104 src/page/albums.vue:547
@@ -2344,7 +2343,7 @@ msgid "Text too long"
 msgstr "Predolgo besedilo"
 
 #: src/page/about/about.vue:41 src/page/about/about.vue:1
-msgid "Thanks for Your Support!"
+msgid "Thank You for Your Support!"
 msgstr "Hvala za podporo!"
 
 #: src/page/library/index.vue:36
@@ -2498,7 +2497,7 @@ msgstr "Posodabljanje indeksa"
 msgid "Updating moments"
 msgstr "Posodabljanje trenutkov"
 
-#: src/dialog/admin/users/edit.vue:159 src/page/settings/account.vue:124
+#: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Posodabljanje predogledov"
 

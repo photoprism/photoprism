@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-29 12:09+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -489,7 +488,7 @@ msgstr "Изменяйте названия фотографий, местопо
 msgid "Change private flag"
 msgstr "Изменить флаг приватности"
 
-#: src/dialog/admin/users/edit.vue:66 src/dialog/admin/users/edit.vue:162
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:110
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
 #: src/dialog/share.vue:104 src/page/albums.vue:547
@@ -2347,7 +2346,7 @@ msgid "Text too long"
 msgstr "Текст слишком длинный"
 
 #: src/page/about/about.vue:41 src/page/about/about.vue:1
-msgid "Thanks for Your Support!"
+msgid "Thank You for Your Support!"
 msgstr "Спасибо за вашу поддержку!"
 
 #: src/page/library/index.vue:36
@@ -2503,7 +2502,7 @@ msgstr "Обновление индекса"
 msgid "Updating moments"
 msgstr "Обновление моментов"
 
-#: src/dialog/admin/users/edit.vue:159 src/page/settings/account.vue:124
+#: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Обновление изображения…"
 

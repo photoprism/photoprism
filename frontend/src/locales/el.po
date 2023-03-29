@@ -485,7 +485,7 @@ msgstr "Αλλάξτε τίτλους φωτογραφιών, τοποθεσίε
 msgid "Change private flag"
 msgstr "Αλλαγή ιδιωτικής κατάστασης"
 
-#: src/dialog/admin/users/edit.vue:66 src/dialog/admin/users/edit.vue:162
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:110
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
 #: src/dialog/share.vue:104 src/page/albums.vue:547
@@ -2343,7 +2343,7 @@ msgid "Text too long"
 msgstr "Πολύ μεγάλο κείμενο"
 
 #: src/page/about/about.vue:41 src/page/about/about.vue:1
-msgid "Thanks for Your Support!"
+msgid "Thank You for Your Support!"
 msgstr "Ευχαριστούμε για την υποστήριξή σας!"
 
 #: src/page/library/index.vue:36
@@ -2497,7 +2497,7 @@ msgstr "Ενημέρωση ευρετηρίου"
 msgid "Updating moments"
 msgstr "Ενημέρωση στιγμών"
 
-#: src/dialog/admin/users/edit.vue:159 src/page/settings/account.vue:124
+#: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Ενημέρωση προεπισκοπήσεων"
 
