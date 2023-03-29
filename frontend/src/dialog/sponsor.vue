@@ -23,7 +23,7 @@
               <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
             </p>
             <p class="body-1">
-              <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
+              <translate>Feel free to contact us at members@photoprism.app for questions regarding your membership.</translate>
             </p>
           </v-flex>
         </v-layout>

@@ -49,7 +49,7 @@ func Connect(router *gin.RouterGroup) {
 
 		s := Auth(c, acl.ResourceConfig, acl.ActionUpdate)
 
-		if s.Invalid() {
+		if !s.IsSuperAdmin() {
 			log.Errorf("connect: %s not authorized", clean.Log(s.User().UserName))
 			AbortForbidden(c)
 			return

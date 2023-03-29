@@ -76,7 +76,7 @@
         <v-flex xs12 grow class="pa-2">
           <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
                  class="ml-0" outline :disabled="busy">
-              <translate>Manage account</translate>
+              <translate>Manage Account</translate>
           </v-btn>
           <v-btn v-if="$config.values.restart" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
                  class="white--text ml-0" depressed :disabled="busy" @click.stop.p.prevent="onRestart">
@@ -111,7 +111,7 @@
                    class="ml-0"
                    outline
                    :disabled="busy">
-              <translate>Manage account</translate>
+              <translate>Manage Account</translate>
             </v-btn>
             <v-btn v-else color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
                    class="ml-0"
@@ -208,7 +208,7 @@ export default {
   },
   created() {
     this.$config.load().then(() => {
-      if (this.$config.isPublic() || !this.$session.isAdmin()) {
+      if (this.$config.isPublic() || !this.$session.isSuperAdmin()) {
         this.$router.push({name: "home"});
       }
     });

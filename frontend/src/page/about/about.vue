@@ -12,7 +12,7 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
-      <p class="subheading py-2 text-selectable">
+      <p class="subheading py-1 pb-2 text-selectable">
         <strong><translate>At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come.</translate></strong>
       </p>
 
@@ -23,7 +23,7 @@
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
           <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
         </p>
-        <p v-if="isAdmin && !isPublic" class="text-xs-center my-4">
+        <p v-if="isSuperAdmin" class="text-xs-center my-4">
           <v-btn
               to="/upgrade"
               color="primary-button"
@@ -36,12 +36,12 @@
           </v-btn>
         </p>
       </template>
-      <template v-else-if="isAdmin && !isPublic">
-        <h3 class="subheading py-2"><translate>Membership</translate></h3>
+      <template v-else-if="isSuperAdmin">
+        <h3 class="subheading py-2"><translate>Thanks for Your Support!</translate> <v-icon size="20" color="primary">favorite</v-icon></h3>
         <p class="text-selectable">
           <translate>PhotoPrism is 100% self-funded and independent.</translate>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-          <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
+          <translate>Feel free to contact us at members@photoprism.app for questions regarding your membership.</translate>
         </p>
         <p class="text-xs-center my-4">
           <v-btn
@@ -50,7 +50,7 @@
               class="white--text px-3 py-2 action-upgrade"
               round depressed
           >
-            <translate>Manage account</translate>
+            <translate>Manage Account</translate>
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
             <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
@@ -58,44 +58,38 @@
       </template>
 
       <div class="text-columns py-2">
-        <h3 class="subheading py-2"><translate>User Guide</translate></h3>
-        <p class="text-selectable" style="break-inside: avoid-column">
-          <translate>Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures.</translate>
-          <translate>Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings.</translate>
-          <translate>Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide.</translate>
-          <br>
-          <a href="https://link.photoprism.app/docs" class="text-link d-inline-block pt-2" target="_blank"><translate>Read the Docs</translate> ›</a>
+        <h3 class="subheading pb-2">Getting Started</h3>
+        <p class="text-selectable">
+          Follow our <a href="https://docs.photoprism.app/user-guide/first-steps/" class="text-link" target="_blank">First Steps 👣</a> tutorial to learn how to navigate the user interface and ensure your library is indexed according to your individual preferences.
+          Additional help and product-specific information can be found in our <a href="https://www.photoprism.app/plus/kb" class="text-link" target="_blank">Knowledge Base</a>.
         </p>
 
-        <h3 class="subheading py-2"><translate>Knowledge Base</translate></h3>
-        <p class="text-selectable" style="break-inside: avoid-column">
-          <translate>Browse the Knowledge Base for detailed information on specific product features, services, and related resources.</translate>
-          <br>
-          <a href="https://www.photoprism.app/kb" class="text-link d-inline-block pt-2" target="_blank"><translate>Learn more</translate> ›</a>
+        <h3 class="subheading pb-2">User Guide</h3>
+        <p>
+          Visit <a href="https://link.photoprism.app/docs" class="text-link" target="_blank">docs.photoprism.app/user-guide</a> to learn how to sync, organize, and share your pictures. Our <a href="https://docs.photoprism.app/user-guide/" class="text-link" target="_blank">User Guide</a> also covers many advanced topics, such as <a href="https://docs.photoprism.app/user-guide/use-cases/google/" class="text-link" target="_blank">migrating from Google Photos</a> and <a href="https://docs.photoprism.app/user-guide/settings/advanced/#images" class="text-link" target="_blank">thumbnail quality settings</a>.
+          Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide at <a href="https://docs.photoprism.app/getting-started/troubleshooting/" class="text-link" target="_blank">docs.photoprism.app/getting-started/troubleshooting</a>.
         </p>
 
-        <h3 class="subheading py-2">
-          <translate>Getting Support</translate>
-        </h3>
-        <p class="body-1 text-selectable">
-          <a target="_blank" href="https://docs.photoprism.app/getting-started/troubleshooting/">
-            <translate>Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem.</translate>
-            <translate>If this doesn't help, or you have other questions:</translate>
-          </a>
-        </p>
-        <ul class="body-1 mb-3">
-          <li><a target="_blank" href="https://link.photoprism.app/reddit"><translate>you are welcome to join us on Reddit</translate></a></li>
-          <li><a target="_blank" href="https://link.photoprism.app/discussions"><translate>post your question in GitHub Discussions</translate></a></li>
-          <li><a target="_blank" href="https://link.photoprism.app/chat"><translate>or ask in our Community Chat</translate></a></li>
-        </ul>
-        <p class="body-1 text-selectable" style="break-inside: avoid-column">
-          <a target="_blank" href="https://www.photoprism.app/contact"><translate>In addition, sponsors receive direct technical support via email.</translate></a>
-          <span v-if="!isSponsor">
-            <translate>We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors.</translate>
-          </span>
-          <br>
-          <a href="https://www.photoprism.app/kb/getting-support" class="text-link d-inline-block pt-2" target="_blank"><translate>Learn more</translate> ›</a>
-        </p>
+        <h3 class="subheading pb-2">Getting Support</h3>
+        <p>Before reporting a bug, please use our <a href="https://docs.photoprism.app/getting-started/troubleshooting/" class="text-link" target="_blank">Troubleshooting Checklists</a>
+          to determine the cause of your problem. If you have a general question, need help, it could be a local configuration
+          issue, or a misunderstanding in how the software works, you are welcome to ask in our <a href="https://link.photoprism.app/chat" class="text-link" target="_blank">Community Chat</a>
+          or post your question in <a href="https://link.photoprism.app/discussions" class="text-link" target="_blank">GitHub Discussions</a></p>
+        <p>When reporting a problem, always include the software versions you are using and <a href="https://www.photoprism.app/kb/reporting-bugs" class="text-link" target="_blank">other information about your environment</a>
+          such as <a href="https://docs.photoprism.app/getting-started/troubleshooting/browsers/" class="text-link" target="_blank">browser, browser plugins</a>, operating system, storage type,
+          memory size, and processor.</p>
+        <p>We kindly ask you not to report bugs via GitHub Issues unless you are certain to have found a fully reproducible and previously unreported issue that must be fixed directly in the app.</p>
+
+        <h3 class="subheading pb-2">Developer Guide</h3>
+        <p>Our <a href="https://docs.photoprism.app/developer-guide/" class="text-link" target="_blank">Developer Guide</a> contains all the information you need to get started as a developer. It guides you from <a href="https://docs.photoprism.app/developer-guide/setup/" class="text-link" target="_blank">setting up your development environment</a> and <a href="https://docs.photoprism.app/developer-guide/pull-requests/" class="text-link" target="_blank">creating pull requests</a> to <a href="https://docs.photoprism.app/developer-guide/tests/" class="text-link" target="_blank">running tests</a> and <a href="https://docs.photoprism.app/developer-guide/translations-weblate/" class="text-link" target="_blank">adding translations</a>. Multiple subsections provide details on specific features and links to external resources for further information.</p>
+
+        <h3 class="subheading pb-2">Terms &amp; Privacy</h3>
+        <p>Visit <a href="https://www.photoprism.app/terms" class="text-link" target="_blank"><strong>photoprism.app/terms</strong></a> to learn how we work, what you can expect from us, and what we expect from you.
+          What information we collect, how we use it, and under what circumstances we share it is explained in our <a href="https://www.photoprism.app/privacy" class="text-link" target="_blank">Privacy Policy</a>.</p>
+
+        <p>Read our <a href="https://www.photoprism.app/privacy/gdpr" class="text-link" target="_blank">GDPR Compliance Statement</a> to learn more about the rights you have as a resident of the European Economic Area ("EEA"), our ongoing commitment to user privacy, and the General Data Protection Regulation ("GDPR").</p>
+
+        <p>Our <a href="https://www.photoprism.app/trademark" class="text-link" target="_blank">Trademark and Brand Guidelines</a>, which may be updated from time to time, describe how our brand assets may be used. It is important to us that any permitted use of our brand assets is fair and meets the highest standards.</p>
       </div>
 
       <p class="text-xs-center pt-4 ma-0 pb-0">
@@ -131,13 +125,15 @@ export default {
   name: 'PPageAbout',
   data() {
     const membership = this.$config.getMembership();
+    const isDemo = this.$config.isDemo();
+    const isPublic = this.$config.isPublic();
     return {
       rtl: this.$rtl,
       membership: membership,
       canUpgrade: membership === 'ce' || membership === 'essentials',
-      isPublic: this.$config.isPublic(),
-      isAdmin: this.$session.isAdmin(),
-      isDemo: this.$config.isDemo(),
+      isDemo: isDemo,
+      isPublic: isPublic,
+      isSuperAdmin: this.$session.isSuperAdmin() && !isPublic && !isDemo,
       isSponsor: this.$config.isSponsor(),
     };
   },

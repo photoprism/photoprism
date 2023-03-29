@@ -493,7 +493,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="isAdmin && !isPublic && !isDemo && featUpgrade" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
+            <v-list-tile v-show="isSuperAdmin && !isPublic && !isDemo && featUpgrade" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate key="Upgrade">Upgrade</translate>
@@ -720,6 +720,7 @@ export default {
       isPublic: isPublic,
       isReadOnly: isReadOnly,
       isAdmin: this.$session.isAdmin(),
+      isSuperAdmin: this.$session.isSuperAdmin(),
       isSponsor: this.$config.isSponsor(),
       isTest: this.$config.test,
       session: this.$session,
