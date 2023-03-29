@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-27 17:33+0000\n"
+"PO-Revision-Date: 2023-03-29 10:42+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
@@ -998,6 +998,8 @@ msgstr "โปรดติดต่อเราที่ hello@photoprism.app �
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"อย่าลังเลที่จะติดต่อเราที่ Members@photoprism.app "
+"สำหรับคำถามเกี่ยวกับการเป็นสมาชิกของคุณ"
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1464,7 +1466,7 @@ msgstr "ชาย"
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
-msgstr ""
+msgstr "จัดการบัญชี"
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -2350,7 +2352,7 @@ msgstr "ข้อความยาวเกินไป"
 
 #: src/page/about/about.vue:34 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
-msgstr ""
+msgstr "ขอบคุณสำหรับการสนับสนุน!"
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
