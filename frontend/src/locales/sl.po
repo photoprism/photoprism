@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -2232,8 +2231,8 @@ msgid "Software"
 msgstr "Programska oprema"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "Nekaj je šlo narobe, poskusite znova"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2763,6 +2762,9 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "Nekaj je šlo narobe, poskusite znova"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "Zgodila se je napaka - ste brez povezave?"

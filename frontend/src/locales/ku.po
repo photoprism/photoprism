@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-29 12:02+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ku/>\n"
+"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2235,8 +2234,8 @@ msgid "Software"
 msgstr "Software"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "Tiştek xelet derket, dîsa biceribîne"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2766,6 +2765,9 @@ msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên dem�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "Tiştek xelet derket, dîsa biceribîne"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "هەڵەیەک ڕوویدا - ئایا ئۆفلاینیت؟"

@@ -2234,8 +2234,8 @@ msgid "Software"
 msgstr "نرم افزار"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "یه چیزی اشتباه شد دوباره تلاش کن"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2769,6 +2769,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "یه چیزی اشتباه شد دوباره تلاش کن"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "خطایی رخ داده است - آیا شما آفلاین هستید؟"

@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-29 12:02+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2237,8 +2236,8 @@ msgid "Software"
 msgstr "软件"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "出错了，再试一次"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2772,6 +2771,9 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "出错了，再试一次"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "发生错误——您离线了？"

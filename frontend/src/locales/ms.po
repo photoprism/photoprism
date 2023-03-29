@@ -2234,8 +2234,8 @@ msgid "Software"
 msgstr "Perisian"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "Kesilapan telah berlaku, cuba lagi"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2765,6 +2765,9 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "Kesilapan telah berlaku, cuba lagi"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "Ralat berlaku - adakah capaian anda tergendala?"

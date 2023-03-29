@@ -2234,8 +2234,8 @@ msgid "Software"
 msgstr "Programari"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "S'ha produït un error, torna-ho a provar"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2769,6 +2769,9 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "S'ha produït un error, torna-ho a provar"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "S'ha produït un error: estàs fora de línia?"

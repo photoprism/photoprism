@@ -2644,7 +2644,7 @@ msgid "Software"
 msgstr ""
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
+msgid "Something went wrong, are you offline?"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:252

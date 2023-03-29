@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-29 12:02+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
-"frontend/fr/>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2235,8 +2234,8 @@ msgid "Software"
 msgstr "Logiciel"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "Quelque chose s'est mal passé, réessayez"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2770,6 +2769,9 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "Quelque chose s'est mal passé, réessayez"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "Un problème est survenu - êtes-vous hors ligne ?"

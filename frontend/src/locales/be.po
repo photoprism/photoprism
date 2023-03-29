@@ -7,8 +7,7 @@ msgstr ""
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -2232,8 +2231,8 @@ msgid "Software"
 msgstr "праграмнае забеспячэнне"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "Нешта пайшло не так, паўтарыце спробу"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2767,6 +2766,9 @@ msgstr "Ваша бібліятэка пастаянна аналізуецца 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Павелічэнне/памяншэнне"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "Нешта пайшло не так, паўтарыце спробу"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "Адбылася памылка - вы у аўтаномным рэжыме?"

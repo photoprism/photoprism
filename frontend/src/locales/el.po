@@ -2231,8 +2231,8 @@ msgid "Software"
 msgstr "Λογισμικό"
 
 #: src/common/api.js:102
-msgid "Something went wrong, try again"
-msgstr "Κάτι πήγε στραβά, δοκιμάστε ξανά"
+msgid "Something went wrong, are you offline?"
+msgstr ""
 
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
@@ -2762,6 +2762,9 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "Κάτι πήγε στραβά, δοκιμάστε ξανά"
 
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "Εμφανίστηκε σφάλμα - είστε εκτός σύνδεσης;"
