@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-29 10:43+0000\n"
+"PO-Revision-Date: 2023-03-29 10:47+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -349,7 +349,10 @@ msgstr "Seitenverhältnis"
 
 #: src/page/about/about.vue:15
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-msgstr "Wir bei PhotoPrism glauben, dass jeder Moment, der durch ein Foto festgehalten wird, wertvoll ist, und unsere Mission ist es, den Menschen zu ermöglichen, diese Momente für die nächsten Generationen zu bewahren."
+msgstr ""
+"Wir bei PhotoPrism glauben, dass jeder Moment, der in einem Bild "
+"festgehalten wird, wertvoll ist, und unsere Mission ist es, jedem zu "
+"ermöglichen, diese Momente für kommende Generationen zu bewahren."
 
 #: src/component/admin/users/add.vue:216 src/component/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
