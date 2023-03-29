@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-29 10:47+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
-"frontend/de/>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -349,10 +348,7 @@ msgstr "Seitenverhältnis"
 
 #: src/page/about/about.vue:15
 msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-msgstr ""
-"Wir bei PhotoPrism glauben, dass jeder Moment, der in einem Bild "
-"festgehalten wird, wertvoll ist, und unsere Mission ist es, jedem zu "
-"ermöglichen, diese Momente für kommende Generationen zu bewahren."
+msgstr "Wir bei PhotoPrism glauben, dass jeder Moment, der in einem Bild festgehalten wird, wertvoll ist, und unsere Mission ist es, jedem zu ermöglichen, diese Momente für kommende Generationen zu bewahren."
 
 #: src/component/admin/users/add.vue:216 src/component/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
@@ -998,12 +994,10 @@ msgstr "Feedback"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Bei Fragen, Wünschen oder Problemen helfen wir gerne per E-Mail an hello@photoprism.app."
 
-#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:45
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"Bei Fragen zu deiner Mitgliedschaft kannst du uns gerne unter members@"
-"photoprism.app kontaktieren."
+msgstr "Bei Fragen zu deiner Mitgliedschaft kannst du uns gerne unter members@photoprism.app kontaktieren."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1346,7 +1340,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:34
+#: src/page/about/about.vue:16 src/page/about/about.vue:268
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Mehr erfahren"
@@ -1467,7 +1462,7 @@ msgstr "Hauptfarbe"
 msgid "Male"
 msgstr "Männlich"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:49
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
 msgstr "Konto verwalten"
@@ -1831,7 +1826,7 @@ msgstr "Bild"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism wurde aktualisiert…"
 
-#: src/page/about/about.vue:36 src/page/about/about.vue:3
+#: src/page/about/about.vue:43 src/page/about/about.vue:3
 #: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism ist zu 100 % selbstfinanziert und unabhängig."
@@ -2354,7 +2349,7 @@ msgstr "Blaugrün"
 msgid "Text too long"
 msgstr "Text ist zu lang"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
+#: src/page/about/about.vue:41 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
 msgstr "Vielen Dank für deine Unterstützung!"
 
@@ -2763,7 +2758,7 @@ msgid "Your account has been successfully connected."
 msgstr "Dein Konto wurde erfolgreich verbunden."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
-#: src/page/about/about.vue:37 src/page/about/about.vue:4
+#: src/page/about/about.vue:44 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Deine Unterstützung hilft uns, regelmäßige Updates bereitzustellen und unabhängig zu bleiben, damit wir unsere Mission erfüllen und deine Privatsphäre schützen können."
 

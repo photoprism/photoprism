@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-03-29 10:42+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -995,7 +994,7 @@ msgstr "反馈"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "如果你有任何问题，请联系我们：hello@photoprism.app。"
 
-#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:45
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr "如有关于会员资格的问题，请随时与我们联系，members@photoprism.app。"
@@ -1341,7 +1340,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:34
+#: src/page/about/about.vue:16 src/page/about/about.vue:268
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "进一步了解"
@@ -1462,7 +1462,7 @@ msgstr "主色调"
 msgid "Male"
 msgstr "男"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:49
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
 msgstr "管理账户"
@@ -1827,7 +1827,7 @@ msgstr "相片"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism 更新啦…"
 
-#: src/page/about/about.vue:36 src/page/about/about.vue:3
+#: src/page/about/about.vue:43 src/page/about/about.vue:3
 #: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism是100%自筹资金和独立的。"
@@ -2351,7 +2351,7 @@ msgstr "蓝绿"
 msgid "Text too long"
 msgstr "文字太长"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
+#: src/page/about/about.vue:41 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
 msgstr "感谢你的支持!"
 
@@ -2764,7 +2764,7 @@ msgid "Your account has been successfully connected."
 msgstr "您的账户已成功连接。"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
-#: src/page/about/about.vue:37 src/page/about/about.vue:4
+#: src/page/about/about.vue:44 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "您的持续支持有助于我们提供定期更新并保持独立，因此我们可以履行我们的使命并保护您的隐私。"
 

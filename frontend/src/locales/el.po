@@ -991,12 +991,10 @@ msgstr "Ανατροφοδότηση"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μας στο hello@photoprism.app αν έχετε οποιεσδήποτε ερωτήσεις."
 
-#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:45
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"Μη διστάσετε να επικοινωνήσετε μαζί μας στο members@photoprism.app για "
-"ερωτήσεις σχετικά με τη συνδρομή σας."
+msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μας στο members@photoprism.app για ερωτήσεις σχετικά με τη συνδρομή σας."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1339,7 +1337,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:34
+#: src/page/about/about.vue:16 src/page/about/about.vue:268
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Μάθετε περισσότερα"
@@ -1460,7 +1459,7 @@ msgstr "Κύριο χρώμα"
 msgid "Male"
 msgstr "Αρσενικό"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:49
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
 msgstr "Διαχείριση λογαριασμού"
@@ -1824,7 +1823,7 @@ msgstr "Φωτογραφία"
 msgid "PhotoPrism has been updated…"
 msgstr "Το PhotoPrism έχει ενημερωθεί…"
 
-#: src/page/about/about.vue:36 src/page/about/about.vue:3
+#: src/page/about/about.vue:43 src/page/about/about.vue:3
 #: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "Η PhotoPrism είναι 100% αυτοχρηματοδοτούμενη και ανεξάρτητη."
@@ -2347,7 +2346,7 @@ msgstr "Teal"
 msgid "Text too long"
 msgstr "Πολύ μεγάλο κείμενο"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
+#: src/page/about/about.vue:41 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
 msgstr "Ευχαριστούμε για την υποστήριξή σας!"
 
@@ -2756,7 +2755,7 @@ msgid "Your account has been successfully connected."
 msgstr "Ο λογαριασμός σας έχει συνδεθεί επιτυχώς."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
-#: src/page/about/about.vue:37 src/page/about/about.vue:4
+#: src/page/about/about.vue:44 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Η συνεχής υποστήριξή σας μας βοηθά να παρέχουμε τακτικές ενημερώσεις και υπηρεσίες όπως οι παγκόσμιοι χάρτες."
 

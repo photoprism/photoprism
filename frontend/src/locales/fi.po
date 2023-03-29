@@ -991,12 +991,10 @@ msgstr "Palaute"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Ota rohkeasti yhteyttä osoitteeseen hello@photoprism.app, jos sinulla on kysyttävää."
 
-#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:45
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"Ota rohkeasti yhteyttä osoitteeseen members@photoprism.app, jos sinulla on "
-"jäsenyyttäsi koskevia kysymyksiä."
+msgstr "Ota rohkeasti yhteyttä osoitteeseen members@photoprism.app, jos sinulla on jäsenyyttäsi koskevia kysymyksiä."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1339,7 +1337,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:34
+#: src/page/about/about.vue:16 src/page/about/about.vue:268
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Lue lisää"
@@ -1460,7 +1459,7 @@ msgstr "Pääväri"
 msgid "Male"
 msgstr "Mies"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:49
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
 msgstr "Hallitse tiliä"
@@ -1824,7 +1823,7 @@ msgstr "Kuva"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on päivitetty…"
 
-#: src/page/about/about.vue:36 src/page/about/about.vue:3
+#: src/page/about/about.vue:43 src/page/about/about.vue:3
 #: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism on 100-prosenttisesti omarahoitteinen ja riippumaton."
@@ -2347,7 +2346,7 @@ msgstr "Sinivihreä"
 msgid "Text too long"
 msgstr "Liian pitkä teksti"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
+#: src/page/about/about.vue:41 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
 msgstr "Kiitos tuestasi!"
 
@@ -2756,7 +2755,7 @@ msgid "Your account has been successfully connected."
 msgstr "Tilisi on yhdistetty onnistuneesti."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
-#: src/page/about/about.vue:37 src/page/about/about.vue:4
+#: src/page/about/about.vue:44 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä ja palveluja, kuten maailmankarttoja."
 

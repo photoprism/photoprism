@@ -991,12 +991,10 @@ msgstr "Tagasiside"
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
 
-#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:45
 #: src/page/about/about.vue:5
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"Võta meiega ühendust aadressil members@photoprism.app, kui sul on küsimusi "
-"seoses liikmelisusega."
+msgstr "Võta meiega ühendust aadressil members@photoprism.app, kui sul on küsimusi seoses liikmelisusega."
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1339,7 +1337,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:34
+#: src/page/about/about.vue:16 src/page/about/about.vue:268
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Lisateave"
@@ -1460,7 +1459,7 @@ msgstr "Põhivärv"
 msgid "Male"
 msgstr "Mees"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:49
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
 msgstr "Halda kontot"
@@ -1824,7 +1823,7 @@ msgstr "Foto"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on uuendatud…"
 
-#: src/page/about/about.vue:36 src/page/about/about.vue:3
+#: src/page/about/about.vue:43 src/page/about/about.vue:3
 #: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism on 100% omafinantseeringuline ja sõltumatu."
@@ -2347,7 +2346,7 @@ msgstr "Sinakasroheline"
 msgid "Text too long"
 msgstr "Tekst on liiga pikk"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
+#: src/page/about/about.vue:41 src/page/about/about.vue:1
 msgid "Thanks for Your Support!"
 msgstr "Täname teie toetuse eest!"
 
@@ -2760,7 +2759,7 @@ msgid "Your account has been successfully connected."
 msgstr "Teie konto on edukalt ühendatud."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
-#: src/page/about/about.vue:37 src/page/about/about.vue:4
+#: src/page/about/about.vue:44 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Sinu jätkuv toetus aitab meil pakkuda regulaarseid uuendusi ja jääda sõltumatuks, et me saaksime täita oma missiooni ja kaitsta sinu privaatsust."
 

@@ -35,6 +35,19 @@
             <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
         </p>
+        <p v-else class="text-xs-center my-4">
+          <v-btn
+              href="https://www.photoprism.app/editions"
+              target="_blank"
+              color="primary-button"
+              class="white--text px-3 py-2 action-upgrade"
+              round depressed
+          >
+            <translate>Learn more</translate>
+            <v-icon v-if="rtl" left dark>navigate_before</v-icon>
+            <v-icon v-else right dark>navigate_next</v-icon>
+          </v-btn>
+        </p>
       </template>
       <template v-else-if="isSuperAdmin">
         <h3 class="subheading py-2"><translate>Thanks for Your Support!</translate> <v-icon size="20" color="primary">favorite</v-icon></h3>
