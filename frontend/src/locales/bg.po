@@ -63,7 +63,7 @@ msgstr "Едно кликване ще го копира в клипборда �
 msgid "About"
 msgstr "За"
 
-#: src/component/navigation.vue:97 src/component/navigation.vue:1996
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -372,10 +372,6 @@ msgstr "Базова папка"
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr "Станете член днес, за да се възползвате от допълнителни функции и да подкрепите нашата мисия!"
 
-#: src/page/about/about.vue:71
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за отстраняване на проблеми\" за да определите причината за проблема."
-
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
@@ -412,10 +408,6 @@ msgstr "Преглеждайте и редактирайте етикети за
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "Преглеждайте индексираните файлове и папки в Библиотеката."
-
-#: src/page/about/about.vue:61
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Разгледайте Базата с познания за подробна информация за конкретни продуктови характеристики, услуги и свързани ресурси."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -539,10 +531,6 @@ msgstr "Цветен профил"
 #: src/page/discover.vue:4
 msgid "Colors"
 msgstr "Цветове"
-
-#: src/page/about/about.vue:54
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Често срещаните проблеми могат да бъдат бързо диагностицирани и решени с помощта на предоставените от нас контролни списъци за отстраняване на неизправности."
 
 #: src/page/connect.vue:83 src/page/connect.vue:88
 msgid "Compare Editions"
@@ -1002,11 +990,14 @@ msgstr "Обратна връзка"
 msgid "Feedback"
 msgstr "Обратна връзка"
 
-#: src/page/connect.vue:101 src/dialog/sponsor.vue:25
-#: src/page/about/about.vue:38 src/page/about/about.vue:5
-#: src/page/connect.vue:106
+#: src/page/connect.vue:101 src/page/connect.vue:106
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Не се колебайте да се свържете с нас на hello@photoprism.app, ако имате някакви въпроси."
+
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/page/about/about.vue:5
+msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1098,10 +1089,6 @@ msgstr "Лавандула"
 msgid "General"
 msgstr "Обща информация"
 
-#: src/page/about/about.vue:67
-msgid "Getting Support"
-msgstr "Получаване на подкрепа"
-
 #: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "Оригинално име"
@@ -1166,10 +1153,6 @@ msgstr "Висок динамичен обхват (HDR)"
 msgid "How can we help?"
 msgstr "Как можем да помогнем?"
 
-#: src/page/about/about.vue:72
-msgid "If this doesn't help, or you have other questions:"
-msgstr "Ако това не ви помогне или имате други въпроси:"
-
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "изображение"
@@ -1211,10 +1194,6 @@ msgstr "Импортиране на файлове в оригинали…"
 #: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "в"
-
-#: src/page/about/about.vue:81
-msgid "In addition, sponsors receive direct technical support via email."
-msgstr "Освен това спонсорите получават директна техническа поддръжка по имейл."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1317,10 +1296,6 @@ msgstr "JPEG и миниатюрите се визуализират автом�
 msgid "Keywords"
 msgstr "Ключови думи"
 
-#: src/page/about/about.vue:59
-msgid "Knowledge Base"
-msgstr "База знания"
-
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "Етикет"
@@ -1365,8 +1340,7 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:63
-#: src/page/about/about.vue:86 src/page/about/about.vue:162
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Научете повече"
@@ -1489,8 +1463,8 @@ msgstr "Мъжки"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
-msgid "Manage account"
-msgstr "Управление на акаунт"
+msgid "Manage Account"
+msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1512,7 +1486,6 @@ msgstr "Маркер"
 msgid "Medium"
 msgstr "Среден"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
 #: src/page/connect.vue:4
 msgid "Membership"
 msgstr "Членство"
@@ -1764,10 +1737,6 @@ msgstr "Един човек намери"
 msgid "One picture found"
 msgstr "Една намерена снимка"
 
-#: src/page/about/about.vue:78
-msgid "or ask in our Community Chat"
-msgstr "или попитайте в нашия чат в общността"
-
 #: src/options/options.js:411
 msgid "Orange"
 msgstr "Orange"
@@ -1802,10 +1771,6 @@ msgstr "Други"
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Екипът ни решава това текущо в зависимост от необходимите усилия за поддръжка, разходите за сървър и лицензиране, както и от това дали функциите са необходими на всички или се изискват предимно от организации и напреднали потребители."
-
-#: src/page/about/about.vue:53
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Нашето ръководство за потребителя обхваща и много теми за напреднали, като мигриране от Google Photos и настройки на качеството на миниатюрите."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1918,10 +1883,6 @@ msgstr "Ограничение на размера на PNG: %{n}px"
 msgid "Portrait"
 msgstr "Портрет"
 
-#: src/page/about/about.vue:77
-msgid "post your question in GitHub Discussions"
-msgstr "публикувайте въпроса си в GitHub Discussions"
-
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr "Запазване на имената на файловете"
@@ -2000,10 +1961,6 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Индексирайте отново всички оригинали, включително вече индексираните и непроменените файлове."
 
-#: src/page/about/about.vue:56
-msgid "Read the Docs"
-msgstr "Прочетете документите"
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "Режим само за четене"
@@ -2043,7 +2000,7 @@ msgstr "Червено"
 msgid "Reload"
 msgstr "Презареждане"
 
-#: src/component/navigation.vue:128 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Презареждане…"
@@ -2391,6 +2348,10 @@ msgstr "Teal"
 msgid "Text too long"
 msgstr "Твърде дълъг текст"
 
+#: src/page/about/about.vue:34 src/page/about/about.vue:1
+msgid "Thanks for Your Support!"
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Индексът в момента съдържа %{n} скрити файлове."
@@ -2512,7 +2473,7 @@ msgid "Unknown"
 msgstr "Неизвестно"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:86 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Нерегистриран"
@@ -2627,7 +2588,7 @@ msgstr "Използване на предварителни настройки"
 msgid "User"
 msgstr "Потребител"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:50
+#: src/component/navigation.vue:597
 msgid "User Guide"
 msgstr "Ръководство за потребителя"
 
@@ -2687,10 +2648,6 @@ msgstr "Вижте"
 msgid "Viewer"
 msgstr "Viewer"
 
-#: src/page/about/about.vue:52
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Посетете docs.photoprism.app/user-guide, за да научите как да синхронизирате, организирате и споделяте снимките си."
-
 #: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
@@ -2712,10 +2669,6 @@ msgstr "Оценяваме обратната ви връзка!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Стараем се да отговаряме в рамките на пет работни дни или по-малко."
-
-#: src/page/about/about.vue:83
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Ще се постараем да отговорим на всичките ви въпроси. В замяна ви молим да ни подкрепите в Patreon или GitHub Sponsors."
 
 #: src/component/admin/users/add.vue:234 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2782,10 +2735,6 @@ msgstr "Жълт"
 msgid "Yes"
 msgstr "Да"
 
-#: src/page/about/about.vue:76
-msgid "you are welcome to join us on Reddit"
-msgstr "можете да се присъедините към нас в Reddit"
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Можете да изтеглите само един албум"
@@ -2819,6 +2768,51 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "Преди да изпратите заявка за поддръжка, прочетете нашият \"Списък за отстраняване на проблеми\" за да определите причината за проблема."
+
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "Разгледайте Базата с познания за подробна информация за конкретни продуктови характеристики, услуги и свързани ресурси."
+
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "Често срещаните проблеми могат да бъдат бързо диагностицирани и решени с помощта на предоставените от нас контролни списъци за отстраняване на неизправности."
+
+#~ msgid "Getting Support"
+#~ msgstr "Получаване на подкрепа"
+
+#~ msgid "If this doesn't help, or you have other questions:"
+#~ msgstr "Ако това не ви помогне или имате други въпроси:"
+
+#~ msgid "In addition, sponsors receive direct technical support via email."
+#~ msgstr "Освен това спонсорите получават директна техническа поддръжка по имейл."
+
+#~ msgid "Knowledge Base"
+#~ msgstr "База знания"
+
+#~ msgid "Manage account"
+#~ msgstr "Управление на акаунт"
+
+#~ msgid "or ask in our Community Chat"
+#~ msgstr "или попитайте в нашия чат в общността"
+
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "Нашето ръководство за потребителя обхваща и много теми за напреднали, като мигриране от Google Photos и настройки на качеството на миниатюрите."
+
+#~ msgid "post your question in GitHub Discussions"
+#~ msgstr "публикувайте въпроса си в GitHub Discussions"
+
+#~ msgid "Read the Docs"
+#~ msgstr "Прочетете документите"
+
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "Посетете docs.photoprism.app/user-guide, за да научите как да синхронизирате, организирате и споделяте снимките си."
+
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "Ще се постараем да отговорим на всичките ви въпроси. В замяна ви молим да ни подкрепите в Patreon или GitHub Sponsors."
+
+#~ msgid "you are welcome to join us on Reddit"
+#~ msgstr "можете да се присъедините към нас в Reddit"
 
 #~ msgid "Abyss"
 #~ msgstr "Abyss"

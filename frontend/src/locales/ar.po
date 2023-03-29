@@ -63,7 +63,7 @@ msgstr "نقرة للنسخ إلى الحافظة الخاصة بك."
 msgid "About"
 msgstr "حول"
 
-#: src/component/navigation.vue:97 src/component/navigation.vue:1996
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -372,10 +372,6 @@ msgstr "المجلد الأساسي"
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr "كن عضوًا اليوم للاستمتاع بميزات إضافية ودعم مهمتنا!"
 
-#: src/page/about/about.vue:71
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "قبل تقديم طلب دعم ، يرجى استخدام قوائم التحقق الخاصة باستكشاف الأخطاء وإصلاحها لتحديد سبب مشكلتك."
-
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
@@ -412,10 +408,6 @@ msgstr "تصفح وتحرير تسميات تصنيف الصورة."
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "تصفح الملفات والمجلدات المفهرسة في المكتبة."
-
-#: src/page/about/about.vue:61
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "تصفح \"قاعدة المعارف\" للحصول على معلومات تفصيلية حول ميزات المنتج المحددة والخدمات والموارد ذات الصلة."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -539,10 +531,6 @@ msgstr "ملف تعريف اللون"
 #: src/page/discover.vue:4
 msgid "Colors"
 msgstr "الألوان"
-
-#: src/page/about/about.vue:54
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "يمكن تشخيص المشكلات الشائعة وحلها بسرعة باستخدام قوائم التحقق الخاصة باستكشاف الأخطاء وإصلاحها التي نقدمها."
 
 #: src/page/connect.vue:83 src/page/connect.vue:88
 msgid "Compare Editions"
@@ -1002,11 +990,14 @@ msgstr "تغذية"
 msgid "Feedback"
 msgstr "استجابة"
 
-#: src/page/connect.vue:101 src/dialog/sponsor.vue:25
-#: src/page/about/about.vue:38 src/page/about/about.vue:5
-#: src/page/connect.vue:106
+#: src/page/connect.vue:101 src/page/connect.vue:106
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "لا تتردد في الاتصال بنا على hello@photoprism.app إذا كان لديك أي أسئلة."
+
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/page/about/about.vue:5
+msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1098,10 +1089,6 @@ msgstr "الجنس"
 msgid "General"
 msgstr "عام"
 
-#: src/page/about/about.vue:67
-msgid "Getting Support"
-msgstr "الحصول على الدعم"
-
 #: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "الاسم المعطى"
@@ -1166,10 +1153,6 @@ msgstr "المدى الديناميكي العالي (HDR)"
 msgid "How can we help?"
 msgstr "كيف يمكن أن نساعد؟"
 
-#: src/page/about/about.vue:72
-msgid "If this doesn't help, or you have other questions:"
-msgstr "إذا لم يساعدك ذلك ، أو لديك أسئلة أخرى:"
-
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "صورة"
@@ -1211,10 +1194,6 @@ msgstr "جارٍ استيراد الملفات إلى النسخ الأصلية 
 #: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "في"
-
-#: src/page/about/about.vue:81
-msgid "In addition, sponsors receive direct technical support via email."
-msgstr "بالإضافة إلى ذلك ، يتلقى الرعاة دعمًا فنيًا مباشرًا عبر البريد الإلكتروني."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1317,10 +1296,6 @@ msgstr "يتم تقديم ملفات JPEG والصور المصغرة تلقائ
 msgid "Keywords"
 msgstr "الكلمات الدالة"
 
-#: src/page/about/about.vue:59
-msgid "Knowledge Base"
-msgstr "قاعدة المعرفة"
-
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "مُلصَق"
@@ -1365,8 +1340,7 @@ msgid "LDAP/AD"
 msgstr "LDAP / AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:63
-#: src/page/about/about.vue:86 src/page/about/about.vue:162
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "اعرف المزيد"
@@ -1489,8 +1463,8 @@ msgstr "ذكر"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
-msgid "Manage account"
-msgstr "إدارة الحساب"
+msgid "Manage Account"
+msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1512,7 +1486,6 @@ msgstr "علامة"
 msgid "Medium"
 msgstr "متوسط"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
 #: src/page/connect.vue:4
 msgid "Membership"
 msgstr "عضوية"
@@ -1764,10 +1737,6 @@ msgstr "تم العثور على شخص واحد"
 msgid "One picture found"
 msgstr "تم العثور على صورة واحدة"
 
-#: src/page/about/about.vue:78
-msgid "or ask in our Community Chat"
-msgstr "أو اسأل في دردشة المجتمع"
-
 #: src/options/options.js:411
 msgid "Orange"
 msgstr "البرتقالي"
@@ -1802,10 +1771,6 @@ msgstr "آخر"
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "يقرر فريقنا هذا على أساس مستمر اعتمادًا على جهد الدعم المطلوب ، وتكاليف الخادم والترخيص ، وما إذا كانت الميزات مطلوبة بشكل عام من قبل الجميع أو مطلوبة بشكل أساسي من قبل المؤسسات والمستخدمين المتقدمين."
-
-#: src/page/about/about.vue:53
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "يغطي دليل المستخدم الخاص بنا أيضًا العديد من الموضوعات المتقدمة ، مثل الترحيل من صور Google وإعدادات جودة الصورة المصغرة."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1918,10 +1883,6 @@ msgstr "حد حجم PNG: %{n} بكسل"
 msgid "Portrait"
 msgstr "لَوحَة"
 
-#: src/page/about/about.vue:77
-msgid "post your question in GitHub Discussions"
-msgstr "انشر سؤالك في GitHub Discussions"
-
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr "الاحتفاظ بأسماء الملفات"
@@ -2000,10 +1961,6 @@ msgstr "الخام"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "أعد فهرسة جميع الأصول ، بما في ذلك الملفات المفهرسة بالفعل والتي لم يتم تغييرها."
 
-#: src/page/about/about.vue:56
-msgid "Read the Docs"
-msgstr "اقرأ ملف المساعدة"
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "وضع القراءة فقط"
@@ -2043,7 +2000,7 @@ msgstr "أحمر"
 msgid "Reload"
 msgstr "إعادة تحميل"
 
-#: src/component/navigation.vue:128 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "جارٍ إعادة التحميل…"
@@ -2391,6 +2348,10 @@ msgstr "بط نهري صغير"
 msgid "Text too long"
 msgstr "نص طويل جدًا"
 
+#: src/page/about/about.vue:34 src/page/about/about.vue:1
+msgid "Thanks for Your Support!"
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "يحتوي الفهرس حاليًا على %{n} من الملفات المخفية."
@@ -2512,7 +2473,7 @@ msgid "Unknown"
 msgstr "مجهول"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:86 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "غير مسجل"
@@ -2627,7 +2588,7 @@ msgstr "استخدم الإعدادات المسبقة"
 msgid "User"
 msgstr "المستعمل"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:50
+#: src/component/navigation.vue:597
 msgid "User Guide"
 msgstr "دليل المستخدم"
 
@@ -2687,10 +2648,6 @@ msgstr "رأي"
 msgid "Viewer"
 msgstr "مشاهد"
 
-#: src/page/about/about.vue:52
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "تفضل بزيارة docs.photoprism.app/user-guide للتعرف على كيفية مزامنة صورك وتنظيمها ومشاركتها."
-
 #: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
@@ -2712,10 +2669,6 @@ msgstr "نحن نقدر ملاحظاتك!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "نحن نبذل قصارى جهدنا للرد في غضون خمسة أيام عمل أو أقل."
-
-#: src/page/about/about.vue:83
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "سنبذل قصارى جهدنا للإجابة على جميع أسئلتك. في المقابل ، نطلب منك دعمنا على Patreon أو GitHub الرعاة."
 
 #: src/component/admin/users/add.vue:234 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2782,10 +2735,6 @@ msgstr "الأصفر"
 msgid "Yes"
 msgstr "نعم"
 
-#: src/page/about/about.vue:76
-msgid "you are welcome to join us on Reddit"
-msgstr "اهلا وسهلا بكم للانضمام إلينا على Reddit"
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "يمكنك تنزيل ألبوم واحد فقط"
@@ -2819,6 +2768,51 @@ msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبوم�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
+
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "قبل تقديم طلب دعم ، يرجى استخدام قوائم التحقق الخاصة باستكشاف الأخطاء وإصلاحها لتحديد سبب مشكلتك."
+
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "تصفح \"قاعدة المعارف\" للحصول على معلومات تفصيلية حول ميزات المنتج المحددة والخدمات والموارد ذات الصلة."
+
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "يمكن تشخيص المشكلات الشائعة وحلها بسرعة باستخدام قوائم التحقق الخاصة باستكشاف الأخطاء وإصلاحها التي نقدمها."
+
+#~ msgid "Getting Support"
+#~ msgstr "الحصول على الدعم"
+
+#~ msgid "If this doesn't help, or you have other questions:"
+#~ msgstr "إذا لم يساعدك ذلك ، أو لديك أسئلة أخرى:"
+
+#~ msgid "In addition, sponsors receive direct technical support via email."
+#~ msgstr "بالإضافة إلى ذلك ، يتلقى الرعاة دعمًا فنيًا مباشرًا عبر البريد الإلكتروني."
+
+#~ msgid "Knowledge Base"
+#~ msgstr "قاعدة المعرفة"
+
+#~ msgid "Manage account"
+#~ msgstr "إدارة الحساب"
+
+#~ msgid "or ask in our Community Chat"
+#~ msgstr "أو اسأل في دردشة المجتمع"
+
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "يغطي دليل المستخدم الخاص بنا أيضًا العديد من الموضوعات المتقدمة ، مثل الترحيل من صور Google وإعدادات جودة الصورة المصغرة."
+
+#~ msgid "post your question in GitHub Discussions"
+#~ msgstr "انشر سؤالك في GitHub Discussions"
+
+#~ msgid "Read the Docs"
+#~ msgstr "اقرأ ملف المساعدة"
+
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "تفضل بزيارة docs.photoprism.app/user-guide للتعرف على كيفية مزامنة صورك وتنظيمها ومشاركتها."
+
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "سنبذل قصارى جهدنا للإجابة على جميع أسئلتك. في المقابل ، نطلب منك دعمنا على Patreon أو GitHub الرعاة."
+
+#~ msgid "you are welcome to join us on Reddit"
+#~ msgstr "اهلا وسهلا بكم للانضمام إلينا على Reddit"
 
 #~ msgid "Abyss"
 #~ msgstr "هاوية"

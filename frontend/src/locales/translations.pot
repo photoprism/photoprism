@@ -62,7 +62,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/component/navigation.vue:97
+#: src/component/navigation.vue:98
 #: src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108
 #: src/model/service.js:98
@@ -411,10 +411,6 @@ msgstr ""
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr ""
 
-#: src/page/about/about.vue:71
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr ""
-
 #: src/dialog/sponsor.vue:22
 #: src/page/about/about.vue:23
 #: src/page/about/about.vue:5
@@ -454,10 +450,6 @@ msgstr ""
 
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
-msgstr ""
-
-#: src/page/about/about.vue:61
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
 msgstr ""
 
 #: src/page/about/feedback.vue:8
@@ -624,10 +616,6 @@ msgstr ""
 
 #: src/page/discover.vue:4
 msgid "Colors"
-msgstr ""
-
-#: src/page/about/about.vue:54
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
 msgstr ""
 
 #: src/page/connect.vue:83
@@ -1160,11 +1148,14 @@ msgid "Feedback"
 msgstr ""
 
 #: src/page/connect.vue:101
+#: src/page/connect.vue:106
+msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgstr ""
+
 #: src/dialog/sponsor.vue:25
 #: src/page/about/about.vue:38
 #: src/page/about/about.vue:5
-#: src/page/connect.vue:106
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
 
 #: src/options/options.js:443
@@ -1270,10 +1261,6 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/page/about/about.vue:67
-msgid "Getting Support"
-msgstr ""
-
 #: src/component/admin/users/edit.vue:208
 #: src/page/settings/account.vue:140
 #: src/page/settings/account.vue:140
@@ -1346,10 +1333,6 @@ msgstr ""
 msgid "How can we help?"
 msgstr ""
 
-#: src/page/about/about.vue:72
-msgid "If this doesn't help, or you have other questions:"
-msgstr ""
-
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr ""
@@ -1394,10 +1377,6 @@ msgstr ""
 #: src/dialog/photo/edit/files.vue:210
 #: src/dialog/photo/edit/files.vue:219
 msgid "in"
-msgstr ""
-
-#: src/page/about/about.vue:81
-msgid "In addition, sponsors receive direct technical support via email."
 msgstr ""
 
 #: src/component/photo/cards.vue:13
@@ -1534,10 +1513,6 @@ msgstr ""
 msgid "Keywords"
 msgstr ""
 
-#: src/page/about/about.vue:59
-msgid "Knowledge Base"
-msgstr ""
-
 #: src/dialog/photo/edit/labels.vue:20
 #: src/model/label.js:124
 msgid "Label"
@@ -1591,9 +1566,7 @@ msgstr ""
 #: src/page/connect.vue:104
 #: src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37
-#: src/page/about/about.vue:63
-#: src/page/about/about.vue:86
-#: src/page/about/about.vue:162
+#: src/page/about/about.vue:264
 #: src/page/connect.vue:130
 #: src/page/connect.vue:122
 msgid "Learn more"
@@ -1747,7 +1720,7 @@ msgstr ""
 #: src/page/about/about.vue:9
 #: src/page/connect.vue:62
 #: src/page/connect.vue:85
-msgid "Manage account"
+msgid "Manage Account"
 msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:35
@@ -1770,8 +1743,6 @@ msgstr ""
 msgid "Medium"
 msgstr ""
 
-#: src/page/about/about.vue:34
-#: src/page/about/about.vue:1
 #: src/page/connect.vue:4
 msgid "Membership"
 msgstr ""
@@ -2083,10 +2054,6 @@ msgstr ""
 msgid "One picture found"
 msgstr ""
 
-#: src/page/about/about.vue:78
-msgid "or ask in our Community Chat"
-msgstr ""
-
 #: src/options/options.js:411
 msgid "Orange"
 msgstr ""
@@ -2126,10 +2093,6 @@ msgstr ""
 
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr ""
-
-#: src/page/about/about.vue:53
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
 msgstr ""
 
 #: src/options/options.js:301
@@ -2261,10 +2224,6 @@ msgstr ""
 msgid "Portrait"
 msgstr ""
 
-#: src/page/about/about.vue:77
-msgid "post your question in GitHub Discussions"
-msgstr ""
-
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr ""
@@ -2355,10 +2314,6 @@ msgstr ""
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr ""
 
-#: src/page/about/about.vue:56
-msgid "Read the Docs"
-msgstr ""
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr ""
@@ -2408,7 +2363,7 @@ msgstr ""
 msgid "Reload"
 msgstr ""
 
-#: src/component/navigation.vue:128
+#: src/component/navigation.vue:129
 #: src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101
 #: src/page/settings/library.vue:46
@@ -2810,6 +2765,11 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
+#: src/page/about/about.vue:34
+#: src/page/about/about.vue:1
+msgid "Thanks for Your Support!"
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr ""
@@ -2954,7 +2914,7 @@ msgstr ""
 
 #: src/page/settings/account.vue:38
 #: src/page/settings/account.vue:46
-#: src/component/navigation.vue:86
+#: src/component/navigation.vue:87
 #: src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
@@ -3090,7 +3050,6 @@ msgid "User"
 msgstr ""
 
 #: src/component/navigation.vue:597
-#: src/page/about/about.vue:50
 msgid "User Guide"
 msgstr ""
 
@@ -3168,10 +3127,6 @@ msgstr ""
 msgid "Viewer"
 msgstr ""
 
-#: src/page/about/about.vue:52
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr ""
-
 #: src/options/admin.js:11
 #: src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
@@ -3196,10 +3151,6 @@ msgstr ""
 #: src/page/about/feedback.vue:17
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr ""
-
-#: src/page/about/about.vue:83
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
 msgstr ""
 
 #: src/component/admin/users/add.vue:234
@@ -3282,10 +3233,6 @@ msgstr ""
 #: src/dialog/photo/edit/info.vue:322
 #: src/dialog/photo/edit/info.vue:342
 msgid "Yes"
-msgstr ""
-
-#: src/page/about/about.vue:76
-msgid "you are welcome to join us on Reddit"
 msgstr ""
 
 #: src/component/album/clipboard.vue:106

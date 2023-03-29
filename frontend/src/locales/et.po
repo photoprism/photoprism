@@ -60,7 +60,7 @@ msgstr "Klõpsamine kopeerib selle lõikelauale."
 msgid "About"
 msgstr "Teave"
 
-#: src/component/navigation.vue:97 src/component/navigation.vue:1996
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -369,10 +369,6 @@ msgstr "Aluskaustik"
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr "Astu liikmeks juba täna, et nautida lisafunktsioone ja toetada meie missiooni!"
 
-#: src/page/about/about.vue:71
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Enne tugitaotluse esitamist kasuta palun meie tõrkeotsingu meelespead, et probleemi põhjus kindlaks teha."
-
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
@@ -409,10 +405,6 @@ msgstr "Sirvi ja muuda piltide klassifitseerimise silte."
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "Sirvi fototeegis olevaid indekseeritud faile ja kaustu."
-
-#: src/page/about/about.vue:61
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud ressursside kohta leiad teadmistebaasist."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -536,10 +528,6 @@ msgstr "Värviprofiil"
 #: src/page/discover.vue:4
 msgid "Colors"
 msgstr "Värvid"
-
-#: src/page/about/about.vue:54
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie poolt pakutavat tõrkeotsingu meelespead."
 
 #: src/page/connect.vue:83 src/page/connect.vue:88
 msgid "Compare Editions"
@@ -999,11 +987,14 @@ msgstr "Kanal"
 msgid "Feedback"
 msgstr "Tagasiside"
 
-#: src/page/connect.vue:101 src/dialog/sponsor.vue:25
-#: src/page/about/about.vue:38 src/page/about/about.vue:5
-#: src/page/connect.vue:106
+#: src/page/connect.vue:101 src/page/connect.vue:106
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kui sul on küsimusi, võta meiega ühendust aadressil hello@photoprism.app."
+
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/page/about/about.vue:5
+msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1095,10 +1086,6 @@ msgstr "Sugu"
 msgid "General"
 msgstr "Üldised"
 
-#: src/page/about/about.vue:67
-msgid "Getting Support"
-msgstr "Abi saamine"
-
 #: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "Eesnimi"
@@ -1163,10 +1150,6 @@ msgstr "Lai dünaamiline diapasoon (HDR)"
 msgid "How can we help?"
 msgstr "Kuidas me saame aidata?"
 
-#: src/page/about/about.vue:72
-msgid "If this doesn't help, or you have other questions:"
-msgstr "Kui see ei aita või sul on muid küsimusi:"
-
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "pilt"
@@ -1208,10 +1191,6 @@ msgstr "Failide importimine originaalidesse…"
 #: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "ajaga"
-
-#: src/page/about/about.vue:81
-msgid "In addition, sponsors receive direct technical support via email."
-msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1314,10 +1293,6 @@ msgstr "JPEG- ja pisipildid renderdatakse automaatselt vastavalt vajadusele."
 msgid "Keywords"
 msgstr "Märksõnad"
 
-#: src/page/about/about.vue:59
-msgid "Knowledge Base"
-msgstr "Teadmusbaas"
-
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "Silt"
@@ -1362,8 +1337,7 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:63
-#: src/page/about/about.vue:86 src/page/about/about.vue:162
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Lisateave"
@@ -1486,8 +1460,8 @@ msgstr "Mees"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
-msgid "Manage account"
-msgstr "Halda kontot"
+msgid "Manage Account"
+msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1509,7 +1483,6 @@ msgstr "Märk"
 msgid "Medium"
 msgstr "Keskmine"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
 #: src/page/connect.vue:4
 msgid "Membership"
 msgstr "Liikmelisus"
@@ -1761,10 +1734,6 @@ msgstr "Üks inimene leitud"
 msgid "One picture found"
 msgstr "Üks pilt leitud"
 
-#: src/page/about/about.vue:78
-msgid "or ask in our Community Chat"
-msgstr "või küsi meie ühisjututoas"
-
 #: src/options/options.js:411
 msgid "Orange"
 msgstr "Oranžikas"
@@ -1799,10 +1768,6 @@ msgstr "Muu"
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Meie meeskond otsustab seda jooksvalt, sõltuvalt vajalikust tugitegevusest, serveri- ja litsentsikuludest ning sellest, kas funktsioone vajavad üldiselt kõik või on neid peamiselt taotlenud organisatsioonid ja edasijõudnud kasutajad."
-
-#: src/page/about/about.vue:53
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Meie kasutajajuhend hõlmab ka paljusid edasijõudnute teemasid, näiteks Google Photos'ist migreerimine ja pisipiltide kvaliteediseaded."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1915,10 +1880,6 @@ msgstr "PNG suuruse limiit: %{n}px"
 msgid "Portrait"
 msgstr "Püstformaat"
 
-#: src/page/about/about.vue:77
-msgid "post your question in GitHub Discussions"
-msgstr "postita oma küsimus GitHub'i aruteludesse"
-
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr "Säilita failinimed"
@@ -1997,10 +1958,6 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indekseeri uuesti kõik originaalid, sealhulgas juba indekseeritud ja muutmata failid."
 
-#: src/page/about/about.vue:56
-msgid "Read the Docs"
-msgstr "Loe dokumentatsiooni"
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "Kirjutuskaitserežiim"
@@ -2040,7 +1997,7 @@ msgstr "Punane"
 msgid "Reload"
 msgstr "Laadi uuesti"
 
-#: src/component/navigation.vue:128 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Uuesti laadimine…"
@@ -2388,6 +2345,10 @@ msgstr "Sinakasroheline"
 msgid "Text too long"
 msgstr "Tekst on liiga pikk"
 
+#: src/page/about/about.vue:34 src/page/about/about.vue:1
+msgid "Thanks for Your Support!"
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Indeks sisaldab praegu %{n} peidetud faili."
@@ -2511,7 +2472,7 @@ msgid "Unknown"
 msgstr "Teadmata"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:86 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Mitteregistreeritud"
@@ -2626,7 +2587,7 @@ msgstr "Kasuta eelseadistusi"
 msgid "User"
 msgstr "Kasutaja"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:50
+#: src/component/navigation.vue:597
 msgid "User Guide"
 msgstr "Kasutajajuhend"
 
@@ -2686,10 +2647,6 @@ msgstr "Vaade"
 msgid "Viewer"
 msgstr "Vaataja"
 
-#: src/page/about/about.vue:52
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Aadressilt docs.photoprism.app/user-guide saad teada, kuidas oma pilte sünkroonida, organiseerida ja jagada."
-
 #: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
@@ -2711,10 +2668,6 @@ msgstr "Me hindame teie tagasisidet!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Anname endast parima, et vastata viie tööpäeva jooksul või vähem."
-
-#: src/page/about/about.vue:83
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Anname endast parima, et vastata kõigile küsimustele. Vastutasuks palume meid toetada Patreoni või GitHub Sponsors kaudu."
 
 #: src/component/admin/users/add.vue:234 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2783,10 +2736,6 @@ msgstr "Kollane"
 msgid "Yes"
 msgstr "Jah"
 
-#: src/page/about/about.vue:76
-msgid "you are welcome to join us on Reddit"
-msgstr "oled oodatud liituma meiega Redditis"
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Võid alla laadida ainult ühe albumi"
@@ -2820,6 +2769,51 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "Enne tugitaotluse esitamist kasuta palun meie tõrkeotsingu meelespead, et probleemi põhjus kindlaks teha."
+
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "Üksikasjalikku teavet konkreetsete tooteomaduste, teenuste ja nendega seotud ressursside kohta leiad teadmistebaasist."
+
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "Levinud probleeme saab kiiresti diagnoosida ja lahendada, kasutades meie poolt pakutavat tõrkeotsingu meelespead."
+
+#~ msgid "Getting Support"
+#~ msgstr "Abi saamine"
+
+#~ msgid "If this doesn't help, or you have other questions:"
+#~ msgstr "Kui see ei aita või sul on muid küsimusi:"
+
+#~ msgid "In addition, sponsors receive direct technical support via email."
+#~ msgstr "Lisaks saavad sponsorid otsest tehnilist tuge e-posti teel."
+
+#~ msgid "Knowledge Base"
+#~ msgstr "Teadmusbaas"
+
+#~ msgid "Manage account"
+#~ msgstr "Halda kontot"
+
+#~ msgid "or ask in our Community Chat"
+#~ msgstr "või küsi meie ühisjututoas"
+
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "Meie kasutajajuhend hõlmab ka paljusid edasijõudnute teemasid, näiteks Google Photos'ist migreerimine ja pisipiltide kvaliteediseaded."
+
+#~ msgid "post your question in GitHub Discussions"
+#~ msgstr "postita oma küsimus GitHub'i aruteludesse"
+
+#~ msgid "Read the Docs"
+#~ msgstr "Loe dokumentatsiooni"
+
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "Aadressilt docs.photoprism.app/user-guide saad teada, kuidas oma pilte sünkroonida, organiseerida ja jagada."
+
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "Anname endast parima, et vastata kõigile küsimustele. Vastutasuks palume meid toetada Patreoni või GitHub Sponsors kaudu."
+
+#~ msgid "you are welcome to join us on Reddit"
+#~ msgstr "oled oodatud liituma meiega Redditis"
 
 #~ msgid "Abyss"
 #~ msgstr "Abyss"

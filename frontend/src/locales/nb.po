@@ -63,7 +63,7 @@ msgstr "Et klikk vil kopiere det til utklippstavlen."
 msgid "About"
 msgstr "Om"
 
-#: src/component/navigation.vue:97 src/component/navigation.vue:1996
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -372,10 +372,6 @@ msgstr "Basismappe"
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr "Bli medlem i dag for å dra nytte av flere funksjoner og støtte vårt oppdrag!"
 
-#: src/page/about/about.vue:71
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Før du sender inn en støtteforespørsel, vennligst bruk våre feilsøkingssjekklister for å finne årsaken til problemet."
-
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
@@ -412,10 +408,6 @@ msgstr "Bla gjennom og rediger merkelapper for bildeklassifisering."
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "Bla gjennom indekserte filer og mapper i Biblioteket."
-
-#: src/page/about/about.vue:61
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Bla gjennom kunnskapsbasen for detaljert informasjon om spesifikke produktfunksjoner, tjenester og relaterte ressurser."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -539,10 +531,6 @@ msgstr "Fargeprofil"
 #: src/page/discover.vue:4
 msgid "Colors"
 msgstr "Farger"
-
-#: src/page/about/about.vue:54
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Vanlige problemer kan raskt diagnostiseres og løses ved hjelp av feilsøkingssjekklistene vi tilbyr."
 
 #: src/page/connect.vue:83 src/page/connect.vue:88
 msgid "Compare Editions"
@@ -1002,11 +990,14 @@ msgstr "Feed"
 msgid "Feedback"
 msgstr "Tilbakemelding"
 
-#: src/page/connect.vue:101 src/dialog/sponsor.vue:25
-#: src/page/about/about.vue:38 src/page/about/about.vue:5
-#: src/page/connect.vue:106
+#: src/page/connect.vue:101 src/page/connect.vue:106
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Vennligst kontakt oss på hello@photoprism.app hvis du har noen spørsmål eller trenger hjelp."
+
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/page/about/about.vue:5
+msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1098,10 +1089,6 @@ msgstr "Kjønn"
 msgid "General"
 msgstr "Generell"
 
-#: src/page/about/about.vue:67
-msgid "Getting Support"
-msgstr "Få støtte"
-
 #: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "Originalnavn"
@@ -1166,10 +1153,6 @@ msgstr "Høyt dynamisk område (HDR)"
 msgid "How can we help?"
 msgstr "Hvordan kan vi hjelpe?"
 
-#: src/page/about/about.vue:72
-msgid "If this doesn't help, or you have other questions:"
-msgstr "Hvis dette ikke hjelper, eller du har andre spørsmål:"
-
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "bilde"
@@ -1211,10 +1194,6 @@ msgstr "Importerer filer til originaler…"
 #: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "inn"
-
-#: src/page/about/about.vue:81
-msgid "In addition, sponsors receive direct technical support via email."
-msgstr "I tillegg får sponsorer direkte teknisk støtte via e-post."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1317,10 +1296,6 @@ msgstr "JPEGer og miniatyrbilder er automatisk generert ved behov."
 msgid "Keywords"
 msgstr "Nøkkelord"
 
-#: src/page/about/about.vue:59
-msgid "Knowledge Base"
-msgstr "Kunnskapsbase"
-
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "Merkelapp"
@@ -1365,8 +1340,7 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:63
-#: src/page/about/about.vue:86 src/page/about/about.vue:162
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Lær mer"
@@ -1489,8 +1463,8 @@ msgstr "Mann"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
-msgid "Manage account"
-msgstr "Administrer konto"
+msgid "Manage Account"
+msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1512,7 +1486,6 @@ msgstr "Markør"
 msgid "Medium"
 msgstr "Medium"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
 #: src/page/connect.vue:4
 msgid "Membership"
 msgstr "Medlemskap"
@@ -1764,10 +1737,6 @@ msgstr "En person funnet"
 msgid "One picture found"
 msgstr "Ett bilde funnet"
 
-#: src/page/about/about.vue:78
-msgid "or ask in our Community Chat"
-msgstr "eller spør i felleschatten vår"
-
 #: src/options/options.js:411
 msgid "Orange"
 msgstr "Oransje"
@@ -1802,10 +1771,6 @@ msgstr "Andre"
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Teamet vårt avgjør dette fortløpende, avhengig av støtteinnsatsen som kreves, server- og lisenskostnader, og om funksjonene generelt trengs av alle eller hovedsakelig etterspørres av organisasjoner og avanserte brukere."
-
-#: src/page/about/about.vue:53
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Brukerveiledningen vår dekker mange avanserte emner, for eksempel migrering fra Google Foto og innstillinger for miniatyrbildekvalitet."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1918,10 +1883,6 @@ msgstr "PNG størrelsesgrense: %{n}px"
 msgid "Portrait"
 msgstr "Portrett"
 
-#: src/page/about/about.vue:77
-msgid "post your question in GitHub Discussions"
-msgstr "legg inn spørsmålet ditt i GitHub Discussions"
-
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr "Behold filnavn"
@@ -2000,10 +1961,6 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indekser alle originaler på nytt, inkludert allerede indekserte og uendrede filer."
 
-#: src/page/about/about.vue:56
-msgid "Read the Docs"
-msgstr "Les dokumentasjonen"
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "Skrivebeskyttet Modus"
@@ -2043,7 +2000,7 @@ msgstr "Rød"
 msgid "Reload"
 msgstr "Oppdater"
 
-#: src/component/navigation.vue:128 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Oppdaterer…"
@@ -2391,6 +2348,10 @@ msgstr "Blågrønn"
 msgid "Text too long"
 msgstr "Teksten er for lang"
 
+#: src/page/about/about.vue:34 src/page/about/about.vue:1
+msgid "Thanks for Your Support!"
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Indeksen inneholder %{n} skjulte filer."
@@ -2512,7 +2473,7 @@ msgid "Unknown"
 msgstr "Ukjent"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:86 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Uregistrert"
@@ -2627,7 +2588,7 @@ msgstr "Bruk Forhåndsinnstillinger"
 msgid "User"
 msgstr "Bruker"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:50
+#: src/component/navigation.vue:597
 msgid "User Guide"
 msgstr "Brukerhåndbok"
 
@@ -2687,10 +2648,6 @@ msgstr "Utseende"
 msgid "Viewer"
 msgstr "Seer"
 
-#: src/page/about/about.vue:52
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Besøk docs.photoprism.app/user-guide for å lære hvordan du synkroniserer, organiserer og deler bildene dine."
-
 #: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
@@ -2712,10 +2669,6 @@ msgstr "Vi setter pris på din tilbakemelding!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Vi gjør vårt beste for å svare innen fem virkedager eller mindre."
-
-#: src/page/about/about.vue:83
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Vi skal gjøre vårt beste for å svare på alle spørsmålene dine. Til gjengjeld ber vi deg om å støtte oss på Patreon- eller GitHub-sponsorer."
 
 #: src/component/admin/users/add.vue:234 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2782,10 +2735,6 @@ msgstr "Gul"
 msgid "Yes"
 msgstr "Ja"
 
-#: src/page/about/about.vue:76
-msgid "you are welcome to join us on Reddit"
-msgstr "du er velkommen til å bli med oss på Reddit"
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Du kan bare laste ned ett album"
@@ -2819,6 +2768,51 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
+
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "Før du sender inn en støtteforespørsel, vennligst bruk våre feilsøkingssjekklister for å finne årsaken til problemet."
+
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "Bla gjennom kunnskapsbasen for detaljert informasjon om spesifikke produktfunksjoner, tjenester og relaterte ressurser."
+
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "Vanlige problemer kan raskt diagnostiseres og løses ved hjelp av feilsøkingssjekklistene vi tilbyr."
+
+#~ msgid "Getting Support"
+#~ msgstr "Få støtte"
+
+#~ msgid "If this doesn't help, or you have other questions:"
+#~ msgstr "Hvis dette ikke hjelper, eller du har andre spørsmål:"
+
+#~ msgid "In addition, sponsors receive direct technical support via email."
+#~ msgstr "I tillegg får sponsorer direkte teknisk støtte via e-post."
+
+#~ msgid "Knowledge Base"
+#~ msgstr "Kunnskapsbase"
+
+#~ msgid "Manage account"
+#~ msgstr "Administrer konto"
+
+#~ msgid "or ask in our Community Chat"
+#~ msgstr "eller spør i felleschatten vår"
+
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "Brukerveiledningen vår dekker mange avanserte emner, for eksempel migrering fra Google Foto og innstillinger for miniatyrbildekvalitet."
+
+#~ msgid "post your question in GitHub Discussions"
+#~ msgstr "legg inn spørsmålet ditt i GitHub Discussions"
+
+#~ msgid "Read the Docs"
+#~ msgstr "Les dokumentasjonen"
+
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "Besøk docs.photoprism.app/user-guide for å lære hvordan du synkroniserer, organiserer og deler bildene dine."
+
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "Vi skal gjøre vårt beste for å svare på alle spørsmålene dine. Til gjengjeld ber vi deg om å støtte oss på Patreon- eller GitHub-sponsorer."
+
+#~ msgid "you are welcome to join us on Reddit"
+#~ msgstr "du er velkommen til å bli med oss på Reddit"
 
 #~ msgid "Abyss"
 #~ msgstr "Avgrunn"

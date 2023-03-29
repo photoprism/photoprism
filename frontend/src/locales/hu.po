@@ -62,7 +62,7 @@ msgstr "A kattintás egy másolatot helyez a vágólapra."
 msgid "About"
 msgstr "Rólunk"
 
-#: src/component/navigation.vue:97 src/component/navigation.vue:1996
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -371,10 +371,6 @@ msgstr "Bázis mappa"
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr "Legyen tag még ma, hogy élvezze a további funkciókat és támogassa küldetésünket!"
 
-#: src/page/about/about.vue:71
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Mielőtt támogatási kérelmet nyújt be, kérjük, használja hibaelhárítási ellenőrző listáinkat a probléma okának meghatározásához."
-
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
@@ -411,10 +407,6 @@ msgstr "Böngéssze és szerkessze a képbesorolási címkéket."
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "Böngésszen az indexelt fájlok és mappák között a Könyvtárban."
-
-#: src/page/about/about.vue:61
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "A Tudásbázisban részletes információkat talál a termék egyes jellemzőiről, szolgáltatásairól és a kapcsolódó erőforrásokról."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -538,10 +530,6 @@ msgstr "Színprofil"
 #: src/page/discover.vue:4
 msgid "Colors"
 msgstr "Színek"
-
-#: src/page/about/about.vue:54
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "A gyakori problémák gyorsan diagnosztizálhatók és megoldhatók az általunk biztosított hibaelhárítási ellenőrző listák segítségével."
 
 #: src/page/connect.vue:83 src/page/connect.vue:88
 msgid "Compare Editions"
@@ -1001,11 +989,14 @@ msgstr "Visszacsatolás"
 msgid "Feedback"
 msgstr "Visszacsatolás"
 
-#: src/page/connect.vue:101 src/dialog/sponsor.vue:25
-#: src/page/about/about.vue:38 src/page/about/about.vue:5
-#: src/page/connect.vue:106
+#: src/page/connect.vue:101 src/page/connect.vue:106
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Kérjük, lépjen kapcsolatba velünk a hello@photoprism.app címen, ha kérdése van, vagy segítségre van szüksége."
+
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/page/about/about.vue:5
+msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1097,10 +1088,6 @@ msgstr "Nem"
 msgid "General"
 msgstr "Általános"
 
-#: src/page/about/about.vue:67
-msgid "Getting Support"
-msgstr "Támogatás megszerzése"
-
 #: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "Keresztnév"
@@ -1165,10 +1152,6 @@ msgstr "Nagy dinamikatartomány (HDR)"
 msgid "How can we help?"
 msgstr "Hogyan segíthetünk?"
 
-#: src/page/about/about.vue:72
-msgid "If this doesn't help, or you have other questions:"
-msgstr "Ha ez nem segít, vagy egyéb kérdése van:"
-
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "kép"
@@ -1210,10 +1193,6 @@ msgstr "Fájlok importálása eredetibe…"
 #: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "-ban/-ben"
-
-#: src/page/about/about.vue:81
-msgid "In addition, sponsors receive direct technical support via email."
-msgstr "A szponzorok emellett közvetlen technikai támogatást kapnak e-mailben."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1316,10 +1295,6 @@ msgstr "A JPEG-fájlok és miniatűrök szükség szerint automatikusan megjelen
 msgid "Keywords"
 msgstr "Kulcsszavak"
 
-#: src/page/about/about.vue:59
-msgid "Knowledge Base"
-msgstr "Tudásbázis"
-
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "Címke"
@@ -1364,8 +1339,7 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:63
-#: src/page/about/about.vue:86 src/page/about/about.vue:162
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Tudjon meg többet"
@@ -1488,8 +1462,8 @@ msgstr "Férfi"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
-msgid "Manage account"
-msgstr "Számla kezelése"
+msgid "Manage Account"
+msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1511,7 +1485,6 @@ msgstr "Jelző"
 msgid "Medium"
 msgstr "Közepes"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
 #: src/page/connect.vue:4
 msgid "Membership"
 msgstr "Tagság"
@@ -1763,10 +1736,6 @@ msgstr "Egy személyt találtak"
 msgid "One picture found"
 msgstr "Egy kép található"
 
-#: src/page/about/about.vue:78
-msgid "or ask in our Community Chat"
-msgstr "vagy kérdezz a közösségi csevegésünkben"
-
 #: src/options/options.js:411
 msgid "Orange"
 msgstr "Narancssárga"
@@ -1801,10 +1770,6 @@ msgstr "Egyéb"
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Csapatunk ezt folyamatosan dönti el, attól függően, hogy mekkora támogatási erőfeszítésre van szükség, milyen szerver- és licencköltségek merülnek fel, és hogy a funkciókat általában mindenki igényli-e, vagy elsősorban szervezetek és haladó felhasználók igénylik."
-
-#: src/page/about/about.vue:53
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "A Felhasználói útmutató számos haladó témával is foglalkozik, például a Google Fotókról való áttelepítéssel és a miniatűrök minőségi beállításaival."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1917,10 +1882,6 @@ msgstr "PNG méretkorlát: %{n}px"
 msgid "Portrait"
 msgstr "Portré"
 
-#: src/page/about/about.vue:77
-msgid "post your question in GitHub Discussions"
-msgstr "tegye fel a kérdését a GitHub Discussions-ban"
-
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr "Fájlnevek megőrzése"
@@ -1999,10 +1960,6 @@ msgstr "NYERS"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indexelje újra az összes eredetit, beleértve a már indexelt és változatlan fájlokat is."
 
-#: src/page/about/about.vue:56
-msgid "Read the Docs"
-msgstr "Olvassa el a dokumentumokat"
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "Csak olvasható mód"
@@ -2042,7 +1999,7 @@ msgstr "Piros"
 msgid "Reload"
 msgstr "Újratöltés"
 
-#: src/component/navigation.vue:128 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Újratöltés…"
@@ -2390,6 +2347,10 @@ msgstr "A zöldeskék"
 msgid "Text too long"
 msgstr "A szöveg túl hosszú"
 
+#: src/page/about/about.vue:34 src/page/about/about.vue:1
+msgid "Thanks for Your Support!"
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Az index jelenleg %{n} rejtett fájlt tartalmaz."
@@ -2511,7 +2472,7 @@ msgid "Unknown"
 msgstr "Ismeretlen"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:86 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Nem regisztrált"
@@ -2626,7 +2587,7 @@ msgstr "Előbeállítások használata"
 msgid "User"
 msgstr "Felhasználó"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:50
+#: src/component/navigation.vue:597
 msgid "User Guide"
 msgstr "Felhasználói útmutató"
 
@@ -2686,10 +2647,6 @@ msgstr "Kilátás"
 msgid "Viewer"
 msgstr "Viewer"
 
-#: src/page/about/about.vue:52
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Látogasson el a docs.photoprism.app/user-guide webhelyre, ahol megtudhatja, hogyan szinkronizálhatja, rendszerezheti és oszthatja meg képeit."
-
 #: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
@@ -2711,10 +2668,6 @@ msgstr "Nagyra értékeljük visszajelzéseit!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Igyekszünk öt munkanapon belül vagy annál rövidebb időn belül válaszolni."
-
-#: src/page/about/about.vue:83
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Mindent megteszünk, hogy válaszoljunk minden kérdésére. Cserébe arra kérünk, hogy támogass minket Patreon vagy GitHub szponzorok."
 
 #: src/component/admin/users/add.vue:234 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2781,10 +2734,6 @@ msgstr "Sárga"
 msgid "Yes"
 msgstr "Igen"
 
-#: src/page/about/about.vue:76
-msgid "you are welcome to join us on Reddit"
-msgstr "szívesen látunk a Reddit-en"
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Csak egy albumot tölthet le"
@@ -2818,6 +2767,51 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "Mielőtt támogatási kérelmet nyújt be, kérjük, használja hibaelhárítási ellenőrző listáinkat a probléma okának meghatározásához."
+
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "A Tudásbázisban részletes információkat talál a termék egyes jellemzőiről, szolgáltatásairól és a kapcsolódó erőforrásokról."
+
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "A gyakori problémák gyorsan diagnosztizálhatók és megoldhatók az általunk biztosított hibaelhárítási ellenőrző listák segítségével."
+
+#~ msgid "Getting Support"
+#~ msgstr "Támogatás megszerzése"
+
+#~ msgid "If this doesn't help, or you have other questions:"
+#~ msgstr "Ha ez nem segít, vagy egyéb kérdése van:"
+
+#~ msgid "In addition, sponsors receive direct technical support via email."
+#~ msgstr "A szponzorok emellett közvetlen technikai támogatást kapnak e-mailben."
+
+#~ msgid "Knowledge Base"
+#~ msgstr "Tudásbázis"
+
+#~ msgid "Manage account"
+#~ msgstr "Számla kezelése"
+
+#~ msgid "or ask in our Community Chat"
+#~ msgstr "vagy kérdezz a közösségi csevegésünkben"
+
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "A Felhasználói útmutató számos haladó témával is foglalkozik, például a Google Fotókról való áttelepítéssel és a miniatűrök minőségi beállításaival."
+
+#~ msgid "post your question in GitHub Discussions"
+#~ msgstr "tegye fel a kérdését a GitHub Discussions-ban"
+
+#~ msgid "Read the Docs"
+#~ msgstr "Olvassa el a dokumentumokat"
+
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "Látogasson el a docs.photoprism.app/user-guide webhelyre, ahol megtudhatja, hogyan szinkronizálhatja, rendszerezheti és oszthatja meg képeit."
+
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "Mindent megteszünk, hogy válaszoljunk minden kérdésére. Cserébe arra kérünk, hogy támogass minket Patreon vagy GitHub szponzorok."
+
+#~ msgid "you are welcome to join us on Reddit"
+#~ msgstr "szívesen látunk a Reddit-en"
 
 #~ msgid "Abyss"
 #~ msgstr "Abyss"

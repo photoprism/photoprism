@@ -63,7 +63,7 @@ msgstr "点击复制到剪贴板。"
 msgid "About"
 msgstr "关于"
 
-#: src/component/navigation.vue:97 src/component/navigation.vue:1996
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -372,10 +372,6 @@ msgstr "底层文件夹"
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr "今天就成为会员，享受更多的功能，并支持我们的使命!"
 
-#: src/page/about/about.vue:71
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "在提交支持请求之前，请使用我们的故障排除清单来确定问题的原因。"
-
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
@@ -412,10 +408,6 @@ msgstr "浏览和编辑图像分类标签。"
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "浏览库中已索引的文件和文件夹。"
-
-#: src/page/about/about.vue:61
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "浏览知识库，了解有关特定产品功能、服务和相关资源的详细信息。"
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -539,10 +531,6 @@ msgstr "颜色简介"
 #: src/page/discover.vue:4
 msgid "Colors"
 msgstr "颜色"
-
-#: src/page/about/about.vue:54
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "使用我们提供的故障排除清单，可以快速诊断和解决常见的问题。"
 
 #: src/page/connect.vue:83 src/page/connect.vue:88
 msgid "Compare Editions"
@@ -1002,11 +990,14 @@ msgstr "订阅源"
 msgid "Feedback"
 msgstr "反馈"
 
-#: src/page/connect.vue:101 src/dialog/sponsor.vue:25
-#: src/page/about/about.vue:38 src/page/about/about.vue:5
-#: src/page/connect.vue:106
+#: src/page/connect.vue:101 src/page/connect.vue:106
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "如果你有任何问题，请联系我们：hello@photoprism.app。"
+
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/page/about/about.vue:5
+msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1098,10 +1089,6 @@ msgstr "性别"
 msgid "General"
 msgstr "一般"
 
-#: src/page/about/about.vue:67
-msgid "Getting Support"
-msgstr "获得支持"
-
 #: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "名"
@@ -1166,10 +1153,6 @@ msgstr "高动态范围成像（HDR）"
 msgid "How can we help?"
 msgstr "我们可以帮您吗？"
 
-#: src/page/about/about.vue:72
-msgid "If this doesn't help, or you have other questions:"
-msgstr "如果这没有帮助，或者你有其他问题："
-
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "图片"
@@ -1211,10 +1194,6 @@ msgstr "导入文件到源…"
 #: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "于"
-
-#: src/page/about/about.vue:81
-msgid "In addition, sponsors receive direct technical support via email."
-msgstr "此外，赞助者通过电子邮件获得直接的技术支持。"
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1317,10 +1296,6 @@ msgstr "系统会根据需要生成缩略图，及JPEG格式的预览图。"
 msgid "Keywords"
 msgstr "关键字"
 
-#: src/page/about/about.vue:59
-msgid "Knowledge Base"
-msgstr "知识库"
-
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "标签"
@@ -1365,8 +1340,7 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:63
-#: src/page/about/about.vue:86 src/page/about/about.vue:162
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "进一步了解"
@@ -1489,8 +1463,8 @@ msgstr "男"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
-msgid "Manage account"
-msgstr "管理账户"
+msgid "Manage Account"
+msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1512,7 +1486,6 @@ msgstr "标记"
 msgid "Medium"
 msgstr "中"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
 #: src/page/connect.vue:4
 msgid "Membership"
 msgstr "会员资格"
@@ -1764,10 +1737,6 @@ msgstr "已找到一个人物"
 msgid "One picture found"
 msgstr "已发现一张图片"
 
-#: src/page/about/about.vue:78
-msgid "or ask in our Community Chat"
-msgstr "或在我们的社区聊天中询问"
-
 #: src/options/options.js:411
 msgid "Orange"
 msgstr "橙"
@@ -1803,10 +1772,6 @@ msgstr "其他"
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "我们的团队根据所需的支持工作、服务器和许可成本，以及这些功能是每个人普遍需要的还是主要由组织和高级用户要求的，持续决定这一点。"
-
-#: src/page/about/about.vue:53
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "我们的用户指南还涵盖了许多高级主题，如从谷歌照片迁移和缩略图质量设置。"
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1919,10 +1884,6 @@ msgstr "PNG 大小限制：%{n}px"
 msgid "Portrait"
 msgstr "人像"
 
-#: src/page/about/about.vue:77
-msgid "post your question in GitHub Discussions"
-msgstr "在 GitHub 讨论中发表你的问题"
-
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr "保留文件名"
@@ -2002,10 +1963,6 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "重新索引所有源文件，包括已索引和未更改的文件。"
 
-#: src/page/about/about.vue:56
-msgid "Read the Docs"
-msgstr "阅读文档"
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "只读模式"
@@ -2045,7 +2002,7 @@ msgstr "红"
 msgid "Reload"
 msgstr "重载"
 
-#: src/component/navigation.vue:128 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "重载中…"
@@ -2393,6 +2350,10 @@ msgstr "蓝绿"
 msgid "Text too long"
 msgstr "文字太长"
 
+#: src/page/about/about.vue:34 src/page/about/about.vue:1
+msgid "Thanks for Your Support!"
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "该索引当前包含 %{n} 个隐藏文件。"
@@ -2516,7 +2477,7 @@ msgid "Unknown"
 msgstr "未知"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:86 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "未注册的"
@@ -2631,7 +2592,7 @@ msgstr "使用预设"
 msgid "User"
 msgstr "用户"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:50
+#: src/component/navigation.vue:597
 msgid "User Guide"
 msgstr "用户指南"
 
@@ -2691,10 +2652,6 @@ msgstr "视图"
 msgid "Viewer"
 msgstr "浏览者"
 
-#: src/page/about/about.vue:52
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "访问docs.photoprism.app/user-guide，了解如何同步、组织和分享你的图片。"
-
 #: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
@@ -2716,10 +2673,6 @@ msgstr "感谢您的反馈！"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "我们尽力在五个工作日或更短时间内作出回应。"
-
-#: src/page/about/about.vue:83
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "我们会尽最大努力回答你的所有问题，作为回报，我们请您在 Patreon 或 GitHub 赞助者上支持我们。"
 
 #: src/component/admin/users/add.vue:234 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2788,10 +2741,6 @@ msgstr "黄"
 msgid "Yes"
 msgstr "是"
 
-#: src/page/about/about.vue:76
-msgid "you are welcome to join us on Reddit"
-msgstr "欢迎你在 Reddit 上加入我们"
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "你只能下载一个相册"
@@ -2825,6 +2774,51 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "在提交支持请求之前，请使用我们的故障排除清单来确定问题的原因。"
+
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "浏览知识库，了解有关特定产品功能、服务和相关资源的详细信息。"
+
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "使用我们提供的故障排除清单，可以快速诊断和解决常见的问题。"
+
+#~ msgid "Getting Support"
+#~ msgstr "获得支持"
+
+#~ msgid "If this doesn't help, or you have other questions:"
+#~ msgstr "如果这没有帮助，或者你有其他问题："
+
+#~ msgid "In addition, sponsors receive direct technical support via email."
+#~ msgstr "此外，赞助者通过电子邮件获得直接的技术支持。"
+
+#~ msgid "Knowledge Base"
+#~ msgstr "知识库"
+
+#~ msgid "Manage account"
+#~ msgstr "管理账户"
+
+#~ msgid "or ask in our Community Chat"
+#~ msgstr "或在我们的社区聊天中询问"
+
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "我们的用户指南还涵盖了许多高级主题，如从谷歌照片迁移和缩略图质量设置。"
+
+#~ msgid "post your question in GitHub Discussions"
+#~ msgstr "在 GitHub 讨论中发表你的问题"
+
+#~ msgid "Read the Docs"
+#~ msgstr "阅读文档"
+
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "访问docs.photoprism.app/user-guide，了解如何同步、组织和分享你的图片。"
+
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "我们会尽最大努力回答你的所有问题，作为回报，我们请您在 Patreon 或 GitHub 赞助者上支持我们。"
+
+#~ msgid "you are welcome to join us on Reddit"
+#~ msgstr "欢迎你在 Reddit 上加入我们"
 
 #~ msgid "Abyss"
 #~ msgstr "深渊"

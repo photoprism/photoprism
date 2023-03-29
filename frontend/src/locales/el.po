@@ -60,7 +60,7 @@ msgstr "Ένα κλικ θα το αντιγράψει στο πρόχειρο."
 msgid "About"
 msgstr "Σχετικά"
 
-#: src/component/navigation.vue:97 src/component/navigation.vue:1996
+#: src/component/navigation.vue:98 src/component/navigation.vue:1996
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -369,10 +369,6 @@ msgstr "Φάκελος βάσης"
 msgid "Become a member today to enjoy additional features and support our mission!"
 msgstr "Γίνετε μέλος σήμερα για να απολαμβάνετε πρόσθετες λειτουργίες και να υποστηρίζετε την αποστολή μας!"
 
-#: src/page/about/about.vue:71
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Πριν υποβάλετε αίτημα υποστήριξης, χρησιμοποιήστε τις Λίστες Αντιμετώπισης Προβλημάτων για να προσδιορίσετε την αιτία του προβλήματός σας."
-
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
@@ -409,10 +405,6 @@ msgstr "Αναζήτηση και επεξεργασία ετικετών ταξ
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
 msgstr "Περιήγηση σε αρχεία και φακέλους στη Βιβλιοθήκη."
-
-#: src/page/about/about.vue:61
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Περιηγηθείτε στη Βάση Γνώσεων για λεπτομερείς πληροφορίες σχετικά με συγκεκριμένα χαρακτηριστικά του προϊόντος, υπηρεσίες και σχετικούς πόρους."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:429
 msgid "Bug Report"
@@ -536,10 +528,6 @@ msgstr "Προφίλ χρώματος"
 #: src/page/discover.vue:4
 msgid "Colors"
 msgstr "Χρώματα"
-
-#: src/page/about/about.vue:54
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Τα συνήθη προβλήματα μπορούν να διαγνωστούν και να επιλυθούν γρήγορα χρησιμοποιώντας τις λίστες ελέγχου αντιμετώπισης προβλημάτων που παρέχουμε."
 
 #: src/page/connect.vue:83 src/page/connect.vue:88
 msgid "Compare Editions"
@@ -999,11 +987,14 @@ msgstr "Ανατροφοδότηση"
 msgid "Feedback"
 msgstr "Ανατροφοδότηση"
 
-#: src/page/connect.vue:101 src/dialog/sponsor.vue:25
-#: src/page/about/about.vue:38 src/page/about/about.vue:5
-#: src/page/connect.vue:106
+#: src/page/connect.vue:101 src/page/connect.vue:106
 msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 msgstr "Μη διστάσετε να επικοινωνήσετε μαζί μας στο hello@photoprism.app αν έχετε οποιεσδήποτε ερωτήσεις."
+
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:38
+#: src/page/about/about.vue:5
+msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
 
 #: src/options/options.js:443
 msgid "Female"
@@ -1095,10 +1086,6 @@ msgstr "Λεβάντα"
 msgid "General"
 msgstr "Γενικά"
 
-#: src/page/about/about.vue:67
-msgid "Getting Support"
-msgstr "Λήψη υποστήριξης"
-
 #: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "Αρχικό όνομα"
@@ -1163,10 +1150,6 @@ msgstr "Υψηλό δυναμικό εύρος (HDR)"
 msgid "How can we help?"
 msgstr "Πώς μπορούμε να βοηθήσουμε;"
 
-#: src/page/about/about.vue:72
-msgid "If this doesn't help, or you have other questions:"
-msgstr "Εάν αυτό δεν βοηθά ή έχετε άλλες ερωτήσεις:"
-
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "εικόνα"
@@ -1208,10 +1191,6 @@ msgstr "Εισαγωγή αρχείων σε πρωτότυπα…"
 #: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "στο"
-
-#: src/page/about/about.vue:81
-msgid "In addition, sponsors receive direct technical support via email."
-msgstr "Επιπλέον, οι χορηγοί λαμβάνουν άμεση τεχνική υποστήριξη μέσω ηλεκτρονικού ταχυδρομείου."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1314,10 +1293,6 @@ msgstr "Τα JPEG και οι μικρογραφίες αποδίδονται α
 msgid "Keywords"
 msgstr "Λέξεις κλειδιά"
 
-#: src/page/about/about.vue:59
-msgid "Knowledge Base"
-msgstr "Βάση γνώσεων"
-
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "Ετικέτα"
@@ -1362,8 +1337,7 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:63
-#: src/page/about/about.vue:86 src/page/about/about.vue:162
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:264
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Μάθετε περισσότερα"
@@ -1486,8 +1460,8 @@ msgstr "Αρσενικό"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:42
 #: src/page/about/about.vue:9 src/page/connect.vue:85
-msgid "Manage account"
-msgstr "Διαχείριση λογαριασμού"
+msgid "Manage Account"
+msgstr ""
 
 #: src/dialog/photo/edit/labels.vue:35
 msgid "manual"
@@ -1509,7 +1483,6 @@ msgstr "Δείκτης"
 msgid "Medium"
 msgstr "Μεσαίο"
 
-#: src/page/about/about.vue:34 src/page/about/about.vue:1
 #: src/page/connect.vue:4
 msgid "Membership"
 msgstr "Μέλη"
@@ -1761,10 +1734,6 @@ msgstr "Ένα άτομο βρήκε"
 msgid "One picture found"
 msgstr "Μια εικόνα που βρέθηκε"
 
-#: src/page/about/about.vue:78
-msgid "or ask in our Community Chat"
-msgstr "ή ρωτήστε στο Community Chat"
-
 #: src/options/options.js:411
 msgid "Orange"
 msgstr "Πορτοκαλί"
@@ -1799,10 +1768,6 @@ msgstr "Άλλα"
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Η ομάδα μας το αποφασίζει αυτό σε συνεχή βάση ανάλογα με την απαιτούμενη προσπάθεια υποστήριξης, το κόστος του διακομιστή και των αδειών χρήσης και το αν οι λειτουργίες χρειάζονται γενικά από όλους ή ζητούνται κυρίως από οργανισμούς και προχωρημένους χρήστες."
-
-#: src/page/about/about.vue:53
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Ο Οδηγός χρήστη καλύπτει επίσης πολλά θέματα για προχωρημένους, όπως η μετανάστευση από τις Φωτογραφίες Google και οι ρυθμίσεις ποιότητας μικρογραφιών."
 
 #: src/options/options.js:301
 msgid "Outdoor"
@@ -1915,10 +1880,6 @@ msgstr "Όριο μεγέθους PNG: %{n}px"
 msgid "Portrait"
 msgstr "Πορτρέτο"
 
-#: src/page/about/about.vue:77
-msgid "post your question in GitHub Discussions"
-msgstr "δημοσιεύστε την ερώτησή σας στο GitHub Discussions"
-
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
 msgstr "Διατήρηση ονομάτων αρχείων"
@@ -1997,10 +1958,6 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Δημιουργία ευρετηρίου όλων των πρωτοτύπων, συμπεριλαμβανομένων των ήδη καταχωρημένων και αμετάβλητων αρχείων."
 
-#: src/page/about/about.vue:56
-msgid "Read the Docs"
-msgstr "Διαβάστε τα έγγραφα"
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "Λειτουργία μόνο για ανάγνωση"
@@ -2040,7 +1997,7 @@ msgstr "Κόκκινο"
 msgid "Reload"
 msgstr "Επαναφόρτωση"
 
-#: src/component/navigation.vue:128 src/dialog/reload.vue:26
+#: src/component/navigation.vue:129 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Επαναγέμισμα…"
@@ -2388,6 +2345,10 @@ msgstr "Teal"
 msgid "Text too long"
 msgstr "Πολύ μεγάλο κείμενο"
 
+#: src/page/about/about.vue:34 src/page/about/about.vue:1
+msgid "Thanks for Your Support!"
+msgstr ""
+
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
 msgstr "Το ευρετήριο περιέχει επί του παρόντος %{n} κρυμμένα αρχεία."
@@ -2509,7 +2470,7 @@ msgid "Unknown"
 msgstr "Άγνωστος"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:86 src/page/settings/account.vue:35
+#: src/component/navigation.vue:87 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Μη εγγεγραμμένο"
@@ -2624,7 +2585,7 @@ msgstr "Χρήση Προεπιλογών"
 msgid "User"
 msgstr "Χρήστης"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:50
+#: src/component/navigation.vue:597
 msgid "User Guide"
 msgstr "Οδηγός χρήσης"
 
@@ -2684,10 +2645,6 @@ msgstr "Προβολή"
 msgid "Viewer"
 msgstr "Πρόγραμμα προβολής"
 
-#: src/page/about/about.vue:52
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Επισκεφθείτε το docs.photoprism.app/user-guide για να μάθετε πώς να συγχρονίζετε, να οργανώνετε και να μοιράζεστε τις φωτογραφίες σας."
-
 #: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
@@ -2709,10 +2666,6 @@ msgstr "Εκτιμούμε τα σχόλιά σας!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Κάνουμε ό,τι μπορούμε για να απαντήσουμε εντός πέντε εργάσιμων ημερών ή λιγότερο."
-
-#: src/page/about/about.vue:83
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Θα κάνουμε ό,τι μπορούμε για να απαντήσουμε σε όλες τις ερωτήσεις σας. Σε αντάλλαγμα, σας ζητάμε να μας υποστηρίξετε στο Patreon ή στο GitHub Sponsors."
 
 #: src/component/admin/users/add.vue:234 src/component/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2779,10 +2732,6 @@ msgstr "Κίτρινο"
 msgid "Yes"
 msgstr "Ναι"
 
-#: src/page/about/about.vue:76
-msgid "you are welcome to join us on Reddit"
-msgstr "είστε ευπρόσδεκτοι να μας ακολουθήσετε στο Reddit"
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Μπορείτε να κατεβάσετε μόνο μια συλλογή"
@@ -2816,6 +2765,51 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "Πριν υποβάλετε αίτημα υποστήριξης, χρησιμοποιήστε τις Λίστες Αντιμετώπισης Προβλημάτων για να προσδιορίσετε την αιτία του προβλήματός σας."
+
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "Περιηγηθείτε στη Βάση Γνώσεων για λεπτομερείς πληροφορίες σχετικά με συγκεκριμένα χαρακτηριστικά του προϊόντος, υπηρεσίες και σχετικούς πόρους."
+
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "Τα συνήθη προβλήματα μπορούν να διαγνωστούν και να επιλυθούν γρήγορα χρησιμοποιώντας τις λίστες ελέγχου αντιμετώπισης προβλημάτων που παρέχουμε."
+
+#~ msgid "Getting Support"
+#~ msgstr "Λήψη υποστήριξης"
+
+#~ msgid "If this doesn't help, or you have other questions:"
+#~ msgstr "Εάν αυτό δεν βοηθά ή έχετε άλλες ερωτήσεις:"
+
+#~ msgid "In addition, sponsors receive direct technical support via email."
+#~ msgstr "Επιπλέον, οι χορηγοί λαμβάνουν άμεση τεχνική υποστήριξη μέσω ηλεκτρονικού ταχυδρομείου."
+
+#~ msgid "Knowledge Base"
+#~ msgstr "Βάση γνώσεων"
+
+#~ msgid "Manage account"
+#~ msgstr "Διαχείριση λογαριασμού"
+
+#~ msgid "or ask in our Community Chat"
+#~ msgstr "ή ρωτήστε στο Community Chat"
+
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "Ο Οδηγός χρήστη καλύπτει επίσης πολλά θέματα για προχωρημένους, όπως η μετανάστευση από τις Φωτογραφίες Google και οι ρυθμίσεις ποιότητας μικρογραφιών."
+
+#~ msgid "post your question in GitHub Discussions"
+#~ msgstr "δημοσιεύστε την ερώτησή σας στο GitHub Discussions"
+
+#~ msgid "Read the Docs"
+#~ msgstr "Διαβάστε τα έγγραφα"
+
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "Επισκεφθείτε το docs.photoprism.app/user-guide για να μάθετε πώς να συγχρονίζετε, να οργανώνετε και να μοιράζεστε τις φωτογραφίες σας."
+
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "Θα κάνουμε ό,τι μπορούμε για να απαντήσουμε σε όλες τις ερωτήσεις σας. Σε αντάλλαγμα, σας ζητάμε να μας υποστηρίξετε στο Patreon ή στο GitHub Sponsors."
+
+#~ msgid "you are welcome to join us on Reddit"
+#~ msgstr "είστε ευπρόσδεκτοι να μας ακολουθήσετε στο Reddit"
 
 #~ msgid "Abyss"
 #~ msgstr "Άβυσσος"
