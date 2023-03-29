@@ -88,27 +88,34 @@ Api.interceptors.response.use(
   function (error) {
     Notify.ajaxEnd();
 
+    // Skip error handling if request was canceled.
     if (Axios.isCancel(error)) {
       return Promise.reject(error);
     }
 
-    if (console && console.log) {
+    // Log error for debugging.
+    if (console && console.log && error) {
       console.log(error);
     }
 
-    let errorMessage = $gettext("An error occurred - are you offline?");
+    // Default error message.
+    let errorMessage = $gettext("Something went wrong, try again");
     let code = error.code;
 
+    // Extract error details from response.
     if (error.response && error.response.data) {
       let data = error.response.data;
       code = data.code;
       errorMessage = data.message ? data.message : data.error;
     }
 
-    if (code === 401) {
-      Notify.logout(errorMessage);
-    } else {
-      Notify.error(errorMessage);
+    // Show error notification.
+    if (errorMessage) {
+      if (code === 401) {
+        Notify.logout(errorMessage);
+      } else {
+        Notify.error(errorMessage);
+      }
     }
 
     return Promise.reject(error);
