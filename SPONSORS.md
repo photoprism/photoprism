@@ -14,7 +14,7 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 [**@ppibburr**](https://github.com/ppibburr) (GitHub Sponsors, December 2021)
 
-[Arto Bendiken](https://github.com/artob) (GitHub Sponsors, March 2023)
+[**Arto Bendiken**](https://github.com/artob) (GitHub Sponsors, March 2023)
 
 ## Gold Sponsors ##
 
