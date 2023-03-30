@@ -58,7 +58,7 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 **PhotoPrism is 100% self-funded and independent.** Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent!
 
-Our sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors. We currently have the following sponsorship options:
+Our members enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other members. We currently have the following membership options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
@@ -66,7 +66,7 @@ Our sponsors enjoy additional features, including access to [interactive world m
 
 You are welcome to [contact us](https://www.photoprism.app/contact) for change requests, account details, and business partnerships.
 
-[Become a Sponsor ›](https://link.photoprism.app/membership) [Contact Us ›](https://www.photoprism.app/contact)
+[Become a Member ›](https://link.photoprism.app/membership) [Contact Us ›](https://www.photoprism.app/contact)
 
 ### Why Your Support Matters ###
 
@@ -84,7 +84,7 @@ Please also leave [a star](https://github.com/photoprism/photoprism/stargazers) 
 
 Visit [docs.photoprism.app/user-guide](https://docs.photoprism.app/user-guide/) to learn how to [sync](https://docs.photoprism.app/user-guide/sync/webdav/), [organize](https://docs.photoprism.app/user-guide/library/), and [share](https://docs.photoprism.app/user-guide/share/) your pictures. If you need help installing our software at home, you can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions).
 
-Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/). Eligible [sponsors](https://link.photoprism.app/membership) are also welcome to [email us for technical support](https://www.photoprism.app/contact) and personalized advice.
+Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/). Eligible [members](https://link.photoprism.app/membership) are also welcome to [email us for technical support](https://www.photoprism.app/contact) and personalized advice.
 
 ## Upcoming Features and Enhancements ##
 
