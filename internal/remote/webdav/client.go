@@ -173,7 +173,7 @@ func (c *Client) MkdirAll(dir string) (err error) {
 
 	for _, folder := range folders {
 		dir = path.Join(dir, folder)
-		err = c.client.Mkdir(dir)
+		err = c.Mkdir(dir)
 	}
 
 	return err
@@ -193,7 +193,15 @@ func (c *Client) Mkdir(dir string) error {
 
 	c.mkdir[dir] = true
 
-	return c.client.Mkdir(dir)
+	err := c.client.Mkdir(dir)
+
+	if err == nil {
+		return nil
+	} else if strings.Contains(err.Error(), "already exists") {
+		return nil
+	}
+
+	return err
 }
 
 // Upload uploads a single file to the remote server.

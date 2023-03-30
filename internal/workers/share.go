@@ -102,8 +102,10 @@ func (w *Share) Start() (err error) {
 
 			dir := path.Dir(file.RemoteName)
 
-			// Ensure destination folder exists.
-			_ = client.MkdirAll(dir)
+			// Ensure remote folder exists.
+			if err := client.MkdirAll(dir); err != nil {
+				log.Debugf("share: %s", err)
+			}
 
 			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
 

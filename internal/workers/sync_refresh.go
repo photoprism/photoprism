@@ -20,10 +20,15 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 		return false, err
 	}
 
+	// Ensure remote folder exists.
+	if err = client.MkdirAll(a.SyncPath); err != nil {
+		log.Debugf("sync: %s", err)
+	}
+
 	subDirs, err := client.Directories(a.SyncPath, true, webdav.MaxRequestDuration)
 
 	if err != nil {
-		log.Error(err)
+		log.Errorf("sync: %s", err)
 		return false, err
 	}
 

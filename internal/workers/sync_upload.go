@@ -45,8 +45,10 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		remoteName := path.Join(a.SyncPath, file.FileName)
 		remoteDir := path.Dir(remoteName)
 
-		// Ensure destination folder exists.
-		_ = client.MkdirAll(remoteDir)
+		// Ensure remote folder exists.
+		if err := client.MkdirAll(remoteDir); err != nil {
+			log.Debugf("sync: %s", err)
+		}
 
 		if err := client.Upload(fileName, remoteName); err != nil {
 			w.logError(err)
