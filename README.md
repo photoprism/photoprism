@@ -58,15 +58,15 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 **PhotoPrism is 100% self-funded and independent.** Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent!
 
-Our members enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other members. We currently have the following membership options:
+Our members [enjoy additional features](https://www.photoprism.app/kb/personal), including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to [connect with our team](https://www.photoprism.app/about/team). We currently have the following membership options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
 - Stripe will be available this year, so you can sign up directly in the app
 
-You are welcome to [contact us](https://www.photoprism.app/contact) for change requests, account details, and business partnerships.
+You are [welcome to contact us](https://www.photoprism.app/contact) for change requests, membership questions, and business partnerships.
 
-[Become a Member ›](https://link.photoprism.app/membership) [Contact Us ›](https://www.photoprism.app/contact)
+[Support Our Mission ›](https://link.photoprism.app/membership) [Contact Us ›](https://www.photoprism.app/contact)
 
 ### Why Your Support Matters ###
 
