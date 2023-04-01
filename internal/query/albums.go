@@ -10,6 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/sortby"
 )
 
@@ -21,17 +22,31 @@ func Albums(offset, limit int) (results entity.Albums, err error) {
 
 // AlbumByUID returns a Album based on the UID.
 func AlbumByUID(albumUID string) (album entity.Album, err error) {
+	if rnd.InvalidUID(albumUID, entity.AlbumUID) {
+		return album, fmt.Errorf("invalid album uid")
+	}
+
 	return entity.CachedAlbumByUID(albumUID)
 }
 
 // AlbumCoverByUID returns an album cover file based on the uid.
 func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
+	if rnd.InvalidUID(uid, entity.AlbumUID) {
+		return file, fmt.Errorf("invalid album uid")
+	}
+
 	a := entity.Album{}
 
 	// Find album.
 	if a, err = AlbumByUID(uid); err != nil {
 		return file, err
-	} else if a.AlbumType != entity.AlbumDefault { // TODO: Optimize
+	} else if !a.HasID() {
+		return file, fmt.Errorf("album uid %s is invalid", clean.Log(uid))
+	} else if a.AlbumType != entity.AlbumManual { // TODO: Optimize
+		if a.AlbumFilter == "" {
+			return file, fmt.Errorf("smart album %s has no filter specified", a.AlbumUID)
+		}
+
 		f := form.SearchPhotos{Album: a.AlbumUID, Filter: a.AlbumFilter, Order: sortby.Relevance, Count: 1, Offset: 0, Merged: false}
 
 		if err = f.ParseQueryString(); err != nil {
@@ -71,8 +86,8 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 
 	// Build query.
 	stmt := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
-		Joins("JOIN albums ON albums.album_uid = ?", uid).
-		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = 0").
+		Joins("JOIN albums a ON a.album_uid = ?", uid).
+		Joins("JOIN photos_albums pa ON pa.album_uid = a.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = 0 AND pa.missing = 0").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL")
 
 	// Public pictures only?
@@ -81,7 +96,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 	}
 
 	// Find first picture.
-	if err := stmt.Order("photos.photo_quality DESC, photos.taken_at DESC").
+	if err = stmt.Order("photos.photo_quality DESC, photos.taken_at DESC").
 		First(&file).Error; err != nil {
 		return file, err
 	}
@@ -96,11 +111,11 @@ func UpdateAlbumDates() error {
 
 	switch DbDialect() {
 	case MySQL:
-		return UnscopedDb().Exec(`UPDATE albums
-		INNER JOIN
-			(SELECT photo_path, MAX(taken_at_local) AS taken_max
+		return UnscopedDb().Exec(`UPDATE albums INNER JOIN (
+             SELECT photo_path, MAX(taken_at_local) AS taken_max
 			 FROM photos WHERE taken_src = 'meta' AND photos.photo_quality >= 3 AND photos.deleted_at IS NULL
-			 GROUP BY photo_path) AS p ON albums.album_path = p.photo_path
+			 GROUP BY photo_path
+	    ) AS p ON albums.album_path = p.photo_path
 		SET albums.album_year = YEAR(taken_max), albums.album_month = MONTH(taken_max), albums.album_day = DAY(taken_max)
 		WHERE albums.album_type = 'folder' AND albums.album_path IS NOT NULL AND p.taken_max IS NOT NULL`).Error
 	default:
@@ -122,6 +137,10 @@ func UpdateMissingAlbumEntries() error {
 
 // AlbumEntryFound removes the missing flag from album entries.
 func AlbumEntryFound(uid string) error {
+	if rnd.InvalidUID(uid, entity.PhotoUID) {
+		return fmt.Errorf("invalid photo uid")
+	}
+
 	switch DbDialect() {
 	default:
 		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 0 WHERE photo_uid = ?`, uid).Error
@@ -131,6 +150,12 @@ func AlbumEntryFound(uid string) error {
 // AlbumsPhotoUIDs returns up to 100000 photo UIDs that belong to the specified albums.
 func AlbumsPhotoUIDs(albums []string, includeDefault, includePrivate bool) (photos []string, err error) {
 	for _, albumUid := range albums {
+		if rnd.InvalidUID(albumUid, entity.AlbumUID) {
+			// Should never happen.
+			log.Debugf("query: album uid %s is invalid", clean.Log(albumUid))
+			continue
+		}
+
 		a, err := AlbumByUID(albumUid)
 
 		if err != nil {
@@ -138,7 +163,11 @@ func AlbumsPhotoUIDs(albums []string, includeDefault, includePrivate bool) (phot
 			continue
 		}
 
-		if a.IsDefault() && !includeDefault {
+		if a.IsDefault() && !includeDefault || !a.HasID() {
+			continue
+		} else if !a.IsDefault() && a.AlbumFilter == "" {
+			// Should never happen.
+			log.Debugf("query: smart album %s has empty filter", clean.Log(a.AlbumUID))
 			continue
 		}
 

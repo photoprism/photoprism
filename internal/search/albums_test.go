@@ -156,7 +156,7 @@ func TestAlbums(t *testing.T) {
 	})
 	t.Run("SearchAlbumForYear", func(t *testing.T) {
 		f := form.SearchAlbums{
-			Type:   entity.AlbumDefault,
+			Type:   entity.AlbumManual,
 			Year:   "2018",
 			Month:  "",
 			Day:    "",

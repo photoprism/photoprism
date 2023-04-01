@@ -187,20 +187,20 @@ type Moments []Moment
 
 // MomentsTime counts photos by month and year.
 func MomentsTime(threshold int, public bool) (results Moments, err error) {
-	db := UnscopedDb().Table("photos").
+	stmt := UnscopedDb().Table("photos").
 		Select("photos.photo_year AS year, photos.photo_month AS month, COUNT(*) AS photo_count").
 		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photos.photo_year > 0 AND photos.photo_month > 0")
 
 	// Ignore private pictures?
 	if public {
-		db = db.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = 0")
 	}
 
-	db = db.Group("photos.photo_year, photos.photo_month").
+	stmt = stmt.Group("photos.photo_year, photos.photo_month").
 		Order("photos.photo_year DESC, photos.photo_month DESC").
 		Having("photo_count >= ?", threshold)
 
-	if err := db.Scan(&results).Error; err != nil {
+	if err = stmt.Scan(&results).Error; err != nil {
 		return results, err
 	}
 
@@ -209,19 +209,19 @@ func MomentsTime(threshold int, public bool) (results Moments, err error) {
 
 // MomentsCountries returns the most popular countries by year.
 func MomentsCountries(threshold int, public bool) (results Moments, err error) {
-	db := UnscopedDb().Table("photos").
+	stmt := UnscopedDb().Table("photos").
 		Select("photo_year AS year, photo_country AS country, COUNT(*) AS photo_count").
 		Where("photos.photo_quality >= 3 AND deleted_at IS NULL AND photo_country <> 'zz' AND photo_year > 0")
 
 	// Ignore private pictures?
 	if public {
-		db = db.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = 0")
 	}
 
-	db = db.Group("photo_year, photo_country").
+	stmt = stmt.Group("photo_year, photo_country").
 		Having("photo_count >= ?", threshold)
 
-	if err := db.Scan(&results).Error; err != nil {
+	if err = stmt.Scan(&results).Error; err != nil {
 		return results, err
 	}
 
@@ -230,20 +230,20 @@ func MomentsCountries(threshold int, public bool) (results Moments, err error) {
 
 // MomentsStates returns the most popular states and countries by year.
 func MomentsStates(threshold int, public bool) (results Moments, err error) {
-	db := UnscopedDb().Table("photos").
+	stmt := UnscopedDb().Table("photos").
 		Select("p.place_country AS country, p.place_state AS state, COUNT(*) AS photo_count").
 		Joins("JOIN places p ON p.id = photos.place_id").
 		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND p.place_state <> '' AND p.place_country <> 'zz'")
 
 	// Ignore private pictures?
 	if public {
-		db = db.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = 0")
 	}
 
-	db = db.Group("p.place_country, p.place_state").
+	stmt = stmt.Group("p.place_country, p.place_state").
 		Having("photo_count >= ?", threshold)
 
-	if err := db.Scan(&results).Error; err != nil {
+	if err = stmt.Scan(&results).Error; err != nil {
 		return results, err
 	}
 
@@ -260,7 +260,7 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 
 	m := Moments{}
 
-	db := UnscopedDb().Table("photos").
+	stmt := UnscopedDb().Table("photos").
 		Select("l.label_slug AS label, COUNT(*) AS photo_count").
 		Joins("JOIN photos_labels pl ON pl.photo_id = photos.id AND pl.uncertainty < 100").
 		Joins("JOIN labels l ON l.id = pl.label_id").
@@ -268,13 +268,13 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		db = db.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = 0")
 	}
 
-	db = db.Group("l.label_slug").
+	stmt = stmt.Group("l.label_slug").
 		Having("photo_count >= ?", threshold)
 
-	if err := db.Scan(&m).Error; err != nil {
+	if err = stmt.Scan(&m).Error; err != nil {
 		return m, err
 	}
 
@@ -299,16 +299,18 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 // RemoveDuplicateMoments deletes generated albums with duplicate slug or filter.
 func RemoveDuplicateMoments() (removed int, err error) {
 	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid 
-		IN (SELECT a.album_uid FROM albums a JOIN albums b ON a.album_type = b.album_type 
-		AND a.album_type <> ? AND a.id > b.id WHERE (a.album_slug = b.album_slug 
-		OR a.album_filter = b.album_filter) GROUP BY a.album_uid)`, entity.AlbumDefault); res.Error != nil {
+		IN (SELECT a.album_uid FROM albums a JOIN albums b ON a.album_type <> ?
+		AND a.album_type = b.album_type AND a.id > b.id
+		WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)
+		GROUP BY a.album_uid)`, entity.AlbumManual); res.Error != nil {
 		return removed, res.Error
 	}
 
 	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id 
-		IN (SELECT a.id FROM albums a JOIN albums b ON a.album_type = b.album_type 
-		AND a.album_type <> ? AND a.id > b.id WHERE (a.album_slug = b.album_slug 
-		OR a.album_filter = b.album_filter) GROUP BY a.album_uid)`, entity.AlbumDefault); res.Error != nil {
+		IN (SELECT a.id FROM albums a JOIN albums b ON a.album_type <> ?
+			AND a.album_type = b.album_type  AND a.id > b.id
+			WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)
+			GROUP BY a.album_uid)`, entity.AlbumManual); res.Error != nil {
 		return removed, res.Error
 	} else if res.RowsAffected > 0 {
 		removed = int(res.RowsAffected)
