@@ -98,6 +98,12 @@ func (c *Config) DatabaseDsn() string {
 	return c.options.DatabaseDsn
 }
 
+// DatabaseFile returns the filename part of a sqlite database DSN.
+func (c *Config) DatabaseFile() string {
+	fileName, _, _ := strings.Cut(c.DatabaseDsn(), "?")
+	return fileName
+}
+
 // ParseDatabaseDsn parses the database dsn and extracts user, password, database server, and name.
 func (c *Config) ParseDatabaseDsn() {
 	if c.options.DatabaseDsn == "" || c.options.DatabaseServer != "" {

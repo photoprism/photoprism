@@ -22,7 +22,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-const restoreDescription = "A user-defined SQL dump FILENAME can be passed as the first argument. " +
+const restoreDescription = "A user-defined filename or - for stdin can be passed as the first argument. " +
 	"The -i parameter can be omitted in this case.\n" +
 	"   The index backup and album file paths are automatically detected if not specified explicitly."
 
@@ -30,8 +30,8 @@ const restoreDescription = "A user-defined SQL dump FILENAME can be passed as th
 var RestoreCommand = cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,
-	Usage:       "Restores the index from an SQL dump and optionally albums from YAML files",
-	ArgsUsage:   "filename.sql",
+	Usage:       "Restores the index from a backup and optionally albums from YAML files",
+	ArgsUsage:   "[filename]",
 	Flags:       restoreFlags,
 	Action:      restoreAction,
 }
@@ -51,7 +51,7 @@ var restoreFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "restore index from SQL dump",
+		Usage: "restore index from backup",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
@@ -101,16 +101,11 @@ func restoreAction(ctx *cli.Context) error {
 			}
 
 			if len(matches) == 0 {
-				log.Errorf("no SQL dumps found in %s", indexPath)
+				log.Errorf("no backup files found in %s", indexPath)
 				return nil
 			}
 
 			indexFileName = matches[len(matches)-1]
-		}
-
-		if !fs.FileExists(indexFileName) {
-			log.Errorf("SQL dump not found: %s", indexFileName)
-			return nil
 		}
 
 		counts := struct{ Photos int }{}
@@ -122,17 +117,9 @@ func restoreAction(ctx *cli.Context) error {
 		if counts.Photos == 0 {
 			// Do nothing;
 		} else if !ctx.Bool("force") {
-			return fmt.Errorf("use --force to replace exisisting index with %d photos", counts.Photos)
+			return fmt.Errorf("found exisisting index with %d pictures, use --force to replace it", counts.Photos)
 		} else {
-			log.Warnf("replacing existing index with %d photos", counts.Photos)
-		}
-
-		log.Infof("restoring index from %s", clean.Log(indexFileName))
-
-		sqlBackup, err := os.ReadFile(indexFileName)
-
-		if err != nil {
-			return err
+			log.Warnf("replacing existing index with %d pictures", counts.Photos)
 		}
 
 		tables := entity.Entities
@@ -156,19 +143,29 @@ func restoreAction(ctx *cli.Context) error {
 			tables.Drop(conf.Db())
 			cmd = exec.Command(
 				conf.SqliteBin(),
-				conf.DatabaseDsn(),
+				conf.DatabaseFile(),
 			)
 		default:
 			return fmt.Errorf("unsupported database type: %s", conf.DatabaseDriver())
 		}
 
-		// Fetch command output.
-		var out bytes.Buffer
-		var stderr bytes.Buffer
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
+		// Read from stdin or file.
+		var f *os.File
+		if indexFileName == "-" {
+			log.Infof("restoring index from stdin")
+			f = os.Stdin
+		} else if f, err = os.OpenFile(indexFileName, os.O_RDONLY, 0); err != nil {
+			return fmt.Errorf("failed to open %s: %s", clean.Log(indexFileName), err)
+		} else {
+			log.Infof("restoring index from %s", clean.Log(indexFileName))
+			defer f.Close()
+		}
 
-		stdin, err := cmd.StdinPipe()
+		var stderr bytes.Buffer
+		var stdin io.WriteCloser
+		cmd.Stderr = &stderr
+		cmd.Stdout = os.Stdout
+		stdin, err = cmd.StdinPipe()
 
 		if err != nil {
 			log.Fatal(err)
@@ -176,7 +173,7 @@ func restoreAction(ctx *cli.Context) error {
 
 		go func() {
 			defer stdin.Close()
-			if _, err := io.WriteString(stdin, string(sqlBackup)); err != nil {
+			if _, err = io.Copy(stdin, f); err != nil {
 				log.Errorf(err.Error())
 			}
 		}()
