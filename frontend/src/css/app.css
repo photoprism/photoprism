@@ -180,8 +180,8 @@ ol, ul {
     padding: 1px 0 1px 8px !important;
 }
 
-#photoprism .v-list__tile .v-icon {
-    color: inherit!important;
+body #photoprism .v-list__tile .v-icon {
+    color: inherit;
 }
 
 /* Image Orientation */
