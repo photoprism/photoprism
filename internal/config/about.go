@@ -24,9 +24,9 @@ Additional information can be found in our Developer Guide:
 */
 package config
 
-// MsgSponsor provides membership information.
-var MsgSponsor = "Upgrade now to support our mission! 💎"
-var SignUpURL = "https://www.photoprism.app/editions"
+var SignUpInfo = "Support Our Mission"
+var SignUpURL = "https://www.photoprism.app/membership"
+var MsgSponsor = "Become a member today, support our mission and enjoy our member benefits! 💎"
 var MsgSignUp = "Visit " + SignUpURL + " to learn more."
 var MsgSponsorCommand = "Since running this command puts additional load on our infrastructure," +
-	" we unfortunately can only offer it to sponsors."
+	" we unfortunately can only offer it to members."

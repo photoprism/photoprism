@@ -501,7 +501,7 @@ func (c *Config) SitePreview() string {
 // LegalInfo returns the legal info text for the page footer.
 func (c *Config) LegalInfo() string {
 	if c.NoSponsor() {
-		return MsgSponsor
+		return SignUpInfo
 	}
 
 	if s := c.CliGlobalString("imprint"); s != "" {
