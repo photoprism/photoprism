@@ -1,0 +1,376 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"POT-Creation-Date: 2023-03-09 13:14+0000\n"
+"PO-Revision-Date: 2023-04-02 11:49+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: none\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.16.2\n"
+
+#: messages.go:94
+msgid "Something went wrong, try again"
+msgstr "Arazoren bat izan da. Saiatu berriro"
+
+#: messages.go:95
+msgid "Unable to do that"
+msgstr "Hori egin ezinik"
+
+#: messages.go:96
+msgid "Changes could not be saved"
+msgstr "Ezin izan dira aldaketak gorde"
+
+#: messages.go:97
+msgid "Could not be deleted"
+msgstr "Ezin izan da ezabatu"
+
+#: messages.go:98
+#, c-format
+msgid "%s already exists"
+msgstr "%s dagoeneko existitzen da"
+
+#: messages.go:99
+msgid "Not found"
+msgstr "Ez da aurkitu"
+
+#: messages.go:100
+msgid "File not found"
+msgstr "Fitxategia ez da aurkitu"
+
+#: messages.go:101
+msgid "File too large"
+msgstr "Fitxategi handiegia"
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr "Onartu gabeko formatua"
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr "Jatorrizkoen karpeta hutsik dago"
+
+#: messages.go:104
+msgid "Selection not found"
+msgstr "Ez da hautapena aurkitu"
+
+#: messages.go:105
+msgid "Entity not found"
+msgstr "Ez da aurkitu entitatea"
+
+#: messages.go:106
+msgid "Account not found"
+msgstr "Ez da kontua aurkitu"
+
+#: messages.go:107
+msgid "User not found"
+msgstr "Ez da erabiltzailea aurkitu"
+
+#: messages.go:108
+msgid "Label not found"
+msgstr "Ez da etiketa aurkitu"
+
+#: messages.go:109
+msgid "Album not found"
+msgstr "Ez da aurkitu albuma"
+
+#: messages.go:110
+msgid "Subject not found"
+msgstr "Ez da aurkitu gaia"
+
+#: messages.go:111
+msgid "Person not found"
+msgstr "Pertsona ez da aurkitu"
+
+#: messages.go:112
+msgid "Face not found"
+msgstr "Aurpegia ez da aurkitu"
+
+#: messages.go:113
+msgid "Not available in public mode"
+msgstr "Ez dago eskuragarri modu publikoan"
+
+#: messages.go:114
+msgid "Not available in read-only mode"
+msgstr "Ez dago erabilgarri irakurtzeko soilik moduan"
+
+#: messages.go:115
+msgid "Please log in to your account"
+msgstr "Mesedez, hasi saioa zure kontuan"
+
+#: messages.go:116
+msgid "Permission denied"
+msgstr "Baimena ukatu egin da"
+
+#: messages.go:117
+msgid "Upload might be offensive"
+msgstr "Kargatzea iraingarria izan daiteke"
+
+#: messages.go:118
+msgid "Upload failed"
+msgstr "Ezin izan da kargatu"
+
+#: messages.go:119
+msgid "No items selected"
+msgstr "Ez da elementurik hautatu"
+
+#: messages.go:120
+msgid "Failed creating file, please check permissions"
+msgstr "Ezin izan da fitxategia sortzean. Egiaztatu baimenak"
+
+#: messages.go:121
+msgid "Failed creating folder, please check permissions"
+msgstr "Ezin izan da karpeta sortzean. Egiaztatu baimenak"
+
+#: messages.go:122
+msgid "Could not connect, please try again"
+msgstr "Ezin izan da konektatu. Saiatu berriro"
+
+#: messages.go:123
+msgid "Invalid password, please try again"
+msgstr "Pasahitz baliogabea, saiatu berriro"
+
+#: messages.go:124
+msgid "Feature disabled"
+msgstr "Eginbidea desgaituta dago"
+
+#: messages.go:125
+msgid "No labels selected"
+msgstr "Ez da etiketarik hautatu"
+
+#: messages.go:126
+msgid "No albums selected"
+msgstr "Ez dago albumik hautatu"
+
+#: messages.go:127
+msgid "No files available for download"
+msgstr "Ez dago fitxategirik deskargatzeko erabilgarri"
+
+#: messages.go:128
+msgid "Failed to create zip file"
+msgstr "Ezin izan da zip fitxategia sortu"
+
+#: messages.go:129
+msgid "Invalid credentials"
+msgstr "Kredentzialak baliogabeak"
+
+#: messages.go:130
+msgid "Invalid link"
+msgstr "Esteka baliogabea"
+
+#: messages.go:131
+msgid "Invalid name"
+msgstr "Izen baliogabea"
+
+#: messages.go:132
+msgid "Busy, please try again later"
+msgstr "Lanpetuta, saiatu berriro geroago"
+
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "Esnatzeko tartea %s da, baina ordu 1 edo gutxiagokoa izan behar du"
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr "Ezin izan da zure kontua konektatu"
+
+#: messages.go:137
+msgid "Changes successfully saved"
+msgstr "Aldaketak ongi gorde dira"
+
+#: messages.go:138
+msgid "Album created"
+msgstr "Sortu da albuma"
+
+#: messages.go:139
+msgid "Album saved"
+msgstr "Albuma gorde da"
+
+#: messages.go:140
+#, c-format
+msgid "Album %s deleted"
+msgstr "%s albuma ezabatu da"
+
+#: messages.go:141
+msgid "Album contents cloned"
+msgstr "Albumen edukia klonatu da"
+
+#: messages.go:142
+msgid "File removed from stack"
+msgstr "Fitxategia pilatik kendu da"
+
+#: messages.go:143
+msgid "File deleted"
+msgstr "Fitxategia ezabatu da"
+
+#: messages.go:144
+#, c-format
+msgid "Selection added to %s"
+msgstr "Aukeraketa gehitu da %s"
+
+#: messages.go:145
+#, c-format
+msgid "One entry added to %s"
+msgstr "Sarrera bat gehitu da %s"
+
+#: messages.go:146
+#, c-format
+msgid "%d entries added to %s"
+msgstr "%d sarrerak gehitu dira %s"
+
+#: messages.go:147
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Sarrera bat kendu da %s-tik"
+
+#: messages.go:148
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "%d sarrerak kendu dira %s-tik"
+
+#: messages.go:149
+msgid "Account created"
+msgstr "Kontua sortu da"
+
+#: messages.go:150
+msgid "Account saved"
+msgstr "Kontua gorde da"
+
+#: messages.go:151
+msgid "Account deleted"
+msgstr "Kontua ezabatu da"
+
+#: messages.go:152
+msgid "Settings saved"
+msgstr "Ezarpenak gorde dira"
+
+#: messages.go:153
+msgid "Password changed"
+msgstr "Pasahitza aldatu da"
+
+#: messages.go:154
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Inportazioa %d s-an amaitu da"
+
+#: messages.go:155
+msgid "Import canceled"
+msgstr "Inportazioa bertan behera utzi da"
+
+#: messages.go:156
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Indexatzea %d s"
+
+#: messages.go:157
+msgid "Indexing originals..."
+msgstr "Jatorrizkoak indexatzen..."
+
+#: messages.go:158
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Fitxategiak indexatzen %s-n"
+
+#: messages.go:159
+msgid "Indexing canceled"
+msgstr "Indexazioa bertan behera utzi da"
+
+#: messages.go:160
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "%d fitxategiak eta %d argazkiak kendu dira"
+
+#: messages.go:161
+#, c-format
+msgid "Moving files from %s"
+msgstr "Fitxategiak mugitzen %s"
+
+#: messages.go:162
+#, c-format
+msgid "Copying files from %s"
+msgstr "%s fitxategiak kopiatzen"
+
+#: messages.go:163
+msgid "Labels deleted"
+msgstr "Etiketak ezabatu dira"
+
+#: messages.go:164
+msgid "Label saved"
+msgstr "Etiketa gorde da"
+
+#: messages.go:165
+msgid "Subject saved"
+msgstr "Gaia gorde da"
+
+#: messages.go:166
+msgid "Subject deleted"
+msgstr "Gaia ezabatu da"
+
+#: messages.go:167
+msgid "Person saved"
+msgstr "Pertsona gordeta"
+
+#: messages.go:168
+msgid "Person deleted"
+msgstr "Pertsona ezabatu da"
+
+#: messages.go:169
+msgid "File uploaded"
+msgstr "Kargatu da fitxategia"
+
+#: messages.go:170
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "%d fitxategiak %d s-etan kargatu dira"
+
+#: messages.go:171
+msgid "Processing upload..."
+msgstr "Kargaketa prozesatzen..."
+
+#: messages.go:172
+msgid "Upload has been processed"
+msgstr "Kargatzea prozesatu da"
+
+#: messages.go:173
+msgid "Selection approved"
+msgstr "Hautaketa onartu da"
+
+#: messages.go:174
+msgid "Selection archived"
+msgstr "Hautaketa artxibatuta dago"
+
+#: messages.go:175
+msgid "Selection restored"
+msgstr "Hautaketa leheneratu da"
+
+#: messages.go:176
+msgid "Selection marked as private"
+msgstr "Hautapena pribatu gisa markatu da"
+
+#: messages.go:177
+msgid "Albums deleted"
+msgstr "Albumak ezabatu dira"
+
+#: messages.go:178
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip sortu zen %d s"
+
+#: messages.go:179
+msgid "Permanently deleted"
+msgstr "Betiko ezabatu da"
+
+#: messages.go:180
+#, c-format
+msgid "%s has been restored"
+msgstr "%s leheneratu da"
