@@ -373,26 +373,28 @@ func TestAlbum_IsMoment(t *testing.T) {
 }
 
 func TestAlbum_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		album := Album{
-			AlbumUID:   "abc123",
-			AlbumSlug:  "test-slug",
-			AlbumType:  AlbumManual,
-			AlbumTitle: "Test Title",
-		}
-		assert.Equal(t, "test-slug", album.AlbumSlug)
-
-		err := album.Update("AlbumSlug", "new-slug")
-
-		if err != nil {
+	t.Run("Success", func(t *testing.T) {
+		album := NewAlbum("Test Title", AlbumManual)
+		if err := album.Save(); err != nil {
 			t.Fatal(err)
 		}
+
+		assert.Equal(t, "test-title", album.AlbumSlug)
+
+		if err := album.Update("AlbumSlug", "new-slug"); err != nil {
+			t.Fatal(err)
+		}
+
 		assert.Equal(t, "new-slug", album.AlbumSlug)
+
+		if err := album.DeletePermanently(); err != nil {
+			t.Fatal(err)
+		}
 	})
 }
 
 func TestAlbum_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		album := NewStateAlbum("Dogs", "dogs", "label:dog")
 
 		initialDate := album.UpdatedAt
@@ -411,7 +413,7 @@ func TestAlbum_Save(t *testing.T) {
 }
 
 func TestAlbum_Create(t *testing.T) {
-	t.Run("album", func(t *testing.T) {
+	t.Run("Album", func(t *testing.T) {
 		album := Album{
 			AlbumType: AlbumManual,
 		}
@@ -422,7 +424,7 @@ func TestAlbum_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	t.Run("moment", func(t *testing.T) {
+	t.Run("Moment", func(t *testing.T) {
 		album := Album{
 			AlbumType: AlbumMoment,
 		}
@@ -433,7 +435,7 @@ func TestAlbum_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	t.Run("month", func(t *testing.T) {
+	t.Run("Month", func(t *testing.T) {
 		album := Album{
 			AlbumType: AlbumMonth,
 		}
@@ -444,7 +446,7 @@ func TestAlbum_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
-	t.Run("folder", func(t *testing.T) {
+	t.Run("Folder", func(t *testing.T) {
 		album := Album{
 			AlbumType: AlbumFolder,
 		}
@@ -458,7 +460,7 @@ func TestAlbum_Create(t *testing.T) {
 }
 
 func TestAlbum_Title(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		album := Album{
 			AlbumUID:   "abc123",
 			AlbumSlug:  "test-slug",
@@ -470,7 +472,7 @@ func TestAlbum_Title(t *testing.T) {
 }
 
 func TestAlbum_Links(t *testing.T) {
-	t.Run("1 result", func(t *testing.T) {
+	t.Run("OneResult", func(t *testing.T) {
 		album := AlbumFixtures.Get("christmas2030")
 		links := album.Links()
 		assert.Equal(t, "4jxf3jfn2k", links[0].LinkToken)
@@ -478,14 +480,15 @@ func TestAlbum_Links(t *testing.T) {
 }
 
 func TestAlbum_AddPhotos(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		album := Album{
-			AlbumUID:   "abc123",
+			ID:         1000000,
+			AlbumUID:   "at9lxuqxpogaaba7",
 			AlbumSlug:  "test-slug",
 			AlbumType:  AlbumManual,
 			AlbumTitle: "Test Title",
 		}
-		added := album.AddPhotos([]string{"ab", "cd"})
+		added := album.AddPhotos([]string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"})
 		assert.Equal(t, 2, len(added))
 	})
 }
@@ -493,12 +496,13 @@ func TestAlbum_AddPhotos(t *testing.T) {
 func TestAlbum_RemovePhotos(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		album := Album{
-			AlbumUID:   "abc123",
+			ID:         1000000,
+			AlbumUID:   "at9lxuqxpogaaba7",
 			AlbumSlug:  "test-slug",
 			AlbumType:  AlbumManual,
 			AlbumTitle: "Test Title",
 		}
-		removed := album.RemovePhotos([]string{"ab", "cd"})
+		removed := album.RemovePhotos([]string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"})
 		assert.Equal(t, 2, len(removed))
 	})
 }

@@ -200,7 +200,7 @@ func FindLink(linkUid string) *Link {
 
 	result := Link{}
 
-	if Db().Where("link_uid = ?", linkUid).First(&result).RecordNotFound() {
+	if Db().Where("link_uid = ?", linkUid).First(&result).Error != nil {
 		event.AuditWarn([]string{"link %s", "not found"}, clean.Log(linkUid))
 		return nil
 	}

@@ -103,7 +103,7 @@ func FindUserShare(find UserShare) *UserShare {
 	m := &UserShare{}
 
 	// Find matching record.
-	if UnscopedDb().First(m, "user_uid = ? AND share_uid = ?", find.UserUID, find.ShareUID).RecordNotFound() {
+	if UnscopedDb().First(m, "user_uid = ? AND share_uid = ?", find.UserUID, find.ShareUID).Error != nil {
 		return nil
 	}
 

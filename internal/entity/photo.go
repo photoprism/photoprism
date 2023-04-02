@@ -302,14 +302,14 @@ func FindPhoto(find Photo) *Photo {
 
 	// Search for UID.
 	if rnd.IsUID(find.PhotoUID, PhotoUID) {
-		if !stmt.First(&m, "photo_uid = ?", find.PhotoUID).RecordNotFound() {
+		if stmt.First(&m, "photo_uid = ?", find.PhotoUID).Error == nil {
 			return &m
 		}
 	}
 
 	// Search for ID.
 	if find.ID > 0 {
-		if !stmt.First(&m, "id = ?", find.ID).RecordNotFound() {
+		if stmt.First(&m, "id = ?", find.ID).Error == nil {
 			return &m
 		}
 	}

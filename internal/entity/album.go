@@ -273,7 +273,7 @@ func FindMonthAlbum(year, month int) *Album {
 		return nil
 	}
 
-	if UnscopedDb().First(&m, "album_year = ? AND album_month = ? AND album_type = ?", year, month, AlbumMonth).RecordNotFound() {
+	if UnscopedDb().First(&m, "album_year = ? AND album_month = ? AND album_type = ?", year, month, AlbumMonth).Error != nil {
 		return nil
 	}
 
@@ -288,7 +288,7 @@ func FindAlbumBySlug(albumSlug, albumType string) *Album {
 		return nil
 	}
 
-	if UnscopedDb().First(&m, "album_slug = ? AND album_type = ?", albumSlug, albumType).RecordNotFound() {
+	if UnscopedDb().First(&m, "album_slug = ? AND album_type = ?", albumSlug, albumType).Error != nil {
 		return nil
 	}
 
@@ -315,7 +315,7 @@ func FindAlbumByAttr(slugs, filters []string, albumType string) *Album {
 		stmt = stmt.Where("album_slug IN (?) OR album_filter IN (?)", slugs, filters)
 	}
 
-	if stmt.First(&m).RecordNotFound() {
+	if stmt.First(&m).Error != nil {
 		return nil
 	}
 
@@ -336,7 +336,7 @@ func FindFolderAlbum(albumPath string) *Album {
 	stmt := UnscopedDb().Where("album_type = ?", AlbumFolder).
 		Where("album_slug = ? OR album_path = ?", albumSlug, albumPath)
 
-	if stmt.First(&m).RecordNotFound() {
+	if stmt.First(&m).Error != nil {
 		return nil
 	}
 
@@ -349,7 +349,7 @@ func FindAlbum(find Album) *Album {
 
 	// Search by UID.
 	if rnd.IsUID(find.AlbumUID, AlbumUID) {
-		if UnscopedDb().First(&m, "album_uid = ?", find.AlbumUID).RecordNotFound() {
+		if UnscopedDb().First(&m, "album_uid = ?", find.AlbumUID).Error != nil {
 			return nil
 		} else if m.AlbumUID != "" {
 			albumCache.SetDefault(m.AlbumUID, m)
@@ -382,7 +382,7 @@ func FindAlbum(find Album) *Album {
 	}
 
 	// Find first matching record.
-	if stmt.First(&m).RecordNotFound() {
+	if stmt.First(&m).Error != nil {
 		return nil
 	}
 
@@ -490,6 +490,10 @@ func (m *Album) SetLocation(location, state, country string) *Album {
 
 // UpdateTitleAndLocation updates title, location, and slug of generated albums if needed.
 func (m *Album) UpdateTitleAndLocation(title, location, state, country, slug string) error {
+	if !m.HasID() {
+		return fmt.Errorf("album does not exist")
+	}
+
 	title = txt.Clip(title, txt.ClipDefault)
 	slug = txt.Clip(slug, txt.ClipSlug)
 
@@ -533,6 +537,10 @@ func (m *Album) UpdateTitleAndLocation(title, location, state, country, slug str
 
 // UpdateTitleAndState updates the album location.
 func (m *Album) UpdateTitleAndState(title, slug, stateName, countryCode string) error {
+	if !m.HasID() {
+		return fmt.Errorf("album does not exist")
+	}
+
 	title = txt.Clip(title, txt.ClipDefault)
 	slug = txt.Clip(slug, txt.ClipSlug)
 
@@ -593,16 +601,28 @@ func (m *Album) SaveForm(f form.Album) error {
 
 // Update sets a new value for a database column.
 func (m *Album) Update(attr string, value interface{}) error {
+	if !m.HasID() {
+		return fmt.Errorf("album does not exist")
+	}
+
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
 // Updates multiple columns in the database.
 func (m *Album) Updates(values interface{}) error {
+	if !m.HasID() {
+		return fmt.Errorf("album does not exist")
+	}
+
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // UpdateFolder updates the path, filter and slug for a folder album.
 func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
+	if !m.HasID() {
+		return fmt.Errorf("album does not exist")
+	}
+
 	albumPath = strings.Trim(albumPath, string(os.PathSeparator))
 	albumSlug := txt.Slug(albumPath)
 
@@ -610,11 +630,11 @@ func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 		return fmt.Errorf("folder album must have a path and filter")
 	}
 
-	if err := UnscopedDb().Model(m).Updates(map[string]interface{}{
+	if err := m.Updates(map[string]interface{}{
 		"AlbumPath":   albumPath,
 		"AlbumFilter": albumFilter,
 		"AlbumSlug":   albumSlug,
-	}).Error; err != nil {
+	}); err != nil {
 		return err
 	} else if err = UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_type = ? AND album_path = ? AND id <> ?", AlbumFolder, albumPath, m.ID).Error; err != nil {
 		return err
@@ -663,6 +683,10 @@ func (m *Album) PublishCountChange(n int) {
 
 // Delete marks the entity as deleted in the database.
 func (m *Album) Delete() error {
+	if !m.HasID() {
+		return fmt.Errorf("album does not exist")
+	}
+
 	if m.Deleted() {
 		return nil
 	}
@@ -679,6 +703,10 @@ func (m *Album) Delete() error {
 
 // DeletePermanently permanently removes an album from the index.
 func (m *Album) DeletePermanently() error {
+	if !m.HasID() {
+		return fmt.Errorf("album does not exist")
+	}
+
 	wasDeleted := m.Deleted()
 
 	if err := UnscopedDb().Delete(m).Error; err != nil {
@@ -704,6 +732,10 @@ func (m *Album) Deleted() bool {
 
 // Restore restores the entity in the database.
 func (m *Album) Restore() error {
+	if !m.HasID() {
+		return fmt.Errorf("album does not exist")
+	}
+
 	if !m.Deleted() {
 		return nil
 	}
@@ -738,7 +770,15 @@ func (m *Album) ZipName() string {
 
 // AddPhotos adds photos to an existing album.
 func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
+	if !m.HasID() {
+		return added
+	}
+
 	for _, uid := range UIDs {
+		if !rnd.IsUID(uid, PhotoUID) {
+			continue
+		}
+
 		entry := PhotoAlbum{AlbumUID: m.AlbumUID, PhotoUID: uid, Hidden: false}
 
 		if err := entry.Save(); err != nil {
@@ -753,7 +793,15 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 
 // RemovePhotos removes photos from an album.
 func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
+	if !m.HasID() {
+		return removed
+	}
+
 	for _, uid := range UIDs {
+		if !rnd.IsUID(uid, PhotoUID) {
+			continue
+		}
+
 		entry := PhotoAlbum{AlbumUID: m.AlbumUID, PhotoUID: uid, Hidden: true}
 
 		if err := entry.Save(); err != nil {
