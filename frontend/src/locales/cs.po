@@ -40,15 +40,15 @@ msgstr "%{n} nalezeno lidí"
 msgid "%{n} pictures found"
 msgstr "%{n} nalezených obrázků"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "1 hour"
 msgstr "1 hodina"
 
-#: src/options/options.js:389
+#: src/options/options.js:393
 msgid "12 hours"
 msgstr "12 hodin"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "4 hours"
 msgstr "4 hodiny"
 
@@ -144,23 +144,23 @@ msgstr "Admin"
 msgid "Advanced"
 msgstr "Pokročilé"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After 1 day"
 msgstr "Po 1 dni"
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After 3 days"
 msgstr "Po 3 dnech"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After 7 days"
 msgstr "Po 7 dnech"
 
-#: src/options/options.js:401
+#: src/options/options.js:405
 msgid "After one month"
 msgstr "Po jednom měsíci"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "After one year"
 msgstr "Po jednom roce"
 
@@ -168,11 +168,11 @@ msgstr "Po jednom roce"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Po výběru obrázků z výsledků vyhledávání je můžete přidat do alba pomocí kontextové nabídky."
 
-#: src/options/options.js:402
+#: src/options/options.js:406
 msgid "After two months"
 msgstr "Po dvou měsících"
 
-#: src/options/options.js:400
+#: src/options/options.js:404
 msgid "After two weeks"
 msgstr "Po dvou týdnech"
 
@@ -267,7 +267,7 @@ msgstr "Nadmořská výška (m)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
-#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:326
 msgid "Animated"
 msgstr "Animované"
 
@@ -381,19 +381,19 @@ msgstr "Biografie"
 msgid "Birth Date"
 msgstr "Datum narození"
 
-#: src/options/options.js:422
+#: src/options/options.js:426
 msgid "Black"
 msgstr "Černá"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos převzorkování, Méně prstencových artefaktů"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Blue"
 msgstr "Modrá"
 
-#: src/options/options.js:419
+#: src/options/options.js:423
 msgid "Brown"
 msgstr "Hnědá"
 
@@ -405,7 +405,7 @@ msgstr "Prohlížet a upravit štítky klasifikace obrazu."
 msgid "Browse indexed files and folders in Library."
 msgstr "Prohlížet indexované soubory a složky v Knihovně."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:429
+#: src/page/about/feedback.vue:8 src/options/options.js:433
 msgid "Bug Report"
 msgstr "Nahlásit chybu"
 
@@ -616,7 +616,7 @@ msgstr "Vytvořeno"
 msgid "Creating thumbnails for"
 msgstr "Vytváření miniatur pro"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Střední kvalita, Dobrý výkon"
 
@@ -624,15 +624,15 @@ msgstr "Cubic: Střední kvalita, Dobrý výkon"
 msgid "Current Password"
 msgstr "Aktuální heslo"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:426
+#: src/page/about/feedback.vue:5 src/options/options.js:430
 msgid "Customer Support"
 msgstr "Zákaznická podpora"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Cyan"
 msgstr "Tyrkysová"
 
-#: src/options/options.js:390
+#: src/options/options.js:394
 msgid "Daily"
 msgstr "Denně"
 
@@ -646,7 +646,7 @@ msgstr "Protokoly ladění"
 
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
-#: src/options/options.js:283 src/options/options.js:341
+#: src/options/options.js:287 src/options/options.js:345
 #: src/options/themes.js:417
 msgid "Default"
 msgstr "Výchozí"
@@ -778,7 +778,7 @@ msgstr "Nepoužívat RawTherapee ke konverzi souborů RAW."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Nepoužívat TensorFlow pro klasifikaci obrazu."
 
-#: src/options/options.js:430
+#: src/options/options.js:434
 msgid "Donations"
 msgstr "Sponzorské dary"
 
@@ -899,7 +899,7 @@ msgstr "Odhadnout přibližné polohy obrázků bez souřadnic."
 msgid "Estimates"
 msgstr "Odhady"
 
-#: src/options/options.js:391
+#: src/options/options.js:395
 msgid "Every two days"
 msgstr "Každé dva dny"
 
@@ -960,7 +960,7 @@ msgstr "Aktualizace odkazu selhalo"
 msgid "Family Name"
 msgstr "Rodné jméno"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Fast"
 msgstr "Rychlé"
 
@@ -973,7 +973,7 @@ msgstr "Oblíbené"
 msgid "Favorites"
 msgstr "Oblíbené"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:428
+#: src/page/about/feedback.vue:7 src/options/options.js:432
 msgid "Feature Request"
 msgstr "Žádost o funkci"
 
@@ -994,7 +994,7 @@ msgstr "V případě jakýchkoli dotazů nás kontaktujte na adrese hello@photop
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr "V případě dotazů týkajících se vašeho členství nás neváhejte kontaktovat na adrese members@photoprism.app."
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Female"
 msgstr "Žena"
 
@@ -1092,15 +1092,15 @@ msgstr "Dané jméno"
 msgid "Global Options"
 msgstr "Globální možnosti"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Gold"
 msgstr "Zlatá"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Green"
 msgstr "Zelená"
 
-#: src/options/options.js:421
+#: src/options/options.js:425
 msgid "Grey"
 msgstr "Šedá"
 
@@ -1136,7 +1136,7 @@ msgstr "Skrýt"
 msgid "Hide photos that have been moved to archive."
 msgstr "Skrýt fotografie, které byly přesunuty do archivu."
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "High"
 msgstr "Vysoká"
 
@@ -1152,7 +1152,7 @@ msgstr "Jak můžeme pomoci?"
 msgid "image"
 msgstr "snímek"
 
-#: src/model/file.js:217 src/options/options.js:314
+#: src/model/file.js:217 src/options/options.js:318
 msgid "Image"
 msgstr "Snímek"
 
@@ -1303,7 +1303,7 @@ msgstr "Štítky"
 msgid "Labels deleted"
 msgstr "Štítky vymazány"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Zachování detailů, Minimální artefakty"
 
@@ -1363,7 +1363,7 @@ msgstr "Licence"
 msgid "Like"
 msgstr "Líbí se mi"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Lime"
 msgstr "Limetková"
 
@@ -1371,7 +1371,7 @@ msgstr "Limetková"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Dosaženo limitu, zobrazeno prvních %{n} souborů"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: Velmi vyhlazené, Nejlepší výkon"
 
@@ -1385,7 +1385,7 @@ msgstr "Seznam"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:326
+#: src/options/options.js:330
 msgid "Live"
 msgstr "Živé"
 
@@ -1434,15 +1434,15 @@ msgstr "Logy"
 msgid "Longitude"
 msgstr "Zeměpisná délka"
 
-#: src/options/options.js:349
+#: src/options/options.js:353
 msgid "Low"
 msgstr "Nízká"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Low Resolution"
 msgstr "Nízké rozlišení"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Magenta"
 msgstr "Purpurová"
 
@@ -1450,7 +1450,7 @@ msgstr "Purpurová"
 msgid "Main Color"
 msgstr "Převažující barva"
 
-#: src/options/options.js:442
+#: src/options/options.js:446
 msgid "Male"
 msgstr "Muž"
 
@@ -1475,7 +1475,7 @@ msgstr "Mapy"
 msgid "Marker"
 msgstr "Značka"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Medium"
 msgstr "Střední"
 
@@ -1567,7 +1567,7 @@ msgid "Name too long"
 msgstr "Název je příliš dlouhý"
 
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
-#: src/options/options.js:386 src/options/options.js:396
+#: src/options/options.js:390 src/options/options.js:400
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Nikdy"
@@ -1651,8 +1651,8 @@ msgstr "Žádná varování nebo chyba obsahující toto klíčové slovo. Mějt
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Nefotografické obrázky a snímky nízké kvality vyžadují kontrolu, než se objeví ve výsledcích vyhledávání."
 
-#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
-#: src/options/options.js:353
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:268
+#: src/options/options.js:357
 msgid "None"
 msgstr "Žádné"
 
@@ -1697,7 +1697,7 @@ msgstr "Od nejstarších"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "V systému Windows zadejte do dialogového okna připojení následující prostředek:"
 
-#: src/options/options.js:392
+#: src/options/options.js:396
 msgid "Once a week"
 msgstr "Jednou týdně"
 
@@ -1730,7 +1730,7 @@ msgstr "Nalezena jedna osoba"
 msgid "One picture found"
 msgstr "Nalezen jeden obrázek"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Orange"
 msgstr "Oranžová"
 
@@ -1757,7 +1757,7 @@ msgstr "Název originálu"
 msgid "Originals"
 msgstr "Originály"
 
-#: src/options/options.js:431 src/options/options.js:444
+#: src/options/options.js:435 src/options/options.js:448
 msgid "Other"
 msgstr "Jiné"
 
@@ -1765,7 +1765,7 @@ msgstr "Jiné"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Náš tým o tom rozhoduje průběžně v závislosti na náročnosti podpory, nákladech na server a licence a na tom, zda jsou funkce obecně potřebné pro všechny, nebo je požadují hlavně organizace a pokročilí uživatelé."
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Outdoor"
 msgstr "Zeměpisně"
 
@@ -1827,7 +1827,7 @@ msgstr "Společnost PhotoPrism je 100% nezávislá a financovaná z vlastních z
 msgid "Photos"
 msgstr "Fotografie"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Pink"
 msgstr "Růžová"
 
@@ -1912,7 +1912,7 @@ msgstr "Soukromé"
 msgid "Proceed"
 msgstr "Postupujte podle"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:427
+#: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Zpětná vazba k produktu"
 
@@ -1920,7 +1920,7 @@ msgstr "Zpětná vazba k produktu"
 msgid "Projection"
 msgstr "Projekce"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Purple"
 msgstr "Fialová"
 
@@ -1941,7 +1941,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Náhodně"
 
-#: src/options/options.js:318
+#: src/options/options.js:322
 msgid "Raw"
 msgstr "Raw"
 
@@ -1981,7 +1981,7 @@ msgstr "Rozpoznané"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Rozpoznává obličeje, aby bylo možné najít konkrétní osoby."
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Red"
 msgstr "Červená"
 
@@ -2059,7 +2059,7 @@ msgstr "Kontrola"
 msgid "Role"
 msgstr "Role"
 
-#: src/options/options.js:296
+#: src/options/options.js:300
 msgid "Satellite"
 msgstr "Satelitní"
 
@@ -2225,7 +2225,7 @@ msgstr "Podobné"
 msgid "Size"
 msgstr "Velikost"
 
-#: src/options/options.js:276
+#: src/options/options.js:280
 msgid "Slow"
 msgstr "Pomalé"
 
@@ -2295,7 +2295,7 @@ msgstr "Status"
 msgid "Storage"
 msgstr "Úložiště"
 
-#: src/options/options.js:291
+#: src/options/options.js:295
 msgid "Streets"
 msgstr "Ulice"
 
@@ -2337,7 +2337,7 @@ msgstr "Synchronizovat raw a video soubory"
 msgid "Taken"
 msgstr "Pořízeno"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "Teal"
 msgstr "Šedozelená"
 
@@ -2424,7 +2424,7 @@ msgstr "Přepnout zobrazení"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:306
+#: src/options/options.js:310
 msgid "Topographic"
 msgstr "Topograficky"
 
@@ -2606,7 +2606,7 @@ msgstr "Uživatelé"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:338
 msgid "Vector"
 msgstr "Vektor"
 
@@ -2621,7 +2621,7 @@ msgstr "Ověřeno"
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:330
+#: src/options/options.js:334
 msgid "Video"
 msgstr "Video"
 
@@ -2701,7 +2701,7 @@ msgstr "Webová stránka"
 msgid "What functionality is generally available?"
 msgstr "Jaké funkce jsou obecně dostupné?"
 
-#: src/options/options.js:420
+#: src/options/options.js:424
 msgid "White"
 msgstr "Bílá"
 
@@ -2718,7 +2718,7 @@ msgstr "Podrobnosti o práci"
 msgid "Year"
 msgstr "Rok"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Yellow"
 msgstr "Žlutá"
 

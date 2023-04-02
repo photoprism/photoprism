@@ -40,15 +40,15 @@ msgstr "%{n} persones trobades"
 msgid "%{n} pictures found"
 msgstr "S'han trobat %{n} imatges"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "1 hour"
 msgstr "1 hora"
 
-#: src/options/options.js:389
+#: src/options/options.js:393
 msgid "12 hours"
 msgstr "12 hores"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "4 hours"
 msgstr "4 hores"
 
@@ -144,23 +144,23 @@ msgstr "Admin"
 msgid "Advanced"
 msgstr "Avançat"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After 1 day"
 msgstr "Després d'1 dia"
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After 3 days"
 msgstr "Després de 3 dies"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After 7 days"
 msgstr "Després de 7 dies"
 
-#: src/options/options.js:401
+#: src/options/options.js:405
 msgid "After one month"
 msgstr "Després d'un mes"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "After one year"
 msgstr "Després d'un any"
 
@@ -168,11 +168,11 @@ msgstr "Després d'un any"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Després de seleccionar imatges dels resultats de la cerca, podeu afegir-les a un àlbum mitjançant el menú contextual."
 
-#: src/options/options.js:402
+#: src/options/options.js:406
 msgid "After two months"
 msgstr "Després de dos mesos"
 
-#: src/options/options.js:400
+#: src/options/options.js:404
 msgid "After two weeks"
 msgstr "Després de dues setmanes"
 
@@ -267,7 +267,7 @@ msgstr "Altitud (m)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
-#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:326
 msgid "Animated"
 msgstr "Animat"
 
@@ -381,19 +381,19 @@ msgstr "bio"
 msgid "Birth Date"
 msgstr "Data de naixement"
 
-#: src/options/options.js:422
+#: src/options/options.js:426
 msgid "Black"
 msgstr "Negre"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: modificació de Lanczos, artefactes menys sonors"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Blue"
 msgstr "Blau"
 
-#: src/options/options.js:419
+#: src/options/options.js:423
 msgid "Brown"
 msgstr "Marró"
 
@@ -405,7 +405,7 @@ msgstr "Exploreu i editeu les etiquetes de classificació d'imatges."
 msgid "Browse indexed files and folders in Library."
 msgstr "Exploreu fitxers i carpetes indexats a la biblioteca."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:429
+#: src/page/about/feedback.vue:8 src/options/options.js:433
 msgid "Bug Report"
 msgstr "Informe d'error"
 
@@ -616,7 +616,7 @@ msgstr "Creat"
 msgid "Creating thumbnails for"
 msgstr "Creació de miniatures per a"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cúbic: qualitat moderada, bon rendiment"
 
@@ -624,15 +624,15 @@ msgstr "Cúbic: qualitat moderada, bon rendiment"
 msgid "Current Password"
 msgstr "Contrasenya actual"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:426
+#: src/page/about/feedback.vue:5 src/options/options.js:430
 msgid "Customer Support"
 msgstr "Atenció al client"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Cyan"
 msgstr "Cian"
 
-#: src/options/options.js:390
+#: src/options/options.js:394
 msgid "Daily"
 msgstr "Diari"
 
@@ -646,7 +646,7 @@ msgstr "Registres de depuració"
 
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
-#: src/options/options.js:283 src/options/options.js:341
+#: src/options/options.js:287 src/options/options.js:345
 #: src/options/themes.js:417
 msgid "Default"
 msgstr "Per defecte"
@@ -778,7 +778,7 @@ msgstr "No utilitzeu RawTherapee per convertir fitxers RAW."
 msgid "Don't use TensorFlow for image classification."
 msgstr "No utilitzeu TensorFlow per a la classificació d'imatges."
 
-#: src/options/options.js:430
+#: src/options/options.js:434
 msgid "Donations"
 msgstr "Donacions"
 
@@ -899,7 +899,7 @@ msgstr "Estimar la ubicació aproximada de les imatges sense coordenades."
 msgid "Estimates"
 msgstr "Estimacions"
 
-#: src/options/options.js:391
+#: src/options/options.js:395
 msgid "Every two days"
 msgstr "Cada dos dies"
 
@@ -960,7 +960,7 @@ msgstr "No s'ha pogut actualitzar l'enllaç"
 msgid "Family Name"
 msgstr "Nom de familia"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Fast"
 msgstr "Ràpida"
 
@@ -973,7 +973,7 @@ msgstr "Favorit"
 msgid "Favorites"
 msgstr "Favorits"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:428
+#: src/page/about/feedback.vue:7 src/options/options.js:432
 msgid "Feature Request"
 msgstr "Sol·licitud de funció"
 
@@ -994,7 +994,7 @@ msgstr "No dubteu a contactar amb nosaltres a hello@photoprism.app si teniu cap 
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr "No dubteu a contactar amb nosaltres a members@photoprism.app per a preguntes sobre la vostra pertinença."
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Female"
 msgstr "Femení"
 
@@ -1092,15 +1092,15 @@ msgstr "Nom de pila"
 msgid "Global Options"
 msgstr "Opcions globals"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Gold"
 msgstr "Or"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Green"
 msgstr "Verd"
 
-#: src/options/options.js:421
+#: src/options/options.js:425
 msgid "Grey"
 msgstr "Gris"
 
@@ -1136,7 +1136,7 @@ msgstr "Amagar"
 msgid "Hide photos that have been moved to archive."
 msgstr "Amaga les fotos que s'han mogut a l'arxiu."
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "High"
 msgstr "Alt"
 
@@ -1152,7 +1152,7 @@ msgstr "Com podem ajudar?"
 msgid "image"
 msgstr "imatge"
 
-#: src/model/file.js:217 src/options/options.js:314
+#: src/model/file.js:217 src/options/options.js:318
 msgid "Image"
 msgstr "Imatge"
 
@@ -1303,7 +1303,7 @@ msgstr "Etiquetes"
 msgid "Labels deleted"
 msgstr "S'han suprimit les etiquetes"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Preservació de detalls, artefactes mínims"
 
@@ -1363,7 +1363,7 @@ msgstr "Llicència"
 msgid "Like"
 msgstr "M'agrada"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Lime"
 msgstr "Llima"
 
@@ -1371,7 +1371,7 @@ msgstr "Llima"
 msgid "Limit reached, showing first %{n} files"
 msgstr "S'ha assolit el límit, mostrant els primers %{n} fitxers"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineal: molt suau, millor rendiment"
 
@@ -1385,7 +1385,7 @@ msgstr "Llista"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:326
+#: src/options/options.js:330
 msgid "Live"
 msgstr "En viu"
 
@@ -1434,15 +1434,15 @@ msgstr "Logs"
 msgid "Longitude"
 msgstr "Longitut"
 
-#: src/options/options.js:349
+#: src/options/options.js:353
 msgid "Low"
 msgstr "Baix"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Low Resolution"
 msgstr "Baixa resolució"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1450,7 +1450,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Color principal"
 
-#: src/options/options.js:442
+#: src/options/options.js:446
 msgid "Male"
 msgstr "Home"
 
@@ -1475,7 +1475,7 @@ msgstr "Mapes"
 msgid "Marker"
 msgstr "Marcador"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Medium"
 msgstr "Mitja"
 
@@ -1567,7 +1567,7 @@ msgid "Name too long"
 msgstr "Nom massa llarg"
 
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
-#: src/options/options.js:386 src/options/options.js:396
+#: src/options/options.js:390 src/options/options.js:400
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Mai"
@@ -1651,8 +1651,8 @@ msgstr "No hi ha cap advertiment ni error que contingui aquesta paraula clau. Ti
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Les imatges no fotogràfiques i de baixa qualitat requereixen una revisió abans que apareguin als resultats de la cerca."
 
-#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
-#: src/options/options.js:353
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:268
+#: src/options/options.js:357
 msgid "None"
 msgstr "Cap"
 
@@ -1697,7 +1697,7 @@ msgstr "El més vell primer"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "A Windows, introduïu el recurs següent al diàleg de connexió:"
 
-#: src/options/options.js:392
+#: src/options/options.js:396
 msgid "Once a week"
 msgstr "Una vegada per setmana"
 
@@ -1730,7 +1730,7 @@ msgstr "S'ha trobat una persona"
 msgid "One picture found"
 msgstr "S'ha trobat una imatge"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Orange"
 msgstr "Taronja"
 
@@ -1757,7 +1757,7 @@ msgstr "Nom original"
 msgid "Originals"
 msgstr "Originals"
 
-#: src/options/options.js:431 src/options/options.js:444
+#: src/options/options.js:435 src/options/options.js:448
 msgid "Other"
 msgstr "Altres"
 
@@ -1765,7 +1765,7 @@ msgstr "Altres"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "El nostre equip ho decideix de manera contínua en funció de l'esforç de suport requerit, dels costos del servidor i de la llicència, i si les funcions són generalment necessàries per tothom o principalment sol·licitades per organitzacions i usuaris avançats."
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Outdoor"
 msgstr "A l'aire lliure"
 
@@ -1827,7 +1827,7 @@ msgstr "PhotoPrism és 100% autofinançat i independent."
 msgid "Photos"
 msgstr "Fotos"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Pink"
 msgstr "Rosa"
 
@@ -1912,7 +1912,7 @@ msgstr "Privada"
 msgid "Proceed"
 msgstr "Continuar"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:427
+#: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Comentaris del producte"
 
@@ -1920,7 +1920,7 @@ msgstr "Comentaris del producte"
 msgid "Projection"
 msgstr "Projecció"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Purple"
 msgstr "Lila"
 
@@ -1941,7 +1941,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Aleatori"
 
-#: src/options/options.js:318
+#: src/options/options.js:322
 msgid "Raw"
 msgstr "Crua"
 
@@ -1981,7 +1981,7 @@ msgstr "Reconegut"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Reconeix cares perquè es puguin trobar persones concretes."
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Red"
 msgstr "Vermell"
 
@@ -2059,7 +2059,7 @@ msgstr "Valoració"
 msgid "Role"
 msgstr "Rol"
 
-#: src/options/options.js:296
+#: src/options/options.js:300
 msgid "Satellite"
 msgstr "Satèl·lit"
 
@@ -2225,7 +2225,7 @@ msgstr "Similars"
 msgid "Size"
 msgstr "Mida"
 
-#: src/options/options.js:276
+#: src/options/options.js:280
 msgid "Slow"
 msgstr "Lenta"
 
@@ -2295,7 +2295,7 @@ msgstr "Estat"
 msgid "Storage"
 msgstr "Emmagatzematge"
 
-#: src/options/options.js:291
+#: src/options/options.js:295
 msgid "Streets"
 msgstr "Carrers"
 
@@ -2337,7 +2337,7 @@ msgstr "Sincronitza fitxers en brut i de vídeo"
 msgid "Taken"
 msgstr "Pres"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "Teal"
 msgstr "Blau Cerseta"
 
@@ -2426,7 +2426,7 @@ msgstr "Canvia la vista"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:306
+#: src/options/options.js:310
 msgid "Topographic"
 msgstr "Topogràfic"
 
@@ -2608,7 +2608,7 @@ msgstr "Usuaris"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:338
 msgid "Vector"
 msgstr "Vector"
 
@@ -2623,7 +2623,7 @@ msgstr "Verificat"
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:330
+#: src/options/options.js:334
 msgid "Video"
 msgstr "Vídeo"
 
@@ -2703,7 +2703,7 @@ msgstr "Pàgina web"
 msgid "What functionality is generally available?"
 msgstr "Quina funcionalitat està disponible en general?"
 
-#: src/options/options.js:420
+#: src/options/options.js:424
 msgid "White"
 msgstr "Blanc"
 
@@ -2720,7 +2720,7 @@ msgstr "Detalls del treball"
 msgid "Year"
 msgstr "Any"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Yellow"
 msgstr "Groc"
 

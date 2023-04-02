@@ -40,15 +40,15 @@ msgstr "%{n} लोग मिले"
 msgid "%{n} pictures found"
 msgstr "%{n} चित्र मिले"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "1 hour"
 msgstr "1 घंटा"
 
-#: src/options/options.js:389
+#: src/options/options.js:393
 msgid "12 hours"
 msgstr "12 घंटा"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "4 hours"
 msgstr "4 घंटा"
 
@@ -144,23 +144,23 @@ msgstr "व्यवस्थापक"
 msgid "Advanced"
 msgstr "उन्नत"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After 1 day"
 msgstr "1 दिन बाद"
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After 3 days"
 msgstr "3 दिन बाद"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After 7 days"
 msgstr "7 दिन बाद"
 
-#: src/options/options.js:401
+#: src/options/options.js:405
 msgid "After one month"
 msgstr "एक महिने बाद"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "After one year"
 msgstr "एक साल बाद"
 
@@ -168,11 +168,11 @@ msgstr "एक साल बाद"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "खोज परिणामों से चित्रों का चयन करने के बाद, आप उन्हें संदर्भ मेनू का उपयोग करके किसी एल्बम में जोड़ सकते हैं।"
 
-#: src/options/options.js:402
+#: src/options/options.js:406
 msgid "After two months"
 msgstr "दो महीने के बाद"
 
-#: src/options/options.js:400
+#: src/options/options.js:404
 msgid "After two weeks"
 msgstr "दो हफ्ते बाद"
 
@@ -267,7 +267,7 @@ msgstr "ऊंचाई (एम)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
-#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:326
 msgid "Animated"
 msgstr "एनिमेटेड"
 
@@ -381,19 +381,19 @@ msgstr "जैव"
 msgid "Birth Date"
 msgstr "जन्म तिथि"
 
-#: src/options/options.js:422
+#: src/options/options.js:426
 msgid "Black"
 msgstr "काली"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "ब्लैकमैन: लैंक्ज़ोस संशोधन, कम बजने वाली कलाकृतियाँ"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Blue"
 msgstr "नीला"
 
-#: src/options/options.js:419
+#: src/options/options.js:423
 msgid "Brown"
 msgstr "भूरा"
 
@@ -405,7 +405,7 @@ msgstr "छवि वर्गीकरण लेबल ब्राउज़ �
 msgid "Browse indexed files and folders in Library."
 msgstr "लाइब्रेरी में अनुक्रमित फ़ाइलों और फ़ोल्डरों को ब्राउज़ करें।"
 
-#: src/page/about/feedback.vue:8 src/options/options.js:429
+#: src/page/about/feedback.vue:8 src/options/options.js:433
 msgid "Bug Report"
 msgstr "बग रिपोर्ट"
 
@@ -616,7 +616,7 @@ msgstr "बनाया था"
 msgid "Creating thumbnails for"
 msgstr "के लिए थंबनेल बनाना"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "घन: मध्यम गुणवत्ता, अच्छा प्रदर्शन"
 
@@ -624,15 +624,15 @@ msgstr "घन: मध्यम गुणवत्ता, अच्छा प्
 msgid "Current Password"
 msgstr "वर्तमान पासवर्ड"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:426
+#: src/page/about/feedback.vue:5 src/options/options.js:430
 msgid "Customer Support"
 msgstr "ग्राहक सहेयता"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Cyan"
 msgstr "सियान"
 
-#: src/options/options.js:390
+#: src/options/options.js:394
 msgid "Daily"
 msgstr "रोज"
 
@@ -646,7 +646,7 @@ msgstr "दोषमार्जन लॉग"
 
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
-#: src/options/options.js:283 src/options/options.js:341
+#: src/options/options.js:287 src/options/options.js:345
 #: src/options/themes.js:417
 msgid "Default"
 msgstr "चूक"
@@ -778,7 +778,7 @@ msgstr "RAW फ़ाइलों को कनवर्ट करने के 
 msgid "Don't use TensorFlow for image classification."
 msgstr "छवि वर्गीकरण लेबल ब्राउज़ करें और संपादित करें।"
 
-#: src/options/options.js:430
+#: src/options/options.js:434
 msgid "Donations"
 msgstr "दान"
 
@@ -899,7 +899,7 @@ msgstr "निर्देशांक के बिना चित्रों
 msgid "Estimates"
 msgstr "अनुमान"
 
-#: src/options/options.js:391
+#: src/options/options.js:395
 msgid "Every two days"
 msgstr "हेर दो दिनों"
 
@@ -960,7 +960,7 @@ msgstr "लिंक अपडेट करने में विफल"
 msgid "Family Name"
 msgstr "परिवार का नाम"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Fast"
 msgstr "तेज"
 
@@ -973,7 +973,7 @@ msgstr "पसंदीदा"
 msgid "Favorites"
 msgstr "पसंदीदा"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:428
+#: src/page/about/feedback.vue:7 src/options/options.js:432
 msgid "Feature Request"
 msgstr "महत्वपूर्ण लेख मांगना"
 
@@ -994,7 +994,7 @@ msgstr "यदि आपके कोई प्रश्न हैं या स
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr "अपनी सदस्यता से संबंधित प्रश्नों के लिए बेझिझक हमसे members@photoprism.app पर संपर्क करें।"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Female"
 msgstr "मादा"
 
@@ -1092,15 +1092,15 @@ msgstr "प्रदत्त नाम"
 msgid "Global Options"
 msgstr "वैश्विक विकल्प"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Gold"
 msgstr "सोना"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Green"
 msgstr "हरा"
 
-#: src/options/options.js:421
+#: src/options/options.js:425
 msgid "Grey"
 msgstr "धूसर"
 
@@ -1136,7 +1136,7 @@ msgstr "छिपाना"
 msgid "Hide photos that have been moved to archive."
 msgstr "उन तस्वीरों को छिपाएं जिन्हें संग्रह में स्थानांतरित किया गया है।"
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "High"
 msgstr "उच्च"
 
@@ -1152,7 +1152,7 @@ msgstr "हम आपकी सहायता किस तरह से कर
 msgid "image"
 msgstr "छवि"
 
-#: src/model/file.js:217 src/options/options.js:314
+#: src/model/file.js:217 src/options/options.js:318
 msgid "Image"
 msgstr "छवि"
 
@@ -1303,7 +1303,7 @@ msgstr "लेबल"
 msgid "Labels deleted"
 msgstr "लेबल हटा दिए गए"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "लैंक्ज़ोस: विस्तार संरक्षण, न्यूनतम कलाकृतियाँ"
 
@@ -1363,7 +1363,7 @@ msgstr "लाइसेंस"
 msgid "Like"
 msgstr "पसंद"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Lime"
 msgstr "चूना"
 
@@ -1371,7 +1371,7 @@ msgstr "चूना"
 msgid "Limit reached, showing first %{n} files"
 msgstr "पहले %{n} फ़ाइलों को दिखाते हुए, सीमा समाप्त हो गई"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "रैखिक: बहुत चिकना, सर्वश्रेष्ठ प्रदर्शन"
 
@@ -1385,7 +1385,7 @@ msgstr "सूची"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:326
+#: src/options/options.js:330
 msgid "Live"
 msgstr "लाइव"
 
@@ -1434,15 +1434,15 @@ msgstr "लॉग्स"
 msgid "Longitude"
 msgstr "देशान्तर"
 
-#: src/options/options.js:349
+#: src/options/options.js:353
 msgid "Low"
 msgstr "कम"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Low Resolution"
 msgstr "कम दृश्यता"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Magenta"
 msgstr "मैजेंटा"
 
@@ -1450,7 +1450,7 @@ msgstr "मैजेंटा"
 msgid "Main Color"
 msgstr "मुखय रंग"
 
-#: src/options/options.js:442
+#: src/options/options.js:446
 msgid "Male"
 msgstr "पुरुष"
 
@@ -1475,7 +1475,7 @@ msgstr "एमएपीएस"
 msgid "Marker"
 msgstr "निशान"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Medium"
 msgstr "मध्यम"
 
@@ -1567,7 +1567,7 @@ msgid "Name too long"
 msgstr "नाम बहुत लंबा"
 
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
-#: src/options/options.js:386 src/options/options.js:396
+#: src/options/options.js:390 src/options/options.js:400
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "कभी नहीँ"
@@ -1651,8 +1651,8 @@ msgstr "इस कीवर्ड से कोई चेतावनी या 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "गैर-फोटोग्राफिक और निम्न-गुणवत्ता वाली छवियों को खोज परिणामों में प्रदर्शित होने से पहले समीक्षा की आवश्यकता होती है।"
 
-#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
-#: src/options/options.js:353
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:268
+#: src/options/options.js:357
 msgid "None"
 msgstr "कोई नहीं"
 
@@ -1697,7 +1697,7 @@ msgstr "सबसे पुराना पहले"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "विंडोज़ पर, कनेक्शन संवाद में निम्न संसाधन दर्ज करें:"
 
-#: src/options/options.js:392
+#: src/options/options.js:396
 msgid "Once a week"
 msgstr "सप्ताह मेँ एक बार"
 
@@ -1730,7 +1730,7 @@ msgstr "एक व्यक्ति मिला"
 msgid "One picture found"
 msgstr "एक तस्वीर मिली"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Orange"
 msgstr "संतरा"
 
@@ -1757,7 +1757,7 @@ msgstr "मूल नाम"
 msgid "Originals"
 msgstr "मूल"
 
-#: src/options/options.js:431 src/options/options.js:444
+#: src/options/options.js:435 src/options/options.js:448
 msgid "Other"
 msgstr "अन्य"
 
@@ -1765,7 +1765,7 @@ msgstr "अन्य"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "हमारी टीम आवश्यक समर्थन प्रयास, सर्वर और लाइसेंसिंग लागत के आधार पर निरंतर आधार पर इसका निर्णय लेती है, और क्या सुविधाओं की आम तौर पर सभी को आवश्यकता होती है या मुख्य रूप से संगठनों और उन्नत उपयोगकर्ताओं द्वारा अनुरोध किया जाता है।"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Outdoor"
 msgstr "घर के बाहर"
 
@@ -1827,7 +1827,7 @@ msgstr "PhotoPrism 100% स्व-वित्तपोषित और स्�
 msgid "Photos"
 msgstr "तस्वीरें"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Pink"
 msgstr "गुलाबी"
 
@@ -1912,7 +1912,7 @@ msgstr "निजी"
 msgid "Proceed"
 msgstr "आगे बढ़ना"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:427
+#: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "उत्पाद प्रतिक्रिया"
 
@@ -1920,7 +1920,7 @@ msgstr "उत्पाद प्रतिक्रिया"
 msgid "Projection"
 msgstr "प्रक्षेपण"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Purple"
 msgstr "बैंगनी"
 
@@ -1941,7 +1941,7 @@ msgstr "आर"
 msgid "Random"
 msgstr "बिना सोचे समझे"
 
-#: src/options/options.js:318
+#: src/options/options.js:322
 msgid "Raw"
 msgstr "कच्चा"
 
@@ -1981,7 +1981,7 @@ msgstr "मान्यता प्राप्त"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "चेहरों को पहचानता है ताकि विशिष्ट लोगों को ढूंढा जा सके।"
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Red"
 msgstr "लाल"
 
@@ -2059,7 +2059,7 @@ msgstr "समीक्षा"
 msgid "Role"
 msgstr "भूमिका"
 
-#: src/options/options.js:296
+#: src/options/options.js:300
 msgid "Satellite"
 msgstr "उपग्रह"
 
@@ -2225,7 +2225,7 @@ msgstr "समान"
 msgid "Size"
 msgstr "आकार"
 
-#: src/options/options.js:276
+#: src/options/options.js:280
 msgid "Slow"
 msgstr "धीरे"
 
@@ -2295,7 +2295,7 @@ msgstr "स्थिति"
 msgid "Storage"
 msgstr "भंडारण"
 
-#: src/options/options.js:291
+#: src/options/options.js:295
 msgid "Streets"
 msgstr "सड़कें"
 
@@ -2337,7 +2337,7 @@ msgstr "कच्ची छवियों को सिंक करें"
 msgid "Taken"
 msgstr "लिया"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "Teal"
 msgstr "टील"
 
@@ -2426,7 +2426,7 @@ msgstr "टॉगल दृश्य"
 msgid "Token"
 msgstr "टोकन"
 
-#: src/options/options.js:306
+#: src/options/options.js:310
 msgid "Topographic"
 msgstr "स्थलाकृतिक"
 
@@ -2608,7 +2608,7 @@ msgstr "उपयोगकर्ताओं"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:338
 msgid "Vector"
 msgstr "वेक्टर"
 
@@ -2623,7 +2623,7 @@ msgstr "सत्यापित"
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:330
+#: src/options/options.js:334
 msgid "Video"
 msgstr "वीडियो"
 
@@ -2703,7 +2703,7 @@ msgstr "वेबसाइट"
 msgid "What functionality is generally available?"
 msgstr "आम तौर पर कौन सी कार्यक्षमता उपलब्ध होती है?"
 
-#: src/options/options.js:420
+#: src/options/options.js:424
 msgid "White"
 msgstr "सफेद"
 
@@ -2720,7 +2720,7 @@ msgstr "कार्य विवरण"
 msgid "Year"
 msgstr "साल"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Yellow"
 msgstr "पीला"
 

@@ -40,15 +40,15 @@ msgstr "พบบุคคล %{n} คน"
 msgid "%{n} pictures found"
 msgstr "พบ %{n} รูปภาพ"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "1 hour"
 msgstr "1 ชั่วโมง"
 
-#: src/options/options.js:389
+#: src/options/options.js:393
 msgid "12 hours"
 msgstr "12 ชั่วโมง"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "4 hours"
 msgstr "4 ชั่วโมง"
 
@@ -144,23 +144,23 @@ msgstr "ผู้ดูแลระบบ"
 msgid "Advanced"
 msgstr "ขั้นสูง"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After 1 day"
 msgstr "หลังจาก 1 วัน"
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After 3 days"
 msgstr "หลังจาก 3 วัน"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After 7 days"
 msgstr "หลังจาก 7 วัน"
 
-#: src/options/options.js:401
+#: src/options/options.js:405
 msgid "After one month"
 msgstr "หลังจากหนึ่งเดือน"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "After one year"
 msgstr "หลังจากหนึ่งปี"
 
@@ -168,11 +168,11 @@ msgstr "หลังจากหนึ่งปี"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "หลังจากเลือกรูปภาพจากผลการค้นหาแล้ว คุณสามารถเพิ่มรูปภาพลงในอัลบั้มโดยใช้เมนูบริบท"
 
-#: src/options/options.js:402
+#: src/options/options.js:406
 msgid "After two months"
 msgstr "หลังจากสองเดือน"
 
-#: src/options/options.js:400
+#: src/options/options.js:404
 msgid "After two weeks"
 msgstr "หลังจากสองสัปดาห์"
 
@@ -267,7 +267,7 @@ msgstr "ระดับความสูง (ม.)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
-#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:326
 msgid "Animated"
 msgstr "เคลื่อนไหว"
 
@@ -381,19 +381,19 @@ msgstr "ไปโอ"
 msgid "Birth Date"
 msgstr "วันที่เกิด"
 
-#: src/options/options.js:422
+#: src/options/options.js:426
 msgid "Black"
 msgstr "สีดำ"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Blue"
 msgstr "สีฟ้า"
 
-#: src/options/options.js:419
+#: src/options/options.js:423
 msgid "Brown"
 msgstr "สีน้ำตาล"
 
@@ -405,7 +405,7 @@ msgstr "เรียกดูและแก้ไขป้ายกำกับ
 msgid "Browse indexed files and folders in Library."
 msgstr "เรียกดูไฟล์และโฟลเดอร์ที่จัดทำดัชนีในไลบรารี"
 
-#: src/page/about/feedback.vue:8 src/options/options.js:429
+#: src/page/about/feedback.vue:8 src/options/options.js:433
 msgid "Bug Report"
 msgstr "รายงานข้อผิดพลาด"
 
@@ -616,7 +616,7 @@ msgstr "สร้างเมื่อ"
 msgid "Creating thumbnails for"
 msgstr "การสร้างภาพขนาดย่อสำหรับ"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "ลูกบาศก์: คุณภาพปานกลาง ประสิทธิภาพที่ดี"
 
@@ -624,15 +624,15 @@ msgstr "ลูกบาศก์: คุณภาพปานกลาง ปร
 msgid "Current Password"
 msgstr "รหัสผ่านปัจจุบัน"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:426
+#: src/page/about/feedback.vue:5 src/options/options.js:430
 msgid "Customer Support"
 msgstr "สนับสนุนลูกค้า"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Cyan"
 msgstr "สีฟ้า"
 
-#: src/options/options.js:390
+#: src/options/options.js:394
 msgid "Daily"
 msgstr "รายวัน"
 
@@ -646,7 +646,7 @@ msgstr "บันทึกการดีบัก"
 
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
-#: src/options/options.js:283 src/options/options.js:341
+#: src/options/options.js:287 src/options/options.js:345
 #: src/options/themes.js:417
 msgid "Default"
 msgstr "ค่าเริ่มต้น"
@@ -778,7 +778,7 @@ msgstr "อย่าใช้ RawTherapee เพื่อแปลงไฟล�
 msgid "Don't use TensorFlow for image classification."
 msgstr "อย่าใช้ TensorFlow สำหรับการจัดประเภทรูปภาพ"
 
-#: src/options/options.js:430
+#: src/options/options.js:434
 msgid "Donations"
 msgstr "บริจาค"
 
@@ -899,7 +899,7 @@ msgstr "ประมาณการตำแหน่งโดยประมา
 msgid "Estimates"
 msgstr "ประมาณการ"
 
-#: src/options/options.js:391
+#: src/options/options.js:395
 msgid "Every two days"
 msgstr "ทุกสองวัน"
 
@@ -960,7 +960,7 @@ msgstr "ไม่สามารถอัปเดตลิงก์"
 msgid "Family Name"
 msgstr "นามสกุล"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Fast"
 msgstr "เร็ว"
 
@@ -973,7 +973,7 @@ msgstr "ที่ชื่นชอบ"
 msgid "Favorites"
 msgstr "รายการโปรด"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:428
+#: src/page/about/feedback.vue:7 src/options/options.js:432
 msgid "Feature Request"
 msgstr "คำขอคุณสมบัติ"
 
@@ -994,7 +994,7 @@ msgstr "โปรดติดต่อเราที่ hello@photoprism.app �
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr "อย่าลังเลที่จะติดต่อเราที่ Members@photoprism.app สำหรับคำถามเกี่ยวกับการเป็นสมาชิกของคุณ"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Female"
 msgstr "หญิง"
 
@@ -1092,15 +1092,15 @@ msgstr "ชื่อจริง"
 msgid "Global Options"
 msgstr "ตัวเลือกระดับโลก"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Gold"
 msgstr "ทอง"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Green"
 msgstr "สีเขียว"
 
-#: src/options/options.js:421
+#: src/options/options.js:425
 msgid "Grey"
 msgstr "สีเทา"
 
@@ -1136,7 +1136,7 @@ msgstr "ซ่อน"
 msgid "Hide photos that have been moved to archive."
 msgstr "ซ่อนรูปภาพที่ถูกย้ายไปเก็บถาวร"
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "High"
 msgstr "สูง"
 
@@ -1152,7 +1152,7 @@ msgstr "เราจะช่วยได้อย่างไร?"
 msgid "image"
 msgstr "ภาพ"
 
-#: src/model/file.js:217 src/options/options.js:314
+#: src/model/file.js:217 src/options/options.js:318
 msgid "Image"
 msgstr "ภาพ"
 
@@ -1303,7 +1303,7 @@ msgstr "ป้าย"
 msgid "Labels deleted"
 msgstr "ป้ายกำกับถูกลบ"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: การเก็บรายละเอียด สิ่งประดิษฐ์น้อยที่สุด"
 
@@ -1363,7 +1363,7 @@ msgstr "ใบอนุญาต"
 msgid "Like"
 msgstr "ชอบ"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Lime"
 msgstr "มะนาว"
 
@@ -1371,7 +1371,7 @@ msgstr "มะนาว"
 msgid "Limit reached, showing first %{n} files"
 msgstr "ถึงขีดจำกัดแล้ว กำลังแสดง %{n} ไฟล์แรก"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "เชิงเส้น: ราบรื่นมาก ประสิทธิภาพดีที่สุด"
 
@@ -1385,7 +1385,7 @@ msgstr "รายการ"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:326
+#: src/options/options.js:330
 msgid "Live"
 msgstr "สด"
 
@@ -1434,15 +1434,15 @@ msgstr "บันทึก"
 msgid "Longitude"
 msgstr "ลองจิจูด"
 
-#: src/options/options.js:349
+#: src/options/options.js:353
 msgid "Low"
 msgstr "ต่ำ"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Low Resolution"
 msgstr "ความละเอียดต่ำ"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Magenta"
 msgstr "สีม่วงแดง"
 
@@ -1450,7 +1450,7 @@ msgstr "สีม่วงแดง"
 msgid "Main Color"
 msgstr "สีหลัก"
 
-#: src/options/options.js:442
+#: src/options/options.js:446
 msgid "Male"
 msgstr "ชาย"
 
@@ -1475,7 +1475,7 @@ msgstr "แผนที่"
 msgid "Marker"
 msgstr "เครื่องหมาย"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Medium"
 msgstr "ปานกลาง"
 
@@ -1567,7 +1567,7 @@ msgid "Name too long"
 msgstr "ชื่อยาวเกินไป"
 
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
-#: src/options/options.js:386 src/options/options.js:396
+#: src/options/options.js:390 src/options/options.js:400
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "ไม่เคย"
@@ -1651,8 +1651,8 @@ msgstr "ไม่มีคำเตือนหรือข้อผิดพล
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "รูปภาพที่ไม่ใช่ภาพถ่ายและคุณภาพต่ำต้องได้รับการตรวจสอบก่อนที่จะปรากฏในผลการค้นหา"
 
-#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
-#: src/options/options.js:353
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:268
+#: src/options/options.js:357
 msgid "None"
 msgstr "ไม่มี"
 
@@ -1697,7 +1697,7 @@ msgstr "เก่าสุดก่อน"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "บน Windows ให้ป้อนทรัพยากรต่อไปนี้ในกล่องโต้ตอบการเชื่อมต่อ:"
 
-#: src/options/options.js:392
+#: src/options/options.js:396
 msgid "Once a week"
 msgstr "สัปดาห์ละครั้ง"
 
@@ -1730,7 +1730,7 @@ msgstr "พบหนึ่งคน"
 msgid "One picture found"
 msgstr "พบหนึ่งภาพ"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Orange"
 msgstr "ส้ม"
 
@@ -1757,7 +1757,7 @@ msgstr "ชื่อจริง"
 msgid "Originals"
 msgstr "ต้นฉบับ"
 
-#: src/options/options.js:431 src/options/options.js:444
+#: src/options/options.js:435 src/options/options.js:448
 msgid "Other"
 msgstr "อื่น"
 
@@ -1765,7 +1765,7 @@ msgstr "อื่น"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "ทีมงานของเราจะตัดสินใจเรื่องนี้อย่างต่อเนื่องโดยขึ้นอยู่กับความพยายามในการสนับสนุนที่จำเป็น เซิร์ฟเวอร์และค่าสิทธิ์การใช้งาน และดูว่าคุณสมบัตินั้นจำเป็นสำหรับทุกคนหรือส่วนใหญ่ร้องขอโดยองค์กรและผู้ใช้ขั้นสูง"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Outdoor"
 msgstr "กลางแจ้ง"
 
@@ -1827,7 +1827,7 @@ msgstr "PhotoPrism ใช้เงินตัวเอง 100% และเป�
 msgid "Photos"
 msgstr "ภาพถ่าย"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Pink"
 msgstr "สีชมพู"
 
@@ -1912,7 +1912,7 @@ msgstr "ส่วนตัว"
 msgid "Proceed"
 msgstr "ดำเนินการ"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:427
+#: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "คำติชมสินค้า"
 
@@ -1920,7 +1920,7 @@ msgstr "คำติชมสินค้า"
 msgid "Projection"
 msgstr "การฉายภาพ"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Purple"
 msgstr "สีม่วง"
 
@@ -1941,7 +1941,7 @@ msgstr "ร"
 msgid "Random"
 msgstr "สุ่ม"
 
-#: src/options/options.js:318
+#: src/options/options.js:322
 msgid "Raw"
 msgstr "ดิบ"
 
@@ -1981,7 +1981,7 @@ msgstr "ได้รับการยอมรับ"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "จดจำใบหน้าเพื่อให้สามารถค้นหาบุคคลที่เฉพาะเจาะจงได้"
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Red"
 msgstr "สีแดง"
 
@@ -2059,7 +2059,7 @@ msgstr "ทบทวน"
 msgid "Role"
 msgstr "บทบาท"
 
-#: src/options/options.js:296
+#: src/options/options.js:300
 msgid "Satellite"
 msgstr "ดาวเทียม"
 
@@ -2225,7 +2225,7 @@ msgstr "คล้ายกัน"
 msgid "Size"
 msgstr "ขนาด"
 
-#: src/options/options.js:276
+#: src/options/options.js:280
 msgid "Slow"
 msgstr "ช้า"
 
@@ -2295,7 +2295,7 @@ msgstr "สถานะ"
 msgid "Storage"
 msgstr "พื้นที่จัดเก็บ"
 
-#: src/options/options.js:291
+#: src/options/options.js:295
 msgid "Streets"
 msgstr "ถนน"
 
@@ -2337,7 +2337,7 @@ msgstr "ซิงค์ไฟล์ดิบและวิดีโอ"
 msgid "Taken"
 msgstr "ถ่าย"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "Teal"
 msgstr "นกเป็ดน้ำ"
 
@@ -2424,7 +2424,7 @@ msgstr "สลับมุมมอง"
 msgid "Token"
 msgstr "โทเค็น"
 
-#: src/options/options.js:306
+#: src/options/options.js:310
 msgid "Topographic"
 msgstr "ภูมิประเทศ"
 
@@ -2606,7 +2606,7 @@ msgstr "ผู้ใช้"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:338
 msgid "Vector"
 msgstr "เวกเตอร์"
 
@@ -2621,7 +2621,7 @@ msgstr "ตรวจสอบแล้ว"
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:330
+#: src/options/options.js:334
 msgid "Video"
 msgstr "วีดีโอ"
 
@@ -2699,7 +2699,7 @@ msgstr "เว็บไซต์"
 msgid "What functionality is generally available?"
 msgstr "โดยทั่วไปมีฟังก์ชันอะไรบ้าง?"
 
-#: src/options/options.js:420
+#: src/options/options.js:424
 msgid "White"
 msgstr "สีขาว"
 
@@ -2716,7 +2716,7 @@ msgstr "รายละเอียด"
 msgid "Year"
 msgstr "ปี"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Yellow"
 msgstr "สีเหลือง"
 

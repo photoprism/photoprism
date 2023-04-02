@@ -40,15 +40,15 @@ msgstr "%{n} persoane găsite"
 msgid "%{n} pictures found"
 msgstr "%{n} imagini găsite"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "1 hour"
 msgstr "1 oră"
 
-#: src/options/options.js:389
+#: src/options/options.js:393
 msgid "12 hours"
 msgstr "12 ore"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "4 hours"
 msgstr "4 ore"
 
@@ -144,23 +144,23 @@ msgstr "Admin"
 msgid "Advanced"
 msgstr "Avansat"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After 1 day"
 msgstr "După 1 zi"
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After 3 days"
 msgstr "După 3 zile"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After 7 days"
 msgstr "După 7 zile"
 
-#: src/options/options.js:401
+#: src/options/options.js:405
 msgid "After one month"
 msgstr "După o lună"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "After one year"
 msgstr "După un an"
 
@@ -168,11 +168,11 @@ msgstr "După un an"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "După selectarea imaginilor din rezultatele căutării, le puteți adăuga la un album utilizând meniul contextual."
 
-#: src/options/options.js:402
+#: src/options/options.js:406
 msgid "After two months"
 msgstr "După două luni"
 
-#: src/options/options.js:400
+#: src/options/options.js:404
 msgid "After two weeks"
 msgstr "După două săptămâni"
 
@@ -267,7 +267,7 @@ msgstr "Altitudine (m)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
-#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:326
 msgid "Animated"
 msgstr "Animat"
 
@@ -381,19 +381,19 @@ msgstr "Biografie"
 msgid "Birth Date"
 msgstr "Data nașterii"
 
-#: src/options/options.js:422
+#: src/options/options.js:426
 msgid "Black"
 msgstr "Negru"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: modificarea Lanczos, mai puține artefacte care sună"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Blue"
 msgstr "Albastru"
 
-#: src/options/options.js:419
+#: src/options/options.js:423
 msgid "Brown"
 msgstr "Maro"
 
@@ -405,7 +405,7 @@ msgstr "Răsfoiți și editați etichetele de clasificare a imaginilor."
 msgid "Browse indexed files and folders in Library."
 msgstr "Răsfoiți fișierele și folderele indexate din Bibliotecă."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:429
+#: src/page/about/feedback.vue:8 src/options/options.js:433
 msgid "Bug Report"
 msgstr "Raport de eroare"
 
@@ -616,7 +616,7 @@ msgstr "Creat"
 msgid "Creating thumbnails for"
 msgstr "Crearea de miniaturi pentru"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: Calitate moderată, performanță bună"
 
@@ -624,15 +624,15 @@ msgstr "Cubic: Calitate moderată, performanță bună"
 msgid "Current Password"
 msgstr "Parola curentă"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:426
+#: src/page/about/feedback.vue:5 src/options/options.js:430
 msgid "Customer Support"
 msgstr "Asistență pentru clienți"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/options.js:390
+#: src/options/options.js:394
 msgid "Daily"
 msgstr "Zilnic"
 
@@ -646,7 +646,7 @@ msgstr "Jurnalele de depanare"
 
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
-#: src/options/options.js:283 src/options/options.js:341
+#: src/options/options.js:287 src/options/options.js:345
 #: src/options/themes.js:417
 msgid "Default"
 msgstr "Implicit"
@@ -778,7 +778,7 @@ msgstr "Nu utilizați RawTherapee pentru a converti fișiere RAW."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Nu utilizați TensorFlow pentru clasificarea imaginilor."
 
-#: src/options/options.js:430
+#: src/options/options.js:434
 msgid "Donations"
 msgstr "Donații"
 
@@ -899,7 +899,7 @@ msgstr "Estimați locația aproximativă a imaginilor fără coordonate."
 msgid "Estimates"
 msgstr "Estimări"
 
-#: src/options/options.js:391
+#: src/options/options.js:395
 msgid "Every two days"
 msgstr "La fiecare două zile"
 
@@ -960,7 +960,7 @@ msgstr "Link de actualizare eșuat"
 msgid "Family Name"
 msgstr "Nume de familie"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Fast"
 msgstr "Rapid"
 
@@ -973,7 +973,7 @@ msgstr "Favorit"
 msgid "Favorites"
 msgstr "Favorite"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:428
+#: src/page/about/feedback.vue:7 src/options/options.js:432
 msgid "Feature Request"
 msgstr "Cerere de caracteristici"
 
@@ -994,7 +994,7 @@ msgstr "Nu ezitați să ne contactați la hello@photoprism.app dacă aveți înt
 msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
 msgstr "Nu ezitați să ne contactați la members@photoprism.app pentru întrebări legate de calitatea de membru."
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Female"
 msgstr "Femeie"
 
@@ -1092,15 +1092,15 @@ msgstr "Numele dat"
 msgid "Global Options"
 msgstr "Opțiuni globale"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Gold"
 msgstr "Aur"
 
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Green"
 msgstr "Verde"
 
-#: src/options/options.js:421
+#: src/options/options.js:425
 msgid "Grey"
 msgstr "Gri"
 
@@ -1136,7 +1136,7 @@ msgstr "Ascundeți"
 msgid "Hide photos that have been moved to archive."
 msgstr "Ascundeți fotografiile care au fost mutate în arhivă."
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "High"
 msgstr "Mare"
 
@@ -1152,7 +1152,7 @@ msgstr "Cum vă putem ajuta?"
 msgid "image"
 msgstr "imagine"
 
-#: src/model/file.js:217 src/options/options.js:314
+#: src/model/file.js:217 src/options/options.js:318
 msgid "Image"
 msgstr "Imagine"
 
@@ -1303,7 +1303,7 @@ msgstr "Etichete"
 msgid "Labels deleted"
 msgstr "Etichete șterse"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Conservarea detaliilor, artefacte minime"
 
@@ -1363,7 +1363,7 @@ msgstr "Licență"
 msgid "Like"
 msgstr "Ca"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Lime"
 msgstr "Lămâie verde"
 
@@ -1371,7 +1371,7 @@ msgstr "Lămâie verde"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limita a fost atinsă, afișând primele %{n} fișiere"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Liniare: Foarte netedă, cea mai bună performanță"
 
@@ -1385,7 +1385,7 @@ msgstr "Listă"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:326
+#: src/options/options.js:330
 msgid "Live"
 msgstr "Live"
 
@@ -1434,15 +1434,15 @@ msgstr "Jurnale"
 msgid "Longitude"
 msgstr "Longitudine"
 
-#: src/options/options.js:349
+#: src/options/options.js:353
 msgid "Low"
 msgstr "Scăzut"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Low Resolution"
 msgstr "Rezoluție redusă"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1450,7 +1450,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Culoare principală"
 
-#: src/options/options.js:442
+#: src/options/options.js:446
 msgid "Male"
 msgstr "Bărbat"
 
@@ -1475,7 +1475,7 @@ msgstr "Hărți"
 msgid "Marker"
 msgstr "Marker"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Medium"
 msgstr "Mediu"
 
@@ -1567,7 +1567,7 @@ msgid "Name too long"
 msgstr "Nume prea lung"
 
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
-#: src/options/options.js:386 src/options/options.js:396
+#: src/options/options.js:390 src/options/options.js:400
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Niciodată"
@@ -1651,8 +1651,8 @@ msgstr "Nu există avertismente sau erori care să conțină acest cuvânt cheie
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Imaginile nefotografice și de slabă calitate necesită o revizuire înainte de a apărea în rezultatele căutării."
 
-#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
-#: src/options/options.js:353
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:268
+#: src/options/options.js:357
 msgid "None"
 msgstr "Nici unul"
 
@@ -1697,7 +1697,7 @@ msgstr "Cel mai vechi Mai întâi"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Pe Windows, introduceți următoarea resursă în fereastra de dialog de conectare:"
 
-#: src/options/options.js:392
+#: src/options/options.js:396
 msgid "Once a week"
 msgstr "O dată pe săptămână"
 
@@ -1730,7 +1730,7 @@ msgstr "O persoană găsită"
 msgid "One picture found"
 msgstr "O imagine găsită"
 
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Orange"
 msgstr "Portocaliu"
 
@@ -1757,7 +1757,7 @@ msgstr "Denumire originală"
 msgid "Originals"
 msgstr "Originale"
 
-#: src/options/options.js:431 src/options/options.js:444
+#: src/options/options.js:435 src/options/options.js:448
 msgid "Other"
 msgstr "Altele"
 
@@ -1765,7 +1765,7 @@ msgstr "Altele"
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Echipa noastră decide acest lucru în permanență, în funcție de efortul de asistență necesar, de costurile serverului și ale licențelor și de faptul dacă funcțiile sunt în general necesare pentru toată lumea sau sunt solicitate în principal de organizații și utilizatori avansați."
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Outdoor"
 msgstr "În aer liber"
 
@@ -1827,7 +1827,7 @@ msgstr "PhotoPrism este 100% autofinanțat și independent."
 msgid "Photos"
 msgstr "Fotografii"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Pink"
 msgstr "Roz"
 
@@ -1912,7 +1912,7 @@ msgstr "Privat"
 msgid "Proceed"
 msgstr "Continuați"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:427
+#: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Feedback despre produs"
 
@@ -1920,7 +1920,7 @@ msgstr "Feedback despre produs"
 msgid "Projection"
 msgstr "Proiecție"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Purple"
 msgstr "Violet"
 
@@ -1941,7 +1941,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Aleatoriu"
 
-#: src/options/options.js:318
+#: src/options/options.js:322
 msgid "Raw"
 msgstr "Raw"
 
@@ -1981,7 +1981,7 @@ msgstr "Recunoscută"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Recunoaște fețele, astfel încât să poată fi găsite anumite persoane."
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Red"
 msgstr "Roșu"
 
@@ -2059,7 +2059,7 @@ msgstr "Revizuire"
 msgid "Role"
 msgstr "Rol"
 
-#: src/options/options.js:296
+#: src/options/options.js:300
 msgid "Satellite"
 msgstr "Satelit"
 
@@ -2225,7 +2225,7 @@ msgstr "Similar"
 msgid "Size"
 msgstr "Dimensiune"
 
-#: src/options/options.js:276
+#: src/options/options.js:280
 msgid "Slow"
 msgstr "Încet"
 
@@ -2295,7 +2295,7 @@ msgstr "Stare"
 msgid "Storage"
 msgstr "Spațiu de stocare"
 
-#: src/options/options.js:291
+#: src/options/options.js:295
 msgid "Streets"
 msgstr "Străzi"
 
@@ -2337,7 +2337,7 @@ msgstr "Sincronizarea fișierelor raw și video"
 msgid "Taken"
 msgstr "Luat"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "Teal"
 msgstr "Turcoaz"
 
@@ -2426,7 +2426,7 @@ msgstr "Schimbă vizualizarea"
 msgid "Token"
 msgstr "Jeton"
 
-#: src/options/options.js:306
+#: src/options/options.js:310
 msgid "Topographic"
 msgstr "Topografic"
 
@@ -2608,7 +2608,7 @@ msgstr "Utilizatori"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:338
 msgid "Vector"
 msgstr "Vector"
 
@@ -2623,7 +2623,7 @@ msgstr "Verificat"
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:330
+#: src/options/options.js:334
 msgid "Video"
 msgstr "Clip"
 
@@ -2703,7 +2703,7 @@ msgstr "Site web"
 msgid "What functionality is generally available?"
 msgstr "Ce funcționalitate este disponibilă în general?"
 
-#: src/options/options.js:420
+#: src/options/options.js:424
 msgid "White"
 msgstr "Alb"
 
@@ -2720,7 +2720,7 @@ msgstr "Detalii de lucru"
 msgid "Year"
 msgstr "Anul"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Yellow"
 msgstr "Galben"
 
