@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-04-03 08:26+0000\n"
+"Last-Translator: Joao Jesus <johncjesus@gmail.com>\n"
 "Language-Team: Portuguese <https://translate.photoprism.app/projects/"
 "photoprism/backend/pt/>\n"
 "Language: pt\n"
@@ -12,11 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.2\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr "Algo deu errado, tente novamente"
+msgstr "Algo correu mal, tente novamente"
 
 #: messages.go:95
 msgid "Unable to do that"
@@ -169,7 +169,7 @@ msgstr "Nome inválido"
 
 #: messages.go:132
 msgid "Busy, please try again later"
-msgstr "Ocupado, por favor tente mais tarde"
+msgstr "Em uso, por favor tente novamente mais tarde"
 
 #: messages.go:133
 #, c-format
@@ -331,7 +331,7 @@ msgstr "%d arquivos enviados em %d"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr "Processamento de upload..."
+msgstr "A processar carregamento..."
 
 #: messages.go:172
 msgid "Upload has been processed"
