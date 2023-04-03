@@ -144,7 +144,7 @@
         </v-flex>
         <v-flex xs12 class="px-2 pt-3 pb-0">
           <p class="body-1 text-selectable">
-            <translate>Feel free to contact us at hello@photoprism.app if you have any questions.</translate>
+            <translate>You are welcome to contact us at members@photoprism.app for questions regarding your membership.</translate>
             <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
           </p>
         </v-flex>

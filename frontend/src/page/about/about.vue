@@ -12,14 +12,19 @@
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
-      <p class="subheading py-1 pb-2 text-selectable">
-        <strong><translate>At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come.</translate></strong>
+      <p class="subheading py-1 pb-2">
+        <a href="https://www.photoprism.app/" target="_blank">
+          <strong>
+            <translate>Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
+            <translate>That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality.</translate>
+          </strong>
+        </a>
       </p>
 
       <template v-if="canUpgrade">
-        <h3 class="subheading py-2"><translate>Support Our Mission</translate></h3>
+        <h3 class="subheading py-2"><translate>PhotoPrism+ Membership</translate></h3>
         <p class="text-selectable">
-          <span v-if="membership !== 'essentials'"><translate>Become a member today to enjoy additional features and support our mission!</translate></span>
+          <span v-if="membership !== 'essentials'"><translate>Become a member today, support our mission and enjoy our member benefits!</translate></span>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
           <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
         </p>
@@ -54,7 +59,7 @@
         <p class="text-selectable">
           <translate>PhotoPrism is 100% self-funded and independent.</translate>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-          <translate>Feel free to contact us at members@photoprism.app for questions regarding your membership.</translate>
+          <translate>You are welcome to contact us at members@photoprism.app for questions regarding your membership.</translate>
         </p>
         <p class="text-xs-center my-4">
           <v-btn

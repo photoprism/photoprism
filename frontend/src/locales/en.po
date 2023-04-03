@@ -55,7 +55,7 @@ msgstr ""
 msgid "A click will copy it to your clipboard."
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:204
+#: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:209
 #: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
@@ -341,10 +341,6 @@ msgstr ""
 msgid "Aspect Ratio"
 msgstr ""
 
-#: src/page/about/about.vue:15
-msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-msgstr ""
-
 #: src/dialog/admin/users/add.vue:216 src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
@@ -363,11 +359,11 @@ msgstr ""
 msgid "Base Folder"
 msgstr ""
 
-#: src/page/about/about.vue:21 src/page/about/about.vue:3
-msgid "Become a member today to enjoy additional features and support our mission!"
+#: src/page/about/about.vue:26 src/page/about/about.vue:3
+msgid "Become a member today, support our mission and enjoy our member benefits!"
 msgstr ""
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr ""
@@ -412,7 +408,7 @@ msgstr ""
 msgid "Busy, please wait…"
 msgstr ""
 
-#: src/page/connect.vue:102 src/page/connect.vue:107
+#: src/page/connect.vue:107
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr ""
 
@@ -984,15 +980,6 @@ msgstr ""
 msgid "Feedback"
 msgstr ""
 
-#: src/page/connect.vue:101 src/page/connect.vue:106
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr ""
-
-#: src/dialog/sponsor.vue:25 src/page/about/about.vue:45
-#: src/page/about/about.vue:5
-msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-
 #: src/options/options.js:447
 msgid "Female"
 msgstr ""
@@ -1331,8 +1318,8 @@ msgid "LDAP/AD"
 msgstr ""
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:34
-#: src/page/about/about.vue:16 src/page/about/about.vue:268
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
+#: src/page/about/about.vue:16 src/page/about/about.vue:272
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr ""
@@ -1453,7 +1440,7 @@ msgstr ""
 msgid "Male"
 msgstr ""
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:49
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
 msgstr ""
@@ -1760,6 +1747,10 @@ msgstr ""
 msgid "Other"
 msgstr ""
 
+#: src/page/about/about.vue:17
+msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+msgstr ""
+
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
@@ -1817,9 +1808,13 @@ msgstr ""
 msgid "PhotoPrism has been updated…"
 msgstr ""
 
-#: src/page/about/about.vue:43 src/page/about/about.vue:3
+#: src/page/about/about.vue:48 src/page/about/about.vue:3
 #: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
+msgstr ""
+
+#: src/page/about/about.vue:24 src/page/about/about.vue:1
+msgid "PhotoPrism+ Membership"
 msgstr ""
 
 #: src/app/routes.js:155
@@ -2015,6 +2010,10 @@ msgstr ""
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
+msgstr ""
+
+#: src/common/api.js:102
+msgid "Request failed - are you offline?"
 msgstr ""
 
 #: src/common/api.js:74
@@ -2232,10 +2231,6 @@ msgstr ""
 msgid "Software"
 msgstr ""
 
-#: src/common/api.js:102
-msgid "Something went wrong, are you offline?"
-msgstr ""
-
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
 msgid "Sort Order"
@@ -2318,8 +2313,7 @@ msgstr ""
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr ""
 
-#: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1
+#: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr ""
 
@@ -2344,8 +2338,12 @@ msgstr ""
 msgid "Text too long"
 msgstr ""
 
-#: src/page/about/about.vue:41 src/page/about/about.vue:1
+#: src/page/about/about.vue:46 src/page/about/about.vue:1
 msgid "Thank You for Your Support!"
+msgstr ""
+
+#: src/page/about/about.vue:18
+msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr ""
 
 #: src/page/library/index.vue:36
@@ -2517,7 +2515,7 @@ msgstr ""
 msgid "Upgrade"
 msgstr ""
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
 #: src/page/about/about.vue:9 src/page/connect.vue:69
 msgid "Upgrade Now"
 msgstr ""
@@ -2731,6 +2729,11 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
+#: src/page/about/about.vue:5 src/page/connect.vue:106
+msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
+
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr ""
@@ -2752,8 +2755,8 @@ msgstr ""
 msgid "Your account has been successfully connected."
 msgstr ""
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
-#: src/page/about/about.vue:44 src/page/about/about.vue:4
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
+#: src/page/about/about.vue:49 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr ""
 

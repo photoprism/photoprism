@@ -47,7 +47,7 @@ export default {
       switch (m) {
         case "":
         case "ce":
-          return "Community Edition";
+          return "CE";
         case "cloud":
           return "Cloud";
         case "essentials":

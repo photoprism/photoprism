@@ -99,7 +99,7 @@ Api.interceptors.response.use(
     }
 
     // Default error message.
-    let errorMessage = $gettext("Something went wrong, are you offline?");
+    let errorMessage = $gettext("Request failed - are you offline?");
     let code = error.code;
 
     // Extract error details from response.

@@ -53,7 +53,7 @@ msgstr "4 tuntia"
 msgid "A click will copy it to your clipboard."
 msgstr "Napsauttamalla sitä voit kopioida sen leikepöydälle."
 
-#: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:204
+#: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:209
 #: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
 #: src/page/help.vue:43 src/page/people/recognized.vue:434
@@ -339,10 +339,6 @@ msgstr "Koska tämä auttaa meitä tarjoamaan enemmän ominaisuuksia yleisölle,
 msgid "Aspect Ratio"
 msgstr "Kuvasuhde"
 
-#: src/page/about/about.vue:15
-msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-msgstr "Me PhotoPrismillä uskomme, että jokainen valokuvaan vangittu hetki on arvokas, ja tehtävämme on antaa ihmisille mahdollisuus vaalia näitä hetkiä tulevien sukupolvien ajan."
-
 #: src/dialog/admin/users/add.vue:216 src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
@@ -361,11 +357,11 @@ msgstr "Luo automaattisesti albumeja erityisistä hetkistä, matkoista ja paikoi
 msgid "Base Folder"
 msgstr "Pohjakansio"
 
-#: src/page/about/about.vue:21 src/page/about/about.vue:3
-msgid "Become a member today to enjoy additional features and support our mission!"
-msgstr "Liity jäseneksi jo tänään nauttiaksesi lisäominaisuuksista ja tukeaksesi missiotamme!"
+#: src/page/about/about.vue:26 src/page/about/about.vue:3
+msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgstr "Liity jäseneksi tänään, tue tehtäviämme ja nauti jäseneduistamme!"
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:23
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Koska olemme 100-prosenttisesti omarahoitteisia ja riippumattomia, voimme luvata, ettemme koskaan myy tietojasi ja että ohjelmistomme ja palvelumme ovat aina avoimia."
@@ -410,7 +406,7 @@ msgstr "Ilmoita virheestä"
 msgid "Busy, please wait…"
 msgstr "Odota hetki…"
 
-#: src/page/connect.vue:102 src/page/connect.vue:107
+#: src/page/connect.vue:107
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Käyttämällä tarjoamiamme ohjelmistoja ja palveluita hyväksyt käyttöehtomme, tietosuojakäytäntömme ja käytännesääntömme."
 
@@ -982,15 +978,6 @@ msgstr "Palaute"
 msgid "Feedback"
 msgstr "Palaute"
 
-#: src/page/connect.vue:101 src/page/connect.vue:106
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Ota rohkeasti yhteyttä osoitteeseen hello@photoprism.app, jos sinulla on kysyttävää."
-
-#: src/dialog/sponsor.vue:25 src/page/about/about.vue:45
-#: src/page/about/about.vue:5
-msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-msgstr "Ota rohkeasti yhteyttä osoitteeseen members@photoprism.app, jos sinulla on jäsenyyttäsi koskevia kysymyksiä."
-
 #: src/options/options.js:447
 msgid "Female"
 msgstr "Nainen"
@@ -1329,8 +1316,8 @@ msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:104 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:34
-#: src/page/about/about.vue:16 src/page/about/about.vue:268
+#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
+#: src/page/about/about.vue:16 src/page/about/about.vue:272
 #: src/page/connect.vue:130 src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Lue lisää"
@@ -1451,7 +1438,7 @@ msgstr "Pääväri"
 msgid "Male"
 msgstr "Mies"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:49
+#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
 #: src/page/about/about.vue:9 src/page/connect.vue:85
 msgid "Manage Account"
 msgstr "Hallitse tiliä"
@@ -1758,6 +1745,10 @@ msgstr "Alkuperäiset"
 msgid "Other"
 msgstr "Muut"
 
+#: src/page/about/about.vue:17
+msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
+msgstr "Tehtävämme on tarjota käyttäjä- ja yksityisyydensuojaystävällisin ratkaisu, jonka avulla kuvasi pysyvät järjestyksessä ja saatavilla."
+
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Tiimimme päättää tästä jatkuvasti riippuen tarvittavasta tukiponnistuksesta, palvelin- ja lisenssikustannuksista sekä siitä, tarvitsevatko kaikki yleisesti ominaisuuksia vai ovatko ne lähinnä organisaatioiden ja edistyneiden käyttäjien toivomia."
@@ -1815,10 +1806,14 @@ msgstr "Kuva"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on päivitetty…"
 
-#: src/page/about/about.vue:43 src/page/about/about.vue:3
+#: src/page/about/about.vue:48 src/page/about/about.vue:3
 #: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism on 100-prosenttisesti omarahoitteinen ja riippumaton."
+
+#: src/page/about/about.vue:24 src/page/about/about.vue:1
+msgid "PhotoPrism+ Membership"
+msgstr "PhotoPrism+ jäsenyys"
 
 #: src/app/routes.js:155
 msgid "Photos"
@@ -2014,6 +2009,10 @@ msgstr "Poista albumista"
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "Poista tuodut tiedostot tallennustilan säästämiseksi. Ei-tuettuja tiedostotyyppejä ei koskaan poisteta, vaan ne säilyvät nykyisessä sijainnissaan."
+
+#: src/common/api.js:102
+msgid "Request failed - are you offline?"
+msgstr ""
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2230,10 +2229,6 @@ msgstr "Hidas"
 msgid "Software"
 msgstr "Ohjelmisto"
 
-#: src/common/api.js:102
-msgid "Something went wrong, are you offline?"
-msgstr "Jokin meni pieleen, oletko offline?"
-
 #: src/component/photo/toolbar.vue:252 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
 msgid "Sort Order"
@@ -2316,8 +2311,7 @@ msgstr "Super Admin"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Tuki lisäpalveluille, kuten Google Drivelle lisätään myöhemmin."
 
-#: src/dialog/sponsor.vue:7 src/page/about/about.vue:19
-#: src/page/about/about.vue:1
+#: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr "Tue missiotamme"
 
@@ -2342,9 +2336,13 @@ msgstr "Sinivihreä"
 msgid "Text too long"
 msgstr "Liian pitkä teksti"
 
-#: src/page/about/about.vue:41 src/page/about/about.vue:1
+#: src/page/about/about.vue:46 src/page/about/about.vue:1
 msgid "Thank You for Your Support!"
 msgstr "Kiitos tuestasi!"
+
+#: src/page/about/about.vue:18
+msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
+msgstr "Siksi PhotoPrism rakennettiin alusta alkaen toimimaan siellä, missä sitä tarvitset, tinkimättä vapaudesta, yksityisyydestä tai toiminnallisuudesta."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
@@ -2515,7 +2513,7 @@ msgstr "Päivitetään pinoja"
 msgid "Upgrade"
 msgstr "Päivitys"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:27
+#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
 #: src/page/about/about.vue:9 src/page/connect.vue:69
 msgid "Upgrade Now"
 msgstr "Päivitä nyt"
@@ -2729,6 +2727,11 @@ msgstr "Keltainen"
 msgid "Yes"
 msgstr "Kyllä"
 
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
+#: src/page/about/about.vue:5 src/page/connect.vue:106
+msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
+msgstr ""
+
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Voit ladata vain yhden albumin"
@@ -2750,8 +2753,8 @@ msgstr "Voit skannata kirjastosi uudelleen löytääksesi lisää kasvoja."
 msgid "Your account has been successfully connected."
 msgstr "Tilisi on yhdistetty onnistuneesti."
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:22
-#: src/page/about/about.vue:44 src/page/about/about.vue:4
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
+#: src/page/about/about.vue:49 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä ja palveluja, kuten maailmankarttoja."
 
@@ -2762,6 +2765,21 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
+
+#~ msgid "Something went wrong, are you offline?"
+#~ msgstr "Jokin meni pieleen, oletko offline?"
+
+#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
+#~ msgstr "Me PhotoPrismillä uskomme, että jokainen valokuvaan vangittu hetki on arvokas, ja tehtävämme on antaa ihmisille mahdollisuus vaalia näitä hetkiä tulevien sukupolvien ajan."
+
+#~ msgid "Become a member today to enjoy additional features and support our mission!"
+#~ msgstr "Liity jäseneksi jo tänään nauttiaksesi lisäominaisuuksista ja tukeaksesi missiotamme!"
+
+#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr "Ota rohkeasti yhteyttä osoitteeseen hello@photoprism.app, jos sinulla on kysyttävää."
+
+#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
+#~ msgstr "Ota rohkeasti yhteyttä osoitteeseen members@photoprism.app, jos sinulla on jäsenyyttäsi koskevia kysymyksiä."
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "Jokin meni pieleen, yritä uudelleen"
@@ -2861,18 +2879,6 @@ msgstr "Lähennä/loitonna"
 
 #~ msgid "Connect Customer Account"
 #~ msgstr "Yhdistä asiakastili"
-
-#~ msgid "Become a member today, support our mission and enjoy our member benefits!"
-#~ msgstr "Liity jäseneksi tänään, tue tehtäviämme ja nauti jäseneduistamme!"
-
-#~ msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-#~ msgstr "Tehtävämme on tarjota käyttäjä- ja yksityisyydensuojaystävällisin ratkaisu, jonka avulla kuvasi pysyvät järjestyksessä ja saatavilla."
-
-#~ msgid "PhotoPrism+ Membership"
-#~ msgstr "PhotoPrism+ jäsenyys"
-
-#~ msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-#~ msgstr "Siksi PhotoPrism rakennettiin alusta alkaen toimimaan siellä, missä sitä tarvitset, tinkimättä vapaudesta, yksityisyydestä tai toiminnallisuudesta."
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Se hyödyntää uusinta teknologiaa merkitäkseen ja löytääkseen kuvia automaattisesti ilman, että se on tielläsi."
