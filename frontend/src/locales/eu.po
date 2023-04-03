@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-04-02 11:48+0000\n"
+"PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -360,6 +360,8 @@ msgstr "Oinarrizko karpeta"
 #: src/page/about/about.vue:26 src/page/about/about.vue:3
 msgid "Become a member today, support our mission and enjoy our member benefits!"
 msgstr ""
+"Egin zaitez kide gaur, lagundu gure eginkizuna eta gozatu gure kideen "
+"abantailak!"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:5
@@ -1748,6 +1750,8 @@ msgstr "Bestela"
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr ""
+"Gure eginkizuna da erabiltzaileentzako eta pribatutasunerako irtenbiderik "
+"egokiena eskaintzea zure argazkiak antolatuta eta eskuragarri mantentzeko."
 
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
@@ -1813,7 +1817,7 @@ msgstr "PhotoPrism %100 autofinantziatua eta independentea da."
 
 #: src/page/about/about.vue:24 src/page/about/about.vue:1
 msgid "PhotoPrism+ Membership"
-msgstr ""
+msgstr "PhotoPrism+ Kidetza"
 
 #: src/app/routes.js:155
 msgid "Photos"
@@ -2012,7 +2016,7 @@ msgstr "Kendu inportatutako fitxategiak biltegia gordetzeko. Onartu gabeko fitxa
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
-msgstr ""
+msgstr "Eskaerak huts egin du - konexiorik gabe zaude?"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2343,6 +2347,8 @@ msgstr "Eskerrik asko zure laguntzagatik!"
 #: src/page/about/about.vue:18
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr ""
+"Horregatik, PhotoPrism oinarritik sortu zen behar duzun tokian exekutatzeko, "
+"askatasuna, pribatutasuna edo funtzionaltasuna arriskuan jarri gabe."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
@@ -2735,6 +2741,8 @@ msgstr "Bai"
 #: src/page/about/about.vue:5 src/page/connect.vue:106
 msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"Ongi etorri gurekin harremanetan jar zaitezke members@photoprism.app "
+"helbidera zure kidetzari buruzko galderak egiteko."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
