@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-29 12:09+0000\n"
+"PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2012,7 +2012,7 @@ msgstr "Αφαιρέστε τα εισαγόμενα αρχεία για εξο�
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
-msgstr ""
+msgstr "Το αίτημα απέτυχε - είστε εκτός σύνδεσης;"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2731,6 +2731,8 @@ msgstr "Ναι"
 #: src/page/about/about.vue:5 src/page/connect.vue:106
 msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"Μπορείτε να επικοινωνήσετε μαζί μας στο members@photoprism.app για ερωτήσεις "
+"σχετικά με τη συνδρομή σας."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"

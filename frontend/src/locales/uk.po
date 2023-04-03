@@ -3,14 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-29 12:09+0000\n"
+"PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -2015,7 +2016,7 @@ msgstr "Вилучіть імпортовані файли, щоб заощад�
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
-msgstr ""
+msgstr "Запит не вдалось виконати - ви не в мережі?"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2738,6 +2739,8 @@ msgstr "Так"
 #: src/page/about/about.vue:5 src/page/connect.vue:106
 msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"Ви можете зв'язатися з нами за адресою members@photoprism.app з питань, що "
+"стосуються вашого членства."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"

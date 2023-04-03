@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-29 12:09+0000\n"
+"PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
+"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2016,7 +2017,7 @@ msgstr "Eliminar los archivos importados para ahorrar espacio. Los tipos de arch
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
-msgstr ""
+msgstr "Solicitud fallida - ¿estás desconectado?"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2739,6 +2740,8 @@ msgstr "Sí"
 #: src/page/about/about.vue:5 src/page/connect.vue:106
 msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"Puede ponerse en contacto con nosotros en members@photoprism.app si tiene "
+"preguntas sobre su afiliación."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"

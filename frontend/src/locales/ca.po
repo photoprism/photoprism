@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-03-29 12:09+0000\n"
+"PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -2015,7 +2015,7 @@ msgstr "Elimina els fitxers importats per estalviar emmagatzematge. Els tipus de
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
-msgstr ""
+msgstr "La sol·licitud ha fallat; estàs fora de línia?"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2738,6 +2738,8 @@ msgstr "Si"
 #: src/page/about/about.vue:5 src/page/connect.vue:106
 msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"Podeu posar-vos en contacte amb nosaltres a members@photoprism.app per a "
+"preguntes sobre la vostra pertinença."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"

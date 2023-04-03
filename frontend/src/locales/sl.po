@@ -2,12 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-29 12:09+0000\n"
+"PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -2012,7 +2013,7 @@ msgstr "Odstranite uvožene datoteke, da prihranite prostor za shranjevanje. Nep
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
-msgstr ""
+msgstr "Zahteva ni bila uspešna - ste brez povezave?"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2731,6 +2732,7 @@ msgstr "Da"
 #: src/page/about/about.vue:5 src/page/connect.vue:106
 msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
 msgstr ""
+"Z vprašanji v zvezi s članstvom se lahko obrnete na members@photoprism.app."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
