@@ -26,7 +26,7 @@
 
       <v-btn icon href="https://link.photoprism.app/personal-editions" target="_blank" class="action-upgrade"
              :title="$gettext('Learn more')">
-        <v-icon size="26">verified</v-icon>
+        <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
       </v-btn>
     </v-toolbar>
     <v-form ref="form" v-model="valid" autocomplete="off" class="px-3 pt-3 pb-0" lazy-validation>
@@ -99,7 +99,7 @@
               outline
           >
           <p class="subheading text-selectable">
-            <strong><translate>To upgrade, you may either enter an activation code or click on "Proceed" to sign up on our website:</translate></strong>
+            <strong><translate>To upgrade, you can either enter an activation code or click "Register" to sign up on our website:</translate></strong>
           </p>
           <v-text-field v-model="form.token" flat solo hide-details return-masked-value :mask="tokenMask"
                         browser-autocomplete="off"
@@ -126,7 +126,7 @@
                    depressed
                    :disabled="busy"
                    @click.stop="connect">
-              <translate>Proceed</translate>
+              <translate>Register</translate>
               <v-icon v-if="rtl" left dark>navigate_before</v-icon>
               <v-icon v-else right dark>navigate_next</v-icon>
             </v-btn>
@@ -144,7 +144,7 @@
         </v-flex>
         <v-flex xs12 class="px-2 pt-3 pb-0">
           <p class="body-1 text-selectable">
-            <translate>You are welcome to contact us at members@photoprism.app for questions regarding your membership.</translate>
+            <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
             <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
           </p>
         </v-flex>

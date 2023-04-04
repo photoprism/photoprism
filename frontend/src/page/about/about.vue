@@ -8,7 +8,7 @@
       <v-spacer></v-spacer>
 
       <v-btn icon href="https://www.photoprism.app/" target="_blank" class="action-info" :title="$gettext('Learn more')">
-        <v-icon size="26" v-html="'$vuetify.icons.prism'"></v-icon>
+        <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
       </v-btn>
     </v-toolbar>
     <v-container fluid class="px-4 pt-4 pb-1">
@@ -59,7 +59,7 @@
         <p class="text-selectable">
           <translate>PhotoPrism is 100% self-funded and independent.</translate>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-          <translate>You are welcome to contact us at members@photoprism.app for questions regarding your membership.</translate>
+          <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
         </p>
         <p class="text-xs-center my-4">
           <v-btn

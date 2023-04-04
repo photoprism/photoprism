@@ -9,13 +9,13 @@
             </h3>
           </v-flex>
           <v-flex xs2 text-xs-right>
-            <v-icon color="secondary-dark">diamond</v-icon>
+            <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
           </v-flex>
         </v-layout>
       </v-card-title>
       <v-card-text class="px-2">
         <v-layout row wrap class="px-2">
-          <v-flex xs12 class="py-2">
+          <v-flex xs12 class="py-1">
             <p class="body-2">
               <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
             </p>
@@ -23,7 +23,7 @@
               <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
             </p>
             <p class="body-1">
-              <translate>You are welcome to contact us at members@photoprism.app for questions regarding your membership.</translate>
+              <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
             </p>
           </v-flex>
         </v-layout>
