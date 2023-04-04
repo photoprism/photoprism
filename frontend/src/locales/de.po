@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-04 14:18+0000\n"
+"PO-Revision-Date: 2023-04-04 14:22+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
@@ -2518,7 +2518,7 @@ msgstr "Aktualisiere Bildstapel"
 #: src/component/navigation.vue:592 src/component/navigation.vue:51
 #: src/page/connect.vue:17
 msgid "Upgrade"
-msgstr "Upgrade"
+msgstr "Upgraden"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
 #: src/page/about/about.vue:9 src/page/connect.vue:69
