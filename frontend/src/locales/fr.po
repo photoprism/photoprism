@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
-"frontend/fr/>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,7 +98,7 @@ msgstr "Actions"
 msgid "Activate"
 msgstr "Activer"
 
-#: src/page/connect.vue:357 src/page/connect.vue:423
+#: src/page/connect.vue:385 src/page/connect.vue:423
 msgid "Activation Code"
 msgstr "Code d'activation"
 
@@ -1319,10 +1318,10 @@ msgstr "Latitude"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:104 src/component/auth/footer.vue:24
+#: src/page/connect.vue:130 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:16 src/page/about/about.vue:272
-#: src/page/connect.vue:130 src/page/connect.vue:122
+#: src/page/about/about.vue:16 src/page/about/about.vue:273
+#: src/page/connect.vue:122
 msgid "Learn more"
 msgstr "En savoir plus"
 
@@ -1904,10 +1903,6 @@ msgstr "Primaire"
 msgid "Private"
 msgstr "Privée"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
-msgid "Proceed"
-msgstr "Procéder"
-
 #: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Commentaires sur le produit"
@@ -1980,6 +1975,10 @@ msgstr "Recherche les visages pour permettre de trouver des personnes données."
 #: src/options/options.js:414
 msgid "Red"
 msgstr "Rouge"
+
+#: src/page/connect.vue:87 src/page/connect.vue:92
+msgid "Register"
+msgstr ""
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2412,8 +2411,8 @@ msgid "Title too long"
 msgstr "Titre trop long"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Pour effectuer une mise à niveau, vous pouvez soit saisir un code d'activation, soit cliquer sur \"Procéder\" pour effectuer une mise à niveau sur notre site web :"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2737,10 +2736,8 @@ msgstr "Oui"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"Vous pouvez nous contacter à l'adresse members@photoprism.app pour toute "
-"question concernant votre adhésion."
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "Vous pouvez nous contacter à l'adresse membership@photoprism.app pour toute question concernant votre adhésion."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2776,6 +2773,12 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
 
+#~ msgid "Proceed"
+#~ msgstr "Procéder"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "Pour effectuer une mise à niveau, vous pouvez soit saisir un code d'activation, soit cliquer sur \"Procéder\" pour effectuer une mise à niveau sur notre site web :"
+
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Quelque chose s'est mal passé, êtes-vous hors ligne ?"
 
@@ -2788,8 +2791,8 @@ msgstr "Agrandir/Dézoomer"
 #~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 #~ msgstr "Contactez-nous à hello@photoprism.app si vous avez des questions ou besoin d'aide."
 
-#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-#~ msgstr "N'hésitez pas à nous contacter à l'adresse members@photoprism.app pour toute question concernant votre adhésion."
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "N'hésitez pas à nous contacter à l'adresse membership@photoprism.app pour toute question concernant votre adhésion."
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "Quelque chose s'est mal passé, réessayez"

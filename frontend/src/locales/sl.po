@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.16.2\n"
 "Generated-By: easygettext\n"
 
@@ -96,7 +95,7 @@ msgstr "Akcije"
 msgid "Activate"
 msgstr "Aktivacija"
 
-#: src/page/connect.vue:357 src/page/connect.vue:423
+#: src/page/connect.vue:385 src/page/connect.vue:423
 msgid "Activation Code"
 msgstr "Aktivacijska koda"
 
@@ -1316,10 +1315,10 @@ msgstr "Zemljepisna širina"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:104 src/component/auth/footer.vue:24
+#: src/page/connect.vue:130 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:16 src/page/about/about.vue:272
-#: src/page/connect.vue:130 src/page/connect.vue:122
+#: src/page/about/about.vue:16 src/page/about/about.vue:273
+#: src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Preberite več"
 
@@ -1901,10 +1900,6 @@ msgstr "Primarni"
 msgid "Private"
 msgstr "Zasebno"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
-msgid "Proceed"
-msgstr "Nadaljuj"
-
 #: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Povratne informacije o izdelku"
@@ -1977,6 +1972,10 @@ msgstr "Prepozna obraze, tako da lahko poišče določene osebe."
 #: src/options/options.js:414
 msgid "Red"
 msgstr "Rdeča"
+
+#: src/page/connect.vue:87 src/page/connect.vue:92
+msgid "Register"
+msgstr ""
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2407,8 +2406,8 @@ msgid "Title too long"
 msgstr "Predolg naslov"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Za nadgradnjo lahko vnesete aktivacijsko kodo ali kliknete \"Nadaljuj\" in se prijavite na našem spletnem mestu:"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2730,9 +2729,8 @@ msgstr "Da"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"Z vprašanji v zvezi s članstvom se lahko obrnete na members@photoprism.app."
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "Z vprašanji v zvezi s članstvom se lahko obrnete na membership@photoprism.app."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2768,6 +2766,12 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
 
+#~ msgid "Proceed"
+#~ msgstr "Nadaljuj"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "Za nadgradnjo lahko vnesete aktivacijsko kodo ali kliknete \"Nadaljuj\" in se prijavite na našem spletnem mestu:"
+
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Nekaj je šlo narobe, ste brez povezave?"
 
@@ -2780,8 +2784,8 @@ msgstr "Povečanje/pomanjšanje"
 #~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 #~ msgstr "Če imate kakršna koli vprašanja, se obrnite na nas na naslov hello@photoprism.app."
 
-#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-#~ msgstr "Za vprašanja v zvezi s članstvom se lahko obrnete na members@photoprism.app."
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "Za vprašanja v zvezi s članstvom se lahko obrnete na membership@photoprism.app."
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "Nekaj je šlo narobe, poskusite znova"

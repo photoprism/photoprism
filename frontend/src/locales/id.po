@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Indonesian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/id/>\n"
+"Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,7 +98,7 @@ msgstr "Tindakan"
 msgid "Activate"
 msgstr "Aktifkan"
 
-#: src/page/connect.vue:357 src/page/connect.vue:423
+#: src/page/connect.vue:385 src/page/connect.vue:423
 msgid "Activation Code"
 msgstr "Kode Aktivasi"
 
@@ -1319,10 +1318,10 @@ msgstr "Lintang"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:104 src/component/auth/footer.vue:24
+#: src/page/connect.vue:130 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:16 src/page/about/about.vue:272
-#: src/page/connect.vue:130 src/page/connect.vue:122
+#: src/page/about/about.vue:16 src/page/about/about.vue:273
+#: src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Pelajari lebih lanjut"
 
@@ -1904,10 +1903,6 @@ msgstr "Utama"
 msgid "Private"
 msgstr "Pribadi"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
-msgid "Proceed"
-msgstr "Lanjutkan"
-
 #: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Umpan Balik Produk"
@@ -1980,6 +1975,10 @@ msgstr "Mengenali wajah sehingga orang tertentu dapat ditemukan."
 #: src/options/options.js:414
 msgid "Red"
 msgstr "Merah"
+
+#: src/page/connect.vue:87 src/page/connect.vue:92
+msgid "Register"
+msgstr ""
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2410,8 +2409,8 @@ msgid "Title too long"
 msgstr "Judul terlalu panjang"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik \"Proceed\" untuk mendaftar di situs web kami:"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2733,10 +2732,8 @@ msgstr "Ya"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"Anda dapat menghubungi kami di members@photoprism.app untuk pertanyaan "
-"mengenai keanggotaan Anda."
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "Anda dapat menghubungi kami di membership@photoprism.app untuk pertanyaan mengenai keanggotaan Anda."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2772,6 +2769,12 @@ msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat al
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
 
+#~ msgid "Proceed"
+#~ msgstr "Lanjutkan"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "Untuk meng-upgrade, Anda dapat memasukkan kode aktivasi atau klik \"Proceed\" untuk mendaftar di situs web kami:"
+
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Ada yang tidak beres, apakah Anda sedang offline?"
 
@@ -2784,8 +2787,8 @@ msgstr "Memperbesar/memperkecil"
 #~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 #~ msgstr "Silakan hubungi kami di hello@photoprism.app jika Anda memiliki pertanyaan atau butuh bantuan."
 
-#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-#~ msgstr "Jangan ragu untuk menghubungi kami di members@photoprism.app jika ada pertanyaan mengenai keanggotaan Anda."
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "Jangan ragu untuk menghubungi kami di membership@photoprism.app jika ada pertanyaan mengenai keanggotaan Anda."
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "Ada yang salah, coba lagi"

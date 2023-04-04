@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
-"frontend/hi/>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,7 +98,7 @@ msgstr "क्रिया"
 msgid "Activate"
 msgstr "सक्रिय"
 
-#: src/page/connect.vue:357 src/page/connect.vue:423
+#: src/page/connect.vue:385 src/page/connect.vue:423
 msgid "Activation Code"
 msgstr "एक्टिवेशन कोड"
 
@@ -1319,10 +1318,10 @@ msgstr "अक्षांश"
 msgid "LDAP/AD"
 msgstr "एलडीएपी/एडी"
 
-#: src/page/connect.vue:104 src/component/auth/footer.vue:24
+#: src/page/connect.vue:130 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:16 src/page/about/about.vue:272
-#: src/page/connect.vue:130 src/page/connect.vue:122
+#: src/page/about/about.vue:16 src/page/about/about.vue:273
+#: src/page/connect.vue:122
 msgid "Learn more"
 msgstr "और अधिक जानें"
 
@@ -1904,10 +1903,6 @@ msgstr "मुख्य"
 msgid "Private"
 msgstr "निजी"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
-msgid "Proceed"
-msgstr "आगे बढ़ना"
-
 #: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "उत्पाद प्रतिक्रिया"
@@ -1980,6 +1975,10 @@ msgstr "चेहरों को पहचानता है ताकि व�
 #: src/options/options.js:414
 msgid "Red"
 msgstr "लाल"
+
+#: src/page/connect.vue:87 src/page/connect.vue:92
+msgid "Register"
+msgstr ""
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2412,8 +2411,8 @@ msgid "Title too long"
 msgstr "शीर्षक बहुत लंबा है"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "अपग्रेड करने के लिए, आप या तो एक सक्रियण कोड दर्ज कर सकते हैं या हमारी वेबसाइट पर साइन अप करने के लिए \"आगे बढ़ें\" पर क्लिक कर सकते हैं:"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2737,10 +2736,8 @@ msgstr "हाँ"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"अपनी सदस्यता से संबंधित प्रश्नों के लिए Member@photoprism.app पर हमसे संपर्क "
-"करने के लिए आपका स्वागत है।"
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "अपनी सदस्यता से संबंधित प्रश्नों के लिए Member@photoprism.app पर हमसे संपर्क करने के लिए आपका स्वागत है।"
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2776,6 +2773,12 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
 
+#~ msgid "Proceed"
+#~ msgstr "आगे बढ़ना"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "अपग्रेड करने के लिए, आप या तो एक सक्रियण कोड दर्ज कर सकते हैं या हमारी वेबसाइट पर साइन अप करने के लिए \"आगे बढ़ें\" पर क्लिक कर सकते हैं:"
+
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "कुछ गलत हो गया, क्या आप ऑफ़लाइन हैं?"
 
@@ -2788,8 +2791,8 @@ msgstr "ज़ूम इन / आउट करें"
 #~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 #~ msgstr "यदि आपके कोई प्रश्न हैं या सहायता चाहिए तो कृपया hello@photoprism.app पर हमसे संपर्क करें।"
 
-#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-#~ msgstr "अपनी सदस्यता से संबंधित प्रश्नों के लिए बेझिझक हमसे members@photoprism.app पर संपर्क करें।"
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "अपनी सदस्यता से संबंधित प्रश्नों के लिए बेझिझक हमसे membership@photoprism.app पर संपर्क करें।"
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "कुछ गलत हुआ है, दोबारा कोशिश करें"

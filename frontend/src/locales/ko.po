@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ko/>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,7 +98,7 @@ msgstr "동작"
 msgid "Activate"
 msgstr "활성화"
 
-#: src/page/connect.vue:357 src/page/connect.vue:423
+#: src/page/connect.vue:385 src/page/connect.vue:423
 msgid "Activation Code"
 msgstr "활성화 코드"
 
@@ -1319,10 +1318,10 @@ msgstr "위도"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:104 src/component/auth/footer.vue:24
+#: src/page/connect.vue:130 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:16 src/page/about/about.vue:272
-#: src/page/connect.vue:130 src/page/connect.vue:122
+#: src/page/about/about.vue:16 src/page/about/about.vue:273
+#: src/page/connect.vue:122
 msgid "Learn more"
 msgstr "더 보기"
 
@@ -1904,10 +1903,6 @@ msgstr "주요"
 msgid "Private"
 msgstr "비공개"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
-msgid "Proceed"
-msgstr "진행하다"
-
 #: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "제품 피드백"
@@ -1980,6 +1975,10 @@ msgstr "특정 사람을 찾을 수 있도록 얼굴을 인식합니다."
 #: src/options/options.js:414
 msgid "Red"
 msgstr "빨간색"
+
+#: src/page/connect.vue:87 src/page/connect.vue:92
+msgid "Register"
+msgstr ""
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2410,8 +2409,8 @@ msgid "Title too long"
 msgstr "주제 너무 긴다"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"진행\"을 클릭하여 당사 웹 사이트에 가입하십시오."
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2733,9 +2732,8 @@ msgstr "네"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
-msgstr "멤버십과 관련하여 궁금한 점이 있으면 members@photoprism.app 으로 문의하시기 "
-"바랍니다."
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "멤버십과 관련하여 궁금한 점이 있으면 membership@photoprism.app 으로 문의하시기 바랍니다."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2771,6 +2769,12 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 msgid "Zoom in/out"
 msgstr "확대/축소"
 
+#~ msgid "Proceed"
+#~ msgstr "진행하다"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "업그레이드하려면 활성화 코드를 입력하거나 \"진행\"을 클릭하여 당사 웹 사이트에 가입하십시오."
+
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "문제가 발생했습니다. 오프라인 상태인가요?"
 
@@ -2783,8 +2787,8 @@ msgstr "확대/축소"
 #~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 #~ msgstr "질문이 있거나 도움이 필요하면 hello@photoprism.app으로 문의하십시오."
 
-#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-#~ msgstr "멤버십과 관련하여 궁금한 점이 있으면 members@photoprism.app 으로 문의해 주세요."
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "멤버십과 관련하여 궁금한 점이 있으면 membership@photoprism.app 으로 문의해 주세요."
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "문제가 발생했습니다. 다시 시도하세요."

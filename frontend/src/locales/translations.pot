@@ -104,7 +104,7 @@ msgstr ""
 msgid "Activate"
 msgstr ""
 
-#: src/page/connect.vue:357
+#: src/page/connect.vue:385
 #: src/page/connect.vue:423
 msgid "Activation Code"
 msgstr ""
@@ -1543,12 +1543,12 @@ msgstr ""
 msgid "LDAP/AD"
 msgstr ""
 
-#: src/page/connect.vue:104
+#: src/page/connect.vue:130
 #: src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39
 #: src/page/about/about.vue:16
-#: src/page/about/about.vue:272
+#: src/page/about/about.vue:273
 #: src/page/connect.vue:130
 #: src/page/connect.vue:122
 msgid "Learn more"
@@ -2254,11 +2254,6 @@ msgstr ""
 msgid "Private"
 msgstr ""
 
-#: src/page/connect.vue:87
-#: src/page/connect.vue:92
-msgid "Proceed"
-msgstr ""
-
 #: src/page/about/feedback.vue:6
 #: src/options/options.js:431
 msgid "Product Feedback"
@@ -2339,6 +2334,11 @@ msgstr ""
 
 #: src/options/options.js:414
 msgid "Red"
+msgstr ""
+
+#: src/page/connect.vue:87
+#: src/page/connect.vue:92
+msgid "Register"
 msgstr ""
 
 #: src/component/album/toolbar.vue:64
@@ -2832,7 +2832,7 @@ msgstr ""
 
 #: src/page/connect.vue:74
 #: src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr ""
 
 #: src/component/album/toolbar.vue:139
@@ -3236,7 +3236,7 @@ msgstr ""
 #: src/page/about/about.vue:50
 #: src/page/about/about.vue:5
 #: src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr ""
 
 #: src/component/album/clipboard.vue:106

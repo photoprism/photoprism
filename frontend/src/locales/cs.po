@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
-"frontend/cs/>\n"
+"Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/frontend/cs/>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,7 +98,7 @@ msgstr "Akce"
 msgid "Activate"
 msgstr "Aktivovat"
 
-#: src/page/connect.vue:357 src/page/connect.vue:423
+#: src/page/connect.vue:385 src/page/connect.vue:423
 msgid "Activation Code"
 msgstr "Aktivační kód"
 
@@ -1319,10 +1318,10 @@ msgstr "Zeměpisná šířka"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:104 src/component/auth/footer.vue:24
+#: src/page/connect.vue:130 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:16 src/page/about/about.vue:272
-#: src/page/connect.vue:130 src/page/connect.vue:122
+#: src/page/about/about.vue:16 src/page/about/about.vue:273
+#: src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Zjistěte více"
 
@@ -1904,10 +1903,6 @@ msgstr "Primární"
 msgid "Private"
 msgstr "Soukromé"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
-msgid "Proceed"
-msgstr "Postupujte podle"
-
 #: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Zpětná vazba k produktu"
@@ -1980,6 +1975,10 @@ msgstr "Rozpoznává obličeje, aby bylo možné najít konkrétní osoby."
 #: src/options/options.js:414
 msgid "Red"
 msgstr "Červená"
+
+#: src/page/connect.vue:87 src/page/connect.vue:92
+msgid "Register"
+msgstr ""
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2410,8 +2409,8 @@ msgid "Title too long"
 msgstr "Titulek je příliš dlouhý"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Chcete-li provést aktualizaci, můžete zadat aktivační kód nebo kliknout na tlačítko \"Pokračovat\" a zaregistrovat se na našich webových stránkách:"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2735,10 +2734,8 @@ msgstr "Ano"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"V případě dotazů týkajících se vašeho členství nás můžete kontaktovat na "
-"adrese members@photoprism.app."
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "V případě dotazů týkajících se vašeho členství nás můžete kontaktovat na adrese membership@photoprism.app."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2774,6 +2771,12 @@ msgstr "Vaše knihovna je průběžně analyzována a automaticky vytváří alb
 msgid "Zoom in/out"
 msgstr "Přiblížit/Oddálit"
 
+#~ msgid "Proceed"
+#~ msgstr "Postupujte podle"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "Chcete-li provést aktualizaci, můžete zadat aktivační kód nebo kliknout na tlačítko \"Pokračovat\" a zaregistrovat se na našich webových stránkách:"
+
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Něco se pokazilo, jste offline?"
 
@@ -2786,8 +2789,8 @@ msgstr "Přiblížit/Oddálit"
 #~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 #~ msgstr "V případě jakýchkoli dotazů nás kontaktujte na adrese hello@photoprism.app."
 
-#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-#~ msgstr "V případě dotazů týkajících se vašeho členství nás neváhejte kontaktovat na adrese members@photoprism.app."
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "V případě dotazů týkajících se vašeho členství nás neváhejte kontaktovat na adrese membership@photoprism.app."
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "Něco se pokazilo, zkuste to znovu"

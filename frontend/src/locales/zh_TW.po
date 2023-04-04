@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-04-03 08:29+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,7 +98,7 @@ msgstr "動作"
 msgid "Activate"
 msgstr "激活"
 
-#: src/page/connect.vue:357 src/page/connect.vue:423
+#: src/page/connect.vue:385 src/page/connect.vue:423
 msgid "Activation Code"
 msgstr "激活碼"
 
@@ -1319,10 +1318,10 @@ msgstr "緯度"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:104 src/component/auth/footer.vue:24
+#: src/page/connect.vue:130 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:16 src/page/about/about.vue:272
-#: src/page/connect.vue:130 src/page/connect.vue:122
+#: src/page/about/about.vue:16 src/page/about/about.vue:273
+#: src/page/connect.vue:122
 msgid "Learn more"
 msgstr "了解更多"
 
@@ -1904,10 +1903,6 @@ msgstr "主要的"
 msgid "Private"
 msgstr "私人的"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
-msgid "Proceed"
-msgstr "繼續"
-
 #: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "產品回饋"
@@ -1980,6 +1975,10 @@ msgstr "辨識面孔，以找到特定的人。"
 #: src/options/options.js:414
 msgid "Red"
 msgstr "紅色"
+
+#: src/page/connect.vue:87 src/page/connect.vue:92
+msgid "Register"
+msgstr ""
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2412,8 +2411,8 @@ msgid "Title too long"
 msgstr "標題太長"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "要升級，你需要輸入金鑰或按下\"繼續\"來登入我們的網站:"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2737,8 +2736,8 @@ msgstr "是"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
-msgstr "欢迎你与我们联系，members@photoprism.app，询问有关你的会员资格的问题。"
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "欢迎你与我们联系，membership@photoprism.app，询问有关你的会员资格的问题。"
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2774,6 +2773,12 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 msgid "Zoom in/out"
 msgstr "縮放"
 
+#~ msgid "Proceed"
+#~ msgstr "繼續"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "要升級，你需要輸入金鑰或按下\"繼續\"來登入我們的網站:"
+
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "出了点问题，你下线了吗？"
 
@@ -2786,8 +2791,8 @@ msgstr "縮放"
 #~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 #~ msgstr "如果您有任何問題或需要幫助，請通過 hello@photoprism.app 與我們聯繫。"
 
-#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-#~ msgstr "如有关于会员资格的问题，请随时与我们联系，members@photoprism.app。"
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "如有关于会员资格的问题，请随时与我们联系，membership@photoprism.app。"
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "出错了，再试一次"

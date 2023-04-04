@@ -95,7 +95,7 @@ msgstr "Ekintzak"
 msgid "Activate"
 msgstr "Aktibatu"
 
-#: src/page/connect.vue:357 src/page/connect.vue:423
+#: src/page/connect.vue:385 src/page/connect.vue:423
 msgid "Activation Code"
 msgstr "Aktibazio kodea"
 
@@ -359,9 +359,7 @@ msgstr "Oinarrizko karpeta"
 
 #: src/page/about/about.vue:26 src/page/about/about.vue:3
 msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Egin zaitez kide gaur, lagundu gure eginkizuna eta gozatu gure kideen "
-"abantailak!"
+msgstr "Egin zaitez kide gaur, lagundu gure eginkizuna eta gozatu gure kideen abantailak!"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:5
@@ -1317,10 +1315,10 @@ msgstr "Latitudea"
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:104 src/component/auth/footer.vue:24
+#: src/page/connect.vue:130 src/component/auth/footer.vue:24
 #: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:16 src/page/about/about.vue:272
-#: src/page/connect.vue:130 src/page/connect.vue:122
+#: src/page/about/about.vue:16 src/page/about/about.vue:273
+#: src/page/connect.vue:122
 msgid "Learn more"
 msgstr "Gehiago ikasi"
 
@@ -1749,9 +1747,7 @@ msgstr "Bestela"
 
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr ""
-"Gure eginkizuna da erabiltzaileentzako eta pribatutasunerako irtenbiderik "
-"egokiena eskaintzea zure argazkiak antolatuta eta eskuragarri mantentzeko."
+msgstr "Gure eginkizuna da erabiltzaileentzako eta pribatutasunerako irtenbiderik egokiena eskaintzea zure argazkiak antolatuta eta eskuragarri mantentzeko."
 
 #: src/page/connect.vue:126
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
@@ -1904,10 +1900,6 @@ msgstr "Lehen mailakoa"
 msgid "Private"
 msgstr "Pribatua"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
-msgid "Proceed"
-msgstr "Jarraitu"
-
 #: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Produktuaren iritzia"
@@ -1980,6 +1972,10 @@ msgstr "Aurpegiak ezagutzen ditu, pertsona zehatzak aurkitu ahal izateko."
 #: src/options/options.js:414
 msgid "Red"
 msgstr "Gorria"
+
+#: src/page/connect.vue:87 src/page/connect.vue:92
+msgid "Register"
+msgstr ""
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2346,9 +2342,7 @@ msgstr "Eskerrik asko zure laguntzagatik!"
 
 #: src/page/about/about.vue:18
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr ""
-"Horregatik, PhotoPrism oinarritik sortu zen behar duzun tokian exekutatzeko, "
-"askatasuna, pribatutasuna edo funtzionaltasuna arriskuan jarri gabe."
+msgstr "Horregatik, PhotoPrism oinarritik sortu zen behar duzun tokian exekutatzeko, askatasuna, pribatutasuna edo funtzionaltasuna arriskuan jarri gabe."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
@@ -2414,8 +2408,8 @@ msgid "Title too long"
 msgstr "Izenburua luzeegia"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Bertsio-berritzeko, aktibazio-kode bat sartu edo \"Jarraitu\" sakatu dezakezu gure webgunean erregistratzeko:"
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr ""
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2739,10 +2733,8 @@ msgstr "Bai"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at members@photoprism.app for questions regarding your membership."
-msgstr ""
-"Ongi etorri gurekin harremanetan jar zaitezke members@photoprism.app "
-"helbidera zure kidetzari buruzko galderak egiteko."
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "Ongi etorri gurekin harremanetan jar zaitezke membership@photoprism.app helbidera zure kidetzari buruzko galderak egiteko."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2778,6 +2770,12 @@ msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien 
 msgid "Zoom in/out"
 msgstr "Handitu/txikiagotu"
 
+#~ msgid "Proceed"
+#~ msgstr "Jarraitu"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "Bertsio-berritzeko, aktibazio-kode bat sartu edo \"Jarraitu\" sakatu dezakezu gure webgunean erregistratzeko:"
+
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Arazoren bat izan da, konexiorik gabe zaude?"
 
@@ -2790,5 +2788,5 @@ msgstr "Handitu/txikiagotu"
 #~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
 #~ msgstr "Galderarik baduzu, jar zaitez gurekin harremanetan hello@photoprism.app helbidera."
 
-#~ msgid "Feel free to contact us at members@photoprism.app for questions regarding your membership."
-#~ msgstr "Jar zaitez gurekin harremanetan members@photoprism.app helbidera zure kidetzari buruzko galderak egiteko."
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "Jar zaitez gurekin harremanetan membership@photoprism.app helbidera zure kidetzari buruzko galderak egiteko."
