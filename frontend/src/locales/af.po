@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-04-03 08:29+0000\n"
+"PO-Revision-Date: 2023-04-04 14:18+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1975,7 +1975,7 @@ msgstr "Rooi"
 
 #: src/page/connect.vue:87 src/page/connect.vue:92
 msgid "Register"
-msgstr ""
+msgstr "Registreer"
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2410,6 +2410,8 @@ msgstr "Titel te lank"
 #: src/page/connect.vue:74 src/page/connect.vue:79
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr ""
+"Om op te gradeer, kan jy óf 'n aktiveringskode invoer óf \"Registreer\" klik "
+"om op ons webwerf aan te meld:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
