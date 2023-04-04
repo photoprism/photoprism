@@ -2,7 +2,7 @@
   <div class="p-page p-page-about">
     <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
       <v-toolbar-title>
-        {{ $config.getAbout() }} {{ getMembership() }}
+        {{ $config.getAbout() }}{{ getMembership() }}
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -157,15 +157,20 @@ export default {
   },
   methods: {
     getMembership() {
+      if (this.isDemo) {
+        return "";
+      }
+
       const m = this.$config.getMembership();
       switch (m) {
+        case "":
         case "ce":
         case "cloud":
           return "";
         case "essentials":
-          return "Essentials";
+          return " Essentials";
         default:
-          return "Plus";
+          return " Plus";
       }
     }
   },
