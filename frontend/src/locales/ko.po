@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-03 08:29+0000\n"
+"PO-Revision-Date: 2023-04-04 14:18+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1978,7 +1979,7 @@ msgstr "빨간색"
 
 #: src/page/connect.vue:87 src/page/connect.vue:92
 msgid "Register"
-msgstr ""
+msgstr "등록하기"
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
@@ -2410,7 +2411,8 @@ msgstr "주제 너무 긴다"
 
 #: src/page/connect.vue:74 src/page/connect.vue:79
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr ""
+msgstr "업그레이드하려면 활성화 코드를 입력하거나 '등록'을 클릭하여 웹사이트에서 "
+"가입할 수 있습니다:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
