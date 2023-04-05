@@ -650,16 +650,17 @@
             <v-icon>auto_stories</v-icon>
             <translate>User Guide</translate>
           </a></div>
-          <div v-if="config.legalUrl && isSponsor" class="menu-action nav-legal"><a :href="config.legalUrl"
-                                                                                      target="_blank">
-            <v-icon>info</v-icon>
-            <translate>Legal Information</translate>
-          </a></div>
+          <div v-if="config.legalUrl && isSponsor" class="menu-action nav-legal">
+            <a :href="config.legalUrl" target="_blank">
+              <v-icon>info</v-icon>
+              <translate>Legal Information</translate>
+            </a>
+          </div>
         </div>
       </div>
     </div>
     <div v-if="config.legalInfo && visible" id="legal-info">
-      <a v-if="config.legalUrl" :href="config.legalUrl" target="_blank">{{ config.legalInfo }}</a>
+      <span v-if="config.legalUrl" class="clickable" @click.stop.prevent="onInfo()">{{ config.legalInfo }}</span>
       <span v-else>{{ config.legalInfo }}</span>
     </div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
@@ -827,6 +828,13 @@ export default {
     },
     onAccount: function () {
       this.$router.push({name: "settings_account"});
+    },
+    onInfo() {
+      if (this.isSponsor && this.config.legalUrl) {
+        window.open(this.config.legalUrl, '_blank').focus();
+      } else {
+        this.$router.push({name: "about"});
+      }
     },
     onLogout() {
       this.$session.logout();

@@ -258,10 +258,6 @@ nav .v-list__tile__title.title {
     background: rgba(250, 250, 255,.08);
 }
 
-#mobile-menu .menu-icons a i {
-    font-size: 22px;
-}
-
 #mobile-menu .menu-actions {
     display: block;
     overflow-y: auto;
@@ -291,9 +287,17 @@ nav .v-list__tile__title.title {
     margin: 0;
 }
 
-#mobile-menu .menu-action a i {
+#mobile-menu .menu-icons a .v-icon {
+    font-size: 22px;
+}
+
+#mobile-menu .menu-action a .v-icon {
     padding: 0 16px 0 0;
     font-size: 20px;
+}
+
+#photoprism #mobile-menu .menu-action.nav-membership a .v-icon {
+    color: #d9b8ff;
 }
 
 #photoprism #mobile-menu .menu-icons a:hover i,
