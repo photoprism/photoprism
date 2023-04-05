@@ -106,7 +106,7 @@ services:
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
-    image: arm64v8/mariadb:10.10 # ARM64 IMAGE ONLY, DOES NOT WORK ON ARMv7, AMD or Intel
+    image: arm64v8/mariadb:10.11 # ARM64 IMAGE ONLY, DOES NOT WORK ON ARMv7, AMD or Intel
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped

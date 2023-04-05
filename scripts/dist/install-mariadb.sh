@@ -23,7 +23,7 @@ set -e
 if [[ $VERSION_CODENAME == "lunar" ]]; then
   echo "Installing MariaDB distribution packages..."
 else
-  MARIADB_VERSION="10.10"
+  MARIADB_VERSION="10.11"
   MARIADB_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
 
   if [ ! -f "/etc/apt/sources.list.d/mariadb.list" ]; then

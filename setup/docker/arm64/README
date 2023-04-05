@@ -12,7 +12,7 @@ single-arch ARM64 images (updated and tested less frequently):
 
   Stable Release     : photoprism/photoprism:arm64
   Development Preview: photoprism/photoprism:preview-arm64
-  MariaDB            : arm64v8/mariadb:10.10
+  MariaDB            : arm64v8/mariadb:10.11
 
 If your device meets the system requirements, mostly the same installation instructions
 as for regular Linux servers apply:
