@@ -197,6 +197,10 @@ func (c *Config) Propagate() {
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
 
+	// Set default theme and locale.
+	customize.DefaultTheme = c.DefaultTheme()
+	customize.DefaultLocale = c.DefaultLocale()
+
 	c.Settings().Propagate()
 	c.Hub().Propagate()
 }
