@@ -1,13 +1,35 @@
 #!/usr/bin/env bash
 
+# This installs the TensorFlow libraries on Linux.
+# bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-tensorflow.sh)
+
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
 
 set -e
 
 TF_VERSION=${TF_VERSION:-1.15.2}
 
-SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
+SYSTEM_ARCH=$(uname -m)
 DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
+
+case $DESTARCH in
+  amd64 | AMD64 | x86_64 | x86-64)
+    DESTARCH=amd64
+    ;;
+
+  arm64 | ARM64 | aarch64)
+    DESTARCH=arm64
+    ;;
+
+  arm | ARM | aarch | armv7l | armhf)
+    DESTARCH=arm
+    ;;
+
+  *)
+    echo "Unsupported Machine Architecture: \"$DESTARCH\"" 1>&2
+    exit 1
+    ;;
+esac
 
 if [[ $1 == "auto" ]]; then
   TF_DRIVER="auto";
@@ -28,7 +50,14 @@ mkdir -p "$DESTDIR"
 
 if [[ $TF_DRIVER == "auto" ]]; then
   echo "Detecting driver..."
-  TF_DRIVER=$("$(dirname "$0")/tensorflow-driver.sh")
+
+  CPU_DETECTED=$(lshw -c processor -json 2>/dev/null)
+
+  if [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx2') == "true" ]]; then
+    TF_DRIVER="avx2"
+  elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx') == "true" ]]; then
+    TF_DRIVER="avx"
+  fi
 fi
 
 if [[ -z $TF_DRIVER ]]; then
