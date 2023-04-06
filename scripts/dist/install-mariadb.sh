@@ -12,8 +12,9 @@ if [[ $(id -u) != "0" ]]; then
 fi
 
 if [[ -z $1 ]]; then
-    echo "Usage: ${0##*/} [package names...]" 1>&2
-    exit 1
+  PACKAGES="mariadb-client"
+else
+  PACKAGES=$1
 fi
 
 set -e
@@ -32,9 +33,9 @@ else
   fi
 fi
 
-echo "Installing \"$1\"..."
+echo "Installing \"$PACKAGES\"..."
 
 apt-get update
-apt-get -qq install $1
+apt-get -qq install $PACKAGES
 
 echo "Done."
