@@ -65,6 +65,7 @@ var PhotoPrism = []cli.Command{
 	ShowCommand,
 	VersionCommand,
 	ShowConfigCommand,
+	SearchCommand,
 	ConnectCommand,
 }
 
