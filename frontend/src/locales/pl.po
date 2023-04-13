@@ -70,7 +70,7 @@ msgstr "O programie"
 msgid "Account"
 msgstr "Konto"
 
-#: src/dialog/admin/users/add.vue:86 src/dialog/service/add.vue:35
+#: src/dialog/admin/users/add.vue:87 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "Konto utworzone"
 
@@ -102,7 +102,7 @@ msgstr "Aktywuj"
 msgid "Activation Code"
 msgstr "Kod aktywacji"
 
-#: src/dialog/admin/users/add.vue:22 src/page/admin/users.vue:47
+#: src/dialog/admin/users/add.vue:23 src/page/admin/users.vue:47
 msgid "Add"
 msgstr "Dodaj"
 
@@ -342,7 +342,7 @@ msgstr "Ponieważ pomaga nam to dostarczać więcej funkcji dla społeczeństwa,
 msgid "Aspect Ratio"
 msgstr "Proporcje obrazu"
 
-#: src/dialog/admin/users/add.vue:216 src/dialog/admin/users/edit.vue:364
+#: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
@@ -440,9 +440,9 @@ msgstr "Nie można załadować więcej, osiągnięto limit"
 msgid "Can't select more items"
 msgstr "Nie można zaznaczyć większej ilości elementów"
 
-#: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:21
+#: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:74 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/password.vue:36
+#: src/page/connect.vue:44 src/dialog/account/password.vue:39
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
 #: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
@@ -467,7 +467,7 @@ msgstr "Kategoria"
 msgid "Change Avatar"
 msgstr "Zmień awatar"
 
-#: src/page/settings/account.vue:54 src/dialog/account/password.vue:7
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
 #: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "Zmień hasło"
@@ -616,7 +616,7 @@ msgstr "Tworzenie miniaturek dla"
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: umiarkowana jakość, dobra wydajność"
 
-#: src/dialog/account/password.vue:133
+#: src/dialog/account/password.vue:134
 msgid "Current Password"
 msgstr "Obecne hasło"
 
@@ -741,7 +741,7 @@ msgstr "Wyłącza transkodowanie wideo i ekstrakcję miniatur."
 msgid "Discover"
 msgstr "Odkryj"
 
-#: src/dialog/admin/users/add.vue:122 src/dialog/admin/users/edit.vue:99
+#: src/dialog/admin/users/add.vue:151 src/dialog/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "Nazwa wyświetlana"
@@ -870,7 +870,7 @@ msgstr "Edytuj zdjęcie"
 msgid "Edited"
 msgstr "Data ostatniej edycji"
 
-#: src/dialog/admin/users/add.vue:147 src/dialog/admin/users/edit.vue:317
+#: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "Email"
@@ -1222,7 +1222,7 @@ msgstr "ID instancji"
 msgid "Interval"
 msgstr "Okres"
 
-#: src/dialog/admin/users/add.vue:125 src/dialog/admin/users/add.vue:150
+#: src/dialog/admin/users/add.vue:154 src/dialog/admin/users/add.vue:179
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
@@ -1528,7 +1528,7 @@ msgstr "Najważniejsze"
 msgid "Move Files"
 msgstr "Przenieś pliki"
 
-#: src/dialog/account/password.vue:162
+#: src/dialog/account/password.vue:165
 msgid "Must have at least %{n} characters."
 msgstr "Musi mieć co najmniej %{n} znaków."
 
@@ -1562,7 +1562,7 @@ msgstr "Nigdy"
 msgid "New"
 msgstr "Nowi"
 
-#: src/dialog/account/password.vue:159
+#: src/dialog/account/password.vue:162
 msgid "New Password"
 msgstr "Nowe hasło"
 
@@ -1767,13 +1767,13 @@ msgstr "Panorama"
 msgid "Panoramas"
 msgstr "Panoramy"
 
-#: src/dialog/admin/users/add.vue:170 src/dialog/service/add.vue:126
+#: src/dialog/admin/users/add.vue:123 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
 msgstr "Hasło"
 
-#: src/dialog/account/password.vue:47
+#: src/dialog/account/password.vue:52
 msgid "Password changed"
 msgstr "Zmieniono hasło"
 
@@ -1842,7 +1842,7 @@ msgstr "Miejsce i czas"
 msgid "Places"
 msgstr "Miejsca"
 
-#: src/dialog/account/password.vue:188
+#: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Potwierdź nowe hasło."
 
@@ -1850,7 +1850,7 @@ msgstr "Potwierdź nowe hasło."
 msgid "Please don't upload photos containing offensive content."
 msgstr "Proszę nie przesyłać zdjęć zawierających nieprzyzwoite treści."
 
-#: src/dialog/account/password.vue:17
+#: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Pamiętaj, że zmiana hasła wyloguje Cię na innych urządzeniach i przeglądarkach."
 
@@ -2020,7 +2020,7 @@ msgstr "Żądanie nie powiodło się - jesteś offline?"
 msgid "Request failed - invalid response"
 msgstr "Żądanie nie powiodło się - niewłaściwa odpowiedź"
 
-#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:175
+#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:128
 #: src/dialog/admin/users/edit.vue:102 src/page/about/feedback.vue:133
 #: src/page/about/feedback.vue:153 src/page/about/feedback.vue:196
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:195
@@ -2043,7 +2043,7 @@ msgstr "Przywróć"
 msgid "Retry Limit"
 msgstr "Limit ponawiania prób"
 
-#: src/dialog/account/password.vue:185
+#: src/dialog/account/password.vue:190
 msgid "Retype Password"
 msgstr "Powtórz hasło"
 
@@ -2051,7 +2051,7 @@ msgstr "Powtórz hasło"
 msgid "Review"
 msgstr "Do sprawdzenia"
 
-#: src/dialog/admin/users/add.vue:195 src/dialog/admin/users/edit.vue:341
+#: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
 #: src/page/admin/sessions.vue:64 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
@@ -2061,7 +2061,7 @@ msgstr "Rola"
 msgid "Satellite"
 msgstr "Satelita"
 
-#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:39
+#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:42
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2664,12 +2664,12 @@ msgstr "Doceniamy Twoją opinię!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Dokładamy wszelkich starań, aby odpowiedzieć w ciągu pięciu dni roboczych lub mniej."
 
-#: src/dialog/admin/users/add.vue:234 src/dialog/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Logowanie przez Internet"
 
-#: src/dialog/admin/users/add.vue:251 src/dialog/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"

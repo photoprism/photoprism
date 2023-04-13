@@ -67,7 +67,7 @@ msgstr "Tietoja"
 msgid "Account"
 msgstr "Tili"
 
-#: src/dialog/admin/users/add.vue:86 src/dialog/service/add.vue:35
+#: src/dialog/admin/users/add.vue:87 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "Tili luotu"
 
@@ -99,7 +99,7 @@ msgstr "Aktivoi"
 msgid "Activation Code"
 msgstr "Aktivointikoodi"
 
-#: src/dialog/admin/users/add.vue:22 src/page/admin/users.vue:47
+#: src/dialog/admin/users/add.vue:23 src/page/admin/users.vue:47
 msgid "Add"
 msgstr "Lisää"
 
@@ -339,7 +339,7 @@ msgstr "Koska tämä auttaa meitä tarjoamaan enemmän ominaisuuksia yleisölle,
 msgid "Aspect Ratio"
 msgstr "Kuvasuhde"
 
-#: src/dialog/admin/users/add.vue:216 src/dialog/admin/users/edit.vue:364
+#: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
@@ -437,9 +437,9 @@ msgstr "Ei voi ladata enempää, raja saavutettu"
 msgid "Can't select more items"
 msgstr "Ei voi valita enempää kohteita"
 
-#: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:21
+#: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:74 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/password.vue:36
+#: src/page/connect.vue:44 src/dialog/account/password.vue:39
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
 #: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
@@ -464,7 +464,7 @@ msgstr "Kategoria"
 msgid "Change Avatar"
 msgstr "Muuta yksityisyyden tilaa"
 
-#: src/page/settings/account.vue:54 src/dialog/account/password.vue:7
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
 #: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "Uusi salasana"
@@ -613,7 +613,7 @@ msgstr "Luodaan pikkukuvia kohteelle"
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kuutio: Kohtalainen laatu, hyvä suorituskyky"
 
-#: src/dialog/account/password.vue:133
+#: src/dialog/account/password.vue:134
 msgid "Current Password"
 msgstr "Nykyinen salasana"
 
@@ -738,7 +738,7 @@ msgstr "Poistaa videon transkoodauksen ja pikkukuvien poiston käytöstä."
 msgid "Discover"
 msgstr "Tutustu"
 
-#: src/dialog/admin/users/add.vue:122 src/dialog/admin/users/edit.vue:99
+#: src/dialog/admin/users/add.vue:151 src/dialog/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "Näytön nimi"
@@ -867,7 +867,7 @@ msgstr "Muokkaa kuvaa"
 msgid "Edited"
 msgstr "Muokattu"
 
-#: src/dialog/admin/users/add.vue:147 src/dialog/admin/users/edit.vue:317
+#: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "Sähköposti"
@@ -1219,7 +1219,7 @@ msgstr "Ilmentymän tunnus"
 msgid "Interval"
 msgstr "Intervalli"
 
-#: src/dialog/admin/users/add.vue:125 src/dialog/admin/users/add.vue:150
+#: src/dialog/admin/users/add.vue:154 src/dialog/admin/users/add.vue:179
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
@@ -1525,7 +1525,7 @@ msgstr "Tärkein"
 msgid "Move Files"
 msgstr "Siirrä tiedostoja"
 
-#: src/dialog/account/password.vue:162
+#: src/dialog/account/password.vue:165
 msgid "Must have at least %{n} characters."
 msgstr "Vähintään %{n} merkkiä."
 
@@ -1559,7 +1559,7 @@ msgstr "Ei koskaan"
 msgid "New"
 msgstr "Uusi"
 
-#: src/dialog/account/password.vue:159
+#: src/dialog/account/password.vue:162
 msgid "New Password"
 msgstr "Uusi salasana"
 
@@ -1764,13 +1764,13 @@ msgstr "Panoraama"
 msgid "Panoramas"
 msgstr "Panoraamat"
 
-#: src/dialog/admin/users/add.vue:170 src/dialog/service/add.vue:126
+#: src/dialog/admin/users/add.vue:123 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
 msgstr "Salasana"
 
-#: src/dialog/account/password.vue:47
+#: src/dialog/account/password.vue:52
 msgid "Password changed"
 msgstr "Salasana vaihdettu"
 
@@ -1839,7 +1839,7 @@ msgstr "Paikka ja aika"
 msgid "Places"
 msgstr "Paikat"
 
-#: src/dialog/account/password.vue:188
+#: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Vahvista uusi salasanasi."
 
@@ -1847,7 +1847,7 @@ msgstr "Vahvista uusi salasanasi."
 msgid "Please don't upload photos containing offensive content."
 msgstr "Älä lataa kuvia, jotka sisältävät loukkaavaa sisältöä."
 
-#: src/dialog/account/password.vue:17
+#: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Huomaa, että salasanan vaihtaminen kirjautuu ulos muilla laitteilla ja selaimilla."
 
@@ -2017,7 +2017,7 @@ msgstr "Pyyntö epäonnistui - oletko offline?"
 msgid "Request failed - invalid response"
 msgstr "Pyyntö epäonnistui – virheellinen vastaus"
 
-#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:175
+#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:128
 #: src/dialog/admin/users/edit.vue:102 src/page/about/feedback.vue:133
 #: src/page/about/feedback.vue:153 src/page/about/feedback.vue:196
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:195
@@ -2040,7 +2040,7 @@ msgstr "Palauta"
 msgid "Retry Limit"
 msgstr "Uudelleenyrittämisen raja"
 
-#: src/dialog/account/password.vue:185
+#: src/dialog/account/password.vue:190
 msgid "Retype Password"
 msgstr "Kirjoita salasana uudelleen"
 
@@ -2048,7 +2048,7 @@ msgstr "Kirjoita salasana uudelleen"
 msgid "Review"
 msgstr "Arvostelu"
 
-#: src/dialog/admin/users/add.vue:195 src/dialog/admin/users/edit.vue:341
+#: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
 #: src/page/admin/sessions.vue:64 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
@@ -2058,7 +2058,7 @@ msgstr "Rooli"
 msgid "Satellite"
 msgstr "Satelliitti"
 
-#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:39
+#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:42
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2661,12 +2661,12 @@ msgstr "Arvostamme palautettasi!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Pyrimme parhaamme mukaan vastaamaan viiden arkipäivän tai lyhyemmän ajan kuluessa."
 
-#: src/dialog/admin/users/add.vue:234 src/dialog/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Web-kirjautuminen"
 
-#: src/dialog/admin/users/add.vue:251 src/dialog/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"

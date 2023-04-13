@@ -67,7 +67,7 @@ msgstr "Buruz"
 msgid "Account"
 msgstr "Kontua"
 
-#: src/dialog/admin/users/add.vue:86 src/dialog/service/add.vue:35
+#: src/dialog/admin/users/add.vue:87 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "Kontua sortu da"
 
@@ -99,7 +99,7 @@ msgstr "Aktibatu"
 msgid "Activation Code"
 msgstr "Aktibazio kodea"
 
-#: src/dialog/admin/users/add.vue:22 src/page/admin/users.vue:47
+#: src/dialog/admin/users/add.vue:23 src/page/admin/users.vue:47
 msgid "Add"
 msgstr "Gehitu"
 
@@ -339,7 +339,7 @@ msgstr "Honek publikoari eginbide gehiago eskaintzen laguntzen digunez, erabiltz
 msgid "Aspect Ratio"
 msgstr "Aspektu-erlazioa"
 
-#: src/dialog/admin/users/add.vue:216 src/dialog/admin/users/edit.vue:364
+#: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
@@ -437,9 +437,9 @@ msgstr "Ezin da gehiago kargatu, mugara iritsi da"
 msgid "Can't select more items"
 msgstr "Ezin dira elementu gehiago hautatu"
 
-#: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:21
+#: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:74 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/password.vue:36
+#: src/page/connect.vue:44 src/dialog/account/password.vue:39
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
 #: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
@@ -464,7 +464,7 @@ msgstr "Kategoria"
 msgid "Change Avatar"
 msgstr "Aldatu avatarra"
 
-#: src/page/settings/account.vue:54 src/dialog/account/password.vue:7
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
 #: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "Aldatu pasahitza"
@@ -613,7 +613,7 @@ msgstr "Miniaturak sortzen"
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubikoa: kalitate ertaina, errendimendu ona"
 
-#: src/dialog/account/password.vue:133
+#: src/dialog/account/password.vue:134
 msgid "Current Password"
 msgstr "oraingo pasahitza"
 
@@ -738,7 +738,7 @@ msgstr "Bideoen transkodeketa eta irudi txikien erauzketa desgaitzen ditu."
 msgid "Discover"
 msgstr "Ezagutu"
 
-#: src/dialog/admin/users/add.vue:122 src/dialog/admin/users/edit.vue:99
+#: src/dialog/admin/users/add.vue:151 src/dialog/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "Bistaratzeko izena"
@@ -867,7 +867,7 @@ msgstr "Editatu argazkia"
 msgid "Edited"
 msgstr "Editatua"
 
-#: src/dialog/admin/users/add.vue:147 src/dialog/admin/users/edit.vue:317
+#: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "Posta elektronikoa"
@@ -1219,7 +1219,7 @@ msgstr "Instantziaren IDa"
 msgid "Interval"
 msgstr "Tartea"
 
-#: src/dialog/admin/users/add.vue:125 src/dialog/admin/users/add.vue:150
+#: src/dialog/admin/users/add.vue:154 src/dialog/admin/users/add.vue:179
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
@@ -1525,7 +1525,7 @@ msgstr "Garrantzitsuena"
 msgid "Move Files"
 msgstr "Mugitu fitxategiak"
 
-#: src/dialog/account/password.vue:162
+#: src/dialog/account/password.vue:165
 msgid "Must have at least %{n} characters."
 msgstr "Gutxienez %{n} karaktere izan behar ditu."
 
@@ -1559,7 +1559,7 @@ msgstr "Inoiz ez"
 msgid "New"
 msgstr "Berria"
 
-#: src/dialog/account/password.vue:159
+#: src/dialog/account/password.vue:162
 msgid "New Password"
 msgstr "pasahitz berria"
 
@@ -1764,13 +1764,13 @@ msgstr "Panorama"
 msgid "Panoramas"
 msgstr "Panoramak"
 
-#: src/dialog/admin/users/add.vue:170 src/dialog/service/add.vue:126
+#: src/dialog/admin/users/add.vue:123 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
 msgstr "Pasahitza"
 
-#: src/dialog/account/password.vue:47
+#: src/dialog/account/password.vue:52
 msgid "Password changed"
 msgstr "Pasahitza aldatu da"
 
@@ -1839,7 +1839,7 @@ msgstr "Lekua eta Ordua"
 msgid "Places"
 msgstr "Lekuak"
 
-#: src/dialog/account/password.vue:188
+#: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Mesedez, berretsi pasahitz berria."
 
@@ -1847,7 +1847,7 @@ msgstr "Mesedez, berretsi pasahitz berria."
 msgid "Please don't upload photos containing offensive content."
 msgstr "Mesedez, ez kargatu eduki iraingarria duten argazkirik."
 
-#: src/dialog/account/password.vue:17
+#: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Kontuan izan pasahitza aldatzeak beste gailu eta arakatzaile batzuetan saioa amaituko duzula."
 
@@ -2017,7 +2017,7 @@ msgstr "Eskaerak huts egin du - konexiorik gabe zaude?"
 msgid "Request failed - invalid response"
 msgstr "Eskaerak huts egin du - erantzun baliogabea"
 
-#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:175
+#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:128
 #: src/dialog/admin/users/edit.vue:102 src/page/about/feedback.vue:133
 #: src/page/about/feedback.vue:153 src/page/about/feedback.vue:196
 #: src/page/settings/account.vue:196 src/page/about/feedback.vue:195
@@ -2040,7 +2040,7 @@ msgstr "Berreskuratu"
 msgid "Retry Limit"
 msgstr "Berriro saiatu muga"
 
-#: src/dialog/account/password.vue:185
+#: src/dialog/account/password.vue:190
 msgid "Retype Password"
 msgstr "Berriro idatzi pasahitza"
 
@@ -2048,7 +2048,7 @@ msgstr "Berriro idatzi pasahitza"
 msgid "Review"
 msgstr "Berrikuspena"
 
-#: src/dialog/admin/users/add.vue:195 src/dialog/admin/users/edit.vue:341
+#: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
 #: src/page/admin/sessions.vue:64 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
@@ -2058,7 +2058,7 @@ msgstr "Rola"
 msgid "Satellite"
 msgstr "Satelitea"
 
-#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:39
+#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:42
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2663,12 +2663,12 @@ msgstr "Zure iritzia eskertzen dugu!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Gure onena egiten dugu bost lanegun edo gutxiagoko epean erantzuteko."
 
-#: src/dialog/admin/users/add.vue:234 src/dialog/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Web Sarrera"
 
-#: src/dialog/admin/users/add.vue:251 src/dialog/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
