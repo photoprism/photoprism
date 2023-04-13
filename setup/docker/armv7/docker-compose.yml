@@ -47,7 +47,7 @@ services:
       - "2342:2342" # HTTP port (host:container)
     environment:
       PHOTOPRISM_ADMIN_USER: "admin"                 # superadmin username
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial superadmin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)

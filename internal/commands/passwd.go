@@ -22,7 +22,13 @@ var PasswdCommand = cli.Command{
 	Name:      "passwd",
 	Usage:     "Changes the password of the user specified as argument",
 	ArgsUsage: "[username]",
-	Action:    passwdAction,
+	Flags: []cli.Flag{
+		cli.BoolFlag{
+			Name:  "show, s",
+			Usage: "show bcrypt password hash",
+		},
+	},
+	Action: passwdAction,
 }
 
 // passwdAction changes the password of the user specified as command argument.
@@ -79,7 +85,12 @@ func passwdAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("changed password for %s\n", clean.Log(m.Username()))
+	// Show bcrypt password hash?
+	if pw := entity.FindPassword(m.UserUID); ctx.Bool("show") && pw != nil {
+		log.Infof("password for %s successfully changed to %s\n", clean.Log(m.Username()), pw.Hash)
+	} else {
+		log.Infof("password for %s successfully changed\n", clean.Log(m.Username()))
+	}
 
 	return nil
 }

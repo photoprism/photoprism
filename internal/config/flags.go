@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Flags configures the global command-line interface (CLI) parameters.
@@ -37,7 +38,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
-			Usage:  fmt.Sprintf("initial superadmin `PASSWORD` (minimum %d characters)", entity.PasswordLength),
+			Usage:  fmt.Sprintf("initial superadmin `PASSWORD` (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVar: EnvVar("ADMIN_PASSWORD"),
 		}}, {
 		Flag: cli.Int64Flag{

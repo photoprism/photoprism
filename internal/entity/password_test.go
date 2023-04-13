@@ -8,57 +8,85 @@ import (
 
 func TestNewPassword(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		p := NewPassword("abc567", "passwd")
+		p := NewPassword("urrwaxd19ldtz68x", "passwd")
 		assert.Len(t, p.Hash, 60)
 	})
 	t.Run("empty password", func(t *testing.T) {
-		p := NewPassword("abc567", "")
+		p := NewPassword("urrwaxd19ldtz68x", "")
 		assert.Equal(t, "", p.Hash)
 	})
 }
 
 func TestPassword_SetPassword(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
-		p := NewPassword("abc567", "passwd")
+	t.Run("Text", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "passwd")
 		assert.Len(t, p.Hash, 60)
+		assert.True(t, p.IsValid("passwd"))
+		assert.False(t, p.IsValid("other"))
+
 		if err := p.SetPassword("abcd"); err != nil {
 			t.Fatal(err)
 		}
+
 		assert.Len(t, p.Hash, 60)
+		assert.True(t, p.IsValid("abcd"))
+		assert.False(t, p.IsValid("other"))
+	})
+	t.Run("Hash", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2")
+		assert.Len(t, p.Hash, 60)
+		assert.True(t, p.IsValid("photoprism"))
+		assert.False(t, p.IsValid("$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2"))
+		assert.False(t, p.IsValid("other"))
 	})
 }
 
-func TestPassword_Is(t *testing.T) {
-	t.Run("Empty", func(t *testing.T) {
+func TestPassword_IsValid(t *testing.T) {
+	t.Run("EmptyHash", func(t *testing.T) {
 		p := Password{Hash: ""}
-		assert.True(t, p.Is(""))
+		assert.True(t, p.IsEmpty())
+		assert.False(t, p.IsValid(""))
 	})
-	t.Run("Ok", func(t *testing.T) {
-		p := NewPassword("abc567", "")
-		assert.True(t, p.Is(""))
+	t.Run("EmptyPassword", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "")
+		assert.True(t, p.IsEmpty())
+		assert.False(t, p.IsValid(""))
 	})
-	t.Run("Wrong", func(t *testing.T) {
-		p := NewPassword("abc567", "passwd")
-		assert.False(t, p.Is("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
+	t.Run("ShortPassword", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "passwd")
+		assert.True(t, p.IsValid("passwd"))
+		assert.False(t, p.IsValid("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
+	})
+	t.Run("LongPassword", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "photoprism")
+		assert.True(t, p.IsValid("photoprism"))
+		assert.False(t, p.IsValid("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
 	})
 }
 
 func TestPassword_IsWrong(t *testing.T) {
-	t.Run("Empty", func(t *testing.T) {
+	t.Run("EmptyHash", func(t *testing.T) {
 		p := Password{Hash: ""}
-		assert.False(t, p.IsWrong(""))
+		assert.True(t, p.IsEmpty())
+		assert.True(t, p.IsWrong(""))
 	})
-	t.Run("Ok", func(t *testing.T) {
-		p := NewPassword("abc567", "")
-		assert.False(t, p.IsWrong(""))
+	t.Run("EmptyPassword", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "")
+		assert.True(t, p.IsEmpty())
+		assert.True(t, p.IsWrong(""))
 	})
-	t.Run("Wrong", func(t *testing.T) {
-		p := NewPassword("abc567", "passwd")
+	t.Run("ShortPassword", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "passwd")
 		assert.True(t, p.IsWrong("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
+		assert.False(t, p.IsWrong("passwd"))
+	})
+	t.Run("LongPassword", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "photoprism")
+		assert.True(t, p.IsWrong("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
+		assert.False(t, p.IsWrong("photoprism"))
 	})
 }
 
-// TODO fails on mariadb
 func TestPassword_Create(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		p := Password{}
@@ -72,26 +100,26 @@ func TestPassword_Create(t *testing.T) {
 }
 
 func TestFindPassword(t *testing.T) {
-	t.Run("not existing", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		r := FindPassword("xxx")
 		assert.Nil(t, r)
 	})
-	t.Run("existing", func(t *testing.T) {
-		p := NewPassword("abc567", "passwd")
+	t.Run("Exists", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "passwd")
 		if err := p.Save(); err != nil {
 			t.Fatal(err)
 		}
-		r := FindPassword("abc567")
+		r := FindPassword("urrwaxd19ldtz68x")
 		assert.NotEmpty(t, r)
 	})
-	t.Run("alice", func(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
 		if p := FindPassword("uqxetse3cy5eo9z2"); p == nil {
 			t.Fatal("password not found")
 		} else {
 			assert.False(t, p.IsWrong("Alice123!"))
 		}
 	})
-	t.Run("bob", func(t *testing.T) {
+	t.Run("Bob", func(t *testing.T) {
 		if p := FindPassword("uqxc08w3d0ej2283"); p == nil {
 			t.Fatal("password not found")
 		} else {
@@ -100,20 +128,39 @@ func TestFindPassword(t *testing.T) {
 	})
 }
 
+func TestPassword_Cost(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "photoprism")
+		if cost, err := p.Cost(); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, PasswordCost, cost)
+		}
+	})
+	t.Run("14", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2")
+		if cost, err := p.Cost(); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, 14, cost)
+		}
+	})
+}
+
 func TestPassword_String(t *testing.T) {
 	t.Run("return string", func(t *testing.T) {
-		p := NewPassword("abc567", "lkjhgtyu")
+		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu")
 		assert.Len(t, p.String(), 60)
 	})
 }
 
-func TestPassword_Unknown(t *testing.T) {
+func TestPassword_IsEmpty(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		p := NewPassword("abc567", "lkjhgtyu")
-		assert.False(t, p.Unknown())
+		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu")
+		assert.False(t, p.IsEmpty())
 	})
 	t.Run("true", func(t *testing.T) {
 		p := Password{}
-		assert.True(t, p.Unknown())
+		assert.True(t, p.IsEmpty())
 	})
 }
