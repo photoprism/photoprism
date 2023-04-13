@@ -8,23 +8,23 @@ import (
 
 func TestNewPassword(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "passwd")
+		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		assert.Len(t, p.Hash, 60)
 	})
 	t.Run("empty password", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "")
+		p := NewPassword("urrwaxd19ldtz68x", "", false)
 		assert.Equal(t, "", p.Hash)
 	})
 }
 
 func TestPassword_SetPassword(t *testing.T) {
 	t.Run("Text", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "passwd")
+		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		assert.Len(t, p.Hash, 60)
 		assert.True(t, p.IsValid("passwd"))
 		assert.False(t, p.IsValid("other"))
 
-		if err := p.SetPassword("abcd"); err != nil {
+		if err := p.SetPassword("abcd", false); err != nil {
 			t.Fatal(err)
 		}
 
@@ -33,7 +33,7 @@ func TestPassword_SetPassword(t *testing.T) {
 		assert.False(t, p.IsValid("other"))
 	})
 	t.Run("Hash", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2")
+		p := NewPassword("urrwaxd19ldtz68x", "$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2", true)
 		assert.Len(t, p.Hash, 60)
 		assert.True(t, p.IsValid("photoprism"))
 		assert.False(t, p.IsValid("$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2"))
@@ -48,17 +48,17 @@ func TestPassword_IsValid(t *testing.T) {
 		assert.False(t, p.IsValid(""))
 	})
 	t.Run("EmptyPassword", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "")
+		p := NewPassword("urrwaxd19ldtz68x", "", false)
 		assert.True(t, p.IsEmpty())
 		assert.False(t, p.IsValid(""))
 	})
 	t.Run("ShortPassword", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "passwd")
+		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		assert.True(t, p.IsValid("passwd"))
 		assert.False(t, p.IsValid("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
 	})
 	t.Run("LongPassword", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "photoprism")
+		p := NewPassword("urrwaxd19ldtz68x", "photoprism", false)
 		assert.True(t, p.IsValid("photoprism"))
 		assert.False(t, p.IsValid("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
 	})
@@ -71,17 +71,17 @@ func TestPassword_IsWrong(t *testing.T) {
 		assert.True(t, p.IsWrong(""))
 	})
 	t.Run("EmptyPassword", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "")
+		p := NewPassword("urrwaxd19ldtz68x", "", false)
 		assert.True(t, p.IsEmpty())
 		assert.True(t, p.IsWrong(""))
 	})
 	t.Run("ShortPassword", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "passwd")
+		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		assert.True(t, p.IsWrong("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
 		assert.False(t, p.IsWrong("passwd"))
 	})
 	t.Run("LongPassword", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "photoprism")
+		p := NewPassword("urrwaxd19ldtz68x", "photoprism", false)
 		assert.True(t, p.IsWrong("$2a$14$p3HKuLvrTuePG/pjXLJQseUnSeAVeVO2cy4b0.34KXsLPK8lkI92G"))
 		assert.False(t, p.IsWrong("photoprism"))
 	})
@@ -105,7 +105,7 @@ func TestFindPassword(t *testing.T) {
 		assert.Nil(t, r)
 	})
 	t.Run("Exists", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "passwd")
+		p := NewPassword("urrwaxd19ldtz68x", "passwd", false)
 		if err := p.Save(); err != nil {
 			t.Fatal(err)
 		}
@@ -130,7 +130,7 @@ func TestFindPassword(t *testing.T) {
 
 func TestPassword_Cost(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "photoprism")
+		p := NewPassword("urrwaxd19ldtz68x", "photoprism", false)
 		if cost, err := p.Cost(); err != nil {
 			t.Fatal(err)
 		} else {
@@ -138,7 +138,7 @@ func TestPassword_Cost(t *testing.T) {
 		}
 	})
 	t.Run("14", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2")
+		p := NewPassword("urrwaxd19ldtz68x", "$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2", true)
 		if cost, err := p.Cost(); err != nil {
 			t.Fatal(err)
 		} else {
@@ -149,14 +149,14 @@ func TestPassword_Cost(t *testing.T) {
 
 func TestPassword_String(t *testing.T) {
 	t.Run("return string", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu")
+		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu", false)
 		assert.Len(t, p.String(), 60)
 	})
 }
 
 func TestPassword_IsEmpty(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu")
+		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu", false)
 		assert.False(t, p.IsEmpty())
 	})
 	t.Run("true", func(t *testing.T) {

@@ -28,7 +28,7 @@ func (Password) TableName() string {
 }
 
 // NewPassword creates a new password instance.
-func NewPassword(uid, pw string) Password {
+func NewPassword(uid, pw string, allowHash bool) Password {
 	if uid == "" {
 		panic("auth: cannot set password without uid")
 	}
@@ -36,8 +36,8 @@ func NewPassword(uid, pw string) Password {
 	m := Password{UID: uid}
 
 	if pw != "" {
-		if err := m.SetPassword(pw); err != nil {
-			log.Errorf("auth: failed setting password for %s", uid)
+		if err := m.SetPassword(pw, allowHash); err != nil {
+			log.Errorf("auth: %s", err)
 		}
 	}
 
@@ -45,23 +45,25 @@ func NewPassword(uid, pw string) Password {
 }
 
 // SetPassword sets a new password stored as hash.
-func (m *Password) SetPassword(s string) error {
-	s = clean.Password(s)
+func (m *Password) SetPassword(pw string, allowHash bool) error {
+	pw = clean.Password(pw)
 
-	if l := len(s); l > txt.ClipPassword {
+	if l := len(pw); l > txt.ClipPassword {
 		return fmt.Errorf("password is too long")
 	} else if l < 1 {
 		return fmt.Errorf("password is too short")
 	}
 
 	// Check if string already is a bcrypt hash.
-	if cost, err := bcrypt.Cost([]byte(s)); err == nil && cost >= bcrypt.MinCost {
-		m.Hash = s
-		return nil
+	if allowHash {
+		if cost, err := bcrypt.Cost([]byte(pw)); err == nil && cost >= bcrypt.MinCost {
+			m.Hash = pw
+			return nil
+		}
 	}
 
 	// Generate hash from plain text string.
-	if bytes, err := bcrypt.GenerateFromPassword([]byte(s), PasswordCost); err != nil {
+	if bytes, err := bcrypt.GenerateFromPassword([]byte(pw), PasswordCost); err != nil {
 		return err
 	} else {
 		m.Hash = string(bytes)
