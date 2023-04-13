@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
@@ -11,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/remote/webdav"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -68,12 +71,21 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 		return false, err
 	}
 
-	if len(relatedFiles) == 0 {
-		log.Infof("sync: download complete for %s", a.AccName)
+	// Check if files must and can be downloaded.
+	if l := len(relatedFiles); l == 0 {
+		log.Infof("sync: no files to download from %s", clean.Log(a.AccName))
 		event.Publish("sync.downloaded", event.Data{"account": a})
+		return true, nil
+	} else if w.conf.ReadOnly() {
+		err = fmt.Errorf("failed to download %s from %s because read-only mode is enabled",
+			english.Plural(l, "file", "files"),
+			clean.Log(a.AccName))
+		log.Errorf("sync: %s", err)
+		event.Publish("sync.downloaded", event.Data{"account": a, "error": err.Error()})
 		return true, nil
 	}
 
+	// Display log message.
 	log.Infof("sync: downloading from %s", a.AccName)
 
 	client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
