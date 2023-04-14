@@ -63,10 +63,12 @@ func GetThumb(router *gin.RouterGroup) {
 				return
 			}
 
+			// Add HTTP cache header.
+			AddImmutableCacheHeader(c)
+
 			if download {
 				c.FileAttachment(fileName, cropName.Jpeg())
 			} else {
-				AddThumbCacheHeader(c)
 				c.File(fileName)
 			}
 
@@ -107,10 +109,12 @@ func GetThumb(router *gin.RouterGroup) {
 				return
 			}
 
-			if c.Query("download") != "" {
+			// Add HTTP cache header.
+			AddImmutableCacheHeader(c)
+
+			if download {
 				c.FileAttachment(cached.FileName, cached.ShareName)
 			} else {
-				AddThumbCacheHeader(c)
 				c.File(cached.FileName)
 			}
 
@@ -120,7 +124,10 @@ func GetThumb(router *gin.RouterGroup) {
 		// Return existing thumbs straight away.
 		if !download {
 			if fileName, err := size.ResolvedName(fileHash, conf.ThumbCachePath()); err == nil {
-				AddThumbCacheHeader(c)
+				// Add HTTP cache header.
+				AddImmutableCacheHeader(c)
+
+				// Return requested content.
 				c.File(fileName)
 				return
 			}
@@ -177,12 +184,14 @@ func GetThumb(router *gin.RouterGroup) {
 		}
 
 		// Use original file if thumb size exceeds limit, see https://github.com/photoprism/photoprism/issues/157
-		if size.ExceedsLimit() && c.Query("download") == "" {
+		if size.ExceedsLimit() && !download {
 			log.Debugf("%s: using original, size exceeds limit (width %d, height %d)", logPrefix, size.Width, size.Height)
 
-			AddThumbCacheHeader(c)
-			c.File(fileName)
+			// Add HTTP cache header.
+			AddImmutableCacheHeader(c)
 
+			// Return requested content.
+			c.File(fileName)
 			return
 		}
 
@@ -211,11 +220,13 @@ func GetThumb(router *gin.RouterGroup) {
 		cache.SetDefault(cacheKey, ThumbCache{thumbName, f.ShareBase(0)})
 		log.Debugf("cached %s [%s]", cacheKey, time.Since(start))
 
-		// Set the download or cache header and return the thumbnail.
+		// Add HTTP cache header.
+		AddImmutableCacheHeader(c)
+
+		// Return requested content.
 		if download {
 			c.FileAttachment(thumbName, f.DownloadName(DownloadName(c), 0))
 		} else {
-			AddThumbCacheHeader(c)
 			c.File(thumbName)
 		}
 	})
