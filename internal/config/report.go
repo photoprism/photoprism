@@ -129,6 +129,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Site Infos.
 		{"cdn-url", c.CdnUrl("/")},
+		{"cdn-video", fmt.Sprintf("%t", c.CdnVideo())},
 		{"site-url", c.SiteUrl()},
 		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
 		{"site-domain", c.SiteDomain()},
@@ -139,10 +140,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-preview", c.SitePreview()},
 
 		// URIs.
-		{"content-uri", c.ContentUri()},
-		{"static-uri", c.StaticUri()},
-		{"api-uri", c.ApiUri()},
 		{"base-uri", c.BaseUri("/")},
+		{"api-uri", c.ApiUri()},
+		{"static-uri", c.StaticUri()},
+		{"content-uri", c.ContentUri()},
+		{"video-uri", c.VideoUri()},
 
 		// Proxy Servers.
 		{"https-proxy", c.HttpsProxy()},

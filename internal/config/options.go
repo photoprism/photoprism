@@ -94,6 +94,7 @@ type Options struct {
 	LegalUrl              string        `yaml:"LegalUrl" json:"LegalUrl" flag:"legal-url"`
 	WallpaperUri          string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
 	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
+	CdnVideo              bool          `yaml:"CdnVideo" json:"CdnVideo" flag:"cdn-video"`
 	SiteUrl               string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SiteAuthor            string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	SiteTitle             string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`

@@ -423,9 +423,27 @@ func (c *Config) CdnUrl(res string) string {
 	return strings.TrimRight(c.options.CdnUrl, "/") + res
 }
 
+// CdnVideo checks if videos should be streamed using the configured CDN.
+func (c *Config) CdnVideo() bool {
+	if c.NoSponsor() || c.options.CdnUrl == "" {
+		return false
+	}
+
+	return c.options.CdnVideo
+}
+
 // ContentUri returns the content delivery URI.
 func (c *Config) ContentUri() string {
 	return c.CdnUrl(c.ApiUri())
+}
+
+// VideoUri returns the video streaming URI.
+func (c *Config) VideoUri() string {
+	if c.CdnVideo() {
+		return c.ContentUri()
+	}
+
+	return c.ApiUri()
 }
 
 // StaticUri returns the static content URI.

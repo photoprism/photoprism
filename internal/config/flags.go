@@ -396,6 +396,12 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("CDN_URL"),
 		},
 		Tags: []string{EnvSponsor}}, {
+		Flag: cli.BoolFlag{
+			Name:   "cdn-video",
+			Usage:  "stream videos over the specified CDN",
+			EnvVar: EnvVar("CDN_VIDEO"),
+		},
+		Tags: []string{EnvSponsor}}, {
 		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",

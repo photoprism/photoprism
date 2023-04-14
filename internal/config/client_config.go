@@ -37,6 +37,7 @@ type ClientConfig struct {
 	ManifestUri      string              `json:"manifestUri"`
 	ApiUri           string              `json:"apiUri"`
 	ContentUri       string              `json:"contentUri"`
+	VideoUri         string              `json:"videoUri"`
 	WallpaperUri     string              `json:"wallpaperUri"`
 	SiteUrl          string              `json:"siteUrl"`
 	SiteDomain       string              `json:"siteDomain"`
@@ -256,6 +257,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		JsUri:            a.AppJsUri(),
 		ApiUri:           c.ApiUri(),
 		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
@@ -343,6 +345,7 @@ func (c *Config) ClientShare() ClientConfig {
 		JsUri:            a.ShareJsUri(),
 		ApiUri:           c.ApiUri(),
 		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
@@ -436,6 +439,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		JsUri:            a.AppJsUri(),
 		ApiUri:           c.ApiUri(),
 		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
