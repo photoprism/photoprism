@@ -25,12 +25,15 @@
         </p>
       </v-alert>
     </template>
-    <v-layout row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}">
+    <v-layout ref="container" row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}" :style="`position: relative; height: ${scrollHeight}px`">
       <div
-          v-for="(photo, index) in photos"
+          v-for="n in Math.max(lastVisibileElementIndex - firstVisibleElementIndex, 1)"
+          :set-index="index = n === 1 ? 0 : firstVisibleElementIndex + n - 1"
+          :set-photo="photo=photos[index]"
           ref="items"
-          :key="photo.ID"
+          :key="photos[n === 1 ? 0 : firstVisibleElementIndex + n - 1].ID"
           class="flex xs4 sm3 md2 lg1"
+          :style="`${n > 1 ? `display: block; position: absolute; width: ${elementWidth}px; height: ${elementHeight}px; top: ${Math.floor((index + 1)/columnCount)*elementHeight}px; left: ${((index + 1)%columnCount)*elementWidth}px` : ''}`"
           :data-index="index"
       >
        <!--
@@ -38,16 +41,11 @@
          re-layout all elements in the list when the children of one of them changes
         -->
         <div class="image-container">
-          <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
-               :data-uid="photo.UID"
-               class="card darken-1 result image"
-          />
-          <div  v-else
-                :key="photo.Hash"
+          <div :key="n"
                 tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
-                :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`"
+                :style="`background-image: url(${photo.thumbnailUrl('tile_224')});`"
                 :class="photo.classes().join(' ') + ' card darken-1 result clickable image'"
                 :alt="photo.Title"
                 :title="photo.Title"
@@ -92,7 +90,6 @@
             <button v-if="!isSharedView && hidePrivate && photo.Private" class="input-private">
               <i color="white" class="select-on">lock</i>
             </button>
-
             <!--
               We'd usually use v-if here to only render the button if needed.
               Because the button is supposed to be visible when the result is
@@ -177,6 +174,14 @@ export default {
       input: new Input(),
       firstVisibleElementIndex: 0,
       lastVisibileElementIndex: 0,
+      elementWidth: 100,
+      elementHeight: 100,
+      containerWidth: 100,
+      paddingRows: 1,
+      containerHeight: window.innerHeight,
+      scrollHeight: 100,
+      scrollPos: 0,
+      columnCount: 1,
       visibleElementIndices: new Set(),
     };
   },
@@ -191,14 +196,28 @@ export default {
     }
   },
   beforeCreate() {
-    this.intersectionObserver = new IntersectionObserver((entries) => {
-      this.visibilitiesChanged(entries);
-    }, {
-      rootMargin: "50% 0px",
+    // 1 resize-observer für die element-größe
+    // 1 intersection-observer und/oder scroll-listener fürs sichtbare window
+    // falls notwendig zusätzlich 1 resize-observer für die größe des sichtbaren windows
+    this.elementObserver = new ResizeObserver((entries) => {
+      this.elementWidth = entries[0].contentRect.width;
+      this.elementHeight = this.elementWidth;
+      this.updateGeometry();
+    });
+    this.containerObserver = new ResizeObserver((entries) => {
+      this.containerWidth = entries[0].contentRect.width;
+      this.updateGeometry();
     });
   },
+  created() {
+    window.addEventListener('scroll', this.handleScroll);
+    window.addEventListener('resize', this.handleResize)
+  },
   beforeDestroy() {
-    this.intersectionObserver.disconnect();
+    window.removeEventListener('scroll', this.handleScroll);
+    window.removeEventListener('resize', this.handleResize);
+    this.elementObserver.disconnect();
+    this.containerObserver.disconnect();
   },
   methods: {
     observeItems() {
@@ -206,31 +225,28 @@ export default {
         return;
       }
 
-      /**
-       * observing only every 5th item reduces the amount of time
-       * spent computing intersection by 80%. me might render up to
-       * 8 items more than required, but the time saved computing
-       * intersections is far greater than the time lost rendering
-       * a couple more items
-       */
-      for (let i = 0; i < this.$refs.items.length; i += 5) {
-        this.intersectionObserver.observe(this.$refs.items[i]);
+      console.log(this.$refs.items[0]);
+      this.elementObserver.observe(this.$refs.items[0]);
+      if (this.$refs.container === undefined) {
+        return;
       }
+      this.containerObserver.observe(this.$refs.container);
     },
-    elementIndexFromIntersectionObserverEntry(entry) {
-      return parseInt(entry.target.getAttribute('data-index'));
+    handleScroll(event) {
+      this.scrollPos = document.scrollingElement.scrollTop;
+      this.updateGeometry();
     },
-    visibilitiesChanged(entries) {
-      const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(
-        this.visibleElementIndices,
-        entries,
-        this.elementIndexFromIntersectionObserverEntry,
-      );
-
-      // we observe only every 5th item, so we increase the rendered
-      // range here by 4 items in every directio just to be safe
-      this.firstVisibleElementIndex = smallestIndex - 4;
-      this.lastVisibileElementIndex = largestIndex + 4;
+    handleResize(event) {
+      this.containerHeight = window.innerHeight;
+      this.updateGeometry();
+    },
+    updateGeometry() {
+      this.columnCount = Math.floor(this.containerWidth / this.elementWidth);
+      this.rowCount = Math.ceil(this.containerHeight / this.elementHeight);
+      this.firstVisibleElementIndex = Math.max(Math.floor((this.scrollPos / this.elementHeight) - (1 + this.paddingRows)) * this.columnCount, 0);
+      this.lastVisibileElementIndex = Math.min(this.firstVisibleElementIndex + ((this.rowCount + 1 + this.paddingRows * 2) * this.columnCount), this.photos.length);
+      this.scrollHeight = Math.ceil(this.photos.length / this.columnCount) * this.elementHeight;
+      console.log('update geometry', this.columnCount, this.rowCount, this.firstVisibleElementIndex, this.lastVisibileElementIndex);
     },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);
