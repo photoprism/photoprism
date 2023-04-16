@@ -1,6 +1,6 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
-    <template v-if="photos.length === 0">
+    <template v-if="visiblePhotos.length === 0">
       <v-alert
           :value="true"
           color="secondary-dark"
@@ -27,13 +27,12 @@
     </template>
     <v-layout ref="container" row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}" :style="`position: relative; height: ${scrollHeight}px`">
       <div
-          v-for="n in Math.max(lastVisibileElementIndex - firstVisibleElementIndex, 1)"
-          :set-index="index = n === 1 ? 0 : firstVisibleElementIndex + n - 1"
-          :set-photo="photo=photos[index]"
+          v-for="(photo, n) in visiblePhotos"
+          :set-index="index = n === 0 ? 0 : firstVisibleElementIndex + n"
           ref="items"
-          :key="photos[n === 1 ? 0 : firstVisibleElementIndex + n - 1].ID"
+          :key="photos[n === 0 ? 0 : firstVisibleElementIndex + n].ID"
           class="flex xs4 sm3 md2 lg1"
-          :style="`${n > 1 ? `display: block; position: absolute; width: ${elementWidth}px; height: ${elementHeight}px; top: ${Math.floor((index + 1)/columnCount)*elementHeight}px; left: ${((index + 1)%columnCount)*elementWidth}px` : ''}`"
+          :style="`${n > 0 ? getVirtualizedElementStyle(index) : ''}`"
           :data-index="index"
       >
        <!--
@@ -41,7 +40,7 @@
          re-layout all elements in the list when the children of one of them changes
         -->
         <div class="image-container">
-          <div :key="n"
+          <div :key="photo.Hash"
                 tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
@@ -174,10 +173,10 @@ export default {
       input: new Input(),
       firstVisibleElementIndex: 0,
       lastVisibileElementIndex: 0,
-      elementWidth: 100,
-      elementHeight: 100,
+      visiblePhotos: [],
+      elementSize: 100, // no need to differentiate width and height, because the images are square.
       containerWidth: 100,
-      paddingRows: 1,
+      paddingRows: 2,
       containerHeight: window.innerHeight,
       scrollHeight: 100,
       scrollPos: 0,
@@ -191,6 +190,9 @@ export default {
         this.$nextTick(() => {
           this.observeItems();
         });
+        if (this.visiblePhotos.length === 0) {
+          this.visiblePhotos = [this.photos[0]];
+        }
       },
       immediate: true,
     }
@@ -200,8 +202,7 @@ export default {
     // 1 intersection-observer und/oder scroll-listener fürs sichtbare window
     // falls notwendig zusätzlich 1 resize-observer für die größe des sichtbaren windows
     this.elementObserver = new ResizeObserver((entries) => {
-      this.elementWidth = entries[0].contentRect.width;
-      this.elementHeight = this.elementWidth;
+      this.elementSize = entries[0].borderBoxSize[0].inlineSize;
       this.updateGeometry();
     });
     this.containerObserver = new ResizeObserver((entries) => {
@@ -241,12 +242,26 @@ export default {
       this.updateGeometry();
     },
     updateGeometry() {
-      this.columnCount = Math.floor(this.containerWidth / this.elementWidth);
-      this.rowCount = Math.ceil(this.containerHeight / this.elementHeight);
-      this.firstVisibleElementIndex = Math.max(Math.floor((this.scrollPos / this.elementHeight) - (1 + this.paddingRows)) * this.columnCount, 0);
-      this.lastVisibileElementIndex = Math.min(this.firstVisibleElementIndex + ((this.rowCount + 1 + this.paddingRows * 2) * this.columnCount), this.photos.length);
-      this.scrollHeight = Math.ceil(this.photos.length / this.columnCount) * this.elementHeight;
-      console.log('update geometry', this.columnCount, this.rowCount, this.firstVisibleElementIndex, this.lastVisibileElementIndex);
+      this.columnCount = Math.floor(this.containerWidth / this.elementSize);
+      this.rowCount = Math.ceil(this.containerHeight / this.elementSize);
+      const prevFirstElementIndex = this.firstVisibleElementIndex;
+      const prevLastElementIndex = this.lastVisibileElementIndex;
+      this.firstVisibleElementIndex = Math.max(Math.floor((this.scrollPos / this.elementSize) - (1 + this.paddingRows)) * this.columnCount, 0);
+      this.lastVisibileElementIndex = Math.min(this.firstVisibleElementIndex + ((this.rowCount + 1 + this.paddingRows * 2) * this.columnCount), this.photos.length - 1);
+      this.scrollHeight = Math.ceil(this.photos.length / this.columnCount) * this.elementSize;
+
+      if (this.firstVisibleElementIndex !== prevFirstElementIndex || this.lastVisibileElementIndex !== prevLastElementIndex) {
+        this.visiblePhotos = [this.photos[0], ...this.photos.slice(Math.max(this.firstVisibleElementIndex, 1), this.lastVisibileElementIndex)];
+      }
+      console.log('update geometry', this.elementSize, this.columnCount, this.rowCount, this.firstVisibleElementIndex, this.lastVisibileElementIndex);
+    },
+    getVirtualizedElementStyle(index) {
+      const rowIndex = Math.floor((index + 1) / this.columnCount);
+      const columnIndex = (index + 1) % this.columnCount;
+      const topPos = rowIndex * this.elementSize;
+      const leftPos = columnIndex * this.elementSize;
+
+      return`display: block; position: absolute; width: ${this.elementSize}px; height: ${this.elementSize}px; top: ${topPos}px; left: ${leftPos}px`
     },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);
