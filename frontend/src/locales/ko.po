@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-04 14:18+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
+"PO-Revision-Date: 2023-04-17 20:58+0000\n"
+"Last-Translator: 임정주 <mr4117@outlook.kr>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,19 +17,19 @@ msgstr ""
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
-msgstr "%{n}개의 앨범을 찾음"
+msgstr "%{n}개 앨범을 찾음"
 
 #: src/dialog/share/upload.vue:81
 msgid "%{n} files uploaded"
-msgstr "%{n}개의 파일 업로드함"
+msgstr "%{n}개 파일 업로드함"
 
 #: src/page/library/browse.vue:311
 msgid "%{n} folders found"
-msgstr "%{n}개의 폴더를 찾음"
+msgstr "%{n}개 폴더를 찾음"
 
 #: src/page/labels.vue:422
 msgid "%{n} labels found"
-msgstr "%{n}개의 라벨을 찾음"
+msgstr "%{n}개 라벨을 찾음"
 
 #: src/page/people/new.vue:286 src/page/people/new.vue:372
 #: src/page/people/recognized.vue:508
@@ -38,7 +39,7 @@ msgstr "%{n}명을 찾았습니다"
 #: src/page/album/photos.vue:240 src/page/album/photos.vue:393
 #: src/page/photos.vue:325 src/page/photos.vue:490
 msgid "%{n} pictures found"
-msgstr "사진 %{n}장을 찾았습니다"
+msgstr "사진 %{n}장 찾았습니다"
 
 #: src/options/options.js:391
 msgid "1 hour"
