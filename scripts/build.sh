@@ -17,7 +17,7 @@ BUILD_BIN=${2:-photoprism}
 GO_BIN=${GO_BIN:-go}
 GO_VER=$($GO_BIN version)
 
-echo "Building PhotoPrism ${BUILD_ID} ($1)…"
+echo "Building PhotoPrism ${BUILD_ID} ($1)..."
 
 if [[ $1 == "debug" ]]; then
   BUILD_CMD=("$GO_BIN" build -tags=debug -ldflags "-X main.version=${BUILD_ID}-DEBUG" -o "${BUILD_BIN}" cmd/photoprism/photoprism.go)
