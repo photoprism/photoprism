@@ -344,7 +344,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "app-icon",
-			Usage:  "home screen `ICON` (logo, app, crisp, mint, bold)",
+			Usage:  "home screen `ICON` (logo, app, crisp, mint, bold, square)",
 			EnvVar: EnvVar("APP_ICON"),
 		},
 		Tags: []string{EnvSponsor}}, {
