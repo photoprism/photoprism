@@ -544,9 +544,6 @@ docker-local-develop-jammy:
 docker-local-develop-lunar:
 	docker pull ubuntu:lunar
 	scripts/docker/build.sh develop lunar /lunar
-docker-local-develop-lunar:
-	docker pull ubuntu:lunar
-	scripts/docker/build.sh develop lunar /lunar
 docker-local-develop-impish:
 	docker pull ubuntu:impish
 	scripts/docker/build.sh develop impish /impish
