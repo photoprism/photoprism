@@ -17,13 +17,6 @@ fi
 
 . /etc/os-release
 
-if [[ $VERSION_CODENAME == "lunar" ]]; then
-  echo "Installing libheif distribution packages..."
-  apt-get update && apt-get -qq install libheif-dev libheif-examples
-  echo "Done."
-  exit 0
-fi
-
 mkdir -p "$DESTDIR"
 
 ARCHIVE="libheif-${VERSION_CODENAME}-${DESTARCH}-${LIBHEIF_VERSION}.tar.gz"
