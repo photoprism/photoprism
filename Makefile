@@ -315,7 +315,7 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-jammy docker-develop-jammy-slim
+docker-develop-ubuntu: docker-develop-lunar docker-develop-lunar-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
@@ -347,7 +347,7 @@ docker-develop-impish:
 docker-develop-jammy:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy
 docker-develop-jammy-slim:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
@@ -355,13 +355,13 @@ docker-develop-jammy-slim:
 docker-develop-lunar:
 	docker pull --platform=amd64 ubuntu:lunar
 	docker pull --platform=arm64 ubuntu:lunar
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 lunar /lunar
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 lunar /lunar "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
 docker-develop-lunar-slim:
 	docker pull --platform=amd64 ubuntu:lunar
 	docker pull --platform=arm64 ubuntu:lunar
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 lunar-slim /lunar-slim
 unstable: docker-unstable
-docker-unstable: docker-unstable-jammy
+docker-unstable: docker-unstable-lunar
 docker-unstable-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
@@ -375,7 +375,7 @@ docker-preview: docker-preview-latest
 docker-preview-all: docker-preview-latest docker-preview-other
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
-docker-preview-ubuntu: docker-preview-jammy
+docker-preview-ubuntu: docker-preview-lunar
 docker-preview-other: docker-preview-debian docker-preview-bullseye
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
@@ -409,13 +409,13 @@ docker-preview-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /jammy "-t photoprism/photoprism:preview-ubuntu"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /jammy
 docker-preview-lunar:
 	docker pull --platform=amd64 photoprism/develop:lunar
 	docker pull --platform=amd64 photoprism/develop:lunar-slim
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /lunar
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /lunar "-t photoprism/photoprism:preview-ubuntu"
 docker-preview-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
@@ -427,7 +427,7 @@ docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
-docker-release-ubuntu: docker-release-jammy
+docker-release-ubuntu: docker-release-lunar
 docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
@@ -461,13 +461,13 @@ docker-release-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy "-t photoprism/photoprism:latest -t photoprism/photoprism:ubuntu"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy
 docker-release-lunar:
 	docker pull --platform=amd64 photoprism/develop:lunar
 	docker pull --platform=amd64 photoprism/develop:lunar-slim
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 lunar /lunar
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 lunar /lunar "-t photoprism/photoprism:latest -t photoprism/photoprism:ubuntu"
 docker-release-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
@@ -500,8 +500,8 @@ terminal-latest:
 	$(DOCKER_COMPOSE) -f docker-compose.latest.yml exec photoprism-latest bash
 logs-latest:
 	$(DOCKER_COMPOSE) -f docker-compose.latest.yml logs -f photoprism-latest
-docker-local: docker-local-jammy
-docker-local-all: docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster docker-local-jammy
+docker-local: docker-local-lunar
+docker-local-all: docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -526,8 +526,8 @@ docker-local-impish:
 	docker pull photoprism/develop:impish
 	docker pull ubuntu:impish
 	scripts/docker/build.sh photoprism impish /impish "-t photoprism/photoprism:local"
-docker-local-develop: docker-local-develop-jammy
-docker-local-develop-all: docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+docker-local-develop: docker-local-develop-lunar
+docker-local-develop-all: docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
@@ -540,6 +540,9 @@ docker-local-develop-buster:
 docker-local-develop-jammy:
 	docker pull ubuntu:jammy
 	scripts/docker/build.sh develop jammy /jammy
+docker-local-develop-lunar:
+	docker pull ubuntu:lunar
+	scripts/docker/build.sh develop lunar /lunar
 docker-local-develop-lunar:
 	docker pull ubuntu:lunar
 	scripts/docker/build.sh develop lunar /lunar
