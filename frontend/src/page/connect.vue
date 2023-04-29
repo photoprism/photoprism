@@ -150,14 +150,6 @@
             <translate>Frequently Asked Questions</translate>
           </h3>
           <p class="subheading text-selectable">
-            <translate>Why are some features only available to members?</translate>
-          </p>
-          <p class="body-1 text-selectable">
-            <translate>PhotoPrism is 100% self-funded and independent.</translate>
-            <translate>Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support.</translate>
-            <translate>It is your decision whether you want to sign up to enjoy additional benefits.</translate>
-          </p>
-          <p class="subheading text-selectable">
             <translate>What functionality is generally available?</translate>
           </p>
           <p class="body-1 text-selectable">
