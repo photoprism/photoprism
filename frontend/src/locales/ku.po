@@ -63,7 +63,7 @@ msgstr "کرتەیەک کۆپی دەکاتە کلیپ بۆردەکەت"
 msgid "About"
 msgstr "دەربارە"
 
-#: src/component/navigation.vue:98 src/component/navigation.vue:1995
+#: src/component/navigation.vue:99 src/component/navigation.vue:1995
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -94,11 +94,11 @@ msgstr "کردار"
 msgid "Actions"
 msgstr "کردارەکان"
 
-#: src/page/connect.vue:92 src/page/connect.vue:97
+#: src/page/connect.vue:92 src/page/connect.vue:94
 msgid "Activate"
 msgstr "Çalak bike"
 
-#: src/page/connect.vue:388 src/page/connect.vue:422
+#: src/page/connect.vue:388 src/page/connect.vue:412
 msgid "Activation Code"
 msgstr "Koda Çalakkirinê"
 
@@ -334,7 +334,7 @@ msgstr "Piştrastin?"
 msgid "Artist"
 msgstr "هونەرمەند"
 
-#: src/page/connect.vue:127
+#: src/page/connect.vue:124
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Ji ber ku ev ji me re dibe alîkar ku bêtir taybetmendiyên ji gel re peyda bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
 
@@ -409,7 +409,7 @@ msgstr "راپۆرتی هەڵە"
 msgid "Busy, please wait…"
 msgstr "سەرقاڵە، تکایە چاوەڕێکە…"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:104
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Bi karanîna nermalava û karûbarên ku em pêşkêş dikin, hûn şertên karûbarê me, polîtîkaya nepenîtiyê, û koda tevgerê qebûl dikin."
 
@@ -449,8 +449,8 @@ msgstr "ناتوانێت ئایتمی زیاتر دیاری بکات"
 #: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/page/library/import.vue:34
-#: src/page/library/index.vue:27
+#: src/dialog/share/upload.vue:29 src/page/connect.vue:41
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "هه‌ڵوه‌شاندنه‌وه"
 
@@ -524,7 +524,7 @@ msgstr "Profîla Rengê"
 msgid "Colors"
 msgstr "ڕەنگەکان"
 
-#: src/page/connect.vue:83 src/page/connect.vue:88
+#: src/page/connect.vue:83 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "Berawirdî Weşanan"
 
@@ -545,7 +545,7 @@ msgstr "بەستنەوە"
 msgid "Connect via WebDAV"
 msgstr "بەستنەوە بە WebDAV"
 
-#: src/page/connect.vue:62
+#: src/page/connect.vue:62 src/page/connect.vue:63
 msgid "Connected"
 msgstr "بەستنەوە"
 
@@ -554,6 +554,7 @@ msgid "Contact Details"
 msgstr "پەیوەندیمان پێوە بکە"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
+#: src/page/connect.vue:44
 msgid "Contact Us"
 msgstr "پەیوەندیمان پێوە بکە"
 
@@ -1055,7 +1056,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Frames"
 
-#: src/page/connect.vue:112
+#: src/page/connect.vue:109
 msgid "Frequently Asked Questions"
 msgstr "Pirsên Pir Pir Pirs"
 
@@ -1243,7 +1244,8 @@ msgstr "بەروارێکی نادروست"
 msgid "Invalid date"
 msgstr "بەروارێکی نادروست"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:75
+#: src/page/connect.vue:81
 msgid "Invalid parameters"
 msgstr "بەروارێکی نادروست"
 
@@ -1251,7 +1253,7 @@ msgstr "بەروارێکی نادروست"
 msgid "Invalid photo selected"
 msgstr "Wêneyê nederbasdar hat hilbijartin"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:117
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd werbigirin."
 
@@ -1320,7 +1322,8 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:122
+#: src/page/about/about.vue:273 src/page/connect.vue:127
+#: src/page/connect.vue:112
 msgid "Learn more"
 msgstr "Bêtir hîn bibin"
 
@@ -1441,7 +1444,7 @@ msgid "Male"
 msgstr "Nêrî"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
-#: src/page/about/about.vue:9 src/page/connect.vue:85
+#: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
 msgid "Manage Account"
 msgstr "Hesabê Birêvebirin"
 
@@ -1751,7 +1754,7 @@ msgstr "هی تر"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "دنیا بینیمان ئەوەیە کە زۆرترین چارەسەری بەکارهێنەر بۆ گەڕان و ڕێکخستن و هاوبەشکردنی کۆکراوەی فۆتۆ دابین بکەین."
 
-#: src/page/connect.vue:126
+#: src/page/connect.vue:123
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Tîma me vê yekê bi domdarî li gorî hewildana piştgirî, lêçûnên server û lîsansê, û gelo taybetmendî bi gelemperî ji hêla her kesî ve hewce ne an bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin, biryar dide."
 
@@ -1809,7 +1812,7 @@ msgid "PhotoPrism has been updated…"
 msgstr "فۆتۆپریزم نوێکرایەوە"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
-#: src/page/connect.vue:118
+#: src/page/connect.vue:115
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism 100% xwe-fînanse û serbixwe ye."
 
@@ -1854,7 +1857,7 @@ msgstr "تکایە ئەو وێنانە بار مەکە کە ناوەڕۆکی س�
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Ji kerema xwe not bikin ku guhertina şîfreya xwe dê we li ser cîhaz û gerokên din derxîne."
 
-#: src/page/connect.vue:56
+#: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Ji kerema xwe mînaka xwe ji nû ve bidin destpêkirin da ku guheztin bikeve meriyetê."
 
@@ -1975,7 +1978,7 @@ msgstr "Rûyan nas dike da ku mirovên taybetî bêne dîtin."
 msgid "Red"
 msgstr "سور"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
+#: src/page/connect.vue:87 src/page/connect.vue:89
 msgid "Register"
 msgstr "Fêhrist"
 
@@ -1987,7 +1990,7 @@ msgstr "Fêhrist"
 msgid "Reload"
 msgstr "بارکردنەوە"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:130 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "دووبارە بارکردن…"
@@ -2031,7 +2034,8 @@ msgstr "پێویست"
 msgid "Resolution"
 msgstr "Resolution"
 
-#: src/page/connect.vue:65 src/page/settings/advanced.vue:156
+#: src/page/connect.vue:65 src/page/connect.vue:62
+#: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Restart"
 
@@ -2297,7 +2301,7 @@ msgstr "شەقامەکان"
 msgid "Subject"
 msgstr "ناونیشان"
 
-#: src/page/connect.vue:11 src/page/connect.vue:20
+#: src/page/connect.vue:11
 msgid "Successfully Connected"
 msgstr "Bi serketî ve girêdayî ye"
 
@@ -2407,7 +2411,7 @@ msgstr "ناونیشانی زۆر درێژ"
 msgid "Title too long"
 msgstr "ناونیشانی زۆر درێژ"
 
-#: src/page/connect.vue:74 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî \"Têkilî\" bikirtînin da ku li ser malpera me têkevin:"
 
@@ -2467,7 +2471,7 @@ msgid "Unknown"
 msgstr "نەزانراو"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:88 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Neqeydkirî"
@@ -2516,7 +2520,7 @@ msgid "Upgrade"
 msgstr "Upgrade"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
-#: src/page/about/about.vue:9 src/page/connect.vue:69
+#: src/page/about/about.vue:9 src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "Nûvekirina Niha"
 
@@ -2611,10 +2615,6 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vectors"
 
-#: src/page/connect.vue:11
-msgid "Verified"
-msgstr "Verified"
-
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2652,7 +2652,7 @@ msgstr "Serda"
 msgid "Visual Similarity"
 msgstr "گروپکردن بە پێی هاوشێوەیی"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:116
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Bexşên dilxwazî mesrefa tîmek ku bi tevahî wextê dixebite nagire da ku nûvekirin, belgekirin û piştgirî peyda bike."
 
@@ -2692,7 +2692,7 @@ msgstr "WebDAV Upload"
 msgid "Website"
 msgstr "Website"
 
-#: src/page/connect.vue:123
+#: src/page/connect.vue:120
 msgid "What functionality is generally available?"
 msgstr "Kîjan fonksiyon bi gelemperî heye?"
 
@@ -2700,7 +2700,7 @@ msgstr "Kîjan fonksiyon bi gelemperî heye?"
 msgid "White"
 msgstr "سپی"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:112
 msgid "Why are some features only available to sponsors?"
 msgstr "Çima hin taybetmendî tenê ji sponsoran re peyda dibin?"
 
@@ -2730,7 +2730,7 @@ msgid "Yes"
 msgstr "بەڵێ"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
-#: src/page/about/about.vue:5 src/page/connect.vue:106
+#: src/page/about/about.vue:5 src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Hûn bi xêr hatin ku ji bo pirsên di derbarê endametiya xwe de bi me re têkilî daynin endamên@photoprism.app."
 
@@ -2751,7 +2751,7 @@ msgstr "دەتوانیت تەنها یەک ئایتم دیاریبکەیت"
 msgid "You may rescan your library to find additional faces."
 msgstr "Hûn dikarin pirtûkxaneya xwe ji bo dîtina rûyên zêde ji nû ve şeh bikin."
 
-#: src/page/connect.vue:54
+#: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
 msgstr "Hesabê we bi serkeftî hate girêdan."
 
@@ -2767,6 +2767,9 @@ msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên dem�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
+
+#~ msgid "Verified"
+#~ msgstr "Verified"
 
 #~ msgid "Proceed"
 #~ msgstr "Pêşçûn"

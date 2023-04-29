@@ -63,7 +63,7 @@ msgstr "एक क्लिक इसे आपके क्लिपबोर�
 msgid "About"
 msgstr "के बारे में"
 
-#: src/component/navigation.vue:98 src/component/navigation.vue:1995
+#: src/component/navigation.vue:99 src/component/navigation.vue:1995
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -94,11 +94,11 @@ msgstr "कार्य"
 msgid "Actions"
 msgstr "क्रिया"
 
-#: src/page/connect.vue:92 src/page/connect.vue:97
+#: src/page/connect.vue:92 src/page/connect.vue:94
 msgid "Activate"
 msgstr "सक्रिय"
 
-#: src/page/connect.vue:388 src/page/connect.vue:422
+#: src/page/connect.vue:388 src/page/connect.vue:412
 msgid "Activation Code"
 msgstr "एक्टिवेशन कोड"
 
@@ -334,7 +334,7 @@ msgstr "क्या आपको यकीन है?"
 msgid "Artist"
 msgstr "कलाकार"
 
-#: src/page/connect.vue:127
+#: src/page/connect.vue:124
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "चूंकि इससे हमें जनता को अधिक सुविधाएँ प्रदान करने में मदद मिलती है, इसलिए हम सभी उपयोगकर्ताओं को हमारे मिशन का समर्थन करने के लिए प्रोत्साहित करते हैं।"
 
@@ -409,7 +409,7 @@ msgstr "बग रिपोर्ट"
 msgid "Busy, please wait…"
 msgstr "व्यस्त, कृपया प्रतीक्षा करें …"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:104
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "हमारे द्वारा प्रदान किए जाने वाले सॉफ़्टवेयर और सेवाओं का उपयोग करके, आप हमारी सेवा की शर्तों, गोपनीयता नीति और आचार संहिता से सहमत होते हैं।"
 
@@ -449,8 +449,8 @@ msgstr "अधिक आइटम का चयन नहीं किया ज
 #: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/page/library/import.vue:34
-#: src/page/library/index.vue:27
+#: src/dialog/share/upload.vue:29 src/page/connect.vue:41
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "रद्द करना"
 
@@ -524,7 +524,7 @@ msgstr "रंग प्रोफ़ाइल"
 msgid "Colors"
 msgstr "रंग की"
 
-#: src/page/connect.vue:83 src/page/connect.vue:88
+#: src/page/connect.vue:83 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "संस्करणों की तुलना करें"
 
@@ -545,7 +545,7 @@ msgstr "जुडिये"
 msgid "Connect via WebDAV"
 msgstr "WebDAV के माध्यम से कनेक्ट करें"
 
-#: src/page/connect.vue:62
+#: src/page/connect.vue:62 src/page/connect.vue:63
 msgid "Connected"
 msgstr "जुड़े हुए"
 
@@ -554,6 +554,7 @@ msgid "Contact Details"
 msgstr "सम्पर्क करने का विवरण"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
+#: src/page/connect.vue:44
 msgid "Contact Us"
 msgstr "संपर्क करें"
 
@@ -1055,7 +1056,7 @@ msgstr "एफपीएस"
 msgid "Frames"
 msgstr "फ्रेम्स"
 
-#: src/page/connect.vue:112
+#: src/page/connect.vue:109
 msgid "Frequently Asked Questions"
 msgstr "अधिकतर पूछे जाने वाले सवाल"
 
@@ -1243,7 +1244,8 @@ msgstr "अमान्य"
 msgid "Invalid date"
 msgstr "अमान्य तिथि"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:75
+#: src/page/connect.vue:81
 msgid "Invalid parameters"
 msgstr "अमान्य मापदण्ड"
 
@@ -1251,7 +1253,7 @@ msgstr "अमान्य मापदण्ड"
 msgid "Invalid photo selected"
 msgstr "अमान्य फ़ोटो चयनित"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:117
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "यह आपका निर्णय है कि आप अतिरिक्त लाभों का आनंद लेने के लिए साइन अप करना चाहते हैं या नहीं।"
 
@@ -1320,7 +1322,8 @@ msgstr "एलडीएपी/एडी"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:122
+#: src/page/about/about.vue:273 src/page/connect.vue:127
+#: src/page/connect.vue:112
 msgid "Learn more"
 msgstr "और अधिक जानें"
 
@@ -1441,7 +1444,7 @@ msgid "Male"
 msgstr "पुरुष"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
-#: src/page/about/about.vue:9 src/page/connect.vue:85
+#: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
 msgid "Manage Account"
 msgstr "खाते का प्रबंधन करें"
 
@@ -1751,7 +1754,7 @@ msgstr "अन्य"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "हमारा मिशन आपके चित्रों को व्यवस्थित और सुलभ रखने के लिए सबसे अधिक उपयोगकर्ता- और गोपनीयता के अनुकूल समाधान प्रदान करना है।"
 
-#: src/page/connect.vue:126
+#: src/page/connect.vue:123
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "हमारी टीम आवश्यक समर्थन प्रयास, सर्वर और लाइसेंसिंग लागत के आधार पर निरंतर आधार पर इसका निर्णय लेती है, और क्या सुविधाओं की आम तौर पर सभी को आवश्यकता होती है या मुख्य रूप से संगठनों और उन्नत उपयोगकर्ताओं द्वारा अनुरोध किया जाता है।"
 
@@ -1809,7 +1812,7 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism अपडेट किया गया है …"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
-#: src/page/connect.vue:118
+#: src/page/connect.vue:115
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism 100% स्व-वित्तपोषित और स्वतंत्र है।"
 
@@ -1854,7 +1857,7 @@ msgstr "कृपया आक्रामक सामग्री वाले
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "कृपया ध्यान दें कि अपना पासवर्ड बदलने से आप अन्य उपकरणों और ब्राउज़रों पर लॉग आउट हो जाएंगे।"
 
-#: src/page/connect.vue:56
+#: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
 msgstr "परिवर्तनों को प्रभावी करने के लिए कृपया अपना इंस्टेंस पुनः प्रारंभ करें।"
 
@@ -1975,7 +1978,7 @@ msgstr "चेहरों को पहचानता है ताकि व�
 msgid "Red"
 msgstr "लाल"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
+#: src/page/connect.vue:87 src/page/connect.vue:89
 msgid "Register"
 msgstr "पंजीकरण करवाना"
 
@@ -1987,7 +1990,7 @@ msgstr "पंजीकरण करवाना"
 msgid "Reload"
 msgstr "पुनः लोड करें"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:130 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "पुन: लोड …"
@@ -2031,7 +2034,8 @@ msgstr "अपेक्षित"
 msgid "Resolution"
 msgstr "रिज़ॉल्यूशन"
 
-#: src/page/connect.vue:65 src/page/settings/advanced.vue:156
+#: src/page/connect.vue:65 src/page/connect.vue:62
+#: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "पुनः आरंभ करें"
 
@@ -2297,7 +2301,7 @@ msgstr "सड़कें"
 msgid "Subject"
 msgstr "विषय"
 
-#: src/page/connect.vue:11 src/page/connect.vue:20
+#: src/page/connect.vue:11
 msgid "Successfully Connected"
 msgstr "सफलतापूर्वक कनेक्ट किया गया"
 
@@ -2409,7 +2413,7 @@ msgstr "शीर्षक स्थिति"
 msgid "Title too long"
 msgstr "शीर्षक बहुत लंबा है"
 
-#: src/page/connect.vue:74 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "अपग्रेड करने के लिए, आप या तो एक सक्रियण कोड दर्ज कर सकते हैं या हमारी वेबसाइट पर साइन अप करने के लिए \"रजिस्टर\" पर क्लिक कर सकते हैं:"
 
@@ -2469,7 +2473,7 @@ msgid "Unknown"
 msgstr "अनजान"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:88 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "अपंजीकृत"
@@ -2518,7 +2522,7 @@ msgid "Upgrade"
 msgstr "उन्नत करना"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
-#: src/page/about/about.vue:9 src/page/connect.vue:69
+#: src/page/about/about.vue:9 src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "अभी अपग्रेड करें"
 
@@ -2613,10 +2617,6 @@ msgstr "वेक्टर"
 msgid "Vectors"
 msgstr "वैक्टर"
 
-#: src/page/connect.vue:11
-msgid "Verified"
-msgstr "सत्यापित"
-
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2654,7 +2654,7 @@ msgstr "आगंतुक"
 msgid "Visual Similarity"
 msgstr "दृश्य समानता"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:116
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "स्वैच्छिक दान आपको अपडेट, दस्तावेज़ीकरण और सहायता प्रदान करने के लिए पूरे समय काम करने वाली टीम की लागत को कवर नहीं करता है।"
 
@@ -2696,7 +2696,7 @@ msgstr "WebDAV अपलोड करें"
 msgid "Website"
 msgstr "वेबसाइट"
 
-#: src/page/connect.vue:123
+#: src/page/connect.vue:120
 msgid "What functionality is generally available?"
 msgstr "आम तौर पर कौन सी कार्यक्षमता उपलब्ध होती है?"
 
@@ -2704,7 +2704,7 @@ msgstr "आम तौर पर कौन सी कार्यक्षमत�
 msgid "White"
 msgstr "सफेद"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:112
 msgid "Why are some features only available to sponsors?"
 msgstr "कुछ सुविधाएँ केवल प्रायोजकों के लिए ही क्यों उपलब्ध हैं?"
 
@@ -2734,7 +2734,7 @@ msgid "Yes"
 msgstr "हाँ"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
-#: src/page/about/about.vue:5 src/page/connect.vue:106
+#: src/page/about/about.vue:5 src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "अपनी सदस्यता से संबंधित प्रश्नों के लिए Member@photoprism.app पर हमसे संपर्क करने के लिए आपका स्वागत है।"
 
@@ -2755,7 +2755,7 @@ msgstr "आप केवल एक आइटम का चयन कर सक�
 msgid "You may rescan your library to find additional faces."
 msgstr "अतिरिक्त चेहरों को खोजने के लिए आप अपनी लाइब्रेरी को फिर से स्कैन कर सकते हैं।"
 
-#: src/page/connect.vue:54
+#: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
 msgstr "आपका खाता सफलतापूर्वक कनेक्ट कर दिया गया है।"
 
@@ -2771,6 +2771,9 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "Verified"
+#~ msgstr "सत्यापित"
 
 #~ msgid "Proceed"
 #~ msgstr "आगे बढ़ना"

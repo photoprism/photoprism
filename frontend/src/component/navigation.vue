@@ -493,7 +493,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="isSuperAdmin && !isPublic && !isDemo && featUpgrade" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
+            <v-list-tile v-show="featUpgrade" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate key="Upgrade">Upgrade</translate>
@@ -640,7 +640,7 @@
               <translate>Logs</translate>
             </router-link>
           </div>
-          <div v-if="!isPublic && !isSponsor && isAdmin" class="menu-action nav-membership">
+          <div v-if="featUpgrade" class="menu-action nav-membership">
             <router-link :to="{ name: 'upgrade' }">
               <v-icon>diamond</v-icon>
               <translate>Upgrade</translate>
@@ -701,6 +701,7 @@ export default {
     const isPublic = this.$config.get("public");
     const isReadOnly = this.$config.get("readonly");
     const isRestricted = this.$config.deny("photos", "access_library");
+    const isSuperAdmin = this.$session.isSuperAdmin();
 
     return {
       canSearchPlaces: this.$config.allow("places", "search"),
@@ -714,14 +715,14 @@ export default {
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,
-      featUpgrade: this.$config.getMembership() === "ce",
+      featUpgrade: this.$config.getTier() < 8 && isSuperAdmin && !isPublic && !isDemo,
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
       isDemo: isDemo,
       isPublic: isPublic,
       isReadOnly: isReadOnly,
       isAdmin: this.$session.isAdmin(),
-      isSuperAdmin: this.$session.isSuperAdmin(),
+      isSuperAdmin: isSuperAdmin,
       isSponsor: this.$config.isSponsor(),
       isTest: this.$config.test,
       session: this.$session,

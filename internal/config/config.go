@@ -55,6 +55,7 @@ type Config struct {
 	token    string
 	serial   string
 	env      string
+	start    bool
 }
 
 func init() {
@@ -96,6 +97,12 @@ func initLogger() {
 
 // NewConfig initialises a new configuration file
 func NewConfig(ctx *cli.Context) *Config {
+	start := false
+
+	if ctx != nil {
+		start = ctx.Command.Name == "start"
+	}
+
 	// Initialize logger.
 	initLogger()
 
@@ -105,6 +112,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		options: NewOptions(ctx),
 		token:   rnd.GenerateToken(8),
 		env:     os.Getenv("DOCKER_ENV"),
+		start:   start,
 	}
 
 	// Overwrite values with options.yml from config path.
@@ -823,12 +831,14 @@ func (c *Config) initHub() {
 		c.hub = h
 	}
 
-	if err := c.hub.Load(); err == nil {
-		// Do nothing.
-	} else if err = c.hub.Update(); err != nil {
-		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
-	} else if err = c.hub.Save(); err != nil {
-		log.Debugf("config: %s while saving api keys for maps and places", err)
+	update := c.start
+
+	if err := c.hub.Load(); err != nil {
+		update = true
+	}
+
+	if update {
+		c.UpdateHub()
 	}
 
 	c.hub.Propagate()

@@ -158,20 +158,17 @@ export default {
   methods: {
     getMembership() {
       if (this.isDemo) {
-        return "";
+        return " Demo";
       }
 
-      const m = this.$config.getMembership();
-      switch (m) {
-        case "":
-        case "ce":
-        case "cloud":
-          return "";
-        case "essentials":
-          return " Essentials";
-        default:
-          return " Plus";
+      const tier = this.$config.getTier();
+      if (tier < 4) {
+        return " Community Edition";
+      } else if (tier === 4) {
+        return " Essentials";
       }
+
+      return "";
     }
   },
 };

@@ -63,7 +63,7 @@ msgstr "Een klik zal het naar uw klembord kopiëren."
 msgid "About"
 msgstr "Over"
 
-#: src/component/navigation.vue:98 src/component/navigation.vue:1995
+#: src/component/navigation.vue:99 src/component/navigation.vue:1995
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -94,11 +94,11 @@ msgstr "Actie"
 msgid "Actions"
 msgstr "Acties"
 
-#: src/page/connect.vue:92 src/page/connect.vue:97
+#: src/page/connect.vue:92 src/page/connect.vue:94
 msgid "Activate"
 msgstr "Activeer"
 
-#: src/page/connect.vue:388 src/page/connect.vue:422
+#: src/page/connect.vue:388 src/page/connect.vue:412
 msgid "Activation Code"
 msgstr "Activeringscode"
 
@@ -334,7 +334,7 @@ msgstr "Weet je het zeker?"
 msgid "Artist"
 msgstr "Artiest"
 
-#: src/page/connect.vue:127
+#: src/page/connect.vue:124
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr "Omdat dit ons helpt meer functies aan het publiek aan te bieden, moedigen wij alle gebruikers aan onze missie te steunen."
 
@@ -409,7 +409,7 @@ msgstr "Bugmelding"
 msgid "Busy, please wait…"
 msgstr "Bezig, wacht even…"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:104
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Door gebruik te maken van de software en diensten die wij leveren, gaat u akkoord met onze servicevoorwaarden, ons privacybeleid en onze gedragscode."
 
@@ -449,8 +449,8 @@ msgstr "Kan niet meer items selecteren"
 #: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/page/library/import.vue:34
-#: src/page/library/index.vue:27
+#: src/dialog/share/upload.vue:29 src/page/connect.vue:41
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Annuleren"
 
@@ -524,7 +524,7 @@ msgstr "Kleur Profiel"
 msgid "Colors"
 msgstr "Kleuren"
 
-#: src/page/connect.vue:83 src/page/connect.vue:88
+#: src/page/connect.vue:83 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "Edities vergelijken"
 
@@ -545,7 +545,7 @@ msgstr "Verbinden"
 msgid "Connect via WebDAV"
 msgstr "Verbinding maken via WebDAV"
 
-#: src/page/connect.vue:62
+#: src/page/connect.vue:62 src/page/connect.vue:63
 msgid "Connected"
 msgstr "Verbonden"
 
@@ -554,6 +554,7 @@ msgid "Contact Details"
 msgstr "Contactgegevens"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
+#: src/page/connect.vue:44
 msgid "Contact Us"
 msgstr "Neem contact met ons op"
 
@@ -1055,7 +1056,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Frames"
 
-#: src/page/connect.vue:112
+#: src/page/connect.vue:109
 msgid "Frequently Asked Questions"
 msgstr "Vaak gestelde vragen"
 
@@ -1243,7 +1244,8 @@ msgstr "Ongeldig"
 msgid "Invalid date"
 msgstr "Ongeldige datum"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:75
+#: src/page/connect.vue:81
 msgid "Invalid parameters"
 msgstr "Ongeldige parameters"
 
@@ -1251,7 +1253,7 @@ msgstr "Ongeldige parameters"
 msgid "Invalid photo selected"
 msgstr "Ongeldige foto geselecteerd"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:117
 msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 msgstr "Het is uw beslissing of u zich wilt inschrijven om van extra voordelen te genieten."
 
@@ -1320,7 +1322,8 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:122
+#: src/page/about/about.vue:273 src/page/connect.vue:127
+#: src/page/connect.vue:112
 msgid "Learn more"
 msgstr "Meer informatie"
 
@@ -1441,7 +1444,7 @@ msgid "Male"
 msgstr "Man"
 
 #: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
-#: src/page/about/about.vue:9 src/page/connect.vue:85
+#: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
 msgid "Manage Account"
 msgstr "Account beheren"
 
@@ -1751,7 +1754,7 @@ msgstr "Andere"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Onze missie is om de meest gebruiks- en privacyvriendelijke oplossing te bieden om uw foto's georganiseerd en toegankelijk te houden."
 
-#: src/page/connect.vue:126
+#: src/page/connect.vue:123
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr "Ons team beslist hierover op permanente basis, afhankelijk van de vereiste ondersteuningsinspanning, de server- en licentiekosten, en of de functies algemeen door iedereen nodig zijn of vooral gevraagd worden door organisaties en gevorderde gebruikers."
 
@@ -1809,7 +1812,7 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism is geüpdatet…"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
-#: src/page/connect.vue:118
+#: src/page/connect.vue:115
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism is 100% zelf gefinancierd en onafhankelijk."
 
@@ -1854,7 +1857,7 @@ msgstr "Upload geen foto's met aanstootgevende inhoud."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Houd er rekening mee dat het wijzigen van uw wachtwoord u zal afmelden op andere apparaten en browsers."
 
-#: src/page/connect.vue:56
+#: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Start uw instantie opnieuw op zodat de wijzigingen van kracht worden."
 
@@ -1975,7 +1978,7 @@ msgstr "Herkent gezichten, zodat specifieke mensen kunnen worden gevonden."
 msgid "Red"
 msgstr "Rood"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
+#: src/page/connect.vue:87 src/page/connect.vue:89
 msgid "Register"
 msgstr "Registreer"
 
@@ -1987,7 +1990,7 @@ msgstr "Registreer"
 msgid "Reload"
 msgstr "Ververs"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:130 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Herladen…"
@@ -2031,7 +2034,8 @@ msgstr "Verplicht"
 msgid "Resolution"
 msgstr "Resolutie"
 
-#: src/page/connect.vue:65 src/page/settings/advanced.vue:156
+#: src/page/connect.vue:65 src/page/connect.vue:62
+#: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Herstart"
 
@@ -2297,7 +2301,7 @@ msgstr "Straat"
 msgid "Subject"
 msgstr "Onderwerp"
 
-#: src/page/connect.vue:11 src/page/connect.vue:20
+#: src/page/connect.vue:11
 msgid "Successfully Connected"
 msgstr "Succesvol aangesloten"
 
@@ -2409,7 +2413,7 @@ msgstr "Titel / Positie"
 msgid "Title too long"
 msgstr "Titel is te lang"
 
-#: src/page/connect.vue:74 src/page/connect.vue:79
+#: src/page/connect.vue:74 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "Om te upgraden kunt u een activeringscode invoeren of op \"Registreren\" klikken om u aan te melden op onze website:"
 
@@ -2469,7 +2473,7 @@ msgid "Unknown"
 msgstr "Onbekend"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:88 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Ongeregistreerd"
@@ -2518,7 +2522,7 @@ msgid "Upgrade"
 msgstr "Upgrade"
 
 #: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
-#: src/page/about/about.vue:9 src/page/connect.vue:69
+#: src/page/about/about.vue:9 src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "Nu upgraden"
 
@@ -2613,10 +2617,6 @@ msgstr "Vector"
 msgid "Vectors"
 msgstr "Vectoren"
 
-#: src/page/connect.vue:11
-msgid "Verified"
-msgstr "Geverifieerd"
-
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2654,7 +2654,7 @@ msgstr "Bezoeker"
 msgid "Visual Similarity"
 msgstr "Visuele gelijkenis"
 
-#: src/page/connect.vue:119
+#: src/page/connect.vue:116
 msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
 msgstr "Vrijwillige donaties dekken niet de kosten van een team dat fulltime werkt om u te voorzien van updates, documentatie en ondersteuning."
 
@@ -2696,7 +2696,7 @@ msgstr "Uploaden"
 msgid "Website"
 msgstr "Website"
 
-#: src/page/connect.vue:123
+#: src/page/connect.vue:120
 msgid "What functionality is generally available?"
 msgstr "Welke functionaliteit is algemeen beschikbaar?"
 
@@ -2704,7 +2704,7 @@ msgstr "Welke functionaliteit is algemeen beschikbaar?"
 msgid "White"
 msgstr "Wit"
 
-#: src/page/connect.vue:115
+#: src/page/connect.vue:112
 msgid "Why are some features only available to sponsors?"
 msgstr "Waarom zijn sommige functies alleen beschikbaar voor sponsors?"
 
@@ -2734,7 +2734,7 @@ msgid "Yes"
 msgstr "Ja"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
-#: src/page/about/about.vue:5 src/page/connect.vue:106
+#: src/page/about/about.vue:5 src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "U kunt contact met ons opnemen via membership@photoprism.app voor vragen over uw lidmaatschap."
 
@@ -2755,7 +2755,7 @@ msgstr "Je kunt slechts een album downloaden"
 msgid "You may rescan your library to find additional faces."
 msgstr "U kunt uw bibliotheek opnieuw scannen om meer gezichten te vinden."
 
-#: src/page/connect.vue:54
+#: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
 msgstr "Uw account is succesvol verbonden."
 
@@ -2771,6 +2771,9 @@ msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te m
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "In-/uitzoomen"
+
+#~ msgid "Verified"
+#~ msgstr "Geverifieerd"
 
 #~ msgid "Proceed"
 #~ msgstr "Ga verder"

@@ -14,11 +14,8 @@
         <span v-else-if="error">
           <translate>Invalid</translate>
         </span>
-        <span v-else-if="form.token || !membership || membership === 'ce'">
-          <translate>Upgrade</translate>
-        </span>
         <span v-else>
-          <translate>Successfully Connected</translate>
+          <translate>Upgrade</translate>
         </span>
       </v-toolbar-title>
 
@@ -197,6 +194,7 @@ export default {
       isAdmin: this.$session.isAdmin(),
       isDemo: this.$config.isDemo(),
       isSponsor: this.$config.isSponsor(),
+      tier: this.$config.getTier(),
       membership: membership,
       showInfo: !token && membership === "ce",
       rtl: this.$rtl,

@@ -73,6 +73,15 @@ func (c *Config) MapKey() string {
 	}
 }
 
+// Tier returns the membership tier.
+func (c *Config) Tier() int {
+	if sess, err := c.DecodeSession(true); err != nil {
+		return 0
+	} else {
+		return sess.Tier
+	}
+}
+
 // Membership returns the membership level as string.
 func (c *Config) Membership() string {
 	if !c.Sponsor() {

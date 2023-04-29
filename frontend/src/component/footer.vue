@@ -28,7 +28,6 @@ export default {
     const about = this.$config.getAbout();
     const membership = this.$config.getMembership();
     const customer = this.$config.getCustomer();
-    const evaluation = !customer;
 
     return {
       rtl: this.$rtl,
@@ -36,7 +35,6 @@ export default {
       about: about,
       membership: membership,
       customer: customer,
-      evaluation: evaluation,
       version: this.$config.getVersion(),
       isDemo: this.$config.isDemo(),
     };
@@ -47,18 +45,14 @@ export default {
         return " Demo";
       }
 
-      const m = this.$config.getMembership();
-      switch (m) {
-        case "":
-        case "ce":
-          return " CE";
-        case "cloud":
-          return " Cloud";
-        case "essentials":
-          return " Essentials";
-        default:
-          return " Plus";
+      const tier = this.$config.getTier();
+      if (tier < 4) {
+        return " CE";
+      } else if (tier === 4) {
+        return " Essentials";
       }
+
+      return "";
     },
   },
 };
