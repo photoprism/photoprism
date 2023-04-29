@@ -1752,7 +1752,7 @@ msgstr "Unser Ziel ist es, die benutzer- und datenschutzfreundlichste Lösung zu
 
 #: src/page/connect.vue:115
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Unser Team entscheidet dies laufend in Abhängigkeit vom erforderlichen Supportaufwand, den Server- und Lizenzkosten und davon, ob die Funktionen generell von jedermann benötigt werden oder hauptsächlich von Unternehmen und fortgeschrittenen Benutzern angefordert werden."
+msgstr "Unser Team entscheidet dies laufend, abhängig vom erforderlichen Supportaufwand, den Server- und Lizenzkosten und davon, ob die Funktionen generell von allen oder hauptsächlich von Unternehmen und anspruchsvollen Nutzern benötigt werden."
 
 #: src/options/options.js:305
 msgid "Outdoor"
