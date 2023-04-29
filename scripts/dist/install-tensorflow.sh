@@ -57,6 +57,8 @@ if [[ $TF_DRIVER == "auto" ]]; then
     TF_DRIVER="avx2"
   elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx') == "true" ]]; then
     TF_DRIVER="avx"
+  else
+    TF_DRIVER=""
   fi
 fi
 
