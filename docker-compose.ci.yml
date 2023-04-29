@@ -19,8 +19,8 @@ services:
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
       PHOTOPRISM_INIT: "https"
-      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (8-72 characters)
+      PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "public"                       # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"

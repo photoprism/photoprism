@@ -1,6 +1,6 @@
 version: '3.5'
 
-# Example Docker Compose config file for PhotoPrism (Windows / AMD64)
+# Example Docker Compose config file for PhotoPrism® Plus (Windows / AMD64)
 #
 # Note:
 # - Hardware transcoding is only available to members due to the high maintenance and support effort.
@@ -17,6 +17,8 @@ version: '3.5'
 #   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
 # Setup Guide:
+# - https://www.photoprism.app/plus/kb/quickstart
+# - https://www.photoprism.app/plus/kb/activation
 # - https://docs.photoprism.app/getting-started/docker-compose/
 #
 # Troubleshooting Checklists:
@@ -30,8 +32,8 @@ version: '3.5'
 
 services:
   photoprism:
-    ## Use photoprism/photoprism:preview for testing preview builds:
-    image: photoprism/photoprism:latest
+    ## Use photoprism/photoprism-plus:preview for testing preview builds:
+    image: photoprism/photoprism-plus:latest
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
@@ -60,6 +62,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # disables face detection and recognition (requires TensorFlow)
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
+      PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
