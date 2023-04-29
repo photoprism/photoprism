@@ -30,7 +30,7 @@ type Data struct {
 	Title         string        `meta:"Headline,Title" xmp:"dc:title" dc:"title,title.Alt"`
 	Subject       string        `meta:"Subject,PersonInImage,ObjectName,HierarchicalSubject,CatalogSets" xmp:"Subject"`
 	Keywords      Keywords      `meta:"Keywords"`
-	Notes         string        `meta:"Comment"`
+	Notes         string        `meta:"Comment,UserComment"`
 	Artist        string        `meta:"Artist,Creator,By-line,OwnerName,Owner" xmp:"Creator"`
 	Description   string        `meta:"Description,Caption-Abstract" xmp:"Description,Description.Alt"`
 	Copyright     string        `meta:"Rights,Copyright,CopyrightNotice,WebStatement" xmp:"Rights,Rights.Alt"`
