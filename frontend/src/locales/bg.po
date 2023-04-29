@@ -2701,8 +2701,8 @@ msgid "White"
 msgstr "Бял"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "Защо някои функции са достъпни само за спонсори?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2767,6 +2767,9 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Защо някои функции са достъпни само за спонсори?"
 
 #~ msgid "Verified"
 #~ msgstr "Проверено"

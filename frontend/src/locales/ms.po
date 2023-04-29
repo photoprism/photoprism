@@ -2701,8 +2701,8 @@ msgid "White"
 msgstr "Putih"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "Mengapakah beberapa ciri hanya tersedia untuk penaja?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2767,6 +2767,9 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Mengapakah beberapa ciri hanya tersedia untuk penaja?"
 
 #~ msgid "Verified"
 #~ msgstr "Disahkan"

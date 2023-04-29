@@ -2702,8 +2702,8 @@ msgid "White"
 msgstr "Wit"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "Waarom is sommige kenmerke slegs vir borge beskikbaar?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2768,6 +2768,9 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Waarom is sommige kenmerke slegs vir borge beskikbaar?"
 
 #~ msgid "Verified"
 #~ msgstr "Geverifieer"

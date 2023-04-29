@@ -2707,8 +2707,8 @@ msgid "White"
 msgstr "白"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "为什么有些功能只对赞助商开放？"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2773,6 +2773,9 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "为什么有些功能只对赞助商开放？"
 
 #~ msgid "Verified"
 #~ msgstr "已验证"

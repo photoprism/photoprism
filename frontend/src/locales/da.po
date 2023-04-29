@@ -2705,8 +2705,8 @@ msgid "White"
 msgstr "Hvid"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "Hvorfor er nogle funktioner kun tilgængelige for sponsorer?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2771,6 +2771,9 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Hvorfor er nogle funktioner kun tilgængelige for sponsorer?"
 
 #~ msgid "Verified"
 #~ msgstr "Verificeret"

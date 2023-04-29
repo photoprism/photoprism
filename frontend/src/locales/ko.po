@@ -2701,8 +2701,8 @@ msgid "White"
 msgstr "백색"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "일부 기능은 스폰서만 사용할 수 있는 이유는 무엇입니까?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2767,6 +2767,9 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "일부 기능은 스폰서만 사용할 수 있는 이유는 무엇입니까?"
 
 #~ msgid "Verified"
 #~ msgstr "인증"

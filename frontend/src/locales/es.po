@@ -2706,8 +2706,8 @@ msgid "White"
 msgstr "Blanco"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "¿Por qué algunas funciones sólo están disponibles para los patrocinadores?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2772,6 +2772,9 @@ msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "¿Por qué algunas funciones sólo están disponibles para los patrocinadores?"
 
 #~ msgid "Verified"
 #~ msgstr "Verificado"

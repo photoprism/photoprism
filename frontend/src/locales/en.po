@@ -2700,7 +2700,7 @@ msgid "White"
 msgstr ""
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
+msgid "Why are some features only available to members?"
 msgstr ""
 
 #: src/page/settings/account.vue:93

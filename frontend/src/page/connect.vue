@@ -150,7 +150,7 @@
             <translate>Frequently Asked Questions</translate>
           </h3>
           <p class="subheading text-selectable">
-            <translate>Why are some features only available to sponsors?</translate>
+            <translate>Why are some features only available to members?</translate>
           </p>
           <p class="body-1 text-selectable">
             <translate>PhotoPrism is 100% self-funded and independent.</translate>

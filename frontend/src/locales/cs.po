@@ -2703,8 +2703,8 @@ msgid "White"
 msgstr "Bílá"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "Proč jsou některé funkce dostupné pouze sponzorům?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2769,6 +2769,9 @@ msgstr "Vaše knihovna je průběžně analyzována a automaticky vytváří alb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Přiblížit/Oddálit"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Proč jsou některé funkce dostupné pouze sponzorům?"
 
 #~ msgid "Verified"
 #~ msgstr "Ověřeno"

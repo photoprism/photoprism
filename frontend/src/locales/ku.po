@@ -2701,8 +2701,8 @@ msgid "White"
 msgstr "سپی"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "Çima hin taybetmendî tenê ji sponsoran re peyda dibin?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2767,6 +2767,9 @@ msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên dem�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Çima hin taybetmendî tenê ji sponsoran re peyda dibin?"
 
 #~ msgid "Verified"
 #~ msgstr "Verified"

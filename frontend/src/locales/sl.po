@@ -2698,8 +2698,8 @@ msgid "White"
 msgstr "Bela"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "Zakaj so nekatere funkcije na voljo samo sponzorjem?"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2764,6 +2764,9 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Zakaj so nekatere funkcije na voljo samo sponzorjem?"
 
 #~ msgid "Verified"
 #~ msgstr "Preverjeno"

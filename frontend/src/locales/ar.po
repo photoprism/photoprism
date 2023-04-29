@@ -2701,8 +2701,8 @@ msgid "White"
 msgstr "أبيض"
 
 #: src/page/connect.vue:112
-msgid "Why are some features only available to sponsors?"
-msgstr "لماذا بعض الميزات متاحة فقط للجهات الراعية؟"
+msgid "Why are some features only available to members?"
+msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2767,6 +2767,9 @@ msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبوم�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "لماذا بعض الميزات متاحة فقط للجهات الراعية؟"
 
 #~ msgid "Verified"
 #~ msgstr "موثق"

@@ -24,7 +24,7 @@
       <template v-if="canUpgrade">
         <h3 class="subheading py-2"><translate>PhotoPrism+ Membership</translate></h3>
         <p class="text-selectable">
-          <span v-if="membership !== 'essentials'"><translate>Become a member today, support our mission and enjoy our member benefits!</translate></span>
+          <span v-if="tier < 4"><translate>Become a member today, support our mission and enjoy our member benefits!</translate></span>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
           <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
         </p>
@@ -142,16 +142,19 @@
 export default {
   name: 'PPageAbout',
   data() {
+    const tier = this.$config.getTier();
     const membership = this.$config.getMembership();
     const isDemo = this.$config.isDemo();
     const isPublic = this.$config.isPublic();
+    const isSuperAdmin = this.$session.isSuperAdmin();
     return {
       rtl: this.$rtl,
+      tier: tier,
       membership: membership,
-      canUpgrade: membership === 'ce' || membership === 'essentials',
+      canUpgrade: tier <= 4,
       isDemo: isDemo,
       isPublic: isPublic,
-      isSuperAdmin: this.$session.isSuperAdmin() && !isPublic && !isDemo,
+      isSuperAdmin: isSuperAdmin && !isPublic && !isDemo,
       isSponsor: this.$config.isSponsor(),
     };
   },
