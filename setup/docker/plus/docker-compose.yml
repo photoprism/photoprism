@@ -1,10 +1,6 @@
 version: '3.5'
 
-# Example Docker Compose config file for PhotoPrism (NVIDIA Container Toolkit / AMD64)
-#
-# For hardware transcoding with an NVIDIA graphics card, the NVIDIA Container Toolkit must be installed on
-# the host computer first. Instructions can be found in their installation guide:
-# - https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+# Example Docker Compose config file for PhotoPrism® Plus (Linux / AMD64)
 #
 # Note:
 # - Hardware transcoding is only available to members due to the high maintenance and support effort.
@@ -16,8 +12,7 @@ version: '3.5'
 #   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
 # Setup Guides:
-# - https://docs.photoprism.app/getting-started/docker-compose/
-# - https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit
+# - https://www.photoprism.app/plus/kb/quickstart
 #
 # Troubleshooting Checklists:
 # - https://docs.photoprism.app/getting-started/troubleshooting/
@@ -32,8 +27,8 @@ version: '3.5'
 
 services:
   photoprism:
-    ## Use photoprism/photoprism:preview for testing preview builds:
-    image: photoprism/photoprism:latest
+    ## Use photoprism/photoprism-plus:preview for testing preview builds:
+    image: photoprism/photoprism-plus:latest
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
@@ -62,6 +57,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # disables face detection and recognition (requires TensorFlow)
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
+      PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
@@ -73,23 +69,30 @@ services:
       PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB or MySQL database schema name
       PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB or MySQL database user name
       PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB or MySQL database user password
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
       PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
-      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      ## Run/install on first startup:
-      PHOTOPRISM_INIT: "tensorflow"
+      ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
+      # PHOTOPRISM_INIT: "https gpu tensorflow"
       ## Hardware Video Transcoding:
-      ## see https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit
-      PHOTOPRISM_FFMPEG_ENCODER: "nvidia"
-      PHOTOPRISM_FFMPEG_BITRATE: "50"
-      NVIDIA_VISIBLE_DEVICES: "all"
-      NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
+      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry")
+      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
       # PHOTOPRISM_UMASK: 0000
     ## Start as non-root user before initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
     # user: "1000:1000"
+    ## Share hardware devices with FFmpeg and TensorFlow (optional):
+    # devices:
+    #  - "/dev/dri:/dev/dri"                         # Intel QSV
+    #  - "/dev/nvidia0:/dev/nvidia0"                 # Nvidia CUDA
+    #  - "/dev/nvidiactl:/dev/nvidiactl"
+    #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
+    #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
+    #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
+    #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+    #  - "/dev/video11:/dev/video11"                 # Video4Linux Video Encode Device (h264_v4l2m2m)
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
@@ -98,13 +101,6 @@ services:
       # - "/example/family:/photoprism/originals/family" # *Additional* media folders can be mounted like this
       # - "~/Import:/photoprism/import"                  # *Optional* base folder from which files can be imported to originals
       - "./storage:/photoprism/storage"                  # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: "nvidia"
-              count: 1
-              capabilities: [gpu]
 
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
@@ -131,13 +127,14 @@ services:
 
   ## Watchtower upgrades services automatically (optional)
   ## see https://docs.photoprism.app/getting-started/updates/#watchtower
-  #
-  # watchtower:
-  #   restart: unless-stopped
-  #   image: containrrr/watchtower
-  #   environment:
-  #     WATCHTOWER_CLEANUP: "true"
-  #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
-  #   volumes:
-  #     - "/var/run/docker.sock:/var/run/docker.sock"
-  #     - "~/.docker/config.json:/config.json" # optional, for authentication if you have a Docker Hub account
+  ## activate via "COMPOSE_PROFILES=update docker compose up -d"
+  watchtower:
+    restart: unless-stopped
+    image: containrrr/watchtower
+    profiles: ["update"]
+    environment:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "~/.docker/config.json:/config.json" # optional, for authentication if you have a Docker Hub account

@@ -9,7 +9,7 @@ version: '3.5'
 #   the "no matching manifest" error on Raspberry Pi OS (Raspbian). See documentation for details.
 # - Use https://dl.photoprism.app/docker/armv7/docker-compose.yml to run PhotoPrism and MariaDB on ARMv7-based devices
 #   as well as Raspberry Pi OS (Raspbian) installations without 64-bit support.
-# - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
+# - Hardware transcoding is only available to members due to the high maintenance and support effort.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - In case you see Docker errors related to "cgroups", try adding the following parameters to /boot/firmware/cmdline.txt
