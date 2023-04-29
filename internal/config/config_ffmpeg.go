@@ -21,7 +21,7 @@ func (c *Config) FFmpegEncoder() ffmpeg.AvcEncoder {
 	if c.options.FFmpegEncoder == "" || c.options.FFmpegEncoder == ffmpeg.SoftwareEncoder.String() {
 		return ffmpeg.SoftwareEncoder
 	} else if c.NoSponsor() {
-		log.Infof("ffmpeg: hardware transcoding is available to sponsors only")
+		log.Infof("ffmpeg: hardware transcoding is available to members only")
 		return ffmpeg.SoftwareEncoder
 	}
 

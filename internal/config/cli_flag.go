@@ -71,7 +71,7 @@ func (f CliFlag) CommandFlag() string {
 // Usage returns the command flag usage.
 func (f CliFlag) Usage() string {
 	if list.Contains(f.Tags, EnvSponsor) {
-		return f.Flag.GetUsage() + " *sponsors only*"
+		return f.Flag.GetUsage() + " *members only*"
 	} else {
 		return f.Flag.GetUsage()
 	}
