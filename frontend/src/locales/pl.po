@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-04-29 09:20+0000\n"
 "Last-Translator: lacrimal <jareeq@gmail.com>\n"
-"Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/pl/>\n"
+"Language-Team: Polish <https://translate.photoprism.app/projects/photoprism/frontend/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -99,7 +98,7 @@ msgstr "Akcje"
 msgid "Activate"
 msgstr "Aktywuj"
 
-#: src/page/connect.vue:388 src/page/connect.vue:412
+#: src/page/connect.vue:388 src/page/connect.vue:410
 msgid "Activation Code"
 msgstr "Kod aktywacji"
 
@@ -167,9 +166,7 @@ msgstr "Po jednym roku"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr ""
-"Po wybraniu zdjęć z wyników wyszukiwania, można je dodać do albumu za pomocą "
-"menu kontekstowego."
+msgstr "Po wybraniu zdjęć z wyników wyszukiwania, można je dodać do albumu za pomocą menu kontekstowego."
 
 #: src/options/options.js:406
 msgid "After two months"
@@ -257,8 +254,7 @@ msgstr "Wszystkie lata"
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr ""
-"Możesz też wysłać wybrane pliki bezpośrednio na serwer WebDAV, np. Nextcloud."
+msgstr "Możesz też wysłać wybrane pliki bezpośrednio na serwer WebDAV, np. Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -281,9 +277,7 @@ msgstr "Animacja"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr ""
-"Wszystkie prywatne zdjęcia i filmy pozostaną prywatne i nie zostaną "
-"udostępnione."
+msgstr "Wszystkie prywatne zdjęcia i filmy pozostaną prywatne i nie zostaną udostępnione."
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -340,11 +334,9 @@ msgstr "Jesteś pewny?"
 msgid "Artist"
 msgstr "Artysta"
 
-#: src/page/connect.vue:124
+#: src/page/connect.vue:116
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr ""
-"Ponieważ pomaga nam to dostarczać więcej funkcji dla społeczeństwa, "
-"zachęcamy wszystkich użytkowników do wspierania naszej misji."
+msgstr "Ponieważ pomaga nam to dostarczać więcej funkcji dla społeczeństwa, zachęcamy wszystkich użytkowników do wspierania naszej misji."
 
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
@@ -358,9 +350,7 @@ msgstr "Uwierzytelnianie"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr ""
-"Automatycznie generuj pliki JPEG dla innych typów plików, by mogły być "
-"wyświetlane w przeglądarce."
+msgstr "Automatycznie generuj pliki JPEG dla innych typów plików, by mogły być wyświetlane w przeglądarce."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -372,17 +362,12 @@ msgstr "Podstawa Folder"
 
 #: src/page/about/about.vue:26 src/page/about/about.vue:3
 msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr ""
-"Zostań członkiem już dziś, wspieraj naszą misję i korzystaj z naszych "
-"korzyści członkowskich!"
+msgstr "Zostań członkiem już dziś, wspieraj naszą misję i korzystaj z naszych korzyści członkowskich!"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr ""
-"Będąc w 100% finansowani i niezależni, możemy obiecać, że nigdy nie "
-"sprzedamy Twoich danych i że zawsze będziemy transparentni w kwestii naszego "
-"oprogramowania i usług."
+msgstr "Będąc w 100% finansowani i niezależni, możemy obiecać, że nigdy nie sprzedamy Twoich danych i że zawsze będziemy transparentni w kwestii naszego oprogramowania i usług."
 
 #: src/dialog/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -426,9 +411,7 @@ msgstr "Zajęty, proszę czekać…"
 
 #: src/page/connect.vue:104
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr ""
-"Korzystając z oprogramowania i usług, które oferujemy, zgadzasz się na nasze "
-"warunki świadczenia usług, politykę prywatności i kodeks postępowania."
+msgstr "Korzystając z oprogramowania i usług, które oferujemy, zgadzasz się na nasze warunki świadczenia usług, politykę prywatności i kodeks postępowania."
 
 #: src/app/routes.js:188 src/component/navigation.vue:257
 #: src/component/navigation.vue:1015
@@ -774,8 +757,7 @@ msgstr "Nie twórz plików ExifTool JSON w celu ulepszenia ekstrakcji metadanych
 
 #: src/page/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr ""
-"Nie modyfikuj folderu z oryginałami. Wyłącza import, wgrywanie i usuwanie."
+msgstr "Nie modyfikuj folderu z oryginałami. Wyłącza import, wgrywanie i usuwanie."
 
 #: src/page/settings/advanced.vue:494
 msgid "Don't use Darktable to convert RAW images."
@@ -816,9 +798,7 @@ msgstr "Pobierz"
 
 #: src/page/settings/general.vue:648
 msgid "Download only original media files, without any automatically generated files."
-msgstr ""
-"Pobieraj tylko oryginalne pliki multimedialne, bez żadnych automatycznie "
-"generowanych plików."
+msgstr "Pobieraj tylko oryginalne pliki multimedialne, bez żadnych automatycznie generowanych plików."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -843,9 +823,7 @@ msgstr "Filtr skalowania rozdzielczości w dół"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr ""
-"Ze względu na dużą ilość otrzymywanych przez nas e-maili, nasz zespół może "
-"nie być w stanie odpowiedzieć na nie natychmiast."
+msgstr "Ze względu na dużą ilość otrzymywanych przez nas e-maili, nasz zespół może nie być w stanie odpowiedzieć na nie natychmiast."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -861,9 +839,7 @@ msgstr "Dynamiczne podglądy"
 
 #: src/page/settings/advanced.vue:305
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr ""
-"Funkcja renderowania na żądanie wymaga wydajnego procesora i nie jest "
-"zalecana w przypadku mniejszych serwerów domowych lub urządzeń NAS."
+msgstr "Funkcja renderowania na żądanie wymaga wydajnego procesora i nie jest zalecana w przypadku mniejszych serwerów domowych lub urządzeń NAS."
 
 #: src/page/settings/advanced.vue:347
 msgid "Dynamic Size Limit: %{n}px"
@@ -914,9 +890,7 @@ msgstr "Błędy"
 
 #: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
-msgstr ""
-"Szacowanie przybliżonej lokalizacji dla obrazów nieposiadających "
-"współrzędnych."
+msgstr "Szacowanie przybliżonej lokalizacji dla obrazów nieposiadających współrzędnych."
 
 #: src/page/settings/library.vue:69
 msgid "Estimates"
@@ -928,9 +902,7 @@ msgstr "Co dwa dni"
 
 #: src/page/settings/general.vue:210
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr ""
-"Pozwala oznaczyć wybrane materiały jako prywatne i wykluczyć je z wyników "
-"wyszukiwania, współdzielonych albumów, oznaczeń i miejsc."
+msgstr "Pozwala oznaczyć wybrane materiały jako prywatne i wykluczyć je z wyników wyszukiwania, współdzielonych albumów, oznaczeń i miejsc."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:134
 msgid "Exclude hidden"
@@ -1047,9 +1019,7 @@ msgstr "Pliki"
 
 #: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr ""
-"Pliki z sekwencyjnymi nazwami, np. 'IMG_1234 (2)' i 'IMG_1234 (3)', należą "
-"do tego samego zdjęcia."
+msgstr "Pliki z sekwencyjnymi nazwami, np. 'IMG_1234 (2)' i 'IMG_1234 (3)', należą do tego samego zdjęcia."
 
 #: src/dialog/photo/edit/details.vue:486
 msgid "Focal Length"
@@ -1189,15 +1159,11 @@ msgstr "Błąd importu"
 
 #: src/page/library/import.vue:25
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr ""
-"Zaimportowane pliki zostaną posortowane według daty i otrzymają unikalną "
-"nazwę, aby uniknąć duplikatów."
+msgstr "Zaimportowane pliki zostaną posortowane według daty i otrzymają unikalną nazwę, aby uniknąć duplikatów."
 
 #: src/page/settings/general.vue:276
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr ""
-"Zaimportowane pliki zostaną posortowane według daty i otrzymają unikalną "
-"nazwę."
+msgstr "Zaimportowane pliki zostaną posortowane według daty i otrzymają unikalną nazwę."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1218,9 +1184,7 @@ msgstr "w"
 #: src/component/photo/mosaic.vue:11 src/component/photo/mosaic.vue:1
 #: src/page/labels.vue:35 src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr ""
-"Jeśli zdjęcia których szukasz nie są widoczne, przeskanuj ponownie "
-"bibliotekę i poczekaj aż indeksowanie zostanie ukończone."
+msgstr "Jeśli zdjęcia których szukasz nie są widoczne, przeskanuj ponownie bibliotekę i poczekaj aż indeksowanie zostanie ukończone."
 
 #: src/page/settings/general.vue:669
 msgid "Include RAW image files when downloading stacks and archives."
@@ -1289,12 +1253,6 @@ msgstr "Parametry nieprawidłowe"
 msgid "Invalid photo selected"
 msgstr "Wybrano nieprawidłowe zdjęcie"
 
-#: src/page/connect.vue:117
-msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
-"To Twoja decyzja, czy chcesz się zapisać, aby korzystać z dodatkowych "
-"korzyści."
-
 #: src/model/rest.js:181
 msgid "Item"
 msgstr "Element"
@@ -1360,8 +1318,8 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:127
-#: src/page/connect.vue:112
+#: src/page/about/about.vue:273 src/page/connect.vue:119
+#: src/page/connect.vue:110
 msgid "Learn more"
 msgstr "Dowiedz się więcej"
 
@@ -1440,9 +1398,7 @@ msgstr "Miejsce"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr ""
-"Komunikaty dziennika pojawiają się tutaj za każdym razem, gdy PhotoPrism "
-"natknie się na uszkodzone pliki lub wystąpią inne potencjalne problemy."
+msgstr "Komunikaty dziennika pojawiają się tutaj za każdym razem, gdy PhotoPrism natknie się na uszkodzone pliki lub wystąpią inne potencjalne problemy."
 
 #: src/component/navigation.vue:474 src/component/navigation.vue:1773
 #: src/component/navigation.vue:2047
@@ -1668,9 +1624,7 @@ msgstr "Nie wybrano żadnego filmu"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr ""
-"Brak ostrzeżeń lub błędów zawierających to słowo kluczowe. Zwróć uwagę, że "
-"wielkość liter jest uwzględniana w wyszukiwaniu."
+msgstr "Brak ostrzeżeń lub błędów zawierających to słowo kluczowe. Zwróć uwagę, że wielkość liter jest uwzględniana w wyszukiwaniu."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1680,9 +1634,7 @@ msgstr ""
 #: src/component/photo/mosaic.vue:3 src/component/photo/mosaic.vue:1
 #: src/dialog/upload.vue:52 src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr ""
-"Obrazy niebędące fotografiami lub posiadające niską jakość wymagają "
-"zatwierdzenia, zanim pojawią się w wynikach wyszukiwania."
+msgstr "Obrazy niebędące fotografiami lub posiadające niską jakość wymagają zatwierdzenia, zanim pojawią się w wynikach wyszukiwania."
 
 #: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:268
 #: src/options/options.js:357
@@ -1695,9 +1647,7 @@ msgstr "Nie znaleziono"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr ""
-"Możesz też ręcznie zarządzać folderem oryginałów, importowanie jest "
-"opcjonalne."
+msgstr "Możesz też ręcznie zarządzać folderem oryginałów, importowanie jest opcjonalne."
 
 #: src/page/settings/services.vue:38
 msgid "Note:"
@@ -1705,10 +1655,7 @@ msgstr "Uwaga:"
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr ""
-"Uwaga: Tylko serwery WebDAV, takie jak Nextcloud lub PhotoPrism, mogą być "
-"skonfigurowane jako zdalna usługa do tworzenia kopii zapasowych i "
-"przesyłania plików."
+msgstr "Uwaga: Tylko serwery WebDAV, takie jak Nextcloud lub PhotoPrism, mogą być skonfigurowane jako zdalna usługa do tworzenia kopii zapasowych i przesyłania plików."
 
 #: src/dialog/photo/edit/details.vue:658
 msgid "Notes"
@@ -1733,8 +1680,7 @@ msgstr "Najstarsze"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr ""
-"W systemie Windows wpisz następujący adres w oknie dialogowym połączenia:"
+msgstr "W systemie Windows wpisz następujący adres w oknie dialogowym połączenia:"
 
 #: src/options/options.js:396
 msgid "Once a week"
@@ -1802,17 +1748,11 @@ msgstr "Inne"
 
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr ""
-"Naszą misją jest dostarczenie najbardziej przyjaznego dla użytkownika i jego "
-"prywatności rozwiązania, które pozwoli uporządkować i udostępniać zdjęcia."
+msgstr "Naszą misją jest dostarczenie najbardziej przyjaznego dla użytkownika i jego prywatności rozwiązania, które pozwoli uporządkować i udostępniać zdjęcia."
 
-#: src/page/connect.vue:123
+#: src/page/connect.vue:115
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr ""
-"Nasz zespół decyduje o tym na bieżąco w zależności od wymaganych nakładów na "
-"wsparcie, kosztów serwera i licencji oraz tego, czy funkcje są ogólnie "
-"potrzebne wszystkim, czy też są głównie wymagane przez organizacje i "
-"zaawansowanych użytkowników."
+msgstr "Nasz zespół decyduje o tym na bieżąco w zależności od wymaganych nakładów na wsparcie, kosztów serwera i licencji oraz tego, czy funkcje są ogólnie potrzebne wszystkim, czy też są głównie wymagane przez organizacje i zaawansowanych użytkowników."
 
 #: src/options/options.js:305
 msgid "Outdoor"
@@ -1845,9 +1785,7 @@ msgstr "Ludzie"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr ""
-"Osoby, z którymi dzielisz się linkiem, będą mogły przeglądać publiczne "
-"treści."
+msgstr "Osoby, z którymi dzielisz się linkiem, będą mogły przeglądać publiczne treści."
 
 #: src/component/photo/clipboard.vue:120
 msgid "Permanently deleted"
@@ -1870,7 +1808,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism został zaktualizowany…"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
-#: src/page/connect.vue:115
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism jest w 100% finansowany i niezależny."
 
@@ -1913,9 +1850,7 @@ msgstr "Proszę nie przesyłać zdjęć zawierających nieprzyzwoite treści."
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr ""
-"Pamiętaj, że zmiana hasła wyloguje Cię na innych urządzeniach i "
-"przeglądarkach."
+msgstr "Pamiętaj, że zmiana hasła wyloguje Cię na innych urządzeniach i przeglądarkach."
 
 #: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
@@ -2005,9 +1940,7 @@ msgstr "RAW"
 
 #: src/page/library/index.vue:117
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr ""
-"Ponowne indeksowanie wszystkich oryginałów, w tym już zaindeksowanych i "
-"niezmienionych plików."
+msgstr "Ponowne indeksowanie wszystkich oryginałów, w tym już zaindeksowanych i niezmienionych plików."
 
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
@@ -2075,9 +2008,7 @@ msgstr "Usuń z albumu"
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr ""
-"Usuń zaimportowane pliki z ich obecnej lokalizacji, aby zaoszczędzić miejsce "
-"na dysku. Nieobsługiwane typy plików pozostaną nienaruszone."
+msgstr "Usuń zaimportowane pliki z ich obecnej lokalizacji, aby zaoszczędzić miejsce na dysku. Nieobsługiwane typy plików pozostaną nienaruszone."
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
@@ -2272,9 +2203,7 @@ msgstr "Pokaż logi serwera w bibliotece."
 
 #: src/page/settings/advanced.vue:77
 msgid "Shows more detailed log messages. Requires a restart."
-msgstr ""
-"Wyświetla bardziej szczegółowe komunikaty dziennika. Wymaga ponownego "
-"uruchomienia."
+msgstr "Wyświetla bardziej szczegółowe komunikaty dziennika. Wymaga ponownego uruchomienia."
 
 #: src/model/file.js:213 src/page/settings/general.vue:689
 msgid "Sidecar"
@@ -2316,15 +2245,11 @@ msgstr "Utwórz stos"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr ""
-"Utwórz stosy z plików posiadających ten sam unikalny identyfikator obrazu "
-"lub instancji."
+msgstr "Utwórz stosy z plików posiadających ten sam unikalny identyfikator obrazu lub instancji."
 
 #: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr ""
-"Utwórz stosy ze zdjęć wykonanych w tym samym czasie i miejscu, zawartymi w "
-"ich metadanych."
+msgstr "Utwórz stosy ze zdjęć wykonanych w tym samym czasie i miejscu, zawartymi w ich metadanych."
 
 #: src/dialog/photo/edit/info.vue:86
 msgid "Stackable"
@@ -2336,9 +2261,7 @@ msgstr "Stosy"
 
 #: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr ""
-"Stosy grupują pliki podobne do siebie, ale z różnicami w jakości, formacie, "
-"rozmiarze lub kolorze."
+msgstr "Stosy grupują pliki podobne do siebie, ale z różnicami w jakości, formacie, rozmiarze lub kolorze."
 
 #: src/page/library/index.vue:31
 msgid "Start"
@@ -2387,9 +2310,7 @@ msgstr "Super Administrator"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr ""
-"Wsparcie dla innych usług, takich jak Google Drive, zostanie dodane w "
-"późniejszym czasie."
+msgstr "Wsparcie dla innych usług, takich jak Google Drive, zostanie dodane w późniejszym czasie."
 
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2422,10 +2343,7 @@ msgstr "Dziękujemy za wsparcie!"
 
 #: src/page/about/about.vue:18
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr ""
-"Dlatego PhotoPrism został zbudowany od podstaw tak, aby działał wszędzie "
-"tam, gdzie go potrzebujesz, bez uszczerbku dla wolności, prywatności czy "
-"funkcjonalności."
+msgstr "Dlatego PhotoPrism został zbudowany od podstaw tak, aby działał wszędzie tam, gdzie go potrzebujesz, bez uszczerbku dla wolności, prywatności czy funkcjonalności."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
@@ -2433,9 +2351,7 @@ msgstr "Indeks zawiera obecnie %{n} ukrytych plików."
 
 #: src/page/library/index.vue:37
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr ""
-"Może być to spowodowane brakiem wsparcia dla ich formatu, nieukończoną "
-"konwersją na JPEG lub byciem duplikatami istniejących plików."
+msgstr "Może być to spowodowane brakiem wsparcia dla ich formatu, nieukończoną konwersją na JPEG lub byciem duplikatami istniejących plików."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2445,17 +2361,11 @@ msgstr "Motyw"
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr ""
-"Dzięki temu oryginalny folder jest montowany jako dysk sieciowy i umożliwia "
-"otwieranie, edytowanie i usuwanie plików z komputera lub smartfona, tak "
-"jakby były one lokalne."
+msgstr "Dzięki temu oryginalny folder jest montowany jako dysk sieciowy i umożliwia otwieranie, edytowanie i usuwanie plików z komputera lub smartfona, tak jakby były one lokalne."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr ""
-"Pozwala to na zamontowanie folderu oryginałów jako dysku sieciowego i "
-"umożliwia otwieranie, edytowanie i usuwanie plików z komputera lub smartfona "
-"w taki sam sposób, jakby były one przechowywane lokalnie."
+msgstr "Pozwala to na zamontowanie folderu oryginałów jako dysku sieciowego i umożliwia otwieranie, edytowanie i usuwanie plików z komputera lub smartfona w taki sam sposób, jakby były one przechowywane lokalnie."
 
 #: src/page/settings/advanced.vue:252
 msgid "Thumbnail Generation"
@@ -2498,9 +2408,7 @@ msgstr "Tytuł za długi"
 
 #: src/page/connect.vue:74 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr ""
-"Aby dokonać aktualizacji, możesz wprowadzić kod aktywacyjny lub kliknąć "
-"\"Zarejestruj się\", aby zarejestrować się na naszej stronie internetowej:"
+msgstr "Aby dokonać aktualizacji, możesz wprowadzić kod aktywacyjny lub kliknąć \"Zarejestruj się\", aby zarejestrować się na naszej stronie internetowej:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2641,8 +2549,7 @@ msgstr "Wgraj pliki z dysku"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
-msgstr ""
-"Udostępnij album poprzez link lub prześlij wybrane pliki na serwer WebDAV."
+msgstr "Udostępnij album poprzez link lub prześlij wybrane pliki na serwer WebDAV."
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2740,21 +2647,13 @@ msgstr "Odwiedzający"
 msgid "Visual Similarity"
 msgstr "Podobieństwo wizualne"
 
-#: src/page/connect.vue:116
-msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr ""
-"Dobrowolne datki nie pokrywają kosztów zespołu pracującego w pełnym wymiarze "
-"czasu, aby zapewnić Ci aktualizacje, dokumentację i wsparcie."
-
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
 msgstr "Doceniamy Twoją opinię!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr ""
-"Dokładamy wszelkich starań, aby odpowiedzieć w ciągu pięciu dni roboczych "
-"lub mniej."
+msgstr "Dokładamy wszelkich starań, aby odpowiedzieć w ciągu pięciu dni roboczych lub mniej."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2768,17 +2667,13 @@ msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr ""
-"Klienci WebDAV mogą połączyć się z PhotoPrism za pomocą następującego adresu "
-"URL:"
+msgstr "Klienci WebDAV mogą połączyć się z PhotoPrism za pomocą następującego adresu URL:"
 
 #: src/page/settings/services.vue:39
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr ""
-"Klienci WebDAV, jak Microsoft Windows Explorer lub Apple Finder, mogą łączyć "
-"się bezpośrednio z PhotoPrism."
+msgstr "Klienci WebDAV, jak Microsoft Windows Explorer lub Apple Finder, mogą łączyć się bezpośrednio z PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2788,17 +2683,13 @@ msgstr "Wyślij na WebDAV"
 msgid "Website"
 msgstr "Strona internetowa"
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:112
 msgid "What functionality is generally available?"
 msgstr "Jaka funkcjonalność jest ogólnie dostępna?"
 
 #: src/options/options.js:424
 msgid "White"
 msgstr "Biały"
-
-#: src/page/connect.vue:112
-msgid "Why are some features only available to members?"
-msgstr ""
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2828,9 +2719,7 @@ msgstr "Tak"
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr ""
-"Zapraszamy do kontaktu z nami pod adresem membership@photoprism.app w "
-"przypadku pytań dotyczących członkostwa."
+msgstr "Zapraszamy do kontaktu z nami pod adresem membership@photoprism.app w przypadku pytań dotyczących członkostwa."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2847,8 +2736,7 @@ msgstr "Możesz wybrać tylko jedną pozycję"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr ""
-"Możesz ponownie przeskanować swoją bibliotekę, aby znaleźć dodatkowe twarze."
+msgstr "Możesz ponownie przeskanować swoją bibliotekę, aby znaleźć dodatkowe twarze."
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
@@ -2857,20 +2745,21 @@ msgstr "Twoje konto zostało pomyślnie połączone."
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
 #: src/page/about/about.vue:49 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr ""
-"Twoje stałe wsparcie pomaga nam dostarczać regularne aktualizacje i zachować "
-"niezależność, dzięki czemu możemy wypełniać naszą misję i chronić Twoją "
-"prywatność."
+msgstr "Twoje stałe wsparcie pomaga nam dostarczać regularne aktualizacje i zachować niezależność, dzięki czemu możemy wypełniać naszą misję i chronić Twoją prywatność."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr ""
-"Twoja biblioteka jest na bieżąco analizowana, aby automatycznie tworzyć "
-"albumy z wyjątkowych chwil, podróży i miejsc."
+msgstr "Twoja biblioteka jest na bieżąco analizowana, aby automatycznie tworzyć albumy z wyjątkowych chwil, podróży i miejsc."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Powiększ / Pomniejsz"
+
+#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "To Twoja decyzja, czy chcesz się zapisać, aby korzystać z dodatkowych korzyści."
+
+#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+#~ msgstr "Dobrowolne datki nie pokrywają kosztów zespołu pracującego w pełnym wymiarze czasu, aby zapewnić Ci aktualizacje, dokumentację i wsparcie."
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Dlaczego niektóre funkcje są dostępne tylko dla sponsorów?"

@@ -97,7 +97,7 @@ msgstr ""
 msgid "Activate"
 msgstr ""
 
-#: src/page/connect.vue:388 src/page/connect.vue:412
+#: src/page/connect.vue:388 src/page/connect.vue:410
 msgid "Activation Code"
 msgstr ""
 
@@ -333,7 +333,7 @@ msgstr ""
 msgid "Artist"
 msgstr ""
 
-#: src/page/connect.vue:124
+#: src/page/connect.vue:116
 msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 msgstr ""
 
@@ -1252,10 +1252,6 @@ msgstr ""
 msgid "Invalid photo selected"
 msgstr ""
 
-#: src/page/connect.vue:117
-msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr ""
-
 #: src/model/rest.js:181
 msgid "Item"
 msgstr ""
@@ -1321,8 +1317,8 @@ msgstr ""
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:127
-#: src/page/connect.vue:112
+#: src/page/about/about.vue:273 src/page/connect.vue:119
+#: src/page/connect.vue:110
 msgid "Learn more"
 msgstr ""
 
@@ -1753,7 +1749,7 @@ msgstr ""
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr ""
 
-#: src/page/connect.vue:123
+#: src/page/connect.vue:115
 msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
 
@@ -1811,7 +1807,6 @@ msgid "PhotoPrism has been updated…"
 msgstr ""
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
-#: src/page/connect.vue:115
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr ""
 
@@ -2651,10 +2646,6 @@ msgstr ""
 msgid "Visual Similarity"
 msgstr ""
 
-#: src/page/connect.vue:116
-msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr ""
-
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
 msgstr ""
@@ -2691,16 +2682,12 @@ msgstr ""
 msgid "Website"
 msgstr ""
 
-#: src/page/connect.vue:120
+#: src/page/connect.vue:112
 msgid "What functionality is generally available?"
 msgstr ""
 
 #: src/options/options.js:424
 msgid "White"
-msgstr ""
-
-#: src/page/connect.vue:112
-msgid "Why are some features only available to members?"
 msgstr ""
 
 #: src/page/settings/account.vue:93
