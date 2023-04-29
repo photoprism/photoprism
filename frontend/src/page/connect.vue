@@ -80,7 +80,7 @@
             <translate>Restart</translate>
             <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
           </v-btn>
-          <v-btn v-if="membership === ''" href="https://my.photoprism.app/get-started" target="_blank" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
+          <v-btn v-if="$config.getTier() < 4" href="https://my.photoprism.app/dashboard/membership" target="_blank" color="primary-button" :block="$vuetify.breakpoint.xsOnly"
                  class="white--text ml-0" depressed :disabled="busy">
             <translate>Upgrade Now</translate>
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
@@ -104,7 +104,7 @@
                         background-color="secondary-light" :label="$gettext('Activation Code')" type="text">
           </v-text-field>
           <div class="action-buttons text-xs-left mt-3">
-            <v-btn v-if="membership && membership !== 'ce'" href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
+            <v-btn v-if="$config.getTier() >= 4" href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly"
                    class="ml-0"
                    outline
                    :disabled="busy">
