@@ -558,8 +558,8 @@ docker-demo: docker-demo-latest
 docker-demo-all: docker-demo-latest docker-demo-debian
 docker-demo-latest:
 	docker pull photoprism/photoprism:preview-ce
-	scripts/docker/build.sh demo $(BUILD_DATE)
-	scripts/docker/push.sh demo $(BUILD_DATE)
+	scripts/docker/build.sh demo ce
+	scripts/docker/push.sh demo ce
 docker-demo-debian:
 	docker pull photoprism/photoprism:preview-ce-debian
 	scripts/docker/build.sh demo debian /debian
