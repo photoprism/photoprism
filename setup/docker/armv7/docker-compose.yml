@@ -17,6 +17,7 @@ version: '3.5'
 # Setup Guides:
 # - https://docs.photoprism.app/getting-started/docker-compose/
 # - https://docs.photoprism.app/getting-started/raspberry-pi/
+# - https://www.photoprism.app/kb/activation
 #
 # Troubleshooting Checklists:
 # - https://docs.photoprism.app/getting-started/troubleshooting/

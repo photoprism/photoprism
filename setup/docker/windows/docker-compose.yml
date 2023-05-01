@@ -18,6 +18,7 @@ version: '3.5'
 #
 # Setup Guide:
 # - https://docs.photoprism.app/getting-started/docker-compose/
+# - https://www.photoprism.app/kb/activation
 #
 # Troubleshooting Checklists:
 # - https://docs.photoprism.app/getting-started/troubleshooting/
@@ -60,6 +61,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # disables face detection and recognition (requires TensorFlow)
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
+      PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)

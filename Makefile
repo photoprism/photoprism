@@ -366,11 +366,11 @@ docker-unstable: docker-unstable-lunar
 docker-unstable-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable /jammy
+	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable-ce /jammy
 docker-unstable-lunar:
 	docker pull --platform=amd64 photoprism/develop:lunar
 	docker pull --platform=amd64 photoprism/develop:lunar-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable /lunar
+	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable-ce /lunar
 preview: docker-preview
 docker-preview: docker-preview-latest
 docker-preview-all: docker-preview-latest docker-preview-other
@@ -384,7 +384,7 @@ docker-preview-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bookworm /bookworm "-t photoprism/photoprism:preview-debian"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-bookworm /bookworm "-t photoprism/photoprism:preview-ce-debian"
 docker-preview-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm ubuntu:jammy
@@ -410,13 +410,13 @@ docker-preview-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /jammy
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /jammy
 docker-preview-lunar:
 	docker pull --platform=amd64 photoprism/develop:lunar
 	docker pull --platform=amd64 photoprism/develop:lunar-slim
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview /lunar "-t photoprism/photoprism:preview-ubuntu"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /lunar "-t photoprism/photoprism:preview-ce-ubuntu"
 docker-preview-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
@@ -436,7 +436,7 @@ docker-release-bookworm:
 	docker pull --platform=amd64 photoprism/develop:bookworm-slim
 	docker pull --platform=arm64 photoprism/develop:bookworm
 	docker pull --platform=arm64 photoprism/develop:bookworm-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/photoprism:debian"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-bookworm /bookworm "-t photoprism/photoprism:ce-debian"
 docker-release-armv7:
 	docker pull --platform=arm photoprism/develop:armv7
 	docker pull --platform=arm ubuntu:jammy
@@ -444,37 +444,37 @@ docker-release-armv7:
 docker-release-arm64:
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx.sh photoprism linux/arm64 arm64 /lunar
+	scripts/docker/buildx.sh photoprism linux/arm64 ce-arm64 /lunar
 docker-release-bullseye:
 	docker pull --platform=amd64 photoprism/develop:bullseye
 	docker pull --platform=amd64 photoprism/develop:bullseye-slim
 	docker pull --platform=arm64 photoprism/develop:bullseye
 	docker pull --platform=arm64 photoprism/develop:bullseye-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 bullseye /bullseye
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-bullseye /bullseye
 docker-release-buster:
 	docker pull --platform=amd64 photoprism/develop:buster
 	docker pull --platform=arm64 photoprism/develop:buster
 	docker pull --platform=amd64 debian:buster-slim
 	docker pull --platform=arm64 debian:buster-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 buster /buster
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-buster /buster
 docker-release-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
 	docker pull --platform=arm64 photoprism/develop:jammy
 	docker pull --platform=arm64 photoprism/develop:jammy-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 jammy /jammy
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-jammy /jammy
 docker-release-lunar:
 	docker pull --platform=amd64 photoprism/develop:lunar
 	docker pull --platform=amd64 photoprism/develop:lunar-slim
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 lunar /lunar "-t photoprism/photoprism:latest -t photoprism/photoprism:ubuntu"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /lunar
 docker-release-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
 	docker pull --platform=amd64 ubuntu:impish
 	docker pull --platform=arm64 ubuntu:impish
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 impish /impish
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-impish /impish
 start-local:
 	$(DOCKER_COMPOSE) -f docker-compose.local.yml up -d --wait
 stop-local:
@@ -506,27 +506,27 @@ docker-local-all: docker-local-lunar docker-local-jammy docker-local-bookworm do
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
-	scripts/docker/build.sh photoprism bookworm /bookworm "-t photoprism/photoprism:local"
+	scripts/docker/build.sh photoprism ce-bookworm /bookworm "-t photoprism/photoprism:local"
 docker-local-bullseye:
 	docker pull photoprism/develop:bullseye
 	docker pull photoprism/develop:bullseye-slim
-	scripts/docker/build.sh photoprism bullseye /bullseye "-t photoprism/photoprism:local"
+	scripts/docker/build.sh photoprism ce-bullseye /bullseye "-t photoprism/photoprism:local"
 docker-local-buster:
 	docker pull photoprism/develop:buster
 	docker pull debian:buster-slim
-	scripts/docker/build.sh photoprism buster /buster "-t photoprism/photoprism:local"
+	scripts/docker/build.sh photoprism ce-buster /buster "-t photoprism/photoprism:local"
 docker-local-jammy:
 	docker pull photoprism/develop:jammy
 	docker pull ubuntu:jammy
-	scripts/docker/build.sh photoprism jammy /jammy "-t photoprism/photoprism:local"
+	scripts/docker/build.sh photoprism ce-jammy /jammy "-t photoprism/photoprism:local"
 docker-local-lunar:
 	docker pull photoprism/develop:lunar
 	docker pull ubuntu:lunar
-	scripts/docker/build.sh photoprism lunar /lunar "-t photoprism/photoprism:local"
+	scripts/docker/build.sh photoprism ce-lunar /lunar "-t photoprism/photoprism:local"
 docker-local-impish:
 	docker pull photoprism/develop:impish
 	docker pull ubuntu:impish
-	scripts/docker/build.sh photoprism impish /impish "-t photoprism/photoprism:local"
+	scripts/docker/build.sh photoprism ce-impish /impish "-t photoprism/photoprism:local"
 docker-local-develop: docker-local-develop-lunar
 docker-local-develop-all: docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
@@ -557,19 +557,19 @@ demo: docker-demo
 docker-demo: docker-demo-latest
 docker-demo-all: docker-demo-latest docker-demo-debian
 docker-demo-latest:
-	docker pull photoprism/photoprism:preview
+	docker pull photoprism/photoprism:preview-ce
 	scripts/docker/build.sh demo $(BUILD_DATE)
 	scripts/docker/push.sh demo $(BUILD_DATE)
 docker-demo-debian:
-	docker pull photoprism/photoprism:preview-debian
+	docker pull photoprism/photoprism:preview-ce-debian
 	scripts/docker/build.sh demo debian /debian
-	scripts/docker/push.sh demo debian
+	scripts/docker/push.sh demo-c debian
 docker-demo-ubuntu:
-	docker pull photoprism/photoprism:preview-ubuntu
+	docker pull photoprism/photoprism:preview-ce-ubuntu
 	scripts/docker/build.sh demo ubuntu /ubuntu
 	scripts/docker/push.sh demo ubuntu
 docker-demo-unstable:
-	docker pull photoprism/photoprism:unstable
+	docker pull photoprism/photoprism:unstable-ce
 	scripts/docker/build.sh demo $(BUILD_DATE) /unstable
 	scripts/docker/push.sh demo $(BUILD_DATE)
 docker-demo-local:

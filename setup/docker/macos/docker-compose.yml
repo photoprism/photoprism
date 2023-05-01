@@ -13,6 +13,7 @@ version: '3.5'
 #
 # Setup Guide:
 # - https://docs.photoprism.app/getting-started/docker-compose/
+# - https://www.photoprism.app/kb/activation
 #
 # Troubleshooting Checklists:
 # - https://docs.photoprism.app/getting-started/troubleshooting/
