@@ -563,7 +563,7 @@ docker-demo-latest:
 docker-demo-debian:
 	docker pull photoprism/photoprism:preview-ce-debian
 	scripts/docker/build.sh demo debian /debian
-	scripts/docker/push.sh demo-c debian
+	scripts/docker/push.sh demo debian
 docker-demo-ubuntu:
 	docker pull photoprism/photoprism:preview-ce-ubuntu
 	scripts/docker/build.sh demo ubuntu /ubuntu
