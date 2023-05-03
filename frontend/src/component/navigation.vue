@@ -539,7 +539,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" class="p-profile" @click.stop="onAccount">
+        <v-list-tile v-show="auth && !isPublic && $config.feature('account')" class="p-profile" @click.stop="onAccount">
           <v-list-tile-avatar size="36">
             <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo">
           </v-list-tile-avatar>
