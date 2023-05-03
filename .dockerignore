@@ -16,6 +16,7 @@
 .idea
 .DS_Store
 .env
+.git
 *.db
 *.db-journal
 Dockerfile
