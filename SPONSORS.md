@@ -62,6 +62,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 [**Toly Rugalev**](https://github.com/AnatolyRugalev) (GitHub Sponsors, March 2023)
 
+[**Yongho Lee**](https://github.com/lyh16) (Patreon, May 2023)
+
 ## Infrastructure Sponsors ##
 
 Our project infrastructure is provided by the following companies:
