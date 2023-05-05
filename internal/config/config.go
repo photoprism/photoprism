@@ -85,7 +85,9 @@ func initLogger() {
 			FullTimestamp: true,
 		})
 
-		if Env(EnvTrace) {
+		if Env(EnvProd) {
+			log.SetLevel(logrus.WarnLevel)
+		} else if Env(EnvTrace) {
 			log.SetLevel(logrus.TraceLevel)
 		} else if Env(EnvDebug) {
 			log.SetLevel(logrus.DebugLevel)
