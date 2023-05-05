@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: djsteph <steph@smorin.com>\n"
-"Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
+"PO-Revision-Date: 2023-05-05 18:58+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
+"frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1975,7 +1976,7 @@ msgstr "Rouge"
 
 #: src/page/connect.vue:87 src/page/connect.vue:89
 msgid "Register"
-msgstr "Registre"
+msgstr "S'inscrire"
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
