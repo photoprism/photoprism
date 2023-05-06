@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/remote/webdav"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -98,6 +99,16 @@ func (w *Share) Start() (err error) {
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {
 				return nil
+			}
+
+			// Skip deleted files.
+			if file.File == nil || file.FileID <= 0 {
+				log.Warnf("share: %s cannot be uploaded because it has been deleted", clean.Log(file.RemoteName))
+				file.Status = entity.FileShareError
+				file.Error = "file not found"
+				file.Errors++
+				w.logError(entity.Db().Save(&file).Error)
+				continue
 			}
 
 			dir := path.Dir(file.RemoteName)
