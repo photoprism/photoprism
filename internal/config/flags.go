@@ -448,7 +448,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringSliceFlag{
 			Name:   "trusted-proxy",
-			Usage:  "`CIDR` range from which reverse proxy headers can be trusted",
+			Usage:  "`CIDR` ranges or IPv4/v6 addresses from which reverse proxy headers can be trusted, separated by commas",
 			Value:  &cli.StringSlice{header.CidrDockerInternal},
 			EnvVar: EnvVar("TRUSTED_PROXY"),
 		}}, {
