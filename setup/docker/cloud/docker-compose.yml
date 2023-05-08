@@ -41,7 +41,7 @@ version: '3.5'
 #  Configuring multiple apps on the same server is beyond the scope of this base
 #  config and for advanced users only.
 #
-#  This config includes Ophelia, a docker job scheduler:
+#  This config includes Ofelia, a docker job scheduler:
 #
 #    https://github.com/mcuadros/ofelia
 #
