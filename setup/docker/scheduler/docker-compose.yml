@@ -1,7 +1,7 @@
 version: '3.5'
 
 # Example Docker Compose config file for PhotoPrism (Linux / AMD64)
-# Includes Ophelia, a docker job scheduler: https://github.com/mcuadros/ofelia
+# Includes Ofelia, a docker job scheduler: https://github.com/mcuadros/ofelia
 #
 # Note:
 # - Hardware transcoding is only available to members due to the high maintenance and support effort.
