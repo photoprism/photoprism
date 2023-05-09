@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Poky Leung <pyleungae@connect.ust.hk>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
+"PO-Revision-Date: 2023-05-09 00:58+0000\n"
+"Last-Translator: nk950357 <nk950357@gmail.com>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -80,7 +81,7 @@ msgstr "帳號已刪除"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "帐户"
+msgstr "所有帳戶"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -96,15 +97,15 @@ msgstr "動作"
 
 #: src/page/connect.vue:92 src/page/connect.vue:94
 msgid "Activate"
-msgstr "激活"
+msgstr "啟用"
 
 #: src/page/connect.vue:388 src/page/connect.vue:410
 msgid "Activation Code"
-msgstr "激活碼"
+msgstr "啟用碼"
 
 #: src/dialog/admin/users/add.vue:23 src/page/admin/users.vue:47
 msgid "Add"
-msgstr "添加"
+msgstr "新增"
 
 #: src/dialog/admin/users/add.vue:8 src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -138,7 +139,7 @@ msgstr "已新增"
 
 #: src/options/admin.js:6 src/options/admin.js:19
 msgid "Admin"
-msgstr "管理员"
+msgstr "管理員"
 
 #: src/page/settings.vue:60
 msgid "Advanced"
@@ -269,7 +270,7 @@ msgstr "高度（公尺）"
 #: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
 #: src/dialog/photo/edit/files.vue:98 src/options/options.js:326
 msgid "Animated"
-msgstr "動畫"
+msgstr "動態圖片"
 
 #: src/page/settings/general.vue:582
 msgid "Animation"
@@ -383,7 +384,7 @@ msgstr "黑色"
 
 #: src/options/options.js:439
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "布萊克曼：Lanczos修改，少振鈴文物"
+msgstr "布萊克曼窗函數：使用Lanczos濾波器修改，減少振鈴現象"
 
 #: src/options/options.js:422
 msgid "Blue"
@@ -425,7 +426,7 @@ msgstr "相機"
 
 #: src/dialog/photo/edit/info.vue:79
 msgid "Camera Serial"
-msgstr "相機系列"
+msgstr "相機序號"
 
 #: src/page/album/photos.vue:246 src/page/photos.vue:331
 msgid "Can't load more, limit reached"
@@ -478,7 +479,7 @@ msgstr "更改個人資料和安全設置。"
 
 #: src/page/settings/general.vue:320
 msgid "Change photo titles, locations, and other metadata."
-msgstr "更改照片標題，位置和其他數據。"
+msgstr "更改照片標題，位置和其他資料。"
 
 #: src/component/photo/clipboard.vue:134
 msgid "Change private flag"
@@ -534,7 +535,7 @@ msgstr "重新完整掃描"
 
 #: src/dialog/photo/edit/labels.vue:22
 msgid "Confidence"
-msgstr "信心度"
+msgstr "可信度"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:55
 msgid "Connect"
@@ -547,16 +548,16 @@ msgstr "使用 WebDAV 連線"
 
 #: src/page/connect.vue:62 src/page/connect.vue:63
 msgid "Connected"
-msgstr "已連接"
+msgstr "已連線"
 
 #: src/page/settings/account.vue:116 src/page/settings/account.vue:95
 msgid "Contact Details"
-msgstr "聯繫方式"
+msgstr "聯絡方式"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
 #: src/page/connect.vue:44
 msgid "Contact Us"
-msgstr "聯繫我們"
+msgstr "聯絡我們"
 
 #: src/page/albums.vue:116 src/page/labels.vue:77
 #: src/page/people/recognized.vue:90
@@ -570,7 +571,7 @@ msgstr "包含一張圖片。"
 
 #: src/options/admin.js:9 src/options/admin.js:31
 msgid "Contributor"
-msgstr "撰稿人"
+msgstr "貢獻者"
 
 #: src/page/settings/library.vue:111
 msgid "Convert to JPEG"
@@ -599,7 +600,7 @@ msgstr "國家"
 
 #: src/page/auth/login.vue:19
 msgid "Create Account"
-msgstr "創建賬戶"
+msgstr "新增帳號"
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
@@ -619,11 +620,11 @@ msgstr "立方：中等品質，良好效能"
 
 #: src/dialog/account/password.vue:134
 msgid "Current Password"
-msgstr "現在密碼"
+msgstr "目前的密碼"
 
 #: src/page/about/feedback.vue:5 src/options/options.js:430
 msgid "Customer Support"
-msgstr "客戶支援"
+msgstr "使用者支援"
 
 #: src/options/options.js:421
 msgid "Cyan"
@@ -687,7 +688,7 @@ msgstr "停用備份"
 
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "停用內建的WebDAV服務器。需要重啟。"
+msgstr "停用內建的WebDAV伺服器。重啟以生效。"
 
 #: src/page/settings/advanced.vue:493
 msgid "Disable Darktable"
