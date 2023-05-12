@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-05 18:58+0000\n"
-"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"PO-Revision-Date: 2023-05-12 14:28+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "frontend/fr/>\n"
 "Language: fr\n"
@@ -321,7 +321,7 @@ msgstr "Êtes-vous sûr de vouloir supprimer ce compte ?"
 
 #: src/dialog/photo/delete.vue:10
 msgid "Are you sure you want to permanently delete these pictures?"
-msgstr "Êtes-vous sûr de vouloir supprimer définitivement ces photos ?"
+msgstr "Êtes-vous sûr de vouloir supprimer définitivement ces photos ?"
 
 #: src/dialog/file/delete.vue:10
 msgid "Are you sure you want to permanently delete this file?"
@@ -1471,7 +1471,7 @@ msgstr "Adhésion"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
-msgstr "Fusionner %{a} avec %{b} ?"
+msgstr "Fusionner %{a} avec %{b} ?"
 
 #: src/page/about/feedback.vue:34 src/page/about/feedback.vue:27
 msgid "Message sent"
