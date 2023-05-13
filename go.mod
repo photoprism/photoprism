@@ -31,7 +31,7 @@ require (
 	github.com/mandykoh/prism v0.35.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
-	github.com/montanaflynn/stats v0.7.0
+	github.com/montanaflynn/stats v0.7.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
