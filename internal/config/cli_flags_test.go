@@ -10,7 +10,7 @@ func TestCliFlags_Cli(t *testing.T) {
 	cliFlags := Flags.Cli()
 	standard := Flags.Find([]string{})
 
-	assert.Greater(t, len(cliFlags), len(standard))
+	assert.Equal(t, len(cliFlags), len(standard))
 }
 
 func TestCliFlags_Find(t *testing.T) {
@@ -21,5 +21,5 @@ func TestCliFlags_Find(t *testing.T) {
 
 	assert.Equal(t, len(standard), len(other))
 	assert.Equal(t, len(cliFlags), len(essentials))
-	assert.Less(t, len(other), len(essentials))
+	assert.Equal(t, len(other), len(essentials))
 }

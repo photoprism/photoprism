@@ -425,7 +425,7 @@ var Flags = CliFlags{
 			Name:   "site-preview",
 			Usage:  "sharing preview image `URL`",
 			EnvVar: EnvVar("SITE_PREVIEW"),
-		}, Tags: []string{Essentials}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "https-proxy",
 			Usage:  "proxy server `URL` to be used for outgoing connections *optional*",
@@ -732,13 +732,13 @@ var Flags = CliFlags{
 			Usage:  "minimum size of automatically clustered faces in `PIXELS` (20-10000)",
 			Value:  face.ClusterSizeThreshold,
 			EnvVar: EnvVar("FACE_CLUSTER_SIZE"),
-		}, Tags: []string{Essentials}}, {
+		}}, {
 		Flag: cli.IntFlag{
 			Name:   "face-cluster-score",
 			Usage:  "minimum `QUALITY` score of automatically clustered faces (1-100)",
 			Value:  face.ClusterScoreThreshold,
 			EnvVar: EnvVar("FACE_CLUSTER_SCORE"),
-		}, Tags: []string{Essentials}}, {
+		}}, {
 		Flag: cli.IntFlag{
 			Name:   "face-cluster-core",
 			Usage:  "`NUMBER` of faces forming a cluster core (1-100)",
