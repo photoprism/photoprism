@@ -12,7 +12,7 @@ import (
 
 // DefaultTheme returns the default user interface theme name.
 func (c *Config) DefaultTheme() string {
-	if c.options.DefaultTheme == "" || c.NoSponsor() {
+	if c.options.DefaultTheme == "" {
 		return "default"
 	}
 
