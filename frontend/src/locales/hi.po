@@ -31,7 +31,7 @@ msgid "%{n} labels found"
 msgstr "%{n} लेबल मिले"
 
 #: src/page/people/new.vue:286 src/page/people/new.vue:372
-#: src/page/people/recognized.vue:508
+#: src/page/people/recognized.vue:497
 msgid "%{n} people found"
 msgstr "%{n} लोग मिले"
 
@@ -59,7 +59,7 @@ msgstr "एक क्लिक इसे आपके क्लिपबोर�
 #: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
 #: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/help.vue:43 src/page/people/recognized.vue:433
 msgid "About"
 msgstr "के बारे में"
 
@@ -94,11 +94,11 @@ msgstr "कार्य"
 msgid "Actions"
 msgstr "क्रिया"
 
-#: src/page/connect.vue:92 src/page/connect.vue:94
+#: src/page/connect.vue:97 src/page/connect.vue:94
 msgid "Activate"
 msgstr "सक्रिय"
 
-#: src/page/connect.vue:388 src/page/connect.vue:410
+#: src/page/connect.vue:431 src/page/connect.vue:401
 msgid "Activation Code"
 msgstr "एक्टिवेशन कोड"
 
@@ -207,7 +207,7 @@ msgstr "सभी %{n} एल्बम लोड किए गए"
 msgid "All %{n} labels loaded"
 msgstr "सभी %{n} लेबल लोड किए गए"
 
-#: src/page/people/recognized.vue:360
+#: src/page/people/recognized.vue:349
 msgid "All %{n} people loaded"
 msgstr "सभी %{n} लोग लोड हुए"
 
@@ -334,10 +334,6 @@ msgstr "क्या आपको यकीन है?"
 msgid "Artist"
 msgstr "कलाकार"
 
-#: src/page/connect.vue:116
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "चूंकि इससे हमें जनता को अधिक सुविधाएँ प्रदान करने में मदद मिलती है, इसलिए हम सभी उपयोगकर्ताओं को हमारे मिशन का समर्थन करने के लिए प्रोत्साहित करते हैं।"
-
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
 msgstr "आस्पेक्ट अनुपात"
@@ -435,8 +431,8 @@ msgstr "अधिक लोड नहीं किया जा सकता, �
 #: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
-#: src/page/people/new.vue:231 src/page/people/recognized.vue:294
-#: src/page/people/recognized.vue:310
+#: src/page/people/new.vue:231 src/page/people/recognized.vue:283
+#: src/page/people/recognized.vue:299
 msgid "Can't select more items"
 msgstr "अधिक आइटम का चयन नहीं किया जा सकता"
 
@@ -524,7 +520,7 @@ msgstr "रंग प्रोफ़ाइल"
 msgid "Colors"
 msgstr "रंग की"
 
-#: src/page/connect.vue:83 src/page/connect.vue:85
+#: src/page/connect.vue:88 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "संस्करणों की तुलना करें"
 
@@ -644,7 +640,7 @@ msgstr "दोषमार्जन लॉग"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:287 src/options/options.js:345
-#: src/options/themes.js:417
+#: src/options/themes.js:418
 msgid "Default"
 msgstr "चूक"
 
@@ -904,7 +900,7 @@ msgstr "हेर दो दिनों"
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "खोज परिणामों, साझा एल्बम, लेबल और स्थानों से निजी के रूप में चिह्नित सामग्री को बाहर निकालें।"
 
-#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
 msgstr "छिपा हुआ शामिल न करें"
 
@@ -1056,10 +1052,6 @@ msgstr "एफपीएस"
 msgid "Frames"
 msgstr "फ्रेम्स"
 
-#: src/page/connect.vue:109
-msgid "Frequently Asked Questions"
-msgstr "अधिकतर पूछे जाने वाले सवाल"
-
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr "पूर्ण स्क्रीन"
@@ -1116,7 +1108,7 @@ msgstr "छिपा हुआ"
 msgid "Hidden Files"
 msgstr "छिपी हुई फाइलें"
 
-#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:294
 msgid "Hide"
 msgstr "छिपाना"
 
@@ -1318,8 +1310,7 @@ msgstr "एलडीएपी/एडी"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:119
-#: src/page/connect.vue:110
+#: src/page/about/about.vue:273 src/page/connect.vue:101
 msgid "Learn more"
 msgstr "और अधिक जानें"
 
@@ -1439,7 +1430,7 @@ msgstr "मुखय रंग"
 msgid "Male"
 msgstr "पुरुष"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
+#: src/page/connect.vue:62 src/page/connect.vue:85 src/page/about/about.vue:54
 #: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
 msgid "Manage Account"
 msgstr "खाते का प्रबंधन करें"
@@ -1510,7 +1501,7 @@ msgstr "20 से अधिक एल्बम मिले"
 msgid "More than 20 labels found"
 msgstr "20 से अधिक लेबल मिले"
 
-#: src/page/people/recognized.vue:511
+#: src/page/people/recognized.vue:500
 msgid "More than 20 people found"
 msgstr "20 से अधिक लोग मिले"
 
@@ -1540,7 +1531,7 @@ msgstr "कम से कम %{n} अक्षर होने चाहिए�
 #: src/page/about/feedback.vue:174 src/page/albums.vue:87
 #: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
-#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
+#: src/page/people/recognized.vue:395 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "नाम"
 
@@ -1588,7 +1579,7 @@ msgstr "कोई लेबल नहीं मिला"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:282 src/page/people/new.vue:368
-#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
+#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:493
 msgid "No people found"
 msgstr "कोई व्यक्ति नहीं मिला"
 
@@ -1707,7 +1698,7 @@ msgid "One label found"
 msgstr "एक लेबल मिला"
 
 #: src/page/people/new.vue:284 src/page/people/new.vue:370
-#: src/page/people/recognized.vue:506
+#: src/page/people/recognized.vue:495
 msgid "One person found"
 msgstr "एक व्यक्ति मिला"
 
@@ -1749,10 +1740,6 @@ msgstr "अन्य"
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "हमारा मिशन आपके चित्रों को व्यवस्थित और सुलभ रखने के लिए सबसे अधिक उपयोगकर्ता- और गोपनीयता के अनुकूल समाधान प्रदान करना है।"
-
-#: src/page/connect.vue:115
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "हमारी टीम आवश्यक समर्थन प्रयास, सर्वर और लाइसेंसिंग लागत के आधार पर निरंतर आधार पर इसका निर्णय लेती है, और क्या सुविधाओं की आम तौर पर सभी को आवश्यकता होती है या मुख्य रूप से संगठनों और उन्नत उपयोगकर्ताओं द्वारा अनुरोध किया जाता है।"
 
 #: src/options/options.js:305
 msgid "Outdoor"
@@ -1973,7 +1960,7 @@ msgstr "चेहरों को पहचानता है ताकि व�
 msgid "Red"
 msgstr "लाल"
 
-#: src/page/connect.vue:87 src/page/connect.vue:89
+#: src/page/connect.vue:92 src/page/connect.vue:89
 msgid "Register"
 msgstr "पंजीकरण करवाना"
 
@@ -1981,7 +1968,7 @@ msgstr "पंजीकरण करवाना"
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
-#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:96
 msgid "Reload"
 msgstr "पुनः लोड करें"
 
@@ -2078,7 +2065,7 @@ msgstr "स्कैन"
 #: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:78 src/page/places.vue:38
+#: src/page/people/recognized.vue:77 src/page/places.vue:38
 msgid "Search"
 msgstr "खोज"
 
@@ -2177,7 +2164,7 @@ msgstr "शेयर %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "अन्य ऐप्स और सेवाओं के साथ अपनी तस्वीरें साझा करें।"
 
-#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:284
 msgid "Show"
 msgstr "दिखाना"
 
@@ -2185,7 +2172,7 @@ msgstr "दिखाना"
 msgid "Show all new faces"
 msgstr "सभी नए चेहरे दिखाएं"
 
-#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:116
 msgid "Show hidden"
 msgstr "छिपा हुआ दिखाएं"
 
@@ -2408,7 +2395,7 @@ msgstr "शीर्षक स्थिति"
 msgid "Title too long"
 msgstr "शीर्षक बहुत लंबा है"
 
-#: src/page/connect.vue:74 src/page/connect.vue:76
+#: src/page/connect.vue:79 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "अपग्रेड करने के लिए, आप या तो एक सक्रियण कोड दर्ज कर सकते हैं या हमारी वेबसाइट पर साइन अप करने के लिए \"रजिस्टर\" पर क्लिक कर सकते हैं:"
 
@@ -2516,8 +2503,9 @@ msgstr "ढेर अद्यतन कर रहा है"
 msgid "Upgrade"
 msgstr "उन्नत करना"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
-#: src/page/about/about.vue:9 src/page/connect.vue:66
+#: src/page/connect.vue:69 src/dialog/sponsor.vue:40
+#: src/page/about/about.vue:32 src/page/about/about.vue:9
+#: src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "अभी अपग्रेड करें"
 
@@ -2687,10 +2675,6 @@ msgstr "WebDAV अपलोड करें"
 msgid "Website"
 msgstr "वेबसाइट"
 
-#: src/page/connect.vue:112
-msgid "What functionality is generally available?"
-msgstr "आम तौर पर कौन सी कार्यक्षमता उपलब्ध होती है?"
-
 #: src/options/options.js:424
 msgid "White"
 msgstr "सफेद"
@@ -2758,6 +2742,18 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+#~ msgstr "चूंकि इससे हमें जनता को अधिक सुविधाएँ प्रदान करने में मदद मिलती है, इसलिए हम सभी उपयोगकर्ताओं को हमारे मिशन का समर्थन करने के लिए प्रोत्साहित करते हैं।"
+
+#~ msgid "Frequently Asked Questions"
+#~ msgstr "अधिकतर पूछे जाने वाले सवाल"
+
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+#~ msgstr "हमारी टीम आवश्यक समर्थन प्रयास, सर्वर और लाइसेंसिंग लागत के आधार पर निरंतर आधार पर इसका निर्णय लेती है, और क्या सुविधाओं की आम तौर पर सभी को आवश्यकता होती है या मुख्य रूप से संगठनों और उन्नत उपयोगकर्ताओं द्वारा अनुरोध किया जाता है।"
+
+#~ msgid "What functionality is generally available?"
+#~ msgstr "आम तौर पर कौन सी कार्यक्षमता उपलब्ध होती है?"
 
 #~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 #~ msgstr "यह आपका निर्णय है कि आप अतिरिक्त लाभों का आनंद लेने के लिए साइन अप करना चाहते हैं या नहीं।"

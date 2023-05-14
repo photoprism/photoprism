@@ -23,7 +23,7 @@ msgstr ""
 
 #: src/page/people/new.vue:286
 #: src/page/people/new.vue:372
-#: src/page/people/recognized.vue:508
+#: src/page/people/recognized.vue:497
 msgid "%{n} people found"
 msgstr ""
 
@@ -57,7 +57,7 @@ msgstr ""
 #: src/component/navigation.vue:460
 #: src/component/navigation.vue:59
 #: src/page/help.vue:43
-#: src/page/people/recognized.vue:434
+#: src/page/people/recognized.vue:433
 #: src/page/settings/account.vue:313
 msgid "About"
 msgstr ""
@@ -99,13 +99,13 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: src/page/connect.vue:92
+#: src/page/connect.vue:97
 #: src/page/connect.vue:94
 msgid "Activate"
 msgstr ""
 
-#: src/page/connect.vue:388
-#: src/page/connect.vue:410
+#: src/page/connect.vue:431
+#: src/page/connect.vue:401
 msgid "Activation Code"
 msgstr ""
 
@@ -227,7 +227,7 @@ msgstr ""
 msgid "All %{n} labels loaded"
 msgstr ""
 
-#: src/page/people/recognized.vue:360
+#: src/page/people/recognized.vue:349
 msgid "All %{n} people loaded"
 msgstr ""
 
@@ -369,10 +369,6 @@ msgstr ""
 msgid "Artist"
 msgstr ""
 
-#: src/page/connect.vue:116
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr ""
-
 #: src/dialog/photo/edit/files.vue:163
 #: src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
@@ -491,8 +487,8 @@ msgstr ""
 #: src/page/library/browse.vue:217
 #: src/page/people/new.vue:215
 #: src/page/people/new.vue:231
-#: src/page/people/recognized.vue:294
-#: src/page/people/recognized.vue:310
+#: src/page/people/recognized.vue:283
+#: src/page/people/recognized.vue:299
 msgid "Can't select more items"
 msgstr ""
 
@@ -609,7 +605,7 @@ msgstr ""
 msgid "Colors"
 msgstr ""
 
-#: src/page/connect.vue:83
+#: src/page/connect.vue:88
 #: src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr ""
@@ -751,7 +747,7 @@ msgstr ""
 #: src/page/admin/users.vue:100
 #: src/options/options.js:287
 #: src/options/options.js:345
-#: src/options/themes.js:417
+#: src/options/themes.js:418
 msgid "Default"
 msgstr ""
 
@@ -1049,7 +1045,7 @@ msgid "Exclude content marked as private from search results, shared albums, lab
 msgstr ""
 
 #: src/page/people/new.vue:92
-#: src/page/people/recognized.vue:134
+#: src/page/people/recognized.vue:133
 msgid "Exclude hidden"
 msgstr ""
 
@@ -1223,10 +1219,6 @@ msgstr ""
 msgid "Frames"
 msgstr ""
 
-#: src/page/connect.vue:109
-msgid "Frequently Asked Questions"
-msgstr ""
-
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr ""
@@ -1291,7 +1283,7 @@ msgid "Hidden Files"
 msgstr ""
 
 #: src/page/people/new.vue:229
-#: src/page/people/recognized.vue:295
+#: src/page/people/recognized.vue:294
 msgid "Hide"
 msgstr ""
 
@@ -1544,8 +1536,7 @@ msgstr ""
 #: src/page/about/about.vue:39
 #: src/page/about/about.vue:16
 #: src/page/about/about.vue:273
-#: src/page/connect.vue:119
-#: src/page/connect.vue:110
+#: src/page/connect.vue:101
 msgid "Learn more"
 msgstr ""
 
@@ -1692,7 +1683,7 @@ msgid "Male"
 msgstr ""
 
 #: src/page/connect.vue:62
-#: src/page/connect.vue:80
+#: src/page/connect.vue:85
 #: src/page/about/about.vue:54
 #: src/page/about/about.vue:9
 #: src/page/connect.vue:59
@@ -1773,7 +1764,7 @@ msgstr ""
 msgid "More than 20 labels found"
 msgstr ""
 
-#: src/page/people/recognized.vue:511
+#: src/page/people/recognized.vue:500
 msgid "More than 20 people found"
 msgstr ""
 
@@ -1814,7 +1805,7 @@ msgstr ""
 #: src/page/labels.vue:339
 #: src/page/people/new.vue:52
 #: src/page/people/new.vue:297
-#: src/page/people/recognized.vue:396
+#: src/page/people/recognized.vue:395
 #: src/page/settings/services.vue:26
 msgid "Name"
 msgstr ""
@@ -1879,7 +1870,7 @@ msgstr ""
 #: src/page/people/new.vue:282
 #: src/page/people/new.vue:368
 #: src/page/people/recognized.vue:35
-#: src/page/people/recognized.vue:504
+#: src/page/people/recognized.vue:493
 msgid "No people found"
 msgstr ""
 
@@ -2022,7 +2013,7 @@ msgstr ""
 
 #: src/page/people/new.vue:284
 #: src/page/people/new.vue:370
-#: src/page/people/recognized.vue:506
+#: src/page/people/recognized.vue:495
 msgid "One person found"
 msgstr ""
 
@@ -2070,10 +2061,6 @@ msgstr ""
 
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr ""
-
-#: src/page/connect.vue:115
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
 msgstr ""
 
 #: src/options/options.js:305
@@ -2330,7 +2317,7 @@ msgstr ""
 msgid "Red"
 msgstr ""
 
-#: src/page/connect.vue:87
+#: src/page/connect.vue:92
 #: src/page/connect.vue:89
 msgid "Register"
 msgstr ""
@@ -2344,7 +2331,7 @@ msgstr ""
 #: src/page/library/browse.vue:91
 #: src/page/library/errors.vue:70
 #: src/page/people/new.vue:57
-#: src/page/people/recognized.vue:97
+#: src/page/people/recognized.vue:96
 msgid "Reload"
 msgstr ""
 
@@ -2461,7 +2448,7 @@ msgstr ""
 #: src/page/albums.vue:96
 #: src/page/labels.vue:72
 #: src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:78
+#: src/page/people/recognized.vue:77
 #: src/page/places.vue:38
 msgid "Search"
 msgstr ""
@@ -2576,7 +2563,7 @@ msgid "Share your pictures with other apps and services."
 msgstr ""
 
 #: src/page/people/new.vue:219
-#: src/page/people/recognized.vue:285
+#: src/page/people/recognized.vue:284
 msgid "Show"
 msgstr ""
 
@@ -2585,7 +2572,7 @@ msgid "Show all new faces"
 msgstr ""
 
 #: src/page/people/new.vue:75
-#: src/page/people/recognized.vue:117
+#: src/page/people/recognized.vue:116
 msgid "Show hidden"
 msgstr ""
 
@@ -2824,7 +2811,7 @@ msgstr ""
 msgid "Title too long"
 msgstr ""
 
-#: src/page/connect.vue:74
+#: src/page/connect.vue:79
 #: src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr ""
@@ -2960,6 +2947,7 @@ msgstr ""
 msgid "Upgrade"
 msgstr ""
 
+#: src/page/connect.vue:69
 #: src/dialog/sponsor.vue:40
 #: src/page/about/about.vue:32
 #: src/page/about/about.vue:9
@@ -3167,10 +3155,6 @@ msgstr ""
 #: src/page/settings/account.vue:821
 #: src/page/settings/account.vue:675
 msgid "Website"
-msgstr ""
-
-#: src/page/connect.vue:112
-msgid "What functionality is generally available?"
 msgstr ""
 
 #: src/options/options.js:424

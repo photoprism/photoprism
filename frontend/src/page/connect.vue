@@ -145,21 +145,6 @@
             <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
           </p>
         </v-flex>
-        <v-flex v-show="showInfo" xs12 class="px-2 pt-3 pb-0">
-          <h3 class="title pb-3">
-            <translate>Frequently Asked Questions</translate>
-          </h3>
-          <p class="subheading text-selectable">
-            <translate>What functionality is generally available?</translate>
-          </p>
-          <p class="body-1 text-selectable">
-            <translate>Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users.</translate>
-            <translate>As this helps us provide more features to the public, we encourage all users to support our mission.</translate>
-          </p>
-          <p class="body-1">
-            <a href="https://www.photoprism.app/oss/faq" class="text-link" target="_blank"><translate>Learn more</translate> ›</a>
-          </p>
-        </v-flex>
       </v-layout>
     </v-form>
     <p-about-footer></p-about-footer>

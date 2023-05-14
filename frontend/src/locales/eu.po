@@ -28,7 +28,7 @@ msgid "%{n} labels found"
 msgstr "%{n} etiketa aurkitu dira"
 
 #: src/page/people/new.vue:286 src/page/people/new.vue:372
-#: src/page/people/recognized.vue:508
+#: src/page/people/recognized.vue:497
 msgid "%{n} people found"
 msgstr "%{n} pertsona aurkitu dira"
 
@@ -56,7 +56,7 @@ msgstr "Klik eginez gero, arbelean kopiatuko da."
 #: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
 #: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/help.vue:43 src/page/people/recognized.vue:433
 msgid "About"
 msgstr "Buruz"
 
@@ -91,11 +91,11 @@ msgstr "Ekintza"
 msgid "Actions"
 msgstr "Ekintzak"
 
-#: src/page/connect.vue:92 src/page/connect.vue:94
+#: src/page/connect.vue:97 src/page/connect.vue:94
 msgid "Activate"
 msgstr "Aktibatu"
 
-#: src/page/connect.vue:388 src/page/connect.vue:410
+#: src/page/connect.vue:431 src/page/connect.vue:401
 msgid "Activation Code"
 msgstr "Aktibazio kodea"
 
@@ -204,7 +204,7 @@ msgstr "%{n} album guztiak kargatu dira"
 msgid "All %{n} labels loaded"
 msgstr "%{n} etiketa guztiak kargatu dira"
 
-#: src/page/people/recognized.vue:360
+#: src/page/people/recognized.vue:349
 msgid "All %{n} people loaded"
 msgstr "%{n} pertsona guztiak kargatu dira"
 
@@ -331,10 +331,6 @@ msgstr "Ziur zaude?"
 msgid "Artist"
 msgstr "Artista"
 
-#: src/page/connect.vue:116
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "Honek publikoari eginbide gehiago eskaintzen laguntzen digunez, erabiltzaile guztiak animatzen ditugu gure eginkizuna laguntzera."
-
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
 msgstr "Aspektu-erlazioa"
@@ -432,8 +428,8 @@ msgstr "Ezin da gehiago kargatu, mugara iritsi da"
 #: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
-#: src/page/people/new.vue:231 src/page/people/recognized.vue:294
-#: src/page/people/recognized.vue:310
+#: src/page/people/new.vue:231 src/page/people/recognized.vue:283
+#: src/page/people/recognized.vue:299
 msgid "Can't select more items"
 msgstr "Ezin dira elementu gehiago hautatu"
 
@@ -521,7 +517,7 @@ msgstr "Kolore-profila"
 msgid "Colors"
 msgstr "Koloreak"
 
-#: src/page/connect.vue:83 src/page/connect.vue:85
+#: src/page/connect.vue:88 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "Edizioak alderatu"
 
@@ -641,7 +637,7 @@ msgstr "Arazte-erregistroak"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:287 src/options/options.js:345
-#: src/options/themes.js:417
+#: src/options/themes.js:418
 msgid "Default"
 msgstr "Lehenetsia"
 
@@ -901,7 +897,7 @@ msgstr "Bi egunetik behin"
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Baztertu pribatu gisa markatutako edukia bilaketa-emaitzetatik, partekatutako albumetatik, etiketetatik eta tokietatik."
 
-#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
 msgstr "Ezkutatuta baztertu"
 
@@ -1053,10 +1049,6 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Markoak"
 
-#: src/page/connect.vue:109
-msgid "Frequently Asked Questions"
-msgstr "Galdera arruntak"
-
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr "Pantaila osoa"
@@ -1113,7 +1105,7 @@ msgstr "Ezkutuan"
 msgid "Hidden Files"
 msgstr "Ezkutuko Fitxategiak"
 
-#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:294
 msgid "Hide"
 msgstr "Ezkutatu"
 
@@ -1315,8 +1307,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:119
-#: src/page/connect.vue:110
+#: src/page/about/about.vue:273 src/page/connect.vue:101
 msgid "Learn more"
 msgstr "Gehiago ikasi"
 
@@ -1436,7 +1427,7 @@ msgstr "Kolore Nagusia"
 msgid "Male"
 msgstr "Gizonezkoa"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
+#: src/page/connect.vue:62 src/page/connect.vue:85 src/page/about/about.vue:54
 #: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
 msgid "Manage Account"
 msgstr "Kudeatu kontua"
@@ -1507,7 +1498,7 @@ msgstr "20 album baino gehiago aurkitu dira"
 msgid "More than 20 labels found"
 msgstr "20 etiketa baino gehiago aurkitu dira"
 
-#: src/page/people/recognized.vue:511
+#: src/page/people/recognized.vue:500
 msgid "More than 20 people found"
 msgstr "20 pertsona baino gehiago aurkitu dira"
 
@@ -1537,7 +1528,7 @@ msgstr "Gutxienez %{n} karaktere izan behar ditu."
 #: src/page/about/feedback.vue:174 src/page/albums.vue:87
 #: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
-#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
+#: src/page/people/recognized.vue:395 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Izena"
 
@@ -1585,7 +1576,7 @@ msgstr "Ez da etiketarik aurkitu"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:282 src/page/people/new.vue:368
-#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
+#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:493
 msgid "No people found"
 msgstr "Ez da jenderik aurkitu"
 
@@ -1704,7 +1695,7 @@ msgid "One label found"
 msgstr "Etiketa bat aurkitu da"
 
 #: src/page/people/new.vue:284 src/page/people/new.vue:370
-#: src/page/people/recognized.vue:506
+#: src/page/people/recognized.vue:495
 msgid "One person found"
 msgstr "Pertsona bat aurkitu du"
 
@@ -1746,10 +1737,6 @@ msgstr "Bestela"
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Gure eginkizuna da erabiltzaileentzako eta pribatutasunerako irtenbiderik egokiena eskaintzea zure argazkiak antolatuta eta eskuragarri mantentzeko."
-
-#: src/page/connect.vue:115
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Gure taldeak etengabe erabakitzen du behar den laguntza-esfortzuaren, zerbitzariaren eta lizentzien kostuen arabera, eta eginbideak oro har denek behar dituzten edo, batez ere, erakundeek eta erabiltzaile aurreratuek eskatzen dituzten ala ez."
 
 #: src/options/options.js:305
 msgid "Outdoor"
@@ -1970,7 +1957,7 @@ msgstr "Aurpegiak ezagutzen ditu, pertsona zehatzak aurkitu ahal izateko."
 msgid "Red"
 msgstr "Gorria"
 
-#: src/page/connect.vue:87 src/page/connect.vue:89
+#: src/page/connect.vue:92 src/page/connect.vue:89
 msgid "Register"
 msgstr "Izena eman"
 
@@ -1978,7 +1965,7 @@ msgstr "Izena eman"
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
-#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:96
 msgid "Reload"
 msgstr "Berriz kargatu"
 
@@ -2075,7 +2062,7 @@ msgstr "Eskaneatzea"
 #: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:78 src/page/places.vue:38
+#: src/page/people/recognized.vue:77 src/page/places.vue:38
 msgid "Search"
 msgstr "Bilatu"
 
@@ -2174,7 +2161,7 @@ msgstr "Partekatu %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Partekatu zure argazkiak beste aplikazio eta zerbitzuekin."
 
-#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:284
 msgid "Show"
 msgstr "Erakutsi"
 
@@ -2182,7 +2169,7 @@ msgstr "Erakutsi"
 msgid "Show all new faces"
 msgstr "Erakutsi aurpegi berri guztiak"
 
-#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:116
 msgid "Show hidden"
 msgstr "Erakutsi ezkutuan"
 
@@ -2405,7 +2392,7 @@ msgstr "Izenburua / Kargua"
 msgid "Title too long"
 msgstr "Izenburua luzeegia"
 
-#: src/page/connect.vue:74 src/page/connect.vue:76
+#: src/page/connect.vue:79 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "Bertsio-berritzeko, aktibazio-kode bat sar dezakezu edo \"Erregistratu\" sakatu gure webgunean erregistratzeko:"
 
@@ -2513,8 +2500,9 @@ msgstr "Pilak eguneratzen"
 msgid "Upgrade"
 msgstr "Berritu"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
-#: src/page/about/about.vue:9 src/page/connect.vue:66
+#: src/page/connect.vue:69 src/dialog/sponsor.vue:40
+#: src/page/about/about.vue:32 src/page/about/about.vue:9
+#: src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "Berritu orain"
 
@@ -2684,10 +2672,6 @@ msgstr "WebDAV igoera"
 msgid "Website"
 msgstr "Webgunea"
 
-#: src/page/connect.vue:112
-msgid "What functionality is generally available?"
-msgstr "Zein funtzionalitate dago eskuragarri orokorrean?"
-
 #: src/options/options.js:424
 msgid "White"
 msgstr "Zuria"
@@ -2755,6 +2739,18 @@ msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Handitu/txikiagotu"
+
+#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+#~ msgstr "Honek publikoari eginbide gehiago eskaintzen laguntzen digunez, erabiltzaile guztiak animatzen ditugu gure eginkizuna laguntzera."
+
+#~ msgid "Frequently Asked Questions"
+#~ msgstr "Galdera arruntak"
+
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+#~ msgstr "Gure taldeak etengabe erabakitzen du behar den laguntza-esfortzuaren, zerbitzariaren eta lizentzien kostuen arabera, eta eginbideak oro har denek behar dituzten edo, batez ere, erakundeek eta erabiltzaile aurreratuek eskatzen dituzten ala ez."
+
+#~ msgid "What functionality is generally available?"
+#~ msgstr "Zein funtzionalitate dago eskuragarri orokorrean?"
 
 #~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 #~ msgstr "Zure erabakia da abantaila gehigarriez gozatzeko izena eman nahi duzun ala ez."

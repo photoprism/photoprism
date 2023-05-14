@@ -31,7 +31,7 @@ msgid "%{n} labels found"
 msgstr "%{n} etiketter fundet"
 
 #: src/page/people/new.vue:286 src/page/people/new.vue:372
-#: src/page/people/recognized.vue:508
+#: src/page/people/recognized.vue:497
 msgid "%{n} people found"
 msgstr "%{n} personer fundet"
 
@@ -59,7 +59,7 @@ msgstr "Et klik kopierer det til dit udklipsholder."
 #: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
 #: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/help.vue:43 src/page/people/recognized.vue:433
 msgid "About"
 msgstr "Om"
 
@@ -94,11 +94,11 @@ msgstr "Handling"
 msgid "Actions"
 msgstr "Handlinger"
 
-#: src/page/connect.vue:92 src/page/connect.vue:94
+#: src/page/connect.vue:97 src/page/connect.vue:94
 msgid "Activate"
 msgstr "Aktivér"
 
-#: src/page/connect.vue:388 src/page/connect.vue:410
+#: src/page/connect.vue:431 src/page/connect.vue:401
 msgid "Activation Code"
 msgstr "Aktiveringskode"
 
@@ -207,7 +207,7 @@ msgstr "Alle %{n} album er indlæst"
 msgid "All %{n} labels loaded"
 msgstr "Alle %{n} etiketter er indlæst"
 
-#: src/page/people/recognized.vue:360
+#: src/page/people/recognized.vue:349
 msgid "All %{n} people loaded"
 msgstr "Alle %{n} personer indlæst"
 
@@ -334,10 +334,6 @@ msgstr "Er du sikker?"
 msgid "Artist"
 msgstr "Kunstner"
 
-#: src/page/connect.vue:116
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "Da det hjælper os med at tilbyde flere funktioner til offentligheden, opfordrer vi alle brugere til at støtte vores mission."
-
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
 msgstr "Billedformat"
@@ -435,8 +431,8 @@ msgstr "Kan ikke indlæse mere, grænsen nået"
 #: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
-#: src/page/people/new.vue:231 src/page/people/recognized.vue:294
-#: src/page/people/recognized.vue:310
+#: src/page/people/new.vue:231 src/page/people/recognized.vue:283
+#: src/page/people/recognized.vue:299
 msgid "Can't select more items"
 msgstr "Kan ikke vælge flere elementer"
 
@@ -524,7 +520,7 @@ msgstr "Farveprofil"
 msgid "Colors"
 msgstr "Farver"
 
-#: src/page/connect.vue:83 src/page/connect.vue:85
+#: src/page/connect.vue:88 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "Sammenlign udgaver"
 
@@ -644,7 +640,7 @@ msgstr "Fejlfindingslog"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:287 src/options/options.js:345
-#: src/options/themes.js:417
+#: src/options/themes.js:418
 msgid "Default"
 msgstr "Standard"
 
@@ -904,7 +900,7 @@ msgstr "Hver anden dag"
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Udeluk indhold, der er markeret som privat, fra søgeresultater, delte album, etiketter og steder."
 
-#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
 msgstr "Udelukke skjulte"
 
@@ -1056,10 +1052,6 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Rammer"
 
-#: src/page/connect.vue:109
-msgid "Frequently Asked Questions"
-msgstr "Ofte stillede spørgsmål"
-
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr "Fuld skærm"
@@ -1116,7 +1108,7 @@ msgstr "Skjult"
 msgid "Hidden Files"
 msgstr "Skjulte filer"
 
-#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:294
 msgid "Hide"
 msgstr "Skjul"
 
@@ -1318,8 +1310,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:119
-#: src/page/connect.vue:110
+#: src/page/about/about.vue:273 src/page/connect.vue:101
 msgid "Learn more"
 msgstr "Få mere at vide"
 
@@ -1439,7 +1430,7 @@ msgstr "Hovedfarve"
 msgid "Male"
 msgstr "Mand"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
+#: src/page/connect.vue:62 src/page/connect.vue:85 src/page/about/about.vue:54
 #: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
 msgid "Manage Account"
 msgstr "Administrer konto"
@@ -1510,7 +1501,7 @@ msgstr "Mere end 20 album fundet"
 msgid "More than 20 labels found"
 msgstr "Mere end 20 etiketter fundet"
 
-#: src/page/people/recognized.vue:511
+#: src/page/people/recognized.vue:500
 msgid "More than 20 people found"
 msgstr "Mere end 20 personer fandt"
 
@@ -1540,7 +1531,7 @@ msgstr "Skal indeholde mindst %{n} tegn."
 #: src/page/about/feedback.vue:174 src/page/albums.vue:87
 #: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
-#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
+#: src/page/people/recognized.vue:395 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Navn"
 
@@ -1588,7 +1579,7 @@ msgstr "Ingen etiketter fundet"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:282 src/page/people/new.vue:368
-#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
+#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:493
 msgid "No people found"
 msgstr "Ingen personer fundet"
 
@@ -1707,7 +1698,7 @@ msgid "One label found"
 msgstr "En etiket fundet"
 
 #: src/page/people/new.vue:284 src/page/people/new.vue:370
-#: src/page/people/recognized.vue:506
+#: src/page/people/recognized.vue:495
 msgid "One person found"
 msgstr "En person fandt"
 
@@ -1749,10 +1740,6 @@ msgstr "Andre"
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Vores mission er at levere den mest bruger- og privatlivsvenlige løsning til at holde dine billeder organiseret og tilgængelige."
-
-#: src/page/connect.vue:115
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Vores team beslutter dette løbende, afhængigt af den nødvendige supportindsats, server- og licensomkostningerne, og om funktionerne generelt er nødvendige for alle eller primært efterspørges af organisationer og avancerede brugere."
 
 #: src/options/options.js:305
 msgid "Outdoor"
@@ -1973,7 +1960,7 @@ msgstr "Genkender ansigter, så man kan finde bestemte personer."
 msgid "Red"
 msgstr "Rød"
 
-#: src/page/connect.vue:87 src/page/connect.vue:89
+#: src/page/connect.vue:92 src/page/connect.vue:89
 msgid "Register"
 msgstr "Registrer"
 
@@ -1981,7 +1968,7 @@ msgstr "Registrer"
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
-#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:96
 msgid "Reload"
 msgstr "Genindlæs"
 
@@ -2078,7 +2065,7 @@ msgstr "Scanninger"
 #: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:78 src/page/places.vue:38
+#: src/page/people/recognized.vue:77 src/page/places.vue:38
 msgid "Search"
 msgstr "Søg"
 
@@ -2177,7 +2164,7 @@ msgstr "Del %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Del dine billeder med andre apps og tjenester."
 
-#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:284
 msgid "Show"
 msgstr "Vis"
 
@@ -2185,7 +2172,7 @@ msgstr "Vis"
 msgid "Show all new faces"
 msgstr "Vis alle nye ansigter"
 
-#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:116
 msgid "Show hidden"
 msgstr "Vis skjult"
 
@@ -2408,7 +2395,7 @@ msgstr "Titel / stilling"
 msgid "Title too long"
 msgstr "Titlen er for lang"
 
-#: src/page/connect.vue:74 src/page/connect.vue:76
+#: src/page/connect.vue:79 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "For at opgradere kan du enten indtaste en aktiveringskode eller klikke på \"Registrer\" for at tilmelde dig på vores websted:"
 
@@ -2516,8 +2503,9 @@ msgstr "Opdatering af samlinger"
 msgid "Upgrade"
 msgstr "Opgradering"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
-#: src/page/about/about.vue:9 src/page/connect.vue:66
+#: src/page/connect.vue:69 src/dialog/sponsor.vue:40
+#: src/page/about/about.vue:32 src/page/about/about.vue:9
+#: src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "Opgrader nu"
 
@@ -2687,10 +2675,6 @@ msgstr "WebDAV-upload"
 msgid "Website"
 msgstr "Websted"
 
-#: src/page/connect.vue:112
-msgid "What functionality is generally available?"
-msgstr "Hvilke funktioner er generelt tilgængelige?"
-
 #: src/options/options.js:424
 msgid "White"
 msgstr "Hvid"
@@ -2758,6 +2742,18 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+#~ msgstr "Da det hjælper os med at tilbyde flere funktioner til offentligheden, opfordrer vi alle brugere til at støtte vores mission."
+
+#~ msgid "Frequently Asked Questions"
+#~ msgstr "Ofte stillede spørgsmål"
+
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+#~ msgstr "Vores team beslutter dette løbende, afhængigt af den nødvendige supportindsats, server- og licensomkostningerne, og om funktionerne generelt er nødvendige for alle eller primært efterspørges af organisationer og avancerede brugere."
+
+#~ msgid "What functionality is generally available?"
+#~ msgstr "Hvilke funktioner er generelt tilgængelige?"
 
 #~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
 #~ msgstr "Det er din beslutning, om du vil tilmelde dig for at få yderligere fordele."
