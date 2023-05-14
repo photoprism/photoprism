@@ -7,7 +7,6 @@ version: '3.5'
 # - https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
 #
 # Note:
-# - Hardware transcoding is only available to members due to the high maintenance and support effort.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure

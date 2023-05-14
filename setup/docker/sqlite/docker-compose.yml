@@ -3,7 +3,6 @@ version: '3.5'
 # Example Docker Compose config file for PhotoPrism (Linux / AMD64)
 #
 # Note:
-# - Hardware transcoding is only available to members due to the high maintenance and support effort.
 # - Use SQLite only for small libraries and testing. SQLite locks the index on updates, so other operations have to
 #   wait. In the worst case, this can lead to timeout errors. MariaDB is optimized for high concurrency.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
