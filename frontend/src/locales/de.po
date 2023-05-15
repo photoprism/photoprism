@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Theresa Gresch <theresagresch@gmail.com>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
+"PO-Revision-Date: 2023-05-15 10:40+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
+"frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -350,7 +351,7 @@ msgstr "Videos und andere Bild-Formate nach JPEG konvertieren, damit sie indexie
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
-msgstr "Erstellt automatisch Alben mit besonderen Momenten, Reisen und Orten."
+msgstr "Erstellt automatisch Alben von besonderen Momenten, Reisen und Orten."
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -666,7 +667,7 @@ msgstr "Beschreibung"
 
 #: src/dialog/webdav.vue:32
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "Unser User Guide enthält eine detaillierte Anleitung."
+msgstr "Unser Benutzerhandbuch enthält eine detaillierte Anleitung."
 
 #: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1
 #: src/dialog/photo/edit.vue:157
@@ -992,7 +993,7 @@ msgstr "Datei-Browser"
 
 #: src/page/settings/advanced.vue:96
 msgid "File Conversion"
-msgstr "Dateikonvertierung"
+msgstr "Datei-Konvertierung"
 
 #: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:54
 #: src/dialog/album/edit.vue:25
@@ -1658,7 +1659,7 @@ msgstr "Hier gibt es noch nichts zu sehen."
 
 #: src/page/admin/sessions.vue:45 src/page/admin/users.vue:43
 msgid "Nothing was found."
-msgstr "Es wurde nichts gefunden."
+msgstr "Es konnte nichts gefunden werden."
 
 #: src/component/navigation.vue:489 src/component/navigation.vue:1818
 msgid "Offline"
