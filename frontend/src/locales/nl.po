@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Ruggero Montalto <ruggero.montalto@protonmail.com>\n"
-"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
+"PO-Revision-Date: 2023-05-15 10:40+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
+"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
+"frontend/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -80,7 +81,7 @@ msgstr "Account verwijderd"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "Rekeningen"
+msgstr "Accounts"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -182,7 +183,7 @@ msgstr "Album"
 
 #: src/page/albums.vue:544
 msgid "Album created"
-msgstr "Album gemaakt"
+msgstr "Album aangemaakt"
 
 #: src/dialog/photo/album.vue:67 src/dialog/photo/album.vue:77
 msgid "Album Name"
@@ -757,15 +758,15 @@ msgstr "Wijzig de map met de originelen niet. Schakel het importeren, uploaden e
 
 #: src/page/settings/advanced.vue:494
 msgid "Don't use Darktable to convert RAW images."
-msgstr "Gebruik Darktable niet om RAW-beelden te converteren."
+msgstr "Gebruik geen Darktable om RAW-beelden te converteren."
 
 #: src/page/settings/advanced.vue:560
 msgid "Don't use ImageMagick to convert images."
-msgstr "Gebruik ImageMagick niet om afbeeldingen te converteren."
+msgstr "Gebruik geen ImageMagick om afbeeldingen te converteren."
 
 #: src/page/settings/advanced.vue:516
 msgid "Don't use RawTherapee to convert RAW images."
-msgstr "Gebruik RawTherapee niet om RAW beelden te converteren."
+msgstr "Gebruik geen RawTherapee om RAW beelden te converteren."
 
 #: src/page/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
@@ -1070,7 +1071,7 @@ msgstr "Voornaam"
 
 #: src/page/settings/advanced.vue:6
 msgid "Global Options"
-msgstr "Globale opties"
+msgstr "Overkoepelende instellingen"
 
 #: src/options/options.js:416
 msgid "Gold"
@@ -1184,7 +1185,8 @@ msgstr "RAW-beeldbestanden opnemen bij het downloaden van stacks en archieven."
 
 #: src/page/settings/general.vue:690
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr "Inclusief sidecar-bestanden bij het downloaden van stacks en archieven."
+msgstr ""
+"Download ook sidecar-bestanden bij het downloaden van stacks en archieven."
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1841,7 +1843,7 @@ msgstr "Houd er rekening mee dat het wijzigen van uw wachtwoord u zal afmelden o
 
 #: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
-msgstr "Start uw instantie opnieuw op zodat de wijzigingen van kracht worden."
+msgstr "Start uw instantie opnieuw op om de wijzigingen van kracht te maken."
 
 #: src/common/notify.js:98
 msgid "Please wait…"
