@@ -36,13 +36,13 @@ require (
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sevlyar/go-daemon v0.1.6
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.2
 	github.com/stretchr/testify v1.8.2
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.14.4
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.13
-	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
+	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
 	golang.org/x/crypto v0.9.0
 	golang.org/x/net v0.10.0
 	gonum.org/v1/gonum v0.13.0
