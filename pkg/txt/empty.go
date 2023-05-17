@@ -25,7 +25,7 @@ func NotEmpty(s string) bool {
 // EmptyDateTime tests if the string is empty or matches an unknown time pattern.
 func EmptyDateTime(s string) bool {
 	switch s {
-	case "", "-", ":", "z", "zz", "Z", "nil", "null", "none", "nan", "NaN":
+	case "", "-", ":", "z", "Z", "nil", "null", "none", "nan", "NaN":
 		return true
 	case "0", "00", "0000", "0000:00:00", "00:00:00", "0000-00-00", "00-00-00":
 		return true
