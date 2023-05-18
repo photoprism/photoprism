@@ -16,6 +16,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 [**Arto Bendiken**](https://github.com/artob) (GitHub Sponsors, March 2023)
 
+**Marko Eckert** (Patreon, May 2023)
+
 ## Gold Sponsors ##
 
 [**Simen Eriksen**](https://github.com/dennorske) (GitHub Sponsors, December 2019)
