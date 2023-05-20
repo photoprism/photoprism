@@ -32,13 +32,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-user, login",
-			Usage:  "superadmin `USERNAME`",
+			Usage:  "admin login `USERNAME`",
 			Value:  "admin",
 			EnvVar: EnvVar("ADMIN_USER"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
-			Usage:  fmt.Sprintf("initial superadmin `PASSWORD` (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
+			Usage:  fmt.Sprintf("initial admin `PASSWORD` (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVar: EnvVar("ADMIN_PASSWORD"),
 		}}, {
 		Flag: cli.Int64Flag{
@@ -327,15 +327,13 @@ var Flags = CliFlags{
 			Name:   "default-theme",
 			Usage:  "standard user interface theme `NAME`",
 			EnvVar: EnvVar("DEFAULT_THEME"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "app-name",
 			Usage:  "progressive web app `NAME` when installed on a device",
 			Value:  "",
 			EnvVar: EnvVar("APP_NAME"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "app-mode",
 			Usage:  "progressive web app `MODE` (fullscreen, standalone, minimal-ui, browser)",
@@ -344,10 +342,9 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "app-icon",
-			Usage:  "home screen `ICON` (logo, app, crisp, mint, bold)",
+			Usage:  "home screen `ICON` (logo, app, crisp, mint, bold, square)",
 			EnvVar: EnvVar("APP_ICON"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "app-color",
 			Usage:  "splash screen `COLOR` code",
@@ -360,30 +357,26 @@ var Flags = CliFlags{
 			Value:  "",
 			Hidden: true,
 			EnvVar: EnvVar("IMPRINT"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "legal-info",
 			Usage:  "legal information `TEXT`, displayed in the page footer",
 			Value:  "",
 			EnvVar: EnvVar("LEGAL_INFO"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "imprint-url",
 			Usage:  "legal information `URL`",
 			Value:  "",
 			Hidden: true,
 			EnvVar: EnvVar("IMPRINT_URL"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "legal-url",
 			Usage:  "legal information `URL`",
 			Value:  "",
 			EnvVar: EnvVar("LEGAL_URL"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "wallpaper-uri",
 			Usage:  "login screen background image `URI`",
@@ -394,14 +387,12 @@ var Flags = CliFlags{
 			Name:   "cdn-url",
 			Usage:  "content delivery network `URL`",
 			EnvVar: EnvVar("CDN_URL"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "cdn-video",
 			Usage:  "stream videos over the specified CDN",
 			EnvVar: EnvVar("CDN_VIDEO"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",
@@ -418,8 +409,7 @@ var Flags = CliFlags{
 			Usage:  "site `TITLE`",
 			Value:  "",
 			EnvVar: EnvVar("SITE_TITLE"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "site-caption",
 			Usage:  "site `CAPTION`",
@@ -435,7 +425,7 @@ var Flags = CliFlags{
 			Name:   "site-preview",
 			Usage:  "sharing preview image `URL`",
 			EnvVar: EnvVar("SITE_PREVIEW"),
-		}, Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "https-proxy",
 			Usage:  "proxy server `URL` to be used for outgoing connections *optional*",
@@ -448,7 +438,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringSliceFlag{
 			Name:   "trusted-proxy",
-			Usage:  "`CIDR` range from which reverse proxy headers can be trusted",
+			Usage:  "`CIDR` ranges or IPv4/v6 addresses from which reverse proxy headers can be trusted, separated by commas",
 			Value:  &cli.StringSlice{header.CidrDockerInternal},
 			EnvVar: EnvVar("TRUSTED_PROXY"),
 		}}, {
@@ -583,8 +573,7 @@ var Flags = CliFlags{
 			Usage:  "FFmpeg AVC encoder `NAME`",
 			Value:  "libx264",
 			EnvVar: EnvVar("FFMPEG_ENCODER"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.IntFlag{
 			Name:   "ffmpeg-bitrate, vb",
 			Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
@@ -743,34 +732,31 @@ var Flags = CliFlags{
 			Usage:  "minimum size of automatically clustered faces in `PIXELS` (20-10000)",
 			Value:  face.ClusterSizeThreshold,
 			EnvVar: EnvVar("FACE_CLUSTER_SIZE"),
-		}, Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.IntFlag{
 			Name:   "face-cluster-score",
 			Usage:  "minimum `QUALITY` score of automatically clustered faces (1-100)",
 			Value:  face.ClusterScoreThreshold,
 			EnvVar: EnvVar("FACE_CLUSTER_SCORE"),
-		}, Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.IntFlag{
 			Name:   "face-cluster-core",
 			Usage:  "`NUMBER` of faces forming a cluster core (1-100)",
 			Value:  face.ClusterCore,
 			EnvVar: EnvVar("FACE_CLUSTER_CORE"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.Float64Flag{
 			Name:   "face-cluster-dist",
 			Usage:  "similarity `DISTANCE` of faces forming a cluster core (0.1-1.5)",
 			Value:  face.ClusterDist,
 			EnvVar: EnvVar("FACE_CLUSTER_DIST"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.Float64Flag{
 			Name:   "face-match-dist",
 			Usage:  "similarity `OFFSET` for matching faces with existing clusters (0.1-1.5)",
 			Value:  face.MatchDist,
 			EnvVar: EnvVar("FACE_MATCH_DIST"),
-		},
-		Tags: []string{EnvSponsor}}, {
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "pid-filename",
 			Usage:  "process id `FILE` *daemon-mode only*",

@@ -71,6 +71,7 @@
               @submit.prevent="add">
 
         <v-btn v-if="user.WebDAV" depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2"
+               :block="$vuetify.breakpoint.xsOnly"
                :disabled="isPublic || isDemo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
           <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
@@ -78,6 +79,7 @@
 
         <v-btn color="primary-button"
                class="white--text compact ml-0 my-2 mr-2"
+               :block="$vuetify.breakpoint.xsOnly"
                :disabled="isPublic || isDemo"
                depressed @click.stop="add">
           <translate>Connect</translate>

@@ -28,7 +28,7 @@
         <v-icon>share</v-icon>
       </v-btn>
 
-      <v-btn v-if="canDownload" icon class="hidden-xs-only action-download" :title="$gettext('Download')"
+      <v-btn v-if="canDownload" icon class="action-download" :title="$gettext('Download')"
              @click.stop="download()">
         <v-icon>get_app</v-icon>
       </v-btn>

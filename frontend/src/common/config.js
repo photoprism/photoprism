@@ -633,6 +633,16 @@ export default class Config {
     return this.getEdition() === "ce";
   }
 
+  getTier() {
+    const tier = this.get("tier");
+
+    if (!tier) {
+      return 0;
+    }
+
+    return tier;
+  }
+
   getMembership() {
     const s = this.get("membership");
 

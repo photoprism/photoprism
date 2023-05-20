@@ -28,7 +28,7 @@ LABEL org.opencontainers.image.description="Ubuntu 21.10 (Impish Indri)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
-LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
 # Declare build parameters.

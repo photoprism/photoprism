@@ -14,7 +14,7 @@ import (
 func (c *Config) AppName() string {
 	name := strings.TrimSpace(c.options.AppName)
 
-	if c.NoSponsor() || name == "" {
+	if name == "" {
 		name = c.SiteTitle()
 	}
 
@@ -44,7 +44,7 @@ func (c *Config) AppMode() string {
 func (c *Config) AppIcon() string {
 	defaultIcon := "logo"
 
-	if c.NoSponsor() || c.options.AppIcon == "" || c.options.AppIcon == defaultIcon {
+	if c.options.AppIcon == "" || c.options.AppIcon == defaultIcon {
 		// Default.
 	} else if strings.Contains(c.options.AppIcon, "/") {
 		return c.options.AppIcon

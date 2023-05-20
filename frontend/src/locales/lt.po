@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-04 14:18+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-04-29 09:20+0000\n"
+"Last-Translator: Joe <reg@smakas.lt>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
-"X-Generator: Weblate 4.16.2\n"
+"X-Generator: Weblate 4.17\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -31,7 +31,7 @@ msgid "%{n} labels found"
 msgstr "rasta %{n} etikečių"
 
 #: src/page/people/new.vue:286 src/page/people/new.vue:372
-#: src/page/people/recognized.vue:508
+#: src/page/people/recognized.vue:497
 msgid "%{n} people found"
 msgstr "rasta %{n} žmonių"
 
@@ -59,11 +59,11 @@ msgstr "Paspaudę jį nukopijuosite į iškarpinę."
 #: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
 #: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/help.vue:43 src/page/people/recognized.vue:433
 msgid "About"
 msgstr "Apie"
 
-#: src/component/navigation.vue:98 src/component/navigation.vue:1995
+#: src/component/navigation.vue:99 src/component/navigation.vue:1995
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -94,11 +94,11 @@ msgstr "Veiksmas"
 msgid "Actions"
 msgstr "Veiksmai"
 
-#: src/page/connect.vue:92 src/page/connect.vue:97
+#: src/page/connect.vue:97 src/page/connect.vue:94
 msgid "Activate"
 msgstr "Suaktyvinti"
 
-#: src/page/connect.vue:388 src/page/connect.vue:422
+#: src/page/connect.vue:431 src/page/connect.vue:401
 msgid "Activation Code"
 msgstr "Aktyvinimo kodas"
 
@@ -207,7 +207,7 @@ msgstr "Įkelti visi %{n} albumai"
 msgid "All %{n} labels loaded"
 msgstr "Įkeltos visos %{n} etiketės"
 
-#: src/page/people/recognized.vue:360
+#: src/page/people/recognized.vue:349
 msgid "All %{n} people loaded"
 msgstr "Įkelti visi %{n} žmonės"
 
@@ -334,10 +334,6 @@ msgstr "Ar esate tikri?"
 msgid "Artist"
 msgstr "Menininkas"
 
-#: src/page/connect.vue:127
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "Tai padeda mums teikti daugiau funkcijų visuomenei, todėl raginame visus naudotojus remti mūsų misiją."
-
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
 msgstr "Kraštinių santykis"
@@ -409,7 +405,7 @@ msgstr "Pranešimas apie klaidą"
 msgid "Busy, please wait…"
 msgstr "Užimtas, palaukite…"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:104
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Naudodamiesi mūsų teikiama programine įranga ir paslaugomis, sutinkate su mūsų paslaugų teikimo sąlygomis, privatumo politika ir elgesio kodeksu."
 
@@ -435,8 +431,8 @@ msgstr "Negalima įkelti daugiau, pasiekta riba"
 #: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
-#: src/page/people/new.vue:231 src/page/people/recognized.vue:294
-#: src/page/people/recognized.vue:310
+#: src/page/people/new.vue:231 src/page/people/recognized.vue:283
+#: src/page/people/recognized.vue:299
 msgid "Can't select more items"
 msgstr "Negalima pasirinkti daugiau elementų"
 
@@ -449,8 +445,8 @@ msgstr "Negalima pasirinkti daugiau elementų"
 #: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/page/library/import.vue:34
-#: src/page/library/index.vue:27
+#: src/dialog/share/upload.vue:29 src/page/connect.vue:41
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Atšaukti"
 
@@ -524,7 +520,7 @@ msgstr "Spalvų profilis"
 msgid "Colors"
 msgstr "Spalvos"
 
-#: src/page/connect.vue:83 src/page/connect.vue:88
+#: src/page/connect.vue:88 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "Palyginti leidimus"
 
@@ -545,7 +541,7 @@ msgstr "Prisijungti"
 msgid "Connect via WebDAV"
 msgstr "Prisijungimas per WebDAV"
 
-#: src/page/connect.vue:62
+#: src/page/connect.vue:62 src/page/connect.vue:63
 msgid "Connected"
 msgstr "Prisijungti"
 
@@ -554,6 +550,7 @@ msgid "Contact Details"
 msgstr "Susisiekite su mumis"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
+#: src/page/connect.vue:44
 msgid "Contact Us"
 msgstr "Susisiekite su mumis"
 
@@ -643,7 +640,7 @@ msgstr "Derinimo žurnalai"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:287 src/options/options.js:345
-#: src/options/themes.js:417
+#: src/options/themes.js:418
 msgid "Default"
 msgstr "Numatytoji"
 
@@ -903,7 +900,7 @@ msgstr "Kas dvi dienas"
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Neįtraukti turinio, pažymėto kaip privataus, į paieškos rezultatus, bendrinamus albumus, etiketes ir vietas."
 
-#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
 msgstr "Neįtraukti paslėptų"
 
@@ -1055,10 +1052,6 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Kadrai"
 
-#: src/page/connect.vue:112
-msgid "Frequently Asked Questions"
-msgstr "Dažnai užduodami klausimai"
-
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr "Viso ekrano"
@@ -1115,7 +1108,7 @@ msgstr "Paslėptas"
 msgid "Hidden Files"
 msgstr "Paslėpti failai"
 
-#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:294
 msgid "Hide"
 msgstr "Paslėpti"
 
@@ -1243,17 +1236,14 @@ msgstr "Neteisinga data"
 msgid "Invalid date"
 msgstr "Neteisinga data"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:75
+#: src/page/connect.vue:81
 msgid "Invalid parameters"
 msgstr "Neteisinga data"
 
 #: src/dialog/photo/edit.vue:119
 msgid "Invalid photo selected"
 msgstr "Pasirinkta netinkama nuotrauka"
-
-#: src/page/connect.vue:120
-msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "Jūs patys sprendžiate, ar norite užsiregistruoti ir naudotis papildomais privalumais."
 
 #: src/model/rest.js:181
 msgid "Item"
@@ -1320,7 +1310,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:122
+#: src/page/about/about.vue:273 src/page/connect.vue:101
 msgid "Learn more"
 msgstr "Sužinokite daugiau"
 
@@ -1440,8 +1430,8 @@ msgstr "Pagrindinė spalva"
 msgid "Male"
 msgstr "Vyras"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
-#: src/page/about/about.vue:9 src/page/connect.vue:85
+#: src/page/connect.vue:62 src/page/connect.vue:85 src/page/about/about.vue:54
+#: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
 msgid "Manage Account"
 msgstr "Tvarkyti paskyrą"
 
@@ -1511,7 +1501,7 @@ msgstr "Rasta daugiau nei 20 albumų"
 msgid "More than 20 labels found"
 msgstr "Rasta daugiau nei 20 etikečių"
 
-#: src/page/people/recognized.vue:511
+#: src/page/people/recognized.vue:500
 msgid "More than 20 people found"
 msgstr "Daugiau nei 20 žmonių rado"
 
@@ -1541,7 +1531,7 @@ msgstr "Ne mažiau kaip 6 ženklai."
 #: src/page/about/feedback.vue:174 src/page/albums.vue:87
 #: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
-#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
+#: src/page/people/recognized.vue:395 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Pavadinimas"
 
@@ -1589,7 +1579,7 @@ msgstr "Etikečių nerasta"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:282 src/page/people/new.vue:368
-#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
+#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:493
 msgid "No people found"
 msgstr "Žmonių nerasta"
 
@@ -1708,7 +1698,7 @@ msgid "One label found"
 msgstr "Viena rasta etiketė"
 
 #: src/page/people/new.vue:284 src/page/people/new.vue:370
-#: src/page/people/recognized.vue:506
+#: src/page/people/recognized.vue:495
 msgid "One person found"
 msgstr "Vienas asmuo rado"
 
@@ -1750,10 +1740,6 @@ msgstr "Kita"
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Mūsų misija - pateikti vartotojui patogiausią ir privatumą užtikrinantį sprendimą, kad nuotraukos būtų tvarkingos ir prieinamos."
-
-#: src/page/connect.vue:126
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Mūsų komanda tai sprendžia nuolat, atsižvelgdama į reikalingas palaikymo pastangas, serverio ir licencijavimo išlaidas ir į tai, ar funkcijos paprastai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai."
 
 #: src/options/options.js:305
 msgid "Outdoor"
@@ -1809,7 +1795,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "\"PhotoPrism\" buvo atnaujintas…"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
-#: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "\"PhotoPrism\" yra 100 % savarankiškai finansuojama ir nepriklausoma."
 
@@ -1854,7 +1839,7 @@ msgstr "Neįkelkite nuotraukų, kuriose yra įžeidžiančio turinio."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Atkreipkite dėmesį, kad pakeitę slaptažodį atsijungsite kituose įrenginiuose ir naršyklėse."
 
-#: src/page/connect.vue:56
+#: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Kad pakeitimai įsigaliotų, iš naujo paleiskite savo instanciją."
 
@@ -1975,7 +1960,7 @@ msgstr "atpažįsta veidus, kad būtų galima rasti konkrečius žmones."
 msgid "Red"
 msgstr "Raudona"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
+#: src/page/connect.vue:92 src/page/connect.vue:89
 msgid "Register"
 msgstr "Registruotis"
 
@@ -1983,11 +1968,11 @@ msgstr "Registruotis"
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
-#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:96
 msgid "Reload"
 msgstr "Perkrauti"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:130 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Perkrovimas…"
@@ -2031,7 +2016,8 @@ msgstr "Reikalinga"
 msgid "Resolution"
 msgstr "Rezoliucija"
 
-#: src/page/connect.vue:65 src/page/settings/advanced.vue:156
+#: src/page/connect.vue:65 src/page/connect.vue:62
+#: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Iš naujo paleiskite"
 
@@ -2079,7 +2065,7 @@ msgstr "Skenuoja"
 #: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:78 src/page/places.vue:38
+#: src/page/people/recognized.vue:77 src/page/places.vue:38
 msgid "Search"
 msgstr "Paieška"
 
@@ -2178,7 +2164,7 @@ msgstr "Dalintis %{pavadinimas}"
 msgid "Share your pictures with other apps and services."
 msgstr "bendrinkite nuotraukas su kitomis programomis ir paslaugomis."
 
-#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:284
 msgid "Show"
 msgstr "Rodyti"
 
@@ -2186,7 +2172,7 @@ msgstr "Rodyti"
 msgid "Show all new faces"
 msgstr "Rodyti visus naujus veidus"
 
-#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:116
 msgid "Show hidden"
 msgstr "Rodyti paslėptus"
 
@@ -2297,7 +2283,7 @@ msgstr "Gatvės"
 msgid "Subject"
 msgstr "Tema"
 
-#: src/page/connect.vue:11 src/page/connect.vue:20
+#: src/page/connect.vue:11
 msgid "Successfully Connected"
 msgstr "Sėkmingai prijungtas"
 
@@ -2407,7 +2393,7 @@ msgstr "Per ilga antraštė"
 msgid "Title too long"
 msgstr "Per ilga antraštė"
 
-#: src/page/connect.vue:74 src/page/connect.vue:79
+#: src/page/connect.vue:79 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Registruotis\" ir užsiregistruoti mūsų svetainėje:"
 
@@ -2467,7 +2453,7 @@ msgid "Unknown"
 msgstr "Nežinomas"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:88 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Neregistruotas"
@@ -2515,8 +2501,9 @@ msgstr "Kaminų atnaujinimas"
 msgid "Upgrade"
 msgstr "Atnaujinti"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
-#: src/page/about/about.vue:9 src/page/connect.vue:69
+#: src/page/connect.vue:69 src/dialog/sponsor.vue:40
+#: src/page/about/about.vue:32 src/page/about/about.vue:9
+#: src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "Atnaujinti dabar"
 
@@ -2611,10 +2598,6 @@ msgstr "Vektorius"
 msgid "Vectors"
 msgstr "Vektoriai"
 
-#: src/page/connect.vue:11
-msgid "Verified"
-msgstr "Patikrinta"
-
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2652,10 +2635,6 @@ msgstr "Lankytojas"
 msgid "Visual Similarity"
 msgstr "Grupuokite pagal panašumą"
 
-#: src/page/connect.vue:119
-msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr "Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri teikia jums atnaujinimus, dokumentus ir pagalbą, išlaidų."
-
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
 msgstr "Vertiname jūsų atsiliepimus!"
@@ -2692,17 +2671,9 @@ msgstr "WebDAV įkėlimas"
 msgid "Website"
 msgstr "Svetainė"
 
-#: src/page/connect.vue:123
-msgid "What functionality is generally available?"
-msgstr "Kokios funkcijos paprastai yra prieinamos?"
-
 #: src/options/options.js:424
 msgid "White"
 msgstr "Balta"
-
-#: src/page/connect.vue:115
-msgid "Why are some features only available to sponsors?"
-msgstr "Kodėl kai kurios funkcijos prieinamos tik rėmėjams?"
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2730,7 +2701,7 @@ msgid "Yes"
 msgstr "Taip"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
-#: src/page/about/about.vue:5 src/page/connect.vue:106
+#: src/page/about/about.vue:5 src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Kviečiame susisiekti su mumis el. paštu membership@photoprism.app ir užduoti klausimus, susijusius su naryste."
 
@@ -2751,7 +2722,7 @@ msgstr "Galite pasirinkti tik vieną elementą"
 msgid "You may rescan your library to find additional faces."
 msgstr "Norėdami rasti papildomų veidų, galite iš naujo nuskaityti savo biblioteką."
 
-#: src/page/connect.vue:54
+#: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
 msgstr "Jūsų paskyra sėkmingai prijungta."
 
@@ -2767,6 +2738,30 @@ msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai k
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
+
+#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+#~ msgstr "Tai padeda mums teikti daugiau funkcijų visuomenei, todėl raginame visus naudotojus remti mūsų misiją."
+
+#~ msgid "Frequently Asked Questions"
+#~ msgstr "Dažnai užduodami klausimai"
+
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+#~ msgstr "Mūsų komanda tai sprendžia nuolat, atsižvelgdama į reikalingas palaikymo pastangas, serverio ir licencijavimo išlaidas ir į tai, ar funkcijos paprastai reikalingos visiems, ar daugiausia jų prašo organizacijos ir pažengę naudotojai."
+
+#~ msgid "What functionality is generally available?"
+#~ msgstr "Kokios funkcijos paprastai yra prieinamos?"
+
+#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "Jūs patys sprendžiate, ar norite užsiregistruoti ir naudotis papildomais privalumais."
+
+#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+#~ msgstr "Savanoriškos aukos nepadengia visą darbo dieną dirbančios komandos, kuri teikia jums atnaujinimus, dokumentus ir pagalbą, išlaidų."
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Kodėl kai kurios funkcijos prieinamos tik rėmėjams?"
+
+#~ msgid "Verified"
+#~ msgstr "Patikrinta"
 
 #~ msgid "Proceed"
 #~ msgstr "Tęsti"

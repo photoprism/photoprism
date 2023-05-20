@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-04 14:18+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-04-29 09:20+0000\n"
+"Last-Translator: Pheggas <petko252@gmail.com>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.16.2\n"
+"X-Generator: Weblate 4.17\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -31,7 +31,7 @@ msgid "%{n} labels found"
 msgstr "%{n} nájdených štítkov"
 
 #: src/page/people/new.vue:286 src/page/people/new.vue:372
-#: src/page/people/recognized.vue:508
+#: src/page/people/recognized.vue:497
 msgid "%{n} people found"
 msgstr "%{n} nájdených ľudí"
 
@@ -59,11 +59,11 @@ msgstr "Kliknutím skopírujete obsah."
 #: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
 #: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/help.vue:43 src/page/people/recognized.vue:433
 msgid "About"
 msgstr "O nás"
 
-#: src/component/navigation.vue:98 src/component/navigation.vue:1995
+#: src/component/navigation.vue:99 src/component/navigation.vue:1995
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -94,11 +94,11 @@ msgstr "Akcia"
 msgid "Actions"
 msgstr "Akcie"
 
-#: src/page/connect.vue:92 src/page/connect.vue:97
+#: src/page/connect.vue:97 src/page/connect.vue:94
 msgid "Activate"
 msgstr "Aktivácia stránky"
 
-#: src/page/connect.vue:388 src/page/connect.vue:422
+#: src/page/connect.vue:431 src/page/connect.vue:401
 msgid "Activation Code"
 msgstr "Aktivačný kód"
 
@@ -207,7 +207,7 @@ msgstr "Všetkých %{n} albumov bolo načítaných"
 msgid "All %{n} labels loaded"
 msgstr "Všetkých %{n} štítkov načítaných"
 
-#: src/page/people/recognized.vue:360
+#: src/page/people/recognized.vue:349
 msgid "All %{n} people loaded"
 msgstr "Všetkých %{n} ľudí načítaných"
 
@@ -334,10 +334,6 @@ msgstr "Ste si istý?"
 msgid "Artist"
 msgstr "Umelec"
 
-#: src/page/connect.vue:127
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "Keďže nám to pomáha poskytovať verejnosti viac funkcií, vyzývame všetkých používateľov, aby podporili naše poslanie."
-
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
 msgstr "Pomer Strán"
@@ -409,7 +405,7 @@ msgstr "Nahlásiť chybu"
 msgid "Busy, please wait…"
 msgstr "Som zaneprázdnený, prosím čakajte…"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:104
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Používaním softvéru a služieb, ktoré poskytujeme, súhlasíte s našimi podmienkami používania, zásadami ochrany osobných údajov a kódexom správania."
 
@@ -435,8 +431,8 @@ msgstr "Nemožno načítať viac, limit dosiahnutý"
 #: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
-#: src/page/people/new.vue:231 src/page/people/recognized.vue:294
-#: src/page/people/recognized.vue:310
+#: src/page/people/new.vue:231 src/page/people/recognized.vue:283
+#: src/page/people/recognized.vue:299
 msgid "Can't select more items"
 msgstr "Nemožno označiť viac položiek"
 
@@ -449,8 +445,8 @@ msgstr "Nemožno označiť viac položiek"
 #: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/page/library/import.vue:34
-#: src/page/library/index.vue:27
+#: src/dialog/share/upload.vue:29 src/page/connect.vue:41
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Zrušiť"
 
@@ -524,7 +520,7 @@ msgstr "Farebný profil"
 msgid "Colors"
 msgstr "Farby"
 
-#: src/page/connect.vue:83 src/page/connect.vue:88
+#: src/page/connect.vue:88 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "Porovnať vydania"
 
@@ -545,7 +541,7 @@ msgstr "Pripojiť"
 msgid "Connect via WebDAV"
 msgstr "Pripojiť pomocou WebDav"
 
-#: src/page/connect.vue:62
+#: src/page/connect.vue:62 src/page/connect.vue:63
 msgid "Connected"
 msgstr "Pripojené"
 
@@ -554,6 +550,7 @@ msgid "Contact Details"
 msgstr "Kontaktné údaje"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
+#: src/page/connect.vue:44
 msgid "Contact Us"
 msgstr "Kontaktujte nás"
 
@@ -643,7 +640,7 @@ msgstr "Denníky ladenia"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:287 src/options/options.js:345
-#: src/options/themes.js:417
+#: src/options/themes.js:418
 msgid "Default"
 msgstr "Predvolená"
 
@@ -903,7 +900,7 @@ msgstr "Každé dva dni"
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Vylúčiť obsah označený ako súkromný z výsledkov vyhľadávania, zdieľaných albumov, štítkov a miest."
 
-#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
 msgstr "Vylúčiť skryté"
 
@@ -1055,10 +1052,6 @@ msgstr ":abbr:`FPS (Frame Per Second - snímok za sekundu)`"
 msgid "Frames"
 msgstr "Frames"
 
-#: src/page/connect.vue:112
-msgid "Frequently Asked Questions"
-msgstr "Často kladené otázky"
-
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr "Plná obrazovka"
@@ -1115,7 +1108,7 @@ msgstr "Skryté"
 msgid "Hidden Files"
 msgstr "Skryté súbory"
 
-#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:294
 msgid "Hide"
 msgstr "Skryť"
 
@@ -1243,17 +1236,14 @@ msgstr "Neplatné"
 msgid "Invalid date"
 msgstr "Neplatný dátum"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:75
+#: src/page/connect.vue:81
 msgid "Invalid parameters"
 msgstr "Neplatné parametre"
 
 #: src/dialog/photo/edit.vue:119
 msgid "Invalid photo selected"
 msgstr "Vybraná neplatná fotografia"
-
-#: src/page/connect.vue:120
-msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "Je na vašom rozhodnutí, či sa chcete zaregistrovať a využívať ďalšie výhody."
 
 #: src/model/rest.js:181
 msgid "Item"
@@ -1320,7 +1310,7 @@ msgstr "LDAP/AD"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
 #: src/page/about/about.vue:39 src/page/about/about.vue:16
-#: src/page/about/about.vue:273 src/page/connect.vue:122
+#: src/page/about/about.vue:273 src/page/connect.vue:101
 msgid "Learn more"
 msgstr "Viac"
 
@@ -1440,8 +1430,8 @@ msgstr "Hlavná Farba"
 msgid "Male"
 msgstr "Muž"
 
-#: src/page/connect.vue:62 src/page/connect.vue:80 src/page/about/about.vue:54
-#: src/page/about/about.vue:9 src/page/connect.vue:85
+#: src/page/connect.vue:62 src/page/connect.vue:85 src/page/about/about.vue:54
+#: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
 msgid "Manage Account"
 msgstr "Správa účtu"
 
@@ -1511,7 +1501,7 @@ msgstr "Našlo sa viac ako 20 albumov"
 msgid "More than 20 labels found"
 msgstr "Našlo sa viac ako 20 štítkov"
 
-#: src/page/people/recognized.vue:511
+#: src/page/people/recognized.vue:500
 msgid "More than 20 people found"
 msgstr "Našlo sa viac ako 20 ľudí"
 
@@ -1541,7 +1531,7 @@ msgstr "Musí obsahovať aspoň %{n} znakov."
 #: src/page/about/feedback.vue:174 src/page/albums.vue:87
 #: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
-#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
+#: src/page/people/recognized.vue:395 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Meno"
 
@@ -1589,7 +1579,7 @@ msgstr "Nenašli sa žiadne štítky"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:282 src/page/people/new.vue:368
-#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
+#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:493
 msgid "No people found"
 msgstr "Neboli nájdení žiadny ľudia"
 
@@ -1708,7 +1698,7 @@ msgid "One label found"
 msgstr "Našiel sa jeden štítok"
 
 #: src/page/people/new.vue:284 src/page/people/new.vue:370
-#: src/page/people/recognized.vue:506
+#: src/page/people/recognized.vue:495
 msgid "One person found"
 msgstr "Našla sa jedna osoba"
 
@@ -1750,10 +1740,6 @@ msgstr "Ostatné"
 #: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Našou víziou je poskytnúť používateľsky najprívetivejšie riešenie na prehliadanie, organizovanie a zdieľanie vašej zbierky fotografií."
-
-#: src/page/connect.vue:126
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Náš tím o tom rozhoduje priebežne v závislosti od potrebného úsilia na podporu, nákladov na server a licencie a od toho, či sú funkcie všeobecne potrebné pre všetkých alebo ich požadujú najmä organizácie a pokročilí používatelia."
 
 #: src/options/options.js:305
 msgid "Outdoor"
@@ -1809,7 +1795,6 @@ msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism bol aktualizovaný…"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
-#: src/page/connect.vue:118
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "Spoločnosť PhotoPrism je 100 % financovaná z vlastných zdrojov a je nezávislá."
 
@@ -1854,7 +1839,7 @@ msgstr "Prosím, neodovzdávajte fotky obsahujúce hanobný obsah."
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Upozorňujeme, že zmena hesla vás odhlási z iných zariadení a prehliadačov."
 
-#: src/page/connect.vue:56
+#: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
 msgstr "Reštartujte inštanciu, aby sa zmeny prejavili."
 
@@ -1975,7 +1960,7 @@ msgstr "Rozpoznáva tváre, aby bolo možné nájsť konkrétne osoby."
 msgid "Red"
 msgstr "Červená"
 
-#: src/page/connect.vue:87 src/page/connect.vue:92
+#: src/page/connect.vue:92 src/page/connect.vue:89
 msgid "Register"
 msgstr "Registrácia"
 
@@ -1983,11 +1968,11 @@ msgstr "Registrácia"
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
-#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:96
 msgid "Reload"
 msgstr "Znovu načítať"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:130 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Znovu načítavanie…"
@@ -2031,7 +2016,8 @@ msgstr "Požadované"
 msgid "Resolution"
 msgstr "Rozlíšenie"
 
-#: src/page/connect.vue:65 src/page/settings/advanced.vue:156
+#: src/page/connect.vue:65 src/page/connect.vue:62
+#: src/page/settings/advanced.vue:156
 msgid "Restart"
 msgstr "Reštartovanie stránky"
 
@@ -2079,7 +2065,7 @@ msgstr "Skeny"
 #: src/component/navigation.vue:550 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:78 src/page/places.vue:38
+#: src/page/people/recognized.vue:77 src/page/places.vue:38
 msgid "Search"
 msgstr "Vyhľadávanie"
 
@@ -2178,7 +2164,7 @@ msgstr "Zdieľať %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Zdieľajte svoje obrázky s inými aplikáciami a službami."
 
-#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:284
 msgid "Show"
 msgstr "Zobraziť"
 
@@ -2186,7 +2172,7 @@ msgstr "Zobraziť"
 msgid "Show all new faces"
 msgstr "Zobraziť všetky nové tváre"
 
-#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:116
 msgid "Show hidden"
 msgstr "Zobraziť skryté"
 
@@ -2297,7 +2283,7 @@ msgstr "Ulice"
 msgid "Subject"
 msgstr "Predmet"
 
-#: src/page/connect.vue:11 src/page/connect.vue:20
+#: src/page/connect.vue:11
 msgid "Successfully Connected"
 msgstr "Úspešne pripojené"
 
@@ -2407,7 +2393,7 @@ msgstr "Titul / pozícia"
 msgid "Title too long"
 msgstr "Titulok je moc dlhý"
 
-#: src/page/connect.vue:74 src/page/connect.vue:79
+#: src/page/connect.vue:79 src/page/connect.vue:76
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "Ak chcete aktualizovať, môžete zadať aktivačný kód alebo sa kliknutím na tlačidlo \"Registrovať\" zaregistrovať na našej webovej stránke:"
 
@@ -2467,7 +2453,7 @@ msgid "Unknown"
 msgstr "Neznámy"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:88 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Neregistrovaný"
@@ -2515,8 +2501,9 @@ msgstr "Aktualizujú sa naskladané fotky"
 msgid "Upgrade"
 msgstr "Aktualizácia"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:32
-#: src/page/about/about.vue:9 src/page/connect.vue:69
+#: src/page/connect.vue:69 src/dialog/sponsor.vue:40
+#: src/page/about/about.vue:32 src/page/about/about.vue:9
+#: src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "Aktualizujte teraz"
 
@@ -2611,10 +2598,6 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vektory"
 
-#: src/page/connect.vue:11
-msgid "Verified"
-msgstr "Overený"
-
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
@@ -2652,10 +2635,6 @@ msgstr "Návštevník"
 msgid "Visual Similarity"
 msgstr "Vizuálna podobnosť"
 
-#: src/page/connect.vue:119
-msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr "Dobrovoľné dary nepokrývajú náklady na tím, ktorý pracuje na plný úväzok, aby vám poskytol aktualizácie, dokumentáciu a podporu."
-
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
 msgstr "Vážime si vašu spätnú väzbu!"
@@ -2692,17 +2671,9 @@ msgstr "Odovzdávanie cez WebDAV"
 msgid "Website"
 msgstr "Webová stránka"
 
-#: src/page/connect.vue:123
-msgid "What functionality is generally available?"
-msgstr "Aké funkcie sú všeobecne dostupné?"
-
 #: src/options/options.js:424
 msgid "White"
 msgstr "Biela"
-
-#: src/page/connect.vue:115
-msgid "Why are some features only available to sponsors?"
-msgstr "Prečo sú niektoré funkcie dostupné len pre sponzorov?"
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2730,7 +2701,7 @@ msgid "Yes"
 msgstr "Áno"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
-#: src/page/about/about.vue:5 src/page/connect.vue:106
+#: src/page/about/about.vue:5 src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "V prípade otázok týkajúcich sa vášho členstva nás môžete kontaktovať na adrese membership@photoprism.app."
 
@@ -2751,7 +2722,7 @@ msgstr "Mali by ste označiť iba jednu položku"
 msgid "You may rescan your library to find additional faces."
 msgstr "Mali by ste preskenovať knižnicu pre nájdenie viac tvárí."
 
-#: src/page/connect.vue:54
+#: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
 msgstr "Vaše konto bolo úspešne pripojené."
 
@@ -2767,6 +2738,30 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+#~ msgstr "Keďže nám to pomáha poskytovať verejnosti viac funkcií, vyzývame všetkých používateľov, aby podporili naše poslanie."
+
+#~ msgid "Frequently Asked Questions"
+#~ msgstr "Často kladené otázky"
+
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+#~ msgstr "Náš tím o tom rozhoduje priebežne v závislosti od potrebného úsilia na podporu, nákladov na server a licencie a od toho, či sú funkcie všeobecne potrebné pre všetkých alebo ich požadujú najmä organizácie a pokročilí používatelia."
+
+#~ msgid "What functionality is generally available?"
+#~ msgstr "Aké funkcie sú všeobecne dostupné?"
+
+#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "Je na vašom rozhodnutí, či sa chcete zaregistrovať a využívať ďalšie výhody."
+
+#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+#~ msgstr "Dobrovoľné dary nepokrývajú náklady na tím, ktorý pracuje na plný úväzok, aby vám poskytol aktualizácie, dokumentáciu a podporu."
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Prečo sú niektoré funkcie dostupné len pre sponzorov?"
+
+#~ msgid "Verified"
+#~ msgstr "Overený"
 
 #~ msgid "Proceed"
 #~ msgstr "Postupujte podľa"

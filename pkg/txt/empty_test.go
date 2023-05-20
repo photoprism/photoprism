@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIsEmpty(t *testing.T) {
+func TestEmpty(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, true, Empty(""))
 	})
@@ -51,6 +51,15 @@ func TestIsEmpty(t *testing.T) {
 	})
 	t.Run("%", func(t *testing.T) {
 		assert.Equal(t, true, Empty("%"))
+	})
+	t.Run("-", func(t *testing.T) {
+		assert.True(t, Empty("-"))
+	})
+	t.Run("z", func(t *testing.T) {
+		assert.True(t, Empty("z"))
+	})
+	t.Run("zz", func(t *testing.T) {
+		assert.False(t, Empty("zz"))
 	})
 }
 
@@ -100,11 +109,29 @@ func TestNotEmpty(t *testing.T) {
 	t.Run("%", func(t *testing.T) {
 		assert.Equal(t, false, NotEmpty("%"))
 	})
+	t.Run("-", func(t *testing.T) {
+		assert.False(t, NotEmpty("-"))
+	})
+	t.Run("z", func(t *testing.T) {
+		assert.False(t, NotEmpty("z"))
+	})
+	t.Run("zz", func(t *testing.T) {
+		assert.True(t, NotEmpty("zz"))
+	})
 }
 
 func TestEmptyDateTime(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.True(t, EmptyDateTime(""))
+	})
+	t.Run("-", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("-"))
+	})
+	t.Run("z", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("z"))
+	})
+	t.Run("zz", func(t *testing.T) {
+		assert.False(t, EmptyDateTime("zz"))
 	})
 	t.Run("0", func(t *testing.T) {
 		assert.True(t, EmptyDateTime("0"))

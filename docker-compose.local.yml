@@ -25,8 +25,8 @@ services:
     environment:
       PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                         # group id
-      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (8-72 characters)
+      PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "https://latest.localssl.dev/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"

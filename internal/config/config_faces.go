@@ -31,7 +31,7 @@ func (c *Config) FaceOverlap() int {
 
 // FaceClusterSize returns the size threshold for faces forming a cluster in pixels.
 func (c *Config) FaceClusterSize() int {
-	if c.NoSponsor() || c.options.FaceClusterSize < 20 || c.options.FaceClusterSize > 10000 {
+	if c.options.FaceClusterSize < 20 || c.options.FaceClusterSize > 10000 {
 		return face.ClusterSizeThreshold
 	}
 
@@ -40,7 +40,7 @@ func (c *Config) FaceClusterSize() int {
 
 // FaceClusterScore returns the quality threshold for faces forming a cluster.
 func (c *Config) FaceClusterScore() int {
-	if c.NoSponsor() || c.options.FaceClusterScore < 1 || c.options.FaceClusterScore > 100 {
+	if c.options.FaceClusterScore < 1 || c.options.FaceClusterScore > 100 {
 		return face.ClusterScoreThreshold
 	}
 
@@ -49,7 +49,7 @@ func (c *Config) FaceClusterScore() int {
 
 // FaceClusterCore returns the number of faces forming a cluster core.
 func (c *Config) FaceClusterCore() int {
-	if c.NoSponsor() || c.options.FaceClusterCore < 1 || c.options.FaceClusterCore > 100 {
+	if c.options.FaceClusterCore < 1 || c.options.FaceClusterCore > 100 {
 		return face.ClusterCore
 	}
 
@@ -58,7 +58,7 @@ func (c *Config) FaceClusterCore() int {
 
 // FaceClusterDist returns the radius of faces forming a cluster core.
 func (c *Config) FaceClusterDist() float64 {
-	if c.NoSponsor() || c.options.FaceClusterDist < 0.1 || c.options.FaceClusterDist > 1.5 {
+	if c.options.FaceClusterDist < 0.1 || c.options.FaceClusterDist > 1.5 {
 		return face.ClusterDist
 	}
 
@@ -67,7 +67,7 @@ func (c *Config) FaceClusterDist() float64 {
 
 // FaceMatchDist returns the offset distance when matching faces with clusters.
 func (c *Config) FaceMatchDist() float64 {
-	if c.NoSponsor() || c.options.FaceMatchDist < 0.1 || c.options.FaceMatchDist > 1.5 {
+	if c.options.FaceMatchDist < 0.1 || c.options.FaceMatchDist > 1.5 {
 		return face.MatchDist
 	}
 

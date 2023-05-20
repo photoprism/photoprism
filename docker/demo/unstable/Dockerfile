@@ -1,4 +1,4 @@
-FROM photoprism/photoprism:unstable as build
+FROM photoprism/photoprism:unstable-ce as build
 
 # Set environment variables
 ENV TF_CPP_MIN_LOG_LEVEL=2 \

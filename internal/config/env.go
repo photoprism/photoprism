@@ -9,6 +9,7 @@ import (
 
 // Environment names.
 const (
+	EnvProd    = "prod"
 	EnvUnsafe  = "unsafe"
 	EnvDebug   = "debug"
 	EnvTrace   = "trace"
@@ -25,7 +26,7 @@ func EnvVar(flag string) string {
 // Env checks the presence of environment and command-line flags.
 func Env(vars ...string) bool {
 	for _, s := range vars {
-		if os.Getenv(EnvVar(s)) == "true" || list.Contains(os.Args, "--"+s) {
+		if (os.Getenv(EnvVar(s)) == "true" || list.Contains(os.Args, "--"+s)) && !list.Contains(os.Args, "--"+s+"=false") {
 			return true
 		}
 	}

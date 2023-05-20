@@ -4,7 +4,7 @@ require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.5.0
-	github.com/dsoprea/go-exif/v3 v3.0.0-20221012082141-d21ac8e2de85
+	github.com/dsoprea/go-exif/v3 v3.0.1
 	github.com/dsoprea/go-heic-exif-extractor/v2 v2.0.0-20210512044107-62067e44c235
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect
 	github.com/dsoprea/go-jpeg-image-structure/v2 v2.0.0-20221012074422-4f3f7e934102
@@ -15,7 +15,7 @@ require (
 	github.com/esimov/pigo v1.4.6
 	github.com/gin-contrib/gzip v0.0.6
 	github.com/gin-gonic/gin v1.9.0
-	github.com/golang/geo v0.0.0-20230404232722-c4acd7a044dc
+	github.com/golang/geo v0.0.0-20230421003525-6adc56603217
 	github.com/google/open-location-code/go v0.0.0-20221010173056-817c0086479a
 	github.com/gorilla/websocket v1.5.0
 	github.com/gosimple/slug v1.13.1
@@ -31,21 +31,21 @@ require (
 	github.com/mandykoh/prism v0.35.1
 	github.com/manifoldco/promptui v0.9.0
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
-	github.com/montanaflynn/stats v0.7.0
+	github.com/montanaflynn/stats v0.7.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sevlyar/go-daemon v0.1.6
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.2
 	github.com/stretchr/testify v1.8.2
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.14.4
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
-	github.com/urfave/cli v1.22.12
-	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/crypto v0.8.0
-	golang.org/x/net v0.9.0
-	gonum.org/v1/gonum v0.12.0
+	github.com/urfave/cli v1.22.13
+	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+	golang.org/x/crypto v0.9.0
+	golang.org/x/net v0.10.0
+	gonum.org/v1/gonum v0.13.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -67,7 +67,7 @@ require (
 require github.com/gabriel-vasile/mimetype v1.4.2
 
 require (
-	golang.org/x/sync v0.1.0
+	golang.org/x/sync v0.2.0
 	golang.org/x/time v0.3.0
 )
 
@@ -103,7 +103,7 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	golang.org/x/oauth2 v0.6.0 // indirect
-	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
