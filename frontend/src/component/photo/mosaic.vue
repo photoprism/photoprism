@@ -27,12 +27,11 @@
     </template>
     <v-layout ref="container" row wrap class="search-results photo-results mosaic-view" :class="{'select-results': selectMode}" :style="`position: relative; height: ${scrollHeight}px`">
       <div
-          v-for="(photo, n) in visiblePhotos"
+          v-for="(photo, index) in visiblePhotos"
           ref="items"
-          :key="photos[n === 0 ? 0 : firstVisibleElementIndex + n].ID"
-          :set-index="index = n === 0 ? 0 : firstVisibleElementIndex + n"
+          :key="photo.ID"
           class="flex xs4 sm3 md2 lg1"
-          :style="`${n > 0 ? getVirtualizedElementStyle(index) : ''}`"
+          :style="getVirtualizedElementStyle(index)"
       >
        <!--
          The following div is the layout + size container. It makes the browser not
@@ -47,11 +46,11 @@
                 :class="photo.classes().join(' ') + ' card darken-1 result clickable image'"
                 :alt="photo.Title"
                 :title="photo.Title"
-                @contextmenu.stop="onContextMenu($event, firstVisibleElementIndex + n)"
-                @touchstart.passive="input.touchStart($event, firstVisibleElementIndex + n)"
-                @touchend.stop.prevent="onClick($event, firstVisibleElementIndex + n)"
-                @mousedown.stop.prevent="input.mouseDown($event, firstVisibleElementIndex + n)"
-                @click.stop.prevent="onClick($event, firstVisibleElementIndex + n)"
+                @contextmenu.stop="onContextMenu($event, index)"
+                @touchstart.passive="input.touchStart($event, index)"
+                @touchend.stop.prevent="onClick($event, index)"
+                @mousedown.stop.prevent="input.mouseDown($event, index)"
+                @click.stop.prevent="onClick($event, index)"
                 @mouseover="playLive(photo)"
                 @mouseleave="pauseLive(photo)">
             <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
@@ -63,10 +62,10 @@
 
             <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
                   class="input-open"
-                  @touchstart.stop.prevent="input.touchStart($event, firstVisibleElementIndex + n)"
-                  @touchend.stop.prevent="onOpen($event, firstVisibleElementIndex + n, !isSharedView, photo.Type === 'live')"
+                  @touchstart.stop.prevent="input.touchStart($event, index)"
+                  @touchend.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, firstVisibleElementIndex + n, !isSharedView, photo.Type === 'live')">
+                  @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')">
               <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">raw_on</i>
               <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
               <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
@@ -78,10 +77,10 @@
             <button v-if="photo.Type === 'image' && selectMode"
                   class="input-view"
                   :title="$gettext('View')"
-                  @touchstart.stop.prevent="input.touchStart($event, firstVisibleElementIndex + n)"
-                  @touchend.stop.prevent="onOpen($event, firstVisibleElementIndex + n)"
+                  @touchstart.stop.prevent="input.touchStart($event, index)"
+                  @touchend.stop.prevent="onOpen($event, index)"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onOpen($event, firstVisibleElementIndex + n)">
+                  @click.stop.prevent="onOpen($event, index)">
               <i color="white" class="action-fullscreen">zoom_in</i>
             </button>
 
@@ -100,21 +99,21 @@
             -->
             <button
                   class="input-select"
-                  @mousedown.stop.prevent="input.mouseDown($event, firstVisibleElementIndex + n)"
-                  @touchstart.stop.prevent="input.touchStart($event, firstVisibleElementIndex + n)"
-                  @touchend.stop.prevent="onSelect($event, firstVisibleElementIndex + n)"
+                  @mousedown.stop.prevent="input.mouseDown($event, index)"
+                  @touchstart.stop.prevent="input.touchStart($event, index)"
+                  @touchend.stop.prevent="onSelect($event, index)"
                   @touchmove.stop.prevent
-                  @click.stop.prevent="onSelect($event, firstVisibleElementIndex + n)">
+                  @click.stop.prevent="onSelect($event, index)">
               <i color="white" class="select-on">check_circle</i>
               <i color="white" class="select-off">radio_button_off</i>
             </button>
 
             <button v-if="!isSharedView"
                 class="input-favorite"
-                @touchstart.stop.prevent="input.touchStart($event, firstVisibleElementIndex + n)"
-                @touchend.stop.prevent="toggleLike($event, firstVisibleElementIndex + n)"
+                @touchstart.stop.prevent="input.touchStart($event, index)"
+                @touchend.stop.prevent="toggleLike($event, index)"
                 @touchmove.stop.prevent
-                @click.stop.prevent="toggleLike($event, firstVisibleElementIndex + n)"
+                @click.stop.prevent="toggleLike($event, index)"
             >
               <i v-if="photo.Favorite">favorite</i>
               <i v-else>favorite_border</i>
@@ -170,13 +169,13 @@ export default {
     return {
       hidePrivate: this.$config.settings().features.private,
       input: new Input(),
-      firstVisibleElementIndex: 0,
-      lastVisibileElementIndex: 0,
-      visiblePhotos: [],
+      firstElementToRender: 1,
+      lastElementToRender: 0,
+      visiblePhotos: {},
       elementSize: 100, // no need to differentiate width and height, because the images are square.
       containerWidth: 100,
-      paddingRows: 2,
       containerHeight: window.innerHeight,
+      containerTop: 0,
       scrollHeight: 100,
       scrollPos: 0,
       columnCount: 1,
@@ -189,17 +188,20 @@ export default {
         this.$nextTick(() => {
           this.observeItems();
         });
-        if (this.visiblePhotos.length === 0) {
-          this.visiblePhotos = [this.photos[0]];
+        if (this.visiblePhotos[0] === undefined) {
+          this.visiblePhotos[0] = this.photos[0];
         }
       },
       immediate: true,
     }
   },
   beforeCreate() {
+    // try intersectionobserver on container to find the real scrollpos
+
     // 1 resize-observer für die element-größe
     // 1 intersection-observer und/oder scroll-listener fürs sichtbare window
     // falls notwendig zusätzlich 1 resize-observer für die größe des sichtbaren windows
+
     this.elementObserver = new ResizeObserver((entries) => {
       this.elementSize = entries[0].borderBoxSize[0].inlineSize;
       this.updateGeometry();
@@ -212,6 +214,10 @@ export default {
   created() {
     window.addEventListener('scroll', this.handleScroll);
     window.addEventListener('resize', this.handleResize);
+  },
+  mounted() {
+    this.containerTop = this.$refs.container.getBoundingClientRect().top;
+    this.updateGeometry();
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.handleScroll);
@@ -240,26 +246,40 @@ export default {
       this.updateGeometry();
     },
     updateGeometry() {
-      this.columnCount = Math.floor(this.containerWidth / this.elementSize);
-      this.rowCount = Math.ceil(this.containerHeight / this.elementSize);
-      const prevFirstElementIndex = this.firstVisibleElementIndex;
-      const prevLastElementIndex = this.lastVisibileElementIndex;
-      this.firstVisibleElementIndex = Math.max(Math.floor((this.scrollPos / this.elementSize) - (1 + this.paddingRows)) * this.columnCount, 0);
-      this.lastVisibileElementIndex = Math.min(this.firstVisibleElementIndex + ((this.rowCount + 1 + this.paddingRows * 2) * this.columnCount), this.photos.length - 1);
-      this.scrollHeight = Math.ceil(this.photos.length / this.columnCount) * this.elementSize;
+      const {
+        visibleColumnCount,
+        firstElementToRender,
+        lastElementToRender,
+        totalScrollHeight,
+      } = virtualizationTools.getVisibleRange(
+        this.photos,
+        this.containerWidth,
+        this.containerHeight,
+        this.elementSize,
+        this.elementSize,
+        this.scrollPos - this.containerTop,
+        1,
+      );
 
-      if (this.firstVisibleElementIndex !== prevFirstElementIndex || this.lastVisibileElementIndex !== prevLastElementIndex) {
-        this.visiblePhotos = [this.photos[0], ...this.photos.slice(Math.max(this.firstVisibleElementIndex, 1), this.lastVisibileElementIndex)];
+      this.columnCount = visibleColumnCount;
+      this.scrollHeight = totalScrollHeight;
+
+      if (this.firstElementToRender !== firstElementToRender || this.lastElementToRender !== lastElementToRender) {
+        this.firstElementToRender = firstElementToRender;
+        this.lastElementToRender = lastElementToRender;
+        this.visiblePhotos = {0: this.photos[0]};
+        for (let i = firstElementToRender; i <= lastElementToRender; i++) {
+          this.visiblePhotos[i] = this.photos[i];
+        }
       }
-      console.log('update geometry', this.elementSize, this.columnCount, this.rowCount, this.firstVisibleElementIndex, this.lastVisibileElementIndex);
     },
     getVirtualizedElementStyle(index) {
-      const rowIndex = Math.floor((index + 1) / this.columnCount);
-      const columnIndex = (index + 1) % this.columnCount;
-      const topPos = rowIndex * this.elementSize;
-      const leftPos = columnIndex * this.elementSize;
+      // the very fist element is not actually virtualized
+      if (index <= 0) {
+        return '';
+      }
 
-      return `display: block; position: absolute; width: ${this.elementSize}px; height: ${this.elementSize}px; top: ${topPos}px; left: ${leftPos}px`;
+      return virtualizationTools.getVirtualizedElementStyle(index, this.columnCount, this.elementSize, this.elementSize);
     },
     livePlayer(photo) {
       return document.querySelector("#live-player-" + photo.ID);

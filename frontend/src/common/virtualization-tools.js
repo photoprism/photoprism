@@ -56,4 +56,49 @@ export const virtualizationTools = {
 
     return [firstVisibleElementIndex, lastVisibileElementIndex];
   },
+
+  getVisibleRange: (
+    elements,
+    containerWidth,
+    containerHeight,
+    elementWidth,
+    elementHeight,
+    scrollPos,
+    rowPadding = 0
+  ) => {
+    const visibleColumnCount = Math.floor(containerWidth / elementWidth);
+
+    const totalRowCount = Math.ceil(elements.length / visibleColumnCount);
+    const totalScrollHeight = totalRowCount * elementHeight;
+    const realScrollPos = Math.max(Math.min(scrollPos, totalScrollHeight), 0);
+
+    const firstRowTopOverlap = realScrollPos % elementHeight;
+    const visibleRowCount = Math.ceil((containerHeight + firstRowTopOverlap) / elementHeight);
+
+    const firstVisibleRow = Math.floor(realScrollPos / elementHeight);
+    const lastVisibleRow = firstVisibleRow + visibleRowCount - 1;
+
+    const firstRowToRender = firstVisibleRow - rowPadding;
+    const lastRowToRender = lastVisibleRow + rowPadding;
+
+    const firstElementToRender = Math.max(firstRowToRender * visibleColumnCount, 0);
+    // eslint-disable-next-line prettier-vue/prettier
+    const lastElementToRender = Math.min((lastRowToRender + 1) * visibleColumnCount - 1, elements.length - 1);
+
+    return {
+      visibleColumnCount,
+      firstElementToRender,
+      lastElementToRender,
+      totalScrollHeight,
+    };
+  },
+
+  getVirtualizedElementStyle: (index, columnCount, elementWidth, elementHeight) => {
+    const rowIndex = Math.floor(index / columnCount);
+    const columnIndex = index % columnCount;
+    const topPos = rowIndex * elementHeight;
+    const leftPos = columnIndex * elementWidth;
+
+    return `display: block; position: absolute; width: ${elementWidth}px; height: ${elementHeight}px; top: ${topPos}px; left: ${leftPos}px`;
+  },
 };
