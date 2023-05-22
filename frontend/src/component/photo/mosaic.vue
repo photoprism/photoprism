@@ -31,6 +31,7 @@
           ref="items"
           :key="photo.ID"
           class="flex xs4 sm3 md2 lg1"
+          :data-index="index"
           :style="getVirtualizedElementStyle(index)"
       >
        <!--
@@ -42,7 +43,7 @@
                 tile
                 :data-id="photo.ID"
                 :data-uid="photo.UID"
-                :style="`background-image: url(${photo.thumbnailUrl('tile_224')});`"
+                :style="`background-image: url(${photo.thumbnailUrl('tile_224')})`"
                 :class="photo.classes().join(' ') + ' card darken-1 result clickable image'"
                 :alt="photo.Title"
                 :title="photo.Title"
@@ -87,6 +88,7 @@
             <button v-if="!isSharedView && hidePrivate && photo.Private" class="input-private">
               <i color="white" class="select-on">lock</i>
             </button>
+
             <!--
               We'd usually use v-if here to only render the button if needed.
               Because the button is supposed to be visible when the result is
@@ -232,10 +234,9 @@ export default {
       }
 
       this.elementObserver.observe(this.$refs.items[0]);
-      if (this.$refs.container === undefined) {
-        return;
+      if (this.$refs.container !== undefined) {
+        this.containerObserver.observe(this.$refs.container);
       }
-      this.containerObserver.observe(this.$refs.container);
     },
     handleScroll(event) {
       this.scrollPos = document.scrollingElement.scrollTop;
