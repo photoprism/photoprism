@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-15 09:28+0000\n"
+"PO-Revision-Date: 2023-05-23 23:58+0000\n"
 "Last-Translator: SODAIS <naruto861214@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/frontend/zh_Hant/>\n"
@@ -515,7 +515,7 @@ msgstr "顏色"
 
 #: src/dialog/photo/edit/files.vue:184 src/dialog/photo/edit/files.vue:181
 msgid "Color Profile"
-msgstr "顏色配置文件"
+msgstr "色彩設定檔"
 
 #: src/page/discover.vue:4
 msgid "Colors"
@@ -746,11 +746,11 @@ msgstr "顯示名稱"
 
 #: src/page/settings/advanced.vue:143
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr "不要將照片和相簿元數據備份到YAML文件中。"
+msgstr "不要將照片和相簿元數據備份到 YAML 檔案中。"
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "不要建立ExifTool JSON文件來改善元數據讀取。"
+msgstr "不要建立 ExifTool JSON 檔案來改善元數據擷取。"
 
 #: src/page/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
@@ -758,7 +758,7 @@ msgstr "不要修改「originals」資料夾。停用匯入，上傳和刪除。
 
 #: src/page/settings/advanced.vue:494
 msgid "Don't use Darktable to convert RAW images."
-msgstr "不要使用 Darktable 來轉換 RAW 文件。"
+msgstr "不要使用 Darktable 來轉換 RAW 檔案。"
 
 #: src/page/settings/advanced.vue:560
 msgid "Don't use ImageMagick to convert images."
@@ -766,7 +766,7 @@ msgstr "不要用ImageMagick来转换图像。"
 
 #: src/page/settings/advanced.vue:516
 msgid "Don't use RawTherapee to convert RAW images."
-msgstr "不要使用 RawTherapee 來轉換 RAW 文件。"
+msgstr "不要使用 RawTherapee 來轉換 RAW 檔案。"
 
 #: src/page/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
@@ -1185,7 +1185,7 @@ msgstr "在下載堆疊和封存時包含 RAW 圖像一起。"
 
 #: src/page/settings/general.vue:690
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr "在下载堆栈和档案时包括sidecar文件。"
+msgstr "在下載堆疊和封存時包含 sidecar 檔案一起。"
 
 #: src/component/navigation.vue:580 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1194,7 +1194,7 @@ msgstr "索引"
 
 #: src/page/settings/general.vue:408
 msgid "Index and import files through the user interface."
-msgstr "透過使用者界面建立索引和匯入文件。"
+msgstr "透過使用者界面建立索引和匯入檔案。"
 
 #: src/page/library/index.vue:134 src/page/library/index.vue:140
 msgid "Indexing"
@@ -1639,7 +1639,7 @@ msgstr "找不到"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "請注意，您可以手動管理\"originals\"文件夾，而匯入是選用的。"
+msgstr "請注意，您可以手動管理「originals」資料夾，而匯入是選用的。"
 
 #: src/page/settings/services.vue:38
 msgid "Note:"
@@ -1659,7 +1659,7 @@ msgstr "這裡什麼都沒有。"
 
 #: src/page/admin/sessions.vue:45 src/page/admin/users.vue:43
 msgid "Nothing was found."
-msgstr "没有发现任何问题。"
+msgstr "什麼都沒有找到。"
 
 #: src/component/navigation.vue:489 src/component/navigation.vue:1818
 msgid "Offline"
@@ -1688,7 +1688,7 @@ msgstr "找到 1 個檔案"
 
 #: src/dialog/share/upload.vue:79
 msgid "One file uploaded"
-msgstr "已上傳一個文件"
+msgstr "已上傳一個檔案"
 
 #: src/page/library/browse.vue:309
 msgid "One folder found"
@@ -1781,7 +1781,7 @@ msgstr "永久刪除"
 
 #: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
-msgstr "永久刪除文件以釋放儲存空間。"
+msgstr "永久刪除檔案以釋放儲存空間。"
 
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:647
 msgid "Phone"
@@ -2133,7 +2133,7 @@ msgstr "工作階段ID"
 
 #: src/page/admin.vue:45
 msgid "Sessions"
-msgstr "会议"
+msgstr "工作階段"
 
 #: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
 #: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
@@ -2233,7 +2233,7 @@ msgstr "堆疊"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "共享相同唯一映像或實例標識符的堆疊文件。"
+msgstr "將有一樣的唯一圖片或實例ID的檔案堆疊起來。"
 
 #: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
@@ -2331,7 +2331,8 @@ msgstr "感谢你的支持!"
 
 #: src/page/about/about.vue:18
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "这就是为什么PhotoPrism从一开始就能在你需要的地方运行，而不影响自由、隐私或功能。"
+msgstr "這就是為何 PhotoPrism 是從零開始建置，好讓您可以在任何您想要的地方運作的，無"
+"須向自由、隱私或是功能妥協。"
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
@@ -2350,8 +2351,9 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，\n"
-"          就像它們是本地文件一樣。"
+"這會將「originals」資料夾掛接為網絡硬碟，並允許您從電腦或智慧型手機中打開、編"
+"輯和刪除檔案，\n"
+"          就像它們是本機檔案一樣。"
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2434,7 +2436,7 @@ msgstr "格式"
 
 #: src/options/admin.js:12
 msgid "Unauthorized"
-msgstr "未经授权的"
+msgstr "未經授權的存取"
 
 #: src/dialog/photo/edit/people.vue:146
 msgid "Undo"
@@ -2589,13 +2591,13 @@ msgstr "使用者名稱"
 
 #: src/component/navigation.vue:428 src/component/navigation.vue:27
 msgid "Users"
-msgstr "用户"
+msgstr "使用者"
 
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
 #: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:338
 msgid "Vector"
-msgstr "矢量"
+msgstr "向量"
 
 #: src/component/navigation.vue:105
 msgid "Vectors"
@@ -2708,7 +2710,7 @@ msgstr "是"
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "欢迎你与我们联系，membership@photoprism.app，询问有关你的会员资格的问题。"
+msgstr "歡迎您來信 membership@photoprism.app 和我們諮詢有關會員資格的相關問題。"
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
