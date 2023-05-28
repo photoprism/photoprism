@@ -330,7 +330,7 @@ export default {
       } else if (showMerged) {
         this.$viewer.show(Thumb.fromFiles([selected]), 0);
       } else {
-        Viewer.show(this, index);
+        this.$viewer.show(Thumb.fromPhotos(this.results), index);
       }
 
       return true;
