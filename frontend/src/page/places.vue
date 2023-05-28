@@ -35,7 +35,7 @@
 import maplibregl from "maplibre-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";
-import PPagePhotos from 'pages/photos.vue';
+import PPagePhotos from 'page/photos.vue';
 
 export default {
   name: 'PPagePlaces',
