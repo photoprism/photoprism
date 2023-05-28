@@ -5,7 +5,7 @@ import (
 	"runtime"
 )
 
-var ServiceURL = "https://hub.photoprism.app/v1/hello"
+var ServiceURL = "https://my.photoprism.app/v1/hello"
 
 // Request represents basic environment specs for debugging.
 type Request struct {

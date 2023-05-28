@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 )
 
-func TestPrism_Start(t *testing.T) {
+func TestMeta_Start(t *testing.T) {
 	conf := config.TestConfig()
 
 	t.Logf("database-dsn: %s", conf.DatabaseDsn())
@@ -27,13 +27,20 @@ func TestPrism_Start(t *testing.T) {
 	delay := time.Second
 	interval := time.Second
 
+	// Mutex should prevent worker from starting.
 	if err := worker.Start(delay, interval, true); err == nil {
 		t.Fatal("error expected")
 	}
 
 	mutex.MetaWorker.Stop()
 
+	// Start worker.
 	if err := worker.Start(delay, interval, true); err != nil {
+		t.Fatal(err)
+	}
+
+	// Rerun worker.
+	if err := worker.Start(delay, interval, false); err != nil {
 		t.Fatal(err)
 	}
 }

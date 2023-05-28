@@ -27,7 +27,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 		var faces entity.Faces
 
 		// Fetch manually added faces from the database.
-		if faces, err = query.ManuallyAddedFaces(false, face.RegularFace); err != nil {
+		if faces, err = query.ManuallyAddedFaces(false, false); err != nil {
 			return result, err
 		} else if n = len(faces) - 1; n < 1 {
 			// Need at least 2 faces to optimize.
@@ -41,7 +41,7 @@ func (w *Faces) Optimize() (result FacesOptimizeResult, err error) {
 			} else if faces[j].SubjUID != merge[len(merge)-1].SubjUID || j == n {
 				if len(merge) < 2 {
 					// Nothing to merge.
-				} else if _, err := query.MergeFaces(merge); err != nil {
+				} else if _, err := query.MergeFaces(merge, false); err != nil {
 					log.Errorf("%s (merge)", err)
 				} else {
 					result.Merged += len(merge)

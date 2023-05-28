@@ -75,7 +75,7 @@
                         @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
                     <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                     <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
-                    <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">draw</i>
+                    <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">font_download</i>
                     <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
                   </button>
                 </div>
@@ -142,7 +142,7 @@
 import download from "common/download";
 import Notify from "common/notify";
 import {virtualizationTools} from 'common/virtualization-tools';
-import IconLivePhoto from "component/icon/live_photo.vue";
+import IconLivePhoto from "component/icon/live-photo.vue";
 
 export default {
   name: 'PPhotoList',

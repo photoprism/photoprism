@@ -62,6 +62,16 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 			return
 		}
 
+		user := s.User()
+		aclRole := user.AclRole()
+
+		// Exclude private content?
+		if !get.Config().Settings().Features.Private {
+			f.Public = false
+		} else if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+			f.Public = true
+		}
+
 		cache := get.FolderCache()
 		recursive := f.Recursive
 		listFiles := f.Files
@@ -69,7 +79,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		resp := FoldersResponse{Root: rootName, Recursive: recursive, Cached: !uncached}
 		path := clean.UserPath(c.Param("path"))
 
-		cacheKey := fmt.Sprintf("folder:%s:%t:%t", filepath.Join(rootName, path), recursive, listFiles)
+		cacheKey := fmt.Sprintf("folder:%s:%t:%t:%t", filepath.Join(rootName, path), recursive, listFiles, f.Public)
 
 		if !uncached {
 			if cacheData, ok := cache.Get(cacheKey); ok {
@@ -91,7 +101,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		}
 
 		if listFiles {
-			if files, err := query.FilesByPath(f.Count, f.Offset, rootName, path); err != nil {
+			if files, err := query.FilesByPath(f.Count, f.Offset, rootName, path, f.Public); err != nil {
 				log.Errorf("folder: %s", err)
 			} else {
 				resp.Files = files

@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// StopCommand registers the stop cli command.
+// StopCommand configures the command name, flags, and action.
 var StopCommand = cli.Command{
 	Name:    "stop",
 	Aliases: []string{"down"},

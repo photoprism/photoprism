@@ -11,7 +11,6 @@ Maps:
   Style: ""
 Features:
   Account: true
-  Advanced: false
   Albums: true
   Archive: true
   Delete: false

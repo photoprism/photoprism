@@ -42,6 +42,9 @@ import PSubjectClipboard from "component/subject/clipboard.vue";
 import PAuthHeader from "component/auth/header.vue";
 import PAuthFooter from "component/auth/footer.vue";
 import PAboutFooter from "component/footer.vue";
+import IconLivePhoto from "component/icon/live-photo.vue";
+import IconSponsor from "component/icon/sponsor.vue";
+import IconPrism from "component/icon/prism.vue";
 
 const components = {};
 
@@ -65,6 +68,9 @@ components.install = (Vue) => {
   Vue.component("PAuthHeader", PAuthHeader);
   Vue.component("PAuthFooter", PAuthFooter);
   Vue.component("PAboutFooter", PAboutFooter);
+  Vue.component("IconLivePhoto", IconLivePhoto);
+  Vue.component("IconSponsor", IconSponsor);
+  Vue.component("IconPrism", IconPrism);
 };
 
 export default components;

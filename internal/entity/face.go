@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/face"
@@ -14,6 +15,7 @@ import (
 )
 
 var faceMutex = sync.Mutex{}
+var UpdateFaces = atomic.Bool{}
 
 // Face represents the face of a Subject.
 type Face struct {
@@ -70,7 +72,7 @@ func (m *Face) MatchId(f Face) string {
 
 // SkipMatching checks whether the face should be skipped when matching.
 func (m *Face) SkipMatching() bool {
-	return m.Embedding().SkipMatching()
+	return m.FaceKind > 1 || m.Embedding().SkipMatching()
 }
 
 // SetEmbeddings assigns face embeddings.
@@ -100,7 +102,11 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 
 	// Update Face ID, Kind, and reset match timestamp,
 	m.ID = base32.StdEncoding.EncodeToString(s[:])
-	m.FaceKind = int(m.embedding.Kind())
+
+	if k := int(m.embedding.Kind()); k > m.FaceKind {
+		m.FaceKind = k
+	}
+
 	m.MatchedAt = nil
 
 	return nil
@@ -183,17 +189,20 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		// Should never happen.
 		return false, fmt.Errorf("collision distance must be positive")
 	} else if dist < 0.02 {
-		// Ignore if distance is very small as faces may belong to the same person.
-		log.Warnf("faces: clearing ambiguous subject %s from face %s, similar face at dist %f with source %s", SubjNames.Log(m.SubjUID), m.ID, dist, SrcString(m.FaceSrc))
+		log.Warnf("faces: %s has ambiguous subject %s with a similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
 
-		// Reset subject UID just in case.
-		m.SubjUID = ""
-
-		return true, m.Updates(Values{"SubjUID": m.SubjUID})
+		m.FaceKind = int(face.AmbiguousFace)
+		m.UpdatedAt = TimeStamp()
+		m.MatchedAt = &m.UpdatedAt
+		m.Collisions++
+		m.CollisionRadius = dist
+		UpdateFaces.Store(true)
+		return true, m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
 		m.CollisionRadius = dist - 0.01
+		UpdateFaces.Store(true)
 	}
 
 	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
@@ -272,6 +281,8 @@ func (m *Face) SetSubjectUID(subjUid string) (err error) {
 		m.SubjUID = subjUid
 	}
 
+	UpdateFaces.Store(true)
+
 	// Update related markers.
 	if err = Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
@@ -290,6 +301,8 @@ func (m *Face) RefreshPhotos() error {
 	if m.ID == "" {
 		return fmt.Errorf("empty face id")
 	}
+
+	UpdateFaces.Store(true)
 
 	var err error
 	switch DbDialect() {
@@ -325,6 +338,8 @@ func (m *Face) Create() error {
 	faceMutex.Lock()
 	defer faceMutex.Unlock()
 
+	UpdateFaces.Store(true)
+
 	return Db().Create(m).Error
 }
 
@@ -333,6 +348,8 @@ func (m *Face) Delete() error {
 	if m.ID == "" {
 		return fmt.Errorf("empty id")
 	}
+
+	UpdateFaces.Store(true)
 
 	// Remove face id from markers before deleting.
 	if err := Db().Model(&Marker{}).
@@ -350,6 +367,8 @@ func (m *Face) Update(attr string, value interface{}) error {
 		return fmt.Errorf("empty id")
 	}
 
+	UpdateFaces.Store(true)
+
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
@@ -358,6 +377,8 @@ func (m *Face) Updates(values interface{}) error {
 	if m.ID == "" {
 		return fmt.Errorf("empty id")
 	}
+
+	UpdateFaces.Store(true)
 
 	return UnscopedDb().Model(m).Updates(values).Error
 }
@@ -381,6 +402,7 @@ func FirstOrCreateFace(m *Face) *Face {
 		}
 		return &result
 	} else if err := m.Create(); err == nil {
+		UpdateFaces.Store(true)
 		return m
 	} else if findErr = UnscopedDb().Where("id = ?", m.ID).First(&result).Error; findErr == nil && result.ID != "" {
 		if m.SubjUID != result.SubjUID {

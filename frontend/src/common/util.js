@@ -165,6 +165,8 @@ export default class Util {
     switch (value) {
       case "jpg":
         return "JPEG";
+      case "jxl":
+        return "JPEG XL";
       case "raw":
         return "Unprocessed Sensor Data (RAW)";
       case "mov":
@@ -174,8 +176,12 @@ export default class Util {
         return "Bitmap";
       case "png":
         return "Portable Network Graphics";
+      case "apng":
+        return "Animated PNG";
       case "tiff":
         return "TIFF";
+      case "psd":
+        return "Adobe Photoshop";
       case "gif":
         return "GIF";
       case "dng":
@@ -185,10 +191,14 @@ export default class Util {
         return "Advanced Video Coding (AVC) / H.264";
       case "avif":
         return "AOMedia Video 1 (AV1)";
+      case "avifs":
+        return "AVIF Image Sequence";
       case "hevc":
       case "hvc":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
+      case "m4v":
+        return "Apple iTunes Multimedia Container";
       case "mkv":
         return "Matroska Multimedia Container";
       case "mts":
@@ -212,10 +222,14 @@ export default class Util {
         return "Windows Media";
       case "svg":
         return "Scalable Vector Graphics";
+      case "pdf":
+        return "Portable Document Format";
+      case "ai":
+        return "Adobe Illustrator";
       case "ps":
         return "Adobe PostScript";
       case "eps":
-        return "Adobe Encapsulated PostScript";
+        return "Encapsulated PostScript";
       default:
         return value.toUpperCase();
     }
@@ -257,10 +271,14 @@ export default class Util {
         return "Motion JPEG (M-JPEG)";
       case "avif":
         return "AV1 Image File Format (AVIF)";
+      case "avifs":
+        return "AVIF Image Sequence";
       case "heif":
         return "High Efficiency Image File Format (HEIF)";
       case "heic":
         return "High Efficiency Image Container (HEIC)";
+      case "heics":
+        return "HEIC Image Sequence";
       case "1":
         return "Uncompressed";
       case "2":

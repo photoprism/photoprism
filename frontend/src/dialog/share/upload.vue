@@ -128,14 +128,14 @@ export default {
       this.$emit('cancel');
     },
     setup() {
-      this.$router.push({name: "settings_sync"});
+      this.$router.push({name: "settings_services"});
     },
     confirm() {
       if (this.noServices) {
         this.$notify.warn(this.$gettext('No servers configured.'));
         return;
       } else if (this.loading) {
-        this.$notify.wait();
+        this.$notify.busy();
         return;
       }
 

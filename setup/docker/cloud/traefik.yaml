@@ -15,18 +15,22 @@
 #  You should now be able to access your instance without security warnings.
 #  -------------------------------------------------------------------------
 
-# Uncomment to enable debug mode:
-# log:
-#  level: DEBUG
+# set to DEBUG to enable debug mode
+log:
+  level: INFO
 
+# disable telemetry
+global:
+  sendAnonymousUsage: false
+
+# allow to proxy services with self-signed certificates
 serversTransport:
-  # Required to proxy services with self-signed HTTPS certificates:
   insecureSkipVerify: true
   # !! REMOVE when using Let's Encrypt HTTPS !!
   rootCAs:
     - "/certs/ca.crt"
 
-# Open ports ond protocols (HTTP will be redirected to HTTPS)
+# open ports ond protocols (HTTP will be redirected to HTTPS)
 entryPoints:
   web:
     address: ":80"
@@ -38,6 +42,7 @@ entryPoints:
   websecure:
     address: ":443"
 
+# auto tls / https
 certificatesResolvers:
   myresolver:
     # See https://doc.traefik.io/traefik/https/acme/
@@ -48,17 +53,18 @@ certificatesResolvers:
       httpChallenge:
         entryPoint: web
 
+# config providers
 providers:
   # !! REMOVE file provider when using Let's Encrypt HTTPS !!
   file:
     filename: "/certs/config.yml"
     watch: true
-  # Always keep this:
+  # always keep this
   docker:
     exposedByDefault: false
     watch: true
 
-# Disable API & Dashboard by default, please read Traefik docs before enabling this:
+# disable dashboard and api
 api:
   insecure: false
   dashboard: false

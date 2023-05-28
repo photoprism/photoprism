@@ -30,6 +30,8 @@ groupadd -f -r -g 937 videodriver  1>&2
 echo "✅ added group videodriver (937)"
 
 # create group 'photoprism'
+groupdel -f ubuntu >/dev/null 2>&1
+groupdel -f photoprism >/dev/null 2>&1
 groupdel -f 1000 >/dev/null 2>&1
 groupadd -f -g 1000 photoprism 1>&2
 echo "✅ added group photoprism (1000)"
@@ -43,6 +45,7 @@ useradd -u 937 -r -N -g 937 -G photoprism,www-data,video,davfs2,renderd,render,s
 echo "✅ added user videodriver (937)"
 
 # create user 'photoprism'
+userdel -r -f ubuntu >/dev/null 2>&1
 userdel -r -f photoprism >/dev/null 2>&1
 userdel -r -f 1000 >/dev/null 2>&1
 useradd -u 1000 -N -g 1000 -G www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/photoprism" photoprism

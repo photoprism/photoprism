@@ -56,15 +56,18 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"originals-path", c.OriginalsPath()},
 		{"originals-limit", fmt.Sprintf("%d", c.OriginalsLimit())},
 		{"resolution-limit", fmt.Sprintf("%d", c.ResolutionLimit())},
-
-		// Other paths.
-		{"storage-path", c.StoragePath()},
-		{"sidecar-path", c.SidecarPath()},
 		{"users-path", c.UsersPath()},
+		{"users-originals-path", c.UsersOriginalsPath()},
+
+		// Storage.
+		{"storage-path", c.StoragePath()},
+		{"users-storage-path", c.UsersStoragePath()},
+		{"sidecar-path", c.SidecarPath()},
 		{"albums-path", c.AlbumsPath()},
 		{"backup-path", c.BackupPath()},
 		{"cache-path", c.CachePath()},
 		{"cmd-cache-path", c.CmdCachePath()},
+		{"media-cache-path", c.MediaCachePath()},
 		{"thumb-cache-path", c.ThumbCachePath()},
 		{"import-path", c.ImportPath()},
 		{"import-dest", c.ImportDest()},
@@ -99,7 +102,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-imagemagick", fmt.Sprintf("%t", c.DisableImageMagick())},
 		{"disable-heifconvert", fmt.Sprintf("%t", c.DisableHeifConvert())},
 		{"disable-rsvgconvert", fmt.Sprintf("%t", c.DisableRsvgConvert())},
-		{"disable-vector", fmt.Sprintf("%t", c.DisableVector())},
+		{"disable-vectors", fmt.Sprintf("%t", c.DisableVectors())},
+		{"disable-jpegxl", fmt.Sprintf("%t", c.DisableJpegXL())},
 		{"disable-raw", fmt.Sprintf("%t", c.DisableRaw())},
 
 		// Format Flags.
@@ -125,6 +129,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Site Infos.
 		{"cdn-url", c.CdnUrl("/")},
+		{"cdn-video", fmt.Sprintf("%t", c.CdnVideo())},
 		{"site-url", c.SiteUrl()},
 		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
 		{"site-domain", c.SiteDomain()},
@@ -135,10 +140,11 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-preview", c.SitePreview()},
 
 		// URIs.
-		{"content-uri", c.ContentUri()},
-		{"static-uri", c.StaticUri()},
-		{"api-uri", c.ApiUri()},
 		{"base-uri", c.BaseUri("/")},
+		{"api-uri", c.ApiUri()},
+		{"static-uri", c.StaticUri()},
+		{"content-uri", c.ContentUri()},
+		{"video-uri", c.VideoUri()},
 
 		// Proxy Servers.
 		{"https-proxy", c.HttpsProxy()},
@@ -154,6 +160,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tls-key", c.TLSKey()},
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
+		{"http-cache-maxage", fmt.Sprintf("%d", c.HttpCacheMaxAge())},
+		{"http-cache-public", fmt.Sprintf("%t", c.HttpCachePublic())},
 		{"http-host", c.HttpHost()},
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},
 
@@ -174,6 +182,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-bin", c.FFmpegBin()},
 		{"ffmpeg-encoder", c.FFmpegEncoder().String()},
 		{"ffmpeg-bitrate", fmt.Sprintf("%d", c.FFmpegBitrate())},
+		{"ffmpeg-map-video", c.FFmpegMapVideo()},
+		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
 		{"exiftool-bin", c.ExifToolBin()},
 		{"darktable-bin", c.DarktableBin()},
 		{"darktable-cache-path", c.DarktableCachePath()},
@@ -185,6 +195,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"imagemagick-blacklist", c.ImageMagickBlacklist()},
 		{"heifconvert-bin", c.HeifConvertBin()},
 		{"rsvgconvert-bin", c.RsvgConvertBin()},
+		{"jpegxldecoder-bin", c.JpegXLDecoderBin()},
 
 		// Thumbnails.
 		{"download-token", c.DownloadToken()},

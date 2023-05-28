@@ -2,6 +2,8 @@ package acl
 
 import (
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Role represents a user role.
@@ -10,6 +12,15 @@ type Role string
 // String returns the type as string.
 func (r Role) String() string {
 	return string(r)
+}
+
+// Pretty returns the type in an easy-to-read format.
+func (r Role) Pretty() string {
+	if r == RoleUnknown {
+		return "Unknown"
+	}
+
+	return txt.UpperFirst(string(r))
 }
 
 // LogId returns an identifier string for use in log messages.

@@ -67,7 +67,8 @@
     display: block;
 }
 
-#photoprism .splash-center {
+#photoprism .splash-center,
+#busy-overlay .splash-center {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -78,7 +79,8 @@
     text-align: center !important;
 }
 
-#photoprism .splash-center .splash-logo {
+#photoprism .splash-center .splash-logo,
+#busy-overlay .splash-center .splash-logo {
     width: 125px;
     height: 125px;
     left: 50%;
@@ -93,7 +95,8 @@
     animation: hue 4s infinite linear;
 }
 
-#photoprism .splash-center #progress {
+#photoprism .splash-center progress,
+#busy-overlay .splash-center progress {
     width: 180px;
 }
 
@@ -103,7 +106,8 @@
         height: 140px;
     }
 
-    #photoprism .splash-center #progress {
+    #photoprism .splash-center progress,
+    #busy-overlay .splash-center progress {
         width: 230px;
     }
 }

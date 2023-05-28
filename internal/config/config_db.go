@@ -98,6 +98,12 @@ func (c *Config) DatabaseDsn() string {
 	return c.options.DatabaseDsn
 }
 
+// DatabaseFile returns the filename part of a sqlite database DSN.
+func (c *Config) DatabaseFile() string {
+	fileName, _, _ := strings.Cut(c.DatabaseDsn(), "?")
+	return fileName
+}
+
 // ParseDatabaseDsn parses the database dsn and extracts user, password, database server, and name.
 func (c *Config) ParseDatabaseDsn() {
 	if c.options.DatabaseDsn == "" || c.options.DatabaseServer != "" {
@@ -282,7 +288,13 @@ func (c *Config) InitDb() {
 // MigrateDb initializes the database and migrates the schema if needed.
 func (c *Config) MigrateDb(runFailed bool, ids []string) {
 	entity.Admin.UserName = c.AdminUser()
-	entity.InitDb(migrate.Opt(runFailed, ids))
+
+	// Only migrate once automatically per version.
+	version := migrate.FirstOrCreateVersion(c.Db(), migrate.NewVersion(c.Version(), c.Edition()))
+	entity.InitDb(migrate.Opt(version.NeedsMigration(), runFailed, ids))
+	if err := version.Migrated(c.Db()); err != nil {
+		log.Warnf("config: %s (migrate)", err)
+	}
 
 	// Init admin account?
 	if c.AdminPassword() == "" {

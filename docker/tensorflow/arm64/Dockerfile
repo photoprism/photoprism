@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-LABEL maintainer="Michael Mayer <hello@photoprism.app>"
+LABEL maintainer="PhotoPrism UG <hello@photoprism.app>"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV TMP /tmp
@@ -11,7 +11,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
-    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin
+    echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissin && \
+    echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold
 
 # Install dev / build dependencies
 RUN apt-get update && apt-get upgrade && \

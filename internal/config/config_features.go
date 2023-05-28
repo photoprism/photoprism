@@ -2,13 +2,14 @@ package config
 
 var Sponsor = Env(EnvDemo, EnvSponsor, EnvTest)
 
-// DisableWebDAV checks if the built-in WebDAV server should be disabled.
-func (c *Config) DisableWebDAV() bool {
-	if c.Public() || c.Demo() {
-		return true
-	}
+// DisableSettings checks if users should not be allowed to change settings.
+func (c *Config) DisableSettings() bool {
+	return c.options.DisableSettings
+}
 
-	return c.options.DisableWebDAV
+// DisableRestart checks if users should not be allowed to restart the server from the user interface.
+func (c *Config) DisableRestart() bool {
+	return c.options.DisableRestart
 }
 
 // DisableBackups checks if photo and album metadata files should be disabled.
@@ -20,9 +21,13 @@ func (c *Config) DisableBackups() bool {
 	return c.options.DisableBackups
 }
 
-// DisableSettings checks if users should not be allowed to change settings.
-func (c *Config) DisableSettings() bool {
-	return c.options.DisableSettings
+// DisableWebDAV checks if the built-in WebDAV server should be disabled.
+func (c *Config) DisableWebDAV() bool {
+	if c.Public() || c.Demo() {
+		return true
+	}
+
+	return c.options.DisableWebDAV
 }
 
 // DisablePlaces checks if geocoding and maps should be disabled.
@@ -139,20 +144,20 @@ func (c *Config) DisableSips() bool {
 	return c.options.DisableSips
 }
 
-// DisableVector checks if vector graphics support is disabled.
-func (c *Config) DisableVector() bool {
-	if c.options.DisableVector || !c.Sponsor() {
+// DisableVectors checks if vector graphics support is disabled.
+func (c *Config) DisableVectors() bool {
+	if c.options.DisableVectors || !c.Sponsor() {
 		return true
-	} else if c.RsvgConvertBin() == "" && c.ImageMagickBin() == "" {
-		c.options.DisableVector = true
+	} else if c.RsvgConvertBin() == "" {
+		c.options.DisableVectors = true
 	}
 
-	return c.options.DisableVector
+	return c.options.DisableVectors
 }
 
 // DisableRsvgConvert checks if rsvg-convert is disabled for SVG conversion.
 func (c *Config) DisableRsvgConvert() bool {
-	if c.options.DisableVector || !c.Sponsor() {
+	if c.options.DisableVectors || !c.Sponsor() {
 		return true
 	}
 

@@ -3,13 +3,13 @@ package commands
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
-
+	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // UsersModCommand configures the command name, flags, and action.
@@ -44,6 +44,21 @@ func usersModAction(ctx *cli.Context) error {
 
 		if m == nil {
 			return fmt.Errorf("user %s not found", clean.LogQuote(id))
+		}
+
+		// Check if account exists but is deleted.
+		if m.Deleted() {
+			prompt := promptui.Prompt{
+				Label:     fmt.Sprintf("Restore user %s?", m.String()),
+				IsConfirm: true,
+			}
+
+			if _, err := prompt.Run(); err != nil {
+				return fmt.Errorf("user already exists")
+			}
+
+			m.DeletedAt = nil
+			log.Infof("user %s will be restored", m.String())
 		}
 
 		// Set values.

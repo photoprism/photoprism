@@ -1,5 +1,4 @@
 # INSTALLS OPTIONAL PACKAGES AND DRIVERS IN DOCKER IMAGES
-# Maintainer: Michael Mayer <hello@photoprism.app>
 
 export PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts"
 

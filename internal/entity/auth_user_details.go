@@ -2,8 +2,10 @@ package entity
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -34,7 +36,7 @@ type UserDetails struct {
 	NameSrc      string    `gorm:"type:VARBINARY(8);" json:"NameSrc" yaml:"NameSrc,omitempty"`
 	UserGender   string    `gorm:"size:16;" json:"Gender" yaml:"Gender,omitempty"`
 	UserAbout    string    `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
-	UserBio      string    `gorm:"size:512;" json:"Bio" yaml:"Bio,omitempty"`
+	UserBio      string    `gorm:"size:2048;" json:"Bio" yaml:"Bio,omitempty"`
 	UserLocation string    `gorm:"size:512;" json:"Location" yaml:"Location,omitempty"`
 	UserCountry  string    `gorm:"type:VARBINARY(2);" json:"Country" yaml:"Country,omitempty"`
 	UserPhone    string    `gorm:"size:32;" json:"Phone" yaml:"Phone,omitempty"`
@@ -99,4 +101,61 @@ func (m *UserDetails) Save() error {
 // Updates multiple properties in the database.
 func (m *UserDetails) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
+}
+
+// DisplayName returns a display name based on the user details.
+func (m *UserDetails) DisplayName() string {
+	if m == nil {
+		return ""
+	}
+
+	n := make([]string, 0, 3)
+
+	// Add title if exists.
+	if m.NameTitle != "" {
+		n = append(n, m.NameTitle)
+	}
+
+	// Add given name if exists.
+	if m.GivenName != "" {
+		n = append(n, m.GivenName)
+	}
+
+	// Add family name if exists.
+	if m.FamilyName != "" {
+		n = append(n, m.FamilyName)
+	}
+
+	// Default to nick name.
+	if len(n) == 0 {
+		return m.NickName
+	}
+
+	return strings.Join(n, " ")
+}
+
+// SetGivenName updates the user's given name.
+func (m *UserDetails) SetGivenName(name string) *UserDetails {
+	name = clean.Name(name)
+
+	if name == "" || SrcPriority[SrcAuto] < SrcPriority[m.NameSrc] {
+		return m
+	}
+
+	m.GivenName = name
+
+	return m
+}
+
+// SetFamilyName updates the user's family name.
+func (m *UserDetails) SetFamilyName(name string) *UserDetails {
+	name = clean.Name(name)
+
+	if name == "" || SrcPriority[SrcAuto] < SrcPriority[m.NameSrc] {
+		return m
+	}
+
+	m.FamilyName = name
+
+	return m
 }

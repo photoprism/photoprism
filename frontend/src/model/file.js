@@ -62,6 +62,7 @@ export class File extends RestModel {
       Width: 0,
       Height: 0,
       Orientation: 0,
+      OrientationSrc: "",
       Projection: "",
       AspectRatio: 1.0,
       HDR: false,
@@ -197,18 +198,18 @@ export class File extends RestModel {
     }
   }
 
+  isAnimated() {
+    return (
+      this.MediaType &&
+      this.MediaType === MediaImage &&
+      ((this.Frames && this.Frames > 1) || (this.Duration && this.Duration > 1))
+    );
+  }
+
   typeInfo() {
     let info = [];
 
-    if (
-      this.MediaType &&
-      this.Frames &&
-      this.MediaType === MediaImage &&
-      this.Frames &&
-      this.Frames > 0
-    ) {
-      info.push($gettext("Animated"));
-    } else if (this.Sidecar) {
+    if (this.Sidecar) {
       info.push($gettext("Sidecar"));
     }
 

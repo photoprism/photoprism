@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -52,6 +53,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		skipArchived := settings.Index.SkipArchived
 
 		indOpt := photoprism.NewIndexOptions(filepath.Clean(f.Path), f.Rescan, convert, true, false, skipArchived)
+		indOpt.SetUser(s.User())
 
 		if len(indOpt.Path) > 1 {
 			event.InfoMsg(i18n.MsgIndexingFiles, clean.Log(indOpt.Path))
@@ -59,36 +61,67 @@ func StartIndexing(router *gin.RouterGroup) {
 			event.InfoMsg(i18n.MsgIndexingOriginals)
 		}
 
-		// Start indexing.
 		ind := get.Index()
-		indexed := ind.Start(indOpt)
+		lastRun, lastFound := ind.LastRun()
+		indexStart := time.Now()
 
-		RemoveFromFolderCache(entity.RootOriginals)
+		// Start indexing.
+		found, indexed := ind.Start(indOpt)
 
-		// Configure purge options.
-		prgOpt := photoprism.PurgeOptions{
-			Path:   filepath.Clean(f.Path),
-			Ignore: indexed,
+		// Only run purge and moments if necessary.
+		forceUpdate := indOpt.Rescan || indexed > 0 || lastRun.IsZero()
+		updateIndex := forceUpdate || len(found) != lastFound
+
+		log.Infof("index: updated %s [%s]", english.Plural(indexed, "file", "files"), time.Since(indexStart))
+
+		// Update index?
+		if updateIndex {
+			event.Publish("index.updating", event.Data{
+				"uid":    indOpt.UID,
+				"action": indOpt.Action,
+				"step":   "folders",
+			})
+
+			RemoveFromFolderCache(entity.RootOriginals)
+
+			event.Publish("index.updating", event.Data{
+				"uid":    indOpt.UID,
+				"action": indOpt.Action,
+				"step":   "purge",
+			})
+
+			// Configure purge options.
+			prgOpt := photoprism.PurgeOptions{
+				Path:   filepath.Clean(f.Path),
+				Ignore: found,
+				Force:  forceUpdate,
+			}
+
+			// Start purging.
+			prg := get.Purge()
+
+			if files, photos, updated, err := prg.Start(prgOpt); err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
+				return
+			} else if updated > 0 {
+				event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
+				forceUpdate = true
+			}
 		}
 
-		// Start purging.
-		prg := get.Purge()
+		// Update moments?
+		if forceUpdate {
+			event.Publish("index.updating", event.Data{
+				"uid":    indOpt.UID,
+				"action": indOpt.Action,
+				"step":   "moments",
+			})
 
-		if files, photos, err := prg.Start(prgOpt); err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
-			return
-		} else if len(files) > 0 || len(photos) > 0 {
-			event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
-		}
+			moments := get.Moments()
 
-		event.Publish("index.updating", event.Data{
-			"step": "moments",
-		})
-
-		moments := get.Moments()
-
-		if err := moments.Start(); err != nil {
-			log.Warnf("moments: %s", err)
+			if err := moments.Start(); err != nil {
+				log.Warnf("moments: %s", err)
+			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())
@@ -96,7 +129,12 @@ func StartIndexing(router *gin.RouterGroup) {
 		msg := i18n.Msg(i18n.MsgIndexingCompletedIn, elapsed)
 
 		event.Success(msg)
-		event.Publish("index.completed", event.Data{"path": path, "seconds": elapsed})
+		event.Publish("index.completed", event.Data{
+			"uid":     indOpt.UID,
+			"action":  indOpt.Action,
+			"path":    path,
+			"seconds": elapsed,
+		})
 
 		UpdateClientConfig()
 

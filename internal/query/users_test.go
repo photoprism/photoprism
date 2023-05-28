@@ -11,7 +11,7 @@ func TestRegisteredUsers(t *testing.T) {
 		users := RegisteredUsers()
 
 		for _, user := range users {
-			t.Logf("user: %v, %s, %s, %s", user.ID, user.UserUID, user.Name(), user.DisplayName)
+			t.Logf("user: %v, %s, %s, %s", user.ID, user.UserUID, user.Username(), user.DisplayName)
 			assert.NotEmpty(t, user.UserUID)
 		}
 

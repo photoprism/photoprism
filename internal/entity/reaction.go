@@ -39,7 +39,7 @@ func FindReaction(uid, userUid string) (m *Reaction) {
 
 	m = &Reaction{}
 
-	if Db().First(m, "uid = ? AND user_uid = ?", uid, userUid).RecordNotFound() {
+	if Db().First(m, "uid = ? AND user_uid = ?", uid, userUid).Error != nil {
 		return nil
 	}
 

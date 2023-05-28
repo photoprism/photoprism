@@ -5,14 +5,13 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/video"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/video"
 )
 
 // GetVideo streams videos.
@@ -44,7 +43,7 @@ func GetVideo(router *gin.RouterGroup) {
 		f, err := query.FileByHash(fileHash)
 
 		if err != nil {
-			log.Errorf("video: %s", err.Error())
+			log.Errorf("video: requested file not found (%s)", err)
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 			return
 		}
@@ -53,14 +52,14 @@ func GetVideo(router *gin.RouterGroup) {
 			f, err = query.VideoByPhotoUID(f.PhotoUID)
 
 			if err != nil {
-				log.Errorf("video: %s", err.Error())
+				log.Errorf("video: no playable file found (%s)", err)
 				c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 				return
 			}
 		}
 
 		if f.FileError != "" {
-			log.Errorf("video: file error %s", f.FileError)
+			log.Errorf("video: file has error %s", f.FileError)
 			c.Data(http.StatusOK, "image/svg+xml", videoIconSvg)
 			return
 		}
@@ -111,6 +110,10 @@ func GetVideo(router *gin.RouterGroup) {
 			}
 		}
 
+		// Add HTTP cache header.
+		AddImmutableCacheHeader(c)
+
+		// Return requested content.
 		if c.Query("download") != "" {
 			c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
 		} else {

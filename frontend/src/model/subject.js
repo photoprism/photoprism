@@ -42,6 +42,7 @@ export class Subject extends RestModel {
       Slug: "",
       Name: "",
       Alias: "",
+      About: "",
       Bio: "",
       Notes: "",
       Favorite: false,

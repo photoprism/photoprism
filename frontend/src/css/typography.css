@@ -1,0 +1,66 @@
+/* Font Settings */
+
+body {
+    color: #333333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+
+    /* Text rendering defaults. */
+    letter-spacing: normal;
+    text-justify: inter-word;
+
+    /* Support for all WebKit browsers. */
+    -webkit-font-smoothing: antialiased;
+
+    /* Support for Safari and Chrome. */
+    text-rendering: optimizeLegibility;
+
+    /* Support for Firefox. */
+    -moz-osx-font-smoothing: grayscale;
+
+    /* Enable font features. */
+    font-feature-settings: 'kern', 'liga';
+}
+
+body .application {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+@media (min-width: 600px) {
+    .text-columns {
+        column-count: 2;
+        column-gap: 2em;
+        orphans: 3;
+        widows: 0;
+    }
+}
+
+button.v-btn.compact  {
+    font-size: 14px;
+    height: 34px;
+}
+
+/* Line Height */
+
+.lh-15 {
+    line-height: 1.5rem !important;
+}
+
+.lh-16 {
+    line-height: 1.6rem !important;
+}
+
+.lh-17 {
+    line-height: 1.7rem !important;
+}
+
+.lh-18 {
+    line-height: 1.8rem !important;
+}
+
+.lh-19 {
+    line-height: 1.9rem !important;
+}
+
+.lh-20 {
+    line-height: 2.0rem !important;
+}

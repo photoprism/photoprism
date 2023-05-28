@@ -12,9 +12,9 @@ type Login struct {
 	AuthToken string `json:"token,omitempty"`
 }
 
-// Name returns the sanitized username in lowercase.
-func (f Login) Name() string {
-	return clean.DN(f.UserName)
+// Username returns the sanitized username in lowercase.
+func (f Login) Username() string {
+	return clean.Username(f.UserName)
 }
 
 // Email returns the sanitized email in lowercase.
@@ -22,9 +22,9 @@ func (f Login) Email() string {
 	return clean.Email(f.UserEmail)
 }
 
-// HasName checks if a username is set.
-func (f Login) HasName() bool {
-	if l := len(f.Name()); l == 0 || l > 255 {
+// HasUsername checks if a username is set.
+func (f Login) HasUsername() bool {
+	if l := len(f.Username()); l == 0 || l > 255 {
 		return false
 	}
 	return true
@@ -42,5 +42,5 @@ func (f Login) HasToken() bool {
 
 // HasCredentials checks if all credentials is set.
 func (f Login) HasCredentials() bool {
-	return f.HasName() && f.HasPassword()
+	return f.HasUsername() && f.HasPassword()
 }

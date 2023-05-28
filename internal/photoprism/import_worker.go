@@ -41,7 +41,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 		// Extract metadata to a JSON file with Exiftool.
 		if related.Main.NeedsExifToolJson() {
-			if jsonName, err := imp.convert.ToJson(related.Main); err != nil {
+			if jsonName, err := imp.convert.ToJson(related.Main, false); err != nil {
 				log.Tracef("exiftool: %s", clean.Log(err.Error()))
 				log.Debugf("exiftool: failed parsing %s", clean.Log(related.Main.RootRelName()))
 			} else if err := related.Main.ReadExifToolJson(); err != nil {
@@ -110,7 +110,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					// Do nothing.
 				} else if file, err := entity.FirstFileByHash(fileHash); err != nil {
 					// Do nothing.
-				} else if err := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, opt.UserUID); err != nil {
+				} else if err := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, opt.UID); err != nil {
 					log.Warn(err)
 				}
 
@@ -135,7 +135,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Extract metadata to a JSON file with Exiftool.
 			if f.NeedsExifToolJson() {
-				if jsonName, err := imp.convert.ToJson(f); err != nil {
+				if jsonName, err := imp.convert.ToJson(f, false); err != nil {
 					log.Tracef("exiftool: %s", clean.Log(err.Error()))
 					log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 				} else {
@@ -145,7 +145,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 			if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
-				if jpegFile, err := imp.convert.ToPreview(f, false); err != nil {
+				if jpegFile, err := imp.convert.ToImage(f, false); err != nil {
 					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), clean.Log(f.RootRelName()))
 					continue
 				} else {
@@ -156,8 +156,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
 			if jpg, err := f.PreviewImage(); err != nil {
 				log.Error(err)
-			} else if exceeds, actual := jpg.ExceedsResolution(o.ResolutionLimit); exceeds {
-				log.Errorf("index: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+			} else if limitErr, _ := jpg.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+				log.Errorf("index: %s", limitErr)
 				continue
 			} else if err := jpg.CreateThumbnails(imp.thumbPath(), false); err != nil {
 				log.Errorf("import: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
@@ -181,16 +181,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 				f := related.Main
 
 				// Enforce file size and resolution limits.
-				if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
-					log.Warnf("import: %s exceeds file size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
+				if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+					log.Warnf("import: %s", limitErr)
 					continue
-				} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
-					log.Warnf("import: %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+				} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+					log.Warnf("import: %s", limitErr)
 					continue
 				}
 
 				// Index main MediaFile.
-				res := ind.UserMediaFile(f, o, originalName, "", opt.UserUID)
+				res := ind.UserMediaFile(f, o, originalName, "", opt.UID)
 
 				// Log result.
 				log.Infof("import: %s main %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
@@ -203,7 +203,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					photoUID = res.PhotoUID
 
 					// Add photo to album if a list of albums was provided when importing.
-					if err := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, opt.UserUID); err != nil {
+					if err := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, opt.UID); err != nil {
 						log.Warn(err)
 					}
 				}
@@ -223,15 +223,15 @@ func ImportWorker(jobs <-chan ImportJob) {
 				done[f.FileName()] = true
 
 				// Show warning if sidecar file exceeds size or resolution limit.
-				if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
-					log.Warnf("import: sidecar file %s exceeds size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
-				} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
-					log.Warnf("import: sidecar file %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+				if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+					log.Warnf("import: %s", limitErr)
+				} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+					log.Warnf("import: %s", limitErr)
 				}
 
 				// Extract metadata to a JSON file with Exiftool.
 				if f.NeedsExifToolJson() {
-					if jsonName, err := imp.convert.ToJson(f); err != nil {
+					if jsonName, err := imp.convert.ToJson(f, false); err != nil {
 						log.Tracef("exiftool: %s", clean.Log(err.Error()))
 						log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 					} else {
@@ -240,7 +240,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				// Index related media file including its original filename.
-				res := ind.UserMediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID, opt.UserUID)
+				res := ind.UserMediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID, opt.UID)
 
 				// Save file error.
 				if fileUid, err := res.FileError(); err != nil {

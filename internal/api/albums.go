@@ -82,7 +82,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 		albumMutex.Lock()
 		defer albumMutex.Unlock()
 
-		a := entity.NewUserAlbum(f.AlbumTitle, entity.AlbumDefault, s.UserUID)
+		a := entity.NewUserAlbum(f.AlbumTitle, entity.AlbumManual, s.UserUID)
 		a.AlbumFavorite = f.AlbumFavorite
 
 		// Existing album?
@@ -94,18 +94,13 @@ func CreateAlbum(router *gin.RouterGroup) {
 				AbortUnexpected(c)
 				return
 			}
-
-			event.SuccessMsg(i18n.MsgAlbumCreated)
 		} else {
 			// Exists, restore if necessary.
 			a = found
 			if !a.Deleted() {
-				event.InfoMsg(i18n.ErrAlreadyExists, a.Title())
 				c.JSON(http.StatusOK, a)
 				return
-			} else if err := a.Restore(); err == nil {
-				event.SuccessMsg(i18n.MsgRestored, a.Title())
-			} else {
+			} else if err := a.Restore(); err != nil {
 				// Report unexpected error.
 				log.Errorf("album: %s (restore)", err)
 				AbortUnexpected(c)
@@ -113,9 +108,9 @@ func CreateAlbum(router *gin.RouterGroup) {
 			}
 		}
 
-		// Publish event and create/update YAML backup.
 		UpdateClientConfig()
-		// PublishAlbumEvent(EntityCreated, a.AlbumUID, c)
+
+		// Update album YAML backup.
 		SaveAlbumAsYaml(*a)
 
 		// Return as JSON.
@@ -167,10 +162,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		event.SuccessMsg(i18n.MsgAlbumSaved)
-
-		// PublishAlbumEvent(EntityUpdated, uid, c)
-
+		// Update album YAML backup.
 		SaveAlbumAsYaml(a)
 
 		c.JSON(http.StatusOK, a)
@@ -219,9 +211,8 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
+		// Update album YAML backup.
 		SaveAlbumAsYaml(a)
-
-		event.SuccessMsg(i18n.MsgAlbumDeleted, clean.Log(a.AlbumTitle))
 
 		c.JSON(http.StatusOK, a)
 	})
@@ -259,6 +250,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 
 		PublishAlbumEvent(EntityUpdated, id, c)
 
+		// Update album YAML backup.
 		SaveAlbumAsYaml(a)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
@@ -297,6 +289,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 
 		PublishAlbumEvent(EntityUpdated, id, c)
 
+		// Update album YAML backup.
 		SaveAlbumAsYaml(a)
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgChangesSaved))
@@ -353,6 +346,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
+			// Update album YAML backup.
 			SaveAlbumAsYaml(a)
 		}
 
@@ -384,6 +378,12 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
+		} else if !a.HasID() {
+			AbortAlbumNotFound(c)
+			return
+		} else if f.Empty() {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
 		}
 
 		// Fetch selection from index.
@@ -408,6 +408,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
+			// Update album YAML backup.
 			SaveAlbumAsYaml(a)
 		}
 
@@ -443,6 +444,9 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		if err != nil {
 			AbortAlbumNotFound(c)
 			return
+		} else if !a.HasID() {
+			AbortAlbumNotFound(c)
+			return
 		}
 
 		removed := a.RemovePhotos(f.Photos)
@@ -458,6 +462,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
 
+			// Update album YAML backup.
 			SaveAlbumAsYaml(a)
 		}
 

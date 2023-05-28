@@ -39,7 +39,6 @@ case $DESTARCH in
       apt-get update
       apt-get -qq install -t buster-backports darktable
     else
-      echo "install-darktable: installing standard amd64 (Intel 64-bit) package"
       apt-get -qq install darktable
     fi
     ;;
@@ -52,7 +51,6 @@ case $DESTARCH in
       apt-get update
       apt-get -qq install -t buster-backports darktable
     else
-      echo "install-darktable: installing standard arm64 (ARM 64-bit) package"
       apt-get -qq install darktable
     fi
     ;;

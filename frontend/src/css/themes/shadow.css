@@ -53,7 +53,7 @@ body.dark-theme.theme-shadow {
 }
 
 #photoprism.theme-shadow .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: #4E4E4E;
+    background: rgba(250, 250, 255, 0.1);
 }
 
 #photoprism.theme-shadow .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {

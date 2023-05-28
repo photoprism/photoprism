@@ -116,11 +116,20 @@
             </v-list-tile-content>
           </v-list-tile>
 
-          <v-list-tile :to="{name: 'browse', query: { q: 'gifs' }}" :exact="true" class="nav-animated"
+          <v-list-tile :to="{name: 'browse', query: { q: 'animated' }}" :exact="true" class="nav-animated"
                        @click.stop="">
             <v-list-tile-content>
               <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Animated</translate>
+              </v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile v-show="isSponsor" :to="{name: 'browse', query: { q: 'vectors' }}" :exact="true" class="nav-vectors"
+                       @click.stop="">
+            <v-list-tile-content>
+              <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                <translate>Vectors</translate>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -410,7 +419,7 @@
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate key="Originals">Originals</translate>
-                <span v-show="config.count.files > 0"
+                <span v-show="config.count.files > 0 && canAccessPrivate"
                       :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.files | abbreviateCount }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
@@ -459,10 +468,10 @@
               </v-list-tile>
             </template>
 
-            <v-list-tile :to="{ name: 'about' }" :exact="true" class="nav-about" @click.stop="">
+            <v-list-tile v-if="canManageUsers" :to="{ path: '/admin/users' }" :exact="false" class="nav-admin-users" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
-                  <translate>About</translate>
+                  <translate>Users</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
@@ -484,10 +493,18 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="isAdmin && !isPublic && !isDemo && !isSponsor" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
+            <v-list-tile v-show="featUpgrade" :to="{ name: 'upgrade' }" class="nav-upgrade" :exact="true" @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
                   <translate key="Upgrade">Upgrade</translate>
+                </v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+
+            <v-list-tile :to="{ name: 'about' }" :exact="true" class="nav-about" @click.stop="">
+              <v-list-tile-content>
+                <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
+                  <translate>About</translate>
                 </v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
@@ -522,7 +539,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="auth && !isPublic && $config.feature('settings')" class="p-profile" @click.stop="onAccount">
+        <v-list-tile v-show="auth && !isPublic && $config.feature('account')" class="p-profile" @click.stop="onAccount">
           <v-list-tile-avatar size="36">
             <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo">
           </v-list-tile-avatar>
@@ -623,7 +640,7 @@
               <translate>Logs</translate>
             </router-link>
           </div>
-          <div v-if="!isPublic && !isSponsor && isAdmin" class="menu-action nav-membership">
+          <div v-if="featUpgrade" class="menu-action nav-membership">
             <router-link :to="{ name: 'upgrade' }">
               <v-icon>diamond</v-icon>
               <translate>Upgrade</translate>
@@ -633,16 +650,17 @@
             <v-icon>auto_stories</v-icon>
             <translate>User Guide</translate>
           </a></div>
-          <div v-if="config.legalUrl && isSponsor" class="menu-action nav-legal"><a :href="config.legalUrl"
-                                                                                      target="_blank">
-            <v-icon>info</v-icon>
-            <translate>Legal Information</translate>
-          </a></div>
+          <div v-if="config.legalUrl && isSponsor" class="menu-action nav-legal">
+            <a :href="config.legalUrl" target="_blank">
+              <v-icon>info</v-icon>
+              <translate>Legal Information</translate>
+            </a>
+          </div>
         </div>
       </div>
     </div>
     <div v-if="config.legalInfo && visible" id="legal-info">
-      <a v-if="config.legalUrl" :href="config.legalUrl" target="_blank">{{ config.legalInfo }}</a>
+      <span v-if="config.legalUrl" class="clickable" @click.stop.prevent="onInfo()">{{ config.legalInfo }}</span>
       <span v-else>{{ config.legalInfo }}</span>
     </div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
@@ -654,7 +672,6 @@
 </template>
 
 <script>
-import Album from "model/album";
 import Event from "pubsub-js";
 
 export default {
@@ -680,27 +697,34 @@ export default {
       appNameSuffix = appNameParts.slice(1, 9).join(" ");
     }
 
+    const isDemo = this.$config.get("demo");
+    const isPublic = this.$config.get("public");
+    const isReadOnly = this.$config.get("readonly");
     const isRestricted = this.$config.deny("photos", "access_library");
+    const isSuperAdmin = this.$session.isSuperAdmin();
 
     return {
       canSearchPlaces: this.$config.allow("places", "search"),
-      canAccessAll: !isRestricted,
+      canAccessPrivate: !isRestricted && this.$config.allow("photos", "access_private"),
       canManagePhotos: this.$config.allow("photos", "manage"),
       canManagePeople: this.$config.allow("people", "manage"),
+      canManageUsers: (!isPublic || isDemo) && this.$config.allow("users", "manage"),
       appNameSuffix: appNameSuffix,
       appName: this.$config.getName(),
       appAbout: this.$config.getAbout(),
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,
+      featUpgrade: this.$config.getTier() < 8 && isSuperAdmin && !isPublic && !isDemo,
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
-      isPublic: this.$config.get("public"),
-      isDemo: this.$config.get("demo"),
+      isDemo: isDemo,
+      isPublic: isPublic,
+      isReadOnly: isReadOnly,
       isAdmin: this.$session.isAdmin(),
+      isSuperAdmin: isSuperAdmin,
       isSponsor: this.$config.isSponsor(),
       isTest: this.$config.test,
-      isReadOnly: this.$config.get("readonly"),
       session: this.$session,
       config: this.$config.values,
       page: this.$config.page,
@@ -799,17 +823,19 @@ export default {
         this.isMini = this.isRestricted;
       }
     },
-    createAlbum() {
-      let name = "New Album";
-      const album = new Album({Title: name, Favorite: false});
-      album.save();
-    },
     toggleIsMini() {
       this.isMini = !this.isMini;
       localStorage.setItem('last_navigation_mode', `${this.isMini}`);
     },
     onAccount: function () {
       this.$router.push({name: "settings_account"});
+    },
+    onInfo() {
+      if (this.isSponsor && this.config.legalUrl) {
+        window.open(this.config.legalUrl, '_blank').focus();
+      } else {
+        this.$router.push({name: "about"});
+      }
     },
     onLogout() {
       this.$session.logout();

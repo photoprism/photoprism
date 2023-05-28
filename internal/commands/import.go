@@ -15,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
-// ImportCommand registers the import cli command.
+// ImportCommand configures the command name, flags, and action.
 var ImportCommand = cli.Command{
 	Name:      "mv",
 	Aliases:   []string{"import"},

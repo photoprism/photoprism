@@ -51,15 +51,15 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		done[f.FileName()] = true
 
 		// Show warning if sidecar file exceeds size or resolution limit.
-		if exceeds, actual := f.ExceedsFileSize(o.OriginalsLimit); exceeds {
-			log.Warnf("index: sidecar file %s exceeds size limit (%d / %d MB)", clean.Log(f.RootRelName()), actual, o.OriginalsLimit)
-		} else if exceeds, actual = f.ExceedsResolution(o.ResolutionLimit); exceeds {
-			log.Warnf("index: sidecar file %s exceeds resolution limit (%d / %d MP)", clean.Log(f.RootRelName()), actual, o.ResolutionLimit)
+		if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+			log.Warnf("index: %s", limitErr)
+		} else if limitErr, _ = f.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+			log.Warnf("index: %s", limitErr)
 		}
 
 		// Extract metadata to a JSON file with Exiftool.
 		if f.NeedsExifToolJson() {
-			if jsonName, err := ind.convert.ToJson(f); err != nil {
+			if jsonName, err := ind.convert.ToJson(f, false); err != nil {
 				log.Tracef("exiftool: %s", clean.Log(err.Error()))
 				log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 			} else {
@@ -69,8 +69,8 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 		if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
-			if jpg, err := ind.convert.ToPreview(f, false); err != nil {
-				result.Err = fmt.Errorf("index: failed converting %s to jpeg (%s)", clean.Log(f.RootRelName()), err.Error())
+			if jpg, err := ind.convert.ToImage(f, false); err != nil {
+				result.Err = fmt.Errorf("index: failed creating preview for %s (%s)", clean.Log(f.RootRelName()), err.Error())
 				result.Status = IndexFailed
 				return result
 			} else {

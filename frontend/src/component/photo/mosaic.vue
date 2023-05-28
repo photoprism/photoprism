@@ -71,11 +71,11 @@
                   @touchend.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
                   @touchmove.stop.prevent
                   @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')">
-              <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">photo_camera</i>
+              <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">raw_on</i>
               <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
               <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
               <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
-              <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">draw</i>
+              <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">font_download</i>
               <i v-if="photo.Type === 'image'" class="action-stack" :title="$gettext('Stack')">burst_mode</i>
             </button>
 
@@ -133,7 +133,7 @@
 <script>
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 import {virtualizationTools} from 'common/virtualization-tools';
-import IconLivePhoto from "component/icon/live_photo.vue";
+import IconLivePhoto from "component/icon/live-photo.vue";
 
 export default {
   name: 'PPhotoMosaic',

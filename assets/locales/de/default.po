@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"POT-Creation-Date: 2023-03-09 13:14+0000\n"
+"PO-Revision-Date: 2023-03-29 12:10+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "backend/de/>\n"
 "Language: de\n"
@@ -12,12 +12,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.16.2\n"
 "X-Poedit-Basepath: .\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
-msgstr "Etwas ist schief gelaufen, versuchen Sie es erneut"
+msgstr "Etwas ist schief gelaufen, versuche es noch einmal"
 
 #: messages.go:95
 msgid "Unable to do that"
@@ -237,15 +237,15 @@ msgstr "%d Einträge aus %s entfernt"
 
 #: messages.go:149
 msgid "Account created"
-msgstr "Server-Konfiguration angelegt"
+msgstr "Konto hinzugefügt"
 
 #: messages.go:150
 msgid "Account saved"
-msgstr "Server-Konfiguration gespeichert"
+msgstr "Konto gespeichert"
 
 #: messages.go:151
 msgid "Account deleted"
-msgstr "Server-Konfiguration gelöscht"
+msgstr "Konto gelöscht"
 
 #: messages.go:152
 msgid "Settings saved"

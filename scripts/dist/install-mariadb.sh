@@ -12,23 +12,30 @@ if [[ $(id -u) != "0" ]]; then
 fi
 
 if [[ -z $1 ]]; then
-    echo "Usage: ${0##*/} [package names...]" 1>&2
-    exit 1
+  PACKAGES="mariadb-client"
+else
+  PACKAGES=$1
 fi
 
 set -e
 
-MARIADB_VERSION="10.10"
-MARIADB_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
+. /etc/os-release
 
-if [ ! -f "/etc/apt/sources.list.d/mariadb.list" ]; then
-  echo "Installing MariaDB $MARIADB_VERSION package sources..."
-  curl -Ls $MARIADB_URL | bash  -s -- --mariadb-server-version="mariadb-$MARIADB_VERSION"
+if [[ $VERSION_CODENAME == "lunar" ]]; then
+  echo "Installing MariaDB distribution packages..."
+else
+  MARIADB_VERSION="10.11"
+  MARIADB_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
+
+  if [ ! -f "/etc/apt/sources.list.d/mariadb.list" ]; then
+    echo "Installing MariaDB $MARIADB_VERSION package sources..."
+    curl -Ls $MARIADB_URL | bash  -s -- --mariadb-server-version="mariadb-$MARIADB_VERSION"
+  fi
 fi
 
-echo "Installing \"$1\"..."
+echo "Installing \"$PACKAGES\"..."
 
 apt-get update
-apt-get -qq install $1
+apt-get -qq install $PACKAGES
 
 echo "Done."

@@ -137,3 +137,22 @@ func TestCamera_String(t *testing.T) {
 		assert.Equal(t, "Unknown", cameraString)
 	})
 }
+
+func TestCamera_Scanner(t *testing.T) {
+	t.Run("model XXX make Nikon", func(t *testing.T) {
+		camera := NewCamera("XXX", "Nikon")
+		assert.False(t, camera.Scanner())
+	})
+	t.Run("MS Scanner", func(t *testing.T) {
+		camera := NewCamera("MS Scanner", "")
+		assert.True(t, camera.Scanner())
+	})
+	t.Run("model Unknown make XXX", func(t *testing.T) {
+		camera := NewCamera("", "test")
+		assert.False(t, camera.Scanner())
+	})
+	t.Run("model Unknown make Unknown", func(t *testing.T) {
+		camera := NewCamera("", "")
+		assert.False(t, camera.Scanner())
+	})
+}

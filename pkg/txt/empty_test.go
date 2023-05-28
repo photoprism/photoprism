@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIsEmpty(t *testing.T) {
+func TestEmpty(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, true, Empty(""))
 	})
@@ -51,6 +51,15 @@ func TestIsEmpty(t *testing.T) {
 	})
 	t.Run("%", func(t *testing.T) {
 		assert.Equal(t, true, Empty("%"))
+	})
+	t.Run("-", func(t *testing.T) {
+		assert.True(t, Empty("-"))
+	})
+	t.Run("z", func(t *testing.T) {
+		assert.True(t, Empty("z"))
+	})
+	t.Run("zz", func(t *testing.T) {
+		assert.False(t, Empty("zz"))
 	})
 }
 
@@ -100,22 +109,106 @@ func TestNotEmpty(t *testing.T) {
 	t.Run("%", func(t *testing.T) {
 		assert.Equal(t, false, NotEmpty("%"))
 	})
+	t.Run("-", func(t *testing.T) {
+		assert.False(t, NotEmpty("-"))
+	})
+	t.Run("z", func(t *testing.T) {
+		assert.False(t, NotEmpty("z"))
+	})
+	t.Run("zz", func(t *testing.T) {
+		assert.True(t, NotEmpty("zz"))
+	})
 }
 
-func TestEmptyTime(t *testing.T) {
-	t.Run("EmptyString", func(t *testing.T) {
-		assert.True(t, EmptyTime(""))
+func TestEmptyDateTime(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.True(t, EmptyDateTime(""))
+	})
+	t.Run("-", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("-"))
+	})
+	t.Run("z", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("z"))
+	})
+	t.Run("zz", func(t *testing.T) {
+		assert.False(t, EmptyDateTime("zz"))
+	})
+	t.Run("0", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("0"))
+	})
+	t.Run("00-00-00", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("00-00-00"))
+	})
+	t.Run("0000-00-00", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("0000-00-00"))
+	})
+	t.Run("00:00:00", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("00:00:00"))
+	})
+	t.Run("0000:00:00", func(t *testing.T) {
+		assert.True(t, EmptyDateTime("0000:00:00"))
 	})
 	t.Run("0000-00-00 00-00-00", func(t *testing.T) {
-		assert.True(t, EmptyTime("0000-00-00 00-00-00"))
+		assert.True(t, EmptyDateTime("0000-00-00 00-00-00"))
 	})
 	t.Run("0000:00:00 00:00:00", func(t *testing.T) {
-		assert.True(t, EmptyTime("0000:00:00 00:00:00"))
+		assert.True(t, EmptyDateTime("0000:00:00 00:00:00"))
 	})
 	t.Run("0000-00-00 00:00:00", func(t *testing.T) {
-		assert.True(t, EmptyTime("0000-00-00 00:00:00"))
+		assert.True(t, EmptyDateTime("0000-00-00 00:00:00"))
 	})
 	t.Run("0001-01-01 00:00:00 +0000 UTC", func(t *testing.T) {
-		assert.True(t, EmptyTime("0001-01-01 00:00:00 +0000 UTC"))
+		assert.True(t, EmptyDateTime("0001-01-01 00:00:00 +0000 UTC"))
+	})
+}
+
+func TestDateTimeDefault(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		assert.True(t, DateTimeDefault(""))
+	})
+	t.Run("nil", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("nil"))
+	})
+	t.Run("2002", func(t *testing.T) {
+		assert.False(t, DateTimeDefault("2002"))
+	})
+	t.Run("1970-01-01", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("1970-01-01"))
+	})
+	t.Run("1980-01-01", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("1980-01-01"))
+	})
+	t.Run("1970-01-01 00:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("1970-01-01 00:00:00"))
+	})
+	t.Run("1970:01:01 00:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("1970:01:01 00:00:00"))
+	})
+	t.Run("1980-01-01 00:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("1980-01-01 00:00:00"))
+	})
+	t.Run("1980:01:01 00:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("1980:01:01 00:00:00"))
+	})
+	t.Run("2002-12-08 12:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("2002-12-08 12:00:00"))
+	})
+	t.Run("2002:12:08 12:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("2002:12:08 12:00:00"))
+	})
+	t.Run("0000-00-00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("0000-00-00"))
+	})
+	t.Run("0000-00-00 00-00-00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("0000-00-00 00-00-00"))
+	})
+	t.Run("0000:00:00 00:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("0000:00:00 00:00:00"))
+	})
+	t.Run("0000-00-00 00:00:00", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("0000-00-00 00:00:00"))
+	})
+	t.Run("0001-01-01 00:00:00 +0000 UTC", func(t *testing.T) {
+		assert.True(t, DateTimeDefault("0001-01-01 00:00:00 +0000 UTC"))
 	})
 }

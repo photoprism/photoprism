@@ -26,13 +26,13 @@ func AddUser(frm form.User) error {
 			return err
 		}
 
-		pw := NewPassword(user.UserUID, frm.Password)
+		pw := NewPassword(user.UserUID, frm.Password, false)
 
 		if err := tx.Create(&pw).Error; err != nil {
 			return err
 		}
 
-		log.Infof("successfully added user %s", clean.LogQuote(user.Name()))
+		log.Infof("successfully added user %s", clean.LogQuote(user.Username()))
 
 		return nil
 	})

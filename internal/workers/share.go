@@ -2,7 +2,7 @@ package workers
 
 import (
 	"fmt"
-	"path/filepath"
+	"path"
 	"runtime/debug"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/remote/webdav"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -39,7 +40,7 @@ func (w *Share) logError(err error) {
 func (w *Share) Start() (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			err = fmt.Errorf("share: %s (panic)\nstack: %s", r, debug.Stack())
+			err = fmt.Errorf("share: %s (worker panic)\nstack: %s", r, debug.Stack())
 			log.Error(err)
 		}
 	}()
@@ -89,21 +90,32 @@ func (w *Share) Start() (err error) {
 			}
 		}
 
-		client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
-		existingDirs := make(map[string]string)
+		client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+
+		if err != nil {
+			return err
+		}
 
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {
 				return nil
 			}
 
-			dir := filepath.Dir(file.RemoteName)
+			// Skip deleted files.
+			if file.File == nil || file.FileID <= 0 {
+				log.Warnf("share: %s cannot be uploaded because it has been deleted", clean.Log(file.RemoteName))
+				file.Status = entity.FileShareError
+				file.Error = "file not found"
+				file.Errors++
+				w.logError(entity.Db().Save(&file).Error)
+				continue
+			}
 
-			if _, ok := existingDirs[dir]; !ok {
-				if err := client.CreateDir(dir); err != nil {
-					log.Errorf("share: failed creating folder %s", dir)
-					continue
-				}
+			dir := path.Dir(file.RemoteName)
+
+			// Ensure remote folder exists.
+			if err := client.MkdirAll(dir); err != nil {
+				log.Debugf("share: %s", err)
 			}
 
 			srcFileName := photoprism.FileName(file.File.FileRoot, file.File.FileName)
@@ -163,7 +175,11 @@ func (w *Share) Start() (err error) {
 			continue
 		}
 
-		client := webdav.New(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+		client, err := webdav.NewClient(a.AccURL, a.AccUser, a.AccPass, webdav.Timeout(a.AccTimeout))
+
+		if err != nil {
+			return err
+		}
 
 		for _, file := range files {
 			if mutex.ShareWorker.Canceled() {

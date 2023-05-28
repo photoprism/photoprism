@@ -2,11 +2,15 @@ package fs
 
 import (
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/emersion/go-webdav"
 )
 
+// FileInfo represents a file system entry.
 type FileInfo struct {
 	Name string    `json:"name"`
 	Abs  string    `json:"abs"`
@@ -15,25 +19,47 @@ type FileInfo struct {
 	Dir  bool      `json:"dir"`
 }
 
-func NewFileInfo(info os.FileInfo, dir string) FileInfo {
-	if dir != PathSeparator && len(dir) > 0 {
-		if dir[len(dir)-1:] == PathSeparator {
+func fileDir(dir, sep string) string {
+	if dir != sep && len(dir) > 0 {
+		if dir[len(dir)-1:] == sep {
 			dir = dir[:len(dir)-1]
 		}
 
-		if dir[0:1] != PathSeparator {
-			dir = PathSeparator + dir
+		if dir[0:1] != sep {
+			dir = sep + dir
 		}
 	} else {
-		dir = PathSeparator
+		dir = sep
 	}
 
+	return dir
+}
+
+// NewFileInfo creates a FileInfo struct from the os.FileInfo record.
+func NewFileInfo(file os.FileInfo, dir string) FileInfo {
+	dir = fileDir(dir, PathSeparator)
+
 	result := FileInfo{
-		Name: info.Name(),
-		Abs:  filepath.Join(dir, info.Name()),
-		Size: info.Size(),
-		Date: info.ModTime(),
-		Dir:  info.IsDir(),
+		Name: file.Name(),
+		Abs:  filepath.Join(dir, file.Name()),
+		Size: file.Size(),
+		Date: file.ModTime(),
+		Dir:  file.IsDir(),
+	}
+
+	return result
+}
+
+// WebFileInfo creates a FileInfo struct from a webdav.FileInfo record.
+func WebFileInfo(file webdav.FileInfo, dir string) FileInfo {
+	filePath := strings.Trim(file.Path, "/")
+	dir = strings.Trim(dir, "/")
+	result := FileInfo{
+		Name: path.Base(filePath),
+		Abs:  "/" + RelName(filePath, dir),
+		Size: file.Size,
+		Date: file.ModTime,
+		Dir:  file.IsDir,
 	}
 
 	return result

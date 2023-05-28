@@ -126,6 +126,10 @@ export const Languages = () => [
     value: "es",
   },
   {
+    text: "Euskara", // Basque
+    value: "eu",
+  },
+  {
     text: "Français", // French
     value: "fr",
   },
@@ -213,7 +217,11 @@ export const Languages = () => [
     rtl: true,
   },
   {
-    text: "български", // Bulgarian
+    text: "Беларуская", // Belarusian
+    value: "be",
+  },
+  {
+    text: "Български", // Bulgarian
     value: "bg",
   },
   {
@@ -438,4 +446,11 @@ export const Gender = () => [
   { value: "male", text: $gettext("Male") },
   { value: "female", text: $gettext("Female") },
   { value: "other", text: $gettext("Other") },
+];
+
+export const Orientations = () => [
+  { value: 1, text: "" },
+  { value: 6, text: "90°" },
+  { value: 3, text: "180°" },
+  { value: 8, text: "270°" },
 ];

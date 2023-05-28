@@ -4,7 +4,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-// ShowCommand registers the show subcommands.
+// ShowCommand configures the show subcommands.
 var ShowCommand = cli.Command{
 	Name:  "show",
 	Usage: "Shows supported formats, features, and config options",

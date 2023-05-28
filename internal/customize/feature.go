@@ -3,7 +3,6 @@ package customize
 // FeatureSettings represents feature flags, mainly for the Web UI.
 type FeatureSettings struct {
 	Account   bool `json:"account" yaml:"Account"`
-	Advanced  bool `json:"advanced" yaml:"Advanced"`
 	Albums    bool `json:"albums" yaml:"Albums"`
 	Archive   bool `json:"archive" yaml:"Archive"`
 	Delete    bool `json:"delete" yaml:"Delete"`

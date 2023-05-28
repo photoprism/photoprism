@@ -1,5 +1,10 @@
 /* PhotoPrism Search Result Styles */
 
+/* Disable native long-touch menu on iOS Safari */
+#photoprism .search-results .result {
+    -webkit-touch-callout: none;
+}
+
 /*
 For more information on the contain property, see https://developers.google.com/web/updates/2016/06/css-containment
 */
@@ -7,7 +12,8 @@ body.chrome #photoprism .search-results .result {
     contain: layout style paint;
 }
 
-#photoprism .v-alert.no-results.v-alert--outline {
+#photoprism .v-alert.no-results.v-alert--outline,
+#photoprism .v-alert.no-outline.v-alert--outline {
     border: 0 !important;
 }
 
@@ -56,6 +62,14 @@ body.chrome #photoprism .search-results .result {
     position: absolute;
     left: 12px;
     top: 12px;
+}
+
+#photoprism .list-view .action-secondary {
+    opacity: 0.4;
+}
+
+#photoprism .list-view tr:hover .action-secondary {
+    opacity: 1;
 }
 
 #photoprism .p-clipboard.--ltr {
@@ -249,7 +263,7 @@ body.chrome #photoprism .search-results .result {
 #photoprism .mosaic-view .result.image i,
 #photoprism .list-view .result .image i,
 #photoprism .cards-view .result .image i {
-  color: #c0c0c0f5;
+  color: #e2e2e2;
   font-size: 24px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -331,6 +345,8 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .result .input-favorite .select-off,
 #photoprism .search-results .result.is-favorite .input-favorite .select-on,
+#photoprism .search-results .result .input-private .select-off,
+#photoprism .search-results .result.is-private .input-private .select-on,
 #photoprism .search-results .result .input-hidden .select-off,
 #photoprism .search-results .result.is-hidden .input-hidden .select-on {
     display: inline-flex;
@@ -338,6 +354,8 @@ body.chrome #photoprism .search-results .result {
 
 #photoprism .search-results .result .input-favorite .select-on,
 #photoprism .search-results .result.is-favorite .input-favorite .select-off,
+#photoprism .search-results .result .input-private .select-on,
+#photoprism .search-results .result.is-private .input-private .select-off,
 #photoprism .search-results .result .input-hidden .select-on,
 #photoprism .search-results .result.is-hidden .input-hidden .select-off {
     display: none;

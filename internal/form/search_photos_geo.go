@@ -39,17 +39,19 @@ type SearchPhotosGeo struct {
 	Private   bool      `form:"private"`
 	Review    bool      `form:"review"`
 	Quality   int       `form:"quality"`
+	Face      string    `form:"face" notes:"Face ID, yes, no, new, or kind"`
 	Faces     string    `form:"faces"` // Find or exclude faces if detected.
+	Subject   string    `form:"subject"`
 	Lat       float32   `form:"lat"`
 	Lng       float32   `form:"lng"`
 	S2        string    `form:"s2"`
 	Olc       string    `form:"olc"`
 	Dist      uint      `form:"dist"`
-	Face      string    `form:"face"`     // UIDs
-	Subject   string    `form:"subject"`  // UIDs
 	Person    string    `form:"person"`   // Alias for Subject
 	Subjects  string    `form:"subjects"` // Text
 	People    string    `form:"people"`   // Alias for Subjects
+	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
+	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
 	Keywords  string    `form:"keywords"`
 	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`
 	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names, can be combined with & and |"`

@@ -2,7 +2,7 @@ PhotoPrism: Browse Your Life in Pictures
 ========================================
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)](https://docs.photoprism.app/license/agpl/)
-[![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://www.photoprism.app/team)
+[![GitHub contributors](https://img.shields.io/github/contributors/photoprism/photoprism.svg)](https://www.photoprism.app/about/team)
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)](https://docs.photoprism.app/)
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)](https://link.photoprism.app/chat)
 [![GitHub Discussions](https://img.shields.io/badge/ask-%20on%20github-4d6a91.svg)](https://link.photoprism.app/discussions)
@@ -34,7 +34,7 @@ To get a first impression, you are welcome to play with our [public demo](https:
 * Use [PhotoSync](https://link.photoprism.app/photosync) to securely backup iOS and Android phones in the background
 * WebDAV clients such as Microsoft's Windows Explorer and Apple's Finder [can connect directly](https://docs.photoprism.app/user-guide/sync/webdav/) to PhotoPrism, allowing you to open, edit, and delete files from your computer as if they were local
 
-Because we are [**100% self-funded and independent**](https://www.photoprism.app/membership), we can promise you that we will [never sell your data](https://www.photoprism.app/privacy) and that we will [always be transparent](https://www.photoprism.app/terms) about our software and services. Your data will never be shared with Google, Amazon, Microsoft or Apple unless you intentionally upload files to one of their services. 🔒
+Being completely [**self-funded and independent**](https://link.photoprism.app/membership), we can promise you that we will [never sell your data](https://www.photoprism.app/privacy) and that we will [always be transparent](https://www.photoprism.app/terms) about our software and services. Your data will never be shared with Google, Amazon, Microsoft or Apple unless you intentionally upload files to one of their services. 🔒
 
 ## Getting Started ##
 <img align="right" width="25%" src="https://www.photoprism.app/user/pages/01.home/03._screenshots/iphone-maps-hybrid-540px.png">
@@ -56,28 +56,35 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 ## Support Our Mission 💎 ##
 
-**We encourage all of our users to [become a sponsor](https://www.photoprism.app/membership), as this allows us to make more features available to the public and remain independent.**
+**PhotoPrism is 100% self-funded and independent.** Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent!
 
-Sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/team) and other sponsors. We currently have the following sponsorship options:
+Our members [enjoy additional features](https://www.photoprism.app/kb/personal), including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to [connect with our team](https://www.photoprism.app/about/team). We currently have the following membership options:
 
 - [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
 - [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
-- Stripe will be available in 2022, so you can sign up directly in the app
+- Stripe will be available this year, so you can sign up directly in the app
 
-You are welcome to [contact us](https://www.photoprism.app/contact) for [crypto donations](https://www.photoprism.app/crypto-donations), bank account details, and business partnerships. Why your support matters:
+You are [welcome to contact us](https://www.photoprism.app/contact) for change requests, membership questions, and business partnerships.
+
+[Support Our Mission ›](https://link.photoprism.app/membership) [Contact Us ›](https://www.photoprism.app/contact)
+
+### Why Your Support Matters ###
 
 - Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy
 - Sustained funding is key to quickly releasing new features requested by you and other community members
-- Being **100% self-funded and independent**, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
+- Being self-funded and independent, we can personally promise you that we will never sell your data and that we will always be transparent about our software and services
 
-Visit [photoprism.app/membership](https://www.photoprism.app/membership) to learn more. Also, please [leave a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project.
-It provides additional motivation to keep going.
+Please also leave [a star](https://github.com/photoprism/photoprism/stargazers) on GitHub if you like this project. It provides additional motivation to keep going.
+
+**A big thank you to all current and past sponsors, whose generous support has been and continues to be essential to the success of the project!**
+
+[View Sponsors ›](SPONSORS.md) [View Credits ›](https://docs.photoprism.app/credits/)
 
 ## Getting Support ##
 
 Visit [docs.photoprism.app/user-guide](https://docs.photoprism.app/user-guide/) to learn how to [sync](https://docs.photoprism.app/user-guide/sync/webdav/), [organize](https://docs.photoprism.app/user-guide/library/), and [share](https://docs.photoprism.app/user-guide/share/) your pictures. If you need help installing our software at home, you can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions).
 
-Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/). Eligible [sponsors](https://www.photoprism.app/membership) are also welcome to [email us for technical support](https://www.photoprism.app/contact) and personalized advice.
+Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/). Eligible [members](https://link.photoprism.app/membership) are also welcome to [email us for technical support](https://www.photoprism.app/contact) and personalized advice.
 
 ## Upcoming Features and Enhancements ##
 
@@ -92,7 +99,7 @@ Be aware that we have a zero-bug policy and do our best to help users when they 
 We kindly ask you not to report bugs via GitHub Issues **unless you are certain to have found a fully reproducible and previously unreported issue** that must be fixed directly in the app. Thank you for your careful consideration!
 
 - When reporting a problem, always include the software versions you are using and other information about your environment such as [browser, browser plugins](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), operating system, [storage type](https://docs.photoprism.app/getting-started/troubleshooting/performance/#storage), [memory size](https://docs.photoprism.app/getting-started/troubleshooting/performance/#memory), and [processor](https://docs.photoprism.app/getting-started/troubleshooting/performance/#server-cpu)
-- Note that all issue **subscribers receive an email notification** from GitHub for each new comment, so these should only be used for sharing important information and not for personal discussions/questions
+- Note that all issue **subscribers receive an email notification** from GitHub whenever a new comment is added, so these should only be used for sharing important information and not for discussions, questions or expressing personal opinions
 - [Contact us](https://www.photoprism.app/contact) or [a community member](https://link.photoprism.app/discussions) if you need help, it could be a local configuration problem, or a misunderstanding in how the software works
 - This gives our team the opportunity to [improve the docs](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling unclear/duplicate bug reports or triggering a flood of notifications by responding to comments
 

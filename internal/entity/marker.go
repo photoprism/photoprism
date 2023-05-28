@@ -136,17 +136,20 @@ func (m *Marker) UpdateFile(file *File) (updated bool) {
 		log.Errorf("faces: failed assigning marker %s to file %s (%s)", m.MarkerUID, m.FileUID, err)
 		return false
 	} else {
+		UpdateFaces.Store(true)
 		return true
 	}
 }
 
 // Updates multiple columns in the database.
 func (m *Marker) Updates(values interface{}) error {
+	UpdateFaces.Store(true)
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
 // Update updates a column in the database.
 func (m *Marker) Update(attr string, value interface{}) error {
+	UpdateFaces.Store(true)
 	return UnscopedDb().Model(m).Update(attr, value).Error
 }
 
@@ -192,10 +195,10 @@ func (m *Marker) SaveForm(f form.Marker) (changed bool, err error) {
 	}
 
 	if changed {
-		return changed, m.Save()
+		return true, m.Save()
 	}
 
-	return changed, nil
+	return false, nil
 }
 
 // HasFace tests if the marker already has the best matching face.
@@ -236,6 +239,8 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	} else {
 		return false, nil
 	}
+
+	UpdateFaces.Store(true)
 
 	// Update face with known subject from marker?
 	if m.SubjSrc == SrcAuto || m.SubjUID == "" || f.SubjUID != "" {
@@ -380,6 +385,8 @@ func (m *Marker) Save() error {
 		return err
 	}
 
+	UpdateFaces.Store(true)
+
 	return Db().Save(m).Error
 }
 
@@ -388,6 +395,8 @@ func (m *Marker) Create() error {
 	if err := m.InvalidArea(); err != nil {
 		return err
 	}
+
+	UpdateFaces.Store(true)
 
 	return Db().Create(m).Error
 }
@@ -458,7 +467,7 @@ func (m *Marker) ClearSubject(src string) error {
 		if count, err := DeleteOrphanPeople(); err != nil {
 			log.Errorf("faces: %s while clearing subject of marker %s [%s]", err, clean.Log(m.MarkerUID), time.Since(start))
 		} else if count > 0 {
-			log.Debugf("faces: %s marked as missing while clearing subject of marker %s [%s]", english.Plural(count, "person", "people"), clean.Log(m.MarkerUID), time.Since(start))
+			log.Debugf("faces: %s flagged as missing while clearing subject of marker %s [%s]", english.Plural(count, "person", "people"), clean.Log(m.MarkerUID), time.Since(start))
 		}
 	}()
 
@@ -532,6 +541,7 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 		return false, m.Matched()
 	}
 
+	UpdateFaces.Store(true)
 	updated = true
 
 	// Remove face references.

@@ -90,6 +90,5 @@
   <!-- in order to avoid to get image with password text -->
   <policy domain="path" rights="none" pattern="@*"/>
   <!-- disable pdf and xps format types -->
-  <policy domain="coder" rights="none" pattern="PDF" />
   <policy domain="coder" rights="none" pattern="XPS" />
 </policymap>

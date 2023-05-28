@@ -22,7 +22,7 @@ func UpdateAlbumDefaultCovers() (err error) {
 
 	var res *gorm.DB
 
-	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumDefault, entity.SrcAuto)
+	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto)
 
 	switch DbDialect() {
 	case MySQL:

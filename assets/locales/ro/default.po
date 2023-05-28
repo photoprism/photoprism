@@ -1,15 +1,10 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-02-26 09:43+0000\n"
+"Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/backend/ro/>\n"
 "Language: ro\n"
@@ -51,15 +46,15 @@ msgstr "Fișier nedescoperit"
 
 #: messages.go:101
 msgid "File too large"
-msgstr "Fișierul este prea mare"
+msgstr "Fișier prea mare"
 
 #: messages.go:102
 msgid "Unsupported format"
-msgstr "Fișier incompatibil"
+msgstr "Format neacceptat"
 
 #: messages.go:103
 msgid "Originals folder is empty"
-msgstr "Dosarul cu fișiere originale este gol"
+msgstr "Dosarul Originals este gol"
 
 #: messages.go:104
 msgid "Selection not found"
@@ -107,11 +102,11 @@ msgstr "Nu este disponibil în modul doar pentru citire"
 
 #: messages.go:115
 msgid "Please log in to your account"
-msgstr "Vă rugăm să vă conectați"
+msgstr "Vă rugăm să vă conectați la contul dvs"
 
 #: messages.go:116
 msgid "Permission denied"
-msgstr "Accesul a fost refuzat"
+msgstr "Permisiune refuzată"
 
 #: messages.go:117
 msgid "Upload might be offensive"
@@ -180,8 +175,7 @@ msgstr "Ocupat, vă rugăm să încercați din nou mai târziu"
 #: messages.go:133
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
-msgstr ""
-"Intervalul de trezire este %s, dar trebuie sa fie de 1 oră sau mai puțin"
+msgstr "Intervalul de trezire este %s, dar trebuie să fie de 1h sau mai puțin"
 
 #: messages.go:134
 msgid "Your account could not be connected"
@@ -329,7 +323,7 @@ msgstr "Persoană eliminată"
 
 #: messages.go:169
 msgid "File uploaded"
-msgstr "Fișierul a fost încarcat"
+msgstr "Fișier încărcat"
 
 #: messages.go:170
 #, c-format
@@ -338,7 +332,7 @@ msgstr "%d fișiere încărcate în %d s"
 
 #: messages.go:171
 msgid "Processing upload..."
-msgstr "Se procesează încărcarea..."
+msgstr "Procesarea încărcării..."
 
 #: messages.go:172
 msgid "Upload has been processed"
@@ -376,7 +370,7 @@ msgstr "Șterse definitiv"
 #: messages.go:180
 #, c-format
 msgid "%s has been restored"
-msgstr "%s a fost restabilită"
+msgstr "%s a fost restaurat"
 
 #~ msgid "Invalid request"
 #~ msgstr "Cerere invalidă"

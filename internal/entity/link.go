@@ -121,7 +121,7 @@ func (m *Link) SetSlug(s string) {
 
 // SetPassword sets the password required to use the share link.
 func (m *Link) SetPassword(password string) error {
-	pw := NewPassword(m.LinkUID, password)
+	pw := NewPassword(m.LinkUID, password, false)
 
 	if err := pw.Save(); err != nil {
 		return err
@@ -200,7 +200,7 @@ func FindLink(linkUid string) *Link {
 
 	result := Link{}
 
-	if Db().Where("link_uid = ?", linkUid).First(&result).RecordNotFound() {
+	if Db().Where("link_uid = ?", linkUid).First(&result).Error != nil {
 		event.AuditWarn([]string{"link %s", "not found"}, clean.Log(linkUid))
 		return nil
 	}

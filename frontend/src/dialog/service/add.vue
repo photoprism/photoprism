@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="500" class="p-account-create-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" lazy persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pa-2">
         <v-layout row wrap>
@@ -38,7 +38,7 @@
             <v-text-field
                 v-model="model.AccPass"
                 hide-details box flat
-                autocorrect="off"
+                browser-autocomplete="new-password"
                 autocapitalize="none"
                 :label="$gettext('Password')"
                 placeholder="optional"
@@ -76,7 +76,7 @@ import Service from "model/service";
 import * as options from "options/options";
 
 export default {
-  name: 'PAccountCreateDialog',
+  name: 'PAccountAddDialog',
   props: {
     show: Boolean,
   },
@@ -106,6 +106,7 @@ export default {
 
       this.model.save().then((a) => {
         this.loading = false;
+        this.$notify.success(this.$gettext("Account created"));
         this.$emit('confirm', a.UID);
       });
     },

@@ -10,20 +10,23 @@ import (
 
 // UserSettings represents user preferences.
 type UserSettings struct {
-	UserUID     string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
-	UITheme     string    `gorm:"type:VARBINARY(32);column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
-	UILanguage  string    `gorm:"type:VARBINARY(32);column:ui_language;" json:"UILanguage,omitempty" yaml:"UILanguage,omitempty"`
-	UITimeZone  string    `gorm:"type:VARBINARY(64);column:ui_time_zone;" json:"UITimeZone,omitempty" yaml:"UITimeZone,omitempty"`
-	MapsStyle   string    `gorm:"type:VARBINARY(32);" json:"MapsStyle,omitempty" yaml:"MapsStyle,omitempty"`
-	MapsAnimate int       `json:"MapsAnimate,omitempty" yaml:"MapsAnimate,omitempty"`
-	IndexPath   string    `gorm:"type:VARBINARY(1024);" json:"IndexPath,omitempty" yaml:"IndexPath,omitempty"`
-	IndexRescan int       `json:"IndexRescan,omitempty" yaml:"IndexRescan,omitempty"`
-	ImportPath  string    `gorm:"type:VARBINARY(1024);" json:"ImportPath,omitempty" yaml:"ImportPath,omitempty"`
-	ImportMove  int       `json:"ImportMove,omitempty" yaml:"ImportMove,omitempty"`
-	UploadPath  string    `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
-	DefaultPage string    `gorm:"type:VARBINARY(128);" json:"DefaultPage,omitempty" yaml:"DefaultPage,omitempty"`
-	CreatedAt   time.Time `json:"CreatedAt" yaml:"-"`
-	UpdatedAt   time.Time `json:"UpdatedAt" yaml:"-"`
+	UserUID              string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"UserUID"`
+	UITheme              string    `gorm:"type:VARBINARY(32);column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
+	UILanguage           string    `gorm:"type:VARBINARY(32);column:ui_language;" json:"UILanguage,omitempty" yaml:"UILanguage,omitempty"`
+	UITimeZone           string    `gorm:"type:VARBINARY(64);column:ui_time_zone;" json:"UITimeZone,omitempty" yaml:"UITimeZone,omitempty"`
+	MapsStyle            string    `gorm:"type:VARBINARY(32);" json:"MapsStyle,omitempty" yaml:"MapsStyle,omitempty"`
+	MapsAnimate          int       `gorm:"default:0;" json:"MapsAnimate,omitempty" yaml:"MapsAnimate,omitempty"`
+	IndexPath            string    `gorm:"type:VARBINARY(1024);" json:"IndexPath,omitempty" yaml:"IndexPath,omitempty"`
+	IndexRescan          int       `gorm:"default:0;" json:"IndexRescan,omitempty" yaml:"IndexRescan,omitempty"`
+	ImportPath           string    `gorm:"type:VARBINARY(1024);" json:"ImportPath,omitempty" yaml:"ImportPath,omitempty"`
+	ImportMove           int       `gorm:"default:0;" json:"ImportMove,omitempty" yaml:"ImportMove,omitempty"`
+	DownloadOriginals    int       `gorm:"default:0;" json:"DownloadOriginals,omitempty" yaml:"DownloadOriginals,omitempty"`
+	DownloadMediaRaw     int       `gorm:"default:0;" json:"DownloadMediaRaw,omitempty" yaml:"DownloadMediaRaw,omitempty"`
+	DownloadMediaSidecar int       `gorm:"default:0;" json:"DownloadMediaSidecar,omitempty" yaml:"DownloadMediaSidecar,omitempty"`
+	UploadPath           string    `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
+	DefaultPage          string    `gorm:"type:VARBINARY(128);" json:"DefaultPage,omitempty" yaml:"DefaultPage,omitempty"`
+	CreatedAt            time.Time `json:"CreatedAt" yaml:"-"`
+	UpdatedAt            time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -123,6 +126,25 @@ func (m *UserSettings) Apply(s *customize.Settings) *UserSettings {
 		}
 	}
 
+	// Download preferences.
+	if s.Download.Name != "" {
+		if s.Download.Originals {
+			m.DownloadOriginals = 1
+		} else {
+			m.DownloadOriginals = -1
+		}
+		if s.Download.MediaRaw {
+			m.DownloadMediaRaw = 1
+		} else {
+			m.DownloadMediaRaw = -1
+		}
+		if s.Download.MediaSidecar {
+			m.DownloadMediaSidecar = 1
+		} else {
+			m.DownloadMediaSidecar = -1
+		}
+	}
+
 	return m
 }
 
@@ -168,6 +190,24 @@ func (m *UserSettings) ApplyTo(s *customize.Settings) *customize.Settings {
 		s.Import.Move = true
 	} else if m.ImportMove < 0 {
 		s.Import.Move = false
+	}
+
+	if m.DownloadOriginals > 0 {
+		s.Download.Originals = true
+	} else if m.DownloadOriginals < 0 {
+		s.Download.Originals = false
+	}
+
+	if m.DownloadMediaRaw > 0 {
+		s.Download.MediaRaw = true
+	} else if m.DownloadMediaRaw < 0 {
+		s.Download.MediaRaw = false
+	}
+
+	if m.DownloadMediaSidecar > 0 {
+		s.Download.MediaSidecar = true
+	} else if m.DownloadMediaSidecar < 0 {
+		s.Download.MediaSidecar = false
 	}
 
 	return s

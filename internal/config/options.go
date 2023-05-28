@@ -18,6 +18,7 @@ import (
 // validation and return defaults if a value is empty.
 type Options struct {
 	Name                  string        `json:"-"`
+	About                 string        `json:"-"`
 	Edition               string        `json:"-"`
 	Version               string        `json:"-"`
 	Copyright             string        `json:"-"`
@@ -45,9 +46,9 @@ type Options struct {
 	OriginalsPath         string        `yaml:"OriginalsPath" json:"-" flag:"originals-path"`
 	OriginalsLimit        int           `yaml:"OriginalsLimit" json:"OriginalsLimit" flag:"originals-limit"`
 	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
+	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
@@ -61,9 +62,10 @@ type Options struct {
 	AutoImport            int           `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
 	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
-	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
-	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
 	DisableSettings       bool          `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
+	DisableRestart        bool          `yaml:"DisableRestart" json:"-" flag:"disable-restart"`
+	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
+	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
 	DisablePlaces         bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableTensorFlow     bool          `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
 	DisableFaces          bool          `yaml:"DisableFaces" json:"DisableFaces" flag:"disable-faces"`
@@ -75,7 +77,8 @@ type Options struct {
 	DisableRawTherapee    bool          `yaml:"DisableRawTherapee" json:"DisableRawTherapee" flag:"disable-rawtherapee"`
 	DisableImageMagick    bool          `yaml:"DisableImageMagick" json:"DisableImageMagick" flag:"disable-imagemagick"`
 	DisableHeifConvert    bool          `yaml:"DisableHeifConvert" json:"DisableHeifConvert" flag:"disable-heifconvert"`
-	DisableVector         bool          `yaml:"DisableVector" json:"DisableVector" flag:"disable-vector"`
+	DisableVectors        bool          `yaml:"DisableVectors" json:"DisableVectors" flag:"disable-vectors"`
+	DisableJpegXL         bool          `yaml:"DisableJpegXL" json:"DisableJpegXL" flag:"disable-jpegxl"`
 	DisableRaw            bool          `yaml:"DisableRaw" json:"DisableRaw" flag:"disable-raw"`
 	RawPresets            bool          `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`
 	ExifBruteForce        bool          `yaml:"ExifBruteForce" json:"ExifBruteForce" flag:"exif-bruteforce"`
@@ -91,6 +94,7 @@ type Options struct {
 	LegalUrl              string        `yaml:"LegalUrl" json:"LegalUrl" flag:"legal-url"`
 	WallpaperUri          string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
 	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
+	CdnVideo              bool          `yaml:"CdnVideo" json:"CdnVideo" flag:"cdn-video"`
 	SiteUrl               string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SiteAuthor            string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	SiteTitle             string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
@@ -108,6 +112,8 @@ type Options struct {
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
 	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
+	HttpCacheMaxAge       int           `yaml:"HttpCacheMaxAge" json:"HttpCacheMaxAge" flag:"http-cache-maxage"`
+	HttpCachePublic       bool          `yaml:"HttpCachePublic" json:"HttpCachePublic" flag:"http-cache-public"`
 	HttpHost              string        `yaml:"HttpHost" json:"-" flag:"http-host"`
 	HttpPort              int           `yaml:"HttpPort" json:"-" flag:"http-port"`
 	DatabaseDriver        string        `yaml:"DatabaseDriver" json:"-" flag:"database-driver"`
@@ -123,6 +129,8 @@ type Options struct {
 	FFmpegBin             string        `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
 	FFmpegEncoder         string        `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
 	FFmpegBitrate         int           `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
+	FFmpegMapVideo        string        `yaml:"FFmpegMapVideo" json:"FFmpegMapVideo" flag:"ffmpeg-map-video"`
+	FFmpegMapAudio        string        `yaml:"FFmpegMapAudio" json:"FFmpegMapAudio" flag:"ffmpeg-map-audio"`
 	ExifToolBin           string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	DarktableBin          string        `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
 	DarktableCachePath    string        `yaml:"DarktableCachePath" json:"-" flag:"darktable-cache-path"`
@@ -176,8 +184,13 @@ func NewOptions(ctx *cli.Context) *Options {
 		c.Name = fmt.Sprintf("%s", s)
 	}
 
-	// Set app edition from metadata if possible.
+	// Set app about from metadata if possible.
 	if s, ok := ctx.App.Metadata["About"]; ok {
+		c.About = fmt.Sprintf("%s", s)
+	}
+
+	// Set app edition from metadata if possible.
+	if s, ok := ctx.App.Metadata["Edition"]; ok {
 		c.Edition = fmt.Sprintf("%s", s)
 	}
 

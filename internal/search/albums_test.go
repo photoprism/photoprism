@@ -156,7 +156,7 @@ func TestAlbums(t *testing.T) {
 	})
 	t.Run("SearchAlbumForYear", func(t *testing.T) {
 		f := form.SearchAlbums{
-			Type:   entity.AlbumDefault,
+			Type:   entity.AlbumManual,
 			Year:   "2018",
 			Month:  "",
 			Day:    "",
@@ -166,6 +166,38 @@ func TestAlbums(t *testing.T) {
 		}
 
 		result, err := Albums(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 2, len(result))
+	})
+	t.Run("Folders", func(t *testing.T) {
+		query := form.NewAlbumSearch("19")
+		result, err := Albums(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "April 1990", result[0].AlbumTitle)
+	})
+	t.Run("California", func(t *testing.T) {
+		query := form.NewAlbumSearch("california")
+		result, err := Albums(query)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("albums: %#v", result)
+
+		assert.GreaterOrEqual(t, 3, len(result))
+	})
+	t.Run("Blue", func(t *testing.T) {
+		query := form.NewAlbumSearch("blue")
+		result, err := Albums(query)
 
 		if err != nil {
 			t.Fatal(err)

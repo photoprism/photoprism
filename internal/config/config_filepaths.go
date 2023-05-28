@@ -90,8 +90,8 @@ func (c *Config) CreateDirectories() error {
 
 	if c.UsersPath() == "" {
 		return notFoundError("users")
-	} else if err := os.MkdirAll(c.UsersPath(), fs.ModeDir); err != nil {
-		return createError(c.UsersPath(), err)
+	} else if err := os.MkdirAll(c.UsersStoragePath(), fs.ModeDir); err != nil {
+		return createError(c.UsersStoragePath(), err)
 	}
 
 	if c.CmdCachePath() == "" {
@@ -128,6 +128,12 @@ func (c *Config) CreateDirectories() error {
 		return notFoundError("cache")
 	} else if err := os.MkdirAll(c.CachePath(), fs.ModeDir); err != nil {
 		return createError(c.CachePath(), err)
+	}
+
+	if c.MediaCachePath() == "" {
+		return notFoundError("media")
+	} else if err := os.MkdirAll(c.MediaCachePath(), fs.ModeDir); err != nil {
+		return createError(c.MediaCachePath(), err)
 	}
 
 	if c.ThumbCachePath() == "" {
@@ -319,24 +325,33 @@ func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }
 
-// UsersPath returns the storage base path for user assets like
-// avatar images and other media that should not be indexed.
+// UsersPath returns the relative base path for user assets.
 func (c *Config) UsersPath() string {
 	// Set default.
 	if c.options.UsersPath == "" {
-		c.options.UsersPath = filepath.Join(c.StoragePath(), "users")
+		return "users"
 	}
 
-	return c.options.UsersPath
+	return clean.UserPath(c.options.UsersPath)
 }
 
-// UserPath returns the storage path for user assets.
-func (c *Config) UserPath(userUid string) string {
+// UsersOriginalsPath returns the users originals base path.
+func (c *Config) UsersOriginalsPath() string {
+	return filepath.Join(c.OriginalsPath(), c.UsersPath())
+}
+
+// UsersStoragePath returns the users storage base path.
+func (c *Config) UsersStoragePath() string {
+	return filepath.Join(c.StoragePath(), "users")
+}
+
+// UserStoragePath returns the storage path for user assets.
+func (c *Config) UserStoragePath(userUid string) string {
 	if !rnd.IsUID(userUid, 0) {
 		return ""
 	}
 
-	dir := filepath.Join(c.UsersPath(), userUid)
+	dir := filepath.Join(c.UsersStoragePath(), userUid)
 
 	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
 		return ""
@@ -351,7 +366,7 @@ func (c *Config) UserUploadPath(userUid, token string) (string, error) {
 		return "", fmt.Errorf("invalid uid")
 	}
 
-	dir := filepath.Join(c.UserPath(userUid), "upload", clean.Token(token))
+	dir := filepath.Join(c.UserStoragePath(userUid), "upload", clean.Token(token))
 
 	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
 		return "", err
@@ -443,9 +458,14 @@ func (c *Config) CmdLibPath() string {
 	return "/usr/local/lib:/usr/lib"
 }
 
-// ThumbCachePath returns the thumbnail storage directory.
+// MediaCachePath returns the media cache path.
+func (c *Config) MediaCachePath() string {
+	return filepath.Join(c.CachePath(), "media")
+}
+
+// ThumbCachePath returns the thumbnail storage path.
 func (c *Config) ThumbCachePath() string {
-	return c.CachePath() + "/thumbnails"
+	return filepath.Join(c.CachePath(), "thumbnails")
 }
 
 // StoragePath returns the path for generated files like cache and index.
@@ -544,6 +564,15 @@ func (c *Config) CustomStaticUri() string {
 		return ""
 	} else {
 		return c.CdnUrl(c.BaseUri(CustomStaticUri))
+	}
+}
+
+// CustomStaticAssetUri returns the resource URI of the custom static file asset.
+func (c *Config) CustomStaticAssetUri(res string) string {
+	if dir := c.CustomAssetsPath(); dir == "" {
+		return ""
+	} else {
+		return c.CdnUrl(c.BaseUri(CustomStaticUri)) + "/" + res
 	}
 }
 

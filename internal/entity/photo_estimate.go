@@ -64,7 +64,7 @@ func (m *Photo) EstimateLocation(force bool) {
 		return
 	} else if force || m.EstimatedAt == nil {
 		// Proceed.
-	} else if hours := TimeStamp().Sub(*m.EstimatedAt) / time.Hour; hours < MetadataEstimateInterval {
+	} else if hours := TimeStamp().Sub(*m.EstimatedAt); hours < MetadataEstimateInterval {
 		// Ignore if location has been estimated recently (in the last 7 days by default).
 		return
 	}

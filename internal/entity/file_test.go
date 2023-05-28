@@ -821,3 +821,41 @@ func TestFile_Bitrate(t *testing.T) {
 		assert.Equal(t, float64(0), m.Bitrate())
 	})
 }
+
+func TestFile_Orientation(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		m := File{FileOrientation: 8}
+		assert.Equal(t, 8, m.Orientation())
+	})
+	t.Run("Empty", func(t *testing.T) {
+		m := File{FileOrientation: 0}
+		assert.Equal(t, 0, m.Orientation())
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		m := File{FileOrientation: 10}
+		assert.Equal(t, 0, m.Orientation())
+	})
+	t.Run("Negative", func(t *testing.T) {
+		m := File{FileOrientation: -1}
+		assert.Equal(t, 0, m.Orientation())
+	})
+}
+
+func TestFile_SetOrientation(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		m := File{FileOrientation: 8}
+		assert.Equal(t, 8, m.Orientation())
+		assert.Equal(t, "", m.FileOrientationSrc)
+		m.SetOrientation(1, SrcManual)
+		assert.Equal(t, 1, m.Orientation())
+		assert.Equal(t, SrcManual, m.FileOrientationSrc)
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		m := File{FileOrientation: 8}
+		assert.Equal(t, 8, m.Orientation())
+		assert.Equal(t, "", m.FileOrientationSrc)
+		m.SetOrientation(-1, SrcManual)
+		assert.Equal(t, 8, m.Orientation())
+		assert.Equal(t, "", m.FileOrientationSrc)
+	})
+}

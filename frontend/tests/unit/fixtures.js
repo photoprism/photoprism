@@ -320,8 +320,8 @@ Mock.onPost("api/v1/folders/dqbevau2zlhxrxww/like").reply(200, { status: "ok" },
 Mock.onDelete("api/v1/folders/dqbevau2zlhxrxww/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onPost("api/v1/photos/undefined/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onDelete("api/v1/photos/undefined/like").reply(200, { status: "ok" }, mockHeaders);
-Mock.onPost("api/v1/albums/undefined/like").reply(200, { status: "ok" }, mockHeaders);
-Mock.onDelete("api/v1/albums/undefined/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onPost("api/v1/albums/5/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onDelete("api/v1/albums/5/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onGet("api/v1/config").reply(200, clientConfig, mockHeaders);
 Mock.onPut("api/v1/markers/mBC123ghytr", { Review: false, Invalid: false }).reply(
   200,

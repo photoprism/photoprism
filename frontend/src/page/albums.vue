@@ -171,6 +171,17 @@
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
+
+                <v-btn v-if="canManage && featExperimental && featPrivate && album.Private"
+                       :ripple="false"
+                       icon flat absolute
+                       class="input-private"
+                       @touchstart.stop.prevent="input.touchStart($event, index)"
+                       @touchend.stop.prevent="onEdit($event, index)"
+                       @touchmove.stop.prevent
+                       @click.stop.prevent="onEdit($event, index)">
+                  <v-icon color="white" class="select-on">lock</v-icon>
+                </v-btn>
               </v-img>
 
               <v-card-title primary-title class="pl-3 pt-3 pr-3 pb-2 card-details" style="user-select: none;">
@@ -295,7 +306,9 @@ export default {
       canManage: this.$config.allow("albums", "manage"),
       canEdit: this.$config.allow("albums", "update"),
       config: this.$config.values,
-      featureShare: features.share,
+      featExperimental: this.$config.get("experimental") && !this.$config.ce(),
+      featShare: features.share,
+      featPrivate: features.private,
       categories: categories,
       subscriptions: [],
       listen: false,
@@ -330,7 +343,6 @@ export default {
           {value: 'favorites', text: this.$gettext('Favorites')},
           {value: 'name', text: this.$gettext('Name')},
           {value: 'place', text: this.$gettext('Location')},
-          {value: 'moment', text: this.$gettext('Place & Time')},
           {value: 'newest', text: this.$gettext('Newest First')},
           {value: 'oldest', text: this.$gettext('Oldest First')},
           {value: 'added', text: this.$gettext('Recently Added')},
@@ -504,6 +516,19 @@ export default {
       }
 
       return (rangeEnd - rangeStart) + 1;
+    },
+    onEdit(ev, index) {
+      if (!this.canManage) {
+        return;
+      }
+
+      const inputType = this.input.eval(ev, index);
+
+      if (inputType !== ClickShort) {
+        return;
+      }
+
+      return this.edit(this.results[index]);
     },
     onShare(ev, index) {
       if (!this.canShare) {
@@ -751,19 +776,32 @@ export default {
       this.loadMore();
     },
     create() {
+      // Use month and year as default title.
       let title = DateTime.local().toFormat("LLLL yyyy");
 
+      // Add suffix if the album title already exists.
       if (this.results.findIndex(a => a.Title.startsWith(title)) !== -1) {
-        const existing = this.results.filter(a => a.Title.startsWith(title));
-        title = `${title} (${existing.length + 1})`;
+        const re = new RegExp(`${title} \\((\\d?)\\)`, 'i');
+        let i = 1;
+        this.results.forEach(a => {
+          const found = a.Title.match(re);
+          if (found && found.length > 0 && found[1]) {
+            const n = parseInt(found[1]);
+            if (n > i) {
+              i = n;
+            }
+          }
+        });
+
+        title = `${title} (${i + 1})`;
       }
 
       const album = new Album({"Title": title, "Favorite": false});
 
-      album.save();
+      album.save().then(() => this.$notify.success(this.$gettext("Album created")));
     },
     onSave(album) {
-      album.update();
+      album.update().then(() => this.$notify.success(this.$gettext("Changes successfully saved")));
     },
     addSelection(uid) {
       const pos = this.selection.indexOf(uid);

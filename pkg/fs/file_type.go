@@ -17,6 +17,15 @@ func FileType(fileName string) Type {
 	return UnknownType
 }
 
+// IsAnimatedImage checks if the type associated with the specified filename may be animated.
+func IsAnimatedImage(fileName string) bool {
+	if t, found := Extensions[LowerExt(fileName)]; found {
+		return TypeAnimated[t] != ""
+	}
+
+	return false
+}
+
 // NewType creates a new file type from a filename extension.
 func NewType(ext string) Type {
 	return Type(TrimExt(ext))

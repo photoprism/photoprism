@@ -37,7 +37,7 @@ import { $gettext } from "common/vm";
 import Clipboard from "common/clipboard";
 import download from "common/download";
 import * as src from "common/src";
-import { canUseOGV, canUseVP8, canUseVP9, canUseAv1, canUseWebm, canUseHevc } from "common/caniuse";
+import { canUseOGV, canUseVP8, canUseVP9, canUseAv1, canUseWebM, canUseHevc } from "common/caniuse";
 
 export const CodecOGV = "ogv";
 export const CodecVP8 = "vp8";
@@ -470,18 +470,18 @@ export class Photo extends RestModel {
     }
 
     if (!file) {
-      file = this.gifFile();
+      file = this.animatedFile();
     }
 
     return file;
   });
 
-  gifFile() {
+  animatedFile() {
     if (!this.Files) {
       return false;
     }
 
-    return this.Files.find((f) => f.FileType === FormatGif);
+    return this.Files.find((f) => f.FileType === FormatGif || !!f.Frames || !!f.Duration);
   }
 
   videoUrl() {
@@ -500,14 +500,14 @@ export class Photo extends RestModel {
         videoFormat = CodecVP9;
       } else if (canUseAv1 && file.Codec === CodecAv1) {
         videoFormat = FormatAv1;
-      } else if (canUseWebm && file.FileType === FormatWebM) {
+      } else if (canUseWebM && file.FileType === FormatWebM) {
         videoFormat = FormatWebM;
       }
 
-      return `${config.apiUri}/videos/${file.Hash}/${config.previewToken}/${videoFormat}`;
+      return `${config.videoUri}/videos/${file.Hash}/${config.previewToken}/${videoFormat}`;
     }
 
-    return `${config.apiUri}/videos/${this.Hash}/${config.previewToken}/${FormatAvc}`;
+    return `${config.videoUri}/videos/${this.Hash}/${config.previewToken}/${FormatAvc}`;
   }
 
   mainFile() {
@@ -808,20 +808,12 @@ export class Photo extends RestModel {
     const info = [];
 
     if (file.MediaType === MediaVector) {
-      info.push(file.FileType.toUpperCase());
-
-      if (file.Software) {
-        info.push(file.Software);
-      }
-
-      this.addSizeInfo(file, info);
+      info.push(Util.fileType(file.FileType));
     } else {
       info.push($gettext("Vector"));
-
-      if (file.Width && file.Height) {
-        info.push(file.Width + " × " + file.Height);
-      }
     }
+
+    this.addSizeInfo(file, info);
 
     return info.join(", ");
   });
@@ -945,6 +937,26 @@ export class Photo extends RestModel {
 
   deleteFile(fileUID) {
     return Api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) =>
+      Promise.resolve(this.setValues(r.data))
+    );
+  }
+
+  changeFileOrientation(file) {
+    // Return if no file was provided.
+    if (!file) {
+      return Promise.resolve(this);
+    }
+
+    // Get updated values.
+    const values = file.getValues(true);
+
+    // Return if no values were changed.
+    if (Object.keys(values).length === 0) {
+      return Promise.resolve(this);
+    }
+
+    // Change file orientation.
+    return Api.put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values).then((r) =>
       Promise.resolve(this.setValues(r.data))
     );
   }

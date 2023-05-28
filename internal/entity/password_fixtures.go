@@ -19,10 +19,10 @@ func (m PasswordMap) Pointer(name string) *Password {
 }
 
 var PasswordFixtures = PasswordMap{
-	"alice":  NewPassword("uqxetse3cy5eo9z2", "Alice123!"),
-	"bob":    NewPassword("uqxc08w3d0ej2283", "Bobbob123!"),
-	"friend": NewPassword("uqxqg7i1kperxvu7", "!Friend321"),
-	"fowler": NewPassword("urinotv3d6jedvlm", "PleaseChange$42"),
+	"alice":  NewPassword("uqxetse3cy5eo9z2", "Alice123!", false),
+	"bob":    NewPassword("uqxc08w3d0ej2283", "Bobbob123!", false),
+	"friend": NewPassword("uqxqg7i1kperxvu7", "!Friend321", false),
+	"fowler": NewPassword("urinotv3d6jedvlm", "PleaseChange$42", false),
 }
 
 // CreatePasswordFixtures inserts known entities into the database for testing.

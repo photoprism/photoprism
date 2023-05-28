@@ -31,7 +31,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Base query.
 	s := UnscopedDb().Table("albums").
-		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year").
+		Select("albums.*, cp.photo_count, cl.link_count, CASE WHEN albums.album_year = 0 THEN 0 ELSE 1 END AS has_year, CASE WHEN albums.album_location = '' THEN 1 ELSE 0 END AS no_location").
 		Joins("LEFT JOIN (SELECT album_uid, count(photo_uid) AS photo_count FROM photos_albums WHERE hidden = 0 AND missing = 0 GROUP BY album_uid) AS cp ON cp.album_uid = albums.album_uid").
 		Joins("LEFT JOIN (SELECT share_uid, count(share_uid) AS link_count FROM links GROUP BY share_uid) AS cl ON cl.share_uid = albums.album_uid").
 		Where("albums.deleted_at IS NULL")
@@ -44,7 +44,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		// Determine resource to check.
 		var aclResource acl.Resource
 		switch f.Type {
-		case entity.AlbumDefault:
+		case entity.AlbumManual:
 			aclResource = acl.ResourceAlbums
 		case entity.AlbumFolder:
 			aclResource = acl.ResourceFolders
@@ -65,11 +65,11 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		if sess.IsVisitor() || sess.NotRegistered() {
 			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
 		} else if acl.Resources.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			if user.BasePath == "" {
+			if basePath := user.GetBasePath(); basePath == "" {
 				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
 			} else {
 				s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ? OR albums.album_type = ? AND (albums.album_path = ? OR albums.album_path LIKE ?)",
-					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, user.BasePath, user.BasePath+"/%")
+					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), entity.AlbumFolder, basePath, basePath+"/%")
 			}
 		}
 
@@ -84,15 +84,19 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	switch f.Order {
 	case sortby.Count:
 		s = s.Order("photo_count DESC, albums.album_title, albums.album_uid DESC")
-	case sortby.Newest:
-		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
+	case sortby.Moment, sortby.Newest:
+		if f.Type == entity.AlbumManual || f.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid DESC")
+		} else if f.Type == entity.AlbumMoment {
+			s = s.Order("has_year, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		}
 	case sortby.Oldest:
-		if f.Type == entity.AlbumDefault || f.Type == entity.AlbumState {
+		if f.Type == entity.AlbumManual || f.Type == entity.AlbumState {
 			s = s.Order("albums.album_uid ASC")
+		} else if f.Type == entity.AlbumMoment {
+			s = s.Order("has_year, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
 		} else {
 			s = s.Order("albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
 		}
@@ -100,10 +104,8 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		s = s.Order("albums.album_uid DESC")
 	case sortby.Edited:
 		s = s.Order("albums.updated_at DESC, albums.album_uid DESC")
-	case sortby.Moment:
-		s = s.Order("albums.album_favorite DESC, has_year, albums.album_year DESC, albums.album_month DESC, albums.album_title ASC, albums.album_uid DESC")
 	case sortby.Place:
-		s = s.Order("albums.album_location, albums.album_title, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_uid DESC")
+		s = s.Order("no_location, albums.album_location, has_year, albums.album_year DESC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid DESC")
 	case sortby.Path:
 		s = s.Order("albums.album_path, albums.album_uid DESC")
 	case sortby.Category:
@@ -123,6 +125,12 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 			s = s.Order("albums.album_path ASC, albums.album_uid DESC")
 		} else {
 			s = s.Order("albums.album_title ASC, albums.album_uid DESC")
+		}
+	case sortby.NameReverse:
+		if f.Type == entity.AlbumFolder {
+			s = s.Order("albums.album_path DESC, albums.album_uid DESC")
+		} else {
+			s = s.Order("albums.album_title DESC, albums.album_uid DESC")
 		}
 	default:
 		s = s.Order("albums.album_favorite DESC, albums.album_title ASC, albums.album_uid DESC")
@@ -152,7 +160,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Albums with public pictures only?
 	if f.Public {
-		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL)")
+		s = s.Where("albums.album_private = 0 AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_private = 0 AND photo_quality > -1 AND deleted_at IS NULL))")
 	} else {
 		s = s.Where("albums.album_type <> 'folder' OR albums.album_path IN (SELECT photo_path FROM photos WHERE photo_quality > -1 AND deleted_at IS NULL)")
 	}
@@ -182,7 +190,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 	if txt.NotEmpty(f.Year) {
 		// Filter by the pictures included if it is a manually managed album, as these do not have an explicit
 		// year assigned to them, unlike calendar albums and moments for example.
-		if f.Type == entity.AlbumDefault {
+		if f.Type == entity.AlbumManual {
 			s = s.Where("? OR albums.album_uid IN (SELECT DISTINCT pay.album_uid FROM photos_albums pay "+
 				"JOIN photos py ON pay.photo_uid = py.photo_uid WHERE py.photo_year IN (?) AND pay.hidden = 0 AND pay.missing = 0)",
 				gorm.Expr(AnyInt("albums.album_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax)), strings.Split(f.Year, txt.Or))

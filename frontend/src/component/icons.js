@@ -23,8 +23,9 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import IconLivePhoto from "component/icon/live_photo.vue";
+import IconLivePhoto from "component/icon/live-photo.vue";
 import IconSponsor from "component/icon/sponsor.vue";
+import IconPrism from "component/icon/prism.vue";
 
 const icons = {
   live_photo: {
@@ -37,6 +38,12 @@ const icons = {
     component: IconSponsor,
     props: {
       name: "sponsor",
+    },
+  },
+  prism: {
+    component: IconPrism,
+    props: {
+      name: "prism",
     },
   },
 };

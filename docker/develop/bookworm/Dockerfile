@@ -8,12 +8,12 @@ FROM debian:bookworm-slim
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Dev (Debian 12)"
+LABEL org.opencontainers.image.title="PhotoPrism® Build Image (Debian 12)"
 LABEL org.opencontainers.image.description="Debian 12 (Bookworm)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
-LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
 # Declare build parameters.
@@ -48,11 +48,12 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
+    echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
     apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
         libc6 ca-certificates sudo bash tzdata \
         gpg zip unzip wget curl rsync make nano \
-        jq lsof lshw sqlite3 mariadb-client imagemagick \
+        jq lsof lshw sqlite3 mariadb-client imagemagick libvips-dev \
         exiftool darktable rawtherapee libheif-examples librsvg2-bin \
         ffmpeg libavcodec-extra x264 x265 libvpx7 libwebm1 \
         libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \

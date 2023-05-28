@@ -29,19 +29,24 @@ func UploadUserFiles(router *gin.RouterGroup) {
 	router.POST("/users/:uid/upload/:token", func(c *gin.Context) {
 		conf := get.Config()
 
+		// Abort in public mode or when the upload feature is disabled.
 		if conf.ReadOnly() || !conf.Settings().Features.Upload {
 			Abort(c, http.StatusForbidden, i18n.ErrReadOnly)
 			return
 		}
 
+		// Check permission.
 		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})
 
 		if s.Abort(c) {
 			return
 		}
 
+		uid := clean.UID(c.Param("uid"))
+
 		// Users may only upload their own files.
-		if s.User().UserUID != clean.UID(c.Param("uid")) {
+		if s.User().UserUID != uid {
+			event.AuditErr([]string{ClientIP(c), "session %s", "upload files", "user does not match"}, s.RefID)
 			AbortForbidden(c)
 			return
 		}
@@ -57,13 +62,15 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			return
 		}
 
-		event.Publish("upload.start", event.Data{"time": start})
+		// Publish upload start event.
+		event.Publish("upload.start", event.Data{"uid": s.UserUID, "time": start})
 
 		files := f.File["files"]
 		uploaded := len(files)
 
 		var uploads []string
 
+		// Compose upload path.
 		uploadDir, err := conf.UserUploadPath(s.UserUID, s.RefID+token)
 
 		if err != nil {
@@ -72,20 +79,24 @@ func UploadUserFiles(router *gin.RouterGroup) {
 			return
 		}
 
+		// Save uploaded files.
 		for _, file := range files {
-			filename := path.Join(uploadDir, filepath.Base(file.Filename))
+			fileName := filepath.Base(file.Filename)
+			filePath := path.Join(uploadDir, fileName)
 
-			log.Debugf("upload: saving file %s", clean.Log(file.Filename))
-
-			if err := c.SaveUploadedFile(file, filename); err != nil {
-				log.Errorf("upload: failed saving file %s", clean.Log(filepath.Base(file.Filename)))
+			if err = c.SaveUploadedFile(file, filePath); err != nil {
+				log.Errorf("upload: failed saving file %s", clean.Log(fileName))
 				Abort(c, http.StatusBadRequest, i18n.ErrUploadFailed)
 				return
+			} else {
+				log.Debugf("upload: saved file %s", clean.Log(fileName))
+				event.Publish("upload.saved", event.Data{"uid": s.UserUID, "file": fileName})
 			}
 
-			uploads = append(uploads, filename)
+			uploads = append(uploads, filePath)
 		}
 
+		// Check if uploaded file is safe.
 		if !conf.UploadNSFW() {
 			nd := get.NsfwDetector()
 
@@ -174,8 +185,9 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		imp := get.Import()
 
+		// Get destination folder.
 		var destFolder string
-		if destFolder = s.User().UploadPath; destFolder == "" {
+		if destFolder = s.User().GetUploadPath(); destFolder == "" {
 			destFolder = conf.ImportDest()
 		}
 
@@ -192,7 +204,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Set user UID if known.
 		if s.UserUID != "" {
-			opt.UserUID = s.UserUID
+			opt.UID = s.UserUID
 		}
 
 		// Start import.
@@ -225,8 +237,9 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		msg := i18n.Msg(i18n.MsgUploadProcessed)
 
 		event.Success(msg)
-		event.Publish("import.completed", event.Data{"path": uploadPath, "seconds": elapsed})
-		event.Publish("index.completed", event.Data{"path": uploadPath, "seconds": elapsed})
+		event.Publish("import.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
+		event.Publish("index.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
+		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 
 		for _, uid := range f.Albums {
 			PublishAlbumEvent(EntityUpdated, uid, c)

@@ -69,11 +69,18 @@ func TestConfig_Name(t *testing.T) {
 	assert.Equal(t, "PhotoPrism", name)
 }
 
+func TestConfig_About(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	name := c.About()
+	assert.Equal(t, "PhotoPrism®", name)
+}
+
 func TestConfig_Edition(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	name := c.Edition()
-	assert.Equal(t, "PhotoPrism® Dev", name)
+	assert.NotEmpty(t, name)
 }
 
 func TestConfig_Version(t *testing.T) {
@@ -192,7 +199,14 @@ func TestConfig_CachePath(t *testing.T) {
 	assert.True(t, strings.HasSuffix(c.CachePath(), "storage/testdata/cache"))
 }
 
-func TestConfig_ThumbnailsPath(t *testing.T) {
+func TestConfig_MediaCachePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.True(t, strings.HasPrefix(c.MediaCachePath(), "/"))
+	assert.True(t, strings.HasSuffix(c.MediaCachePath(), "storage/testdata/cache/media"))
+}
+
+func TestConfig_ThumbCachePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.True(t, strings.HasPrefix(c.ThumbCachePath(), "/"))
@@ -356,28 +370,28 @@ func TestConfig_OriginalsLimit(t *testing.T) {
 	assert.Equal(t, 800, c.OriginalsLimit())
 }
 
-func TestConfig_OriginalsLimitBytes(t *testing.T) {
+func TestConfig_OriginalsByteLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int64(-1), c.OriginalsLimitBytes())
+	assert.Equal(t, int64(-1), c.OriginalsByteLimit())
 	c.options.OriginalsLimit = 800
-	assert.Equal(t, int64(838860800), c.OriginalsLimitBytes())
+	assert.Equal(t, int64(838860800), c.OriginalsByteLimit())
 }
 
 func TestConfig_ResolutionLimit(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, -1, c.ResolutionLimit())
+	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
 	c.options.ResolutionLimit = 800
 	assert.Equal(t, 800, c.ResolutionLimit())
 	c.options.ResolutionLimit = 950
 	assert.Equal(t, 900, c.ResolutionLimit())
 	c.options.ResolutionLimit = 0
-	assert.Equal(t, -1, c.ResolutionLimit())
+	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
 	c.options.ResolutionLimit = -1
 	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = false
-	assert.Equal(t, 150, c.ResolutionLimit())
+	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = true
 	assert.Equal(t, -1, c.ResolutionLimit())
 }
@@ -426,6 +440,22 @@ func TestConfig_CdnUrl(t *testing.T) {
 	assert.Equal(t, "http://foo:2342/foo/", c.CdnUrl("/"))
 }
 
+func TestConfig_CdnVideo(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.CdnVideo())
+	c.options.SiteUrl = "http://superhost:2342/"
+	assert.False(t, c.CdnVideo())
+	c.options.CdnUrl = "http://foo:2342/foo/"
+	assert.False(t, c.CdnVideo())
+	c.options.CdnVideo = true
+	assert.True(t, c.CdnVideo())
+	c.options.CdnVideo = false
+	assert.False(t, c.CdnVideo())
+	c.options.CdnUrl = ""
+	assert.False(t, c.CdnVideo())
+}
+
 func TestConfig_ContentUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -434,6 +464,19 @@ func TestConfig_ContentUri(t *testing.T) {
 	assert.Equal(t, ApiUri, c.ContentUri())
 	c.options.CdnUrl = "http://foo:2342//"
 	assert.Equal(t, "http://foo:2342"+ApiUri, c.ContentUri())
+}
+
+func TestConfig_VideoUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, ApiUri, c.VideoUri())
+	c.options.SiteUrl = "http://superhost:2342/"
+	assert.Equal(t, ApiUri, c.VideoUri())
+	c.options.CdnUrl = "http://foo:2342//"
+	c.options.CdnVideo = true
+	assert.Equal(t, "http://foo:2342"+ApiUri, c.VideoUri())
+	c.options.CdnVideo = false
+	assert.Equal(t, ApiUri, c.VideoUri())
 }
 
 func TestConfig_SiteUrl(t *testing.T) {

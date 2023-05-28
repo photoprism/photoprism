@@ -11,7 +11,7 @@ Feel free to [contact us](https://www.photoprism.app/contact) with anything that
 
 ## Not a Developer? No Problem ##
 
-You can also contribute by...
+You can also contribute by…
 
 * answering questions in the [Community Chat](https://link.photoprism.app/chat), on [Reddit](https://link.photoprism.app/reddit) and in [GitHub Discussions](https://link.photoprism.app/discussions)
 * helping us [translate](https://docs.photoprism.app/developer-guide/translations-weblate/) the Web UI
@@ -36,7 +36,7 @@ to determine the cause of your problem. If you have a general question, need hel
 We kindly ask you not to report bugs via GitHub Issues **unless you are certain to have found a fully reproducible and previously unreported issue** that must be fixed directly in [our source code](https://github.com/photoprism/photoprism). Thank you for your careful consideration!
 
 - When reporting a problem, always include the software versions you are using and other information about your environment such as [browser, browser plugins](https://docs.photoprism.app/getting-started/troubleshooting/browsers/), operating system, [storage type](https://docs.photoprism.app/getting-started/troubleshooting/performance/#storage), [memory size](https://docs.photoprism.app/getting-started/troubleshooting/performance/#memory), and [processor](https://docs.photoprism.app/getting-started/troubleshooting/performance/#server-cpu)
-- Note that all issue **subscribers receive an email notification** from GitHub for each new comment, so these should only be used for sharing important information and not for personal discussions/questions
+- Note that all issue **subscribers receive an email notification** from GitHub whenever a new comment is added, so these should only be used for sharing important information and not for discussions, questions or expressing personal opinions
 - [Contact us](https://www.photoprism.app/contact) or [a community member](https://link.photoprism.app/discussions) if you need help, it could be a local configuration problem, or a misunderstanding in how the software works
 - This gives our team the opportunity to [improve the docs](https://docs.photoprism.app/getting-started/troubleshooting/) and provide best-in-class support to you, instead of handling unclear/duplicate bug reports or triggering a flood of notifications by responding to comments
 
@@ -52,9 +52,22 @@ Pull requests solving ["help wanted"](https://github.com/photoprism/photoprism/l
 
 After you submit your first pull request, you will be asked to accept our Contributor License Agreement (CLA). Visit [photoprism.app/cla](https://www.photoprism.app/cla) and [photoprism.app/oss/faq](https://www.photoprism.app/oss/faq#cla) to learn more.
 
+## Thank You to All Current and Past Sponsors 💎 ##
+
+[A big thank you to all of our sponsors](SPONSORS.md), whose generous support has been and continues to be essential to the success of the project! 💜
+
+Our project infrastructure is provided by the following companies:
+
+- [**GitHub**](https://github.com/) hosts our [code repositories](https://github.com/photoprism/photoprism) and also provides many other important services
+- [**Docker**](https://www.docker.com/) approved us for their [Open Source Program](https://www.docker.com/community/open-source/application/) and hosts all of our app images
+- [**Element**](https://element.io/) develops and [operates the infrastructure](https://matrix.org/) that our [community chat](https://link.photoprism.app/chat) is based on
+- [**BrowserStack**](https://www.browserstack.com/) provides [free access](https://www.browserstack.com/open-source) to their device and browser testing infrastructure
+
+[View Sponsors ›](SPONSORS.md) [View Credits ›](https://docs.photoprism.app/credits/)
+
 ## Privacy Notice ##
 
-We operate a number of web services that help us develop and maintain our software in collaboration with the open source community, such as Weblate hosted at [translate.photoprism.app](https://translate.photoprism.app/) to keep translations up to date.
+We operate a number of web services that help us develop and maintain our software in collaboration with the open source community, for example [translate.photoprism.app](https://translate.photoprism.app/).
 
 Because many of these apps and tools were originally developed for internal use without a high level of privacy in mind, we ask that you do not enter personal information such as your real name or personal email address if you want it to remain private.
 
