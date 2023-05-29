@@ -95,17 +95,6 @@ export class Thumb extends Model {
     return result;
   }
 
-  static fromPhotos(photos) {
-    let result = [];
-    const n = photos.length;
-
-    for (let i = 0; i < n; i++) {
-      result.push(this.fromPhoto(photos[i]));
-    }
-
-    return result;
-  }
-
   static fromPhoto(photo) {
     if (photo.Files) {
       return this.fromFile(photo, photo.mainFile());

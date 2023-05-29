@@ -53,7 +53,6 @@ import {Photo, MediaLive, MediaRaw, MediaVideo, MediaAnimated} from "model/photo
 import Album from "model/album";
 import Thumb from "model/thumb";
 import Event from "pubsub-js";
-import Viewer from "common/viewer";
 
 export default {
   name: 'PPageAlbumPhotos',
@@ -243,12 +242,12 @@ export default {
         if (selected.isPlayable()) {
           this.$viewer.play({video: selected, album: this.album});
         } else {
-          this.$viewer.show(Thumb.fromPhotos(this.results), index);
+          this.$viewer.show(this.results, index);
         }
       } else if (showMerged) {
         this.$viewer.show(Thumb.fromFiles([selected]), 0);
       } else {
-        this.$viewer.show(Thumb.fromPhotos(this.results), index);
+        this.$viewer.show(this.results, index);
       }
 
       return true;

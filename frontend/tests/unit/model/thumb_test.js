@@ -247,7 +247,7 @@ describe("model/thumb", () => {
     };
     const photo = new Photo(values);
     const Photos = [photo];
-    const result = Thumb.fromPhotos(Photos);
+    const result = Photos;
     assert.equal(result[0].UID, "ABC123");
     assert.equal(result[0].Description, "Nice description 3");
     assert.equal(result[0].Width, 500);
