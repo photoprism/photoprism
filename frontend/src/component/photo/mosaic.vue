@@ -192,12 +192,6 @@ export default {
     }
   },
   beforeCreate() {
-    // try intersectionobserver on container to find the real scrollpos
-
-    // 1 resize-observer für die element-größe
-    // 1 intersection-observer und/oder scroll-listener fürs sichtbare window
-    // falls notwendig zusätzlich 1 resize-observer für die größe des sichtbaren windows
-
     this.elementObserver = new ResizeObserver((entries) => {
       this.elementSize = entries[0].borderBoxSize[0].inlineSize;
       this.updateGeometry();
