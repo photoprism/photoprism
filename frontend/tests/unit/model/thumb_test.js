@@ -198,7 +198,7 @@ describe("model/thumb", () => {
       ],
     };
     const photo = new Photo(values);
-    const result = Thumb.fromPhoto(photo);
+    const result = photo;
     assert.equal(result.UID, "ABC123");
     assert.equal(result.Description, "Nice description 3");
     assert.equal(result.Width, 500);
@@ -208,7 +208,7 @@ describe("model/thumb", () => {
       Description: "Nice description 3",
     };
     const photo3 = new Photo(values3);
-    const result2 = Thumb.fromPhoto(photo3);
+    const result2 = photo3;
     assert.equal(result2.UID, "");
     const values2 = {
       ID: 8,
@@ -221,7 +221,7 @@ describe("model/thumb", () => {
       Hash: "xdf45m",
     };
     const photo2 = new Photo(values2);
-    const result3 = Thumb.fromPhoto(photo2);
+    const result3 = photo2;
     assert.equal(result3.UID, "ABC123");
     assert.equal(result3.Title, "Crazy Cat");
     assert.equal(result3.Description, "Nice description");

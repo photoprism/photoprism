@@ -95,42 +95,6 @@ export class Thumb extends Model {
     return result;
   }
 
-  static fromPhoto(photo) {
-    if (photo.Files) {
-      return this.fromFile(photo, photo.mainFile());
-    }
-
-    if (!photo || !photo.Hash) {
-      return this.thumbNotFound();
-    }
-
-    const result = {
-      UID: photo.UID,
-      Title: photo.Title,
-      TakenAtLocal: photo.getDateString(),
-      Description: photo.Description,
-      Favorite: photo.Favorite,
-      Playable: photo.isPlayable(),
-      DownloadUrl: this.downloadUrl(photo),
-      Width: photo.Width,
-      Height: photo.Height,
-      Thumbs: {},
-    };
-
-    for (let i = 0; i < thumbs.length; i++) {
-      let t = thumbs[i];
-      let size = photo.calculateSize(t.w, t.h);
-
-      result.Thumbs[t.size] = {
-        src: photo.thumbnailUrl(t.size),
-        w: size.width,
-        h: size.height,
-      };
-    }
-
-    return new this(result);
-  }
-
   static fromFile(photo, file) {
     if (!photo || !file || !file.Hash) {
       return this.thumbNotFound();
