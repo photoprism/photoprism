@@ -32,7 +32,7 @@
           :key="photo.ID"
           class="flex xs4 sm3 md2 lg1 image-container"
           :data-index="index"
-          :style="getVirtualizedElementStyle(index)"
+          :style="getVirtualizedElementStyle(parseInt(index))"
       >
         <div :key="photo.Hash"
               tile
@@ -42,11 +42,11 @@
               :class="photo.classes().join(' ') + ' card darken-1 result clickable image'"
               :alt="photo.Title"
               :title="photo.Title"
-              @contextmenu.stop="onContextMenu($event, index)"
-              @touchstart.passive="input.touchStart($event, index)"
-              @touchend.stop.prevent="onClick($event, index)"
-              @mousedown.stop.prevent="input.mouseDown($event, index)"
-              @click.stop.prevent="onClick($event, index)"
+              @contextmenu.stop="onContextMenu($event, parseInt(index))"
+              @touchstart.passive="input.touchStart($event, parseInt(index))"
+              @touchend.stop.prevent="onClick($event, parseInt(index))"
+              @mousedown.stop.prevent="input.mouseDown($event, parseInt(index))"
+              @click.stop.prevent="onClick($event, parseInt(index))"
               @mouseover="playLive(photo)"
               @mouseleave="pauseLive(photo)">
           <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
@@ -58,10 +58,10 @@
 
           <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
                 class="input-open"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
+                @touchstart.stop.prevent="input.touchStart($event, parseInt(index))"
+                @touchend.stop.prevent="onOpen($event, parseInt(index), !isSharedView, photo.Type === 'live')"
                 @touchmove.stop.prevent
-                @click.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')">
+                @click.stop.prevent="onOpen($event, parseInt(index), !isSharedView, photo.Type === 'live')">
             <i v-if="photo.Type === 'raw'" class="action-raw" :title="$gettext('RAW')">raw_on</i>
             <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
             <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
@@ -73,10 +73,10 @@
           <button v-if="photo.Type === 'image' && selectMode"
                 class="input-view"
                 :title="$gettext('View')"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onOpen($event, index)"
+                @touchstart.stop.prevent="input.touchStart($event, parseInt(index))"
+                @touchend.stop.prevent="onOpen($event, parseInt(index))"
                 @touchmove.stop.prevent
-                @click.stop.prevent="onOpen($event, index)">
+                @click.stop.prevent="onOpen($event, parseInt(index))">
             <i color="white" class="action-fullscreen">zoom_in</i>
           </button>
 
@@ -96,21 +96,21 @@
           -->
           <button
                 class="input-select"
-                @mousedown.stop.prevent="input.mouseDown($event, index)"
-                @touchstart.stop.prevent="input.touchStart($event, index)"
-                @touchend.stop.prevent="onSelect($event, index)"
+                @mousedown.stop.prevent="input.mouseDown($event, parseInt(index))"
+                @touchstart.stop.prevent="input.touchStart($event, parseInt(index))"
+                @touchend.stop.prevent="onSelect($event, parseInt(index))"
                 @touchmove.stop.prevent
-                @click.stop.prevent="onSelect($event, index)">
+                @click.stop.prevent="onSelect($event, parseInt(index))">
             <i color="white" class="select-on">check_circle</i>
             <i color="white" class="select-off">radio_button_off</i>
           </button>
 
           <button v-if="!isSharedView"
               class="input-favorite"
-              @touchstart.stop.prevent="input.touchStart($event, index)"
-              @touchend.stop.prevent="toggleLike($event, index)"
+              @touchstart.stop.prevent="input.touchStart($event, parseInt(index))"
+              @touchend.stop.prevent="toggleLike($event, parseInt(index))"
               @touchmove.stop.prevent
-              @click.stop.prevent="toggleLike($event, index)"
+              @click.stop.prevent="toggleLike($event, parseInt(index))"
           >
             <i v-if="photo.Favorite">favorite</i>
             <i v-else>favorite_border</i>
@@ -194,10 +194,12 @@ export default {
   beforeCreate() {
     this.elementObserver = new ResizeObserver((entries) => {
       this.elementSize = entries[0].borderBoxSize[0].inlineSize;
+      console.log('element', entries[0].borderBoxSize[0].inlineSize, entries[0]);
       this.updateGeometry();
     });
     this.containerObserver = new ResizeObserver((entries) => {
       this.containerWidth = entries[0].contentRect.width;
+      console.log('container', entries[0].contentRect.width, entries[0]);
       this.updateGeometry();
     });
   },
