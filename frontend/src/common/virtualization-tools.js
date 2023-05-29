@@ -66,7 +66,9 @@ export const virtualizationTools = {
     scrollPos,
     rowPadding = 0
   ) => {
-    const visibleColumnCount = Math.floor(containerWidth / elementWidth);
+    // floor the elementWidth, so that rounding errors don't cause the columnCount
+    // to be one to small
+    const visibleColumnCount = Math.floor(containerWidth / Math.floor(elementWidth));
 
     const totalRowCount = Math.ceil(elements.length / visibleColumnCount);
     const totalScrollHeight = totalRowCount * elementHeight;
