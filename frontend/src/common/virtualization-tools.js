@@ -72,8 +72,23 @@ export const virtualizationTools = {
     const totalScrollHeight = totalRowCount * elementHeight;
     const realScrollPos = Math.max(Math.min(scrollPos, totalScrollHeight), 0);
 
-    const firstRowTopOverlap = realScrollPos % elementHeight;
-    const visibleRowCount = Math.ceil((containerHeight + firstRowTopOverlap) / elementHeight);
+    /**
+     * in a previous version, we calculated the actual visible row count by first
+     * calculating the firstRowTopOverlap (= realScrollPos % elementHeight)
+     * and adding that to the containerHeight.
+     *
+     * this would cause the visibleRowCount to sometimes be 1 higher, sometimes
+     * 1 smaller than the last run, depending on the actual scroll position.
+     *
+     * That resulted in this function not always returning the same number of
+     * rows. We want to always return the same number of rows however, because
+     * that allowes reduces the amount of updates in scenarios where half a row
+     * is visible. The result is, that removing and adding a row on scroll always
+     * happen in the same render, instead of in two renders
+     */
+    const visibleRowCount = Math.ceil(containerHeight / elementHeight) + 1;
+    // const firstRowTopOverlap = realScrollPos % elementHeight;
+    // const visibleRowCount = Math.ceil((containerHeight + firstRowTopOverlap) / elementHeight);
 
     const firstVisibleRow = Math.floor(realScrollPos / elementHeight);
     const lastVisibleRow = firstVisibleRow + visibleRowCount - 1;
@@ -99,6 +114,6 @@ export const virtualizationTools = {
     const topPos = rowIndex * elementHeight;
     const leftPos = columnIndex * elementWidth;
 
-    return `display: block; position: absolute; width: ${elementWidth}px; height: ${elementHeight}px; top: ${topPos}px; left: ${leftPos}px`;
+    return `display: block; position: absolute; width: ${elementWidth}px; height: ${elementHeight}px; transform: translate(${leftPos}px, ${topPos}px)`;
   },
 };
