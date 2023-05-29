@@ -253,7 +253,7 @@ export default {
         this.elementSize,
         this.elementSize,
         this.scrollPos - this.containerTop,
-        1,
+        2,
       );
 
       this.columnCount = visibleColumnCount;
