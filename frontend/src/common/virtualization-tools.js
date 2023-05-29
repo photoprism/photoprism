@@ -87,8 +87,6 @@ export const virtualizationTools = {
      * happen in the same render, instead of in two renders
      */
     const visibleRowCount = Math.ceil(containerHeight / elementHeight) + 1;
-    // const firstRowTopOverlap = realScrollPos % elementHeight;
-    // const visibleRowCount = Math.ceil((containerHeight + firstRowTopOverlap) / elementHeight);
 
     const firstVisibleRow = Math.floor(realScrollPos / elementHeight);
     const lastVisibleRow = firstVisibleRow + visibleRowCount - 1;
