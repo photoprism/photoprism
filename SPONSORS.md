@@ -18,6 +18,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 **Marko Eckert** (Patreon, May 2023)
 
+**Vitold Romanovski** (May 2023)
+
 ## Gold Sponsors ##
 
 [**Simen Eriksen**](https://github.com/dennorske) (GitHub Sponsors, December 2019)
