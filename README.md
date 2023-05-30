@@ -63,7 +63,7 @@ Our members [enjoy additional features](https://www.photoprism.app/kb/personal),
 - You can [sign up directly on our website](https://my.photoprism.app/register) and pay with credit card or SEPA through Stripe, so you don't need to link an external account and can easily upgrade or downgrade at any time
 - Alternatively, [Patreon](https://link.photoprism.app/patreon) supports additional currencies, payment with PayPal, and lets you choose between monthly and annual billing for all tiers
 
-Note that if you currently support us through [GitHub Sponsors](https://link.photoprism.app/sponsor), you also need to sign up on our website and use the *Activate GitHub Sponsors Membership* button so that we can link your account. For details on this and how to [link your Patreon account](https://www.patreon.com/pledges), see our [Activation Guide](https://www.photoprism.app/kb/activation).
+If you currently support us through [GitHub Sponsors](https://link.photoprism.app/sponsor), you can also [register on our website](https://my.photoprism.app/register) and use the *Activate GitHub Sponsors Membership* button to link your account. For details on this and how to [link your Patreon account](https://www.patreon.com/pledges), see our [Activation Guide](https://www.photoprism.app/kb/activation).
 
 You are [welcome to contact us](https://www.photoprism.app/contact) for change requests, membership questions, and business partnerships.
 
