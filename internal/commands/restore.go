@@ -129,7 +129,7 @@ func restoreAction(ctx *cli.Context) error {
 		switch conf.DatabaseDriver() {
 		case config.MySQL, config.MariaDB:
 			cmd = exec.Command(
-				conf.MysqlBin(),
+				conf.MariadbBin(),
 				"--protocol", "tcp",
 				"-h", conf.DatabaseHost(),
 				"-P", conf.DatabasePortString(),

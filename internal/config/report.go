@@ -175,6 +175,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
 		{"database-conns", fmt.Sprintf("%d", c.DatabaseConns())},
 		{"database-conns-idle", fmt.Sprintf("%d", c.DatabaseConnsIdle())},
+		{"mariadb-bin", c.MariadbBin()},
+		{"mariadb-dump-bin", c.MariadbDumpBin()},
 
 		// File Converters.
 		{"sips-bin", c.SipsBin()},
