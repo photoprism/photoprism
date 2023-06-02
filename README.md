@@ -67,7 +67,7 @@ If you currently support us through [GitHub Sponsors](https://link.photoprism.ap
 
 You are [welcome to contact us](https://www.photoprism.app/contact) for change requests, membership questions, and business partnerships.
 
-[View Membership FAQ ›](https://www.photoprism.app/kb/membership) [Contact Us ›](https://www.photoprism.app/contact)
+[View Membership FAQ ›](https://www.photoprism.app/kb/membership) [Sign Up ›](https://link.photoprism.app/membership)
 
 ### Why Your Support Matters ###
 
