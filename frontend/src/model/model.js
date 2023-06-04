@@ -37,6 +37,10 @@ export class Model {
   setValues(values, scalarOnly) {
     if (!values) return;
 
+    if (values.maps?.style === "basic" || values.maps?.style === "offline") {
+      values.maps.style = "";
+    }
+
     for (let key in values) {
       if (values.hasOwnProperty(key) && key !== "__originalValues") {
         this[key] = values[key];

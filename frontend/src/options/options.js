@@ -288,10 +288,6 @@ export const MapsStyle = () => [
     value: "",
   },
   {
-    text: $gettext("Low Resolution"),
-    value: "offline",
-  },
-  {
     text: $gettext("Streets"),
     value: "streets",
     sponsor: true,
@@ -311,6 +307,10 @@ export const MapsStyle = () => [
     value: "topographique",
     sponsor: true,
   },
+  /*{
+    text: $gettext("Offline"),
+    value: "offline",
+  },*/
 ];
 
 export const PhotoTypes = () => [

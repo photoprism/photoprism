@@ -99,10 +99,8 @@ export default {
 
         let mapsStyle = s.style;
 
-        if (!mapKey || !this.$config.isSponsor() && !this.$config.isDemo() || mapsStyle === "basic") {
-          mapsStyle = "offline";
-        } else if (!mapsStyle) {
-          mapsStyle = "streets";
+        if (!mapKey && mapsStyle !== "offline") {
+          mapsStyle = "";
         }
 
         let mapOptions = {
@@ -114,7 +112,16 @@ export default {
           zoom: 0,
         };
 
-        if (mapsStyle === "offline") {
+        if (mapsStyle === "") {
+          mapOptions = {
+            container: "map",
+            style:  "https://cdn.photoprism.app/maps/default.json",
+            glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
+            attributionControl: true,
+            zoom: 0,
+          };
+          this.url = '';
+        } else if (mapsStyle === "offline") {
           mapOptions = {
             container: "map",
             style: {
@@ -200,8 +207,8 @@ export default {
                 },
               ],
             },
-            attributionControl: true,
-            customAttribution: this.attribution,
+            attributionControl: false,
+            customAttribution:  '',
             zoom: 0,
           };
           this.url = '';
