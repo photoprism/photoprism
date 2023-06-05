@@ -99,7 +99,7 @@ export default {
 
         let mapsStyle = s.style;
 
-        if (!mapKey && mapsStyle !== "offline") {
+        if (!mapKey && mapsStyle !== "low-resolution") {
           mapsStyle = "";
         }
 
@@ -121,7 +121,7 @@ export default {
             zoom: 0,
           };
           this.url = '';
-        } else if (mapsStyle === "offline") {
+        } else if (mapsStyle === "low-resolution") {
           mapOptions = {
             container: "map",
             style: {

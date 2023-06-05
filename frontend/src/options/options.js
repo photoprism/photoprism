@@ -282,36 +282,43 @@ export const MapsAnimate = () => [
   },
 ];
 
-export const MapsStyle = () => [
-  {
-    text: $gettext("Default"),
-    value: "",
-  },
-  {
-    text: $gettext("Streets"),
-    value: "streets",
-    sponsor: true,
-  },
-  {
-    text: $gettext("Satellite"),
-    value: "hybrid",
-    sponsor: true,
-  },
-  {
-    text: $gettext("Outdoor"),
-    value: "outdoor",
-    sponsor: true,
-  },
-  {
-    text: $gettext("Topographic"),
-    value: "topographique",
-    sponsor: true,
-  },
-  /*{
-    text: $gettext("Offline"),
-    value: "offline",
-  },*/
-];
+export const MapsStyle = (experimental) => {
+  const styles = [
+    {
+      text: $gettext("Default"),
+      value: "",
+    },
+    {
+      text: $gettext("Streets"),
+      value: "streets",
+      sponsor: true,
+    },
+    {
+      text: $gettext("Satellite"),
+      value: "hybrid",
+      sponsor: true,
+    },
+    {
+      text: $gettext("Outdoor"),
+      value: "outdoor",
+      sponsor: true,
+    },
+    {
+      text: $gettext("Topographic"),
+      value: "topographique",
+      sponsor: true,
+    },
+  ];
+
+  if (experimental) {
+    styles.splice(1, 0, {
+      text: $gettext("Low Resolution"),
+      value: "low-resolution",
+    });
+  }
+
+  return styles;
+};
 
 export const PhotoTypes = () => [
   {

@@ -320,7 +320,7 @@
               <v-select
                 v-model="settings.maps.style"
                 :disabled="busy"
-                :items="options.MapsStyle()"
+                :items="mapsStyle"
                 :label="$gettext('Maps')"
                 :menu-props="{'maxHeight':346}"
                 color="secondary-dark"
@@ -433,7 +433,7 @@ export default {
       subscriptions: [],
       themes: [],
       currentTheme: this.$config.themeName,
-      mapsStyle: options.MapsStyle(),
+      mapsStyle: options.MapsStyle(this.$config.get("experimental")),
       currentMapsStyle: this.$config.settings().maps.style,
       languages: options.Languages(),
       dialog: {
@@ -454,6 +454,7 @@ export default {
     load() {
       this.$config.load().then(() => {
         this.themes = themes.Translated();
+        this.mapsStyle = options.MapsStyle(this.$config.get("experimental"));
         this.settings.setValues(this.$config.settings());
         this.busy = false;
       });
