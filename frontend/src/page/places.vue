@@ -43,7 +43,12 @@ export default {
       markers: {},
       markersOnScreen: {},
       loading: false,
-      url: "",
+      style: "",
+      terrain: {
+        'topo-v2': 'terrain_rgb',
+        'outdoor-v2': 'terrain-rgb',
+        '414c531c-926d-4164-a057-455a215c0eee': 'terrain_rgb_virtual',
+      },
       attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
       maxCount: 500000,
       options: {},
@@ -97,31 +102,46 @@ export default {
           filter.quality = "3";
         }
 
-        let mapsStyle = s.style;
+        switch (s.style) {
+          case "basic":
+          case "offline":
+            this.style = "";
+            break;
+          case "hybrid":
+            this.style = "414c531c-926d-4164-a057-455a215c0eee";
+            break;
+          case "outdoor":
+            this.style = "outdoor-v2";
+            break;
+          case "topographique":
+            this.style = "topo-v2";
+            break;
+          default:
+            this.style = s.style;
+        }
 
-        if (!mapKey && mapsStyle !== "low-resolution") {
-          mapsStyle = "";
+        if (!mapKey && this.style !== "low-resolution") {
+          this.style = "";
         }
 
         let mapOptions = {
           container: "map",
-          style: "https://api.maptiler.com/maps/" + mapsStyle + "/style.json?key=" + mapKey,
+          style: "https://api.maptiler.com/maps/" + this.style + "/style.json?key=" + mapKey,
           glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=" + mapKey,
           attributionControl: true,
           customAttribution: this.attribution,
           zoom: 0,
         };
 
-        if (mapsStyle === "") {
+        if (this.style === "") {
           mapOptions = {
             container: "map",
-            style:  "https://cdn.photoprism.app/maps/default.json",
+            style: "https://cdn.photoprism.app/maps/default.json",
             glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
             attributionControl: true,
             zoom: 0,
           };
-          this.url = '';
-        } else if (mapsStyle === "low-resolution") {
+        } else if (this.style === "low-resolution") {
           mapOptions = {
             container: "map",
             style: {
@@ -208,12 +228,9 @@ export default {
               ],
             },
             attributionControl: false,
-            customAttribution:  '',
+            customAttribution: '',
             zoom: 0,
           };
-          this.url = '';
-        } else {
-          this.url = 'https://api.maptiler.com/maps/' + mapsStyle + '/{z}/{x}/{y}.png?key=' + mapKey;
         }
 
         this.filter = filter;
@@ -347,8 +364,25 @@ export default {
 
       const controlPos = this.$rtl ? 'top-left' : 'top-right';
 
-      this.map.addControl(new maplibregl.NavigationControl({showCompass: true}), controlPos);
+      // Show navigation control.
+      this.map.addControl(new maplibregl.NavigationControl({
+        visualizePitch: true,
+        showZoom: true,
+        showCompass: true
+      }), controlPos);
+
+      // Show terrain control, if supported.
+      if (this.terrain[this.style]) {
+        this.map.addControl(new maplibregl.TerrainControl({
+          source: this.terrain[this.style],
+          exaggeration: 1
+        }));
+      }
+
+      // Show fullscreen control.
       this.map.addControl(new maplibregl.FullscreenControl({container: document.querySelector('body')}), controlPos);
+
+      // Show locate control.
       this.map.addControl(new maplibregl.GeolocateControl({
         positionOptions: {
           enableHighAccuracy: true

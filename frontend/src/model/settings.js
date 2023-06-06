@@ -35,6 +35,18 @@ export class Settings extends Model {
     return this[area][key] !== this.__originalValues[area][key];
   }
 
+  setValues(values, scalarOnly) {
+    if (!values) return;
+
+    if (values.maps?.style === "basic" || values.maps?.style === "offline") {
+      values.maps.style = "";
+    }
+
+    super.setValues(values, scalarOnly);
+
+    return this;
+  }
+
   load() {
     return Api.get("settings").then((response) => {
       return Promise.resolve(this.setValues(response.data));
