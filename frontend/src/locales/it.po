@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Artillio <artillio95@gmail.com>\n"
-"Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/frontend/it/>\n"
+"PO-Revision-Date: 2023-06-07 08:37+0000\n"
+"Last-Translator: leosamuele221 <leosamuele221@gmail.com>\n"
+"Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
+"frontend/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -80,7 +81,7 @@ msgstr "Account eliminato"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "Conti"
+msgstr "Account"
 
 #: src/dialog/photo/edit/info.vue:159
 msgid "Accuracy"
@@ -699,7 +700,7 @@ msgstr "Disabilita FFmpeg"
 
 #: src/page/settings/advanced.vue:559
 msgid "Disable ImageMagick"
-msgstr "Disabilitare ImageMagick"
+msgstr "Disattiva ImageMagick"
 
 #: src/page/settings/advanced.vue:186
 msgid "Disable Places"
@@ -715,7 +716,7 @@ msgstr "Disabilita TensorFlow"
 
 #: src/page/settings/advanced.vue:605
 msgid "Disable Vectors"
-msgstr "Disattivare i vettori"
+msgstr "Disattiva i vettori"
 
 #: src/page/settings/advanced.vue:164
 msgid "Disable WebDAV"
@@ -951,7 +952,7 @@ msgstr "Impossibile aggiornare il link"
 
 #: src/dialog/admin/users/edit.vue:235 src/page/settings/account.vue:166
 msgid "Family Name"
-msgstr "Nome di famiglia"
+msgstr "Cognome"
 
 #: src/options/options.js:272
 msgid "Fast"
