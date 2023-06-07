@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Pheggas <petko252@gmail.com>\n"
-"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
+"PO-Revision-Date: 2023-06-07 08:37+0000\n"
+"Last-Translator: Jose Riha <jose1711@gmail.com>\n"
+"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
+"frontend/sk/>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -76,7 +77,7 @@ msgstr "Účet vytvorený"
 
 #: src/dialog/admin/users/remove.vue:24 src/dialog/service/remove.vue:24
 msgid "Account deleted"
-msgstr "Účet ostránený"
+msgstr "Účet odstránený"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
@@ -254,7 +255,9 @@ msgstr "Všetky Roky"
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Prípadne, môžete odovzdať súbory priamo na WebDAV servery ako napríklad Nextcloud."
+msgstr ""
+"Prípadne môžete odovzdať súbory priamo na WebDAV servery ako napríklad "
+"Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:151
 msgid "Altitude"
@@ -1581,7 +1584,7 @@ msgstr "Nenašli sa žiadne štítky"
 #: src/page/people/new.vue:282 src/page/people/new.vue:368
 #: src/page/people/recognized.vue:35 src/page/people/recognized.vue:493
 msgid "No people found"
-msgstr "Neboli nájdení žiadny ľudia"
+msgstr "Neboli nájdení žiadni ľudia"
 
 #: src/common/viewer.js:263 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
