@@ -25,7 +25,7 @@ FROM debian:buster-slim
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism® (Debian 10)"
 LABEL org.opencontainers.image.description="Debian 10 (Buster)"
-LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
 LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"

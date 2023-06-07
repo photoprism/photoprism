@@ -26,7 +26,7 @@ FROM photoprism/develop:lunar-slim
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism® (Ubuntu 23.04)"
 LABEL org.opencontainers.image.description="Ubuntu 23.04 (Lunar Lobster)"
-LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
 LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
