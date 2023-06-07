@@ -23,7 +23,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/cpuid/v2 v2.2.4
+	github.com/klauspost/cpuid/v2 v2.2.5
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.5.2
 	github.com/lib/pq v1.8.0 // indirect
@@ -36,7 +36,7 @@ require (
 	github.com/paulmach/go.geojson v1.4.0
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sevlyar/go-daemon v0.1.6
-	github.com/sirupsen/logrus v1.9.2
+	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.8.4
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.14.4
