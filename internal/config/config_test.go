@@ -440,6 +440,20 @@ func TestConfig_CdnUrl(t *testing.T) {
 	assert.Equal(t, "http://foo:2342/foo/", c.CdnUrl("/"))
 }
 
+func TestConfig_CdnDomain(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.CdnDomain())
+	c.options.CdnUrl = "http://superhost:2342/"
+	assert.Equal(t, "superhost", c.CdnDomain())
+	c.options.CdnUrl = "https://foo.bar.com:2342/foo/"
+	assert.Equal(t, "foo.bar.com", c.CdnDomain())
+	c.options.CdnUrl = "http:/invalid:2342/foo/"
+	assert.Equal(t, "", c.CdnDomain())
+	c.options.CdnUrl = ""
+	assert.Equal(t, "", c.CdnDomain())
+}
+
 func TestConfig_CdnVideo(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

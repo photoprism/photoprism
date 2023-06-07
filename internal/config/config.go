@@ -429,6 +429,17 @@ func (c *Config) CdnUrl(res string) string {
 	return strings.TrimRight(c.options.CdnUrl, "/") + res
 }
 
+// CdnDomain returns the content delivery network domain name if specified.
+func (c *Config) CdnDomain() string {
+	if c.options.CdnUrl == "" {
+		return ""
+	} else if u, err := url.Parse(c.options.CdnUrl); err != nil {
+		return ""
+	} else {
+		return u.Hostname()
+	}
+}
+
 // CdnVideo checks if videos should be streamed using the configured CDN.
 func (c *Config) CdnVideo() bool {
 	if c.options.CdnUrl == "" {
