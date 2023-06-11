@@ -53,7 +53,7 @@ func CreateUnknownPlace() {
 func FindPlace(id string) *Place {
 	m := Place{}
 
-	if Db().First(&m, "id = ?", id).RecordNotFound() {
+	if Db().First(&m, "id = ?", id).Error != nil {
 		log.Debugf("place: %s not found", clean.Log(id))
 		return nil
 	}

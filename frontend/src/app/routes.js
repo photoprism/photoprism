@@ -57,19 +57,19 @@ export default [
     name: "about",
     path: "/about",
     component: About,
-    meta: { title: siteTitle, auth: false },
+    meta: { title: $gettext("About"), auth: false },
   },
   {
     name: "license",
     path: "/license",
     component: License,
-    meta: { title: siteTitle, auth: false },
+    meta: { title: $gettext("License"), auth: false },
   },
   {
     name: "feedback",
     path: "/feedback",
     component: Feedback,
-    meta: { title: siteTitle, auth: true },
+    meta: { title: $gettext("Help & Support"), auth: true },
   },
   {
     name: "help",

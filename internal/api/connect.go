@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -48,21 +49,31 @@ func Connect(router *gin.RouterGroup) {
 
 		s := Auth(c, acl.ResourceConfig, acl.ActionUpdate)
 
-		if s.Invalid() {
+		if !s.IsSuperAdmin() {
 			log.Errorf("connect: %s not authorized", clean.Log(s.User().UserName))
 			AbortForbidden(c)
 			return
 		}
 
 		var err error
+		var restart bool
 
 		switch name {
 		case "hub":
+			old := conf.Hub().Session
 			err = conf.ResyncHub(f.Token)
+			restart = old != conf.Hub().Session
 		default:
 			log.Errorf("connect: invalid service %s", clean.Log(name))
 			Abort(c, http.StatusBadRequest, i18n.ErrAccountConnect)
 			return
+		}
+
+		// Set restart flag and update client config if necessary.
+		if restart {
+			mutex.Restart.Store(true)
+			conf.Propagate()
+			UpdateClientConfig()
 		}
 
 		if err != nil {

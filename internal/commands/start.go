@@ -133,9 +133,9 @@ func startAction(ctx *cli.Context) error {
 
 	// Wait for signal to initiate server shutdown.
 	quit := make(chan os.Signal)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGUSR1)
 
-	<-quit
+	sig := <-quit
 
 	// Stop all background activity.
 	auto.Stop()
@@ -153,6 +153,12 @@ func startAction(ctx *cli.Context) error {
 	// Finally, close the DB connection after a short grace period.
 	time.Sleep(2 * time.Second)
 	conf.Shutdown()
+
+	// Don't exit with 0 if SIGUSR1 was received to avoid restarts.
+	if sig == syscall.SIGUSR1 {
+		os.Exit(1)
+		return nil
+	}
 
 	return nil
 }

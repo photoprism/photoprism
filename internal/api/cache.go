@@ -84,8 +84,8 @@ func AddCoverCacheHeader(c *gin.Context) {
 	AddCacheHeader(c, CoverMaxAge, thumb.CachePublic)
 }
 
-// AddThumbCacheHeader adds thumbnail cache control headers to the response.
-func AddThumbCacheHeader(c *gin.Context) {
+// AddImmutableCacheHeader adds cache control headers to the response for immutable content like thumbnails.
+func AddImmutableCacheHeader(c *gin.Context) {
 	if thumb.CachePublic {
 		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, no-transform, immutable", thumb.CacheMaxAge.String()))
 	} else {

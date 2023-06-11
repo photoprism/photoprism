@@ -414,6 +414,15 @@ func (m *Session) IsVisitor() bool {
 	return m.User().IsVisitor()
 }
 
+// IsSuperAdmin checks if the session belongs to a registered super admin user.
+func (m *Session) IsSuperAdmin() bool {
+	if !m.IsRegistered() {
+		return false
+	}
+
+	return m.User().IsSuperAdmin()
+}
+
 // IsRegistered checks if the session belongs to a registered user account.
 func (m *Session) IsRegistered() bool {
 	if m == nil || m.user == nil || rnd.InvalidUID(m.UserUID, UserUID) {

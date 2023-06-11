@@ -170,7 +170,6 @@
         </v-layout>
       </v-container>
     </v-container>
-    <p-sponsor-dialog :show="dialog.sponsor" @close="dialog.sponsor = false"></p-sponsor-dialog>
     <p-people-merge-dialog lazy :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge"
                            @confirm="onMerge"></p-people-merge-dialog>
   </div>
@@ -224,9 +223,6 @@ export default {
       titleRule: v => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
-      dialog: {
-        sponsor: false,
-      },
       merge: {
         subj1: null,
         subj2: null,
@@ -432,12 +428,8 @@ export default {
         return;
       }
 
-      this.$sponsorFeatures().then(() => {
-        this.filter.hidden = value;
-        this.updateQuery();
-      }).catch(() => {
-        this.dialog.sponsor = true;
-      });
+      this.filter.hidden = value;
+      this.updateQuery();
     },
     onToggleHidden(ev, index) {
       if(!this.canManage) {
@@ -450,11 +442,7 @@ export default {
         return;
       }
 
-      this.$sponsorFeatures().then(() => {
-        this.toggleHidden(this.results[index]);
-      }).catch(() => {
-        this.dialog.sponsor = true;
-      });
+      this.toggleHidden(this.results[index]);
     },
     toggleHidden(model) {
       if (!model || !this.canManage) {

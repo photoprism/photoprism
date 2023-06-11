@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-03-13 21:26+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-04-29 09:20+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16.2\n"
+"X-Generator: Weblate 4.17\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -28,7 +28,7 @@ msgid "%{n} labels found"
 msgstr "%{n} tunnistetta löydetty"
 
 #: src/page/people/new.vue:286 src/page/people/new.vue:372
-#: src/page/people/recognized.vue:508
+#: src/page/people/recognized.vue:497
 msgid "%{n} people found"
 msgstr "%{n} ihmistä löydetty"
 
@@ -37,15 +37,15 @@ msgstr "%{n} ihmistä löydetty"
 msgid "%{n} pictures found"
 msgstr "%{n} kuvaa löydetty"
 
-#: src/options/options.js:387
+#: src/options/options.js:391
 msgid "1 hour"
 msgstr "1 tunti"
 
-#: src/options/options.js:389
+#: src/options/options.js:393
 msgid "12 hours"
 msgstr "12 tuntia"
 
-#: src/options/options.js:388
+#: src/options/options.js:392
 msgid "4 hours"
 msgstr "4 tuntia"
 
@@ -53,29 +53,25 @@ msgstr "4 tuntia"
 msgid "A click will copy it to your clipboard."
 msgstr "Napsauttamalla sitä voit kopioida sen leikepöydälle."
 
-#: src/component/admin/users/edit.vue:265 src/page/about/about.vue:4
-#: src/page/about/about.vue:204 src/page/settings/account.vue:313
+#: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
+#: src/page/settings/account.vue:313 src/app/routes.js:60
 #: src/component/navigation.vue:460 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:434
+#: src/page/help.vue:43 src/page/people/recognized.vue:433
 msgid "About"
 msgstr "Tietoja"
 
-#: src/options/themes.js:473
-msgid "Abyss"
-msgstr "Kuilu"
-
-#: src/component/navigation.vue:98 src/component/navigation.vue:1996
+#: src/component/navigation.vue:99 src/component/navigation.vue:1995
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "Tili"
 
-#: src/component/admin/users/add.vue:86 src/dialog/service/add.vue:35
+#: src/dialog/admin/users/add.vue:87 src/dialog/service/add.vue:35
 msgid "Account created"
 msgstr "Tili luotu"
 
-#: src/component/admin/users/remove.vue:24 src/dialog/service/remove.vue:24
+#: src/dialog/admin/users/remove.vue:24 src/dialog/service/remove.vue:24
 msgid "Account deleted"
 msgstr "Tili poistettu"
 
@@ -95,19 +91,19 @@ msgstr "Toiminnot"
 msgid "Actions"
 msgstr "Toiminnot"
 
-#: src/page/connect.vue:73 src/page/connect.vue:80
+#: src/page/connect.vue:97 src/page/connect.vue:94
 msgid "Activate"
 msgstr "Aktivoi"
 
-#: src/page/connect.vue:292 src/page/connect.vue:360
+#: src/page/connect.vue:431 src/page/connect.vue:401
 msgid "Activation Code"
 msgstr "Aktivointikoodi"
 
-#: src/component/admin/users/add.vue:22 src/page/admin/users.vue:45
+#: src/dialog/admin/users/add.vue:23 src/page/admin/users.vue:47
 msgid "Add"
 msgstr "Lisää"
 
-#: src/component/admin/users/add.vue:8 src/dialog/service/add.vue:7
+#: src/dialog/admin/users/add.vue:8 src/dialog/service/add.vue:7
 msgid "Add Account"
 msgstr "Muokkaa tiliä"
 
@@ -145,23 +141,23 @@ msgstr "Admin"
 msgid "Advanced"
 msgstr "Lisäasetukset"
 
-#: src/options/options.js:397
+#: src/options/options.js:401
 msgid "After 1 day"
 msgstr "1 päivän kuluttua"
 
-#: src/options/options.js:398
+#: src/options/options.js:402
 msgid "After 3 days"
 msgstr "3 päivän kuluttua"
 
-#: src/options/options.js:399
+#: src/options/options.js:403
 msgid "After 7 days"
 msgstr "7 päivän kuluttua"
 
-#: src/options/options.js:401
+#: src/options/options.js:405
 msgid "After one month"
 msgstr "Yhden kuukauden kuluttua"
 
-#: src/options/options.js:403
+#: src/options/options.js:407
 msgid "After one year"
 msgstr "Vuoden kuluttua"
 
@@ -169,11 +165,11 @@ msgstr "Vuoden kuluttua"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Kun olet valinnut kuvia hakutuloksista, voit lisätä ne albumiin kontekstivalikon avulla."
 
-#: src/options/options.js:402
+#: src/options/options.js:406
 msgid "After two months"
 msgstr "Kahden kuukauden kuluttua"
 
-#: src/options/options.js:400
+#: src/options/options.js:404
 msgid "After two weeks"
 msgstr "Kahden viikon kuluttua"
 
@@ -192,7 +188,7 @@ msgstr "Albumin nimi"
 #: src/app/routes.js:175 src/component/album/toolbar.vue:52
 #: src/component/navigation.vue:151 src/component/navigation.vue:161
 #: src/component/navigation.vue:556 src/component/navigation.vue:4
-#: src/component/navigation.vue:648
+#: src/component/navigation.vue:647
 msgid "Albums"
 msgstr "Albumit"
 
@@ -208,7 +204,7 @@ msgstr "Kaikki %{n} albumia ladattu"
 msgid "All %{n} labels loaded"
 msgstr "Kaikki %{n} tunnistetta ladattu"
 
-#: src/page/people/recognized.vue:360
+#: src/page/people/recognized.vue:349
 msgid "All %{n} people loaded"
 msgstr "Kaikki %{n} ihmistä ladattu"
 
@@ -265,14 +261,10 @@ msgstr "Korkeus"
 msgid "Altitude (m)"
 msgstr "Korkeus (m)"
 
-#: src/common/api.js:99
-msgid "An error occurred - are you offline?"
-msgstr "Tapahtui virhe – oletko offline-tilassa?"
-
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
 #: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:101
-#: src/dialog/photo/edit/files.vue:98 src/options/options.js:322
+#: src/dialog/photo/edit/files.vue:98 src/options/options.js:326
 msgid "Animated"
 msgstr "Animoitu"
 
@@ -319,7 +311,7 @@ msgstr "Haluatko varmasti poistaa nämä albumit?"
 msgid "Are you sure you want to delete these labels?"
 msgstr "Haluatko varmasti poistaa nämä tunnisteet?"
 
-#: src/component/admin/users/remove.vue:10 src/dialog/service/remove.vue:10
+#: src/dialog/admin/users/remove.vue:10 src/dialog/service/remove.vue:10
 msgid "Are you sure you want to delete this account?"
 msgstr "Haluatko varmasti poistaa tämän tilin?"
 
@@ -331,7 +323,7 @@ msgstr "Haluatko varmasti poistaa nämä kuvat pysyvästi?"
 msgid "Are you sure you want to permanently delete this file?"
 msgstr "Haluatko varmasti poistaa tämän tiedoston pysyvästi?"
 
-#: src/component/admin/sessions/remove.vue:10 src/dialog/confirm.vue:10
+#: src/dialog/admin/sessions/remove.vue:10 src/dialog/confirm.vue:10
 msgid "Are you sure?"
 msgstr "Oletko varma?"
 
@@ -339,16 +331,12 @@ msgstr "Oletko varma?"
 msgid "Artist"
 msgstr "Tekijä"
 
-#: src/page/connect.vue:110
-msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-msgstr "Koska tämä auttaa meitä tarjoamaan enemmän ominaisuuksia yleisölle, kannustamme kaikkia käyttäjiä tukemaan tehtäviämme."
-
 #: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Aspect Ratio"
 msgstr "Kuvasuhde"
 
-#: src/component/admin/users/add.vue:214 src/component/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:69 src/page/admin/sessions.vue:31
+#: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
+#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Tunnistus"
@@ -361,19 +349,20 @@ msgstr "Luo automaattisesti JPEG-tiedostoja muille tiedostotyypeille, jotta ne v
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Luo automaattisesti albumeja erityisistä hetkistä, matkoista ja paikoista."
 
-#: src/component/admin/users/edit.vue:391
+#: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
 msgstr "Pohjakansio"
 
-#: src/page/about/about.vue:62
-msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-msgstr "Ennen kuin lähetät tukipyynnön, käytä vianmäärityksen tarkistuslistojamme selvittääksesi ongelmasi syyn."
+#: src/page/about/about.vue:26 src/page/about/about.vue:3
+msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgstr "Liity jäseneksi tänään, tue tehtäviämme ja nauti jäseneduistamme!"
 
-#: src/dialog/sponsor.vue:22 src/page/about/about.vue:25
+#: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
+#: src/page/about/about.vue:5
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Koska olemme 100-prosenttisesti omarahoitteisia ja riippumattomia, voimme luvata, ettemme koskaan myy tietojasi ja että ohjelmistomme ja palvelumme ovat aina avoimia."
 
-#: src/component/admin/users/edit.vue:293 src/page/settings/account.vue:285
+#: src/dialog/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
 msgstr "Biografia"
 
@@ -381,19 +370,19 @@ msgstr "Biografia"
 msgid "Birth Date"
 msgstr "Syntymäaika"
 
-#: src/options/options.js:422
+#: src/options/options.js:426
 msgid "Black"
 msgstr "Musta"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos-muutos, vähemmän pakkausartefakteja"
 
-#: src/options/options.js:418
+#: src/options/options.js:422
 msgid "Blue"
 msgstr "Sininen"
 
-#: src/options/options.js:419
+#: src/options/options.js:423
 msgid "Brown"
 msgstr "Ruskea"
 
@@ -405,24 +394,20 @@ msgstr "Selaa ja muokkaa kuvien luokitustunnisteita."
 msgid "Browse indexed files and folders in Library."
 msgstr "Selaa kirjaston indeksoituja tiedostoja ja kansioita."
 
-#: src/page/about/about.vue:54
-msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-msgstr "Tutustu tietopohjaan, josta löydät yksityiskohtaista tietoa tuotteiden ominaisuuksista, palveluista ja niihin liittyvistä resursseista."
-
-#: src/page/about/feedback.vue:8 src/options/options.js:429
+#: src/page/about/feedback.vue:8 src/options/options.js:433
 msgid "Bug Report"
 msgstr "Ilmoita virheestä"
 
-#: src/page/connect.vue:8 src/common/notify.js:94 src/page/connect.vue:5
+#: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
 msgstr "Odota hetki…"
 
-#: src/page/connect.vue:83 src/page/connect.vue:90
+#: src/page/connect.vue:104
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Käyttämällä tarjoamiamme ohjelmistoja ja palveluita hyväksyt käyttöehtomme, tietosuojakäytäntömme ja käytännesääntömme."
 
 #: src/app/routes.js:188 src/component/navigation.vue:257
-#: src/component/navigation.vue:1016
+#: src/component/navigation.vue:1015
 msgid "Calendar"
 msgstr "Kalenteri"
 
@@ -443,44 +428,39 @@ msgstr "Ei voi ladata enempää, raja saavutettu"
 #: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:201
 #: src/page/library/browse.vue:217 src/page/people/new.vue:215
-#: src/page/people/new.vue:231 src/page/people/recognized.vue:294
-#: src/page/people/recognized.vue:310
+#: src/page/people/new.vue:231 src/page/people/recognized.vue:283
+#: src/page/people/recognized.vue:299
 msgid "Can't select more items"
 msgstr "Ei voi valita enempää kohteita"
 
-#: src/component/admin/sessions/remove.vue:15
-#: src/component/admin/users/add.vue:21 src/component/admin/users/edit.vue:74
-#: src/component/admin/users/remove.vue:15 src/page/connect.vue:41
-#: src/dialog/account/password.vue:36 src/dialog/album/delete.vue:15
-#: src/dialog/album/edit.vue:50 src/dialog/confirm.vue:15
-#: src/dialog/file/delete.vue:15 src/dialog/label/delete.vue:15
-#: src/dialog/photo/album.vue:18 src/dialog/photo/delete.vue:15
-#: src/dialog/reload.vue:9 src/dialog/service/add.vue:17
-#: src/dialog/service/edit.vue:104 src/dialog/service/remove.vue:15
-#: src/dialog/share.vue:25 src/dialog/share/upload.vue:29
-#: src/page/connect.vue:38 src/page/library/import.vue:34
-#: src/page/library/index.vue:27
+#: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
+#: src/dialog/admin/users/edit.vue:74 src/dialog/admin/users/remove.vue:15
+#: src/page/connect.vue:44 src/dialog/account/password.vue:39
+#: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
+#: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
+#: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
+#: src/dialog/photo/delete.vue:15 src/dialog/reload.vue:9
+#: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
+#: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
+#: src/dialog/share/upload.vue:29 src/page/connect.vue:41
+#: src/page/library/import.vue:34 src/page/library/index.vue:27
 msgid "Cancel"
 msgstr "Peruuta"
-
-#: src/options/themes.js:463
-msgid "Carbon"
-msgstr "Carbon"
 
 #: src/component/album/toolbar.vue:59 src/component/photo/toolbar.vue:46
 msgid "Cards"
 msgstr "Kortit"
 
-#: src/page/about/feedback.vue:121 src/component/photo/toolbar.vue:350
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:350
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Kategoria"
 
-#: src/component/admin/users/edit.vue:182 src/page/settings/account.vue:254
+#: src/dialog/admin/users/edit.vue:182 src/page/settings/account.vue:254
 msgid "Change Avatar"
 msgstr "Muuta yksityisyyden tilaa"
 
-#: src/page/settings/account.vue:54 src/dialog/account/password.vue:7
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
 #: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "Uusi salasana"
@@ -497,12 +477,12 @@ msgstr "Muuta kuvien otsikoita, sijainteja ja muita metatietoja."
 msgid "Change private flag"
 msgstr "Muuta yksityisyyden tilaa"
 
-#: src/component/admin/users/edit.vue:66 src/component/admin/users/edit.vue:162
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:110
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
 #: src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:43 src/page/settings/general.vue:105
+#: src/page/settings/advanced.vue:51 src/page/settings/general.vue:105
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
 msgstr "Muutokset tallennettu onnistuneesti"
@@ -515,7 +495,7 @@ msgstr "Tarkistettu"
 msgid "Chroma"
 msgstr "Värikylläisyys"
 
-#: src/page/admin/sessions.vue:113 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:113 src/dialog/share.vue:87
 #: src/page/library/errors.vue:60
 msgid "Close"
@@ -537,11 +517,7 @@ msgstr "Väriprofiili"
 msgid "Colors"
 msgstr "Värit"
 
-#: src/page/about/about.vue:49
-msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-msgstr "Yleiset ongelmat voidaan diagnosoida ja ratkaista nopeasti toimittamiemme vianmäärityksen tarkistuslistojen avulla."
-
-#: src/page/connect.vue:65 src/page/connect.vue:72
+#: src/page/connect.vue:88 src/page/connect.vue:85
 msgid "Compare Editions"
 msgstr "Vertaa painoksia"
 
@@ -553,16 +529,16 @@ msgstr "Täydellinen uudelleentarkistus"
 msgid "Confidence"
 msgstr "Varmuus"
 
-#: src/dialog/service/add.vue:18 src/page/settings/services.vue:53
+#: src/dialog/service/add.vue:18 src/page/settings/services.vue:55
 msgid "Connect"
 msgstr "Yhdistä"
 
 #: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
-#: src/page/settings/account.vue:62 src/page/settings/services.vue:48
+#: src/page/settings/account.vue:62 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Yhdistä WebDAV:n kautta"
 
-#: src/page/connect.vue:56
+#: src/page/connect.vue:62 src/page/connect.vue:63
 msgid "Connected"
 msgstr "Yhdistä"
 
@@ -570,8 +546,8 @@ msgstr "Yhdistä"
 msgid "Contact Details"
 msgstr "Ota yhteyttä"
 
-#: src/page/about/feedback.vue:4 src/page/connect.vue:44
-#: src/page/connect.vue:41
+#: src/page/about/feedback.vue:4 src/page/connect.vue:47
+#: src/page/connect.vue:44
 msgid "Contact Us"
 msgstr "Ota yhteyttä"
 
@@ -622,7 +598,7 @@ msgstr "Luo tili"
 msgid "Create album"
 msgstr "Luo albumi"
 
-#: src/page/admin/sessions.vue:75 src/dialog/photo/edit/info.vue:167
+#: src/page/admin/sessions.vue:77 src/dialog/photo/edit/info.vue:167
 msgid "Created"
 msgstr "Luotu"
 
@@ -630,27 +606,23 @@ msgstr "Luotu"
 msgid "Creating thumbnails for"
 msgstr "Luodaan pikkukuvia kohteelle"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kuutio: Kohtalainen laatu, hyvä suorituskyky"
 
-#: src/dialog/account/password.vue:133
+#: src/dialog/account/password.vue:134
 msgid "Current Password"
 msgstr "Nykyinen salasana"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:426
+#: src/page/about/feedback.vue:5 src/options/options.js:430
 msgid "Customer Support"
 msgstr "Asiakastuki"
 
-#: src/options/options.js:417
+#: src/options/options.js:421
 msgid "Cyan"
 msgstr "Syaani"
 
-#: src/options/themes.js:503
-msgid "Cyano"
-msgstr "Sinivihreä"
-
-#: src/options/options.js:390
+#: src/options/options.js:394
 msgid "Daily"
 msgstr "Päivittäin"
 
@@ -658,14 +630,14 @@ msgstr "Päivittäin"
 msgid "Day"
 msgstr "Päivä"
 
-#: src/page/settings/advanced.vue:74
+#: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
 msgstr "Vianmäärityslokit"
 
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
-#: src/options/options.js:283 src/options/options.js:341
-#: src/options/themes.js:448
+#: src/options/options.js:287 src/options/options.js:345
+#: src/options/themes.js:418
 msgid "Default"
 msgstr "Oletus"
 
@@ -673,8 +645,7 @@ msgstr "Oletus"
 msgid "Default Folder"
 msgstr "Oletuskansio"
 
-#: src/component/admin/sessions/remove.vue:18
-#: src/component/admin/users/remove.vue:18
+#: src/dialog/admin/sessions/remove.vue:18 src/dialog/admin/users/remove.vue:18
 #: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
 #: src/component/photo/clipboard.vue:272 src/dialog/album/delete.vue:18
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
@@ -703,59 +674,59 @@ msgstr "Tarkemmat tiedot"
 msgid "Dimensions"
 msgstr "Mitat"
 
-#: src/page/settings/advanced.vue:140
+#: src/page/settings/advanced.vue:142
 msgid "Disable Backups"
 msgstr "Poista varmuuskopiot käytöstä"
 
-#: src/page/settings/advanced.vue:163
+#: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Poista sisäänrakennettu WebDAV-palvelin käytöstä. Vaatii uudelleenkäynnistyksen."
 
-#: src/page/settings/advanced.vue:491
+#: src/page/settings/advanced.vue:493
 msgid "Disable Darktable"
 msgstr "Poista Darktable käytöstä"
 
-#: src/page/settings/advanced.vue:206
+#: src/page/settings/advanced.vue:208
 msgid "Disable ExifTool"
 msgstr "Poista ExifTool käytöstä"
 
-#: src/page/settings/advanced.vue:579
+#: src/page/settings/advanced.vue:581
 msgid "Disable FFmpeg"
 msgstr "Poista FFmpeg käytöstä"
 
-#: src/page/settings/advanced.vue:557
+#: src/page/settings/advanced.vue:559
 msgid "Disable ImageMagick"
 msgstr "Poista ImageMagick käytöstä"
 
-#: src/page/settings/advanced.vue:184
+#: src/page/settings/advanced.vue:186
 msgid "Disable Places"
 msgstr "Poista paikat käytöstä"
 
-#: src/page/settings/advanced.vue:513
+#: src/page/settings/advanced.vue:515
 msgid "Disable RawTherapee"
 msgstr "Poista RawTherapee käytöstä"
 
-#: src/page/settings/advanced.vue:228
+#: src/page/settings/advanced.vue:230
 msgid "Disable TensorFlow"
 msgstr "Poista TensorFlow käytöstä"
 
-#: src/page/settings/advanced.vue:603
+#: src/page/settings/advanced.vue:605
 msgid "Disable Vectors"
 msgstr "Poista vektorit käytöstä"
 
-#: src/page/settings/advanced.vue:162
+#: src/page/settings/advanced.vue:164
 msgid "Disable WebDAV"
 msgstr "Poista WebDAV käytöstä"
 
-#: src/page/settings/advanced.vue:185
+#: src/page/settings/advanced.vue:187
 msgid "Disables reverse geocoding and maps."
 msgstr "Poistaa käytöstä käänteisen geokoodauksen ja kartat."
 
-#: src/page/settings/advanced.vue:604
+#: src/page/settings/advanced.vue:606
 msgid "Disables vector graphics support."
 msgstr "Poistaa vektorigrafiikan tuen käytöstä."
 
-#: src/page/settings/advanced.vue:580
+#: src/page/settings/advanced.vue:582
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Poistaa videon transkoodauksen ja pikkukuvien poiston käytöstä."
 
@@ -764,40 +735,40 @@ msgstr "Poistaa videon transkoodauksen ja pikkukuvien poiston käytöstä."
 msgid "Discover"
 msgstr "Tutustu"
 
-#: src/component/admin/users/add.vue:121 src/component/admin/users/edit.vue:99
+#: src/dialog/admin/users/add.vue:151 src/dialog/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:193
 msgid "Display Name"
 msgstr "Näytön nimi"
 
-#: src/page/settings/advanced.vue:141
+#: src/page/settings/advanced.vue:143
 msgid "Don't backup photo and album metadata to YAML files."
 msgstr "Älä varmuuskopioi valokuvien ja albumien metatietoja YAML-tiedostoihin."
 
-#: src/page/settings/advanced.vue:207
+#: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
 msgstr "Älä luo ExifTool JSON -tiedostoja parantaaksesi metatietojen purkamista."
 
-#: src/page/settings/advanced.vue:97
+#: src/page/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Älä muuta alkuperäiskansiota. Poistaa tuonnin, lataamisen ja poistamisen käytöstä."
 
-#: src/page/settings/advanced.vue:492
+#: src/page/settings/advanced.vue:494
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Älä käytä Darktablea RAW-tiedostojen muuntamiseen."
 
-#: src/page/settings/advanced.vue:558
+#: src/page/settings/advanced.vue:560
 msgid "Don't use ImageMagick to convert images."
 msgstr "Älä käytä ImageMagickia kuvien muuntamiseen."
 
-#: src/page/settings/advanced.vue:514
+#: src/page/settings/advanced.vue:516
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Älä käytä RawTherapeeta RAW-tiedostojen muuntamiseen."
 
-#: src/page/settings/advanced.vue:229
+#: src/page/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
 msgstr "Älä käytä TensorFlow'ta kuvien luokitteluun."
 
-#: src/options/options.js:430
+#: src/options/options.js:434
 msgid "Donations"
 msgstr "Lahjoitukset"
 
@@ -839,7 +810,7 @@ msgstr "Lataa yksittäisiä tiedostoja ja zip-arkistoja."
 msgid "Downloading…"
 msgstr "Ladataan…"
 
-#: src/page/settings/advanced.vue:279
+#: src/page/settings/advanced.vue:281
 msgid "Downscaling Filter"
 msgstr "Skaalaussuodatin"
 
@@ -855,19 +826,19 @@ msgstr "Kaksoiskappaleet ohitetaan ja ne näkyvät vain kerran."
 msgid "Duration"
 msgstr "Kesto"
 
-#: src/page/settings/advanced.vue:302
+#: src/page/settings/advanced.vue:304
 msgid "Dynamic Previews"
 msgstr "Dynaamiset esikatselut"
 
-#: src/page/settings/advanced.vue:303
+#: src/page/settings/advanced.vue:305
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "Dynaaminen renderöinti vaatii tehokkaan palvelimen. Sitä ei suositella NAS-laitteille."
 
-#: src/page/settings/advanced.vue:345
+#: src/page/settings/advanced.vue:347
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dynaaminen kokorajoitus: %{n}px"
 
-#: src/page/about/feedback.vue:195 src/page/about/feedback.vue:194
+#: src/page/about/feedback.vue:198 src/page/about/feedback.vue:197
 msgid "E-Mail"
 msgstr "Sähköposti"
 
@@ -881,7 +852,7 @@ msgstr "Muokkaa"
 msgid "Edit %{name}"
 msgstr "Muokkaa %{name}"
 
-#: src/component/admin/users/edit.vue:58 src/dialog/service/edit.vue:146
+#: src/dialog/admin/users/edit.vue:58 src/dialog/service/edit.vue:146
 msgid "Edit Account"
 msgstr "Muokkaa tiliä"
 
@@ -893,16 +864,16 @@ msgstr "Muokkaa kuvaa"
 msgid "Edited"
 msgstr "Muokattu"
 
-#: src/component/admin/users/add.vue:146 src/component/admin/users/edit.vue:317
+#: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222 src/page/settings/account.vue:647
 msgid "Email"
 msgstr "Sähköposti"
 
-#: src/page/settings/advanced.vue:119
+#: src/page/settings/advanced.vue:121
 msgid "Enable new features currently under development."
 msgstr "Ota käyttöön uudet ominaisuudet, joita kehitetään parhaillaan."
 
-#: src/page/settings/advanced.vue:536
+#: src/page/settings/advanced.vue:538
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ottaa käyttöön RAW-muuntimen esiasetukset. Saattaa heikentää suorituskykyä."
 
@@ -918,7 +889,7 @@ msgstr "Arvioi kuvien likimääräinen sijainti ilman koordinaatteja."
 msgid "Estimates"
 msgstr "Arvioitu"
 
-#: src/options/options.js:391
+#: src/options/options.js:395
 msgid "Every two days"
 msgstr "Joka toinen päivä"
 
@@ -926,11 +897,11 @@ msgstr "Joka toinen päivä"
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Sulje yksityiseksi merkitty sisältö pois hakutuloksista, jaetuista albumeista, tunnisteista ja paikoista."
 
-#: src/page/people/new.vue:92 src/page/people/recognized.vue:134
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
 msgstr "Sulje pois piilotetut kohteet"
 
-#: src/component/navigation.vue:295
+#: src/component/navigation.vue:294
 msgid "Expand"
 msgstr "Laajenna"
 
@@ -938,11 +909,11 @@ msgstr "Laajenna"
 msgid "Expand Search"
 msgstr "Laajenna hakua"
 
-#: src/page/settings/advanced.vue:118
+#: src/page/settings/advanced.vue:120
 msgid "Experimental Features"
 msgstr "Kokeelliset ominaisuudet"
 
-#: src/page/admin/sessions.vue:87 src/dialog/service/edit.vue:249
+#: src/page/admin/sessions.vue:89 src/dialog/service/edit.vue:249
 #: src/dialog/share.vue:64
 msgid "Expires"
 msgstr "Vanhenee"
@@ -975,11 +946,11 @@ msgstr "Linkin poistaminen epäonnistui"
 msgid "Failed updating link"
 msgstr "Linkin päivittäminen epäonnistui"
 
-#: src/component/admin/users/edit.vue:235 src/page/settings/account.vue:166
+#: src/dialog/admin/users/edit.vue:235 src/page/settings/account.vue:166
 msgid "Family Name"
 msgstr "Sukunimi"
 
-#: src/options/options.js:268
+#: src/options/options.js:272
 msgid "Fast"
 msgstr "Nopea"
 
@@ -988,11 +959,11 @@ msgid "Favorite"
 msgstr "Suosikki"
 
 #: src/app/routes.js:221 src/component/navigation.vue:231
-#: src/component/navigation.vue:926 src/page/albums.vue:86
+#: src/component/navigation.vue:925 src/page/albums.vue:86
 msgid "Favorites"
 msgstr "Suosikit"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:428
+#: src/page/about/feedback.vue:7 src/options/options.js:432
 msgid "Feature Request"
 msgstr "Ominaisuuspyyntö"
 
@@ -1004,11 +975,7 @@ msgstr "Palaute"
 msgid "Feedback"
 msgstr "Palaute"
 
-#: src/page/connect.vue:82 src/dialog/sponsor.vue:25 src/page/connect.vue:89
-msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-msgstr "Ota rohkeasti yhteyttä osoitteeseen hello@photoprism.app, jos sinulla on kysyttävää."
-
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Female"
 msgstr "Nainen"
 
@@ -1066,7 +1033,7 @@ msgid "Folder is empty"
 msgstr "Kansio on tyhjä"
 
 #: src/app/routes.js:201 src/component/navigation.vue:332
-#: src/component/navigation.vue:1281
+#: src/component/navigation.vue:1280
 msgid "Folders"
 msgstr "Kansiot"
 
@@ -1082,19 +1049,11 @@ msgstr "Ruutunopeus (FPS)"
 msgid "Frames"
 msgstr "Ruudut"
 
-#: src/page/connect.vue:95
-msgid "Frequently Asked Questions"
-msgstr "Usein kysytyt kysymykset"
-
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
 msgstr "Koko näyttö"
 
-#: src/options/themes.js:458
-msgid "Gemstone"
-msgstr "Jalokivi"
-
-#: src/component/admin/users/edit.vue:117 src/page/settings/account.vue:81
+#: src/dialog/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
 msgstr "Laventeli"
 
@@ -1102,11 +1061,7 @@ msgstr "Laventeli"
 msgid "General"
 msgstr "Yleinen"
 
-#: src/page/about/about.vue:58
-msgid "Getting Support"
-msgstr "Tuen saaminen"
-
-#: src/component/admin/users/edit.vue:208 src/page/settings/account.vue:140
+#: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
 msgstr "Alkuperäinen nimi"
 
@@ -1114,19 +1069,15 @@ msgstr "Alkuperäinen nimi"
 msgid "Global Options"
 msgstr "Globaalit vaihtoehdot"
 
-#: src/options/options.js:412
+#: src/options/options.js:416
 msgid "Gold"
 msgstr "Kulta"
 
-#: src/options/themes.js:453
-msgid "Grayscale"
-msgstr "Harmaasävy"
-
-#: src/options/options.js:415
+#: src/options/options.js:419
 msgid "Green"
 msgstr "Vihreä"
 
-#: src/options/options.js:421
+#: src/options/options.js:425
 msgid "Grey"
 msgstr "Harmaa"
 
@@ -1142,7 +1093,7 @@ msgstr "Hash"
 msgid "Help"
 msgstr "Apua"
 
-#: src/app/routes.js:78
+#: src/app/routes.js:72 src/app/routes.js:78
 msgid "Help & Support"
 msgstr "Apu ja tuki"
 
@@ -1154,7 +1105,7 @@ msgstr "Piilotettu"
 msgid "Hidden Files"
 msgstr "Piilotetut tiedostot"
 
-#: src/page/people/new.vue:229 src/page/people/recognized.vue:295
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:294
 msgid "Hide"
 msgstr "Piilota"
 
@@ -1162,7 +1113,7 @@ msgstr "Piilota"
 msgid "Hide photos that have been moved to archive."
 msgstr "Piilota valokuvat, jotka on siirretty arkistoon."
 
-#: src/options/options.js:345
+#: src/options/options.js:349
 msgid "High"
 msgstr "Korkea"
 
@@ -1170,19 +1121,15 @@ msgstr "Korkea"
 msgid "High Dynamic Range (HDR)"
 msgstr "Korkea dynaaminen alue (HDR)"
 
-#: src/page/about/feedback.vue:152 src/page/about/feedback.vue:151
+#: src/page/about/feedback.vue:155 src/page/about/feedback.vue:154
 msgid "How can we help?"
 msgstr "Kuinka voimme auttaa?"
-
-#: src/page/about/about.vue:63
-msgid "If this doesn't help, or you have other questions:"
-msgstr "Jos tämä ei auta tai sinulla on muita kysymyksiä:"
 
 #: src/dialog/photo/edit/labels.vue:37
 msgid "image"
 msgstr "kuva"
 
-#: src/model/file.js:217 src/options/options.js:314
+#: src/model/file.js:217 src/options/options.js:318
 msgid "Image"
 msgstr "Kuva"
 
@@ -1219,10 +1166,6 @@ msgstr "Tuodaan tiedostoja alkuperäisiin…"
 #: src/dialog/photo/edit/files.vue:210 src/dialog/photo/edit/files.vue:219
 msgid "in"
 msgstr "osoitteessa"
-
-#: src/page/about/about.vue:72
-msgid "In addition, sponsors receive direct technical support via email."
-msgstr "Lisäksi sponsorit saavat suoraa teknistä tukea sähköpostitse."
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
@@ -1269,14 +1212,11 @@ msgstr "Ilmentymän tunnus"
 msgid "Interval"
 msgstr "Intervalli"
 
-#: src/component/admin/users/add.vue:124 src/component/admin/users/add.vue:149
-#: src/component/admin/users/edit.vue:127
-#: src/component/admin/users/edit.vue:154
-#: src/component/admin/users/edit.vue:211
-#: src/component/admin/users/edit.vue:238
-#: src/component/admin/users/edit.vue:264
-#: src/component/admin/users/edit.vue:292
-#: src/component/admin/users/edit.vue:320 src/page/connect.vue:14
+#: src/dialog/admin/users/add.vue:154 src/dialog/admin/users/add.vue:179
+#: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
+#: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
+#: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
+#: src/dialog/admin/users/edit.vue:320 src/page/connect.vue:14
 #: src/page/settings/account.vue:91 src/page/settings/account.vue:117
 #: src/page/settings/account.vue:143 src/page/settings/account.vue:169
 #: src/page/settings/account.vue:225 src/page/settings/account.vue:284
@@ -1285,8 +1225,7 @@ msgstr "Intervalli"
 #: src/page/settings/account.vue:678 src/page/settings/account.vue:742
 #: src/page/settings/account.vue:769 src/page/settings/account.vue:796
 #: src/page/settings/account.vue:824 src/page/settings/account.vue:852
-#: src/page/connect.vue:11 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "Virheellinen päivämäärä"
 
@@ -1294,7 +1233,8 @@ msgstr "Virheellinen päivämäärä"
 msgid "Invalid date"
 msgstr "Virheellinen päivämäärä"
 
-#: src/page/connect.vue:68 src/page/connect.vue:74
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:75
+#: src/page/connect.vue:81
 msgid "Invalid parameters"
 msgstr "Virheellinen päivämäärä"
 
@@ -1302,19 +1242,15 @@ msgstr "Virheellinen päivämäärä"
 msgid "Invalid photo selected"
 msgstr "Virheellinen kuva valittu"
 
-#: src/page/connect.vue:103
-msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-msgstr "On sinun päätöksesi, haluatko rekisteröityä ja nauttia lisäeduista."
-
 #: src/model/rest.js:181
 msgid "Item"
 msgstr "Kohde"
 
-#: src/page/settings/advanced.vue:320
+#: src/page/settings/advanced.vue:322
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-laatu: %{n}"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:428
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG-kokorajoitus: %{n}px"
 
@@ -1326,16 +1262,12 @@ msgstr "JPEG-tiedostot ja pikkukuvat renderöidään automaattisesti tarpeen muk
 msgid "Keywords"
 msgstr "Avainsanat"
 
-#: src/page/about/about.vue:53
-msgid "Knowledge Base"
-msgstr "Tietopohja"
-
 #: src/dialog/photo/edit/labels.vue:20 src/model/label.js:124
 msgid "Label"
 msgstr "Tunniste"
 
 #: src/app/routes.js:313 src/component/navigation.vue:319
-#: src/component/navigation.vue:1236 src/dialog/photo/edit.vue:39
+#: src/component/navigation.vue:1235 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:187
 msgid "Labels"
@@ -1345,7 +1277,7 @@ msgstr "Tunnisteet"
 msgid "Labels deleted"
 msgstr "Tunnisteet poistettu"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Yksityiskohtien säilyttäminen, minimaaliset artefaktit"
 
@@ -1353,7 +1285,7 @@ msgstr "Lanczos: Yksityiskohtien säilyttäminen, minimaaliset artefaktit"
 msgid "Language"
 msgstr "Kieli"
 
-#: src/page/admin/sessions.vue:81 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:83 src/page/admin/sessions.vue:33
 msgid "Last Active"
 msgstr "Viimeisin aktiivinen"
 
@@ -1369,22 +1301,17 @@ msgstr "Viimeisin synkronointi"
 msgid "Latitude"
 msgstr "Leveysaste"
 
-#: src/options/themes.js:468
-msgid "Lavender"
-msgstr "Laventeli"
-
 #: src/options/admin.js:47 src/options/admin.js:65
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
-#: src/page/connect.vue:99 src/component/auth/footer.vue:24
-#: src/dialog/sponsor.vue:37 src/page/about/about.vue:39
-#: src/page/about/about.vue:55 src/page/about/about.vue:163
-#: src/page/connect.vue:113 src/page/connect.vue:91
+#: src/page/connect.vue:130 src/dialog/sponsor.vue:37
+#: src/page/about/about.vue:39 src/page/about/about.vue:16
+#: src/page/about/about.vue:273 src/page/connect.vue:101
 msgid "Learn more"
 msgstr "Lue lisää"
 
-#: src/component/navigation.vue:601
+#: src/component/navigation.vue:602
 msgid "Legal Information"
 msgstr "Oikeudelliset tiedot"
 
@@ -1394,12 +1321,12 @@ msgstr "Objektiivi"
 
 #: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
 #: src/component/navigation.vue:358 src/component/navigation.vue:368
-#: src/component/navigation.vue:4 src/component/navigation.vue:1373
+#: src/component/navigation.vue:4 src/component/navigation.vue:1372
 #: src/page/settings.vue:48 src/page/settings/general.vue:407
 msgid "Library"
 msgstr "Kirjasto"
 
-#: src/page/connect.vue:4 src/component/navigation.vue:444
+#: src/page/connect.vue:4 src/app/routes.js:66 src/component/navigation.vue:444
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:559
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1409,7 +1336,7 @@ msgstr "Lisenssi"
 msgid "Like"
 msgstr "Tykkää"
 
-#: src/options/options.js:414
+#: src/options/options.js:418
 msgid "Lime"
 msgstr "Lime"
 
@@ -1417,7 +1344,7 @@ msgstr "Lime"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Raja saavutettu, näytetään ensimmäiset %{n} tiedostoa"
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineaarinen: Erittäin tasainen, paras suorituskyky"
 
@@ -1431,7 +1358,7 @@ msgstr "Luettelo"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:293
 #: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
-#: src/options/options.js:326
+#: src/options/options.js:330
 msgid "Live"
 msgstr "Live Photo -kuva"
 
@@ -1461,13 +1388,13 @@ msgstr "Sijainti"
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Lokiviestit näkyvät täällä aina, kun PhotoPrism löytää rikkinäisiä tiedostoja tai muita mahdollisia ongelmia."
 
-#: src/component/navigation.vue:474 src/component/navigation.vue:1774
-#: src/component/navigation.vue:2048
+#: src/component/navigation.vue:474 src/component/navigation.vue:1773
+#: src/component/navigation.vue:2047
 msgid "Login"
 msgstr "Kirjaudu sisään"
 
-#: src/component/navigation.vue:518 src/component/navigation.vue:1885
-#: src/component/navigation.vue:1916 src/component/navigation.vue:1967
+#: src/component/navigation.vue:518 src/component/navigation.vue:1884
+#: src/component/navigation.vue:1915 src/component/navigation.vue:1966
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
@@ -1480,15 +1407,15 @@ msgstr "Lokit"
 msgid "Longitude"
 msgstr "Pituusaste"
 
-#: src/options/options.js:349
+#: src/options/options.js:353
 msgid "Low"
 msgstr "Matala"
 
-#: src/options/options.js:287
+#: src/options/options.js:291
 msgid "Low Resolution"
 msgstr "Matala resoluutio"
 
-#: src/options/options.js:408
+#: src/options/options.js:412
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1496,12 +1423,13 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Pääväri"
 
-#: src/options/options.js:442
+#: src/options/options.js:446
 msgid "Male"
 msgstr "Mies"
 
-#: src/page/connect.vue:53
-msgid "Manage account"
+#: src/page/connect.vue:62 src/page/connect.vue:85 src/page/about/about.vue:54
+#: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
+msgid "Manage Account"
 msgstr "Hallitse tiliä"
 
 #: src/dialog/photo/edit/labels.vue:35
@@ -1520,9 +1448,13 @@ msgstr "Kartat"
 msgid "Marker"
 msgstr "Merkki"
 
-#: src/options/options.js:272
+#: src/options/options.js:276
 msgid "Medium"
 msgstr "Keskikokoinen"
+
+#: src/page/connect.vue:4
+msgid "Membership"
+msgstr "Jäsenyys"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
@@ -1532,7 +1464,7 @@ msgstr "Yhdistetäänkö %{a} ja %{b}?"
 msgid "Message sent"
 msgstr "Viesti lähetetty"
 
-#: src/component/navigation.vue:248
+#: src/component/navigation.vue:247
 msgid "Minimize"
 msgstr "Minimoi"
 
@@ -1541,7 +1473,7 @@ msgid "Missing"
 msgstr "Puuttuva"
 
 #: src/app/routes.js:162 src/component/navigation.vue:244
-#: src/component/navigation.vue:971 src/page/settings/general.vue:165
+#: src/component/navigation.vue:970 src/page/settings/general.vue:165
 msgid "Moments"
 msgstr "Hetket"
 
@@ -1566,7 +1498,7 @@ msgstr "Yli 20 albumia löydetty"
 msgid "More than 20 labels found"
 msgstr "Yli 20 tunnistetta löytyi"
 
-#: src/page/people/recognized.vue:511
+#: src/page/people/recognized.vue:500
 msgid "More than 20 people found"
 msgstr "Yli 20 ihmistä löytyi"
 
@@ -1583,20 +1515,20 @@ msgstr "Tärkein"
 msgid "Move Files"
 msgstr "Siirrä tiedostoja"
 
-#: src/dialog/account/password.vue:162
+#: src/dialog/account/password.vue:165
 msgid "Must have at least %{n} characters."
 msgstr "Vähintään %{n} merkkiä."
 
-#: src/page/about/feedback.vue:172 src/component/photo/cards.vue:517
+#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:517
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:36
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
 #: src/dialog/photo/edit/labels.vue:159 src/dialog/photo/edit/people.vue:21
 #: src/dialog/photo/edit/people.vue:225 src/dialog/service/edit.vue:427
-#: src/page/about/feedback.vue:171 src/page/albums.vue:87
+#: src/page/about/feedback.vue:174 src/page/albums.vue:87
 #: src/page/auth/login.vue:89 src/page/labels.vue:339
 #: src/page/people/new.vue:52 src/page/people/new.vue:297
-#: src/page/people/recognized.vue:396 src/page/settings/services.vue:26
+#: src/page/people/recognized.vue:395 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Nimi"
 
@@ -1607,12 +1539,8 @@ msgstr "Nimi"
 msgid "Name too long"
 msgstr "Nimi liian pitkä"
 
-#: src/options/themes.js:483
-msgid "Neon"
-msgstr "Neon"
-
 #: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
-#: src/options/options.js:386 src/options/options.js:396
+#: src/options/options.js:390 src/options/options.js:400
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Ei koskaan"
@@ -1621,7 +1549,7 @@ msgstr "Ei koskaan"
 msgid "New"
 msgstr "Uusi"
 
-#: src/dialog/account/password.vue:159
+#: src/dialog/account/password.vue:162
 msgid "New Password"
 msgstr "Uusi salasana"
 
@@ -1648,7 +1576,7 @@ msgstr "Tunnisteita ei löytynyt"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:282 src/page/people/new.vue:368
-#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:504
+#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:493
 msgid "No people found"
 msgstr "Ihmisiä ei löytynyt"
 
@@ -1670,7 +1598,7 @@ msgstr "Ei äskettäin muokattuja kuvia"
 msgid "No servers configured."
 msgstr "Palvelimia ei ole määritetty."
 
-#: src/page/settings/services.vue:36
+#: src/page/settings/services.vue:37
 msgid "No services configured."
 msgstr "Palvelimia ei ole määritetty."
 
@@ -1696,8 +1624,8 @@ msgstr "Ei varoituksia tai virheitä, jotka sisältävät tämän avainsanan. Hu
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Muut kuin valokuvat ja heikkolaatuiset kuvat edellyttävät tarkistusta, ennen kuin ne näkyvät hakutuloksissa."
 
-#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:264
-#: src/options/options.js:353
+#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:268
+#: src/options/options.js:357
 msgid "None"
 msgstr "Ei mitään"
 
@@ -1709,7 +1637,7 @@ msgstr "Ei löydetty"
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr "Huomaa, että voit hallita alkuperäisiä kansioita manuaalisesti, ja tuonti on valinnaista."
 
-#: src/page/settings/services.vue:36
+#: src/page/settings/services.vue:38
 msgid "Note:"
 msgstr "Huomautus:"
 
@@ -1725,11 +1653,11 @@ msgstr "Huomautukset"
 msgid "Nothing to see here yet."
 msgstr "Täällä ei ole vielä mitään nähtävää. Ole kärsivällinen."
 
-#: src/page/admin/sessions.vue:44 src/page/admin/users.vue:42
+#: src/page/admin/sessions.vue:45 src/page/admin/users.vue:43
 msgid "Nothing was found."
 msgstr "Mitään ei löytynyt."
 
-#: src/component/navigation.vue:489 src/component/navigation.vue:1819
+#: src/component/navigation.vue:489 src/component/navigation.vue:1818
 msgid "Offline"
 msgstr "Offline-tilassa"
 
@@ -1742,7 +1670,7 @@ msgstr "Vanhin ensin"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Kirjoita Windowsissa seuraava resurssi yhteysvalintaikkunaan:"
 
-#: src/options/options.js:392
+#: src/options/options.js:396
 msgid "Once a week"
 msgstr "Kerran viikossa"
 
@@ -1767,7 +1695,7 @@ msgid "One label found"
 msgstr "Yksi tunniste löytyi"
 
 #: src/page/people/new.vue:284 src/page/people/new.vue:370
-#: src/page/people/recognized.vue:506
+#: src/page/people/recognized.vue:495
 msgid "One person found"
 msgstr "Yksi henkilö löytyi"
 
@@ -1775,15 +1703,7 @@ msgstr "Yksi henkilö löytyi"
 msgid "One picture found"
 msgstr "Yksi kuva löytyi"
 
-#: src/options/themes.js:498
-msgid "Onyx"
-msgstr "Onyksinmusta"
-
-#: src/page/about/about.vue:69
-msgid "or ask in our Community Chat"
-msgstr "tai kysy yhteisöchatissamme"
-
-#: src/options/options.js:411
+#: src/options/options.js:415
 msgid "Orange"
 msgstr "Oranssi"
 
@@ -1810,23 +1730,15 @@ msgstr "Alkuperäinen nimi"
 msgid "Originals"
 msgstr "Alkuperäiset"
 
-#: src/options/options.js:431 src/options/options.js:444
+#: src/options/options.js:435 src/options/options.js:448
 msgid "Other"
 msgstr "Muut"
 
-#: src/page/about/about.vue:19
+#: src/page/about/about.vue:17
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Tehtävämme on tarjota käyttäjä- ja yksityisyydensuojaystävällisin ratkaisu, jonka avulla kuvasi pysyvät järjestyksessä ja saatavilla."
 
-#: src/page/connect.vue:109
-msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-msgstr "Tiimimme päättää tästä jatkuvasti riippuen tarvittavasta tukiponnistuksesta, palvelin- ja lisenssikustannuksista sekä siitä, tarvitsevatko kaikki yleisesti ominaisuuksia vai ovatko ne lähinnä organisaatioiden ja edistyneiden käyttäjien toivomia."
-
-#: src/page/about/about.vue:48
-msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-msgstr "Käyttöoppaassa käsitellään myös monia edistyneempiä aiheita, kuten siirtämistä Google-kuvista ja pikkukuvien laatuasetuksia."
-
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Outdoor"
 msgstr "Ulkona"
 
@@ -1838,18 +1750,18 @@ msgstr "Panoraama"
 msgid "Panoramas"
 msgstr "Panoraamat"
 
-#: src/component/admin/users/add.vue:169 src/dialog/service/add.vue:126
+#: src/dialog/admin/users/add.vue:123 src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
 #: src/page/auth/login.vue:118
 msgid "Password"
 msgstr "Salasana"
 
-#: src/dialog/account/password.vue:47
+#: src/dialog/account/password.vue:52
 msgid "Password changed"
 msgstr "Salasana vaihdettu"
 
 #: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:218
-#: src/component/navigation.vue:562 src/component/navigation.vue:881
+#: src/component/navigation.vue:562 src/component/navigation.vue:880
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
@@ -1879,11 +1791,11 @@ msgstr "Kuva"
 msgid "PhotoPrism has been updated…"
 msgstr "PhotoPrism on päivitetty…"
 
-#: src/page/connect.vue:101
+#: src/page/about/about.vue:48 src/page/about/about.vue:3
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "PhotoPrism on 100-prosenttisesti omarahoitteinen ja riippumaton."
 
-#: src/page/about/about.vue:22 src/page/connect.vue:14
+#: src/page/about/about.vue:24 src/page/about/about.vue:1
 msgid "PhotoPrism+ Membership"
 msgstr "PhotoPrism+ jäsenyys"
 
@@ -1891,7 +1803,7 @@ msgstr "PhotoPrism+ jäsenyys"
 msgid "Photos"
 msgstr "Kuvat"
 
-#: src/options/options.js:409
+#: src/options/options.js:413
 msgid "Pink"
 msgstr "Vaaleanpunainen"
 
@@ -1907,12 +1819,12 @@ msgstr "Paikka ja aika"
 #: src/app/routes.js:281 src/component/navigation.vue:284
 #: src/component/navigation.vue:294 src/component/navigation.vue:568
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
-#: src/component/navigation.vue:4 src/component/navigation.vue:1116
+#: src/component/navigation.vue:4 src/component/navigation.vue:1115
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "Paikat"
 
-#: src/dialog/account/password.vue:188
+#: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Vahvista uusi salasanasi."
 
@@ -1920,21 +1832,25 @@ msgstr "Vahvista uusi salasanasi."
 msgid "Please don't upload photos containing offensive content."
 msgstr "Älä lataa kuvia, jotka sisältävät loukkaavaa sisältöä."
 
-#: src/dialog/account/password.vue:17
+#: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
 msgstr "Huomaa, että salasanan vaihtaminen kirjautuu ulos muilla laitteilla ja selaimilla."
 
-#: src/page/settings/advanced.vue:456
+#: src/page/connect.vue:56 src/page/connect.vue:53
+msgid "Please restart your instance for the changes to take effect."
+msgstr "Käynnistä instanssisi uudelleen, jotta muutokset tulevat voimaan."
+
+#: src/common/notify.js:98
+msgid "Please wait…"
+msgstr "Odota…"
+
+#: src/page/settings/advanced.vue:458
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG-kokorajoitus: %{n}px"
 
 #: src/dialog/photo/edit/files.vue:149 src/dialog/photo/edit/files.vue:146
 msgid "Portrait"
 msgstr "Muotokuva"
-
-#: src/page/about/about.vue:68
-msgid "post your question in GitHub Discussions"
-msgstr "lähetä kysymyksesi GitHub-keskusteluihin"
 
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
@@ -1963,16 +1879,12 @@ msgid "Primary"
 msgstr "Ensisijainen"
 
 #: src/app/routes.js:249 src/component/navigation.vue:345
-#: src/component/navigation.vue:1326 src/dialog/album/edit.vue:232
+#: src/component/navigation.vue:1325 src/dialog/album/edit.vue:232
 #: src/dialog/photo/edit/info.vue:102 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "Yksityinen"
 
-#: src/page/connect.vue:68 src/page/connect.vue:75
-msgid "Proceed"
-msgstr "Jatka"
-
-#: src/page/about/feedback.vue:6 src/options/options.js:427
+#: src/page/about/feedback.vue:6 src/options/options.js:431
 msgid "Product Feedback"
 msgstr "Tuotepalaute"
 
@@ -1980,7 +1892,7 @@ msgstr "Tuotepalaute"
 msgid "Projection"
 msgstr "Projektio"
 
-#: src/options/options.js:407
+#: src/options/options.js:411
 msgid "Purple"
 msgstr "Violetti"
 
@@ -2001,11 +1913,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Satunnainen"
 
-#: src/options/themes.js:508
-msgid "Raspberry"
-msgstr "Vadelma"
-
-#: src/options/options.js:318
+#: src/options/options.js:322
 msgid "Raw"
 msgstr "Raaka"
 
@@ -2018,11 +1926,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indeksoi uudelleen kaikki alkuperäiset tiedostot, mukaan lukien jo indeksoidut ja muuttumattomat tiedostot."
 
-#: src/page/about/about.vue:51
-msgid "Read the Docs"
-msgstr "Lue asiakirjat"
-
-#: src/page/settings/advanced.vue:96
+#: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "Vain luku -tila"
 
@@ -2049,19 +1953,23 @@ msgstr "Tunnistettu"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Tunnistaa kasvot, jotta tietyt ihmiset voidaan löytää."
 
-#: src/options/options.js:410
+#: src/options/options.js:414
 msgid "Red"
 msgstr "Punainen"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1981
+#: src/page/connect.vue:92 src/page/connect.vue:89
+msgid "Register"
+msgstr "Rekisteröi"
+
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1980
 #: src/component/photo/toolbar.vue:54 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
-#: src/page/people/new.vue:57 src/page/people/recognized.vue:97
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:96
 msgid "Reload"
 msgstr "Lataa uudelleen"
 
-#: src/component/navigation.vue:129 src/dialog/reload.vue:26
+#: src/component/navigation.vue:130 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:101 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Ladataan uudelleen…"
@@ -2086,20 +1994,29 @@ msgstr "Poista albumista"
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
 msgstr "Poista tuodut tiedostot tallennustilan säästämiseksi. Ei-tuettuja tiedostotyyppejä ei koskaan poisteta, vaan ne säilyvät nykyisessä sijainnissaan."
 
+#: src/common/api.js:102
+msgid "Request failed - are you offline?"
+msgstr "Pyyntö epäonnistui - oletko offline?"
+
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
 msgstr "Pyyntö epäonnistui – virheellinen vastaus"
 
-#: src/component/admin/users/add.vue:100 src/component/admin/users/add.vue:173
-#: src/component/admin/users/edit.vue:102 src/page/about/feedback.vue:130
-#: src/page/about/feedback.vue:150 src/page/about/feedback.vue:193
-#: src/page/settings/account.vue:196 src/page/about/feedback.vue:192
+#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:128
+#: src/dialog/admin/users/edit.vue:102 src/page/about/feedback.vue:133
+#: src/page/about/feedback.vue:153 src/page/about/feedback.vue:196
+#: src/page/settings/account.vue:196 src/page/about/feedback.vue:195
 msgid "Required"
 msgstr "Vaadittu"
 
 #: src/dialog/photo/edit/info.vue:67
 msgid "Resolution"
 msgstr "Resoluutio"
+
+#: src/page/connect.vue:65 src/page/connect.vue:62
+#: src/page/settings/advanced.vue:156
+msgid "Restart"
+msgstr "Käynnistä uudelleen"
 
 #: src/component/photo/clipboard.vue:227
 msgid "Restore"
@@ -2109,7 +2026,7 @@ msgstr "Palauta"
 msgid "Retry Limit"
 msgstr "Uudelleenyrittämisen raja"
 
-#: src/dialog/account/password.vue:185
+#: src/dialog/account/password.vue:190
 msgid "Retype Password"
 msgstr "Kirjoita salasana uudelleen"
 
@@ -2117,17 +2034,17 @@ msgstr "Kirjoita salasana uudelleen"
 msgid "Review"
 msgstr "Arvostelu"
 
-#: src/component/admin/users/add.vue:193 src/component/admin/users/edit.vue:341
-#: src/page/admin/sessions.vue:62 src/page/admin/sessions.vue:2
+#: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
+#: src/page/admin/sessions.vue:64 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "Rooli"
 
-#: src/options/options.js:296
+#: src/options/options.js:300
 msgid "Satellite"
 msgstr "Satelliitti"
 
-#: src/component/admin/users/edit.vue:77 src/dialog/account/password.vue:39
+#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:42
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
@@ -2143,9 +2060,9 @@ msgstr "Skannaukset"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
 #: src/component/navigation.vue:550 src/component/navigation.vue:4
-#: src/component/navigation.vue:327 src/component/photo/toolbar.vue:44
+#: src/component/navigation.vue:326 src/component/photo/toolbar.vue:44
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:78 src/page/places.vue:38
+#: src/page/people/recognized.vue:77 src/page/places.vue:38
 msgid "Search"
 msgstr "Etsi"
 
@@ -2218,8 +2135,8 @@ msgstr "Istunnot"
 #: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
 #: src/component/navigation.vue:409 src/component/navigation.vue:419
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
-#: src/component/navigation.vue:4 src/component/navigation.vue:1547
-#: src/component/navigation.vue:2014
+#: src/component/navigation.vue:4 src/component/navigation.vue:1546
+#: src/component/navigation.vue:2013
 msgid "Settings"
 msgstr "Asetukset"
 
@@ -2230,10 +2147,6 @@ msgstr "Asetukset tallennettu"
 #: src/dialog/share/upload.vue:32
 msgid "Setup"
 msgstr "Määritä"
-
-#: src/options/themes.js:488
-msgid "Shadow"
-msgstr "Varjo"
 
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
@@ -2248,7 +2161,7 @@ msgstr "Jaa %{name}"
 msgid "Share your pictures with other apps and services."
 msgstr "Jaa kuvasi muiden sovellusten ja palveluiden kanssa."
 
-#: src/page/people/new.vue:219 src/page/people/recognized.vue:285
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:284
 msgid "Show"
 msgstr "Näytä"
 
@@ -2256,7 +2169,7 @@ msgstr "Näytä"
 msgid "Show all new faces"
 msgstr "Näytä kaikki uudet kasvot"
 
-#: src/page/people/new.vue:75 src/page/people/recognized.vue:117
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:116
 msgid "Show hidden"
 msgstr "Näytä piilotetut"
 
@@ -2272,7 +2185,7 @@ msgstr "Näytä lisää"
 msgid "Show server logs in Library."
 msgstr "Näytä palvelimen lokit kirjastossa."
 
-#: src/page/settings/advanced.vue:75
+#: src/page/settings/advanced.vue:77
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Näyttää yksityiskohtaisemmat lokiviestit. Vaatii uudelleenkäynnistyksen."
 
@@ -2293,13 +2206,9 @@ msgstr "Samanlainen"
 msgid "Size"
 msgstr "Koko"
 
-#: src/options/options.js:276
+#: src/options/options.js:280
 msgid "Slow"
 msgstr "Hidas"
-
-#: src/options/themes.js:493
-msgid "Snow"
-msgstr "Lumi"
 
 #: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
 msgid "Software"
@@ -2347,11 +2256,11 @@ msgid "Start/Stop Slideshow"
 msgstr "Aloita/lopeta diaesitys"
 
 #: src/component/navigation.vue:270 src/component/navigation.vue:304
-#: src/component/navigation.vue:28 src/component/navigation.vue:1063
+#: src/component/navigation.vue:28 src/component/navigation.vue:1062
 msgid "States"
 msgstr "Alueet"
 
-#: src/page/settings/advanced.vue:371
+#: src/page/settings/advanced.vue:373
 msgid "Static Size Limit: %{n}px"
 msgstr "Staattinen kokorajoitus: %{n}px"
 
@@ -2363,7 +2272,7 @@ msgstr "Tila"
 msgid "Storage"
 msgstr "Tallennus"
 
-#: src/options/options.js:291
+#: src/options/options.js:295
 msgid "Streets"
 msgstr "Kadut"
 
@@ -2371,15 +2280,15 @@ msgstr "Kadut"
 msgid "Subject"
 msgstr "Aihe"
 
-#: src/page/connect.vue:51 src/page/connect.vue:48
+#: src/page/connect.vue:11
 msgid "Successfully Connected"
 msgstr "Onnistuneesti yhdistetty"
 
-#: src/component/admin/sessions/remove.vue:23
+#: src/dialog/admin/sessions/remove.vue:23
 msgid "Successfully deleted"
 msgstr "Poistettu onnistuneesti"
 
-#: src/component/admin/users/edit.vue:436 src/page/admin/users.vue:87
+#: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "Super Admin"
 
@@ -2404,13 +2313,21 @@ msgstr "Synkronoi raaka- ja videotiedostot"
 msgid "Taken"
 msgstr "Otettu"
 
-#: src/options/options.js:416
+#: src/options/options.js:420
 msgid "Teal"
 msgstr "Sinivihreä"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Liian pitkä teksti"
+
+#: src/page/about/about.vue:46 src/page/about/about.vue:1
+msgid "Thank You for Your Support!"
+msgstr "Kiitos tuestasi!"
+
+#: src/page/about/about.vue:18
+msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
+msgstr "Siksi PhotoPrism rakennettiin alusta alkaen toimimaan siellä, missä sitä tarvitset, tinkimättä vapaudesta, yksityisyydestä tai toiminnallisuudesta."
 
 #: src/page/library/index.vue:36
 msgid "The index currently contains %{n} hidden files."
@@ -2424,7 +2341,7 @@ msgstr "Niiden muotoa ei ehkä tueta, niitä ei ole vielä muunnettu JPEG-muotoo
 msgid "Theme"
 msgstr "Teema"
 
-#: src/page/settings/services.vue:40
+#: src/page/settings/services.vue:42
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
@@ -2434,7 +2351,7 @@ msgstr "Tämä liittää alkuperäiskansion verkkoasemaksi ja antaa sinun avata,
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Tämä liittää alkuperäiskansion verkkoasemaksi ja antaa sinun avata, muokata ja poistaa tiedostoja tietokoneeltasi tai älypuhelimelta ikään kuin ne olisivat paikallisia."
 
-#: src/page/settings/advanced.vue:250
+#: src/page/settings/advanced.vue:252
 msgid "Thumbnail Generation"
 msgstr "Pikkukuvien luominen"
 
@@ -2450,7 +2367,7 @@ msgstr "Aikavyöhyke"
 msgid "Timeout"
 msgstr "Aikakatkaisu"
 
-#: src/component/admin/users/edit.vue:151 src/page/settings/account.vue:114
+#: src/dialog/admin/users/edit.vue:151 src/page/settings/account.vue:114
 msgctxt "Account"
 msgid "Title"
 msgstr "Otsikko"
@@ -2473,9 +2390,9 @@ msgstr "Otsikko liian pitkä"
 msgid "Title too long"
 msgstr "Otsikko liian pitkä"
 
-#: src/page/connect.vue:59 src/page/connect.vue:66
-msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-msgstr "Päivittääksesi voit joko syöttää aktivointikoodin tai klikata \"Jatka\" rekisteröityäksesi verkkosivustollamme:"
+#: src/page/connect.vue:79 src/page/connect.vue:76
+msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
+msgstr "Päivittääksesi voit joko syöttää aktivointikoodin tai rekisteröityä verkkosivustollamme klikkaamalla \"Rekisteröidy\":"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:71
@@ -2487,7 +2404,7 @@ msgstr "Vaihda näkymää"
 msgid "Token"
 msgstr "Merkki"
 
-#: src/options/options.js:306
+#: src/options/options.js:310
 msgid "Topographic"
 msgstr "Topografinen"
 
@@ -2533,7 +2450,7 @@ msgid "Unknown"
 msgstr "Tuntematon"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:87 src/page/settings/account.vue:35
+#: src/component/navigation.vue:88 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Rekisteröimätön"
@@ -2563,7 +2480,7 @@ msgstr "Päivitetään indeksiä"
 msgid "Updating moments"
 msgstr "Päivitetään hetkiä"
 
-#: src/component/admin/users/edit.vue:159 src/page/settings/account.vue:124
+#: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
 msgid "Updating picture…"
 msgstr "Päivitetään esikatseluita"
 
@@ -2575,17 +2492,19 @@ msgstr "Päivitetään esikatseluita"
 msgid "Updating stacks"
 msgstr "Päivitetään pinoja"
 
-#: src/page/connect.vue:17 src/component/navigation.vue:452
+#: src/page/connect.vue:20 src/component/navigation.vue:452
 #: src/component/navigation.vue:592 src/component/navigation.vue:51
+#: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Päivitys"
 
-#: src/dialog/sponsor.vue:40 src/page/about/about.vue:31
-#: src/page/connect.vue:56
+#: src/page/connect.vue:69 src/dialog/sponsor.vue:40
+#: src/page/about/about.vue:32 src/page/about/about.vue:9
+#: src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "Päivitä nyt"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2032
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2031
 #: src/component/photo/toolbar.vue:122 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
@@ -2605,7 +2524,7 @@ msgstr "Lähetys valmis. Indeksoidaan…"
 msgid "Upload failed"
 msgstr "Lähetys epäonnistui"
 
-#: src/component/admin/users/edit.vue:418
+#: src/dialog/admin/users/edit.vue:418
 msgid "Upload Folder"
 msgstr "Lataa kansio"
 
@@ -2637,17 +2556,17 @@ msgstr "Tällaisia kuvia mahdollisesti sisältävät lataukset hylätään autom
 msgid "URL"
 msgstr "URL-osoite"
 
-#: src/page/settings/advanced.vue:535
+#: src/page/settings/advanced.vue:537
 msgid "Use Presets"
 msgstr "Käytä esiasetuksia"
 
 #: src/options/admin.js:7 src/options/admin.js:23
-#: src/page/admin/sessions.vue:54 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:56 src/page/admin/sessions.vue:2
 #: src/model/user.js:230
 msgid "User"
 msgstr "Käyttäjä"
 
-#: src/component/navigation.vue:597 src/page/about/about.vue:45
+#: src/component/navigation.vue:597
 msgid "User Guide"
 msgstr "Käyttöopas"
 
@@ -2655,7 +2574,7 @@ msgstr "Käyttöopas"
 msgid "User Interface"
 msgstr "Käyttöliittymä"
 
-#: src/component/admin/users/add.vue:94 src/page/admin/sessions.vue:46
+#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:48
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:30
 #: src/page/admin/users.vue:34 src/dialog/service/add.vue:103
 #: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
@@ -2666,13 +2585,9 @@ msgstr "Käyttäjätunnus"
 msgid "Users"
 msgstr "Käyttäjät"
 
-#: src/options/themes.js:478
-msgid "Vanta"
-msgstr "Vantamusta"
-
 #: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:334
+#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:338
 msgid "Vector"
 msgstr "Vektori"
 
@@ -2680,14 +2595,10 @@ msgstr "Vektori"
 msgid "Vectors"
 msgstr "Vektorit"
 
-#: src/page/connect.vue:11 src/page/connect.vue:8
-msgid "Verified"
-msgstr "Vahvistettu"
-
 #: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
 #: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
-#: src/options/options.js:330
+#: src/options/options.js:334
 msgid "Video"
 msgstr "Video"
 
@@ -2698,7 +2609,7 @@ msgstr "Kesto"
 
 #: src/app/routes.js:235 src/component/navigation.vue:184
 #: src/component/navigation.vue:194 src/component/navigation.vue:4
-#: src/component/navigation.vue:765
+#: src/component/navigation.vue:764
 msgid "Videos"
 msgstr "Videot"
 
@@ -2711,11 +2622,7 @@ msgstr "Näytä"
 msgid "Viewer"
 msgstr "Katseluohjelma"
 
-#: src/page/about/about.vue:47
-msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-msgstr "Käy osoitteessa docs.photoprism.app/user-guide ja opi, miten voit synkronoida, järjestää ja jakaa kuvia."
-
-#: src/options/admin.js:11 src/page/admin/sessions.vue:65
+#: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
 msgid "Visitor"
 msgstr "Vierailija"
@@ -2725,10 +2632,6 @@ msgstr "Vierailija"
 msgid "Visual Similarity"
 msgstr "Ryhmittele samankaltaisuuden mukaan"
 
-#: src/page/connect.vue:102
-msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-msgstr "Vapaaehtoiset lahjoitukset eivät kata kustannuksia, jotka aiheutuvat kokopäiväisesti työskentelevästä tiimistä, joka tarjoaa sinulle päivityksiä, dokumentaatiota ja tukea."
-
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
 msgstr "Arvostamme palautettasi!"
@@ -2737,16 +2640,12 @@ msgstr "Arvostamme palautettasi!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Pyrimme parhaamme mukaan vastaamaan viiden arkipäivän tai lyhyemmän ajan kuluessa."
 
-#: src/page/about/about.vue:74
-msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-msgstr "Teemme parhaamme vastataksemme kaikkiin kysymyksiisi. Vastineeksi pyydämme sinua tukemaan meitä Patreon- tai GitHub-sponsoreina."
-
-#: src/component/admin/users/add.vue:232 src/component/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Web-kirjautuminen"
 
-#: src/component/admin/users/add.vue:249 src/component/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47
 msgid "WebDAV"
 msgstr "WebDAV"
@@ -2755,7 +2654,7 @@ msgstr "WebDAV"
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV-ohjelmat voivat muodostaa yhteyden PhotoPrismiin käyttämällä seuraavaa URL-osoitetta:"
 
-#: src/page/settings/services.vue:37
+#: src/page/settings/services.vue:39
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
@@ -2769,17 +2668,9 @@ msgstr "WebDAV-lähetys"
 msgid "Website"
 msgstr "Verkkosivusto"
 
-#: src/page/connect.vue:106
-msgid "What functionality is generally available?"
-msgstr "Mitä toimintoja on yleisesti saatavilla?"
-
-#: src/options/options.js:420
+#: src/options/options.js:424
 msgid "White"
 msgstr "Valkoinen"
-
-#: src/page/connect.vue:98
-msgid "Why are some features only available to sponsors?"
-msgstr "Miksi jotkin ominaisuudet ovat vain sponsoreiden käytettävissä?"
 
 #: src/page/settings/account.vue:93
 msgid "Work Details"
@@ -2790,13 +2681,9 @@ msgstr "Tarkemmat tiedot"
 msgid "Year"
 msgstr "Vuosi"
 
-#: src/options/options.js:413
+#: src/options/options.js:417
 msgid "Yellow"
 msgstr "Keltainen"
-
-#: src/options/themes.js:513
-msgid "Yellowstone"
-msgstr "Yellowstone"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
 #: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:104
@@ -2810,9 +2697,10 @@ msgstr "Yellowstone"
 msgid "Yes"
 msgstr "Kyllä"
 
-#: src/page/about/about.vue:67
-msgid "you are welcome to join us on Reddit"
-msgstr "olet tervetullut liittymään meihin Redditissä"
+#: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
+#: src/page/about/about.vue:5 src/page/connect.vue:103
+msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr "Voit ottaa meihin yhteyttä osoitteeseen membership@photoprism.app, jos sinulla on jäsenyyttäsi koskevia kysymyksiä."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2831,7 +2719,12 @@ msgstr "Voit valita vain yhden kohteen"
 msgid "You may rescan your library to find additional faces."
 msgstr "Voit skannata kirjastosi uudelleen löytääksesi lisää kasvoja."
 
-#: src/dialog/sponsor.vue:19 src/page/about/about.vue:24
+#: src/page/connect.vue:54 src/page/connect.vue:51
+msgid "Your account has been successfully connected."
+msgstr "Tilisi on yhdistetty onnistuneesti."
+
+#: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
+#: src/page/about/about.vue:49 src/page/about/about.vue:4
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Jatkuva tukesi auttaa meitä tarjoamaan säännöllisiä päivityksiä ja palveluja, kuten maailmankarttoja."
 
@@ -2843,8 +2736,149 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
 
+#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
+#~ msgstr "Koska tämä auttaa meitä tarjoamaan enemmän ominaisuuksia yleisölle, kannustamme kaikkia käyttäjiä tukemaan tehtäviämme."
+
+#~ msgid "Frequently Asked Questions"
+#~ msgstr "Usein kysytyt kysymykset"
+
+#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
+#~ msgstr "Tiimimme päättää tästä jatkuvasti riippuen tarvittavasta tukiponnistuksesta, palvelin- ja lisenssikustannuksista sekä siitä, tarvitsevatko kaikki yleisesti ominaisuuksia vai ovatko ne lähinnä organisaatioiden ja edistyneiden käyttäjien toivomia."
+
+#~ msgid "What functionality is generally available?"
+#~ msgstr "Mitä toimintoja on yleisesti saatavilla?"
+
+#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgstr "On sinun päätöksesi, haluatko rekisteröityä ja nauttia lisäeduista."
+
+#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
+#~ msgstr "Vapaaehtoiset lahjoitukset eivät kata kustannuksia, jotka aiheutuvat kokopäiväisesti työskentelevästä tiimistä, joka tarjoaa sinulle päivityksiä, dokumentaatiota ja tukea."
+
+#~ msgid "Why are some features only available to sponsors?"
+#~ msgstr "Miksi jotkin ominaisuudet ovat vain sponsoreiden käytettävissä?"
+
+#~ msgid "Verified"
+#~ msgstr "Vahvistettu"
+
+#~ msgid "Proceed"
+#~ msgstr "Jatka"
+
+#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
+#~ msgstr "Päivittääksesi voit joko syöttää aktivointikoodin tai klikata \"Jatka\" rekisteröityäksesi verkkosivustollamme:"
+
+#~ msgid "Something went wrong, are you offline?"
+#~ msgstr "Jokin meni pieleen, oletko offline?"
+
 #~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
 #~ msgstr "Me PhotoPrismillä uskomme, että jokainen valokuvaan vangittu hetki on arvokas, ja tehtävämme on antaa ihmisille mahdollisuus vaalia näitä hetkiä tulevien sukupolvien ajan."
+
+#~ msgid "Become a member today to enjoy additional features and support our mission!"
+#~ msgstr "Liity jäseneksi jo tänään nauttiaksesi lisäominaisuuksista ja tukeaksesi missiotamme!"
+
+#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr "Ota rohkeasti yhteyttä osoitteeseen hello@photoprism.app, jos sinulla on kysyttävää."
+
+#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
+#~ msgstr "Ota rohkeasti yhteyttä osoitteeseen membership@photoprism.app, jos sinulla on jäsenyyttäsi koskevia kysymyksiä."
+
+#~ msgid "Something went wrong, try again"
+#~ msgstr "Jokin meni pieleen, yritä uudelleen"
+
+#~ msgid "An error occurred - are you offline?"
+#~ msgstr "Tapahtui virhe – oletko offline-tilassa?"
+
+#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
+#~ msgstr "Ennen kuin lähetät tukipyynnön, käytä vianmäärityksen tarkistuslistojamme selvittääksesi ongelmasi syyn."
+
+#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
+#~ msgstr "Tutustu tietopohjaan, josta löydät yksityiskohtaista tietoa tuotteiden ominaisuuksista, palveluista ja niihin liittyvistä resursseista."
+
+#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
+#~ msgstr "Yleiset ongelmat voidaan diagnosoida ja ratkaista nopeasti toimittamiemme vianmäärityksen tarkistuslistojen avulla."
+
+#~ msgid "Getting Support"
+#~ msgstr "Tuen saaminen"
+
+#~ msgid "If this doesn't help, or you have other questions:"
+#~ msgstr "Jos tämä ei auta tai sinulla on muita kysymyksiä:"
+
+#~ msgid "In addition, sponsors receive direct technical support via email."
+#~ msgstr "Lisäksi sponsorit saavat suoraa teknistä tukea sähköpostitse."
+
+#~ msgid "Knowledge Base"
+#~ msgstr "Tietopohja"
+
+#~ msgid "Manage account"
+#~ msgstr "Hallitse tiliä"
+
+#~ msgid "or ask in our Community Chat"
+#~ msgstr "tai kysy yhteisöchatissamme"
+
+#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
+#~ msgstr "Käyttöoppaassa käsitellään myös monia edistyneempiä aiheita, kuten siirtämistä Google-kuvista ja pikkukuvien laatuasetuksia."
+
+#~ msgid "post your question in GitHub Discussions"
+#~ msgstr "lähetä kysymyksesi GitHub-keskusteluihin"
+
+#~ msgid "Read the Docs"
+#~ msgstr "Lue asiakirjat"
+
+#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
+#~ msgstr "Käy osoitteessa docs.photoprism.app/user-guide ja opi, miten voit synkronoida, järjestää ja jakaa kuvia."
+
+#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
+#~ msgstr "Teemme parhaamme vastataksemme kaikkiin kysymyksiisi. Vastineeksi pyydämme sinua tukemaan meitä Patreon- tai GitHub-sponsoreina."
+
+#~ msgid "you are welcome to join us on Reddit"
+#~ msgstr "olet tervetullut liittymään meihin Redditissä"
+
+#~ msgid "Abyss"
+#~ msgstr "Kuilu"
+
+#~ msgid "Carbon"
+#~ msgstr "Carbon"
+
+#~ msgid "Cyano"
+#~ msgstr "Sinivihreä"
+
+#~ msgid "Gemstone"
+#~ msgstr "Jalokivi"
+
+#~ msgid "Grayscale"
+#~ msgstr "Harmaasävy"
+
+#~ msgid "Lavender"
+#~ msgstr "Laventeli"
+
+#~ msgid "Neon"
+#~ msgstr "Neon"
+
+#~ msgid "Onyx"
+#~ msgstr "Onyksinmusta"
+
+#~ msgid "Raspberry"
+#~ msgstr "Vadelma"
+
+#~ msgid "Shadow"
+#~ msgstr "Varjo"
+
+#~ msgid "Snow"
+#~ msgstr "Lumi"
+
+#~ msgid "Vanta"
+#~ msgstr "Vantamusta"
+
+#~ msgid "Yellowstone"
+#~ msgstr "Yellowstone"
+
+#~ msgid "{{ getMembership() }}"
+#~ msgstr "{{ getMembership() }}"
+
+#~ msgid "Activation Failed"
+#~ msgstr "Aktivointi epäonnistui"
+
+#~ msgid "Connect Customer Account"
+#~ msgstr "Yhdistä asiakastili"
 
 #~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
 #~ msgstr "Se hyödyntää uusinta teknologiaa merkitäkseen ja löytääkseen kuvia automaattisesti ilman, että se on tielläsi."
@@ -2893,9 +2927,6 @@ msgstr "Lähennä/loitonna"
 
 #~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "Ryhdy sponsoriksi jo tänään, tue missiotamme ja nauti jäseneduistamme!"
-
-#~ msgid "Membership"
-#~ msgstr "Jäsenyys"
 
 #~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
 #~ msgstr "Tiimimme arvioi tätä jatkuvasti sen mukaan, kuinka paljon tukipalvelua ominaisuudet vaativat, kuinka paljon ne maksavat meille ja ovatko ne yleisesti kaikkien tarvitsemia vai lähinnä organisaatioiden ja edistyneiden käyttäjien pyytämiä. Koska näin voimme tarjota enemmän ominaisuuksia yleisölle, kannustamme kaikkia käyttäjiä tukemaan tehtäviämme."

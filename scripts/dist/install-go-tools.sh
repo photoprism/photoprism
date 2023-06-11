@@ -51,6 +51,7 @@ case $DESTARCH in
     GOBIN="/usr/local/bin" go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest
     GOBIN="/usr/local/bin" go install github.com/mikefarah/yq/v4@latest
     GOBIN="/usr/local/bin" go install github.com/kyoh86/richgo@latest
+    GOBIN="/usr/local/bin" go install github.com/muesli/duf@latest
     ;;
 esac
 

@@ -91,7 +91,7 @@ func (c *Config) Auth() bool {
 
 // AuthMode returns the authentication mode.
 func (c *Config) AuthMode() string {
-	if c.options.Public || c.options.Demo {
+	if c.options.Public || c.Demo() {
 		return AuthModePublic
 	}
 

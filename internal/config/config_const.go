@@ -55,3 +55,10 @@ const DefaultSessionMaxAge = UnixWeek * 2
 
 // DefaultSessionTimeout is the default session timeout time in seconds.
 const DefaultSessionTimeout = UnixWeek
+
+// Product feature tags used to automatically generate documentation.
+const (
+	Pro        = "pro"
+	Plus       = "plus"
+	Essentials = "essentials"
+)

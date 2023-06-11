@@ -6,9 +6,9 @@
 @import url("themes/neon.css");
 @import url("themes/gemstone.css");
 @import url("themes/carbon.css");
-@import url("themes/snow.css");
+@import url("themes/nordic.css");
 @import url("themes/lavender.css");
-@import url("themes/raspberry.css");
+@import url("themes/default.css");
 
 /* General Styles */
 
@@ -87,6 +87,8 @@ body.dark-theme #photoprism .theme--light.v-expansion-panel .v-expansion-panel__
 body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
 body.dark-theme #photoprism .theme--light {
     color: #ffffff;
+    caret-color: #ffffff;
+    stroke: #ffffff;
 }
 
 body.dark-theme #photoprism .theme--light.v-label {

@@ -3,7 +3,6 @@ version: '3.5'
 # Example Podman Compose config file for PhotoPrism (RedHat, CentOS, Fedora, and AlmaLinux)
 #
 # Note:
-# - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
@@ -12,6 +11,7 @@ version: '3.5'
 #   https://docs.photoprism.app/getting-started/proxies/traefik/
 #
 # Quickstart Guide: https://docs.photoprism.app/getting-started/docker-compose/
+# Membership Activation: https://www.photoprism.app/kb/activation
 # Knowledge Base: https://www.photoprism.app/kb
 # Docker Image: https://hub.docker.com/r/photoprism/photoprism
 #
@@ -47,8 +47,8 @@ services:
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
-      PHOTOPRISM_ADMIN_USER: "admin"                 # superadmin username
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_ADMIN_USER: "admin"                 # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
@@ -62,6 +62,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # disables face detection and recognition (requires TensorFlow)
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
+      PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
@@ -98,7 +99,7 @@ services:
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped
-    image: mariadb:10.10
+    image: mariadb:10.11
     container_name: mariadb
     user: 1000:1000
     privileged: true
@@ -107,7 +108,7 @@ services:
       - apparmor:unconfined
     ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
     ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
-    command: mysqld --innodb-buffer-pool-size=2G --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=180
+    command: mariadbd --innodb-buffer-pool-size=2G --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=180
     volumes:
       - "./database:/var/lib/mysql"
     environment:

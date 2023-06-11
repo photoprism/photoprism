@@ -58,15 +58,16 @@ available at [dl.photoprism.app/docker](https://dl.photoprism.app/docker/).
 
 **PhotoPrism is 100% self-funded and independent.** Your [continued support](https://link.photoprism.app/membership) helps us [provide more features to the public](https://www.photoprism.app/oss/faq#what-functionality-is-generally-available), release [regular updates](https://docs.photoprism.app/release-notes/), and remain independent!
 
-Our sponsors enjoy additional features, including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to connect with [our team](https://www.photoprism.app/about/team) and other sponsors. We currently have the following sponsorship options:
+Our members [enjoy additional features](https://www.photoprism.app/kb/personal), including access to [interactive world maps](https://try.photoprism.app/library/places), and can join our private chat room to [connect with our team](https://www.photoprism.app/about/team). We currently have the following membership options:
 
-- [GitHub Sponsors](https://link.photoprism.app/sponsor) is priced in USD and also offers [one-time donations](https://link.photoprism.app/donate)
-- [Patreon](https://link.photoprism.app/patreon) is priced in Euro and also offers yearly payments
-- Stripe will be available this year, so you can sign up directly in the app
+- You can [sign up directly on our website](https://link.photoprism.app/membership) and pay with credit card or SEPA through Stripe, so you don't need to [link an external account](https://www.photoprism.app/kb/activation) and can easily upgrade or downgrade at any time
+- Alternatively, [Patreon](https://link.photoprism.app/patreon) also supports PayPal, additional currencies, and lets you choose between monthly and annual billing for all tiers
 
-You are welcome to [contact us](https://www.photoprism.app/contact) for change requests, account details, and business partnerships.
+If you currently support us through [GitHub Sponsors](https://link.photoprism.app/sponsor), you can also [register on our website](https://my.photoprism.app/register) and use the *Activate GitHub Sponsors Membership* button to link your account. For details on this and how to [link your Patreon account](https://www.patreon.com/pledges), see our [Activation Guide](https://www.photoprism.app/kb/activation).
 
-[Become a Sponsor ›](https://link.photoprism.app/membership) [Contact Us ›](https://www.photoprism.app/contact)
+You are [welcome to contact us](https://www.photoprism.app/contact) for change requests, membership questions, and business partnerships.
+
+[View Membership FAQ ›](https://www.photoprism.app/kb/membership) [Sign Up ›](https://link.photoprism.app/membership)
 
 ### Why Your Support Matters ###
 
@@ -84,7 +85,7 @@ Please also leave [a star](https://github.com/photoprism/photoprism/stargazers) 
 
 Visit [docs.photoprism.app/user-guide](https://docs.photoprism.app/user-guide/) to learn how to [sync](https://docs.photoprism.app/user-guide/sync/webdav/), [organize](https://docs.photoprism.app/user-guide/library/), and [share](https://docs.photoprism.app/user-guide/share/) your pictures. If you need help installing our software at home, you can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions).
 
-Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/). Eligible [sponsors](https://link.photoprism.app/membership) are also welcome to [email us for technical support](https://www.photoprism.app/contact) and personalized advice.
+Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/). Eligible [members](https://link.photoprism.app/membership) are also welcome to [email us for technical support](https://www.photoprism.app/contact) and personalized advice.
 
 ## Upcoming Features and Enhancements ##
 

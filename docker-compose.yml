@@ -11,6 +11,7 @@ services:
     depends_on:
       - mariadb
       - dummy-webdav
+    stop_grace_period: 10s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
@@ -40,8 +41,8 @@ services:
       PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                         # group id
       ## Access Management
-      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
       PHOTOPRISM_REGISTER_URI: "https://keycloak.localssl.dev/admin/"
       PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
@@ -126,13 +127,13 @@ services:
 
   ## MariaDB Database Server
   ## Docs: https://mariadb.com/docs/reference/
-  ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1010/
+  ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
-    image: mariadb:10.10
+    image: mariadb:10.11
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mariadbd --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
     ports:

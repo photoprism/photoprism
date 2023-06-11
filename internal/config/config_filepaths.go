@@ -591,14 +591,14 @@ func (c *Config) TestdataPath() string {
 	return filepath.Join(c.StoragePath(), "testdata")
 }
 
-// MysqlBin returns the mysql executable file name.
-func (c *Config) MysqlBin() string {
-	return findBin("", "mysql")
+// MariadbBin returns the mariadb executable file name.
+func (c *Config) MariadbBin() string {
+	return findBin("", "mariadb")
 }
 
-// MysqldumpBin returns the mysqldump executable file name.
-func (c *Config) MysqldumpBin() string {
-	return findBin("", "mysqldump")
+// MariadbDumpBin returns the mariadb-dump executable file name.
+func (c *Config) MariadbDumpBin() string {
+	return findBin("", "mariadb-dump")
 }
 
 // SqliteBin returns the sqlite executable file name.

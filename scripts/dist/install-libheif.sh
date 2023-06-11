@@ -15,6 +15,8 @@ if [[ $(id -u) != "0" ]] && [[ $DESTDIR == "/usr" || $DESTDIR == "/usr/local" ]]
   exit 1
 fi
 
+. /etc/os-release
+
 mkdir -p "$DESTDIR"
 
 ARCHIVE="libheif-${VERSION_CODENAME}-${DESTARCH}-${LIBHEIF_VERSION}.tar.gz"

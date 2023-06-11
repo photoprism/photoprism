@@ -135,7 +135,7 @@ export default {
         this.$notify.warn(this.$gettext('No servers configured.'));
         return;
       } else if (this.loading) {
-        this.$notify.wait();
+        this.$notify.busy();
         return;
       }
 

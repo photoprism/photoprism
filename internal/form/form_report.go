@@ -46,7 +46,7 @@ func Report(f interface{}) (rows [][]string, cols []string) {
 			case time.Time:
 				typeName = "timestamp"
 				if example == "" {
-					example = fmt.Sprintf("%s:\"2022-01-30 15:23:42\"", fieldName)
+					example = fmt.Sprintf("%s:\"2022-01-30\"", fieldName)
 				}
 			case int, int8, int16, int32, int64:
 				typeName = "number"

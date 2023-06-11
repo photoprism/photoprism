@@ -14,15 +14,15 @@ func TestConfig_DefaultTheme(t *testing.T) {
 	c.options.Sponsor = false
 	c.options.Test = false
 	c.options.DefaultTheme = "grayscale"
-	assert.Equal(t, "default", c.DefaultTheme())
+	assert.Equal(t, "grayscale", c.DefaultTheme())
 	c.options.Sponsor = true
 	assert.Equal(t, "grayscale", c.DefaultTheme())
 	c.options.Sponsor = false
 	c.options.Test = true
-	assert.Equal(t, "default", c.DefaultTheme())
+	assert.Equal(t, "grayscale", c.DefaultTheme())
 	c.options.Sponsor = false
 	c.options.Test = false
-	assert.Equal(t, "default", c.DefaultTheme())
+	assert.Equal(t, "grayscale", c.DefaultTheme())
 	c.options.Sponsor = true
 	c.options.DefaultTheme = ""
 	assert.Equal(t, "default", c.DefaultTheme())

@@ -55,6 +55,7 @@ type Config struct {
 	token    string
 	serial   string
 	env      string
+	start    bool
 }
 
 func init() {
@@ -84,7 +85,9 @@ func initLogger() {
 			FullTimestamp: true,
 		})
 
-		if Env(EnvTrace) {
+		if Env(EnvProd) {
+			log.SetLevel(logrus.WarnLevel)
+		} else if Env(EnvTrace) {
 			log.SetLevel(logrus.TraceLevel)
 		} else if Env(EnvDebug) {
 			log.SetLevel(logrus.DebugLevel)
@@ -96,6 +99,12 @@ func initLogger() {
 
 // NewConfig initialises a new configuration file
 func NewConfig(ctx *cli.Context) *Config {
+	start := false
+
+	if ctx != nil {
+		start = ctx.Command.Name == "start"
+	}
+
 	// Initialize logger.
 	initLogger()
 
@@ -105,6 +114,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		options: NewOptions(ctx),
 		token:   rnd.GenerateToken(8),
 		env:     os.Getenv("DOCKER_ENV"),
+		start:   start,
 	}
 
 	// Overwrite values with options.yml from config path.
@@ -124,6 +134,11 @@ func NewConfig(ctx *cli.Context) *Config {
 // Unsafe checks if unsafe settings are allowed.
 func (c *Config) Unsafe() bool {
 	return c.options.Unsafe
+}
+
+// Restart checks if the application should be restarted, e.g. after an update or a config changes.
+func (c *Config) Restart() bool {
+	return mutex.Restart.Load()
 }
 
 // CliContext returns the cli context if set.
@@ -191,6 +206,10 @@ func (c *Config) Propagate() {
 	face.ClusterCore = c.FaceClusterCore()
 	face.ClusterDist = c.FaceClusterDist()
 	face.MatchDist = c.FaceMatchDist()
+
+	// Set default theme and locale.
+	customize.DefaultTheme = c.DefaultTheme()
+	customize.DefaultLocale = c.DefaultLocale()
 
 	c.Settings().Propagate()
 	c.Hub().Propagate()
@@ -350,9 +369,7 @@ func (c *Config) Name() string {
 // About returns the app about string.
 func (c *Config) About() string {
 	if c.options.About == "" {
-		return "PhotoPrism® Dev"
-	} else if strings.HasSuffix(c.options.About, "CE") && c.Sponsor() {
-		return strings.Replace(c.options.About, "CE", "Plus", 1)
+		return "PhotoPrism®"
 	}
 
 	return c.options.About
@@ -409,16 +426,41 @@ func (c *Config) ApiUri() string {
 
 // CdnUrl returns the optional content delivery network URI without trailing slash.
 func (c *Config) CdnUrl(res string) string {
-	if c.NoSponsor() {
-		return res
+	return strings.TrimRight(c.options.CdnUrl, "/") + res
+}
+
+// CdnDomain returns the content delivery network domain name if specified.
+func (c *Config) CdnDomain() string {
+	if c.options.CdnUrl == "" {
+		return ""
+	} else if u, err := url.Parse(c.options.CdnUrl); err != nil {
+		return ""
+	} else {
+		return u.Hostname()
+	}
+}
+
+// CdnVideo checks if videos should be streamed using the configured CDN.
+func (c *Config) CdnVideo() bool {
+	if c.options.CdnUrl == "" {
+		return false
 	}
 
-	return strings.TrimRight(c.options.CdnUrl, "/") + res
+	return c.options.CdnVideo
 }
 
 // ContentUri returns the content delivery URI.
 func (c *Config) ContentUri() string {
 	return c.CdnUrl(c.ApiUri())
+}
+
+// VideoUri returns the video streaming URI.
+func (c *Config) VideoUri() string {
+	if c.CdnVideo() {
+		return c.ContentUri()
+	}
+
+	return c.ApiUri()
 }
 
 // StaticUri returns the static content URI.
@@ -465,7 +507,7 @@ func (c *Config) SiteAuthor() string {
 
 // SiteTitle returns the main site title (default is application name).
 func (c *Config) SiteTitle() string {
-	if c.options.SiteTitle == "" || c.NoSponsor() {
+	if c.options.SiteTitle == "" {
 		return c.Name()
 	}
 
@@ -484,7 +526,7 @@ func (c *Config) SiteDescription() string {
 
 // SitePreview returns the site preview image URL for sharing.
 func (c *Config) SitePreview() string {
-	if c.options.SitePreview == "" || c.NoSponsor() {
+	if c.options.SitePreview == "" {
 		return fmt.Sprintf("https://i.photoprism.app/prism?cover=64&style=centered%%20dark&caption=none&title=%s", url.QueryEscape(c.AppName()))
 	}
 
@@ -497,10 +539,6 @@ func (c *Config) SitePreview() string {
 
 // LegalInfo returns the legal info text for the page footer.
 func (c *Config) LegalInfo() string {
-	if c.NoSponsor() {
-		return MsgSponsor
-	}
-
 	if s := c.CliGlobalString("imprint"); s != "" {
 		log.Warnf("config: option 'imprint' is deprecated, please use 'legal-info'")
 		return s
@@ -511,10 +549,6 @@ func (c *Config) LegalInfo() string {
 
 // LegalUrl returns the legal info url.
 func (c *Config) LegalUrl() string {
-	if c.NoSponsor() {
-		return SignUpURL
-	}
-
 	if s := c.CliGlobalString("imprint-url"); s != "" {
 		log.Warnf("config: option 'imprint-url' is deprecated, please use 'legal-url'")
 		return s
@@ -563,15 +597,10 @@ func (c *Config) Sponsor() bool {
 	if Sponsor || c.options.Sponsor {
 		return true
 	} else if c.hub != nil {
-		Sponsor = c.Hub().Plus()
+		Sponsor = c.Hub().Sponsor()
 	}
 
 	return Sponsor
-}
-
-// NoSponsor reports if you prefer not to support our mission.
-func (c *Config) NoSponsor() bool {
-	return !c.Sponsor() && !c.Demo()
 }
 
 // Experimental checks if experimental features should be enabled.
@@ -757,13 +786,25 @@ func (c *Config) ResolutionLimit() int {
 	return result
 }
 
-// UpdateHub renews backend api credentials for maps and places without a token.
+// UpdateHub renews backend api credentials with an optional activation code.
 func (c *Config) UpdateHub() {
-	_ = c.ResyncHub("")
+	if c.hub == nil {
+		return
+	}
+
+	if token := os.Getenv(EnvVar("CONNECT")); token != "" && !c.Hub().Sponsor() {
+		_ = c.ResyncHub(token)
+	} else {
+		_ = c.ResyncHub("")
+	}
 }
 
 // ResyncHub renews backend api credentials for maps and places with an optional token.
 func (c *Config) ResyncHub(token string) error {
+	if c.hub == nil {
+		return fmt.Errorf("hub is not initialized")
+	}
+
 	if err := c.hub.ReSync(token); err != nil {
 		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
 		if token != "" {
@@ -786,12 +827,14 @@ func (c *Config) initHub() {
 		c.hub = h
 	}
 
-	if err := c.hub.Load(); err == nil {
-		// Do nothing.
-	} else if err = c.hub.Update(); err != nil {
-		log.Debugf("config: %s, see https://docs.photoprism.app/getting-started/troubleshooting/firewall/", err)
-	} else if err = c.hub.Save(); err != nil {
-		log.Debugf("config: %s while saving api keys for maps and places", err)
+	update := c.start
+
+	if err := c.hub.Load(); err != nil {
+		update = true
+	}
+
+	if update {
+		c.UpdateHub()
 	}
 
 	c.hub.Propagate()

@@ -1,4 +1,4 @@
-FROM photoprism/photoprism:preview-ubuntu as build
+FROM photoprism/photoprism:preview-ce-ubuntu as build
 
 # Set environment variables
 ENV TF_CPP_MIN_LOG_LEVEL=2 \
@@ -32,6 +32,7 @@ RUN wget -qO- https://dl.photoprism.app/qa/demo.tar.gz | tar xvz -C /photoprism/
 RUN photoprism restore -a && \
     photoprism index -a && \
     photoprism moments && \
+    rm /photoprism/storage/config/*.yml && \
     chmod -R a+rwX /photoprism/originals /photoprism/storage
 
 # Start PhotoPrism server

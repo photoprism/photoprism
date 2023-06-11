@@ -11,46 +11,48 @@
         :no-data-text="$gettext('No services configured.')"
     >
       <template #items="props">
-        <td class="p-account">
-          <button class="secondary-dark--text text--lighten-1" @click.stop.prevent="edit(props.item)">
-            {{ props.item.AccName }}
-          </button>
-        </td>
-        <td class="text-xs-center">
-          <v-btn icon small flat :ripple="false"
-                 class="action-toggle-share"
-                 color="transparent"
-                 @click.stop.prevent="editSharing(props.item)">
-            <v-icon v-if="props.item.AccShare" color="secondary-dark">check</v-icon>
-            <v-icon v-else color="secondary-dark">settings</v-icon>
-          </v-btn>
-        </td>
-        <td class="text-xs-center">
-          <v-btn icon small flat :ripple="false"
-                 class="action-toggle-sync"
-                 color="transparent"
-                 @click.stop.prevent="editSync(props.item)">
-            <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">report_problem
-            </v-icon>
-            <v-icon v-else-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
-            <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
-          </v-btn>
-        </td>
-        <td class="hidden-sm-and-down">{{ formatDate(props.item.SyncDate) }}</td>
-        <td class="hidden-xs-only text-xs-right" nowrap>
-          <v-btn icon small flat :ripple="false"
-                 class="action-remove action-secondary"
-                 color="transparent"
-                 @click.stop.prevent="remove(props.item)">
-            <v-icon color="secondary-dark">delete</v-icon>
-          </v-btn>
-          <v-btn icon small flat :ripple="false"
-                 class="action-edit"
-                 color="transparent"
-                 @click.stop.prevent="edit(props.item)">
-            <v-icon color="secondary-dark">edit</v-icon>
-          </v-btn>
-        </td>
+        <tr :data-name="props.item.AccName">
+          <td class="p-account">
+            <button class="secondary-dark--text text--lighten-1" @click.stop.prevent="edit(props.item)">
+              {{ props.item.AccName }}
+            </button>
+          </td>
+          <td class="text-xs-center">
+            <v-btn icon small flat :ripple="false"
+                   class="action-toggle-share"
+                   color="transparent"
+                   @click.stop.prevent="editSharing(props.item)">
+              <v-icon v-if="props.item.AccShare" color="secondary-dark">check</v-icon>
+              <v-icon v-else color="secondary-dark">settings</v-icon>
+            </v-btn>
+          </td>
+          <td class="text-xs-center">
+            <v-btn icon small flat :ripple="false"
+                   class="action-toggle-sync"
+                   color="transparent"
+                   @click.stop.prevent="editSync(props.item)">
+              <v-icon v-if="props.item.AccErrors" color="secondary-dark" :title="props.item.AccError">report_problem
+              </v-icon>
+              <v-icon v-else-if="props.item.AccSync" color="secondary-dark">sync</v-icon>
+              <v-icon v-else color="secondary-dark">sync_disabled</v-icon>
+            </v-btn>
+          </td>
+          <td class="hidden-sm-and-down">{{ formatDate(props.item.SyncDate) }}</td>
+          <td class="hidden-xs-only text-xs-right" nowrap>
+            <v-btn icon small flat :ripple="false"
+                   class="action-remove action-secondary"
+                   color="transparent"
+                   @click.stop.prevent="remove(props.item)">
+              <v-icon color="secondary-dark">delete</v-icon>
+            </v-btn>
+            <v-btn icon small flat :ripple="false"
+                   class="action-edit"
+                   color="transparent"
+                   @click.stop.prevent="edit(props.item)">
+              <v-icon color="secondary-dark">edit</v-icon>
+            </v-btn>
+          </td>
+        </tr>
       </template>
     </v-data-table>
     <v-container fluid>
@@ -69,6 +71,7 @@
               @submit.prevent="add">
 
         <v-btn v-if="user.WebDAV" depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2"
+               :block="$vuetify.breakpoint.xsOnly"
                :disabled="isPublic || isDemo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
           <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
@@ -76,6 +79,7 @@
 
         <v-btn color="primary-button"
                class="white--text compact ml-0 my-2 mr-2"
+               :block="$vuetify.breakpoint.xsOnly"
                :disabled="isPublic || isDemo"
                depressed @click.stop="add">
           <translate>Connect</translate>

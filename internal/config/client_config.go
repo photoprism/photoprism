@@ -37,6 +37,7 @@ type ClientConfig struct {
 	ManifestUri      string              `json:"manifestUri"`
 	ApiUri           string              `json:"apiUri"`
 	ContentUri       string              `json:"contentUri"`
+	VideoUri         string              `json:"videoUri"`
 	WallpaperUri     string              `json:"wallpaperUri"`
 	SiteUrl          string              `json:"siteUrl"`
 	SiteDomain       string              `json:"siteDomain"`
@@ -51,6 +52,7 @@ type ClientConfig struct {
 	AppMode          string              `json:"appMode"`
 	AppIcon          string              `json:"appIcon"`
 	AppColor         string              `json:"appColor"`
+	Restart          bool                `json:"restart"`
 	Debug            bool                `json:"debug"`
 	Trace            bool                `json:"trace"`
 	Test             bool                `json:"test"`
@@ -73,7 +75,8 @@ type ClientConfig struct {
 	Countries        entity.Countries    `json:"countries"`
 	People           entity.People       `json:"people"`
 	Thumbs           ThumbSizes          `json:"thumbs"`
-	License          string              `json:"license"`
+	Tier             int                 `json:"tier"`
+	Membership       string              `json:"membership"`
 	Customer         string              `json:"customer"`
 	MapKey           string              `json:"mapKey"`
 	DownloadToken    string              `json:"downloadToken,omitempty"`
@@ -255,6 +258,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		JsUri:            a.AppJsUri(),
 		ApiUri:           c.ApiUri(),
 		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
@@ -271,6 +275,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		WallpaperUri:     c.WallpaperUri(),
 		Version:          c.Version(),
 		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
 		Debug:            c.Debug(),
 		Trace:            c.Trace(),
 		Test:             c.Test(),
@@ -289,7 +294,8 @@ func (c *Config) ClientPublic() ClientConfig {
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
 		People:           entity.People{},
-		License:          c.Hub().Status,
+		Tier:             c.Hub().Tier(),
+		Membership:       c.Hub().Membership(),
 		Customer:         "",
 		MapKey:           "",
 		Thumbs:           Thumbs,
@@ -341,6 +347,7 @@ func (c *Config) ClientShare() ClientConfig {
 		JsUri:            a.ShareJsUri(),
 		ApiUri:           c.ApiUri(),
 		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
@@ -357,6 +364,7 @@ func (c *Config) ClientShare() ClientConfig {
 		WallpaperUri:     c.WallpaperUri(),
 		Version:          c.Version(),
 		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
 		Debug:            c.Debug(),
 		Trace:            c.Trace(),
 		Test:             c.Test(),
@@ -378,7 +386,8 @@ func (c *Config) ClientShare() ClientConfig {
 		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
-		License:          c.Hub().Status,
+		Tier:             c.Hub().Tier(),
+		Membership:       c.Hub().Membership(),
 		Customer:         c.Hub().Customer(),
 		MapKey:           c.Hub().MapKey(),
 		DownloadToken:    c.DownloadToken(),
@@ -433,6 +442,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		JsUri:            a.AppJsUri(),
 		ApiUri:           c.ApiUri(),
 		ContentUri:       c.ContentUri(),
+		VideoUri:         c.VideoUri(),
 		SiteUrl:          c.SiteUrl(),
 		SiteDomain:       c.SiteDomain(),
 		SiteAuthor:       c.SiteAuthor(),
@@ -449,6 +459,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		WallpaperUri:     c.WallpaperUri(),
 		Version:          c.Version(),
 		Copyright:        c.Copyright(),
+		Restart:          c.Restart(),
 		Debug:            c.Debug(),
 		Trace:            c.Trace(),
 		Test:             c.Test(),
@@ -471,7 +482,8 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
-		License:          c.Hub().Status,
+		Tier:             c.Hub().Tier(),
+		Membership:       c.Hub().Membership(),
 		Customer:         c.Hub().Customer(),
 		MapKey:           c.Hub().MapKey(),
 		DownloadToken:    c.DownloadToken(),
@@ -551,13 +563,13 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Table("albums").
 			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders, "+
 				"SUM(album_type = ? AND album_private = 1) AS private_albums, SUM(album_type = ? AND album_private = 1) AS private_moments, SUM(album_type = ? AND album_private = 1) AS private_months, SUM(album_type = ? AND album_private = 1) AS private_states, SUM(album_type = ? AND album_private = 1) AS private_folders",
-				entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder, entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+				entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder, entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.photo_private = 0 AND photos.deleted_at IS NULL))").
 			Take(&cfg.Count)
 	} else {
 		c.Db().
 			Table("albums").
-			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumDefault, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL))").
 			Take(&cfg.Count)
 	}

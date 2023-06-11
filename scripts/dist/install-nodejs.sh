@@ -13,13 +13,20 @@ fi
 
 set -e
 
-SETUP_URL="https://deb.nodesource.com/setup_18.x"
+. /etc/os-release
 
-echo "Fetching packages from \"$SETUP_URL\"..."
-wget --inet4-only -c -qO- $SETUP_URL | bash -
+if [[ $VERSION_CODENAME == "lunar" ]]; then
+  echo "Installing NodeJS and NPM distribution packages..."
+  apt-get update && apt-get -qq install nodejs npm
+else
+  SETUP_URL="https://deb.nodesource.com/setup_18.x"
 
-echo "Installing NodeJS, NPM, and TestCafe..."
-apt-get update && apt-get -qq install nodejs
+  echo "Fetching packages from \"$SETUP_URL\"..."
+  wget --inet4-only -c -qO- $SETUP_URL | bash -
+
+  echo "Installing NodeJS, NPM, and TestCafe..."
+  apt-get update && apt-get -qq install nodejs
+fi
 
 npm install --unsafe-perm=true --allow-root -g npm testcafe
 npm config set cache ~/.cache/npm

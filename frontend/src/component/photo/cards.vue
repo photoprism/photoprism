@@ -247,7 +247,7 @@ import download from "common/download";
 import Notify from "common/notify";
 import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
 import {virtualizationTools} from 'common/virtualization-tools';
-import IconLivePhoto from "component/icon/live_photo.vue";
+import IconLivePhoto from "component/icon/live-photo.vue";
 
 export default {
   name: 'PPhotoCards',

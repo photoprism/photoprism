@@ -1,0 +1,13 @@
+<svg data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 224 224">
+    <defs>
+        <linearGradient id="a" x1="0" y1="231.72" x2="231.72" y2="0" gradientUnits="userSpaceOnUse"
+                        gradientTransform="translate(-26.38 -26.38)">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset="0" stop-color="#b8edff"/>
+            <stop offset="1" stop-color="#d4b8ff"/>
+        </linearGradient>
+    </defs>
+    <rect rx="0%" ry="0%" width="224" height="224" style="fill:url(#a)"/>
+    <path d="m198.63 157.72-3.8 22.98M25.464 158.66l14.07 13.3m90.971-130.767L39.438 171.78a.086.086 0 0 0 .067.142l155.24 8.902a.086.086 0 0 0 .085-.124L130.638 41.212a.095.095 0 0 0-.133-.02zm-18.753-12.626L25.36 158.48a.123.123 0 0 0 .105.18l173.07-.76a.114.114 0 0 0 .096-.18L111.952 28.567a.114.114 0 0 0-.2 0zm.105-.152 18.781 12.654"
+          style="fill:none;stroke:#1d1d1b;stroke-miterlimit:10;stroke-width:6px"/>
+</svg>

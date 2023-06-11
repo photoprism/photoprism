@@ -110,6 +110,10 @@ func GetVideo(router *gin.RouterGroup) {
 			}
 		}
 
+		// Add HTTP cache header.
+		AddImmutableCacheHeader(c)
+
+		// Return requested content.
 		if c.Query("download") != "" {
 			c.FileAttachment(fileName, f.DownloadName(DownloadName(c), 0))
 		} else {

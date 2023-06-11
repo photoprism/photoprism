@@ -504,10 +504,10 @@ export class Photo extends RestModel {
         videoFormat = FormatWebM;
       }
 
-      return `${config.apiUri}/videos/${file.Hash}/${config.previewToken}/${videoFormat}`;
+      return `${config.videoUri}/videos/${file.Hash}/${config.previewToken}/${videoFormat}`;
     }
 
-    return `${config.apiUri}/videos/${this.Hash}/${config.previewToken}/${FormatAvc}`;
+    return `${config.videoUri}/videos/${this.Hash}/${config.previewToken}/${FormatAvc}`;
   }
 
   mainFile() {

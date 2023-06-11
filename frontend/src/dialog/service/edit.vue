@@ -219,7 +219,7 @@
             <v-text-field
                 v-model="model.AccPass"
                 hide-details box flat
-                browser-autocomplete="off"
+                browser-autocomplete="new-password"
                 :label="$gettext('Password')"
                 placeholder="optional"
                 color="secondary-dark"
@@ -388,7 +388,7 @@ export default {
     },
     save() {
       if (this.loading) {
-        this.$notify.wait();
+        this.$notify.busy();
         return;
       }
 

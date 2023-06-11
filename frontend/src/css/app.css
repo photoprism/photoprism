@@ -26,7 +26,7 @@ Additional information can be found in our Developer Guide:
 @import url("vendor/icons/material-design-icons.css");
 @import url("../../node_modules/vuetify/dist/vuetify.min.css");
 @import url("../../node_modules/maplibre-gl/dist/maplibre-gl.css");
-@import url("font.css");
+@import url("typography.css");
 @import url("wallpapers.css");
 @import url("scrollbar.css");
 @import url("themes.css");
@@ -79,6 +79,19 @@ main {
     height: 100%;
     z-index: 100;
     background-color: rgba(0, 0, 0, 0.2);
+}
+
+#busy-overlay.progress {
+    cursor: wait;
+    background-color: rgba(0, 0, 0, 0.32);
+}
+
+#busy-overlay.progress .splash-center {
+    display: block;
+}
+
+#busy-overlay .splash-center {
+    display: none;
 }
 
 /* General App Styles */
@@ -167,8 +180,8 @@ ol, ul {
     padding: 1px 0 1px 8px !important;
 }
 
-#photoprism .v-list__tile .v-icon {
-    color: inherit!important;
+body #photoprism .v-list__tile .v-icon {
+    color: inherit;
 }
 
 /* Image Orientation */

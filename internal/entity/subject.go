@@ -129,7 +129,7 @@ func (m *Subject) Delete() error {
 		return err
 	}
 
-	log.Infof("subject: flagged %s as missing", TypeString(m.SubjType), clean.Log(m.SubjName))
+	log.Infof("subject: %s %s flagged as missing", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 	return Db().Delete(m).Error
 }

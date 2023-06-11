@@ -23,12 +23,12 @@ FROM photoprism/develop:bullseye-slim
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Community Edition (Debian 11)"
+LABEL org.opencontainers.image.title="PhotoPrism® (Debian 11)"
 LABEL org.opencontainers.image.description="Debian 11 (Bullseye)"
-LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
-LABEL org.opencontainers.image.authors="Michael Mayer <hello@photoprism.app>"
+LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
 
 # Declare build parameters.

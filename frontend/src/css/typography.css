@@ -25,6 +25,15 @@ body .application {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+@media (min-width: 600px) {
+    .text-columns {
+        column-count: 2;
+        column-gap: 2em;
+        orphans: 3;
+        widows: 0;
+    }
+}
+
 button.v-btn.compact  {
     font-size: 14px;
     height: 34px;

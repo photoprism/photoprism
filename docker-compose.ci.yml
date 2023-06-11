@@ -19,8 +19,8 @@ services:
       - "~/.cache/go-mod:/go/pkg/mod"
     environment:
       PHOTOPRISM_INIT: "https"
-      PHOTOPRISM_ADMIN_USER: "admin"                       # superadmin username
-      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "public"                       # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
@@ -146,11 +146,11 @@ services:
   ## MariaDB Database Server
   ## Docs: https://mariadb.com/docs/reference/
   mariadb:
-    image: mariadb:10.10
+    image: mariadb:10.11
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mariadbd --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001" # database port (internal)
     volumes:

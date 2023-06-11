@@ -21,17 +21,8 @@
         <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-left white--text text-selectable">
           <strong>{{ config.siteTitle }}</strong> – {{ config.siteCaption }}
         </v-flex>
-        <v-flex xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
-          <v-btn
-              href="https://www.photoprism.app/"
-              target="_blank"
-              color="transparent"
-              class="white--text px-3 py-2 ma-0 action-about"
-              round depressed small
-          >
-            <translate>Learn more</translate>
-            <v-icon :left="rtl" :right="!rtl" size="16" class="ml-2" dark>diamond</v-icon>
-          </v-btn>
+        <v-flex xs12 sm6 class="pa-0 body-2 text-selectable text-xs-center text-sm-right">
+          <router-link to="/about" class="text-link"><span class="white--text">Made with ❤️ in Berlin</span></router-link>
         </v-flex>
       </v-layout>
     </footer>

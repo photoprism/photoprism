@@ -24,24 +24,24 @@ Additional information can be found in our Developer Guide:
 */
 
 export const canUseVideo = !!document.createElement("video").canPlayType;
-export const canUseAvc = canUseVideo
+export const canUseAvc = canUseVideo // AVC
   ? !!document.createElement("video").canPlayType('video/mp4; codecs="avc1"')
   : false;
 export const canUseOGV = canUseVideo // Ogg Theora
   ? !!document.createElement("video").canPlayType("video/ogg")
   : false;
-export const canUseVP8 = canUseVideo // WebM VP8
+export const canUseVP8 = canUseVideo // Google WebM, VP8
   ? !!document.createElement("video").canPlayType('video/webm; codecs="vp8"')
   : false;
-export const canUseVP9 = canUseVideo // WebM VP9
+export const canUseVP9 = canUseVideo // Google WebM, VP9
   ? !!document.createElement("video").canPlayType('video/webm; codecs="vp9"')
   : false;
-export const canUseAv1 = canUseVideo // AV1, Main Profile, Level 4.0 Main Tier, 8-bit
+export const canUseAv1 = canUseVideo // AV1, Main Profile
   ? !!document.createElement("video").canPlayType('video/webm; codecs="av01.0.08M.08"')
   : false;
-export const canUseWebM = canUseVideo
+export const canUseWebM = canUseVideo // Google WebM
   ? !!document.createElement("video").canPlayType("video/webm")
   : false;
-export const canUseHevc = canUseVideo
-  ? !!document.createElement("video").canPlayType('video/mp4; codecs="hvc1"')
+export const canUseHevc = canUseVideo // HVC, Basic Support
+  ? !!document.createElement("video").canPlayType('video/mp4; codecs="hvc1.1.6.L93.90"')
   : false;

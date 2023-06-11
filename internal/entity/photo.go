@@ -55,7 +55,7 @@ type Photo struct {
 	ID               uint          `gorm:"primary_key" yaml:"-"`
 	UUID             string        `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time     `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
-	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" yaml:"-"`
+	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" json:"TakenAtLocal" yaml:"TakenAtLocal"`
 	TakenSrc         string        `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
 	PhotoUID         string        `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string        `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
@@ -302,14 +302,14 @@ func FindPhoto(find Photo) *Photo {
 
 	// Search for UID.
 	if rnd.IsUID(find.PhotoUID, PhotoUID) {
-		if !stmt.First(&m, "photo_uid = ?", find.PhotoUID).RecordNotFound() {
+		if stmt.First(&m, "photo_uid = ?", find.PhotoUID).Error == nil {
 			return &m
 		}
 	}
 
 	// Search for ID.
 	if find.ID > 0 {
-		if !stmt.First(&m, "id = ?", find.ID).RecordNotFound() {
+		if stmt.First(&m, "id = ?", find.ID).Error == nil {
 			return &m
 		}
 	}

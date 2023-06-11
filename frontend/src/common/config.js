@@ -64,6 +64,7 @@ export default class Config {
       this.loginUri = "/library/login";
       this.apiUri = "/api/v1";
       this.contentUri = this.apiUri;
+      this.videoUri = this.apiUri;
       this.values = {
         mode: "test",
         name: "Test",
@@ -79,6 +80,7 @@ export default class Config {
       this.loginUri = values.loginUri ? values.loginUri : this.baseUri + "/library/login";
       this.apiUri = values.apiUri ? values.apiUri : this.baseUri + "/api/v1";
       this.contentUri = values.contentUri ? values.contentUri : this.apiUri;
+      this.videoUri = values.videoUri ? values.videoUri : this.apiUri;
     }
 
     if (document && document.body) {
@@ -602,8 +604,6 @@ export default class Config {
 
     if (!s) {
       return "PhotoPrism";
-    } else if (s === "PhotoPrism" && this.values.sponsor) {
-      return "PhotoPrism+";
     }
 
     return s;
@@ -613,7 +613,7 @@ export default class Config {
     const s = this.get("about");
 
     if (!s) {
-      return "PhotoPrism® Dev";
+      return "PhotoPrism®";
     }
 
     return s;
@@ -633,11 +633,23 @@ export default class Config {
     return this.getEdition() === "ce";
   }
 
-  getLicense() {
-    const s = this.get("license");
+  getTier() {
+    const tier = this.get("tier");
+
+    if (!tier) {
+      return 0;
+    }
+
+    return tier;
+  }
+
+  getMembership() {
+    const s = this.get("membership");
 
     if (!s) {
       return "ce";
+    } else if (s === "ce" && this.isSponsor()) {
+      return "essentials";
     }
 
     return s;

@@ -238,7 +238,7 @@ func (m *User) InitAccount(initName, initPasswd string) (updated bool) {
 	}
 
 	// Set initial password.
-	initialPasswd := NewPassword(m.UserUID, initPasswd)
+	initialPasswd := NewPassword(m.UserUID, initPasswd, true)
 
 	// Save password.
 	if err := initialPasswd.Save(); err != nil {
@@ -772,7 +772,7 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("password must have at least %d characters", PasswordLength)
 	}
 
-	pw := NewPassword(m.UserUID, password)
+	pw := NewPassword(m.UserUID, password, false)
 
 	if err := pw.Save(); err != nil {
 		return err

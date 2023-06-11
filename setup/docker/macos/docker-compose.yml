@@ -3,7 +3,6 @@ version: '3.5'
 # Example Docker Compose config file for PhotoPrism (Apple macOS)
 #
 # Note:
-# - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - If you install PhotoPrism on a public server outside your home network, please always run it behind a secure
@@ -13,6 +12,7 @@ version: '3.5'
 #
 # Setup Guide:
 # - https://docs.photoprism.app/getting-started/docker-compose/
+# - https://www.photoprism.app/kb/activation
 #
 # Troubleshooting Checklists:
 # - https://docs.photoprism.app/getting-started/troubleshooting/
@@ -26,20 +26,21 @@ services:
   photoprism:
     ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
-    depends_on:
-      - mariadb
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     # restart: unless-stopped
+    stop_grace_period: 10s
+    depends_on:
+      - mariadb
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
-      PHOTOPRISM_ADMIN_USER: "admin"                 # superadmin username
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_ADMIN_USER: "admin"                 # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
@@ -79,14 +80,15 @@ services:
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
+    image: mariadb:10.11
     restart: unless-stopped
-    image: mariadb:10.10
+    stop_grace_period: 5s
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
     ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
     ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
-    command: mysqld --lower-case-table-names=1 --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mariadbd --lower-case-table-names=1 --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
       - "database:/var/lib/mysql" # Named volume "database" is defined at the bottom (DO NOT REMOVE)
     environment:

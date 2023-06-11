@@ -41,7 +41,7 @@ version: '3.5'
 #  Configuring multiple apps on the same server is beyond the scope of this base
 #  config and for advanced users only.
 #
-#  This config includes Ophelia, a docker job scheduler:
+#  This config includes Ofelia, a docker job scheduler:
 #
 #    https://github.com/mcuadros/ofelia
 #
@@ -97,13 +97,14 @@ version: '3.5'
 
 services:
   photoprism:
+    ## Use photoprism/photoprism:preview for testing preview builds:
+    image: photoprism/photoprism:latest
+    container_name: photoprism
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: always
-    ## Use photoprism/photoprism:preview for testing preview builds:
-    image: photoprism/photoprism:latest
-    container_name: photoprism
+    stop_grace_period: 10s
     depends_on:
       - mariadb
     security_opt:
@@ -148,6 +149,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"           # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"                # disables face detection and recognition (requires TensorFlow)
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"       # disables image classification (requires TensorFlow)
+      PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                  # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                  # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_JPEG_QUALITY: 85                      # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
@@ -189,13 +191,14 @@ services:
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
-    restart: always
-    image: mariadb:10.10
+    image: mariadb:10.11
     container_name: mariadb
+    restart: always
+    stop_grace_period: 5s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mariadbd --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
       - "./database:/var/lib/mysql" # DO NOT REMOVE

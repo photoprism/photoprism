@@ -11,7 +11,7 @@ Feel free to [contact us](https://www.photoprism.app/contact) with anything that
 
 ## Not a Developer? No Problem ##
 
-You can also contribute by...
+You can also contribute by…
 
 * answering questions in the [Community Chat](https://link.photoprism.app/chat), on [Reddit](https://link.photoprism.app/reddit) and in [GitHub Discussions](https://link.photoprism.app/discussions)
 * helping us [translate](https://docs.photoprism.app/developer-guide/translations-weblate/) the Web UI

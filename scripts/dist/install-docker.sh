@@ -22,5 +22,11 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 sudo apt-get update
 sudo apt-get -qq install docker-ce docker-ce-cli docker-ce-rootless-extras containerd.io docker-compose-plugin cgroupfs-mount libltdl7 pigz
 
+# Add docker-compose alias for Compose Plugin.
+if [ ! -f "/bin/docker-compose" ]; then
+  echo 'docker compose "$@"' | sudo tee /bin/docker-compose
+  sudo chmod +x /bin/docker-compose
+fi
+
 # Verify installation works.
 sudo docker run hello-world

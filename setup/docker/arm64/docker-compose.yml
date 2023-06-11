@@ -9,7 +9,6 @@ version: '3.5'
 #   the "no matching manifest" error on Raspberry Pi OS (Raspbian). See documentation for details.
 # - Use https://dl.photoprism.app/docker/armv7/docker-compose.yml to run PhotoPrism and MariaDB on ARMv7-based devices
 #   as well as Raspberry Pi OS (Raspbian) installations without 64-bit support.
-# - Hardware transcoding is only available for sponsors due to the high maintenance and support effort.
 # - Running PhotoPrism on a server with less than 4 GB of swap space or setting a memory/swap limit can cause unexpected
 #   restarts ("crashes"), for example, when the indexer temporarily needs more memory to process large files.
 # - In case you see Docker errors related to "cgroups", try adding the following parameters to /boot/firmware/cmdline.txt
@@ -22,6 +21,7 @@ version: '3.5'
 # Setup Guides:
 # - https://docs.photoprism.app/getting-started/docker-compose/
 # - https://docs.photoprism.app/getting-started/raspberry-pi/
+# - https://www.photoprism.app/kb/activation
 #
 # Troubleshooting Checklists:
 # - https://docs.photoprism.app/getting-started/troubleshooting/
@@ -38,20 +38,21 @@ services:
   photoprism:
     ## Use photoprism/photoprism:preview-arm64 for testing preview builds:
     image: photoprism/photoprism:arm64
-    depends_on:
-      - mariadb
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     # restart: unless-stopped
+    stop_grace_period: 10s
+    depends_on:
+      - mariadb
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
     ports:
       - "2342:2342" # HTTP port (host:container)
     environment:
-      PHOTOPRISM_ADMIN_USER: "admin"                 # superadmin username
-      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial superadmin password (minimum 8 characters)
+      PHOTOPRISM_ADMIN_USER: "admin"                 # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
       PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
@@ -66,6 +67,7 @@ services:
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"              # disables face detection and recognition (requires TensorFlow)
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
+      PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
@@ -105,14 +107,15 @@ services:
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
+    image: arm64v8/mariadb:10.11 # ARM64 IMAGE ONLY, DOES NOT WORK ON ARMv7, AMD or Intel
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped
-    image: arm64v8/mariadb:10.10 # ARM64 IMAGE ONLY, DOES NOT WORK ON ARMv7, AMD or Intel
+    stop_grace_period: 5s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mysqld --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: mariadbd --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
       - "./database:/var/lib/mysql" # DO NOT REMOVE

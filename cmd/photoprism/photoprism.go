@@ -36,7 +36,7 @@ var version = "development"
 var log = event.Log
 
 const appName = "PhotoPrism"
-const appAbout = "PhotoPrism® CE"
+const appAbout = "PhotoPrism®"
 const appEdition = "ce"
 const appDescription = "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web." +
 	" It makes use of the latest technologies to tag and find pictures automatically without getting in your way." +
