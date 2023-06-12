@@ -17,7 +17,7 @@ import (
 // FindCommand configures the command name, flags, and action.
 var FindCommand = cli.Command{
 	Name:      "find",
-	Usage:     "Finds indexed files that match the specified search filter",
+	Usage:     "Searches the index for specific files",
 	ArgsUsage: "filter",
 	Flags: append(report.CliFlags, cli.UintFlag{
 		Name:  "n",
@@ -27,7 +27,7 @@ var FindCommand = cli.Command{
 	Action: findAction,
 }
 
-// findAction finds indexed files that match the specified search filter.
+// findAction searches the index for specific files.
 func findAction(ctx *cli.Context) error {
 	conf, err := InitConfig(ctx)
 
