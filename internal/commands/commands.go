@@ -45,6 +45,7 @@ var PhotoPrism = []cli.Command{
 	StopCommand,
 	StatusCommand,
 	IndexCommand,
+	FindCommand,
 	ImportCommand,
 	CopyCommand,
 	FacesCommand,
@@ -65,7 +66,6 @@ var PhotoPrism = []cli.Command{
 	ShowCommand,
 	VersionCommand,
 	ShowConfigCommand,
-	SearchCommand,
 	ConnectCommand,
 }
 
