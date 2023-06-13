@@ -371,9 +371,10 @@ docker-unstable-lunar:
 	docker pull --platform=amd64 photoprism/develop:lunar
 	docker pull --platform=amd64 photoprism/develop:lunar-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable-ce /lunar
-preview: docker-preview
-docker-preview: docker-preview-latest
+preview: docker-preview-ce
+docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
+docker-preview-ce: docker-preview-lunar
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
 docker-preview-ubuntu: docker-preview-lunar
@@ -416,7 +417,7 @@ docker-preview-lunar:
 	docker pull --platform=amd64 photoprism/develop:lunar-slim
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /lunar "-t photoprism/photoprism:preview-ce-ubuntu"
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /lunar
 docker-preview-impish:
 	docker pull --platform=amd64 photoprism/develop:impish
 	docker pull --platform=arm64 photoprism/develop:impish
