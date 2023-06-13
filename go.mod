@@ -41,7 +41,7 @@ require (
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.14.4
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
-	github.com/urfave/cli v1.22.13
+	github.com/urfave/cli v1.22.14
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
 	golang.org/x/crypto v0.9.0
 	golang.org/x/net v0.10.0
@@ -52,7 +52,7 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.2 // indirect
-	golang.org/x/image v0.7.0
+	golang.org/x/image v0.8.0
 )
 
 require github.com/olekukonko/tablewriter v0.0.5
@@ -71,9 +71,10 @@ require (
 	golang.org/x/time v0.3.0
 )
 
-require github.com/go-ldap/ldap/v3 v3.4.5-0.20230210083308-d16fb563008d
+require github.com/go-ldap/ldap/v3 v3.4.5
 
 require (
+	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
@@ -108,7 +109,7 @@ require (
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/oauth2 v0.6.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/text v0.9.0 // indirect
+	golang.org/x/text v0.10.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
@@ -116,7 +117,6 @@ require (
 )
 
 require (
-	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/emersion/go-webdav v0.4.0
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/rogpeppe/go-internal v1.8.1 // indirect
