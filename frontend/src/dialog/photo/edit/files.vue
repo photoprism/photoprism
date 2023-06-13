@@ -66,10 +66,11 @@
                                    @click.stop.prevent="showDeleteDialog(file)">
                               <translate>Delete</translate>
                             </v-btn>
-                            <v-btn v-if="file.Primary" small depressed dark color="primary-button"
+                            <v-btn v-if="experimental && file.Primary" small depressed dark color="primary-button"
                                    class="btn-action action-open-folder"
-                                   :href="getFolderUri(file)">
-                              <translate>Open folder</translate>
+                                   :href="folderUrl(file)" target="_blank">
+                              <translate>Folder</translate>
+                              <v-icon :right="!rtl" :left="rtl" dark size="20">open_in_new</v-icon>
                             </v-btn>
                           </td>
                         </tr>
@@ -306,8 +307,10 @@ export default {
       features: this.$config.settings().features,
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
+      experimental: this.$config.get("experimental"),
       options: options,
       busy: false,
+      rtl: this.$rtl,
       listColumns: [
         {
           text: this.$gettext('Primary'),
@@ -356,11 +359,15 @@ export default {
     openFile(file) {
       this.$viewer.show([Thumb.fromFile(this.model, file)], 0);
     },
-    getFolderUri(file) {
-      const fileName = file.Name;
-      const folder = fileName.substring(0, fileName.lastIndexOf('/'));
+    folderUrl(m) {
+      if (!m) {
+        return '#';
+      }
 
-      return(this.config.baseUri + '/library/index/files/' + folder);
+      const name = m.Name;
+      const path = name.substring(0, name.lastIndexOf('/'));
+
+      return this.$router.resolve({ path: '/index/files/' + path }).href;
     },
     downloadFile(file) {
       Notify.success(this.$gettext("Downloading…"));

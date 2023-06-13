@@ -172,6 +172,7 @@ export default {
       this.lastFilter = {};
       this.routeName = this.$route.name;
       this.path = this.$route.params.pathMatch;
+
       this.search();
     }
   },

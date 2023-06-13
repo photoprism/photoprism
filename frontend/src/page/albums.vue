@@ -172,7 +172,7 @@
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
 
-                <v-btn v-if="canManage && featExperimental && featPrivate && album.Private"
+                <v-btn v-if="canManage && experimental && featPrivate && album.Private"
                        :ripple="false"
                        icon flat absolute
                        class="input-private"
@@ -301,12 +301,12 @@ export default {
 
     return {
       searchExpanded: false,
+      experimental: this.$config.get("experimental") && !this.$config.ce(),
       canUpload: this.$config.allow("files", "upload") && features.upload,
       canShare: this.$config.allow("albums", "share") && features.share,
       canManage: this.$config.allow("albums", "manage"),
       canEdit: this.$config.allow("albums", "update"),
       config: this.$config.values,
-      featExperimental: this.$config.get("experimental") && !this.$config.ce(),
       featShare: features.share,
       featPrivate: features.private,
       categories: categories,
