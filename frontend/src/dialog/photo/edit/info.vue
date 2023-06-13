@@ -41,12 +41,6 @@
           </td>
           <td>{{ model.Name }}</td>
         </tr>
-        <tr>
-          <td>
-            <translate>Albums</translate>
-          </td>
-          <td>{{ model.Albums.map(album => album.Title).join(', ') }}</td>
-        </tr>
         <tr v-if="model.OriginalName">
           <td>
             <translate>Original Name</translate>
@@ -76,6 +70,14 @@
             <v-icon v-if="model.TakenSrc === 'manual'" class="src">check</v-icon>
           </td>
           <td>{{ model.getDateString() }}</td>
+        </tr>
+        <tr v-if="model.Albums && model.Albums.length">
+          <td>
+            <translate>Albums</translate>
+          </td>
+          <td>
+            <a v-for="(m, i) in model.Albums" :key="i" :href="albumUrl(m)" class="primary--text text-link" target="_blank"><span v-if="i > 0">, </span>{{ m.Title }}</a>
+          </td>
         </tr>
         <tr>
           <td>
@@ -322,6 +324,13 @@ export default {
     },
     openPhoto() {
       this.$viewer.show(Thumb.fromFiles([this.model]), 0);
+    },
+    albumUrl(m) {
+      if (!m) {
+        return '#';
+      }
+
+      return this.$router.resolve({ name: 'album', params: { uid: m.UID, slug: 'view' }}).href;
     },
   },
 };
