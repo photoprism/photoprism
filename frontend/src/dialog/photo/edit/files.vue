@@ -66,11 +66,10 @@
                                    @click.stop.prevent="showDeleteDialog(file)">
                               <translate>Delete</translate>
                             </v-btn>
-                            <v-btn v-if="experimental && file.Primary" small depressed dark color="primary-button"
+                            <v-btn v-if="experimental && canAccessPrivate && file.Primary" small depressed dark color="primary-button"
                                    class="btn-action action-open-folder"
                                    :href="folderUrl(file)" target="_blank">
-                              <translate>Folder</translate>
-                              <v-icon :right="!rtl" :left="rtl" dark size="20">open_in_new</v-icon>
+                              <translate>File Browser</translate>
                             </v-btn>
                           </td>
                         </tr>
@@ -308,6 +307,7 @@ export default {
       config: this.$config.values,
       readonly: this.$config.get("readonly"),
       experimental: this.$config.get("experimental"),
+      canAccessPrivate: this.$config.allow("photos", "access_library") && this.$config.allow("photos", "access_private"),
       options: options,
       busy: false,
       rtl: this.$rtl,
