@@ -60,22 +60,6 @@ func findBin(configBin, defaultBin string) (binPath string) {
 
 // CreateDirectories creates directories for storing photos, metadata and cache files.
 func (c *Config) CreateDirectories() error {
-	createError := func(path string, err error) (result error) {
-		if fs.FileExists(path) {
-			result = fmt.Errorf("directory path %s is a file, please check your configuration", clean.Log(path))
-		} else {
-			result = fmt.Errorf("failed to create the directory %s, check configuration and permissions", clean.Log(path))
-		}
-
-		log.Debug(err)
-
-		return result
-	}
-
-	notFoundError := func(name string) error {
-		return fmt.Errorf("invalid %s path, check configuration and permissions", clean.Log(name))
-	}
-
 	if c.AssetsPath() == "" {
 		return notFoundError("assets")
 	} else if err := os.MkdirAll(c.AssetsPath(), fs.ModeDir); err != nil {
