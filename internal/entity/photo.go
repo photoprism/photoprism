@@ -500,7 +500,7 @@ func (m *Photo) PreloadKeywords() {
 	q := Db().NewScope(nil).DB().
 		Table("keywords").
 		Select(`keywords.*`).
-		Joins("JOIN photos_keywords ON photos_keywords.keyword_id = keywords.id AND photos_keywords.photo_id = ?", m.ID).
+		Joins("JOIN photos_keywords pk ON pk.keyword_id = keywords.id AND pk.photo_id = ?", m.ID).
 		Order("keywords.keyword ASC")
 
 	Log("photo", "preload files", q.Scan(&m.Keywords).Error)
@@ -511,7 +511,7 @@ func (m *Photo) PreloadAlbums() {
 	q := Db().NewScope(nil).DB().
 		Table("albums").
 		Select(`albums.*`).
-		Joins("JOIN photos_albums ON photos_albums.album_uid = albums.album_uid AND photos_albums.photo_uid = ?", m.PhotoUID).
+		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = ? AND pa.hidden = 0", m.PhotoUID).
 		Where("albums.deleted_at IS NULL").
 		Order("albums.album_title ASC")
 

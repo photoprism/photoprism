@@ -71,12 +71,12 @@
           </td>
           <td>{{ model.getDateString() }}</td>
         </tr>
-        <tr v-if="model.Albums && model.Albums.length">
+        <tr v-if="albums.length > 0">
           <td>
             <translate>Albums</translate>
           </td>
           <td>
-            <a v-for="(m, i) in model.Albums" :key="i" :href="albumUrl(m)" class="primary--text text-link" target="_blank"><span v-if="i > 0">, </span>{{ m.Title }}</a>
+            <a v-for="(a, i) in albums" :key="i" :href="a.url" class="primary--text text-link" target="_blank"><span v-if="i > 0">, </span>{{ a.title }}</a>
           </td>
         </tr>
         <tr>
@@ -310,6 +310,17 @@ export default {
       }
 
       return result;
+    },
+    albums() {
+      if (!this.model || !this.model.Albums || this.model.Albums.length < 1) {
+        return [];
+      }
+
+      const results = [];
+
+      this.model.Albums.forEach(a => results.push({"title": a.Title, "url": this.albumUrl(a)}));
+
+      return results;
     },
   },
   methods: {
