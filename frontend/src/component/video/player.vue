@@ -85,7 +85,8 @@ export default {
       return this.$el.getElementsByTagName('video')[0];
     },
     updateStyle() {
-      this.style = `width: ${this.width.toString()}px; height: ${this.height.toString()}px`;
+      // this.style = `width: ${this.width.toString()}px; height: ${this.height.toString()}px`;
+      this.style = `width:100%; height: 100%`;
       this.$el.style.cssText = this.style;
     },
     render() {
