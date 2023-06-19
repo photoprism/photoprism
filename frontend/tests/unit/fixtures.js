@@ -310,6 +310,8 @@ Mock.onDelete("api/v1/link/5").reply(200, "delete success", mockHeaders);
 
 Mock.onPost("api/v1/photos/55/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onDelete("api/v1/photos/55/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onPost("api/v1/photos/prqjmzr1jlmr4mpb/like").reply(200, { status: "ok" }, mockHeaders);
+Mock.onDelete("api/v1/photos/prqjmzr1jlmr4mpb/like").reply(200, { status: "ok" }, mockHeaders);
 Mock.onGet("api/v1/albums/5").reply(200, { UID: "5" }, mockHeaders);
 Mock.onPut("api/v1/photos/5").reply(200, { UID: "5" }, mockHeaders);
 Mock.onDelete("api/v1/photos/abc123/like").reply(200, { status: "ok" }, mockHeaders);

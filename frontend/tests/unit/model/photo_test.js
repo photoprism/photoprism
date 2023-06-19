@@ -120,7 +120,7 @@ describe("model/photo", () => {
   it("should get photo download url", () => {
     const values = { ID: 5, Title: "Crazy Cat", Hash: 345982 };
     const photo = new Photo(values);
-    const result = photo.getDownloadUrl();
+    const result = photo.downloadUrl();
     assert.equal(result, "/api/v1/dl/345982?t=2lbh9x09");
   });
 
@@ -636,11 +636,17 @@ describe("model/photo", () => {
       ],
     };
     const photo3 = new Photo(values3);
-    const result = photo3.videoParams();
-    assert.equal(result.height, "463");
-    assert.equal(result.width, "695");
-    assert.equal(result.loop, false);
-    assert.equal(result.uri, "/api/v1/videos/1xxbgdt55/public/avc");
+
+    const video = photo3.video();
+    assert.equal(video.Height, 600);
+    assert.equal(video.Width, 900);
+    assert.equal(video.loop(), false);
+    assert.equal(video.url(), "/api/v1/videos/1xxbgdt55/public/avc");
+
+    const playerSize = video.playerSize();
+    assert.equal(playerSize.height, 470);
+    assert.equal(playerSize.width, 705);
+
     const values = {
       ID: 11,
       UID: "ABC127",
@@ -667,12 +673,17 @@ describe("model/photo", () => {
         },
       ],
     };
+
     const photo = new Photo(values);
-    const result2 = photo.videoParams();
-    assert.equal(result2.height, "440");
-    assert.equal(result2.width, "440");
-    assert.equal(result2.loop, false);
-    assert.equal(result2.uri, "/api/v1/videos/1xxbgdt55/public/avc");
+    const video2 = photo.video();
+    assert.equal(video2.Height, 5000);
+    assert.equal(video2.Width, 5000);
+    assert.equal(video2.loop(), false);
+    assert.equal(video2.url(), "/api/v1/videos/1xxbgdt55/public/avc");
+
+    const playerSize2 = video2.playerSize();
+    assert.equal(playerSize2.height, 460);
+    assert.equal(playerSize2.width, 460);
   });
 
   it("should return videofile", () => {

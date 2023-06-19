@@ -27,6 +27,7 @@ import memoizeOne from "memoize-one";
 
 import RestModel from "model/rest";
 import File from "model/file";
+import Video from "model/video";
 import Marker from "model/marker";
 import Api from "common/api";
 import { DateTime } from "luxon";
@@ -396,13 +397,7 @@ export class Photo extends RestModel {
     return files.some((f) => f.Video);
   });
 
-  videoParams() {
-    const uri = this.videoUrl();
-
-    if (!uri) {
-      return { error: "no video selected" };
-    }
-
+  video() {
     let main = this.mainFile();
     let file = this.videoFile();
 
@@ -410,44 +405,37 @@ export class Photo extends RestModel {
       file = main;
     }
 
-    const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    let width = file.Width > 0 ? file.Width : main.Width;
+    let height = file.Height > 0 ? file.Height : main.Height;
 
-    let actualWidth = 640;
-    let actualHeight = 480;
-
-    if (file.Width > 0) {
-      actualWidth = file.Width;
-    } else if (main && main.Width > 0) {
-      actualWidth = main.Width;
+    if (width <= 0 || height <= 0) {
+      width = 640;
+      height = 480;
     }
 
-    if (file.Height > 0) {
-      actualHeight = file.Height;
-    } else if (main && main.Height > 0) {
-      actualHeight = main.Height;
-    }
-
-    let width = actualWidth;
-    let height = actualHeight;
-
-    if (vw < width + 80) {
-      let newWidth = vw - 90;
-      height = Math.round(newWidth * (actualHeight / actualWidth));
-      width = newWidth;
-    }
-
-    if (vh < height + 100) {
-      let newHeight = vh - 160;
-      width = Math.round(newHeight * (actualWidth / actualHeight));
-      height = newHeight;
-    }
-
-    const loop = this.Type === MediaAnimated || (file.Duration >= 0 && file.Duration <= 5000000000);
-    const poster = this.thumbnailUrl("fit_720");
-    const error = false;
-
-    return { width, height, loop, poster, uri, error };
+    return new Video({
+      UID: file.UID ? file.UID : this.FileUID,
+      PhotoUID: this.UID,
+      Hash: file.Hash ? file.Hash : this.Hash,
+      PosterHash: this.mainFileHash(),
+      Title: this.Title,
+      TakenAtLocal: this.TakenAtLocal,
+      Description: this.Description,
+      Favorite: this.Favorite,
+      Playable: this.isPlayable(),
+      HDR: file.HDR,
+      Mime: file.Mime,
+      Type: this.Type,
+      Codec: file.Codec,
+      Width: width,
+      Height: height,
+      Duration: file.Duration,
+      FPS: file.FPS,
+      Frames: file.Frames,
+      Projection: file.Projection,
+      ColorProfile: file.ColorProfile,
+      Error: file.Error,
+    });
   }
 
   videoFile() {
@@ -600,7 +588,7 @@ export class Photo extends RestModel {
     return `${contentUri}/t/${hash}/${previewToken}/${size}`;
   });
 
-  getDownloadUrl() {
+  downloadUrl() {
     return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken}`;
   }
 

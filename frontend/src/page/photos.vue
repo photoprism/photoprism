@@ -47,6 +47,7 @@
 <script>
 import {MediaAnimated, MediaLive, MediaRaw, MediaVideo, Photo} from "model/photo";
 import Thumb from "model/thumb";
+import Video from "model/video";
 import Viewer from "common/viewer";
 import Event from "pubsub-js";
 
@@ -323,7 +324,7 @@ export default {
        */
       if (preferVideo && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
-          this.$viewer.play({video: selected});
+          this.$viewer.play(Video.fromPhotos(this.results, index));
         } else {
           this.$viewer.show(Thumb.fromPhotos(this.results), index);
         }

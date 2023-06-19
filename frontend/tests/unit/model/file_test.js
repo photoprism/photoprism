@@ -120,7 +120,7 @@ describe("model/file", () => {
       Name: "1/2/IMG123.jpg",
     };
     const file = new File(values);
-    assert.equal(file.getDownloadUrl("abc"), "/api/v1/dl/54ghtfd?t=2lbh9x09");
+    assert.equal(file.downloadUrl("abc"), "/api/v1/dl/54ghtfd?t=2lbh9x09");
   });
 
   it("should not download as hash is missing", () => {

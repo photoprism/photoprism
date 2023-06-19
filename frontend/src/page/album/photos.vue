@@ -52,8 +52,9 @@
 import {Photo, MediaLive, MediaRaw, MediaVideo, MediaAnimated} from "model/photo";
 import Album from "model/album";
 import Thumb from "model/thumb";
-import Event from "pubsub-js";
+import Video from "model/video";
 import Viewer from "common/viewer";
+import Event from "pubsub-js";
 
 export default {
   name: 'PPageAlbumPhotos',
@@ -241,7 +242,8 @@ export default {
        */
       if (preferVideo && selected.Type === MediaLive || selected.Type === MediaVideo || selected.Type === MediaAnimated) {
         if (selected.isPlayable()) {
-          this.$viewer.play({video: selected, album: this.album});
+          const play = Video.fromPhotos(this.results, index);
+          this.$viewer.play({videos: play.videos, index: play.index, album: this.albums});
         } else {
           this.$viewer.show(Thumb.fromPhotos(this.results), index);
         }

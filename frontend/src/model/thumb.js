@@ -68,7 +68,7 @@ export class Thumb extends Model {
     }
   }
 
-  static thumbNotFound() {
+  static notFound() {
     const result = {
       UID: "",
       Title: $gettext("Not Found"),
@@ -112,7 +112,7 @@ export class Thumb extends Model {
     }
 
     if (!photo || !photo.Hash) {
-      return this.thumbNotFound();
+      return this.notFound();
     }
 
     const result = {
@@ -144,7 +144,7 @@ export class Thumb extends Model {
 
   static fromFile(photo, file) {
     if (!photo || !file || !file.Hash) {
-      return this.thumbNotFound();
+      return this.notFound();
     }
 
     const result = {

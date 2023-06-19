@@ -76,9 +76,7 @@
       </div>
     </div>
     <div v-if="player.show" class="video-viewer" @click.stop.prevent="closePlayer" @keydown.esc.stop.prevent="closePlayer">
-      <p-video-player ref="player" :source="player.source" :poster="player.poster"
-                      :height="player.height" :width="player.width" :autoplay="player.autoplay" :loop="player.loop" @close="closePlayer">
-      </p-video-player>
+      <p-video-player ref="player" :videos="videos" :index="0" @close="closePlayer"></p-video-player>
     </div>
   </div>
 </template>
@@ -101,13 +99,14 @@ export default {
       canDownload: this.$config.allow("photos", "download") && this.$config.feature("download"),
       selection: this.$clipboard.selection,
       config: this.$config.values,
-      item: new Thumb(),
+      item: new Thumb(false),
       subscriptions: [],
       interval: false,
       slideshow: {
         active: false,
         next: 0,
       },
+      videos: [],
       player: {
         show: false,
         loop: false,
@@ -175,28 +174,23 @@ export default {
     },
     onPlay() {
       if (this.item && this.item.Playable) {
-        new Photo().find(this.item.UID).then((video) => this.openPlayer(video));
+        new Photo().find(this.item.UID).then((photo) => this.openPlayer(photo));
       }
     },
-    openPlayer(video) {
-      if (!video) {
+    openPlayer(photo) {
+      if (!photo) {
         this.$notify.error(this.$gettext("No video selected"));
         return;
       }
 
-      const params = video.videoParams();
+      const video = photo.video();
 
-      if (params.error) {
-        this.$notify.error(params.error);
+      if (!video || video.Error) {
+        this.$notify.error(this.$gettext("Not Found"));
         return;
       }
 
-      // Set video parameters.
-      this.player.loop = params.loop;
-      this.player.width = params.width;
-      this.player.height = params.height;
-      this.player.poster = params.poster;
-      this.player.source = params.uri;
+      this.videos = [video];
 
       // Play video.
       this.player.show = true;

@@ -1,7 +1,6 @@
 <template>
   <div v-if="show" class="video-viewer" role="dialog" @click.stop.prevent="onClose" @keydown.esc.stop.prevent="onClose">
-      <p-video-player v-show="show" ref="player" :source="source" :poster="poster" :height="height"
-                      :width="width" :autoplay="true" :loop="loop" @close="onClose"></p-video-player>
+      <p-video-player v-show="show" ref="player" :videos="videos" :index="index" :album="album" @close="onClose"></p-video-player>
   </div>
 </template>
 <script>
@@ -18,7 +17,8 @@ export default {
       defaultHeight: 480,
       width: 640,
       height: 480,
-      video: null,
+      index: 0,
+      videos: [],
       album: null,
       loop: false,
       subscriptions: [],
@@ -39,9 +39,16 @@ export default {
   methods: {
     onOpen(ev, params) {
       const fullscreen = !!params.fullscreen;
+      const hasQueue = params.videos && params.videos.length > 0;
 
-      this.video = params.video;
-      this.album = params.album;
+      this.videos = hasQueue ? params.videos : [];
+      this.album = params.album ? params.album : null;
+
+      if(params.index && params.index < this.videos.length) {
+        this.index = params.index;
+      } else {
+        this.index = 0;
+      }
 
       this.play(fullscreen);
     },
@@ -58,24 +65,10 @@ export default {
       this.show = false;
     },
     play(fullscreen) {
-      if (!this.video) {
-        this.$notify.error(this.$gettext("No video selected"));
+      if (!this.videos) {
+        this.$notify.error(this.$gettext("No videos found to play"));
         return;
       }
-
-      const params = this.video.videoParams();
-
-      if (params.error) {
-        this.$notify.error(params.error);
-        return;
-      }
-
-      // Set video parameters.
-      this.loop = params.loop;
-      this.width = params.width;
-      this.height = params.height;
-      this.poster = params.poster;
-      this.source = params.uri;
 
       // Play video.
       this.show = true;

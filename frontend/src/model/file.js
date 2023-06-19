@@ -24,13 +24,14 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
+import Video from "model/video";
+import { MediaAnimated, MediaImage } from "model/photo";
 import Api from "common/api";
 import { DateTime } from "luxon";
 import Util from "common/util";
 import { config } from "app/session";
 import { $gettext } from "common/vm";
 import download from "common/download";
-import { MediaImage } from "./photo";
 
 export class File extends RestModel {
   getDefaults() {
@@ -128,7 +129,7 @@ export class File extends RestModel {
     return `${config.contentUri}/t/${this.Hash}/${config.previewToken}/${size}`;
   }
 
-  getDownloadUrl() {
+  downloadUrl() {
     return `${config.apiUri}/dl/${this.Hash}?t=${config.downloadToken}`;
   }
 
@@ -137,7 +138,7 @@ export class File extends RestModel {
       return;
     }
 
-    download(this.getDownloadUrl(), this.baseName(this.Name));
+    download(this.downloadUrl(), this.baseName(this.Name));
   }
 
   calculateSize(width, height) {
@@ -285,6 +286,48 @@ export class File extends RestModel {
   unlike() {
     this.Favorite = false;
     return Api.delete(this.getPhotoResource() + "/like");
+  }
+
+  isPlayable() {
+    if (this.MediaType === MediaAnimated) {
+      return true;
+    }
+
+    return this.Video;
+  }
+
+  video() {
+    let width = this.Width;
+    let height = this.Height;
+
+    if (width <= 0 || height <= 0) {
+      width = 640;
+      height = 480;
+    }
+
+    return new Video({
+      UID: this.UID,
+      PhotoUID: this.PhotoUID,
+      Hash: this.Hash,
+      PosterHash: this.Hash,
+      Title: this.Name,
+      Description: "",
+      TakenAt: this.TakenAt,
+      Favorite: false,
+      Playable: this.isPlayable(),
+      HDR: this.HDR,
+      Mime: this.Mime,
+      Type: this.Video ? "video" : "animated",
+      Codec: this.Codec,
+      Width: width,
+      Height: height,
+      Duration: this.Duration,
+      FPS: this.FPS,
+      Frames: this.Frames,
+      Projection: this.Projection,
+      ColorProfile: this.ColorProfile,
+      Error: this.Error,
+    });
   }
 
   static getCollectionResource() {

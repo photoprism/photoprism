@@ -75,6 +75,7 @@
     "mocha": "^10.2.0",
     "node-storage-shim": "^2.0.1",
     "photoswipe": "^4.1.3",
+    "plyr": "^3.7.8",
     "postcss": "^8.4.20",
     "postcss-import": "^15.1.0",
     "postcss-loader": "^7.0.2",

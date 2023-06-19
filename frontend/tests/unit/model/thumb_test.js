@@ -66,8 +66,8 @@ describe("model/thumb", () => {
     assert.equal(thumb.Favorite, true);
   });
 
-  it("should return thumb not found", () => {
-    const result = Thumb.thumbNotFound();
+  it("should return not placeholder", () => {
+    const result = Thumb.notFound();
     assert.equal(result.UID, "");
     assert.equal(result.Favorite, false);
   });
