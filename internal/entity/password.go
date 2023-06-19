@@ -46,12 +46,14 @@ func NewPassword(uid, pw string, allowHash bool) Password {
 
 // SetPassword sets a new password stored as hash.
 func (m *Password) SetPassword(pw string, allowHash bool) error {
+	// Remove leading and trailing white space.
 	pw = clean.Password(pw)
 
-	if l := len(pw); l > txt.ClipPassword {
-		return fmt.Errorf("password is too long")
-	} else if l < 1 {
+	// Check if password is too short or too long.
+	if len([]rune(pw)) < 1 {
 		return fmt.Errorf("password is too short")
+	} else if len(pw) > txt.ClipPassword {
+		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
 	}
 
 	// Check if string already is a bcrypt hash.

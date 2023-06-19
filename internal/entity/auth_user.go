@@ -31,7 +31,7 @@ const (
 // UsernameLength specifies the minimum length of the username in characters.
 var UsernameLength = 1
 
-// PasswordLength specifies the minimum length of the password in characters.
+// PasswordLength specifies the minimum length of a password in characters (runes, not bytes).
 var PasswordLength = 4
 
 // UsersPath is the relative path for user assets.
@@ -768,8 +768,10 @@ func (m *User) SetPassword(password string) error {
 		return fmt.Errorf("only registered users can change their password")
 	}
 
-	if len(password) < PasswordLength {
+	if len([]rune(password)) < PasswordLength {
 		return fmt.Errorf("password must have at least %d characters", PasswordLength)
+	} else if len(password) > txt.ClipPassword {
+		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
 	}
 
 	pw := NewPassword(m.UserUID, password, false)
