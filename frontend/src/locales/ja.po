@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Chris Yang <chrisyx511@gmail.com>\n"
-"Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
+"PO-Revision-Date: 2023-06-20 02:59+0000\n"
+"Last-Translator: Kento Okamoto <kentokamoto@protonmail.com>\n"
+"Language-Team: Japanese <https://translate.photoprism.app/projects/"
+"photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2349,11 +2350,17 @@ msgstr "テーマ"
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "これは、オリジナルのフォルダをネットワークドライブとしてマウントし、まるでローカルにあるかのようにファイルを開いたり、編集したり、あなたのコンピュータまたはスマートフォンから削除したりすることができるようにします。"
+msgstr ""
+"これは、オリジナルのフォルダをネットワークドライブとしてマウントし、まるでロ"
+"ーカルにあるかのようにファイル開き、編集、または削除を\n"
+"あなたのコンピュータまたはスマートフォンからできるようにします。"
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "これは、オリジナルのフォルダをネットワークドライブとしてマウントし、まるでローカルにあるかのようにファイルを開いたり、編集したり、あなたのコンピュータまたはスマートフォンから削除したりすることができるようにします。"
+msgstr ""
+"これは、オリジナルのフォルダをネットワークドライブとしてマウントし、まるでロ"
+"ーカルにあるかのようにファイル開き、編集、または削除をあなたのコンピュータま"
+"たはスマートフォンからできるようにします。"
 
 #: src/page/settings/advanced.vue:252
 msgid "Thumbnail Generation"
@@ -2486,7 +2493,7 @@ msgstr "モーメントを更新しています"
 
 #: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "画像更新中..."
+msgstr "画像更新中…"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2609,7 +2616,7 @@ msgstr "動画"
 #: src/component/album/toolbar.vue:71 src/component/photo/toolbar.vue:56
 #: src/dialog/album/edit.vue:27
 msgid "Video Duration"
-msgstr "ビデオデュレイション   "
+msgstr "時間"
 
 #: src/app/routes.js:235 src/component/navigation.vue:184
 #: src/component/navigation.vue:194 src/component/navigation.vue:4
@@ -2638,7 +2645,7 @@ msgstr "視覚的類似性"
 
 #: src/page/about/feedback.vue:13
 msgid "We appreciate your feedback!"
-msgstr "ご感想をお寄せいただきありがとうございました。"
+msgstr "ご感想をお寄せいただきありがとうございました！"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
@@ -2662,7 +2669,10 @@ msgstr "WebDAV クライアントは PhotoPrism に次の URL を使用して接
 msgid ""
 "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
 "          PhotoPrism."
-msgstr "Microsoft の Windows エクスプローラ や Apple の Finder のような WebDAV クライアントは、直接 PhotoPrism に接続できます。"
+msgstr ""
+"Microsoft の Windows エクスプローラー や Apple の Finder のような WebDAV "
+"クライアントは、\n"
+"直接 PhotoPrism に接続できます。"
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"

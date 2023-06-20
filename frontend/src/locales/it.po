@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-06-07 08:37+0000\n"
-"Last-Translator: leosamuele221 <leosamuele221@gmail.com>\n"
-"Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/frontend/it/>\n"
+"PO-Revision-Date: 2023-06-20 02:59+0000\n"
+"Last-Translator: Tommi <surfing@tommi.space>\n"
+"Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
+"frontend/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2349,7 +2350,10 @@ msgstr "Tema"
 msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "Questo monta la cartella degli originali come un'unità di rete e ti permette di aprire, modificare e cancellare i file dal tuo computer o smartphone come se fossero locali."
+msgstr ""
+"Questo monta la cartella degli originali come un’unità di rete e ti permette "
+"di aprire, modificare e cancellare i file dal tuo computer o smartphone come "
+"se fossero locali."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
@@ -2486,7 +2490,7 @@ msgstr "Aggiornamento momenti in corso"
 
 #: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "Aggiornamento dell'immagine.."
+msgstr "Aggiornamento dell'immagine…"
 
 #: src/page/library/index.vue:153
 msgid "Updating previews"
@@ -2550,7 +2554,7 @@ msgstr "Caricamento foto…"
 
 #: src/page/settings/account.vue:127
 msgid "Uploading…"
-msgstr "Caricamento in corso..."
+msgstr "Caricamento in corso…"
 
 #: src/dialog/upload.vue:48
 msgid "Uploads that may contain such images will be rejected automatically."
