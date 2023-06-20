@@ -67,7 +67,7 @@ describe("model/thumb", () => {
   });
 
   it("should return thumb not found", () => {
-    const result = Thumb.thumbNotFound();
+    const result = Thumb.notFound();
     assert.equal(result.UID, "");
     assert.equal(result.Favorite, false);
   });
@@ -289,7 +289,7 @@ describe("model/thumb", () => {
       Name: "1/2/IMG123.jpg",
     };
     const file2 = new File(values2);
-    assert.equal(Thumb.thumbnailUrl(file2, "bcd"), "/api/v1/svg/photo");
+    assert.equal(Thumb.thumbnailUrl(file2, "bcd"), "/static/img/404.jpg");
   });
 
   it("should calculate size", () => {
