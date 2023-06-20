@@ -67,7 +67,7 @@ require (
 require github.com/gabriel-vasile/mimetype v1.4.2
 
 require (
-	golang.org/x/sync v0.2.0
+	golang.org/x/sync v0.3.0
 	golang.org/x/time v0.3.0
 )
 
