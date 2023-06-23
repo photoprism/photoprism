@@ -561,6 +561,10 @@ func TestUser_SetPassword(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
 		assert.Error(t, p.SetPassword("cat"))
 	})
+	t.Run("PasswordTooLong", func(t *testing.T) {
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		assert.Error(t, p.SetPassword("hfnoehurhgfoeuro7584othgiyruifh85hglhiryhgbbyeirygbubgirgtheuogfugfkhsbdgiyerbgeuigbdtiyrgehbik"))
+	})
 }
 
 func TestUser_InitLogin(t *testing.T) {
@@ -754,6 +758,28 @@ func TestAddUser(t *testing.T) {
 			UserName:  "thomas1",
 			UserEmail: "thomas1@example.com",
 			Password:  "hel",
+		}
+
+		err := AddUser(u)
+		assert.Error(t, err)
+	})
+	t.Run("TooLong", func(t *testing.T) {
+		u := form.User{
+			UserName:  "thomas3",
+			UserEmail: "thomas3@example.com",
+			Password:  "1234567725244364789969hhkvnsgjlb;ghfnbn nd;dhewy8ortfgbkryeti7gfbie57yteoubgvlsiruwojflger",
+			UserRole:  acl.RoleAdmin.String(),
+		}
+
+		err := AddUser(u)
+		assert.Error(t, err)
+	})
+	t.Run("Invalid Role", func(t *testing.T) {
+		u := form.User{
+			UserName:  "thomas4",
+			UserEmail: "thomas4@example.com",
+			Password:  "helloworld",
+			UserRole:  "invalid",
 		}
 
 		err := AddUser(u)
