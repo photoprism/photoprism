@@ -184,6 +184,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-bin", c.FFmpegBin()},
 		{"ffmpeg-encoder", c.FFmpegEncoder().String()},
 		{"ffmpeg-bitrate", fmt.Sprintf("%d", c.FFmpegBitrate())},
+		{"ffmpeg-resolution", fmt.Sprintf("%d", c.FFmpegResolution())},
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},
 		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
 		{"exiftool-bin", c.ExifToolBin()},
