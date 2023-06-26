@@ -159,6 +159,11 @@ func TestPassword_Cost(t *testing.T) {
 			assert.Equal(t, 14, cost)
 		}
 	})
+	t.Run("empty password", func(t *testing.T) {
+		p := NewPassword("urrwaxd19ldtz68x", "", false)
+		_, err := p.Cost()
+		assert.Error(t, err)
+	})
 }
 
 func TestPassword_String(t *testing.T) {
