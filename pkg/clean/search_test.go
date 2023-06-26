@@ -19,6 +19,10 @@ func TestSearchString(t *testing.T) {
 		q := SearchString(" Flowers in the Park ")
 		assert.Equal(t, " Flowers in the Park ", q)
 	})
+	t.Run("Empty", func(t *testing.T) {
+		q := SearchString("")
+		assert.Equal(t, "", q)
+	})
 }
 
 func TestSearchQuery(t *testing.T) {
@@ -33,5 +37,9 @@ func TestSearchQuery(t *testing.T) {
 	t.Run("FlowersInThePark", func(t *testing.T) {
 		q := SearchQuery(" Flowers in the Park ")
 		assert.Equal(t, "Flowers&the Park", q)
+	})
+	t.Run("Empty", func(t *testing.T) {
+		q := SearchQuery("")
+		assert.Equal(t, "", q)
 	})
 }

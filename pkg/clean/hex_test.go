@@ -16,4 +16,7 @@ func TestHex(t *testing.T) {
 	t.Run("SHA1", func(t *testing.T) {
 		assert.Equal(t, "5c50ae14f339364eb8224f23c2d3abc7e79016f3eaded", Hex("5c50ae14f339364eb8224f23c2d3abc7e79016f3  README.md"))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Hex(""))
+	})
 }

@@ -34,4 +34,10 @@ func TestFileName(t *testing.T) {
 	t.Run("Replace", func(t *testing.T) {
 		assert.Equal(t, "", FileName("${https://<host>:<port>/<path>}"))
 	})
+	t.Run("file?name.jpg", func(t *testing.T) {
+		assert.Equal(t, "filename.jpg", FileName("file?name.jpg"))
+	})
+	t.Run("Control Character", func(t *testing.T) {
+		assert.Equal(t, "filename.", FileName("filename."+string(rune(127))))
+	})
 }
