@@ -47,3 +47,53 @@ func TestBlacklist_Ok(t *testing.T) {
 		assert.True(t, list.Allow("raw"))
 	})
 }
+
+func TestBlacklist_Contains(t *testing.T) {
+	t.Run("DNG", func(t *testing.T) {
+		list := NewBlacklist("dng")
+		assert.True(t, list.Contains("dng"))
+		assert.False(t, list.Contains("cr2"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		list := NewBlacklist("")
+		assert.False(t, list.Contains(""))
+	})
+}
+
+func TestBlacklist_Set(t *testing.T) {
+	t.Run("DNG, CR2", func(t *testing.T) {
+		list := NewBlacklist("dng")
+		assert.True(t, list.Contains("dng"))
+		assert.False(t, list.Contains("cr2"))
+		list.Set("cr2")
+		assert.True(t, list.Contains("dng"))
+		assert.True(t, list.Contains("cr2"))
+	})
+	t.Run("DNG", func(t *testing.T) {
+		list := NewBlacklist("dng")
+		assert.True(t, list.Contains("dng"))
+		assert.False(t, list.Contains("cr2"))
+		list.Set("")
+		assert.True(t, list.Contains("dng"))
+		assert.False(t, list.Contains("cr2"))
+	})
+}
+
+func TestBlacklist_Add(t *testing.T) {
+	t.Run("DNG, CR2", func(t *testing.T) {
+		list := NewBlacklist("dng")
+		assert.True(t, list.Contains("dng"))
+		assert.False(t, list.Contains("cr2"))
+		list.Add("cr2")
+		assert.True(t, list.Contains("dng"))
+		assert.True(t, list.Contains("cr2"))
+	})
+	t.Run("DNG", func(t *testing.T) {
+		list := NewBlacklist("dng")
+		assert.True(t, list.Contains("dng"))
+		assert.False(t, list.Contains("cr2"))
+		list.Add("")
+		assert.True(t, list.Contains("dng"))
+		assert.False(t, list.Contains("cr2"))
+	})
+}
