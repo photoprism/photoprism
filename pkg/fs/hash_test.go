@@ -31,9 +31,9 @@ func TestChecksum(t *testing.T) {
 func TestIsHash(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
 		assert.Equal(t, false, IsHash(""))
+		assert.Equal(t, false, IsHash("123"))
 	})
 	t.Run("true", func(t *testing.T) {
 		assert.Equal(t, true, IsHash("516cb1fefbfd9fa66f1db50b94503a480cee30db"))
-
 	})
 }
