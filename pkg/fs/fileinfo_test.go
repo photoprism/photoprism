@@ -1,10 +1,11 @@
 package fs
 
 import (
-	"github.com/emersion/go-webdav"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/emersion/go-webdav"
 
 	"github.com/stretchr/testify/assert"
 )
