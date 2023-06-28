@@ -31,13 +31,13 @@ func TestConfig_TLSEmail(t *testing.T) {
 func TestConfig_TLSCert(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.True(t, strings.HasSuffix(c.TLSCert(), "photoprism.me.crt"))
+	assert.True(t, strings.HasSuffix(c.TLSCert(), "photoprism.crt"))
 }
 
 func TestConfig_TLSKey(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.True(t, strings.HasSuffix(c.TLSKey(), "photoprism.me.key"))
+	assert.True(t, strings.HasSuffix(c.TLSKey(), "photoprism.key"))
 }
 
 func TestConfig_TLS(t *testing.T) {

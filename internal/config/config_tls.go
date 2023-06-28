@@ -31,14 +31,24 @@ func (c *Config) TLSCert() string {
 		return certName
 	}
 
-	// Try to find server certificate.
-	if fileName := filepath.Join(c.CertificatesPath(), certName); fs.FileExistsNotEmpty(fileName) {
-		return fileName
-	} else if fileName = filepath.Join("/etc/ssl/certs", certName); fs.FileExistsNotEmpty(fileName) {
+	// find looks for an existing certificate file.
+	find := func(certName string) string {
+		if fileName := filepath.Join(c.CertificatesPath(), certName); fs.FileExistsNotEmpty(fileName) {
+			return fileName
+		} else if fileName = filepath.Join("/etc/ssl/certs", certName); fs.FileExistsNotEmpty(fileName) {
+			return fileName
+		} else {
+			return ""
+		}
+	}
+
+	// Find matching TLS certificate file.
+	if fileName := find(certName); fileName != "" {
 		return fileName
 	}
 
-	return ""
+	// Find default TLS certificate.
+	return find("photoprism" + PublicCertExt)
 }
 
 // TLSKey returns the private key required to enable TLS.
@@ -51,14 +61,24 @@ func (c *Config) TLSKey() string {
 		return keyName
 	}
 
-	// Try to find private key.
-	if fileName := filepath.Join(c.CertificatesPath(), keyName); fs.FileExistsNotEmpty(fileName) {
-		return fileName
-	} else if fileName = filepath.Join("/etc/ssl/private", keyName); fs.FileExistsNotEmpty(fileName) {
+	// find looks for an existing private key file.
+	find := func(keyName string) string {
+		if fileName := filepath.Join(c.CertificatesPath(), keyName); fs.FileExistsNotEmpty(fileName) {
+			return fileName
+		} else if fileName = filepath.Join("/etc/ssl/private", keyName); fs.FileExistsNotEmpty(fileName) {
+			return fileName
+		} else {
+			return ""
+		}
+	}
+
+	// Find matching private key.
+	if fileName := find(keyName); fileName != "" {
 		return fileName
 	}
 
-	return ""
+	// Find default key file.
+	return find("photoprism" + PrivateKeyExt)
 }
 
 // TLS returns the HTTPS certificate and private key file name.
