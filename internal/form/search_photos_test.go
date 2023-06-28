@@ -25,6 +25,18 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Equal(t, "Jens & Mander", form.Subjects)
 	})
+	t.Run("subject", func(t *testing.T) {
+		form := &SearchPhotos{Query: "subject:\"Jens\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Jens", form.Subject)
+		assert.Equal(t, "", form.Person)
+	})
 	t.Run("aliases", func(t *testing.T) {
 		form := &SearchPhotos{Query: "people:\"Jens & Mander\" folder:Foo person:Bar"}
 
@@ -784,5 +796,18 @@ func TestSearchPhotos_Unserialize(t *testing.T) {
 		assert.Equal(t, "foo.jpg", f.Name)
 		assert.Equal(t, "priqwb43p5dh7777", f.UID)
 		assert.Equal(t, "ariqwb43p5dh5555", f.Album)
+	})
+}
+
+func TestSearchPhotos_FindUidOnly(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		f := &SearchPhotos{UID: "priqwb43p5dh7777"}
+
+		assert.True(t, f.FindUidOnly())
+	})
+	t.Run("false", func(t *testing.T) {
+		f := &SearchPhotos{Query: "label:cat", UID: "priqwb43p5dh7777"}
+
+		assert.False(t, f.FindUidOnly())
 	})
 }
