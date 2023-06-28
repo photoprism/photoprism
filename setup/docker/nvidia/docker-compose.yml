@@ -83,6 +83,7 @@ services:
       ## see https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit
       PHOTOPRISM_FFMPEG_ENCODER: "nvidia"
       PHOTOPRISM_FFMPEG_BITRATE: "50"
+      PHOTOPRISM_FFMPEG_RESOLUTION: "2160"
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):

@@ -181,7 +181,7 @@ func (c *Convert) AvcBitrate(f *MediaFile) string {
 
 // AvcResolution returns the resolution to use for transcoding.
 func (c *Convert) AvcResolution(f *MediaFile) string {
-	const defaultResolution = "1080"
+	const defaultResolution = "2160"
 
 	if f == nil {
 		return defaultResolution
@@ -191,7 +191,7 @@ func (c *Convert) AvcResolution(f *MediaFile) string {
 
 	resolution := f.height
 
-	if resolution <= 0 {
+	if resolution <= 144 {
 		return defaultResolution
 	} else if resolution > limit {
 		resolution = limit
