@@ -583,7 +583,7 @@ var Flags = CliFlags{
 		Flag: cli.IntFlag{
 			Name:   "ffmpeg-resolution",
 			Usage:  "maximum FFmpeg encoding `RESOLUTION` (height)",
-			Value:  2160,
+			Value:  4096,
 			EnvVar: EnvVar("FFMPEG_RESOLUTION"),
 		}}, {
 		Flag: cli.StringFlag{
