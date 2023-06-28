@@ -79,16 +79,15 @@ func (c *Config) FFmpegMapAudio() string {
 }
 
 // FFmpegOptions returns the FFmpeg transcoding options.
-func (c *Config) FFmpegOptions(encoder ffmpeg.AvcEncoder, bitrate string, resolution string, heightLarger bool) (ffmpeg.Options, error) {
+func (c *Config) FFmpegOptions(encoder ffmpeg.AvcEncoder, bitrate string) (ffmpeg.Options, error) {
 	// Transcode all other formats with FFmpeg.
 	opt := ffmpeg.Options{
-		Bin:          c.FFmpegBin(),
-		Encoder:      encoder,
-		Bitrate:      bitrate,
-		MapVideo:     c.FFmpegMapVideo(),
-		MapAudio:     c.FFmpegMapAudio(),
-		Resolution:   resolution,
-		HeightLarger: heightLarger,
+		Bin:        c.FFmpegBin(),
+		Encoder:    encoder,
+		Bitrate:    bitrate,
+		MapVideo:   c.FFmpegMapVideo(),
+		MapAudio:   c.FFmpegMapAudio(),
+		Resolution: fmt.Sprintf("%v", c.FFmpegResolution()),
 	}
 
 	// Check

@@ -149,8 +149,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg
 
 	// Transcode all other formats with FFmpeg.
 	var opt ffmpeg.Options
-	resolution, heightLarger := c.AvcResolution(f)
-	if opt, err = c.conf.FFmpegOptions(encoder, c.AvcBitrate(f), resolution, heightLarger); err != nil {
+	if opt, err = c.conf.FFmpegOptions(encoder, c.AvcBitrate(f)); err != nil {
 		return nil, false, fmt.Errorf("convert: failed to transcode %s (%s)", clean.Log(f.BaseName()), err)
 	} else {
 		return ffmpeg.AvcConvertCommand(fileName, avcName, opt)
@@ -177,29 +176,4 @@ func (c *Convert) AvcBitrate(f *MediaFile) string {
 	}
 
 	return fmt.Sprintf("%dM", bitrate)
-}
-
-// AvcResolution returns the resolution to use for transcoding and true if the height is larger then the width and false if it is smaller then the width
-func (c *Convert) AvcResolution(f *MediaFile) (string, bool) {
-	const defaultResolution = "4096"
-
-	if f == nil {
-		return defaultResolution, true
-	}
-
-	limit := c.conf.FFmpegResolution()
-	heightLarger := true
-	resolution := f.height
-	if resolution < f.width {
-		heightLarger = true
-		resolution = f.width
-	}
-
-	if resolution <= 144 {
-		return defaultResolution, heightLarger
-	} else if resolution > limit {
-		resolution = limit
-	}
-
-	return fmt.Sprintf("%d", resolution), heightLarger
 }

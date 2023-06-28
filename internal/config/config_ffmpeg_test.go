@@ -88,8 +88,7 @@ func TestConfig_FFmpegMapAudio(t *testing.T) {
 func TestConfig_FFmpegOptions(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	bitrate := "25M"
-	resolution := "1080"
-	opt, err := c.FFmpegOptions(ffmpeg.SoftwareEncoder, bitrate, resolution, true)
+	opt, err := c.FFmpegOptions(ffmpeg.SoftwareEncoder, bitrate)
 	assert.NoError(t, err)
 	assert.Equal(t, c.FFmpegBin(), opt.Bin)
 	assert.Equal(t, ffmpeg.SoftwareEncoder, opt.Encoder)
@@ -98,5 +97,4 @@ func TestConfig_FFmpegOptions(t *testing.T) {
 	assert.Equal(t, ffmpeg.MapAudioDefault, opt.MapAudio)
 	assert.Equal(t, c.FFmpegMapVideo(), opt.MapVideo)
 	assert.Equal(t, c.FFmpegMapAudio(), opt.MapAudio)
-	assert.Equal(t, resolution, opt.Resolution)
 }
