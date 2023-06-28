@@ -580,6 +580,12 @@ var Flags = CliFlags{
 			Value:  50,
 			EnvVar: EnvVar("FFMPEG_BITRATE"),
 		}}, {
+		Flag: cli.IntFlag{
+			Name:   "ffmpeg-resolution",
+			Usage:  "maximum FFmpeg encoding `RESOLUTION` (height)",
+			Value:  2160,
+			EnvVar: EnvVar("FFMPEG_RESOLUTION"),
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "ffmpeg-map-video",
 			Usage:  "video `STREAMS` that should be transcoded",
