@@ -62,5 +62,3 @@ chmod -R u=rwX,g=rX,o-rwx "$KEY_PATH"
 
 echo "Running 'update-ca-certificates'..."
 update-ca-certificates
-
-echo "Enjoy!"
