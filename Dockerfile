@@ -1,5 +1,5 @@
 # Ubuntu 23.04 (Lunar Lobster)
-FROM photoprism/develop:230607-lunar
+FROM photoprism/develop:230628-lunar
 
 ## Alternative Environments:
 # FROM photoprism/develop:jammy    # Ubuntu 22.04 LTS (Jammy Jellyfish)

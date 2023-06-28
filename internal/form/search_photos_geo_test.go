@@ -19,6 +19,18 @@ func TestSearchPhotosGeo(t *testing.T) {
 
 		assert.Equal(t, "Jens Mander", form.Subjects)
 	})
+	t.Run("subject", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "subject:\"Jens\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Jens", form.Subject)
+		assert.Equal(t, "", form.Person)
+	})
 	t.Run("id", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "id:\"ii3e4567-e89b-hdgtr\""}
 
@@ -56,6 +68,32 @@ func TestSearchPhotosGeo(t *testing.T) {
 
 		assert.Equal(t, "Foo Bar", form.Keywords)
 	})
+	t.Run("path", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "path:123abc/,EFG"}
+
+		err := form.ParseQueryString()
+
+		// log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "123abc/,EFG", form.Path)
+	})
+	t.Run("name", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "name:filename.jpg"}
+
+		err := form.ParseQueryString()
+
+		// log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "filename", form.Name)
+	})
 	t.Run("valid query", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "q:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667"}
 
@@ -89,6 +127,21 @@ func TestSearchPhotosGeo(t *testing.T) {
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, uint(0x61a8), form.Dist)
 		assert.Equal(t, float32(33.45343), form.Lat)
+	})
+	t.Run("valid query with filter", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "keywords:cat title:\"fooBar baz\"", Filter: "keywords:dog"}
+
+		err := form.ParseQueryString()
+
+		// log.Debugf("%+v\n", form)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "dog", form.Keywords)
+		assert.Equal(t, "keywords:dog", form.Filter)
+		assert.Equal(t, "fooBar baz", form.Title)
 	})
 	t.Run("PortraitLandscapeSquare", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "portrait:true landscape:yes square:jo"}
@@ -203,4 +256,17 @@ func TestSearchPhotosGeo_SerializeAll(t *testing.T) {
 func TestNewSearchPhotosGeo(t *testing.T) {
 	r := NewSearchPhotosGeo("Berlin")
 	assert.IsType(t, SearchPhotosGeo{}, r)
+}
+
+func TestSearchPhotosGeo_FindUidOnly(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		f := &SearchPhotosGeo{UID: "priqwb43p5dh7777"}
+
+		assert.True(t, f.FindUidOnly())
+	})
+	t.Run("false", func(t *testing.T) {
+		f := &SearchPhotosGeo{Query: "label:cat", UID: "priqwb43p5dh7777"}
+
+		assert.False(t, f.FindUidOnly())
+	})
 }

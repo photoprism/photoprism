@@ -30,7 +30,7 @@ services:
       PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
-      PHOTOPRISM_SITE_URL: "http://photoprism.me:2342/"
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"

@@ -42,10 +42,10 @@ func (c *Config) FFmpegResolution() int {
 	switch {
 	case c.options.FFmpegResolution <= 0:
 		return 4096
-	case c.options.FFmpegBitrate >= 8192:
+	case c.options.FFmpegResolution >= 8192:
 		return 8192
 	default:
-		return c.options.FFmpegBitrate
+		return c.options.FFmpegResolution
 	}
 }
 

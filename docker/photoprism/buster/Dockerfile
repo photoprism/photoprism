@@ -59,7 +59,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_UPLOAD_NSFW="true" \
     PHOTOPRISM_DETECT_NSFW="false" \
     PHOTOPRISM_EXPERIMENTAL="false" \
-    PHOTOPRISM_SITE_URL="http://photoprism.me:2342/" \
+    PHOTOPRISM_SITE_URL="http://localhost:2342/" \
     PHOTOPRISM_SITE_CAPTION="AI-Powered Photos App" \
     PHOTOPRISM_SITE_DESCRIPTION="" \
     PHOTOPRISM_SITE_AUTHOR="" \
@@ -89,7 +89,8 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_WORKERS=0 \
     PHOTOPRISM_WAKEUP_INTERVAL=900 \
     PHOTOPRISM_AUTO_INDEX=300 \
-    PHOTOPRISM_AUTO_IMPORT=300
+    PHOTOPRISM_AUTO_IMPORT=300 \
+    PHOTOPRISM_INIT="https"
 
 # Copy dist files, scripts, and debian backports sources list.
 COPY --from=build --chown=root:root --chmod=755 /opt/photoprism/ /opt/photoprism

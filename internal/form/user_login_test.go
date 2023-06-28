@@ -6,6 +6,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestLogin_Email(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		form := &Login{UserEmail: "", Password: "passwd", AuthToken: ""}
+		assert.Equal(t, "", form.Email())
+	})
+	t.Run("valid", func(t *testing.T) {
+		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: "123"}
+		assert.Equal(t, "test@test.com", form.Email())
+	})
+}
+
 func TestLogin_HasToken(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
 		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: ""}
