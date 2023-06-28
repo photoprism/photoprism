@@ -45,7 +45,7 @@ func TestConfig_FFmpegBitrate(t *testing.T) {
 
 func TestConfig_FFmpegResolution(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 144, c.FFmpegResolution())
+	assert.Equal(t, 4320, c.FFmpegResolution())
 
 	c.options.FFmpegResolution = 1920
 	assert.Equal(t, 1920, c.FFmpegResolution())
