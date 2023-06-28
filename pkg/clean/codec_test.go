@@ -25,4 +25,7 @@ func TestCodec(t *testing.T) {
 	t.Run("Quotes", func(t *testing.T) {
 		assert.Equal(t, "fooBaaar23", Codec("\"foo\" Baa'ar 2```3"))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Codec(""))
+	})
 }

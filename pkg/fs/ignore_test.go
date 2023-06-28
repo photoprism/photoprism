@@ -171,3 +171,11 @@ func TestIgnoreList_Dir(t *testing.T) {
 		assert.Nil(t, ignoreList.Dir("./testdata/directory"))
 	})
 }
+
+func TestIgnoreList_Reset(t *testing.T) {
+	ignoreList := NewIgnoreList(".xyz", false, false)
+	ignoreList.AppendItems("testdata123/directory", []string{"__test_"})
+	assert.Equal(t, "testdata123/directory/", ignoreList.items[0].Dir)
+	ignoreList.Reset()
+	assert.Len(t, ignoreList.items, 0)
+}

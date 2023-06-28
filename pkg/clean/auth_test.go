@@ -25,6 +25,12 @@ func TestHandle(t *testing.T) {
 	t.Run("Windows", func(t *testing.T) {
 		assert.Equal(t, "jens.mander", Handle("DOMAIN\\Jens Mander "))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Handle("  "))
+	})
+	t.Run("control character", func(t *testing.T) {
+		assert.Equal(t, "admin!", Handle("admin!"+string(rune(1))))
+	})
 }
 
 func TestUsername(t *testing.T) {
@@ -46,6 +52,12 @@ func TestUsername(t *testing.T) {
 	t.Run("Windows", func(t *testing.T) {
 		assert.Equal(t, "domain\\jens mander", Username("DOMAIN\\Jens Mander "))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Username("   "))
+	})
+	t.Run("control character", func(t *testing.T) {
+		assert.Equal(t, "admin!", Username("admin!"+string(rune(1))))
+	})
 }
 
 func TestEmail(t *testing.T) {
@@ -58,6 +70,9 @@ func TestEmail(t *testing.T) {
 	t.Run("Invalid", func(t *testing.T) {
 		assert.Equal(t, "", Email(" hello-photoprism "))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Email(""))
+	})
 }
 
 func TestRole(t *testing.T) {
@@ -69,6 +84,12 @@ func TestRole(t *testing.T) {
 	})
 	t.Run(" admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Role(" admin "))
+	})
+	t.Run("adm}in", func(t *testing.T) {
+		assert.Equal(t, "admin", Role("adm}in"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Role(""))
 	})
 }
 
