@@ -439,7 +439,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetSoftware(metaData.Software, entity.SrcXmp)
 
 			// Update externally marked as favorite.
-			photo.SetFavorite(metaData.Favorite)
+			if metaData.Favorite {
+				photo.SetFavorite(metaData.Favorite)
+			}
 		} else {
 			log.Warn(err.Error())
 			file.FileError = err.Error()
