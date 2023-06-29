@@ -51,7 +51,7 @@ func TestConfig_FFmpegResolution(t *testing.T) {
 	assert.Equal(t, 1920, c.FFmpegResolution())
 
 	c.options.FFmpegResolution = 8640
-	assert.Equal(t, 4320, c.FFmpegResolution())
+	assert.Equal(t, 8192, c.FFmpegResolution())
 }
 
 func TestConfig_FFmpegBitrateExceeded(t *testing.T) {
