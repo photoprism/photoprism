@@ -101,19 +101,23 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 		} else if force || !fs.FileExists(fileName) {
 			// Open original if needed.
 			if original == nil {
-				img, err := thumb.Open(m.FileName(), m.Orientation())
+				img, imgErr := thumb.Open(m.FileName(), m.Orientation())
 
 				// Try to fix broken JPEGs if possible, fail otherwise.
-				if err != nil {
-					if !strings.HasPrefix(err.Error(), "invalid JPEG format") {
-						log.Debugf("media: %s in %s", err.Error(), clean.Log(m.RootRelName()))
-						return err
+				if imgErr != nil {
+					msg := imgErr.Error()
+
+					// Fixable file error?
+					if !(strings.HasPrefix(msg, "EOF") || strings.HasPrefix(msg, "invalid JPEG")) {
+						log.Debugf("media: %s in %s", msg, clean.Log(m.RootRelName()))
+						return imgErr
 					}
 
-					if fixed, err := NewConvert(conf).FixJpeg(m, false); err != nil {
-						return err
-					} else if fixedImg, err := thumb.Open(fixed.FileName(), m.Orientation()); err != nil {
-						return err
+					// Try to fix image.
+					if fixed, fixErr := NewConvert(conf).FixJpeg(m, false); fixErr != nil {
+						return fixErr
+					} else if fixedImg, openErr := thumb.Open(fixed.FileName(), m.Orientation()); openErr != nil {
+						return openErr
 					} else {
 						img = fixedImg
 					}

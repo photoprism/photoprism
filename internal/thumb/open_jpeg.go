@@ -1,28 +1,21 @@
 package thumb
 
 import (
-	"bytes"
 	"fmt"
 	"image"
 	"io"
 	"os"
 	"path/filepath"
-	"syscall"
 
 	"github.com/disintegration/imaging"
 	"github.com/mandykoh/prism/meta"
 	"github.com/mandykoh/prism/meta/autometa"
-	"golang.org/x/sys/unix"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
 )
 
-var (
-	EOI = []byte{0xff, 0xd9}
-)
-
-func decode(reader io.Reader, logName string) (md *meta.Data, img image.Image, err error) {
+// decodeImage opens an image and decodes its color metadata.
+func decodeImage(reader io.Reader, logName string) (md *meta.Data, img image.Image, err error) {
 	// Read color metadata.
 	md, imgStream, err := autometa.Load(reader)
 
@@ -32,26 +25,8 @@ func decode(reader io.Reader, logName string) (md *meta.Data, img image.Image, e
 	} else {
 		img, err = imaging.Decode(imgStream)
 	}
+
 	return md, img, err
-}
-
-func attemptRepair(fileReader *os.File) (io.Reader, error) {
-	fi, err := fileReader.Stat()
-	if err != nil {
-		return nil, fmt.Errorf("%s trying to stat() file", err)
-	}
-	size := int(fi.Size())
-	b, err := unix.Mmap(int(fileReader.Fd()), 0, size, syscall.PROT_READ|syscall.PROT_WRITE, syscall.MAP_PRIVATE)
-	if err != nil {
-		return nil, fmt.Errorf("%s while mmap()ing file", err)
-	}
-
-	// Check for missing EOI.
-	if !bytes.Equal(b[size-len(EOI):size], EOI) {
-		b = append(b, EOI...)
-	}
-
-	return bytes.NewReader(b), nil
 }
 
 // OpenJpeg loads a JPEG image from disk, rotates it, and converts the color profile if necessary.
@@ -75,16 +50,12 @@ func OpenJpeg(fileName string, orientation int) (image.Image, error) {
 		return nil, fmt.Errorf("%s on seek", err)
 	}
 
-	md, img, err := decode(fileReader, logName)
+	// Decode image incl color metadata.
+	md, img, err := decodeImage(fileReader, logName)
+
+	// Ok?
 	if err != nil {
-		log.Warnf("%s during initial decoding attempt", err)
-		repaired, err := attemptRepair(fileReader)
-		if err != nil {
-			return nil, fmt.Errorf("%s while trying to recover image", err)
-		}
-		if md, img, err = decode(repaired, logName); err != nil {
-			return nil, fmt.Errorf("%s while decoding after recovery attempt", err)
-		}
+		return nil, fmt.Errorf("%s while decoding", err)
 	}
 
 	// Read ICC profile and convert colors if possible.
