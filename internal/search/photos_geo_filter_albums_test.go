@@ -14,7 +14,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -45,7 +45,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet*"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -76,7 +76,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet*|Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -108,7 +108,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet* | Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -139,7 +139,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet* or Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -170,7 +170,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet* OR Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -202,7 +202,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet*&Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -233,7 +233,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet* & Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -264,7 +264,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet* and Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -295,7 +295,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pet* AND Berlin 2019"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -326,7 +326,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "%gold"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -357,7 +357,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "I love % dog"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -388,7 +388,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "sale%"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -419,7 +419,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "&IlikeFood"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -450,7 +450,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Pets & Dogs"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -481,7 +481,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Light&"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -512,7 +512,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "'Family"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -543,7 +543,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Father's Day"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -574,7 +574,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Ice Cream'"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -605,7 +605,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "*Forrest"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -636,7 +636,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "My*Kids"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -667,7 +667,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Yoga***"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -698,7 +698,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "|Banana"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -729,7 +729,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Red|Green"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, count, err := Photos(f)
 
@@ -765,7 +765,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Blue|"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -796,7 +796,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "345 Shirt"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -827,7 +827,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Color555 Blue"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -858,7 +858,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Route 66"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -889,7 +889,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Route 66 & Father's Day"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -920,7 +920,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Route 66 | Father's Day"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -951,7 +951,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Red|Green & Father's Day"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -982,7 +982,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Red|Green | Father's Day"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1013,7 +1013,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Light& & Red|Green"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1044,7 +1044,7 @@ func TestPhotosGeoFilterAlbums(t *testing.T) {
 
 		f.Albums = "Red|Green | Light&"
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1078,7 +1078,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1110,7 +1110,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet*\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1140,7 +1140,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet*|Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1170,7 +1170,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet* | Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1200,7 +1200,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet* or Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1230,7 +1230,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet* OR Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1260,7 +1260,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet*&Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1290,7 +1290,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet* & Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1320,7 +1320,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet* and Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1350,7 +1350,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pet* AND Berlin 2019\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1380,7 +1380,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"%gold\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1409,7 +1409,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"I love % dog\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1438,7 +1438,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"sale%\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1468,7 +1468,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"&IlikeFood\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1497,7 +1497,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Pets & Dogs\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1526,7 +1526,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Light&\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1556,7 +1556,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"'Family\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1585,7 +1585,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Father's Day\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1616,7 +1616,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Ice Cream'\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1646,7 +1646,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"*Forrest\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1675,7 +1675,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"My*Kids\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1705,7 +1705,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Yoga***\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1735,7 +1735,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"|Banana\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1764,7 +1764,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Red|Green\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, count, err := Photos(f)
 
@@ -1800,7 +1800,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Blue|\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1830,7 +1830,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"345 Shirt\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1860,7 +1860,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Color555 Blue\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1890,7 +1890,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Route 66\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1920,7 +1920,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Route 66 & Father's Day\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1950,7 +1950,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Route 66 | Father's Day\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -1980,7 +1980,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Red|Green & Father's Day\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -2010,7 +2010,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Red|Green | Father's Day\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -2040,7 +2040,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Light& & Red|Green\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -2070,7 +2070,7 @@ func TestPhotosGeoQueryAlbums(t *testing.T) {
 
 		f.Query = "albums:\"Red|Green | Light&\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 

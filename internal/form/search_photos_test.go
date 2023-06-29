@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestSearchPhotosForm(t *testing.T) {
@@ -438,7 +440,8 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, form.Geo)
+		assert.Equal(t, "*cat", form.Geo)
+		assert.False(t, txt.No(form.Geo))
 	})
 	t.Run("query for review with uncommon bool value", func(t *testing.T) {
 		form := &SearchPhotos{Query: "review:*cat"}
