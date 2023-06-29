@@ -45,7 +45,7 @@ func TestConfig_FFmpegBitrate(t *testing.T) {
 
 func TestConfig_FFmpegResolution(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 4320, c.FFmpegResolution())
+	assert.Equal(t, 4096, c.FFmpegResolution())
 
 	c.options.FFmpegResolution = 1920
 	assert.Equal(t, 1920, c.FFmpegResolution())
@@ -88,8 +88,7 @@ func TestConfig_FFmpegMapAudio(t *testing.T) {
 func TestConfig_FFmpegOptions(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	bitrate := "25M"
-	resolution := "1080"
-	opt, err := c.FFmpegOptions(ffmpeg.SoftwareEncoder, bitrate, resolution)
+	opt, err := c.FFmpegOptions(ffmpeg.SoftwareEncoder, bitrate)
 	assert.NoError(t, err)
 	assert.Equal(t, c.FFmpegBin(), opt.Bin)
 	assert.Equal(t, ffmpeg.SoftwareEncoder, opt.Encoder)
@@ -98,5 +97,4 @@ func TestConfig_FFmpegOptions(t *testing.T) {
 	assert.Equal(t, ffmpeg.MapAudioDefault, opt.MapAudio)
 	assert.Equal(t, c.FFmpegMapVideo(), opt.MapVideo)
 	assert.Equal(t, c.FFmpegMapAudio(), opt.MapAudio)
-	assert.Equal(t, resolution, opt.Resolution)
 }

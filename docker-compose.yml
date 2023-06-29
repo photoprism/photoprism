@@ -109,7 +109,7 @@ services:
       # PHOTOPRISM_FFMPEG_ENCODER: "nvidia"          # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry", "vaapi") Intel: "intel" for Broadwell or later and "vaapi" for Haswell or earlier
       # PHOTOPRISM_FFMPEG_ENCODER: "intel"           # FFmpeg encoder ("software", "intel", "nvidia", "apple", "raspberry", "vaapi") Intel: "intel" for Broadwell or later and "vaapi" for Haswell or earlier`
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # FFmpeg encoding bitrate limit in Mbit/s (default: 50)
-      # PHOTOPRISM_FFMPEG_RESOLUTION: "1080"         # FFmpeg encoding resolution limit in pixel height (default: 2160)
+      # PHOTOPRISM_FFMPEG_RESOLUTION: "1920"         # FFmpeg encoding resolution limit in pixel height (default: 4096)
       # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
