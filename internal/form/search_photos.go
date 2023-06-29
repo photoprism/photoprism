@@ -51,7 +51,7 @@ type SearchPhotos struct {
 	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
 	Diff      uint32    `form:"diff" notes:"Differential Perceptual Hash (000000-FFFFFF)"`
 	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
-	Geo       string    `form:"geo" example:"geo:yes" notes:"Limits results to pictures with or without GPS location"`
+	Geo       string    `form:"geo" example:"geo:yes" notes:"Finds pictures with or without coordinates"`
 	Keywords  string    `form:"keywords"  example:"keywords:\"buffalo&water\"" notes:"Keywords, can be combined with & and |"`                                                                                        // Filter by keyword(s)
 	Label     string    `form:"label" example:"label:cat|dog" notes:"Label Name, OR search with |"`                                                                                                                   // Label name
 	Category  string    `form:"category"  notes:"Location Category Name"`                                                                                                                                             // Moments
