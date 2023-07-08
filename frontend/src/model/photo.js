@@ -95,19 +95,22 @@ export let BatchSize = 120;
 export class Photo extends RestModel {
   constructor(values) {
     super(values);
-    this.Thumbs = this.generateThumbs();
-    this.DownloadUrl = this.getDownloadUrl();
+
+    let mainFile;
+    if (this.Files) {
+      mainFile = this.mainFile();
+    }
+    const mainFileHash = this.generateMainFileHash(mainFile, this.Hash);
+    this.Thumbs = this.generateThumbs(mainFile, mainFileHash);
+    this.DownloadUrl = this.getDownloadUrl(mainFileHash);
   }
 
-  generateThumbs() {
+  generateThumbs(mainFile, mainFileHash) {
     let sourceWidth = this.Width;
     let sourceHeight = this.Height;
-    if (this.Files) {
-      const mainFile = this.mainFile();
-      if (mainFile) {
-        sourceWidth = mainFile.Width;
-        sourceHeight = mainFile.Height;
-      }
+    if (mainFile) {
+      sourceWidth = mainFile.Width;
+      sourceHeight = mainFile.Height;
     }
 
     if (!this.Hash) {
@@ -117,10 +120,20 @@ export class Photo extends RestModel {
     const result = {};
     for (let i = 0; i < thumbs.length; i++) {
       let t = thumbs[i];
-      let size = this.calculateSizeFromProps(t.w, t.h, sourceWidth, sourceHeight);
+      const size = this.calculateSizeFromProps(t.w, t.h, sourceWidth, sourceHeight);
+
+      // we know the thumbnail url can't be cached because the size-parameter changes on every call
+      const url = this.generateThumbnailUrlUnmemoized(
+        mainFileHash,
+        this.videoFile(),
+        config.staticUri,
+        config.contentUri,
+        config.previewToken,
+        t.size
+      );
 
       result[t.size] = {
-        src: this.thumbnailUrl(t.size),
+        src: url,
         w: size.width,
         h: size.height,
       };
@@ -622,24 +635,39 @@ export class Photo extends RestModel {
     );
   }
 
-  generateThumbnailUrl = memoizeOne(
-    (mainFileHash, videoFile, staticUri, contentUri, previewToken, size) => {
-      let hash = mainFileHash;
+  /**
+   * use this one if you know the parameters changed AND yout task is so
+   * performance critical, that you benefit from skipping the parameter-changed
+   * -check from memoizeOne.
+   *
+   * If you don't know wether the parameters changed or if your task is not
+   * incredibly performance critical, use the memoized 'generateThumbnailUrl'
+   */
+  generateThumbnailUrlUnmemoized = (
+    mainFileHash,
+    videoFile,
+    staticUri,
+    contentUri,
+    previewToken,
+    size
+  ) => {
+    let hash = mainFileHash;
 
-      if (!hash) {
-        if (videoFile && videoFile.Hash) {
-          return `${contentUri}/t/${videoFile.Hash}/${previewToken}/${size}`;
-        }
-
-        return `${staticUri}/img/404.jpg`;
+    if (!hash) {
+      if (videoFile && videoFile.Hash) {
+        return `${contentUri}/t/${videoFile.Hash}/${previewToken}/${size}`;
       }
 
-      return `${contentUri}/t/${hash}/${previewToken}/${size}`;
+      return `${staticUri}/img/404.jpg`;
     }
-  );
 
-  getDownloadUrl() {
-    return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken}`;
+    return `${contentUri}/t/${hash}/${previewToken}/${size}`;
+  };
+
+  generateThumbnailUrl = memoizeOne(this.generateThumbnailUrlUnmemoized);
+
+  getDownloadUrl(mainFileHash = this.mainFileHash()) {
+    return `${config.apiUri}/dl/${mainFileHash}?t=${config.downloadToken}`;
   }
 
   downloadAll() {
