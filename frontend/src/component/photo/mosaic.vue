@@ -194,12 +194,10 @@ export default {
   beforeCreate() {
     this.elementObserver = new ResizeObserver((entries) => {
       this.elementSize = entries[0].borderBoxSize[0].inlineSize;
-      console.log('element', entries[0].borderBoxSize[0].inlineSize, entries[0]);
       this.updateGeometry();
     });
     this.containerObserver = new ResizeObserver((entries) => {
       this.containerWidth = entries[0].contentRect.width;
-      console.log('container', entries[0].contentRect.width, entries[0]);
       this.updateGeometry();
     });
   },
