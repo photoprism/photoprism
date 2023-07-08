@@ -22,7 +22,7 @@ var ImportCommand = cli.Command{
 	Usage:     "Moves media files to originals",
 	ArgsUsage: "[source]",
 	Flags: []cli.Flag{
-		cli.BoolFlag{
+		cli.StringFlag{
 			Name:  "dest, d",
 			Usage: "relative originals `PATH` to which the files should be imported",
 		},

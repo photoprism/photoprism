@@ -182,7 +182,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = ""
 		frm.Count = 10
 		frm.Offset = 0
-		frm.Geo = true
+		frm.Geo = "yes"
 
 		photos, _, err := Photos(frm)
 
@@ -198,7 +198,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = "bridge"
 		frm.Count = 10
 		frm.Offset = 0
-		frm.Geo = true
+		frm.Geo = "yes"
 		frm.Error = false
 
 		photos, _, err := Photos(frm)

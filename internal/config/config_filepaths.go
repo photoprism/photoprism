@@ -60,22 +60,6 @@ func findBin(configBin, defaultBin string) (binPath string) {
 
 // CreateDirectories creates directories for storing photos, metadata and cache files.
 func (c *Config) CreateDirectories() error {
-	createError := func(path string, err error) (result error) {
-		if fs.FileExists(path) {
-			result = fmt.Errorf("directory path %s is a file, please check your configuration", clean.Log(path))
-		} else {
-			result = fmt.Errorf("failed to create the directory %s, check configuration and permissions", clean.Log(path))
-		}
-
-		log.Debug(err)
-
-		return result
-	}
-
-	notFoundError := func(name string) error {
-		return fmt.Errorf("invalid %s path, check configuration and permissions", clean.Log(name))
-	}
-
 	if c.AssetsPath() == "" {
 		return notFoundError("assets")
 	} else if err := os.MkdirAll(c.AssetsPath(), fs.ModeDir); err != nil {
@@ -591,14 +575,14 @@ func (c *Config) TestdataPath() string {
 	return filepath.Join(c.StoragePath(), "testdata")
 }
 
-// MysqlBin returns the mysql executable file name.
-func (c *Config) MysqlBin() string {
-	return findBin("", "mysql")
+// MariadbBin returns the mariadb executable file name.
+func (c *Config) MariadbBin() string {
+	return findBin("", "mariadb")
 }
 
-// MysqldumpBin returns the mysqldump executable file name.
-func (c *Config) MysqldumpBin() string {
-	return findBin("", "mysqldump")
+// MariadbDumpBin returns the mariadb-dump executable file name.
+func (c *Config) MariadbDumpBin() string {
+	return findBin("", "mariadb-dump")
 }
 
 // SqliteBin returns the sqlite executable file name.

@@ -3,56 +3,59 @@ package thumb
 import (
 	"fmt"
 	"image"
+	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/disintegration/imaging"
+	"github.com/mandykoh/prism/meta"
 	"github.com/mandykoh/prism/meta/autometa"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/colors"
 )
 
+// decodeImage opens an image and decodes its color metadata.
+func decodeImage(reader io.Reader, logName string) (md *meta.Data, img image.Image, err error) {
+	// Read color metadata.
+	md, imgStream, err := autometa.Load(reader)
+
+	if err != nil {
+		log.Warnf("thumb: %s in %s (read color metadata)", err, logName)
+		img, err = imaging.Decode(reader)
+	} else {
+		img, err = imaging.Decode(imgStream)
+	}
+
+	return md, img, err
+}
+
 // OpenJpeg loads a JPEG image from disk, rotates it, and converts the color profile if necessary.
-func OpenJpeg(fileName string, orientation int) (result image.Image, err error) {
+func OpenJpeg(fileName string, orientation int) (image.Image, error) {
 	if fileName == "" {
-		return result, fmt.Errorf("filename missing")
+		return nil, fmt.Errorf("filename missing")
 	}
 
 	logName := clean.Log(filepath.Base(fileName))
 
 	// Open file.
 	fileReader, err := os.Open(fileName)
-
 	if err != nil {
-		return result, err
+		return nil, err
 	}
-
 	defer fileReader.Close()
 
 	// Reset file offset.
 	// see https://github.com/golang/go/issues/45902#issuecomment-1007953723
-	_, err = fileReader.Seek(0, 0)
-
-	if err != nil {
-		return result, fmt.Errorf("%s on seek", err)
+	if _, err := fileReader.Seek(0, 0); err != nil {
+		return nil, fmt.Errorf("%s on seek", err)
 	}
 
-	// Read color metadata.
-	md, imgStream, err := autometa.Load(fileReader)
+	// Decode image incl color metadata.
+	md, img, err := decodeImage(fileReader, logName)
 
-	// Decode image.
-	var img image.Image
-
+	// Ok?
 	if err != nil {
-		log.Warnf("thumb: %s in %s (read color metadata)", err, logName)
-		img, err = imaging.Decode(fileReader)
-	} else {
-		img, err = imaging.Decode(imgStream)
-	}
-
-	if err != nil {
-		return result, fmt.Errorf("%s while decoding", err)
+		return nil, fmt.Errorf("%s while decoding", err)
 	}
 
 	// Read ICC profile and convert colors if possible.

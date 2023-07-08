@@ -319,16 +319,17 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Filter by location.
-	if f.Geo == true {
+	// Filter by location info.
+	if txt.No(f.Geo) {
+		s = s.Where("photos.cell_id = 'zz'")
+	} else if txt.NotEmpty(f.Geo) {
 		s = s.Where("photos.cell_id <> 'zz'")
+	}
 
-		for _, where := range LikeAnyKeyword("k.keyword", f.Query) {
-			s = s.Where("files.photo_id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
-		}
-	} else if f.Query != "" {
+	// Filter by query string.
+	if f.Query != "" {
 		if err := Db().Where(AnySlug("custom_slug", f.Query, " ")).Find(&labels).Error; len(labels) == 0 || err != nil {
-			log.Debugf("search: label %s not found, using fuzzy search", txt.LogParamLower(f.Query))
+			log.Tracef("search: label %s not found, using fuzzy search", txt.LogParamLower(f.Query))
 
 			for _, where := range LikeAnyKeyword("k.keyword", f.Query) {
 				s = s.Where("files.photo_id IN (SELECT pk.photo_id FROM keywords k JOIN photos_keywords pk ON k.id = pk.keyword_id WHERE (?))", gorm.Expr(where))
@@ -339,7 +340,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 				Db().Where("category_id = ?", l.ID).Find(&categories)
 
-				log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
+				log.Tracef("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
 
 				for _, category := range categories {
 					labelIds = append(labelIds, category.LabelID)

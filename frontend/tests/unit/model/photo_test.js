@@ -72,7 +72,7 @@ describe("model/photo", () => {
     };
     const photo3 = new Photo(values3);
     const result3 = photo3.thumbnailUrl("tile500");
-    assert.equal(result3, "/api/v1/svg/photo");
+    assert.equal(result3, "/static/img/404.jpg");
   });
 
   it("should get classes", () => {
@@ -637,8 +637,8 @@ describe("model/photo", () => {
     };
     const photo3 = new Photo(values3);
     const result = photo3.videoParams();
-    assert.equal(result.height, "463");
-    assert.equal(result.width, "695");
+    assert.equal(result.height, 463);
+    assert.equal(result.width, 695);
     assert.equal(result.loop, false);
     assert.equal(result.uri, "/api/v1/videos/1xxbgdt55/public/avc");
     const values = {
@@ -669,8 +669,8 @@ describe("model/photo", () => {
     };
     const photo = new Photo(values);
     const result2 = photo.videoParams();
-    assert.equal(result2.height, "440");
-    assert.equal(result2.width, "440");
+    assert.equal(result2.height, 510);
+    assert.equal(result2.width, 510);
     assert.equal(result2.loop, false);
     assert.equal(result2.uri, "/api/v1/videos/1xxbgdt55/public/avc");
   });

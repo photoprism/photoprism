@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // UsersAddCommand configures the command name, flags, and action.
@@ -90,10 +91,12 @@ func usersAddAction(ctx *cli.Context) error {
 			frm.UserEmail = clean.Email(res)
 		}
 
-		if interactive && len(ctx.String("password")) < entity.PasswordLength {
+		if interactive && len([]rune(ctx.String("password"))) < entity.PasswordLength {
 			validate := func(input string) error {
-				if len(input) < entity.PasswordLength {
+				if len([]rune(input)) < entity.PasswordLength {
 					return fmt.Errorf("password must have at least %d characters", entity.PasswordLength)
+				} else if len(input) > txt.ClipPassword {
+					return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
 				}
 				return nil
 			}

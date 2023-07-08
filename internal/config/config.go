@@ -219,14 +219,17 @@ func (c *Config) Propagate() {
 func (c *Config) Init() error {
 	start := time.Now()
 
+	// Create configured directory paths.
 	if err := c.CreateDirectories(); err != nil {
 		return err
 	}
 
-	if err := c.initSerial(); err != nil {
+	// Init storage directories with a random serial.
+	if err := c.InitSerial(); err != nil {
 		return err
 	}
 
+	// Detect case-insensitive file system.
 	if insensitive, err := c.CaseInsensitive(); err != nil {
 		return err
 	} else if insensitive {
@@ -234,6 +237,7 @@ func (c *Config) Init() error {
 		fs.IgnoreCase()
 	}
 
+	// Detect CPU.
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
 		log.Debugf("config: running on %s, %s memory detected", clean.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
 	}
@@ -275,8 +279,10 @@ func (c *Config) Init() error {
 	c.initSettings()
 	c.initHub()
 
+	// Propagate configuration.
 	c.Propagate()
 
+	// Connect to database.
 	if err := c.connectDb(); err != nil {
 		return err
 	} else if !c.Sponsor() {
@@ -284,6 +290,7 @@ func (c *Config) Init() error {
 		log.Info(MsgSignUp)
 	}
 
+	// Show log message.
 	log.Debugf("config: successfully initialized [%s]", time.Since(start))
 
 	return nil
@@ -313,8 +320,8 @@ func (c *Config) readSerial() string {
 	return ""
 }
 
-// initSerial initializes storage directories with a random serial.
-func (c *Config) initSerial() (err error) {
+// InitSerial initializes storage directories with a random serial.
+func (c *Config) InitSerial() (err error) {
 	if c.Serial() != "" {
 		return nil
 	}
@@ -429,6 +436,17 @@ func (c *Config) CdnUrl(res string) string {
 	return strings.TrimRight(c.options.CdnUrl, "/") + res
 }
 
+// CdnDomain returns the content delivery network domain name if specified.
+func (c *Config) CdnDomain() string {
+	if c.options.CdnUrl == "" {
+		return ""
+	} else if u, err := url.Parse(c.options.CdnUrl); err != nil {
+		return ""
+	} else {
+		return u.Hostname()
+	}
+}
+
 // CdnVideo checks if videos should be streamed using the configured CDN.
 func (c *Config) CdnVideo() bool {
 	if c.options.CdnUrl == "" {
@@ -462,10 +480,10 @@ func (c *Config) StaticAssetUri(res string) string {
 	return c.StaticUri() + "/" + res
 }
 
-// SiteUrl returns the public server URL (default is "http://photoprism.me:2342/").
+// SiteUrl returns the public server URL (default is "http://localhost:2342/").
 func (c *Config) SiteUrl() string {
 	if c.options.SiteUrl == "" {
-		return "http://photoprism.me:2342/"
+		return "http://localhost:2342/"
 	}
 
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"

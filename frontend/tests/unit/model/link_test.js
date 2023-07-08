@@ -19,11 +19,11 @@ describe("model/link", () => {
     const values = { UID: 5, Token: "1234hhtbbt", Slug: "friends", ShareUID: "family" };
     const link = new Link(values);
     const result = link.url();
-    assert.equal(result, "http://photoprism.me:2342/s/1234hhtbbt/friends");
+    assert.equal(result, "http://localhost:2342/s/1234hhtbbt/friends");
     const values2 = { UID: 5, Token: "", ShareUID: "family" };
     const link2 = new Link(values2);
     const result2 = link2.url();
-    assert.equal(result2, "http://photoprism.me:2342/s/…/family");
+    assert.equal(result2, "http://localhost:2342/s/…/family");
   });
 
   it("should get link caption", () => {

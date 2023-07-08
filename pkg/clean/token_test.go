@@ -19,6 +19,9 @@ func TestToken(t *testing.T) {
 	t.Run("SHA256", func(t *testing.T) {
 		assert.Equal(t, "a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447", Token("a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447"))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Token(""))
+	})
 }
 
 func TestUrlToken(t *testing.T) {
@@ -51,5 +54,8 @@ func TestShareToken(t *testing.T) {
 	})
 	t.Run("SHA256", func(t *testing.T) {
 		assert.Equal(t, "a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447", ShareToken("a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", ShareToken(""))
 	})
 }

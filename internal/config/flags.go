@@ -396,7 +396,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",
-			Value:  "http://photoprism.me:2342/",
+			Value:  "http://localhost:2342/",
 			EnvVar: EnvVar("SITE_URL"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -579,6 +579,12 @@ var Flags = CliFlags{
 			Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
 			Value:  50,
 			EnvVar: EnvVar("FFMPEG_BITRATE"),
+		}}, {
+		Flag: cli.IntFlag{
+			Name:   "ffmpeg-resolution",
+			Usage:  "maximum FFmpeg encoding `RESOLUTION` (height)",
+			Value:  4096,
+			EnvVar: EnvVar("FFMPEG_RESOLUTION"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "ffmpeg-map-video",

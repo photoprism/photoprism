@@ -72,10 +72,12 @@ func (f CliFlag) CommandFlag() string {
 func (f CliFlag) Usage() string {
 	if list.Contains(f.Tags, EnvSponsor) {
 		return f.Flag.GetUsage() + " *members only*"
-	} else if list.Contains(f.Tags, Essentials) {
-		return f.Flag.GetUsage() + " *essentials*"
+	} else if list.Contains(f.Tags, Pro) {
+		return f.Flag.GetUsage() + " *pro*"
 	} else if list.Contains(f.Tags, Plus) {
 		return f.Flag.GetUsage() + " *plus*"
+	} else if list.Contains(f.Tags, Essentials) {
+		return f.Flag.GetUsage() + " *essentials*"
 	} else {
 		return f.Flag.GetUsage()
 	}

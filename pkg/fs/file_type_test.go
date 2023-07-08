@@ -18,6 +18,22 @@ func TestType_Equal(t *testing.T) {
 	})
 }
 
+func TestType_NotEqual(t *testing.T) {
+	t.Run("jpg", func(t *testing.T) {
+		assert.False(t, ImageJPEG.NotEqual("JPG"))
+		assert.True(t, ImageJPEG.NotEqual("xmp"))
+	})
+}
+
+func TestType_DefaultExt(t *testing.T) {
+	t.Run("jpg", func(t *testing.T) {
+		assert.Equal(t, ".jpg", ImageJPEG.DefaultExt())
+	})
+	t.Run("avif", func(t *testing.T) {
+		assert.Equal(t, ".avif", ImageAVIF.DefaultExt())
+	})
+}
+
 func TestToType(t *testing.T) {
 	t.Run("jpg", func(t *testing.T) {
 		assert.Equal(t, "jpg", NewType("JPG").String())

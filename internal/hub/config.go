@@ -284,7 +284,7 @@ func (c *Config) ReSync(token string) (err error) {
 // Load backend api credentials from a YAML file.
 func (c *Config) Load() error {
 	if !fs.FileExists(c.FileName) {
-		return fmt.Errorf("settings file not found: %s", clean.Log(c.FileName))
+		return fmt.Errorf("%s not found", clean.Log(c.FileName))
 	}
 
 	mutex.Lock()

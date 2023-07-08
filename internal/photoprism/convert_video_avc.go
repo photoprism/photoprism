@@ -149,7 +149,6 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg
 
 	// Transcode all other formats with FFmpeg.
 	var opt ffmpeg.Options
-
 	if opt, err = c.conf.FFmpegOptions(encoder, c.AvcBitrate(f)); err != nil {
 		return nil, false, fmt.Errorf("convert: failed to transcode %s (%s)", clean.Log(f.BaseName()), err)
 	} else {

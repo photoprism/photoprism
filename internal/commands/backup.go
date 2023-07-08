@@ -121,7 +121,7 @@ func backupAction(ctx *cli.Context) error {
 		switch conf.DatabaseDriver() {
 		case config.MySQL, config.MariaDB:
 			cmd = exec.Command(
-				conf.MysqldumpBin(),
+				conf.MariadbDumpBin(),
 				"--protocol", "tcp",
 				"-h", conf.DatabaseHost(),
 				"-P", conf.DatabasePortString(),

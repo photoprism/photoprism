@@ -37,6 +37,18 @@ func (c *Config) FFmpegBitrate() int {
 	}
 }
 
+// FFmpegResolution returns the ffmpeg resolution limit in pixel height. Goes from 144p to 8k.
+func (c *Config) FFmpegResolution() int {
+	switch {
+	case c.options.FFmpegResolution <= 0:
+		return 4096
+	case c.options.FFmpegResolution >= 8192:
+		return 8192
+	default:
+		return c.options.FFmpegResolution
+	}
+}
+
 // FFmpegBitrateExceeded tests if the ffmpeg bitrate limit is exceeded.
 func (c *Config) FFmpegBitrateExceeded(mbit float64) bool {
 	if mbit <= 0 {
@@ -70,11 +82,12 @@ func (c *Config) FFmpegMapAudio() string {
 func (c *Config) FFmpegOptions(encoder ffmpeg.AvcEncoder, bitrate string) (ffmpeg.Options, error) {
 	// Transcode all other formats with FFmpeg.
 	opt := ffmpeg.Options{
-		Bin:      c.FFmpegBin(),
-		Encoder:  encoder,
-		Bitrate:  bitrate,
-		MapVideo: c.FFmpegMapVideo(),
-		MapAudio: c.FFmpegMapAudio(),
+		Bin:        c.FFmpegBin(),
+		Encoder:    encoder,
+		Bitrate:    bitrate,
+		MapVideo:   c.FFmpegMapVideo(),
+		MapAudio:   c.FFmpegMapAudio(),
+		Resolution: fmt.Sprintf("%v", c.FFmpegResolution()),
 	}
 
 	// Check

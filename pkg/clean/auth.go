@@ -109,13 +109,7 @@ func Attr(s string) string {
 	return list.ParseAttr(s).String()
 }
 
-// Password returns the sanitized password string with trimmed whitespace.
+// Password returns the password string with all leading and trailing white space removed.
 func Password(s string) string {
-	s = strings.TrimSpace(s)
-
-	if s == "" || reject(s, txt.ClipPassword) {
-		return ""
-	}
-
-	return s
+	return strings.TrimSpace(s)
 }

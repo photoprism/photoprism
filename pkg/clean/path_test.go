@@ -34,6 +34,12 @@ func TestPath(t *testing.T) {
 	t.Run("Replace", func(t *testing.T) {
 		assert.Equal(t, "", Path("${https://<host>:<port>/<path>}"))
 	})
+	t.Run("Control Character", func(t *testing.T) {
+		assert.Equal(t, "filename.", Path("filename."+string(rune(127))))
+	})
+	t.Run("Special Chars", func(t *testing.T) {
+		assert.Equal(t, "filename.", Path("filename.?**"))
+	})
 }
 
 func TestUserPath(t *testing.T) {
