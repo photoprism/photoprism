@@ -417,14 +417,14 @@ func TestConfig_AssetsPath2(t *testing.T) {
 	}
 }
 
-func TestConfig_MysqlBin(t *testing.T) {
+func TestConfig_MariadbBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Contains(t, c.MysqlBin(), "mysql")
+	assert.Contains(t, c.MariadbBin(), "mariadb")
 }
 
-func TestConfig_MysqldumpBin(t *testing.T) {
+func TestConfig_MariadbDumpBin(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Contains(t, c.MysqldumpBin(), "mysqldump")
+	assert.Contains(t, c.MariadbDumpBin(), "mariadb-dump")
 }
 
 func TestConfig_SqliteBin(t *testing.T) {

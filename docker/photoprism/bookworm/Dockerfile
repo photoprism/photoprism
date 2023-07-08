@@ -25,7 +25,7 @@ FROM photoprism/develop:bookworm-slim
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism® (Debian 12)"
 LABEL org.opencontainers.image.description="Debian 12 (Bookworm)"
-LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/photoprism"
+LABEL org.opencontainers.image.url="https://hub.docker.com/r/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
 LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
@@ -56,7 +56,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_UPLOAD_NSFW="true" \
     PHOTOPRISM_DETECT_NSFW="false" \
     PHOTOPRISM_EXPERIMENTAL="false" \
-    PHOTOPRISM_SITE_URL="http://photoprism.me:2342/" \
+    PHOTOPRISM_SITE_URL="http://localhost:2342/" \
     PHOTOPRISM_SITE_CAPTION="AI-Powered Photos App" \
     PHOTOPRISM_SITE_DESCRIPTION="" \
     PHOTOPRISM_SITE_AUTHOR="" \
@@ -86,7 +86,8 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_WORKERS=0 \
     PHOTOPRISM_WAKEUP_INTERVAL=900 \
     PHOTOPRISM_AUTO_INDEX=300 \
-    PHOTOPRISM_AUTO_IMPORT=300
+    PHOTOPRISM_AUTO_IMPORT=300 \
+    PHOTOPRISM_INIT="https"
 
 # Copy scripts.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/

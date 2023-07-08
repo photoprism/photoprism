@@ -232,9 +232,7 @@ config.update().finally(() => {
     } else {
       config.page.title = config.values.name;
 
-      if (!config.values.sponsor) {
-        window.document.title = config.values.name;
-      } else if (config.values.siteCaption === "") {
+      if (config.values.siteCaption === "") {
         window.document.title = config.values.siteTitle;
       } else {
         window.document.title = config.values.siteCaption;

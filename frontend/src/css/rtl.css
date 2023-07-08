@@ -39,3 +39,13 @@
     margin-left: -6px;
     margin-right: 6px;
 }
+
+#photoprism .v-btn.v-btn--depressed.v-btn--small .v-icon--right {
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+#photoprism .v-btn.v-btn--depressed.v-btn--small .v-icon--left {
+    font-size: 16px;
+    margin-right: 8px;
+}

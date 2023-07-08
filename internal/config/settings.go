@@ -1,10 +1,14 @@
 package config
 
 import (
+	"os"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/i18n"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // initSettings initializes user settings from a config file.
@@ -17,13 +21,19 @@ func (c *Config) initSettings() {
 	c.settings = customize.NewSettings(c.DefaultTheme(), c.DefaultLocale())
 
 	// Get filenames to load the settings from.
+	configPath := c.ConfigPath()
 	settingsFile := c.SettingsYaml()
 	defaultsFile := c.SettingsYamlDefaults(settingsFile)
+
+	// Make sure that the config path exists.
+	if err := os.MkdirAll(configPath, fs.ModeDir); err != nil {
+		log.Errorf("settings: %s", createError(configPath, err))
+	}
 
 	// Load values from an existing YAML file or create it otherwise.
 	if err := c.settings.Load(defaultsFile); err == nil {
 		log.Debugf("settings: loaded from %s", defaultsFile)
-	} else if err := c.settings.Save(settingsFile); err != nil {
+	} else if err = c.settings.Save(settingsFile); err != nil {
 		log.Errorf("settings: could not create %s (%s)", settingsFile, err)
 	} else {
 		log.Debugf("settings: saved to %s ", settingsFile)

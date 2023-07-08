@@ -117,6 +117,38 @@ func DateFromFilePath(s string) (result time.Time) {
 				0,
 				time.UTC)
 		}
+	} else if found = DateWhatsAppRegexp.Find(b); len(found) > 0 { // Is it a WhatsApp date path like "VID-20191120-WA0001.jpg"?
+		match := DateWhatsAppRegexp.FindSubmatch(b)
+
+		if len(match) != 4 {
+			return result
+		}
+
+		matchMap := make(map[string]string)
+		for i, name := range DateWhatsAppRegexp.SubexpNames() {
+			if i != 0 {
+				matchMap[name] = string(match[i])
+			}
+		}
+
+		year := ExpandYear(matchMap["year"])
+		month := Int(matchMap["month"])
+		day := Int(matchMap["day"])
+
+		// Perform date plausibility check.
+		if year < YearMin || year > YearMax || month < MonthMin || month > MonthMax || day < DayMin || day > DayMax {
+			return result
+		}
+
+		result = time.Date(
+			year,
+			time.Month(month),
+			day,
+			0,
+			0,
+			0,
+			0,
+			time.UTC)
 	}
 
 	return result.UTC()

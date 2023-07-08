@@ -96,8 +96,10 @@ func TestFileNameHidden(t *testing.T) {
 	t.Run("False", func(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/path/folder"))
 	})
+	t.Run("Too short", func(t *testing.T) {
+		assert.False(t, FileNameHidden("a"))
+	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.False(t, FileNameHidden(""))
 	})
-
 }

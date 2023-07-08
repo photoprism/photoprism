@@ -2,6 +2,8 @@ package thumb
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOpenJpeg(t *testing.T) {
@@ -17,9 +19,10 @@ func TestOpenJpeg(t *testing.T) {
 		}
 	})
 	t.Run("testdata/broken.jpg", func(t *testing.T) {
-		if _, err := OpenJpeg("testdata/broken.jpg", 0); err == nil {
-			t.Error("unexpected EOF while decoding error expected")
-		}
+		img, err := OpenJpeg("testdata/broken.jpg", 0)
+
+		assert.Error(t, err)
+		assert.Nil(t, img)
 	})
 	t.Run("testdata/fixed.jpg", func(t *testing.T) {
 		img, err := OpenJpeg("testdata/fixed.jpg", 0)

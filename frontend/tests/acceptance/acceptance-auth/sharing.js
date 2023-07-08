@@ -142,13 +142,13 @@ test.meta("testID", "sharing-001").meta({ mode: "auth" })(
       .notOk()
       .expect(toolbar.toolbarSecondTitle.withText("Albums").visible)
       .notOk()
-      .expect(Selector('svg[id="b14cd102-2241-4742-aeeb-4ebca536e025"]').visible)
+      .expect(Selector(".input-username input").visible)
       .ok();
   }
 );
 
 test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })(
-  "Common: Verify anonymous user has limited options",
+  "Common: Verify visitor role has limited permissions",
   async (t) => {
     await t.navigateTo("http://localhost:2343/s/jxoux5ub1e/british-columbia-canada");
     await t.expect(toolbar.toolbarSecondTitle.withText("British Columbia").visible).ok();

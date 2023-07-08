@@ -12,6 +12,7 @@ import (
 var DateRegexp = regexp.MustCompile("\\D\\d{4}[\\-_]\\d{2}[\\-_]\\d{2,}")
 var DatePathRegexp = regexp.MustCompile("\\D\\d{4}/\\d{1,2}/?\\d*")
 var DateTimeRegexp = regexp.MustCompile("\\D\\d{2,4}[\\-_]\\d{2}[\\-_]\\d{2}.{1,4}\\d{2}\\D\\d{2}\\D\\d{2,}")
+var DateWhatsAppRegexp = regexp.MustCompile("(?:IMG|VID)-(?P<year>\\d{4})(?P<month>\\d{2})(?P<day>\\d{2})-WA")
 var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 var YearRegexp = regexp.MustCompile("\\d{4,5}")
 var IsDateRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}")
@@ -131,8 +132,15 @@ func DateTime(s, timeZone string) (t time.Time) {
 	}
 
 	// Create rounded timestamp from parsed input values.
+	// Year 0 is treated separately as it has a special meaning in exiftool. Golang
+	// does not seem to accept value 0 for the year, but considers a date to be
+	// "zero" when year is 1.
+	year := IntVal(m[v["year"]], 0, YearMax, time.Now().Year())
+	if year == 0 {
+		year = 1
+	}
 	t = time.Date(
-		IntVal(m[v["year"]], 1, YearMax, time.Now().Year()),
+		year,
 		time.Month(IntVal(m[v["month"]], 1, 12, 1)),
 		IntVal(m[v["day"]], 1, 31, 1),
 		IntVal(m[v["h"]], 0, 23, 0),

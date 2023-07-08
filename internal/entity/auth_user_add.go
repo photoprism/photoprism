@@ -7,14 +7,17 @@ import (
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // AddUser creates a new user record and sets the password in a single transaction.
 func AddUser(frm form.User) error {
 	user := NewUser().SetFormValues(frm)
 
-	if len(frm.Password) < PasswordLength {
+	if len([]rune(frm.Password)) < PasswordLength {
 		return fmt.Errorf("password must have at least %d characters", PasswordLength)
+	} else if len(frm.Password) > txt.ClipPassword {
+		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
 	}
 
 	if err := user.Validate(); err != nil {

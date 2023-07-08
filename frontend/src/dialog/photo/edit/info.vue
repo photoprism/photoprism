@@ -71,6 +71,14 @@
           </td>
           <td>{{ model.getDateString() }}</td>
         </tr>
+        <tr v-if="albums.length > 0">
+          <td>
+            <translate>Albums</translate>
+          </td>
+          <td>
+            <a v-for="(a, i) in albums" :key="i" :href="a.url" class="primary--text text-link" target="_blank"><span v-if="i > 0">, </span>{{ a.title }}</a>
+          </td>
+        </tr>
         <tr>
           <td>
             <translate>Quality Score</translate>
@@ -303,6 +311,17 @@ export default {
 
       return result;
     },
+    albums() {
+      if (!this.model || !this.model.Albums || this.model.Albums.length < 1) {
+        return [];
+      }
+
+      const results = [];
+
+      this.model.Albums.forEach(a => results.push({"title": a.Title, "url": this.albumUrl(a)}));
+
+      return results;
+    },
   },
   methods: {
     formatTime(s) {
@@ -316,6 +335,13 @@ export default {
     },
     openPhoto() {
       this.$viewer.show(Thumb.fromFiles([this.model]), 0);
+    },
+    albumUrl(m) {
+      if (!m) {
+        return '#';
+      }
+
+      return this.$router.resolve({ name: 'album', params: { uid: m.UID, slug: 'view' }}).href;
     },
   },
 };

@@ -147,14 +147,12 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Filter by title or path?
 	if txt.NotEmpty(f.Query) {
-		if f.Type != entity.AlbumFolder {
-			likeString := "%" + f.Query + "%"
-			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", likeString, likeString)
+		q := "%" + strings.Trim(f.Query, " *%") + "%"
+
+		if f.Type == entity.AlbumFolder {
+			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ? OR albums.album_path LIKE ?", q, q, q)
 		} else {
-			searchQuery := strings.Trim(strings.ReplaceAll(f.Query, "\\", "/"), "/")
-			for _, where := range LikeAllNames(Cols{"albums.album_title", "albums.album_location", "albums.album_path"}, searchQuery) {
-				s = s.Where(where)
-			}
+			s = s.Where("albums.album_title LIKE ? OR albums.album_location LIKE ?", q, q)
 		}
 	}
 

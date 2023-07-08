@@ -12,7 +12,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 	f0.Query = "favorite:true"
 	f0.Primary = true
-	f0.Geo = true
+	f0.Geo = "yes"
 
 	// Parse query string and filter.
 	if err := f0.ParseQueryString(); err != nil {
@@ -31,7 +31,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"%gold\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -61,7 +61,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"I love % dog\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -91,7 +91,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"sale%\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -121,7 +121,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"&IlikeFood\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -152,7 +152,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Pets & Dogs\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -182,7 +182,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Light&\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -213,7 +213,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"'Family\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -244,7 +244,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 		// Note: If the string in favorite starts with f/F, the txt package will assume it means false,
 		f.Query = "favorite:\"Mother's Day\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -275,7 +275,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Ice Cream'\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -306,7 +306,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"*Forrest\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -337,7 +337,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"My*Kids\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -368,7 +368,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Yoga***\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -399,7 +399,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"|Banana\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -430,7 +430,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Red|Green\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -461,7 +461,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Blue|\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -492,7 +492,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"345 Shirt\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -523,7 +523,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Color555 Blue\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -554,7 +554,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Route 66\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -585,7 +585,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Route 66 & Father's Day\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
@@ -616,7 +616,7 @@ func TestPhotosGeoQueryFavorite(t *testing.T) {
 
 		f.Query = "favorite:\"Route %66 | *Father's Day\""
 		f.Primary = true
-		f.Geo = true
+		f.Geo = "yes"
 
 		photos, _, err := Photos(f)
 
