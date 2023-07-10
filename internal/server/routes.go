@@ -157,6 +157,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.BatchAlbumsDelete(APIv1)
 	api.BatchLabelsDelete(APIv1)
 	api.BatchPhotosAddLabel(APIv1)
+	api.BatchPhotosSetLocation(APIv1)
 
 	// Technical Endpoints.
 	api.GetSvg(APIv1)

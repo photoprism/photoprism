@@ -3,6 +3,8 @@ package api
 import (
 	"net/http"
 	"path"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -496,6 +498,85 @@ func BatchPhotosAddLabel(router *gin.RouterGroup) {
 			if err := p2.SaveLabels(); err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 				return
+			}
+		}
+
+		UpdateClientConfig()
+
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionProtected))
+	})
+}
+
+type SetLocationData struct {
+	Photos   []string `json:"photos"`
+	PhotoLat float32  `json:"Lat"`
+	PhotoLng float32  `json:"Lng"`
+}
+
+// BatchPhotosAddLabel flags multiple photos as private.
+//
+// POST /api/v1/batch/photos/label/:name
+func BatchPhotosSetLocation(router *gin.RouterGroup) {
+	router.POST("/batch/photos/location", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.AccessPrivate)
+
+		if s.Abort(c) {
+			return
+		}
+
+		var f SetLocationData
+
+		if err := c.BindJSON(&f); err != nil {
+			log.Infof("photos: error %s", err.Error())
+			AbortBadRequest(c)
+			return
+		}
+
+		if len(f.Photos) == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		if f.PhotoLat == 0 || f.PhotoLng == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		log.Infof("photos: Setting lattitude %s and longitude %s to %s", clean.Log(strconv.FormatFloat(float64(f.PhotoLat), 'f', -1, 64)), clean.Log(strconv.FormatFloat(float64(f.PhotoLng), 'f', -1, 64)), clean.Log(strings.Join(f.Photos, ", ")))
+
+		// Fetch selection from index
+		var fs form.Selection
+		fs.Photos = f.Photos
+		photos, err := query.SelectedPhotos(fs)
+
+		if err != nil {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		// Set location on each photo
+		for _, p := range photos {
+			log.Infof("photos: Setting lattitude %s and longitude %s to %s", clean.Log(strconv.FormatFloat(float64(f.PhotoLat), 'f', -1, 64)), clean.Log(strconv.FormatFloat(float64(f.PhotoLng), 'f', -1, 64)), clean.Log(p.String()))
+
+			// 1) Init form with model values
+			nf, err := form.NewPhoto(p)
+
+			if err != nil {
+				Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
+				return
+			}
+
+			// 2) Update form with values from request
+			nf.PhotoLat = f.PhotoLat
+			nf.PhotoLng = f.PhotoLng
+			nf.PlaceSrc = "manual"
+
+			// 3) Save model with values from form
+			if err := entity.SavePhotoForm(p, nf); err != nil {
+				Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
+				return
+			} else if nf.PhotoPrivate {
+				FlushCoverCache()
 			}
 		}
 
