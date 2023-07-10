@@ -34,6 +34,7 @@ import PFileDeleteDialog from "dialog/file/delete.vue";
 import PAlbumEditDialog from "dialog/album/edit.vue";
 import PAlbumDeleteDialog from "dialog/album/delete.vue";
 import PLabelDeleteDialog from "dialog/label/delete.vue";
+import PLabelAddDialog from "dialog/label/add.vue";
 import PPeopleMergeDialog from "dialog/people/merge.vue";
 import PUploadDialog from "dialog/upload.vue";
 import PVideoViewer from "dialog/video/viewer.vue";
@@ -59,6 +60,7 @@ dialogs.install = (Vue) => {
   Vue.component("PAlbumEditDialog", PAlbumEditDialog);
   Vue.component("PAlbumDeleteDialog", PAlbumDeleteDialog);
   Vue.component("PLabelDeleteDialog", PLabelDeleteDialog);
+  Vue.component("PLabelAddDialog", PLabelAddDialog);
   Vue.component("PPeopleMergeDialog", PPeopleMergeDialog);
   Vue.component("PUploadDialog", PUploadDialog);
   Vue.component("PVideoViewer", PVideoViewer);

@@ -134,6 +134,17 @@
           <v-icon>delete</v-icon>
         </v-btn>
         <v-btn
+            v-if="canEdit" fab dark
+            small
+            :title="$gettext('Add Label')"
+            color="edit"
+            :disabled="selection.length === 0 || busy"
+            class="action-add-label"
+            @click.stop="dialog.addlabel = true"
+        >
+          <v-icon>new_label</v-icon>
+        </v-btn>
+        <v-btn
             fab dark small
             color="accent"
             class="action-clear"
@@ -151,6 +162,8 @@
                           @confirm="addToAlbum"></p-photo-album-dialog>
     <p-share-upload-dialog :show="dialog.share" :items="{photos: selection}" :model="album" @cancel="dialog.share = false"
                            @confirm="onShared"></p-share-upload-dialog>
+    <p-label-add-dialog :show="dialog.addlabel" @cancel="dialog.addlabel = false"
+                          @confirm="addLabel"></p-label-add-dialog>
   </div>
 </template>
 <script>
@@ -201,6 +214,7 @@ export default {
         delete: false,
         album: false,
         share: false,
+        addlabel: false,
       },
       rtl: this.$rtl,
     };
@@ -334,6 +348,23 @@ export default {
     },
     onRemoved() {
       this.clearClipboard();
+    },
+    addLabel(label) {
+      if (!label || !this.canManage) {
+        return;
+      }
+
+      if (this.busy) {
+        return;
+      }
+
+      this.busy = true;
+      this.dialog.addlabel = false;
+
+      Api.post(`batch/photos/label/${label}`, {"photos": this.selection})
+        .finally(() => {
+          this.busy = false;
+        });
     },
     download() {
       if (this.busy || !this.canDownload) {
