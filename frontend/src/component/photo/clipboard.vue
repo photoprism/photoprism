@@ -145,6 +145,17 @@
           <v-icon>new_label</v-icon>
         </v-btn>
         <v-btn
+            v-if="canEdit" fab dark
+            small
+            :title="$gettext('Set Location')"
+            color="edit"
+            :disabled="selection.length === 0 || busy"
+            class="action-set-location"
+            @click.stop="dialog.setlocation = true"
+        >
+          <v-icon>edit_location</v-icon>
+        </v-btn>
+        <v-btn
             fab dark small
             color="accent"
             class="action-clear"
@@ -164,6 +175,8 @@
                            @confirm="onShared"></p-share-upload-dialog>
     <p-label-add-dialog :show="dialog.addlabel" @cancel="dialog.addlabel = false"
                           @confirm="addLabel"></p-label-add-dialog>
+    <p-photo-set-location-dialog :show="dialog.setlocation" @cancel="dialog.setlocation = false"
+                          @confirm="setLocation"></p-photo-set-location-dialog>
   </div>
 </template>
 <script>
@@ -215,6 +228,7 @@ export default {
         album: false,
         share: false,
         addlabel: false,
+        setlocation: false,
       },
       rtl: this.$rtl,
     };
@@ -362,6 +376,23 @@ export default {
       this.dialog.addlabel = false;
 
       Api.post(`batch/photos/label/${label}`, {"photos": this.selection})
+        .finally(() => {
+          this.busy = false;
+        });
+    },
+    setLocation(latitude, longitude) {
+      if (!latitude || !longitude || !this.canEdit) {
+        return;
+      }
+
+      if (this.busy) {
+        return;
+      }
+
+      this.busy = true;
+      this.dialog.setlocation = false;
+
+      Api.post(`batch/photos/location`, {"photos": this.selection, "lat": parseFloat(latitude), "lng": parseFloat(longitude)})
         .finally(() => {
           this.busy = false;
         });
