@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // BatchPhotosArchive moves multiple photos to the archive.
@@ -413,5 +414,93 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		}
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPermanentlyDeleted))
+	})
+}
+
+// BatchPhotosAddLabel flags multiple photos as private.
+//
+// POST /api/v1/batch/photos/label/:name
+func BatchPhotosAddLabel(router *gin.RouterGroup) {
+	router.POST("/batch/photos/label/:name", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.AccessPrivate)
+
+		if s.Abort(c) {
+			return
+		}
+
+		//log.Infof("photos: Batch add label %s", clean.Log(form.
+
+		var f form.Selection
+
+		if err := c.BindJSON(&f); err != nil {
+			AbortBadRequest(c)
+			return
+		}
+		log.Infof("photos: Batch add label to photos: %s", clean.Log(f.String()))
+
+		if len(f.Photos) == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		labelName := c.Param("name")
+
+		log.Infof("photos: Adding label %s to %s", clean.Log(labelName), clean.Log(f.String()))
+
+		// Fetch selection from index and record time.
+		photos, err := query.SelectedPhotos(f)
+
+		if err != nil {
+			AbortEntityNotFound(c)
+			return
+		}
+
+		labelEntity := entity.FirstOrCreateLabel(entity.NewLabel(labelName, 10))
+
+		if labelEntity == nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed creating label"})
+			return
+		}
+
+		if err := labelEntity.Restore(); err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "could not restore label"})
+		}
+
+		// Add label to each photo
+		for _, p := range photos {
+			log.Infof("photos: Adding label %s to %s", clean.Log(labelName), clean.Log(p.String()))
+
+			photoLabel := entity.FirstOrCreatePhotoLabel(entity.NewPhotoLabel(p.ID, labelEntity.ID, 0, "manual"))
+
+			if photoLabel == nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed updating photo label"})
+				return
+			}
+
+			if photoLabel.Uncertainty > 0 {
+				if err := photoLabel.Updates(map[string]interface{}{
+					"Uncertainty": 0,
+					"LabelSrc":    entity.SrcManual,
+				}); err != nil {
+					log.Errorf("label: %s", err)
+				}
+			}
+
+			p2, err := query.PhotoPreloadByUID(clean.UID(p.PhotoUID))
+
+			if err != nil {
+				AbortEntityNotFound(c)
+				return
+			}
+
+			if err := p2.SaveLabels(); err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
+				return
+			}
+		}
+
+		UpdateClientConfig()
+
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgSelectionProtected))
 	})
 }

@@ -350,7 +350,7 @@ export default {
       this.clearClipboard();
     },
     addLabel(label) {
-      if (!label || !this.canManage) {
+      if (!label || !this.canEdit) {
         return;
       }
 
