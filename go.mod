@@ -73,8 +73,6 @@ require (
 
 require github.com/go-ldap/ldap/v3 v3.4.5
 
-require golang.org/x/sys v0.9.0
-
 require (
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
@@ -110,6 +108,7 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/oauth2 v0.6.0 // indirect
+	golang.org/x/sys v0.9.0 // indirect
 	golang.org/x/text v0.10.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
