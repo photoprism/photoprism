@@ -35,9 +35,8 @@ echo Starting PhotoPrism and MariaDB...
 docker compose up -d
 timeout /t 20
 
-echo Please open the Web UI by navigating to http://localhost:2342/. You should see a login screen.
-echo Then log in with the user 'admin' and the password you have specified in PHOTOPRISM_ADMIN_PASSWORD (default is 'insecure').
-echo You can change it on the account settings page. If you enable public mode, authentication will be disabled.
-echo Enjoy!
+echo You should now be able to log in with the user "admin" when navigating to http://localhost:2342/.
+echo The initial password is 'insecure' or the value specified with PHOTOPRISM_ADMIN_PASSWORD in your
+echo docker-compose.yml file. Please change it under Settings › Account before you proceed.
 
 START http://localhost:2342/
