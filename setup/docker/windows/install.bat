@@ -1,5 +1,5 @@
-echo "Checking Docker version..."
 echo "Visit https://docs.docker.com/desktop/install/windows-install/ to learn how to download and install Docker."
+echo "Checking Docker version..."
 
 docker --version
 docker compose version
