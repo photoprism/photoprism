@@ -21,7 +21,6 @@ del docker-compose.yml
 del start.bat
 del stop.bat
 del install.bat
-del uninstall.bat
 del update.bat
 
 :END
