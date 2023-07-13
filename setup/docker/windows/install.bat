@@ -12,7 +12,7 @@ echo and install Docker Desktop before you proceed:
 echo:
 echo   https://docs.docker.com/desktop/install/windows-install/
 
-timeout /t 5
+timeout /t 10
 
 echo Checking Docker version...
 
