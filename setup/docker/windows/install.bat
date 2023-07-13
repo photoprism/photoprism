@@ -27,6 +27,7 @@ curl.exe -s -o docker-compose.yml https://dl.photoprism.app/docker/windows/docke
 curl.exe -s -o start.bat https://dl.photoprism.app/docker/windows/start.bat
 curl.exe -s -o stop.bat https://dl.photoprism.app/docker/windows/stop.bat
 curl.exe -s -o uninstall.bat https://dl.photoprism.app/docker/windows/uninstall.bat
+curl.exe -s -o update.bat https://dl.photoprism.app/docker/windows/update.bat
 
 dir
 
