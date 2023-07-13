@@ -1,3 +1,5 @@
+@echo off
+
 echo Pulling Docker images...
 
 docker compose pull
