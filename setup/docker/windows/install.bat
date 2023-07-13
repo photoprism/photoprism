@@ -33,8 +33,7 @@ docker compose pull
 echo Starting PhotoPrism and MariaDB...
 
 docker compose up -d
-
-Start-Sleep -Seconds 10
+timeout /t 20
 
 echo Please open the Web UI by navigating to http://localhost:2342/. You should see a login screen.
 echo Then log in with the user 'admin' and the password you have specified in PHOTOPRISM_ADMIN_PASSWORD (default is 'insecure').
