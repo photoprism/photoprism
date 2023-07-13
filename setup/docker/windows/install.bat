@@ -14,29 +14,34 @@ echo   https://docs.docker.com/desktop/install/windows-install/
 
 timeout /t 10
 
+echo:
 echo Checking Docker version...
 
 docker --version
 docker compose version
 
+echo:
 echo Downloading config files...
 
-curl.exe -o docker-compose.yml https://dl.photoprism.app/docker/windows/docker-compose.yml
-curl.exe -o start.bat https://dl.photoprism.app/docker/windows/start.bat
-curl.exe -o stop.bat https://dl.photoprism.app/docker/windows/stop.bat
-curl.exe -o uninstall.bat https://dl.photoprism.app/docker/windows/uninstall.bat
+curl.exe -s -o docker-compose.yml https://dl.photoprism.app/docker/windows/docker-compose.yml
+curl.exe -s -o start.bat https://dl.photoprism.app/docker/windows/start.bat
+curl.exe -s -o stop.bat https://dl.photoprism.app/docker/windows/stop.bat
+curl.exe -s -o uninstall.bat https://dl.photoprism.app/docker/windows/uninstall.bat
 
 dir
 
+echo:
 echo Pulling Docker images...
 
 docker compose pull
 
+echo:
 echo Starting PhotoPrism and MariaDB...
 
 docker compose up -d
 timeout /t 20
 
+echo:
 echo You should now be able to log in with the user "admin" when navigating to the following URL:
 echo:
 echo   http://localhost:2342/

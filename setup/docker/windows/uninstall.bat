@@ -9,9 +9,19 @@ echo Stopping PhotoPrism and MariaDB...
 docker compose down -v
 timeout /t 5
 
+echo:
 echo Removing Docker images...
 
 docker compose rm -s -v
+
+echo:
+echo Removing config files...
+
+del docker-compose.yml
+del start.bat
+del stop.bat
+del install.bat
+del uninstall.bat
 
 :END
 endlocal
