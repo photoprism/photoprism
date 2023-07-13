@@ -29,8 +29,6 @@ curl.exe -s -o stop.bat https://dl.photoprism.app/docker/windows/stop.bat
 curl.exe -s -o uninstall.bat https://dl.photoprism.app/docker/windows/uninstall.bat
 curl.exe -s -o update.bat https://dl.photoprism.app/docker/windows/update.bat
 
-dir
-
 echo:
 echo Pulling Docker images...
 
