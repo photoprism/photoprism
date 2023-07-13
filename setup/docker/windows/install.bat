@@ -1,4 +1,17 @@
-echo "Visit https://docs.docker.com/desktop/install/windows-install/ to learn how to download and install Docker."
+@echo off
+
+Rem If you don't have Docker installed yet, please follow this guide to download
+Rem and install Docker Desktop before you proceed:
+Rem
+Rem   https://docs.docker.com/desktop/install/windows-install/
+Rem
+Rem With Docker up and running, change to the directory where you want to install PhotoPrism,
+Rem and then run the following commands in a terminal (command prompt) to download our
+Rem configuration examples and start PhotoPrism on your local PC:
+Rem
+Rem   curl.exe -o install.bat https://dl.photoprism.app/docker/windows/install.bat
+Rem   install.bat
+
 echo "Checking Docker version..."
 
 docker --version
