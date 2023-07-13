@@ -1,10 +1,10 @@
-echo "Pulling Docker images..."
+echo Pulling Docker images...
 
 docker compose pull
 
-echo "Restarting PhotoPrism and MariaDB..."
+echo Restarting PhotoPrism and MariaDB...
 
 docker compose stop
 docker compose up -d
 
-echo "Done."
+echo Done.

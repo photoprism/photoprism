@@ -1,5 +1,5 @@
-echo "Stopping PhotoPrism and MariaDB..."
+echo Stopping PhotoPrism and MariaDB...
 
 docker compose stop
 
-echo "Done."
+echo Done.
