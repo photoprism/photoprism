@@ -100,7 +100,7 @@ export default class Session {
   }
 
   useSessionStorage() {
-    this.deleteId();
+    this.reset();
     this.storage.setItem(this.storage_key, "true");
     this.storage = window.sessionStorage;
   }
@@ -112,7 +112,7 @@ export default class Session {
 
   applyId(id) {
     if (!id) {
-      this.deleteId();
+      this.reset();
       return false;
     }
 
@@ -146,8 +146,6 @@ export default class Session {
     this.storage.removeItem("session_id");
 
     delete Api.defaults.headers.common[SessionHeader];
-
-    this.deleteAll();
   }
 
   setResp(resp) {
@@ -272,9 +270,17 @@ export default class Session {
     this.storage.removeItem("user");
   }
 
-  deleteAll() {
+  deleteClipboard() {
+    this.storage.removeItem("clipboard");
+    this.storage.removeItem("photo_clipboard");
+    this.storage.removeItem("album_clipboard");
+  }
+
+  reset() {
+    this.deleteId();
     this.deleteData();
     this.deleteUser();
+    this.deleteClipboard();
   }
 
   sendClientInfo() {
@@ -303,14 +309,18 @@ export default class Session {
   }
 
   login(username, password, token) {
-    this.deleteId();
+    this.reset();
 
     return Api.post("session", { username, password, token }).then((resp) => {
       const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
-      this.sendClientInfo();
+      this.onLogin();
       return Promise.resolve(reload);
     });
+  }
+
+  onLogin() {
+    this.sendClientInfo();
   }
 
   refresh() {
@@ -330,7 +340,7 @@ export default class Session {
           return Promise.resolve();
         })
         .catch(() => {
-          this.deleteId();
+          this.reset();
           if (!this.isLogin()) {
             window.location.reload();
           }
@@ -354,7 +364,7 @@ export default class Session {
   }
 
   onLogout(noRedirect) {
-    this.deleteId();
+    this.reset();
     if (noRedirect !== true && !this.isLogin()) {
       window.location = this.config.baseUri + "/";
     }

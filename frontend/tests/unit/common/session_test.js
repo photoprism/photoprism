@@ -25,7 +25,7 @@ describe("common/session", () => {
     assert.equal(session.session_id, "999900000000000000000000000000000000000000000000");
     const result = session.getId();
     assert.equal(result, "999900000000000000000000000000000000000000000000");
-    session.deleteId();
+    session.reset();
     assert.equal(session.session_id, null);
   });
 
@@ -54,7 +54,7 @@ describe("common/session", () => {
     assert.equal(session.user.DisplayName, "Max Example");
     assert.equal(session.user.SuperAdmin, true);
     assert.equal(session.user.Role, "admin");
-    session.deleteAll();
+    session.reset();
     assert.equal(session.user.DisplayName, "");
     assert.equal(session.user.SuperAdmin, false);
     assert.equal(session.user.Role, "");

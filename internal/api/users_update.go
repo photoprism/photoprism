@@ -3,10 +3,12 @@ package api
 import (
 	"net/http"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -31,8 +33,10 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
+		// UserUID.
 		uid := clean.UID(c.Param("uid"))
 
+		// Find user.
 		m := entity.FindUserByUID(uid)
 
 		if m == nil {
@@ -66,14 +70,25 @@ func UpdateUser(router *gin.RouterGroup) {
 
 		// Save model with values from form.
 		if err = m.SaveForm(f, isPrivileged); err != nil {
-			log.Error(err)
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", err.Error()}, s.RefID)
 			AbortSaveFailed(c)
 			return
 		}
 
-		// Clear the session cache, as it contains user information.
+		// Log event.
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "updated"}, s.RefID)
+
+		// Delete sessions after privilege level change.
+		if s.User().UserUID != m.UID() && isPrivileged {
+			// see https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#renew-the-session-id-after-any-privilege-level-change
+			event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "invalidated %s"}, s.RefID,
+				english.Plural(m.DeleteSessions(nil), "session", "sessions"))
+		}
+
+		// Clear the session cache.
 		s.ClearCache()
 
+		// Find and return the updated user record.
 		m = entity.FindUserByUID(uid)
 
 		if m == nil {
