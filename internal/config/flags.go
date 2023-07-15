@@ -456,8 +456,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-tls",
-			Usage:  "disable HTTPS even if a certificate is available",
+			Usage:  "disable HTTPS/TLS even if the site URL starts with https:// and a certificate is available",
 			EnvVar: EnvVar("DISABLE_TLS"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "default-tls",
+			Usage:  "default to a self-signed HTTPS/TLS certificate if no other certificate is available",
+			EnvVar: EnvVar("DEFAULT_TLS"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "tls-email",

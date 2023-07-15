@@ -142,14 +142,15 @@ services:
       PHOTOPRISM_LOG_LEVEL: "info"                     # log level: trace, debug, info, warning, error, fatal, or panic
       PHOTOPRISM_READONLY: "false"                     # do not modify originals directory (reduced functionality)
       PHOTOPRISM_EXPERIMENTAL: "false"                 # enables experimental features
-      PHOTOPRISM_DISABLE_TLS: "true"                   # disables HTTPS even if a certificate is available
+      PHOTOPRISM_DISABLE_TLS: "false"                  # disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available
+      PHOTOPRISM_DEFAULT_TLS: "true"                   # defaults to a self-signed HTTPS/TLS certificate if no other certificate is available
       PHOTOPRISM_DISABLE_CHOWN: "false"                # disables updating storage permissions via chmod and chown on startup
       PHOTOPRISM_DISABLE_WEBDAV: "false"               # disables built-in WebDAV server
       PHOTOPRISM_DISABLE_SETTINGS: "false"             # disables Settings in Web UI
       PHOTOPRISM_DISABLE_TENSORFLOW: "false"           # disables all features depending on TensorFlow
       PHOTOPRISM_DISABLE_FACES: "false"                # disables face detection and recognition (requires TensorFlow)
       PHOTOPRISM_DISABLE_CLASSIFICATION: "false"       # disables image classification (requires TensorFlow)
-      PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
+      PHOTOPRISM_DISABLE_VECTORS: "false"              # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                  # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                  # enables applying user presets when converting RAW images (reduces performance)
       PHOTOPRISM_JPEG_QUALITY: 85                      # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)

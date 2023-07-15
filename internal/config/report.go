@@ -155,6 +155,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Web Server.
 		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
+		{"default-tls", fmt.Sprintf("%t", c.DefaultTLS())},
 		{"tls-email", c.TLSEmail()},
 		{"tls-cert", c.TLSCert()},
 		{"tls-key", c.TLSKey()},

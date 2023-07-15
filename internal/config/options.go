@@ -107,6 +107,7 @@ type Options struct {
 	ProxyProtoHeaders     []string      `yaml:"ProxyProtoHeaders" json:"-" flag:"proxy-proto-header"`
 	ProxyProtoHttps       []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
 	DisableTLS            bool          `yaml:"DisableTLS" json:"DisableTLS" flag:"disable-tls"`
+	DefaultTLS            bool          `yaml:"DefaultTLS" json:"DefaultTLS" flag:"default-tls"`
 	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"`
 	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`

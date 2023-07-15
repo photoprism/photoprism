@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Generates local HTTPS keys and certificates on Linux.
+# Creates a default TLS certificate that can be used to enable HTTPS if no other certificate is available.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-https.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
@@ -19,11 +19,11 @@ KEY_PATH="/etc/ssl/private"
 # Abort if files already exist.
 
 if [ -f "$CERTS_PATH/photoprism.issuer.crt" ] && [ -f "$KEY_PATH/photoprism.pfx" ]; then
-    echo "Certificate already exists in ${KEY_PATH} and ${CERTS_PATH}."
+    echo "Default HTTPS/TLS certificate already exists."
     exit 0
 fi
 
-echo "Creating keys and certificates in ${KEY_PATH} and ${CERTS_PATH}."
+echo "Creating a default HTTPS/TLS certificate."
 
 mkdir -p "${CERTS_PATH}" "${KEY_PATH}"
 groupadd -f -r -g 116 ssl-cert 1>&2
