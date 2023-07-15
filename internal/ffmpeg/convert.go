@@ -14,7 +14,9 @@ func AvcConvertCommand(fileName, avcName string, opt Options) (result *exec.Cmd,
 	} else if avcName == "" {
 		return nil, false, fmt.Errorf("empty output filename")
 	}
+
 	scale := "scale='if(gte(iw,ih), min(" + opt.Resolution + ", iw), -2):if(gte(iw,ih), -2, min(" + opt.Resolution + ", ih))'"
+
 	// Don't transcode more than one video at the same time.
 	useMutex = true
 

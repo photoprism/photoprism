@@ -144,7 +144,7 @@ func (c *Config) Restart() bool {
 // CliContext returns the cli context if set.
 func (c *Config) CliContext() *cli.Context {
 	if c.cliCtx == nil {
-		log.Warnf("config: cli context not set - possible bug")
+		log.Warnf("config: cli context not set - you may have found a bug")
 	}
 
 	return c.cliCtx
@@ -162,7 +162,7 @@ func (c *Config) CliGlobalString(name string) string {
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
-		log.Warnf("config: options should not be nil - possible bug")
+		log.Warnf("config: options should not be nil - you may have found a bug")
 		c.options = NewOptions(nil)
 	}
 

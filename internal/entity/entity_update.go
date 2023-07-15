@@ -31,7 +31,7 @@ func Update(m interface{}, keyNames ...string) (err error) {
 	if result.Error != nil {
 		return err
 	} else if result.RowsAffected > 1 {
-		log.Debugf("entity: updated statement affected more than one record - possible bug")
+		log.Debugf("entity: updated statement affected more than one record - you may have found a bug")
 		return nil
 	} else if result.RowsAffected == 1 {
 		return nil

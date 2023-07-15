@@ -81,7 +81,7 @@
     "postcss-preset-env": "^9.0.0",
     "postcss-reporter": "^7.0.5",
     "postcss-url": "^10.1.3",
-    "prettier": "^3.0.0",
+    "prettier": "^2.8.8",
     "pubsub-js": "^1.9.4",
     "regenerator-runtime": "^0.13.11",
     "resolve-url-loader": "^5.0.0",

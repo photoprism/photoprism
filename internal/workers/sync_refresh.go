@@ -71,7 +71,7 @@ func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
 			f = entity.FirstOrCreateFileSync(f)
 
 			if f == nil {
-				log.Errorf("sync: file sync entity should not be nil - possible bug")
+				log.Errorf("sync: file sync entity should not be nil - you may have found a bug")
 				continue
 			}
 

@@ -155,7 +155,7 @@ func (w *Faces) Audit(fix bool) (err error) {
 	} else {
 		for _, m := range markers {
 			if m.FaceID == "" {
-				log.Warnf("faces: marker %s has an empty face id - possible bug", m.MarkerUID)
+				log.Warnf("faces: marker %s has an empty face id - you may have found a bug", m.MarkerUID)
 			} else if f, ok := faces[m.FaceID]; !ok {
 				log.Warnf("faces: marker %s has invalid face %s of subject %s (%s)", m.MarkerUID, m.FaceID, entity.SubjNames.Log(f.SubjUID), f.SubjUID)
 			} else if m.SubjUID != "" {

@@ -225,7 +225,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		} else {
 			log.Infof("upload: imported %s", english.Plural(n, "file", "files"))
 			if moments := get.Moments(); moments == nil {
-				log.Warnf("upload: moments service not set - possible bug")
+				log.Warnf("upload: moments service not set - you may have found a bug")
 			} else if err := moments.Start(); err != nil {
 				log.Warnf("moments: %s", err)
 			}

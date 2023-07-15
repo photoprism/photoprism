@@ -13,7 +13,7 @@ func (c *Convert) PngConvertCommands(f *MediaFile, pngName string) (result []*ex
 	result = make([]*exec.Cmd, 0, 2)
 
 	if f == nil {
-		return result, useMutex, fmt.Errorf("file is nil - possible bug")
+		return result, useMutex, fmt.Errorf("file is nil - you may have found a bug")
 	}
 
 	// Find conversion command depending on the file type and runtime environment.

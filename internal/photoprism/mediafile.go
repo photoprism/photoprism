@@ -352,6 +352,11 @@ func (m *MediaFile) BaseName() string {
 
 // SetFileName sets the filename to the given string.
 func (m *MediaFile) SetFileName(fileName string) {
+	if m == nil {
+		log.Errorf("media: file %s is nil - you may have found a bug", clean.Log(fileName))
+		return
+	}
+
 	m.fileName = fileName
 	m.fileRoot = entity.RootUnknown
 }

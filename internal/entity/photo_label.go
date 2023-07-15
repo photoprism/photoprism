@@ -87,7 +87,7 @@ func FirstOrCreatePhotoLabel(m *PhotoLabel) *PhotoLabel {
 // ClassifyLabel returns the label as classify.Label
 func (m *PhotoLabel) ClassifyLabel() classify.Label {
 	if m.Label == nil {
-		log.Errorf("photo-label: classify label is nil (photo id %d, label id %d) - possible bug", m.PhotoID, m.LabelID)
+		log.Errorf("photo-label: classify label is nil (photo id %d, label id %d) - you may have found a bug", m.PhotoID, m.LabelID)
 		return classify.Label{}
 	}
 
