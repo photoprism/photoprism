@@ -587,7 +587,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "ffmpeg-resolution",
-			Usage:  "maximum FFmpeg encoding `RESOLUTION` (height)",
+			Usage:  "maximum FFmpeg encoding `RESOLUTION` can be specified using SD, HD, HD+, 2k, 4k, and 8k or with the largest possible dimension in pixels.",
 			Value:  4096,
 			EnvVar: EnvVar("FFMPEG_RESOLUTION"),
 		}}, {

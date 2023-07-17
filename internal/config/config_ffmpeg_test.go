@@ -47,11 +47,35 @@ func TestConfig_FFmpegResolution(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, 4096, c.FFmpegResolution())
 
-	c.options.FFmpegResolution = 1920
+	c.options.FFmpegResolution = "1920"
 	assert.Equal(t, 1920, c.FFmpegResolution())
 
-	c.options.FFmpegResolution = 8640
+	c.options.FFmpegResolution = "8640"
 	assert.Equal(t, 8192, c.FFmpegResolution())
+
+	c.options.FFmpegResolution = "8640"
+	assert.Equal(t, 8192, c.FFmpegResolution())
+
+	c.options.FFmpegResolution = "8k"
+	assert.Equal(t, 8192, c.FFmpegResolution())
+
+	c.options.FFmpegResolution = "4k"
+	assert.Equal(t, 4096, c.FFmpegResolution())
+
+	c.options.FFmpegResolution = "2K"
+	assert.Equal(t, 2560, c.FFmpegResolution())
+
+	c.options.FFmpegResolution = "HD+"
+	assert.Equal(t, 1920, c.FFmpegResolution())
+
+	c.options.FFmpegResolution = "HD"
+	assert.Equal(t, 1280, c.FFmpegResolution())
+
+	c.options.FFmpegResolution = "SD"
+	assert.Equal(t, 720, c.FFmpegResolution())
+
+	c.options.FFmpegResolution = "dfgjkn"
+	assert.Equal(t, 4096, c.FFmpegResolution())
 }
 
 func TestConfig_FFmpegBitrateExceeded(t *testing.T) {

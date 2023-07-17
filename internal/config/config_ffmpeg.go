@@ -2,7 +2,8 @@ package config
 
 import (
 	"fmt"
-
+	"strconv"
+	"strings"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 )
 
@@ -39,13 +40,33 @@ func (c *Config) FFmpegBitrate() int {
 
 // FFmpegResolution returns the ffmpeg resolution limit in pixel height. Goes from 144p to 8k.
 func (c *Config) FFmpegResolution() int {
+	resolution := strings.ToLower(c.options.FFmpegResolution)
 	switch {
-	case c.options.FFmpegResolution <= 0:
-		return 4096
-	case c.options.FFmpegResolution >= 8192:
+	case resolution == "8k":
 		return 8192
+	case resolution == "4k":
+		return 4096
+	case resolution == "2k":
+		return 2560
+	case resolution == "hd+":
+		return 1920
+	case resolution == "hd":
+		return 1280
+	case resolution == "sd":
+		return 720
 	default:
-		return c.options.FFmpegResolution
+		number, err := strconv.Atoi(resolution)
+		if err != nil {
+			return 4096
+		}
+		switch {
+		case number <= 0:
+			return 4096
+		case number >= 8192:
+			return 8192
+		default:
+			return number
+		}
 	}
 }
 
