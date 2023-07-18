@@ -76,6 +76,10 @@ services:
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
       PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
+      ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
+      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)
+      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbit/s (default: 50)
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: use "/" not "\" as separator, "~" is a shortcut for C:/user/{username}, "." for the current directory
     volumes:

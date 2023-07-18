@@ -79,15 +79,14 @@ services:
       PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
       PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-      ## Run/install on first startup:
-      PHOTOPRISM_INIT: "tensorflow"
-      ## Hardware Video Transcoding:
-      ## see https://docs.photoprism.app/getting-started/advanced/transcoding/#nvidia-container-toolkit
-      PHOTOPRISM_FFMPEG_ENCODER: "nvidia"
-      PHOTOPRISM_FFMPEG_SIZE: "1920"                 # Maximum video size in PIXELS (720-7680) (default: 3840)
-      PHOTOPRISM_FFMPEG_BITRATE: "32"                # Maximum video BITRATE in Mbit/s (default: 50)
+      ## Hardware Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
+      PHOTOPRISM_FFMPEG_ENCODER: "nvidia"            # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)
+      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbit/s (default: 50)
       NVIDIA_VISIBLE_DEVICES: "all"
       NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
+      ## Run/install on first startup:
+      PHOTOPRISM_INIT: "tensorflow"
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
       # PHOTOPRISM_UID: 1000
       # PHOTOPRISM_GID: 1000
