@@ -810,6 +810,11 @@ func (m *MediaFile) IsAnimated() bool {
 	return m.IsVideo() || m.IsAnimatedImage()
 }
 
+// NotAnimated checks if the file is not a video or an animated image.
+func (m *MediaFile) NotAnimated() bool {
+	return !m.IsAnimated()
+}
+
 // IsVideo returns true if this is a video file.
 func (m *MediaFile) IsVideo() bool {
 	return m.HasMediaType(media.Video)
@@ -845,9 +850,24 @@ func (m *MediaFile) InSidecar() bool {
 	return m.Root() == entity.RootSidecar
 }
 
-// IsPlayableVideo checks if the file is a video in playable format.
-func (m *MediaFile) IsPlayableVideo() bool {
-	return m.IsVideo() && (m.HasFileType(fs.VideoMP4) || m.HasFileType(fs.VideoAVC))
+// NeedsTranscoding checks whether the media file is a video or an animated image and should be transcoded to a playable format.
+func (m *MediaFile) NeedsTranscoding() bool {
+	if m.NotAnimated() {
+		return false
+	} else if m.HasFileType(fs.VideoAVC) || m.HasFileType(fs.VideoMP4) && m.MetaData().CodecAvc() {
+		return false
+	}
+
+	if m.IsAnimatedImage() {
+		return fs.VideoMP4.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) == ""
+	}
+
+	return fs.VideoAVC.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) == ""
+}
+
+// SkipTranscoding checks if the media file is not animated or has already been transcoded to a playable format.
+func (m *MediaFile) SkipTranscoding() bool {
+	return !m.NeedsTranscoding()
 }
 
 // IsImageOther returns true if this is a PNG, GIF, BMP, TIFF, or WebP file.
