@@ -61,7 +61,8 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user is has user management privileges.
-		isPrivileged := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		privilegeLevelChange := isAdmin && m.PrivilegeLevelChange(f)
 
 		// Prevent super admins from locking themselves out.
 		if u := s.User(); u.IsSuperAdmin() && u.Equal(m) && !f.CanLogin {
@@ -69,7 +70,7 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Save model with values from form.
-		if err = m.SaveForm(f, isPrivileged); err != nil {
+		if err = m.SaveForm(f, isAdmin); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", err.Error()}, s.RefID)
 			AbortSaveFailed(c)
 			return
@@ -78,9 +79,9 @@ func UpdateUser(router *gin.RouterGroup) {
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "updated"}, s.RefID)
 
-		// Delete user sessions after a permission level change.
+		// Delete user sessions after a privilege level change.
 		// see https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#renew-the-session-id-after-any-privilege-level-change
-		if isPrivileged {
+		if privilegeLevelChange {
 			// Prevent the current session from being deleted.
 			deleted := m.DeleteSessions([]string{s.ID})
 			event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "invalidated %s"}, s.RefID,

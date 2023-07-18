@@ -920,6 +920,41 @@ func TestUser_Form(t *testing.T) {
 	})
 }
 
+func TestUser_PrivilegeLevelChange(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UserRole = "guest"
+
+		assert.True(t, m.PrivilegeLevelChange(frm))
+	})
+	t.Run("False", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, m.PrivilegeLevelChange(frm))
+	})
+}
+
 func TestUser_SaveForm(t *testing.T) {
 	t.Run("UnknownUser", func(t *testing.T) {
 		frm, err := UnknownUser.Form()

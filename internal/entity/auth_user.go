@@ -1016,8 +1016,20 @@ func (m *User) Form() (form.User, error) {
 	return frm, nil
 }
 
+// PrivilegeLevelChange checks if saving the form changes the user privileges.
+func (m *User) PrivilegeLevelChange(f form.User) bool {
+	return m.UserRole != f.Role() ||
+		m.SuperAdmin != f.SuperAdmin ||
+		m.CanLogin != f.CanLogin ||
+		m.WebDAV != f.WebDAV ||
+		m.UserAttr != f.Attr() ||
+		m.AuthProvider != f.Provider().String() ||
+		m.BasePath != f.BasePath ||
+		m.UploadPath != f.UploadPath
+}
+
 // SaveForm updates the entity using form data and stores it in the database.
-func (m *User) SaveForm(f form.User, updateRights bool) error {
+func (m *User) SaveForm(f form.User, changePrivileges bool) error {
 	if m.UserName == "" || m.ID <= 0 {
 		return fmt.Errorf("system users cannot be modified")
 	} else if (m.ID == 1 || f.SuperAdmin) && acl.RoleAdmin.NotEqual(f.Role()) {
@@ -1055,8 +1067,8 @@ func (m *User) SaveForm(f form.User, updateRights bool) error {
 		m.VerifyToken = GenerateToken()
 	}
 
-	// Update user rights only if explicitly requested.
-	if updateRights {
+	// Change user privileges only if allowed.
+	if changePrivileges {
 		m.SetRole(f.Role())
 		m.SuperAdmin = f.SuperAdmin
 

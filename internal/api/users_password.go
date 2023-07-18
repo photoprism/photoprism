@@ -43,19 +43,19 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user is has user management privileges.
-		isPrivileged := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
-		isSuperAdmin := isPrivileged && s.User().IsSuperAdmin()
+		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isSuperAdmin := isAdmin && s.User().IsSuperAdmin()
 		uid := clean.UID(c.Param("uid"))
 
 		var u *entity.User
 
 		// Users may only change their own password.
-		if !isPrivileged && s.User().UserUID != uid {
+		if !isAdmin && s.User().UserUID != uid {
 			AbortForbidden(c)
 			return
 		} else if s.User().UserUID == uid {
 			u = s.User()
-			isPrivileged = false
+			isAdmin = false
 			isSuperAdmin = false
 		} else if u = entity.FindUserByUID(uid); u == nil {
 			Abort(c, http.StatusNotFound, i18n.ErrUserNotFound)
