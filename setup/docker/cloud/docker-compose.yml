@@ -162,9 +162,9 @@ services:
       PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB or MySQL database user name
       PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB or MySQL database user password
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
-      # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
-      # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)
-      # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbit/s (default: 50)
+      # PHOTOPRISM_FFMPEG_ENCODER: "software"          # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
+      # PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
+      # PHOTOPRISM_FFMPEG_BITRATE: "32"                # video bitrate limit in Mbit/s (default: 50)
       ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clean):
       PHOTOPRISM_INIT: "update tensorflow clean"
     working_dir: "/photoprism" # do not change or remove
