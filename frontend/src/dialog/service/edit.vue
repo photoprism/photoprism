@@ -408,7 +408,7 @@ export default {
       for (let i = 0; i < thumbs.length; i++) {
         let t = thumbs[i];
 
-        result.push({"text": t.w + 'x' + t.h, "value": t.size});
+        result.push({"text": t.w + ' × ' + t.h, "value": t.size});
       }
 
       return result;

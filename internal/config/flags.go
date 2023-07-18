@@ -580,16 +580,16 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("FFMPEG_ENCODER"),
 		}}, {
 		Flag: cli.IntFlag{
-			Name:   "ffmpeg-bitrate, vb",
-			Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
-			Value:  50,
-			EnvVar: EnvVar("FFMPEG_BITRATE"),
+			Name:   "ffmpeg-size, vs",
+			Usage:  "maximum FFmpeg encoding size in `PIXELS` (720-7680)",
+			Value:  thumb.Sizes[thumb.Fit3840].Width,
+			EnvVar: EnvVar("FFMPEG_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{
-			Name:   "ffmpeg-resolution",
-			Usage:  "maximum FFmpeg encoding `RESOLUTION` (height)",
-			Value:  4096,
-			EnvVar: EnvVar("FFMPEG_RESOLUTION"),
+			Name:   "ffmpeg-bitrate, vb",
+			Usage:  "maximum FFmpeg video `BITRATE` in Mbit/s",
+			Value:  50,
+			EnvVar: EnvVar("FFMPEG_BITRATE"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "ffmpeg-map-video",

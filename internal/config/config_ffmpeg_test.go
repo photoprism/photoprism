@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/ffmpeg"
+	"github.com/photoprism/photoprism/internal/thumb"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -43,15 +44,30 @@ func TestConfig_FFmpegBitrate(t *testing.T) {
 	assert.Equal(t, 800, c.FFmpegBitrate())
 }
 
-func TestConfig_FFmpegResolution(t *testing.T) {
+func TestConfig_FFmpegSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 4096, c.FFmpegResolution())
+	assert.Equal(t, 3840, c.FFmpegSize())
 
-	c.options.FFmpegResolution = 1920
-	assert.Equal(t, 1920, c.FFmpegResolution())
+	c.options.FFmpegSize = 0
+	assert.Equal(t, 3840, c.FFmpegSize())
 
-	c.options.FFmpegResolution = 8640
-	assert.Equal(t, 8192, c.FFmpegResolution())
+	c.options.FFmpegSize = -1
+	assert.Equal(t, 7680, c.FFmpegSize())
+
+	c.options.FFmpegSize = 10
+	assert.Equal(t, 720, c.FFmpegSize())
+
+	c.options.FFmpegSize = 720
+	assert.Equal(t, 720, c.FFmpegSize())
+
+	c.options.FFmpegSize = 1920
+	assert.Equal(t, 1920, c.FFmpegSize())
+
+	c.options.FFmpegSize = 4000
+	assert.Equal(t, 3840, c.FFmpegSize())
+
+	c.options.FFmpegSize = 8640
+	assert.Equal(t, thumb.Sizes[thumb.Fit7680].Width, c.FFmpegSize())
 }
 
 func TestConfig_FFmpegBitrateExceeded(t *testing.T) {
