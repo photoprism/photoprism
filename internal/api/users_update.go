@@ -78,11 +78,13 @@ func UpdateUser(router *gin.RouterGroup) {
 		// Log event.
 		event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "updated"}, s.RefID)
 
-		// Delete sessions after privilege level change.
-		if s.User().UserUID != m.UID() && isPrivileged {
-			// see https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#renew-the-session-id-after-any-privilege-level-change
+		// Delete user sessions after a permission level change.
+		// see https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html#renew-the-session-id-after-any-privilege-level-change
+		if isPrivileged {
+			// Prevent the current session from being deleted.
+			deleted := m.DeleteSessions([]string{s.ID})
 			event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "invalidated %s"}, s.RefID,
-				english.Plural(m.DeleteSessions(nil), "session", "sessions"))
+				english.Plural(deleted, "session", "sessions"))
 		}
 
 		// Clear the session cache.

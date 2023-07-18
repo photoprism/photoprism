@@ -740,8 +740,16 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 		return 0
 	}
 
+	// Compose update statement.
+	stmt := Db()
+
 	// Find all user sessions except the session ids passed as argument.
-	stmt := Db().Where("user_uid = ? AND id NOT IN (?)", m.UserUID, omit)
+	if len(omit) == 0 {
+		stmt = stmt.Where("user_uid = ?", m.UserUID)
+	} else {
+		stmt = stmt.Where("user_uid = ? AND id NOT IN (?)", m.UserUID, omit)
+	}
+
 	sess := Sessions{}
 
 	if err := stmt.Find(&sess).Error; err != nil {
