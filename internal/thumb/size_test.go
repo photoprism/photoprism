@@ -77,3 +77,15 @@ func TestSize_Skip(t *testing.T) {
 		assert.True(t, size.Skip(img))
 	})
 }
+
+func TestSize_FileName(t *testing.T) {
+	size := Sizes[Fit2048]
+
+	r, err := size.FileName("193456789098765432", "testdata/cache")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, r, "testdata/cache/1/9/3/193456789098765432_2048x2048_fit.jpg")
+}
