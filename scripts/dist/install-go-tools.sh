@@ -51,6 +51,7 @@ case $DESTARCH in
     GOBIN="/usr/local/bin" go install github.com/mikefarah/yq/v4@latest
     GOBIN="/usr/local/bin" go install github.com/kyoh86/richgo@latest
     GOBIN="/usr/local/bin" go install github.com/muesli/duf@latest
+    GOBIN="/usr/local/bin" go install github.com/go-delve/delve/cmd/dlv@latest
     ;;
 esac
 

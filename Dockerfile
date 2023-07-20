@@ -1,8 +1,3 @@
-# Build stage 
-FROM golang:1.17 AS build-env
-RUN go install github.com/go-delve/delve/cmd/dlv@latest \
-  && cp $GOPATH/bin/dlv /usr/local/bin/
-
 # Ubuntu 23.04 (Lunar Lobster)
 FROM photoprism/develop:230715-lunar
 
@@ -19,4 +14,3 @@ WORKDIR "/go/src/github.com/photoprism/photoprism"
 # Copy source to image.
 COPY . .
 COPY --chown=root:root /scripts/dist/ /scripts/
-COPY --from=build-env /usr/local/bin/dlv /
