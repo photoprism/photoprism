@@ -1,7 +1,7 @@
 <template>
   <v-dialog :value="show" fullscreen hide-overlay scrollable
             lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
-    <v-card color="application">
+    <v-card color="application" class="fill-height">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark class="action-close" @click.stop="close">
           <v-icon>close</v-icon>
@@ -24,12 +24,10 @@
       </v-toolbar>
       <v-tabs
           v-model="active"
-          flat
-          grow
+          flat grow
           color="secondary"
           slider-color="secondary-dark"
           :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
-          class="form"
       >
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Details')">edit</v-icon>
@@ -82,7 +80,7 @@
         </v-tab>
 
         <v-tabs-items touchless>
-          <v-tab-item>
+          <v-tab-item lazy>
             <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid"
                                  @close="close" @prev="prev" @next="next"></p-tab-photo-details>
           </v-tab-item>
