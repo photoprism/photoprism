@@ -1,7 +1,7 @@
 <template>
   <v-dialog :value="show" fullscreen hide-overlay scrollable
             lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
-    <v-card color="application" class="fill-height">
+    <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark class="action-close" @click.stop="close">
           <v-icon>close</v-icon>
@@ -25,6 +25,7 @@
       <v-tabs
           v-model="active"
           flat grow
+          class="form"
           color="secondary"
           slider-color="secondary-dark"
           :height="$vuetify.breakpoint.smAndDown ? 48 : 64"

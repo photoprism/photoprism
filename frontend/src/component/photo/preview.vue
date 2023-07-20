@@ -1,6 +1,6 @@
 <template>
   <div class="p-photo-preview pa-0 ma-0 elevation-0 v-card v-sheet v-sheet--tile no-transition" :title="title">
-    <div class="v-responsive v-image card darken-1 elevation-0 clickable">
+    <div class="v-responsive v-image card darken-1 elevation-0 clickable" @click.prevent.stop="openPhoto">
       <div class="v-responsive__sizer" style="padding-bottom: 100%;"></div>
       <div class="v-image__image v-image__image--cover" :style="cover"></div>
       <div class="v-responsive__content"></div>
@@ -38,6 +38,10 @@ export default {
   },
   methods: {
     openPhoto() {
+      if (!this.$viewer || !this.model) {
+        return;
+      }
+
       this.$viewer.show(Thumb.fromFiles([this.model]), 0);
     },
   },
