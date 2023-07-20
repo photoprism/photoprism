@@ -127,7 +127,7 @@ func StartImport(router *gin.RouterGroup) {
 		} else {
 			log.Infof("import: imported %s", english.Plural(n, "file", "files"))
 			if moments := get.Moments(); moments == nil {
-				log.Warnf("import: moments service not set - possible bug")
+				log.Warnf("import: moments service not set - you may have found a bug")
 			} else if err := moments.Start(); err != nil {
 				log.Warnf("moments: %s", err)
 			}

@@ -1293,7 +1293,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		assert.Equal(t, true, mediaFile.IsImageNative())
 		assert.Equal(t, true, mediaFile.IsImageOther())
 		assert.Equal(t, false, mediaFile.IsVideo())
-		assert.Equal(t, false, mediaFile.IsPlayableVideo())
+		assert.Equal(t, true, mediaFile.SkipTranscoding())
 	})
 	t.Run("yellow_rose-small.bmp", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/yellow_rose-small.bmp")
@@ -1310,7 +1310,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		assert.Equal(t, true, mediaFile.IsImageNative())
 		assert.Equal(t, true, mediaFile.IsImageOther())
 		assert.Equal(t, false, mediaFile.IsVideo())
-		assert.Equal(t, false, mediaFile.IsPlayableVideo())
+		assert.Equal(t, true, mediaFile.SkipTranscoding())
 	})
 	t.Run("preloader.gif", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/preloader.gif")
@@ -1328,7 +1328,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		assert.Equal(t, true, mediaFile.IsImageNative())
 		assert.Equal(t, true, mediaFile.IsImageOther())
 		assert.Equal(t, false, mediaFile.IsVideo())
-		assert.Equal(t, false, mediaFile.IsPlayableVideo())
+		assert.Equal(t, true, mediaFile.SkipTranscoding())
 	})
 	t.Run("norway-kjetil-moe.webp", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/norway-kjetil-moe.webp")
@@ -1347,7 +1347,7 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 		assert.Equal(t, true, mediaFile.IsImageNative())
 		assert.Equal(t, true, mediaFile.IsImageOther())
 		assert.Equal(t, false, mediaFile.IsVideo())
-		assert.Equal(t, false, mediaFile.IsPlayableVideo())
+		assert.Equal(t, true, mediaFile.SkipTranscoding())
 	})
 }
 
@@ -1503,6 +1503,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, true, f.IsImage())
 			assert.Equal(t, true, f.IsAVIFS())
 			assert.Equal(t, true, f.IsAnimated())
+			assert.Equal(t, false, f.NotAnimated())
 			assert.Equal(t, true, f.IsAnimatedImage())
 			assert.Equal(t, true, f.ExifSupported())
 			assert.Equal(t, false, f.IsVideo())
@@ -1521,6 +1522,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, true, f.IsImage())
 			assert.Equal(t, true, f.IsWebP())
 			assert.Equal(t, true, f.IsAnimated())
+			assert.Equal(t, false, f.NotAnimated())
 			assert.Equal(t, true, f.IsAnimatedImage())
 			assert.Equal(t, false, f.ExifSupported())
 			assert.Equal(t, false, f.IsVideo())
@@ -1539,6 +1541,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, true, f.IsImage())
 			assert.Equal(t, false, f.IsVideo())
 			assert.Equal(t, false, f.IsAnimated())
+			assert.Equal(t, true, f.NotAnimated())
 			assert.Equal(t, true, f.IsGIF())
 			assert.Equal(t, false, f.IsAnimatedImage())
 			assert.Equal(t, false, f.IsSidecar())
@@ -1551,6 +1554,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, true, f.IsImage())
 			assert.Equal(t, false, f.IsVideo())
 			assert.Equal(t, true, f.IsAnimated())
+			assert.Equal(t, false, f.NotAnimated())
 			assert.Equal(t, true, f.IsGIF())
 			assert.Equal(t, true, f.IsAnimatedImage())
 			assert.Equal(t, false, f.IsSidecar())
@@ -1563,6 +1567,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 			assert.Equal(t, false, f.IsImage())
 			assert.Equal(t, true, f.IsVideo())
 			assert.Equal(t, true, f.IsAnimated())
+			assert.Equal(t, false, f.NotAnimated())
 			assert.Equal(t, false, f.IsGIF())
 			assert.Equal(t, false, f.IsAnimatedImage())
 			assert.Equal(t, false, f.IsSidecar())
@@ -2376,28 +2381,85 @@ func TestMediaFile_IsJson(t *testing.T) {
 	})
 }
 
-func TestMediaFile_IsPlayableVideo(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
-		conf := config.TestConfig()
+func TestMediaFile_NeedsTranscoding(t *testing.T) {
+	c := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.json")
+	t.Run("json", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/blue-go-video.json")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.False(t, mediaFile.IsPlayableVideo())
+		assert.False(t, f.NeedsTranscoding())
 	})
-	t.Run("true", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/blue-go-video.mp4")
+	t.Run("mp4", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/blue-go-video.mp4")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.True(t, mediaFile.IsPlayableVideo())
+		assert.False(t, f.NeedsTranscoding())
+	})
+	t.Run("mov", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/earth.mov")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, f.NeedsTranscoding())
+	})
+	t.Run("gif", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/pythagoras.gif")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, f.NeedsTranscoding())
+	})
+}
+
+func TestMediaFile_SkipTranscoding(t *testing.T) {
+	c := config.TestConfig()
+
+	t.Run("json", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/blue-go-video.json")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, f.SkipTranscoding())
+	})
+	t.Run("mp4", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/blue-go-video.mp4")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, f.SkipTranscoding())
+	})
+	t.Run("mov", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/earth.mov")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, f.SkipTranscoding())
+	})
+	t.Run("gif", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/pythagoras.gif")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, f.SkipTranscoding())
 	})
 }
 

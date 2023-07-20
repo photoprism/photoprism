@@ -106,7 +106,7 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 
 		if err != nil {
 			m.metaData.Error = err
-			log.Debugf("metadata: %s in %s", err, clean.Log(m.BaseName()))
+			log.Debugf("%s in %s", err, clean.Log(m.BaseName()))
 		}
 	})
 

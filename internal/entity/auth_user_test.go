@@ -561,6 +561,10 @@ func TestUser_SetPassword(t *testing.T) {
 		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
 		assert.Error(t, p.SetPassword("cat"))
 	})
+	t.Run("PasswordTooLong", func(t *testing.T) {
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		assert.Error(t, p.SetPassword("hfnoehurhgfoeuro7584othgiyruifh85hglhiryhgbbyeirygbubgirgtheuogfugfkhsbdgiyerbgeuigbdtiyrgehbik"))
+	})
 }
 
 func TestUser_InitLogin(t *testing.T) {
@@ -759,6 +763,28 @@ func TestAddUser(t *testing.T) {
 		err := AddUser(u)
 		assert.Error(t, err)
 	})
+	t.Run("TooLong", func(t *testing.T) {
+		u := form.User{
+			UserName:  "thomas3",
+			UserEmail: "thomas3@example.com",
+			Password:  "1234567725244364789969hhkvnsgjlb;ghfnbn nd;dhewy8ortfgbkryeti7gfbie57yteoubgvlsiruwojflger",
+			UserRole:  acl.RoleAdmin.String(),
+		}
+
+		err := AddUser(u)
+		assert.Error(t, err)
+	})
+	t.Run("Invalid Role", func(t *testing.T) {
+		u := form.User{
+			UserName:  "thomas4",
+			UserEmail: "thomas4@example.com",
+			Password:  "helloworld",
+			UserRole:  "invalid",
+		}
+
+		err := AddUser(u)
+		assert.Error(t, err)
+	})
 	t.Run("Valid", func(t *testing.T) {
 		u := form.User{
 			UserName:  "thomas2",
@@ -891,6 +917,41 @@ func TestUser_Form(t *testing.T) {
 		t.Logf("User.UserDetails: %#v", m.UserDetails)
 		t.Logf("Form: %#v", frm)
 		t.Logf("Form.UserDetails: %#v", frm.UserDetails)
+	})
+}
+
+func TestUser_PrivilegeLevelChange(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UserRole = "guest"
+
+		assert.True(t, m.PrivilegeLevelChange(frm))
+	})
+	t.Run("False", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, m.PrivilegeLevelChange(frm))
 	})
 }
 

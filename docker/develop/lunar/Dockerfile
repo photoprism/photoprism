@@ -50,10 +50,10 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
     apt-get update && apt-get -qq upgrade && \
     apt-get -qq install \
-        libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
-        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync \
-        imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
-        libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+        libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 \
+        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync imagemagick libvips-dev rawtherapee \
+        ffmpeg libffmpeg-nvenc-dev libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra \
+        x264 x265 libde265-dev libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \

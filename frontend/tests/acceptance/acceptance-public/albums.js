@@ -8,6 +8,7 @@ import Photo from "../page-model/photo";
 import PhotoViewer from "../page-model/photoviewer";
 import Page from "../page-model/page";
 import AlbumDialog from "../page-model/dialog-album";
+import PhotoEdit from "../page-model/photo-edit";
 
 fixture`Test albums`.page`${testcafeconfig.url}`;
 
@@ -19,6 +20,7 @@ const photo = new Photo();
 const photoviewer = new PhotoViewer();
 const page = new Page();
 const albumdialog = new AlbumDialog();
+const photoedit = new PhotoEdit();
 
 test.meta("testID", "albums-001").meta({ type: "short", mode: "public" })(
   "Common: Create/delete album on /albums",
@@ -48,9 +50,29 @@ test.meta("testID", "albums-002").meta({ type: "short", mode: "public" })(
     await toolbar.search("photo:true");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
     const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+
+    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await t
+      .click(photoedit.infoTab)
+      .expect(Selector("td").withText("Albums").visible)
+      .notOk()
+      .expect(Selector("td").withText("NotYetExistingAlbum").visible)
+      .notOk()
+      .click(photoedit.dialogClose);
+
     await photo.selectPhotoFromUID(SecondPhotoUid);
     await photo.selectPhotoFromUID(FirstPhotoUid);
     await contextmenu.triggerContextMenuAction("album", "NotYetExistingAlbum");
+
+    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await t
+      .click(photoedit.infoTab)
+      .expect(Selector("td").withText("Albums").visible)
+      .ok()
+      .expect(Selector("td").withText("NotYetExistingAlbum").visible)
+      .ok()
+      .click(photoedit.dialogClose);
+
     await menu.openPage("albums");
     const AlbumCountAfterCreation = await album.getAlbumCount("all");
 
@@ -64,6 +86,17 @@ test.meta("testID", "albums-002").meta({ type: "short", mode: "public" })(
     const AlbumCountAfterDelete = await album.getAlbumCount("all");
 
     await t.expect(AlbumCountAfterDelete).eql(AlbumCount);
+
+    await menu.openPage("browse");
+    await toolbar.search("photo:true");
+    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await t
+      .click(photoedit.infoTab)
+      .expect(Selector("td").withText("Albums").visible)
+      .notOk()
+      .expect(Selector("td").withText("NotYetExistingAlbum").visible)
+      .notOk()
+      .click(photoedit.dialogClose);
   }
 );
 
@@ -132,6 +165,16 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
     await toolbar.search("photo:true");
     const FirstPhotoUid = await photo.getNthPhotoUid("image", 0);
     const SecondPhotoUid = await photo.getNthPhotoUid("image", 1);
+
+    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await t
+      .click(photoedit.infoTab)
+      .expect(Selector("td").withText("Albums").visible)
+      .notOk()
+      .expect(Selector("td").withText("Holiday").visible)
+      .notOk()
+      .click(photoedit.dialogClose);
+
     await photo.selectPhotoFromUID(SecondPhotoUid);
     await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
     await photoviewer.triggerPhotoViewerAction("select");
@@ -143,12 +186,32 @@ test.meta("testID", "albums-004").meta({ type: "short", mode: "public" })(
 
     await t.expect(PhotoCountAfterAdd).eql(PhotoCount + 2);
 
+    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await t
+      .click(photoedit.infoTab)
+      .expect(Selector("td").withText("Albums").visible)
+      .ok()
+      .expect(Selector("td").withText("Holiday").visible)
+      .ok()
+      .click(photoedit.dialogClose);
+
     await photo.selectPhotoFromUID(FirstPhotoUid);
     await photo.selectPhotoFromUID(SecondPhotoUid);
     await contextmenu.triggerContextMenuAction("remove", "");
     const PhotoCountAfterRemove = await photo.getPhotoCount("all");
 
     await t.expect(PhotoCountAfterRemove).eql(PhotoCountAfterAdd - 2);
+
+    await menu.openPage("browse");
+    await toolbar.search("photo:true");
+    await t.click(page.cardTitle.withAttribute("data-uid", FirstPhotoUid));
+    await t
+      .click(photoedit.infoTab)
+      .expect(Selector("td").withText("Albums").visible)
+      .notOk()
+      .expect(Selector("td").withText("Holiday").visible)
+      .notOk()
+      .click(photoedit.dialogClose);
   }
 );
 

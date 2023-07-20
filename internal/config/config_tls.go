@@ -31,13 +31,28 @@ func (c *Config) TLSCert() string {
 		return certName
 	}
 
-	// Try to find server certificate.
-	if fileName := filepath.Join(c.CertificatesPath(), certName); fs.FileExistsNotEmpty(fileName) {
-		return fileName
-	} else if fileName = filepath.Join("/etc/ssl/certs", certName); fs.FileExistsNotEmpty(fileName) {
+	// find looks for an existing certificate file.
+	find := func(certName string) string {
+		if fileName := filepath.Join(c.CertificatesPath(), certName); fs.FileExistsNotEmpty(fileName) {
+			return fileName
+		} else if fileName = filepath.Join("/etc/ssl/certs", certName); fs.FileExistsNotEmpty(fileName) {
+			return fileName
+		} else {
+			return ""
+		}
+	}
+
+	// Find matching TLS certificate file.
+	if fileName := find(certName); fileName != "" {
 		return fileName
 	}
 
+	// Find default TLS certificate.
+	if c.DefaultTLS() {
+		return find("photoprism" + PublicCertExt)
+	}
+
+	// Not found.
 	return ""
 }
 
@@ -51,13 +66,28 @@ func (c *Config) TLSKey() string {
 		return keyName
 	}
 
-	// Try to find private key.
-	if fileName := filepath.Join(c.CertificatesPath(), keyName); fs.FileExistsNotEmpty(fileName) {
-		return fileName
-	} else if fileName = filepath.Join("/etc/ssl/private", keyName); fs.FileExistsNotEmpty(fileName) {
+	// find looks for an existing private key file.
+	find := func(keyName string) string {
+		if fileName := filepath.Join(c.CertificatesPath(), keyName); fs.FileExistsNotEmpty(fileName) {
+			return fileName
+		} else if fileName = filepath.Join("/etc/ssl/private", keyName); fs.FileExistsNotEmpty(fileName) {
+			return fileName
+		} else {
+			return ""
+		}
+	}
+
+	// Find matching private key.
+	if fileName := find(keyName); fileName != "" {
 		return fileName
 	}
 
+	// Find default key file.
+	if c.DefaultTLS() {
+		return find("photoprism" + PrivateKeyExt)
+	}
+
+	// Not found.
 	return ""
 }
 
@@ -70,7 +100,7 @@ func (c *Config) TLS() (publicCert, privateKey string) {
 	return c.TLSCert(), c.TLSKey()
 }
 
-// DisableTLS checks if HTTPS should be disabled.
+// DisableTLS checks if HTTPS should be disabled even if the site URL starts with https:// and a certificate is available.
 func (c *Config) DisableTLS() bool {
 	if c.options.DisableTLS {
 		return true
@@ -79,4 +109,9 @@ func (c *Config) DisableTLS() bool {
 	}
 
 	return c.TLSCert() == "" || c.TLSKey() == ""
+}
+
+// DefaultTLS checks if a self-signed certificate should be used to enable HTTPS if no other certificate is available.
+func (c *Config) DefaultTLS() bool {
+	return c.options.DefaultTLS
 }

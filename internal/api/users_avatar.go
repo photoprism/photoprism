@@ -36,11 +36,11 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user is has user management privileges.
-		isPrivileged := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		uid := clean.UID(c.Param("uid"))
 
 		// Users may only change their own avatar.
-		if !isPrivileged && s.User().UserUID != uid {
+		if !isAdmin && s.User().UserUID != uid {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "user does not match"}, s.RefID)
 			AbortForbidden(c)
 			return

@@ -250,7 +250,7 @@ func FirstOrCreateCell(m *Cell) *Cell {
 // Keywords returns search keywords for a location.
 func (m *Cell) Keywords() (result []string) {
 	if m.Place == nil {
-		log.Errorf("cell: place for %s is missing - possible bug", m.ID)
+		log.Errorf("cell: place for %s is missing - you may have found a bug", m.ID)
 		return result
 	}
 

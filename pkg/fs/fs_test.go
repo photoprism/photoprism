@@ -41,12 +41,20 @@ func TestPathExists(t *testing.T) {
 	assert.True(t, PathExists("./testdata"))
 	assert.False(t, PathExists("./testdata/test.jpg"))
 	assert.False(t, PathExists("./testdata3ggdtgdg"))
+	assert.False(t, PathExists(""))
 }
 
 func TestPathWritable(t *testing.T) {
-	assert.True(t, PathExists("./testdata"))
-	assert.False(t, PathExists("./testdata/test.jpg"))
-	assert.False(t, PathExists("./testdata3ggdtgdg"))
+	assert.True(t, PathWritable("./testdata"))
+	assert.False(t, PathWritable("./testdata/test.jpg"))
+	assert.False(t, PathWritable("./testdata3ggdtgdg"))
+	assert.False(t, PathWritable(""))
+}
+
+func TestWritable(t *testing.T) {
+	assert.True(t, Writable("./testdata"))
+	assert.False(t, Writable("./testdata3ggdtgdg"))
+	assert.False(t, Writable(""))
 }
 
 func TestOverwrite(t *testing.T) {

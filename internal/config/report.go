@@ -155,6 +155,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Web Server.
 		{"disable-tls", fmt.Sprintf("%t", c.DisableTLS())},
+		{"default-tls", fmt.Sprintf("%t", c.DefaultTLS())},
 		{"tls-email", c.TLSEmail()},
 		{"tls-cert", c.TLSCert()},
 		{"tls-key", c.TLSKey()},
@@ -183,6 +184,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"sips-blacklist", c.SipsBlacklist()},
 		{"ffmpeg-bin", c.FFmpegBin()},
 		{"ffmpeg-encoder", c.FFmpegEncoder().String()},
+		{"ffmpeg-size", fmt.Sprintf("%d", c.FFmpegSize())},
 		{"ffmpeg-bitrate", fmt.Sprintf("%d", c.FFmpegBitrate())},
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},
 		{"ffmpeg-map-audio", c.FFmpegMapAudio()},

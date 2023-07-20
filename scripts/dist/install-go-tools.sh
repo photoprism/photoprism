@@ -41,14 +41,13 @@ mkdir -p "$GOPATH/src"
 case $DESTARCH in
   arm | ARM | aarch | armv7l | armhf)
     # no additional tools on ARMv7 to reduce build time
-    echo "Skipping installation of goimports, go-mod-outdated, exif-read-tool and richgo."
+    echo "Skipping installation of goimports, go-mod-outdated, and richgo."
     ;;
 
   *)
-    echo "Installing goimports, go-mod-outdated, exif-read-tool and richgo in /usr/local/bin..."
+    echo "Installing goimports, go-mod-outdated, and richgo in /usr/local/bin..."
     GOBIN="/usr/local/bin" go install golang.org/x/tools/cmd/goimports@latest
     GOBIN="/usr/local/bin" go install github.com/psampaz/go-mod-outdated@latest
-    GOBIN="/usr/local/bin" go install github.com/dsoprea/go-exif/v3/command/exif-read-tool@latest
     GOBIN="/usr/local/bin" go install github.com/mikefarah/yq/v4@latest
     GOBIN="/usr/local/bin" go install github.com/kyoh86/richgo@latest
     GOBIN="/usr/local/bin" go install github.com/muesli/duf@latest

@@ -396,7 +396,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",
-			Value:  "http://photoprism.me:2342/",
+			Value:  "http://localhost:2342/",
 			EnvVar: EnvVar("SITE_URL"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -456,8 +456,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-tls",
-			Usage:  "disable HTTPS even if a certificate is available",
+			Usage:  "disable HTTPS/TLS even if the site URL starts with https:// and a certificate is available",
 			EnvVar: EnvVar("DISABLE_TLS"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "default-tls",
+			Usage:  "default to a self-signed HTTPS/TLS certificate if no other certificate is available",
+			EnvVar: EnvVar("DEFAULT_TLS"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "tls-email",
@@ -575,8 +580,14 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("FFMPEG_ENCODER"),
 		}}, {
 		Flag: cli.IntFlag{
+			Name:   "ffmpeg-size, vs",
+			Usage:  "maximum video size in `PIXELS` (720-7680)",
+			Value:  thumb.Sizes[thumb.Fit3840].Width,
+			EnvVar: EnvVar("FFMPEG_SIZE"),
+		}}, {
+		Flag: cli.IntFlag{
 			Name:   "ffmpeg-bitrate, vb",
-			Usage:  "maximum FFmpeg encoding `BITRATE` (Mbit/s)",
+			Usage:  "maximum video `BITRATE` in Mbit/s",
 			Value:  50,
 			EnvVar: EnvVar("FFMPEG_BITRATE"),
 		}}, {

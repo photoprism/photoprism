@@ -68,10 +68,10 @@ export class Thumb extends Model {
     }
   }
 
-  static thumbNotFound() {
+  static notFound() {
     const result = {
       UID: "",
-      Title: $gettext("Not Found"),
+      Title: $gettext("Invalid photo selected"),
       TakenAtLocal: "",
       Description: "",
       Favorite: false,
@@ -85,8 +85,8 @@ export class Thumb extends Model {
     for (let i = 0; i < thumbs.length; i++) {
       let t = thumbs[i];
 
-      result[t.size] = {
-        src: `${config.contentUri}/svg/photo`,
+      result.Thumbs[t.size] = {
+        src: `${config.staticUri}/img/404.jpg`,
         w: t.w,
         h: t.h,
       };
@@ -112,7 +112,7 @@ export class Thumb extends Model {
     }
 
     if (!photo || !photo.Hash) {
-      return this.thumbNotFound();
+      return this.notFound();
     }
 
     const result = {
@@ -144,7 +144,7 @@ export class Thumb extends Model {
 
   static fromFile(photo, file) {
     if (!photo || !file || !file.Hash) {
-      return this.thumbNotFound();
+      return this.notFound();
     }
 
     const result = {
@@ -236,7 +236,7 @@ export class Thumb extends Model {
 
   static thumbnailUrl(file, size) {
     if (!file.Hash) {
-      return `${config.contentUri}/svg/photo`;
+      return `${config.staticUri}/img/404.jpg`;
     }
 
     return `${config.contentUri}/t/${file.Hash}/${config.previewToken}/${size}`;

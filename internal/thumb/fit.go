@@ -2,9 +2,9 @@ package thumb
 
 import "image"
 
-// Fitted contains only "fit" cropped thumbnail sizes from largest to smallest.
+// FitSizes contains "fit" cropped thumbnail sizes from largest to smallest.
 // Best for the viewer as proportional resizing maintains the aspect ratio.
-var Fitted = []Size{
+var FitSizes = SizeList{
 	Sizes[Fit7680],
 	Sizes[Fit4096],
 	Sizes[Fit3840],
@@ -17,15 +17,15 @@ var Fitted = []Size{
 
 // Fit returns the largest fitting thumbnail size.
 func Fit(w, h int) (size Size) {
-	j := len(Fitted) - 1
+	j := len(FitSizes) - 1
 
 	for i := j; i >= 0; i-- {
-		if size = Fitted[i]; w <= size.Width && h <= size.Height {
+		if size = FitSizes[i]; w <= size.Width && h <= size.Height {
 			return size
 		}
 	}
 
-	return Fitted[0]
+	return FitSizes[0]
 }
 
 // FitBounds returns the largest thumbnail size fitting the rectangle.

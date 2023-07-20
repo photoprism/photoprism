@@ -6,8 +6,8 @@ PhotoPrism: Browse Your Life in Pictures
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)](https://docs.photoprism.app/)
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)](https://link.photoprism.app/chat)
 [![GitHub Discussions](https://img.shields.io/badge/ask-%20on%20github-4d6a91.svg)](https://link.photoprism.app/discussions)
-[![Twitter](https://img.shields.io/badge/follow-@photoprism_app-00acee.svg)](https://link.photoprism.app/twitter)
-[![Reddit](https://img.shields.io/badge/join-/r/photoprism-EC5800.svg)](https://link.photoprism.app/reddit)
+[![Mastodon](https://dl.photoprism.app/img/badges/badge-mastodon.svg)](https://floss.social/@photoprism)
+[![Twitter](https://dl.photoprism.app/img/badges/badge-twitter.svg)](https://link.photoprism.app/twitter)
 
 PhotoPrism® is an AI-Powered Photos App for the [Decentralized Web](https://en.wikipedia.org/wiki/Decentralized_web).
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
@@ -83,9 +83,8 @@ Please also leave [a star](https://github.com/photoprism/photoprism/stargazers) 
 
 ## Getting Support ##
 
-Visit [docs.photoprism.app/user-guide](https://docs.photoprism.app/user-guide/) to learn how to [sync](https://docs.photoprism.app/user-guide/sync/webdav/), [organize](https://docs.photoprism.app/user-guide/library/), and [share](https://docs.photoprism.app/user-guide/share/) your pictures. If you need help installing our software at home, you can [join us on Reddit](https://link.photoprism.app/reddit), ask in our [Community Chat](https://link.photoprism.app/chat), or post your question in [GitHub Discussions](https://link.photoprism.app/discussions).
-
-Common problems can be quickly diagnosed and solved using the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) in [Getting Started](https://docs.photoprism.app/getting-started/). Eligible [members](https://link.photoprism.app/membership) are also welcome to [email us for technical support](https://www.photoprism.app/contact) and personalized advice.
+Visit [docs.photoprism.app/user-guide](https://docs.photoprism.app/user-guide/) to learn how to [sync](https://docs.photoprism.app/user-guide/sync/webdav/), [organize](https://docs.photoprism.app/user-guide/library/), and [share](https://docs.photoprism.app/user-guide/share/) your pictures. If you need help installing our software at home, you are welcome to post your question in [GitHub Discussions](https://link.photoprism.app/discussions) or ask in our [Community Chat](https://link.photoprism.app/chat).
+Common problems can be quickly diagnosed and solved using our [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/). Eligible [members](https://link.photoprism.app/membership) are also welcome to email us for technical support and advice.
 
 ## Upcoming Features and Enhancements ##
 

@@ -73,7 +73,7 @@ func init() {
 		t := thumb.Sizes[name]
 
 		if t.Public {
-			Thumbs = append(Thumbs, ThumbSize{Size: string(name), Use: t.Use, Width: t.Width, Height: t.Height})
+			Thumbs = append(Thumbs, ThumbSize{Size: string(name), Usage: t.Usage, Width: t.Width, Height: t.Height})
 		}
 	}
 }
@@ -144,7 +144,7 @@ func (c *Config) Restart() bool {
 // CliContext returns the cli context if set.
 func (c *Config) CliContext() *cli.Context {
 	if c.cliCtx == nil {
-		log.Warnf("config: cli context not set - possible bug")
+		log.Warnf("config: cli context not set - you may have found a bug")
 	}
 
 	return c.cliCtx
@@ -162,7 +162,7 @@ func (c *Config) CliGlobalString(name string) string {
 // Options returns the raw config options.
 func (c *Config) Options() *Options {
 	if c.options == nil {
-		log.Warnf("config: options should not be nil - possible bug")
+		log.Warnf("config: options should not be nil - you may have found a bug")
 		c.options = NewOptions(nil)
 	}
 
@@ -480,10 +480,10 @@ func (c *Config) StaticAssetUri(res string) string {
 	return c.StaticUri() + "/" + res
 }
 
-// SiteUrl returns the public server URL (default is "http://photoprism.me:2342/").
+// SiteUrl returns the public server URL (default is "http://localhost:2342/").
 func (c *Config) SiteUrl() string {
 	if c.options.SiteUrl == "" {
-		return "http://photoprism.me:2342/"
+		return "http://localhost:2342/"
 	}
 
 	return strings.TrimRight(c.options.SiteUrl, "/") + "/"

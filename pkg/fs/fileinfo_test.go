@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/emersion/go-webdav"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -70,6 +72,19 @@ func TestNewFileInfos(t *testing.T) {
 			assert.Equal(t, info.Dir, file.Dir, "%t expected for %s", info.Dir, file.Name)
 		}
 	}
+}
+
+func TestWebFileInfo(t *testing.T) {
+
+	infos := webdav.FileInfo{Path: "testdata", Size: 3, ModTime: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), IsDir: true, MIMEType: "image"}
+
+	result := WebFileInfo(infos, PathSeparator)
+
+	assert.Equal(t, "testdata", result.Name)
+	assert.Equal(t, "/testdata", result.Abs)
+	assert.Equal(t, int64(3), result.Size)
+	assert.Equal(t, "2020-01-01 00:00:00 +0000 UTC", result.Date.String())
+	assert.Equal(t, true, result.Dir)
 }
 
 func TestFileInfos_Less(t *testing.T) {

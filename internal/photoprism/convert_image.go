@@ -21,7 +21,7 @@ import (
 // ToImage converts a media file to a directly supported image file format.
 func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 	if f == nil {
-		return nil, fmt.Errorf("convert: file is nil - possible bug")
+		return nil, fmt.Errorf("convert: file is nil - you may have found a bug")
 	}
 
 	if !f.Exists() {
