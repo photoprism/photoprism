@@ -1,3 +1,4 @@
+@import url("themes/default.css");
 @import url("themes/grayscale.css");
 @import url("themes/shadow.css");
 @import url("themes/yellowstone.css");
@@ -6,11 +7,11 @@
 @import url("themes/neon.css");
 @import url("themes/gemstone.css");
 @import url("themes/carbon.css");
+@import url("themes/mint.css");
 @import url("themes/nordic.css");
 @import url("themes/lavender.css");
-@import url("themes/default.css");
 
-/* General Styles */
+/* Input Style Overrides */
 
 :-webkit-autofill,
 :-webkit-autofill:hover,
@@ -21,89 +22,14 @@ input:-webkit-autofill:focus {
     transition: background-color 9999s !important;
 }
 
-body.dark-theme #photoprism .v-tabs .v-badge__badge {
-    color: #000000;
-}
-
-body.dark-theme #photoprism .theme--light.v-table thead th {
-    color: #ffffff;
-}
-
-.card {
-    background-color: #e0e0e0;
-}
-
-body.dark-theme .card {
-    background-color: #1a1a1a;
-}
-
-body.dark-theme #photoprism .v-table .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
-    background: transparent;
-}
-
-body.dark-theme .theme--light.v-list .v-list__tile--highlighted,
-body.dark-theme .theme--light.v-list a:hover {
-    background: rgba(255,255,255,0.3) !important;
-}
-
-body.dark-theme .v-input input::placeholder {
-    color: rgba(255,255,255,0.5) !important;
-}
-
 .v-text-field>.v-input__control>.v-input__slot:after,
 .v-text-field>.v-input__control>.v-input__slot:before {
     display: none !important;
 }
 
-/*
-body.dark-theme .v-text-field.v-text-field--enclosed .v-text-field__details {
-    padding-left: 0;
-}*/
-
-.theme--light.v-list .v-list__tile--highlighted,
-.theme--light.v-list a:hover {
-    background: rgba(155,155,155,0.3) !important;
-}
-
-body.dark-theme #photoprism .map-control .theme--light.v-input:not(.v-input--is-disabled) i,
-body.dark-theme #photoprism .map-control .theme--light.v-input:not(.v-input--is-disabled) input {
-    color: #333333;
-}
-
-body:not(.dark-theme) .theme--dark.v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat):not(.v-btn--outline) {
-    color: rgb(51, 51, 51)!important;
-    background-color: #d9dadc!important;
-}
-
-body.dark-theme #photoprism .theme--light.v-chip,
-body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__control>.v-input__slot {
-    background: #00000033;
-}
-
-body.dark-theme #photoprism,
-body.dark-theme #photoprism .p-page a,
-body.dark-theme #photoprism .v-datatable a,
-body.dark-theme #photoprism .theme--light.v-expansion-panel .v-expansion-panel__container,
-body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
-body.dark-theme #photoprism .theme--light {
-    color: #ffffff;
-    caret-color: #ffffff;
-    stroke: #ffffff;
-}
-
-body.dark-theme #photoprism .theme--light.v-label {
-    color: #ffffffaa;
-}
-
-body.dark-theme #photoprism .theme--light.v-select .v-select__selections {
-    color: #ffffffee;
-}
-
 #photoprism .v-select.v-text-field--box .v-select__selections {
     padding-top: 20px;
 }
-
-/* Exceptions */
 
 #photoprism .theme--light.v-text-field--solo.background-inherit>.v-input__control>.v-input__slot {
     background: inherit;

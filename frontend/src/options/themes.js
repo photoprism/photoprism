@@ -10,7 +10,7 @@ let themes = {
     name: "default",
     colors: {
       application: "#2f3031",
-      form: "#eeeeee",
+      form: "#2f3031",
       card: "#232425",
       primary: "#9E7BEA",
       "primary-button": "#5F1DB7",
@@ -41,7 +41,7 @@ let themes = {
     sponsor: false,
     colors: {
       application: "#525252",
-      form: "#e5e4e2",
+      form: "#525252",
       card: "#5e5e5e",
       primary: "#c8bdb1",
       "primary-button": "#726e69",
@@ -103,7 +103,7 @@ let themes = {
     sponsor: false,
     colors: {
       application: "#F5F5F5",
-      form: "#eeeeee",
+      form: "#F5F5F5",
       card: "#e0e0e0",
       primary: "#FFCA28",
       "primary-button": "#212121",
@@ -128,6 +128,38 @@ let themes = {
       "navigation-home": "#000000",
     },
   },
+  mint: {
+    dark: true,
+    sponsor: false,
+    title: "Mint",
+    name: "mint",
+    colors: {
+      application: "#121212",
+      form: "#121212",
+      card: "#1e1e1e",
+      primary: "#2bb14c",
+      "primary-button": "#22903d",
+      "secondary-dark": "#2bb14c",
+      secondary: "#181818",
+      "secondary-light": "#1f1f1f",
+      accent: "#2bb14c",
+      error: "#e57373",
+      info: "#00acc1",
+      success: "#4db6ac",
+      warning: "#ffd740",
+      remove: "#e57373",
+      restore: "#64b5f6",
+      album: "#ffab00",
+      download: "#00bfa5",
+      private: "#00b8d4",
+      edit: "#00b8d4",
+      share: "#9575cd",
+      love: "#ef5350",
+      terminal: "#181818",
+      navigation: "#181818",
+      "navigation-home": "#181818",
+    },
+  },
   nordic: {
     dark: false,
     sponsor: false,
@@ -135,7 +167,7 @@ let themes = {
     name: "nordic",
     colors: {
       application: "#f7f8fa",
-      form: "#eeeeee",
+      form: "#f7f8fa",
       card: "#ECEFF4",
       primary: "#4ca0b8",
       "primary-button": "#519fb6",
@@ -197,7 +229,7 @@ let themes = {
     sponsor: true,
     colors: {
       application: "#202020",
-      form: "#AFB42B",
+      form: "#202020",
       card: "#242424",
       primary: "#814fd9",
       "primary-button": "#7e57c2",
@@ -229,7 +261,7 @@ let themes = {
     name: "carbon",
     colors: {
       application: "#16141c",
-      form: "#eeeeee",
+      form: "#16141c",
       card: "#292732",
       primary: "#8a6eff",
       "primary-button": "#53478a",
@@ -260,7 +292,7 @@ let themes = {
     sponsor: true,
     colors: {
       application: "#2f2f31",
-      form: "#eeeeee",
+      form: "#2f2f31",
       card: "#2b2b2d",
       primary: "#AFB4D4",
       "primary-button": "#545465",
@@ -291,7 +323,7 @@ let themes = {
     sponsor: true,
     colors: {
       application: "#242326",
-      form: "#AFB42B",
+      form: "#242326",
       card: "#1b1a1c",
       primary: "#f44abf",
       "primary-button": "#890664",
@@ -322,7 +354,7 @@ let themes = {
     sponsor: true,
     colors: {
       application: "#444",
-      form: "#eeeeee",
+      form: "#444",
       card: "#666666",
       primary: "#c4f1e5",
       "primary-button": "#74817d",
@@ -353,7 +385,7 @@ let themes = {
     sponsor: true,
     colors: {
       application: "#212121",
-      form: "#AFB42B",
+      form: "#212121",
       card: "#1d1d1d",
       primary: "#04acaf",
       "primary-button": "#444444",
@@ -384,7 +416,7 @@ let themes = {
     sponsor: true,
     colors: {
       application: "#32312f",
-      form: "#eeeeee",
+      form: "#32312f",
       card: "#262524",
       primary: "#ffb700",
       "primary-button": "#54524e",
@@ -432,6 +464,11 @@ let options = [
   {
     text: "Legacy",
     value: "legacy",
+    disabled: false,
+  },
+  {
+    text: "Mint",
+    value: "mint",
     disabled: false,
   },
   {
