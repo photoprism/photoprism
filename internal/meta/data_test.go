@@ -175,3 +175,22 @@ func TestData_CellID(t *testing.T) {
 		assert.Equal(t, "s2:100c9acde614", data.CellID())
 	})
 }
+
+func TestData_IsHDR(t *testing.T) {
+	t.Run("true", func(t *testing.T) {
+		data := Data{
+			ImageType: 3,
+			TakenAt:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
+		}
+
+		assert.True(t, data.IsHDR())
+	})
+	t.Run("false", func(t *testing.T) {
+		data := Data{
+			ImageType: 2,
+			TakenAt:   time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
+		}
+
+		assert.False(t, data.IsHDR())
+	})
+}

@@ -75,3 +75,18 @@ func TestGpsCoord(t *testing.T) {
 		assert.Equal(t, float64(0), r)
 	})
 }
+
+func TestClipLat(t *testing.T) {
+	assert.Equal(t, 10.254852777777785, clipLat(100.25485277777778))
+	assert.Equal(t, 89.25485277777778, clipLat(89.25485277777778))
+	assert.Equal(t, 10.254852777777785, clipLat(190.25485277777778))
+	assert.Equal(t, -10.254852777777785, clipLat(-100.25485277777778))
+	assert.Equal(t, -89.25485277777778, clipLat(-89.25485277777778))
+	assert.Equal(t, -10.254852777777785, clipLat(-190.25485277777778))
+}
+
+func TestNormalizeGPS(t *testing.T) {
+	assert.Equal(t, 100.25485277777778, normalizeCoord(100.25485277777778, 120.25485277777778))
+	assert.Equal(t, 110.25485277777778, normalizeCoord(-130.25485277777778, 120.25485277777778))
+	assert.Equal(t, -120.25485277777778, normalizeCoord(120.25485277777778, 120.25485277777778))
+}
