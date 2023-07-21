@@ -125,6 +125,17 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 			if err = entry.Save(); err != nil {
 				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
 			}
+
+			// save the album with updated value for updated_at
+			m := Album{}
+
+			stmt := UnscopedDb().Where("album_uid = ?", albumUid)
+
+			if stmt.First(&m).Error != nil {
+				return nil
+			}
+
+			m.Save()
 		}
 	}
 
