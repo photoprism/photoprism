@@ -178,8 +178,26 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Error("at least one album entry expected")
 		}
 
-		// t.Logf("photo album entries: %+v", entries)
-	})
+		var album Album
+		if err = Db().Where("album_uid = ?", "at6axuzitogaaiax").Find(
+			&album,
+		).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		photo_updatedAt := entries[0].UpdatedAt
+		album_updatedAt := album.UpdatedAt
+
+		assert.Truef(
+			t, photo_updatedAt.Before(album_updatedAt),
+			"Expected the UpdatedAt field of an album to be updated when"+
+				" new photos are added",
+		)
+
+		t.Logf("album: %+v", album)
+		t.Logf("photo albums: %+v", entries)
+		},
+	)
 
 	t.Run("empty photo", func(t *testing.T) {
 		err := AddPhotoToAlbums("", []string{"at6axuzitogaaiax"})
@@ -216,7 +234,24 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			t.Error("at least one album entry expected")
 		}
 
-		// t.Logf("photo album entries: %+v", entries)
+		var album Album
+		if err = Db().Where("album_uid = ?", "at6axuzitogaaiax").Find(
+			&album,
+		).Error; err != nil {
+			t.Fatal(err)
+		}
+
+		photo_updatedAt := entries[0].UpdatedAt
+		album_updatedAt := album.UpdatedAt
+
+		assert.Truef(
+			t, photo_updatedAt.Before(album_updatedAt),
+			"Expected the UpdatedAt field of an album to be updated when"+
+				" new photos are added",
+		)
+
+		t.Logf("album: %+v", album)
+		t.Logf("photo albums: %+v", entries)
 	})
 }
 
