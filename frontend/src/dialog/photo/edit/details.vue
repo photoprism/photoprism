@@ -158,6 +158,7 @@
                 placeholder=""
                 color="secondary-dark"
                 class="input-latitude"
+                @paste="pastePosition"
               ></v-text-field>
             </v-flex>
 
@@ -174,6 +175,7 @@
                 placeholder=""
                 color="secondary-dark"
                 class="input-longitude"
+                @paste="pastePosition"
               ></v-text-field>
             </v-flex>
 
@@ -468,6 +470,27 @@ export default {
       const taken = this.model.getDateTime();
 
       this.time = taken.toFormat("HH:mm:ss");
+    },
+    pastePosition(event) {
+      /* If text is pasted in the form of "XXX.XXXX, YYY.YYYY" (for example if
+       * pasting a position from external mapping app) then auto-fill both lat
+       * and lng fields
+       */
+      let paste = (event.clipboardData || window.clipboardData).getData("text");
+      let s = paste.split(/[ ,]+/);
+
+      if (s.length == 2)
+      {
+        let lat = parseFloat(s[0]);
+        let lng = parseFloat(s[1]);
+        if(!isNaN(lat) && lat >= -90 && lat <= 90 &&
+            !isNaN(lng) && lng >= -180 && lng <= 180)
+        {
+          event.preventDefault();
+          this.model.Lat = lat;
+          this.model.Lng = lng;
+        }
+      }
     },
     updateModel() {
       if (!this.model.hasId()) {
