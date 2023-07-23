@@ -377,7 +377,6 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		} else if f.All {
-			log.Infof("archive: deleting all archived photos", clean.Log(f.String()))
 			photos, err = query.ArchivedPhotos(1000000, 0)
 		} else {
 			photos, err = query.SelectedPhotos(f)
