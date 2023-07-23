@@ -24,12 +24,11 @@
       </v-toolbar>
       <v-tabs
           v-model="active"
-          flat
-          grow
+          flat grow
+          class="form"
           color="secondary"
           slider-color="secondary-dark"
           :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
-          class="form"
       >
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Details')">edit</v-icon>
@@ -82,7 +81,7 @@
         </v-tab>
 
         <v-tabs-items touchless>
-          <v-tab-item>
+          <v-tab-item lazy>
             <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid"
                                  @close="close" @prev="prev" @next="next"></p-tab-photo-details>
           </v-tab-item>

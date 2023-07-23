@@ -3,7 +3,7 @@
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <p-photo-toolbar :filter="filter" :settings="settings" :refresh="refresh"
+    <p-photo-toolbar :context="context" :filter="filter" :settings="settings" :refresh="refresh"
                      :update-filter="updateFilter" :update-query="updateQuery"></p-photo-toolbar>
 
     <v-container v-if="loading" fluid class="pa-4">
@@ -12,7 +12,7 @@
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
-      <p-photo-clipboard :refresh="refresh" :selection="selection" :context="context"></p-photo-clipboard>
+      <p-photo-clipboard :context="context" :refresh="refresh" :selection="selection"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
                       :context="context"

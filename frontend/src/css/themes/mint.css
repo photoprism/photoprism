@@ -1,0 +1,92 @@
+/* Mint Theme */
+
+body.dark-theme.theme-mint,
+.theme-mint .v-content__wrap,
+.theme-mint .p-page,
+.theme-mint .form,
+.theme-mint .v-content {
+    background: #121212 !important;
+}
+
+#photoprism.theme-mint .theme--light.v-small-dialog__content,
+#photoprism.theme-mint .theme--light.v-sheet,
+#photoprism.theme-mint .theme--light.v-card,
+.theme-mint .application.theme--light {
+    background: #1e1e1e;
+}
+
+#photoprism.container.theme-mint {
+    background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
+}
+
+#photoprism.theme-mint .theme--light .v-table {
+    background: #1a1a1a;
+}
+
+#photoprism.theme-mint .theme--light.v-table thead th,
+#photoprism.theme-mint .theme--light.v-table tbody td {
+    color: #fff;
+}
+
+#photoprism.theme-mint .theme--light.v-table tbody tr:hover {
+    background: #2b2b2b;
+}
+
+#photoprism.theme-mint .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-mint .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-mint .theme--light.v-input--is-disabled .v-label,
+#photoprism.theme-mint .theme--light.v-input--is-disabled input,
+#photoprism.theme-mint .theme--light.v-input--is-disabled textarea {
+    color: #ccc;
+}
+
+#photoprism.theme-mint .theme--light.v-list {
+    background: #232425;
+}
+
+#photoprism.theme-mint a.text-link {
+    color: #f6f7e8 !important;
+}
+
+#photoprism.theme-mint .footer .body-link {
+    color: #f6f7e8 !important;
+}
+
+#photoprism.theme-mint .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-mint .accent--text {
+    color: #2bb14c !important;
+}
+
+#photoprism.theme-mint .theme--light.v-input:not(.v-input--is-disabled) input,
+#photoprism.theme-mint .theme--light.v-input:not(.v-input--is-disabled) textarea {
+    color: #fff;
+}
+
+#photoprism.theme-mint .theme--light.v-btn.v-btn--disabled,
+#photoprism.theme-mint .theme--light.v-btn.v-btn--disabled .v-btn__loading,
+#photoprism.theme-mint .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-mint .theme--light.v-list .v-list__tile__mask {
+    color: #cccccc;
+    background: transparent;
+}
+
+#photoprism.theme-mint .cards-view .card.is-selected .card-details {
+    color: #fff;
+    background-color: #333333;
+}
+
+#photoprism.theme-mint .cards-view .card.is-selected,
+#photoprism.theme-mint .cards-view .card.is-selected .card-background {
+    background-color: #333333 !important;
+}
+
+#photoprism.theme-mint .cards-view .card.is-selected .card-details .v-icon {
+    color: #fff;
+}
+
