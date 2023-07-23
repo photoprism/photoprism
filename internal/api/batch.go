@@ -361,19 +361,37 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			return
 		}
 
-		if len(f.Photos) == 0 {
-			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+		deleteStart := time.Now()
+
+		var photos entity.Photos
+		var err error
+
+		// Abort if user wants to delete all but does not have sufficient privileges.
+		if f.All && !acl.Resources.AllowAll(acl.ResourcePhotos, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+			AbortForbidden(c)
 			return
 		}
 
-		log.Infof("photos: deleting %s", clean.Log(f.String()))
+		// Get selection or all archived photos if f.All is true.
+		if len(f.Photos) == 0 && !f.All {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		} else if f.All {
+			log.Infof("archive: deleting all archived photos", clean.Log(f.String()))
+			photos, err = query.ArchivedPhotos(1000000, 0)
+		} else {
+			photos, err = query.SelectedPhotos(f)
+		}
 
-		// Fetch selection from index and record time.
-		deleteStart := time.Now()
-		photos, err := query.SelectedPhotos(f)
-
+		// Abort if the query failed or no photos were found.
 		if err != nil {
-			AbortEntityNotFound(c)
+			log.Errorf("archive: %s", err)
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		} else if len(photos) > 0 {
+			log.Infof("archive: deleting %s", english.Plural(len(photos), "photo", "photos"))
+		} else {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
 			return
 		}
 
@@ -398,8 +416,8 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			}
 		}
 
-		if numFiles > 0 {
-			log.Infof("delete: removed %s [%s]", english.Plural(numFiles, "file", "files"), time.Since(deleteStart))
+		if numFiles > 0 || len(deleted) > 0 {
+			log.Infof("archive: deleted %s and %s [%s]", english.Plural(numFiles, "file", "files"), english.Plural(len(deleted), "photo", "photos"), time.Since(deleteStart))
 		}
 
 		// Any photos deleted?

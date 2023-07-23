@@ -32,7 +32,11 @@
         <v-icon>view_column</v-icon>
       </v-btn>
 
-      <v-btn v-if="!$config.values.readonly && $config.feature('upload')" icon class="hidden-sm-and-down action-upload"
+      <v-btn v-if="canDelete && context === 'archive'" icon class="hidden-sm-and-down action-delete"
+             :title="$gettext('Delete')" @click.stop="deletePhotos()">
+        <v-icon>delete</v-icon>
+      </v-btn>
+      <v-btn v-else-if="canUpload" icon class="hidden-sm-and-down action-upload"
              :title="$gettext('Upload')" @click.stop="showUpload()">
         <v-icon>cloud_upload</v-icon>
       </v-btn>
@@ -166,15 +170,23 @@
         </v-layout>
       </v-card-text>
     </v-card>
+    <p-photo-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
+                           @confirm="batchDelete"></p-photo-delete-dialog>
   </v-form>
 </template>
 <script>
 import Event from "pubsub-js";
 import * as options from "options/options";
+import Api from "common/api";
+import Notify from "common/notify";
 
 export default {
   name: 'PPhotoToolbar',
   props: {
+    context: {
+      type: String,
+      default: 'photos',
+    },
     filter: {
       type: Object,
       default: () => {},
@@ -197,10 +209,15 @@ export default {
     },
   },
   data() {
+    const features = this.$config.settings().features;
+    const readonly = this.$config.get("readonly");
     return {
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
       config: this.$config.values,
+      readonly: readonly,
+      canUpload: !readonly && this.$config.allow("files", "upload") && features.upload,
+      canDelete: !readonly && this.$config.allow("photos", "delete") && features.delete,
       searchExpanded: false,
       all: {
         countries: [{ID: "", Name: this.$gettext("All Countries")}],
@@ -228,6 +245,9 @@ export default {
           {value: 'relevance', text: this.$gettext('Most Relevant')},
           {value: 'similar', text: this.$gettext('Visual Similarity')},
         ],
+      },
+      dialog: {
+        delete: false,
       },
     };
   },
@@ -262,7 +282,27 @@ export default {
     },
     showUpload() {
       Event.publish("dialog.upload");
-    }
+    },
+    deletePhotos() {
+      if (!this.canDelete) {
+        return;
+      }
+
+      this.dialog.delete = true;
+    },
+    batchDelete() {
+      if (!this.canDelete) {
+        return;
+      }
+
+      this.dialog.delete = false;
+
+      Api.post("batch/photos/delete", {"all": true}).then(() => this.onDeleted());
+    },
+    onDeleted() {
+      Notify.success(this.$gettext("Permanently deleted"));
+      this.$clipboard.clear();
+    },
   },
 };
 </script>
