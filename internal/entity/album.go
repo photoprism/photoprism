@@ -653,15 +653,6 @@ func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 	} else if err = UnscopedDb().Exec("UPDATE albums SET album_path = NULL WHERE album_type = ? AND album_path = ? AND id <> ?", AlbumFolder, albumPath, m.ID).Error; err != nil {
 		return err
 	}
-	
-	// update folder
-	if folder := FindFolder("/", albumPath); folder != nil {
-		folder.Updates(
-			map[string]interface{}{
-				"UpdatedAt": TimeStamp(),
-			},
-		)
-	}
 
 	return nil
 }
