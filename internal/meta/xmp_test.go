@@ -68,6 +68,17 @@ func TestXMP(t *testing.T) {
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone 7", data.CameraModel)
 		assert.Equal(t, "iPhone 7 back camera 3.99mm f/1.8", data.LensModel)
+		assert.Equal(t, false, data.Favorite)
+	})
+
+	t.Run("fstop", func(t *testing.T) {
+		data, err := XMP("testdata/fstop-favorite.xmp")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, true, data.Favorite)
 	})
 
 	t.Run("DateHeic", func(t *testing.T) {
