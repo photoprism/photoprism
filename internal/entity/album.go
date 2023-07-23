@@ -81,6 +81,17 @@ func (Album) TableName() string {
 	return "albums"
 }
 
+// UpdateAlbum updates album attributes in the database.
+func UpdateAlbum(albumUID string, values interface{}) (err error) {
+	if rnd.InvalidUID(albumUID, AlbumUID) {
+		return fmt.Errorf("album: invalid uid %s", clean.Log(albumUID))
+	} else if err = Db().Model(Album{}).Where("album_uid = ?", albumUID).UpdateColumns(values).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // AddPhotoToAlbums adds a photo UID to multiple albums and automatically creates them if needed.
 func AddPhotoToAlbums(uid string, albums []string) (err error) {
 	return AddPhotoToUserAlbums(uid, albums, OwnerUnknown)
@@ -125,6 +136,9 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 			if err = entry.Save(); err != nil {
 				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
 			}
+
+			// Refresh updated timestamp.
+			err = UpdateAlbum(albumUid, Values{"updated_at": TimePointer()})
 		}
 	}
 
@@ -774,6 +788,7 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 		return added
 	}
 
+	// Add album entries.
 	for _, uid := range UIDs {
 		if !rnd.IsUID(uid, PhotoUID) {
 			continue
@@ -786,6 +801,11 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 		} else {
 			added = append(added, entry)
 		}
+	}
+
+	// Refresh updated timestamp.
+	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimePointer()}); err != nil {
+		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 
 	return added
