@@ -112,7 +112,8 @@
     "webpack-hot-middleware": "^2.25.4",
     "webpack-manifest-plugin": "^5.0.0",
     "webpack-md5-hash": "^0.0.6",
-    "webpack-merge": "^5.9.0"
+    "webpack-merge": "^5.9.0",
+    "geodesy": "^2.4.0"
   },
   "engines": {
     "node": ">= 16.0.0",

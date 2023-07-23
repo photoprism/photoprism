@@ -411,6 +411,7 @@ import countries from "options/countries.json";
 import Thumb from "model/thumb";
 import Photo from "model/photo";
 import * as options from "options/options";
+import Dms from "geodesy/dms";
 
 export default {
   name: 'PTabPhotoDetails',
@@ -472,7 +473,9 @@ export default {
       this.time = taken.toFormat("HH:mm:ss");
     },
     pastePosition(event) {
-      // Auto-fills the lat and lng fields if the text in the clipboard contains two float values.
+      // Auto-fills the lat and lng fields if the text in the clipboard contains a position specified as one of
+      // decimal degrees, degrees and decimal minutes, or degrees, minutes and decimal seconds. Lat/Lng may be
+      // seperated by either comma or a space.
       const clipboard = event.clipboardData ? event.clipboardData : window.clipboardData;
 
       if (!clipboard) {
@@ -481,15 +484,24 @@ export default {
 
       // Get values from browser clipboard.
       const text = clipboard.getData("text");
-      const val = text.split(",").map(function(s) {
-        return s.trim();
-      });
+      // First try to detect location forms split by a comma
+      let val = text.split(",");
+      // If location is not split by comma, try searching for NSEW characters, and split at the first one detected
+      // This allows eg 36°51'42.1" S 174°47'43.3" E
+      if(val.length == 1) {
+        const nsew = text.search(/[nNsSeEwW]/);
+        if (nsew != -1)
+          val = [text.substr(0,nsew+1), text.substr(nsew+1)];
+        // If location is split by neither comma nor NSEW character, then try it being split by a space
+        else
+          val = text.split(" ");
+      }
 
       // Two values found?
       if (val.length === 2) {
         // Parse values.
-        const lat = parseFloat(val[0]);
-        const lng = parseFloat(val[1]);
+        const lat = Dms.parse(val[0]);
+        const lng = Dms.parse(val[1]);
 
         // Lat and long must be valid floating point numbers.
         if (!isNaN(lat) && lat >= -90 && lat <= 90 &&
