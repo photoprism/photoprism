@@ -472,23 +472,33 @@ export default {
       this.time = taken.toFormat("HH:mm:ss");
     },
     pastePosition(event) {
-      /* If text is pasted in the form of "XXX.XXXX, YYY.YYYY" (for example if
-       * pasting a position from external mapping app) then auto-fill both lat
-       * and lng fields
-       */
-      let paste = (event.clipboardData || window.clipboardData).getData("text");
-      let s = paste.split(/[ ,]+/);
+      // Auto-fills the lat and lng fields if the text in the clipboard contains two float values.
+      const clipboard = event.clipboardData ? event.clipboardData : window.clipboardData;
 
-      if (s.length == 2)
-      {
-        let lat = parseFloat(s[0]);
-        let lng = parseFloat(s[1]);
-        if(!isNaN(lat) && lat >= -90 && lat <= 90 &&
-            !isNaN(lng) && lng >= -180 && lng <= 180)
-        {
-          event.preventDefault();
+      if (!clipboard) {
+        return;
+      }
+
+      // Get values from browser clipboard.
+      const text = clipboard.getData("text");
+      const val = text.split(",").map(function(s) {
+        return s.trim();
+      });
+
+      // Two values found?
+      if (val.length === 2) {
+        // Parse values.
+        const lat = parseFloat(val[0]);
+        const lng = parseFloat(val[1]);
+
+        // Lat and long must be valid floating point numbers.
+        if (!isNaN(lat) && lat >= -90 && lat <= 90 &&
+          !isNaN(lng) && lng >= -180 && lng <= 180) {
+          // Update model values.
           this.model.Lat = lat;
           this.model.Lng = lng;
+          // Prevent default action.
+          event.preventDefault();
         }
       }
     },
