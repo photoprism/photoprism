@@ -4,13 +4,17 @@ import Page from "../page-model/page";
 import Account from "../page-model/account";
 import Settings from "../page-model/settings";
 import Menu from "../page-model/menu";
+import Photo from "../page-model/photo";
+import ContextMenu from "../page-model/context-menu";
 
 fixture`Test authentication`.page`${testcafeconfig.url}`;
 
 const page = new Page();
 const account = new Account();
+const contextmenu = new ContextMenu();
 const menu = new Menu();
 const settings = new Settings();
+const photo = new Photo();
 
 test.meta("testID", "authentication-001").meta({ type: "short", mode: "auth" })(
   "Common: Login and Logout",
@@ -151,5 +155,21 @@ test.meta("testID", "authentication-003").meta({ type: "short", mode: "auth" })(
 
     await t.expect(Selector(".input-search input").visible).ok();
     await page.logout();
+  }
+);
+
+test.meta("testID", "authentication-004").meta({ type: "short", mode: "auth" })(
+  "Common: Delete Clipboard on logout",
+  async (t) => {
+    await page.login("admin", "photoprism");
+    await t.navigateTo("/library/browse");
+    await photo.toggleSelectNthPhoto(0, "all");
+    await photo.toggleSelectNthPhoto(1, "all");
+    await contextmenu.checkContextMenuCount("2");
+    await page.logout();
+    await page.login("admin", "photoprism");
+    await t.navigateTo("/library/browse");
+    await t.expect(Selector("button.action-menu").visible).notOk();
+    await t.expect(Selector("span.count-clipboard").visible).notOk();
   }
 );
