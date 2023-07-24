@@ -921,7 +921,7 @@ func TestUser_Form(t *testing.T) {
 }
 
 func TestUser_PrivilegeLevelChange(t *testing.T) {
-	t.Run("True", func(t *testing.T) {
+	t.Run("True - Role changed", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -938,7 +938,75 @@ func TestUser_PrivilegeLevelChange(t *testing.T) {
 
 		assert.True(t, m.PrivilegeLevelChange(frm))
 	})
-	t.Run("False", func(t *testing.T) {
+	t.Run("True - Path changed", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UploadPath = "uploads-alice"
+
+		assert.True(t, m.PrivilegeLevelChange(frm))
+	})
+	t.Run("True - CanLogin changed", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.CanLogin = false
+
+		assert.True(t, m.PrivilegeLevelChange(frm))
+	})
+	t.Run("True - Webdav changed", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.WebDAV = false
+
+		assert.True(t, m.PrivilegeLevelChange(frm))
+	})
+	t.Run("False - Name changed", func(t *testing.T) {
+		m := FindUserByName("alice")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UserName = "alice-new"
+
+		assert.False(t, m.PrivilegeLevelChange(frm))
+	})
+	t.Run("False - No change", func(t *testing.T) {
 		m := FindUserByName("alice")
 
 		if m == nil {
@@ -1012,6 +1080,116 @@ func TestUser_SaveForm(t *testing.T) {
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "admin@example.com", m.UserEmail)
 		assert.Equal(t, "GoLand", m.Details().UserLocation)
+	})
+	t.Run("Change display name", func(t *testing.T) {
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.DisplayName = "New Name"
+		err = Admin.SaveForm(frm, true)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "New Name", Admin.DisplayName)
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.Equal(t, "New Name", m.DisplayName)
+	})
+	t.Run("Prevent log out initial admin", func(t *testing.T) {
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.CanLogin = false
+		err = Admin.SaveForm(frm, true)
+
+		assert.NoError(t, err)
+		assert.Equal(t, true, Admin.CanLogin)
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.Equal(t, true, m.CanLogin)
+	})
+	t.Run("Try to change role of superadmin", func(t *testing.T) {
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UserRole = "user"
+		err = Admin.SaveForm(frm, false)
+
+		assert.Error(t, err)
+		assert.Equal(t, "super admin must not have a non-admin role", err.Error())
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.Equal(t, "admin", m.UserRole)
+	})
+	t.Run("Invalid base path", func(t *testing.T) {
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.BasePath = "//*?"
+		err = Admin.SaveForm(frm, false)
+
+		assert.Error(t, err)
+		assert.Equal(t, "invalid base folder", err.Error())
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.Equal(t, "", m.BasePath)
+	})
+	t.Run("Invalid upload path", func(t *testing.T) {
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UploadPath = "//*?"
+		err = Admin.SaveForm(frm, false)
+
+		assert.Error(t, err)
+		assert.Equal(t, "invalid upload folder", err.Error())
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.Equal(t, "", m.UploadPath)
 	})
 }
 
