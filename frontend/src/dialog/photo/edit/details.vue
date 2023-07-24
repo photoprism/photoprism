@@ -481,12 +481,12 @@ export default {
 
       // Get values from browser clipboard.
       const text = clipboard.getData("text");
-      const val = text.split(",").map(function(s) {
-        return s.trim();
-      });
+
+      // Trim spaces before splitting by whitespace and/or commas.
+      const val = text.trim().split(/[ ,]+/);
 
       // Two values found?
-      if (val.length === 2) {
+      if (val.length >= 2) {
         // Parse values.
         const lat = parseFloat(val[0]);
         const lng = parseFloat(val[1]);
