@@ -5,13 +5,13 @@
         <v-flex class="pa-2	hidden-sm-and-down" xs12 md2 xxl1 fill-height>
           <p-photo-preview :model="model"></p-photo-preview>
         </v-flex>
-        <v-flex class="pa-2-md-and-up ra-4-table-md-and-up" xs12 md10 xxl11 fill-width fill-height>
+        <v-flex class="pa-2-md-and-up" xs12 md10 xxl11 fill-width fill-height>
           <v-data-table
             v-model="selected"
             :headers="listColumns"
             :items="model.Labels"
             hide-actions
-            class="elevation-0 p-files p-files-list p-results"
+            class="elevation-0 p-results"
             disable-initial-sort
             item-key="ID"
             :no-data-text="$gettext('No labels found')"
