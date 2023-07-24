@@ -95,6 +95,7 @@
 .v-btn.v-btn--depressed:not(.v-btn--round):not(.v-btn--icon),
 .v-text-field.v-text-field--box > .v-input__control > .v-input__slot,
 .v-text-field.v-text-field--solo > .v-input__control > .v-input__slot,
+#photoprism .mosaic-view .result.image,
 #photoprism .list-view .result .image {
     border-radius: 4px;
 }
