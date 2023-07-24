@@ -51,6 +51,9 @@ fi
 
 # do nothing if PHOTOPRISM_INIT was not set
 if [[ -z ${PHOTOPRISM_INIT} ]]; then
+  if [[ ${PHOTOPRISM_DEFAULT_TLS} = "true" ]]; then
+    make --no-print-directory -C "$INIT_SCRIPTS" "https"
+  fi
   exit
 fi
 
@@ -60,7 +63,7 @@ INIT_LOCK="/scripts/.init-lock"
 if [[ ! -e ${INIT_LOCK} ]]; then
   for INIT_TARGET in $PHOTOPRISM_INIT; do
     echo "init: $INIT_TARGET"
-    make -C "$INIT_SCRIPTS" "$INIT_TARGET"
+    make --no-print-directory -C "$INIT_SCRIPTS" "$INIT_TARGET"
   done
 
   echo 1 >${INIT_LOCK}

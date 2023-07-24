@@ -3,7 +3,7 @@ package config
 // ThumbSize represents thumbnail info for use in client apps.
 type ThumbSize struct {
 	Size   string `json:"size"`
-	Use    string `json:"use"`
+	Usage  string `json:"usage"`
 	Width  int    `json:"w"`
 	Height int    `json:"h"`
 }

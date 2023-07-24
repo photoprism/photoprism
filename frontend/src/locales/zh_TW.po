@@ -265,8 +265,8 @@ msgid "Altitude (m)"
 msgstr "高度（公尺）"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
-#: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:104
+#: src/component/photo/cards.vue:489 src/component/photo/list.vue:192
+#: src/component/photo/mosaic.vue:230 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:101 src/options/options.js:333
 msgid "Animated"
 msgstr "動態圖片"
@@ -287,13 +287,13 @@ msgstr "API鑰匙"
 msgid "Apply"
 msgstr "套用"
 
-#: src/component/photo/cards.vue:418 src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:419 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:116
 msgid "Approve"
 msgstr "確認"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
-#: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
+#: src/component/photo/cards.vue:390 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "封存"
@@ -414,7 +414,7 @@ msgstr "當您開始使用我們提供的軟體及服務時，即表示您同意
 msgid "Calendar"
 msgstr "日曆"
 
-#: src/component/photo/cards.vue:505 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:506 src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:204 src/dialog/photo/edit/details.vue:357
 msgid "Camera"
 msgstr "相機"
@@ -454,7 +454,7 @@ msgstr "取消"
 msgid "Cards"
 msgstr "卡片"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:350
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:351
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "分類"
@@ -508,7 +508,7 @@ msgstr "關閉"
 msgid "Codec"
 msgstr "解碼器"
 
-#: src/component/photo/toolbar.vue:325
+#: src/component/photo/toolbar.vue:326
 msgid "Color"
 msgstr "顏色"
 
@@ -654,12 +654,12 @@ msgstr "預設資料夾"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:228 src/page/library/errors.vue:88
+#: src/dialog/share.vue:229 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "刪除"
 
-#: src/component/photo/cards.vue:457 src/dialog/album/edit.vue:148
+#: src/component/photo/cards.vue:458 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:608 src/page/albums.vue:550
 msgid "Description"
 msgstr "描述"
@@ -1242,7 +1242,7 @@ msgstr "無效的日期"
 msgid "Invalid parameters"
 msgstr "無效的參數"
 
-#: src/dialog/photo/edit.vue:119
+#: src/dialog/photo/edit.vue:119 src/model/thumb.js:74
 msgid "Invalid photo selected"
 msgstr "選擇的照片無效"
 
@@ -1361,7 +1361,7 @@ msgid "List"
 msgstr "清單"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:293
-#: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
+#: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:214
 #: src/options/options.js:337
 msgid "Live"
 msgstr "即時"
@@ -1382,7 +1382,7 @@ msgstr "本地時間"
 msgid "location"
 msgstr "地點"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:529
+#: src/page/settings/account.vue:739 src/component/photo/cards.vue:530
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/page/albums.vue:88 src/page/settings/account.vue:593
 msgid "Location"
@@ -1523,7 +1523,7 @@ msgstr "移動檔案"
 msgid "Must have at least %{n} characters."
 msgstr "必須至少有 %{n} 個字元。"
 
-#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:517
+#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:518
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:39
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
@@ -1632,10 +1632,6 @@ msgstr "非照片和低品質圖像需要進行手動確認，才會出現在搜
 #: src/options/options.js:364
 msgid "None"
 msgstr "無"
-
-#: src/model/thumb.js:74
-msgid "Not Found"
-msgstr "找不到"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
@@ -1787,7 +1783,7 @@ msgstr "永久刪除檔案以釋放儲存空間。"
 msgid "Phone"
 msgstr "電話"
 
-#: src/model/photo.js:1111
+#: src/model/photo.js:1114
 msgid "Photo"
 msgstr "相片"
 
@@ -1921,7 +1917,7 @@ msgstr "隨機"
 msgid "Raw"
 msgstr "原始"
 
-#: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
+#: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:207
 #: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "RAW"
@@ -2227,7 +2223,7 @@ msgstr "排序"
 msgid "Source"
 msgstr "來源"
 
-#: src/component/photo/cards.vue:323 src/component/photo/mosaic.vue:243
+#: src/component/photo/cards.vue:323 src/component/photo/mosaic.vue:244
 msgid "Stack"
 msgstr "堆疊"
 
@@ -2312,7 +2308,7 @@ msgstr "同步"
 msgid "Sync raw and video files"
 msgstr "同步 RAW 照片及影片"
 
-#: src/component/photo/cards.vue:471 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:472 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:52
 msgid "Taken"
 msgstr "拍攝於"
@@ -2445,9 +2441,9 @@ msgid "Unique ID"
 msgstr "唯一身份"
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
-#: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
-#: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:151 src/options/options.js:27
+#: src/model/album.js:179 src/model/photo.js:703 src/model/photo.js:724
+#: src/model/photo.js:747 src/model/photo.js:765 src/model/photo.js:886
+#: src/model/photo.js:899 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2591,9 +2587,9 @@ msgstr "使用者名稱"
 msgid "Users"
 msgstr "使用者"
 
-#: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
-#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:345
+#: src/component/photo/cards.vue:316 src/component/photo/cards.vue:498
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:237
+#: src/model/photo.js:808 src/model/photo.js:816 src/options/options.js:345
 msgid "Vector"
 msgstr "向量"
 
@@ -2601,9 +2597,9 @@ msgstr "向量"
 msgid "Vectors"
 msgstr "向量"
 
-#: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
-#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
+#: src/component/photo/cards.vue:302 src/component/photo/cards.vue:480
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:223
+#: src/model/file.js:220 src/model/photo.js:831 src/model/photo.js:847
 #: src/options/options.js:341
 msgid "Video"
 msgstr "影片"
@@ -2619,7 +2615,7 @@ msgstr "影片長度"
 msgid "Videos"
 msgstr "影片"
 
-#: src/component/photo/cards.vue:332 src/component/photo/mosaic.vue:252
+#: src/component/photo/cards.vue:332 src/component/photo/mosaic.vue:253
 #: src/component/photo/toolbar.vue:230
 msgid "View"
 msgstr "檢視"
@@ -2743,6 +2739,9 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Not Found"
+#~ msgstr "找不到"
 
 #~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 #~ msgstr "由於這能夠幫助我們為大眾帶來更多的功能，我們鼓勵所有的使用者來幫助我們的使命。"

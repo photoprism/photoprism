@@ -1,7 +1,76 @@
-/* Default Theme */
+/* Component Color Defaults */
 
-#photoprism.theme-default .theme--light.v-text-field--solo>.v-input__control>.v-input__slot,
-#photoprism.theme-default .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+.card {
+    background-color: #e0e0e0;
+}
+
+body.dark-theme .card {
+    background-color: #1a1a1a;
+}
+
+body.dark-theme #photoprism .v-table .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: transparent;
+}
+
+body.dark-theme .theme--light.v-list .v-list__tile--highlighted,
+body.dark-theme .theme--light.v-list a:hover {
+    background: rgba(255,255,255,0.3) !important;
+}
+
+body.dark-theme .v-input input::placeholder {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+body.dark-theme .theme--light .v-table {
+    background: #303030;
+}
+
+body.dark-theme .theme--light.v-table tbody tr:hover {
+    background: #343434;
+}
+
+.theme--light.v-list .v-list__tile--highlighted,
+.theme--light.v-list a:hover {
+    background: rgba(155,155,155,0.3) !important;
+}
+
+body:not(.dark-theme) .theme--dark.v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat):not(.v-btn--outline) {
+    color: rgb(51, 51, 51)!important;
+    background-color: #d9dadc!important;
+}
+
+body.dark-theme #photoprism .theme--light.v-chip,
+body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__control>.v-input__slot {
+    background: #00000033;
+}
+
+body.dark-theme #photoprism,
+body.dark-theme #photoprism .p-page a,
+body.dark-theme #photoprism .v-datatable a,
+body.dark-theme #photoprism .theme--light.v-expansion-panel .v-expansion-panel__container,
+body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
+body.dark-theme #photoprism .theme--light {
+    color: #ffffff;
+    caret-color: #ffffff;
+    stroke: #ffffff;
+}
+
+body.dark-theme #photoprism .theme--light.v-label {
+    color: #ffffffaa;
+}
+
+body.dark-theme #photoprism .theme--light.v-select .v-select__selections {
+    color: #ffffffee;
+}
+
+body.dark-theme .theme--light.v-small-dialog__content,
+body.dark-theme .theme--light.v-sheet,
+body.dark-theme .theme--light.v-card {
+    background: #2f3031;
+}
+
+body.dark-theme .theme--light.v-text-field--solo>.v-input__control>.v-input__slot,
+body.dark-theme .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
     background: rgba(250, 250, 255, 0.1);
 }
 
@@ -20,7 +89,10 @@ body.dark-theme #photoprism .p-page a,
 body.dark-theme #photoprism .v-datatable a,
 body.dark-theme #photoprism .theme--light.v-expansion-panel .v-expansion-panel__container,
 body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
-body.dark-theme #photoprism .theme--light {
+body.dark-theme #photoprism .theme--light,
+body.dark-theme #photoprism .theme--light.v-table thead th,
+body.dark-theme .theme--light.v-table thead th,
+body.dark-theme .theme--light.v-table tbody td {
     color: #ffffff;
 }
 
@@ -35,6 +107,12 @@ body.dark-theme #photoprism .theme--light.v-select .v-select__selections {
 #photoprism .v-select.v-text-field--box .v-select__selections {
     padding-top: 20px;
 }
+
+body.dark-theme #photoprism .v-tabs .v-badge__badge {
+    color: #000000;
+}
+
+/* Default Theme */
 
 body.dark-theme.theme-default,
 .theme-default .v-content__wrap,
@@ -51,10 +129,6 @@ body.dark-theme.theme-default,
     background: #2f3031;
 }
 
-#photoprism.theme-default .theme--light .v-table {
-    background: #37393a;
-}
-
 #photoprism.container.theme-default {
     background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
 }
@@ -68,6 +142,10 @@ body.dark-theme.theme-default,
     stroke: rgba(196, 241, 229, 0.3);
 }
 
+#photoprism.theme-default .theme--light .v-table {
+    background: #37393a;
+}
+
 #photoprism.theme-default .theme--light.v-table thead th,
 #photoprism.theme-default .theme--light.v-table tbody td {
     color: #fff;
@@ -79,6 +157,11 @@ body.dark-theme.theme-default,
 
 #photoprism.theme-default .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
     color: #999 !important;
+}
+
+#photoprism.theme-default .theme--light.v-text-field--solo>.v-input__control>.v-input__slot,
+#photoprism.theme-default .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: rgba(250, 250, 255, 0.1);
 }
 
 #photoprism.theme-default .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,

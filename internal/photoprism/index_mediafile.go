@@ -29,7 +29,7 @@ func (ind *Index) MediaFile(m *MediaFile, o IndexOptions, originalName, photoUID
 func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, photoUID, userUID string) (result IndexResult) {
 	if m == nil {
 		result.Status = IndexFailed
-		result.Err = errors.New("index: media file is nil - possible bug")
+		result.Err = errors.New("index: media file is nil - you may have found a bug")
 		return result
 	}
 
@@ -184,7 +184,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	} else {
 		// Should never happen.
 		result.Status = IndexFailed
-		result.Err = fmt.Errorf("index: unexpectedly failed indexing %s - possible bug, please report", logName)
+		result.Err = fmt.Errorf("index: unexpectedly failed indexing %s - you may have found a bug, please report", logName)
 		return result
 	}
 
@@ -437,6 +437,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			details.SetCopyright(metaData.Copyright, entity.SrcXmp)
 			details.SetLicense(metaData.License, entity.SrcXmp)
 			details.SetSoftware(metaData.Software, entity.SrcXmp)
+
+			// Update externally marked as favorite.
+			if metaData.Favorite {
+				photo.SetFavorite(metaData.Favorite)
+			}
 		} else {
 			log.Warn(err.Error())
 			file.FileError = err.Error()

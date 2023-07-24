@@ -107,6 +107,7 @@ type Options struct {
 	ProxyProtoHeaders     []string      `yaml:"ProxyProtoHeaders" json:"-" flag:"proxy-proto-header"`
 	ProxyProtoHttps       []string      `yaml:"ProxyProtoHttps" json:"-" flag:"proxy-proto-https"`
 	DisableTLS            bool          `yaml:"DisableTLS" json:"DisableTLS" flag:"disable-tls"`
+	DefaultTLS            bool          `yaml:"DefaultTLS" json:"DefaultTLS" flag:"default-tls"`
 	TLSEmail              string        `yaml:"TLSEmail" json:"TLSEmail" flag:"tls-email"`
 	TLSCert               string        `yaml:"TLSCert" json:"TLSCert" flag:"tls-cert"`
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
@@ -128,8 +129,8 @@ type Options struct {
 	SipsBlacklist         string        `yaml:"SipsBlacklist" json:"-" flag:"sips-blacklist"`
 	FFmpegBin             string        `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
 	FFmpegEncoder         string        `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
+	FFmpegSize            int           `yaml:"FFmpegSize" json:"FFmpegSize" flag:"ffmpeg-size"`
 	FFmpegBitrate         int           `yaml:"FFmpegBitrate" json:"FFmpegBitrate" flag:"ffmpeg-bitrate"`
-	FFmpegResolution      int           `yaml:"FFmpegResolution" json:"FFmpegResolution" flag:"ffmpeg-resolution"`
 	FFmpegMapVideo        string        `yaml:"FFmpegMapVideo" json:"FFmpegMapVideo" flag:"ffmpeg-map-video"`
 	FFmpegMapAudio        string        `yaml:"FFmpegMapAudio" json:"FFmpegMapAudio" flag:"ffmpeg-map-audio"`
 	ExifToolBin           string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`

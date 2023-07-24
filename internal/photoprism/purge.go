@@ -215,7 +215,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	limit = 10000
 	offset = 0
 	for {
-		photos, err := query.PhotosMissing(limit, offset)
+		photos, err := query.MissingPhotos(limit, offset)
 
 		if err != nil {
 			return purgedFiles, purgedPhotos, updates(), err

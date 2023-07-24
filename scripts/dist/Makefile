@@ -13,7 +13,7 @@ clean:
 	rm -rf /var/lib/apt/lists/*
 https: install-https
 install-https:
-	/scripts/install-https.sh
+	@/scripts/install-https.sh
 mariadb: mariadb-client
 mariadb-client: install-mariadb-client
 install-mariadb-client:

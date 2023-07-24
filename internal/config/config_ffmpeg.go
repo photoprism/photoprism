@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/ffmpeg"
+	"github.com/photoprism/photoprism/internal/thumb"
 )
 
 // FFmpegBin returns the ffmpeg executable file name.
@@ -25,6 +26,11 @@ func (c *Config) FFmpegEncoder() ffmpeg.AvcEncoder {
 	return ffmpeg.FindEncoder(c.options.FFmpegEncoder)
 }
 
+// FFmpegSize returns the maximum ffmpeg video encoding size in pixels (720-7680).
+func (c *Config) FFmpegSize() int {
+	return thumb.VideoSize(c.options.FFmpegSize).Width
+}
+
 // FFmpegBitrate returns the ffmpeg bitrate limit in MBit/s.
 func (c *Config) FFmpegBitrate() int {
 	switch {
@@ -34,18 +40,6 @@ func (c *Config) FFmpegBitrate() int {
 		return 960
 	default:
 		return c.options.FFmpegBitrate
-	}
-}
-
-// FFmpegResolution returns the ffmpeg resolution limit in pixel height. Goes from 144p to 8k.
-func (c *Config) FFmpegResolution() int {
-	switch {
-	case c.options.FFmpegResolution <= 0:
-		return 4096
-	case c.options.FFmpegResolution >= 8192:
-		return 8192
-	default:
-		return c.options.FFmpegResolution
 	}
 }
 
@@ -82,12 +76,12 @@ func (c *Config) FFmpegMapAudio() string {
 func (c *Config) FFmpegOptions(encoder ffmpeg.AvcEncoder, bitrate string) (ffmpeg.Options, error) {
 	// Transcode all other formats with FFmpeg.
 	opt := ffmpeg.Options{
-		Bin:        c.FFmpegBin(),
-		Encoder:    encoder,
-		Bitrate:    bitrate,
-		MapVideo:   c.FFmpegMapVideo(),
-		MapAudio:   c.FFmpegMapAudio(),
-		Resolution: fmt.Sprintf("%v", c.FFmpegResolution()),
+		Bin:      c.FFmpegBin(),
+		Encoder:  encoder,
+		Size:     c.FFmpegSize(),
+		Bitrate:  bitrate,
+		MapVideo: c.FFmpegMapVideo(),
+		MapAudio: c.FFmpegMapAudio(),
 	}
 
 	// Check

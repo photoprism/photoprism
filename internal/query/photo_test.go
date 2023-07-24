@@ -58,13 +58,29 @@ func TestPreloadPhotoByUID(t *testing.T) {
 }
 
 func TestMissingPhotos(t *testing.T) {
-	result, err := PhotosMissing(15, 0)
+	result, err := MissingPhotos(15, 0)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	assert.LessOrEqual(t, 1, len(result))
+}
+
+func TestArchivedPhotos(t *testing.T) {
+	results, err := ArchivedPhotos(15, 0)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, 1, len(results))
+
+	if len(results) > 1 {
+		result := results[0]
+		assert.Equal(t, "image", result.PhotoType)
+		assert.Equal(t, "pt9jtdre2lvl0y25", result.PhotoUID)
+	}
 }
 
 func TestPhotosMetadataUpdate(t *testing.T) {

@@ -6,6 +6,16 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestMaxSize(t *testing.T) {
+	SizePrecached = 7680
+	SizeUncached = 1024
+
+	assert.Equal(t, MaxSize(), 7680)
+
+	SizePrecached = 2048
+	SizeUncached = 7680
+}
+
 func TestSize_ExceedsLimit(t *testing.T) {
 	SizePrecached = 1024
 	SizeUncached = 2048

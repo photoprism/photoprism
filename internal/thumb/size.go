@@ -4,10 +4,11 @@ import (
 	"image"
 )
 
+// Size represents a standard media resolution.
 type Size struct {
 	Name    Name             `json:"name"`
 	Source  Name             `json:"-"`
-	Use     string           `json:"use"`
+	Usage   string           `json:"usage"`
 	Width   int              `json:"w"`
 	Height  int              `json:"h"`
 	Public  bool             `json:"-"`

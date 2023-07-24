@@ -23,7 +23,33 @@ func TestPhotosQueryGeo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	assert.GreaterOrEqual(t, len(photos0), 13)
+
+	for _, r0 := range photos0 {
+		assert.IsType(t, Photo{}, r0)
+		assert.NotEqual(t, "zz", r0.CellID)
+	}
+
+	t.Run("geo:false", func(t *testing.T) {
+		var f form.SearchPhotos
+
+		f.Query = "geo:false"
+		f.Merged = true
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.LessOrEqual(t, len(photos), 13)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.Equal(t, "zz", r.CellID)
+		}
+	})
 
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos

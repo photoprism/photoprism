@@ -265,8 +265,8 @@ msgid "Altitude (m)"
 msgstr "Надморска височина (м)"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:309
-#: src/component/photo/cards.vue:488 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:229 src/dialog/photo/edit/files.vue:104
+#: src/component/photo/cards.vue:489 src/component/photo/list.vue:192
+#: src/component/photo/mosaic.vue:230 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:101 src/options/options.js:333
 msgid "Animated"
 msgstr "Анимация"
@@ -287,13 +287,13 @@ msgstr "Ключ за API"
 msgid "Apply"
 msgstr "Направете заявка на"
 
-#: src/component/photo/cards.vue:418 src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:419 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:116
 msgid "Approve"
 msgstr "Одобряване на"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
-#: src/component/photo/cards.vue:389 src/component/photo/clipboard.vue:204
+#: src/component/photo/cards.vue:390 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "Архив"
@@ -414,7 +414,7 @@ msgstr "С използването на софтуера и услугите, �
 msgid "Calendar"
 msgstr "Календар"
 
-#: src/component/photo/cards.vue:505 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:506 src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:204 src/dialog/photo/edit/details.vue:357
 msgid "Camera"
 msgstr "Камера"
@@ -454,7 +454,7 @@ msgstr "Отмяна на"
 msgid "Cards"
 msgstr "Карти"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:350
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:351
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Категория"
@@ -508,7 +508,7 @@ msgstr "Затвори"
 msgid "Codec"
 msgstr "Кодек"
 
-#: src/component/photo/toolbar.vue:325
+#: src/component/photo/toolbar.vue:326
 msgid "Color"
 msgstr "Цвят"
 
@@ -654,12 +654,12 @@ msgstr "Папка по подразбиране"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:228 src/page/library/errors.vue:88
+#: src/dialog/share.vue:229 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Изтриване на"
 
-#: src/component/photo/cards.vue:457 src/dialog/album/edit.vue:148
+#: src/component/photo/cards.vue:458 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:608 src/page/albums.vue:550
 msgid "Description"
 msgstr "Описание"
@@ -1242,7 +1242,7 @@ msgstr "Невалидна дата"
 msgid "Invalid parameters"
 msgstr "Невалидна дата"
 
-#: src/dialog/photo/edit.vue:119
+#: src/dialog/photo/edit.vue:119 src/model/thumb.js:74
 msgid "Invalid photo selected"
 msgstr "Избрана е невалидна снимка"
 
@@ -1361,7 +1361,7 @@ msgid "List"
 msgstr "Списък"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:293
-#: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:213
+#: src/component/photo/list.vue:183 src/component/photo/mosaic.vue:214
 #: src/options/options.js:337
 msgid "Live"
 msgstr "На живо"
@@ -1382,7 +1382,7 @@ msgstr "Местно време"
 msgid "location"
 msgstr "местоположение"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:529
+#: src/page/settings/account.vue:739 src/component/photo/cards.vue:530
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/page/albums.vue:88 src/page/settings/account.vue:593
 msgid "Location"
@@ -1523,7 +1523,7 @@ msgstr "Преместване на файлове"
 msgid "Must have at least %{n} characters."
 msgstr "Най-малко 6 символа."
 
-#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:517
+#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:518
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:39
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/labels.vue:43
@@ -1632,10 +1632,6 @@ msgstr "Нефотографските изображения и изображ�
 #: src/options/options.js:364
 msgid "None"
 msgstr "Няма"
-
-#: src/model/thumb.js:74
-msgid "Not Found"
-msgstr "Не е намерен"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
@@ -1787,7 +1783,7 @@ msgstr "Постоянно премахване на файлове, за да �
 msgid "Phone"
 msgstr "Телефон"
 
-#: src/model/photo.js:1111
+#: src/model/photo.js:1114
 msgid "Photo"
 msgstr "Снимка"
 
@@ -1921,7 +1917,7 @@ msgstr "Случаен"
 msgid "Raw"
 msgstr "Суров"
 
-#: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:206
+#: src/component/photo/cards.vue:286 src/component/photo/mosaic.vue:207
 #: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "RAW"
@@ -2227,7 +2223,7 @@ msgstr "Ред на сортиране"
 msgid "Source"
 msgstr "Източник:"
 
-#: src/component/photo/cards.vue:323 src/component/photo/mosaic.vue:243
+#: src/component/photo/cards.vue:323 src/component/photo/mosaic.vue:244
 msgid "Stack"
 msgstr "Стек"
 
@@ -2312,7 +2308,7 @@ msgstr "Синхронизиране"
 msgid "Sync raw and video files"
 msgstr "Синхронизиране на необработени и видеофайлове"
 
-#: src/component/photo/cards.vue:471 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:472 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:52
 msgid "Taken"
 msgstr "Взето"
@@ -2443,9 +2439,9 @@ msgid "Unique ID"
 msgstr "Уникален идентификатор"
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:24
-#: src/model/album.js:179 src/model/photo.js:700 src/model/photo.js:721
-#: src/model/photo.js:744 src/model/photo.js:762 src/model/photo.js:883
-#: src/model/photo.js:896 src/model/user.js:151 src/options/options.js:27
+#: src/model/album.js:179 src/model/photo.js:703 src/model/photo.js:724
+#: src/model/photo.js:747 src/model/photo.js:765 src/model/photo.js:886
+#: src/model/photo.js:899 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2589,9 +2585,9 @@ msgstr "Потребителско име"
 msgid "Users"
 msgstr "Потребители"
 
-#: src/component/photo/cards.vue:316 src/component/photo/cards.vue:497
-#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:236
-#: src/model/photo.js:805 src/model/photo.js:813 src/options/options.js:345
+#: src/component/photo/cards.vue:316 src/component/photo/cards.vue:498
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:237
+#: src/model/photo.js:808 src/model/photo.js:816 src/options/options.js:345
 msgid "Vector"
 msgstr "Вектор"
 
@@ -2599,9 +2595,9 @@ msgstr "Вектор"
 msgid "Vectors"
 msgstr "Вектори"
 
-#: src/component/photo/cards.vue:302 src/component/photo/cards.vue:479
-#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:222
-#: src/model/file.js:220 src/model/photo.js:828 src/model/photo.js:844
+#: src/component/photo/cards.vue:302 src/component/photo/cards.vue:480
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:223
+#: src/model/file.js:220 src/model/photo.js:831 src/model/photo.js:847
 #: src/options/options.js:341
 msgid "Video"
 msgstr "Видео"
@@ -2617,7 +2613,7 @@ msgstr "Дарения"
 msgid "Videos"
 msgstr "Видеоклипове"
 
-#: src/component/photo/cards.vue:332 src/component/photo/mosaic.vue:252
+#: src/component/photo/cards.vue:332 src/component/photo/mosaic.vue:253
 #: src/component/photo/toolbar.vue:230
 msgid "View"
 msgstr "Вижте"
@@ -2739,6 +2735,9 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Not Found"
+#~ msgstr "Не е намерен"
 
 #~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
 #~ msgstr "Тъй като това ни помага да предоставяме повече функции на обществеността, насърчаваме всички потребители да подкрепят нашата мисия."

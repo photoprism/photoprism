@@ -2,7 +2,9 @@ package form
 
 import "strings"
 
+// Selection represents items selected in the user interface.
 type Selection struct {
+	All      bool     `json:"all"`
 	Files    []string `json:"files"`
 	Photos   []string `json:"photos"`
 	Albums   []string `json:"albums"`
@@ -11,6 +13,7 @@ type Selection struct {
 	Subjects []string `json:"subjects"`
 }
 
+// Empty checks if any specific items were selected.
 func (f Selection) Empty() bool {
 	switch {
 	case len(f.Files) > 0:
@@ -30,7 +33,8 @@ func (f Selection) Empty() bool {
 	return true
 }
 
-func (f Selection) All() []string {
+// Get returns a string slice with the selected item UIDs.
+func (f Selection) Get() []string {
 	var all []string
 
 	copy(all, f.Files)
@@ -44,6 +48,7 @@ func (f Selection) All() []string {
 	return all
 }
 
+// String returns a string containing all selected item UIDs.
 func (f Selection) String() string {
-	return strings.Join(f.All(), ", ")
+	return strings.Join(f.Get(), ", ")
 }

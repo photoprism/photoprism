@@ -71,7 +71,7 @@ func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
 // NewMarker creates a new entity.
 func NewMarker(file File, area crop.Area, subjUID, markerSrc, markerType string, size, score int) *Marker {
 	if file.FileHash == "" {
-		log.Errorf("markers: file hash is empty - possible bug")
+		log.Errorf("markers: file hash is empty - you may have found a bug")
 		return nil
 	}
 

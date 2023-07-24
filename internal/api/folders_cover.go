@@ -125,7 +125,7 @@ func FolderCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		} else if thumbnail == "" {
-			log.Errorf("%s: %s has empty thumb name - possible bug", folderCover, filepath.Base(fileName))
+			log.Errorf("%s: %s has empty thumb name - you may have found a bug", folderCover, filepath.Base(fileName))
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		}

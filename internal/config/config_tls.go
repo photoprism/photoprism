@@ -48,7 +48,12 @@ func (c *Config) TLSCert() string {
 	}
 
 	// Find default TLS certificate.
-	return find("photoprism" + PublicCertExt)
+	if c.DefaultTLS() {
+		return find("photoprism" + PublicCertExt)
+	}
+
+	// Not found.
+	return ""
 }
 
 // TLSKey returns the private key required to enable TLS.
@@ -78,7 +83,12 @@ func (c *Config) TLSKey() string {
 	}
 
 	// Find default key file.
-	return find("photoprism" + PrivateKeyExt)
+	if c.DefaultTLS() {
+		return find("photoprism" + PrivateKeyExt)
+	}
+
+	// Not found.
+	return ""
 }
 
 // TLS returns the HTTPS certificate and private key file name.
@@ -90,7 +100,7 @@ func (c *Config) TLS() (publicCert, privateKey string) {
 	return c.TLSCert(), c.TLSKey()
 }
 
-// DisableTLS checks if HTTPS should be disabled.
+// DisableTLS checks if HTTPS should be disabled even if the site URL starts with https:// and a certificate is available.
 func (c *Config) DisableTLS() bool {
 	if c.options.DisableTLS {
 		return true
@@ -99,4 +109,9 @@ func (c *Config) DisableTLS() bool {
 	}
 
 	return c.TLSCert() == "" || c.TLSKey() == ""
+}
+
+// DefaultTLS checks if a self-signed certificate should be used to enable HTTPS if no other certificate is available.
+func (c *Config) DefaultTLS() bool {
+	return c.options.DefaultTLS
 }

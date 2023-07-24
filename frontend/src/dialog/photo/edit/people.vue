@@ -13,7 +13,7 @@
           <translate>Recognition starts after indexing has been completed.</translate>
         </p>
       </v-alert>
-      <v-layout row wrap class="search-results face-results cards-view">
+      <v-layout class="search-results face-results cards-view" row wrap fill-height>
         <v-flex
             v-for="(marker, index) in markers"
             :key="index"

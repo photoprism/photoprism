@@ -4,6 +4,7 @@
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
     <p-photo-toolbar
+      :context="context"
       :filter="filter"
       :settings="settings"
       :refresh="refresh"
@@ -19,7 +20,7 @@
     <v-container v-else fluid class="pa-0">
       <p-scroll-top></p-scroll-top>
 
-      <p-photo-clipboard :refresh="refresh" :selection="selection" :context="context"></p-photo-clipboard>
+      <p-photo-clipboard :context="context" :refresh="refresh" :selection="selection"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'"
                       :context="context"
