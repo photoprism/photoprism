@@ -81,3 +81,10 @@ func TestParseQuality(t *testing.T) {
 		assert.Equal(t, Quality(100), ParseQuality("100"))
 	})
 }
+
+func TestQuality_String(t *testing.T) {
+	assert.Equal(t, "95", QualityBest.String())
+	assert.Equal(t, "92", QualityHigh.String())
+	assert.Equal(t, "75", QualityBad.String())
+
+}

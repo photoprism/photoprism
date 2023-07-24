@@ -35,4 +35,11 @@ func TestOpenJpeg(t *testing.T) {
 			t.Error("img must not be nil")
 		}
 	})
+	t.Run("filename empty", func(t *testing.T) {
+		img, err := OpenJpeg("", 0)
+
+		assert.Error(t, err)
+		assert.Equal(t, "filename missing", err.Error())
+		assert.Nil(t, img)
+	})
 }
