@@ -150,4 +150,20 @@ export default class Page {
       }
     }
   }
+
+  async checkSortOptions(type) {
+    await t.click(Selector('.p-expand-search'));
+    await t.click(Selector('p-sort-select'));
+    await t.expect(Selector('.v-menu__content:first-of-type').visible).ok();
+
+    const sortOptions = await Selector(
+      '.v-menu__content:first-of-type div[role=listitem]'
+    );
+
+    if (type === 'album') {
+      t.expect(sortOptions.count).eql(7);
+    } else {
+      t.expect(sortOptions.count).eql(6);
+    }
+  }
 }
