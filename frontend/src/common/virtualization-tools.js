@@ -56,4 +56,64 @@ export const virtualizationTools = {
 
     return [firstVisibleElementIndex, lastVisibileElementIndex];
   },
+
+  getVisibleRange: (
+    elements,
+    containerWidth,
+    containerHeight,
+    elementWidth,
+    elementHeight,
+    scrollPos,
+    rowPadding = 0
+  ) => {
+    // floor the elementWidth, so that rounding errors don't cause the columnCount
+    // to be one to small
+    const visibleColumnCount = Math.floor(containerWidth / Math.floor(elementWidth));
+
+    const totalRowCount = Math.ceil(elements.length / visibleColumnCount);
+    const totalScrollHeight = totalRowCount * elementHeight;
+    const realScrollPos = Math.max(Math.min(scrollPos, totalScrollHeight), 0);
+
+    /**
+     * in a previous version, we calculated the actual visible row count by first
+     * calculating the firstRowTopOverlap (= realScrollPos % elementHeight)
+     * and adding that to the containerHeight.
+     *
+     * this would cause the visibleRowCount to sometimes be 1 higher, sometimes
+     * 1 smaller than the last run, depending on the actual scroll position.
+     *
+     * That resulted in this function not always returning the same number of
+     * rows. We want to always return the same number of rows however, because
+     * that allowes reduces the amount of updates in scenarios where half a row
+     * is visible. The result is, that removing and adding a row on scroll always
+     * happen in the same render, instead of in two renders
+     */
+    const visibleRowCount = Math.ceil(containerHeight / elementHeight) + 1;
+
+    const firstVisibleRow = Math.floor(realScrollPos / elementHeight);
+    const lastVisibleRow = firstVisibleRow + visibleRowCount - 1;
+
+    const firstRowToRender = firstVisibleRow - rowPadding;
+    const lastRowToRender = lastVisibleRow + rowPadding;
+
+    const firstElementToRender = Math.max(firstRowToRender * visibleColumnCount, 0);
+    // eslint-disable-next-line prettier-vue/prettier
+    const lastElementToRender = Math.min((lastRowToRender + 1) * visibleColumnCount - 1, elements.length - 1);
+
+    return {
+      visibleColumnCount,
+      firstElementToRender,
+      lastElementToRender,
+      totalScrollHeight,
+    };
+  },
+
+  getVirtualizedElementStyle: (index, columnCount, elementWidth, elementHeight) => {
+    const rowIndex = Math.floor(index / columnCount);
+    const columnIndex = index % columnCount;
+    const topPos = rowIndex * elementHeight;
+    const leftPos = columnIndex * elementWidth;
+
+    return `display: block; position: absolute; width: ${elementWidth}px; height: ${elementHeight}px; transform: translate(${leftPos}px, ${topPos}px)`;
+  },
 };
