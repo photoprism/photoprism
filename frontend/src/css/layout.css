@@ -95,6 +95,7 @@
 .v-btn.v-btn--depressed:not(.v-btn--round):not(.v-btn--icon),
 .v-text-field.v-text-field--box > .v-input__control > .v-input__slot,
 .v-text-field.v-text-field--solo > .v-input__control > .v-input__slot,
+#photoprism .v-dialog .v-responsive.v-image,
 #photoprism .mosaic-view .result.image,
 #photoprism .list-view .result .image {
     border-radius: 4px;
@@ -188,6 +189,10 @@
 
     .pa-3-md-and-up {
         padding: 24px!important;
+    }
+
+    .ra-4-table-md-and-up table.v-table {
+        border-radius: 4px !important;
     }
 }
 
