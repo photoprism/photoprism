@@ -45,6 +45,10 @@ type SearchPhotos struct {
 	Unsorted  bool      `form:"unsorted" notes:"Finds pictures not in an album"`
 	Lat       float32   `form:"lat" notes:"Latitude (GPS Position)"`
 	Lng       float32   `form:"lng" notes:"Longitude (GPS Position)"`
+	Latmin    float32   `form:"latmin" notes:"Minimum latitude (GPS Position)"`
+	Latmax    float32   `form:"latmax" notes:"Maximum latitude (GPS Position)"`
+	Lngmin    float32   `form:"lngmin" notes:"Minimum longitude (GPS Position)"`
+	Lngmax    float32   `form:"lngmax" notes:"Maximum longitude (GPS Position)"`
 	Dist      uint      `form:"dist" example:"dist:5" notes:"Distance in km in combination with lat/lng"`
 	Fmin      float32   `form:"fmin" notes:"F-number (min)"`
 	Fmax      float32   `form:"fmax" notes:"F-number (max)"`

@@ -18,6 +18,16 @@
         </div>
       </div>
     </div>
+    <v-dialog v-model="showClusterPictures" overflowed width="100%">
+      <v-card min-height="80vh">
+        <p-page-photos
+          v-if="showClusterPictures"
+          :static-filter="selectedClusterBounds"
+          :on-close="unselectCluster"
+          sticky-toolbar
+        />
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -25,9 +35,13 @@
 import maplibregl from "maplibre-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";
+import PPagePhotos from 'page/photos.vue';
 
 export default {
   name: 'PPagePlaces',
+  components: {
+    PPagePhotos,
+  },
   props: {
     staticFilter: {
       type: Object,
@@ -58,23 +72,54 @@ export default {
       lastFilter: {},
       config: this.$config.values,
       settings: this.$config.values.settings.maps,
+      selectedClusterBounds: undefined,
+      showClusterPictures: false,
     };
   },
   watch: {
     '$route'() {
+
+      const clusterWasOpenBeforeRouterChange = this.selectedClusterBounds !== undefined;
+      const clusterIsOpenAfterRouteChange = this.getSelectedClusterFromUrl() !== undefined;
+      const lastRouteChangeWasClusterOpenOrClose = clusterWasOpenBeforeRouterChange !== clusterIsOpenAfterRouteChange;
+
+      if (lastRouteChangeWasClusterOpenOrClose) {
+        this.updateSelectedClusterFromUrl();
+
+        /**
+         * dont touch any filters or searches if the only action taken was
+         * opening or closing a cluster.
+         * This currently assumes that when a cluster was opened or closed,
+         * nothing else changed. I currently can't think of a scenario, where
+         * a route-change is triggered by the user wanting to open/close a cluster
+         * AND for example update the filter at the same time.
+         *
+         * Without this, opening or closing a cluster triggers a search, even
+         * though no search parameter changed. Also without this, closing a
+         * cluster resets the filter, because closing a cluster is done via
+         * backwards navigation.
+         * (closing is cluster is done via backwards navigation so that it can
+         * be closed using the back-button. This is especially useful on android
+         * smartphones)
+         */
+        return;
+      }
+
       this.filter.q = this.query();
       this.filter.s = this.scope();
       this.lastFilter = {};
 
       this.search();
+    },
+    showClusterPictures:function(newValue, old){
+      if(!newValue){
+        this.unselectCluster();
+      }
     }
   },
   mounted() {
-    this.$scrollbar.hide();
     this.configureMap().then(() => this.renderMap());
-  },
-  destroyed() {
-    this.$scrollbar.show();
+    this.updateSelectedClusterFromUrl();
   },
   methods: {
     configureMap() {
@@ -237,6 +282,59 @@ export default {
         this.options = mapOptions;
       });
     },
+    getSelectedClusterFromUrl() {
+      const clusterIsSelected = this.$route.query.selectedCluster !== undefined
+                            && this.$route.query.selectedCluster !== '';
+      if (!clusterIsSelected) {
+        return undefined;
+      }
+
+      const [latmin, latmax, lngmin, lngmax] = this.$route.query.selectedCluster.split(',');
+      return {latmin, latmax, lngmin, lngmax};
+    },
+    updateSelectedClusterFromUrl: function() {
+      this.selectedClusterBounds = this.getSelectedClusterFromUrl();
+      this.showClusterPictures = this.selectedClusterBounds !== undefined;
+    },
+    selectClusterByCoords: function(latMin, latMax, lngMin, lngMax) {
+      this.$router.push({
+        query: {
+          selectedCluster: [latMin, latMax, lngMin, lngMax].join(','),
+        },
+        params: this.filter,
+      });
+    },
+    selectClusterById: function(clusterId) {
+      this.getClusterFeatures(clusterId, (clusterFeatures) => {
+        let latMin,latMax,lngMin,lngMax;
+        for (const feature of clusterFeatures) {
+          const [lng,lat] = feature.geometry.coordinates;
+          if (latMin === undefined || lat < latMin) {
+            latMin = lat;
+          }
+          if (latMax === undefined || lat > latMax) {
+            latMax = lat;
+          }
+          if (lngMin === undefined || lng < lngMin) {
+            lngMin = lng;
+          }
+          if (lngMax === undefined || lng > lngMax) {
+            lngMax = lng;
+          }
+        }
+
+        this.selectClusterByCoords(latMin, latMax, lngMin, lngMax);
+      });
+    },
+    unselectCluster: function() {
+      const aClusterIsSelected = this.getSelectedClusterFromUrl() !== undefined;
+      if (aClusterIsSelected) {
+        // it shouldn't matter wether a cluster was closed by pressing the back
+        // button on a browser or the x-button on the dialog. We therefore make
+        // both actions do the exact same thing: navigate backwards
+        this.$router.go(-1);
+      }
+    },
     query: function () {
       return this.$route.params.q ? this.$route.params.q : '';
     },
@@ -392,57 +490,123 @@ export default {
 
       this.map.on("load", () => this.onMapLoad());
     },
+    getClusterFeatures(clusterId, callback) {
+      this.map.getSource('photos').getClusterLeaves(clusterId, -1, undefined, (error, clusterFeatures) => {
+        callback(clusterFeatures);
+      });;
+    },
+    getMultipleClusterFeatures(clusterIds, callback) {
+      const result = {};
+      let handledClusterLeaveResultCount = 0;
+      for (const clusterId of clusterIds) {
+        this.getClusterFeatures(clusterId, (clusterFeatures) => {
+          result[clusterId] = clusterFeatures;
+          handledClusterLeaveResultCount += 1;
+
+          if (handledClusterLeaveResultCount === clusterIds.length) {
+            callback(result);
+          }
+        });
+      }
+    },
+    getClusterRadiusFromItemCount(itemCount) {
+      // see config of cluster-layer for these values
+      if (itemCount >= 750) {
+        return 50;
+      }
+      if (itemCount >= 100) {
+        return 40;
+      }
+
+      return 30;
+    },
     updateMarkers() {
       if (this.loading) return;
       let newMarkers = {};
       let features = this.map.querySourceFeatures("photos");
+      const clusterIds = features
+        .filter(feature => feature.properties.cluster)
+        .map(feature => feature.properties.cluster_id);
 
-      for (let i = 0; i < features.length; i++) {
-        let coords = features[i].geometry.coordinates;
-        let props = features[i].properties;
-        if (props.cluster) continue;
-        let id = features[i].id;
+      this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
+        for (let i = 0; i < features.length; i++) {
+          let coords = features[i].geometry.coordinates;
+          let props = features[i].properties;
+          let id = features[i].id;
 
-        let marker = this.markers[id];
-        let token = this.$config.previewToken;
-        if (!marker) {
-          let el = document.createElement('div');
-          el.className = 'marker';
-          el.title = props.Title;
-          el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
-          el.style.width = '50px';
-          el.style.height = '50px';
+          let marker = this.markers[id];
+          let token = this.$config.previewToken;
+          if (!marker) {
+            let el = document.createElement('div');
+            if (props.cluster) {
+              const radius = this.getClusterRadiusFromItemCount(props.point_count);
+              el.style.width = `${radius * 2}px`;
+              el.style.height = `${radius * 2}px`;
 
-          el.addEventListener('click', () => this.openPhoto(props.UID));
-          marker = this.markers[id] = new maplibregl.Marker({
-            element: el
-          }).setLngLat(coords);
-        } else {
-          marker.setLngLat(coords);
+              const imageContainer = document.createElement('div');
+              imageContainer.className = 'marker cluster-marker';
+
+              const clusterFeatures = clusterFeaturesById[props.cluster_id];
+              const previewImageCount = clusterFeatures.length > 3 ? 4 : 2;
+              const images = clusterFeatures
+                .slice(0, previewImageCount)
+                .map((feature) => {
+                  const imageHash = feature.properties.Hash;
+                  const image = document.createElement('div');
+                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${imageHash}/${token}/tile_${50})`;
+                  return image;
+                });
+              imageContainer.append(...images);
+
+              const counterBubble = document.createElement('div');
+              counterBubble.className = 'counter-bubble';
+              counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
+
+              el.append(imageContainer);
+              el.append(counterBubble);
+              el.addEventListener('click', () => {
+                this.selectClusterById(props.cluster_id);
+              });
+            } else {
+              el.className = 'marker';
+              el.title = props.Title;
+              el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
+              el.style.width = '50px';
+              el.style.height = '50px';
+
+              el.addEventListener('click', () => this.openPhoto(props.UID));
+            }
+            marker = this.markers[id] = new maplibregl.Marker({
+              element: el
+            }).setLngLat(coords);
+          } else {
+            marker.setLngLat(coords);
+          }
+
+          newMarkers[id] = marker;
+
+          if (!this.markersOnScreen[id]) {
+            marker.addTo(this.map);
+          }
         }
-
-        newMarkers[id] = marker;
-
-        if (!this.markersOnScreen[id]) {
-          marker.addTo(this.map);
+        for (let id in this.markersOnScreen) {
+          if (!newMarkers[id]) {
+            this.markersOnScreen[id].remove();
+          }
         }
-      }
-      for (let id in this.markersOnScreen) {
-        if (!newMarkers[id]) {
-          this.markersOnScreen[id].remove();
-        }
-      }
-      this.markersOnScreen = newMarkers;
+        this.markersOnScreen = newMarkers;
+      });
     },
     onMapLoad() {
       this.map.addSource('photos', {
         type: 'geojson',
         data: null,
         cluster: true,
-        clusterMaxZoom: 14, // Max zoom to cluster points on
-        clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+        clusterMaxZoom: 18, // Max zoom to cluster points on
+        clusterRadius: 80 // Radius of each cluster when clustering points (defaults to 50)
       });
 
+      // TODO: can this rendering of empty colored circles be removed?
       this.map.addLayer({
         id: 'clusters',
         type: 'circle',
@@ -452,62 +616,26 @@ export default {
           'circle-color': [
             'step',
             ['get', 'point_count'],
-            '#2DC4B2',
+            'transparent',
             100,
-            '#3BB3C3',
+            'transparent',
             750,
-            '#669EC4'
+            'transparent'
           ],
           'circle-radius': [
             'step',
             ['get', 'point_count'],
-            20,
-            100,
             30,
+            100,
+            40,
             750,
-            40
+            50
           ]
-        }
-      });
-
-      this.map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'photos',
-        filter: ['has', 'point_count'],
-        layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-font': this.mapFont,
-          'text-size': 13
         }
       });
 
       this.map.on('render', this.updateMarkers);
 
-      this.map.on('click', 'clusters', (e) => {
-        const features = this.map.queryRenderedFeatures(e.point, {
-          layers: ['clusters']
-        });
-        const clusterId = features[0].properties.cluster_id;
-        this.map.getSource('photos').getClusterExpansionZoom(
-          clusterId,
-          (err, zoom) => {
-            if (err) return;
-
-            this.map.easeTo({
-              center: features[0].geometry.coordinates,
-              zoom: zoom
-            });
-          }
-        );
-      });
-
-      this.map.on('mouseenter', 'clusters', () => {
-        this.map.getCanvas().style.cursor = 'pointer';
-      });
-      this.map.on('mouseleave', 'clusters', () => {
-        this.map.getCanvas().style.cursor = '';
-      });
 
       this.search();
     },

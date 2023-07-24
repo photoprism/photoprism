@@ -3,8 +3,16 @@
        :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
        :infinite-scroll-listen-for-event="'scrollRefresh'">
 
-    <p-photo-toolbar :context="context" :filter="filter" :settings="settings" :refresh="refresh"
-                     :update-filter="updateFilter" :update-query="updateQuery"></p-photo-toolbar>
+    <p-photo-toolbar
+      :context="context"
+      :filter="filter"
+      :settings="settings"
+      :refresh="refresh"
+      :update-filter="updateFilter"
+      :update-query="updateQuery"
+      :on-close="onClose"
+      :sticky="stickyToolbar"
+    />
 
     <v-container v-if="loading" fluid class="pa-4">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
@@ -57,6 +65,14 @@ export default {
       type: Object,
       default: () => {
       },
+    },
+    onClose: {
+      type: Function,
+      default: undefined,
+    },
+    stickyToolbar: {
+      type: Boolean,
+      default: false
     },
   },
   data() {

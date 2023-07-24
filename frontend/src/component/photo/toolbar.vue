@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form" lazy-validation
           dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
+          :class="{'sticky': sticky}"
           @submit.prevent="updateQuery()">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
       <v-text-field :value="filter.q"
@@ -44,6 +45,10 @@
       <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')"
              @click.stop="searchExpanded = !searchExpanded">
         <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
+      </v-btn>
+
+      <v-btn v-if="onClose !== undefined" icon @click.stop="onClose">
+        <v-icon>close</v-icon>
       </v-btn>
     </v-toolbar>
 
@@ -206,6 +211,14 @@ export default {
     refresh: {
       type: Function,
       default: () => {},
+    },
+    onClose: {
+      type: Function,
+      default: undefined,
+    },
+    sticky: {
+      type: Boolean,
+      default: false
     },
   },
   data() {

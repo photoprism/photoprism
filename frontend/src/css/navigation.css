@@ -120,6 +120,12 @@ nav .v-list__tile__title.title {
     overflow: hidden;
 }
 
+#photoprism .p-photo-toolbar.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .p-user-box {
     width: 100%;
     padding: 0;

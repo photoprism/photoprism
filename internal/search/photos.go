@@ -636,6 +636,13 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
 	}
 
+	if f.Latmin != 0 && f.Latmax != 0 {
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", f.Latmin, f.Latmax)
+	}
+	if f.Lngmin != 0 && f.Lngmax != 0 {
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", f.Lngmin, f.Lngmax)
+	}
+
 	if !f.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))
 	}
