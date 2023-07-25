@@ -2,6 +2,7 @@ package entity
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -16,6 +17,11 @@ func TestNewUser(t *testing.T) {
 
 	assert.True(t, rnd.IsRefID(m.RefID))
 	assert.True(t, rnd.IsUID(m.UserUID, UserUID))
+}
+
+func TestLdapUser(t *testing.T) {
+	m := LdapUser("user-ldap", "ldap@test.com")
+	assert.Equal(t, "ldap", m.AuthProvider)
 }
 
 func TestFindLocalUser(t *testing.T) {
@@ -493,6 +499,36 @@ func TestFindUserByUID(t *testing.T) {
 	})
 }
 
+func TestUser_SameUID(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		m := FindUserByUID("uqxc08w3d0ej2283")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.True(t, m.SameUID("uqxc08w3d0ej2283"))
+	})
+	t.Run("False", func(t *testing.T) {
+		m := FindUserByUID("uqxc08w3d0ej2283")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.False(t, m.SameUID("uqxc08w3d0ej2276"))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		m := FindUserByUID("uqxc08w3d0ej2283")
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.False(t, m.SameUID("xxx"))
+	})
+}
+
 func TestUser_String(t *testing.T) {
 	t.Run("UID", func(t *testing.T) {
 		p := User{UserUID: "abc123", UserName: "", DisplayName: ""}
@@ -822,6 +858,14 @@ func TestDeleteUser(t *testing.T) {
 		err := u.Delete()
 		assert.Error(t, err)
 	})
+	t.Run("Empty UID", func(t *testing.T) {
+		u := NewUser()
+		u.UserUID = ""
+		u.ID = 500
+
+		err := u.Delete()
+		assert.Error(t, err)
+	})
 }
 
 func TestUser_Deleted(t *testing.T) {
@@ -830,8 +874,17 @@ func TestUser_Deleted(t *testing.T) {
 }
 
 func TestUser_Expired(t *testing.T) {
-	assert.False(t, UserFixtures.Pointer("alice").Expired())
-	assert.False(t, UserFixtures.Pointer("deleted").Expired())
+	t.Run("False", func(t *testing.T) {
+		assert.False(t, UserFixtures.Pointer("alice").Expired())
+		assert.False(t, UserFixtures.Pointer("deleted").Expired())
+	})
+	t.Run("True", func(t *testing.T) {
+		u := NewUser()
+		var expired = time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC)
+		u.ExpiresAt = &expired
+
+		assert.True(t, u.Expired())
+	})
 }
 
 func TestUser_Disabled(t *testing.T) {
@@ -840,27 +893,52 @@ func TestUser_Disabled(t *testing.T) {
 }
 
 func TestUser_UpdateLoginTime(t *testing.T) {
-	alice := UserFixtures.Get("alice")
-	time1 := alice.LoginAt
-	assert.Nil(t, time1)
-	alice.UpdateLoginTime()
-	time2 := alice.LoginAt
-	assert.NotNil(t, time2)
-	alice.UpdateLoginTime()
-	time3 := alice.LoginAt
-	assert.NotNil(t, time3)
-	assert.True(t, time3.After(*time2) || time3.Equal(*time2))
+	t.Run("Success", func(t *testing.T) {
+		alice := UserFixtures.Get("alice")
+		time1 := alice.LoginAt
+		assert.Nil(t, time1)
+		alice.UpdateLoginTime()
+		time2 := alice.LoginAt
+		assert.NotNil(t, time2)
+		alice.UpdateLoginTime()
+		time3 := alice.LoginAt
+		assert.NotNil(t, time3)
+		assert.True(t, time3.After(*time2) || time3.Equal(*time2))
+	})
+	t.Run("User deleted", func(t *testing.T) {
+		u := NewUser()
+		var deleted = time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC)
+		u.DeletedAt = &deleted
+		assert.Nil(t, u.UpdateLoginTime())
+	})
 }
 
 func TestUser_CanLogIn(t *testing.T) {
-	alice := UserFixtures.Get("alice")
-	assert.True(t, alice.CanLogIn())
-	alice.SetProvider(authn.ProviderNone)
-	assert.False(t, alice.CanLogIn())
-	alice.SetProvider(authn.ProviderLocal)
-	assert.True(t, alice.CanLogIn())
+	t.Run("True", func(t *testing.T) {
+		alice := UserFixtures.Get("alice")
+		assert.True(t, alice.CanLogIn())
+		alice.SetProvider(authn.ProviderNone)
+		assert.False(t, alice.CanLogIn())
+		alice.SetProvider(authn.ProviderLocal)
+		assert.True(t, alice.CanLogIn())
 
-	assert.False(t, UserFixtures.Pointer("deleted").CanLogIn())
+		assert.False(t, UserFixtures.Pointer("deleted").CanLogIn())
+	})
+	t.Run("False - !canlogin", func(t *testing.T) {
+		u := NewUser()
+		u.AuthProvider = "local"
+		u.CanLogin = false
+		assert.False(t, u.CanLogIn())
+	})
+	t.Run("False - unknown role", func(t *testing.T) {
+		u := NewUser()
+		u.AuthProvider = "local"
+		u.CanLogin = true
+		u.ID = 500
+		u.UserName = "Unknown"
+		u.UserRole = ""
+		assert.False(t, u.CanLogIn())
+	})
 }
 
 func TestUser_CanUseWebDAV(t *testing.T) {
