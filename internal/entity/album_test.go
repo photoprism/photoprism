@@ -600,12 +600,12 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 		assert.Truef(
 			t, first_photo_updatedAt <= album_updatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
-				" new photos are added",
+				" photos are removed",
 		)
 		assert.Truef(
 			t, second_photo_updatedAt <= album_updatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
-				" new photos are added",
+				" photos are removed",
 		)
 
 		assert.Equal(t, 2, len(removed))
