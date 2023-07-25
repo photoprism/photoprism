@@ -194,7 +194,7 @@ func TestAddPhotoToAlbums(t *testing.T) {
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
-		},
+	},
 	)
 
 	t.Run("empty photo", func(t *testing.T) {

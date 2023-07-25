@@ -830,12 +830,12 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 			removed = append(removed, entry)
 		}
 	}
-	
+
 	// Refresh updated timestamp.
 	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimePointer()}); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
-	} 
-	
+	}
+
 	return removed
 }
 
