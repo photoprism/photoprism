@@ -76,7 +76,7 @@
                         flat solo hide-details
                         color="secondary-dark"
                         background-color="secondary"
-                        :items="options.sorting"
+                        :items="context === 'album' ? options.sorting : options.sorting.filter(item => item.value !== 'edited')"
                         @change="(v) => {updateQuery({'order': v})}">
               </v-select>
             </v-flex>
@@ -293,8 +293,6 @@ export default {
 
     let categories = [{"value": "", "text": this.$gettext("All Categories")}];
 
-    const typeName = this.staticFilter?.type;
-
     if (this.$config.albumCategories().length > 0) {
       categories = categories.concat(this.$config.albumCategories().map(cat => {
         return {"value": cat, "text": cat};
@@ -348,7 +346,7 @@ export default {
           {value: 'newest', text: this.$gettext('Newest First')},
           {value: 'oldest', text: this.$gettext('Oldest First')},
           {value: 'added', text: this.$gettext('Recently Added')},
-          ...(typeName === 'album' ? [{value: 'edited', text: this.$gettext('Recently Edited')}] : [])
+          {value: 'edited', text: this.$gettext('Recently Edited')}
         ],
       },
     };
@@ -377,7 +375,6 @@ export default {
       this.filter.category = query["category"] ? query["category"] : "";
       this.filter.year = query['year'] ? parseInt(query['year']) : "";
       this.filter.order = this.sortOrder();
-      this.options.sorting = this.sortOptions();
 
       this.search();
     }
@@ -428,21 +425,6 @@ export default {
       }
 
       return this.defaultOrder;
-    },
-    sortOptions() {
-      const typeName = this.staticFilter?.type;
-      
-      const sortOptions = [
-        {value: 'favorites', text: this.$gettext('Favorites')},
-        {value: 'name', text: this.$gettext('Name')},
-        {value: 'place', text: this.$gettext('Location')},
-        {value: 'newest', text: this.$gettext('Newest First')},
-        {value: 'oldest', text: this.$gettext('Oldest First')},
-        {value: 'added', text: this.$gettext('Recently Added')},
-        ...(typeName === 'album' ? [{value: 'edited', text: this.$gettext('Recently Edited')}] : [])
-      ];
-      
-      return sortOptions;
     },
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("albums_offset"));
