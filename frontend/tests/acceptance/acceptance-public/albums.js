@@ -10,7 +10,7 @@ import Page from "../page-model/page";
 import AlbumDialog from "../page-model/dialog-album";
 import PhotoEdit from "../page-model/photo-edit";
 
-fixture.only`Test albums`.page`${testcafeconfig.url}`;
+fixture`Test albums`.page`${testcafeconfig.url}`;
 
 const menu = new Menu();
 const album = new Album();
@@ -276,10 +276,10 @@ test.meta("testID", "albums-007").meta({ type: "short", mode: "public" })(
   }
 );
 
-test.meta('testID', 'albums-008').meta({ type: 'short', mode: 'public' })(
-  'Common: Verify album sort options',
+test.meta("testID", "albums-008").meta({ type: "short", mode: "public" })(
+  "Common: Verify album sort options",
   async (t) => {
-    await menu.openPage('albums');
-    await album.checkSortOptions('album');
+    await menu.openPage("albums");
+    await album.checkSortOptions("album");
   }
 );

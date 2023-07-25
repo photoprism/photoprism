@@ -161,3 +161,11 @@ test.meta("testID", "calendar-004").meta({ type: "short", mode: "public" })(
     await photo.checkPhotoVisibility(SecondPhotoUid, true);
   }
 );
+
+test.meta("testID", "calendar-005").meta({ type: "short", mode: "public" })(
+  "Common: Verify calendar sort options",
+  async (t) => {
+    await menu.openPage("calendar");
+    await album.checkSortOptions("calendar");
+  }
+);

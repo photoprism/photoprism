@@ -169,3 +169,11 @@ test.meta("testID", "folders-004").meta({ mode: "public" })(
     await photo.checkPhotoVisibility(FirstPhotoUid, true);
   }
 );
+
+test.meta("testID", "folders-005").meta({ type: "short", mode: "public" })(
+  "Common: Verify folder sort options",
+  async (t) => {
+    await menu.openPage("folders");
+    await album.checkSortOptions("folder");
+  }
+);

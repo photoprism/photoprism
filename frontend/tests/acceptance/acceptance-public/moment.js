@@ -155,3 +155,11 @@ test.meta("testID", "moments-003").meta({ mode: "public" })(
     await photo.checkPhotoVisibility(SecondPhotoUid, true);
   }
 );
+
+test.meta("testID", "moments-004").meta({ type: "short", mode: "public" })(
+  "Common: Verify moment sort options",
+  async (t) => {
+    await menu.openPage("moments");
+    await album.checkSortOptions("moment");
+  }
+);
