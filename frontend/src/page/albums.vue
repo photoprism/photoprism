@@ -76,7 +76,7 @@
                         flat solo hide-details
                         color="secondary-dark"
                         background-color="secondary"
-                        :items="options.sorting"
+                        :items="context === 'album' ? options.sorting : options.sorting.filter(item => item.value !== 'edited')"
                         @change="(v) => {updateQuery({'order': v})}">
               </v-select>
             </v-flex>
@@ -346,7 +346,7 @@ export default {
           {value: 'newest', text: this.$gettext('Newest First')},
           {value: 'oldest', text: this.$gettext('Oldest First')},
           {value: 'added', text: this.$gettext('Recently Added')},
-          {value: 'edited', text: this.$gettext('Recently Edited')},
+          {value: 'edited', text: this.$gettext('Recently Edited')}
         ],
       },
     };
