@@ -3,7 +3,6 @@ version: '3.5'
 ## PhotoPrism Stack Configuration for Portainer
 services:
   photoprism:
-    ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
