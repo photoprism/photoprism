@@ -778,6 +778,26 @@ func TestUser_Validate(t *testing.T) {
 
 		assert.Error(t, u.Validate())
 	})
+	t.Run("EmailInvalid", func(t *testing.T) {
+		u := &User{
+			UserName:    "12",
+			DisplayName: "Validate",
+			UserEmail:   "validate",
+			UserRole:    acl.RoleAdmin.String(),
+		}
+
+		assert.Error(t, u.Validate())
+	})
+	t.Run("EmailInvalid2", func(t *testing.T) {
+		u := &User{
+			UserName:    "12",
+			DisplayName: "Validate",
+			UserEmail:   "validate@",
+			UserRole:    acl.RoleAdmin.String(),
+		}
+
+		assert.Error(t, u.Validate())
+	})
 	t.Run("EmailEmpty", func(t *testing.T) {
 		FirstOrCreateUser(&User{
 			UserName: "nnomail",
@@ -1324,6 +1344,67 @@ func TestUser_SetDisplayName(t *testing.T) {
 		assert.Equal(t, "Henry Gates", d.FamilyName)
 		assert.Equal(t, "III", d.NameSuffix)
 	})
+	t.Run("Empty Name", func(t *testing.T) {
+		user := NewUser()
+		user.SetDisplayName("", SrcAuto)
+		d := user.Details()
+		assert.Equal(t, "", d.NameTitle)
+		assert.Equal(t, "", d.GivenName)
+		assert.Equal(t, "", d.FamilyName)
+		assert.Equal(t, "", d.NameSuffix)
+	})
+	t.Run("priority too low", func(t *testing.T) {
+		user := User{
+			ID:      1234567,
+			UserUID: "urqdrfb72479n047",
+			UserDetails: &UserDetails{
+				GivenName:  "John",
+				MiddleName: "Percival",
+				FamilyName: "Doe",
+				NameSrc:    "manual",
+			},
+		}
+		user.SetDisplayName("Sir William Henry Gates III", SrcAuto)
+		d := user.Details()
+		assert.Equal(t, "", d.NameTitle)
+		assert.Equal(t, "John", d.GivenName)
+		assert.Equal(t, "Doe", d.FamilyName)
+		assert.Equal(t, "", d.NameSuffix)
+	})
+}
+
+func TestUser_SetGivenName(t *testing.T) {
+	user := User{
+		ID:      1234567,
+		UserUID: "urqdrfb72479n047",
+		UserDetails: &UserDetails{
+			GivenName:  "John",
+			MiddleName: "Percival",
+			FamilyName: "Doe",
+		},
+	}
+	assert.Equal(t, "John", user.Details().GivenName)
+	user.SetGivenName("Jane")
+	assert.Equal(t, "Jane", user.Details().GivenName)
+	user.SetGivenName("")
+	assert.Equal(t, "Jane", user.Details().GivenName)
+}
+
+func TestUser_SetFamilyName(t *testing.T) {
+	user := User{
+		ID:      1234567,
+		UserUID: "urqdrfb72479n047",
+		UserDetails: &UserDetails{
+			GivenName:  "John",
+			MiddleName: "Percival",
+			FamilyName: "Doe",
+		},
+	}
+	assert.Equal(t, "Doe", user.Details().FamilyName)
+	user.SetFamilyName("Maier")
+	assert.Equal(t, "Maier", user.Details().FamilyName)
+	user.SetFamilyName("")
+	assert.Equal(t, "Maier", user.Details().FamilyName)
 }
 
 func TestUser_SetAvatar(t *testing.T) {
@@ -1344,6 +1425,10 @@ func TestUser_SetAvatar(t *testing.T) {
 		m := FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "ebfc0aea7d3fd018b5fff57c76806b35181855ed", m.Thumb)
 		assert.Equal(t, SrcManual, m.ThumbSrc)
+	})
+	t.Run("No permissions", func(t *testing.T) {
+		err := Admin.SetAvatar("ebfc0aea7d3fd018b5fff57c76806b35181855ed", SrcAuto)
+		assert.Error(t, err)
 	})
 }
 
@@ -1624,5 +1709,93 @@ func TestUser_Details(t *testing.T) {
 
 		assert.Equal(t, "", u.Details().GivenName)
 		assert.Equal(t, "", u.Details().FamilyName)
+	})
+}
+
+func TestUser_Equal(t *testing.T) {
+	assert.True(t, Admin.Equal(&Admin))
+	assert.False(t, Admin.Equal(&Visitor))
+}
+
+func TestUser_DeleteSessions(t *testing.T) {
+	t.Run("empty uid", func(t *testing.T) {
+		u := User{
+			ID:       1234567,
+			UserUID:  "",
+			UserName: "test",
+			UserRole: "user",
+		}
+
+		assert.Equal(t, 0, u.DeleteSessions([]string{}))
+	})
+	t.Run("alice", func(t *testing.T) {
+		m := FindLocalUser("alice")
+
+		assert.Equal(t, 0, m.DeleteSessions([]string{"69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"}))
+		assert.Equal(t, 1, m.DeleteSessions([]string{}))
+	})
+}
+
+func TestUser_HasPassword(t *testing.T) {
+	assert.True(t, Admin.HasPassword("photoprism"))
+	assert.False(t, Admin.HasPassword("wrong"))
+}
+
+func TestUser_RegenerateTokens(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.Nil(t, Visitor.RegenerateTokens())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		preview := Admin.PreviewToken
+		download := Admin.DownloadToken
+
+		err := Admin.RegenerateTokens()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.NotEqual(t, preview, Admin.PreviewToken)
+		assert.NotEqual(t, download, Admin.DownloadToken)
+
+	})
+}
+
+func TestUser_HasShares(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.False(t, Visitor.HasShares())
+	})
+	t.Run("Alice", func(t *testing.T) {
+		m := FindLocalUser("alice")
+		assert.False(t, m.HasShares())
+		m.RefreshShares()
+		assert.True(t, m.HasShares())
+	})
+}
+
+func TestUser_HasShare(t *testing.T) {
+	m := FindLocalUser("alice")
+	m.RefreshShares()
+	assert.True(t, m.HasShare("at9lxuqxpogaaba9"))
+	assert.False(t, m.HasShare("at9lxuqxpogaaba8"))
+	assert.False(t, Visitor.HasShare("at9lxuqxpogaaba8"))
+
+}
+
+func TestUser_RedeemToken(t *testing.T) {
+	t.Run("Visitor", func(t *testing.T) {
+		assert.Equal(t, 0, Visitor.RedeemToken("1234"))
+	})
+	t.Run("Alice", func(t *testing.T) {
+		m := FindLocalUser("alice")
+		m.RefreshShares()
+		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[0].ShareUID)
+		assert.Equal(t, 0, m.RedeemToken("1234"))
+		m.RefreshShares()
+		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[0].ShareUID)
+		assert.Equal(t, 1, m.RedeemToken("4jxf3jfn2k"))
+		m.RefreshShares()
+		assert.Equal(t, "at9lxuqxpogaaba7", m.UserShares[0].ShareUID)
+		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[1].ShareUID)
 	})
 }
