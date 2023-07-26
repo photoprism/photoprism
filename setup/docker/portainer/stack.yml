@@ -18,7 +18,7 @@ services:
     ports:
       - "2342:2342" # HTTP port (host:container)
     env_file:
-      - photoprism.env
+      - stack.env
     working_dir: "/photoprism" # do not change or remove
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:
@@ -39,4 +39,4 @@ services:
     volumes:
       - "./database:/var/lib/mysql" # DO NOT REMOVE
     env_file:
-      - photoprism.env
+      - stack.env
