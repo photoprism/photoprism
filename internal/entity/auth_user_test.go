@@ -235,6 +235,33 @@ func TestUser_UpdateUsername(t *testing.T) {
 			t.Logf("expected errror: %s", err)
 		}
 	})
+	t.Run("Success", func(t *testing.T) {
+		var m = User{
+			ID:          5000,
+			UserName:    "",
+			UserRole:    "user",
+			DisplayName: "Foo",
+			SuperAdmin:  false,
+			CanLogin:    true,
+		}
+
+		err := m.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Nil(t, FindUserByName("bar"))
+
+		err2 := m.UpdateUsername("bar")
+
+		if err2 != nil {
+			t.Fatal(err2)
+		}
+
+		assert.NotNil(t, FindUserByName("bar"))
+
+	})
 }
 
 func TestUser_SetUsername(t *testing.T) {
@@ -254,6 +281,15 @@ func TestUser_SetUsername(t *testing.T) {
 
 		assert.Equal(t, "photoprism", m.Username())
 		assert.Equal(t, "photoprism", m.UserName)
+	})
+	t.Run("system users cannot be modified", func(t *testing.T) {
+		assert.Equal(t, "system users cannot be modified", Visitor.SetUsername("newname").Error())
+	})
+	t.Run("username is empty", func(t *testing.T) {
+		assert.Equal(t, "username is empty", Admin.SetUsername("").Error())
+	})
+	t.Run("same name", func(t *testing.T) {
+		assert.Nil(t, Admin.SetUsername("admin"))
 	})
 }
 
@@ -931,13 +967,12 @@ func TestUser_CanLogIn(t *testing.T) {
 		assert.False(t, u.CanLogIn())
 	})
 	t.Run("False - unknown role", func(t *testing.T) {
-		u := NewUser()
-		u.AuthProvider = "local"
-		u.CanLogin = true
-		u.ID = 500
-		u.UserName = "Unknown"
-		u.UserRole = ""
-		assert.False(t, u.CanLogIn())
+		unknown := UserFixtures.Get("unauthorized")
+		assert.False(t, unknown.CanLogIn())
+		unknown.SetProvider(authn.ProviderLocal)
+		assert.False(t, unknown.CanLogIn())
+		unknown.SetProvider(authn.ProviderNone)
+		assert.False(t, unknown.CanLogIn())
 	})
 }
 
@@ -963,6 +998,14 @@ func TestUser_CanUpload(t *testing.T) {
 
 	assert.False(t, UserFixtures.Pointer("deleted").CanUpload())
 	assert.True(t, UserFixtures.Pointer("friend").CanUpload())
+
+	unknown := UserFixtures.Get("unauthorized")
+	assert.False(t, unknown.CanUpload())
+	unknown.SetProvider(authn.ProviderLocal)
+	assert.False(t, unknown.CanUpload())
+	unknown.SetProvider(authn.ProviderNone)
+	assert.False(t, unknown.CanUpload())
+
 }
 
 func TestUser_SharedUIDs(t *testing.T) {
@@ -1319,12 +1362,25 @@ func TestUser_Username(t *testing.T) {
 func TestUser_Provider(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, authn.ProviderLink, Visitor.Provider())
+		Visitor.AuthProvider = ""
+		assert.Equal(t, authn.ProviderLink, Visitor.Provider())
+		Visitor.SetProvider(authn.ProviderLink)
 	})
 	t.Run("UnknownUser", func(t *testing.T) {
 		assert.Equal(t, authn.ProviderNone, UnknownUser.Provider())
 	})
 	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, authn.ProviderLocal, Admin.Provider())
+		Admin.AuthProvider = ""
+		assert.Equal(t, authn.ProviderLocal, Admin.Provider())
+		Admin.SetProvider(authn.ProviderLocal)
+	})
+	t.Run("Username empty", func(t *testing.T) {
+		user := NewUser()
+		user.ID = 500
+		user.AuthProvider = ""
+		user.UserName = "test"
+		assert.Equal(t, authn.ProviderDefault, user.Provider())
 	})
 }
 
@@ -1354,6 +1410,7 @@ func TestUser_SetBasePath(t *testing.T) {
 			CanInvite:   false,
 		}
 
+		assert.Equal(t, "", u.SetBasePath("./").GetBasePath())
 		assert.Equal(t, "base", u.SetBasePath("base").GetBasePath())
 		assert.Equal(t, "users/test", u.SetBasePath("~").GetBasePath())
 		assert.Equal(t, "users/test", u.DefaultBasePath())
@@ -1370,6 +1427,20 @@ func TestUser_GetUploadPath(t *testing.T) {
 	})
 	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "", Admin.GetUploadPath())
+	})
+	t.Run("Use base path", func(t *testing.T) {
+		user := NewUser()
+		user.UserName = "test"
+		user.UploadPath = "./"
+		user.BasePath = "mybase"
+		assert.Equal(t, "mybase", user.GetUploadPath())
+	})
+	t.Run("Upload path includes base path", func(t *testing.T) {
+		user := NewUser()
+		user.UserName = "test"
+		user.UploadPath = "mybase/upload"
+		user.BasePath = "mybase"
+		assert.Equal(t, "mybase/upload", user.GetUploadPath())
 	})
 }
 
@@ -1388,7 +1459,9 @@ func TestUser_SetUploadPath(t *testing.T) {
 		}
 
 		assert.Equal(t, "upload", u.SetUploadPath("upload").GetUploadPath())
-		assert.Equal(t, "base/upload", u.SetBasePath("base").GetUploadPath())
+		assert.Equal(t, "", u.SetUploadPath("./").GetUploadPath())
+		assert.Equal(t, "users/test", u.SetUploadPath("~").GetUploadPath())
+		assert.Equal(t, "base/users/test", u.SetBasePath("base").GetUploadPath())
 		assert.Equal(t, "base", u.SetUploadPath("~").GetUploadPath())
 		assert.Equal(t, "users/test", u.DefaultBasePath())
 		assert.Equal(t, "users/test", u.SetBasePath("~").GetUploadPath())
@@ -1454,6 +1527,26 @@ func TestUser_FullName(t *testing.T) {
 
 		assert.Equal(t, "Jane Doe", u.FullName())
 	})
+	t.Run("Name from Details", func(t *testing.T) {
+		u := User{
+			ID:          1234567,
+			UserUID:     "urqdrfb72479n047",
+			UserName:    "mr-happy@cat.com",
+			UserRole:    acl.RoleAdmin.String(),
+			DisplayName: "",
+			SuperAdmin:  false,
+			CanLogin:    true,
+			WebDAV:      true,
+			CanInvite:   false,
+			UserDetails: &UserDetails{
+				GivenName:  "John",
+				FamilyName: "Doe",
+			},
+		}
+
+		assert.Equal(t, "John Doe", u.FullName())
+
+	})
 	t.Run("Windows", func(t *testing.T) {
 		u := User{
 			ID:          1234567,
@@ -1470,5 +1563,66 @@ func TestUser_FullName(t *testing.T) {
 		assert.Equal(t, "jens.mander", u.Handle())
 		assert.Equal(t, "domain\\jens mander", u.Username())
 		assert.Equal(t, "Jens Mander", u.FullName())
+	})
+}
+
+func TestUser_Settings(t *testing.T) {
+	t.Run("return settings", func(t *testing.T) {
+		u := User{
+			ID:       1234567,
+			UserUID:  "urqdrfb72479n047",
+			UserName: "test",
+			UserRole: "user",
+			UserSettings: &UserSettings{
+				UserUID:    "",
+				UITheme:    "vanta",
+				UILanguage: "de",
+				MapsStyle:  "street",
+				IndexPath:  "/photos",
+			},
+		}
+
+		assert.Equal(t, "de", u.Settings().UILanguage)
+		assert.Equal(t, "vanta", u.Settings().UITheme)
+	})
+	t.Run("empty uid", func(t *testing.T) {
+		u := User{
+			ID:       1234567,
+			UserUID:  "",
+			UserName: "test",
+			UserRole: "user",
+		}
+
+		assert.Equal(t, "", u.Settings().UILanguage)
+		assert.Equal(t, "", u.Settings().UITheme)
+	})
+}
+
+func TestUser_Details(t *testing.T) {
+	t.Run("return details", func(t *testing.T) {
+		u := User{
+			ID:       1234567,
+			UserUID:  "urqdrfb72479n047",
+			UserName: "test",
+			UserRole: "user",
+			UserDetails: &UserDetails{
+				GivenName:  "John",
+				FamilyName: "Doe",
+			},
+		}
+
+		assert.Equal(t, "John", u.Details().GivenName)
+		assert.Equal(t, "Doe", u.Details().FamilyName)
+	})
+	t.Run("empty uid", func(t *testing.T) {
+		u := User{
+			ID:       1234567,
+			UserUID:  "",
+			UserName: "test",
+			UserRole: "user",
+		}
+
+		assert.Equal(t, "", u.Details().GivenName)
+		assert.Equal(t, "", u.Details().FamilyName)
 	})
 }
