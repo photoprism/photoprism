@@ -97,6 +97,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.GetFile(APIv1)
 	api.DeleteFile(APIv1)
 	api.ChangeFileOrientation(APIv1)
+	api.CreateMarker(APIv1)
 	api.UpdateMarker(APIv1)
 	api.ClearMarkerSubject(APIv1)
 	api.PhotoPrimary(APIv1)

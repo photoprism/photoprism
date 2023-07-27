@@ -12,8 +12,137 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 )
 
+func TestCreateMarker(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		GetPhoto(router)
+		CreateMarker(router)
+
+		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		photoUid := gjson.Get(r.Body.String(), "UID").String()
+		fileUid := gjson.Get(r.Body.String(), "Files.0.UID").String()
+		markerUid := gjson.Get(r.Body.String(), "Files.0.Markers.0.UID").String()
+
+		assert.NotEmpty(t, photoUid)
+		assert.NotEmpty(t, fileUid)
+		assert.NotEmpty(t, markerUid)
+
+		u := "/api/v1/markers"
+
+		frm := form.Marker{
+			FileUID:       fileUid,
+			MarkerType:    "face",
+			X:             0.303519,
+			Y:             0.260742,
+			W:             0.548387,
+			H:             0.365234,
+			SubjSrc:       "",
+			MarkerName:    "",
+			MarkerReview:  false,
+			MarkerInvalid: false,
+		}
+
+		if b, err := json.Marshal(frm); err != nil {
+			t.Fatal(err)
+		} else {
+			t.Logf("POST %s", u)
+			r = PerformRequestWithBody(app, "POST", u, string(b))
+		}
+
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("SuccessWithName", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		GetPhoto(router)
+		CreateMarker(router)
+
+		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		photoUid := gjson.Get(r.Body.String(), "UID").String()
+		fileUid := gjson.Get(r.Body.String(), "Files.0.UID").String()
+		markerUid := gjson.Get(r.Body.String(), "Files.0.Markers.0.UID").String()
+
+		assert.NotEmpty(t, photoUid)
+		assert.NotEmpty(t, fileUid)
+		assert.NotEmpty(t, markerUid)
+
+		u := "/api/v1/markers"
+
+		frm := form.Marker{
+			FileUID:       fileUid,
+			MarkerType:    "face",
+			X:             0.303519,
+			Y:             0.260742,
+			W:             0.548387,
+			H:             0.365234,
+			SubjSrc:       "manual",
+			MarkerName:    "Jens Mander",
+			MarkerReview:  false,
+			MarkerInvalid: false,
+		}
+
+		if b, err := json.Marshal(frm); err != nil {
+			t.Fatal(err)
+		} else {
+			t.Logf("POST %s", u)
+			r = PerformRequestWithBody(app, "POST", u, string(b))
+		}
+
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("InvalidArea", func(t *testing.T) {
+		app, router, _ := NewApiTest()
+
+		GetPhoto(router)
+		CreateMarker(router)
+
+		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+
+		assert.Equal(t, http.StatusOK, r.Code)
+
+		photoUid := gjson.Get(r.Body.String(), "UID").String()
+		fileUid := gjson.Get(r.Body.String(), "Files.0.UID").String()
+		markerUid := gjson.Get(r.Body.String(), "Files.0.Markers.0.UID").String()
+
+		assert.NotEmpty(t, photoUid)
+		assert.NotEmpty(t, fileUid)
+		assert.NotEmpty(t, markerUid)
+
+		u := "/api/v1/markers"
+
+		frm := form.Marker{
+			FileUID:       fileUid,
+			MarkerType:    "face",
+			X:             0.5,
+			Y:             0.5,
+			W:             0,
+			H:             0,
+			SubjSrc:       "",
+			MarkerName:    "",
+			MarkerReview:  false,
+			MarkerInvalid: false,
+		}
+
+		if b, err := json.Marshal(frm); err != nil {
+			t.Fatal(err)
+		} else {
+			t.Logf("POST %s", u)
+			r = PerformRequestWithBody(app, "POST", u, string(b))
+		}
+
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+}
+
 func TestUpdateMarker(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		GetPhoto(router)
@@ -48,7 +177,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
-	t.Run("bad request non- primary file", func(t *testing.T) {
+	t.Run("NonPrimaryFile", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		UpdateMarker(router)
