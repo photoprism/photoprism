@@ -2,6 +2,7 @@
   "skipJsErrors": true,
   "quarantineMode": false,
   "selectorTimeout": 5000,
+  "hostname": "localhost",
   "screenshots": {
     "path": "tests/acceptance/screenshots",
     "takeOnFails": true
