@@ -634,8 +634,7 @@ export default {
         }
       });
 
-      this.map.on('render', this.updateMarkers);
-
+      this.map.on('idle', this.updateMarkers);
 
       this.search();
     },
