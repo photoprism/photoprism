@@ -548,9 +548,10 @@ export default {
 
               const clusterFeatures = clusterFeaturesById[props.cluster_id];
               const previewImageCount = clusterFeatures.length > 3 ? 4 : 2;
-              const images = clusterFeatures
-                .slice(0, previewImageCount)
-                .map((feature) => {
+              const images = Array(previewImageCount)
+                .fill()
+                .map((a,i) => {
+                  const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
                   const imageHash = feature.properties.Hash;
                   const image = document.createElement('div');
                   image.style.backgroundImage = `url(${this.$config.contentUri}/t/${imageHash}/${token}/tile_${50})`;
