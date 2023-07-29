@@ -58,7 +58,39 @@ func (c *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 
 	// Check if file exists.
 	if !fs.FileExists(jsonName) {
-		return "", fmt.Errorf("exiftool: failed creating %s", filepath.Base(jsonName))
+		return "", fmt.Errorf(
+			"exiftool: failed creating %s", filepath.Base(jsonName),
+		)
+	}
+
+	// attempt to extract the video file if it exists
+	var extractCmd *exec.Cmd
+	path := filepath.Join(
+		Config().SidecarPath(), f.RootRelPath(), "%f"+fs.ExtMP4,
+	)
+
+	if f.IsJpeg() {
+		extractCmd = exec.Command(
+			c.conf.ExifToolBin(), "-EmbeddedVideoFile", "-b", "-w",
+			path, f.FileName(),
+		)
+	} else if f.IsHEIF() {
+		extractCmd = exec.Command(
+			c.conf.ExifToolBin(), "-MotionPhotoVideo", "-b", "-w",
+			path, f.FileName(),
+		)
+	} else {
+		return jsonName, err
+	}
+
+	extractCmd.Stdout = &out
+	extractCmd.Stderr = &stderr
+	if err := extractCmd.Run(); err != nil {
+		if stderr.String() != "" {
+			return "", errors.New(stderr.String())
+		} else {
+			return "", err
+		}
 	}
 
 	return jsonName, err
