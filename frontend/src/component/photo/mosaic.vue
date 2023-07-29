@@ -1,6 +1,6 @@
 <template>
-  <v-container grid-list-xs fluid class="pa-1 p-photos p-photo-mosaic">
-    <div v-if="photos.length === 0" class="pa-1">
+  <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
+    <div v-if="photos.length === 0" class="pa-0">
       <v-alert
           :value="true"
           color="secondary-dark"
