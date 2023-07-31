@@ -450,6 +450,10 @@ body.chrome #photoprism .search-results .result {
     text-shadow: 0 0 2px #000, 0 0 2px #000;
 }
 
+#photoprism .search-results .type-live.is-playable .input-open .action-live svg {
+    filter: drop-shadow(0 0 2px #000);
+}
+
 #photoprism .search-results .live-player {
     display: none;
 }
