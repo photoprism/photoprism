@@ -2,6 +2,7 @@ package entity
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -62,6 +63,44 @@ func TestSession_SetData(t *testing.T) {
 		assert.NotEmpty(t, sess.ID)
 		assert.Equal(t, sess.ID, m.ID)
 	})
+}
+
+func TestSession_Expires(t *testing.T) {
+	t.Run("Set expiry date", func(t *testing.T) {
+		m := NewSession(UnixDay, UnixHour)
+		initialExpiryDate := m.SessExpires
+		m.Expires(time.Date(2035, 01, 15, 12, 30, 0, 0, time.UTC))
+		finalExpiryDate := m.SessExpires
+		assert.Greater(t, finalExpiryDate, initialExpiryDate)
+
+	})
+	t.Run("Try to set zero date", func(t *testing.T) {
+		m := NewSession(UnixDay, UnixHour)
+		initialExpiryDate := m.SessExpires
+		m.Expires(time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC))
+		finalExpiryDate := m.SessExpires
+		assert.Equal(t, finalExpiryDate, initialExpiryDate)
+	})
+}
+
+func TestDeleteExpiredSessions(t *testing.T) {
+	assert.Equal(t, 0, DeleteExpiredSessions())
+	m := NewSession(UnixDay, UnixHour)
+	m.Expires(time.Date(2000, 01, 15, 12, 30, 0, 0, time.UTC))
+	m.Save()
+	assert.Equal(t, 1, DeleteExpiredSessions())
+}
+
+func TestSessionStatusUnauthorized(t *testing.T) {
+	m := SessionStatusUnauthorized()
+	assert.Equal(t, 401, m.Status)
+	assert.IsType(t, &Session{}, m)
+}
+
+func TestSessionStatusForbidden(t *testing.T) {
+	m := SessionStatusForbidden()
+	assert.Equal(t, 403, m.Status)
+	assert.IsType(t, &Session{}, m)
 }
 
 func TestSession_TimedOut(t *testing.T) {
