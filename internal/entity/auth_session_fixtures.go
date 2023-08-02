@@ -21,6 +21,7 @@ func (m SessionMap) Pointer(name string) *Session {
 var SessionFixtures = SessionMap{
 	"alice": {
 		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0",
+		RefID:       "sessxkkcabcd",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
 		user:        UserFixtures.Pointer("alice"),
@@ -29,6 +30,7 @@ var SessionFixtures = SessionMap{
 	},
 	"bob": {
 		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1",
+		RefID:       "sessxkkcabce",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
 		user:        UserFixtures.Pointer("bob"),
@@ -37,6 +39,7 @@ var SessionFixtures = SessionMap{
 	},
 	"unauthorized": {
 		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2",
+		RefID:       "sessxkkcabcf",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
 		user:        UserFixtures.Pointer("unauthorized"),
@@ -45,6 +48,7 @@ var SessionFixtures = SessionMap{
 	},
 	"visitor": {
 		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3",
+		RefID:       "sessxkkcabcg",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
 		user:        &Visitor,
@@ -58,6 +62,7 @@ var SessionFixtures = SessionMap{
 	},
 	"friend": {
 		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac4",
+		RefID:       "sessxkkcabch",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
 		user:        UserFixtures.Pointer("friend"),
