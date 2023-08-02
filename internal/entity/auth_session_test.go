@@ -103,6 +103,25 @@ func TestSessionStatusForbidden(t *testing.T) {
 	assert.IsType(t, &Session{}, m)
 }
 
+func TestFindSessionByRefID(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		assert.Nil(t, FindSessionByRefID(""))
+	})
+	t.Run("alice", func(t *testing.T) {
+		m := FindSessionByRefID("sessxkkcabcd")
+		assert.Equal(t, "alice", m.UserName)
+		assert.IsType(t, &Session{}, m)
+	})
+}
+
+func TestSession_RegenerateID(t *testing.T) {
+	m := NewSession(UnixDay, UnixHour)
+	initialID := m.ID
+	m.RegenerateID()
+	finalID := m.ID
+	assert.NotEqual(t, initialID, finalID)
+}
+
 func TestSession_TimedOut(t *testing.T) {
 	t.Run("NewSession", func(t *testing.T) {
 		m := NewSession(UnixDay, UnixHour)
