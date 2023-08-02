@@ -2,6 +2,7 @@ package photoprism
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -64,32 +65,40 @@ func (c *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	}
 
 	// attempt to extract the video file if it exists
-	var extractCmd *exec.Cmd
-	path := filepath.Join(
-		Config().SidecarPath(), f.RootRelPath(), "%f"+fs.ExtMP4,
-	)
-
-	if f.IsJpeg() {
-		extractCmd = exec.Command(
-			c.conf.ExifToolBin(), "-EmbeddedVideoFile", "-b", "-w",
-			path, f.FileName(),
-		)
-	} else if f.IsHEIF() {
-		extractCmd = exec.Command(
-			c.conf.ExifToolBin(), "-MotionPhotoVideo", "-b", "-w",
-			path, f.FileName(),
-		)
-	} else {
-		return jsonName, err
+	var payload []interface{}
+	err = json.Unmarshal([]byte(out.String()), &payload)
+	if err != nil {
+		log.Debugf("Error parsing exiftool JSON payload: ", err)
 	}
+	if len(payload) > 0 {
+		if payloadMap, ok := payload[0].(map[string]interface{}); ok {
+			var extractCmd *exec.Cmd
+			path := filepath.Join(
+				Config().SidecarPath(), f.RootRelPath(), "%f"+fs.ExtMP4,
+			)
+			if _, exists := payloadMap["EmbeddedVideoFile"]; exists {
+				extractCmd = exec.Command(
+					c.conf.ExifToolBin(), "-EmbeddedVideoFile", "-b", "-w",
+					path, f.FileName(),
+				)
+			} else if _, exists := payloadMap["MotionPhotoVideo"]; exists {
+				extractCmd = exec.Command(
+					c.conf.ExifToolBin(), "-MotionPhotoVideo", "-b", "-w",
+					path, f.FileName(),
+				)
+			}
 
-	extractCmd.Stdout = &out
-	extractCmd.Stderr = &stderr
-	if err := extractCmd.Run(); err != nil {
-		if stderr.String() != "" {
-			return "", errors.New(stderr.String())
-		} else {
-			return "", err
+			if extractCmd != nil {
+				extractCmd.Stdout = &out
+				extractCmd.Stderr = &stderr
+				if err := extractCmd.Run(); err != nil {
+					if stderr.String() != "" {
+						return "", errors.New(stderr.String())
+					} else {
+						return "", err
+					}
+				}
+			}
 		}
 	}
 
