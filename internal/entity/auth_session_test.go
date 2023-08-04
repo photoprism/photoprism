@@ -122,6 +122,73 @@ func TestSession_RegenerateID(t *testing.T) {
 	assert.NotEqual(t, initialID, finalID)
 }
 
+func TestSession_Create(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := FindSessionByRefID("sessxkkcxxxx")
+		assert.Empty(t, m)
+		s := &Session{
+			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxx",
+			UserName:    "charles",
+			SessExpires: UnixDay * 3,
+			SessTimeout: UnixTime() + UnixWeek,
+			RefID:       "sessxkkcxxxx",
+		}
+
+		err := s.Create()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		m2 := FindSessionByRefID("sessxkkcxxxx")
+		assert.Equal(t, "charles", m2.UserName)
+	})
+	t.Run("ID already exists", func(t *testing.T) {
+		s := &Session{
+			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0",
+			UserName:    "charles",
+			SessExpires: UnixDay * 3,
+			SessTimeout: UnixTime() + UnixWeek,
+			RefID:       "sessxkkcxxxx",
+		}
+
+		err := s.Create()
+		assert.Error(t, err)
+	})
+}
+
+func TestSession_Save(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := FindSessionByRefID("sessxkkcxxxy")
+		assert.Empty(t, m)
+		s := &Session{
+			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxy",
+			UserName:    "chris",
+			SessExpires: UnixDay * 3,
+			SessTimeout: UnixTime() + UnixWeek,
+			RefID:       "sessxkkcxxxy",
+		}
+
+		err := s.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		m2 := FindSessionByRefID("sessxkkcxxxy")
+		assert.Equal(t, "chris", m2.UserName)
+	})
+}
+
+func TestSession_Updates(t *testing.T) {
+	m := FindSessionByRefID("sessxkkcabcd")
+	assert.Equal(t, "alice", m.UserName)
+
+	m.Updates(Session{UserName: "anton"})
+
+	assert.Equal(t, "anton", m.UserName)
+}
+
 func TestSession_TimedOut(t *testing.T) {
 	t.Run("NewSession", func(t *testing.T) {
 		m := NewSession(UnixDay, UnixHour)
