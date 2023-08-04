@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 
+	"github.com/h2non/filetype"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -69,12 +71,13 @@ func (c *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	err = json.Unmarshal([]byte(out.String()), &payload)
 	if err != nil {
 		log.Debugf("Error parsing exiftool JSON payload: ", err)
+		return "", err
 	}
 	if len(payload) > 0 {
 		if payloadMap, ok := payload[0].(map[string]interface{}); ok {
 			var extractCmd *exec.Cmd
 			path := filepath.Join(
-				Config().SidecarPath(), f.RootRelPath(), "%f"+fs.ExtMP4,
+				Config().SidecarPath(), f.RootRelPath(), "%f",
 			)
 			if _, exists := payloadMap["EmbeddedVideoFile"]; exists {
 				extractCmd = exec.Command(
@@ -92,11 +95,44 @@ func (c *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 				extractCmd.Stdout = &out
 				extractCmd.Stderr = &stderr
 				if err := extractCmd.Run(); err != nil {
+					log.Debugf("Error running exiftool on video file: ", err)
 					if stderr.String() != "" {
 						return "", errors.New(stderr.String())
 					} else {
 						return "", err
 					}
+				}
+
+				// find the extracted file
+				savedPath := filepath.Join(
+					Config().SidecarPath(),
+					f.RootRelPath(),
+					f.BasePrefix(false),
+				)
+
+				// find the video file type
+				buf, err := ioutil.ReadFile(savedPath)
+				if err != nil {
+					log.Debugf("Error reading sidecar file at %s", savedPath)
+					return "", err
+				}
+				kind, err := filetype.Match(buf)
+				if err != nil {
+					log.Debugf(
+						"Error finding the type of sidecar file at %s",
+						savedPath,
+					)
+					return "", err
+				}
+
+				// rename the file with the correct extension
+				dir, file := filepath.Split(savedPath)
+				newFileName := fmt.Sprintf("%s.%s", file, kind.Extension)
+				newSavedPath := filepath.Join(dir, newFileName)
+				err = os.Rename(savedPath, newSavedPath)
+				if err != nil {
+					log.Debugf("Error renaming the file at %s", savedPath)
+					return "", err
 				}
 			}
 		}
