@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/authn"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -143,6 +145,27 @@ func TestSession_Create(t *testing.T) {
 		m2 := FindSessionByRefID("sessxkkcxxxx")
 		assert.Equal(t, "charles", m2.UserName)
 	})
+	t.Run("Invalid RefID", func(t *testing.T) {
+		m, _ := FindSession("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111")
+		assert.Empty(t, m)
+		s := &Session{
+			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111",
+			UserName:    "charles",
+			SessExpires: UnixDay * 3,
+			SessTimeout: UnixTime() + UnixWeek,
+			RefID:       "123",
+		}
+
+		err := s.Create()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		m2, _ := FindSession("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111")
+
+		assert.NotEqual(t, "123", m2.RefID)
+	})
 	t.Run("ID already exists", func(t *testing.T) {
 		s := &Session{
 			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0",
@@ -187,6 +210,69 @@ func TestSession_Updates(t *testing.T) {
 	m.Updates(Session{UserName: "anton"})
 
 	assert.Equal(t, "anton", m.UserName)
+}
+
+func TestSession_User(t *testing.T) {
+	t.Run("alice", func(t *testing.T) {
+		m := FindSessionByRefID("sessxkkcabcd")
+		assert.Equal(t, "uqxetse3cy5eo9z2", m.User().UserUID)
+	})
+	t.Run("empty", func(t *testing.T) {
+		m := &Session{}
+		assert.Equal(t, "", m.User().UserUID)
+	})
+}
+
+func TestSession_RefreshUser(t *testing.T) {
+	t.Run("bob", func(t *testing.T) {
+		m := FindSessionByRefID("sessxkkcabce")
+
+		assert.Equal(t, "bob", m.Username())
+
+		m.UserName = "bobby"
+
+		assert.Equal(t, "bobby", m.Username())
+
+		assert.Equal(t, "bob", m.RefreshUser().UserName)
+
+		assert.Equal(t, "bob", m.Username())
+	})
+	t.Run("empty", func(t *testing.T) {
+		m := &Session{}
+		assert.Equal(t, "", m.RefreshUser().UserUID)
+	})
+}
+
+func TestSession_SetProvider(t *testing.T) {
+	m := FindSessionByRefID("sessxkkcabce")
+	assert.Equal(t, authn.ProviderDefault, m.Provider())
+	m.SetProvider("")
+	assert.Equal(t, authn.ProviderDefault, m.Provider())
+	m.SetProvider(authn.ProviderLink)
+	assert.Equal(t, authn.ProviderLink, m.Provider())
+	m.SetProvider(authn.ProviderDefault)
+	assert.Equal(t, authn.ProviderDefault, m.Provider())
+}
+
+func TestSession_ChangePassword(t *testing.T) {
+	m := FindSessionByRefID("sessxkkcabce")
+	assert.Empty(t, m.PreviewToken)
+	assert.Empty(t, m.DownloadToken)
+
+	err := m.ChangePassword("photoprism123")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotEmpty(t, m.PreviewToken)
+	assert.NotEmpty(t, m.DownloadToken)
+
+	err2 := m.ChangePassword("Bobbob123!")
+
+	if err2 != nil {
+		t.Fatal(err2)
+	}
 }
 
 func TestSession_TimedOut(t *testing.T) {
