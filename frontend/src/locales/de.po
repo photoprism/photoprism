@@ -927,7 +927,7 @@ msgstr "Belichtungszeit"
 
 #: src/dialog/photo/edit/details.vue:465
 msgid "F Number"
-msgstr "F Nummer"
+msgstr "Lichtstärke"
 
 #: src/model/face.js:163
 msgid "Face"
@@ -968,7 +968,7 @@ msgstr "Favoriten"
 
 #: src/page/about/feedback.vue:7 src/options/options.js:439
 msgid "Feature Request"
-msgstr "Feature Request"
+msgstr "Verbesserungsvorschlag"
 
 #: src/page/settings/account.vue:849 src/page/settings/account.vue:703
 msgid "Feed"
