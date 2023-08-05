@@ -968,7 +968,7 @@ msgstr "Favoriten"
 
 #: src/page/about/feedback.vue:7 src/options/options.js:439
 msgid "Feature Request"
-msgstr "Feature-Anfrage"
+msgstr "Verbesserungsvorschlag"
 
 #: src/page/settings/account.vue:849 src/page/settings/account.vue:703
 msgid "Feed"
