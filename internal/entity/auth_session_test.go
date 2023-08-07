@@ -497,3 +497,52 @@ func TestSession_Expired(t *testing.T) {
 		assert.Equal(t, m.ExpiresAt(), m.TimeoutAt())
 	})
 }
+
+func TestSession_SetUserAgent(t *testing.T) {
+	t.Run("user agent empty", func(t *testing.T) {
+		m := &Session{}
+		assert.Equal(t, "", m.UserAgent)
+		m.SetUserAgent("")
+		assert.Equal(t, "", m.UserAgent)
+		m.SetUserAgent("       ")
+		assert.Equal(t, "", m.UserAgent)
+	})
+	t.Run("change user agent", func(t *testing.T) {
+		m := &Session{}
+		assert.Equal(t, "", m.UserAgent)
+		m.SetUserAgent("chrome")
+		assert.Equal(t, "chrome", m.UserAgent)
+		m.SetUserAgent("mozilla")
+		assert.Equal(t, "mozilla", m.UserAgent)
+	})
+}
+
+func TestSession_SetClientIP(t *testing.T) {
+	t.Run("ip empty", func(t *testing.T) {
+		m := &Session{}
+		assert.Equal(t, "", m.ClientIP)
+		m.SetClientIP("")
+		assert.Equal(t, "", m.ClientIP)
+		m.SetClientIP("       ")
+		assert.Equal(t, "", m.ClientIP)
+	})
+	t.Run("change ip", func(t *testing.T) {
+		m := &Session{}
+		assert.Equal(t, "", m.ClientIP)
+		m.SetClientIP("1234")
+		assert.Equal(t, "", m.ClientIP)
+		m.SetClientIP("111.123.1.11")
+		assert.Equal(t, "111.123.1.11", m.ClientIP)
+		m.SetClientIP("2001:db8::68")
+		assert.Equal(t, "2001:db8::68", m.ClientIP)
+	})
+}
+
+func TestSession_HttpStatus(t *testing.T) {
+	m := &Session{}
+	assert.Equal(t, 401, m.HttpStatus())
+	m.Status = 403
+	assert.Equal(t, 403, m.HttpStatus())
+	alice := FindSessionByRefID("sessxkkcabcd")
+	assert.Equal(t, 200, alice.HttpStatus())
+}
