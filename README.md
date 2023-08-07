@@ -112,7 +112,7 @@ Feel free to contact us at [hello@photoprism.app](mailto:hello@photoprism.app) w
 
 ## Every Contribution Makes a Difference ##
 
-We welcome [contributions](CONTRIBUTING.md) of any kind, including blog posts, tutorials, testing, writing documentation, and pull requests. Our [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all the information necessary for you to get started.
+We welcome [contributions](CONTRIBUTING.md) of any kind, including blog posts, tutorials, translations, testing, writing documentation, and pull requests. Our [Developer Guide](https://docs.photoprism.app/developer-guide/) contains all the information necessary for you to get started.
 
 ----
 
