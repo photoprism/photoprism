@@ -30,12 +30,15 @@ test.meta("testID", "settings-general-001").meta({ type: "short", mode: "auth" }
   "Common: Disable delete",
   async (t) => {
     await menu.openPage("archive");
+    await toolbar.checkToolbarActionAvailability("delete", true);
     await photo.triggerHoverAction("nth", 0, "select");
     await contextmenu.checkContextMenuActionAvailability("delete", true);
     await contextmenu.clearSelection();
     await menu.openPage("settings");
     await t.click(settings.deleteCheckbox);
     await menu.openPage("archive");
+    await toolbar.checkToolbarActionAvailability("delete", false);
+
     await photo.triggerHoverAction("nth", 0, "select");
 
     await contextmenu.checkContextMenuActionAvailability("restore", true);
