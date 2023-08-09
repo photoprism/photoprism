@@ -47,7 +47,7 @@
         <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
       </v-btn>
 
-      <v-btn v-if="onClose !== undefined" icon @click.stop="onClose">
+      <v-btn v-if="onClose !== undefined" icon class="action-close" @click.stop="onClose">
         <v-icon>close</v-icon>
       </v-btn>
     </v-toolbar>
