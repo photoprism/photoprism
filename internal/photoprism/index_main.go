@@ -37,6 +37,23 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 			log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 		} else {
 			log.Debugf("index: created %s", filepath.Base(jsonName))
+			// attempt to extract the video file if it exists
+			if video, err := ind.convert.ToSamsungVideo(
+				f, jsonName,
+				false,
+			); err != nil {
+				result.Err = fmt.Errorf(
+					"index: failed creating preview for %s (%s)",
+					clean.Log(f.RootRelName()), err.Error(),
+				)
+				result.Status = IndexFailed
+				return result
+			} else {
+				related.Files = append(
+					related.Files,
+					video,
+				)
+			}
 		}
 	}
 
