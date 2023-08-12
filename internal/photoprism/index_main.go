@@ -49,10 +49,20 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 				result.Status = IndexFailed
 				return result
 			} else {
-				related.Files = append(
-					related.Files,
+				// extract the metadata of the video file
+				if jsonName, err := ind.convert.ToJson(
 					video,
-				)
+					false,
+				); err != nil {
+					log.Tracef("exiftool: %s", clean.Log(err.Error()))
+				} else {
+					log.Debugf("index: created %s", filepath.Base(jsonName))
+					// add video to related files
+					related.Files = append(
+						related.Files,
+						video,
+					)
+				}
 			}
 		}
 	}
