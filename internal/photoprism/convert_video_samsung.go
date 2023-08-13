@@ -67,15 +67,14 @@ func (c *Convert) ToSamsungVideo(
 				)
 			}
 
-			var out bytes.Buffer
-			var stderr bytes.Buffer
-			cmd.Stdout = &out
-			cmd.Stderr = &stderr
-			cmd.Env = []string{
-				fmt.Sprintf("HOME=%s", c.conf.CmdCachePath()),
-			}
-
 			if cmd != nil {
+				var out bytes.Buffer
+				var stderr bytes.Buffer
+				cmd.Stdout = &out
+				cmd.Stderr = &stderr
+				cmd.Env = []string{
+					fmt.Sprintf("HOME=%s", c.conf.CmdCachePath()),
+				}
 				if err := cmd.Run(); err != nil {
 					log.Debugf("Error running exiftool on video file: ", err)
 					if stderr.String() != "" {
