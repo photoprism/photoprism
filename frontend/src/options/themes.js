@@ -36,6 +36,7 @@ let themes = {
     },
   },
   abyss: {
+    title: "Abyss",
     name: "abyss",
     dark: true,
     sponsor: true,
@@ -131,6 +132,7 @@ let themes = {
     },
   },
   gemstone: {
+    title: "Gemstone",
     name: "gemstone",
     dark: true,
     sponsor: true,
@@ -162,6 +164,7 @@ let themes = {
     },
   },
   grayscale: {
+    title: "Grayscale",
     name: "grayscale",
     dark: true,
     sponsor: false,
@@ -193,6 +196,7 @@ let themes = {
     },
   },
   lavender: {
+    title: "Lavender",
     name: "lavender",
     dark: false,
     sponsor: false,
@@ -224,6 +228,7 @@ let themes = {
     },
   },
   legacy: {
+    title: "Legacy",
     name: "legacy",
     dark: false,
     sponsor: false,
@@ -287,6 +292,7 @@ let themes = {
     },
   },
   neon: {
+    title: "Neon",
     name: "neon",
     dark: true,
     sponsor: true,
@@ -350,6 +356,7 @@ let themes = {
     },
   },
   onyx: {
+    title: "Onyx",
     name: "onyx",
     dark: false,
     sponsor: false,
@@ -381,6 +388,7 @@ let themes = {
     },
   },
   shadow: {
+    title: "Shadow",
     name: "shadow",
     dark: true,
     sponsor: true,
@@ -412,6 +420,7 @@ let themes = {
     },
   },
   vanta: {
+    title: "Vanta",
     name: "vanta",
     dark: true,
     sponsor: true,
@@ -443,6 +452,7 @@ let themes = {
     },
   },
   yellowstone: {
+    title: "Yellowstone",
     name: "yellowstone",
     dark: true,
     sponsor: true,

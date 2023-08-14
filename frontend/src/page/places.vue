@@ -2,7 +2,7 @@
   <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
     <div id="map" style="width: 100%; height: 100%;">
       <div v-if="canSearch" class="map-control">
-        <div class="maplibregl-ctrl maplibregl-ctrl-group">
+        <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
           <v-text-field v-model.lazy.trim="filter.q"
                         solo hide-details clearable flat single-line validate-on-blur
                         class="input-search pa-0 ma-0"
@@ -560,7 +560,7 @@ export default {
               imageContainer.append(...images);
 
               const counterBubble = document.createElement('div');
-              counterBubble.className = 'counter-bubble';
+              counterBubble.className = 'counter-bubble primary-button theme--light';
               counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
 
               el.append(imageContainer);

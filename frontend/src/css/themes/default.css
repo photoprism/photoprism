@@ -69,7 +69,6 @@ body.dark-theme .theme--light.v-card {
     background: #2f3031;
 }
 
-body.dark-theme .theme--light.v-text-field--solo>.v-input__control>.v-input__slot,
 body.dark-theme .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
     background: rgba(250, 250, 255, 0.1);
 }

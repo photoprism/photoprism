@@ -3,25 +3,29 @@
 #photoprism .map-control {
     position: absolute;
     background: transparent;
-    bottom: 35px;
-    right: 30px;
+    top: 10px;
+    left: 10px;
     z-index: 2;
 }
 
 #photoprism.is-rtl .map-control {
-    right: auto;
-    left: 30px;
+    left: auto;
+    right: 10px;
+}
+
+#photoprism .map-control .map-control-search {
+    overflow: hidden;
+    border-radius: 24px;
 }
 
 #photoprism #map .marker {
     box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12) !important;
     background-color: rgba(0, 0, 0, 0.3);
-    border-color: #fff;
     color: rgba(0, 0, 0, 0.87);
     display: block;
-    border-radius: 20%;
+    border-radius: 50%;
     cursor: pointer;
-    border: 1px solid #7f7f7f;
+    border: 1px solid #ffffff99;
 }
 
 #photoprism #map .cluster-marker {
@@ -29,31 +33,30 @@
     grid-template-columns: 1fr 1fr;
     grid-gap: 1px;
     overflow: hidden;
-    background-color: #7f7f7f;
+    background-color: #ffffff99;
     width: 100%;
     height: 100%
 }
 
 #photoprism #map .counter-bubble {
-  border-radius: 100%;
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  font-size: 12px;
-  display: flex;
-  background-color: #bb3719;
-  top: -12px;
-  right: -12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+    border-radius: 100%;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    display: flex;
+    color: #ffffff;
+    top: -6px;
+    right: -6px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
 }
 
 #photoprism #map .cluster-marker > div {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
 }
 
 #photoprism .maplibregl-ctrl-attrib-inner a {

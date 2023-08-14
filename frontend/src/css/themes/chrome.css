@@ -69,6 +69,19 @@ body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--
     color: rgba(255, 255, 255, 0.2)!important;
 }
 
+body.dark-theme #photoprism.theme-chrome #map .secondary-dark.theme--light,
+body.dark-theme #photoprism.theme-chrome #map .secondary-dark--text {
+    color: #000000!important;
+    caret-color: #000000!important;
+    stroke: #000000!important;
+}
+
+body.dark-theme #photoprism.theme-chrome .map-control .theme--light {
+    color: #757575;
+    caret-color: #757575;
+    stroke: #757575;
+}
+
 body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box>.v-input__control>.v-input__slot {
     background: rgba(255, 255, 255, 0.04);
 }
