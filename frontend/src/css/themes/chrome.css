@@ -1,0 +1,133 @@
+/* Chrome Dark Theme */
+
+body.dark-theme.theme-chrome,
+.theme-chrome .v-content__wrap,
+.theme-chrome .p-page,
+.theme-chrome .form,
+.theme-chrome .v-content {
+    background: #1d1d1d !important;
+}
+
+#photoprism.theme-chrome .theme--light.v-small-dialog__content,
+#photoprism.theme-chrome .theme--light.v-sheet,
+#photoprism.theme-chrome .theme--light.v-card,
+.theme-chrome .application.theme--light {
+    background: #202020;
+}
+
+#photoprism.container.theme-chrome {
+    background-image: linear-gradient(160deg, #808080 0%, #262626 100%);
+}
+
+#photoprism.theme-chrome .theme--light .v-table {
+    background: #262626;
+}
+
+body.dark-theme #photoprism.theme-chrome,
+body.dark-theme #photoprism.theme-chrome .v-datatable a,
+body.dark-theme #photoprism.theme-chrome .theme--light.v-expansion-panel .v-expansion-panel__container,
+body.dark-theme #photoprism.theme-chrome .theme--light.v-tabs__bar .v-tabs__div {
+    color: #ffffff;
+    caret-color: #ffffff;
+    stroke: #ffffff;
+}
+
+body.dark-theme #photoprism.theme-chrome .p-page a,
+body.dark-theme #photoprism.theme-chrome .theme--light,
+body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu.theme--dark.v-list,
+body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--dark.v-icon {
+    color: #d8d8d8;
+    caret-color: #d8d8d8;
+    stroke: #d8d8d8;
+}
+
+body.dark-theme #photoprism.theme-chrome .v-input--selection-controls__input .theme--light {
+    color: #8e8e8e;
+    caret-color: #8e8e8e;
+    stroke: #8e8e8e;
+}
+
+body.dark-theme #photoprism.theme-chrome #p-navigation .navigation-menu .theme--dark.v-icon {
+    color: inherit;
+}
+
+#photoprism.theme-chrome .theme--light.v-table thead th,
+#photoprism.theme-chrome .theme--light.v-table tbody td {
+    color: #fff;
+}
+
+#photoprism.theme-chrome .theme--light.v-table tbody tr:hover {
+    background: #2b2b2b;
+}
+
+#photoprism.theme-chrome .theme--light.v-text-field--solo>.v-input__control>.v-input__slot,
+#photoprism.theme-chrome .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#photoprism.theme-chrome .secondary--text {
+    color: rgba(255, 255, 255, 0.2)!important;
+}
+
+body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box>.v-input__control>.v-input__slot {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+#photoprism.theme-chrome .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-chrome .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-chrome .theme--light.v-input--is-disabled .v-label,
+#photoprism.theme-chrome .theme--light.v-input--is-disabled input,
+#photoprism.theme-chrome .theme--light.v-input--is-disabled textarea {
+    color: #aaaaaa;
+}
+
+#photoprism.theme-chrome .theme--light.v-list {
+    background: #232425;
+}
+
+#photoprism.theme-chrome a.text-link {
+    color: #ffffff !important;
+}
+
+#photoprism.theme-chrome .footer .body-link {
+    color: #ffffff !important;
+}
+
+#photoprism.theme-chrome .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-chrome .accent--text {
+    color: #ffffff !important;
+}
+
+#photoprism.theme-chrome .theme--light.v-input:not(.v-input--is-disabled) input,
+#photoprism.theme-chrome .theme--light.v-input:not(.v-input--is-disabled) textarea {
+    color: #fff;
+}
+
+#photoprism.theme-chrome .theme--light.v-btn.v-btn--disabled,
+#photoprism.theme-chrome .theme--light.v-btn.v-btn--disabled .v-btn__loading,
+#photoprism.theme-chrome .theme--light.v-btn.v-btn--disabled .v-icon {
+    color: #999 !important;
+}
+
+#photoprism.theme-chrome .theme--light.v-list .v-list__tile__mask {
+    color: #cccccc;
+    background: transparent;
+}
+
+#photoprism.theme-chrome .cards-view .card.is-selected .card-details {
+    color: #fff;
+    background-color: #424242;
+}
+
+#photoprism.theme-chrome .cards-view .card.is-selected,
+#photoprism.theme-chrome .cards-view .card.is-selected .card-background {
+    background-color: #424242 !important;
+}
+
+#photoprism.theme-chrome .cards-view .card.is-selected .card-details .v-icon {
+    color: #fff;
+}
+
