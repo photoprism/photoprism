@@ -105,7 +105,7 @@ func (c *Config) HttpCachePublic() bool {
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpHost() string {
 	// when unix socket used as host, make host as default value. or http client will act weirdly.
-	if c.options.HttpHost == "" || c.HttpHostAsSocketPath() != "" {
+	if c.options.HttpHost == "" {
 		return "0.0.0.0"
 	}
 
@@ -121,13 +121,17 @@ func (c *Config) HttpPort() int {
 	return c.options.HttpPort
 }
 
-// HttpHostAsSocketPath tries to parse the HttpHost as unix socket path. If failed, return empty string.
-func (c *Config) HttpHostAsSocketPath() string {
-	host := c.options.HttpHost
-	if strings.HasPrefix(host, "unix:") && strings.Contains(host, "/") {
-		return strings.TrimPrefix(host, "unix:")
+// HttpSocket tries to parse the HttpHost as a Unix socket path and returns an empty string otherwise.
+func (c *Config) HttpSocket() string {
+	if c.options.HttpSocket != "" {
+		// Do nothing.
+	} else if host := c.options.HttpHost; !strings.HasPrefix(host, "unix:") {
+		return ""
+	} else if strings.Contains(host, "/") {
+		c.options.HttpSocket = strings.TrimPrefix(host, "unix:")
 	}
-	return ""
+
+	return c.options.HttpSocket
 }
 
 // TemplatesPath returns the server templates path.

@@ -8,12 +8,12 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 
-func TestConfig_HttpHostAsSocketPath(t *testing.T) {
+func TestConfig_HttpSocket(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "", c.HttpHostAsSocketPath())
+	assert.Equal(t, "", c.HttpSocket())
 	c.options.HttpHost = "unix:/tmp/photoprism.sock"
-	assert.Equal(t, "/tmp/photoprism.sock", c.HttpHostAsSocketPath())
+	assert.Equal(t, "/tmp/photoprism.sock", c.HttpSocket())
 }
 
 func TestConfig_HttpServerHost2(t *testing.T) {
@@ -23,7 +23,7 @@ func TestConfig_HttpServerHost2(t *testing.T) {
 	c.options.HttpHost = "test"
 	assert.Equal(t, "test", c.HttpHost())
 	c.options.HttpHost = "unix:/tmp/photoprism.sock"
-	assert.Equal(t, "0.0.0.0", c.HttpHost())
+	assert.Equal(t, "unix:/tmp/photoprism.sock", c.HttpHost())
 }
 
 func TestConfig_HttpServerPort2(t *testing.T) {

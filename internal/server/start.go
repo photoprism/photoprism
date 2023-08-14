@@ -76,8 +76,29 @@ func Start(ctx context.Context, conf *config.Config) {
 	var tlsManager *autocert.Manager
 	var server *http.Server
 
-	// Enable TLS?
-	if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
+	// Start HTTP server.
+	if unixSocket := conf.HttpSocket(); unixSocket != "" {
+		var listener net.Listener
+		var unixAddr *net.UnixAddr
+		var err error
+
+		if unixAddr, err = net.ResolveUnixAddr("unix", unixSocket); err != nil {
+			log.Errorf("server: resolve unix address failed (%s)", err)
+			return
+		} else if listener, err = net.ListenUnix("unix", unixAddr); err != nil {
+			log.Errorf("server: listen unix address failed (%s)", err)
+			return
+		} else {
+			server = &http.Server{
+				Addr:    unixSocket,
+				Handler: router,
+			}
+
+			log.Infof("server: listening on %s [%s]", unixSocket, time.Since(start))
+
+			go StartHttp(server, listener)
+		}
+	} else if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
 		server = &http.Server{
 			Addr:      fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 			TLSConfig: tlsManager.TLSConfig(),
@@ -85,11 +106,8 @@ func Start(ctx context.Context, conf *config.Config) {
 		}
 		log.Infof("server: starting in auto tls mode on %s [%s]", server.Addr, time.Since(start))
 		go StartAutoTLS(server, tlsManager, conf)
-	} else if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
+	} else if publicCert, privateKey := conf.TLS(); unixSocket == "" && publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in tls mode")
-		if unixSocketPath := conf.HttpHostAsSocketPath(); unixSocketPath != "" {
-			log.Errorf("both unix socket and tls cert provided")
-		}
 		server = &http.Server{
 			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 			Handler: router,
@@ -98,30 +116,22 @@ func Start(ctx context.Context, conf *config.Config) {
 		go StartTLS(server, publicCert, privateKey)
 	} else {
 		log.Infof("server: %s", tlsErr)
-		var listener net.Listener
-		var listenPath string
-		var err error
-		if unixSocketPath := conf.HttpHostAsSocketPath(); unixSocketPath != "" {
-			var unixAddr *net.UnixAddr
-			unixAddr, err = net.ResolveUnixAddr("unix", unixSocketPath)
-			if err != nil {
-				log.Errorf("server: resolve unix address failed (%s)", err)
-			}
-			listenPath = unixSocketPath
-			listener, err = net.ListenUnix("unix", unixAddr)
+
+		socket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+
+		if listener, err := net.Listen("tcp", socket); err != nil {
+			log.Errorf("server: %s", err)
+			return
 		} else {
-			listenPath = fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
-			listener, err = net.Listen("tcp", listenPath)
+			server = &http.Server{
+				Addr:    socket,
+				Handler: router,
+			}
+
+			log.Infof("server: listening on %s [%s]", socket, time.Since(start))
+
+			go StartHttp(server, listener)
 		}
-		if err != nil {
-			log.Errorf("server: listen unix address failed (%s)", err)
-		}
-		server = &http.Server{
-			Addr:    listenPath,
-			Handler: router,
-		}
-		log.Infof("server: listening on %s [%s]", listenPath, time.Since(start))
-		go StartHttp(server, listener)
 	}
 
 	// Graceful HTTP server shutdown.

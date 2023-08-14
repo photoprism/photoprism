@@ -33,11 +33,11 @@ func statusAction(ctx *cli.Context) error {
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 10 * time.Second}
 
-	// make a dial function for unix socket
-	if unixSocketPath := conf.HttpHostAsSocketPath(); unixSocketPath != "" {
+	// Connect to unix socket?
+	if unixSocket := conf.HttpSocket(); unixSocket != "" {
 		client.Transport = &http.Transport{
 			Dial: func(network, addr string) (net.Conn, error) {
-				return net.Dial("unix", unixSocketPath)
+				return net.Dial("unix", unixSocket)
 			},
 		}
 	}

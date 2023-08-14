@@ -16,8 +16,6 @@ func AutoTLS(conf *config.Config) (*autocert.Manager, error) {
 	// Enable automatic HTTPS via Let's Encrypt?
 	if !conf.SiteHttps() {
 		return nil, fmt.Errorf("disabled tls")
-	} else if conf.HttpHostAsSocketPath() != "" {
-		return nil, fmt.Errorf("unix socket not work with auto https")
 	} else if siteDomain = conf.SiteDomain(); !strings.Contains(siteDomain, ".") {
 		return nil, fmt.Errorf("fully qualified domain required to enable tls")
 	} else if tlsEmail = conf.TLSEmail(); tlsEmail == "" {
