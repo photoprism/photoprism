@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
@@ -86,6 +87,9 @@ func Start(ctx context.Context, conf *config.Config) {
 		go StartAutoTLS(server, tlsManager, conf)
 	} else if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in tls mode")
+		if unixSocketPath := conf.HttpHostAsSocketPath(); unixSocketPath != "" {
+			log.Errorf("both unix socket and tls cert provided")
+		}
 		server = &http.Server{
 			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 			Handler: router,
@@ -94,12 +98,30 @@ func Start(ctx context.Context, conf *config.Config) {
 		go StartTLS(server, publicCert, privateKey)
 	} else {
 		log.Infof("server: %s", tlsErr)
+		var listener net.Listener
+		var listenPath string
+		var err error
+		if unixSocketPath := conf.HttpHostAsSocketPath(); unixSocketPath != "" {
+			var unixAddr *net.UnixAddr
+			unixAddr, err = net.ResolveUnixAddr("unix", unixSocketPath)
+			if err != nil {
+				log.Errorf("server: resolve unix address failed (%s)", err)
+			}
+			listenPath = unixSocketPath
+			listener, err = net.ListenUnix("unix", unixAddr)
+		} else {
+			listenPath = fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+			listener, err = net.Listen("tcp", listenPath)
+		}
+		if err != nil {
+			log.Errorf("server: listen unix address failed (%s)", err)
+		}
 		server = &http.Server{
-			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
+			Addr:    listenPath,
 			Handler: router,
 		}
-		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
-		go StartHttp(server)
+		log.Infof("server: listening on %s [%s]", listenPath, time.Since(start))
+		go StartHttp(server, listener)
 	}
 
 	// Graceful HTTP server shutdown.
@@ -112,8 +134,8 @@ func Start(ctx context.Context, conf *config.Config) {
 }
 
 // StartHttp starts the web server in http mode.
-func StartHttp(s *http.Server) {
-	if err := s.ListenAndServe(); err != nil {
+func StartHttp(s *http.Server, l net.Listener) {
+	if err := s.Serve(l); err != nil {
 		if err == http.ErrServerClosed {
 			log.Info("server: shutdown complete")
 		} else {

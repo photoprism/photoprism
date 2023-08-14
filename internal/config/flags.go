@@ -503,7 +503,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-host, ip",
-			Usage:  "Web server `IP` address",
+			Usage:  "Web server `IP` address. If start with unix:, path followed is treated as unix socket path for listening.",
 			EnvVar: EnvVar("HTTP_HOST"),
 		}}, {
 		Flag: cli.IntFlag{
