@@ -178,6 +178,11 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return nil
 			}
 
+			// Create JSON sidecar file, if needed.
+			if err = mf.CreateExifToolJson(imp.convert); err != nil {
+				log.Errorf("import: %s", clean.Log(err.Error()), clean.Log(mf.BaseName()))
+			}
+
 			// Find related files to import.
 			related, err := mf.RelatedFiles(imp.conf.Settings().StackSequences())
 

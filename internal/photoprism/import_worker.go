@@ -39,8 +39,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			continue
 		}
 
-		// Extract metadata to a JSON file with Exiftool.
-		if jsonErr := related.Main.CreateExifToolJson(); jsonErr != nil {
+		// Create JSON sidecar file, if needed.
+		if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
 			log.Errorf("import: %s", clean.Log(jsonErr.Error()))
 		}
 
@@ -126,8 +126,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
-			// Extract metadata to a JSON file with Exiftool.
-			if jsonErr := f.CreateExifToolJson(); jsonErr != nil {
+			// Create JSON sidecar file, if needed.
+			if jsonErr := f.CreateExifToolJson(imp.convert); jsonErr != nil {
 				log.Errorf("import: %s", clean.Log(jsonErr.Error()))
 			}
 

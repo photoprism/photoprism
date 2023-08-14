@@ -54,10 +54,10 @@ func (m *MediaFile) NeedsExifToolJson() bool {
 }
 
 // CreateExifToolJson extracts metadata to a JSON file using Exiftool.
-func (m *MediaFile) CreateExifToolJson() error {
+func (m *MediaFile) CreateExifToolJson(convert *Convert) error {
 	if !m.NeedsExifToolJson() {
 		return nil
-	} else if jsonName, jsonErr := NewConvert(Config()).ToJson(m, false); jsonErr != nil {
+	} else if jsonName, jsonErr := convert.ToJson(m, false); jsonErr != nil {
 		log.Tracef("exiftool: %s", clean.Log(jsonErr.Error()))
 		log.Debugf("exiftool: failed parsing %s", clean.Log(m.RootRelName()))
 	} else if jsonErr = m.metaData.JSON(jsonName, ""); jsonErr != nil {

@@ -131,7 +131,7 @@ func TestMediaFile_CreateExifToolJson(t *testing.T) {
 
 		assert.True(t, mediaFile.NeedsExifToolJson())
 
-		err = mediaFile.CreateExifToolJson()
+		err = mediaFile.CreateExifToolJson(NewConvert(conf))
 
 		if err != nil {
 			t.Fatal(err)
