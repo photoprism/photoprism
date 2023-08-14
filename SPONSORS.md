@@ -68,6 +68,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 [**Yongho Lee**](https://github.com/lyh16) (Patreon, May 2023)
 
+**Albert R** (Patreon, August 2023)
+
 ## Infrastructure Sponsors ##
 
 Our project infrastructure is provided by the following companies:
