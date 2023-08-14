@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/dustin/go-humanize/english"
 
@@ -58,13 +57,8 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		}
 
 		// Extract metadata to a JSON file with Exiftool.
-		if f.NeedsExifToolJson() {
-			if jsonName, err := ind.convert.ToJson(f, false); err != nil {
-				log.Tracef("exiftool: %s", clean.Log(err.Error()))
-				log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
-			} else {
-				log.Debugf("index: created %s", filepath.Base(jsonName))
-			}
+		if jsonErr := f.CreateExifToolJson(); jsonErr != nil {
+			log.Errorf("index: %s", clean.Log(jsonErr.Error()))
 		}
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.

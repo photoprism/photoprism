@@ -13,6 +13,13 @@ import (
 
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
+	// Create JSON sidecar file?
+	if m.IsSidecar() {
+		// Do nothing.
+	} else if err = m.CreateExifToolJson(); err != nil {
+		log.Errorf("media: %s", clean.Log(err.Error()), clean.Log(result.Main.BaseName()))
+	}
+
 	// File path and name without any extensions.
 	prefix := m.AbsPrefix(stripSequence)
 
