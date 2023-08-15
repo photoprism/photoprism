@@ -220,7 +220,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// Extract metadata to a JSON file with Exiftool.
 				if f.NeedsExifToolJson() {
 					if jsonName, err := imp.convert.ToJson(f, false); err != nil {
-						log.Tracef("exiftool: %s", clean.LogError(err))
+						log.Tracef("exiftool: %s", clean.Error(err))
 						log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 					} else {
 						log.Debugf("import: created %s", filepath.Base(jsonName))

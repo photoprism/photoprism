@@ -221,7 +221,7 @@ func (c *Client) Upload(src, dest string) (err error) {
 	f, err := os.OpenFile(src, os.O_RDONLY, 0)
 
 	if err != nil {
-		log.Errorf("webdav: %s", clean.LogError(err))
+		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to read %s", clean.Log(path.Base(src)))
 	}
 
@@ -232,14 +232,14 @@ func (c *Client) Upload(src, dest string) (err error) {
 	writer, err = c.client.Create(dest)
 
 	if err != nil {
-		log.Errorf("webdav: %s", clean.LogError(err))
+		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to write %s", clean.Log(dest))
 	}
 
 	defer writer.Close()
 
 	if _, err = io.Copy(writer, f); err != nil {
-		log.Errorf("webdav: %s", clean.LogError(err))
+		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to upload %s", clean.Log(dest))
 	}
 
@@ -281,7 +281,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 
 	// Error?
 	if err != nil {
-		log.Errorf("webdav: %s", clean.LogError(err))
+		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to download %s", clean.Log(src))
 	}
 
@@ -290,14 +290,14 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	f, err := os.OpenFile(dest, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeFile)
 
 	if err != nil {
-		log.Errorf("webdav: %s", clean.LogError(err))
+		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed to create %s", clean.Log(path.Base(dest)))
 	}
 
 	defer f.Close()
 
 	if _, err = f.ReadFrom(reader); err != nil {
-		log.Errorf("webdav: %s", clean.LogError(err))
+		log.Errorf("webdav: %s", clean.Error(err))
 		return fmt.Errorf("webdav: failed writing to %s", clean.Log(path.Base(dest)))
 	}
 

@@ -42,17 +42,6 @@ func Log(s string) string {
 	return s
 }
 
-// LogError sanitizes an error message for use in logging.
-func LogError(err error) string {
-	if err == nil {
-		return "no error"
-	} else if s := strings.TrimSpace(err.Error()); s == "" {
-		return "unknown error"
-	} else {
-		return Log(s)
-	}
-}
-
 // LogQuote sanitizes a string and puts it in single quotes for logging.
 func LogQuote(s string) string {
 	if s = Log(s); s[0] != '\'' {

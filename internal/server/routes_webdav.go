@@ -65,11 +65,11 @@ func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
 		if err != nil {
 			switch r.Method {
 			case MethodPut, MethodPost, MethodPatch, MethodDelete, MethodCopy, MethodMove:
-				log.Errorf("webdav: %s in %s %s", clean.LogError(err), clean.Log(r.Method), clean.Log(r.URL.String()))
+				log.Errorf("webdav: %s in %s %s", clean.Error(err), clean.Log(r.Method), clean.Log(r.URL.String()))
 			case MethodPropfind:
-				log.Tracef("webdav: %s in %s %s", clean.LogError(err), clean.Log(r.Method), clean.Log(r.URL.String()))
+				log.Tracef("webdav: %s in %s %s", clean.Error(err), clean.Log(r.Method), clean.Log(r.URL.String()))
 			default:
-				log.Debugf("webdav: %s in %s %s", clean.LogError(err), clean.Log(r.Method), clean.Log(r.URL.String()))
+				log.Debugf("webdav: %s in %s %s", clean.Error(err), clean.Log(r.Method), clean.Log(r.URL.String()))
 			}
 		} else {
 			// Mark uploaded files as favorite if X-Favorite HTTP header is "1".
