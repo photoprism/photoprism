@@ -180,7 +180,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 			// Create JSON sidecar file, if needed.
 			if err = mf.CreateExifToolJson(imp.convert); err != nil {
-				log.Errorf("import: %s", clean.Log(err.Error()), clean.Log(mf.BaseName()))
+				log.Errorf("import: %s", clean.LogError(err), clean.Log(mf.BaseName()))
 			}
 
 			// Find related files to import.

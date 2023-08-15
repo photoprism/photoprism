@@ -57,11 +57,11 @@ func (m *MediaFile) NeedsExifToolJson() bool {
 func (m *MediaFile) CreateExifToolJson(convert *Convert) error {
 	if !m.NeedsExifToolJson() {
 		return nil
-	} else if jsonName, jsonErr := convert.ToJson(m, false); jsonErr != nil {
-		log.Tracef("exiftool: %s", clean.Log(jsonErr.Error()))
+	} else if jsonName, err := convert.ToJson(m, false); err != nil {
+		log.Tracef("exiftool: %s", clean.LogError(err))
 		log.Debugf("exiftool: failed parsing %s", clean.Log(m.RootRelName()))
-	} else if jsonErr = m.metaData.JSON(jsonName, ""); jsonErr != nil {
-		return fmt.Errorf("%s in %s (read json sidecar)", clean.Log(jsonErr.Error()), clean.Log(m.BaseName()))
+	} else if err = m.metaData.JSON(jsonName, ""); err != nil {
+		return fmt.Errorf("%s in %s (read json sidecar)", clean.LogError(err), clean.Log(m.BaseName()))
 	}
 
 	return nil

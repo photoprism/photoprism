@@ -23,7 +23,7 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...inter
 
 	if err != nil {
 		resp.Details = err.Error()
-		log.Errorf("api-v1: error %s with code %d in %s (%s)", clean.Log(err.Error()), code, clean.Log(c.FullPath()), strings.ToLower(resp.String()))
+		log.Errorf("api-v1: error %s with code %d in %s (%s)", clean.LogError(err), code, clean.Log(c.FullPath()), strings.ToLower(resp.String()))
 	}
 
 	c.AbortWithStatusJSON(code, resp)
