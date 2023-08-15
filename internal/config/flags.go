@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/ttl"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -492,9 +493,15 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-cache-maxage",
-			Value:  int(thumb.CacheMaxAge),
+			Value:  int(ttl.Default),
 			Usage:  "time in `SECONDS` until cached content expires",
 			EnvVar: EnvVar("HTTP_CACHE_MAXAGE"),
+		}}, {
+		Flag: cli.IntFlag{
+			Name:   "http-video-maxage",
+			Value:  int(ttl.Video),
+			Usage:  "time in `SECONDS` until cached videos expire",
+			EnvVar: EnvVar("HTTP_VIDEO_MAXAGE"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "http-cache-public",

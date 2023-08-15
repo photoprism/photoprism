@@ -61,6 +61,7 @@ func startAction(ctx *cli.Context) error {
 			{"http-mode", conf.HttpMode()},
 			{"http-compression", conf.HttpCompression()},
 			{"http-cache-maxage", fmt.Sprintf("%d", conf.HttpCacheMaxAge())},
+			{"http-video-maxage", fmt.Sprintf("%d", conf.HttpVideoMaxAge())},
 			{"http-cache-public", fmt.Sprintf("%t", conf.HttpCachePublic())},
 			{"http-host", conf.HttpHost()},
 			{"http-port", fmt.Sprintf("%d", conf.HttpPort())},
