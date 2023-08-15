@@ -851,11 +851,7 @@ export class Photo extends RestModel {
   });
 
   getPhotoInfo = () => {
-    let file = this.videoFile();
-    if (!file || !file.Width) {
-      file = this.mainFile();
-    }
-
+    let file = this.mainFile() || this.videoFile();
     return this.generatePhotoInfo(this.Camera, this.CameraModel, this.CameraMake, file);
   };
 
