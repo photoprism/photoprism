@@ -252,7 +252,7 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 
 		for _, f := range files {
 			assert.Equal(t, "1990/04/bridge2.mp4", f.FileName)
-			assert.Equal(t, int(600), f.FileWidth)
+			assert.Equal(t, 1200, f.FileWidth)
 		}
 	})
 }
