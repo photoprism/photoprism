@@ -614,26 +614,6 @@ export default {
         type: 'circle',
         source: 'photos',
         filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': [
-            'step',
-            ['get', 'point_count'],
-            'transparent',
-            100,
-            'transparent',
-            750,
-            'transparent'
-          ],
-          'circle-radius': [
-            'step',
-            ['get', 'point_count'],
-            30,
-            100,
-            40,
-            750,
-            50
-          ]
-        }
       });
 
       // Example on how to update clusters:
