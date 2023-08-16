@@ -159,6 +159,13 @@
     border-radius: 10px !important;
 }
 
+.ra-24,
+.ra-24 > a,
+.rounded-24,
+.rounded-24 > a {
+    border-radius: 24px !important;
+}
+
 #photoprism div.v-dialog.v-dialog--fullscreen > div.v-card {
     border-radius: 0;
 }

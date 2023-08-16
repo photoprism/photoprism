@@ -1,6 +1,6 @@
 <template>
-  <v-container grid-list-xs fluid class="pa-1 p-photos p-photo-mosaic">
-    <div v-if="photos.length === 0" class="pa-1">
+  <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
+    <div v-if="photos.length === 0" class="pa-0">
       <v-alert
           :value="true"
           color="secondary-dark"
@@ -60,7 +60,7 @@
                 @mouseleave="pauseLive(photo)">
             <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="224" height="224" preload="none"
-                    loop muted playsinline>
+                     loop muted playsinline>
                 <source :src="photo.videoUrl()">
               </video>
             </v-layout>

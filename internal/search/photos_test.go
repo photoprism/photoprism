@@ -667,6 +667,50 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
+	t.Run("Latmin:33.45343166666667 Latmax:49.519234", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = "Latmin:33.45343166666667 Latmax:49.519234"
+		f.Count = 10
+		f.Offset = 0
+		f.Order = "imported"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, p := range photos {
+			assert.GreaterOrEqual(t, float32(49.519234), p.PhotoLat)
+			assert.LessOrEqual(t, float32(33.45343166666667), p.PhotoLat)
+		}
+
+		assert.LessOrEqual(t, 2, len(photos))
+
+	})
+	t.Run("Latmin:0.00 Latmax:49.519234 Lngmin:-30.123 Lngmax:9.1001234", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Query = "Latmin:0.00 Latmax:49.519234 Lngmin:-30.123 Lngmax:9.1001234"
+		f.Count = 10
+		f.Offset = 0
+		f.Order = "imported"
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, p := range photos {
+			assert.GreaterOrEqual(t, float32(49.519234), p.PhotoLat)
+			assert.LessOrEqual(t, float32(0.00), p.PhotoLat)
+			assert.GreaterOrEqual(t, float32(9.1001234), p.PhotoLng)
+			assert.LessOrEqual(t, float32(-30.123), p.PhotoLng)
+		}
+
+		assert.LessOrEqual(t, 10, len(photos))
+
+	})
 	t.Run("form.Before and form.After Order:relevance", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Query = "Before:2016-01-01 After:2013-01-01"

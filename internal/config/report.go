@@ -162,6 +162,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
 		{"http-cache-maxage", fmt.Sprintf("%d", c.HttpCacheMaxAge())},
+		{"http-video-maxage", fmt.Sprintf("%d", c.HttpVideoMaxAge())},
 		{"http-cache-public", fmt.Sprintf("%t", c.HttpCachePublic())},
 		{"http-host", c.HttpHost()},
 		{"http-port", fmt.Sprintf("%d", c.HttpPort())},

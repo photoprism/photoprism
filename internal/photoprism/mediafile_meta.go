@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -41,7 +40,7 @@ func (m *MediaFile) ExifToolJsonName() (string, error) {
 
 // NeedsExifToolJson tests if an ExifTool JSON file needs to be created.
 func (m *MediaFile) NeedsExifToolJson() bool {
-	if m.Root() == entity.RootSidecar || !m.IsMedia() || m.Empty() {
+	if m.InSidecar() && m.IsImage() || !m.IsMedia() || m.Empty() {
 		return false
 	}
 
@@ -52,6 +51,20 @@ func (m *MediaFile) NeedsExifToolJson() bool {
 	}
 
 	return !fs.FileExists(jsonName)
+}
+
+// CreateExifToolJson extracts metadata to a JSON file using Exiftool.
+func (m *MediaFile) CreateExifToolJson(convert *Convert) error {
+	if !m.NeedsExifToolJson() {
+		return nil
+	} else if jsonName, err := convert.ToJson(m, false); err != nil {
+		log.Tracef("exiftool: %s", clean.Error(err))
+		log.Debugf("exiftool: failed parsing %s", clean.Log(m.RootRelName()))
+	} else if err = m.metaData.JSON(jsonName, ""); err != nil {
+		return fmt.Errorf("%s in %s (read json sidecar)", clean.Error(err), clean.Log(m.BaseName()))
+	}
+
+	return nil
 }
 
 // ReadExifToolJson reads metadata from a cached ExifTool JSON file.

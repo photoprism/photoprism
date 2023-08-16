@@ -33,6 +33,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/ttl"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -180,8 +181,11 @@ func (c *Config) Propagate() {
 	thumb.SizeUncached = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
 	thumb.JpegQuality = c.JpegQuality()
-	thumb.CacheMaxAge = c.HttpCacheMaxAge()
 	thumb.CachePublic = c.HttpCachePublic()
+
+	// Set cache expiration defaults.
+	ttl.Default = c.HttpCacheMaxAge()
+	ttl.Video = c.HttpVideoMaxAge()
 
 	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()

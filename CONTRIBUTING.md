@@ -14,7 +14,7 @@ Feel free to [contact us](https://www.photoprism.app/contact) with anything that
 You can also contribute by…
 
 * answering questions in the [Community Chat](https://link.photoprism.app/chat), on [Reddit](https://link.photoprism.app/reddit) and in [GitHub Discussions](https://link.photoprism.app/discussions)
-* helping us [translate](https://docs.photoprism.app/developer-guide/translations-weblate/) the Web UI
+* helping us [translate](https://docs.photoprism.app/developer-guide/translations-weblate/) the Web UI on [Weblate](https://translate.photoprism.app/)
 * [conducting research](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Aresearch) and [improving the documentation](https://github.com/photoprism/photoprism/issues?q=is%3Aopen+is%3Aissue+label%3Adocs)
 * publishing tutorials, blog posts, and podcasts
 * voting for us on pages like:

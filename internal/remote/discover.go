@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// Account represents remote service details.
 type Account struct {
 	AccName string
 	AccURL  string
@@ -17,6 +18,7 @@ type Account struct {
 	AccPass string
 }
 
+// Discover performs a service lookup based on the URL and credentials provided and returns an Account if successful.
 func Discover(rawUrl, user, pass string) (result Account, err error) {
 	if rawUrl == "" {
 		return result, errors.New("service URL is empty")

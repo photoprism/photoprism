@@ -92,7 +92,7 @@
           >
             <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none"
-                    loop muted playsinline>
+                     loop muted playsinline>
                 <source :src="photo.videoUrl()">
               </video>
             </v-layout>
@@ -199,6 +199,11 @@
                 </button>
                 <br>
                 <button v-if="photo.Type === 'video'" :title="$gettext('Video')"
+                        @click.exact="openPhoto(index)">
+                  <i>movie</i>
+                  {{ photo.getVideoInfo() }}
+                </button>
+                <button v-else-if="photo.Type === 'live'" :title="$gettext('Live')"
                         @click.exact="openPhoto(index)">
                   <i>movie</i>
                   {{ photo.getVideoInfo() }}

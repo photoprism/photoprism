@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -31,40 +30,43 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	}
 
 	// Extract metadata to a JSON file with Exiftool.
-	if f.NeedsExifToolJson() {
-		if jsonName, err := ind.convert.ToJson(f, false); err != nil {
-			log.Tracef("exiftool: %s", clean.Log(err.Error()))
-			log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
-		} else {
-			log.Debugf("index: created %s", filepath.Base(jsonName))
-			// attempt to extract the video file if it exists
-			if video, err := ind.convert.ToSamsungVideo(
-				f, jsonName,
-				false,
-			); err != nil {
-				result.Err = fmt.Errorf(
-					"index: failed creating preview for %s (%s)",
-					clean.Log(f.RootRelName()), err.Error(),
-				)
-				result.Status = IndexFailed
-				return result
-			} else {
-				// extract the metadata of the video file
-				if jsonName, err := ind.convert.ToJson(
-					video,
-					false,
-				); err != nil {
-					log.Tracef("exiftool: %s", clean.Log(err.Error()))
-				} else {
-					log.Debugf("index: created %s", filepath.Base(jsonName))
-					// add video to related files
-					related.Files = append(
-						related.Files,
-						video,
-					)
-				}
-			}
-		}
+	// if f.NeedsExifToolJson() {
+	// 	if jsonName, err := ind.convert.ToJson(f, false); err != nil {
+	// 		log.Tracef("exiftool: %s", clean.Log(err.Error()))
+	// 		log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
+	// 	} else {
+	// 		log.Debugf("index: created %s", filepath.Base(jsonName))
+	// 		// attempt to extract the video file if it exists
+	// 		if video, err := ind.convert.ToSamsungVideo(
+	// 			f, jsonName,
+	// 			false,
+	// 		); err != nil {
+	// 			result.Err = fmt.Errorf(
+	// 				"index: failed creating preview for %s (%s)",
+	// 				clean.Log(f.RootRelName()), err.Error(),
+	// 			)
+	// 			result.Status = IndexFailed
+	// 			return result
+	// 		} else {
+	// 			// extract the metadata of the video file
+	// 			if jsonName, err := ind.convert.ToJson(
+	// 				video,
+	// 				false,
+	// 			); err != nil {
+	// 				log.Tracef("exiftool: %s", clean.Log(err.Error()))
+	// 			} else {
+	// 				log.Debugf("index: created %s", filepath.Base(jsonName))
+	// 				// add video to related files
+	// 				related.Files = append(
+	// 					related.Files,
+	// 					video,
+	// 				)
+	// 			}
+	// 		}
+	// 	}
+	// Create JSON sidecar file, if needed.
+	if jsonErr := f.CreateExifToolJson(ind.convert); jsonErr != nil {
+		log.Errorf("index: %s", clean.Log(jsonErr.Error()))
 	}
 
 	// Create JPEG sidecar for media files in other formats so that thumbnails can be created.

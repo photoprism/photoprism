@@ -15,7 +15,7 @@ fi
 
 # Query version.
 if [[ -z $GOLANG_VERSION ]]; then
-  GOLANG_VERSION=$(curl -fsSL https://go.dev/VERSION?m=text)
+  GOLANG_VERSION=$(curl -fsSL https://go.dev/VERSION?m=text | head -n 1)
 fi
 
 echo "Installing ${GOLANG_VERSION} in \"${DESTDIR}\"..."

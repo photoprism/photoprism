@@ -12,6 +12,35 @@ import (
 )
 
 func TestJSON(t *testing.T) {
+	t.Run("mov.json", func(t *testing.T) {
+		data, err := JSON("testdata/mov.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %#v", data)
+
+		assert.Equal(t, "20230602_100151_361985AB.mov", data.FileName)
+		assert.Equal(t, CodecHvc1, data.Codec)
+		assert.Equal(t, int64(1420), data.Duration.Milliseconds())
+		assert.Equal(t, "1.42s", data.Duration.String())
+		assert.Equal(t, "2023-06-02 12:01:51 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2023-06-02 10:01:51 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, 0, data.TakenNs)
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, 1920, data.Width)
+		assert.Equal(t, 1440, data.Height)
+		assert.Equal(t, 1920, data.ActualWidth())
+		assert.Equal(t, 1440, data.ActualHeight())
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(52.5035), data.Lat)
+		assert.Equal(t, float32(13.4098), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 12 mini", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
 	t.Run("iphone-mov.json", func(t *testing.T) {
 		data, err := JSON("testdata/iphone-mov.json", "")
 

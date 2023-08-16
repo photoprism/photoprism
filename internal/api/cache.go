@@ -8,10 +8,8 @@ import (
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/ttl"
 )
-
-// CoverMaxAge specifies the number of seconds to cache album covers.
-var CoverMaxAge thumb.MaxAge = 3600 // 1 hour
 
 type ThumbCache struct {
 	FileName  string
@@ -71,24 +69,41 @@ func FlushCoverCache() {
 }
 
 // AddCacheHeader adds a cache control header to the response.
-func AddCacheHeader(c *gin.Context, maxAge thumb.MaxAge, public bool) {
-	if public {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, no-transform", maxAge.String()))
+func AddCacheHeader(c *gin.Context, maxAge ttl.Duration, public bool) {
+	if c == nil {
+		return
+	} else if maxAge <= 0 {
+		c.Header("Cache-Control", "no-cache")
+	} else if public {
+		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s", maxAge.String()))
 	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform", maxAge.String()))
+		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s", maxAge.String()))
 	}
 }
 
 // AddCoverCacheHeader adds cover image cache control headers to the response.
 func AddCoverCacheHeader(c *gin.Context) {
-	AddCacheHeader(c, CoverMaxAge, thumb.CachePublic)
+	AddCacheHeader(c, ttl.Cover, thumb.CachePublic)
 }
 
 // AddImmutableCacheHeader adds cache control headers to the response for immutable content like thumbnails.
 func AddImmutableCacheHeader(c *gin.Context) {
-	if thumb.CachePublic {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, no-transform, immutable", thumb.CacheMaxAge.String()))
+	if c == nil {
+		return
+	} else if thumb.CachePublic {
+		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.Default.String()))
 	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, no-transform, immutable", thumb.CacheMaxAge.String()))
+		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.Default.String()))
+	}
+}
+
+// AddVideoCacheHeader adds video cache control headers to the response.
+func AddVideoCacheHeader(c *gin.Context, cdn bool) {
+	if c == nil {
+		return
+	} else if cdn || thumb.CachePublic {
+		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.Video.String()))
+	} else {
+		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.Video.String()))
 	}
 }

@@ -39,16 +39,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 			continue
 		}
 
-		// Extract metadata to a JSON file with Exiftool.
-		if related.Main.NeedsExifToolJson() {
-			if jsonName, err := imp.convert.ToJson(related.Main, false); err != nil {
-				log.Tracef("exiftool: %s", clean.Log(err.Error()))
-				log.Debugf("exiftool: failed parsing %s", clean.Log(related.Main.RootRelName()))
-			} else if err := related.Main.ReadExifToolJson(); err != nil {
-				log.Errorf("import: %s in %s (read metadata)", clean.Log(err.Error()), clean.Log(related.Main.BaseName()))
-			} else {
-				log.Debugf("import: created %s", filepath.Base(jsonName))
-			}
+		// Create JSON sidecar file, if needed.
+		if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
+			log.Errorf("import: %s", clean.Log(jsonErr.Error()))
 		}
 
 		originalName := related.Main.RelName(src)
@@ -133,14 +126,9 @@ func ImportWorker(jobs <-chan ImportJob) {
 				continue
 			}
 
-			// Extract metadata to a JSON file with Exiftool.
-			if f.NeedsExifToolJson() {
-				if jsonName, err := imp.convert.ToJson(f, false); err != nil {
-					log.Tracef("exiftool: %s", clean.Log(err.Error()))
-					log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
-				} else {
-					log.Debugf("import: created %s", filepath.Base(jsonName))
-				}
+			// Create JSON sidecar file, if needed.
+			if jsonErr := f.CreateExifToolJson(imp.convert); jsonErr != nil {
+				log.Errorf("import: %s", clean.Log(jsonErr.Error()))
 			}
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
@@ -232,7 +220,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// Extract metadata to a JSON file with Exiftool.
 				if f.NeedsExifToolJson() {
 					if jsonName, err := imp.convert.ToJson(f, false); err != nil {
-						log.Tracef("exiftool: %s", clean.Log(err.Error()))
+						log.Tracef("exiftool: %s", clean.Error(err))
 						log.Debugf("exiftool: failed parsing %s", clean.Log(f.RootRelName()))
 					} else {
 						log.Debugf("import: created %s", filepath.Base(jsonName))

@@ -2,7 +2,7 @@
   <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
     <div id="map" style="width: 100%; height: 100%;">
       <div v-if="canSearch" class="map-control">
-        <div class="maplibregl-ctrl maplibregl-ctrl-group">
+        <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
           <v-text-field v-model.lazy.trim="filter.q"
                         solo hide-details clearable flat single-line validate-on-blur
                         class="input-search pa-0 ma-0"
@@ -305,7 +305,7 @@ export default {
       });
     },
     selectClusterById: function(clusterId) {
-      this.getClusterFeatures(clusterId, (clusterFeatures) => {
+      this.getClusterFeatures(clusterId, -1, (clusterFeatures) => {
         let latMin,latMax,lngMin,lngMax;
         for (const feature of clusterFeatures) {
           const [lng,lat] = feature.geometry.coordinates;
@@ -490,16 +490,16 @@ export default {
 
       this.map.on("load", () => this.onMapLoad());
     },
-    getClusterFeatures(clusterId, callback) {
-      this.map.getSource('photos').getClusterLeaves(clusterId, -1, undefined, (error, clusterFeatures) => {
+    getClusterFeatures(clusterId, limit, callback) {
+      this.map.getSource('photos').getClusterLeaves(clusterId, limit, undefined, (error, clusterFeatures) => {
         callback(clusterFeatures);
-      });;
+      });
     },
     getMultipleClusterFeatures(clusterIds, callback) {
       const result = {};
       let handledClusterLeaveResultCount = 0;
       for (const clusterId of clusterIds) {
-        this.getClusterFeatures(clusterId, (clusterFeatures) => {
+        this.getClusterFeatures(clusterId, 100, (clusterFeatures) => {
           result[clusterId] = clusterFeatures;
           handledClusterLeaveResultCount += 1;
 
@@ -548,9 +548,10 @@ export default {
 
               const clusterFeatures = clusterFeaturesById[props.cluster_id];
               const previewImageCount = clusterFeatures.length > 3 ? 4 : 2;
-              const images = clusterFeatures
-                .slice(0, previewImageCount)
-                .map((feature) => {
+              const images = Array(previewImageCount)
+                .fill()
+                .map((a,i) => {
+                  const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
                   const imageHash = feature.properties.Hash;
                   const image = document.createElement('div');
                   image.style.backgroundImage = `url(${this.$config.contentUri}/t/${imageHash}/${token}/tile_${50})`;
@@ -559,7 +560,7 @@ export default {
               imageContainer.append(...images);
 
               const counterBubble = document.createElement('div');
-              counterBubble.className = 'counter-bubble';
+              counterBubble.className = 'counter-bubble primary-button theme--light';
               counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
 
               el.append(imageContainer);
@@ -634,8 +635,7 @@ export default {
         }
       });
 
-      this.map.on('render', this.updateMarkers);
-
+      this.map.on('idle', this.updateMarkers);
 
       this.search();
     },

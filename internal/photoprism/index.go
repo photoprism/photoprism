@@ -219,6 +219,11 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
+			// Create JSON sidecar file, if needed.
+			if err = mf.CreateExifToolJson(ind.convert); err != nil {
+				log.Errorf("index: %s", clean.Error(err), clean.Log(mf.BaseName()))
+			}
+
 			// Find related files to index.
 			related, err := mf.RelatedFiles(ind.conf.Settings().StackSequences())
 

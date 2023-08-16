@@ -57,8 +57,10 @@ func (c *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 	}
 
 	// Check if file exists.
-	if !fs.FileExists(jsonName) {
-		return "", fmt.Errorf("exiftool: failed creating %s", filepath.Base(jsonName))
+	if fs.FileExists(jsonName) {
+		log.Debugf("cache: created %s", filepath.Base(jsonName))
+	} else {
+		return "", fmt.Errorf("exiftool: failed to create %s", filepath.Base(jsonName))
 	}
 
 	return jsonName, err

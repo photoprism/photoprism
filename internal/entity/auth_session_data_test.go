@@ -21,3 +21,24 @@ func TestData_HasShare(t *testing.T) {
 	assert.True(t, data.HasShare("def444"))
 	assert.False(t, data.HasShare("xxx"))
 }
+
+func TestSessionData_RedeemToken(t *testing.T) {
+	data := SessionData{Shares: []string{"abc123", "def444"}}
+	assert.True(t, data.HasShare("def444"))
+	assert.False(t, data.HasShare("at9lxuqxpogaaba8"))
+	data.RedeemToken("xxx")
+	assert.False(t, data.HasShare("xxx"))
+	data.RedeemToken("1jxf3jfn2k")
+	assert.True(t, data.HasShare("def444"))
+	assert.True(t, data.HasShare("at9lxuqxpogaaba8"))
+}
+
+func TestSessionData_SharedUIDs(t *testing.T) {
+	data := SessionData{Shares: []string{"abc123", "def444"},
+		Tokens: []string{"5jxf3jfn2k"}}
+	assert.Equal(t, "abc123", data.SharedUIDs()[0])
+	data2 := SessionData{Shares: []string{},
+		Tokens: []string{"5jxf3jfn2k"}}
+	assert.Equal(t, "ft2es39w45bnlqdw", data2.SharedUIDs()[0])
+
+}

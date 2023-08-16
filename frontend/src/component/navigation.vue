@@ -65,7 +65,7 @@
         </v-list>
       </v-toolbar>
 
-      <v-list class="pt-3 p-flex-menu">
+      <v-list class="pt-3 p-flex-menu navigation-menu">
         <v-list-tile v-if="isMini && !isRestricted" class="nav-expand" @click.stop="toggleIsMini()">
           <v-list-tile-action :title="$gettext('Expand')">
             <v-icon v-if="!rtl">chevron_right</v-icon>

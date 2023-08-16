@@ -464,20 +464,8 @@ export default {
         return false;
       }
 
-      this.$sponsorFeatures().then(() => {
-        this.currentTheme = value;
-        this.onChange();
-      }).catch(() => {
-        if (themes.Get(value).sponsor) {
-          this.dialog.sponsor = true;
-          this.$nextTick(() => {
-            this.settings.ui.theme = this.currentTheme;
-          });
-        } else {
-          this.currentTheme = value;
-          this.onChange();
-        }
-      });
+      this.currentTheme = value;
+      this.onChange();
     },
     onChangeMapsStyle(value) {
       if (!value) {

@@ -14,7 +14,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/video"
 )
 
-// GetVideo streams videos.
+// GetVideo streams video content.
 //
 // GET /api/v1/videos/:hash/:token/:type
 //
@@ -111,7 +111,7 @@ func GetVideo(router *gin.RouterGroup) {
 		}
 
 		// Add HTTP cache header.
-		AddImmutableCacheHeader(c)
+		AddVideoCacheHeader(c, conf.CdnVideo())
 
 		// Return requested content.
 		if c.Query("download") != "" {

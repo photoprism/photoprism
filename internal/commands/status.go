@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"time"
 
@@ -31,6 +32,15 @@ func statusAction(ctx *cli.Context) error {
 	// running after Get, Head, Post, or Do return and will
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 10 * time.Second}
+
+	// Connect to unix socket?
+	if unixSocket := conf.HttpSocket(); unixSocket != "" {
+		client.Transport = &http.Transport{
+			Dial: func(network, addr string) (net.Conn, error) {
+				return net.Dial("unix", unixSocket)
+			},
+		}
+	}
 
 	url := fmt.Sprintf("http://%s:%d/api/v1/status", conf.HttpHost(), conf.HttpPort())
 

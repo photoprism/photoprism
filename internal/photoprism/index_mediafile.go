@@ -648,6 +648,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
+		// Set video dimensions from primary file, if necessary.
+		// See also File.UpdateVideoInfos()
 		if file.FileWidth == 0 && primaryFile.FileWidth > 0 {
 			file.FileWidth = primaryFile.FileWidth
 			file.FileHeight = primaryFile.FileHeight
@@ -655,12 +657,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FilePortrait = primaryFile.FilePortrait
 		}
 
+		// Set video appearance from primary file, if necessary.
+		// See also File.UpdateVideoInfos()
 		if primaryFile.FileDiff > 0 {
-			file.FileDiff = primaryFile.FileDiff
 			file.FileMainColor = primaryFile.FileMainColor
-			file.FileChroma = primaryFile.FileChroma
-			file.FileLuminance = primaryFile.FileLuminance
 			file.FileColors = primaryFile.FileColors
+			file.FileLuminance = primaryFile.FileLuminance
+			file.FileDiff = primaryFile.FileDiff
+			file.FileChroma = primaryFile.FileChroma
 		}
 	}
 

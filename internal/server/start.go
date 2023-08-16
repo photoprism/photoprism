@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
@@ -75,8 +76,29 @@ func Start(ctx context.Context, conf *config.Config) {
 	var tlsManager *autocert.Manager
 	var server *http.Server
 
-	// Enable TLS?
-	if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
+	// Start HTTP server.
+	if unixSocket := conf.HttpSocket(); unixSocket != "" {
+		var listener net.Listener
+		var unixAddr *net.UnixAddr
+		var err error
+
+		if unixAddr, err = net.ResolveUnixAddr("unix", unixSocket); err != nil {
+			log.Errorf("server: resolve unix address failed (%s)", err)
+			return
+		} else if listener, err = net.ListenUnix("unix", unixAddr); err != nil {
+			log.Errorf("server: listen unix address failed (%s)", err)
+			return
+		} else {
+			server = &http.Server{
+				Addr:    unixSocket,
+				Handler: router,
+			}
+
+			log.Infof("server: listening on %s [%s]", unixSocket, time.Since(start))
+
+			go StartHttp(server, listener)
+		}
+	} else if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
 		server = &http.Server{
 			Addr:      fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
 			TLSConfig: tlsManager.TLSConfig(),
@@ -84,7 +106,7 @@ func Start(ctx context.Context, conf *config.Config) {
 		}
 		log.Infof("server: starting in auto tls mode on %s [%s]", server.Addr, time.Since(start))
 		go StartAutoTLS(server, tlsManager, conf)
-	} else if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
+	} else if publicCert, privateKey := conf.TLS(); unixSocket == "" && publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in tls mode")
 		server = &http.Server{
 			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
@@ -94,12 +116,22 @@ func Start(ctx context.Context, conf *config.Config) {
 		go StartTLS(server, publicCert, privateKey)
 	} else {
 		log.Infof("server: %s", tlsErr)
-		server = &http.Server{
-			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-			Handler: router,
+
+		socket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+
+		if listener, err := net.Listen("tcp", socket); err != nil {
+			log.Errorf("server: %s", err)
+			return
+		} else {
+			server = &http.Server{
+				Addr:    socket,
+				Handler: router,
+			}
+
+			log.Infof("server: listening on %s [%s]", socket, time.Since(start))
+
+			go StartHttp(server, listener)
 		}
-		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
-		go StartHttp(server)
 	}
 
 	// Graceful HTTP server shutdown.
@@ -112,8 +144,8 @@ func Start(ctx context.Context, conf *config.Config) {
 }
 
 // StartHttp starts the web server in http mode.
-func StartHttp(s *http.Server) {
-	if err := s.ListenAndServe(); err != nil {
+func StartHttp(s *http.Server, l net.Listener) {
+	if err := s.Serve(l); err != nil {
 		if err == http.ErrServerClosed {
 			log.Info("server: shutdown complete")
 		} else {
