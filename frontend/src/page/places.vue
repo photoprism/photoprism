@@ -622,7 +622,8 @@ export default {
         }
       });
 
-      // Also update clusters on 'moveend'.
+      // Also update clusters on 'move' and 'moveend'.
+      this.map.on('move', this.updateMarkers);
       this.map.on('moveend', this.updateMarkers);
 
       // Load pictures.
