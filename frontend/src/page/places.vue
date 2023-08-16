@@ -644,11 +644,11 @@ export default {
         }
       });
 
-      // Load pictures.
-      this.search();
-
       // Also update clusters on 'moveend'.
       this.map.on('moveend', this.updateMarkers);
+
+      // Load pictures.
+      this.search();
     },
   },
 };
