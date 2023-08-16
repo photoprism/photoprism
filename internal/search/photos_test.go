@@ -919,7 +919,7 @@ func TestPhotos(t *testing.T) {
 	t.Run("search with multiple parameters", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Hidden = true
-		f.Scan = true
+		f.Scan = "true"
 		f.Year = "2010"
 		f.Day = "1"
 		f.Photo = true
@@ -939,7 +939,7 @@ func TestPhotos(t *testing.T) {
 	t.Run("search with multiple parameters", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Hidden = true
-		f.Scan = true
+		f.Scan = "true"
 		f.Year = strconv.Itoa(2010)
 		f.Day = strconv.Itoa(1)
 		f.Video = true

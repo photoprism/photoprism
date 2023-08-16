@@ -777,11 +777,10 @@ func TestGeo(t *testing.T) {
 
 		assert.Equal(t, len(photos5), len(photos4))
 	})
-
 	t.Run("f.Scan = true", func(t *testing.T) {
 		var frm form.SearchPhotosGeo
 
-		frm.Scan = true
+		frm.Scan = "true"
 
 		photos, err := PhotosGeo(frm)
 

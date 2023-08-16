@@ -311,7 +311,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, form.Scan)
+		assert.Equal(t, ";cat", form.Scan)
 	})
 	t.Run("query for panorama with uncommon bool value", func(t *testing.T) {
 		form := &SearchPhotos{Query: "panorama:*cat"}

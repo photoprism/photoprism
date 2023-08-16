@@ -236,7 +236,7 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			f.Panorama = true
 		case terms["scans"]:
 			f.Query = strings.ReplaceAll(f.Query, "scans", "")
-			f.Scan = true
+			f.Scan = "true"
 		case terms["monochrome"]:
 			f.Query = strings.ReplaceAll(f.Query, "monochrome", "")
 			f.Mono = true
@@ -391,8 +391,10 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
-	// Find scans only.
-	if f.Scan {
+	// Filter by scan flag.
+	if txt.No(f.Scan) {
+		s = s.Where("photos.photo_scan = 0")
+	} else if txt.NotEmpty(f.Scan) {
 		s = s.Where("photos.photo_scan = 1")
 	}
 

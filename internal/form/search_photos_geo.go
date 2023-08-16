@@ -29,7 +29,7 @@ type SearchPhotosGeo struct {
 	Photo     bool      `form:"photo"`
 	Raw       bool      `form:"raw"`
 	Live      bool      `form:"live"`
-	Scan      bool      `form:"scan"`
+	Scan      string    `form:"scan" example:"scan:true scan:false" notes:"Finds scanned photos and documents"`
 	Panorama  bool      `form:"panorama"`
 	Portrait  bool      `form:"portrait"`
 	Landscape bool      `form:"landscape"`
