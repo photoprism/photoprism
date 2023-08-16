@@ -635,7 +635,14 @@ export default {
         }
       });
 
-      this.map.on('idle', this.updateMarkers);
+      // Following example for cluster updates from here: https://maplibre.org/maplibre-gl-js/docs/examples/cluster-html/
+      this.map.on('data', (e) => {
+          if (e.sourceId !== 'photos' || !e.isSourceLoaded) return;
+
+          this.map.on('move', this.updateMarkers);
+          this.map.on('moveend', this.updateMarkers);
+          this.updateMarkers();
+        });
 
       this.search();
     },
