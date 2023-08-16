@@ -510,12 +510,10 @@ export default {
       }
     },
     getClusterRadiusFromItemCount(itemCount) {
-      // see config of cluster-layer for these values
       if (itemCount >= 750) {
-        return 50;
-      }
-      if (itemCount >= 100) {
-        return 40;
+        return 42;
+      } else if (itemCount >= 100) {
+        return 36;
       }
 
       return 30;
