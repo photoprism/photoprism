@@ -599,6 +599,7 @@ export default {
       });
     },
     onMapLoad() {
+      // Add 'photos' data source.
       this.map.addSource('photos', {
         type: 'geojson',
         data: null,
@@ -607,7 +608,7 @@ export default {
         clusterRadius: 80 // Radius of each cluster when clustering points (defaults to 50)
       });
 
-      // TODO: can this rendering of empty colored circles be removed?
+      // Add 'clusters' layer.
       this.map.addLayer({
         id: 'clusters',
         type: 'circle',
@@ -635,16 +636,19 @@ export default {
         }
       });
 
-      // Following example for cluster updates from here: https://maplibre.org/maplibre-gl-js/docs/examples/cluster-html/
+      // Example on how to update clusters:
+      // https://maplibre.org/maplibre-gl-js/docs/examples/cluster-html/
       this.map.on('data', (e) => {
-          if (e.sourceId !== 'photos' || !e.isSourceLoaded) return;
-
-          this.map.on('move', this.updateMarkers);
-          this.map.on('moveend', this.updateMarkers);
+        if (e.sourceId === 'photos' && e.isSourceLoaded) {
           this.updateMarkers();
-        });
+        }
+      });
 
+      // Load pictures.
       this.search();
+
+      // Also update clusters on 'moveend'.
+      this.map.on('moveend', this.updateMarkers);
     },
   },
 };
