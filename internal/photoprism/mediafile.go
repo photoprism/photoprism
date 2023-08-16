@@ -1,14 +1,19 @@
 package photoprism
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
+	"io/ioutil"
 	"math"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -17,6 +22,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/h2non/filetype"
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"
@@ -312,6 +318,113 @@ func (m *MediaFile) EditedName() string {
 	}
 
 	return ""
+}
+
+func (m *MediaFile) VideoFileName(jsonName string) (string, error) {
+	if m == nil {
+		return "", fmt.Errorf(
+			"mediafile: file is nil - you may have found a" +
+				" bug",
+		)
+	}
+
+	// Abort if the source media file does not exist.
+	if !m.Exists() {
+		return "", fmt.Errorf(
+			"mediafile: %s not found", clean.Log(m.RootRelName()),
+		)
+	} else if m.Empty() {
+		return "", fmt.Errorf(
+			"mediafile: %s is empty", clean.Log(m.RootRelName()),
+		)
+	}
+
+	// given the filename, read the json sidecar
+	jsonBytes, err := os.ReadFile(jsonName)
+	if err != nil {
+		log.Debugf("mediafile: Error reading the JSON file: ", err)
+		return "", err
+	}
+	var jsonPayload []interface{}
+	err = json.Unmarshal(jsonBytes, &jsonPayload)
+	if err != nil {
+		log.Debugf("mediafile: Error parsing exiftool JSON payload: ", err)
+		return "", err
+	}
+
+	if len(jsonPayload) > 0 {
+		if payloadMap, ok := jsonPayload[0].(map[string]interface{}); ok {
+			var cmd *exec.Cmd
+			path := filepath.Join(
+				Config().SidecarPath(), m.RootRelPath(), "%f",
+			)
+			if _, exists := payloadMap["EmbeddedVideoFile"]; exists {
+				cmd = exec.Command(
+					Config().ExifToolBin(), "-EmbeddedVideoFile", "-b", "-w",
+					path, m.FileName(),
+				)
+			} else if _, exists := payloadMap["MotionPhotoVideo"]; exists {
+				cmd = exec.Command(
+					Config().ExifToolBin(), "-MotionPhotoVideo", "-b", "-w",
+					path, m.FileName(),
+				)
+			}
+
+			if cmd != nil {
+				var out bytes.Buffer
+				var stderr bytes.Buffer
+				cmd.Stdout = &out
+				cmd.Stderr = &stderr
+				cmd.Env = []string{
+					fmt.Sprintf("HOME=%s", Config().CmdCachePath()),
+				}
+				if err := cmd.Run(); err != nil {
+					log.Debugf("Error running exiftool on video file: ", err)
+					if stderr.String() != "" {
+						return "", errors.New(stderr.String())
+					} else {
+						return "", err
+					}
+				}
+
+				// find the extracted file
+				savedPath := filepath.Join(
+					Config().SidecarPath(),
+					m.RootRelPath(),
+					m.BasePrefix(false),
+				)
+
+				// find the video file type
+				buf, err := ioutil.ReadFile(savedPath)
+				if err != nil {
+					log.Debugf("Error reading sidecar file at %s", savedPath)
+					return "", err
+				}
+				kind, err := filetype.Match(buf)
+				if err != nil {
+					log.Debugf(
+						"Error finding the type of sidecar file at %s",
+						savedPath,
+					)
+					return "", err
+				}
+
+				// rename the file with the correct extension
+				dir, file := filepath.Split(savedPath)
+				newFileName := fmt.Sprintf("%s.%s", file, kind.Extension)
+				newSavedPath := filepath.Join(dir, newFileName)
+				err = os.Rename(savedPath, newSavedPath)
+				if err != nil {
+					log.Debugf("Error renaming the file at %s", savedPath)
+					return "", err
+				}
+
+				return newSavedPath, nil
+			}
+		}
+	}
+
+	return "", nil
 }
 
 // PathNameInfo returns file name infos for indexing.
