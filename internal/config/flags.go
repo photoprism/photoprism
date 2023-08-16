@@ -473,12 +473,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "tls-cert",
-			Usage:  "public HTTPS certificate `FILE` (.crt)",
+			Usage:  "public HTTPS certificate `FILE` (.crt), ignored for Unix domain sockets",
 			EnvVar: EnvVar("TLS_CERT"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "tls-key",
-			Usage:  "private HTTPS key `FILE` (.key)",
+			Usage:  "private HTTPS key `FILE` (.key), ignored for Unix domain sockets",
 			EnvVar: EnvVar("TLS_KEY"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -510,13 +510,14 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-host, ip",
-			Usage:  "Web server `IP` address. If start with unix:, path followed is treated as unix socket path for listening.",
+			Value:  "0.0.0.0",
+			Usage:  "web server `IP` address or Unix domain socket, e.g. unix:/var/run/photoprism.sock",
 			EnvVar: EnvVar("HTTP_HOST"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-port, port",
 			Value:  2342,
-			Usage:  "Web server port `NUMBER`",
+			Usage:  "web server port `NUMBER`, ignored for Unix domain sockets",
 			EnvVar: EnvVar("HTTP_PORT"),
 		}}, {
 		Flag: cli.StringFlag{

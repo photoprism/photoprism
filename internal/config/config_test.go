@@ -156,27 +156,6 @@ func TestConfig_DetachServer(t *testing.T) {
 	assert.Equal(t, false, detachServer)
 }
 
-func TestConfig_HttpServerHost(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	host := c.HttpHost()
-	assert.Equal(t, "0.0.0.0", host)
-}
-
-func TestConfig_HttpServerPort(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	port := c.HttpPort()
-	assert.Equal(t, 2342, port)
-}
-
-func TestConfig_HttpServerMode(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	mode := c.HttpMode()
-	assert.Equal(t, HttpModeProd, mode)
-}
-
 func TestConfig_OriginalsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

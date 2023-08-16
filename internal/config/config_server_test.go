@@ -8,15 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ttl"
 )
 
-func TestConfig_HttpSocket(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.HttpSocket())
-	c.options.HttpHost = "unix:/tmp/photoprism.sock"
-	assert.Equal(t, "/tmp/photoprism.sock", c.HttpSocket())
-}
-
-func TestConfig_HttpServerHost2(t *testing.T) {
+func TestConfig_HttpServerHost(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "0.0.0.0", c.HttpHost())
@@ -26,15 +18,23 @@ func TestConfig_HttpServerHost2(t *testing.T) {
 	assert.Equal(t, "unix:/tmp/photoprism.sock", c.HttpHost())
 }
 
-func TestConfig_HttpServerPort2(t *testing.T) {
+func TestConfig_HttpSocket(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int(2342), c.HttpPort())
-	c.options.HttpPort = int(1234)
-	assert.Equal(t, int(1234), c.HttpPort())
+	assert.Equal(t, "", c.HttpSocket())
+	c.options.HttpHost = "unix:/tmp/photoprism.sock"
+	assert.Equal(t, "/tmp/photoprism.sock", c.HttpSocket())
 }
 
-func TestConfig_HttpServerMode2(t *testing.T) {
+func TestConfig_HttpServerPort(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, 2342, c.HttpPort())
+	c.options.HttpPort = 1234
+	assert.Equal(t, 1234, c.HttpPort())
+}
+
+func TestConfig_HttpServerMode(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, HttpModeProd, c.HttpMode())
