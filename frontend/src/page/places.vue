@@ -625,7 +625,7 @@ export default {
         filter: ['has', 'point_count'],
       });
 
-      // Example on how to update clusters:
+      // Example of dynamic map cluster rendering:
       // https://maplibre.org/maplibre-gl-js/docs/examples/cluster-html/
       this.map.on('data', (e) => {
         if (e.sourceId === 'photos' && e.isSourceLoaded) {
@@ -633,7 +633,7 @@ export default {
         }
       });
 
-      // Also update clusters on 'moveend'.
+      // Add additional event handlers to update the marker previews.
       this.map.on('moveend', this.updateMarkers);
       this.map.on('resize', this.updateMarkers);
       this.map.on('idle', this.updateMarkers);
