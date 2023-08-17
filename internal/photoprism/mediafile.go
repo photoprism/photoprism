@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"image"
@@ -10,7 +9,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
-	"io/ioutil"
 	"math"
 	"os"
 	"os/exec"
@@ -22,7 +20,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/h2non/filetype"
 	_ "golang.org/x/image/bmp"
 	_ "golang.org/x/image/tiff"
 	_ "golang.org/x/image/webp"
@@ -320,7 +317,7 @@ func (m *MediaFile) EditedName() string {
 	return ""
 }
 
-func (m *MediaFile) VideoFileName(jsonName string) (string, error) {
+func (m *MediaFile) ExtractEmbeddedVideo(jsonName string) (string, error) {
 	if m == nil {
 		return "", fmt.Errorf(
 			"mediafile: file is nil - you may have found a" +
@@ -339,88 +336,61 @@ func (m *MediaFile) VideoFileName(jsonName string) (string, error) {
 		)
 	}
 
-	// given the filename, read the json sidecar
-	jsonBytes, err := os.ReadFile(jsonName)
-	if err != nil {
-		log.Debugf("mediafile: Error reading the JSON file: ", err)
-		return "", err
-	}
-	var jsonPayload []interface{}
-	err = json.Unmarshal(jsonBytes, &jsonPayload)
-	if err != nil {
-		log.Debugf("mediafile: Error parsing exiftool JSON payload: ", err)
-		return "", err
-	}
+	// get the embedded video field name from the file metadata
+	if metaData := m.MetaData(); metaData.Error == nil && metaData.
+		EmbeddedVideo != "" {
+		path := filepath.Join(
+			Config().SidecarPath(), m.RootRelPath(), "%f",
+		)
+		cmd := exec.Command(
+			Config().ExifToolBin(), fmt.Sprintf("-%s", metaData.EmbeddedVideo),
+			"-b", "-w",
+			path, m.FileName(),
+		)
 
-	if len(jsonPayload) > 0 {
-		if payloadMap, ok := jsonPayload[0].(map[string]interface{}); ok {
-			var cmd *exec.Cmd
-			path := filepath.Join(
-				Config().SidecarPath(), m.RootRelPath(), "%f",
+		var out bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &out
+		cmd.Stderr = &stderr
+		cmd.Env = []string{fmt.Sprintf("HOME=%s", Config().CmdCachePath())}
+		if err := cmd.Run(); err != nil {
+			log.Debugf("Error running exiftool on video file: ", err)
+			if stderr.String() != "" {
+				return "", errors.New(stderr.String())
+			} else {
+				return "", err
+			}
+		}
+
+		// find the extracted video path
+		savedPath := filepath.Join(
+			Config().SidecarPath(),
+			m.RootRelPath(),
+			m.BasePrefix(false),
+		)
+
+		// detect mime type of the extracted video
+		mimeType := fs.MimeType(savedPath)
+
+		if len := len(strings.Split(mimeType, "/")); len <= 1 {
+			log.Debugf(
+				"Error detecting the mime type of sidecar file at %s",
+				savedPath,
 			)
-			if _, exists := payloadMap["EmbeddedVideoFile"]; exists {
-				cmd = exec.Command(
-					Config().ExifToolBin(), "-EmbeddedVideoFile", "-b", "-w",
-					path, m.FileName(),
-				)
-			} else if _, exists := payloadMap["MotionPhotoVideo"]; exists {
-				cmd = exec.Command(
-					Config().ExifToolBin(), "-MotionPhotoVideo", "-b", "-w",
-					path, m.FileName(),
-				)
+			return "", nil
+		} else if extension := strings.Split(
+			mimeType, "/",
+		)[len-1]; extension != "" {
+			// rename the extracted video file with the correct extension
+			dir, file := filepath.Split(savedPath)
+			newFileName := fmt.Sprintf("%s.%s", file, extension)
+			newSavedPath := filepath.Join(dir, newFileName)
+			err := os.Rename(savedPath, newSavedPath)
+			if err != nil {
+				log.Debugf("Error renaming the file at %s", savedPath)
+				return "", err
 			}
-
-			if cmd != nil {
-				var out bytes.Buffer
-				var stderr bytes.Buffer
-				cmd.Stdout = &out
-				cmd.Stderr = &stderr
-				cmd.Env = []string{
-					fmt.Sprintf("HOME=%s", Config().CmdCachePath()),
-				}
-				if err := cmd.Run(); err != nil {
-					log.Debugf("Error running exiftool on video file: ", err)
-					if stderr.String() != "" {
-						return "", errors.New(stderr.String())
-					} else {
-						return "", err
-					}
-				}
-
-				// find the extracted file
-				savedPath := filepath.Join(
-					Config().SidecarPath(),
-					m.RootRelPath(),
-					m.BasePrefix(false),
-				)
-
-				// find the video file type
-				buf, err := ioutil.ReadFile(savedPath)
-				if err != nil {
-					log.Debugf("Error reading sidecar file at %s", savedPath)
-					return "", err
-				}
-				kind, err := filetype.Match(buf)
-				if err != nil {
-					log.Debugf(
-						"Error finding the type of sidecar file at %s",
-						savedPath,
-					)
-					return "", err
-				}
-
-				// rename the file with the correct extension
-				dir, file := filepath.Split(savedPath)
-				newFileName := fmt.Sprintf("%s.%s", file, kind.Extension)
-				newSavedPath := filepath.Join(dir, newFileName)
-				err = os.Rename(savedPath, newSavedPath)
-				if err != nil {
-					log.Debugf("Error renaming the file at %s", savedPath)
-					return "", err
-				}
-
-				return newSavedPath, nil
-			}
+			return newSavedPath, nil
 		}
 	}
 

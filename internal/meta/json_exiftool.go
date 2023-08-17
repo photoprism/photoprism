@@ -365,5 +365,12 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 
+	// set the embedded video file name, if it exists
+	if embeddedVideo, ok := data.json["EmbeddedVideoFile"]; ok && embeddedVideo != "" {
+		data.EmbeddedVideo = "EmbeddedVideoFile"
+	} else if embeddedVideo, ok := data.json["MotionPhotoVideo"]; ok && embeddedVideo != "" {
+		data.EmbeddedVideo = "MotionPhotoVideo"
+	}
+
 	return nil
 }

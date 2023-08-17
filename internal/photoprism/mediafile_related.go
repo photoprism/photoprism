@@ -57,10 +57,10 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 
 	// check for an embedded video in the media file using the JSON sidecar
 	jsonName, err := m.ExifToolJsonName()
-	if videoFileName, err := m.VideoFileName(jsonName); err != nil {
+	if embeddedVideoName, err := m.ExtractEmbeddedVideo(jsonName); err != nil {
 		return result, err
-	} else if videoFileName != "" {
-		matches = append(matches, videoFileName)
+	} else if embeddedVideoName != "" {
+		matches = append(matches, embeddedVideoName)
 	}
 
 	isHEIC := false
