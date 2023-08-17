@@ -50,6 +50,7 @@ export default {
     },
   },
   data() {
+    const settings = this.$config.values.settings.maps;
     return {
       canSearch: this.$config.allow("places", "search"),
       initialized: false,
@@ -71,7 +72,8 @@ export default {
       filter: {q: this.query(), s: this.scope()},
       lastFilter: {},
       config: this.$config.values,
-      settings: this.$config.values.settings.maps,
+      settings: settings,
+      animate: settings.animate,
       selectedClusterBounds: undefined,
       showClusterPictures: false,
     };
@@ -375,7 +377,9 @@ export default {
       });
     },
     formChange() {
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
       this.search();
     },
     clearQuery() {
@@ -383,7 +387,9 @@ export default {
       this.search();
     },
     updateQuery() {
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
 
       if (this.query() !== this.filter.q) {
         if (this.filter.s) {
@@ -410,7 +416,9 @@ export default {
       return params;
     },
     search() {
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
@@ -443,16 +451,17 @@ export default {
           this.map.fitBounds(this.result.bbox, {
             maxZoom: 17,
             padding: 100,
-            duration: this.settings.animate,
+            duration: this.animate,
             essential: false,
-            animate: this.settings.animate > 0
+            animate: true
           });
         }
 
         this.initialized = true;
+        this.loading = false;
 
         this.updateMarkers();
-      }).finally(() => {
+      }).catch(() => {
         this.loading = false;
       });
     },
@@ -519,7 +528,10 @@ export default {
       return 30;
     },
     updateMarkers() {
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
+
       let newMarkers = {};
       let features = this.map.querySourceFeatures("photos");
       const clusterIds = features
@@ -545,14 +557,13 @@ export default {
               imageContainer.className = 'marker cluster-marker';
 
               const clusterFeatures = clusterFeaturesById[props.cluster_id];
-              const previewImageCount = clusterFeatures.length > 3 ? 4 : 2;
+              const previewImageCount = clusterFeatures.length >= 100 ? 4 : 2;
               const images = Array(previewImageCount)
-                .fill()
+                .fill(null)
                 .map((a,i) => {
                   const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
-                  const imageHash = feature.properties.Hash;
                   const image = document.createElement('div');
-                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${imageHash}/${token}/tile_${50})`;
+                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
                   return image;
                 });
               imageContainer.append(...images);
@@ -623,8 +634,9 @@ export default {
       });
 
       // Also update clusters on 'moveend'.
-      // this.map.on('move', this.updateMarkers); // Doesn't make a difference to add this?
       this.map.on('moveend', this.updateMarkers);
+      this.map.on('resize', this.updateMarkers);
+      this.map.on('idle', this.updateMarkers);
 
       // Load pictures.
       this.search();
