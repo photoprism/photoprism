@@ -522,6 +522,8 @@ export default {
     getClusterSizeFromItemCount(itemCount) {
       if (itemCount >= 750) {
         return 74;
+      } else if (itemCount >= 200) {
+        return 70;
       } else if (itemCount >= 100) {
         return 66;
       }
@@ -568,7 +570,7 @@ export default {
               imageContainer.className = 'marker cluster-marker';
 
               const clusterFeatures = clusterFeaturesById[props.cluster_id];
-              const previewImageCount = clusterFeatures.length >= 100 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
+              const previewImageCount = clusterFeatures.length >= 10 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
               const images = Array(previewImageCount)
                 .fill(null)
                 .map((a,i) => {
