@@ -57,6 +57,7 @@ export default {
       map: null,
       markers: {},
       markersOnScreen: {},
+      clusterIds: [],
       loading: false,
       style: "",
       terrain: {
@@ -518,25 +519,35 @@ export default {
         });
       }
     },
-    getClusterRadiusFromItemCount(itemCount) {
+    getClusterSizeFromItemCount(itemCount) {
       if (itemCount >= 750) {
-        return 42;
+        return 74;
       } else if (itemCount >= 100) {
-        return 36;
+        return 66;
       }
 
-      return 30;
+      return 60;
     },
     updateMarkers() {
       if (this.loading) {
         return;
       }
 
-      let newMarkers = {};
+      // Find clusters.
       let features = this.map.querySourceFeatures("photos");
+
       const clusterIds = features
         .filter(feature => feature.properties.cluster)
         .map(feature => feature.properties.cluster_id);
+
+      // Skip update if nothing has changed.
+      if (clusterIds.toString() === this.clusterIds.toString()) {
+        return;
+      } else {
+        this.clusterIds = clusterIds;
+      }
+
+      let newMarkers = {};
 
       this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
         for (let i = 0; i < features.length; i++) {
@@ -549,15 +560,15 @@ export default {
           if (!marker) {
             let el = document.createElement('div');
             if (props.cluster) {
-              const radius = this.getClusterRadiusFromItemCount(props.point_count);
-              el.style.width = `${radius * 2}px`;
-              el.style.height = `${radius * 2}px`;
+              const size = this.getClusterSizeFromItemCount(props.point_count);
+              el.style.width = `${size}px`;
+              el.style.height = `${size}px`;
 
               const imageContainer = document.createElement('div');
               imageContainer.className = 'marker cluster-marker';
 
               const clusterFeatures = clusterFeaturesById[props.cluster_id];
-              const previewImageCount = clusterFeatures.length >= 100 ? 4 : 2;
+              const previewImageCount = clusterFeatures.length >= 100 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
               const images = Array(previewImageCount)
                 .fill(null)
                 .map((a,i) => {
@@ -566,6 +577,7 @@ export default {
                   image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
                   return image;
                 });
+
               imageContainer.append(...images);
 
               const counterBubble = document.createElement('div');
