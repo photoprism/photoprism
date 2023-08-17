@@ -510,12 +510,10 @@ export default {
       }
     },
     getClusterRadiusFromItemCount(itemCount) {
-      // see config of cluster-layer for these values
       if (itemCount >= 750) {
-        return 50;
-      }
-      if (itemCount >= 100) {
-        return 40;
+        return 42;
+      } else if (itemCount >= 100) {
+        return 36;
       }
 
       return 30;
@@ -599,6 +597,7 @@ export default {
       });
     },
     onMapLoad() {
+      // Add 'photos' data source.
       this.map.addSource('photos', {
         type: 'geojson',
         data: null,
@@ -607,36 +606,27 @@ export default {
         clusterRadius: 80 // Radius of each cluster when clustering points (defaults to 50)
       });
 
-      // TODO: can this rendering of empty colored circles be removed?
+      // Add 'clusters' layer.
       this.map.addLayer({
         id: 'clusters',
         type: 'circle',
         source: 'photos',
         filter: ['has', 'point_count'],
-        paint: {
-          'circle-color': [
-            'step',
-            ['get', 'point_count'],
-            'transparent',
-            100,
-            'transparent',
-            750,
-            'transparent'
-          ],
-          'circle-radius': [
-            'step',
-            ['get', 'point_count'],
-            30,
-            100,
-            40,
-            750,
-            50
-          ]
+      });
+
+      // Example on how to update clusters:
+      // https://maplibre.org/maplibre-gl-js/docs/examples/cluster-html/
+      this.map.on('data', (e) => {
+        if (e.sourceId === 'photos' && e.isSourceLoaded) {
+          this.updateMarkers();
         }
       });
 
-      this.map.on('idle', this.updateMarkers);
+      // Also update clusters on 'moveend'.
+      // this.map.on('move', this.updateMarkers); // Doesn't make a difference to add this?
+      this.map.on('moveend', this.updateMarkers);
 
+      // Load pictures.
       this.search();
     },
   },
