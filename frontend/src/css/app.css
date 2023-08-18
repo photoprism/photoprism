@@ -68,7 +68,7 @@ main {
     z-index: 1;
 }
 
-/* Page Overlay */
+/* Loading Animations */
 
 #busy-overlay {
     display: none;
