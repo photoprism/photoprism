@@ -648,7 +648,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		// Sets the video dimensions from the primary image if it could not be determined from the video metadata.
+		// Set the video dimensions from the primary image if it could not be determined from the video metadata.
 		// If there is no primary image yet, File.UpdateVideoInfos() sets the fields in retrospect when there is one.
 		if file.FileWidth == 0 && primaryFile.FileWidth > 0 {
 			file.FileWidth = primaryFile.FileWidth
@@ -657,7 +657,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FilePortrait = primaryFile.FilePortrait
 		}
 
-		// Set the video appearance from the primary file. In a future version, a still image extracted from the
+		// Set the video appearance from the primary image. In a future version, a still image extracted from the
 		// video could be used for this purpose if the primary image is not directly derived from the video file,
 		// e.g. in live photo stacks, see https://github.com/photoprism/photoprism/pull/3588#issuecomment-1683429455
 		if primaryFile.FileDiff > 0 {
