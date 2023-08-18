@@ -317,7 +317,7 @@ func (m *MediaFile) EditedName() string {
 	return ""
 }
 
-func (m *MediaFile) ExtractEmbeddedVideo(jsonName string) (string, error) {
+func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 	if m == nil {
 		return "", fmt.Errorf(
 			"mediafile: file is nil - you may have found a" +
@@ -1029,13 +1029,25 @@ func (m *MediaFile) HasPreviewImage() bool {
 		return true
 	}
 
-	jpegName := fs.ImageJPEG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegName := fs.ImageJPEG.FindFirst(
+		m.FileName(),
+		[]string{
+			Config().SidecarPath(), Config().OriginalsPath(),
+			fs.HiddenPath,
+		},
+		Config().OriginalsPath(), false,
+	)
 
 	if m.hasPreviewImage = fs.MimeType(jpegName) == fs.MimeTypeJPEG; m.hasPreviewImage {
 		return true
 	}
 
-	pngName := fs.ImagePNG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	pngName := fs.ImagePNG.FindFirst(
+		m.FileName(),
+		[]string{
+			Config().SidecarPath(), Config().OriginalsPath(), fs.HiddenPath,
+		}, Config().OriginalsPath(), false,
+	)
 
 	if m.hasPreviewImage = fs.MimeType(pngName) == fs.MimeTypePNG; m.hasPreviewImage {
 		return true

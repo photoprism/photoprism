@@ -55,9 +55,8 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		matches = append(matches, name)
 	}
 
-	// check for an embedded video in the media file using the JSON sidecar
-	jsonName, err := m.ExifToolJsonName()
-	if embeddedVideoName, err := m.ExtractEmbeddedVideo(jsonName); err != nil {
+	// check for an embedded video in the media file
+	if embeddedVideoName, err := m.ExtractEmbeddedVideo(); err != nil {
 		return result, err
 	} else if embeddedVideoName != "" {
 		matches = append(matches, embeddedVideoName)
