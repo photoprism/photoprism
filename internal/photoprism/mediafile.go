@@ -1032,7 +1032,7 @@ func (m *MediaFile) HasPreviewImage() bool {
 	jpegName := fs.ImageJPEG.FindFirst(
 		m.FileName(),
 		[]string{
-			Config().SidecarPath(), Config().OriginalsPath(),
+			Config().SidecarPath(),
 			fs.HiddenPath,
 		},
 		Config().OriginalsPath(), false,
@@ -1045,7 +1045,7 @@ func (m *MediaFile) HasPreviewImage() bool {
 	pngName := fs.ImagePNG.FindFirst(
 		m.FileName(),
 		[]string{
-			Config().SidecarPath(), Config().OriginalsPath(), fs.HiddenPath,
+			Config().SidecarPath(), fs.HiddenPath,
 		}, Config().OriginalsPath(), false,
 	)
 
