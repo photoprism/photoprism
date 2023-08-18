@@ -59,6 +59,7 @@ export default {
       markersOnScreen: {},
       clusterIds: [],
       loading: false,
+      markerPromise: null,
       style: "",
       terrain: {
         'topo-v2': 'terrain_rgb',
@@ -530,95 +531,104 @@ export default {
 
       return 60;
     },
-    updateMarkers() {
+    async updateMarkers() {
       if (this.loading) {
         return;
       }
 
-      // Find clusters.
-      let features = this.map.querySourceFeatures("photos");
-
-      const clusterIds = features
-        .filter(feature => feature.properties.cluster)
-        .map(feature => feature.properties.cluster_id);
-
-      // Skip update if nothing has changed.
-      if (clusterIds.toString() === this.clusterIds.toString()) {
-        return;
-      } else {
-        this.clusterIds = clusterIds;
+      // Parts of marker processing are done asyncronously. Ensure previous processing is complete before restarting
+      if(this.markerPromise) {
+        await this.markerPromise;
       }
 
-      let newMarkers = {};
+      this.markerPromise = new Promise((resolve, reject) => {
+        // Find clusters.
+        let features = this.map.querySourceFeatures("photos");
 
-      this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
-        for (let i = 0; i < features.length; i++) {
-          let coords = features[i].geometry.coordinates;
-          let props = features[i].properties;
-          let id = features[i].id;
+        const clusterIds = [...new Set(features
+          .filter(feature => feature.properties.cluster)
+          .map(feature => feature.properties.cluster_id))];
 
-          let marker = this.markers[id];
-          let token = this.$config.previewToken;
-          if (!marker) {
-            let el = document.createElement('div');
-            if (props.cluster) {
-              const size = this.getClusterSizeFromItemCount(props.point_count);
-              el.style.width = `${size}px`;
-              el.style.height = `${size}px`;
+        // Skip update if nothing has changed.
+        if (clusterIds.toString() === this.clusterIds.toString()) {
+          resolve("skip");
+          return;
+        } else {
+          this.clusterIds = clusterIds;
+        }
 
-              const imageContainer = document.createElement('div');
-              imageContainer.className = 'marker cluster-marker';
+        let newMarkers = {};
 
-              const clusterFeatures = clusterFeaturesById[props.cluster_id];
-              const previewImageCount = clusterFeatures.length >= 10 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
-              const images = Array(previewImageCount)
-                .fill(null)
-                .map((a,i) => {
-                  const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
-                  const image = document.createElement('div');
-                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
-                  return image;
+        this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
+          for (let i = 0; i < features.length; i++) {
+            let coords = features[i].geometry.coordinates;
+            let props = features[i].properties;
+            let id = features[i].id;
+
+            let marker = this.markers[id];
+            let token = this.$config.previewToken;
+            if (!marker) {
+              let el = document.createElement('div');
+              if (props.cluster) {
+                const size = this.getClusterSizeFromItemCount(props.point_count);
+                el.style.width = `${size}px`;
+                el.style.height = `${size}px`;
+
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'marker cluster-marker';
+
+                const clusterFeatures = clusterFeaturesById[props.cluster_id];
+                const previewImageCount = clusterFeatures.length >= 10 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
+                const images = Array(previewImageCount)
+                  .fill(null)
+                  .map((a,i) => {
+                    const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
+                    const image = document.createElement('div');
+                    image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
+                    return image;
+                  });
+
+                imageContainer.append(...images);
+
+                const counterBubble = document.createElement('div');
+                counterBubble.className = 'counter-bubble primary-button theme--light';
+                counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
+
+                el.append(imageContainer);
+                el.append(counterBubble);
+                el.addEventListener('click', () => {
+                  this.selectClusterById(props.cluster_id);
                 });
+              } else {
+                el.className = 'marker';
+                el.title = props.Title;
+                el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
+                el.style.width = '50px';
+                el.style.height = '50px';
 
-              imageContainer.append(...images);
-
-              const counterBubble = document.createElement('div');
-              counterBubble.className = 'counter-bubble primary-button theme--light';
-              counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
-
-              el.append(imageContainer);
-              el.append(counterBubble);
-              el.addEventListener('click', () => {
-                this.selectClusterById(props.cluster_id);
-              });
+                el.addEventListener('click', () => this.openPhoto(props.UID));
+              }
+              marker = this.markers[id] = new maplibregl.Marker({
+                element: el
+              }).setLngLat(coords);
             } else {
-              el.className = 'marker';
-              el.title = props.Title;
-              el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
-              el.style.width = '50px';
-              el.style.height = '50px';
-
-              el.addEventListener('click', () => this.openPhoto(props.UID));
+              marker.setLngLat(coords);
             }
-            marker = this.markers[id] = new maplibregl.Marker({
-              element: el
-            }).setLngLat(coords);
-          } else {
-            marker.setLngLat(coords);
-          }
 
-          newMarkers[id] = marker;
+            newMarkers[id] = marker;
 
-          if (!this.markersOnScreen[id]) {
-            marker.addTo(this.map);
+            if (!this.markersOnScreen[id]) {
+              marker.addTo(this.map);
+            }
           }
-        }
-        for (let id in this.markersOnScreen) {
-          if (!newMarkers[id]) {
-            this.markersOnScreen[id].remove();
+          for (let id in this.markersOnScreen) {
+            if (!newMarkers[id]) {
+              this.markersOnScreen[id].remove();
+            }
           }
-        }
-        this.markersOnScreen = newMarkers;
+          this.markersOnScreen = newMarkers;
+          resolve("done");
+        })
       });
     },
     onMapLoad() {
