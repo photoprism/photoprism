@@ -657,7 +657,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.FilePortrait = primaryFile.FilePortrait
 		}
 
-		// Set the appearance of the video from the primary file. In a future version, a still image extracted from the
+		// Set the video appearance from the primary file. In a future version, a still image extracted from the
 		// video could be used for this purpose if the primary image is not directly derived from the video file,
 		// e.g. in live photo stacks, see https://github.com/photoprism/photoprism/pull/3588#issuecomment-1683429455
 		if primaryFile.FileDiff > 0 {
