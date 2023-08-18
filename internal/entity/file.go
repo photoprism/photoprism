@@ -446,21 +446,16 @@ func (m *File) Save() error {
 	return m.ResolvePrimary()
 }
 
-// UpdateVideoInfos updates related video infos based on this file.
+// UpdateVideoInfos updates missing video metadata from the primary image.
+// see https://github.com/photoprism/photoprism/pull/3588#issuecomment-1683429455
 func (m *File) UpdateVideoInfos() error {
 	if m.PhotoID <= 0 {
 		return fmt.Errorf("file has invalid photo id")
 	}
 
-	// Update video dimensions, if necessary.
-	type Dimensions struct {
-		FileWidth       int
-		FileHeight      int
-		FileOrientation int
-		FileAspectRatio float32
-	}
-
-	dimensions := Dimensions{}
+	// Set the video dimensions from the primary image if it could not be determined from the video metadata.
+	// see https://github.com/photoprism/photoprism/blob/develop/internal/photoprism/index_mediafile.go
+	dimensions := FileDimensions{}
 
 	if err := deepcopier.Copy(&dimensions).From(m); err != nil {
 		return err
@@ -468,16 +463,9 @@ func (m *File) UpdateVideoInfos() error {
 		return err
 	}
 
-	// Update video appearance, if necessary.
-	type Appearance struct {
-		FileMainColor string
-		FileColors    string
-		FileLuminance string
-		FileDiff      int
-		FileChroma    int16
-	}
-
-	appearance := Appearance{}
+	// Set the video appearance from the primary file if it could not be detected e.g. from a JPEG sidecar file.
+	// see https://github.com/photoprism/photoprism/blob/develop/internal/photoprism/index_mediafile.go
+	appearance := FileAppearance{}
 
 	if err := deepcopier.Copy(&appearance).From(m); err != nil {
 		return err

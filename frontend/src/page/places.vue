@@ -50,13 +50,16 @@ export default {
     },
   },
   data() {
+    const settings = this.$config.values.settings.maps;
     return {
       canSearch: this.$config.allow("places", "search"),
       initialized: false,
       map: null,
       markers: {},
       markersOnScreen: {},
+      clusterIds: [],
       loading: false,
+      markerPromise: null,
       style: "",
       terrain: {
         'topo-v2': 'terrain_rgb',
@@ -71,7 +74,8 @@ export default {
       filter: {q: this.query(), s: this.scope()},
       lastFilter: {},
       config: this.$config.values,
-      settings: this.$config.values.settings.maps,
+      settings: settings,
+      animate: settings.animate,
       selectedClusterBounds: undefined,
       showClusterPictures: false,
     };
@@ -375,7 +379,9 @@ export default {
       });
     },
     formChange() {
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
       this.search();
     },
     clearQuery() {
@@ -383,7 +389,9 @@ export default {
       this.search();
     },
     updateQuery() {
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
 
       if (this.query() !== this.filter.q) {
         if (this.filter.s) {
@@ -410,7 +418,9 @@ export default {
       return params;
     },
     search() {
-      if (this.loading) return;
+      if (this.loading) {
+        return;
+      }
 
       // Don't query the same data more than once
       if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
@@ -443,16 +453,17 @@ export default {
           this.map.fitBounds(this.result.bbox, {
             maxZoom: 17,
             padding: 100,
-            duration: this.settings.animate,
+            duration: this.animate,
             essential: false,
-            animate: this.settings.animate > 0
+            animate: true
           });
         }
 
         this.initialized = true;
+        this.loading = false;
 
         this.updateMarkers();
-      }).finally(() => {
+      }).catch(() => {
         this.loading = false;
       });
     },
@@ -509,91 +520,115 @@ export default {
         });
       }
     },
-    getClusterRadiusFromItemCount(itemCount) {
+    getClusterSizeFromItemCount(itemCount) {
       if (itemCount >= 750) {
-        return 42;
+        return 74;
+      } else if (itemCount >= 200) {
+        return 70;
       } else if (itemCount >= 100) {
-        return 36;
+        return 66;
       }
 
-      return 30;
+      return 60;
     },
-    updateMarkers() {
-      if (this.loading) return;
-      let newMarkers = {};
-      let features = this.map.querySourceFeatures("photos");
-      const clusterIds = features
-        .filter(feature => feature.properties.cluster)
-        .map(feature => feature.properties.cluster_id);
+    async updateMarkers() {
+      if (this.loading) {
+        return;
+      }
 
-      this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
-        for (let i = 0; i < features.length; i++) {
-          let coords = features[i].geometry.coordinates;
-          let props = features[i].properties;
-          let id = features[i].id;
+      // Parts of marker processing are done asyncronously. Ensure previous processing is complete before restarting
+      if(this.markerPromise) {
+        await this.markerPromise;
+      }
 
-          let marker = this.markers[id];
-          let token = this.$config.previewToken;
-          if (!marker) {
-            let el = document.createElement('div');
-            if (props.cluster) {
-              const radius = this.getClusterRadiusFromItemCount(props.point_count);
-              el.style.width = `${radius * 2}px`;
-              el.style.height = `${radius * 2}px`;
+      this.markerPromise = new Promise((resolve, reject) => {
+        // Find clusters.
+        let features = this.map.querySourceFeatures("photos");
 
-              const imageContainer = document.createElement('div');
-              imageContainer.className = 'marker cluster-marker';
+        const clusterIds = [...new Set(features
+          .filter(feature => feature.properties.cluster)
+          .map(feature => feature.properties.cluster_id))];
 
-              const clusterFeatures = clusterFeaturesById[props.cluster_id];
-              const previewImageCount = clusterFeatures.length > 3 ? 4 : 2;
-              const images = Array(previewImageCount)
-                .fill()
-                .map((a,i) => {
-                  const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
-                  const imageHash = feature.properties.Hash;
-                  const image = document.createElement('div');
-                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${imageHash}/${token}/tile_${50})`;
-                  return image;
+        // Skip update if nothing has changed.
+        if (clusterIds.toString() === this.clusterIds.toString()) {
+          resolve("skip");
+          return;
+        } else {
+          this.clusterIds = clusterIds;
+        }
+
+        let newMarkers = {};
+
+        this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
+          for (let i = 0; i < features.length; i++) {
+            let coords = features[i].geometry.coordinates;
+            let props = features[i].properties;
+            let id = features[i].id;
+
+            let marker = this.markers[id];
+            let token = this.$config.previewToken;
+            if (!marker) {
+              let el = document.createElement('div');
+              if (props.cluster) {
+                const size = this.getClusterSizeFromItemCount(props.point_count);
+                el.style.width = `${size}px`;
+                el.style.height = `${size}px`;
+
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'marker cluster-marker';
+
+                const clusterFeatures = clusterFeaturesById[props.cluster_id];
+                const previewImageCount = clusterFeatures.length >= 10 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
+                const images = Array(previewImageCount)
+                  .fill(null)
+                  .map((a,i) => {
+                    const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
+                    const image = document.createElement('div');
+                    image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
+                    return image;
+                  });
+
+                imageContainer.append(...images);
+
+                const counterBubble = document.createElement('div');
+                counterBubble.className = 'counter-bubble primary-button theme--light';
+                counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
+
+                el.append(imageContainer);
+                el.append(counterBubble);
+                el.addEventListener('click', () => {
+                  this.selectClusterById(props.cluster_id);
                 });
-              imageContainer.append(...images);
+              } else {
+                el.className = 'marker';
+                el.title = props.Title;
+                el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
+                el.style.width = '50px';
+                el.style.height = '50px';
 
-              const counterBubble = document.createElement('div');
-              counterBubble.className = 'counter-bubble primary-button theme--light';
-              counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
-
-              el.append(imageContainer);
-              el.append(counterBubble);
-              el.addEventListener('click', () => {
-                this.selectClusterById(props.cluster_id);
-              });
+                el.addEventListener('click', () => this.openPhoto(props.UID));
+              }
+              marker = this.markers[id] = new maplibregl.Marker({
+                element: el
+              }).setLngLat(coords);
             } else {
-              el.className = 'marker';
-              el.title = props.Title;
-              el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
-              el.style.width = '50px';
-              el.style.height = '50px';
-
-              el.addEventListener('click', () => this.openPhoto(props.UID));
+              marker.setLngLat(coords);
             }
-            marker = this.markers[id] = new maplibregl.Marker({
-              element: el
-            }).setLngLat(coords);
-          } else {
-            marker.setLngLat(coords);
-          }
 
-          newMarkers[id] = marker;
+            newMarkers[id] = marker;
 
-          if (!this.markersOnScreen[id]) {
-            marker.addTo(this.map);
+            if (!this.markersOnScreen[id]) {
+              marker.addTo(this.map);
+            }
           }
-        }
-        for (let id in this.markersOnScreen) {
-          if (!newMarkers[id]) {
-            this.markersOnScreen[id].remove();
+          for (let id in this.markersOnScreen) {
+            if (!newMarkers[id]) {
+              this.markersOnScreen[id].remove();
+            }
           }
-        }
-        this.markersOnScreen = newMarkers;
+          this.markersOnScreen = newMarkers;
+          resolve("done");
+        })
       });
     },
     onMapLoad() {
@@ -614,7 +649,7 @@ export default {
         filter: ['has', 'point_count'],
       });
 
-      // Example on how to update clusters:
+      // Example of dynamic map cluster rendering:
       // https://maplibre.org/maplibre-gl-js/docs/examples/cluster-html/
       this.map.on('data', (e) => {
         if (e.sourceId === 'photos' && e.isSourceLoaded) {
@@ -622,9 +657,10 @@ export default {
         }
       });
 
-      // Also update clusters on 'moveend'.
-      // this.map.on('move', this.updateMarkers); // Doesn't make a difference to add this?
+      // Add additional event handlers to update the marker previews.
       this.map.on('moveend', this.updateMarkers);
+      this.map.on('resize', this.updateMarkers);
+      this.map.on('idle', this.updateMarkers);
 
       // Load pictures.
       this.search();
