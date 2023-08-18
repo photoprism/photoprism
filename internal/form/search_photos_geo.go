@@ -38,7 +38,7 @@ type SearchPhotosGeo struct {
 	Public    bool      `form:"public"`
 	Private   bool      `form:"private"`
 	Review    bool      `form:"review"`
-	Quality   int       `form:"quality"`
+	Quality   int       `form:"quality" notes:"Minimum quality score (1-7)"`
 	Face      string    `form:"face" notes:"Face ID, yes, no, new, or kind"`
 	Faces     string    `form:"faces"` // Find or exclude faces if detected.
 	Subject   string    `form:"subject"`
