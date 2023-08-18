@@ -545,9 +545,9 @@ export default {
         // Find clusters.
         let features = this.map.querySourceFeatures("photos");
 
-        const clusterIds = features
+        const clusterIds = [...new Set(features
           .filter(feature => feature.properties.cluster)
-          .map(feature => feature.properties.cluster_id);
+          .map(feature => feature.properties.cluster_id))];
 
         // Skip update if nothing has changed.
         if (clusterIds.toString() === this.clusterIds.toString()) {
