@@ -52,43 +52,63 @@ export class Model {
     return this;
   }
 
-  getValues(changed) {
-    const result = {};
-    const defaults = this.getDefaults();
+  /**
+   * Returns the values of this model, all of them or only changed values, with changed
+   * subobjects traversed for changed fields or simply included as complete objects
+   *
+   * @param {boolean} changed - get only changed values
+   * @param {boolean} traverseSubObjects - get only changed values for subobjects too (parameter {@link changed} must also be `true`)
+   * @return {object}
+   */
+  getValues(changed, traverseSubObjects) {
+    return getObjectValues(this, this.__originalValues, this.getDefaults());
 
-    for (let key in this.__originalValues) {
-      if (this.__originalValues.hasOwnProperty(key) && key !== "__originalValues") {
-        let val;
-        if (defaults.hasOwnProperty(key)) {
-          switch (typeof defaults[key]) {
-            case "string":
-              if (this[key] === null || this[key] === undefined) {
-                val = "";
-              } else {
-                val = this[key];
-              }
-              break;
-            case "bigint":
-            case "number":
-              val = parseFloat(this[key]);
-              break;
-            case "boolean":
-              val = !!this[key];
-              break;
-            default:
-              val = this[key];
+    function getObjectValues(obj, originalValues, defaults) {
+      const result = {};
+      for (let key in originalValues) {
+        if (originalValues.hasOwnProperty(key) && key !== "__originalValues") {
+          let val;
+          if (defaults.hasOwnProperty(key)) {
+            val = getTypedValue(key);
+          } else {
+            val = obj[key];
           }
-        } else {
-          val = this[key];
-        }
 
-        if (!changed || JSON.stringify(val) !== JSON.stringify(this.__originalValues[key])) {
-          result[key] = val;
+          if (!changed || JSON.stringify(val) !== JSON.stringify(originalValues[key])) {
+            if (changed && traverseSubObjects && typeof val === "object") {
+              result[key] = getObjectValues(val, originalValues[key], defaults[key]);
+            } else {
+              result[key] = val;
+            }
+          }
         }
       }
-    }
 
-    return result;
+      return result;
+
+      function getTypedValue(key) {
+        let typedVal;
+        switch (typeof defaults[key]) {
+          case "string":
+            if (obj[key] === null || obj[key] === undefined) {
+              typedVal = "";
+            } else {
+              typedVal = obj[key];
+            }
+            break;
+          case "bigint":
+          case "number":
+            typedVal = parseFloat(obj[key]);
+            break;
+          case "boolean":
+            typedVal = !!obj[key];
+            break;
+          default:
+            typedVal = obj[key];
+        }
+        return typedVal;
+      }
+    }
   }
 
   originalValue(key) {

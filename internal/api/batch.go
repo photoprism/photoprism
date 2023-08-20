@@ -8,6 +8,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -19,6 +20,11 @@ import (
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+)
+
+var (
+	photoDbColumns   = entity.GetDbFieldMap(entity.Photo{})
+	detailsDbColumns = entity.GetDbFieldMap(entity.Details{})
 )
 
 // BatchPhotosArchive moves multiple photos to the archive.
@@ -430,5 +436,96 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		}
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPermanentlyDeleted))
+	})
+}
+
+// BatchPhotosEdit edit fields in multiple photos.
+//
+// POST /api/v1/batch/photos/edit
+func BatchPhotosEdit(router *gin.RouterGroup) {
+	router.POST("/batch/photos/edit", func(c *gin.Context) {
+		s := Auth(c, acl.ResourcePhotos, acl.AccessPrivate)
+
+		if s.Abort(c) {
+			return
+		}
+
+		var photoSelection struct {
+			Photos []string `json:"photos"`
+		}
+		if err := c.ShouldBindBodyWith(&photoSelection, binding.JSON); err != nil {
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
+			return
+		}
+		photoUids := photoSelection.Photos
+		if len(photoUids) == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoItemsSelected)
+			return
+		}
+
+		var photoChanges map[string]interface{}
+		if err := c.ShouldBindBodyWith(&photoChanges, binding.JSON); err != nil {
+			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
+			return
+		}
+		if len(photoChanges) == 0 {
+			Abort(c, http.StatusBadRequest, i18n.ErrNoFieldsChanged)
+			return
+		}
+		delete(photoChanges, "photos")
+
+		log.Infof("photos: updating %d fields for %d photos", len(photoChanges), len(photoUids))
+
+		if err := entity.Db().Transaction(func(tx *gorm.DB) error {
+			var photoIds []uint64
+			if err := tx.Model(entity.Photo{}).Where("photo_uid IN (?)", photoUids).Pluck("id", &photoIds).Error; err != nil {
+				return err
+			}
+
+			if err := tx.Model(entity.Photo{}).Where("id IN (?)", photoIds).Omit("Details").UpdateColumns(entity.SubstDbFields(photoChanges, photoDbColumns)).Error; err != nil {
+				return err
+			}
+
+			detailsChanges, ok := photoChanges["Details"].(map[string]interface{})
+			if ok {
+				if err := tx.Model(entity.Details{}).Where("photo_id IN (?)", photoIds).UpdateColumns(entity.SubstDbFields(detailsChanges, detailsDbColumns)).Error; err != nil {
+					return err
+				}
+			}
+
+			return nil
+		}); err != nil {
+			log.Errorf("batch edit photos: %s", err)
+			AbortSaveFailed(c)
+			return
+		}
+
+		var updatedPhotos entity.Photos
+
+		for _, sel := range photoUids {
+			uid := clean.UID(sel)
+			p, err := query.PhotoPreloadByUID(uid)
+
+			if err != nil {
+				AbortEntityNotFound(c)
+				return
+			}
+
+			updatedPhotos = append(updatedPhotos, p)
+			SavePhotoAsYaml(p)
+		}
+
+		// Update precalculated photo and file counts.
+		logWarn("index", entity.UpdateCounts())
+
+		event.EntitiesUpdated("photos", updatedPhotos)
+
+		UpdateClientConfig()
+
+		FlushCoverCache()
+
+		event.SuccessMsg(i18n.MsgPhotosUpdated, len(photoUids))
+
+		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgPhotosUpdated, len(photoUids)))
 	})
 }

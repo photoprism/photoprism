@@ -42,6 +42,7 @@ const (
 	ErrBusy
 	ErrWakeupInterval
 	ErrAccountConnect
+	ErrNoFieldsChanged
 
 	MsgChangesSaved
 	MsgAlbumCreated
@@ -83,6 +84,7 @@ const (
 	MsgSelectionArchived
 	MsgSelectionRestored
 	MsgSelectionProtected
+	MsgPhotosUpdated
 	MsgAlbumsDeleted
 	MsgZipCreatedIn
 	MsgPermanentlyDeleted
@@ -132,6 +134,7 @@ var Messages = MessageMap{
 	ErrBusy:               gettext("Busy, please try again later"),
 	ErrWakeupInterval:     gettext("The wakeup interval is %s, but must be 1h or less"),
 	ErrAccountConnect:     gettext("Your account could not be connected"),
+	ErrNoFieldsChanged:    gettext("No fields were changed"),
 
 	// Info and confirmation messages:
 	MsgChangesSaved:          gettext("Changes successfully saved"),
@@ -174,6 +177,7 @@ var Messages = MessageMap{
 	MsgSelectionArchived:     gettext("Selection archived"),
 	MsgSelectionRestored:     gettext("Selection restored"),
 	MsgSelectionProtected:    gettext("Selection marked as private"),
+	MsgPhotosUpdated:         gettext("%d photos updated"),
 	MsgAlbumsDeleted:         gettext("Albums deleted"),
 	MsgZipCreatedIn:          gettext("Zip created in %d s"),
 	MsgPermanentlyDeleted:    gettext("Permanently deleted"),

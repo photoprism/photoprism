@@ -83,7 +83,8 @@
         <v-tabs-items touchless>
           <v-tab-item lazy>
             <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid"
-                                 @close="close" @prev="prev" @next="next"></p-tab-photo-details>
+                                 @close="close" @prev="prev" @next="next"
+                                 @updateAllSelected="updateAllSelected"></p-tab-photo-details>
           </v-tab-item>
 
           <v-tab-item lazy>
@@ -203,6 +204,14 @@ export default {
           }
           break;
       }
+    },
+    updateAllSelected() {
+      if (!(this.$clipboard.selection?.length > 0)) return;
+      this.model.updateAllSelected(this.$clipboard.selection).then((updated) => {
+        if (updated) {
+          this.find(this.selected);
+        }
+      });
     },
     close() {
       this.$emit('close');

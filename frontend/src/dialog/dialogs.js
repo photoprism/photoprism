@@ -27,6 +27,7 @@ import PServiceAddDialog from "dialog/service/add.vue";
 import PServiceRemoveDialog from "dialog/service/remove.vue";
 import PServiceEditDialog from "dialog/service/edit.vue";
 import PPhotoArchiveDialog from "dialog/photo/archive.vue";
+import PPhotoBatchEditDialog from "dialog/photo/edit/batch-edit.vue";
 import PPhotoAlbumDialog from "dialog/photo/album.vue";
 import PPhotoEditDialog from "dialog/photo/edit.vue";
 import PPhotoDeleteDialog from "dialog/photo/delete.vue";
@@ -52,6 +53,7 @@ dialogs.install = (Vue) => {
   Vue.component("PServiceRemoveDialog", PServiceRemoveDialog);
   Vue.component("PServiceEditDialog", PServiceEditDialog);
   Vue.component("PPhotoArchiveDialog", PPhotoArchiveDialog);
+  Vue.component("PPhotoBatchEditDialog", PPhotoBatchEditDialog);
   Vue.component("PPhotoAlbumDialog", PPhotoAlbumDialog);
   Vue.component("PPhotoEditDialog", PPhotoEditDialog);
   Vue.component("PPhotoDeleteDialog", PPhotoDeleteDialog);

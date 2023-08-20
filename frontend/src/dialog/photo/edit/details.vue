@@ -389,12 +389,14 @@
                 <translate>Close</translate>
               </v-btn>
               <v-btn color="primary-button" depressed dark class="compact action-apply action-approve"
-                     @click.stop="save(false)">
+                     @click.stop="save(false)"
+                     v-longpress:[allowbatchedit]="confirmSaveAllSelected">
                 <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
                 <span v-else><translate>Apply</translate></span>
               </v-btn>
               <v-btn color="primary-button" depressed dark class="compact action-done hidden-xs-only"
-                     @click.stop="save(true)">
+                     @click.stop="save(true)"
+                     v-longpress:[allowbatchedit]="confirmSaveAllSelectedAndClose">
                 <translate>Done</translate>
               </v-btn>
             </v-flex>
@@ -403,6 +405,8 @@
       </v-layout>
       <div class="mt-1 clear"></div>
     </v-form>
+    <p-photo-batch-edit-dialog :show="dialog.batchEdit" @cancel="dialog.batchEdit = false"
+                               @confirm="batchEdit"></p-photo-batch-edit-dialog>
   </div>
 </template>
 
@@ -440,7 +444,11 @@ export default {
       time: "",
       textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
       rtl: this.$rtl,
-    };
+      allowbatchedit: (this.$clipboard.selection.length > 0),
+      batchEditFunction: null,
+      dialog: {
+        batchEdit: false,
+      },    };
   },
   computed: {
     cameraOptions() {
@@ -565,6 +573,33 @@ export default {
     },
     close() {
       this.$emit('close');
+    },
+    batchEdit() {
+      this.dialog.batchEdit = false;
+      this.batchEditFunction();
+      this.batchEditFunction = null;
+    },
+    confirmSaveAllSelectedAndClose() {
+      this.batchEditFunction = this.saveAllSelectedAndClose;
+      this.dialog.batchEdit = true;
+    },
+    confirmSaveAllSelected() {
+      this.batchEditFunction = this.saveAllSelected;
+      this.dialog.batchEdit = true;
+    },
+    saveAllSelectedAndClose() {
+      if (!this.saveAllSelected()) return;
+      this.close();
+    },
+    saveAllSelected() {
+      if (this.invalidDate) {
+        this.$notify.error(this.$gettext("Invalid date"));
+        return false;
+      }
+      this.updateModel();
+      this.$emit('updateAllSelected');
+      this.updateTime();
+      return true;
     },
   },
 };

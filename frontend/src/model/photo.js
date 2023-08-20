@@ -1014,8 +1014,38 @@ export class Photo extends RestModel {
     return result;
   }
 
+  updateAllSelected(selection) {
+    const values = this.getUpdatedValues(true);
+
+    if (Object.keys(values).length === 0) {
+      return Promise.resolve(false);
+    }
+
+    return Api.post("batch/photos/edit", { ...values, photos: selection }).then(() => {
+      if (values.Type || values.Lat) {
+        config.update();
+      }
+      return Promise.resolve(true);
+    });
+  }
+
   update() {
-    const values = this.getValues(true);
+    const values = this.getUpdatedValues();
+    if (values.Details) {
+      values.Details.PhotoID = this.ID; // Send PhotoID to identify Details.
+    }
+
+    return Api.put(this.getEntityResource(), values).then((resp) => {
+      if (values.Type || values.Lat) {
+        config.update();
+      }
+
+      return Promise.resolve(this.setValues(resp.data));
+    });
+  }
+
+  getUpdatedValues(traverseSubObjects) {
+    const values = this.getValues(true, traverseSubObjects);
 
     if (values.Title) {
       values.TitleSrc = src.Manual;
@@ -1081,14 +1111,7 @@ export class Photo extends RestModel {
         values.Details.LicenseSrc = src.Manual;
       }
     }
-
-    return Api.put(this.getEntityResource(), values).then((resp) => {
-      if (values.Type || values.Lat) {
-        config.update();
-      }
-
-      return Promise.resolve(this.setValues(resp.data));
-    });
+    return values;
   }
 
   static batchSize() {

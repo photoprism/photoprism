@@ -33,6 +33,7 @@ import Clipboard from "common/clipboard";
 import Components from "component/components";
 import icons from "component/icons";
 import Dialogs from "dialog/dialogs";
+import Directives from "directive/directives";
 import Event from "pubsub-js";
 import GetTextPlugin from "vue-gettext";
 import Log from "common/log";
@@ -118,6 +119,7 @@ config.update().finally(() => {
   Vue.use(Components);
   Vue.use(Dialogs);
   Vue.use(Router);
+  Vue.use(Directives);
 
   // make scroll-pos-restore compatible with bfcache
   // this is required to make scroll-pos-restore work on iOS in PWA-mode
