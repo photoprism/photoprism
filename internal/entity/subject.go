@@ -46,7 +46,7 @@ func (Subject) TableName() string {
 	return "subjects"
 }
 
-// BeforeCreate creates a random UID if needed before inserting a new row to the database.
+// BeforeCreate creates a random uid if needed before inserting a new row to the database.
 func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
 	if rnd.IsUnique(m.SubjUID, 'j') {
 		return nil
@@ -129,9 +129,23 @@ func (m *Subject) Delete() error {
 		return err
 	}
 
-	log.Infof("subject: %s %s flagged as missing", TypeString(m.SubjType), clean.Log(m.SubjName))
+	log.Infof("subject: flagged %s %s as missing", TypeString(m.SubjType), clean.Log(m.SubjName))
 
 	return Db().Delete(m).Error
+}
+
+// DeletePermanently permanently removes a subject from the index after is has been soft deleted.
+func (m *Subject) DeletePermanently() error {
+	if !m.Deleted() {
+		return nil
+	}
+
+	subjectMutex.Lock()
+	defer subjectMutex.Unlock()
+
+	SubjNames.Unset(m.SubjUID)
+
+	return UnscopedDb().Delete(m).Error
 }
 
 // AfterDelete resets file and photo counters when the entity was deleted.
@@ -140,6 +154,9 @@ func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
 		"FileCount":  0,
 		"PhotoCount": 0,
 	})
+
+	SubjNames.Unset(m.SubjUID)
+
 	return
 }
 
@@ -192,7 +209,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 		return nil
 	}
 
-	if found := FindSubjectByName(m.SubjName); found != nil {
+	if found := FindSubjectByName(m.SubjName, true); found != nil {
 		return found
 	} else if err := m.Create(); err == nil {
 		log.Infof("subject: added %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
@@ -207,7 +224,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 		}
 
 		return m
-	} else if found = FindSubjectByName(m.SubjName); found != nil {
+	} else if found = FindSubjectByName(m.SubjName, true); found != nil {
 		return found
 	} else {
 		log.Errorf("subject: failed adding %s (%s)", clean.Log(m.SubjName), err)
@@ -232,7 +249,7 @@ func FindSubject(uid string) *Subject {
 }
 
 // FindSubjectByName find an existing subject by name.
-func FindSubjectByName(name string) *Subject {
+func FindSubjectByName(name string, restore bool) *Subject {
 	name = clean.Name(name)
 
 	if name == "" {
@@ -240,34 +257,34 @@ func FindSubjectByName(name string) *Subject {
 	}
 
 	result := Subject{}
-	uid := SubjNames.Key(name)
 
-	switch uid {
-	case "":
-		if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
-			log.Debugf("subject: %s not found by name", clean.Log(name))
-			return nil
-		}
-	default:
-		if found := FindSubject(uid); found == nil {
-			log.Debugf("subject: %s not found by uid", clean.Log(name))
-			return nil
-		} else {
-			result = *found
-		}
-	}
-
-	// Restore if flagged as deleted.
-	if !result.Deleted() {
-		return &result
-	} else if err := result.Restore(); err == nil {
-		log.Debugf("subject: restored %s", clean.Log(result.SubjName))
-		return &result
+	// Fetch existing record by uid, if possible
+	if uid := SubjNames.Key(name); uid == "" {
+	} else if found := FindSubject(uid); found != nil {
+		result = *found
 	} else {
-		log.Errorf("subject: failed restoring %s (%s)", clean.Log(result.SubjName), err)
+		log.Debugf("subject: cannot find record for uid %s", clean.Log(uid))
 	}
 
-	return nil
+	// Search existing record by name, otherwise.
+	if result.SubjUID != "" {
+	} else if err := UnscopedDb().Where("subj_name LIKE ?", name).First(&result).Error; err != nil {
+		log.Debugf("subject: %s does not exist yet", clean.Log(name))
+		return nil
+	}
+
+	// Restore record if flagged as deleted.
+	if result.Deleted() && restore {
+		if err := result.Restore(); err == nil {
+			log.Debugf("subject: restored %s", clean.Log(result.SubjName))
+			return &result
+		} else {
+			log.Errorf("subject: failed to restore %s (%s)", clean.Log(result.SubjName), err)
+			return nil
+		}
+	}
+
+	return &result
 }
 
 // IsPerson tests if the subject is a person.
@@ -305,7 +322,7 @@ func (m *Subject) Visible() bool {
 // SaveForm updates the subject from form values.
 func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 	if m.SubjUID == "" {
-		return false, fmt.Errorf("subject uid is empty")
+		return false, fmt.Errorf("subject has no uid")
 	}
 
 	// Change name?
@@ -374,34 +391,66 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 
 // UpdateName changes and saves the subject's name in the index.
 func (m *Subject) UpdateName(name string) (*Subject, error) {
-	if err := m.SetName(name); err != nil {
-		return m, err
-	} else if err := m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err == nil {
-		log.Infof("subject: renamed %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
+	// Make sure the subject has a name and UID.
+	if m.SubjName == "" {
+		return m, fmt.Errorf("subject name is empty")
+	} else if m.SubjUID == "" {
+		return m, fmt.Errorf("subject has no uid")
+	}
 
-		event.EntitiesUpdated("subjects", []*Subject{m})
+	// Validate new subject name.
+	name = clean.Name(name)
+	if name == m.SubjName {
+		// Nothing to do.
+		return m, nil
+	} else if name == "" {
+		return m, fmt.Errorf("new subject name is empty")
+	}
 
-		if m.IsPerson() {
-			event.EntitiesUpdated("people", []*Person{m.Person()})
+	// Check if subject already exists.
+	if existing := FindSubjectByName(name, false); existing == nil {
+		// Do nothing.
+	} else if existing.Deleted() {
+		// see https://github.com/photoprism/photoprism/issues/3414
+		if err := existing.DeletePermanently(); err != nil {
+			return m, err
 		}
-
-		return m, m.UpdateMarkerNames()
-	} else if existing := FindSubjectByName(m.SubjName); existing == nil {
-		return m, err
-	} else {
+	} else if existing.SubjUID != m.SubjUID {
 		return existing, m.MergeWith(existing)
 	}
+
+	// Update subject record.
+	if err := m.SetName(name); err != nil {
+		return m, err
+	} else if err = m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err != nil {
+		return m, err
+	} else {
+		SubjNames.Set(m.SubjUID, m.SubjName)
+	}
+
+	// Log result.
+	log.Infof("subject: renamed %s to %s", TypeString(m.SubjType), clean.Log(m.SubjName))
+
+	event.EntitiesUpdated("subjects", []*Subject{m})
+
+	if m.IsPerson() {
+		event.EntitiesUpdated("people", []*Person{m.Person()})
+	}
+
+	return m, m.UpdateMarkerNames()
 }
 
 // UpdateMarkerNames updates related marker names.
 func (m *Subject) UpdateMarkerNames() error {
+	// Make sure the subject has a name and UID.
 	if m.SubjName == "" {
 		return fmt.Errorf("subject name is empty")
 	} else if m.SubjUID == "" {
-		return fmt.Errorf("subject uid is empty")
+		return fmt.Errorf("subject has no uid")
 	}
 
-	if err := Db().Model(&Marker{}).
+	// Update markers table to match current subject name.
+	if err := UnscopedDb().Model(&Marker{}).
 		Where("subj_uid = ? AND subj_src <> ?", m.SubjUID, SrcAuto).
 		Where("marker_name <> ?", m.SubjName).
 		UpdateColumn("marker_name", m.SubjName).Error; err != nil {
@@ -435,31 +484,42 @@ func (m *Subject) RefreshPhotos() error {
 // MergeWith merges this subject with another subject and then deletes it.
 func (m *Subject) MergeWith(other *Subject) error {
 	if other == nil {
-		return fmt.Errorf("other subject is nil")
+		return fmt.Errorf("subject cannot be merged if other subject is nil")
 	} else if other.SubjUID == "" {
-		return fmt.Errorf("other subject's uid is empty")
+		return fmt.Errorf("subject cannot be merged if other subject uid is missing")
 	} else if m.SubjUID == "" {
-		return fmt.Errorf("subject uid is empty")
+		return fmt.Errorf("subject cannot be merged if uid is missing")
+	} else if other.Deleted() {
+		return fmt.Errorf("subject cannot be merged with deleted subject")
 	}
 
 	// Update markers and faces with new SubjUID.
-	if err := Db().Model(&Marker{}).
+	if err := UnscopedDb().Model(&Marker{}).
 		Where("subj_uid = ?", m.SubjUID).
 		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
-	} else if err := Db().Model(&Face{}).
+	} else if err = UnscopedDb().Model(&Face{}).
 		Where("subj_uid = ?", m.SubjUID).
 		UpdateColumn("subj_uid", other.SubjUID).Error; err != nil {
 		return err
-	} else if err := other.UpdateMarkerNames(); err != nil {
+	} else if err = other.UpdateMarkerNames(); err != nil {
 		return err
 	}
 
-	// Update file and photo counts.
-	if err := Db().Model(other).Updates(Values{
+	// Updated subject entity values.
+	updates := Values{
 		"FileCount":  other.FileCount + m.FileCount,
 		"PhotoCount": other.PhotoCount + m.PhotoCount,
-	}).Error; err != nil {
+	}
+
+	// Use existing thumbnail image?
+	if other.ThumbSrc == SrcAuto && other.Thumb == "" && m.Thumb != "" {
+		updates["Thumb"] = m.Thumb
+		updates["ThumbSrc"] = m.ThumbSrc
+	}
+
+	// Update subject entity.
+	if err := UnscopedDb().Model(other).Updates(updates).Error; err != nil {
 		return err
 	}
 
