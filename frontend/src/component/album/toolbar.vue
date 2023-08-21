@@ -176,7 +176,12 @@ export default {
       this.dialog.upload = true;
     },
     showUpload() {
-      Event.publish("dialog.upload", {albums: [this.album]});
+      // Pre-select manually managed albums in upload dialog.
+      if(this.album.Type === "album") {
+        Event.publish("dialog.upload", {albums: [this.album]});
+      } else {
+        Event.publish("dialog.upload", {albums: []});
+      }
     },
     expand() {
       this.searchExpanded = !this.searchExpanded;
