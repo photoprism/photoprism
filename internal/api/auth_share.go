@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"path"
 
@@ -30,7 +29,7 @@ func Shares(router *gin.RouterGroup) {
 		}
 
 		clientConfig := conf.ClientShare()
-		clientConfig.SiteUrl = fmt.Sprintf("%ss/%s", clientConfig.SiteUrl, token)
+		clientConfig.SiteUrl = path.Join(clientConfig.SiteUrl, "s", token)
 
 		uri := conf.BaseUri("/library/albums")
 		c.HTML(http.StatusOK, "share.gohtml", gin.H{"shared": gin.H{"token": token, "uri": uri}, "config": clientConfig})
@@ -52,8 +51,8 @@ func Shares(router *gin.RouterGroup) {
 
 		uid := links[0].ShareUID
 		clientConfig := conf.ClientShare()
-		clientConfig.SiteUrl = fmt.Sprintf("%s/%s", clientConfig.SiteUrl, path.Join("s", token, uid))
-		clientConfig.SitePreview = fmt.Sprintf("%s/preview", clientConfig.SiteUrl)
+		clientConfig.SiteUrl = path.Join(clientConfig.SiteUrl, "s", token, uid)
+		clientConfig.SitePreview = path.Join(clientConfig.SiteUrl, "preview")
 
 		if a, err := query.AlbumByUID(uid); err == nil {
 			clientConfig.SiteCaption = a.AlbumTitle
