@@ -33,10 +33,12 @@
         <v-icon>get_app</v-icon>
       </v-btn>
 
-      <v-btn v-if="settings.view === 'cards'" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
+      <v-btn v-if="settings.view === 'cards'" icon class="action-view-list" :title="$gettext('Toggle View')"
+             @click.stop="setView('list')">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn v-else-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
+      <v-btn v-else-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')"
+             @click.stop="setView('mosaic')">
         <v-icon>view_comfy</v-icon>
       </v-btn>
       <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
@@ -68,7 +70,8 @@
 
     <p-share-dialog :show="dialog.share" :model="album" @upload="webdavUpload"
                     @close="dialog.share = false"></p-share-dialog>
-    <p-share-upload-dialog :show="dialog.upload" :items="{albums: album.getId()}" :model="album" @cancel="dialog.upload = false"
+    <p-share-upload-dialog :show="dialog.upload" :items="{albums: album.getId()}" :model="album"
+                           @cancel="dialog.upload = false"
                            @confirm="dialog.upload = false"></p-share-upload-dialog>
     <p-album-edit-dialog :show="dialog.edit" :album="album" @close="dialog.edit = false"></p-album-edit-dialog>
   </v-form>
@@ -77,34 +80,40 @@
 import Event from "pubsub-js";
 import Notify from "common/notify";
 import download from "common/download";
-import { T } from "common/vm";
+import {T} from "common/vm";
 
 export default {
   name: 'PAlbumToolbar',
   props: {
     album: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     filter: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     updateFilter: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
     updateQuery: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
     settings: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     refresh: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
   },
   data() {
@@ -167,7 +176,7 @@ export default {
       this.dialog.upload = true;
     },
     showUpload() {
-      Event.publish("dialog.upload");
+      Event.publish("dialog.upload", {albums: [this.album]});
     },
     expand() {
       this.searchExpanded = !this.searchExpanded;
