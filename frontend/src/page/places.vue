@@ -55,7 +55,6 @@ export default {
       canSearch: this.$config.allow("places", "search"),
       initialized: false,
       map: null,
-      markers: {},
       markersOnScreen: {},
       clusterIds: [],
       loading: false,
@@ -543,7 +542,7 @@ export default {
 
       this.markerPromise = new Promise((resolve, reject) => {
         // Find clusters.
-        let features = this.map.querySourceFeatures("photos");
+        const features = this.map.querySourceFeatures("photos");
 
         const clusterIds = [...new Set(features
           .filter(feature => feature.properties.cluster)
@@ -557,17 +556,30 @@ export default {
           this.clusterIds = clusterIds;
         }
 
+        // If clusterIds are empty, getMultipleClusterFeatures will not call callback,
+        // and thus resolve will never be called. Handle that case here.
+        if (clusterIds.length === 0) {
+          for (let id in this.markersOnScreen) {
+            this.markersOnScreen[id].remove();
+          }
+          this.markersOnScreen = {};
+          resolve("done");
+          return;
+        }
+
         let newMarkers = {};
 
         this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
+
           for (let i = 0; i < features.length; i++) {
-            let coords = features[i].geometry.coordinates;
-            let props = features[i].properties;
             let id = features[i].id;
 
-            let marker = this.markers[id];
-            let token = this.$config.previewToken;
-            if (!marker) {
+            // Multiple features can exist with the same cluser ID. Avoid processing the same cluster twice
+            if (!newMarkers[id]) {
+              let coords = features[i].geometry.coordinates;
+              let props = features[i].properties;
+
+              let token = this.$config.previewToken;
               let el = document.createElement('div');
               if (props.cluster) {
                 const size = this.getClusterSizeFromItemCount(props.point_count);
@@ -608,16 +620,15 @@ export default {
 
                 el.addEventListener('click', () => this.openPhoto(props.UID));
               }
-              marker = this.markers[id] = new maplibregl.Marker({
+              let marker = new maplibregl.Marker({
                 element: el
               }).setLngLat(coords);
-            } else {
-              marker.setLngLat(coords);
-            }
 
-            newMarkers[id] = marker;
+              newMarkers[id] = marker;
 
-            if (!this.markersOnScreen[id]) {
+              if (this.markersOnScreen[id]) {
+                this.markersOnScreen[id].remove();
+              }
               marker.addTo(this.map);
             }
           }
