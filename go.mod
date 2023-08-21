@@ -45,7 +45,7 @@ require (
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
 	golang.org/x/crypto v0.12.0
 	golang.org/x/net v0.14.0
-	gonum.org/v1/gonum v0.13.0
+	gonum.org/v1/gonum v0.14.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.4.0
 )
