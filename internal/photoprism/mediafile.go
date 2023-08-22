@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"image"
 	_ "image/gif"
@@ -9,6 +11,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -312,6 +315,82 @@ func (m *MediaFile) EditedName() string {
 	}
 
 	return ""
+}
+
+func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
+	if m == nil {
+		return "", fmt.Errorf(
+			"mediafile: file is nil - you may have found a" +
+				" bug",
+		)
+	}
+
+	// Abort if the source media file does not exist.
+	if !m.Exists() {
+		return "", fmt.Errorf(
+			"mediafile: %s not found", clean.Log(m.RootRelName()),
+		)
+	} else if m.Empty() {
+		return "", fmt.Errorf(
+			"mediafile: %s is empty", clean.Log(m.RootRelName()),
+		)
+	}
+
+	// get the embedded video field name from the file metadata
+	if metaData := m.MetaData(); metaData.Error == nil && metaData.
+		EmbeddedVideo != "" {
+		outputPath := filepath.Join(Config().TempPath(), m.RootRelPath(), "%f")
+		cmd := exec.Command(
+			Config().ExifToolBin(), fmt.Sprintf("-%s", metaData.EmbeddedVideo),
+			"-b", "-w",
+			outputPath, m.FileName(),
+		)
+
+		var out bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &out
+		cmd.Stderr = &stderr
+		cmd.Env = []string{fmt.Sprintf("HOME=%s", Config().TempPath())}
+		if err := cmd.Run(); err != nil {
+			log.Debugf("Error running exiftool on video file: ", err)
+			if stderr.String() != "" {
+				return "", errors.New(stderr.String())
+			} else {
+				return "", err
+			}
+		}
+
+		// find the extracted video path
+		outputPath = strings.Replace(outputPath, "%f", m.BasePrefix(false), 1)
+
+		// detect mime type of the extracted video
+		mimeType := fs.MimeType(outputPath)
+
+		if len := len(strings.Split(mimeType, "/")); len <= 1 {
+			log.Debugf(
+				"Error detecting the mime type of video file at %s",
+				outputPath,
+			)
+			return "", nil
+		} else if extension := strings.Split(
+			mimeType, "/",
+		)[len-1]; extension != "" {
+			// rename the extracted video file with the correct extension and
+			// move it to the sidecar path
+			_, file := filepath.Split(outputPath)
+			newFileName := fmt.Sprintf("%s.%s", file, extension)
+			dstPath := filepath.Join(
+				Config().SidecarPath(), m.RootRelPath(), newFileName,
+			)
+			if err := fs.Move(outputPath, dstPath); err != nil {
+				log.Debugf("Error moving the video file at %s", outputPath)
+				return "", err
+			}
+			return dstPath, nil
+		}
+	}
+
+	return "", nil
 }
 
 // PathNameInfo returns file name infos for indexing.
@@ -946,13 +1025,25 @@ func (m *MediaFile) HasPreviewImage() bool {
 		return true
 	}
 
-	jpegName := fs.ImageJPEG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegName := fs.ImageJPEG.FindFirst(
+		m.FileName(),
+		[]string{
+			Config().SidecarPath(),
+			fs.HiddenPath,
+		},
+		Config().OriginalsPath(), false,
+	)
 
 	if m.hasPreviewImage = fs.MimeType(jpegName) == fs.MimeTypeJPEG; m.hasPreviewImage {
 		return true
 	}
 
-	pngName := fs.ImagePNG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	pngName := fs.ImagePNG.FindFirst(
+		m.FileName(),
+		[]string{
+			Config().SidecarPath(), fs.HiddenPath,
+		}, Config().OriginalsPath(), false,
+	)
 
 	if m.hasPreviewImage = fs.MimeType(pngName) == fs.MimeTypePNG; m.hasPreviewImage {
 		return true
