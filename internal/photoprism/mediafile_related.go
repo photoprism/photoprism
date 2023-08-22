@@ -51,15 +51,16 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		return result, err
 	}
 
+	// Search for related edited image file name (as used by Apple) and add it to the list of files, if found.
 	if name := m.EditedName(); name != "" {
 		matches = append(matches, name)
 	}
 
-	// check for an embedded video in the media file
-	if embeddedVideoName, err := m.ExtractEmbeddedVideo(); err != nil {
-		return result, err
-	} else if embeddedVideoName != "" {
-		matches = append(matches, embeddedVideoName)
+	// Extract an embedded video file and add it to the list of files, if successful.
+	if videoName, videoErr := m.ExtractEmbeddedVideo(); videoErr != nil {
+		log.Warnf("media: %s om %s (extract embedded video)", clean.Error(videoErr), clean.Log(m.RootRelName()))
+	} else if videoName != "" {
+		matches = append(matches, videoName)
 	}
 
 	isHEIC := false

@@ -65,7 +65,7 @@ type Data struct {
 	Rotation      int           `meta:"Rotation"`
 	Views         int           `meta:"-"`
 	Albums        []string      `meta:"-"`
-	EmbeddedVideo string        `meta:"EmbeddedVideo"`
+	EmbeddedVideo string        `meta:"-"`
 	Error         error         `meta:"-"`
 	json          map[string]string
 	exif          map[string]string
