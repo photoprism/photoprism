@@ -339,20 +339,18 @@ func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 	// get the embedded video field name from the file metadata
 	if metaData := m.MetaData(); metaData.Error == nil && metaData.
 		EmbeddedVideo != "" {
-		path := filepath.Join(
-			Config().SidecarPath(), m.RootRelPath(), "%f",
-		)
+		outputPath := filepath.Join(Config().TempPath(), m.RootRelPath(), "%f")
 		cmd := exec.Command(
 			Config().ExifToolBin(), fmt.Sprintf("-%s", metaData.EmbeddedVideo),
 			"-b", "-w",
-			path, m.FileName(),
+			outputPath, m.FileName(),
 		)
 
 		var out bytes.Buffer
 		var stderr bytes.Buffer
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
-		cmd.Env = []string{fmt.Sprintf("HOME=%s", Config().CmdCachePath())}
+		cmd.Env = []string{fmt.Sprintf("HOME=%s", Config().TempPath())}
 		if err := cmd.Run(); err != nil {
 			log.Debugf("Error running exiftool on video file: ", err)
 			if stderr.String() != "" {
@@ -363,34 +361,32 @@ func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 		}
 
 		// find the extracted video path
-		savedPath := filepath.Join(
-			Config().SidecarPath(),
-			m.RootRelPath(),
-			m.BasePrefix(false),
-		)
+		outputPath = strings.Replace(outputPath, "%f", m.BasePrefix(false), 1)
 
 		// detect mime type of the extracted video
-		mimeType := fs.MimeType(savedPath)
+		mimeType := fs.MimeType(outputPath)
 
 		if len := len(strings.Split(mimeType, "/")); len <= 1 {
 			log.Debugf(
-				"Error detecting the mime type of sidecar file at %s",
-				savedPath,
+				"Error detecting the mime type of video file at %s",
+				outputPath,
 			)
 			return "", nil
 		} else if extension := strings.Split(
 			mimeType, "/",
 		)[len-1]; extension != "" {
-			// rename the extracted video file with the correct extension
-			dir, file := filepath.Split(savedPath)
+			// rename the extracted video file with the correct extension and
+			// move it to the sidecar path
+			_, file := filepath.Split(outputPath)
 			newFileName := fmt.Sprintf("%s.%s", file, extension)
-			newSavedPath := filepath.Join(dir, newFileName)
-			err := os.Rename(savedPath, newSavedPath)
-			if err != nil {
-				log.Debugf("Error renaming the file at %s", savedPath)
+			dstPath := filepath.Join(
+				Config().SidecarPath(), m.RootRelPath(), newFileName,
+			)
+			if err := fs.Move(outputPath, dstPath); err != nil {
+				log.Debugf("Error moving the video file at %s", outputPath)
 				return "", err
 			}
-			return newSavedPath, nil
+			return dstPath, nil
 		}
 	}
 

@@ -65,10 +65,10 @@ type Data struct {
 	Rotation      int           `meta:"Rotation"`
 	Views         int           `meta:"-"`
 	Albums        []string      `meta:"-"`
+	EmbeddedVideo string        `meta:"EmbeddedVideo"`
 	Error         error         `meta:"-"`
 	json          map[string]string
 	exif          map[string]string
-	EmbeddedVideo string `meta:"EmbeddedVideo"`
 }
 
 // New returns a new metadata struct.
