@@ -188,8 +188,6 @@ test.meta("testID", "photos-upload-delete-003").meta({ mode: "public" })(
       const PhotoCount = await photo.getPhotoCount("all");
       await toolbar.triggerToolbarAction("upload");
       await t
-        .click(Selector(".input-albums"))
-        .click(page.selectOption.withText("Christmas"))
         .setFilesToUpload(Selector(".input-upload"), ["../../upload-files/ladybug.jpg"])
         .wait(15000);
       const PhotoCountAfterUpload = await photo.getPhotoCount("all");
