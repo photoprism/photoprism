@@ -18,7 +18,7 @@ func TestMediaFile_HasSidecarJson(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
 		conf := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_sand.jpg")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/beach_wood.jpg")
 
 		if err != nil {
 			t.Fatal(err)
