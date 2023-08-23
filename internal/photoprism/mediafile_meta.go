@@ -53,6 +53,15 @@ func (m *MediaFile) NeedsExifToolJson() bool {
 	return !fs.FileExists(jsonName)
 }
 
+// Checks if an .mp4 video file exists for this file in the sidecar path
+func (m *MediaFile) HasEmbeddedVideo() string {
+	sidecarFile := filepath.Join(Config().SidecarPath(), m.RootRelPath(), m.BasePrefix(false)+fs.ExtMP4)
+	if fs.FileExists(sidecarFile) {
+		return sidecarFile
+	}
+	return ""
+}
+
 // CreateExifToolJson extracts metadata to a JSON file using Exiftool.
 func (m *MediaFile) CreateExifToolJson(convert *Convert) error {
 	if !m.NeedsExifToolJson() {
