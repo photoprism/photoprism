@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-23 23:58+0000\n"
+"PO-Revision-Date: 2023-08-23 19:59+0000\n"
 "Last-Translator: SODAIS <naruto861214@gmail.com>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -794,7 +795,7 @@ msgstr "下載"
 
 #: src/page/settings/general.vue:648
 msgid "Download only original media files, without any automatically generated files."
-msgstr "只下載原始的媒體檔案，不會自動產生任何的檔案。"
+msgstr "只下載原始的媒體檔，不會自動產生任何的檔案。"
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
