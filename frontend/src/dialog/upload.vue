@@ -99,6 +99,10 @@ export default {
   name: 'PUploadDialog',
   props: {
     show: Boolean,
+    data: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -130,6 +134,15 @@ export default {
       this.reset();
       this.review = this.$config.feature("review");
       this.safe = !this.$config.get("uploadNSFW");
+
+      // Set currently selected albums.
+      if (this.data && Array.isArray(this.data.albums)) {
+        this.selectedAlbums = this.data.albums;
+      } else {
+        this.selectedAlbums = [];
+      }
+
+      // Fetch albums from backend.
       this.findAlbums("");
     }
   },

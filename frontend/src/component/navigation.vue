@@ -664,7 +664,7 @@
       <span v-else>{{ config.legalInfo }}</span>
     </div>
     <p-reload-dialog :show="reload.dialog" @close="reload.dialog = false"></p-reload-dialog>
-    <p-upload-dialog :show="upload.dialog" @cancel="upload.dialog = false"
+    <p-upload-dialog :show="upload.dialog" :data="upload.data" @cancel="upload.dialog = false"
                      @confirm="upload.dialog = false"></p-upload-dialog>
     <p-photo-edit-dialog :show="edit.dialog" :selection="edit.selection" :index="edit.index" :album="edit.album"
                          @close="edit.dialog = false"></p-photo-edit-dialog>
@@ -734,6 +734,7 @@ export default {
       },
       upload: {
         dialog: false,
+        data: {},
       },
       edit: {
         dialog: false,
@@ -777,7 +778,14 @@ export default {
     this.subscriptions.push(Event.subscribe('index', this.onIndex));
     this.subscriptions.push(Event.subscribe('import', this.onIndex));
     this.subscriptions.push(Event.subscribe("dialog.reload", () => this.reload.dialog = true));
-    this.subscriptions.push(Event.subscribe("dialog.upload", () => this.upload.dialog = true));
+    this.subscriptions.push(Event.subscribe("dialog.upload", (ev, data) => {
+      if(data) {
+        this.upload.data = data;
+      } else {
+        this.upload.data = {};
+      }
+      this.upload.dialog = true;
+    }));
     this.subscriptions.push(Event.subscribe("dialog.edit", (ev, data) => {
       if (!this.edit.dialog) {
         this.edit.dialog = true;

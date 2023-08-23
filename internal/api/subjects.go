@@ -80,6 +80,7 @@ func UpdateSubject(router *gin.RouterGroup) {
 			AbortSaveFailed(c)
 			return
 		} else if changed {
+			// Show success message.
 			if m.IsPerson() {
 				event.SuccessMsg(i18n.MsgPersonSaved)
 			} else {
