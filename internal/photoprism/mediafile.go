@@ -333,13 +333,8 @@ func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 	// Get the embedded video field name from the file metadata.
 	if metaData := m.MetaData(); metaData.Error == nil && metaData.EmbeddedVideo != "" {
 		// Check if an embedded video sidecar already exists
-		if embeddedVideo := m.HasEmbeddedVideo(); embeddedVideo != "" {
+		if embeddedVideo := m.SidecarFileName(fs.VideoMP4); embeddedVideo != "" {
 			return embeddedVideo, nil
-		}
-
-		// Check if the camera make is supported
-		if _, ok := entity.CameraMakes[metaData.CameraMake]; !ok {
-			return "", errors.New("unrecognised camera make")
 		}
 
 		// Extract the embedded video
