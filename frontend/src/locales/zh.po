@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-06-20 02:59+0000\n"
-"Last-Translator: SettingDust <settingdust@gmail.com>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
+"PO-Revision-Date: 2023-08-23 19:59+0000\n"
+"Last-Translator: Daolong <ahlongxp@qq.com>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
+"projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -1560,7 +1561,7 @@ msgstr "新密码"
 #: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:69
 #: src/dialog/album/edit.vue:21 src/page/albums.vue:89
 msgid "Newest First"
-msgstr "按上传时间"
+msgstr "最新优先"
 
 #: src/dialog/people/merge.vue:15 src/dialog/photo/archive.vue:15
 #: src/dialog/photo/edit/info.vue:298 src/dialog/photo/edit/info.vue:319
@@ -1663,7 +1664,7 @@ msgstr "离线"
 #: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:70
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:90
 msgid "Oldest First"
-msgstr "按最早优先"
+msgstr "最旧优先"
 
 #: src/dialog/webdav.vue:17
 msgid "On Windows, enter the following resource in the connection dialog:"
