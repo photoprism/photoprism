@@ -274,3 +274,40 @@ func TestBatchPhotosDelete(t *testing.T) {
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 }
+
+func TestBatchPhotosEdit(t *testing.T) {
+	app, router, _ := NewApiTest()
+	BatchPhotosEdit(router)
+	t.Run("successful multi-photos multi-fields multi-details", func(t *testing.T) {
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/edit",
+			`{"TakenAtLocal": "2023-07-05T13:33:04Z", "Lat": 50.9102, "Lng": 53.3411,
+			"Details": {"Subject": "Same subject", "Artist": "Same artist", "SubjectSrc": "manual", "ArtistSrc": "manual"},
+			"PlaceSrc": "manual", "TakenSrc": "manual",
+			"photos": ["pr2xu7myk7wrbk44", "pr2xu7myk7wrbk45"]}`)
+		val := gjson.Get(r.Body.String(), "message")
+		assert.Equal(t, "2 photos updated", val.String())
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("no items selected - photos missing", func(t *testing.T) {
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/edit", `{"TakenAtLocal": "2023-07-05T13:33:04Z"}`)
+		val := gjson.Get(r.Body.String(), "error")
+		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("no items selected - photos empty", func(t *testing.T) {
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/edit", `{"TakenAtLocal": "2023-07-05T13:33:04Z", "photos": []}`)
+		val := gjson.Get(r.Body.String(), "error")
+		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("invalid request", func(t *testing.T) {
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/edit", `{"TakenAtLocal": "2023-07-05T13:33:04Z", "photos": 123}`)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+	t.Run("no fields changed", func(t *testing.T) {
+		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/edit", `{"photos": ["pr2xu7myk7wrbk44", "pr2xu7myk7wrbk45"]}`)
+		val := gjson.Get(r.Body.String(), "error")
+		assert.Equal(t, i18n.Msg(i18n.ErrNoFieldsChanged), val.String())
+		assert.Equal(t, http.StatusBadRequest, r.Code)
+	})
+}

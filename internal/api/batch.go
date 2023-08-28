@@ -468,11 +468,11 @@ func BatchPhotosEdit(router *gin.RouterGroup) {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
 		}
+		delete(photoChanges, "photos")
 		if len(photoChanges) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoFieldsChanged)
 			return
 		}
-		delete(photoChanges, "photos")
 
 		log.Infof("photos: updating %d fields for %d photos", len(photoChanges), len(photoUids))
 
