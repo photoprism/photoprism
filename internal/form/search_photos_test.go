@@ -120,7 +120,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, "23", form.Camera)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
-		assert.Equal(t, false, form.Favorite)
+		assert.Equal(t, "false", form.Favorite)
 		assert.Equal(t, uint(0x61a8), form.Dist)
 		assert.Equal(t, float32(33.45343), form.Lat)
 	})
@@ -190,7 +190,7 @@ func TestParseQueryString(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, form.Favorite)
+		assert.Equal(t, "cat", form.Favorite)
 	})
 	t.Run("query for primary with uncommon bool value", func(t *testing.T) {
 		form := &SearchPhotos{Query: "primary:&cat"}

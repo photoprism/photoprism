@@ -300,7 +300,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 			f.Raw = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
-			f.Favorite = true
+			f.Favorite = "true"
 		case terms["stacks"]:
 			f.Query = strings.ReplaceAll(f.Query, "stacks", "")
 			f.Stack = true
@@ -478,8 +478,10 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
-	// Find favorites only.
-	if f.Favorite {
+	// Filter by favorite flag.
+	if txt.No(f.Favorite) {
+		s = s.Where("photos.photo_favorite = 0")
+	} else if txt.NotEmpty(f.Favorite) {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 

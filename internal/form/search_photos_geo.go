@@ -21,7 +21,7 @@ type SearchPhotosGeo struct {
 	Title     string    `form:"title"`
 	Before    time.Time `form:"before" time_format:"2006-01-02"`
 	After     time.Time `form:"after" time_format:"2006-01-02"`
-	Favorite  bool      `form:"favorite"`
+	Favorite  string    `form:"favorite" example:"favorite:yes" notes:"Finds favorites only"`
 	Unsorted  bool      `form:"unsorted"`
 	Video     bool      `form:"video"`
 	Vector    bool      `form:"vector"`

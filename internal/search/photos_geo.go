@@ -230,7 +230,7 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			f.Raw = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
-			f.Favorite = true
+			f.Favorite = "true"
 		case terms["panoramas"]:
 			f.Query = strings.ReplaceAll(f.Query, "panoramas", "")
 			f.Panorama = true
@@ -386,8 +386,10 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
-	// Find favorites only.
-	if f.Favorite {
+	// Filter by favorite flag.
+	if txt.No(f.Favorite) {
+		s = s.Where("photos.photo_favorite = 0")
+	} else if txt.NotEmpty(f.Favorite) {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 

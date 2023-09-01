@@ -193,7 +193,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, form.Favorite)
+		assert.Equal(t, "cat", form.Favorite)
 	})
 	t.Run("query for before with invalid type", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "before:cat"}
@@ -242,13 +242,13 @@ func TestSearchPhotosGeo(t *testing.T) {
 }
 
 func TestSearchPhotosGeo_Serialize(t *testing.T) {
-	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: true}
+	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: "true"}
 
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.Serialize())
 }
 
 func TestSearchPhotosGeo_SerializeAll(t *testing.T) {
-	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: true}
+	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: "true"}
 
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.SerializeAll())
 }
