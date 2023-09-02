@@ -2,6 +2,7 @@ module github.com/photoprism/photoprism
 
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
+	github.com/coreos/go-systemd/v22 v22.5.0
 	github.com/disintegration/imaging v1.6.2
 	github.com/djherbis/times v1.5.0
 	github.com/dsoprea/go-exif/v3 v3.0.1

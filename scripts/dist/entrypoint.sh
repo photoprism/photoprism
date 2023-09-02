@@ -115,7 +115,7 @@ else
 
   # run command
   ([[ ${DOCKER_ENV} != "prod" ]] || "/scripts/audit.sh") \
-   && (while "$@"; ret=$?; [[ $ret -eq 0 ]]; do echo "${@}"; done) &
+   && if [[ -n $LISTEN_FDS ]]; then exec "$@"; else (while "$@"; ret=$?; [[ $ret -eq 0 ]]; do echo "${@}"; done) & fi
 fi
 
 PID=$!
