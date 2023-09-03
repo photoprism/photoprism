@@ -65,7 +65,7 @@ func StartIndexing(router *gin.RouterGroup) {
 		lastRun, lastFound := ind.LastRun()
 		indexStart := time.Now()
 
-		// Start indexing.
+		// Update file index.
 		found, indexed := ind.Start(indOpt)
 
 		// Only run purge and moments if necessary.
@@ -90,22 +90,48 @@ func StartIndexing(router *gin.RouterGroup) {
 				"step":   "purge",
 			})
 
-			// Configure purge options.
-			prgOpt := photoprism.PurgeOptions{
+			// Get purge worker instance.
+			w := get.Purge()
+
+			// Purge worker options.
+			opt := photoprism.PurgeOptions{
 				Path:   filepath.Clean(f.Path),
 				Ignore: found,
 				Force:  forceUpdate,
 			}
 
-			// Start purging.
-			prg := get.Purge()
-
-			if files, photos, updated, err := prg.Start(prgOpt); err != nil {
+			// Start purge to remove missing files from search results.
+			if files, photos, updated, err := w.Start(opt); err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 				return
 			} else if updated > 0 {
 				event.InfoMsg(i18n.MsgRemovedFilesAndPhotos, len(files), len(photos))
 				forceUpdate = true
+			}
+		}
+
+		// Delete orphaned index entries, sidecar files and thumbnails?
+		if f.Cleanup && s.User().IsAdmin() {
+			event.Publish("index.updating", event.Data{
+				"uid":    indOpt.UID,
+				"action": indOpt.Action,
+				"step":   "cleanup",
+			})
+
+			// Get cleanup worker instance.
+			w := get.CleanUp()
+
+			// Cleanup worker options.
+			opt := photoprism.CleanUpOptions{
+				Dry: false,
+			}
+
+			// Start index and cache cleanup.
+			cleanupStart := time.Now()
+			if thumbnails, _, sidecars, err := w.Start(opt); err != nil {
+				log.Errorf("cleanup: %s", err)
+			} else if total := thumbnails + sidecars; total > 0 {
+				log.Infof("cleanup: deleted %s in total [%s]", english.Plural(total, "file", "files"), time.Since(cleanupStart))
 			}
 		}
 

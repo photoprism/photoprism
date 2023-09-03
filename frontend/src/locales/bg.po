@@ -672,7 +672,7 @@ msgid "Delete"
 msgstr "Изтриване на"
 
 #: src/page/library/index.vue:141
-msgid "Delete orphaned index entries, cache files and thumbnails."
+msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr ""
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148

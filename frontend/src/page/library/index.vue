@@ -11,18 +11,18 @@
         </p>
 
         <v-autocomplete
-            v-model="settings.index.path"
-            color="secondary-dark"
-            class="my-3 input-index-folder"
-            hide-details
-            hide-no-data flat solo browser-autocomplete="off"
-            :items="dirs"
-            :loading="loading"
-            :disabled="busy || !ready"
-            item-text="name"
-            item-value="path"
-            @change="onChange"
-            @focus="onFocus"
+          v-model="settings.index.path"
+          color="secondary-dark"
+          class="my-3 input-index-folder"
+          hide-details
+          hide-no-data flat solo browser-autocomplete="off"
+          :items="dirs"
+          :loading="loading"
+          :disabled="busy || !ready"
+          item-text="name"
+          item-value="path"
+          @change="onChange"
+          @focus="onFocus"
         >
         </v-autocomplete>
 
@@ -32,53 +32,65 @@
         </p>
 
         <v-layout wrap align-top class="pb-3">
-          <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+          <v-flex xs12 sm6 lg12 class="px-2 pb-2 pt-2">
             <v-checkbox
-                v-model="settings.index.rescan"
-                :disabled="busy || !ready"
-                class="ma-0 pa-0"
-                color="secondary-dark"
-                :label="$gettext('Complete Rescan')"
-                :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
-                prepend-icon="cached"
-                persistent-hint
-                @change="onChange"
+              v-model="settings.index.rescan"
+              :disabled="busy || !ready"
+              class="ma-0 pa-0"
+              color="secondary-dark"
+              :label="$gettext('Complete Rescan')"
+              :hint="$gettext('Re-index all originals, including already indexed and unchanged files.')"
+              prepend-icon="cached"
+              persistent-hint
+              @change="onChange"
+            >
+            </v-checkbox>
+          </v-flex>
+          <v-flex v-if="isAdmin" xs12 sm6 lg12 class="px-2 pb-2 pt-2">
+            <v-checkbox
+              v-model="cleanup"
+              :disabled="busy || !ready"
+              class="ma-0 pa-0"
+              color="secondary-dark"
+              :label="$gettext('Cleanup')"
+              :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')"
+              prepend-icon="cleaning_services"
+              persistent-hint
             >
             </v-checkbox>
           </v-flex>
         </v-layout>
 
         <v-btn
-            :disabled="!busy || !ready"
-            color="primary-button"
-            class="white--text ml-0 mt-2 action-cancel"
-            depressed
-            @click.stop="cancelIndexing()"
+          :disabled="!busy || !ready"
+          color="primary-button"
+          class="white--text ml-0 mt-2 action-cancel"
+          depressed
+          @click.stop="cancelIndexing()"
         >
           <translate>Cancel</translate>
         </v-btn>
 
         <v-btn
-            :disabled="busy || !ready"
-            color="primary-button"
-            class="white--text ml-0 mt-2 action-index"
-            depressed
-            @click.stop="startIndexing()"
+          :disabled="busy || !ready"
+          color="primary-button"
+          class="white--text ml-0 mt-2 action-index"
+          depressed
+          @click.stop="startIndexing()"
         >
           <translate>Start</translate>
           <v-icon :right="!rtl" :left="rtl" dark>update</v-icon>
         </v-btn>
 
         <v-alert
-            v-if="ready && !busy && config.count.hidden > 1"
-            :value="true"
-            color="error"
-            icon="priority_high"
-            class="mt-3"
-            outline
+          v-if="ready && !busy && config.count.hidden > 1"
+          :value="true"
+          color="error"
+          icon="priority_high"
+          class="mt-3"
+          outline
         >
-          <translate
-              :translate-params="{n: config.count.hidden}">The index currently contains %{n} hidden files.</translate>
+          <translate :translate-params="{n: config.count.hidden}">The index currently contains %{n} hidden files.</translate>
           <translate>Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.</translate>
         </v-alert>
       </v-container>
@@ -105,6 +117,7 @@ export default {
       settings: new Settings(this.$config.settings()),
       readonly: this.$config.get("readonly"),
       config: this.$config.values,
+      isAdmin: this.$session.isAdmin(),
       started: false,
       busy: false,
       loading: false,
@@ -112,6 +125,7 @@ export default {
       subscriptionId: "",
       action: "",
       fileName: "",
+      cleanup: false,
       source: null,
       root: root,
       dirs: [root],
@@ -189,7 +203,15 @@ export default {
       const ctx = this;
       Notify.blockUI();
 
-      Api.post('index', this.settings.index, {cancelToken: this.source.token}).then(function () {
+      // Request parameters.
+      const params = {
+        path: this.settings.index.path,
+        rescan: this.settings.index.rescan,
+        cleanup: this.cleanup,
+      };
+
+      // Submit POST request.
+      Api.post('index', params, {cancelToken: this.source.token}).then(function () {
         Notify.unblockUI();
         ctx.busy = false;
         ctx.completed = 100;
@@ -198,7 +220,7 @@ export default {
         Notify.unblockUI();
 
         if (Axios.isCancel(e)) {
-          // run in background
+          // Run in background.
           return;
         }
 
@@ -240,6 +262,8 @@ export default {
             this.action = this.$gettext("Updating faces");
           } else if (data.step === "previews") {
             this.action = this.$gettext("Updating previews");
+          } else if (data.step === "cleanup") {
+            this.action = this.$gettext("Cleaning index and cache");
           } else {
             this.action = this.$gettext("Updating index");
           }
