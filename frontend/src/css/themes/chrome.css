@@ -132,12 +132,12 @@ body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box
 
 #photoprism.theme-chrome .cards-view .card.is-selected .card-details {
     color: #fff;
-    background-color: #424242;
+    background-color: #5C5C5C;
 }
 
 #photoprism.theme-chrome .cards-view .card.is-selected,
 #photoprism.theme-chrome .cards-view .card.is-selected .card-background {
-    background-color: #424242 !important;
+    background-color: #5C5C5C !important;
 }
 
 #photoprism.theme-chrome .cards-view .card.is-selected .card-details .v-icon {
