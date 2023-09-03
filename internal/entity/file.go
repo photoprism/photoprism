@@ -446,7 +446,7 @@ func (m *File) Save() error {
 	return m.ResolvePrimary()
 }
 
-// UpdateVideoInfos updates missing video metadata from the primary image.
+// UpdateVideoInfos updated related video files so they are properly grouped with the primary image in search results.
 // see https://github.com/photoprism/photoprism/pull/3588#issuecomment-1683429455
 func (m *File) UpdateVideoInfos() error {
 	if m.PhotoID <= 0 {
@@ -469,7 +469,7 @@ func (m *File) UpdateVideoInfos() error {
 
 	if err := deepcopier.Copy(&appearance).From(m); err != nil {
 		return err
-	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1 AND file_diff <= 0", m.PhotoID).Updates(appearance).Error; err != nil {
+	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(appearance).Error; err != nil {
 		return err
 	}
 

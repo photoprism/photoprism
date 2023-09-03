@@ -906,9 +906,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 	}
 
+	// Update related video files so they are properly grouped with the primary image in search results.
 	if (photo.PhotoType == entity.MediaVideo || photo.PhotoType == entity.MediaLive) && file.FilePrimary {
-		if err := file.UpdateVideoInfos(); err != nil {
-			log.Errorf("index: %s in %s (update video infos)", err, logName)
+		if updateErr := file.UpdateVideoInfos(); updateErr != nil {
+			log.Errorf("index: %s in %s (update video infos)", updateErr, logName)
 		}
 	}
 
