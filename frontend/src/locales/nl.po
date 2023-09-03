@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-15 10:40+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
+"frontend/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -308,7 +309,7 @@ msgstr "Weet je zeker dat je deze foto’s wilt verwijderen?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Weet je zeker dat je alle gearchiveerde foto's wilt verwijderen?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -504,11 +505,11 @@ msgstr "Chroma"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Index en cache opschonen"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Opruimen"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -673,7 +674,7 @@ msgstr "Verwijder"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "Verwijder verweesde indexvermeldingen, zijspanbestanden en miniaturen."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2754,6 +2755,9 @@ msgstr "Uw bibliotheek wordt voortdurend geanalyseerd om automatisch albums te m
 msgid "Zoom in/out"
 msgstr "In-/uitzoomen"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Verwijder verweesde indexvermeldingen, cachebestanden en miniaturen."
+
 #~ msgid "Not Found"
 #~ msgstr "Niet gevonden"
 
@@ -3343,3 +3347,10 @@ msgstr "In-/uitzoomen"
 
 #~ msgid "Week"
 #~ msgstr "Week"
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Hun formaat wordt mogelijk niet ondersteund, ze zijn nog niet geconverteerd naar JPEG of er zijn\n"
+#~ "            duplicaten."

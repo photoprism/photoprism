@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Bloxel25 <bloxel25@gmail.com>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -305,7 +305,7 @@ msgstr "Is jy seker jy wil die keuse argiveer?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Is jy seker jy wil alle geargiveerde prente uitvee?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -501,11 +501,11 @@ msgstr "Chroma"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Skoonmaak indeks en kas"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Maak skoon"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -670,7 +670,7 @@ msgstr "Vee uit"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "Vee wees indeksinskrywings, syspanlêers en duimnaels uit."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2751,6 +2751,9 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Vee wees indeksinskrywings, kaslêers en duimnaels uit."
+
 #~ msgid "Not Found"
 #~ msgstr "Nie gevind nie"
 
@@ -2963,3 +2966,10 @@ msgstr "Zoem in/uit"
 
 #~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
 #~ msgstr "Dink aan \"vrye sagteware\" soos in \"vrye spraak,\" nie soos in \"gratis bier nie.\" Die Free Software Foundation noem dit soms \"libre sagteware,\" leen die Franse of Spaanse woord vir \"gratis\" soos in vryheid, om te wys hulle beteken nie dat die sagteware gratis is nie."
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Hulle formaat word dalk nie ondersteun nie, hulle is nog nie na JPEG omgeskakel nie of daar is\n"
+#~ "            duplikate."

@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-05-15 10:40+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
-"Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
+"frontend/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -308,7 +309,7 @@ msgstr "Auswahl wirklich archivieren?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie alle archivierten Bilder löschen wollen?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -504,11 +505,11 @@ msgstr "Farbsättigung"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Bereinigung von Index und Cache"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Aufräumen"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -674,6 +675,7 @@ msgstr "Löschen"
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr ""
+"Löschen Sie verwaiste Indexeinträge, Sidecar-Dateien und Miniaturansichten."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2750,6 +2752,9 @@ msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von 
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Löschen Sie verwaiste Indexeinträge, Cache-Dateien und Miniaturansichten."
+
 #~ msgid "Not Found"
 #~ msgstr "Keine Ergebnisse"
 
@@ -3688,3 +3693,10 @@ msgstr "Herein/Herauszoomen"
 
 #~ msgid "Vibrant"
 #~ msgstr "Kräftige Farbe"
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Ihr Format wird möglicherweise nicht unterstützt, sie sind noch nicht in JPEG konvertiert worden oder es gibt\n"
+#~ "            Duplikate."

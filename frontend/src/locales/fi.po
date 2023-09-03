@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -305,7 +305,7 @@ msgstr "Oletko varma, että haluat arkistoida valinnan?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Haluatko varmasti poistaa kaikki arkistoidut kuvat?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -501,11 +501,11 @@ msgstr "Värikylläisyys"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Indeksin ja välimuistin puhdistaminen"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Siivous"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -670,7 +670,7 @@ msgstr "Poista"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "Poistaa orpoja indeksimerkintöjä, sivutiedostoja ja pikkukuvia."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2747,6 +2747,9 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Poistaa orpoja indeksimerkintöjä, välimuistitiedostoja ja pikkukuvia."
+
 #~ msgid "Not Found"
 #~ msgstr "Ei löydetty"
 
@@ -3087,3 +3090,10 @@ msgstr "Lähennä/loitonna"
 
 #~ msgid "Your message has been sent"
 #~ msgstr "Viestisi on lähetetty"
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Niiden muotoa ei ehkä tueta, niitä ei ole vielä muunnettu JPEG-muotoon tai niissä on\n"
+#~ "            kaksoiskappaleita."

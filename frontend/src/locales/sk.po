@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-06-07 08:37+0000\n"
-"Last-Translator: Jose Riha <jose1711@gmail.com>\n"
-"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
+"frontend/sk/>\n"
 "Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -308,7 +309,7 @@ msgstr "Ste si istý, že chcete archivovať výber?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Určite chcete odstrániť všetky archivované obrázky?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -504,11 +505,11 @@ msgstr "Sýtosť"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Čistenie indexu a vyrovnávacej pamäte"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Čistenie"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -674,6 +675,7 @@ msgstr "Vymazať"
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr ""
+"Odstránenie osirelých položiek indexu, súborov vedľajších kariet a miniatúr."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2750,6 +2752,9 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Odstránenie osirelých položiek indexu, súborov vyrovnávacej pamäte a miniatúr."
+
 #~ msgid "Not Found"
 #~ msgstr "Nebolo Nájdené"
 
@@ -3264,3 +3269,10 @@ msgstr "Priblíziť/Oddialiť"
 
 #~ msgid "Stack Sequences"
 #~ msgstr "Postupnosť Sekvencie"
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Ich formát nemusí byť podporovaný, neboli ešte skonvertované do formátu JPEG alebo existujú\n"
+#~ "            duplikáty."

@@ -2,13 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Evgenij Spitsyn <evgeniy@spitsyn.net>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.17\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -305,7 +306,7 @@ msgstr "Вы ўпэўнены, што хочаце заархіваваць вы
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Вы ўпэўнены, што жадаеце выдаліць усе заархіваваныя выявы?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -501,11 +502,11 @@ msgstr "каляровасць"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Ачыстка індэкса і кэша"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Прыбіраць"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -670,7 +671,7 @@ msgstr "Выдаліць"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "Выдаліць асірацелыя запісы індэкса, дапаможныя файлы і мініяцюры."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2751,6 +2752,9 @@ msgstr "Ваша бібліятэка пастаянна аналізуецца 
 msgid "Zoom in/out"
 msgstr "Павелічэнне/памяншэнне"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Выдаліце страчаныя запісы індэкса, файлы кэша і мініяцюры."
+
 #~ msgid "Not Found"
 #~ msgstr "Не знойдзены"
 
@@ -2927,3 +2931,10 @@ msgstr "Павелічэнне/памяншэнне"
 
 #~ msgid "Web Login "
 #~ msgstr "Інтэрнэт-уваход "
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Іх фармат можа не падтрымлівацца, яны яшчэ не былі пераўтвораны ў JPEG або ёсць\n"
+#~ "            дублікаты."

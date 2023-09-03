@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: mastir hekir <mastirhekir@gmail.com>\n"
-"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -308,7 +309,7 @@ msgstr "Seçimi arşivlemek istediğinizden emin misiniz?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Arşivlenmiş tüm resimleri silmek istediğinizden emin misiniz?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -504,11 +505,11 @@ msgstr "Renk"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Dizin ve önbelleği temizleme"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Temizleme"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -673,7 +674,7 @@ msgstr "Sil"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "Artık dizin girişlerini, sidecar dosyalarını ve küçük resimleri silin."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2754,6 +2755,9 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Artık dizin girdilerini, önbellek dosyalarını ve küçük resimleri silin."
+
 #~ msgid "Not Found"
 #~ msgstr "Bulunamadı"
 
@@ -3109,3 +3113,10 @@ msgstr "Yakınlaştır / uzaklaştır"
 
 #~ msgid "Thank you for supporting PhotoPrism®"
 #~ msgstr "PhotoPrism®'i desteklediğiniz için teşekkür ederiz"
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir veya\n"
+#~ "            kopyalar."

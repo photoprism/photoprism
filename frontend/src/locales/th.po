@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: ppnplus <djbestppntube@icloud.com>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -308,7 +308,7 @@ msgstr "คุณแน่ใจหรือไม่ว่าต้องกา
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบรูปภาพที่เก็บถาวรทั้งหมด"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -504,11 +504,11 @@ msgstr "โครมา"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "การทำความสะอาดดัชนีและแคช"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "ทำความสะอาด"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -673,7 +673,7 @@ msgstr "ลบ"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "ลบรายการดัชนีที่ถูกละเลย ไฟล์รถเทียมข้างรถจักรยานยนต์ และภาพขนาดย่อ"
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2750,6 +2750,9 @@ msgstr "คลังของคุณได้รับการวิเคร
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "ลบรายการดัชนีที่ถูกละเลย ไฟล์แคช และภาพขนาดย่อ"
+
 #~ msgid "Not Found"
 #~ msgstr "ไม่พบ"
 
@@ -3096,3 +3099,10 @@ msgstr "ซูมเข้า/ออก"
 
 #~ msgid "t"
 #~ msgstr "t"
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "รูปแบบอาจไม่รองรับ ยังไม่ได้แปลงเป็น JPEG หรือมีอยู่แล้ว\n"
+#~ "            ซ้ำกัน"

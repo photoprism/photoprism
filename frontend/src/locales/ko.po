@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: jsonmona <jsonmona@outlook.com>\n"
-"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/frontend/ko/>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Korean <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -308,7 +309,7 @@ msgstr "선택 항목들을 보관하시겠습니까?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "보관된 사진을 모두 삭제하시겠습니까?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -504,11 +505,11 @@ msgstr "채도"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "인덱스 및 캐시 정리"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "정리"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -673,7 +674,7 @@ msgstr "삭제"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "고아가 된 색인 항목, 사이드카 파일 및 썸네일을 삭제합니다."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2750,6 +2751,9 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 msgid "Zoom in/out"
 msgstr "확대/축소"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "고아가 된 인덱스 항목, 캐시 파일 및 썸네일을 삭제합니다."
+
 #~ msgid "Not Found"
 #~ msgstr "찾을 수 없음"
 
@@ -3234,3 +3238,10 @@ msgstr "확대/축소"
 
 #~ msgid "Please enter your name and password:"
 #~ msgstr "다신의 이름과 비밀번호를 입력하십시요:"
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "해당 형식이 지원되지 않거나, 아직 JPEG로 변환되지 않았거나, 중복이 있을 수 있습니다.\n"
+#~ "            중복이 있을 수 있습니다."

@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
+"Language-Team: Indonesian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -308,7 +309,7 @@ msgstr "Apakah Anda yakin untuk mengarsipkan pilihan ini?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Apakah Anda yakin ingin menghapus semua gambar yang diarsipkan?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -504,11 +505,11 @@ msgstr "Kroma"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Membersihkan indeks dan cache"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Pembersihan"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -673,7 +674,7 @@ msgstr "Hapus"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "Menghapus entri indeks, file sidebar, dan gambar mini."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2750,6 +2751,9 @@ msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat al
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Menghapus entri indeks, file cache, dan gambar mini."
+
 #~ msgid "Not Found"
 #~ msgstr "Tidak ditemukan"
 
@@ -3189,3 +3193,10 @@ msgstr "Memperbesar/memperkecil"
 
 #~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
 #~ msgstr "Anda dapat menggunakannya sesuai kebutuhan untuk menjelaskan perangkat lunak kami, menjalankan server Anda sendiri, untuk tujuan pendidikan, tetapi tidak untuk menawarkan barang secara komersial, produk, atau layanan tanpa izin tertulis sebelumnya. Dengan kata lain, silakan bertanya terlebih dahulu."
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Formatnya mungkin tidak didukung, belum dikonversi ke JPEG atau ada\n"
+#~ "            duplikat."
