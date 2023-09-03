@@ -205,7 +205,7 @@
                 </button>
                 <button v-else-if="photo.Type === 'live'" :title="$gettext('Live')"
                         @click.exact="openPhoto(index)">
-                  <i>movie</i>
+                  <i>play_circle_outline</i>
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'"
