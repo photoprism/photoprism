@@ -6,13 +6,14 @@ import (
 )
 
 const (
-	ExtYAML = ".yml"
 	ExtJPEG = ".jpg"
 	ExtPNG  = ".png"
 	ExtDNG  = ".dng"
 	ExtTHM  = ".thm"
 	ExtAVC  = ".avc"
+	ExtHEVC = ".hevc"
 	ExtMP4  = ".mp4"
+	ExtYAML = ".yml"
 )
 
 // Ext returns all extension of a file name including the dots.
