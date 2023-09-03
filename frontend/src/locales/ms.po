@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Vee Hua Zhi <veehzhz@gmail.com>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -308,7 +308,7 @@ msgstr "Adakah anda pasti mahu mengarkibkan pemilihan?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Adakah anda pasti mahu memadamkan semua gambar yang diarkibkan?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -504,11 +504,11 @@ msgstr "Chroma"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Membersihkan indeks dan cache"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Bersihkan"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -673,7 +673,7 @@ msgstr "Padam"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "Padamkan entri indeks yatim piatu, fail sidecar dan lakaran kecil."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2750,6 +2750,9 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Padamkan entri indeks yatim piatu, fail cache dan lakaran kecil."
+
 #~ msgid "Not Found"
 #~ msgstr "Halaman Tak Dijumpai"
 
@@ -3108,3 +3111,10 @@ msgstr "Zum masuk/keluar"
 
 #~ msgid "Thank you for supporting PhotoPrism®"
 #~ msgstr "Terima kasih kerana menyokong PhotoPrism®"
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Format mereka mungkin tidak disokong, mereka belum ditukar kepada JPEG lagi atau masih ada\n"
+#~ "            pendua."

@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Krisztián Vanyolai <vanyolai@gmail.com>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 
 #: src/page/albums.vue:493
 msgid "%{n} albums found"
@@ -307,7 +308,7 @@ msgstr "Biztos benne, hogy archíválja a kiválasztott fájlokat?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Biztos, hogy törölni szeretné az összes archivált képet?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -503,11 +504,11 @@ msgstr "Chroma"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Index és gyorsítótár tisztítása"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Tisztítás"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -673,6 +674,7 @@ msgstr "Törlés"
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr ""
+"Törli az elárvult indexbejegyzéseket, oldalkocsis fájlokat és miniatűröket."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2749,6 +2751,9 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Törli az elárvult indexbejegyzéseket, gyorsítótárfájlokat és miniatűröket."
+
 #~ msgid "Not Found"
 #~ msgstr "Nem található"
 
@@ -3194,3 +3199,10 @@ msgstr "Nagyítás/kicsinyítés"
 
 #~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
 #~ msgstr "Szükség szerint használhatja szoftverünk leírására, saját szerver futtatására, oktatási célokra, de kereskedelmi áruk, termékek vagy szolgáltatások kínálására előzetes írásbeli engedély nélkül nem. Más szóval, kérdezzen."
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Előfordulhat, hogy a formátumuk nem támogatott, vagy még nem konvertálták őket JPEG-be, vagy vannak\n"
+#~ "            duplikátumok."

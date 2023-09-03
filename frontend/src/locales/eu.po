@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-04-29 09:20+0000\n"
-"Last-Translator: Paul <PaU1570@users.noreply.github.com>\n"
+"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -305,7 +305,7 @@ msgstr "Ziur hautapena artxibatu nahi duzula?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr ""
+msgstr "Ziur artxibatutako argazki guztiak ezabatu nahi dituzula?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -501,11 +501,11 @@ msgstr "Kroma"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
-msgstr ""
+msgstr "Indizea eta cachea garbitzea"
 
 #: src/page/library/index.vue:140
 msgid "Cleanup"
-msgstr ""
+msgstr "Garbitu"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -670,7 +670,7 @@ msgstr "Ezabatu"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
+msgstr "Ezabatu umezurtz indize-sarrerak, sidecar fitxategiak eta miniaturak."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -2751,6 +2751,9 @@ msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien 
 msgid "Zoom in/out"
 msgstr "Handitu/txikiagotu"
 
+#~ msgid "Delete orphaned index entries, cache files and thumbnails."
+#~ msgstr "Ezabatu umezurtz indize-sarrerak, cache-fitxategiak eta miniaturak."
+
 #~ msgid "Not Found"
 #~ msgstr "Ez da aurkitu"
 
@@ -2798,3 +2801,10 @@ msgstr "Handitu/txikiagotu"
 
 #~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
 #~ msgstr "Jar zaitez gurekin harremanetan membership@photoprism.app helbidera zure kidetzari buruzko galderak egiteko."
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "            duplicates."
+#~ msgstr ""
+#~ "Baliteke haien formatua ez onartzea, oraindik ez dira JPEG bihurtu edo badaude\n"
+#~ "            bikoiztuak."
