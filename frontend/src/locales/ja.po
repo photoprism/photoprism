@@ -2348,11 +2348,9 @@ msgstr "そのため、PhotoPrismは、自由、プライバシー、機能性�
 msgid "The index currently contains %{n} hidden files."
 msgstr "インデックスには現在 %{n} 件の隠しファイルがあります。"
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "それらの形式がサポートされていないか、まだ JPEG に変換されていないか、または重複している可能性があります。。"
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2755,9 +2753,6 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "それらの形式がサポートされていないか、まだ JPEG に変換されていないか、または重複している可能性があります。。"
 
 #~ msgid "Not Found"
 #~ msgstr "見つかりませんでした"

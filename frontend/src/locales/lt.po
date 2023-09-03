@@ -2348,11 +2348,9 @@ msgstr "Todėl \"PhotoPrism\" buvo sukurta nuo pat pradžių, kad veiktų ten, k
 msgid "The index currently contains %{n} hidden files."
 msgstr "Šiuo metu rodyklėje yra %{n} paslėptų failų."
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Jų formatas gali būti nepalaikomas, jos dar nebuvo konvertuotos į JPEG arba yra dublikatų."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2751,9 +2749,6 @@ msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai k
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "Jų formatas gali būti nepalaikomas, jos dar nebuvo konvertuotos į JPEG arba yra dublikatų."
 
 #~ msgid "Not Found"
 #~ msgstr "Nerastas"

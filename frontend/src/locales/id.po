@@ -2348,11 +2348,9 @@ msgstr "Itulah mengapa PhotoPrism dibangun dari nol untuk berjalan di mana pun A
 msgid "The index currently contains %{n} hidden files."
 msgstr "Indeks saat ini berisi %{n} file tersembunyi."
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Format mereka mungkin tidak didukung, mereka belum dikonversi ke JPEG atau ada duplikat."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2751,9 +2749,6 @@ msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat al
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "Format mereka mungkin tidak didukung, mereka belum dikonversi ke JPEG atau ada duplikat."
 
 #~ msgid "Not Found"
 #~ msgstr "Tidak ditemukan"

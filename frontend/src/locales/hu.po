@@ -2347,11 +2347,9 @@ msgstr "Ezért a PhotoPrismet az alapoktól kezdve úgy építették fel, hogy b
 msgid "The index currently contains %{n} hidden files."
 msgstr "Az index jelenleg %{n} rejtett fájlt tartalmaz."
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Előfordulhat, hogy a formátumuk nem támogatott, még nem konvertálták JPEG formátumba, vagy ismétlődők vannak."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2750,9 +2748,6 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "Előfordulhat, hogy a formátumuk nem támogatott, még nem konvertálták JPEG formátumba, vagy ismétlődők vannak."
 
 #~ msgid "Not Found"
 #~ msgstr "Nem található"

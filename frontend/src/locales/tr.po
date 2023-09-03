@@ -2348,11 +2348,9 @@ msgstr "Bu nedenle PhotoPrism, özgürlük, gizlilik veya işlevsellikten ödün
 msgid "The index currently contains %{n} hidden files."
 msgstr "Dizin şu anda %{n} gizli dosya içermektedir."
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir veya mükerrer olabilir."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2755,9 +2753,6 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "Formatları desteklenmiyor olabilir, henüz JPEG'e dönüştürülmemiş olabilir veya mükerrer olabilir."
 
 #~ msgid "Not Found"
 #~ msgstr "Bulunamadı"

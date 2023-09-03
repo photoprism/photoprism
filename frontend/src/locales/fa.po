@@ -2348,11 +2348,9 @@ msgstr "به همین دلیل است که PhotoPrism از ابتدا ساخته
 msgid "The index currently contains %{n} hidden files."
 msgstr "این فهرست در حال حاضر حاوی %{n} فایل پنهان است."
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "ممکن است فرمت آنها پشتیبانی نشود، هنوز به JPEG تبدیل نشده اند یا موارد تکراری وجود دارد."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2755,9 +2753,6 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "ممکن است فرمت آنها پشتیبانی نشود، هنوز به JPEG تبدیل نشده اند یا موارد تکراری وجود دارد."
 
 #~ msgid "Not Found"
 #~ msgstr "پیدا نشد"

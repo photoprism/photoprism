@@ -2348,11 +2348,9 @@ msgstr "Derfor ble PhotoPrism bygget fra grunnen av for å kjøre der du trenger
 msgid "The index currently contains %{n} hidden files."
 msgstr "Indeksen inneholder %{n} skjulte filer."
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "Formatet deres støttes kanskje ikke, de har ikke blitt konvertert til JPEG enda, eller det finnes duplikater."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2751,9 +2749,6 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "Formatet deres støttes kanskje ikke, de har ikke blitt konvertert til JPEG enda, eller det finnes duplikater."
 
 #~ msgid "Not Found"
 #~ msgstr "Ikke Funnet"

@@ -2350,11 +2350,9 @@ msgstr "这就是为什么PhotoPrism从一开始就能在你需要的地方运�
 msgid "The index currently contains %{n} hidden files."
 msgstr "该索引当前包含 %{n} 个隐藏文件。"
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "它们的格式可能不受支持，它们尚未转换为 JPEG 或存在重复项。"
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2757,9 +2755,6 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "它们的格式可能不受支持，它们尚未转换为 JPEG 或存在重复项。"
 
 #~ msgid "Not Found"
 #~ msgstr "未找到"

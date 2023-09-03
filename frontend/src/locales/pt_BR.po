@@ -2348,11 +2348,9 @@ msgstr "É por isso que o PhotoPrism foi construído desde o início para funcio
 msgid "The index currently contains %{n} hidden files."
 msgstr "O índice atualmente contém %{n} arquivos ocultos."
 
-#: src/page/library/index.vue:42
-msgid ""
-"Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
-"            duplicates."
-msgstr ""
+#: src/page/library/index.vue:41
+msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgstr "O formato delas não é suportado, elas não foram convertidas para JPEG ainda ou existe duplicação."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2751,9 +2749,6 @@ msgstr "Sua biblioteca é continuamente analisada para criar automaticamente ál
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Aproximar/Afastar"
-
-#~ msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-#~ msgstr "O formato delas não é suportado, elas não foram convertidas para JPEG ainda ou existe duplicação."
 
 #~ msgid "Not Found"
 #~ msgstr "Não encontrado"
