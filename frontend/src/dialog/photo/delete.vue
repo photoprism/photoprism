@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="350" class="p-photo-delete-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" lazy persistent max-width="360" class="p-photo-delete-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -7,8 +7,11 @@
             <v-icon size="54" color="secondary-dark lighten-1">delete_outline</v-icon>
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
-            <div class="subheading pr-1">
+            <div v-if="text === ''" class="subheading pr-1">
               <translate>Are you sure you want to permanently delete these pictures?</translate>
+            </div>
+            <div v-else class="subheading pr-1">
+              {{ text }}
             </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
@@ -30,6 +33,10 @@ export default {
   name: 'PPhotoDeleteDialog',
   props: {
     show: Boolean,
+    text: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {};

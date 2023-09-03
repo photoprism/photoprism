@@ -637,14 +637,16 @@ export default {
           this.dirty = true;
           this.complete = false;
 
-          if (this.context === "archive") break;
+          if (this.context !== "archive") {
+            for (let i = 0; i < data.entities.length; i++) {
+              const uid = data.entities[i];
 
-          for (let i = 0; i < data.entities.length; i++) {
-            const uid = data.entities[i];
-
-            this.removeResult(this.results, uid);
-            this.removeResult(this.viewer.results, uid);
-            this.$clipboard.removeId(uid);
+              this.removeResult(this.results, uid);
+              this.removeResult(this.viewer.results, uid);
+              this.$clipboard.removeId(uid);
+            }
+          } else if (!this.results.length) {
+            this.refresh();
           }
 
           break;

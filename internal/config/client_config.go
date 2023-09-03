@@ -139,6 +139,7 @@ type ClientCounts struct {
 	Lenses         int `json:"lenses"`
 	Countries      int `json:"countries"`
 	Hidden         int `json:"hidden"`
+	Archived       int `json:"archived"`
 	Favorites      int `json:"favorites"`
 	Review         int `json:"review"`
 	Stories        int `json:"stories"`
@@ -539,6 +540,15 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 				"0 AS private").
 			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 			Where("deleted_at IS NULL").
+			Take(&cfg.Count)
+	}
+
+	// Get number of archived pictures.
+	if c.Settings().Features.Archive {
+		c.Db().
+			Table("photos").
+			Select("SUM(photo_quality > -1) AS archived").
+			Where("deleted_at IS NOT NULL").
 			Take(&cfg.Count)
 	}
 

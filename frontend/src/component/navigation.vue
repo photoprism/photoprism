@@ -165,6 +165,8 @@
             <v-list-tile-content>
               <v-list-tile-title :class="`p-flex-menuitem menu-item ${rtl ? '--rtl' : ''}`">
                 <translate>Archive</translate>
+                <span v-show="config.count.archived > 0"
+                      :class="`nav-count ${rtl ? '--rtl' : ''}`">{{ config.count.archived | abbreviateCount }}</span>
               </v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
@@ -539,7 +541,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="auth && !isPublic && $config.feature('account')" class="p-profile" @click.stop="onAccount">
+        <v-list-tile v-show="auth && !isPublic" class="p-profile" @click.stop="onAccountSettings">
           <v-list-tile-avatar size="36">
             <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo">
           </v-list-tile-avatar>
@@ -835,8 +837,12 @@ export default {
       this.isMini = !this.isMini;
       localStorage.setItem('last_navigation_mode', `${this.isMini}`);
     },
-    onAccount: function () {
-      this.$router.push({name: "settings_account"});
+    onAccountSettings: function () {
+      if (this.$config.feature('account')) {
+        this.$router.push({name: "settings_account"});
+      } else {
+        this.$router.push({name: "settings"});
+      }
     },
     onInfo() {
       if (this.isSponsor && this.config.legalUrl) {
