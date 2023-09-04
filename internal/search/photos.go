@@ -156,7 +156,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Order("files.photo_taken_at, files.media_id")
 	case sortby.Similar:
 		s = s.Where("files.file_diff > 0")
-		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.time_index")
+		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.photo_id, files.time_index")
 	case sortby.Name:
 		s = s.Order("photos.photo_path, photos.photo_name, files.time_index")
 	case sortby.Random:
