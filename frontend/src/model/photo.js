@@ -431,14 +431,14 @@ export class Photo extends RestModel {
     let width = actualWidth;
     let height = actualHeight;
 
-    if (vw < width + 80) {
-      let newWidth = vw - 90;
+    if (vw < width + 100) {
+      let newWidth = vw - 110;
       height = Math.round(newWidth * (actualHeight / actualWidth));
       width = newWidth;
     }
 
-    if (vh < height + 80) {
-      let newHeight = vh - 90;
+    if (vh < height + 90) {
+      let newHeight = vh - 100;
       width = Math.round(newHeight * (actualWidth / actualHeight));
       height = newHeight;
     }
