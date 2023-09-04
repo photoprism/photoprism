@@ -52,12 +52,12 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.2 // indirect
-	golang.org/x/image v0.11.0
+	golang.org/x/image v0.12.0
 )
 
 require github.com/olekukonko/tablewriter v0.0.5
 
-require github.com/google/uuid v1.3.0
+require github.com/google/uuid v1.3.1
 
 require (
 	github.com/chzyer/readline v1.5.1 // indirect
@@ -109,7 +109,7 @@ require (
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/oauth2 v0.6.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/text v0.12.0 // indirect
+	golang.org/x/text v0.13.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
