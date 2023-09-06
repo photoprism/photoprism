@@ -20,7 +20,7 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 **Vitold Romanovski** (May 2023)
 
-**Aaron C. de Bruyn** (September, 2023)
+**Aaron C. de Bruyn** (September 2023)
 
 ## Gold Sponsors ##
 
