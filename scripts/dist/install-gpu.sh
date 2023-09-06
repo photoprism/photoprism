@@ -55,6 +55,12 @@ for t in ${GPU_DETECTED[@]}; do
     nvidia)
       echo "NVIDIA Container Toolkit must be installed: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html"
       ;;
+      
+    amdgpu)
+      echo "Installing AMD VA-API Drivers..."
+      apt-get -qq install mesa-va-drivers vainfo libva-dev
+      ;;
+      
 
     "null")
       # ignore
