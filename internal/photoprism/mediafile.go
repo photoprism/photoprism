@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"runtime/debug"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -330,7 +331,7 @@ func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 		return "", fmt.Errorf("mediafile: %s is empty", clean.Log(m.RootRelName()))
 	}
 
-	// Get the embedded video field name from the file metadata.
+	// Samsung Motion Photos: Get the embedded video field name from the file metadata.
 	if metaData := m.MetaData(); metaData.Error == nil && metaData.EmbeddedVideo != "" {
 		outputPath := filepath.Join(Config().TempPath(), m.RootRelPath(), "%f")
 		cmd := exec.Command(Config().ExifToolBin(),
@@ -378,6 +379,24 @@ func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 
 			return dstPath, nil
 		}
+	} else if metaData.EmbeddedVideoOffset != "" {
+		// parse embeddedVideoOffset to int and compute start offset of the video
+		videoOffset, _ := strconv.ParseInt(metaData.EmbeddedVideoOffset, 10, 32)
+		startOffset := m.fileSize - videoOffset
+
+		// dd command
+		cmd := exec.Command(
+			Config().DDBin(),
+			fmt.Sprintf("if=%s", "inputfile"),
+			fmt.Sprintf("of=%s", "outfile"),
+			fmt.Sprintf("bs=%d", startOffset),
+			"skip=1",
+		)
+
+		var out bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &out
+		cmd.Stderr = &stderr
 	}
 
 	return "", nil
