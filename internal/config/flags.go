@@ -578,7 +578,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "ffmpeg-bin",
 			Usage:  "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
-			Value:  "ffmpeg",
+			Value:  ffmpeg.DefaultBin,
 			EnvVar: EnvVar("FFMPEG_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
