@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-09-03 14:44+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-09-07 01:59+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "frontend/de/>\n"
 "Language: de\n"
@@ -309,7 +309,7 @@ msgstr "Auswahl wirklich archivieren?"
 
 #: src/component/photo/toolbar.vue:415
 msgid "Are you sure you want to delete all archived pictures?"
-msgstr "Sind Sie sicher, dass Sie alle archivierten Bilder löschen wollen?"
+msgstr "Alle archivierten Bilder unwiderruflich löschen?"
 
 #: src/dialog/album/delete.vue:10
 msgid "Are you sure you want to delete these albums?"
@@ -674,8 +674,7 @@ msgstr "Löschen"
 
 #: src/page/library/index.vue:141
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
-"Löschen Sie verwaiste Indexeinträge, Sidecar-Dateien und Miniaturansichten."
+msgstr "Verwaiste Indexeinträge, Sidecar-Dateien und Thumbnails löschen."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
