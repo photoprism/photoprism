@@ -1,12 +1,11 @@
 package api
 
 import (
-	"fmt"
 	"image"
-	"image/color"
 	"net/http"
 	"os"
 	"path"
+	"path/filepath"
 	"time"
 
 	"github.com/disintegration/imaging"
@@ -14,24 +13,26 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/frame"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// SharePreview returns a link share preview image.
+// SharePreview returns a preview image for the given share uid if the token is valid.
 //
-// GET /s/:token/:uid/preview
+// GET /s/:token/:shared/preview
 // TODO: Proof of concept, needs refactoring.
 func SharePreview(router *gin.RouterGroup) {
 	router.GET("/:token/:shared/preview", func(c *gin.Context) {
 		conf := get.Config()
 
 		token := clean.Token(c.Param("token"))
-		shared := clean.Token(c.Param("shared"))
+		shared := clean.UID(c.Param("shared"))
 		links := entity.FindLinks(token, shared)
 
 		if len(links) != 1 {
@@ -48,17 +49,26 @@ func SharePreview(router *gin.RouterGroup) {
 			return
 		}
 
-		previewFilename := fmt.Sprintf("%s/%s.jpg", thumbPath, shared)
-		yesterday := time.Now().Add(-24 * time.Hour)
+		previewFilename := filepath.Join(thumbPath, shared+fs.ExtJPEG)
+
+		expires := entity.TimeStamp().Add(-1 * time.Hour)
 
 		if info, err := os.Stat(previewFilename); err != nil {
 			log.Debugf("share: creating new preview for %s", clean.Log(shared))
-		} else if info.ModTime().After(yesterday) {
+		} else if info.ModTime().After(expires) {
 			log.Debugf("share: using cached preview for %s", clean.Log(shared))
 			c.File(previewFilename)
 			return
 		} else if err := os.Remove(previewFilename); err != nil {
 			log.Errorf("share: could not remove old preview of %s", clean.Log(shared))
+			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
+			return
+		}
+
+		a, err := query.AlbumByUID(shared)
+
+		if err != nil {
+			log.Error(err)
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -75,11 +85,11 @@ func SharePreview(router *gin.RouterGroup) {
 		f.Primary = true
 
 		// Get first 12 album entries.
-		f.Count = 12
-		f.Order = "relevance"
+		f.Count = 6
+		f.Order = a.AlbumOrder
 
-		if err := f.ParseQueryString(); err != nil {
-			log.Errorf("preview: %s", err)
+		if parseErr := f.ParseQueryString(); parseErr != nil {
+			log.Errorf("preview: %s", parseErr)
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
 		}
@@ -95,75 +105,43 @@ func SharePreview(router *gin.RouterGroup) {
 		if count == 0 {
 			c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 			return
-		} else if count < 12 {
-			f := p[0]
-			size, _ := thumb.Sizes[thumb.Fit720]
-
-			fileName := photoprism.FileName(f.FileRoot, f.FileName)
-
-			if !fs.FileExists(fileName) {
-				log.Errorf("share: file %s is missing (preview)", clean.Log(f.FileName))
-				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
-				return
-			}
-
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
-
-			if err != nil {
-				log.Error(err)
-				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
-				return
-			}
-
-			c.File(thumbnail)
-
-			return
 		}
 
-		width := 908
-		height := 680
-		x := 0
-		y := 0
+		size, _ := thumb.Sizes[thumb.Tile500]
 
-		preview := imaging.New(width, height, color.NRGBA{255, 255, 255, 255})
-		size, _ := thumb.Sizes[thumb.Tile224]
+		images := make([]image.Image, 0, len(p))
 
-		for _, f := range p {
-			fileName := photoprism.FileName(f.FileRoot, f.FileName)
+		// Get thumbnail images to create album preview.
+		for _, file := range p {
+			fileName := photoprism.FileName(file.FileRoot, file.FileName)
 
 			if !fs.FileExists(fileName) {
-				log.Errorf("share: file %s is missing (preview)", clean.Log(f.FileName))
+				log.Errorf("share: file %s is missing (preview)", clean.Log(file.FileName))
 				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
 				return
 			}
 
-			thumbnail, err := thumb.FromFile(fileName, f.FileHash, conf.ThumbCachePath(), size.Width, size.Height, f.FileOrientation, size.Options...)
+			thumbnail, imgErr := thumb.FromFile(fileName, file.FileHash, conf.ThumbCachePath(), size.Width, size.Height, file.FileOrientation, size.Options...)
 
-			if err != nil {
-				log.Error(err)
-				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
-				return
+			if imgErr != nil {
+				log.Warn(imgErr)
+				continue
 			}
 
-			src, err := imaging.Open(thumbnail)
+			img, imgErr := imaging.Open(thumbnail)
 
-			if err != nil {
-				log.Error(err)
-				c.Redirect(http.StatusTemporaryRedirect, conf.SitePreview())
-				return
+			if imgErr != nil {
+				log.Warn(imgErr)
+				continue
 			}
 
-			preview = imaging.Paste(preview, src, image.Pt(x, y))
-
-			x += 228
-
-			if x > width {
-				x = 0
-				y += 228
-			}
+			images = append(images, img)
 		}
 
-		// Save the resulting image as JPEG.
+		// Create album preview from thumbnail images.
+		preview, err := frame.Collage(frame.Polaroid, images)
+
+		// Save the resulting album preview as JPEG.
 		err = imaging.Save(preview, previewFilename)
 
 		if err != nil {

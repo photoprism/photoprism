@@ -2,6 +2,8 @@ package api
 
 import (
 	"fmt"
+	"os"
+	"path"
 
 	"github.com/gin-gonic/gin"
 
@@ -9,6 +11,8 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 type ThumbCache struct {
@@ -42,8 +46,13 @@ func RemoveFromFolderCache(rootName string) {
 
 // RemoveFromAlbumCoverCache removes covers by album UID e.g. after adding or removing photos.
 func RemoveFromAlbumCoverCache(uid string) {
+	if !rnd.IsAlnum(uid) {
+		return
+	}
+
 	cache := get.CoverCache()
 
+	// Flush album cover cache.
 	for thumbName := range thumb.Sizes {
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
@@ -52,6 +61,12 @@ func RemoveFromAlbumCoverCache(uid string) {
 		log.Debugf("removed %s from cache", cacheKey)
 	}
 
+	// Delete share preview, if exists.
+	if sharePreview := path.Join(get.Config().ThumbCachePath(), "share", uid+fs.ExtJPEG); fs.FileExists(sharePreview) {
+		_ = os.Remove(sharePreview)
+	}
+
+	// Update album cover images.
 	if err := query.UpdateAlbumCovers(); err != nil {
 		log.Error(err)
 	}

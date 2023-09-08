@@ -160,6 +160,10 @@ func UpdateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
+		// Flush album cover cache.
+		RemoveFromAlbumCoverCache(uid)
+
+		// Update client.
 		UpdateClientConfig()
 
 		// Update album YAML backup.
