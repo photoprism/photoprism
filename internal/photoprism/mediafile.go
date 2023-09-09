@@ -331,6 +331,21 @@ func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 		return "", fmt.Errorf("mediafile: %s is empty", clean.Log(m.RootRelName()))
 	}
 
+	fileData, err := os.ReadFile(m.fileName)
+	if err != nil {
+		fmt.Errorf("could not read file %s", m.fileName)
+	}
+
+	if bytes.Contains(fileData, []byte("ftyp")) {
+		idx := bytes.Index(fileData, []byte("ftyp"))
+		dstPath := filepath.Join(Config().SidecarPath(), m.RootRelPath(), m.BasePrefix(false)+".mp4")
+		if err := fs.CopyWithOffset(m.fileName, dstPath, idx-4, 1); err != nil {
+			fmt.Errorf("could not copy file %s", m.fileName)
+		}
+	} else {
+		// TODO
+	}
+
 	// Samsung Motion Photos: Get the embedded video field name from the file metadata.
 	if metaData := m.MetaData(); metaData.Error == nil && metaData.EmbeddedVideo != "" {
 		outputPath := filepath.Join(Config().TempPath(), m.RootRelPath(), "%f")
