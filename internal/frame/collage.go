@@ -66,7 +66,7 @@ func polaroidCollage(collage image.Image, images []image.Image) (image.Image, er
 			collage = imaging.Overlay(collage, framed, RandomPoint(850-i*dl, -150-((i%2)*50), 950-i*dr, 125-((i%2)*125)), 1)
 		}
 
-		if framed, err := polaroid(images[0], RandomAngle(20)); err != nil {
+		if framed, err := polaroid(images[0], RandomAngle(15)); err != nil {
 			return collage, err
 		} else {
 			collage = imaging.Overlay(collage, framed, image.Pt(275, -50), 1)
