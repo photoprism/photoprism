@@ -141,8 +141,11 @@ func SharePreview(router *gin.RouterGroup) {
 		// Create album preview from thumbnail images.
 		preview, err := frame.Collage(frame.Polaroid, images)
 
+		// Downsize from 1600x900 to 1200x675.
+		preview = imaging.Resize(preview, 1200, 0, imaging.Lanczos)
+
 		// Save the resulting album preview as JPEG.
-		err = imaging.Save(preview, previewFilename)
+		err = imaging.Save(preview, previewFilename, thumb.JpegQualitySmall.EncodeOption())
 
 		if err != nil {
 			log.Error(err)
