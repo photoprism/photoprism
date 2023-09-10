@@ -2,7 +2,6 @@ package photoprism
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"image"
 	_ "image/gif"
@@ -11,12 +10,10 @@ import (
 	"io"
 	"math"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
 	"runtime/debug"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -318,7 +315,7 @@ func (m *MediaFile) EditedName() string {
 	return ""
 }
 
-// ExtractEmbeddedVideo extracts an embedded video file and returns its filename, if any.
+// ExtractEmbeddedVideo extracts an embedded video file and returns its filename.
 func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 	if m == nil {
 		return "", fmt.Errorf("mediafile: file is nil - you may have found a bug")
@@ -331,87 +328,39 @@ func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 		return "", fmt.Errorf("mediafile: %s is empty", clean.Log(m.RootRelName()))
 	}
 
+	// Read the binary file
 	fileData, err := os.ReadFile(m.fileName)
 	if err != nil {
-		fmt.Errorf("could not read file %s", m.fileName)
+		return "", fmt.Errorf("mediafile: could not read file %s", m.fileName)
 	}
 
+	// Search for the FileType Box "ftyp"
 	if bytes.Contains(fileData, []byte("ftyp")) {
+		// Find the offset of the "ftyp" byte in the file
 		idx := bytes.Index(fileData, []byte("ftyp"))
-		dstPath := filepath.Join(Config().SidecarPath(), m.RootRelPath(), m.BasePrefix(false)+".mp4")
+		// Create the destination path to save the embedded video file
+		dstPath := filepath.Join(Config().SidecarPath(), m.RootRelPath(), m.BasePrefix(false))
+		// Extract the embedded video file and save to dstPath
 		if err := fs.CopyWithOffset(m.fileName, dstPath, idx-4, 1); err != nil {
-			fmt.Errorf("could not copy file %s", m.fileName)
-		}
-	} else {
-		// TODO
-	}
-
-	// Samsung Motion Photos: Get the embedded video field name from the file metadata.
-	if metaData := m.MetaData(); metaData.Error == nil && metaData.EmbeddedVideo != "" {
-		outputPath := filepath.Join(Config().TempPath(), m.RootRelPath(), "%f")
-		cmd := exec.Command(Config().ExifToolBin(),
-			fmt.Sprintf("-%s", metaData.EmbeddedVideo), // TODO: Is this safe?
-			"-b", "-w",
-			outputPath, m.FileName())
-
-		var out bytes.Buffer
-		var stderr bytes.Buffer
-
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
-		cmd.Env = []string{fmt.Sprintf("HOME=%s", Config().TempPath())}
-
-		if err := cmd.Run(); err != nil {
-			log.Debugf("Error running exiftool on video file: ", err)
-
-			if stderr.String() != "" {
-				return "", errors.New(stderr.String())
-			} else {
-				return "", err
-			}
+			return "", fmt.Errorf("mediafile: could not copy file %s to %s", m.fileName, dstPath)
 		}
 
-		// Find the extracted video file.
-		outputPath = strings.Replace(outputPath, "%f", m.BasePrefix(false), 1)
-
-		// Detect mime type of the extracted video file.
-		mimeType := fs.MimeType(outputPath)
-
+		// Detect mime type of the extracted video file
+		mimeType := fs.MimeType(dstPath)
 		if l := len(strings.Split(mimeType, "/")); l <= 1 {
-			log.Debugf("Error detecting the mime type of video file at %s", outputPath)
-
-			return "", nil
+			return "", fmt.Errorf("mediafile: error detecting the mime type of video file at %s", dstPath)
 		} else if extension := strings.Split(mimeType, "/")[l-1]; extension != "" {
 			// Rename the extracted video file with the correct extension and move it to the sidecar path.
-			_, file := filepath.Split(outputPath)
-			newFileName := fmt.Sprintf("%s.%s", file, extension)
-			dstPath := filepath.Join(Config().SidecarPath(), m.RootRelPath(), newFileName)
+			_, dstFile := filepath.Split(dstPath)
+			newFileName := fmt.Sprintf("%s.%s", dstFile, extension)
+			newDstPath := filepath.Join(Config().SidecarPath(), m.RootRelPath(), newFileName)
 
-			if err := fs.Move(outputPath, dstPath); err != nil {
-				log.Debugf("failed to move extracted video file to %s", outputPath)
-				return "", err
+			if err := fs.Move(dstPath, newDstPath); err != nil {
+				return "", fmt.Errorf("mediafile: failed to move extracted video file to %s", newDstPath)
 			}
 
-			return dstPath, nil
+			return newDstPath, nil
 		}
-	} else if metaData.EmbeddedVideoOffset != "" {
-		// parse embeddedVideoOffset to int and compute start offset of the video
-		videoOffset, _ := strconv.ParseInt(metaData.EmbeddedVideoOffset, 10, 32)
-		startOffset := m.fileSize - videoOffset
-
-		// dd command
-		cmd := exec.Command(
-			Config().DDBin(),
-			fmt.Sprintf("if=%s", "inputfile"),
-			fmt.Sprintf("of=%s", "outfile"),
-			fmt.Sprintf("bs=%d", startOffset),
-			"skip=1",
-		)
-
-		var out bytes.Buffer
-		var stderr bytes.Buffer
-		cmd.Stdout = &out
-		cmd.Stderr = &stderr
 	}
 
 	return "", nil

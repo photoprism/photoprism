@@ -365,16 +365,12 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 
-	// Samsung Motion Photos: Set the name of the embedded video data field, if any.
-	if embeddedVideo, ok := data.json["EmbeddedVideoFile"]; ok && embeddedVideo != "" {
-		data.EmbeddedVideo = "EmbeddedVideoFile"
-	} else if embeddedVideo, ok = data.json["MotionPhotoVideo"]; ok && embeddedVideo != "" {
-		data.EmbeddedVideo = "MotionPhotoVideo"
+	// Samsung Motion Photos & Google Motion Photos: Set the embedded video data field, if exists.
+	if embeddedVideo, ok := data.json["MotionPhoto"]; ok && embeddedVideo != "" {
+		data.EmbeddedVideo = true
+	} else if embeddedVideo, ok = data.json["MicroVideo"]; ok && embeddedVideo != "" {
+		data.EmbeddedVideo = true
 	}
 
-	// Google Motion Photos: Set the motion video offset, if exists.
-	if videoOffset, ok := data.json["MicroVideoOffset"]; ok && videoOffset != "" {
-		data.EmbeddedVideoOffset = data.json["MicroVideoOffset"]
-	}
 	return nil
 }
