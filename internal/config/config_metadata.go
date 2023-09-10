@@ -19,7 +19,3 @@ func (c *Config) ExifToolJson() bool {
 func (c *Config) BackupYaml() bool {
 	return !c.DisableBackups()
 }
-
-func (c *Config) DDBin() string {
-	return findBin(c.options.DDBin, "dd")
-}

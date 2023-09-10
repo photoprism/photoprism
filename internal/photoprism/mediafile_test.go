@@ -2651,6 +2651,43 @@ func TestMediaFile_ExtractEmbeddedVideo(t *testing.T) {
 	)
 
 	t.Run(
+		"pixel4a.jpg", func(t *testing.T) {
+			// input image file
+			fileName := filepath.Join(
+				conf.ExamplesPath(),
+				"pixel4a.jpg",
+			)
+			// expected output video file
+			outputName := filepath.Join(
+				conf.SidecarPath(), "pixel4a.mp4",
+			)
+
+			_ = os.Remove(outputName)
+
+			mf, err := NewMediaFile(fileName)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// extract the video
+			if embeddedVideoName, err := mf.ExtractEmbeddedVideo(); err != nil {
+				t.Fatal(err)
+			} else if embeddedVideoName == "" {
+				t.Errorf("embeddedVideoName should not be empty")
+			} else {
+				t.Logf(embeddedVideoName)
+				assert.Equal(t, embeddedVideoName, outputName)
+				assert.Truef(
+					t, fs.FileExists(embeddedVideoName),
+					"output file does not exist: %s", embeddedVideoName,
+				)
+
+				_ = os.Remove(outputName)
+			}
+		},
+	)
+
+	t.Run(
 		"beach_sand.jpg", func(t *testing.T) {
 			// input image file
 			fileName := filepath.Join(
