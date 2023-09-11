@@ -29,4 +29,24 @@ func TestImage(t *testing.T) {
 
 		_ = os.Remove(saveName)
 	})
+
+	t.Run("Unknown type", func(t *testing.T) {
+		img, err := imaging.Open("testdata/500x500.jpg")
+		assert.NoError(t, err)
+
+		saveName := "testdata/test-image.png"
+
+		out, err := Image("unknown", img, RandomAngle(30))
+
+		assert.Error(t, err)
+		assert.Equal(t, "unknown collage type unknown", err.Error())
+
+		err = imaging.Save(out, saveName)
+
+		assert.NoError(t, err)
+		mimeType := fs.MimeType(saveName)
+		assert.Equal(t, fs.MimeTypePNG, mimeType)
+
+		_ = os.Remove(saveName)
+	})
 }
