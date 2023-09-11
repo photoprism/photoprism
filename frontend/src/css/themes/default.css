@@ -205,12 +205,12 @@ body.dark-theme.theme-default,
 
 #photoprism.theme-default .cards-view .card.is-selected .card-details {
     color: #fff;
-    background-color: #636669;
+    background-color: #636869;
 }
 
 #photoprism.theme-default .cards-view .card.is-selected,
 #photoprism.theme-default .cards-view .card.is-selected .card-background {
-    background-color: #636669 !important;
+    background-color: #636869 !important;
 }
 
 #photoprism.theme-default .cards-view .card.is-selected .card-details .v-icon {
