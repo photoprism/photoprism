@@ -5,7 +5,7 @@ import "time"
 // PreviewTimeOffset returns an appropriate time offset depending on the duration for extracting a preview image.
 func PreviewTimeOffset(d time.Duration) string {
 	// Default.
-	result := "00:00:00.001"
+	result := "00:00:00.000"
 
 	// If the video is long enough, don't use the first frames to avoid completely
 	// black or white thumbnails in case there is an effect or intro.

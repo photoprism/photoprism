@@ -1,6 +1,8 @@
 package photoprism
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -87,6 +89,40 @@ func TestConvert_ToJson(t *testing.T) {
 		}
 
 		assert.FileExists(t, jsonName)
+
+		_ = os.Remove(jsonName)
+	})
+
+	t.Run("PXL_20221215_011015207.MP.jpg", func(t *testing.T) {
+		fileName := conf.ExamplesPath() + "/PXL_20221215_011015207.MP.jpg"
+
+		assert.True(t, fs.FileExists(fileName))
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		jsonName, err := convert.ToJson(mf, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if jsonName == "" {
+			t.Fatal("json file name should not be empty")
+		}
+
+		assert.FileExists(t, jsonName)
+
+		jsonBytes, _ := ioutil.ReadFile(jsonName)
+		var mapSlice []map[string]interface{}
+		if err := json.Unmarshal(jsonBytes, &mapSlice); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 1693875.0, mapSlice[0]["EmbeddedVideoOffset"])
 
 		_ = os.Remove(jsonName)
 	})

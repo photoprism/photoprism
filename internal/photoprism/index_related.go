@@ -37,6 +37,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 	for i < len(related.Files) {
 		f := related.Files[i]
+
 		i++
 
 		if f == nil {

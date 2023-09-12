@@ -1575,6 +1575,39 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 	})
 }
 
+func TestMediaFile_IsGoogleMotionPhoto(t *testing.T) {
+	conf := config.TestConfig()
+
+	t.Run("iphone_7.json", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.json")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, false, mediaFile.IsGoogleMotionPhoto())
+	})
+	t.Run("iphone_7.heic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, false, mediaFile.IsGoogleMotionPhoto())
+	})
+	t.Run("elephants.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, false, mediaFile.IsGoogleMotionPhoto())
+	})
+	t.Run("PXL_20221215_011015207.MP.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/PXL_20221215_011015207.MP.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, true, mediaFile.IsGoogleMotionPhoto())
+	})
+}
+
 func TestMediaFile_HasPreviewImage(t *testing.T) {
 	t.Run("Random.docx", func(t *testing.T) {
 		cfg := config.TestConfig()
@@ -2671,5 +2704,39 @@ func TestMediaFile_ExtractEmbeddedVideo(t *testing.T) {
 				t.Logf(embeddedVideoName)
 			}
 		},
+	)
+
+	t.Run("PXL_20221215_011015207.MP.jpg", func(t *testing.T) {
+		// input image file
+		fileName := filepath.Join(
+			conf.ExamplesPath(),
+			"PXL_20221215_011015207.MP.jpg",
+		)
+
+		// expected output video file
+		outputName := filepath.Join(
+			conf.SidecarPath(), "PXL_20221215_011015207.MP.mp4",
+		)
+
+		mf, err := NewMediaFile(fileName)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if embeddedVideoName, err := mf.ExtractEmbeddedVideo(); err != nil {
+			t.Fatal(err)
+		} else if embeddedVideoName == "" {
+			t.Errorf("expected embeddedVideoName to exist")
+		} else {
+			t.Logf(embeddedVideoName)
+			assert.Equal(t, embeddedVideoName, outputName)
+			assert.Truef(
+				t, fs.FileExists(embeddedVideoName),
+				"output file does not exist: %s", embeddedVideoName,
+			)
+
+			_ = os.Remove(outputName)
+		}
+	},
 	)
 }
