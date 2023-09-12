@@ -347,3 +347,34 @@ func TestSubject_RefreshPhotos(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestSubject_DeletePermanently(t *testing.T) {
+	m := NewSubject("Tim Doe", SubjPerson, SrcAuto)
+
+	if err := m.Save(); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, "Tim Doe", m.SubjName)
+	assert.Empty(t, m.DeletedAt)
+	assert.NotEmpty(t, FindSubject(m.SubjUID))
+
+	assert.Nil(t, m.DeletePermanently())
+
+	time := TimeStamp()
+	m.DeletedAt = &time
+
+	if err := m.Save(); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotEmpty(t, m.DeletedAt)
+	assert.NotEmpty(t, FindSubject(m.SubjUID))
+
+	if err := m.DeletePermanently(); err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotEmpty(t, m.DeletedAt)
+	assert.Empty(t, FindSubject(m.SubjUID))
+}
