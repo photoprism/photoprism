@@ -143,15 +143,15 @@ func TestFindPassword(t *testing.T) {
 }
 
 func TestPassword_Cost(t *testing.T) {
-	t.Run("Default", func(t *testing.T) {
+	t.Run("DefaultPasswordCost", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "photoprism", false)
 		if cost, err := p.Cost(); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Equal(t, PasswordCost, cost)
+			assert.Equal(t, DefaultPasswordCost, cost)
 		}
 	})
-	t.Run("14", func(t *testing.T) {
+	t.Run("PasswordCost14", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "$2a$14$qCcNjxupSJV1gjhgdYxz8e9l0e0fTZosX0s0qhMK54IkI9YOyWLt2", true)
 		if cost, err := p.Cost(); err != nil {
 			t.Fatal(err)
@@ -159,7 +159,7 @@ func TestPassword_Cost(t *testing.T) {
 			assert.Equal(t, 14, cost)
 		}
 	})
-	t.Run("empty password", func(t *testing.T) {
+	t.Run("EmptyPassword", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "", false)
 		_, err := p.Cost()
 		assert.Error(t, err)
@@ -167,18 +167,18 @@ func TestPassword_Cost(t *testing.T) {
 }
 
 func TestPassword_String(t *testing.T) {
-	t.Run("return string", func(t *testing.T) {
+	t.Run("BCrypt", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu", false)
 		assert.Len(t, p.String(), 60)
 	})
 }
 
 func TestPassword_IsEmpty(t *testing.T) {
-	t.Run("false", func(t *testing.T) {
+	t.Run("False", func(t *testing.T) {
 		p := NewPassword("urrwaxd19ldtz68x", "lkjhgtyu", false)
 		assert.False(t, p.IsEmpty())
 	})
-	t.Run("true", func(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
 		p := Password{}
 		assert.True(t, p.IsEmpty())
 	})
