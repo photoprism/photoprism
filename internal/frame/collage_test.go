@@ -60,7 +60,7 @@ func TestCollage(t *testing.T) {
 		_ = os.Remove(saveName)
 	})
 
-	t.Run("No images", func(t *testing.T) {
+	t.Run("NoImages", func(t *testing.T) {
 		var images []image.Image
 
 		saveName := "testdata/test-no-images-collage.jpg"
@@ -77,7 +77,7 @@ func TestCollage(t *testing.T) {
 		_ = os.Remove(saveName)
 	})
 
-	t.Run("Unknown collage type", func(t *testing.T) {
+	t.Run("UnknownCollageType", func(t *testing.T) {
 		var images []image.Image
 
 		img, err := imaging.Open("testdata/500x500.jpg")

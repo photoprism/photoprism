@@ -16,13 +16,13 @@ func TestRandomAngle(t *testing.T) {
 			assert.GreaterOrEqual(t, a, -1*e)
 		}
 	})
-	t.Run("max<0", func(t *testing.T) {
+	t.Run("MaxTooLow", func(t *testing.T) {
 		e := float64(-35)
 		a := RandomAngle(e)
 		assert.GreaterOrEqual(t, a, e)
 		assert.LessOrEqual(t, a, -1*e)
 	})
-	t.Run("max>180", func(t *testing.T) {
+	t.Run("MaxTooHigh", func(t *testing.T) {
 		e := float64(200)
 		a := RandomAngle(e)
 		assert.LessOrEqual(t, a, e)
