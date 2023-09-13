@@ -374,7 +374,11 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	if jsonValues["EmbeddedVideoOffset"].Exists() {
 		if val := jsonValues["EmbeddedVideoOffset"].Int(); val > 0 {
-			data.EmbeddedVideoOffset = int(val)
+			data.EmbeddedVideoOffset = int64(val)
+		}
+	} else if jsonValues["MicroVideoOffset"].Exists() {
+		if val := jsonValues["MicroVideoOffset"].Int(); val > 0 {
+			data.EmbeddedVideoOffset = int64(val)
 		}
 	}
 

@@ -66,7 +66,7 @@ type Data struct {
 	Views               int           `meta:"-"`
 	Albums              []string      `meta:"-"`
 	EmbeddedVideo       string        `meta:"-"`
-	EmbeddedVideoOffset int           `meta:"-"`
+	EmbeddedVideoOffset int64         `meta:"-"`
 	Error               error         `meta:"-"`
 	json                map[string]string
 	exif                map[string]string
@@ -140,4 +140,8 @@ func (data Data) ActualHeight() int {
 // CellID returns the S2 cell ID.
 func (data Data) CellID() string {
 	return s2.PrefixedToken(float64(data.Lat), float64(data.Lng))
+}
+
+func (data Data) HasEmbeddedVideo() bool {
+	return data.EmbeddedVideo != "" || data.EmbeddedVideoOffset > 0
 }

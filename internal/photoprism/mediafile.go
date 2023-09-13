@@ -386,7 +386,8 @@ func (m *MediaFile) ExtractEmbeddedVideo() (string, error) {
 			return "", fmt.Errorf("Failed to extract embedded video for %s : %w", m.FileName(), err)
 		}
 
-		reader := io.NewSectionReader(srcFile, int64(metaData.EmbeddedVideoOffset), m.FileSize())
+		videoStart := m.FileSize() - metaData.EmbeddedVideoOffset
+		reader := io.NewSectionReader(srcFile, videoStart, m.FileSize())
 		dstFile, err := os.Create(dstPath)
 		if err != nil {
 			return "", fmt.Errorf("Failed to extract embedded video for %s : %w", m.FileName(), err)
@@ -825,15 +826,13 @@ func (m *MediaFile) IsWebP() bool {
 	return m.MimeType() == fs.MimeTypeWebP
 }
 
-// IsGoogleMotionPhoto checks if the file matches naming convention for a Google Pixel Motion Photo.
-// Google motion photos have a file name pattern of PXL_XXX_XXX.MP.jpg example: PXL_20200819_155830631.MP.jpg
-func (m *MediaFile) IsGoogleMotionPhoto() bool {
+func (m *MediaFile) IsMotionPhoto() bool {
 	if !m.IsJpeg() {
 		return false
 	}
 
-	photoName := m.BaseName()
-	return strings.HasPrefix(photoName, "PXL") && strings.HasSuffix(photoName, ".MP"+m.Extension())
+	metadata := m.MetaData()
+	return metadata.HasEmbeddedVideo()
 }
 
 // Duration returns the duration if the file is a video.

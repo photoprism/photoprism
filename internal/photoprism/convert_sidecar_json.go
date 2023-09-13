@@ -43,10 +43,14 @@ func execExifTool(conf *config.Config, filename string, arguments ...string) (ou
 	return out, err
 }
 
-func injectMotionVideoOffset(conf *config.Config, f *MediaFile, exifJsonOutput string) (output string, err error) {
+// Google motion photos have a duplicate key for DirectoryItemLength
+// when using exifTool in json mode, only the first one is outputted
+// This will read the value of the second one, use it to calculate the mp4
+// offset and inject it under a new key of EmbeddedVideoOffset
+func injectMotionVideoOffset(conf *config.Config, f *MediaFile, exifJson []map[string]interface{}) (output string, err error) {
 	rawOutput, err := execExifTool(conf, f.FileName(), "-a", "-DirectoryItemLength", "-m", "-n")
 	if err != nil {
-		return exifJsonOutput, err
+		return "", err
 	}
 	scanner := bufio.NewScanner(&rawOutput)
 
@@ -66,17 +70,13 @@ func injectMotionVideoOffset(conf *config.Config, f *MediaFile, exifJsonOutput s
 			}
 		}
 	}
+	// a proper motion photo should have two DirectoryItemLength keys, the secone one is for the video
 	if maxLength < 1 || iterations < 2 {
-		return exifJsonOutput, errors.New("exiftool: did not find valid DirectoryItemLength data for video offset for google motion photo")
+		return "", errors.New("exiftool: did not find valid DirectoryItemLength data for video offset for google motion photo")
 	}
 
-	var mapSlice []map[string]interface{}
-	if err := json.Unmarshal([]byte(exifJsonOutput), &mapSlice); err != nil {
-		return exifJsonOutput, err
-	}
-
-	mapSlice[0]["EmbeddedVideoOffset"] = f.FileSize() - int64(maxLength)
-	json, err := json.MarshalIndent(mapSlice, "", " ")
+	exifJson[0]["EmbeddedVideoOffset"] = int64(maxLength)
+	json, err := json.MarshalIndent(exifJson, "", " ")
 	return string(json), err
 }
 
@@ -105,12 +105,16 @@ func (c *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 
 	outputString := out.String()
 
-	if f.IsGoogleMotionPhoto() {
-		injectedJson, err := injectMotionVideoOffset(c.conf, f, outputString)
-		if err != nil {
-			log.Infof("exiftool: Failed to extract video offset for %s ignoring. %s", clean.Log(f.RootRelName()), err.Error())
-		} else {
-			outputString = injectedJson
+	// if a google motion photo parse out second DirectoryItemLength
+	var exifJson []map[string]interface{}
+	if err := json.Unmarshal([]byte(outputString), &exifJson); err == nil && len(exifJson) > 0 {
+
+		if _, ok := exifJson[0]["MotionPhoto"]; ok {
+			if injectedJson, err := injectMotionVideoOffset(c.conf, f, exifJson); err != nil {
+				log.Infof("exiftool: Failed to extract video offset for %s ignoring. %s", clean.Log(f.RootRelName()), err.Error())
+			} else {
+				outputString = injectedJson
+			}
 		}
 	}
 

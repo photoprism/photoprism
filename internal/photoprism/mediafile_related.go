@@ -99,7 +99,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			result.Main = f
 		} else if f.IsImage() && !f.IsPreviewImage() {
 			result.Main = f
-		} else if f.IsVideo() && !isHEIC && !m.IsGoogleMotionPhoto() {
+		} else if f.IsVideo() && !isHEIC && !m.IsMotionPhoto() {
 			result.Main = f
 		} else if result.Main != nil && f.IsPreviewImage() {
 			if result.Main.IsPreviewImage() && len(result.Main.FileName()) > len(f.FileName()) {

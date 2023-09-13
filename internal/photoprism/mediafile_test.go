@@ -1575,7 +1575,7 @@ func TestMediaFile_IsAnimated(t *testing.T) {
 	})
 }
 
-func TestMediaFile_IsGoogleMotionPhoto(t *testing.T) {
+func TestMediaFile_IsMotionPhoto(t *testing.T) {
 	conf := config.TestConfig()
 
 	t.Run("iphone_7.json", func(t *testing.T) {
@@ -1583,28 +1583,35 @@ func TestMediaFile_IsGoogleMotionPhoto(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, false, mediaFile.IsGoogleMotionPhoto())
+		assert.Equal(t, false, mediaFile.IsMotionPhoto())
 	})
 	t.Run("iphone_7.heic", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, false, mediaFile.IsGoogleMotionPhoto())
+		assert.Equal(t, false, mediaFile.IsMotionPhoto())
 	})
 	t.Run("elephants.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/elephants.jpg")
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, false, mediaFile.IsGoogleMotionPhoto())
+		assert.Equal(t, false, mediaFile.IsMotionPhoto())
 	})
 	t.Run("PXL_20221215_011015207.MP.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/PXL_20221215_011015207.MP.jpg")
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, true, mediaFile.IsGoogleMotionPhoto())
+		assert.Equal(t, true, mediaFile.IsMotionPhoto())
+	})
+	t.Run("samsung-motion-photo.jpg", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/PXL_20221215_011015207.MP.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Equal(t, true, mediaFile.IsMotionPhoto())
 	})
 }
 
