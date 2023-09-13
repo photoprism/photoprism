@@ -1607,7 +1607,7 @@ func TestMediaFile_IsMotionPhoto(t *testing.T) {
 		assert.Equal(t, true, mediaFile.IsMotionPhoto())
 	})
 	t.Run("samsung-motion-photo.jpg", func(t *testing.T) {
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/PXL_20221215_011015207.MP.jpg")
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/samsung-motion-photo.jpg")
 		if err != nil {
 			t.Fatal(err)
 		}
