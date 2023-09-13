@@ -198,21 +198,21 @@ func TestData_IsHDR(t *testing.T) {
 func TestData_HasEmeddedVideo(t *testing.T) {
 	t.Run("EmbeddedVideo", func(t *testing.T) {
 		data := Data{
-			EmbeddedVideo: "exists"
+			EmbeddedVideo: "exists",
 		}
 
 		assert.True(t, data.HasEmbeddedVideo())
 	})
 	t.Run("EmbeddedVideoOffset", func(t *testing.T) {
 		data := Data{
-			EmbeddedVideoOffset: 34
+			EmbeddedVideoOffset: 34,
 		}
 
 		assert.True(t, data.HasEmbeddedVideo())
 	})
-		t.Run("false", func(t *testing.T) {
+	t.Run("false", func(t *testing.T) {
 		data := Data{
-			ImageType: 2
+			ImageType: 2,
 		}
 
 		assert.False(t, data.HasEmbeddedVideo())

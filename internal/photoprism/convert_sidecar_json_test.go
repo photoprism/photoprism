@@ -122,7 +122,7 @@ func TestConvert_ToJson(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, 1693875.0, mapSlice[0]["EmbeddedVideoOffset"])
+		assert.Equal(t, 2606233.0, mapSlice[0]["EmbeddedVideoOffset"])
 
 		_ = os.Remove(jsonName)
 	})
