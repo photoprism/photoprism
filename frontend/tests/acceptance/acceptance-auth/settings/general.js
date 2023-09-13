@@ -303,6 +303,9 @@ test.meta("testID", "settings-general-005").meta({ type: "short", mode: "auth" }
 
     await photo.checkPhotoVisibility("pqnah1k2frui6p63", false);
 
+    await t.navigateTo("/library/archive");
+    await toolbar.checkToolbarActionAvailability("sweep", true);
+
     await menu.openPage("settings");
     await t
       .click(settings.archiveCheckbox)
@@ -340,6 +343,9 @@ test.meta("testID", "settings-general-005").meta({ type: "short", mode: "auth" }
     await toolbar.search("Archive / 2020");
 
     await photo.checkPhotoVisibility("pqnah1k2frui6p63", true);
+
+    await t.navigateTo("/library/archive");
+    await toolbar.checkToolbarActionAvailability("sweep", false);
 
     await menu.openPage("settings");
     await t
