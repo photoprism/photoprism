@@ -35,7 +35,6 @@ fi
 
 echo "Installing TestCafe..."
 npm config set cache ~/.cache/npm
-npm install --unsafe-perm=true --allow-root -g npm testcafe
-npm update --unsafe-perm=true --allow-root -g
+npm install --unsafe-perm=true --allow-root -g npm@latest testcafe@3.2.0
 
 echo "Done."
