@@ -54,6 +54,7 @@ all: dep build-js
 dep: dep-tensorflow dep-js
 biuld: build
 build: build-go
+build-all: build-go build-js
 pull: docker-pull
 test: test-js test-go
 test-go: reset-sqlite run-test-go
