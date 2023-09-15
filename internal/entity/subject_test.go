@@ -21,13 +21,13 @@ func TestNewSubject(t *testing.T) {
 		assert.Equal(t, "jens-mander", m.SubjSlug)
 		assert.Equal(t, "person", m.SubjType)
 	})
-	t.Run("subject Type empty", func(t *testing.T) {
+	t.Run("SubjectTypeEmpty", func(t *testing.T) {
 		m := NewSubject("Anna Mander", "", SrcAuto)
 		assert.Equal(t, "Anna Mander", m.SubjName)
 		assert.Equal(t, "anna-mander", m.SubjSlug)
 		assert.Equal(t, "person", m.SubjType)
 	})
-	t.Run("subject name empty", func(t *testing.T) {
+	t.Run("SubjectNameEmpty", func(t *testing.T) {
 		m := NewSubject("", "", SrcAuto)
 		assert.Nil(t, m)
 	})
@@ -62,10 +62,21 @@ func TestSubject_SetName(t *testing.T) {
 		assert.Equal(t, "name must not be empty", err.Error())
 		assert.Equal(t, "Jens Mander", m.SubjName)
 	})
+	t.Run("NoChange", func(t *testing.T) {
+		m := NewSubject("Anna Mander", SubjPerson, SrcAuto)
+
+		assert.Equal(t, "Anna Mander", m.SubjName)
+
+		if err := m.SetName("Anna Mander"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Anna Mander", m.SubjName)
+	})
 }
 
 func TestFirstOrCreatePerson(t *testing.T) {
-	t.Run("not yet existing person", func(t *testing.T) {
+	t.Run("NotYetExistingPerson", func(t *testing.T) {
 		m := NewSubject("Create Me", SubjPerson, SrcAuto)
 		result := FirstOrCreateSubject(m)
 
@@ -76,7 +87,7 @@ func TestFirstOrCreatePerson(t *testing.T) {
 		assert.Equal(t, "Create Me", m.SubjName)
 		assert.Equal(t, "create-me", m.SubjSlug)
 	})
-	t.Run("existing person", func(t *testing.T) {
+	t.Run("ExistingPerson", func(t *testing.T) {
 		m := SubjectFixtures.Pointer("john-doe")
 		result := FirstOrCreateSubject(m)
 
@@ -91,7 +102,7 @@ func TestFirstOrCreatePerson(t *testing.T) {
 }
 
 func TestSubject_Save(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Save Me", SubjPerson, SrcAuto)
 		initialDate := m.UpdatedAt
 		err := m.Save()
@@ -108,7 +119,7 @@ func TestSubject_Save(t *testing.T) {
 }
 
 func TestSubject_Delete(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Jens Mander", SubjPerson, SrcAuto)
 		err := m.Save()
 		assert.False(t, m.Deleted())
@@ -132,10 +143,26 @@ func TestSubject_Delete(t *testing.T) {
 
 		assert.Len(t, subj, 0)
 	})
+	t.Run("AlreadyDeleted", func(t *testing.T) {
+		m := NewSubject("Jens Doe", SubjPerson, SrcAuto)
+
+		err := m.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, m.Deleted())
+
+		time := TimeStamp()
+		m.DeletedAt = &time
+
+		assert.True(t, m.Deleted())
+
+		assert.Nil(t, m.Delete())
+	})
 }
 
 func TestSubject_Restore(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
 
 		m := &Subject{DeletedAt: &deleteTime, SubjType: SubjPerson, SubjName: "ToBeRestored"}
@@ -151,7 +178,7 @@ func TestSubject_Restore(t *testing.T) {
 		}
 		assert.False(t, m.Deleted())
 	})
-	t.Run("subject not deleted", func(t *testing.T) {
+	t.Run("SubjectNotDeleted", func(t *testing.T) {
 		m := &Subject{DeletedAt: nil, SubjType: SubjPerson, SubjName: "NotDeleted1234"}
 		err := m.Restore()
 		if err != nil {
@@ -162,7 +189,7 @@ func TestSubject_Restore(t *testing.T) {
 }
 
 func TestFindSubject(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Find Me", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
@@ -179,18 +206,49 @@ func TestFindSubject(t *testing.T) {
 			t.Fatal("result must not be nil")
 		}
 	})
-	t.Run("nil", func(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
 		r := FindSubject("XXX")
 		assert.Nil(t, r)
 	})
-	t.Run("empty uid", func(t *testing.T) {
+	t.Run("EmptyUid", func(t *testing.T) {
 		r := FindSubject("")
 		assert.Nil(t, r)
 	})
 }
 
+func TestFindSubjectByName(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		r := FindSubjectByName("John Doe", false)
+		assert.Equal(t, "John Doe", r.SubjName)
+	})
+	t.Run("NameEmpty", func(t *testing.T) {
+		assert.Nil(t, FindSubjectByName("", false))
+	})
+	t.Run("RestoreDeleted", func(t *testing.T) {
+		m := NewSubject("Jim Doe", SubjPerson, SrcAuto)
+
+		time := TimeStamp()
+		m.DeletedAt = &time
+
+		err := m.Save()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, m.Deleted())
+
+		r := FindSubjectByName("Jim Doe", false)
+		assert.Equal(t, "Jim Doe", r.SubjName)
+		assert.True(t, r.Deleted())
+
+		r = FindSubjectByName("Jim Doe", true)
+		assert.Equal(t, "Jim Doe", r.SubjName)
+		assert.False(t, r.Deleted())
+	})
+}
+
 func TestSubject_Links(t *testing.T) {
-	t.Run("no-result", func(t *testing.T) {
+	t.Run("NoResult", func(t *testing.T) {
 		m := SubjectFixtures.Pointer("john-doe")
 		links := m.Links()
 		assert.Empty(t, links)
@@ -198,7 +256,7 @@ func TestSubject_Links(t *testing.T) {
 }
 
 func TestSubject_Update(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Update Me", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
@@ -216,7 +274,7 @@ func TestSubject_Update(t *testing.T) {
 
 // TODO fails on mariadb
 func TestSubject_Updates(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Update Me", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
@@ -255,7 +313,7 @@ func TestSubject_Visible(t *testing.T) {
 }
 
 func TestSubject_SaveForm(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		subj := NewSubject("Save Form Test", SubjPerson, SrcManual)
 
 		assert.Equal(t, "Save Form Test", subj.SubjName)
@@ -275,6 +333,7 @@ func TestSubject_SaveForm(t *testing.T) {
 
 		subjForm.SubjName = "Bill Gates III"
 		subjForm.SubjHidden = true
+		subjForm.SubjFavorite = true
 
 		t.Logf("Subject Form: %#v", subjForm)
 
@@ -287,16 +346,39 @@ func TestSubject_SaveForm(t *testing.T) {
 		assert.Equal(t, "Bill Gates III", subj.SubjName)
 		assert.Equal(t, "bill-gates-iii", subj.SubjSlug)
 		assert.Equal(t, true, subj.SubjHidden)
+		assert.Equal(t, true, subj.SubjFavorite)
 		assert.Equal(t, true, subj.IsPerson())
 
 		if err := subj.Delete(); err != nil {
 			t.Fatal(err)
 		}
 	})
+	t.Run("NoUid", func(t *testing.T) {
+		subj := NewSubject("No Uid", SubjPerson, SrcManual)
+
+		assert.Equal(t, true, subj.IsPerson())
+
+		if err := subj.Create(); err != nil {
+			t.Fatal(err)
+		}
+
+		subjForm, err := form.NewSubject(subj)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		subj.SubjUID = ""
+
+		changed, err := subj.SaveForm(subjForm)
+
+		assert.Contains(t, err.Error(), "no uid")
+		assert.False(t, changed)
+	})
 }
 
 func TestSubject_UpdateName(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Test Person", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
@@ -317,7 +399,37 @@ func TestSubject_UpdateName(t *testing.T) {
 			assert.Equal(t, "new-new", s.SubjSlug)
 		}
 	})
-	t.Run("empty name", func(t *testing.T) {
+	t.Run("SubjNameEmpty", func(t *testing.T) {
+		m := NewSubject("Empty", SubjPerson, SrcAuto)
+
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		m.SubjName = ""
+
+		assert.Equal(t, "", m.SubjName)
+
+		s, err := m.UpdateName("hans")
+		assert.Equal(t, "", s.SubjName)
+		assert.Error(t, err)
+	})
+	t.Run("SubjUidEmpty", func(t *testing.T) {
+		m := NewSubject("Janet", SubjPerson, SrcAuto)
+
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		m.SubjUID = ""
+
+		assert.Equal(t, "", m.SubjUID)
+
+		s, err := m.UpdateName("hans")
+		assert.Equal(t, "", s.SubjUID)
+		assert.Error(t, err)
+	})
+	t.Run("EmptyName", func(t *testing.T) {
 		m := NewSubject("Test Person2", SubjPerson, SrcAuto)
 
 		if err := m.Save(); err != nil {
