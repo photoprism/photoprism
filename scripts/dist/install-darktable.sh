@@ -32,6 +32,11 @@ case $DESTARCH in
       curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_22.04/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
       apt-get update
       apt-get -qq install darktable
+    elif [[ $VERSION_CODENAME == "lunar" ]]; then
+      echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_23.04/ /' | sudo tee /etc/apt/sources.list.d/graphics:darktable.list
+      curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_23.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
+      sudo apt update
+      sudo apt install darktable
     elif [[ $VERSION_CODENAME == "bullseye" ]]; then
       apt-get update
       apt-get -qq install -t bullseye-backports darktable
