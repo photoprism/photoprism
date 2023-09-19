@@ -543,17 +543,28 @@ export default {
       return value;
     },
     updateMarkers() {
-      if (this.loading) return;
+      // Busy loading data from the server?
+      if (this.loading) {
+        // Skip updating map markers.
+        return;
+      }
+
       let newMarkers = {};
+
+      // Get map features from the "photos" layer.
       let features = this.map.querySourceFeatures("photos");
+
+      // Get API token required to show thumbnails.
       let token = this.$config.previewToken;
 
+      // Loop through photos and clusters.
       for (let i = 0; i < features.length; i++) {
         let coords = features[i].geometry.coordinates;
         let props = features[i].properties;
 
+        // Is it a cluster?
         if (props.cluster) {
-          // Clusters.
+          // Update cluster marker.
           let id = -1*props.cluster_id;
 
           let marker = this.markers[id];
@@ -610,7 +621,7 @@ export default {
             marker.addTo(this.map);
           }
         } else {
-          // Pictures.
+          // Update photo marker.
           let id = features[i].id;
 
           let marker = this.markers[id];
@@ -638,12 +649,14 @@ export default {
         }
       }
 
+      // Hide markers that are not currently visible.
       for (let id in this.markersOnScreen) {
         if (!newMarkers[id]) {
           this.markersOnScreen[id].remove();
         }
       }
 
+      // Remember the markers displayed on the map.
       this.markersOnScreen = newMarkers;
     },
     onMapLoad() {
