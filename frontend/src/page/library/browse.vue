@@ -217,7 +217,10 @@ export default {
         // Open Edit Dialog
         Event.publish("dialog.edit", {selection: [model.PhotoUID], album: null, index: 0});
       } else {
-        this.$router.push({path: '/index/files/' + model.Path});
+        // "#" chars in path names must be explicitly escaped,
+        // see https://github.com/photoprism/photoprism/issues/3695
+        const path = model.Path.replaceAll(":", "%3A").replaceAll("#", "%23");
+        this.$router.push({path: '/index/files/' + path});
       }
     },
     downloadFile(index) {
