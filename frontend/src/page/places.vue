@@ -1,23 +1,22 @@
 <template>
   <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
-    <div id="map" style="width: 100%; height: 100%;">
-      <div v-if="canSearch" class="map-control">
-        <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
-          <v-text-field v-model.lazy.trim="filter.q"
-                        solo hide-details clearable flat single-line validate-on-blur
-                        class="input-search pa-0 ma-0"
-                        :label="$gettext('Search')"
-                        prepend-inner-icon="search"
-                        browser-autocomplete="off"
-                        autocorrect="off"
-                        autocapitalize="none"
-                        color="secondary-dark"
-                        @click:clear="clearQuery"
-                        @keyup.enter.native="formChange"
-          ></v-text-field>
-        </div>
+    <div v-if="canSearch" class="map-control search-control">
+      <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
+        <v-text-field v-model.lazy.trim="filter.q"
+                      solo hide-details clearable flat single-line validate-on-blur
+                      class="input-search pa-0 ma-0"
+                      :label="$gettext('Search')"
+                      prepend-inner-icon="search"
+                      browser-autocomplete="off"
+                      autocorrect="off"
+                      autocapitalize="none"
+                      color="secondary-dark"
+                      @click:clear="clearQuery"
+                      @keyup.enter.native="formChange"
+        ></v-text-field>
       </div>
     </div>
+    <div id="map" ref="map" style="width: 100%; height: 100%;"></div>
     <v-dialog v-model="showClusterPictures" overflowed width="100%">
       <v-card min-height="80vh">
         <p-page-photos
@@ -36,6 +35,7 @@ import maplibregl from "maplibre-gl";
 import Api from "common/api";
 import Thumb from "model/thumb";
 import PPagePhotos from 'page/photos.vue';
+import MapStyleControl from 'component/places/style-control';
 
 export default {
   name: 'PPagePlaces',
@@ -59,8 +59,8 @@ export default {
       markersOnScreen: {},
       clusterIds: [],
       loading: false,
-      markerPromise: null,
       style: "",
+      mapStyles: [],
       terrain: {
         'topo-v2': 'terrain_rgb',
         'outdoor-v2': 'terrain-rgb',
@@ -122,169 +122,222 @@ export default {
     }
   },
   mounted() {
-    this.configureMap().then(() => this.renderMap());
+    this.initMap().then(() => this.renderMap());
     this.updateSelectedClusterFromUrl();
   },
   methods: {
-    configureMap() {
+    initMap() {
       return this.$config.load().finally(() => {
-        const s = this.$config.values.settings.maps;
-        const filter = {
-          q: this.query(),
-          s: this.scope(),
-        };
+        this.configureMap(this.$config.values.settings.maps.style);
+        return Promise.resolve();
+      });
+    },
+    setStyle(style) {
+      if (this.loading) {
+        return false;
+      }
 
-        let mapKey = "";
+      this.$notify.blockUI();
 
-        if (this.$config.has("mapKey")) {
-          // Remove non-alphanumeric characters from key.
-          mapKey = this.$config.get("mapKey").replace(/[^a-z0-9]/gi, '');
-        }
+      this.lastFilter = {};
+      this.initialized = false;
+      this.$refs.map.innerHTML = '';
 
-        const settings = this.$config.settings();
+      this.configureMap(style);
+      this.renderMap();
 
-        if (settings && settings.features.private) {
-          filter.public = "true";
-        }
+      this.$notify.unblockUI();
 
-        if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
-          filter.quality = "3";
-        }
+      return true;
+    },
+    configureMap(style) {
+      const filter = {
+        q: this.query(),
+        s: this.scope(),
+      };
 
-        switch (s.style) {
-          case "basic":
-          case "offline":
-            this.style = "";
-            break;
-          case "hybrid":
-            this.style = "414c531c-926d-4164-a057-455a215c0eee";
-            break;
-          case "outdoor":
-            this.style = "outdoor-v2";
-            break;
-          case "topographique":
-            this.style = "topo-v2";
-            break;
-          default:
-            this.style = s.style;
-        }
+      let mapKey = "";
 
-        if (!mapKey && this.style !== "low-resolution") {
+      if (this.$config.has("mapKey")) {
+        // Remove non-alphanumeric characters from key.
+        mapKey = this.$config.get("mapKey").replace(/[^a-z0-9]/gi, '');
+      }
+
+      const settings = this.$config.settings();
+
+      if (settings && settings.features.private) {
+        filter.public = "true";
+      }
+
+      if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
+        filter.quality = "3";
+      }
+
+      switch (style) {
+        case "basic":
+        case "offline":
           this.style = "";
-        }
+          break;
+        case "hybrid":
+          this.style = "414c531c-926d-4164-a057-455a215c0eee";
+          break;
+        case "outdoor":
+          this.style = "outdoor-v2";
+          break;
+        case "topographique":
+          this.style = "topo-v2";
+          break;
+        case "":
+          this.style = "default";
+          break;
+        default:
+          this.style = style;
+      }
 
-        let mapOptions = {
+      if (!mapKey && this.style !== "low-resolution") {
+        this.style = "default";
+      }
+
+      // Set available map styles.
+      this.mapStyles = [
+        {
+          title: this.$gettext("Default"),
+          style: "default",
+        },
+      ];
+
+      if (mapKey) {
+        this.mapStyles.push(
+          {
+            title: this.$gettext("Streets"),
+            style: "streets",
+          },
+          {
+            title: this.$gettext("Satellite"),
+            style: "414c531c-926d-4164-a057-455a215c0eee",
+          },
+          {
+            title: this.$gettext("Outdoor"),
+            style: "outdoor-v2",
+          },
+          {
+            title: this.$gettext("Topographic"),
+            style: "topo-v2",
+          },
+        );
+      }
+
+      let mapOptions = {
+        container: "map",
+        style: "https://api.maptiler.com/maps/" + this.style + "/style.json?key=" + mapKey,
+        glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=" + mapKey,
+        attributionControl: true,
+        customAttribution: this.attribution,
+        zoom: 0,
+      };
+
+      if (this.style === "" || this.style === "default") {
+        mapOptions = {
           container: "map",
-          style: "https://api.maptiler.com/maps/" + this.style + "/style.json?key=" + mapKey,
-          glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=" + mapKey,
+          style: "https://cdn.photoprism.app/maps/default.json",
+          glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
           attributionControl: true,
-          customAttribution: this.attribution,
           zoom: 0,
         };
-
-        if (this.style === "") {
-          mapOptions = {
-            container: "map",
-            style: "https://cdn.photoprism.app/maps/default.json",
-            glyphs: `https://cdn.photoprism.app/maps/font/{fontstack}/{range}.pbf`,
-            attributionControl: true,
-            zoom: 0,
-          };
-        } else if (this.style === "low-resolution") {
-          mapOptions = {
-            container: "map",
-            style: {
-              "version": 8,
-              "sources": {
-                "world": {
-                  "type": "geojson",
-                  "data": `${this.$config.staticUri}/geo/world.json`,
-                  "maxzoom": 6
+      } else if (this.style === "low-resolution") {
+        mapOptions = {
+          container: "map",
+          style: {
+            "version": 8,
+            "sources": {
+              "world": {
+                "type": "geojson",
+                "data": `${this.$config.staticUri}/geo/world.json`,
+                "maxzoom": 6
+              }
+            },
+            "glyphs": `${this.$config.staticUri}/font/{fontstack}/{range}.pbf`,
+            "layers": [
+              {
+                "id": "background",
+                "type": "background",
+                "paint": {
+                  "background-color": "#aadafe"
                 }
               },
-              "glyphs": `${this.$config.staticUri}/font/{fontstack}/{range}.pbf`,
-              "layers": [
-                {
-                  "id": "background",
-                  "type": "background",
-                  "paint": {
-                    "background-color": "#aadafe"
+              {
+                id: "land",
+                type: "fill",
+                source: "world",
+                // "source-layer": "land",
+                paint: {
+                  "fill-color": "#cbe5ca",
+                },
+              },
+              {
+                "id": "country-abbrev",
+                "type": "symbol",
+                "source": "world",
+                "maxzoom": 3,
+                "layout": {
+                  "text-field": "{abbrev}",
+                  "text-font": ["Open Sans Semibold"],
+                  "text-transform": "uppercase",
+                  "text-max-width": 20,
+                  "text-size": {
+                    "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
+                  },
+                  "text-letter-spacing": {
+                    "stops": [[4, 0], [5, 1], [6, 2]]
+                  },
+                  "text-line-height": {
+                    "stops": [[5, 1.2], [6, 2]]
                   }
                 },
-                {
-                  id: "land",
-                  type: "fill",
-                  source: "world",
-                  // "source-layer": "land",
-                  paint: {
-                    "fill-color": "#cbe5ca",
-                  },
+                "paint": {
+                  "text-halo-color": "#fff",
+                  "text-halo-width": 1
                 },
-                {
-                  "id": "country-abbrev",
-                  "type": "symbol",
-                  "source": "world",
-                  "maxzoom": 3,
-                  "layout": {
-                    "text-field": "{abbrev}",
-                    "text-font": ["Open Sans Semibold"],
-                    "text-transform": "uppercase",
-                    "text-max-width": 20,
-                    "text-size": {
-                      "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
-                    },
-                    "text-letter-spacing": {
-                      "stops": [[4, 0], [5, 1], [6, 2]]
-                    },
-                    "text-line-height": {
-                      "stops": [[5, 1.2], [6, 2]]
-                    }
-                  },
-                  "paint": {
-                    "text-halo-color": "#fff",
-                    "text-halo-width": 1
-                  },
-                },
-                {
-                  "id": "country-border",
-                  "type": "line",
-                  "source": "world",
-                  "paint": {
-                    "line-color": "#226688",
-                    "line-opacity": 0.25,
-                    "line-dasharray": [6, 2, 2, 2],
-                    "line-width": 1.2
+              },
+              {
+                "id": "country-border",
+                "type": "line",
+                "source": "world",
+                "paint": {
+                  "line-color": "#226688",
+                  "line-opacity": 0.25,
+                  "line-dasharray": [6, 2, 2, 2],
+                  "line-width": 1.2
+                }
+              },
+              {
+                "id": "country-name",
+                "type": "symbol",
+                "minzoom": 3,
+                "source": "world",
+                "layout": {
+                  "text-field": "{name}",
+                  "text-font": ["Open Sans Semibold"],
+                  "text-max-width": 20,
+                  "text-size": {
+                    "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
                   }
                 },
-                {
-                  "id": "country-name",
-                  "type": "symbol",
-                  "minzoom": 3,
-                  "source": "world",
-                  "layout": {
-                    "text-field": "{name}",
-                    "text-font": ["Open Sans Semibold"],
-                    "text-max-width": 20,
-                    "text-size": {
-                      "stops": [[3, 10], [4, 11], [5, 12], [6, 16]]
-                    }
-                  },
-                  "paint": {
-                    "text-halo-color": "#fff",
-                    "text-halo-width": 1
-                  },
+                "paint": {
+                  "text-halo-color": "#fff",
+                  "text-halo-width": 1
                 },
-              ],
-            },
-            attributionControl: false,
-            customAttribution: '',
-            zoom: 0,
-          };
-        }
+              },
+            ],
+          },
+          attributionControl: false,
+          customAttribution: '',
+          zoom: 0,
+        };
+      }
 
-        this.filter = filter;
-        this.options = mapOptions;
-      });
+      this.filter = filter;
+      this.options = mapOptions;
     },
     getSelectedClusterFromUrl() {
       const clusterIsSelected = this.$route.query.selectedCluster !== undefined
@@ -473,7 +526,7 @@ export default {
 
       const controlPos = this.$rtl ? 'top-left' : 'top-right';
 
-      // Show navigation control.
+      // Show map navigation control.
       this.map.addControl(new maplibregl.NavigationControl({
         visualizePitch: true,
         showZoom: true,
@@ -499,26 +552,20 @@ export default {
         trackUserLocation: true
       }), controlPos);
 
+      // Map style switcher control.
+      if (this.mapStyles.length > 1) {
+        this.map.addControl(new MapStyleControl(this.mapStyles, this.style, this.setStyle), this.$rtl ? 'bottom-left' : 'bottom-right');
+      }
+
+      // Show map scale control.
+      this.map.addControl(new maplibregl.ScaleControl({}), this.$rtl ? 'bottom-right' : 'bottom-left');
+
       this.map.on("load", () => this.onMapLoad());
     },
     getClusterFeatures(clusterId, limit, callback) {
       this.map.getSource('photos').getClusterLeaves(clusterId, limit, undefined, (error, clusterFeatures) => {
         callback(clusterFeatures);
       });
-    },
-    getMultipleClusterFeatures(clusterIds, callback) {
-      const result = {};
-      let handledClusterLeaveResultCount = 0;
-      for (const clusterId of clusterIds) {
-        this.getClusterFeatures(clusterId, 100, (clusterFeatures) => {
-          result[clusterId] = clusterFeatures;
-          handledClusterLeaveResultCount += 1;
-
-          if (handledClusterLeaveResultCount === clusterIds.length) {
-            callback(result);
-          }
-        });
-      }
     },
     getClusterSizeFromItemCount(itemCount) {
       if (itemCount >= 10000) {
