@@ -1,22 +1,24 @@
 <template>
   <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
-    <div v-if="canSearch" class="map-control search-control">
-      <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
-        <v-text-field v-model.lazy.trim="filter.q"
-                      solo hide-details clearable flat single-line validate-on-blur
-                      class="input-search pa-0 ma-0"
-                      :label="$gettext('Search')"
-                      prepend-inner-icon="search"
-                      browser-autocomplete="off"
-                      autocorrect="off"
-                      autocapitalize="none"
-                      color="secondary-dark"
-                      @click:clear="clearQuery"
-                      @keyup.enter.native="formChange"
-        ></v-text-field>
+    <div style="width: 100%; height: 100%; position: relative;">
+      <div v-if="canSearch" class="map-control search-control">
+        <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
+          <v-text-field v-model.lazy.trim="filter.q"
+                        solo hide-details clearable flat single-line validate-on-blur
+                        class="input-search pa-0 ma-0"
+                        :label="$gettext('Search')"
+                        prepend-inner-icon="search"
+                        browser-autocomplete="off"
+                        autocorrect="off"
+                        autocapitalize="none"
+                        color="secondary-dark"
+                        @click:clear="clearQuery"
+                        @keyup.enter.native="formChange"
+          ></v-text-field>
+        </div>
       </div>
+      <div id="map" ref="map" style="width: 100%; height: 100%;"></div>
     </div>
-    <div id="map" ref="map" style="width: 100%; height: 100%;"></div>
     <v-dialog v-model="showClusterPictures" overflowed width="100%">
       <v-card min-height="80vh">
         <p-page-photos
