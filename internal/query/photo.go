@@ -188,17 +188,17 @@ func FlagHiddenPhotos() (err error) {
 	if err = Db().Table(entity.Photo{}.TableName()).
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
 		Pluck("id", &hidden).Error; err != nil {
-		// Find failed.
+		// Find query failed.
 		return err
 	} else if n := len(hidden); n == 0 {
-		// Nothing to do.
+		// Nothing to update.
 		return nil
 	} else if err = Db().Table(entity.Photo{}.TableName()).Where("id IN (?)", hidden).UpdateColumn("photo_quality", -1).Error; err != nil {
+		// Update statement failed.
 		log.Warnf("index: failed to flag %d pictures as hidden", len(hidden))
-		// Update failed.
 		return err
 	} else {
-		// Log result.
+		// Log update result.
 		log.Infof("index: flagged %s as hidden [%s]", english.Plural(int(n), "photo", "photos"), time.Since(start))
 	}
 
