@@ -57,7 +57,7 @@
       <template v-else>
         <v-spacer></v-spacer>
         <v-btn v-if="canAccessLibrary" icon class="action-open-tab" @click.stop="openInTab">
-          <v-icon size="19">open_in_new</v-icon>
+          <v-icon size="20">open_in_new</v-icon>
         </v-btn>
         <v-btn v-if="onClose !== undefined" icon class="action-close" @click.stop="onClose">
           <v-icon>close</v-icon>
