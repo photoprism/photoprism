@@ -32,7 +32,7 @@
         </p>
 
         <v-layout wrap align-top class="pb-3">
-          <v-flex xs12 sm6 lg12 class="px-2 pb-2 pt-2">
+          <v-flex xs12 sm6 lg3 xl2 class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="settings.index.rescan"
               :disabled="busy || !ready"
@@ -46,7 +46,7 @@
             >
             </v-checkbox>
           </v-flex>
-          <v-flex v-if="isAdmin" xs12 sm6 lg12 class="px-2 pb-2 pt-2">
+          <v-flex v-if="isAdmin" xs12 sm6 lg3 xl2 class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="cleanup"
               :disabled="busy || !ready"
