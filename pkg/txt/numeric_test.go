@@ -148,6 +148,23 @@ func TestFloat(t *testing.T) {
 	})
 }
 
+func TestFloat32(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		result := Float32("")
+		assert.Equal(t, float32(0), result)
+	})
+
+	t.Run("LeadingZeros", func(t *testing.T) {
+		result := Float32(" 000123")
+		assert.Equal(t, float32(123), result)
+	})
+
+	t.Run("LongFloat", func(t *testing.T) {
+		result := Float32("123.87945632786543786547")
+		assert.Equal(t, float32(123.87945632786543786547), result)
+	})
+}
+
 func TestInt64(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		result := Int64("")
