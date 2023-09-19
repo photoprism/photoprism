@@ -676,6 +676,7 @@ export default {
       this.map.on('move', this.updateMarkers);
       this.map.on('moveend', this.updateMarkers);
       this.map.on('resize', this.updateMarkers);
+      this.map.on('idle', this.updateMarkers);
 
       // Load pictures.
       this.search();
