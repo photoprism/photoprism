@@ -13,8 +13,11 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -54,6 +57,9 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		log.Debugf("search: %s", err)
 		return PhotoResults{}, 0, ErrBadRequest
 	}
+
+	// Size of S2 Cells.
+	S2Levels := 7
 
 	// Specify table names and joins.
 	s := UnscopedDb().Table(entity.File{}.TableName()).Select(resultCols).
@@ -622,35 +628,46 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_f_number <= ?", f.Fmax)
 	}
 
+	// Filter by location.
+	if f.S2 != "" {
+		// S2 Cell ID.
+		s2Min, s2Max := s2.PrefixedRange(f.S2, S2Levels)
+		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
+	} else if f.OLC != "" {
+		// Open Location Code (OLC).
+		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.OLC), S2Levels)
+		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
+	} else if latNorth, lngEast, latSouth, lngWest, parseErr := clean.GPSBounds(f.LatLng); parseErr == nil {
+		// GPS Bounds (Lat N, Lng E, Lat S, Lng W).
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latNorth, latSouth)
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngEast, lngWest)
+	}
+
+	// Filter by approx distance to coordinates.
 	if f.Dist == 0 {
 		f.Dist = 20
 	} else if f.Dist > 5000 {
 		f.Dist = 5000
 	}
 
-	// Filter by approx distance to co-ordinates:
 	if f.Lat != 0 {
-		latMin := f.Lat - Radius*float32(f.Dist)
-		latMax := f.Lat + Radius*float32(f.Dist)
-		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
+		latNorth := f.Lat - Radius*float32(f.Dist)
+		latSouth := f.Lat + Radius*float32(f.Dist)
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latNorth, latSouth)
 	}
+
 	if f.Lng != 0 {
-		lngMin := f.Lng - Radius*float32(f.Dist)
-		lngMax := f.Lng + Radius*float32(f.Dist)
-		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
+		lngEast := f.Lng - Radius*float32(f.Dist)
+		lngWest := f.Lng + Radius*float32(f.Dist)
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngEast, lngWest)
 	}
 
-	if f.Latmin != 0 && f.Latmax != 0 {
-		s = s.Where("photos.photo_lat BETWEEN ? AND ?", f.Latmin, f.Latmax)
-	}
-	if f.Lngmin != 0 && f.Lngmax != 0 {
-		s = s.Where("photos.photo_lng BETWEEN ? AND ?", f.Lngmin, f.Lngmax)
-	}
-
+	// Find photos taken before date.
 	if !f.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))
 	}
 
+	// Find photos taken after date.
 	if !f.After.IsZero() {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}

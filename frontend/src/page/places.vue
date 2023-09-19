@@ -18,17 +18,17 @@
         </div>
       </div>
       <div id="map" ref="map" style="width: 100%; height: 100%;"></div>
+      <div v-if="showCluster" class="map-control cluster-control">
+        <v-card class="cluster-control-container">
+          <p-page-photos
+            ref="cluster"
+            :static-filter="cluster"
+            :on-close="closeCluster"
+            :embedded="true"
+          />
+        </v-card>
+      </div>
     </div>
-    <v-dialog v-model="showClusterPictures" overflowed width="100%">
-      <v-card min-height="80vh">
-        <p-page-photos
-          v-if="showClusterPictures"
-          :static-filter="selectedClusterBounds"
-          :on-close="unselectCluster"
-          sticky-toolbar
-        />
-      </v-card>
-    </v-dialog>
   </v-container>
 </template>
 
@@ -75,57 +75,25 @@ export default {
       result: {},
       filter: {q: this.query(), s: this.scope()},
       lastFilter: {},
+      cluster: {},
+      showCluster: false,
       config: this.$config.values,
       settings: settings,
       animate: settings.animate,
-      selectedClusterBounds: undefined,
-      showClusterPictures: false,
     };
   },
   watch: {
     '$route'() {
-
-      const clusterWasOpenBeforeRouterChange = this.selectedClusterBounds !== undefined;
-      const clusterIsOpenAfterRouteChange = this.getSelectedClusterFromUrl() !== undefined;
-      const lastRouteChangeWasClusterOpenOrClose = clusterWasOpenBeforeRouterChange !== clusterIsOpenAfterRouteChange;
-
-      if (lastRouteChangeWasClusterOpenOrClose) {
-        this.updateSelectedClusterFromUrl();
-
-        /**
-         * dont touch any filters or searches if the only action taken was
-         * opening or closing a cluster.
-         * This currently assumes that when a cluster was opened or closed,
-         * nothing else changed. I currently can't think of a scenario, where
-         * a route-change is triggered by the user wanting to open/close a cluster
-         * AND for example update the filter at the same time.
-         *
-         * Without this, opening or closing a cluster triggers a search, even
-         * though no search parameter changed. Also without this, closing a
-         * cluster resets the filter, because closing a cluster is done via
-         * backwards navigation.
-         * (closing is cluster is done via backwards navigation so that it can
-         * be closed using the back-button. This is especially useful on android
-         * smartphones)
-         */
-        return;
-      }
-
       this.filter.q = this.query();
       this.filter.s = this.scope();
-      this.lastFilter = {};
+      this.initialized = false;
 
       this.search();
     },
-    showClusterPictures: function (newValue, old) {
-      if (!newValue) {
-        this.unselectCluster();
-      }
-    }
   },
   mounted() {
     this.initMap().then(() => this.renderMap());
-    this.updateSelectedClusterFromUrl();
+    this.openClusterFromUrl();
   },
   methods: {
     initMap() {
@@ -341,61 +309,71 @@ export default {
       this.filter = filter;
       this.options = mapOptions;
     },
-    getSelectedClusterFromUrl() {
-      const clusterIsSelected = this.$route.query.selectedCluster !== undefined
-        && this.$route.query.selectedCluster !== '';
-      if (!clusterIsSelected) {
+    getClusterFromUrl() {
+      const hasLatLng = this.$route.query.latlng !== undefined && this.$route.query.latlng !== '';
+
+      if (!hasLatLng) {
         return undefined;
       }
 
-      const [latmin, latmax, lngmin, lngmax] = this.$route.query.selectedCluster.split(',');
-      return {latmin, latmax, lngmin, lngmax};
+      return {
+        q: this.filter.q,
+        s: this.filter.s,
+        latlng: this.$route.query.latlng,
+      };
     },
-    updateSelectedClusterFromUrl: function () {
-      this.selectedClusterBounds = this.getSelectedClusterFromUrl();
-      this.showClusterPictures = this.selectedClusterBounds !== undefined;
+    openCluster: function (cluster) {
+      this.cluster = cluster;
+      this.showCluster = true;
     },
-    selectClusterByCoords: function (latMin, latMax, lngMin, lngMax) {
-      this.$router.push({
-        query: {
-          selectedCluster: [latMin, latMax, lngMin, lngMax].join(','),
-        },
-        params: this.filter,
+    openClusterFromUrl: function () {
+      const cluster = this.getClusterFromUrl();
+
+      if (!cluster) {
+        return;
+      }
+
+      this.openCluster(cluster);
+    },
+    selectClusterByCoords: function (latNorth, lngEast, latSouth, lngWest) {
+      this.openCluster({
+        q: this.filter.q,
+        s: this.filter.s,
+        latlng: [latNorth, lngEast, latSouth, lngWest].join(','),
       });
     },
     selectClusterById: function (clusterId) {
+      if(this.showCluster) {
+        this.showCluster = false;
+      }
+
       this.getClusterFeatures(clusterId, -1, (clusterFeatures) => {
-        let latMin, latMax, lngMin, lngMax;
+        let latNorth, lngEast, latSouth, lngWest;
         for (const feature of clusterFeatures) {
           const [lng, lat] = feature.geometry.coordinates;
-          if (latMin === undefined || lat < latMin) {
-            latMin = lat;
+          if (latNorth === undefined || lat < latNorth) {
+            latNorth = lat;
           }
-          if (latMax === undefined || lat > latMax) {
-            latMax = lat;
+          if (lngEast === undefined || lng < lngEast) {
+            lngEast = lng;
           }
-          if (lngMin === undefined || lng < lngMin) {
-            lngMin = lng;
+          if (latSouth === undefined || lat > latSouth) {
+            latSouth = lat;
           }
-          if (lngMax === undefined || lng > lngMax) {
-            lngMax = lng;
+          if (lngWest === undefined || lng > lngWest) {
+            lngWest = lng;
           }
         }
 
-        this.selectClusterByCoords(latMin, latMax, lngMin, lngMax);
+        this.selectClusterByCoords(latNorth, lngEast, latSouth, lngWest);
       });
     },
-    unselectCluster: function () {
-      const aClusterIsSelected = this.getSelectedClusterFromUrl() !== undefined;
-      if (aClusterIsSelected) {
-        // it shouldn't matter wether a cluster was closed by pressing the back
-        // button on a browser or the x-button on the dialog. We therefore make
-        // both actions do the exact same thing: navigate backwards
-        this.$router.go(-1);
-      }
+    closeCluster: function () {
+      this.cluster = {};
+      this.showCluster = false;
     },
     query: function () {
-      return this.$route.params.q ? this.$route.params.q : '';
+      return this.$route.query.q ? this.$route.query.q : '';
     },
     scope: function () {
       return this.$route.params.s ? this.$route.params.s : '';
@@ -437,11 +415,21 @@ export default {
       if (this.loading) {
         return;
       }
-      this.search();
+
+      this.$router.push({
+        query: {
+          q: this.filter.q,
+        },
+      });
     },
     clearQuery() {
-      this.filter.q = '';
-      this.search();
+      if (this.loading) {
+        return;
+      }
+
+      this.$router.push({
+        query: {},
+      });
     },
     updateQuery() {
       if (this.loading) {
@@ -450,9 +438,9 @@ export default {
 
       if (this.query() !== this.filter.q) {
         if (this.filter.s) {
-          this.$router.replace({name: "places_scope", params: {s: this.filter.s, q: this.filter.q}});
+          this.$router.replace({name: "places_scope", params: {s: this.filter.s}, query: {q: this.filter.q}});
         } else if (this.filter.q) {
-          this.$router.replace({name: "places_query", params: {q: this.filter.q}});
+          this.$router.replace({name: "places", query: {q: this.filter.q}});
         } else {
           this.$router.replace({name: "places"});
         }
@@ -477,9 +465,11 @@ export default {
         return;
       }
 
-      // Don't query the same data more than once
-      if (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
+      // Do not query the same data more than once unless search results need to be updated.
+      if (this.initialized && JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
       this.loading = true;
+
+      this.closeCluster();
 
       Object.assign(this.lastFilter, this.filter);
 
@@ -614,7 +604,10 @@ export default {
         // Is it a cluster?
         if (props.cluster) {
           // Update cluster marker.
-          let id = -1*props.cluster_id;
+
+          // Attention: Do not confuse with photo feature IDs.
+          // Clusters have their own ID number range!
+          let id = -1 * props.cluster_id;
 
           let marker = this.markers[id];
 
@@ -636,7 +629,7 @@ export default {
               const previewImageCount = clusterFeatures.length >= 4 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
               const images = Array(previewImageCount)
                 .fill(null)
-                .map((a,i) => {
+                .map((a, i) => {
                   const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
                   const image = document.createElement('div');
                   image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
@@ -724,6 +717,11 @@ export default {
         type: 'circle',
         source: 'photos',
         filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': '#FFFFFF',
+          'circle-opacity': 0,
+          'circle-radius': 0,
+        },
       });
 
       // Example of dynamic map cluster rendering:

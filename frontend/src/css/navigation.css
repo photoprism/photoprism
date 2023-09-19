@@ -122,7 +122,7 @@ nav .v-list__tile__title.title {
     overflow: hidden;
 }
 
-#photoprism .p-photo-toolbar.sticky {
+#photoprism .p-photo-toolbar.embedded {
   position: sticky;
   top: 0;
   z-index: 1;

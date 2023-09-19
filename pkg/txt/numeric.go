@@ -65,6 +65,11 @@ func Float(s string) float64 {
 	return f
 }
 
+// Float32 converts a string to a 32-bit floating point number or 0 if invalid.
+func Float32(s string) float32 {
+	return float32(Float(s))
+}
+
 // Int64 converts a string to a signed 64-bit integer or 0 if invalid.
 func Int64(s string) int64 {
 	if s == "" {

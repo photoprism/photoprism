@@ -43,13 +43,12 @@ type SearchPhotos struct {
 	Private   bool      `form:"private" notes:"Finds private pictures"`
 	Favorite  string    `form:"favorite" example:"favorite:yes" notes:"Finds favorites only"`
 	Unsorted  bool      `form:"unsorted" notes:"Finds pictures not in an album"`
-	Lat       float32   `form:"lat" notes:"Latitude (GPS Position)"`
-	Lng       float32   `form:"lng" notes:"Longitude (GPS Position)"`
-	Latmin    float32   `form:"latmin" notes:"Minimum latitude (GPS Position)"`
-	Latmax    float32   `form:"latmax" notes:"Maximum latitude (GPS Position)"`
-	Lngmin    float32   `form:"lngmin" notes:"Minimum longitude (GPS Position)"`
-	Lngmax    float32   `form:"lngmax" notes:"Maximum longitude (GPS Position)"`
-	Dist      uint      `form:"dist" example:"dist:5" notes:"Distance in km in combination with lat/lng"`
+	Lat       float32   `form:"lat" notes:"GPS Position (Latitude)"`
+	Lng       float32   `form:"lng" notes:"GPS Position (Longitude)"`
+	Dist      uint      `form:"dist" example:"dist:5" notes:"Distance to GPS Position (km)"`
+	LatLng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
+	S2        string    `form:"s2" notes:"S2 Position (Cell ID)"`
+	OLC       string    `form:"olc" notes:"Open Location Code (OLC)"`
 	Fmin      float32   `form:"fmin" notes:"F-number (min)"`
 	Fmax      float32   `form:"fmax" notes:"F-number (max)"`
 	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`

@@ -6,12 +6,13 @@
     <p-photo-toolbar
       :context="context"
       :filter="filter"
+      :static-filter="staticFilter"
       :settings="settings"
       :refresh="refresh"
       :update-filter="updateFilter"
       :update-query="updateQuery"
       :on-close="onClose"
-      :sticky="stickyToolbar"
+      :embedded="embedded"
     />
 
     <v-container v-if="loading" fluid class="pa-4">
@@ -70,7 +71,7 @@ export default {
       type: Function,
       default: undefined,
     },
-    stickyToolbar: {
+    embedded: {
       type: Boolean,
       default: false
     },
@@ -87,12 +88,14 @@ export default {
     const month = query['month'] ? parseInt(query['month']) : 0;
     const color = query['color'] ? query['color'] : '';
     const label = query['label'] ? query['label'] : '';
+    const latlng = query['latlng'] ? query['latlng'] : '';
     const view = this.viewType();
     const filter = {
       country: country,
       camera: camera,
       lens: lens,
       label: label,
+      latlng: latlng,
       year: year,
       month: month,
       color: color,
@@ -192,6 +195,7 @@ export default {
       this.filter.month = query['month'] ? parseInt(query['month']) : 0;
       this.filter.color = query['color'] ? query['color'] : '';
       this.filter.label = query['label'] ? query['label'] : '';
+      this.filter.latlng = query['latlng'] ? query['latlng'] : '';
       this.filter.order = this.sortOrder();
 
       this.settings.view = this.viewType();
@@ -253,8 +257,12 @@ export default {
       window.localStorage.setItem("photos_offset", offset);
     },
     viewType() {
-      let queryParam = this.$route.query['view'] ? this.$route.query['view'] : "";
-      let storedType = window.localStorage.getItem("photos_view");
+      if (this.embedded) {
+        return 'mosaic';
+      }
+
+      let queryParam = this.$route.query['view'] ? this.$route.query['view'] : '';
+      let storedType = window.localStorage.getItem('photos_view');
 
       if (queryParam) {
         window.localStorage.setItem("photos_view", queryParam);
@@ -268,17 +276,21 @@ export default {
       return 'cards';
     },
     sortOrder() {
-      let queryParam = this.$route.query["order"];
-      let storedType = window.localStorage.getItem("photos_order");
+      if (this.embedded) {
+        return 'newest';
+      }
+
+      let queryParam = this.$route.query['order'];
+      let storedType = window.localStorage.getItem('photos_order');
 
       if (queryParam) {
-        window.localStorage.setItem("photos_order", queryParam);
+        window.localStorage.setItem('photos_order', queryParam);
         return queryParam;
       } else if (storedType) {
         return storedType;
       }
 
-      return "newest";
+      return 'newest';
     },
     openLocation(index) {
       if (!this.hasPlaces || !this.canSearchPlaces) {
@@ -292,9 +304,9 @@ export default {
       }
 
       if (photo.CellID && photo.CellID !== "zz") {
-        this.$router.push({name: "places_query", params: {q: photo.CellID}});
+        this.$router.push({name: "places", query: {q: photo.CellID}});
       } else if (photo.Country && photo.Country !== "zz") {
-        this.$router.push({name: "places_query", params: {q: "country:" + photo.Country}});
+        this.$router.push({name: "places", query: {q: "country:" + photo.Country}});
       } else {
         this.$notify.warn("unknown location");
       }
@@ -384,7 +396,7 @@ export default {
         if (this.complete) {
           this.setOffset(response.offset);
 
-          if (this.results.length > 1) {
+          if (!this.embedded && this.results.length > 1) {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
           }
         } else if (this.results.length >= Photo.limit()) {
@@ -547,9 +559,9 @@ export default {
         if (this.complete) {
           if (!this.results.length) {
             this.$notify.warn(this.$gettext("No pictures found"));
-          } else if (this.results.length === 1) {
+          } else if (!this.embedded && this.results.length === 1) {
             this.$notify.info(this.$gettext("One picture found"));
-          } else {
+          } else if (!this.embedded) {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
           }
         } else {

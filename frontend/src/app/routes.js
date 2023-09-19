@@ -263,15 +263,15 @@ export default [
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "places_query",
-    path: "/places/:q",
+    name: "places_scope",
+    path: "/places/:s",
     component: Places,
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "places_scope",
-    path: "/places/:s/:q",
-    component: Places,
+    name: "places_location",
+    path: "/location",
+    component: Photos,
     meta: { title: $gettext("Places"), auth: true },
   },
   {

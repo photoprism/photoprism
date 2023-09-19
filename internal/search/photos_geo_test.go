@@ -130,7 +130,7 @@ func TestGeo(t *testing.T) {
 			Lat:      1.234,
 			Lng:      4.321,
 			S2:       "",
-			Olc:      "",
+			OLC:      "",
 			Dist:     0,
 			Quality:  0,
 			Review:   true,
@@ -158,7 +158,7 @@ func TestGeo(t *testing.T) {
 			Lat:      0,
 			Lng:      0,
 			S2:       "",
-			Olc:      "",
+			OLC:      "",
 			Dist:     0,
 			Quality:  3,
 			Review:   false,
@@ -181,7 +181,7 @@ func TestGeo(t *testing.T) {
 			Lat:      0,
 			Lng:      0,
 			S2:       "85",
-			Olc:      "",
+			OLC:      "",
 			Dist:     0,
 			Quality:  0,
 			Review:   false,
@@ -195,7 +195,7 @@ func TestGeo(t *testing.T) {
 		assert.Empty(t, result)
 		assert.IsType(t, GeoResults{}, result)
 	})
-	t.Run("search for Olc", func(t *testing.T) {
+	t.Run("search for OLC", func(t *testing.T) {
 		f := form.SearchPhotosGeo{
 			Query:    "",
 			Before:   time.Time{},
@@ -204,7 +204,7 @@ func TestGeo(t *testing.T) {
 			Lat:      0,
 			Lng:      0,
 			S2:       "",
-			Olc:      "9",
+			OLC:      "9",
 			Dist:     0,
 			Quality:  0,
 			Review:   false,

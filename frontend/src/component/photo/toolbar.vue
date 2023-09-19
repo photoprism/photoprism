@@ -1,55 +1,68 @@
 <template>
   <v-form ref="form" lazy-validation
           dense autocomplete="off" class="p-photo-toolbar" accept-charset="UTF-8"
-          :class="{'sticky': sticky}"
+          :class="{'embedded': embedded}"
           @submit.prevent="updateQuery()">
-    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-      <v-text-field :value="filter.q"
-                    class="input-search background-inherit elevation-0"
-                    solo hide-details clearable overflow single-line
-                    validate-on-blur
-                    autocorrect="off"
-                    autocapitalize="none"
-                    browser-autocomplete="off"
-                    :label="$gettext('Search')"
-                    prepend-inner-icon="search"
-                    color="secondary-dark"
-                    @change="(v) => {updateFilter({'q': v})}"
-                    @keyup.enter.native="(e) => updateQuery({'q': e.target.value})"
-                    @click:clear="() => {updateQuery({'q': ''})}"
-      ></v-text-field>
+    <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" :height="embedded ? 45 : undefined"
+               class="page-toolbar" color="secondary">
+      <template v-if="!embedded">
+        <v-text-field :value="filter.q"
+                      class="input-search background-inherit elevation-0"
+                      solo hide-details clearable overflow single-line validate-on-blur
+                      autocorrect="off"
+                      autocapitalize="none"
+                      browser-autocomplete="off"
+                      :label="$gettext('Search')"
+                      prepend-inner-icon="search"
+                      color="secondary-dark"
+                      @change="(v) => {updateFilter({'q': v})}"
+                      @keyup.enter.native="(e) => updateQuery({'q': e.target.value})"
+                      @click:clear="() => {updateQuery({'q': ''})}"
+        ></v-text-field>
 
-      <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
-        <v-icon>refresh</v-icon>
-      </v-btn>
+        <v-btn v-if="filter.latlng" icon class="action-clear-location" :title="$gettext('Clear Location')" @click.stop="clearLocation()">
+          <v-icon>location_off</v-icon>
+        </v-btn>
 
-      <v-btn v-if="settings.view === 'cards'" icon :title="$gettext('Toggle View')" @click.stop="setView('list')">
-        <v-icon>view_list</v-icon>
-      </v-btn>
-      <v-btn v-else-if="settings.view === 'list'" icon :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
-        <v-icon>view_comfy</v-icon>
-      </v-btn>
-      <v-btn v-else icon :title="$gettext('Toggle View')" @click.stop="setView('cards')">
-        <v-icon>view_column</v-icon>
-      </v-btn>
+        <v-btn icon class="hidden-xs-only action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+          <v-icon>refresh</v-icon>
+        </v-btn>
 
-      <v-btn v-if="canDelete && context === 'archive' && config.count.archived > 0" icon class="hidden-sm-and-down action-sweep"
-             :title="$gettext('Delete')" @click.stop="sweepArchive()">
-        <v-icon>delete_sweep</v-icon>
-      </v-btn>
-      <v-btn v-else-if="canUpload" icon class="hidden-sm-and-down action-upload"
-             :title="$gettext('Upload')" @click.stop="showUpload()">
-        <v-icon>cloud_upload</v-icon>
-      </v-btn>
+        <v-btn v-if="settings.view === 'cards'" icon :title="$gettext('Toggle View')" @click.stop="setView('list')">
+          <v-icon>view_list</v-icon>
+        </v-btn>
+        <v-btn v-else-if="settings.view === 'list'" icon :title="$gettext('Toggle View')"
+               @click.stop="setView('mosaic')">
+          <v-icon>view_comfy</v-icon>
+        </v-btn>
+        <v-btn v-else icon :title="$gettext('Toggle View')" @click.stop="setView('cards')">
+          <v-icon>view_column</v-icon>
+        </v-btn>
 
-      <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')"
-             @click.stop="searchExpanded = !searchExpanded">
-        <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
-      </v-btn>
+        <v-btn v-if="canDelete && context === 'archive' && config.count.archived > 0" icon
+               class="hidden-sm-and-down action-sweep"
+               :title="$gettext('Delete')" @click.stop="sweepArchive()">
+          <v-icon>delete_sweep</v-icon>
+        </v-btn>
+        <v-btn v-else-if="canUpload" icon class="hidden-sm-and-down action-upload"
+               :title="$gettext('Upload')" @click.stop="showUpload()">
+          <v-icon>cloud_upload</v-icon>
+        </v-btn>
 
-      <v-btn v-if="onClose !== undefined" icon class="action-close" @click.stop="onClose">
-        <v-icon>close</v-icon>
-      </v-btn>
+        <v-btn icon class="p-expand-search" :title="$gettext('Expand Search')"
+               @click.stop="searchExpanded = !searchExpanded">
+          <v-icon>{{ searchExpanded ? 'keyboard_arrow_up' : 'keyboard_arrow_down' }}</v-icon>
+        </v-btn>
+      </template>
+      <template v-else>
+        <v-spacer></v-spacer>
+        <v-btn v-if="canAccessLibrary" icon class="action-open-tab" @click.stop="openInTab">
+          <v-icon size="19">open_in_new</v-icon>
+        </v-btn>
+        <v-btn v-if="onClose !== undefined" icon class="action-close" @click.stop="onClose">
+          <v-icon>close</v-icon>
+        </v-btn>
+      </template>
     </v-toolbar>
 
     <v-card v-show="searchExpanded"
@@ -197,29 +210,39 @@ export default {
     },
     filter: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
+    },
+    staticFilter: {
+      type: Object,
+      default: () => {
+      },
     },
     updateFilter: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
     updateQuery: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
     settings: {
       type: Object,
-      default: () => {},
+      default: () => {
+      },
     },
     refresh: {
       type: Function,
-      default: () => {},
+      default: () => {
+      },
     },
     onClose: {
       type: Function,
       default: undefined,
     },
-    sticky: {
+    embedded: {
       type: Boolean,
       default: false
     },
@@ -232,8 +255,9 @@ export default {
       isFullScreen: !!document.fullscreenElement,
       config: this.$config.values,
       readonly: readonly,
-      canUpload: !readonly && this.$config.allow("files", "upload") && features.upload,
-      canDelete: !readonly && this.$config.allow("photos", "delete") && features.delete,
+      canUpload: !readonly && !this.embedded && this.$config.allow("files", "upload") && features.upload,
+      canDelete: !readonly && !this.embedded && this.$config.allow("photos", "delete") && features.delete,
+      canAccessLibrary: this.$config.allow("photos", "access_library"),
       searchExpanded: false,
       all: {
         countries: [{ID: "", Name: this.$gettext("All Countries")}],
@@ -305,6 +329,15 @@ export default {
       }
 
       this.dialog.delete = true;
+    },
+    clearLocation() {
+      this.$router.push({ name: "browse" });
+    },
+    openInTab() {
+      const url = this.$router.resolve({name: 'places_location', query: this.staticFilter}).href;
+      if (url) {
+        window.open(url, '_blank');
+      }
     },
     batchDelete() {
       if (!this.canDelete) {
