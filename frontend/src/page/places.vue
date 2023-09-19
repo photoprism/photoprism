@@ -55,6 +55,7 @@ export default {
       canSearch: this.$config.allow("places", "search"),
       initialized: false,
       map: null,
+      markers: {},
       markersOnScreen: {},
       clusterIds: [],
       loading: false,
@@ -114,8 +115,8 @@ export default {
 
       this.search();
     },
-    showClusterPictures:function(newValue, old){
-      if(!newValue){
+    showClusterPictures: function (newValue, old) {
+      if (!newValue) {
         this.unselectCluster();
       }
     }
@@ -287,7 +288,7 @@ export default {
     },
     getSelectedClusterFromUrl() {
       const clusterIsSelected = this.$route.query.selectedCluster !== undefined
-                            && this.$route.query.selectedCluster !== '';
+        && this.$route.query.selectedCluster !== '';
       if (!clusterIsSelected) {
         return undefined;
       }
@@ -295,11 +296,11 @@ export default {
       const [latmin, latmax, lngmin, lngmax] = this.$route.query.selectedCluster.split(',');
       return {latmin, latmax, lngmin, lngmax};
     },
-    updateSelectedClusterFromUrl: function() {
+    updateSelectedClusterFromUrl: function () {
       this.selectedClusterBounds = this.getSelectedClusterFromUrl();
       this.showClusterPictures = this.selectedClusterBounds !== undefined;
     },
-    selectClusterByCoords: function(latMin, latMax, lngMin, lngMax) {
+    selectClusterByCoords: function (latMin, latMax, lngMin, lngMax) {
       this.$router.push({
         query: {
           selectedCluster: [latMin, latMax, lngMin, lngMax].join(','),
@@ -307,11 +308,11 @@ export default {
         params: this.filter,
       });
     },
-    selectClusterById: function(clusterId) {
+    selectClusterById: function (clusterId) {
       this.getClusterFeatures(clusterId, -1, (clusterFeatures) => {
-        let latMin,latMax,lngMin,lngMax;
+        let latMin, latMax, lngMin, lngMax;
         for (const feature of clusterFeatures) {
-          const [lng,lat] = feature.geometry.coordinates;
+          const [lng, lat] = feature.geometry.coordinates;
           if (latMin === undefined || lat < latMin) {
             latMin = lat;
           }
@@ -329,7 +330,7 @@ export default {
         this.selectClusterByCoords(latMin, latMax, lngMin, lngMax);
       });
     },
-    unselectCluster: function() {
+    unselectCluster: function () {
       const aClusterIsSelected = this.getSelectedClusterFromUrl() !== undefined;
       if (aClusterIsSelected) {
         // it shouldn't matter wether a cluster was closed by pressing the back
@@ -520,127 +521,130 @@ export default {
       }
     },
     getClusterSizeFromItemCount(itemCount) {
-      if (itemCount >= 750) {
+      if (itemCount >= 10000) {
         return 74;
-      } else if (itemCount >= 200) {
+      } else if (itemCount >= 1000) {
         return 70;
-      } else if (itemCount >= 100) {
+      } else if (itemCount >= 750) {
+        return 68;
+      } else if (itemCount >= 200) {
         return 66;
+      } else if (itemCount >= 100) {
+        return 64;
       }
 
       return 60;
     },
-    async updateMarkers() {
-      if (this.loading) {
-        return;
+    abbreviateCount(val) {
+      const value = Number.parseInt(val);
+      if (value >= 1000) {
+        return (value / 1000).toFixed(0).toString() + 'k';
       }
+      return value;
+    },
+    updateMarkers() {
+      if (this.loading) return;
+      let newMarkers = {};
+      let features = this.map.querySourceFeatures("photos");
+      let token = this.$config.previewToken;
 
-      // Parts of marker processing are done asyncronously. Ensure previous processing is complete before restarting
-      if(this.markerPromise) {
-        await this.markerPromise;
-      }
+      for (let i = 0; i < features.length; i++) {
+        let coords = features[i].geometry.coordinates;
+        let props = features[i].properties;
 
-      this.markerPromise = new Promise((resolve, reject) => {
-        // Find clusters.
-        const features = this.map.querySourceFeatures("photos");
+        if (props.cluster) {
+          // Clusters.
+          let id = -1*props.cluster_id;
 
-        const clusterIds = [...new Set(features
-          .filter(feature => feature.properties.cluster)
-          .map(feature => feature.properties.cluster_id))];
+          let marker = this.markers[id];
 
-        // Skip update if nothing has changed.
-        if (clusterIds.toString() === this.clusterIds.toString()) {
-          resolve("skip");
-          return;
-        } else {
-          this.clusterIds = clusterIds;
-        }
+          if (!marker) {
+            const size = this.getClusterSizeFromItemCount(props.point_count);
+            let el = document.createElement('div');
 
-        // If clusterIds are empty, getMultipleClusterFeatures will not call callback,
-        // and thus resolve will never be called. Handle that case here.
-        if (clusterIds.length === 0) {
-          for (let id in this.markersOnScreen) {
-            this.markersOnScreen[id].remove();
-          }
-          this.markersOnScreen = {};
-          resolve("done");
-          return;
-        }
+            el.style.width = `${size}px`;
+            el.style.height = `${size}px`;
 
-        let newMarkers = {};
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'marker cluster-marker';
 
-        this.getMultipleClusterFeatures(clusterIds, (clusterFeaturesById) => {
+            this.map.getSource('photos').getClusterLeaves(props.cluster_id, 4, 0, (error, clusterFeatures) => {
+              if (error) {
+                return;
+              }
 
-          for (let i = 0; i < features.length; i++) {
-            let id = features[i].id;
-
-            // Multiple features can exist with the same cluser ID. Avoid processing the same cluster twice
-            if (!newMarkers[id]) {
-              let coords = features[i].geometry.coordinates;
-              let props = features[i].properties;
-
-              let token = this.$config.previewToken;
-              let el = document.createElement('div');
-              if (props.cluster) {
-                const size = this.getClusterSizeFromItemCount(props.point_count);
-                el.style.width = `${size}px`;
-                el.style.height = `${size}px`;
-
-                const imageContainer = document.createElement('div');
-                imageContainer.className = 'marker cluster-marker';
-
-                const clusterFeatures = clusterFeaturesById[props.cluster_id];
-                const previewImageCount = clusterFeatures.length >= 10 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
-                const images = Array(previewImageCount)
-                  .fill(null)
-                  .map((a,i) => {
-                    const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
-                    const image = document.createElement('div');
-                    image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
-                    return image;
-                  });
-
-                imageContainer.append(...images);
-
-                const counterBubble = document.createElement('div');
-                counterBubble.className = 'counter-bubble primary-button theme--light';
-                counterBubble.innerText = clusterFeatures.length > 99 ? '99+' : clusterFeatures.length;
-
-                el.append(imageContainer);
-                el.append(counterBubble);
-                el.addEventListener('click', () => {
-                  this.selectClusterById(props.cluster_id);
+              const previewImageCount = clusterFeatures.length >= 4 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
+              const images = Array(previewImageCount)
+                .fill(null)
+                .map((a,i) => {
+                  const feature = clusterFeatures[Math.floor(clusterFeatures.length * i / previewImageCount)];
+                  const image = document.createElement('div');
+                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
+                  return image;
                 });
-              } else {
-                el.className = 'marker';
-                el.title = props.Title;
-                el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
-                el.style.width = '50px';
-                el.style.height = '50px';
 
-                el.addEventListener('click', () => this.openPhoto(props.UID));
-              }
-              let marker = new maplibregl.Marker({
-                element: el
-              }).setLngLat(coords);
+              imageContainer.append(...images);
+            });
 
-              newMarkers[id] = marker;
+            const counterBubble = document.createElement('div');
 
-              if (this.markersOnScreen[id]) {
-                this.markersOnScreen[id].remove();
-              }
-              marker.addTo(this.map);
-            }
+            counterBubble.className = 'counter-bubble primary-button theme--light';
+            counterBubble.innerText = this.abbreviateCount(props.point_count);
+
+            el.append(imageContainer);
+            el.append(counterBubble);
+            el.addEventListener('click', () => {
+              this.selectClusterById(props.cluster_id);
+            });
+
+            marker = this.markers[id] = new maplibregl.Marker({
+              element: el
+            }).setLngLat(coords);
+          } else {
+            marker.setLngLat(coords);
           }
-          for (let id in this.markersOnScreen) {
-            if (!newMarkers[id]) {
-              this.markersOnScreen[id].remove();
-            }
+
+          newMarkers[id] = marker;
+
+          if (!this.markersOnScreen[id]) {
+            marker.addTo(this.map);
           }
-          this.markersOnScreen = newMarkers;
-          resolve("done");
-        })
-      });
+        } else {
+          // Pictures.
+          let id = features[i].id;
+
+          let marker = this.markers[id];
+          if (!marker) {
+            let el = document.createElement('div');
+            el.className = 'marker';
+            el.title = props.Title;
+            el.style.backgroundImage = `url(${this.$config.contentUri}/t/${props.Hash}/${token}/tile_50)`;
+            el.style.width = '50px';
+            el.style.height = '50px';
+
+            el.addEventListener('click', () => this.openPhoto(props.UID));
+            marker = this.markers[id] = new maplibregl.Marker({
+              element: el
+            }).setLngLat(coords);
+          } else {
+            marker.setLngLat(coords);
+          }
+
+          newMarkers[id] = marker;
+
+          if (!this.markersOnScreen[id]) {
+            marker.addTo(this.map);
+          }
+        }
+      }
+
+      for (let id in this.markersOnScreen) {
+        if (!newMarkers[id]) {
+          this.markersOnScreen[id].remove();
+        }
+      }
+
+      this.markersOnScreen = newMarkers;
     },
     onMapLoad() {
       // Add 'photos' data source.
@@ -669,9 +673,9 @@ export default {
       });
 
       // Add additional event handlers to update the marker previews.
+      this.map.on('move', this.updateMarkers);
       this.map.on('moveend', this.updateMarkers);
       this.map.on('resize', this.updateMarkers);
-      this.map.on('idle', this.updateMarkers);
 
       // Load pictures.
       this.search();
