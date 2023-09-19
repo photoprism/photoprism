@@ -63,11 +63,11 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 				}
 			}
 		} else if err := entity.Db().Where("photo_uid IN (?)", f.Photos).Delete(&entity.Photo{}).Error; err != nil {
-			log.Errorf("archive: %s", err)
+			log.Errorf("archive: failed to archive %d pictures (%s)", len(f.Photos), err)
 			AbortSaveFailed(c)
 			return
-		} else if err := entity.Db().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("hidden", true).Error; err != nil {
-			log.Errorf("archive: %s", err)
+		} else if err = entity.Db().Model(&entity.PhotoAlbum{}).Where("photo_uid IN (?)", f.Photos).UpdateColumn("hidden", true).Error; err != nil {
+			log.Errorf("archive: failed to flag %d pictures as hidden (%s)", len(f.Photos), err)
 		}
 
 		// Update precalculated photo and file counts.

@@ -194,6 +194,7 @@ func FlagHiddenPhotos() (err error) {
 		// Nothing to do.
 		return nil
 	} else if err = Db().Table(entity.Photo{}.TableName()).Where("id IN (?)", hidden).UpdateColumn("photo_quality", -1).Error; err != nil {
+		log.Warnf("index: failed to flag %d pictures as hidden", len(hidden))
 		// Update failed.
 		return err
 	} else {
