@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -78,4 +79,48 @@ func GPSBounds(bounds string) (latN, lngE, latS, lngW float32, err error) {
 
 	// Return rounded coordinates.
 	return gpsCeil(latNorth), gpsCeil(lngEast), gpsFloor(latSouth), gpsFloor(lngWest), nil
+}
+
+// GPSLatRange returns a range based on the specified latitude and distance in km, or an error otherwise.
+func GPSLatRange(lat float64, km uint) (latN, latS float32, err error) {
+	// Latitude (from +90 to -90 degrees).
+	if lat == 0 || lat < -90 || lat > 90 {
+		return 0, 0, fmt.Errorf("invalid latitude")
+	}
+
+	// Approximate range.
+	latN = gpsCeil(lat + geo.KmToDeg(km))
+	latS = gpsFloor(lat - geo.KmToDeg(km))
+
+	if latN > 90 {
+		latN = 90
+	}
+
+	if latS < -90 {
+		latS = -90
+	}
+
+	return latN, latS, nil
+}
+
+// GPSLngRange returns a range based on the specified longitude and distance in km, or an error otherwise.
+func GPSLngRange(lng float64, km uint) (lngE, lngW float32, err error) {
+	// Longitude (from -180 to +180 degrees).
+	if lng == 0 || lng < -180 || lng > 180 {
+		return 0, 0, fmt.Errorf("invalid longitude")
+	}
+
+	// Approximate range.
+	lngE = gpsCeil(lng + geo.KmToDeg(km))
+	lngW = gpsFloor(lng - geo.KmToDeg(km))
+
+	if lngE > 180 {
+		lngE = 180
+	}
+
+	if lngW < -180 {
+		lngW = -180
+	}
+
+	return lngE, lngW, nil
 }

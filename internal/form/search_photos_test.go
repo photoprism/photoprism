@@ -122,7 +122,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, "false", form.Favorite)
 		assert.Equal(t, uint(0x61a8), form.Dist)
-		assert.Equal(t, float32(33.45343), form.Lat)
+		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
 		form := &SearchPhotos{Query: "chroma:200 title:\"te:st\" after:2018-01-15 favorite:true lng:33.45343166666667"}
@@ -138,7 +138,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, int16(200), form.Chroma)
 		assert.Equal(t, "te:st", form.Title)
 		assert.Equal(t, time.Date(2018, 01, 15, 0, 0, 0, 0, time.UTC), form.After)
-		assert.Equal(t, float32(33.45343), form.Lng)
+		assert.Equal(t, 33.45343166666667, form.Lng)
 	})
 	t.Run("valid query with filter", func(t *testing.T) {
 		form := &SearchPhotos{Query: "label:cat title:\"fooBar baz\"", Filter: "label:dog"}

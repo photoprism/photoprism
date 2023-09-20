@@ -46,8 +46,8 @@ type SearchPhotos struct {
 	Near      string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`
 	S2        string    `form:"s2" example:"s2:4799e370ca54c8b9"  notes:"S2 Position (Cell ID)"`
 	Olc       string    `form:"olc" example:"olc:8FWCHX7W+" notes:"OLC Position (Open Location Code)"`
-	Lat       float32   `form:"lat" example:"lat:41.894043" notes:"GPS Position (Latitude)"`
-	Lng       float32   `form:"lng" example:"lng:-87.62448" notes:"GPS Position (Longitude)"`
+	Lat       float64   `form:"lat" example:"lat:41.894043" notes:"GPS Position (Latitude)"`
+	Lng       float64   `form:"lng" example:"lng:-87.62448" notes:"GPS Position (Longitude)"`
 	Dist      uint      `form:"dist" example:"dist:50" notes:"Distance to Position (km)"`
 	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
 	Fmin      float32   `form:"fmin" notes:"F-number (min)"`

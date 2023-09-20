@@ -106,7 +106,6 @@ func TestLevel(t *testing.T) {
 	t.Run("8000", func(t *testing.T) {
 		assert.Equal(t, 0, Level(8000))
 	})
-
 	t.Run("150", func(t *testing.T) {
 		assert.Equal(t, 6, Level(150))
 	})

@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/s2"
@@ -70,18 +71,13 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 		// Set the S2 Cell ID to search for.
 		f.S2 = photo.CellID
-
-		// Set the search distance if unspecified.
-		if f.Dist <= 0 {
-			f.Dist = 2
-		}
 	}
 
 	// Set default search distance.
 	if f.Dist <= 0 {
-		f.Dist = 50
-	} else if f.Dist > 5000 {
-		f.Dist = 5000
+		f.Dist = geo.DefaultDist
+	} else if f.Dist > geo.DistLimit {
+		f.Dist = geo.DistLimit
 	}
 
 	// Specify table names and joins.
@@ -118,9 +114,11 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
 		}
 
-		// Limit search distance.
-		if f.Dist <= 0 || f.Dist > 50 {
-			f.Dist = 50
+		// Enforce search distance range (km).
+		if f.Dist <= 0 {
+			f.Dist = geo.DefaultDist
+		} else if f.Dist > geo.ScopeDistLimit {
+			f.Dist = geo.ScopeDistLimit
 		}
 	} else {
 		f.Scope = ""
@@ -668,24 +666,19 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	}
 
 	// Filter by GPS Bounds (Lat N, Lng E, Lat S, Lng W).
-	if latNorth, lngEast, latSouth, lngWest, parseErr := clean.GPSBounds(f.Latlng); parseErr == nil {
-		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latSouth, latNorth)
-		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngWest, lngEast)
+	if latN, lngE, latS, lngW, boundsErr := clean.GPSBounds(f.Latlng); boundsErr == nil {
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latS, latN)
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
 	}
 
-	// Filter by approx distance to coordinates.
-	if f.Lat != 0 && f.Lat >= -90 && f.Lat <= 90 {
-		// Latitude (from +90 to -90 degrees).
-		latNorth := f.Lat + Radius*float32(f.Dist)
-		latSouth := f.Lat - Radius*float32(f.Dist)
-		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latSouth, latNorth)
+	// Filter by GPS Latitude (from +90 to -90 degrees).
+	if latN, latS, latErr := clean.GPSLatRange(f.Lat, f.Dist); latErr == nil {
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latS, latN)
 	}
 
-	if f.Lng != 0 && f.Lng >= -180 && f.Lng <= 180 {
-		// Longitude (from -180 to +180 degrees).
-		lngWest := f.Lng - Radius*float32(f.Dist)
-		lngEast := f.Lng + Radius*float32(f.Dist)
-		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngWest, lngEast)
+	// Filter by GPS Longitude (from -180 to +180 degrees).
+	if lngE, lngW, lngErr := clean.GPSLngRange(f.Lng, f.Dist); lngErr == nil {
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
 	}
 
 	// Find photos taken before date.

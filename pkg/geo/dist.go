@@ -4,6 +4,17 @@ import (
 	"math"
 )
 
+const (
+	DistLimit      uint = 5000
+	ScopeDistLimit uint = 50
+	DefaultDist    uint = 2
+)
+
+// KmToDeg returns the approximate distance in decimal degrees.
+func KmToDeg(km uint) float64 {
+	return 0.009009009 * float64(km)
+}
+
 // DegToRad converts a value from degrees to radians.
 func DegToRad(d float64) float64 {
 	return d * math.Pi / 180

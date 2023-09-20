@@ -108,7 +108,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, uint(0x61a8), form.Dist)
-		assert.Equal(t, float32(33.45343), form.Lat)
+		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query path empty folder not empty", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "q:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667 folder:test"}
@@ -126,7 +126,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 		assert.Equal(t, "", form.Folder)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, uint(0x61a8), form.Dist)
-		assert.Equal(t, float32(33.45343), form.Lat)
+		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query with filter", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "keywords:cat title:\"fooBar baz\"", Filter: "keywords:dog"}
