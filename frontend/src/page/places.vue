@@ -18,7 +18,7 @@
         </div>
       </div>
       <div id="map" ref="map" style="width: 100%; height: 100%;"></div>
-      <div v-if="showCluster" class="map-control cluster-control">
+      <div v-if="showCluster" class="cluster-control">
         <v-card class="cluster-control-container">
           <p-page-photos
             ref="cluster"
