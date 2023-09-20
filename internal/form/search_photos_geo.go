@@ -53,9 +53,11 @@ type SearchPhotosGeo struct {
 	People    string    `form:"people"`   // Alias for Subjects
 	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
 	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
-	Keywords  string    `form:"keywords"`
+	Keywords  string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords (combinable with & and |)"`
+	Label     string    `form:"label" example:"label:cat|dog" notes:"Label Names (separate with |)"`
+	Category  string    `form:"category" example:"category:airport" notes:"Location Category"`
 	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`
-	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names, can be combined with & and |"`
+	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names (combinable with & and |)"`
 	Country   string    `form:"country"`
 	State     string    `form:"state"` // Moments
 	City      string    `form:"city"`

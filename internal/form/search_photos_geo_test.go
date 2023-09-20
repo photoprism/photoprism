@@ -247,6 +247,16 @@ func TestSearchPhotosGeo_Serialize(t *testing.T) {
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.Serialize())
 }
 
+func TestSearchPhotosGeo_Unserialize(t *testing.T) {
+	filter := "public:true label:bay|beach|cape|seashore"
+	frm := SearchPhotosGeo{}
+	err := Unserialize(&frm, filter)
+	assert.Equal(t, true, frm.Public)
+	assert.Equal(t, "bay|beach|cape|seashore", frm.Label)
+	assert.NoError(t, err)
+}
+
+// public:true label:bay|beach|cape|seashore
 func TestSearchPhotosGeo_SerializeAll(t *testing.T) {
 	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: "true"}
 

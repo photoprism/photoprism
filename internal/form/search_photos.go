@@ -13,14 +13,14 @@ type SearchPhotos struct {
 	Filter    string    `form:"filter" serialize:"-" notes:"-"`
 	ID        string    `form:"id" example:"id:123e4567-e89b-..." notes:"Finds pictures by Exif UID, XMP Document ID or Instance ID"`
 	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Limits results to the specified internal unique IDs"`
-	Type      string    `form:"type" example:"type:raw" notes:"Media Type (image, video, raw, live, animated); OR search with |"`
-	Path      string    `form:"path" example:"path:2020/Holiday" notes:"Path Name, OR search with |, supports * wildcards"`
-	Folder    string    `form:"folder" example:"folder:\"*/2020\"" notes:"Path Name, OR search with |, supports * wildcards"` // Alias for Path
-	Name      string    `form:"name" example:"name:\"IMG_9831-112*\"" notes:"File Name without path and extension, OR search with |"`
-	Filename  string    `form:"filename" example:"filename:\"2021/07/12345.jpg\"" notes:"File Name with path and extension, OR search with |"`
-	Original  string    `form:"original" example:"original:\"IMG_9831-112*\"" notes:"Original file name of imported files, OR search with |"`
-	Title     string    `form:"title" example:"title:\"Lake*\"" notes:"Title, OR search with |"`
-	Hash      string    `form:"hash" example:"hash:2fd4e1c67a2d" notes:"SHA1 File Hash, OR search with |"`
+	Type      string    `form:"type" example:"type:raw" notes:"Media Type (image, video, raw, live, animated); separate with |"`
+	Path      string    `form:"path" example:"path:2020/Holiday" notes:"Path Name (separate with |), supports * wildcards"`
+	Folder    string    `form:"folder" example:"folder:\"*/2020\"" notes:"Path Name (separate with |), supports * wildcards"` // Alias for Path
+	Name      string    `form:"name" example:"name:\"IMG_9831-112*\"" notes:"File Name without path and extension (separate with |)"`
+	Filename  string    `form:"filename" example:"filename:\"2021/07/12345.jpg\"" notes:"File Name with path and extension (separate with |)"`
+	Original  string    `form:"original" example:"original:\"IMG_9831-112*\"" notes:"Original file name of imported files (separate with |)"`
+	Title     string    `form:"title" example:"title:\"Lake*\"" notes:"Title (separate with |)"`
+	Hash      string    `form:"hash" example:"hash:2fd4e1c67a2d" notes:"SHA1 File Hash (separate with |)"`
 	Primary   bool      `form:"primary" notes:"Finds primary JPEG files only"`
 	Stack     bool      `form:"stack" notes:"Finds pictures with more than one media file"`
 	Unstacked bool      `form:"unstacked" notes:"Finds pictures with a file that has been removed from a stack"`
@@ -56,24 +56,24 @@ type SearchPhotos struct {
 	Diff      uint32    `form:"diff" notes:"Differential Perceptual Hash (000000-FFFFFF)"`
 	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
 	Geo       string    `form:"geo" example:"geo:yes" notes:"Finds pictures with or without coordinates"`
-	Keywords  string    `form:"keywords"  example:"keywords:\"buffalo&water\"" notes:"Keywords, can be combined with & and |"`                                                                                        // Filter by keyword(s)
-	Label     string    `form:"label" example:"label:cat|dog" notes:"Label Name, OR search with |"`                                                                                                                   // Label name
-	Category  string    `form:"category"  notes:"Location Category Name"`                                                                                                                                             // Moments
-	Country   string    `form:"country" example:"country:\"de|us\"" notes:"Country Code, OR search with |"`                                                                                                           // Moments
-	State     string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"Name of State (Location), OR search with |"`                                                                                       // Moments
-	City      string    `form:"city" example:"city:\"Berlin\"" notes:"Name of City (Location), OR search with |"`                                                                                                     // Moments
-	Year      string    `form:"year" example:"year:1990|2003" notes:"Year Number, OR search with |"`                                                                                                                  // Moments
-	Month     string    `form:"month" example:"month:7|10" notes:"Month (1-12), OR search with |"`                                                                                                                    // Moments
-	Day       string    `form:"day" example:"day:3|13" notes:"Day of Month (1-31), OR search with |"`                                                                                                                 // Moments
+	Keywords  string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords (combinable with & and |)"`
+	Label     string    `form:"label" example:"label:cat|dog" notes:"Label Names (separate with |)"`
+	Category  string    `form:"category" example:"category:airport" notes:"Location Category"`
+	Country   string    `form:"country" example:"country:\"de|us\"" notes:"Location Country Code (separate with |)"`                                                                                                  // Moments
+	State     string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"Location State (separate with |)"`                                                                                                 // Moments
+	City      string    `form:"city" example:"city:\"Berlin\"" notes:"Location City (separate with |)"`                                                                                                               // Moments
+	Year      string    `form:"year" example:"year:1990|2003" notes:"Year (separate with |)"`                                                                                                                         // Moments
+	Month     string    `form:"month" example:"month:7|10" notes:"Month (1-12, separate with |)"`                                                                                                                     // Moments
+	Day       string    `form:"day" example:"day:3|13" notes:"Day of Month (1-31, separate with |)"`                                                                                                                  // Moments
 	Face      string    `form:"face" example:"face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZG" notes:"Face ID, yes, no, new, or kind"`                                                                                          // UIDs
 	Faces     string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of Faces (yes = 1)"`                                                                                                          // Find or exclude faces if detected.
 	Subject   string    `form:"subject" example:"subject:\"Jane Doe & John Doe\"" notes:"Alias for person"`                                                                                                           // UIDs
-	Person    string    `form:"person" example:"person:\"Jane Doe & John Doe\"" notes:"Subject Names, exact matches, can be combined with & and |"`                                                                   // Alias for Subject
+	Person    string    `form:"person" example:"person:\"Jane Doe & John Doe\"" notes:"Subject Names, exact matches (combinable with & and |)"`                                                                       // Alias for Subject
 	Subjects  string    `form:"subjects" example:"subjects:\"Jane & John\"" notes:"Alias for people"`                                                                                                                 // People names
-	People    string    `form:"people" example:"people:\"Jane & John\"" notes:"Subject Names, can be combined with & and |"`                                                                                          // Alias for Subjects
+	People    string    `form:"people" example:"people:\"Jane & John\"" notes:"Subject Names (combinable with & and |)"`                                                                                              // Alias for Subjects
 	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`                                                                                                         // Album UIDs or name
-	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names, can be combined with & and |"`                                                                                   // Multi search with and/or
-	Color     string    `form:"color" example:"color:\"red|blue\"" notes:"Color Name (purple, magenta, pink, red, orange, gold, yellow, lime, green, teal, cyan, blue, brown, white, grey, black), OR search with |"` // Main color
+	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names (combinable with & and |)"`                                                                                       // Multi search with and/or
+	Color     string    `form:"color" example:"color:\"red|blue\"" notes:"Color Name (purple, magenta, pink, red, orange, gold, yellow, lime, green, teal, cyan, blue, brown, white, grey, black) (separate with |)"` // Main color
 	Quality   int       `form:"quality" notes:"Minimum quality score (1-7)"`                                                                                                                                          // Photo quality score
 	Review    bool      `form:"review" notes:"Finds pictures in review"`                                                                                                                                              // Find photos in review
 	Camera    string    `form:"camera" example:"camera:canon" notes:"Camera Make/Model Name"`                                                                                                                         // Camera UID or name

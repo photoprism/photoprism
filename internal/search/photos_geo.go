@@ -93,7 +93,8 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		} else if a.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", a.AlbumUID)
-		} else if err = form.Unserialize(&f, a.AlbumFilter); err != nil {
+		} else if formErr := form.Unserialize(&f, a.AlbumFilter); formErr != nil {
+			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(a.AlbumFilter))
 			return GeoResults{}, ErrBadFilter
 		} else {
 			f.Filter = a.AlbumFilter
@@ -196,6 +197,31 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			if ids := SplitOr(id); len(ids) > 0 {
 				s = s.Where("files.instance_id IN (?) OR photos.uuid IN (?)", ids, ids)
 			}
+		}
+	}
+
+	// Filter by label, label category and keywords.
+	var categories []entity.Category
+	var labels []entity.Label
+	var labelIds []uint
+	if txt.NotEmpty(f.Label) {
+		if labelErr := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || labelErr != nil {
+			log.Debugf("search: label %s not found", txt.LogParamLower(f.Label))
+			return GeoResults{}, nil
+		} else {
+			for _, l := range labels {
+				labelIds = append(labelIds, l.ID)
+
+				Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
+				log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
+
+				for _, category := range categories {
+					labelIds = append(labelIds, category.LabelID)
+				}
+			}
+
+			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
+				Group("photos.id, files.id")
 		}
 	}
 
@@ -442,6 +468,12 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 	// Filter by location city.
 	if txt.NotEmpty(f.City) {
 		s = s.Where("places.place_city IN (?)", SplitOr(f.City))
+	}
+
+	// Filter by location category.
+	if txt.NotEmpty(f.Category) {
+		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
+			Where("cells.cell_category IN (?)", SplitOr(strings.ToLower(f.Category)))
 	}
 
 	// Filter by media type.

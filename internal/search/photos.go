@@ -107,7 +107,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		} else if a.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", a.AlbumUID)
-		} else if err = form.Unserialize(&f, a.AlbumFilter); err != nil {
+		} else if formErr := form.Unserialize(&f, a.AlbumFilter); formErr != nil {
+			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(a.AlbumFilter))
 			return PhotoResults{}, 0, ErrBadFilter
 		} else {
 			f.Filter = a.AlbumFilter
@@ -266,7 +267,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	var labels []entity.Label
 	var labelIds []uint
 	if txt.NotEmpty(f.Label) {
-		if err := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || err != nil {
+		if labelErr := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || labelErr != nil {
 			log.Debugf("search: label %s not found", txt.LogParamLower(f.Label))
 			return PhotoResults{}, 0, nil
 		} else {
