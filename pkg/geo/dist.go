@@ -10,9 +10,10 @@ const (
 	DefaultDist    uint = 2
 )
 
-// KmToDeg returns the approximate distance in decimal degrees.
-func KmToDeg(km uint) float64 {
-	return 0.009009009 * float64(km)
+// Deg returns the approximate distance in decimal degrees,
+// see https://en.wikipedia.org/wiki/Decimal_degrees.
+func Deg(km float64) float64 {
+	return 0.009009009 * km
 }
 
 // DegToRad converts a value from degrees to radians.

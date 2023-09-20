@@ -639,7 +639,7 @@ func TestPhotos(t *testing.T) {
 	})
 	t.Run("form.Lat and form.Lng", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:2000"
+		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:4000"
 		f.Count = 10
 		f.Offset = 0
 		f.Order = "imported"

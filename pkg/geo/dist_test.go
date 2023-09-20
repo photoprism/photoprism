@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestKmToDeg(t *testing.T) {
+func TestDeg(t *testing.T) {
 	t.Run("10km", func(t *testing.T) {
-		assert.Equal(t, 0.09009009, KmToDeg(10))
+		assert.Equal(t, 0.09009009, Deg(10))
 	})
 }
 

@@ -88,9 +88,13 @@ func GPSLatRange(lat float64, km uint) (latN, latS float32, err error) {
 		return 0, 0, fmt.Errorf("invalid latitude")
 	}
 
-	// Approximate range.
-	latN = gpsCeil(lat + geo.KmToDeg(km))
-	latS = gpsFloor(lat - geo.KmToDeg(km))
+	// Approximate range radius.
+	r := float64(km) * 0.75
+
+	// Approximate longitude range,
+	// see https://en.wikipedia.org/wiki/Decimal_degrees
+	latN = gpsCeil(lat + geo.Deg(r))
+	latS = gpsFloor(lat - geo.Deg(r))
 
 	if latN > 90 {
 		latN = 90
@@ -110,9 +114,13 @@ func GPSLngRange(lng float64, km uint) (lngE, lngW float32, err error) {
 		return 0, 0, fmt.Errorf("invalid longitude")
 	}
 
-	// Approximate range.
-	lngE = gpsCeil(lng + geo.KmToDeg(km))
-	lngW = gpsFloor(lng - geo.KmToDeg(km))
+	// Approximate range radius.
+	r := float64(km) * 0.75
+
+	// Approximate longitude range,
+	// see https://en.wikipedia.org/wiki/Decimal_degrees
+	lngE = gpsCeil(lng + geo.Deg(r))
+	lngW = gpsFloor(lng - geo.Deg(r))
 
 	if lngE > 180 {
 		lngE = 180
