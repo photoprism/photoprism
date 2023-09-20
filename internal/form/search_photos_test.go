@@ -121,7 +121,7 @@ func TestParseQueryString(t *testing.T) {
 		assert.Equal(t, "23", form.Camera)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
 		assert.Equal(t, "false", form.Favorite)
-		assert.Equal(t, uint(0x61a8), form.Dist)
+		assert.Equal(t, float64(25000), form.Dist)
 		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query 2", func(t *testing.T) {
