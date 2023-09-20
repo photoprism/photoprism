@@ -38,7 +38,7 @@ func UserPath(dir string) string {
 		return dir
 	}
 
-	dir = strings.Trim(path.Clean(Path(strings.ReplaceAll(dir, "\\", "/"))), " ./\\|?*%<>")
+	dir = strings.Trim(path.Clean(Path(strings.ReplaceAll(dir, "\\", "/"))), " ~./\\|?*%<>")
 
 	if strings.Contains(dir, "/.") || strings.Contains(dir, "..") || strings.Contains(dir, "//") {
 		return ""
