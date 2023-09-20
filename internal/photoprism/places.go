@@ -37,7 +37,7 @@ func (w *Places) Start() (updated []string, err error) {
 	}()
 
 	// Check if a worker is already running.
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err = mutex.MainWorker.Start(); err != nil {
 		log.Warnf("index: %s (update locations)", err.Error())
 		return []string{}, err
 	}

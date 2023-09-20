@@ -77,7 +77,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	// Make sure to run import only once, unless otherwise requested.
 	if !opt.NonBlocking {
 		if err := mutex.MainWorker.Start(); err != nil {
-			event.Error(fmt.Sprintf("import: %s", err.Error()))
+			event.Warn(fmt.Sprintf("import: %s", err.Error()))
 			return done
 		}
 

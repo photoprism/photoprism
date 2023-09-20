@@ -101,7 +101,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	if err := mutex.MainWorker.Start(); err != nil {
-		event.Error(fmt.Sprintf("index: %s", err.Error()))
+		event.Warn(fmt.Sprintf("index: %s", err.Error()))
 		return found, updated
 	}
 
