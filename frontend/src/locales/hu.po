@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-09-20 16:47+0000\n"
+"PO-Revision-Date: 2023-09-20 17:58+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1703,7 +1704,7 @@ msgstr "Egy kép található"
 
 #: src/component/photo/toolbar.vue:201
 msgid "Open"
-msgstr ""
+msgstr "Nyissa meg a  címet."
 
 #: src/options/options.js:422
 msgid "Orange"

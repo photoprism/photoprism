@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-09-20 16:47+0000\n"
+"PO-Revision-Date: 2023-09-20 17:58+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1701,7 +1701,7 @@ msgstr "Irudi bat aurkitu da"
 
 #: src/component/photo/toolbar.vue:201
 msgid "Open"
-msgstr ""
+msgstr "Ireki"
 
 #: src/options/options.js:422
 msgid "Orange"
