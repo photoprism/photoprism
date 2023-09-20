@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-09-03 14:44+0000\n"
+"PO-Revision-Date: 2023-09-20 16:47+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -509,7 +509,7 @@ msgstr "Garbitu"
 
 #: src/component/photo/toolbar.vue:61
 msgid "Clear Location"
-msgstr ""
+msgstr "Garbitu kokapena"
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
