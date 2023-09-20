@@ -22,7 +22,7 @@ msgstr "%{n} àlbums trobats"
 msgid "%{n} files uploaded"
 msgstr "%{n} arxius penjats"
 
-#: src/page/library/browse.vue:312
+#: src/page/library/browse.vue:315
 msgid "%{n} folders found"
 msgstr "%{n} carpetes trobades"
 
@@ -36,7 +36,7 @@ msgid "%{n} people found"
 msgstr "%{n} persones trobades"
 
 #: src/page/album/photos.vue:240 src/page/album/photos.vue:393
-#: src/page/photos.vue:333 src/page/photos.vue:498
+#: src/page/photos.vue:344 src/page/photos.vue:509
 msgid "%{n} pictures found"
 msgstr "S'han trobat %{n} imatges"
 
@@ -211,20 +211,20 @@ msgstr "S'han carregat totes les %{n} etiquetes"
 msgid "All %{n} people loaded"
 msgstr "S'han carregat les totes les persones (%{n})"
 
-#: src/component/album/toolbar.vue:43 src/component/photo/toolbar.vue:55
+#: src/component/album/toolbar.vue:43 src/component/photo/toolbar.vue:66
 msgid "All Cameras"
 msgstr "Totes les càmeres"
 
-#: src/component/photo/toolbar.vue:58 src/page/albums.vue:37
+#: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
 #: src/page/albums.vue:146 src/page/albums.vue:616
 msgid "All Categories"
 msgstr "Totes les Categories"
 
-#: src/component/photo/toolbar.vue:57
+#: src/component/photo/toolbar.vue:68
 msgid "All Colors"
 msgstr "Tots els colors"
 
-#: src/component/album/toolbar.vue:47 src/component/photo/toolbar.vue:54
+#: src/component/album/toolbar.vue:47 src/component/photo/toolbar.vue:65
 msgid "All Countries"
 msgstr "Tots els Països"
 
@@ -236,11 +236,11 @@ msgstr "Tots els camps són obligatoris"
 msgid "All files from import folder"
 msgstr "Tots els fitxers de la carpeta d'importació"
 
-#: src/component/photo/toolbar.vue:56
+#: src/component/photo/toolbar.vue:67
 msgid "All Lenses"
 msgstr "Totes les lents"
 
-#: src/component/photo/toolbar.vue:59
+#: src/component/photo/toolbar.vue:70
 msgid "All Months"
 msgstr "Tots els mesos"
 
@@ -248,7 +248,7 @@ msgstr "Tots els mesos"
 msgid "All originals"
 msgstr "Tots els originals"
 
-#: src/component/photo/toolbar.vue:60 src/page/albums.vue:82
+#: src/component/photo/toolbar.vue:71 src/page/albums.vue:82
 msgid "All Years"
 msgstr "Tots els anys"
 
@@ -306,7 +306,7 @@ msgstr "Arxivat"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Esteu segur que voleu arxivar la selecció?"
 
-#: src/component/photo/toolbar.vue:415
+#: src/component/photo/toolbar.vue:460
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Esteu segur que voleu suprimir totes les imatges arxivades?"
 
@@ -419,7 +419,7 @@ msgid "Calendar"
 msgstr "Calendari"
 
 #: src/component/photo/cards.vue:516 src/component/photo/list.vue:138
-#: src/component/photo/toolbar.vue:241 src/dialog/photo/edit/details.vue:358
+#: src/component/photo/toolbar.vue:286 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Càmera"
 
@@ -427,14 +427,14 @@ msgstr "Càmera"
 msgid "Camera Serial"
 msgstr "Càmera en sèrie"
 
-#: src/page/album/photos.vue:246 src/page/photos.vue:339
+#: src/page/album/photos.vue:246 src/page/photos.vue:350
 msgid "Can't load more, limit reached"
 msgstr "No es pot carregar més, s'ha arribat al límit"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
 #: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
-#: src/page/labels.vue:224 src/page/library/browse.vue:202
-#: src/page/library/browse.vue:218 src/page/people/new.vue:215
+#: src/page/labels.vue:224 src/page/library/browse.vue:205
+#: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
 #: src/page/people/recognized.vue:299
 msgid "Can't select more items"
@@ -454,11 +454,11 @@ msgstr "No es poden seleccionar més elements"
 msgid "Cancel"
 msgstr "Cancel·lar"
 
-#: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:65
+#: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:76
 msgid "Cards"
 msgstr "Targetes"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:387
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:432
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Categoria"
@@ -485,7 +485,7 @@ msgid "Change private flag"
 msgstr "Canvia la bandera privada"
 
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
-#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:123
+#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
 #: src/dialog/share.vue:104 src/page/albums.vue:547
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
@@ -506,9 +506,13 @@ msgstr "Croma"
 msgid "Cleaning index and cache"
 msgstr "Neteja d'índex i memòria cau"
 
-#: src/page/library/index.vue:140
+#: src/page/library/index.vue:142
 msgid "Cleanup"
 msgstr "Netejar"
+
+#: src/component/photo/toolbar.vue:61
+msgid "Clear Location"
+msgstr ""
 
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
 #: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
@@ -520,7 +524,7 @@ msgstr "Tancar"
 msgid "Codec"
 msgstr "Còdec"
 
-#: src/component/photo/toolbar.vue:362
+#: src/component/photo/toolbar.vue:407
 msgid "Color"
 msgstr "Color"
 
@@ -536,7 +540,7 @@ msgstr "Colors"
 msgid "Compare Editions"
 msgstr "Compara Edicions"
 
-#: src/page/library/index.vue:116
+#: src/page/library/index.vue:117
 msgid "Complete Rescan"
 msgstr "Rescaneig complet"
 
@@ -600,7 +604,7 @@ msgstr "Copyright"
 msgid "Couldn't find anything."
 msgstr "No he pogut trobar res."
 
-#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:215
+#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:260
 #: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:612
 msgid "Country"
 msgstr "País"
@@ -652,7 +656,7 @@ msgstr "Registres de depuració"
 #: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
 #: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
 #: src/options/options.js:288 src/options/options.js:352
-#: src/options/themes.js:492
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Per defecte"
 
@@ -662,7 +666,7 @@ msgstr "Carpeta per defecte"
 
 #: src/dialog/admin/sessions/remove.vue:18 src/dialog/admin/users/remove.vue:18
 #: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
-#: src/component/photo/clipboard.vue:272 src/component/photo/toolbar.vue:123
+#: src/component/photo/clipboard.vue:272 src/component/photo/toolbar.vue:146
 #: src/dialog/album/delete.vue:18 src/dialog/file/delete.vue:18
 #: src/dialog/label/delete.vue:18 src/dialog/photo/delete.vue:21
 #: src/dialog/photo/edit/files.vue:41 src/dialog/photo/edit/files.vue:38
@@ -671,11 +675,9 @@ msgstr "Carpeta per defecte"
 msgid "Delete"
 msgstr "Esborrar"
 
-#: src/page/library/index.vue:141
+#: src/page/library/index.vue:143
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr ""
-"Suprimeix les entrades d'índex orfes, els fitxers de sidecar i les "
-"miniatures."
+msgstr "Suprimeix les entrades d'índex orfes, els fitxers de sidecar i les miniatures."
 
 #: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
@@ -691,7 +693,7 @@ msgstr "Podeu trobar instruccions detallades a la nostra Guia d'usuari."
 msgid "Details"
 msgstr "Detalls"
 
-#: src/dialog/photo/edit/files.vue:40
+#: src/dialog/photo/edit/files.vue:43
 msgid "Dimensions"
 msgstr "Dimensions"
 
@@ -826,8 +828,8 @@ msgstr "Baixeu fitxers únics i arxius zip."
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
 #: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
-#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:90
-#: src/page/library/browse.vue:108
+#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:96
+#: src/page/library/browse.vue:111
 msgid "Downloading…"
 msgstr "S'està baixant…"
 
@@ -926,7 +928,7 @@ msgstr "Exclou ocult"
 msgid "Expand"
 msgstr "Expandir"
 
-#: src/component/photo/toolbar.vue:158 src/page/albums.vue:165
+#: src/component/photo/toolbar.vue:181 src/page/albums.vue:165
 msgid "Expand Search"
 msgstr "Amplieu la cerca"
 
@@ -1013,12 +1015,12 @@ msgstr "Navegador de fitxers"
 msgid "File Conversion"
 msgstr "Conversió de fitxers"
 
-#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:73
+#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:84
 #: src/dialog/album/edit.vue:25
 msgid "File Name"
 msgstr "Nom de fitxer"
 
-#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:74
+#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:85
 #: src/dialog/album/edit.vue:26
 msgid "File Size"
 msgstr "Tamany arxiu"
@@ -1042,15 +1044,15 @@ msgstr "Longitud focal"
 
 #: src/dialog/photo/edit/info.vue:26 src/dialog/service/edit.vue:287
 #: src/dialog/service/edit.vue:293 src/dialog/share/upload.vue:141
-#: src/model/folder.js:198 src/page/library/browse.vue:72
+#: src/model/folder.js:199 src/page/library/browse.vue:72
 msgid "Folder"
 msgstr "Carpeta"
 
-#: src/page/library/browse.vue:314
+#: src/page/library/browse.vue:317
 msgid "Folder contains %{n} files"
 msgstr "La carpeta conté %{n} fitxers"
 
-#: src/page/library/browse.vue:306
+#: src/page/library/browse.vue:309
 msgid "Folder is empty"
 msgstr "La carpeta està buida"
 
@@ -1362,7 +1364,7 @@ msgstr "M'agrada"
 msgid "Lime"
 msgstr "Llima"
 
-#: src/page/library/browse.vue:316
+#: src/page/library/browse.vue:319
 msgid "Limit reached, showing first %{n} files"
 msgstr "S'ha assolit el límit, mostrant els primers %{n} fitxers"
 
@@ -1374,7 +1376,7 @@ msgstr "Lineal: molt suau, millor rendiment"
 msgid "Link"
 msgstr "Enllaç"
 
-#: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:66
+#: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:77
 msgid "List"
 msgstr "Llista"
 
@@ -1503,14 +1505,10 @@ msgstr "Moments"
 msgid "Monochrome"
 msgstr "Monocrom"
 
-#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:337
+#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:382
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "Mes"
-
-#: src/page/album/photos.vue:396 src/page/photos.vue:501
-msgid "More than %{n} pictures found"
-msgstr "S'han trobat més de %{n} imatges"
 
 #: src/page/albums.vue:496
 msgid "More than 20 albums found"
@@ -1524,11 +1522,11 @@ msgstr "S'han trobat més de 20 etiquetes"
 msgid "More than 20 people found"
 msgstr "S'han trobat més de 20 persones"
 
-#: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:64
+#: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:75
 msgid "Mosaic"
 msgstr "Mosaic"
 
-#: src/component/album/toolbar.vue:78 src/component/photo/toolbar.vue:76
+#: src/component/album/toolbar.vue:78 src/component/photo/toolbar.vue:87
 #: src/dialog/album/edit.vue:28
 msgid "Most Relevant"
 msgstr "El més rellevant"
@@ -1543,7 +1541,7 @@ msgstr "Ha de tenir almenys %{n} caràcters."
 
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:528
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:39
+#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/labels.vue:84
 #: src/dialog/photo/edit/labels.vue:200 src/dialog/photo/edit/people.vue:21
 #: src/dialog/photo/edit/people.vue:226 src/dialog/service/edit.vue:427
@@ -1575,7 +1573,7 @@ msgstr "Nou"
 msgid "New Password"
 msgstr "Nova contrasenya"
 
-#: src/component/album/toolbar.vue:71 src/component/photo/toolbar.vue:69
+#: src/component/album/toolbar.vue:71 src/component/photo/toolbar.vue:80
 #: src/dialog/album/edit.vue:21 src/page/albums.vue:89
 msgid "Newest First"
 msgstr "El més nou primer"
@@ -1605,8 +1603,8 @@ msgstr "No s'han trobat persones"
 #: src/common/viewer.js:263 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:389
-#: src/page/library/browse.vue:34 src/page/photos.vue:494
-#: src/page/places.vue:340 src/page/places.vue:408
+#: src/page/library/browse.vue:34 src/page/photos.vue:505
+#: src/page/places.vue:376 src/page/places.vue:456
 msgid "No pictures found"
 msgstr "No s'han trobat imatges"
 
@@ -1678,7 +1676,7 @@ msgstr "No es va trobar res."
 msgid "Offline"
 msgstr "Offline"
 
-#: src/component/album/toolbar.vue:72 src/component/photo/toolbar.vue:70
+#: src/component/album/toolbar.vue:72 src/component/photo/toolbar.vue:81
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:90
 msgid "Oldest First"
 msgstr "El més vell primer"
@@ -1695,7 +1693,7 @@ msgstr "Una vegada per setmana"
 msgid "One album found"
 msgstr "S'ha trobat un àlbum"
 
-#: src/page/library/browse.vue:308
+#: src/page/library/browse.vue:311
 msgid "One file found"
 msgstr "S'ha trobat un fitxer"
 
@@ -1703,7 +1701,7 @@ msgstr "S'ha trobat un fitxer"
 msgid "One file uploaded"
 msgstr "S'ha penjat un fitxer"
 
-#: src/page/library/browse.vue:310
+#: src/page/library/browse.vue:313
 msgid "One folder found"
 msgstr "S'ha trobat una carpeta"
 
@@ -1716,7 +1714,7 @@ msgstr "S'ha trobat una etiqueta"
 msgid "One person found"
 msgstr "S'ha trobat una persona"
 
-#: src/page/album/photos.vue:391 src/page/photos.vue:496
+#: src/page/album/photos.vue:391 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "S'ha trobat una imatge"
 
@@ -1755,7 +1753,7 @@ msgstr "Altres"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "La nostra missió és proporcionar la solució més fàcil d'utilitzar i de privadesa per mantenir les vostres imatges organitzades i accessibles."
 
-#: src/options/options.js:302
+#: src/options/options.js:302 src/page/places.vue:158
 msgid "Outdoor"
 msgstr "A l'aire lliure"
 
@@ -1788,7 +1786,7 @@ msgstr "Gent"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Les persones amb qui comparteixis un enllaç podran veure contingut públic."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:134
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:154
 msgid "Permanently deleted"
 msgstr "Esborrat permanentment"
 
@@ -1891,7 +1889,7 @@ msgstr "Previsualitza"
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:136
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:133
-#: src/dialog/photo/edit/files.vue:33
+#: src/dialog/photo/edit/files.vue:36
 msgid "Primary"
 msgstr "Primari"
 
@@ -1939,7 +1937,7 @@ msgstr "Crua"
 msgid "RAW"
 msgstr "RAW"
 
-#: src/page/library/index.vue:117
+#: src/page/library/index.vue:118
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Torneu a indexar tots els originals, inclosos els fitxers ja indexats i sense canvis."
 
@@ -1947,12 +1945,12 @@ msgstr "Torneu a indexar tots els originals, inclosos els fitxers ja indexats i 
 msgid "Read-Only Mode"
 msgstr "Mode de només lectura"
 
-#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:71
+#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:82
 #: src/dialog/album/edit.vue:23 src/page/albums.vue:91
 msgid "Recently Added"
 msgstr "Recentment afegit"
 
-#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:72
+#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:83
 #: src/dialog/album/edit.vue:24 src/page/albums.vue:92
 msgid "Recently Edited"
 msgstr "Editat recentment"
@@ -1979,7 +1977,7 @@ msgid "Register"
 msgstr "Registra't"
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:1985
-#: src/component/photo/toolbar.vue:55 src/dialog/reload.vue:12
+#: src/component/photo/toolbar.vue:78 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
 #: src/page/people/new.vue:57 src/page/people/recognized.vue:96
@@ -2057,7 +2055,7 @@ msgstr "Valoració"
 msgid "Role"
 msgstr "Rol"
 
-#: src/options/options.js:297
+#: src/options/options.js:297 src/page/places.vue:154
 msgid "Satellite"
 msgstr "Satèl·lit"
 
@@ -2077,9 +2075,9 @@ msgstr "Escaneigs"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
 #: src/component/navigation.vue:551 src/component/navigation.vue:4
-#: src/component/navigation.vue:326 src/component/photo/toolbar.vue:45
+#: src/component/navigation.vue:326 src/component/photo/toolbar.vue:49
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
-#: src/page/people/recognized.vue:77 src/page/places.vue:41
+#: src/page/people/recognized.vue:77 src/page/places.vue:46
 msgid "Search"
 msgstr "Cercar"
 
@@ -2219,7 +2217,7 @@ msgid "Similar"
 msgstr "Similars"
 
 #: src/dialog/photo/edit/files.vue:86 src/dialog/photo/edit/files.vue:83
-#: src/dialog/photo/edit/files.vue:41 src/dialog/service/edit.vue:226
+#: src/dialog/photo/edit/files.vue:44 src/dialog/service/edit.vue:226
 msgid "Size"
 msgstr "Mida"
 
@@ -2231,7 +2229,7 @@ msgstr "Lenta"
 msgid "Software"
 msgstr "Programari"
 
-#: src/component/photo/toolbar.vue:289 src/dialog/album/edit.vue:189
+#: src/component/photo/toolbar.vue:334 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
 msgid "Sort Order"
 msgstr "Criteri d’ordenació"
@@ -2281,7 +2279,7 @@ msgstr "Províncies"
 msgid "Static Size Limit: %{n}px"
 msgstr "Límit de mida estàtica: %{n}px"
 
-#: src/dialog/photo/edit/files.vue:43
+#: src/dialog/photo/edit/files.vue:46
 msgid "Status"
 msgstr "Estat"
 
@@ -2289,7 +2287,7 @@ msgstr "Estat"
 msgid "Storage"
 msgstr "Emmagatzematge"
 
-#: src/options/options.js:292
+#: src/options/options.js:292 src/page/places.vue:150
 msgid "Streets"
 msgstr "Carrers"
 
@@ -2414,8 +2412,8 @@ msgid "To upgrade, you can either enter an activation code or click \"Register\"
 msgstr "Per actualitzar, podeu introduir un codi d'activació o fer clic a \"Registrar-vos\" per registrar-vos al nostre lloc web:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
-#: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:72
-#: src/component/photo/toolbar.vue:89 src/component/photo/toolbar.vue:105
+#: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:95
+#: src/component/photo/toolbar.vue:112 src/component/photo/toolbar.vue:128
 msgid "Toggle View"
 msgstr "Canvia la vista"
 
@@ -2423,7 +2421,7 @@ msgstr "Canvia la vista"
 msgid "Token"
 msgstr "Token"
 
-#: src/options/options.js:307
+#: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topogràfic"
 
@@ -2439,7 +2437,7 @@ msgid "Try again using other filters or keywords."
 msgstr "Torna-ho a provar amb altres filtres o paraules clau."
 
 #: src/dialog/photo/edit/files.vue:98 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:42 src/dialog/photo/edit/info.vue:16
+#: src/dialog/photo/edit/files.vue:45 src/dialog/photo/edit/info.vue:16
 #: src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "Tipus"
@@ -2523,7 +2521,7 @@ msgid "Upgrade Now"
 msgstr "Actualitza ara"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
-#: src/component/photo/toolbar.vue:141 src/dialog/share/upload.vue:35
+#: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
@@ -2620,7 +2618,7 @@ msgstr "Vectors"
 msgid "Video"
 msgstr "Vídeo"
 
-#: src/component/album/toolbar.vue:77 src/component/photo/toolbar.vue:75
+#: src/component/album/toolbar.vue:77 src/component/photo/toolbar.vue:86
 #: src/dialog/album/edit.vue:27
 msgid "Video Duration"
 msgstr "Durada del vídeo"
@@ -2632,7 +2630,7 @@ msgid "Videos"
 msgstr "Videos"
 
 #: src/component/photo/cards.vue:334 src/component/photo/mosaic.vue:257
-#: src/component/photo/toolbar.vue:267
+#: src/component/photo/toolbar.vue:312
 msgid "View"
 msgstr "Veure"
 
@@ -2645,7 +2643,7 @@ msgstr "Visor"
 msgid "Visitor"
 msgstr "Visitant"
 
-#: src/component/album/toolbar.vue:79 src/component/photo/toolbar.vue:77
+#: src/component/album/toolbar.vue:79 src/component/photo/toolbar.vue:88
 #: src/dialog/album/edit.vue:29
 msgid "Visual Similarity"
 msgstr "Similitud visual"
@@ -2696,7 +2694,7 @@ msgstr "Blanc"
 msgid "Work Details"
 msgstr "Detalls del treball"
 
-#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:312
+#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:357
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:204
 msgid "Year"
 msgstr "Any"
@@ -2755,6 +2753,9 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
+
+#~ msgid "More than %{n} pictures found"
+#~ msgstr "S'han trobat més de %{n} imatges"
 
 #~ msgid "Delete orphaned index entries, cache files and thumbnails."
 #~ msgstr "Suprimeix les entrades d'índex orfes, els fitxers de memòria cau i les miniatures."
