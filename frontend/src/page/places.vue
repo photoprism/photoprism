@@ -441,7 +441,7 @@ export default {
 
       if (this.query() !== this.filter.q) {
         if (this.filter.s) {
-          this.$router.replace({name: "places_scope", params: {s: this.filter.s}, query: {q: this.filter.q}});
+          this.$router.replace({name: "places_view", params: {s: this.filter.s}, query: {q: this.filter.q}});
         } else if (this.filter.q) {
           this.$router.replace({name: "places", query: {q: this.filter.q}});
         } else {

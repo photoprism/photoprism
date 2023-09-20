@@ -198,7 +198,7 @@ export default {
       if (this.canAccessLibrary && photo.CellID && photo.CellID !== "zz") {
         this.$router.push({name: "places", query: {q: photo.CellID}});
       } else if (this.uid) {
-        this.$router.push({name: "places_scope", params: {s: this.uid}, query: {q: photo.CellID}});
+        this.$router.push({name: "places_view", params: {s: this.uid}, query: {q: photo.CellID}});
       }
     },
     editPhoto(index) {

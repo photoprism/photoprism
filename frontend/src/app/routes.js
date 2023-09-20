@@ -263,16 +263,25 @@ export default [
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "places_scope",
-    path: "/places/:s",
+    name: "places_view",
+    path: "/places/view/:s",
     component: Places,
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "places_location",
-    path: "/location",
+    name: "places_browse",
+    path: "/places/browse",
     component: Photos,
     meta: { title: $gettext("Places"), auth: true },
+    beforeEnter: (to, from, next) => {
+      if (session.loginRequired()) {
+        next({ name: "login" });
+      } else if (config.deny("photos", "search")) {
+        next({ name: "albums" });
+      } else {
+        next();
+      }
+    },
   },
   {
     name: "states",

@@ -56,7 +56,7 @@
       </template>
       <template v-else>
         <v-spacer></v-spacer>
-        <v-btn v-if="canAccessLibrary" icon :title="$gettext('Open')" class="action-open-tab" @click.stop="openInTab">
+        <v-btn v-if="canAccessLibrary" icon :title="$gettext('Browse')" class="action-browse" @click.stop="onBrowse">
           <v-icon size="20">tab</v-icon>
         </v-btn>
         <v-btn v-if="onClose !== undefined" icon :title="$gettext('Close')" class="action-close" @click.stop="onClose">
@@ -334,10 +334,11 @@ export default {
     clearLocation() {
       this.$router.push({ name: "browse" });
     },
-    openInTab() {
-      const url = this.$router.resolve({name: 'places_location', query: this.staticFilter}).href;
-      if (url) {
-        window.open(url, '_blank');
+    onBrowse() {
+      const route = {name: 'places_browse', query: this.staticFilter};
+      const routeUrl = this.$router.resolve(route).href;
+      if (routeUrl) {
+        window.open(routeUrl, '_blank');
       }
     },
     batchDelete() {
