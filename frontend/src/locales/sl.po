@@ -2,12 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-09-20 16:47+0000\n"
+"PO-Revision-Date: 2023-09-20 17:58+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
+"n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
@@ -1701,7 +1702,7 @@ msgstr "Najdena je bila ena slika"
 
 #: src/component/photo/toolbar.vue:201
 msgid "Open"
-msgstr ""
+msgstr "Odpri"
 
 #: src/options/options.js:422
 msgid "Orange"
