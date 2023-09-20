@@ -56,10 +56,10 @@
       </template>
       <template v-else>
         <v-spacer></v-spacer>
-        <v-btn v-if="canAccessLibrary" icon class="action-open-tab" @click.stop="openInTab">
-          <v-icon size="20">open_in_new</v-icon>
+        <v-btn v-if="canAccessLibrary" icon :title="$gettext('Browse')" class="action-open-tab" @click.stop="openInTab">
+          <v-icon size="20">tab</v-icon>
         </v-btn>
-        <v-btn v-if="onClose !== undefined" icon class="action-close" @click.stop="onClose">
+        <v-btn v-if="onClose !== undefined" icon :title="$gettext('Close')" class="action-close" @click.stop="onClose">
           <v-icon>close</v-icon>
         </v-btn>
       </template>
