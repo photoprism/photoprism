@@ -549,7 +549,7 @@ export default {
 
       // Map style switcher control.
       if (this.mapStyles.length > 1) {
-        this.map.addControl(new MapStyleControl(this.mapStyles, this.style, this.setStyle), this.$rtl ? 'bottom-left' : 'bottom-right');
+        this.map.addControl(new MapStyleControl(this.mapStyles, this.style, this.setStyle), controlPos);
       }
 
       // Show map scale control.

@@ -28,6 +28,8 @@ export default class MapStyleControl {
       styleElement.addEventListener("click", (event) => {
         const srcElement = event.srcElement;
         if (srcElement.classList.contains("active")) {
+          this.mapStyleContainer.style.display = "none";
+          this.styleButton.style.display = "block";
           return;
         }
 
