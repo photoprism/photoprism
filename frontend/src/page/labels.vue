@@ -577,8 +577,7 @@ export default {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));
           }
         } else {
-          this.$notify.info(this.$gettext('More than 20 labels found'));
-
+          // this.$notify.info(this.$gettext('More than 20 labels found'));
           this.$nextTick(() => {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
