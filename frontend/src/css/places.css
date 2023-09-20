@@ -114,7 +114,7 @@
     max-height: 90vh;
     overflow: hidden;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    transition: all 1450ms cubic-bezier(0.32,1,0.23,1) 0ms;
+    transition: all 650ms cubic-bezier(0.32, 1, 0.23, 1) 0ms;
 }
 
 #photoprism .cluster-control-container {
@@ -136,13 +136,13 @@
     }
 }
 
-@media (orientation: portrait) {
+@media only screen and (max-width: 599px) {
     #photoprism .cluster-control {
-        left: 2px;
-        right: 2px;
+        left: 0;
+        right: 0;
     }
 
     #photoprism .cluster-control-container {
-        min-height: 70vh;
+        min-height: 66vh;
     }
 }
