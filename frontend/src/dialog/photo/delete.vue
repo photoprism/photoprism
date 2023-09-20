@@ -18,9 +18,13 @@
             <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed dark class="action-confirm"
+            <v-btn v-if="action === ''" color="primary-button" depressed dark class="action-confirm"
                    @click.stop="confirm">
               <translate key="Delete">Delete</translate>
+            </v-btn>
+            <v-btn v-else color="primary-button" depressed dark class="action-confirm"
+                   @click.stop="confirm">
+              {{ action }}
             </v-btn>
           </v-flex>
         </v-layout>
@@ -34,6 +38,10 @@ export default {
   props: {
     show: Boolean,
     text: {
+      type: String,
+      default: "",
+    },
+    action: {
       type: String,
       default: "",
     },

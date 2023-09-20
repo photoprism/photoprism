@@ -7,8 +7,7 @@ msgstr ""
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
@@ -660,14 +659,18 @@ msgstr "Тэчка па змаўчанні"
 
 #: src/dialog/admin/sessions/remove.vue:18 src/dialog/admin/users/remove.vue:18
 #: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
-#: src/component/photo/clipboard.vue:272 src/component/photo/toolbar.vue:146
-#: src/dialog/album/delete.vue:18 src/dialog/file/delete.vue:18
-#: src/dialog/label/delete.vue:18 src/dialog/photo/delete.vue:21
-#: src/dialog/photo/edit/files.vue:41 src/dialog/photo/edit/files.vue:38
-#: src/dialog/service/remove.vue:18 src/dialog/share.vue:228
-#: src/page/library/errors.vue:88 src/page/settings/general.vue:363
+#: src/component/photo/clipboard.vue:272 src/dialog/album/delete.vue:18
+#: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
+#: src/dialog/photo/delete.vue:21 src/dialog/photo/edit/files.vue:41
+#: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
+#: src/dialog/share.vue:228 src/page/library/errors.vue:88
+#: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Выдаліць"
+
+#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:463
+msgid "Delete All"
+msgstr ""
 
 #: src/page/library/index.vue:143
 msgid "Delete orphaned index entries, sidecar files and thumbnails."

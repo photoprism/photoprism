@@ -40,8 +40,8 @@
         </v-btn>
 
         <v-btn v-if="canDelete && context === 'archive' && config.count.archived > 0" icon
-               class="hidden-sm-and-down action-sweep"
-               :title="$gettext('Delete')" @click.stop="sweepArchive()">
+               class="hidden-sm-and-down action-delete-all"
+               :title="$gettext('Delete All')" @click.stop="deleteAll()">
           <v-icon>delete_sweep</v-icon>
         </v-btn>
         <v-btn v-else-if="canUpload" icon class="hidden-sm-and-down action-upload"
@@ -191,6 +191,7 @@
     <p-photo-delete-dialog
       :show="dialog.delete"
       :text="$gettext('Are you sure you want to delete all archived pictures?')"
+      :action="$gettext('Delete All')"
       @cancel="dialog.delete = false" @confirm="batchDelete">
     </p-photo-delete-dialog>
   </v-form>
@@ -323,7 +324,7 @@ export default {
     showUpload() {
       Event.publish("dialog.upload");
     },
-    sweepArchive() {
+    deleteAll() {
       if (!this.canDelete) {
         return;
       }

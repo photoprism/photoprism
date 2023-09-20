@@ -775,7 +775,6 @@ msgstr ""
 #: src/component/album/clipboard.vue:153
 #: src/component/label/clipboard.vue:82
 #: src/component/photo/clipboard.vue:272
-#: src/component/photo/toolbar.vue:146
 #: src/dialog/album/delete.vue:18
 #: src/dialog/file/delete.vue:18
 #: src/dialog/label/delete.vue:18
@@ -787,6 +786,11 @@ msgstr ""
 #: src/page/library/errors.vue:88
 #: src/page/settings/general.vue:363
 msgid "Delete"
+msgstr ""
+
+#: src/component/photo/toolbar.vue:146
+#: src/component/photo/toolbar.vue:463
+msgid "Delete All"
 msgstr ""
 
 #: src/page/library/index.vue:143
