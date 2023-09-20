@@ -180,7 +180,7 @@ msgstr "بعد از دو هفته"
 msgid "Album"
 msgstr "آلبوم"
 
-#: src/page/albums.vue:544
+#: src/page/albums.vue:543
 msgid "Album created"
 msgstr "آلبوم ایجاد شد"
 
@@ -216,7 +216,7 @@ msgid "All Cameras"
 msgstr "همه دوربین ها"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:616
+#: src/page/albums.vue:146 src/page/albums.vue:615
 msgid "All Categories"
 msgstr "همه دسته بندی ها"
 
@@ -306,7 +306,7 @@ msgstr "بایگانی شده"
 msgid "Are you sure you want to archive the selection?"
 msgstr "آیا مطمئن هستید که می خواهید انتخاب را بایگانی کنید؟"
 
-#: src/component/photo/toolbar.vue:460
+#: src/component/photo/toolbar.vue:462
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "آیا مطمئن هستید که می خواهید همه تصاویر بایگانی شده را حذف کنید؟"
 
@@ -419,7 +419,7 @@ msgid "Calendar"
 msgstr "تقویم"
 
 #: src/component/photo/cards.vue:516 src/component/photo/list.vue:138
-#: src/component/photo/toolbar.vue:286 src/dialog/photo/edit/details.vue:358
+#: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "دوربین"
 
@@ -432,7 +432,7 @@ msgid "Can't load more, limit reached"
 msgstr "نمی تواند بار بیشتری بارگیری کند ، محدود شود"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
+#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -458,7 +458,7 @@ msgstr "لغو"
 msgid "Cards"
 msgstr "کارت ها"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:432
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "دسته"
@@ -487,7 +487,7 @@ msgstr "تغییر پرچم خصوصی"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:547
+#: src/dialog/share.vue:104 src/page/albums.vue:546
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -510,13 +510,9 @@ msgstr "پاک کردن فهرست و کش"
 msgid "Cleanup"
 msgstr "پاک کردن"
 
-#: src/component/photo/toolbar.vue:61
-msgid "Clear Location"
-msgstr "پاک کردن مکان"
-
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
-#: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
-#: src/page/library/errors.vue:60
+#: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
+#: src/dialog/share.vue:87 src/page/library/errors.vue:60
 msgid "Close"
 msgstr "نزدیک"
 
@@ -524,7 +520,7 @@ msgstr "نزدیک"
 msgid "Codec"
 msgstr "کدک"
 
-#: src/component/photo/toolbar.vue:407
+#: src/component/photo/toolbar.vue:409
 msgid "Color"
 msgstr "رنگ"
 
@@ -604,7 +600,7 @@ msgstr "حق چاپ"
 msgid "Couldn't find anything."
 msgstr "نتوانست چیزی پیدا کند."
 
-#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:260
+#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:262
 #: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:612
 msgid "Country"
 msgstr "کشور"
@@ -1505,22 +1501,10 @@ msgstr "لحظه ها"
 msgid "Monochrome"
 msgstr "تک رنگ"
 
-#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:382
+#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:384
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "ماه"
-
-#: src/page/albums.vue:496
-msgid "More than 20 albums found"
-msgstr "بیش از 20 آلبوم پیدا شد"
-
-#: src/page/labels.vue:425
-msgid "More than 20 labels found"
-msgstr "بیش از 20 برچسب پیدا شد"
-
-#: src/page/people/recognized.vue:500
-msgid "More than 20 people found"
-msgstr "بیش از 20 نفر پیدا شد"
 
 #: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:75
 msgid "Mosaic"
@@ -1717,6 +1701,10 @@ msgstr "یک شخص پیدا شد"
 #: src/page/album/photos.vue:391 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "یک تصویر پیدا شد"
+
+#: src/component/photo/toolbar.vue:201
+msgid "Open"
+msgstr ""
 
 #: src/options/options.js:422
 msgid "Orange"
@@ -2192,7 +2180,7 @@ msgstr "نمایش مخفی ها"
 msgid "Show less"
 msgstr "نمایش کمتر"
 
-#: src/page/labels.vue:103
+#: src/component/photo/toolbar.vue:60 src/page/labels.vue:103
 msgid "Show more"
 msgstr "نمایش بیشتر"
 
@@ -2229,7 +2217,7 @@ msgstr "آهسته"
 msgid "Software"
 msgstr "نرم افزار"
 
-#: src/component/photo/toolbar.vue:334 src/dialog/album/edit.vue:189
+#: src/component/photo/toolbar.vue:336 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
 msgid "Sort Order"
 msgstr "ترتیب مرتب سازی"
@@ -2630,7 +2618,7 @@ msgid "Videos"
 msgstr "ویدیو ها"
 
 #: src/component/photo/cards.vue:334 src/component/photo/mosaic.vue:257
-#: src/component/photo/toolbar.vue:312
+#: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "نمایش"
 
@@ -2694,7 +2682,7 @@ msgstr "سفید"
 msgid "Work Details"
 msgstr "جزئیات"
 
-#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:357
+#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:359
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:204
 msgid "Year"
 msgstr "سال"
@@ -2753,6 +2741,18 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Clear Location"
+#~ msgstr "پاک کردن مکان"
+
+#~ msgid "More than 20 albums found"
+#~ msgstr "بیش از 20 آلبوم پیدا شد"
+
+#~ msgid "More than 20 labels found"
+#~ msgstr "بیش از 20 برچسب پیدا شد"
+
+#~ msgid "More than 20 people found"
+#~ msgstr "بیش از 20 نفر پیدا شد"
 
 #~ msgid "More than %{n} pictures found"
 #~ msgstr "بیش از %{n} تصاویر یافت شده"

@@ -180,7 +180,7 @@ msgstr "Després de dues setmanes"
 msgid "Album"
 msgstr "Àlbum"
 
-#: src/page/albums.vue:544
+#: src/page/albums.vue:543
 msgid "Album created"
 msgstr "Àlbum creat"
 
@@ -216,7 +216,7 @@ msgid "All Cameras"
 msgstr "Totes les càmeres"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:616
+#: src/page/albums.vue:146 src/page/albums.vue:615
 msgid "All Categories"
 msgstr "Totes les Categories"
 
@@ -306,7 +306,7 @@ msgstr "Arxivat"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Esteu segur que voleu arxivar la selecció?"
 
-#: src/component/photo/toolbar.vue:460
+#: src/component/photo/toolbar.vue:462
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Esteu segur que voleu suprimir totes les imatges arxivades?"
 
@@ -419,7 +419,7 @@ msgid "Calendar"
 msgstr "Calendari"
 
 #: src/component/photo/cards.vue:516 src/component/photo/list.vue:138
-#: src/component/photo/toolbar.vue:286 src/dialog/photo/edit/details.vue:358
+#: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Càmera"
 
@@ -432,7 +432,7 @@ msgid "Can't load more, limit reached"
 msgstr "No es pot carregar més, s'ha arribat al límit"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
+#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -458,7 +458,7 @@ msgstr "Cancel·lar"
 msgid "Cards"
 msgstr "Targetes"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:432
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Categoria"
@@ -487,7 +487,7 @@ msgstr "Canvia la bandera privada"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:547
+#: src/dialog/share.vue:104 src/page/albums.vue:546
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -510,13 +510,9 @@ msgstr "Neteja d'índex i memòria cau"
 msgid "Cleanup"
 msgstr "Netejar"
 
-#: src/component/photo/toolbar.vue:61
-msgid "Clear Location"
-msgstr "Neteja la ubicació"
-
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
-#: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
-#: src/page/library/errors.vue:60
+#: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
+#: src/dialog/share.vue:87 src/page/library/errors.vue:60
 msgid "Close"
 msgstr "Tancar"
 
@@ -524,7 +520,7 @@ msgstr "Tancar"
 msgid "Codec"
 msgstr "Còdec"
 
-#: src/component/photo/toolbar.vue:407
+#: src/component/photo/toolbar.vue:409
 msgid "Color"
 msgstr "Color"
 
@@ -604,7 +600,7 @@ msgstr "Copyright"
 msgid "Couldn't find anything."
 msgstr "No he pogut trobar res."
 
-#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:260
+#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:262
 #: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:612
 msgid "Country"
 msgstr "País"
@@ -1505,22 +1501,10 @@ msgstr "Moments"
 msgid "Monochrome"
 msgstr "Monocrom"
 
-#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:382
+#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:384
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "Mes"
-
-#: src/page/albums.vue:496
-msgid "More than 20 albums found"
-msgstr "S'han trobat més de 20 àlbums"
-
-#: src/page/labels.vue:425
-msgid "More than 20 labels found"
-msgstr "S'han trobat més de 20 etiquetes"
-
-#: src/page/people/recognized.vue:500
-msgid "More than 20 people found"
-msgstr "S'han trobat més de 20 persones"
 
 #: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:75
 msgid "Mosaic"
@@ -1717,6 +1701,10 @@ msgstr "S'ha trobat una persona"
 #: src/page/album/photos.vue:391 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "S'ha trobat una imatge"
+
+#: src/component/photo/toolbar.vue:201
+msgid "Open"
+msgstr ""
 
 #: src/options/options.js:422
 msgid "Orange"
@@ -2192,7 +2180,7 @@ msgstr "Mostra ocult"
 msgid "Show less"
 msgstr "Mostra menys"
 
-#: src/page/labels.vue:103
+#: src/component/photo/toolbar.vue:60 src/page/labels.vue:103
 msgid "Show more"
 msgstr "Mostra’n més"
 
@@ -2229,7 +2217,7 @@ msgstr "Lenta"
 msgid "Software"
 msgstr "Programari"
 
-#: src/component/photo/toolbar.vue:334 src/dialog/album/edit.vue:189
+#: src/component/photo/toolbar.vue:336 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
 msgid "Sort Order"
 msgstr "Criteri d’ordenació"
@@ -2630,7 +2618,7 @@ msgid "Videos"
 msgstr "Videos"
 
 #: src/component/photo/cards.vue:334 src/component/photo/mosaic.vue:257
-#: src/component/photo/toolbar.vue:312
+#: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "Veure"
 
@@ -2694,7 +2682,7 @@ msgstr "Blanc"
 msgid "Work Details"
 msgstr "Detalls del treball"
 
-#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:357
+#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:359
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:204
 msgid "Year"
 msgstr "Any"
@@ -2753,6 +2741,18 @@ msgstr "La vostra biblioteca s'analitza contínuament per crear automàticament 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Apropa o redueix"
+
+#~ msgid "Clear Location"
+#~ msgstr "Neteja la ubicació"
+
+#~ msgid "More than 20 albums found"
+#~ msgstr "S'han trobat més de 20 àlbums"
+
+#~ msgid "More than 20 labels found"
+#~ msgstr "S'han trobat més de 20 etiquetes"
+
+#~ msgid "More than 20 people found"
+#~ msgstr "S'han trobat més de 20 persones"
 
 #~ msgid "More than %{n} pictures found"
 #~ msgstr "S'han trobat més de %{n} imatges"

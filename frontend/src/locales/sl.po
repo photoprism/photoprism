@@ -7,8 +7,7 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 4.18.2\n"
 "Generated-By: easygettext\n"
 
@@ -178,7 +177,7 @@ msgstr "Po dveh tednih"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/albums.vue:544
+#: src/page/albums.vue:543
 msgid "Album created"
 msgstr "Ustvarjen album"
 
@@ -214,7 +213,7 @@ msgid "All Cameras"
 msgstr "Vsi fotoaparati"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:616
+#: src/page/albums.vue:146 src/page/albums.vue:615
 msgid "All Categories"
 msgstr "Vse kategorije"
 
@@ -304,7 +303,7 @@ msgstr "Arhivirano"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Ali ste prepričani, da želite arhivirati izbor?"
 
-#: src/component/photo/toolbar.vue:460
+#: src/component/photo/toolbar.vue:462
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Ali ste prepričani, da želite izbrisati vse arhivirane slike?"
 
@@ -417,7 +416,7 @@ msgid "Calendar"
 msgstr "Koledar"
 
 #: src/component/photo/cards.vue:516 src/component/photo/list.vue:138
-#: src/component/photo/toolbar.vue:286 src/dialog/photo/edit/details.vue:358
+#: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Fotoaparat"
 
@@ -430,7 +429,7 @@ msgid "Can't load more, limit reached"
 msgstr "Ne morem naložiti več, omejitev je dosežena"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
+#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -456,7 +455,7 @@ msgstr "Prekliči"
 msgid "Cards"
 msgstr "Kartice"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:432
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Kategorija"
@@ -485,7 +484,7 @@ msgstr "Sprememba zasebne zastave"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:547
+#: src/dialog/share.vue:104 src/page/albums.vue:546
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -508,13 +507,9 @@ msgstr "Čiščenje indeksa in predpomnilnika"
 msgid "Cleanup"
 msgstr "Čiščenje"
 
-#: src/component/photo/toolbar.vue:61
-msgid "Clear Location"
-msgstr "Jasna lokacija"
-
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
-#: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
-#: src/page/library/errors.vue:60
+#: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
+#: src/dialog/share.vue:87 src/page/library/errors.vue:60
 msgid "Close"
 msgstr "Zapri"
 
@@ -522,7 +517,7 @@ msgstr "Zapri"
 msgid "Codec"
 msgstr "Kodek"
 
-#: src/component/photo/toolbar.vue:407
+#: src/component/photo/toolbar.vue:409
 msgid "Color"
 msgstr "Barva"
 
@@ -602,7 +597,7 @@ msgstr "Avtorske pravice"
 msgid "Couldn't find anything."
 msgstr "Ničesar nisem našel."
 
-#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:260
+#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:262
 #: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:612
 msgid "Country"
 msgstr "Država"
@@ -1503,22 +1498,10 @@ msgstr "Trenutki"
 msgid "Monochrome"
 msgstr "Enobarvni"
 
-#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:382
+#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:384
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "Mesec"
-
-#: src/page/albums.vue:496
-msgid "More than 20 albums found"
-msgstr "Najdenih več kot 20 albumov"
-
-#: src/page/labels.vue:425
-msgid "More than 20 labels found"
-msgstr "Najdenih je bilo več kot 20 značk"
-
-#: src/page/people/recognized.vue:500
-msgid "More than 20 people found"
-msgstr "Več kot 20 ljudi je našlo"
 
 #: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:75
 msgid "Mosaic"
@@ -1715,6 +1698,10 @@ msgstr "Ena oseba je našla"
 #: src/page/album/photos.vue:391 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "Najdena je bila ena slika"
+
+#: src/component/photo/toolbar.vue:201
+msgid "Open"
+msgstr ""
 
 #: src/options/options.js:422
 msgid "Orange"
@@ -2190,7 +2177,7 @@ msgstr "Prikaži skrito"
 msgid "Show less"
 msgstr "Pokaži manj"
 
-#: src/page/labels.vue:103
+#: src/component/photo/toolbar.vue:60 src/page/labels.vue:103
 msgid "Show more"
 msgstr "Pokaži več"
 
@@ -2227,7 +2214,7 @@ msgstr "Počasi"
 msgid "Software"
 msgstr "Programska oprema"
 
-#: src/component/photo/toolbar.vue:334 src/dialog/album/edit.vue:189
+#: src/component/photo/toolbar.vue:336 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
 msgid "Sort Order"
 msgstr "Vrstni red"
@@ -2626,7 +2613,7 @@ msgid "Videos"
 msgstr "Videoposnetki"
 
 #: src/component/photo/cards.vue:334 src/component/photo/mosaic.vue:257
-#: src/component/photo/toolbar.vue:312
+#: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "Oglejte si"
 
@@ -2688,7 +2675,7 @@ msgstr "Bela"
 msgid "Work Details"
 msgstr "Podrobnosti"
 
-#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:357
+#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:359
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:204
 msgid "Year"
 msgstr "Leto"
@@ -2747,6 +2734,18 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Clear Location"
+#~ msgstr "Jasna lokacija"
+
+#~ msgid "More than 20 albums found"
+#~ msgstr "Najdenih več kot 20 albumov"
+
+#~ msgid "More than 20 labels found"
+#~ msgstr "Najdenih je bilo več kot 20 značk"
+
+#~ msgid "More than 20 people found"
+#~ msgstr "Več kot 20 ljudi je našlo"
 
 #~ msgid "More than %{n} pictures found"
 #~ msgstr "Najdenih več kot %{n} slik"

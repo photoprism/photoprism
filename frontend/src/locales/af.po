@@ -177,7 +177,7 @@ msgstr "Na twee weke"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/albums.vue:544
+#: src/page/albums.vue:543
 msgid "Album created"
 msgstr "Album geskep"
 
@@ -213,7 +213,7 @@ msgid "All Cameras"
 msgstr "Alle kameras"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:616
+#: src/page/albums.vue:146 src/page/albums.vue:615
 msgid "All Categories"
 msgstr "Alle kategorieë"
 
@@ -303,7 +303,7 @@ msgstr "Geargiveer"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Is jy seker jy wil die keuse argiveer?"
 
-#: src/component/photo/toolbar.vue:460
+#: src/component/photo/toolbar.vue:462
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Is jy seker jy wil alle geargiveerde prente uitvee?"
 
@@ -416,7 +416,7 @@ msgid "Calendar"
 msgstr "Kalender"
 
 #: src/component/photo/cards.vue:516 src/component/photo/list.vue:138
-#: src/component/photo/toolbar.vue:286 src/dialog/photo/edit/details.vue:358
+#: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Kamera"
 
@@ -429,7 +429,7 @@ msgid "Can't load more, limit reached"
 msgstr "Kan nie meer laai nie, limiet bereik"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:554 src/page/albums.vue:570 src/page/labels.vue:204
+#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -455,7 +455,7 @@ msgstr "Kanselleer"
 msgid "Cards"
 msgstr "Kaarte"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:432
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Kategorie"
@@ -484,7 +484,7 @@ msgstr "Verander privaat vlag"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:547
+#: src/dialog/share.vue:104 src/page/albums.vue:546
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -507,13 +507,9 @@ msgstr "Skoonmaak indeks en kas"
 msgid "Cleanup"
 msgstr "Maak skoon"
 
-#: src/component/photo/toolbar.vue:61
-msgid "Clear Location"
-msgstr "Vee ligging uit"
-
 #: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
-#: src/dialog/photo/edit/details.vue:112 src/dialog/share.vue:87
-#: src/page/library/errors.vue:60
+#: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
+#: src/dialog/share.vue:87 src/page/library/errors.vue:60
 msgid "Close"
 msgstr "Naby"
 
@@ -521,7 +517,7 @@ msgstr "Naby"
 msgid "Codec"
 msgstr "Kodek"
 
-#: src/component/photo/toolbar.vue:407
+#: src/component/photo/toolbar.vue:409
 msgid "Color"
 msgstr "Kleur"
 
@@ -601,7 +597,7 @@ msgstr "Kopiereg"
 msgid "Couldn't find anything."
 msgstr "Kon niks kry nie."
 
-#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:260
+#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:262
 #: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:612
 msgid "Country"
 msgstr "Land"
@@ -1502,22 +1498,10 @@ msgstr "Oomblikke"
 msgid "Monochrome"
 msgstr "Monochroom"
 
-#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:382
+#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:384
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "Maand"
-
-#: src/page/albums.vue:496
-msgid "More than 20 albums found"
-msgstr "Meer as 20 albums gevind"
-
-#: src/page/labels.vue:425
-msgid "More than 20 labels found"
-msgstr "Meer as 20 etikette gevind"
-
-#: src/page/people/recognized.vue:500
-msgid "More than 20 people found"
-msgstr "Meer as 20 mense gevind"
 
 #: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:75
 msgid "Mosaic"
@@ -1714,6 +1698,10 @@ msgstr "Een persoon gevind"
 #: src/page/album/photos.vue:391 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "Een foto gevind"
+
+#: src/component/photo/toolbar.vue:201
+msgid "Open"
+msgstr ""
 
 #: src/options/options.js:422
 msgid "Orange"
@@ -2189,7 +2177,7 @@ msgstr "Wys versteek"
 msgid "Show less"
 msgstr "Wys minder"
 
-#: src/page/labels.vue:103
+#: src/component/photo/toolbar.vue:60 src/page/labels.vue:103
 msgid "Show more"
 msgstr "Wys meer"
 
@@ -2226,7 +2214,7 @@ msgstr "Stadig"
 msgid "Software"
 msgstr "Sagteware"
 
-#: src/component/photo/toolbar.vue:334 src/dialog/album/edit.vue:189
+#: src/component/photo/toolbar.vue:336 src/dialog/album/edit.vue:189
 #: src/page/albums.vue:251
 msgid "Sort Order"
 msgstr "Sorteervolgorde"
@@ -2627,7 +2615,7 @@ msgid "Videos"
 msgstr "Video's"
 
 #: src/component/photo/cards.vue:334 src/component/photo/mosaic.vue:257
-#: src/component/photo/toolbar.vue:312
+#: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "Beskou"
 
@@ -2691,7 +2679,7 @@ msgstr "Wit"
 msgid "Work Details"
 msgstr "Werkbesonderhede"
 
-#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:357
+#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:359
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:204
 msgid "Year"
 msgstr "Jaar"
@@ -2750,6 +2738,18 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#~ msgid "Clear Location"
+#~ msgstr "Vee ligging uit"
+
+#~ msgid "More than 20 albums found"
+#~ msgstr "Meer as 20 albums gevind"
+
+#~ msgid "More than 20 labels found"
+#~ msgstr "Meer as 20 etikette gevind"
+
+#~ msgid "More than 20 people found"
+#~ msgstr "Meer as 20 mense gevind"
 
 #~ msgid "More than %{n} pictures found"
 #~ msgstr "Meer as %{n} prente gevind"

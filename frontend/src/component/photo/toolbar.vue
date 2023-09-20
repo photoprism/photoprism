@@ -20,7 +20,7 @@
                       @click:clear="() => {updateQuery({'q': ''})}"
         ></v-text-field>
 
-        <v-btn v-if="filter.latlng" icon class="action-clear-location" :title="$gettext('Clear Location')" @click.stop="clearLocation()">
+        <v-btn v-if="filter.latlng" icon :title="$gettext('Show more')" class="action-clear-location" @click.stop="clearLocation()">
           <v-icon>location_off</v-icon>
         </v-btn>
 
@@ -56,7 +56,7 @@
       </template>
       <template v-else>
         <v-spacer></v-spacer>
-        <v-btn v-if="canAccessLibrary" icon :title="$gettext('Browse')" class="action-open-tab" @click.stop="openInTab">
+        <v-btn v-if="canAccessLibrary" icon :title="$gettext('Open')" class="action-open-tab" @click.stop="openInTab">
           <v-icon size="20">tab</v-icon>
         </v-btn>
         <v-btn v-if="onClose !== undefined" icon :title="$gettext('Close')" class="action-close" @click.stop="onClose">
