@@ -390,6 +390,10 @@ msgstr "Μπλε"
 msgid "Brown"
 msgstr "Καφέ"
 
+#: src/component/photo/toolbar.vue:201
+msgid "Browse"
+msgstr ""
+
 #: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "Αναζήτηση και επεξεργασία ετικετών ταξινόμησης εικόνων."
@@ -750,8 +754,8 @@ msgstr "Απενεργοποιεί την υποστήριξη διανυσμα�
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Απενεργοποιεί τη μετακωδικοποίηση βίντεο και την εξαγωγή μικρογραφιών."
 
-#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
-#: src/app/routes.js:453
+#: src/app/routes.js:441 src/app/routes.js:448 src/app/routes.js:455
+#: src/app/routes.js:462
 msgid "Discover"
 msgstr "Ανακαλύψτε το"
 
@@ -897,7 +901,7 @@ msgstr "Ενεργοποίηση νέων χαρακτηριστικών που 
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ενεργοποιεί τις προεπιλογές μετατροπέα RAW. Μπορεί να μειώσει την απόδοση."
 
-#: src/app/routes.js:307 src/component/navigation.vue:396
+#: src/app/routes.js:316 src/component/navigation.vue:396
 msgid "Errors"
 msgstr "Σφάλματα"
 
@@ -1003,7 +1007,7 @@ msgstr "Γυναίκα"
 msgid "File"
 msgstr "Αρχείο"
 
-#: src/app/routes.js:294 src/dialog/photo/edit/files.vue:44
+#: src/app/routes.js:303 src/dialog/photo/edit/files.vue:44
 #: src/dialog/photo/edit/files.vue:41
 msgid "File Browser"
 msgstr "Πρόγραμμα περιήγησης αρχείων"
@@ -1122,7 +1126,7 @@ msgstr "Βοήθεια & Υποστήριξη"
 msgid "Hidden"
 msgstr "Κρυφό"
 
-#: src/app/routes.js:300
+#: src/app/routes.js:309
 msgid "Hidden Files"
 msgstr "Κρυμμένα αρχεία"
 
@@ -1287,7 +1291,7 @@ msgstr "Λέξεις κλειδιά"
 msgid "Label"
 msgstr "Ετικέτα"
 
-#: src/app/routes.js:313 src/component/navigation.vue:320
+#: src/app/routes.js:322 src/component/navigation.vue:320
 #: src/component/navigation.vue:1240 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:187
@@ -1340,7 +1344,7 @@ msgstr "Νομικές πληροφορίες"
 msgid "Lens"
 msgstr "Φακοί"
 
-#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
+#: src/app/routes.js:358 src/app/routes.js:365 src/app/routes.js:372
 #: src/component/navigation.vue:359 src/component/navigation.vue:369
 #: src/component/navigation.vue:4 src/component/navigation.vue:1377
 #: src/page/settings.vue:48 src/page/settings/general.vue:407
@@ -1703,10 +1707,6 @@ msgstr "Ένα άτομο βρήκε"
 msgid "One picture found"
 msgstr "Μια εικόνα που βρέθηκε"
 
-#: src/component/photo/toolbar.vue:201
-msgid "Open"
-msgstr "Ανοίξτε το"
-
 #: src/options/options.js:422
 msgid "Orange"
 msgstr "Πορτοκαλί"
@@ -1764,7 +1764,7 @@ msgstr "Κωδικός πρόσβασης"
 msgid "Password changed"
 msgstr "Ο κωδικός πρόσβασης άλλαξε"
 
-#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:219
+#: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:219
 #: src/component/navigation.vue:563 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
@@ -1775,7 +1775,7 @@ msgstr "Άνθρωποι"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Τα άτομα με τα οποία μοιράζεστε έναν σύνδεσμο θα μπορούν να βλέπουν το δημόσιο περιεχόμενο."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:154
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:155
 msgid "Permanently deleted"
 msgstr "Διαγράφηκε μόνιμα"
 
@@ -1820,7 +1820,7 @@ msgid "Place & Time"
 msgstr "Τόπος και χρόνος"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
-#: src/app/routes.js:281 src/component/navigation.vue:285
+#: src/app/routes.js:290 src/component/navigation.vue:285
 #: src/component/navigation.vue:295 src/component/navigation.vue:569
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
@@ -2135,8 +2135,8 @@ msgstr "Αναγνωριστικό συνεδρίας"
 msgid "Sessions"
 msgstr "Συνεδρίες"
 
-#: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
+#: src/app/routes.js:100 src/app/routes.js:380 src/app/routes.js:392
+#: src/app/routes.js:405 src/app/routes.js:418 src/app/routes.js:430
 #: src/component/navigation.vue:410 src/component/navigation.vue:420
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
@@ -2738,6 +2738,9 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Open"
+#~ msgstr "Ανοίξτε το"
 
 #~ msgid "Clear Location"
 #~ msgstr "Καθαρή τοποθεσία"

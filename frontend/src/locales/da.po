@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-09-20 18:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/da/>\n"
+"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -394,6 +393,10 @@ msgstr "Blå"
 msgid "Brown"
 msgstr "Brun"
 
+#: src/component/photo/toolbar.vue:201
+msgid "Browse"
+msgstr ""
+
 #: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "Gennemse og rediger billedklassifikationsetiketter."
@@ -754,8 +757,8 @@ msgstr "Deaktiverer understøttelse af vektorgrafik."
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Deaktiverer video-omkodning og udtrækning af miniaturebilleder."
 
-#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
-#: src/app/routes.js:453
+#: src/app/routes.js:441 src/app/routes.js:448 src/app/routes.js:455
+#: src/app/routes.js:462
 msgid "Discover"
 msgstr "Opdag"
 
@@ -901,7 +904,7 @@ msgstr "Aktivér nye funktioner, der aktuelt er under udvikling."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverer RAW-konverteringsindstillinger. Kan reducere ydeevnen."
 
-#: src/app/routes.js:307 src/component/navigation.vue:396
+#: src/app/routes.js:316 src/component/navigation.vue:396
 msgid "Errors"
 msgstr "Fejl"
 
@@ -1007,7 +1010,7 @@ msgstr "Kvinde"
 msgid "File"
 msgstr "Fil"
 
-#: src/app/routes.js:294 src/dialog/photo/edit/files.vue:44
+#: src/app/routes.js:303 src/dialog/photo/edit/files.vue:44
 #: src/dialog/photo/edit/files.vue:41
 msgid "File Browser"
 msgstr "Filbrowser"
@@ -1126,7 +1129,7 @@ msgstr "Hjælp og Support"
 msgid "Hidden"
 msgstr "Skjult"
 
-#: src/app/routes.js:300
+#: src/app/routes.js:309
 msgid "Hidden Files"
 msgstr "Skjulte filer"
 
@@ -1291,7 +1294,7 @@ msgstr "Nøgleord"
 msgid "Label"
 msgstr "Etiket"
 
-#: src/app/routes.js:313 src/component/navigation.vue:320
+#: src/app/routes.js:322 src/component/navigation.vue:320
 #: src/component/navigation.vue:1240 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:187
@@ -1344,7 +1347,7 @@ msgstr "Juridiske oplysninger"
 msgid "Lens"
 msgstr "Linse"
 
-#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
+#: src/app/routes.js:358 src/app/routes.js:365 src/app/routes.js:372
 #: src/component/navigation.vue:359 src/component/navigation.vue:369
 #: src/component/navigation.vue:4 src/component/navigation.vue:1377
 #: src/page/settings.vue:48 src/page/settings/general.vue:407
@@ -1707,10 +1710,6 @@ msgstr "En person fandt"
 msgid "One picture found"
 msgstr "Et billede fundet"
 
-#: src/component/photo/toolbar.vue:201
-msgid "Open"
-msgstr "Åben"
-
 #: src/options/options.js:422
 msgid "Orange"
 msgstr "Orange"
@@ -1768,7 +1767,7 @@ msgstr "Adgangskode"
 msgid "Password changed"
 msgstr "Adgangskode ændret"
 
-#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:219
+#: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:219
 #: src/component/navigation.vue:563 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
@@ -1779,7 +1778,7 @@ msgstr "Mennesker"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Personer, som du deler et link med, kan se offentligt indhold."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:154
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:155
 msgid "Permanently deleted"
 msgstr "Permanent slettet"
 
@@ -1824,7 +1823,7 @@ msgid "Place & Time"
 msgstr "Sted og tid"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
-#: src/app/routes.js:281 src/component/navigation.vue:285
+#: src/app/routes.js:290 src/component/navigation.vue:285
 #: src/component/navigation.vue:295 src/component/navigation.vue:569
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
@@ -2139,8 +2138,8 @@ msgstr "Sessions-ID"
 msgid "Sessions"
 msgstr "Sessioner"
 
-#: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
+#: src/app/routes.js:100 src/app/routes.js:380 src/app/routes.js:392
+#: src/app/routes.js:405 src/app/routes.js:418 src/app/routes.js:430
 #: src/component/navigation.vue:410 src/component/navigation.vue:420
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
@@ -2746,6 +2745,9 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "Open"
+#~ msgstr "Åben"
 
 #~ msgid "Clear Location"
 #~ msgstr "Klar placering"

@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-09-20 18:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -394,6 +393,10 @@ msgstr "藍色"
 msgid "Brown"
 msgstr "棕色"
 
+#: src/component/photo/toolbar.vue:201
+msgid "Browse"
+msgstr ""
+
 #: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "瀏覽並編輯分類標籤。"
@@ -754,8 +757,8 @@ msgstr "停用向量圖型支援。"
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "停用影像轉碼和縮圖擷取。"
 
-#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
-#: src/app/routes.js:453
+#: src/app/routes.js:441 src/app/routes.js:448 src/app/routes.js:455
+#: src/app/routes.js:462
 msgid "Discover"
 msgstr "發現"
 
@@ -901,7 +904,7 @@ msgstr "啟用目前正在開發的新功能。"
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "啟用 RAW 轉換器預設集。可能會降低性能。"
 
-#: src/app/routes.js:307 src/component/navigation.vue:396
+#: src/app/routes.js:316 src/component/navigation.vue:396
 msgid "Errors"
 msgstr "錯誤"
 
@@ -1007,7 +1010,7 @@ msgstr "女性"
 msgid "File"
 msgstr "檔案"
 
-#: src/app/routes.js:294 src/dialog/photo/edit/files.vue:44
+#: src/app/routes.js:303 src/dialog/photo/edit/files.vue:44
 #: src/dialog/photo/edit/files.vue:41
 msgid "File Browser"
 msgstr "檔案瀏覽器"
@@ -1126,7 +1129,7 @@ msgstr "支援與幫助"
 msgid "Hidden"
 msgstr "隱藏"
 
-#: src/app/routes.js:300
+#: src/app/routes.js:309
 msgid "Hidden Files"
 msgstr "隱藏的檔案"
 
@@ -1291,7 +1294,7 @@ msgstr "關鍵字"
 msgid "Label"
 msgstr "標籤"
 
-#: src/app/routes.js:313 src/component/navigation.vue:320
+#: src/app/routes.js:322 src/component/navigation.vue:320
 #: src/component/navigation.vue:1240 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:187
@@ -1344,7 +1347,7 @@ msgstr "法律資訊"
 msgid "Lens"
 msgstr "鏡頭"
 
-#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
+#: src/app/routes.js:358 src/app/routes.js:365 src/app/routes.js:372
 #: src/component/navigation.vue:359 src/component/navigation.vue:369
 #: src/component/navigation.vue:4 src/component/navigation.vue:1377
 #: src/page/settings.vue:48 src/page/settings/general.vue:407
@@ -1707,10 +1710,6 @@ msgstr "找到一個人"
 msgid "One picture found"
 msgstr "找到一張圖片"
 
-#: src/component/photo/toolbar.vue:201
-msgid "Open"
-msgstr "开放"
-
 #: src/options/options.js:422
 msgid "Orange"
 msgstr "橘色"
@@ -1768,7 +1767,7 @@ msgstr "密碼"
 msgid "Password changed"
 msgstr "密碼已更改"
 
-#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:219
+#: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:219
 #: src/component/navigation.vue:563 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
@@ -1779,7 +1778,7 @@ msgstr "人"
 msgid "People you share a link with will be able to view public contents."
 msgstr "擁有連結的人可以看到公開內容。"
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:154
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:155
 msgid "Permanently deleted"
 msgstr "永久刪除"
 
@@ -1824,7 +1823,7 @@ msgid "Place & Time"
 msgstr "地點與時間"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
-#: src/app/routes.js:281 src/component/navigation.vue:285
+#: src/app/routes.js:290 src/component/navigation.vue:285
 #: src/component/navigation.vue:295 src/component/navigation.vue:569
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
@@ -2139,8 +2138,8 @@ msgstr "工作階段ID"
 msgid "Sessions"
 msgstr "工作階段"
 
-#: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
+#: src/app/routes.js:100 src/app/routes.js:380 src/app/routes.js:392
+#: src/app/routes.js:405 src/app/routes.js:418 src/app/routes.js:430
 #: src/component/navigation.vue:410 src/component/navigation.vue:420
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
@@ -2746,6 +2745,9 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Open"
+#~ msgstr "开放"
 
 #~ msgid "Clear Location"
 #~ msgstr "明确位置"

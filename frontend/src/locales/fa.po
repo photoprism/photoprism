@@ -393,6 +393,10 @@ msgstr "آبی"
 msgid "Brown"
 msgstr "قهوه ای"
 
+#: src/component/photo/toolbar.vue:201
+msgid "Browse"
+msgstr ""
+
 #: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
 msgstr "مرور و ویرایش برچسب های طبقه بندی تصویر."
@@ -753,8 +757,8 @@ msgstr "پشتیبانی از گرافیک برداری را غیرفعال می
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "رمزگذاری ویدیو و استخراج تصاویر کوچک را غیرفعال می کند."
 
-#: src/app/routes.js:432 src/app/routes.js:439 src/app/routes.js:446
-#: src/app/routes.js:453
+#: src/app/routes.js:441 src/app/routes.js:448 src/app/routes.js:455
+#: src/app/routes.js:462
 msgid "Discover"
 msgstr "کشف"
 
@@ -900,7 +904,7 @@ msgstr "فعال کردن ویژگی های جدید در حال توسعه."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "فعال کردن RAW converter presets  . ممکن است عملکرد را کاهش دهد."
 
-#: src/app/routes.js:307 src/component/navigation.vue:396
+#: src/app/routes.js:316 src/component/navigation.vue:396
 msgid "Errors"
 msgstr "خطا ها"
 
@@ -1006,7 +1010,7 @@ msgstr "زن"
 msgid "File"
 msgstr "فایل"
 
-#: src/app/routes.js:294 src/dialog/photo/edit/files.vue:44
+#: src/app/routes.js:303 src/dialog/photo/edit/files.vue:44
 #: src/dialog/photo/edit/files.vue:41
 msgid "File Browser"
 msgstr "مرورگر فایل"
@@ -1125,7 +1129,7 @@ msgstr "راهنما و پشتیبانی"
 msgid "Hidden"
 msgstr "مخفی"
 
-#: src/app/routes.js:300
+#: src/app/routes.js:309
 msgid "Hidden Files"
 msgstr "فایل های مخفی"
 
@@ -1290,7 +1294,7 @@ msgstr "کلید واژه ها"
 msgid "Label"
 msgstr "برچسب"
 
-#: src/app/routes.js:313 src/component/navigation.vue:320
+#: src/app/routes.js:322 src/component/navigation.vue:320
 #: src/component/navigation.vue:1240 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:187
@@ -1343,7 +1347,7 @@ msgstr "اطلاعات حقوقی"
 msgid "Lens"
 msgstr "لنز"
 
-#: src/app/routes.js:349 src/app/routes.js:356 src/app/routes.js:363
+#: src/app/routes.js:358 src/app/routes.js:365 src/app/routes.js:372
 #: src/component/navigation.vue:359 src/component/navigation.vue:369
 #: src/component/navigation.vue:4 src/component/navigation.vue:1377
 #: src/page/settings.vue:48 src/page/settings/general.vue:407
@@ -1706,10 +1710,6 @@ msgstr "یک شخص پیدا شد"
 msgid "One picture found"
 msgstr "یک تصویر پیدا شد"
 
-#: src/component/photo/toolbar.vue:201
-msgid "Open"
-msgstr "باز کن"
-
 #: src/options/options.js:422
 msgid "Orange"
 msgstr "نارنجی"
@@ -1767,7 +1767,7 @@ msgstr "رمزعبور"
 msgid "Password changed"
 msgstr "رمز عبور تغییر کرد"
 
-#: src/app/routes.js:319 src/app/routes.js:343 src/component/navigation.vue:219
+#: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:219
 #: src/component/navigation.vue:563 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
@@ -1778,7 +1778,7 @@ msgstr "مردم"
 msgid "People you share a link with will be able to view public contents."
 msgstr "افرادی که لینکی را با آنها به اشتراک می گذارید می توانند محتوای عمومی را مشاهده کنند."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:154
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:155
 msgid "Permanently deleted"
 msgstr "برای همیشه حذف شد"
 
@@ -1823,7 +1823,7 @@ msgid "Place & Time"
 msgstr "مکان و زمان"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
-#: src/app/routes.js:281 src/component/navigation.vue:285
+#: src/app/routes.js:290 src/component/navigation.vue:285
 #: src/component/navigation.vue:295 src/component/navigation.vue:569
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
@@ -2138,8 +2138,8 @@ msgstr "شناسه جلسه"
 msgid "Sessions"
 msgstr "جلسات"
 
-#: src/app/routes.js:100 src/app/routes.js:371 src/app/routes.js:383
-#: src/app/routes.js:396 src/app/routes.js:409 src/app/routes.js:421
+#: src/app/routes.js:100 src/app/routes.js:380 src/app/routes.js:392
+#: src/app/routes.js:405 src/app/routes.js:418 src/app/routes.js:430
 #: src/component/navigation.vue:410 src/component/navigation.vue:420
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
@@ -2745,6 +2745,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "Open"
+#~ msgstr "باز کن"
 
 #~ msgid "Clear Location"
 #~ msgstr "پاک کردن مکان"
