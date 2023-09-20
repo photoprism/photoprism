@@ -35,10 +35,3 @@ func Prefix(token string) string {
 func PrefixedToken(lat, lng float64) string {
 	return Prefix(Token(lat, lng))
 }
-
-// PrefixedRange returns a token range for finding nearby locations.
-func PrefixedRange(token string, levelUp int) (min, max string) {
-	min, max = Range(token, levelUp)
-
-	return Prefix(min), Prefix(max)
-}

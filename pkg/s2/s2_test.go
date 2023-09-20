@@ -102,19 +102,32 @@ func TestTokenLevel(t *testing.T) {
 	})
 }
 
+func TestLevel(t *testing.T) {
+	t.Run("8000", func(t *testing.T) {
+		assert.Equal(t, 0, Level(8000))
+	})
+
+	t.Run("150", func(t *testing.T) {
+		assert.Equal(t, 6, Level(150))
+	})
+	t.Run("0", func(t *testing.T) {
+		assert.Equal(t, 14, Level(0))
+	})
+}
+
 func TestLatLng(t *testing.T) {
-	t.Run("valid", func(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
 		lat, lng := LatLng("4799e370ca54c8b9")
 		assert.Equal(t, 48.56344835921243, lat)
 		assert.Equal(t, 8.996878323369781, lng)
 	})
 
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		lat, lng := LatLng("4799e370ca5q")
 		assert.Equal(t, 0.0, lat)
 		assert.Equal(t, 0.0, lng)
 	})
-	t.Run("empty", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		lat, lng := LatLng("")
 		assert.Equal(t, 0.0, lat)
 		assert.Equal(t, 0.0, lng)
@@ -122,45 +135,60 @@ func TestLatLng(t *testing.T) {
 }
 
 func TestIsZero(t *testing.T) {
-	t.Run("valid", func(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
 		lat, lng := LatLng("4799e370ca54c8b9")
 		assert.False(t, IsZero(lat, lng))
 	})
-	t.Run("invalid", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		lat, lng := LatLng("4799e370ca5q")
 		assert.True(t, IsZero(lat, lng))
 	})
 }
 
 func TestRange(t *testing.T) {
-	t.Run("valid_1", func(t *testing.T) {
-		min, max := Range("4799e370ca54c8b9", 1)
-		assert.Equal(t, "4799e370ca54c8b1", min)
-		assert.Equal(t, "4799e370ca54c8c1", max)
+	t.Run("Level1", func(t *testing.T) {
+		start, end := Range("4799e370ca54c8b9", 1)
+		assert.Equal(t, "3800000000000001", start)
+		assert.Equal(t, "4800000000000001", end)
 	})
-	t.Run("valid_2", func(t *testing.T) {
-		min, max := Range("4799e370ca54c8b9", 2)
-		assert.Equal(t, "4799e370ca54c881", min)
-		assert.Equal(t, "4799e370ca54c8c1", max)
+	t.Run("Level2", func(t *testing.T) {
+		start, end := Range("4799e370ca54c8b9", 2)
+		assert.Equal(t, "4400000000000001", start)
+		assert.Equal(t, "4800000000000001", end)
 	})
-	t.Run("valid_3", func(t *testing.T) {
-		min, max := Range("4799e370ca54c8b9", 3)
-		assert.Equal(t, "4799e370ca54c801", min)
-		assert.Equal(t, "4799e370ca54c901", max)
+	t.Run("Level5", func(t *testing.T) {
+		start, end := Range("4799e370ca54c8b9", 5)
+		assert.Equal(t, "4790000000000001", start)
+		assert.Equal(t, "47a0000000000001", end)
 	})
-	t.Run("valid_4", func(t *testing.T) {
-		min, max := Range("4799e370ca54c8b9", 4)
-		assert.Equal(t, "4799e370ca54c601", min)
-		assert.Equal(t, "4799e370ca54ca01", max)
+	t.Run("Level7", func(t *testing.T) {
+		start, end := Range("4799e370ca54c8b9", 7)
+		assert.Equal(t, "4799000000000001", start)
+		assert.Equal(t, "479a000000000001", end)
 	})
-	t.Run("valid_5", func(t *testing.T) {
-		min, max := Range("4799e370ca54c8b9", 5)
-		assert.Equal(t, "4799e370ca54c001", min)
-		assert.Equal(t, "4799e370ca54d001", max)
+	t.Run("Level10", func(t *testing.T) {
+		start, end := Range("4799e370ca54c8b9", 10)
+		assert.Equal(t, "4799e00000000001", start)
+		assert.Equal(t, "4799e40000000001", end)
 	})
-	t.Run("invalid", func(t *testing.T) {
-		min, max := Range("4799e370ca5q", 1)
-		assert.Equal(t, "", min)
-		assert.Equal(t, "", max)
+	t.Run("Level14", func(t *testing.T) {
+		start, end := Range("4799e370ca54c8b9", 14)
+		assert.Equal(t, "4799e36e00000001", start)
+		assert.Equal(t, "4799e37200000001", end)
+	})
+	t.Run("Level21", func(t *testing.T) {
+		start, end := Range("4799e370ca54c8b9", 21)
+		assert.Equal(t, "4799e370ca480001", start)
+		assert.Equal(t, "4799e370ca580001", end)
+	})
+	t.Run("Level23", func(t *testing.T) {
+		start, end := Range("4799e370ca54c8b9", 23)
+		assert.Equal(t, "4799e370ca540001", start)
+		assert.Equal(t, "4799e370ca550001", end)
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		start, end := Range("4799e370ca5q", 1)
+		assert.Equal(t, "", start)
+		assert.Equal(t, "", end)
 	})
 }

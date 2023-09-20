@@ -58,8 +58,31 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		return PhotoResults{}, 0, ErrBadRequest
 	}
 
-	// Size of S2 Cells.
-	S2Levels := 7
+	// Find photos near another?
+	if txt.NotEmpty(f.Near) {
+		photo := Photo{}
+
+		// Find a nearby picture using the UID or return an empty result otherwise.
+		if err = Db().First(&photo, "photo_uid = ?", f.Near).Error; err != nil {
+			log.Debugf("search: %s (find nearby)", err)
+			return PhotoResults{}, 0, ErrNotFound
+		}
+
+		// Set the S2 Cell ID to search for.
+		f.S2 = photo.CellID
+
+		// Set the search distance if unspecified.
+		if f.Dist <= 0 {
+			f.Dist = 2
+		}
+	}
+
+	// Set default search distance.
+	if f.Dist <= 0 {
+		f.Dist = 50
+	} else if f.Dist > 5000 {
+		f.Dist = 5000
+	}
 
 	// Specify table names and joins.
 	s := UnscopedDb().Table(entity.File{}.TableName()).Select(resultCols).
@@ -93,6 +116,11 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		} else {
 			f.Filter = a.AlbumFilter
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
+		}
+
+		// Limit search distance.
+		if f.Dist <= 0 || f.Dist > 50 {
+			f.Dist = 50
 		}
 	} else {
 		f.Scope = ""
@@ -629,13 +657,13 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	}
 
 	// Filter by location code.
-	if f.S2 != "" {
+	if txt.NotEmpty(f.S2) {
 		// S2 Cell ID.
-		s2Min, s2Max := s2.PrefixedRange(f.S2, S2Levels)
+		s2Min, s2Max := s2.PrefixedRange(f.S2, s2.Level(f.Dist))
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
-	} else if f.Olc != "" {
+	} else if txt.NotEmpty(f.Olc) {
 		// Open Location Code (OLC).
-		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), S2Levels)
+		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), s2.Level(f.Dist))
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
 	}
 
@@ -646,22 +674,18 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	}
 
 	// Filter by approx distance to coordinates.
-	if f.Dist == 0 {
-		f.Dist = 20
-	} else if f.Dist > 5000 {
-		f.Dist = 5000
+	if f.Lat != 0 && f.Lat >= -90 && f.Lat <= 90 {
+		// Latitude (from +90 to -90 degrees).
+		latNorth := f.Lat + Radius*float32(f.Dist)
+		latSouth := f.Lat - Radius*float32(f.Dist)
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latSouth, latNorth)
 	}
 
-	if f.Lat != 0 {
-		latNorth := f.Lat - Radius*float32(f.Dist)
-		latSouth := f.Lat + Radius*float32(f.Dist)
-		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latNorth, latSouth)
-	}
-
-	if f.Lng != 0 {
-		lngEast := f.Lng - Radius*float32(f.Dist)
-		lngWest := f.Lng + Radius*float32(f.Dist)
-		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngEast, lngWest)
+	if f.Lng != 0 && f.Lng >= -180 && f.Lng <= 180 {
+		// Longitude (from -180 to +180 degrees).
+		lngWest := f.Lng - Radius*float32(f.Dist)
+		lngEast := f.Lng + Radius*float32(f.Dist)
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngWest, lngEast)
 	}
 
 	// Find photos taken before date.

@@ -13,7 +13,6 @@ type SearchPhotosGeo struct {
 	Filter    string    `form:"filter" serialize:"-" notes:"-"`
 	ID        string    `form:"id" example:"id:123e4567-e89b-..." notes:"Finds pictures by Exif UID, XMP Document ID or Instance ID"`
 	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Limits results to the specified internal unique IDs"`
-	Near      string    `form:"near"`
 	Type      string    `form:"type"`
 	Path      string    `form:"path"`
 	Folder    string    `form:"folder"` // Alias for Path
@@ -42,12 +41,13 @@ type SearchPhotosGeo struct {
 	Face      string    `form:"face" notes:"Face ID, yes, no, new, or kind"`
 	Faces     string    `form:"faces"` // Find or exclude faces if detected.
 	Subject   string    `form:"subject"`
-	Lat       float32   `form:"lat" notes:"GPS Position (Latitude)"`
-	Lng       float32   `form:"lng" notes:"GPS Position (Longitude)"`
-	Dist      uint      `form:"dist" example:"dist:5" notes:"Distance to GPS Position (km)"`
+	Near      string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`
+	S2        string    `form:"s2" example:"s2:4799e370ca54c8b9"  notes:"S2 Position (Cell ID)"`
+	Olc       string    `form:"olc" example:"olc:8FWCHX7W+" notes:"OLC Position (Open Location Code)"`
+	Lat       float32   `form:"lat" example:"lat:41.894043" notes:"GPS Position (Latitude)"`
+	Lng       float32   `form:"lng" example:"lng:-87.62448" notes:"GPS Position (Longitude)"`
+	Dist      uint      `form:"dist" example:"dist:50" notes:"Distance to Position (km)"`
 	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
-	S2        string    `form:"s2" notes:"S2 Position (Cell ID)"`
-	Olc       string    `form:"olc" notes:"Open Location Code (OLC)"`
 	Person    string    `form:"person"`   // Alias for Subject
 	Subjects  string    `form:"subjects"` // Text
 	People    string    `form:"people"`   // Alias for Subjects

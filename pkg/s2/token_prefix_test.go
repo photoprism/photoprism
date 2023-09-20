@@ -78,34 +78,34 @@ func TestPrefixedToken(t *testing.T) {
 }
 
 func TestPrefixedRange(t *testing.T) {
-	t.Run("valid_1", func(t *testing.T) {
-		min, max := PrefixedRange("4799e370ca54c8b9", 1)
-		assert.Equal(t, TokenPrefix+"4799e370ca54c8b1", min)
-		assert.Equal(t, TokenPrefix+"4799e370ca54c8c1", max)
+	t.Run("Level1", func(t *testing.T) {
+		start, end := PrefixedRange("4799e370ca54c8b9", 1)
+		assert.Equal(t, TokenPrefix+"3800000000000001", start)
+		assert.Equal(t, TokenPrefix+"4800000000000001", end)
 	})
-	t.Run("valid_2", func(t *testing.T) {
-		min, max := PrefixedRange(TokenPrefix+"4799e370ca54c8b9", 2)
-		assert.Equal(t, TokenPrefix+"4799e370ca54c881", min)
-		assert.Equal(t, TokenPrefix+"4799e370ca54c8c1", max)
+	t.Run("Level2", func(t *testing.T) {
+		start, end := PrefixedRange(TokenPrefix+"4799e370ca54c8b9", 2)
+		assert.Equal(t, TokenPrefix+"4400000000000001", start)
+		assert.Equal(t, TokenPrefix+"4800000000000001", end)
 	})
-	t.Run("valid_3", func(t *testing.T) {
-		min, max := PrefixedRange("4799e370ca54c8b9", 3)
-		assert.Equal(t, TokenPrefix+"4799e370ca54c801", min)
-		assert.Equal(t, TokenPrefix+"4799e370ca54c901", max)
+	t.Run("Level3", func(t *testing.T) {
+		start, end := PrefixedRange("4799e370ca54c8b9", 3)
+		assert.Equal(t, TokenPrefix+"4700000000000001", start)
+		assert.Equal(t, TokenPrefix+"4800000000000001", end)
 	})
-	t.Run("valid_4", func(t *testing.T) {
-		min, max := PrefixedRange(TokenPrefix+"4799e370ca54c8b9", 4)
-		assert.Equal(t, TokenPrefix+"4799e370ca54c601", min)
-		assert.Equal(t, TokenPrefix+"4799e370ca54ca01", max)
+	t.Run("Level4", func(t *testing.T) {
+		start, end := PrefixedRange(TokenPrefix+"4799e370ca54c8b9", 4)
+		assert.Equal(t, TokenPrefix+"4760000000000001", start)
+		assert.Equal(t, TokenPrefix+"47a0000000000001", end)
 	})
-	t.Run("valid_5", func(t *testing.T) {
-		min, max := PrefixedRange("4799e370ca54c8b9", 5)
-		assert.Equal(t, TokenPrefix+"4799e370ca54c001", min)
-		assert.Equal(t, TokenPrefix+"4799e370ca54d001", max)
+	t.Run("Level5", func(t *testing.T) {
+		start, end := PrefixedRange("4799e370ca54c8b9", 5)
+		assert.Equal(t, TokenPrefix+"4790000000000001", start)
+		assert.Equal(t, TokenPrefix+"47a0000000000001", end)
 	})
-	t.Run("invalid", func(t *testing.T) {
-		min, max := PrefixedRange("4799e370ca5q", 1)
-		assert.Equal(t, "", min)
-		assert.Equal(t, "", max)
+	t.Run("Invalid", func(t *testing.T) {
+		start, end := PrefixedRange("4799e370ca5q", 1)
+		assert.Equal(t, "", start)
+		assert.Equal(t, "", end)
 	})
 }

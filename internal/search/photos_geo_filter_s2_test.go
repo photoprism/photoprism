@@ -13,6 +13,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "1ef744d1e283"
+		f.Dist = 2
 
 		photos, err := PhotosGeo(f)
 
@@ -25,6 +26,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "85d1ea7d382c"
+		f.Dist = 2
 
 		photos, err := PhotosGeo(f)
 
@@ -37,25 +39,27 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "%gold"
+		f.Dist = 2
 
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.S2 = "I love % dog"
+		f.Dist = 2
 
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -67,7 +71,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -79,7 +83,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -91,7 +95,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -103,7 +107,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -115,7 +119,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -128,7 +132,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -140,7 +144,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -152,7 +156,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -164,7 +168,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -176,7 +180,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -188,7 +192,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -201,7 +205,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -214,7 +218,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -226,7 +230,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -238,7 +242,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -250,7 +254,7 @@ func TestPhotosGeoFilterS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 }
 
@@ -259,13 +263,14 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Query = "s2:1ef744d1e283"
+		f.Dist = 2
 
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 3)
+		assert.Equal(t, 3, len(photos))
 	})
 	t.Run("s2:85d1ea7d382c", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -277,7 +282,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 8)
+		assert.Equal(t, 8, len(photos))
 	})
 	t.Run("85d1ea7d382c pipe 1ef744d1e283", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -289,7 +294,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -301,7 +306,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -313,7 +318,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -325,7 +330,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -337,7 +342,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterAmpersand", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -349,7 +354,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithAmpersand", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -361,7 +366,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -373,7 +378,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -386,7 +391,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithSingleQuote", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -398,7 +403,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -410,7 +415,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterAsterisk", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -422,7 +427,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithAsterisk", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -434,7 +439,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -446,7 +451,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterPipe", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -459,7 +464,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithPipe", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -471,7 +476,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("StartsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -483,7 +488,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("CenterNumber", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -495,7 +500,7 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 	t.Run("EndsWithNumber", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -507,6 +512,6 @@ func TestPhotosGeoQueryS2(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 0)
+		assert.Equal(t, 0, len(photos))
 	})
 }
