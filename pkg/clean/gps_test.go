@@ -63,6 +63,22 @@ func TestGPSBounds(t *testing.T) {
 		assert.Equal(t, float32(0), lngWest)
 		assert.Error(t, err)
 	})
+	t.Run("Invalid", func(t *testing.T) {
+		latNorth, lngEast, latSouth, lngWest, err := GPSBounds("95.87760543823242,-197.62521362304688,98.89404296875,-197.6215591430664")
+		assert.Equal(t, float32(90.0001), latNorth)
+		assert.Equal(t, float32(89.9999), latSouth)
+		assert.Equal(t, float32(-180.0001), lngWest)
+		assert.Equal(t, float32(-179.9999), lngEast)
+		assert.NoError(t, err)
+	})
+	t.Run("Invalid2", func(t *testing.T) {
+		latNorth, lngEast, latSouth, lngWest, err := GPSBounds("-95.87760543823242,197.62521362304688,-98.89404296875,197.6215591430664")
+		assert.Equal(t, float32(-89.9999), latNorth)
+		assert.Equal(t, float32(-90.0001), latSouth)
+		assert.Equal(t, float32(179.9999), lngWest)
+		assert.Equal(t, float32(180.0001), lngEast)
+		assert.NoError(t, err)
+	})
 }
 
 func TestGPSLatRange(t *testing.T) {

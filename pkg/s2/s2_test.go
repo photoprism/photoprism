@@ -118,6 +118,57 @@ func TestLevel(t *testing.T) {
 	t.Run("0", func(t *testing.T) {
 		assert.Equal(t, 21, Level(0))
 	})
+	t.Run("3999", func(t *testing.T) {
+		assert.Equal(t, 1, Level(3999))
+	})
+	t.Run("1825", func(t *testing.T) {
+		assert.Equal(t, 2, Level(1825))
+	})
+	t.Run("1500", func(t *testing.T) {
+		assert.Equal(t, 3, Level(1500))
+	})
+	t.Run("600", func(t *testing.T) {
+		assert.Equal(t, 4, Level(600))
+	})
+	t.Run("100", func(t *testing.T) {
+		assert.Equal(t, 7, Level(100))
+	})
+	t.Run("40", func(t *testing.T) {
+		assert.Equal(t, 8, Level(40))
+	})
+	t.Run("25", func(t *testing.T) {
+		assert.Equal(t, 9, Level(25))
+	})
+	t.Run("10", func(t *testing.T) {
+		assert.Equal(t, 10, Level(10))
+	})
+	t.Run("5", func(t *testing.T) {
+		assert.Equal(t, 11, Level(5))
+	})
+	t.Run("3", func(t *testing.T) {
+		assert.Equal(t, 12, Level(3))
+	})
+	t.Run("1.5", func(t *testing.T) {
+		assert.Equal(t, 13, Level(1.5))
+	})
+	t.Run("0.5", func(t *testing.T) {
+		assert.Equal(t, 14, Level(0.5))
+	})
+	t.Run("0.15", func(t *testing.T) {
+		assert.Equal(t, 16, Level(0.15))
+	})
+	t.Run("0.03", func(t *testing.T) {
+		assert.Equal(t, 18, Level(0.03))
+	})
+	t.Run("0.015", func(t *testing.T) {
+		assert.Equal(t, 19, Level(0.015))
+	})
+	t.Run("0.008", func(t *testing.T) {
+		assert.Equal(t, 20, Level(0.008))
+	})
+	t.Run("445", func(t *testing.T) {
+		assert.Equal(t, 5, Level(445))
+	})
 	t.Run("Negative", func(t *testing.T) {
 		assert.Equal(t, 21, Level(-1))
 	})
