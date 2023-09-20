@@ -134,13 +134,16 @@ export default {
       }
 
       const settings = this.$config.settings();
+      const features = settings.features;
 
-      if (settings && settings.features.private) {
-        filter.public = "true";
-      }
+      if (settings) {
+        if (features.private) {
+          filter.public = "true";
+        }
 
-      if (settings && settings.features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
-        filter.quality = "3";
+        if (features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
+          filter.quality = "3";
+        }
       }
 
       switch (style) {
@@ -351,16 +354,16 @@ export default {
         let latNorth, lngEast, latSouth, lngWest;
         for (const feature of clusterFeatures) {
           const [lng, lat] = feature.geometry.coordinates;
-          if (latNorth === undefined || lat < latNorth) {
+          if (latNorth === undefined || lat > latNorth) {
             latNorth = lat;
           }
-          if (lngEast === undefined || lng < lngEast) {
+          if (lngEast === undefined || lng > lngEast) {
             lngEast = lng;
           }
-          if (latSouth === undefined || lat > latSouth) {
+          if (latSouth === undefined || lat < latSouth) {
             latSouth = lat;
           }
-          if (lngWest === undefined || lng > lngWest) {
+          if (lngWest === undefined || lng < lngWest) {
             lngWest = lng;
           }
         }

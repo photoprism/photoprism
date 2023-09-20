@@ -628,19 +628,21 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_f_number <= ?", f.Fmax)
 	}
 
-	// Filter by location.
+	// Filter by location code.
 	if f.S2 != "" {
 		// S2 Cell ID.
 		s2Min, s2Max := s2.PrefixedRange(f.S2, S2Levels)
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
-	} else if f.OLC != "" {
+	} else if f.Olc != "" {
 		// Open Location Code (OLC).
-		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.OLC), S2Levels)
+		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), S2Levels)
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
-	} else if latNorth, lngEast, latSouth, lngWest, parseErr := clean.GPSBounds(f.LatLng); parseErr == nil {
-		// GPS Bounds (Lat N, Lng E, Lat S, Lng W).
-		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latNorth, latSouth)
-		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngEast, lngWest)
+	}
+
+	// Filter by GPS Bounds (Lat N, Lng E, Lat S, Lng W).
+	if latNorth, lngEast, latSouth, lngWest, parseErr := clean.GPSBounds(f.Latlng); parseErr == nil {
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latSouth, latNorth)
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngWest, lngEast)
 	}
 
 	// Filter by approx distance to coordinates.

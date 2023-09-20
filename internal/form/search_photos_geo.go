@@ -45,9 +45,9 @@ type SearchPhotosGeo struct {
 	Lat       float32   `form:"lat" notes:"GPS Position (Latitude)"`
 	Lng       float32   `form:"lng" notes:"GPS Position (Longitude)"`
 	Dist      uint      `form:"dist" example:"dist:5" notes:"Distance to GPS Position (km)"`
-	LatLng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
+	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
 	S2        string    `form:"s2" notes:"S2 Position (Cell ID)"`
-	OLC       string    `form:"olc" notes:"Open Location Code (OLC)"`
+	Olc       string    `form:"olc" notes:"Open Location Code (OLC)"`
 	Person    string    `form:"person"`   // Alias for Subject
 	Subjects  string    `form:"subjects"` // Text
 	People    string    `form:"people"`   // Alias for Subjects

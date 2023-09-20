@@ -667,9 +667,9 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("LatLng:33.453431,-180.0,49.519234,180.0", func(t *testing.T) {
+	t.Run("latlng:33.453431,-180.0,49.519234,180.0", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "LatLng:33.453431,-180.0,49.519234,180.0"
+		f.Query = "latlng:33.453431,-180.0,49.519234,180.0"
 		f.Count = 10
 		f.Offset = 0
 		f.Order = "imported"
@@ -688,9 +688,9 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("LatLng:0.00,-30.123.0,49.519234,9.1001234", func(t *testing.T) {
+	t.Run("latlng:0.00,-30.123.0,49.519234,9.1001234", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "LatLng:0.00,-30.123.0,49.519234,9.1001234"
+		f.Query = "latlng:0.00,-30.123.0,49.519234,9.1001234"
 		f.Count = 10
 		f.Offset = 0
 		f.Order = "imported"
