@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-09-20 17:58+0000\n"
+"PO-Revision-Date: 2023-09-20 18:39+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -670,7 +670,7 @@ msgstr "Kustuta"
 
 #: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:463
 msgid "Delete All"
-msgstr ""
+msgstr "Kustuta kõik"
 
 #: src/page/library/index.vue:143
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
