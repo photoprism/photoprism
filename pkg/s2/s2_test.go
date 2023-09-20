@@ -109,8 +109,17 @@ func TestLevel(t *testing.T) {
 	t.Run("150", func(t *testing.T) {
 		assert.Equal(t, 6, Level(150))
 	})
+	t.Run("0.25", func(t *testing.T) {
+		assert.Equal(t, 15, Level(0.25))
+	})
+	t.Run("0.1", func(t *testing.T) {
+		assert.Equal(t, 17, Level(0.1))
+	})
 	t.Run("0", func(t *testing.T) {
-		assert.Equal(t, 14, Level(0))
+		assert.Equal(t, 21, Level(0))
+	})
+	t.Run("Negative", func(t *testing.T) {
+		assert.Equal(t, 21, Level(-1))
 	})
 }
 

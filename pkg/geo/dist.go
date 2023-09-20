@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	DistLimit      uint = 5000
-	ScopeDistLimit uint = 50
-	DefaultDist    uint = 2
+	DistLimit      float64 = 5000
+	ScopeDistLimit float64 = 50
+	DefaultDist    float64 = 2
 )
 
 // Deg returns the approximate distance in decimal degrees,

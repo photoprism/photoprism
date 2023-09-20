@@ -82,14 +82,14 @@ func GPSBounds(bounds string) (latN, lngE, latS, lngW float32, err error) {
 }
 
 // GPSLatRange returns a range based on the specified latitude and distance in km, or an error otherwise.
-func GPSLatRange(lat float64, km uint) (latN, latS float32, err error) {
+func GPSLatRange(lat float64, km float64) (latN, latS float32, err error) {
 	// Latitude (from +90 to -90 degrees).
 	if lat == 0 || lat < -90 || lat > 90 {
 		return 0, 0, fmt.Errorf("invalid latitude")
 	}
 
 	// Approximate range radius.
-	r := float64(km) * 0.75
+	r := km * 0.75
 
 	// Approximate longitude range,
 	// see https://en.wikipedia.org/wiki/Decimal_degrees
@@ -108,14 +108,14 @@ func GPSLatRange(lat float64, km uint) (latN, latS float32, err error) {
 }
 
 // GPSLngRange returns a range based on the specified longitude and distance in km, or an error otherwise.
-func GPSLngRange(lng float64, km uint) (lngE, lngW float32, err error) {
+func GPSLngRange(lng float64, km float64) (lngE, lngW float32, err error) {
 	// Longitude (from -180 to +180 degrees).
 	if lng == 0 || lng < -180 || lng > 180 {
 		return 0, 0, fmt.Errorf("invalid longitude")
 	}
 
 	// Approximate range radius.
-	r := float64(km) * 0.75
+	r := km * 0.75
 
 	// Approximate longitude range,
 	// see https://en.wikipedia.org/wiki/Decimal_degrees

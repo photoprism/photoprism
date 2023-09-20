@@ -3,9 +3,9 @@ package s2
 // DefaultLevel specifies the default S2 cell size.
 var DefaultLevel = 21
 
-// Level returns the S2 cell level based on the approximate cell size in km.
-// see https://s2geometry.io/resources/s2cell_statistics.html
-func Level(km uint) (level int) {
+// Level returns the applicable cell level based on the search range in km,
+// see https://s2geometry.io/resources/s2cell_statistics.html.
+func Level(km float64) (level int) {
 	switch {
 	case km >= 7842:
 		return 0
@@ -35,7 +35,21 @@ func Level(km uint) (level int) {
 		return 12
 	case km >= 1:
 		return 13
-	default:
+	case km >= 0.425:
 		return 14
+	case km >= 0.212:
+		return 15
+	case km >= 0.106:
+		return 16
+	case km >= 0.053:
+		return 17
+	case km >= 0.027:
+		return 18
+	case km >= 0.013:
+		return 19
+	case km >= 0.007:
+		return 20
+	default:
+		return DefaultLevel
 	}
 }

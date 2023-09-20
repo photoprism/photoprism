@@ -107,7 +107,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 
 		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
-		assert.Equal(t, uint(0x61a8), form.Dist)
+		assert.Equal(t, 25000.0, form.Dist)
 		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query path empty folder not empty", func(t *testing.T) {
@@ -125,7 +125,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 		assert.Equal(t, "test", form.Path)
 		assert.Equal(t, "", form.Folder)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
-		assert.Equal(t, uint(0x61a8), form.Dist)
+		assert.Equal(t, 25000.0, form.Dist)
 		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query with filter", func(t *testing.T) {
