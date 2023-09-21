@@ -2722,7 +2722,7 @@ func TestMediaFile_ExtractEmbeddedVideo(t *testing.T) {
 
 		// expected output video file
 		outputName := filepath.Join(
-			conf.SidecarPath(), "PXL_20221215_011015207.MP.mp4",
+			conf.SidecarPath(), "PXL_20221215_011015207.mp4",
 		)
 
 		mf, err := NewMediaFile(fileName)

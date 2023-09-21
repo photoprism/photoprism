@@ -1322,4 +1322,30 @@ func TestJSON(t *testing.T) {
 		assert.InEpsilon(t, 4294967284, data.Altitude, 1000)
 		assert.Equal(t, 0, clean.Altitude(data.Altitude))
 	})
+
+	t.Run("PXL_20221215_011015207.json", func(t *testing.T) {
+		data, err := JSON("testdata/PXL_20221215_011015207.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Google", data.CameraMake)
+		assert.Equal(t, "Google", data.LensMake)
+		assert.Equal(t, "Pixel 6 back camera 6.81mm f/1.85", data.LensModel)
+		assert.Equal(t, int64(2606233), data.EmbeddedVideoOffset)
+
+	})
+	t.Run("samsung-motion-photo.json", func(t *testing.T) {
+		data, err := JSON("testdata/samsung-motion-photo.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "samsung", data.CameraMake)
+		assert.Equal(t, int64(4535831), data.EmbeddedVideoOffset)
+
+	})
+
 }

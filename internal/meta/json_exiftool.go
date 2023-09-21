@@ -365,21 +365,17 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 
-	// Set the name of the embedded video data field, if any.
-	if embeddedVideo, ok := data.json["EmbeddedVideoFile"]; ok && embeddedVideo != "" {
-		data.EmbeddedVideo = "EmbeddedVideoFile"
-	} else if embeddedVideo, ok = data.json["MotionPhotoVideo"]; ok && embeddedVideo != "" {
-		data.EmbeddedVideo = "MotionPhotoVideo"
-	}
-
-	if jsonValues["EmbeddedVideoOffset"].Exists() {
-		if val := jsonValues["EmbeddedVideoOffset"].Int(); val > 0 {
-			data.EmbeddedVideoOffset = int64(val)
-		}
-	} else if jsonValues["MicroVideoOffset"].Exists() {
+	// look for motion photo offsets.
+	// Google motion photos are stored in an array of DirectoryItemLength and we care about the one thats a motion photos
+	if jsonValues["MicroVideoOffset"].Exists() {
 		if val := jsonValues["MicroVideoOffset"].Int(); val > 0 {
 			data.EmbeddedVideoOffset = int64(val)
 		}
+	} else if jsonValues["MotionPhoto"].Exists() {
+		if videoLength := j.Get(`Directory.#(Item.Semantic=="MotionPhoto").Item.Length`); videoLength.Exists() {
+			data.EmbeddedVideoOffset = videoLength.Int()
+		}
+
 	}
 
 	return nil

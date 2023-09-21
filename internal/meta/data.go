@@ -65,7 +65,6 @@ type Data struct {
 	Rotation            int           `meta:"Rotation"`
 	Views               int           `meta:"-"`
 	Albums              []string      `meta:"-"`
-	EmbeddedVideo       string        `meta:"-"`
 	EmbeddedVideoOffset int64         `meta:"-"`
 	Error               error         `meta:"-"`
 	json                map[string]string
@@ -143,5 +142,5 @@ func (data Data) CellID() string {
 }
 
 func (data Data) HasEmbeddedVideo() bool {
-	return data.EmbeddedVideo != "" || data.EmbeddedVideoOffset > 0
+	return data.EmbeddedVideoOffset > 0
 }
