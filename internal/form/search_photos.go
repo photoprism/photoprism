@@ -41,7 +41,7 @@ type SearchPhotos struct {
 	Archived  bool      `form:"archived" notes:"Finds archived pictures"`
 	Public    bool      `form:"public" notes:"Excludes private pictures"`
 	Private   bool      `form:"private" notes:"Finds private pictures"`
-	Favorite  string    `form:"favorite" example:"favorite:yes" notes:"Finds favorites only"`
+	Favorite  string    `form:"favorite" example:"favorite:true favorite:false" notes:"Finds images by favorite status"`
 	Unsorted  bool      `form:"unsorted" notes:"Finds pictures not in an album"`
 	Near      string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`
 	S2        string    `form:"s2" example:"s2:4799e370ca54c8b9"  notes:"S2 Position (Cell ID)"`
