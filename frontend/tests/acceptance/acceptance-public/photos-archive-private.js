@@ -538,7 +538,7 @@ test.meta("testID", "photos-archive-private-005").meta({ type: "short", mode: "p
   "Common: Check delete all dialog",
   async (t) => {
     await menu.openPage("archive");
-    await toolbar.triggerToolbarAction("sweep");
+    await toolbar.triggerToolbarAction("delete-all");
     await t
       .expect(
         Selector("div").withText("Are you sure you want to delete all archived pictures?").visible
