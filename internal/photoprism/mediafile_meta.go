@@ -7,6 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/video"
 )
 
 // HasSidecarJson returns true if this file has or is a json sidecar file.
@@ -81,10 +82,11 @@ func (m *MediaFile) ReadExifToolJson() error {
 // MetaData returns exif meta data of a media file.
 func (m *MediaFile) MetaData() (result meta.Data) {
 	if !m.Ok() || !m.IsMedia() {
-		// No valid media file.
+		// Not a main media file.
 		return m.metaData
 	}
 
+	// Gather the data once and cache it.
 	m.metaOnce.Do(func() {
 		var err error
 
@@ -124,4 +126,23 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 	})
 
 	return m.metaData
+}
+
+// VideoInfo returns video information if this is a video file or has a video embedded.
+func (m *MediaFile) VideoInfo() video.Info {
+	if !m.Ok() || !m.IsMedia() {
+		// Not a main media file.
+		return m.videoInfo
+	}
+
+	// Gather the data once and cache it.
+	m.videoOnce.Do(func() {
+		if info, err := video.ProbeFile(m.FileName()); err != nil {
+			log.Debugf("video: %s in %s", err, clean.Log(m.BaseName()))
+		} else {
+			m.videoInfo = info
+		}
+	})
+
+	return m.videoInfo
 }

@@ -52,5 +52,5 @@ var Formats = map[fs.Type]Type{
 	fs.SidecarText:     Sidecar,
 	fs.SidecarJSON:     Sidecar,
 	fs.SidecarMarkdown: Sidecar,
-	fs.UnknownType:     Other,
+	fs.TypeUnknown:     Other,
 }

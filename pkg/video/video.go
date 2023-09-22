@@ -1,5 +1,5 @@
 /*
-Package video provides video file related types and functions.
+Package video provides video file related types and abstractions.
 
 Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 

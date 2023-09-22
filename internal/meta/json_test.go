@@ -726,7 +726,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(video.CodecHEVC), data.Codec)
+		assert.Equal(t, string(video.CodecHVC), data.Codec)
 		assert.Equal(t, "6.83s", data.Duration.String())
 		assert.Equal(t, "2020-12-22 02:45:43 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-12-22 01:45:43 +0000 UTC", data.TakenAt.String())
@@ -750,7 +750,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(video.CodecHEVC), data.Codec)
+		assert.Equal(t, string(video.CodecHVC), data.Codec)
 		assert.Equal(t, "2.15s", data.Duration.String())
 		assert.Equal(t, "2019-12-12 20:47:21 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2019-12-13 01:47:21 +0000 UTC", data.TakenAt.String())
@@ -823,6 +823,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "OLYMPUS IMAGING CORP.", data.CameraMake)
 		assert.Equal(t, "TG-830", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
+		assert.Equal(t, "Bad PrintIM data", data.Warning)
 	})
 
 	t.Run("datetime-zero.json", func(t *testing.T) {

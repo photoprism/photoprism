@@ -56,13 +56,6 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		matches = append(matches, name)
 	}
 
-	// Extract an embedded video file and add it to the list of files, if successful.
-	if videoName, videoErr := m.ExtractEmbeddedVideo(); videoErr != nil {
-		log.Warnf("media: %s om %s (extract embedded video)", clean.Error(videoErr), clean.Log(m.RootRelName()))
-	} else if videoName != "" {
-		matches = append(matches, videoName)
-	}
-
 	isHEIC := false
 
 	for _, fileName := range matches {

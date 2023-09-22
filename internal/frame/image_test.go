@@ -30,7 +30,7 @@ func TestImage(t *testing.T) {
 		_ = os.Remove(saveName)
 	})
 
-	t.Run("UnknownType", func(t *testing.T) {
+	t.Run("TypeUnknown", func(t *testing.T) {
 		img, err := imaging.Open("testdata/500x500.jpg")
 		assert.NoError(t, err)
 

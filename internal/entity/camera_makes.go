@@ -1,18 +1,36 @@
 package entity
 
 var CameraMakes = map[string]string{
+	"apple":                   "Apple",
+	"google":                  "Google",
+	"samsung":                 "Samsung",
 	"OLYMPUS":                 "Olympus",
 	"OLYMPUS CORPORATION":     "Olympus",
 	"OLYMPUS DIGITAL CAMERA":  "Olympus",
 	"OLYMPUS IMAGING CORP.":   "Olympus",
 	"OLYMPUS OPTICAL CO.,LTD": "Olympus",
-	"samsung":                 "Samsung",
 }
 
 var CameraModels = map[string]string{
 	"iPhone SE (1st generation)": "iPhone SE",
 	"iPhone SE (2nd generation)": "iPhone SE",
 	"iPhone SE (3rd generation)": "iPhone SE",
+	"SM-G780F":                   "Galaxy S20",
+	"SM-G781B":                   "Galaxy S20 FE",
+	"SM-G991A":                   "Galaxy S21",
+	"SM-G991B":                   "Galaxy S21",
+	"SM-G990A":                   "Galaxy S21 FE",
+	"SM-G990B":                   "Galaxy S21 FE",
+	"SM-G996A":                   "Galaxy S21+",
+	"SM-G996B":                   "Galaxy S21+",
+	"SM-G998A":                   "Galaxy S21 Ultra",
+	"SM-G998B":                   "Galaxy S21 Ultra",
+	"SM-S911A":                   "Galaxy S23",
+	"SM-S911B":                   "Galaxy S23",
+	"SM-S916A":                   "Galaxy S23+",
+	"SM-S916B":                   "Galaxy S23+",
+	"SM-S918A":                   "Galaxy S23 Ultra",
+	"SM-S918B":                   "Galaxy S23 Ultra",
 	"WAS-LX1":                    "P10 lite",
 	"WAS-LX2":                    "P10 lite",
 	"WAS-LX3":                    "P10 lite",

@@ -16,6 +16,7 @@ func Path(s string) string {
 	s = strings.TrimSpace(s)
 
 	// Remove non-printable and other potentially problematic characters.
+	// The following characters must never be used in a filepath: \ > < | : &
 	s = strings.Map(func(r rune) rune {
 		if !unicode.IsPrint(r) {
 			return -1
@@ -38,6 +39,7 @@ func UserPath(dir string) string {
 		return dir
 	}
 
+	// The following characters must never be used in a filepath: \ > < | : &
 	dir = strings.Trim(path.Clean(Path(strings.ReplaceAll(dir, "\\", "/"))), " ~./\\|?*%<>")
 
 	if strings.Contains(dir, "/.") || strings.Contains(dir, "..") || strings.Contains(dir, "//") {

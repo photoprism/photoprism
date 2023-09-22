@@ -11,7 +11,9 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/projection"
+	"github.com/photoprism/photoprism/pkg/video"
 )
 
 func TestMediaFile_HasSidecarJson(t *testing.T) {
@@ -434,4 +436,53 @@ func TestMediaFile_Exif_HEIC(t *testing.T) {
 	if err := os.Remove(filepath.Join(conf.SidecarPath(), conf.ExamplesPath(), "iphone_7.heic.jpg")); err != nil {
 		t.Error(err)
 	}
+}
+
+func TestMediaFile_VideoInfo(t *testing.T) {
+	c := config.TestConfig()
+	t.Run(
+		"samsung-motion-photo.jpg", func(t *testing.T) {
+			fileName := filepath.Join(c.ExamplesPath(), "samsung-motion-photo.jpg")
+
+			mf, err := NewMediaFile(fileName)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			info := mf.VideoInfo()
+
+			assert.Equal(t, video.MP4, info.VideoType)
+			assert.Equal(t, video.CodecAVC, info.VideoCodec)
+			assert.Equal(t, 1440, info.VideoWidth)
+			assert.Equal(t, 1080, info.VideoHeight)
+			assert.Equal(t, int64(2685814), info.VideoOffset)
+			assert.Equal(t, int64(0), info.ThumbOffset)
+			assert.Equal(t, "2.933s", info.Duration.String())
+			assert.Equal(t, fs.ImageJPEG, info.FileType)
+			assert.Equal(t, media.Live, info.MediaType)
+		},
+	)
+
+	t.Run(
+		"beach_sand.jpg", func(t *testing.T) {
+			fileName := filepath.Join(conf.ExamplesPath(), "beach_sand.jpg")
+
+			mf, err := NewMediaFile(fileName)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			info := mf.VideoInfo()
+
+			assert.Equal(t, video.Unknown, info.VideoType)
+			assert.Equal(t, video.CodecUnknown, info.VideoCodec)
+			assert.Equal(t, 0, info.VideoWidth)
+			assert.Equal(t, 0, info.VideoHeight)
+			assert.Equal(t, int64(-1), info.VideoOffset)
+			assert.Equal(t, int64(-1), info.ThumbOffset)
+			assert.Equal(t, time.Duration(0), info.Duration)
+			assert.Equal(t, fs.ImageJPEG, info.FileType)
+			assert.Equal(t, media.Image, info.MediaType)
+		},
+	)
 }

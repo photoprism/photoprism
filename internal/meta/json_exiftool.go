@@ -13,6 +13,8 @@ import (
 	"gopkg.in/photoprism/go-tz.v2/tz"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -154,7 +156,20 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					continue
 				}
 
-				fieldValue.SetBool(jsonValue.Bool())
+				boolVal := false
+				strVal := jsonValue.String()
+
+				// Cast string to bool.
+				switch strVal {
+				case "1", "true":
+					boolVal = true
+				case "", "0", "false":
+					boolVal = false
+				default:
+					boolVal = txt.NotEmpty(strVal)
+				}
+
+				fieldValue.SetBool(boolVal)
 			default:
 				log.Warnf("metadata: cannot assign value of type %s to %s (exiftool)", t, tagValue)
 			}
@@ -365,11 +380,9 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 
-	// Set the name of the embedded video data field, if any.
-	if embeddedVideo, ok := data.json["EmbeddedVideoFile"]; ok && embeddedVideo != "" {
-		data.EmbeddedVideo = "EmbeddedVideoFile"
-	} else if embeddedVideo, ok = data.json["MotionPhotoVideo"]; ok && embeddedVideo != "" {
-		data.EmbeddedVideo = "MotionPhotoVideo"
+	// Flag Samsung/Google Motion Photos as live media.
+	if data.EmbeddedVideo && (data.MimeType == fs.MimeTypeJPEG || data.MimeType == fs.MimeTypeHEIC) {
+		data.MediaType = media.Live
 	}
 
 	return nil

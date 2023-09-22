@@ -4,6 +4,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/s2"
 )
@@ -15,6 +16,7 @@ const (
 // Data represents image metadata.
 type Data struct {
 	FileName      string        `meta:"FileName"`
+	MimeType      string        `meta:"MIMEType"`
 	DocumentID    string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID,DigitalImageGUID"`
 	InstanceID    string        `meta:"InstanceID,DocumentID"`
 	CreatedAt     time.Time     `meta:"SubSecCreateDate,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate"`
@@ -23,6 +25,9 @@ type Data struct {
 	TakenGps      time.Time     `meta:"GPSDateTime,GPSDateStamp"`
 	TakenNs       int           `meta:"-"`
 	TimeZone      string        `meta:"-"`
+	MediaType     media.Type    `meta:"-"`
+	EmbeddedThumb bool          `meta:"ThumbnailImage,PhotoshopThumbnail"`
+	EmbeddedVideo bool          `meta:"EmbeddedVideoFile,MotionPhoto,MotionPhotoVideo,MicroVideo"`
 	Duration      time.Duration `meta:"Duration,MediaDuration,TrackDuration,PreviewDuration"`
 	FPS           float64       `meta:"VideoFrameRate,VideoAvgFrameRate"`
 	Frames        int           `meta:"FrameCount,AnimationFrames"`
@@ -65,14 +70,14 @@ type Data struct {
 	Rotation      int           `meta:"Rotation"`
 	Views         int           `meta:"-"`
 	Albums        []string      `meta:"-"`
-	EmbeddedVideo string        `meta:"-"`
+	Warning       string        `meta:"Warning"`
 	Error         error         `meta:"-"`
 	json          map[string]string
 	exif          map[string]string
 }
 
-// New returns a new metadata struct.
-func New() Data {
+// NewData returns a new Data struct with default values.
+func NewData() Data {
 	return Data{}
 }
 

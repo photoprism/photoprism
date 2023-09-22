@@ -6,9 +6,9 @@ import (
 
 // Type represents a video format type.
 type Type struct {
-	File   fs.Type
-	Codec  Codec
-	Width  int
-	Height int
-	Public bool
+	Codec       Codec
+	FileType    fs.Type
+	WidthLimit  int
+	HeightLimit int
+	Public      bool
 }
