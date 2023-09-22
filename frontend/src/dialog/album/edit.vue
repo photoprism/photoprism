@@ -30,6 +30,31 @@
                 ></v-text-field>
               </v-flex>
               <v-flex xs12 pa-2>
+                <v-select v-model="model.Thumb"
+				              hide-details box flat
+                              :items="items"
+							  item-text="label"
+							  item-value="hash"
+                              :label="$gettext('Thumbnail')"
+                              :allow-overflow="false"
+                              color="secondary-dark"
+                              class="input-thumbnail"
+                >
+                  <template v-slot:selection="{ props, item }">
+                    <v-list-item v-bind="props" class="select-thumb-img selected">
+                      <img :src="item.thumb">
+					  {{ item.label }}
+					</v-list-item>
+                  </template>
+                  <template v-slot:item="{ props, item }">
+                    <v-list-item v-bind="props" class="select-thumb-img">
+                      <img :src="item.thumb">
+					  {{ item.label }}
+					</v-list-item>
+                  </template>
+                </v-select>
+              </v-flex>
+              <v-flex xs12 pa-2>
                 <v-text-field v-model="model.Location"
                               hide-details box flat
                               :label="$gettext('Location')"
@@ -121,8 +146,12 @@
   </v-dialog>
 </template>
 <script>
+import Photo from "model/photo";
 import Album from "model/album";
+import Thumb from "model/thumb";
 
+// Todo: Handle cases where users have more than 10000 photos.
+const MaxResults = 10000;
 export default {
   name: 'PAlbumEditDialog',
   props: {
@@ -153,12 +182,14 @@ export default {
       ],
       categories: this.$config.albumCategories(),
       titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
+      items: [],
     };
   },
   watch: {
     show: function (show) {
       if (show) {
         this.model = this.album.clone();
+        this.queryServer(this.album.getId());
       }
     }
   },
@@ -175,11 +206,58 @@ export default {
         return;
       }
 
+      this.model.setThumbnailSrc();
       this.model.update().then((m) => {
         this.$notify.success(this.$gettext("Changes successfully saved"));
         this.categories = this.$config.albumCategories();
         this.$emit('close');
       });
+    },
+    queryServer(q) {
+      if (this.loading) {
+        return;
+      }
+
+      this.loading = true;
+
+      const params = {
+        s: q,
+        count: MaxResults,
+        offset: 0,
+        type: "image"
+      };
+
+      Photo.search(params).then(response => {
+
+        // Title -> OriginalName
+		
+        this.photos = response.data;
+		
+        var thumbList = [];
+        for (let i = 0; i < response.data.length; i++) {
+
+          thumbList.push({
+            label: response.data[i].Title,
+            hash: response.data[i].Hash,
+			thumb: Thumb.thumbnailUrl({
+              Hash: response.data[i].Hash
+            }, "tile_50")
+          });
+
+        }
+		
+        thumbList.sort(function(a, b) {
+          return a.label.localeCompare(b.label);
+        });
+
+        this.items = thumbList;
+
+      }).catch(() => {
+        // Nothing to do
+      }).finally(() => {
+        this.loading = false;
+      });	  
+
     },
   },
 };

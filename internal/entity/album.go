@@ -55,7 +55,7 @@ type Album struct {
 	AlbumFavorite    bool        `json:"Favorite" yaml:"Favorite,omitempty"`
 	AlbumPrivate     bool        `json:"Private" yaml:"Private,omitempty"`
 	Thumb            string      `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc         string      `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	ThumbSrc         string      `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc" yaml:"ThumbSrc,omitempty"`
 	CreatedBy        string      `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt        time.Time   `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time   `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`

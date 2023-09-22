@@ -134,6 +134,17 @@ export class Album extends RestModel {
     return "";
   }
 
+  setThumbnailSrc(value) {
+    if (value === undefined) {
+      if (this.Thumb != this.originalValue("Thumb")) {
+        this.ThumbSrc = "manual";
+      }
+      return this;
+    }
+
+    this.ThumbSrc = value;
+    return this;
+  }
   thumbnailUrl(size) {
     if (this.Thumb) {
       return `${config.contentUri}/t/${this.Thumb}/${config.previewToken}/${size}`;

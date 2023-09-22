@@ -7,3 +7,27 @@
 #photoprism .v-small-dialog__content {
     padding: 0;
 }
+
+#photoprism .v-select__selections input {
+  height: 0;
+  margin: 0;
+  padding: 0; 
+}
+
+#photoprism .select-thumb-img {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#photoprism .select-thumb-img img {
+    float: left;
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    border: 1px #fff solid;
+}
+
+#photoprism .select-thumb-img.selected {
+    margin: 20px 0 15px 0;
+}

@@ -9,6 +9,8 @@ import (
 func TestNewAlbum(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		var album = struct {
+			Thumb            string
+			ThumbSrc         string
 			AlbumTitle       string
 			AlbumDescription string
 			AlbumNotes       string
@@ -16,6 +18,8 @@ func TestNewAlbum(t *testing.T) {
 			AlbumTemplate    string
 			AlbumFavorite    bool
 		}{
+			Thumb:            "FooBarThumb",
+			ThumbSrc:         "manual",
 			AlbumTitle:       "Foo",
 			AlbumDescription: "bar",
 			AlbumNotes:       "test notes",
@@ -30,6 +34,8 @@ func TestNewAlbum(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.Equal(t, "FooBarThumb", r.Thumb)
+		assert.Equal(t, "manual", r.ThumbSrc)
 		assert.Equal(t, "Foo", r.AlbumTitle)
 		assert.Equal(t, "bar", r.AlbumDescription)
 		assert.Equal(t, "test notes", r.AlbumNotes)
