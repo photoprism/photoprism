@@ -24,33 +24,6 @@ func TestProbeFile(t *testing.T) {
 		require.Error(t, err)
 		require.NotNil(t, info)
 	})
-	/*t.Run("motion-photo.heif", func(t *testing.T) {
-		fileName := "testdata/motion-photo.heif"
-		info, err := ProbeFile(fileName)
-		require.NoError(t, err)
-		require.NotNil(t, info)
-
-		assert.Equal(t, fileName, info.FileName)
-		assert.Equal(t, int64(3366300), info.FileSize)
-		assert.Equal(t, fs.ImageHEIC, info.FileType)
-		assert.Equal(t, MOV, info.VideoType)
-		assert.Equal(t, int64(0), info.VideoOffset)
-		assert.Equal(t, int64(-1), info.ThumbOffset)
-		assert.Equal(t, media.Image, info.MediaType)
-		assert.Equal(t, CodecHVC, info.VideoCodec)
-		assert.Equal(t, fs.MimeTypeMOV, info.VideoMimeType)
-		assert.Equal(t, "", info.VideoContentType())
-		assert.Equal(t, "1.166666666s", info.Duration.String())
-		assert.InEpsilon(t, 1.166, info.Duration.Seconds(), 0.01)
-		assert.Equal(t, 5, info.Tracks)
-		assert.Equal(t, 0, info.VideoWidth)
-		assert.Equal(t, 0, info.VideoHeight)
-		assert.Equal(t, 35, info.Frames)
-		assert.Equal(t, 30.0, info.FPS)
-		assert.Equal(t, false, info.Encrypted)
-		assert.Equal(t, false, info.FastStart)
-		assert.Equal(t, true, info.Compatible)
-	})*/
 	t.Run("mp4v-avc1.mp4", func(t *testing.T) {
 		fileName := "testdata/mp4v-avc1.mp4"
 		info, err := ProbeFile(fileName)

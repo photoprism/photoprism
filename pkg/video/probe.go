@@ -71,13 +71,13 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 		return info, err
 	}
 
-	// Find start chunk.
-	if offset, findErr := ChunkMP4.DataOffset(file); findErr != nil {
+	// Find file type start offset.
+	if offset, findErr := CompatibleBrands.FileTypeOffset(file); findErr != nil {
 		return info, findErr
-	} else if offset < 4 {
+	} else if offset < 0 {
 		return info, nil
 	} else {
-		info.VideoOffset = int64(offset) - 4
+		info.VideoOffset = int64(offset)
 	}
 
 	// Ignore any data before the video offset.

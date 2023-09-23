@@ -68,8 +68,8 @@ func GetVideo(router *gin.RouterGroup) {
 		conf := get.Config()
 		fileName := photoprism.FileName(f.FileRoot, f.FileName)
 
-		// If file is not a video, try to find and stream embedded video data.
-		if f.MediaType != entity.MediaVideo {
+		// If the file has a hybrid photo/video format, try to find and send the embedded video data.
+		if f.MediaType == entity.MediaLive {
 			if info, videoErr := video.ProbeFile(fileName); info.VideoOffset < 0 || !info.Compatible || videoErr != nil {
 				logError("video", videoErr)
 				log.Warnf("video: no data found in %s", clean.Log(f.FileName))

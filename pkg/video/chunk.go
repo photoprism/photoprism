@@ -9,7 +9,6 @@ import (
 	"os"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-
 	"github.com/sunfish-shogi/bufseekio"
 )
 
@@ -46,7 +45,7 @@ func (c Chunk) Equal(b []byte) bool {
 	return bytes.Equal(c.Bytes(), b)
 }
 
-// FileOffset returns the index of the chunk in the specified file, or -1 if it was not found.
+// FileOffset returns the index of the chunk, or -1 if it was not found.
 func (c Chunk) FileOffset(fileName string) (int, error) {
 	if !fs.FileExists(fileName) {
 		return -1, errors.New("file not found")
@@ -65,7 +64,7 @@ func (c Chunk) FileOffset(fileName string) (int, error) {
 	return index, err
 }
 
-// DataOffset returns the index of the chunk in f, or -1 if it was not found.
+// DataOffset returns the index of the chunk in file, or -1 if it was not found.
 func (c Chunk) DataOffset(file io.ReadSeeker) (int, error) {
 	if file == nil {
 		return -1, errors.New("file is nil")

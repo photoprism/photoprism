@@ -1,9 +1,17 @@
 package video
 
-// ChunkMP4 specifies the start chunk of MP4 video files,
-// it must be followed by a valid subtype chunk.
+import (
+	"errors"
+	"os"
+
+	"github.com/photoprism/photoprism/pkg/fs"
+)
+
+// ChunkFTYP specifies the start chunk of the ISO base media
+// format, it must be followed by a valid subtype chunk.
+// https://en.wikipedia.org/wiki/ISO_base_media_file_format
 var (
-	ChunkMP4  = Chunk{'f', 't', 'y', 'p'}
+	ChunkFTYP = Chunk{'f', 't', 'y', 'p'}
 	ChunkQT   = Chunk{'q', 't', ' ', ' '}
 	ChunkISOM = Chunk{'i', 's', 'o', 'm'}
 	ChunkISO2 = Chunk{'i', 's', 'o', '2'}
@@ -49,4 +57,23 @@ var CompatibleBrands = Chunks{
 	ChunkMP41,
 	ChunkMP42,
 	ChunkMP71,
+}
+
+// FileTypeOffset returns the file type start offset, or -1 if it was not found.
+func FileTypeOffset(fileName string, brands Chunks) (int, error) {
+	if !fs.FileExists(fileName) {
+		return -1, errors.New("file not found")
+	}
+
+	file, err := os.Open(fileName)
+
+	if err != nil {
+		return -1, err
+	}
+
+	defer file.Close()
+
+	index, err := brands.FileTypeOffset(file)
+
+	return index, err
 }

@@ -13,29 +13,29 @@ import (
 
 func TestChunk_TypeCast(t *testing.T) {
 	t.Run("String", func(t *testing.T) {
-		assert.Equal(t, "ftyp", ChunkMP4.String())
+		assert.Equal(t, "ftyp", ChunkFTYP.String())
 	})
 	t.Run("Hex", func(t *testing.T) {
-		assert.Equal(t, "0x66747970", ChunkMP4.Hex())
+		assert.Equal(t, "0x66747970", ChunkFTYP.Hex())
 	})
 	t.Run("Uint32", func(t *testing.T) {
-		assert.Equal(t, uint32(0x66747970), ChunkMP4.Uint32())
+		assert.Equal(t, uint32(0x66747970), ChunkFTYP.Uint32())
 	})
 }
 
 func TestChunk_FileOffset(t *testing.T) {
 	t.Run("mp4v-avc1.mp4", func(t *testing.T) {
-		index, err := ChunkMP4.FileOffset("testdata/mp4v-avc1.mp4")
+		index, err := ChunkFTYP.FileOffset("testdata/mp4v-avc1.mp4")
 		require.NoError(t, err)
 		assert.Equal(t, 4, index)
 	})
 	t.Run("isom-avc1.mp4", func(t *testing.T) {
-		index, err := ChunkMP4.FileOffset("testdata/isom-avc1.mp4")
+		index, err := ChunkFTYP.FileOffset("testdata/isom-avc1.mp4")
 		require.NoError(t, err)
 		assert.Equal(t, 4, index)
 	})
 	t.Run("image-isom-avc1.jpg", func(t *testing.T) {
-		index, err := ChunkMP4.FileOffset("testdata/image-isom-avc1.jpg")
+		index, err := ChunkFTYP.FileOffset("testdata/image-isom-avc1.jpg")
 		require.NoError(t, err)
 		assert.Equal(t, 23213, index)
 	})
@@ -69,7 +69,7 @@ func TestChunks(t *testing.T) {
 			t.Fatal("expected to read 4 bytes")
 		}
 
-		assert.Equal(t, ChunkMP4.Bytes(), startChunk[:4])
+		assert.Equal(t, ChunkFTYP.Bytes(), startChunk[:4])
 		assert.Equal(t, ChunkMP4V.Bytes(), subType[:4])
 	})
 	t.Run("isom-avc1.mp4", func(t *testing.T) {
@@ -86,7 +86,7 @@ func TestChunks(t *testing.T) {
 			t.Fatalf("expected to read 12 bytes instead of %d", n)
 		}
 
-		assert.Equal(t, ChunkMP4[:], b[4:8])
+		assert.Equal(t, ChunkFTYP[:], b[4:8])
 		assert.Equal(t, ChunkISOM[:], b[8:12])
 	})
 	t.Run("image-isom-avc1.jpg", func(t *testing.T) {
@@ -103,8 +103,17 @@ func TestChunks(t *testing.T) {
 			t.Fatalf("expected to read 12 bytes instead of %d", n)
 		}
 
-		assert.NotEqual(t, ChunkMP4, *(*[4]byte)(b[4:8]))
+		assert.NotEqual(t, ChunkFTYP, *(*[4]byte)(b[4:8]))
 		assert.NotEqual(t, ChunkISOM, *(*[4]byte)(b[8:12]))
+	})
+}
+
+func TestChunks_Contains(t *testing.T) {
+	t.Run("Found", func(t *testing.T) {
+		assert.True(t, CompatibleBrands.Contains(ChunkMP41))
+	})
+	t.Run("NotFound", func(t *testing.T) {
+		assert.False(t, CompatibleBrands.Contains(ChunkFTYP))
 	})
 }
 
@@ -114,7 +123,7 @@ func TestChunks_ContainsAny(t *testing.T) {
 		assert.True(t, CompatibleBrands.ContainsAny(chunks))
 	})
 	t.Run("NotFound", func(t *testing.T) {
-		chunks := [][4]byte{ChunkMP4}
+		chunks := [][4]byte{ChunkFTYP}
 		assert.False(t, CompatibleBrands.ContainsAny(chunks))
 	})
 }

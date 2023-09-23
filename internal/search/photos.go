@@ -30,7 +30,7 @@ var PhotosColsAll = SelectString(Photo{}, []string{"*"})
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
 
 // FileTypes contains a list of browser-compatible file formats returned by search queries.
-var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageAVIF.String(), fs.ImageAVIFS.String(), fs.ImageWebP.String(), fs.VectorSVG.String()}
+var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageHEIC.String(), fs.ImageAVIF.String(), fs.ImageAVIFS.String(), fs.ImageWebP.String(), fs.VectorSVG.String()}
 
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
