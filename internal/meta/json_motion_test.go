@@ -9,7 +9,7 @@ import (
 )
 
 func TestJSON_Motion(t *testing.T) {
-	t.Run("GooglePixel2_JPG", func(t *testing.T) {
+	t.Run("google_pixel2.jpg.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/google_pixel2.jpg.json", "")
 
 		if err != nil {
@@ -40,7 +40,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "Pixel 2", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-	t.Run("GooglePixel4a_JPG", func(t *testing.T) {
+	t.Run("google_pixel4a.jpg.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/google_pixel4a.jpg.json", "")
 
 		if err != nil {
@@ -71,7 +71,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "Pixel 4a", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-	t.Run("GooglePixel6_JPG", func(t *testing.T) {
+	t.Run("google_pixel6.jpg.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/google_pixel6.jpg.json", "")
 
 		if err != nil {
@@ -102,7 +102,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "Pixel 6", data.CameraModel)
 		assert.Equal(t, "Pixel 6 back camera 6.81mm f/1.85", data.LensModel)
 	})
-	t.Run("GooglePixel7Pro_JPG", func(t *testing.T) {
+	t.Run("google_pixel7pro.jpg.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/google_pixel7pro.jpg.json", "")
 
 		if err != nil {
@@ -133,7 +133,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "Pixel 7 Pro", data.CameraModel)
 		assert.Equal(t, "Pixel 7 Pro back camera 19.0mm f/3.5", data.LensModel)
 	})
-	t.Run("SamsungGalaxyS20_JPG", func(t *testing.T) {
+	t.Run("samsung_galaxys20.jpg.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/samsung_galaxys20.jpg.json", "")
 
 		if err != nil {
@@ -164,7 +164,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "SM-G780F", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-	t.Run("SamsungGalaxyS20_MP4", func(t *testing.T) {
+	t.Run("samsung_galaxys20.mp4.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/samsung_galaxys20.mp4.json", "")
 
 		if err != nil {
@@ -195,7 +195,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-	t.Run("SamsungGalaxyS20FE_HEIF", func(t *testing.T) {
+	t.Run("samsung_galaxys20fe.heif.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/samsung_galaxys20fe.heif.json", "")
 
 		if err != nil {
@@ -226,7 +226,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "SM-G781B", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-	t.Run("SamsungGalaxyS21Ultra_JPG", func(t *testing.T) {
+	t.Run("samsung_galaxys21ultra.jpg.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/samsung_galaxys21ultra.jpg.json", "")
 
 		if err != nil {
@@ -257,7 +257,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "SM-G998B", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
-	t.Run("SamsungGalaxyS21Ultra_MP4", func(t *testing.T) {
+	t.Run("samsung_galaxys21ultra.mp4.json", func(t *testing.T) {
 		data, err := JSON("testdata/motion/samsung_galaxys21ultra.mp4.json", "")
 
 		if err != nil {
@@ -286,6 +286,35 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, float32(0), data.Lng)
 		assert.Equal(t, "", data.CameraMake)
 		assert.Equal(t, "", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+	t.Run("samsung_galaxya71.jpg.json", func(t *testing.T) {
+		data, err := JSON("testdata/motion/samsung_galaxya71.jpg.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %#v", data)
+
+		assert.Equal(t, "motion-photo.jpg", data.FileName)
+		assert.Equal(t, media.Live, data.MediaType)
+		assert.Equal(t, true, data.EmbeddedThumb)
+		assert.Equal(t, true, data.EmbeddedVideo)
+		assert.Equal(t, CodecJpeg, data.Codec)
+		assert.Equal(t, int64(0), data.Duration.Milliseconds())
+		assert.Equal(t, "0s", data.Duration.String())
+		assert.Equal(t, 308000000, data.TakenNs)
+		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, 4624, data.Width)
+		assert.Equal(t, 3468, data.Height)
+		assert.Equal(t, 3468, data.ActualWidth())
+		assert.Equal(t, 4624, data.ActualHeight())
+		assert.Equal(t, 6, data.Orientation)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "Samsung", data.CameraMake)
+		assert.Equal(t, "Galaxy A71", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
 	})
 }

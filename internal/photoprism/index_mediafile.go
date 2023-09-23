@@ -359,6 +359,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Reset file perceptive diff and chroma percent.
 	file.FileDiff = -1
 	file.FileChroma = -1
+	file.FileVideo = m.IsVideo()
+	file.MediaType = m.Media().String()
 
 	// Handle file types.
 	switch {
@@ -411,6 +413,16 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.SetDuration(info.Duration)
 				file.SetFPS(info.FPS)
 				file.SetFrames(info.Frames)
+
+				// Change file and photo type to "live" if the file has a video embedded.
+				file.FileVideo = true
+				file.MediaType = entity.MediaLive
+				if photo.TypeSrc == entity.SrcAuto {
+					photo.PhotoType = entity.MediaLive
+				}
+			} else if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaLive {
+				// Image does not include a compatible video.
+				photo.PhotoType = entity.MediaImage
 			}
 
 			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
@@ -424,11 +436,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
 				file.InstanceID = data.InstanceID
-			}
-
-			// Change photo type to "live" if the file has a video embedded.
-			if photo.TypeSrc == entity.SrcAuto && data.MediaType == media.Live {
-				photo.PhotoType = entity.MediaLive
 			}
 		}
 
@@ -514,12 +521,20 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.SetDuration(data.Duration)
 				file.SetFPS(data.FPS)
 				file.SetFrames(data.Frames)
-				file.FileVideo = false
 			} else if info := m.VideoInfo(); info.Compatible {
 				file.SetDuration(info.Duration)
 				file.SetFPS(info.FPS)
 				file.SetFrames(info.Frames)
+
+				// Change file and photo type to "live" if the file has a video embedded.
 				file.FileVideo = true
+				file.MediaType = entity.MediaLive
+				if photo.TypeSrc == entity.SrcAuto {
+					photo.PhotoType = entity.MediaLive
+				}
+			} else if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaLive {
+				// HEIC does not include a compatible video.
+				photo.PhotoType = entity.MediaImage
 			}
 
 			// Set photo resolution based on the largest media file.
@@ -785,18 +800,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Update file properties.
 	file.FileSidecar = m.IsSidecar()
-	file.FileVideo = m.IsVideo() || m.MetaData().EmbeddedVideo
 	file.FileType = m.FileType().String()
 	file.FileMime = m.MimeType()
 	file.SetOrientation(m.Orientation(), entity.SrcMeta)
 	file.ModTime = modTime.UTC().Truncate(time.Second).Unix()
-
-	// Update file media type.
-	if mediaType := m.MetaData().MediaType; mediaType != media.Unknown {
-		file.MediaType = mediaType.String()
-	} else {
-		file.MediaType = m.Media().String()
-	}
 
 	// Detect ICC color profile for JPEGs if still unknown at this point.
 	if file.FileColorProfile == "" && fs.ImageJPEG.Equal(file.FileType) {

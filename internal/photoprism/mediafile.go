@@ -887,10 +887,6 @@ func (m *MediaFile) IsImageNative() bool {
 
 // IsLive checks if the file is a live photo.
 func (m *MediaFile) IsLive() bool {
-	if m.MetaData().MediaType == media.Live {
-		return true
-	}
-
 	if m.IsHEIC() {
 		return fs.VideoMOV.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
 	}
@@ -899,7 +895,7 @@ func (m *MediaFile) IsLive() bool {
 		return fs.ImageHEIC.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
 	}
 
-	return false
+	return m.MetaData().MediaType == media.Live && m.VideoInfo().Compatible
 }
 
 // ExifSupported returns true if parsing exif metadata is supported for the media file type.
