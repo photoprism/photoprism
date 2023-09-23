@@ -4,14 +4,15 @@ Video File Support
 Technical References and Tutorials 
 ----------------------------------
 
-| Title                                                | URL                                                                     |
-|------------------------------------------------------|-------------------------------------------------------------------------|
-| Web Video Codec Guide                                | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Video_codecs |
-| Media Container Formats                              | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Containers   |
-| MP4 Signature Format                                 | https://www.file-recovery.com/mp4-signature-format.htm                  |
-| List of file signatures (Wikipedia)                  | https://en.wikipedia.org/wiki/List_of_file_signatures                   |
-| How to use the io.Reader interface                   | https://yourbasic.org/golang/io-reader-interface-explained/             |
-| AV1 Codec ISO Media File Format                      | https://aomediacodec.github.io/av1-isobmff                              |
+| Title                               | URL                                                                         |
+|-------------------------------------|-----------------------------------------------------------------------------|
+| Web Video Codec Guide               | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Video_codecs     |
+| Media Container Formats             | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/Containers       |
+| Video Codec Content-Type Headers    | https://developer.mozilla.org/en-US/docs/Web/Media/Formats/codecs_parameter |
+| MP4 Signature Format                | https://www.file-recovery.com/mp4-signature-format.htm                      |
+| List of file signatures (Wikipedia) | https://en.wikipedia.org/wiki/List_of_file_signatures                       |
+| How to use the io.Reader interface  | https://yourbasic.org/golang/io-reader-interface-explained/                 |
+| AV1 Codec ISO Media File Format     | https://aomediacodec.github.io/av1-isobmff                                  |
 
 Hybrid Photo/Video Formats
 --------------------------
