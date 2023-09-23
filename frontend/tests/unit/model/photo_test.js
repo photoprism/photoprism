@@ -1073,7 +1073,7 @@ describe("model/photo", () => {
       ],
     };
     const photo3 = new Photo(values3);
-    assert.equal(photo3.getVideoInfo(), "6µs, AVC1, 500 × 600, 0.2 MB");
+    assert.equal(photo3.getVideoInfo(), "6µs, AVC, 500 × 600, 0.2 MB");
     const values4 = {
       ID: 10,
       UID: "ABC127",
@@ -1100,7 +1100,7 @@ describe("model/photo", () => {
       ],
     };
     const photo4 = new Photo(values4);
-    assert.equal(photo4.getVideoInfo(), "6µs, AVC1, 300 × 500, 10.0 KB");
+    assert.equal(photo4.getVideoInfo(), "6µs, AVC, 300 × 500, 10.0 KB");
   });
 
   it("should return photo info", () => {
@@ -1150,7 +1150,7 @@ describe("model/photo", () => {
       ],
     };
     const photo3 = new Photo(values3);
-    assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC1, 500 × 600");
+    assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC, 500 × 600");
     const values4 = {
       ID: 10,
       UID: "ABC127",
@@ -1182,7 +1182,7 @@ describe("model/photo", () => {
       ],
     };
     const photo4 = new Photo(values4);
-    assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC1, 500 × 600");
+    assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC, 500 × 600");
   });
 
   it("should archive photo", () => {

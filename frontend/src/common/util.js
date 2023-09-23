@@ -171,6 +171,7 @@ export default class Util {
         return "Unprocessed Sensor Data (RAW)";
       case "mov":
       case "qt":
+      case "qt  ":
         return "Apple QuickTime";
       case "bmp":
         return "Bitmap";
@@ -193,8 +194,9 @@ export default class Util {
         return "AOMedia Video 1 (AV1)";
       case "avifs":
         return "AVIF Image Sequence";
-      case "hevc":
       case "hvc":
+      case "hevc":
+      case "hev1":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
       case "m4v":
@@ -235,6 +237,26 @@ export default class Util {
     }
   }
 
+  static formatCodec(codec) {
+    if (!codec) {
+      return "";
+    }
+
+    switch (codec) {
+      case "av1c":
+      case "av01":
+        return "AV1";
+      case "avc1":
+        return "AVC";
+      case "hvc":
+      case "hev1":
+      case "hvc1":
+        return "HEVC";
+      default:
+        return codec.toUpperCase();
+    }
+  }
+
   static codecName(value) {
     if (!value || typeof value !== "string") {
       return "";
@@ -245,16 +267,19 @@ export default class Util {
         return "Unprocessed Sensor Data (RAW)";
       case "mov":
       case "qt":
+      case "qt  ":
         return "Apple QuickTime (MOV)";
       case "avc":
       case "avc1":
         return "Advanced Video Coding (AVC) / H.264";
-      case "hevc":
       case "hvc":
+      case "hevc":
+      case "hev1":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
       case "vvc":
         return "Versatile Video Coding (VVC) / H.266";
+      case "av1c":
       case "av01":
         return "AOMedia Video 1 (AV1)";
       case "gif":

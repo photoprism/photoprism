@@ -42,9 +42,11 @@ import { canUseOGV, canUseVP8, canUseVP9, canUseAv1, canUseWebM, canUseHevc } fr
 export const CodecOGV = "ogv";
 export const CodecVP8 = "vp8";
 export const CodecVP9 = "vp9";
-export const CodecAv1 = "av01";
+export const CodecAv01 = "av01";
+export const CodecAv1C = "av1c";
 export const CodecAvc1 = "avc1";
 export const CodecHvc1 = "hvc1";
+export const CodecHev1 = "hev1";
 export const FormatMp4 = "mp4";
 export const FormatAv1 = "av01";
 export const FormatAvc = "avc";
@@ -490,7 +492,7 @@ export class Photo extends RestModel {
     if (file) {
       let videoFormat = FormatAvc;
 
-      if (canUseHevc && file.Codec === CodecHvc1) {
+      if (canUseHevc && (file.Codec === CodecHvc1 || file.Codec === CodecHev1)) {
         videoFormat = FormatHevc;
       } else if (canUseOGV && file.Codec === CodecOGV) {
         videoFormat = CodecOGV;
@@ -498,7 +500,7 @@ export class Photo extends RestModel {
         videoFormat = CodecVP8;
       } else if (canUseVP9 && file.Codec === CodecVP9) {
         videoFormat = CodecVP9;
-      } else if (canUseAv1 && file.Codec === CodecAv1) {
+      } else if (canUseAv1 && (file.Codec === CodecAv01 || file.Codec === CodecAv1C)) {
         videoFormat = FormatAv1;
       } else if (canUseWebM && file.FileType === FormatWebM) {
         videoFormat = FormatWebM;
@@ -838,7 +840,7 @@ export class Photo extends RestModel {
     }
 
     if (file.Codec) {
-      info.push(file.Codec.toUpperCase());
+      info.push(Util.formatCodec(file.Codec));
     }
 
     this.addSizeInfo(file, info);
@@ -873,7 +875,7 @@ export class Photo extends RestModel {
     }
 
     if (file && file.Width && file.Codec) {
-      info.push(file.Codec.toUpperCase());
+      info.push(Util.formatCodec(file.Codec));
     }
 
     this.addSizeInfo(file, info);
