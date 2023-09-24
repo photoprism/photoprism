@@ -243,6 +243,11 @@ export default class Util {
     }
 
     switch (codec) {
+      case "webp":
+      case "extended webp":
+        return "WebP";
+      case "webm":
+        return "WebM";
       case "av1c":
       case "av01":
         return "AV1";
@@ -288,6 +293,8 @@ export default class Util {
         return "Matroska Multimedia Container (MKV)";
       case "webp":
         return "Google WebP";
+      case "extended webp":
+        return "Extended WebP";
       case "webm":
         return "Google WebM";
       case "mpeg":

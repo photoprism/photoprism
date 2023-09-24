@@ -827,7 +827,7 @@ func (m *MediaFile) IsVector() bool {
 
 // IsSidecar checks if the file is a metadata sidecar file, independent of the storage location.
 func (m *MediaFile) IsSidecar() bool {
-	return m.Media() == media.Sidecar
+	return !m.Media().Main()
 }
 
 // IsSVG returns true if this is a SVG vector graphics.

@@ -521,13 +521,36 @@ export class Photo extends RestModel {
       return this;
     }
 
+    // Return the primary image, if found.
     let file = files.find((f) => !!f.Primary);
-
     if (file) {
       return file;
     }
 
+    // Find and return the first JPEG or PNG image otherwise.
     return files.find((f) => f.FileType === FormatJpeg || f.FileType === FormatPng);
+  });
+
+  originalFile() {
+    // Default to main file if there is only one.
+    if (this.Files?.length < 2) {
+      return this.mainFile();
+    }
+
+    // If there are multiple files, find the first one with
+    // a format other than JPEG, e.g. RAW or Live.
+    return this.getOriginalFileFromFiles(this.Files);
+  }
+
+  getOriginalFileFromFiles = memoizeOne((files) => {
+    // Find first original media file with a format other than JPEG.
+    let file = files.find((f) => !f.Sidecar && f.Root === "/" && f.FileType !== FormatJpeg);
+    if (file) {
+      return file;
+    }
+
+    // Find and return the primary JPEG or PNG otherwise.
+    return this.getMainFileFromFiles(files);
   });
 
   jpegFiles() {
@@ -853,7 +876,7 @@ export class Photo extends RestModel {
   });
 
   getPhotoInfo = () => {
-    let file = this.mainFile() || this.videoFile();
+    let file = this.originalFile() || this.videoFile();
     return this.generatePhotoInfo(this.Camera, this.CameraModel, this.CameraMake, file);
   };
 

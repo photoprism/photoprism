@@ -205,7 +205,7 @@
                 </button>
                 <button v-else-if="photo.Type === 'live'" :title="$gettext('Live')"
                         @click.exact="openPhoto(index)">
-                  <i>play_circle_outline</i>
+                  <i>play_circle</i>
                   {{ photo.getVideoInfo() }}
                 </button>
                 <button v-else-if="photo.Type === 'animated'" :title="$gettext('Animated')+' GIF'"
@@ -222,6 +222,11 @@
                         :data-uid="photo.UID" @click.exact="editPhoto(index)">
                   <i>photo_camera</i>
                   {{ photo.getPhotoInfo() }}
+                </button>
+                <button v-if="photo.LensID > 1" :title="$gettext('Lens')" class="action-lens-edit"
+                        :data-uid="photo.UID" @click.exact="editPhoto(index)">
+                  <i>camera</i>
+                  {{ photo.LensModel }}
                 </button>
                 <template v-if="filter.order === 'name' && $config.feature('download')">
                   <br>
