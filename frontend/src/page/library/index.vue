@@ -54,7 +54,7 @@
               color="secondary-dark"
               :label="$gettext('Cleanup')"
               :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')"
-              prepend-icon="cleaning_services"
+              prepend-icon="delete_sweep"
               persistent-hint
             >
             </v-checkbox>
