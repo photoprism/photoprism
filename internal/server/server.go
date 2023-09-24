@@ -1,5 +1,5 @@
 /*
-Package server provides REST and web server routing, request handling and logging.
+Package server provides REST and Web server routing, request handling and logging.
 
 Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
 

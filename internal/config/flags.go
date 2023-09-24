@@ -511,13 +511,13 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "http-host, ip",
 			Value:  "0.0.0.0",
-			Usage:  "web server `IP` address or Unix domain socket, e.g. unix:/var/run/photoprism.sock",
+			Usage:  "Web server `IP` address or Unix domain socket, e.g. unix:/var/run/photoprism.sock",
 			EnvVar: EnvVar("HTTP_HOST"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-port, port",
 			Value:  2342,
-			Usage:  "web server port `NUMBER`, ignored for Unix domain sockets",
+			Usage:  "Web server port `NUMBER`, ignored for Unix domain sockets",
 			EnvVar: EnvVar("HTTP_PORT"),
 		}}, {
 		Flag: cli.StringFlag{

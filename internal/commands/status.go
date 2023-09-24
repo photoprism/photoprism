@@ -20,7 +20,7 @@ var StatusCommand = cli.Command{
 	Action: statusAction,
 }
 
-// statusAction checks if the web server is running.
+// statusAction checks if the Web server is running.
 func statusAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 

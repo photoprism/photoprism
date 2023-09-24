@@ -143,7 +143,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	}
 }
 
-// StartHttp starts the web server in http mode.
+// StartHttp starts the Web server in http mode.
 func StartHttp(s *http.Server, l net.Listener) {
 	if err := s.Serve(l); err != nil {
 		if err == http.ErrServerClosed {
@@ -154,7 +154,7 @@ func StartHttp(s *http.Server, l net.Listener) {
 	}
 }
 
-// StartTLS starts the web server in https mode.
+// StartTLS starts the Web server in https mode.
 func StartTLS(s *http.Server, httpsCert, privateKey string) {
 	if err := s.ListenAndServeTLS(httpsCert, privateKey); err != nil {
 		if err == http.ErrServerClosed {
@@ -165,7 +165,7 @@ func StartTLS(s *http.Server, httpsCert, privateKey string) {
 	}
 }
 
-// StartAutoTLS starts the web server with auto tls enabled.
+// StartAutoTLS starts the Web server with auto tls enabled.
 func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
 	var g errgroup.Group
 
