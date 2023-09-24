@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-// Copies a file to a destination.
+// Copy copies a file to a destination.
 func Copy(src, dest string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {

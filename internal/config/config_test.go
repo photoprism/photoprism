@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -183,6 +184,14 @@ func TestConfig_MediaCachePath(t *testing.T) {
 
 	assert.True(t, strings.HasPrefix(c.MediaCachePath(), "/"))
 	assert.True(t, strings.HasSuffix(c.MediaCachePath(), "storage/testdata/cache/media"))
+}
+
+func TestConfig_MediaFileCachePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, c.MediaCachePath(), c.MediaFileCachePath(""))
+	assert.Equal(t, filepath.Join(c.MediaCachePath(), "a"), c.MediaFileCachePath("a"))
+	assert.Equal(t, filepath.Join(c.MediaCachePath(), "0", "b", "5"), c.MediaFileCachePath("0b57b50fe3f6d12bbbf5f1abda3ebcc8bb5ebcee"))
 }
 
 func TestConfig_ThumbCachePath(t *testing.T) {

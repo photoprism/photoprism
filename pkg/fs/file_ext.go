@@ -13,6 +13,7 @@ const (
 	ExtAVC  = ".avc"
 	ExtHEVC = ".hevc"
 	ExtMP4  = ".mp4"
+	ExtMOV  = ".mov"
 	ExtYAML = ".yml"
 )
 

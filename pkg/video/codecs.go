@@ -2,6 +2,11 @@ package video
 
 type Codec string
 
+// String returns the codec name as string.
+func (c Codec) String() string {
+	return string(c)
+}
+
 // Check browser support: https://cconcolato.github.io/media-mime-support/
 
 const (
