@@ -543,6 +543,10 @@ export class Photo extends RestModel {
   }
 
   getOriginalFileFromFiles = memoizeOne((files) => {
+    if (!files) {
+      return this;
+    }
+
     // Find first original media file with a format other than JPEG.
     let file = files.find((f) => !f.Sidecar && f.Root === "/" && f.FileType !== FormatJpeg);
     if (file) {
@@ -804,13 +808,15 @@ export class Photo extends RestModel {
       }
     }
 
+    if (!file.Size) {
+      return;
+    }
+
     if (file.Size > 102400) {
       const size = Number.parseFloat(file.Size) / 1048576;
-
       info.push(size.toFixed(1) + " MB");
-    } else if (file.Size) {
+    } else {
       const size = Number.parseFloat(file.Size) / 1024;
-
       info.push(size.toFixed(1) + " KB");
     }
   }
