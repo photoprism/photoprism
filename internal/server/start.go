@@ -10,6 +10,8 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 	"golang.org/x/sync/errgroup"
 
+	"github.com/coreos/go-systemd/v22/activation"
+
 	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 
@@ -74,13 +76,32 @@ func Start(ctx context.Context, conf *config.Config) {
 
 	var tlsErr error
 	var tlsManager *autocert.Manager
-	var server *http.Server
+	var listener net.Listener
+
+	server := &http.Server{Handler: router}
 
 	// Start HTTP server.
-	if unixSocket := conf.HttpSocket(); unixSocket != "" {
-		var listener net.Listener
+	// 1st check for socket activation
+	listeners, err := activation.Listeners()
+	if err != nil {
+		log.Errorf("server: Socket activation detection failed (%s)", err)
+		return
+	}
+	if len(listeners) > 1 {
+		log.Errorf("server: Only expected 1 activated socket, found %d", len(listeners))
+		return
+	} else if len(listeners) == 1 {
+		if publicCert, privateKey := conf.TLS(); publicCert != "" && privateKey != "" {
+			log.Infof("server: starting in tls mode")
+
+			go StartTLS(server, listeners[0], publicCert, privateKey)
+		} else {
+			log.Infof("server: %v", listeners[0].Addr())
+
+			go StartHttp(server, listeners[0])
+		}
+	} else if unixSocket := conf.HttpSocket(); unixSocket != "" {
 		var unixAddr *net.UnixAddr
-		var err error
 
 		if unixAddr, err = net.ResolveUnixAddr("unix", unixSocket); err != nil {
 			log.Errorf("server: resolve unix address failed (%s)", err)
@@ -89,11 +110,6 @@ func Start(ctx context.Context, conf *config.Config) {
 			log.Errorf("server: listen unix address failed (%s)", err)
 			return
 		} else {
-			server = &http.Server{
-				Addr:    unixSocket,
-				Handler: router,
-			}
-
 			log.Infof("server: listening on %s [%s]", unixSocket, time.Since(start))
 
 			go StartHttp(server, listener)
@@ -106,30 +122,23 @@ func Start(ctx context.Context, conf *config.Config) {
 		}
 		log.Infof("server: starting in auto tls mode on %s [%s]", server.Addr, time.Since(start))
 		go StartAutoTLS(server, tlsManager, conf)
-	} else if publicCert, privateKey := conf.TLS(); unixSocket == "" && publicCert != "" && privateKey != "" {
-		log.Infof("server: starting in tls mode")
-		server = &http.Server{
-			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-			Handler: router,
-		}
-		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
-		go StartTLS(server, publicCert, privateKey)
 	} else {
-		log.Infof("server: %s", tlsErr)
+		var listener net.Listener
+		var err error
 
 		socket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
 
-		if listener, err := net.Listen("tcp", socket); err != nil {
+		if listener, err = net.Listen("tcp", socket); err != nil {
 			log.Errorf("server: %s", err)
 			return
+		}
+
+		log.Infof("server: listening on %s [%s]", socket, time.Since(start))
+
+		if publicCert, privateKey := conf.TLS(); unixSocket == "" && publicCert != "" && privateKey != "" {
+			log.Infof("server: starting in tls mode")
+			go StartTLS(server, listener, publicCert, privateKey)
 		} else {
-			server = &http.Server{
-				Addr:    socket,
-				Handler: router,
-			}
-
-			log.Infof("server: listening on %s [%s]", socket, time.Since(start))
-
 			go StartHttp(server, listener)
 		}
 	}
@@ -137,7 +146,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Graceful HTTP server shutdown.
 	<-ctx.Done()
 	log.Info("server: shutting down")
-	err := server.Close()
+	err = server.Close()
 	if err != nil {
 		log.Errorf("server: shutdown failed (%s)", err)
 	}
@@ -155,8 +164,8 @@ func StartHttp(s *http.Server, l net.Listener) {
 }
 
 // StartTLS starts the web server in https mode.
-func StartTLS(s *http.Server, httpsCert, privateKey string) {
-	if err := s.ListenAndServeTLS(httpsCert, privateKey); err != nil {
+func StartTLS(s *http.Server, listener net.Listener, httpsCert, privateKey string) {
+	if err := s.ServeTLS(listener, httpsCert, privateKey); err != nil {
 		if err == http.ErrServerClosed {
 			log.Info("server: shutdown complete")
 		} else {
