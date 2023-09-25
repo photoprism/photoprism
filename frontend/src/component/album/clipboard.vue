@@ -24,56 +24,61 @@
         <v-btn
             v-if="canShare"
             fab dark small
-            :title="$gettext('Share')"
+									  
             color="share"
             :disabled="selection.length !== 1"
             class="action-share"
             @click.stop="shareDialog()"
         >
           <v-icon>share</v-icon>
+          <div class="tooltip">{{$gettext('Share')}}</div>
         </v-btn>
         <v-btn
             v-if="canManage"
             fab dark small
-            :title="$gettext('Edit')"
+									 
             color="edit"
             :disabled="selection.length !== 1"
             class="action-edit"
             @click.stop="editDialog()"
         >
           <v-icon>edit</v-icon>
+          <div class="tooltip">{{$gettext('Edit')}}</div>
         </v-btn>
         <v-btn
             fab dark small
-            :title="$gettext('Download')"
+										 
             color="download"
             class="action-download"
             :disabled="!canDownload || selection.length !== 1"
             @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
+          <div class="tooltip">{{$gettext('Download')}}</div>
         </v-btn>
         <v-btn
             v-if="canManage"
             fab dark small
-            :title="$gettext('Add to album')"
+											 
             color="album"
             :disabled="selection.length === 0"
             class="action-clone"
             @click.stop="dialog.album = true"
         >
           <v-icon>bookmark</v-icon>
+          <div class="tooltip">{{$gettext('Add to album')}}</div>
         </v-btn>
         <v-btn
             v-if="canDelete && deletable.includes(context)"
             fab dark small
             color="remove"
-            :title="$gettext('Delete')"
+									   
             :disabled="selection.length === 0"
             class="action-delete"
             @click.stop="dialog.delete = true"
         >
           <v-icon>delete</v-icon>
+          <div class="tooltip">{{$gettext('Delete')}}</div>
         </v-btn>
         <v-btn
             fab dark small
