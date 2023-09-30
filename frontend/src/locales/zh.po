@@ -2356,7 +2356,7 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"这将原件文件夹挂载为一个网络驱动器，并允许你从你的电脑或智能手机上打开、编辑和删除文件，就像它们在本地一样。\n"
+"这将原件文件夹挂载为一个网络驱动器，并允许你从你的电脑或智能手机上打开、编辑和删除文件，\n"
 "          就像它们是本地的一样。"
 
 #: src/dialog/webdav.vue:26
