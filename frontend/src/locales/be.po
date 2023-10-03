@@ -2,13 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-09-20 21:59+0000\n"
+"PO-Revision-Date: 2023-10-03 18:09+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.18.2\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -907,7 +908,7 @@ msgstr "Памылкі"
 
 #: src/dialog/photo/edit/info.vue:65
 msgid "Estimate"
-msgstr ""
+msgstr "Каштарыс"
 
 #: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
@@ -1497,7 +1498,7 @@ msgstr "Паведамленне адпраўлена"
 
 #: src/dialog/photo/edit/info.vue:61
 msgid "Metadata"
-msgstr ""
+msgstr "Метададзеныя"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1840,7 +1841,7 @@ msgstr "Месцы"
 
 #: src/dialog/upload.vue:48
 msgid "Please be careful not to upload any private or offensive content."
-msgstr ""
+msgstr "Будзьце асцярожныя, каб не загружаць прыватны або абразлівы кантэнт."
 
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
@@ -2726,6 +2727,8 @@ msgstr "Вы можаце звязацца з намі па адрасе members
 #: src/dialog/upload.vue:47
 msgid "You are welcome to upload files to this public demo for which you own the copyright."
 msgstr ""
+"Вы можаце загружаць файлы ў гэтую агульнадаступную дэманстрацыю, на якую вы "
+"валодаеце аўтарскім правам."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2737,7 +2740,7 @@ msgstr "Вы можаце спампаваць толькі адну этыке�
 
 #: src/dialog/upload.vue:167
 msgid "You may not upload more than %{n} files"
-msgstr ""
+msgstr "Вы не можаце загрузіць больш за %{n} файлаў"
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

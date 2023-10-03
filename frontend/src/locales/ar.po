@@ -3,15 +3,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-09-20 21:59+0000\n"
+"PO-Revision-Date: 2023-10-03 18:09+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.18.2\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:493
@@ -910,7 +911,7 @@ msgstr "أخطاء"
 
 #: src/dialog/photo/edit/info.vue:65
 msgid "Estimate"
-msgstr ""
+msgstr "تقدير"
 
 #: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
@@ -1500,7 +1501,7 @@ msgstr "تم الارسال"
 
 #: src/dialog/photo/edit/info.vue:61
 msgid "Metadata"
-msgstr ""
+msgstr "البيانات الوصفية"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1843,7 +1844,7 @@ msgstr "أماكن"
 
 #: src/dialog/upload.vue:48
 msgid "Please be careful not to upload any private or offensive content."
-msgstr ""
+msgstr "يرجى الحرص على عدم تحميل أي محتوى خاص أو مسيء."
 
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
@@ -2725,6 +2726,8 @@ msgstr "نرحب باتصالك بنا على membership@photoprism.app لطرح
 #: src/dialog/upload.vue:47
 msgid "You are welcome to upload files to this public demo for which you own the copyright."
 msgstr ""
+"نرحب بك لتحميل الملفات إلى هذا العرض التوضيحي العام الذي تمتلك حقوق الطبع "
+"والنشر له."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2736,7 +2739,7 @@ msgstr "يمكنك فقط تحميل تسمية واحدة"
 
 #: src/dialog/upload.vue:167
 msgid "You may not upload more than %{n} files"
-msgstr ""
+msgstr "لا يجوز لك تحميل أكثر من %{n} من الملفات"
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
