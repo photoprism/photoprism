@@ -62,12 +62,16 @@
               <p class="px-2 ma-0 text-xs-right opacity-85"><span v-if="eta">{{ eta }}</span></p>
             </v-progress-linear>
 
-            <p v-if="safe" class="body-1">
+            <p v-if="isDemo" class="body-2">
+              <translate>You are welcome to upload files to this public demo for which you own the copyright.</translate>
+              <translate>Please be careful not to upload any private or offensive content.</translate>
+            </p>
+            <p v-else-if="rejectNSFW" class="body-1">
               <translate>Please don't upload photos containing offensive content.</translate>
               <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
 
-            <p v-if="review" class="body-1">
+            <p v-if="featReview" class="body-1">
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
@@ -124,16 +128,18 @@ export default {
       remainingTime: -1,
       eta: "",
       token: "",
-      review: this.$config.feature("review"),
-      safe: !this.$config.get("uploadNSFW"),
+      isDemo: this.$config.get("demo"),
+      rejectNSFW: !this.$config.get("uploadNSFW"),
+      featReview: this.$config.feature("review"),
       rtl: this.$rtl,
     };
   },
   watch: {
     show: function () {
       this.reset();
-      this.review = this.$config.feature("review");
-      this.safe = !this.$config.get("uploadNSFW");
+      this.isDemo = this.$config.get("demo");
+      this.rejectNSFW = !this.$config.get("uploadNSFW");
+      this.featReview = this.$config.feature("review");
 
       // Set currently selected albums.
       if (this.data && Array.isArray(this.data.albums)) {
