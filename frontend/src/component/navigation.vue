@@ -675,6 +675,7 @@
 
 <script>
 import Event from "pubsub-js";
+import Album from "model/album";
 
 export default {
   name: "PNavigation",
@@ -817,7 +818,15 @@ export default {
     },
     openUpload() {
       if (this.auth && !this.isReadOnly && this.$config.feature('upload')) {
-        this.upload.dialog = true;
+        if (this.$route.params?.album) {
+          return new Album().find(this.$route.params?.album).then(m => {
+            this.upload.dialog = true;
+            this.upload.data = {albums: [m]};
+          });
+        } else {
+          this.upload.dialog = true;
+          this.upload.data = {};
+        }
       } else {
         this.goHome();
       }
