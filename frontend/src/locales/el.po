@@ -262,8 +262,8 @@ msgid "Altitude (m)"
 msgstr "Υψόμετρο (m)"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
-#: src/component/photo/cards.vue:501 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
+#: src/component/photo/cards.vue:502 src/component/photo/list.vue:192
+#: src/component/photo/mosaic.vue:235 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:101 src/options/options.js:333
 msgid "Animated"
 msgstr "Κινούμενη εικόνα"
@@ -284,13 +284,13 @@ msgstr "Κλειδί API"
 msgid "Apply"
 msgstr "Εφαρμογή"
 
-#: src/component/photo/cards.vue:422 src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:423 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:115
 msgid "Approve"
 msgstr "Έγκριση"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
-#: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
+#: src/component/photo/cards.vue:394 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "Αρχείο"
@@ -303,7 +303,7 @@ msgstr "Αρχειοθετημένο"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Είστε σίγουροι ότι θέλετε να αρχειοθετήσετε την επιλογή;"
 
-#: src/component/photo/toolbar.vue:462
+#: src/component/photo/toolbar.vue:463
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετε όλες τις αρχειοθετημένες φωτογραφίες;"
 
@@ -419,7 +419,7 @@ msgstr "Χρησιμοποιώντας το λογισμικό και τις υ�
 msgid "Calendar"
 msgstr "Ημερολόγιο"
 
-#: src/component/photo/cards.vue:518 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:519 src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Κάμερα"
@@ -459,7 +459,7 @@ msgstr "Ακύρωση"
 msgid "Cards"
 msgstr "Κάρτες"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:435
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Κατηγορία"
@@ -521,7 +521,7 @@ msgstr "Κλείσιμο"
 msgid "Codec"
 msgstr "Codec"
 
-#: src/component/photo/toolbar.vue:409
+#: src/component/photo/toolbar.vue:410
 msgid "Color"
 msgstr "Χρώμα"
 
@@ -667,12 +667,12 @@ msgstr "Προεπιλεγμένος φάκελος"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:21 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:228 src/page/library/errors.vue:88
+#: src/dialog/share.vue:229 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Διαγραφή"
 
-#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:463
+#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:464
 msgid "Delete All"
 msgstr "Διαγραφή όλων"
 
@@ -680,7 +680,7 @@ msgstr "Διαγραφή όλων"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "Διαγράψτε ορφανές καταχωρήσεις ευρετηρίου, αρχεία sidecar και μικρογραφίες."
 
-#: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
+#: src/component/photo/cards.vue:462 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
 msgid "Description"
 msgstr "Περιγραφή"
@@ -1340,7 +1340,7 @@ msgstr "Μάθετε περισσότερα"
 msgid "Legal Information"
 msgstr "Νομικές πληροφορίες"
 
-#: src/component/photo/cards.vue:529 src/dialog/photo/edit/details.vue:433
+#: src/component/photo/cards.vue:530 src/dialog/photo/edit/details.vue:433
 msgid "Lens"
 msgstr "Φακοί"
 
@@ -1382,8 +1382,8 @@ msgid "List"
 msgstr "Λίστα"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
-#: src/component/photo/cards.vue:492 src/component/photo/list.vue:183
-#: src/component/photo/mosaic.vue:218 src/options/options.js:337
+#: src/component/photo/cards.vue:493 src/component/photo/list.vue:183
+#: src/component/photo/mosaic.vue:219 src/options/options.js:337
 msgid "Live"
 msgstr "Ζωντανό"
 
@@ -1403,7 +1403,7 @@ msgstr "Τοπική ώρα"
 msgid "location"
 msgstr "τοποθεσία"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:739 src/component/photo/cards.vue:555
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/page/albums.vue:88 src/page/settings/account.vue:593
 msgid "Location"
@@ -1528,7 +1528,7 @@ msgstr "Μετακίνηση αρχείων"
 msgid "Must have at least %{n} characters."
 msgstr "Πρέπει να έχει τουλάχιστον %{n} χαρακτήρες."
 
-#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
+#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:543
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/labels.vue:84
@@ -1925,7 +1925,7 @@ msgstr "Τυχαίο"
 msgid "Raw"
 msgstr "Raw"
 
-#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:211
+#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:212
 #: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "RAW"
@@ -2231,7 +2231,7 @@ msgstr "Σειρά ταξινόμησης"
 msgid "Source"
 msgstr "Πηγή"
 
-#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:248
+#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:249
 msgid "Stack"
 msgstr "Στοίβα"
 
@@ -2316,7 +2316,7 @@ msgstr "Συγχρονισμός"
 msgid "Sync raw and video files"
 msgstr "Συγχρονισμός αρχείων raw και βίντεο"
 
-#: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:476 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:53
 msgid "Taken"
 msgstr "Λαμβάνεται"
@@ -2519,7 +2519,7 @@ msgstr "Αναβάθμιση τώρα"
 msgid "Upload"
 msgstr "Ανέβασμα"
 
-#: src/dialog/upload.vue:246
+#: src/dialog/upload.vue:258
 msgid "Upload complete"
 msgstr "Ανέβασμα ολοκληρωμένο"
 
@@ -2527,7 +2527,7 @@ msgstr "Ανέβασμα ολοκληρωμένο"
 msgid "Upload complete. Indexing…"
 msgstr "Το ανέβασμα ολοκληρώθηκε. Δημιουργία ευρετηρίου…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:234 src/dialog/upload.vue:250
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:246 src/dialog/upload.vue:262
 msgid "Upload failed"
 msgstr "Αποτυχία αποστολής"
 
@@ -2547,7 +2547,7 @@ msgstr "Ανεβάστε σε WebDAV και μοιραστείτε συνδέσ�
 msgid "Uploading %{n} of %{t}…"
 msgstr "Ανέβασμα %{n} του %{t}…"
 
-#: src/dialog/upload.vue:82 src/dialog/upload.vue:90 src/dialog/upload.vue:191
+#: src/dialog/upload.vue:85 src/dialog/upload.vue:93 src/dialog/upload.vue:203
 msgid "Uploading photos…"
 msgstr "Ανέβασμα φωτογραφιών…"
 
@@ -2592,8 +2592,8 @@ msgstr "Όνομα χρήστη"
 msgid "Users"
 msgstr "Χρήστες"
 
-#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
-#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
+#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:511
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:242
 #: src/model/photo.js:839 src/model/photo.js:847 src/options/options.js:345
 msgid "Vector"
 msgstr "Διάνυσμα"
@@ -2602,8 +2602,8 @@ msgstr "Διάνυσμα"
 msgid "Vectors"
 msgstr "Φορείς"
 
-#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
-#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
+#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:484
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:228
 #: src/model/file.js:220 src/model/photo.js:862 src/model/photo.js:878
 #: src/options/options.js:341
 msgid "Video"
@@ -2620,7 +2620,7 @@ msgstr "Διάρκεια"
 msgid "Videos"
 msgstr "Βίντεο"
 
-#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:257
+#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:258
 #: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "Προβολή"
@@ -2720,6 +2720,10 @@ msgstr "Μπορείτε να κατεβάσετε μόνο μια συλλογ�
 #: src/component/label/clipboard.vue:71
 msgid "You can only download one label"
 msgstr "Μπορείτε να κατεβάσετε μόνο μία ετικέτα"
+
+#: src/dialog/upload.vue:167
+msgid "You may not upload more than %{n} files"
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

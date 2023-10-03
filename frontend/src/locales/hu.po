@@ -264,8 +264,8 @@ msgid "Altitude (m)"
 msgstr "Magasság (m)"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
-#: src/component/photo/cards.vue:501 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
+#: src/component/photo/cards.vue:502 src/component/photo/list.vue:192
+#: src/component/photo/mosaic.vue:235 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:101 src/options/options.js:333
 msgid "Animated"
 msgstr "Mozgó"
@@ -286,13 +286,13 @@ msgstr "API Kulcs"
 msgid "Apply"
 msgstr "Alkalmaz"
 
-#: src/component/photo/cards.vue:422 src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:423 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:115
 msgid "Approve"
 msgstr "Jóváhagy"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
-#: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
+#: src/component/photo/cards.vue:394 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "Archívum"
@@ -305,7 +305,7 @@ msgstr "Archíválva"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Biztos benne, hogy archíválja a kiválasztott fájlokat?"
 
-#: src/component/photo/toolbar.vue:462
+#: src/component/photo/toolbar.vue:463
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Biztos, hogy törölni szeretné az összes archivált képet?"
 
@@ -421,7 +421,7 @@ msgstr "Az általunk biztosított szoftver és szolgáltatások használatával 
 msgid "Calendar"
 msgstr "Naptár"
 
-#: src/component/photo/cards.vue:518 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:519 src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Kamera"
@@ -461,7 +461,7 @@ msgstr "Mégsem"
 msgid "Cards"
 msgstr "Kártyák"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:435
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Kategória"
@@ -523,7 +523,7 @@ msgstr "Bezárás"
 msgid "Codec"
 msgstr "Codec"
 
-#: src/component/photo/toolbar.vue:409
+#: src/component/photo/toolbar.vue:410
 msgid "Color"
 msgstr "Szín"
 
@@ -669,12 +669,12 @@ msgstr "Alapértelmezett mappa"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:21 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:228 src/page/library/errors.vue:88
+#: src/dialog/share.vue:229 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Törlés"
 
-#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:463
+#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:464
 msgid "Delete All"
 msgstr "Mindent törölni"
 
@@ -682,7 +682,7 @@ msgstr "Mindent törölni"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "Törli az elárvult indexbejegyzéseket, oldalkocsis fájlokat és miniatűröket."
 
-#: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
+#: src/component/photo/cards.vue:462 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
 msgid "Description"
 msgstr "Leírás"
@@ -1342,7 +1342,7 @@ msgstr "Tudjon meg többet"
 msgid "Legal Information"
 msgstr "Jogi információk"
 
-#: src/component/photo/cards.vue:529 src/dialog/photo/edit/details.vue:433
+#: src/component/photo/cards.vue:530 src/dialog/photo/edit/details.vue:433
 msgid "Lens"
 msgstr "Lencse"
 
@@ -1384,8 +1384,8 @@ msgid "List"
 msgstr "Lista"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
-#: src/component/photo/cards.vue:492 src/component/photo/list.vue:183
-#: src/component/photo/mosaic.vue:218 src/options/options.js:337
+#: src/component/photo/cards.vue:493 src/component/photo/list.vue:183
+#: src/component/photo/mosaic.vue:219 src/options/options.js:337
 msgid "Live"
 msgstr "Élő"
 
@@ -1405,7 +1405,7 @@ msgstr "Helyi idő"
 msgid "location"
 msgstr "elhelyezkedés"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:739 src/component/photo/cards.vue:555
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/page/albums.vue:88 src/page/settings/account.vue:593
 msgid "Location"
@@ -1530,7 +1530,7 @@ msgstr "Fájlok áthelyezése"
 msgid "Must have at least %{n} characters."
 msgstr "Legalább %{n} karakteresnek kell lennie."
 
-#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
+#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:543
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/labels.vue:84
@@ -1927,7 +1927,7 @@ msgstr "Véletlen"
 msgid "Raw"
 msgstr "Nyers"
 
-#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:211
+#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:212
 #: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "NYERS"
@@ -2233,7 +2233,7 @@ msgstr "Sorrend"
 msgid "Source"
 msgstr "Forrás"
 
-#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:248
+#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:249
 msgid "Stack"
 msgstr "Csoportosítás"
 
@@ -2318,7 +2318,7 @@ msgstr "Szinkronizálás"
 msgid "Sync raw and video files"
 msgstr "Nyers és videofájlok szinkronizálása"
 
-#: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:476 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:53
 msgid "Taken"
 msgstr "Felvett"
@@ -2521,7 +2521,7 @@ msgstr "Frissítés most"
 msgid "Upload"
 msgstr "Feltöltés"
 
-#: src/dialog/upload.vue:246
+#: src/dialog/upload.vue:258
 msgid "Upload complete"
 msgstr "Feltöltés kész"
 
@@ -2529,7 +2529,7 @@ msgstr "Feltöltés kész"
 msgid "Upload complete. Indexing…"
 msgstr "Feltöltés kész. Indexelés…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:234 src/dialog/upload.vue:250
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:246 src/dialog/upload.vue:262
 msgid "Upload failed"
 msgstr "Feltöltés sikertelen"
 
@@ -2549,7 +2549,7 @@ msgstr "Töltse fel a WebDAV-ba, és ossza meg hivatkozásait barátaival."
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{n}/%{t} feltöltése…"
 
-#: src/dialog/upload.vue:82 src/dialog/upload.vue:90 src/dialog/upload.vue:191
+#: src/dialog/upload.vue:85 src/dialog/upload.vue:93 src/dialog/upload.vue:203
 msgid "Uploading photos…"
 msgstr "Fényképek feltöltése…"
 
@@ -2594,8 +2594,8 @@ msgstr "Felhasználónév"
 msgid "Users"
 msgstr "Felhasználók"
 
-#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
-#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
+#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:511
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:242
 #: src/model/photo.js:839 src/model/photo.js:847 src/options/options.js:345
 msgid "Vector"
 msgstr "Vektor"
@@ -2604,8 +2604,8 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vektorok"
 
-#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
-#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
+#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:484
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:228
 #: src/model/file.js:220 src/model/photo.js:862 src/model/photo.js:878
 #: src/options/options.js:341
 msgid "Video"
@@ -2622,7 +2622,7 @@ msgstr "Időtartam"
 msgid "Videos"
 msgstr "Videók"
 
-#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:257
+#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:258
 #: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "Kilátás"
@@ -2722,6 +2722,10 @@ msgstr "Csak egy albumot tölthet le"
 #: src/component/label/clipboard.vue:71
 msgid "You can only download one label"
 msgstr "Csak egy címkét tölthet le"
+
+#: src/dialog/upload.vue:167
+msgid "You may not upload more than %{n} files"
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

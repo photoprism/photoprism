@@ -262,8 +262,8 @@ msgid "Altitude (m)"
 msgstr "Hoogte (m)"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
-#: src/component/photo/cards.vue:501 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
+#: src/component/photo/cards.vue:502 src/component/photo/list.vue:192
+#: src/component/photo/mosaic.vue:235 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:101 src/options/options.js:333
 msgid "Animated"
 msgstr "Geanimeerde"
@@ -284,13 +284,13 @@ msgstr "API-sleutel"
 msgid "Apply"
 msgstr "Doen aansoek"
 
-#: src/component/photo/cards.vue:422 src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:423 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:115
 msgid "Approve"
 msgstr "Keur goed"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
-#: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
+#: src/component/photo/cards.vue:394 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "Argief"
@@ -303,7 +303,7 @@ msgstr "Geargiveer"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Is jy seker jy wil die keuse argiveer?"
 
-#: src/component/photo/toolbar.vue:462
+#: src/component/photo/toolbar.vue:463
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Is jy seker jy wil alle geargiveerde prente uitvee?"
 
@@ -419,7 +419,7 @@ msgstr "Deur die sagteware en dienste wat ons verskaf te gebruik, stem jy in tot
 msgid "Calendar"
 msgstr "Kalender"
 
-#: src/component/photo/cards.vue:518 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:519 src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Kamera"
@@ -459,7 +459,7 @@ msgstr "Kanselleer"
 msgid "Cards"
 msgstr "Kaarte"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:435
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Kategorie"
@@ -521,7 +521,7 @@ msgstr "Naby"
 msgid "Codec"
 msgstr "Kodek"
 
-#: src/component/photo/toolbar.vue:409
+#: src/component/photo/toolbar.vue:410
 msgid "Color"
 msgstr "Kleur"
 
@@ -667,12 +667,12 @@ msgstr "Verstek gids"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:21 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:228 src/page/library/errors.vue:88
+#: src/dialog/share.vue:229 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Vee uit"
 
-#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:463
+#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:464
 msgid "Delete All"
 msgstr "Vee alles uit"
 
@@ -680,7 +680,7 @@ msgstr "Vee alles uit"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "Vee wees indeksinskrywings, syspanlêers en duimnaels uit."
 
-#: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
+#: src/component/photo/cards.vue:462 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
 msgid "Description"
 msgstr "Beskrywing"
@@ -1340,7 +1340,7 @@ msgstr "Leer meer"
 msgid "Legal Information"
 msgstr "Regsinligting"
 
-#: src/component/photo/cards.vue:529 src/dialog/photo/edit/details.vue:433
+#: src/component/photo/cards.vue:530 src/dialog/photo/edit/details.vue:433
 msgid "Lens"
 msgstr "Lens"
 
@@ -1382,8 +1382,8 @@ msgid "List"
 msgstr "Lys"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
-#: src/component/photo/cards.vue:492 src/component/photo/list.vue:183
-#: src/component/photo/mosaic.vue:218 src/options/options.js:337
+#: src/component/photo/cards.vue:493 src/component/photo/list.vue:183
+#: src/component/photo/mosaic.vue:219 src/options/options.js:337
 msgid "Live"
 msgstr "Leef"
 
@@ -1403,7 +1403,7 @@ msgstr "Plaaslike tyd"
 msgid "location"
 msgstr "ligging"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:739 src/component/photo/cards.vue:555
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/page/albums.vue:88 src/page/settings/account.vue:593
 msgid "Location"
@@ -1528,7 +1528,7 @@ msgstr "Skuif lêers"
 msgid "Must have at least %{n} characters."
 msgstr "Moet ten minste %{n} karakters hê."
 
-#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
+#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:543
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/labels.vue:84
@@ -1925,7 +1925,7 @@ msgstr "Willekeurig"
 msgid "Raw"
 msgstr "Rou"
 
-#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:211
+#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:212
 #: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "RAW"
@@ -2231,7 +2231,7 @@ msgstr "Sorteervolgorde"
 msgid "Source"
 msgstr "Bron"
 
-#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:248
+#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:249
 msgid "Stack"
 msgstr "Stapel"
 
@@ -2316,7 +2316,7 @@ msgstr "Sinkroniseer"
 msgid "Sync raw and video files"
 msgstr "Sinkroniseer rou- en videolêers"
 
-#: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:476 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:53
 msgid "Taken"
 msgstr "Geneem"
@@ -2521,7 +2521,7 @@ msgstr "Gradeer nou op"
 msgid "Upload"
 msgstr "Laai op"
 
-#: src/dialog/upload.vue:246
+#: src/dialog/upload.vue:258
 msgid "Upload complete"
 msgstr "Oplaai voltooi"
 
@@ -2529,7 +2529,7 @@ msgstr "Oplaai voltooi"
 msgid "Upload complete. Indexing…"
 msgstr "Oplaai voltooi. Indekseer tans …"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:234 src/dialog/upload.vue:250
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:246 src/dialog/upload.vue:262
 msgid "Upload failed"
 msgstr "Oplegging misluk"
 
@@ -2549,7 +2549,7 @@ msgstr "Laai op na WebDAV en deel skakels met vriende."
 msgid "Uploading %{n} of %{t}…"
 msgstr "Laai tans %{n} van %{t} op…"
 
-#: src/dialog/upload.vue:82 src/dialog/upload.vue:90 src/dialog/upload.vue:191
+#: src/dialog/upload.vue:85 src/dialog/upload.vue:93 src/dialog/upload.vue:203
 msgid "Uploading photos…"
 msgstr "Laai tans foto's op …"
 
@@ -2594,8 +2594,8 @@ msgstr "Gebruikersnaam"
 msgid "Users"
 msgstr "Gebruikers"
 
-#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
-#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
+#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:511
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:242
 #: src/model/photo.js:839 src/model/photo.js:847 src/options/options.js:345
 msgid "Vector"
 msgstr "Vektor"
@@ -2604,8 +2604,8 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vektore"
 
-#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
-#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
+#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:484
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:228
 #: src/model/file.js:220 src/model/photo.js:862 src/model/photo.js:878
 #: src/options/options.js:341
 msgid "Video"
@@ -2622,7 +2622,7 @@ msgstr "Video Duur"
 msgid "Videos"
 msgstr "Video's"
 
-#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:257
+#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:258
 #: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "Beskou"
@@ -2724,6 +2724,10 @@ msgstr "Jy kan net een album aflaai"
 #: src/component/label/clipboard.vue:71
 msgid "You can only download one label"
 msgstr "Jy kan net een etiket aflaai"
+
+#: src/dialog/upload.vue:167
+msgid "You may not upload more than %{n} files"
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

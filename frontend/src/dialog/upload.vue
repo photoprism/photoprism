@@ -109,6 +109,7 @@ export default {
     },
   },
   data() {
+    const isDemo = this.$config.get("demo");
     return {
       albums: [],
       selectedAlbums: [],
@@ -128,7 +129,8 @@ export default {
       remainingTime: -1,
       eta: "",
       token: "",
-      isDemo: this.$config.get("demo"),
+      isDemo: isDemo,
+      fileLimit: isDemo ? 3 : 0,
       rejectNSFW: !this.$config.get("uploadNSFW"),
       featReview: this.$config.feature("review"),
       rtl: this.$rtl,
@@ -138,6 +140,7 @@ export default {
     show: function () {
       this.reset();
       this.isDemo = this.$config.get("demo");
+      this.fileLimit = this.isDemo ? 3 : 0;
       this.rejectNSFW = !this.$config.get("uploadNSFW");
       this.featReview = this.$config.feature("review");
 
@@ -199,8 +202,8 @@ export default {
       this.failed = false;
       this.current = 0;
       this.total = 0;
-      this.totalFailed = 0;
       this.totalSize = 0;
+      this.totalFailed = 0;
       this.completedSize = 0;
       this.completedTotal = 0;
       this.started = 0;
@@ -252,10 +255,19 @@ export default {
         return;
       }
 
-      this.selected = this.$refs.upload.files;
-      this.total = this.selected.length;
+      const files = this.$refs.upload.files;
 
-      if (this.total < 1) {
+      // Too many files selected for upload?
+      if (this.isDemo && files && files.length > this.fileLimit) {
+        Notify.error(this.$gettextInterpolate(this.$gettext("You may not upload more than %{n} files"), {n: this.fileLimit}));
+        return;
+      }
+
+      this.selected = files;
+      this.total = files.length;
+
+      // No files selected?
+      if (!this.selected || this.total < 1) {
         return;
       }
 

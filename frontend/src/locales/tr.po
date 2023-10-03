@@ -265,8 +265,8 @@ msgid "Altitude (m)"
 msgstr "Rakım (m)"
 
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
-#: src/component/photo/cards.vue:501 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
+#: src/component/photo/cards.vue:502 src/component/photo/list.vue:192
+#: src/component/photo/mosaic.vue:235 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:101 src/options/options.js:333
 msgid "Animated"
 msgstr "Hareketli"
@@ -287,13 +287,13 @@ msgstr "API Anahtarı"
 msgid "Apply"
 msgstr "Uygula"
 
-#: src/component/photo/cards.vue:422 src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:423 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:115
 msgid "Approve"
 msgstr "Onayla"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
-#: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
+#: src/component/photo/cards.vue:394 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "Arşiv"
@@ -306,7 +306,7 @@ msgstr "Arşivlendi"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Seçimi arşivlemek istediğinizden emin misiniz?"
 
-#: src/component/photo/toolbar.vue:462
+#: src/component/photo/toolbar.vue:463
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Arşivlenmiş tüm resimleri silmek istediğinizden emin misiniz?"
 
@@ -422,7 +422,7 @@ msgstr "Sağladığımız yazılım ve hizmetleri kullanarak hizmet şartlarım�
 msgid "Calendar"
 msgstr "Takvim"
 
-#: src/component/photo/cards.vue:518 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:519 src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Kamera"
@@ -462,7 +462,7 @@ msgstr "İptal"
 msgid "Cards"
 msgstr "Kartlar"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:435
 #: src/dialog/album/edit.vue:171 src/page/albums.vue:229
 msgid "Category"
 msgstr "Kategori"
@@ -524,7 +524,7 @@ msgstr "Kapat"
 msgid "Codec"
 msgstr "Kodek"
 
-#: src/component/photo/toolbar.vue:409
+#: src/component/photo/toolbar.vue:410
 msgid "Color"
 msgstr "Renk"
 
@@ -670,12 +670,12 @@ msgstr "Varsayılan Klasör"
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
 #: src/dialog/photo/delete.vue:21 src/dialog/photo/edit/files.vue:41
 #: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:228 src/page/library/errors.vue:88
+#: src/dialog/share.vue:229 src/page/library/errors.vue:88
 #: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Sil"
 
-#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:463
+#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:464
 msgid "Delete All"
 msgstr "Tümünü Sil"
 
@@ -683,7 +683,7 @@ msgstr "Tümünü Sil"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "Artık dizin girişlerini, sidecar dosyalarını ve küçük resimleri silin."
 
-#: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
+#: src/component/photo/cards.vue:462 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
 msgid "Description"
 msgstr "Tanım"
@@ -1343,7 +1343,7 @@ msgstr "Daha fazla bilgi edin"
 msgid "Legal Information"
 msgstr "Yasal Bilgiler"
 
-#: src/component/photo/cards.vue:529 src/dialog/photo/edit/details.vue:433
+#: src/component/photo/cards.vue:530 src/dialog/photo/edit/details.vue:433
 msgid "Lens"
 msgstr "Lens"
 
@@ -1385,8 +1385,8 @@ msgid "List"
 msgstr "Liste"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
-#: src/component/photo/cards.vue:492 src/component/photo/list.vue:183
-#: src/component/photo/mosaic.vue:218 src/options/options.js:337
+#: src/component/photo/cards.vue:493 src/component/photo/list.vue:183
+#: src/component/photo/mosaic.vue:219 src/options/options.js:337
 msgid "Live"
 msgstr "Canlı"
 
@@ -1406,7 +1406,7 @@ msgstr "Yerel Saat"
 msgid "location"
 msgstr "konum"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:739 src/component/photo/cards.vue:555
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/page/albums.vue:88 src/page/settings/account.vue:593
 msgid "Location"
@@ -1531,7 +1531,7 @@ msgstr "Dosyaları Taşı"
 msgid "Must have at least %{n} characters."
 msgstr "En az %{n} karakter olmalıdır."
 
-#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
+#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:543
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/labels.vue:84
@@ -1928,7 +1928,7 @@ msgstr "Rastgele"
 msgid "Raw"
 msgstr "Çiğ"
 
-#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:211
+#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:212
 #: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "RAW"
@@ -2234,7 +2234,7 @@ msgstr "Sıralama düzeni"
 msgid "Source"
 msgstr "Kaynak"
 
-#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:248
+#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:249
 msgid "Stack"
 msgstr "Yığın"
 
@@ -2319,7 +2319,7 @@ msgstr "Eşitle"
 msgid "Sync raw and video files"
 msgstr "Ham ve video dosyalarını senkronize edin"
 
-#: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:476 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:53
 msgid "Taken"
 msgstr "Alınmış"
@@ -2524,7 +2524,7 @@ msgstr "Şimdi Yükselt"
 msgid "Upload"
 msgstr "Yükle"
 
-#: src/dialog/upload.vue:246
+#: src/dialog/upload.vue:258
 msgid "Upload complete"
 msgstr "Yüklendi"
 
@@ -2532,7 +2532,7 @@ msgstr "Yüklendi"
 msgid "Upload complete. Indexing…"
 msgstr "Yükleme tamamlandı. İndeksleniyor.."
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:234 src/dialog/upload.vue:250
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:246 src/dialog/upload.vue:262
 msgid "Upload failed"
 msgstr "Yükleme başarısız"
 
@@ -2552,7 +2552,7 @@ msgstr "WebDAV'a yükleyin ve bağlantıları arkadaşlarınızla paylaşın."
 msgid "Uploading %{n} of %{t}…"
 msgstr "1]'in %{n}'ı yükleniyor.."
 
-#: src/dialog/upload.vue:82 src/dialog/upload.vue:90 src/dialog/upload.vue:191
+#: src/dialog/upload.vue:85 src/dialog/upload.vue:93 src/dialog/upload.vue:203
 msgid "Uploading photos…"
 msgstr "Fotoğraf yükleniyor.."
 
@@ -2597,8 +2597,8 @@ msgstr "Kullanıcı Adı"
 msgid "Users"
 msgstr "Kullanıcılar"
 
-#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
-#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
+#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:511
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:242
 #: src/model/photo.js:839 src/model/photo.js:847 src/options/options.js:345
 msgid "Vector"
 msgstr "Vektör"
@@ -2607,8 +2607,8 @@ msgstr "Vektör"
 msgid "Vectors"
 msgstr "Vektörler"
 
-#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
-#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
+#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:484
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:228
 #: src/model/file.js:220 src/model/photo.js:862 src/model/photo.js:878
 #: src/options/options.js:341
 msgid "Video"
@@ -2625,7 +2625,7 @@ msgstr "Video Süresi"
 msgid "Videos"
 msgstr "Videolar"
 
-#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:257
+#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:258
 #: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "Görünüm"
@@ -2727,6 +2727,10 @@ msgstr "Yalnızca bir albüm indirebilirsiniz"
 #: src/component/label/clipboard.vue:71
 msgid "You can only download one label"
 msgstr "Yalnızca bir etiket indirebilirsiniz"
+
+#: src/dialog/upload.vue:167
+msgid "You may not upload more than %{n} files"
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
