@@ -112,7 +112,7 @@ require (
 )
 
 require (
-	github.com/abema/go-mp4 v1.0.0
+	github.com/abema/go-mp4 v1.1.1
 	github.com/bytedance/sonic v1.10.0 // indirect
 	github.com/go-errors/errors v1.5.0 // indirect
 	github.com/go-playground/validator/v10 v10.15.3 // indirect
