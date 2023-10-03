@@ -59,18 +59,24 @@
             </td>
           </tr>
           <tr>
-            <td :title="model.TitleSrc">
+            <td :title="sourceName(model.TitleSrc)">
               <translate>Title</translate>
               <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
             </td>
-            <td>{{ model.Title }}</td>
+            <td :title="sourceName(model.TitleSrc)">
+              {{ model.Title }}
+              <v-icon v-if="model.TitleSrc === 'name'" class="src">insert_drive_file</v-icon>
+            </td>
           </tr>
           <tr>
-            <td :title="model.TakenSrc">
+            <td :title="sourceName(model.TakenSrc)">
               <translate>Taken</translate>
               <v-icon v-if="model.TakenSrc === 'manual'" class="src">check</v-icon>
             </td>
-            <td>{{ model.getDateString() }}</td>
+            <td :title="sourceName(model.TakenSrc)">
+              {{ model.getDateString() }}
+              <v-icon v-if="model.TakenSrc === 'name' || model.TakenSrc === 'estimate'" class="src">insights</v-icon>
+            </td>
           </tr>
           <tr v-if="albums.length > 0">
             <td>
@@ -181,12 +187,13 @@
             </td>
           </tr>
           <tr>
-            <td :title="model.PlaceSrc">
+            <td :title="sourceName(model.PlaceSrc)">
               <translate>Place</translate>
               <v-icon v-if="model.PlaceSrc === 'manual'" class="src">check</v-icon>
             </td>
-            <td>
+            <td :title="sourceName(model.PlaceSrc)">
               {{ model.locationInfo() }}
+              <v-icon v-if="model.PlaceSrc === 'estimate'" class="src">insights</v-icon>
             </td>
           </tr>
           <tr v-if="model.Lat">
@@ -283,6 +290,8 @@
 import Thumb from "model/thumb";
 import {DateTime, Info} from "luxon";
 import * as options from "options/options";
+import {T} from "common/vm";
+import Util from "common/util";
 
 export default {
   name: 'PTabPhotoAdvanced',
@@ -331,6 +340,28 @@ export default {
     },
   },
   methods: {
+    sourceName(s) {
+      switch (s) {
+        case "":
+        case "auto":
+        case "manual":
+          return "";
+        case "meta":
+          return this.$gettext('Metadata');
+        case "xmp":
+          return "XMP";
+        case "estimate":
+          return this.$gettext("Estimate");
+        case "name":
+          return this.$gettext("Name");
+        case "image":
+          return this.$gettext("Image");
+        case "location":
+          return this.$gettext("Location");
+        default:
+          return T(Util.capitalize(s));
+      }
+    },
     formatTime(s) {
       return DateTime.fromISO(s).toLocaleString(DateTime.DATETIME_MED);
     },

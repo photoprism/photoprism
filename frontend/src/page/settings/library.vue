@@ -20,7 +20,7 @@
                   color="secondary-dark"
                   :label="$gettext('Estimates')"
                   :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
-                  prepend-icon="timeline"
+                  prepend-icon="insights"
                   persistent-hint
                   @change="onChange"
               >
