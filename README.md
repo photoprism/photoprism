@@ -15,7 +15,7 @@ You can run it at home, on a private server, or in the cloud.
 
 ![](https://dl.photoprism.app/img/ui/desktop-1000px.jpg)
 
-To get a first impression, you are welcome to play with our [public demo](https://try.photoprism.app/). Be careful not to upload any private pictures.
+To get a first impression, you are welcome to play with our [public demo](https://try.photoprism.app/). Please be careful not to upload any private or offensive content.
 
 ## Feature Overview ##
 

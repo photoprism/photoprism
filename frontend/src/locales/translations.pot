@@ -292,8 +292,8 @@ msgid "Altitude (m)"
 msgstr ""
 
 #: src/component/navigation.vue:97
-#: src/component/photo/cards.vue:311
-#: src/component/photo/cards.vue:499
+#: src/component/photo/cards.vue:313
+#: src/component/photo/cards.vue:501
 #: src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:234
 #: src/dialog/photo/edit/files.vue:104
@@ -318,7 +318,7 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: src/component/photo/cards.vue:420
+#: src/component/photo/cards.vue:422
 #: src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:115
 msgid "Approve"
@@ -326,7 +326,7 @@ msgstr ""
 
 #: src/app/routes.js:256
 #: src/component/navigation.vue:138
-#: src/component/photo/cards.vue:391
+#: src/component/photo/cards.vue:393
 #: src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
@@ -470,7 +470,7 @@ msgstr ""
 msgid "Calendar"
 msgstr ""
 
-#: src/component/photo/cards.vue:516
+#: src/component/photo/cards.vue:518
 #: src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:288
 #: src/dialog/photo/edit/details.vue:358
@@ -801,7 +801,7 @@ msgstr ""
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr ""
 
-#: src/component/photo/cards.vue:459
+#: src/component/photo/cards.vue:461
 #: src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609
 #: src/page/albums.vue:550
@@ -1574,6 +1574,7 @@ msgstr ""
 msgid "Legal Information"
 msgstr ""
 
+#: src/component/photo/cards.vue:529
 #: src/dialog/photo/edit/details.vue:433
 msgid "Lens"
 msgstr ""
@@ -1627,8 +1628,8 @@ msgid "List"
 msgstr ""
 
 #: src/app/routes.js:228
-#: src/component/photo/cards.vue:295
-#: src/component/photo/cards.vue:490
+#: src/component/photo/cards.vue:297
+#: src/component/photo/cards.vue:492
 #: src/component/photo/list.vue:183
 #: src/component/photo/mosaic.vue:218
 #: src/options/options.js:337
@@ -1655,7 +1656,7 @@ msgid "location"
 msgstr ""
 
 #: src/page/settings/account.vue:739
-#: src/component/photo/cards.vue:540
+#: src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139
 #: src/dialog/album/edit.vue:126
 #: src/page/albums.vue:88
@@ -1802,7 +1803,7 @@ msgid "Must have at least %{n} characters."
 msgstr ""
 
 #: src/page/about/feedback.vue:175
-#: src/component/photo/cards.vue:528
+#: src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:139
 #: src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105
@@ -1941,7 +1942,7 @@ msgstr ""
 #: src/component/photo/mosaic.vue:15
 #: src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
@@ -2125,7 +2126,7 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: src/model/photo.js:1110
+#: src/model/photo.js:1141
 msgid "Photo"
 msgstr ""
 
@@ -2175,11 +2176,15 @@ msgstr ""
 msgid "Places"
 msgstr ""
 
+#: src/dialog/upload.vue:48
+msgid "Please be careful not to upload any private or offensive content."
+msgstr ""
+
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr ""
 
-#: src/dialog/upload.vue:47
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr ""
 
@@ -2280,7 +2285,7 @@ msgstr ""
 msgid "Raw"
 msgstr ""
 
-#: src/component/photo/cards.vue:288
+#: src/component/photo/cards.vue:290
 #: src/component/photo/mosaic.vue:211
 #: src/page/settings/general.vue:668
 msgid "RAW"
@@ -2484,7 +2489,7 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: src/dialog/upload.vue:126
+#: src/dialog/upload.vue:130
 msgid "Select albums or create a new one"
 msgstr ""
 
@@ -2642,7 +2647,7 @@ msgstr ""
 msgid "Source"
 msgstr ""
 
-#: src/component/photo/cards.vue:325
+#: src/component/photo/cards.vue:327
 #: src/component/photo/mosaic.vue:248
 msgid "Stack"
 msgstr ""
@@ -2736,7 +2741,7 @@ msgstr ""
 msgid "Sync raw and video files"
 msgstr ""
 
-#: src/component/photo/cards.vue:473
+#: src/component/photo/cards.vue:475
 #: src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:53
 msgid "Taken"
@@ -2884,12 +2889,12 @@ msgstr ""
 #: src/dialog/photo/edit/details.vue:23
 #: src/dialog/photo/edit/info.vue:28
 #: src/model/album.js:179
-#: src/model/photo.js:703
-#: src/model/photo.js:724
-#: src/model/photo.js:747
-#: src/model/photo.js:765
-#: src/model/photo.js:882
-#: src/model/photo.js:895
+#: src/model/photo.js:732
+#: src/model/photo.js:753
+#: src/model/photo.js:776
+#: src/model/photo.js:794
+#: src/model/photo.js:913
+#: src/model/photo.js:926
 #: src/model/user.js:151
 #: src/options/options.js:27
 #: src/options/options.js:41
@@ -2972,7 +2977,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:164
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
-#: src/dialog/upload.vue:56
+#: src/dialog/upload.vue:60
 #: src/page/albums.vue:127
 #: src/page/library/import.vue:38
 #: src/page/settings/general.vue:231
@@ -2980,7 +2985,7 @@ msgstr ""
 msgid "Upload"
 msgstr ""
 
-#: src/dialog/upload.vue:244
+#: src/dialog/upload.vue:246
 msgid "Upload complete"
 msgstr ""
 
@@ -2989,8 +2994,8 @@ msgid "Upload complete. Indexing…"
 msgstr ""
 
 #: src/dialog/upload.vue:34
-#: src/dialog/upload.vue:232
-#: src/dialog/upload.vue:248
+#: src/dialog/upload.vue:234
+#: src/dialog/upload.vue:250
 msgid "Upload failed"
 msgstr ""
 
@@ -3010,9 +3015,9 @@ msgstr ""
 msgid "Uploading %{n} of %{t}…"
 msgstr ""
 
-#: src/dialog/upload.vue:80
-#: src/dialog/upload.vue:88
-#: src/dialog/upload.vue:189
+#: src/dialog/upload.vue:82
+#: src/dialog/upload.vue:90
+#: src/dialog/upload.vue:191
 msgid "Uploading photos…"
 msgstr ""
 
@@ -3020,7 +3025,7 @@ msgstr ""
 msgid "Uploading…"
 msgstr ""
 
-#: src/dialog/upload.vue:48
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 
@@ -3064,12 +3069,12 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: src/component/photo/cards.vue:318
-#: src/component/photo/cards.vue:508
+#: src/component/photo/cards.vue:320
+#: src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:199
 #: src/component/photo/mosaic.vue:241
-#: src/model/photo.js:808
-#: src/model/photo.js:816
+#: src/model/photo.js:839
+#: src/model/photo.js:847
 #: src/options/options.js:345
 msgid "Vector"
 msgstr ""
@@ -3078,13 +3083,13 @@ msgstr ""
 msgid "Vectors"
 msgstr ""
 
-#: src/component/photo/cards.vue:304
-#: src/component/photo/cards.vue:481
+#: src/component/photo/cards.vue:306
+#: src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:206
 #: src/component/photo/mosaic.vue:227
 #: src/model/file.js:220
-#: src/model/photo.js:831
-#: src/model/photo.js:847
+#: src/model/photo.js:862
+#: src/model/photo.js:878
 #: src/options/options.js:341
 msgid "Video"
 msgstr ""
@@ -3103,7 +3108,7 @@ msgstr ""
 msgid "Videos"
 msgstr ""
 
-#: src/component/photo/cards.vue:334
+#: src/component/photo/cards.vue:336
 #: src/component/photo/mosaic.vue:257
 #: src/component/photo/toolbar.vue:314
 msgid "View"
@@ -3215,6 +3220,10 @@ msgstr ""
 #: src/page/about/about.vue:5
 #: src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
+msgstr ""
+
+#: src/dialog/upload.vue:47
+msgid "You are welcome to upload files to this public demo for which you own the copyright."
 msgstr ""
 
 #: src/component/album/clipboard.vue:106

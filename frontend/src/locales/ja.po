@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-09-20 21:59+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Japanese <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ja/>\n"
+"Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -265,8 +264,8 @@ msgstr "高度"
 msgid "Altitude (m)"
 msgstr "高度 (m)"
 
-#: src/component/navigation.vue:97 src/component/photo/cards.vue:311
-#: src/component/photo/cards.vue:499 src/component/photo/list.vue:192
+#: src/component/navigation.vue:97 src/component/photo/cards.vue:313
+#: src/component/photo/cards.vue:501 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
 #: src/dialog/photo/edit/files.vue:101 src/options/options.js:333
 msgid "Animated"
@@ -288,13 +287,13 @@ msgstr "API キー"
 msgid "Apply"
 msgstr "適用"
 
-#: src/component/photo/cards.vue:420 src/component/photo/clipboard.vue:88
+#: src/component/photo/cards.vue:422 src/component/photo/clipboard.vue:88
 #: src/dialog/photo/edit/details.vue:115
 msgid "Approve"
 msgstr "承認"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
-#: src/component/photo/cards.vue:391 src/component/photo/clipboard.vue:204
+#: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "アーカイブ"
@@ -423,7 +422,7 @@ msgstr "当社が提供するソフトウェアおよびサービスを利用す
 msgid "Calendar"
 msgstr "カレンダー"
 
-#: src/component/photo/cards.vue:516 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:518 src/component/photo/list.vue:138
 #: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "カメラ"
@@ -684,7 +683,7 @@ msgstr "すべて削除"
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "孤児となったインデックスエントリ、サイドカーファイル、サムネイルを削除します。"
 
-#: src/component/photo/cards.vue:459 src/dialog/album/edit.vue:148
+#: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
 msgid "Description"
 msgstr "概要"
@@ -1344,7 +1343,7 @@ msgstr "詳細はこちら"
 msgid "Legal Information"
 msgstr "法的情報"
 
-#: src/dialog/photo/edit/details.vue:433
+#: src/component/photo/cards.vue:529 src/dialog/photo/edit/details.vue:433
 msgid "Lens"
 msgstr "レンズ"
 
@@ -1385,8 +1384,8 @@ msgstr "リンク"
 msgid "List"
 msgstr "リスト"
 
-#: src/app/routes.js:228 src/component/photo/cards.vue:295
-#: src/component/photo/cards.vue:490 src/component/photo/list.vue:183
+#: src/app/routes.js:228 src/component/photo/cards.vue:297
+#: src/component/photo/cards.vue:492 src/component/photo/list.vue:183
 #: src/component/photo/mosaic.vue:218 src/options/options.js:337
 msgid "Live"
 msgstr "ライブ"
@@ -1407,7 +1406,7 @@ msgstr "現地時間"
 msgid "location"
 msgstr "場所"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:540
+#: src/page/settings/account.vue:739 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/page/albums.vue:88 src/page/settings/account.vue:593
 msgid "Location"
@@ -1532,7 +1531,7 @@ msgstr "ファイルを移動"
 msgid "Must have at least %{n} characters."
 msgstr "最低6文字。"
 
-#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:528
+#: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:235
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/labels.vue:84
@@ -1631,7 +1630,7 @@ msgstr "このキーワードを含む警告やエラーは1つも見つかり�
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:52
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "写真ではないものや、低品質な画像は検索結果に現れる前にレビューが必要です。"
@@ -1791,7 +1790,7 @@ msgstr "ファイルを永久的に削除して、ストレージを空けるこ
 msgid "Phone"
 msgstr "電話番号"
 
-#: src/model/photo.js:1110
+#: src/model/photo.js:1141
 msgid "Photo"
 msgstr "写真"
 
@@ -1832,11 +1831,15 @@ msgstr "場所と時間"
 msgid "Places"
 msgstr "場所"
 
+#: src/dialog/upload.vue:48
+msgid "Please be careful not to upload any private or offensive content."
+msgstr ""
+
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "あなたの新しいパスワードを確認してください。"
 
-#: src/dialog/upload.vue:47
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "過激な内容を含む写真をアップロードしないでください。"
 
@@ -1925,7 +1928,7 @@ msgstr "ランダム"
 msgid "Raw"
 msgstr "Raw"
 
-#: src/component/photo/cards.vue:288 src/component/photo/mosaic.vue:211
+#: src/component/photo/cards.vue:290 src/component/photo/mosaic.vue:211
 #: src/page/settings/general.vue:668
 msgid "RAW"
 msgstr "RAW"
@@ -2094,7 +2097,7 @@ msgstr "セキュリティとアクセス"
 msgid "Select"
 msgstr "選択"
 
-#: src/dialog/upload.vue:126
+#: src/dialog/upload.vue:130
 msgid "Select albums or create a new one"
 msgstr "アルバムを選択するか、新しいアルバムを作成します"
 
@@ -2231,7 +2234,7 @@ msgstr "並び替え順"
 msgid "Source"
 msgstr "ソース"
 
-#: src/component/photo/cards.vue:325 src/component/photo/mosaic.vue:248
+#: src/component/photo/cards.vue:327 src/component/photo/mosaic.vue:248
 msgid "Stack"
 msgstr "スタック"
 
@@ -2316,7 +2319,7 @@ msgstr "同期"
 msgid "Sync raw and video files"
 msgstr "Raw ファイルや動画ファイルを同期"
 
-#: src/component/photo/cards.vue:473 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:53
 msgid "Taken"
 msgstr "撮影済み"
@@ -2448,9 +2451,9 @@ msgid "Unique ID"
 msgstr "一意のID"
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:28
-#: src/model/album.js:179 src/model/photo.js:703 src/model/photo.js:724
-#: src/model/photo.js:747 src/model/photo.js:765 src/model/photo.js:882
-#: src/model/photo.js:895 src/model/user.js:151 src/options/options.js:27
+#: src/model/album.js:179 src/model/photo.js:732 src/model/photo.js:753
+#: src/model/photo.js:776 src/model/photo.js:794 src/model/photo.js:913
+#: src/model/photo.js:926 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2515,13 +2518,13 @@ msgstr "今すぐアップグレード"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:56 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
 msgstr "アップロード"
 
-#: src/dialog/upload.vue:244
+#: src/dialog/upload.vue:246
 msgid "Upload complete"
 msgstr "アップロード完了"
 
@@ -2529,7 +2532,7 @@ msgstr "アップロード完了"
 msgid "Upload complete. Indexing…"
 msgstr "アップロードが完了しました。インデックスしています…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:232 src/dialog/upload.vue:248
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:234 src/dialog/upload.vue:250
 msgid "Upload failed"
 msgstr "アップロード失敗"
 
@@ -2549,7 +2552,7 @@ msgstr "WebDAV にアップロードして、友達とリンクを共有でき�
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{t} 件中 %{n} 件をアップロードしています…"
 
-#: src/dialog/upload.vue:80 src/dialog/upload.vue:88 src/dialog/upload.vue:189
+#: src/dialog/upload.vue:82 src/dialog/upload.vue:90 src/dialog/upload.vue:191
 msgid "Uploading photos…"
 msgstr "写真をアップロードしています…"
 
@@ -2557,7 +2560,7 @@ msgstr "写真をアップロードしています…"
 msgid "Uploading…"
 msgstr "アップロード中…"
 
-#: src/dialog/upload.vue:48
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "そのような画像を含むアップロードは自動的に拒否されます。"
 
@@ -2594,9 +2597,9 @@ msgstr "ユーザ名"
 msgid "Users"
 msgstr "ユーザー"
 
-#: src/component/photo/cards.vue:318 src/component/photo/cards.vue:508
+#: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:808 src/model/photo.js:816 src/options/options.js:345
+#: src/model/photo.js:839 src/model/photo.js:847 src/options/options.js:345
 msgid "Vector"
 msgstr "ベクター"
 
@@ -2604,9 +2607,9 @@ msgstr "ベクター"
 msgid "Vectors"
 msgstr "ベクター"
 
-#: src/component/photo/cards.vue:304 src/component/photo/cards.vue:481
+#: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
-#: src/model/file.js:220 src/model/photo.js:831 src/model/photo.js:847
+#: src/model/file.js:220 src/model/photo.js:862 src/model/photo.js:878
 #: src/options/options.js:341
 msgid "Video"
 msgstr "動画"
@@ -2622,7 +2625,7 @@ msgstr "時間"
 msgid "Videos"
 msgstr "動画"
 
-#: src/component/photo/cards.vue:334 src/component/photo/mosaic.vue:257
+#: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:257
 #: src/component/photo/toolbar.vue:314
 msgid "View"
 msgstr "表示"
@@ -2712,6 +2715,10 @@ msgstr "はい"
 #: src/page/about/about.vue:5 src/page/connect.vue:103
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "メンバーシップに関するご質問は、membership@photoprism.app までご連絡ください。"
+
+#: src/dialog/upload.vue:47
+msgid "You are welcome to upload files to this public demo for which you own the copyright."
+msgstr ""
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
