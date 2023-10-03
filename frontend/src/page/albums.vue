@@ -473,7 +473,9 @@ export default {
 
       // Pre-select manually managed album in upload dialog.
       if(this.context === 'album' && this.selection && this.selection.length === 1) {
-        return this.model.find(this.selection[0]).then(m => Event.publish("dialog.upload", {albums: [m]}));
+        return this.model.find(this.selection[0])
+          .then(m => Event.publish("dialog.upload", {albums: [m]}))
+          .catch(() => Event.publish("dialog.upload", {albums: []}));
       } else {
         Event.publish("dialog.upload", {albums: []});
       }

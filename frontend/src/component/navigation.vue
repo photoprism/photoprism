@@ -818,14 +818,17 @@ export default {
     },
     openUpload() {
       if (this.auth && !this.isReadOnly && this.$config.feature('upload')) {
-        if (this.$route.params?.album) {
+        if (this.$route.name === 'album' && this.$route.params?.album) {
           return new Album().find(this.$route.params?.album).then(m => {
             this.upload.dialog = true;
             this.upload.data = {albums: [m]};
+          }).catch(() => {
+            this.upload.dialog = true;
+            this.upload.data = {albums: []};
           });
         } else {
           this.upload.dialog = true;
-          this.upload.data = {};
+          this.upload.data = {albums: []};
         }
       } else {
         this.goHome();
