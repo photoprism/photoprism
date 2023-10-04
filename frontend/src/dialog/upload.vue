@@ -65,7 +65,6 @@
             <p v-if="isDemo" class="body-2">
               <translate :translate-params="{n: fileLimit}">You can upload up to %{n} files for test purposes.</translate>
               <translate>Please do not upload any private, unlawful or offensive pictures. </translate>
-              <translate>We reserve the right to delete these automatically.</translate>
             </p>
             <p v-else-if="rejectNSFW" class="body-2">
               <translate>Please don't upload photos containing offensive content.</translate>
