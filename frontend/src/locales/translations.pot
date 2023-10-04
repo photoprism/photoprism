@@ -5,7 +5,7 @@ msgstr ""
 "Generated-By: easygettext\n"
 "Project-Id-Version: \n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr ""
 
@@ -62,7 +62,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/component/navigation.vue:100
+#: src/component/navigation.vue:101
 #: src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108
 #: src/model/service.js:98
@@ -196,7 +196,7 @@ msgstr ""
 msgid "Album"
 msgstr ""
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr ""
 
@@ -220,7 +220,7 @@ msgstr ""
 msgid "Albums deleted"
 msgstr ""
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr ""
 
@@ -240,7 +240,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:69
 #: src/page/albums.vue:37
 #: src/page/albums.vue:146
-#: src/page/albums.vue:615
+#: src/page/albums.vue:622
 msgid "All Categories"
 msgstr ""
 
@@ -488,8 +488,8 @@ msgstr ""
 
 #: src/common/clipboard.js:100
 #: src/common/clipboard.js:137
-#: src/page/albums.vue:553
-#: src/page/albums.vue:569
+#: src/page/albums.vue:560
+#: src/page/albums.vue:576
 #: src/page/labels.vue:204
 #: src/page/labels.vue:224
 #: src/page/library/browse.vue:205
@@ -570,7 +570,7 @@ msgstr ""
 #: src/dialog/service/edit.vue:102
 #: src/dialog/share.vue:88
 #: src/dialog/share.vue:104
-#: src/page/albums.vue:546
+#: src/page/albums.vue:553
 #: src/page/settings/account.vue:114
 #: src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51
@@ -1881,7 +1881,7 @@ msgid "No"
 msgstr ""
 
 #: src/page/albums.vue:54
-#: src/page/albums.vue:489
+#: src/page/albums.vue:496
 msgid "No albums found"
 msgstr ""
 
@@ -1953,7 +1953,7 @@ msgstr ""
 #: src/component/photo/mosaic.vue:15
 #: src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:56
+#: src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
@@ -2010,7 +2010,7 @@ msgstr ""
 msgid "Once a week"
 msgstr ""
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr ""
 
@@ -2187,15 +2187,15 @@ msgstr ""
 msgid "Places"
 msgstr ""
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr ""
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr ""
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr ""
 
@@ -2360,7 +2360,7 @@ msgstr ""
 msgid "Reload"
 msgstr ""
 
-#: src/component/navigation.vue:138
+#: src/component/navigation.vue:139
 #: src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92
 #: src/page/settings/library.vue:46
@@ -2857,6 +2857,10 @@ msgstr ""
 msgid "Token"
 msgstr ""
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307
 #: src/page/places.vue:162
 msgid "Topographic"
@@ -2920,7 +2924,7 @@ msgstr ""
 
 #: src/page/settings/account.vue:38
 #: src/page/settings/account.vue:46
-#: src/component/navigation.vue:89
+#: src/component/navigation.vue:90
 #: src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
@@ -2988,7 +2992,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:164
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
-#: src/dialog/upload.vue:60
+#: src/dialog/upload.vue:61
 #: src/page/albums.vue:127
 #: src/page/library/import.vue:38
 #: src/page/settings/general.vue:231
@@ -3036,7 +3040,7 @@ msgstr ""
 msgid "Uploading…"
 msgstr ""
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 
@@ -3152,6 +3156,10 @@ msgstr ""
 msgid "We do our best to respond within five business days or less."
 msgstr ""
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237
 #: src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -3233,10 +3241,6 @@ msgstr ""
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr ""
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-
 #: src/component/album/clipboard.vue:106
 #: src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -3246,8 +3250,8 @@ msgstr ""
 msgid "You can only download one label"
 msgstr ""
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
 msgstr ""
 
 #: src/component/album/clipboard.vue:59

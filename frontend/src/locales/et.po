@@ -11,7 +11,7 @@ msgstr ""
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "%{n} albumit leitud"
 
@@ -60,7 +60,7 @@ msgstr "Klõpsamine kopeerib selle lõikelauale."
 msgid "About"
 msgstr "Teave"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -177,7 +177,7 @@ msgstr "Kahe nädala pärast"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "Album lisatud"
 
@@ -196,7 +196,7 @@ msgstr "Albumid"
 msgid "Albums deleted"
 msgstr "Albumid kustutatud"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "Kõik %{n} albumit laaditud"
 
@@ -213,7 +213,7 @@ msgid "All Cameras"
 msgstr "Kõik kaamerad"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "Kõik kategooriad"
 
@@ -433,7 +433,7 @@ msgid "Can't load more, limit reached"
 msgstr "Rohkem ei saa laadida, limiit on saavutatud"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -488,7 +488,7 @@ msgstr "Muuda isiklikkust"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1584,7 +1584,7 @@ msgstr "Uuemad eespool"
 msgid "No"
 msgstr "Ei"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "Albumeid ei leitud"
 
@@ -1637,7 +1637,7 @@ msgstr "Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et 
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne kui nad otsingutulemustes ilmuvad."
@@ -1688,7 +1688,7 @@ msgstr "Windowsis sisestage ühendusdialoogi järgmine ressurss:"
 msgid "Once a week"
 msgstr "Üks kord nädalas"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "Üks album leitud"
 
@@ -1838,16 +1838,15 @@ msgstr "Koht ja aeg"
 msgid "Places"
 msgstr "Kohad"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr ""
-"Palun olge ettevaatlik, et mitte laadida üles privaatset või solvavat sisu."
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Palun kinnita oma uus parool."
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "Palun ära laadi üles solvava sisuga fotosid."
 
@@ -1988,7 +1987,7 @@ msgstr "Registreeri"
 msgid "Reload"
 msgstr "Laadi uuesti"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Uuesti laadimine…"
@@ -2425,6 +2424,10 @@ msgstr "Muuda vaadet"
 msgid "Token"
 msgstr "Token"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topograafiline"
@@ -2470,7 +2473,7 @@ msgid "Unknown"
 msgstr "Teadmata"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Mitteregistreeritud"
@@ -2526,7 +2529,7 @@ msgstr "Uuenda nüüd"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2568,7 +2571,7 @@ msgstr "Fotode üleslaadimine…"
 msgid "Uploading…"
 msgstr "Üleslaadimine…"
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
 
@@ -2660,6 +2663,10 @@ msgstr "Me hindame teie tagasisidet!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Anname endast parima, et vastata viie tööpäeva jooksul või vähem."
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2724,12 +2731,6 @@ msgstr "Jah"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Olete oodatud meiega ühendust võtma aadressil membership@photoprism.app, kui teil on küsimusi seoses teie liikmelisusega."
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-"Te olete teretulnud üles laadima sellesse avalikku demolehele faile, mille "
-"autoriõigused kuuluvad teile."
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Võid alla laadida ainult ühe albumi"
@@ -2738,9 +2739,9 @@ msgstr "Võid alla laadida ainult ühe albumi"
 msgid "You can only download one label"
 msgstr "Võid alla laadida ainult ühe sildi"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "Sa ei tohi üles laadida rohkem kui %{n} faile."
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2767,6 +2768,15 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "Palun olge ettevaatlik, et mitte laadida üles privaatset või solvavat sisu."
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "Te olete teretulnud üles laadima sellesse avalikku demolehele faile, mille autoriõigused kuuluvad teile."
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "Sa ei tohi üles laadida rohkem kui %{n} faile."
 
 #~ msgid "Open"
 #~ msgstr "Avatud"

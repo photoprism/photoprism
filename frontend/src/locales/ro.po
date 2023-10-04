@@ -5,18 +5,16 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-03 18:09+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Romanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ro/>\n"
+"Language-Team: Romanian <https://translate.photoprism.app/projects/photoprism/frontend/ro/>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
-"20)) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2;\n"
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "%{n} albume găsite"
 
@@ -65,7 +63,7 @@ msgstr "Un clic îl va copia în clipboard."
 msgid "About"
 msgstr "Despre"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -182,7 +180,7 @@ msgstr "După două săptămâni"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "Album creat"
 
@@ -201,7 +199,7 @@ msgstr "Albume"
 msgid "Albums deleted"
 msgstr "Albume șterse"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "Toate albumele %{n} încărcate"
 
@@ -218,7 +216,7 @@ msgid "All Cameras"
 msgstr "Toate camerele de luat vederi"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "Toate categoriile"
 
@@ -438,7 +436,7 @@ msgid "Can't load more, limit reached"
 msgstr "Nu se poate încărca mai mult, limita a fost atinsă"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -493,7 +491,7 @@ msgstr "Schimbarea steagului privat"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1589,7 +1587,7 @@ msgstr "Cel mai nou Mai întâi"
 msgid "No"
 msgstr "Nu"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "Nu s-au găsit albume"
 
@@ -1642,7 +1640,7 @@ msgstr "Nu există avertismente sau erori care să conțină acest cuvânt cheie
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Imaginile nefotografice și de slabă calitate necesită o revizuire înainte de a apărea în rezultatele căutării."
@@ -1693,7 +1691,7 @@ msgstr "Pe Windows, introduceți următoarea resursă în fereastra de dialog de
 msgid "Once a week"
 msgstr "O dată pe săptămână"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "Un album găsit"
 
@@ -1843,15 +1841,15 @@ msgstr "Locul și Ora"
 msgid "Places"
 msgstr "Locuri"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr "Vă rugăm să aveți grijă să nu încărcați conținut privat sau ofensator."
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Vă rugăm să confirmați noua parolă."
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "Vă rugăm să nu încărcați fotografii cu conținut ofensator."
 
@@ -1992,7 +1990,7 @@ msgstr "Înregistrare"
 msgid "Reload"
 msgstr "Reîncărcare"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Se reîncarcă…"
@@ -2429,6 +2427,10 @@ msgstr "Schimbă vizualizarea"
 msgid "Token"
 msgstr "Jeton"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topografic"
@@ -2474,7 +2476,7 @@ msgid "Unknown"
 msgstr "Necunoscut"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Neînregistrat"
@@ -2530,7 +2532,7 @@ msgstr "Actualizați acum"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2572,7 +2574,7 @@ msgstr "Se încarcă fotografii…"
 msgid "Uploading…"
 msgstr "Se încarcă…"
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Încărcările care pot conține astfel de imagini vor fi respinse automat."
 
@@ -2664,6 +2666,10 @@ msgstr "Apreciem feedback-ul dumneavoastră!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Facem tot posibilul să răspundem în termen de cinci zile lucrătoare sau mai puțin."
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2728,12 +2734,6 @@ msgstr "Da"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Vă invităm să ne contactați la membership@photoprism.app pentru întrebări legate de calitatea de membru."
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-"Sunteți bineveniți să încărcați în acest demo public fișiere pentru care "
-"dețineți drepturile de autor."
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Poți descărca doar un singur album"
@@ -2742,9 +2742,9 @@ msgstr "Poți descărca doar un singur album"
 msgid "You can only download one label"
 msgstr "Puteți descărca doar o singură etichetă"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "Nu puteți încărca mai mult de %{n} fișiere"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2771,6 +2771,15 @@ msgstr "Biblioteca dvs. este analizată în permanență pentru a crea automat a
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "Vă rugăm să aveți grijă să nu încărcați conținut privat sau ofensator."
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "Sunteți bineveniți să încărcați în acest demo public fișiere pentru care dețineți drepturile de autor."
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "Nu puteți încărca mai mult de %{n} fișiere"
 
 #~ msgid "Open"
 #~ msgstr "Deschideți"

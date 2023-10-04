@@ -7,12 +7,11 @@ msgstr ""
 "Language: sl\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
-"n%100==4 ? 2 : 3;\n"
+"Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "%{n} najdenih albumov"
 
@@ -61,7 +60,7 @@ msgstr "S klikom ga boste kopirali v odložišče."
 msgid "About"
 msgstr "Podrobno"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -178,7 +177,7 @@ msgstr "Po dveh tednih"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "Ustvarjen album"
 
@@ -197,7 +196,7 @@ msgstr "Albumi"
 msgid "Albums deleted"
 msgstr "Izbrisani albumi"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "Vseh %{n} je bilo naloženih"
 
@@ -214,7 +213,7 @@ msgid "All Cameras"
 msgstr "Vsi fotoaparati"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "Vse kategorije"
 
@@ -434,7 +433,7 @@ msgid "Can't load more, limit reached"
 msgstr "Ne morem naložiti več, omejitev je dosežena"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -489,7 +488,7 @@ msgstr "Sprememba zasebne zastave"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1585,7 +1584,7 @@ msgstr "Najprej najnovejše"
 msgid "No"
 msgstr "Ne"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "Ni najdenih albumov"
 
@@ -1638,7 +1637,7 @@ msgstr "Ni opozoril ali napak, ki bi vsebovale to ključno besedo. Upoštevajte,
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Nefotografske slike in slike nizke kakovosti je treba pred prikazom v rezultatih iskanja pregledati."
@@ -1689,7 +1688,7 @@ msgstr "V operacijskem sistemu Windows v pogovorno okno za povezavo vnesite nasl
 msgid "Once a week"
 msgstr "Enkrat na teden"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "Najden je bil en album"
 
@@ -1839,15 +1838,15 @@ msgstr "Kraj in čas"
 msgid "Places"
 msgstr "Kraji"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr "Pazite, da ne nalagate zasebne ali žaljive vsebine."
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Potrdite novo geslo."
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "Ne nalagajte fotografij z žaljivo vsebino."
 
@@ -1988,7 +1987,7 @@ msgstr "Register"
 msgid "Reload"
 msgstr "Ponovno polnjenje"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Polnjenje…"
@@ -2423,6 +2422,10 @@ msgstr "Toggle View"
 msgid "Token"
 msgstr "Žeton"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topografija"
@@ -2468,7 +2471,7 @@ msgid "Unknown"
 msgstr "Neznano"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Neregistrirani"
@@ -2524,7 +2527,7 @@ msgstr "Nadgradite zdaj"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2566,7 +2569,7 @@ msgstr "Nalaganje fotografij…"
 msgid "Uploading…"
 msgstr "Polnjenje…"
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Prenosi, ki bi lahko vsebovali takšne slike, bodo samodejno zavrnjeni."
 
@@ -2658,6 +2661,10 @@ msgstr "Cenimo vaše povratne informacije!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Potrudimo se, da vam odgovorimo v petih delovnih dneh ali manj."
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2720,12 +2727,6 @@ msgstr "Da"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Z vprašanji v zvezi s članstvom se lahko obrnete na membership@photoprism.app."
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-"V to javno demo različico lahko naložite datoteke, za katere imate avtorske "
-"pravice."
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Prenesete lahko samo en album"
@@ -2734,9 +2735,9 @@ msgstr "Prenesete lahko samo en album"
 msgid "You can only download one label"
 msgstr "Prenesete lahko samo eno nalepko"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "Ne smete naložiti več kot %{n} datotek"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2763,6 +2764,15 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "Pazite, da ne nalagate zasebne ali žaljive vsebine."
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "V to javno demo različico lahko naložite datoteke, za katere imate avtorske pravice."
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "Ne smete naložiti več kot %{n} datotek"
 
 #~ msgid "Open"
 #~ msgstr "Odpri"

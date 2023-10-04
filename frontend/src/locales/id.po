@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-03 18:09+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Indonesian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/id/>\n"
+"Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,7 +14,7 @@ msgstr ""
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "%{n} album ditemukan"
 
@@ -64,7 +63,7 @@ msgstr "Satu klik akan menyalinnya ke clipboard Anda."
 msgid "About"
 msgstr "Tentang"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -181,7 +180,7 @@ msgstr "Setelah 2 minggu"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "Album dibuat"
 
@@ -200,7 +199,7 @@ msgstr "Koleksi Album"
 msgid "Albums deleted"
 msgstr "Koleksi album dihapus"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "%{n} album telah dimuat"
 
@@ -217,7 +216,7 @@ msgid "All Cameras"
 msgstr "Semua Kamera"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "Semua Kategori"
 
@@ -437,7 +436,7 @@ msgid "Can't load more, limit reached"
 msgstr "Tidak dapat memuat lebih banyak, batas tercapai"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -492,7 +491,7 @@ msgstr "Ubah bendera pribadi"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1588,7 +1587,7 @@ msgstr "Terbaru terlebih dahulu"
 msgid "No"
 msgstr "Tidak"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "Tidak ada album yang ditemukan"
 
@@ -1641,7 +1640,7 @@ msgstr "Tidak ada peringatan atau kesalahan yang mengandung kata kunci ini. Perh
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Gambar non-fotografis dan berkualitas rendah memerlukan peninjauan sebelum muncul di hasil pencarian."
@@ -1692,7 +1691,7 @@ msgstr "Pada Windows, masukkan sumber daya berikut ini dalam dialog connection:"
 msgid "Once a week"
 msgstr "Seminggu sekali"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "Satu album ditemukan"
 
@@ -1842,17 +1841,15 @@ msgstr "Tempat & Waktu"
 msgid "Places"
 msgstr "Tempat"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr ""
-"Harap berhati-hati untuk tidak mengunggah konten yang bersifat pribadi atau "
-"menyinggung."
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Harap konfirmasi kata sandi baru Anda."
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "Jangan mengunggah foto yang mengandung konten SARA."
 
@@ -1993,7 +1990,7 @@ msgstr "Daftar"
 msgid "Reload"
 msgstr "Muat ulang"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Memuat ulang…"
@@ -2428,6 +2425,10 @@ msgstr "Beralih Tampilan"
 msgid "Token"
 msgstr "Token"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topografi"
@@ -2473,7 +2474,7 @@ msgid "Unknown"
 msgstr "Tidak diketahui"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Tidak terdaftar"
@@ -2529,7 +2530,7 @@ msgstr "Tingkatkan Sekarang"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2571,7 +2572,7 @@ msgstr "Mengunggah foto…"
 msgid "Uploading…"
 msgstr "Memuat ulang…"
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Unggahan yang mungkin berisi gambar seperti itu akan ditolak secara otomatis."
 
@@ -2663,6 +2664,10 @@ msgstr "Kami menghargai umpan balik Anda!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Kami melakukan yang terbaik untuk merespons dalam waktu lima hari kerja atau kurang."
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2725,12 +2730,6 @@ msgstr "Ya"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Anda dapat menghubungi kami di membership@photoprism.app untuk pertanyaan mengenai keanggotaan Anda."
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-"Anda dipersilakan untuk mengunggah file ke demo publik ini yang hak ciptanya "
-"Anda miliki."
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Anda hanya dapat mengunduh satu album"
@@ -2739,9 +2738,9 @@ msgstr "Anda hanya dapat mengunduh satu album"
 msgid "You can only download one label"
 msgstr "Anda hanya dapat mengunduh satu label"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "Anda tidak boleh mengunggah lebih dari %{n} file"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2768,6 +2767,15 @@ msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat al
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "Harap berhati-hati untuk tidak mengunggah konten yang bersifat pribadi atau menyinggung."
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "Anda dipersilakan untuk mengunggah file ke demo publik ini yang hak ciptanya Anda miliki."
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "Anda tidak boleh mengunggah lebih dari %{n} file"
 
 #~ msgid "Open"
 #~ msgstr "Buka"

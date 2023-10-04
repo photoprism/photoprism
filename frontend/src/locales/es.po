@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-03 18:09+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/es/>\n"
+"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,7 +14,7 @@ msgstr ""
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "%{n} álbumes encontrados"
 
@@ -64,7 +63,7 @@ msgstr "Un clic lo copiará al portapapeles."
 msgid "About"
 msgstr "Acerca de"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -181,7 +180,7 @@ msgstr "Después de dos semanas"
 msgid "Album"
 msgstr "Álbum"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "Álbum creado"
 
@@ -200,7 +199,7 @@ msgstr "Álbumes"
 msgid "Albums deleted"
 msgstr "Álbumes borrados"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "Todos los %{n} álbumes cargados"
 
@@ -217,7 +216,7 @@ msgid "All Cameras"
 msgstr "Todas las cámaras"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "Todas las categorías"
 
@@ -437,7 +436,7 @@ msgid "Can't load more, limit reached"
 msgstr "No se puede cargar más, límite alcanzado"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -492,7 +491,7 @@ msgstr "Cambiar indicador de privado"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1589,7 +1588,7 @@ msgstr "Lo más nuevo primero"
 msgid "No"
 msgstr "No"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "No se encontraron álbumes"
 
@@ -1642,7 +1641,7 @@ msgstr "No hay advertencias ni errores que contengan esta palabra clave. Tenga e
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Las imágenes no fotográficas y de baja calidad requieren una revisión antes que aparezcan en los resultados de la búsqueda."
@@ -1693,7 +1692,7 @@ msgstr "En Windows, introduzca el siguiente recurso en el diálogo de conexión:
 msgid "Once a week"
 msgstr "Una vez a la semana"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "Un álbum encontrado"
 
@@ -1843,15 +1842,15 @@ msgstr "Lugar y tiempo"
 msgid "Places"
 msgstr "Lugares"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr "Tenga cuidado de no subir contenidos privados u ofensivos."
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Por favor, confirma tu nueva contraseña."
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "Por favor, no subas fotos con contenido ofensivo."
 
@@ -1992,7 +1991,7 @@ msgstr "Regístrese en"
 msgid "Reload"
 msgstr "Recargar"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Recargando…"
@@ -2429,6 +2428,10 @@ msgstr "Cambiar Vista"
 msgid "Token"
 msgstr "Simbólico"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topográfico"
@@ -2474,7 +2477,7 @@ msgid "Unknown"
 msgstr "Desconocido"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "No registrado"
@@ -2530,7 +2533,7 @@ msgstr "Mejore su plan ahora"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2572,7 +2575,7 @@ msgstr "Subiendo fotos…"
 msgid "Uploading…"
 msgstr "Subiendo…"
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Las subidas que puedan contener tales imágenes serán rechazadas automáticamente."
 
@@ -2664,6 +2667,10 @@ msgstr "¡Agradecemos sus comentarios!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Hacemos todo lo posible por responder en un plazo de cinco días hábiles o menos."
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2728,12 +2735,6 @@ msgstr "Sí"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Puede ponerse en contacto con nosotros en membership@photoprism.app si tiene preguntas sobre su afiliación."
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-"Te invitamos a subir archivos a esta demo pública cuyos derechos de autor te "
-"pertenezcan."
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Sólo puedes descargar un álbum"
@@ -2742,9 +2743,9 @@ msgstr "Sólo puedes descargar un álbum"
 msgid "You can only download one label"
 msgstr "Sólo puedes descargar una etiqueta"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "No puede cargar más de %{n} archivos"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2771,6 +2772,15 @@ msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "Tenga cuidado de no subir contenidos privados u ofensivos."
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "Te invitamos a subir archivos a esta demo pública cuyos derechos de autor te pertenezcan."
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "No puede cargar más de %{n} archivos"
 
 #~ msgid "Open"
 #~ msgstr "Abrir"

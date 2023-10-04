@@ -10,12 +10,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "تم العثور على %{n} من الألبومات"
 
@@ -64,7 +63,7 @@ msgstr "نقرة للنسخ إلى الحافظة الخاصة بك."
 msgid "About"
 msgstr "حول"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -181,7 +180,7 @@ msgstr "بعد أسبوعين"
 msgid "Album"
 msgstr "البوم"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "تم إنشاء الألبوم"
 
@@ -200,7 +199,7 @@ msgstr "ألبومات"
 msgid "Albums deleted"
 msgstr "تم حذف الألبومات"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "تم تحميل كافة الألبومات الـ %{n}"
 
@@ -217,7 +216,7 @@ msgid "All Cameras"
 msgstr "جميع الكاميرات"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "جميع الفئات"
 
@@ -437,7 +436,7 @@ msgid "Can't load more, limit reached"
 msgstr "لا يمكن تحميل المزيد ، تم الوصول إلى الحد الأقصى"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -492,7 +491,7 @@ msgstr "تغيير العلم الخاص"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1588,7 +1587,7 @@ msgstr "الاحدث اولا"
 msgid "No"
 msgstr "رقم"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "لم يتم العثور على ألبومات"
 
@@ -1641,7 +1640,7 @@ msgstr "لا تحذيرات أو خطأ يحتوي على هذه الكلمة ا
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "تتطلب الصور غير الفوتوغرافية وذات الجودة المنخفضة المراجعة قبل ظهورها في نتائج البحث."
@@ -1692,7 +1691,7 @@ msgstr "في نظام التشغيل Windows ، أدخل المورد التال
 msgid "Once a week"
 msgstr "مرة في الأسبوع"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "تم العثور على ألبوم واحد"
 
@@ -1842,15 +1841,15 @@ msgstr "المكان والزمان"
 msgid "Places"
 msgstr "أماكن"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr "يرجى الحرص على عدم تحميل أي محتوى خاص أو مسيء."
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "يرجى تأكيد كلمة المرور الجديدة الخاصة بك."
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "الرجاء عدم تحميل الصور التي تحتوي على محتوى مسيء."
 
@@ -1991,7 +1990,7 @@ msgstr "يسجل"
 msgid "Reload"
 msgstr "إعادة تحميل"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "جارٍ إعادة التحميل…"
@@ -2426,6 +2425,10 @@ msgstr "نظرة قوية"
 msgid "Token"
 msgstr "رمز"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "طبوغرافية"
@@ -2471,7 +2474,7 @@ msgid "Unknown"
 msgstr "مجهول"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "غير مسجل"
@@ -2527,7 +2530,7 @@ msgstr "تحديث الآن"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2569,7 +2572,7 @@ msgstr "جارٍ تحميل الصور …"
 msgid "Uploading…"
 msgstr "جارٍ الرفع..."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "سيتم رفض التحميلات التي قد تحتوي على مثل هذه الصور تلقائيًا."
 
@@ -2661,6 +2664,10 @@ msgstr "نحن نقدر ملاحظاتك!"
 msgid "We do our best to respond within five business days or less."
 msgstr "نحن نبذل قصارى جهدنا للرد في غضون خمسة أيام عمل أو أقل."
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2723,12 +2730,6 @@ msgstr "نعم"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "نرحب باتصالك بنا على membership@photoprism.app لطرح أسئلة بخصوص عضويتك."
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-"نرحب بك لتحميل الملفات إلى هذا العرض التوضيحي العام الذي تمتلك حقوق الطبع "
-"والنشر له."
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "يمكنك تنزيل ألبوم واحد فقط"
@@ -2737,9 +2738,9 @@ msgstr "يمكنك تنزيل ألبوم واحد فقط"
 msgid "You can only download one label"
 msgstr "يمكنك فقط تحميل تسمية واحدة"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "لا يجوز لك تحميل أكثر من %{n} من الملفات"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2766,6 +2767,15 @@ msgstr "يتم تحليل مكتبتك باستمرار لإنشاء ألبوم�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "التكبير / التصغير"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "يرجى الحرص على عدم تحميل أي محتوى خاص أو مسيء."
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "نرحب بك لتحميل الملفات إلى هذا العرض التوضيحي العام الذي تمتلك حقوق الطبع والنشر له."
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "لا يجوز لك تحميل أكثر من %{n} من الملفات"
 
 #~ msgid "Open"
 #~ msgstr "يفتح"

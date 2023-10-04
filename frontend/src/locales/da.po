@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-03 18:09+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/da/>\n"
+"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,7 +14,7 @@ msgstr ""
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "%{n} album fundet"
 
@@ -64,7 +63,7 @@ msgstr "Et klik kopierer det til dit udklipsholder."
 msgid "About"
 msgstr "Om"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -181,7 +180,7 @@ msgstr "Efter tre uger"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "Album oprettet"
 
@@ -200,7 +199,7 @@ msgstr "Album"
 msgid "Albums deleted"
 msgstr "Albums slettet"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "Alle %{n} album er indlæst"
 
@@ -217,7 +216,7 @@ msgid "All Cameras"
 msgstr "Alle kameraer"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "Alle kategorier"
 
@@ -437,7 +436,7 @@ msgid "Can't load more, limit reached"
 msgstr "Kan ikke indlæse mere, grænsen nået"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -492,7 +491,7 @@ msgstr "Ændre privat flag"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1588,7 +1587,7 @@ msgstr "Nyeste først"
 msgid "No"
 msgstr "Nej"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "Ingen album fundet"
 
@@ -1641,7 +1640,7 @@ msgstr "Ingen advarsler eller fejl, der indeholder dette nøgleord. Bemærk, at 
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Ikke-fotografiske billeder af lav kvalitet kræver en gennemgang, før de vises i søgeresultaterne."
@@ -1692,7 +1691,7 @@ msgstr "På Windows skal du indtaste følgende ressource i forbindelsesdialogbok
 msgid "Once a week"
 msgstr "En gang om ugen"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "Et album fundet"
 
@@ -1842,15 +1841,15 @@ msgstr "Sted og tid"
 msgid "Places"
 msgstr "Steder"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr "Vær forsigtig med ikke at uploade privat eller stødende indhold."
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Bekræft din nye adgangskode."
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "Upload ikke billeder, der indeholder stødende indhold."
 
@@ -1991,7 +1990,7 @@ msgstr "Registrer"
 msgid "Reload"
 msgstr "Genindlæs"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Genindlæser…"
@@ -2428,6 +2427,10 @@ msgstr "Skift visning"
 msgid "Token"
 msgstr "Token"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topografisk"
@@ -2473,7 +2476,7 @@ msgid "Unknown"
 msgstr "Ukendt"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Uregistreret"
@@ -2529,7 +2532,7 @@ msgstr "Opgrader nu"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2571,7 +2574,7 @@ msgstr "Uploader fotos…"
 msgid "Uploading…"
 msgstr "Overførsel af…"
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Uploads, der kan indeholde sådanne billeder, afvises automatisk."
 
@@ -2663,6 +2666,10 @@ msgstr "Vi sætter pris på din feedback!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Vi gør vores bedste for at svare inden for fem arbejdsdage eller mindre."
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2727,12 +2734,6 @@ msgstr "Ja"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Du er velkommen til at kontakte os på membership@photoprism.app for at få svar på spørgsmål om dit medlemskab."
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-"Du er velkommen til at uploade filer til denne offentlige demo, som du ejer "
-"ophavsretten til."
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Du kan kun downloade et album"
@@ -2741,9 +2742,9 @@ msgstr "Du kan kun downloade et album"
 msgid "You can only download one label"
 msgstr "Du kan kun downloade en etiket"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "Du må ikke uploade mere end %{n} filer"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2770,6 +2771,15 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "Vær forsigtig med ikke at uploade privat eller stødende indhold."
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "Du er velkommen til at uploade filer til denne offentlige demo, som du ejer ophavsretten til."
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "Du må ikke uploade mere end %{n} filer"
 
 #~ msgid "Open"
 #~ msgstr "Åben"

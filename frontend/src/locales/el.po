@@ -11,7 +11,7 @@ msgstr ""
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "%{n} συλλογές βρέθηκαν"
 
@@ -60,7 +60,7 @@ msgstr "Ένα κλικ θα το αντιγράψει στο πρόχειρο."
 msgid "About"
 msgstr "Σχετικά"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -177,7 +177,7 @@ msgstr "Μετά από δύο εβδομάδες"
 msgid "Album"
 msgstr "Συλλογή"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "Η Συλλογή δημιουργήθηκε"
 
@@ -196,7 +196,7 @@ msgstr "Συλλογές"
 msgid "Albums deleted"
 msgstr "Οι Συλλογές διαγράφηκαν"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "%{n} Συλλογές φορτώθηκαν"
 
@@ -213,7 +213,7 @@ msgid "All Cameras"
 msgstr "Όλες οι Κάμερες"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "Όλες οι Κατηγορίες"
 
@@ -433,7 +433,7 @@ msgid "Can't load more, limit reached"
 msgstr "Δεν μπορείτε να φορτώσετε περισσότερα διότι θα ξεπεράσετε το όριο"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -488,7 +488,7 @@ msgstr "Αλλαγή ιδιωτικής κατάστασης"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1584,7 +1584,7 @@ msgstr "Το νεότερο πρώτα"
 msgid "No"
 msgstr "Όχι"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "Δεν βρέθηκαν συλλογές"
 
@@ -1637,7 +1637,7 @@ msgstr "Δεν υπάρχουν προειδοποιήσεις ή σφάλματ
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Οι μη φωτογραφικές εικόνες και οι εικόνες χαμηλής ποιότητας απαιτούν επανεξέταση προτού εμφανιστούν στα αποτελέσματα αναζήτησης."
@@ -1688,7 +1688,7 @@ msgstr "Στα Windows, εισαγάγετε τον ακόλουθο πόρο σ
 msgid "Once a week"
 msgstr "Μία φορά την εβδομάδα"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "Βρέθηκε μια συλλογή"
 
@@ -1838,15 +1838,15 @@ msgstr "Τόπος και χρόνος"
 msgid "Places"
 msgstr "Μέρη"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr "Προσέξτε να μην ανεβάζετε προσωπικό ή προσβλητικό περιεχόμενο."
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "Επιβεβαιώστε τον νέο σας κωδικό πρόσβασης."
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "Παρακαλούμε μην ανεβάζετε φωτογραφίες που περιέχουν προσβλητικό περιεχόμενο."
 
@@ -1987,7 +1987,7 @@ msgstr "Εγγραφή"
 msgid "Reload"
 msgstr "Επαναφόρτωση"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Επαναγέμισμα…"
@@ -2422,6 +2422,10 @@ msgstr "Εναλλαγή προβολής"
 msgid "Token"
 msgstr "Token"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Τοπογραφικό"
@@ -2467,7 +2471,7 @@ msgid "Unknown"
 msgstr "Άγνωστος"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Μη εγγεγραμμένο"
@@ -2523,7 +2527,7 @@ msgstr "Αναβάθμιση τώρα"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2565,7 +2569,7 @@ msgstr "Ανέβασμα φωτογραφιών…"
 msgid "Uploading…"
 msgstr "Επαναγέμισμα…"
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Οι μεταφορτώσεις που ενδέχεται να περιέχουν τέτοιες εικόνες θα απορρίπτονται αυτόματα."
 
@@ -2657,6 +2661,10 @@ msgstr "Εκτιμούμε τα σχόλιά σας!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Κάνουμε ό,τι μπορούμε για να απαντήσουμε εντός πέντε εργάσιμων ημερών ή λιγότερο."
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2719,12 +2727,6 @@ msgstr "Ναι"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Μπορείτε να επικοινωνήσετε μαζί μας στο membership@photoprism.app για ερωτήσεις σχετικά με τη συνδρομή σας."
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr ""
-"Είστε ευπρόσδεκτοι να ανεβάσετε αρχεία σε αυτό το δημόσιο demo για τα οποία "
-"έχετε τα πνευματικά δικαιώματα."
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Μπορείτε να κατεβάσετε μόνο μια συλλογή"
@@ -2733,9 +2735,9 @@ msgstr "Μπορείτε να κατεβάσετε μόνο μια συλλογ�
 msgid "You can only download one label"
 msgstr "Μπορείτε να κατεβάσετε μόνο μία ετικέτα"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "Δεν μπορείτε να ανεβάσετε περισσότερα από %{n} αρχεία"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2762,6 +2764,15 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "Προσέξτε να μην ανεβάζετε προσωπικό ή προσβλητικό περιεχόμενο."
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "Είστε ευπρόσδεκτοι να ανεβάσετε αρχεία σε αυτό το δημόσιο demo για τα οποία έχετε τα πνευματικά δικαιώματα."
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "Δεν μπορείτε να ανεβάσετε περισσότερα από %{n} αρχεία"
 
 #~ msgid "Open"
 #~ msgstr "Ανοίξτε το"

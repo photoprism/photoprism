@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-03 18:09+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hans/>\n"
+"Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,7 +14,7 @@ msgstr ""
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:493
+#: src/page/albums.vue:500
 msgid "%{n} albums found"
 msgstr "已找到 %{n} 个相册"
 
@@ -64,7 +63,7 @@ msgstr "点击复制到剪贴板。"
 msgid "About"
 msgstr "关于"
 
-#: src/component/navigation.vue:100 src/component/navigation.vue:2000
+#: src/component/navigation.vue:101 src/component/navigation.vue:2000
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -181,7 +180,7 @@ msgstr "2 星期后"
 msgid "Album"
 msgstr "相册"
 
-#: src/page/albums.vue:543
+#: src/page/albums.vue:550
 msgid "Album created"
 msgstr "相册已创建"
 
@@ -200,7 +199,7 @@ msgstr "相册"
 msgid "Albums deleted"
 msgstr "相册已删除"
 
-#: src/page/albums.vue:359
+#: src/page/albums.vue:366
 msgid "All %{n} albums loaded"
 msgstr "%{n} 本相册已加载"
 
@@ -217,7 +216,7 @@ msgid "All Cameras"
 msgstr "全部相机"
 
 #: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:615
+#: src/page/albums.vue:146 src/page/albums.vue:622
 msgid "All Categories"
 msgstr "全部分类"
 
@@ -437,7 +436,7 @@ msgid "Can't load more, limit reached"
 msgstr "无法加载更多内容，已达上限"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:553 src/page/albums.vue:569 src/page/labels.vue:204
+#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -492,7 +491,7 @@ msgstr "更改私有标记"
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:546
+#: src/dialog/share.vue:104 src/page/albums.vue:553
 #: src/page/settings/account.vue:114 src/page/settings/account.vue:129
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -1588,7 +1587,7 @@ msgstr "最新优先"
 msgid "No"
 msgstr "否"
 
-#: src/page/albums.vue:54 src/page/albums.vue:489
+#: src/page/albums.vue:54 src/page/albums.vue:496
 msgid "No albums found"
 msgstr "找不到相册"
 
@@ -1641,7 +1640,7 @@ msgstr "没有包含此关键字的警告或错误，请注意，搜索区分大
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "非照片和低质量图像出现在搜索结果中前需要进行审查。"
@@ -1692,7 +1691,7 @@ msgstr "在 Windows 上，连接对话框中使用以下资源："
 msgid "Once a week"
 msgstr "每周一次"
 
-#: src/page/albums.vue:491
+#: src/page/albums.vue:498
 msgid "One album found"
 msgstr "已找到一本相册"
 
@@ -1843,15 +1842,15 @@ msgstr "地点和时间"
 msgid "Places"
 msgstr "地点"
 
-#: src/dialog/upload.vue:48
-msgid "Please be careful not to upload any private or offensive content."
-msgstr "请注意不要上传任何私人或攻击性内容。"
-
 #: src/dialog/account/password.vue:193
 msgid "Please confirm your new password."
 msgstr "请确认新密码。"
 
-#: src/dialog/upload.vue:51
+#: src/dialog/upload.vue:48
+msgid "Please do not upload any private, unlawful or offensive pictures."
+msgstr ""
+
+#: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
 msgstr "请不要上传包含令人反感的内容的照片。"
 
@@ -1993,7 +1992,7 @@ msgstr "注册"
 msgid "Reload"
 msgstr "重载"
 
-#: src/component/navigation.vue:138 src/dialog/reload.vue:26
+#: src/component/navigation.vue:139 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "重载中…"
@@ -2430,6 +2429,10 @@ msgstr "切换视图"
 msgid "Token"
 msgstr "令牌"
 
+#: src/dialog/upload.vue:167
+msgid "Too many files selected"
+msgstr ""
+
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
 msgstr "地形图"
@@ -2475,7 +2478,7 @@ msgid "Unknown"
 msgstr "未知"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:89 src/page/settings/account.vue:35
+#: src/component/navigation.vue:90 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "未注册的"
@@ -2531,7 +2534,7 @@ msgstr "立即升级"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2573,7 +2576,7 @@ msgstr "上传照片…"
 msgid "Uploading…"
 msgstr "上传中…"
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:53
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "可能包含此类图像的上传将被自动拒绝。"
 
@@ -2665,6 +2668,10 @@ msgstr "感谢您的反馈！"
 msgid "We do our best to respond within five business days or less."
 msgstr "我们尽力在五个工作日或更短时间内作出回应。"
 
+#: src/dialog/upload.vue:49
+msgid "We reserve the right to delete these automatically."
+msgstr ""
+
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
 msgid "Web Login"
@@ -2729,10 +2736,6 @@ msgstr "是"
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "欢迎你与我们联系，membership@photoprism.app，询问有关你的会员资格的问题。"
 
-#: src/dialog/upload.vue:47
-msgid "You are welcome to upload files to this public demo for which you own the copyright."
-msgstr "欢迎您将拥有版权的文件上传到此公共演示中。"
-
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "你只能下载一个相册"
@@ -2741,9 +2744,9 @@ msgstr "你只能下载一个相册"
 msgid "You can only download one label"
 msgstr "你只能下载一个标签"
 
-#: src/dialog/upload.vue:167
-msgid "You may not upload more than %{n} files"
-msgstr "您上传的文件不得超过 %{n}"
+#: src/dialog/upload.vue:47
+msgid "You can upload up to %{n} files for test purposes."
+msgstr ""
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
@@ -2770,6 +2773,15 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Please be careful not to upload any private or offensive content."
+#~ msgstr "请注意不要上传任何私人或攻击性内容。"
+
+#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
+#~ msgstr "欢迎您将拥有版权的文件上传到此公共演示中。"
+
+#~ msgid "You may not upload more than %{n} files"
+#~ msgstr "您上传的文件不得超过 %{n}"
 
 #~ msgid "Open"
 #~ msgstr "开放"

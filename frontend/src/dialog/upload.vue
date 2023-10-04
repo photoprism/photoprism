@@ -63,10 +63,11 @@
             </v-progress-linear>
 
             <p v-if="isDemo" class="body-2">
-              <translate>You are welcome to upload files to this public demo for which you own the copyright.</translate>
-              <translate>Please be careful not to upload any private or offensive content.</translate>
+              <translate :translate-params="{n: fileLimit}">You can upload up to %{n} files for test purposes.</translate>
+              <translate>Please do not upload any private, unlawful or offensive pictures. </translate>
+              <translate>We reserve the right to delete these automatically.</translate>
             </p>
-            <p v-else-if="rejectNSFW" class="body-1">
+            <p v-else-if="rejectNSFW" class="body-2">
               <translate>Please don't upload photos containing offensive content.</translate>
               <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
@@ -259,7 +260,7 @@ export default {
 
       // Too many files selected for upload?
       if (this.isDemo && files && files.length > this.fileLimit) {
-        Notify.error(this.$gettextInterpolate(this.$gettext("You may not upload more than %{n} files"), {n: this.fileLimit}));
+        Notify.error(this.$gettext("Too many files selected"));
         return;
       }
 
