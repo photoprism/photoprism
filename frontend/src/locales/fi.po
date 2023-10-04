@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1844,7 +1844,7 @@ msgstr "Vahvista uusi salasanasi."
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
+msgstr "Älä lataa yksityisiä, laittomia tai loukkaavia kuvia."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2424,7 +2424,7 @@ msgstr "Merkki"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "Liian monta tiedostoa valittu"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2663,7 +2663,7 @@ msgstr "Pyrimme parhaamme mukaan vastaamaan viiden arkipäivän tai lyhyemmän a
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Pidätämme oikeuden poistaa nämä automaattisesti."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2737,7 +2737,7 @@ msgstr "Voit ladata vain yhden tunnisteen"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "Voit ladata enintään %{n} tiedostoa testitarkoituksiin."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

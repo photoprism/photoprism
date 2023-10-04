@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -1847,7 +1847,7 @@ msgstr "Si us plau, confirmeu la vostra nova contrasenya."
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
+msgstr "Si us plau, no carregueu cap imatge privada, il·legal o ofensiva."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2429,7 +2429,7 @@ msgstr "Token"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "S'han seleccionat massa fitxers"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2668,7 +2668,7 @@ msgstr "Fem tot el possible per respondre en un termini de cinc dies laborables 
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Ens reservem el dret d'eliminar-los automàticament."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2744,7 +2744,7 @@ msgstr "Només podeu baixar una etiqueta"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "Podeu penjar fins a %{n} fitxers amb finalitats de prova."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1845,6 +1845,7 @@ msgstr "Επιβεβαιώστε τον νέο σας κωδικό πρόσβα�
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr ""
+"Παρακαλούμε μην ανεβάζετε προσωπικές, παράνομες ή προσβλητικές φωτογραφίες."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2424,7 +2425,7 @@ msgstr "Token"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "Πολλά επιλεγμένα αρχεία"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2663,7 +2664,7 @@ msgstr "Κάνουμε ό,τι μπορούμε για να απαντήσουμ
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Διατηρούμε το δικαίωμα να τα διαγράψουμε αυτόματα."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2737,7 +2738,7 @@ msgstr "Μπορείτε να κατεβάσετε μόνο μία ετικέτ�
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "Μπορείτε να ανεβάσετε έως και %{n} αρχεία για δοκιμαστικούς σκοπούς."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

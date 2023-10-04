@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1845,6 +1845,7 @@ msgstr "Bevestig asseblief jou nuwe wagwoord."
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr ""
+"Moet asseblief geen privaat, onwettige of aanstootlike foto's oplaai nie."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2426,7 +2427,7 @@ msgstr "Teken"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "Te veel lêers gekies"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2665,7 +2666,7 @@ msgstr "Ons doen ons bes om binne vyf werksdae of minder te reageer."
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Ons behou die reg voor om dit outomaties uit te vee."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2741,7 +2742,7 @@ msgstr "Jy kan net een etiket aflaai"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "Jy kan tot %{n} lêers oplaai vir toetsdoeleindes."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

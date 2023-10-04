@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: \n"
 "Language: ms\n"
@@ -1848,6 +1848,8 @@ msgstr "Sila sahkan kata laluan baharu anda."
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr ""
+"Tolong jangan muat naik sebarang gambar peribadi, menyalahi undang-undang "
+"atau menyinggung perasaan."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2427,7 +2429,7 @@ msgstr "Token"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "Terlalu banyak fail dipilih"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2666,7 +2668,7 @@ msgstr "Kami melakukan yang terbaik untuk membalas dalam tempoh lima hari pernia
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Kami berhak untuk memadamnya secara automatik."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2740,7 +2742,7 @@ msgstr "Anda hanya boleh memuat turun satu label"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "Anda boleh memuat naik sehingga %{n} fail untuk tujuan ujian."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
