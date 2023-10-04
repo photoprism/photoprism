@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1847,7 +1848,7 @@ msgstr "Моля, потвърдете новата си парола."
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
+msgstr "Моля, не качвайте лични, незаконни или обидни снимки."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2427,7 +2428,7 @@ msgstr "Токен"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "Избрани са твърде много файлове"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2666,7 +2667,7 @@ msgstr "Стараем се да отговаряме в рамките на п�
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Запазваме си правото да ги изтриваме автоматично."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2740,7 +2741,7 @@ msgstr "Можете да изтеглите само един етикет"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "Можете да качвате до %{n} файлове за тестови цели."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

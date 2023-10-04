@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1844,7 +1844,7 @@ msgstr "Mesedez, berretsi pasahitz berria."
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
+msgstr "Mesedez, ez igo argazki pribatu, legez kanpoko edo iraingarririk."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2426,7 +2426,7 @@ msgstr "Tokena"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "Fitxategi gehiegi hautatu dira"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2665,7 +2665,7 @@ msgstr "Gure onena egiten dugu bost lanegun edo gutxiagoko epean erantzuteko."
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Hauek automatikoki ezabatzeko eskubidea gordetzen dugu."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2741,7 +2741,7 @@ msgstr "Etiketa bakarra deskarga dezakezu"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "%{n} fitxategi karga ditzakezu proba helburuetarako."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
+"photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1847,7 +1848,7 @@ msgstr "Vennligst bekreft ditt nye passord."
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
+msgstr "Vennligst ikke last opp private, ulovlige eller støtende bilder."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2427,7 +2428,7 @@ msgstr "Token"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "For mange filer valgt"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2666,7 +2667,7 @@ msgstr "Vi gjør vårt beste for å svare innen fem virkedager eller mindre."
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Vi forbeholder oss retten til å slette disse automatisk."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2740,7 +2741,7 @@ msgstr "Du kan bare laste ned én merkelapp"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "Du kan laste opp opptil %{n} filer for testformål."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"

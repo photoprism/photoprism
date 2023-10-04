@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-03 18:09+0000\n"
+"PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1846,7 +1847,7 @@ msgstr "Kérjük, erősítse meg új jelszavát."
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
+msgstr "Kérjük, ne töltsön fel magánjellegű, jogellenes vagy sértő képeket."
 
 #: src/dialog/upload.vue:52
 msgid "Please don't upload photos containing offensive content."
@@ -2426,7 +2427,7 @@ msgstr "Jelképes"
 
 #: src/dialog/upload.vue:167
 msgid "Too many files selected"
-msgstr ""
+msgstr "Túl sok fájl van kiválasztva"
 
 #: src/options/options.js:307 src/page/places.vue:162
 msgid "Topographic"
@@ -2665,7 +2666,7 @@ msgstr "Igyekszünk öt munkanapon belül vagy annál rövidebb időn belül vá
 
 #: src/dialog/upload.vue:49
 msgid "We reserve the right to delete these automatically."
-msgstr ""
+msgstr "Fenntartjuk a jogot, hogy ezeket automatikusan töröljük."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2739,7 +2740,7 @@ msgstr "Csak egy címkét tölthet le"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr ""
+msgstr "Legfeljebb %{n} fájlt tölthet fel tesztelés céljából."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
