@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1641,7 +1640,7 @@ msgstr "Няма предупреждения или грешки, съдърж�
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Нефотографските изображения и изображенията с ниско качество изискват преглед, преди да се появят в резултатите от търсенето."
@@ -1850,7 +1849,7 @@ msgstr "Моля, потвърдете новата си парола."
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Моля, не качвайте лични, незаконни или обидни снимки."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Моля, не качвайте снимки с обидно съдържание."
 
@@ -2531,7 +2530,7 @@ msgstr "Актуализирайте сега"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2573,7 +2572,7 @@ msgstr "Качване на снимки…"
 msgid "Uploading…"
 msgstr "Презареждане…"
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Качванията, които могат да съдържат такива изображения, ще бъдат отхвърлени автоматично."
 
@@ -2664,10 +2663,6 @@ msgstr "Оценяваме обратната ви връзка!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Стараем се да отговаряме в рамките на пет работни дни или по-малко."
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
-msgstr "Запазваме си правото да ги изтриваме автоматично."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2768,6 +2763,9 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "We reserve the right to delete these automatically."
+#~ msgstr "Запазваме си правото да ги изтриваме автоматично."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Моля, внимавайте да не качвате лично или обидно съдържание."

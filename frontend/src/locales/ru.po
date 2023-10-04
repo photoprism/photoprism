@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
-"frontend/ru/>\n"
+"Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1641,7 +1640,7 @@ msgstr "Нет предупреждений или ошибок содержащ
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Файлы, не являющиеся фотографиями, или изображения низкого качества нужно одобрить, чтобы они появились в результатах поиска."
@@ -1848,10 +1847,9 @@ msgstr "Пожалуйста, подтвердите ваш новый паро�
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
-"Пожалуйста, не загружайте частные, незаконные или оскорбительные фотографии."
+msgstr "Пожалуйста, не загружайте частные, незаконные или оскорбительные фотографии."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Пожалуйста, не загружайте фотографии, содержащие недопустимый контент."
 
@@ -2534,7 +2532,7 @@ msgstr "Обновить сейчас"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2576,7 +2574,7 @@ msgstr "Загрузка фотографий…"
 msgid "Uploading…"
 msgstr "Загрузка…"
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Загрузки, которые могут содержать такие изображение будут автоматически отменены."
 
@@ -2667,10 +2665,6 @@ msgstr "Мы признательны за ваш отзыв!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Мы делаем все возможное, чтобы ответить в течение пяти рабочих дней или меньше."
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
-msgstr "Мы оставляем за собой право удалять их автоматически."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2773,6 +2767,9 @@ msgstr "Ваша библиотека постоянно анализирует�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#~ msgid "We reserve the right to delete these automatically."
+#~ msgstr "Мы оставляем за собой право удалять их автоматически."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Пожалуйста, будьте осторожны и не загружайте материалы частного или оскорбительного характера."

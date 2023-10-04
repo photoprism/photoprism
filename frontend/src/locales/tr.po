@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/tr/>\n"
+"Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1641,7 +1640,7 @@ msgstr "Bu anahtar kelimeyi içeren uyarı veya hata yok. Aramanın büyük/kü�
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Fotoğrafik olmayan ve düşük kaliteli görseller, arama sonuçlarında görünmeden önce bir inceleme gerektirir."
@@ -1850,7 +1849,7 @@ msgstr "Lütfen yeni şifrenizi onaylayın."
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Lütfen özel, yasa dışı veya saldırgan resimler yüklemeyin."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Lütfen saldırgan içerik barındıran fotoğraflar yüklemeyin."
 
@@ -2533,7 +2532,7 @@ msgstr "Şimdi Yükselt"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2575,7 +2574,7 @@ msgstr "Fotoğraf yükleniyor.."
 msgid "Uploading…"
 msgstr "Yükleniyor…"
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedilecektir."
 
@@ -2666,10 +2665,6 @@ msgstr "Görüşleriniz için teşekkür ederiz!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Beş iş günü veya daha kısa bir süre içinde yanıt vermek için elimizden geleni yapıyoruz."
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
-msgstr "Bunları otomatik olarak silme hakkımızı saklı tutarız."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2772,6 +2767,9 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
+
+#~ msgid "We reserve the right to delete these automatically."
+#~ msgstr "Bunları otomatik olarak silme hakkımızı saklı tutarız."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Lütfen özel veya saldırgan içerik yüklememeye dikkat edin."

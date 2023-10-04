@@ -10,8 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
@@ -1641,7 +1640,7 @@ msgstr "Немає попереджень або помилок із цим кл
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Нефотографічні та низькоякісні зображення потребують перевірки, перш ніж з’являться в результатах пошуку."
@@ -1848,11 +1847,9 @@ msgstr "Будь-ласка підтвердіть ваш новий парол�
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
-"Будь ласка, не завантажуйте жодних приватних, незаконних або образливих "
-"зображень."
+msgstr "Будь ласка, не завантажуйте жодних приватних, незаконних або образливих зображень."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Будь ласка, не завантажуйте фотографії образливого змісту."
 
@@ -2535,7 +2532,7 @@ msgstr "Оновити зараз"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2577,7 +2574,7 @@ msgstr "Вивантаження фотографій…"
 msgid "Uploading…"
 msgstr "Вивантаження…"
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Вивантаження, які можуть містити такі зображення, автоматично відхилятимуться."
 
@@ -2668,10 +2665,6 @@ msgstr "Ми вдячні Вам за зворотній зв'язок!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Ми намагаємося відповідати протягом п'яти робочих днів або менше."
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
-msgstr "Ми залишаємо за собою право видаляти їх автоматично."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2774,6 +2767,9 @@ msgstr "Ваша бібліотека постійно аналізується,
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Збільшення/зменшення"
+
+#~ msgid "We reserve the right to delete these automatically."
+#~ msgstr "Ми залишаємо за собою право видаляти їх автоматично."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Будь ласка, будьте обережні, не завантажуйте приватний або образливий контент."

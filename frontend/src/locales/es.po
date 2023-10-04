@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/es/>\n"
+"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1642,7 +1641,7 @@ msgstr "No hay advertencias ni errores que contengan esta palabra clave. Tenga e
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Las imágenes no fotográficas y de baja calidad requieren una revisión antes que aparezcan en los resultados de la búsqueda."
@@ -1851,7 +1850,7 @@ msgstr "Por favor, confirma tu nueva contraseña."
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Por favor, no subas fotos privadas, ilegales u ofensivas."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Por favor, no subas fotos con contenido ofensivo."
 
@@ -2534,7 +2533,7 @@ msgstr "Mejore su plan ahora"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2576,7 +2575,7 @@ msgstr "Subiendo fotos…"
 msgid "Uploading…"
 msgstr "Subiendo…"
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Las subidas que puedan contener tales imágenes serán rechazadas automáticamente."
 
@@ -2667,10 +2666,6 @@ msgstr "¡Agradecemos sus comentarios!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Hacemos todo lo posible por responder en un plazo de cinco días hábiles o menos."
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
-msgstr "Nos reservamos el derecho a eliminarlas automáticamente."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2773,6 +2768,9 @@ msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
+
+#~ msgid "We reserve the right to delete these automatically."
+#~ msgstr "Nos reservamos el derecho a eliminarlas automáticamente."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Tenga cuidado de no subir contenidos privados u ofensivos."

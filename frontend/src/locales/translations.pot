@@ -1953,7 +1953,7 @@ msgstr ""
 #: src/component/photo/mosaic.vue:15
 #: src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1
-#: src/dialog/upload.vue:57
+#: src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
@@ -2195,7 +2195,7 @@ msgstr ""
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr ""
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr ""
 
@@ -2992,7 +2992,7 @@ msgstr ""
 #: src/component/photo/toolbar.vue:164
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
-#: src/dialog/upload.vue:61
+#: src/dialog/upload.vue:60
 #: src/page/albums.vue:127
 #: src/page/library/import.vue:38
 #: src/page/settings/general.vue:231
@@ -3040,7 +3040,7 @@ msgstr ""
 msgid "Uploading…"
 msgstr ""
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 
@@ -3154,10 +3154,6 @@ msgstr ""
 #: src/page/about/feedback.vue:17
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr ""
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
 msgstr ""
 
 #: src/dialog/admin/users/add.vue:237

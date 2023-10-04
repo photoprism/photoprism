@@ -1637,7 +1637,7 @@ msgstr "Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et 
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne kui nad otsingutulemustes ilmuvad."
@@ -1844,10 +1844,9 @@ msgstr "Palun kinnita oma uus parool."
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr ""
-"Palun ärge laadige üles privaatseid, ebaseaduslikke või solvavaid pilte."
+msgstr "Palun ärge laadige üles privaatseid, ebaseaduslikke või solvavaid pilte."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Palun ära laadi üles solvava sisuga fotosid."
 
@@ -2530,7 +2529,7 @@ msgstr "Uuenda nüüd"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2572,7 +2571,7 @@ msgstr "Fotode üleslaadimine…"
 msgid "Uploading…"
 msgstr "Üleslaadimine…"
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagasi."
 
@@ -2663,10 +2662,6 @@ msgstr "Me hindame teie tagasisidet!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Anname endast parima, et vastata viie tööpäeva jooksul või vähem."
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
-msgstr "Jätame endale õiguse need automaatselt kustutada."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2769,6 +2764,9 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "We reserve the right to delete these automatically."
+#~ msgstr "Jätame endale õiguse need automaatselt kustutada."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Palun olge ettevaatlik, et mitte laadida üles privaatset või solvavat sisu."

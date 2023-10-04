@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/"
-"photoprism/frontend/nb_NO/>\n"
+"Language-Team: Norwegian Bokmål <https://translate.photoprism.app/projects/photoprism/frontend/nb_NO/>\n"
 "Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1641,7 +1640,7 @@ msgstr "Ingen advarsler eller feilmeldinger inneholder dette nøkkelordet. Merk 
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Bilder som ikke er fotografiske eller har lav kvalitet må gjennomgås før de kommer i søkeresultater."
@@ -1850,7 +1849,7 @@ msgstr "Vennligst bekreft ditt nye passord."
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Vennligst ikke last opp private, ulovlige eller støtende bilder."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Vennligst ikke last opp bilder som inneholder støtende innhold."
 
@@ -2531,7 +2530,7 @@ msgstr "Oppgrader nå"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2573,7 +2572,7 @@ msgstr "Laster opp bilder…"
 msgid "Uploading…"
 msgstr "Oppdaterer…"
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Opplastinger som kan inneholde slike bilder blir avvist automatisk."
 
@@ -2664,10 +2663,6 @@ msgstr "Vi setter pris på din tilbakemelding!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Vi gjør vårt beste for å svare innen fem virkedager eller mindre."
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
-msgstr "Vi forbeholder oss retten til å slette disse automatisk."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2768,6 +2763,9 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
+
+#~ msgid "We reserve the right to delete these automatically."
+#~ msgstr "Vi forbeholder oss retten til å slette disse automatisk."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Vær forsiktig så du ikke laster opp privat eller støtende innhold."

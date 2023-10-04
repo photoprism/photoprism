@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-04 10:53+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/da/>\n"
+"Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1641,7 +1640,7 @@ msgstr "Ingen advarsler eller fejl, der indeholder dette nøgleord. Bemærk, at 
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
 #: src/component/photo/list.vue:1 src/component/photo/list.vue:52
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
-#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:57
+#: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Ikke-fotografiske billeder af lav kvalitet kræver en gennemgang, før de vises i søgeresultaterne."
@@ -1850,7 +1849,7 @@ msgstr "Bekræft din nye adgangskode."
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Upload venligst ikke private, ulovlige eller stødende billeder."
 
-#: src/dialog/upload.vue:52
+#: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Upload ikke billeder, der indeholder stødende indhold."
 
@@ -2533,7 +2532,7 @@ msgstr "Opgrader nu"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:61 src/page/albums.vue:127
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
@@ -2575,7 +2574,7 @@ msgstr "Uploader fotos…"
 msgid "Uploading…"
 msgstr "Overførsel af…"
 
-#: src/dialog/upload.vue:53
+#: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Uploads, der kan indeholde sådanne billeder, afvises automatisk."
 
@@ -2666,10 +2665,6 @@ msgstr "Vi sætter pris på din feedback!"
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
 msgstr "Vi gør vores bedste for at svare inden for fem arbejdsdage eller mindre."
-
-#: src/dialog/upload.vue:49
-msgid "We reserve the right to delete these automatically."
-msgstr "Vi forbeholder os ret til at slette disse automatisk."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2772,6 +2767,9 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "We reserve the right to delete these automatically."
+#~ msgstr "Vi forbeholder os ret til at slette disse automatisk."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Vær forsigtig med ikke at uploade privat eller stødende indhold."
