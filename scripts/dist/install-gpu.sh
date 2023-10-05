@@ -13,13 +13,15 @@ fi
 
 set -e
 
+# Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
   SYSTEM_ARCH=$(uname -m)
 fi
 
-DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
+
 TMPDIR=${TMPDIR:-/tmp}
 
 . /etc/os-release

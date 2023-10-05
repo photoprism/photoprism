@@ -3,18 +3,19 @@
 # Build "heif-convert", "heif-enc", "heif-info", and "heif-thumbnailer" from source.
 CURRENT_DIR=$(pwd)
 
-# Query architecture.
+# Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
   SYSTEM_ARCH=$(uname -m)
 fi
 
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
+
 . /etc/os-release
 
 LATEST=$(curl --silent "https://api.github.com/repos/strukturag/libheif/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 LIBHEIF_VERSION=${1:-$LATEST}
-DESTARCH=${2:-$SYSTEM_ARCH}
 
 BUILD="libheif-$VERSION_CODENAME-$DESTARCH-$LIBHEIF_VERSION"
 
