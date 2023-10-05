@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-04 10:53+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
+"PO-Revision-Date: 2023-10-05 10:02+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
+"Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
+"frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1847,7 +1848,7 @@ msgstr "Veuillez confirmer votre nouveau mot de passe."
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr "Veuillez ne pas télécharger de photos privées, illégales ou offensantes."
+msgstr "Attention à ne pas envoyer de photos privées, illégales ou offensantes."
 
 #: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
@@ -2740,7 +2741,7 @@ msgstr "Vous ne pouvez télécharger qu'une seule étiquette"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr "Vous pouvez télécharger jusqu'à %{n} fichiers à des fins de test."
+msgstr "Vous pouvez déposer jusqu'à %{n} fichiers à des fins de test."
 
 #: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
 msgid "You may only select one item"
