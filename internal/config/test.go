@@ -202,6 +202,7 @@ func CliTestContext() *cli.Context {
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.String("config-path", config.ConfigPath, "doc")
 	globalSet.String("admin-password", config.DarktableBin, "doc")
+	globalSet.String("admin-password-file", config.AdminPasswordFile, "doc")
 	globalSet.String("storage-path", config.StoragePath, "doc")
 	globalSet.String("backup-path", config.StoragePath, "doc")
 	globalSet.String("sidecar-path", config.SidecarPath, "doc")

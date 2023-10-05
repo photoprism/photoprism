@@ -127,7 +127,30 @@ func NewConfig(ctx *cli.Context) *Config {
 		}
 	}
 
+	// All options loaded and overrides are applied, now some options can be initialized from files.
+	c.loadSecretsFromFile()
+
 	Ext().Init(c)
+
+	return c
+}
+
+func (c *Config) loadSecretsFromFile() *Config {
+	if adminPasswordFile := c.options.AdminPasswordFile; fs.FileExists(adminPasswordFile) {
+		if lines, err := fs.ReadLines(adminPasswordFile); err == nil {
+			c.options.AdminPassword = lines[0]
+		} else {
+			log.Warnf("config: failed to read admin password from file %s", adminPasswordFile)
+		}
+	}
+
+	if databasePasswordFile := c.options.DatabasePasswordFile; fs.FileExists(databasePasswordFile) {
+		if lines, err := fs.ReadLines(databasePasswordFile); err == nil {
+			c.options.DatabasePassword = lines[0]
+		} else {
+			log.Warnf("config: failed to read database password from file %s", databasePasswordFile)
+		}
+	}
 
 	return c
 }

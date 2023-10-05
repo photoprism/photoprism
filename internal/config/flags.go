@@ -42,6 +42,11 @@ var Flags = CliFlags{
 			Usage:  fmt.Sprintf("initial admin `PASSWORD` (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVar: EnvVar("ADMIN_PASSWORD"),
 		}}, {
+		Flag: cli.StringFlag{
+			Name:   "admin-password-file",
+			Usage:  fmt.Sprintf("a file containing an initial admin user `PASSWORD`, which must have at least %d characters", entity.PasswordLength),
+			EnvVar: "PHOTOPRISM_ADMIN_PASSWORD_FILE",
+		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-maxage",
 			Value:  DefaultSessionMaxAge,
@@ -552,6 +557,11 @@ var Flags = CliFlags{
 			Name:   "database-password, db-pass",
 			Usage:  "database user `PASSWORD`",
 			EnvVar: EnvVar("DATABASE_PASSWORD"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "database-password-file",
+			Usage:  "a file containing a database user `PASSWORD`",
+			EnvVar: "PHOTOPRISM_DATABASE_PASSWORD_FILE",
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "database-conns",

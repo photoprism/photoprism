@@ -39,6 +39,11 @@ func (c *Config) AdminPassword() string {
 	return clean.Password(c.options.AdminPassword)
 }
 
+// AdminPasswordFile returns the file that contains an initial admin password.
+func (c *Config) AdminPasswordFile() string {
+	return c.options.AdminPasswordFile
+}
+
 // SessionMaxAge returns the time in seconds until API sessions expire automatically.
 func (c *Config) SessionMaxAge() int64 {
 	if c.options.SessionMaxAge < 0 {

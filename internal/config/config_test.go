@@ -618,3 +618,11 @@ func TestConfigOptions(t *testing.T) {
 	assert.Equal(t, r2.AutoImport, 0)
 	assert.Equal(t, r2.AutoIndex, 0)
 }
+
+func TestConfig_SecretsFiles(t *testing.T) {
+	ctx := CliTestContext()
+	ctx.GlobalSet("admin-password-file", "/go/src/github.com/photoprism/photoprism/internal/config/testdata/admin_password")
+	c := NewConfig(ctx)
+
+	assert.Equal(t, "test_password", c.AdminPassword())
+}

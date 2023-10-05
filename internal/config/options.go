@@ -31,6 +31,7 @@ type Options struct {
 	Public                bool          `yaml:"Public" json:"-" flag:"public"`
 	AdminUser             string        `yaml:"AdminUser" json:"-" flag:"admin-user"`
 	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
+	AdminPasswordFile     string        `yaml:"AdminPasswordFile" json:"-" flag:"admin-password-file"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
@@ -125,6 +126,7 @@ type Options struct {
 	DatabaseServer        string        `yaml:"DatabaseServer" json:"-" flag:"database-server"`
 	DatabaseUser          string        `yaml:"DatabaseUser" json:"-" flag:"database-user"`
 	DatabasePassword      string        `yaml:"DatabasePassword" json:"-" flag:"database-password"`
+	DatabasePasswordFile  string        `yaml:"DatabasePasswordFile" json:"-" flag:"database-password-file"`
 	DatabaseConns         int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
 	DatabaseConnsIdle     int           `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
 	SipsBin               string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
