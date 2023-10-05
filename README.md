@@ -13,9 +13,9 @@ PhotoPrism® is an AI-Powered Photos App for the [Decentralized Web](https://en.
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
 You can run it at home, on a private server, or in the cloud.
 
-![](https://dl.photoprism.app/img/ui/desktop-1000px.jpg)
+![](https://dl.photoprism.app/img/ui/search-cards-view.jpg)
 
-To get a first impression, you are welcome to play with our [public demo](https://try.photoprism.app/). Please be careful not to upload any private or offensive content.
+To get a first impression, you are welcome to play with our [public demo](https://try.photoprism.app/). Please be careful not to upload any private, unlawful or offensive pictures.
 
 ## Feature Overview ##
 
