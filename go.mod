@@ -52,7 +52,7 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.2 // indirect
-	golang.org/x/image v0.12.0
+	golang.org/x/image v0.13.0
 )
 
 require github.com/olekukonko/tablewriter v0.0.5
@@ -67,7 +67,7 @@ require (
 require github.com/gabriel-vasile/mimetype v1.4.2
 
 require (
-	golang.org/x/sync v0.3.0
+	golang.org/x/sync v0.4.0
 	golang.org/x/time v0.3.0
 )
 
