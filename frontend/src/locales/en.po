@@ -348,7 +348,7 @@ msgid "Authentication"
 msgstr ""
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
 msgstr ""
 
 #: src/page/settings/general.vue:166
@@ -581,10 +581,6 @@ msgstr ""
 
 #: src/options/admin.js:9 src/options/admin.js:31
 msgid "Contributor"
-msgstr ""
-
-#: src/page/settings/library.vue:111
-msgid "Convert to JPEG"
 msgstr ""
 
 #: src/page/library/index.vue:175
@@ -1799,7 +1795,7 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: src/model/photo.js:1141
+#: src/model/photo.js:1177
 msgid "Photo"
 msgstr ""
 
@@ -1890,6 +1886,10 @@ msgstr ""
 
 #: src/dialog/photo/edit/files.vue:19 src/dialog/photo/edit/files.vue:16
 msgid "Preview"
+msgstr ""
+
+#: src/page/settings/library.vue:111
+msgid "Preview Images"
 msgstr ""
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:136
@@ -2462,9 +2462,9 @@ msgid "Unique ID"
 msgstr ""
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:30
-#: src/model/album.js:179 src/model/photo.js:732 src/model/photo.js:753
-#: src/model/photo.js:776 src/model/photo.js:794 src/model/photo.js:913
-#: src/model/photo.js:926 src/model/user.js:151 src/options/options.js:27
+#: src/model/album.js:179 src/model/photo.js:768 src/model/photo.js:789
+#: src/model/photo.js:812 src/model/photo.js:830 src/model/photo.js:949
+#: src/model/photo.js:962 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2610,7 +2610,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:839 src/model/photo.js:847 src/options/options.js:345
+#: src/model/photo.js:875 src/model/photo.js:883 src/options/options.js:345
 msgid "Vector"
 msgstr ""
 
@@ -2620,7 +2620,7 @@ msgstr ""
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
-#: src/model/file.js:220 src/model/photo.js:862 src/model/photo.js:878
+#: src/model/file.js:220 src/model/photo.js:898 src/model/photo.js:914
 #: src/options/options.js:341
 msgid "Video"
 msgstr ""

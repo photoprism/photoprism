@@ -349,8 +349,8 @@ msgid "Authentication"
 msgstr "Autenticación"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-msgstr "Crear automáticamente JPEG para otros tipos de archivos para que se puedan visualizar en un navegador."
+msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
+msgstr ""
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -583,10 +583,6 @@ msgstr "Contiene una imagen."
 #: src/options/admin.js:9 src/options/admin.js:31
 msgid "Contributor"
 msgstr "Colaborador"
-
-#: src/page/settings/library.vue:111
-msgid "Convert to JPEG"
-msgstr "Convertir a JPEG"
 
 #: src/page/library/index.vue:175
 msgid "Converting"
@@ -1801,7 +1797,7 @@ msgstr "Elimina permanentemente los archivos para liberar almacenamiento."
 msgid "Phone"
 msgstr "Teléfono"
 
-#: src/model/photo.js:1141
+#: src/model/photo.js:1177
 msgid "Photo"
 msgstr "Foto"
 
@@ -1893,6 +1889,10 @@ msgstr "Presiona enter para crear un nuevo álbum."
 #: src/dialog/photo/edit/files.vue:19 src/dialog/photo/edit/files.vue:16
 msgid "Preview"
 msgstr "Vista previa"
+
+#: src/page/settings/library.vue:111
+msgid "Preview Images"
+msgstr ""
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:136
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:133
@@ -2466,9 +2466,9 @@ msgid "Unique ID"
 msgstr "ID Única"
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:30
-#: src/model/album.js:179 src/model/photo.js:732 src/model/photo.js:753
-#: src/model/photo.js:776 src/model/photo.js:794 src/model/photo.js:913
-#: src/model/photo.js:926 src/model/user.js:151 src/options/options.js:27
+#: src/model/album.js:179 src/model/photo.js:768 src/model/photo.js:789
+#: src/model/photo.js:812 src/model/photo.js:830 src/model/photo.js:949
+#: src/model/photo.js:962 src/model/user.js:151 src/options/options.js:27
 #: src/options/options.js:41 src/options/options.js:58
 #: src/options/options.js:72 src/options/options.js:84
 #: src/page/library/errors.vue:173 src/page/library/errors.vue:180
@@ -2614,7 +2614,7 @@ msgstr "Usuarios"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:839 src/model/photo.js:847 src/options/options.js:345
+#: src/model/photo.js:875 src/model/photo.js:883 src/options/options.js:345
 msgid "Vector"
 msgstr "Vector"
 
@@ -2624,7 +2624,7 @@ msgstr "Vectores"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
-#: src/model/file.js:220 src/model/photo.js:862 src/model/photo.js:878
+#: src/model/file.js:220 src/model/photo.js:898 src/model/photo.js:914
 #: src/options/options.js:341
 msgid "Video"
 msgstr "Vídeo"
@@ -2768,6 +2768,12 @@ msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
+
+#~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+#~ msgstr "Crear automáticamente JPEG para otros tipos de archivos para que se puedan visualizar en un navegador."
+
+#~ msgid "Convert to JPEG"
+#~ msgstr "Convertir a JPEG"
 
 #~ msgid "We reserve the right to delete these automatically."
 #~ msgstr "Nos reservamos el derecho a eliminarlas automáticamente."
