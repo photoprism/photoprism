@@ -45,6 +45,7 @@ var Codecs = StandardCodecs{
 	"vp80":     CodecVP8,
 	"v_vp8":    CodecVP8,
 	"vp9":      CodecVP9,
+	"vp09":     CodecVP9,
 	"vp90":     CodecVP9,
 	"v_vp9":    CodecVP9,
 	"ogv":      CodecOGV,
