@@ -16,6 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/geo"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/s2"
@@ -209,6 +210,10 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	// Find primary files only?
 	if f.Primary {
 		s = s.Where("files.file_primary = 1")
+	} else if f.Order == sortby.Similar {
+		s = s.Where("files.file_primary = 1 OR files.media_type = ?", media.Video)
+	} else if f.Order == sortby.Random {
+		s = s.Where("files.file_primary = 1 AND photos.photo_type NOT IN ('live','video') OR photos.photo_type IN ('live','video') AND files.media_type IN ('live','video')")
 	} else {
 		// Otherwise, find all matching media except sidecar files.
 		s = s.Where("files.file_sidecar = 0")
