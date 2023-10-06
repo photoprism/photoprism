@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-04 10:53+0000\n"
+"PO-Revision-Date: 2023-10-06 08:25+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
+"Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
+"frontend/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -351,6 +352,8 @@ msgstr "Authenticatie"
 #: src/page/settings/library.vue:112
 msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
 msgstr ""
+"Maak automatisch miniaturen voor bestanden die anders niet geïndexeerd of "
+"bekeken kunnen worden."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -1891,7 +1894,7 @@ msgstr "Voorbeeld"
 
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
-msgstr ""
+msgstr "Voorbeeldafbeeldingen"
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:136
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:133

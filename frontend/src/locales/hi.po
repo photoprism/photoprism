@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-04 10:53+0000\n"
+"PO-Revision-Date: 2023-10-06 08:25+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/frontend/hi/>\n"
+"Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
+"frontend/hi/>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -351,6 +352,8 @@ msgstr "प्रमाणीकरण"
 #: src/page/settings/library.vue:112
 msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
 msgstr ""
+"उन फ़ाइलों के लिए स्वचालित रूप से थंबनेल बनाएं जिन्हें अन्यथा अनुक्रमित या "
+"देखा नहीं जा सकता।"
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -1891,7 +1894,7 @@ msgstr "पूर्वावलोकन"
 
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
-msgstr ""
+msgstr "छवियों का पूर्वावलोकन करें"
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:136
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:133
