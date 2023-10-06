@@ -32,7 +32,7 @@ func TestPhotosFilterPath(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, len(photos), 2)
 	})
 	t.Run("London", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -471,7 +471,7 @@ func TestPhotosQueryPath(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 1)
+		assert.Equal(t, len(photos), 2)
 	})
 	t.Run("London", func(t *testing.T) {
 		var f form.SearchPhotos

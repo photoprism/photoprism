@@ -32,7 +32,7 @@ func TestPhotosFilterKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 4)
+		assert.Equal(t, len(photos), 5)
 	})
 	t.Run("b* pipe kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -45,7 +45,7 @@ func TestPhotosFilterKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 5)
+		assert.Equal(t, len(photos), 6)
 	})
 	t.Run("b* whitespace pipe whitespace kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -58,7 +58,7 @@ func TestPhotosFilterKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 5)
+		assert.Equal(t, len(photos), 6)
 	})
 	t.Run("b* or kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -71,7 +71,7 @@ func TestPhotosFilterKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 5)
+		assert.Equal(t, len(photos), 6)
 	})
 	t.Run("b* OR kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -84,7 +84,7 @@ func TestPhotosFilterKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 5)
+		assert.Equal(t, len(photos), 6)
 	})
 	t.Run("b* Ampersand kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -535,7 +535,7 @@ func TestPhotosQueryKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 4)
+		assert.Equal(t, len(photos), 5)
 	})
 	t.Run("b* pipe kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -548,7 +548,7 @@ func TestPhotosQueryKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 5)
+		assert.Equal(t, len(photos), 6)
 	})
 	t.Run("b* whitespace pipe whitespace kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -561,7 +561,7 @@ func TestPhotosQueryKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 5)
+		assert.Equal(t, len(photos), 6)
 	})
 	t.Run("b* or kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -574,7 +574,7 @@ func TestPhotosQueryKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 5)
+		assert.Equal(t, len(photos), 6)
 	})
 	t.Run("b* OR kuh", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -587,7 +587,7 @@ func TestPhotosQueryKeywords(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 5)
+		assert.Equal(t, len(photos), 6)
 	})
 	t.Run("b* Ampersand kuh", func(t *testing.T) {
 		var f form.SearchPhotos

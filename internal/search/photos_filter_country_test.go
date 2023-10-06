@@ -20,7 +20,7 @@ func TestPhotosFilterCountry(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 6)
+		assert.Equal(t, len(photos), 7)
 	})
 	t.Run("mx", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -312,7 +312,7 @@ func TestPhotosQueryCountry(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 6)
+		assert.Equal(t, len(photos), 7)
 	})
 	t.Run("mx", func(t *testing.T) {
 		var f form.SearchPhotos
