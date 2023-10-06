@@ -29,9 +29,6 @@ var PhotosColsAll = SelectString(Photo{}, []string{"*"})
 // PhotosColsView contains the result column names necessary for the photo viewer.
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
 
-// FileTypes contains a list of browser-compatible file formats returned by search queries.
-var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageHEIC.String(), fs.ImageAVIF.String(), fs.ImageAVIFS.String(), fs.ImageWebP.String(), fs.VectorSVG.String()}
-
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
 	return searchPhotos(f, nil, PhotosColsAll)
@@ -200,10 +197,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		return PhotoResults{}, 0, ErrBadSortOrder
 	}
 
-	// Limit the result file types if hidden images/videos should not be found.
+	// Exclude files with errors by default.
 	if !f.Hidden {
-		s = s.Where("files.file_type IN (?) OR files.media_type IN ('vector','video')", FileTypes)
-
 		if f.Error {
 			s = s.Where("files.file_error <> ''")
 		} else {
@@ -211,9 +206,12 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Primary files only.
+	// Find primary files only?
 	if f.Primary {
 		s = s.Where("files.file_primary = 1")
+	} else {
+		// Otherwise, find all matching media except sidecar files.
+		s = s.Where("files.file_sidecar = 0")
 	}
 
 	// Find specific UIDs only.

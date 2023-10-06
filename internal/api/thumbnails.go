@@ -143,9 +143,7 @@ func GetThumb(router *gin.RouterGroup) {
 
 		// Find supported preview image if media file is not a JPEG or PNG.
 		if f.NoJPEG() && f.NoPNG() {
-			f, err = query.FileByPhotoUID(f.PhotoUID)
-
-			if err != nil {
+			if f, err = query.FileByPhotoUID(f.PhotoUID); err != nil {
 				c.Data(http.StatusOK, "image/svg+xml", fileIconSvg)
 				return
 			}

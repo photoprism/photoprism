@@ -1318,6 +1318,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.Equal(t, "", data.LensModel)
 		assert.Equal(t, float32(45.75285), data.Lat)
 		assert.Equal(t, float32(33.221977), data.Lng)
 		assert.InEpsilon(t, 4294967284, data.Altitude, 1000)

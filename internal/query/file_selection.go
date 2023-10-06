@@ -58,8 +58,6 @@ func ShareSelection(originals bool) FileSelection {
 			media.Unknown.String(),
 			media.Raw.String(),
 			media.Sidecar.String(),
-			media.Text.String(),
-			media.Other.String(),
 		}
 
 		omitTypes = []string{

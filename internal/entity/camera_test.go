@@ -109,8 +109,8 @@ func TestNewCamera(t *testing.T) {
 		camera := NewCamera("ELE-AL00", "Huawei")
 
 		assert.Equal(t, "huawei-p30", camera.CameraSlug)
-		assert.Equal(t, "Huawei P30", camera.CameraName)
-		assert.Equal(t, "Huawei", camera.CameraMake)
+		assert.Equal(t, "HUAWEI P30", camera.CameraName)
+		assert.Equal(t, "HUAWEI", camera.CameraMake)
 		assert.Equal(t, "P30", camera.CameraModel)
 	})
 }
@@ -119,7 +119,7 @@ func TestCamera_String(t *testing.T) {
 	t.Run("model XXX make Nikon", func(t *testing.T) {
 		camera := NewCamera("XXX", "Nikon")
 		cameraString := camera.String()
-		assert.Equal(t, "'Nikon XXX'", cameraString)
+		assert.Equal(t, "'NIKON XXX'", cameraString)
 	})
 	t.Run("model XXX make Unknown", func(t *testing.T) {
 		camera := NewCamera("XXX", "")

@@ -58,8 +58,13 @@ func NewLens(modelName string, makeName string) *Lens {
 		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
 
+	// Normalize make name.
 	if n, ok := CameraMakes[makeName]; ok {
 		makeName = n
+	}
+
+	if strings.HasPrefix(modelName, makeName) {
+		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
 
 	var name []string

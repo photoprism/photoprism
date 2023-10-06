@@ -491,16 +491,17 @@ export class Photo extends RestModel {
 
     if (file) {
       let videoFormat = FormatAvc;
+      const fileCodec = file.Codec ? file.Codec : "";
 
-      if (canUseHevc && (file.Codec === CodecHvc1 || file.Codec === CodecHev1)) {
+      if (canUseHevc && (fileCodec === CodecHvc1 || fileCodec === CodecHev1)) {
         videoFormat = FormatHevc;
-      } else if (canUseOGV && file.Codec === CodecOGV) {
+      } else if (canUseOGV && fileCodec === CodecOGV) {
         videoFormat = CodecOGV;
-      } else if (canUseVP8 && file.Codec === CodecVP8) {
+      } else if (canUseVP8 && fileCodec === CodecVP8) {
         videoFormat = CodecVP8;
-      } else if (canUseVP9 && file.Codec === CodecVP9) {
+      } else if (canUseVP9 && fileCodec === CodecVP9) {
         videoFormat = CodecVP9;
-      } else if (canUseAv1 && (file.Codec === CodecAv01 || file.Codec === CodecAv1C)) {
+      } else if (canUseAv1 && (fileCodec === CodecAv01 || fileCodec === CodecAv1C)) {
         videoFormat = FormatAv1;
       } else if (canUseWebM && file.FileType === FormatWebM) {
         videoFormat = FormatWebM;
@@ -523,12 +524,21 @@ export class Photo extends RestModel {
 
     // Return the primary image, if found.
     let file = files.find((f) => !!f.Primary);
+
+    // Found?
     if (file) {
       return file;
     }
 
     // Find and return the first JPEG or PNG image otherwise.
-    return files.find((f) => f.FileType === FormatJpeg || f.FileType === FormatPng);
+    file = files.find((f) => f.FileType === FormatJpeg || f.FileType === FormatPng);
+
+    // Found?
+    if (file) {
+      return file;
+    }
+
+    return files.find((f) => !f.Sidecar);
   });
 
   originalFile() {
@@ -547,8 +557,34 @@ export class Photo extends RestModel {
       return this;
     }
 
+    let file;
+
+    // Find file with matching media type.
+    switch (this.Type) {
+      case MediaAnimated:
+        file = files.find((f) => f.MediaType === MediaImage && f.Root === "/");
+        break;
+      case MediaLive:
+        file = files.find(
+          (f) => (f.MediaType === MediaVideo || f.MediaType === MediaLive) && f.Root === "/"
+        );
+        break;
+      case MediaRaw:
+      case MediaVideo:
+      case MediaVector:
+        file = files.find((f) => f.MediaType === this.Type && f.Root === "/");
+        break;
+    }
+
+    // Found?
+    if (file) {
+      return file;
+    }
+
     // Find first original media file with a format other than JPEG.
-    let file = files.find((f) => !f.Sidecar && f.Root === "/" && f.FileType !== FormatJpeg);
+    file = files.find((f) => !f.Sidecar && f.FileType !== FormatJpeg && f.Root === "/");
+
+    // Found?
     if (file) {
       return file;
     }

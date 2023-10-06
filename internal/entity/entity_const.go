@@ -24,7 +24,6 @@ const (
 	MediaLive     = string(media.Live)
 	MediaVideo    = string(media.Video)
 	MediaVector   = string(media.Vector)
-	MediaText     = string(media.Text)
 )
 
 // Base folders.

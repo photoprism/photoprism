@@ -1,6 +1,8 @@
 package entity
 
 var CameraMakes = map[string]string{
+	"Asus":                    "ASUS",
+	"ASUS_AI2302":             "ASUS",
 	"apple":                   "Apple",
 	"google":                  "Google",
 	"samsung":                 "Samsung",
@@ -9,9 +11,17 @@ var CameraMakes = map[string]string{
 	"OLYMPUS DIGITAL CAMERA":  "Olympus",
 	"OLYMPUS IMAGING CORP.":   "Olympus",
 	"OLYMPUS OPTICAL CO.,LTD": "Olympus",
+	"Nikon":                   "NIKON",
+	"NIKON CORPORATION":       "NIKON",
+	"Fujifilm":                "FUJIFILM",
+	"FUJIFILM CORPORATION":    "FUJIFILM",
+	"Huawei":                  "HUAWEI",
+	"RaspberryPi":             "Raspberry Pi",
 }
 
 var CameraModels = map[string]string{
+	"AI2302":                     "ASUS Zenfone 10",
+	"ASUS_AI2302":                "ASUS Zenfone 10",
 	"iPhone SE (1st generation)": "iPhone SE",
 	"iPhone SE (2nd generation)": "iPhone SE",
 	"iPhone SE (3rd generation)": "iPhone SE",

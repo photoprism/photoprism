@@ -44,11 +44,11 @@ type Data struct {
 	Projection    string        `meta:"ProjectionType"`
 	ColorProfile  string        `meta:"ICCProfileName,ProfileDescription"`
 	CameraMake    string        `meta:"CameraMake,Make" xmp:"Make"`
-	CameraModel   string        `meta:"CameraModel,Model" xmp:"Model"`
+	CameraModel   string        `meta:"CameraModel,Model,CameraID,UniqueCameraModel" xmp:"CameraModel,Model"`
 	CameraOwner   string        `meta:"OwnerName"`
 	CameraSerial  string        `meta:"SerialNumber"`
 	LensMake      string        `meta:"LensMake"`
-	LensModel     string        `meta:"Lens,LensModel" xmp:"LensModel"`
+	LensModel     string        `meta:"LensModel,Lens,LensID," xmp:"LensModel,Lens"`
 	Software      string        `meta:"Software,CreatorTool,HistorySoftwareAgent,ProcessingSoftware"`
 	Flash         bool          `meta:"FlashFired"`
 	FocalLength   int           `meta:"FocalLength,FocalLengthIn35mmFormat"`

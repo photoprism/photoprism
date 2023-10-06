@@ -23,13 +23,13 @@ func TestFromName(t *testing.T) {
 		result := FromName("/IMG_4120.AAE")
 		assert.Equal(t, Sidecar, result)
 	})
+	t.Run("other", func(t *testing.T) {
+		result := FromName("/IMG_4120.XXX")
+		assert.Equal(t, Sidecar, result)
+	})
 	t.Run("empty", func(t *testing.T) {
 		result := FromName("")
 		assert.Equal(t, Unknown, result)
-	})
-	t.Run("invalid type", func(t *testing.T) {
-		result := FromName("/IMG_4120.XXX")
-		assert.Equal(t, Other, result)
 	})
 }
 

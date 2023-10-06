@@ -77,7 +77,6 @@ func MissingPhotos(limit int, offset int) (entities entity.Photos, err error) {
 	err = Db().
 		Select("photos.*").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = 0 AND file_root = '/' AND deleted_at IS NULL)").
-		Where("photos.photo_type <> ?", entity.MediaText).
 		Order("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 
@@ -90,7 +89,6 @@ func ArchivedPhotos(limit int, offset int) (entities entity.Photos, err error) {
 		Select("photos.*").
 		Where("photos.photo_quality > -1").
 		Where("photos.deleted_at IS NOT NULL").
-		Where("photos.photo_type <> ?", entity.MediaText).
 		Order("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 

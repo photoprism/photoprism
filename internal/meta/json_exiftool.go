@@ -380,6 +380,11 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 
+	// Ignore numeric model names as they are probably invalid.
+	if txt.IsUInt(data.LensModel) {
+		data.LensModel = ""
+	}
+
 	// Flag Samsung/Google Motion Photos as live media.
 	if data.EmbeddedVideo && (data.MimeType == fs.MimeTypeJPEG || data.MimeType == fs.MimeTypeHEIC) {
 		data.MediaType = media.Live
