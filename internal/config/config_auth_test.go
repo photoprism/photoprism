@@ -4,6 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestAuth(t *testing.T) {
@@ -46,9 +49,26 @@ func TestAuthMode(t *testing.T) {
 	c.options.Debug = false
 }
 
-func TestLoginUri(t *testing.T) {
+func TestPasswordLength(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/library/login", c.LoginUri())
+	assert.Equal(t, 8, c.PasswordLength())
+	c.options.PasswordLength = 2
+	assert.Equal(t, 2, c.PasswordLength())
+	c.options.PasswordLength = 30
+	assert.Equal(t, 30, c.PasswordLength())
+	c.options.PasswordLength = 10000
+	assert.Equal(t, 72, c.PasswordLength())
+	assert.Equal(t, txt.ClipPassword, c.PasswordLength())
+	c.options.PasswordLength = -1
+	assert.Equal(t, 8, c.PasswordLength())
+	assert.Equal(t, entity.PasswordLengthDefault, c.PasswordLength())
+	c.options.PasswordLength = 0
+	assert.Equal(t, 8, c.PasswordLength())
+}
+
+func TestPasswordResetUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "", c.PasswordResetUri())
 }
 
 func TestRegisterUri(t *testing.T) {
@@ -56,14 +76,9 @@ func TestRegisterUri(t *testing.T) {
 	assert.Equal(t, "", c.RegisterUri())
 }
 
-func TestPasswordLength(t *testing.T) {
+func TestLoginUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 4, c.PasswordLength())
-}
-
-func TestPasswordResetUri(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, "", c.PasswordResetUri())
+	assert.Equal(t, "/library/login", c.LoginUri())
 }
 
 func TestSessMaxAge(t *testing.T) {

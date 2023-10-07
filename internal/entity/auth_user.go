@@ -23,16 +23,18 @@ import (
 
 // User identifier prefixes.
 const (
-	UserUID      = byte('u')
-	UserPrefix   = "user"
-	OwnerUnknown = ""
+	UserUID               = byte('u')
+	UserPrefix            = "user"
+	OwnerUnknown          = ""
+	UsernameLengthDefault = 1
+	PasswordLengthDefault = 8
 )
 
 // UsernameLength specifies the minimum length of the username in characters.
-var UsernameLength = 1
+var UsernameLength = UsernameLengthDefault
 
 // PasswordLength specifies the minimum length of a password in characters (runes, not bytes).
-var PasswordLength = 4
+var PasswordLength = PasswordLengthDefault
 
 // UsersPath is the relative path for user assets.
 var UsersPath = "users"

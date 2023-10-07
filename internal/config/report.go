@@ -24,13 +24,12 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"auth-mode", fmt.Sprintf("%s", c.AuthMode())},
 		{"admin-user", c.AdminUser()},
 		{"admin-password", strings.Repeat("*", utf8.RuneCountInString(c.AdminPassword()))},
-		{"public", fmt.Sprintf("%t", c.Public())},
-		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
-		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},
-		{"login-uri", c.LoginUri()},
-		{"register-uri", c.RegisterUri()},
 		{"password-length", fmt.Sprintf("%d", c.PasswordLength())},
 		{"password-reset-uri", c.PasswordResetUri()},
+		{"register-uri", c.RegisterUri()},
+		{"login-uri", c.LoginUri()},
+		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
+		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},
 
 		// Logging.
 		{"log-level", c.LogLevel().String()},
