@@ -146,7 +146,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 
 		// Visitors and other restricted users can only access shared content.
-		if f.Scope != "" && !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.NotRegistered()) ||
+		if f.Scope != "" && !sess.HasShare(f.Scope) && (sess.User().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
 			f.Scope == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
 			return PhotoResults{}, 0, ErrForbidden

@@ -731,6 +731,15 @@ func (m *User) IsVisitor() bool {
 	return m.AclRole() == acl.RoleVisitor || m.ID == Visitor.ID
 }
 
+// HasSharedAccessOnly checks if the user as only access to shared resources.
+func (m *User) HasSharedAccessOnly(resource acl.Resource) bool {
+	if acl.Resources.Deny(resource, m.AclRole(), acl.AccessShared) {
+		return false
+	}
+
+	return acl.Resources.DenyAll(resource, m.AclRole(), acl.Permissions{acl.AccessAll, acl.AccessLibrary})
+}
+
 // IsUnknown checks if the user is unknown.
 func (m *User) IsUnknown() bool {
 	return !rnd.IsUID(m.UserUID, UserUID) || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID
@@ -953,10 +962,17 @@ func (m *User) HasShares() bool {
 
 // HasShare if a uid was shared with the user.
 func (m *User) HasShare(uid string) bool {
-	if !m.IsRegistered() || m.NoShares() {
+	if !m.IsRegistered() {
 		return false
 	}
 
+	// Check cashed list of user shares.
+	if m.UserShares.Contains(uid) {
+		return true
+	}
+
+	// Refresh cache and try again if not found.
+	m.RefreshShares()
 	return m.UserShares.Contains(uid)
 }
 
