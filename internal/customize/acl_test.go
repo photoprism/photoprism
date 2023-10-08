@@ -18,7 +18,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Account:   true,
 			Albums:    true,
 			Archive:   true,
-			Delete:    false,
+			Delete:    true,
 			Download:  true,
 			Edit:      true,
 			Estimates: true,

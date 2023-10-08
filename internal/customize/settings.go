@@ -77,7 +77,7 @@ func NewSettings(theme, lang string) *Settings {
 			Settings:  true,
 			Services:  true,
 			Account:   true,
-			Delete:    false,
+			Delete:    true,
 		},
 		Import: ImportSettings{
 			Path: RootPath,
