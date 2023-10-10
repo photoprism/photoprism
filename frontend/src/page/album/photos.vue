@@ -465,6 +465,9 @@ export default {
         window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`;
 
         return Promise.resolve(this.model);
+      }).catch((e) => {
+        this.$router.push({ name: "albums" });
+        return Promise.reject(e);
       });
     },
     onAlbumsUpdated(ev, data) {
