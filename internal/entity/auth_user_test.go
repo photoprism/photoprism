@@ -1773,8 +1773,6 @@ func TestUser_HasShares(t *testing.T) {
 	})
 	t.Run("Alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
-		assert.False(t, m.HasShares())
-		m.RefreshShares()
 		assert.True(t, m.HasShares())
 	})
 }

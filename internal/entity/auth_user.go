@@ -312,8 +312,9 @@ func (m *User) Deleted() bool {
 
 // LoadRelated loads related settings and details.
 func (m *User) LoadRelated() *User {
-	m.Settings()
 	m.Details()
+	m.Settings()
+	m.RefreshShares()
 
 	return m
 }
@@ -948,7 +949,7 @@ func (m *User) RefreshShares() *User {
 
 // NoShares checks if the user has no shares yet.
 func (m *User) NoShares() bool {
-	if !m.IsRegistered() {
+	if m.NotRegistered() {
 		return true
 	}
 
@@ -962,23 +963,17 @@ func (m *User) HasShares() bool {
 
 // HasShare if a uid was shared with the user.
 func (m *User) HasShare(uid string) bool {
-	if !m.IsRegistered() {
+	if m.NotRegistered() || m.NoShares() {
 		return false
 	}
 
-	// Check cashed list of user shares.
-	if m.UserShares.Contains(uid) {
-		return true
-	}
-
-	// Refresh cache and try again if not found.
-	m.RefreshShares()
+	// Check if the share list contains the specified UID.
 	return m.UserShares.Contains(uid)
 }
 
 // SharedUIDs returns shared entity UIDs.
 func (m *User) SharedUIDs() UIDs {
-	if m.IsRegistered() && m.UserShares.Empty() {
+	if m.IsRegistered() && m.NoShares() {
 		m.RefreshShares()
 	}
 
