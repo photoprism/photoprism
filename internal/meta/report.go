@@ -5,11 +5,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/projection"
-
-	"github.com/photoprism/photoprism/pkg/media"
-
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/projection"
 )
 
 // Report returns form fields as table rows for reports.
@@ -40,9 +38,10 @@ func Report(f interface{}) (rows [][]string, cols []string) {
 		metaTags := v.Type().Field(i).Tag.Get("meta")
 		xmpTags := v.Type().Field(i).Tag.Get("xmp")
 		dcTags := v.Type().Field(i).Tag.Get("dc")
+		reportTag := v.Type().Field(i).Tag.Get("report")
 
 		// Serialize field values as string.
-		if metaTags != "" && metaTags != "-" {
+		if metaTags != "" && metaTags != "-" && reportTag != "-" {
 			typeName := "any"
 
 			switch t := fieldValue.Interface().(type) {

@@ -405,7 +405,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.SetSoftware(data.Software)
 
 			// Get video metadata from embedded file?
-			if !data.EmbeddedVideo {
+			if !data.HasVideoEmbedded {
 				file.SetDuration(data.Duration)
 				file.SetFPS(data.FPS)
 				file.SetFrames(data.Frames)
@@ -517,7 +517,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			file.SetSoftware(data.Software)
 
 			// Get video metadata from embedded file?
-			if !m.IsHEIC() || !data.EmbeddedVideo {
+			if !m.IsHEIC() || !data.HasVideoEmbedded {
 				file.SetDuration(data.Duration)
 				file.SetFPS(data.FPS)
 				file.SetFrames(data.Frames)

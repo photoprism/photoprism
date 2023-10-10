@@ -386,7 +386,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	}
 
 	// Flag Samsung/Google Motion Photos as live media.
-	if data.EmbeddedVideo && (data.MimeType == fs.MimeTypeJPEG || data.MimeType == fs.MimeTypeHEIC) {
+	if data.HasVideoEmbedded && (data.MimeType == fs.MimeTypeJPEG || data.MimeType == fs.MimeTypeHEIC) {
 		data.MediaType = media.Live
 	}
 
