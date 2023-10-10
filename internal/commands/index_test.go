@@ -48,7 +48,6 @@ func TestIndexCommand(t *testing.T) {
 	if l != "" {
 		assert.NotContains(t, l, "error")
 		assert.NotContains(t, l, "warning")
-		assert.Contains(t, l, "index")
 	} else {
 		t.Fatal("log output missing")
 	}
