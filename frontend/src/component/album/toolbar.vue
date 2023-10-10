@@ -5,8 +5,8 @@
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
       <v-toolbar-title :title="album.Title">
         <span class="hidden-xs-only">
-        <router-link :to="{ name: collRoute }">
-          {{ T(collName) }}
+        <router-link :to="{ name: collectionRoute }">
+          {{ T(collectionTitle) }}
         </router-link>
         <v-icon>{{ navIcon }}</v-icon>
         </span>
@@ -134,8 +134,8 @@ export default {
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
       categories: this.$config.albumCategories(),
-      collName: this.$route.meta && this.$route.meta.collName ? this.$route.meta.collName : this.$gettext("Albums"),
-      collRoute: this.$route.meta && this.$route.meta.collRoute ? this.$route.meta.collRoute : "albums",
+      collectionTitle: this.$route.meta?.collectionTitle ? this.$route.meta.collectionTitle : this.$gettext("Albums"),
+      collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       navIcon: this.$rtl ? 'navigate_before' : 'navigate_next',
       searchExpanded: false,
       options: {

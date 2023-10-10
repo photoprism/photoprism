@@ -99,6 +99,7 @@ export default {
       filter: filter,
       lastFilter: {},
       routeName: routeName,
+      collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       loading: true,
       viewer: {
         results: [],
@@ -466,7 +467,7 @@ export default {
 
         return Promise.resolve(this.model);
       }).catch((e) => {
-        this.$router.push({ name: "albums" });
+        this.$router.push({ name: this.collectionRoute });
         return Promise.reject(e);
       });
     },
