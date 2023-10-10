@@ -95,11 +95,14 @@ func (c *Config) AppManifest() *pwa.Manifest {
 
 		return cacheData.(*pwa.Manifest)
 	}
+
 	result := pwa.NewManifest(c.AppConfig())
+
 	if result != nil {
 		Cache.SetDefault(CacheKeyAppManifest, result)
 	} else {
 		log.Warnf("config: web app manifest is nil - you may have found a bug")
 	}
+
 	return result
 }

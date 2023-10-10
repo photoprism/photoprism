@@ -13,6 +13,7 @@ type Manifest struct {
 	Description     string        `json:"description,omitempty"`
 	Categories      list.List     `json:"categories"`
 	Display         string        `json:"display"`
+	Orientation     string        `json:"orientation"`
 	ThemeColor      string        `json:"theme_color"`
 	BackgroundColor string        `json:"background_color"`
 	Scope           string        `json:"scope"`
@@ -30,6 +31,7 @@ func NewManifest(c Config) (m *Manifest) {
 		Description:     c.Description,
 		Categories:      Categories,
 		Display:         c.Mode,
+		Orientation:     "any",
 		ThemeColor:      clean.Color(c.Color),
 		BackgroundColor: clean.Color(c.Color),
 		Scope:           c.BaseUri,
