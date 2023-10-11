@@ -5,14 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-06 08:25+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
-"frontend/he/>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
-"n % 10 == 0) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
@@ -37,7 +35,7 @@ msgstr "%{n} תוויות נמצאו"
 msgid "%{n} people found"
 msgstr "%{n} אנשים מצאו"
 
-#: src/page/album/photos.vue:240 src/page/album/photos.vue:393
+#: src/page/album/photos.vue:241 src/page/album/photos.vue:394
 #: src/page/photos.vue:344 src/page/photos.vue:509
 msgid "%{n} pictures found"
 msgstr "נמצאו %{n} תמונות"
@@ -352,8 +350,7 @@ msgstr "אימות"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr ""
-"צור אוטומטית תמונות ממוזערות עבור קבצים שלא ניתן לאינדקס או להציג בדרך אחרת."
+msgstr "צור אוטומטית תמונות ממוזערות עבור קבצים שלא ניתן לאינדקס או להציג בדרך אחרת."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -434,7 +431,7 @@ msgstr "מצלמה"
 msgid "Camera Serial"
 msgstr "מזהה מצלמה"
 
-#: src/page/album/photos.vue:246 src/page/photos.vue:350
+#: src/page/album/photos.vue:247 src/page/photos.vue:350
 msgid "Can't load more, limit reached"
 msgstr "לא ניתן לטעון יותר, הגעת למגבלה"
 
@@ -1603,7 +1600,7 @@ msgstr "לא נמצאו אנשים"
 
 #: src/common/viewer.js:263 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:389
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
 #: src/page/places.vue:376 src/page/places.vue:456
 msgid "No pictures found"
@@ -1715,7 +1712,7 @@ msgstr "נמצאה תווית אחת"
 msgid "One person found"
 msgstr "אדם אחד נמצא"
 
-#: src/page/album/photos.vue:391 src/page/photos.vue:507
+#: src/page/album/photos.vue:392 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "תמונה אחת נמצאה"
 

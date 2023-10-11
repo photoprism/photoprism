@@ -35,7 +35,7 @@ msgstr "พบ %{n} ป้ายกำกับ"
 msgid "%{n} people found"
 msgstr "พบบุคคล %{n} คน"
 
-#: src/page/album/photos.vue:240 src/page/album/photos.vue:393
+#: src/page/album/photos.vue:241 src/page/album/photos.vue:394
 #: src/page/photos.vue:344 src/page/photos.vue:509
 msgid "%{n} pictures found"
 msgstr "พบ %{n} รูปภาพ"
@@ -431,7 +431,7 @@ msgstr "กล้อง"
 msgid "Camera Serial"
 msgstr "อนุกรมกล้อง"
 
-#: src/page/album/photos.vue:246 src/page/photos.vue:350
+#: src/page/album/photos.vue:247 src/page/photos.vue:350
 msgid "Can't load more, limit reached"
 msgstr "โหลดเพิ่มไม่ได้แล้ว หมดเขตแล้ว"
 
@@ -1600,7 +1600,7 @@ msgstr "ไม่พบผู้คน"
 
 #: src/common/viewer.js:263 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:389
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
 #: src/page/places.vue:376 src/page/places.vue:456
 msgid "No pictures found"
@@ -1712,7 +1712,7 @@ msgstr "พบหนึ่งป้าย"
 msgid "One person found"
 msgstr "พบหนึ่งคน"
 
-#: src/page/album/photos.vue:391 src/page/photos.vue:507
+#: src/page/album/photos.vue:392 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "พบหนึ่งภาพ"
 

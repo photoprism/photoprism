@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-06 08:25+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Japanese <https://translate.photoprism.app/projects/"
-"photoprism/frontend/ja/>\n"
+"Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,7 +35,7 @@ msgstr "%{n} 個のラベルが見つかりました"
 msgid "%{n} people found"
 msgstr "%{n}人が見つかりました"
 
-#: src/page/album/photos.vue:240 src/page/album/photos.vue:393
+#: src/page/album/photos.vue:241 src/page/album/photos.vue:394
 #: src/page/photos.vue:344 src/page/photos.vue:509
 msgid "%{n} pictures found"
 msgstr "%{n}の写真が見つかりました"
@@ -432,7 +431,7 @@ msgstr "カメラ"
 msgid "Camera Serial"
 msgstr "カメラのシリアル"
 
-#: src/page/album/photos.vue:246 src/page/photos.vue:350
+#: src/page/album/photos.vue:247 src/page/photos.vue:350
 msgid "Can't load more, limit reached"
 msgstr "更に読み込むことはできません、制限に達しました"
 
@@ -1601,7 +1600,7 @@ msgstr "ユーザーが見つかりません"
 
 #: src/common/viewer.js:263 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:389
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
 #: src/page/places.vue:376 src/page/places.vue:456
 msgid "No pictures found"
@@ -1713,7 +1712,7 @@ msgstr "1枚のラベルが見つかりました"
 msgid "One person found"
 msgstr "一人が見つけた"
 
-#: src/page/album/photos.vue:391 src/page/photos.vue:507
+#: src/page/album/photos.vue:392 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "1枚の写真を発見"
 

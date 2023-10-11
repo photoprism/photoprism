@@ -35,7 +35,7 @@ msgstr "%{n} برچسب پیدا شد"
 msgid "%{n} people found"
 msgstr "%{n} نفر پیدا شد"
 
-#: src/page/album/photos.vue:240 src/page/album/photos.vue:393
+#: src/page/album/photos.vue:241 src/page/album/photos.vue:394
 #: src/page/photos.vue:344 src/page/photos.vue:509
 msgid "%{n} pictures found"
 msgstr "%{n} عکس پیدا شد"
@@ -350,9 +350,7 @@ msgstr "احراز هویت"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr ""
-"به طور خودکار تصاویر کوچک برای فایل هایی ایجاد کنید که در غیر این صورت نمی "
-"توان آنها را فهرست یا مشاهده کرد."
+msgstr "به طور خودکار تصاویر کوچک برای فایل هایی ایجاد کنید که در غیر این صورت نمی توان آنها را فهرست یا مشاهده کرد."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -433,7 +431,7 @@ msgstr "دوربین"
 msgid "Camera Serial"
 msgstr "سریال دوربین"
 
-#: src/page/album/photos.vue:246 src/page/photos.vue:350
+#: src/page/album/photos.vue:247 src/page/photos.vue:350
 msgid "Can't load more, limit reached"
 msgstr "نمی تواند بار بیشتری بارگیری کند ، محدود شود"
 
@@ -1602,7 +1600,7 @@ msgstr "هیچ فردی پیدا نشد"
 
 #: src/common/viewer.js:263 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:389
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
 #: src/page/places.vue:376 src/page/places.vue:456
 msgid "No pictures found"
@@ -1714,7 +1712,7 @@ msgstr "یک برچسب پیدا شد"
 msgid "One person found"
 msgstr "یک شخص پیدا شد"
 
-#: src/page/album/photos.vue:391 src/page/photos.vue:507
+#: src/page/album/photos.vue:392 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "یک تصویر پیدا شد"
 

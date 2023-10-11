@@ -32,7 +32,7 @@ msgstr "%{n} etiketa aurkitu dira"
 msgid "%{n} people found"
 msgstr "%{n} pertsona aurkitu dira"
 
-#: src/page/album/photos.vue:240 src/page/album/photos.vue:393
+#: src/page/album/photos.vue:241 src/page/album/photos.vue:394
 #: src/page/photos.vue:344 src/page/photos.vue:509
 msgid "%{n} pictures found"
 msgstr "%{n} argazki aurkitu dira"
@@ -347,9 +347,7 @@ msgstr "Autentifikazioa"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr ""
-"Sortu automatikoki koadro txikiak bestela indexatu edo ikusi ezin diren "
-"fitxategietarako."
+msgstr "Sortu automatikoki koadro txikiak bestela indexatu edo ikusi ezin diren fitxategietarako."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -430,7 +428,7 @@ msgstr "Kamera"
 msgid "Camera Serial"
 msgstr "Kamera seriea"
 
-#: src/page/album/photos.vue:246 src/page/photos.vue:350
+#: src/page/album/photos.vue:247 src/page/photos.vue:350
 msgid "Can't load more, limit reached"
 msgstr "Ezin da gehiago kargatu, mugara iritsi da"
 
@@ -1599,7 +1597,7 @@ msgstr "Ez da jenderik aurkitu"
 
 #: src/common/viewer.js:263 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:389
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
 #: src/page/places.vue:376 src/page/places.vue:456
 msgid "No pictures found"
@@ -1711,7 +1709,7 @@ msgstr "Etiketa bat aurkitu da"
 msgid "One person found"
 msgstr "Pertsona bat aurkitu du"
 
-#: src/page/album/photos.vue:391 src/page/photos.vue:507
+#: src/page/album/photos.vue:392 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "Irudi bat aurkitu da"
 

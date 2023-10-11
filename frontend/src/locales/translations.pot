@@ -27,8 +27,8 @@ msgstr ""
 msgid "%{n} people found"
 msgstr ""
 
-#: src/page/album/photos.vue:240
-#: src/page/album/photos.vue:393
+#: src/page/album/photos.vue:241
+#: src/page/album/photos.vue:394
 #: src/page/photos.vue:344
 #: src/page/photos.vue:509
 msgid "%{n} pictures found"
@@ -481,7 +481,7 @@ msgstr ""
 msgid "Camera Serial"
 msgstr ""
 
-#: src/page/album/photos.vue:246
+#: src/page/album/photos.vue:247
 #: src/page/photos.vue:350
 msgid "Can't load more, limit reached"
 msgstr ""
@@ -1901,7 +1901,7 @@ msgstr ""
 #: src/component/photo/cards.vue:6
 #: src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8
-#: src/page/album/photos.vue:389
+#: src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34
 #: src/page/photos.vue:505
 #: src/page/places.vue:376
@@ -2032,7 +2032,7 @@ msgstr ""
 msgid "One person found"
 msgstr ""
 
-#: src/page/album/photos.vue:391
+#: src/page/album/photos.vue:392
 #: src/page/photos.vue:507
 msgid "One picture found"
 msgstr ""

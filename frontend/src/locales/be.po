@@ -7,8 +7,7 @@ msgstr ""
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
@@ -33,7 +32,7 @@ msgstr "%{n} метак знойдзена"
 msgid "%{n} people found"
 msgstr "Знойдзена %{n} чалавек"
 
-#: src/page/album/photos.vue:240 src/page/album/photos.vue:393
+#: src/page/album/photos.vue:241 src/page/album/photos.vue:394
 #: src/page/photos.vue:344 src/page/photos.vue:509
 msgid "%{n} pictures found"
 msgstr "Знойдзена %{n} малюнкаў"
@@ -348,9 +347,7 @@ msgstr "Аўтэнтыфікацыя"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr ""
-"Аўтаматычна ствараць мініяцюры для файлаў, якія інакш нельга праіндэксаваць "
-"або праглядаць."
+msgstr "Аўтаматычна ствараць мініяцюры для файлаў, якія інакш нельга праіндэксаваць або праглядаць."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -431,7 +428,7 @@ msgstr "Камера"
 msgid "Camera Serial"
 msgstr "Серыял камеры"
 
-#: src/page/album/photos.vue:246 src/page/photos.vue:350
+#: src/page/album/photos.vue:247 src/page/photos.vue:350
 msgid "Can't load more, limit reached"
 msgstr "Немагчыма загрузіць больш, дасягнуты ліміт"
 
@@ -1600,7 +1597,7 @@ msgstr "Людзей не знойдзена"
 
 #: src/common/viewer.js:263 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:389
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
 #: src/page/places.vue:376 src/page/places.vue:456
 msgid "No pictures found"
@@ -1712,7 +1709,7 @@ msgstr "Знойдзена адна этыкетка"
 msgid "One person found"
 msgstr "Знайшоўся адзін чалавек"
 
-#: src/page/album/photos.vue:391 src/page/photos.vue:507
+#: src/page/album/photos.vue:392 src/page/photos.vue:507
 msgid "One picture found"
 msgstr "Адзін здымак знойдзены"
 
