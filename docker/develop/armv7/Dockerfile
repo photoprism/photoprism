@@ -1,5 +1,5 @@
-#### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
-FROM ubuntu:jammy
+#### Base Image: Ubuntu 23.04 (Lunar Lobster)
+FROM ubuntu:lunar
 
 # Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
 #
@@ -9,7 +9,7 @@ FROM ubuntu:jammy
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism® Build Image (ARMv7)"
-LABEL org.opencontainers.image.description="Ubuntu 22.04 LTS (Jammy Jellyfish)"
+LABEL org.opencontainers.image.description="Ubuntu 23.04 (Lunar Lobster)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
@@ -59,8 +59,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         exiftool ffmpeg libavcodec-extra \
     && \
     /scripts/install-nodejs.sh && \
-    /scripts/install-tensorflow.sh && \
-    /scripts/install-libheif.sh && \
+    /scripts/install-tensorflow.sh && \ 
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
@@ -79,14 +78,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
-# download models and testdata
+# Download models and testdata.
 RUN mkdir /tmp/photoprism && \
     wget "https://dl.photoprism.app/tensorflow/nsfw.zip?${BUILD_TAG}" -O /tmp/photoprism/nsfw.zip && \
     wget "https://dl.photoprism.app/tensorflow/nasnet.zip?${BUILD_TAG}" -O /tmp/photoprism/nasnet.zip && \
     wget "https://dl.photoprism.app/tensorflow/facenet.zip?${BUILD_TAG}" -O /tmp/photoprism/facenet.zip && \
     wget "https://dl.photoprism.app/qa/testdata.zip?${BUILD_TAG}" -O /tmp/photoprism/testdata.zip
 
-# set up project directory
+# Default working directory.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 
 # Expose the following container ports:
@@ -103,3 +102,4 @@ ENTRYPOINT ["/scripts/entrypoint.sh"]
 
 # Keep container running.
 CMD ["tail", "-f", "/dev/null"]
+

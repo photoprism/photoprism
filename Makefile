@@ -335,8 +335,9 @@ docker-develop-bullseye-slim:
 	docker pull --platform=amd64 debian:bullseye-slim
 	docker pull --platform=arm64 debian:bullseye-slim
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye-slim /bullseye-slim
+develop-armv7: docker-develop-armv7
 docker-develop-armv7:
-	docker pull --platform=arm ubuntu:jammy
+	docker pull --platform=arm ubuntu:lunar
 	scripts/docker/buildx.sh develop linux/arm armv7 /armv7
 docker-develop-buster:
 	docker pull --platform=amd64 golang:1-buster
