@@ -11,7 +11,7 @@ ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILD_TAG
 
-# Copy source to image.
+# Copy project files.
 WORKDIR "/go/src/github.com/photoprism/photoprism"
 COPY . .
 
@@ -20,7 +20,7 @@ RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
 #### Base Image: Ubuntu 23.04 (Lunar Lobster)
-FROM ubuntu:jammy
+FROM ubuntu:lunar
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
@@ -31,6 +31,7 @@ LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
 LABEL org.opencontainers.image.authors="PhotoPrism UG <hello@photoprism.app>"
 LABEL org.opencontainers.image.vendor="PhotoPrism UG"
+LABEL org.opencontainers.image.ref.name="photoprism"
 
 # Declare build parameters.
 ARG TARGETARCH
