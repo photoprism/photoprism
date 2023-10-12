@@ -3,7 +3,7 @@
     lazy persistent class="p-photo-edit-dialog" @keydown.esc="close" @keydown.left="prev_if_possible" @keydown.right="next_if_possible">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark class="action-close" @click.stop="close">
+        <v-btn icon dark class="action-close" ref="close_button" @click.stop="close">
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>{{ title }}
@@ -246,6 +246,7 @@ export default {
         this.model = model;
         this.loading = false;
         this.uid = this.selectedId;
+        this.$nextTick(() => this.$refs.close_button.$el.focus());
       }).catch(() => this.loading = false);
     },
   },
