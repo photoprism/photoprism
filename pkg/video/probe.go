@@ -94,6 +94,7 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 	if CompatibleBrands.ContainsAny(video.CompatibleBrands) {
 		info.Compatible = true
 		info.VideoType = MP4
+		info.VideoMimeType = fs.MimeTypeMP4
 		info.FPS = 30.0 // TODO: Detect actual frames per second!
 
 		if info.VideoOffset > 0 {
@@ -107,8 +108,6 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 
 	// Check major brand.
 	switch video.MajorBrand {
-	case ChunkMP41.Get(), ChunkMP42.Get():
-		info.VideoMimeType = fs.MimeTypeMP4
 	case ChunkQT.Get():
 		info.VideoType = MOV
 		info.VideoMimeType = fs.MimeTypeMOV

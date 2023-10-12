@@ -119,7 +119,7 @@ func TestProbeFile(t *testing.T) {
 		assert.Equal(t, int64(-1), info.ThumbOffset)
 		assert.Equal(t, media.Video, info.MediaType)
 		assert.Equal(t, CodecUnknown, info.VideoCodec)
-		assert.Equal(t, "", info.VideoContentType())
+		assert.Equal(t, ContentTypeDefault, info.VideoContentType())
 		assert.Equal(t, "", info.VideoMimeType)
 		assert.Equal(t, "0s", info.Duration.String())
 		assert.Equal(t, 0, info.Tracks)

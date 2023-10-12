@@ -69,32 +69,28 @@ func (info Info) VideoBitrate() float64 {
 // VideoContentType composes the video content type from its mime type and codec.
 func (info Info) VideoContentType() string {
 	if info.VideoMimeType == "" {
-		return ""
+		return ContentTypeDefault
 	}
 
 	return ContentType(info.VideoMimeType, info.VideoCodec)
 }
 
-// VideoFileExt returns the appropriate video file extension based on the mime type, if any.
+// VideoFileExt returns the appropriate video file extension based on the mime type and defaults to fs.ExtMP4 otherwise.
 func (info Info) VideoFileExt() string {
 	switch info.VideoMimeType {
-	case fs.MimeTypeMP4:
-		return fs.ExtMP4
 	case fs.MimeTypeMOV:
 		return fs.ExtMOV
 	default:
-		return ""
+		return fs.ExtMP4
 	}
 }
 
-// VideoFileType returns the video type based on the mime type, if any.
+// VideoFileType returns the video type based on the mime type and defaults to fs.VideoMP4 otherwise.
 func (info Info) VideoFileType() fs.Type {
 	switch info.VideoMimeType {
-	case fs.MimeTypeMP4:
-		return fs.VideoMP4
 	case fs.MimeTypeMOV:
 		return fs.VideoMOV
 	default:
-		return fs.TypeUnknown
+		return fs.VideoMP4
 	}
 }
