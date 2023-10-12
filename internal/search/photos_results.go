@@ -49,11 +49,11 @@ type Photo struct {
 	CameraID         uint          `json:"CameraID" select:"photos.camera_id"` // Camera
 	CameraSrc        string        `json:"CameraSrc,omitempty" select:"photos.camera_src"`
 	CameraSerial     string        `json:"CameraSerial,omitempty" select:"photos.camera_serial"`
-	CameraModel      string        `json:"CameraModel,omitempty" select:"cameras.camera_model"`
 	CameraMake       string        `json:"CameraMake,omitempty" select:"cameras.camera_make"`
+	CameraModel      string        `json:"CameraModel,omitempty" select:"cameras.camera_model"`
 	LensID           uint          `json:"LensID" select:"photos.lens_id"` // Lens
-	LensModel        string        `json:"LensModel,omitempty" select:"lenses.lens_make"`
 	LensMake         string        `json:"LensMake,omitempty" select:"lenses.lens_model"`
+	LensModel        string        `json:"LensModel,omitempty" select:"lenses.lens_make"`
 	PhotoAltitude    int           `json:"Altitude,omitempty" select:"photos.photo_altitude"`
 	PhotoLat         float32       `json:"Lat" select:"photos.photo_lat"`
 	PhotoLng         float32       `json:"Lng" select:"photos.photo_lng"`

@@ -1185,6 +1185,65 @@ describe("model/photo", () => {
     assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC, 500 × 600");
   });
 
+  it("should return lens info", () => {
+    const values = {
+      ID: "674-860",
+      UID: "ps22wlskqtcmu9l3",
+      Type: "raw",
+      TypeSrc: "",
+      TakenAt: "2018-10-05T08:47:32Z",
+      TakenAtLocal: "2018-10-05T08:47:32Z",
+      TakenSrc: "meta",
+      TimeZone: "",
+      Path: "raw images/Canon EOS 700 D",
+      Name: "_MG_9509",
+      OriginalName: "",
+      Title: "Unknown / 2018",
+      Description: "",
+      Year: 2018,
+      Month: 10,
+      Day: 5,
+      Country: "zz",
+      Stack: 0,
+      Favorite: false,
+      Private: false,
+      Iso: 100,
+      FocalLength: 50,
+      FNumber: 2.8,
+      Exposure: "1/1600",
+      Quality: 3,
+      Resolution: 18,
+      Color: 0,
+      Scan: false,
+      Panorama: false,
+      CameraID: 47,
+      CameraSrc: "meta",
+      CameraSerial: "338075021697",
+      CameraModel: "EOS 700D",
+      CameraMake: "Canon",
+      LensID: 47,
+      LensModel: "EF50mm f/1.8 II",
+      CellID: "zz",
+      PlaceID: "zz",
+      PlaceSrc: "",
+      PlaceLabel: "Unknown",
+      PlaceCity: "Unknown",
+      PlaceState: "Unknown",
+      PlaceCountry: "zz",
+      InstanceID: "",
+      FileUID: "fs25jsa22w9g851o",
+      FileRoot: "sidecar",
+      FileName: "raw images/Canon EOS 700 D/_MG_9509.CR2.jpg",
+      Hash: "7dc01e8cb588f3cfe31694ac2fece10167d88eec",
+      Width: 5198,
+      Height: 3462,
+      Portrait: false,
+      Files: [],
+    };
+    const photo = new Photo(values);
+    assert.equal(photo.getLensInfo(), "EF50mm f/1.8 II, 50mm, ƒ/2.8, 1/1600");
+  });
+
   it("should archive photo", () => {
     const values = { ID: 5, Title: "Crazy Cat", CountryName: "Africa", Favorite: false };
     const photo = new Photo(values);

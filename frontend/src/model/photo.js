@@ -136,10 +136,14 @@ export class Photo extends RestModel {
       Views: 0,
       Camera: {},
       CameraID: 0,
+      CameraMake: "",
+      CameraModel: "",
       CameraSerial: "",
       CameraSrc: "",
       Lens: {},
       LensID: 0,
+      LensMake: "",
+      LensModel: "",
       Country: "",
       Year: YearUnknown,
       Month: MonthUnknown,
@@ -888,12 +892,13 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
+  // Example: 00:00:03, HEVC, ISO250, 1440 × 1920, 4.2 MB
   getVideoInfo = () => {
     let file = this.videoFile() || this.mainFile();
-    return this.generateVideoInfo(file);
+    return this.generateVideoInfo(this.Iso, file);
   };
 
-  generateVideoInfo = memoizeOne((file) => {
+  generateVideoInfo = memoizeOne((iso, file) => {
     if (!file) {
       return $gettext("Video");
     }
@@ -908,6 +913,10 @@ export class Photo extends RestModel {
       info.push(Util.formatCodec(file.Codec));
     }
 
+    if (iso) {
+      info.push("ISO" + iso);
+    }
+
     this.addSizeInfo(file, info);
 
     if (!info.length) {
@@ -917,12 +926,13 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
+  // Example: EOS 700D, CR2, ISO100, 5184 × 3456, 20.5 MB
   getPhotoInfo = () => {
     let file = this.originalFile() || this.videoFile();
-    return this.generatePhotoInfo(this.Camera, this.CameraModel, this.CameraMake, file);
+    return this.generatePhotoInfo(this.Camera, this.CameraMake, this.CameraModel, this.Iso, file);
   };
 
-  generatePhotoInfo = memoizeOne((camera, cameraModel, cameraMake, file) => {
+  generatePhotoInfo = memoizeOne((camera, cameraMake, cameraModel, iso, file) => {
     let info = [];
 
     if (camera) {
@@ -943,6 +953,10 @@ export class Photo extends RestModel {
       info.push(Util.formatCodec(file.Codec));
     }
 
+    if (iso) {
+      info.push("ISO" + iso);
+    }
+
     this.addSizeInfo(file, info);
 
     if (!info.length) {
@@ -951,6 +965,60 @@ export class Photo extends RestModel {
 
     return info.join(", ");
   });
+
+  // Example: EF24-105mm f/4L IS USM, 50mm, ƒ/8, 1/125
+  getLensInfo = () => {
+    return this.generateLensInfo(
+      this.Lens,
+      this.LensID,
+      this.LensMake,
+      this.LensModel,
+      this.FNumber,
+      this.Exposure,
+      this.FocalLength
+    );
+  };
+
+  generateLensInfo = memoizeOne(
+    (lens, lensId, lensMake, lensModel, fNumber, exposure, focalLength) => {
+      let info = [];
+
+      // Example: EF-S18-55mm f/3.5-5.6 IS STM
+      if (lens && lens.Model && lens.ID > 1) {
+        if (lens.Model.length > 7) {
+          info.push(lens.Model);
+        } else {
+          info.push(lens.Make + " " + lens.Model);
+        }
+      } else if (lensModel && lensId > 1) {
+        if (lensModel.length > 45) {
+          return lensModel;
+        } else {
+          info.push(lensModel);
+        }
+      } else if (lensMake) {
+        info.push(lensMake);
+      }
+
+      if (focalLength) {
+        info.push(focalLength + "mm");
+      }
+
+      if (fNumber && (!lensModel || !lensModel.endsWith(fNumber.toString()))) {
+        info.push("ƒ/" + fNumber);
+      }
+
+      if (exposure) {
+        info.push(exposure);
+      }
+
+      if (!info.length) {
+        return $gettext("Unknown");
+      }
+
+      return info.join(", ");
+    }
+  );
 
   getCamera() {
     if (this.Camera) {

@@ -1,6 +1,7 @@
 /* Layout Breakpoints */
 
 @media (min-width: 1750px) {
+    /* Extra Large (XL) */
     .flex.xlg2 {
         flex-basis: 16.666666666666664%;
         flex-grow: 0;
@@ -14,6 +15,7 @@
 }
 
 @media (min-width: 2400px) {
+    /* Extra Extra Large (XXL) */
     .flex.xxl1 {
         flex-basis: 8.333333333333332%;
         flex-grow: 0;
@@ -26,13 +28,14 @@
     }
 }
 
-@media (min-width: 2550px) {
-    .flex.xxxl1 {
+@media (min-width: 2800px) {
+    /* Ultra Large (UL) */
+    .flex.ul1 {
         flex-basis: 8.333333333333332%;
         flex-grow: 0;
         max-width: 8.333333333333332%;
     }
-    .flex.xxxl11 {
+    .flex.ul11 {
         flex-basis: 91.66666666666667%;
         flex-grow: 0;
         max-width: 91.66666666666667%;
@@ -40,7 +43,6 @@
 }
 
 /* Layout Widths */
-
 
 .width-sm, .width-md, .width-lg {
     margin-left: auto;
