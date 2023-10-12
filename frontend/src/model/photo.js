@@ -892,13 +892,13 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
-  // Example: 00:00:03, HEVC, ISO250, 1440 × 1920, 4.2 MB
+  // Example: 00:00:03, HEVC, 1440 × 1920, 4.2 MB
   getVideoInfo = () => {
     let file = this.videoFile() || this.mainFile();
-    return this.generateVideoInfo(this.Iso, file);
+    return this.generateVideoInfo(file);
   };
 
-  generateVideoInfo = memoizeOne((iso, file) => {
+  generateVideoInfo = memoizeOne((file) => {
     if (!file) {
       return $gettext("Video");
     }
@@ -913,10 +913,6 @@ export class Photo extends RestModel {
       info.push(Util.formatCodec(file.Codec));
     }
 
-    if (iso) {
-      info.push("ISO" + iso);
-    }
-
     this.addSizeInfo(file, info);
 
     if (!info.length) {
@@ -926,7 +922,7 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
-  // Example: EOS 700D, CR2, ISO100, 5184 × 3456, 20.5 MB
+  // Example: EOS 700D, CR2, 5184 × 3456, 20.5 MB
   getPhotoInfo = () => {
     let file = this.originalFile() || this.videoFile();
     return this.generatePhotoInfo(this.Camera, this.CameraMake, this.CameraModel, file);
