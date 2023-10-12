@@ -407,6 +407,21 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("photos.lens_id = ?", f.Lens)
 	}
 
+	// Filter by ISO Range.
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Iso, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_iso >= ? AND photos.photo_iso <= ?", rangeStart, rangeEnd)
+	}
+
+	// Filter by F-Number Range.
+	if rangeStart, rangeEnd, rangeErr := txt.FloatRange(f.F, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_f_number >= ? AND photos.photo_f_number <= ?", rangeStart-0.01, rangeEnd+0.01)
+	}
+
+	// Filter by Focal Length Range.
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Mm, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_focal_length >= ? AND photos.photo_focal_length <= ?", rangeStart, rangeEnd)
+	}
+
 	// Filter by year.
 	if f.Year != "" {
 		s = s.Where(AnyInt("photos.photo_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))

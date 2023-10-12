@@ -1,6 +1,7 @@
 package txt
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
@@ -45,6 +46,58 @@ func IntVal(s string, min, max, def int) (i int) {
 	return i
 }
 
+// IntRange parses a string as integer range and returns an error if it's not a valid range.
+func IntRange(s string, min, max int) (start int, end int, err error) {
+	if s == "" || len(s) > 40 {
+		return start, end, errors.New("invalid range")
+	}
+
+	valid := false
+
+	p := 0
+	v := [][]byte{make([]byte, 0, 20), make([]byte, 0, 20)}
+
+	for i, r := range s {
+		if r == 45 {
+			if i == 0 || p == 1 {
+				v[p] = append(v[p], byte(r))
+			} else if p == 0 {
+				p = 1
+			}
+		}
+		if r == 46 || r >= 48 && r <= 57 {
+			valid = true
+			v[p] = append(v[p], byte(r))
+		}
+	}
+
+	if !valid {
+		return start, end, errors.New("invalid range")
+	}
+
+	if p == 0 {
+		start = Int(string(v[0]))
+		end = start
+	} else {
+		start = Int(string(v[0]))
+		end = Int(string(v[1]))
+	}
+
+	if start > max {
+		start = max
+	} else if start < min {
+		start = min
+	}
+
+	if end > max {
+		end = max
+	} else if end < min {
+		end = min
+	}
+
+	return start, end, nil
+}
+
 // UInt converts a string to an unsigned integer or 0 if invalid.
 func UInt(s string) uint {
 	if s == "" {
@@ -60,6 +113,23 @@ func UInt(s string) uint {
 	}
 
 	return uint(result)
+}
+
+// Int64 converts a string to a signed 64-bit integer or 0 if invalid.
+func Int64(s string) int64 {
+	if s == "" {
+		return 0
+	}
+
+	i := strings.SplitN(Numeric(s), ".", 2)
+
+	result, err := strconv.ParseInt(i[0], 10, 64)
+
+	if err != nil {
+		return 0
+	}
+
+	return result
 }
 
 // IsUInt tests if a string represents an unsigned integer.

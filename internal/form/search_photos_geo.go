@@ -67,6 +67,9 @@ type SearchPhotosGeo struct {
 	Color     string    `form:"color"`
 	Camera    int       `form:"camera"`
 	Lens      int       `form:"lens"`
+	Iso       string    `form:"iso" example:"iso:200-400" notes:"ISO Range"`
+	F         string    `form:"f" example:"f:2.8-4.5" notes:"F-Number Range"`
+	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length Range"`
 	Count     int       `form:"count" serialize:"-"`
 	Offset    int       `form:"offset" serialize:"-"`
 }
