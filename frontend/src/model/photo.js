@@ -929,10 +929,10 @@ export class Photo extends RestModel {
   // Example: EOS 700D, CR2, ISO100, 5184 × 3456, 20.5 MB
   getPhotoInfo = () => {
     let file = this.originalFile() || this.videoFile();
-    return this.generatePhotoInfo(this.Camera, this.CameraMake, this.CameraModel, this.Iso, file);
+    return this.generatePhotoInfo(this.Camera, this.CameraMake, this.CameraModel, file);
   };
 
-  generatePhotoInfo = memoizeOne((camera, cameraMake, cameraModel, iso, file) => {
+  generatePhotoInfo = memoizeOne((camera, cameraMake, cameraModel, file) => {
     let info = [];
 
     if (camera) {
@@ -953,10 +953,6 @@ export class Photo extends RestModel {
       info.push(Util.formatCodec(file.Codec));
     }
 
-    if (iso) {
-      info.push("ISO" + iso);
-    }
-
     this.addSizeInfo(file, info);
 
     if (!info.length) {
@@ -966,21 +962,23 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
-  // Example: EF24-105mm f/4L IS USM, 50mm, ƒ/8, 1/125
+  // Example: EF24-105mm f/4L IS USM, 50mm, ƒ/8, ISO200, 1/125
   getLensInfo = () => {
     return this.generateLensInfo(
       this.Lens,
       this.LensID,
       this.LensMake,
       this.LensModel,
+      this.CameraModel,
       this.FNumber,
+      this.Iso,
       this.Exposure,
       this.FocalLength
     );
   };
 
   generateLensInfo = memoizeOne(
-    (lens, lensId, lensMake, lensModel, fNumber, exposure, focalLength) => {
+    (lens, lensId, lensMake, lensModel, cameraModel, fNumber, iso, exposure, focalLength) => {
       let info = [];
 
       // Example: EF-S18-55mm f/3.5-5.6 IS STM
@@ -991,6 +989,14 @@ export class Photo extends RestModel {
           info.push(lens.Make + " " + lens.Model);
         }
       } else if (lensModel && lensId > 1) {
+        if (
+          cameraModel &&
+          lensModel.startsWith(cameraModel + " ") &&
+          cameraModel.length < lensModel.length + 5
+        ) {
+          lensModel = Util.ucFirst(lensModel.substring(cameraModel.length + 1));
+        }
+
         if (lensModel.length > 45) {
           return lensModel;
         } else {
@@ -1006,6 +1012,10 @@ export class Photo extends RestModel {
 
       if (fNumber && (!lensModel || !lensModel.endsWith(fNumber.toString()))) {
         info.push("ƒ/" + fNumber);
+      }
+
+      if (iso) {
+        info.push("ISO" + iso);
       }
 
       if (exposure) {

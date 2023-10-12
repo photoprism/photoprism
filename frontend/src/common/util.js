@@ -153,6 +153,14 @@ export default class Util {
     return s.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
   }
 
+  static ucFirst(s) {
+    if (!s || s === "") {
+      return "";
+    }
+
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
   static generateToken() {
     return (Math.random() + 1).toString(36).substring(6);
   }
