@@ -8,13 +8,13 @@ import (
 )
 
 // FileType returns the type associated with the specified filename,
-// and UnknownType if it could not be matched.
+// and TypeUnknown if it could not be matched.
 func FileType(fileName string) Type {
 	if t, found := Extensions[LowerExt(fileName)]; found {
 		return t
 	}
 
-	return UnknownType
+	return TypeUnknown
 }
 
 // IsAnimatedImage checks if the type associated with the specified filename may be animated.

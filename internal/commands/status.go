@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"time"
 
@@ -19,7 +20,7 @@ var StatusCommand = cli.Command{
 	Action: statusAction,
 }
 
-// statusAction checks if the web server is running.
+// statusAction checks if the Web server is running.
 func statusAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
@@ -31,6 +32,15 @@ func statusAction(ctx *cli.Context) error {
 	// running after Get, Head, Post, or Do return and will
 	// interrupt reading of the Response.Body.
 	client := &http.Client{Timeout: 10 * time.Second}
+
+	// Connect to unix socket?
+	if unixSocket := conf.HttpSocket(); unixSocket != "" {
+		client.Transport = &http.Transport{
+			Dial: func(network, addr string) (net.Conn, error) {
+				return net.Dial("unix", unixSocket)
+			},
+		}
+	}
 
 	url := fmt.Sprintf("http://%s:%d/api/v1/status", conf.HttpHost(), conf.HttpPort())
 

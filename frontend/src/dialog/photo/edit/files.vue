@@ -5,7 +5,7 @@
         <v-expansion-panel-content v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light"
                                    style="margin-top: 1px;">
           <template #header>
-            <div class="caption">{{ file.baseName(70) }}</div>
+            <div class="caption filename">{{ file.baseName(70) }}</div>
           </template>
           <v-card>
             <v-card-text class="white pa-0">
@@ -294,7 +294,10 @@ export default {
       type: Object,
       default: () => {},
     },
-    uid: String,
+    uid: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -365,8 +368,11 @@ export default {
       }
 
       const name = m.Name;
-      const path = name.substring(0, name.lastIndexOf('/'));
 
+      // "#" chars in path names must be explicitly escaped,
+      // see https://github.com/photoprism/photoprism/issues/3695
+      const path = name.substring(0, name.lastIndexOf('/'))
+        .replaceAll(":", "%3A").replaceAll("#", "%23");
       return this.$router.resolve({ path: '/index/files/' + path }).href;
     },
     downloadFile(file) {

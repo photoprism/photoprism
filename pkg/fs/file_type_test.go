@@ -167,7 +167,7 @@ func TestType_FindAll(t *testing.T) {
 func TestFileType(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		result := FileType("")
-		assert.Equal(t, UnknownType, result)
+		assert.Equal(t, TypeUnknown, result)
 	})
 	t.Run("JPEG", func(t *testing.T) {
 		result := FileType("testdata/test.jpg")

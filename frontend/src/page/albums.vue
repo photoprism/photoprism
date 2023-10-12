@@ -471,7 +471,14 @@ export default {
         return;
       }
 
-      Event.publish("dialog.upload");
+      // Pre-select manually managed album in upload dialog.
+      if(this.context === 'album' && this.selection && this.selection.length === 1) {
+        return this.model.find(this.selection[0])
+          .then(m => Event.publish("dialog.upload", {albums: [m]}))
+          .catch(() => Event.publish("dialog.upload", {albums: []}));
+      } else {
+        Event.publish("dialog.upload", {albums: []});
+      }
     },
     toggleLike(ev, index) {
       if (!this.canManage) {
@@ -750,8 +757,7 @@ export default {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} albums found"), {n: this.results.length}));
           }
         } else {
-          this.$notify.info(this.$gettext('More than 20 albums found'));
-
+          // this.$notify.info(this.$gettext('More than 20 albums found'));
           this.$nextTick(() => {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");

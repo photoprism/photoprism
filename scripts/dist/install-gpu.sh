@@ -13,13 +13,15 @@ fi
 
 set -e
 
+# Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
   SYSTEM_ARCH=$(uname -m)
 fi
 
-DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
+
 TMPDIR=${TMPDIR:-/tmp}
 
 . /etc/os-release
@@ -55,6 +57,12 @@ for t in ${GPU_DETECTED[@]}; do
     nvidia)
       echo "NVIDIA Container Toolkit must be installed: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html"
       ;;
+      
+    amdgpu)
+      echo "Installing AMD VA-API Drivers..."
+      apt-get -qq install mesa-va-drivers vainfo libva-dev
+      ;;
+      
 
     "null")
       # ignore

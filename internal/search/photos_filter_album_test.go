@@ -19,7 +19,7 @@ func TestPhotosFilterAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 3)
+		assert.Equal(t, len(photos), 4)
 	})
 	t.Run("Pet*", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -289,7 +289,7 @@ func TestPhotosQueryAlbum(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 3)
+		assert.Equal(t, len(photos), 4)
 	})
 	t.Run("Pet*", func(t *testing.T) {
 		var f form.SearchPhotos

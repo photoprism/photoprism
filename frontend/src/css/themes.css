@@ -1,15 +1,16 @@
 @import url("themes/default.css");
-@import url("themes/grayscale.css");
-@import url("themes/shadow.css");
-@import url("themes/yellowstone.css");
 @import url("themes/abyss.css");
-@import url("themes/vanta.css");
-@import url("themes/neon.css");
-@import url("themes/gemstone.css");
 @import url("themes/carbon.css");
-@import url("themes/mint.css");
-@import url("themes/nordic.css");
+@import url("themes/chrome.css");
+@import url("themes/gemstone.css");
+@import url("themes/grayscale.css");
 @import url("themes/lavender.css");
+@import url("themes/mint.css");
+@import url("themes/neon.css");
+@import url("themes/nordic.css");
+@import url("themes/shadow.css");
+@import url("themes/vanta.css");
+@import url("themes/yellowstone.css");
 
 /* Input Style Overrides */
 

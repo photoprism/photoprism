@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -156,27 +157,6 @@ func TestConfig_DetachServer(t *testing.T) {
 	assert.Equal(t, false, detachServer)
 }
 
-func TestConfig_HttpServerHost(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	host := c.HttpHost()
-	assert.Equal(t, "0.0.0.0", host)
-}
-
-func TestConfig_HttpServerPort(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	port := c.HttpPort()
-	assert.Equal(t, 2342, port)
-}
-
-func TestConfig_HttpServerMode(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	mode := c.HttpMode()
-	assert.Equal(t, HttpModeProd, mode)
-}
-
 func TestConfig_OriginalsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -204,6 +184,14 @@ func TestConfig_MediaCachePath(t *testing.T) {
 
 	assert.True(t, strings.HasPrefix(c.MediaCachePath(), "/"))
 	assert.True(t, strings.HasSuffix(c.MediaCachePath(), "storage/testdata/cache/media"))
+}
+
+func TestConfig_MediaFileCachePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, c.MediaCachePath(), c.MediaFileCachePath(""))
+	assert.Equal(t, filepath.Join(c.MediaCachePath(), "a"), c.MediaFileCachePath("a"))
+	assert.Equal(t, filepath.Join(c.MediaCachePath(), "0", "b", "5"), c.MediaFileCachePath("0b57b50fe3f6d12bbbf5f1abda3ebcc8bb5ebcee"))
 }
 
 func TestConfig_ThumbCachePath(t *testing.T) {

@@ -533,3 +533,17 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "short", mode: "p
     }
   }
 );
+
+test.meta("testID", "photos-archive-private-005").meta({ type: "short", mode: "public" })(
+  "Common: Check delete all dialog",
+  async (t) => {
+    await menu.openPage("archive");
+    await toolbar.triggerToolbarAction("delete-all");
+    await t
+      .expect(
+        Selector("div").withText("Are you sure you want to delete all archived pictures?").visible
+      )
+      .ok();
+    await t.click(Selector("button.action-cancel"));
+  }
+);

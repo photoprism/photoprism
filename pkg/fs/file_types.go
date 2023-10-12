@@ -61,7 +61,7 @@ const (
 	SidecarJSON     Type = "json"  // JSON metadata / config / sidecar file
 	SidecarText     Type = "txt"   // Text config / sidecar file
 	SidecarMarkdown Type = "md"    // Markdown text sidecar file
-	UnknownType     Type = ""      // Unknown file
+	TypeUnknown     Type = ""      // Unknown file
 )
 
 // TypeAnimated maps animated file types to their mime type.

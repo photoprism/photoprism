@@ -58,12 +58,18 @@ func NewCamera(modelName string, makeName string) *Camera {
 		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
 
+	// Normalize make name.
 	if n, ok := CameraMakes[makeName]; ok {
 		makeName = n
 	}
 
+	// Normalize model name.
 	if n, ok := CameraModels[modelName]; ok {
 		modelName = n
+	}
+
+	if strings.HasPrefix(modelName, makeName) {
+		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
 
 	var name []string

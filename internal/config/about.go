@@ -24,7 +24,6 @@ Additional information can be found in our Developer Guide:
 */
 package config
 
-var SignUpInfo = "Support Our Mission"
 var SignUpURL = "https://www.photoprism.app/membership"
 var MsgSponsor = "Become a member today, support our mission and enjoy our member benefits! 💎"
 var MsgSignUp = "Visit " + SignUpURL + " to learn more."

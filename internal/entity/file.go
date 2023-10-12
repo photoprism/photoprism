@@ -64,13 +64,13 @@ type File struct {
 	FileVideo          bool          `json:"Video" yaml:"Video,omitempty"`
 	FileDuration       time.Duration `json:"Duration" yaml:"Duration,omitempty"`
 	FileFPS            float64       `gorm:"column:file_fps;" json:"FPS" yaml:"FPS,omitempty"`
-	FileFrames         int           `json:"Frames" yaml:"Frames,omitempty"`
-	FileWidth          int           `json:"Width" yaml:"Width,omitempty"`
-	FileHeight         int           `json:"Height" yaml:"Height,omitempty"`
-	FileOrientation    int           `json:"Orientation" yaml:"Orientation,omitempty"`
-	FileOrientationSrc string        `gorm:"type:VARBINARY(8);default:'';" json:"OrientationSrc" yaml:"OrientationSrc,omitempty"`
-	FileProjection     string        `gorm:"type:VARBINARY(64);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
-	FileAspectRatio    float32       `gorm:"type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
+	FileFrames         int           `gorm:"column:file_frames;" json:"Frames" yaml:"Frames,omitempty"`
+	FileWidth          int           `gorm:"column:file_width;" json:"Width" yaml:"Width,omitempty"`
+	FileHeight         int           `gorm:"column:file_height;" json:"Height" yaml:"Height,omitempty"`
+	FileOrientation    int           `gorm:"column:file_orientation;" json:"Orientation" yaml:"Orientation,omitempty"`
+	FileOrientationSrc string        `gorm:"column:file_orientation_src;type:VARBINARY(8);default:'';" json:"OrientationSrc" yaml:"OrientationSrc,omitempty"`
+	FileProjection     string        `gorm:"column:file_projection;type:VARBINARY(64);" json:"Projection,omitempty" yaml:"Projection,omitempty"`
+	FileAspectRatio    float32       `gorm:"column:file_aspect_ratio;type:FLOAT;" json:"AspectRatio" yaml:"AspectRatio,omitempty"`
 	FileHDR            bool          `gorm:"column:file_hdr;"  json:"HDR" yaml:"HDR,omitempty"`
 	FileWatermark      bool          `gorm:"column:file_watermark;"  json:"Watermark" yaml:"Watermark,omitempty"`
 	FileColorProfile   string        `gorm:"type:VARBINARY(64);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
@@ -154,18 +154,6 @@ func (m File) RegenerateIndex() {
 	}
 
 	log.Debugf("search: updated %s [%s]", scope, time.Since(start))
-}
-
-type FileInfos struct {
-	FileWidth       int
-	FileHeight      int
-	FileOrientation int
-	FileAspectRatio float32
-	FileMainColor   string
-	FileColors      string
-	FileLuminance   string
-	FileDiff        int
-	FileChroma      int16
 }
 
 // FirstFileByHash gets a file in db from its hash
@@ -458,15 +446,34 @@ func (m *File) Save() error {
 	return m.ResolvePrimary()
 }
 
-// UpdateVideoInfos updates related video infos based on this file.
+// UpdateVideoInfos updated related video files so they are properly grouped with the primary image in search results.
+// see https://github.com/photoprism/photoprism/pull/3588#issuecomment-1683429455
 func (m *File) UpdateVideoInfos() error {
-	values := FileInfos{}
+	if m.PhotoID <= 0 {
+		return fmt.Errorf("file has invalid photo id")
+	}
 
-	if err := deepcopier.Copy(&values).From(m); err != nil {
+	// Set the video dimensions from the primary image if it could not be determined from the video metadata.
+	// see https://github.com/photoprism/photoprism/blob/develop/internal/photoprism/index_mediafile.go
+	dimensions := FileDimensions{}
+
+	if err := deepcopier.Copy(&dimensions).From(m); err != nil {
+		return err
+	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1 AND file_width <= 0", m.PhotoID).Updates(dimensions).Error; err != nil {
 		return err
 	}
 
-	return Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(values).Error
+	// Set the video appearance from the primary file if it could not be detected e.g. from a JPEG sidecar file.
+	// see https://github.com/photoprism/photoprism/blob/develop/internal/photoprism/index_mediafile.go
+	appearance := FileAppearance{}
+
+	if err := deepcopier.Copy(&appearance).From(m); err != nil {
+		return err
+	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(appearance).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Update updates a column in the database.
@@ -676,7 +683,7 @@ func (m *File) SetDuration(d time.Duration) {
 
 // Bitrate returns the average bitrate in MBit/s if the file has a duration.
 func (m *File) Bitrate() float64 {
-	// Make sure size and duration have a positive value.
+	// Return 0 if file size or video duration are unknown.
 	if m.FileSize <= 0 || m.FileDuration <= 0 {
 		return 0
 	}

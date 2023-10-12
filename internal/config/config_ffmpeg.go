@@ -9,7 +9,7 @@ import (
 
 // FFmpegBin returns the ffmpeg executable file name.
 func (c *Config) FFmpegBin() string {
-	return findBin(c.options.FFmpegBin, "ffmpeg")
+	return findBin(c.options.FFmpegBin, ffmpeg.DefaultBin)
 }
 
 // FFmpegEnabled checks if FFmpeg is enabled for video transcoding.

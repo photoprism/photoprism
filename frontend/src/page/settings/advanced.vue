@@ -324,7 +324,7 @@
             <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
               <v-checkbox
                   v-model="settings.DisableFFmpeg"
-                  :disabled="busy"
+                  :disabled="busy || (!experimental && !settings.DisableFFmpeg)"
                   class="ma-0 pa-0 input-disable-ffmpeg"
                   color="secondary-dark"
                   :label="$gettext('Disable FFmpeg')"

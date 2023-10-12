@@ -13,7 +13,7 @@ Features:
   Account: true
   Albums: true
   Archive: true
-  Delete: false
+  Delete: true
   Download: true
   Edit: true
   Estimates: true

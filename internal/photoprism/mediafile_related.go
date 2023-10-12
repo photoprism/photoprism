@@ -51,6 +51,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		return result, err
 	}
 
+	// Search for related edited image file name (as used by Apple) and add it to the list of files, if found.
 	if name := m.EditedName(); name != "" {
 		matches = append(matches, name)
 	}

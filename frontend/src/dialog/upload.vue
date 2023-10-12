@@ -62,12 +62,16 @@
               <p class="px-2 ma-0 text-xs-right opacity-85"><span v-if="eta">{{ eta }}</span></p>
             </v-progress-linear>
 
-            <p v-if="safe" class="body-1">
+            <p v-if="isDemo" class="body-2">
+              <translate :translate-params="{n: fileLimit}">You can upload up to %{n} files for test purposes.</translate>
+              <translate>Please do not upload any private, unlawful or offensive pictures. </translate>
+            </p>
+            <p v-else-if="rejectNSFW" class="body-2">
               <translate>Please don't upload photos containing offensive content.</translate>
               <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
 
-            <p v-if="review" class="body-1">
+            <p v-if="featReview" class="body-1">
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
@@ -99,8 +103,13 @@ export default {
   name: 'PUploadDialog',
   props: {
     show: Boolean,
+    data: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
+    const isDemo = this.$config.get("demo");
     return {
       albums: [],
       selectedAlbums: [],
@@ -120,16 +129,29 @@ export default {
       remainingTime: -1,
       eta: "",
       token: "",
-      review: this.$config.feature("review"),
-      safe: !this.$config.get("uploadNSFW"),
+      isDemo: isDemo,
+      fileLimit: isDemo ? 3 : 0,
+      rejectNSFW: !this.$config.get("uploadNSFW"),
+      featReview: this.$config.feature("review"),
       rtl: this.$rtl,
     };
   },
   watch: {
     show: function () {
       this.reset();
-      this.review = this.$config.feature("review");
-      this.safe = !this.$config.get("uploadNSFW");
+      this.isDemo = this.$config.get("demo");
+      this.fileLimit = this.isDemo ? 3 : 0;
+      this.rejectNSFW = !this.$config.get("uploadNSFW");
+      this.featReview = this.$config.feature("review");
+
+      // Set currently selected albums.
+      if (this.data && Array.isArray(this.data.albums)) {
+        this.selectedAlbums = this.data.albums;
+      } else {
+        this.selectedAlbums = [];
+      }
+
+      // Fetch albums from backend.
       this.findAlbums("");
     }
   },
@@ -180,8 +202,8 @@ export default {
       this.failed = false;
       this.current = 0;
       this.total = 0;
-      this.totalFailed = 0;
       this.totalSize = 0;
+      this.totalFailed = 0;
       this.completedSize = 0;
       this.completedTotal = 0;
       this.started = 0;
@@ -233,10 +255,19 @@ export default {
         return;
       }
 
-      this.selected = this.$refs.upload.files;
-      this.total = this.selected.length;
+      const files = this.$refs.upload.files;
 
-      if (this.total < 1) {
+      // Too many files selected for upload?
+      if (this.isDemo && files && files.length > this.fileLimit) {
+        Notify.error(this.$gettext("Too many files selected"));
+        return;
+      }
+
+      this.selected = files;
+      this.total = files.length;
+
+      // No files selected?
+      if (!this.selected || this.total < 1) {
         return;
       }
 

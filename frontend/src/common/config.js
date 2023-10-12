@@ -327,6 +327,12 @@ export default class Config {
       case "files":
         this.values.count.files += data.count;
         break;
+      case "hidden":
+        this.values.count.hidden += data.count;
+        break;
+      case "archived":
+        this.values.count.archived += data.count;
+        break;
       case "favorites":
         this.values.count.favorites += data.count;
         break;

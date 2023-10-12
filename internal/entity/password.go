@@ -10,9 +10,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var (
-	PasswordCost = 14
-)
+// DefaultPasswordCost specifies the cost of the BCrypt Password Hash,
+// see https://github.com/photoprism/photoprism/issues/3718.
+var DefaultPasswordCost = 12
 
 // Password represents a password hash.
 type Password struct {
@@ -64,8 +64,8 @@ func (m *Password) SetPassword(pw string, allowHash bool) error {
 		}
 	}
 
-	// Generate hash from plain text string.
-	if bytes, err := bcrypt.GenerateFromPassword([]byte(pw), PasswordCost); err != nil {
+	// Generate hash from plain text string using the default password cost.
+	if bytes, err := bcrypt.GenerateFromPassword([]byte(pw), DefaultPasswordCost); err != nil {
 		return err
 	} else {
 		m.Hash = string(bytes)
@@ -125,12 +125,12 @@ func (m *Password) Cost() (int, error) {
 	return bcrypt.Cost([]byte(m.Hash))
 }
 
-// IsEmpty returns true if the password is not set.
+// IsEmpty returns true if no password is set.
 func (m *Password) IsEmpty() bool {
 	return m.Hash == ""
 }
 
-// String returns the password hash.
+// String returns the BCrypt Password Hash.
 func (m *Password) String() string {
 	return m.Hash
 }

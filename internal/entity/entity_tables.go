@@ -108,7 +108,7 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 		}
 	}()
 
-	log.Infof("migrate: running database migrations")
+	log.Debugf("migrate: running database migrations")
 
 	// Run pre migrations, if any.
 	if err := migrate.Run(db, opt.Pre()); err != nil {

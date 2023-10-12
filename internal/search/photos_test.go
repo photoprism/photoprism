@@ -639,7 +639,7 @@ func TestPhotos(t *testing.T) {
 	})
 	t.Run("form.Lat and form.Lng", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:2000"
+		f.Query = "Lat:33.45343166666667 Lng:25.764711666666667 Dist:4000"
 		f.Count = 10
 		f.Offset = 0
 		f.Order = "imported"
@@ -667,9 +667,9 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("Latmin:33.45343166666667 Latmax:49.519234", func(t *testing.T) {
+	t.Run("latlng:33.453431,-180.0,49.519234,180.0", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Latmin:33.45343166666667 Latmax:49.519234"
+		f.Query = "latlng:33.453431,-180.0,49.519234,180.0"
 		f.Count = 10
 		f.Offset = 0
 		f.Order = "imported"
@@ -688,9 +688,9 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 2, len(photos))
 
 	})
-	t.Run("Latmin:0.00 Latmax:49.519234 Lngmin:-30.123 Lngmax:9.1001234", func(t *testing.T) {
+	t.Run("latlng:0.00,-30.123.0,49.519234,9.1001234", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Latmin:0.00 Latmax:49.519234 Lngmin:-30.123 Lngmax:9.1001234"
+		f.Query = "latlng:0.00,-30.123.0,49.519234,9.1001234"
 		f.Count = 10
 		f.Offset = 0
 		f.Order = "imported"
@@ -919,7 +919,7 @@ func TestPhotos(t *testing.T) {
 	t.Run("search with multiple parameters", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Hidden = true
-		f.Scan = true
+		f.Scan = "true"
 		f.Year = "2010"
 		f.Day = "1"
 		f.Photo = true
@@ -939,7 +939,7 @@ func TestPhotos(t *testing.T) {
 	t.Run("search with multiple parameters", func(t *testing.T) {
 		var f form.SearchPhotos
 		f.Hidden = true
-		f.Scan = true
+		f.Scan = "true"
 		f.Year = strconv.Itoa(2010)
 		f.Day = strconv.Itoa(1)
 		f.Video = true

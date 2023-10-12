@@ -64,7 +64,7 @@ export default {
     },
   },
   data() {
-    const uid = this.$route.params.uid;
+    const uid = this.$route.params.album;
     const query = this.$route.query;
     const routeName = this.$route.name;
     const order = query['order'] ? query['order'] : 'oldest';
@@ -99,6 +99,7 @@ export default {
       filter: filter,
       lastFilter: {},
       routeName: routeName,
+      collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       loading: true,
       viewer: {
         results: [],
@@ -143,8 +144,8 @@ export default {
 
       this.routeName = this.$route.name;
 
-      if (this.uid !== this.$route.params.uid) {
-        this.uid = this.$route.params.uid;
+      if (this.uid !== this.$route.params.album) {
+        this.uid = this.$route.params.album;
         this.findAlbum().then(() => this.search());
       } else {
         this.search();
@@ -196,9 +197,9 @@ export default {
       }
 
       if (this.canAccessLibrary && photo.CellID && photo.CellID !== "zz") {
-        this.$router.push({name: "places_query", params: {q: photo.CellID}});
+        this.$router.push({name: "places", query: {q: photo.CellID}});
       } else if (this.uid) {
-        this.$router.push({name: "places_scope", params: {s: this.uid, q: photo.CellID}});
+        this.$router.push({name: "places_view", params: {s: this.uid}, query: {q: photo.CellID}});
       }
     },
     editPhoto(index) {
@@ -444,8 +445,7 @@ export default {
             this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} pictures found"), {n: this.results.length}));
           }
         } else {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
-
+          // this.$notify.info(this.$gettextInterpolate(this.$gettext("More than %{n} pictures found"), {n: 100}));
           this.$nextTick(() => {
             if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
               this.$emit("scrollRefresh");
@@ -466,6 +466,9 @@ export default {
         window.document.title = `${this.$config.get("siteTitle")}: ${this.model.Title}`;
 
         return Promise.resolve(this.model);
+      }).catch((e) => {
+        this.$router.push({ name: this.collectionRoute });
+        return Promise.reject(e);
       });
     },
     onAlbumsUpdated(ev, data) {

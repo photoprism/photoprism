@@ -1,6 +1,7 @@
 package txt
 
 var SpecialWords = map[string]string{
+	"av":                 "AV",
 	"xxs":                "XXS",
 	"xs":                 "XS",
 	"s":                  "S",
@@ -81,6 +82,8 @@ var SpecialWords = map[string]string{
 	"eps":                "EPS",
 	"mov":                "MOV",
 	"avc":                "AVC",
+	"hvc":                "HVC",
+	"hevc":               "HEVC",
 	"wto":                "WTO",
 	"fifa":               "FIFA",
 	"yaml":               "YAML",
@@ -164,6 +167,8 @@ var SpecialWords = map[string]string{
 	"zuerich":            "Zürich",
 	"wg":                 "WG",
 	"webdav":             "WebDAV",
+	"webp":               "WebP",
+	"webm":               "WebM",
 	"goland":             "GoLand",
 	"phpstorm":           "PhpStorm",
 	"vuejs":              "VueJS",

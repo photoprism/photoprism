@@ -212,8 +212,7 @@ body.chrome #photoprism .search-results .result {
 }
 
 #photoprism .mosaic-view .result {
-    margin: 1px !important;
-    border-radius: 0;
+    margin: 0 !important;
 }
 
 #photoprism .search-results .image-container {
@@ -301,9 +300,12 @@ body.chrome #photoprism .search-results .result {
     width: 14px;
 }
 
-#photoprism .cards-view .result.is-selected,
-#photoprism .mosaic-view .result.is-selected {
+#photoprism .cards-view .result.is-selected {
     margin: 7px !important;
+}
+
+#photoprism .mosaic-view .result.is-selected {
+    margin: 9px !important;
 }
 
 #photoprism .list-view .result.is-selected .image {

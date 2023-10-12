@@ -265,12 +265,12 @@ func TestBatchPhotosApprove(t *testing.T) {
 }
 
 func TestBatchPhotosDelete(t *testing.T) {
-	t.Run("feature disabled", func(t *testing.T) {
+	t.Run("ErrNoItemsSelected", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		BatchPhotosDelete(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/batch/photos/delete", `{"photos": []}`)
 		val := gjson.Get(r.Body.String(), "error")
-		assert.Equal(t, i18n.Msg(i18n.ErrFeatureDisabled), val.String())
-		assert.Equal(t, http.StatusForbidden, r.Code)
+		assert.Equal(t, i18n.Msg(i18n.ErrNoItemsSelected), val.String())
+		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }

@@ -107,8 +107,8 @@ func TestSearchPhotosGeo(t *testing.T) {
 
 		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
-		assert.Equal(t, uint(0x61a8), form.Dist)
-		assert.Equal(t, float32(33.45343), form.Lat)
+		assert.Equal(t, 25000.0, form.Dist)
+		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query path empty folder not empty", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "q:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667 folder:test"}
@@ -125,8 +125,8 @@ func TestSearchPhotosGeo(t *testing.T) {
 		assert.Equal(t, "test", form.Path)
 		assert.Equal(t, "", form.Folder)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
-		assert.Equal(t, uint(0x61a8), form.Dist)
-		assert.Equal(t, float32(33.45343), form.Lat)
+		assert.Equal(t, 25000.0, form.Dist)
+		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query with filter", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "keywords:cat title:\"fooBar baz\"", Filter: "keywords:dog"}
@@ -193,7 +193,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, form.Favorite)
+		assert.Equal(t, "cat", form.Favorite)
 	})
 	t.Run("query for before with invalid type", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "before:cat"}
@@ -242,13 +242,23 @@ func TestSearchPhotosGeo(t *testing.T) {
 }
 
 func TestSearchPhotosGeo_Serialize(t *testing.T) {
-	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: true}
+	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: "true"}
 
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.Serialize())
 }
 
+func TestSearchPhotosGeo_Unserialize(t *testing.T) {
+	filter := "public:true label:bay|beach|cape|seashore"
+	frm := SearchPhotosGeo{}
+	err := Unserialize(&frm, filter)
+	assert.Equal(t, true, frm.Public)
+	assert.Equal(t, "bay|beach|cape|seashore", frm.Label)
+	assert.NoError(t, err)
+}
+
+// public:true label:bay|beach|cape|seashore
 func TestSearchPhotosGeo_SerializeAll(t *testing.T) {
-	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: true}
+	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: "true"}
 
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.SerializeAll())
 }

@@ -442,9 +442,32 @@ func (c *Config) CmdLibPath() string {
 	return "/usr/local/lib:/usr/lib"
 }
 
-// MediaCachePath returns the media cache path.
+// MediaCachePath returns the main media cache path.
 func (c *Config) MediaCachePath() string {
 	return filepath.Join(c.CachePath(), "media")
+}
+
+// MediaFileCachePath returns the cache subdirectory path for a given file hash.
+func (c *Config) MediaFileCachePath(hash string) string {
+	dir := c.MediaCachePath()
+
+	switch len(hash) {
+	case 0:
+		return dir
+	case 1:
+		dir = filepath.Join(dir, hash[0:1])
+	case 2:
+		dir = filepath.Join(dir, hash[0:1], hash[1:2])
+	default:
+		dir = filepath.Join(dir, hash[0:1], hash[1:2], hash[2:3])
+	}
+
+	// Ensure the subdirectory exists, or log an error otherwise.
+	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+		log.Errorf("cache: failed to create subdirectory for media file")
+	}
+
+	return dir
 }
 
 // ThumbCachePath returns the thumbnail storage path.

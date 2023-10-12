@@ -15,8 +15,8 @@ func FromName(fileName string) Type {
 		return result
 	}
 
-	// Default.
-	return Other
+	// Default to sidecar.
+	return Sidecar
 }
 
 // MainFile checks if the filename belongs to a main content type.

@@ -165,7 +165,7 @@ services:
   ## Login: user / photoprism
   ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:20.0
+    image: quay.io/keycloak/keycloak:22.0
     command: "start-dev" # development mode, do not use this in production!
     container_name: keycloak
     links:

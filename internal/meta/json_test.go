@@ -12,6 +12,35 @@ import (
 )
 
 func TestJSON(t *testing.T) {
+	t.Run("mov.json", func(t *testing.T) {
+		data, err := JSON("testdata/mov.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %#v", data)
+
+		assert.Equal(t, "20230602_100151_361985AB.mov", data.FileName)
+		assert.Equal(t, CodecHvc1, data.Codec)
+		assert.Equal(t, int64(1420), data.Duration.Milliseconds())
+		assert.Equal(t, "1.42s", data.Duration.String())
+		assert.Equal(t, "2023-06-02 12:01:51 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2023-06-02 10:01:51 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, 0, data.TakenNs)
+		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, 1920, data.Width)
+		assert.Equal(t, 1440, data.Height)
+		assert.Equal(t, 1920, data.ActualWidth())
+		assert.Equal(t, 1440, data.ActualHeight())
+		assert.Equal(t, 1, data.Orientation)
+		assert.Equal(t, float32(52.5035), data.Lat)
+		assert.Equal(t, float32(13.4098), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 12 mini", data.CameraModel)
+		assert.Equal(t, "", data.LensModel)
+	})
+
 	t.Run("iphone-mov.json", func(t *testing.T) {
 		data, err := JSON("testdata/iphone-mov.json", "")
 
@@ -697,7 +726,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(video.CodecHEVC), data.Codec)
+		assert.Equal(t, string(video.CodecHVC), data.Codec)
 		assert.Equal(t, "6.83s", data.Duration.String())
 		assert.Equal(t, "2020-12-22 02:45:43 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-12-22 01:45:43 +0000 UTC", data.TakenAt.String())
@@ -721,7 +750,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(video.CodecHEVC), data.Codec)
+		assert.Equal(t, string(video.CodecHVC), data.Codec)
 		assert.Equal(t, "2.15s", data.Duration.String())
 		assert.Equal(t, "2019-12-12 20:47:21 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2019-12-13 01:47:21 +0000 UTC", data.TakenAt.String())
@@ -794,6 +823,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "OLYMPUS IMAGING CORP.", data.CameraMake)
 		assert.Equal(t, "TG-830", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
+		assert.Equal(t, "Bad PrintIM data", data.Warning)
 	})
 
 	t.Run("datetime-zero.json", func(t *testing.T) {
@@ -1288,6 +1318,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.Equal(t, "", data.LensModel)
 		assert.Equal(t, float32(45.75285), data.Lat)
 		assert.Equal(t, float32(33.221977), data.Lng)
 		assert.InEpsilon(t, 4294967284, data.Altitude, 1000)

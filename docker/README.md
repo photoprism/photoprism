@@ -48,7 +48,7 @@ make all install DESTDIR=/opt/photoprism
 ```
 
 Missing build dependencies must be installed manually as shown in our human-readable and versioned
-[Dockerfile](https://github.com/photoprism/photoprism/blob/develop/docker/develop/Dockerfile). You often don't
+[Dockerfile](https://github.com/photoprism/photoprism/blob/develop/docker/develop/lunar/Dockerfile). You often don't
 need to use the exact same versions, so it's possible to replace packages with what is available in your environment.
 
 Please note that we do not have the resources to provide private users with dependencies and

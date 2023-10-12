@@ -77,7 +77,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	// Make sure to run import only once, unless otherwise requested.
 	if !opt.NonBlocking {
 		if err := mutex.MainWorker.Start(); err != nil {
-			event.Error(fmt.Sprintf("import: %s", err.Error()))
+			event.Warn(fmt.Sprintf("import: %s", err.Error()))
 			return done
 		}
 
@@ -176,6 +176,11 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			if mf.IsRaw() && skipRaw {
 				log.Infof("import: skipped raw %s", clean.Log(mf.RootRelName()))
 				return nil
+			}
+
+			// Create JSON sidecar file, if needed.
+			if err = mf.CreateExifToolJson(imp.convert); err != nil {
+				log.Errorf("import: %s", clean.Error(err), clean.Log(mf.BaseName()))
 			}
 
 			// Find related files to import.

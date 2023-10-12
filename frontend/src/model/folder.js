@@ -145,8 +145,9 @@ export class Folder extends RestModel {
       path = "/" + path;
     }
 
-    // Escape ":" in URL path.
-    path = path.replaceAll(":", "%3A");
+    // "#" chars in path names must be explicitly escaped,
+    // see https://github.com/photoprism/photoprism/issues/3695
+    path = path.replaceAll(":", "%3A").replaceAll("#", "%23");
 
     return Api.get(this.getCollectionResource() + path, options).then((response) => {
       let folders = response.data.folders ? response.data.folders : [];

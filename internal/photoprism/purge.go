@@ -59,7 +59,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	purgedFiles = make(map[string]bool)
 	purgedPhotos = make(map[string]bool)
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err = mutex.MainWorker.Start(); err != nil {
 		log.Warnf("purge: %s (start)", err.Error())
 		return purgedFiles, purgedPhotos, 0, err
 	}

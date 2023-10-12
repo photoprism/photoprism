@@ -296,14 +296,16 @@ func (c *Config) Load() error {
 		return err
 	}
 
-	if err := yaml.Unmarshal(yamlConfig, c); err != nil {
+	if err = yaml.Unmarshal(yamlConfig, c); err != nil {
 		return err
 	}
 
 	c.Sanitize()
 	c.Propagate()
 
-	if sess, err := c.DecodeSession(false); err != nil {
+	var sess Session
+
+	if sess, err = c.DecodeSession(false); err != nil {
 		return err
 	} else if sess.Expired() {
 		return errors.New("session expired")
@@ -327,11 +329,11 @@ func (c *Config) Save() error {
 
 	c.Propagate()
 
-	if err := os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
+	if err = os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
 		return err
 	}
 
-	if err := os.WriteFile(c.FileName, data, fs.ModeFile); err != nil {
+	if err = os.WriteFile(c.FileName, data, fs.ModeFile); err != nil {
 		return err
 	}
 

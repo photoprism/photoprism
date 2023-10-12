@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/server/header"
-	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/ttl"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -84,13 +84,29 @@ func (c *Config) HttpCompression() string {
 }
 
 // HttpCacheMaxAge returns the time in seconds until cached content expires.
-func (c *Config) HttpCacheMaxAge() thumb.MaxAge {
-	if c.options.HttpCacheMaxAge < 1 || c.options.HttpCacheMaxAge > 31536000 {
-		// Default to one month.
-		return thumb.CacheMaxAge
+func (c *Config) HttpCacheMaxAge() ttl.Duration {
+	// Return default cache maxage?
+	if c.options.HttpCacheMaxAge < 1 {
+		return ttl.Default
+	} else if c.options.HttpCacheMaxAge > 31536000 {
+		return ttl.Duration(31536000)
 	}
 
-	return thumb.MaxAge(c.options.HttpCacheMaxAge)
+	// Return the configured cache expiration time.
+	return ttl.Duration(c.options.HttpCacheMaxAge)
+}
+
+// HttpVideoMaxAge returns the time in seconds until cached videos expire.
+func (c *Config) HttpVideoMaxAge() ttl.Duration {
+	// Return default video maxage?
+	if c.options.HttpVideoMaxAge < 1 {
+		return ttl.Video
+	} else if c.options.HttpVideoMaxAge > 31536000 {
+		return ttl.Duration(31536000)
+	}
+
+	// Return the configured cache expiration time.
+	return ttl.Duration(c.options.HttpVideoMaxAge)
 }
 
 // HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
@@ -104,6 +120,7 @@ func (c *Config) HttpCachePublic() bool {
 
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpHost() string {
+	// when unix socket used as host, make host as default value. or http client will act weirdly.
 	if c.options.HttpHost == "" {
 		return "0.0.0.0"
 	}
@@ -118,6 +135,19 @@ func (c *Config) HttpPort() int {
 	}
 
 	return c.options.HttpPort
+}
+
+// HttpSocket tries to parse the HttpHost as a Unix socket path and returns an empty string otherwise.
+func (c *Config) HttpSocket() string {
+	if c.options.HttpSocket != "" {
+		// Do nothing.
+	} else if host := c.options.HttpHost; !strings.HasPrefix(host, "unix:") {
+		return ""
+	} else if strings.Contains(host, "/") {
+		c.options.HttpSocket = strings.TrimPrefix(host, "unix:")
+	}
+
+	return c.options.HttpSocket
 }
 
 // TemplatesPath returns the server templates path.

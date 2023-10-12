@@ -31,6 +31,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/video"
 )
 
 // MediaFile represents a single photo, video, sidecar, or other supported media file.
@@ -54,6 +55,8 @@ type MediaFile struct {
 	height           int
 	metaData         meta.Data
 	metaOnce         sync.Once
+	videoInfo        video.Info
+	videoOnce        sync.Once
 	fileMutex        sync.Mutex
 	location         *entity.Cell
 	imageConfig      *image.Config
@@ -77,8 +80,9 @@ func NewMediaFileSkipResolve(fileName string, fileNameResolved string) (*MediaFi
 		fileName:         fileName,
 		fileNameResolved: fileNameResolved,
 		fileRoot:         entity.RootUnknown,
-		fileType:         fs.UnknownType,
-		metaData:         meta.New(),
+		fileType:         fs.TypeUnknown,
+		metaData:         meta.NewData(),
+		videoInfo:        video.NewInfo(),
 		width:            -1,
 		height:           -1,
 	}
@@ -735,12 +739,8 @@ func (m *MediaFile) IsWebP() bool {
 	return m.MimeType() == fs.MimeTypeWebP
 }
 
-// Duration returns the duration if the file is a video.
+// Duration returns the duration is the media content is playable.
 func (m *MediaFile) Duration() time.Duration {
-	if !m.IsVideo() {
-		return 0
-	}
-
 	return m.MetaData().Duration
 }
 
@@ -827,7 +827,7 @@ func (m *MediaFile) IsVector() bool {
 
 // IsSidecar checks if the file is a metadata sidecar file, independent of the storage location.
 func (m *MediaFile) IsSidecar() bool {
-	return m.Media() == media.Sidecar
+	return !m.Media().Main()
 }
 
 // IsSVG returns true if this is a SVG vector graphics.
@@ -895,7 +895,7 @@ func (m *MediaFile) IsLive() bool {
 		return fs.ImageHEIC.FindFirst(m.FileName(), []string{}, Config().OriginalsPath(), false) != ""
 	}
 
-	return false
+	return m.MetaData().MediaType == media.Live && m.VideoInfo().Compatible
 }
 
 // ExifSupported returns true if parsing exif metadata is supported for the media file type.
@@ -920,13 +920,15 @@ func (m *MediaFile) PreviewImage() (*MediaFile, error) {
 		return nil, fmt.Errorf("%s is empty", m.RootRelName())
 	}
 
-	jpegName := fs.ImageJPEG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegName := fs.ImageJPEG.FindFirst(m.FileName(),
+		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if jpegName != "" {
 		return NewMediaFile(jpegName)
 	}
 
-	pngName := fs.ImagePNG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	pngName := fs.ImagePNG.FindFirst(m.FileName(),
+		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if pngName != "" {
 		return NewMediaFile(pngName)
@@ -946,13 +948,15 @@ func (m *MediaFile) HasPreviewImage() bool {
 		return true
 	}
 
-	jpegName := fs.ImageJPEG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	jpegName := fs.ImageJPEG.FindFirst(m.FileName(),
+		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if m.hasPreviewImage = fs.MimeType(jpegName) == fs.MimeTypeJPEG; m.hasPreviewImage {
 		return true
 	}
 
-	pngName := fs.ImagePNG.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+	pngName := fs.ImagePNG.FindFirst(m.FileName(),
+		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
 
 	if m.hasPreviewImage = fs.MimeType(pngName) == fs.MimeTypePNG; m.hasPreviewImage {
 		return true

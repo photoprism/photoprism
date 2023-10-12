@@ -11,10 +11,6 @@ import (
 	"github.com/photoprism/photoprism/internal/session"
 )
 
-const (
-	ContentTypeAvc = `video/mp4; codecs="avc1"`
-)
-
 // AddCountHeader adds the actual result count to the response.
 func AddCountHeader(c *gin.Context, count int) {
 	c.Header("X-Count", strconv.Itoa(count))

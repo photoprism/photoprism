@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"time"
 
@@ -37,14 +35,14 @@ func (c *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 
 	var err error
 
-	hash := f.Hash()
-	dir := path.Join(c.conf.MediaCachePath(), hash[0:1], hash[1:2], hash[2:3])
+	// Get SHA1 file hash.
+	fileHash := f.Hash()
 
-	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
-		return nil, fmt.Errorf("convert: failed to create cache directory")
-	}
+	// Get cache path based on config and file hash.
+	cacheDir := c.conf.MediaFileCachePath(fileHash)
 
-	cacheName := filepath.Join(dir, hash+fs.ExtJPEG)
+	// Compose cache filename.
+	cacheName := filepath.Join(cacheDir, fileHash+fs.ExtJPEG)
 
 	mediaFile, err := NewMediaFile(cacheName)
 

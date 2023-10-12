@@ -60,7 +60,7 @@
                 @mouseleave="pauseLive(photo)">
             <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="224" height="224" preload="none"
-                    loop muted playsinline>
+                     loop muted playsinline>
                 <source :src="photo.videoUrl()">
               </video>
             </v-layout>

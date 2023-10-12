@@ -23,16 +23,18 @@ import (
 
 // User identifier prefixes.
 const (
-	UserUID      = byte('u')
-	UserPrefix   = "user"
-	OwnerUnknown = ""
+	UserUID               = byte('u')
+	UserPrefix            = "user"
+	OwnerUnknown          = ""
+	UsernameLengthDefault = 1
+	PasswordLengthDefault = 8
 )
 
 // UsernameLength specifies the minimum length of the username in characters.
-var UsernameLength = 1
+var UsernameLength = UsernameLengthDefault
 
 // PasswordLength specifies the minimum length of a password in characters (runes, not bytes).
-var PasswordLength = 4
+var PasswordLength = PasswordLengthDefault
 
 // UsersPath is the relative path for user assets.
 var UsersPath = "users"
@@ -310,8 +312,9 @@ func (m *User) Deleted() bool {
 
 // LoadRelated loads related settings and details.
 func (m *User) LoadRelated() *User {
-	m.Settings()
 	m.Details()
+	m.Settings()
+	m.RefreshShares()
 
 	return m
 }
@@ -729,6 +732,15 @@ func (m *User) IsVisitor() bool {
 	return m.AclRole() == acl.RoleVisitor || m.ID == Visitor.ID
 }
 
+// HasSharedAccessOnly checks if the user as only access to shared resources.
+func (m *User) HasSharedAccessOnly(resource acl.Resource) bool {
+	if acl.Resources.Deny(resource, m.AclRole(), acl.AccessShared) {
+		return false
+	}
+
+	return acl.Resources.DenyAll(resource, m.AclRole(), acl.Permissions{acl.AccessAll, acl.AccessLibrary})
+}
+
 // IsUnknown checks if the user is unknown.
 func (m *User) IsUnknown() bool {
 	return !rnd.IsUID(m.UserUID, UserUID) || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID
@@ -839,7 +851,7 @@ func (m *User) Validate() (err error) {
 
 	// Validate user role.
 	if acl.ValidRoles[m.UserRole] == "" {
-		return fmt.Errorf("unsupported user role")
+		return fmt.Errorf("user role %s is invalid", clean.LogQuote(m.UserRole))
 	}
 
 	// Check if the username is unique.
@@ -937,7 +949,7 @@ func (m *User) RefreshShares() *User {
 
 // NoShares checks if the user has no shares yet.
 func (m *User) NoShares() bool {
-	if !m.IsRegistered() {
+	if m.NotRegistered() {
 		return true
 	}
 
@@ -951,16 +963,17 @@ func (m *User) HasShares() bool {
 
 // HasShare if a uid was shared with the user.
 func (m *User) HasShare(uid string) bool {
-	if !m.IsRegistered() || m.NoShares() {
+	if m.NotRegistered() || m.NoShares() {
 		return false
 	}
 
+	// Check if the share list contains the specified UID.
 	return m.UserShares.Contains(uid)
 }
 
 // SharedUIDs returns shared entity UIDs.
 func (m *User) SharedUIDs() UIDs {
-	if m.IsRegistered() && m.UserShares.Empty() {
+	if m.IsRegistered() && m.NoShares() {
 		m.RefreshShares()
 	}
 

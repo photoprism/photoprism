@@ -27,6 +27,15 @@ func TestLog(t *testing.T) {
 	})
 }
 
+func TestLogQuote(t *testing.T) {
+	t.Run("The quick brown fox.", func(t *testing.T) {
+		assert.Equal(t, "'The quick brown fox.'", LogQuote("The quick brown fox."))
+	})
+	t.Run("SpecialChars", func(t *testing.T) {
+		assert.Equal(t, "'?The quick brown fox'", LogQuote("$The quick brown fox"))
+	})
+}
+
 func TestLogLower(t *testing.T) {
 	t.Run("The quick brown fox.", func(t *testing.T) {
 		assert.Equal(t, "'the quick brown fox.'", LogLower("The quick brown fox."))
@@ -42,14 +51,5 @@ func TestLogLower(t *testing.T) {
 	})
 	t.Run("Ldap", func(t *testing.T) {
 		assert.Equal(t, "?", LogLower("User-Agent: ${jndi:ldap://<host>:<port>/<path>}"))
-	})
-}
-
-func TestLogQuote(t *testing.T) {
-	t.Run("The quick brown fox.", func(t *testing.T) {
-		assert.Equal(t, "'The quick brown fox.'", LogQuote("The quick brown fox."))
-	})
-	t.Run("SpecialChars", func(t *testing.T) {
-		assert.Equal(t, "'?The quick brown fox'", LogQuote("$The quick brown fox"))
 	})
 }

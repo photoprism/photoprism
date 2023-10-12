@@ -5,26 +5,36 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/internal/ttl"
 )
 
-func TestConfig_HttpServerHost2(t *testing.T) {
+func TestConfig_HttpServerHost(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "0.0.0.0", c.HttpHost())
 	c.options.HttpHost = "test"
 	assert.Equal(t, "test", c.HttpHost())
+	c.options.HttpHost = "unix:/tmp/photoprism.sock"
+	assert.Equal(t, "unix:/tmp/photoprism.sock", c.HttpHost())
 }
 
-func TestConfig_HttpServerPort2(t *testing.T) {
+func TestConfig_HttpSocket(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int(2342), c.HttpPort())
-	c.options.HttpPort = int(1234)
-	assert.Equal(t, int(1234), c.HttpPort())
+	assert.Equal(t, "", c.HttpSocket())
+	c.options.HttpHost = "unix:/tmp/photoprism.sock"
+	assert.Equal(t, "/tmp/photoprism.sock", c.HttpSocket())
 }
 
-func TestConfig_HttpServerMode2(t *testing.T) {
+func TestConfig_HttpServerPort(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, 2342, c.HttpPort())
+	c.options.HttpPort = 1234
+	assert.Equal(t, 1234, c.HttpPort())
+}
+
+func TestConfig_HttpServerMode(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, HttpModeProd, c.HttpMode())
@@ -55,11 +65,25 @@ func TestConfig_HttpCompression(t *testing.T) {
 func TestConfig_HttpCacheMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, thumb.MaxAge(2592000), c.HttpCacheMaxAge())
+	assert.Equal(t, ttl.Duration(2592000), c.HttpCacheMaxAge())
 	c.Options().HttpCacheMaxAge = 23
-	assert.Equal(t, thumb.MaxAge(23), c.HttpCacheMaxAge())
+	assert.Equal(t, ttl.Duration(23), c.HttpCacheMaxAge())
+	c.Options().HttpCacheMaxAge = 41536000
+	assert.Equal(t, ttl.Limit, c.HttpCacheMaxAge())
 	c.Options().HttpCacheMaxAge = 0
-	assert.Equal(t, thumb.MaxAge(2592000), c.HttpCacheMaxAge())
+	assert.Equal(t, ttl.Duration(2592000), c.HttpCacheMaxAge())
+}
+
+func TestConfig_HttpVideoMaxAge(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, ttl.Video, c.HttpVideoMaxAge())
+	c.Options().HttpVideoMaxAge = 23
+	assert.Equal(t, ttl.Duration(23), c.HttpVideoMaxAge())
+	c.Options().HttpVideoMaxAge = 41536000
+	assert.Equal(t, ttl.Limit, c.HttpVideoMaxAge())
+	c.Options().HttpVideoMaxAge = 0
+	assert.Equal(t, ttl.Video, c.HttpVideoMaxAge())
 }
 
 func TestConfig_HttpCachePublic(t *testing.T) {

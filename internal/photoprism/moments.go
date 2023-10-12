@@ -53,7 +53,7 @@ func (w *Moments) Start() (err error) {
 		}
 	}()
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err = mutex.MainWorker.Start(); err != nil {
 		return err
 	}
 

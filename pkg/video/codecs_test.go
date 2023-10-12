@@ -3,8 +3,8 @@ package video
 import "testing"
 
 func TestCodecs(t *testing.T) {
-	if val := Codecs[""]; val != UnknownCodec {
-		t.Fatal("default codec should be UnknownCodec")
+	if val := Codecs[""]; val != CodecUnknown {
+		t.Fatal("default codec should be CodecUnknown")
 	}
 
 	if val := Codecs["avc"]; val != CodecAVC {

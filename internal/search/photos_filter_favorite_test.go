@@ -23,7 +23,7 @@ func TestPhotosQueryFavorite(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	assert.Equal(t, len(photos0), 5)
+	assert.Equal(t, len(photos0), 6)
 
 	t.Run("false > yes", func(t *testing.T) {
 		var f form.SearchPhotos

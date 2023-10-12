@@ -1,7 +1,8 @@
 # Ubuntu 23.04 (Lunar Lobster)
-FROM photoprism/develop:230811-lunar
+FROM photoprism/develop:231011-lunar
 
 ## Alternative Environments:
+# FROM photoprism/develop:armv7    # ARMv7 (32bit)
 # FROM photoprism/develop:jammy    # Ubuntu 22.04 LTS (Jammy Jellyfish)
 # FROM photoprism/develop:impish   # Ubuntu 21.10 (Impish Indri)
 # FROM photoprism/develop:bookworm # Debian 12 (Bookworm)

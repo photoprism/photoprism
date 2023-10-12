@@ -13,7 +13,9 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/s2"
@@ -38,22 +40,30 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		return GeoResults{}, ErrBadRequest
 	}
 
-	S2Levels := 7
-
-	// Search for nearby photos.
-	if f.Near != "" {
+	// Find photos near another?
+	if txt.NotEmpty(f.Near) {
 		photo := Photo{}
 
-		// Find photo to get location.
+		// Find a nearby picture using the UID or return an empty result otherwise.
 		if err = Db().First(&photo, "photo_uid = ?", f.Near).Error; err != nil {
-			return GeoResults{}, err
+			log.Debugf("search: %s (find nearby)", err)
+			return GeoResults{}, ErrNotFound
 		}
 
+		// Set the S2 Cell ID to search for.
 		f.S2 = photo.CellID
-		f.Lat = photo.PhotoLat
-		f.Lng = photo.PhotoLng
 
-		S2Levels = 12
+		// Set the search distance if unspecified.
+		if f.Dist <= 0 {
+			f.Dist = geo.DefaultDist
+		}
+	}
+
+	// Set default search distance.
+	if f.Dist <= 0 {
+		f.Dist = geo.DefaultDist
+	} else if f.Dist > geo.DistLimit {
+		f.Dist = geo.DistLimit
 	}
 
 	// Specify table names and joins.
@@ -83,14 +93,20 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		} else if a.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", a.AlbumUID)
-		} else if err = form.Unserialize(&f, a.AlbumFilter); err != nil {
+		} else if formErr := form.Unserialize(&f, a.AlbumFilter); formErr != nil {
+			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(a.AlbumFilter))
 			return GeoResults{}, ErrBadFilter
 		} else {
 			f.Filter = a.AlbumFilter
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
 		}
 
-		S2Levels = 18
+		// Enforce search distance range (km).
+		if f.Dist <= 0 {
+			f.Dist = geo.DefaultDist
+		} else if f.Dist > geo.ScopeDistLimit {
+			f.Dist = geo.ScopeDistLimit
+		}
 	} else {
 		f.Scope = ""
 	}
@@ -113,7 +129,7 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		}
 
 		// Visitors and other restricted users can only access shared content.
-		if f.Scope != "" && !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.NotRegistered()) ||
+		if f.Scope != "" && !sess.HasShare(f.Scope) && (sess.User().HasSharedAccessOnly(acl.ResourcePlaces) || sess.NotRegistered()) ||
 			f.Scope == "" && acl.Resources.Deny(acl.ResourcePlaces, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePlaces), aclRole)
 			return GeoResults{}, ErrForbidden
@@ -184,6 +200,31 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		}
 	}
 
+	// Filter by label, label category and keywords.
+	var categories []entity.Category
+	var labels []entity.Label
+	var labelIds []uint
+	if txt.NotEmpty(f.Label) {
+		if labelErr := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || labelErr != nil {
+			log.Debugf("search: label %s not found", txt.LogParamLower(f.Label))
+			return GeoResults{}, nil
+		} else {
+			for _, l := range labels {
+				labelIds = append(labelIds, l.ID)
+
+				Log("find categories", Db().Where("category_id = ?", l.ID).Find(&categories).Error)
+				log.Debugf("search: label %s includes %d categories", txt.LogParamLower(l.LabelName), len(categories))
+
+				for _, category := range categories {
+					labelIds = append(labelIds, category.LabelID)
+				}
+			}
+
+			s = s.Joins("JOIN photos_labels ON photos_labels.photo_id = files.photo_id AND photos_labels.uncertainty < 100 AND photos_labels.label_id IN (?)", labelIds).
+				Group("photos.id, files.id")
+		}
+	}
+
 	// Set search filters based on search terms.
 	if terms := txt.SearchTerms(f.Query); f.Query != "" && len(terms) == 0 {
 		if f.Title == "" {
@@ -230,13 +271,13 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			f.Raw = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
-			f.Favorite = true
+			f.Favorite = "true"
 		case terms["panoramas"]:
 			f.Query = strings.ReplaceAll(f.Query, "panoramas", "")
 			f.Panorama = true
 		case terms["scans"]:
 			f.Query = strings.ReplaceAll(f.Query, "scans", "")
-			f.Scan = true
+			f.Scan = "true"
 		case terms["monochrome"]:
 			f.Query = strings.ReplaceAll(f.Query, "monochrome", "")
 			f.Mono = true
@@ -366,6 +407,21 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("photos.lens_id = ?", f.Lens)
 	}
 
+	// Filter by ISO Range.
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Iso, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_iso >= ? AND photos.photo_iso <= ?", rangeStart, rangeEnd)
+	}
+
+	// Filter by F-Number Range.
+	if rangeStart, rangeEnd, rangeErr := txt.FloatRange(f.F, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_f_number >= ? AND photos.photo_f_number <= ?", rangeStart-0.01, rangeEnd+0.01)
+	}
+
+	// Filter by Focal Length Range.
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Mm, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_focal_length >= ? AND photos.photo_focal_length <= ?", rangeStart, rangeEnd)
+	}
+
 	// Filter by year.
 	if f.Year != "" {
 		s = s.Where(AnyInt("photos.photo_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))
@@ -386,13 +442,17 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
-	// Find favorites only.
-	if f.Favorite {
+	// Filter by favorite flag.
+	if txt.No(f.Favorite) {
+		s = s.Where("photos.photo_favorite = 0")
+	} else if txt.NotEmpty(f.Favorite) {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
-	// Find scans only.
-	if f.Scan {
+	// Filter by scan flag.
+	if txt.No(f.Scan) {
+		s = s.Where("photos.photo_scan = 0")
+	} else if txt.NotEmpty(f.Scan) {
 		s = s.Where("photos.photo_scan = 1")
 	}
 
@@ -423,6 +483,12 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 	// Filter by location city.
 	if txt.NotEmpty(f.City) {
 		s = s.Where("places.place_city IN (?)", SplitOr(f.City))
+	}
+
+	// Filter by location category.
+	if txt.NotEmpty(f.Category) {
+		s = s.Joins("JOIN cells ON photos.cell_id = cells.id").
+			Where("cells.cell_category IN (?)", SplitOr(strings.ToLower(f.Category)))
 	}
 
 	// Filter by media type.
@@ -505,24 +571,31 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
 	}
 
-	if f.S2 != "" {
-		s2Min, s2Max := s2.PrefixedRange(f.S2, S2Levels)
+	// Filter by location code.
+	if txt.NotEmpty(f.S2) {
+		// S2 Cell ID.
+		s2Min, s2Max := s2.PrefixedRange(f.S2, s2.Level(f.Dist))
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
-	} else if f.Olc != "" {
-		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), S2Levels)
+	} else if txt.NotEmpty(f.Olc) {
+		// Open Location Code (OLC).
+		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), s2.Level(f.Dist))
 		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
-	} else {
-		// Filter by approx distance to coordinate:
-		if f.Lat != 0 {
-			latMin := f.Lat - Radius*float32(f.Dist)
-			latMax := f.Lat + Radius*float32(f.Dist)
-			s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
-		}
-		if f.Lng != 0 {
-			lngMin := f.Lng - Radius*float32(f.Dist)
-			lngMax := f.Lng + Radius*float32(f.Dist)
-			s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
-		}
+	}
+
+	// Filter by GPS Bounds (Lat N, Lng E, Lat S, Lng W).
+	if latN, lngE, latS, lngW, boundsErr := clean.GPSBounds(f.Latlng); boundsErr == nil {
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latS, latN)
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
+	}
+
+	// Filter by GPS Latitude (from +90 to -90 degrees).
+	if latN, latS, latErr := clean.GPSLatRange(f.Lat, f.Dist); latErr == nil {
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latS, latN)
+	}
+
+	// Filter by GPS Longitude (from -180 to +180 degrees).
+	if lngE, lngW, lngErr := clean.GPSLngRange(f.Lng, f.Dist); lngErr == nil {
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
 	}
 
 	// Find photos taken before date.

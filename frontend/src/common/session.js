@@ -84,11 +84,14 @@ export default class Session {
       this.config.progress(80);
       this.redeemToken(shared.token).finally(() => {
         this.config.progress(99);
-        if (shared.uri) {
-          window.location = shared.uri;
-        } else {
-          window.location = this.config.baseUri + "/";
-        }
+
+        // Redirect URL.
+        const location = shared.uri ? shared.uri : this.config.baseUri + "/";
+
+        // Redirect to URL after one second.
+        setTimeout(() => {
+          window.location = location;
+        }, 1000);
       });
     } else {
       this.config.progress(80);

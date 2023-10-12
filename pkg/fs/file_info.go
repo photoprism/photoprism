@@ -53,5 +53,5 @@ var TypeInfo = TypeMap{
 	SidecarYAML:     "Serialized YAML Data (Config, Metadata)",
 	SidecarText:     "Plain Text",
 	SidecarMarkdown: "Markdown Formatted Text",
-	UnknownType:     "Other",
+	TypeUnknown:     "Other",
 }

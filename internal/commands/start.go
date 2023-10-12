@@ -45,7 +45,7 @@ var startFlags = []cli.Flag{
 	},
 }
 
-// startAction starts the web server and initializes the daemon.
+// startAction starts the Web server and initializes the daemon.
 func startAction(ctx *cli.Context) error {
 	conf, err := InitConfig(ctx)
 
@@ -61,6 +61,7 @@ func startAction(ctx *cli.Context) error {
 			{"http-mode", conf.HttpMode()},
 			{"http-compression", conf.HttpCompression()},
 			{"http-cache-maxage", fmt.Sprintf("%d", conf.HttpCacheMaxAge())},
+			{"http-video-maxage", fmt.Sprintf("%d", conf.HttpVideoMaxAge())},
 			{"http-cache-public", fmt.Sprintf("%t", conf.HttpCachePublic())},
 			{"http-host", conf.HttpHost()},
 			{"http-port", fmt.Sprintf("%d", conf.HttpPort())},
@@ -117,7 +118,7 @@ func startAction(ctx *cli.Context) error {
 		log.Infof("config: enabled read-only mode")
 	}
 
-	// Start web server.
+	// Start Web server.
 	go server.Start(cctx, conf)
 
 	if count, err := photoprism.RestoreAlbums(conf.AlbumsPath(), false); err != nil {

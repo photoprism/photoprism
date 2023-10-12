@@ -101,7 +101,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	if err := mutex.MainWorker.Start(); err != nil {
-		event.Error(fmt.Sprintf("index: %s", err.Error()))
+		event.Warn(fmt.Sprintf("index: %s", err.Error()))
 		return found, updated
 	}
 
@@ -217,6 +217,11 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 			if mf.IsRaw() && skipRaw {
 				log.Infof("index: skipped raw %s", clean.Log(mf.RootRelName()))
 				return nil
+			}
+
+			// Create JSON sidecar file, if needed.
+			if err = mf.CreateExifToolJson(ind.convert); err != nil {
+				log.Errorf("index: %s", clean.Error(err), clean.Log(mf.BaseName()))
 			}
 
 			// Find related files to index.

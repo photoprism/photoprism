@@ -13,7 +13,6 @@ type SearchPhotosGeo struct {
 	Filter    string    `form:"filter" serialize:"-" notes:"-"`
 	ID        string    `form:"id" example:"id:123e4567-e89b-..." notes:"Finds pictures by Exif UID, XMP Document ID or Instance ID"`
 	UID       string    `form:"uid" example:"uid:pqbcf5j446s0futy" notes:"Limits results to the specified internal unique IDs"`
-	Near      string    `form:"near"`
 	Type      string    `form:"type"`
 	Path      string    `form:"path"`
 	Folder    string    `form:"folder"` // Alias for Path
@@ -21,7 +20,7 @@ type SearchPhotosGeo struct {
 	Title     string    `form:"title"`
 	Before    time.Time `form:"before" time_format:"2006-01-02"`
 	After     time.Time `form:"after" time_format:"2006-01-02"`
-	Favorite  bool      `form:"favorite"`
+	Favorite  string    `form:"favorite" example:"favorite:yes" notes:"Finds favorites only"`
 	Unsorted  bool      `form:"unsorted"`
 	Video     bool      `form:"video"`
 	Vector    bool      `form:"vector"`
@@ -29,7 +28,7 @@ type SearchPhotosGeo struct {
 	Photo     bool      `form:"photo"`
 	Raw       bool      `form:"raw"`
 	Live      bool      `form:"live"`
-	Scan      bool      `form:"scan"`
+	Scan      string    `form:"scan" example:"scan:true scan:false" notes:"Finds scanned photos and documents"`
 	Panorama  bool      `form:"panorama"`
 	Portrait  bool      `form:"portrait"`
 	Landscape bool      `form:"landscape"`
@@ -38,23 +37,27 @@ type SearchPhotosGeo struct {
 	Public    bool      `form:"public"`
 	Private   bool      `form:"private"`
 	Review    bool      `form:"review"`
-	Quality   int       `form:"quality"`
+	Quality   int       `form:"quality" notes:"Minimum quality score (1-7)"`
 	Face      string    `form:"face" notes:"Face ID, yes, no, new, or kind"`
 	Faces     string    `form:"faces"` // Find or exclude faces if detected.
 	Subject   string    `form:"subject"`
-	Lat       float32   `form:"lat"`
-	Lng       float32   `form:"lng"`
-	S2        string    `form:"s2"`
-	Olc       string    `form:"olc"`
-	Dist      uint      `form:"dist"`
+	Near      string    `form:"near" example:"near:pqbcf5j446s0futy" notes:"Finds nearby pictures (UID)"`
+	S2        string    `form:"s2" example:"s2:4799e370ca54c8b9"  notes:"S2 Position (Cell ID)"`
+	Olc       string    `form:"olc" example:"olc:8FWCHX7W+" notes:"OLC Position (Open Location Code)"`
+	Lat       float64   `form:"lat" example:"lat:41.894043" notes:"GPS Position (Latitude)"`
+	Lng       float64   `form:"lng" example:"lng:-87.62448" notes:"GPS Position (Longitude)"`
+	Dist      float64   `form:"dist" example:"dist:50" notes:"Distance to Position (km)"`
+	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
 	Person    string    `form:"person"`   // Alias for Subject
 	Subjects  string    `form:"subjects"` // Text
 	People    string    `form:"people"`   // Alias for Subjects
 	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
 	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
-	Keywords  string    `form:"keywords"`
+	Keywords  string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords (combinable with & and |)"`
+	Label     string    `form:"label" example:"label:cat|dog" notes:"Label Names (separate with |)"`
+	Category  string    `form:"category" example:"category:airport" notes:"Location Category"`
 	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`
-	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names, can be combined with & and |"`
+	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names (combinable with & and |)"`
 	Country   string    `form:"country"`
 	State     string    `form:"state"` // Moments
 	City      string    `form:"city"`
@@ -64,6 +67,9 @@ type SearchPhotosGeo struct {
 	Color     string    `form:"color"`
 	Camera    int       `form:"camera"`
 	Lens      int       `form:"lens"`
+	Iso       string    `form:"iso" example:"iso:200-400" notes:"ISO Range"`
+	F         string    `form:"f" example:"f:2.8-4.5" notes:"F-Number Range"`
+	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length Range"`
 	Count     int       `form:"count" serialize:"-"`
 	Offset    int       `form:"offset" serialize:"-"`
 }

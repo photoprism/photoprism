@@ -9,11 +9,12 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/video"
 )
 
 func TestGetVideo(t *testing.T) {
-	t.Run("ContentTypeAvc", func(t *testing.T) {
-		assert.Equal(t, ContentTypeAvc, fmt.Sprintf("%s; codecs=\"%s\"", "video/mp4", clean.Codec("avc1")))
+	t.Run("ContentTypeAVC", func(t *testing.T) {
+		assert.Equal(t, video.ContentTypeAVC, fmt.Sprintf("%s; codecs=\"%s\"", "video/mp4", clean.Codec("avc1")))
 	})
 
 	t.Run("InvalidHash", func(t *testing.T) {

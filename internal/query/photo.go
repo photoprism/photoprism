@@ -77,7 +77,6 @@ func MissingPhotos(limit int, offset int) (entities entity.Photos, err error) {
 	err = Db().
 		Select("photos.*").
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = 0 AND file_root = '/' AND deleted_at IS NULL)").
-		Where("photos.photo_type <> ?", entity.MediaText).
 		Order("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 
@@ -90,7 +89,6 @@ func ArchivedPhotos(limit int, offset int) (entities entity.Photos, err error) {
 		Select("photos.*").
 		Where("photos.photo_quality > -1").
 		Where("photos.deleted_at IS NOT NULL").
-		Where("photos.photo_type <> ?", entity.MediaText).
 		Order("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 
@@ -184,20 +182,46 @@ func FlagHiddenPhotos() (err error) {
 	// IDs of hidden photos.
 	var hidden []uint
 
+	// Number of updated photos.
+	n := 0
+
 	// Find and flag hidden photos.
 	if err = Db().Table(entity.Photo{}.TableName()).
 		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
 		Pluck("id", &hidden).Error; err != nil {
-		// Find failed.
+		// Find query failed.
 		return err
-	} else if n := len(hidden); n == 0 {
-		// Nothing to do.
+	} else if found := len(hidden); found == 0 {
+		// Nothing to update.
 		return nil
-	} else if err = Db().Table(entity.Photo{}.TableName()).Where("id IN (?)", hidden).UpdateColumn("photo_quality", -1).Error; err != nil {
-		// Update failed.
-		return err
 	} else {
-		// Log result.
+		// Update photos in batches to be compatible with SQLite.
+		batch := 500
+
+		for i := 0; i < len(hidden); i += batch {
+			j := i + batch
+
+			if j > len(hidden) {
+				j = len(hidden)
+			}
+
+			// Next batch.
+			ids := hidden[i:j]
+
+			// Set photos.photo_quality = -1.
+			if err = Db().Table(entity.Photo{}.TableName()).Where("id IN (?)", ids).UpdateColumn("photo_quality", -1).Error; err != nil {
+				// Failed.
+				log.Warnf("index: failed to flag %d pictures as hidden", len(ids))
+				return err
+			} else {
+				// Success.
+				n += len(ids)
+			}
+		}
+	}
+
+	// Log number of updated photos, if any.
+	if n > 0 {
 		log.Infof("index: flagged %s as hidden [%s]", english.Plural(int(n), "photo", "photos"), time.Since(start))
 	}
 

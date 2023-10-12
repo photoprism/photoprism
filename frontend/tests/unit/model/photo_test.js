@@ -637,8 +637,8 @@ describe("model/photo", () => {
     };
     const photo3 = new Photo(values3);
     const result = photo3.videoParams();
-    assert.equal(result.height, 463);
-    assert.equal(result.width, 695);
+    assert.equal(result.height, 457);
+    assert.equal(result.width, 685);
     assert.equal(result.loop, false);
     assert.equal(result.uri, "/api/v1/videos/1xxbgdt55/public/avc");
     const values = {
@@ -669,8 +669,8 @@ describe("model/photo", () => {
     };
     const photo = new Photo(values);
     const result2 = photo.videoParams();
-    assert.equal(result2.height, 510);
-    assert.equal(result2.width, 510);
+    assert.equal(result2.height, 500);
+    assert.equal(result2.width, 500);
     assert.equal(result2.loop, false);
     assert.equal(result2.uri, "/api/v1/videos/1xxbgdt55/public/avc");
   });
@@ -1073,7 +1073,7 @@ describe("model/photo", () => {
       ],
     };
     const photo3 = new Photo(values3);
-    assert.equal(photo3.getVideoInfo(), "6µs, AVC1, 500 × 600, 0.2 MB");
+    assert.equal(photo3.getVideoInfo(), "6µs, AVC, 500 × 600, 0.2 MB");
     const values4 = {
       ID: 10,
       UID: "ABC127",
@@ -1100,7 +1100,7 @@ describe("model/photo", () => {
       ],
     };
     const photo4 = new Photo(values4);
-    assert.equal(photo4.getVideoInfo(), "6µs, AVC1, 300 × 500, 10.0 KB");
+    assert.equal(photo4.getVideoInfo(), "6µs, AVC, 300 × 500, 10.0 KB");
   });
 
   it("should return photo info", () => {
@@ -1150,7 +1150,7 @@ describe("model/photo", () => {
       ],
     };
     const photo3 = new Photo(values3);
-    assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC1, 500 × 600");
+    assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC, 500 × 600");
     const values4 = {
       ID: 10,
       UID: "ABC127",
@@ -1182,7 +1182,66 @@ describe("model/photo", () => {
       ],
     };
     const photo4 = new Photo(values4);
-    assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC1, 500 × 600");
+    assert.equal(photo3.getPhotoInfo(), "Canon abcde, AVC, 500 × 600");
+  });
+
+  it("should return lens info", () => {
+    const values = {
+      ID: "674-860",
+      UID: "ps22wlskqtcmu9l3",
+      Type: "raw",
+      TypeSrc: "",
+      TakenAt: "2018-10-05T08:47:32Z",
+      TakenAtLocal: "2018-10-05T08:47:32Z",
+      TakenSrc: "meta",
+      TimeZone: "",
+      Path: "raw images/Canon EOS 700 D",
+      Name: "_MG_9509",
+      OriginalName: "",
+      Title: "Unknown / 2018",
+      Description: "",
+      Year: 2018,
+      Month: 10,
+      Day: 5,
+      Country: "zz",
+      Stack: 0,
+      Favorite: false,
+      Private: false,
+      Iso: 100,
+      FocalLength: 50,
+      FNumber: 2.8,
+      Exposure: "1/1600",
+      Quality: 3,
+      Resolution: 18,
+      Color: 0,
+      Scan: false,
+      Panorama: false,
+      CameraID: 47,
+      CameraSrc: "meta",
+      CameraSerial: "338075021697",
+      CameraModel: "EOS 700D",
+      CameraMake: "Canon",
+      LensID: 47,
+      LensModel: "EF50mm f/1.8 II",
+      CellID: "zz",
+      PlaceID: "zz",
+      PlaceSrc: "",
+      PlaceLabel: "Unknown",
+      PlaceCity: "Unknown",
+      PlaceState: "Unknown",
+      PlaceCountry: "zz",
+      InstanceID: "",
+      FileUID: "fs25jsa22w9g851o",
+      FileRoot: "sidecar",
+      FileName: "raw images/Canon EOS 700 D/_MG_9509.CR2.jpg",
+      Hash: "7dc01e8cb588f3cfe31694ac2fece10167d88eec",
+      Width: 5198,
+      Height: 3462,
+      Portrait: false,
+      Files: [],
+    };
+    const photo = new Photo(values);
+    assert.equal(photo.getLensInfo(), "EF50mm f/1.8 II, 50mm, ƒ/2.8, 1/1600");
   });
 
   it("should archive photo", () => {

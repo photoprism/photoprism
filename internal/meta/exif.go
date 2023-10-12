@@ -131,15 +131,18 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 		data.Copyright = SanitizeString(value)
 	}
 
-	if value, ok := data.exif["Model"]; ok {
+	// Ignore numeric model names as they are probably invalid.
+	if value, ok := data.exif["CameraModel"]; ok && !txt.IsUInt(value) {
 		data.CameraModel = SanitizeString(value)
-	} else if value, ok := data.exif["CameraModel"]; ok {
+	} else if value, ok = data.exif["Model"]; ok && !txt.IsUInt(value) {
+		data.CameraModel = SanitizeString(value)
+	} else if value, ok = data.exif["UniqueCameraModel"]; ok && !txt.IsUInt(value) {
 		data.CameraModel = SanitizeString(value)
 	}
 
-	if value, ok := data.exif["Make"]; ok {
+	if value, ok := data.exif["CameraMake"]; ok && !txt.IsUInt(value) {
 		data.CameraMake = SanitizeString(value)
-	} else if value, ok := data.exif["CameraMake"]; ok {
+	} else if value, ok = data.exif["Make"]; ok && !txt.IsUInt(value) {
 		data.CameraMake = SanitizeString(value)
 	}
 
@@ -151,11 +154,14 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 		data.CameraSerial = SanitizeString(value)
 	}
 
-	if value, ok := data.exif["LensMake"]; ok {
+	if value, ok := data.exif["LensMake"]; ok && !txt.IsUInt(value) {
 		data.LensMake = SanitizeString(value)
 	}
 
-	if value, ok := data.exif["LensModel"]; ok {
+	// Ignore numeric model names as they are probably invalid.
+	if value, ok := data.exif["LensModel"]; ok && !txt.IsUInt(value) {
+		data.LensModel = SanitizeString(value)
+	} else if value, ok = data.exif["Lens"]; ok && !txt.IsUInt(value) {
 		data.LensModel = SanitizeString(value)
 	}
 

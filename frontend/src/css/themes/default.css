@@ -69,7 +69,6 @@ body.dark-theme .theme--light.v-card {
     background: #2f3031;
 }
 
-body.dark-theme .theme--light.v-text-field--solo>.v-input__control>.v-input__slot,
 body.dark-theme .theme--light.v-text-field--solo>.v-input__control>.v-input__slot {
     background: rgba(250, 250, 255, 0.1);
 }
@@ -206,12 +205,12 @@ body.dark-theme.theme-default,
 
 #photoprism.theme-default .cards-view .card.is-selected .card-details {
     color: #fff;
-    background-color: #4b4e4f;
+    background-color: #636869;
 }
 
 #photoprism.theme-default .cards-view .card.is-selected,
 #photoprism.theme-default .cards-view .card.is-selected .card-background {
-    background-color: #4b4e4f !important;
+    background-color: #636869 !important;
 }
 
 #photoprism.theme-default .cards-view .card.is-selected .card-details .v-icon {

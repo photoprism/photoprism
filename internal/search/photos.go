@@ -13,8 +13,13 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/geo"
+	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/pluscode"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -24,9 +29,6 @@ var PhotosColsAll = SelectString(Photo{}, []string{"*"})
 
 // PhotosColsView contains the result column names necessary for the photo viewer.
 var PhotosColsView = SelectString(Photo{}, SelectCols(GeoResult{}, []string{"*"}))
-
-// FileTypes contains a list of browser-compatible file formats returned by search queries.
-var FileTypes = []string{fs.ImageJPEG.String(), fs.ImagePNG.String(), fs.ImageGIF.String(), fs.ImageAVIF.String(), fs.ImageAVIFS.String(), fs.ImageWebP.String(), fs.VectorSVG.String()}
 
 // Photos finds PhotoResults based on the search form without checking rights or permissions.
 func Photos(f form.SearchPhotos) (results PhotoResults, count int, err error) {
@@ -53,6 +55,27 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	if err = f.ParseQueryString(); err != nil {
 		log.Debugf("search: %s", err)
 		return PhotoResults{}, 0, ErrBadRequest
+	}
+
+	// Find photos near another?
+	if txt.NotEmpty(f.Near) {
+		photo := Photo{}
+
+		// Find a nearby picture using the UID or return an empty result otherwise.
+		if err = Db().First(&photo, "photo_uid = ?", f.Near).Error; err != nil {
+			log.Debugf("search: %s (find nearby)", err)
+			return PhotoResults{}, 0, ErrNotFound
+		}
+
+		// Set the S2 Cell ID to search for.
+		f.S2 = photo.CellID
+	}
+
+	// Set default search distance.
+	if f.Dist <= 0 {
+		f.Dist = geo.DefaultDist
+	} else if f.Dist > geo.DistLimit {
+		f.Dist = geo.DistLimit
 	}
 
 	// Specify table names and joins.
@@ -82,11 +105,19 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		} else if a.AlbumFilter == "" {
 			s = s.Joins("JOIN photos_albums ON photos_albums.photo_uid = files.photo_uid").
 				Where("photos_albums.hidden = 0 AND photos_albums.album_uid = ?", a.AlbumUID)
-		} else if err = form.Unserialize(&f, a.AlbumFilter); err != nil {
+		} else if formErr := form.Unserialize(&f, a.AlbumFilter); formErr != nil {
+			log.Debugf("search: %s (%s)", clean.Error(formErr), clean.Log(a.AlbumFilter))
 			return PhotoResults{}, 0, ErrBadFilter
 		} else {
 			f.Filter = a.AlbumFilter
 			s = s.Where("files.photo_uid NOT IN (SELECT photo_uid FROM photos_albums pa WHERE pa.hidden = 1 AND pa.album_uid = ?)", a.AlbumUID)
+		}
+
+		// Enforce search distance range (km).
+		if f.Dist <= 0 {
+			f.Dist = geo.DefaultDist
+		} else if f.Dist > geo.ScopeDistLimit {
+			f.Dist = geo.ScopeDistLimit
 		}
 	} else {
 		f.Scope = ""
@@ -115,7 +146,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 
 		// Visitors and other restricted users can only access shared content.
-		if f.Scope != "" && !sess.HasShare(f.Scope) && (sess.IsVisitor() || sess.NotRegistered()) ||
+		if f.Scope != "" && !sess.HasShare(f.Scope) && (sess.User().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
 			f.Scope == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
 			return PhotoResults{}, 0, ErrForbidden
@@ -156,7 +187,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Order("files.photo_taken_at, files.media_id")
 	case sortby.Similar:
 		s = s.Where("files.file_diff > 0")
-		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.time_index")
+		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.photo_id, files.time_index")
 	case sortby.Name:
 		s = s.Order("photos.photo_path, photos.photo_name, files.time_index")
 	case sortby.Random:
@@ -167,10 +198,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		return PhotoResults{}, 0, ErrBadSortOrder
 	}
 
-	// Limit the result file types if hidden images/videos should not be found.
+	// Exclude files with errors by default.
 	if !f.Hidden {
-		s = s.Where("files.file_type IN (?) OR files.media_type IN ('vector','video')", FileTypes)
-
 		if f.Error {
 			s = s.Where("files.file_error <> ''")
 		} else {
@@ -178,9 +207,16 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		}
 	}
 
-	// Primary files only.
+	// Find primary files only?
 	if f.Primary {
 		s = s.Where("files.file_primary = 1")
+	} else if f.Order == sortby.Similar {
+		s = s.Where("files.file_primary = 1 OR files.media_type = ?", media.Video)
+	} else if f.Order == sortby.Random {
+		s = s.Where("files.file_primary = 1 AND photos.photo_type NOT IN ('live','video') OR photos.photo_type IN ('live','video') AND files.media_type IN ('live','video')")
+	} else {
+		// Otherwise, find all matching media except sidecar files.
+		s = s.Where("files.file_sidecar = 0")
 	}
 
 	// Find specific UIDs only.
@@ -234,7 +270,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	var labels []entity.Label
 	var labelIds []uint
 	if txt.NotEmpty(f.Label) {
-		if err := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || err != nil {
+		if labelErr := Db().Where(AnySlug("label_slug", f.Label, txt.Or)).Or(AnySlug("custom_slug", f.Label, txt.Or)).Find(&labels).Error; len(labels) == 0 || labelErr != nil {
 			log.Debugf("search: label %s not found", txt.LogParamLower(f.Label))
 			return PhotoResults{}, 0, nil
 		} else {
@@ -300,7 +336,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 			f.Raw = true
 		case terms["favorites"]:
 			f.Query = strings.ReplaceAll(f.Query, "favorites", "")
-			f.Favorite = true
+			f.Favorite = "true"
 		case terms["stacks"]:
 			f.Query = strings.ReplaceAll(f.Query, "stacks", "")
 			f.Stack = true
@@ -309,7 +345,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 			f.Panorama = true
 		case terms["scans"]:
 			f.Query = strings.ReplaceAll(f.Query, "scans", "")
-			f.Scan = true
+			f.Scan = "true"
 		case terms["monochrome"]:
 			f.Query = strings.ReplaceAll(f.Query, "monochrome", "")
 			f.Mono = true
@@ -458,6 +494,21 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
 	}
 
+	// Filter by ISO Range.
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Iso, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_iso >= ? AND photos.photo_iso <= ?", rangeStart, rangeEnd)
+	}
+
+	// Filter by F-Number Range.
+	if rangeStart, rangeEnd, rangeErr := txt.FloatRange(f.F, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_f_number >= ? AND photos.photo_f_number <= ?", rangeStart-0.01, rangeEnd+0.01)
+	}
+
+	// Filter by Focal Length Range.
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Mm, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_focal_length >= ? AND photos.photo_focal_length <= ?", rangeStart, rangeEnd)
+	}
+
 	// Filter by year.
 	if f.Year != "" {
 		s = s.Where(AnyInt("photos.photo_year", f.Year, txt.Or, entity.UnknownYear, txt.YearMax))
@@ -478,13 +529,17 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
-	// Find favorites only.
-	if f.Favorite {
+	// Filter by favorite flag.
+	if txt.No(f.Favorite) {
+		s = s.Where("photos.photo_favorite = 0")
+	} else if txt.NotEmpty(f.Favorite) {
 		s = s.Where("photos.photo_favorite = 1")
 	}
 
-	// Find scans only.
-	if f.Scan {
+	// Filter by scan flag.
+	if txt.No(f.Scan) {
+		s = s.Where("photos.photo_scan = 0")
+	} else if txt.NotEmpty(f.Scan) {
 		s = s.Where("photos.photo_scan = 1")
 	}
 
@@ -618,35 +673,39 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_f_number <= ?", f.Fmax)
 	}
 
-	if f.Dist == 0 {
-		f.Dist = 20
-	} else if f.Dist > 5000 {
-		f.Dist = 5000
+	// Filter by location code.
+	if txt.NotEmpty(f.S2) {
+		// S2 Cell ID.
+		s2Min, s2Max := s2.PrefixedRange(f.S2, s2.Level(f.Dist))
+		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
+	} else if txt.NotEmpty(f.Olc) {
+		// Open Location Code (OLC).
+		s2Min, s2Max := s2.PrefixedRange(pluscode.S2(f.Olc), s2.Level(f.Dist))
+		s = s.Where("photos.cell_id BETWEEN ? AND ?", s2Min, s2Max)
 	}
 
-	// Filter by approx distance to co-ordinates:
-	if f.Lat != 0 {
-		latMin := f.Lat - Radius*float32(f.Dist)
-		latMax := f.Lat + Radius*float32(f.Dist)
-		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latMin, latMax)
-	}
-	if f.Lng != 0 {
-		lngMin := f.Lng - Radius*float32(f.Dist)
-		lngMax := f.Lng + Radius*float32(f.Dist)
-		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngMin, lngMax)
+	// Filter by GPS Bounds (Lat N, Lng E, Lat S, Lng W).
+	if latN, lngE, latS, lngW, boundsErr := clean.GPSBounds(f.Latlng); boundsErr == nil {
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latS, latN)
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
 	}
 
-	if f.Latmin != 0 && f.Latmax != 0 {
-		s = s.Where("photos.photo_lat BETWEEN ? AND ?", f.Latmin, f.Latmax)
-	}
-	if f.Lngmin != 0 && f.Lngmax != 0 {
-		s = s.Where("photos.photo_lng BETWEEN ? AND ?", f.Lngmin, f.Lngmax)
+	// Filter by GPS Latitude (from +90 to -90 degrees).
+	if latN, latS, latErr := clean.GPSLatRange(f.Lat, f.Dist); latErr == nil {
+		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latS, latN)
 	}
 
+	// Filter by GPS Longitude (from -180 to +180 degrees).
+	if lngE, lngW, lngErr := clean.GPSLngRange(f.Lng, f.Dist); lngErr == nil {
+		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
+	}
+
+	// Find photos taken before date.
 	if !f.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))
 	}
 
+	// Find photos taken after date.
 	if !f.After.IsZero() {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}

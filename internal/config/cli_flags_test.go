@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli"
 )
 
 func TestCliFlags_Cli(t *testing.T) {
@@ -22,4 +23,47 @@ func TestCliFlags_Find(t *testing.T) {
 	assert.Equal(t, len(standard), len(other))
 	assert.Equal(t, len(cliFlags), len(essentials))
 	assert.Equal(t, len(other), len(essentials))
+}
+
+func TestCliFlags_Replace(t *testing.T) {
+	originalPublicFlag := CliFlag{Flag: cli.BoolFlag{
+		Name:   "public, p",
+		Hidden: true,
+		Usage:  "disable authentication, advanced settings, and WebDAV remote access",
+		EnvVar: EnvVar("PUBLIC"),
+	}}
+
+	newPublicFlag := CliFlag{Flag: cli.BoolFlag{
+		Name:   "public",
+		Hidden: false,
+		Usage:  "disable authentication, advanced settings, and WebDAV remote access",
+		EnvVar: EnvVar("PUBLIC"),
+	}}
+
+	cliFlags := CliFlags{
+		{
+			Flag: cli.StringFlag{
+				Name:   "auth-mode, a",
+				Usage:  "authentication `MODE` (public, password)",
+				Value:  "password",
+				EnvVar: EnvVar("AUTH_MODE"),
+			}},
+		originalPublicFlag,
+		{
+			Flag: cli.StringFlag{
+				Name:   "admin-user, login",
+				Usage:  "admin login `USERNAME`",
+				Value:  "admin",
+				EnvVar: EnvVar("ADMIN_USER"),
+			}}}
+
+	assert.Equal(t, 3, len(cliFlags))
+	assert.Equal(t, originalPublicFlag.Name(), cliFlags[1].Name())
+	assert.Equal(t, originalPublicFlag.Hidden(), cliFlags[1].Hidden())
+
+	cliFlags.Replace("public, p", newPublicFlag)
+
+	assert.Equal(t, 3, len(cliFlags))
+	assert.Equal(t, newPublicFlag.Name(), cliFlags[1].Name())
+	assert.Equal(t, newPublicFlag.Hidden(), cliFlags[1].Hidden())
 }

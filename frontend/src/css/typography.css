@@ -39,6 +39,10 @@ button.v-btn.compact  {
     height: 34px;
 }
 
+.caption.filename {
+    font-weight: 500;
+}
+
 /* Line Height */
 
 .lh-15 {

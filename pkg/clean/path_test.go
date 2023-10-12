@@ -40,6 +40,12 @@ func TestPath(t *testing.T) {
 	t.Run("Special Chars", func(t *testing.T) {
 		assert.Equal(t, "filename.", Path("filename.?**"))
 	})
+	t.Run("IncludesHash", func(t *testing.T) {
+		assert.Equal(t, "1970-05 (Tray #005) to 3-78 Person-Abbrev Place", Path("1970-05 (Tray #005) to 3-78 Person-Abbrev Place"))
+	})
+	t.Run("StartsWithHash", func(t *testing.T) {
+		assert.Equal(t, "#2020", Path("#2020"))
+	})
 }
 
 func TestUserPath(t *testing.T) {
@@ -69,6 +75,12 @@ func TestUserPath(t *testing.T) {
 	})
 	t.Run("Replace", func(t *testing.T) {
 		assert.Equal(t, "", UserPath("${https://<host>:<port>/<path>}"))
+	})
+	t.Run("IncludesHash", func(t *testing.T) {
+		assert.Equal(t, "1970-05 (Tray #005) to 3-78 Person-Abbrev Place", UserPath("1970-05 (Tray #005) to 3-78 Person-Abbrev Place"))
+	})
+	t.Run("StartsWithHash", func(t *testing.T) {
+		assert.Equal(t, "#2020", UserPath("#2020"))
 	})
 	t.Run("Unclean", func(t *testing.T) {
 		assert.Equal(t, "foo/bar/baz", UserPath("/foo/bar/baz/"))

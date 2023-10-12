@@ -101,7 +101,7 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 			Account:   true,
 			Albums:    true,
 			Archive:   true,
-			Delete:    false,
+			Delete:    true,
 			Download:  true,
 			Edit:      true,
 			Estimates: true,
@@ -226,7 +226,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
 		assert.True(t, f.Services)
-		assert.False(t, f.Delete)
+		assert.True(t, f.Delete)
 		assert.True(t, f.Import)
 		assert.True(t, f.Library)
 		assert.True(t, f.Logs)
@@ -317,7 +317,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Upload)
 		assert.True(t, f.Download)
 		assert.True(t, f.Services)
-		assert.False(t, f.Delete)
+		assert.True(t, f.Delete)
 		assert.True(t, f.Import)
 		assert.True(t, f.Library)
 		assert.True(t, f.Logs)
