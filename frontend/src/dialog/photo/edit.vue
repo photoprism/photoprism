@@ -220,11 +220,11 @@ export default {
       }
     },
     prev_if_possible() {
-      if (this.selected < 1) return;
+      if (this.selected < 1 || document.activeElement.nodeName.toLowerCase() === 'input') return;
       this.prev();
     },
     next_if_possible() {
-      if (this.selected >= this.selection.length - 1) return;
+      if (this.selected >= this.selection.length - 1  || document.activeElement.nodeName.toLowerCase() === 'input') return;
       this.next();
     },
     find(index) {
