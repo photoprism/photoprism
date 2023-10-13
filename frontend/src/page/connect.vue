@@ -12,7 +12,7 @@
           <translate>Successfully Connected</translate>
         </span>
         <span v-else-if="error">
-          <translate>Invalid</translate>
+          <translate>Error</translate>
         </span>
         <span v-else>
           <translate>Upgrade</translate>

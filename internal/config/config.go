@@ -797,21 +797,21 @@ func (c *Config) ResolutionLimit() int {
 	return result
 }
 
-// UpdateHub renews backend api credentials with an optional activation code.
-func (c *Config) UpdateHub() {
+// RenewApiKeys renews the api credentials for maps and places.
+func (c *Config) RenewApiKeys() {
 	if c.hub == nil {
 		return
 	}
 
 	if token := os.Getenv(EnvVar("CONNECT")); token != "" && !c.Hub().Sponsor() {
-		_ = c.ResyncHub(token)
+		_ = c.RenewApiKeysWithToken(token)
 	} else {
-		_ = c.ResyncHub("")
+		_ = c.RenewApiKeysWithToken("")
 	}
 }
 
-// ResyncHub renews backend api credentials for maps and places with an optional token.
-func (c *Config) ResyncHub(token string) error {
+// RenewApiKeysWithToken renews the api credentials for maps and places with an activation token.
+func (c *Config) RenewApiKeysWithToken(token string) error {
 	if c.hub == nil {
 		return fmt.Errorf("hub is not initialized")
 	}
@@ -822,7 +822,8 @@ func (c *Config) ResyncHub(token string) error {
 			return i18n.Error(i18n.ErrAccountConnect)
 		}
 	} else if err = c.hub.Save(); err != nil {
-		log.Debugf("config: %s while saving api keys for maps and places", err)
+		log.Warnf("config: failed to save api keys for maps and places (%s)", err)
+		return i18n.Error(i18n.ErrSaveFailed)
 	} else {
 		c.hub.Propagate()
 	}
@@ -845,7 +846,7 @@ func (c *Config) initHub() {
 	}
 
 	if update {
-		c.UpdateHub()
+		c.RenewApiKeys()
 	}
 
 	c.hub.Propagate()
@@ -856,7 +857,7 @@ func (c *Config) initHub() {
 		for {
 			select {
 			case <-ticker.C:
-				c.UpdateHub()
+				c.RenewApiKeys()
 			}
 		}
 	}()

@@ -900,6 +900,10 @@ msgstr "چالاککردنی تایبەتمەندیە نوێکان کە لە ئ�
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Pêşdibistanên veguheztina RAW çalak dike. Dibe ku performans kêm bike."
 
+#: src/page/connect.vue:14
+msgid "Error"
+msgstr "هەڵە"
+
 #: src/app/routes.js:316 src/component/navigation.vue:396
 msgid "Errors"
 msgstr "هەڵەکان"
@@ -1245,16 +1249,16 @@ msgstr "ماوە"
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
-#: src/dialog/admin/users/edit.vue:320 src/page/connect.vue:14
-#: src/page/settings/account.vue:91 src/page/settings/account.vue:117
-#: src/page/settings/account.vue:143 src/page/settings/account.vue:169
-#: src/page/settings/account.vue:225 src/page/settings/account.vue:284
-#: src/page/settings/account.vue:312 src/page/settings/account.vue:596
-#: src/page/settings/account.vue:622 src/page/settings/account.vue:650
-#: src/page/settings/account.vue:678 src/page/settings/account.vue:742
-#: src/page/settings/account.vue:769 src/page/settings/account.vue:796
-#: src/page/settings/account.vue:824 src/page/settings/account.vue:852
-#: src/page/settings/account.vue:623 src/page/settings/account.vue:706
+#: src/dialog/admin/users/edit.vue:320 src/page/settings/account.vue:91
+#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
+#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
+#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
+#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
+#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
+#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
+#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
+#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
+#: src/page/settings/account.vue:706
 msgid "Invalid"
 msgstr "بەروارێکی نادروست"
 
@@ -1796,7 +1800,7 @@ msgstr "سڕینەوەی پەڕگەکان بە شێوەیەکی هەمیشەیی
 msgid "Phone"
 msgstr "Telefon"
 
-#: src/model/photo.js:1177
+#: src/model/photo.js:1249
 msgid "Photo"
 msgstr "وێنە"
 
@@ -2463,13 +2467,13 @@ msgid "Unique ID"
 msgstr "IDـی بێ هاوتا"
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:30
-#: src/model/album.js:179 src/model/photo.js:768 src/model/photo.js:789
-#: src/model/photo.js:812 src/model/photo.js:830 src/model/photo.js:949
-#: src/model/photo.js:962 src/model/user.js:151 src/options/options.js:27
-#: src/options/options.js:41 src/options/options.js:58
-#: src/options/options.js:72 src/options/options.js:84
-#: src/page/library/errors.vue:173 src/page/library/errors.vue:180
-#: src/page/library/logs.vue:18
+#: src/model/album.js:179 src/model/photo.js:772 src/model/photo.js:793
+#: src/model/photo.js:816 src/model/photo.js:834 src/model/photo.js:957
+#: src/model/photo.js:1020 src/model/photo.js:1034 src/model/user.js:151
+#: src/options/options.js:27 src/options/options.js:41
+#: src/options/options.js:58 src/options/options.js:72
+#: src/options/options.js:84 src/page/library/errors.vue:173
+#: src/page/library/errors.vue:180 src/page/library/logs.vue:18
 msgid "Unknown"
 msgstr "نەزانراو"
 
@@ -2611,7 +2615,7 @@ msgstr "Bikarhêner"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:875 src/model/photo.js:883 src/options/options.js:345
+#: src/model/photo.js:879 src/model/photo.js:887 src/options/options.js:345
 msgid "Vector"
 msgstr "Vektor"
 
@@ -2621,7 +2625,7 @@ msgstr "Vectors"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
-#: src/model/file.js:220 src/model/photo.js:898 src/model/photo.js:914
+#: src/model/file.js:220 src/model/photo.js:903 src/model/photo.js:919
 #: src/options/options.js:341
 msgid "Video"
 msgstr "ڤیدیۆ"
@@ -3263,9 +3267,6 @@ msgstr "گەورەکردن/بچووکردن"
 
 #~ msgid "Disables simultaneous conversion of RAW images to apply Darktable presets."
 #~ msgstr " هاوکات گۆڕینی پەڕگەی RAW لە کاربخە بۆ کارپێکردنی پێش خشتەی تاریک."
-
-#~ msgid "Error"
-#~ msgstr "هەڵە"
 
 #~ msgid "Let PhotoPrism create albums from past events."
 #~ msgstr "با فۆتۆپریزم ئەلبوم دروست بکات لە ڕووداوەکانی ڕابردوو."

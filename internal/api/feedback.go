@@ -30,7 +30,7 @@ func SendFeedback(router *gin.RouterGroup) {
 			return
 		}
 
-		conf.UpdateHub()
+		conf.RenewApiKeys()
 
 		var f form.Feedback
 

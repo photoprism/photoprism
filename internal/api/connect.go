@@ -61,7 +61,7 @@ func Connect(router *gin.RouterGroup) {
 		switch name {
 		case "hub":
 			old := conf.Hub().Session
-			err = conf.ResyncHub(f.Token)
+			err = conf.RenewApiKeysWithToken(f.Token)
 			restart = old != conf.Hub().Session
 		default:
 			log.Errorf("connect: invalid service %s", clean.Log(name))
