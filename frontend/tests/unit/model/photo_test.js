@@ -1241,7 +1241,7 @@ describe("model/photo", () => {
       Files: [],
     };
     const photo = new Photo(values);
-    assert.equal(photo.getLensInfo(), "EF50mm f/1.8 II, 50mm, ƒ/2.8, ISO100, 1/1600");
+    assert.equal(photo.getLensInfo(), "EF50mm ƒ/1.8 II, 50mm, ƒ/2.8, ISO100, 1/1600");
   });
 
   it("should archive photo", () => {
