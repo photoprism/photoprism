@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-06 08:25+0000\n"
+"PO-Revision-Date: 2023-10-13 10:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -902,7 +903,7 @@ msgstr "Активира предварителните настройки на 
 
 #: src/page/connect.vue:14
 msgid "Error"
-msgstr ""
+msgstr "Грешка"
 
 #: src/app/routes.js:316 src/component/navigation.vue:396
 msgid "Errors"

@@ -3,9 +3,10 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-06 08:25+0000\n"
+"PO-Revision-Date: 2023-10-13 10:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
+"Language-Team: Hungarian <https://translate.photoprism.app/projects/"
+"photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -901,7 +902,7 @@ msgstr "Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljes
 
 #: src/page/connect.vue:14
 msgid "Error"
-msgstr ""
+msgstr "Hiba"
 
 #: src/app/routes.js:316 src/component/navigation.vue:396
 msgid "Errors"
