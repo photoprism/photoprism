@@ -938,7 +938,7 @@ export class Photo extends RestModel {
         info.push(camera.Make + " " + camera.Model);
       }
     } else if (cameraMake && cameraModel) {
-      if ((cameraMake + cameraModel).length > 21) {
+      if ((cameraMake + cameraModel).length > 19) {
         info.push(cameraModel);
       } else {
         info.push(cameraMake + " " + cameraModel);
@@ -1008,7 +1008,7 @@ export class Photo extends RestModel {
         info.push("ƒ/" + fNumber);
       }
 
-      if (iso && lensModel.length < 27) {
+      if (iso && lensModel.length < 21) {
         info.push("ISO" + iso);
       }
 
