@@ -47,10 +47,10 @@ func CreateUnknownCamera() {
 	UnknownCamera = *FirstOrCreateCamera(&UnknownCamera)
 }
 
-// NewCamera creates a camera entity from a model name and a make name.
-func NewCamera(modelName string, makeName string) *Camera {
-	modelName = strings.TrimSpace(modelName)
+// NewCamera creates a new camera entity from make and model names.
+func NewCamera(makeName string, modelName string) *Camera {
 	makeName = strings.TrimSpace(makeName)
+	modelName = strings.TrimSpace(modelName)
 
 	if modelName == "" && makeName == "" {
 		return &UnknownCamera

@@ -922,7 +922,7 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
-  // Example: EOS 700D, CR2, 5184 × 3456, 20.5 MB
+  // Example: Apple iPhone 12 Pro Max, DNG, 4032 × 3024, 32.9 MB
   getPhotoInfo = () => {
     let file = this.originalFile() || this.videoFile();
     return this.generatePhotoInfo(this.Camera, this.CameraMake, this.CameraModel, file);
@@ -937,12 +937,14 @@ export class Photo extends RestModel {
       } else {
         info.push(camera.Make + " " + camera.Model);
       }
-    } else if (cameraModel && cameraMake) {
-      if (cameraModel.length > 7) {
+    } else if (cameraMake && cameraModel) {
+      if ((cameraMake + cameraModel).length > 21) {
         info.push(cameraModel);
       } else {
         info.push(cameraMake + " " + cameraModel);
       }
+    } else if (cameraModel) {
+      info.push(cameraModel);
     }
 
     if (file && file.Width && file.Codec) {
@@ -958,7 +960,7 @@ export class Photo extends RestModel {
     return info.join(", ");
   });
 
-  // Example: EF24-105mm f/4L IS USM, 50mm, ƒ/8, ISO200, 1/125
+  // Example: iPhone 12 Pro Max 5.1mm ƒ/1.6, 26mm, ISO32, 1/4525
   getLensInfo = () => {
     return this.generateLensInfo(
       this.Lens,
@@ -984,22 +986,18 @@ export class Photo extends RestModel {
         } else {
           info.push(lens.Make + " " + lens.Model);
         }
-      } else if (lensModel && lensId > 1) {
-        if (
-          cameraModel &&
-          lensModel.startsWith(cameraModel + " ") &&
-          cameraModel.length < lensModel.length + 5
-        ) {
-          lensModel = Util.ucFirst(lensModel.substring(cameraModel.length + 1));
-        }
-
-        if (lensModel.length > 45) {
-          return lensModel;
+      } else if (lensId > 1) {
+        if (!lensModel && !!lensMake) {
+          info.push(lensMake);
         } else {
-          info.push(lensModel);
+          lensModel = lensModel.replace("f/", "ƒ/");
+
+          if (lensModel.length > 45) {
+            return lensModel;
+          } else {
+            info.push(lensModel);
+          }
         }
-      } else if (lensMake) {
-        info.push(lensMake);
       }
 
       if (focalLength) {
@@ -1010,7 +1008,7 @@ export class Photo extends RestModel {
         info.push("ƒ/" + fNumber);
       }
 
-      if (iso) {
+      if (iso && lensModel.length < 27) {
         info.push("ISO" + iso);
       }
 

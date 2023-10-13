@@ -11,7 +11,7 @@ func (m LensMap) Get(name string) Lens {
 		return result
 	}
 
-	return *NewLens(name, "")
+	return *NewLens("", name)
 }
 
 func (m LensMap) Pointer(name string) *Lens {
@@ -19,7 +19,7 @@ func (m LensMap) Pointer(name string) *Lens {
 		return &result
 	}
 
-	return NewLens(name, "")
+	return NewLens("", name)
 }
 
 var LensFixtures = LensMap{

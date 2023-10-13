@@ -11,7 +11,7 @@ func (m CameraMap) Get(name string) Camera {
 		return result
 	}
 
-	return *NewCamera(name, "")
+	return *NewCamera("", name)
 }
 
 func (m CameraMap) Pointer(name string) *Camera {
@@ -19,7 +19,7 @@ func (m CameraMap) Pointer(name string) *Camera {
 		return &result
 	}
 
-	return NewCamera(name, "")
+	return NewCamera("", name)
 }
 
 var CameraFixtures = CameraMap{

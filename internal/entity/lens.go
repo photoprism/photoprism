@@ -47,10 +47,10 @@ func CreateUnknownLens() {
 	UnknownLens = *FirstOrCreateLens(&UnknownLens)
 }
 
-// NewLens creates a new lens in database
-func NewLens(modelName string, makeName string) *Lens {
-	modelName = strings.TrimSpace(modelName)
+// NewLens creates a new camera lens entity from make and model names.
+func NewLens(makeName string, modelName string) *Lens {
 	makeName = strings.TrimSpace(makeName)
+	modelName = strings.TrimSpace(modelName)
 
 	if modelName == "" && makeName == "" {
 		return &UnknownLens
@@ -63,9 +63,13 @@ func NewLens(modelName string, makeName string) *Lens {
 		makeName = n
 	}
 
+	// Remove duplicate make from model name.
 	if strings.HasPrefix(modelName, makeName) {
 		modelName = strings.TrimSpace(modelName[len(makeName):])
 	}
+
+	// Remove ignored substrings from model name.
+	modelName = LensModelIgnore.ReplaceAllString(modelName, " ")
 
 	var name []string
 

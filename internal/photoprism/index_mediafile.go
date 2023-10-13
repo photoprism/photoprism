@@ -542,8 +542,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				photo.PhotoResolution = res
 			}
 
-			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
-			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraMake(), m.CameraModel())), entity.SrcMeta)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensMake(), m.LensModel())), entity.SrcMeta)
 			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
@@ -677,8 +677,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				photo.PhotoDuration = file.FileDuration
 			}
 
-			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
-			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraMake(), m.CameraModel())), entity.SrcMeta)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensMake(), m.LensModel())), entity.SrcMeta)
 			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
@@ -771,8 +771,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
-		photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
-		photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+		photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraMake(), m.CameraModel())), entity.SrcMeta)
+		photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensMake(), m.LensModel())), entity.SrcMeta)
 		photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 
 		var locLabels classify.Labels
