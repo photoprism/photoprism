@@ -700,6 +700,11 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
 	}
 
+	// Filter by GPS Altitude
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Alt, 0, 1000000); rangeErr == nil {
+		s = s.Where("photos.photo_altitude >= ? AND photos.photo_altitude <= ?", rangeStart, rangeEnd)
+	}
+
 	// Find photos taken before date.
 	if !f.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))

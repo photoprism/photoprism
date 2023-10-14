@@ -48,6 +48,7 @@ type SearchPhotos struct {
 	Olc       string    `form:"olc" example:"olc:8FWCHX7W+" notes:"OLC Position (Open Location Code)"`
 	Lat       float64   `form:"lat" example:"lat:41.894043" notes:"GPS Position (Latitude)"`
 	Lng       float64   `form:"lng" example:"lng:-87.62448" notes:"GPS Position (Longitude)"`
+	Alt       string    `form:"alt" example:"alt:300-500" notes:"GPS Altitude Range"`
 	Dist      float64   `form:"dist" example:"dist:50" notes:"Distance to Position (km)"`
 	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
 	Fmin      float32   `form:"fmin" notes:"F-number (min)"`
