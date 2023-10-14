@@ -651,7 +651,7 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Equal(t, "cat", form.Lens)
 	})
-	t.Run("MinAltitude", func(t *testing.T) {
+	t.Run("Altitude", func(t *testing.T) {
 		form := &SearchPhotos{Query: "alt:200-500"}
 
 		err := form.ParseQueryString()
