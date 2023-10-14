@@ -42,8 +42,12 @@ nano: clitools
 install-clitools:
 	@apt-get -qq install zsh nano >/dev/null 2>&1 && echo "init: successfully installed zsh and nano" || echo "init: packages zsh and nano not available for installation"
 	@apt-get -qq install exa duf >/dev/null 2>&1 && echo "init: successfully installed exa and duf" || echo "init: packages exa and duf not available for installation"
-.PHONY: update apt-upgrade clean apt-cleanup tensorflow install-tensorflow  \
-	tensorflow-amd64-cpu tensorflow-amd64-avx tensorflow-amd64-avx2 \
-    intel install-intel intel-graphics install-intel-graphics \
-    davfs install-davfs nano clitools install-clitools \
-    mariadb-client install-mariadb-client https install-https gpu install-gpu;
+darktable:
+	echo 'deb http://download.opensuse.org/repositories/graphics:/darktable/xUbuntu_23.04/ /' | sudo tee /etc/apt/sources.list.d/graphics:darktable.list
+	curl -fsSL https://download.opensuse.org/repositories/graphics:darktable/xUbuntu_23.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/graphics_darktable.gpg > /dev/null
+	sudo apt-get update
+	sudo apt-get install darktable
+	sudo apt-get autoremove
+
+# Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
+MAKEFLAGS += --always-make
