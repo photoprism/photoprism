@@ -11,25 +11,30 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
+# Abort if PHOTOPRISM_DEFAULT_TLS is "false".
+if [[ ${PHOTOPRISM_DEFAULT_TLS} = "false" ]]; then
+   echo "Creation of a default HTTPS/TLS certificate is skipped because PHOTOPRISM_DEFAULT_TLS is \"false\"."
+   exit 0
+fi
+
 # shellcheck disable=SC2164
 CONF_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/openssl"
 CERTS_PATH="/etc/ssl/certs"
 KEY_PATH="/etc/ssl/private"
 
-# Abort if files already exist.
-
-if [ -f "$CERTS_PATH/photoprism.issuer.crt" ] && [ -f "$KEY_PATH/photoprism.pfx" ]; then
+# Abort if certificate files already exist.
+if [ -f "$CERTS_PATH/photoprism.issuer.crt" ] && [ -f "$KEY_PATH/photoprism.key" ]; then
     echo "Default HTTPS/TLS certificate already exists."
     exit 0
 fi
 
+# Start creating a self-signed certificate.
 echo "Creating a default HTTPS/TLS certificate."
 
 mkdir -p "${CERTS_PATH}" "${KEY_PATH}"
 groupadd -f -r -g 116 ssl-cert 1>&2
 
 # Generate issuer (CA) certificate.
-
 echo "Generating self-signed issuer (CA) certificate..."
 
 openssl genrsa -out "$KEY_PATH/photoprism.issuer.key" 4096
@@ -39,7 +44,6 @@ openssl req -x509 -new -nodes -key "$KEY_PATH/photoprism.issuer.key" -sha256 -da
 openssl x509 -outform der -in "$CERTS_PATH/photoprism.issuer.pem" -out "$CERTS_PATH/photoprism.issuer.crt"
 
 # Generate server certificates.
-
 echo "Generating self-signed tls certificate..."
 
 openssl genrsa -out "$KEY_PATH/photoprism.key" 4096
@@ -52,13 +56,11 @@ openssl x509 -req -in "$CERTS_PATH/photoprism.csr" -CA "$CERTS_PATH/photoprism.i
 openssl pkcs12 -export -in "$CERTS_PATH/photoprism.crt" -inkey "$KEY_PATH/photoprism.key" -out "$KEY_PATH/photoprism.pfx" -passin pass: -passout pass:
 
 # Change key permissions.
-
 echo "Updating permissions of keys in '$KEY_PATH'..."
 
 chown -R root:ssl-cert "$KEY_PATH"
 chmod -R u=rwX,g=rX,o-rwx "$KEY_PATH"
 
-# Run "update-ca-certificates".
-
+# Finally, run "update-ca-certificates".
 echo "Running 'update-ca-certificates'..."
 update-ca-certificates
