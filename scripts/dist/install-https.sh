@@ -11,9 +11,12 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
-# Abort if PHOTOPRISM_DEFAULT_TLS is "false".
+# Abort if PHOTOPRISM_DEFAULT_TLS is "false" or PHOTOPRISM_DISABLE_TLS is "true".
 if [[ ${PHOTOPRISM_DEFAULT_TLS} = "false" ]]; then
    echo "Creation of a default HTTPS/TLS certificate is skipped because PHOTOPRISM_DEFAULT_TLS is \"false\"."
+   exit 0
+elif [[ ${PHOTOPRISM_DISABLE_TLS} = "true" ]]; then
+   echo "Creation of a default HTTPS/TLS certificate is skipped because PHOTOPRISM_DISABLE_TLS is \"true\"."
    exit 0
 fi
 
