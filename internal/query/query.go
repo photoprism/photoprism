@@ -69,9 +69,19 @@ func UnscopedDb() *gorm.DB {
 	return entity.Db().Unscoped()
 }
 
-// DbDialect returns the sql dialect name.
+// DbDialect returns the sql database dialect name.
 func DbDialect() string {
 	return Db().Dialect().GetName()
+}
+
+// BatchSize returns the maximum query parameter number based on the current sql database dialect.
+func BatchSize() int {
+	switch DbDialect() {
+	case SQLite3:
+		return 333
+	default:
+		return 1000
+	}
 }
 
 // logErr logs an error and keeps quiet otherwise.

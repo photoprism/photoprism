@@ -152,7 +152,7 @@ func CountNewFaceMarkers(size, score int) (n int) {
 // PurgeOrphanFaces removes unused faces from the index.
 func PurgeOrphanFaces(faceIds []string, ignored bool) (removed int64, err error) {
 	// Remove invalid face IDs in batches to be compatible with SQLite.
-	batchSize := 500
+	batchSize := BatchSize()
 
 	for i := 0; i < len(faceIds); i += batchSize {
 		j := i + batchSize

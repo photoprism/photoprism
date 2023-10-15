@@ -196,7 +196,7 @@ func FlagHiddenPhotos() (err error) {
 		return nil
 	} else {
 		// Update photos in batches to be compatible with SQLite.
-		batchSize := 500
+		batchSize := BatchSize()
 
 		for i := 0; i < len(hidden); i += batchSize {
 			j := i + batchSize
@@ -209,7 +209,9 @@ func FlagHiddenPhotos() (err error) {
 			ids := hidden[i:j]
 
 			// Set photos.photo_quality = -1.
-			if err = Db().Table(entity.Photo{}.TableName()).Where("id IN (?)", ids).UpdateColumn("photo_quality", -1).Error; err != nil {
+			if err = UnscopedDb().Table(entity.Photo{}.TableName()).
+				Where("id IN (?) AND photo_quality > -1", ids).
+				UpdateColumn("photo_quality", -1).Error; err != nil {
 				// Failed.
 				log.Warnf("index: failed to flag %d pictures as hidden", len(ids))
 				return err
