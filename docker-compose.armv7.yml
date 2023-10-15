@@ -110,7 +110,7 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:220405
+    image: photoprism/dummy-webdav:231015
     container_name: dummy-webdav
     environment:
       WEBDAV_USERNAME: admin

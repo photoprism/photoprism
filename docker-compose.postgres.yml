@@ -83,7 +83,7 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:20211109
+    image: photoprism/dummy-webdav:231015
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism

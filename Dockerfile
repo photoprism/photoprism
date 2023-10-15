@@ -1,5 +1,5 @@
 # Ubuntu 23.04 (Lunar Lobster)
-FROM photoprism/develop:231011-lunar
+FROM photoprism/develop:231015-lunar
 
 ## Alternative Environments:
 # FROM photoprism/develop:armv7    # ARMv7 (32bit)

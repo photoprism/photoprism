@@ -165,11 +165,11 @@ services:
 
   ## Dummy OpenID Connect Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:220405
+    image: photoprism/dummy-oidc:231015
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:20211109
+    image: photoprism/dummy-webdav:231015
     environment:
       WEBDAV_USERNAME: admin
       WEBDAV_PASSWORD: photoprism
