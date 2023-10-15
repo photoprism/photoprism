@@ -522,8 +522,9 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Table("photos").
 			Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
 				"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
-				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','animated','vector','raw') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
-				"SUM(photo_type IN ('image','live','animated','vector','raw') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, " +
+				"SUM(photo_quality = -1) AS hidden, " +
+				"SUM(photo_type NOT IN ('live', 'video') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
+				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
 				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
 			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
@@ -534,8 +535,9 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Table("photos").
 			Select("SUM(photo_type = 'video' AND photo_quality > -1) AS videos, " +
 				"SUM(photo_type = 'live' AND photo_quality > -1) AS live, " +
-				"SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','animated') AND photo_quality > -1) AS photos, " +
-				"SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1) AS review, " +
+				"SUM(photo_quality = -1) AS hidden, " +
+				"SUM(photo_type NOT IN ('live', 'video') AND photo_quality > -1) AS photos, " +
+				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_quality > -1) AS favorites, " +
 				"0 AS private").
 			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
@@ -638,7 +640,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Where("l.deleted_at IS NULL").
 		Group("l.custom_slug, l.label_uid, l.label_name").
 		Order("l.custom_slug").
-		Limit(1000).Offset(0).
+		Limit(10000).Offset(0).
 		Scan(&cfg.Categories)
 
 	c.Db().
@@ -647,7 +649,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Where("deleted_at IS NULL AND album_category <> ''").
 		Group("album_category").
 		Order("album_category").
-		Limit(1000).Offset(0).
+		Limit(10000).Offset(0).
 		Pluck("album_category", &cfg.AlbumCategories)
 
 	return cfg
