@@ -300,17 +300,17 @@ func UpdateCovers() (err error) {
 
 	// Update Albums.
 	if err = UpdateAlbumCovers(); err != nil {
-		return err
+		return fmt.Errorf("%s while updating album covers", err)
 	}
 
 	// Update Labels.
 	if err = UpdateLabelCovers(); err != nil {
-		return err
+		return fmt.Errorf("%s while updating label covers", err)
 	}
 
 	// Update Subjects.
 	if err = UpdateSubjectCovers(); err != nil {
-		return err
+		return fmt.Errorf("%s while updating subject covers", err)
 	}
 
 	return nil

@@ -192,7 +192,7 @@ func UpdateCounts() (err error) {
 			return nil
 		}
 
-		return err
+		return fmt.Errorf("%s while updating places counts", err)
 	}
 
 	if err = UpdateSubjectCounts(); err != nil {
@@ -202,11 +202,11 @@ func UpdateCounts() (err error) {
 			return nil
 		}
 
-		return err
+		return fmt.Errorf("%s while updating subject counts", err)
 	}
 
 	if err = UpdateLabelCounts(); err != nil {
-		return err
+		return fmt.Errorf("%s while updating label counts", err)
 	}
 
 	/* TODO: Slow with many photos due to missing index.

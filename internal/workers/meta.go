@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 )
 
-// Meta represents a background metadata optimization worker.
+// Meta represents a background index and metadata optimization worker.
 type Meta struct {
 	conf    *config.Config
 	lastRun time.Time
@@ -83,7 +83,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 		for _, photo := range photos {
 			if mutex.MetaWorker.Canceled() {
-				return errors.New("index: metadata update canceled")
+				return errors.New("index: metadata optimization canceled")
 			}
 
 			if done[photo.PhotoUID] {
@@ -95,7 +95,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 			updated, merged, err := photo.Optimize(settings.StackMeta(), settings.StackUUID(), settings.Features.Estimates, force)
 
 			if err != nil {
-				log.Errorf("index: %s (metadata update)", err)
+				log.Errorf("index: %s in optimization worker", err)
 			} else if updated {
 				optimized++
 				log.Debugf("index: updated photo %s", photo.String())
@@ -108,7 +108,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 		}
 
 		if mutex.MetaWorker.Canceled() {
-			return errors.New("index: metadata update canceled")
+			return errors.New("index: optimization canceled")
 		}
 
 		offset += limit
@@ -123,24 +123,24 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	if updateIndex {
 		// Set photo quality scores to -1 if files are missing.
 		if err = query.FlagHiddenPhotos(); err != nil {
-			log.Warnf("index: %s (reset quality)", err.Error())
+			log.Warnf("index: %s in optimization worker", err)
 		}
 
 		// Run moments worker.
 		if moments := photoprism.NewMoments(w.conf); moments == nil {
 			log.Errorf("index: failed updating moments")
 		} else if err = moments.Start(); err != nil {
-			log.Warn(err)
+			log.Warnf("moments: %s in optimization worker", err)
 		}
 
 		// Update precalculated photo and file counts.
 		if err = entity.UpdateCounts(); err != nil {
-			log.Warnf("index: %s (update counts)", err.Error())
+			log.Warnf("index: %s in optimization worker", err)
 		}
 
 		// Update album, subject, and label cover thumbs.
 		if err = query.UpdateCovers(); err != nil {
-			log.Warnf("index: %s (update covers)", err)
+			log.Warnf("index: %s in optimization worker", err)
 		}
 	}
 
