@@ -495,6 +495,9 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Ext:              ClientExt(c, ClientUser),
 	}
 
+	// Query start time.
+	start := time.Now()
+
 	hidePrivate := c.Settings().Features.Private
 
 	c.Db().
@@ -523,7 +526,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
 				"SUM(photo_type = 'live' AND photo_quality > -1 AND photo_private = 0) AS live, " +
 				"SUM(photo_quality = -1) AS hidden, " +
-				"SUM(photo_type NOT IN ('live', 'video') AND photo_private = 0 AND photo_quality > -1) AS photos, " +
+				"SUM(photo_type NOT IN ('live', 'video') AND photo_quality > -1 AND photo_private = 0) AS photos, " +
 				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
 				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
 				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
@@ -573,15 +576,29 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	if hidePrivate {
 		c.Db().
 			Table("albums").
-			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders, "+
-				"SUM(album_type = ? AND album_private = 1) AS private_albums, SUM(album_type = ? AND album_private = 1) AS private_moments, SUM(album_type = ? AND album_private = 1) AS private_months, SUM(album_type = ? AND album_private = 1) AS private_states, SUM(album_type = ? AND album_private = 1) AS private_folders",
-				entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder, entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+			Select("SUM(album_type = ?) AS albums, "+
+				"SUM(album_type = ?) AS moments, "+
+				"SUM(album_type = ?) AS months, "+
+				"SUM(album_type = ?) AS states, "+
+				"SUM(album_type = ?) AS folders, "+
+				"SUM(album_type = ? AND album_private = 1) AS private_albums, "+
+				"SUM(album_type = ? AND album_private = 1) AS private_moments, "+
+				"SUM(album_type = ? AND album_private = 1) AS private_months, "+
+				"SUM(album_type = ? AND album_private = 1) AS private_states, "+
+				"SUM(album_type = ? AND album_private = 1) AS private_folders",
+				entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder,
+				entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.photo_private = 0 AND photos.deleted_at IS NULL))").
 			Take(&cfg.Count)
 	} else {
 		c.Db().
 			Table("albums").
-			Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS months, SUM(album_type = ?) AS states, SUM(album_type = ?) AS folders", entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
+			Select("SUM(album_type = ?) AS albums, "+
+				"SUM(album_type = ?) AS moments, "+
+				"SUM(album_type = ?) AS months, "+
+				"SUM(album_type = ?) AS states, "+
+				"SUM(album_type = ?) AS folders",
+				entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
 			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.deleted_at IS NULL))").
 			Take(&cfg.Count)
 	}
@@ -651,6 +668,9 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 		Order("album_category").
 		Limit(10000).Offset(0).
 		Pluck("album_category", &cfg.AlbumCategories)
+
+	// Trace log for performance measurement.
+	log.Tracef("config: updated counts [%s]", time.Since(start))
 
 	return cfg
 }
