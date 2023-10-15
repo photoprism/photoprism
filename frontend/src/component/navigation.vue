@@ -524,6 +524,18 @@
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+
+        <v-list-tile v-show="featMembership" :to="{ name: 'upgrade' }" class="nav-membership" @click.stop="">
+          <v-list-tile-action :title="$gettext('Support Our Mission')">
+            <v-icon>diamond</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>
+              <translate key="Support Our Mission">Support Our Mission</translate>
+            </v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
       </v-list>
 
       <v-list class="p-user-box">
@@ -705,6 +717,7 @@ export default {
     const isReadOnly = this.$config.get("readonly");
     const isRestricted = this.$config.deny("photos", "access_library");
     const isSuperAdmin = this.$session.isSuperAdmin();
+    const tier = this.$config.getTier();
 
     return {
       canSearchPlaces: this.$config.allow("places", "search"),
@@ -718,7 +731,8 @@ export default {
       appIcon: this.$config.getIcon(),
       indexing: false,
       drawer: null,
-      featUpgrade: this.$config.getTier() < 8 && isSuperAdmin && !isPublic && !isDemo,
+      featUpgrade: tier < 6 && isSuperAdmin && !isPublic && !isDemo,
+      featMembership: tier < 3 && isSuperAdmin && !isPublic && !isDemo,
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
       isDemo: isDemo,
