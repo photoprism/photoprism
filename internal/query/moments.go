@@ -260,10 +260,10 @@ func MomentsStates(threshold int, public bool) (results Moments, err error) {
 
 // MomentsLabels returns the most popular photo labels.
 func MomentsLabels(threshold int, public bool) (results Moments, err error) {
-	var cats []string
+	var labelSlugs []string
 
-	for cat := range MomentLabels {
-		cats = append(cats, cat)
+	for labelSlug := range MomentLabels {
+		labelSlugs = append(labelSlugs, labelSlug)
 	}
 
 	m := Moments{}
@@ -272,7 +272,7 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 		Select("l.label_slug AS label, COUNT(*) AS photo_count").
 		Joins("JOIN photos_labels pl ON pl.photo_id = photos.id AND pl.uncertainty < 100").
 		Joins("JOIN labels l ON l.id = pl.label_id").
-		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND l.label_slug IN (?)", cats)
+		Where("photos.photo_quality >= 3 AND photos.deleted_at IS NULL AND l.label_slug IN (?)", labelSlugs)
 
 	// Ignore private pictures?
 	if public {

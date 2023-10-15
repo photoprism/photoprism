@@ -151,19 +151,33 @@ func CountNewFaceMarkers(size, score int) (n int) {
 
 // PurgeOrphanFaces removes unused faces from the index.
 func PurgeOrphanFaces(faceIds []string, ignored bool) (removed int64, err error) {
-	// Remove invalid face IDs.
-	stmt := Db().
-		Where("id IN (?)", faceIds).
-		Where("id NOT IN (SELECT face_id FROM ?)", gorm.Expr(entity.Marker{}.TableName()))
+	// Remove invalid face IDs in batches to be compatible with SQLite.
+	batchSize := 500
 
-	if !ignored {
-		stmt = stmt.Where("face_kind <= 1")
-	}
+	for i := 0; i < len(faceIds); i += batchSize {
+		j := i + batchSize
 
-	if res := stmt.Delete(&entity.Face{}); res.Error != nil {
-		return removed, fmt.Errorf("faces: %s while purging orphans", res.Error)
-	} else {
-		removed += res.RowsAffected
+		if j > len(faceIds) {
+			j = len(faceIds)
+		}
+
+		// Next batch.
+		ids := faceIds[i:j]
+
+		// Remove invalid face IDs.
+		stmt := Db().
+			Where("id IN (?)", ids).
+			Where("id NOT IN (SELECT face_id FROM ?)", gorm.Expr(entity.Marker{}.TableName()))
+
+		if !ignored {
+			stmt = stmt.Where("face_kind <= 1")
+		}
+
+		if res := stmt.Delete(&entity.Face{}); res.Error != nil {
+			return removed, fmt.Errorf("faces: %s while purging orphans", res.Error)
+		} else {
+			removed += res.RowsAffected
+		}
 	}
 
 	return removed, nil

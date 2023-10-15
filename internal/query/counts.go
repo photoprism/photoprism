@@ -22,6 +22,7 @@ type Counts struct {
 	LabelMaxPhotos int `json:"labelMaxPhotos"`
 }
 
+// Refresh updates the counts.
 func (c *Counts) Refresh() {
 	Db().Table("cameras").
 		Where("camera_slug <> 'zz' AND camera_slug <> ''").
@@ -34,7 +35,12 @@ func (c *Counts) Refresh() {
 		Take(c)
 
 	Db().Table("photos").
-		Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live','animated') AND photo_private = 0 AND photo_quality > -1) AS photos, SUM(photo_favorite = 1 AND photo_quality > -1) AS favorites, SUM(photo_private = 1 AND photo_quality > -1) AS private").
+		Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, " +
+			"SUM(photo_quality > -1 AND photo_quality < 3 AND photo_private = 0) AS review, " +
+			"SUM(photo_quality = -1) AS hidden, " +
+			"SUM(photo_type NOT IN ('live', 'video') AND photo_quality > -1 AND photo_private = 0) AS photos, " +
+			"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
+			"SUM(photo_private = 1 AND photo_quality > -1) AS private").
 		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
 		Where("deleted_at IS NULL").
 		Take(c)
@@ -43,11 +49,13 @@ func (c *Counts) Refresh() {
 		Select("MAX(photo_count) as label_max_photos, COUNT(*) AS labels").
 		Where("photo_count > 0").
 		Where("deleted_at IS NULL").
-		Where("(label_priority >= 0 || label_favorite = 1)").
+		Where("(label_priority >= 0 OR label_favorite = 1)").
 		Take(c)
 
 	Db().Table("albums").
-		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, SUM(album_type = ?) AS folders", entity.AlbumManual, entity.AlbumMoment, entity.AlbumFolder).
+		Select("SUM(album_type = ?) AS albums, SUM(album_type = ?) AS moments, "+
+			"SUM(album_type = ?) AS folders",
+			entity.AlbumManual, entity.AlbumMoment, entity.AlbumFolder).
 		Where("deleted_at IS NULL").
 		Take(c)
 
@@ -63,11 +71,5 @@ func (c *Counts) Refresh() {
 	Db().Table("places").
 		Select("SUM(photo_count > 0) AS places").
 		Where("id <> 'zz'").
-		Take(c)
-
-	Db().Table("photos").
-		Select("SUM(photo_type = 'video' AND photo_quality > -1 AND photo_private = 0) AS videos, SUM(photo_type IN ('image','raw','live','animated') AND photo_quality < 3 AND photo_quality > -1 AND photo_private = 0) AS review, SUM(photo_quality = -1) AS hidden, SUM(photo_type IN ('image','raw','live','animated') AND photo_private = 0 AND photo_quality > -1) AS photos, SUM(photo_favorite = 1 AND photo_quality > -1) AS favorites, SUM(photo_private = 1 AND photo_quality > -1) AS private").
-		Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
-		Where("deleted_at IS NULL").
 		Take(c)
 }

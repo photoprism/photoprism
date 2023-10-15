@@ -69,9 +69,11 @@ func PurgeOrphanDuplicates() error {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
-	return UnscopedDb().Delete(
-		entity.Duplicate{},
-		"file_hash NOT IN (SELECT file_hash FROM files WHERE file_missing = 0 AND deleted_at IS NULL)").Error
+	result := UnscopedDb().
+		Delete(entity.Duplicate{},
+			"file_hash NOT IN (SELECT file_hash FROM files WHERE file_missing = 0 AND deleted_at IS NULL)")
+
+	return result.Error
 }
 
 // PurgeOrphanCountries removes countries without any photos.
@@ -80,10 +82,12 @@ func PurgeOrphanCountries() error {
 	defer mutex.Index.Unlock()
 
 	entity.FlushCountryCache()
-	switch DbDialect() {
-	default:
-		return UnscopedDb().Exec(`DELETE FROM countries WHERE country_slug <> ? AND id NOT IN (SELECT photo_country FROM photos)`, entity.UnknownCountry.CountrySlug).Error
-	}
+
+	result := UnscopedDb().
+		Exec(`DELETE FROM countries WHERE country_slug <> ? AND id NOT IN (SELECT photo_country FROM photos)`,
+			entity.UnknownCountry.CountrySlug)
+
+	return result.Error
 }
 
 // PurgeOrphanCameras removes cameras without any photos.
@@ -92,10 +96,12 @@ func PurgeOrphanCameras() error {
 	defer mutex.Index.Unlock()
 
 	entity.FlushCameraCache()
-	switch DbDialect() {
-	default:
-		return UnscopedDb().Exec(`DELETE FROM cameras WHERE camera_slug <> ? AND id NOT IN (SELECT camera_id FROM photos)`, entity.UnknownCamera.CameraSlug).Error
-	}
+
+	result := UnscopedDb().
+		Exec(`DELETE FROM cameras WHERE camera_slug <> ? AND id NOT IN (SELECT camera_id FROM photos)`,
+			entity.UnknownCamera.CameraSlug)
+
+	return result.Error
 }
 
 // PurgeOrphanLenses removes cameras without any photos.
@@ -104,8 +110,10 @@ func PurgeOrphanLenses() error {
 	defer mutex.Index.Unlock()
 
 	entity.FlushLensCache()
-	switch DbDialect() {
-	default:
-		return UnscopedDb().Exec(`DELETE FROM lenses WHERE lens_slug <> ? AND id NOT IN (SELECT lens_id FROM photos)`, entity.UnknownLens.LensSlug).Error
-	}
+
+	result := UnscopedDb().
+		Exec(`DELETE FROM lenses WHERE lens_slug <> ? AND id NOT IN (SELECT lens_id FROM photos)`,
+			entity.UnknownLens.LensSlug)
+
+	return result.Error
 }

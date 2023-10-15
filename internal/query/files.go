@@ -56,7 +56,7 @@ func Files(limit, offset int, pathName string, includeMissing bool) (files entit
 
 // FilesByUID finds files for the given UIDs.
 func FilesByUID(u []string, limit int, offset int) (files entity.Files, err error) {
-	if err := Db().Where("(photo_uid IN (?) AND file_primary = 1) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
+	if err = Db().Where("(photo_uid IN (?) AND file_primary = 1) OR file_uid IN (?)", u, u).Preload("Photo").Limit(limit).Offset(offset).Find(&files).Error; err != nil {
 		return files, err
 	}
 
@@ -137,7 +137,9 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 
 	if fileUID != "" {
 		// Do nothing.
-	} else if err := Db().Model(entity.File{}).Where("photo_uid = ? AND file_missing = 0 AND file_type IN (?)", photoUID, media.PreviewExpr).Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
+	} else if err = Db().Model(entity.File{}).
+		Where("photo_uid = ? AND file_missing = 0 AND file_type IN (?)", photoUID, media.PreviewExpr).
+		Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
 		return fmt.Errorf("cannot find primary file for %s", photoUID)

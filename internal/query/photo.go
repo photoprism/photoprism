@@ -196,10 +196,10 @@ func FlagHiddenPhotos() (err error) {
 		return nil
 	} else {
 		// Update photos in batches to be compatible with SQLite.
-		batch := 500
+		batchSize := 500
 
-		for i := 0; i < len(hidden); i += batch {
-			j := i + batch
+		for i := 0; i < len(hidden); i += batchSize {
+			j := i + batchSize
 
 			if j > len(hidden) {
 				j = len(hidden)

@@ -30,8 +30,9 @@ func CellIDs() (result Cells, err error) {
 
 // PurgePlaces removes unused entries from the places table.
 func PurgePlaces() error {
-	query := "DELETE FROM places WHERE id NOT IN (SELECT DISTINCT place_id FROM cells)" +
-		" AND id NOT IN (SELECT DISTINCT place_id FROM photos)"
+	query := `DELETE FROM places 
+       WHERE id NOT IN (SELECT DISTINCT place_id FROM cells)
+       AND id NOT IN (SELECT DISTINCT place_id FROM photos)`
 
 	return Db().Exec(query).Error
 }

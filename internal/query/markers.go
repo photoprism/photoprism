@@ -124,34 +124,33 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 
 // RemoveInvalidMarkerReferences removes face and subject references from invalid markers.
 func RemoveInvalidMarkerReferences() (removed int64, err error) {
-	res := Db().
+	result := Db().
 		Model(&entity.Marker{}).
 		Where("marker_invalid = 1 AND (subj_uid <> '' OR face_id <> '')").
 		UpdateColumns(entity.Values{"subj_uid": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
-	return res.RowsAffected, res.Error
+	return result.RowsAffected, result.Error
 }
 
 // RemoveNonExistentMarkerFaces removes non-existent face IDs from the markers table.
 func RemoveNonExistentMarkerFaces() (removed int64, err error) {
-
-	res := Db().
+	result := Db().
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
 		Where(fmt.Sprintf("face_id <> '' AND face_id NOT IN (SELECT id FROM %s)", entity.Face{}.TableName())).
 		UpdateColumns(entity.Values{"face_id": "", "face_dist": -1.0, "matched_at": nil})
 
-	return res.RowsAffected, res.Error
+	return result.RowsAffected, result.Error
 }
 
 // RemoveNonExistentMarkerSubjects removes non-existent subject UIDs from the markers table.
 func RemoveNonExistentMarkerSubjects() (removed int64, err error) {
-	res := Db().
+	result := Db().
 		Model(&entity.Marker{}).
 		Where(fmt.Sprintf("subj_uid <> '' AND subj_uid NOT IN (SELECT subj_uid FROM %s)", entity.Subject{}.TableName())).
 		UpdateColumns(entity.Values{"subj_uid": "", "matched_at": nil})
 
-	return res.RowsAffected, res.Error
+	return result.RowsAffected, result.Error
 }
 
 // FixMarkerReferences repairs invalid or non-existent references in the markers table.
