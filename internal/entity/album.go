@@ -52,6 +52,8 @@ type Album struct {
 	AlbumYear        int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	AlbumMonth       int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`
 	AlbumDay         int         `gorm:"index:idx_albums_ymd;" json:"Day" yaml:"Day,omitempty"`
+	AlbumOldest		 time.Time	 `json:"Oldest" yaml:"Oldest"`
+	AlbumNewest 	 time.Time	 `json:"Newest" yaml:"Newest"`
 	AlbumFavorite    bool        `json:"Favorite" yaml:"Favorite,omitempty"`
 	AlbumPrivate     bool        `json:"Private" yaml:"Private,omitempty"`
 	Thumb            string      `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
@@ -137,8 +139,33 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
 			}
 
-			// Refresh updated timestamp.
-			err = UpdateAlbum(albumUid, Values{"updated_at": TimePointer()})
+			// update the oldest or newest date of the album, if needed
+			var photo Photo
+			var album Album
+			var albumOldest time.Time
+			var albumNewest time.Time
+			if err := Db().Model(&Photo{}).Where("photo_uid = ?",
+				photoUid).First(&photo).Error; err == nil && photo.UUID != "" {
+				takenAt := photo.TakenAt
+				if err := Db().Model(&Album{}).Where("album_uid = ?",
+					albumUid).First(&album).Error; err == nil && album.
+						AlbumUID != "" {
+					albumOldest = album.AlbumOldest
+					albumNewest = album.AlbumNewest
+
+					if before := takenAt.Before(albumOldest); before {
+						albumOldest = takenAt
+						log.Println("test")
+					} else if after := takenAt.After(albumNewest); after {
+						albumNewest = takenAt
+					}
+				}
+
+			}
+
+			// Refresh updated timestamp and album oldest/newest values.
+			err = UpdateAlbum(albumUid, Values{"updated_at": TimePointer(),
+				"albumOldest": albumOldest, "albumNewest": albumNewest})
 		}
 	}
 
@@ -788,6 +815,9 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 		return added
 	}
 
+	albumOldest := m.AlbumOldest
+	albumNewest := m.AlbumNewest
+
 	// Add album entries.
 	for _, uid := range UIDs {
 		if !rnd.IsUID(uid, PhotoUID) {
@@ -801,10 +831,24 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 		} else {
 			added = append(added, entry)
 		}
+
+		// update the oldest or newest date of the album, if needed
+		var photo Photo
+		if err := Db().Model(&Photo{}).Where("photo_uid = ?",
+			uid).First(&photo).Error; err == nil && photo.UUID != "" {
+			takenAt := photo.TakenAt
+			if before := takenAt.Before(albumOldest); before {
+				albumOldest = takenAt
+			} else if after := takenAt.After(albumNewest); after {
+				albumNewest = takenAt
+			}
+		}
 	}
 
-	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimePointer()}); err != nil {
+	// Refresh updated timestamp and album oldest/newest values.
+	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimePointer(),
+		"albumOldest": albumOldest, "albumNewest": albumNewest,
+		}); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 

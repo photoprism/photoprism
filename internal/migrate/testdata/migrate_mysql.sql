@@ -148,6 +148,8 @@ CREATE TABLE `albums` (
   `album_day` int(11) DEFAULT NULL,
   `album_favorite` tinyint(1) DEFAULT NULL,
   `album_private` tinyint(1) DEFAULT NULL,
+  `album_oldest` datetime DEFAULT NULL,
+  `album_newest` datetime DEFAULT NULL,
   `thumb` varbinary(128) DEFAULT '',
   `thumb_src` varbinary(8) DEFAULT '',
   `created_at` datetime DEFAULT NULL,
