@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-10-13 10:48+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-10-16 15:33+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -270,7 +270,7 @@ msgstr "Κινούμενη εικόνα"
 
 #: src/page/settings/general.vue:582
 msgid "Animation"
-msgstr "Animation"
+msgstr "Κίνηση"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
@@ -466,7 +466,7 @@ msgstr "Κατηγορία"
 
 #: src/dialog/admin/users/edit.vue:182 src/page/settings/account.vue:254
 msgid "Change Avatar"
-msgstr "Αλλαγή ιδιωτικής κατάστασης"
+msgstr "Αλλαγή Άβαταρ"
 
 #: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
 #: src/page/settings/account.vue:56
@@ -501,7 +501,7 @@ msgstr "Σημειωμένο"
 
 #: src/dialog/photo/edit/files.vue:199 src/dialog/photo/edit/files.vue:196
 msgid "Chroma"
-msgstr "Chroma"
+msgstr "Χρώμα"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
@@ -560,7 +560,7 @@ msgstr "Σύνδεση"
 
 #: src/page/settings/account.vue:116 src/page/settings/account.vue:95
 msgid "Contact Details"
-msgstr "Επικοινωνήστε μαζί μας"
+msgstr "Στοιχεία Επικοινωνίας"
 
 #: src/page/about/feedback.vue:4 src/page/connect.vue:47
 #: src/page/connect.vue:44
@@ -976,7 +976,7 @@ msgstr "Αποτυχία ενημέρωσης συνδέσμου"
 
 #: src/dialog/admin/users/edit.vue:235 src/page/settings/account.vue:166
 msgid "Family Name"
-msgstr "Όνομα οικογένειας"
+msgstr "Επίθετο"
 
 #: src/options/options.js:272
 msgid "Fast"
@@ -1084,7 +1084,7 @@ msgstr "Πλήρης οθόνη"
 
 #: src/dialog/admin/users/edit.vue:117 src/page/settings/account.vue:81
 msgid "Gender"
-msgstr "Λεβάντα"
+msgstr "Φύλο"
 
 #: src/page/settings.vue:36
 msgid "General"
@@ -1092,7 +1092,7 @@ msgstr "Γενικά"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
-msgstr "Αρχικό όνομα"
+msgstr "Όνομα"
 
 #: src/page/settings/advanced.vue:6
 msgid "Global Options"
@@ -1347,7 +1347,7 @@ msgstr "Νομικές πληροφορίες"
 
 #: src/component/photo/cards.vue:529 src/dialog/photo/edit/details.vue:433
 msgid "Lens"
-msgstr "Φακοί"
+msgstr "Φακός"
 
 #: src/app/routes.js:358 src/app/routes.js:365 src/app/routes.js:372
 #: src/component/navigation.vue:359 src/component/navigation.vue:369
@@ -1456,7 +1456,7 @@ msgstr "Κύριο χρώμα"
 
 #: src/options/options.js:453
 msgid "Male"
-msgstr "Αρσενικό"
+msgstr "Άνδρας"
 
 #: src/page/connect.vue:62 src/page/connect.vue:85 src/page/about/about.vue:54
 #: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:82
@@ -1465,7 +1465,7 @@ msgstr "Διαχείριση λογαριασμού"
 
 #: src/dialog/photo/edit/labels.vue:40
 msgid "manual"
-msgstr "εγχειρίδιο"
+msgstr "μη αυτόματο"
 
 #: src/dialog/service/edit.vue:53
 msgid "Manual Upload"
@@ -2033,7 +2033,7 @@ msgstr "Απαιτούμενο"
 
 #: src/dialog/photo/edit/info.vue:82
 msgid "Resolution"
-msgstr "Ψήφισμα"
+msgstr "Ανάλυση"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
 #: src/page/settings/advanced.vue:156
@@ -2333,11 +2333,11 @@ msgstr "Συγχρονισμός αρχείων raw και βίντεο"
 #: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
 #: src/dialog/photo/edit/info.vue:56
 msgid "Taken"
-msgstr "Λαμβάνεται"
+msgstr "Λήψη"
 
 #: src/options/options.js:427
 msgid "Teal"
-msgstr "Teal"
+msgstr "Γαλαζοπράσινο"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2507,7 +2507,7 @@ msgstr "Ενημέρωση στιγμών"
 
 #: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
 msgid "Updating picture…"
-msgstr "Ενημέρωση προεπισκοπήσεων"
+msgstr "Ενημέρωση εικόνας…"
 
 #: src/page/library/index.vue:163
 msgid "Updating previews"
