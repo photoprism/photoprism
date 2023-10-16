@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-13 10:48+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2023-10-15 20:24+0000\n"
+"Last-Translator: Lulu195 <bimasakti.ro@gmail.com>\n"
 "Language-Team: Romanian <https://translate.photoprism.app/projects/"
 "photoprism/frontend/ro/>\n"
 "Language: ro\n"
@@ -675,7 +675,7 @@ msgstr "Ștergeți"
 
 #: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:463
 msgid "Delete All"
-msgstr "Ștergeți toate"
+msgstr "Ștergeți totul"
 
 #: src/page/library/index.vue:143
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
