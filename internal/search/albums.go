@@ -86,8 +86,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		s = s.Order("photo_count DESC, albums.album_title, albums.album_uid DESC")
 	case sortby.Moment, sortby.Newest:
 		if f.Type == entity.AlbumManual || f.Type == entity.AlbumState {
-			s = s.Order("albums.album_uid DESC") // needs to change: dont
-			// sort by album_uid
+			s = s.Order("albums.album_newest DESC")
 		} else if f.Type == entity.AlbumMoment {
 			s = s.Order("has_year, albums.album_year DESC, albums.album_month DESC, albums.album_day DESC, albums.album_title, albums.album_uid DESC")
 		} else {
@@ -95,8 +94,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 		}
 	case sortby.Oldest:
 		if f.Type == entity.AlbumManual || f.Type == entity.AlbumState {
-			s = s.Order("albums.album_uid ASC") // needs to change: dont sort
-			// by album_uid
+			s = s.Order("albums.album_oldest ASC")
 		} else if f.Type == entity.AlbumMoment {
 			s = s.Order("has_year, albums.album_year ASC, albums.album_month ASC, albums.album_day ASC, albums.album_title, albums.album_uid ASC")
 		} else {

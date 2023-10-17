@@ -145,7 +145,7 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 			var albumOldest time.Time
 			var albumNewest time.Time
 			if err := Db().Model(&Photo{}).Where("photo_uid = ?",
-				photoUid).First(&photo).Error; err == nil && photo.UUID != "" {
+				photoUid).First(&photo).Error; err == nil && photo.PhotoUID != "" {
 				takenAt := photo.TakenAt
 				if err := Db().Model(&Album{}).Where("album_uid = ?",
 					albumUid).First(&album).Error; err == nil && album.
@@ -835,7 +835,7 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 		// update the oldest or newest date of the album, if needed
 		var photo Photo
 		if err := Db().Model(&Photo{}).Where("photo_uid = ?",
-			uid).First(&photo).Error; err == nil && photo.UUID != "" {
+			uid).First(&photo).Error; err == nil && photo.PhotoUID != "" {
 			takenAt := photo.TakenAt
 			if before := takenAt.Before(albumOldest); before {
 				albumOldest = takenAt
