@@ -42,6 +42,7 @@ var CameraModels = map[string]string{
 	"SM-G950F":                   "Galaxy S8",
 	"SM-G955U1":                  "Galaxy S8+",
 	"SM-G965F":                   "Galaxy S9+",
+	"SM-G973U1":                  "Galaxy S10",
 	"SM-G780F":                   "Galaxy S20",
 	"SM-G781B":                   "Galaxy S20 FE",
 	"SM-G991A":                   "Galaxy S21",
