@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-10-16 15:33+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2023-10-17 09:07+0000\n"
+"Last-Translator: dtsolakis <dtsola@eranet.gr>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -380,7 +380,7 @@ msgstr "Μαύρο"
 
 #: src/options/options.js:446
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
-msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
+msgstr "Blackman: Παραλλαγή της Lanczos, με λιγότερα τεχνουργήματα"
 
 #: src/options/options.js:429
 msgid "Blue"
@@ -620,7 +620,7 @@ msgstr "Δημιουργία μικρογραφιών για"
 
 #: src/options/options.js:448
 msgid "Cubic: Moderate Quality, Good Performance"
-msgstr "Cubic: Moderate Quality, Good Performance"
+msgstr "Κυβικό: Μέτρια ποιότητα, καλή επίδοση"
 
 #: src/dialog/account/password.vue:134
 msgid "Current Password"
@@ -1376,7 +1376,7 @@ msgstr "Επίτευξη ορίου, εμφάνιση των πρώτων %{n} �
 
 #: src/options/options.js:449
 msgid "Linear: Very Smooth, Best Performance"
-msgstr "Γραμμική: Linear: Πολύ ομαλή, καλύτερη απόδοση"
+msgstr "Γραμμικό: Πολύ ομοιόμορφο, βέλτιστη επίδοση"
 
 #: src/options/admin.js:48 src/options/admin.js:49 src/model/link.js:119
 msgid "Link"
@@ -1723,7 +1723,7 @@ msgstr "Πορτοκαλί"
 
 #: src/page/settings/account.vue:619
 msgid "Organization"
-msgstr "Προσανατολισμός"
+msgstr "Οργανισμός"
 
 #: src/dialog/photo/edit/files.vue:172 src/dialog/photo/edit/files.vue:169
 msgid "Orientation"
@@ -2406,7 +2406,7 @@ msgstr "Τίτλος"
 
 #: src/page/settings/account.vue:593
 msgid "Title / Position"
-msgstr "Πολύ μεγάλος τίτλος"
+msgstr "Τίτλος / Θέση"
 
 #: src/page/albums.vue:72
 msgid "Title too long"
@@ -2630,7 +2630,7 @@ msgstr "Βίντεο"
 #: src/component/album/toolbar.vue:77 src/component/photo/toolbar.vue:86
 #: src/dialog/album/edit.vue:27
 msgid "Video Duration"
-msgstr "Διάρκεια"
+msgstr "Διάρκεια Βίντεο"
 
 #: src/app/routes.js:235 src/component/navigation.vue:185
 #: src/component/navigation.vue:195 src/component/navigation.vue:4
@@ -2645,7 +2645,7 @@ msgstr "Προβολή"
 
 #: src/options/admin.js:8 src/options/admin.js:27
 msgid "Viewer"
-msgstr "Πρόγραμμα προβολής"
+msgstr "Θεατής"
 
 #: src/options/admin.js:11 src/page/admin/sessions.vue:67
 #: src/page/admin/sessions.vue:5
