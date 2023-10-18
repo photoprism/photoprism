@@ -861,6 +861,9 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 		return removed
 	}
 
+	updatedAlbumOldest := m.AlbumOldest
+	updatedAlbumNewest := m.AlbumNewest
+
 	for _, uid := range UIDs {
 		if !rnd.IsUID(uid, PhotoUID) {
 			continue
@@ -873,10 +876,33 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 		} else {
 			removed = append(removed, entry)
 		}
+
+		// update the oldest or newest date of the album, if needed
+		var photo Photo
+		if err := Db().Model(&Photo{}).Where("photo_uid = ?", uid).First(&photo).Error; err == nil &&
+			photo.PhotoUID != "" {
+			takenAt := photo.TakenAt
+			if isOldest := takenAt.Equal(m.AlbumOldest); isOldest {
+				if oldestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, true); err == nil {
+					// update the oldest of the album
+					updatedAlbumOldest = oldestPhoto.TakenAt
+				}
+			} else if isNewest := takenAt.Equal(m.AlbumNewest); isNewest {
+				if newestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, false); err == nil {
+					// update the newest of the album
+					updatedAlbumNewest = newestPhoto.TakenAt
+				}
+			}
+		}
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimePointer()}); err != nil {
+	if err := UpdateAlbum(
+		m.AlbumUID, Values{
+			"updated_at": TimePointer(), "albumOldest": updatedAlbumOldest,
+			"albumNewest": updatedAlbumNewest,
+		},
+	); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 
@@ -886,4 +912,33 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 // Links returns all share links for this entity.
 func (m *Album) Links() Links {
 	return FindLinks("", m.AlbumUID)
+}
+
+func AlbumOldestOrNewest(albumUid string, isOldest bool) (Photo, error) {
+	var photo Photo
+	var orderDirection string
+	if isOldest {
+		orderDirection = "ASC"
+	} else {
+		orderDirection = "DESC"
+	}
+
+	stmt := Db().Table("photos").Select("photos.*").Joins(
+		"JOIN photos_albums ON photos.photo_uid = "+
+			"photos_albums.photo_uid",
+	).Joins("JOIN albums ON photos_albums.album_uid = albums.album_uid").
+		Where("albums.album_uid = ?", albumUid).
+		Where("photos_albums.hidden = 0").
+		Order(
+			fmt.Sprintf(
+				"photos.taken_at %s, photos.photo_uid",
+				orderDirection,
+			),
+		)
+
+	if err := stmt.First(&photo).Error; err != nil {
+		return Photo{}, err
+	}
+
+	return photo, nil
 }
