@@ -43,7 +43,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
-    apt-get update && apt-get -qq upgrade && \
+    apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
       libc6 ca-certificates sudo bash tzdata \
       gpg zip unzip wget curl rsync make nano \

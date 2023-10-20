@@ -48,7 +48,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
-    apt-get update && apt-get -qq upgrade && apt-get -qq install --no-install-recommends \
+    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
         apt-utils gpg pkg-config software-properties-common ca-certificates avahi-utils \
         build-essential gcc g++ sudo bash make nano lsof lshw git jq \
         autoconf automake cmake libtool libjpeg8 libjpeg8-dev \

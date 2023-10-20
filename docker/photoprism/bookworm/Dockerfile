@@ -94,7 +94,7 @@ COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
 
 # Update pre-installed packages.
 RUN apt-get update && \
-    apt-get -qq upgrade && \
+    apt-get -qq dist-upgrade && \
     /scripts/cleanup.sh
 
 # Default working directory.
