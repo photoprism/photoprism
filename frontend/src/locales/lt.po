@@ -5,15 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-13 10:48+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/lt/>\n"
+"Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
-"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
-"1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
 "X-Generator: Weblate 5.0.2\n"
 "Generated-By: easygettext\n"
 
@@ -66,7 +63,7 @@ msgstr "Paspaudę jį nukopijuosite į iškarpinę."
 msgid "About"
 msgstr "Apie"
 
-#: src/component/navigation.vue:101 src/component/navigation.vue:2000
+#: src/component/navigation.vue:103 src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -193,7 +190,7 @@ msgstr "Albumo pavadinimas"
 
 #: src/app/routes.js:175 src/component/album/toolbar.vue:58
 #: src/component/navigation.vue:152 src/component/navigation.vue:162
-#: src/component/navigation.vue:557 src/component/navigation.vue:4
+#: src/component/navigation.vue:569 src/component/navigation.vue:4
 #: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:66
 msgid "Albums"
 msgstr "Albumai"
@@ -1040,7 +1037,7 @@ msgstr "Failas"
 msgid "Filename"
 msgstr "Failas"
 
-#: src/component/navigation.vue:575 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:587 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Failai"
@@ -1219,7 +1216,7 @@ msgstr "Atsisiunčiant stekus ir archyvus įtraukite RAW vaizdų failus."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Atsisiunčiant stekus ir archyvus įtraukti šalutinius failus."
 
-#: src/component/navigation.vue:581 src/page/library.vue:35
+#: src/component/navigation.vue:593 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Indeksas"
@@ -1347,7 +1344,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Sužinokite daugiau"
 
-#: src/component/navigation.vue:603
+#: src/component/navigation.vue:615
 msgid "Legal Information"
 msgstr "Teisinė informacija"
 
@@ -1426,16 +1423,16 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr "Žurnalo pranešimai čia rodomi, kai \"PhotoPrism\" susiduria su sugadintais failais arba kitomis galimomis problemomis."
 
 #: src/component/navigation.vue:475 src/component/navigation.vue:1778
-#: src/component/navigation.vue:2052
+#: src/component/navigation.vue:2092
 msgid "Login"
 msgstr "Prisijungimas"
 
-#: src/component/navigation.vue:519 src/component/navigation.vue:1889
-#: src/component/navigation.vue:1920 src/component/navigation.vue:1971
+#: src/component/navigation.vue:531 src/component/navigation.vue:1929
+#: src/component/navigation.vue:1960 src/component/navigation.vue:2011
 msgid "Logout"
 msgstr "Atsijungimas"
 
-#: src/component/navigation.vue:587 src/page/library.vue:58
+#: src/component/navigation.vue:599 src/page/library.vue:58
 #: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "Žurnalai"
@@ -1677,7 +1674,7 @@ msgstr "Kol kas čia nieko nematyti. Būkite kantrūs."
 msgid "Nothing was found."
 msgstr "Nieko nerasta."
 
-#: src/component/navigation.vue:490 src/component/navigation.vue:1823
+#: src/component/navigation.vue:502 src/component/navigation.vue:1863
 msgid "Offline"
 msgstr "Neprisijungus prie interneto"
 
@@ -1781,7 +1778,7 @@ msgid "Password changed"
 msgstr "Pakeistas slaptažodis"
 
 #: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:219
-#: src/component/navigation.vue:563 src/component/navigation.vue:885
+#: src/component/navigation.vue:575 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
@@ -1837,7 +1834,7 @@ msgstr "Vieta & amp; laikas"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
 #: src/app/routes.js:290 src/component/navigation.vue:285
-#: src/component/navigation.vue:295 src/component/navigation.vue:569
+#: src/component/navigation.vue:295 src/component/navigation.vue:581
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:497
@@ -1989,7 +1986,7 @@ msgstr "Raudona"
 msgid "Register"
 msgstr "Registruotis"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1985
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:2025
 #: src/component/photo/toolbar.vue:78 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1997,7 +1994,7 @@ msgstr "Registruotis"
 msgid "Reload"
 msgstr "Perkrauti"
 
-#: src/component/navigation.vue:139 src/dialog/reload.vue:26
+#: src/component/navigation.vue:141 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Perkrovimas…"
@@ -2087,7 +2084,7 @@ msgid "Scans"
 msgstr "Skenuoja"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:551 src/component/navigation.vue:4
+#: src/component/navigation.vue:563 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:49
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:77 src/page/places.vue:46
@@ -2164,7 +2161,7 @@ msgstr "Sesijos"
 #: src/component/navigation.vue:410 src/component/navigation.vue:420
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
-#: src/component/navigation.vue:2018
+#: src/component/navigation.vue:2058
 msgid "Settings"
 msgstr "Nustatymai"
 
@@ -2324,6 +2321,7 @@ msgstr "Super administratorius"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Papildomų paslaugų, pavyzdžiui, \"Google Drive\", palaikymas bus pridėtas laikui bėgant."
 
+#: src/component/navigation.vue:487 src/component/navigation.vue:1818
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr "Palaikykite mūsų misiją"
@@ -2481,7 +2479,7 @@ msgid "Unknown"
 msgstr "Nežinomas"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:90 src/page/settings/account.vue:35
+#: src/component/navigation.vue:92 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Neregistruotas"
@@ -2524,7 +2522,7 @@ msgid "Updating stacks"
 msgstr "Kaminų atnaujinimas"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:453
-#: src/component/navigation.vue:593 src/component/navigation.vue:51
+#: src/component/navigation.vue:605 src/component/navigation.vue:51
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Atnaujinti"
@@ -2535,7 +2533,7 @@ msgstr "Atnaujinti"
 msgid "Upgrade Now"
 msgstr "Atnaujinti dabar"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2076
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
@@ -2597,7 +2595,7 @@ msgstr "Naudokite išankstinius nustatymus"
 msgid "User"
 msgstr "Vartotojas"
 
-#: src/component/navigation.vue:598
+#: src/component/navigation.vue:610
 msgid "User Guide"
 msgstr "Naudotojo vadovas"
 

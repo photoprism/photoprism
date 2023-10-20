@@ -62,8 +62,8 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/component/navigation.vue:101
-#: src/component/navigation.vue:2000
+#: src/component/navigation.vue:103
+#: src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108
 #: src/model/service.js:98
 #: src/model/user.js:165
@@ -209,7 +209,7 @@ msgstr ""
 #: src/component/album/toolbar.vue:58
 #: src/component/navigation.vue:152
 #: src/component/navigation.vue:162
-#: src/component/navigation.vue:557
+#: src/component/navigation.vue:569
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:652
 #: src/dialog/photo/edit/info.vue:66
@@ -1202,7 +1202,7 @@ msgstr ""
 msgid "Filename"
 msgstr ""
 
-#: src/component/navigation.vue:575
+#: src/component/navigation.vue:587
 #: src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:296
@@ -1407,7 +1407,7 @@ msgstr ""
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr ""
 
-#: src/component/navigation.vue:581
+#: src/component/navigation.vue:593
 #: src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
@@ -1574,7 +1574,7 @@ msgstr ""
 msgid "Learn more"
 msgstr ""
 
-#: src/component/navigation.vue:603
+#: src/component/navigation.vue:615
 msgid "Legal Information"
 msgstr ""
 
@@ -1676,18 +1676,18 @@ msgstr ""
 
 #: src/component/navigation.vue:475
 #: src/component/navigation.vue:1778
-#: src/component/navigation.vue:2052
+#: src/component/navigation.vue:2092
 msgid "Login"
 msgstr ""
 
-#: src/component/navigation.vue:519
-#: src/component/navigation.vue:1889
-#: src/component/navigation.vue:1920
-#: src/component/navigation.vue:1971
+#: src/component/navigation.vue:531
+#: src/component/navigation.vue:1929
+#: src/component/navigation.vue:1960
+#: src/component/navigation.vue:2011
 msgid "Logout"
 msgstr ""
 
-#: src/component/navigation.vue:587
+#: src/component/navigation.vue:599
 #: src/page/library.vue:58
 #: src/page/settings/general.vue:451
 msgid "Logs"
@@ -1989,8 +1989,8 @@ msgstr ""
 msgid "Nothing was found."
 msgstr ""
 
-#: src/component/navigation.vue:490
-#: src/component/navigation.vue:1823
+#: src/component/navigation.vue:502
+#: src/component/navigation.vue:1863
 msgid "Offline"
 msgstr ""
 
@@ -2109,7 +2109,7 @@ msgstr ""
 #: src/app/routes.js:328
 #: src/app/routes.js:352
 #: src/component/navigation.vue:219
-#: src/component/navigation.vue:563
+#: src/component/navigation.vue:575
 #: src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:52
 #: src/dialog/photo/edit.vue:6
@@ -2176,7 +2176,7 @@ msgstr ""
 #: src/app/routes.js:290
 #: src/component/navigation.vue:285
 #: src/component/navigation.vue:295
-#: src/component/navigation.vue:569
+#: src/component/navigation.vue:581
 #: src/component/navigation.vue:8
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
@@ -2351,7 +2351,7 @@ msgid "Register"
 msgstr ""
 
 #: src/component/album/toolbar.vue:64
-#: src/component/navigation.vue:1985
+#: src/component/navigation.vue:2025
 #: src/component/photo/toolbar.vue:78
 #: src/dialog/reload.vue:12
 #: src/page/albums.vue:109
@@ -2363,7 +2363,7 @@ msgstr ""
 msgid "Reload"
 msgstr ""
 
-#: src/component/navigation.vue:139
+#: src/component/navigation.vue:141
 #: src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92
 #: src/page/settings/library.vue:46
@@ -2470,7 +2470,7 @@ msgstr ""
 
 #: src/component/navigation.vue:61
 #: src/component/navigation.vue:71
-#: src/component/navigation.vue:551
+#: src/component/navigation.vue:563
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:326
 #: src/component/photo/toolbar.vue:49
@@ -2563,7 +2563,7 @@ msgstr ""
 #: src/component/navigation.vue:18
 #: src/component/navigation.vue:4
 #: src/component/navigation.vue:1551
-#: src/component/navigation.vue:2018
+#: src/component/navigation.vue:2058
 msgid "Settings"
 msgstr ""
 
@@ -2743,6 +2743,8 @@ msgstr ""
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr ""
 
+#: src/component/navigation.vue:487
+#: src/component/navigation.vue:1818
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr ""
@@ -2928,7 +2930,7 @@ msgstr ""
 
 #: src/page/settings/account.vue:38
 #: src/page/settings/account.vue:46
-#: src/component/navigation.vue:90
+#: src/component/navigation.vue:92
 #: src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
@@ -2977,7 +2979,7 @@ msgstr ""
 
 #: src/page/connect.vue:20
 #: src/component/navigation.vue:453
-#: src/component/navigation.vue:593
+#: src/component/navigation.vue:605
 #: src/component/navigation.vue:51
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2992,7 +2994,7 @@ msgid "Upgrade Now"
 msgstr ""
 
 #: src/component/album/toolbar.vue:192
-#: src/component/navigation.vue:2036
+#: src/component/navigation.vue:2076
 #: src/component/photo/toolbar.vue:164
 #: src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8
@@ -3064,7 +3066,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: src/component/navigation.vue:598
+#: src/component/navigation.vue:610
 msgid "User Guide"
 msgstr ""
 

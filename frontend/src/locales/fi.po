@@ -60,7 +60,7 @@ msgstr "Napsauttamalla sitä voit kopioida sen leikepöydälle."
 msgid "About"
 msgstr "Tietoja"
 
-#: src/component/navigation.vue:101 src/component/navigation.vue:2000
+#: src/component/navigation.vue:103 src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -187,7 +187,7 @@ msgstr "Albumin nimi"
 
 #: src/app/routes.js:175 src/component/album/toolbar.vue:58
 #: src/component/navigation.vue:152 src/component/navigation.vue:162
-#: src/component/navigation.vue:557 src/component/navigation.vue:4
+#: src/component/navigation.vue:569 src/component/navigation.vue:4
 #: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:66
 msgid "Albums"
 msgstr "Albumit"
@@ -1034,7 +1034,7 @@ msgstr "Tiedosto"
 msgid "Filename"
 msgstr "Tiedoston nimi"
 
-#: src/component/navigation.vue:575 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:587 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Tiedostot"
@@ -1213,7 +1213,7 @@ msgstr "Sisällytä RAW-kuvatiedostot pinoja ja arkistoja ladattaessa."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Sisällytä sidecar-tiedostot, kun lataat pinoja ja arkistoja."
 
-#: src/component/navigation.vue:581 src/page/library.vue:35
+#: src/component/navigation.vue:593 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Indeksi"
@@ -1341,7 +1341,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Lue lisää"
 
-#: src/component/navigation.vue:603
+#: src/component/navigation.vue:615
 msgid "Legal Information"
 msgstr "Oikeudelliset tiedot"
 
@@ -1420,16 +1420,16 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr "Lokiviestit näkyvät täällä aina, kun PhotoPrism löytää rikkinäisiä tiedostoja tai muita mahdollisia ongelmia."
 
 #: src/component/navigation.vue:475 src/component/navigation.vue:1778
-#: src/component/navigation.vue:2052
+#: src/component/navigation.vue:2092
 msgid "Login"
 msgstr "Kirjaudu sisään"
 
-#: src/component/navigation.vue:519 src/component/navigation.vue:1889
-#: src/component/navigation.vue:1920 src/component/navigation.vue:1971
+#: src/component/navigation.vue:531 src/component/navigation.vue:1929
+#: src/component/navigation.vue:1960 src/component/navigation.vue:2011
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
-#: src/component/navigation.vue:587 src/page/library.vue:58
+#: src/component/navigation.vue:599 src/page/library.vue:58
 #: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "Lokit"
@@ -1671,7 +1671,7 @@ msgstr "Täällä ei ole vielä mitään nähtävää. Ole kärsivällinen."
 msgid "Nothing was found."
 msgstr "Mitään ei löytynyt."
 
-#: src/component/navigation.vue:490 src/component/navigation.vue:1823
+#: src/component/navigation.vue:502 src/component/navigation.vue:1863
 msgid "Offline"
 msgstr "Offline-tilassa"
 
@@ -1775,7 +1775,7 @@ msgid "Password changed"
 msgstr "Salasana vaihdettu"
 
 #: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:219
-#: src/component/navigation.vue:563 src/component/navigation.vue:885
+#: src/component/navigation.vue:575 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
@@ -1831,7 +1831,7 @@ msgstr "Paikka ja aika"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
 #: src/app/routes.js:290 src/component/navigation.vue:285
-#: src/component/navigation.vue:295 src/component/navigation.vue:569
+#: src/component/navigation.vue:295 src/component/navigation.vue:581
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:497
@@ -1983,7 +1983,7 @@ msgstr "Punainen"
 msgid "Register"
 msgstr "Rekisteröi"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1985
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:2025
 #: src/component/photo/toolbar.vue:78 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1991,7 +1991,7 @@ msgstr "Rekisteröi"
 msgid "Reload"
 msgstr "Lataa uudelleen"
 
-#: src/component/navigation.vue:139 src/dialog/reload.vue:26
+#: src/component/navigation.vue:141 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Ladataan uudelleen…"
@@ -2081,7 +2081,7 @@ msgid "Scans"
 msgstr "Skannaukset"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:551 src/component/navigation.vue:4
+#: src/component/navigation.vue:563 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:49
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:77 src/page/places.vue:46
@@ -2158,7 +2158,7 @@ msgstr "Istunnot"
 #: src/component/navigation.vue:410 src/component/navigation.vue:420
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
-#: src/component/navigation.vue:2018
+#: src/component/navigation.vue:2058
 msgid "Settings"
 msgstr "Asetukset"
 
@@ -2318,6 +2318,7 @@ msgstr "Super Admin"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Tuki lisäpalveluille, kuten Google Drivelle lisätään myöhemmin."
 
+#: src/component/navigation.vue:487 src/component/navigation.vue:1818
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr "Tue missiotamme"
@@ -2475,7 +2476,7 @@ msgid "Unknown"
 msgstr "Tuntematon"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:90 src/page/settings/account.vue:35
+#: src/component/navigation.vue:92 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Rekisteröimätön"
@@ -2518,7 +2519,7 @@ msgid "Updating stacks"
 msgstr "Päivitetään pinoja"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:453
-#: src/component/navigation.vue:593 src/component/navigation.vue:51
+#: src/component/navigation.vue:605 src/component/navigation.vue:51
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Päivitys"
@@ -2529,7 +2530,7 @@ msgstr "Päivitys"
 msgid "Upgrade Now"
 msgstr "Päivitä nyt"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2076
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
@@ -2591,7 +2592,7 @@ msgstr "Käytä esiasetuksia"
 msgid "User"
 msgstr "Käyttäjä"
 
-#: src/component/navigation.vue:598
+#: src/component/navigation.vue:610
 msgid "User Guide"
 msgstr "Käyttöopas"
 

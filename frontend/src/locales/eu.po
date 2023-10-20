@@ -60,7 +60,7 @@ msgstr "Klik eginez gero, arbelean kopiatuko da."
 msgid "About"
 msgstr "Buruz"
 
-#: src/component/navigation.vue:101 src/component/navigation.vue:2000
+#: src/component/navigation.vue:103 src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -187,7 +187,7 @@ msgstr "Albumaren izena"
 
 #: src/app/routes.js:175 src/component/album/toolbar.vue:58
 #: src/component/navigation.vue:152 src/component/navigation.vue:162
-#: src/component/navigation.vue:557 src/component/navigation.vue:4
+#: src/component/navigation.vue:569 src/component/navigation.vue:4
 #: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:66
 msgid "Albums"
 msgstr "Albumak"
@@ -1034,7 +1034,7 @@ msgstr "Fitxategiaren Tamaina"
 msgid "Filename"
 msgstr "Fitxategi izena"
 
-#: src/component/navigation.vue:575 src/dialog/photo/edit.vue:65
+#: src/component/navigation.vue:587 src/dialog/photo/edit.vue:65
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
 msgid "Files"
 msgstr "Fitxategiak"
@@ -1213,7 +1213,7 @@ msgstr "Sartu RAW irudi-fitxategiak pila eta artxiboak deskargatzean."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Sartu sidecar fitxategiak pilak eta artxiboak deskargatzean."
 
-#: src/component/navigation.vue:581 src/page/library.vue:35
+#: src/component/navigation.vue:593 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Aurkibidea"
@@ -1341,7 +1341,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Gehiago ikasi"
 
-#: src/component/navigation.vue:603
+#: src/component/navigation.vue:615
 msgid "Legal Information"
 msgstr "Informazio juridikoa"
 
@@ -1420,16 +1420,16 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr "Erregistro-mezuak hemen agertzen dira PhotoPrism-ek hautsitako fitxategiak aurkitzen dituen bakoitzean edo beste arazo potentzial batzuk daudenean."
 
 #: src/component/navigation.vue:475 src/component/navigation.vue:1778
-#: src/component/navigation.vue:2052
+#: src/component/navigation.vue:2092
 msgid "Login"
 msgstr "Saioa hasi"
 
-#: src/component/navigation.vue:519 src/component/navigation.vue:1889
-#: src/component/navigation.vue:1920 src/component/navigation.vue:1971
+#: src/component/navigation.vue:531 src/component/navigation.vue:1929
+#: src/component/navigation.vue:1960 src/component/navigation.vue:2011
 msgid "Logout"
 msgstr "Saioa amaitu"
 
-#: src/component/navigation.vue:587 src/page/library.vue:58
+#: src/component/navigation.vue:599 src/page/library.vue:58
 #: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "Erregistroak"
@@ -1671,7 +1671,7 @@ msgstr "Hemen oraindik ez dago ezer ikusteko."
 msgid "Nothing was found."
 msgstr "Ez da ezer aurkitu."
 
-#: src/component/navigation.vue:490 src/component/navigation.vue:1823
+#: src/component/navigation.vue:502 src/component/navigation.vue:1863
 msgid "Offline"
 msgstr "Lineaz kanpo"
 
@@ -1775,7 +1775,7 @@ msgid "Password changed"
 msgstr "Pasahitza aldatu da"
 
 #: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:219
-#: src/component/navigation.vue:563 src/component/navigation.vue:885
+#: src/component/navigation.vue:575 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
 msgid "People"
@@ -1831,7 +1831,7 @@ msgstr "Lekua eta Ordua"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
 #: src/app/routes.js:290 src/component/navigation.vue:285
-#: src/component/navigation.vue:295 src/component/navigation.vue:569
+#: src/component/navigation.vue:295 src/component/navigation.vue:581
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
 #: src/page/settings/general.vue:118 src/page/settings/general.vue:497
@@ -1983,7 +1983,7 @@ msgstr "Gorria"
 msgid "Register"
 msgstr "Izena eman"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:1985
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:2025
 #: src/component/photo/toolbar.vue:78 src/dialog/reload.vue:12
 #: src/page/albums.vue:109 src/page/labels.vue:85
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:70
@@ -1991,7 +1991,7 @@ msgstr "Izena eman"
 msgid "Reload"
 msgstr "Berriz kargatu"
 
-#: src/component/navigation.vue:139 src/dialog/reload.vue:26
+#: src/component/navigation.vue:141 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:92 src/page/settings/library.vue:46
 msgid "Reloading…"
 msgstr "Berriro kargatzen…"
@@ -2081,7 +2081,7 @@ msgid "Scans"
 msgstr "Eskaneatzea"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:551 src/component/navigation.vue:4
+#: src/component/navigation.vue:563 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:49
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:77 src/page/places.vue:46
@@ -2158,7 +2158,7 @@ msgstr "Saioak"
 #: src/component/navigation.vue:410 src/component/navigation.vue:420
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
-#: src/component/navigation.vue:2018
+#: src/component/navigation.vue:2058
 msgid "Settings"
 msgstr "Ezarpenak"
 
@@ -2318,6 +2318,7 @@ msgstr "Super Administratzailea"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Zerbitzu gehigarrietarako laguntza gehituko da denborarekin, Google Drive adibidez."
 
+#: src/component/navigation.vue:487 src/component/navigation.vue:1818
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr "Lagundu Gure Misioa"
@@ -2477,7 +2478,7 @@ msgid "Unknown"
 msgstr "Ezezaguna"
 
 #: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:90 src/page/settings/account.vue:35
+#: src/component/navigation.vue:92 src/page/settings/account.vue:35
 #: src/page/settings/account.vue:43
 msgid "Unregistered"
 msgstr "Erregistratu gabe"
@@ -2520,7 +2521,7 @@ msgid "Updating stacks"
 msgstr "Pilak eguneratzen"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:453
-#: src/component/navigation.vue:593 src/component/navigation.vue:51
+#: src/component/navigation.vue:605 src/component/navigation.vue:51
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Berritu"
@@ -2531,7 +2532,7 @@ msgstr "Berritu"
 msgid "Upgrade Now"
 msgstr "Berritu orain"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2036
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2076
 #: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
@@ -2593,7 +2594,7 @@ msgstr "Erabili aurrezarpenak"
 msgid "User"
 msgstr "Erabiltzailea"
 
-#: src/component/navigation.vue:598
+#: src/component/navigation.vue:610
 msgid "User Guide"
 msgstr "Erabiltzailearen Gida"
 
