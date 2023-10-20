@@ -305,19 +305,6 @@ func (m *MediaFile) Checksum() string {
 	return m.checksum
 }
 
-// EditedName returns the corresponding edited image file name as used by Apple (e.g. IMG_E12345.JPG).
-func (m *MediaFile) EditedName() string {
-	basename := filepath.Base(m.fileName)
-
-	if strings.ToUpper(basename[:4]) == "IMG_" && strings.ToUpper(basename[:5]) != "IMG_E" {
-		if filename := filepath.Dir(m.fileName) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]; fs.FileExists(filename) {
-			return filename
-		}
-	}
-
-	return ""
-}
-
 // PathNameInfo returns file name infos for indexing.
 func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relativePath, relativeName string) {
 	fileRoot = m.Root()
@@ -444,9 +431,27 @@ func (m *MediaFile) SubDir(dir string) string {
 	return filepath.Join(filepath.Dir(m.fileName), dir)
 }
 
+// AbsPrefix returns the directory and base filename without any extensions.
+func (m *MediaFile) AbsPrefix(stripSequence bool) string {
+	return fs.AbsPrefix(m.FileName(), stripSequence)
+}
+
 // BasePrefix returns the filename base without any extensions and path.
 func (m *MediaFile) BasePrefix(stripSequence bool) string {
 	return fs.BasePrefix(m.FileName(), stripSequence)
+}
+
+// EditedName returns the corresponding edited image file name as used by Apple (e.g. IMG_E12345.JPG).
+func (m *MediaFile) EditedName() string {
+	basename := filepath.Base(m.fileName)
+
+	if strings.ToUpper(basename[:4]) == "IMG_" && strings.ToUpper(basename[:5]) != "IMG_E" {
+		if filename := filepath.Dir(m.fileName) + string(os.PathSeparator) + basename[:4] + "E" + basename[4:]; fs.FileExists(filename) {
+			return filename
+		}
+	}
+
+	return ""
 }
 
 // Root returns the file root directory.
@@ -482,11 +487,6 @@ func (m *MediaFile) Root() string {
 	}
 
 	return m.fileRoot
-}
-
-// AbsPrefix returns the directory and base filename without any extensions.
-func (m *MediaFile) AbsPrefix(stripSequence bool) string {
-	return fs.AbsPrefix(m.FileName(), stripSequence)
 }
 
 // MimeType returns the mime type.

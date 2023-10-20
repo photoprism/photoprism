@@ -11,10 +11,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+// RelatedFilePathPrefix returns the absolute file path and name prefix without file extensions
+// and suffixes to be ignored.
+func (m *MediaFile) RelatedFilePathPrefix(stripSequence bool) (s string) {
+	return fs.RelatedFilePathPrefix(m.FileName(), stripSequence)
+}
+
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
-	// File path and name without any extensions.
-	prefix := m.AbsPrefix(stripSequence)
+	// Related file path prefix without ignored file name extensions and suffixes.
+	filePathPrefix := m.RelatedFilePathPrefix(stripSequence)
 
 	// Storage folder path prefixes.
 	sidecarPrefix := Config().SidecarPath() + "/"
@@ -30,34 +36,36 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	skipVectors := Config().DisableVectors()
 
 	// Replace sidecar with originals path in search prefix.
-	if len(sidecarPrefix) > 1 && sidecarPrefix != originalsPrefix && strings.HasPrefix(prefix, sidecarPrefix) {
-		prefix = strings.Replace(prefix, sidecarPrefix, originalsPrefix, 1)
+	if len(sidecarPrefix) > 1 && sidecarPrefix != originalsPrefix && strings.HasPrefix(filePathPrefix, sidecarPrefix) {
+		filePathPrefix = strings.Replace(filePathPrefix, sidecarPrefix, originalsPrefix, 1)
 		log.Debugf("media: replaced sidecar with originals path in related file matching pattern")
 	}
 
-	// Quote path for glob.
+	// globPattern specifies the escaped naming pattern to find related files.
+	var globPattern string
+
+	// Strip common name sequences like "copy 2" or "(3)"?
 	if stripSequence {
-		// Strip common name sequences like "copy 2" and escape meta characters.
-		prefix = regexp.QuoteMeta(prefix)
+		globPattern = regexp.QuoteMeta(filePathPrefix) + "*"
 	} else {
-		// Use strict file name matching and escape meta characters.
-		prefix = regexp.QuoteMeta(prefix + ".")
+		globPattern = regexp.QuoteMeta(filePathPrefix+".") + "*"
 	}
 
-	// Find related files.
-	matches, err := filepath.Glob(prefix + "*")
+	// Find files that match the pattern.
+	matches, err := filepath.Glob(globPattern)
 
 	if err != nil {
 		return result, err
 	}
 
-	// Search for related edited image file name (as used by Apple) and add it to the list of files, if found.
+	// Additionally include edited version in the file matches, if exists.
 	if name := m.EditedName(); name != "" {
 		matches = append(matches, name)
 	}
 
 	isHEIC := false
 
+	// Process files that matched the pattern.
 	for _, fileName := range matches {
 		f, fileErr := NewMediaFile(fileName)
 
@@ -65,7 +73,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			continue
 		}
 
-		// Ignore file format?
+		// Skip file if its format must be ignored based on the configuration.
 		switch {
 		case skipRaw && f.IsRaw():
 			log.Debugf("media: skipped related raw image %s", clean.Log(f.RootRelName()))
