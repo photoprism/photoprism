@@ -376,7 +376,7 @@ func TestPhoto_GetTakenAt(t *testing.T) {
 	utcTime := m.GetTakenAt().Format("2006-01-02T15:04:05")
 
 	if utcTime != "2020-02-04T10:54:34" {
-		t.Fatalf("utc time should be 2020-02-04T10:54:34: %s", utcTime)
+		t.Fatalf("UTC time should be 2020-02-04T10:54:34: %s", utcTime)
 	}
 }
 

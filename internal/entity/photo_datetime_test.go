@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -113,7 +115,7 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 
 		zone := "Europe/Berlin"
 
-		loc, _ := time.LoadLocation(zone)
+		loc := txt.TimeZone(zone)
 
 		newTime := time.Date(2013, 11, 11, 9, 7, 18, 0, loc)
 

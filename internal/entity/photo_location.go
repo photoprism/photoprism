@@ -330,9 +330,9 @@ func (m *Photo) CountryCode() string {
 
 // GetTakenAt returns UTC time for TakenAtLocal.
 func (m *Photo) GetTakenAt() time.Time {
-	location, err := time.LoadLocation(m.TimeZone)
+	location := txt.TimeZone(m.TimeZone)
 
-	if err != nil {
+	if location == nil {
 		return m.TakenAt
 	}
 
@@ -345,9 +345,9 @@ func (m *Photo) GetTakenAt() time.Time {
 
 // GetTakenAtLocal returns local time for TakenAt.
 func (m *Photo) GetTakenAtLocal() time.Time {
-	location, err := time.LoadLocation(m.TimeZone)
+	location := txt.TimeZone(m.TimeZone)
 
-	if err != nil {
+	if location == nil {
 		return m.TakenAtLocal
 	}
 

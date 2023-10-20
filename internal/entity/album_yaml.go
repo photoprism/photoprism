@@ -4,15 +4,20 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
+
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"gopkg.in/yaml.v2"
 )
 
 var albumYamlMutex = sync.Mutex{}
 
 // Yaml returns album data as YAML string.
 func (m *Album) Yaml() (out []byte, err error) {
+	m.CreatedAt = m.CreatedAt.UTC().Truncate(time.Second)
+	m.UpdatedAt = m.UpdatedAt.UTC().Truncate(time.Second)
+
 	if err := Db().Model(m).Association("Photos").Find(&m.Photos).Error; err != nil {
 		log.Errorf("album: %s (yaml)", err)
 		return out, err

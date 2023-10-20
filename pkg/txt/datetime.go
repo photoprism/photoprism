@@ -96,10 +96,10 @@ func DateTime(s, timeZone string) (t time.Time) {
 	}
 
 	// Set time zone.
-	loc, err := time.LoadLocation(timeZone)
+	loc := TimeZone(timeZone)
 
 	// Location found?
-	if err == nil && timeZone != "" && tz != time.Local {
+	if loc != nil && timeZone != "" && tz != time.Local {
 		tz = loc
 		timeZone = tz.String()
 	} else {

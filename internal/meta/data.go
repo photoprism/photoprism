@@ -19,12 +19,13 @@ type Data struct {
 	MimeType         string        `meta:"MIMEType" report:"-"`
 	DocumentID       string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID,DigitalImageGUID"`
 	InstanceID       string        `meta:"InstanceID,DocumentID"`
-	CreatedAt        time.Time     `meta:"SubSecCreateDate,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate"`
+	CreatedAt        time.Time     `meta:"SubSecCreateDate,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate,SubSecModifyDate"`
 	TakenAt          time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized" xmp:"DateCreated"`
 	TakenAtLocal     time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized"`
 	TakenGps         time.Time     `meta:"GPSDateTime,GPSDateStamp"`
 	TakenNs          int           `meta:"-"`
 	TimeZone         string        `meta:"-"`
+	TimeOffset       string        `meta:"OffsetTime,OffsetTimeOriginal,OffsetTimeDigitized"`
 	MediaType        media.Type    `meta:"-"`
 	HasThumbEmbedded bool          `meta:"ThumbnailImage,PhotoshopThumbnail" report:"-"`
 	HasVideoEmbedded bool          `meta:"EmbeddedVideoFile,MotionPhoto,MotionPhotoVideo,MicroVideo" report:"-"`

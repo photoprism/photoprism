@@ -3,7 +3,7 @@ module github.com/photoprism/photoprism
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/disintegration/imaging v1.6.2
-	github.com/djherbis/times v1.5.0
+	github.com/djherbis/times v1.6.0
 	github.com/dsoprea/go-exif/v3 v3.0.1
 	github.com/dsoprea/go-heic-exif-extractor/v2 v2.0.0-20210512044107-62067e44c235
 	github.com/dsoprea/go-iptc v0.0.0-20200610044640-bc9ca208b413 // indirect

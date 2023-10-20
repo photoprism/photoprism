@@ -395,6 +395,7 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	m.PhotoUID = rnd.GenerateUID(PhotoUID)
+
 	return scope.SetColumn("PhotoUID", m.PhotoUID)
 }
 

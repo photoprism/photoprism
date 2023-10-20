@@ -4,9 +4,11 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"time"
+
+	"gopkg.in/yaml.v2"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"gopkg.in/yaml.v2"
 )
 
 var photoYamlMutex = sync.Mutex{}
@@ -15,6 +17,9 @@ var photoYamlMutex = sync.Mutex{}
 func (m *Photo) Yaml() ([]byte, error) {
 	// Load details if not done yet.
 	m.GetDetails()
+
+	m.CreatedAt = m.CreatedAt.UTC().Truncate(time.Second)
+	m.UpdatedAt = m.UpdatedAt.UTC().Truncate(time.Second)
 
 	out, err := yaml.Marshal(m)
 

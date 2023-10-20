@@ -13,7 +13,7 @@ func TestUTC(t *testing.T) {
 		utc := UTC()
 
 		if zone, offset := utc.Zone(); zone != time.UTC.String() {
-			t.Error("should be utc")
+			t.Error("should be UTC")
 		} else if offset != 0 {
 			t.Error("offset should be 0")
 		}
@@ -27,7 +27,7 @@ func TestUTC(t *testing.T) {
 		assert.True(t, utcGorm.After(utc))
 
 		if zone, offset := utcGorm.Zone(); zone != time.UTC.String() {
-			t.Error("gorm time should be utc")
+			t.Error("gorm time should be UTC")
 		} else if offset != 0 {
 			t.Error("gorm time offset should be 0")
 		}
@@ -39,7 +39,7 @@ func TestUTC(t *testing.T) {
 func TestTimeStamp(t *testing.T) {
 	t.Run("UTC", func(t *testing.T) {
 		if TimeStamp().Location() != time.UTC {
-			t.Fatal("timestamp zone must be utc")
+			t.Fatal("timestamp zone must be UTC")
 		}
 	})
 	t.Run("Past", func(t *testing.T) {
@@ -102,7 +102,7 @@ func TestTimePointer(t *testing.T) {
 	}
 
 	if result.Location() != time.UTC {
-		t.Fatal("timestamp zone must be utc")
+		t.Fatal("timestamp zone must be UTC")
 	}
 
 	if result.After(time.Now().Add(time.Second)) {

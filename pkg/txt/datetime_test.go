@@ -127,6 +127,11 @@ func TestDateTime(t *testing.T) {
 		assert.Equal(t, "2022-09-04 00:48:26 +0000 UTC", result.UTC().String())
 		assert.Equal(t, "2022-09-03 17:48:26", result.Format("2006-01-02 15:04:05"))
 	})
+	t.Run("2016:06:28 09:45:49 UTC+2", func(t *testing.T) {
+		result := DateTime("2016:06:28 09:45:49 +0000 UTC", "UTC+2")
+		assert.Equal(t, "2016-06-28 09:45:49 +0200 UTC+2", result.String())
+		assert.Equal(t, "2016-06-28 07:45:49 +0000 UTC", result.UTC().String())
+	})
 }
 
 func TestIsTime(t *testing.T) {
