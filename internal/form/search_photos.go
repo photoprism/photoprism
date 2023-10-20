@@ -48,7 +48,7 @@ type SearchPhotos struct {
 	Olc       string    `form:"olc" example:"olc:8FWCHX7W+" notes:"OLC Position (Open Location Code)"`
 	Lat       float64   `form:"lat" example:"lat:41.894043" notes:"GPS Position (Latitude)"`
 	Lng       float64   `form:"lng" example:"lng:-87.62448" notes:"GPS Position (Longitude)"`
-	Alt       string    `form:"alt" example:"alt:300-500" notes:"GPS Altitude Range"`
+	Alt       string    `form:"alt" example:"alt:300-500" notes:"GPS Altitude (m)"`
 	Dist      float64   `form:"dist" example:"dist:50" notes:"Distance to Position (km)"`
 	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
 	Fmin      float32   `form:"fmin" notes:"F-number (min)"`
@@ -79,9 +79,9 @@ type SearchPhotos struct {
 	Review    bool      `form:"review" notes:"Finds pictures in review"`                                                                                                                                              // Find photos in review
 	Camera    string    `form:"camera" example:"camera:canon" notes:"Camera Make/Model Name"`                                                                                                                         // Camera UID or name
 	Lens      string    `form:"lens" example:"lens:ef24" notes:"Lens Make/Model Name"`                                                                                                                                // Lens UID or name
-	Iso       string    `form:"iso" example:"iso:200-400" notes:"ISO Range"`
-	F         string    `form:"f" example:"f:2.8-4.5" notes:"F-Number Range"`
-	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length Range"`
+	Iso       string    `form:"iso" example:"iso:200-400" notes:"ISO Number (light sensitivity)"`
+	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length (35mm equivalent)"`
+	F         string    `form:"f" example:"f:2.8-4.5" notes:"Aperture (f-number)"`
 	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken before this date"` // Finds images taken before date
 	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken after this date"`   // Finds images taken after date
 	Count     int       `form:"count" binding:"required" serialize:"-"`                                        // Result FILE limit

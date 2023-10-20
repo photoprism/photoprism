@@ -494,19 +494,19 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("lenses.lens_name LIKE ? OR lenses.lens_model LIKE ? OR lenses.lens_slug LIKE ?", v, v, v)
 	}
 
-	// Filter by ISO Range.
+	// Filter by ISO Number (light sensitivity) range.
 	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Iso, 0, 10000000); rangeErr == nil {
 		s = s.Where("photos.photo_iso >= ? AND photos.photo_iso <= ?", rangeStart, rangeEnd)
 	}
 
-	// Filter by F-Number Range.
-	if rangeStart, rangeEnd, rangeErr := txt.FloatRange(f.F, 0, 10000000); rangeErr == nil {
-		s = s.Where("photos.photo_f_number >= ? AND photos.photo_f_number <= ?", rangeStart-0.01, rangeEnd+0.01)
-	}
-
-	// Filter by Focal Length Range.
+	// Filter by Focal Length (35mm equivalent) range.
 	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Mm, 0, 10000000); rangeErr == nil {
 		s = s.Where("photos.photo_focal_length >= ? AND photos.photo_focal_length <= ?", rangeStart, rangeEnd)
+	}
+
+	// Filter by Aperture (f-number) range.
+	if rangeStart, rangeEnd, rangeErr := txt.FloatRange(f.F, 0, 10000000); rangeErr == nil {
+		s = s.Where("photos.photo_f_number >= ? AND photos.photo_f_number <= ?", rangeStart-0.01, rangeEnd+0.01)
 	}
 
 	// Filter by year.
@@ -690,19 +690,19 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
 	}
 
-	// Filter by GPS Latitude (from +90 to -90 degrees).
+	// Filter by GPS Latitude range (from +90 to -90 degrees).
 	if latN, latS, latErr := clean.GPSLatRange(f.Lat, f.Dist); latErr == nil {
 		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latS, latN)
 	}
 
-	// Filter by GPS Longitude (from -180 to +180 degrees).
+	// Filter by GPS Longitude range (from -180 to +180 degrees)
 	if lngE, lngW, lngErr := clean.GPSLngRange(f.Lng, f.Dist); lngErr == nil {
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
 	}
 
-	// Filter by GPS Altitude
-	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Alt, 0, 1000000); rangeErr == nil {
-		s = s.Where("photos.photo_altitude >= ? AND photos.photo_altitude <= ?", rangeStart, rangeEnd)
+	// Filter by GPS Altitude (m) range.
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Alt, -6378000, 1000000000); rangeErr == nil {
+		s = s.Where("photos.photo_altitude BETWEEN ? AND ?", rangeStart, rangeEnd)
 	}
 
 	// Find photos taken before date.

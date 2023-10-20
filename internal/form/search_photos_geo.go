@@ -46,8 +46,8 @@ type SearchPhotosGeo struct {
 	Olc       string    `form:"olc" example:"olc:8FWCHX7W+" notes:"OLC Position (Open Location Code)"`
 	Lat       float64   `form:"lat" example:"lat:41.894043" notes:"GPS Position (Latitude)"`
 	Lng       float64   `form:"lng" example:"lng:-87.62448" notes:"GPS Position (Longitude)"`
+	Alt       string    `form:"alt" example:"alt:300-500" notes:"GPS Altitude (m)"`
 	Dist      float64   `form:"dist" example:"dist:50" notes:"Distance to Position (km)"`
-	Alt       string    `form:"alt" example:"alt:300-500" notes:"GPS Altitude Range"`
 	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
 	Person    string    `form:"person"`   // Alias for Subject
 	Subjects  string    `form:"subjects"` // Text
@@ -68,9 +68,9 @@ type SearchPhotosGeo struct {
 	Color     string    `form:"color"`
 	Camera    int       `form:"camera"`
 	Lens      int       `form:"lens"`
-	Iso       string    `form:"iso" example:"iso:200-400" notes:"ISO Range"`
-	F         string    `form:"f" example:"f:2.8-4.5" notes:"F-Number Range"`
-	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length Range"`
+	Iso       string    `form:"iso" example:"iso:200-400" notes:"ISO Number (light sensitivity)"`
+	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length (35mm equivalent)"`
+	F         string    `form:"f" example:"f:2.8-4.5" notes:"Aperture (f-number)"`
 	Count     int       `form:"count" serialize:"-"`
 	Offset    int       `form:"offset" serialize:"-"`
 }
