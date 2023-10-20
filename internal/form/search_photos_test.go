@@ -651,6 +651,17 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Equal(t, "cat", form.Lens)
 	})
+	t.Run("Altitude", func(t *testing.T) {
+		form := &SearchPhotos{Query: "alt:200-500"}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "200-500", form.Alt)
+	})
 	t.Run("query for before with invalid type", func(t *testing.T) {
 		form := &SearchPhotos{Query: "before:cat"}
 

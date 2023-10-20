@@ -47,6 +47,7 @@ type SearchPhotosGeo struct {
 	Lat       float64   `form:"lat" example:"lat:41.894043" notes:"GPS Position (Latitude)"`
 	Lng       float64   `form:"lng" example:"lng:-87.62448" notes:"GPS Position (Longitude)"`
 	Dist      float64   `form:"dist" example:"dist:50" notes:"Distance to Position (km)"`
+	Alt       string    `form:"alt" example:"alt:300-500" notes:"GPS Altitude Range"`
 	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
 	Person    string    `form:"person"`   // Alias for Subject
 	Subjects  string    `form:"subjects"` // Text

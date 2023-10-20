@@ -593,6 +593,11 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("photos.photo_lat BETWEEN ? AND ?", latS, latN)
 	}
 
+	// Filter by GPS Altitude
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Alt, 0, 1000000); rangeErr == nil {
+		s = s.Where("photos.photo_altitude >= ? AND photos.photo_altitude <= ?", rangeStart, rangeEnd)
+	}
+
 	// Filter by GPS Longitude (from -180 to +180 degrees).
 	if lngE, lngW, lngErr := clean.GPSLngRange(f.Lng, f.Dist); lngErr == nil {
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
