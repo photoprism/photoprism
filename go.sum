@@ -1842,8 +1842,8 @@ gopkg.in/check.v1 v1.0.0-20200902074654-038fdea0a05b/go.mod h1:Co6ibVJAznAaIkqp8
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c h1:Hei/4ADfdWqJk1ZMxUNpqntNwaWcugrBjAiHlqqRiVk=
 gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod h1:JHkPIbrfpd72SG/EVd6muEfDQjcINNoR0C8j2r3qZ4Q=
 gopkg.in/errgo.v2 v2.1.0/go.mod h1:hNsd1EY+bozCKY1Ytp96fpM3vjJbqLJn88ws8XvfDNI=
-gopkg.in/photoprism/go-tz.v2 v2.1.1 h1:XdNAQRneJmJdXDFovXJbf5eewp3zsir+jJ1BxdmbnPk=
-gopkg.in/photoprism/go-tz.v2 v2.1.1/go.mod h1:E1aQvLJs3YA4wbrPMOdX4YEx1TgRO2PLSxnO+J1Kqiw=
+gopkg.in/photoprism/go-tz.v2 v2.1.2 h1:FvfcMZhoTW/NOi0h2W/+7zSktIw6pZ//fPTcG5JLccU=
+gopkg.in/photoprism/go-tz.v2 v2.1.2/go.mod h1:5nMEBZ864+F7kgqRrXOSrHTephWTHM36nM9/HYQ8i+g=
 gopkg.in/square/go-jose.v2 v2.6.0 h1:NGk74WTnPKBNUhNzQX7PYcTLUjoq7mzKk2OKbvwk2iI=
 gopkg.in/square/go-jose.v2 v2.6.0/go.mod h1:M9dMgbHiYLoDGQrXy7OpJDJWiKiU//h+vD76mk0e1AI=
 gopkg.in/src-d/go-billy.v4 v4.3.2 h1:0SQA1pRztfTFx2miS8sA97XvooFeNOmvUenF4o0EcVg=
