@@ -606,9 +606,9 @@ func TestPhotos(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(photos))
 
 	})
-	t.Run("form.fmin", func(t *testing.T) {
+	t.Run("form.f", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Fmin:5"
+		f.Query = "F:5-100"
 		f.Count = 10
 		f.Offset = 0
 		f.Order = "oldest"
@@ -621,9 +621,9 @@ func TestPhotos(t *testing.T) {
 
 		assert.LessOrEqual(t, 1, len(photos))
 	})
-	t.Run("form.fmax", func(t *testing.T) {
+	t.Run("form.f", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "Fmax:2"
+		f.Query = "F:0-2"
 		f.Count = 10
 		f.Offset = 0
 		f.Order = "newest"

@@ -51,43 +51,41 @@ type SearchPhotos struct {
 	Alt       string    `form:"alt" example:"alt:300-500" notes:"GPS Altitude (m)"`
 	Dist      float64   `form:"dist" example:"dist:50" notes:"Distance to Position (km)"`
 	Latlng    string    `form:"latlng" notes:"GPS Bounding Box (Lat N, Lng E, Lat S, Lng W)"`
-	Fmin      float32   `form:"fmin" notes:"F-number (min)"`
-	Fmax      float32   `form:"fmax" notes:"F-number (max)"`
+	Camera    string    `form:"camera" example:"camera:canon" notes:"Camera Make/Model Name"` // Camera UID or name
+	Lens      string    `form:"lens" example:"lens:ef24" notes:"Lens Make/Model Name"`        // Lens UID or name
+	Iso       string    `form:"iso" example:"iso:200-400" notes:"ISO Number (light sensitivity)"`
+	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length (35mm equivalent)"`
+	F         string    `form:"f" example:"f:2.8-4.5" notes:"Aperture (f-number)"`
+	Color     string    `form:"color" example:"color:\"red|blue\"" notes:"Color Name (purple, magenta, pink, red, orange, gold, yellow, lime, green, teal, cyan, blue, brown, white, grey, black) (separate with |)"` // Main color
 	Chroma    int16     `form:"chroma" example:"chroma:70" notes:"Chroma (0-100)"`
-	Diff      uint32    `form:"diff" notes:"Differential Perceptual Hash (000000-FFFFFF)"`
 	Mono      bool      `form:"mono" notes:"Finds pictures with few or no colors"`
+	Diff      uint32    `form:"diff" notes:"Differential Perceptual Hash (000000-FFFFFF)"`
 	Geo       string    `form:"geo" example:"geo:yes" notes:"Finds pictures with or without coordinates"`
 	Keywords  string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords (combinable with & and |)"`
 	Label     string    `form:"label" example:"label:cat|dog" notes:"Label Names (separate with |)"`
 	Category  string    `form:"category" example:"category:airport" notes:"Location Category"`
-	Country   string    `form:"country" example:"country:\"de|us\"" notes:"Location Country Code (separate with |)"`                                                                                                  // Moments
-	State     string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"Location State (separate with |)"`                                                                                                 // Moments
-	City      string    `form:"city" example:"city:\"Berlin\"" notes:"Location City (separate with |)"`                                                                                                               // Moments
-	Year      string    `form:"year" example:"year:1990|2003" notes:"Year (separate with |)"`                                                                                                                         // Moments
-	Month     string    `form:"month" example:"month:7|10" notes:"Month (1-12, separate with |)"`                                                                                                                     // Moments
-	Day       string    `form:"day" example:"day:3|13" notes:"Day of Month (1-31, separate with |)"`                                                                                                                  // Moments
-	Face      string    `form:"face" example:"face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZG" notes:"Face ID, yes, no, new, or kind"`                                                                                          // UIDs
-	Faces     string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of Faces (yes = 1)"`                                                                                                          // Find or exclude faces if detected.
-	Subject   string    `form:"subject" example:"subject:\"Jane Doe & John Doe\"" notes:"Alias for person"`                                                                                                           // UIDs
-	Person    string    `form:"person" example:"person:\"Jane Doe & John Doe\"" notes:"Subject Names, exact matches (combinable with & and |)"`                                                                       // Alias for Subject
-	Subjects  string    `form:"subjects" example:"subjects:\"Jane & John\"" notes:"Alias for people"`                                                                                                                 // People names
-	People    string    `form:"people" example:"people:\"Jane & John\"" notes:"Subject Names (combinable with & and |)"`                                                                                              // Alias for Subjects
-	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`                                                                                                         // Album UIDs or name
-	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names (combinable with & and |)"`                                                                                       // Multi search with and/or
-	Color     string    `form:"color" example:"color:\"red|blue\"" notes:"Color Name (purple, magenta, pink, red, orange, gold, yellow, lime, green, teal, cyan, blue, brown, white, grey, black) (separate with |)"` // Main color
-	Quality   int       `form:"quality" notes:"Minimum quality score (1-7)"`                                                                                                                                          // Photo quality score
-	Review    bool      `form:"review" notes:"Finds pictures in review"`                                                                                                                                              // Find photos in review
-	Camera    string    `form:"camera" example:"camera:canon" notes:"Camera Make/Model Name"`                                                                                                                         // Camera UID or name
-	Lens      string    `form:"lens" example:"lens:ef24" notes:"Lens Make/Model Name"`                                                                                                                                // Lens UID or name
-	Iso       string    `form:"iso" example:"iso:200-400" notes:"ISO Number (light sensitivity)"`
-	Mm        string    `form:"mm" example:"mm:28-35" notes:"Focal Length (35mm equivalent)"`
-	F         string    `form:"f" example:"f:2.8-4.5" notes:"Aperture (f-number)"`
-	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken before this date"` // Finds images taken before date
-	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken after this date"`   // Finds images taken after date
-	Count     int       `form:"count" binding:"required" serialize:"-"`                                        // Result FILE limit
-	Offset    int       `form:"offset" serialize:"-"`                                                          // Result FILE offset
-	Order     string    `form:"order" serialize:"-"`                                                           // Sort order
-	Merged    bool      `form:"merged" serialize:"-"`                                                          // Merge FILES in response
+	Country   string    `form:"country" example:"country:\"de|us\"" notes:"Location Country Code (separate with |)"`                            // Moments
+	State     string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"Location State (separate with |)"`                           // Moments
+	City      string    `form:"city" example:"city:\"Berlin\"" notes:"Location City (separate with |)"`                                         // Moments
+	Year      string    `form:"year" example:"year:1990|2003" notes:"Year (separate with |)"`                                                   // Moments
+	Month     string    `form:"month" example:"month:7|10" notes:"Month (1-12, separate with |)"`                                               // Moments
+	Day       string    `form:"day" example:"day:3|13" notes:"Day of Month (1-31, separate with |)"`                                            // Moments
+	Face      string    `form:"face" example:"face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZG" notes:"Face ID, yes, no, new, or kind"`                    // UIDs
+	Faces     string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of Faces (yes = 1)"`                                    // Find or exclude faces if detected.
+	Subject   string    `form:"subject" example:"subject:\"Jane Doe & John Doe\"" notes:"Alias for person"`                                     // UIDs
+	Person    string    `form:"person" example:"person:\"Jane Doe & John Doe\"" notes:"Subject Names, exact matches (combinable with & and |)"` // Alias for Subject
+	Subjects  string    `form:"subjects" example:"subjects:\"Jane & John\"" notes:"Alias for people"`                                           // People names
+	People    string    `form:"people" example:"people:\"Jane & John\"" notes:"Subject Names (combinable with & and |)"`                        // Alias for Subjects
+	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`                                   // Album UIDs or name
+	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names (combinable with & and |)"`                 // Multi search with and/or
+	Quality   int       `form:"quality" notes:"Minimum quality score (1-7)"`                                                                    // Photo quality score
+	Review    bool      `form:"review" notes:"Finds pictures in review"`                                                                        // Find photos in review
+	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken before this date"`                                  // Finds images taken before date
+	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken after this date"`                                    // Finds images taken after date
+	Count     int       `form:"count" binding:"required" serialize:"-"`                                                                         // Result FILE limit
+	Offset    int       `form:"offset" serialize:"-"`                                                                                           // Result FILE offset
+	Order     string    `form:"order" serialize:"-"`                                                                                            // Sort order
+	Merged    bool      `form:"merged" serialize:"-"`                                                                                           // Merge FILES in response
 }
 
 func (f *SearchPhotos) GetQuery() string {

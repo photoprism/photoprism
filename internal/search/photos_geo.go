@@ -442,6 +442,15 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
+	// Filter by chroma.
+	if f.Mono {
+		s = s.Where("files.file_chroma = 0")
+	} else if f.Chroma > 9 {
+		s = s.Where("files.file_chroma > ?", f.Chroma)
+	} else if f.Chroma > 0 {
+		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
+	}
+
 	// Filter by favorite flag.
 	if txt.No(f.Favorite) {
 		s = s.Where("photos.photo_favorite = 0")
@@ -560,15 +569,6 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		} else if f.Quality != 0 && f.Private == false {
 			s = s.Where("photos.photo_quality >= ?", f.Quality)
 		}
-	}
-
-	// Filter by chroma.
-	if f.Mono {
-		s = s.Where("files.file_chroma = 0")
-	} else if f.Chroma > 9 {
-		s = s.Where("files.file_chroma > ?", f.Chroma)
-	} else if f.Chroma > 0 {
-		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
 	}
 
 	// Filter by location code.

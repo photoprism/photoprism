@@ -529,6 +529,19 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
 	}
 
+	// Filter by chroma.
+	if f.Mono {
+		s = s.Where("files.file_chroma = 0")
+	} else if f.Chroma > 9 {
+		s = s.Where("files.file_chroma > ?", f.Chroma)
+	} else if f.Chroma > 0 {
+		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
+	}
+
+	if f.Diff != 0 {
+		s = s.Where("files.file_diff = ?", f.Diff)
+	}
+
 	// Filter by favorite flag.
 	if txt.No(f.Favorite) {
 		s = s.Where("photos.photo_favorite = 0")
@@ -650,27 +663,6 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	// Filter by hash.
 	if txt.NotEmpty(f.Hash) {
 		s = s.Where("files.file_hash IN (?)", SplitOr(strings.ToLower(f.Hash)))
-	}
-
-	// Filter by chroma.
-	if f.Mono {
-		s = s.Where("files.file_chroma = 0")
-	} else if f.Chroma > 9 {
-		s = s.Where("files.file_chroma > ?", f.Chroma)
-	} else if f.Chroma > 0 {
-		s = s.Where("files.file_chroma > 0 AND files.file_chroma <= ?", f.Chroma)
-	}
-
-	if f.Diff != 0 {
-		s = s.Where("files.file_diff = ?", f.Diff)
-	}
-
-	if f.Fmin > 0 {
-		s = s.Where("photos.photo_f_number >= ?", f.Fmin)
-	}
-
-	if f.Fmax > 0 {
-		s = s.Where("photos.photo_f_number <= ?", f.Fmax)
 	}
 
 	// Filter by location code.
