@@ -2,14 +2,9 @@ package fs
 
 import (
 	"path/filepath"
-	"regexp"
 	"strconv"
 	"strings"
 )
-
-// RelatedMediaFileSuffix is a regular expression that matches suffixes of related media files,
-// see https://github.com/photoprism/photoprism/issues/2983 (Support Live Photos downloaded with "iCloudPD").
-var RelatedMediaFileSuffix = regexp.MustCompile(`(?i)_(jpg|jpeg|hevc)$`)
 
 // StripSequence removes common sequence patterns at the end of file names.
 func StripSequence(fileName string) string {
@@ -65,14 +60,4 @@ func AbsPrefix(fileName string, stripSequence bool) string {
 	}
 
 	return filepath.Join(filepath.Dir(fileName), BasePrefix(fileName, stripSequence))
-}
-
-// RelatedFilePathPrefix returns the absolute file path and name prefix without file extensions and media file
-// suffixes to be ignored for comparison, see https://github.com/photoprism/photoprism/issues/2983.
-func RelatedFilePathPrefix(fileName string, stripSequence bool) string {
-	if fileName == "" {
-		return ""
-	}
-
-	return RelatedMediaFileSuffix.ReplaceAllString(AbsPrefix(fileName, stripSequence), "")
 }

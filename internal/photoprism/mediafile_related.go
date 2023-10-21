@@ -9,18 +9,13 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/list"
 )
-
-// RelatedFilePathPrefix returns the absolute file path and name prefix without file extensions
-// and suffixes to be ignored.
-func (m *MediaFile) RelatedFilePathPrefix(stripSequence bool) (s string) {
-	return fs.RelatedFilePathPrefix(m.FileName(), stripSequence)
-}
 
 // RelatedFiles returns files which are related to this file.
 func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err error) {
 	// Related file path prefix without ignored file name extensions and suffixes.
-	filePathPrefix := m.RelatedFilePathPrefix(stripSequence)
+	filePathPrefix := m.AbsPrefix(stripSequence)
 
 	// Storage folder path prefixes.
 	sidecarPrefix := Config().SidecarPath() + "/"
@@ -58,9 +53,10 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 		return result, err
 	}
 
-	// Additionally include edited version in the file matches, if exists.
-	if name := m.EditedName(); name != "" {
-		matches = append(matches, name)
+	// Find additional sidecar files with naming schemes not matching the glob pattern,
+	// see https://github.com/photoprism/photoprism/issues/2983 for further information.
+	if files, _ := m.RelatedSidecarFiles(stripSequence); len(files) > 0 {
+		matches = list.Join(matches, files)
 	}
 
 	isHEIC := false
@@ -137,4 +133,34 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 	sort.Sort(result.Files)
 
 	return result, nil
+}
+
+// RelatedSidecarFiles finds additional sidecar files with naming schemes not matching the default glob pattern
+// for related files. see https://github.com/photoprism/photoprism/issues/2983 for further information.
+func (m *MediaFile) RelatedSidecarFiles(stripSequence bool) (files []string, err error) {
+	baseName := filepath.Base(m.fileName)
+	files = make([]string, 0, 2)
+
+	// Find edited file versions with a naming scheme as used by Apple, for example "IMG_E12345.JPG".
+	if strings.ToUpper(baseName[:4]) == "IMG_" && strings.ToUpper(baseName[:5]) != "IMG_E" {
+		if fileName := filepath.Join(filepath.Dir(m.fileName), baseName[:4]+"E"+baseName[4:]); fs.FileExists(fileName) {
+			files = append(files, fileName)
+		}
+	}
+
+	// Related file path prefix without ignored file name extensions and suffixes.
+	filePathPrefix := m.AbsPrefix(stripSequence)
+
+	// Find additional sidecar files that match the default glob pattern for related files.
+	globPattern := regexp.QuoteMeta(filePathPrefix) + "_????\\.*"
+	matches, err := filepath.Glob(globPattern)
+
+	if err != nil {
+		return files, err
+	}
+
+	// Add glob file matches to results.
+	files = append(files, matches...)
+
+	return files, nil
 }

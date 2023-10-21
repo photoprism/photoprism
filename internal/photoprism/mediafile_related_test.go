@@ -8,35 +8,6 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-func TestMediaFile_RelatedFilePathPrefix(t *testing.T) {
-	t.Run("IMG_1234_HEVC.JPEG", func(t *testing.T) {
-		fileName := "testdata/related/IMG_1234_HEVC (3).JPEG"
-		f, err := NewMediaFile(fileName)
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		assert.Equal(t, fileName, f.FileName())
-		assert.Equal(t, "testdata/related/IMG_1234_HEVC", f.AbsPrefix(true))
-		assert.Equal(t, "testdata/related/IMG_1234_HEVC (3)", f.AbsPrefix(false))
-		assert.Equal(t, "testdata/related/IMG_1234", f.RelatedFilePathPrefix(true))
-		assert.Equal(t, "testdata/related/IMG_1234_HEVC (3)", f.RelatedFilePathPrefix(false))
-	})
-	t.Run("fern_green.jpg", func(t *testing.T) {
-		f, err := NewMediaFile(conf.ExamplesPath() + "/fern_green.jpg")
-
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		expected := conf.ExamplesPath() + "/fern_green"
-
-		assert.Equal(t, expected, f.RelatedFilePathPrefix(true))
-		assert.Equal(t, expected, f.RelatedFilePathPrefix(false))
-	})
-}
-
 func TestMediaFile_RelatedFiles(t *testing.T) {
 	c := config.TestConfig()
 
@@ -227,30 +198,67 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		assert.Equal(t, "2015-02-04.jpg.json", related.Files[2].BaseName())
 		assert.Equal(t, "2015-02-04.jpg(1).json", related.Files[3].BaseName())
 	})
+
+	t.Run("Ordering", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/IMG_4120.JPG")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		related, err := mediaFile.RelatedFiles(true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Len(t, related.Files, 5)
+
+		assert.Equal(t, c.ExamplesPath()+"/IMG_4120.AAE", related.Files[0].FileName())
+		assert.Equal(t, c.ExamplesPath()+"/IMG_4120.JPG", related.Files[1].FileName())
+
+		for _, result := range related.Files {
+			filename := result.FileName()
+			t.Logf("FileName: %s", filename)
+		}
+	})
 }
 
-func TestMediaFile_RelatedFiles_Ordering(t *testing.T) {
-	c := config.TestConfig()
+func TestMediaFile_RelatedSidecarFiles(t *testing.T) {
+	t.Run("FindEdited", func(t *testing.T) {
+		file, err := NewMediaFile("testdata/related/IMG_1234 (2).JPEG")
 
-	mediaFile, err := NewMediaFile(c.ExamplesPath() + "/IMG_4120.JPG")
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		files, err := file.RelatedSidecarFiles(false)
 
-	related, err := mediaFile.RelatedFiles(true)
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		expected := []string{"testdata/related/IMG_E1234 (2).JPEG"}
 
-	assert.Len(t, related.Files, 5)
+		assert.Len(t, files, len(expected))
+		assert.Equal(t, expected, files)
+	})
+	t.Run("StripSequence", func(t *testing.T) {
+		file, err := NewMediaFile("testdata/related/IMG_1234 (2).JPEG")
 
-	assert.Equal(t, c.ExamplesPath()+"/IMG_4120.AAE", related.Files[0].FileName())
-	assert.Equal(t, c.ExamplesPath()+"/IMG_4120.JPG", related.Files[1].FileName())
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	for _, result := range related.Files {
-		filename := result.FileName()
-		t.Logf("FileName: %s", filename)
-	}
+		files, err := file.RelatedSidecarFiles(true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		expected := []string{"testdata/related/IMG_E1234 (2).JPEG", "testdata/related/IMG_1234_HEVC.JPEG"}
+
+		assert.Len(t, files, len(expected))
+		assert.Equal(t, expected, files)
+	})
 }

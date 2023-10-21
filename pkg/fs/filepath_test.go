@@ -130,6 +130,10 @@ func TestAbsPrefix(t *testing.T) {
 		assert.Equal(t, "", AbsPrefix("", true))
 		assert.Equal(t, "", AbsPrefix("", false))
 	})
+	t.Run("IMG_4120", func(t *testing.T) {
+		assert.Equal(t, "/foo/bar/IMG_4120", AbsPrefix("/foo/bar/IMG_4120.JPG", false))
+		assert.Equal(t, "/foo/bar/IMG_E4120", AbsPrefix("/foo/bar/IMG_E4120.JPG", false))
+	})
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
 		result := AbsPrefix("/testdata/Test (4).jpg", true)
 
@@ -140,50 +144,11 @@ func TestAbsPrefix(t *testing.T) {
 
 		assert.Equal(t, "/testdata/Test (4)", result)
 	})
-}
-
-func TestRelatedFilePathPrefix(t *testing.T) {
-	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, "", RelatedFilePathPrefix("", true))
-		assert.Equal(t, "", RelatedFilePathPrefix("", false))
-	})
-	t.Run("IMG_4120", func(t *testing.T) {
-		assert.Equal(t, "/foo/bar/IMG_4120", RelatedFilePathPrefix("/foo/bar/IMG_4120.JPG", false))
-		assert.Equal(t, "/foo/bar/IMG_E4120", RelatedFilePathPrefix("/foo/bar/IMG_E4120.JPG", false))
-	})
-	t.Run("LivePhoto", func(t *testing.T) {
-		assert.Equal(t, "IMG_1722", RelatedFilePathPrefix("IMG_1722_HEVC.MOV", false))
-		assert.Equal(t, "IMG_1722", RelatedFilePathPrefix("IMG_1722_HEVC.MOV", true))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_HevC", false))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_HEVC.MOV", false))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_HEVC.MOV", true))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_hevc.MOV", false))
-		assert.Equal(t, "/foo/bar/IMG_1722_hevc_", RelatedFilePathPrefix("/foo/bar/IMG_1722_hevc_.MOV", false))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_HEVC.AVC", true))
-		assert.Equal(t, "/foo/bar/IMG_1722_MOV", RelatedFilePathPrefix("/foo/bar/IMG_1722_MOV.MOV", true))
-		assert.Equal(t, "/foo/bar/IMG_1722_AVC", RelatedFilePathPrefix("/foo/bar/IMG_1722_AVC.MOV", true))
-
-		assert.Equal(t, "IMG_1722", RelatedFilePathPrefix("IMG_1722_HEVC.JPEG", false))
-		assert.Equal(t, "IMG_1722", RelatedFilePathPrefix("IMG_1722_HEVC.JPEG", true))
-		assert.Equal(t, "IMG_1722", RelatedFilePathPrefix("IMG_1722_HEVC (1).JPEG", true))
-		assert.Equal(t, "IMG_1722", RelatedFilePathPrefix("IMG_1722_HEVC (2).JPEG", true))
-		assert.Equal(t, "IMG_1722", RelatedFilePathPrefix("IMG_1722_JPEG (1).JPEG", true))
-		assert.Equal(t, "IMG_1722", RelatedFilePathPrefix("IMG_1722_JPG (2).JPEG", true))
-		assert.Equal(t, "IMG_1722_JPG (2)", RelatedFilePathPrefix("IMG_1722_JPG (2).JPEG", false))
-		assert.Equal(t, "IMG_1722_AVC", RelatedFilePathPrefix("IMG_1722_AVC (3).JPEG", true))
-		assert.Equal(t, "IMG_1722_AVC (3)", RelatedFilePathPrefix("IMG_1722_AVC (3).JPEG", false))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_Jpeg", false))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_JPEG.MOV", false))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_JPEG.MOV", true))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_jpeg.MOV", false))
-		assert.Equal(t, "/foo/bar/IMG_1722_jpeg_", RelatedFilePathPrefix("/foo/bar/IMG_1722_jpeg_.MOV", false))
-		assert.Equal(t, "/foo/bar/IMG_1722", RelatedFilePathPrefix("/foo/bar/IMG_1722_JPEG.JPEG", false))
-	})
 	t.Run("Sequence", func(t *testing.T) {
-		assert.Equal(t, "/foo/bar/Test", RelatedFilePathPrefix("/foo/bar/Test (4).jpg", true))
-		assert.Equal(t, "/foo/bar/Test (4)", RelatedFilePathPrefix("/foo/bar/Test (4).jpg", false))
+		assert.Equal(t, "/foo/bar/Test", AbsPrefix("/foo/bar/Test (4).jpg", true))
+		assert.Equal(t, "/foo/bar/Test (4)", AbsPrefix("/foo/bar/Test (4).jpg", false))
 	})
 	t.Run("LowerCase", func(t *testing.T) {
-		assert.Equal(t, "/foo/bar/IMG_E4120", RelatedFilePathPrefix("/foo/bar/IMG_E4120.JPG", false))
+		assert.Equal(t, "/foo/bar/IMG_E4120", AbsPrefix("/foo/bar/IMG_E4120.JPG", false))
 	})
 }
