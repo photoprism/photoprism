@@ -89,6 +89,10 @@
         </v-flex>
       </v-layout>
       <v-layout v-else row wrap>
+        <v-flex v-if="$config.getTier() < 4" xs12 grow align-center justify-center class="px-2 pt-1 pb-3 subheading text-selectable">
+          <translate>Become a member today, support our mission and enjoy our member benefits!</translate>
+          <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
+        </v-flex>
         <v-flex xs12 grow align-center justify-center class="px-2 py-1">
           <v-alert
               :value="true"
@@ -139,11 +143,9 @@
           </div>
           </v-alert>
         </v-flex>
-        <v-flex xs12 class="px-2 pt-3 pb-0">
-          <p class="body-1 text-selectable">
-            <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
-            <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
-          </p>
+        <v-flex xs12 class="px-2 pt-3 pb-0 body-1 text-selectable">
+          <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
+          <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
         </v-flex>
       </v-layout>
     </v-form>
