@@ -10,6 +10,14 @@ import (
 func TestTimeZone(t *testing.T) {
 	t.Run("UTC", func(t *testing.T) {
 		assert.Equal(t, time.UTC.String(), TimeZone(time.UTC.String()).String())
+		assert.Equal(t, time.UTC.String(), TimeZone("Z").String())
+		assert.Equal(t, time.UTC.String(), TimeZone("UTC").String())
+	})
+	t.Run("LocalTime", func(t *testing.T) {
+		assert.Equal(t, "", TimeZone("").String())
+		assert.Equal(t, "", TimeZone("0").String())
+		assert.Equal(t, "", TimeZone("UTC+0").String())
+		assert.Equal(t, "", TimeZone("UTC+00:00").String())
 	})
 	t.Run("UTC+2", func(t *testing.T) {
 		local, err := time.Parse("2006-01-02 15:04:05 Z07:00", "2023-10-02 13:20:17 +00:00")
@@ -31,24 +39,6 @@ func TestTimeZone(t *testing.T) {
 		loc := TimeZone(timeZone)
 
 		assert.Equal(t, "UTC+2", loc.String())
-	})
-}
-
-func TestIsUtcOffset(t *testing.T) {
-	t.Run("Valid", func(t *testing.T) {
-		assert.Equal(t, true, IsUtcOffset("UTC-2"))
-		assert.Equal(t, true, IsUtcOffset("UTC"))
-		assert.Equal(t, true, IsUtcOffset("UTC+1"))
-		assert.Equal(t, true, IsUtcOffset("UTC+2"))
-		assert.Equal(t, true, IsUtcOffset("UTC+12"))
-	})
-	t.Run("Invalid", func(t *testing.T) {
-		assert.Equal(t, false, IsUtcOffset("UTC-15"))
-		assert.Equal(t, false, IsUtcOffset("UTC-14"))
-		assert.Equal(t, false, IsUtcOffset("UTC--2"))
-		assert.Equal(t, false, IsUtcOffset("UTC1"))
-		assert.Equal(t, false, IsUtcOffset("UTC13"))
-		assert.Equal(t, false, IsUtcOffset("UTC+13"))
 	})
 }
 
@@ -112,8 +102,8 @@ func TestUtcOffset(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "UTC", UtcOffset(local, utc, "00:00"))
-		assert.Equal(t, "UTC", UtcOffset(local, utc, "+00:00"))
+		assert.Equal(t, "", UtcOffset(local, utc, "00:00"))
+		assert.Equal(t, "", UtcOffset(local, utc, "+00:00"))
 		assert.Equal(t, "UTC", UtcOffset(local, utc, "Z"))
 	})
 	t.Run("UTC+2", func(t *testing.T) {
@@ -216,19 +206,49 @@ func TestUtcOffset(t *testing.T) {
 
 func TestTimeOffset(t *testing.T) {
 	t.Run("Valid", func(t *testing.T) {
-		assert.Equal(t, -2*3600, TimeOffset("UTC-2"))
-		assert.Equal(t, 0, TimeOffset("UTC"))
-		assert.Equal(t, 3600, TimeOffset("UTC+1"))
-		assert.Equal(t, 2*3600, TimeOffset("UTC+2"))
-		assert.Equal(t, 12*3600, TimeOffset("UTC+12"))
+		sec, err := TimeOffset("UTC-2")
+		assert.Equal(t, -2*3600, sec)
+		assert.NoError(t, err)
+
+		sec, err = TimeOffset("UTC")
+		assert.Equal(t, 0, sec)
+		assert.NoError(t, err)
+
+		sec, err = TimeOffset("UTC+1")
+		assert.Equal(t, 3600, sec)
+		assert.NoError(t, err)
+
+		sec, err = TimeOffset("UTC+2")
+		assert.Equal(t, 2*3600, sec)
+		assert.NoError(t, err)
+
+		sec, err = TimeOffset("UTC+12")
+		assert.Equal(t, 12*3600, sec)
+		assert.NoError(t, err)
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		assert.Equal(t, 0, TimeOffset("UTC-15"))
-		assert.Equal(t, 0, TimeOffset("UTC-14"))
-		assert.Equal(t, 0, TimeOffset("UTC--2"))
-		assert.Equal(t, 0, TimeOffset("UTC0"))
-		assert.Equal(t, 0, TimeOffset("UTC1"))
-		assert.Equal(t, 0, TimeOffset("UTC13"))
-		assert.Equal(t, 0, TimeOffset("UTC+13"))
+		sec, err := TimeOffset("UTC-15")
+		assert.Equal(t, 0, sec)
+		assert.Error(t, err)
+
+		sec, err = TimeOffset("UTC--2")
+		assert.Equal(t, 0, sec)
+		assert.Error(t, err)
+
+		sec, err = TimeOffset("UTC0")
+		assert.Equal(t, 0, sec)
+		assert.Error(t, err)
+
+		sec, err = TimeOffset("UTC1")
+		assert.Equal(t, 0, sec)
+		assert.Error(t, err)
+
+		sec, err = TimeOffset("UTC13")
+		assert.Equal(t, 0, sec)
+		assert.Error(t, err)
+
+		sec, err = TimeOffset("UTC+13")
+		assert.Equal(t, 0, sec)
+		assert.Error(t, err)
 	})
 }

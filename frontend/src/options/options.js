@@ -12,8 +12,6 @@ import {
 } from "model/photo";
 
 export const UtcOffsets = [
-  { ID: "UTC-14", Name: "UTC-14:00" },
-  { ID: "UTC-13", Name: "UTC-13:00" },
   { ID: "UTC-12", Name: "UTC-12:00" },
   { ID: "UTC-11", Name: "UTC-11:00" },
   { ID: "UTC-10", Name: "UTC-10:00" },
