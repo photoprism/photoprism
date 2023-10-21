@@ -19,7 +19,7 @@ type Data struct {
 	MimeType         string        `meta:"MIMEType" report:"-"`
 	DocumentID       string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID,DigitalImageGUID"`
 	InstanceID       string        `meta:"InstanceID,DocumentID"`
-	CreatedAt        time.Time     `meta:"SubSecCreateDate,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate,SubSecModifyDate"`
+	CreatedAt        time.Time     `meta:"SubSecCreateDate,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate"`
 	TakenAt          time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized" xmp:"DateCreated"`
 	TakenAtLocal     time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized"`
 	TakenGps         time.Time     `meta:"GPSDateTime,GPSDateStamp"`
