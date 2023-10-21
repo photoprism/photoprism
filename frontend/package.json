@@ -30,7 +30,7 @@
     "@babel/register": "^7.22.15",
     "@babel/runtime": "^7.23.2",
     "@lcdp/offline-plugin": "^5.1.1",
-    "@vvo/tzdb": "^6.108.0",
+    "@vvo/tzdb": "^6.109.0",
     "axios": "^1.5.1",
     "axios-mock-adapter": "^1.22.0",
     "babel-loader": "^9.1.3",
