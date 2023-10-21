@@ -184,7 +184,7 @@ func TestJSON_Motion(t *testing.T) {
 		assert.Equal(t, "2023-08-22 14:38:06 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2023-08-22 11:38:06 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 0, data.TakenNs)
-		assert.Equal(t, "Europe/Kiev", data.TimeZone)
+		assert.Equal(t, "Europe/Kyiv", data.TimeZone)
 		assert.Equal(t, 1440, data.Width)
 		assert.Equal(t, 1080, data.Height)
 		assert.Equal(t, 1080, data.ActualWidth())
