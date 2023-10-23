@@ -925,10 +925,16 @@ export class Photo extends RestModel {
   // Example: Apple iPhone 12 Pro Max, DNG, 4032 × 3024, 32.9 MB
   getPhotoInfo = () => {
     let file = this.originalFile() || this.videoFile();
-    return this.generatePhotoInfo(this.Camera, this.CameraMake, this.CameraModel, file);
+    return this.generatePhotoInfo(
+      this.Camera,
+      this.CameraID,
+      this.CameraMake,
+      this.CameraModel,
+      file
+    );
   };
 
-  generatePhotoInfo = memoizeOne((camera, cameraMake, cameraModel, file) => {
+  generatePhotoInfo = memoizeOne((camera, cameraId, cameraMake, cameraModel, file) => {
     let info = [];
 
     if (camera) {
@@ -943,7 +949,7 @@ export class Photo extends RestModel {
       } else {
         info.push(cameraMake + " " + cameraModel);
       }
-    } else if (cameraModel) {
+    } else if (cameraId > 1 && cameraModel) {
       info.push(cameraModel);
     }
 
@@ -1009,7 +1015,7 @@ export class Photo extends RestModel {
       }
 
       if (iso && lensModel.length < 21) {
-        info.push("ISO" + iso);
+        info.push("ISO " + iso);
       }
 
       if (exposure) {
