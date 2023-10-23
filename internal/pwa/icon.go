@@ -16,7 +16,7 @@ type Icon struct {
 }
 
 // IconSizes represents standard app icon sizes.
-var IconSizes = []int{16, 32, 77, 114, 128, 144, 152, 160, 167, 180, 192, 196, 256, 400, 512}
+var IconSizes = []int{16, 32, 76, 114, 128, 144, 152, 160, 167, 180, 192, 196, 256, 400, 512}
 
 // NewIcons creates new app icons in the default sizes based on the parameters provided.
 func NewIcons(staticUri, appIcon string) Icons {
