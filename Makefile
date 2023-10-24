@@ -109,6 +109,11 @@ clean:
 tar.gz:
 	$(info Creating tar.gz archives from the directories in "$(BUILD_PATH)"...)
 	find "$(BUILD_PATH)" -maxdepth 1 -mindepth 1 -type d -exec tar --exclude='.[^/]*' -C {} -czf {}.tar.gz . \;
+pkg: pkg-amd64 pkg-arm64
+pkg-amd64:
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" --entrypoint "" photoprism/develop:jammy make all install tar.gz
+pkg-arm64:
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" --entrypoint "" photoprism/develop:jammy make all install tar.gz
 install:
 	$(info Installing in "$(DESTDIR)"...)
 	@[ ! -d "$(DESTDIR)" ] || (echo "ERROR: Install path '$(DESTDIR)' already exists!"; exit 1)
