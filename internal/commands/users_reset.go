@@ -36,7 +36,7 @@ func usersResetAction(ctx *cli.Context) error {
 		// Show prompt?
 		if !confirmed {
 			actionPrompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Reset the user database to a clean state?"),
+				Label:     "Reset the user database to a clean state?",
 				IsConfirm: true,
 			}
 
