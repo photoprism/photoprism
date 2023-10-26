@@ -322,7 +322,7 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-lunar docker-develop-lunar-slim
+docker-develop-ubuntu: docker-develop-mantic docker-develop-mantic-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
@@ -363,7 +363,7 @@ docker-develop-jammy-slim:
 docker-develop-lunar:
 	docker pull --platform=amd64 ubuntu:lunar
 	docker pull --platform=arm64 ubuntu:lunar
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 lunar /lunar "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 lunar /lunar
 docker-develop-lunar-slim:
 	docker pull --platform=amd64 ubuntu:lunar
 	docker pull --platform=arm64 ubuntu:lunar
@@ -371,13 +371,13 @@ docker-develop-lunar-slim:
 docker-develop-mantic:
 	docker pull --platform=amd64 ubuntu:mantic
 	docker pull --platform=arm64 ubuntu:mantic
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic /mantic
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic /mantic "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
 docker-develop-mantic-slim:
 	docker pull --platform=amd64 ubuntu:mantic
 	docker pull --platform=arm64 ubuntu:mantic
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic-slim /mantic-slim
 unstable: docker-unstable
-docker-unstable: docker-unstable-lunar
+docker-unstable: docker-unstable-mantic
 docker-unstable-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
@@ -393,10 +393,10 @@ docker-unstable-mantic:
 preview: docker-preview-ce
 docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
-docker-preview-ce: docker-preview-lunar
+docker-preview-ce: docker-preview-mantic
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
-docker-preview-ubuntu: docker-preview-lunar
+docker-preview-ubuntu: docker-preview-mantic
 docker-preview-other: docker-preview-debian docker-preview-bullseye
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
@@ -454,7 +454,7 @@ docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
-docker-release-ubuntu: docker-release-lunar
+docker-release-ubuntu: docker-release-mantic
 docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
@@ -533,8 +533,8 @@ terminal-latest:
 	$(DOCKER_COMPOSE) -f docker-compose.latest.yml exec photoprism-latest bash
 logs-latest:
 	$(DOCKER_COMPOSE) -f docker-compose.latest.yml logs -f photoprism-latest
-docker-local: docker-local-lunar
-docker-local-all: docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
+docker-local: docker-local-mantic
+docker-local-all: docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -563,8 +563,8 @@ docker-local-mantic:
 	docker pull photoprism/develop:mantic
 	docker pull ubuntu:mantic
 	scripts/docker/build.sh photoprism ce-mantic /mantic "-t photoprism/photoprism:local"
-docker-local-develop: docker-local-develop-lunar
-docker-local-develop-all: docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+docker-local-develop: docker-local-develop-mantic
+docker-local-develop-all: docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
