@@ -21,7 +21,7 @@ set -e
 
 . /etc/os-release
 
-if [[ $VERSION_CODENAME == "lunar" ]]; then
+if [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" ]]; then
   echo "Installing MariaDB distribution packages..."
 else
   MARIADB_VERSION="10.11"

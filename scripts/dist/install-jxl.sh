@@ -50,7 +50,7 @@ case $DESTARCH in
       (cd "$TMPDIR" && dpkg -i jxl_0.8.1_amd64.deb libjxl_0.8.1_amd64.deb libjxl-dev_0.8.1_amd64.deb)
       apt --fix-broken install
       rm -rf /tmp/jpegxl
-    elif [[ $VERSION_CODENAME == "lunar" ]]; then
+    elif [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" ]]; then
       echo "Installing JPEG XL distribution packages for amd64 (Intel 64-bit)"
       apt-get -qq install libjxl-dev libjxl-tools
     else
@@ -59,7 +59,7 @@ case $DESTARCH in
     ;;
 
   arm64 | ARM64 | aarch64)
-    if [[ $VERSION_CODENAME == "lunar" ]]; then
+    if [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" ]]; then
       echo "Installing JPEG XL distribution packages for arm64 (ARM 64-bit)"
       apt-get -qq install libjxl-dev libjxl-tools
     else
