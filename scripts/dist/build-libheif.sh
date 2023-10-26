@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Build "heif-convert", "heif-enc", "heif-info", and "heif-thumbnailer" from source.
+# This builds heif-convert, heif-enc, heif-info, and heif-thumbnailer binaries from source.
+
 CURRENT_DIR=$(pwd)
 
 # Determine the system architecture.
