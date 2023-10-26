@@ -368,6 +368,14 @@ docker-develop-lunar-slim:
 	docker pull --platform=amd64 ubuntu:lunar
 	docker pull --platform=arm64 ubuntu:lunar
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 lunar-slim /lunar-slim
+docker-develop-mantic:
+	docker pull --platform=amd64 ubuntu:mantic
+	docker pull --platform=arm64 ubuntu:mantic
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic /mantic
+docker-develop-mantic-slim:
+	docker pull --platform=amd64 ubuntu:mantic
+	docker pull --platform=arm64 ubuntu:mantic
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic-slim /mantic-slim
 unstable: docker-unstable
 docker-unstable: docker-unstable-lunar
 docker-unstable-jammy:
@@ -378,6 +386,10 @@ docker-unstable-lunar:
 	docker pull --platform=amd64 photoprism/develop:lunar
 	docker pull --platform=amd64 photoprism/develop:lunar-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable-ce /lunar
+docker-unstable-mantic:
+	docker pull --platform=amd64 photoprism/develop:mantic
+	docker pull --platform=amd64 photoprism/develop:mantic-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64 unstable-ce /mantic
 preview: docker-preview-ce
 docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
@@ -413,6 +425,12 @@ docker-preview-buster:
 	docker pull --platform=amd64 debian:buster-slim
 	docker pull --platform=arm64 debian:buster-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-buster /buster
+docker-preview-impish:
+	docker pull --platform=amd64 photoprism/develop:impish
+	docker pull --platform=arm64 photoprism/develop:impish
+	docker pull --platform=amd64 ubuntu:impish
+	docker pull --platform=arm64 ubuntu:impish
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
 docker-preview-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
@@ -425,12 +443,12 @@ docker-preview-lunar:
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /lunar
-docker-preview-impish:
-	docker pull --platform=amd64 photoprism/develop:impish
-	docker pull --platform=arm64 photoprism/develop:impish
-	docker pull --platform=amd64 ubuntu:impish
-	docker pull --platform=arm64 ubuntu:impish
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-impish /impish
+docker-preview-mantic:
+	docker pull --platform=amd64 photoprism/develop:mantic
+	docker pull --platform=amd64 photoprism/develop:mantic-slim
+	docker pull --platform=arm64 photoprism/develop:mantic
+	docker pull --platform=arm64 photoprism/develop:mantic-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /mantic
 release: docker-release
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
@@ -465,6 +483,12 @@ docker-release-buster:
 	docker pull --platform=amd64 debian:buster-slim
 	docker pull --platform=arm64 debian:buster-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-buster /buster
+docker-release-impish:
+	docker pull --platform=amd64 photoprism/develop:impish
+	docker pull --platform=arm64 photoprism/develop:impish
+	docker pull --platform=amd64 ubuntu:impish
+	docker pull --platform=arm64 ubuntu:impish
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-impish /impish
 docker-release-jammy:
 	docker pull --platform=amd64 photoprism/develop:jammy
 	docker pull --platform=amd64 photoprism/develop:jammy-slim
@@ -477,12 +501,12 @@ docker-release-lunar:
 	docker pull --platform=arm64 photoprism/develop:lunar
 	docker pull --platform=arm64 photoprism/develop:lunar-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /lunar
-docker-release-impish:
-	docker pull --platform=amd64 photoprism/develop:impish
-	docker pull --platform=arm64 photoprism/develop:impish
-	docker pull --platform=amd64 ubuntu:impish
-	docker pull --platform=arm64 ubuntu:impish
-	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce-impish /impish
+docker-release-mantic:
+	docker pull --platform=amd64 photoprism/develop:mantic
+	docker pull --platform=amd64 photoprism/develop:mantic-slim
+	docker pull --platform=arm64 photoprism/develop:mantic
+	docker pull --platform=arm64 photoprism/develop:mantic-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /mantic
 start-local:
 	$(DOCKER_COMPOSE) -f docker-compose.local.yml up -d --wait
 stop-local:
@@ -523,6 +547,10 @@ docker-local-buster:
 	docker pull photoprism/develop:buster
 	docker pull debian:buster-slim
 	scripts/docker/build.sh photoprism ce-buster /buster "-t photoprism/photoprism:local"
+docker-local-impish:
+	docker pull photoprism/develop:impish
+	docker pull ubuntu:impish
+	scripts/docker/build.sh photoprism ce-impish /impish "-t photoprism/photoprism:local"
 docker-local-jammy:
 	docker pull photoprism/develop:jammy
 	docker pull ubuntu:jammy
@@ -531,10 +559,10 @@ docker-local-lunar:
 	docker pull photoprism/develop:lunar
 	docker pull ubuntu:lunar
 	scripts/docker/build.sh photoprism ce-lunar /lunar "-t photoprism/photoprism:local"
-docker-local-impish:
-	docker pull photoprism/develop:impish
-	docker pull ubuntu:impish
-	scripts/docker/build.sh photoprism ce-impish /impish "-t photoprism/photoprism:local"
+docker-local-mantic:
+	docker pull photoprism/develop:mantic
+	docker pull ubuntu:mantic
+	scripts/docker/build.sh photoprism ce-mantic /mantic "-t photoprism/photoprism:local"
 docker-local-develop: docker-local-develop-lunar
 docker-local-develop-all: docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
@@ -546,15 +574,18 @@ docker-local-develop-bullseye:
 docker-local-develop-buster:
 	docker pull golang:1-buster
 	scripts/docker/build.sh develop buster /buster
+docker-local-develop-impish:
+	docker pull ubuntu:impish
+	scripts/docker/build.sh develop impish /impish
 docker-local-develop-jammy:
 	docker pull ubuntu:jammy
 	scripts/docker/build.sh develop jammy /jammy
 docker-local-develop-lunar:
 	docker pull ubuntu:lunar
 	scripts/docker/build.sh develop lunar /lunar
-docker-local-develop-impish:
-	docker pull ubuntu:impish
-	scripts/docker/build.sh develop impish /impish
+docker-local-develop-mantic:
+	docker pull ubuntu:mantic
+	scripts/docker/build.sh develop mantic /mantic
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
