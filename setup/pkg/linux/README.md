@@ -9,7 +9,7 @@ Since these packages need to be set up manually and do not include the system de
 
 Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 (or later) and Debian Bookworm will work with these binaries, but older Linux distributions may not be compatible.
 
-## Usage ##
+## Usage
 
 You can download and install PhotoPrism in `/opt/photoprism` by running the following commands:
 
@@ -23,23 +23,23 @@ photoprism --version
 
 If your server has an ARM-based CPU, make sure to install `arm64.tar.gz` instead of `amd64.tar.gz` when using the commands above. Both are linked to the latest available build.
 
-## Updates ##
+## Updates
 
 To update your installation, please stop all running PhotoPrism instances and replace the contents of the installation directory, e.g. `/opt/photoprism`, with the new version.
 
-## Dependencies ##
+## Dependencies
 
 In order to use all PhotoPrism features and have full file format support, additional distribution packages must be installed manually as they are not included in the tar.gz archive, for example exiftool, darktable, rawtherapee, imagemagick, libheif, ffmpeg, libavcodec-extra, mariadb, sqlite3, and tzdata.
 
 For details on the packages installed in our official Docker images, see <https://github.com/photoprism/photoprism/tree/develop/docker/develop>.
 
-## Configuration ##
+## Configuration
 
 Run `photoprism --help` in a terminal to get an overview of the command flags and environment variables available for configuration. Their current values can be displayed with the `photoprism config` command.
 
 Please keep in mind that any changes you make to the global [config options](https://docs.photoprism.app/getting-started/config-options/) will require a restart to take effect.
 
-### `defaults.yml` ###
+### `defaults.yml`
 
 Default values, including the config path to use, may optionally be specified in a `defaults.yml` file located in `/etc/photoprism`. A custom default config filename can be set with the `PHOTOPRISM_DEFAULTS_YAML` variable or the `--defaults-yaml` command flag.
 
@@ -51,7 +51,7 @@ ReadOnly: true
 JpegQuality: 85
 ```
 
-### `options.yml` ###
+### `options.yml`
 
 Config defaults set in a `defaults.yml` file can be overridden by values in an [`options.yml`](https://docs.photoprism.app/getting-started/config-files/) file, command flags, and environment variables. The config path from which the `options.yml` file is loaded, if it exists, can be specified with the `PHOTOPRISM_CONFIG_PATH` variable or the `--config-path` command flag.
 
