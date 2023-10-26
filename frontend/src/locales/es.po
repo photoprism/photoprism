@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2023-10-23 22:02+0000\n"
 "Last-Translator: wapophis <atlialogic@gmail.com>\n"
-"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/"
-"frontend/es/>\n"
+"Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1803,7 +1802,7 @@ msgstr "Elimina permanentemente los archivos para liberar almacenamiento."
 msgid "Phone"
 msgstr "Teléfono"
 
-#: src/model/photo.js:1249
+#: src/model/photo.js:1255
 msgid "Photo"
 msgstr "Foto"
 
@@ -2474,8 +2473,8 @@ msgstr "ID Única"
 
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:30
 #: src/model/album.js:179 src/model/photo.js:772 src/model/photo.js:793
-#: src/model/photo.js:816 src/model/photo.js:834 src/model/photo.js:957
-#: src/model/photo.js:1020 src/model/photo.js:1034 src/model/user.js:151
+#: src/model/photo.js:816 src/model/photo.js:834 src/model/photo.js:963
+#: src/model/photo.js:1026 src/model/photo.js:1040 src/model/user.js:151
 #: src/options/options.js:52 src/options/options.js:66
 #: src/options/options.js:83 src/options/options.js:97
 #: src/options/options.js:109 src/page/library/errors.vue:173

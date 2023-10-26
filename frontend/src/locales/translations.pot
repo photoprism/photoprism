@@ -2137,7 +2137,7 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: src/model/photo.js:1249
+#: src/model/photo.js:1255
 msgid "Photo"
 msgstr ""
 
@@ -2914,9 +2914,9 @@ msgstr ""
 #: src/model/photo.js:793
 #: src/model/photo.js:816
 #: src/model/photo.js:834
-#: src/model/photo.js:957
-#: src/model/photo.js:1020
-#: src/model/photo.js:1034
+#: src/model/photo.js:963
+#: src/model/photo.js:1026
+#: src/model/photo.js:1040
 #: src/model/user.js:151
 #: src/options/options.js:52
 #: src/options/options.js:66
