@@ -491,6 +491,11 @@ var Flags = CliFlags{
 			Usage:  "Web server compression `METHOD` (gzip, none)",
 			EnvVar: EnvVar("HTTP_COMPRESSION"),
 		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "http-cache-public",
+			Usage:  "allow static content to be cached by a CDN or caching proxy",
+			EnvVar: EnvVar("HTTP_CACHE_PUBLIC"),
+		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-cache-maxage",
 			Value:  int(ttl.Default),
@@ -502,11 +507,6 @@ var Flags = CliFlags{
 			Value:  int(ttl.Video),
 			Usage:  "time in `SECONDS` until cached videos expire",
 			EnvVar: EnvVar("HTTP_VIDEO_MAXAGE"),
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "http-cache-public",
-			Usage:  "allow static content to be cached by a CDN or caching proxy",
-			EnvVar: EnvVar("HTTP_CACHE_PUBLIC"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-host, ip",
