@@ -22,7 +22,7 @@ BUILD_ARCH ?= $(shell scripts/dist/arch.sh)
 JS_BUILD_PATH ?= $(shell realpath "./assets/static/build")
 
 # Install parameters.
-INSTALL_PATH ?= $(BUILD_PATH)/photoprism-$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
+INSTALL_PATH ?= $(BUILD_PATH)/photoprism-ce-$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
 DESTDIR ?= $(INSTALL_PATH)
 DESTUID ?= 1000
 DESTGID ?= 1000
