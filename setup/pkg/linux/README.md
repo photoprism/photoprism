@@ -29,15 +29,15 @@ To update your installation, please stop all running PhotoPrism instances and re
 
 ## Dependencies
 
-In order to use all PhotoPrism features and have full file format support, additional distribution packages must be installed manually as they are not included in the tar.gz archive, for example exiftool, darktable, rawtherapee, imagemagick, libheif, ffmpeg, libavcodec-extra, mariadb, sqlite3, and tzdata.
+In order to use all PhotoPrism features and have [full file format support](https://www.photoprism.app/kb/file-formats), additional distribution packages must be installed manually as they are not included in the tar.gz archive, for example exiftool, darktable, rawtherapee, imagemagick, libheif, ffmpeg, libavcodec-extra, mariadb, sqlite3, and tzdata.
 
 For details on the packages installed in our official Docker images, see <https://github.com/photoprism/photoprism/tree/develop/docker/develop>.
 
 ## Configuration
 
-Run `photoprism --help` in a terminal to get an overview of the command flags and environment variables available for configuration. Their current values can be displayed with the `photoprism config` command.
+Run `photoprism --help` in a terminal to get an [overview of the command flags and environment variables](https://docs.photoprism.app/getting-started/config-options/) available for configuration. Their current values can be displayed with the `photoprism config` command.
 
-Please keep in mind that any changes you make to the global [config options](https://docs.photoprism.app/getting-started/config-options/) will require a restart to take effect.
+Please keep in mind that any changes you make to the global [config options](https://docs.photoprism.app/getting-started/config-options/) require a restart to take effect.
 
 ### `defaults.yml`
 
