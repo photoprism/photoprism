@@ -19,13 +19,13 @@ COPY . .
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Ubuntu 23.04 (Lunar Lobster)
-FROM ubuntu:lunar
+#### Base Image: Ubuntu 23.10 (Mantic Minotaur)
+FROM ubuntu:mantic
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism® (ARMv7)"
-LABEL org.opencontainers.image.description="Ubuntu 23.04 (Lunar Lobster)"
+LABEL org.opencontainers.image.description="Ubuntu 23.10 (Mantic Minotaur)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/r/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
