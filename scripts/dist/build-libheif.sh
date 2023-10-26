@@ -47,7 +47,7 @@ cd libheif || exit
 ./configure
 make
 
-# Install "heif-convert", "heif-enc", "heif-info", and "heif-thumbnailer" in "/usr/local".
+# Install heif-convert, heif-enc, heif-info, and heif-thumbnailer in "/usr/local".
 echo "Installing binaries..."
 DESTDIR=$DESTDIR make install-exec
 cd "$CURRENT_DIR" || exit
