@@ -1,6 +1,6 @@
 # PhotoPrism® Installation Packages
 
-As an alternative to our [Docker images](https://docs.photoprism.app/getting-started/docker-compose/), you can [use the following tar.gz archives](https://dl.photoprism.app/pkg/linux/) to install PhotoPrism on compatible Linux distributions without building it from source:
+As an alternative to our [Docker images](https://docs.photoprism.app/getting-started/docker-compose/), you can use the *tar.gz* archives available at [**dl.photoprism.app/pkg/linux/**](https://dl.photoprism.app/pkg/linux/) to install PhotoPrism on compatible Linux distributions without building it from source:
 
 - <https://dl.photoprism.app/pkg/linux/amd64.tar.gz>
 - <https://dl.photoprism.app/pkg/linux/arm64.tar.gz>
