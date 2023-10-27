@@ -37,7 +37,7 @@ For details on the packages installed in our official Docker images, see <https:
 
 Run `photoprism --help` in a terminal to get an [overview of the command flags and environment variables](https://docs.photoprism.app/getting-started/config-options/) available for configuration. Their current values can be displayed with the `photoprism config` command.
 
-Please keep in mind that any changes to the global config options, either through the UI, config files, or by setting environment variables, require a restart to take effect.
+Please keep in mind that any changes to the global config options, either [through the UI](https://docs.photoprism.app/user-guide/settings/advanced/), [config files](https://docs.photoprism.app/getting-started/config-files/), or by [setting environment variables](https://docs.photoprism.app/getting-started/config-options/), require a restart to take effect.
 
 ### `defaults.yml`
 
