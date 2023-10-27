@@ -7,7 +7,7 @@ As an alternative to our [Docker images](https://docs.photoprism.app/getting-sta
 
 Since these packages need to be set up manually and do not include the system dependencies required to make use of all the features, we recommend that only advanced users choose this installation method.
 
-Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 (or later) and Debian Bookworm will work with these binaries, but older Linux distributions may not be compatible.
+Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work with these binaries, but older Linux distributions may not be compatible.
 
 ## Usage
 
@@ -37,7 +37,7 @@ For details on the packages installed in our official Docker images, see <https:
 
 Run `photoprism --help` in a terminal to get an [overview of the command flags and environment variables](https://docs.photoprism.app/getting-started/config-options/) available for configuration. Their current values can be displayed with the `photoprism config` command.
 
-Please keep in mind that any changes you make to the global [config options](https://docs.photoprism.app/getting-started/config-options/) require a restart to take effect.
+Please keep in mind that any changes to the global config options, either through the UI, config files, or by setting environment variables, require a restart to take effect.
 
 ### `defaults.yml`
 
@@ -53,13 +53,13 @@ JpegQuality: 85
 
 ### `options.yml`
 
-Config defaults set in a `defaults.yml` file can be overridden by values in an [`options.yml`](https://docs.photoprism.app/getting-started/config-files/) file, command flags, and environment variables. The config path from which the `options.yml` file is loaded, if it exists, can be specified with the `PHOTOPRISM_CONFIG_PATH` variable or the `--config-path` command flag.
+Configuration values set in a `defaults.yml` file can be overridden by values in an [`options.yml`](https://docs.photoprism.app/getting-started/config-files/) file, command flags, and environment variables. The config path from which the `options.yml` file is loaded, if it exists, can be specified with the `PHOTOPRISM_CONFIG_PATH` variable or the `--config-path` command flag.
 
 For a list of supported options and their names, see <https://docs.photoprism.app/getting-started/config-files/>.
 
 ## Documentation
 
-For detailed information on specific features and related resources, see our [Knowledge Base](https://www.photoprism.app/kb), or check the [User Guide](https://docs.photoprism.app/user-guide/) for help [navigating the user interface](https://docs.photoprism.app/user-guide/navigate/), a [complete list of config options](https://docs.photoprism.app/getting-started/config-options/), and [additional installation methods](https://docs.photoprism.app/getting-started/):
+For detailed information on specific features and related resources, see our [Knowledge Base](https://www.photoprism.app/kb), or check the [User Guide](https://docs.photoprism.app/user-guide/) for help [navigating the user interface](https://docs.photoprism.app/user-guide/navigate/), a [complete list of config options](https://docs.photoprism.app/getting-started/config-options/), and [alternative installation methods](https://docs.photoprism.app/getting-started/):
 
 - [PhotoPrism® User Guide](https://docs.photoprism.app/user-guide/)
 - [PhotoPrism® Developer Guide](https://docs.photoprism.app/developer-guide/)
