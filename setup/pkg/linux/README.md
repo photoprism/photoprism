@@ -59,7 +59,7 @@ For a list of supported options and their names, see <https://docs.photoprism.ap
 
 ## Documentation
 
-For detailed information on specific features and related resources, see our [Knowledge Base](https://www.photoprism.app/kb), or check the [User Guide](https://docs.photoprism.app/user-guide/) for help [navigating the user interface](https://docs.photoprism.app/user-guide/navigate/), a [complete list of config options](https://docs.photoprism.app/getting-started/config-options/), and [alternative installation methods](https://docs.photoprism.app/getting-started/):
+For detailed information on specific features and related resources, see our [Knowledge Base](https://www.photoprism.app/kb), or check the [User Guide](https://docs.photoprism.app/user-guide/) for help [navigating the user interface](https://docs.photoprism.app/user-guide/navigate/), a [complete list of config options](https://docs.photoprism.app/getting-started/config-options/), and [other installation methods](https://docs.photoprism.app/getting-started/):
 
 - [PhotoPrism® User Guide](https://docs.photoprism.app/user-guide/)
 - [PhotoPrism® Developer Guide](https://docs.photoprism.app/developer-guide/)
