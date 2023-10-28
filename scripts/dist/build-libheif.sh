@@ -35,7 +35,7 @@ echo "------------------------------------------------"
 echo "Installing build deps..."
 
 sudo apt-get -qq update
-sudo apt-get -qq install build-essential gcc g++ gettext git autoconf automake cmake libtool libjpeg8 libjpeg8-dev libde265-dev libaom-dev
+sudo apt-get -qq install build-essential gcc g++ gettext git autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev libde265-dev libaom-dev
 
 cd "/tmp" || exit
 rm -rf "/tmp/libheif"
@@ -43,13 +43,12 @@ rm -rf "/tmp/libheif"
 echo "Cloning git repository..."
 git clone -c advice.detachedHead=false -b "$LIBHEIF_VERSION" --depth 1 https://github.com/strukturag/libheif.git libheif
 cd libheif || exit
-./autogen.sh
-./configure
-make
+(mkdir build && cd build && cmake --preset=release ..)
+make -C build
 
 # Install heif-convert, heif-enc, heif-info, and heif-thumbnailer in "/usr/local".
 echo "Installing binaries..."
-DESTDIR=$DESTDIR make install-exec
+DESTDIR=$DESTDIR make -C build install
 cd "$CURRENT_DIR" || exit
 rm -rf "/tmp/libheif"
 
