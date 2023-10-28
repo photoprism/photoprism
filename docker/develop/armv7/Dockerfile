@@ -51,10 +51,10 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
         apt-utils gpg pkg-config software-properties-common ca-certificates avahi-utils \
         build-essential gcc g++ sudo bash make nano lsof lshw git jq \
-        autoconf automake cmake libtool libjpeg8 libjpeg8-dev \
+        autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev \
         zip unzip wget curl rsync sqlite3 chrpath gettext libc6-dev \
         libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 \
-        libfontconfig1-dev libhdf5-serial-dev libpng-dev libzmq3-dev \
+        libfontconfig1-dev libhdf5-serial-dev libzmq3-dev \
         libx264-dev libx265-dev libde265-dev libaom-dev libnss3 libxtst6 librsvg2-bin tzdata \
         exiftool ffmpeg libavcodec-extra \
     && \
