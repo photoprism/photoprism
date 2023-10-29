@@ -57,7 +57,7 @@ require (
 
 require github.com/olekukonko/tablewriter v0.0.5
 
-require github.com/google/uuid v1.3.1
+require github.com/google/uuid v1.4.0
 
 require (
 	github.com/chzyer/readline v1.5.1 // indirect
