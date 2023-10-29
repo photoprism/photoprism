@@ -6,7 +6,7 @@
 set -e
 
 DESTDIR=$(realpath "${1:-/usr/local}")
-LIBHEIF_VERSION=${2:-v1.13.0}
+LIBHEIF_VERSION=${2:-v1.17.1}
 SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
 DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
 
