@@ -45,14 +45,14 @@ Please keep in mind that any changes to the global config options, either [throu
 
 ### `defaults.yml`
 
-Global config defaults, including the config and storage paths to use, can optionally be set with a `defaults.yml` file in the `/etc/photoprism` directory (requires root privileges). To use a custom default config file, you can specify a filename with the `PHOTOPRISM_DEFAULTS_YAML` environment variable or the `--defaults-yaml` command flag.
+Global config defaults, including the config and storage paths to use, can optionally be set with a `defaults.yml` file in the `/etc/photoprism` directory (requires root privileges). A custom filename for loading the defaults can be specified with the `PHOTOPRISM_DEFAULTS_YAML` environment variable or the `--defaults-yaml` command flag.
 
-Since you only need to specify the values for which you want to set a default, a `defaults.yml` file does not need to contain a value for all the available options and can thus be kept to a minimum, e.g.:
+Since you only need to add the values for which you want to have a custom default, a `defaults.yml` file does not need to contain all available options and can thus be kept to a minimum, e.g.:
 
 ```
 Debug: false
-ReadOnly: true
 JpegQuality: 85
+ConfigPath: "~/.photoprism"
 ```
 
 ### `options.yml`
