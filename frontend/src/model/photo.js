@@ -1014,7 +1014,7 @@ export class Photo extends RestModel {
         info.push("ƒ/" + fNumber);
       }
 
-      if (iso && lensModel.length < 21) {
+      if (iso && lensModel.length < 27) {
         info.push("ISO " + iso);
       }
 
