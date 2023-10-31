@@ -15,18 +15,28 @@ import (
 )
 
 // decodeImage opens an image and decodes its color metadata.
-func decodeImage(reader io.Reader, logName string) (md *meta.Data, img image.Image, err error) {
+func decodeImage(reader io.ReadSeeker, logName string) (metaData *meta.Data, img image.Image, err error) {
 	// Read color metadata.
-	md, imgStream, err := autometa.Load(reader)
+	metaData, imgReader, err := autometa.Load(reader)
 
-	if err != nil {
-		log.Warnf("thumb: %s in %s (read color metadata)", err, logName)
-		img, err = imaging.Decode(reader)
-	} else {
-		img, err = imaging.Decode(imgStream)
+	if err == nil {
+		img, err = imaging.Decode(imgReader)
+		return metaData, img, err
 	}
 
-	return md, img, err
+	// Log color metadata read error.
+	log.Warnf("thumb: %s in %s (read color metadata)", err, logName)
+
+	// Seek to the file start in order to avoid decoding errors,
+	// see https://github.com/photoprism/photoprism/issues/3843
+	if _, err = reader.Seek(0, io.SeekStart); err != nil {
+		log.Errorf("thumb: %s in %s (seek to file start)", err, logName)
+	}
+
+	// Decode image file.
+	img, err = imaging.Decode(reader)
+
+	return metaData, img, err
 }
 
 // OpenJpeg loads a JPEG image from disk, rotates it, and converts the color profile if necessary.
