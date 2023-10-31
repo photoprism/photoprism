@@ -10,10 +10,10 @@ import (
 )
 
 func TestMediaFile_Location(t *testing.T) {
-	t.Run("iphone_7.heic", func(t *testing.T) {
-		conf := config.TestConfig()
+	c := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+	t.Run("iphone_7.heic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.heic")
 
 		if err != nil {
 			t.Fatal(err)
@@ -47,10 +47,45 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.Equal(t, "姫路市", location2.City())
 		assert.Equal(t, "兵庫県", location2.State())
 	})
-	t.Run("cat_brown.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
+	t.Run("iphone_15_pro.heic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_15_pro.heic")
 
-		f, err := NewMediaFile(conf.ExamplesPath() + "/cat_brown.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		location, err := mediaFile.Location()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err = location.Find("places"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Berlin", location.City())
+		assert.Equal(t, "Berlin", location.State())
+		assert.Equal(t, "Steglitz", location.District())
+		assert.Equal(t, "Zimmermannstraße", location.Street())
+		assert.Equal(t, "Germany", location.CountryName())
+		assert.Equal(t, "", location.Category())
+
+		location2, err := mediaFile.Location()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if err = location.Find("places"); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "Berlin", location2.City())
+		assert.Equal(t, "Berlin", location2.State())
+	})
+	t.Run("cat_brown.jpg", func(t *testing.T) {
+		f, err := NewMediaFile(c.ExamplesPath() + "/cat_brown.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -72,9 +107,7 @@ func TestMediaFile_Location(t *testing.T) {
 		assert.True(t, strings.HasPrefix(loc.ID, s2.TokenPrefix+"4799e4a5"))
 	})
 	t.Run("dog_orange.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/dog_orange.jpg")
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/dog_orange.jpg")
 
 		if err != nil {
 			t.Fatal(err)
@@ -87,9 +120,7 @@ func TestMediaFile_Location(t *testing.T) {
 		}
 	})
 	t.Run("Random.docx", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/Random.docx")
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/Random.docx")
 
 		if err != nil {
 			t.Fatal(err)

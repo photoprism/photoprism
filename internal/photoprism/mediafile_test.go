@@ -77,6 +77,15 @@ func TestMediaFile_DateCreated(t *testing.T) {
 		date := mediaFile.DateCreated().UTC()
 		assert.Equal(t, "2018-09-10 03:16:13 +0000 UTC", date.String())
 	})
+	t.Run("iphone_15_pro.heic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_15_pro.heic")
+		if err != nil {
+			t.Fatal(err)
+		}
+		date := mediaFile.DateCreated().UTC()
+		assert.Equal(t, "2023-10-31 10:44:43 +0000 UTC", date.String())
+		assert.Equal(t, "2023-10-31 10:44:43 +0000 UTC", mediaFile.DateCreated().String())
+	})
 	t.Run("canon_eos_6d.dng", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/canon_eos_6d.dng")
 		if err != nil {
@@ -1946,22 +1955,32 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 }
 
 func TestMediaFile_Orientation(t *testing.T) {
-	t.Run("iphone_7.heic", func(t *testing.T) {
-		conf := config.TestConfig()
+	c := config.TestConfig()
 
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/iphone_7.heic")
+	t.Run("iphone_7.heic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_7.heic")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		orientation := mediaFile.Orientation()
+
+		assert.Equal(t, 6, orientation)
+	})
+	t.Run("iphone_15_pro.heic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_15_pro.heic")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		orientation := mediaFile.Orientation()
+
 		assert.Equal(t, 6, orientation)
 	})
 	t.Run("turtle_brown_blue.jpg", func(t *testing.T) {
-		conf := config.TestConfig()
-
-		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/turtle_brown_blue.jpg")
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/turtle_brown_blue.jpg")
 
 		if err != nil {
 			t.Fatal(err)

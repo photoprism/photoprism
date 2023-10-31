@@ -113,6 +113,38 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		}
 	})
 
+	t.Run("iphone_15_pro.heic", func(t *testing.T) {
+		mediaFile, err := NewMediaFile(c.ExamplesPath() + "/iphone_15_pro.heic")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		expectedBaseFilename := c.ExamplesPath() + "/iphone_15_pro"
+
+		related, err := mediaFile.RelatedFiles(true)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(related.Files), 2)
+
+		for _, result := range related.Files {
+			t.Logf("FileName: %s", result.FileName())
+
+			filename := result.FileName()
+			extension := result.Extension()
+			baseFilename := filename[0 : len(filename)-len(extension)]
+
+			if result.IsJpeg() {
+				assert.Contains(t, expectedBaseFilename, "examples/iphone_15_pro")
+			} else {
+				assert.Equal(t, expectedBaseFilename, baseFilename)
+			}
+		}
+	})
+
 	t.Run("2015-02-04.jpg", func(t *testing.T) {
 		mediaFile, err := NewMediaFile("testdata/2015-02-04.jpg")
 
