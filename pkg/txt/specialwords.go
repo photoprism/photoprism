@@ -126,6 +126,7 @@ var SpecialWords = map[string]string{
 	"airplay":            "AirPlay",
 	"airpods":            "AirPods",
 	"youtube":            "YouTube",
+	"github":             "GitHub",
 	"tensorflow":         "TensorFlow",
 	"digitalocean":       "DigitalOcean",
 	"photosync":          "PhotoSync",
