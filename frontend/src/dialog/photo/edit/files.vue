@@ -77,25 +77,25 @@
                           <td title="Unique ID">
                             UID
                           </td>
-                          <td>{{ file.UID | uppercase }}</td>
+                          <td><span class="clickable" @click.stop.prevent="copyText(file.UID)">{{ file.UID | uppercase }}</span></td>
                         </tr>
                         <tr v-if="file.InstanceID" title="XMP">
                           <td>
                             <translate>Instance ID</translate>
                           </td>
-                          <td class="clickable" @click.stop.prevent="copyText">{{ file.InstanceID | uppercase }}</td>
+                          <td><span class="clickable" @click.stop.prevent="copyText(file.InstanceID)">{{ file.InstanceID | uppercase }}</span></td>
                         </tr>
                         <tr>
                           <td title="SHA-1">
                             <translate>Hash</translate>
                           </td>
-                          <td class="clickable" @click.stop.prevent="copyText">{{ file.Hash }}</td>
+                          <td><span class="clickable" @click.stop.prevent="copyText(file.Hash)">{{ file.Hash }}</span></td>
                         </tr>
                         <tr v-if="file.Name">
                           <td>
                             <translate>Filename</translate>
                           </td>
-                          <td class="clickable" @click.stop.prevent="copyText">{{ file.Name }}</td>
+                          <td><span class="clickable" @click.stop.prevent="copyText(file.Name)">{{ file.Name }}</span></td>
                         </tr>
                         <tr v-if="file.Root">
                           <td>
@@ -107,7 +107,7 @@
                           <td>
                             <translate>Original Name</translate>
                           </td>
-                          <td class="clickable" @click.stop.prevent="copyText">{{ file.OriginalName }}</td>
+                          <td><span class="clickable" @click.stop.prevent="copyText(file.OriginalName)">{{ file.OriginalName }}</span></td>
                         </tr>
                         <tr>
                           <td>
@@ -332,14 +332,12 @@ export default {
   },
   computed: {},
   methods: {
-    async copyText(ev) {
-      if (!ev || !ev.target) {
+    async copyText(text) {
+      if (!text) {
         return;
       }
 
       try {
-        const el = ev.target;
-        const text = el.innerText || el.textContent;
         await Util.copyToMachineClipboard(text);
         this.$notify.success(this.$gettext("Copied to clipboard"));
       } catch (error) {

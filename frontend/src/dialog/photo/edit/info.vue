@@ -6,11 +6,11 @@
           <tbody>
           <tr>
             <td>UID</td>
-            <td>{{ model.UID | uppercase }}</td>
+            <td><span class="clickable" @click.stop.prevent="copyText(model.UID)">{{ model.UID | uppercase }}</span></td>
           </tr>
           <tr v-if="model.DocumentID">
             <td>Document ID</td>
-            <td>{{ model.DocumentID | uppercase }}</td>
+            <td><span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID | uppercase }}</span></td>
           </tr>
           <tr>
             <td :title="model.TypeSrc">
@@ -34,13 +34,13 @@
             <td>
               <translate>Folder</translate>
             </td>
-            <td>{{ model.Path }}</td>
+            <td><span class="clickable" @click.stop.prevent="copyText(model.Path)">{{ model.Path }}</span></td>
           </tr>
           <tr>
             <td>
               <translate>Name</translate>
             </td>
-            <td>{{ model.Name }}</td>
+            <td><span class="clickable" @click.stop.prevent="copyText(model.Name)">{{ model.Name }}</span></td>
           </tr>
           <tr v-if="model.OriginalName">
             <td>
@@ -64,7 +64,7 @@
               <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
             </td>
             <td :title="sourceName(model.TitleSrc)">
-              {{ model.Title }}
+              <span class="clickable" @click.stop.prevent="copyText(model.Title)">{{ model.Title }}</span>
               <v-icon v-if="model.TitleSrc === 'name'" class="src">insert_drive_file</v-icon>
             </td>
           </tr>
@@ -340,6 +340,18 @@ export default {
     },
   },
   methods: {
+    async copyText(text) {
+      if (!text) {
+        return;
+      }
+
+      try {
+        await Util.copyToMachineClipboard(text);
+        this.$notify.success(this.$gettext("Copied to clipboard"));
+      } catch (error) {
+        this.$notify.error(this.$gettext("Failed copying to clipboard"));
+      }
+    },
     sourceName(s) {
       switch (s) {
         case "":
