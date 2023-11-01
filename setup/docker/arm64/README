@@ -41,7 +41,7 @@ applications.
 
 ### Raspberry Pi OS ###
 
-To ensure compatibility with 64-bit Docker images, your Raspberry Pi 3 / 4 must
+To ensure compatibility with 64-bit Docker images, your Raspberry Pi must
 boot with the "arm_64bit=1" flag in its "config.txt" file:
 
   https://www.raspberrypi.org/documentation/installation/installing-images/README.md
