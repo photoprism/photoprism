@@ -44,7 +44,7 @@ all you need is a Web browser and [Docker](https://docs.docker.com/get-docker/) 
 
 The [stable version](https://docs.photoprism.app/release-notes/) and development preview have been built into a single [multi-arch image](https://link.photoprism.app/docker-hub) for 64-bit AMD, Intel, and ARM processors. That means, [Raspberry Pi](https://docs.photoprism.app/getting-started/raspberry-pi/) and Apple Silicon users can follow the same [installation steps](https://docs.photoprism.app/getting-started/docker-compose/) and enjoy the exact same functionality.
 
-See our [Getting Started FAQ](https://docs.photoprism.app/getting-started/faq/#how-can-i-install-photoprism-without-docker) for alternative installation methods, for example using the [*tar.gz* packages](https://github.com/photoprism/photoprism/blob/develop/setup/pkg/linux/README.md) we provide for download at [dl.photoprism.app/pkg/linux/](https://dl.photoprism.app/pkg/linux/README.html).
+See our [Getting Started FAQ](https://docs.photoprism.app/getting-started/faq/#how-can-i-install-photoprism-without-docker) for alternative installation methods, for example using the [*tar.gz* packages](https://dl.photoprism.app/pkg/linux/README.html) we provide.
 
 ## Support Our Mission 💎 ##
 
