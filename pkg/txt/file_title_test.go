@@ -40,6 +40,12 @@ func TestFileTitle(t *testing.T) {
 	t.Run("IMG_4568", func(t *testing.T) {
 		assert.Equal(t, "", FileTitle("IMG_4568"))
 	})
+	t.Run("mr-kitty_life.svg", func(t *testing.T) {
+		assert.Equal(t, "Mr Kitty Life", FileTitle("mr-kitty_life.svg"))
+	})
+	t.Run("mr-kitty--life.svg", func(t *testing.T) {
+		assert.Equal(t, "Mr Kitty / Life", FileTitle("mr-kitty--life.svg"))
+	})
 	t.Run("queen-city-yacht-club--toronto-island_7999432607_o.jpg", func(t *testing.T) {
 		assert.Equal(t, "Queen City Yacht Club / Toronto Island", FileTitle("queen-city-yacht-club--toronto-island_7999432607_o.jpg"))
 	})
