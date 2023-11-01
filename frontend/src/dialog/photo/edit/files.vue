@@ -83,19 +83,19 @@
                           <td>
                             <translate>Instance ID</translate>
                           </td>
-                          <td>{{ file.InstanceID | uppercase }}</td>
+                          <td class="clickable" @click.stop.prevent="copyText">{{ file.InstanceID | uppercase }}</td>
                         </tr>
                         <tr>
                           <td title="SHA-1">
                             <translate>Hash</translate>
                           </td>
-                          <td>{{ file.Hash }}</td>
+                          <td class="clickable" @click.stop.prevent="copyText">{{ file.Hash }}</td>
                         </tr>
                         <tr v-if="file.Name">
                           <td>
                             <translate>Filename</translate>
                           </td>
-                          <td>{{ file.Name }}</td>
+                          <td class="clickable" @click.stop.prevent="copyText">{{ file.Name }}</td>
                         </tr>
                         <tr v-if="file.Root">
                           <td>
@@ -107,7 +107,7 @@
                           <td>
                             <translate>Original Name</translate>
                           </td>
-                          <td>{{ file.OriginalName }}</td>
+                          <td class="clickable" @click.stop.prevent="copyText">{{ file.OriginalName }}</td>
                         </tr>
                         <tr>
                           <td>
@@ -332,6 +332,20 @@ export default {
   },
   computed: {},
   methods: {
+    async copyText(ev) {
+      if (!ev || !ev.target) {
+        return;
+      }
+
+      try {
+        const el = ev.target;
+        const text = el.innerText || el.textContent;
+        await Util.copyToMachineClipboard(text);
+        this.$notify.success(this.$gettext("Copied to clipboard"));
+      } catch (error) {
+        this.$notify.error(this.$gettext("Failed copying to clipboard"));
+      }
+    },
     orientationClass(file) {
       if (!file) {
         return [];
