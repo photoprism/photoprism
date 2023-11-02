@@ -2,6 +2,12 @@
 
 # This builds heif-convert, heif-enc, heif-info, and heif-thumbnailer binaries from source.
 
+# Show usage information if first argument is --help.
+if [[ ${1} == "--help" ]]; then
+  echo "Usage: ${0##*/} [version]" 1>&2
+  exit 0
+fi
+
 CURRENT_DIR=$(pwd)
 
 # Determine the system architecture.
@@ -12,6 +18,25 @@ else
 fi
 
 DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
+
+case $DESTARCH in
+  amd64 | AMD64 | x86_64 | x86-64)
+    DESTARCH=amd64
+    ;;
+
+  arm64 | ARM64 | aarch64)
+    DESTARCH=arm64
+    ;;
+
+  arm | ARM | aarch | armv7l | armhf)
+    DESTARCH=arm
+    ;;
+
+  *)
+    echo "Unsupported Machine Architecture: \"$DESTARCH\"" 1>&2
+    exit 1
+    ;;
+esac
 
 . /etc/os-release
 
