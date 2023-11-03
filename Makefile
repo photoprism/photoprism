@@ -22,7 +22,7 @@ BUILD_ARCH ?= $(shell scripts/dist/arch.sh)
 JS_BUILD_PATH ?= $(shell realpath "./assets/static/build")
 
 # Install parameters.
-INSTALL_PATH ?= $(BUILD_PATH)/photoprism-ce-$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
+INSTALL_PATH ?= $(BUILD_PATH)/photoprism-ce_$(BUILD_TAG)-$(shell echo $(BUILD_OS) | tr '[:upper:]' '[:lower:]')-$(BUILD_ARCH)
 DESTDIR ?= $(INSTALL_PATH)
 DESTUID ?= 1000
 DESTGID ?= 1000
@@ -120,12 +120,11 @@ install:
 	mkdir --mode=$(INSTALL_MODE) -p $(DESTDIR)
 	env TMPDIR="$(BUILD_PATH)" ./scripts/dist/install-tensorflow.sh $(DESTDIR)
 	rm -rf --preserve-root $(DESTDIR)/include
-	(cd $(DESTDIR) && mkdir -p bin lib assets config config/examples)
+	(cd $(DESTDIR) && mkdir -p bin lib assets)
 	./scripts/build.sh prod "$(DESTDIR)/bin/$(BINARY_NAME)"
 	rsync -r -l --safe-links --exclude-from=assets/.buildignore --chmod=a+r,u+rw ./assets/ $(DESTDIR)/assets
 	wget -O $(DESTDIR)/assets/static/img/wallpaper/welcome.jpg https://cdn.photoprism.app/wallpaper/welcome.jpg
 	wget -O $(DESTDIR)/assets/static/img/preview.jpg https://cdn.photoprism.app/img/preview.jpg
-	cp internal/config/testdata/*.yml $(DESTDIR)/config/examples
 	chown -R $(INSTALL_USER) $(DESTDIR)
 	chmod -R $(INSTALL_MODE) $(DESTDIR)
 	chmod -R $(INSTALL_MODE_BIN) $(DESTDIR)/bin $(DESTDIR)/lib
