@@ -749,7 +749,6 @@ export default {
       return Math.max(Math.min(0.85*vh, height), 0.3*vh);
     },
     startClusterControlResize(e) {
-    console.log("start cluster control resize");
     this.isClusterControlResizing = true;
     const initialY = e.clientY;
     const initialHeight = this.clusterControlHeight;
@@ -759,13 +758,11 @@ export default {
     window.addEventListener('mouseup', this.stopClusterControlResize);
   },
   clusterControlResize(e, initialY, initialHeight) {
-    console.log("cluster control resize")
     if (this.isClusterControlResizing) {
       this.clusterControlHeight = this.clampClusterControlHeight(initialHeight - (e.clientY - initialY));
     }
   },
   stopClusterControlResize() {
-    console.log("stop cluster control resize");
     this.isClusterControlResizing = false;
     const clusterControlContainer = this.$refs.clusterControlContainer;
     if (clusterControlContainer) {
