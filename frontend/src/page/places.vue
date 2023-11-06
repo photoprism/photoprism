@@ -749,31 +749,33 @@ export default {
       return Math.max(Math.min(0.85*vh, height), 0.3*vh);
     },
     startClusterControlResize(e) {
-      console.log("start cluster control resize")
-      this.isClusterControlResizing = true;
-      const initialY = e.clientY;
-      const initialHeight = this.clusterControlHeight;
-      window.addEventListener('mousemove', (event) => this.clusterControlResize(event, initialY, initialHeight));
-      window.addEventListener('mouseup', this.stopClusterControlResize);
-    },
-    clusterControlResize(e, initialY, initialHeight) {
-      console.log("cluster control resize")
-      if (this.isClusterControlResizing) {
-        this.clusterControlHeight = this.clampClusterControlHeight(initialHeight - (e.clientY - initialY));
-      }
-    },
-    stopClusterControlResize() {
-      console.log("cstop luster control resize")
-      this.isClusterControlResizing = false;
-      const clusterControlContainer = this.$refs.clusterControlContainer;
-      if (clusterControlContainer) {
-        this.clusterControlHeight = clusterControlContainer.clientHeight;
-      }
-      localStorage.setItem('clusterControlHeight', this.clusterControlHeight);
-      window.removeEventListener('mousemove', this.clusterControlResize);
-      window.removeEventListener('mouseup', this.stopClusterControlResize);
-    },
+    console.log("start cluster control resize");
+    this.isClusterControlResizing = true;
+    const initialY = e.clientY;
+    const initialHeight = this.clusterControlHeight;
+    
+    this.clusterControlResizeHandler = (event) => this.clusterControlResize(event, initialY, initialHeight);
+    window.addEventListener('mousemove', this.clusterControlResizeHandler);
+    window.addEventListener('mouseup', this.stopClusterControlResize);
   },
+  clusterControlResize(e, initialY, initialHeight) {
+    console.log("cluster control resize")
+    if (this.isClusterControlResizing) {
+      this.clusterControlHeight = this.clampClusterControlHeight(initialHeight - (e.clientY - initialY));
+    }
+  },
+  stopClusterControlResize() {
+    console.log("stop cluster control resize");
+    this.isClusterControlResizing = false;
+    const clusterControlContainer = this.$refs.clusterControlContainer;
+    if (clusterControlContainer) {
+      this.clusterControlHeight = clusterControlContainer.clientHeight;
+    }
+    localStorage.setItem('clusterControlHeight', this.clusterControlHeight);
+    window.removeEventListener('mousemove', this.clusterControlResizeHandler);
+    window.removeEventListener('mouseup', this.stopClusterControlResize);
+  },
+},
   created() {
     const storedClusterControlHeight = localStorage.getItem('clusterControlHeight');
     if (storedClusterControlHeight) {
