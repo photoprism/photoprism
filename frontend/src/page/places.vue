@@ -349,9 +349,6 @@ export default {
       });
     },
     selectClusterById: function (clusterId) {
-      if(this.showCluster) {
-        this.showCluster = false;
-      }
 
       this.getClusterFeatures(clusterId, -1, (clusterFeatures) => {
         let latNorth, lngEast, latSouth, lngWest;

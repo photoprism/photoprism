@@ -220,6 +220,9 @@ export default {
 
       this.routeName = this.$route.name;
       this.search();
+    },
+    staticFilter() {
+      this.refresh();
     }
   },
   created() {
