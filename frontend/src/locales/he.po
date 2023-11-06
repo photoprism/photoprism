@@ -3,15 +3,17 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-06 08:25+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
-"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
+"PO-Revision-Date: 2023-11-06 11:27+0000\n"
+"Last-Translator: Dmitry Banny <dj.icecore@gmail.com>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
+"frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 5.0.2\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
+"X-Generator: Weblate 5.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:500
@@ -54,7 +56,7 @@ msgstr "4 שעות"
 
 #: src/dialog/share.vue:73
 msgid "A click will copy it to your clipboard."
-msgstr "לחיצה תעתיק את זה ללוח."
+msgstr "לחיצה תעתיק את זה."
 
 #: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
 #: src/page/settings/account.vue:313 src/app/routes.js:60
@@ -96,7 +98,7 @@ msgstr "פעולות"
 
 #: src/page/connect.vue:97 src/page/connect.vue:98
 msgid "Activate"
-msgstr "לְהַפְעִיל"
+msgstr "הפעלה"
 
 #: src/page/connect.vue:431 src/page/connect.vue:426
 msgid "Activation Code"
@@ -104,7 +106,7 @@ msgstr "קוד הפעלה"
 
 #: src/dialog/admin/users/add.vue:23 src/page/admin/users.vue:47
 msgid "Add"
-msgstr "לְהוֹסִיף"
+msgstr "הוספה"
 
 #: src/dialog/admin/users/add.vue:8 src/dialog/service/add.vue:7
 msgid "Add Account"
@@ -112,7 +114,7 @@ msgstr "הוספת חשבון"
 
 #: src/page/albums.vue:145 src/page/albums.vue:146
 msgid "Add Album"
-msgstr "הוסף אלבום"
+msgstr "הוספת אלבום"
 
 #: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
@@ -120,7 +122,7 @@ msgstr "הוסף קבצים לספריה באמצעות העלאה באתר."
 
 #: src/dialog/share.vue:79
 msgid "Add Link"
-msgstr "הוסף קישור"
+msgstr "הוספת קישור"
 
 #: src/page/albums.vue:119
 msgid "Add pictures from search results by selecting them."
@@ -130,7 +132,7 @@ msgstr "הוסף תמונות מתוצאות החיפוש על ידי בחירת
 #: src/component/label/clipboard.vue:61 src/component/photo/clipboard.vue:180
 #: src/component/subject/clipboard.vue:82 src/dialog/photo/album.vue:20
 msgid "Add to album"
-msgstr "הוסף לאלבום"
+msgstr "הוספה לאלבום"
 
 #: src/dialog/photo/edit/files.vue:213 src/dialog/photo/edit/files.vue:210
 msgid "Added"
@@ -166,7 +168,9 @@ msgstr "אחרי שנה"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "לאחר בחירת תמונות מתוצאות החיפוש, תוכל להוסיף אותן לאלבום באמצעות תפריט ההקשר."
+msgstr ""
+"לאחר בחירת תמונות מתוצאות החיפוש, אפשר להוסיף אותן לאלבום באמצעות תפריט "
+"ההקשר."
 
 #: src/options/options.js:438
 msgid "After two months"
