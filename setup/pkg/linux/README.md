@@ -45,19 +45,22 @@ Please keep in mind that any changes to the global config options, either [throu
 
 ### `defaults.yml`
 
-Global config defaults, including the config and storage paths to use, can optionally be set with a `defaults.yml` file in the `/etc/photoprism` directory (requires root privileges). A custom filename for loading the defaults can be specified with the `PHOTOPRISM_DEFAULTS_YAML` environment variable or the `--defaults-yaml` command flag.
+Global config defaults, including the config and storage paths to use, can optionally be [set with a `defaults.yml` file](defaults.yml) in the `/etc/photoprism` directory (requires root privileges). A custom filename for loading the defaults can be specified with the `PHOTOPRISM_DEFAULTS_YAML` environment variable or the `--defaults-yaml` command flag.
 
 Since you only need to add the values for which you want to have a custom default, a `defaults.yml` file does not need to contain all available options and can thus be kept to a minimum, e.g.:
 
-```
-Debug: false
+```yaml
+ConfigPath: "~/.config/photoprism"
+LogLevel: "info"
+AuthMode: "password"
+DatabaseDriver: "sqlite"
 JpegQuality: 85
-ConfigPath: "~/.photoprism"
+UploadNSFW: "true"
 ```
 
 ### `options.yml`
 
-Default config values in the `defaults.yml` file can be overridden by values specified in a [`options.yml`](https://docs.photoprism.app/getting-started/config-files/) file, the command flags, and the environment variables. The config path from which the `options.yml` file is loaded, if it exists, can be set by adding a `ConfigPath` value to the `defaults.yml`, using the `--config-path` command flag, or with the `PHOTOPRISM_CONFIG_PATH` environment variable.
+Default config values in the `defaults.yml` file can be overridden by values [specified in an `options.yml` file](options.yml), the command flags, and the environment variables. The config path from which the `options.yml` file is loaded, if it exists, can be set by adding a `ConfigPath` value to the `defaults.yml`, using the `--config-path` command flag, or with the `PHOTOPRISM_CONFIG_PATH` environment variable.
 
 For a list of supported options and their names, see <https://docs.photoprism.app/getting-started/config-files/>.
 
