@@ -53,6 +53,7 @@ Since you only need to add the values for which you want to have a custom defaul
 ConfigPath: "~/.config/photoprism"
 StoragePath: "~/.photoprism"
 OriginalsPath: "~/Pictures"
+ImportPath: "/media"
 AdminUser: "admin"
 AdminPassword: "insecure"
 AuthMode: "password"

@@ -1,6 +1,7 @@
 ConfigPath: "~/.config/photoprism"
 StoragePath: "~/.photoprism"
 OriginalsPath: "~/Pictures"
+ImportPath: "/media"
 AdminUser: "admin"
 AdminPassword: "insecure"
 AuthMode: "password"
