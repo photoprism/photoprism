@@ -5,7 +5,7 @@ As an alternative to our [Docker images](https://docs.photoprism.app/getting-sta
 - <https://dl.photoprism.app/pkg/linux/amd64.tar.gz>
 - <https://dl.photoprism.app/pkg/linux/arm64.tar.gz>
 
-Since these packages need to be set up manually and do not include the system dependencies required to make use of all the features, we recommend that only advanced users choose this installation method.
+Since these packages need to be set up manually and do not include the system dependencies required to make use of all the features, we recommend that **only experienced users** choose this installation method.
 
 Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work with these binaries, but older Linux distributions may not be compatible.
 
@@ -45,7 +45,7 @@ Please keep in mind that any changes to the global config options, either [throu
 
 ### `defaults.yml`
 
-Global config defaults, including the config and storage paths to use, can optionally be [set with a `defaults.yml` file](defaults.yml) in the `/etc/photoprism` directory (requires root privileges). A custom filename for loading the defaults can be specified with the `PHOTOPRISM_DEFAULTS_YAML` environment variable or the `--defaults-yaml` command flag.
+Global config defaults, including the config and storage paths to use, can optionally be [set with a `defaults.yml` file](https://dl.photoprism.app/pkg/linux/defaults.yml) in the `/etc/photoprism` directory (requires root privileges). A custom filename for loading the defaults can be specified with the `PHOTOPRISM_DEFAULTS_YAML` environment variable or the `--defaults-yaml` command flag.
 
 Since you only need to add the values for which you want to have a custom default, a `defaults.yml` file does not need to contain all available options and can thus be kept to a minimum, e.g.:
 
@@ -60,7 +60,7 @@ UploadNSFW: true
 
 ### `options.yml`
 
-Default config values in the `defaults.yml` file can be overridden by values [specified in an `options.yml` file](options.yml), the command flags, and the environment variables. The config path from which the `options.yml` file is loaded, if it exists, can be set by adding a `ConfigPath` value to the `defaults.yml`, using the `--config-path` command flag, or with the `PHOTOPRISM_CONFIG_PATH` environment variable.
+Default config values in the `defaults.yml` file can be overridden by values [specified in an `options.yml` file](https://dl.photoprism.app/pkg/linux/options.yml), the command flags, and the environment variables. The config path from which the `options.yml` file is loaded, if it exists, can be set by adding a `ConfigPath` value to the `defaults.yml`, using the `--config-path` command flag, or with the `PHOTOPRISM_CONFIG_PATH` environment variable.
 
 For a list of supported options and their names, see <https://docs.photoprism.app/getting-started/config-files/>.
 
