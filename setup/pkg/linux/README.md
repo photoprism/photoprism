@@ -55,7 +55,7 @@ LogLevel: "info"
 AuthMode: "password"
 DatabaseDriver: "sqlite"
 JpegQuality: 85
-UploadNSFW: "true"
+UploadNSFW: true
 ```
 
 ### `options.yml`
