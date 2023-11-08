@@ -1,5 +1,5 @@
-LogLevel: "info"
 ConfigPath: "~/.config/photoprism"
+LogLevel: "info"
 AdminUser: "admin"
 DatabaseDriver: "sqlite"
 AuthMode: "password"
