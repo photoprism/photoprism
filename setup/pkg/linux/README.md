@@ -52,7 +52,8 @@ Since you only need to add the values for which you want to have a custom defaul
 ```yaml
 ConfigPath: "~/.config/photoprism"
 StoragePath: "~/.photoprism"
-LogLevel: "info"
+AdminUser: "admin"
+AdminPassword: "insecure"
 AuthMode: "password"
 DatabaseDriver: "sqlite"
 JpegQuality: 85
