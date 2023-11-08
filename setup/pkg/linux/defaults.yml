@@ -1,5 +1,6 @@
 ConfigPath: "~/.config/photoprism"
 StoragePath: "~/.photoprism"
+OriginalsPath: "~/Pictures"
 AdminUser: "admin"
 AdminPassword: "insecure"
 AuthMode: "password"
@@ -9,7 +10,6 @@ HttpPort: 2342
 HttpCompression: "gzip"
 DisableTLS: false
 DefaultTLS: true
-OriginalsLimit: 5000
 Experimental: false
 DisableWebDAV: false
 DisableSettings: false
