@@ -65,7 +65,7 @@ UploadNSFW: true
 
 For a list of supported options and their names, see <https://docs.photoprism.app/getting-started/config-files/>.
 
-When specifying values, make sure that the data type is the same as in the documentation, e.g. *bool* values must be either `true` or `false` and *int* values must be whole numbers without any quotes, see the example above.
+When specifying values, make sure that the data type is the same as in the documentation, e.g. *bool* values must be either `true` or `false` and *int* values must be whole numbers without any quotes, as in the example above.
 
 ### `options.yml`
 
