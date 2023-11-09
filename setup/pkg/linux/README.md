@@ -69,7 +69,7 @@ When specifying values, make sure that the data type is the [same as in the docu
 
 ### `options.yml`
 
-Default config values can be overridden by values [specified in an `options.yml` file](https://dl.photoprism.app/pkg/linux/options.yml), the command flags, and the environment variables. To load values from an `options.yml` file, if it exists, you can specify its storage path (excluding the filename) with the `ConfigPath` option in a `defaults.yml` file, the `--config-path` command flag, or the `PHOTOPRISM_CONFIG_PATH` environment variable.
+Default config values can be overridden by values [specified in an `options.yml` file](https://dl.photoprism.app/pkg/linux/options.yml) as well as with command flags and environment variables. To load values from an existing `options.yml` file, you can specify its storage path (excluding the filename) by setting the `ConfigPath` option in your `defaults.yml` file, using the `--config-path` command flag, or with the `PHOTOPRISM_CONFIG_PATH` environment variable.
 
 The values in an `options.yml` file are not global and can be used to customize individual instances based on the default values in a `defaults.yml` file. Both files allow you to set any of the [supported options](https://docs.photoprism.app/getting-started/config-files/#config-options).
 
