@@ -25,7 +25,7 @@ func decodeImage(reader io.ReadSeeker, logName string) (metaData *meta.Data, img
 	}
 
 	// Log color metadata read error.
-	log.Warnf("thumb: %s in %s (read color metadata)", err, logName)
+	log.Infof("thumb: %s in %s (read color metadata)", err, logName)
 
 	// Seek to the file start in order to avoid decoding errors,
 	// see https://github.com/photoprism/photoprism/issues/3843
