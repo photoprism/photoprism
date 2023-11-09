@@ -63,11 +63,15 @@ DetectNSFW: false
 UploadNSFW: true
 ```
 
+For a list of supported options and their names, see <https://docs.photoprism.app/getting-started/config-files/>.
+
+When specifying values, make sure that the data type is the same as in the documentation, e.g. *bool* values must be either `true` or `false` and *int* values must be whole numbers without any quotes, see the example above.
+
 ### `options.yml`
 
 Default config values can be overridden by values [specified in an `options.yml` file](https://dl.photoprism.app/pkg/linux/options.yml), the command flags, and the environment variables. To load values from an `options.yml` file, if it exists, you can specify its storage path (excluding the filename) with the `ConfigPath` option in a `defaults.yml` file, the `--config-path` command flag, or the `PHOTOPRISM_CONFIG_PATH` environment variable.
 
-The values in an `options.yml` file are not global and can be different for each user and/or instance, depending on the directory layout you have specified in the `defaults.yml` file. For a list of supported options and their names, see <https://docs.photoprism.app/getting-started/config-files/>.
+The values in an `options.yml` file are not global and can be different for each user and/or instance, depending on the directory layout you have specified in the `defaults.yml` file. Both files allow you to [set the same options](https://docs.photoprism.app/getting-started/config-files/).
 
 ## Documentation
 
