@@ -155,8 +155,11 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 
 					if before := takenAt.Before(albumOldest); before {
 						albumOldest = takenAt
-						log.Println("test")
-					} else if after := takenAt.After(albumNewest); after {
+					} else if zero := albumOldest.IsZero(); zero {
+						albumOldest = takenAt
+					}
+
+					if after := takenAt.After(albumNewest); after {
 						albumNewest = takenAt
 					}
 				}
@@ -887,7 +890,8 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 					// update the oldest of the album
 					updatedAlbumOldest = oldestPhoto.TakenAt
 				}
-			} else if isNewest := takenAt.Equal(m.AlbumNewest); isNewest {
+			}
+			if isNewest := takenAt.Equal(m.AlbumNewest); isNewest {
 				if newestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, false); err == nil {
 					// update the newest of the album
 					updatedAlbumNewest = newestPhoto.TakenAt
@@ -936,9 +940,30 @@ func AlbumOldestOrNewest(albumUid string, isOldest bool) (Photo, error) {
 			),
 		)
 
-	if err := stmt.First(&photo).Error; err != nil {
-		return Photo{}, err
+	if r := stmt.First(&photo); r.RecordNotFound() {
+		return Photo{}, nil
+	} else if r.Error != nil {
+		return Photo{}, r.Error
 	}
 
 	return photo, nil
+}
+
+func AlbumsOfPhoto(photoUid string) ([]Album, error) {
+	var albums []Album
+
+	stmt := Db().Table("albums").Select("albums.*").Joins(
+		"JOIN photos_albums ON albums.album_uid = "+
+			"photos_albums.album_uid",
+	).Joins("JOIN photos ON photos_albums.photo_uid = photos.photo_uid").
+		Where("photos.photo_uid = ?", photoUid).
+		Where("photos_albums.hidden = 0")
+
+	if r := stmt.Find(&albums); r.RecordNotFound() {
+		return albums, nil
+	} else if r.Error != nil {
+		return albums, r.Error
+	}
+
+	return albums, nil
 }

@@ -127,4 +127,29 @@ func (m *Photo) UpdateDateFields() {
 			Where("photo_id = ? AND photo_taken_at <> ?", m.ID, m.TakenAtLocal).
 			Updates(File{PhotoTakenAt: m.TakenAtLocal}).Error,
 	)
+
+	// update the oldest or newest date of the albums of this photo, if needed
+	if albums, err := AlbumsOfPhoto(m.PhotoUID); err == nil {
+		for _, album := range albums {
+			albumOldest := album.AlbumOldest
+			albumNewest := album.AlbumNewest
+			takenAt := m.TakenAt
+			if before := takenAt.Before(albumOldest); before {
+				albumOldest = takenAt
+			} else if after := takenAt.After(albumNewest); after {
+				albumNewest = takenAt
+			}
+
+			// Refresh updated timestamp and album oldest/newest values.
+			if !albumOldest.Equal(album.AlbumOldest) || !albumNewest.Equal(album.AlbumNewest) {
+				if err := UpdateAlbum(
+					album.AlbumUID, Values{
+						"albumOldest": albumOldest, "albumNewest": albumNewest,
+					},
+				); err != nil {
+					log.Errorf("album: %s (update %s)", err.Error(), album)
+				}
+			}
+		}
+	}
 }
