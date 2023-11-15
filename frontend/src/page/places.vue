@@ -19,7 +19,7 @@
       </div>
       <div id="map" ref="map" style="width: 100%; height: 100%;"></div>
       <div class="cluster-control" :style="{ height: this.showCluster ? clusterControlHeight + 'px' : 0}">
-        <div class="cluster-control-resize-handle" @mousedown="startClusterControlResize"></div>
+        <div class="cluster-control-resize-handle" @mousedown="startClusterControlResize" @touchstart="startClusterControlResize"></div>
         <v-card class="cluster-control-container">
           <p-page-photos
             ref="cluster"
@@ -749,30 +749,43 @@ export default {
       return Math.max(Math.min(0.85*vh, height), 0.3*vh);
     },
     startClusterControlResize(e) {
-    this.isClusterControlResizing = true;
-    const initialY = e.clientY;
-    const initialHeight = this.clusterControlHeight;
-    
-    this.clusterControlResizeHandler = (event) => this.clusterControlResize(event, initialY, initialHeight);
-    window.addEventListener('mousemove', this.clusterControlResizeHandler);
-    window.addEventListener('mouseup', this.stopClusterControlResize);
-  },
-  clusterControlResize(e, initialY, initialHeight) {
-    if (this.isClusterControlResizing) {
-      this.clusterControlHeight = this.clampClusterControlHeight(initialHeight - (e.clientY - initialY));
+      this.isClusterControlResizing = true;
+      const initialY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+      const initialHeight = this.clusterControlHeight;
+
+      this.clusterControlResizeHandler = (event) => this.clusterControlResize(event, initialY, initialHeight);
+      
+      if (e.type === 'touchstart') {
+        window.addEventListener('touchmove', this.clusterControlResizeHandler);
+        window.addEventListener('touchend', this.stopClusterControlResize);
+      } else {
+        window.addEventListener('mousemove', this.clusterControlResizeHandler);
+        window.addEventListener('mouseup', this.stopClusterControlResize);
+      }
+    },
+    clusterControlResize(e, initialY, initialHeight) {
+      if (this.isClusterControlResizing) {
+        const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+        this.clusterControlHeight = this.clampClusterControlHeight(initialHeight - (currentY - initialY));
+      }
+    },
+    stopClusterControlResize(e) {
+      this.isClusterControlResizing = false;
+      const clusterControlContainer = this.$refs.clusterControlContainer;
+      if (clusterControlContainer) {
+        this.clusterControlHeight = clusterControlContainer.clientHeight;
+      }
+      localStorage.setItem('clusterControlHeight', this.clusterControlHeight);
+
+      if (e.type === 'touchend') {
+        window.removeEventListener('touchmove', this.clusterControlResizeHandler);
+        window.removeEventListener('touchend', this.stopClusterControlResize);
+      } else {
+        window.removeEventListener('mousemove', this.clusterControlResizeHandler);
+        window.removeEventListener('mouseup', this.stopClusterControlResize);
+      }
     }
   },
-  stopClusterControlResize() {
-    this.isClusterControlResizing = false;
-    const clusterControlContainer = this.$refs.clusterControlContainer;
-    if (clusterControlContainer) {
-      this.clusterControlHeight = clusterControlContainer.clientHeight;
-    }
-    localStorage.setItem('clusterControlHeight', this.clusterControlHeight);
-    window.removeEventListener('mousemove', this.clusterControlResizeHandler);
-    window.removeEventListener('mouseup', this.stopClusterControlResize);
-  },
-},
   created() {
     const storedClusterControlHeight = localStorage.getItem('clusterControlHeight');
     if (storedClusterControlHeight) {
