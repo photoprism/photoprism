@@ -842,7 +842,11 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 			takenAt := photo.TakenAt
 			if before := takenAt.Before(albumOldest); before {
 				albumOldest = takenAt
-			} else if after := takenAt.After(albumNewest); after {
+			} else if zero := albumOldest.IsZero(); zero {
+				albumOldest = takenAt
+			}
+
+			if after := takenAt.After(albumNewest); after {
 				albumNewest = takenAt
 			}
 		}
