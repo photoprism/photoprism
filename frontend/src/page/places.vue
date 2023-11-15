@@ -1,6 +1,6 @@
 <template>
   <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
-    <div style="width: 100%; height: 100%; position: relative;">
+    <div style="width: 100%; height: 100%; position: relative; overflow: hidden;">
       <div v-if="canSearch" class="map-control search-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
           <v-text-field v-model.lazy.trim="filter.q"
