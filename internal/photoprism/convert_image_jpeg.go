@@ -29,7 +29,7 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 	// Extract a still image to be used as preview.
 	if f.IsAnimated() && !f.IsWebP() && c.conf.FFmpegEnabled() {
 		// Use "ffmpeg" to extract a JPEG still image from the video.
-		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-vframes", "1", jpegName))
+		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-i", f.FileName(), "-vframes", "1", jpegName))
 	}
 
 	// Use heif-convert for HEIC/HEIF and AVIF image files.
