@@ -28,7 +28,7 @@ func (c *Convert) PngConvertCommands(f *MediaFile, pngName string) (result []*ex
 	// Extract a video still image that can be used as preview.
 	if f.IsAnimated() && !f.IsWebP() && c.conf.FFmpegEnabled() {
 		// Use "ffmpeg" to extract a PNG still image from the video.
-		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-i", f.FileName(), "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-vframes", "1", pngName))
+		result = append(result, exec.Command(c.conf.FFmpegBin(), "-y", "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-i", f.FileName(), "-vframes", "1", pngName))
 	}
 
 	// Use heif-convert for HEIC/HEIF and AVIF image files.
