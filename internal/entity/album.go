@@ -166,9 +166,15 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 
 			}
 
-			// Refresh updated timestamp and album oldest/newest values.
-			err = UpdateAlbum(albumUid, Values{"updated_at": TimePointer(),
-				"albumOldest": albumOldest, "albumNewest": albumNewest})
+			if !albumOldest.Equal(album.AlbumOldest) || !albumNewest.Equal(album.AlbumNewest) {
+				// Refresh updated timestamp and album oldest/newest values.
+				err = UpdateAlbum(
+					albumUid, Values{
+						"updated_at":  TimePointer(),
+						"albumOldest": albumOldest, "albumNewest": albumNewest,
+					},
+				)
+			}
 		}
 	}
 
@@ -853,10 +859,15 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 	}
 
 	// Refresh updated timestamp and album oldest/newest values.
-	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimePointer(),
-		"albumOldest": albumOldest, "albumNewest": albumNewest,
-		}); err != nil {
-		log.Errorf("album: %s (update %s)", err.Error(), m)
+	if !albumOldest.Equal(m.AlbumOldest) || !albumNewest.Equal(m.AlbumNewest) {
+		if err := UpdateAlbum(
+			m.AlbumUID, Values{
+				"updated_at":  TimePointer(),
+				"albumOldest": albumOldest, "albumNewest": albumNewest,
+			},
+		); err != nil {
+			log.Errorf("album: %s (update %s)", err.Error(), m)
+		}
 	}
 
 	return added
@@ -905,13 +916,15 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(
-		m.AlbumUID, Values{
-			"updated_at": TimePointer(), "albumOldest": updatedAlbumOldest,
-			"albumNewest": updatedAlbumNewest,
-		},
-	); err != nil {
-		log.Errorf("album: %s (update %s)", err.Error(), m)
+	if !updatedAlbumOldest.Equal(m.AlbumOldest) || !updatedAlbumNewest.Equal(m.AlbumNewest) {
+		if err := UpdateAlbum(
+			m.AlbumUID, Values{
+				"updated_at": TimePointer(), "albumOldest": updatedAlbumOldest,
+				"albumNewest": updatedAlbumNewest,
+			},
+		); err != nil {
+			log.Errorf("album: %s (update %s)", err.Error(), m)
+		}
 	}
 
 	return removed
