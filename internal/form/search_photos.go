@@ -32,6 +32,7 @@ type SearchPhotos struct {
 	Raw       bool      `form:"raw" notes:"Finds pictures with RAW image file"`
 	Live      bool      `form:"live" notes:"Finds Live Photos and short videos"`
 	Scan      string    `form:"scan" example:"scan:true scan:false" notes:"Finds scanned photos and documents"`
+	Mp        string    `form:"mp" example:"mp:3-6" notes:"Resolution in Megapixels (MP)"`
 	Panorama  bool      `form:"panorama" notes:"Finds pictures with an aspect ratio > 1.9:1"`
 	Portrait  bool      `form:"portrait" notes:"Finds pictures in portrait format"`
 	Landscape bool      `form:"landscape" notes:"Finds pictures in landscape format"`

@@ -524,6 +524,25 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where(AnyInt("photos.photo_day", f.Day, txt.Or, entity.UnknownDay, txt.DayMax))
 	}
 
+	// Filter by Resolution in Megapixels (MP).
+	if rangeStart, rangeEnd, rangeErr := txt.IntRange(f.Mp, 0, 32000); rangeErr == nil {
+		s = s.Where("photos.photo_resolution >= ? AND photos.photo_resolution <= ?", rangeStart, rangeEnd)
+	}
+
+	// Find panoramic pictures only.
+	if f.Panorama {
+		s = s.Where("photos.photo_panorama = 1")
+	}
+
+	// Find portrait/landscape/square pictures only.
+	if f.Portrait {
+		s = s.Where("files.file_portrait = 1")
+	} else if f.Landscape {
+		s = s.Where("files.file_aspect_ratio > 1.25")
+	} else if f.Square {
+		s = s.Where("files.file_aspect_ratio = 1")
+	}
+
 	// Filter by main color.
 	if f.Color != "" {
 		s = s.Where("files.file_main_color IN (?)", SplitOr(strings.ToLower(f.Color)))
@@ -556,20 +575,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_scan = 1")
 	}
 
-	// Find panoramas only.
-	if f.Panorama {
-		s = s.Where("photos.photo_panorama = 1")
-	}
-
-	// Find portrait/landscape/square pictures only.
-	if f.Portrait {
-		s = s.Where("files.file_portrait = 1")
-	} else if f.Landscape {
-		s = s.Where("files.file_aspect_ratio > 1.25")
-	} else if f.Square {
-		s = s.Where("files.file_aspect_ratio = 1")
-	}
-
+	// Filter by stack flag.
 	if f.Stackable {
 		s = s.Where("photos.photo_stack > -1")
 	} else if f.Unstacked {
