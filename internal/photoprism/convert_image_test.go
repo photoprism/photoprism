@@ -3,6 +3,7 @@ package photoprism
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -150,6 +151,9 @@ func TestConvert_PngConvertCommands(t *testing.T) {
 		}
 
 		assert.False(t, useMutex)
+
+		assert.NotEmpty(t, cmds)
+		assert.True(t, strings.Contains(cmds[0].String(), "rsvg"))
 
 		t.Logf("commands: %#v", cmds)
 	})
