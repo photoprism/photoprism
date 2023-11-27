@@ -45,7 +45,6 @@ echo You should now be able to log in with the user "admin" when navigating to t
 echo:
 echo   http://localhost:2342/
 echo:
-echo The initial password is "insecure" or the value specified with PHOTOPRISM_ADMIN_PASSWORD in your
-echo docker-compose.yml file. Please change it under Settings ^> Account before you proceed.
+echo The initial password is "insecure". Please change it under Settings ^> Account before you proceed.
 
 START http://localhost:2342/
