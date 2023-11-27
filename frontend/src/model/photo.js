@@ -984,25 +984,21 @@ export class Photo extends RestModel {
   generateLensInfo = memoizeOne(
     (lens, lensId, lensMake, lensModel, cameraModel, fNumber, iso, exposure, focalLength) => {
       let info = [];
+      const id = lensId ? lensId : lens && lens.ID ? lens.ID : 1;
+      const make = lensMake ? lensMake : lens && lens.Make ? lens.Make : "";
+      const model = (lensModel ? lensModel : lens && lens.Model ? lens.Model : "").replace(
+        "f/",
+        "ƒ/"
+      );
 
       // Example: EF-S18-55mm f/3.5-5.6 IS STM
-      if (lens && lens.Model && lens.ID > 1) {
-        if (lens.Model.length > 7) {
-          info.push(lens.Model);
-        } else {
-          info.push(lens.Make + " " + lens.Model);
-        }
-      } else if (lensId > 1) {
-        if (!lensModel && !!lensMake) {
-          info.push(lensMake);
-        } else {
-          lensModel = lensModel.replace("f/", "ƒ/");
-
-          if (lensModel.length > 45) {
-            return lensModel;
-          } else {
-            info.push(lensModel);
-          }
+      if (id > 1) {
+        if (!model && !!make) {
+          info.push(make);
+        } else if (model.length > 45) {
+          return model;
+        } else if (model) {
+          info.push(model);
         }
       }
 
@@ -1010,11 +1006,11 @@ export class Photo extends RestModel {
         info.push(focalLength + "mm");
       }
 
-      if (fNumber && (!lensModel || !lensModel.endsWith(fNumber.toString()))) {
+      if (fNumber && (!model || !model.endsWith(fNumber.toString()))) {
         info.push("ƒ/" + fNumber);
       }
 
-      if (iso && lensModel.length < 27) {
+      if (iso && model.length < 27) {
         info.push("ISO " + iso);
       }
 
