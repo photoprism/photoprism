@@ -6,8 +6,8 @@ PhotoPrism: Browse Your Life in Pictures
 [![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)](https://docs.photoprism.app/)
 [![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)](https://link.photoprism.app/chat)
 [![GitHub Discussions](https://img.shields.io/badge/ask-%20on%20github-4d6a91.svg)](https://link.photoprism.app/discussions)
-[![Mastodon](https://dl.photoprism.app/img/badges/badge-mastodon.svg)](https://floss.social/@photoprism)
-[![Twitter](https://dl.photoprism.app/img/badges/badge-twitter.svg)](https://link.photoprism.app/twitter)
+[![Bluesky Social](https://dl.photoprism.app/img/badges/badge-follow-photoprism-bsky-social.svg)](https://photoprism.bsky.social/)
+[![Mastodon](https://dl.photoprism.app/img/badges/badge-floss-social.svg)](https://floss.social/@photoprism)
 
 PhotoPrism® is an AI-Powered Photos App for the [Decentralized Web](https://en.wikipedia.org/wiki/Decentralized_web).
 It makes use of the latest technologies to tag and find pictures automatically without getting in your way.
