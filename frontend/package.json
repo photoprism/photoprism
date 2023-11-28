@@ -98,7 +98,7 @@
     "vue-fullscreen": "^2.6.1",
     "vue-gettext": "^2.1.12",
     "vue-infinite-scroll": "^2.0.2",
-    "vue-loader": "^15.10.1",
+    "vue-loader": "^16.0.0",
     "vue-loader-plugin": "^1.3.0",
     "vue-luxon": "^0.10.0",
     "vue-router": "^3.6.5",
