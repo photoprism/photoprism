@@ -28,14 +28,14 @@ Since the packages currently do not include a default configuration, we recommen
 
 As an alternative to the plain *tar.gz* archives, that you need to unpack manually, we also offer *.deb* packages for Debian-based distributions such as Ubuntu Linux.
 
-On servers with a **64-bit Intel or AMD CPU**, the [latest stable release](https://github.com/photoprism/photoprism/releases) can be installed as follows:
+On servers with a **64-bit Intel or AMD CPU**, our [latest stable release](https://github.com/photoprism/photoprism/releases) can be installed as follows:
 
 ```
 curl -sLO https://dl.photoprism.app/pkg/linux/deb/amd64.deb
 sudo dpkg -i amd64.deb
 ```
 
-If your server has an **ARM-based CPU**, such as a [Raspberry Pi](https://docs.photoprism.app/getting-started/raspberry-pi/), you need to run the following instead:
+If your server has an **ARM-based CPU**, such as a [Raspberry Pi](https://docs.photoprism.app/getting-started/raspberry-pi/), use the following commands instead:
 
 ```
 curl -sLO https://dl.photoprism.app/pkg/linux/deb/arm64.deb
@@ -50,7 +50,7 @@ Since the packages currently do not include a default configuration, we recommen
 
 To update your installation, please stop all running PhotoPrism instances, delete the contents of the `/opt/photoprism` directory by running the command `sudo rm -rf /opt/photoprism/*` and then install the new version as shown above.
 
-If you used a *.deb* package for the installation, you may need to remove the currently installed `photoprism` package by running `sudo dpkg -r photoprism` before you can install a new version with `sudo dpkg -i package.deb`. This is a known issue that we hope to resolve with improved packages in the future.
+If you used a *.deb* package for the installation, you may need to remove the currently installed `photoprism` package by running `sudo dpkg -r photoprism` before you can install a new version with `sudo dpkg -i package.deb`. This is a known issue that we hope to resolve with improved packages.
 
 ## Dependencies
 
