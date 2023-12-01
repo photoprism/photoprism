@@ -4,11 +4,11 @@ version: '3.5'
 ## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
-  ## MariaDB 11.0 Database Server
+  ## MariaDB 11.2 Database Server
   ## Docs: https://mariadb.com/docs/reference/
-  ## Release Notes: https://mariadb.com/kb/en/mariadb-11-0-0-release-notes/
-  mariadb-11-0:
-    image: mariadb:11.0-rc
+  ## Release Notes: https://mariadb.com/kb/en/release-notes-mariadb-11-2-series/
+  mariadb-11-2:
+    image: mariadb:11.2
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
