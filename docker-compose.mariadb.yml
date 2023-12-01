@@ -27,10 +27,10 @@ services:
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
 
-  ## MariaDB 10.8 Database Server
-  ## Docs: https://mariadb.com/kb/en/release-notes-mariadb-108-series/
-  mariadb-10-8:
-    image: mariadb:10.8
+  ## MariaDB 10.11 Database Server
+  ## Docs: https://mariadb.com/kb/en/release-notes-mariadb-1011-series/
+  mariadb-10-11:
+    image: mariadb:10.11
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
@@ -39,22 +39,6 @@ services:
       - "4001"
     ports:
       - "4002:4001" # database port (host:container)
-    volumes:
-      - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
-    environment:
-      MARIADB_AUTO_UPGRADE: "1"
-      MARIADB_INITDB_SKIP_TZINFO: "1"
-      MARIADB_DATABASE: "photoprism"
-      MARIADB_USER: "photoprism"
-      MARIADB_PASSWORD: "photoprism"
-      MARIADB_ROOT_PASSWORD: "photoprism"
-
-  ## MariaDB 10.7 Database Server
-  mariadb-10-7:
-    image: mariadb:10.7
-    command: mysqld --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-    expose:
-      - "4001" # database port (internal)
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
