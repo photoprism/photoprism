@@ -36,13 +36,20 @@ services:
     ## Use photoprism/photoprism:preview for testing preview builds:
     image: photoprism/photoprism:latest
     container_name: photoprism
+    ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
+    ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
+    ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
+    # restart: unless-stopped
     depends_on:
       - mariadb
-    restart: unless-stopped
+    ## "security_opt" specifies options for kernel security modules, it can be omitted if it is not needed or supported:
+    ## https://github.com/containers/podman-compose/issues/199#issuecomment-991379608
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    user: 1000:1000
+    ## "user" starts the service with a specific non-root user and group ID (optional):
+    # user: 1000:1000
+    ## "privileged" allows to run the service on ports < 1024 (see below):
     privileged: true
     ports:
       - "2342:2342" # HTTP port (host:container)
@@ -104,14 +111,15 @@ services:
     restart: unless-stopped
     image: mariadb:10.11
     container_name: mariadb
-    user: 1000:1000
-    privileged: true
-    security_opt:
-      - seccomp:unconfined
-      - apparmor:unconfined
-    ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
-    ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
-    command: mariadbd --innodb-buffer-pool-size=2G --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=180
+    ## "security_opt" specifies options for kernel security modules, it can be omitted if it is not needed or supported:
+    # security_opt:
+    #  - seccomp:unconfined
+    #  - apparmor:unconfined
+    ## "user" starts the service with a specific non-root user and group ID (optional):
+    # user: 1000:1000
+    ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner:
+    ## https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
+    command: --innodb-buffer-pool-size=2G --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=180
     volumes:
       - "./database:/var/lib/mysql"
     environment:
