@@ -48,7 +48,7 @@ Since the packages currently do not include a default configuration, we recommen
 
 ## Updates
 
-To update your installation, please stop all running PhotoPrism instances, delete the contents of the `/opt/photoprism` directory by running the command `sudo rm -rf /opt/photoprism/*` and then install the new version as shown above.
+To update your installation, please stop all running PhotoPrism instances and make sure that there are [no custom media, database, or config files](#configuration) in the `/opt/photoprism` directory. You can then delete its contents with the command `sudo rm -rf /opt/photoprism/*` and install a new version as shown above.
 
 If you used a *.deb* package for the installation, you may need to remove the currently installed `photoprism` package by running `sudo dpkg -r photoprism` before you can install a new version with `sudo dpkg -i package.deb`. This is a known issue that we hope to resolve with improved packages.
 
@@ -62,9 +62,9 @@ For details on the packages installed in our official Docker images, see <https:
 
 Run `photoprism --help` in a terminal to get an [overview of the command flags and environment variables](https://docs.photoprism.app/getting-started/config-options/) available for configuration. Their current values can be displayed with the `photoprism config` command.
 
-If no explicit *originals*, *import* and/or *assets* path has been configured, a list of [default directory paths](https://github.com/photoprism/photoprism/blob/develop/pkg/fs/dirs.go) will be searched and the first existing directory will be used for the respective path.
+Global config defaults [can be defined in a `/etc/photoprism/defaults.yml` file](#defaultsyml). When specifying paths, `~` is supported as a placeholder for the current user's home directory, e.g. `~/Pictures`. Relative paths can also be specified via `./pathname`.
 
-Global config defaults can be defined in a `/etc/photoprism/defaults.yml` file (see below). When specifying paths, `~` is supported as a placeholder for the current user's home directory, e.g. `~/Pictures`. Relative paths can also be specified via `./pathname`.
+If no explicit *originals*, *import* and/or *assets* path has been configured, a list of [default directory paths](https://github.com/photoprism/photoprism/blob/develop/pkg/fs/dirs.go) will be searched and the first existing directory will be used for the respective path. To simplify [updates](#updates), we recommend **not to store** any media, database, or config files in the same directory where you installed PhotoPrism, e.g. `/opt/photoprism`, and to use a different base directory for them instead, for example `/photoprism`, `/var/lib/photoprism/`, or a path relative to each user's home directory.
 
 Please keep in mind that any changes to the config options, either [through the UI](https://docs.photoprism.app/user-guide/settings/advanced/), [config files](https://docs.photoprism.app/getting-started/config-files/), or by [setting environment variables](https://docs.photoprism.app/getting-started/config-options/), require a restart to take effect.
 
