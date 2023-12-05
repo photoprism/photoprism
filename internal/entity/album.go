@@ -901,13 +901,13 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 			photo.PhotoUID != "" {
 			takenAt := photo.TakenAt
 			if isOldest := takenAt.Equal(m.AlbumOldest); isOldest {
-				if oldestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, true); err == nil {
+				if oldestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, true, ""); err == nil {
 					// update the oldest of the album
 					updatedAlbumOldest = oldestPhoto.TakenAt
 				}
 			}
 			if isNewest := takenAt.Equal(m.AlbumNewest); isNewest {
-				if newestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, false); err == nil {
+				if newestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, false, ""); err == nil {
 					// update the newest of the album
 					updatedAlbumNewest = newestPhoto.TakenAt
 				}
@@ -935,7 +935,7 @@ func (m *Album) Links() Links {
 	return FindLinks("", m.AlbumUID)
 }
 
-func AlbumOldestOrNewest(albumUid string, isOldest bool) (Photo, error) {
+func AlbumOldestOrNewest(albumUid string, isOldest bool, exceptPhotoUid string) (Photo, error) {
 	var photo Photo
 	var orderDirection string
 	if isOldest {
@@ -948,6 +948,7 @@ func AlbumOldestOrNewest(albumUid string, isOldest bool) (Photo, error) {
 		"JOIN photos_albums ON photos.photo_uid = "+
 			"photos_albums.photo_uid",
 	).Joins("JOIN albums ON photos_albums.album_uid = albums.album_uid").
+		Where("photos.photo_uid != ?", exceptPhotoUid).
 		Where("albums.album_uid = ?", albumUid).
 		Where("photos_albums.hidden = 0").
 		Order(

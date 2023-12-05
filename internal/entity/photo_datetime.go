@@ -127,24 +127,39 @@ func (m *Photo) UpdateDateFields() {
 			Where("photo_id = ? AND photo_taken_at <> ?", m.ID, m.TakenAtLocal).
 			Updates(File{PhotoTakenAt: m.TakenAtLocal}).Error,
 	)
+}
 
-	// update the oldest or newest date of the albums of this photo, if needed
+// UpdateDateFieldsOfAlbums updates the oldest or newest date of the albums the photo is in, if needed.
+func (m *Photo) UpdateDateFieldsOfAlbums(oldTakenAt time.Time) {
 	if albums, err := AlbumsOfPhoto(m.PhotoUID); err == nil {
 		for _, album := range albums {
 			albumOldest := album.AlbumOldest
 			albumNewest := album.AlbumNewest
+			updatedAlbumOldest := albumOldest
+			updatedAlbumNewest := albumNewest
 			takenAt := m.TakenAt
-			if before := takenAt.Before(albumOldest); before {
-				albumOldest = takenAt
-			} else if after := takenAt.After(albumNewest); after {
-				albumNewest = takenAt
+			if wasOldest := oldTakenAt.Equal(albumOldest); wasOldest {
+				if oldestPhoto, err := AlbumOldestOrNewest(album.AlbumUID, true, m.PhotoUID); err == nil {
+					// find the oldest of the album
+					updatedAlbumOldest = oldestPhoto.TakenAt
+				}
 			}
-
+			if wasNewest := oldTakenAt.Equal(albumNewest); wasNewest {
+				if newestPhoto, err := AlbumOldestOrNewest(album.AlbumUID, false, m.PhotoUID); err == nil {
+					// find the newest of the album
+					updatedAlbumNewest = newestPhoto.TakenAt
+				}
+			}
+			if before := takenAt.Before(updatedAlbumOldest); before {
+				updatedAlbumOldest = takenAt
+			} else if after := takenAt.After(updatedAlbumNewest); after {
+				updatedAlbumNewest = takenAt
+			}
 			// Refresh updated timestamp and album oldest/newest values.
-			if !albumOldest.Equal(album.AlbumOldest) || !albumNewest.Equal(album.AlbumNewest) {
+			if !updatedAlbumOldest.Equal(album.AlbumOldest) || !updatedAlbumNewest.Equal(album.AlbumNewest) {
 				if err := UpdateAlbum(
 					album.AlbumUID, Values{
-						"albumOldest": albumOldest, "albumNewest": albumNewest,
+						"albumOldest": updatedAlbumOldest, "albumNewest": updatedAlbumNewest,
 					},
 				); err != nil {
 					log.Errorf("album: %s (update %s)", err.Error(), album)
