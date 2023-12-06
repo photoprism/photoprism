@@ -32,6 +32,7 @@ var Formats = map[fs.Type]Type{
 	fs.VideoM4V:        Video,
 	fs.VideoMKV:        Video,
 	fs.VideoMOV:        Video,
+	fs.VideoMXF:        Video,
 	fs.Video3GP:        Video,
 	fs.Video3G2:        Video,
 	fs.VideoFlash:      Video,

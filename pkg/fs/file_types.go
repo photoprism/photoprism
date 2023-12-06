@@ -39,6 +39,7 @@ const (
 	VideoMP2        Type = "mp2"   // MPEG-2, H.222/H.262
 	VideoMP4        Type = "mp4"   // MPEG-4 Container based on QuickTime, can contain AVC, HEVC,...
 	VideoM4V        Type = "m4v"   // Apple iTunes MPEG-4 Container, optionally with DRM copy protection
+	VideoMXF        Type = "mxf"   // Material Exchange Format
 	VideoAVI        Type = "avi"   // Microsoft Audio Video Interleave (AVI)
 	Video3GP        Type = "3gp"   // Mobile Multimedia Container, MPEG-4 Part 12
 	Video3G2        Type = "3g2"   // Similar to 3GP, consumes less space & bandwidth

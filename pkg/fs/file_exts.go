@@ -96,6 +96,7 @@ var Extensions = FileExtensions{
 	".mp":       VideoMP4,
 	ExtMP4:      VideoMP4, // .mp4
 	".m4v":      VideoM4V,
+	".mxf":      VideoMXF,
 	".3gp":      Video3GP,
 	".3g2":      Video3G2,
 	".flv":      VideoFlash,
