@@ -1,6 +1,6 @@
 package header
 
 var (
-	DefaultContentSecurityPolicy    = "frame-ancestors 'none';"
-	DefaultFrameOptions             = "DENY"
+	DefaultContentSecurityPolicy = "frame-ancestors 'none';"
+	DefaultFrameOptions          = "DENY"
 )
