@@ -12,5 +12,6 @@ var Security = func(conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Writer.Header().Set(header.ContentSecurityPolicy, header.DefaultContentSecurityPolicy)
 		c.Writer.Header().Set(header.FrameOptions, header.DefaultFrameOptions)
+		c.Writer.Header().Set(header.AccessControlAllowOrigin, header.DefaultFrameOptions)
 	}
 }
