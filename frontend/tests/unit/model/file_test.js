@@ -193,13 +193,82 @@ describe("model/file", () => {
       UID: "ABC123",
       Hash: "54ghtfd",
       FileType: "jpg",
-      Duration: 8009,
       Name: "1/2/IMG123.jpg",
       CreatedAt: "2012-07-08T14:45:39Z",
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file = new File(values);
-    assert.equal(file.getInfo(), "JPG, 8µs");
+    assert.equal(file.getInfo(), "JPG");
+
+    const values2 = {
+      InstanceID: 6,
+      UID: "ABC124",
+      Hash: "54ghtfd",
+      FileType: "mp4",
+      Duration: 8009,
+      FPS: 60,
+      Name: "1/2/IMG123.mp4",
+      CreatedAt: "2012-07-08T14:45:39Z",
+      UpdatedAt: "2012-07-08T14:45:39Z",
+    };
+    const file2 = new File(values2);
+    assert.equal(file2.getInfo(), "MP4, 8µs, 60.0 FPS");
+  });
+
+  it("should return storage location", () => {
+    const values = {
+      InstanceID: 5,
+      UID: "ABC123",
+      Hash: "54ghtfd",
+      FileType: "jpg",
+      Name: "1/2/IMG123.jpg",
+      Root: "sidecar",
+      CreatedAt: "2012-07-08T14:45:39Z",
+      UpdatedAt: "2012-07-08T14:45:39Z",
+    };
+    const file = new File(values);
+    assert.equal(file.storageInfo(), "Sidecar");
+
+    const values2 = {
+      InstanceID: 6,
+      UID: "ABC124",
+      Hash: "54ghtfd",
+      FileType: "mp4",
+      Duration: 8009,
+      FPS: 60,
+      Root: "/",
+      Name: "1/2/IMG123.mp4",
+      CreatedAt: "2012-07-08T14:45:39Z",
+      UpdatedAt: "2012-07-08T14:45:39Z",
+    };
+    const file2 = new File(values2);
+    assert.equal(file2.storageInfo(), "Originals");
+
+    const values3 = {
+      InstanceID: 6,
+      UID: "ABC124",
+      Hash: "54ghtfd",
+      FileType: "mp4",
+      Duration: 8009,
+      FPS: 60,
+      Root: "",
+      Name: "1/2/IMG123.mp4",
+      CreatedAt: "2012-07-08T14:45:39Z",
+      UpdatedAt: "2012-07-08T14:45:39Z",
+    };
+    const file3 = new File(values3);
+    assert.equal(file3.storageInfo(), "");
+  });
+
+  it("should return whether file is animated", () => {
+    const values = {
+      InstanceID: 5,
+      UID: "ABC123",
+      MediaType: "image",
+      Duration: 500,
+    };
+    const file = new File(values);
+    assert.equal(file.isAnimated(), true);
   });
 
   it("should get type info", () => {
@@ -208,20 +277,21 @@ describe("model/file", () => {
       UID: "ABC123",
       Hash: "54ghtfd",
       FileType: "jpg",
-      Duration: 8009,
+      Primary: true,
       Name: "1/2/IMG123.jpg",
       CreatedAt: "2012-07-08T14:45:39Z",
       UpdatedAt: "2012-07-08T14:45:39Z",
     };
     const file = new File(values);
-    assert.equal(file.typeInfo(), "JPEG");
+    assert.equal(file.typeInfo(), "Image");
     const values2 = {
       InstanceID: 5,
       UID: "ABC123",
       Hash: "54ghtfd",
-      FileType: "jpg",
+      FileType: "mp4",
       Duration: 8009,
-      Name: "1/2/IMG123.jpg",
+      FPS: 60,
+      Name: "1/2/IMG123.mp4",
       Video: true,
       CreatedAt: "2012-07-08T14:45:39Z",
       UpdatedAt: "2012-07-08T14:45:39Z",
@@ -233,7 +303,6 @@ describe("model/file", () => {
       UID: "ABC123",
       Hash: "54ghtfd",
       FileType: "jpg",
-      Duration: 8009,
       Name: "1/2/IMG123.jpg",
       Sidecar: true,
       CreatedAt: "2012-07-08T14:45:39Z",
@@ -255,6 +324,18 @@ describe("model/file", () => {
     };
     const file4 = new File(values4);
     assert.equal(file4.typeInfo(), "Sidecar GIF Image");
+    const values5 = {
+      InstanceID: 5,
+      UID: "ABC123",
+      Hash: "54ghtfd",
+      FileType: "svg",
+      MediaType: "vector",
+      Name: "1/2/IMG123.svg",
+      CreatedAt: "2012-07-08T14:45:39Z",
+      UpdatedAt: "2012-07-08T14:45:39Z",
+    };
+    const file5 = new File(values5);
+    assert.equal(file5.typeInfo(), "Scalable Vector Graphics");
   });
 
   it("should get size info", () => {
