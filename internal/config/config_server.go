@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"strconv"
 
 	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/internal/ttl"
@@ -28,6 +29,21 @@ func (c *Config) TrustedProxy() string {
 // TrustedProxies returns proxy server ranges from which reverse proxy headers can be trusted.
 func (c *Config) TrustedProxies() []string {
 	return c.options.TrustedProxies
+}
+
+// Origin returns the websites origin.
+func (c *Config) Origin() string {
+	protocol := "https://"
+	if c.SiteHttps() != true {
+		protocol = "http://"
+	}
+
+	return protocol + c.SiteDomain() + ":" + strconv.Itoa(c.HttpPort());
+}
+
+// AccessControlAllowOriginHeader returns the access control header value.
+func (c *Config) AccessControlAllowOriginHeader() string {
+	return c.Origin()
 }
 
 // ProxyProtoHeader returns the proxy protocol header names.
