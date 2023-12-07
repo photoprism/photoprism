@@ -341,6 +341,7 @@ Mock.onPut("api/v1/markers/mDC123ghytr", { SubjSrc: "manual", Name: "testname" }
   200,
   {
     success: "ok",
+    Name: "testname",
   },
   mockHeaders
 );
