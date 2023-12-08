@@ -1,6 +1,6 @@
 # PhotoPrism® Installation Packages
 
-As an alternative to our [Docker images](https://docs.photoprism.app/getting-started/docker-compose/), you can use the packages available at [**dl.photoprism.app/pkg/linux/**](https://dl.photoprism.app/pkg/linux/) to install PhotoPrism on compatible Linux distributions without [building it from source](https://docs.photoprism.app/developer-guide/setup/).
+As an alternative to our [Docker images](https://docs.photoprism.app/getting-started/docker-compose/), you can use the packages available at [**dl.photoprism.app/pkg/linux/**](https://dl.photoprism.app/pkg/linux/) to install PhotoPrism on compatible Linux distributions without [building it from source](https://docs.photoprism.app/getting-started/faq/#building-from-source).
 
 We recommend that **only experienced users** choose this installation method, since these packages [need to be set up manually](#configuration) and [do not include the system dependencies](#dependencies) required to make use of all the features.
 
