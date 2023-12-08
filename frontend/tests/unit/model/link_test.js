@@ -38,6 +38,10 @@ describe("model/link", () => {
     const link = new Link(values);
     const result = link.getId();
     assert.equal(result, 5);
+    const values2 = {};
+    const link2 = new Link(values2);
+    const result2 = link2.getId();
+    assert.equal(result2, false);
   });
 
   it("should test has id", () => {
