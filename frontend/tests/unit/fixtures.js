@@ -41,6 +41,7 @@ Mock.onPost("api/v1/users/urii20d30w2wqzjf/profile").reply(
   { DisplayName: "Max New" },
   mockHeaders
 );
+Mock.onPost("api/v1/users/52/avatar").reply(200, { Thumb: "abc", ThumbSrc: "manual" }, mockHeaders);
 Mock.onGet("api/v1/foo").reply(200, getCollectionResponse, mockHeaders);
 Mock.onGet("api/v1/foo/123").reply(200, getEntityResponse, mockHeaders);
 Mock.onPost("api/v1/foo").reply(201, postEntityResponse, mockHeaders);
