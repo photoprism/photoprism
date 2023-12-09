@@ -148,7 +148,7 @@ services:
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
 
-  ## HTTPS Reverse Proxy (recommended) ##
+  ## HTTPS Reverse Test Proxy
   ## includes "*.localssl.dev" SSL certificate for test environments
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
@@ -161,13 +161,13 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
-  ## Keycloak OpenID Connect Provider
+  ## Keycloak Test Identity Provider
   ## Login: user / photoprism
   ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:22.0
-    command: "start-dev" # development mode, do not use this in production!
+    image: quay.io/keycloak/keycloak:23.0
     container_name: keycloak
+    command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"
       - "traefik:app.localssl.dev"
@@ -190,6 +190,22 @@ services:
       KC_DB_URL: "jdbc:mariadb://mariadb:4001/keycloak"
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
+
+  ## Prometheus Test Server
+  ## Docs: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#oauth2
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.http.routers.prometheus.entrypoints=websecure"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.localssl.dev`)"
+      - "traefik.http.routers.prometheus.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.prometheus.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.prometheus.tls=true"
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
 
   ## Dummy LDAP Directory Server
   ## Docs: https://glauth.github.io/docs/
