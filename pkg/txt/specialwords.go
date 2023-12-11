@@ -21,6 +21,7 @@ var SpecialWords = map[string]string{
 	"xxxl":               "XXXL",
 	"xxxxl":              "XXXXL",
 	"xtc":                "XTC",
+	"rpg":                "RPG",
 	"rtx":                "RTX",
 	"rty":                "RTY",
 	"nq":                 "NQ",
