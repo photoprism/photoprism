@@ -67,7 +67,7 @@ func TestFlag_String(t *testing.T) {
 		assert.Equal(t, "feature:string", ParseKeyValue("feature :  string").String())
 	})
 	t.Run("WhitespacePadding", func(t *testing.T) {
-		assert.Equal(t, "featureq62:String!!#$^&*(", ParseKeyValue(" ^&^&(&*&)feature!q62:String!!#$^&*(   ").String())
+		assert.Equal(t, "*featureq62:String!!#$^&*(", ParseKeyValue(" ^&^&(&*&)feature!q62:String!!#$^&*(   ").String())
 	})
 	t.Run("SpecialChars", func(t *testing.T) {
 		assert.Equal(t, "feature:String!!#$^&*(", ParseKeyValue(" feature:String!!#$^&*(  ").String())

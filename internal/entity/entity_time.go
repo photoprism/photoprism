@@ -7,14 +7,23 @@ import (
 // Day specified as time.Duration to improve readability.
 const Day = time.Hour * 24
 
+// UnixMinute is one minute in UnixTime.
+const UnixMinute int64 = 60
+
 // UnixHour is one hour in UnixTime.
-const UnixHour int64 = 3600
+const UnixHour = UnixMinute * 60
 
 // UnixDay is one day in UnixTime.
 const UnixDay = UnixHour * 24
 
 // UnixWeek is one week in UnixTime.
 const UnixWeek = UnixDay * 7
+
+// UnixMonth is about one month in UnixTime.
+const UnixMonth = UnixDay * 31
+
+// UnixYear is about one year in UnixTime.
+const UnixYear = UnixDay * 365
 
 // UTC returns the current Coordinated Universal Time (UTC).
 func UTC() time.Time {

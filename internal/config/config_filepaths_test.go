@@ -191,7 +191,7 @@ func TestConfig_CreateDirectories(t *testing.T) {
 
 		c := &Config{
 			options: NewTestOptions("config"),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 
 		if err := c.CreateDirectories(); err != nil {
@@ -211,7 +211,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 		c.options.AssetsPath = ""
 
@@ -235,7 +235,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 
 		c.options.StoragePath = "/-*&^%$#@!`~"
@@ -252,7 +252,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 		c.options.OriginalsPath = ""
 
@@ -277,7 +277,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 		c.options.ImportPath = ""
 
@@ -302,7 +302,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 
 		c.options.SidecarPath = "/-*&^%$#@!`~"
@@ -319,7 +319,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 
 		c.options.CachePath = "/-*&^%$#@!`~"
@@ -336,7 +336,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 
 		c.options.ConfigPath = "/-*&^%$#@!`~"
@@ -353,7 +353,7 @@ func TestConfig_CreateDirectories2(t *testing.T) {
 		defer testConfigMutex.Unlock()
 		c := &Config{
 			options: NewTestOptions(),
-			token:   rnd.GenerateToken(8),
+			token:   rnd.Base36(8),
 		}
 
 		c.options.TempPath = "/-*&^%$#@!`~"

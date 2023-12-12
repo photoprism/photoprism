@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/internal/server/header"
 )
 
 // AuthenticateAdmin Register session routes and returns valid SessionId.
@@ -27,7 +27,7 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, pas
 		Password: password,
 	}))
 
-	sessId = r.Header().Get(session.Header)
+	sessId = r.Header().Get(header.SessionID)
 
 	return
 }
@@ -37,7 +37,7 @@ func AuthenticatedRequest(r http.Handler, method, path, sess string) *httptest.R
 	req, _ := http.NewRequest(method, path, nil)
 
 	if sess != "" {
-		req.Header.Add(session.Header, sess)
+		req.Header.Add(header.SessionID, sess)
 	}
 
 	w := httptest.NewRecorder()
@@ -52,7 +52,7 @@ func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, ses
 	req, _ := http.NewRequest(method, path, reader)
 
 	if sess != "" {
-		req.Header.Add(session.Header, sess)
+		req.Header.Add(header.SessionID, sess)
 	}
 
 	w := httptest.NewRecorder()

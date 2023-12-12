@@ -8,9 +8,9 @@ import (
 
 func TestGeneratePasscode(t *testing.T) {
 	for n := 0; n < 10; n++ {
-		code := GeneratePasscode()
-		t.Logf("Passcode %d: %s", n, code)
-		assert.Equal(t, 19, len(code))
+		s := GeneratePasscode()
+		t.Logf("Passcode %d: %s", n, s)
+		assert.Equal(t, 19, len(s))
 	}
 }
 

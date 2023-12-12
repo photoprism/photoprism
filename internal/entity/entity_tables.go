@@ -22,6 +22,7 @@ var Entities = Tables{
 	UserDetails{}.TableName():       &UserDetails{},
 	UserSettings{}.TableName():      &UserSettings{},
 	Session{}.TableName():           &Session{},
+	Client{}.TableName():            &Client{},
 	Service{}.TableName():           &Service{},
 	Folder{}.TableName():            &Folder{},
 	Duplicate{}.TableName():         &Duplicate{},

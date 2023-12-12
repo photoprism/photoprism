@@ -113,7 +113,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	c := &Config{
 		cliCtx:  ctx,
 		options: NewOptions(ctx),
-		token:   rnd.GenerateToken(8),
+		token:   rnd.Base36(8),
 		env:     os.Getenv("DOCKER_ENV"),
 		start:   start,
 	}

@@ -22,8 +22,9 @@ func TestIsUID(t *testing.T) {
 	prefix := byte('x')
 
 	for n := 0; n < 10; n++ {
-		id := GenerateUID(prefix)
-		assert.True(t, IsUID(id, prefix))
+		s := GenerateUID(prefix)
+		t.Logf("UID %d: %s", n, s)
+		assert.True(t, IsUID(s, prefix))
 	}
 
 	assert.True(t, IsUID("lt9k3pw1wowuy3c2", 'l'))
@@ -69,9 +70,10 @@ func TestIsAlnum(t *testing.T) {
 
 func TestGenerateUID(t *testing.T) {
 	for n := 0; n < 5; n++ {
-		uid := GenerateUID('x')
-		t.Logf("id: %s", uid)
+		uid := GenerateUID('c')
+		t.Logf("UID %d: %s", n, uid)
 		assert.Equal(t, len(uid), 16)
+		assert.True(t, IsUID(uid, 'c'))
 	}
 }
 

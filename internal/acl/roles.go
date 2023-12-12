@@ -5,6 +5,7 @@ const (
 	RoleDefault Role = "default"
 	RoleAdmin   Role = "admin"
 	RoleVisitor Role = "visitor"
+	RoleClient  Role = "client"
 	RoleUnknown Role = ""
 )
 

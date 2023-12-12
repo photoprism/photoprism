@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -37,7 +38,7 @@ type Session struct {
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	LastActive    int64           `json:"LastActive" yaml:"LastActive,omitempty"`
 	SessExpires   int64           `gorm:"index" json:"Expires" yaml:"Expires,omitempty"`
@@ -64,7 +65,7 @@ func (Session) TableName() string {
 }
 
 // NewSession creates a new session using the maxAge and timeout in seconds.
-func NewSession(maxAge, timeout int64) (m *Session) {
+func NewSession(lifetime, timeout int64) (m *Session) {
 	created := TimeStamp()
 
 	m = &Session{
@@ -74,8 +75,8 @@ func NewSession(maxAge, timeout int64) (m *Session) {
 		UpdatedAt: created,
 	}
 
-	if maxAge > 0 {
-		m.SessExpires = created.Unix() + maxAge
+	if lifetime > 0 {
+		m.SessExpires = created.Unix() + lifetime
 	}
 
 	if timeout > 0 {
@@ -230,6 +231,8 @@ func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 func (m *Session) User() *User {
 	if m.user != nil {
 		return m.user
+	} else if m.UserUID == "" {
+		return &User{}
 	}
 
 	if u := FindUserByUID(m.UserUID); u != nil {
@@ -453,6 +456,25 @@ func (m *Session) HasShares() bool {
 	}
 }
 
+// NoUser checks if this session has no specific user assigned.
+func (m *Session) NoUser() bool {
+	return !m.HasUser()
+}
+
+// HasUser checks if a user account is assigned to the session.
+func (m *Session) HasUser() bool {
+	return m.UserUID != ""
+}
+
+// HasRegisteredUser checks if the session belongs to a registered user.
+func (m *Session) HasRegisteredUser() bool {
+	if !m.HasUser() {
+		return false
+	}
+
+	return m.User().IsRegistered()
+}
+
 // HasShare if the session includes the specified share
 func (m *Session) HasShare(uid string) bool {
 	if user := m.User(); user.IsRegistered() {
@@ -493,6 +515,15 @@ func (m *Session) ExpiresAt() time.Time {
 	}
 
 	return time.Unix(m.SessExpires, 0)
+}
+
+// ExpiresIn returns the expiration time in seconds.
+func (m *Session) ExpiresIn() int64 {
+	if m.SessExpires <= 0 {
+		return 0
+	}
+
+	return m.SessExpires - UnixTime()
 }
 
 // TimeoutAt returns the time at which the session will expire due to inactivity.
@@ -548,6 +579,9 @@ func (m *Session) Invalid() bool {
 
 // Valid checks whether the session belongs to a registered user or a visitor with shares.
 func (m *Session) Valid() bool {
+	if m.AuthMethod == authn.MethodOAuth2.String() {
+		return true
+	}
 	return m.User().IsRegistered() || m.IsVisitor() && m.HasShares()
 }
 
@@ -623,4 +657,14 @@ func (m *Session) HttpStatus() int {
 	}
 
 	return http.StatusUnauthorized
+}
+
+// Scope returns the client IP address, or "unknown" if it is unknown.
+func (m *Session) Scope() string {
+	return clean.Scope(m.AuthScope)
+}
+
+// HasScope returns the client IP address, or "unknown" if it is unknown.
+func (m *Session) HasScope(scope string) bool {
+	return !list.ParseAttr(m.Scope()).Contains(scope)
 }

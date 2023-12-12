@@ -588,59 +588,82 @@ func TestUser_String(t *testing.T) {
 
 func TestUser_Admin(t *testing.T) {
 	t.Run("SuperAdmin", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true}
 		assert.True(t, p.IsAdmin())
 	})
 	t.Run("RoleAdmin", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.True(t, p.IsAdmin())
 	})
+	t.Run("NoID", func(t *testing.T) {
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		assert.False(t, p.IsAdmin())
+	})
 	t.Run("False", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: ""}
 		assert.False(t, p.IsAdmin())
 	})
 }
 
-func TestUser_Anonymous(t *testing.T) {
-	t.Run("True", func(t *testing.T) {
-		p := User{UserUID: "", UserName: "Hanna", DisplayName: ""}
+func TestUser_IsUnknown(t *testing.T) {
+	t.Run("ID", func(t *testing.T) {
+		p := User{ID: UnknownUser.ID, UserUID: "u000000000000008", UserName: "", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
 		assert.True(t, p.IsUnknown())
 	})
-	t.Run("False", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true}
+	t.Run("UID", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		assert.True(t, p.IsUnknown())
+	})
+	t.Run("Name", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "u000000000000008", UserName: "", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		assert.False(t, p.IsUnknown())
+	})
+	t.Run("Role", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: ""}
+		assert.True(t, p.IsUnknown())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		assert.False(t, p.IsUnknown())
+	})
+	t.Run("SuperAdmin", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true, UserRole: ""}
 		assert.False(t, p.IsUnknown())
 	})
 }
 
-func TestUser_Guest(t *testing.T) {
+func TestUser_IsVisitor(t *testing.T) {
 	t.Run("True", func(t *testing.T) {
-		p := User{UserUID: "", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleVisitor.String()}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleVisitor.String()}
 		assert.True(t, p.IsVisitor())
 	})
-	t.Run("False", func(t *testing.T) {
-		p := User{UserUID: "", UserName: "Hanna", DisplayName: ""}
+	t.Run("Unknown", func(t *testing.T) {
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		assert.False(t, p.IsVisitor())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.False(t, p.IsVisitor())
 	})
 }
 
 func TestUser_SetPassword(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		if err := p.SetPassword("insecure"); err != nil {
 			t.Fatal(err)
 		}
 	})
 	t.Run("NotRegistered", func(t *testing.T) {
-		p := User{UserUID: "", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 0, UserUID: "", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Error(t, p.SetPassword("insecure"))
-
 	})
 	t.Run("PasswordTooShort", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Error(t, p.SetPassword("cat"))
 	})
 	t.Run("PasswordTooLong", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Error(t, p.SetPassword("hfnoehurhgfoeuro7584othgiyruifh85hglhiryhgbbyeirygbubgirgtheuogfugfkhsbdgiyerbgeuigbdtiyrgehbik"))
 	})
 }
@@ -657,10 +680,10 @@ func TestUser_InitLogin(t *testing.T) {
 		}
 	})
 	t.Run("AlreadyExists", func(t *testing.T) {
-		p := User{UserUID: "u000000000000010", UserName: "Hans", DisplayName: ""}
+		p := User{ID: 10, UserUID: "u000000000000010", UserName: "Hans", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 
 		if err := p.Save(); err != nil {
-			t.Logf("cannot user %s: ", err)
+			t.Logf("failed to create user: %s", err)
 		}
 
 		if err := p.SetPassword("insecure"); err != nil {
@@ -691,25 +714,31 @@ func TestUser_InitLogin(t *testing.T) {
 
 func TestUser_AclRole(t *testing.T) {
 	t.Run("SuperAdmin", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true, UserRole: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true, UserRole: ""}
 		assert.Equal(t, acl.RoleAdmin, p.AclRole())
 		assert.True(t, p.IsAdmin())
 		assert.False(t, p.IsVisitor())
 	})
 	t.Run("RoleAdmin", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
 		assert.Equal(t, acl.RoleAdmin, p.AclRole())
 		assert.True(t, p.IsAdmin())
 		assert.False(t, p.IsVisitor())
 	})
 	t.Run("NoName", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Equal(t, acl.RoleVisitor, p.AclRole())
 		assert.False(t, p.IsAdmin())
 		assert.True(t, p.IsVisitor())
 	})
+	t.Run("NoID", func(t *testing.T) {
+		p := User{ID: 0, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		assert.Equal(t, acl.RoleAdmin, p.AclRole())
+		assert.False(t, p.IsAdmin())
+		assert.False(t, p.IsVisitor())
+	})
 	t.Run("Unauthorized", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
 		assert.Equal(t, acl.RoleUnknown, p.AclRole())
 		assert.False(t, p.IsAdmin())
 		assert.False(t, p.IsVisitor())
@@ -931,27 +960,27 @@ func TestDeleteUser(t *testing.T) {
 }
 
 func TestUser_Deleted(t *testing.T) {
-	assert.False(t, UserFixtures.Pointer("alice").Deleted())
-	assert.True(t, UserFixtures.Pointer("deleted").Deleted())
+	assert.False(t, UserFixtures.Pointer("alice").IsDeleted())
+	assert.True(t, UserFixtures.Pointer("deleted").IsDeleted())
 }
 
 func TestUser_Expired(t *testing.T) {
 	t.Run("False", func(t *testing.T) {
-		assert.False(t, UserFixtures.Pointer("alice").Expired())
-		assert.False(t, UserFixtures.Pointer("deleted").Expired())
+		assert.False(t, UserFixtures.Pointer("alice").IsExpired())
+		assert.False(t, UserFixtures.Pointer("deleted").IsExpired())
 	})
 	t.Run("True", func(t *testing.T) {
 		u := NewUser()
 		var expired = time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC)
 		u.ExpiresAt = &expired
 
-		assert.True(t, u.Expired())
+		assert.True(t, u.IsExpired())
 	})
 }
 
 func TestUser_Disabled(t *testing.T) {
-	assert.False(t, UserFixtures.Pointer("alice").Disabled())
-	assert.True(t, UserFixtures.Pointer("deleted").Disabled())
+	assert.False(t, UserFixtures.Pointer("alice").IsDisabled())
+	assert.True(t, UserFixtures.Pointer("deleted").IsDisabled())
 }
 
 func TestUser_UpdateLoginTime(t *testing.T) {

@@ -30,7 +30,7 @@ func TestIndexRelated(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		testToken := rnd.GenerateToken(8)
+		testToken := rnd.Base36(8)
 		testPath := filepath.Join(conf.OriginalsPath(), testToken)
 
 		for _, f := range testRelated.Files {
@@ -91,7 +91,7 @@ func TestIndexRelated(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		testToken := rnd.GenerateToken(8)
+		testToken := rnd.Base36(8)
 		testPath := filepath.Join(conf.OriginalsPath(), testToken)
 
 		for _, f := range testRelated.Files {

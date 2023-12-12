@@ -64,7 +64,7 @@ func passwdAction(ctx *cli.Context) error {
 
 	if m == nil {
 		return fmt.Errorf("user %s not found", clean.LogQuote(id))
-	} else if m.Deleted() {
+	} else if m.IsDeleted() {
 		return fmt.Errorf("user %s has been deleted", clean.LogQuote(id))
 	}
 

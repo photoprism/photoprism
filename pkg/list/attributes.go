@@ -68,3 +68,36 @@ func (list Attr) Sort() {
 		}
 	})
 }
+
+// Contains tests if the list contains the attribute provided as string.
+func (list Attr) Contains(s string) bool {
+	if len(list) == 0 || s == "" {
+		return false
+	} else if s == All {
+		return true
+	}
+
+	attr := ParseKeyValue(s)
+
+	// Abort if attribute is invalid.
+	if attr.Key == "" {
+		return false
+	}
+
+	// Find matches.
+	if attr.Value == "" || attr.Value == All {
+		for i := range list {
+			if strings.EqualFold(attr.Key, list[i].Key) || list[i].Key == All {
+				return true
+			}
+		}
+	} else {
+		for i := range list {
+			if strings.EqualFold(attr.Key, list[i].Key) && (attr.Value == list[i].Value || list[i].Value == All) {
+				return true
+			}
+		}
+	}
+
+	return false
+}

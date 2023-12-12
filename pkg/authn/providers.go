@@ -1,6 +1,8 @@
 package authn
 
 import (
+	"strings"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -12,6 +14,7 @@ type ProviderType string
 // Authentication providers.
 const (
 	ProviderDefault ProviderType = "default"
+	ProviderClient  ProviderType = "client"
 	ProviderLocal   ProviderType = "local"
 	ProviderLDAP    ProviderType = "ldap"
 	ProviderLink    ProviderType = "link"
@@ -56,6 +59,16 @@ func (t ProviderType) String() string {
 	default:
 		return string(t)
 	}
+}
+
+// Equal checks if the type matches.
+func (t ProviderType) Equal(s string) bool {
+	return strings.EqualFold(s, t.String())
+}
+
+// NotEqual checks if the type is different.
+func (t ProviderType) NotEqual(s string) bool {
+	return !t.Equal(s)
 }
 
 // Pretty returns the provider identifier in an easy-to-read format.

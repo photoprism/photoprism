@@ -14,7 +14,7 @@ import (
 // UsersLegacyCommand configures the command name, flags, and action.
 var UsersLegacyCommand = cli.Command{
 	Name:      "legacy",
-	Usage:     "Displays legacy user accounts",
+	Usage:     "Lists legacy user accounts",
 	ArgsUsage: "[search]",
 	Flags:     report.CliFlags,
 	Action:    usersLegacyAction,

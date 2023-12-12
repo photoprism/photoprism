@@ -2,8 +2,8 @@ package api
 
 import (
 	"net/http"
-	"testing"
 	"regexp"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )

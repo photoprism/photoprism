@@ -63,10 +63,18 @@ var PhotoPrism = []cli.Command{
 	ResetCommand,
 	PasswdCommand,
 	UsersCommand,
+	ClientsCommand,
 	ShowCommand,
 	VersionCommand,
 	ShowConfigCommand,
 	ConnectCommand,
+}
+
+// countFlag represents a CLI flag to limit the number of report rows.
+var countFlag = cli.UintFlag{
+	Name:  "n",
+	Usage: "`LIMIT` number of results",
+	Value: 100,
 }
 
 // childAlreadyRunning tests if a .pid file at filePath is a running process.

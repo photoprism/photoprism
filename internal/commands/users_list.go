@@ -15,7 +15,7 @@ import (
 // UsersListCommand configures the command name, flags, and action.
 var UsersListCommand = cli.Command{
 	Name:   "ls",
-	Usage:  "Displays existing user accounts",
+	Usage:  "Lists registered user accounts",
 	Flags:  report.CliFlags,
 	Action: usersListAction,
 }
