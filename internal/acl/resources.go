@@ -37,7 +37,7 @@ var Resources = ACL{
 	},
 	ResourcePlaces: Roles{
 		RoleAdmin:   GrantFullAccess,
-		RoleVisitor: Grant{AccessShared: true, ActionView: true, ActionDownload: true},
+		RoleVisitor: GrantViewShared,
 		RoleClient:  GrantFullAccess,
 	},
 	ResourceLabels: Roles{
