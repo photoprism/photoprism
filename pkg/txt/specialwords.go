@@ -16,6 +16,7 @@ var SpecialWords = map[string]string{
 	"ii":                 "II",
 	"iii":                "III",
 	"ti":                 "Ti",
+	"tv":                 "TV",
 	"xl":                 "XL",
 	"xxl":                "XXL",
 	"xxxl":               "XXXL",
