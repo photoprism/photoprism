@@ -48,13 +48,13 @@ Since the packages currently do not include a default configuration, we recommen
 
 ## Updates
 
-To update your installation, please stop all running PhotoPrism instances and make sure that there are [no custom media, database, or config files](#configuration) in the `/opt/photoprism` directory. You can then delete its contents with the command `sudo rm -rf /opt/photoprism/*` and install a new version as shown above.
+To update your installation, please stop all running PhotoPrism instances and make sure that there are [no media, database, or custom config files](#configuration) in the `/opt/photoprism` directory. You can then delete its contents with the command `sudo rm -rf /opt/photoprism/*` and install a new version as shown above.
 
 If you used a *.deb* package for the installation, you may need to remove the currently installed `photoprism` package by running `sudo dpkg -r photoprism` before you can install a new version with `sudo dpkg -i package.deb`. This is a known issue that we hope to resolve with improved packages.
 
 ## Dependencies
 
-In order to use all PhotoPrism features and have [full file format support](https://www.photoprism.app/kb/file-formats), additional distribution packages must be installed manually as they are not included in the tar.gz archive, for example exiftool, darktable, rawtherapee, [libheif](https://dl.photoprism.app/dist/libheif/README.html), imagemagick, ffmpeg, libavcodec-extra, mariadb, sqlite3, and tzdata.
+In order to use all PhotoPrism features and have [full file format support](https://www.photoprism.app/kb/file-formats), additional system dependencies **must be installed** as they are not included in the packages we provide, for example exiftool, darktable, rawtherapee, [libheif](https://dl.photoprism.app/dist/libheif/README.html), imagemagick, ffmpeg, libavcodec-extra, mariadb, sqlite3, and tzdata. The actual names may vary depending on what distribution you use.
 
 For details on the packages installed in our official Docker images, see <https://github.com/photoprism/photoprism/tree/develop/docker/develop>.
 
@@ -64,7 +64,7 @@ Run `photoprism --help` in a terminal to get an [overview of the command flags a
 
 Global config defaults [can be defined in a `/etc/photoprism/defaults.yml` file](#defaultsyml). When specifying paths, `~` is supported as a placeholder for the current user's home directory, e.g. `~/Pictures`. Relative paths can also be specified via `./pathname`.
 
-If no explicit *originals*, *import* and/or *assets* path has been configured, a list of [default directory paths](https://github.com/photoprism/photoprism/blob/develop/pkg/fs/dirs.go) will be searched and the first existing directory will be used for the respective path. To simplify [updates](#updates), we recommend **not to store** any media, database, or config files in the same directory where you installed PhotoPrism, e.g. `/opt/photoprism`, and to use a different base directory for them instead, for example `/photoprism`, `/var/lib/photoprism`, or a path relative to each user's home directory.
+If no explicit *originals*, *import* and/or *assets* path has been configured, a list of [default directory paths](https://github.com/photoprism/photoprism/blob/develop/pkg/fs/dirs.go) will be searched and the first existing directory will be used for the respective path. To simplify [updates](#updates), we recommend **not to store** any media, database, or custom config files in the same directory where you installed PhotoPrism, e.g. `/opt/photoprism`, and to use a different base directory for them instead, for example `/photoprism`, `/var/lib/photoprism`, or a path relative to each user's home directory.
 
 Please keep in mind that any changes to the config options, either [through the UI](https://docs.photoprism.app/user-guide/settings/advanced/), [config files](https://docs.photoprism.app/getting-started/config-files/), or by [setting environment variables](https://docs.photoprism.app/getting-started/config-options/), require a restart to take effect.
 
