@@ -645,4 +645,3 @@ users:
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make
-.PHONY: all assets build cmd docker frontend internal pkg scripts storage photoprism install;
