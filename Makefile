@@ -72,6 +72,8 @@ wait:
 	sleep 20
 wait-2:
 	sleep 20
+show-rev:
+	@git rev-parse HEAD
 show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
