@@ -765,6 +765,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone X", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
+		assert.Equal(t, "ca20385d-6106-49c9-acf5-2f8098f4b390", data.DocumentID)
 	})
 
 	t.Run("aurora.jpg.json", func(t *testing.T) {
@@ -1294,6 +1295,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone 14 Pro Max", data.CameraModel)
 		assert.Equal(t, "iPhone 14 Pro Max back triple camera 9mm f/2.8", data.LensModel)
+		assert.Equal(t, "e5f10d35-06c3-4f75-a00c-50b793a6c325", data.DocumentID)
 	})
 
 	t.Run("buggy_panorama.json", func(t *testing.T) {
