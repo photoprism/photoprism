@@ -112,9 +112,9 @@ services:
     image: mariadb:10.11
     container_name: mariadb
     ## "security_opt" specifies options for kernel security modules, it can be omitted if it is not needed or supported:
-    # security_opt:
-    #  - seccomp:unconfined
-    #  - apparmor:unconfined
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
     ## "user" starts the service with a specific non-root user and group ID (optional):
     # user: 1000:1000
     ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner:
