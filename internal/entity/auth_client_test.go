@@ -58,8 +58,42 @@ func TestFindClient(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
+	t.Run("Invalid", func(t *testing.T) {
+		m := FindClient("123")
+		assert.Nil(t, m)
+	})
 }
 
+func TestClient_User(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		alice := ClientFixtures.Get("alice")
+
+		m := alice.User()
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, "alice", m.UserName)
+		assert.Equal(t, "uqxetse3cy5eo9z2", m.UserUID)
+		assert.Equal(t, "admin", m.UserRole)
+
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		metrics := ClientFixtures.Get("metrics")
+
+		m := metrics.User()
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Empty(t, m.UserName)
+		assert.Empty(t, m.UserUID)
+		assert.Empty(t, m.UserRole)
+
+	})
+}
 func TestClient_HasPassword(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
