@@ -109,7 +109,7 @@ services:
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped
-    image: mariadb:11.0
+    image: mariadb:11
     container_name: mariadb
     ## "security_opt" specifies options for kernel security modules, it can be omitted if it is not needed or supported:
     security_opt:

@@ -25,7 +25,7 @@ services:
       - "./storage:/photoprism/storage"     # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
 
   mariadb:
-    image: mariadb:11.0
+    image: mariadb:11
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped

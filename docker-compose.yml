@@ -129,7 +129,7 @@ services:
   ## Docs: https://mariadb.com/docs/reference/
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
-    image: mariadb:11.0
+    image: mariadb:11
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
