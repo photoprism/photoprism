@@ -3,6 +3,9 @@ package entity
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -241,6 +244,35 @@ func TestClient_NewSecret(t *testing.T) {
 	})
 }
 
+func TestClient_Method(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		alice := ClientFixtures.Get("alice")
+		assert.Equal(t, alice.Method(), authn.MethodOAuth2)
+	})
+}
+
+func TestClient_UpdateLastActive(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		var m = Client{ClientName: "Anne", ClientUID: "cs5cpu17n6gj2fff"}
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Empty(t, m.LastActive)
+
+		c := m.UpdateLastActive()
+
+		assert.NotEmpty(t, c.LastActive)
+	})
+	t.Run("EmptyUID", func(t *testing.T) {
+		var m = Client{ClientName: "No UUID"}
+
+		c := m.UpdateLastActive()
+
+		assert.Empty(t, c.LastActive)
+	})
+}
+
 func TestClient_HasPassword(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
@@ -279,5 +311,144 @@ func TestClient_HasPassword(t *testing.T) {
 		assert.True(t, m.WrongSecret(""))
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
+	})
+}
+
+func TestClient_Expires(t *testing.T) {
+	t.Run("Metrics", func(t *testing.T) {
+		m := ClientFixtures.Get("metrics")
+
+		r := m.Expires()
+
+		assert.Equal(t, r.String(), "1h0m0s")
+	})
+	t.Run("Alice", func(t *testing.T) {
+		m := ClientFixtures.Get("alice")
+
+		r := m.Expires()
+
+		assert.Equal(t, r.String(), "24h0m0s")
+	})
+}
+
+func TestClient_Report(t *testing.T) {
+	t.Run("Metrics", func(t *testing.T) {
+		m := ClientFixtures.Get("metrics")
+
+		rows, _ := m.Report(true)
+		assert.NotEmpty(t, rows)
+	})
+}
+
+func TestClient_SetFormValues(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		var m = Client{ClientName: "Neo", ClientUID: "cs5cpu17n6gj3aab"}
+
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		var values = form.Client{ClientName: "New Name", AuthMethod: authn.MethodOAuth2.String(),
+			AuthScope:   "test",
+			AuthExpires: 4000,
+			AuthTokens:  3,
+			AuthEnabled: false}
+
+		c := m.SetFormValues(values)
+
+		assert.Equal(t, "New Name", c.ClientName)
+		assert.Equal(t, int64(4000), c.AuthExpires)
+		assert.Equal(t, int64(3), c.AuthTokens)
+		assert.Equal(t, false, c.AuthEnabled)
+	})
+	t.Run("Success2", func(t *testing.T) {
+		var m = Client{ClientName: "Neo", ClientUID: "cs5cpu17n6gj3aab", AuthTokens: -4}
+
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		var values = form.Client{ClientName: "Annika", AuthMethod: authn.MethodBasic.String(),
+			AuthScope:   "metrics",
+			AuthExpires: -4000,
+			AuthTokens:  -5,
+			AuthEnabled: true}
+
+		c := m.SetFormValues(values)
+
+		assert.Equal(t, "Annika", c.ClientName)
+		assert.Equal(t, int64(3600), c.AuthExpires)
+		assert.Equal(t, int64(-1), c.AuthTokens)
+		assert.Equal(t, true, c.AuthEnabled)
+	})
+	t.Run("Success3", func(t *testing.T) {
+		var m = Client{ClientName: "Neo", ClientUID: "cs5cpu17n6gj3aab"}
+
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		var values = form.Client{ClientName: "Friend",
+			AuthMethod:  authn.MethodBasic.String(),
+			AuthScope:   "test",
+			AuthExpires: 4000000,
+			AuthTokens:  3000000000,
+			AuthEnabled: true,
+			UserUID:     "uqxqg7i1kperxvu7"}
+
+		c := m.SetFormValues(values)
+
+		assert.Equal(t, "Friend", c.ClientName)
+		assert.Equal(t, int64(2678400), c.AuthExpires)
+		assert.Equal(t, int64(2147483647), c.AuthTokens)
+		assert.Equal(t, true, c.AuthEnabled)
+	})
+}
+
+func TestClient_Validate(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "basic", AuthScope: "all"}
+
+		err := m.Validate()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("ClientNameEmpty", func(t *testing.T) {
+		m := Client{ClientName: "", ClientType: "test", AuthMethod: "basic", AuthScope: "all"}
+
+		err := m.Validate()
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+	})
+	t.Run("ClientTypeEmpty", func(t *testing.T) {
+		m := Client{ClientName: "test", ClientType: "", AuthMethod: "basic", AuthScope: "all"}
+
+		err := m.Validate()
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+	})
+	t.Run("AuthMethodEmpty", func(t *testing.T) {
+		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "", AuthScope: "all"}
+
+		err := m.Validate()
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+	})
+	t.Run("AuthScopeEmpty", func(t *testing.T) {
+		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "basic", AuthScope: ""}
+
+		err := m.Validate()
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
 	})
 }
