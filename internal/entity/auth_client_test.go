@@ -93,7 +93,154 @@ func TestClient_User(t *testing.T) {
 		assert.Empty(t, m.UserRole)
 
 	})
+	t.Run("UnknownUser", func(t *testing.T) {
+		c := Client{ClientName: "test",
+			UserUID: "123",
+		}
+
+		m := c.User()
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Empty(t, m.UserName)
+		assert.Empty(t, m.UserUID)
+		assert.Empty(t, m.UserRole)
+	})
+	t.Run("Bob", func(t *testing.T) {
+		c := Client{ClientName: "bob",
+			UserUID: "uqxc08w3d0ej2283",
+		}
+
+		m := c.User()
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "uqxc08w3d0ej2283", m.UserUID)
+		assert.Equal(t, "admin", m.UserRole)
+	})
 }
+
+func TestClient_SetUser(t *testing.T) {
+	t.Run("john", func(t *testing.T) {
+		c := Client{ClientName: "test"}
+		u := &User{UserUID: "uqxc08w3d0ej2111", UserName: "john"}
+
+		assert.Empty(t, c.User().UserName)
+
+		m := c.SetUser(u)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.NotEmpty(t, c.User().UserName)
+	})
+}
+
+func TestClient_Create(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		var m = Client{ClientName: "test"}
+		if err := m.Create(); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("AlreadyExists", func(t *testing.T) {
+		var m = ClientFixtures.Get("alice")
+		err := m.Create()
+		assert.Error(t, err)
+	})
+}
+
+func TestClient_Save(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		c := FindClient("cs5cpu17n6gj2aaa")
+		assert.Nil(t, c)
+
+		var m = Client{ClientName: "New Client", ClientUID: "cs5cpu17n6gj2aaa"}
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		c = FindClient("cs5cpu17n6gj2aaa")
+
+		if c == nil {
+			t.Fatal("result should not be nil")
+		}
+	})
+}
+
+func TestClient_Delete(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		var m = Client{ClientName: "David", ClientUID: "cs5cpu17n6gj2bbb"}
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		err := m.Delete()
+
+		assert.NoError(t, err)
+	})
+	t.Run("EmptyUID", func(t *testing.T) {
+		var m = Client{ClientName: "No UUID"}
+
+		err := m.Delete()
+
+		assert.Error(t, err)
+	})
+}
+
+func TestClient_Deleted(t *testing.T) {
+	assert.False(t, ClientFixtures.Pointer("alice").Deleted())
+	assert.True(t, ClientFixtures.Pointer("deleted").Deleted())
+}
+
+func TestClient_Updates(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		var m = Client{ClientName: "Peter", ClientUID: "cs5cpu17n6gj2ddd"}
+
+		assert.Empty(t, m.AuthScope)
+
+		err := m.Updates(Client{AuthScope: "metrics"})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "metrics", m.AuthScope)
+	})
+}
+
+func TestClient_NewSecret(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		var m = Client{ClientName: "Anna", ClientUID: "cs5cpu17n6gj2eee"}
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		s, err := m.NewSecret()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, m.HasSecret(s))
+		assert.NotEmpty(t, s)
+	})
+	t.Run("EmptyUID", func(t *testing.T) {
+		var m = Client{ClientName: "No UUID"}
+
+		s, err := m.NewSecret()
+
+		assert.Error(t, err)
+		assert.False(t, m.HasSecret(s))
+		assert.Empty(t, s)
+	})
+}
+
 func TestClient_HasPassword(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")

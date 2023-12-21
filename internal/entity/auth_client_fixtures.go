@@ -85,6 +85,23 @@ var ClientFixtures = ClientMap{
 		AuthEnabled: true,
 		LastActive:  0,
 	},
+	"deleted": {
+		ClientUID:   "cs5cpu17n6gj2gf7",
+		UserUID:     "",
+		UserName:    "",
+		user:        nil,
+		ClientName:  "Deleted Monitoring",
+		ClientType:  authn.ClientConfidential,
+		ClientURL:   "",
+		CallbackURL: "",
+		AuthMethod:  authn.MethodOAuth2.String(),
+		AuthScope:   "metrics",
+		AuthExpires: UnixHour,
+		AuthTokens:  2,
+		AuthEnabled: true,
+		LastActive:  0,
+		DeletedAt:   TimePointer(),
+	},
 }
 
 // CreateClientFixtures inserts known entities into the database for testing.
