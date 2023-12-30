@@ -422,6 +422,13 @@ export default class Util {
     }
   }
 
+  static JSFileFromPhoto(blob, photo) {
+    return new File([blob], photo.Name.replaceAll("/", "-"), {
+      type: photo.Mime,
+      lastModified: photo.ModTime,
+    });
+  }
+
   static async copyToMachineClipboard(text) {
     if (window.navigator.clipboard) {
       await window.navigator.clipboard.writeText(text);

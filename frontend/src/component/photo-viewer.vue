@@ -27,6 +27,11 @@
             <v-icon size="16" color="white">edit</v-icon>
           </button>
 
+          <button v-if="navigatorCanShare" class="pswp__button action-webshare" style="background: none;"
+                  :title="$gettext('Share')" @click.exact="onWebShare">
+            <v-icon size="16" color="white">share</v-icon>
+          </button>
+
           <button class="pswp__button action-select" style="background: none;"
                   :title="$gettext('Select')" @click.exact="onSelect">
             <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">check_circle</v-icon>
@@ -99,6 +104,7 @@ export default {
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
       canLike: this.$config.allow("photos", "manage") && this.$config.feature("favorites"),
       canDownload: this.$config.allow("photos", "download") && this.$config.feature("download"),
+      navigatorCanShare: navigator.canShare,
       selection: this.$clipboard.selection,
       config: this.$config.values,
       item: new Thumb(),
@@ -247,6 +253,21 @@ export default {
       Notify.success(this.$gettext("Downloading…"));
 
       new Photo().find(this.item.UID).then(p => p.downloadAll());
+    },
+    onWebShare() {
+      this.onPause();
+
+      if (!this.item || !this.item.DownloadUrl) {
+        console.warn("photo viewer: no download url");
+        return;
+      }
+
+      new Photo().find(this.item.UID).then(p => p.webShare()).catch(e => {
+        this.$notify.error("couldn't share photo");
+        console.warn(e);
+      });
+
+      Notify.success(this.$gettext("Downloading & Sharing…"));
     },
     onEdit() {
       this.onPause();

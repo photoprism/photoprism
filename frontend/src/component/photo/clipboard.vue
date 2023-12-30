@@ -34,6 +34,19 @@
           <v-icon>cloud</v-icon>
         </v-btn>
 
+        
+        <v-btn
+            v-if="context !== 'archive' && context !== 'review' && navigatorCanShare" fab dark
+            small
+            :title="$gettext('Share')"
+            color="share"
+            :disabled="selection.length === 0"
+            class="action-webshare"
+            @click.stop="webShare()"
+        >
+          <v-icon>share</v-icon>
+        </v-btn>
+
         <v-btn
             v-if="canManage && context === 'review'" fab dark
             small
@@ -155,6 +168,7 @@
 </template>
 <script>
 import Api from "common/api";
+import Util from "common/util";
 import Notify from "common/notify";
 import Event from "pubsub-js";
 import download from "common/download";
@@ -196,6 +210,7 @@ export default {
       config: this.$config.values,
       expanded: false,
       isAlbum: this.album && this.album.Type === 'album',
+      navigatorCanShare: navigator.canShare,
       dialog: {
         archive: false,
         delete: false,
@@ -369,6 +384,33 @@ export default {
     },
     onDownload(path) {
       download(path, "photos.zip");
+    },
+    webShare() {
+      switch (this.selection.length) {
+        case 0: return;
+        case 1: new Photo().find(this.selection[0]).then(p => p.webShare()); break;
+        default:
+          // Resolve selection into Photo objects and download them as blobs
+          const photos = this.selection.map((uid) => new Photo().find(uid).then((p) => fetch(p.getDownloadUrl()).then((res) => res.blob()).then((blob) => {
+            p.Blob = blob;
+            return p;
+          })));
+          // Wait for all downloads, then open native browser share dialog
+          Promise.all(photos).then((blobs) => {
+            const filesArray = blobs.map((p) => Util.JSFileFromPhoto(p.Blob, p.mainFile()));
+            const shareData = {
+              files: filesArray,
+            };
+            return navigator.share(shareData);
+          }).catch((e) => {
+            this.$notify.error(this.$gettext("sharing photos failed"));
+            console.warn(e);
+          })
+      }
+
+      Notify.success(this.$gettext("Downloading & Sharing…"));
+
+      this.expanded = false;
     },
     edit() {
       // Open Edit Dialog
