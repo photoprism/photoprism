@@ -21,7 +21,7 @@ import (
 // PasswdCommand configures the command name, flags, and action.
 var PasswdCommand = cli.Command{
 	Name:      "passwd",
-	Usage:     "Changes the password of the user specified as argument",
+	Usage:     "Changes the password of a registered user",
 	ArgsUsage: "[username]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
