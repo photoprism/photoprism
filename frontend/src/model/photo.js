@@ -1240,7 +1240,6 @@ export class Photo extends RestModel {
         const filesArray = [Util.JSFileFromPhoto(blob, this.mainFile())];
         const shareData = {
           files: filesArray,
-          title: this.getTitle(),
         };
         return navigator.share(shareData);
       });
