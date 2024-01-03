@@ -40,7 +40,7 @@
             small
             :title="$gettext('Share')"
             color="webshare"
-            :disabled="selection.length === 0"
+            :disabled="selection.length === 0 || busy"
             class="action-webshare"
             @click.stop="webShare()"
         >
@@ -386,27 +386,30 @@ export default {
       download(path, "photos.zip");
     },
     webShare() {
-      switch (this.selection.length) {
-        case 0: return;
-        case 1: new Photo().find(this.selection[0]).then(p => p.webShare()); break;
-        default:
-          // Resolve selection into Photo objects and download them as blobs
-          const photos = this.selection.map((uid) => new Photo().find(uid).then((p) => fetch(p.getDownloadUrl()).then((res) => res.blob()).then((blob) => {
-            p.Blob = blob;
-            return p;
-          })));
-          // Wait for all downloads, then open native browser share dialog
-          Promise.all(photos).then((blobs) => {
-            const filesArray = blobs.map((p) => Util.JSFileFromPhoto(p.Blob, p.mainFile()));
-            const shareData = {
-              files: filesArray,
-            };
-            return navigator.share(shareData);
-          }).catch((e) => {
-            this.$notify.error(this.$gettext("sharing photos failed"));
-            console.warn(e);
-          })
+      if (this.busy || this.selection.length == 0) {
+        return;
       }
+
+      this.busy = true;
+
+      // Resolve selection into Photo objects and download them as blobs
+      const photos = this.selection.map((uid) => new Photo().find(uid).then((p) => fetch(p.getDownloadUrl()).then((res) => res.blob()).then((blob) => {
+        p.Blob = blob;
+        return p;
+      })));
+      // Wait for all downloads, then open native browser share dialog
+      Promise.all(photos).then((blobs) => {
+        const filesArray = blobs.map((p) => Util.JSFileFromPhoto(p.Blob, p.mainFile()));
+        const shareData = {
+          files: filesArray,
+        };
+        return navigator.share(shareData);
+      }).catch((e) => {
+        this.$notify.error(this.$gettext("sharing photos failed"));
+        console.warn(e);
+      }).finally(() => {
+        this.busy = false;
+      })
 
       Notify.success(this.$gettext("Downloading & Sharing…"));
 
