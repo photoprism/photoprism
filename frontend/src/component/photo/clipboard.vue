@@ -39,7 +39,7 @@
             v-if="context !== 'archive' && context !== 'review' && navigatorCanShare" fab dark
             small
             :title="$gettext('Share')"
-            color="share"
+            color="webshare"
             :disabled="selection.length === 0"
             class="action-webshare"
             @click.stop="webShare()"
