@@ -18,8 +18,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// FacesCommand configures the command name, flags, and action.
-var FacesCommand = cli.Command{
+// FacesCommands configures the command name, flags, and action.
+var FacesCommands = cli.Command{
 	Name:  "faces",
 	Usage: "Face recognition subcommands",
 	Subcommands: []cli.Command{

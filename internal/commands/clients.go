@@ -18,10 +18,10 @@ const (
 	ClientEnable           = "re-enable client authentication"
 )
 
-// ClientsCommand configures the client application subcommands.
-var ClientsCommand = cli.Command{
+// ClientsCommands configures the client application subcommands.
+var ClientsCommands = cli.Command{
 	Name:  "clients",
-	Usage: "API authentication subcommands",
+	Usage: "Client credentials subcommands",
 	Subcommands: []cli.Command{
 		ClientsListCommand,
 		ClientsAddCommand,
