@@ -187,7 +187,7 @@ func TestBatchLabelsDelete(t *testing.T) {
 		val := gjson.Get(r.Body.String(), `#(Name=="Batch Delete").Slug`)
 		assert.Equal(t, val.String(), "batch-delete")
 
-		r2 := PerformRequestWithBody(app, "POST", "/api/v1/batch/labels/delete", fmt.Sprintf(`{"labels": ["lt9k3pw1wowuy3c6", "pt9jtdre2lvl0ycc"]}`))
+		r2 := PerformRequestWithBody(app, "POST", "/api/v1/batch/labels/delete", `{"labels": ["lt9k3pw1wowuy3c6", "pt9jtdre2lvl0ycc"]}`)
 
 		var resp i18n.Response
 
