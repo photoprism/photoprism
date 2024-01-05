@@ -22,7 +22,7 @@ func TestFindSession(t *testing.T) {
 		}
 	})
 	t.Run("InvalidID", func(t *testing.T) {
-		if _, err := FindSession("at9lxuqxpogaaba7"); err == nil {
+		if _, err := FindSession("as6sg6bxpogaaba7"); err == nil {
 			t.Fatal("error expected")
 		}
 	})

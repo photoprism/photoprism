@@ -91,7 +91,7 @@ func TestExistingFiles(t *testing.T) {
 
 func TestFilesByUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		files, err := FilesByUID([]string{"ft8es39w45bnlqdw"}, 100, 0)
+		files, err := FilesByUID([]string{"fs6sg6bw45bnlqdw"}, 100, 0)
 
 		if err != nil {
 			t.Fatal(err)
@@ -100,7 +100,7 @@ func TestFilesByUID(t *testing.T) {
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", files[0].FileName)
 	})
 	t.Run("no files found", func(t *testing.T) {
-		files, err := FilesByUID([]string{"ft8es39w45bnlxxx"}, 100, 0)
+		files, err := FilesByUID([]string{"fs6sg6bw45bnlxxx"}, 100, 0)
 
 		if err != nil {
 			t.Fatal(err)
@@ -109,7 +109,7 @@ func TestFilesByUID(t *testing.T) {
 	})
 	//TODO fails on mariadb
 	t.Run("error", func(t *testing.T) {
-		files, err := FilesByUID([]string{"ft8es39w45bnlxxx"}, -100, 0)
+		files, err := FilesByUID([]string{"fs6sg6bw45bnlxxx"}, -100, 0)
 
 		assert.Error(t, err)
 		assert.Equal(t, 0, len(files))
@@ -118,7 +118,7 @@ func TestFilesByUID(t *testing.T) {
 
 func TestFileByPhotoUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := FileByPhotoUID("pt9jtdre2lvl0y11")
+		file, err := FileByPhotoUID("ps6sg6be2lvl0y11")
 
 		if err != nil {
 			t.Fatal(err)
@@ -136,7 +136,7 @@ func TestFileByPhotoUID(t *testing.T) {
 
 func TestVideoByPhotoUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := VideoByPhotoUID("pt9jtdre2lvl0yh0")
+		file, err := VideoByPhotoUID("ps6sg6be2lvl0yh0")
 
 		if err != nil {
 			t.Fatal(err)
@@ -154,7 +154,7 @@ func TestVideoByPhotoUID(t *testing.T) {
 
 func TestFileByUID(t *testing.T) {
 	t.Run("files found", func(t *testing.T) {
-		file, err := FileByUID("ft8es39w45bnlqdw")
+		file, err := FileByUID("fs6sg6bw45bnlqdw")
 
 		if err != nil {
 			t.Fatal(err)
@@ -197,14 +197,14 @@ func TestSetPhotoPrimary(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		assert.Equal(t, false, entity.FileFixturesExampleXMP.FilePrimary)
 
-		err := SetPhotoPrimary("pt9jtdre2lvl0yh7", "ft2es49whhbnlqdn")
+		err := SetPhotoPrimary("ps6sg6be2lvl0yh7", "fs6sg6bwhhbnlqdn")
 
 		if err != nil {
 			t.Fatal(err)
 		}
 	})
 	t.Run("no_file_uid", func(t *testing.T) {
-		err := SetPhotoPrimary("pt9jtdre2lvl0yh7", "")
+		err := SetPhotoPrimary("ps6sg6be2lvl0yh7", "")
 
 		if err != nil {
 			t.Fatal(err)
@@ -218,7 +218,7 @@ func TestSetPhotoPrimary(t *testing.T) {
 		}
 	})
 	t.Run("file missing", func(t *testing.T) {
-		err := SetPhotoPrimary("pt9jtdre2lvl0y22", "")
+		err := SetPhotoPrimary("ps6sg6be2lvl0y22", "")
 
 		if err == nil {
 			t.Fatal("error expected")
@@ -230,7 +230,7 @@ func TestSetPhotoPrimary(t *testing.T) {
 func TestSetFileError(t *testing.T) {
 	assert.Equal(t, "", entity.FileFixturesExampleXMP.FileError)
 
-	SetFileError("ft2es49whhbnlqdn", "errorFromTest")
+	SetFileError("fs6sg6bwhhbnlqdn", "errorFromTest")
 
 	//TODO How to assert
 	//assert.Equal(t, true, entity.FileFixturesExampleXMP.FilePrimary)

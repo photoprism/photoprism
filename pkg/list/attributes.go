@@ -93,7 +93,7 @@ func (list Attr) Contains(s string) bool {
 		}
 	} else {
 		for i := range list {
-			if strings.EqualFold(attr.Key, list[i].Key) && (attr.Value == list[i].Value || list[i].Value == All) {
+			if strings.EqualFold(attr.Key, list[i].Key) && (attr.Value == list[i].Value || list[i].Value == All) || list[i].Key == All {
 				return true
 			}
 		}

@@ -52,6 +52,7 @@ var Resources = ACL{
 	ResourceSettings: Roles{
 		RoleAdmin:   GrantFullAccess,
 		RoleVisitor: Grant{AccessOwn: true, ActionView: true},
+		RoleClient:  Grant{AccessOwn: true, ActionView: true, ActionUpdate: true},
 	},
 	ResourceServices: Roles{
 		RoleAdmin: GrantFullAccess,

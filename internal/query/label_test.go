@@ -27,7 +27,7 @@ func TestLabelBySlug(t *testing.T) {
 
 func TestLabelByUID(t *testing.T) {
 	t.Run("file found", func(t *testing.T) {
-		label, err := LabelByUID("lt9k3pw1wowuy3c5")
+		label, err := LabelByUID("ls6sg6b1wowuy3c5")
 
 		if err != nil {
 			t.Fatal(err)
@@ -66,7 +66,7 @@ func TestLabelThumbBySlug(t *testing.T) {
 
 func TestLabelThumbByUID(t *testing.T) {
 	t.Run("file found", func(t *testing.T) {
-		file, err := LabelThumbByUID("lt9k3pw1wowuy3c5")
+		file, err := LabelThumbByUID("ls6sg6b1wowuy3c5")
 
 		if err != nil {
 			t.Fatal(err)

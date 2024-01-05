@@ -271,7 +271,7 @@ func (doc *XmpDocument) TakenAt(timeZone string) time.Time {
 		return taken
 	}
 
-	if dateTime := txt.DateTime(s, timeZone); !dateTime.IsZero() {
+	if dateTime := txt.ParseTime(s, timeZone); !dateTime.IsZero() {
 		return dateTime
 	}
 

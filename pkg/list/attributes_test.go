@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewFlags(t *testing.T) {
+func TestParseAttr(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		f := ParseAttr("")
 		assert.Len(t, f, 0)
@@ -40,7 +40,7 @@ func TestNewFlags(t *testing.T) {
 	})
 }
 
-func TestFlags_String(t *testing.T) {
+func TestAttr_String(t *testing.T) {
 	t.Run("SlackScope", func(t *testing.T) {
 		s := "admin.conversations.removeCustomRetention admin.usergroups:read"
 		f := ParseAttr(s)
@@ -60,5 +60,27 @@ func TestFlags_String(t *testing.T) {
 
 		assert.Len(t, f, 6)
 		assert.Equal(t, "6VU FOOt0-2U admin.conversations.removeCustomRetention admin.usergroups:read cmNu me", f.String())
+	})
+}
+
+func TestAttr_Contains(t *testing.T) {
+	t.Run("Any", func(t *testing.T) {
+		s := "*"
+		a := ParseAttr(s)
+
+		assert.Len(t, a, 1)
+
+		t.Logf("Contains: %s", a[0])
+		assert.True(t, a.Contains("metrics"))
+	})
+}
+
+func TestParseKeyValue(t *testing.T) {
+	t.Run("Any", func(t *testing.T) {
+		v := ParseKeyValue("*")
+		t.Logf("Key: '%s'", v.Key)
+		t.Logf("Value: '%s'", v.Value)
+		assert.Equal(t, "*", v.Key)
+		assert.Equal(t, "true", v.Value)
 	})
 }

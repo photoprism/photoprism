@@ -15,7 +15,7 @@ func TestGetPreview(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 		SharePreview(router)
-		r := PerformRequest(app, "GET", "api/v1/s/1jxf3jfn2k/st9lxuqxpogaaba7/preview")
+		r := PerformRequest(app, "GET", "api/v1/s/1jxf3jfn2k/ss6sg6bxpogaaba7/preview")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 	t.Run("InvalidToken", func(t *testing.T) {
@@ -23,7 +23,7 @@ func TestGetPreview(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 		SharePreview(router)
-		r := PerformRequest(app, "GET", "api/v1/s/xxx/st9lxuqxpogaaba7/preview")
+		r := PerformRequest(app, "GET", "api/v1/s/xxx/ss6sg6bxpogaaba7/preview")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

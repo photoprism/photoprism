@@ -72,7 +72,7 @@ func TestAlbum_SaveAsYaml(t *testing.T) {
 
 func TestAlbum_LoadFromYaml(t *testing.T) {
 	t.Run("berlin-2020", func(t *testing.T) {
-		fileName := "testdata/album/at9lxuqxpoaaaaaa.yml"
+		fileName := "testdata/album/as6sg6bxpoaaaaaa.yml"
 
 		m := Album{}
 
@@ -84,7 +84,7 @@ func TestAlbum_LoadFromYaml(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		a := Album{AlbumUID: "at9lxuqxpoaaaaaa"}
+		a := Album{AlbumUID: "as6sg6bxpoaaaaaa"}
 
 		if found := a.Find(); found == nil {
 			t.Fatal("should find album")
@@ -124,6 +124,6 @@ func TestAlbum_YamlFileName(t *testing.T) {
 
 		fileName := m.YamlFileName("/foo/bar")
 
-		assert.Equal(t, "/foo/bar/album/at9lxuqxpogaaba9.yml", fileName)
+		assert.Equal(t, "/foo/bar/album/as6sg6bxpogaaba9.yml", fileName)
 	})
 }

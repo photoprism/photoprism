@@ -1071,7 +1071,7 @@ func TestUser_SharedUIDs(t *testing.T) {
 		result := m.SharedUIDs()
 		assert.NotNil(t, result)
 		assert.Len(t, result, 1)
-		assert.Equal(t, UIDs{"at9lxuqxpogaaba9"}, result)
+		assert.Equal(t, UIDs{"as6sg6bxpogaaba9"}, result)
 	})
 }
 
@@ -1809,9 +1809,9 @@ func TestUser_HasShares(t *testing.T) {
 func TestUser_HasShare(t *testing.T) {
 	m := FindLocalUser("alice")
 	m.RefreshShares()
-	assert.True(t, m.HasShare("at9lxuqxpogaaba9"))
-	assert.False(t, m.HasShare("at9lxuqxpogaaba8"))
-	assert.False(t, Visitor.HasShare("at9lxuqxpogaaba8"))
+	assert.True(t, m.HasShare("as6sg6bxpogaaba9"))
+	assert.False(t, m.HasShare("as6sg6bxpogaaba8"))
+	assert.False(t, Visitor.HasShare("as6sg6bxpogaaba8"))
 
 }
 
@@ -1822,13 +1822,13 @@ func TestUser_RedeemToken(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
 		m.RefreshShares()
-		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[0].ShareUID)
 		assert.Equal(t, 0, m.RedeemToken("1234"))
 		m.RefreshShares()
-		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[0].ShareUID)
 		assert.Equal(t, 1, m.RedeemToken("4jxf3jfn2k"))
 		m.RefreshShares()
-		assert.Equal(t, "at9lxuqxpogaaba7", m.UserShares[0].ShareUID)
-		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[1].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba7", m.UserShares[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[1].ShareUID)
 	})
 }

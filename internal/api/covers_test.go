@@ -13,7 +13,7 @@ func TestAlbumCover(t *testing.T) {
 	t.Run("InvalidType", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		AlbumCover(router)
-		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7/t/"+conf.PreviewToken()+"/xxx")
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba7/t/"+conf.PreviewToken()+"/xxx")
 
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
@@ -26,7 +26,7 @@ func TestAlbumCover(t *testing.T) {
 	t.Run("album: could not find original", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		AlbumCover(router)
-		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba9/t/"+conf.PreviewToken()+"/tile_500")
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba9/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("InvalidToken", func(t *testing.T) {
@@ -34,7 +34,7 @@ func TestAlbumCover(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 		AlbumCover(router)
-		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8/t/xxx/tile_500")
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/t/xxx/tile_500")
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 }
@@ -43,7 +43,7 @@ func TestLabelCover(t *testing.T) {
 	t.Run("InvalidType", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		LabelCover(router)
-		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c2/t/"+conf.PreviewToken()+"/xxx")
+		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/xxx")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("invalid label", func(t *testing.T) {
@@ -56,9 +56,9 @@ func TestLabelCover(t *testing.T) {
 	t.Run("could not find original", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		LabelCover(router)
-		//r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c3/t/"+conf.PreviewToken()+"/tile_500")
-		//lt9k3pw1wowuy3c2
-		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c2/t/"+conf.PreviewToken()+"/tile_500")
+		//r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c3/t/"+conf.PreviewToken()+"/tile_500")
+		//ls6sg6b1wowuy3c2
+		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c2/t/"+conf.PreviewToken()+"/tile_500")
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("InvalidToken", func(t *testing.T) {
@@ -66,7 +66,7 @@ func TestLabelCover(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 		LabelCover(router)
-		r := PerformRequest(app, "GET", "/api/v1/labels/lt9k3pw1wowuy3c3/t/xxx/tile_500")
+		r := PerformRequest(app, "GET", "/api/v1/labels/ls6sg6b1wowuy3c3/t/xxx/tile_500")
 		assert.Equal(t, http.StatusForbidden, r.Code)
 	})
 }

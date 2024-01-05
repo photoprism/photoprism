@@ -127,10 +127,9 @@ func clientsAddAction(ctx *cli.Context) error {
 			return fmt.Errorf("failed to create client secret: %s", err)
 		} else {
 			// Show client authentication credentials.
-			fmt.Printf("\nTHE FOLLOWING RANDOMLY GENERATED CLIENT ID AND SECRET ARE REQUIRED FOR AUTHENTICATION:\n")
+			fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED CLIENT SECRET, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
 			result := report.Credentials("Client ID", client.ClientUID, "Client Secret", secret)
-			fmt.Printf("\n%s", result)
-			fmt.Printf("\nPLEASE WRITE THE CREDENTIALS DOWN AND KEEP THEM IN A SAFE PLACE, AS THE SECRET CANNOT BE DISPLAYED AGAIN.\n\n")
+			fmt.Printf("\n%s\n", result)
 		}
 
 		return nil

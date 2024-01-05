@@ -22,9 +22,9 @@ var testEmbeddings = face.Embeddings{
 
 func TestMarkers_Contains(t *testing.T) {
 	t.Run("Examples", func(t *testing.T) {
-		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
-		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
-		m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea2, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+		m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
 
 		assert.Equal(t, 29, m1.OverlapPercent(m2))
 		assert.Equal(t, 100, m2.OverlapPercent(m1))
@@ -71,9 +71,9 @@ func TestMarkers_Contains(t *testing.T) {
 }
 
 func TestMarkers_DetectedFaceCount(t *testing.T) {
-	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
-	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcManual, MarkerFace, 100, 65)
-	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcManual, MarkerFace, 100, 65)
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "ls6sg6b1wowuy1c2", SrcManual, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcManual, MarkerFace, 100, 65)
 	m3.MarkerInvalid = true
 
 	m := Markers{m1, m2, m3}
@@ -82,9 +82,9 @@ func TestMarkers_DetectedFaceCount(t *testing.T) {
 }
 
 func TestMarkers_ValidFaceCount(t *testing.T) {
-	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
-	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcManual, MarkerFace, 100, 65)
-	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcManual, MarkerFace, 100, 65)
+	m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+	m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "ls6sg6b1wowuy1c2", SrcManual, MarkerFace, 100, 65)
+	m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcManual, MarkerFace, 100, 65)
 	m3.MarkerInvalid = true
 
 	m := Markers{m1, m2, m3}
@@ -115,8 +115,8 @@ func TestMarkers_Labels(t *testing.T) {
 		}
 	})
 	t.Run("One", func(t *testing.T) {
-		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 12)
-		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 300)
+		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 12)
+		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 300)
 
 		m2.MarkerInvalid = true
 
@@ -141,9 +141,9 @@ func TestMarkers_Labels(t *testing.T) {
 		}
 	})
 	t.Run("Many", func(t *testing.T) {
-		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
-		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "lt9k3pw1wowuy1c2", SrcImage, MarkerFace, 100, 65)
-		m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea4, "ls6sg6b1wowuy1c2", SrcImage, MarkerFace, 100, 65)
+		m3 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
 		m3.MarkerInvalid = true
 
 		m := Markers{m1, m2, m3}
@@ -166,8 +166,8 @@ func TestMarkers_Labels(t *testing.T) {
 
 func TestMarkers_AppendWithEmbedding(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "lt9k3pw1wowuy1c1", SrcImage, MarkerFace, 100, 65)
-		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "lt9k3pw1wowuy1c3", SrcImage, MarkerFace, 100, 65)
+		m1 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea1, "ls6sg6b1wowuy1c1", SrcImage, MarkerFace, 100, 65)
+		m2 := *NewMarker(FileFixtures.Get("exampleFileName.jpg"), cropArea3, "ls6sg6b1wowuy1c3", SrcImage, MarkerFace, 100, 65)
 
 		m := Markers{m1}
 

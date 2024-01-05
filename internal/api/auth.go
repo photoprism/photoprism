@@ -6,7 +6,6 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 // Auth checks if the user has permission to access the specified resource and returns the session if so.
@@ -30,7 +29,7 @@ func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *
 
 	// If the request is from a client application, check its authorization based
 	// on the allowed scope, the ACL, and the user account it belongs to (if any).
-	if s.Provider() == authn.ProviderClient {
+	if s.IsClient() {
 		// Check ACL resource name against the permitted scope.
 		if !s.HasScope(resource.String()) {
 			event.AuditErr([]string{ip, "client %s", "session %s", "access %s", "denied"}, s.AuthID, s.RefID, string(resource))

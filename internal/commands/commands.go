@@ -64,6 +64,7 @@ var PhotoPrism = []cli.Command{
 	PasswdCommand,
 	UsersCommands,
 	ClientsCommands,
+	AuthCommands,
 	ShowCommands,
 	VersionCommand,
 	ShowConfigCommand,

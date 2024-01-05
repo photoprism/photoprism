@@ -94,7 +94,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					continue
 				}
 
-				if dateTime := txt.DateTime(jsonValue.String(), ""); !dateTime.IsZero() {
+				if dateTime := txt.ParseTime(jsonValue.String(), ""); !dateTime.IsZero() {
 					fieldValue.Set(reflect.ValueOf(dateTime))
 				}
 			case time.Duration:

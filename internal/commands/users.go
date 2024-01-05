@@ -19,8 +19,9 @@ const (
 
 // UsersCommands configures the user management subcommands.
 var UsersCommands = cli.Command{
-	Name:  "users",
-	Usage: "User management subcommands",
+	Name:    "users",
+	Aliases: []string{"user"},
+	Usage:   "User management subcommands",
 	Subcommands: []cli.Command{
 		UsersListCommand,
 		UsersLegacyCommand,

@@ -30,7 +30,7 @@ func (m LabelMap) PhotoLabel(photoId uint, labelName string, uncertainty int, so
 var LabelFixtures = LabelMap{
 	"landscape": {
 		ID:               1000000,
-		LabelUID:         "lt9k3pw1wowuy3c2",
+		LabelUID:         "ls6sg6b1wowuy3c2",
 		LabelSlug:        "landscape",
 		CustomSlug:       "landscape",
 		LabelName:        "Landscape",
@@ -47,7 +47,7 @@ var LabelFixtures = LabelMap{
 	},
 	"flower": {
 		ID:               1000001,
-		LabelUID:         "lt9k3pw1wowuy3c3",
+		LabelUID:         "ls6sg6b1wowuy3c3",
 		LabelSlug:        "flower",
 		CustomSlug:       "flower",
 		LabelName:        "Flower",
@@ -64,7 +64,7 @@ var LabelFixtures = LabelMap{
 	},
 	"cake": {
 		ID:               1000002,
-		LabelUID:         "lt9k3pw1wowuy3c4",
+		LabelUID:         "ls6sg6b1wowuy3c4",
 		LabelSlug:        "cake",
 		CustomSlug:       "kuchen",
 		LabelName:        "Cake",
@@ -81,7 +81,7 @@ var LabelFixtures = LabelMap{
 	},
 	"cow": {
 		ID:               1000003,
-		LabelUID:         "lt9k3pw1wowuy3c5",
+		LabelUID:         "ls6sg6b1wowuy3c5",
 		LabelSlug:        "cow",
 		CustomSlug:       "kuh",
 		LabelName:        "COW",
@@ -98,7 +98,7 @@ var LabelFixtures = LabelMap{
 	},
 	"batchdelete": {
 		ID:               1000004,
-		LabelUID:         "lt9k3pw1wowuy3c6",
+		LabelUID:         "ls6sg6b1wowuy3c6",
 		LabelSlug:        "batch-delete",
 		CustomSlug:       "batch-delete",
 		LabelName:        "Batch Delete",
@@ -115,7 +115,7 @@ var LabelFixtures = LabelMap{
 	},
 	"updateLabel": {
 		ID:               1000005,
-		LabelUID:         "lt9k3pw1wowuy3c7",
+		LabelUID:         "ls6sg6b1wowuy3c7",
 		LabelSlug:        "update-label",
 		CustomSlug:       "update-label",
 		LabelName:        "Update Label",
@@ -132,7 +132,7 @@ var LabelFixtures = LabelMap{
 	},
 	"updatePhotoLabel": {
 		ID:               1000006,
-		LabelUID:         "lt9k3pw1wowuy3c8",
+		LabelUID:         "ls6sg6b1wowuy3c8",
 		LabelSlug:        "update-photo-label",
 		CustomSlug:       "update-label-photo",
 		LabelName:        "Update Photo Label",
@@ -149,7 +149,7 @@ var LabelFixtures = LabelMap{
 	},
 	"likeLabel": {
 		ID:               1000007,
-		LabelUID:         "lt9k3pw1wowuy3c9",
+		LabelUID:         "ls6sg6b1wowuy3c9",
 		LabelSlug:        "like-label",
 		CustomSlug:       "like-label",
 		LabelName:        "Like Label",
@@ -183,7 +183,7 @@ var LabelFixtures = LabelMap{
 	},
 	"apilikeLabel": {
 		ID:               1000009,
-		LabelUID:         "lt9k3pw1wowuy311",
+		LabelUID:         "ls6sg6b1wowuy311",
 		LabelSlug:        "api-like-label",
 		CustomSlug:       "api-like-label",
 		LabelName:        "Api Like Label",
@@ -200,7 +200,7 @@ var LabelFixtures = LabelMap{
 	},
 	"apidislikeLabel": {
 		ID:               1000010,
-		LabelUID:         "lt9k3pw1wowuy312",
+		LabelUID:         "ls6sg6b1wowuy312",
 		LabelSlug:        "api-dislike-label",
 		CustomSlug:       "api-dislike-label",
 		LabelName:        "Api Dislike Label",
@@ -217,7 +217,7 @@ var LabelFixtures = LabelMap{
 	},
 	"%tennis": {
 		ID:               1000011,
-		LabelUID:         "lt9k3pw1wowuy313",
+		LabelUID:         "ls6sg6b1wowuy313",
 		LabelSlug:        "%tennis",
 		CustomSlug:       "%tennis",
 		LabelName:        "%tennis",
@@ -234,7 +234,7 @@ var LabelFixtures = LabelMap{
 	},
 	"chem%stry": {
 		ID:               1000012,
-		LabelUID:         "lt9k3pw1wowuy314",
+		LabelUID:         "ls6sg6b1wowuy314",
 		LabelSlug:        "chem%stry",
 		CustomSlug:       "chem%stry",
 		LabelName:        "chem%stry",
@@ -251,7 +251,7 @@ var LabelFixtures = LabelMap{
 	},
 	"cell%": {
 		ID:               1000013,
-		LabelUID:         "lt9k3pw1wowuy315",
+		LabelUID:         "ls6sg6b1wowuy315",
 		LabelSlug:        "cell%",
 		CustomSlug:       "cell%",
 		LabelName:        "cell%",
@@ -268,7 +268,7 @@ var LabelFixtures = LabelMap{
 	},
 	"&friendship": {
 		ID:               1000014,
-		LabelUID:         "lt9k3pw1wowuy316",
+		LabelUID:         "ls6sg6b1wowuy316",
 		LabelSlug:        "&friendship",
 		CustomSlug:       "&friendship",
 		LabelName:        "&friendship",
@@ -285,7 +285,7 @@ var LabelFixtures = LabelMap{
 	},
 	"construction&failure": {
 		ID:               1000015,
-		LabelUID:         "lt9k3pw1wowuy317",
+		LabelUID:         "ls6sg6b1wowuy317",
 		LabelSlug:        "construction&failure",
 		CustomSlug:       "construction&failure",
 		LabelName:        "construction&failure",
@@ -302,7 +302,7 @@ var LabelFixtures = LabelMap{
 	},
 	"goal&": {
 		ID:               1000016,
-		LabelUID:         "lt9k3pw1wowuy318",
+		LabelUID:         "ls6sg6b1wowuy318",
 		LabelSlug:        "goal&",
 		CustomSlug:       "goal&",
 		LabelName:        "goal&",
@@ -319,7 +319,7 @@ var LabelFixtures = LabelMap{
 	},
 	"'activity": {
 		ID:               1000017,
-		LabelUID:         "lt9k3pw1wowuy319",
+		LabelUID:         "ls6sg6b1wowuy319",
 		LabelSlug:        "'activity",
 		CustomSlug:       "'activity",
 		LabelName:        "'activity",
@@ -336,7 +336,7 @@ var LabelFixtures = LabelMap{
 	},
 	"funera'l": {
 		ID:               1000018,
-		LabelUID:         "lt9k3pw1wowuy320",
+		LabelUID:         "ls6sg6b1wowuy320",
 		LabelSlug:        "funera'l",
 		CustomSlug:       "funera'l",
 		LabelName:        "funera'l",
@@ -353,7 +353,7 @@ var LabelFixtures = LabelMap{
 	},
 	"technology'": {
 		ID:               1000019,
-		LabelUID:         "lt9k3pw1wowuy321",
+		LabelUID:         "ls6sg6b1wowuy321",
 		LabelSlug:        "technology'",
 		CustomSlug:       "technology'",
 		LabelName:        "technology'",
@@ -370,7 +370,7 @@ var LabelFixtures = LabelMap{
 	},
 	"*tea": {
 		ID:               1000020,
-		LabelUID:         "lt9k3pw1wowuy322",
+		LabelUID:         "ls6sg6b1wowuy322",
 		LabelSlug:        "*tea",
 		CustomSlug:       "*tea",
 		LabelName:        "*tea",
@@ -387,7 +387,7 @@ var LabelFixtures = LabelMap{
 	},
 	"soup*menu": {
 		ID:               1000021,
-		LabelUID:         "lt9k3pw1wowuy323",
+		LabelUID:         "ls6sg6b1wowuy323",
 		LabelSlug:        "soup*menu",
 		CustomSlug:       "soup*menu",
 		LabelName:        "soup*menu",
@@ -404,7 +404,7 @@ var LabelFixtures = LabelMap{
 	},
 	"proposal*": {
 		ID:               1000022,
-		LabelUID:         "lt9k3pw1wowuy324",
+		LabelUID:         "ls6sg6b1wowuy324",
 		LabelSlug:        "proposal*",
 		CustomSlug:       "proposal*",
 		LabelName:        "proposal*",
@@ -421,7 +421,7 @@ var LabelFixtures = LabelMap{
 	},
 	"|college": {
 		ID:               1000023,
-		LabelUID:         "lt9k3pw1wowuy325",
+		LabelUID:         "ls6sg6b1wowuy325",
 		LabelSlug:        "|college",
 		CustomSlug:       "|college",
 		LabelName:        "|college",
@@ -438,7 +438,7 @@ var LabelFixtures = LabelMap{
 	},
 	"potato|couch": {
 		ID:               1000024,
-		LabelUID:         "lt9k3pw1wowuy326",
+		LabelUID:         "ls6sg6b1wowuy326",
 		LabelSlug:        "potato|couch",
 		CustomSlug:       "potato|couch",
 		LabelName:        "potato|couch",
@@ -455,7 +455,7 @@ var LabelFixtures = LabelMap{
 	},
 	"mall|": {
 		ID:               1000025,
-		LabelUID:         "lt9k3pw1wowuy327",
+		LabelUID:         "ls6sg6b1wowuy327",
 		LabelSlug:        "mall|",
 		CustomSlug:       "mall|",
 		LabelName:        "mall|",
@@ -472,7 +472,7 @@ var LabelFixtures = LabelMap{
 	},
 	"2020-world": {
 		ID:               1000026,
-		LabelUID:         "lt9k3pw1wowuy328",
+		LabelUID:         "ls6sg6b1wowuy328",
 		LabelSlug:        "2020-world",
 		CustomSlug:       "2020-world",
 		LabelName:        "2020-world",
@@ -489,7 +489,7 @@ var LabelFixtures = LabelMap{
 	},
 	"sport-2021-event": {
 		ID:               1000027,
-		LabelUID:         "lt9k3pw1wowuy329",
+		LabelUID:         "ls6sg6b1wowuy329",
 		LabelSlug:        "sport-2021-event",
 		CustomSlug:       "sport-2021-event",
 		LabelName:        "Sport 2021 Event",
@@ -506,7 +506,7 @@ var LabelFixtures = LabelMap{
 	},
 	"oven-3000": {
 		ID:               1000028,
-		LabelUID:         "lt9k3pw1wowuy330",
+		LabelUID:         "ls6sg6b1wowuy330",
 		LabelSlug:        "oven-3000",
 		CustomSlug:       "oven-3000",
 		LabelName:        "Oven3000",
@@ -523,7 +523,7 @@ var LabelFixtures = LabelMap{
 	},
 	"\"king": {
 		ID:               1000029,
-		LabelUID:         "lt9k3pw1wowuy331",
+		LabelUID:         "ls6sg6b1wowuy331",
 		LabelSlug:        "\"king",
 		CustomSlug:       "\"king",
 		LabelName:        "\"king",
@@ -540,7 +540,7 @@ var LabelFixtures = LabelMap{
 	},
 	"town\"ship": {
 		ID:               1000030,
-		LabelUID:         "lt9k3pw1wowuy332",
+		LabelUID:         "ls6sg6b1wowuy332",
 		LabelSlug:        "town\"ship",
 		CustomSlug:       "town\"ship",
 		LabelName:        "town\"ship",
@@ -557,7 +557,7 @@ var LabelFixtures = LabelMap{
 	},
 	"ladder\"": {
 		ID:               1000031,
-		LabelUID:         "lt9k3pw1wowuy333",
+		LabelUID:         "ls6sg6b1wowuy333",
 		LabelSlug:        "ladder\"",
 		CustomSlug:       "ladder\"",
 		LabelName:        "ladder\"",

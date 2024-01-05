@@ -8,11 +8,11 @@ import (
 // Usage hints for the client management subcommands.
 const (
 	ClientNameUsage        = "arbitrary name to help identify the `CLIENT` application"
-	ClientUserName         = "a `USERNAME` is only required if the client belongs to a specific account"
+	ClientUserName         = "provide a `USERNAME` if the client belongs to a specific user account"
 	ClientAuthMethod       = "supported authentication `METHOD` for the client application"
-	ClientAuthScope        = "authorization `SCOPE` of the client e.g. \"metrics\" (\"*\" to allow all scopes)"
-	ClientAuthExpires      = "access token expiration time in `SECONDS`, after which a new token must be created"
-	ClientAuthTokens       = "maximum `NUMBER` of access tokens the client can create (-1 to disable the limit)"
+	ClientAuthScope        = "authorization `SCOPE` of the client e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all scopes)"
+	ClientAuthExpires      = "access token lifetime in `SECONDS`, after which a new token must be created by the client (-1 to disable)"
+	ClientAuthTokens       = "maximum `NUMBER` of access tokens the client can create (-1 to disable)"
 	ClientRegenerateSecret = "generate a new client secret and display it"
 	ClientDisable          = "deactivate authentication with this client"
 	ClientEnable           = "re-enable client authentication"
@@ -20,8 +20,9 @@ const (
 
 // ClientsCommands configures the client application subcommands.
 var ClientsCommands = cli.Command{
-	Name:  "clients",
-	Usage: "Client credentials subcommands",
+	Name:    "clients",
+	Aliases: []string{"client"},
+	Usage:   "Client credentials subcommands",
 	Subcommands: []cli.Command{
 		ClientsListCommand,
 		ClientsAddCommand,

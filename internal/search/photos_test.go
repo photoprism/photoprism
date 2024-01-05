@@ -109,7 +109,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = ""
 		frm.Count = 5000
 		frm.Offset = 0
-		frm.UID = "pt9jtdre2lvl0yh7"
+		frm.UID = "ps6sg6be2lvl0yh7"
 		frm.Merged = true
 
 		photos, _, err := Photos(frm)
@@ -125,7 +125,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = ""
 		frm.Count = 5000
 		frm.Offset = 0
-		frm.UID = "pt9jtdre2lvl0yh7"
+		frm.UID = "ps6sg6be2lvl0yh7"
 		frm.Merged = false
 
 		photos, _, err := Photos(frm)
@@ -485,7 +485,7 @@ func TestPhotos(t *testing.T) {
 	})
 	t.Run("form.subject", func(t *testing.T) {
 		var f form.SearchPhotos
-		f.Query = "subject:jqu0xs11qekk9jx8"
+		f.Query = "subject:js6sg6b1qekk9jx8"
 		f.Count = 10
 		f.Offset = 0
 
@@ -807,7 +807,7 @@ func TestPhotos(t *testing.T) {
 		f.Lens = "1000000"
 		f.Month = strconv.Itoa(7)
 		f.Year = strconv.Itoa(2790)
-		f.Album = "at9lxuqxpogaaba8"
+		f.Album = "as6sg6bxpogaaba8"
 
 		photos, _, err := Photos(f)
 
@@ -1126,7 +1126,7 @@ func TestPhotos(t *testing.T) {
 	t.Run("Subject", func(t *testing.T) {
 		var frm form.SearchPhotos
 
-		frm.Subject = "jqu0xs11qekk9jx8"
+		frm.Subject = "js6sg6b1qekk9jx8"
 		frm.Count = 10
 		frm.Offset = 0
 

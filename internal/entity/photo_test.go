@@ -332,7 +332,7 @@ func TestPhoto_Save(t *testing.T) {
 		}
 	})
 	t.Run("Error", func(t *testing.T) {
-		photo := Photo{PhotoUID: "pt9jtdre2lvl0yh0"}
+		photo := Photo{PhotoUID: "ps6sg6be2lvl0yh0"}
 		assert.Error(t, photo.Save())
 	})
 }
@@ -348,7 +348,7 @@ func TestFindPhoto(t *testing.T) {
 		assert.NotNil(t, FindPhoto(photo))
 	})
 	t.Run("Found", func(t *testing.T) {
-		photo := Photo{PhotoUID: "pt9jtdre2lvl0yh0"}
+		photo := Photo{PhotoUID: "ps6sg6be2lvl0yh0"}
 		assert.NotNil(t, photo.Find())
 		assert.NotNil(t, FindPhoto(photo))
 	})
@@ -363,7 +363,7 @@ func TestFindPhoto(t *testing.T) {
 		assert.Nil(t, photo.Find())
 	})
 	t.Run("InvalidUID", func(t *testing.T) {
-		photo := Photo{PhotoUID: "pt9jtdre2lvl0iuj"}
+		photo := Photo{PhotoUID: "ps6sg6be2lvl0iuj"}
 		assert.Nil(t, FindPhoto(photo))
 		assert.Nil(t, photo.Find())
 	})
@@ -597,7 +597,7 @@ func TestPhoto_Approve(t *testing.T) {
 
 func TestPhoto_Links(t *testing.T) {
 	t.Run("OneResult", func(t *testing.T) {
-		photo := Photo{PhotoUID: "pt9k3pw1wowuy3c3"}
+		photo := Photo{PhotoUID: "ps6sg6b1wowuy3c3"}
 		links := photo.Links()
 		assert.Equal(t, "7jxf3jfn2k", links[0].LinkToken)
 	})

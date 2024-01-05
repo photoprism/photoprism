@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"errors"
 	"fmt"
 	"net/mail"
 	"path"
@@ -774,6 +773,10 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 		stmt = stmt.Where("user_uid = ? AND id NOT IN (?)", m.UserUID, omit)
 	}
 
+	// Exclude client access tokens.
+	stmt = stmt.Where("auth_provider NOT IN (?)", authn.ClientProviders)
+
+	// Fetch sessions from database.
 	sess := Sessions{}
 
 	if err := stmt.Find(&sess).Error; err != nil {
@@ -781,7 +784,7 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 		return 0
 	}
 
-	// This will also remove the session from the cache.
+	// Delete sessions from cache and database.
 	for _, s := range sess {
 		if err := s.Delete(); err != nil {
 			event.AuditWarn([]string{"user %s", "failed to invalidate session %s", "%s"}, m.RefID, clean.Log(s.RefID), err)
@@ -790,7 +793,7 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 		}
 	}
 
-	// Return number of deleted sessions for logs.
+	// Return number of deleted sessions.
 	return deleted
 }
 
@@ -851,17 +854,19 @@ func (m *User) WrongPassword(s string) bool {
 
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
-	// Empty name?
-	if m.Username() == "" {
-		return errors.New("username must not be empty")
+	// Validate username.
+	if userName, nameErr := authn.Username(m.UserName); nameErr != nil {
+		return fmt.Errorf("username is %s", nameErr.Error())
+	} else {
+		m.UserName = userName
 	}
 
-	// Name too short?
+	// Check if username also meets the length requirements.
 	if len(m.Username()) < UsernameLength {
 		return fmt.Errorf("username must have at least %d characters", UsernameLength)
 	}
 
-	// Validate user role.
+	// Check user role.
 	if acl.ValidRoles[m.UserRole] == "" {
 		return fmt.Errorf("user role %s is invalid", clean.LogQuote(m.UserRole))
 	}

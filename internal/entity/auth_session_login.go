@@ -146,7 +146,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 			event.AuditDebug([]string{m.IP(), "session %s", "role upgraded to %s"}, m.RefID, user.AclRole().String())
 			expires := UTC().Add(time.Hour * 24)
 			m.Expires(expires)
-			event.AuditDebug([]string{m.IP(), "session %s", "expires at %s"}, m.RefID, txt.TimeStamp(&expires))
+			event.AuditDebug([]string{m.IP(), "session %s", "expires at %s"}, m.RefID, txt.DateTime(&expires))
 		}
 
 		m.SetUser(user)

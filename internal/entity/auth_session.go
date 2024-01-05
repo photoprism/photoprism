@@ -282,9 +282,31 @@ func (m *Session) Username() string {
 	return m.UserName
 }
 
-// Provider returns the authentication provider name.
+// AuthInfo returns information about the authentication type.
+func (m *Session) AuthInfo() string {
+	provider := m.Provider()
+	method := m.Method()
+
+	if method.IsDefault() {
+		return provider.Pretty()
+	}
+
+	return fmt.Sprintf("%s (%s)", provider.Pretty(), method.Pretty())
+}
+
+// Provider returns the authentication provider.
 func (m *Session) Provider() authn.ProviderType {
 	return authn.Provider(m.AuthProvider)
+}
+
+// Method returns the authentication method.
+func (m *Session) Method() authn.MethodType {
+	return authn.Method(m.AuthMethod)
+}
+
+// IsClient checks whether this session is used to authenticate an API client.
+func (m *Session) IsClient() bool {
+	return authn.Provider(m.AuthProvider).IsClient()
 }
 
 // SetProvider updates the session's authentication provider.
@@ -659,12 +681,12 @@ func (m *Session) HttpStatus() int {
 	return http.StatusUnauthorized
 }
 
-// Scope returns the client IP address, or "unknown" if it is unknown.
+// Scope returns the authorization scope as a sanitized string.
 func (m *Session) Scope() string {
 	return clean.Scope(m.AuthScope)
 }
 
-// HasScope returns the client IP address, or "unknown" if it is unknown.
+// HasScope checks if the session has the given authorization scope.
 func (m *Session) HasScope(scope string) bool {
-	return !list.ParseAttr(m.Scope()).Contains(scope)
+	return list.ParseAttr(m.Scope()).Contains(scope)
 }
