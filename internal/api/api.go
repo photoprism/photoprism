@@ -1,5 +1,5 @@
 /*
-Package api provides REST API authentication and request handlers.
+Package api provides REST-API authentication and request handlers.
 
 Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 

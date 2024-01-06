@@ -98,7 +98,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 	// Login credentials provided?
 	if f.HasCredentials() {
 		if m.IsRegistered() {
-			m.RegenerateID()
+			m.Regenerate()
 		}
 
 		user, provider, err = Auth(f, m, c)

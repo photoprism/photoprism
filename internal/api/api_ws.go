@@ -43,9 +43,9 @@ var wsConnection = websocket.Upgrader{
 	},
 }
 
-// clientInfo represents information provided by the WebSocket client.
-type clientInfo struct {
-	SessionID string `json:"session"`
+// wsClient represents information about the WebSocket client.
+type wsClient struct {
+	AuthToken string `json:"session"`
 	CssUri    string `json:"css"`
 	JsUri     string `json:"js"`
 	Version   string `json:"version"`
@@ -111,18 +111,18 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 	ws.SetPongHandler(func(string) error { _ = ws.SetReadDeadline(time.Now().Add(wsTimeout)); return nil })
 
 	for {
-		_, m, err := ws.ReadMessage()
+		_, m, readErr := ws.ReadMessage()
 
-		if err != nil {
+		if readErr != nil {
 			break
 		}
 
-		var info clientInfo
+		var info wsClient
 
-		if err := json.Unmarshal(m, &info); err != nil {
+		if jsonErr := json.Unmarshal(m, &info); jsonErr != nil {
 			// Do nothing.
 		} else {
-			if s := Session(info.SessionID); s != nil {
+			if s := Session(info.AuthToken); s != nil {
 				wsAuth.mutex.Lock()
 				wsAuth.sid[connId] = s.ID
 				wsAuth.rid[connId] = s.RefID

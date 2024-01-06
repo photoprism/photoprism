@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 type SessionMap map[string]Session
@@ -25,7 +26,8 @@ func (m SessionMap) Pointer(name string) *Session {
 
 var SessionFixtures = SessionMap{
 	"alice": {
-		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0",
+		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0",
+		ID:          rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"),
 		RefID:       "sessxkkcabcd",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
@@ -34,7 +36,8 @@ var SessionFixtures = SessionMap{
 		UserName:    UserFixtures.Pointer("alice").UserName,
 	},
 	"alice_token": {
-		ID:           "bb8658e779403ae524a188712470060f050054324a8b104e",
+		authToken:    "bb8658e779403ae524a188712470060f050054324a8b104e",
+		ID:           rnd.SessionID("bb8658e779403ae524a188712470060f050054324a8b104e"),
 		RefID:        "sess34q3hael",
 		SessTimeout:  -1,
 		SessExpires:  UnixTime() + UnixDay,
@@ -47,7 +50,8 @@ var SessionFixtures = SessionMap{
 		UserName:     UserFixtures.Pointer("alice").UserName,
 	},
 	"alice_token_scope": {
-		ID:            "778f0f7d80579a072836c65b786145d6e0127505194cc51e",
+		authToken:     "778f0f7d80579a072836c65b786145d6e0127505194cc51e",
+		ID:            rnd.SessionID("778f0f7d80579a072836c65b786145d6e0127505194cc51e"),
 		RefID:         "sessjr0ge18d",
 		SessTimeout:   0,
 		SessExpires:   UnixTime() + UnixDay,
@@ -61,7 +65,8 @@ var SessionFixtures = SessionMap{
 		DownloadToken: "64ydcbom",
 	},
 	"bob": {
-		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1",
+		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1",
+		ID:          rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"),
 		RefID:       "sessxkkcabce",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
@@ -70,7 +75,8 @@ var SessionFixtures = SessionMap{
 		UserName:    UserFixtures.Pointer("bob").UserName,
 	},
 	"unauthorized": {
-		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2",
+		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2",
+		ID:          rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2"),
 		RefID:       "sessxkkcabcf",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
@@ -79,7 +85,8 @@ var SessionFixtures = SessionMap{
 		UserName:    UserFixtures.Pointer("unauthorized").UserName,
 	},
 	"visitor": {
-		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3",
+		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3",
+		ID:          rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac3"),
 		RefID:       "sessxkkcabcg",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
@@ -93,7 +100,8 @@ var SessionFixtures = SessionMap{
 		},
 	},
 	"visitor_token_metrics": {
-		ID:           "4ebe1048a7384e1e6af2930b5b6f29795ffab691df47a488",
+		authToken:    "4ebe1048a7384e1e6af2930b5b6f29795ffab691df47a488",
+		ID:           rnd.SessionID("4ebe1048a7384e1e6af2930b5b6f29795ffab691df47a488"),
 		RefID:        "sessaae5cxun",
 		SessTimeout:  0,
 		SessExpires:  UnixTime() + UnixWeek,
@@ -105,7 +113,8 @@ var SessionFixtures = SessionMap{
 		UserName:     Visitor.UserName,
 	},
 	"friend": {
-		ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac4",
+		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac4",
+		ID:          rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac4"),
 		RefID:       "sessxkkcabch",
 		SessTimeout: UnixDay * 3,
 		SessExpires: UnixTime() + UnixWeek,
@@ -114,7 +123,8 @@ var SessionFixtures = SessionMap{
 		UserName:    UserFixtures.Pointer("friend").UserName,
 	},
 	"token_metrics": {
-		ID:            "9d8b8801ffa23eb52e08ca7766283799ddfd8dd368208a9b",
+		authToken:     "9d8b8801ffa23eb52e08ca7766283799ddfd8dd368208a9b",
+		ID:            rnd.SessionID("9d8b8801ffa23eb52e08ca7766283799ddfd8dd368208a9b"),
 		RefID:         "sessgh6gjuo1",
 		SessTimeout:   0,
 		SessExpires:   UnixTime() + UnixWeek,
@@ -128,7 +138,8 @@ var SessionFixtures = SessionMap{
 		DownloadToken: "vgln2ffb",
 	},
 	"token_settings": {
-		ID:            "3f9684f7d3dd3d5b84edd43289c7fb5ca32ee73bd0233237",
+		authToken:     "3f9684f7d3dd3d5b84edd43289c7fb5ca32ee73bd0233237",
+		ID:            rnd.SessionID("3f9684f7d3dd3d5b84edd43289c7fb5ca32ee73bd0233237"),
 		RefID:         "sessyugn54so",
 		SessTimeout:   0,
 		SessExpires:   UnixTime() + UnixWeek,

@@ -47,7 +47,7 @@ const Api = Axios.create({
   baseURL: c.apiUri,
   headers: {
     common: {
-      "X-Session-ID": window.localStorage.getItem("session_id"),
+      "X-Session-ID": window.localStorage.getItem("authToken"),
       "X-Client-Uri": c.jsUri,
       "X-Client-Version": c.version,
     },

@@ -28,8 +28,9 @@ import Event from "pubsub-js";
 import User from "model/user";
 import Socket from "websocket.js";
 
-const SessionHeader = "X-Session-ID";
-const PublicID = "234200000000000000000000000000000000000000000000";
+const RequestHeader = "X-Session-ID";
+const PublicSessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+const PublicAuthToken = "234200000000000000000000000000000000000000000000";
 const LoginPage = "login";
 
 export default class Session {
@@ -39,7 +40,7 @@ export default class Session {
    * @param {object} shared
    */
   constructor(storage, config, shared) {
-    this.storage_key = "session_storage";
+    this.storage_key = "sessionStorage";
     this.auth = false;
     this.config = config;
     this.user = new User(false);
@@ -52,9 +53,12 @@ export default class Session {
       this.storage = storage;
     }
 
-    // Restore from session storage.
-    if (this.applyId(this.storage.getItem("session_id"))) {
-      const dataJson = this.storage.getItem("data");
+    // Restore authentication from session storage.
+    if (
+      this.applyAuthToken(this.storage.getItem("authToken")) &&
+      this.applyId(this.storage.getItem("sessionId"))
+    ) {
+      const dataJson = this.storage.getItem("sessionData");
       if (dataJson !== "undefined") {
         this.data = JSON.parse(dataJson);
       }
@@ -113,42 +117,91 @@ export default class Session {
     this.storage = window.localStorage;
   }
 
-  applyId(id) {
-    if (!id) {
+  setConfig(values) {
+    this.config.setValues(values);
+  }
+
+  setAuthToken(authToken) {
+    if (authToken) {
+      this.storage.setItem("authToken", authToken);
+      if (authToken === PublicAuthToken) {
+        this.setId(PublicSessionID);
+      }
+    }
+
+    return this.applyAuthToken(authToken);
+  }
+
+  getAuthToken() {
+    return this.authToken;
+  }
+
+  hasAuthToken() {
+    return !!this.authToken;
+  }
+
+  applyAuthToken(authToken) {
+    if (!authToken) {
       this.reset();
       return false;
     }
 
-    this.session_id = id;
+    this.authToken = authToken;
 
-    Api.defaults.headers.common[SessionHeader] = id;
+    Api.defaults.headers.common[RequestHeader] = authToken;
 
     return true;
   }
 
   setId(id) {
-    this.storage.setItem("session_id", id);
-    return this.applyId(id);
-  }
-
-  setConfig(values) {
-    this.config.setValues(values);
+    this.storage.setItem("sessionId", id);
+    this.id = id;
   }
 
   getId() {
-    return this.session_id;
+    return this.id;
   }
 
   hasId() {
-    return !!this.session_id;
+    return !!this.id;
   }
 
-  deleteId() {
-    this.session_id = null;
-    this.provider = "";
-    this.storage.removeItem("session_id");
+  applyId(id) {
+    if (!id) {
+      return false;
+    }
 
-    delete Api.defaults.headers.common[SessionHeader];
+    this.setId(id);
+
+    return true;
+  }
+
+  isAuthenticated() {
+    return this.hasId() && this.hasAuthToken();
+  }
+
+  deleteAuthentication() {
+    this.id = null;
+    this.authToken = null;
+    this.provider = "";
+    this.storage.removeItem("sessionId");
+    this.storage.removeItem("authToken");
+    this.storage.removeItem("provider");
+
+    delete Api.defaults.headers.common[RequestHeader];
+  }
+
+  setProvider(provider) {
+    this.storage.setItem("provider", provider);
+    this.provider = provider;
+  }
+
+  getProvider() {
+    return this.provider;
+  }
+
+  hasProvider() {
+    return !!this.provider;
   }
 
   setResp(resp) {
@@ -159,15 +212,25 @@ export default class Session {
     if (resp.data.id) {
       this.setId(resp.data.id);
     }
-    if (resp.data.provider) {
-      this.provider = resp.data.provider;
+
+    if (resp.data.access_token) {
+      this.setAuthToken(resp.data.access_token);
+    } else if (resp.data.id) {
+      this.setAuthToken(resp.data.id);
     }
+
+    if (resp.data.provider) {
+      this.setProvider(resp.data.provider);
+    }
+
     if (resp.data.config) {
       this.setConfig(resp.data.config);
     }
+
     if (resp.data.user) {
       this.setUser(resp.data.user);
     }
+
     if (resp.data.data) {
       this.setData(resp.data.data);
     }
@@ -179,7 +242,7 @@ export default class Session {
     }
 
     this.data = data;
-    this.storage.setItem("data", JSON.stringify(data));
+    this.storage.setItem("sessionData", JSON.stringify(data));
 
     if (data.user) {
       this.setUser(data.user);
@@ -264,7 +327,7 @@ export default class Session {
 
   deleteData() {
     this.data = null;
-    this.storage.removeItem("data");
+    this.storage.removeItem("sessionData");
   }
 
   deleteUser() {
@@ -280,7 +343,7 @@ export default class Session {
   }
 
   reset() {
-    this.deleteId();
+    this.deleteAuthentication();
     this.deleteData();
     this.deleteUser();
     this.deleteClipboard();
@@ -289,7 +352,7 @@ export default class Session {
   sendClientInfo() {
     const hasConfig = !!window.__CONFIG__;
     const clientInfo = {
-      session: this.getId(),
+      session: this.getAuthToken(),
       cssUri: hasConfig ? window.__CONFIG__.cssUri : "",
       jsUri: hasConfig ? window.__CONFIG__.jsUri : "",
       version: hasConfig ? window.__CONFIG__.version : "",
@@ -327,16 +390,17 @@ export default class Session {
   }
 
   refresh() {
-    // Refresh session information.
+    // Check if the authentication is still valid and update the client session data.
     if (this.config.isPublic()) {
-      // No authentication in public mode.
-      this.setId(PublicID);
+      // Use a static auth token in public mode, as no additional authentication is required.
+      this.setAuthToken(PublicAuthToken);
+      this.setId(PublicSessionID);
       return Api.get("session/" + this.getId()).then((resp) => {
         this.setResp(resp);
         return Promise.resolve();
       });
-    } else if (this.hasId()) {
-      // Verify authentication.
+    } else if (this.isAuthenticated()) {
+      // Check the auth token by fetching the client session data from the API.
       return Api.get("session/" + this.getId())
         .then((resp) => {
           this.setResp(resp);
@@ -350,7 +414,7 @@ export default class Session {
           return Promise.reject();
         });
     } else {
-      // No authentication yet.
+      // Skip updating session data if client is not authenticated.
       return Promise.resolve();
     }
   }
@@ -367,15 +431,19 @@ export default class Session {
   }
 
   onLogout(noRedirect) {
+    // Delete all authentication and session data.
     this.reset();
+
+    // Perform redirect?
     if (noRedirect !== true && !this.isLogin()) {
       window.location = this.config.baseUri + "/";
     }
+
     return Promise.resolve();
   }
 
   logout(noRedirect) {
-    if (this.hasId()) {
+    if (this.isAuthenticated()) {
       return Api.delete("session/" + this.getId())
         .then(() => {
           return this.onLogout(noRedirect);

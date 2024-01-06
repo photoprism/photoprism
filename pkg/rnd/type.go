@@ -39,7 +39,7 @@ func IdType(id string) (Type, byte) {
 		return TypeSHA1, PrefixNone
 	case IsRefID(id):
 		return TypeRefID, PrefixNone
-	case IsSessionID(id):
+	case IsAuthToken(id):
 		return TypeSessionID, PrefixNone
 	case ValidateCrcToken(id):
 		return TypeCrcToken, PrefixNone

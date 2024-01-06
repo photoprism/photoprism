@@ -133,36 +133,46 @@ Mock.onDelete("api/v1/photos/pqbemz8276mhtobh/label/12345").reply(
 Mock.onPost("api/v1/session").reply(
   200,
   {
-    id: "999900000000000000000000000000000000000000000000",
+    id: "5aa770f2a1ef431628d9f17bdf82a0d16865e99d4a1ddd9356e1aabfe6464683",
+    access_token: "999900000000000000000000000000000000000000000000",
+    provider: "test",
     data: { token: "123token" },
     user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
   },
   mockHeaders
 );
 
-Mock.onGet("api/v1/session/234200000000000000000000000000000000000000000000").reply(
+Mock.onGet("api/v1/session/a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f").reply(
   200,
   {
-    id: "234200000000000000000000000000000000000000000000",
+    id: "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f",
+    access_token: "234200000000000000000000000000000000000000000000",
+    provider: "public",
     data: { token: "123token" },
     user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
   },
   mockHeaders
 );
 
-Mock.onGet("api/v1/session/999900000000000000000000000000000000000000000000").reply(
+Mock.onGet("api/v1/session/5aa770f2a1ef431628d9f17bdf82a0d16865e99d4a1ddd9356e1aabfe6464683").reply(
   200,
   {
-    id: "999900000000000000000000000000000000000000000000",
+    id: "5aa770f2a1ef431628d9f17bdf82a0d16865e99d4a1ddd9356e1aabfe6464683",
+    access_token: "999900000000000000000000000000000000000000000000",
+    provider: "test",
     data: { token: "123token" },
     user: { ID: 1, UID: "urjysof3b9v7lgex", Name: "test", Email: "test@test.com" },
   },
   mockHeaders
 );
 
-Mock.onDelete("api/v1/session/999900000000000000000000000000000000000000000000").reply(200);
+Mock.onDelete(
+  "api/v1/session/5aa770f2a1ef431628d9f17bdf82a0d16865e99d4a1ddd9356e1aabfe6464683"
+).reply(200);
 
-Mock.onDelete("api/v1/session/234200000000000000000000000000000000000000000000").reply(200);
+Mock.onDelete(
+  "api/v1/session/a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f"
+).reply(200);
 
 Mock.onGet("api/v1/settings").reply(200, { download: true, language: "de" }, mockHeaders);
 Mock.onPost("api/v1/settings").reply(200, { download: true, language: "en" }, mockHeaders);

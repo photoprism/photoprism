@@ -19,7 +19,7 @@ func UpdateClientConfig() {
 // GET /api/v1/config
 func GetClientConfig(router *gin.RouterGroup) {
 	router.GET("/config", func(c *gin.Context) {
-		s := Session(SessionID(c))
+		s := Session(AuthToken(c))
 		conf := get.Config()
 
 		if s == nil {

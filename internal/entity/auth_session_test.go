@@ -4,10 +4,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/internal/server/header"
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -15,6 +16,7 @@ func TestNewSession(t *testing.T) {
 	t.Run("NoSessionData", func(t *testing.T) {
 		m := NewSession(UnixDay, UnixHour*6)
 
+		assert.True(t, rnd.IsAuthToken(m.AuthToken()))
 		assert.True(t, rnd.IsSessionID(m.ID))
 		assert.False(t, m.CreatedAt.IsZero())
 		assert.False(t, m.UpdatedAt.IsZero())
@@ -27,6 +29,7 @@ func TestNewSession(t *testing.T) {
 		m := NewSession(UnixDay, UnixHour*6)
 		m.SetData(NewSessionData())
 
+		assert.True(t, rnd.IsAuthToken(m.AuthToken()))
 		assert.True(t, rnd.IsSessionID(m.ID))
 		assert.False(t, m.CreatedAt.IsZero())
 		assert.False(t, m.UpdatedAt.IsZero())
@@ -41,6 +44,7 @@ func TestNewSession(t *testing.T) {
 		m := NewSession(UnixDay, UnixHour*6)
 		m.SetData(data)
 
+		assert.True(t, rnd.IsAuthToken(m.AuthToken()))
 		assert.True(t, rnd.IsSessionID(m.ID))
 		assert.False(t, m.CreatedAt.IsZero())
 		assert.False(t, m.UpdatedAt.IsZero())
@@ -116,27 +120,64 @@ func TestFindSessionByRefID(t *testing.T) {
 	})
 }
 
-func TestSession_RegenerateID(t *testing.T) {
-	t.Run("Success", func(t *testing.T) {
+func TestSession_Regenerate(t *testing.T) {
+	t.Run("NewSession", func(t *testing.T) {
 		m := NewSession(UnixDay, UnixHour)
 		initialID := m.ID
-		m.RegenerateID()
+		m.Regenerate()
 		finalID := m.ID
 		assert.NotEqual(t, initialID, finalID)
 	})
-	t.Run("Empty ID", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		m := Session{ID: ""}
 		initialID := m.ID
-		m.RegenerateID()
+		m.Regenerate()
 		finalID := m.ID
 		assert.NotEqual(t, initialID, finalID)
 	})
-	t.Run("Can't delete", func(t *testing.T) {
+	t.Run("Existing", func(t *testing.T) {
 		m := Session{ID: "1234567"}
 		initialID := m.ID
-		m.RegenerateID()
+		m.Regenerate()
 		finalID := m.ID
 		assert.NotEqual(t, initialID, finalID)
+	})
+}
+
+func TestSession_AuthToken(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		alice := SessionFixtures.Get("alice")
+		sess := &Session{}
+		assert.Equal(t, "", sess.ID)
+		assert.Equal(t, "", sess.AuthToken())
+		assert.False(t, rnd.IsSessionID(sess.ID))
+		assert.False(t, rnd.IsAuthToken(sess.AuthToken()))
+		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		sess.Regenerate()
+		assert.True(t, rnd.IsSessionID(sess.ID))
+		assert.True(t, rnd.IsAuthToken(sess.AuthToken()))
+		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		sess.SetAuthToken(alice.AuthToken())
+		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", sess.ID)
+		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", sess.AuthToken())
+		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+	})
+	t.Run("Alice", func(t *testing.T) {
+		sess := SessionFixtures.Get("alice")
+		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", sess.ID)
+		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", sess.AuthToken())
+		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+	})
+	t.Run("Find", func(t *testing.T) {
+		alice := SessionFixtures.Get("alice")
+		sess := FindSessionByRefID("sessxkkcabcd")
+		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", sess.ID)
+		assert.Equal(t, "", sess.AuthToken())
+		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		sess.SetAuthToken(alice.AuthToken())
+		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", sess.ID)
+		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", sess.AuthToken())
+		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
 	})
 }
 
@@ -145,12 +186,13 @@ func TestSession_Create(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcxxxx")
 		assert.Empty(t, m)
 		s := &Session{
-			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxx",
 			UserName:    "charles",
 			SessExpires: UnixDay * 3,
 			SessTimeout: UnixTime() + UnixWeek,
 			RefID:       "sessxkkcxxxx",
 		}
+
+		s.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxx")
 
 		err := s.Create()
 
@@ -162,15 +204,21 @@ func TestSession_Create(t *testing.T) {
 		assert.Equal(t, "charles", m2.UserName)
 	})
 	t.Run("Invalid RefID", func(t *testing.T) {
-		m, _ := FindSession("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111")
+		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111"
+		id := rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111")
+
+		m, _ := FindSession(id)
+
 		assert.Empty(t, m)
+
 		s := &Session{
-			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111",
 			UserName:    "charles",
 			SessExpires: UnixDay * 3,
 			SessTimeout: UnixTime() + UnixWeek,
 			RefID:       "123",
 		}
+
+		s.SetAuthToken(authToken)
 
 		err := s.Create()
 
@@ -178,18 +226,21 @@ func TestSession_Create(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		m2, _ := FindSession("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111")
+		m2, _ := FindSession(id)
 
 		assert.NotEqual(t, "123", m2.RefID)
 	})
 	t.Run("ID already exists", func(t *testing.T) {
+		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"
+
 		s := &Session{
-			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0",
 			UserName:    "charles",
 			SessExpires: UnixDay * 3,
 			SessTimeout: UnixTime() + UnixWeek,
 			RefID:       "sessxkkcxxxx",
 		}
+
+		s.SetAuthToken(authToken)
 
 		err := s.Create()
 		assert.Error(t, err)
@@ -201,12 +252,13 @@ func TestSession_Save(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcxxxy")
 		assert.Empty(t, m)
 		s := &Session{
-			ID:          "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxy",
 			UserName:    "chris",
 			SessExpires: UnixDay * 3,
 			SessTimeout: UnixTime() + UnixWeek,
 			RefID:       "sessxkkcxxxy",
 		}
+
+		s.SetAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7xxy")
 
 		err := s.Save()
 

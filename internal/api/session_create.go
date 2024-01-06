@@ -31,15 +31,12 @@ func CreateSession(router *gin.RouterGroup) {
 		// Skip authentication if app is running in public mode.
 		if conf.Public() {
 			sess := get.Session().Public()
-			data := gin.H{
-				"status":   "ok",
-				"id":       sess.ID,
-				"provider": sess.AuthProvider,
-				"user":     sess.User(),
-				"data":     sess.Data(),
-				"config":   conf.ClientPublic(),
-			}
-			c.JSON(http.StatusOK, data)
+
+			// Response includes admin account data, session data, and client config values.
+			response := SessionResponse(sess.AuthToken(), sess, conf.ClientPublic())
+
+			// Return JSON response.
+			c.JSON(http.StatusOK, response)
 			return
 		}
 
@@ -53,7 +50,7 @@ func CreateSession(router *gin.RouterGroup) {
 		var isNew bool
 
 		// Find existing session, if any.
-		if s := Session(SessionID(c)); s != nil {
+		if s := Session(AuthToken(c)); s != nil {
 			// Update existing session.
 			sess = s
 		} else {
@@ -80,22 +77,12 @@ func CreateSession(router *gin.RouterGroup) {
 		}
 
 		// Add session id to response headers.
-		AddSessionHeader(c, sess.ID)
+		AddSessionHeader(c, sess.AuthToken())
 
-		// Get config values for the UI.
-		clientConfig := conf.ClientSession(sess)
+		// Response includes user data, session data, and client config values.
+		response := SessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
 
-		// User information, session data, and client config values.
-		data := gin.H{
-			"status":   "ok",
-			"id":       sess.ID,
-			"provider": sess.AuthProvider,
-			"user":     sess.User(),
-			"data":     sess.Data(),
-			"config":   clientConfig,
-		}
-
-		// Send JSON response.
-		c.JSON(sess.HttpStatus(), data)
+		// Return JSON response.
+		c.JSON(sess.HttpStatus(), response)
 	})
 }

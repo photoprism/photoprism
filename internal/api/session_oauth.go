@@ -14,8 +14,8 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 )
 
-// CreateOauthToken creates a new access token and returns it as JSON
-// if the client's credentials have been successfully validated.
+// CreateOauthToken creates a new access token for clients that
+// authenticate with valid OAuth2 client credentials.
 //
 // POST /api/v1/oauth/token
 func CreateOauthToken(router *gin.RouterGroup) {
@@ -60,7 +60,7 @@ func CreateOauthToken(router *gin.RouterGroup) {
 			limiter.Login.Reserve(clientIP)
 			return
 		} else if !client.AuthEnabled {
-			event.AuditWarn([]string{clientIP, "client %s", "create access token", "authentication disabled"}, f.ClientID)
+			event.AuditWarn([]string{clientIP, "client %s", "create access token", "running in public mode"}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if client.AuthMethod != authn.MethodOAuth2.String() {
@@ -92,13 +92,14 @@ func CreateOauthToken(router *gin.RouterGroup) {
 			event.AuditInfo([]string{clientIP, "client %s", "session %s", "access token created"}, f.ClientID, sess.RefID)
 		}
 
-		// Return access token.
+		// Response includes access token, token type, and token lifetime.
 		data := gin.H{
-			"access_token": sess.ID,
-			"token_type":   "Bearer",
+			"access_token": sess.AuthToken(),
+			"token_type":   sess.AuthTokenType(),
 			"expires_in":   sess.ExpiresIn(),
 		}
 
+		// Return JSON response.
 		c.JSON(http.StatusOK, data)
 	})
 }

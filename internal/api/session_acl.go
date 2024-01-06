@@ -17,10 +17,10 @@ func Auth(c *gin.Context, resource acl.Resource, grant acl.Permission) *entity.S
 func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *entity.Session) {
 	// Get the client IP and session ID from the request headers.
 	ip := ClientIP(c)
-	sid := SessionID(c)
+	authToken := AuthToken(c)
 
 	// Find active session to perform authorization check or deny if no session was found.
-	if s = Session(sid); s == nil {
+	if s = Session(authToken); s == nil {
 		event.AuditWarn([]string{ip, "unauthenticated", "%s %s", "denied"}, grants.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
 	} else {

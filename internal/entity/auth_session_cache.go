@@ -15,13 +15,17 @@ import (
 var sessionCacheExpiration = 15 * time.Minute
 var sessionCache = gc.New(sessionCacheExpiration, 5*time.Minute)
 
-// FindSession returns an existing session or nil if not found.
+// FindSessionByAuthToken finds a session based on the auth token string or returns nil if it does not exist.
+func FindSessionByAuthToken(token string) (*Session, error) {
+	return FindSession(rnd.SessionID(token))
+}
+
+// FindSession finds a session based on the id string or returns nil if it does not exist.
 func FindSession(id string) (*Session, error) {
 	found := &Session{}
 
-	// Valid id?
 	if !rnd.IsSessionID(id) {
-		return found, fmt.Errorf("id %s is invalid", clean.LogQuote(id))
+		return found, fmt.Errorf("invalid session id")
 	}
 
 	// Find the session in the cache with a fallback to the database.

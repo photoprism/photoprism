@@ -17,22 +17,24 @@ func GetSession(router *gin.RouterGroup) {
 	router.GET("/session/:id", func(c *gin.Context) {
 		id := clean.ID(c.Param("id"))
 
+		// Check authentication token.
 		if id == "" {
+			// Abort if authentication token is missing or empty.
 			AbortBadRequest(c)
-			return
-		} else if id != SessionID(c) {
-			AbortForbidden(c)
 			return
 		}
 
 		conf := get.Config()
+		authToken := AuthToken(c)
 
 		// Skip authentication if app is running in public mode.
 		var sess *entity.Session
 		if conf.Public() {
 			sess = get.Session().Public()
+			id = sess.ID
+			authToken = sess.AuthToken()
 		} else {
-			sess = Session(id)
+			sess = Session(authToken)
 		}
 
 		switch {
@@ -42,7 +44,7 @@ func GetSession(router *gin.RouterGroup) {
 		case sess.Expired(), sess.ID == "":
 			AbortUnauthorized(c)
 			return
-		case sess.Invalid():
+		case sess.Invalid(), sess.ID != id && !conf.Public():
 			AbortForbidden(c)
 			return
 		}
@@ -51,18 +53,12 @@ func GetSession(router *gin.RouterGroup) {
 		sess.RefreshUser()
 
 		// Add session id to response headers.
-		AddSessionHeader(c, sess.ID)
+		AddSessionHeader(c, authToken)
 
-		// Send JSON response with user information, session data, and client config values.
-		data := gin.H{
-			"status":   "ok",
-			"id":       sess.ID,
-			"provider": sess.AuthProvider,
-			"user":     sess.User(),
-			"data":     sess.Data(),
-			"config":   get.Config().ClientSession(sess),
-		}
+		// Response includes user data, session data, and client config values.
+		response := SessionResponse(authToken, sess, get.Config().ClientSession(sess))
 
-		c.JSON(http.StatusOK, data)
+		// Return JSON response.
+		c.JSON(http.StatusOK, response)
 	})
 }

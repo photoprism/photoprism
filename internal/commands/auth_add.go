@@ -88,7 +88,7 @@ func authAddAction(ctx *cli.Context) error {
 				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED PERSONAL ACCESS TOKEN, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
 			}
 
-			result := report.Credentials("Access Token", sess.ID, "Authorization Scope", sess.Scope())
+			result := report.Credentials("Access Token", sess.AuthToken(), "Authorization Scope", sess.Scope())
 
 			fmt.Printf("\n%s\n", result)
 		}
