@@ -160,7 +160,7 @@ func NewTestConfig(pkg string) *Config {
 	c := &Config{
 		cliCtx:  CliTestContext(),
 		options: NewTestOptions(pkg),
-		token:   rnd.GenerateToken(8),
+		token:   rnd.Base36(8),
 	}
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale())

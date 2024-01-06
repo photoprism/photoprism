@@ -15,7 +15,7 @@ import (
 // UsersModCommand configures the command name, flags, and action.
 var UsersModCommand = cli.Command{
 	Name:      "mod",
-	Usage:     "Modifies an existing user account",
+	Usage:     "Changes user account settings",
 	ArgsUsage: "[username]",
 	Flags:     UserFlags,
 	Action:    usersModAction,
@@ -47,7 +47,7 @@ func usersModAction(ctx *cli.Context) error {
 		}
 
 		// Check if account exists but is deleted.
-		if m.Deleted() {
+		if m.IsDeleted() {
 			prompt := promptui.Prompt{
 				Label:     fmt.Sprintf("Restore user %s?", m.String()),
 				IsConfirm: true,

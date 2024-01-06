@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"errors"
 	"fmt"
 	"net/mail"
 	"path"
@@ -301,8 +300,8 @@ func (m *User) Delete() (err error) {
 	return err
 }
 
-// Deleted checks if the user account has been deleted.
-func (m *User) Deleted() bool {
+// IsDeleted checks if the user account has been deleted.
+func (m *User) IsDeleted() bool {
 	if m.DeletedAt == nil {
 		return false
 	}
@@ -361,8 +360,8 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("UserUID", m.UserUID)
 }
 
-// Expired checks if the user account has expired.
-func (m *User) Expired() bool {
+// IsExpired checks if the user account has expired.
+func (m *User) IsExpired() bool {
 	if m.ExpiresAt == nil {
 		return false
 	}
@@ -370,16 +369,20 @@ func (m *User) Expired() bool {
 	return m.ExpiresAt.Before(time.Now())
 }
 
-// Disabled checks if the user account has been deleted or has expired.
-func (m *User) Disabled() bool {
-	return m.Deleted() || m.Expired() && !m.SuperAdmin
+// IsDisabled checks if the user account has been deleted or has expired.
+func (m *User) IsDisabled() bool {
+	if m == nil {
+		return true
+	}
+
+	return m.IsDeleted() || m.IsExpired() && !m.SuperAdmin
 }
 
 // UpdateLoginTime updates the login timestamp and returns it if successful.
 func (m *User) UpdateLoginTime() *time.Time {
 	if m == nil {
 		return nil
-	} else if m.Deleted() {
+	} else if m.IsDeleted() {
 		return nil
 	}
 
@@ -398,40 +401,43 @@ func (m *User) UpdateLoginTime() *time.Time {
 func (m *User) CanLogIn() bool {
 	if m == nil {
 		return false
-	} else if m.Deleted() || m.HasProvider(authn.ProviderNone) {
+	} else if m.IsDeleted() || m.HasProvider(authn.ProviderNone) {
 		return false
 	} else if !m.CanLogin && !m.SuperAdmin || m.ID <= 0 || m.UserName == "" {
 		return false
-	} else if role := m.AclRole(); m.Disabled() || role == acl.RoleUnknown {
+	} else if m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() {
 		return false
 	} else {
-		return acl.Resources.Allow(acl.ResourceConfig, role, acl.AccessOwn)
+		return acl.Resources.Allow(acl.ResourceConfig, m.AclRole(), acl.AccessOwn)
 	}
 }
 
 // CanUseWebDAV checks whether the user is allowed to use WebDAV to synchronize files.
 func (m *User) CanUseWebDAV() bool {
 	if m == nil {
+		// Abort check if user is nil for any reason.
 		return false
-	} else if m.Deleted() || m.HasProvider(authn.ProviderNone) {
-		return false
-	} else if role := m.AclRole(); m.Disabled() || !m.WebDAV || m.ID <= 0 || m.UserName == "" || role == acl.RoleUnknown {
+	} else if !m.WebDAV || m.ID <= 0 || m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() || m.HasProvider(authn.ProviderNone) {
+		// Deny WebDAV access if WebDAV is disabled, the user does not have a
+		// regular, registered account, or the account has been deactivated.
 		return false
 	} else {
-		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
+		// Check if the ACL allows downloading files via WebDAV based on the user role.
+		return acl.Resources.Allow(acl.ResourceWebDAV, m.AclRole(), acl.ActionDownload)
 	}
 }
 
 // CanUpload checks if the user is allowed to upload files.
 func (m *User) CanUpload() bool {
 	if m == nil {
+		// Abort check if user is nil for any reason.
 		return false
-	} else if m.Deleted() || m.HasProvider(authn.ProviderNone) {
-		return false
-	} else if role := m.AclRole(); m.Disabled() || role == acl.RoleUnknown {
+	} else if m.IsDisabled() || m.HasProvider(authn.ProviderNone) || m.IsUnknown() {
+		// Deny uploading if the user is unknown or the account has been deactivated.
 		return false
 	} else {
-		return acl.Resources.Allow(acl.ResourcePhotos, role, acl.ActionUpload)
+		// Check if the ACL allows uploading photos based on the user role.
+		return acl.Resources.Allow(acl.ResourcePhotos, m.AclRole(), acl.ActionUpload)
 	}
 }
 
@@ -630,8 +636,8 @@ func (m *User) SetRole(role string) *User {
 }
 
 // HasRole checks the user role specified as string.
-func (m *User) HasRole(role string) bool {
-	return m.AclRole().String() == acl.ValidRoles[clean.Role(role)].String()
+func (m *User) HasRole(role acl.Role) bool {
+	return m.AclRole() == role
 }
 
 // AclRole returns the user role for ACL permission checks.
@@ -686,13 +692,14 @@ func (m *User) Attr() string {
 	return clean.Attr(m.UserAttr)
 }
 
-// IsRegistered checks if the user is registered e.g. has a username.
+// IsRegistered checks if this user has a registered account with a valid ID, username, and role.
 func (m *User) IsRegistered() bool {
 	if m == nil {
 		return false
 	}
 
-	return m.UserName != "" && rnd.IsUID(m.UserUID, UserUID) && !m.IsVisitor()
+	// Registered users must have an ID, a UID, a username and a known role, except visitor.
+	return m.ID > 0 && m.UserName != "" && rnd.IsUID(m.UserUID, UserUID) && !m.IsVisitor()
 }
 
 // NotRegistered checks if the user is not registered with an own account.
@@ -743,7 +750,11 @@ func (m *User) HasSharedAccessOnly(resource acl.Resource) bool {
 
 // IsUnknown checks if the user is unknown.
 func (m *User) IsUnknown() bool {
-	return !rnd.IsUID(m.UserUID, UserUID) || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID
+	if m == nil {
+		return true
+	}
+
+	return !rnd.IsUID(m.UserUID, UserUID) || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID || m.HasRole(acl.RoleUnknown)
 }
 
 // DeleteSessions deletes all active user sessions except those passed as argument.
@@ -762,6 +773,10 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 		stmt = stmt.Where("user_uid = ? AND id NOT IN (?)", m.UserUID, omit)
 	}
 
+	// Exclude client access tokens.
+	stmt = stmt.Where("auth_provider NOT IN (?)", authn.ClientProviders)
+
+	// Fetch sessions from database.
 	sess := Sessions{}
 
 	if err := stmt.Find(&sess).Error; err != nil {
@@ -769,7 +784,7 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 		return 0
 	}
 
-	// This will also remove the session from the cache.
+	// Delete sessions from cache and database.
 	for _, s := range sess {
 		if err := s.Delete(); err != nil {
 			event.AuditWarn([]string{"user %s", "failed to invalidate session %s", "%s"}, m.RefID, clean.Log(s.RefID), err)
@@ -778,7 +793,7 @@ func (m *User) DeleteSessions(omit []string) (deleted int) {
 		}
 	}
 
-	// Return number of deleted sessions for logs.
+	// Return number of deleted sessions.
 	return deleted
 }
 
@@ -839,17 +854,19 @@ func (m *User) WrongPassword(s string) bool {
 
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
-	// Empty name?
-	if m.Username() == "" {
-		return errors.New("username must not be empty")
+	// Validate username.
+	if userName, nameErr := authn.Username(m.UserName); nameErr != nil {
+		return fmt.Errorf("username is %s", nameErr.Error())
+	} else {
+		m.UserName = userName
 	}
 
-	// Name too short?
+	// Check if username also meets the length requirements.
 	if len(m.Username()) < UsernameLength {
 		return fmt.Errorf("username must have at least %d characters", UsernameLength)
 	}
 
-	// Validate user role.
+	// Check user role.
 	if acl.ValidRoles[m.UserRole] == "" {
 		return fmt.Errorf("user role %s is invalid", clean.LogQuote(m.UserRole))
 	}

@@ -52,8 +52,47 @@ const (
 	SecMax   = 59
 )
 
-// DateTime parses a time string and returns a valid time.Time if possible.
-func DateTime(s, timeZone string) (t time.Time) {
+// IsTime tests if the string looks like a date and/or time.
+func IsTime(s string) bool {
+	if s == "" {
+		return false
+	} else if m := IsDateRegexp.FindString(s); m == s {
+		return true
+	} else if m := IsDateTimeRegexp.FindString(s); m == s {
+		return true
+	}
+
+	return false
+}
+
+// DateTime formats a time pointer as a human-readable datetime string.
+func DateTime(t *time.Time) string {
+	if t == nil {
+		return ""
+	} else if t.IsZero() {
+		return ""
+	}
+
+	return t.UTC().Format("2006-01-02 15:04:05")
+}
+
+// UnixTime formats a unix time as a human-readable datetime string.
+func UnixTime(t int64) string {
+	if t == 0 {
+		return ""
+	}
+
+	timeStamp := time.Unix(t, 0)
+
+	if timeStamp.IsZero() {
+		return ""
+	}
+
+	return timeStamp.UTC().Format("2006-01-02 15:04:05")
+}
+
+// ParseTime parses a time string and returns a valid time.Time if possible.
+func ParseTime(s, timeZone string) (t time.Time) {
 	defer func() {
 		if r := recover(); r != nil {
 			// Panic? Return unknown time.
@@ -154,17 +193,4 @@ func DateTime(s, timeZone string) (t time.Time) {
 	}
 
 	return t
-}
-
-// IsTime tests if the string looks like a date and/or time.
-func IsTime(s string) bool {
-	if s == "" {
-		return false
-	} else if m := IsDateRegexp.FindString(s); m == s {
-		return true
-	} else if m := IsDateTimeRegexp.FindString(s); m == s {
-		return true
-	}
-
-	return false
 }

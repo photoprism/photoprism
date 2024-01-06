@@ -273,7 +273,7 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 	takenAt := time.Time{}
 
 	for _, name := range exifDateTimeTags {
-		if dateTime := txt.DateTime(data.exif[name], data.TimeZone); !dateTime.IsZero() {
+		if dateTime := txt.ParseTime(data.exif[name], data.TimeZone); !dateTime.IsZero() {
 			takenAt = dateTime
 			break
 		}

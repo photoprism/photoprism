@@ -1,4 +1,4 @@
-# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -72,6 +72,8 @@ wait:
 	sleep 20
 wait-2:
 	sleep 20
+show-rev:
+	@git rev-parse HEAD
 show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
@@ -643,4 +645,3 @@ users:
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make
-.PHONY: all assets build cmd docker frontend internal pkg scripts storage photoprism install;

@@ -204,6 +204,9 @@ describe("model/marker", () => {
 
   it("should return batch size", () => {
     assert.equal(Marker.batchSize(), 48);
+    Marker.setBatchSize(30);
+    assert.equal(Marker.batchSize(), 30);
+    Marker.setBatchSize(48);
   });
 
   it("should get collection resource", () => {

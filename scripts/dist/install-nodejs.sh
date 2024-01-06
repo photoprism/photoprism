@@ -30,6 +30,6 @@ apt-get update && apt-get -qq install nodejs
 
 echo "Installing TestCafe..."
 npm config set cache ~/.cache/npm
-npm install --unsafe-perm=true --allow-root -g npm@latest testcafe@3.2.0
+npm install --unsafe-perm=true --allow-root -g npm@latest npm-check-updates@latest testcafe@3.4.0
 
 echo "Done."

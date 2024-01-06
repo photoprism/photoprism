@@ -66,7 +66,7 @@ func TestSessions(t *testing.T) {
 		}
 	})
 	t.Run("SearchAlice", func(t *testing.T) {
-		if results, err := Sessions(100, 0, "", "alice"); err != nil {
+		if results, err := Sessions(100, 0, "sess_expires DESC, user_name", "alice"); err != nil {
 			t.Fatal(err)
 		} else {
 			t.Logf("sessions: %#v", results)

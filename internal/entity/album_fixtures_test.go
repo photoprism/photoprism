@@ -9,7 +9,7 @@ import (
 func TestAlbumMap_Get(t *testing.T) {
 	t.Run("get existing album", func(t *testing.T) {
 		r := AlbumFixtures.Get("christmas2030")
-		assert.Equal(t, "at9lxuqxpogaaba7", r.AlbumUID)
+		assert.Equal(t, "as6sg6bxpogaaba7", r.AlbumUID)
 		assert.Equal(t, "christmas-2030", r.AlbumSlug)
 		assert.IsType(t, Album{}, r)
 	})
@@ -23,7 +23,7 @@ func TestAlbumMap_Get(t *testing.T) {
 func TestAlbumMap_Pointer(t *testing.T) {
 	t.Run("get existing album pointer", func(t *testing.T) {
 		r := AlbumFixtures.Pointer("christmas2030")
-		assert.Equal(t, "at9lxuqxpogaaba7", r.AlbumUID)
+		assert.Equal(t, "as6sg6bxpogaaba7", r.AlbumUID)
 		assert.Equal(t, "christmas-2030", r.AlbumSlug)
 		assert.IsType(t, &Album{}, r)
 	})

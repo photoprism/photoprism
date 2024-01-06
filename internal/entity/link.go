@@ -69,7 +69,7 @@ func NewUserLink(shareUid, userUid string) Link {
 	result := Link{
 		LinkUID:    rnd.GenerateUID(LinkUID),
 		ShareUID:   shareUid,
-		LinkToken:  rnd.GenerateToken(10),
+		LinkToken:  rnd.Base36(10),
 		CreatedBy:  userUid,
 		CreatedAt:  now,
 		ModifiedAt: now,

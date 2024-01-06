@@ -8,7 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/internal/server/header"
 )
 
 // AddCountHeader adds the actual result count to the response.
@@ -33,7 +33,7 @@ func AddDownloadHeader(c *gin.Context, fileName string) {
 
 // AddSessionHeader adds a session id header to the response.
 func AddSessionHeader(c *gin.Context, id string) {
-	c.Header(session.Header, id)
+	c.Header(header.SessionID, id)
 }
 
 // AddContentTypeHeader adds a content type header to the response.

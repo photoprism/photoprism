@@ -14,7 +14,7 @@ import (
 // UsersResetCommand configures the command name, flags, and action.
 var UsersResetCommand = cli.Command{
 	Name:  "reset",
-	Usage: "Resets the user database to a clean state",
+	Usage: "Removes all registered user accounts",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "trace, t",

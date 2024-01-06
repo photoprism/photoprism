@@ -25,7 +25,7 @@ func (m AlbumMap) Pointer(name string) *Album {
 var AlbumFixtures = AlbumMap{
 	"christmas2030": {
 		ID:               1000000,
-		AlbumUID:         "at9lxuqxpogaaba7",
+		AlbumUID:         "as6sg6bxpogaaba7",
 		AlbumSlug:        "christmas-2030",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -50,7 +50,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"holiday-2030": {
 		ID:               1000001,
-		AlbumUID:         "at9lxuqxpogaaba8",
+		AlbumUID:         "as6sg6bxpogaaba8",
 		AlbumSlug:        "holiday-2030",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -75,7 +75,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"berlin-2019": {
 		ID:               1000002,
-		AlbumUID:         "at9lxuqxpogaaba9",
+		AlbumUID:         "as6sg6bxpogaaba9",
 		AlbumSlug:        "berlin-2019",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -100,7 +100,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"april-1990": {
 		ID:               1000003,
-		AlbumUID:         "at1lxuqipogaaba1",
+		AlbumUID:         "as6sg6bipogaaba1",
 		AlbumSlug:        "april-1990",
 		AlbumPath:        "1990/04",
 		AlbumType:        AlbumFolder,
@@ -125,7 +125,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"import": {
 		ID:               1000004,
-		AlbumUID:         "at6axuzitogaaiax",
+		AlbumUID:         "as6sg6bitoga0004",
 		AlbumSlug:        "import",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -150,7 +150,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"emptyMoment": {
 		ID:               1000005,
-		AlbumUID:         "at7axuzitogaaiax",
+		AlbumUID:         "as6sg6bitoga0005",
 		AlbumSlug:        "empty-moment",
 		AlbumPath:        "",
 		AlbumType:        AlbumMoment,
@@ -175,7 +175,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"2016-04": {
 		ID:               1000006,
-		AlbumUID:         "at1lxuqipogaabj8",
+		AlbumUID:         "as6sg6bipogaabj8",
 		AlbumSlug:        "2016-04",
 		AlbumPath:        "2016/04",
 		AlbumType:        AlbumFolder,
@@ -199,7 +199,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"september-2021": {
 		ID:               1000007,
-		AlbumUID:         "at1lxuqipogaabj9",
+		AlbumUID:         "as6sg6bipogaabj9",
 		AlbumSlug:        "september-2021",
 		AlbumPath:        "",
 		AlbumType:        AlbumMonth,
@@ -223,7 +223,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"california-usa": {
 		ID:               1000008,
-		AlbumUID:         "at1lxuqipogaab11",
+		AlbumUID:         "as6sg6bipogaab11",
 		AlbumSlug:        "california-usa",
 		AlbumPath:        "",
 		AlbumType:        AlbumState,
@@ -247,7 +247,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"california-duplicate-1": {
 		ID:               1000009,
-		AlbumUID:         "at1lxuqipotaab12",
+		AlbumUID:         "as6sg6bipotaab12",
 		AlbumSlug:        "california-usa",
 		AlbumPath:        "",
 		AlbumType:        AlbumState,
@@ -271,7 +271,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"california-duplicate-2": {
 		ID:               1000010,
-		AlbumUID:         "at1lxuqipotaab19",
+		AlbumUID:         "as6sg6bipotaab19",
 		AlbumSlug:        "california",
 		AlbumPath:        "",
 		AlbumType:        AlbumState,
@@ -295,7 +295,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"&ilikefood": {
 		ID:               1000011,
-		AlbumUID:         "at1lxuqipotaab19",
+		AlbumUID:         "as6sg6bipotaab19",
 		AlbumSlug:        "&ilikefood",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -320,7 +320,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"i-love-%-dog": {
 		ID:               1000012,
-		AlbumUID:         "at1lxuqipotaab20",
+		AlbumUID:         "as6sg6bipotaab20",
 		AlbumSlug:        "i-love-%-dog",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -345,7 +345,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"%gold": {
 		ID:               1000013,
-		AlbumUID:         "at1lxuqipotaab21",
+		AlbumUID:         "as6sg6bipotaab21",
 		AlbumSlug:        "%gold",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -370,7 +370,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"sale%": {
 		ID:               1000014,
-		AlbumUID:         "at1lxuqipotaab22",
+		AlbumUID:         "as6sg6bipotaab22",
 		AlbumSlug:        "sale%",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -395,7 +395,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"pets&dogs": {
 		ID:               1000015,
-		AlbumUID:         "at1lxuqipotaab23",
+		AlbumUID:         "as6sg6bipotaab23",
 		AlbumSlug:        "pest&dogs",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -420,7 +420,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"light&": {
 		ID:               1000016,
-		AlbumUID:         "at1lxuqipotaab24",
+		AlbumUID:         "as6sg6bipotaab24",
 		AlbumSlug:        "light&",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -445,7 +445,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"'family": {
 		ID:               1000017,
-		AlbumUID:         "at1lxuqipotaab25",
+		AlbumUID:         "as6sg6bipotaab25",
 		AlbumSlug:        "'family",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -470,7 +470,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"father's-day": {
 		ID:               1000018,
-		AlbumUID:         "at1lxuqipotaab26",
+		AlbumUID:         "as6sg6bipotaab26",
 		AlbumSlug:        "father's-day",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -495,7 +495,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"ice-cream'": {
 		ID:               1000019,
-		AlbumUID:         "at1lxuqipotaab27",
+		AlbumUID:         "as6sg6bipotaab27",
 		AlbumSlug:        "ice-cream'",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -520,7 +520,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"*forrest": {
 		ID:               1000020,
-		AlbumUID:         "at1lxuqipotaab28",
+		AlbumUID:         "as6sg6bipotaab28",
 		AlbumSlug:        "*forrest",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -545,7 +545,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"my*kids": {
 		ID:               1000021,
-		AlbumUID:         "at1lxuqipotaab29",
+		AlbumUID:         "as6sg6bipotaab29",
 		AlbumSlug:        "my*kids",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -570,7 +570,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"yoga***": {
 		ID:               1000022,
-		AlbumUID:         "at1lxuqipotaab30",
+		AlbumUID:         "as6sg6bipotaab30",
 		AlbumSlug:        "yoga***",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -595,7 +595,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"|banana": {
 		ID:               1000023,
-		AlbumUID:         "at1lxuqipotaab31",
+		AlbumUID:         "as6sg6bipotaab31",
 		AlbumSlug:        "|banana",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -620,7 +620,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"blue|": {
 		ID:               1000024,
-		AlbumUID:         "at1lxuqipotaab33",
+		AlbumUID:         "as6sg6bipotaab33",
 		AlbumSlug:        "blue|",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -645,7 +645,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"345-shirt": {
 		ID:               1000025,
-		AlbumUID:         "at1lxuqipotaab34",
+		AlbumUID:         "as6sg6bipotaab34",
 		AlbumSlug:        "345-shirt",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -670,7 +670,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"color-555-blue": {
 		ID:               1000026,
-		AlbumUID:         "at1lxuqipotaab35",
+		AlbumUID:         "as6sg6bipotaab35",
 		AlbumSlug:        "color-555-blue",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -695,7 +695,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"route-66": {
 		ID:               1000027,
-		AlbumUID:         "at1lxuqipotaab36",
+		AlbumUID:         "as6sg6bipotaab36",
 		AlbumSlug:        "route-66",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,
@@ -720,7 +720,7 @@ var AlbumFixtures = AlbumMap{
 	},
 	"red|green": {
 		ID:               1000028,
-		AlbumUID:         "at1lxuqipotaab32",
+		AlbumUID:         "as6sg6bipotaab32",
 		AlbumSlug:        "red|green",
 		AlbumPath:        "",
 		AlbumType:        AlbumManual,

@@ -34,7 +34,7 @@ func TestSessions(t *testing.T) {
 		}
 	})
 	t.Run("SearchAlice", func(t *testing.T) {
-		if results, err := Sessions(form.SearchSessions{Count: 100, Query: "alice"}); err != nil {
+		if results, err := Sessions(form.SearchSessions{Count: 100, Query: "alice", Order: "sess_expires DESC, user_name"}); err != nil {
 			t.Fatal(err)
 		} else {
 			t.Logf("sessions: %#v", results)

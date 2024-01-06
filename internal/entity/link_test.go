@@ -8,8 +8,8 @@ import (
 )
 
 func TestNewLink(t *testing.T) {
-	link := NewLink("st9lxuqxpogaaba1", true, false)
-	assert.Equal(t, "st9lxuqxpogaaba1", link.ShareUID)
+	link := NewLink("ss6sg6bxpogaaba1", true, false)
+	assert.Equal(t, "ss6sg6bxpogaaba1", link.ShareUID)
 	assert.Equal(t, 10, len(link.LinkToken))
 	assert.Equal(t, 16, len(link.LinkUID))
 }
@@ -17,7 +17,7 @@ func TestNewLink(t *testing.T) {
 func TestLink_Expired(t *testing.T) {
 	const oneDay = 60 * 60 * 24
 
-	link := NewLink("st9lxuqxpogaaba1", true, false)
+	link := NewLink("ss6sg6bxpogaaba1", true, false)
 
 	link.ModifiedAt = TimeStamp().Add(-7 * Day)
 	link.LinkExpires = 0
@@ -110,12 +110,12 @@ func TestLink_Save(t *testing.T) {
 		assert.Error(t, link.Save())
 	})
 	t.Run("empty token", func(t *testing.T) {
-		link := Link{ShareUID: "lpfjfjhffgtredft", LinkToken: ""}
+		link := Link{ShareUID: "ls6sg6bffgtredft", LinkToken: ""}
 
 		assert.Error(t, link.Save())
 	})
 	t.Run("success", func(t *testing.T) {
-		link := NewLink("lhfjfjhffgtredft", false, false)
+		link := NewLink("ls6sg6bffgtredft", false, false)
 
 		err := link.Save()
 
@@ -127,7 +127,7 @@ func TestLink_Save(t *testing.T) {
 
 func TestLink_Delete(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		link := NewLink("lhfjfjhffgtreoft", false, false)
+		link := NewLink("ls6sg6bffgtreoft", false, false)
 
 		err := link.Delete()
 
@@ -137,14 +137,14 @@ func TestLink_Delete(t *testing.T) {
 
 	})
 	t.Run("empty token", func(t *testing.T) {
-		link := Link{ShareUID: "lpfjpjhffgtredft", LinkToken: ""}
+		link := Link{ShareUID: "ls6sg6bffgtredft", LinkToken: ""}
 		assert.Error(t, link.Delete())
 	})
 }
 
 func TestFindLink(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		m := NewLink("lhfjfjhffgtrjoft", false, false)
+		m := NewLink("ls6sg6bffgtrjoft", false, false)
 
 		link := &m
 
@@ -167,7 +167,7 @@ func TestFindLink(t *testing.T) {
 func TestFindLinks(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		r := FindLinks("1jxf3jfn2k", "")
-		assert.Equal(t, "at9lxuqxpogaaba8", r[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
 	})
 	t.Run("not found", func(t *testing.T) {
 		r := FindLinks("", "")
@@ -182,7 +182,7 @@ func TestFindLinks(t *testing.T) {
 func TestFindValidLinksLinks(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		r := FindValidLinks("1jxf3jfn2k", "")
-		assert.Equal(t, "at9lxuqxpogaaba8", r[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
 	})
 }
 

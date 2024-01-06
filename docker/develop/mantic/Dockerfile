@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 23.10 (Mantic Minotaur)
 FROM ubuntu:mantic
 
-# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/

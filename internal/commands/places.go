@@ -13,8 +13,8 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 )
 
-// PlacesCommand configures the command name, flags, and action.
-var PlacesCommand = cli.Command{
+// PlacesCommands configures the command name, flags, and action.
+var PlacesCommands = cli.Command{
 	Name:  "places",
 	Usage: "Maps and location details subcommands",
 	Subcommands: []cli.Command{

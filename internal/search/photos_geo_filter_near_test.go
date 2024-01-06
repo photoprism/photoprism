@@ -9,10 +9,10 @@ import (
 )
 
 func TestPhotosGeoFilterNear(t *testing.T) {
-	t.Run("pt9jtdre2lvl0y24", func(t *testing.T) {
+	t.Run("ps6sg6be2lvl0y24", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
-		f.Near = "pt9jtdre2lvl0y24"
+		f.Near = "ps6sg6be2lvl0y24"
 
 		photos, err := PhotosGeo(f)
 
@@ -21,10 +21,10 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 8)
 	})
-	t.Run("pr2xu7myk7wrbk30", func(t *testing.T) {
+	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
-		f.Near = "pr2xu7myk7wrbk30"
+		f.Near = "ps6sg6byk7wrbk30"
 
 		photos, err := PhotosGeo(f)
 
@@ -248,10 +248,10 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 }
 
 func TestPhotosGeoQueryNear(t *testing.T) {
-	t.Run("pt9jtdre2lvl0y24", func(t *testing.T) {
+	t.Run("ps6sg6be2lvl0y24", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
-		f.Query = "near:pt9jtdre2lvl0y24"
+		f.Query = "near:ps6sg6be2lvl0y24"
 
 		photos, err := PhotosGeo(f)
 
@@ -261,10 +261,10 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 
 		assert.Equal(t, len(photos), 8)
 	})
-	t.Run("pr2xu7myk7wrbk30", func(t *testing.T) {
+	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
-		f.Query = "near:pr2xu7myk7wrbk30"
+		f.Query = "near:ps6sg6byk7wrbk30"
 
 		photos, err := PhotosGeo(f)
 
@@ -274,10 +274,10 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		assert.Equal(t, len(photos), 26)
 	})
 	//TODO error
-	/*t.Run("pt9jtdre2lvl0y24 pipe pr2xu7myk7wrbk30", func(t *testing.T) {
+	/*t.Run("ps6sg6be2lvl0y24 pipe ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
 
-		f.Query = "near:pt9jtdre2lvl0y24|pr2xu7myk7wrbk30"
+		f.Query = "near:ps6sg6be2lvl0y24|ps6sg6byk7wrbk30"
 
 		photos, err := PhotosGeo(f)
 

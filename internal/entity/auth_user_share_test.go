@@ -11,16 +11,16 @@ import (
 
 func TestUserShares_Contains(t *testing.T) {
 	t.Run("False", func(t *testing.T) {
-		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "at9lxuqxpogaaba9"}}
-		assert.False(t, m.Contains("at9lxuqxpogaaxxx"))
+		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "as6sg6bxpogaaba9"}}
+		assert.False(t, m.Contains("as6sg6bxpogaaxxx"))
 	})
 	t.Run("True", func(t *testing.T) {
-		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "at9lxuqxpogaaba9"}}
-		assert.True(t, m.Contains("at9lxuqxpogaaba9"))
+		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "as6sg6bxpogaaba9"}}
+		assert.True(t, m.Contains("as6sg6bxpogaaba9"))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		m := UserShares{}
-		assert.False(t, m.Contains("at9lxuqxpogaaxxx"))
+		assert.False(t, m.Contains("as6sg6bxpogaaxxx"))
 	})
 }
 
@@ -52,7 +52,7 @@ func TestPerm(t *testing.T) {
 
 func TestFindUserShare(t *testing.T) {
 	t.Run("AliceAlbum", func(t *testing.T) {
-		m := FindUserShare(UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "at9lxuqxpogaaba9"})
+		m := FindUserShare(UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "as6sg6bxpogaaba9"})
 
 		expected := UserShareFixtures.Get("AliceAlbum")
 
@@ -114,15 +114,15 @@ func TestUserShare_Create(t *testing.T) {
 func TestUserShare_UpdateLink(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := UserShare{
-			ShareUID: "at9lxuqxpogaaba9",
+			ShareUID: "as6sg6bxpogaaba9",
 		}
 
 		assert.Equal(t, "", m.LinkUID)
 		assert.Equal(t, "", m.Comment)
 
 		l := Link{
-			LinkUID:  "sqn2xpryd1ob8xxx",
-			ShareUID: "at9lxuqxpogaaba9",
+			LinkUID:  "ss62xpryd1ob8xxx",
+			ShareUID: "as6sg6bxpogaaba9",
 			Comment:  "Wedding",
 		}
 		err := m.UpdateLink(l)
@@ -131,20 +131,20 @@ func TestUserShare_UpdateLink(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "sqn2xpryd1ob8xxx", m.LinkUID)
+		assert.Equal(t, "ss62xpryd1ob8xxx", m.LinkUID)
 		assert.Equal(t, "Wedding", m.Comment)
 	})
 	t.Run("UID mismatch", func(t *testing.T) {
 		m := UserShare{
-			ShareUID: "at9lxuqxpogaaba9",
+			ShareUID: "as6sg6bxpogaaba9",
 		}
 
 		assert.Equal(t, "", m.LinkUID)
 		assert.Equal(t, "", m.Comment)
 
 		l := Link{
-			LinkUID:  "sqn2xpryd1ob8xxx",
-			ShareUID: "at9lxuqxpogaaba8",
+			LinkUID:  "ss62xpryd1ob8xxx",
+			ShareUID: "as6sg6bxpogaaba8",
 			Comment:  "Wedding",
 		}
 		err := m.UpdateLink(l)

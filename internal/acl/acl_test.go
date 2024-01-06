@@ -25,6 +25,12 @@ func TestACL_Allow(t *testing.T) {
 	t.Run("ResourceAlbumsRoleVisitorActionDefault", func(t *testing.T) {
 		assert.False(t, Resources.Allow(ResourceAlbums, RoleVisitor, FullAccess))
 	})
+	t.Run("WrongResourceRoleAdminActionDefault", func(t *testing.T) {
+		assert.True(t, Resources.Allow("wrong", RoleAdmin, FullAccess))
+	})
+	t.Run("WrongResourceRoleVisitorActionDefault", func(t *testing.T) {
+		assert.False(t, Resources.Allow("wrong", RoleVisitor, FullAccess))
+	})
 }
 
 func TestACL_AllowAny(t *testing.T) {
@@ -103,5 +109,14 @@ func TestACL_Deny(t *testing.T) {
 	})
 	t.Run("ResourceAlbumsRoleVisitorActionDefault", func(t *testing.T) {
 		assert.True(t, Resources.Deny(ResourceAlbums, RoleVisitor, FullAccess))
+	})
+}
+
+func TestACL_DenyAll(t *testing.T) {
+	t.Run("ResourceFilesRoleVisitorActionDefault", func(t *testing.T) {
+		assert.True(t, Resources.DenyAll(ResourceFiles, RoleVisitor, Permissions{FullAccess, AccessShared, ActionView}))
+	})
+	t.Run("ResourceFilesRoleAdminActionDefault", func(t *testing.T) {
+		assert.False(t, Resources.DenyAll(ResourceFiles, RoleAdmin, Permissions{FullAccess, AccessShared, ActionView}))
 	})
 }

@@ -10,13 +10,13 @@ import (
 )
 
 func TestPhotoSelection(t *testing.T) {
-	albums := form.Selection{Albums: []string{"at9lxuqxpogaaba9", "at6axuzitogaaiax", "at9lxuqxpogaaba8", "at9lxuqxpogaaba7"}}
+	albums := form.Selection{Albums: []string{"as6sg6bxpogaaba9", "as6sg6bitoga0004", "as6sg6bxpogaaba8", "as6sg6bxpogaaba7"}}
 
-	months := form.Selection{Albums: []string{"at1lxuqipogaabj9"}}
+	months := form.Selection{Albums: []string{"as6sg6bipogaabj9"}}
 
-	folders := form.Selection{Albums: []string{"at1lxuqipogaaba1", "at1lxuqipogaabj8"}}
+	folders := form.Selection{Albums: []string{"as6sg6bipogaaba1", "as6sg6bipogaabj8"}}
 
-	states := form.Selection{Albums: []string{"at1lxuqipogaab11", "at1lxuqipotaab12", "at1lxuqipotaab19"}}
+	states := form.Selection{Albums: []string{"as6sg6bipogaab11", "as6sg6bipotaab12", "as6sg6bipotaab19"}}
 
 	t.Run("no items selected", func(t *testing.T) {
 		f := form.Selection{
@@ -30,7 +30,7 @@ func TestPhotoSelection(t *testing.T) {
 	})
 	t.Run("photos selected", func(t *testing.T) {
 		f := form.Selection{
-			Photos: []string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"},
+			Photos: []string{"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8"},
 		}
 
 		r, err := SelectedPhotos(f)

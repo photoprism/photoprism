@@ -85,7 +85,7 @@ func TestManuallyAddedFaces(t *testing.T) {
 }
 
 func TestMatchFaceMarkers(t *testing.T) {
-	const faceFixtureId = "mt9k3pw1wowuy444"
+	const faceFixtureId = "ms6sg6b1wowuy444"
 
 	if m, err := MarkerByUID(faceFixtureId); err != nil {
 		t.Fatal(err)
@@ -98,7 +98,7 @@ func TestMatchFaceMarkers(t *testing.T) {
 	// Reset subj_uid.
 	if err := Db().Model(&entity.Marker{}).
 		Where("subj_src = ?", entity.SrcAuto).
-		Where("subj_uid = ?", "jqu0xs11qekk9jx8").
+		Where("subj_uid = ?", "js6sg6b1qekk9jx8").
 		UpdateColumn("subj_uid", "").Error; err != nil {
 		t.Fatal(err)
 	}
@@ -116,7 +116,7 @@ func TestMatchFaceMarkers(t *testing.T) {
 	} else if m == nil {
 		t.Fatal("marker is nil")
 	} else {
-		assert.Equal(t, "jqu0xs11qekk9jx8", m.SubjUID)
+		assert.Equal(t, "js6sg6b1qekk9jx8", m.SubjUID)
 	}
 }
 

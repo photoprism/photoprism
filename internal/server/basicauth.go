@@ -1,13 +1,9 @@
 package server
 
 import (
-	"crypto/sha1"
-	"encoding/base64"
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 
@@ -24,63 +20,68 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Authentication cache with an expiration time of 5 minutes.
+// To improve performance, we use a basic auth cache
+// with an expiration time of about 5 minutes.
 var basicAuthExpiration = 5 * time.Minute
 var basicAuthCache = gc.New(basicAuthExpiration, basicAuthExpiration)
 var basicAuthMutex = sync.Mutex{}
 var BasicAuthRealm = "Basic realm=\"WebDAV Authorization Required\""
 
-// GetAuthUser returns the authenticated user if found, nil otherwise.
-func GetAuthUser(key string) *entity.User {
-	user, valid := basicAuthCache.Get(key)
+// WebDAVAuth checks authentication and authentication
+// before WebDAV requests are processed.
+func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
+	// Helper function that extracts the login information from the request headers.
+	var basicAuth = func(c *gin.Context) (username, password, cacheKey string, authorized bool) {
+		// Extract credentials from the HTTP request headers.
+		username, password, cacheKey = api.BasicAuth(c)
 
-	if valid && user != nil {
-		return user.(*entity.User)
-	}
-
-	return nil
-}
-
-// BasicAuth implements an HTTP request handler that adds basic authentication.
-func BasicAuth(conf *config.Config) gin.HandlerFunc {
-	var validate = func(c *gin.Context) (name, password, key string, valid bool) {
-		name, password, key = GetCredentials(c)
-
-		if name == "" || password == "" {
-			return name, password, "", false
+		// Fail if the username or password is empty, as
+		// this is not allowed under any circumstances.
+		if username == "" || password == "" || cacheKey == "" {
+			return "", "", "", false
 		}
 
-		key = fmt.Sprintf("%x", sha1.Sum([]byte(key)))
-
-		if user := GetAuthUser(key); user != nil {
-			c.Set(gin.AuthUserKey, user)
-			return name, password, key, true
+		// To improve performance, check the cache for already authorized users.
+		if user, found := basicAuthCache.Get(cacheKey); found && user != nil {
+			// Add cached user information to the request context.
+			c.Set(gin.AuthUserKey, user.(*entity.User))
+			// Credentials have already been authorized within the configured
+			// expiration time of the basic auth cache (about 5 minutes).
+			return username, password, cacheKey, true
+		} else {
+			// Credentials found, but not pre-authorized. If successful, the
+			// authorization will be cached for the next request.
+			return username, password, cacheKey, false
 		}
-
-		return name, password, key, false
 	}
 
+	// Authentication handler that is called before WebDAV requests are processed.
 	return func(c *gin.Context) {
 		if c == nil {
 			return
 		}
 
-		name, password, key, ok := validate(c)
+		// Get basic authentication credentials.
+		username, password, cacheKey, authorized := basicAuth(c)
 
-		if ok {
-			// Already authenticated.
+		// Allow requests from already authorized users to be processed.
+		if authorized {
 			return
-		} else if key == "" {
-			// Incomplete credentials.
+		}
+
+		// Re-request authentication if credentials are missing or incomplete.
+		if cacheKey == "" {
 			c.Header("WWW-Authenticate", BasicAuthRealm)
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
 
-		// Get client IP address.
+		// Get the client IP address from the request headers
+		// for use in logs and to enforce request rate limits.
 		clientIp := api.ClientIP(c)
 
-		// Check limit for failed auth requests (max. 10 per minute).
+		// Check the authentication request rate to block the client after
+		// too many failed attempts (10/req per minute by default).
 		if limiter.Login.Reject(clientIp) {
 			limiter.Abort(c)
 			return
@@ -91,7 +92,7 @@ func BasicAuth(conf *config.Config) gin.HandlerFunc {
 
 		// User credentials.
 		f := form.Login{
-			UserName: name,
+			UserName: username,
 			Password: password,
 		}
 
@@ -99,31 +100,31 @@ func BasicAuth(conf *config.Config) gin.HandlerFunc {
 		if user, _, err := entity.Auth(f, nil, c); err != nil {
 			message := err.Error()
 			limiter.Login.Reserve(clientIp)
-			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
+			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
+			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if user == nil {
 			message := "account not found"
 			limiter.Login.Reserve(clientIp)
-			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
+			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
+			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if !user.CanUseWebDAV() {
 			// Sync disabled for this account.
 			message := "sync disabled"
 
-			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
+			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
+			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if err = os.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath()), fs.ModeDir); err != nil {
 			message := "failed to create user upload path"
 
-			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(name))
-			event.LoginError(clientIp, "webdav", name, api.UserAgent(c), message)
+			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
+			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else {
 			// Successfully authenticated.
-			event.AuditInfo([]string{clientIp, "webdav login as %s", "succeeded"}, clean.LogQuote(name))
-			event.LoginInfo(clientIp, "webdav", name, api.UserAgent(c))
+			event.AuditInfo([]string{clientIp, "webdav login as %s", "succeeded"}, clean.LogQuote(username))
+			event.LoginInfo(clientIp, "webdav", username, api.UserAgent(c))
 
 			// Cache successful authentication.
-			basicAuthCache.SetDefault(key, user)
+			basicAuthCache.SetDefault(cacheKey, user)
 			c.Set(gin.AuthUserKey, user)
 			return
 		}
@@ -132,29 +133,4 @@ func BasicAuth(conf *config.Config) gin.HandlerFunc {
 		c.Header("WWW-Authenticate", BasicAuthRealm)
 		c.AbortWithStatus(http.StatusUnauthorized)
 	}
-}
-
-// GetCredentials parses the "Authorization" header into username and password.
-func GetCredentials(c *gin.Context) (name, password, raw string) {
-	data := c.GetHeader("Authorization")
-
-	if !strings.HasPrefix(data, "Basic ") {
-		return "", "", data
-	}
-
-	data = strings.TrimPrefix(data, "Basic ")
-
-	auth, err := base64.StdEncoding.DecodeString(data)
-
-	if err != nil {
-		return "", "", data
-	}
-
-	credentials := strings.SplitN(string(auth), ":", 2)
-
-	if len(credentials) != 2 {
-		return "", "", data
-	}
-
-	return credentials[0], credentials[1], data
 }

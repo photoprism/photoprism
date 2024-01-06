@@ -9,10 +9,10 @@ import (
 )
 
 func TestPhotosFilterUid(t *testing.T) {
-	t.Run("pt9jtdre2lvl0yh0", func(t *testing.T) {
+	t.Run("ps6sg6be2lvl0yh0", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.UID = "pt9jtdre2lvl0yh0"
+		f.UID = "ps6sg6be2lvl0yh0"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -22,10 +22,10 @@ func TestPhotosFilterUid(t *testing.T) {
 		}
 		assert.Equal(t, len(photos), 1)
 	})
-	t.Run("pt9jtdre2lvl0yh*", func(t *testing.T) {
+	t.Run("ps6sg6be2lvl0yh*", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.UID = "pt9jtdre2lvl0yh*"
+		f.UID = "ps6sg6be2lvl0yh*"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -237,7 +237,7 @@ func TestPhotosQueryUid(t *testing.T) {
 	t.Run("PhotoUID", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "uid:pt9jtdre2lvl0yh0"
+		f.Query = "uid:ps6sg6be2lvl0yh0"
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -251,7 +251,7 @@ func TestPhotosQueryUid(t *testing.T) {
 	t.Run("QuotedPhotoUID", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "uid:\"pt9jtdre2lvl0yh0\""
+		f.Query = "uid:\"ps6sg6be2lvl0yh0\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)
@@ -262,10 +262,10 @@ func TestPhotosQueryUid(t *testing.T) {
 
 		assert.Equal(t, len(photos), 1)
 	})
-	t.Run("pt9jtdre2lvl0yh*", func(t *testing.T) {
+	t.Run("ps6sg6be2lvl0yh*", func(t *testing.T) {
 		var f form.SearchPhotos
 
-		f.Query = "uid:\"pt9jtdre2lvl0yh*\""
+		f.Query = "uid:\"ps6sg6be2lvl0yh*\""
 		f.Merged = true
 
 		photos, _, err := Photos(f)

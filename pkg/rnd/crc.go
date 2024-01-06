@@ -10,9 +10,9 @@ import (
 func CrcToken() string {
 	token := make([]byte, 0, 14)
 
-	token = append(token, []byte(GenerateToken(4))...)
+	token = append(token, []byte(Base36(4))...)
 	token = append(token, '-')
-	token = append(token, []byte(GenerateToken(4))...)
+	token = append(token, []byte(Base36(4))...)
 
 	checksum := crc32.ChecksumIEEE(token)
 

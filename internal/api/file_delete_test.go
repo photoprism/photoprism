@@ -21,7 +21,7 @@ func TestDeleteFile(t *testing.T) {
 
 		DeleteFile(router)
 
-		r := PerformRequest(app, "DELETE", "/api/v1/photos/pt9jtdre2lvl0yh7/files/ft8es39w45bnlqdw")
+		r := PerformRequest(app, "DELETE", "/api/v1/photos/ps6sg6be2lvl0yh7/files/fs6sg6bw45bnlqdw")
 		assert.Equal(t, http.StatusInternalServerError, r.Code)
 	})
 	t.Run("try to delete file", func(t *testing.T) {
@@ -29,7 +29,7 @@ func TestDeleteFile(t *testing.T) {
 
 		DeleteFile(router)
 
-		r := PerformRequest(app, "DELETE", "/api/v1/photos/pt9jtdre2lvl0yh8/files/ft9es39w45bnlqdw")
+		r := PerformRequest(app, "DELETE", "/api/v1/photos/ps6sg6be2lvl0yh8/files/fs6sg6bw45bn0001")
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

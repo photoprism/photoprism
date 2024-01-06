@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -80,7 +80,7 @@ module.exports = (config) => {
 
     coverageIstanbulReporter: {
       // reports can be any that are listed here: https://github.com/istanbuljs/istanbuljs/tree/aae256fb8b9a3d19414dcf069c592e88712c32c6/packages/istanbul-reports/lib
-      reports: ["lcovonly", "text-summary"],
+      reports: ["lcov", "text-summary"],
 
       // base output directory. If you include %browser% in the path it will be replaced with the karma browser name
       dir: path.join(__dirname, "coverage"),

@@ -157,13 +157,13 @@ func TestAlbum_SaveForm(t *testing.T) {
 
 func TestAddPhotoToAlbums(t *testing.T) {
 	t.Run("success one album", func(t *testing.T) {
-		err := AddPhotoToAlbums("pt9jtxrexxvl0yh0", []string{"at6axuzitogaaiax"})
+		err := AddPhotoToAlbums("ps6sg6bexxvl0yh0", []string{"as6sg6bitoga0004"})
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		a := Album{AlbumUID: "at6axuzitogaaiax"}
+		a := Album{AlbumUID: "as6sg6bitoga0004"}
 
 		if found := a.Find(); found == nil {
 			t.Fatal("should find album")
@@ -171,7 +171,7 @@ func TestAddPhotoToAlbums(t *testing.T) {
 
 		var entries PhotoAlbums
 
-		if err = Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
+		if err = Db().Where("album_uid = ? AND photo_uid = ?", "as6sg6bitoga0004", "ps6sg6bexxvl0yh0").Find(&entries).Error; err != nil {
 			t.Fatal(err)
 		}
 
@@ -180,7 +180,7 @@ func TestAddPhotoToAlbums(t *testing.T) {
 		}
 
 		var album Album
-		if err = Db().Where("album_uid = ?", "at6axuzitogaaiax").Find(
+		if err = Db().Where("album_uid = ?", "as6sg6bitoga0004").Find(
 			&album,
 		).Error; err != nil {
 			t.Fatal(err)
@@ -198,7 +198,7 @@ func TestAddPhotoToAlbums(t *testing.T) {
 	)
 
 	t.Run("empty photo", func(t *testing.T) {
-		err := AddPhotoToAlbums("", []string{"at6axuzitogaaiax"})
+		err := AddPhotoToAlbums("", []string{"as6sg6bitoga0004"})
 
 		if err != nil {
 			t.Fatal(err)
@@ -206,17 +206,17 @@ func TestAddPhotoToAlbums(t *testing.T) {
 	})
 
 	t.Run("invalid photo uid", func(t *testing.T) {
-		assert.Error(t, AddPhotoToAlbums("xxx", []string{"at6axuzitogaaiax"}))
+		assert.Error(t, AddPhotoToAlbums("xxx", []string{"as6sg6bitoga0004"}))
 	})
 
 	t.Run("success two album", func(t *testing.T) {
-		err := AddPhotoToAlbums("pt9jtxrexxvl0yh0", []string{"at6axuzitogaaiax", ""})
+		err := AddPhotoToAlbums("ps6sg6bexxvl0yh0", []string{"as6sg6bitoga0004", ""})
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		a := Album{AlbumUID: "at6axuzitogaaiax"}
+		a := Album{AlbumUID: "as6sg6bitoga0004"}
 
 		if found := a.Find(); found == nil {
 			t.Fatal("should find album")
@@ -224,7 +224,7 @@ func TestAddPhotoToAlbums(t *testing.T) {
 
 		var entries PhotoAlbums
 
-		if err = Db().Where("album_uid = ? AND photo_uid = ?", "at6axuzitogaaiax", "pt9jtxrexxvl0yh0").Find(&entries).Error; err != nil {
+		if err = Db().Where("album_uid = ? AND photo_uid = ?", "as6sg6bitoga0004", "ps6sg6bexxvl0yh0").Find(&entries).Error; err != nil {
 			t.Fatal(err)
 		}
 
@@ -233,7 +233,7 @@ func TestAddPhotoToAlbums(t *testing.T) {
 		}
 
 		var album Album
-		if err = Db().Where("album_uid = ?", "at6axuzitogaaiax").Find(
+		if err = Db().Where("album_uid = ?", "as6sg6bitoga0004").Find(
 			&album,
 		).Error; err != nil {
 			t.Fatal(err)
@@ -513,19 +513,19 @@ func TestAlbum_AddPhotos(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		album := Album{
 			ID:         1000000,
-			AlbumUID:   "at9lxuqxpogaaba7",
+			AlbumUID:   "as6sg6bxpogaaba7",
 			AlbumSlug:  "test-slug",
 			AlbumType:  AlbumManual,
 			AlbumTitle: "Test Title",
 		}
-		added := album.AddPhotos([]string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"})
+		added := album.AddPhotos([]string{"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8"})
 
 		var entries PhotoAlbums
 
 		if err := Db().Where(
-			"album_uid = ? AND photo_uid in (?)", "at9lxuqxpogaaba7",
+			"album_uid = ? AND photo_uid in (?)", "as6sg6bxpogaaba7",
 			[]string{
-				"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8",
+				"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8",
 			},
 		).Find(&entries).Error; err != nil {
 			t.Fatal(err)
@@ -536,7 +536,7 @@ func TestAlbum_AddPhotos(t *testing.T) {
 		}
 
 		var a Album
-		if err := Db().Where("album_uid = ?", "at9lxuqxpogaaba7").Find(
+		if err := Db().Where("album_uid = ?", "as6sg6bxpogaaba7").Find(
 			&a,
 		).Error; err != nil {
 			t.Fatal(err)
@@ -564,19 +564,19 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		album := Album{
 			ID:         1000000,
-			AlbumUID:   "at9lxuqxpogaaba7",
+			AlbumUID:   "as6sg6bxpogaaba7",
 			AlbumSlug:  "test-slug",
 			AlbumType:  AlbumManual,
 			AlbumTitle: "Test Title",
 		}
-		removed := album.RemovePhotos([]string{"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8"})
+		removed := album.RemovePhotos([]string{"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8"})
 
 		var entries PhotoAlbums
 
 		if err := Db().Where(
-			"album_uid = ? AND photo_uid in (?)", "at9lxuqxpogaaba7",
+			"album_uid = ? AND photo_uid in (?)", "as6sg6bxpogaaba7",
 			[]string{
-				"pt9jtdre2lvl0yh7", "pt9jtdre2lvl0yh8",
+				"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8",
 			},
 		).Find(&entries).Error; err != nil {
 			t.Fatal(err)
@@ -587,7 +587,7 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 		}
 
 		var a Album
-		if err := Db().Where("album_uid = ?", "at9lxuqxpogaaba7").Find(
+		if err := Db().Where("album_uid = ?", "as6sg6bxpogaaba7").Find(
 			&a,
 		).Error; err != nil {
 			t.Fatal(err)
@@ -614,7 +614,7 @@ func TestAlbum_RemovePhotos(t *testing.T) {
 
 func TestAlbum_Find(t *testing.T) {
 	t.Run("existing album", func(t *testing.T) {
-		a := Album{AlbumUID: "at6axuzitogaaiax"}
+		a := Album{AlbumUID: "as6sg6bitoga0004"}
 
 		if found := a.Find(); found == nil {
 			t.Fatal("should find album")
@@ -628,7 +628,7 @@ func TestAlbum_Find(t *testing.T) {
 		}
 	})
 	t.Run("album not existing", func(t *testing.T) {
-		a := Album{AlbumUID: "at6axuzitogaaxxx"}
+		a := Album{AlbumUID: "as6sg6bitogaaxxx"}
 
 		if found := a.Find(); found != nil {
 			t.Fatal("should not find album")
@@ -638,7 +638,7 @@ func TestAlbum_Find(t *testing.T) {
 
 func TestAlbum_UpdateFolder(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		a := Album{ID: 99999, AlbumUID: "at6axuzitogaaxxx"}
+		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxx"}
 		assert.Empty(t, a.AlbumPath)
 		assert.Empty(t, a.AlbumFilter)
 		if err := a.UpdateFolder("2222/07", "month:07"); err != nil {
@@ -648,14 +648,14 @@ func TestAlbum_UpdateFolder(t *testing.T) {
 		assert.Equal(t, "month:07", a.AlbumFilter)
 	})
 	t.Run("EmptyPath", func(t *testing.T) {
-		a := Album{ID: 99999, AlbumUID: "at6axuzitogaaxxy"}
+		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxy"}
 		assert.Empty(t, a.AlbumPath)
 		assert.Empty(t, a.AlbumFilter)
 		err := a.UpdateFolder("", "month:07")
 		assert.Error(t, err)
 	})
 	t.Run("EmptyFilter", func(t *testing.T) {
-		a := Album{ID: 99999, AlbumUID: "at6axuzitogaaxxy"}
+		a := Album{ID: 99999, AlbumUID: "as6sg6bitogaaxxy"}
 		assert.Empty(t, a.AlbumPath)
 		assert.Empty(t, a.AlbumFilter)
 		err := a.UpdateFolder("2222/07", "")

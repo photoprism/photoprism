@@ -27,6 +27,9 @@ func Key(s string) string {
 		switch r {
 		case '.', '@', '-', '+', '_', '#':
 			return r
+		case '*':
+			i++
+			return r
 		}
 		if r >= '0' && r <= '9' {
 			return r
@@ -52,7 +55,7 @@ func Value(s string) string {
 			return -1
 		}
 		switch r {
-		case '(', ')', '<', '>', '\'', '"':
+		case '(', ')', '<', '>', '\'', '"', '*':
 			return r
 		}
 		return r

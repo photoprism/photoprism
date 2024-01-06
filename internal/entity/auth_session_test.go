@@ -359,23 +359,23 @@ func TestSession_HasShare(t *testing.T) {
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
 	alice.User().RefreshShares()
-	assert.True(t, alice.HasShare("at9lxuqxpogaaba9"))
-	assert.False(t, alice.HasShare("at9lxuqxpogaaba7"))
+	assert.True(t, alice.HasShare("as6sg6bxpogaaba9"))
+	assert.False(t, alice.HasShare("as6sg6bxpogaaba7"))
 
 	bob := FindSessionByRefID("sessxkkcabce")
 	bob.RefreshUser()
 	bob.User().RefreshShares()
-	assert.False(t, bob.HasShare("at9lxuqxpogaaba9"))
+	assert.False(t, bob.HasShare("as6sg6bxpogaaba9"))
 
 	m := &Session{}
-	assert.False(t, m.HasShare("at9lxuqxpogaaba9"))
+	assert.False(t, m.HasShare("as6sg6bxpogaaba9"))
 }
 
 func TestSession_SharedUIDs(t *testing.T) {
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
 	alice.User().RefreshShares()
-	assert.Equal(t, "at9lxuqxpogaaba9", alice.SharedUIDs()[0])
+	assert.Equal(t, "as6sg6bxpogaaba9", alice.SharedUIDs()[0])
 
 	bob := FindSessionByRefID("sessxkkcabce")
 	bob.RefreshUser()
@@ -395,7 +395,7 @@ func TestSession_RedeemToken(t *testing.T) {
 		assert.Empty(t, bob.User().UserShares)
 		assert.Equal(t, 1, bob.RedeemToken("1jxf3jfn2k"))
 		bob.User().RefreshShares()
-		assert.Equal(t, "at9lxuqxpogaaba8", bob.User().UserShares[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba8", bob.User().UserShares[0].ShareUID)
 	})
 	t.Run("Empty session", func(t *testing.T) {
 		m := &Session{}
