@@ -5,9 +5,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/internal/ttl"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 const (

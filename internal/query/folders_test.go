@@ -13,7 +13,7 @@ func TestFolderCoverByUID(t *testing.T) {
 			t.Fatal(err)
 		} else if result.FileUID == "" {
 			t.Fatal("result must not be empty")
-		} else if result.FileUID != "ft2es49w15bnlqdw" {
+		} else if result.FileUID != "fs6sg6bw15bnlqdw" {
 			t.Errorf("wrong result: %#v", result)
 		}
 	})
@@ -22,7 +22,7 @@ func TestFolderCoverByUID(t *testing.T) {
 			t.Fatal(err)
 		} else if result.FileUID == "" {
 			t.Fatal("result must not be empty")
-		} else if result.FileUID != "ft2es49qhhinlplk" {
+		} else if result.FileUID != "fs6sg6bqhhinlplk" {
 			t.Errorf("wrong result: %#v", result)
 		}
 	})

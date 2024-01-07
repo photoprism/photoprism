@@ -19,12 +19,11 @@ import (
 
 // PhotoUnstack removes a file from an existing photo stack.
 //
+// Request Parameters:
+// - uid: string Photo UID as returned by the API
+// - file_uid: string File UID as returned by the API
+//
 // POST /api/v1/photos/:uid/files/:file_uid/unstack
-//
-// Parameters:
-//
-//	uid: string Photo UID as returned by the API
-//	file_uid: string File UID as returned by the API
 func PhotoUnstack(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/unstack", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -194,8 +193,8 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		// Notify clients by publishing events.
-		PublishPhotoEvent(EntityCreated, newPhoto.PhotoUID, c)
-		PublishPhotoEvent(EntityUpdated, stackPhoto.PhotoUID, c)
+		PublishPhotoEvent(StatusCreated, newPhoto.PhotoUID, c)
+		PublishPhotoEvent(StatusUpdated, stackPhoto.PhotoUID, c)
 
 		event.SuccessMsg(i18n.MsgFileUnstacked)
 

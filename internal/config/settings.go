@@ -75,6 +75,10 @@ func (c *Config) SessionSettings(sess *entity.Session) *customize.Settings {
 		return c.Settings()
 	}
 
+	if sess.NoUser() && sess.IsClient() {
+		return c.Settings().ApplyACL(acl.Resources, acl.RoleClient).ApplyScope(sess.Scope())
+	}
+
 	user := sess.User()
 
 	// Return public settings if the session does not have a user.
@@ -83,7 +87,7 @@ func (c *Config) SessionSettings(sess *entity.Session) *customize.Settings {
 	}
 
 	// Apply role-based permissions and user settings to a copy of the global app settings.
-	return user.Settings().ApplyTo(c.Settings().ApplyACL(acl.Resources, user.AclRole()))
+	return user.Settings().ApplyTo(c.Settings().ApplyACL(acl.Resources, user.AclRole())).ApplyScope(sess.Scope())
 }
 
 // PublicSettings returns the public app settings.

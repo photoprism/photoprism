@@ -18,7 +18,7 @@ func TestUidType(t *testing.T) {
 		assert.Equal(t, PrefixNone, prefix)
 	})
 	t.Run("LabelUID", func(t *testing.T) {
-		result, prefix := IdType("lt9k3pw1wowuy3c2")
+		result, prefix := IdType("ls6sg1e1wowuy3c2")
 		assert.Equal(t, TypeUID, result)
 		assert.Equal(t, byte('l'), prefix)
 	})

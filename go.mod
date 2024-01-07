@@ -52,7 +52,7 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.2 // indirect
-	golang.org/x/image v0.14.0
+	golang.org/x/image v0.15.0
 )
 
 require github.com/olekukonko/tablewriter v0.0.5

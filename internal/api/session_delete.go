@@ -20,38 +20,52 @@ func DeleteSession(router *gin.RouterGroup) {
 	router.DELETE("/session/:id", func(c *gin.Context) {
 		id := clean.ID(c.Param("id"))
 
-		// Abort if ID is missing.
+		// Abort if authentication token is missing or empty.
 		if id == "" {
 			AbortBadRequest(c)
 			return
 		} else if get.Config().Public() {
-			c.JSON(http.StatusOK, gin.H{"status": "authentication disabled", "id": id})
+			// Return JSON response for confirmation.
+			c.JSON(http.StatusOK, DeleteSessionResponse(id))
 			return
 		}
 
-		// Find session by reference ID.
-		if !rnd.IsRefID(id) {
-			// Do nothing.
-		} else if s := Session(SessionID(c)); s == nil {
-			entity.SessionStatusUnauthorized().Abort(c)
-			return
-		} else if !acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
-			s.Abort(c)
-			return
-		} else if ref := entity.FindSessionByRefID(id); ref == nil {
-			AbortNotFound(c)
-			return
+		// Only admins may delete other sessions by reference id.
+		if rnd.IsRefID(id) {
+			if s := Session(AuthToken(c)); s == nil {
+				entity.SessionStatusUnauthorized().Abort(c)
+				return
+			} else if s.Abort(c) {
+				return
+			} else if !acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+				s.Abort(c)
+				return
+			} else if ref := entity.FindSessionByRefID(id); ref == nil {
+				AbortNotFound(c)
+				return
+			} else {
+				id = ref.ID
+			}
 		} else {
-			id = ref.ID
+			if s := Session(AuthToken(c)); s == nil {
+				entity.SessionStatusUnauthorized().Abort(c)
+				return
+			} else if s.Abort(c) {
+				return
+			} else if s.ID != id {
+				entity.SessionStatusForbidden().Abort(c)
+				return
+			}
 		}
 
-		// Delete session by ID.
+		// Delete session cache and database record.
 		if err := get.Session().Delete(id); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s"}, err)
 		} else {
 			event.AuditDebug([]string{ClientIP(c), "session deleted"})
 		}
 
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "id": id})
+		// Return JSON response for confirmation.
+		c.JSON(http.StatusOK, DeleteSessionResponse(id))
 	})
 }

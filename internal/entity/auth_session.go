@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -35,6 +36,7 @@ type Session struct {
 	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName      string          `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user          *User           `gorm:"-"`
+	authToken     string          `gorm:"-"`
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
@@ -66,17 +68,12 @@ func (Session) TableName() string {
 
 // NewSession creates a new session using the maxAge and timeout in seconds.
 func NewSession(lifetime, timeout int64) (m *Session) {
-	created := TimeStamp()
+	m = &Session{}
 
-	m = &Session{
-		ID:        rnd.SessionID(),
-		RefID:     rnd.RefID(SessionPrefix),
-		CreatedAt: created,
-		UpdatedAt: created,
-	}
+	m.Regenerate()
 
 	if lifetime > 0 {
-		m.SessExpires = created.Unix() + lifetime
+		m.SessExpires = TimeStamp().Unix() + lifetime
 	}
 
 	if timeout > 0 {
@@ -142,9 +139,27 @@ func FindSessionByRefID(refId string) *Session {
 	return m
 }
 
-// RegenerateID regenerated the random session ID.
-func (m *Session) RegenerateID() *Session {
-	if m.ID == "" {
+// AuthToken returns the secret client authentication token.
+func (m *Session) AuthToken() string {
+	return m.authToken
+}
+
+// SetAuthToken sets a custom authentication token.
+func (m *Session) SetAuthToken(authToken string) *Session {
+	m.authToken = authToken
+	m.ID = rnd.SessionID(authToken)
+
+	return m
+}
+
+// AuthTokenType returns the authentication token type.
+func (m *Session) AuthTokenType() string {
+	return header.BearerAuth
+}
+
+// Regenerate (re-)initializes the session with a random auth token, ID, and RefID.
+func (m *Session) Regenerate() *Session {
+	if !rnd.IsSessionID(m.ID) {
 		// Do not delete the old session if no ID is set yet.
 	} else if err := m.Delete(); err != nil {
 		event.AuditErr([]string{m.IP(), "session %s", "failed to delete", "%s"}, m.RefID, err)
@@ -154,7 +169,7 @@ func (m *Session) RegenerateID() *Session {
 
 	generated := TimeStamp()
 
-	m.ID = rnd.SessionID()
+	m.SetAuthToken(rnd.AuthToken())
 	m.RefID = rnd.RefID(SessionPrefix)
 	m.CreatedAt = generated
 	m.UpdatedAt = generated
@@ -222,7 +237,7 @@ func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 		return nil
 	}
 
-	m.ID = rnd.SessionID()
+	m.Regenerate()
 
 	return scope.SetColumn("ID", m.ID)
 }
@@ -282,9 +297,31 @@ func (m *Session) Username() string {
 	return m.UserName
 }
 
-// Provider returns the authentication provider name.
+// AuthInfo returns information about the authentication type.
+func (m *Session) AuthInfo() string {
+	provider := m.Provider()
+	method := m.Method()
+
+	if method.IsDefault() {
+		return provider.Pretty()
+	}
+
+	return fmt.Sprintf("%s (%s)", provider.Pretty(), method.Pretty())
+}
+
+// Provider returns the authentication provider.
 func (m *Session) Provider() authn.ProviderType {
 	return authn.Provider(m.AuthProvider)
+}
+
+// Method returns the authentication method.
+func (m *Session) Method() authn.MethodType {
+	return authn.Method(m.AuthMethod)
+}
+
+// IsClient checks whether this session is used to authenticate an API client.
+func (m *Session) IsClient() bool {
+	return authn.Provider(m.AuthProvider).IsClient()
 }
 
 // SetProvider updates the session's authentication provider.
@@ -659,12 +696,12 @@ func (m *Session) HttpStatus() int {
 	return http.StatusUnauthorized
 }
 
-// Scope returns the client IP address, or "unknown" if it is unknown.
+// Scope returns the authorization scope as a sanitized string.
 func (m *Session) Scope() string {
 	return clean.Scope(m.AuthScope)
 }
 
-// HasScope returns the client IP address, or "unknown" if it is unknown.
+// HasScope checks if the session has the given authorization scope.
 func (m *Session) HasScope(scope string) bool {
-	return !list.ParseAttr(m.Scope()).Contains(scope)
+	return list.ParseAttr(m.Scope()).Contains(scope)
 }

@@ -4,33 +4,37 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/server/header"
+
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
-// SessionID returns the session ID from the request context,
-// or an empty string if there is none.
-func SessionID(c *gin.Context) string {
+// AuthToken returns the client authentication token from the request context,
+// or an empty string if none is found.
+func AuthToken(c *gin.Context) string {
 	// Default is an empty string if no context or ID is set.
 	if c == nil {
 		return ""
 	}
 
-	// First check the X-Session-ID header for an existing ID.
-	if id := clean.ID(c.GetHeader(header.SessionID)); id != "" {
-		return id
+	// First check the "X-Auth-Token" and "X-Session-ID" headers for an auth token.
+	if token := c.GetHeader(header.AuthToken); token != "" {
+		return clean.ID(token)
+	} else if id := c.GetHeader(header.SessionID); id != "" {
+		return clean.ID(id)
 	}
 
-	// Otherwise, return the bearer token, if any.
+	// Otherwise, the bearer token from the authorization request header is returned.
 	return BearerToken(c)
 }
 
-// BearerToken returns the value of the bearer token header, or an empty string if there is none.
+// BearerToken returns the client bearer token header value, or an empty string if none is found.
 func BearerToken(c *gin.Context) string {
-	if authType, bearerToken := Authorization(c); authType == "Bearer" && bearerToken != "" {
+	if authType, bearerToken := Authorization(c); authType == header.BearerAuth && bearerToken != "" {
 		return bearerToken
 	}
 
@@ -40,7 +44,9 @@ func BearerToken(c *gin.Context) string {
 // Authorization returns the authentication type and token from the authorization request header,
 // or an empty string if there is none.
 func Authorization(c *gin.Context) (authType, authToken string) {
-	if s := c.GetHeader(header.Authorization); s == "" {
+	if c == nil {
+		return "", ""
+	} else if s := c.GetHeader(header.Authorization); s == "" {
 		// Ignore.
 	} else if t := strings.Split(s, " "); len(t) != 2 {
 		// Ignore.
@@ -51,6 +57,13 @@ func Authorization(c *gin.Context) (authType, authToken string) {
 	return "", ""
 }
 
+// AddRequestAuthorizationHeader adds a bearer token authorization header to a request.
+func AddRequestAuthorizationHeader(r *http.Request, authToken string) {
+	if authToken != "" {
+		r.Header.Add(header.Authorization, fmt.Sprintf("%s %s", header.BearerAuth, authToken))
+	}
+}
+
 // BasicAuth checks the basic authorization header for credentials and returns them if found.
 //
 // Note that OAuth 2.0 defines basic authentication differently than RFC 7617, however, this
@@ -59,7 +72,7 @@ func Authorization(c *gin.Context) (authType, authToken string) {
 func BasicAuth(c *gin.Context) (username, password, cacheKey string) {
 	authType, authToken := Authorization(c)
 
-	if authType != "Basic" || authToken == "" {
+	if authType != header.BasicAuth || authToken == "" {
 		return "", "", ""
 	}
 

@@ -478,7 +478,7 @@
               </v-list-tile-content>
             </v-list-tile>
 
-            <v-list-tile v-show="!isPublic && isAdmin && isSponsor" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
+            <v-list-tile v-show="featFeedback" :to="{ name: 'feedback' }" :exact="true" class="nav-feedback"
                          @click.stop="">
               <v-list-tile-content>
                 <v-list-tile-title :class="`menu-item ${rtl ? '--rtl' : ''}`">
@@ -733,6 +733,7 @@ export default {
       drawer: null,
       featUpgrade: tier < 6 && isSuperAdmin && !isPublic && !isDemo,
       featMembership: tier < 3 && isSuperAdmin && !isPublic && !isDemo,
+      featFeedback: tier >= 6 && isSuperAdmin && !isPublic && !isDemo,
       isRestricted: isRestricted,
       isMini: localStorage.getItem('last_navigation_mode') !== 'false' || isRestricted,
       isDemo: isDemo,

@@ -161,7 +161,7 @@ func CreateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Publish updated photo entity.
-			PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
 		}
 
 		// Display success message.
@@ -174,11 +174,10 @@ func CreateMarker(router *gin.RouterGroup) {
 
 // UpdateMarker updates an existing file area marker to assign faces or other subjects.
 //
+// Request Parameters:
+// - marker_uid: string Marker UID as returned by the API
+//
 // PUT /api/v1/markers/:marker_uid
-//
-// Parameters:
-//
-//	marker_uid: string Marker UID as returned by the API
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
@@ -253,7 +252,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
-			PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
 		}
 
 		// Display success message.
@@ -266,13 +265,12 @@ func UpdateMarker(router *gin.RouterGroup) {
 
 // ClearMarkerSubject removes an existing marker subject association.
 //
+// Request Parameters:
+// - uid: string Photo UID as returned by the API
+// - file_uid: string File UID as returned by the API
+// - id: int Marker ID as returned by the API
+//
 // DELETE /api/v1/markers/:marker_uid/subject
-//
-// Parameters:
-//
-//	uid: string Photo UID as returned by the API
-//	file_uid: string File UID as returned by the API
-//	id: int Marker ID as returned by the API
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
@@ -314,7 +312,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
-			PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
 		}
 
 		event.SuccessMsg(i18n.MsgChangesSaved)

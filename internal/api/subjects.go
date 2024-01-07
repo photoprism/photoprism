@@ -94,11 +94,10 @@ func UpdateSubject(router *gin.RouterGroup) {
 
 // LikeSubject flags a subject as favorite.
 //
+// Request Parameters:
+// - uid: string Subject UID
+//
 // POST /api/v1/subjects/:uid/like
-//
-// Parameters:
-//
-//	uid: string Subject UID
 func LikeSubject(router *gin.RouterGroup) {
 	router.POST("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
@@ -120,7 +119,7 @@ func LikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishSubjectEvent(EntityUpdated, uid, c)
+		PublishSubjectEvent(StatusUpdated, uid, c)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -128,11 +127,10 @@ func LikeSubject(router *gin.RouterGroup) {
 
 // DislikeSubject removes the favorite flag from a subject.
 //
+// Request Parameters:
+// - uid: string Subject UID
+//
 // DELETE /api/v1/subjects/:uid/like
-//
-// Parameters:
-//
-//	uid: string Subject UID
 func DislikeSubject(router *gin.RouterGroup) {
 	router.DELETE("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
@@ -154,7 +152,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishSubjectEvent(EntityUpdated, uid, c)
+		PublishSubjectEvent(StatusUpdated, uid, c)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

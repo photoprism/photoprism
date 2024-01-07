@@ -14,7 +14,7 @@ func TestZip(t *testing.T) {
 	ZipDownload(router)
 
 	t.Run("Download", func(t *testing.T) {
-		r := PerformRequestWithBody(app, "POST", "/api/v1/zip", `{"photos": ["pt9jtdre2lvl0y12", "pt9jtdre2lvl0y11"]}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/zip", `{"photos": ["ps6sg6be2lvl0y12", "ps6sg6be2lvl0y11"]}`)
 		message := gjson.Get(r.Body.String(), "message")
 		assert.Contains(t, message.String(), "Zip created")
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -29,7 +29,7 @@ func TestZip(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("ErrBadRequest", func(t *testing.T) {
-		r := PerformRequestWithBody(app, "POST", "/api/v1/zip", `{"photos": [123, "pt9jtdre2lvl0yxx"]}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/zip", `{"photos": [123, "ps6sg6be2lvl0yxx"]}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("ErrNotFound", func(t *testing.T) {

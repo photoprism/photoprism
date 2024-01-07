@@ -14,8 +14,10 @@ func Session(id string) (result entity.Session, err error) {
 		return result, fmt.Errorf("invalid session id")
 	} else if rnd.IsRefID(id) {
 		err = Db().Where("ref_id = ?", id).First(&result).Error
-	} else {
+	} else if rnd.IsSessionID(id) {
 		err = Db().Where("id LIKE ?", id).First(&result).Error
+	} else {
+		err = Db().Where("id LIKE ?", rnd.SessionID(id)).First(&result).Error
 	}
 
 	return result, err
@@ -32,6 +34,8 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", entity.UnixTime())
 	} else if rnd.IsSessionID(search) {
 		stmt = stmt.Where("id = ?", search)
+	} else if rnd.IsAuthToken(search) {
+		stmt = stmt.Where("id = ?", rnd.SessionID(search))
 	} else if rnd.IsUID(search, entity.UserUID) {
 		stmt = stmt.Where("user_uid = ?", search)
 	} else if search != "" {

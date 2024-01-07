@@ -14,19 +14,19 @@ describe("common/session", () => {
   it("should construct session", () => {
     const storage = new StorageShim();
     const session = new Session(storage, config);
-    assert.equal(session.session_id, null);
+    assert.equal(session.authToken, null);
   });
 
   it("should set, get and delete token", () => {
     const storage = new StorageShim();
     const session = new Session(storage, config);
     assert.equal(session.hasToken("2lbh9x09"), false);
-    session.setId("999900000000000000000000000000000000000000000000");
-    assert.equal(session.session_id, "999900000000000000000000000000000000000000000000");
-    const result = session.getId();
+    session.setAuthToken("999900000000000000000000000000000000000000000000");
+    assert.equal(session.authToken, "999900000000000000000000000000000000000000000000");
+    const result = session.getAuthToken();
     assert.equal(result, "999900000000000000000000000000000000000000000000");
     session.reset();
-    assert.equal(session.session_id, null);
+    assert.equal(session.authToken, null);
   });
 
   it("should set, get and delete user", () => {
@@ -48,9 +48,23 @@ describe("common/session", () => {
       user,
     };
 
+    assert.equal(session.hasId(), false);
+    assert.equal(session.hasAuthToken(), false);
+    assert.equal(session.isAuthenticated(), false);
+    assert.equal(session.hasProvider(), false);
     session.setData();
     assert.equal(session.user.DisplayName, "");
     session.setData(data);
+    assert.equal(session.hasId(), false);
+    assert.equal(session.hasAuthToken(), false);
+    assert.equal(session.hasProvider(), false);
+    session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+    session.setAuthToken("234200000000000000000000000000000000000000000000");
+    session.setProvider("public");
+    assert.equal(session.hasId(), true);
+    assert.equal(session.hasAuthToken(), true);
+    assert.equal(session.isAuthenticated(), true);
+    assert.equal(session.hasProvider(), true);
     assert.equal(session.user.DisplayName, "Max Example");
     assert.equal(session.user.SuperAdmin, true);
     assert.equal(session.user.Role, "admin");
@@ -79,6 +93,11 @@ describe("common/session", () => {
   it("should get user email", () => {
     const storage = new StorageShim();
     const session = new Session(storage, config);
+
+    session.setId("a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+    session.setAuthToken("234200000000000000000000000000000000000000000000");
+    session.setProvider("public");
+
     const values = {
       user: {
         ID: 5,
@@ -88,6 +107,7 @@ describe("common/session", () => {
         Role: "admin",
       },
     };
+
     session.setData(values);
     const result = session.getEmail();
     assert.equal(result, "test@test.com");
@@ -121,6 +141,10 @@ describe("common/session", () => {
     const result = session.getDisplayName();
     assert.equal(result, "Max Last");
     const values2 = {
+      id: "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f",
+      access_token: "234200000000000000000000000000000000000000000000",
+      provider: "public",
+      data: {},
       user: {
         ID: 5,
         Name: "bar",
@@ -221,18 +245,18 @@ describe("common/session", () => {
   it("should use session storage", () => {
     const storage = new StorageShim();
     const session = new Session(storage, config);
-    assert.equal(storage.getItem("session_storage"), null);
+    assert.equal(storage.getItem("sessionStorage"), null);
     session.useSessionStorage();
-    assert.equal(storage.getItem("session_storage"), "true");
+    assert.equal(storage.getItem("sessionStorage"), "true");
     session.deleteData();
   });
 
   it("should use local storage", () => {
     const storage = new StorageShim();
     const session = new Session(storage, config);
-    assert.equal(storage.getItem("session_storage"), null);
+    assert.equal(storage.getItem("sessionStorage"), null);
     session.useLocalStorage();
-    assert.equal(storage.getItem("session_storage"), "false");
+    assert.equal(storage.getItem("sessionStorage"), "false");
     session.deleteData();
   });
 

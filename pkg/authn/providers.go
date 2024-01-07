@@ -22,14 +22,19 @@ const (
 	ProviderUnknown ProviderType = ""
 )
 
-// RemoteProviders lists all remote auth providers.
+// RemoteProviders contains all remote auth providers.
 var RemoteProviders = list.List{
 	string(ProviderLDAP),
 }
 
-// LocalProviders lists all local auth providers.
+// LocalProviders contains all local auth providers.
 var LocalProviders = list.List{
 	string(ProviderLocal),
+}
+
+// ClientProviders contains all client auth providers.
+var ClientProviders = list.List{
+	string(ProviderClient),
 }
 
 // IsRemote checks if the provider is external.
@@ -40,6 +45,11 @@ func (t ProviderType) IsRemote() bool {
 // IsLocal checks if local authentication is possible.
 func (t ProviderType) IsLocal() bool {
 	return list.Contains(LocalProviders, string(t))
+}
+
+// IsClient checks if the authentication is provided for a client.
+func (t ProviderType) IsClient() bool {
+	return list.Contains(ClientProviders, string(t))
 }
 
 // IsDefault checks if this is the default provider.
@@ -76,6 +86,8 @@ func (t ProviderType) Pretty() string {
 	switch t {
 	case ProviderLDAP:
 		return "LDAP/AD"
+	case ProviderClient:
+		return "Client"
 	default:
 		return txt.UpperFirst(t.String())
 	}
