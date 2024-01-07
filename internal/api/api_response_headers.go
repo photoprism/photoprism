@@ -8,7 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/server/header"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 // AddCountHeader adds the actual result count to the response.

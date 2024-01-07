@@ -9,7 +9,6 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -26,7 +25,8 @@ func DeleteSession(router *gin.RouterGroup) {
 			AbortBadRequest(c)
 			return
 		} else if get.Config().Public() {
-			c.JSON(http.StatusOK, gin.H{"status": "running in public mode", "id": session.PublicAuthToken})
+			// Return JSON response for confirmation.
+			c.JSON(http.StatusOK, DeleteSessionResponse(id))
 			return
 		}
 
@@ -58,17 +58,14 @@ func DeleteSession(router *gin.RouterGroup) {
 			}
 		}
 
-		// Delete session.
+		// Delete session cache and database record.
 		if err := get.Session().Delete(id); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s"}, err)
 		} else {
 			event.AuditDebug([]string{ClientIP(c), "session deleted"})
 		}
 
-		// Response includes the auth token for confirmation.
-		response := SessionDeleteResponse(id)
-
-		// Return JSON response.
-		c.JSON(http.StatusOK, response)
+		// Return JSON response for confirmation.
+		c.JSON(http.StatusOK, DeleteSessionResponse(id))
 	})
 }

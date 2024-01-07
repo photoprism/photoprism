@@ -38,9 +38,10 @@ func SavePhotoAsYaml(p entity.Photo) {
 
 // GetPhoto returns photo details as JSON.
 //
-// Route : GET /api/v1/photos/:uid
-// Params:
+// Request Parameters:
 // - uid (string) PhotoUID as returned by the API
+//
+// GET /api/v1/photos/:uid
 func GetPhoto(router *gin.RouterGroup) {
 	router.GET("/photos/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionView)
@@ -101,7 +102,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			FlushCoverCache()
 		}
 
-		PublishPhotoEvent(EntityUpdated, uid, c)
+		PublishPhotoEvent(StatusUpdated, uid, c)
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
@@ -123,7 +124,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 // GetPhotoDownload returns the primary file matching that belongs to the photo.
 //
 // Route :GET /api/v1/photos/:uid/dl
-// Params:
+// Request Parameters:
 // - uid (string) PhotoUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
@@ -157,10 +158,10 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 
 // GetPhotoYaml returns photo details as YAML.
 //
-// GET /api/v1/photos/:uid/yaml
-// Params:
+// Request Parameters:
+// - uid: string PhotoUID as returned by the API
 //
-//	uid: string PhotoUID as returned by the API
+// GET /api/v1/photos/:uid/yaml
 func GetPhotoYaml(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/yaml", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.AccessAll)
@@ -193,10 +194,10 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 
 // ApprovePhoto marks a photo in review as approved.
 //
-// POST /api/v1/photos/:uid/approve
-// Params:
+// Request Parameters:
+// - uid: string PhotoUID as returned by the API
 //
-//	uid: string PhotoUID as returned by the API
+// POST /api/v1/photos/:uid/approve
 func ApprovePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/approve", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -221,7 +222,7 @@ func ApprovePhoto(router *gin.RouterGroup) {
 
 		SavePhotoAsYaml(m)
 
-		PublishPhotoEvent(EntityUpdated, id, c)
+		PublishPhotoEvent(StatusUpdated, id, c)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
@@ -229,11 +230,11 @@ func ApprovePhoto(router *gin.RouterGroup) {
 
 // PhotoPrimary sets the primary file for a photo.
 //
-// POST /photos/:uid/files/:file_uid/primary
-// Params:
+// Request Parameters:
+// - uid: string PhotoUID as returned by the API
+// - file_uid: string File UID as returned by the API
 //
-//	uid: string PhotoUID as returned by the API
-//	file_uid: string File UID as returned by the API
+// POST /photos/:uid/files/:file_uid/primary
 func PhotoPrimary(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/primary", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -251,7 +252,7 @@ func PhotoPrimary(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, uid, c)
+		PublishPhotoEvent(StatusUpdated, uid, c)
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 

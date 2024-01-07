@@ -28,7 +28,7 @@ import Event from "pubsub-js";
 import User from "model/user";
 import Socket from "websocket.js";
 
-const RequestHeader = "X-Session-ID";
+const RequestHeader = "X-Auth-Token";
 const PublicSessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
 const PublicAuthToken = "234200000000000000000000000000000000000000000000";
 const LoginPage = "login";
@@ -209,13 +209,15 @@ export default class Session {
       return;
     }
 
-    if (resp.data.id) {
-      this.setId(resp.data.id);
+    if (resp.data.session_id) {
+      this.setId(resp.data.session_id);
     }
 
     if (resp.data.access_token) {
       this.setAuthToken(resp.data.access_token);
     } else if (resp.data.id) {
+      // TODO: "id" field is deprecated! Clients should now use "access_token" instead.
+      // see https://github.com/photoprism/photoprism/commit/0d2f8be522dbf0a051ae6ef78abfc9efded0082d
       this.setAuthToken(resp.data.id);
     }
 

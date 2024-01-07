@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
@@ -14,12 +15,12 @@ import (
 )
 
 // ChangeFileOrientation changes the orientation of a file.
+//
+// Request Parameters:
+// - uid: string Photo UID as returned by the API
+// - file_uid: string File UID as returned by the API
+//
 // PUT /api/v1/photos/:uid/files/:file_uid/orientation
-//
-// Parameters:
-//
-//	uid: string Photo UID as returned by the API
-//	file_uid: string File UID as returned by the API
 func ChangeFileOrientation(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/files/:file_uid/orientation", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
@@ -99,7 +100,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, m.PhotoUID, c)
+		PublishPhotoEvent(StatusUpdated, m.PhotoUID, c)
 
 		c.JSON(http.StatusOK, p)
 	})

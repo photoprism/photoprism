@@ -56,7 +56,7 @@ func GetSession(router *gin.RouterGroup) {
 		AddSessionHeader(c, authToken)
 
 		// Response includes user data, session data, and client config values.
-		response := SessionResponse(authToken, sess, get.Config().ClientSession(sess))
+		response := GetSessionResponse(authToken, sess, get.Config().ClientSession(sess))
 
 		// Return JSON response.
 		c.JSON(http.StatusOK, response)

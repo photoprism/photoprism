@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/server/header"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 func TestAuthToken(t *testing.T) {
@@ -41,7 +41,7 @@ func TestAuthToken(t *testing.T) {
 		bearerToken := BearerToken(c)
 		assert.Equal(t, authToken, bearerToken)
 	})
-	t.Run("X-Session-ID", func(t *testing.T) {
+	t.Run("Header", func(t *testing.T) {
 		gin.SetMode(gin.TestMode)
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
@@ -50,7 +50,7 @@ func TestAuthToken(t *testing.T) {
 		}
 
 		// Add authorization header.
-		c.Request.Header.Add(header.SessionID, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
+		c.Request.Header.Add(header.AuthToken, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
 
 		// Check result.
 		authToken := AuthToken(c)

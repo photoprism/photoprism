@@ -12,9 +12,10 @@ import (
 
 // GetFile returns file details as JSON.
 //
-// GET /api/v1/files/:hash
-// Params:
+// Request Parameters:
 // - hash (string) SHA-1 hash of the file
+//
+// GET /api/v1/files/:hash
 func GetFile(router *gin.RouterGroup) {
 	router.GET("/files/:hash", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionView)

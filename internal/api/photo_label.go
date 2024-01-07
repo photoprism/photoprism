@@ -16,11 +16,12 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// AddPhotoLabel adds a label to a photo.
+//
+// Request Parameters:
+// - uid: string PhotoUID as returned by the API
+//
 // POST /api/v1/photos/:uid/label
-//
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -82,7 +83,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uid"), c)
+		PublishPhotoEvent(StatusUpdated, c.Param("uid"), c)
 
 		event.Success("label updated")
 
@@ -90,12 +91,13 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 	})
 }
 
+// RemovePhotoLabel removes a label from a photo.
+//
+// Request Parameters:
+// - uid: string PhotoUID as returned by the API
+// - id: int LabelId as returned by the API
+//
 // DELETE /api/v1/photos/:uid/label/:id
-//
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
-//	id: int LabelId as returned by the API
 func RemovePhotoLabel(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -146,7 +148,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label removed")
 
@@ -154,12 +156,13 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 	})
 }
 
+// UpdatePhotoLabel changes a photo labels.
+//
+// Request Parameters:
+// - uid: string PhotoUID as returned by the API
+// - id: int LabelId as returned by the API
+//
 // PUT /api/v1/photos/:uid/label/:id
-//
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
-//	id: int LabelId as returned by the API
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -213,7 +216,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label saved")
 

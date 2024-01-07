@@ -8,8 +8,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/server/header"
+
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 // AuthToken returns the client authentication token from the request context,
@@ -20,12 +21,14 @@ func AuthToken(c *gin.Context) string {
 		return ""
 	}
 
-	// First check the X-Session-ID header for an existing ID.
-	if id := clean.ID(c.GetHeader(header.SessionID)); id != "" {
-		return id
+	// First check the "X-Auth-Token" and "X-Session-ID" headers for an auth token.
+	if token := c.GetHeader(header.AuthToken); token != "" {
+		return clean.ID(token)
+	} else if id := c.GetHeader(header.SessionID); id != "" {
+		return clean.ID(id)
 	}
 
-	// Otherwise, return the bearer token, if any.
+	// Otherwise, the bearer token from the authorization request header is returned.
 	return BearerToken(c)
 }
 

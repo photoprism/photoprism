@@ -57,7 +57,7 @@ func UpdateLink(c *gin.Context) {
 
 	UpdateClientConfig()
 
-	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
+	PublishAlbumEvent(StatusUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }
@@ -82,7 +82,7 @@ func DeleteLink(c *gin.Context) {
 
 	UpdateClientConfig()
 
-	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
+	PublishAlbumEvent(StatusUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }
@@ -132,7 +132,7 @@ func CreateLink(c *gin.Context) {
 
 	UpdateClientConfig()
 
-	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
+	PublishAlbumEvent(StatusUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }

@@ -28,11 +28,12 @@ func TestSessionResponse(t *testing.T) {
 		conf := get.Config().ClientSession(sess)
 
 		// Create response in public mode.
-		result := SessionResponse(sess.AuthToken(), sess, conf)
+		result := GetSessionResponse(sess.AuthToken(), sess, conf)
 
 		// Check response.
-		assert.Equal(t, "ok", result["status"])
-		assert.Equal(t, sess.ID, result["id"])
+		assert.Equal(t, StatusSuccess, result["status"])
+		assert.Equal(t, sess.ID, result["session_id"])
+		assert.Equal(t, sess.AuthToken(), result["id"])
 		assert.Equal(t, sess.AuthToken(), result["access_token"])
 		assert.Equal(t, sess.AuthTokenType(), result["token_type"])
 		assert.Equal(t, sess.ExpiresIn(), result["expires_in"])
@@ -46,11 +47,12 @@ func TestSessionResponse(t *testing.T) {
 		conf := get.Config().ClientSession(sess)
 
 		// Create response without auth token.
-		result := SessionResponse("", sess, conf)
+		result := GetSessionResponse("", sess, conf)
 
 		// Check response.
-		assert.Equal(t, "ok", result["status"])
-		assert.Equal(t, sess.ID, result["id"])
+		assert.Equal(t, StatusSuccess, result["status"])
+		assert.Equal(t, sess.ID, result["session_id"])
+		assert.Nil(t, result["id"])
 		assert.Nil(t, result["access_token"])
 		assert.Nil(t, result["token_type"])
 		assert.Equal(t, sess.ExpiresIn(), result["expires_in"])
@@ -70,9 +72,9 @@ func TestCreateSession(t *testing.T) {
 		CreateSession(router)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
-		log.Debugf("BODY: %s", r.Body.String())
-		val2 := gjson.Get(r.Body.String(), "user.Name")
-		assert.Equal(t, "admin", val2.String())
+		t.Logf("Response Body: %s", r.Body.String())
+		userName := gjson.Get(r.Body.String(), "user.Name").String()
+		assert.Equal(t, "admin", userName)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("BadRequest", func(t *testing.T) {
@@ -213,6 +215,9 @@ func TestGetSession(t *testing.T) {
 
 		t.Logf("Session ID: %s", authToken)
 		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/session/"+rnd.SessionID(authToken), authToken)
+		t.Logf("Response Body: %s", r.Body.String())
+		id := gjson.Get(r.Body.String(), "session_id").String()
+		assert.Equal(t, rnd.SessionID(authToken), id)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
@@ -263,6 +268,9 @@ func TestDeleteSession(t *testing.T) {
 		authToken := AuthenticateUser(app, router, "alice", "Alice123!")
 
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(authToken), authToken)
+		t.Logf("Response Body: %s", r.Body.String())
+		id := gjson.Get(r.Body.String(), "session_id").String()
+		assert.Equal(t, rnd.SessionID(authToken), id)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("AliceSessionAsBob", func(t *testing.T) {

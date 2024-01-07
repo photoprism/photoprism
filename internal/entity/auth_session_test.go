@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/server/header"
+	"github.com/photoprism/photoprism/pkg/header"
 
 	"github.com/stretchr/testify/assert"
 

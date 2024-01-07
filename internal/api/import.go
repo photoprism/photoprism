@@ -151,7 +151,7 @@ func StartImport(router *gin.RouterGroup) {
 		event.Publish("index.completed", eventData)
 
 		for _, uid := range f.Albums {
-			PublishAlbumEvent(EntityUpdated, uid, c)
+			PublishAlbumEvent(StatusUpdated, uid, c)
 		}
 
 		// Update the user interface.

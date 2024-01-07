@@ -1,9 +1,6 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -25,41 +22,5 @@ func Session(authToken string) *entity.Session {
 		return nil
 	} else {
 		return s
-	}
-}
-
-// SessionResponse returns authentication response data based on the session and client config.
-func SessionResponse(authToken string, sess *entity.Session, conf config.ClientConfig) gin.H {
-	if authToken == "" {
-		return gin.H{
-			"status":     "ok",
-			"id":         sess.ID,
-			"expires_in": sess.ExpiresIn(),
-			"provider":   sess.Provider().String(),
-			"user":       sess.User(),
-			"data":       sess.Data(),
-			"config":     conf,
-		}
-	} else {
-		return gin.H{
-			"status":       "ok",
-			"id":           sess.ID,
-			"access_token": authToken,
-			"token_type":   sess.AuthTokenType(),
-			"expires_in":   sess.ExpiresIn(),
-			"provider":     sess.Provider().String(),
-			"user":         sess.User(),
-			"data":         sess.Data(),
-			"config":       conf,
-		}
-	}
-}
-
-// SessionDeleteResponse returns a confirmation response for deleted sessions.
-func SessionDeleteResponse(authToken string) gin.H {
-	if authToken == "" {
-		return gin.H{"status": "ok"}
-	} else {
-		return gin.H{"status": "ok", "id": authToken, "access_token": authToken}
 	}
 }

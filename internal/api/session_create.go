@@ -33,7 +33,7 @@ func CreateSession(router *gin.RouterGroup) {
 			sess := get.Session().Public()
 
 			// Response includes admin account data, session data, and client config values.
-			response := SessionResponse(sess.AuthToken(), sess, conf.ClientPublic())
+			response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientPublic())
 
 			// Return JSON response.
 			c.JSON(http.StatusOK, response)
@@ -80,7 +80,7 @@ func CreateSession(router *gin.RouterGroup) {
 		AddSessionHeader(c, sess.AuthToken())
 
 		// Response includes user data, session data, and client config values.
-		response := SessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
+		response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
 
 		// Return JSON response.
 		c.JSON(sess.HttpStatus(), response)

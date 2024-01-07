@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/server/header"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 // Security adds common HTTP security headers to the response.
