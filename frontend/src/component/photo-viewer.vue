@@ -22,14 +22,14 @@
             <v-icon size="16" color="white">get_app</v-icon>
           </button>
 
-          <button v-if="canEdit" class="pswp__button action-edit hidden-shared-only" style="background: none;" :title="$gettext('Edit')"
-                  @click.exact="onEdit">
-            <v-icon size="16" color="white">edit</v-icon>
-          </button>
-
-          <button v-if="navigatorCanShare" class="pswp__button action-webshare" style="background: none;"
+          <button v-if="navigatorCanShare" class="pswp__button action-webshare hide-mini" style="background: none;"
                   :title="$gettext('Share')" @click.exact="onWebShare">
             <v-icon size="16" color="white">share</v-icon>
+          </button>
+
+         <button v-if="canEdit" class="pswp__button action-edit hidden-shared-only hide-mini" style="background: none;" :title="$gettext('Edit')"
+                  @click.exact="onEdit">
+            <v-icon size="16" color="white">edit</v-icon>
           </button>
 
           <button class="pswp__button action-select" style="background: none;"

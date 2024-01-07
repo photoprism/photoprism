@@ -22,6 +22,24 @@ body.readonly #photoprism .feature-readonly {
     display: block !important;
 }
 
+/* Download / Webshare Buttons */
+#photoprism .pswp__button.action-webshare {
+    display: none !important;
+}
+
+body.mobile #photoprism .pswp__button.action-webshare {
+    display: block !important;
+}
+
+#photoprism .pswp__button.action-download {
+    display: block !important;
+}
+
+body.mobile #photoprism .pswp__button.action-download {
+    display: none !important;
+}
+
+
 /* Opacity */
 
 #photoprism .opacity-0 {
