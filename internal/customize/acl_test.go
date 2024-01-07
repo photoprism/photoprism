@@ -42,6 +42,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Services:  true,
 			Upload:    true,
 			Videos:    true,
+			WebShare:  true,
 		}
 
 		assert.Equal(t, original, s.Features)
@@ -82,6 +83,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 			Services:  false,
 			Upload:    false,
 			Videos:    false,
+			WebShare:  true,
 		}
 
 		assert.Equal(t, original, s.Features)

@@ -22,12 +22,12 @@
             <v-icon size="16" color="white">get_app</v-icon>
           </button>
 
-          <button v-if="navigatorCanShare" class="pswp__button action-webshare hide-mini" style="background: none;"
+          <button v-if="canWebShare" class="pswp__button action-webshare" style="background: none;"
                   :title="$gettext('Share')" @click.exact="onWebShare">
             <v-icon size="16" color="white">share</v-icon>
           </button>
 
-         <button v-if="canEdit" class="pswp__button action-edit hidden-shared-only hide-mini" style="background: none;" :title="$gettext('Edit')"
+          <button v-if="canEdit" class="pswp__button action-edit hidden-shared-only" style="background: none;" :title="$gettext('Edit')"
                   @click.exact="onEdit">
             <v-icon size="16" color="white">edit</v-icon>
           </button>
@@ -104,7 +104,7 @@ export default {
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
       canLike: this.$config.allow("photos", "manage") && this.$config.feature("favorites"),
       canDownload: this.$config.allow("photos", "download") && this.$config.feature("download"),
-      navigatorCanShare: navigator.canShare,
+      canWebShare: navigator.canShare && this.$config.feature("webshare"),
       selection: this.$clipboard.selection,
       config: this.$config.values,
       item: new Thumb(),

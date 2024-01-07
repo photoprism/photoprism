@@ -37,6 +37,7 @@ Features:
   Share: true
   Upload: true
   Videos: true
+  WebShare: true
 Import:
   Path: /
   Move: false

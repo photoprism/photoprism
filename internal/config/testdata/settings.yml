@@ -26,6 +26,7 @@ Features:
   Archive: true
   Delete: false
   Share: true
+  WebShare: true
   Library: true
   Import: true
   Logs: true

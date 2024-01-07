@@ -170,6 +170,21 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
+                v-model="settings.features.webshare"
+                :disabled="busy"
+                class="ma-0 pa-0 input-native-share"
+                color="secondary-dark"
+                :label="$gettext('WebShare')"
+                :hint="$gettext('Use native sharing of your device to share pictures.')"
+                prepend-icon="share"
+                persistent-hint
+                @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
                 v-model="settings.features.edit"
                 :disabled="busy || isDemo"
                 class="ma-0 pa-0 input-edit"
