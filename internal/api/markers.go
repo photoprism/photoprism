@@ -74,9 +74,9 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 
 // CreateMarker adds a new file area marker to assign faces or other subjects.
 //
-// POST /api/v1/markers
-//
 // See internal/form/marker.go for the values required to create a new marker.
+//
+// POST /api/v1/markers
 func CreateMarker(router *gin.RouterGroup) {
 	router.POST("/markers", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
