@@ -93,18 +93,44 @@ func (m *Session) Expires(t time.Time) *Session {
 	return m
 }
 
-// DeleteExpiredSessions deletes expired sessions.
+// DeleteExpiredSessions deletes all expired sessions.
 func DeleteExpiredSessions() (deleted int) {
-	expired := Sessions{}
+	found := Sessions{}
 
-	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", UnixTime()).Find(&expired).Error; err != nil {
-		event.AuditErr([]string{"failed to fetch sessions sessions", "%s"}, err)
+	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", UnixTime()).Find(&found).Error; err != nil {
+		event.AuditErr([]string{"failed to fetch expired sessions", "%s"}, err)
 		return deleted
 	}
 
-	for _, s := range expired {
-		if err := s.Delete(); err != nil {
-			event.AuditErr([]string{s.IP(), "session %s", "failed to delete", "%s"}, s.RefID, err)
+	for _, sess := range found {
+		if err := sess.Delete(); err != nil {
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
+		} else {
+			deleted++
+		}
+	}
+
+	return deleted
+}
+
+// DeleteClientSessions deletes client sessions above the specified limit.
+func DeleteClientSessions(clientUID string, limit int64) (deleted int) {
+	if !rnd.IsUID(clientUID, ClientUID) || limit < 0 {
+		return 0
+	}
+
+	found := Sessions{}
+
+	if err := Db().Where("auth_id = ?", clientUID).
+		Order("created_at DESC").Limit(2147483648).Offset(limit).
+		Find(&found).Error; err != nil {
+		event.AuditErr([]string{"failed to fetch client sessions", "%s"}, err)
+		return deleted
+	}
+
+	for _, sess := range found {
+		if err := sess.Delete(); err != nil {
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
 		} else {
 			deleted++
 		}
@@ -616,7 +642,7 @@ func (m *Session) Invalid() bool {
 
 // Valid checks whether the session belongs to a registered user or a visitor with shares.
 func (m *Session) Valid() bool {
-	if m.AuthMethod == authn.MethodOAuth2.String() {
+	if m.IsClient() {
 		return true
 	}
 

@@ -14,8 +14,14 @@ func (s *Session) Save(m *entity.Session) (*entity.Session, error) {
 		return nil, fmt.Errorf("session is nil")
 	}
 
+	// Update last active timestamp.
+	m.LastActive = entity.UnixTime()
+
 	// Save session.
-	return m.UpdateLastActive(), m.Save()
+	err := m.Save()
+
+	// Return session.
+	return m, err
 }
 
 // Create initializes a new client session and returns it.

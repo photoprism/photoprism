@@ -97,6 +97,36 @@ func TestDeleteExpiredSessions(t *testing.T) {
 	assert.Equal(t, 1, DeleteExpiredSessions())
 }
 
+func TestDeleteClientSessions(t *testing.T) {
+	clientUID := "cs5gfen1bgx00000"
+
+	// Make sure no sessions exist yet and test missing arguments.
+	assert.Equal(t, 0, DeleteClientSessions("", -1))
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, -1))
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, 0))
+	assert.Equal(t, 0, DeleteClientSessions("", 0))
+
+	// Create 10 client sessions.
+	for i := 0; i < 10; i++ {
+		sess := NewSession(3600, 0)
+		sess.SetClientIP(UnknownIP)
+		sess.AuthID = clientUID
+		sess.AuthProvider = authn.ProviderClient.String()
+		sess.AuthMethod = authn.MethodOAuth2.String()
+		sess.AuthScope = "*"
+
+		if err := sess.Save(); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	// Check if the expected number of sessions is deleted until none are left.
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, -1))
+	assert.Equal(t, 9, DeleteClientSessions(clientUID, 1))
+	assert.Equal(t, 1, DeleteClientSessions(clientUID, 0))
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, 0))
+}
+
 func TestSessionStatusUnauthorized(t *testing.T) {
 	m := SessionStatusUnauthorized()
 	assert.Equal(t, 401, m.Status)

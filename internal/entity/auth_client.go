@@ -256,9 +256,6 @@ func (m *Client) UpdateLastActive() *Client {
 
 // NewSession creates a new client session.
 func (m *Client) NewSession(c *gin.Context) *Session {
-	// Update activity timestamp.
-	m.UpdateLastActive()
-
 	// Create, initialize, and return new session.
 	sess := NewSession(m.AuthExpires, 0).SetContext(c)
 	sess.AuthID = m.UID()
@@ -268,6 +265,19 @@ func (m *Client) NewSession(c *gin.Context) *Session {
 	sess.SetUser(m.User())
 
 	return sess
+}
+
+// EnforceAuthTokenLimit deletes client sessions above the configured limit and returns the number of deleted sessions.
+func (m *Client) EnforceAuthTokenLimit() (deleted int) {
+	if m == nil {
+		return 0
+	} else if !m.HasUID() {
+		return 0
+	} else if m.AuthTokens < 0 {
+		return 0
+	}
+
+	return DeleteClientSessions(m.ClientUID, m.AuthTokens)
 }
 
 // Expires returns the auth expiration duration.

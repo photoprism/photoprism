@@ -3,8 +3,8 @@ package api
 import (
 	"net/http"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/pkg/authn"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -28,7 +29,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIP, "create client session in public mode", "denied"})
+			event.AuditErr([]string{clientIP, "create client session", "disabled in public mode"})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}
@@ -42,14 +43,14 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			f.ClientID = clientId
 			f.ClientSecret = clientSecret
 		} else if err = c.Bind(&f); err != nil {
-			event.AuditWarn([]string{clientIP, "oauth", "%s"}, err)
+			event.AuditWarn([]string{clientIP, "create client session", "%s"}, err)
 			AbortBadRequest(c)
 			return
 		}
 
 		// Check the credentials for completeness and the correct format.
 		if err = f.Validate(); err != nil {
-			event.AuditWarn([]string{clientIP, "oauth", "%s"}, err)
+			event.AuditWarn([]string{clientIP, "create client session", "%s"}, err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		}
@@ -70,7 +71,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			limiter.Login.Reserve(clientIP)
 			return
 		} else if !client.AuthEnabled {
-			event.AuditWarn([]string{clientIP, "client %s", "create session", "disabled"}, f.ClientID)
+			event.AuditWarn([]string{clientIP, "client %s", "create session", "authentication disabled"}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if method := client.Method(); !method.IsDefault() && method != authn.MethodOAuth2 {
@@ -87,8 +88,6 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 		// Create new client session.
 		sess := client.NewSession(c)
 
-		// TODO: Enforce limit for maximum number of access tokens.
-
 		// Try to log in and save session if successful.
 		if sess, err = get.Session().Save(sess); err != nil {
 			event.AuditErr([]string{clientIP, "client %s", "create session", "%s"}, f.ClientID, err)
@@ -100,6 +99,11 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			return
 		} else {
 			event.AuditInfo([]string{clientIP, "client %s", "session %s", "created"}, f.ClientID, sess.RefID)
+		}
+
+		// Deletes old client sessions above the configured limit.
+		if deleted := client.EnforceAuthTokenLimit(); deleted > 0 {
+			event.AuditInfo([]string{clientIP, "client %s", "%s deleted"}, f.ClientID, english.Plural(deleted, "old session", "old sessions"))
 		}
 
 		// Response includes access token, token type, and token lifetime.
@@ -125,7 +129,7 @@ func DeleteOAuthToken(router *gin.RouterGroup) {
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIP, "delete client session in public mode", "denied"})
+			event.AuditErr([]string{clientIP, "delete client session", "disabled in public mode"})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}
