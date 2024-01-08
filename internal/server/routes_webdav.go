@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/webdav"
@@ -14,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 const WebDAVOriginals = "/originals"
@@ -72,12 +74,33 @@ func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
 				log.Debugf("webdav: %s in %s %s", clean.Error(err), clean.Log(r.Method), clean.Log(r.URL.String()))
 			}
 		} else {
-			// Mark uploaded files as favorite if X-Favorite HTTP header is "1".
-			if r.Method == MethodPut && r.Header.Get("X-Favorite") == "1" {
+			// Handle optional upload request headers.
+			if r.Method == MethodPut {
+				var fileName string
+
+				// Determine name and path of the uploaded file.
 				if router.BasePath() == conf.BaseUri(WebDAVOriginals) {
-					MarkUploadAsFavorite(filepath.Join(conf.OriginalsPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
+					fileName = filepath.Join(conf.OriginalsPath(), strings.TrimPrefix(r.URL.Path, router.BasePath()))
 				} else if router.BasePath() == conf.BaseUri(WebDAVImport) {
-					MarkUploadAsFavorite(filepath.Join(conf.ImportPath(), strings.TrimPrefix(r.URL.Path, router.BasePath())))
+					fileName = filepath.Join(conf.ImportPath(), strings.TrimPrefix(r.URL.Path, router.BasePath()))
+				}
+
+				if fs.FileExists(fileName) {
+					// Flag the uploaded file as favorite if the "X-Favorite" header is set to "1".
+					if r.Header.Get("X-Favorite") == "1" {
+						FlagUploadAsFavorite(fileName)
+					}
+
+					// Set the file modification time based on the Unix timestamp found in the "X-OC-MTime" header.
+					if mtimeUnix := txt.Int64(r.Header.Get("X-OC-MTime")); mtimeUnix <= 0 {
+						// Ignore, as no Unix timestamp was provided.
+					} else if mtime := time.Unix(mtimeUnix, 0); mtime.IsZero() || time.Now().Before(mtime) {
+						log.Warnf("webdav: invalid modtime provided for %s", clean.Log(filepath.Base(fileName)))
+					} else if mtimeErr := os.Chtimes(fileName, time.Time{}, mtime); mtimeErr != nil {
+						log.Warnf("webdav: failed to set modtime for %s", clean.Log(filepath.Base(fileName)))
+					} else {
+						log.Infof("webdav: set modtime for %s", clean.Log(filepath.Base(fileName)))
+					}
 				}
 			}
 
@@ -144,8 +167,8 @@ func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
 	}
 }
 
-// MarkUploadAsFavorite sets the favorite flag for newly uploaded files.
-func MarkUploadAsFavorite(fileName string) {
+// FlagUploadAsFavorite adds the favorite flag to files uploaded via WebDAV.
+func FlagUploadAsFavorite(fileName string) {
 	yamlName := fs.AbsPrefix(fileName, false) + fs.ExtYAML
 
 	// Abort if YAML file already exists to avoid overwriting metadata.
