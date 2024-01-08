@@ -16,9 +16,10 @@ import (
 
 // ChangeFileOrientation changes the orientation of a file.
 //
-// Request Parameters:
-// - uid: string Photo UID as returned by the API
-// - file_uid: string File UID as returned by the API
+// The request parameters are:
+//
+//   - uid: string Photo UID as returned by the API
+//   - file_uid: string File UID as returned by the API
 //
 // PUT /api/v1/photos/:uid/files/:file_uid/orientation
 func ChangeFileOrientation(router *gin.RouterGroup) {

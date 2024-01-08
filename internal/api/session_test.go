@@ -248,6 +248,17 @@ func TestDeleteSession(t *testing.T) {
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(authToken), authToken)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
+	t.Run("AdminAuthenticatedLogout", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DeleteSession(router)
+		authToken := AuthenticateAdmin(app, router)
+
+		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session", authToken)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
 	t.Run("UserWithoutAuthentication", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)

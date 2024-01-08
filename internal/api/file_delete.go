@@ -17,9 +17,10 @@ import (
 
 // DeleteFile removes a file from storage.
 //
-// Request Parameters:
-// - uid: string Photo UID as returned by the API
-// - file_uid: string File UID as returned by the API
+// The request parameters are:
+//
+//   - uid: string Photo UID as returned by the API
+//   - file_uid: string File UID as returned by the API
 //
 // DELETE /api/v1/photos/:uid/files/:file_uid
 func DeleteFile(router *gin.RouterGroup) {

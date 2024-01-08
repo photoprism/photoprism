@@ -16,6 +16,7 @@ const (
 	StatusUpdated Event = "updated"
 	StatusDeleted Event = "deleted"
 	StatusSuccess Event = "success"
+	StatusFailed  Event = "failed"
 )
 
 // String returns the event type as string.

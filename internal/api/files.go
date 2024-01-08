@@ -12,8 +12,9 @@ import (
 
 // GetFile returns file details as JSON.
 //
-// Request Parameters:
-// - hash (string) SHA-1 hash of the file
+// The request parameters are:
+//
+//   - hash (string) SHA-1 hash of the file
 //
 // GET /api/v1/files/:hash
 func GetFile(router *gin.RouterGroup) {

@@ -15,24 +15,30 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// handler for the path with (without) the trailing slash exists.
 	router.RedirectTrailingSlash = true
 
-	// Static assets and templates.
+	// Register static asset and templates routes.
 	registerStaticRoutes(router, conf)
 
-	// Web app bootstrapping and configuration.
+	// Register PWA bootstrap and config routes.
 	registerPWARoutes(router, conf)
 
-	// Built-in WebDAV server.
+	// Register built-in WebDAV server routes.
 	registerWebDAVRoutes(router, conf)
 
-	// Sharing routes start with "/s".
+	// Register sharing routes starting with "/s".
 	registerSharingRoutes(router, conf)
 
-	// JSON-REST API Version 1
+	// Register ".well-known" service discovery routes.
+	registerWellknownRoutes(router, conf)
+
+	// Register JSON REST-API version 1 (APIv1) routes, grouped by functionality.
+	// Docs: https://pkg.go.dev/github.com/photoprism/photoprism/internal/api
+
 	// Authentication.
 	api.CreateSession(APIv1)
 	api.GetSession(APIv1)
 	api.DeleteSession(APIv1)
-	api.CreateOauthToken(APIv1)
+	api.CreateOAuthToken(APIv1)
+	api.DeleteOAuthToken(APIv1)
 
 	// Server Config.
 	api.GetConfigOptions(APIv1)

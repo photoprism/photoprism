@@ -19,9 +19,10 @@ import (
 
 // PhotoUnstack removes a file from an existing photo stack.
 //
-// Request Parameters:
-// - uid: string Photo UID as returned by the API
-// - file_uid: string File UID as returned by the API
+// The request parameters are:
+//
+//   - uid: string Photo UID as returned by the API
+//   - file_uid: string File UID as returned by the API
 //
 // POST /api/v1/photos/:uid/files/:file_uid/unstack
 func PhotoUnstack(router *gin.RouterGroup) {

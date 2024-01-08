@@ -174,8 +174,9 @@ func CreateMarker(router *gin.RouterGroup) {
 
 // UpdateMarker updates an existing file area marker to assign faces or other subjects.
 //
-// Request Parameters:
-// - marker_uid: string Marker UID as returned by the API
+// The request parameters are:
+//
+//   - marker_uid: string Marker UID as returned by the API
 //
 // PUT /api/v1/markers/:marker_uid
 func UpdateMarker(router *gin.RouterGroup) {
@@ -265,10 +266,11 @@ func UpdateMarker(router *gin.RouterGroup) {
 
 // ClearMarkerSubject removes an existing marker subject association.
 //
-// Request Parameters:
-// - uid: string Photo UID as returned by the API
-// - file_uid: string File UID as returned by the API
-// - id: int Marker ID as returned by the API
+// The request parameters are:
+//
+//   - uid: string Photo UID as returned by the API
+//   - file_uid: string File UID as returned by the API
+//   - id: int Marker ID as returned by the API
 //
 // DELETE /api/v1/markers/:marker_uid/subject
 func ClearMarkerSubject(router *gin.RouterGroup) {

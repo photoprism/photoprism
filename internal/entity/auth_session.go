@@ -619,6 +619,7 @@ func (m *Session) Valid() bool {
 	if m.AuthMethod == authn.MethodOAuth2.String() {
 		return true
 	}
+
 	return m.User().IsRegistered() || m.IsVisitor() && m.HasShares()
 }
 

@@ -54,8 +54,9 @@ func UpdateLabel(router *gin.RouterGroup) {
 
 // LikeLabel flags a label as favorite.
 //
-// Request Parameters:
-// - uid: string Label UID
+// The request parameters are:
+//
+//   - uid: string Label UID
 //
 // POST /api/v1/labels/:uid/like
 func LikeLabel(router *gin.RouterGroup) {
@@ -93,8 +94,9 @@ func LikeLabel(router *gin.RouterGroup) {
 
 // DislikeLabel removes the favorite flag from a label.
 //
-// Request Parameters:
-// - uid: string Label UID
+// The request parameters are:
+//
+//   - uid: string Label UID
 //
 // DELETE /api/v1/labels/:uid/like
 func DislikeLabel(router *gin.RouterGroup) {

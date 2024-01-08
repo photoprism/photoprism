@@ -7,7 +7,7 @@ import (
 )
 
 func TestSendFeedback(t *testing.T) {
-	t.Run("not available in public mode", func(t *testing.T) {
+	t.Run("PublicMode", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		SendFeedback(router)
 		r := PerformRequestWithBody(app, "POST", "/api/v1/feedback", `{"Subject": "Send feedback from unit test", "Message": "Test message"}`)

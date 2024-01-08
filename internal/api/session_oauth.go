@@ -6,26 +6,36 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/photoprism/photoprism/pkg/authn"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// CreateOauthToken creates a new access token for clients that
+// CreateOAuthToken creates a new access token for clients that
 // authenticate with valid OAuth2 client credentials.
 //
 // POST /api/v1/oauth/token
-func CreateOauthToken(router *gin.RouterGroup) {
+func CreateOAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/token", func(c *gin.Context) {
+		// Get client IP address for logs and rate limiting checks.
+		clientIP := ClientIP(c)
+
+		// Abort if running in public mode.
+		if get.Config().Public() {
+			event.AuditErr([]string{clientIP, "create client session in public mode", "denied"})
+			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
+			return
+		}
+
 		// client_id, client_secret
 		var err error
 		var f form.ClientCredentials
-
-		// Get client IP address for logs and rate limiting checks.
-		clientIP := ClientIP(c)
 
 		// Allow authentication with basic auth and form values.
 		if clientId, clientSecret, _ := BasicAuth(c); clientId != "" && clientSecret != "" {
@@ -55,20 +65,20 @@ func CreateOauthToken(router *gin.RouterGroup) {
 
 		// Abort if the client ID or secret are invalid.
 		if client == nil {
-			event.AuditWarn([]string{clientIP, "client %s", "create access token", "invalid client id"}, f.ClientID)
+			event.AuditWarn([]string{clientIP, "client %s", "create session", "invalid client_id"}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			limiter.Login.Reserve(clientIP)
 			return
 		} else if !client.AuthEnabled {
-			event.AuditWarn([]string{clientIP, "client %s", "create access token", "running in public mode"}, f.ClientID)
+			event.AuditWarn([]string{clientIP, "client %s", "create session", "disabled"}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
-		} else if client.AuthMethod != authn.MethodOAuth2.String() {
-			event.AuditWarn([]string{clientIP, "client %s", "create access token", "%s authentication not supported"}, f.ClientID, client.AuthMethod)
+		} else if method := client.Method(); !method.IsDefault() && method != authn.MethodOAuth2 {
+			event.AuditWarn([]string{clientIP, "client %s", "create session", "method %s not supported"}, f.ClientID, clean.LogQuote(method.String()))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if client.WrongSecret(f.ClientSecret) {
-			event.AuditWarn([]string{clientIP, "client %s", "create access token", "invalid client secret"}, f.ClientID)
+			event.AuditWarn([]string{clientIP, "client %s", "create session", "invalid client_secret"}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			limiter.Login.Reserve(clientIP)
 			return
@@ -81,15 +91,15 @@ func CreateOauthToken(router *gin.RouterGroup) {
 
 		// Try to log in and save session if successful.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIP, "client %s", "create access token", "%s"}, f.ClientID, err)
+			event.AuditErr([]string{clientIP, "client %s", "create session", "%s"}, f.ClientID, err)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIP, "client %s", "create access token", "failed unexpectedly"}, f.ClientID)
+			event.AuditErr([]string{clientIP, "client %s", "create session", StatusFailed.String()}, f.ClientID)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrUnexpected)})
 			return
 		} else {
-			event.AuditInfo([]string{clientIP, "client %s", "session %s", "access token created"}, f.ClientID, sess.RefID)
+			event.AuditInfo([]string{clientIP, "client %s", "session %s", "created"}, f.ClientID, sess.RefID)
 		}
 
 		// Response includes access token, token type, and token lifetime.
@@ -101,5 +111,61 @@ func CreateOauthToken(router *gin.RouterGroup) {
 
 		// Return JSON response.
 		c.JSON(http.StatusOK, data)
+	})
+}
+
+// DeleteOAuthToken creates a new access token for clients that
+// authenticate with valid OAuth2 client credentials.
+//
+// POST /api/v1/oauth/logout
+func DeleteOAuthToken(router *gin.RouterGroup) {
+	router.POST("/oauth/logout", func(c *gin.Context) {
+		// Get client IP address for logs and rate limiting checks.
+		clientIP := ClientIP(c)
+
+		// Abort if running in public mode.
+		if get.Config().Public() {
+			event.AuditErr([]string{clientIP, "delete client session in public mode", "denied"})
+			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
+			return
+		}
+
+		// Find session based on auth token.
+		sess, err := entity.FindSession(rnd.SessionID(AuthToken(c)))
+
+		if err != nil {
+			event.AuditErr([]string{clientIP, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String(), err.Error())
+			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
+			return
+		} else if sess == nil {
+			event.AuditErr([]string{clientIP, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String())
+			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
+			return
+		} else if sess.Abort(c) {
+			event.AuditErr([]string{clientIP, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String())
+			return
+		} else if !sess.IsClient() {
+			event.AuditErr([]string{clientIP, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String())
+			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
+			return
+		} else {
+			event.AuditInfo([]string{clientIP, "client %s", "session %s", "delete session as %s", "granted"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String())
+		}
+
+		// Delete session cache and database record.
+		if err = sess.Delete(); err != nil {
+			// Log error.
+			event.AuditErr([]string{clientIP, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String(), err)
+
+			// Return JSON error.
+			c.AbortWithStatusJSON(http.StatusNotFound, i18n.NewResponse(http.StatusNotFound, i18n.ErrNotFound))
+			return
+		}
+
+		// Log event.
+		event.AuditInfo([]string{clientIP, "client %s", "session %s", "deleted"}, clean.Log(sess.AuthID), clean.Log(sess.RefID))
+
+		// Return JSON response for confirmation.
+		c.JSON(http.StatusOK, DeleteSessionResponse(sess.ID))
 	})
 }
