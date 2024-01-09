@@ -1,4 +1,4 @@
-package api
+package header
 
 import (
 	"net/http"
@@ -7,8 +7,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/photoprism/photoprism/pkg/header"
 )
 
 func TestAuthToken(t *testing.T) {
@@ -33,7 +31,7 @@ func TestAuthToken(t *testing.T) {
 		}
 
 		// Add authorization header.
-		AddRequestAuthorizationHeader(c.Request, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
+		SetAuthorization(c.Request, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
 
 		// Check result.
 		authToken := AuthToken(c)
@@ -50,7 +48,7 @@ func TestAuthToken(t *testing.T) {
 		}
 
 		// Add authorization header.
-		c.Request.Header.Add(header.AuthToken, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
+		c.Request.Header.Add(XAuthToken, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
 
 		// Check result.
 		authToken := AuthToken(c)
@@ -82,7 +80,7 @@ func TestBearerToken(t *testing.T) {
 		}
 
 		// Add authorization header.
-		AddRequestAuthorizationHeader(c.Request, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
+		SetAuthorization(c.Request, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
 
 		// Check result.
 		token := BearerToken(c)
@@ -113,11 +111,11 @@ func TestAuthorization(t *testing.T) {
 		}
 
 		// Add authorization header.
-		c.Request.Header.Add(header.Authorization, "Bearer 69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
+		c.Request.Header.Add(Auth, "Bearer 69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")
 
 		// Check result.
 		authType, authToken := Authorization(c)
-		assert.Equal(t, "Bearer", authType)
+		assert.Equal(t, AuthBearer, authType)
 		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", authToken)
 	})
 }
@@ -146,7 +144,7 @@ func TestBasicAuth(t *testing.T) {
 		}
 
 		// Add authorization header.
-		c.Request.Header.Add(header.Authorization, "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==")
+		c.Request.Header.Add(Auth, AuthBasic+" QWxhZGRpbjpvcGVuIHNlc2FtZQ==")
 
 		// Check result.
 		user, pass, key := BasicAuth(c)

@@ -109,7 +109,7 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, pas
 		Password: password,
 	}))
 
-	authToken = r.Header().Get(header.SessionID)
+	authToken = r.Header().Get(header.XSessionID)
 
 	return
 }
@@ -118,7 +118,7 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, pas
 func AuthenticatedRequest(r http.Handler, method, path, authToken string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(method, path, nil)
 
-	AddRequestAuthorizationHeader(req, authToken)
+	header.SetAuthorization(req, authToken)
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -131,7 +131,7 @@ func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, aut
 	reader := strings.NewReader(body)
 	req, _ := http.NewRequest(method, path, reader)
 
-	AddRequestAuthorizationHeader(req, authToken)
+	header.SetAuthorization(req, authToken)
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)

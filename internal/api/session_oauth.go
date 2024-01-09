@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -39,7 +40,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 		var f form.ClientCredentials
 
 		// Allow authentication with basic auth and form values.
-		if clientId, clientSecret, _ := BasicAuth(c); clientId != "" && clientSecret != "" {
+		if clientId, clientSecret, _ := header.BasicAuth(c); clientId != "" && clientSecret != "" {
 			f.ClientID = clientId
 			f.ClientSecret = clientSecret
 		} else if err = c.Bind(&f); err != nil {

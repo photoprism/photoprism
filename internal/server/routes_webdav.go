@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -87,12 +88,12 @@ func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
 
 				if fs.FileExists(fileName) {
 					// Flag the uploaded file as favorite if the "X-Favorite" header is set to "1".
-					if r.Header.Get("X-Favorite") == "1" {
+					if r.Header.Get(header.XFavorite) == "1" {
 						FlagUploadAsFavorite(fileName)
 					}
 
 					// Set the file modification time based on the Unix timestamp found in the "X-OC-MTime" header.
-					if mtimeUnix := txt.Int64(r.Header.Get("X-OC-MTime")); mtimeUnix <= 0 {
+					if mtimeUnix := txt.Int64(r.Header.Get(header.XModTime)); mtimeUnix <= 0 {
 						// Ignore, as no Unix timestamp was provided.
 					} else if mtime := time.Unix(mtimeUnix, 0); mtime.IsZero() || time.Now().Before(mtime) {
 						log.Warnf("webdav: invalid modtime provided for %s", clean.Log(filepath.Base(fileName)))

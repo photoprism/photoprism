@@ -21,7 +21,7 @@ Please Note:
 
 ## Hybrid Photo/Video Formats
 
-For more information on hybrid photo/video file formats, e.g. Apple Live Photos and Samsung/Google Motion Photos, see [github.com/photoprism/photoprism/tree/develop/pkg/live](https://github.com/photoprism/photoprism/tree/develop/pkg/live) and [docs.photoprism.app/developer-guide/media/live](https://docs.photoprism.app/developer-guide/media/live/).
+For more information on hybrid photo/video file formats, e.g. Apple Live Photos and Samsung/Google Motion Photos, see [github.com/photoprism/photoprism/tree/develop/pkg/media](https://github.com/photoprism/photoprism/tree/develop/pkg/media) and [docs.photoprism.app/developer-guide/media/live](https://docs.photoprism.app/developer-guide/media/live/).
 
 ## Standard Resolutions
 

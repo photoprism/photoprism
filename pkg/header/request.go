@@ -1,4 +1,4 @@
-package api
+package header
 
 import (
 	"github.com/gin-gonic/gin"
@@ -10,6 +10,8 @@ const UnknownIP = "0.0.0.0"
 func ClientIP(c *gin.Context) (ip string) {
 	if c == nil {
 		// Should never happen.
+		return UnknownIP
+	} else if c.Request == nil {
 		return UnknownIP
 	} else if ip = c.ClientIP(); ip != "" {
 		return ip
@@ -25,6 +27,8 @@ func ClientIP(c *gin.Context) (ip string) {
 func UserAgent(c *gin.Context) string {
 	if c == nil {
 		// Should never happen.
+		return ""
+	} else if c.Request == nil {
 		return ""
 	}
 

@@ -18,6 +18,7 @@ import (
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 // To improve performance, we use a basic auth cache
@@ -33,7 +34,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 	// Helper function that extracts the login information from the request headers.
 	var basicAuth = func(c *gin.Context) (username, password, cacheKey string, authorized bool) {
 		// Extract credentials from the HTTP request headers.
-		username, password, cacheKey = api.BasicAuth(c)
+		username, password, cacheKey = header.BasicAuth(c)
 
 		// Fail if the username or password is empty, as
 		// this is not allowed under any circumstances.

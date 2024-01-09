@@ -33,7 +33,7 @@ func AddDownloadHeader(c *gin.Context, fileName string) {
 
 // AddSessionHeader adds a session id header to the response.
 func AddSessionHeader(c *gin.Context, id string) {
-	c.Header(header.SessionID, id)
+	c.Header(header.XSessionID, id)
 }
 
 // AddContentTypeHeader adds a content type header to the response.

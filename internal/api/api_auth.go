@@ -6,14 +6,17 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
-// Auth checks if the user has permission to access the specified resource and returns the session if so.
+// Auth checks if the user is authorized to access a resource with the given permission
+// and returns the session or nil otherwise.
 func Auth(c *gin.Context, resource acl.Resource, grant acl.Permission) *entity.Session {
 	return AuthAny(c, resource, acl.Permissions{grant})
 }
 
-// AuthAny checks if at least one permission allows access and returns the session in this case.
+// AuthAny checks if the user is authorized to access a resource with any of the specified permissions
+// and returns the session or nil otherwise.
 func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *entity.Session) {
 	// Get the client IP and session ID from the request headers.
 	ip := ClientIP(c)
@@ -74,4 +77,10 @@ func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *
 		event.AuditInfo([]string{ip, "session %s", "%s %s as %s", "granted"}, s.RefID, grants.String(), string(resource), u.AclRole().String())
 		return s
 	}
+}
+
+// AuthToken returns the client authentication token from the request context if one was found,
+// or an empty string if no supported request header value was provided.
+func AuthToken(c *gin.Context) string {
+	return header.AuthToken(c)
 }

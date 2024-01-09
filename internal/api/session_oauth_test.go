@@ -236,7 +236,7 @@ func TestDeleteOAuthToken(t *testing.T) {
 		authToken := gjson.Get(createResp.Body.String(), "access_token").String()
 
 		deleteToken, _ := http.NewRequest("POST", logoutPath, nil)
-		deleteToken.Header.Add(header.AuthToken, authToken)
+		deleteToken.Header.Add(header.XAuthToken, authToken)
 
 		deleteResp := httptest.NewRecorder()
 		app.ServeHTTP(deleteResp, deleteToken)
@@ -253,7 +253,7 @@ func TestDeleteOAuthToken(t *testing.T) {
 		sess := entity.SessionFixtures.Get("alice_token")
 
 		deleteToken, _ := http.NewRequest("POST", "/api/v1/oauth/logout", nil)
-		deleteToken.Header.Add(header.AuthToken, sess.AuthToken())
+		deleteToken.Header.Add(header.XAuthToken, sess.AuthToken())
 
 		deleteResp := httptest.NewRecorder()
 		app.ServeHTTP(deleteResp, deleteToken)

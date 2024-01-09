@@ -180,7 +180,7 @@ func (m *Session) SetAuthToken(authToken string) *Session {
 
 // AuthTokenType returns the authentication token type.
 func (m *Session) AuthTokenType() string {
-	return header.BearerAuth
+	return header.AuthBearer
 }
 
 // Regenerate (re-)initializes the session with a random auth token, ID, and RefID.
