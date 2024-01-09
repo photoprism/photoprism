@@ -114,15 +114,20 @@ func DeleteExpiredSessions() (deleted int) {
 }
 
 // DeleteClientSessions deletes client sessions above the specified limit.
-func DeleteClientSessions(clientUID string, limit int64) (deleted int) {
+func DeleteClientSessions(clientUID string, authMethod authn.MethodType, limit int64) (deleted int) {
 	if !rnd.IsUID(clientUID, ClientUID) || limit < 0 {
 		return 0
 	}
 
 	found := Sessions{}
 
-	if err := Db().Where("auth_id = ?", clientUID).
-		Order("created_at DESC").Limit(2147483648).Offset(limit).
+	q := Db().Where("auth_id = ? AND auth_provider = ?", clientUID, authn.ProviderClient.String())
+
+	if !authMethod.IsDefault() {
+		q = q.Where("auth_method = ?", authMethod.String())
+	}
+
+	if err := q.Order("created_at DESC").Limit(2147483648).Offset(limit).
 		Find(&found).Error; err != nil {
 		event.AuditErr([]string{"failed to fetch client sessions", "%s"}, err)
 		return deleted

@@ -277,7 +277,7 @@ func (m *Client) EnforceAuthTokenLimit() (deleted int) {
 		return 0
 	}
 
-	return DeleteClientSessions(m.ClientUID, m.AuthTokens)
+	return DeleteClientSessions(m.ClientUID, authn.MethodOAuth2, m.AuthTokens)
 }
 
 // Expires returns the auth expiration duration.
