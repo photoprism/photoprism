@@ -29,5 +29,4 @@ type FeatureSettings struct {
 	Share     bool `json:"share" yaml:"Share"`
 	Upload    bool `json:"upload" yaml:"Upload"`
 	Videos    bool `json:"videos" yaml:"Videos"`
-	WebShare  bool `json:"webshare" yaml:"WebShare"`
 }

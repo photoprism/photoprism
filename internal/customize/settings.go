@@ -70,7 +70,6 @@ func NewSettings(theme, lang string) *Settings {
 			Archive:   true,
 			Review:    true,
 			Share:     true,
-			WebShare:  true,
 			Library:   true,
 			Import:    true,
 			Logs:      true,
