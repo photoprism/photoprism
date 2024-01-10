@@ -10,7 +10,7 @@ const (
 	WebDAVImport    = "/import"
 )
 
-// registerWebDAVRoutes configures the built-in WebDAV server.
+// registerWebDAVRoutes adds routes for handling webdav client requests.
 func registerWebDAVRoutes(router *gin.Engine, conf *config.Config) {
 	if conf.DisableWebDAV() {
 		log.Info("webdav: disabled")

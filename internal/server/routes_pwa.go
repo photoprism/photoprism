@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/header"
 )
 
-// registerPWARoutes configures the progressive web app bootstrap and config routes.
+// registerPWARoutes adds routes for bootstrapping and configuring the progressive web app user interface.
 func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 	// Loads Progressive Web App (PWA) on all routes beginning with "library".
 	pwa := func(c *gin.Context) {

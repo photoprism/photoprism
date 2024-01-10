@@ -9,7 +9,7 @@ import (
 
 var APIv1 *gin.RouterGroup
 
-// registerRoutes configures the available Web server routes.
+// registerRoutes registers the routes for handling HTTP requests with the built-in web server.
 func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Enables automatic redirection if the current route cannot be matched but a
 	// handler for the path with (without) the trailing slash exists.
