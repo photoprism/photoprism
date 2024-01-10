@@ -458,23 +458,56 @@ func (m *Session) SetData(data *SessionData) *Session {
 	return m
 }
 
-// SetContext updates the session's request context.
+// SetContext sets the session request context.
 func (m *Session) SetContext(c *gin.Context) *Session {
 	if c == nil || m == nil {
 		return m
 	}
 
-	// Set client ip address.
-	if ip := c.ClientIP(); ip != "" {
+	// Set client ip address from request context.
+	if ip := header.ClientIP(c); ip != "" {
 		m.SetClientIP(ip)
 	} else if m.ClientIP == "" {
 		// Unit tests often do not set a client IP.
 		m.SetClientIP(UnknownIP)
 	}
 
-	// Set client user agent.
-	if ua := c.GetHeader("User-Agent"); ua != "" {
+	// Set client user agent from request context.
+	if ua := header.UserAgent(c); ua != "" {
 		m.SetUserAgent(ua)
+	}
+
+	return m
+}
+
+// UpdateContext sets the session request context and updates the session entry in the database if it has changed.
+func (m *Session) UpdateContext(c *gin.Context) *Session {
+	if c == nil || m == nil {
+		return m
+	}
+
+	changed := false
+
+	// Set client ip address from request context.
+	if ip := header.ClientIP(c); ip != "" && (ip != m.ClientIP || m.LoginIP == "") {
+		m.SetClientIP(ip)
+		changed = true
+	} else if m.ClientIP == "" {
+		// Unit tests often do not set a client IP.
+		m.SetClientIP(UnknownIP)
+		changed = true
+	}
+
+	// Set client user agent from request context.
+	if ua := header.UserAgent(c); ua != "" && ua != m.UserAgent {
+		m.SetUserAgent(ua)
+		changed = true
+	}
+
+	if !changed {
+		return m
+	} else if err := m.Save(); err != nil {
+		log.Debugf("auth:  %s while updating session context", err)
 	}
 
 	return m

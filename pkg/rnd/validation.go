@@ -97,7 +97,7 @@ func IsHex(s string) bool {
 	}
 
 	for _, r := range s {
-		if (r < 48 || r > 57) && (r < 97 || r > 102) && (r < 65 || r > 70) && r != 45 {
+		if (r < '0' || r > '9') && (r < 'a' || r > 'f') && (r < 'A' || r > 'F') && r != '-' {
 			return false
 		}
 	}
