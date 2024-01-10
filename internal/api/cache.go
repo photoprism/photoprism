@@ -98,7 +98,7 @@ func AddCacheHeader(c *gin.Context, maxAge ttl.Duration, public bool) {
 
 // AddCoverCacheHeader adds cover image cache control headers to the response.
 func AddCoverCacheHeader(c *gin.Context) {
-	AddCacheHeader(c, ttl.Cover, thumb.CachePublic)
+	AddCacheHeader(c, ttl.CacheCover, thumb.CachePublic)
 }
 
 // AddImmutableCacheHeader adds cache control headers to the response for immutable content like thumbnails.
@@ -106,9 +106,9 @@ func AddImmutableCacheHeader(c *gin.Context) {
 	if c == nil {
 		return
 	} else if thumb.CachePublic {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.Default.String()))
+		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.CacheDefault.String()))
 	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.Default.String()))
+		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.CacheDefault.String()))
 	}
 }
 
@@ -117,8 +117,8 @@ func AddVideoCacheHeader(c *gin.Context, cdn bool) {
 	if c == nil {
 		return
 	} else if cdn || thumb.CachePublic {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.Video.String()))
+		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.CacheVideo.String()))
 	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.Video.String()))
+		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.CacheVideo.String()))
 	}
 }

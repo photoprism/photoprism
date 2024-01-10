@@ -23,10 +23,3 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
 package ttl
-
-var (
-	Limit   Duration = 31536000 // 365 days
-	Default Duration = 2592000  // 30 days
-	Video   Duration = 21600    // 6 hours
-	Cover   Duration = 3600     // 1 hour
-)

@@ -498,13 +498,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-cache-maxage",
-			Value:  int(ttl.Default),
+			Value:  int(ttl.CacheDefault),
 			Usage:  "time in `SECONDS` until cached content expires",
 			EnvVar: EnvVar("HTTP_CACHE_MAXAGE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-video-maxage",
-			Value:  int(ttl.Video),
+			Value:  int(ttl.CacheVideo),
 			Usage:  "time in `SECONDS` until cached videos expire",
 			EnvVar: EnvVar("HTTP_VIDEO_MAXAGE"),
 		}}, {
