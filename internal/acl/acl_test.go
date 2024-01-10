@@ -120,3 +120,10 @@ func TestACL_DenyAll(t *testing.T) {
 		assert.False(t, Resources.DenyAll(ResourceFiles, RoleAdmin, Permissions{FullAccess, AccessShared, ActionView}))
 	})
 }
+
+func TestACL_Resources(t *testing.T) {
+	t.Run("Resources", func(t *testing.T) {
+		result := Resources.Resources()
+		assert.Len(t, result, 21)
+	})
+}

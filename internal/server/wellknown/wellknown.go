@@ -1,5 +1,5 @@
 /*
-Package live provides types and abstractions for hybrid photo/video file formats.
+Package wellknown provides data types and abstractions for service discovery endpoints.
 
 Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
@@ -22,4 +22,4 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package live
+package wellknown

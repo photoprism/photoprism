@@ -250,8 +250,9 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 // LikeAlbum sets the favorite flag for an album.
 //
-// Request Parameters:
-// - uid: string Album UID
+// The request parameters are:
+//
+//   - uid: string Album UID
 //
 // POST /api/v1/albums/:uid/like
 func LikeAlbum(router *gin.RouterGroup) {
@@ -297,8 +298,9 @@ func LikeAlbum(router *gin.RouterGroup) {
 
 // DislikeAlbum removes the favorite flag from an album.
 //
-// Request Parameters:
-// - uid: string Album UID
+// The request parameters are:
+//
+//   - uid: string Album UID
 //
 // DELETE /api/v1/albums/:uid/like
 func DislikeAlbum(router *gin.RouterGroup) {

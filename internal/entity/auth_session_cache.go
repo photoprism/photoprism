@@ -37,11 +37,11 @@ func FindSession(id string) (*Session, error) {
 			event.AuditErr([]string{cached.IP(), "session %s", "failed to delete after expiration", "%s"}, cached.RefID, err)
 		}
 	} else if res := Db().First(&found, "id = ?", id); res.RecordNotFound() {
-		return found, fmt.Errorf("not found")
+		return found, fmt.Errorf("invalid session")
 	} else if res.Error != nil {
 		return found, res.Error
 	} else if !rnd.IsSessionID(found.ID) {
-		return found, fmt.Errorf("has invalid id %s", clean.LogQuote(found.ID))
+		return found, fmt.Errorf("invalid session id %s", clean.LogQuote(found.ID))
 	} else if !found.Expired() {
 		found.UpdateLastActive()
 		CacheSession(found, sessionCacheExpiration)
@@ -50,7 +50,7 @@ func FindSession(id string) (*Session, error) {
 		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", "%s"}, found.RefID, err)
 	}
 
-	return found, fmt.Errorf("expired")
+	return found, fmt.Errorf("session expired")
 }
 
 // FlushSessionCache resets the session cache.

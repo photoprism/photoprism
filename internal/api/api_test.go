@@ -8,13 +8,13 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/sirupsen/logrus"
 )
 
 type CloseableResponseRecorder struct {
@@ -31,15 +31,22 @@ func (r *CloseableResponseRecorder) closeClient() {
 }
 
 func TestMain(m *testing.M) {
+	// Init test logger.
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
+	// Init test config.
 	c := config.TestConfig()
 	get.SetConfig(c)
 
+	// Increase login rate limit for testing.
+	limiter.Login = limiter.NewLimit(1, 10000)
+
+	// Run unit tests.
 	code := m.Run()
 
+	// Close database connection.
 	_ = c.CloseDb()
 
 	os.Exit(code)
@@ -102,7 +109,7 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, pas
 		Password: password,
 	}))
 
-	authToken = r.Header().Get(header.SessionID)
+	authToken = r.Header().Get(header.XSessionID)
 
 	return
 }
@@ -111,7 +118,7 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, pas
 func AuthenticatedRequest(r http.Handler, method, path, authToken string) *httptest.ResponseRecorder {
 	req, _ := http.NewRequest(method, path, nil)
 
-	AddRequestAuthorizationHeader(req, authToken)
+	header.SetAuthorization(req, authToken)
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -124,7 +131,7 @@ func AuthenticatedRequestWithBody(r http.Handler, method, path, body string, aut
 	reader := strings.NewReader(body)
 	req, _ := http.NewRequest(method, path, reader)
 
-	AddRequestAuthorizationHeader(req, authToken)
+	header.SetAuthorization(req, authToken)
 
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)

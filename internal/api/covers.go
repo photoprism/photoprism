@@ -23,10 +23,11 @@ const (
 
 // AlbumCover returns an album cover image.
 //
-// Request Parameters:
-// - uid: string album uid
-// - token: string security token (see config)
-// - size: string thumb type, see photoprism.ThumbnailTypes
+// The request parameters are:
+//
+//   - uid: string album uid
+//   - token: string security token (see config)
+//   - size: string thumb type, see photoprism.ThumbnailTypes
 //
 // GET /api/v1/albums/:uid/t/:token/:size
 func AlbumCover(router *gin.RouterGroup) {
@@ -135,10 +136,11 @@ func AlbumCover(router *gin.RouterGroup) {
 
 // LabelCover returns a label cover image.
 //
-// Request Parameters:
-// - uid: string label uid
-// - token: string security token (see config)
-// - size: string thumb type, see photoprism.ThumbnailTypes
+// The request parameters are:
+//
+//   - uid: string label uid
+//   - token: string security token (see config)
+//   - size: string thumb type, see photoprism.ThumbnailTypes
 //
 // GET /api/v1/labels/:uid/t/:token/:size
 func LabelCover(router *gin.RouterGroup) {

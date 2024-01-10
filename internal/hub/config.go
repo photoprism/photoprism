@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 type Status string
@@ -250,7 +251,7 @@ func (c *Config) ReSync(token string) (err error) {
 	}
 
 	// Add Content-Type header.
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add(header.ContentType, header.ContentTypeJson)
 
 	var r *http.Response
 

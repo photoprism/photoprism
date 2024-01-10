@@ -69,7 +69,7 @@ func TestConfig_HttpCacheMaxAge(t *testing.T) {
 	c.Options().HttpCacheMaxAge = 23
 	assert.Equal(t, ttl.Duration(23), c.HttpCacheMaxAge())
 	c.Options().HttpCacheMaxAge = 41536000
-	assert.Equal(t, ttl.Limit, c.HttpCacheMaxAge())
+	assert.Equal(t, ttl.CacheMaxAge, c.HttpCacheMaxAge())
 	c.Options().HttpCacheMaxAge = 0
 	assert.Equal(t, ttl.Duration(2592000), c.HttpCacheMaxAge())
 }
@@ -77,13 +77,13 @@ func TestConfig_HttpCacheMaxAge(t *testing.T) {
 func TestConfig_HttpVideoMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, ttl.Video, c.HttpVideoMaxAge())
+	assert.Equal(t, ttl.CacheVideo, c.HttpVideoMaxAge())
 	c.Options().HttpVideoMaxAge = 23
 	assert.Equal(t, ttl.Duration(23), c.HttpVideoMaxAge())
 	c.Options().HttpVideoMaxAge = 41536000
-	assert.Equal(t, ttl.Limit, c.HttpVideoMaxAge())
+	assert.Equal(t, ttl.CacheMaxAge, c.HttpVideoMaxAge())
 	c.Options().HttpVideoMaxAge = 0
-	assert.Equal(t, ttl.Video, c.HttpVideoMaxAge())
+	assert.Equal(t, ttl.CacheVideo, c.HttpVideoMaxAge())
 }
 
 func TestConfig_HttpCachePublic(t *testing.T) {

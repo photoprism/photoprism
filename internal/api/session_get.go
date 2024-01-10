@@ -14,7 +14,7 @@ import (
 //
 // GET /api/v1/session/:id
 func GetSession(router *gin.RouterGroup) {
-	router.GET("/session/:id", func(c *gin.Context) {
+	getSessionHandler := func(c *gin.Context) {
 		id := clean.ID(c.Param("id"))
 
 		// Check authentication token.
@@ -60,5 +60,7 @@ func GetSession(router *gin.RouterGroup) {
 
 		// Return JSON response.
 		c.JSON(http.StatusOK, response)
-	})
+	}
+
+	router.GET("/session/:id", getSessionHandler)
 }

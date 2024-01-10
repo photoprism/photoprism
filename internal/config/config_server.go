@@ -87,7 +87,7 @@ func (c *Config) HttpCompression() string {
 func (c *Config) HttpCacheMaxAge() ttl.Duration {
 	// Return default cache maxage?
 	if c.options.HttpCacheMaxAge < 1 {
-		return ttl.Default
+		return ttl.CacheDefault
 	} else if c.options.HttpCacheMaxAge > 31536000 {
 		return ttl.Duration(31536000)
 	}
@@ -100,7 +100,7 @@ func (c *Config) HttpCacheMaxAge() ttl.Duration {
 func (c *Config) HttpVideoMaxAge() ttl.Duration {
 	// Return default video maxage?
 	if c.options.HttpVideoMaxAge < 1 {
-		return ttl.Video
+		return ttl.CacheVideo
 	} else if c.options.HttpVideoMaxAge > 31536000 {
 		return ttl.Duration(31536000)
 	}

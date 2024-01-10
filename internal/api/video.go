@@ -19,9 +19,10 @@ import (
 
 // GetVideo streams video content.
 //
-// Request Parameters:
-// - hash: string The photo or video file hash as returned by the search API
-// - type: string Video format
+// The request parameters are:
+//
+//   - hash: string The photo or video file hash as returned by the search API
+//   - type: string Video format
 //
 // GET /api/v1/videos/:hash/:token/:type
 func GetVideo(router *gin.RouterGroup) {

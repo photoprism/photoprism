@@ -21,10 +21,11 @@ const (
 
 // FolderCover returns a folder cover image.
 //
-// Request Parameters:
-// - uid: string folder uid
-// - token: string url security token, see config
-// - size: string thumb type, see thumb.Sizes
+// The request parameters are:
+//
+//   - uid: string folder uid
+//   - token: string url security token, see config
+//   - size: string thumb type, see thumb.Sizes
 //
 // GET /api/v1/folders/t/:hash/:token/:size
 func FolderCover(router *gin.RouterGroup) {

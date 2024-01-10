@@ -35,8 +35,9 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 
 // GetDownload returns the raw file data.
 //
-// Request Parameters:
-// - hash: string The file hash as returned by the files/photos endpoint
+// The request parameters are:
+//
+//   - hash: string The file hash as returned by the files/photos endpoint
 //
 // GET /api/v1/dl/:hash
 func GetDownload(router *gin.RouterGroup) {

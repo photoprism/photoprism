@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
@@ -11,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // AuthAddFlags specifies the "photoprism auth add" command flags.
@@ -64,7 +64,7 @@ func authAddAction(ctx *cli.Context) error {
 
 		// Set a default token name if no specific name has been provided.
 		if name == "" {
-			name = time.Now().UTC().Format(time.DateTime)
+			name = rnd.Name()
 		}
 
 		// Username provided?

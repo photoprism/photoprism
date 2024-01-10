@@ -38,8 +38,9 @@ func SavePhotoAsYaml(p entity.Photo) {
 
 // GetPhoto returns photo details as JSON.
 //
-// Request Parameters:
-// - uid (string) PhotoUID as returned by the API
+// The request parameters are:
+//
+//   - uid (string) PhotoUID as returned by the API
 //
 // GET /api/v1/photos/:uid
 func GetPhoto(router *gin.RouterGroup) {
@@ -124,8 +125,10 @@ func UpdatePhoto(router *gin.RouterGroup) {
 // GetPhotoDownload returns the primary file matching that belongs to the photo.
 //
 // Route :GET /api/v1/photos/:uid/dl
-// Request Parameters:
-// - uid (string) PhotoUID as returned by the API
+//
+// The request parameters are:
+//
+//   - uid (string) PhotoUID as returned by the API
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
@@ -158,8 +161,9 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 
 // GetPhotoYaml returns photo details as YAML.
 //
-// Request Parameters:
-// - uid: string PhotoUID as returned by the API
+// The request parameters are:
+//
+//   - uid: string PhotoUID as returned by the API
 //
 // GET /api/v1/photos/:uid/yaml
 func GetPhotoYaml(router *gin.RouterGroup) {
@@ -194,8 +198,9 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 
 // ApprovePhoto marks a photo in review as approved.
 //
-// Request Parameters:
-// - uid: string PhotoUID as returned by the API
+// The request parameters are:
+//
+//   - uid: string PhotoUID as returned by the API
 //
 // POST /api/v1/photos/:uid/approve
 func ApprovePhoto(router *gin.RouterGroup) {
@@ -230,9 +235,10 @@ func ApprovePhoto(router *gin.RouterGroup) {
 
 // PhotoPrimary sets the primary file for a photo.
 //
-// Request Parameters:
-// - uid: string PhotoUID as returned by the API
-// - file_uid: string File UID as returned by the API
+// The request parameters are:
+//
+//   - uid: string PhotoUID as returned by the API
+//   - file_uid: string File UID as returned by the API
 //
 // POST /photos/:uid/files/:file_uid/primary
 func PhotoPrimary(router *gin.RouterGroup) {

@@ -184,8 +184,8 @@ func (c *Config) Propagate() {
 	thumb.CachePublic = c.HttpCachePublic()
 
 	// Set cache expiration defaults.
-	ttl.Default = c.HttpCacheMaxAge()
-	ttl.Video = c.HttpVideoMaxAge()
+	ttl.CacheDefault = c.HttpCacheMaxAge()
+	ttl.CacheVideo = c.HttpVideoMaxAge()
 
 	// Set geocoding parameters.
 	places.UserAgent = c.UserAgent()

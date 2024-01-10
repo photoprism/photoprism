@@ -94,8 +94,9 @@ func UpdateSubject(router *gin.RouterGroup) {
 
 // LikeSubject flags a subject as favorite.
 //
-// Request Parameters:
-// - uid: string Subject UID
+// The request parameters are:
+//
+//   - uid: string Subject UID
 //
 // POST /api/v1/subjects/:uid/like
 func LikeSubject(router *gin.RouterGroup) {
@@ -127,8 +128,9 @@ func LikeSubject(router *gin.RouterGroup) {
 
 // DislikeSubject removes the favorite flag from a subject.
 //
-// Request Parameters:
-// - uid: string Subject UID
+// The request parameters are:
+//
+//   - uid: string Subject UID
 //
 // DELETE /api/v1/subjects/:uid/like
 func DislikeSubject(router *gin.RouterGroup) {

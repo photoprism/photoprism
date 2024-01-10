@@ -1,5 +1,5 @@
 /*
-Package header provides common response header names and default values.
+Package header provides abstractions and naming constants for HTTP request and response headers.
 
 Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 

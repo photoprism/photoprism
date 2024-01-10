@@ -93,18 +93,49 @@ func (m *Session) Expires(t time.Time) *Session {
 	return m
 }
 
-// DeleteExpiredSessions deletes expired sessions.
+// DeleteExpiredSessions deletes all expired sessions.
 func DeleteExpiredSessions() (deleted int) {
-	expired := Sessions{}
+	found := Sessions{}
 
-	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", UnixTime()).Find(&expired).Error; err != nil {
-		event.AuditErr([]string{"failed to fetch sessions sessions", "%s"}, err)
+	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", UnixTime()).Find(&found).Error; err != nil {
+		event.AuditErr([]string{"failed to fetch expired sessions", "%s"}, err)
 		return deleted
 	}
 
-	for _, s := range expired {
-		if err := s.Delete(); err != nil {
-			event.AuditErr([]string{s.IP(), "session %s", "failed to delete", "%s"}, s.RefID, err)
+	for _, sess := range found {
+		if err := sess.Delete(); err != nil {
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
+		} else {
+			deleted++
+		}
+	}
+
+	return deleted
+}
+
+// DeleteClientSessions deletes client sessions above the specified limit.
+func DeleteClientSessions(clientUID string, authMethod authn.MethodType, limit int64) (deleted int) {
+	if !rnd.IsUID(clientUID, ClientUID) || limit < 0 {
+		return 0
+	}
+
+	found := Sessions{}
+
+	q := Db().Where("auth_id = ? AND auth_provider = ?", clientUID, authn.ProviderClient.String())
+
+	if !authMethod.IsDefault() {
+		q = q.Where("auth_method = ?", authMethod.String())
+	}
+
+	if err := q.Order("created_at DESC").Limit(2147483648).Offset(limit).
+		Find(&found).Error; err != nil {
+		event.AuditErr([]string{"failed to fetch client sessions", "%s"}, err)
+		return deleted
+	}
+
+	for _, sess := range found {
+		if err := sess.Delete(); err != nil {
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
 		} else {
 			deleted++
 		}
@@ -154,7 +185,7 @@ func (m *Session) SetAuthToken(authToken string) *Session {
 
 // AuthTokenType returns the authentication token type.
 func (m *Session) AuthTokenType() string {
-	return header.BearerAuth
+	return header.AuthBearer
 }
 
 // Regenerate (re-)initializes the session with a random auth token, ID, and RefID.
@@ -427,23 +458,56 @@ func (m *Session) SetData(data *SessionData) *Session {
 	return m
 }
 
-// SetContext updates the session's request context.
+// SetContext sets the session request context.
 func (m *Session) SetContext(c *gin.Context) *Session {
 	if c == nil || m == nil {
 		return m
 	}
 
-	// Set client ip address.
-	if ip := c.ClientIP(); ip != "" {
+	// Set client ip address from request context.
+	if ip := header.ClientIP(c); ip != "" {
 		m.SetClientIP(ip)
 	} else if m.ClientIP == "" {
 		// Unit tests often do not set a client IP.
 		m.SetClientIP(UnknownIP)
 	}
 
-	// Set client user agent.
-	if ua := c.GetHeader("User-Agent"); ua != "" {
+	// Set client user agent from request context.
+	if ua := header.UserAgent(c); ua != "" {
 		m.SetUserAgent(ua)
+	}
+
+	return m
+}
+
+// UpdateContext sets the session request context and updates the session entry in the database if it has changed.
+func (m *Session) UpdateContext(c *gin.Context) *Session {
+	if c == nil || m == nil {
+		return m
+	}
+
+	changed := false
+
+	// Set client ip address from request context.
+	if ip := header.ClientIP(c); ip != "" && (ip != m.ClientIP || m.LoginIP == "") {
+		m.SetClientIP(ip)
+		changed = true
+	} else if m.ClientIP == "" {
+		// Unit tests often do not set a client IP.
+		m.SetClientIP(UnknownIP)
+		changed = true
+	}
+
+	// Set client user agent from request context.
+	if ua := header.UserAgent(c); ua != "" && ua != m.UserAgent {
+		m.SetUserAgent(ua)
+		changed = true
+	}
+
+	if !changed {
+		return m
+	} else if err := m.Save(); err != nil {
+		log.Debugf("auth:  %s while updating session context", err)
 	}
 
 	return m
@@ -616,9 +680,10 @@ func (m *Session) Invalid() bool {
 
 // Valid checks whether the session belongs to a registered user or a visitor with shares.
 func (m *Session) Valid() bool {
-	if m.AuthMethod == authn.MethodOAuth2.String() {
+	if m.IsClient() {
 		return true
 	}
+
 	return m.User().IsRegistered() || m.IsVisitor() && m.HasShares()
 }
 

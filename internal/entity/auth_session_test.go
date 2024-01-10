@@ -97,6 +97,37 @@ func TestDeleteExpiredSessions(t *testing.T) {
 	assert.Equal(t, 1, DeleteExpiredSessions())
 }
 
+func TestDeleteClientSessions(t *testing.T) {
+	clientUID := "cs5gfen1bgx00000"
+
+	// Make sure no sessions exist yet and test missing arguments.
+	assert.Equal(t, 0, DeleteClientSessions("", "", -1))
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOAuth2, -1))
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOAuth2, 0))
+	assert.Equal(t, 0, DeleteClientSessions("", authn.MethodDefault, 0))
+
+	// Create 10 client sessions.
+	for i := 0; i < 10; i++ {
+		sess := NewSession(3600, 0)
+		sess.SetClientIP(UnknownIP)
+		sess.AuthID = clientUID
+		sess.AuthProvider = authn.ProviderClient.String()
+		sess.AuthMethod = authn.MethodOAuth2.String()
+		sess.AuthScope = "*"
+
+		if err := sess.Save(); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	// Check if the expected number of sessions is deleted until none are left.
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOAuth2, -1))
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOIDC, 1))
+	assert.Equal(t, 9, DeleteClientSessions(clientUID, authn.MethodOAuth2, 1))
+	assert.Equal(t, 1, DeleteClientSessions(clientUID, authn.MethodOAuth2, 0))
+	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOAuth2, 0))
+}
+
 func TestSessionStatusUnauthorized(t *testing.T) {
 	m := SessionStatusUnauthorized()
 	assert.Equal(t, 401, m.Status)
@@ -152,32 +183,32 @@ func TestSession_AuthToken(t *testing.T) {
 		assert.Equal(t, "", sess.AuthToken())
 		assert.False(t, rnd.IsSessionID(sess.ID))
 		assert.False(t, rnd.IsAuthToken(sess.AuthToken()))
-		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		assert.Equal(t, header.AuthBearer, sess.AuthTokenType())
 		sess.Regenerate()
 		assert.True(t, rnd.IsSessionID(sess.ID))
 		assert.True(t, rnd.IsAuthToken(sess.AuthToken()))
-		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		assert.Equal(t, header.AuthBearer, sess.AuthTokenType())
 		sess.SetAuthToken(alice.AuthToken())
 		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", sess.ID)
 		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", sess.AuthToken())
-		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		assert.Equal(t, header.AuthBearer, sess.AuthTokenType())
 	})
 	t.Run("Alice", func(t *testing.T) {
 		sess := SessionFixtures.Get("alice")
 		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", sess.ID)
 		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", sess.AuthToken())
-		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		assert.Equal(t, header.AuthBearer, sess.AuthTokenType())
 	})
 	t.Run("Find", func(t *testing.T) {
 		alice := SessionFixtures.Get("alice")
 		sess := FindSessionByRefID("sessxkkcabcd")
 		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", sess.ID)
 		assert.Equal(t, "", sess.AuthToken())
-		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		assert.Equal(t, header.AuthBearer, sess.AuthTokenType())
 		sess.SetAuthToken(alice.AuthToken())
 		assert.Equal(t, "a3859489780243a78b331bd44f58255b552dee104041a45c0e79b610f63af2e5", sess.ID)
 		assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", sess.AuthToken())
-		assert.Equal(t, header.BearerAuth, sess.AuthTokenType())
+		assert.Equal(t, header.AuthBearer, sess.AuthTokenType())
 	})
 }
 

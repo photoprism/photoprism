@@ -28,17 +28,17 @@ func AddOffsetHeader(c *gin.Context, offset int) {
 
 // AddDownloadHeader adds a header indicating the response is expected to be downloaded.
 func AddDownloadHeader(c *gin.Context, fileName string) {
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
+	c.Header(header.ContentDisposition, fmt.Sprintf("attachment; filename=%s", fileName))
 }
 
 // AddSessionHeader adds a session id header to the response.
 func AddSessionHeader(c *gin.Context, id string) {
-	c.Header(header.SessionID, id)
+	c.Header(header.XSessionID, id)
 }
 
 // AddContentTypeHeader adds a content type header to the response.
 func AddContentTypeHeader(c *gin.Context, contentType string) {
-	c.Header("Content-Type", contentType)
+	c.Header(header.ContentType, contentType)
 }
 
 // AddFileCountHeaders adds file and folder counts to the response.
