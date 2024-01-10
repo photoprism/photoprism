@@ -40,7 +40,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		// Fail if the username or password is empty, as
 		// this is not allowed under any circumstances.
 		if username == "" || password == "" || cacheKey == "" {
-			return "", "", "", false
+			return "", password, "", false
 		}
 
 		// To improve performance, check the cache for already authorized users.
@@ -80,7 +80,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 
 		// Use the value provided in the password field as auth secret if no username was provided
 		// and the format matches.
-		if username == "" && authToken == "" && rnd.IsAuthSecret(password) {
+		if (username == "" || username == "access-token") && authToken == "" && rnd.IsAuthSecret(password) {
 			authToken = password
 		}
 

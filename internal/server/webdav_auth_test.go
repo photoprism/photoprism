@@ -1,6 +1,8 @@
 package server
 
 import (
+	"encoding/base64"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -53,7 +55,24 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		sess := entity.SessionFixtures.Get("alice_token_webdav")
-		header.SetAuthorization(c.Request, sess.AuthToken())
+		basicAuth := []byte(fmt.Sprintf("access-token:%s", sess.AuthToken()))
+		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
+
+		webdavHandler(c)
+
+		assert.Equal(t, http.StatusOK, c.Writer.Status())
+		assert.Equal(t, "", c.Writer.Header().Get("WWW-Authenticate"))
+	})
+	t.Run("AliceTokenWebdavWithoutUsername", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{
+			Header: make(http.Header),
+		}
+
+		sess := entity.SessionFixtures.Get("alice_token_webdav")
+		basicAuth := []byte(fmt.Sprintf(":%s", sess.AuthToken()))
+		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
 		webdavHandler(c)
 
