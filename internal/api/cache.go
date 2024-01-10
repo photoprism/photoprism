@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/ttl"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -88,11 +89,11 @@ func AddCacheHeader(c *gin.Context, maxAge ttl.Duration, public bool) {
 	if c == nil {
 		return
 	} else if maxAge <= 0 {
-		c.Header("Cache-Control", "no-cache")
+		c.Header(header.CacheControl, header.CacheControlNoCache)
 	} else if public {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s", maxAge.String()))
+		c.Header(header.CacheControl, fmt.Sprintf("public, max-age=%s", maxAge.String()))
 	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s", maxAge.String()))
+		c.Header(header.CacheControl, fmt.Sprintf("private, max-age=%s", maxAge.String()))
 	}
 }
 
@@ -106,9 +107,9 @@ func AddImmutableCacheHeader(c *gin.Context) {
 	if c == nil {
 		return
 	} else if thumb.CachePublic {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.CacheDefault.String()))
+		c.Header(header.CacheControl, fmt.Sprintf("public, max-age=%s, immutable", ttl.CacheDefault.String()))
 	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.CacheDefault.String()))
+		c.Header(header.CacheControl, fmt.Sprintf("private, max-age=%s, immutable", ttl.CacheDefault.String()))
 	}
 }
 
@@ -117,8 +118,8 @@ func AddVideoCacheHeader(c *gin.Context, cdn bool) {
 	if c == nil {
 		return
 	} else if cdn || thumb.CachePublic {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.CacheVideo.String()))
+		c.Header(header.CacheControl, fmt.Sprintf("public, max-age=%s, immutable", ttl.CacheVideo.String()))
 	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.CacheVideo.String()))
+		c.Header(header.CacheControl, fmt.Sprintf("private, max-age=%s, immutable", ttl.CacheVideo.String()))
 	}
 }

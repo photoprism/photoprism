@@ -1,5 +1,12 @@
 package wellknown
 
+import (
+	"fmt"
+
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/config"
+)
+
 // OpenIDConfiguration represents the values returned by the "/.well-known/openid-configuration" endpoint.
 type OpenIDConfiguration struct {
 	Issuer                                    string   `json:"issuer"`
@@ -26,4 +33,34 @@ type OpenIDConfiguration struct {
 	RequestObjectSigningAlgValuesSupported    []string `json:"request_object_signing_alg_values_supported"`
 	DeviceAuthorizationEndpoint               string   `json:"device_authorization_endpoint"`
 	DpopSigningAlgValuesSupported             []string `json:"dpop_signing_alg_values_supported"`
+}
+
+// NewOpenIDConfiguration creates a service discovery endpoint response based on the config provided.
+func NewOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
+	return &OpenIDConfiguration{
+		Issuer:                                    conf.SiteUrl(),
+		AuthorizationEndpoint:                     "",
+		TokenEndpoint:                             fmt.Sprintf("%sapi/v1/oauth/token", conf.SiteUrl()),
+		UserinfoEndpoint:                          "",
+		RegistrationEndpoint:                      "",
+		JwksUri:                                   "",
+		ResponseTypesSupported:                    OAuthResponseTypes,
+		ResponseModesSupported:                    []string{},
+		GrantTypesSupported:                       OAuthGrantTypes,
+		SubjectTypesSupported:                     []string{},
+		IdTokenSigningAlgValuesSupported:          []string{},
+		ScopesSupported:                           acl.Resources.Resources(),
+		TokenEndpointAuthMethodsSupported:         OAuthTokenEndpointAuthMethods,
+		ClaimsSupported:                           []string{},
+		CodeChallengeMethodsSupported:             []string{},
+		IntrospectionEndpoint:                     "",
+		IntrospectionEndpointAuthMethodsSupported: []string{},
+		RevocationEndpoint:                        fmt.Sprintf("%sapi/v1/oauth/revoke", conf.SiteUrl()),
+		RevocationEndpointAuthMethodsSupported:    OAuthRevocationEndpointAuthMethods,
+		EndSessionEndpoint:                        "",
+		RequestParameterSupported:                 false,
+		RequestObjectSigningAlgValuesSupported:    []string{},
+		DeviceAuthorizationEndpoint:               "",
+		DpopSigningAlgValuesSupported:             []string{},
+	}
 }

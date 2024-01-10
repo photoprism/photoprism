@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 // registerPWARoutes configures the progressive web app bootstrap and config routes.
@@ -23,15 +24,15 @@ func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 
 	// Progressive Web App (PWA) Manifest.
 	manifest := func(c *gin.Context) {
-		c.Header("Cache-Control", "no-store")
-		c.Header("Content-Type", "application/json")
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+		c.Header(header.ContentType, header.ContentTypeJson)
 		c.IndentedJSON(200, conf.AppManifest())
 	}
 	router.Any(conf.BaseUri("/manifest.json"), manifest)
 
 	// Progressive Web App (PWA) Service Worker.
 	swWorker := func(c *gin.Context) {
-		c.Header("Cache-Control", "no-store")
+		c.Header(header.CacheControl, header.CacheControlNoStore)
 		c.File(filepath.Join(conf.BuildPath(), "sw.js"))
 	}
 	router.Any("/sw.js", swWorker)

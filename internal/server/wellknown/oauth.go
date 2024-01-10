@@ -1,5 +1,19 @@
 package wellknown
 
+import (
+	"fmt"
+
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/config"
+)
+
+var (
+	OAuthResponseTypes                 = []string{"token"}
+	OAuthGrantTypes                    = []string{"client_credentials"}
+	OAuthTokenEndpointAuthMethods      = []string{"client_secret_basic", "client_secret_post"}
+	OAuthRevocationEndpointAuthMethods = []string{"none"}
+)
+
 // OAuthAuthorizationServer represents the values returned by the "/.well-known/oauth-authorization-server" endpoint.
 type OAuthAuthorizationServer struct {
 	Issuer                                    string   `json:"issuer"`
@@ -23,4 +37,29 @@ type OAuthAuthorizationServer struct {
 	RequestObjectSigningAlgValuesSupported    []string `json:"request_object_signing_alg_values_supported"`
 	DeviceAuthorizationEndpoint               string   `json:"device_authorization_endpoint"`
 	DpopSigningAlgValuesSupported             []string `json:"dpop_signing_alg_values_supported"`
+}
+
+// NewOAuthAuthorizationServer creates a service discovery endpoint response based on the config provided.
+func NewOAuthAuthorizationServer(conf *config.Config) *OAuthAuthorizationServer {
+	return &OAuthAuthorizationServer{
+		Issuer:                                    conf.SiteUrl(),
+		AuthorizationEndpoint:                     "",
+		TokenEndpoint:                             fmt.Sprintf("%sapi/v1/oauth/token", conf.SiteUrl()),
+		ScopesSupported:                           acl.Resources.Resources(),
+		ResponseTypesSupported:                    OAuthResponseTypes,
+		GrantTypesSupported:                       OAuthGrantTypes,
+		TokenEndpointAuthMethodsSupported:         OAuthTokenEndpointAuthMethods,
+		ResponseModesSupported:                    []string{},
+		SubjectTypesSupported:                     []string{},
+		ClaimsSupported:                           []string{},
+		CodeChallengeMethodsSupported:             []string{},
+		IntrospectionEndpointAuthMethodsSupported: []string{},
+		RevocationEndpoint:                        fmt.Sprintf("%sapi/v1/oauth/revoke", conf.SiteUrl()),
+		RevocationEndpointAuthMethodsSupported:    OAuthRevocationEndpointAuthMethods,
+		EndSessionEndpoint:                        "",
+		RequestParameterSupported:                 false,
+		RequestObjectSigningAlgValuesSupported:    []string{},
+		DeviceAuthorizationEndpoint:               "",
+		DpopSigningAlgValuesSupported:             []string{},
+	}
 }

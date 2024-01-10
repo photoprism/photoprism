@@ -35,15 +35,16 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			return
 		}
 
-		// client_id, client_secret
 		var err error
+
+		// Client authentication request credentials.
 		var f form.ClientCredentials
 
 		// Allow authentication with basic auth and form values.
 		if clientId, clientSecret, _ := header.BasicAuth(c); clientId != "" && clientSecret != "" {
 			f.ClientID = clientId
 			f.ClientSecret = clientSecret
-		} else if err = c.Bind(&f); err != nil {
+		} else if err = c.ShouldBind(&f); err != nil {
 			event.AuditWarn([]string{clientIP, "create client session", "%s"}, err)
 			AbortBadRequest(c)
 			return
@@ -119,12 +120,11 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 	})
 }
 
-// DeleteOAuthToken creates a new access token for clients that
-// authenticate with valid OAuth2 client credentials.
+// RevokeOAuthToken takes an access token and deletes it. A client may only delete its own tokens.
 //
-// POST /api/v1/oauth/logout
-func DeleteOAuthToken(router *gin.RouterGroup) {
-	router.POST("/oauth/logout", func(c *gin.Context) {
+// POST /api/v1/oauth/revoke
+func RevokeOAuthToken(router *gin.RouterGroup) {
+	router.POST("/oauth/revoke", func(c *gin.Context) {
 		// Get client IP address for logs and rate limiting checks.
 		clientIP := ClientIP(c)
 
@@ -135,8 +135,32 @@ func DeleteOAuthToken(router *gin.RouterGroup) {
 			return
 		}
 
+		var err error
+
+		// Token revocation request data.
+		var f form.ClientToken
+
+		authToken := AuthToken(c)
+
+		// Get the auth token to be revoked from the submitted form values or the request header.
+		if err = c.ShouldBind(&f); err != nil && authToken == "" {
+			event.AuditWarn([]string{clientIP, "delete client session", "%s"}, err)
+			AbortBadRequest(c)
+			return
+		} else if f.Empty() {
+			f.AuthToken = authToken
+			f.TypeHint = form.ClientAccessToken
+		}
+
+		// Check the token form values.
+		if err = f.Validate(); err != nil {
+			event.AuditWarn([]string{clientIP, "delete client session", "%s"}, err)
+			AbortBadRequest(c)
+			return
+		}
+
 		// Find session based on auth token.
-		sess, err := entity.FindSession(rnd.SessionID(AuthToken(c)))
+		sess, err := entity.FindSession(rnd.SessionID(f.AuthToken))
 
 		if err != nil {
 			event.AuditErr([]string{clientIP, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String(), err.Error())

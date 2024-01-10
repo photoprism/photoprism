@@ -38,7 +38,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.GetSession(APIv1)
 	api.DeleteSession(APIv1)
 	api.CreateOAuthToken(APIv1)
-	api.DeleteOAuthToken(APIv1)
+	api.RevokeOAuthToken(APIv1)
 
 	// Server Config.
 	api.GetConfigOptions(APIv1)
