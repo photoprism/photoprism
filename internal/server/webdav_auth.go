@@ -81,7 +81,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 
 		// Use the value provided in the password field as auth token if no username was provided
 		// and the format matches auth secrets e.g. "iXrDz-aY16n-4IUWM-otkM3".
-		if authToken == "" && rnd.IsAuthSecret(password) {
+		if username != "" && authToken == "" && rnd.IsAuthSecret(password) {
 			authToken = password
 		}
 

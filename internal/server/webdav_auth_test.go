@@ -99,8 +99,8 @@ func TestWebDAVAuth(t *testing.T) {
 		webdavAuthCache.Flush()
 		webdavHandler(c)
 
-		assert.Equal(t, http.StatusOK, c.Writer.Status())
-		assert.Equal(t, "", c.Writer.Header().Get("WWW-Authenticate"))
+		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
+		assert.Equal(t, BasicAuthRealm, c.Writer.Header().Get("WWW-Authenticate"))
 	})
 	t.Run("AliceTokenScope", func(t *testing.T) {
 		w := httptest.NewRecorder()
