@@ -40,12 +40,12 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		// Fail if the username or password is empty, as
 		// this is not allowed under any circumstances.
 		if username == "" || password == "" || cacheKey == "" {
-			return "", password, "", false
+			return username, password, "", false
 		}
 
 		// To improve performance, check the cache for already authorized users.
 		if user, found := webdavAuthCache.Get(cacheKey); found && user != nil {
-			// Add cached user information to the request context.
+			// Add user to request context and return to signal successful authentication.
 			c.Set(gin.AuthUserKey, user.(*entity.User))
 			// Credentials have already been authorized within the configured
 			// expiration time of the basic auth cache (about 5 minutes).
@@ -73,77 +73,44 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 
 		// Get the client IP address from the request headers
 		// for use in logs and to enforce request rate limits.
-		clientIp := api.ClientIP(c)
+		clientIp := header.ClientIP(c)
 
 		// Get access token, if any.
 		authToken := header.AuthToken(c)
 
-		// Use the value provided in the password field as auth secret if no username was provided
-		// and the format matches.
-		if (username == "" || username == "access-token") && authToken == "" && rnd.IsAuthSecret(password) {
+		// Use the value provided in the password field as auth token if no username was provided
+		// and the format matches auth secrets e.g. "iXrDz-aY16n-4IUWM-otkM3".
+		if authToken == "" && rnd.IsAuthSecret(password) {
 			authToken = password
 		}
 
-		// Find client session if an auth token has been provided and perform authorization check.
-		if authToken != "" {
-			sid := rnd.SessionID(authToken)
+		// Allow webdav access based on the auth token or secret provided?
+		if sess, user, sid, cached := WebDAVSession(c, authToken); cached && user != nil {
+			// Add user to request context and return to signal successful authentication.
+			c.Set(gin.AuthUserKey, user)
+			return
+		} else if sess == nil {
+			// Ignore and try basic auth next.
+		} else if !sess.HasUser() || user == nil {
+			// Log error if session does not belong to an authorized user account.
+			event.AuditErr([]string{clientIp, "session %s", "access webdav without authorized user account", "denied"}, sess.RefID)
+		} else if sess.IsClient() && !sess.HasScope(acl.ResourceWebDAV.String()) {
+			// Log error if the client is allowed to access webdav based on its scope.
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "access webdav without scope authorization", "denied"}, clean.Log(sess.AuthID), sess.RefID)
+		} else if !user.CanUseWebDAV() {
+			// Log warning if WebDAV is disabled for this account.
+			message := "webdav access disabled"
+			event.AuditWarn([]string{clientIp, "access webdav as %s", message}, clean.LogQuote(username))
+		} else if err := os.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath()), fs.ModeDir); err != nil {
+			// Log warning if upload path could not be created.
+			message := "failed to create user upload path"
+			event.AuditWarn([]string{clientIp, "access webdav as %s", message}, clean.LogQuote(username))
+		} else {
+			// Cache authentication to improve performance.
+			webdavAuthCache.SetDefault(sid, user)
 
-			// Check if client authorization has been cached to improve performance.
-			if user, found := webdavAuthCache.Get(sid); found && user != nil {
-				// Add cached user information to the request context.
-				c.Set(gin.AuthUserKey, user.(*entity.User))
-				return
-			}
-
-			sess, err := entity.FindSession(sid)
-
-			if sess == nil {
-				limiter.Login.Reserve(clientIp)
-				event.AuditErr([]string{clientIp, "access webdav", "invalid auth token"})
-				WebDAVAbortUnauthorized(c)
-				return
-			} else if err != nil {
-				limiter.Login.Reserve(clientIp)
-				event.AuditErr([]string{clientIp, "access webdav", "%s"}, err.Error())
-				WebDAVAbortUnauthorized(c)
-				return
-			} else {
-				sess.UpdateContext(c)
-			}
-
-			// Required resource scope.
-			resource := acl.ResourceWebDAV
-
-			// If the request is from a client application, check its authorization based
-			// on the allowed scope, the ACL, and the user account it belongs to (if any).
-			if sess.IsClient() {
-				// Check if client belongs to a user and if the "webdav" scope is set.
-				if !sess.HasScope(resource.String()) || !sess.HasUser() {
-					event.AuditErr([]string{clientIp, "client %s", "session %s", "access webdav", "denied"}, clean.Log(sess.AuthID), sess.RefID)
-					WebDAVAbortUnauthorized(c)
-					return
-				}
-			}
-
-			// Check authorization and grant access if successful.
-			if !sess.HasUser() {
-				event.AuditErr([]string{clientIp, "session %s", "access webdav as unauthorized user", "denied"}, sess.RefID)
-			} else if user := sess.User(); !user.CanUseWebDAV() {
-				// Sync disabled for this account.
-				message := "sync disabled"
-				event.AuditWarn([]string{clientIp, "access webdav as %s", message}, clean.LogQuote(username))
-			} else if err = os.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath()), fs.ModeDir); err != nil {
-				message := "failed to create user upload path"
-				event.AuditWarn([]string{clientIp, "access webdav as %s", message}, clean.LogQuote(username))
-			} else {
-				// Cache successful authentication to improve performance.
-				webdavAuthCache.SetDefault(sid, user)
-				c.Set(gin.AuthUserKey, user)
-				return
-			}
-
-			// Request authentication.
-			WebDAVAbortUnauthorized(c)
+			// Add user to request context and return to signal successful authentication.
+			c.Set(gin.AuthUserKey, user)
 			return
 		}
 
@@ -171,33 +138,36 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 
 		// Check credentials and authorization.
 		if user, _, err := entity.Auth(f, nil, c); err != nil {
+			// Abort if authentication has failed.
 			message := err.Error()
 			limiter.Login.Reserve(clientIp)
 			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if user == nil {
+			// Abort if account was not found.
 			message := "account not found"
 			limiter.Login.Reserve(clientIp)
 			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if !user.CanUseWebDAV() {
-			// Sync disabled for this account.
-			message := "sync disabled"
-
+			// Abort if WebDAV is disabled for this account.
+			message := "webdav access disabled"
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if err = os.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath()), fs.ModeDir); err != nil {
+			// Abort if upload path could not be created.
 			message := "failed to create user upload path"
-
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else {
-			// Successfully authenticated.
+			// Log successful authentication.
 			event.AuditInfo([]string{clientIp, "webdav login as %s", "succeeded"}, clean.LogQuote(username))
 			event.LoginInfo(clientIp, "webdav", username, api.UserAgent(c))
 
-			// Cache successful authentication to improve performance.
+			// Cache authentication to improve performance.
 			webdavAuthCache.SetDefault(cacheKey, user)
+
+			// Add user to request context and return to signal successful authentication.
 			c.Set(gin.AuthUserKey, user)
 			return
 		}
@@ -211,4 +181,43 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 func WebDAVAbortUnauthorized(c *gin.Context) {
 	c.Header("WWW-Authenticate", BasicAuthRealm)
 	c.AbortWithStatus(http.StatusUnauthorized)
+}
+
+// WebDAVSession returns the client session that belongs to the auth token provided, or returns nil if it was not found.
+func WebDAVSession(c *gin.Context, authToken string) (sess *entity.Session, user *entity.User, sid string, cached bool) {
+	if authToken == "" {
+		// Abort authentication if no token was provided.
+		return nil, nil, "", false
+	} else if !rnd.IsAuthToken(authToken) && !rnd.IsAuthSecret(authToken) {
+		// Abort authentication if token doesn't match expected format.
+		return nil, nil, "", false
+	}
+
+	// Get session ID for the auth token provided.
+	sid = rnd.SessionID(authToken)
+
+	// Check if client authorization has been cached to improve performance.
+	if cacheData, found := webdavAuthCache.Get(sid); found && cacheData != nil {
+		// Add cached user information to the request context.
+		user = cacheData.(*entity.User)
+		return nil, user, sid, true
+	}
+
+	var err error
+
+	// Find the session based on the hashed token used as session ID and return it.
+	sess, err = entity.FindSession(sid)
+
+	// Log error and return nil if no matching session was found.
+	if sess == nil || err != nil {
+		event.AuditErr([]string{header.ClientIP(c), "access webdav", "invalid auth token or secret"})
+		return nil, nil, sid, false
+	}
+
+	// Update the client IP and the user agent from
+	// the request context if they have changed.
+	sess.UpdateContext(c)
+
+	// Returns session and user if all checks have passed.
+	return sess, sess.User(), sid, false
 }
