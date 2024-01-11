@@ -28,6 +28,7 @@ func TestWebDAVAuth(t *testing.T) {
 			Header: make(http.Header),
 		}
 
+		webdavAuthCache.Flush()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -39,6 +40,8 @@ func TestWebDAVAuth(t *testing.T) {
 		c.Request = &http.Request{
 			Header: make(http.Header),
 		}
+
+		webdavAuthCache.Flush()
 
 		sess := entity.SessionFixtures.Get("alice_token")
 		header.SetAuthorization(c.Request, sess.AuthToken())
@@ -56,13 +59,31 @@ func TestWebDAVAuth(t *testing.T) {
 		}
 
 		sess := entity.SessionFixtures.Get("alice_token_webdav")
-		basicAuth := []byte(fmt.Sprintf("access-token:%s", sess.AuthToken()))
+		basicAuth := []byte(fmt.Sprintf("alice:%s", sess.AuthToken()))
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
+		webdavAuthCache.Flush()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusOK, c.Writer.Status())
 		assert.Equal(t, "", c.Writer.Header().Get("WWW-Authenticate"))
+	})
+	t.Run("AliceTokenWebdavWrongUsername", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		c.Request = &http.Request{
+			Header: make(http.Header),
+		}
+
+		sess := entity.SessionFixtures.Get("alice_token_webdav")
+		basicAuth := []byte(fmt.Sprintf("bob:%s", sess.AuthToken()))
+		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
+
+		webdavAuthCache.Flush()
+		webdavHandler(c)
+
+		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
+		assert.Equal(t, BasicAuthRealm, c.Writer.Header().Get("WWW-Authenticate"))
 	})
 	t.Run("AliceTokenWebdavWithoutUsername", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -75,6 +96,7 @@ func TestWebDAVAuth(t *testing.T) {
 		basicAuth := []byte(fmt.Sprintf(":%s", sess.AuthToken()))
 		c.Request.Header.Add(header.Auth, fmt.Sprintf("%s %s", header.AuthBasic, base64.StdEncoding.EncodeToString(basicAuth)))
 
+		webdavAuthCache.Flush()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusOK, c.Writer.Status())
@@ -90,6 +112,7 @@ func TestWebDAVAuth(t *testing.T) {
 		sess := entity.SessionFixtures.Get("alice_token_scope")
 		header.SetAuthorization(c.Request, sess.AuthToken())
 
+		webdavAuthCache.Flush()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -104,6 +127,7 @@ func TestWebDAVAuth(t *testing.T) {
 
 		header.SetAuthorization(c.Request, rnd.AuthToken())
 
+		webdavAuthCache.Flush()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -118,6 +142,7 @@ func TestWebDAVAuth(t *testing.T) {
 
 		header.SetAuthorization(c.Request, rnd.AuthSecret())
 
+		webdavAuthCache.Flush()
 		webdavHandler(c)
 
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
@@ -136,22 +161,36 @@ func TestWebDAVAuthSession(t *testing.T) {
 		s := entity.SessionFixtures.Get("alice_token_webdav")
 
 		// Get session with authorized user and webdav scope.
+		webdavAuthCache.Flush()
 		sess, user, sid, cached := WebDAVAuthSession(c, s.AuthToken())
 
 		// Check result.
-		if cached {
-			assert.Nil(t, sess)
-			assert.NotNil(t, user)
-			assert.True(t, cached)
-		} else {
-			assert.NotNil(t, sess)
-			assert.NotNil(t, user)
-			assert.True(t, sess.HasUser())
-			assert.Equal(t, user.UserUID, sess.UserUID)
-			assert.Equal(t, entity.UserFixtures.Get("alice").UserUID, sess.UserUID)
-			assert.True(t, sess.HasScope(acl.ResourceWebDAV.String()))
-			assert.False(t, cached)
-		}
+		assert.NotNil(t, sess)
+		assert.NotNil(t, user)
+		assert.True(t, sess.HasUser())
+		assert.Equal(t, user.UserUID, sess.UserUID)
+		assert.Equal(t, entity.UserFixtures.Get("alice").UserUID, sess.UserUID)
+		assert.True(t, sess.HasScope(acl.ResourceWebDAV.String()))
+		assert.False(t, cached)
+
+		assert.Equal(t, s.ID, sid)
+		assert.Equal(t, entity.UserFixtures.Get("alice").UserUID, user.UserUID)
+		assert.True(t, user.CanUseWebDAV())
+
+		// WebDAVAuthSession should not set a status code or any headers.
+		assert.Equal(t, http.StatusOK, c.Writer.Status())
+		assert.Equal(t, "", c.Writer.Header().Get("WWW-Authenticate"))
+
+		// Cache authentication.
+		webdavAuthCache.SetDefault(sid, user)
+
+		// Get cached user.
+		sess, user, sid, cached = WebDAVAuthSession(c, s.AuthToken())
+
+		// Check result.
+		assert.Nil(t, sess)
+		assert.NotNil(t, user)
+		assert.True(t, cached)
 
 		assert.Equal(t, s.ID, sid)
 		assert.Equal(t, entity.UserFixtures.Get("alice").UserUID, user.UserUID)
