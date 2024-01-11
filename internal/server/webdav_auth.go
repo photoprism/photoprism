@@ -85,7 +85,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		}
 
 		// Allow webdav access based on the auth token or secret provided?
-		if sess, user, sid, cached := WebDAVSession(c, authToken); cached && user != nil {
+		if sess, user, sid, cached := WebDAVAuthSession(c, authToken); cached && user != nil {
 			// Add user to request context and return to signal successful authentication.
 			c.Set(gin.AuthUserKey, user)
 			return
@@ -94,17 +94,25 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		} else if !sess.HasUser() || user == nil {
 			// Log error if session does not belong to an authorized user account.
 			event.AuditErr([]string{clientIp, "session %s", "access webdav without authorized user account", "denied"}, sess.RefID)
+			WebDAVAbortUnauthorized(c)
+			return
 		} else if sess.IsClient() && !sess.HasScope(acl.ResourceWebDAV.String()) {
 			// Log error if the client is allowed to access webdav based on its scope.
 			event.AuditErr([]string{clientIp, "client %s", "session %s", "access webdav without scope authorization", "denied"}, clean.Log(sess.AuthID), sess.RefID)
+			WebDAVAbortUnauthorized(c)
+			return
 		} else if !user.CanUseWebDAV() {
 			// Log warning if WebDAV is disabled for this account.
 			message := "webdav access disabled"
 			event.AuditWarn([]string{clientIp, "access webdav as %s", message}, clean.LogQuote(username))
+			WebDAVAbortUnauthorized(c)
+			return
 		} else if err := os.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath()), fs.ModeDir); err != nil {
 			// Log warning if upload path could not be created.
 			message := "failed to create user upload path"
 			event.AuditWarn([]string{clientIp, "access webdav as %s", message}, clean.LogQuote(username))
+			WebDAVAbortServerError(c)
+			return
 		} else {
 			// Cache authentication to improve performance.
 			webdavAuthCache.SetDefault(sid, user)
@@ -159,6 +167,8 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			message := "failed to create user upload path"
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
+			WebDAVAbortServerError(c)
+			return
 		} else {
 			// Log successful authentication.
 			event.AuditInfo([]string{clientIp, "webdav login as %s", "succeeded"}, clean.LogQuote(username))
@@ -183,41 +193,7 @@ func WebDAVAbortUnauthorized(c *gin.Context) {
 	c.AbortWithStatus(http.StatusUnauthorized)
 }
 
-// WebDAVSession returns the client session that belongs to the auth token provided, or returns nil if it was not found.
-func WebDAVSession(c *gin.Context, authToken string) (sess *entity.Session, user *entity.User, sid string, cached bool) {
-	if authToken == "" {
-		// Abort authentication if no token was provided.
-		return nil, nil, "", false
-	} else if !rnd.IsAuthToken(authToken) && !rnd.IsAuthSecret(authToken) {
-		// Abort authentication if token doesn't match expected format.
-		return nil, nil, "", false
-	}
-
-	// Get session ID for the auth token provided.
-	sid = rnd.SessionID(authToken)
-
-	// Check if client authorization has been cached to improve performance.
-	if cacheData, found := webdavAuthCache.Get(sid); found && cacheData != nil {
-		// Add cached user information to the request context.
-		user = cacheData.(*entity.User)
-		return nil, user, sid, true
-	}
-
-	var err error
-
-	// Find the session based on the hashed token used as session ID and return it.
-	sess, err = entity.FindSession(sid)
-
-	// Log error and return nil if no matching session was found.
-	if sess == nil || err != nil {
-		event.AuditErr([]string{header.ClientIP(c), "access webdav", "invalid auth token or secret"})
-		return nil, nil, sid, false
-	}
-
-	// Update the client IP and the user agent from
-	// the request context if they have changed.
-	sess.UpdateContext(c)
-
-	// Returns session and user if all checks have passed.
-	return sess, sess.User(), sid, false
+// WebDAVAbortServerError aborts the request with the status internal server error.
+func WebDAVAbortServerError(c *gin.Context) {
+	c.AbortWithStatus(http.StatusInternalServerError)
 }
