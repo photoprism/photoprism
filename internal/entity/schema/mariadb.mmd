@@ -36,28 +36,6 @@ class albums_users {
     varbinary(42) uid
     varbinary(42) user_uid
 }
-class audit_logins {
-    varchar(32) login_status
-    varchar(512) error_message
-    bigint(20) error_repeated
-    varchar(512) client_browser
-    datetime login_at
-    datetime failed_at
-    datetime banned_at
-    datetime created_at
-    datetime updated_at
-    varchar(64) client_ip
-    varchar(64) login_name
-    varchar(64) login_realm
-}
-class audit_logs {
-    datetime log_time
-    tinyint(3) unsigned severity
-    varchar(64) client_ip
-    varbinary(2048) log_message
-    bigint(20) log_repeated
-    int(10) unsigned id
-}
 class auth_clients {
     varbinary(42) user_uid
     varchar(200) client_name
@@ -466,15 +444,6 @@ class markers {
     datetime updated_at
     varbinary(42) marker_uid
 }
-class migrations {
-    varchar(16) dialect
-    varchar(16) stage
-    varchar(255) error
-    varchar(16) source
-    datetime started_at
-    datetime finished_at
-    varchar(16) id
-}
 class passwords {
     varbinary(255) hash
     datetime created_at
@@ -633,15 +602,6 @@ class subjects {
     datetime deleted_at
     varbinary(42) subj_uid
 }
-class versions {
-    varchar(255) version
-    varchar(255) edition
-    varchar(255) error
-    datetime created_at
-    datetime updated_at
-    datetime migrated_at
-    int(10) unsigned id
-}
 
 auth_sessions  -->  auth_users : user_uid
 auth_users_details --> auth_users : user_uid
@@ -658,6 +618,7 @@ files_share  -->  files : file_id
 files_share  -->  services : service_id
 files_sync  -->  files : file_id
 files_sync  -->  services : service_id
+markers  -->  files : file_uid
 markers  -->  faces : face_id
 markers  -->  subjects : subject_uid
 faces  -->  subjects : subject_uid
@@ -681,3 +642,9 @@ photos_users   -->  auth_users : user_uid
 photos --> users : created_by
 links  -->  albums : uid
 duplicates -- files
+passwords --> users : user_uid
+passwords --> auth_clients : client_uid
+reactions --> users : user_uid
+reactions --> photos : photo_uid
+reactions --> albums : album_uid
+auth_clients --> users : user_uid
