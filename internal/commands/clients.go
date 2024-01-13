@@ -1,16 +1,17 @@
 package commands
 
 import (
-	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 // Usage hints for the client management subcommands.
 const (
 	ClientNameUsage        = "arbitrary name to help identify the `CLIENT` application"
-	ClientUserName         = "provide a `USERNAME` if the client belongs to a specific user account"
-	ClientAuthMethod       = "supported authentication `METHOD` for the client application"
+	ClientUserName         = "`USERNAME` of the account the client application belongs to (leave empty for none)"
 	ClientAuthScope        = "authorization `SCOPE` of the client e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all scopes)"
+	ClientAuthMethod       = "supported authentication `METHOD` for the client application"
 	ClientAuthExpires      = "access token lifetime in `SECONDS`, after which a new token must be created by the client (-1 to disable)"
 	ClientAuthTokens       = "maximum `NUMBER` of access tokens the client can create (-1 to disable)"
 	ClientRegenerateSecret = "generate a new client secret and display it"
@@ -44,13 +45,14 @@ var ClientAddFlags = []cli.Flag{
 		Usage: ClientUserName,
 	},
 	cli.StringFlag{
-		Name:  "method, m",
-		Usage: ClientAuthMethod,
-		Value: authn.MethodOAuth2.String(),
-	},
-	cli.StringFlag{
 		Name:  "scope, s",
 		Usage: ClientAuthScope,
+	},
+	cli.StringFlag{
+		Name:   "method, m",
+		Usage:  ClientAuthMethod,
+		Value:  authn.MethodOAuth2.String(),
+		Hidden: true,
 	},
 	cli.Int64Flag{
 		Name:  "expires, e",
@@ -69,13 +71,14 @@ var ClientModFlags = []cli.Flag{
 		Usage: ClientNameUsage,
 	},
 	cli.StringFlag{
-		Name:  "method, m",
-		Usage: ClientAuthMethod,
-		Value: authn.MethodOAuth2.String(),
-	},
-	cli.StringFlag{
 		Name:  "scope, s",
 		Usage: ClientAuthScope,
+	},
+	cli.StringFlag{
+		Name:   "method, m",
+		Usage:  ClientAuthMethod,
+		Value:  authn.MethodOAuth2.String(),
+		Hidden: true,
 	},
 	cli.Int64Flag{
 		Name:  "expires, e",

@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // ClientsAddCommand configures the command name, flags, and action.
@@ -39,7 +40,8 @@ func clientsAddAction(ctx *cli.Context) error {
 
 		if interactive && frm.ClientName == "" {
 			prompt := promptui.Prompt{
-				Label: "Client Name",
+				Label:   "Client Name",
+				Default: rnd.Name(),
 			}
 
 			res, err := prompt.Run()

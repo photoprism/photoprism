@@ -368,7 +368,7 @@ func TestClient_SetFormValues(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var values = form.Client{ClientName: "Annika", AuthMethod: authn.MethodBasic.String(),
+		var values = form.Client{ClientName: "Annika", AuthMethod: authn.MethodOAuth2.String(),
 			AuthScope:   "metrics",
 			AuthExpires: -4000,
 			AuthTokens:  -5,
@@ -389,7 +389,7 @@ func TestClient_SetFormValues(t *testing.T) {
 		}
 
 		var values = form.Client{ClientName: "Friend",
-			AuthMethod:  authn.MethodBasic.String(),
+			AuthMethod:  authn.MethodOAuth2.String(),
 			AuthScope:   "test",
 			AuthExpires: 4000000,
 			AuthTokens:  3000000000,
