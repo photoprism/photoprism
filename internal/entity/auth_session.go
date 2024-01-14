@@ -356,6 +356,27 @@ func (m *Session) SetAuthID(id string) *Session {
 	return m
 }
 
+// Scope returns the authorization scope as a sanitized string.
+func (m *Session) Scope() string {
+	return clean.Scope(m.AuthScope)
+}
+
+// HasScope checks if the session has the given authorization scope.
+func (m *Session) HasScope(scope string) bool {
+	return list.ParseAttr(m.Scope()).Contains(scope)
+}
+
+// SetScope sets a custom authentication scope.
+func (m *Session) SetScope(scope string) *Session {
+	if scope == "" {
+		return m
+	}
+
+	m.AuthScope = clean.Scope(scope)
+
+	return m
+}
+
 // Method returns the authentication method.
 func (m *Session) Method() authn.MethodType {
 	return authn.Method(m.AuthMethod)
@@ -792,14 +813,4 @@ func (m *Session) HttpStatus() int {
 	}
 
 	return http.StatusUnauthorized
-}
-
-// Scope returns the authorization scope as a sanitized string.
-func (m *Session) Scope() string {
-	return clean.Scope(m.AuthScope)
-}
-
-// HasScope checks if the session has the given authorization scope.
-func (m *Session) HasScope(scope string) bool {
-	return list.ParseAttr(m.Scope()).Contains(scope)
 }

@@ -126,6 +126,7 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (authn.Prov
 			return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
 		} else {
 			m.SetAuthID(authSess.AuthID)
+			m.SetScope(authSess.Scope())
 			m.SetMethod(authn.MethodSession)
 			event.AuditInfo([]string{clientIp, "session %s", "login as %s with auth secret", "succeeded"}, m.RefID, clean.LogQuote(userName))
 			event.LoginInfo(clientIp, "api", userName, m.UserAgent)
