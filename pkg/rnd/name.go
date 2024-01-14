@@ -1,6 +1,9 @@
 package rnd
 
 import (
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+
 	petname "github.com/dustinkirkland/golang-petname"
 )
 
@@ -11,5 +14,5 @@ func Name() string {
 
 // NameN returns a pronounceable name consisting of a random combination of adverbs, an adjective, and a pet name.
 func NameN(n int) string {
-	return petname.Generate(n, "-")
+	return cases.Title(language.English, cases.Compact).String(petname.Generate(n, " "))
 }

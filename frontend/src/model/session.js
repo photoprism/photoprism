@@ -24,7 +24,7 @@ Additional information can be found in our Developer Guide:
 */
 
 import RestModel from "model/rest";
-import { $gettext } from "common/vm";
+import { $gettext, T } from "common/vm";
 import Util from "common/util";
 import * as admin from "options/admin";
 import memoizeOne from "memoize-one";
@@ -64,7 +64,7 @@ export class Session extends RestModel {
     let providerName = memoizeOne(admin.AuthProviders)()[this.AuthProvider];
 
     if (providerName) {
-      providerName = $gettext(providerName);
+      providerName = T(providerName);
     } else {
       providerName = Util.capitalize(this.AuthProvider);
     }

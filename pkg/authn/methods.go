@@ -13,10 +13,10 @@ type MethodType string
 // Authentication methods.
 const (
 	MethodDefault     MethodType = "default"
-	MethodBasic       MethodType = "basic"
 	MethodAccessToken MethodType = "access_token"
 	MethodOAuth2      MethodType = "oauth2"
 	MethodOIDC        MethodType = "oidc"
+	Method2FA         MethodType = "2fa"
 	MethodUnknown     MethodType = ""
 )
 
@@ -30,10 +30,12 @@ func (t MethodType) String() string {
 	switch t {
 	case "":
 		return string(MethodDefault)
-	case "openid":
-		return string(MethodOIDC)
 	case "oauth":
 		return string(MethodOAuth2)
+	case "openid":
+		return string(MethodOIDC)
+	case "totp":
+		return string(Method2FA)
 	default:
 		return string(t)
 	}
@@ -58,6 +60,8 @@ func (t MethodType) Pretty() string {
 		return "OAuth2"
 	case MethodOIDC:
 		return "OIDC"
+	case Method2FA:
+		return "2FA"
 	default:
 		return txt.UpperFirst(t.String())
 	}
@@ -70,6 +74,10 @@ func Method(s string) MethodType {
 		return MethodDefault
 	case "oauth2", "oauth":
 		return MethodOAuth2
+	case "sso":
+		return MethodOIDC
+	case "two-factor", "totp":
+		return Method2FA
 	default:
 		return MethodType(clean.TypeLower(s))
 	}

@@ -184,9 +184,15 @@ export default class Session {
     this.id = null;
     this.authToken = null;
     this.provider = "";
+
+    // "sessionId" is the SHA256 hash of the auth token.
     this.storage.removeItem("sessionId");
     this.storage.removeItem("authToken");
     this.storage.removeItem("provider");
+
+    // The "session_id" storage key is deprecated in favor of "authToken",
+    // but should continue to be removed when logging out:
+    this.storage.removeItem("session_id");
 
     delete Api.defaults.headers.common[RequestHeader];
   }

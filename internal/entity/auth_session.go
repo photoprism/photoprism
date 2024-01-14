@@ -564,6 +564,10 @@ func (m *Session) NoUser() bool {
 
 // HasUser checks if a user account is assigned to the session.
 func (m *Session) HasUser() bool {
+	if m == nil {
+		return false
+	}
+
 	return m.UserUID != ""
 }
 

@@ -13,14 +13,17 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // ClientsAddCommand configures the command name, flags, and action.
 var ClientsAddCommand = cli.Command{
-	Name:   "add",
-	Usage:  "Registers a new client application",
-	Flags:  ClientAddFlags,
-	Action: clientsAddAction,
+	Name:        "add",
+	Usage:       "Registers a new client application",
+	Description: "Specifying a username as argument will assign the client application to a registered user account.",
+	ArgsUsage:   "[username]",
+	Flags:       ClientAddFlags,
+	Action:      clientsAddAction,
 }
 
 // clientsAddAction registers a new client application.
@@ -39,7 +42,8 @@ func clientsAddAction(ctx *cli.Context) error {
 
 		if interactive && frm.ClientName == "" {
 			prompt := promptui.Prompt{
-				Label: "Client Name",
+				Label:   "Client Name",
+				Default: rnd.Name(),
 			}
 
 			res, err := prompt.Run()

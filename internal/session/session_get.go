@@ -9,7 +9,7 @@ import (
 // Get returns an existing client session.
 func (s *Session) Get(id string) (m *entity.Session, err error) {
 	if id == "" {
-		return &entity.Session{}, fmt.Errorf("invalid session id")
+		return &entity.Session{}, fmt.Errorf("session id is missing")
 	}
 
 	return entity.FindSession(id)

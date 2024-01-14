@@ -97,7 +97,7 @@
               </video>
             </v-layout>
 
-            <button v-if="photo.Type !== 'image' || photo.Files.length > 1"
+            <button v-if="photo.Type !== 'image' || photo.isStack()"
                   class="input-open"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
                   @touchend.stop.prevent="onOpen($event, index, !isSharedView, photo.Type === 'live')"
