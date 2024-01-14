@@ -65,7 +65,7 @@ msgstr "概要"
 
 #: src/options/admin.js:61
 msgid "Access Token"
-msgstr ""
+msgstr "アクセス・トークン"
 
 #: src/component/navigation.vue:104 src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
@@ -2097,7 +2097,7 @@ msgstr "スキャン"
 
 #: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
 msgid "Scope"
-msgstr ""
+msgstr "スコープ"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
 #: src/component/navigation.vue:563 src/component/navigation.vue:4
@@ -2789,6 +2789,9 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
+
+#~ msgid "providerName"
+#~ msgstr "プロバイダ名"
 
 #~ msgid "Basic"
 #~ msgstr "基本"

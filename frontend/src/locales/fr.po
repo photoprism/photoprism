@@ -65,7 +65,7 @@ msgstr "À propos"
 
 #: src/options/admin.js:61
 msgid "Access Token"
-msgstr ""
+msgstr "Jeton d'accès"
 
 #: src/component/navigation.vue:104 src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
@@ -2097,7 +2097,7 @@ msgstr "Numérisées"
 
 #: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
 msgid "Scope"
-msgstr ""
+msgstr "Champ d'application"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
 #: src/component/navigation.vue:563 src/component/navigation.vue:4
@@ -2789,6 +2789,9 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "providerName"
+#~ msgstr "Nom du fournisseur"
 
 #~ msgid "Basic"
 #~ msgstr "Basique"

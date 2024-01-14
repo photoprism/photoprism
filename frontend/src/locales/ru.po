@@ -65,7 +65,7 @@ msgstr "О нас"
 
 #: src/options/admin.js:61
 msgid "Access Token"
-msgstr ""
+msgstr "Токен доступа"
 
 #: src/component/navigation.vue:104 src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
@@ -2097,7 +2097,7 @@ msgstr "Сканы"
 
 #: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
 msgid "Scope"
-msgstr ""
+msgstr "Область применения"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
 #: src/component/navigation.vue:563 src/component/navigation.vue:4
@@ -2789,6 +2789,9 @@ msgstr "Ваша библиотека постоянно анализирует�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличение/уменьшение масштаба"
+
+#~ msgid "providerName"
+#~ msgstr "providerName"
 
 #~ msgid "Basic"
 #~ msgstr "Простой"

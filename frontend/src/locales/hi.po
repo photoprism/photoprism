@@ -65,7 +65,7 @@ msgstr "के बारे में"
 
 #: src/options/admin.js:61
 msgid "Access Token"
-msgstr ""
+msgstr "एक्सेस टोकन"
 
 #: src/component/navigation.vue:104 src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
@@ -2097,7 +2097,7 @@ msgstr "स्कैन"
 
 #: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
 msgid "Scope"
-msgstr ""
+msgstr "दायरा"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
 #: src/component/navigation.vue:563 src/component/navigation.vue:4
@@ -2789,6 +2789,9 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "providerName"
+#~ msgstr "प्रदाता का नाम"
 
 #~ msgid "Basic"
 #~ msgstr "बुनियादी"
