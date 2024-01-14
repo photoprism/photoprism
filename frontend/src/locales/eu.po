@@ -62,7 +62,7 @@ msgstr "Buruz"
 
 #: src/options/admin.js:61
 msgid "Access Token"
-msgstr ""
+msgstr "Sarbide-tokena"
 
 #: src/component/navigation.vue:104 src/component/navigation.vue:2040
 #: src/dialog/share/upload.vue:108 src/model/service.js:98
@@ -518,7 +518,7 @@ msgstr "Garbitu"
 
 #: src/options/admin.js:11 src/options/admin.js:47
 msgid "Client"
-msgstr ""
+msgstr "Bezeroa"
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -2094,7 +2094,7 @@ msgstr "Eskaneatzea"
 
 #: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
 msgid "Scope"
-msgstr ""
+msgstr "Eremua"
 
 #: src/component/navigation.vue:61 src/component/navigation.vue:71
 #: src/component/navigation.vue:563 src/component/navigation.vue:4
@@ -2786,6 +2786,9 @@ msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Handitu/txikiagotu"
+
+#~ msgid "providerName"
+#~ msgstr "hornitzailearenIzena"
 
 #~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 #~ msgstr "Sortu automatikoki JPEGak beste fitxategi mota batzuetarako, arakatzaile batean bistaratzeko."
