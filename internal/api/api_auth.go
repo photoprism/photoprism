@@ -36,7 +36,7 @@ func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *
 		// Check ACL resource name against the permitted scope.
 		if !s.HasScope(resource.String()) {
 			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", "denied"}, s.AuthID, s.RefID, string(resource))
-			return s
+			return entity.SessionStatusForbidden()
 		}
 
 		// Perform an authorization check based on the ACL defaults for client applications.
