@@ -17,12 +17,12 @@
 
           <button class="pswp__button pswp__button--close action-close" :title="$gettext('Close')"></button>
 
-          <button v-if="canDownload" class="pswp__button action-download" style="background: none;"
+          <button v-if="canDownload && !navigatorCanShare" class="pswp__button action-download" style="background: none;"
                   :title="$gettext('Download')" @click.exact="onDownload">
             <v-icon size="16" color="white">get_app</v-icon>
           </button>
 
-          <button v-if="navigatorCanShare" class="pswp__button action-webshare hide-mini" style="background: none;"
+          <button v-if="canDownload && navigatorCanShare" class="pswp__button action-webshare hide-mini" style="background: none;"
                   :title="$gettext('Share')" @click.exact="onWebShare">
             <v-icon size="16" color="white">share</v-icon>
           </button>
@@ -104,7 +104,7 @@ export default {
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
       canLike: this.$config.allow("photos", "manage") && this.$config.feature("favorites"),
       canDownload: this.$config.allow("photos", "download") && this.$config.feature("download"),
-      navigatorCanShare: navigator.canShare,
+      navigatorCanShare: navigator.canShare && navigator.canShare({files: [new File([], "emtpy.jpg")]}) && this.$isMobile,
       selection: this.$clipboard.selection,
       config: this.$config.values,
       item: new Thumb(),

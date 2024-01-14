@@ -33,20 +33,6 @@
         >
           <v-icon>cloud</v-icon>
         </v-btn>
-
-        
-        <v-btn
-            v-if="context !== 'archive' && context !== 'review' && navigatorCanShare" fab dark
-            small
-            :title="$gettext('Share')"
-            color="webshare"
-            :disabled="selection.length === 0 || busy"
-            class="action-webshare"
-            @click.stop="webShare()"
-        >
-          <v-icon>share</v-icon>
-        </v-btn>
-
         <v-btn
             v-if="canManage && context === 'review'" fab dark
             small
@@ -81,7 +67,7 @@
           <v-icon>lock</v-icon>
         </v-btn>
         <v-btn
-            v-if="canDownload && context !== 'archive'" fab dark
+            v-if="canDownload && !navigatorCanShare && context !== 'archive'" fab dark
             small
             :title="$gettext('Download')"
             :disabled="busy"
@@ -90,6 +76,17 @@
             @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
+        </v-btn>
+        <v-btn
+            v-if="canDownload && navigatorCanShare && context !== 'archive'" fab dark
+            small
+            :title="$gettext('Share')"
+            color="download"
+            :disabled="busy"
+            class="action-webshare"
+            @click.stop="webShare()"
+        >
+          <v-icon>share</v-icon>
         </v-btn>
         <v-btn
             v-if="canEditAlbum && context !== 'archive'" fab dark
@@ -210,7 +207,7 @@ export default {
       config: this.$config.values,
       expanded: false,
       isAlbum: this.album && this.album.Type === 'album',
-      navigatorCanShare: navigator.canShare,
+      navigatorCanShare: navigator.canShare && navigator.canShare({files: [new File([], "emtpy.jpg")]}) && this.$isMobile,
       dialog: {
         archive: false,
         delete: false,
