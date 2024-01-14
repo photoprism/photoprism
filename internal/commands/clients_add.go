@@ -18,10 +18,12 @@ import (
 
 // ClientsAddCommand configures the command name, flags, and action.
 var ClientsAddCommand = cli.Command{
-	Name:   "add",
-	Usage:  "Registers a new client application",
-	Flags:  ClientAddFlags,
-	Action: clientsAddAction,
+	Name:        "add",
+	Usage:       "Registers a new client application",
+	Description: "Specifying a username as argument will assign the client application to a registered user account.",
+	ArgsUsage:   "[username]",
+	Flags:       ClientAddFlags,
+	Action:      clientsAddAction,
 }
 
 // clientsAddAction registers a new client application.

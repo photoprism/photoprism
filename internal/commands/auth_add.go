@@ -20,10 +20,6 @@ var AuthAddFlags = []cli.Flag{
 		Usage: "arbitrary name to help identify the access `TOKEN`",
 	},
 	cli.StringFlag{
-		Name:  "user, u",
-		Usage: "`USERNAME` of the account the access token belongs to (leave empty for none)",
-	},
-	cli.StringFlag{
 		Name:  "scope, s",
 		Usage: "authorization `SCOPE` for the access token e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all scopes)",
 	},
@@ -36,17 +32,19 @@ var AuthAddFlags = []cli.Flag{
 
 // AuthAddCommand configures the command name, flags, and action.
 var AuthAddCommand = cli.Command{
-	Name:   "add",
-	Usage:  "Creates a new client access token",
-	Flags:  AuthAddFlags,
-	Action: authAddAction,
+	Name:        "add",
+	Usage:       "Creates a new client access token",
+	Description: "Specifying a username as argument creates a personal access token for a registered user account.",
+	ArgsUsage:   "[username]",
+	Flags:       AuthAddFlags,
+	Action:      authAddAction,
 }
 
 // authAddAction shows detailed session information.
 func authAddAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		// Get username from command flag.
-		userName := ctx.String("user")
+		userName := clean.Username(ctx.Args().First())
 
 		// Find user account.
 		user := entity.FindUserByName(userName)

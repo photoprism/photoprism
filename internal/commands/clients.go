@@ -9,7 +9,6 @@ import (
 // Usage hints for the client management subcommands.
 const (
 	ClientNameUsage        = "arbitrary name to help identify the `CLIENT` application"
-	ClientUserName         = "`USERNAME` of the account the client application belongs to (leave empty for none)"
 	ClientAuthScope        = "authorization `SCOPE` of the client e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all scopes)"
 	ClientAuthMethod       = "supported authentication `METHOD` for the client application"
 	ClientAuthExpires      = "access token lifetime in `SECONDS`, after which a new token must be created by the client (-1 to disable)"
@@ -39,10 +38,6 @@ var ClientAddFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "name, n",
 		Usage: ClientNameUsage,
-	},
-	cli.StringFlag{
-		Name:  "user, u",
-		Usage: ClientUserName,
 	},
 	cli.StringFlag{
 		Name:  "scope, s",

@@ -46,7 +46,7 @@ func NewClientFromCli(ctx *cli.Context) Client {
 		f.AuthScope = "webdav"
 	}
 
-	if user := ctx.String("user"); rnd.IsUID(user, 'u') {
+	if user := clean.Username(ctx.Args().First()); rnd.IsUID(user, 'u') {
 		f.UserUID = user
 	} else if user != "" {
 		f.UserName = user
