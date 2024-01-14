@@ -661,8 +661,8 @@ msgstr "디버그 로그"
 
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:73
-#: src/options/admin.js:92 src/options/options.js:313
+#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
+#: src/options/admin.js:93 src/options/options.js:313
 #: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "기본값"
@@ -1346,7 +1346,7 @@ msgstr "마지막 동기화"
 msgid "Latitude"
 msgstr "위도"
 
-#: src/options/admin.js:49 src/options/admin.js:81
+#: src/options/admin.js:49 src/options/admin.js:82
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1411,8 +1411,8 @@ msgstr "라이브"
 msgid "Live Photos"
 msgstr "라이브 포토"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:77
-#: src/options/admin.js:96
+#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
+#: src/options/admin.js:97
 msgid "Local"
 msgstr "로컬"
 
@@ -1658,7 +1658,7 @@ msgstr "이 키워드를 포함하는 경고 또는 오류가 없습니다. 검�
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "사진이 아닌 저품질 이미지는 검색 결과에 표시되기 전에 검토가 필요합니다."
 
-#: src/options/admin.js:52 src/options/admin.js:85 src/options/admin.js:100
+#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
 #: src/options/options.js:293 src/options/options.js:389
 msgid "None"
 msgstr "없음"
@@ -2160,7 +2160,7 @@ msgstr "서비스 URL"
 msgid "Services"
 msgstr "서비스"
 
-#: src/model/session.js:98
+#: src/model/session.js:98 src/options/admin.js:62
 msgid "Session"
 msgstr "세션"
 

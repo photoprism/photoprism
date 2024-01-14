@@ -5,78 +5,246 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/authn"
-
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
+
+func TestAuthSession(t *testing.T) {
+	t.Run("RandomAuthSecret", func(t *testing.T) {
+		// Create test request form.
+		f := form.Login{
+			UserName: "alice",
+			Password: rnd.AuthSecret(),
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		authSess, authUser, authErr := AuthSession(f, c)
+
+		assert.Nil(t, authSess)
+		assert.Nil(t, authUser)
+		assert.Error(t, authErr)
+	})
+	t.Run("RandomAuthToken", func(t *testing.T) {
+		// Create test request form.
+		f := form.Login{
+			UserName: "alice",
+			Password: rnd.AuthToken(),
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		authSess, authUser, authErr := AuthSession(f, c)
+
+		assert.Nil(t, authSess)
+		assert.Nil(t, authUser)
+		assert.Error(t, authErr)
+	})
+	t.Run("AliceAuthToken", func(t *testing.T) {
+		s := SessionFixtures.Get("alice_token")
+
+		// Create test request form.
+		f := form.Login{
+			UserName: "alice",
+			Password: s.AuthToken(),
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		authSess, authUser, authErr := AuthSession(f, c)
+
+		assert.Nil(t, authSess)
+		assert.Nil(t, authUser)
+		assert.Error(t, authErr)
+	})
+	t.Run("AliceTokenPersonal", func(t *testing.T) {
+		s := SessionFixtures.Get("alice_token_personal")
+		u := FindUserByName("alice")
+
+		// Create test request form.
+		f := form.Login{
+			UserName: "alice",
+			Password: s.AuthToken(),
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		authSess, authUser, authErr := AuthSession(f, c)
+
+		if authErr != nil {
+			t.Fatal(authErr)
+		}
+
+		assert.NotNil(t, authSess)
+		assert.NotNil(t, authUser)
+
+		assert.Equal(t, u.UserUID, s.UserUID)
+		assert.Equal(t, u.Username(), s.Username())
+		assert.Equal(t, authUser.UserUID, authSess.UserUID)
+		assert.Equal(t, authUser.Username(), authSess.Username())
+		assert.Equal(t, authUser.UserUID, authUser.UserUID)
+		assert.Equal(t, authUser.Username(), authUser.Username())
+
+		assert.True(t, authSess.IsRegistered())
+		assert.True(t, authSess.HasUser())
+
+		assert.True(t, authSess.HasScope(acl.ResourceWebDAV.String()))
+		assert.True(t, authSess.HasScope(acl.ResourceSessions.String()))
+	})
+	t.Run("AliceTokenWebdav", func(t *testing.T) {
+		s := SessionFixtures.Get("alice_token_webdav")
+		u := FindUserByName("alice")
+
+		// Create test request form.
+		f := form.Login{
+			UserName: "alice",
+			Password: s.AuthToken(),
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		authSess, authUser, authErr := AuthSession(f, c)
+
+		if authErr != nil {
+			t.Fatal(authErr)
+		}
+
+		assert.NotNil(t, authSess)
+		assert.NotNil(t, authUser)
+
+		assert.Equal(t, u.UserUID, s.UserUID)
+		assert.Equal(t, u.Username(), s.Username())
+		assert.Equal(t, authUser.UserUID, authSess.UserUID)
+		assert.Equal(t, authUser.Username(), authSess.Username())
+		assert.Equal(t, authUser.UserUID, authUser.UserUID)
+		assert.Equal(t, authUser.Username(), authUser.Username())
+
+		assert.True(t, authSess.IsRegistered())
+		assert.True(t, authSess.HasUser())
+
+		assert.True(t, authSess.HasScope(acl.ResourceWebDAV.String()))
+		assert.False(t, authSess.HasScope(acl.ResourceSessions.String()))
+	})
+}
 
 func TestAuthLocal(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
-
 		m := FindSessionByRefID("sessxkkcabch")
-
 		u := FindUserByName("alice")
 
+		// Create test request form.
 		frm := form.Login{
 			UserName: "alice",
 			Password: "Alice123!",
 		}
 
-		if err := AuthLocal(u, frm, m); err != nil {
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		if provider, err := AuthLocal(u, frm, m, c); err != nil {
 			t.Fatal(err)
+		} else {
+			assert.Equal(t, authn.ProviderLocal, provider)
 		}
 	})
 	t.Run("Wrong credentials", func(t *testing.T) {
-
 		m := FindSessionByRefID("sessxkkcabch")
-
 		u := FindUserByName("alice")
 
+		// Create test request form.
 		frm := form.Login{
 			UserName: "alice",
 			Password: "photoprism",
 		}
 
-		if err := AuthLocal(u, frm, m); err == nil {
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		if provider, err := AuthLocal(u, frm, m, c); err == nil {
 			t.Fatal("auth should fail")
+		} else {
+			assert.Equal(t, authn.ProviderNone, provider)
 		}
 	})
 	t.Run("No login rights", func(t *testing.T) {
-
 		m := &Session{}
-
 		u := FindUserByName("friend")
 
 		u.CanLogin = false
 
+		// Create test request form.
 		frm := form.Login{
 			UserName: "friend",
 			Password: "!Friend321",
 		}
 
-		if err := AuthLocal(u, frm, m); err == nil {
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		if provider, err := AuthLocal(u, frm, m, c); err == nil {
 			t.Fatal("auth should fail")
+		} else {
+			assert.Equal(t, authn.ProviderNone, provider)
 		}
 
 		u.CanLogin = true
 	})
 	t.Run("Authentication disabled", func(t *testing.T) {
-
 		m := &Session{}
-
 		u := FindUserByName("friend")
 
 		u.SetProvider(authn.ProviderNone)
 
+		// Create test request form.
 		frm := form.Login{
 			UserName: "friend",
 			Password: "!Friend321",
 		}
 
-		if err := AuthLocal(u, frm, m); err == nil {
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		if provider, err := AuthLocal(u, frm, m, c); err == nil {
 			t.Fatal("auth should fail")
+		} else {
+			assert.Equal(t, authn.ProviderNone, provider)
 		}
 
 		u.SetProvider(authn.ProviderLocal)
@@ -85,9 +253,7 @@ func TestAuthLocal(t *testing.T) {
 
 func TestSessionLogIn(t *testing.T) {
 	const clientIp = "1.2.3.4"
-
 	rec := httptest.NewRecorder()
-	ctx, _ := gin.CreateTestContext(rec)
 
 	t.Run("Admin", func(t *testing.T) {
 		m := NewSession(UnixDay, UnixHour*6)
@@ -99,12 +265,13 @@ func TestSessionLogIn(t *testing.T) {
 			Password: "photoprism",
 		}
 
-		// Create HTTP request.
-		ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
-		ctx.Request.RemoteAddr = "1.2.3.4"
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Try to log in.
-		if err := m.LogIn(frm, ctx); err != nil {
+		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -118,12 +285,13 @@ func TestSessionLogIn(t *testing.T) {
 			Password: "wrong",
 		}
 
-		// Create HTTP request.
-		ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
-		ctx.Request.RemoteAddr = "1.2.3.4"
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Try to log in.
-		if err := m.LogIn(frm, ctx); err == nil {
+		if err := m.LogIn(frm, c); err == nil {
 			t.Fatal("login should fail")
 		}
 	})
@@ -137,12 +305,13 @@ func TestSessionLogIn(t *testing.T) {
 			Password: "password",
 		}
 
-		// Create HTTP request.
-		ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
-		ctx.Request.RemoteAddr = "1.2.3.4"
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Try to log in.
-		if err := m.LogIn(frm, ctx); err == nil {
+		if err := m.LogIn(frm, c); err == nil {
 			t.Fatal("login should fail")
 		}
 	})
@@ -155,12 +324,13 @@ func TestSessionLogIn(t *testing.T) {
 			ShareToken: "1jxf3jfn2k",
 		}
 
-		// Create HTTP request.
-		ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
-		ctx.Request.RemoteAddr = "1.2.3.4"
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Try to log in.
-		if err := m.LogIn(frm, ctx); err != nil {
+		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -174,12 +344,13 @@ func TestSessionLogIn(t *testing.T) {
 			ShareToken: "1jxf3jfxxx",
 		}
 
-		// Create HTTP request.
-		ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
-		ctx.Request.RemoteAddr = "1.2.3.4"
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Try to log in.
-		if err := m.LogIn(frm, ctx); err == nil {
+		if err := m.LogIn(frm, c); err == nil {
 			t.Fatal("login should fail")
 		}
 	})
@@ -193,12 +364,13 @@ func TestSessionLogIn(t *testing.T) {
 			ShareToken: "1jxf3jfn2k",
 		}
 
-		// Create HTTP request.
-		ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
-		ctx.Request.RemoteAddr = "1.2.3.4"
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Try to log in.
-		if err := m.LogIn(frm, ctx); err != nil {
+		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
 	})
@@ -212,12 +384,13 @@ func TestSessionLogIn(t *testing.T) {
 			ShareToken: "1jxf3jfxxx",
 		}
 
-		// Create HTTP request.
-		ctx.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
-		ctx.Request.RemoteAddr = "1.2.3.4"
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Try to log in.
-		if err := m.LogIn(frm, ctx); err == nil {
+		if err := m.LogIn(frm, c); err == nil {
 			t.Fatal("login should fail")
 		}
 	})

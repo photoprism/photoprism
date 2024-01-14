@@ -7,21 +7,28 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Auth checks if the credentials are valid and returns the user and authentication provider.
 var Auth = func(f form.Login, m *Session, c *gin.Context) (user *User, provider authn.ProviderType, err error) {
-	name := f.Username()
+	// Get username from login form.
+	nameName := f.Username()
 
-	user = FindUserByName(name)
-	err = AuthLocal(user, f, m)
+	// Find registered user account.
+	user = FindUserByName(nameName)
+
+	// Try local authentication.
+	provider, err = AuthLocal(user, f, m, c)
 
 	if err != nil {
 		return user, authn.ProviderNone, err
@@ -30,60 +37,116 @@ var Auth = func(f form.Login, m *Session, c *gin.Context) (user *User, provider 
 	// Update login timestamp.
 	user.UpdateLoginTime()
 
-	return user, authn.ProviderLocal, err
+	return user, provider, err
+}
+
+// AuthSession returns the client session that belongs to the auth token provided, or returns nil if it was not found.
+func AuthSession(f form.Login, c *gin.Context) (sess *Session, user *User, err error) {
+	if f.Password == "" {
+		// Abort authentication if no token was provided.
+		return nil, nil, fmt.Errorf("no auth secret provided")
+	} else if !rnd.IsAuthSecret(f.Password) {
+		// Abort authentication if token doesn't match expected format.
+		return nil, nil, fmt.Errorf("auth secret does not match expected format")
+	}
+
+	// Get session ID for the auth token provided.
+	sid := rnd.SessionID(f.Password)
+
+	// Find the session based on the hashed token used as session ID and return it.
+	sess, err = FindSession(sid)
+
+	// Log error and return nil if no matching session was found.
+	if sess == nil || err != nil {
+		return nil, nil, fmt.Errorf("invalid auth secret")
+	}
+
+	// Update the client IP and the user agent from
+	// the request context if they have changed.
+	sess.UpdateContext(c)
+
+	// Returns session and user if all checks have passed.
+	return sess, sess.User(), nil
 }
 
 // AuthLocal authenticates against the local user database with the specified username and password.
-func AuthLocal(user *User, f form.Login, m *Session) (err error) {
-	name := f.Username()
+func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (authn.ProviderType, error) {
+	// Get client IP from request context.
+	clientIp := header.ClientIP(c)
 
-	// User found?
+	// Get username from login form.
+	userName := f.Username()
+
+	// Check if a session has been created.
+	if m == nil {
+		event.AuditErr([]string{clientIp, "login as %s", "invalid session"}, clean.LogQuote(userName))
+		return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
+	}
+
+	// Check if user account exists.
 	if user == nil {
 		message := "account not found"
-		if m != nil {
-			limiter.Login.Reserve(m.IP())
-			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-			m.Status = http.StatusUnauthorized
-		}
-		return i18n.Error(i18n.ErrInvalidCredentials)
+		limiter.Login.Reserve(clientIp)
+		event.AuditWarn([]string{clientIp, "session %s", "login as %s", message}, m.RefID, clean.LogQuote(userName))
+		event.LoginError(clientIp, "api", userName, m.UserAgent, message)
+		m.Status = http.StatusUnauthorized
+		return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
 	}
 
 	// Login allowed?
 	if !user.Provider().IsDefault() && !user.Provider().IsLocal() {
 		message := fmt.Sprintf("%s authentication disabled", authn.ProviderLocal.String())
-		if m != nil {
-			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-			m.Status = http.StatusUnauthorized
-		}
-		return i18n.Error(i18n.ErrInvalidCredentials)
+		event.AuditWarn([]string{clientIp, "session %s", "login as %s", message}, m.RefID, clean.LogQuote(userName))
+		event.LoginError(clientIp, "api", userName, m.UserAgent, message)
+		m.Status = http.StatusUnauthorized
+		return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
 	} else if !user.CanLogIn() {
 		message := "account disabled"
-		if m != nil {
-			event.AuditWarn([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-			m.Status = http.StatusUnauthorized
-		}
-		return i18n.Error(i18n.ErrInvalidCredentials)
+		event.AuditWarn([]string{clientIp, "session %s", "login as %s", message}, m.RefID, clean.LogQuote(userName))
+		event.LoginError(clientIp, "api", userName, m.UserAgent, message)
+		m.Status = http.StatusUnauthorized
+		return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
 	}
 
-	// Password valid?
+	// Authentication with personal access token if a valid secret has been provided as password.
+	if authSess, authUser, err := AuthSession(f, c); err == nil {
+		if !authUser.IsRegistered() || authUser.UserUID != user.UserUID {
+			message := "incorrect user"
+			limiter.Login.Reserve(clientIp)
+			event.AuditErr([]string{clientIp, "session %s", "login as %s with auth secret", message}, m.RefID, clean.LogQuote(userName))
+			event.LoginError(clientIp, "api", userName, m.UserAgent, message)
+			m.Status = http.StatusUnauthorized
+			return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
+		} else if !authSess.IsClient() || authSess.Method() != authn.MethodAccessToken || !authSess.HasScope(acl.ResourceSessions.String()) {
+			message := "unauthorized"
+			limiter.Login.Reserve(clientIp)
+			event.AuditErr([]string{clientIp, "session %s", "login as %s with auth secret", message}, m.RefID, clean.LogQuote(userName))
+			event.LoginError(clientIp, "api", userName, m.UserAgent, message)
+			m.Status = http.StatusUnauthorized
+			return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
+		} else {
+			m.SetAuthID(authSess.AuthID)
+			m.SetMethod(authn.MethodSession)
+			event.AuditInfo([]string{clientIp, "session %s", "login as %s with auth secret", "succeeded"}, m.RefID, clean.LogQuote(userName))
+			event.LoginInfo(clientIp, "api", userName, m.UserAgent)
+			return authn.ProviderClient, err
+		}
+	}
+
+	// Otherwise, check account password.
 	if user.WrongPassword(f.Password) {
 		message := "incorrect password"
-		if m != nil {
-			limiter.Login.Reserve(m.IP())
-			event.AuditErr([]string{m.IP(), "session %s", "login as %s", message}, m.RefID, clean.LogQuote(name))
-			event.LoginError(m.IP(), "api", name, m.UserAgent, message)
-			m.Status = http.StatusUnauthorized
-		}
-		return i18n.Error(i18n.ErrInvalidCredentials)
+		limiter.Login.Reserve(clientIp)
+		event.AuditErr([]string{clientIp, "session %s", "login as %s", message}, m.RefID, clean.LogQuote(userName))
+		event.LoginError(clientIp, "api", userName, m.UserAgent, message)
+		m.Status = http.StatusUnauthorized
+		return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
 	} else if m != nil {
-		event.AuditInfo([]string{m.IP(), "session %s", "login as %s", "succeeded"}, m.RefID, clean.LogQuote(name))
-		event.LoginInfo(m.IP(), "api", name, m.UserAgent)
+		event.AuditInfo([]string{clientIp, "session %s", "login as %s", "succeeded"}, m.RefID, clean.LogQuote(userName))
+		event.LoginInfo(clientIp, "api", userName, m.UserAgent)
 	}
 
-	return err
+	return authn.ProviderLocal, nil
 }
 
 // LogIn performs authentication checks against the specified login form.

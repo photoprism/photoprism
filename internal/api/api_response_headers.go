@@ -31,9 +31,9 @@ func AddDownloadHeader(c *gin.Context, fileName string) {
 	c.Header(header.ContentDisposition, fmt.Sprintf("attachment; filename=%s", fileName))
 }
 
-// AddSessionHeader adds a session id header to the response.
-func AddSessionHeader(c *gin.Context, id string) {
-	c.Header(header.XSessionID, id)
+// AddAuthTokenHeader adds an X-Auth-Token header to the response.
+func AddAuthTokenHeader(c *gin.Context, authToken string) {
+	c.Header(header.XAuthToken, authToken)
 }
 
 // AddContentTypeHeader adds a content type header to the response.

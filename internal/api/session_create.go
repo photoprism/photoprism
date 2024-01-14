@@ -11,17 +11,24 @@ import (
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 // CreateSession creates a new client session and returns it as JSON if authentication was successful.
 //
 // POST /api/v1/session
+// POST /api/v1/sessions
 func CreateSession(router *gin.RouterGroup) {
-	router.POST("/session", func(c *gin.Context) {
+	createSessionHandler := func(c *gin.Context) {
+		// Disable caching of responses.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+
 		var f form.Login
 
+		clientIp := ClientIP(c)
+
 		if err := c.BindJSON(&f); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "create session", "invalid request", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "create session", "invalid request", "%s"}, err)
 			AbortBadRequest(c)
 			return
 		}
@@ -40,8 +47,8 @@ func CreateSession(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check limit for failed auth requests (max. 10 per minute).
-		if limiter.Login.Reject(ClientIP(c)) {
+		// Fail if authentication error rate limit is exceeded.
+		if clientIp != "" && (limiter.Login.Reject(clientIp) || limiter.Auth.Reject(clientIp)) {
 			limiter.AbortJSON(c)
 			return
 		}
@@ -50,7 +57,7 @@ func CreateSession(router *gin.RouterGroup) {
 		var isNew bool
 
 		// Find existing session, if any.
-		if s := Session(AuthToken(c)); s != nil {
+		if s := Session(clientIp, AuthToken(c)); s != nil {
 			// Update existing session.
 			sess = s
 		} else {
@@ -64,25 +71,28 @@ func CreateSession(router *gin.RouterGroup) {
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{ClientIP(c), "%s"}, err)
+			event.AuditErr([]string{clientIp, "%s"}, err)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if sess == nil {
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrUnexpected)})
 			return
 		} else if isNew {
-			event.AuditInfo([]string{ClientIP(c), "session %s", "created"}, sess.RefID)
+			event.AuditInfo([]string{clientIp, "session %s", "created"}, sess.RefID)
 		} else {
-			event.AuditInfo([]string{ClientIP(c), "session %s", "updated"}, sess.RefID)
+			event.AuditInfo([]string{clientIp, "session %s", "updated"}, sess.RefID)
 		}
 
-		// Add session id to response headers.
-		AddSessionHeader(c, sess.AuthToken())
+		// Add auth token to response header.
+		AddAuthTokenHeader(c, sess.AuthToken())
 
 		// Response includes user data, session data, and client config values.
 		response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
 
 		// Return JSON response.
 		c.JSON(sess.HttpStatus(), response)
-	})
+	}
+
+	router.POST("/session", createSessionHandler)
+	router.POST("/sessions", createSessionHandler)
 }

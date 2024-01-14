@@ -658,8 +658,8 @@ msgstr "Αρχεία καταγραφής σφαλμάτων"
 
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:73
-#: src/options/admin.js:92 src/options/options.js:313
+#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
+#: src/options/admin.js:93 src/options/options.js:313
 #: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Προεπιλογή"
@@ -1343,7 +1343,7 @@ msgstr "Τελευταίος συγχρονισμός"
 msgid "Latitude"
 msgstr "Γεωγραφικό πλάτος"
 
-#: src/options/admin.js:49 src/options/admin.js:81
+#: src/options/admin.js:49 src/options/admin.js:82
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1408,8 +1408,8 @@ msgstr "Ζωντανό"
 msgid "Live Photos"
 msgstr "Φωτογραφίες"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:77
-#: src/options/admin.js:96
+#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
+#: src/options/admin.js:97
 msgid "Local"
 msgstr "Τοπικό"
 
@@ -1655,7 +1655,7 @@ msgstr "Δεν υπάρχουν προειδοποιήσεις ή σφάλματ
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Οι μη φωτογραφικές εικόνες και οι εικόνες χαμηλής ποιότητας απαιτούν επανεξέταση προτού εμφανιστούν στα αποτελέσματα αναζήτησης."
 
-#: src/options/admin.js:52 src/options/admin.js:85 src/options/admin.js:100
+#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
 #: src/options/options.js:293 src/options/options.js:389
 msgid "None"
 msgstr "Κανένα"
@@ -2157,7 +2157,7 @@ msgstr "URL υπηρεσίας"
 msgid "Services"
 msgstr "URL υπηρεσίας"
 
-#: src/model/session.js:98
+#: src/model/session.js:98 src/options/admin.js:62
 msgid "Session"
 msgstr "Σύνοδος"
 

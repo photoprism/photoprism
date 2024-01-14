@@ -109,7 +109,7 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, pas
 		Password: password,
 	}))
 
-	authToken = r.Header().Get(header.XSessionID)
+	authToken = r.Header().Get(header.XAuthToken)
 
 	return
 }

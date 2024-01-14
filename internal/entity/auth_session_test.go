@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"net/http"
 	"testing"
 	"time"
 
@@ -130,13 +131,19 @@ func TestDeleteClientSessions(t *testing.T) {
 
 func TestSessionStatusUnauthorized(t *testing.T) {
 	m := SessionStatusUnauthorized()
-	assert.Equal(t, 401, m.Status)
+	assert.Equal(t, http.StatusUnauthorized, m.Status)
 	assert.IsType(t, &Session{}, m)
 }
 
 func TestSessionStatusForbidden(t *testing.T) {
 	m := SessionStatusForbidden()
-	assert.Equal(t, 403, m.Status)
+	assert.Equal(t, http.StatusForbidden, m.Status)
+	assert.IsType(t, &Session{}, m)
+}
+
+func TestSessionStatusTooManyRequests(t *testing.T) {
+	m := SessionStatusTooManyRequests()
+	assert.Equal(t, http.StatusTooManyRequests, m.Status)
 	assert.IsType(t, &Session{}, m)
 }
 

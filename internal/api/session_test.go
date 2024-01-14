@@ -17,8 +17,8 @@ import (
 func TestSession(t *testing.T) {
 	t.Run("Public", func(t *testing.T) {
 		sess := get.Session().Public()
-		assert.Equal(t, sess, Session(""))
-		assert.Equal(t, sess, Session("638bffc9b86a8fda0d908ebee84a43930cb8d1e3507f4aa0"))
+		assert.Equal(t, sess, Session("1.2.3.4", ""))
+		assert.Equal(t, sess, Session("1.2.3.4", "1234ffc9b86a8fda0d908ebee84a43930cb8d1e3507f4aa0"))
 	})
 }
 
@@ -213,8 +213,38 @@ func TestGetSession(t *testing.T) {
 		GetSession(router)
 		authToken := AuthenticateAdmin(app, router)
 
-		t.Logf("Session ID: %s", authToken)
+		t.Logf("Auth Token: %s", authToken)
+		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/session", authToken)
+		t.Logf("Response Body: %s", r.Body.String())
+		id := gjson.Get(r.Body.String(), "session_id").String()
+		assert.Equal(t, rnd.SessionID(authToken), id)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("AdminAuthenticatedRequestWithID", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		GetSession(router)
+		authToken := AuthenticateAdmin(app, router)
+
+		t.Logf("Auth Token: %s", authToken)
 		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/session/"+rnd.SessionID(authToken), authToken)
+		t.Logf("Response Body: %s", r.Body.String())
+		id := gjson.Get(r.Body.String(), "session_id").String()
+		assert.Equal(t, rnd.SessionID(authToken), id)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("AdminAuthenticatedRequestSessionsWithID", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		GetSession(router)
+		authToken := AuthenticateAdmin(app, router)
+
+		t.Logf("Auth Token: %s", authToken)
+		r := AuthenticatedRequest(app, http.MethodGet, "/api/v1/sessions/"+rnd.SessionID(authToken), authToken)
 		t.Logf("Response Body: %s", r.Body.String())
 		id := gjson.Get(r.Body.String(), "session_id").String()
 		assert.Equal(t, rnd.SessionID(authToken), id)
@@ -231,11 +261,8 @@ func TestDeleteSession(t *testing.T) {
 		DeleteSession(router)
 		authToken := AuthenticateAdmin(app, router)
 
-		// f9ae12e95a01bcc7faae6497124cd721eaf13c1dad301dbc
-		t.Logf("authToken: %s", authToken)
-
-		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(authToken), authToken)
-		assert.Equal(t, http.StatusOK, r.Code)
+		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(authToken), "")
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
 	})
 	t.Run("AdminAuthenticatedRequest", func(t *testing.T) {
 		app, router, conf := NewApiTest()
@@ -245,7 +272,29 @@ func TestDeleteSession(t *testing.T) {
 		DeleteSession(router)
 		authToken := AuthenticateAdmin(app, router)
 
+		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session", authToken)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("AdminAuthenticatedRequestWithID", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DeleteSession(router)
+		authToken := AuthenticateAdmin(app, router)
+
 		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/session/"+rnd.SessionID(authToken), authToken)
+		assert.Equal(t, http.StatusOK, r.Code)
+	})
+	t.Run("AdminAuthenticatedRequestSessionsWithID", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		DeleteSession(router)
+		authToken := AuthenticateAdmin(app, router)
+
+		r := AuthenticatedRequest(app, http.MethodDelete, "/api/v1/sessions/"+rnd.SessionID(authToken), authToken)
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 	t.Run("AdminAuthenticatedLogout", func(t *testing.T) {

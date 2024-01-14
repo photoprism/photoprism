@@ -658,8 +658,8 @@ msgstr "Tõrkeotsingu logid"
 
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:73
-#: src/options/admin.js:92 src/options/options.js:313
+#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
+#: src/options/admin.js:93 src/options/options.js:313
 #: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Vaikimisi"
@@ -1343,7 +1343,7 @@ msgstr "Viimane sünkroonimine"
 msgid "Latitude"
 msgstr "Laiuskraad"
 
-#: src/options/admin.js:49 src/options/admin.js:81
+#: src/options/admin.js:49 src/options/admin.js:82
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1408,8 +1408,8 @@ msgstr "Live"
 msgid "Live Photos"
 msgstr "Liikuvad fotod"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:77
-#: src/options/admin.js:96
+#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
+#: src/options/admin.js:97
 msgid "Local"
 msgstr "Kohalik"
 
@@ -1655,7 +1655,7 @@ msgstr "Seda märksõna sisaldavaid hoiatusi või vigu ei ole. Pane tähele, et 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne kui nad otsingutulemustes ilmuvad."
 
-#: src/options/admin.js:52 src/options/admin.js:85 src/options/admin.js:100
+#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
 #: src/options/options.js:293 src/options/options.js:389
 msgid "None"
 msgstr "Puudub"
@@ -2157,7 +2157,7 @@ msgstr "Teenuse URL"
 msgid "Services"
 msgstr "Teenused"
 
-#: src/model/session.js:98
+#: src/model/session.js:98 src/options/admin.js:62
 msgid "Session"
 msgstr "Sessioon"
 

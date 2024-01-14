@@ -661,8 +661,8 @@ msgstr "Registros de depuração"
 
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:73
-#: src/options/admin.js:92 src/options/options.js:313
+#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
+#: src/options/admin.js:93 src/options/options.js:313
 #: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Padrão"
@@ -1346,7 +1346,7 @@ msgstr "Última Sincronia"
 msgid "Latitude"
 msgstr "Latitude"
 
-#: src/options/admin.js:49 src/options/admin.js:81
+#: src/options/admin.js:49 src/options/admin.js:82
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1411,8 +1411,8 @@ msgstr "Ao vivo"
 msgid "Live Photos"
 msgstr "Fotos ao vivo"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:77
-#: src/options/admin.js:96
+#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
+#: src/options/admin.js:97
 msgid "Local"
 msgstr "Local"
 
@@ -1658,7 +1658,7 @@ msgstr "Nenhum alerta ou erro contendo esta palavra-chave. Note que a pesquisa d
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Imagens de baixa qualidade ou não-fotográficas necessitam de revisão antes de aparecerem nos resultados da pesquisa."
 
-#: src/options/admin.js:52 src/options/admin.js:85 src/options/admin.js:100
+#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
 #: src/options/options.js:293 src/options/options.js:389
 msgid "None"
 msgstr "Nenhum"
@@ -2160,7 +2160,7 @@ msgstr "URL do serviço"
 msgid "Services"
 msgstr "Serviços"
 
-#: src/model/session.js:98
+#: src/model/session.js:98 src/options/admin.js:62
 msgid "Session"
 msgstr "Sessão"
 

@@ -403,13 +403,13 @@ export default class Session {
       // Use a static auth token in public mode, as no additional authentication is required.
       this.setAuthToken(PublicAuthToken);
       this.setId(PublicSessionID);
-      return Api.get("session/" + this.getId()).then((resp) => {
+      return Api.get("session").then((resp) => {
         this.setResp(resp);
         return Promise.resolve();
       });
     } else if (this.isAuthenticated()) {
       // Check the auth token by fetching the client session data from the API.
-      return Api.get("session/" + this.getId())
+      return Api.get("session")
         .then((resp) => {
           this.setResp(resp);
           return Promise.resolve();
@@ -452,7 +452,7 @@ export default class Session {
 
   logout(noRedirect) {
     if (this.isAuthenticated()) {
-      return Api.delete("session/" + this.getId())
+      return Api.delete("session")
         .then(() => {
           return this.onLogout(noRedirect);
         })

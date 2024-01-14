@@ -13,6 +13,7 @@ type MethodType string
 // Authentication methods.
 const (
 	MethodDefault     MethodType = "default"
+	MethodSession     MethodType = "session"
 	MethodAccessToken MethodType = "access_token"
 	MethodOAuth2      MethodType = "oauth2"
 	MethodOIDC        MethodType = "oidc"

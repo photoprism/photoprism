@@ -91,7 +91,7 @@ export class Session extends RestModel {
   }
 
   static getCollectionResource() {
-    return "session";
+    return "sessions";
   }
 
   static getModelName() {

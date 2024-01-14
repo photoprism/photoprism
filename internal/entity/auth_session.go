@@ -154,6 +154,11 @@ func SessionStatusForbidden() *Session {
 	return &Session{Status: http.StatusForbidden}
 }
 
+// SessionStatusTooManyRequests returns a session with status too many requests (429).
+func SessionStatusTooManyRequests() *Session {
+	return &Session{Status: http.StatusTooManyRequests}
+}
+
 // FindSessionByRefID finds an existing session by ref ID.
 func FindSessionByRefID(refId string) *Session {
 	if !rnd.IsRefID(refId) {
@@ -340,9 +345,15 @@ func (m *Session) AuthInfo() string {
 	return fmt.Sprintf("%s (%s)", provider.Pretty(), method.Pretty())
 }
 
-// Provider returns the authentication provider.
-func (m *Session) Provider() authn.ProviderType {
-	return authn.Provider(m.AuthProvider)
+// SetAuthID sets a custom authentication identifier.
+func (m *Session) SetAuthID(id string) *Session {
+	if id == "" {
+		return m
+	}
+
+	m.AuthID = clean.Name(id)
+
+	return m
 }
 
 // Method returns the authentication method.
@@ -350,9 +361,20 @@ func (m *Session) Method() authn.MethodType {
 	return authn.Method(m.AuthMethod)
 }
 
-// IsClient checks whether this session is used to authenticate an API client.
-func (m *Session) IsClient() bool {
-	return authn.Provider(m.AuthProvider).IsClient()
+// SetMethod sets a custom authentication method.
+func (m *Session) SetMethod(method authn.MethodType) *Session {
+	if method == "" {
+		return m
+	}
+
+	m.AuthMethod = method.String()
+
+	return m
+}
+
+// Provider returns the authentication provider.
+func (m *Session) Provider() authn.ProviderType {
+	return authn.Provider(m.AuthProvider)
 }
 
 // SetProvider updates the session's authentication provider.
@@ -364,6 +386,11 @@ func (m *Session) SetProvider(provider authn.ProviderType) *Session {
 	m.AuthProvider = provider.String()
 
 	return m
+}
+
+// IsClient checks whether this session is used to authenticate an API client.
+func (m *Session) IsClient() bool {
+	return authn.Provider(m.AuthProvider).IsClient()
 }
 
 // ChangePassword changes the password of the current user.
@@ -465,8 +492,8 @@ func (m *Session) SetContext(c *gin.Context) *Session {
 	}
 
 	// Set client ip address from request context.
-	if ip := header.ClientIP(c); ip != "" {
-		m.SetClientIP(ip)
+	if clientIp := header.ClientIP(c); clientIp != "" {
+		m.SetClientIP(clientIp)
 	} else if m.ClientIP == "" {
 		// Unit tests often do not set a client IP.
 		m.SetClientIP(UnknownIP)
@@ -489,8 +516,8 @@ func (m *Session) UpdateContext(c *gin.Context) *Session {
 	changed := false
 
 	// Set client ip address from request context.
-	if ip := header.ClientIP(c); ip != "" && (ip != m.ClientIP || m.LoginIP == "") {
-		m.SetClientIP(ip)
+	if clientIp := header.ClientIP(c); clientIp != "" && (clientIp != m.ClientIP || m.LoginIP == "") {
+		m.SetClientIP(clientIp)
 		changed = true
 	} else if m.ClientIP == "" {
 		// Unit tests often do not set a client IP.
@@ -701,6 +728,8 @@ func (m *Session) Abort(c *gin.Context) bool {
 	switch m.Status {
 	case http.StatusUnauthorized:
 		c.AbortWithStatusJSON(m.Status, i18n.NewResponse(m.Status, i18n.ErrUnauthorized))
+	case http.StatusTooManyRequests:
+		c.AbortWithStatusJSON(m.Status, gin.H{"error": "rate limit exceeded", "code": http.StatusTooManyRequests})
 	default:
 		c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 	}

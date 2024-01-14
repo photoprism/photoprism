@@ -661,8 +661,8 @@ msgstr "デバッグログ"
 
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:73
-#: src/options/admin.js:92 src/options/options.js:313
+#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
+#: src/options/admin.js:93 src/options/options.js:313
 #: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "既定"
@@ -1346,7 +1346,7 @@ msgstr "最終同期"
 msgid "Latitude"
 msgstr "緯度"
 
-#: src/options/admin.js:49 src/options/admin.js:81
+#: src/options/admin.js:49 src/options/admin.js:82
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1411,8 +1411,8 @@ msgstr "ライブ"
 msgid "Live Photos"
 msgstr "ライブ写真"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:77
-#: src/options/admin.js:96
+#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
+#: src/options/admin.js:97
 msgid "Local"
 msgstr "ローカル"
 
@@ -1658,7 +1658,7 @@ msgstr "このキーワードを含む警告やエラーは1つも見つかり�
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "写真ではないものや、低品質な画像は検索結果に現れる前にレビューが必要です。"
 
-#: src/options/admin.js:52 src/options/admin.js:85 src/options/admin.js:100
+#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
 #: src/options/options.js:293 src/options/options.js:389
 msgid "None"
 msgstr "なし"
@@ -2160,7 +2160,7 @@ msgstr "サービス URL"
 msgid "Services"
 msgstr "サービス"
 
-#: src/model/session.js:98
+#: src/model/session.js:98 src/options/admin.js:62
 msgid "Session"
 msgstr "セッション"
 
