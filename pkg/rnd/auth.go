@@ -14,7 +14,7 @@ const (
 	AuthSecretSeparator = '-'
 )
 
-// AuthToken returns a random hex encoded string that can be used for authentication.
+// AuthToken returns a random hexadecimal character string that can be used for authentication purposes.
 //
 // Examples: 9fa8e562564dac91b96881040e98f6719212a1a364e0bb25
 func AuthToken() string {
@@ -27,7 +27,7 @@ func AuthToken() string {
 	return fmt.Sprintf("%x", b)
 }
 
-// IsAuthToken checks if the string is a session id.
+// IsAuthToken checks if the string might be a valid auth token.
 func IsAuthToken(s string) bool {
 	if l := len(s); l == AuthTokenLength {
 		return IsHex(s)
@@ -36,7 +36,7 @@ func IsAuthToken(s string) bool {
 	return false
 }
 
-// AuthSecret returns a random, human-friendly token that can be used for authentication.
+// AuthSecret returns a random, human-friendly string that can be used instead of a regular auth token.
 // It is separated by 3 dashes for better readability and has a total length of 23 characters.
 //
 // Example: iXrDz-aY16n-4IUWM-otkM3
@@ -57,7 +57,7 @@ func AuthSecret() string {
 	return string(b)
 }
 
-// IsAuthSecret returns true if the string only contains alphanumeric ascii chars without whitespace.
+// IsAuthSecret checks if the string might be a valid auth secret.
 func IsAuthSecret(s string) bool {
 	if len(s) != AuthSecretLength {
 		return false
@@ -74,6 +74,21 @@ func IsAuthSecret(s string) bool {
 	}
 
 	return sep == AuthSecretLength/6
+}
+
+// IsAuthAny checks if the string might be a valid auth token or secret.
+func IsAuthAny(s string) bool {
+	// Check if string might be a regular auth token.
+	if IsAuthToken(s) {
+		return true
+	}
+
+	// Check if string might be a human-friendly auth secret.
+	if IsAuthSecret(s) {
+		return true
+	}
+
+	return false
 }
 
 // SessionID returns the hashed session id string.

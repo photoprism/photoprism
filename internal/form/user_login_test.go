@@ -8,55 +8,55 @@ import (
 
 func TestLogin_Email(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
-		form := &Login{UserEmail: "", Password: "passwd", AuthToken: ""}
+		form := &Login{UserEmail: "", Password: "passwd", ShareToken: ""}
 		assert.Equal(t, "", form.Email())
 	})
 	t.Run("valid", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: "123"}
+		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", ShareToken: "123"}
 		assert.Equal(t, "test@test.com", form.Email())
 	})
 }
 
 func TestLogin_HasToken(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: ""}
-		assert.Equal(t, false, form.HasToken())
+		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", ShareToken: ""}
+		assert.Equal(t, false, form.HasShareToken())
 	})
 	t.Run("true", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: "123"}
-		assert.Equal(t, true, form.HasToken())
+		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", ShareToken: "123"}
+		assert.Equal(t, true, form.HasShareToken())
 	})
 }
 
 func TestLogin_HasName(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", Password: "passwd", AuthToken: ""}
+		form := &Login{UserEmail: "test@test.com", Password: "passwd", ShareToken: ""}
 		assert.Equal(t, false, form.HasUsername())
 	})
 	t.Run("true", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: "123"}
+		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", ShareToken: "123"}
 		assert.Equal(t, true, form.HasUsername())
 	})
 }
 
 func TestLogin_HasPassword(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", Password: "", AuthToken: ""}
+		form := &Login{UserEmail: "test@test.com", Password: "", ShareToken: ""}
 		assert.Equal(t, false, form.HasPassword())
 	})
 	t.Run("true", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: "123"}
+		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", ShareToken: "123"}
 		assert.Equal(t, true, form.HasPassword())
 	})
 }
 
 func TestLogin_HasCredentials(t *testing.T) {
 	t.Run("false", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", Password: "passwd123", AuthToken: ""}
+		form := &Login{UserEmail: "test@test.com", Password: "passwd123", ShareToken: ""}
 		assert.Equal(t, false, form.HasCredentials())
 	})
 	t.Run("true", func(t *testing.T) {
-		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", AuthToken: "123"}
+		form := &Login{UserEmail: "test@test.com", UserName: "John", Password: "passwd", ShareToken: "123"}
 		assert.Equal(t, true, form.HasCredentials())
 	})
 }

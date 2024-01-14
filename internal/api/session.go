@@ -12,7 +12,7 @@ func Session(authToken string) *entity.Session {
 	// Skip authentication when running in public mode.
 	if get.Config().Public() {
 		return get.Session().Public()
-	} else if !rnd.IsAuthToken(authToken) {
+	} else if !rnd.IsAuthAny(authToken) {
 		return nil
 	}
 

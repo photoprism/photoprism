@@ -77,6 +77,26 @@ func BenchmarkIsAuthSecret(b *testing.B) {
 	}
 }
 
+func TestIsAuthAny(t *testing.T) {
+	assert.True(t, IsAuthAny("f64nl-GQbmZ-CEcLr-Q1VSr"))
+	assert.True(t, IsAuthAny("XRhOW-DM2ol-INove-dAg6m"))
+	assert.True(t, IsAuthAny(AuthSecret()))
+	assert.True(t, IsAuthAny(AuthSecret()))
+	assert.True(t, IsAuthAny(AuthToken()))
+	assert.True(t, IsAuthAny(AuthToken()))
+	assert.False(t, IsAuthAny(SessionID(AuthToken())))
+	assert.False(t, IsAuthAny(SessionID(AuthToken())))
+	assert.False(t, IsAuthAny("55785BAC-9H4B-4747-B090-EE123FFEE437"))
+	assert.False(t, IsAuthAny("4B1FEF2D1CF4A5BE38B263E0637EDEAD"))
+	assert.True(t, IsAuthAny("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2"))
+	assert.False(t, IsAuthAny(""))
+}
+
+func BenchmarkIsAuthAny(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		IsAuthAny("f64nl-GQbmZ-CEcLr-Q1VSr")
+	}
+}
 func TestSessionID(t *testing.T) {
 	result := SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2")
 	assert.Equal(t, SessionIdLength, len(result))

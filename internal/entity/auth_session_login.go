@@ -95,7 +95,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 	var user *User
 	var provider authn.ProviderType
 
-	// Login credentials provided?
+	// Try to login with user credentials, if provided.
 	if f.HasCredentials() {
 		if m.IsRegistered() {
 			m.Regenerate()
@@ -111,26 +111,26 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 		m.SetProvider(provider)
 	}
 
-	// Link token provided?
-	if f.HasToken() {
+	// Try to redeem link share token, if provided.
+	if f.HasShareToken() {
 		user = m.User()
 
 		// Redeem token.
 		if user.IsRegistered() {
-			if shares := user.RedeemToken(f.AuthToken); shares == 0 {
+			if shares := user.RedeemToken(f.ShareToken); shares == 0 {
 				limiter.Login.Reserve(m.IP())
-				event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.AuthToken))
+				event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.ShareToken))
 				m.Status = http.StatusNotFound
 				return i18n.Error(i18n.ErrInvalidLink)
 			} else {
-				event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, user.RedeemToken(f.AuthToken))
+				event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, user.RedeemToken(f.ShareToken))
 			}
 		} else if data := m.Data(); data == nil {
 			m.Status = http.StatusInternalServerError
 			return i18n.Error(i18n.ErrUnexpected)
-		} else if shares := data.RedeemToken(f.AuthToken); shares == 0 {
+		} else if shares := data.RedeemToken(f.ShareToken); shares == 0 {
 			limiter.Login.Reserve(m.IP())
-			event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.AuthToken))
+			event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.ShareToken))
 			event.LoginError(m.IP(), "api", "", m.UserAgent, "invalid share token")
 			m.Status = http.StatusNotFound
 			return i18n.Error(i18n.ErrInvalidLink)
@@ -140,7 +140,7 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 			event.AuditInfo([]string{m.IP(), "session %s", "token redeemed for %d shares"}, m.RefID, shares, data)
 		}
 
-		// Upgrade session to visitor.
+		// Upgrade the session user role to visitor if a valid share token has been provided.
 		if user.IsUnknown() {
 			user = &Visitor
 			event.AuditDebug([]string{m.IP(), "session %s", "role upgraded to %s"}, m.RefID, user.AclRole().String())

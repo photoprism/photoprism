@@ -152,7 +152,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			AuthToken: "1jxf3jfn2k",
+			ShareToken: "1jxf3jfn2k",
 		}
 
 		// Create HTTP request.
@@ -171,7 +171,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			AuthToken: "1jxf3jfxxx",
+			ShareToken: "1jxf3jfxxx",
 		}
 
 		// Create HTTP request.
@@ -190,7 +190,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			AuthToken: "1jxf3jfn2k",
+			ShareToken: "1jxf3jfn2k",
 		}
 
 		// Create HTTP request.
@@ -209,7 +209,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			AuthToken: "1jxf3jfxxx",
+			ShareToken: "1jxf3jfxxx",
 		}
 
 		// Create HTTP request.
