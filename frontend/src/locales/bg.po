@@ -1930,10 +1930,6 @@ msgstr "Отзиви за продукта"
 msgid "Projection"
 msgstr "Прожектиране"
 
-#: src/model/session.js:67
-msgid "providerName"
-msgstr ""
-
 #: src/options/options.js:443
 msgid "Purple"
 msgstr "Лилаво"

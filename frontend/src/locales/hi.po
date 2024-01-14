@@ -1930,10 +1930,6 @@ msgstr "उत्पाद प्रतिक्रिया"
 msgid "Projection"
 msgstr "प्रक्षेपण"
 
-#: src/model/session.js:67
-msgid "providerName"
-msgstr ""
-
 #: src/options/options.js:443
 msgid "Purple"
 msgstr "बैंगनी"

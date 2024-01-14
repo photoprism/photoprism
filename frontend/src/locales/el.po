@@ -1927,10 +1927,6 @@ msgstr "Ανατροφοδότηση προϊόντος"
 msgid "Projection"
 msgstr "Προβολή"
 
-#: src/model/session.js:67
-msgid "providerName"
-msgstr ""
-
 #: src/options/options.js:443
 msgid "Purple"
 msgstr "Μωβ"

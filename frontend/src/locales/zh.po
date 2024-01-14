@@ -1931,10 +1931,6 @@ msgstr "产品反馈"
 msgid "Projection"
 msgstr "投影"
 
-#: src/model/session.js:67
-msgid "providerName"
-msgstr ""
-
 #: src/options/options.js:443
 msgid "Purple"
 msgstr "紫"

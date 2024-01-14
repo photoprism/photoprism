@@ -1930,10 +1930,6 @@ msgstr "ڕەخنە و پێشنیار لە بەرهەم"
 msgid "Projection"
 msgstr "هەڵسەنگاندن"
 
-#: src/model/session.js:67
-msgid "providerName"
-msgstr ""
-
 #: src/options/options.js:443
 msgid "Purple"
 msgstr "مۆر"
