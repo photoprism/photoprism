@@ -2,7 +2,11 @@ package entity
 
 import (
 	"fmt"
+	"github.com/go-ldap/ldap/v3"
+	"github.com/jinzhu/gorm"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,18 +23,90 @@ import (
 // Auth checks if the credentials are valid and returns the user and authentication provider.
 var Auth = func(f form.Login, m *Session, c *gin.Context) (user *User, provider authn.ProviderType, err error) {
 	name := f.Username()
-
-	user = FindUserByName(name)
-	err = AuthLocal(user, f, m)
-
-	if err != nil {
-		return user, authn.ProviderNone, err
+	username := clean.Username(name)
+	if os.Getenv("PHOTOPRISM_LDAP_ENABLED") == "true" {
+		isAdmin, err := AuthLdap(username, f.Password)
+		if err != nil {
+			return nil, authn.ProviderNone, err
+		}
+		user = FindUserByName(username)
+		if user == nil {
+			user, err = CreateUser(username, isAdmin)
+			if err != nil {
+				return nil, authn.ProviderNone, err
+			}
+		}
+	} else {
+		user = FindUserByName(username)
+		err = AuthLocal(user, f, m)
+		if err != nil {
+			return user, authn.ProviderNone, err
+		}
 	}
-
 	// Update login timestamp.
 	user.UpdateLoginTime()
 
 	return user, authn.ProviderLocal, err
+}
+
+func CreateUser(username string, isAdmin bool) (*User, error) {
+	user := NewUser()
+	user.UserName = username
+	user.SuperAdmin = isAdmin
+	user.CanLogin = true
+	err := Db().Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(user).Error; err != nil {
+			return err
+		}
+		log.Infof("successfully added user %s", clean.LogQuote(user.Username()))
+		return nil
+	})
+	if err != nil {
+		log.Errorln("user save error", err)
+		return nil, err
+	}
+	return user, nil
+}
+
+func AuthLdap(username, password string) (bool, error) {
+	conn, err := ldap.DialURL(os.Getenv("PHOTOPRISM_LDAP_URI"))
+	if err != nil {
+		log.Errorln("ldap dial error", err)
+		return false, i18n.Error(i18n.ErrInvalidCredentials)
+	}
+	defer conn.Close()
+
+	bindDn := strings.ReplaceAll(os.Getenv("PHOTOPRISM_LDAP_BIND_DN"), "{username}", username)
+	err = conn.Bind(bindDn, password)
+	if err != nil {
+		log.Errorln("ldap bind error", err)
+		return false, i18n.Error(i18n.ErrInvalidCredentials)
+	}
+	isAdmin, err := isLdapAdmin(conn, username)
+	if err != nil {
+		return false, i18n.Error(i18n.ErrInvalidCredentials)
+	}
+	return isAdmin, nil
+}
+
+func isLdapAdmin(conn *ldap.Conn, username string) (bool, error) {
+	searchRequest := ldap.NewSearchRequest(
+		os.Getenv("PHOTOPRISM_LDAP_ADMIN_GROUP_DN"),
+		ldap.ScopeWholeSubtree, ldap.DerefAlways, 0, 0, false,
+		strings.ReplaceAll(os.Getenv("PHOTOPRISM_LDAP_ADMIN_GROUP_FILTER"), "{username}", username),
+		[]string{os.Getenv("PHOTOPRISM_LDAP_ADMIN_GROUP_ATTRIBUTE")},
+		nil)
+
+	sr, err := conn.Search(searchRequest)
+	if err != nil {
+		log.Errorln("admin search error", err)
+		return false, err
+	}
+
+	if len(sr.Entries) < 1 {
+		return false, nil
+	}
+	return true, nil
 }
 
 // AuthLocal authenticates against the local user database with the specified username and password.
