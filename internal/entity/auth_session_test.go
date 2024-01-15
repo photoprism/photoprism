@@ -349,6 +349,73 @@ func TestSession_RefreshUser(t *testing.T) {
 	})
 }
 
+func TestSession_AuthInfo(t *testing.T) {
+	t.Run("bob", func(t *testing.T) {
+		m := FindSessionByRefID("sessxkkcabce")
+
+		i := m.AuthInfo()
+
+		assert.Equal(t, "Default", i)
+	})
+	t.Run("aliceTokenWebDAV", func(t *testing.T) {
+		m := FindSessionByRefID("sesshjtgx8qt")
+
+		i := m.AuthInfo()
+
+		assert.Equal(t, "Client (Access Token)", i)
+	})
+}
+
+func TestSession_SetAuthID(t *testing.T) {
+	t.Run("emptyID", func(t *testing.T) {
+		s := &Session{
+			UserName: "test",
+			RefID:    "sessxkkcxxxz",
+			AuthID:   "test-session-auth-id",
+		}
+
+		m := s.SetAuthID("")
+
+		assert.Equal(t, "test-session-auth-id", m.AuthID)
+	})
+	t.Run("setNewID", func(t *testing.T) {
+		s := &Session{
+			UserName: "test",
+			RefID:    "sessxkkcxxxz",
+			AuthID:   "new-id",
+		}
+
+		m := s.SetAuthID("new-id")
+
+		assert.Equal(t, "new-id", m.AuthID)
+	})
+}
+
+func TestSession_SetScope(t *testing.T) {
+	t.Run("emptyScope", func(t *testing.T) {
+		s := &Session{
+			UserName:  "test",
+			RefID:     "sessxkkcxxxz",
+			AuthScope: "*",
+		}
+
+		m := s.SetScope("")
+
+		assert.Equal(t, "*", m.AuthScope)
+	})
+	t.Run("setNewScope", func(t *testing.T) {
+		s := &Session{
+			UserName:  "test",
+			RefID:     "sessxkkcxxxz",
+			AuthScope: "*",
+		}
+
+		m := s.SetScope("Metrics")
+
+		assert.Equal(t, "metrics", m.AuthScope)
+	})
+}
+
 func TestSession_SetProvider(t *testing.T) {
 	m := FindSessionByRefID("sessxkkcabce")
 	assert.Equal(t, authn.ProviderDefault, m.Provider())
