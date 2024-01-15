@@ -492,6 +492,11 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("HTTP_COMPRESSION"),
 		}}, {
 		Flag: cli.BoolFlag{
+			Name:   "http-cors",
+			Usage:  "allow Cross-Origin Resource Sharing (CORS)",
+			EnvVar: EnvVar("HTTP_CORS"),
+		}}, {
+		Flag: cli.BoolFlag{
 			Name:   "http-cache-public",
 			Usage:  "allow static content to be cached by a CDN or caching proxy",
 			EnvVar: EnvVar("HTTP_CACHE_PUBLIC"),

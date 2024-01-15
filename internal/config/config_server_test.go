@@ -62,6 +62,36 @@ func TestConfig_HttpCompression(t *testing.T) {
 	assert.Equal(t, "", c.HttpCompression())
 }
 
+func TestConfig_HttpCORS(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.Options().CdnUrl = ""
+	c.Options().HttpCORS = false
+	assert.False(t, c.HttpCORS())
+	c.Options().CdnUrl = "https://cdn.com/"
+	assert.False(t, c.HttpCORS())
+	c.Options().CdnUrl = ""
+	assert.False(t, c.HttpCORS())
+	c.Options().HttpCORS = true
+	assert.True(t, c.HttpCORS())
+	c.Options().HttpCORS = false
+	assert.False(t, c.HttpCORS())
+}
+
+func TestConfig_HttpCachePublic(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.HttpCachePublic())
+	c.Options().CdnUrl = "https://cdn.com/"
+	assert.True(t, c.HttpCachePublic())
+	c.Options().CdnUrl = ""
+	assert.False(t, c.HttpCachePublic())
+	c.Options().HttpCachePublic = true
+	assert.True(t, c.HttpCachePublic())
+	c.Options().HttpCachePublic = false
+	assert.False(t, c.HttpCachePublic())
+}
+
 func TestConfig_HttpCacheMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -84,18 +114,4 @@ func TestConfig_HttpVideoMaxAge(t *testing.T) {
 	assert.Equal(t, ttl.CacheMaxAge, c.HttpVideoMaxAge())
 	c.Options().HttpVideoMaxAge = 0
 	assert.Equal(t, ttl.CacheVideo, c.HttpVideoMaxAge())
-}
-
-func TestConfig_HttpCachePublic(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.False(t, c.HttpCachePublic())
-	c.Options().CdnUrl = "https://cdn.com/"
-	assert.True(t, c.HttpCachePublic())
-	c.Options().CdnUrl = ""
-	assert.False(t, c.HttpCachePublic())
-	c.Options().HttpCachePublic = true
-	assert.True(t, c.HttpCachePublic())
-	c.Options().HttpCachePublic = false
-	assert.False(t, c.HttpCachePublic())
 }

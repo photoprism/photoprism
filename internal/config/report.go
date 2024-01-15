@@ -160,6 +160,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tls-key", c.TLSKey()},
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
+		{"http-cors", fmt.Sprintf("%t", c.HttpCORS())},
 		{"http-cache-public", fmt.Sprintf("%t", c.HttpCachePublic())},
 		{"http-cache-maxage", fmt.Sprintf("%d", c.HttpCacheMaxAge())},
 		{"http-video-maxage", fmt.Sprintf("%d", c.HttpVideoMaxAge())},

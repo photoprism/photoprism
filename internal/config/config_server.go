@@ -83,6 +83,21 @@ func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
 
+// HttpCORS checks of Cross-Origin Resource Sharing (CORS) should be allowed,
+// so the "Access-Control-Allow-Origin" response header should be set to "*".
+func (c *Config) HttpCORS() bool {
+	return c.options.HttpCORS
+}
+
+// HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
+func (c *Config) HttpCachePublic() bool {
+	if c.options.HttpCachePublic {
+		return true
+	}
+
+	return c.options.CdnUrl != ""
+}
+
 // HttpCacheMaxAge returns the time in seconds until cached content expires.
 func (c *Config) HttpCacheMaxAge() ttl.Duration {
 	// Return default cache maxage?
@@ -107,15 +122,6 @@ func (c *Config) HttpVideoMaxAge() ttl.Duration {
 
 	// Return the configured cache expiration time.
 	return ttl.Duration(c.options.HttpVideoMaxAge)
-}
-
-// HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
-func (c *Config) HttpCachePublic() bool {
-	if c.options.HttpCachePublic {
-		return true
-	}
-
-	return c.options.CdnUrl != ""
 }
 
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
