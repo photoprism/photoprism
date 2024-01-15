@@ -52,7 +52,7 @@ func TestSession_Exists(t *testing.T) {
 
 	t.Logf("ID: %s", sess.ID)
 
-	assert.Equal(t, 48, len(sess.ID))
+	assert.Equal(t, 64, len(sess.ID))
 	assert.True(t, s.Exists(sess.ID))
 
 	err = s.Delete(sess.ID)

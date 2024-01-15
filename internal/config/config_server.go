@@ -6,9 +6,9 @@ import (
 	"strings"
 	"strconv"
 
-	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/internal/ttl"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 const (
@@ -99,11 +99,26 @@ func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
 
+// HttpCORS checks of Cross-Origin Resource Sharing (CORS) should be allowed,
+// so the "Access-Control-Allow-Origin" response header should be set to "*".
+func (c *Config) HttpCORS() bool {
+	return c.options.HttpCORS
+}
+
+// HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
+func (c *Config) HttpCachePublic() bool {
+	if c.options.HttpCachePublic {
+		return true
+	}
+
+	return c.options.CdnUrl != ""
+}
+
 // HttpCacheMaxAge returns the time in seconds until cached content expires.
 func (c *Config) HttpCacheMaxAge() ttl.Duration {
 	// Return default cache maxage?
 	if c.options.HttpCacheMaxAge < 1 {
-		return ttl.Default
+		return ttl.CacheDefault
 	} else if c.options.HttpCacheMaxAge > 31536000 {
 		return ttl.Duration(31536000)
 	}
@@ -116,22 +131,13 @@ func (c *Config) HttpCacheMaxAge() ttl.Duration {
 func (c *Config) HttpVideoMaxAge() ttl.Duration {
 	// Return default video maxage?
 	if c.options.HttpVideoMaxAge < 1 {
-		return ttl.Video
+		return ttl.CacheVideo
 	} else if c.options.HttpVideoMaxAge > 31536000 {
 		return ttl.Duration(31536000)
 	}
 
 	// Return the configured cache expiration time.
 	return ttl.Duration(c.options.HttpVideoMaxAge)
-}
-
-// HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
-func (c *Config) HttpCachePublic() bool {
-	if c.options.HttpCachePublic {
-		return true
-	}
-
-	return c.options.CdnUrl != ""
 }
 
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).

@@ -420,22 +420,31 @@ func TestConfig_ApiUri(t *testing.T) {
 func TestConfig_CdnUrl(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
+	assert.Equal(t, "", c.options.SiteUrl)
 	assert.Equal(t, "", c.CdnUrl(""))
 	c.options.SiteUrl = "http://superhost:2342/"
 	assert.Equal(t, "/", c.CdnUrl("/"))
 	c.options.CdnUrl = "http://foo:2342/foo/"
 	assert.Equal(t, "http://foo:2342/foo", c.CdnUrl(""))
 	assert.Equal(t, "http://foo:2342/foo/", c.CdnUrl("/"))
+	c.options.SiteUrl = c.options.CdnUrl
+	assert.Equal(t, "/", c.CdnUrl("/"))
+	assert.Equal(t, "", c.CdnUrl(""))
+	c.options.SiteUrl = ""
 }
 
 func TestConfig_CdnDomain(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
+	assert.Equal(t, "", c.options.SiteUrl)
 	assert.Equal(t, "", c.CdnDomain())
 	c.options.CdnUrl = "http://superhost:2342/"
 	assert.Equal(t, "superhost", c.CdnDomain())
 	c.options.CdnUrl = "https://foo.bar.com:2342/foo/"
 	assert.Equal(t, "foo.bar.com", c.CdnDomain())
+	c.options.SiteUrl = c.options.CdnUrl
+	assert.Equal(t, "", c.CdnDomain())
+	c.options.SiteUrl = ""
 	c.options.CdnUrl = "http:/invalid:2342/foo/"
 	assert.Equal(t, "", c.CdnDomain())
 	c.options.CdnUrl = ""
@@ -451,6 +460,10 @@ func TestConfig_CdnVideo(t *testing.T) {
 	c.options.CdnUrl = "http://foo:2342/foo/"
 	assert.False(t, c.CdnVideo())
 	c.options.CdnVideo = true
+	assert.True(t, c.CdnVideo())
+	c.options.SiteUrl = c.options.CdnUrl
+	assert.False(t, c.CdnVideo())
+	c.options.SiteUrl = ""
 	assert.True(t, c.CdnVideo())
 	c.options.CdnVideo = false
 	assert.False(t, c.CdnVideo())

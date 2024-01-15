@@ -14,9 +14,11 @@ import (
 func TestSession_Save(t *testing.T) {
 	s := New(config.TestConfig())
 
-	id := ID()
+	authToken := rnd.AuthToken()
+	id := rnd.SessionID(authToken)
 
-	assert.Equal(t, 48, len(id))
+	assert.Equal(t, 48, len(authToken))
+	assert.Equal(t, 64, len(id))
 	assert.Falsef(t, s.Exists(id), "session %s should not exist", clean.LogQuote(id))
 
 	var err error
@@ -32,8 +34,8 @@ func TestSession_Save(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, 48, len(m.ID))
-	assert.Truef(t, s.Exists(m.ID), "session %s should exist", clean.LogQuote(id))
+	assert.Equal(t, 64, len(m.ID))
+	assert.Truef(t, s.Exists(m.ID), "session %s should exist", clean.LogQuote(m.ID))
 
 	newData := &entity.SessionData{
 		Shares: entity.UIDs{"a000000000000001"},
@@ -65,5 +67,6 @@ func TestSession_Create(t *testing.T) {
 	assert.NotEmpty(t, sess)
 	assert.NotEmpty(t, sess.ID)
 	assert.NotEmpty(t, sess.RefID)
+	assert.True(t, rnd.IsAuthToken(sess.AuthToken()))
 	assert.True(t, rnd.IsSessionID(sess.ID))
 }

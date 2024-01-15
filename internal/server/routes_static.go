@@ -10,7 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/i18n"
 )
 
-// registerStaticRoutes configures serving static assets and templates.
+// registerStaticRoutes adds routes for serving static content and templates.
 func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	// Redirects to the PWA for now, can be replaced by a template later.
 	login := func(c *gin.Context) {

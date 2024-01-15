@@ -21,6 +21,7 @@ const (
 	ResourcePassword  Resource = "password"
 	ResourceServices  Resource = "services"
 	ResourceUsers     Resource = "users"
+	ResourceSessions  Resource = "sessions"
 	ResourceLogs      Resource = "logs"
 	ResourceWebDAV    Resource = "webdav"
 	ResourceMetrics   Resource = "metrics"

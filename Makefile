@@ -163,6 +163,8 @@ stop:
 	./photoprism stop
 terminal:
 	$(DOCKER_COMPOSE) exec -u $(UID) photoprism bash
+mariadb:
+	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
 rootshell: root-terminal
 root-terminal:
 	$(DOCKER_COMPOSE) exec -u root photoprism bash

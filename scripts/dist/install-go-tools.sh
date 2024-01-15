@@ -46,6 +46,7 @@ case $DESTARCH in
   *)
     echo "Installing Go tools for ${DESTARCH^^} in /usr/local/bin..."
     GOBIN="/usr/local/bin" go install golang.org/x/tools/cmd/goimports@latest
+    GOBIN="/usr/local/bin" go install golang.org/x/tools/cmd/godoc@latest
     GOBIN="/usr/local/bin" go install github.com/psampaz/go-mod-outdated@latest
     GOBIN="/usr/local/bin" go install github.com/mikefarah/yq/v4@latest
     GOBIN="/usr/local/bin" go install github.com/kyoh86/richgo@latest

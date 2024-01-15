@@ -45,7 +45,7 @@ func LikePhoto(router *gin.RouterGroup) {
 			}
 
 			SavePhotoAsYaml(m)
-			PublishPhotoEvent(EntityUpdated, id, c)
+			PublishPhotoEvent(StatusUpdated, id, c)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
@@ -85,7 +85,7 @@ func DislikePhoto(router *gin.RouterGroup) {
 			}
 
 			SavePhotoAsYaml(m)
-			PublishPhotoEvent(EntityUpdated, id, c)
+			PublishPhotoEvent(StatusUpdated, id, c)
 		}
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})

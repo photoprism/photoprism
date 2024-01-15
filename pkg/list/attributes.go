@@ -8,7 +8,7 @@ import (
 // Attr represents a list of key-value attributes.
 type Attr []*KeyValue
 
-// ParseAttr parses a string into a new Attr since and returns it.
+// ParseAttr parses a string into a new Attr slice and returns it.
 func ParseAttr(s string) Attr {
 	fields := strings.Fields(s)
 	result := make(Attr, 0, len(fields))

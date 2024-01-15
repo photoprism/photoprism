@@ -1766,7 +1766,7 @@ func TestUser_DeleteSessions(t *testing.T) {
 	t.Run("alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
 
-		assert.Equal(t, 0, m.DeleteSessions([]string{"69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"}))
+		assert.Equal(t, 0, m.DeleteSessions([]string{rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")}))
 		assert.Equal(t, 1, m.DeleteSessions([]string{}))
 	})
 }
@@ -1792,7 +1792,6 @@ func TestUser_RegenerateTokens(t *testing.T) {
 
 		assert.NotEqual(t, preview, Admin.PreviewToken)
 		assert.NotEqual(t, download, Admin.DownloadToken)
-
 	})
 }
 

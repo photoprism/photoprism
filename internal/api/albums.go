@@ -237,7 +237,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		// PublishAlbumEvent(EntityDeleted, uid, c)
+		// PublishAlbumEvent(StatusDeleted, uid, c)
 
 		UpdateClientConfig()
 
@@ -250,11 +250,11 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 // LikeAlbum sets the favorite flag for an album.
 //
+// The request parameters are:
+//
+//   - uid: string Album UID
+//
 // POST /api/v1/albums/:uid/like
-//
-// Parameters:
-//
-//	uid: string Album UID
 func LikeAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -287,7 +287,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		PublishAlbumEvent(EntityUpdated, uid, c)
+		PublishAlbumEvent(StatusUpdated, uid, c)
 
 		// Update album YAML backup.
 		SaveAlbumAsYaml(a)
@@ -298,11 +298,11 @@ func LikeAlbum(router *gin.RouterGroup) {
 
 // DislikeAlbum removes the favorite flag from an album.
 //
+// The request parameters are:
+//
+//   - uid: string Album UID
+//
 // DELETE /api/v1/albums/:uid/like
-//
-// Parameters:
-//
-//	uid: string Album UID
 func DislikeAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -335,7 +335,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 
 		UpdateClientConfig()
 
-		PublishAlbumEvent(EntityUpdated, uid, c)
+		PublishAlbumEvent(StatusUpdated, uid, c)
 
 		// Update album YAML backup.
 		SaveAlbumAsYaml(a)
@@ -402,7 +402,7 @@ func CloneAlbums(router *gin.RouterGroup) {
 		if len(added) > 0 {
 			event.SuccessMsg(i18n.MsgSelectionAddedTo, clean.Log(a.Title()))
 
-			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
 
 			// Update album YAML backup.
 			SaveAlbumAsYaml(a)
@@ -473,7 +473,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
 
-			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
 
 			// Update album YAML backup.
 			SaveAlbumAsYaml(a)
@@ -537,7 +537,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 			RemoveFromAlbumCoverCache(a.AlbumUID)
 
-			PublishAlbumEvent(EntityUpdated, a.AlbumUID, c)
+			PublishAlbumEvent(StatusUpdated, a.AlbumUID, c)
 
 			// Update album YAML backup.
 			SaveAlbumAsYaml(a)

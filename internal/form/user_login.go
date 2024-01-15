@@ -6,10 +6,10 @@ import (
 
 // Login represents a login form.
 type Login struct {
-	UserName  string `json:"username,omitempty"`
-	UserEmail string `json:"email,omitempty"`
-	Password  string `json:"password,omitempty"`
-	AuthToken string `json:"token,omitempty"`
+	UserName   string `json:"username,omitempty"`
+	UserEmail  string `json:"email,omitempty"`
+	Password   string `json:"password,omitempty"`
+	ShareToken string `json:"token,omitempty"`
 }
 
 // Username returns the sanitized username in lowercase.
@@ -35,9 +35,9 @@ func (f Login) HasPassword() bool {
 	return f.Password != "" && len(f.Password) <= 255
 }
 
-// HasToken checks if an auth token is set.
-func (f Login) HasToken() bool {
-	return f.AuthToken != ""
+// HasShareToken checks if a link share token has been provided.
+func (f Login) HasShareToken() bool {
+	return f.ShareToken != ""
 }
 
 // HasCredentials checks if all credentials is set.

@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -84,7 +85,7 @@ func SearchGeo(router *gin.RouterGroup) {
 			return
 		}
 
-		c.Data(http.StatusOK, "application/json", resp)
+		c.Data(http.StatusOK, header.ContentTypeJson, resp)
 	}
 
 	// Register route handlers.

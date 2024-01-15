@@ -2,12 +2,11 @@
   <div>
     <div v-if="photos.length === 0" class="pa-2">
       <v-alert
-          :value="true"
-          color="secondary-dark"
-          :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
-          class="no-results ma-2 opacity-70"
-          outline
-      >
+        :value="true"
+        color="secondary-dark"
+        :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
+        class="no-results ma-2 opacity-70"
+        outline>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -50,29 +49,27 @@
             <tr v-for="(photo, index) in photos" :key="photo.ID" ref="items" :data-index="index">
               <td :data-uid="photo.UID" class="result" :class="photo.classes()">
                 <div
-                    v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
-                    :key="photo.Hash"
-                    class="image card darken-1"
-                />
+                  v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
+                  :key="photo.Hash"
+                  class="image card darken-1">
+                </div>
                 <div
-                      v-else
-                      :key="photo.Hash"
-                      :alt="photo.Title"
-                      :style="`background-image: url(${photo.thumbnailUrl('tile_50')})`"
-                      class="card darken-1 clickable image"
-                      @touchstart="onMouseDown($event, index)"
-                      @touchend.stop.prevent="onClick($event, index)"
-                      @mousedown="onMouseDown($event, index)"
-                      @contextmenu.stop="onContextMenu($event, index)"
-                      @click.stop.prevent="onClick($event, index)"
-                >
+                  v-else
+                  :key="photo.Hash"
+                  :style="`background-image: url(${photo.thumbnailUrl('tile_50')})`"
+                  class="card darken-1 clickable image"
+                  @touchstart="onMouseDown($event, index)"
+                  @touchend.stop.prevent="onClick($event, index)"
+                  @mousedown="onMouseDown($event, index)"
+                  @contextmenu.stop="onContextMenu($event, index)"
+                  @click.stop.prevent="onClick($event, index)">
                   <button v-if="selectMode" class="input-select">
                     <i class="select-on">check_circle</i>
                     <i class="select-off">radio_button_off</i>
                   </button>
                   <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'"
-                        class="input-open"
-                        @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
+                    class="input-open"
+                    @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
                     <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
                     <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
                     <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">font_download</i>
@@ -82,7 +79,7 @@
               </td>
 
               <td class="p-photo-desc clickable" :data-uid="photo.UID"
-                  @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
+                @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                 {{ photo.Title }}
               </td>
               <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">

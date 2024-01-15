@@ -3,6 +3,6 @@ package authn
 // API client types.
 const (
 	ClientConfidential = "confidential"
-	ClientWebDAV       = "webdav"
+	ClientPublic       = "public"
 	ClientUnknown      = ""
 )

@@ -93,4 +93,10 @@ var DialectSQLite3 = Migrations{
 		Stage:      "main",
 		Statements: []string{"UPDATE auth_users SET user_role = 'contributor' WHERE user_role = 'uploader';", "UPDATE auth_sessions SET auth_provider = 'link' WHERE auth_provider = 'token';"},
 	},
+	{
+		ID:         "20240112-000001",
+		Dialect:    "sqlite3",
+		Stage:      "main",
+		Statements: []string{"DELETE FROM auth_sessions;"},
+	},
 }

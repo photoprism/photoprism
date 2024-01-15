@@ -58,9 +58,9 @@ export const AuthMethods = () => {
   return {
     "": $gettext("Default"),
     default: $gettext("Default"),
-    basic: $gettext("Basic"),
     access_token: $gettext("Access Token"),
-    oauth: "OAuth",
+    session: $gettext("Session"),
+    "2fa": "2FA",
     oauth2: "OAuth2",
     oidc: "OIDC",
   };

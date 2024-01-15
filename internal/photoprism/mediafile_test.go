@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 func TestMediaFile_Ok(t *testing.T) {
@@ -700,7 +701,7 @@ func TestMediaFile_MimeType(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "application/json", mediaFile.MimeType())
+		assert.Equal(t, header.ContentTypeJson, mediaFile.MimeType())
 	})
 	t.Run("fox.profile0.8bpc.yuv420.avif", func(t *testing.T) {
 		mediaFile, err := NewMediaFile(conf.ExamplesPath() + "/fox.profile0.8bpc.yuv420.avif")

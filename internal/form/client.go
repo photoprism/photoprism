@@ -40,18 +40,13 @@ func NewClientFromCli(ctx *cli.Context) Client {
 
 	f.ClientName = clean.Name(ctx.String("name"))
 	f.AuthScope = clean.Scope(ctx.String("scope"))
-
-	if method := clean.Scope(ctx.String("method")); authn.MethodOAuth2.Equal(method) {
-		f.AuthMethod = authn.MethodOAuth2.String()
-	} else if authn.MethodBasic.Equal(method) {
-		f.AuthMethod = authn.MethodBasic.String()
-	}
+	f.AuthMethod = authn.Method(ctx.String("method")).String()
 
 	if authn.MethodOAuth2.NotEqual(f.AuthMethod) {
 		f.AuthScope = "webdav"
 	}
 
-	if user := ctx.String("user"); rnd.IsUID(user, 'u') {
+	if user := clean.Username(ctx.Args().First()); rnd.IsUID(user, 'u') {
 		f.UserUID = user
 	} else if user != "" {
 		f.UserName = user

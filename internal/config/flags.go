@@ -10,9 +10,9 @@ import (
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -492,19 +492,24 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("HTTP_COMPRESSION"),
 		}}, {
 		Flag: cli.BoolFlag{
+			Name:   "http-cors",
+			Usage:  "allow Cross-Origin Resource Sharing (CORS)",
+			EnvVar: EnvVar("HTTP_CORS"),
+		}}, {
+		Flag: cli.BoolFlag{
 			Name:   "http-cache-public",
 			Usage:  "allow static content to be cached by a CDN or caching proxy",
 			EnvVar: EnvVar("HTTP_CACHE_PUBLIC"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-cache-maxage",
-			Value:  int(ttl.Default),
+			Value:  int(ttl.CacheDefault),
 			Usage:  "time in `SECONDS` until cached content expires",
 			EnvVar: EnvVar("HTTP_CACHE_MAXAGE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-video-maxage",
-			Value:  int(ttl.Video),
+			Value:  int(ttl.CacheVideo),
 			Usage:  "time in `SECONDS` until cached videos expire",
 			EnvVar: EnvVar("HTTP_VIDEO_MAXAGE"),
 		}}, {

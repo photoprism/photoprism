@@ -77,3 +77,20 @@ func (acl ACL) AllowAll(resource Resource, role Role, perms Permissions) bool {
 
 	return true
 }
+
+// Resources returns the resources specified in the ACL.
+func (acl ACL) Resources() (result []string) {
+	if len(acl) == 0 {
+		return []string{}
+	}
+
+	result = make([]string, 0, len(acl))
+
+	for resource := range acl {
+		if resource != ResourceDefault && resource.String() != "" {
+			result = append(result, resource.String())
+		}
+	}
+
+	return result
+}
