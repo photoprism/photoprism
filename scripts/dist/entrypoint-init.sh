@@ -35,6 +35,18 @@ case $DOCKER_ENV in
 esac
 
 if [[ ${PHOTOPRISM_UID} =~ $re ]] && [[ ${PHOTOPRISM_UID} != "0" ]]; then
+  # Create user account if it does not exist yet (required by /usr/bin/setpriv).
+  getent passwd "${PHOTOPRISM_UID}" > /dev/null
+  if [ $? -eq 2 ] ; then
+    userdel -r -f "user-${PHOTOPRISM_UID}" >/dev/null 2>&1
+    groupdel -f "group-${PHOTOPRISM_UID}" >/dev/null 2>&1
+    groupadd -f -g "${PHOTOPRISM_UID}" "group-${PHOTOPRISM_UID}"
+    useradd -u "${PHOTOPRISM_UID}" -g "${PHOTOPRISM_UID}" -G photoprism,www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/user-${PHOTOPRISM_UID}" "user-${PHOTOPRISM_UID}" 2>/dev/null
+    echo "init: account with the user id ${PHOTOPRISM_UID} has been created"
+  else
+    echo "init: account with the user id ${PHOTOPRISM_UID} already exists"
+  fi
+
   if [[ ${PHOTOPRISM_GID} =~ $re ]] && [[ ${PHOTOPRISM_GID} != "0" ]]; then
     CHOWN="${PHOTOPRISM_UID}:${PHOTOPRISM_GID}"
   else
