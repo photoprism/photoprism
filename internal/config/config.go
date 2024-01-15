@@ -437,12 +437,16 @@ func (c *Config) ApiUri() string {
 
 // CdnUrl returns the optional content delivery network URI without trailing slash.
 func (c *Config) CdnUrl(res string) string {
+	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
+		return res
+	}
+
 	return strings.TrimRight(c.options.CdnUrl, "/") + res
 }
 
 // CdnDomain returns the content delivery network domain name if specified.
 func (c *Config) CdnDomain() string {
-	if c.options.CdnUrl == "" {
+	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
 		return ""
 	} else if u, err := url.Parse(c.options.CdnUrl); err != nil {
 		return ""
@@ -453,7 +457,7 @@ func (c *Config) CdnDomain() string {
 
 // CdnVideo checks if videos should be streamed using the configured CDN.
 func (c *Config) CdnVideo() bool {
-	if c.options.CdnUrl == "" {
+	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
 		return false
 	}
 
