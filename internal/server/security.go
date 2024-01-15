@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
 )
 
@@ -14,10 +13,12 @@ var Security = func(conf *config.Config) gin.HandlerFunc {
 		// Allow Cross-Origin Resource Sharing (CORS)?
 		// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin#cors_and_caching
 		if conf.HttpCORS() {
+			// Allow all origins if CORS is enabled.
+			// Warning: This is a potential security risk!
 			c.Header(header.AccessControlAllowOrigin, header.Any)
 		} else if origin := c.GetHeader(header.Origin); origin != "" {
 			// Automatically set the "Access-Control-Allow-Origin" response header
-			// based on the "Origin" value of the request.
+			// with the site url for requests with an "Origin" header.
 			c.Header(header.AccessControlAllowOrigin, conf.AccessControlAllowOriginHeader())
 			c.Header(header.Vary, header.Origin)
 		}
