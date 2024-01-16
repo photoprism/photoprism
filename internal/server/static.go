@@ -12,7 +12,7 @@ import (
 // Static is a middleware that adds static content-related headers to the server's response.
 var Static = func(conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Allow CORS based on the configuration and automatically for eot, ttf, woff, woff2 and css files with a CDN.
+		// Allow CORS based on the configuration or otherwise automatically for certain file types when using a CDN.
 		// See: https://www.w3.org/TR/css-fonts-3/#font-fetching-requirements
 		if origin := conf.CORSOrigin(); origin != "" || header.AllowCORS(c.Request.URL.Path) && conf.UseCdn() {
 			if origin == "" {

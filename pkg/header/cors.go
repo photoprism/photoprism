@@ -21,8 +21,21 @@ var (
 	CorsMethods                      = []string{http.MethodGet, http.MethodHead, http.MethodOptions}
 	DefaultAccessControlAllowMethods = strings.Join(CorsMethods, ", ")
 	DefaultAccessControlMaxAge       = "3600"
-	CorsExt                          = map[string]bool{".eot": true, ".ttf": true, ".woff": true, ".woff2": true, ".css": true}
 )
+
+// CorsExt contains all static asset extensions for which a CORS header may be added automatically.
+var CorsExt = map[string]bool{
+	".ttf":   true,
+	".ttc":   true,
+	".otf":   true,
+	".eot":   true,
+	".woff":  true,
+	".woff2": true,
+	".css":   true,
+	".js":    true, // Required for the MapLibre GL RTL text plugin.
+	".json":  true, // Required for static frontend configuration files.
+	".svg":   true, // Required for SVG icons that depend on additional styles or fonts.
+}
 
 // AllowCORS checks if CORS headers can be safely used based on a request's file path.
 // See: https://www.w3.org/TR/css-fonts-3/#font-fetching-requirements
