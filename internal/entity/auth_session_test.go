@@ -416,6 +416,31 @@ func TestSession_SetScope(t *testing.T) {
 	})
 }
 
+func TestSession_SetMethod(t *testing.T) {
+	t.Run("emptyMethod", func(t *testing.T) {
+		s := &Session{
+			UserName:   "test",
+			RefID:      "sessxkkcxxxz",
+			AuthMethod: "Access Token",
+		}
+
+		m := s.SetMethod("")
+
+		assert.Equal(t, "Access Token", m.AuthMethod)
+	})
+	t.Run("setNewMethod", func(t *testing.T) {
+		s := &Session{
+			UserName:   "test",
+			RefID:      "sessxkkcxxxz",
+			AuthMethod: "Access Token",
+		}
+
+		m := s.SetMethod("Test")
+
+		assert.Equal(t, "Test", m.AuthMethod)
+	})
+}
+
 func TestSession_SetProvider(t *testing.T) {
 	m := FindSessionByRefID("sessxkkcabce")
 	assert.Equal(t, authn.ProviderDefault, m.Provider())
@@ -512,6 +537,28 @@ func TestSession_NoShares(t *testing.T) {
 	assert.True(t, m.NoShares())
 }
 
+func TestSession_NoUser(t *testing.T) {
+	alice := FindSessionByRefID("sessxkkcabcd")
+	assert.False(t, alice.NoUser())
+
+	visitor := FindSessionByRefID("sessxkkcabcg")
+	assert.False(t, visitor.NoUser())
+
+	metrics := FindSessionByRefID("sessgh6gjuo1")
+	assert.True(t, metrics.NoUser())
+}
+
+func TestSession_HasRegisteredUser(t *testing.T) {
+	alice := FindSessionByRefID("sessxkkcabcd")
+	assert.True(t, alice.HasRegisteredUser())
+
+	visitor := FindSessionByRefID("sessxkkcabcg")
+	assert.False(t, visitor.HasRegisteredUser())
+
+	metrics := FindSessionByRefID("sessgh6gjuo1")
+	assert.False(t, metrics.HasRegisteredUser())
+}
+
 func TestSession_HasShare(t *testing.T) {
 	alice := FindSessionByRefID("sessxkkcabcd")
 	alice.RefreshUser()
@@ -566,6 +613,7 @@ func TestSession_TimedOut(t *testing.T) {
 		assert.False(t, m.TimeoutAt().IsZero())
 		assert.Equal(t, m.ExpiresAt(), m.TimeoutAt())
 		assert.False(t, m.TimedOut())
+		assert.Greater(t, m.ExpiresIn(), int64(0))
 	})
 	t.Run("NoExpiration", func(t *testing.T) {
 		m := NewSession(0, UnixHour)
@@ -574,6 +622,7 @@ func TestSession_TimedOut(t *testing.T) {
 		assert.Equal(t, m.ExpiresAt(), m.TimeoutAt())
 		assert.False(t, m.TimedOut())
 		assert.True(t, m.ExpiresAt().IsZero())
+		assert.Equal(t, m.ExpiresIn(), int64(0))
 	})
 	t.Run("NoTimeout", func(t *testing.T) {
 		m := NewSession(UnixDay, 0)
@@ -582,6 +631,7 @@ func TestSession_TimedOut(t *testing.T) {
 		assert.Equal(t, m.ExpiresAt(), m.TimeoutAt())
 		assert.False(t, m.TimedOut())
 		assert.False(t, m.ExpiresAt().IsZero())
+		assert.Greater(t, m.ExpiresIn(), int64(0))
 	})
 	t.Run("TimedOut", func(t *testing.T) {
 		m := NewSession(UnixDay, UnixHour)
