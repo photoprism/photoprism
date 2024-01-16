@@ -39,12 +39,21 @@ var AbortNotFound = func(c *gin.Context) {
 	case gin.MIMEJSON:
 		c.JSON(http.StatusNotFound, gin.H{"error": i18n.Msg(i18n.ErrNotFound)})
 	default:
-		values := gin.H{
-			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
-			"config": conf.ClientPublic(),
-			"error":  i18n.Msg(i18n.ErrNotFound),
-			"code":   http.StatusNotFound,
+		var redirect string
+
+		// Redirect to site root if current path is different.
+		if root, path := conf.BaseUri("/"), c.Request.URL.Path; path != "" && path != root {
+			redirect = root
 		}
+
+		values := gin.H{
+			"signUp":   gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
+			"config":   conf.ClientPublic(),
+			"error":    i18n.Msg(i18n.ErrNotFound),
+			"code":     http.StatusNotFound,
+			"redirect": redirect,
+		}
+
 		c.HTML(http.StatusNotFound, "404.gohtml", values)
 	}
 
