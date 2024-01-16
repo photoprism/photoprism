@@ -64,11 +64,8 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Block CDNs from caching this endpoint.
-		if header.IsCdn(c.Request) {
-			c.AbortWithStatus(http.StatusNotFound)
-			return
-		}
+		// Set vary response header.
+		c.Header(header.Vary, header.DefaultVary)
 
 		// Get basic authentication credentials, if any.
 		username, password, cacheKey, authorized := basicAuth(c)

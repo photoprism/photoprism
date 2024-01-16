@@ -16,6 +16,7 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	login := func(c *gin.Context) {
 		c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 	}
+
 	router.Any(conf.BaseUri("/"), login)
 
 	// Shows "Page Not found" error if no other handler is registered.
@@ -38,11 +39,19 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	router.StaticFile(conf.BaseUri("/favicon.ico"), filepath.Join(conf.ImgPath(), "favicon.ico"))
 
 	// Serves static assets like js, css and font files.
-	router.Static(conf.BaseUri(config.StaticUri), conf.StaticPath())
+	if dir := conf.StaticPath(); dir != "" {
+		group := router.Group(conf.BaseUri(config.StaticUri), Static(conf))
+		{
+			group.Static("", dir)
+		}
+	}
 
 	// Serves custom static assets if folder exists.
 	if dir := conf.CustomStaticPath(); dir != "" {
-		router.Static(conf.BaseUri(config.CustomStaticUri), dir)
+		group := router.Group(conf.BaseUri(config.CustomStaticUri), Static(conf))
+		{
+			group.Static("", dir)
+		}
 	}
 
 	// Rainbow Page.

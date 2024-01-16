@@ -45,7 +45,7 @@ func Start(ctx context.Context, conf *config.Config) {
 	router.Use(Recovery(), Security(conf), Logger())
 
 	// Create REST API router group.
-	APIv1 = router.Group(conf.BaseUri(config.ApiUri))
+	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))
 
 	// Initialize package extensions.
 	Ext().Init(router, conf)

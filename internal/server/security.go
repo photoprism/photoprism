@@ -9,29 +9,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/header"
 )
 
-// Security adds common HTTP security headers to the response.
+// Security is a middleware that adds security-related headers to the server's response.
 var Security = func(conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Only allow CDNs to cache responses of GET, HEAD, and OPTIONS requests and block the request otherwise.
-		if header.BlockCdn(c.Request) {
+		// Abort if the request should not be served through a CDN.
+		if header.AbortCdnRequest(c.Request) {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
-		}
-
-		// Set vary header.
-		c.Header(header.Vary, header.DefaultVary)
-
-		// If permitted, set CORS headers (Cross-Origin Resource Sharing).
-		// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
-		if origin := conf.CORSOrigin(); origin != "" {
-			c.Header(header.AccessControlAllowOrigin, origin)
-
-			// Add additional information to preflight OPTION requests.
-			if c.Request.Method == http.MethodOptions {
-				c.Header(header.AccessControlAllowHeaders, conf.CORSHeaders())
-				c.Header(header.AccessControlAllowMethods, conf.CORSMethods())
-				c.Header(header.AccessControlMaxAge, header.DefaultAccessControlMaxAge)
-			}
 		}
 
 		// Set Content Security Policy.

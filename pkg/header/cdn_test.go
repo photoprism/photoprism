@@ -44,7 +44,7 @@ func TestIsCdn(t *testing.T) {
 	})
 }
 
-func TestBlockCdn(t *testing.T) {
+func TestAbortCdnRequest(t *testing.T) {
 	t.Run("Allow", func(t *testing.T) {
 		u, _ := url.Parse("/foo")
 
@@ -54,7 +54,7 @@ func TestBlockCdn(t *testing.T) {
 			Method: http.MethodGet,
 		}
 
-		assert.False(t, BlockCdn(r))
+		assert.False(t, AbortCdnRequest(r))
 	})
 	t.Run("UnsafeMethod", func(t *testing.T) {
 		u, _ := url.Parse("/foo")
@@ -65,7 +65,7 @@ func TestBlockCdn(t *testing.T) {
 			Method: http.MethodPost,
 		}
 
-		assert.True(t, BlockCdn(r))
+		assert.True(t, AbortCdnRequest(r))
 	})
 	t.Run("Root", func(t *testing.T) {
 		u, _ := url.Parse("/")
@@ -76,7 +76,7 @@ func TestBlockCdn(t *testing.T) {
 			Method: http.MethodGet,
 		}
 
-		assert.True(t, BlockCdn(r))
+		assert.True(t, AbortCdnRequest(r))
 	})
 	t.Run("NoCdn", func(t *testing.T) {
 		u, _ := url.Parse("/foo")
@@ -87,6 +87,6 @@ func TestBlockCdn(t *testing.T) {
 			Method: http.MethodPost,
 		}
 
-		assert.False(t, BlockCdn(r))
+		assert.False(t, AbortCdnRequest(r))
 	})
 }

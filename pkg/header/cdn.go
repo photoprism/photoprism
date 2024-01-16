@@ -15,6 +15,10 @@ const (
 	CdnConnectionID = "Cdn-Connectionid"
 )
 
+var (
+	CdnMethods = []string{http.MethodGet, http.MethodHead, http.MethodOptions}
+)
+
 // IsCdn checks whether the request seems to come from a CDN.
 func IsCdn(req *http.Request) bool {
 	if req == nil {
@@ -30,15 +34,15 @@ func IsCdn(req *http.Request) bool {
 	return false
 }
 
-// BlockCdn checks whether the request should be blocked for CDNs.
-func BlockCdn(req *http.Request) bool {
+// AbortCdnRequest checks if the request should not be served through a CDN.
+func AbortCdnRequest(req *http.Request) bool {
 	if !IsCdn(req) {
 		return false
-	}
-
-	if req.URL.Path == "/" {
+	} else if req.Header.Get(XAuthToken) != "" {
+		return true
+	} else if req.URL.Path == "/" {
 		return true
 	}
 
-	return list.Excludes(SafeMethods, req.Method)
+	return list.Excludes(CdnMethods, req.Method)
 }

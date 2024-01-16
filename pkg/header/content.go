@@ -2,7 +2,7 @@ package header
 
 import "strings"
 
-// Content header names.
+// Standard content request and response header names.
 const (
 	Accept             = "Accept"
 	AcceptEncoding     = "Accept-Encoding"
@@ -18,7 +18,10 @@ const (
 	Vary               = "Vary"
 )
 
-// Content header defaults.
+// Vary response header defaults.
+//
+// Requests that include a standard authorization header should be automatically excluded
+// from public caches: https://datatracker.ietf.org/doc/html/rfc7234#section-3
 var (
 	DefaultVaryHeaders = []string{XAuthToken, AcceptEncoding}
 	DefaultVary        = strings.Join(DefaultVaryHeaders, ", ")

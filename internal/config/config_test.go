@@ -423,15 +423,23 @@ func TestConfig_CdnUrl(t *testing.T) {
 
 	assert.Equal(t, "", c.options.SiteUrl)
 	assert.Equal(t, "", c.CdnUrl(""))
+	assert.True(t, c.NoCdn())
+	assert.False(t, c.UseCdn())
 	c.options.SiteUrl = "http://superhost:2342/"
 	assert.Equal(t, "/", c.CdnUrl("/"))
 	c.options.CdnUrl = "http://foo:2342/foo/"
 	assert.Equal(t, "http://foo:2342/foo", c.CdnUrl(""))
 	assert.Equal(t, "http://foo:2342/foo/", c.CdnUrl("/"))
+	assert.False(t, c.NoCdn())
+	assert.True(t, c.UseCdn())
 	c.options.SiteUrl = c.options.CdnUrl
 	assert.Equal(t, "/", c.CdnUrl("/"))
 	assert.Equal(t, "", c.CdnUrl(""))
+	assert.True(t, c.NoCdn())
+	assert.False(t, c.UseCdn())
 	c.options.SiteUrl = ""
+	assert.False(t, c.NoCdn())
+	assert.True(t, c.UseCdn())
 }
 
 func TestConfig_CdnDomain(t *testing.T) {

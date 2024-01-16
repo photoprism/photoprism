@@ -444,6 +444,20 @@ func (c *Config) CdnUrl(res string) string {
 	return strings.TrimRight(c.options.CdnUrl, "/") + res
 }
 
+// UseCdn checks if a Content Deliver Network (CDN) is used to serve static content.
+func (c *Config) UseCdn() bool {
+	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
+		return false
+	}
+
+	return true
+}
+
+// NoCdn checks if there is no Content Deliver Network (CDN) configured to serve static content.
+func (c *Config) NoCdn() bool {
+	return !c.UseCdn()
+}
+
 // CdnDomain returns the content delivery network domain name if specified.
 func (c *Config) CdnDomain() string {
 	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
