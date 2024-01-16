@@ -13,5 +13,6 @@ func TestNewClient(t *testing.T) {
 		client := NewClient()
 		assert.Equal(t, authn.MethodOAuth2, client.Method())
 		assert.Equal(t, "", client.Scope())
+		assert.Equal(t, "", client.Name())
 	})
 }
