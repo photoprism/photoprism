@@ -150,6 +150,25 @@ func TestAuthSession(t *testing.T) {
 		assert.True(t, authSess.HasScope(acl.ResourceWebDAV.String()))
 		assert.False(t, authSess.HasScope(acl.ResourceSessions.String()))
 	})
+	t.Run("EmptyPassword", func(t *testing.T) {
+		// Create test request form.
+		f := form.Login{
+			UserName: "alice",
+			Password: "",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(f))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		authSess, authUser, authErr := AuthSession(f, c)
+
+		assert.Nil(t, authSess)
+		assert.Nil(t, authUser)
+		assert.Error(t, authErr)
+	})
 }
 
 func TestAuthLocal(t *testing.T) {

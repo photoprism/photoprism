@@ -188,14 +188,24 @@ func TestCacheSession(t *testing.T) {
 }
 
 func TestDeleteSession(t *testing.T) {
-	id := rnd.SessionID("77be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
-	m := &Session{ID: id, DownloadToken: "download123", PreviewToken: "preview123"}
-	CacheSession(m, time.Hour)
-	r, _ := sessionCache.Get(id)
-	assert.NotEmpty(t, r)
-	DeleteSession(m)
-	r2, _ := sessionCache.Get(id)
-	assert.Empty(t, r2)
+	t.Run("Success", func(t *testing.T) {
+		id := rnd.SessionID("77be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1")
+		m := &Session{ID: id, DownloadToken: "download123", PreviewToken: "preview123"}
+		CacheSession(m, time.Hour)
+		r, _ := sessionCache.Get(id)
+		assert.NotEmpty(t, r)
+		DeleteSession(m)
+		r2, _ := sessionCache.Get(id)
+		assert.Empty(t, r2)
+	})
+	t.Run("invalidID", func(t *testing.T) {
+		m := &Session{ID: "123-invalid", DownloadToken: "download123", PreviewToken: "preview123"}
+		CacheSession(m, time.Hour)
+
+		err := DeleteSession(m)
+
+		assert.Error(t, err)
+	})
 }
 
 func TestDeleteFromSessionCache(t *testing.T) {

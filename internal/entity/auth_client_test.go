@@ -273,6 +273,30 @@ func TestClient_UpdateLastActive(t *testing.T) {
 	})
 }
 
+func TestClient_EnforceAuthTokenLimit(t *testing.T) {
+	t.Run("EmptyUID", func(t *testing.T) {
+		var m = Client{ClientName: "No UUID"}
+
+		r := m.EnforceAuthTokenLimit()
+
+		assert.Equal(t, r, 0)
+	})
+	t.Run("NoToken", func(t *testing.T) {
+		var m = Client{ClientName: "David", ClientUID: "cs5cpu17n6gj2bbb"}
+
+		r := m.EnforceAuthTokenLimit()
+
+		assert.Equal(t, r, 0)
+	})
+	t.Run("NegativeTokenLimit", func(t *testing.T) {
+		var m = Client{ClientName: "David", ClientUID: "cs5cpu17n6gj2bbb", AuthTokens: -1}
+
+		r := m.EnforceAuthTokenLimit()
+
+		assert.Equal(t, r, 0)
+	})
+}
+
 func TestClient_HasPassword(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
