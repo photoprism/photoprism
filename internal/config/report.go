@@ -127,8 +127,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"wallpaper-uri", c.WallpaperUri()},
 
 		// Site Infos.
-		{"cdn-url", c.CdnUrl("/")},
-		{"cdn-video", fmt.Sprintf("%t", c.CdnVideo())},
 		{"site-url", c.SiteUrl()},
 		{"site-https", fmt.Sprintf("%t", c.SiteHttps())},
 		{"site-domain", c.SiteDomain()},
@@ -137,6 +135,13 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"site-caption", c.SiteCaption()},
 		{"site-description", c.SiteDescription()},
 		{"site-preview", c.SitePreview()},
+
+		// CDN and Cross-Origin Resource Sharing (CORS).
+		{"cdn-url", c.CdnUrl("/")},
+		{"cdn-video", fmt.Sprintf("%t", c.CdnVideo())},
+		{"cors-origin", c.CORSOrigin()},
+		{"cors-headers", c.CORSHeaders()},
+		{"cors-methods", c.CORSMethods()},
 
 		// URIs.
 		{"base-uri", c.BaseUri("/")},
@@ -160,7 +165,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"tls-key", c.TLSKey()},
 		{"http-mode", c.HttpMode()},
 		{"http-compression", c.HttpCompression()},
-		{"http-cors", fmt.Sprintf("%t", c.HttpCORS())},
 		{"http-cache-public", fmt.Sprintf("%t", c.HttpCachePublic())},
 		{"http-cache-maxage", fmt.Sprintf("%d", c.HttpCacheMaxAge())},
 		{"http-video-maxage", fmt.Sprintf("%d", c.HttpVideoMaxAge())},

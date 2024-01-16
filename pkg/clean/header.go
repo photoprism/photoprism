@@ -9,7 +9,7 @@ func Header(s string) string {
 	result := make([]rune, 0, len(s))
 
 	for _, r := range s {
-		if r > 32 && r < 127 {
+		if r > 31 && r < 127 {
 			result = append(result, r)
 		}
 	}

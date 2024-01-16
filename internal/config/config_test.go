@@ -11,6 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 func TestMain(m *testing.M) {
@@ -469,6 +470,39 @@ func TestConfig_CdnVideo(t *testing.T) {
 	assert.False(t, c.CdnVideo())
 	c.options.CdnUrl = ""
 	assert.False(t, c.CdnVideo())
+}
+
+func TestConfig_CORSOrigin(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	c.Options().CORSOrigin = ""
+	assert.Equal(t, "", c.CORSOrigin())
+	c.Options().CORSOrigin = "*"
+	assert.Equal(t, "*", c.CORSOrigin())
+	c.Options().CORSOrigin = "https://developer.mozilla.org"
+	assert.Equal(t, "https://developer.mozilla.org", c.CORSOrigin())
+	c.Options().CORSOrigin = ""
+	assert.Equal(t, "", c.CORSOrigin())
+}
+
+func TestConfig_CORSHeaders(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.CORSHeaders())
+	c.Options().CORSHeaders = header.DefaultAccessControlAllowHeaders
+	assert.Equal(t, header.DefaultAccessControlAllowHeaders, c.CORSHeaders())
+	c.Options().CORSHeaders = ""
+	assert.Equal(t, "", c.CORSHeaders())
+}
+
+func TestConfig_CORSMethods(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.CORSMethods())
+	c.Options().CORSMethods = header.DefaultAccessControlAllowMethods
+	assert.Equal(t, header.DefaultAccessControlAllowMethods, c.CORSMethods())
+	c.Options().CORSMethods = ""
+	assert.Equal(t, "", c.CORSMethods())
 }
 
 func TestConfig_ContentUri(t *testing.T) {

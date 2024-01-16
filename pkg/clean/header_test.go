@@ -18,7 +18,7 @@ func TestHeader(t *testing.T) {
 	})
 	t.Run("Emoji", func(t *testing.T) {
 		result := Header("Hello 👍")
-		assert.Equal(t, "Hello", result)
+		assert.Equal(t, "Hello ", result)
 	})
 }
 

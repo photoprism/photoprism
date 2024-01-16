@@ -385,16 +385,6 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("WALLPAPER_URI"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "cdn-url",
-			Usage:  "content delivery network `URL`",
-			EnvVar: EnvVar("CDN_URL"),
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "cdn-video",
-			Usage:  "stream videos over the specified CDN",
-			EnvVar: EnvVar("CDN_VIDEO"),
-		}}, {
-		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",
 			Value:  "http://localhost:2342/",
@@ -426,6 +416,34 @@ var Flags = CliFlags{
 			Name:   "site-preview",
 			Usage:  "sharing preview image `URL`",
 			EnvVar: EnvVar("SITE_PREVIEW"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cdn-url",
+			Usage:  "content delivery network `URL`",
+			EnvVar: EnvVar("CDN_URL"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "cdn-video",
+			Usage:  "stream videos over the specified CDN",
+			EnvVar: EnvVar("CDN_VIDEO"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-origin",
+			Usage:  "origin `URL` from which browsers are allowed to perform cross-origin requests (leave empty to disable or use * to allow all)",
+			EnvVar: EnvVar("CORS_ORIGIN"),
+			Value:  header.DefaultAccessControlAllowOrigin,
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-headers",
+			Usage:  "one or more `HEADERS` that browsers should see when performing a cross-origin request",
+			EnvVar: EnvVar("CORS_HEADERS"),
+			Value:  header.DefaultAccessControlAllowHeaders,
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-methods",
+			Usage:  "one or more `METHODS` that may be used when performing a cross-origin request",
+			EnvVar: EnvVar("CORS_METHODS"),
+			Value:  header.DefaultAccessControlAllowMethods,
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "https-proxy",
@@ -490,11 +508,6 @@ var Flags = CliFlags{
 			Name:   "http-compression, z",
 			Usage:  "Web server compression `METHOD` (gzip, none)",
 			EnvVar: EnvVar("HTTP_COMPRESSION"),
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "http-cors",
-			Usage:  "allow Cross-Origin Resource Sharing (CORS)",
-			EnvVar: EnvVar("HTTP_CORS"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "http-cache-public",

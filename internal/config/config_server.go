@@ -83,12 +83,6 @@ func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
 
-// HttpCORS checks of Cross-Origin Resource Sharing (CORS) should be allowed,
-// so the "Access-Control-Allow-Origin" response header should be set to "*".
-func (c *Config) HttpCORS() bool {
-	return c.options.HttpCORS
-}
-
 // HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
 func (c *Config) HttpCachePublic() bool {
 	if c.options.HttpCachePublic {

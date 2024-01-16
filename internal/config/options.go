@@ -93,14 +93,17 @@ type Options struct {
 	LegalInfo             string        `yaml:"LegalInfo" json:"LegalInfo" flag:"legal-info"`
 	LegalUrl              string        `yaml:"LegalUrl" json:"LegalUrl" flag:"legal-url"`
 	WallpaperUri          string        `yaml:"WallpaperUri" json:"WallpaperUri" flag:"wallpaper-uri"`
-	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
-	CdnVideo              bool          `yaml:"CdnVideo" json:"CdnVideo" flag:"cdn-video"`
 	SiteUrl               string        `yaml:"SiteUrl" json:"SiteUrl" flag:"site-url"`
 	SiteAuthor            string        `yaml:"SiteAuthor" json:"SiteAuthor" flag:"site-author"`
 	SiteTitle             string        `yaml:"SiteTitle" json:"SiteTitle" flag:"site-title"`
 	SiteCaption           string        `yaml:"SiteCaption" json:"SiteCaption" flag:"site-caption"`
 	SiteDescription       string        `yaml:"SiteDescription" json:"SiteDescription" flag:"site-description"`
 	SitePreview           string        `yaml:"SitePreview" json:"SitePreview" flag:"site-preview"`
+	CdnUrl                string        `yaml:"CdnUrl" json:"CdnUrl" flag:"cdn-url"`
+	CdnVideo              bool          `yaml:"CdnVideo" json:"CdnVideo" flag:"cdn-video"`
+	CORSOrigin            string        `yaml:"CORSOrigin" json:"-" flag:"cors-origin"`
+	CORSHeaders           string        `yaml:"CORSHeaders" json:"-" flag:"cors-headers"`
+	CORSMethods           string        `yaml:"CORSMethods" json:"-" flag:"cors-methods"`
 	HttpsProxy            string        `yaml:"HttpsProxy" json:"HttpsProxy" flag:"https-proxy"`
 	HttpsProxyInsecure    bool          `yaml:"HttpsProxyInsecure" json:"HttpsProxyInsecure" flag:"https-proxy-insecure"`
 	TrustedProxies        []string      `yaml:"TrustedProxies" json:"-" flag:"trusted-proxy"`
@@ -113,7 +116,6 @@ type Options struct {
 	TLSKey                string        `yaml:"TLSKey" json:"TLSKey" flag:"tls-key"`
 	HttpMode              string        `yaml:"HttpMode" json:"-" flag:"http-mode"`
 	HttpCompression       string        `yaml:"HttpCompression" json:"-" flag:"http-compression"`
-	HttpCORS              bool          `yaml:"HttpCORS" json:"-" flag:"http-cors"`
 	HttpCachePublic       bool          `yaml:"HttpCachePublic" json:"HttpCachePublic" flag:"http-cache-public"`
 	HttpCacheMaxAge       int           `yaml:"HttpCacheMaxAge" json:"HttpCacheMaxAge" flag:"http-cache-maxage"`
 	HttpVideoMaxAge       int           `yaml:"HttpVideoMaxAge" json:"HttpVideoMaxAge" flag:"http-video-maxage"`

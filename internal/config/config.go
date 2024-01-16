@@ -464,6 +464,21 @@ func (c *Config) CdnVideo() bool {
 	return c.options.CdnVideo
 }
 
+// CORSOrigin returns the value for the Access-Control-Allow-Origin header, if any.
+func (c *Config) CORSOrigin() string {
+	return clean.Header(c.options.CORSOrigin)
+}
+
+// CORSHeaders returns the value for the Access-Control-Allow-Headers header, if any.
+func (c *Config) CORSHeaders() string {
+	return clean.Header(c.options.CORSHeaders)
+}
+
+// CORSMethods returns the value for the Access-Control-Allow-Methods header, if any.
+func (c *Config) CORSMethods() string {
+	return clean.Header(c.options.CORSMethods)
+}
+
 // ContentUri returns the content delivery URI.
 func (c *Config) ContentUri() string {
 	return c.CdnUrl(c.ApiUri())
