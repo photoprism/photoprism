@@ -30,7 +30,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
-			c.AbortWithStatus(http.StatusNotFound)
+			AbortNotFound(c)
 			return
 		}
 
@@ -139,7 +139,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
-			c.AbortWithStatus(http.StatusNotFound)
+			AbortNotFound(c)
 			return
 		}
 

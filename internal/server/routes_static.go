@@ -6,8 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/i18n"
 )
 
 // registerStaticRoutes adds routes for serving static content and templates.
@@ -20,20 +20,7 @@ func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	router.Any(conf.BaseUri("/"), login)
 
 	// Shows "Page Not found" error if no other handler is registered.
-	router.NoRoute(func(c *gin.Context) {
-		switch c.NegotiateFormat(gin.MIMEHTML, gin.MIMEJSON) {
-		case gin.MIMEJSON:
-			c.JSON(http.StatusNotFound, gin.H{"error": i18n.Msg(i18n.ErrNotFound)})
-		default:
-			values := gin.H{
-				"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
-				"config": conf.ClientPublic(),
-				"error":  i18n.Msg(i18n.ErrNotFound),
-				"code":   http.StatusNotFound,
-			}
-			c.HTML(http.StatusNotFound, "404.gohtml", values)
-		}
-	})
+	router.NoRoute(api.AbortNotFound)
 
 	// Serves static favicon.
 	router.StaticFile(conf.BaseUri("/favicon.ico"), filepath.Join(conf.ImgPath(), "favicon.ico"))

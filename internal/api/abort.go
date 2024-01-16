@@ -6,6 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -29,6 +31,26 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...inter
 	c.AbortWithStatusJSON(code, resp)
 }
 
+// AbortNotFound renders a "404 Not Found" error page or JSON response.
+var AbortNotFound = func(c *gin.Context) {
+	conf := get.Config()
+
+	switch c.NegotiateFormat(gin.MIMEHTML, gin.MIMEJSON) {
+	case gin.MIMEJSON:
+		c.JSON(http.StatusNotFound, gin.H{"error": i18n.Msg(i18n.ErrNotFound)})
+	default:
+		values := gin.H{
+			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
+			"config": conf.ClientPublic(),
+			"error":  i18n.Msg(i18n.ErrNotFound),
+			"code":   http.StatusNotFound,
+		}
+		c.HTML(http.StatusNotFound, "404.gohtml", values)
+	}
+
+	c.Abort()
+}
+
 // AbortUnauthorized aborts with status code 401.
 func AbortUnauthorized(c *gin.Context) {
 	Abort(c, http.StatusUnauthorized, i18n.ErrUnauthorized)
@@ -37,11 +59,6 @@ func AbortUnauthorized(c *gin.Context) {
 // AbortForbidden aborts with status code 403.
 func AbortForbidden(c *gin.Context) {
 	Abort(c, http.StatusForbidden, i18n.ErrForbidden)
-}
-
-// AbortNotFound aborts with status code 404.
-func AbortNotFound(c *gin.Context) {
-	Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 }
 
 // AbortEntityNotFound aborts with status code 404.

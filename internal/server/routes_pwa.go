@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/header"
 )
@@ -16,7 +17,7 @@ func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 	pwa := func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
-			c.AbortWithStatus(http.StatusNotFound)
+			api.AbortNotFound(c)
 			return
 		}
 

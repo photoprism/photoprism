@@ -23,6 +23,6 @@ const (
 // Requests that include a standard authorization header should be automatically excluded
 // from public caches: https://datatracker.ietf.org/doc/html/rfc7234#section-3
 var (
-	DefaultVaryHeaders = []string{XAuthToken, AcceptEncoding}
+	DefaultVaryHeaders = []string{AcceptEncoding, XAuthToken}
 	DefaultVary        = strings.Join(DefaultVaryHeaders, ", ")
 )

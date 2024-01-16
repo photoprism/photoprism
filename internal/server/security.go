@@ -1,10 +1,9 @@
 package server
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/header"
 )
@@ -14,7 +13,7 @@ var Security = func(conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Abort if the request should not be served through a CDN.
 		if header.AbortCdnRequest(c.Request) {
-			c.AbortWithStatus(http.StatusNotFound)
+			api.AbortNotFound(c)
 			return
 		}
 
