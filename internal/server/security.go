@@ -18,6 +18,9 @@ var Security = func(conf *config.Config) gin.HandlerFunc {
 			return
 		}
 
+		// Set vary header.
+		c.Header(header.Vary, header.DefaultVary)
+
 		// If permitted, set CORS headers (Cross-Origin Resource Sharing).
 		// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
 		if origin := conf.CORSOrigin(); origin != "" {
