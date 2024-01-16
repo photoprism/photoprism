@@ -37,15 +37,15 @@ msgstr "%{n} najdenih oseb"
 msgid "%{n} pictures found"
 msgstr "%{n} najdenih slik"
 
-#: src/options/options.js:423
+#: src/options/options.js:427
 msgid "1 hour"
 msgstr "1 ura"
 
-#: src/options/options.js:425
+#: src/options/options.js:429
 msgid "12 hours"
 msgstr "12 ur"
 
-#: src/options/options.js:424
+#: src/options/options.js:428
 msgid "4 hours"
 msgstr "4 ure"
 
@@ -145,23 +145,23 @@ msgstr "Admin"
 msgid "Advanced"
 msgstr "Napredno"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "After 1 day"
 msgstr "Po 1 dnevu"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "After 3 days"
 msgstr "Po 3 dneh"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "After 7 days"
 msgstr "Po 7 dneh"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "After one month"
 msgstr "Po enem mesecu"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "After one year"
 msgstr "Po enem letu"
 
@@ -169,11 +169,11 @@ msgstr "Po enem letu"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Ko izberete slike iz rezultatov iskanja, jih lahko s pomočjo kontekstnega menija dodate v album."
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "After two months"
 msgstr "Po dveh mesecih"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "After two weeks"
 msgstr "Po dveh tednih"
 
@@ -268,7 +268,7 @@ msgstr "Nadmorska višina (m)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
 #: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
-#: src/dialog/photo/edit/files.vue:101 src/options/options.js:358
+#: src/dialog/photo/edit/files.vue:101 src/options/options.js:362
 msgid "Animated"
 msgstr "Animirani"
 
@@ -379,19 +379,19 @@ msgstr "Bio"
 msgid "Birth Date"
 msgstr "Datum rojstva"
 
-#: src/options/options.js:458
+#: src/options/options.js:462
 msgid "Black"
 msgstr "Črna"
 
-#: src/options/options.js:471
+#: src/options/options.js:475
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczosova modifikacija, manj zvonjenja artefaktov"
 
-#: src/options/options.js:454
+#: src/options/options.js:458
 msgid "Blue"
 msgstr "Modra"
 
-#: src/options/options.js:455
+#: src/options/options.js:459
 msgid "Brown"
 msgstr "Rjava"
 
@@ -407,7 +407,7 @@ msgstr "Brskajte po značkah za razvrščanje slik in jih urejajte."
 msgid "Browse indexed files and folders in Library."
 msgstr "Brskanje po indeksiranih datotekah in mapah v knjižnici."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:465
+#: src/page/about/feedback.vue:8 src/options/options.js:469
 msgid "Bug Report"
 msgstr "Poročilo o napaki"
 
@@ -628,7 +628,7 @@ msgstr "Ustvarjeno"
 msgid "Creating thumbnails for"
 msgstr "Ustvarjanje sličic za"
 
-#: src/options/options.js:473
+#: src/options/options.js:477
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubični: Srednja kakovost, dobra zmogljivost"
 
@@ -636,15 +636,15 @@ msgstr "Kubični: Srednja kakovost, dobra zmogljivost"
 msgid "Current Password"
 msgstr "Trenutno geslo"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:462
+#: src/page/about/feedback.vue:5 src/options/options.js:466
 msgid "Customer Support"
 msgstr "Podpora strankam"
 
-#: src/options/options.js:453
+#: src/options/options.js:457
 msgid "Cyan"
 msgstr "Cyan"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Daily"
 msgstr "Dnevno"
 
@@ -659,8 +659,8 @@ msgstr "Dnevniki za odpravljanje napak"
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
 #: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:313
-#: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:93 src/options/options.js:317
+#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Privzeto"
 
@@ -799,7 +799,7 @@ msgstr "Za pretvorbo slik RAW ne uporabljajte programa RawTherapee."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Ne uporabljajte TensorFlow za razvrščanje slik."
 
-#: src/options/options.js:466
+#: src/options/options.js:470
 msgid "Donations"
 msgstr "Donacije"
 
@@ -928,7 +928,7 @@ msgstr "Ocenite približno lokacijo slik brez koordinat."
 msgid "Estimates"
 msgstr "Ocene"
 
-#: src/options/options.js:427
+#: src/options/options.js:431
 msgid "Every two days"
 msgstr "Vsaka dva dni"
 
@@ -990,7 +990,7 @@ msgstr "Neuspešno posodabljanje povezave"
 msgid "Family Name"
 msgstr "Družinsko ime"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Fast"
 msgstr "Hitro"
 
@@ -1003,7 +1003,7 @@ msgstr "Najljubši"
 msgid "Favorites"
 msgstr "Priljubljeno"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:464
+#: src/page/about/feedback.vue:7 src/options/options.js:468
 msgid "Feature Request"
 msgstr "Zahteva za funkcijo"
 
@@ -1015,7 +1015,7 @@ msgstr "Povratne informacije"
 msgid "Feedback"
 msgstr "Povratne informacije"
 
-#: src/options/options.js:479
+#: src/options/options.js:483
 msgid "Female"
 msgstr "Ženske"
 
@@ -1110,15 +1110,15 @@ msgstr "Izvirno ime"
 msgid "Global Options"
 msgstr "Globalne možnosti"
 
-#: src/options/options.js:448
+#: src/options/options.js:452
 msgid "Gold"
 msgstr "Zlato"
 
-#: src/options/options.js:451
+#: src/options/options.js:455
 msgid "Green"
 msgstr "Zelena"
 
-#: src/options/options.js:457
+#: src/options/options.js:461
 msgid "Grey"
 msgstr "Siva"
 
@@ -1154,7 +1154,7 @@ msgstr "Skrij"
 msgid "Hide photos that have been moved to archive."
 msgstr "Skrijte fotografije, ki so bile prenesene v arhiv."
 
-#: src/options/options.js:381
+#: src/options/options.js:385
 msgid "High"
 msgstr "Visoka"
 
@@ -1171,7 +1171,7 @@ msgid "image"
 msgstr "slika"
 
 #: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
-#: src/options/options.js:350
+#: src/options/options.js:354
 msgid "Image"
 msgstr "Slika"
 
@@ -1319,7 +1319,7 @@ msgstr "Značke"
 msgid "Labels deleted"
 msgstr "Značke izbrisane"
 
-#: src/options/options.js:472
+#: src/options/options.js:476
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: ohranjanje podrobnosti, minimalni artefakti"
 
@@ -1378,7 +1378,7 @@ msgstr "Licenca"
 msgid "Like"
 msgstr "Všeč mi je"
 
-#: src/options/options.js:450
+#: src/options/options.js:454
 msgid "Lime"
 msgstr "Lime"
 
@@ -1386,7 +1386,7 @@ msgstr "Lime"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Omejitev je dosežena, prikazovanje prvih %{n} datotekek"
 
-#: src/options/options.js:474
+#: src/options/options.js:478
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linearno: Zelo gladko, najboljša zmogljivost"
 
@@ -1400,7 +1400,7 @@ msgstr "Seznam"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
 #: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:218 src/options/options.js:362
+#: src/component/photo/mosaic.vue:218 src/options/options.js:366
 msgid "Live"
 msgstr "V živo"
 
@@ -1451,15 +1451,15 @@ msgstr "Dnevniki"
 msgid "Longitude"
 msgstr "Zemljepisna dolžina"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "Low"
 msgstr "Nizka"
 
-#: src/options/options.js:340
+#: src/options/options.js:344
 msgid "Low Resolution"
 msgstr "Nizka ločljivost"
 
-#: src/options/options.js:444
+#: src/options/options.js:448
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1467,7 +1467,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Glavna barva"
 
-#: src/options/options.js:478
+#: src/options/options.js:482
 msgid "Male"
 msgstr "Moški"
 
@@ -1492,7 +1492,7 @@ msgstr "Zemljevidi"
 msgid "Marker"
 msgstr "Označevalnik"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Medium"
 msgstr "Srednja"
 
@@ -1572,7 +1572,7 @@ msgid "Name too long"
 msgstr "Predolgo ime"
 
 #: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
-#: src/options/options.js:422 src/options/options.js:432
+#: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Nikoli"
@@ -1656,7 +1656,7 @@ msgid "Non-photographic and low-quality images require a review before they appe
 msgstr "Nefotografske slike in slike nizke kakovosti je treba pred prikazom v rezultatih iskanja pregledati."
 
 #: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:293 src/options/options.js:389
+#: src/options/options.js:297 src/options/options.js:393
 msgid "None"
 msgstr "Ni"
 
@@ -1697,7 +1697,7 @@ msgstr "Najprej najstarejši"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "V operacijskem sistemu Windows v pogovorno okno za povezavo vnesite naslednji vir:"
 
-#: src/options/options.js:428
+#: src/options/options.js:432
 msgid "Once a week"
 msgstr "Enkrat na teden"
 
@@ -1730,7 +1730,7 @@ msgstr "Ena oseba je našla"
 msgid "One picture found"
 msgstr "Najdena je bila ena slika"
 
-#: src/options/options.js:447
+#: src/options/options.js:451
 msgid "Orange"
 msgstr "Oranžna"
 
@@ -1757,7 +1757,7 @@ msgstr "Izvirno ime"
 msgid "Originals"
 msgstr "Izvirniki"
 
-#: src/options/options.js:467 src/options/options.js:480
+#: src/options/options.js:471 src/options/options.js:484
 msgid "Other"
 msgstr "Drugo"
 
@@ -1765,7 +1765,7 @@ msgstr "Drugo"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Naše poslanstvo je zagotoviti uporabniku in zasebnosti najbolj prijazno rešitev za urejanje in dostop do vaših slik."
 
-#: src/options/options.js:327 src/page/places.vue:158
+#: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
 msgstr "Na prostem"
 
@@ -1830,7 +1830,7 @@ msgstr "Članstvo PhotoPrism+"
 msgid "Photos"
 msgstr "Fotografije"
 
-#: src/options/options.js:445
+#: src/options/options.js:449
 msgid "Pink"
 msgstr "Roza"
 
@@ -1919,7 +1919,7 @@ msgstr "Primarni"
 msgid "Private"
 msgstr "Zasebno"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:463
+#: src/page/about/feedback.vue:6 src/options/options.js:467
 msgid "Product Feedback"
 msgstr "Povratne informacije o izdelku"
 
@@ -1927,7 +1927,7 @@ msgstr "Povratne informacije o izdelku"
 msgid "Projection"
 msgstr "Projekcija"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Purple"
 msgstr "Vijolična"
 
@@ -1947,7 +1947,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Naključno"
 
-#: src/options/options.js:354
+#: src/options/options.js:358
 msgid "Raw"
 msgstr "Surovo"
 
@@ -1987,7 +1987,7 @@ msgstr "Priznani"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Prepozna obraze, tako da lahko poišče določene osebe."
 
-#: src/options/options.js:446
+#: src/options/options.js:450
 msgid "Red"
 msgstr "Rdeča"
 
@@ -2074,7 +2074,7 @@ msgstr "Pregled"
 msgid "Role"
 msgstr "Vloga"
 
-#: src/options/options.js:322 src/page/places.vue:154
+#: src/options/options.js:326 src/page/places.vue:154
 msgid "Satellite"
 msgstr "Satelit"
 
@@ -2244,7 +2244,7 @@ msgstr "Podobno"
 msgid "Size"
 msgstr "Velikost"
 
-#: src/options/options.js:305
+#: src/options/options.js:309
 msgid "Slow"
 msgstr "Počasi"
 
@@ -2310,7 +2310,7 @@ msgstr "Status"
 msgid "Storage"
 msgstr "Shranjevanje"
 
-#: src/options/options.js:317 src/page/places.vue:150
+#: src/options/options.js:321 src/page/places.vue:150
 msgid "Streets"
 msgstr "Ulice"
 
@@ -2352,7 +2352,7 @@ msgstr "Sinhronizacija neobdelanih in video datotek"
 msgid "Taken"
 msgstr "Prevzeto"
 
-#: src/options/options.js:452
+#: src/options/options.js:456
 msgid "Teal"
 msgstr "Teal"
 
@@ -2447,7 +2447,7 @@ msgstr "Žeton"
 msgid "Too many files selected"
 msgstr "Izbranih je preveč datotek"
 
-#: src/options/options.js:332 src/page/places.vue:162
+#: src/options/options.js:336 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topografija"
 
@@ -2629,7 +2629,7 @@ msgstr "Uporabniki"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:370
+#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:374
 msgid "Vector"
 msgstr "Vektor"
 
@@ -2640,7 +2640,7 @@ msgstr "Vektorji"
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
 #: src/model/file.js:220 src/model/photo.js:927 src/model/photo.js:943
-#: src/options/options.js:366
+#: src/options/options.js:370
 msgid "Video"
 msgstr "Videoposnetek"
 
@@ -2710,7 +2710,7 @@ msgstr "Nalaganje prek protokola WebDAV"
 msgid "Website"
 msgstr "Spletna stran"
 
-#: src/options/options.js:456
+#: src/options/options.js:460
 msgid "White"
 msgstr "Bela"
 
@@ -2723,7 +2723,7 @@ msgstr "Podrobnosti"
 msgid "Year"
 msgstr "Leto"
 
-#: src/options/options.js:449
+#: src/options/options.js:453
 msgid "Yellow"
 msgstr "Rumena"
 

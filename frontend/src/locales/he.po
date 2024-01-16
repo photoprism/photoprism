@@ -40,15 +40,15 @@ msgstr "%{n} אנשים מצאו"
 msgid "%{n} pictures found"
 msgstr "נמצאו %{n} תמונות"
 
-#: src/options/options.js:423
+#: src/options/options.js:427
 msgid "1 hour"
 msgstr "שעה"
 
-#: src/options/options.js:425
+#: src/options/options.js:429
 msgid "12 hours"
 msgstr "12 שעות"
 
-#: src/options/options.js:424
+#: src/options/options.js:428
 msgid "4 hours"
 msgstr "4 שעות"
 
@@ -148,23 +148,23 @@ msgstr "מנהל מערכת"
 msgid "Advanced"
 msgstr "מתקדם"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "After 1 day"
 msgstr "אחרי יום"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "After 3 days"
 msgstr "אחרי 3 ימים"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "After 7 days"
 msgstr "אחרי 7 ימים"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "After one month"
 msgstr "אחרי חודש"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "After one year"
 msgstr "אחרי שנה"
 
@@ -172,11 +172,11 @@ msgstr "אחרי שנה"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "לאחר בחירת תמונות מתוצאות החיפוש, אפשר להוסיף אותן לאלבום באמצעות תפריט ההקשר."
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "After two months"
 msgstr "אחרי חודשיים"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "After two weeks"
 msgstr "אחרי שבועיים"
 
@@ -271,7 +271,7 @@ msgstr "גובה (מ')"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
 #: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
-#: src/dialog/photo/edit/files.vue:101 src/options/options.js:358
+#: src/dialog/photo/edit/files.vue:101 src/options/options.js:362
 msgid "Animated"
 msgstr "מונפש"
 
@@ -382,19 +382,19 @@ msgstr "אודותיך"
 msgid "Birth Date"
 msgstr "תאריך לידה"
 
-#: src/options/options.js:458
+#: src/options/options.js:462
 msgid "Black"
 msgstr "שחור"
 
-#: src/options/options.js:471
+#: src/options/options.js:475
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modification, Less Ringing Artifacts"
 
-#: src/options/options.js:454
+#: src/options/options.js:458
 msgid "Blue"
 msgstr "כחול"
 
-#: src/options/options.js:455
+#: src/options/options.js:459
 msgid "Brown"
 msgstr "חום"
 
@@ -410,7 +410,7 @@ msgstr "צפה וערוך תוויות סיווג תמונות."
 msgid "Browse indexed files and folders in Library."
 msgstr "צפה בקבצים ותיקיות שנוספו לאינדקס בספרייה."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:465
+#: src/page/about/feedback.vue:8 src/options/options.js:469
 msgid "Bug Report"
 msgstr "דיווח באג"
 
@@ -631,7 +631,7 @@ msgstr "נוצר"
 msgid "Creating thumbnails for"
 msgstr "יותר תמונות מקדימות עבור"
 
-#: src/options/options.js:473
+#: src/options/options.js:477
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "מעוקב: איכות בינונית, ביצועים טובים"
 
@@ -639,15 +639,15 @@ msgstr "מעוקב: איכות בינונית, ביצועים טובים"
 msgid "Current Password"
 msgstr "צור סיסמה"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:462
+#: src/page/about/feedback.vue:5 src/options/options.js:466
 msgid "Customer Support"
 msgstr "שירות לקוחות"
 
-#: src/options/options.js:453
+#: src/options/options.js:457
 msgid "Cyan"
 msgstr "טורקיז"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Daily"
 msgstr "יומי"
 
@@ -662,8 +662,8 @@ msgstr "Debug Logs"
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
 #: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:313
-#: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:93 src/options/options.js:317
+#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "ברירת מחדל"
 
@@ -802,7 +802,7 @@ msgstr "אל תשתמש ב- RawTherapee להמרת קבצי RAW."
 msgid "Don't use TensorFlow for image classification."
 msgstr "אל תשתמש ב- TensorFlow לסיווג תמונות."
 
-#: src/options/options.js:466
+#: src/options/options.js:470
 msgid "Donations"
 msgstr "תרומות"
 
@@ -931,7 +931,7 @@ msgstr "אמוד את המיקום המשוער של תמונות ללא קוא�
 msgid "Estimates"
 msgstr "אומדנים"
 
-#: src/options/options.js:427
+#: src/options/options.js:431
 msgid "Every two days"
 msgstr "כל יומיים"
 
@@ -993,7 +993,7 @@ msgstr "העלאת הקישור נכשלה"
 msgid "Family Name"
 msgstr "שם משפחה"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Fast"
 msgstr "מהיר"
 
@@ -1006,7 +1006,7 @@ msgstr "מועדף"
 msgid "Favorites"
 msgstr "מועדפים"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:464
+#: src/page/about/feedback.vue:7 src/options/options.js:468
 msgid "Feature Request"
 msgstr "בקשת תכונה"
 
@@ -1018,7 +1018,7 @@ msgstr "פיד"
 msgid "Feedback"
 msgstr "משוב"
 
-#: src/options/options.js:479
+#: src/options/options.js:483
 msgid "Female"
 msgstr "נקבה"
 
@@ -1113,15 +1113,15 @@ msgstr "שם פרטי"
 msgid "Global Options"
 msgstr "אפשרויות גלובליות"
 
-#: src/options/options.js:448
+#: src/options/options.js:452
 msgid "Gold"
 msgstr "זהב"
 
-#: src/options/options.js:451
+#: src/options/options.js:455
 msgid "Green"
 msgstr "ירוק"
 
-#: src/options/options.js:457
+#: src/options/options.js:461
 msgid "Grey"
 msgstr "אפור"
 
@@ -1157,7 +1157,7 @@ msgstr "הסתר"
 msgid "Hide photos that have been moved to archive."
 msgstr "תמונות מוסתרות שהועברו לארכיון."
 
-#: src/options/options.js:381
+#: src/options/options.js:385
 msgid "High"
 msgstr "גבוה"
 
@@ -1174,7 +1174,7 @@ msgid "image"
 msgstr "תמונה"
 
 #: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
-#: src/options/options.js:350
+#: src/options/options.js:354
 msgid "Image"
 msgstr "תמונה"
 
@@ -1322,7 +1322,7 @@ msgstr "תוויות"
 msgid "Labels deleted"
 msgstr "תוויות נמחקו"
 
-#: src/options/options.js:472
+#: src/options/options.js:476
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: שימור פרטים, חפצים מינימליים"
 
@@ -1381,7 +1381,7 @@ msgstr "רשיון"
 msgid "Like"
 msgstr "אהבתי"
 
-#: src/options/options.js:450
+#: src/options/options.js:454
 msgid "Lime"
 msgstr "ליים"
 
@@ -1389,7 +1389,7 @@ msgstr "ליים"
 msgid "Limit reached, showing first %{n} files"
 msgstr "לא ניתן להציג יותר, מציג את ה-%{n} קבצים הראשונים"
 
-#: src/options/options.js:474
+#: src/options/options.js:478
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "ליניארי: חלק מאוד, הביצועים הטובים ביותר"
 
@@ -1403,7 +1403,7 @@ msgstr "רשימה"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
 #: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:218 src/options/options.js:362
+#: src/component/photo/mosaic.vue:218 src/options/options.js:366
 msgid "Live"
 msgstr "חי"
 
@@ -1454,15 +1454,15 @@ msgstr "יומן"
 msgid "Longitude"
 msgstr "קו אורך"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "Low"
 msgstr "נמוך"
 
-#: src/options/options.js:340
+#: src/options/options.js:344
 msgid "Low Resolution"
 msgstr "רזולוציה נמוכה"
 
-#: src/options/options.js:444
+#: src/options/options.js:448
 msgid "Magenta"
 msgstr "ארגמן"
 
@@ -1470,7 +1470,7 @@ msgstr "ארגמן"
 msgid "Main Color"
 msgstr "צבע עיקרי"
 
-#: src/options/options.js:478
+#: src/options/options.js:482
 msgid "Male"
 msgstr "זכר"
 
@@ -1495,7 +1495,7 @@ msgstr "מפות"
 msgid "Marker"
 msgstr "סמן"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Medium"
 msgstr "בינוני"
 
@@ -1575,7 +1575,7 @@ msgid "Name too long"
 msgstr "שם ארוך מדי"
 
 #: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
-#: src/options/options.js:422 src/options/options.js:432
+#: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "לעולם לא"
@@ -1659,7 +1659,7 @@ msgid "Non-photographic and low-quality images require a review before they appe
 msgstr "תמונות שאינן נראות צילום או באיכות נמוכה דורשות בדיקה לפני שהן מופיעות בתוצאות החיפוש."
 
 #: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:293 src/options/options.js:389
+#: src/options/options.js:297 src/options/options.js:393
 msgid "None"
 msgstr "ללא"
 
@@ -1700,7 +1700,7 @@ msgstr "הישן ראשון"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "ב-Windows, הזן את המשאב הבא בתיבת הדו-שיח של החיבור:"
 
-#: src/options/options.js:428
+#: src/options/options.js:432
 msgid "Once a week"
 msgstr "פעם בשבוע"
 
@@ -1733,7 +1733,7 @@ msgstr "אדם אחד נמצא"
 msgid "One picture found"
 msgstr "תמונה אחת נמצאה"
 
-#: src/options/options.js:447
+#: src/options/options.js:451
 msgid "Orange"
 msgstr "כתום"
 
@@ -1760,7 +1760,7 @@ msgstr "השם המקורי"
 msgid "Originals"
 msgstr "קבצי מקור"
 
-#: src/options/options.js:467 src/options/options.js:480
+#: src/options/options.js:471 src/options/options.js:484
 msgid "Other"
 msgstr "אחר"
 
@@ -1768,7 +1768,7 @@ msgstr "אחר"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "המשימה שלנו היא לספק את הפתרון הכי ידידותי למשתמש ולפרטיות כדי לשמור על התמונות שלך מאורגנות ונגישות."
 
-#: src/options/options.js:327 src/page/places.vue:158
+#: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
 msgstr "באוויר הפתוח"
 
@@ -1833,7 +1833,7 @@ msgstr "חברות PhotoPrism+"
 msgid "Photos"
 msgstr "תמונות"
 
-#: src/options/options.js:445
+#: src/options/options.js:449
 msgid "Pink"
 msgstr "ורוד"
 
@@ -1922,7 +1922,7 @@ msgstr "ראשי"
 msgid "Private"
 msgstr "פרטי"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:463
+#: src/page/about/feedback.vue:6 src/options/options.js:467
 msgid "Product Feedback"
 msgstr "משוב על המוצר"
 
@@ -1930,7 +1930,7 @@ msgstr "משוב על המוצר"
 msgid "Projection"
 msgstr "הקרנה"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Purple"
 msgstr "סגול"
 
@@ -1950,7 +1950,7 @@ msgstr "ר"
 msgid "Random"
 msgstr "אקראי"
 
-#: src/options/options.js:354
+#: src/options/options.js:358
 msgid "Raw"
 msgstr "גלמי"
 
@@ -1990,7 +1990,7 @@ msgstr "מוּכָּר"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "מזהה פרצופים כך שאפשר למצוא אנשים ספציפיים."
 
-#: src/options/options.js:446
+#: src/options/options.js:450
 msgid "Red"
 msgstr "אדום"
 
@@ -2077,7 +2077,7 @@ msgstr "סקירה"
 msgid "Role"
 msgstr "תַפְקִיד"
 
-#: src/options/options.js:322 src/page/places.vue:154
+#: src/options/options.js:326 src/page/places.vue:154
 msgid "Satellite"
 msgstr "לוויין"
 
@@ -2247,7 +2247,7 @@ msgstr "דומה"
 msgid "Size"
 msgstr "גודל"
 
-#: src/options/options.js:305
+#: src/options/options.js:309
 msgid "Slow"
 msgstr "איטי"
 
@@ -2313,7 +2313,7 @@ msgstr "סטטוס"
 msgid "Storage"
 msgstr "אחסון"
 
-#: src/options/options.js:317 src/page/places.vue:150
+#: src/options/options.js:321 src/page/places.vue:150
 msgid "Streets"
 msgstr "רחובות"
 
@@ -2355,7 +2355,7 @@ msgstr "סנכרן קבצי תמונה גולמיים וסרטונים"
 msgid "Taken"
 msgstr "נלקח"
 
-#: src/options/options.js:452
+#: src/options/options.js:456
 msgid "Teal"
 msgstr "ירוק כחלחל"
 
@@ -2450,7 +2450,7 @@ msgstr "טוקן"
 msgid "Too many files selected"
 msgstr "נבחרו יותר מדי קבצים"
 
-#: src/options/options.js:332 src/page/places.vue:162
+#: src/options/options.js:336 src/page/places.vue:162
 msgid "Topographic"
 msgstr "טופוגרפית"
 
@@ -2632,7 +2632,7 @@ msgstr "משתמשים"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:370
+#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:374
 msgid "Vector"
 msgstr "וֶקטוֹר"
 
@@ -2643,7 +2643,7 @@ msgstr "וקטורים"
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
 #: src/model/file.js:220 src/model/photo.js:927 src/model/photo.js:943
-#: src/options/options.js:366
+#: src/options/options.js:370
 msgid "Video"
 msgstr "סרטון"
 
@@ -2713,7 +2713,7 @@ msgstr "העלאת WebDAV"
 msgid "Website"
 msgstr "אתר"
 
-#: src/options/options.js:456
+#: src/options/options.js:460
 msgid "White"
 msgstr "לבן"
 
@@ -2726,7 +2726,7 @@ msgstr "פרטי העבודה"
 msgid "Year"
 msgstr "שנה"
 
-#: src/options/options.js:449
+#: src/options/options.js:453
 msgid "Yellow"
 msgstr "צהוב"
 

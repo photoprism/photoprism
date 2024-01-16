@@ -40,15 +40,15 @@ msgstr "найдено %{n} человек"
 msgid "%{n} pictures found"
 msgstr "найдено %{n} изображений"
 
-#: src/options/options.js:423
+#: src/options/options.js:427
 msgid "1 hour"
 msgstr "1 час"
 
-#: src/options/options.js:425
+#: src/options/options.js:429
 msgid "12 hours"
 msgstr "12 часов"
 
-#: src/options/options.js:424
+#: src/options/options.js:428
 msgid "4 hours"
 msgstr "4 часа"
 
@@ -148,23 +148,23 @@ msgstr "Администратор"
 msgid "Advanced"
 msgstr "Дополнительно"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "After 1 day"
 msgstr "Спустя 1 день"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "After 3 days"
 msgstr "Спустя 3 дня"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "After 7 days"
 msgstr "Спустя 7 дней"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "After one month"
 msgstr "Спустя 1 месяц"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "After one year"
 msgstr "Спустя 1 год"
 
@@ -172,11 +172,11 @@ msgstr "Спустя 1 год"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "После выбора изображений из результатов поиска их можно добавить в альбом с помощью контекстного меню."
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "After two months"
 msgstr "Спустя 2 месяца"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "After two weeks"
 msgstr "Спустя 2 недели"
 
@@ -271,7 +271,7 @@ msgstr "Высота (м)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
 #: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
-#: src/dialog/photo/edit/files.vue:101 src/options/options.js:358
+#: src/dialog/photo/edit/files.vue:101 src/options/options.js:362
 msgid "Animated"
 msgstr "Анимированный"
 
@@ -382,19 +382,19 @@ msgstr "Биография"
 msgid "Birth Date"
 msgstr "Дата рождения"
 
-#: src/options/options.js:458
+#: src/options/options.js:462
 msgid "Black"
 msgstr "Черный"
 
-#: src/options/options.js:471
+#: src/options/options.js:475
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: модификация Lanczos, меньше артефактов звона"
 
-#: src/options/options.js:454
+#: src/options/options.js:458
 msgid "Blue"
 msgstr "Синий"
 
-#: src/options/options.js:455
+#: src/options/options.js:459
 msgid "Brown"
 msgstr "Коричневый"
 
@@ -410,7 +410,7 @@ msgstr "Просматривайте и редактируйте метки кл
 msgid "Browse indexed files and folders in Library."
 msgstr "Просматривайте проиндексированные файлы и папки в Библиотеке."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:465
+#: src/page/about/feedback.vue:8 src/options/options.js:469
 msgid "Bug Report"
 msgstr "Отчет об ошибке"
 
@@ -631,7 +631,7 @@ msgstr "Создано"
 msgid "Creating thumbnails for"
 msgstr "Сформировать предпросмотр"
 
-#: src/options/options.js:473
+#: src/options/options.js:477
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Кубический: умеренное качество, хорошая производительность"
 
@@ -639,15 +639,15 @@ msgstr "Кубический: умеренное качество, хороша�
 msgid "Current Password"
 msgstr "Текущий пароль"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:462
+#: src/page/about/feedback.vue:5 src/options/options.js:466
 msgid "Customer Support"
 msgstr "Поддержка клиента"
 
-#: src/options/options.js:453
+#: src/options/options.js:457
 msgid "Cyan"
 msgstr "Сине-зеленый"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Daily"
 msgstr "Ежедневно"
 
@@ -662,8 +662,8 @@ msgstr "Отладочные Логи"
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
 #: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:313
-#: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:93 src/options/options.js:317
+#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "По умолчанию"
 
@@ -802,7 +802,7 @@ msgstr "Не использовать RawTherapee для конвертиров�
 msgid "Don't use TensorFlow for image classification."
 msgstr "Не использовать TensorFlow для классификации изображений."
 
-#: src/options/options.js:466
+#: src/options/options.js:470
 msgid "Donations"
 msgstr "Пожертвования"
 
@@ -931,7 +931,7 @@ msgstr "Оценить примерное местоположение фото�
 msgid "Estimates"
 msgstr "Примерное местоположение"
 
-#: src/options/options.js:427
+#: src/options/options.js:431
 msgid "Every two days"
 msgstr "Каждые два дня"
 
@@ -993,7 +993,7 @@ msgstr "Не удалось загрузить ссылку"
 msgid "Family Name"
 msgstr "Фамилия"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Fast"
 msgstr "Быстро"
 
@@ -1006,7 +1006,7 @@ msgstr "В избранном"
 msgid "Favorites"
 msgstr "Избранное"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:464
+#: src/page/about/feedback.vue:7 src/options/options.js:468
 msgid "Feature Request"
 msgstr "Запрос функции"
 
@@ -1018,7 +1018,7 @@ msgstr "Лента"
 msgid "Feedback"
 msgstr "Обратная связь"
 
-#: src/options/options.js:479
+#: src/options/options.js:483
 msgid "Female"
 msgstr "Женский"
 
@@ -1113,15 +1113,15 @@ msgstr "Имя"
 msgid "Global Options"
 msgstr "Глобальные опции"
 
-#: src/options/options.js:448
+#: src/options/options.js:452
 msgid "Gold"
 msgstr "Золото"
 
-#: src/options/options.js:451
+#: src/options/options.js:455
 msgid "Green"
 msgstr "Зеленый"
 
-#: src/options/options.js:457
+#: src/options/options.js:461
 msgid "Grey"
 msgstr "Серый"
 
@@ -1157,7 +1157,7 @@ msgstr "Скрыть"
 msgid "Hide photos that have been moved to archive."
 msgstr "Скрыть фотографии, которые были перенесены в архив."
 
-#: src/options/options.js:381
+#: src/options/options.js:385
 msgid "High"
 msgstr "Высокий"
 
@@ -1174,7 +1174,7 @@ msgid "image"
 msgstr "изображение"
 
 #: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
-#: src/options/options.js:350
+#: src/options/options.js:354
 msgid "Image"
 msgstr "Изображение"
 
@@ -1322,7 +1322,7 @@ msgstr "Метки"
 msgid "Labels deleted"
 msgstr "Метки удалены"
 
-#: src/options/options.js:472
+#: src/options/options.js:476
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: сохранение деталей, минимальные артефакты"
 
@@ -1381,7 +1381,7 @@ msgstr "Лицензия"
 msgid "Like"
 msgstr "Нравится"
 
-#: src/options/options.js:450
+#: src/options/options.js:454
 msgid "Lime"
 msgstr "Лайм"
 
@@ -1389,7 +1389,7 @@ msgstr "Лайм"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Лимит превышен, отображение первых %{n} файлов"
 
-#: src/options/options.js:474
+#: src/options/options.js:478
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Линейный: очень сглаженный, лучшая производительность"
 
@@ -1403,7 +1403,7 @@ msgstr "Список"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
 #: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:218 src/options/options.js:362
+#: src/component/photo/mosaic.vue:218 src/options/options.js:366
 msgid "Live"
 msgstr "Прямой эфир"
 
@@ -1454,15 +1454,15 @@ msgstr "Журнал"
 msgid "Longitude"
 msgstr "Долгота"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "Low"
 msgstr "Низкий"
 
-#: src/options/options.js:340
+#: src/options/options.js:344
 msgid "Low Resolution"
 msgstr "Низкое разрешение"
 
-#: src/options/options.js:444
+#: src/options/options.js:448
 msgid "Magenta"
 msgstr "Пурпурный"
 
@@ -1470,7 +1470,7 @@ msgstr "Пурпурный"
 msgid "Main Color"
 msgstr "Основной цвет"
 
-#: src/options/options.js:478
+#: src/options/options.js:482
 msgid "Male"
 msgstr "Мужской"
 
@@ -1495,7 +1495,7 @@ msgstr "Карты"
 msgid "Marker"
 msgstr "Маркер"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Medium"
 msgstr "Средний"
 
@@ -1575,7 +1575,7 @@ msgid "Name too long"
 msgstr "Название слишком длинное"
 
 #: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
-#: src/options/options.js:422 src/options/options.js:432
+#: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Никогда"
@@ -1659,7 +1659,7 @@ msgid "Non-photographic and low-quality images require a review before they appe
 msgstr "Файлы, не являющиеся фотографиями, или изображения низкого качества нужно одобрить, чтобы они появились в результатах поиска."
 
 #: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:293 src/options/options.js:389
+#: src/options/options.js:297 src/options/options.js:393
 msgid "None"
 msgstr "Ничего"
 
@@ -1700,7 +1700,7 @@ msgstr "Сначала старые"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "В Windows введите следующий ресурс в диалоговом окне подключения:"
 
-#: src/options/options.js:428
+#: src/options/options.js:432
 msgid "Once a week"
 msgstr "Раз в неделю"
 
@@ -1733,7 +1733,7 @@ msgstr "Найден один человек"
 msgid "One picture found"
 msgstr "Найдена одна фотография"
 
-#: src/options/options.js:447
+#: src/options/options.js:451
 msgid "Orange"
 msgstr "Оранжевый"
 
@@ -1760,7 +1760,7 @@ msgstr "Оригинальное Название"
 msgid "Originals"
 msgstr "Оригиналы"
 
-#: src/options/options.js:467 src/options/options.js:480
+#: src/options/options.js:471 src/options/options.js:484
 msgid "Other"
 msgstr "Другой"
 
@@ -1768,7 +1768,7 @@ msgstr "Другой"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Наша задача - предоставить наиболее удобное для пользователя и конфиденциальности решение для хранения ваших фотографий в упорядоченном и доступном виде."
 
-#: src/options/options.js:327 src/page/places.vue:158
+#: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
 msgstr "Активности на открытом воздухе"
 
@@ -1833,7 +1833,7 @@ msgstr "Членство в программе PhotoPrism+"
 msgid "Photos"
 msgstr "Фотографии"
 
-#: src/options/options.js:445
+#: src/options/options.js:449
 msgid "Pink"
 msgstr "Розовый"
 
@@ -1922,7 +1922,7 @@ msgstr "Главная"
 msgid "Private"
 msgstr "Приватные"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:463
+#: src/page/about/feedback.vue:6 src/options/options.js:467
 msgid "Product Feedback"
 msgstr "Обратная связь по продукту"
 
@@ -1930,7 +1930,7 @@ msgstr "Обратная связь по продукту"
 msgid "Projection"
 msgstr "Проекция"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Purple"
 msgstr "Фиолетовый"
 
@@ -1950,7 +1950,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Случайно"
 
-#: src/options/options.js:354
+#: src/options/options.js:358
 msgid "Raw"
 msgstr "Исходный"
 
@@ -1990,7 +1990,7 @@ msgstr "Распознано"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Распознает лица, чтобы можно было найти конкретных людей."
 
-#: src/options/options.js:446
+#: src/options/options.js:450
 msgid "Red"
 msgstr "Красный"
 
@@ -2077,7 +2077,7 @@ msgstr "Не одобрены"
 msgid "Role"
 msgstr "Роль"
 
-#: src/options/options.js:322 src/page/places.vue:154
+#: src/options/options.js:326 src/page/places.vue:154
 msgid "Satellite"
 msgstr "Спутник"
 
@@ -2247,7 +2247,7 @@ msgstr "Похожие"
 msgid "Size"
 msgstr "Размер"
 
-#: src/options/options.js:305
+#: src/options/options.js:309
 msgid "Slow"
 msgstr "Медленно"
 
@@ -2313,7 +2313,7 @@ msgstr "Статус"
 msgid "Storage"
 msgstr "Хранилище"
 
-#: src/options/options.js:317 src/page/places.vue:150
+#: src/options/options.js:321 src/page/places.vue:150
 msgid "Streets"
 msgstr "Улицы"
 
@@ -2355,7 +2355,7 @@ msgstr "Синхронизация сырых и видео файлов"
 msgid "Taken"
 msgstr "Дата съемки"
 
-#: src/options/options.js:452
+#: src/options/options.js:456
 msgid "Teal"
 msgstr "Бирюзовый"
 
@@ -2452,7 +2452,7 @@ msgstr "Токен"
 msgid "Too many files selected"
 msgstr "Выбрано слишком много файлов"
 
-#: src/options/options.js:332 src/page/places.vue:162
+#: src/options/options.js:336 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Топографический"
 
@@ -2634,7 +2634,7 @@ msgstr "Пользователи"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:370
+#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:374
 msgid "Vector"
 msgstr "Вектор"
 
@@ -2645,7 +2645,7 @@ msgstr "Векторы"
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
 #: src/model/file.js:220 src/model/photo.js:927 src/model/photo.js:943
-#: src/options/options.js:366
+#: src/options/options.js:370
 msgid "Video"
 msgstr "Видео"
 
@@ -2717,7 +2717,7 @@ msgstr "WebDAV загрузка"
 msgid "Website"
 msgstr "Сайт"
 
-#: src/options/options.js:456
+#: src/options/options.js:460
 msgid "White"
 msgstr "Белый"
 
@@ -2730,7 +2730,7 @@ msgstr "Детали работы"
 msgid "Year"
 msgstr "Год"
 
-#: src/options/options.js:449
+#: src/options/options.js:453
 msgid "Yellow"
 msgstr "Желтый"
 

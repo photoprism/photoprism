@@ -40,15 +40,15 @@ msgstr "rasta %{n} žmonių"
 msgid "%{n} pictures found"
 msgstr "rasta %{n} paveikslėlių"
 
-#: src/options/options.js:423
+#: src/options/options.js:427
 msgid "1 hour"
 msgstr "1 val."
 
-#: src/options/options.js:425
+#: src/options/options.js:429
 msgid "12 hours"
 msgstr "12 valandų"
 
-#: src/options/options.js:424
+#: src/options/options.js:428
 msgid "4 hours"
 msgstr "4 valandos"
 
@@ -148,23 +148,23 @@ msgstr "Administratorius"
 msgid "Advanced"
 msgstr "Išplėstinė"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "After 1 day"
 msgstr "Po 1 dienos"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "After 3 days"
 msgstr "Po 3 dienų"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "After 7 days"
 msgstr "Po 7 dienų"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "After one month"
 msgstr "Po vieno mėnesio"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "After one year"
 msgstr "Po vienerių metų"
 
@@ -172,11 +172,11 @@ msgstr "Po vienerių metų"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Pasirinkę nuotraukas iš paieškos rezultatų, galite jas įtraukti į albumą naudodami kontekstinį meniu."
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "After two months"
 msgstr "Po dviejų mėnesių"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "After two weeks"
 msgstr "Po dviejų savaičių"
 
@@ -271,7 +271,7 @@ msgstr "Aukštis (m)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
 #: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
-#: src/dialog/photo/edit/files.vue:101 src/options/options.js:358
+#: src/dialog/photo/edit/files.vue:101 src/options/options.js:362
 msgid "Animated"
 msgstr "Animuota"
 
@@ -382,19 +382,19 @@ msgstr "Bio"
 msgid "Birth Date"
 msgstr "Gimimo data"
 
-#: src/options/options.js:458
+#: src/options/options.js:462
 msgid "Black"
 msgstr "Juoda"
 
-#: src/options/options.js:471
+#: src/options/options.js:475
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modifikacija,Mažiau Žiedinių Artefaktų"
 
-#: src/options/options.js:454
+#: src/options/options.js:458
 msgid "Blue"
 msgstr "Mėlyna"
 
-#: src/options/options.js:455
+#: src/options/options.js:459
 msgid "Brown"
 msgstr "Ruda"
 
@@ -410,7 +410,7 @@ msgstr "Naršykite ir redaguokite vaizdų klasifikavimo etiketes."
 msgid "Browse indexed files and folders in Library."
 msgstr "Naršykite po bibliotekos indeksuotus failus ir aplankus."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:465
+#: src/page/about/feedback.vue:8 src/options/options.js:469
 msgid "Bug Report"
 msgstr "Pranešimas apie klaidą"
 
@@ -631,7 +631,7 @@ msgstr "Sukurta"
 msgid "Creating thumbnails for"
 msgstr "Miniatiūrų kūrimas"
 
-#: src/options/options.js:473
+#: src/options/options.js:477
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubinis: Vidutinė kokybė, geras našumas"
 
@@ -639,15 +639,15 @@ msgstr "Kubinis: Vidutinė kokybė, geras našumas"
 msgid "Current Password"
 msgstr "Dabartinis slaptažodis"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:462
+#: src/page/about/feedback.vue:5 src/options/options.js:466
 msgid "Customer Support"
 msgstr "Klientų aptarnavimas"
 
-#: src/options/options.js:453
+#: src/options/options.js:457
 msgid "Cyan"
 msgstr "Žydra"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Daily"
 msgstr "Kasdien"
 
@@ -662,8 +662,8 @@ msgstr "Derinimo žurnalai"
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
 #: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:313
-#: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:93 src/options/options.js:317
+#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Numatytoji"
 
@@ -802,7 +802,7 @@ msgstr "Nenaudokite \"RawTherapee\" RAW failams konvertuoti."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Nenaudokite \"TensorFlow\" vaizdams klasifikuoti."
 
-#: src/options/options.js:466
+#: src/options/options.js:470
 msgid "Donations"
 msgstr "Dovanos"
 
@@ -931,7 +931,7 @@ msgstr "Apytikriai įvertinkite apytikslę nuotraukų vietą be koordinačių."
 msgid "Estimates"
 msgstr "Apskaičiavimai"
 
-#: src/options/options.js:427
+#: src/options/options.js:431
 msgid "Every two days"
 msgstr "Kas dvi dienas"
 
@@ -993,7 +993,7 @@ msgstr "Nepavyko atnaujinti nuorodos"
 msgid "Family Name"
 msgstr "Šeimos pavadinimas"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Fast"
 msgstr "Greitai"
 
@@ -1006,7 +1006,7 @@ msgstr "Mėgstamiausias"
 msgid "Favorites"
 msgstr "Mėgstamiausi"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:464
+#: src/page/about/feedback.vue:7 src/options/options.js:468
 msgid "Feature Request"
 msgstr "Funkcijos prašymas"
 
@@ -1018,7 +1018,7 @@ msgstr "Atsiliepimai"
 msgid "Feedback"
 msgstr "Atsiliepimai"
 
-#: src/options/options.js:479
+#: src/options/options.js:483
 msgid "Female"
 msgstr "Moteris"
 
@@ -1113,15 +1113,15 @@ msgstr "Originalus pavadinimas"
 msgid "Global Options"
 msgstr "Visuotinės parinktys"
 
-#: src/options/options.js:448
+#: src/options/options.js:452
 msgid "Gold"
 msgstr "Auksinis"
 
-#: src/options/options.js:451
+#: src/options/options.js:455
 msgid "Green"
 msgstr "Žalioji"
 
-#: src/options/options.js:457
+#: src/options/options.js:461
 msgid "Grey"
 msgstr "Pilka"
 
@@ -1157,7 +1157,7 @@ msgstr "Paslėpti"
 msgid "Hide photos that have been moved to archive."
 msgstr "Paslėpti nuotraukas, kurios buvo perkeltos į archyvą."
 
-#: src/options/options.js:381
+#: src/options/options.js:385
 msgid "High"
 msgstr "Aukštas"
 
@@ -1174,7 +1174,7 @@ msgid "image"
 msgstr "vaizdas"
 
 #: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
-#: src/options/options.js:350
+#: src/options/options.js:354
 msgid "Image"
 msgstr "Vaizdas"
 
@@ -1322,7 +1322,7 @@ msgstr "Etiketės"
 msgid "Labels deleted"
 msgstr "Ištrintos etiketės"
 
-#: src/options/options.js:472
+#: src/options/options.js:476
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: detalių išsaugojimas, minimalūs artefaktai"
 
@@ -1381,7 +1381,7 @@ msgstr "Licencija"
 msgid "Like"
 msgstr "Kaip"
 
-#: src/options/options.js:450
+#: src/options/options.js:454
 msgid "Lime"
 msgstr "Lime"
 
@@ -1389,7 +1389,7 @@ msgstr "Lime"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limitas pasiektas, rodomi pirmieji %{n} failai"
 
-#: src/options/options.js:474
+#: src/options/options.js:478
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linijinis: Labai sklandus, geriausias našumas"
 
@@ -1403,7 +1403,7 @@ msgstr "Sąrašas"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
 #: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:218 src/options/options.js:362
+#: src/component/photo/mosaic.vue:218 src/options/options.js:366
 msgid "Live"
 msgstr "Gyvai"
 
@@ -1454,15 +1454,15 @@ msgstr "Žurnalai"
 msgid "Longitude"
 msgstr "Ilguma"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "Low"
 msgstr "Žema"
 
-#: src/options/options.js:340
+#: src/options/options.js:344
 msgid "Low Resolution"
 msgstr "Maža skiriamoji geba"
 
-#: src/options/options.js:444
+#: src/options/options.js:448
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1470,7 +1470,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Pagrindinė spalva"
 
-#: src/options/options.js:478
+#: src/options/options.js:482
 msgid "Male"
 msgstr "Vyras"
 
@@ -1495,7 +1495,7 @@ msgstr "Žemėlapiai"
 msgid "Marker"
 msgstr "Žymeklis"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Medium"
 msgstr "Vidutinis"
 
@@ -1575,7 +1575,7 @@ msgid "Name too long"
 msgstr "Per ilgas vardas"
 
 #: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
-#: src/options/options.js:422 src/options/options.js:432
+#: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Niekada"
@@ -1659,7 +1659,7 @@ msgid "Non-photographic and low-quality images require a review before they appe
 msgstr "Prieš rodant nefotografuotus ir prastos kokybės vaizdus paieškos rezultatuose, juos reikia peržiūrėti."
 
 #: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:293 src/options/options.js:389
+#: src/options/options.js:297 src/options/options.js:393
 msgid "None"
 msgstr "Nėra"
 
@@ -1700,7 +1700,7 @@ msgstr "Seniausias pirmas"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "\"Windows\" sistemoje prisijungimo dialogo lange įveskite šiuos išteklius:"
 
-#: src/options/options.js:428
+#: src/options/options.js:432
 msgid "Once a week"
 msgstr "Kartą per savaitę"
 
@@ -1733,7 +1733,7 @@ msgstr "Vienas asmuo rado"
 msgid "One picture found"
 msgstr "Vienas rastas paveikslėlis"
 
-#: src/options/options.js:447
+#: src/options/options.js:451
 msgid "Orange"
 msgstr "Oranžinė"
 
@@ -1760,7 +1760,7 @@ msgstr "Originalus pavadinimas"
 msgid "Originals"
 msgstr "Originalai"
 
-#: src/options/options.js:467 src/options/options.js:480
+#: src/options/options.js:471 src/options/options.js:484
 msgid "Other"
 msgstr "Kita"
 
@@ -1768,7 +1768,7 @@ msgstr "Kita"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Mūsų misija - pateikti vartotojui patogiausią ir privatumą užtikrinantį sprendimą, kad nuotraukos būtų tvarkingos ir prieinamos."
 
-#: src/options/options.js:327 src/page/places.vue:158
+#: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
 msgstr "Lauko"
 
@@ -1833,7 +1833,7 @@ msgstr "\"PhotoPrism+\" narystė"
 msgid "Photos"
 msgstr "Nuotraukos"
 
-#: src/options/options.js:445
+#: src/options/options.js:449
 msgid "Pink"
 msgstr "Rožinis"
 
@@ -1922,7 +1922,7 @@ msgstr "Pagrindinis"
 msgid "Private"
 msgstr "Privatus"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:463
+#: src/page/about/feedback.vue:6 src/options/options.js:467
 msgid "Product Feedback"
 msgstr "Atsiliepimai apie produktą"
 
@@ -1930,7 +1930,7 @@ msgstr "Atsiliepimai apie produktą"
 msgid "Projection"
 msgstr "Projekcija"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Purple"
 msgstr "Violetinė"
 
@@ -1950,7 +1950,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Atsitiktinis"
 
-#: src/options/options.js:354
+#: src/options/options.js:358
 msgid "Raw"
 msgstr "Neapdorotas"
 
@@ -1990,7 +1990,7 @@ msgstr "Pripažintas"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "atpažįsta veidus, kad būtų galima rasti konkrečius žmones."
 
-#: src/options/options.js:446
+#: src/options/options.js:450
 msgid "Red"
 msgstr "Raudona"
 
@@ -2077,7 +2077,7 @@ msgstr "Peržiūrėkite"
 msgid "Role"
 msgstr "Vaidmuo"
 
-#: src/options/options.js:322 src/page/places.vue:154
+#: src/options/options.js:326 src/page/places.vue:154
 msgid "Satellite"
 msgstr "Palydovas"
 
@@ -2247,7 +2247,7 @@ msgstr "Panašiai"
 msgid "Size"
 msgstr "Dydis"
 
-#: src/options/options.js:305
+#: src/options/options.js:309
 msgid "Slow"
 msgstr "Lėtas"
 
@@ -2313,7 +2313,7 @@ msgstr "Statusas"
 msgid "Storage"
 msgstr "Saugojimo aplankas"
 
-#: src/options/options.js:317 src/page/places.vue:150
+#: src/options/options.js:321 src/page/places.vue:150
 msgid "Streets"
 msgstr "Gatvės"
 
@@ -2355,7 +2355,7 @@ msgstr "Sinchronizuokite neapdorotus ir vaizdo failus"
 msgid "Taken"
 msgstr "Paimta"
 
-#: src/options/options.js:452
+#: src/options/options.js:456
 msgid "Teal"
 msgstr "Teal"
 
@@ -2450,7 +2450,7 @@ msgstr "Žetonas"
 msgid "Too many files selected"
 msgstr "Pasirinkta per daug failų"
 
-#: src/options/options.js:332 src/page/places.vue:162
+#: src/options/options.js:336 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topografinis"
 
@@ -2632,7 +2632,7 @@ msgstr "Vartotojai"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:370
+#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:374
 msgid "Vector"
 msgstr "Vektorius"
 
@@ -2643,7 +2643,7 @@ msgstr "Vektoriai"
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
 #: src/model/file.js:220 src/model/photo.js:927 src/model/photo.js:943
-#: src/options/options.js:366
+#: src/options/options.js:370
 msgid "Video"
 msgstr "Vaizdo įrašas"
 
@@ -2713,7 +2713,7 @@ msgstr "WebDAV įkėlimas"
 msgid "Website"
 msgstr "Svetainė"
 
-#: src/options/options.js:456
+#: src/options/options.js:460
 msgid "White"
 msgstr "Balta"
 
@@ -2726,7 +2726,7 @@ msgstr "Detalės"
 msgid "Year"
 msgstr "Metai"
 
-#: src/options/options.js:449
+#: src/options/options.js:453
 msgid "Yellow"
 msgstr "Geltona"
 

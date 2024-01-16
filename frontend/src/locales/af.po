@@ -37,15 +37,15 @@ msgstr "%{n} mense gevind"
 msgid "%{n} pictures found"
 msgstr "%{n} fotos gevind"
 
-#: src/options/options.js:423
+#: src/options/options.js:427
 msgid "1 hour"
 msgstr "1 uur"
 
-#: src/options/options.js:425
+#: src/options/options.js:429
 msgid "12 hours"
 msgstr "12 ure"
 
-#: src/options/options.js:424
+#: src/options/options.js:428
 msgid "4 hours"
 msgstr "4 ure"
 
@@ -145,23 +145,23 @@ msgstr "admin"
 msgid "Advanced"
 msgstr "Gevorderd"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "After 1 day"
 msgstr "Na 1 dag"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "After 3 days"
 msgstr "Na 3 dae"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "After 7 days"
 msgstr "Na 7 dae"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "After one month"
 msgstr "Na een maand"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "After one year"
 msgstr "Na een jaar"
 
@@ -169,11 +169,11 @@ msgstr "Na een jaar"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Nadat u fotos uit soekresultate gekies het, kan u dit aan 'n album voeg deur die kontekskieslys te gebruik."
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "After two months"
 msgstr "Na twee maande"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "After two weeks"
 msgstr "Na twee weke"
 
@@ -268,7 +268,7 @@ msgstr "Hoogte (m)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
 #: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
-#: src/dialog/photo/edit/files.vue:101 src/options/options.js:358
+#: src/dialog/photo/edit/files.vue:101 src/options/options.js:362
 msgid "Animated"
 msgstr "Geanimeerde"
 
@@ -379,19 +379,19 @@ msgstr "Bio"
 msgid "Birth Date"
 msgstr "Geboortedatum"
 
-#: src/options/options.js:458
+#: src/options/options.js:462
 msgid "Black"
 msgstr "Swart"
 
-#: src/options/options.js:471
+#: src/options/options.js:475
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Swartman: Lanczos-wysiging, minder lui-artefakte"
 
-#: src/options/options.js:454
+#: src/options/options.js:458
 msgid "Blue"
 msgstr "Blou"
 
-#: src/options/options.js:455
+#: src/options/options.js:459
 msgid "Brown"
 msgstr "Bruin"
 
@@ -407,7 +407,7 @@ msgstr "Blaai deur en wysig beeldklassifikasie-etikette."
 msgid "Browse indexed files and folders in Library."
 msgstr "Blaai deur geïndekseerde lêers en dopgehou in Biblioteek."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:465
+#: src/page/about/feedback.vue:8 src/options/options.js:469
 msgid "Bug Report"
 msgstr "Fout verslag"
 
@@ -628,7 +628,7 @@ msgstr "Geskep"
 msgid "Creating thumbnails for"
 msgstr "Skep duimnaels vir"
 
-#: src/options/options.js:473
+#: src/options/options.js:477
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubus: Matige kwaliteit, goeie prestasie"
 
@@ -636,15 +636,15 @@ msgstr "Kubus: Matige kwaliteit, goeie prestasie"
 msgid "Current Password"
 msgstr "huidige Sleutelwoord"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:462
+#: src/page/about/feedback.vue:5 src/options/options.js:466
 msgid "Customer Support"
 msgstr "Klientediens"
 
-#: src/options/options.js:453
+#: src/options/options.js:457
 msgid "Cyan"
 msgstr "Siaan"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Daily"
 msgstr "Daagliks"
 
@@ -659,8 +659,8 @@ msgstr "Ontfout logs"
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
 #: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:313
-#: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:93 src/options/options.js:317
+#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Verstek"
 
@@ -799,7 +799,7 @@ msgstr "Moenie RawTherapee gebruik om RAW-beelde om te skakel nie."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Moenie TensorFlow vir beeldklassifikasie gebruik nie."
 
-#: src/options/options.js:466
+#: src/options/options.js:470
 msgid "Donations"
 msgstr "Skenkings"
 
@@ -928,7 +928,7 @@ msgstr "Skat die benaderde ligging van fotos sonder koördinate."
 msgid "Estimates"
 msgstr "Skattings"
 
-#: src/options/options.js:427
+#: src/options/options.js:431
 msgid "Every two days"
 msgstr "Elke twee dae"
 
@@ -990,7 +990,7 @@ msgstr "Kon nie skakel opdateer nie"
 msgid "Family Name"
 msgstr "Van"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Fast"
 msgstr "Vinnig"
 
@@ -1003,7 +1003,7 @@ msgstr "Gunsteling"
 msgid "Favorites"
 msgstr "Gunstelinge"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:464
+#: src/page/about/feedback.vue:7 src/options/options.js:468
 msgid "Feature Request"
 msgstr "Kenmerkversoek"
 
@@ -1015,7 +1015,7 @@ msgstr "Voer"
 msgid "Feedback"
 msgstr "Terugvoer"
 
-#: src/options/options.js:479
+#: src/options/options.js:483
 msgid "Female"
 msgstr "Vroulik"
 
@@ -1110,15 +1110,15 @@ msgstr "Noemnaam"
 msgid "Global Options"
 msgstr "Globale Opsies"
 
-#: src/options/options.js:448
+#: src/options/options.js:452
 msgid "Gold"
 msgstr "Goud"
 
-#: src/options/options.js:451
+#: src/options/options.js:455
 msgid "Green"
 msgstr "Groen"
 
-#: src/options/options.js:457
+#: src/options/options.js:461
 msgid "Grey"
 msgstr "Grys"
 
@@ -1154,7 +1154,7 @@ msgstr "Versteek"
 msgid "Hide photos that have been moved to archive."
 msgstr "Versteek foto's wat na die argief geskuif is."
 
-#: src/options/options.js:381
+#: src/options/options.js:385
 msgid "High"
 msgstr "Hoog"
 
@@ -1171,7 +1171,7 @@ msgid "image"
 msgstr "beeld"
 
 #: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
-#: src/options/options.js:350
+#: src/options/options.js:354
 msgid "Image"
 msgstr "Beeld"
 
@@ -1319,7 +1319,7 @@ msgstr "Etikette"
 msgid "Labels deleted"
 msgstr "Merkers uitgevee"
 
-#: src/options/options.js:472
+#: src/options/options.js:476
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Detailbewaring, minimale artefakte"
 
@@ -1378,7 +1378,7 @@ msgstr "Lisensie"
 msgid "Like"
 msgstr "Soos"
 
-#: src/options/options.js:450
+#: src/options/options.js:454
 msgid "Lime"
 msgstr "Lemmetjie"
 
@@ -1386,7 +1386,7 @@ msgstr "Lemmetjie"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limiet bereik, wys eerste %{n} lêers"
 
-#: src/options/options.js:474
+#: src/options/options.js:478
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineêr: Baie glad, beste prestasie"
 
@@ -1400,7 +1400,7 @@ msgstr "Lys"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
 #: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:218 src/options/options.js:362
+#: src/component/photo/mosaic.vue:218 src/options/options.js:366
 msgid "Live"
 msgstr "Leef"
 
@@ -1451,15 +1451,15 @@ msgstr "Logs"
 msgid "Longitude"
 msgstr "Lengtegraad"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "Low"
 msgstr "Laag"
 
-#: src/options/options.js:340
+#: src/options/options.js:344
 msgid "Low Resolution"
 msgstr "Lae resolusie"
 
-#: src/options/options.js:444
+#: src/options/options.js:448
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1467,7 +1467,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Hoofkleur"
 
-#: src/options/options.js:478
+#: src/options/options.js:482
 msgid "Male"
 msgstr "Manlik"
 
@@ -1492,7 +1492,7 @@ msgstr "Kaarte"
 msgid "Marker"
 msgstr "Merker"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Medium"
 msgstr "Medium"
 
@@ -1572,7 +1572,7 @@ msgid "Name too long"
 msgstr "Naam te lank"
 
 #: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
-#: src/options/options.js:422 src/options/options.js:432
+#: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Nooit nie"
@@ -1656,7 +1656,7 @@ msgid "Non-photographic and low-quality images require a review before they appe
 msgstr "Nie-fotografiese en lae kwaliteit prente vereis 'n hersiening voordat dit in soekresultate verskyn."
 
 #: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:293 src/options/options.js:389
+#: src/options/options.js:297 src/options/options.js:393
 msgid "None"
 msgstr "Geen"
 
@@ -1697,7 +1697,7 @@ msgstr "Oudste Eerste"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Op Windows, voer die volgende hulpbron in die verbindingsdialoog in:"
 
-#: src/options/options.js:428
+#: src/options/options.js:432
 msgid "Once a week"
 msgstr "Een keer 'n week"
 
@@ -1730,7 +1730,7 @@ msgstr "Een persoon gevind"
 msgid "One picture found"
 msgstr "Een foto gevind"
 
-#: src/options/options.js:447
+#: src/options/options.js:451
 msgid "Orange"
 msgstr "Oranje"
 
@@ -1757,7 +1757,7 @@ msgstr "Oorspronklike naam"
 msgid "Originals"
 msgstr "Oorspronklikes"
 
-#: src/options/options.js:467 src/options/options.js:480
+#: src/options/options.js:471 src/options/options.js:484
 msgid "Other"
 msgstr "Ander"
 
@@ -1765,7 +1765,7 @@ msgstr "Ander"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Ons missie is om die mees gebruikers- en privaatheidsvriendelike oplossing te bied om jou foto's georganiseer en toeganklik te hou."
 
-#: src/options/options.js:327 src/page/places.vue:158
+#: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
 msgstr "Buitelug"
 
@@ -1830,7 +1830,7 @@ msgstr "PhotoPrism+ Lidmaatskap"
 msgid "Photos"
 msgstr "Foto's"
 
-#: src/options/options.js:445
+#: src/options/options.js:449
 msgid "Pink"
 msgstr "Pienk"
 
@@ -1919,7 +1919,7 @@ msgstr "Primêr"
 msgid "Private"
 msgstr "Privaat"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:463
+#: src/page/about/feedback.vue:6 src/options/options.js:467
 msgid "Product Feedback"
 msgstr "Produkterugvoer"
 
@@ -1927,7 +1927,7 @@ msgstr "Produkterugvoer"
 msgid "Projection"
 msgstr "Projeksie"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Purple"
 msgstr "Pers"
 
@@ -1947,7 +1947,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Willekeurig"
 
-#: src/options/options.js:354
+#: src/options/options.js:358
 msgid "Raw"
 msgstr "Rou"
 
@@ -1987,7 +1987,7 @@ msgstr "Herken"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Herken gesigte sodat spesifieke mense gevind kan word."
 
-#: src/options/options.js:446
+#: src/options/options.js:450
 msgid "Red"
 msgstr "Rooi"
 
@@ -2074,7 +2074,7 @@ msgstr "Resensie"
 msgid "Role"
 msgstr "Rol"
 
-#: src/options/options.js:322 src/page/places.vue:154
+#: src/options/options.js:326 src/page/places.vue:154
 msgid "Satellite"
 msgstr "Satelliet"
 
@@ -2244,7 +2244,7 @@ msgstr "Soortgelyk"
 msgid "Size"
 msgstr "Grootte"
 
-#: src/options/options.js:305
+#: src/options/options.js:309
 msgid "Slow"
 msgstr "Stadig"
 
@@ -2310,7 +2310,7 @@ msgstr "Status"
 msgid "Storage"
 msgstr "Berging"
 
-#: src/options/options.js:317 src/page/places.vue:150
+#: src/options/options.js:321 src/page/places.vue:150
 msgid "Streets"
 msgstr "Strate"
 
@@ -2352,7 +2352,7 @@ msgstr "Sinkroniseer rou- en videolêers"
 msgid "Taken"
 msgstr "Geneem"
 
-#: src/options/options.js:452
+#: src/options/options.js:456
 msgid "Teal"
 msgstr "Blauwgroen"
 
@@ -2449,7 +2449,7 @@ msgstr "Teken"
 msgid "Too many files selected"
 msgstr "Te veel lêers gekies"
 
-#: src/options/options.js:332 src/page/places.vue:162
+#: src/options/options.js:336 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topografiese"
 
@@ -2631,7 +2631,7 @@ msgstr "Gebruikers"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:370
+#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:374
 msgid "Vector"
 msgstr "Vektor"
 
@@ -2642,7 +2642,7 @@ msgstr "Vektore"
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
 #: src/model/file.js:220 src/model/photo.js:927 src/model/photo.js:943
-#: src/options/options.js:366
+#: src/options/options.js:370
 msgid "Video"
 msgstr "Video"
 
@@ -2714,7 +2714,7 @@ msgstr "WebDAV oplaai"
 msgid "Website"
 msgstr "Webwerf"
 
-#: src/options/options.js:456
+#: src/options/options.js:460
 msgid "White"
 msgstr "Wit"
 
@@ -2727,7 +2727,7 @@ msgstr "Werkbesonderhede"
 msgid "Year"
 msgstr "Jaar"
 
-#: src/options/options.js:449
+#: src/options/options.js:453
 msgid "Yellow"
 msgstr "Geel"
 

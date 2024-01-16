@@ -39,15 +39,15 @@ msgstr "%{n} ember találat"
 msgid "%{n} pictures found"
 msgstr "%{n} kép találat"
 
-#: src/options/options.js:423
+#: src/options/options.js:427
 msgid "1 hour"
 msgstr "1 óra"
 
-#: src/options/options.js:425
+#: src/options/options.js:429
 msgid "12 hours"
 msgstr "12 óra"
 
-#: src/options/options.js:424
+#: src/options/options.js:428
 msgid "4 hours"
 msgstr "4 óra"
 
@@ -147,23 +147,23 @@ msgstr "Admin"
 msgid "Advanced"
 msgstr "Haladó"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "After 1 day"
 msgstr "Egy nap után"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "After 3 days"
 msgstr "Három nap után"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "After 7 days"
 msgstr "Hét nap után"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "After one month"
 msgstr "Egy hónap után"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "After one year"
 msgstr "Egy év után"
 
@@ -171,11 +171,11 @@ msgstr "Egy év után"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "A találokból kiválasztott képeket, tetszőleges albumhoz adni a menü segítségével lehet."
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "After two months"
 msgstr "Két hónap után"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "After two weeks"
 msgstr "Két hét után"
 
@@ -270,7 +270,7 @@ msgstr "Magasság (m)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
 #: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
-#: src/dialog/photo/edit/files.vue:101 src/options/options.js:358
+#: src/dialog/photo/edit/files.vue:101 src/options/options.js:362
 msgid "Animated"
 msgstr "Mozgó"
 
@@ -381,19 +381,19 @@ msgstr "Bio"
 msgid "Birth Date"
 msgstr "Születési dátum"
 
-#: src/options/options.js:458
+#: src/options/options.js:462
 msgid "Black"
 msgstr "Fekete"
 
-#: src/options/options.js:471
+#: src/options/options.js:475
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos-módosítás, kevesebb csengő műtárgy"
 
-#: src/options/options.js:454
+#: src/options/options.js:458
 msgid "Blue"
 msgstr "Kék"
 
-#: src/options/options.js:455
+#: src/options/options.js:459
 msgid "Brown"
 msgstr "Barna"
 
@@ -409,7 +409,7 @@ msgstr "Böngéssze és szerkessze a képbesorolási címkéket."
 msgid "Browse indexed files and folders in Library."
 msgstr "Böngésszen az indexelt fájlok és mappák között a Könyvtárban."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:465
+#: src/page/about/feedback.vue:8 src/options/options.js:469
 msgid "Bug Report"
 msgstr "Hibajelentés"
 
@@ -630,7 +630,7 @@ msgstr "Létrehozva"
 msgid "Creating thumbnails for"
 msgstr "Miniatűrök létrehozása a következőhöz"
 
-#: src/options/options.js:473
+#: src/options/options.js:477
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Köbös: Közepes minőség, jó teljesítmény"
 
@@ -638,15 +638,15 @@ msgstr "Köbös: Közepes minőség, jó teljesítmény"
 msgid "Current Password"
 msgstr "Jelenlegi jelszó"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:462
+#: src/page/about/feedback.vue:5 src/options/options.js:466
 msgid "Customer Support"
 msgstr "Vevőszolgálat"
 
-#: src/options/options.js:453
+#: src/options/options.js:457
 msgid "Cyan"
 msgstr "Cián"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Daily"
 msgstr "Napi"
 
@@ -661,8 +661,8 @@ msgstr "Hibakeresési naplók"
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
 #: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:313
-#: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:93 src/options/options.js:317
+#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Alapértelmezett"
 
@@ -801,7 +801,7 @@ msgstr "Ne használja a RawTherapee-t RAW képek konvertálására."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Ne használja a TensorFlow-t képosztályozáshoz."
 
-#: src/options/options.js:466
+#: src/options/options.js:470
 msgid "Donations"
 msgstr "Adományok"
 
@@ -930,7 +930,7 @@ msgstr "Becsülje meg a képek hozzávetőleges helyét koordináták nélkül."
 msgid "Estimates"
 msgstr "Becslések"
 
-#: src/options/options.js:427
+#: src/options/options.js:431
 msgid "Every two days"
 msgstr "Kétnaponta"
 
@@ -992,7 +992,7 @@ msgstr "Nem sikerült frissíteni a linket"
 msgid "Family Name"
 msgstr "Családnév"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Fast"
 msgstr "Gyors"
 
@@ -1005,7 +1005,7 @@ msgstr "Kedvenc"
 msgid "Favorites"
 msgstr "Kedvencek"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:464
+#: src/page/about/feedback.vue:7 src/options/options.js:468
 msgid "Feature Request"
 msgstr "Funkciókérés"
 
@@ -1017,7 +1017,7 @@ msgstr "Visszacsatolás"
 msgid "Feedback"
 msgstr "Visszacsatolás"
 
-#: src/options/options.js:479
+#: src/options/options.js:483
 msgid "Female"
 msgstr "Női"
 
@@ -1112,15 +1112,15 @@ msgstr "Keresztnév"
 msgid "Global Options"
 msgstr "Globális lehetőségek"
 
-#: src/options/options.js:448
+#: src/options/options.js:452
 msgid "Gold"
 msgstr "Arany"
 
-#: src/options/options.js:451
+#: src/options/options.js:455
 msgid "Green"
 msgstr "Zöld"
 
-#: src/options/options.js:457
+#: src/options/options.js:461
 msgid "Grey"
 msgstr "Szürke"
 
@@ -1156,7 +1156,7 @@ msgstr "Elrejt"
 msgid "Hide photos that have been moved to archive."
 msgstr "Az archívumba áthelyezett fotók elrejtése."
 
-#: src/options/options.js:381
+#: src/options/options.js:385
 msgid "High"
 msgstr "Magas"
 
@@ -1173,7 +1173,7 @@ msgid "image"
 msgstr "kép"
 
 #: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
-#: src/options/options.js:350
+#: src/options/options.js:354
 msgid "Image"
 msgstr "Kép"
 
@@ -1321,7 +1321,7 @@ msgstr "Címkék"
 msgid "Labels deleted"
 msgstr "Címkék törölve"
 
-#: src/options/options.js:472
+#: src/options/options.js:476
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Részletmegőrzés, minimális műtárgyak"
 
@@ -1380,7 +1380,7 @@ msgstr "Engedély"
 msgid "Like"
 msgstr "Kedvelés"
 
-#: src/options/options.js:450
+#: src/options/options.js:454
 msgid "Lime"
 msgstr "Mész"
 
@@ -1388,7 +1388,7 @@ msgstr "Mész"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Elérte a korlátot, az első %{n} fájl látható"
 
-#: src/options/options.js:474
+#: src/options/options.js:478
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineáris: Nagyon sima, a legjobb teljesítmény"
 
@@ -1402,7 +1402,7 @@ msgstr "Lista"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
 #: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:218 src/options/options.js:362
+#: src/component/photo/mosaic.vue:218 src/options/options.js:366
 msgid "Live"
 msgstr "Élő"
 
@@ -1453,15 +1453,15 @@ msgstr "Naplók"
 msgid "Longitude"
 msgstr "Hosszúság"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "Low"
 msgstr "Alacsony"
 
-#: src/options/options.js:340
+#: src/options/options.js:344
 msgid "Low Resolution"
 msgstr "Alacsony felbontás"
 
-#: src/options/options.js:444
+#: src/options/options.js:448
 msgid "Magenta"
 msgstr "Bíborvörös"
 
@@ -1469,7 +1469,7 @@ msgstr "Bíborvörös"
 msgid "Main Color"
 msgstr "Fő szín"
 
-#: src/options/options.js:478
+#: src/options/options.js:482
 msgid "Male"
 msgstr "Férfi"
 
@@ -1494,7 +1494,7 @@ msgstr "Térképek"
 msgid "Marker"
 msgstr "Jelző"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Medium"
 msgstr "Közepes"
 
@@ -1574,7 +1574,7 @@ msgid "Name too long"
 msgstr "A név túl hosszú"
 
 #: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
-#: src/options/options.js:422 src/options/options.js:432
+#: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Soha"
@@ -1658,7 +1658,7 @@ msgid "Non-photographic and low-quality images require a review before they appe
 msgstr "A rossz minőségű képek ellenörzésre kerülnek, mielőtt megjelennének a keresési eredmények között."
 
 #: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:293 src/options/options.js:389
+#: src/options/options.js:297 src/options/options.js:393
 msgid "None"
 msgstr "Egyik sem"
 
@@ -1699,7 +1699,7 @@ msgstr "Először a legidősebb"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windows alatt adja meg a következő erőforrást a kapcsolat párbeszédpanelen:"
 
-#: src/options/options.js:428
+#: src/options/options.js:432
 msgid "Once a week"
 msgstr "Hetente egyszer"
 
@@ -1732,7 +1732,7 @@ msgstr "Egy személyt találtak"
 msgid "One picture found"
 msgstr "Egy kép található"
 
-#: src/options/options.js:447
+#: src/options/options.js:451
 msgid "Orange"
 msgstr "Narancssárga"
 
@@ -1759,7 +1759,7 @@ msgstr "Eredeti Név"
 msgid "Originals"
 msgstr "Eredetiek"
 
-#: src/options/options.js:467 src/options/options.js:480
+#: src/options/options.js:471 src/options/options.js:484
 msgid "Other"
 msgstr "Egyéb"
 
@@ -1767,7 +1767,7 @@ msgstr "Egyéb"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Küldetésünk, hogy a legfelhasználó- és adatvédelmi szempontból legkedvezőbb megoldást nyújtsuk képeinek rendszerezésére és elérhetőségére."
 
-#: src/options/options.js:327 src/page/places.vue:158
+#: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
 msgstr "Szabadtéri"
 
@@ -1832,7 +1832,7 @@ msgstr "PhotoPrism+ tagság"
 msgid "Photos"
 msgstr "Fényképek"
 
-#: src/options/options.js:445
+#: src/options/options.js:449
 msgid "Pink"
 msgstr "Rózsaszín"
 
@@ -1921,7 +1921,7 @@ msgstr "Elsődleges"
 msgid "Private"
 msgstr "Privát"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:463
+#: src/page/about/feedback.vue:6 src/options/options.js:467
 msgid "Product Feedback"
 msgstr "Termék visszajelzés"
 
@@ -1929,7 +1929,7 @@ msgstr "Termék visszajelzés"
 msgid "Projection"
 msgstr "Kivetítés"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Purple"
 msgstr "Lila"
 
@@ -1949,7 +1949,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Véletlen"
 
-#: src/options/options.js:354
+#: src/options/options.js:358
 msgid "Raw"
 msgstr "Nyers"
 
@@ -1989,7 +1989,7 @@ msgstr "Elismert"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Felismeri az arcokat, így konkrét személyeket is meg lehet találni."
 
-#: src/options/options.js:446
+#: src/options/options.js:450
 msgid "Red"
 msgstr "Piros"
 
@@ -2076,7 +2076,7 @@ msgstr "Felülvizsgálat"
 msgid "Role"
 msgstr "Szerepvállalás"
 
-#: src/options/options.js:322 src/page/places.vue:154
+#: src/options/options.js:326 src/page/places.vue:154
 msgid "Satellite"
 msgstr "Műholdas"
 
@@ -2246,7 +2246,7 @@ msgstr "Hasonló"
 msgid "Size"
 msgstr "Méret"
 
-#: src/options/options.js:305
+#: src/options/options.js:309
 msgid "Slow"
 msgstr "Lassú"
 
@@ -2312,7 +2312,7 @@ msgstr "Állapot"
 msgid "Storage"
 msgstr "Tárhely"
 
-#: src/options/options.js:317 src/page/places.vue:150
+#: src/options/options.js:321 src/page/places.vue:150
 msgid "Streets"
 msgstr "Utcák"
 
@@ -2354,7 +2354,7 @@ msgstr "Nyers és videofájlok szinkronizálása"
 msgid "Taken"
 msgstr "Felvett"
 
-#: src/options/options.js:452
+#: src/options/options.js:456
 msgid "Teal"
 msgstr "A zöldeskék"
 
@@ -2449,7 +2449,7 @@ msgstr "Jelképes"
 msgid "Too many files selected"
 msgstr "Túl sok fájl van kiválasztva"
 
-#: src/options/options.js:332 src/page/places.vue:162
+#: src/options/options.js:336 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topográfiai"
 
@@ -2631,7 +2631,7 @@ msgstr "Felhasználók"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:370
+#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:374
 msgid "Vector"
 msgstr "Vektor"
 
@@ -2642,7 +2642,7 @@ msgstr "Vektorok"
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
 #: src/model/file.js:220 src/model/photo.js:927 src/model/photo.js:943
-#: src/options/options.js:366
+#: src/options/options.js:370
 msgid "Video"
 msgstr "Videó"
 
@@ -2712,7 +2712,7 @@ msgstr "WebDAV feltöltés"
 msgid "Website"
 msgstr "Weboldal"
 
-#: src/options/options.js:456
+#: src/options/options.js:460
 msgid "White"
 msgstr "Fehér"
 
@@ -2725,7 +2725,7 @@ msgstr "Részletek"
 msgid "Year"
 msgstr "Év"
 
-#: src/options/options.js:449
+#: src/options/options.js:453
 msgid "Yellow"
 msgstr "Sárga"
 

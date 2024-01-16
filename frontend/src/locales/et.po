@@ -37,15 +37,15 @@ msgstr "%{n} inimest leitud"
 msgid "%{n} pictures found"
 msgstr "%{n} pilti leitud"
 
-#: src/options/options.js:423
+#: src/options/options.js:427
 msgid "1 hour"
 msgstr "1 tund"
 
-#: src/options/options.js:425
+#: src/options/options.js:429
 msgid "12 hours"
 msgstr "12 tundi"
 
-#: src/options/options.js:424
+#: src/options/options.js:428
 msgid "4 hours"
 msgstr "4 tundi"
 
@@ -145,23 +145,23 @@ msgstr "Admin"
 msgid "Advanced"
 msgstr "Täpsemad"
 
-#: src/options/options.js:433
+#: src/options/options.js:437
 msgid "After 1 day"
 msgstr "1 päeva pärast"
 
-#: src/options/options.js:434
+#: src/options/options.js:438
 msgid "After 3 days"
 msgstr "3 päeva pärast"
 
-#: src/options/options.js:435
+#: src/options/options.js:439
 msgid "After 7 days"
 msgstr "7 päeva pärast"
 
-#: src/options/options.js:437
+#: src/options/options.js:441
 msgid "After one month"
 msgstr "Ühe kuu pärast"
 
-#: src/options/options.js:439
+#: src/options/options.js:443
 msgid "After one year"
 msgstr "Ühe aasta pärast"
 
@@ -169,11 +169,11 @@ msgstr "Ühe aasta pärast"
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Pärast piltide valimist otsingutulemustest saad need kontekstimenüü abil albumisse lisada."
 
-#: src/options/options.js:438
+#: src/options/options.js:442
 msgid "After two months"
 msgstr "Kahe kuu pärast"
 
-#: src/options/options.js:436
+#: src/options/options.js:440
 msgid "After two weeks"
 msgstr "Kahe nädala pärast"
 
@@ -268,7 +268,7 @@ msgstr "Kõrgus (m)"
 #: src/component/navigation.vue:97 src/component/photo/cards.vue:313
 #: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
-#: src/dialog/photo/edit/files.vue:101 src/options/options.js:358
+#: src/dialog/photo/edit/files.vue:101 src/options/options.js:362
 msgid "Animated"
 msgstr "Animeeritud"
 
@@ -379,19 +379,19 @@ msgstr "Elulugu"
 msgid "Birth Date"
 msgstr "Sünnikuupäev"
 
-#: src/options/options.js:458
+#: src/options/options.js:462
 msgid "Black"
 msgstr "Must"
 
-#: src/options/options.js:471
+#: src/options/options.js:475
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos modifikatsioon, vähem artefakte"
 
-#: src/options/options.js:454
+#: src/options/options.js:458
 msgid "Blue"
 msgstr "Sinine"
 
-#: src/options/options.js:455
+#: src/options/options.js:459
 msgid "Brown"
 msgstr "Pruun"
 
@@ -407,7 +407,7 @@ msgstr "Sirvi ja muuda piltide klassifitseerimise silte."
 msgid "Browse indexed files and folders in Library."
 msgstr "Sirvi fototeegis olevaid indekseeritud faile ja kaustu."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:465
+#: src/page/about/feedback.vue:8 src/options/options.js:469
 msgid "Bug Report"
 msgstr "Vearaport"
 
@@ -628,7 +628,7 @@ msgstr "Lisatud"
 msgid "Creating thumbnails for"
 msgstr "Pisipiltide loomine:"
 
-#: src/options/options.js:473
+#: src/options/options.js:477
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubic: mõõdukas kvaliteet, hea jõudlus"
 
@@ -636,15 +636,15 @@ msgstr "Cubic: mõõdukas kvaliteet, hea jõudlus"
 msgid "Current Password"
 msgstr "Praegune parool"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:462
+#: src/page/about/feedback.vue:5 src/options/options.js:466
 msgid "Customer Support"
 msgstr "Klienditugi"
 
-#: src/options/options.js:453
+#: src/options/options.js:457
 msgid "Cyan"
 msgstr "Tsüaan"
 
-#: src/options/options.js:426
+#: src/options/options.js:430
 msgid "Daily"
 msgstr "Üks kord päevas"
 
@@ -659,8 +659,8 @@ msgstr "Tõrkeotsingu logid"
 #: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
 #: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
 #: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:313
-#: src/options/options.js:377 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:93 src/options/options.js:317
+#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Vaikimisi"
 
@@ -799,7 +799,7 @@ msgstr "Ärge kasutage RawTherapee't RAW-piltide teisendamiseks."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Ära kasuta TensorFlow'd piltide klassifitseerimiseks."
 
-#: src/options/options.js:466
+#: src/options/options.js:470
 msgid "Donations"
 msgstr "Annetused"
 
@@ -928,7 +928,7 @@ msgstr "Hinda piltide ligikaudset asukohta ilma koordinaatideta."
 msgid "Estimates"
 msgstr "Hinnangud"
 
-#: src/options/options.js:427
+#: src/options/options.js:431
 msgid "Every two days"
 msgstr "Iga kahe päeva tagant"
 
@@ -990,7 +990,7 @@ msgstr "Lingi uuendamine ebaõnnestus"
 msgid "Family Name"
 msgstr "Perekonnanimi"
 
-#: src/options/options.js:297
+#: src/options/options.js:301
 msgid "Fast"
 msgstr "Kiire"
 
@@ -1003,7 +1003,7 @@ msgstr "Lemmik"
 msgid "Favorites"
 msgstr "Lemmikud"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:464
+#: src/page/about/feedback.vue:7 src/options/options.js:468
 msgid "Feature Request"
 msgstr "Funktsiooni taotlus"
 
@@ -1015,7 +1015,7 @@ msgstr "Kanal"
 msgid "Feedback"
 msgstr "Tagasiside"
 
-#: src/options/options.js:479
+#: src/options/options.js:483
 msgid "Female"
 msgstr "Naine"
 
@@ -1110,15 +1110,15 @@ msgstr "Eesnimi"
 msgid "Global Options"
 msgstr "Globaalsed valikud"
 
-#: src/options/options.js:448
+#: src/options/options.js:452
 msgid "Gold"
 msgstr "Kuld"
 
-#: src/options/options.js:451
+#: src/options/options.js:455
 msgid "Green"
 msgstr "Roheline"
 
-#: src/options/options.js:457
+#: src/options/options.js:461
 msgid "Grey"
 msgstr "Hall"
 
@@ -1154,7 +1154,7 @@ msgstr "Peida"
 msgid "Hide photos that have been moved to archive."
 msgstr "Peida fotod, mis on viidud arhiivi."
 
-#: src/options/options.js:381
+#: src/options/options.js:385
 msgid "High"
 msgstr "Kõrge"
 
@@ -1171,7 +1171,7 @@ msgid "image"
 msgstr "pilt"
 
 #: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
-#: src/options/options.js:350
+#: src/options/options.js:354
 msgid "Image"
 msgstr "Pilt"
 
@@ -1319,7 +1319,7 @@ msgstr "Sildid"
 msgid "Labels deleted"
 msgstr "Sildid kustutatud"
 
-#: src/options/options.js:472
+#: src/options/options.js:476
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: detailide säilitamine, minimaalsed artefaktid"
 
@@ -1378,7 +1378,7 @@ msgstr "Litsents"
 msgid "Like"
 msgstr "Meeldib"
 
-#: src/options/options.js:450
+#: src/options/options.js:454
 msgid "Lime"
 msgstr "Laimiroheline"
 
@@ -1386,7 +1386,7 @@ msgstr "Laimiroheline"
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limiit saavutatud, näidatakse esimest %{n} faili"
 
-#: src/options/options.js:474
+#: src/options/options.js:478
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineaarne: väga sujuv, parim jõudlus"
 
@@ -1400,7 +1400,7 @@ msgstr "Loend"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
 #: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
-#: src/component/photo/mosaic.vue:218 src/options/options.js:362
+#: src/component/photo/mosaic.vue:218 src/options/options.js:366
 msgid "Live"
 msgstr "Live"
 
@@ -1451,15 +1451,15 @@ msgstr "Logid"
 msgid "Longitude"
 msgstr "Pikkuskraad"
 
-#: src/options/options.js:385
+#: src/options/options.js:389
 msgid "Low"
 msgstr "Madal"
 
-#: src/options/options.js:340
+#: src/options/options.js:344
 msgid "Low Resolution"
 msgstr "Madal resolutsioon"
 
-#: src/options/options.js:444
+#: src/options/options.js:448
 msgid "Magenta"
 msgstr "Magenta"
 
@@ -1467,7 +1467,7 @@ msgstr "Magenta"
 msgid "Main Color"
 msgstr "Põhivärv"
 
-#: src/options/options.js:478
+#: src/options/options.js:482
 msgid "Male"
 msgstr "Mees"
 
@@ -1492,7 +1492,7 @@ msgstr "Kaardid"
 msgid "Marker"
 msgstr "Märk"
 
-#: src/options/options.js:301
+#: src/options/options.js:305
 msgid "Medium"
 msgstr "Keskmine"
 
@@ -1572,7 +1572,7 @@ msgid "Name too long"
 msgstr "Nimi on liiga pikk"
 
 #: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
-#: src/options/options.js:422 src/options/options.js:432
+#: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Mitte kunagi"
@@ -1656,7 +1656,7 @@ msgid "Non-photographic and low-quality images require a review before they appe
 msgstr "Mittefotograafilised ja madala kvaliteediga pildid tuleb üle vaadata, enne kui nad otsingutulemustes ilmuvad."
 
 #: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:293 src/options/options.js:389
+#: src/options/options.js:297 src/options/options.js:393
 msgid "None"
 msgstr "Puudub"
 
@@ -1697,7 +1697,7 @@ msgstr "Vanemad eespool"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windowsis sisestage ühendusdialoogi järgmine ressurss:"
 
-#: src/options/options.js:428
+#: src/options/options.js:432
 msgid "Once a week"
 msgstr "Üks kord nädalas"
 
@@ -1730,7 +1730,7 @@ msgstr "Üks inimene leitud"
 msgid "One picture found"
 msgstr "Üks pilt leitud"
 
-#: src/options/options.js:447
+#: src/options/options.js:451
 msgid "Orange"
 msgstr "Oranžikas"
 
@@ -1757,7 +1757,7 @@ msgstr "Esialgne nimi"
 msgid "Originals"
 msgstr "Originaalid"
 
-#: src/options/options.js:467 src/options/options.js:480
+#: src/options/options.js:471 src/options/options.js:484
 msgid "Other"
 msgstr "Muu"
 
@@ -1765,7 +1765,7 @@ msgstr "Muu"
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Meie eesmärk on pakkuda kõige kasutajasõbralikumat ja privaatsussõbralikumat lahendust, et hoida teie pilte korrastatuna ja kättesaadavana."
 
-#: src/options/options.js:327 src/page/places.vue:158
+#: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
 msgstr "Loodus"
 
@@ -1830,7 +1830,7 @@ msgstr "PhotoPrism+ liikmelisus"
 msgid "Photos"
 msgstr "Fotod"
 
-#: src/options/options.js:445
+#: src/options/options.js:449
 msgid "Pink"
 msgstr "Roosa"
 
@@ -1919,7 +1919,7 @@ msgstr "Primaarne"
 msgid "Private"
 msgstr "Isiklik"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:463
+#: src/page/about/feedback.vue:6 src/options/options.js:467
 msgid "Product Feedback"
 msgstr "Tagasiside"
 
@@ -1927,7 +1927,7 @@ msgstr "Tagasiside"
 msgid "Projection"
 msgstr "Projektsioon"
 
-#: src/options/options.js:443
+#: src/options/options.js:447
 msgid "Purple"
 msgstr "Lilla"
 
@@ -1947,7 +1947,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Juhuslik"
 
-#: src/options/options.js:354
+#: src/options/options.js:358
 msgid "Raw"
 msgstr "RAW"
 
@@ -1987,7 +1987,7 @@ msgstr "Tuvastatud"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "Tuvastab nägusid, et oleks võimalik konkreetseid inimesi leida."
 
-#: src/options/options.js:446
+#: src/options/options.js:450
 msgid "Red"
 msgstr "Punane"
 
@@ -2074,7 +2074,7 @@ msgstr "Läbivaatamine"
 msgid "Role"
 msgstr "Role"
 
-#: src/options/options.js:322 src/page/places.vue:154
+#: src/options/options.js:326 src/page/places.vue:154
 msgid "Satellite"
 msgstr "Satelliit"
 
@@ -2244,7 +2244,7 @@ msgstr "Sarnased"
 msgid "Size"
 msgstr "Suurus"
 
-#: src/options/options.js:305
+#: src/options/options.js:309
 msgid "Slow"
 msgstr "Aeglane"
 
@@ -2310,7 +2310,7 @@ msgstr "Staatus"
 msgid "Storage"
 msgstr "Asukoht"
 
-#: src/options/options.js:317 src/page/places.vue:150
+#: src/options/options.js:321 src/page/places.vue:150
 msgid "Streets"
 msgstr "Tänavad"
 
@@ -2352,7 +2352,7 @@ msgstr "Sünkrooni RAW ja videofaile"
 msgid "Taken"
 msgstr "Pildistatud"
 
-#: src/options/options.js:452
+#: src/options/options.js:456
 msgid "Teal"
 msgstr "Sinakasroheline"
 
@@ -2449,7 +2449,7 @@ msgstr "Token"
 msgid "Too many files selected"
 msgstr "Liiga palju valitud faile"
 
-#: src/options/options.js:332 src/page/places.vue:162
+#: src/options/options.js:336 src/page/places.vue:162
 msgid "Topographic"
 msgstr "Topograafiline"
 
@@ -2631,7 +2631,7 @@ msgstr "Kasutajad"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
 #: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:370
+#: src/model/photo.js:903 src/model/photo.js:911 src/options/options.js:374
 msgid "Vector"
 msgstr "Vektor"
 
@@ -2642,7 +2642,7 @@ msgstr "Vektorid"
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
 #: src/model/file.js:220 src/model/photo.js:927 src/model/photo.js:943
-#: src/options/options.js:366
+#: src/options/options.js:370
 msgid "Video"
 msgstr "Video"
 
@@ -2714,7 +2714,7 @@ msgstr "WebDAV üleslaadimine"
 msgid "Website"
 msgstr "Veebileht"
 
-#: src/options/options.js:456
+#: src/options/options.js:460
 msgid "White"
 msgstr "Valge"
 
@@ -2727,7 +2727,7 @@ msgstr "Töö üksikasjad"
 msgid "Year"
 msgstr "Aasta"
 
-#: src/options/options.js:449
+#: src/options/options.js:453
 msgid "Yellow"
 msgstr "Kollane"
 
