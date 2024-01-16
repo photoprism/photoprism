@@ -1,0 +1,372 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"POT-Creation-Date: 2023-03-09 13:14+0000\n"
+"PO-Revision-Date: 2024-01-16 11:14+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
+"Language-Team: none\n"
+"Language: vi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.3.1\n"
+
+#: messages.go:94
+msgid "Something went wrong, try again"
+msgstr "Đã xảy ra lỗi, hãy thử lại"
+
+#: messages.go:95
+msgid "Unable to do that"
+msgstr "Không thể làm điều đó"
+
+#: messages.go:96
+msgid "Changes could not be saved"
+msgstr "Không thể lưu các thay đổi"
+
+#: messages.go:97
+msgid "Could not be deleted"
+msgstr "Không thể xóa được"
+
+#: messages.go:98
+#, c-format
+msgid "%s already exists"
+msgstr "%s đã tồn tại"
+
+#: messages.go:99
+msgid "Not found"
+msgstr "Không tìm thấy"
+
+#: messages.go:100
+msgid "File not found"
+msgstr "Không tìm thấy tập tin"
+
+#: messages.go:101
+msgid "File too large"
+msgstr "Tệp quá lớn"
+
+#: messages.go:102
+msgid "Unsupported format"
+msgstr "Định dạng không được hỗ trợ"
+
+#: messages.go:103
+msgid "Originals folder is empty"
+msgstr "Thư mục gốc trống"
+
+#: messages.go:104
+msgid "Selection not found"
+msgstr "Không tìm thấy lựa chọn"
+
+#: messages.go:105
+msgid "Entity not found"
+msgstr "Không tìm thấy thực thể"
+
+#: messages.go:106
+msgid "Account not found"
+msgstr "Tài khoản không được tìm thấy"
+
+#: messages.go:107
+msgid "User not found"
+msgstr "Không tìm thấy người dùng"
+
+#: messages.go:108
+msgid "Label not found"
+msgstr "Không tìm thấy nhãn"
+
+#: messages.go:109
+msgid "Album not found"
+msgstr "Không tìm thấy album"
+
+#: messages.go:110
+msgid "Subject not found"
+msgstr "Không tìm thấy chủ đề"
+
+#: messages.go:111
+msgid "Person not found"
+msgstr "Không tìm thấy người"
+
+#: messages.go:112
+msgid "Face not found"
+msgstr "Không tìm thấy khuôn mặt"
+
+#: messages.go:113
+msgid "Not available in public mode"
+msgstr "Không khả dụng ở chế độ công khai"
+
+#: messages.go:114
+msgid "Not available in read-only mode"
+msgstr "Không khả dụng ở chế độ chỉ đọc"
+
+#: messages.go:115
+msgid "Please log in to your account"
+msgstr "Xin hãy đăng nhập vào tài khoản của bạn"
+
+#: messages.go:116
+msgid "Permission denied"
+msgstr "Quyền bị từ chối"
+
+#: messages.go:117
+msgid "Upload might be offensive"
+msgstr "Tải lên có thể gây khó chịu"
+
+#: messages.go:118
+msgid "Upload failed"
+msgstr "Tải lên không thành công"
+
+#: messages.go:119
+msgid "No items selected"
+msgstr "Không có mục nào được chọn"
+
+#: messages.go:120
+msgid "Failed creating file, please check permissions"
+msgstr "Không tạo được tệp, vui lòng kiểm tra quyền"
+
+#: messages.go:121
+msgid "Failed creating folder, please check permissions"
+msgstr "Không tạo được thư mục, vui lòng kiểm tra quyền"
+
+#: messages.go:122
+msgid "Could not connect, please try again"
+msgstr "Không thể kết nối, vui lòng thử lại"
+
+#: messages.go:123
+msgid "Invalid password, please try again"
+msgstr "mật mã không hợp lệ, vui lòng thử lại"
+
+#: messages.go:124
+msgid "Feature disabled"
+msgstr "Tính năng bị tắt"
+
+#: messages.go:125
+msgid "No labels selected"
+msgstr "Không có nhãn nào được chọn"
+
+#: messages.go:126
+msgid "No albums selected"
+msgstr "Không có album nào được chọn"
+
+#: messages.go:127
+msgid "No files available for download"
+msgstr "Không có tập tin nào để tải xuống"
+
+#: messages.go:128
+msgid "Failed to create zip file"
+msgstr "Không tạo được tệp zip"
+
+#: messages.go:129
+msgid "Invalid credentials"
+msgstr "Thông tin không hợp lệ"
+
+#: messages.go:130
+msgid "Invalid link"
+msgstr "Liên kết không hợp lệ"
+
+#: messages.go:131
+msgid "Invalid name"
+msgstr "Tên không hợp lệ"
+
+#: messages.go:132
+msgid "Busy, please try again later"
+msgstr "Đang bận, vui lòng thử lại sau"
+
+#: messages.go:133
+#, c-format
+msgid "The wakeup interval is %s, but must be 1h or less"
+msgstr "Khoảng thời gian đánh thức là %s nhưng phải từ 1 giờ trở xuống"
+
+#: messages.go:134
+msgid "Your account could not be connected"
+msgstr "Tài khoản của bạn không thể kết nối được"
+
+#: messages.go:137
+msgid "Changes successfully saved"
+msgstr "Đã lưu thay đổi thành công"
+
+#: messages.go:138
+msgid "Album created"
+msgstr "Đã tạo album"
+
+#: messages.go:139
+msgid "Album saved"
+msgstr "Đã lưu album"
+
+#: messages.go:140
+#, c-format
+msgid "Album %s deleted"
+msgstr "Album %s đã bị xóa"
+
+#: messages.go:141
+msgid "Album contents cloned"
+msgstr "Nội dung album được sao chép"
+
+#: messages.go:142
+msgid "File removed from stack"
+msgstr "Đã xóa tệp khỏi ngăn xếp"
+
+#: messages.go:143
+msgid "File deleted"
+msgstr "Đã xóa tệp"
+
+#: messages.go:144
+#, c-format
+msgid "Selection added to %s"
+msgstr "Đã thêm lựa chọn vào %s"
+
+#: messages.go:145
+#, c-format
+msgid "One entry added to %s"
+msgstr "Đã thêm một mục vào %s"
+
+#: messages.go:146
+#, c-format
+msgid "%d entries added to %s"
+msgstr "Các mục %d được thêm vào %s"
+
+#: messages.go:147
+#, c-format
+msgid "One entry removed from %s"
+msgstr "Đã xóa một mục khỏi %s"
+
+#: messages.go:148
+#, c-format
+msgid "%d entries removed from %s"
+msgstr "Các mục %d đã bị xóa khỏi %s"
+
+#: messages.go:149
+msgid "Account created"
+msgstr "Tài khoản đã được tạo"
+
+#: messages.go:150
+msgid "Account saved"
+msgstr "Đã lưu tài khoản"
+
+#: messages.go:151
+msgid "Account deleted"
+msgstr "Tài khoản đã bị xóa"
+
+#: messages.go:152
+msgid "Settings saved"
+msgstr "Đã lưu cài đặt"
+
+#: messages.go:153
+msgid "Password changed"
+msgstr "mật khẩu đã được thay đổi"
+
+#: messages.go:154
+#, c-format
+msgid "Import completed in %d s"
+msgstr "Quá trình nhập hoàn tất sau %d giây"
+
+#: messages.go:155
+msgid "Import canceled"
+msgstr "Đã hủy nhập"
+
+#: messages.go:156
+#, c-format
+msgid "Indexing completed in %d s"
+msgstr "Việc lập chỉ mục hoàn tất sau %d giây"
+
+#: messages.go:157
+msgid "Indexing originals..."
+msgstr "Lập chỉ mục bản gốc..."
+
+#: messages.go:158
+#, c-format
+msgid "Indexing files in %s"
+msgstr "Lập chỉ mục các tệp trong %s"
+
+#: messages.go:159
+msgid "Indexing canceled"
+msgstr "Đã hủy lập chỉ mục"
+
+#: messages.go:160
+#, c-format
+msgid "Removed %d files and %d photos"
+msgstr "Đã xóa tệp %d và ảnh %d"
+
+#: messages.go:161
+#, c-format
+msgid "Moving files from %s"
+msgstr "Di chuyển tệp từ %s"
+
+#: messages.go:162
+#, c-format
+msgid "Copying files from %s"
+msgstr "Sao chép tập tin từ %s"
+
+#: messages.go:163
+msgid "Labels deleted"
+msgstr "Đã xóa nhãn"
+
+#: messages.go:164
+msgid "Label saved"
+msgstr "Đã lưu nhãn"
+
+#: messages.go:165
+msgid "Subject saved"
+msgstr "Đã lưu chủ đề"
+
+#: messages.go:166
+msgid "Subject deleted"
+msgstr "Chủ đề đã bị xóa"
+
+#: messages.go:167
+msgid "Person saved"
+msgstr "Người đã được cứu"
+
+#: messages.go:168
+msgid "Person deleted"
+msgstr "Người đã bị xóa"
+
+#: messages.go:169
+msgid "File uploaded"
+msgstr "File đã được tải lên"
+
+#: messages.go:170
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr "Các tệp %d được tải lên trong %d giây"
+
+#: messages.go:171
+msgid "Processing upload..."
+msgstr "Đang xử lý tải lên..."
+
+#: messages.go:172
+msgid "Upload has been processed"
+msgstr "Tải lên đã được xử lý"
+
+#: messages.go:173
+msgid "Selection approved"
+msgstr "Lựa chọn đã được phê duyệt"
+
+#: messages.go:174
+msgid "Selection archived"
+msgstr "Đã lưu trữ lựa chọn"
+
+#: messages.go:175
+msgid "Selection restored"
+msgstr "Đã khôi phục lựa chọn"
+
+#: messages.go:176
+msgid "Selection marked as private"
+msgstr "Lựa chọn được đánh dấu là riêng tư"
+
+#: messages.go:177
+msgid "Albums deleted"
+msgstr "Album đã bị xóa"
+
+#: messages.go:178
+#, c-format
+msgid "Zip created in %d s"
+msgstr "Zip được tạo trong %d giây"
+
+#: messages.go:179
+msgid "Permanently deleted"
+msgstr "Đã xóa vĩnh viễn"
+
+#: messages.go:180
+#, c-format
+msgid "%s has been restored"
+msgstr "%s đã được khôi phục"
