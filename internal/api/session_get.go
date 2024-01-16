@@ -5,9 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -23,54 +22,45 @@ func GetSession(router *gin.RouterGroup) {
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
 		id := clean.ID(c.Param("id"))
 
-		// Abort if session id is provided but invalid.
 		if id != "" && !rnd.IsSessionID(id) {
+			// Abort if session id is provided but invalid.
 			AbortBadRequest(c)
 			return
 		}
 
 		conf := get.Config()
 
-		// Get client IP and auth token from request headers.
-		clientIp := ClientIP(c)
-		authToken := AuthToken(c)
+		// Check if the session user is allowed to manage all accounts or update his/her own account.
+		s := AuthAny(c, acl.ResourceSessions, acl.Permissions{acl.ActionManage, acl.ActionView})
 
-		// Skip authentication if app is running in public mode.
-		var sess *entity.Session
-		if conf.Public() {
-			sess = get.Session().Public()
-			id = sess.ID
-			authToken = sess.AuthToken()
-		} else if clientIp != "" && limiter.Auth.Reject(clientIp) {
-			// Fail if authentication error rate limit is exceeded.
-			limiter.AbortJSON(c)
-			return
-		} else {
-			sess = Session(clientIp, authToken)
-		}
-
+		// Check if session is valid.
 		switch {
-		case sess == nil:
-			if clientIp != "" {
-				limiter.Auth.Reserve(clientIp)
-			}
+		case s.Abort(c):
+			return
+		case s.Expired(), s.ID == "":
 			AbortUnauthorized(c)
 			return
-		case sess.Expired(), sess.ID == "":
-			AbortUnauthorized(c)
-			return
-		case sess.Invalid(), id != "" && sess.ID != id && !conf.Public():
+		case s.Invalid(), id != "" && s.ID != id && !conf.Public():
 			AbortForbidden(c)
 			return
 		}
 
+		// Get auth token from headers.
+		authToken := AuthToken(c)
+
 		// Update user information.
-		sess.RefreshUser()
+		s.RefreshUser()
 
 		// Response includes user data, session data, and client config values.
-		response := GetSessionResponse(authToken, sess, get.Config().ClientSession(sess))
+		response := GetSessionResponse(authToken, s, get.Config().ClientSession(s))
 
 		// Return JSON response.
 		c.JSON(http.StatusOK, response)

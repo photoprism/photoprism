@@ -23,10 +23,17 @@ func CreateSession(router *gin.RouterGroup) {
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
 		var f form.Login
 
 		clientIp := ClientIP(c)
 
+		// Validate request data.
 		if err := c.BindJSON(&f); err != nil {
 			event.AuditWarn([]string{clientIp, "create session", "invalid request", "%s"}, err)
 			AbortBadRequest(c)

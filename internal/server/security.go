@@ -12,6 +12,12 @@ import (
 // Security adds common HTTP security headers to the response.
 var Security = func(conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// Only allow CDNs to cache responses of GET, HEAD, and OPTIONS requests and block the request otherwise.
+		if header.BlockCdn(c.Request) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
 		// If permitted, set CORS headers (Cross-Origin Resource Sharing).
 		// See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
 		if origin := conf.CORSOrigin(); origin != "" {

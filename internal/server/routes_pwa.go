@@ -14,6 +14,12 @@ import (
 func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 	// Loads Progressive Web App (PWA) on all routes beginning with "library".
 	pwa := func(c *gin.Context) {
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
 		values := gin.H{
 			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
 			"config": conf.ClientPublic(),

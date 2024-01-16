@@ -18,6 +18,11 @@ func Auth(c *gin.Context, resource acl.Resource, grant acl.Permission) *entity.S
 // AuthAny checks if the user is authorized to access a resource with any of the specified permissions
 // and returns the session or nil otherwise.
 func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *entity.Session) {
+	// Prevent CDNs from caching responses that require authentication.
+	if header.IsCdn(c.Request) {
+		return entity.SessionStatusForbidden()
+	}
+
 	// Get client IP and auth token from the request headers.
 	clientIp := ClientIP(c)
 	authToken := AuthToken(c)

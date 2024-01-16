@@ -10,7 +10,6 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
@@ -27,10 +26,22 @@ func DeleteSession(router *gin.RouterGroup) {
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			// Return JSON response for confirmation.
 			c.JSON(http.StatusOK, DeleteSessionResponse(session.PublicID))
+			return
+		}
+
+		// Check if the session user is allowed to manage all accounts or update his/her own account.
+		s := AuthAny(c, acl.ResourceSessions, acl.Permissions{acl.ActionManage, acl.ActionDelete})
+
+		if s.Abort(c) {
 			return
 		}
 
@@ -38,56 +49,36 @@ func DeleteSession(router *gin.RouterGroup) {
 
 		// Get client IP and auth token from request headers.
 		clientIp := ClientIP(c)
-		authToken := AuthToken(c)
-
-		// Fail if authentication error rate limit is exceeded.
-		if clientIp != "" && limiter.Auth.Reject(clientIp) {
-			limiter.AbortJSON(c)
-			return
-		}
-
-		// Find session based on auth token.
-		sess, err := entity.FindSession(rnd.SessionID(authToken))
-
-		if err != nil || sess == nil {
-			if clientIp != "" {
-				limiter.Auth.Reserve(clientIp)
-			}
-			Abort(c, http.StatusUnauthorized, i18n.ErrUnauthorized)
-			return
-		} else if sess.Abort(c) {
-			return
-		}
 
 		// Only admins may delete other sessions by ref id.
 		if rnd.IsRefID(id) {
-			if !acl.Resources.AllowAll(acl.ResourceSessions, sess.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
-				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", "denied"}, sess.RefID, acl.ResourceSessions.String(), sess.User().AclRole())
+			if !acl.Resources.AllowAll(acl.ResourceSessions, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", "denied"}, s.RefID, acl.ResourceSessions.String(), s.User().AclRole())
 				Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 				return
 			}
 
-			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", "granted"}, sess.RefID, acl.ResourceSessions.String(), sess.User().AclRole())
+			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", "granted"}, s.RefID, acl.ResourceSessions.String(), s.User().AclRole())
 
-			if sess = entity.FindSessionByRefID(id); sess == nil {
+			if s = entity.FindSessionByRefID(id); s == nil {
 				Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 				return
 			}
-		} else if id != "" && sess.ID != id {
-			event.AuditWarn([]string{clientIp, "session %s", "delete %s as %s", "ids do not match"}, sess.RefID, acl.ResourceSessions.String(), sess.User().AclRole())
+		} else if id != "" && s.ID != id {
+			event.AuditWarn([]string{clientIp, "session %s", "delete %s as %s", "ids do not match"}, s.RefID, acl.ResourceSessions.String(), s.User().AclRole())
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}
 
 		// Delete session cache and database record.
-		if err = sess.Delete(); err != nil {
-			event.AuditErr([]string{clientIp, "session %s", "delete session as %s", "%s"}, sess.RefID, sess.User().AclRole(), err)
+		if err := s.Delete(); err != nil {
+			event.AuditErr([]string{clientIp, "session %s", "delete session as %s", "%s"}, s.RefID, s.User().AclRole(), err)
 		} else {
-			event.AuditDebug([]string{clientIp, "session %s", "deleted"}, sess.RefID)
+			event.AuditDebug([]string{clientIp, "session %s", "deleted"}, s.RefID)
 		}
 
 		// Return JSON response for confirmation.
-		c.JSON(http.StatusOK, DeleteSessionResponse(sess.ID))
+		c.JSON(http.StatusOK, DeleteSessionResponse(s.ID))
 	}
 
 	router.DELETE("/session", deleteSessionHandler)

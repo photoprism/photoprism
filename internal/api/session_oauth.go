@@ -28,13 +28,19 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
 
-		// Abort if running in public mode.
 		if get.Config().Public() {
+			// Abort if running in public mode.
 			event.AuditErr([]string{clientIp, "create client session", "disabled in public mode"})
-			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
+			AbortForbidden(c)
 			return
 		}
 
@@ -130,6 +136,12 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/revoke", func(c *gin.Context) {
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
+
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
 
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
