@@ -62,7 +62,7 @@ func AbortDeleteFailed(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrDeleteFailed)
 }
 
-func AbortUnexpected(c *gin.Context) {
+func AbortUnexpectedError(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 }
 

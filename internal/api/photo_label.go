@@ -40,7 +40,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 
 		var f form.Label
 
-		if err := c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -52,8 +52,9 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := labelEntity.Restore(); err != nil {
+		if err = labelEntity.Restore(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "could not restore label"})
+			return
 		}
 
 		photoLabel := entity.FirstOrCreatePhotoLabel(entity.NewPhotoLabel(m.ID, labelEntity.ID, f.Uncertainty, "manual"))
@@ -79,7 +80,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := p.SaveLabels(); err != nil {
+		if err = p.SaveLabels(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}

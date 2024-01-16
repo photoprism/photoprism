@@ -22,7 +22,7 @@ func TestSession(t *testing.T) {
 	})
 }
 
-func TestSessionResponse(t *testing.T) {
+func TestGetSessionResponse(t *testing.T) {
 	t.Run("Public", func(t *testing.T) {
 		sess := get.Session().Public()
 		conf := get.Config().ClientSession(sess)

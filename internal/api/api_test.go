@@ -8,13 +8,15 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"github.com/tidwall/gjson"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/header"
-	"github.com/sirupsen/logrus"
 )
 
 type CloseableResponseRecorder struct {
@@ -109,7 +111,7 @@ func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, pas
 		Password: password,
 	}))
 
-	authToken = r.Header().Get(header.XAuthToken)
+	authToken = gjson.Get(r.Body.String(), "access_token").String()
 
 	return
 }

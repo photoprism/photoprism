@@ -80,7 +80,7 @@ func SaveSettings(router *gin.RouterGroup) {
 			user := s.User()
 
 			if user == nil {
-				AbortUnexpected(c)
+				AbortUnexpectedError(c)
 				return
 			}
 

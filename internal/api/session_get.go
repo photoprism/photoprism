@@ -69,9 +69,6 @@ func GetSession(router *gin.RouterGroup) {
 		// Update user information.
 		sess.RefreshUser()
 
-		// Add auth token to response header.
-		AddAuthTokenHeader(c, authToken)
-
 		// Response includes user data, session data, and client config values.
 		response := GetSessionResponse(authToken, sess, get.Config().ClientSession(sess))
 

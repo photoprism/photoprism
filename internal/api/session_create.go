@@ -83,9 +83,6 @@ func CreateSession(router *gin.RouterGroup) {
 			event.AuditInfo([]string{clientIp, "session %s", "updated"}, sess.RefID)
 		}
 
-		// Add auth token to response header.
-		AddAuthTokenHeader(c, sess.AuthToken())
-
 		// Response includes user data, session data, and client config values.
 		response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
 
