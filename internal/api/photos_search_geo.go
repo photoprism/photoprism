@@ -85,7 +85,7 @@ func SearchGeo(router *gin.RouterGroup) {
 			return
 		}
 
-		c.Data(http.StatusOK, header.ContentTypeJson, resp)
+		c.Data(http.StatusOK, header.ContentTypeJsonUtf8, resp)
 	}
 
 	// Register route handlers.

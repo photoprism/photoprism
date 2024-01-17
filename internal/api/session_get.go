@@ -19,9 +19,6 @@ import (
 // GET /api/v1/sessions/:id
 func GetSession(router *gin.RouterGroup) {
 	getSessionHandler := func(c *gin.Context) {
-		// Disable caching of responses.
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			AbortNotFound(c)

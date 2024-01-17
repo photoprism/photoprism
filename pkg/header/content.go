@@ -8,14 +8,20 @@ const (
 	AcceptEncoding     = "Accept-Encoding"
 	AcceptRanges       = "Accept-Ranges"
 	ContentType        = "Content-Type"
-	ContentTypeForm    = "application/x-www-form-urlencoded"
-	ContentTypeJson    = "application/json"
 	ContentDisposition = "Content-Disposition"
 	ContentEncoding    = "Content-Encoding"
 	ContentRange       = "Content-Range"
 	Location           = "Location"
 	Origin             = "Origin"
 	Vary               = "Vary"
+)
+
+// Standard ContentType header values.
+const (
+	ContentTypeForm      = "application/x-www-form-urlencoded"
+	ContentTypeMultipart = "multipart/form-data"
+	ContentTypeJson      = "application/json"
+	ContentTypeJsonUtf8  = "application/json; charset=utf-8"
 )
 
 // Vary response header defaults.

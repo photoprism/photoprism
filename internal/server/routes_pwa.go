@@ -32,7 +32,7 @@ func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 	// Progressive Web App (PWA) Manifest.
 	manifest := func(c *gin.Context) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
-		c.Header(header.ContentType, header.ContentTypeJson)
+		c.Header(header.ContentType, header.ContentTypeJsonUtf8)
 		c.IndentedJSON(200, conf.AppManifest())
 	}
 	router.Any(conf.BaseUri("/manifest.json"), manifest)

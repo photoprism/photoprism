@@ -23,9 +23,6 @@ import (
 // DELETE /api/v1/sessions/:id
 func DeleteSession(router *gin.RouterGroup) {
 	deleteSessionHandler := func(c *gin.Context) {
-		// Disable caching of responses.
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			AbortNotFound(c)

@@ -31,9 +31,11 @@ func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *
 	if s = Session(clientIp, authToken); s == nil {
 		event.AuditWarn([]string{clientIp, "unauthenticated", "%s %s", "denied"}, grants.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
-	} else {
-		s.SetClientIP(clientIp)
 	}
+
+	// Disable caching of responses and the client IP.
+	c.Header(header.CacheControl, header.CacheControlNoStore)
+	s.SetClientIP(clientIp)
 
 	// If the request is from a client application, check its authorization based
 	// on the allowed scope, the ACL, and the user account it belongs to (if any).

@@ -12,6 +12,9 @@ import (
 // Static is a middleware that adds static content-related headers to the server's response.
 var Static = func(conf *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// Allow caching of static assets for up to 7 days.
+		header.SetCacheControlImmutable(c, 0, true)
+
 		// Allow CORS based on the configuration or otherwise automatically for certain file types when using a CDN.
 		// See: https://www.w3.org/TR/css-fonts-3/#font-fetching-requirements
 		if origin := conf.CORSOrigin(); origin != "" || header.AllowCORS(c.Request.URL.Path) && conf.UseCdn() {

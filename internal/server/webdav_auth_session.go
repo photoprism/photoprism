@@ -14,7 +14,7 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 	if authToken == "" {
 		// Abort authentication if no token was provided.
 		return nil, nil, "", false
-	} else if !rnd.IsAuthToken(authToken) && !rnd.IsAuthSecret(authToken) {
+	} else if !rnd.IsAuthAny(authToken) {
 		// Abort authentication if token doesn't match expected format.
 		return nil, nil, "", false
 	}

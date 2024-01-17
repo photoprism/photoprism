@@ -20,9 +20,6 @@ import (
 // POST /api/v1/sessions
 func CreateSession(router *gin.RouterGroup) {
 	createSessionHandler := func(c *gin.Context) {
-		// Disable caching of responses.
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			AbortNotFound(c)
@@ -39,6 +36,9 @@ func CreateSession(router *gin.RouterGroup) {
 			AbortBadRequest(c)
 			return
 		}
+
+		// Disable caching of responses.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
 
 		conf := get.Config()
 

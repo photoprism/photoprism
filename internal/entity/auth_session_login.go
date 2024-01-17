@@ -45,7 +45,7 @@ func AuthSession(f form.Login, c *gin.Context) (sess *Session, user *User, err e
 	if f.Password == "" {
 		// Abort authentication if no token was provided.
 		return nil, nil, fmt.Errorf("no auth secret provided")
-	} else if !rnd.IsAuthSecret(f.Password) {
+	} else if !rnd.IsAuthSecret(f.Password, true) {
 		// Abort authentication if token doesn't match expected format.
 		return nil, nil, fmt.Errorf("auth secret does not match expected format")
 	}

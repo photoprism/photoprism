@@ -26,6 +26,7 @@ func BenchmarkAuthToken(b *testing.B) {
 }
 
 func TestIsAuthToken(t *testing.T) {
+	assert.False(t, IsAuthToken("MPkOqm-RtKGOi-ctIvXm-Qv3XhN"))
 	assert.True(t, IsAuthToken("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2"))
 	assert.True(t, IsAuthToken(AuthToken()))
 	assert.True(t, IsAuthToken(AuthToken()))
@@ -57,29 +58,55 @@ func BenchmarkAuthSecret(b *testing.B) {
 }
 
 func TestIsAuthSecret(t *testing.T) {
-	assert.True(t, IsAuthSecret("f64nl-GQbmZ-CEcLr-Q1VSr"))
-	assert.True(t, IsAuthSecret("XRhOW-DM2ol-INove-dAg6m"))
-	assert.True(t, IsAuthSecret(AuthSecret()))
-	assert.True(t, IsAuthSecret(AuthSecret()))
-	assert.False(t, IsAuthSecret(AuthToken()))
-	assert.False(t, IsAuthSecret(AuthToken()))
-	assert.False(t, IsAuthSecret(SessionID(AuthToken())))
-	assert.False(t, IsAuthSecret(SessionID(AuthToken())))
-	assert.False(t, IsAuthSecret("55785BAC-9H4B-4747-B090-EE123FFEE437"))
-	assert.False(t, IsAuthSecret("4B1FEF2D1CF4A5BE38B263E0637EDEAD"))
-	assert.False(t, IsAuthSecret("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2"))
-	assert.False(t, IsAuthSecret(""))
+	t.Run("VerifyChecksum", func(t *testing.T) {
+		assert.True(t, IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", true))
+		assert.True(t, IsAuthSecret("9q2JHc-P0LzNE-xzvY9j-vMoefj", true))
+		assert.False(t, IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3Xha", true))
+		assert.False(t, IsAuthSecret("9q2JHc-P0LzNE-xzvY9j-vMoef2", true))
+		assert.True(t, IsAuthSecret(AuthSecret(), true))
+		assert.True(t, IsAuthSecret(AuthSecret(), true))
+		assert.False(t, IsAuthSecret(AuthToken(), true))
+		assert.False(t, IsAuthSecret(AuthToken(), true))
+		assert.False(t, IsAuthSecret(SessionID(AuthToken()), true))
+		assert.False(t, IsAuthSecret(SessionID(AuthToken()), true))
+		assert.False(t, IsAuthSecret("55785BAC-9H4B-4747-B090-EE123FFEE437", true))
+		assert.False(t, IsAuthSecret("4B1FEF2D1CF4A5BE38B263E0637EDEAD", true))
+		assert.False(t, IsAuthSecret("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2", true))
+		assert.False(t, IsAuthSecret("", true))
+	})
+	t.Run("IgnoreChecksum", func(t *testing.T) {
+		assert.True(t, IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", false))
+		assert.True(t, IsAuthSecret("9q2JHc-P0LzNE-xzvY9j-vMoefj", false))
+		assert.True(t, IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3Xha", false))
+		assert.True(t, IsAuthSecret("9q2JHc-P0LzNE-xzvY9j-vMoef2", false))
+		assert.True(t, IsAuthSecret(AuthSecret(), false))
+		assert.True(t, IsAuthSecret(AuthSecret(), false))
+		assert.False(t, IsAuthSecret(AuthToken(), false))
+		assert.False(t, IsAuthSecret(AuthToken(), false))
+		assert.False(t, IsAuthSecret(SessionID(AuthToken()), false))
+		assert.False(t, IsAuthSecret(SessionID(AuthToken()), false))
+		assert.False(t, IsAuthSecret("55785BAC-9H4B-4747-B090-EE123FFEE437", false))
+		assert.False(t, IsAuthSecret("4B1FEF2D1CF4A5BE38B263E0637EDEAD", false))
+		assert.False(t, IsAuthSecret("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2", false))
+		assert.False(t, IsAuthSecret("", false))
+	})
 }
 
-func BenchmarkIsAuthSecret(b *testing.B) {
+func BenchmarkIsAuthSecretVerifyChecksum(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		IsAuthSecret("f64nl-GQbmZ-CEcLr-Q1VSr")
+		IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", true)
+	}
+}
+
+func BenchmarkIsAuthSecretIgnoreChecksum(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", false)
 	}
 }
 
 func TestIsAuthAny(t *testing.T) {
-	assert.True(t, IsAuthAny("f64nl-GQbmZ-CEcLr-Q1VSr"))
-	assert.True(t, IsAuthAny("XRhOW-DM2ol-INove-dAg6m"))
+	assert.True(t, IsAuthAny("MPkOqm-RtKGOi-ctIvXm-Qv3XhN"))
+	assert.True(t, IsAuthAny("9q2JHc-P0LzNE-xzvY9j-vMoefj"))
 	assert.True(t, IsAuthAny(AuthSecret()))
 	assert.True(t, IsAuthAny(AuthSecret()))
 	assert.True(t, IsAuthAny(AuthToken()))
@@ -94,7 +121,7 @@ func TestIsAuthAny(t *testing.T) {
 
 func BenchmarkIsAuthAny(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		IsAuthAny("f64nl-GQbmZ-CEcLr-Q1VSr")
+		IsAuthAny("MPkOqm-RtKGOi-ctIvXm-Qv3XhN")
 	}
 }
 func TestSessionID(t *testing.T) {

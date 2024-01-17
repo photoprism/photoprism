@@ -25,9 +25,6 @@ import (
 // POST /api/v1/oauth/token
 func CreateOAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/token", func(c *gin.Context) {
-		// Disable caching of responses.
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			AbortNotFound(c)
@@ -65,6 +62,9 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		}
+
+		// Disable caching of responses.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
 
 		// Fail if authentication error rate limit is exceeded.
 		if clientIp != "" && (limiter.Login.Reject(clientIp) || limiter.Auth.Reject(clientIp)) {
@@ -134,9 +134,6 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 // POST /api/v1/oauth/revoke
 func RevokeOAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/revoke", func(c *gin.Context) {
-		// Disable caching of responses.
-		c.Header(header.CacheControl, header.CacheControlNoStore)
-
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			AbortNotFound(c)
@@ -176,6 +173,9 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 			AbortBadRequest(c)
 			return
 		}
+
+		// Disable caching of responses.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
 
 		// Find session based on auth token.
 		sess, err := entity.FindSession(rnd.SessionID(f.AuthToken))

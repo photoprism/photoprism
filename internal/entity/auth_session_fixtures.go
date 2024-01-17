@@ -51,8 +51,8 @@ var SessionFixtures = SessionMap{
 		UserName:     UserFixtures.Pointer("alice").UserName,
 	},
 	"alice_token_personal": {
-		authToken:    "bSJu9-2sr54-ZOasm-8QusP",
-		ID:           rnd.SessionID("bSJu9-2sr54-ZOasm-8QusP"),
+		authToken:    "DIbS8T-uyGMe1-R3fmTv-vVaR35",
+		ID:           rnd.SessionID("DIbS8T-uyGMe1-R3fmTv-vVaR35"),
 		RefID:        "sess6ey1ykya",
 		SessTimeout:  -1,
 		SessExpires:  UnixTime() + UnixDay,
@@ -66,8 +66,8 @@ var SessionFixtures = SessionMap{
 		UserName:     UserFixtures.Pointer("alice").UserName,
 	},
 	"alice_token_webdav": {
-		authToken:    "bHcZP-YxRbi-irKII-W1kpz",
-		ID:           rnd.SessionID("bHcZP-YxRbi-irKII-W1kpz"),
+		authToken:    "5d0rGx-EvsDnV-DcKtYY-HT1aWL",
+		ID:           rnd.SessionID("5d0rGx-EvsDnV-DcKtYY-HT1aWL"),
 		RefID:        "sesshjtgx8qt",
 		SessTimeout:  -1,
 		SessExpires:  UnixTime() + UnixDay,
