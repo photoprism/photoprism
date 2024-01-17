@@ -19,6 +19,10 @@ func TestASCII(t *testing.T) {
 		result := ASCII("https://docs.photoprism.app/getting-started 👍/config-options/#file-converters")
 		assert.Equal(t, "https://docs.photoprism.app/getting-started /config-options/#file-converters", result)
 	})
+	t.Run("Empty", func(t *testing.T) {
+		result := ASCII("")
+		assert.Equal(t, "", result)
+	})
 }
 
 func BenchmarkASCII(b *testing.B) {

@@ -39,12 +39,31 @@ func TestProviderType_IsDefault(t *testing.T) {
 	assert.Equal(t, true, ProviderUnknown.IsDefault())
 }
 
+func TestProviderType_IsClient(t *testing.T) {
+	assert.Equal(t, false, ProviderLocal.IsClient())
+	assert.Equal(t, false, ProviderLDAP.IsClient())
+	assert.Equal(t, false, ProviderNone.IsClient())
+	assert.Equal(t, false, ProviderDefault.IsClient())
+	assert.Equal(t, true, ProviderClient.IsClient())
+}
+
+func TestProviderType_Equal(t *testing.T) {
+	assert.True(t, ProviderClient.Equal("Client"))
+	assert.False(t, ProviderLocal.Equal("Client"))
+}
+
+func TestProviderType_NotEqual(t *testing.T) {
+	assert.False(t, ProviderClient.NotEqual("Client"))
+	assert.True(t, ProviderLocal.NotEqual("Client"))
+}
+
 func TestProviderType_Pretty(t *testing.T) {
 	assert.Equal(t, "Local", ProviderLocal.Pretty())
 	assert.Equal(t, "LDAP/AD", ProviderLDAP.Pretty())
 	assert.Equal(t, "None", ProviderNone.Pretty())
 	assert.Equal(t, "Default", ProviderDefault.Pretty())
 	assert.Equal(t, "Default", ProviderUnknown.Pretty())
+	assert.Equal(t, "Client", ProviderClient.Pretty())
 }
 
 func TestProvider(t *testing.T) {
@@ -52,4 +71,5 @@ func TestProvider(t *testing.T) {
 	assert.Equal(t, ProviderLDAP, Provider("ad"))
 	assert.Equal(t, ProviderDefault, Provider(""))
 	assert.Equal(t, ProviderLink, Provider("url"))
+	assert.Equal(t, ProviderDefault, Provider("default"))
 }

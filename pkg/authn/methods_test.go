@@ -33,10 +33,23 @@ func TestMethodType_Pretty(t *testing.T) {
 	assert.Equal(t, "Default", MethodUnknown.Pretty())
 }
 
+func TestMethodType_Equal(t *testing.T) {
+	assert.True(t, Method2FA.Equal("2fa"))
+	assert.False(t, MethodAccessToken.Equal("2fa"))
+}
+
+func TestMethodType_NotEqual(t *testing.T) {
+	assert.False(t, Method2FA.NotEqual("2fa"))
+	assert.True(t, MethodAccessToken.NotEqual("2fa"))
+}
+
 func TestMethod(t *testing.T) {
 	assert.Equal(t, MethodDefault, Method("default"))
+	assert.Equal(t, MethodDefault, Method(""))
 	assert.Equal(t, MethodAccessToken, Method("access_token"))
 	assert.Equal(t, MethodOAuth2, Method("oauth2"))
 	assert.Equal(t, MethodOIDC, Method("oidc"))
+	assert.Equal(t, MethodOIDC, Method("sso"))
 	assert.Equal(t, Method2FA, Method("2fa"))
+	assert.Equal(t, Method2FA, Method("totp"))
 }

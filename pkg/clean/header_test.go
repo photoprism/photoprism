@@ -20,6 +20,10 @@ func TestHeader(t *testing.T) {
 		result := Header("Hello 👍")
 		assert.Equal(t, "Hello ", result)
 	})
+	t.Run("Empty", func(t *testing.T) {
+		result := Header("")
+		assert.Equal(t, "", result)
+	})
 }
 
 func BenchmarkHeader(b *testing.B) {

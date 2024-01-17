@@ -104,6 +104,27 @@ func TestAttr_Contains(t *testing.T) {
 		assert.Len(t, attr, 1)
 		assert.True(t, attr.Contains("metrics"))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		s := "*"
+		attr := ParseAttr(s)
+
+		assert.Len(t, attr, 1)
+		assert.False(t, attr.Contains(""))
+	})
+	t.Run("All", func(t *testing.T) {
+		s := "*"
+		attr := ParseAttr(s)
+
+		assert.Len(t, attr, 1)
+		assert.True(t, attr.Contains("*"))
+	})
+	t.Run("ValueAll", func(t *testing.T) {
+		s := "*"
+		attr := ParseAttr(s)
+
+		assert.Len(t, attr, 1)
+		assert.True(t, attr.Contains("6VU:*"))
+	})
 	t.Run("Scopes", func(t *testing.T) {
 		attr := ParseAttr("files files.read:true photos photos.create:false albums:true people.view:true config.view:false")
 

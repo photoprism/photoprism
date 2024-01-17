@@ -19,6 +19,10 @@ func TestUri(t *testing.T) {
 		result := Uri("Hello 👍")
 		assert.Equal(t, "Hello%20%F0%9F%91%8D", result)
 	})
+	t.Run("Empty", func(t *testing.T) {
+		result := Uri("")
+		assert.Equal(t, "", result)
+	})
 }
 
 func BenchmarkUri(b *testing.B) {
