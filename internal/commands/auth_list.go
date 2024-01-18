@@ -14,7 +14,7 @@ import (
 // AuthListCommand configures the command name, flags, and action.
 var AuthListCommand = cli.Command{
 	Name:      "ls",
-	Usage:     "Lists authenticated users and API clients",
+	Usage:     "Lists currently authenticated users and clients",
 	ArgsUsage: "[search]",
 	Flags:     append(report.CliFlags, countFlag, tokensFlag),
 	Action:    authListAction,

@@ -15,7 +15,7 @@ import (
 var ClientsShowCommand = cli.Command{
 	Name:      "show",
 	Usage:     "Shows client configuration details",
-	ArgsUsage: "[id]",
+	ArgsUsage: "[client id]",
 	Flags:     report.CliFlags,
 	Action:    clientsShowAction,
 }

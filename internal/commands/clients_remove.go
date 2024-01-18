@@ -15,7 +15,7 @@ import (
 var ClientsRemoveCommand = cli.Command{
 	Name:      "rm",
 	Usage:     "Deletes the specified client application",
-	ArgsUsage: "[id]",
+	ArgsUsage: "[client id]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",

@@ -16,7 +16,7 @@ import (
 var ClientsModCommand = cli.Command{
 	Name:      "mod",
 	Usage:     "Updates client application settings",
-	ArgsUsage: "[id]",
+	ArgsUsage: "[client id]",
 	Flags:     ClientModFlags,
 	Action:    clientsModAction,
 }

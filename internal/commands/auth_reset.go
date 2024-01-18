@@ -15,7 +15,7 @@ import (
 // AuthResetCommand configures the command name, flags, and action.
 var AuthResetCommand = cli.Command{
 	Name:  "reset",
-	Usage: "Removes all registered user and client sessions",
+	Usage: "Resets the authentication of all users and clients",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "trace, t",

@@ -33,8 +33,8 @@ var AuthAddFlags = []cli.Flag{
 // AuthAddCommand configures the command name, flags, and action.
 var AuthAddCommand = cli.Command{
 	Name:        "add",
-	Usage:       "Creates a new client access token",
-	Description: "Specifying a username as argument creates a personal access token for a registered user account.",
+	Usage:       "Creates a new access token for client authentication",
+	Description: "If you provide a username as argument, a personal access token for registered users will be created.",
 	ArgsUsage:   "[username]",
 	Flags:       AuthAddFlags,
 	Action:      authAddAction,

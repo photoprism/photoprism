@@ -14,8 +14,8 @@ import (
 // AuthShowCommand configures the command name, flags, and action.
 var AuthShowCommand = cli.Command{
 	Name:      "show",
-	Usage:     "Shows details of the specified session or access token",
-	ArgsUsage: "[id]",
+	Usage:     "Shows detailed information about a session",
+	ArgsUsage: "[identifier]",
 	Flags:     report.CliFlags,
 	Action:    authShowAction,
 }
