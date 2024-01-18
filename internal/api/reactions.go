@@ -31,11 +31,11 @@ func LikePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		if get.Config().Experimental() && acl.Resources.Allow(acl.ResourcePhotos, s.User().AclRole(), acl.ActionReact) {
+		if get.Config().Experimental() && acl.Resources.Allow(acl.ResourcePhotos, s.UserRole(), acl.ActionReact) {
 			logWarn("react", m.React(s.User(), react.Find("love")))
 		}
 
-		if acl.Resources.Allow(acl.ResourcePhotos, s.User().AclRole(), acl.ActionUpdate) {
+		if acl.Resources.Allow(acl.ResourcePhotos, s.UserRole(), acl.ActionUpdate) {
 			err = m.SetFavorite(true)
 
 			if err != nil {
@@ -71,11 +71,11 @@ func DislikePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		if get.Config().Experimental() && acl.Resources.Allow(acl.ResourcePhotos, s.User().AclRole(), acl.ActionReact) {
+		if get.Config().Experimental() && acl.Resources.Allow(acl.ResourcePhotos, s.UserRole(), acl.ActionReact) {
 			logWarn("react", m.UnReact(s.User()))
 		}
 
-		if acl.Resources.Allow(acl.ResourcePhotos, s.User().AclRole(), acl.ActionUpdate) {
+		if acl.Resources.Allow(acl.ResourcePhotos, s.UserRole(), acl.ActionUpdate) {
 			err = m.SetFavorite(false)
 
 			if err != nil {

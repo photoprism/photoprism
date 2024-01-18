@@ -22,7 +22,7 @@ func TestFindClient(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
 
-		m := FindClient("cs5gfen1bgxz7s9i")
+		m := FindClientByUID("cs5gfen1bgxz7s9i")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -36,7 +36,7 @@ func TestFindClient(t *testing.T) {
 	t.Run("Bob", func(t *testing.T) {
 		expected := ClientFixtures.Get("bob")
 
-		m := FindClient("cs5gfsvbd7ejzn8m")
+		m := FindClientByUID("cs5gfsvbd7ejzn8m")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -50,7 +50,7 @@ func TestFindClient(t *testing.T) {
 	t.Run("Metrics", func(t *testing.T) {
 		expected := ClientFixtures.Get("metrics")
 
-		m := FindClient("cs5cpu17n6gj2qo5")
+		m := FindClientByUID("cs5cpu17n6gj2qo5")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -62,7 +62,7 @@ func TestFindClient(t *testing.T) {
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		m := FindClient("123")
+		m := FindClientByUID("123")
 		assert.Nil(t, m)
 	})
 }
@@ -161,7 +161,7 @@ func TestClient_Create(t *testing.T) {
 
 func TestClient_Save(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := FindClient("cs5cpu17n6gj2aaa")
+		c := FindClientByUID("cs5cpu17n6gj2aaa")
 		assert.Nil(t, c)
 
 		var m = Client{ClientName: "New Client", ClientUID: "cs5cpu17n6gj2aaa"}
@@ -169,7 +169,7 @@ func TestClient_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		c = FindClient("cs5cpu17n6gj2aaa")
+		c = FindClientByUID("cs5cpu17n6gj2aaa")
 
 		if c == nil {
 			t.Fatal("result should not be nil")
@@ -301,7 +301,7 @@ func TestClient_HasPassword(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
 
-		m := FindClient("cs5gfen1bgxz7s9i")
+		m := FindClientByUID("cs5gfen1bgxz7s9i")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -320,7 +320,7 @@ func TestClient_HasPassword(t *testing.T) {
 	t.Run("Metrics", func(t *testing.T) {
 		expected := ClientFixtures.Get("metrics")
 
-		m := FindClient("cs5cpu17n6gj2qo5")
+		m := FindClientByUID("cs5cpu17n6gj2qo5")
 
 		if m == nil {
 			t.Fatal("result should not be nil")

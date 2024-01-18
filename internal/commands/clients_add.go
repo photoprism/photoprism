@@ -87,17 +87,8 @@ func clientsAddAction(ctx *cli.Context) error {
 			log.Infof("successfully registered new client %s", clean.LogQuote(client.ClientName))
 
 			// Display client details.
-			cols := []string{"Client ID", "Client Name", "Authentication", "Scope", "User", "Enabled", "Access Token Expires", "Created At"}
+			cols := []string{"Client ID", "Client Name", "Client User", "Authentication Method", "Role", "Scope", "Enabled", "Authentication Expires", "Created At"}
 			rows := make([][]string, 1)
-
-			var userName string
-			if client.UserUID == "" {
-				userName = report.NotAssigned
-			} else if client.UserName != "" {
-				userName = client.UserName
-			} else {
-				userName = client.UserUID
-			}
 
 			var authExpires string
 			if client.AuthExpires > 0 {
@@ -107,15 +98,16 @@ func clientsAddAction(ctx *cli.Context) error {
 			}
 
 			if client.AuthTokens > 0 {
-				authExpires = fmt.Sprintf("%s, max %d tokens", authExpires, client.AuthTokens)
+				authExpires = fmt.Sprintf("%s; up to %d tokens", authExpires, client.AuthTokens)
 			}
 
 			rows[0] = []string{
 				client.UID(),
-				client.ClientName,
-				client.AuthMethod,
-				client.AuthScope,
-				userName,
+				client.Name(),
+				client.UserInfo(),
+				client.Method().String(),
+				client.AclRole().String(),
+				client.Scope(),
 				report.Bool(client.AuthEnabled, report.Yes, report.No),
 				authExpires,
 				client.CreatedAt.Format("2006-01-02 15:04:05"),

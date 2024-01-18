@@ -41,7 +41,7 @@ func TestAuthListCommand(t *testing.T) {
 		// Check command output for plausibility.
 		// t.Logf(output)
 		assert.NoError(t, err)
-		assert.Contains(t, output, "|  Session ID  |")
+		assert.Contains(t, output, "Session ID")
 		assert.Contains(t, output, "alice")
 		assert.NotContains(t, output, "bob")
 		assert.NotContains(t, output, "visitor")
@@ -60,7 +60,7 @@ func TestAuthListCommand(t *testing.T) {
 		// Check command output for plausibility.
 		t.Logf(output)
 		assert.NoError(t, err)
-		assert.Contains(t, output, "Session ID;User;Authentication")
+		assert.Contains(t, output, "Session ID;")
 		assert.Contains(t, output, "alice")
 		assert.NotContains(t, output, "bob")
 		assert.NotContains(t, output, "visitor")

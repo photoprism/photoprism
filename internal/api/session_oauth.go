@@ -6,7 +6,6 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -73,7 +72,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 		}
 
 		// Find the client that has the ID specified in the authentication request.
-		client := entity.FindClient(f.ClientID)
+		client := entity.FindClientByUID(f.ClientID)
 
 		// Abort if the client ID or secret are invalid.
 		if client == nil {
@@ -181,28 +180,28 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 		sess, err := entity.FindSession(rnd.SessionID(f.AuthToken))
 
 		if err != nil {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String(), err.Error())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String(), err.Error())
 			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
 			return
 		} else if sess.Abort(c) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			return
 		} else if !sess.IsClient() {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "delete session as %s", "granted"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String())
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "delete session as %s", "granted"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 		}
 
 		// Delete session cache and database record.
 		if err = sess.Delete(); err != nil {
 			// Log error.
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.AuthID), clean.Log(sess.RefID), acl.RoleClient.String(), err)
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String(), err)
 
 			// Return JSON error.
 			c.AbortWithStatusJSON(http.StatusNotFound, i18n.NewResponse(http.StatusNotFound, i18n.ErrNotFound))
@@ -210,7 +209,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 		}
 
 		// Log event.
-		event.AuditInfo([]string{clientIp, "client %s", "session %s", "deleted"}, clean.Log(sess.AuthID), clean.Log(sess.RefID))
+		event.AuditInfo([]string{clientIp, "client %s", "session %s", "deleted"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID))
 
 		// Return JSON response for confirmation.
 		c.JSON(http.StatusOK, DeleteSessionResponse(sess.ID))

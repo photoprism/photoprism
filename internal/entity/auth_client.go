@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -27,9 +28,10 @@ type Clients []Client
 type Client struct {
 	ClientUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
 	UserUID     string     `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
-	UserName    string     `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
+	UserName    string     `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user        *User      `gorm:"-"`
 	ClientName  string     `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
+	ClientRole  string     `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
 	ClientType  string     `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
 	ClientURL   string     `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
 	CallbackURL string     `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
@@ -54,6 +56,7 @@ func NewClient() *Client {
 	return &Client{
 		UserUID:     "",
 		ClientName:  "",
+		ClientRole:  acl.RoleClient.String(),
 		ClientType:  authn.ClientConfidential,
 		ClientURL:   "",
 		CallbackURL: "",
@@ -77,8 +80,8 @@ func (m *Client) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("ClientUID", m.ClientUID)
 }
 
-// FindClient returns the matching client or nil if it was not found.
-func FindClient(uid string) *Client {
+// FindClientByUID returns the matching client or nil if it was not found.
+func FindClientByUID(uid string) *Client {
 	if rnd.InvalidUID(uid, ClientUID) {
 		return nil
 	}
@@ -101,6 +104,36 @@ func (m *Client) UID() string {
 // HasUID tests if the entity has a valid uid.
 func (m *Client) HasUID() bool {
 	return rnd.IsUID(m.ClientUID, ClientUID)
+}
+
+// Name returns the client name string.
+func (m *Client) Name() string {
+	return m.ClientName
+}
+
+// SetRole sets the client role specified as string.
+func (m *Client) SetRole(role string) *Client {
+	m.ClientRole = acl.ClientRoles[clean.Role(role)].String()
+
+	return m
+}
+
+// HasRole checks the client role specified as string.
+func (m *Client) HasRole(role acl.Role) bool {
+	return m.AclRole() == role
+}
+
+// AclRole returns the client role for ACL permission checks.
+func (m *Client) AclRole() acl.Role {
+	if m == nil {
+		return acl.RoleNone
+	}
+
+	if role, ok := acl.ClientRoles[clean.Role(m.ClientRole)]; ok {
+		return role
+	}
+
+	return acl.RoleNone
 }
 
 // User returns the related user account, if any.
@@ -131,6 +164,17 @@ func (m *Client) SetUser(u *User) *Client {
 	m.UserName = u.UserName
 
 	return m
+}
+
+// UserInfo returns user identification info.
+func (m *Client) UserInfo() string {
+	if m.UserUID == "" {
+		return ""
+	} else if m.UserName != "" {
+		return m.UserName
+	}
+
+	return m.UserUID
 }
 
 // Create new entity in the database.
@@ -257,14 +301,7 @@ func (m *Client) UpdateLastActive() *Client {
 // NewSession creates a new client session.
 func (m *Client) NewSession(c *gin.Context) *Session {
 	// Create, initialize, and return new session.
-	sess := NewSession(m.AuthExpires, 0).SetContext(c)
-	sess.AuthID = m.UID()
-	sess.AuthProvider = authn.ProviderClient.String()
-	sess.AuthMethod = m.Method().String()
-	sess.AuthScope = m.Scope()
-	sess.SetUser(m.User())
-
-	return sess
+	return NewSession(m.AuthExpires, 0).SetContext(c).SetClient(m)
 }
 
 // EnforceAuthTokenLimit deletes client sessions above the configured limit and returns the number of deleted sessions.
@@ -321,6 +358,10 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 
 	if frm.ClientName != "" {
 		m.ClientName = frm.Name()
+	}
+
+	if frm.ClientRole != "" {
+		m.SetRole(frm.ClientRole)
 	}
 
 	if frm.AuthMethod != "" {

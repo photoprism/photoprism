@@ -22,8 +22,8 @@ func TestRole_Pretty(t *testing.T) {
 	t.Run("Admin", func(t *testing.T) {
 		assert.Equal(t, "Admin", RoleAdmin.Pretty())
 	})
-	t.Run("Unknown", func(t *testing.T) {
-		assert.Equal(t, "Unknown", RoleUnknown.Pretty())
+	t.Run("None", func(t *testing.T) {
+		assert.Equal(t, "None", RoleNone.Pretty())
 	})
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "Visitor", RoleVisitor.Pretty())

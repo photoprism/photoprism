@@ -17,15 +17,15 @@ import (
 var AuthAddFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "name, n",
-		Usage: "arbitrary name to help identify the access `TOKEN`",
+		Usage: "access `TOKEN` name to help identify the client application",
 	},
 	cli.StringFlag{
 		Name:  "scope, s",
-		Usage: "authorization `SCOPE` for the access token e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all scopes)",
+		Usage: "authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)",
 	},
 	cli.Int64Flag{
 		Name:  "expires, e",
-		Usage: "access token lifetime in `SECONDS`, after which it expires and a new token must be created (-1 to disable)",
+		Usage: "authentication `LIFETIME` in seconds, after which the access token expires (-1 to disable the limit)",
 		Value: entity.UnixYear,
 	},
 }
@@ -53,10 +53,10 @@ func authAddAction(ctx *cli.Context) error {
 			return fmt.Errorf("user %s not found", clean.LogQuote(userName))
 		}
 
-		// Get token name from command flag or ask for it.
-		tokenName := ctx.String("name")
+		// Get client name from command flag or ask for it.
+		clientName := ctx.String("name")
 
-		if tokenName == "" {
+		if clientName == "" {
 			prompt := promptui.Prompt{
 				Label:   "Token Name",
 				Default: rnd.Name(),
@@ -68,7 +68,7 @@ func authAddAction(ctx *cli.Context) error {
 				return err
 			}
 
-			tokenName = clean.Name(res)
+			clientName = clean.Name(res)
 		}
 
 		// Get auth scope from command flag or ask for it.
@@ -89,8 +89,8 @@ func authAddAction(ctx *cli.Context) error {
 			authScope = clean.Scope(res)
 		}
 
-		// Create client session.
-		sess, err := entity.CreateClientAccessToken(tokenName, ctx.Int64("expires"), authScope, user)
+		// Create session with client access token.
+		sess, err := entity.CreateClientAccessToken(clientName, ctx.Int64("expires"), authScope, user)
 
 		if err != nil {
 			return fmt.Errorf("failed to create access token: %s", err)

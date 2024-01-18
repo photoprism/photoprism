@@ -1,6 +1,9 @@
 package entity
 
-import "github.com/photoprism/photoprism/pkg/authn"
+import (
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/pkg/authn"
+)
 
 type ClientMap map[string]Client
 
@@ -27,6 +30,7 @@ var ClientFixtures = ClientMap{
 		UserName:    UserFixtures.Pointer("alice").UserName,
 		user:        UserFixtures.Pointer("alice"),
 		ClientName:  "Alice",
+		ClientRole:  acl.RoleClient.String(),
 		ClientType:  authn.ClientConfidential,
 		ClientURL:   "",
 		CallbackURL: "",
@@ -43,6 +47,7 @@ var ClientFixtures = ClientMap{
 		UserName:    UserFixtures.Pointer("bob").UserName,
 		user:        UserFixtures.Pointer("bob"),
 		ClientName:  "Bob",
+		ClientRole:  acl.RoleClient.String(),
 		ClientType:  authn.ClientPublic,
 		ClientURL:   "",
 		CallbackURL: "",
@@ -59,6 +64,7 @@ var ClientFixtures = ClientMap{
 		UserName:    "",
 		user:        nil,
 		ClientName:  "Monitoring",
+		ClientRole:  acl.RoleClient.String(),
 		ClientType:  authn.ClientConfidential,
 		ClientURL:   "",
 		CallbackURL: "",
@@ -75,6 +81,7 @@ var ClientFixtures = ClientMap{
 		UserName:    "",
 		user:        nil,
 		ClientName:  "Unknown",
+		ClientRole:  acl.RoleNone.String(),
 		ClientType:  authn.ClientUnknown,
 		ClientURL:   "",
 		CallbackURL: "",
@@ -91,6 +98,7 @@ var ClientFixtures = ClientMap{
 		UserName:    "",
 		user:        nil,
 		ClientName:  "Deleted Monitoring",
+		ClientRole:  acl.RoleClient.String(),
 		ClientType:  authn.ClientConfidential,
 		ClientURL:   "",
 		CallbackURL: "",

@@ -7,7 +7,6 @@ import (
 	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/i18n"
-
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -76,7 +75,7 @@ func (c *Config) SessionSettings(sess *entity.Session) *customize.Settings {
 	}
 
 	if sess.NoUser() && sess.IsClient() {
-		return c.Settings().ApplyACL(acl.Resources, acl.RoleClient).ApplyScope(sess.Scope())
+		return c.Settings().ApplyACL(acl.Resources, sess.ClientRole()).ApplyScope(sess.Scope())
 	}
 
 	user := sess.User()

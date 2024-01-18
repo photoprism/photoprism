@@ -67,9 +67,9 @@ func StartImport(router *gin.RouterGroup) {
 		// To avoid conflicts, uploads are imported from "import_path/upload/session_ref/timestamp".
 		if token := path.Base(srcFolder); token != "" && path.Dir(srcFolder) == UploadPath {
 			srcFolder = path.Join(UploadPath, s.RefID+token)
-			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", "granted"}, s.RefID, clean.Log(srcFolder), s.User().AclRole().String())
-		} else if acl.Resources.Deny(acl.ResourceFiles, s.User().AclRole(), acl.ActionManage) {
-			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", "denied"}, s.RefID, clean.Log(srcFolder), s.User().AclRole().String())
+			event.AuditInfo([]string{ClientIP(c), "session %s", "import uploads from %s as %s", "granted"}, s.RefID, clean.Log(srcFolder), s.UserRole().String())
+		} else if acl.Resources.Deny(acl.ResourceFiles, s.UserRole(), acl.ActionManage) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "import files from %s as %s", "denied"}, s.RefID, clean.Log(srcFolder), s.UserRole().String())
 			AbortForbidden(c)
 			return
 		}
@@ -99,7 +99,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		// Add imported files to albums if allowed.
 		if len(f.Albums) > 0 &&
-			acl.Resources.AllowAny(acl.ResourceAlbums, s.User().AclRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
+			acl.Resources.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
 			log.Debugf("import: adding files to album %s", clean.Log(strings.Join(f.Albums, " and ")))
 			opt.Albums = f.Albums
 		}

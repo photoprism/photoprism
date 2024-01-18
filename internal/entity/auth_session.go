@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -32,11 +33,14 @@ type Sessions []Session
 // Session represents a User session.
 type Session struct {
 	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
-	ClientIP      string          `gorm:"size:64;column:client_ip;index" json:"ClientIP" yaml:"ClientIP,omitempty"`
-	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
-	UserName      string          `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
-	user          *User           `gorm:"-"`
 	authToken     string          `gorm:"-"`
+	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	UserName      string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
+	user          *User           `gorm:"-"`
+	ClientUID     string          `gorm:"type:VARBINARY(42);index;default:'';" json:"ClientUID" yaml:"ClientUID,omitempty"`
+	ClientName    string          `gorm:"size:200;default:'';" json:"ClientName" yaml:"ClientName,omitempty"`
+	ClientIP      string          `gorm:"size:64;column:client_ip;index" json:"ClientIP" yaml:"ClientIP,omitempty"`
+	client        *Client         `gorm:"-"`
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
@@ -121,7 +125,7 @@ func DeleteClientSessions(clientUID string, authMethod authn.MethodType, limit i
 
 	found := Sessions{}
 
-	q := Db().Where("auth_id = ? AND auth_provider = ?", clientUID, authn.ProviderClient.String())
+	q := Db().Where("client_uid = ?", clientUID)
 
 	if !authMethod.IsDefault() {
 		q = q.Where("auth_method = ?", authMethod.String())
@@ -278,9 +282,100 @@ func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 	return scope.SetColumn("ID", m.ID)
 }
 
-// User returns the session's user.
+// SetClient updates the client of this session.
+func (m *Session) SetClient(c *Client) *Session {
+	if c == nil {
+		return m
+	}
+
+	m.client = c
+	m.ClientUID = c.UID()
+	m.ClientName = c.ClientName
+	m.AuthProvider = authn.ProviderClient.String()
+	m.AuthMethod = c.Method().String()
+	m.AuthScope = c.Scope()
+	m.SetUser(c.User())
+
+	return m
+}
+
+// SetClientName changes the session's client name.
+func (m *Session) SetClientName(s string) *Session {
+	if s == "" {
+		return m
+	}
+
+	m.ClientName = clean.Name(s)
+
+	return m
+}
+
+// Client returns the session's client.
+func (m *Session) Client() *Client {
+	if m == nil {
+		return &Client{}
+	} else if m.client != nil {
+		return m.client
+	} else if c := FindClientByUID(m.ClientUID); c != nil {
+		m.SetClient(c)
+		return m.client
+	}
+
+	return &Client{
+		UserUID:    m.UserUID,
+		UserName:   m.UserName,
+		ClientUID:  m.ClientUID,
+		ClientName: m.ClientName,
+		ClientRole: m.ClientRole().String(),
+		AuthScope:  m.Scope(),
+		AuthMethod: m.AuthMethod,
+	}
+}
+
+// ClientRole returns the session's client ACL role.
+func (m *Session) ClientRole() acl.Role {
+	if m.HasClient() {
+		return m.Client().AclRole()
+	} else if m.IsClient() {
+		return acl.RoleClient
+	}
+
+	return acl.RoleNone
+}
+
+// ClientInfo returns the session's client identifier string.
+func (m *Session) ClientInfo() string {
+	if m.HasClient() {
+		return m.Client().Name()
+	}
+
+	return m.ClientName
+}
+
+// HasClient checks if a client entity is assigned to the session.
+func (m *Session) HasClient() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.ClientUID != ""
+}
+
+// NoClient if this session has no client entity assigned.
+func (m *Session) NoClient() bool {
+	return !m.HasClient()
+}
+
+// IsClient checks if this session authenticates an API client.
+func (m *Session) IsClient() bool {
+	return authn.Provider(m.AuthProvider).IsClient()
+}
+
+// User returns the session's user entity.
 func (m *Session) User() *User {
-	if m.user != nil {
+	if m == nil {
+		return &User{}
+	} else if m.user != nil {
 		return m.user
 	} else if m.UserUID == "" {
 		return &User{}
@@ -292,6 +387,54 @@ func (m *Session) User() *User {
 	}
 
 	return &User{}
+}
+
+// UserRole returns the session's user ACL role.
+func (m *Session) UserRole() acl.Role {
+	return m.User().AclRole()
+}
+
+// UserInfo returns the session's user information.
+func (m *Session) UserInfo() string {
+	name := m.Username()
+
+	if name != "" {
+		return name
+	}
+
+	return m.UserRole().String()
+}
+
+// SetUser updates the user entity of this session.
+func (m *Session) SetUser(u *User) *Session {
+	if u == nil {
+		return m
+	}
+
+	// Update user.
+	m.user = u
+	m.UserUID = u.UserUID
+	m.UserName = u.UserName
+
+	// Update tokens.
+	m.SetPreviewToken(u.PreviewToken)
+	m.SetDownloadToken(u.DownloadToken)
+
+	return m
+}
+
+// HasUser checks if a user entity is assigned to the session.
+func (m *Session) HasUser() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.UserUID != ""
+}
+
+// NoUser checks if this session has no user entity assigned.
+func (m *Session) NoUser() bool {
+	return !m.HasUser()
 }
 
 // RefreshUser updates the cached user data.
@@ -306,24 +449,6 @@ func (m *Session) RefreshUser() *Session {
 	if u := FindUserByUID(m.UserUID); u != nil {
 		m.SetUser(u)
 	}
-
-	return m
-}
-
-// SetUser updates the session's user.
-func (m *Session) SetUser(u *User) *Session {
-	if u == nil {
-		return m
-	}
-
-	// Update user.
-	m.user = u
-	m.UserUID = u.UserUID
-	m.UserName = u.UserName
-
-	// Update tokens.
-	m.SetPreviewToken(u.PreviewToken)
-	m.SetDownloadToken(u.DownloadToken)
 
 	return m
 }
@@ -407,11 +532,6 @@ func (m *Session) SetProvider(provider authn.ProviderType) *Session {
 	m.AuthProvider = provider.String()
 
 	return m
-}
-
-// IsClient checks whether this session is used to authenticate an API client.
-func (m *Session) IsClient() bool {
-	return authn.Provider(m.AuthProvider).IsClient()
 }
 
 // ChangePassword changes the password of the current user.
@@ -603,20 +723,6 @@ func (m *Session) HasShares() bool {
 	} else {
 		return data.HasShares()
 	}
-}
-
-// NoUser checks if this session has no specific user assigned.
-func (m *Session) NoUser() bool {
-	return !m.HasUser()
-}
-
-// HasUser checks if a user account is assigned to the session.
-func (m *Session) HasUser() bool {
-	if m == nil {
-		return false
-	}
-
-	return m.UserUID != ""
 }
 
 // HasRegisteredUser checks if the session belongs to a registered user.

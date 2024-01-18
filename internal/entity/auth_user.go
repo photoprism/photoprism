@@ -48,7 +48,7 @@ type User struct {
 	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
-	UserName      string        `gorm:"size:255;index;" json:"Name" yaml:"Name,omitempty"`
+	UserName      string        `gorm:"size:200;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
 	BackupEmail   string        `gorm:"size:255;" json:"BackupEmail,omitempty" yaml:"BackupEmail,omitempty"`
@@ -627,9 +627,9 @@ func (m *User) SetRole(role string) *User {
 
 	switch role {
 	case "", "0", "false", "nil", "null", "nan":
-		m.UserRole = acl.RoleUnknown.String()
+		m.UserRole = acl.RoleNone.String()
 	default:
-		m.UserRole = acl.ValidRoles[role].String()
+		m.UserRole = acl.UserRoles[role].String()
 	}
 
 	return m
@@ -648,11 +648,11 @@ func (m *User) AclRole() acl.Role {
 	case m.SuperAdmin:
 		return acl.RoleAdmin
 	case role == "":
-		return acl.RoleUnknown
+		return acl.RoleNone
 	case m.UserName == "":
 		return acl.RoleVisitor
 	default:
-		return acl.ValidRoles[role]
+		return acl.UserRoles[role]
 	}
 }
 
@@ -754,7 +754,7 @@ func (m *User) IsUnknown() bool {
 		return true
 	}
 
-	return !rnd.IsUID(m.UserUID, UserUID) || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID || m.HasRole(acl.RoleUnknown)
+	return !rnd.IsUID(m.UserUID, UserUID) || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID || m.HasRole(acl.RoleNone)
 }
 
 // DeleteSessions deletes all active user sessions except those passed as argument.
@@ -867,7 +867,7 @@ func (m *User) Validate() (err error) {
 	}
 
 	// Check user role.
-	if acl.ValidRoles[m.UserRole] == "" {
+	if acl.UserRoles[m.UserRole] == "" {
 		return fmt.Errorf("user role %s is invalid", clean.LogQuote(m.UserRole))
 	}
 

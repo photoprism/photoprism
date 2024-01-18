@@ -128,7 +128,7 @@ var UserFixtures = UserMap{
 		UserUID:      "uriku0138hqql4bz",
 		UserName:     "jens.mander",
 		UserEmail:    "jens.mander@microsoft.com",
-		UserRole:     acl.RoleUnknown.String(),
+		UserRole:     acl.RoleNone.String(),
 		AuthProvider: authn.ProviderNone.String(),
 		SuperAdmin:   false,
 		DisplayName:  "Jens Mander",

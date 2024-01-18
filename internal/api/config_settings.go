@@ -91,7 +91,7 @@ func SaveSettings(router *gin.RouterGroup) {
 				return
 			}
 
-			if acl.Resources.DenyAll(acl.ResourceSettings, s.User().AclRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
+			if acl.Resources.DenyAll(acl.ResourceSettings, s.UserRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
 				c.JSON(http.StatusOK, user.Settings().Apply(settings).ApplyTo(conf.Settings().ApplyACL(acl.Resources, user.AclRole())))
 				return
 			} else if err := user.Settings().Apply(settings).Save(); err != nil {

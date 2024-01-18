@@ -39,7 +39,7 @@ func TestUserMap_Pointer(t *testing.T) {
 		r := UserFixtures.Pointer("monstera")
 		assert.Equal(t, "", r.UserName)
 		assert.Equal(t, "", r.Email())
-		assert.Equal(t, acl.RoleUnknown, r.AclRole())
+		assert.Equal(t, acl.RoleNone, r.AclRole())
 		assert.IsType(t, &User{}, r)
 	})
 }

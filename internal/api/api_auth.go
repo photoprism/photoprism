@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
 )
 
@@ -42,31 +43,31 @@ func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *
 	if s.IsClient() {
 		// Check ACL resource name against the permitted scope.
 		if !s.HasScope(resource.String()) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", "denied"}, s.AuthID, s.RefID, string(resource))
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", "denied"}, clean.Log(s.ClientInfo()), s.RefID, string(resource))
 			return entity.SessionStatusForbidden()
 		}
 
 		// Perform an authorization check based on the ACL defaults for client applications.
-		if acl.Resources.DenyAll(resource, acl.RoleClient, grants) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s", "denied"}, s.AuthID, s.RefID, grants.String(), string(resource))
+		if acl.Resources.DenyAll(resource, s.ClientRole(), grants) {
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s", "denied"}, clean.Log(s.ClientInfo()), s.RefID, grants.String(), string(resource))
 			return entity.SessionStatusForbidden()
 		}
 
 		// Additionally check the user authorization if the client belongs to a user account.
 		if s.NoUser() {
 			// Allow access based on the ACL defaults for client applications.
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s", "granted"}, s.AuthID, s.RefID, grants.String(), string(resource))
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s", "granted"}, clean.Log(s.ClientInfo()), s.RefID, grants.String(), string(resource))
 		} else if u := s.User(); !u.IsDisabled() && !u.IsUnknown() && u.IsRegistered() {
 			if acl.Resources.DenyAll(resource, u.AclRole(), grants) {
-				event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as %s", "denied"}, s.AuthID, s.RefID, grants.String(), string(resource), u.String())
+				event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as %s", "denied"}, clean.Log(s.ClientInfo()), s.RefID, grants.String(), string(resource), u.String())
 				return entity.SessionStatusForbidden()
 			}
 
 			// Allow access based on the user role.
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s as %s", "granted"}, s.AuthID, s.RefID, grants.String(), string(resource), u.String())
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s as %s", "granted"}, clean.Log(s.ClientInfo()), s.RefID, grants.String(), string(resource), u.String())
 		} else {
 			// Deny access if it is not a regular user account or the account has been disabled.
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as unauthorized user", "denied"}, s.AuthID, s.RefID, grants.String(), string(resource))
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as unauthorized user", "denied"}, clean.Log(s.ClientInfo()), s.RefID, grants.String(), string(resource))
 			return entity.SessionStatusForbidden()
 		}
 

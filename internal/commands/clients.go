@@ -3,19 +3,22 @@ package commands
 import (
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 // Usage hints for the client management subcommands.
 const (
-	ClientNameUsage        = "arbitrary name to help identify the `CLIENT` application"
-	ClientAuthScope        = "authorization `SCOPE` of the client e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all scopes)"
-	ClientAuthMethod       = "supported authentication `METHOD` for the client application"
-	ClientAuthExpires      = "access token lifetime in `SECONDS`, after which a new token must be created by the client (-1 to disable)"
-	ClientAuthTokens       = "maximum `NUMBER` of access tokens the client can create (-1 to disable)"
+	ClientNameUsage        = "`CLIENT` name to help identify the application"
+	ClientRoleUsage        = "client authorization `ROLE`"
+	ClientAuthScope        = "client authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)"
+	ClientAuthMethod       = "client authentication `METHOD`"
+	ClientAuthExpires      = "authentication `LIFETIME` in seconds, after which a new access token must be requested (-1 to disable the limit)"
+	ClientAuthTokens       = "maximum 'NUMBER' of access tokens that the client can request (-1 to disable the limit)"
 	ClientRegenerateSecret = "generate a new client secret and display it"
-	ClientDisable          = "deactivate authentication with this client"
-	ClientEnable           = "re-enable client authentication"
+	ClientEnable           = "enable client authentication if disabled"
+	ClientDisable          = "disable client authentication"
 )
 
 // ClientsCommands configures the client application subcommands.
@@ -40,6 +43,11 @@ var ClientAddFlags = []cli.Flag{
 		Usage: ClientNameUsage,
 	},
 	cli.StringFlag{
+		Name:  "role, r",
+		Usage: ClientRoleUsage,
+		Value: acl.RoleClient.String(),
+	},
+	cli.StringFlag{
 		Name:  "scope, s",
 		Usage: ClientAuthScope,
 	},
@@ -52,10 +60,12 @@ var ClientAddFlags = []cli.Flag{
 	cli.Int64Flag{
 		Name:  "expires, e",
 		Usage: ClientAuthExpires,
+		Value: entity.UnixDay,
 	},
 	cli.Int64Flag{
 		Name:  "tokens, t",
 		Usage: ClientAuthTokens,
+		Value: 10,
 	},
 }
 
@@ -64,6 +74,11 @@ var ClientModFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "name, n",
 		Usage: ClientNameUsage,
+	},
+	cli.StringFlag{
+		Name:  "role, r",
+		Usage: ClientRoleUsage,
+		Value: acl.RoleClient.String(),
 	},
 	cli.StringFlag{
 		Name:  "scope, s",
@@ -88,11 +103,11 @@ var ClientModFlags = []cli.Flag{
 		Usage: ClientRegenerateSecret,
 	},
 	cli.BoolFlag{
-		Name:  "disable",
-		Usage: ClientDisable,
-	},
-	cli.BoolFlag{
 		Name:  "enable",
 		Usage: ClientEnable,
+	},
+	cli.BoolFlag{
+		Name:  "disable",
+		Usage: ClientDisable,
 	},
 }

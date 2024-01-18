@@ -739,7 +739,7 @@ func TestUser_AclRole(t *testing.T) {
 	})
 	t.Run("Unauthorized", func(t *testing.T) {
 		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
-		assert.Equal(t, acl.RoleUnknown, p.AclRole())
+		assert.Equal(t, acl.RoleNone, p.AclRole())
 		assert.False(t, p.IsAdmin())
 		assert.False(t, p.IsVisitor())
 	})
@@ -943,7 +943,7 @@ func TestDeleteUser(t *testing.T) {
 			UserName:    "thomasdel2",
 			UserEmail:   "thomasdel2@example.com",
 			DisplayName: "Thomas Delete 2",
-			UserRole:    acl.RoleUnknown.String(),
+			UserRole:    acl.RoleNone.String(),
 		}
 
 		err := u.Delete()

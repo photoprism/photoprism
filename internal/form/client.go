@@ -13,6 +13,7 @@ type Client struct {
 	UserUID     string `json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
 	UserName    string `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
 	ClientName  string `json:"ClientName,omitempty" yaml:"ClientName,omitempty"`
+	ClientRole  string `json:"ClientRole,omitempty" yaml:"ClientRole,omitempty"`
 	AuthMethod  string `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
 	AuthScope   string `json:"AuthScope,omitempty" yaml:"AuthScope,omitempty"`
 	AuthExpires int64  `json:"AuthExpires,omitempty" yaml:"AuthExpires,omitempty"`
@@ -39,6 +40,7 @@ func NewClientFromCli(ctx *cli.Context) Client {
 	f := NewClient()
 
 	f.ClientName = clean.Name(ctx.String("name"))
+	f.ClientRole = clean.Name(ctx.String("role"))
 	f.AuthScope = clean.Scope(ctx.String("scope"))
 	f.AuthMethod = authn.Method(ctx.String("method")).String()
 
@@ -58,6 +60,11 @@ func NewClientFromCli(ctx *cli.Context) Client {
 // Name returns the sanitized client name.
 func (f *Client) Name() string {
 	return clean.Name(f.ClientName)
+}
+
+// Role returns the sanitized client role.
+func (f *Client) Role() string {
+	return clean.Role(f.ClientRole)
 }
 
 // Method returns the sanitized auth method name.
