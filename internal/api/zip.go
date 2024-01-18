@@ -100,7 +100,7 @@ func ZipCreate(router *gin.RouterGroup) {
 		// Create zip writer.
 		zipWriter := zip.NewWriter(newZipFile)
 		defer func(w *zip.Writer) {
-			logError("zip", w.Close())
+			logErr("zip", w.Close())
 		}(zipWriter)
 
 		var aliases = make(map[string]int)
@@ -127,7 +127,7 @@ func ZipCreate(router *gin.RouterGroup) {
 				log.Infof("zip: added %s as %s", clean.Log(file.FileName), clean.Log(alias))
 			} else {
 				log.Warnf("zip: media file %s is missing", clean.Log(file.FileName))
-				logError("zip", file.Update("FileMissing", true))
+				logErr("zip", file.Update("FileMissing", true))
 			}
 		}
 

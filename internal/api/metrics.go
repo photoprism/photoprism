@@ -42,13 +42,13 @@ func GetMetrics(router *gin.RouterGroup) {
 
 			metrics, err := reg.Gather()
 			if err != nil {
-				logError("metrics", err)
+				logErr("metrics", err)
 				return false
 			}
 
 			for _, metric := range metrics {
 				if _, err := expfmt.MetricFamilyToText(w, metric); err != nil {
-					logError("metrics", err)
+					logErr("metrics", err)
 					return false
 				}
 			}

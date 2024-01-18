@@ -91,7 +91,7 @@ func AlbumCover(router *gin.RouterGroup) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			log.Warnf("%s: %s is missing", albumCover, clean.Log(f.FileName))
-			logError(albumCover, f.Update("FileMissing", true))
+			logErr(albumCover, f.Update("FileMissing", true))
 			return
 		}
 
@@ -203,7 +203,7 @@ func LabelCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError(labelCover, f.Update("FileMissing", true))
+			logErr(labelCover, f.Update("FileMissing", true))
 
 			return
 		}

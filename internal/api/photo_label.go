@@ -131,10 +131,10 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if label.LabelSrc == classify.SrcManual || label.LabelSrc == classify.SrcKeyword {
-			logError("label", entity.Db().Delete(&label).Error)
+			logErr("label", entity.Db().Delete(&label).Error)
 		} else {
 			label.Uncertainty = 100
-			logError("label", entity.Db().Save(&label).Error)
+			logErr("label", entity.Db().Save(&label).Error)
 		}
 
 		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
@@ -144,7 +144,7 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		logError("label", p.RemoveKeyword(label.Label.LabelName))
+		logErr("label", p.RemoveKeyword(label.Label.LabelName))
 
 		if err := p.SaveLabels(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})

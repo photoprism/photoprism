@@ -67,7 +67,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	relatedFiles, err := w.relatedDownloads(a)
 
 	if err != nil {
-		w.logError(err)
+		w.logErr(err)
 		return false, err
 	}
 
@@ -118,13 +118,13 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 
 			localName := baseDir + file.RemoteName
 
-			if _, err := os.Stat(localName); err == nil {
+			if _, err = os.Stat(localName); err == nil {
 				log.Warnf("sync: download skipped, %s already exists", localName)
 				file.Status = entity.FileSyncExists
 				file.Error = ""
 				file.Errors = 0
 			} else {
-				if err := client.Download(file.RemoteName, localName, false); err != nil {
+				if err = client.Download(file.RemoteName, localName, false); err != nil {
 					file.Errors++
 					file.Error = err.Error()
 				} else {
@@ -139,8 +139,8 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				}
 			}
 
-			if err := entity.Db().Save(&file).Error; err != nil {
-				w.logError(err)
+			if err = entity.Db().Save(&file).Error; err != nil {
+				w.logErr(err)
 			} else {
 				files[i] = file
 			}

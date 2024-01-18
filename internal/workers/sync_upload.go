@@ -46,12 +46,12 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 		remoteDir := path.Dir(remoteName)
 
 		// Ensure remote folder exists.
-		if err := client.MkdirAll(remoteDir); err != nil {
+		if err = client.MkdirAll(remoteDir); err != nil {
 			log.Debugf("sync: %s", err)
 		}
 
-		if err := client.Upload(fileName, remoteName); err != nil {
-			w.logError(err)
+		if err = client.Upload(fileName, remoteName); err != nil {
+			w.logErr(err)
 			continue // try again next time
 		}
 
@@ -69,7 +69,7 @@ func (w *Sync) upload(a entity.Service) (complete bool, err error) {
 			return false, nil
 		}
 
-		w.logError(entity.Db().Save(&fileSync).Error)
+		w.logErr(entity.Db().Save(&fileSync).Error)
 	}
 
 	return false, nil

@@ -325,7 +325,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 		}
 
 		for _, label := range labels {
-			logError("labels", label.Delete())
+			logErr("labels", label.Delete())
 		}
 
 		UpdateClientConfig()
