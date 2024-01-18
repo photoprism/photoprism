@@ -12,10 +12,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
-// AuthClearCommand configures the command name, flags, and action.
-var AuthClearCommand = cli.Command{
-	Name:  "clear",
-	Usage: "Removes all registered sessions and access tokens",
+// AuthResetCommand configures the command name, flags, and action.
+var AuthResetCommand = cli.Command{
+	Name:  "reset",
+	Usage: "Removes all registered user and client sessions",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "trace, t",
@@ -26,11 +26,11 @@ var AuthClearCommand = cli.Command{
 			Usage: "assume \"yes\" and run non-interactively",
 		},
 	},
-	Action: authClearAction,
+	Action: authResetAction,
 }
 
-// authClearAction removes all sessions and resets the storage to a clean state.
-func authClearAction(ctx *cli.Context) error {
+// authResetAction removes all sessions and resets the related database table to a clean state.
+func authResetAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		confirmed := ctx.Bool("yes")
 
