@@ -5,27 +5,44 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/capture"
 )
 
-func TestAuthListCommand(t *testing.T) {
-	var err error
+func TestAuthCommands(t *testing.T) {
+	t.Run("List", func(t *testing.T) {
+		var err error
 
-	ctx := config.CliTestContext()
+		// Create test context with flags and arguments.
+		ctx := NewTestContext([]string{"auth", "ls"})
 
-	output := capture.Output(func() {
-		err = AuthListCommand.Run(ctx)
+		// Run command with test context.
+		output := capture.Output(func() {
+			err = AuthCommands.Run(ctx)
+		})
+
+		// Check command output for plausibility.
+		// t.Logf(output)
+		assert.NoError(t, err)
+		assert.Contains(t, output, "alice")
+		assert.Contains(t, output, "bob")
+		assert.Contains(t, output, "visitor")
 	})
+	t.Run("ListAlice", func(t *testing.T) {
+		var err error
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		// Create test context with flags and arguments.
+		ctx := NewTestContext([]string{"auth", "ls", "alice"})
 
-	t.Logf(output)
+		// Run command with test context.
+		output := capture.Output(func() {
+			err = AuthCommands.Run(ctx)
+		})
 
-	// Check the command output for plausibility.
-	assert.Contains(t, output, "alice")
-	assert.Contains(t, output, "bob")
-	assert.Contains(t, output, "visitor")
+		// Check command output for plausibility.
+		// t.Logf(output)
+		assert.NoError(t, err)
+		assert.Contains(t, output, "alice")
+		assert.NotContains(t, output, "bob")
+		assert.NotContains(t, output, "visitor")
+	})
 }

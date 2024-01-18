@@ -78,6 +78,13 @@ var countFlag = cli.UintFlag{
 	Value: 100,
 }
 
+// LogErr logs an error if the argument is not nil.
+func LogErr(err error) {
+	if err != nil {
+		log.Error(err)
+	}
+}
+
 // childAlreadyRunning tests if a .pid file at filePath is a running process.
 // it returns the pid value and the running status (true or false).
 func childAlreadyRunning(filePath string) (pid int, running bool) {
