@@ -1,9 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
+"PO-Revision-Date: 2024-01-19 17:11+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language: vi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 5.3.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:500
@@ -517,7 +523,7 @@ msgstr "Khách hàng"
 
 #: src/options/auth.js:24
 msgid "Client Credentials"
-msgstr ""
+msgstr "Thông tin xác thực của khách hàng"
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -1806,7 +1812,7 @@ msgstr "Xóa vĩnh viễn các tập tin để giải phóng bộ nhớ."
 
 #: src/options/auth.js:39
 msgid "Personal"
-msgstr ""
+msgstr "Riêng tư"
 
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:647
 msgid "Phone"
@@ -1931,7 +1937,7 @@ msgstr "Chiếu"
 
 #: src/page/admin/users.vue:106
 msgid "providerName"
-msgstr ""
+msgstr "tên nhà cung cấp"
 
 #: src/options/options.js:447
 msgid "Purple"
