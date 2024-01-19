@@ -105,7 +105,7 @@ func clientsAddAction(ctx *cli.Context) error {
 				client.UID(),
 				client.Name(),
 				client.UserInfo(),
-				client.Method().String(),
+				client.AuthInfo(),
 				client.AclRole().String(),
 				client.Scope(),
 				report.Bool(client.AuthEnabled, report.Yes, report.No),

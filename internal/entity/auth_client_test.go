@@ -244,10 +244,33 @@ func TestClient_NewSecret(t *testing.T) {
 	})
 }
 
-func TestClient_Method(t *testing.T) {
+func TestClient_Provider(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		client := NewClient()
+		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+	})
 	t.Run("Alice", func(t *testing.T) {
-		alice := ClientFixtures.Get("alice")
-		assert.Equal(t, alice.Method(), authn.MethodOAuth2)
+		client := ClientFixtures.Get("alice")
+		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+	})
+	t.Run("Bob", func(t *testing.T) {
+		client := ClientFixtures.Get("bob")
+		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+	})
+}
+
+func TestClient_Method(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		client := NewClient()
+		assert.Equal(t, authn.MethodOAuth2, client.Method())
+	})
+	t.Run("Alice", func(t *testing.T) {
+		client := ClientFixtures.Get("alice")
+		assert.Equal(t, authn.MethodOAuth2, client.Method())
+	})
+	t.Run("Bob", func(t *testing.T) {
+		client := ClientFixtures.Get("bob")
+		assert.Equal(t, authn.MethodOAuth2, client.Method())
 	})
 }
 
@@ -352,6 +375,30 @@ func TestClient_Expires(t *testing.T) {
 		r := m.Expires()
 
 		assert.Equal(t, r.String(), "24h0m0s")
+	})
+}
+
+func TestClient_UserInfo(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		assert.Equal(t, "", NewClient().UserInfo())
+	})
+	t.Run("Alice", func(t *testing.T) {
+		assert.Equal(t, "alice", ClientFixtures.Pointer("alice").UserInfo())
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		assert.Equal(t, "", ClientFixtures.Pointer("metrics").UserInfo())
+	})
+}
+
+func TestClient_AuthInfo(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		assert.Equal(t, "Client Credentials (OAuth2)", NewClient().AuthInfo())
+	})
+	t.Run("Alice", func(t *testing.T) {
+		assert.Equal(t, "Client Credentials (OAuth2)", ClientFixtures.Pointer("alice").AuthInfo())
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		assert.Equal(t, "Client Credentials (OAuth2)", ClientFixtures.Pointer("metrics").AuthInfo())
 	})
 }
 

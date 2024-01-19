@@ -26,24 +26,25 @@ type Clients []Client
 
 // Client represents a client application.
 type Client struct {
-	ClientUID   string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
-	UserUID     string     `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
-	UserName    string     `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
-	user        *User      `gorm:"-"`
-	ClientName  string     `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
-	ClientRole  string     `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
-	ClientType  string     `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
-	ClientURL   string     `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
-	CallbackURL string     `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
-	AuthMethod  string     `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
-	AuthScope   string     `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
-	AuthExpires int64      `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
-	AuthTokens  int64      `json:"AuthTokens" yaml:"AuthTokens,omitempty"` // TODO: Enforce limit for number of tokens.
-	AuthEnabled bool       `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
-	LastActive  int64      `json:"LastActive" yaml:"LastActive,omitempty"`
-	CreatedAt   time.Time  `json:"CreatedAt" yaml:"-"`
-	UpdatedAt   time.Time  `json:"UpdatedAt" yaml:"-"`
-	DeletedAt   *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	ClientUID    string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
+	UserUID      string     `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	UserName     string     `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
+	user         *User      `gorm:"-" yaml:"-"`
+	ClientName   string     `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
+	ClientRole   string     `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
+	ClientType   string     `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
+	ClientURL    string     `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
+	CallbackURL  string     `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
+	AuthProvider string     `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string     `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthScope    string     `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
+	AuthExpires  int64      `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
+	AuthTokens   int64      `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
+	AuthEnabled  bool       `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
+	LastActive   int64      `json:"LastActive" yaml:"LastActive,omitempty"`
+	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time  `json:"UpdatedAt" yaml:"-"`
+	DeletedAt    *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -54,18 +55,19 @@ func (Client) TableName() string {
 // NewClient returns a new client application instance.
 func NewClient() *Client {
 	return &Client{
-		UserUID:     "",
-		ClientName:  "",
-		ClientRole:  acl.RoleClient.String(),
-		ClientType:  authn.ClientConfidential,
-		ClientURL:   "",
-		CallbackURL: "",
-		AuthMethod:  authn.MethodOAuth2.String(),
-		AuthScope:   "",
-		AuthExpires: UnixHour,
-		AuthTokens:  5,
-		AuthEnabled: true,
-		LastActive:  0,
+		UserUID:      "",
+		ClientName:   "",
+		ClientRole:   acl.RoleClient.String(),
+		ClientType:   authn.ClientConfidential,
+		ClientURL:    "",
+		CallbackURL:  "",
+		AuthProvider: authn.ProviderClientCredentials.String(),
+		AuthMethod:   authn.MethodOAuth2.String(),
+		AuthScope:    "",
+		AuthExpires:  UnixHour,
+		AuthTokens:   5,
+		AuthEnabled:  true,
+		LastActive:   0,
 	}
 }
 
@@ -166,15 +168,37 @@ func (m *Client) SetUser(u *User) *Client {
 	return m
 }
 
-// UserInfo returns user identification info.
+// UserInfo reports the user that is assigned to this client.
 func (m *Client) UserInfo() string {
-	if m.UserUID == "" {
+	if m == nil {
+		return ""
+	} else if m.UserUID == "" {
 		return ""
 	} else if m.UserName != "" {
 		return m.UserName
 	}
 
 	return m.UserUID
+}
+
+// AuthInfo reports the authentication configured for this client.
+func (m *Client) AuthInfo() string {
+	if m == nil {
+		return ""
+	}
+
+	provider := m.Provider()
+	method := m.Method()
+
+	if method.IsDefault() {
+		return provider.Pretty()
+	}
+
+	if provider.IsDefault() {
+		return method.Pretty()
+	}
+
+	return fmt.Sprintf("%s (%s)", provider.Pretty(), method.Pretty())
 }
 
 // Create new entity in the database.
@@ -265,6 +289,11 @@ func (m *Client) WrongSecret(s string) bool {
 	}
 
 	return false
+}
+
+// Provider returns the client authentication provider.
+func (m *Client) Provider() authn.ProviderType {
+	return authn.Provider(m.AuthProvider)
 }
 
 // Method returns the client authentication method.

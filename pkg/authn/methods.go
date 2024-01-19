@@ -17,7 +17,7 @@ const (
 	MethodAccessToken MethodType = "access_token"
 	MethodOAuth2      MethodType = "oauth2"
 	MethodOIDC        MethodType = "oidc"
-	Method2FA         MethodType = "2fa"
+	MethodTOTP        MethodType = "totp"
 	MethodUnknown     MethodType = ""
 )
 
@@ -35,8 +35,8 @@ func (t MethodType) String() string {
 		return string(MethodOAuth2)
 	case "openid":
 		return string(MethodOIDC)
-	case "totp":
-		return string(Method2FA)
+	case "2fa", "otp":
+		return string(MethodTOTP)
 	default:
 		return string(t)
 	}
@@ -61,8 +61,8 @@ func (t MethodType) Pretty() string {
 		return "OAuth2"
 	case MethodOIDC:
 		return "OIDC"
-	case Method2FA:
-		return "2FA"
+	case MethodTOTP:
+		return "TOTP/2FA"
 	default:
 		return txt.UpperFirst(t.String())
 	}
@@ -77,8 +77,8 @@ func Method(s string) MethodType {
 		return MethodOAuth2
 	case "sso":
 		return MethodOIDC
-	case "two-factor", "totp":
-		return Method2FA
+	case "TOTP/2FA", "2FA", "2fa", "OTP", "otp":
+		return MethodTOTP
 	default:
 		return MethodType(clean.TypeLower(s))
 	}

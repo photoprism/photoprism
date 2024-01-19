@@ -33,7 +33,7 @@ func TestNewClientFromCli(t *testing.T) {
 		c := cli.NewContext(app, globalSet, nil)
 
 		client := NewClientFromCli(c)
-		assert.Equal(t, authn.Method2FA, client.Method())
+		assert.Equal(t, authn.MethodTOTP, client.Method())
 		assert.Equal(t, "webdav", client.Scope())
 		assert.Equal(t, "Test", client.Name())
 	})

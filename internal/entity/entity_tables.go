@@ -18,6 +18,7 @@ var Entities = Tables{
 	migrate.Version{}.TableName():   &migrate.Version{},
 	Error{}.TableName():             &Error{},
 	Password{}.TableName():          &Password{},
+	AuthKey{}.TableName():           &AuthKey{},
 	User{}.TableName():              &User{},
 	UserDetails{}.TableName():       &UserDetails{},
 	UserSettings{}.TableName():      &UserSettings{},

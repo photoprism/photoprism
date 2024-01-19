@@ -16,35 +16,36 @@ func TestProviderType_String(t *testing.T) {
 }
 
 func TestProviderType_IsRemote(t *testing.T) {
-	assert.Equal(t, false, ProviderLocal.IsRemote())
-	assert.Equal(t, true, ProviderLDAP.IsRemote())
-	assert.Equal(t, false, ProviderNone.IsRemote())
-	assert.Equal(t, false, ProviderDefault.IsRemote())
-	assert.Equal(t, false, ProviderUnknown.IsRemote())
+	assert.False(t, ProviderLocal.IsRemote())
+	assert.True(t, ProviderLDAP.IsRemote())
+	assert.False(t, ProviderNone.IsRemote())
+	assert.False(t, ProviderDefault.IsRemote())
+	assert.False(t, ProviderUnknown.IsRemote())
 }
 
 func TestProviderType_IsLocal(t *testing.T) {
-	assert.Equal(t, true, ProviderLocal.IsLocal())
-	assert.Equal(t, false, ProviderLDAP.IsLocal())
-	assert.Equal(t, false, ProviderNone.IsLocal())
-	assert.Equal(t, false, ProviderDefault.IsLocal())
-	assert.Equal(t, false, ProviderUnknown.IsLocal())
+	assert.True(t, ProviderLocal.IsLocal())
+	assert.False(t, ProviderLDAP.IsLocal())
+	assert.False(t, ProviderNone.IsLocal())
+	assert.False(t, ProviderDefault.IsLocal())
+	assert.False(t, ProviderUnknown.IsLocal())
 }
 
 func TestProviderType_IsDefault(t *testing.T) {
-	assert.Equal(t, false, ProviderLocal.IsDefault())
-	assert.Equal(t, false, ProviderLDAP.IsDefault())
-	assert.Equal(t, false, ProviderNone.IsDefault())
-	assert.Equal(t, true, ProviderDefault.IsDefault())
-	assert.Equal(t, true, ProviderUnknown.IsDefault())
+	assert.False(t, ProviderLocal.IsDefault())
+	assert.False(t, ProviderLDAP.IsDefault())
+	assert.False(t, ProviderNone.IsDefault())
+	assert.True(t, ProviderDefault.IsDefault())
+	assert.True(t, ProviderUnknown.IsDefault())
 }
 
 func TestProviderType_IsClient(t *testing.T) {
-	assert.Equal(t, false, ProviderLocal.IsClient())
-	assert.Equal(t, false, ProviderLDAP.IsClient())
-	assert.Equal(t, false, ProviderNone.IsClient())
-	assert.Equal(t, false, ProviderDefault.IsClient())
-	assert.Equal(t, true, ProviderClient.IsClient())
+	assert.False(t, ProviderLocal.IsClient())
+	assert.False(t, ProviderLDAP.IsClient())
+	assert.False(t, ProviderNone.IsClient())
+	assert.False(t, ProviderDefault.IsClient())
+	assert.True(t, ProviderClient.IsClient())
+	assert.True(t, ProviderClientCredentials.IsClient())
 }
 
 func TestProviderType_Equal(t *testing.T) {
