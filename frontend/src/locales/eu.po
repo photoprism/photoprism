@@ -2,8 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-01-19 17:11+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2024-01-19 18:51+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -286,7 +287,7 @@ msgstr "API gakoa"
 
 #: src/options/auth.js:25
 msgid "Application"
-msgstr ""
+msgstr "Aplikazio"
 
 #: src/dialog/photo/edit/details.vue:116
 msgid "Apply"
