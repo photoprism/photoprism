@@ -4,11 +4,10 @@ import (
 	"flag"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/pkg/authn"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNewClient(t *testing.T) {
