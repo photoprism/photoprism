@@ -10,8 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 5.3.1\n"
 "Generated-By: easygettext\n"
 
@@ -64,7 +63,7 @@ msgstr "Копіювання до буферу обміну по кліку."
 msgid "About"
 msgstr "Про"
 
-#: src/options/auth.js:25 src/options/auth.js:40
+#: src/options/auth.js:26 src/options/auth.js:43
 msgid "Access Token"
 msgstr "Токен доступу"
 
@@ -287,6 +286,10 @@ msgstr "Будь-які приватні фотографії та відео з
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
 msgstr "Ключ API"
+
+#: src/options/auth.js:25
+msgid "Application"
+msgstr ""
 
 #: src/dialog/photo/edit/details.vue:116
 msgid "Apply"
@@ -520,7 +523,7 @@ msgstr "Очищення індексу та кешу"
 msgid "Cleanup"
 msgstr "Прибирання"
 
-#: src/options/auth.js:11 src/options/auth.js:23
+#: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:42
 msgid "Client"
 msgstr "Клієнт"
 
@@ -665,8 +668,8 @@ msgid "Debug Logs"
 msgstr "Журнали налагодження"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:38 src/options/auth.js:39
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1351,7 +1354,7 @@ msgstr "Остання синхронізація"
 msgid "Latitude"
 msgstr "Широта"
 
-#: src/options/admin.js:39 src/options/auth.js:27
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1398,7 +1401,7 @@ msgstr "Ліміт досягнуто, показано перші %{n} файл
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Лінійний: дуже плавний, найкраща продуктивність"
 
-#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
+#: src/model/link.js:119 src/options/auth.js:29 src/options/auth.js:30
 msgid "Link"
 msgstr "Посилання"
 
@@ -1416,7 +1419,7 @@ msgstr "Live фото"
 msgid "Live Photos"
 msgstr "Живі фото"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
 msgstr "Місцевий"
 
@@ -1662,7 +1665,7 @@ msgstr "Немає попереджень або помилок із цим кл
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Нефотографічні та низькоякісні зображення потребують перевірки, перш ніж з’являться в результатах пошуку."
 
-#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "Жодного"
@@ -1813,7 +1816,7 @@ msgstr "Остаточно видалено"
 msgid "Permanently remove files to free up storage."
 msgstr "Видалити файли назавжди, щоб звільнити пам’ять."
 
-#: src/options/auth.js:39
+#: src/options/auth.js:41
 msgid "Personal"
 msgstr "Особисте"
 
@@ -2172,7 +2175,7 @@ msgstr "URL служби"
 msgid "Services"
 msgstr "Послуги"
 
-#: src/model/session.js:98 src/options/auth.js:41
+#: src/model/session.js:100 src/options/auth.js:40
 msgid "Session"
 msgstr "Сесія"
 

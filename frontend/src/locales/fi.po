@@ -60,7 +60,7 @@ msgstr "Napsauttamalla sitä voit kopioida sen leikepöydälle."
 msgid "About"
 msgstr "Tietoja"
 
-#: src/options/auth.js:25 src/options/auth.js:40
+#: src/options/auth.js:26 src/options/auth.js:43
 msgid "Access Token"
 msgstr "Access Token"
 
@@ -283,6 +283,10 @@ msgstr "Kaikki yksityiset kuvat ja videot pysyvät yksityisinä, eikä niitä ja
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
 msgstr "API-avain"
+
+#: src/options/auth.js:25
+msgid "Application"
+msgstr ""
 
 #: src/dialog/photo/edit/details.vue:116
 msgid "Apply"
@@ -516,7 +520,7 @@ msgstr "Indeksin ja välimuistin puhdistaminen"
 msgid "Cleanup"
 msgstr "Siivous"
 
-#: src/options/auth.js:11 src/options/auth.js:23
+#: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:42
 msgid "Client"
 msgstr "Asiakas"
 
@@ -661,8 +665,8 @@ msgid "Debug Logs"
 msgstr "Vianmäärityslokit"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:38 src/options/auth.js:39
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1347,7 +1351,7 @@ msgstr "Viimeisin synkronointi"
 msgid "Latitude"
 msgstr "Leveysaste"
 
-#: src/options/admin.js:39 src/options/auth.js:27
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1394,7 +1398,7 @@ msgstr "Raja saavutettu, näytetään ensimmäiset %{n} tiedostoa"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineaarinen: Erittäin tasainen, paras suorituskyky"
 
-#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
+#: src/model/link.js:119 src/options/auth.js:29 src/options/auth.js:30
 msgid "Link"
 msgstr "Linkki"
 
@@ -1412,7 +1416,7 @@ msgstr "Live Photo -kuva"
 msgid "Live Photos"
 msgstr "Kuvat"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
 msgstr "Paikallinen"
 
@@ -1658,7 +1662,7 @@ msgstr "Ei varoituksia tai virheitä, jotka sisältävät tämän avainsanan. Hu
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Muut kuin valokuvat ja heikkolaatuiset kuvat edellyttävät tarkistusta, ennen kuin ne näkyvät hakutuloksissa."
 
-#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "Ei mitään"
@@ -1809,7 +1813,7 @@ msgstr "Poistettu pysyvästi"
 msgid "Permanently remove files to free up storage."
 msgstr "Poista tiedostot pysyvästi vapauttaaksesi tallennustilaa."
 
-#: src/options/auth.js:39
+#: src/options/auth.js:41
 msgid "Personal"
 msgstr "Henkilökohtainen"
 
@@ -2168,7 +2172,7 @@ msgstr "Palvelun URL-osoite"
 msgid "Services"
 msgstr "Palvelun URL-osoite"
 
-#: src/model/session.js:98 src/options/auth.js:41
+#: src/model/session.js:100 src/options/auth.js:40
 msgid "Session"
 msgstr "Istunto"
 

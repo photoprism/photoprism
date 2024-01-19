@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2024-01-19 17:11+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
-"Language-Team: Indonesian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/id/>\n"
+"Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -64,7 +63,7 @@ msgstr "Satu klik akan menyalinnya ke clipboard Anda."
 msgid "About"
 msgstr "Tentang"
 
-#: src/options/auth.js:25 src/options/auth.js:40
+#: src/options/auth.js:26 src/options/auth.js:43
 msgid "Access Token"
 msgstr "Token Akses"
 
@@ -287,6 +286,10 @@ msgstr "Semua foto dan video pribadi tetap pribadi dan tidak akan dibagikan."
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
 msgstr "Kunci API"
+
+#: src/options/auth.js:25
+msgid "Application"
+msgstr ""
 
 #: src/dialog/photo/edit/details.vue:116
 msgid "Apply"
@@ -520,7 +523,7 @@ msgstr "Membersihkan indeks dan cache"
 msgid "Cleanup"
 msgstr "Pembersihan"
 
-#: src/options/auth.js:11 src/options/auth.js:23
+#: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:42
 msgid "Client"
 msgstr "Klien"
 
@@ -665,8 +668,8 @@ msgid "Debug Logs"
 msgstr "Log Debug"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:38 src/options/auth.js:39
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1351,7 +1354,7 @@ msgstr "Sinkronisasi Terakhir"
 msgid "Latitude"
 msgstr "Lintang"
 
-#: src/options/admin.js:39 src/options/auth.js:27
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1398,7 +1401,7 @@ msgstr "Batas tercapai, menampilkan %{n} file pertama"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: Sangat Halus, Performa Terbaik"
 
-#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
+#: src/model/link.js:119 src/options/auth.js:29 src/options/auth.js:30
 msgid "Link"
 msgstr "Tautan"
 
@@ -1416,7 +1419,7 @@ msgstr "Langsung"
 msgid "Live Photos"
 msgstr "Foto"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
 msgstr "Lokal"
 
@@ -1662,7 +1665,7 @@ msgstr "Tidak ada peringatan atau kesalahan yang mengandung kata kunci ini. Perh
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Gambar non-fotografis dan berkualitas rendah memerlukan peninjauan sebelum muncul di hasil pencarian."
 
-#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "Tidak ada"
@@ -1813,7 +1816,7 @@ msgstr "Dihapus permanen"
 msgid "Permanently remove files to free up storage."
 msgstr "Hapus file secara permanen untuk mengosongkan penyimpanan."
 
-#: src/options/auth.js:39
+#: src/options/auth.js:41
 msgid "Personal"
 msgstr "Pribadi"
 
@@ -2172,7 +2175,7 @@ msgstr "URL Layanan"
 msgid "Services"
 msgstr "URL Layanan"
 
-#: src/model/session.js:98 src/options/auth.js:41
+#: src/model/session.js:100 src/options/auth.js:40
 msgid "Session"
 msgstr "Sesi"
 

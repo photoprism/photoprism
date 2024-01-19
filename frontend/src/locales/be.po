@@ -3,13 +3,11 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "PO-Revision-Date: 2024-01-19 17:11+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 5.3.1\n"
 "Generated-By: easygettext\n"
 
@@ -62,7 +60,7 @@ msgstr "Клік скапіруе яго ў буфер абмену."
 msgid "About"
 msgstr "Аб"
 
-#: src/options/auth.js:25 src/options/auth.js:40
+#: src/options/auth.js:26 src/options/auth.js:43
 msgid "Access Token"
 msgstr "Токен доступу"
 
@@ -285,6 +283,10 @@ msgstr "Любыя прыватныя фатаграфіі і відэа зас�
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
 msgstr "Ключ API"
+
+#: src/options/auth.js:25
+msgid "Application"
+msgstr ""
 
 #: src/dialog/photo/edit/details.vue:116
 msgid "Apply"
@@ -518,7 +520,7 @@ msgstr "Ачыстка індэкса і кэша"
 msgid "Cleanup"
 msgstr "Прыбіраць"
 
-#: src/options/auth.js:11 src/options/auth.js:23
+#: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:42
 msgid "Client"
 msgstr "Кліент"
 
@@ -663,8 +665,8 @@ msgid "Debug Logs"
 msgstr "Журналы адладкі"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:38 src/options/auth.js:39
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1349,7 +1351,7 @@ msgstr "Апошняя сінхранізацыя"
 msgid "Latitude"
 msgstr "Шырата"
 
-#: src/options/admin.js:39 src/options/auth.js:27
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1396,7 +1398,7 @@ msgstr "Ліміт дасягнуты, паказваюцца першыя %{n} 
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Лінейны: вельмі гладкі, найлепшая прадукцыйнасць"
 
-#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
+#: src/model/link.js:119 src/options/auth.js:29 src/options/auth.js:30
 msgid "Link"
 msgstr "Спасылка"
 
@@ -1414,7 +1416,7 @@ msgstr "жыць"
 msgid "Live Photos"
 msgstr "Жывыя фатаграфіі"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
 msgstr "Мясцовы"
 
@@ -1660,7 +1662,7 @@ msgstr "Няма папярэджанняў або памылак з гэтым 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Нефатаграфічныя і нізкаякасныя выявы патрабуюць праверкі, перш чым яны з'явяцца ў выніках пошуку."
 
-#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "Няма"
@@ -1811,7 +1813,7 @@ msgstr "Выдалены назаўсёды"
 msgid "Permanently remove files to free up storage."
 msgstr "Выдаліце файлы назаўсёды, каб вызваліць сховішча."
 
-#: src/options/auth.js:39
+#: src/options/auth.js:41
 msgid "Personal"
 msgstr "Асабісты"
 
@@ -2170,7 +2172,7 @@ msgstr "URL службы"
 msgid "Services"
 msgstr "Паслугі"
 
-#: src/model/session.js:98 src/options/auth.js:41
+#: src/model/session.js:100 src/options/auth.js:40
 msgid "Session"
 msgstr "сесія"
 

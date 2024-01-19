@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2024-01-19 17:11+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
-"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
-"projects/photoprism/frontend/zh_Hant/>\n"
+"Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -64,7 +63,7 @@ msgstr "點擊以複製到剪貼簿。"
 msgid "About"
 msgstr "關於"
 
-#: src/options/auth.js:25 src/options/auth.js:40
+#: src/options/auth.js:26 src/options/auth.js:43
 msgid "Access Token"
 msgstr "访问令牌"
 
@@ -287,6 +286,10 @@ msgstr "所有私人相片跟影片都會保持私人，不會被分享。"
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
 msgstr "API鑰匙"
+
+#: src/options/auth.js:25
+msgid "Application"
+msgstr ""
 
 #: src/dialog/photo/edit/details.vue:116
 msgid "Apply"
@@ -520,7 +523,7 @@ msgstr "清理索引和缓存"
 msgid "Cleanup"
 msgstr "清理"
 
-#: src/options/auth.js:11 src/options/auth.js:23
+#: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:42
 msgid "Client"
 msgstr "客户"
 
@@ -665,8 +668,8 @@ msgid "Debug Logs"
 msgstr "除錯紀錄"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:38 src/options/auth.js:39
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1351,7 +1354,7 @@ msgstr "上次同步"
 msgid "Latitude"
 msgstr "緯度"
 
-#: src/options/admin.js:39 src/options/auth.js:27
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1398,7 +1401,7 @@ msgstr "到達上限，顯示前 %{n} 個檔案"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "線性：非常平滑，最佳性能"
 
-#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
+#: src/model/link.js:119 src/options/auth.js:29 src/options/auth.js:30
 msgid "Link"
 msgstr "連結"
 
@@ -1416,7 +1419,7 @@ msgstr "即時"
 msgid "Live Photos"
 msgstr "原況照片"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
 msgstr "当地"
 
@@ -1662,7 +1665,7 @@ msgstr "沒有包含此關鍵字的警告或錯誤。請注意，搜尋區分大
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "非照片和低品質圖像需要進行手動確認，才會出現在搜尋結果中。"
 
-#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "無"
@@ -1813,7 +1816,7 @@ msgstr "永久刪除"
 msgid "Permanently remove files to free up storage."
 msgstr "永久刪除檔案以釋放儲存空間。"
 
-#: src/options/auth.js:39
+#: src/options/auth.js:41
 msgid "Personal"
 msgstr "个人"
 
@@ -2172,7 +2175,7 @@ msgstr "服務 URL"
 msgid "Services"
 msgstr "服務"
 
-#: src/model/session.js:98 src/options/auth.js:41
+#: src/model/session.js:100 src/options/auth.js:40
 msgid "Session"
 msgstr "工作階段"
 

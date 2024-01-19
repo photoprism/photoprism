@@ -5,15 +5,12 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2024-01-19 17:11+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
-"Language-Team: Lithuanian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/lt/>\n"
+"Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
-"19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
-"1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
 "X-Generator: Weblate 5.3.1\n"
 "Generated-By: easygettext\n"
 
@@ -66,7 +63,7 @@ msgstr "Paspaudę jį nukopijuosite į iškarpinę."
 msgid "About"
 msgstr "Apie"
 
-#: src/options/auth.js:25 src/options/auth.js:40
+#: src/options/auth.js:26 src/options/auth.js:43
 msgid "Access Token"
 msgstr "Prieigos žetonas"
 
@@ -289,6 +286,10 @@ msgstr "Visos privačios nuotraukos ir vaizdo įrašai išlieka privatūs ir jai
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
 msgstr "API raktas"
+
+#: src/options/auth.js:25
+msgid "Application"
+msgstr ""
 
 #: src/dialog/photo/edit/details.vue:116
 msgid "Apply"
@@ -522,7 +523,7 @@ msgstr "Indekso ir talpyklos valymas"
 msgid "Cleanup"
 msgstr "Valymas"
 
-#: src/options/auth.js:11 src/options/auth.js:23
+#: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:42
 msgid "Client"
 msgstr "Klientas"
 
@@ -667,8 +668,8 @@ msgid "Debug Logs"
 msgstr "Derinimo žurnalai"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:38 src/options/auth.js:39
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1353,7 +1354,7 @@ msgstr "Sinchronizavimas"
 msgid "Latitude"
 msgstr "Platuma"
 
-#: src/options/admin.js:39 src/options/auth.js:27
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1400,7 +1401,7 @@ msgstr "Limitas pasiektas, rodomi pirmieji %{n} failai"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linijinis: Labai sklandus, geriausias našumas"
 
-#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
+#: src/model/link.js:119 src/options/auth.js:29 src/options/auth.js:30
 msgid "Link"
 msgstr "Nuoroda"
 
@@ -1418,7 +1419,7 @@ msgstr "Gyvai"
 msgid "Live Photos"
 msgstr "Nuotraukos"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
 msgstr "Vietinis"
 
@@ -1664,7 +1665,7 @@ msgstr "Jokių įspėjimų ar klaidų su šiuo raktažodžiu nėra. Atkreipkite 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Prieš rodant nefotografuotus ir prastos kokybės vaizdus paieškos rezultatuose, juos reikia peržiūrėti."
 
-#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "Nėra"
@@ -1815,7 +1816,7 @@ msgstr "Visam laikui ištrintas"
 msgid "Permanently remove files to free up storage."
 msgstr "Visam laikui pašalinkite failus, kad atlaisvintumėte saugyklą."
 
-#: src/options/auth.js:39
+#: src/options/auth.js:41
 msgid "Personal"
 msgstr "Asmeninis"
 
@@ -2174,7 +2175,7 @@ msgstr "Paslaugos URL"
 msgid "Services"
 msgstr "Paslaugos URL"
 
-#: src/model/session.js:98 src/options/auth.js:41
+#: src/model/session.js:100 src/options/auth.js:40
 msgid "Session"
 msgstr "Sesija"
 
