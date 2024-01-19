@@ -63,7 +63,7 @@ msgstr "Ett klick kopierar den till urklippshanteraren."
 msgid "About"
 msgstr "Om"
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr "Token för åtkomst"
 
@@ -140,7 +140,7 @@ msgstr "Lägg till i album"
 msgid "Added"
 msgstr "Tillagd"
 
-#: src/options/admin.js:6 src/options/admin.js:20
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
@@ -347,7 +347,7 @@ msgid "Aspect Ratio"
 msgstr "Bildförhållande"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Autentisering"
@@ -519,9 +519,13 @@ msgstr "Rensning av index och cache"
 msgid "Cleanup"
 msgstr "Rengöring"
 
-#: src/options/admin.js:11 src/options/admin.js:47
+#: src/options/auth.js:11 src/options/auth.js:23
 msgid "Client"
 msgstr "Kund"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr ""
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -589,7 +593,7 @@ msgstr "Innehåller %{n} bilder."
 msgid "Contains one picture."
 msgstr "Innehåller en bild."
 
-#: src/options/admin.js:9 src/options/admin.js:32
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Bidragsgivare"
 
@@ -659,11 +663,11 @@ msgstr "Dag"
 msgid "Debug Logs"
 msgstr "Felsökningsloggar"
 
-#: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
-#: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:317
-#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/options.js:317 src/options/options.js:381
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Standard"
 
@@ -1125,7 +1129,7 @@ msgstr "Grön"
 msgid "Grey"
 msgstr "Grått"
 
-#: src/options/admin.js:10 src/options/admin.js:36
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "Gäst"
 
@@ -1330,7 +1334,7 @@ msgstr "Lanczos: Bevarande av detaljer, minimala artefakter"
 msgid "Language"
 msgstr "Språk"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "Senast aktiv"
 
@@ -1346,7 +1350,7 @@ msgstr "Senaste synkronisering"
 msgid "Latitude"
 msgstr "Latitud"
 
-#: src/options/admin.js:49 src/options/admin.js:82
+#: src/options/admin.js:39 src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1393,7 +1397,7 @@ msgstr "Gränsen är nådd, visar de första %{n} filerna"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linjär: Mycket jämn, bästa prestanda"
 
-#: src/model/link.js:119 src/options/admin.js:50 src/options/admin.js:51
+#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
 msgid "Link"
 msgstr "Länk"
 
@@ -1411,8 +1415,7 @@ msgstr "Live"
 msgid "Live Photos"
 msgstr "Foton"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
 msgid "Local"
 msgstr "Lokal"
 
@@ -1574,7 +1577,7 @@ msgstr "Namn"
 msgid "Name too long"
 msgstr "Namnet är för långt"
 
-#: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:134
 #: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1658,8 +1661,8 @@ msgstr "Inga varningar eller fel som innehåller detta nyckelord. Observera att 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Bilder som inte är fotografiska eller av låg kvalitet måste granskas innan de visas i sökresultaten."
 
-#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:297 src/options/options.js:393
+#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/options.js:393
 msgid "None"
 msgstr "Ingen"
 
@@ -1930,6 +1933,10 @@ msgstr "Produktåterkoppling"
 msgid "Projection"
 msgstr "Projektion"
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr "leverantörsnamn"
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr "Lila"
@@ -1942,7 +1949,7 @@ msgstr "Kvalitetsfilter"
 msgid "Quality Score"
 msgstr "Kvalitetspoäng"
 
-#: src/page/admin/users.vue:93 src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "r"
 
@@ -2095,7 +2102,7 @@ msgstr "Skanna"
 msgid "Scans"
 msgstr "Skannar"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr "Omfattning"
 
@@ -2160,11 +2167,11 @@ msgstr "Tjänstens URL"
 msgid "Services"
 msgstr "Tjänstens URL"
 
-#: src/model/session.js:98 src/options/admin.js:62
+#: src/model/session.js:98 src/options/auth.js:39
 msgid "Session"
 msgstr "Sammanträde"
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "Sessions-ID"
 
@@ -2473,7 +2480,7 @@ msgstr "Försök igen med andra filter eller nyckelord."
 msgid "Type"
 msgstr "Typ"
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "Obehörig"
 
@@ -2607,9 +2614,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Använd förinställningar"
 
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29 src/model/user.js:230 src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:230 src/options/auth.js:7
 msgid "User"
 msgstr "Användare"
 
@@ -2665,12 +2672,12 @@ msgstr "Videor"
 msgid "View"
 msgstr "Visa"
 
-#: src/options/admin.js:8 src/options/admin.js:28
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "Visare"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "Besökare"
 
@@ -2789,9 +2796,6 @@ msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
-
-#~ msgid "providerName"
-#~ msgstr "leverantörsnamn"
 
 #~ msgid "Basic"
 #~ msgstr "Grundläggande"

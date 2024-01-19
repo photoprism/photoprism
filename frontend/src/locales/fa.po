@@ -63,7 +63,7 @@ msgstr "یک کلیک آن را در کلیپ بورد شما کپی می کند
 msgid "About"
 msgstr "درباره"
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr "نشانه دسترسی"
 
@@ -140,7 +140,7 @@ msgstr "افزودن به آلبوم"
 msgid "Added"
 msgstr "اضافه شده"
 
-#: src/options/admin.js:6 src/options/admin.js:20
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "مدیر"
 
@@ -347,7 +347,7 @@ msgid "Aspect Ratio"
 msgstr "نسبت ابعاد"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "احراز هویت"
@@ -519,9 +519,13 @@ msgstr "پاک کردن فهرست و کش"
 msgid "Cleanup"
 msgstr "پاک کردن"
 
-#: src/options/admin.js:11 src/options/admin.js:47
+#: src/options/auth.js:11 src/options/auth.js:23
 msgid "Client"
 msgstr "مشتری"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr ""
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -589,7 +593,7 @@ msgstr "حاوی %{n} عکس است."
 msgid "Contains one picture."
 msgstr "حاوی یک تصویر است."
 
-#: src/options/admin.js:9 src/options/admin.js:32
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "مشارکت کننده"
 
@@ -659,11 +663,11 @@ msgstr "روز"
 msgid "Debug Logs"
 msgstr "گزارش‌های اشکال زدایی"
 
-#: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
-#: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:317
-#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/options.js:317 src/options/options.js:381
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "پیشفرض"
 
@@ -1125,7 +1129,7 @@ msgstr "سبز"
 msgid "Grey"
 msgstr "خاکستری"
 
-#: src/options/admin.js:10 src/options/admin.js:36
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "مهمان"
 
@@ -1330,7 +1334,7 @@ msgstr "Lanczos: حفظ جزئیات، حداقل مصنوعات"
 msgid "Language"
 msgstr "زبان"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "آخرین فعالیت"
 
@@ -1346,7 +1350,7 @@ msgstr "آخرین همگام سازی"
 msgid "Latitude"
 msgstr "عرض جغرافیایی"
 
-#: src/options/admin.js:49 src/options/admin.js:82
+#: src/options/admin.js:39 src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1393,7 +1397,7 @@ msgstr "به حد مجاز رسیده است، اولین %{n} فایل را ن�
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "خطی: بسیار روان، بهترین عملکرد"
 
-#: src/model/link.js:119 src/options/admin.js:50 src/options/admin.js:51
+#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
 msgid "Link"
 msgstr "لینک"
 
@@ -1411,8 +1415,7 @@ msgstr "زنده"
 msgid "Live Photos"
 msgstr "تصاویر"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
 msgid "Local"
 msgstr "محلی"
 
@@ -1574,7 +1577,7 @@ msgstr "نام"
 msgid "Name too long"
 msgstr "نام خیلی طولانی است"
 
-#: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:134
 #: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1658,8 +1661,8 @@ msgstr "هیچ هشدار یا خطایی حاوی این کلمه کلیدی ن
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "تصاویر غیرعکاسی و با کیفیت پایین قبل از اینکه در نتایج جستجو ظاهر شوند نیاز به بررسی دارند."
 
-#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:297 src/options/options.js:393
+#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/options.js:393
 msgid "None"
 msgstr "هیچ یک"
 
@@ -1930,6 +1933,10 @@ msgstr "بازخورد محصول"
 msgid "Projection"
 msgstr "طرح ها"
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr "نام ارائه دهنده"
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr "بنفش"
@@ -1942,7 +1949,7 @@ msgstr "فیلتر کیفیت"
 msgid "Quality Score"
 msgstr "امتیاز کیفیت"
 
-#: src/page/admin/users.vue:93 src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "r"
 
@@ -2095,7 +2102,7 @@ msgstr "اسکن"
 msgid "Scans"
 msgstr "اسکن ها"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr "محدوده"
 
@@ -2160,11 +2167,11 @@ msgstr "URL سرویس"
 msgid "Services"
 msgstr "URL سرویس"
 
-#: src/model/session.js:98 src/options/admin.js:62
+#: src/model/session.js:98 src/options/auth.js:39
 msgid "Session"
 msgstr "جلسه"
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "شناسه جلسه"
 
@@ -2473,7 +2480,7 @@ msgstr "دوباره با استفاده از فیلترها یا کلمات ک�
 msgid "Type"
 msgstr "نوع"
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "غیرمجاز"
 
@@ -2607,9 +2614,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "از Presets استفاده کنید"
 
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29 src/model/user.js:230 src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:230 src/options/auth.js:7
 msgid "User"
 msgstr "کاربر"
 
@@ -2665,12 +2672,12 @@ msgstr "ویدیو ها"
 msgid "View"
 msgstr "نمایش"
 
-#: src/options/admin.js:8 src/options/admin.js:28
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "بیننده"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "بازدید کننده"
 
@@ -2789,9 +2796,6 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
-
-#~ msgid "providerName"
-#~ msgstr "نام ارائه دهنده"
 
 #~ msgid "Basic"
 #~ msgstr "پایه ای"

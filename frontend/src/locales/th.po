@@ -63,7 +63,7 @@ msgstr "คลิกเพื่อคัดลอกไปยังคลิป
 msgid "About"
 msgstr "เกี่ยวกับ"
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr "โทเค็นการเข้าถึง"
 
@@ -140,7 +140,7 @@ msgstr "เพิ่มไปยังอัลบั้ม"
 msgid "Added"
 msgstr "เพิ่มแล้ว"
 
-#: src/options/admin.js:6 src/options/admin.js:20
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "ผู้ดูแลระบบ"
 
@@ -347,7 +347,7 @@ msgid "Aspect Ratio"
 msgstr "อัตราส่วน"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "การรับรองความถูกต้อง"
@@ -519,9 +519,13 @@ msgstr "การทำความสะอาดดัชนีและแค
 msgid "Cleanup"
 msgstr "ทำความสะอาด"
 
-#: src/options/admin.js:11 src/options/admin.js:47
+#: src/options/auth.js:11 src/options/auth.js:23
 msgid "Client"
 msgstr "ลูกค้า"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr ""
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -589,7 +593,7 @@ msgstr "มี %{n} รูป"
 msgid "Contains one picture."
 msgstr "ประกอบด้วยหนึ่งภาพ"
 
-#: src/options/admin.js:9 src/options/admin.js:32
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "ผู้ให้ข้อมูล"
 
@@ -659,11 +663,11 @@ msgstr "วัน"
 msgid "Debug Logs"
 msgstr "บันทึกการดีบัก"
 
-#: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
-#: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:317
-#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/options.js:317 src/options/options.js:381
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "ค่าเริ่มต้น"
 
@@ -1125,7 +1129,7 @@ msgstr "สีเขียว"
 msgid "Grey"
 msgstr "สีเทา"
 
-#: src/options/admin.js:10 src/options/admin.js:36
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "แขก"
 
@@ -1330,7 +1334,7 @@ msgstr "Lanczos: การเก็บรายละเอียด สิ่�
 msgid "Language"
 msgstr "ภาษา"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "ใช้งานล่าสุด"
 
@@ -1346,7 +1350,7 @@ msgstr "ซิงค์ล่าสุด"
 msgid "Latitude"
 msgstr "ละติจูด"
 
-#: src/options/admin.js:49 src/options/admin.js:82
+#: src/options/admin.js:39 src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr "แอลดีเอพี/ค.ศ"
 
@@ -1393,7 +1397,7 @@ msgstr "ถึงขีดจำกัดแล้ว กำลังแสด�
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "เชิงเส้น: ราบรื่นมาก ประสิทธิภาพดีที่สุด"
 
-#: src/model/link.js:119 src/options/admin.js:50 src/options/admin.js:51
+#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
 msgid "Link"
 msgstr "ลิงค์"
 
@@ -1411,8 +1415,7 @@ msgstr "สด"
 msgid "Live Photos"
 msgstr "ภาพถ่าย"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
 msgid "Local"
 msgstr "ท้องถิ่น"
 
@@ -1574,7 +1577,7 @@ msgstr "ชื่อ"
 msgid "Name too long"
 msgstr "ชื่อยาวเกินไป"
 
-#: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:134
 #: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1658,8 +1661,8 @@ msgstr "ไม่มีคำเตือนหรือข้อผิดพล
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "รูปภาพที่ไม่ใช่ภาพถ่ายและคุณภาพต่ำต้องได้รับการตรวจสอบก่อนที่จะปรากฏในผลการค้นหา"
 
-#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:297 src/options/options.js:393
+#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/options.js:393
 msgid "None"
 msgstr "ไม่มี"
 
@@ -1930,6 +1933,10 @@ msgstr "คำติชมสินค้า"
 msgid "Projection"
 msgstr "การฉายภาพ"
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr "ชื่อผู้ให้บริการ"
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr "สีม่วง"
@@ -1942,7 +1949,7 @@ msgstr "ตัวกรองคุณภาพ"
 msgid "Quality Score"
 msgstr "คะแนนคุณภาพ"
 
-#: src/page/admin/users.vue:93 src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "ร"
 
@@ -2095,7 +2102,7 @@ msgstr "สแกน"
 msgid "Scans"
 msgstr "สแกน"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr "ขอบเขต"
 
@@ -2160,11 +2167,11 @@ msgstr "URL บริการ"
 msgid "Services"
 msgstr "URL บริการ"
 
-#: src/model/session.js:98 src/options/admin.js:62
+#: src/model/session.js:98 src/options/auth.js:39
 msgid "Session"
 msgstr "การประชุม"
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "รหัสเซสชัน"
 
@@ -2471,7 +2478,7 @@ msgstr "ลองอีกครั้งโดยใช้ตัวกรอง
 msgid "Type"
 msgstr "พิมพ์"
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "ไม่ได้รับอนุญาต"
 
@@ -2605,9 +2612,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "ใช้พรีเซ็ต"
 
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29 src/model/user.js:230 src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:230 src/options/auth.js:7
 msgid "User"
 msgstr "ผู้ใช้"
 
@@ -2663,12 +2670,12 @@ msgstr "วิดีโอ"
 msgid "View"
 msgstr "ดู"
 
-#: src/options/admin.js:8 src/options/admin.js:28
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "ผู้ดู"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "ผู้เข้าชม"
 
@@ -2785,9 +2792,6 @@ msgstr "คลังของคุณได้รับการวิเคร
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
-
-#~ msgid "providerName"
-#~ msgstr "ชื่อผู้ให้บริการ"
 
 #~ msgid "Basic"
 #~ msgstr "ขั้นพื้นฐาน"

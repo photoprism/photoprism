@@ -62,7 +62,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr ""
 
@@ -155,7 +155,7 @@ msgid "Added"
 msgstr ""
 
 #: src/options/admin.js:6
-#: src/options/admin.js:20
+#: src/options/auth.js:6
 msgid "Admin"
 msgstr ""
 
@@ -386,7 +386,7 @@ msgstr ""
 #: src/dialog/admin/users/add.vue:219
 #: src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:74
-#: src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr ""
@@ -601,9 +601,13 @@ msgstr ""
 msgid "Cleanup"
 msgstr ""
 
-#: src/options/admin.js:11
-#: src/options/admin.js:47
+#: src/options/auth.js:11
+#: src/options/auth.js:23
 msgid "Client"
+msgstr ""
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
 msgstr ""
 
 #: src/page/admin/sessions.vue:124
@@ -687,8 +691,8 @@ msgstr ""
 msgid "Contains one picture."
 msgstr ""
 
-#: src/options/admin.js:9
-#: src/options/admin.js:32
+#: src/options/admin.js:18
+#: src/options/auth.js:9
 msgid "Contributor"
 msgstr ""
 
@@ -766,15 +770,14 @@ msgstr ""
 msgid "Debug Logs"
 msgstr ""
 
-#: src/page/admin/sessions.vue:63
+#: src/options/admin.js:31
+#: src/page/admin/sessions.vue:60
 #: src/page/admin/users.vue:100
 #: src/model/session.js:61
-#: src/options/admin.js:44
-#: src/options/admin.js:45
-#: src/options/admin.js:59
-#: src/options/admin.js:60
-#: src/options/admin.js:74
-#: src/options/admin.js:93
+#: src/options/auth.js:20
+#: src/options/auth.js:21
+#: src/options/auth.js:36
+#: src/options/auth.js:37
 #: src/options/options.js:317
 #: src/options/options.js:381
 #: src/options/themes.js:492
@@ -1308,8 +1311,8 @@ msgstr ""
 msgid "Grey"
 msgstr ""
 
-#: src/options/admin.js:10
-#: src/options/admin.js:36
+#: src/options/admin.js:22
+#: src/options/auth.js:10
 msgid "Guest"
 msgstr ""
 
@@ -1561,7 +1564,7 @@ msgid "Language"
 msgstr ""
 
 #: src/page/admin/sessions.vue:92
-#: src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr ""
 
@@ -1578,8 +1581,8 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: src/options/admin.js:49
-#: src/options/admin.js:82
+#: src/options/admin.js:39
+#: src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr ""
 
@@ -1639,8 +1642,8 @@ msgid "Linear: Very Smooth, Best Performance"
 msgstr ""
 
 #: src/model/link.js:119
-#: src/options/admin.js:50
-#: src/options/admin.js:51
+#: src/options/auth.js:27
+#: src/options/auth.js:28
 msgid "Link"
 msgstr ""
 
@@ -1662,10 +1665,9 @@ msgstr ""
 msgid "Live Photos"
 msgstr ""
 
-#: src/options/admin.js:46
-#: src/options/admin.js:48
-#: src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35
+#: src/options/auth.js:22
+#: src/options/auth.js:25
 msgid "Local"
 msgstr ""
 
@@ -1865,8 +1867,8 @@ msgstr ""
 msgid "Name too long"
 msgstr ""
 
-#: src/page/admin/sessions.vue:77
-#: src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74
+#: src/page/admin/users.vue:134
 #: src/options/options.js:426
 #: src/options/options.js:436
 #: src/page/settings/services.vue:54
@@ -1976,9 +1978,8 @@ msgstr ""
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 
-#: src/options/admin.js:52
-#: src/options/admin.js:86
-#: src/options/admin.js:101
+#: src/options/admin.js:43
+#: src/options/auth.js:29
 #: src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
@@ -2293,6 +2294,10 @@ msgstr ""
 msgid "Projection"
 msgstr ""
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr ""
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr ""
@@ -2306,7 +2311,6 @@ msgid "Quality Score"
 msgstr ""
 
 #: src/page/admin/users.vue:93
-#: src/page/admin/users.vue:106
 msgid "r"
 msgstr ""
 
@@ -2488,7 +2492,7 @@ msgid "Scans"
 msgstr ""
 
 #: src/page/admin/sessions.vue:80
-#: src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr ""
 
@@ -2564,11 +2568,11 @@ msgid "Services"
 msgstr ""
 
 #: src/model/session.js:98
-#: src/options/admin.js:62
+#: src/options/auth.js:39
 msgid "Session"
 msgstr ""
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr ""
 
@@ -2919,7 +2923,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr ""
 
@@ -3083,12 +3087,12 @@ msgstr ""
 msgid "Use Presets"
 msgstr ""
 
+#: src/options/admin.js:10
 #: src/page/admin/sessions.vue:59
 #: src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:26
 #: src/model/user.js:230
-#: src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/auth.js:7
 msgid "User"
 msgstr ""
 
@@ -3160,14 +3164,14 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: src/options/admin.js:8
-#: src/options/admin.js:28
+#: src/options/admin.js:14
+#: src/options/auth.js:8
 msgid "Viewer"
 msgstr ""
 
 #: src/page/admin/sessions.vue:70
 #: src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr ""
 

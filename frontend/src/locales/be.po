@@ -60,7 +60,7 @@ msgstr "Клік скапіруе яго ў буфер абмену."
 msgid "About"
 msgstr "Аб"
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr "Токен доступу"
 
@@ -137,7 +137,7 @@ msgstr "Дадаць у альбом"
 msgid "Added"
 msgstr "Дададзена"
 
-#: src/options/admin.js:6 src/options/admin.js:20
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "Адмін"
 
@@ -344,7 +344,7 @@ msgid "Aspect Ratio"
 msgstr "Суадносіны бакоў"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Аўтэнтыфікацыя"
@@ -516,9 +516,13 @@ msgstr "Ачыстка індэкса і кэша"
 msgid "Cleanup"
 msgstr "Прыбіраць"
 
-#: src/options/admin.js:11 src/options/admin.js:47
+#: src/options/auth.js:11 src/options/auth.js:23
 msgid "Client"
 msgstr "Кліент"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr ""
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -586,7 +590,7 @@ msgstr "Змяшчае %{n} малюнкаў."
 msgid "Contains one picture."
 msgstr "Змяшчае адзін малюнак."
 
-#: src/options/admin.js:9 src/options/admin.js:32
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Укладальнік"
 
@@ -656,11 +660,11 @@ msgstr "Дзень"
 msgid "Debug Logs"
 msgstr "Журналы адладкі"
 
-#: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
-#: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:317
-#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/options.js:317 src/options/options.js:381
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Па змаўчанні"
 
@@ -1122,7 +1126,7 @@ msgstr "Зялёны"
 msgid "Grey"
 msgstr "Шэры"
 
-#: src/options/admin.js:10 src/options/admin.js:36
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "Госць"
 
@@ -1327,7 +1331,7 @@ msgstr "Lanczos: Захаванне дэталяў, мінімум артэфа�
 msgid "Language"
 msgstr "мова"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "Апошні актыўны"
 
@@ -1343,7 +1347,7 @@ msgstr "Апошняя сінхранізацыя"
 msgid "Latitude"
 msgstr "Шырата"
 
-#: src/options/admin.js:49 src/options/admin.js:82
+#: src/options/admin.js:39 src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1390,7 +1394,7 @@ msgstr "Ліміт дасягнуты, паказваюцца першыя %{n} 
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Лінейны: вельмі гладкі, найлепшая прадукцыйнасць"
 
-#: src/model/link.js:119 src/options/admin.js:50 src/options/admin.js:51
+#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
 msgid "Link"
 msgstr "Спасылка"
 
@@ -1408,8 +1412,7 @@ msgstr "жыць"
 msgid "Live Photos"
 msgstr "Жывыя фатаграфіі"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
 msgid "Local"
 msgstr "Мясцовы"
 
@@ -1571,7 +1574,7 @@ msgstr "Імя"
 msgid "Name too long"
 msgstr "Назва занадта доўгая"
 
-#: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:134
 #: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1655,8 +1658,8 @@ msgstr "Няма папярэджанняў або памылак з гэтым 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Нефатаграфічныя і нізкаякасныя выявы патрабуюць праверкі, перш чым яны з'явяцца ў выніках пошуку."
 
-#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:297 src/options/options.js:393
+#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/options.js:393
 msgid "None"
 msgstr "Няма"
 
@@ -1927,6 +1930,10 @@ msgstr "Водгук аб прадукце"
 msgid "Projection"
 msgstr "Праекцыя"
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr "імя пастаўшчыка"
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr "Фіялетавы"
@@ -1939,7 +1946,7 @@ msgstr "Фільтр якасці"
 msgid "Quality Score"
 msgstr "Паказчык якасці"
 
-#: src/page/admin/users.vue:93 src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "р"
 
@@ -2092,7 +2099,7 @@ msgstr "сканаваць"
 msgid "Scans"
 msgstr "Сканы"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr "Вобласць прымянення"
 
@@ -2157,11 +2164,11 @@ msgstr "URL службы"
 msgid "Services"
 msgstr "Паслугі"
 
-#: src/model/session.js:98 src/options/admin.js:62
+#: src/model/session.js:98 src/options/auth.js:39
 msgid "Session"
 msgstr "сесія"
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "Ідэнтыфікатар сеансу"
 
@@ -2470,7 +2477,7 @@ msgstr "Паўтарыце спробу, выкарыстоўваючы іншы
 msgid "Type"
 msgstr "Тып"
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "Несанкцыянаваны"
 
@@ -2604,9 +2611,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Выкарыстоўвайце налады"
 
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29 src/model/user.js:230 src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:230 src/options/auth.js:7
 msgid "User"
 msgstr "Карыстальнік"
 
@@ -2662,12 +2669,12 @@ msgstr "Відэа"
 msgid "View"
 msgstr "Выгляд"
 
-#: src/options/admin.js:8 src/options/admin.js:28
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "Глядач"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "Наведвальнік"
 
@@ -2786,9 +2793,6 @@ msgstr "Ваша бібліятэка пастаянна аналізуецца 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Павелічэнне/памяншэнне"
-
-#~ msgid "providerName"
-#~ msgstr "імя пастаўшчыка"
 
 #~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 #~ msgstr "Аўтаматычна ствараць файлы JPEG для іншых тыпаў файлаў, каб яны маглі адлюстроўвацца ў браўзеры."

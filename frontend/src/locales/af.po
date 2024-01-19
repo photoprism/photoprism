@@ -60,7 +60,7 @@ msgstr "'n Klik sal dit na jou knipbord kopieer."
 msgid "About"
 msgstr "Oor"
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr "Toegang Token"
 
@@ -137,7 +137,7 @@ msgstr "Voeg aan album"
 msgid "Added"
 msgstr "Bygevoeg"
 
-#: src/options/admin.js:6 src/options/admin.js:20
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "admin"
 
@@ -344,7 +344,7 @@ msgid "Aspect Ratio"
 msgstr "Aspekverhouding"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Stawing"
@@ -516,9 +516,13 @@ msgstr "Skoonmaak indeks en kas"
 msgid "Cleanup"
 msgstr "Maak skoon"
 
-#: src/options/admin.js:11 src/options/admin.js:47
+#: src/options/auth.js:11 src/options/auth.js:23
 msgid "Client"
 msgstr "Kliënt"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr ""
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -586,7 +590,7 @@ msgstr "Bevat %{n} fotos."
 msgid "Contains one picture."
 msgstr "Bevat een foto."
 
-#: src/options/admin.js:9 src/options/admin.js:32
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Bydraer"
 
@@ -656,11 +660,11 @@ msgstr "Dag"
 msgid "Debug Logs"
 msgstr "Ontfout logs"
 
-#: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
-#: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:317
-#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/options.js:317 src/options/options.js:381
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Verstek"
 
@@ -1122,7 +1126,7 @@ msgstr "Groen"
 msgid "Grey"
 msgstr "Grys"
 
-#: src/options/admin.js:10 src/options/admin.js:36
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "Gas"
 
@@ -1327,7 +1331,7 @@ msgstr "Lanczos: Detailbewaring, minimale artefakte"
 msgid "Language"
 msgstr "Taal"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "Laas aktief"
 
@@ -1343,7 +1347,7 @@ msgstr "Laaste sinkronisering"
 msgid "Latitude"
 msgstr "Breedtegraad"
 
-#: src/options/admin.js:49 src/options/admin.js:82
+#: src/options/admin.js:39 src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1390,7 +1394,7 @@ msgstr "Limiet bereik, wys eerste %{n} lêers"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineêr: Baie glad, beste prestasie"
 
-#: src/model/link.js:119 src/options/admin.js:50 src/options/admin.js:51
+#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
 msgid "Link"
 msgstr "Skakel"
 
@@ -1408,8 +1412,7 @@ msgstr "Leef"
 msgid "Live Photos"
 msgstr "Regstreekse Foto's"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
 msgid "Local"
 msgstr "Plaaslik"
 
@@ -1571,7 +1574,7 @@ msgstr "Naam"
 msgid "Name too long"
 msgstr "Naam te lank"
 
-#: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:134
 #: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1655,8 +1658,8 @@ msgstr "Geen waarskuwings of foute wat hierdie sleutelwoord bevat nie. Let daaro
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Nie-fotografiese en lae kwaliteit prente vereis 'n hersiening voordat dit in soekresultate verskyn."
 
-#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:297 src/options/options.js:393
+#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/options.js:393
 msgid "None"
 msgstr "Geen"
 
@@ -1927,6 +1930,10 @@ msgstr "Produkterugvoer"
 msgid "Projection"
 msgstr "Projeksie"
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr "verskaffer Naam"
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr "Pers"
@@ -1939,7 +1946,7 @@ msgstr "Kwaliteit filter"
 msgid "Quality Score"
 msgstr "Gehaltetelling"
 
-#: src/page/admin/users.vue:93 src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "r"
 
@@ -2092,7 +2099,7 @@ msgstr "Skandeer"
 msgid "Scans"
 msgstr "Skanderings"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr "Omvang"
 
@@ -2157,11 +2164,11 @@ msgstr "Diens-URL"
 msgid "Services"
 msgstr "Dienste"
 
-#: src/model/session.js:98 src/options/admin.js:62
+#: src/model/session.js:98 src/options/auth.js:39
 msgid "Session"
 msgstr "Sessie"
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "Sessie ID"
 
@@ -2470,7 +2477,7 @@ msgstr "Probeer weer met ander filters of sleutelwoorde."
 msgid "Type"
 msgstr "Tik"
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "Ongemagtig"
 
@@ -2604,9 +2611,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Gebruik voorafinstellings"
 
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29 src/model/user.js:230 src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:230 src/options/auth.js:7
 msgid "User"
 msgstr "Gebruiker"
 
@@ -2662,12 +2669,12 @@ msgstr "Video's"
 msgid "View"
 msgstr "Beskou"
 
-#: src/options/admin.js:8 src/options/admin.js:28
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "Kyker"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "Besoeker"
 
@@ -2786,9 +2793,6 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
-
-#~ msgid "providerName"
-#~ msgstr "verskaffer Naam"
 
 #~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 #~ msgstr "Skep outomaties JPEG's vir ander lêertipes sodat dit in 'n blaaier vertoon kan word."

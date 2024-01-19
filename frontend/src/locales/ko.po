@@ -63,7 +63,7 @@ msgstr "클릭하면 클립보드에 복사됩니다."
 msgid "About"
 msgstr "정보"
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr "액세스 토큰"
 
@@ -140,7 +140,7 @@ msgstr "앨범에 추가"
 msgid "Added"
 msgstr "추가됨"
 
-#: src/options/admin.js:6 src/options/admin.js:20
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "관리자"
 
@@ -347,7 +347,7 @@ msgid "Aspect Ratio"
 msgstr "종횡비"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "인증"
@@ -519,9 +519,13 @@ msgstr "인덱스 및 캐시 정리"
 msgid "Cleanup"
 msgstr "정리"
 
-#: src/options/admin.js:11 src/options/admin.js:47
+#: src/options/auth.js:11 src/options/auth.js:23
 msgid "Client"
 msgstr "클라이언트"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr ""
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -589,7 +593,7 @@ msgstr "%{n}개의 사진이 포함되어 있습니다."
 msgid "Contains one picture."
 msgstr "한 장의 사진이 포함되어 있습니다."
 
-#: src/options/admin.js:9 src/options/admin.js:32
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "기여자"
 
@@ -659,11 +663,11 @@ msgstr "일"
 msgid "Debug Logs"
 msgstr "디버그 로그"
 
-#: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
-#: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:317
-#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/options.js:317 src/options/options.js:381
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "기본값"
 
@@ -1125,7 +1129,7 @@ msgstr "녹색"
 msgid "Grey"
 msgstr "회색"
 
-#: src/options/admin.js:10 src/options/admin.js:36
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "게스트"
 
@@ -1330,7 +1334,7 @@ msgstr "Lanczos: 디테일 보존, 최소한의 인공물"
 msgid "Language"
 msgstr "언어"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "마지막 활성"
 
@@ -1346,7 +1350,7 @@ msgstr "마지막 동기화"
 msgid "Latitude"
 msgstr "위도"
 
-#: src/options/admin.js:49 src/options/admin.js:82
+#: src/options/admin.js:39 src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1393,7 +1397,7 @@ msgstr "한도에 도달하여 처음 %{n} 파일을 표시합니다"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: 매우 부드럽고 최고의 성능"
 
-#: src/model/link.js:119 src/options/admin.js:50 src/options/admin.js:51
+#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
 msgid "Link"
 msgstr "링크"
 
@@ -1411,8 +1415,7 @@ msgstr "라이브"
 msgid "Live Photos"
 msgstr "라이브 포토"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
 msgid "Local"
 msgstr "로컬"
 
@@ -1574,7 +1577,7 @@ msgstr "이름"
 msgid "Name too long"
 msgstr "이름이 너무 깁니다"
 
-#: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:134
 #: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1658,8 +1661,8 @@ msgstr "이 키워드를 포함하는 경고 또는 오류가 없습니다. 검�
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "사진이 아닌 저품질 이미지는 검색 결과에 표시되기 전에 검토가 필요합니다."
 
-#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:297 src/options/options.js:393
+#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/options.js:393
 msgid "None"
 msgstr "없음"
 
@@ -1930,6 +1933,10 @@ msgstr "제품 피드백"
 msgid "Projection"
 msgstr "투사"
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr "공급자 이름"
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr "보라색"
@@ -1942,7 +1949,7 @@ msgstr "품질 필터"
 msgid "Quality Score"
 msgstr "품질 점수"
 
-#: src/page/admin/users.vue:93 src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "r"
 
@@ -2095,7 +2102,7 @@ msgstr "스켄"
 msgid "Scans"
 msgstr "스켄"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr "범위"
 
@@ -2160,11 +2167,11 @@ msgstr "서비스 URL"
 msgid "Services"
 msgstr "서비스"
 
-#: src/model/session.js:98 src/options/admin.js:62
+#: src/model/session.js:98 src/options/auth.js:39
 msgid "Session"
 msgstr "세션"
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "세션 ID"
 
@@ -2471,7 +2478,7 @@ msgstr "다른 필터 또는 키워드를 사용하여 다시 시도하십시오
 msgid "Type"
 msgstr "종류"
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "승인되지 않은"
 
@@ -2605,9 +2612,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "사전 설정 사용"
 
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29 src/model/user.js:230 src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:230 src/options/auth.js:7
 msgid "User"
 msgstr "사용자"
 
@@ -2663,12 +2670,12 @@ msgstr "동영상"
 msgid "View"
 msgstr "보기"
 
-#: src/options/admin.js:8 src/options/admin.js:28
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "뷰어"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "방문자"
 
@@ -2785,9 +2792,6 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "확대/축소"
-
-#~ msgid "providerName"
-#~ msgstr "공급자 이름"
 
 #~ msgid "Basic"
 #~ msgstr "기본"

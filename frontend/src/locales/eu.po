@@ -60,7 +60,7 @@ msgstr "Klik eginez gero, arbelean kopiatuko da."
 msgid "About"
 msgstr "Buruz"
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr "Sarbide-tokena"
 
@@ -137,7 +137,7 @@ msgstr "Gehitu albumera"
 msgid "Added"
 msgstr "Gehituta"
 
-#: src/options/admin.js:6 src/options/admin.js:20
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "Admin"
 
@@ -344,7 +344,7 @@ msgid "Aspect Ratio"
 msgstr "Aspektu-erlazioa"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Autentifikazioa"
@@ -516,9 +516,13 @@ msgstr "Indizea eta cachea garbitzea"
 msgid "Cleanup"
 msgstr "Garbitu"
 
-#: src/options/admin.js:11 src/options/admin.js:47
+#: src/options/auth.js:11 src/options/auth.js:23
 msgid "Client"
 msgstr "Bezeroa"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr ""
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -586,7 +590,7 @@ msgstr "%{n} irudi ditu."
 msgid "Contains one picture."
 msgstr "Irudi bat dauka."
 
-#: src/options/admin.js:9 src/options/admin.js:32
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Laguntzailea"
 
@@ -656,11 +660,11 @@ msgstr "Eguna"
 msgid "Debug Logs"
 msgstr "Arazte-erregistroak"
 
-#: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
-#: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:317
-#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/options.js:317 src/options/options.js:381
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Lehenetsia"
 
@@ -1122,7 +1126,7 @@ msgstr "Berdea"
 msgid "Grey"
 msgstr "Grisa"
 
-#: src/options/admin.js:10 src/options/admin.js:36
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "Gonbidatua"
 
@@ -1327,7 +1331,7 @@ msgstr "Lanczos: Xehetasunen kontserbazioa, artefaktu minimoak"
 msgid "Language"
 msgstr "Hizkuntza"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "Azken Aktiboa"
 
@@ -1343,7 +1347,7 @@ msgstr "Azken sinkronizazioa"
 msgid "Latitude"
 msgstr "Latitudea"
 
-#: src/options/admin.js:49 src/options/admin.js:82
+#: src/options/admin.js:39 src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1390,7 +1394,7 @@ msgstr "Muga iritsi da, lehen %{n} fitxategi erakusten"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineala: oso leuna, errendimendu onena"
 
-#: src/model/link.js:119 src/options/admin.js:50 src/options/admin.js:51
+#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
 msgid "Link"
 msgstr "Esteka"
 
@@ -1408,8 +1412,7 @@ msgstr "Zuzenean"
 msgid "Live Photos"
 msgstr "Zuzeneko Argazkiak"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
 msgid "Local"
 msgstr "Tokikoa"
 
@@ -1571,7 +1574,7 @@ msgstr "Izena"
 msgid "Name too long"
 msgstr "Izena luzeegia"
 
-#: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:134
 #: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1655,8 +1658,8 @@ msgstr "Ez dago gako-hitz hau duen abisurik edo errorerik. Kontuan izan bilaketa
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Argazkiak ez diren eta kalitate baxuko irudiak berrikusi behar dira bilaketa-emaitzetan agertu aurretik."
 
-#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:297 src/options/options.js:393
+#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/options.js:393
 msgid "None"
 msgstr "Bat ere ez"
 
@@ -1927,6 +1930,10 @@ msgstr "Produktuaren iritzia"
 msgid "Projection"
 msgstr "Proiekzioa"
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr "hornitzailearenIzena"
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr "Morea"
@@ -1939,7 +1946,7 @@ msgstr "Kalitate-iragazkia"
 msgid "Quality Score"
 msgstr "Kalitate-maila"
 
-#: src/page/admin/users.vue:93 src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "r"
 
@@ -2092,7 +2099,7 @@ msgstr "Eskaneatu"
 msgid "Scans"
 msgstr "Eskaneatzea"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr "Eremua"
 
@@ -2157,11 +2164,11 @@ msgstr "Zerbitzuaren URLa"
 msgid "Services"
 msgstr "Zerbitzuak"
 
-#: src/model/session.js:98 src/options/admin.js:62
+#: src/model/session.js:98 src/options/auth.js:39
 msgid "Session"
 msgstr "Saioa"
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "Saioaren ID"
 
@@ -2470,7 +2477,7 @@ msgstr "Saiatu berriro beste iragazki edo gako-hitz batzuk erabiliz."
 msgid "Type"
 msgstr "Mota"
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "Baimenik gabe"
 
@@ -2604,9 +2611,9 @@ msgstr "URLa"
 msgid "Use Presets"
 msgstr "Erabili aurrezarpenak"
 
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29 src/model/user.js:230 src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:230 src/options/auth.js:7
 msgid "User"
 msgstr "Erabiltzailea"
 
@@ -2662,12 +2669,12 @@ msgstr "Bideoak"
 msgid "View"
 msgstr "Ikusi"
 
-#: src/options/admin.js:8 src/options/admin.js:28
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "Ikusle"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "Bisitaria"
 
@@ -2786,9 +2793,6 @@ msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Handitu/txikiagotu"
-
-#~ msgid "providerName"
-#~ msgstr "hornitzailearenIzena"
 
 #~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 #~ msgstr "Sortu automatikoki JPEGak beste fitxategi mota batzuetarako, arakatzaile batean bistaratzeko."

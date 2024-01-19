@@ -60,7 +60,7 @@ msgstr "Ένα κλικ θα το αντιγράψει στο πρόχειρο."
 msgid "About"
 msgstr "Σχετικά"
 
-#: src/options/admin.js:61
+#: src/options/auth.js:38
 msgid "Access Token"
 msgstr "Token πρόσβασης"
 
@@ -137,7 +137,7 @@ msgstr "Προσθήκη στο άλμπουμ"
 msgid "Added"
 msgstr "Προστέθηκε"
 
-#: src/options/admin.js:6 src/options/admin.js:20
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "Διαχειριστής"
 
@@ -344,7 +344,7 @@ msgid "Aspect Ratio"
 msgstr "Αναλογία διαστάσεων"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Αυθεντικοποίηση"
@@ -516,9 +516,13 @@ msgstr "Καθαρισμός ευρετηρίου και cache"
 msgid "Cleanup"
 msgstr "Καθαρισμός"
 
-#: src/options/admin.js:11 src/options/admin.js:47
+#: src/options/auth.js:11 src/options/auth.js:23
 msgid "Client"
 msgstr "Πελάτης"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr ""
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -586,7 +590,7 @@ msgstr "Περιέχει %{n} εικόνες."
 msgid "Contains one picture."
 msgstr "Περιέχει μία εικόνα."
 
-#: src/options/admin.js:9 src/options/admin.js:32
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Συντελεστής"
 
@@ -656,11 +660,11 @@ msgstr "Ημέρα"
 msgid "Debug Logs"
 msgstr "Αρχεία καταγραφής σφαλμάτων"
 
-#: src/page/admin/sessions.vue:63 src/page/admin/users.vue:100
-#: src/model/session.js:61 src/options/admin.js:44 src/options/admin.js:45
-#: src/options/admin.js:59 src/options/admin.js:60 src/options/admin.js:74
-#: src/options/admin.js:93 src/options/options.js:317
-#: src/options/options.js:381 src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
+#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/options.js:317 src/options/options.js:381
+#: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
 msgstr "Προεπιλογή"
 
@@ -1122,7 +1126,7 @@ msgstr "Πράσινο"
 msgid "Grey"
 msgstr "Γκρι"
 
-#: src/options/admin.js:10 src/options/admin.js:36
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "Επισκέπτης"
 
@@ -1327,7 +1331,7 @@ msgstr "Lanczos: Διατήρηση λεπτομερειών, ελάχιστα �
 msgid "Language"
 msgstr "Γλώσσα"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "Τελευταία ενεργή"
 
@@ -1343,7 +1347,7 @@ msgstr "Τελευταίος συγχρονισμός"
 msgid "Latitude"
 msgstr "Γεωγραφικό πλάτος"
 
-#: src/options/admin.js:49 src/options/admin.js:82
+#: src/options/admin.js:39 src/options/auth.js:26
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1390,7 +1394,7 @@ msgstr "Επίτευξη ορίου, εμφάνιση των πρώτων %{n} �
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Γραμμικό: Πολύ ομοιόμορφο, βέλτιστη επίδοση"
 
-#: src/model/link.js:119 src/options/admin.js:50 src/options/admin.js:51
+#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
 msgid "Link"
 msgstr "Σύνδεσμος"
 
@@ -1408,8 +1412,7 @@ msgstr "Ζωντανό"
 msgid "Live Photos"
 msgstr "Φωτογραφίες"
 
-#: src/options/admin.js:46 src/options/admin.js:48 src/options/admin.js:78
-#: src/options/admin.js:97
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
 msgid "Local"
 msgstr "Τοπικό"
 
@@ -1571,7 +1574,7 @@ msgstr "Όνομα"
 msgid "Name too long"
 msgstr "Όνομα πολύ μεγάλο"
 
-#: src/page/admin/sessions.vue:77 src/page/admin/users.vue:133
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:134
 #: src/options/options.js:426 src/options/options.js:436
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1655,8 +1658,8 @@ msgstr "Δεν υπάρχουν προειδοποιήσεις ή σφάλματ
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Οι μη φωτογραφικές εικόνες και οι εικόνες χαμηλής ποιότητας απαιτούν επανεξέταση προτού εμφανιστούν στα αποτελέσματα αναζήτησης."
 
-#: src/options/admin.js:52 src/options/admin.js:86 src/options/admin.js:101
-#: src/options/options.js:297 src/options/options.js:393
+#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/options.js:393
 msgid "None"
 msgstr "Κανένα"
 
@@ -1927,6 +1930,10 @@ msgstr "Ανατροφοδότηση προϊόντος"
 msgid "Projection"
 msgstr "Προβολή"
 
+#: src/page/admin/users.vue:106
+msgid "providerName"
+msgstr "providerName"
+
 #: src/options/options.js:447
 msgid "Purple"
 msgstr "Μωβ"
@@ -1939,7 +1946,7 @@ msgstr "Φίλτρο ποιότητας"
 msgid "Quality Score"
 msgstr "Βαθμολογία ποιότητας"
 
-#: src/page/admin/users.vue:93 src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "r"
 
@@ -2092,7 +2099,7 @@ msgstr "Σάρωση"
 msgid "Scans"
 msgstr "Σαρώσεις"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 msgid "Scope"
 msgstr "Πεδίο εφαρμογής"
 
@@ -2157,11 +2164,11 @@ msgstr "URL υπηρεσίας"
 msgid "Services"
 msgstr "URL υπηρεσίας"
 
-#: src/model/session.js:98 src/options/admin.js:62
+#: src/model/session.js:98 src/options/auth.js:39
 msgid "Session"
 msgstr "Σύνοδος"
 
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "Αναγνωριστικό συνεδρίας"
 
@@ -2468,7 +2475,7 @@ msgstr "Δοκιμάστε ξανά χρησιμοποιώντας άλλα φί
 msgid "Type"
 msgstr "Τύπος"
 
-#: src/options/admin.js:13
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "Μη εξουσιοδοτημένο"
 
@@ -2602,9 +2609,9 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Χρήση Προεπιλογών"
 
-#: src/page/admin/sessions.vue:59 src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:29 src/model/user.js:230 src/options/admin.js:7
-#: src/options/admin.js:24
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:230 src/options/auth.js:7
 msgid "User"
 msgstr "Χρήστης"
 
@@ -2660,12 +2667,12 @@ msgstr "Βίντεο"
 msgid "View"
 msgstr "Προβολή"
 
-#: src/options/admin.js:8 src/options/admin.js:28
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "Θεατής"
 
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
-#: src/options/admin.js:12
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "Επισκέπτης"
 
@@ -2782,9 +2789,6 @@ msgstr "Η βιβλιοθήκη σας αναλύεται συνεχώς για 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Μεγέθυνση/ σμίκρυνση"
-
-#~ msgid "providerName"
-#~ msgstr "providerName"
 
 #~ msgid "Basic"
 #~ msgstr "Βασικό"
