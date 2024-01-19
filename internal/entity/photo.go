@@ -155,6 +155,9 @@ func NewUserPhoto(stackable bool, userUid string) Photo {
 // SavePhotoForm saves a model in the database using form data.
 func SavePhotoForm(model Photo, form form.Photo) error {
 	locChanged := model.PhotoLat != form.PhotoLat || model.PhotoLng != form.PhotoLng || model.PhotoCountry != form.PhotoCountry
+	oldTakenAt := model.TakenAt
+	oldTakenAtLocal := model.TakenAtLocal
+	takenAtChanged := oldTakenAt != form.TakenAt || oldTakenAtLocal != form.TakenAtLocal
 
 	if err := deepcopier.Copy(&model).From(form); err != nil {
 		return err
@@ -172,6 +175,10 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	model.UpdateDateFields()
+
+	if takenAtChanged {
+		model.UpdateDateFieldsOfAlbums(oldTakenAt)
+	}
 
 	details := model.GetDetails()
 

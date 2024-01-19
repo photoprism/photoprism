@@ -52,6 +52,8 @@ type Album struct {
 	AlbumYear        int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	AlbumMonth       int         `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`
 	AlbumDay         int         `gorm:"index:idx_albums_ymd;" json:"Day" yaml:"Day,omitempty"`
+	AlbumOldest		 time.Time	 `json:"Oldest" yaml:"Oldest"`
+	AlbumNewest 	 time.Time	 `json:"Newest" yaml:"Newest"`
 	AlbumFavorite    bool        `json:"Favorite" yaml:"Favorite,omitempty"`
 	AlbumPrivate     bool        `json:"Private" yaml:"Private,omitempty"`
 	Thumb            string      `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
@@ -137,8 +139,42 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 				log.Errorf("album: %s (add photo %s to albums)", err.Error(), photoUid)
 			}
 
-			// Refresh updated timestamp.
-			err = UpdateAlbum(albumUid, Values{"updated_at": TimePointer()})
+			// update the oldest or newest date of the album, if needed
+			var photo Photo
+			var album Album
+			var albumOldest time.Time
+			var albumNewest time.Time
+			if err := Db().Model(&Photo{}).Where("photo_uid = ?",
+				photoUid).First(&photo).Error; err == nil && photo.PhotoUID != "" {
+				takenAt := photo.TakenAt
+				if err := Db().Model(&Album{}).Where("album_uid = ?",
+					albumUid).First(&album).Error; err == nil && album.
+						AlbumUID != "" {
+					albumOldest = album.AlbumOldest
+					albumNewest = album.AlbumNewest
+
+					if before := takenAt.Before(albumOldest); before {
+						albumOldest = takenAt
+					} else if zero := albumOldest.IsZero(); zero {
+						albumOldest = takenAt
+					}
+
+					if after := takenAt.After(albumNewest); after {
+						albumNewest = takenAt
+					}
+				}
+
+			}
+
+			if !albumOldest.Equal(album.AlbumOldest) || !albumNewest.Equal(album.AlbumNewest) {
+				// Refresh updated timestamp and album oldest/newest values.
+				err = UpdateAlbum(
+					albumUid, Values{
+						"updated_at":  TimePointer(),
+						"albumOldest": albumOldest, "albumNewest": albumNewest,
+					},
+				)
+			}
 		}
 	}
 
@@ -788,6 +824,9 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 		return added
 	}
 
+	albumOldest := m.AlbumOldest
+	albumNewest := m.AlbumNewest
+
 	// Add album entries.
 	for _, uid := range UIDs {
 		if !rnd.IsUID(uid, PhotoUID) {
@@ -801,11 +840,34 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 		} else {
 			added = append(added, entry)
 		}
+
+		// update the oldest or newest date of the album, if needed
+		var photo Photo
+		if err := Db().Model(&Photo{}).Where("photo_uid = ?",
+			uid).First(&photo).Error; err == nil && photo.PhotoUID != "" {
+			takenAt := photo.TakenAt
+			if before := takenAt.Before(albumOldest); before {
+				albumOldest = takenAt
+			} else if zero := albumOldest.IsZero(); zero {
+				albumOldest = takenAt
+			}
+
+			if after := takenAt.After(albumNewest); after {
+				albumNewest = takenAt
+			}
+		}
 	}
 
-	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimePointer()}); err != nil {
-		log.Errorf("album: %s (update %s)", err.Error(), m)
+	// Refresh updated timestamp and album oldest/newest values.
+	if !albumOldest.Equal(m.AlbumOldest) || !albumNewest.Equal(m.AlbumNewest) {
+		if err := UpdateAlbum(
+			m.AlbumUID, Values{
+				"updated_at":  TimePointer(),
+				"albumOldest": albumOldest, "albumNewest": albumNewest,
+			},
+		); err != nil {
+			log.Errorf("album: %s (update %s)", err.Error(), m)
+		}
 	}
 
 	return added
@@ -816,6 +878,9 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 	if !m.HasID() {
 		return removed
 	}
+
+	updatedAlbumOldest := m.AlbumOldest
+	updatedAlbumNewest := m.AlbumNewest
 
 	for _, uid := range UIDs {
 		if !rnd.IsUID(uid, PhotoUID) {
@@ -829,11 +894,37 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 		} else {
 			removed = append(removed, entry)
 		}
+
+		// update the oldest or newest date of the album, if needed
+		var photo Photo
+		if err := Db().Model(&Photo{}).Where("photo_uid = ?", uid).First(&photo).Error; err == nil &&
+			photo.PhotoUID != "" {
+			takenAt := photo.TakenAt
+			if isOldest := takenAt.Equal(m.AlbumOldest); isOldest {
+				if oldestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, true, ""); err == nil {
+					// update the oldest of the album
+					updatedAlbumOldest = oldestPhoto.TakenAt
+				}
+			}
+			if isNewest := takenAt.Equal(m.AlbumNewest); isNewest {
+				if newestPhoto, err := AlbumOldestOrNewest(m.AlbumUID, false, ""); err == nil {
+					// update the newest of the album
+					updatedAlbumNewest = newestPhoto.TakenAt
+				}
+			}
+		}
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Values{"updated_at": TimePointer()}); err != nil {
-		log.Errorf("album: %s (update %s)", err.Error(), m)
+	if !updatedAlbumOldest.Equal(m.AlbumOldest) || !updatedAlbumNewest.Equal(m.AlbumNewest) {
+		if err := UpdateAlbum(
+			m.AlbumUID, Values{
+				"updated_at": TimePointer(), "albumOldest": updatedAlbumOldest,
+				"albumNewest": updatedAlbumNewest,
+			},
+		); err != nil {
+			log.Errorf("album: %s (update %s)", err.Error(), m)
+		}
 	}
 
 	return removed
@@ -842,4 +933,55 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 // Links returns all share links for this entity.
 func (m *Album) Links() Links {
 	return FindLinks("", m.AlbumUID)
+}
+
+func AlbumOldestOrNewest(albumUid string, isOldest bool, exceptPhotoUid string) (Photo, error) {
+	var photo Photo
+	var orderDirection string
+	if isOldest {
+		orderDirection = "ASC"
+	} else {
+		orderDirection = "DESC"
+	}
+
+	stmt := Db().Table("photos").Select("photos.*").Joins(
+		"JOIN photos_albums ON photos.photo_uid = "+
+			"photos_albums.photo_uid",
+	).Joins("JOIN albums ON photos_albums.album_uid = albums.album_uid").
+		Where("photos.photo_uid != ?", exceptPhotoUid).
+		Where("albums.album_uid = ?", albumUid).
+		Where("photos_albums.hidden = 0").
+		Order(
+			fmt.Sprintf(
+				"photos.taken_at %s, photos.photo_uid",
+				orderDirection,
+			),
+		)
+
+	if r := stmt.First(&photo); r.RecordNotFound() {
+		return Photo{}, nil
+	} else if r.Error != nil {
+		return Photo{}, r.Error
+	}
+
+	return photo, nil
+}
+
+func AlbumsOfPhoto(photoUid string) ([]Album, error) {
+	var albums []Album
+
+	stmt := Db().Table("albums").Select("albums.*").Joins(
+		"JOIN photos_albums ON albums.album_uid = "+
+			"photos_albums.album_uid",
+	).Joins("JOIN photos ON photos_albums.photo_uid = photos.photo_uid").
+		Where("photos.photo_uid = ?", photoUid).
+		Where("photos_albums.hidden = 0")
+
+	if r := stmt.Find(&albums); r.RecordNotFound() {
+		return albums, nil
+	} else if r.Error != nil {
+		return albums, r.Error
+	}
+
+	return albums, nil
 }
