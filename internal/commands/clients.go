@@ -13,6 +13,7 @@ const (
 	ClientNameUsage        = "`CLIENT` name to help identify the application"
 	ClientRoleUsage        = "client authorization `ROLE`"
 	ClientAuthScope        = "client authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)"
+	ClientAuthProvider     = "client authentication `PROVIDER`"
 	ClientAuthMethod       = "client authentication `METHOD`"
 	ClientAuthExpires      = "authentication `LIFETIME` in seconds, after which a new access token must be requested (-1 to disable the limit)"
 	ClientAuthTokens       = "maximum 'NUMBER' of access tokens that the client can request (-1 to disable the limit)"
@@ -52,6 +53,12 @@ var ClientAddFlags = []cli.Flag{
 		Usage: ClientAuthScope,
 	},
 	cli.StringFlag{
+		Name:   "provider, p",
+		Usage:  ClientAuthProvider,
+		Value:  authn.ProviderClientCredentials.String(),
+		Hidden: true,
+	},
+	cli.StringFlag{
 		Name:   "method, m",
 		Usage:  ClientAuthMethod,
 		Value:  authn.MethodOAuth2.String(),
@@ -83,6 +90,12 @@ var ClientModFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "scope, s",
 		Usage: ClientAuthScope,
+	},
+	cli.StringFlag{
+		Name:   "provider, p",
+		Usage:  ClientAuthProvider,
+		Value:  authn.ProviderClientCredentials.String(),
+		Hidden: true,
 	},
 	cli.StringFlag{
 		Name:   "method, m",

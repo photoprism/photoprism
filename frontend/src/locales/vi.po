@@ -55,7 +55,7 @@ msgstr "Một cú nhấp chuột sẽ sao chép nó vào clipboard của bạn."
 msgid "About"
 msgstr "Về"
 
-#: src/options/auth.js:38
+#: src/options/auth.js:25 src/options/auth.js:40
 msgid "Access Token"
 msgstr "Truy cập thẻ"
 
@@ -657,7 +657,7 @@ msgstr "Nhật ký gỡ lỗi"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
 #: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1342,7 +1342,7 @@ msgstr "Đồng bộ hóa lần cuối"
 msgid "Latitude"
 msgstr "Vĩ độ"
 
-#: src/options/admin.js:39 src/options/auth.js:26
+#: src/options/admin.js:39 src/options/auth.js:27
 msgid "LDAP/AD"
 msgstr "LDAP/QUẢNG CÁO"
 
@@ -1389,7 +1389,7 @@ msgstr "Đã đạt đến giới hạn, hiển thị tệp %{n} đầu tiên"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Tuyến tính: Rất mượt mà, hiệu suất tốt nhất"
 
-#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
+#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
 msgid "Link"
 msgstr "liên kết"
 
@@ -1407,7 +1407,7 @@ msgstr "Sống"
 msgid "Live Photos"
 msgstr "Ảnh trực tiếp"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
 msgid "Local"
 msgstr "Địa phương"
 
@@ -1653,7 +1653,7 @@ msgstr "Không có cảnh báo hoặc lỗi có chứa từ khóa này. Lưu ý 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Hình ảnh không phải ảnh và chất lượng thấp cần được xem xét trước khi chúng xuất hiện trong kết quả tìm kiếm."
 
-#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "Không có"
@@ -1803,6 +1803,10 @@ msgstr "Đã xóa vĩnh viễn"
 #: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "Xóa vĩnh viễn các tập tin để giải phóng bộ nhớ."
+
+#: src/options/auth.js:39
+msgid "Personal"
+msgstr ""
 
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:647
 msgid "Phone"
@@ -2159,7 +2163,7 @@ msgstr "URL dịch vụ"
 msgid "Services"
 msgstr "Dịch vụ"
 
-#: src/model/session.js:98 src/options/auth.js:39
+#: src/model/session.js:98 src/options/auth.js:41
 msgid "Session"
 msgstr "Phiên họp"
 

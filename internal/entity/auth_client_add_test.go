@@ -9,7 +9,12 @@ import (
 
 func Test_AddClient(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		m := form.Client{ClientName: "test", AuthMethod: "basic", AuthScope: "all"}
+		m := form.Client{
+			ClientName:   "test",
+			AuthProvider: "client_credentials",
+			AuthMethod:   "oauth2",
+			AuthScope:    "all",
+		}
 
 		c, err := AddClient(m)
 
@@ -20,7 +25,12 @@ func Test_AddClient(t *testing.T) {
 		assert.Equal(t, "test", c.ClientName)
 	})
 	t.Run("ClientNameEmpty", func(t *testing.T) {
-		m := form.Client{ClientName: "", AuthMethod: "basic", AuthScope: "all"}
+		m := form.Client{
+			ClientName:   "",
+			AuthProvider: "client_credentials",
+			AuthMethod:   "oauth2",
+			AuthScope:    "all",
+		}
 
 		c, err := AddClient(m)
 

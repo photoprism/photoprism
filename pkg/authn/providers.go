@@ -16,6 +16,7 @@ const (
 	ProviderDefault           ProviderType = "default"
 	ProviderClient            ProviderType = "client"
 	ProviderClientCredentials ProviderType = "client_credentials"
+	ProviderAccessToken       ProviderType = "access_token"
 	ProviderLocal             ProviderType = "local"
 	ProviderLDAP              ProviderType = "ldap"
 	ProviderLink              ProviderType = "link"
@@ -37,6 +38,7 @@ var LocalProviders = list.List{
 var ClientProviders = list.List{
 	string(ProviderClient),
 	string(ProviderClientCredentials),
+	string(ProviderAccessToken),
 }
 
 // IsRemote checks if the provider is external.
@@ -92,6 +94,8 @@ func (t ProviderType) Pretty() string {
 		return "LDAP/AD"
 	case ProviderClient:
 		return "Client"
+	case ProviderAccessToken:
+		return "Access Token"
 	case ProviderClientCredentials:
 		return "Client Credentials"
 	default:

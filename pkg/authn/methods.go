@@ -12,13 +12,13 @@ type MethodType string
 
 // Authentication methods.
 const (
-	MethodDefault     MethodType = "default"
-	MethodSession     MethodType = "session"
-	MethodAccessToken MethodType = "access_token"
-	MethodOAuth2      MethodType = "oauth2"
-	MethodOIDC        MethodType = "oidc"
-	MethodTOTP        MethodType = "totp"
-	MethodUnknown     MethodType = ""
+	MethodDefault  MethodType = "default"
+	MethodSession  MethodType = "session"
+	MethodPersonal MethodType = "personal"
+	MethodOAuth2   MethodType = "oauth2"
+	MethodOIDC     MethodType = "oidc"
+	MethodTOTP     MethodType = "totp"
+	MethodUnknown  MethodType = ""
 )
 
 // IsDefault checks if this is the default method.
@@ -29,7 +29,7 @@ func (t MethodType) IsDefault() bool {
 // String returns the provider identifier as a string.
 func (t MethodType) String() string {
 	switch t {
-	case "":
+	case "", "access_token":
 		return string(MethodDefault)
 	case "oauth":
 		return string(MethodOAuth2)
@@ -55,8 +55,6 @@ func (t MethodType) NotEqual(s string) bool {
 // Pretty returns the provider identifier in an easy-to-read format.
 func (t MethodType) Pretty() string {
 	switch t {
-	case MethodAccessToken:
-		return "Access Token"
 	case MethodOAuth2:
 		return "OAuth2"
 	case MethodOIDC:
@@ -79,6 +77,8 @@ func Method(s string) MethodType {
 		return MethodOIDC
 	case "TOTP/2FA", "2FA", "2fa", "OTP", "otp":
 		return MethodTOTP
+	case "access_token":
+		return MethodDefault
 	default:
 		return MethodType(clean.TypeLower(s))
 	}

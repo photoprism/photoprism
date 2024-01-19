@@ -8,7 +8,7 @@ import (
 
 func TestMethodType_String(t *testing.T) {
 	assert.Equal(t, "default", MethodDefault.String())
-	assert.Equal(t, "access_token", MethodAccessToken.String())
+	assert.Equal(t, "personal", MethodPersonal.String())
 	assert.Equal(t, "oauth2", MethodOAuth2.String())
 	assert.Equal(t, "oidc", MethodOIDC.String())
 	assert.Equal(t, "totp", MethodTOTP.String())
@@ -17,7 +17,7 @@ func TestMethodType_String(t *testing.T) {
 
 func TestMethodType_IsDefault(t *testing.T) {
 	assert.Equal(t, true, MethodDefault.IsDefault())
-	assert.Equal(t, false, MethodAccessToken.IsDefault())
+	assert.Equal(t, false, MethodPersonal.IsDefault())
 	assert.Equal(t, false, MethodOAuth2.IsDefault())
 	assert.Equal(t, false, MethodOIDC.IsDefault())
 	assert.Equal(t, false, MethodTOTP.IsDefault())
@@ -26,7 +26,7 @@ func TestMethodType_IsDefault(t *testing.T) {
 
 func TestMethodType_Pretty(t *testing.T) {
 	assert.Equal(t, "Default", MethodDefault.Pretty())
-	assert.Equal(t, "Access Token", MethodAccessToken.Pretty())
+	assert.Equal(t, "Personal", MethodPersonal.Pretty())
 	assert.Equal(t, "OAuth2", MethodOAuth2.Pretty())
 	assert.Equal(t, "OIDC", MethodOIDC.Pretty())
 	assert.Equal(t, "TOTP/2FA", MethodTOTP.Pretty())
@@ -36,19 +36,16 @@ func TestMethodType_Pretty(t *testing.T) {
 func TestMethodType_Equal(t *testing.T) {
 	assert.True(t, MethodTOTP.Equal("totp"))
 	assert.False(t, MethodTOTP.Equal("2fa"))
-	assert.False(t, MethodAccessToken.Equal("2fa"))
 }
 
 func TestMethodType_NotEqual(t *testing.T) {
 	assert.True(t, MethodTOTP.NotEqual("2fa"))
 	assert.False(t, MethodTOTP.NotEqual("totp"))
-	assert.True(t, MethodAccessToken.NotEqual("2fa"))
 }
 
 func TestMethod(t *testing.T) {
 	assert.Equal(t, MethodDefault, Method("default"))
 	assert.Equal(t, MethodDefault, Method(""))
-	assert.Equal(t, MethodAccessToken, Method("access_token"))
 	assert.Equal(t, MethodOAuth2, Method("oauth2"))
 	assert.Equal(t, MethodOIDC, Method("oidc"))
 	assert.Equal(t, MethodOIDC, Method("sso"))

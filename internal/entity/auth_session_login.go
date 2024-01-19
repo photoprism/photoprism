@@ -117,7 +117,7 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (authn.Prov
 			event.LoginError(clientIp, "api", userName, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
 			return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
-		} else if !authSess.IsClient() || authSess.Method() != authn.MethodAccessToken || !authSess.HasScope(acl.ResourceSessions.String()) {
+		} else if !authSess.IsClient() || !authSess.HasScope(acl.ResourceSessions.String()) {
 			message := "unauthorized"
 			limiter.Login.Reserve(clientIp)
 			event.AuditErr([]string{clientIp, "session %s", "login as %s with auth secret", message}, m.RefID, clean.LogQuote(userName))

@@ -62,7 +62,7 @@ msgstr ""
 msgid "About"
 msgstr ""
 
-#: src/options/auth.js:38
+#: src/options/auth.js:25 src/options/auth.js:40
 msgid "Access Token"
 msgstr ""
 
@@ -664,7 +664,7 @@ msgstr ""
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
 #: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1349,7 +1349,7 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: src/options/admin.js:39 src/options/auth.js:26
+#: src/options/admin.js:39 src/options/auth.js:27
 msgid "LDAP/AD"
 msgstr ""
 
@@ -1396,7 +1396,7 @@ msgstr ""
 msgid "Linear: Very Smooth, Best Performance"
 msgstr ""
 
-#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
+#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
 msgid "Link"
 msgstr ""
 
@@ -1414,7 +1414,7 @@ msgstr ""
 msgid "Live Photos"
 msgstr ""
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
 msgid "Local"
 msgstr ""
 
@@ -1660,7 +1660,7 @@ msgstr ""
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 
-#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr ""
@@ -1809,6 +1809,10 @@ msgstr ""
 
 #: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
+msgstr ""
+
+#: src/options/auth.js:39
+msgid "Personal"
 msgstr ""
 
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:647
@@ -2166,7 +2170,7 @@ msgstr ""
 msgid "Services"
 msgstr ""
 
-#: src/model/session.js:98 src/options/auth.js:39
+#: src/model/session.js:98 src/options/auth.js:41
 msgid "Session"
 msgstr ""
 

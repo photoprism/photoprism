@@ -63,7 +63,7 @@ msgstr "Un clic lo copiará al portapapeles."
 msgid "About"
 msgstr "Acerca de"
 
-#: src/options/auth.js:38
+#: src/options/auth.js:25 src/options/auth.js:40
 msgid "Access Token"
 msgstr "Ficha de acceso"
 
@@ -665,7 +665,7 @@ msgstr "Registros de depuración"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
 #: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1350,7 +1350,7 @@ msgstr "Última sincronización"
 msgid "Latitude"
 msgstr "Latitud"
 
-#: src/options/admin.js:39 src/options/auth.js:26
+#: src/options/admin.js:39 src/options/auth.js:27
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1398,7 +1398,7 @@ msgstr "Límite alcanzado, mostrando los primeros %{n} archivos"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Lineal: Muy suave, el mejor rendimiento"
 
-#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
+#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
 msgid "Link"
 msgstr "Enlace"
 
@@ -1416,7 +1416,7 @@ msgstr "En vivo"
 msgid "Live Photos"
 msgstr "Fotos en vivo"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
 msgid "Local"
 msgstr "Local"
 
@@ -1662,7 +1662,7 @@ msgstr "No hay advertencias ni errores que contengan esta palabra clave. Tenga e
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Las imágenes no fotográficas y de baja calidad requieren una revisión antes que aparezcan en los resultados de la búsqueda."
 
-#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "Ninguno"
@@ -1812,6 +1812,10 @@ msgstr "Eliminado permanentemente"
 #: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "Elimina permanentemente los archivos para liberar almacenamiento."
+
+#: src/options/auth.js:39
+msgid "Personal"
+msgstr ""
 
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:647
 msgid "Phone"
@@ -2168,7 +2172,7 @@ msgstr "URL del servicio"
 msgid "Services"
 msgstr "Servicios"
 
-#: src/model/session.js:98 src/options/auth.js:39
+#: src/model/session.js:98 src/options/auth.js:41
 msgid "Session"
 msgstr "Sesión"
 

@@ -15,13 +15,15 @@ func NewClientAccessToken(clientName string, lifetime int64, scope string, user 
 	}
 
 	sess.SetClientName(clientName)
-	sess.SetProvider(authn.ProviderClient)
-	sess.SetMethod(authn.MethodAccessToken)
+	sess.SetProvider(authn.ProviderAccessToken)
 	sess.SetScope(scope)
 
 	if user != nil {
 		sess.SetUser(user)
 		sess.SetAuthToken(rnd.AuthSecret())
+		sess.SetMethod(authn.MethodPersonal)
+	} else {
+		sess.SetMethod(authn.MethodDefault)
 	}
 
 	return sess

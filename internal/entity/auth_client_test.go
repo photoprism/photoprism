@@ -419,11 +419,15 @@ func TestClient_SetFormValues(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var values = form.Client{ClientName: "New Name", AuthMethod: authn.MethodOAuth2.String(),
-			AuthScope:   "test",
-			AuthExpires: 4000,
-			AuthTokens:  3,
-			AuthEnabled: false}
+		var values = form.Client{
+			ClientName:   "New Name",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   authn.MethodOAuth2.String(),
+			AuthScope:    "test",
+			AuthExpires:  4000,
+			AuthTokens:   3,
+			AuthEnabled:  false,
+		}
 
 		c := m.SetFormValues(values)
 
@@ -439,11 +443,15 @@ func TestClient_SetFormValues(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var values = form.Client{ClientName: "Annika", AuthMethod: authn.MethodOAuth2.String(),
-			AuthScope:   "metrics",
-			AuthExpires: -4000,
-			AuthTokens:  -5,
-			AuthEnabled: true}
+		var values = form.Client{
+			ClientName:   "Annika",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   authn.MethodOAuth2.String(),
+			AuthScope:    "metrics",
+			AuthExpires:  -4000,
+			AuthTokens:   -5,
+			AuthEnabled:  true,
+		}
 
 		c := m.SetFormValues(values)
 
@@ -459,13 +467,16 @@ func TestClient_SetFormValues(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var values = form.Client{ClientName: "Friend",
-			AuthMethod:  authn.MethodOAuth2.String(),
-			AuthScope:   "test",
-			AuthExpires: 4000000,
-			AuthTokens:  3000000000,
-			AuthEnabled: true,
-			UserUID:     "uqxqg7i1kperxvu7"}
+		var values = form.Client{
+			ClientName:   "Friend",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   authn.MethodOAuth2.String(),
+			AuthScope:    "test",
+			AuthExpires:  4000000,
+			AuthTokens:   3000000000,
+			AuthEnabled:  true,
+			UserUID:      "uqxqg7i1kperxvu7",
+		}
 
 		c := m.SetFormValues(values)
 
@@ -478,7 +489,13 @@ func TestClient_SetFormValues(t *testing.T) {
 
 func TestClient_Validate(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "basic", AuthScope: "all"}
+		m := Client{
+			ClientName:   "test",
+			ClientType:   "test",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "basic",
+			AuthScope:    "all",
+		}
 
 		err := m.Validate()
 
@@ -487,7 +504,13 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("ClientNameEmpty", func(t *testing.T) {
-		m := Client{ClientName: "", ClientType: "test", AuthMethod: "basic", AuthScope: "all"}
+		m := Client{
+			ClientName:   "",
+			ClientType:   "test",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "basic",
+			AuthScope:    "all",
+		}
 
 		err := m.Validate()
 
@@ -496,7 +519,13 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("ClientTypeEmpty", func(t *testing.T) {
-		m := Client{ClientName: "test", ClientType: "", AuthMethod: "basic", AuthScope: "all"}
+		m := Client{
+			ClientName:   "test",
+			ClientType:   "",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "basic",
+			AuthScope:    "all",
+		}
 
 		err := m.Validate()
 
@@ -505,7 +534,13 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("AuthMethodEmpty", func(t *testing.T) {
-		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "", AuthScope: "all"}
+		m := Client{
+			ClientName:   "test",
+			ClientType:   "test",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "",
+			AuthScope:    "all",
+		}
 
 		err := m.Validate()
 
@@ -514,7 +549,13 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("AuthScopeEmpty", func(t *testing.T) {
-		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "basic", AuthScope: ""}
+		m := Client{
+			ClientName:   "test",
+			ClientType:   "test",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "basic",
+			AuthScope:    "",
+		}
 
 		err := m.Validate()
 

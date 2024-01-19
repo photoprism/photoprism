@@ -393,6 +393,10 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 		m.SetRole(frm.ClientRole)
 	}
 
+	if frm.AuthProvider != "" {
+		m.AuthProvider = frm.Provider().String()
+	}
+
 	if frm.AuthMethod != "" {
 		m.AuthMethod = frm.Method().String()
 	}

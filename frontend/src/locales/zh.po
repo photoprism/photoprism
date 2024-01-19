@@ -63,7 +63,7 @@ msgstr "点击复制到剪贴板。"
 msgid "About"
 msgstr "关于"
 
-#: src/options/auth.js:38
+#: src/options/auth.js:25 src/options/auth.js:40
 msgid "Access Token"
 msgstr "访问令牌"
 
@@ -665,7 +665,7 @@ msgstr "调试日志"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
 #: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1350,7 +1350,7 @@ msgstr "上次同步"
 msgid "Latitude"
 msgstr "纬度"
 
-#: src/options/admin.js:39 src/options/auth.js:26
+#: src/options/admin.js:39 src/options/auth.js:27
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1397,7 +1397,7 @@ msgstr "已达到限制，显示前 %{n} 个文件"
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linear: 非常平滑，性能最佳"
 
-#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
+#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
 msgid "Link"
 msgstr "链接"
 
@@ -1415,7 +1415,7 @@ msgstr "实况"
 msgid "Live Photos"
 msgstr "现场照片"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
 msgid "Local"
 msgstr "当地"
 
@@ -1661,7 +1661,7 @@ msgstr "没有包含此关键字的警告或错误，请注意，搜索区分大
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "非照片和低质量图像出现在搜索结果中前需要进行审查。"
 
-#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "无"
@@ -1812,6 +1812,10 @@ msgstr "已永久删除"
 #: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "永久删除文件以释放存储空间。"
+
+#: src/options/auth.js:39
+msgid "Personal"
+msgstr ""
 
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:647
 msgid "Phone"
@@ -2169,7 +2173,7 @@ msgstr "服务 URL"
 msgid "Services"
 msgstr "服务"
 
-#: src/model/session.js:98 src/options/auth.js:39
+#: src/model/session.js:98 src/options/auth.js:41
 msgid "Session"
 msgstr "会议"
 

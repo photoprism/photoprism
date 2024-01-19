@@ -63,7 +63,7 @@ msgstr "یک کلیک آن را در کلیپ بورد شما کپی می کند
 msgid "About"
 msgstr "درباره"
 
-#: src/options/auth.js:38
+#: src/options/auth.js:25 src/options/auth.js:40
 msgid "Access Token"
 msgstr "نشانه دسترسی"
 
@@ -665,7 +665,7 @@ msgstr "گزارش‌های اشکال زدایی"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
 #: src/page/admin/users.vue:100 src/model/session.js:61 src/options/auth.js:20
-#: src/options/auth.js:21 src/options/auth.js:36 src/options/auth.js:37
+#: src/options/auth.js:21 src/options/auth.js:37 src/options/auth.js:38
 #: src/options/options.js:317 src/options/options.js:381
 #: src/options/themes.js:492 src/page/places.vue:142
 msgid "Default"
@@ -1350,7 +1350,7 @@ msgstr "آخرین همگام سازی"
 msgid "Latitude"
 msgstr "عرض جغرافیایی"
 
-#: src/options/admin.js:39 src/options/auth.js:26
+#: src/options/admin.js:39 src/options/auth.js:27
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1397,7 +1397,7 @@ msgstr "به حد مجاز رسیده است، اولین %{n} فایل را ن�
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "خطی: بسیار روان، بهترین عملکرد"
 
-#: src/model/link.js:119 src/options/auth.js:27 src/options/auth.js:28
+#: src/model/link.js:119 src/options/auth.js:28 src/options/auth.js:29
 msgid "Link"
 msgstr "لینک"
 
@@ -1415,7 +1415,7 @@ msgstr "زنده"
 msgid "Live Photos"
 msgstr "تصاویر"
 
-#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:25
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:26
 msgid "Local"
 msgstr "محلی"
 
@@ -1661,7 +1661,7 @@ msgstr "هیچ هشدار یا خطایی حاوی این کلمه کلیدی ن
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "تصاویر غیرعکاسی و با کیفیت پایین قبل از اینکه در نتایج جستجو ظاهر شوند نیاز به بررسی دارند."
 
-#: src/options/admin.js:43 src/options/auth.js:29 src/options/options.js:297
+#: src/options/admin.js:43 src/options/auth.js:30 src/options/options.js:297
 #: src/options/options.js:393
 msgid "None"
 msgstr "هیچ یک"
@@ -1811,6 +1811,10 @@ msgstr "برای همیشه حذف شد"
 #: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
 msgstr "برای آزاد کردن فضای ذخیره سازی، فایل ها را برای همیشه حذف کنید."
+
+#: src/options/auth.js:39
+msgid "Personal"
+msgstr ""
 
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:647
 msgid "Phone"
@@ -2167,7 +2171,7 @@ msgstr "URL سرویس"
 msgid "Services"
 msgstr "URL سرویس"
 
-#: src/model/session.js:98 src/options/auth.js:39
+#: src/model/session.js:98 src/options/auth.js:41
 msgid "Session"
 msgstr "جلسه"
 

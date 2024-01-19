@@ -10,28 +10,30 @@ import (
 
 // Client represents client application settings.
 type Client struct {
-	UserUID     string `json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
-	UserName    string `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
-	ClientName  string `json:"ClientName,omitempty" yaml:"ClientName,omitempty"`
-	ClientRole  string `json:"ClientRole,omitempty" yaml:"ClientRole,omitempty"`
-	AuthMethod  string `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
-	AuthScope   string `json:"AuthScope,omitempty" yaml:"AuthScope,omitempty"`
-	AuthExpires int64  `json:"AuthExpires,omitempty" yaml:"AuthExpires,omitempty"`
-	AuthTokens  int64  `json:"AuthTokens,omitempty" yaml:"AuthTokens,omitempty"`
-	AuthEnabled bool   `json:"AuthEnabled,omitempty" yaml:"AuthEnabled,omitempty"`
+	UserUID      string `json:"UserUID,omitempty" yaml:"UserUID,omitempty"`
+	UserName     string `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
+	ClientName   string `json:"ClientName,omitempty" yaml:"ClientName,omitempty"`
+	ClientRole   string `json:"ClientRole,omitempty" yaml:"ClientRole,omitempty"`
+	AuthProvider string `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
+	AuthScope    string `json:"AuthScope,omitempty" yaml:"AuthScope,omitempty"`
+	AuthExpires  int64  `json:"AuthExpires,omitempty" yaml:"AuthExpires,omitempty"`
+	AuthTokens   int64  `json:"AuthTokens,omitempty" yaml:"AuthTokens,omitempty"`
+	AuthEnabled  bool   `json:"AuthEnabled,omitempty" yaml:"AuthEnabled,omitempty"`
 }
 
 // NewClient creates new client application settings.
 func NewClient() Client {
 	return Client{
-		UserUID:     "",
-		UserName:    "",
-		ClientName:  "",
-		AuthMethod:  authn.MethodOAuth2.String(),
-		AuthScope:   "",
-		AuthExpires: 3600,
-		AuthTokens:  5,
-		AuthEnabled: true,
+		UserUID:      "",
+		UserName:     "",
+		ClientName:   "",
+		AuthProvider: authn.ProviderClientCredentials.String(),
+		AuthMethod:   authn.MethodOAuth2.String(),
+		AuthScope:    "",
+		AuthExpires:  3600,
+		AuthTokens:   5,
+		AuthEnabled:  true,
 	}
 }
 
@@ -41,8 +43,9 @@ func NewClientFromCli(ctx *cli.Context) Client {
 
 	f.ClientName = clean.Name(ctx.String("name"))
 	f.ClientRole = clean.Name(ctx.String("role"))
-	f.AuthScope = clean.Scope(ctx.String("scope"))
+	f.AuthProvider = authn.Provider(ctx.String("provider")).String()
 	f.AuthMethod = authn.Method(ctx.String("method")).String()
+	f.AuthScope = clean.Scope(ctx.String("scope"))
 
 	if authn.MethodOAuth2.NotEqual(f.AuthMethod) {
 		f.AuthScope = "webdav"
@@ -65,6 +68,11 @@ func (f *Client) Name() string {
 // Role returns the sanitized client role.
 func (f *Client) Role() string {
 	return clean.Role(f.ClientRole)
+}
+
+// Provider returns the sanitized auth provider name.
+func (f *Client) Provider() authn.ProviderType {
+	return authn.Provider(f.AuthProvider)
 }
 
 // Method returns the sanitized auth method name.

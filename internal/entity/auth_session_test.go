@@ -479,7 +479,7 @@ func TestSession_AuthInfo(t *testing.T) {
 
 		i := m.AuthInfo()
 
-		assert.Equal(t, "Client (Access Token)", i)
+		assert.Equal(t, "Access Token (Personal)", i)
 	})
 }
 
@@ -534,27 +534,44 @@ func TestSession_SetScope(t *testing.T) {
 }
 
 func TestSession_SetMethod(t *testing.T) {
-	t.Run("EmptyMethod", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		s := &Session{
-			UserName:   "test",
-			RefID:      "sessxkkcxxxz",
-			AuthMethod: "Access Token",
+			UserName:     "test",
+			RefID:        "sessxkkcxxxz",
+			AuthProvider: authn.ProviderAccessToken.String(),
+			AuthMethod:   authn.MethodPersonal.String(),
 		}
 
 		m := s.SetMethod("")
 
-		assert.Equal(t, "Access Token", m.AuthMethod)
+		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
+		assert.Equal(t, authn.MethodPersonal, m.Method())
 	})
-	t.Run("NewMethod", func(t *testing.T) {
+	t.Run("Test", func(t *testing.T) {
 		s := &Session{
-			UserName:   "test",
-			RefID:      "sessxkkcxxxz",
-			AuthMethod: "Access Token",
+			UserName:     "test",
+			RefID:        "sessxkkcxxxz",
+			AuthProvider: authn.ProviderAccessToken.String(),
+			AuthMethod:   authn.MethodPersonal.String(),
 		}
 
 		m := s.SetMethod("Test")
 
-		assert.Equal(t, "Test", m.AuthMethod)
+		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
+		assert.Equal(t, authn.Method("Test"), m.Method())
+	})
+	t.Run("Test", func(t *testing.T) {
+		s := &Session{
+			UserName:     "test",
+			RefID:        "sessxkkcxxxz",
+			AuthProvider: authn.ProviderAccessToken.String(),
+			AuthMethod:   authn.MethodPersonal.String(),
+		}
+
+		m := s.SetMethod(authn.MethodSession)
+
+		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
+		assert.Equal(t, authn.MethodSession, m.Method())
 	})
 }
 
