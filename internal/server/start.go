@@ -44,12 +44,6 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Register common middleware.
 	router.Use(Recovery(), Security(conf), Logger())
 
-	// Create REST API router group.
-	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))
-
-	// Initialize package extensions.
-	Ext().Init(router, conf)
-
 	// Enable HTTP compression?
 	switch conf.HttpCompression() {
 	case "gzip":
@@ -65,6 +59,12 @@ func Start(ctx context.Context, conf *config.Config) {
 			})))
 		log.Infof("server: enabled gzip compression")
 	}
+
+	// Create REST API router group.
+	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))
+
+	// Initialize package extensions.
+	Ext().Init(router, conf)
 
 	// Find and load templates.
 	router.LoadHTMLFiles(conf.TemplateFiles()...)
