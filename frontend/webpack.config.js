@@ -130,10 +130,7 @@ const config = {
               sourceMap: isDev,
               compact: false,
               presets: ["@babel/preset-env"],
-              plugins: [
-                "@babel/plugin-proposal-object-rest-spread",
-                "@babel/plugin-proposal-class-properties",
-              ],
+              plugins: [],
             },
           },
         ],
@@ -253,12 +250,13 @@ if (isDev) {
 
   config.plugins.push(devToolPlugin);
 
-  const esLintPlugin = new ESLintPlugin({
-    formatter: require("eslint-formatter-pretty"),
-    extensions: ["js"],
+  import("eslint-formatter-pretty").then(() => {
+    const esLintPlugin = new ESLintPlugin({
+      formatter: "eslint-formatter-pretty",
+      extensions: ["js"],
+    });
+    config.plugins.push(esLintPlugin);
   });
-
-  config.plugins.push(esLintPlugin);
 }
 
 module.exports = config;

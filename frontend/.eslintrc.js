@@ -6,15 +6,10 @@ module.exports = {
     node: true,
     mocha: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:vue/recommended",
-    "prettier",
-    "plugin:prettier-vue/recommended",
-  ],
+  extends: ["eslint:recommended", "plugin:vue/recommended", "plugin:prettier/recommended"],
 
   settings: {
-    "prettier-vue": {
+    "prettier/prettier": {
       // Settings for how to process Vue SFC Blocks
       SFCBlocks: {
         template: false,
@@ -62,11 +57,9 @@ module.exports = {
         multiline: "ignore",
       },
     ],
-    "prettier-vue/prettier": [
-      "error",
+    "prettier/prettier": [
+      "warn",
       {
-        // Override all options of `prettier` here
-        // @see https://prettier.io/docs/en/options.html
         printWidth: 100,
         singleQuote: false,
         semi: true,

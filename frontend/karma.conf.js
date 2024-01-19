@@ -62,10 +62,7 @@ module.exports = (config) => {
       },
     },
 
-    files: [
-      "node_modules/regenerator-runtime/runtime/runtime.js",
-      { pattern: "tests/unit/**/*_test.js", watched: false },
-    ],
+    files: [{ pattern: "tests/unit/**/*_test.js", watched: false }],
 
     // Preprocess through webpack
     preprocessors: {
@@ -161,8 +158,6 @@ module.exports = (config) => {
                   compact: false,
                   presets: ["@babel/preset-env"],
                   plugins: [
-                    "@babel/plugin-proposal-object-rest-spread",
-                    "@babel/plugin-proposal-class-properties",
                     "@babel/plugin-transform-runtime",
                     ["istanbul", { exclude: ["**/*_test.js"] }],
                   ],
