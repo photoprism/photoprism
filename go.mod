@@ -82,9 +82,12 @@ require github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aa
 
 require golang.org/x/text v0.14.0
 
+require github.com/pquerna/otp v1.4.0
+
 require (
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
