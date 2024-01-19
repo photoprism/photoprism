@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2023-10-13 10:48+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-01-19 17:11+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: fi\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0.2\n"
+"X-Generator: Weblate 5.3.1\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:500
@@ -522,7 +522,7 @@ msgstr "Asiakas"
 
 #: src/options/auth.js:24
 msgid "Client Credentials"
-msgstr ""
+msgstr "Asiakkaan valtakirjat"
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
@@ -1811,7 +1811,7 @@ msgstr "Poista tiedostot pysyvästi vapauttaaksesi tallennustilaa."
 
 #: src/options/auth.js:39
 msgid "Personal"
-msgstr ""
+msgstr "Henkilökohtainen"
 
 #: src/page/settings/account.vue:793 src/page/settings/account.vue:647
 msgid "Phone"
