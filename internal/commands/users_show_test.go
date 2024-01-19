@@ -1,13 +1,14 @@
 package commands
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestUsersShowCommand(t *testing.T) {
-	t.Run("All", func(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
 		var err error
 
 		// Create test context with flags and arguments.

@@ -62,7 +62,7 @@ func TestClientsListCommand(t *testing.T) {
 		// Check command output for plausibility.
 		// t.Logf(output)
 		assert.NoError(t, err)
-		assert.Contains(t, output, "Client ID;Client Name;Authentication;Scope;")
+		assert.Contains(t, output, "Client ID;Client Name;Client User;Authentication Method;Role;Scope;")
 		assert.Contains(t, output, "Monitoring")
 		assert.Contains(t, output, "metrics")
 		assert.NotContains(t, output, "bob")
