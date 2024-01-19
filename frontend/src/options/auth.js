@@ -22,6 +22,7 @@ export const Providers = () => {
     local: $gettext("Local"),
     client: $gettext("Client"),
     client_credentials: $gettext("Client Credentials"),
+    application: $gettext("Application"),
     access_token: $gettext("Access Token"),
     password: $gettext("Local"),
     ldap: $gettext("LDAP/AD"),
@@ -36,11 +37,12 @@ export const Methods = () => {
   return {
     "": $gettext("Default"),
     default: $gettext("Default"),
-    personal: $gettext("Personal"),
-    access_token: $gettext("Access Token"),
     session: $gettext("Session"),
-    totp: "TOTP/2FA",
+    personal: $gettext("Personal"),
+    client: $gettext("Client"),
+    access_token: $gettext("Access Token"),
     oauth2: "OAuth2",
+    totp: "TOTP/2FA",
     oidc: "OIDC",
   };
 };

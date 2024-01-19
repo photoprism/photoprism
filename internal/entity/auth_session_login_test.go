@@ -15,11 +15,11 @@ import (
 )
 
 func TestAuthSession(t *testing.T) {
-	t.Run("RandomAuthSecret", func(t *testing.T) {
+	t.Run("RandomAppPassword", func(t *testing.T) {
 		// Create test request form.
 		f := form.Login{
 			UserName: "alice",
-			Password: rnd.AuthSecret(),
+			Password: rnd.AppPassword(),
 		}
 
 		// Create test request context.

@@ -133,14 +133,14 @@ func TestWebDAVAuth(t *testing.T) {
 		assert.Equal(t, http.StatusUnauthorized, c.Writer.Status())
 		assert.Equal(t, BasicAuthRealm, c.Writer.Header().Get("WWW-Authenticate"))
 	})
-	t.Run("InvalidAuthSecret", func(t *testing.T) {
+	t.Run("InvalidAppPassword", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = &http.Request{
 			Header: make(http.Header),
 		}
 
-		header.SetAuthorization(c.Request, rnd.AuthSecret())
+		header.SetAuthorization(c.Request, rnd.AppPassword())
 
 		webdavAuthCache.Flush()
 		webdavHandler(c)
@@ -228,18 +228,18 @@ func TestWebDAVAuthSession(t *testing.T) {
 		assert.Equal(t, http.StatusOK, c.Writer.Status())
 		assert.Equal(t, "", c.Writer.Header().Get("WWW-Authenticate"))
 	})
-	t.Run("InvalidAuthSecret", func(t *testing.T) {
+	t.Run("InvalidAppPassword", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Request = &http.Request{
 			Header: make(http.Header),
 		}
 
-		authToken := rnd.AuthSecret()
-		authId := rnd.SessionID(authToken)
+		appPassword := rnd.AppPassword()
+		authId := rnd.SessionID(appPassword)
 
-		// Get session with invalid auth secret.
-		sess, user, sid, cached := WebDAVAuthSession(c, authToken)
+		// Get session with invalid app password.
+		sess, user, sid, cached := WebDAVAuthSession(c, appPassword)
 
 		// Check result.
 		assert.Nil(t, sess)

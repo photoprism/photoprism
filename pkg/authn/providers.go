@@ -16,6 +16,7 @@ const (
 	ProviderDefault           ProviderType = "default"
 	ProviderClient            ProviderType = "client"
 	ProviderClientCredentials ProviderType = "client_credentials"
+	ProviderApplication       ProviderType = "application"
 	ProviderAccessToken       ProviderType = "access_token"
 	ProviderLocal             ProviderType = "local"
 	ProviderLDAP              ProviderType = "ldap"
@@ -38,6 +39,7 @@ var LocalProviders = list.List{
 var ClientProviders = list.List{
 	string(ProviderClient),
 	string(ProviderClientCredentials),
+	string(ProviderApplication),
 	string(ProviderAccessToken),
 }
 

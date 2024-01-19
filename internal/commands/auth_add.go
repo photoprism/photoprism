@@ -17,7 +17,7 @@ import (
 var AuthAddFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "name, n",
-		Usage: "access `TOKEN` name to help identify the client application",
+		Usage: "`CLIENT` name to help identify the application",
 	},
 	cli.StringFlag{
 		Name:  "scope, s",
@@ -25,19 +25,20 @@ var AuthAddFlags = []cli.Flag{
 	},
 	cli.Int64Flag{
 		Name:  "expires, e",
-		Usage: "authentication `LIFETIME` in seconds, after which the access token expires (-1 to disable the limit)",
+		Usage: "authentication `LIFETIME` in seconds, after which access expires (-1 to disable the limit)",
 		Value: entity.UnixYear,
 	},
 }
 
 // AuthAddCommand configures the command name, flags, and action.
 var AuthAddCommand = cli.Command{
-	Name:        "add",
-	Usage:       "Creates a new access token for client authentication",
-	Description: "If you provide a username as argument, a personal access token for registered users will be created.",
-	ArgsUsage:   "[username]",
-	Flags:       AuthAddFlags,
-	Action:      authAddAction,
+	Name:  "add",
+	Usage: "Adds a new authentication secret for client applications",
+	Description: "If you specify a username as argument, an app password will be created for this user account." +
+		" It can be used as a password replacement to grant limited access to client applications.",
+	ArgsUsage: "[username]",
+	Flags:     AuthAddFlags,
+	Action:    authAddAction,
 }
 
 // authAddAction shows detailed session information.
@@ -89,22 +90,21 @@ func authAddAction(ctx *cli.Context) error {
 			authScope = clean.Scope(res)
 		}
 
-		// Create session with client access token.
-		sess, err := entity.CreateClientAccessToken(clientName, ctx.Int64("expires"), authScope, user)
+		// Create session and show the authentication secret.
+		sess, err := entity.AddClientAuthentication(clientName, ctx.Int64("expires"), authScope, user)
 
 		if err != nil {
-			return fmt.Errorf("failed to create access token: %s", err)
+			return fmt.Errorf("failed to create authentication secret: %s", err)
 		} else {
 			// Show client authentication credentials.
 			if sess.UserUID == "" {
-				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED CLIENT ACCESS TOKEN, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED ACCESS TOKEN, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\n%s\n", report.Credentials("Access Token", sess.AuthToken(), "Authorization Scope", sess.Scope()))
 			} else {
-				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED PERSONAL ACCESS TOKEN, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED APP PASSWORD, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\n%s\n", report.Credentials("App Password", sess.AuthToken(), "Authorization Scope", sess.Scope()))
 			}
 
-			result := report.Credentials("Access Token", sess.AuthToken(), "Authorization Scope", sess.Scope())
-
-			fmt.Printf("\n%s\n", result)
 		}
 
 		return err

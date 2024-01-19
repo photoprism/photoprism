@@ -43,72 +43,72 @@ func BenchmarkIsAuthToken(b *testing.B) {
 	}
 }
 
-func TestAuthSecret(t *testing.T) {
+func TestAppPassword(t *testing.T) {
 	for n := 0; n < 10; n++ {
-		s := AuthSecret()
-		t.Logf("AuthSecret %d: %s", n, s)
-		assert.Equal(t, AuthSecretLength, len(s))
+		s := AppPassword()
+		t.Logf("AppPassword %d: %s", n, s)
+		assert.Equal(t, AppPasswordLength, len(s))
 	}
 }
 
-func BenchmarkAuthSecret(b *testing.B) {
+func BenchmarkAppPassword(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		AuthSecret()
+		AppPassword()
 	}
 }
 
-func TestIsAuthSecret(t *testing.T) {
+func TestIsAppPasswordt(t *testing.T) {
 	t.Run("VerifyChecksum", func(t *testing.T) {
-		assert.True(t, IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", true))
-		assert.True(t, IsAuthSecret("9q2JHc-P0LzNE-xzvY9j-vMoefj", true))
-		assert.False(t, IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3Xha", true))
-		assert.False(t, IsAuthSecret("9q2JHc-P0LzNE-xzvY9j-vMoef2", true))
-		assert.True(t, IsAuthSecret(AuthSecret(), true))
-		assert.True(t, IsAuthSecret(AuthSecret(), true))
-		assert.False(t, IsAuthSecret(AuthToken(), true))
-		assert.False(t, IsAuthSecret(AuthToken(), true))
-		assert.False(t, IsAuthSecret(SessionID(AuthToken()), true))
-		assert.False(t, IsAuthSecret(SessionID(AuthToken()), true))
-		assert.False(t, IsAuthSecret("55785BAC-9H4B-4747-B090-EE123FFEE437", true))
-		assert.False(t, IsAuthSecret("4B1FEF2D1CF4A5BE38B263E0637EDEAD", true))
-		assert.False(t, IsAuthSecret("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2", true))
-		assert.False(t, IsAuthSecret("", true))
+		assert.True(t, IsAppPassword("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", true))
+		assert.True(t, IsAppPassword("9q2JHc-P0LzNE-xzvY9j-vMoefj", true))
+		assert.False(t, IsAppPassword("MPkOqm-RtKGOi-ctIvXm-Qv3Xha", true))
+		assert.False(t, IsAppPassword("9q2JHc-P0LzNE-xzvY9j-vMoef2", true))
+		assert.True(t, IsAppPassword(AppPassword(), true))
+		assert.True(t, IsAppPassword(AppPassword(), true))
+		assert.False(t, IsAppPassword(AuthToken(), true))
+		assert.False(t, IsAppPassword(AuthToken(), true))
+		assert.False(t, IsAppPassword(SessionID(AuthToken()), true))
+		assert.False(t, IsAppPassword(SessionID(AuthToken()), true))
+		assert.False(t, IsAppPassword("55785BAC-9H4B-4747-B090-EE123FFEE437", true))
+		assert.False(t, IsAppPassword("4B1FEF2D1CF4A5BE38B263E0637EDEAD", true))
+		assert.False(t, IsAppPassword("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2", true))
+		assert.False(t, IsAppPassword("", true))
 	})
 	t.Run("IgnoreChecksum", func(t *testing.T) {
-		assert.True(t, IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", false))
-		assert.True(t, IsAuthSecret("9q2JHc-P0LzNE-xzvY9j-vMoefj", false))
-		assert.True(t, IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3Xha", false))
-		assert.True(t, IsAuthSecret("9q2JHc-P0LzNE-xzvY9j-vMoef2", false))
-		assert.True(t, IsAuthSecret(AuthSecret(), false))
-		assert.True(t, IsAuthSecret(AuthSecret(), false))
-		assert.False(t, IsAuthSecret(AuthToken(), false))
-		assert.False(t, IsAuthSecret(AuthToken(), false))
-		assert.False(t, IsAuthSecret(SessionID(AuthToken()), false))
-		assert.False(t, IsAuthSecret(SessionID(AuthToken()), false))
-		assert.False(t, IsAuthSecret("55785BAC-9H4B-4747-B090-EE123FFEE437", false))
-		assert.False(t, IsAuthSecret("4B1FEF2D1CF4A5BE38B263E0637EDEAD", false))
-		assert.False(t, IsAuthSecret("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2", false))
-		assert.False(t, IsAuthSecret("", false))
+		assert.True(t, IsAppPassword("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", false))
+		assert.True(t, IsAppPassword("9q2JHc-P0LzNE-xzvY9j-vMoefj", false))
+		assert.True(t, IsAppPassword("MPkOqm-RtKGOi-ctIvXm-Qv3Xha", false))
+		assert.True(t, IsAppPassword("9q2JHc-P0LzNE-xzvY9j-vMoef2", false))
+		assert.True(t, IsAppPassword(AppPassword(), false))
+		assert.True(t, IsAppPassword(AppPassword(), false))
+		assert.False(t, IsAppPassword(AuthToken(), false))
+		assert.False(t, IsAppPassword(AuthToken(), false))
+		assert.False(t, IsAppPassword(SessionID(AuthToken()), false))
+		assert.False(t, IsAppPassword(SessionID(AuthToken()), false))
+		assert.False(t, IsAppPassword("55785BAC-9H4B-4747-B090-EE123FFEE437", false))
+		assert.False(t, IsAppPassword("4B1FEF2D1CF4A5BE38B263E0637EDEAD", false))
+		assert.False(t, IsAppPassword("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac2", false))
+		assert.False(t, IsAppPassword("", false))
 	})
 }
 
-func BenchmarkIsAuthSecretVerifyChecksum(b *testing.B) {
+func BenchmarkAppPasswordtVerifyChecksum(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", true)
+		IsAppPassword("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", true)
 	}
 }
 
-func BenchmarkIsAuthSecretIgnoreChecksum(b *testing.B) {
+func BenchmarkAppPasswordIgnoreChecksum(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		IsAuthSecret("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", false)
+		IsAppPassword("MPkOqm-RtKGOi-ctIvXm-Qv3XhN", false)
 	}
 }
 
 func TestIsAuthAny(t *testing.T) {
 	assert.True(t, IsAuthAny("MPkOqm-RtKGOi-ctIvXm-Qv3XhN"))
 	assert.True(t, IsAuthAny("9q2JHc-P0LzNE-xzvY9j-vMoefj"))
-	assert.True(t, IsAuthAny(AuthSecret()))
-	assert.True(t, IsAuthAny(AuthSecret()))
+	assert.True(t, IsAuthAny(AppPassword()))
+	assert.True(t, IsAuthAny(AppPassword()))
 	assert.True(t, IsAuthAny(AuthToken()))
 	assert.True(t, IsAuthAny(AuthToken()))
 	assert.False(t, IsAuthAny(SessionID(AuthToken())))

@@ -39,6 +39,8 @@ export class Session extends RestModel {
       UserUID: "",
       UserName: "",
       UserAgent: "",
+      ClientUID: "",
+      ClientName: "",
       AuthProvider: "",
       AuthMethod: "",
       AuthDomain: "",

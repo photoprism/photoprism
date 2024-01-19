@@ -44,10 +44,10 @@ var Auth = func(f form.Login, m *Session, c *gin.Context) (user *User, provider 
 func AuthSession(f form.Login, c *gin.Context) (sess *Session, user *User, err error) {
 	if f.Password == "" {
 		// Abort authentication if no token was provided.
-		return nil, nil, fmt.Errorf("no auth secret provided")
-	} else if !rnd.IsAuthSecret(f.Password, true) {
+		return nil, nil, fmt.Errorf("no password provided")
+	} else if !rnd.IsAppPassword(f.Password, true) {
 		// Abort authentication if token doesn't match expected format.
-		return nil, nil, fmt.Errorf("auth secret does not match expected format")
+		return nil, nil, fmt.Errorf("password does not match expected format")
 	}
 
 	// Get session ID for the auth token provided.
@@ -58,7 +58,7 @@ func AuthSession(f form.Login, c *gin.Context) (sess *Session, user *User, err e
 
 	// Log error and return nil if no matching session was found.
 	if sess == nil || err != nil {
-		return nil, nil, fmt.Errorf("invalid auth secret")
+		return nil, nil, fmt.Errorf("invalid password")
 	}
 
 	// Update the client IP and the user agent from
@@ -113,14 +113,14 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (authn.Prov
 		if !authUser.IsRegistered() || authUser.UserUID != user.UserUID {
 			message := "incorrect user"
 			limiter.Login.Reserve(clientIp)
-			event.AuditErr([]string{clientIp, "session %s", "login as %s with auth secret", message}, m.RefID, clean.LogQuote(userName))
+			event.AuditErr([]string{clientIp, "session %s", "login as %s with app password", message}, m.RefID, clean.LogQuote(userName))
 			event.LoginError(clientIp, "api", userName, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
 			return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
 		} else if !authSess.IsClient() || !authSess.HasScope(acl.ResourceSessions.String()) {
 			message := "unauthorized"
 			limiter.Login.Reserve(clientIp)
-			event.AuditErr([]string{clientIp, "session %s", "login as %s with auth secret", message}, m.RefID, clean.LogQuote(userName))
+			event.AuditErr([]string{clientIp, "session %s", "login as %s with app password", message}, m.RefID, clean.LogQuote(userName))
 			event.LoginError(clientIp, "api", userName, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
 			return authn.ProviderNone, i18n.Error(i18n.ErrInvalidCredentials)
@@ -129,9 +129,9 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (authn.Prov
 			m.ClientName = authSess.ClientName
 			m.SetScope(authSess.Scope())
 			m.SetMethod(authn.MethodSession)
-			event.AuditInfo([]string{clientIp, "session %s", "login as %s with auth secret", "succeeded"}, m.RefID, clean.LogQuote(userName))
+			event.AuditInfo([]string{clientIp, "session %s", "login as %s with app password", "succeeded"}, m.RefID, clean.LogQuote(userName))
 			event.LoginInfo(clientIp, "api", userName, m.UserAgent)
-			return authn.ProviderClient, err
+			return authn.ProviderApplication, err
 		}
 	}
 

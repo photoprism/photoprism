@@ -23,7 +23,7 @@ var ClientsListCommand = cli.Command{
 // clientsListAction lists registered client applications
 func clientsListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		cols := []string{"Client ID", "Client Name", "Client User", "Authentication Method", "Role", "Scope", "Enabled", "Authentication Expires", "Created At"}
+		cols := []string{"Client ID", "Client Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Authentication Expires", "Created At"}
 
 		// Fetch clients from database.
 		clients, err := query.Clients(ctx.Int("n"), 0, "", ctx.Args().First())
@@ -58,8 +58,8 @@ func clientsListAction(ctx *cli.Context) error {
 			rows[i] = []string{
 				client.UID(),
 				client.Name(),
-				client.UserInfo(),
 				client.AuthInfo(),
+				client.UserInfo(),
 				client.AclRole().String(),
 				client.Scope(),
 				report.Bool(client.AuthEnabled, report.Yes, report.No),

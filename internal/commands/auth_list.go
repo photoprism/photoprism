@@ -25,7 +25,7 @@ func authListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		var rows [][]string
 
-		cols := []string{"Session ID", "Session User", "Session Client", "Authentication Method", "Scope", "Login IP", "Current IP", "Last Active", "Created At", "Expires At"}
+		cols := []string{"Session ID", "Session User", "Client Name", "Authentication Method", "Scope", "Login IP", "Current IP", "Last Active", "Created At", "Expires At"}
 
 		if ctx.Bool("tokens") {
 			cols = append(cols, "Preview Token", "Download Token")

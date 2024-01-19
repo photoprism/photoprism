@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	SessionIdLength     = 64
-	AuthTokenLength     = 48
-	AuthSecretLength    = 27
-	AuthSecretSeparator = '-'
+	SessionIdLength      = 64
+	AuthTokenLength      = 48
+	AppPasswordLength    = 27
+	AppPasswordSeparator = '-'
 )
 
-// AuthToken returns a random hexadecimal character string that can be used for authentication purposes.
+// AuthToken generates a random hexadecimal character token for authenticating client applications.
 //
 // Examples: 9fa8e562564dac91b96881040e98f6719212a1a364e0bb25
 func AuthToken() string {
@@ -37,18 +37,19 @@ func IsAuthToken(s string) bool {
 	return false
 }
 
-// AuthSecret returns a random, human-friendly string that can be used instead of a regular auth token.
-// It is separated by 3 dashes for better readability and has a total length of 27 characters.
+// AppPassword generates a random, human-friendly authentication token that can also be used as
+// password replacement for client applications. It is separated by 3 dashes for better readability
+// and has a total length of 27 characters.
 //
 // Example: OXiV72-wTtiL9-d04jO7-X7XP4p
-func AuthSecret() string {
+func AppPassword() string {
 	m := big.NewInt(int64(len(CharsetBase62)))
-	b := make([]byte, 0, AuthSecretLength)
+	b := make([]byte, 0, AppPasswordLength)
 
-	for i := 0; i < AuthSecretLength; i++ {
+	for i := 0; i < AppPasswordLength; i++ {
 		if (i+1)%7 == 0 {
-			b = append(b, AuthSecretSeparator)
-		} else if i == AuthSecretLength-1 {
+			b = append(b, AppPasswordSeparator)
+		} else if i == AppPasswordLength-1 {
 			b = append(b, CharsetBase62[crc32.ChecksumIEEE(b)%62])
 			return string(b)
 		} else if r, err := rand.Int(rand.Reader, m); err == nil {
@@ -59,17 +60,17 @@ func AuthSecret() string {
 	return string(b)
 }
 
-// IsAuthSecret checks if the string might be a valid auth secret.
-func IsAuthSecret(s string, verifyChecksum bool) bool {
+// IsAppPassword checks if the string might be a valid app password.
+func IsAppPassword(s string, verifyChecksum bool) bool {
 	// Verify token length.
-	if len(s) != AuthSecretLength {
+	if len(s) != AppPasswordLength {
 		return false
 	}
 
 	// Check characters.
 	sep := 0
 	for _, r := range s {
-		if r == AuthSecretSeparator {
+		if r == AppPasswordSeparator {
 			sep++
 		} else if (r < '0' || r > '9') && (r < 'A' || r > 'Z') && (r < 'a' || r > 'z') {
 			return false
@@ -77,25 +78,25 @@ func IsAuthSecret(s string, verifyChecksum bool) bool {
 	}
 
 	// Check number of separators.
-	if sep != AuthSecretLength/7 {
+	if sep != AppPasswordLength/7 {
 		return false
 	} else if !verifyChecksum {
 		return true
 	}
 
 	// Verify token checksum.
-	return s[AuthSecretLength-1] == CharsetBase62[crc32.ChecksumIEEE([]byte(s[:AuthSecretLength-1]))%62]
+	return s[AppPasswordLength-1] == CharsetBase62[crc32.ChecksumIEEE([]byte(s[:AppPasswordLength-1]))%62]
 }
 
-// IsAuthAny checks if the string might be a valid auth token or secret.
+// IsAuthAny checks if the string might be a valid auth token or app password.
 func IsAuthAny(s string) bool {
 	// Check if string might be a regular auth token.
 	if IsAuthToken(s) {
 		return true
 	}
 
-	// Check if string might be a human-friendly auth secret.
-	if IsAuthSecret(s, false) {
+	// Check if string might be a human-friendly app password.
+	if IsAppPassword(s, false) {
 		return true
 	}
 
