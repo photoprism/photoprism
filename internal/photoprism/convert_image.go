@@ -36,10 +36,10 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 
 	var err error
 
-	imageName := fs.ImagePNG.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+	imageName := fs.ImagePNG.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.PPHiddenPathname}, c.conf.OriginalsPath(), false)
 
 	if imageName == "" {
-		imageName = fs.ImageJPEG.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+		imageName = fs.ImageJPEG.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.PPHiddenPathname}, c.conf.OriginalsPath(), false)
 	}
 
 	mediaFile, err := NewMediaFile(imageName)

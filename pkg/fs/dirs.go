@@ -138,12 +138,14 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 	}
 
 	// Ignore hidden folders as well as those listed in an optional ".ppignore" file.
-	ignore := NewIgnoreList(IgnoreFile, true, false)
+	ignore := NewIgnoreList(PPIgnoreFilename, true, false)
 	_ = ignore.Dir(root)
 
 	err = fastwalk.Walk(root, func(fileName string, typ os.FileMode) error {
 		if typ.IsDir() || typ == os.ModeSymlink && followLinks {
 			if ignore.Ignore(fileName) {
+				return filepath.SkipDir
+			} else if FileExists(filepath.Join(fileName, PPStorageFilename)) {
 				return filepath.SkipDir
 			}
 

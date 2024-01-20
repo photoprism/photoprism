@@ -38,11 +38,11 @@ import (
 
 var ignoreCase bool
 
-const IgnoreFile = ".ppignore"
-const HiddenPath = ".photoprism"
-const PathSeparator = string(filepath.Separator)
-const Home = "~"
-const HomePath = Home + PathSeparator
+const (
+	PathSeparator = string(filepath.Separator)
+	Home          = "~"
+	HomePath      = Home + PathSeparator
+)
 
 // FileExists returns true if file exists and is not a directory.
 func FileExists(fileName string) bool {
@@ -178,11 +178,15 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 }
 
 // Download downloads a file from a URL.
-func Download(filepath string, url string) error {
-	os.MkdirAll("/tmp/photoprism", ModeDir)
+func Download(fileName string, url string) error {
+	if dir := filepath.Dir(fileName); dir == "" || dir == "/" || dir == "." || dir == ".." {
+		return fmt.Errorf("invalid path")
+	} else if err := os.MkdirAll(dir, ModeDir); err != nil {
+		return err
+	}
 
 	// Create the file
-	out, err := os.Create(filepath)
+	out, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}

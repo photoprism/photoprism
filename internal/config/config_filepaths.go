@@ -60,16 +60,20 @@ func findBin(configBin, defaultBin string) (binPath string) {
 
 // CreateDirectories creates directories for storing photos, metadata and cache files.
 func (c *Config) CreateDirectories() error {
+	// Make sure the configured assets path exits.
 	if c.AssetsPath() == "" {
 		return notFoundError("assets")
 	} else if err := os.MkdirAll(c.AssetsPath(), fs.ModeDir); err != nil {
 		return createError(c.AssetsPath(), err)
 	}
 
-	if c.StoragePath() == "" {
+	// Make sure the configured storage folder exists and create a ".ppstorage" file in it.
+	if dir := c.StoragePath(); dir == "" {
 		return notFoundError("storage")
-	} else if err := os.MkdirAll(c.StoragePath(), fs.ModeDir); err != nil {
-		return createError(c.StoragePath(), err)
+	} else if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+		return createError(dir, err)
+	} else if err = fs.Touch(filepath.Join(dir, fs.PPStorageFilename)); err != nil {
+		return fmt.Errorf("%s file in %s could not be created", fs.PPStorageFilename, clean.Log(dir))
 	}
 
 	if c.UsersPath() == "" {
@@ -481,7 +485,7 @@ func (c *Config) StoragePath() string {
 		const dirName = "storage"
 
 		// Default directories.
-		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.HiddenPath, dirName))
+		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.PPHiddenPathname, dirName))
 		storageDir := fs.Abs(dirName)
 
 		// Find existing directories.
@@ -498,7 +502,7 @@ func (c *Config) StoragePath() string {
 
 		// Use .photoprism in home directory?
 		if usr, _ := user.Current(); usr.HomeDir != "" {
-			p := fs.Abs(filepath.Join(usr.HomeDir, fs.HiddenPath, dirName))
+			p := fs.Abs(filepath.Join(usr.HomeDir, fs.PPHiddenPathname, dirName))
 
 			if fs.PathWritable(p) || c.ReadOnly() {
 				return p
@@ -507,7 +511,7 @@ func (c *Config) StoragePath() string {
 
 		// Fallback directory in case nothing else works.
 		if c.ReadOnly() {
-			return fs.Abs(filepath.Join(fs.HiddenPath, dirName))
+			return fs.Abs(filepath.Join(fs.PPHiddenPathname, dirName))
 		}
 
 		// Store cache and index in "originals/.photoprism/storage".

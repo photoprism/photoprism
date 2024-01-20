@@ -245,12 +245,12 @@ func (c *Config) Init() error {
 
 	// Create configured directory paths.
 	if err := c.CreateDirectories(); err != nil {
-		return err
+		return fmt.Errorf("config: %s", err)
 	}
 
 	// Init storage directories with a random serial.
 	if err := c.InitSerial(); err != nil {
-		return err
+		return fmt.Errorf("config: %s", err)
 	}
 
 	// Detect case-insensitive file system.

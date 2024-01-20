@@ -41,7 +41,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 		// Create JSON sidecar file, if needed.
 		if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
-			log.Errorf("import: %s", clean.Log(jsonErr.Error()))
+			log.Errorf("import: %s", clean.Error(jsonErr))
 		}
 
 		originalName := related.Main.RelName(src)
@@ -85,13 +85,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 				if opt.Move {
 					if err := f.Move(destFileName); err != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Debugf("import: %s", err.Error())
+						log.Debugf("import: %s", clean.Error(err))
 						log.Warnf("import: failed moving file to %s, is another import running at the same time?", logRelName)
 					}
 				} else {
 					if err := f.Copy(destFileName); err != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Debugf("import: %s", err.Error())
+						log.Debugf("import: %s", clean.Error(err))
 						log.Warnf("import: failed copying file to %s, is another import running at the same time?", logRelName)
 					}
 				}
@@ -128,13 +128,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Create JSON sidecar file, if needed.
 			if jsonErr := f.CreateExifToolJson(imp.convert); jsonErr != nil {
-				log.Errorf("import: %s", clean.Log(jsonErr.Error()))
+				log.Errorf("import: %s", clean.Error(jsonErr))
 			}
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 			if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
 				if jpegFile, err := imp.convert.ToImage(f, false); err != nil {
-					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), clean.Log(f.RootRelName()))
+					log.Errorf("import: %s in %s (convert to jpeg)", clean.Error(err), clean.Log(f.RootRelName()))
 					continue
 				} else {
 					log.Debugf("import: created %s", clean.Log(jpegFile.BaseName()))
@@ -148,7 +148,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				log.Errorf("index: %s", limitErr)
 				continue
 			} else if err := jpg.CreateThumbnails(imp.thumbPath(), false); err != nil {
-				log.Errorf("import: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+				log.Errorf("import: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), clean.Error(err))
 				continue
 			}
 
@@ -232,7 +232,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				// Save file error.
 				if fileUid, err := res.FileError(); err != nil {
-					query.SetFileError(fileUid, err.Error())
+					query.SetFileError(fileUid, clean.Error(err))
 				}
 
 				// Log result.

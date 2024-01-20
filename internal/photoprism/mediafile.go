@@ -381,7 +381,7 @@ func (m *MediaFile) RelPath(directory string) string {
 	}
 
 	// Remove hidden sub directory if exists.
-	if path.Base(pathname) == fs.HiddenPath {
+	if path.Base(pathname) == fs.PPHiddenPathname {
 		pathname = path.Dir(pathname)
 	}
 
@@ -859,10 +859,10 @@ func (m *MediaFile) NeedsTranscoding() bool {
 	}
 
 	if m.IsAnimatedImage() {
-		return fs.VideoMP4.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) == ""
+		return fs.VideoMP4.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) == ""
 	}
 
-	return fs.VideoAVC.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) == ""
+	return fs.VideoAVC.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) == ""
 }
 
 // SkipTranscoding checks if the media file is not animated or has already been transcoded to a playable format.
@@ -921,14 +921,14 @@ func (m *MediaFile) PreviewImage() (*MediaFile, error) {
 	}
 
 	jpegName := fs.ImageJPEG.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
 
 	if jpegName != "" {
 		return NewMediaFile(jpegName)
 	}
 
 	pngName := fs.ImagePNG.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
 
 	if pngName != "" {
 		return NewMediaFile(pngName)
@@ -949,14 +949,14 @@ func (m *MediaFile) HasPreviewImage() bool {
 	}
 
 	jpegName := fs.ImageJPEG.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
 
 	if m.hasPreviewImage = fs.MimeType(jpegName) == fs.MimeTypeJPEG; m.hasPreviewImage {
 		return true
 	}
 
 	pngName := fs.ImagePNG.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
 
 	if m.hasPreviewImage = fs.MimeType(pngName) == fs.MimeTypePNG; m.hasPreviewImage {
 		return true

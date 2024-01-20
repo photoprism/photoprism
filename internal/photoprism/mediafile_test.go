@@ -568,7 +568,7 @@ func TestMediaFile_RelativePath(t *testing.T) {
 		assert.Equal(t, conf.ExamplesPath(), path)
 	})
 	t.Run("hidden root", func(t *testing.T) {
-		path := mediaFile.RelPath(filepath.Join(conf.ExamplesPath(), fs.HiddenPath))
+		path := mediaFile.RelPath(filepath.Join(conf.ExamplesPath(), fs.PPHiddenPathname))
 		assert.Equal(t, "", path)
 	})
 }
