@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/api"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/header"
 )
@@ -14,6 +15,12 @@ import (
 func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 	// Loads Progressive Web App (PWA) on all routes beginning with "library".
 	pwa := func(c *gin.Context) {
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			api.AbortNotFound(c)
+			return
+		}
+
 		values := gin.H{
 			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
 			"config": conf.ClientPublic(),
@@ -25,7 +32,7 @@ func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 	// Progressive Web App (PWA) Manifest.
 	manifest := func(c *gin.Context) {
 		c.Header(header.CacheControl, header.CacheControlNoStore)
-		c.Header(header.ContentType, header.ContentTypeJson)
+		c.Header(header.ContentType, header.ContentTypeJsonUtf8)
 		c.IndentedJSON(200, conf.AppManifest())
 	}
 	router.Any(conf.BaseUri("/manifest.json"), manifest)

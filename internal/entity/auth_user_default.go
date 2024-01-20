@@ -36,7 +36,7 @@ var UnknownUser = User{
 	UserUID:       "u000000000000001",
 	UserName:      "",
 	AuthProvider:  authn.ProviderNone.String(),
-	UserRole:      acl.RoleUnknown.String(),
+	UserRole:      acl.RoleNone.String(),
 	CanLogin:      false,
 	WebDAV:        false,
 	CanInvite:     false,

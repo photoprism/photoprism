@@ -26,7 +26,7 @@ Additional information can be found in our Developer Guide:
 import RestModel from "model/rest";
 import { $gettext, T } from "common/vm";
 import Util from "common/util";
-import * as admin from "options/admin";
+import * as auth from "options/auth";
 import memoizeOne from "memoize-one";
 
 export class Session extends RestModel {
@@ -39,6 +39,8 @@ export class Session extends RestModel {
       UserUID: "",
       UserName: "",
       UserAgent: "",
+      ClientUID: "",
+      ClientName: "",
       AuthProvider: "",
       AuthMethod: "",
       AuthDomain: "",
@@ -61,7 +63,7 @@ export class Session extends RestModel {
       return $gettext("Default");
     }
 
-    let providerName = memoizeOne(admin.AuthProviders)()[this.AuthProvider];
+    let providerName = memoizeOne(auth.Providers)()[this.AuthProvider];
 
     if (providerName) {
       providerName = T(providerName);
@@ -73,7 +75,7 @@ export class Session extends RestModel {
       return providerName;
     }
 
-    let methodName = memoizeOne(admin.AuthMethods)()[this.AuthMethod];
+    let methodName = memoizeOne(auth.Methods)()[this.AuthMethod];
 
     if (!methodName) {
       methodName = this.AuthMethod;
@@ -91,7 +93,7 @@ export class Session extends RestModel {
   }
 
   static getCollectionResource() {
-    return "session";
+    return "sessions";
   }
 
   static getModelName() {

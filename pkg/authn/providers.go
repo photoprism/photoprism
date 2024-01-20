@@ -11,15 +11,18 @@ import (
 // ProviderType represents an authentication provider type.
 type ProviderType string
 
-// Authentication providers.
+// Standard authentication provider types.
 const (
-	ProviderDefault ProviderType = "default"
-	ProviderClient  ProviderType = "client"
-	ProviderLocal   ProviderType = "local"
-	ProviderLDAP    ProviderType = "ldap"
-	ProviderLink    ProviderType = "link"
-	ProviderNone    ProviderType = "none"
-	ProviderUnknown ProviderType = ""
+	ProviderDefault           ProviderType = "default"
+	ProviderClient            ProviderType = "client"
+	ProviderClientCredentials ProviderType = "client_credentials"
+	ProviderApplication       ProviderType = "application"
+	ProviderAccessToken       ProviderType = "access_token"
+	ProviderLocal             ProviderType = "local"
+	ProviderLDAP              ProviderType = "ldap"
+	ProviderLink              ProviderType = "link"
+	ProviderNone              ProviderType = "none"
+	ProviderUnknown           ProviderType = ""
 )
 
 // RemoteProviders contains all remote auth providers.
@@ -35,6 +38,9 @@ var LocalProviders = list.List{
 // ClientProviders contains all client auth providers.
 var ClientProviders = list.List{
 	string(ProviderClient),
+	string(ProviderClientCredentials),
+	string(ProviderApplication),
+	string(ProviderAccessToken),
 }
 
 // IsRemote checks if the provider is external.
@@ -66,6 +72,8 @@ func (t ProviderType) String() string {
 		return string(ProviderLink)
 	case "password":
 		return string(ProviderLocal)
+	case "oauth2", "client credentials":
+		return string(ProviderClientCredentials)
 	default:
 		return string(t)
 	}
@@ -88,6 +96,10 @@ func (t ProviderType) Pretty() string {
 		return "LDAP/AD"
 	case ProviderClient:
 		return "Client"
+	case ProviderAccessToken:
+		return "Access Token"
+	case ProviderClientCredentials:
+		return "Client Credentials"
 	default:
 		return txt.UpperFirst(t.String())
 	}
@@ -104,6 +116,8 @@ func Provider(s string) ProviderType {
 		return ProviderLocal
 	case "ldap", "ad", "ldap/ad", "ldap\\ad":
 		return ProviderLDAP
+	case "oauth2", "client credentials":
+		return ProviderClientCredentials
 	default:
 		return ProviderType(clean.TypeLower(s))
 	}

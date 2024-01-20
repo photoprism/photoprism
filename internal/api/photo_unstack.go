@@ -78,7 +78,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Errorf("photo: cannot find primary file for %s (unstack)", clean.Log(baseName))
-			AbortUnexpected(c)
+			AbortUnexpectedError(c)
 			return
 		}
 
@@ -115,7 +115,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 
 			if err := unstackFile.Move(destName); err != nil {
 				log.Errorf("photo: cannot rename %s to %s (unstack)", clean.Log(unstackFile.BaseName()), clean.Log(filepath.Base(destName)))
-				AbortUnexpected(c)
+				AbortUnexpectedError(c)
 				return
 			}
 
@@ -182,7 +182,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		// Reset type for existing photo stack to image.
 		if err := stackPhoto.Update("PhotoType", entity.MediaImage); err != nil {
 			log.Errorf("photo: %s (unstack %s)", err, clean.Log(baseName))
-			AbortUnexpected(c)
+			AbortUnexpectedError(c)
 			return
 		}
 

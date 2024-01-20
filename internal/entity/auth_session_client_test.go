@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewClientAccessToken(t *testing.T) {
+func TestNewClientAuthentication(t *testing.T) {
 	t.Run("Anonymous", func(t *testing.T) {
-		sess := NewClientAccessToken("Anonymous", UnixDay, "metrics", nil)
+		sess := NewClientAuthentication("Anonymous", UnixDay, "metrics", nil)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -23,7 +23,7 @@ func TestNewClientAccessToken(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess := NewClientAccessToken("alice", UnixDay, "metrics", user)
+		sess := NewClientAuthentication("alice", UnixDay, "metrics", user)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -38,7 +38,7 @@ func TestNewClientAccessToken(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess := NewClientAccessToken("alice", UnixDay, "", user)
+		sess := NewClientAuthentication("alice", UnixDay, "", user)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -53,7 +53,7 @@ func TestNewClientAccessToken(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess := NewClientAccessToken("", 0, "metrics", user)
+		sess := NewClientAuthentication("", 0, "metrics", user)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -63,9 +63,9 @@ func TestNewClientAccessToken(t *testing.T) {
 	})
 }
 
-func TestCreateClientAccessToken(t *testing.T) {
+func TestAddClientAuthentication(t *testing.T) {
 	t.Run("Anonymous", func(t *testing.T) {
-		sess, err := CreateClientAccessToken("", UnixDay, "metrics", nil)
+		sess, err := AddClientAuthentication("", UnixDay, "metrics", nil)
 
 		assert.NoError(t, err)
 
@@ -82,7 +82,7 @@ func TestCreateClientAccessToken(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess, err := CreateClientAccessToken("My Client App Token", UnixDay, "metrics", user)
+		sess, err := AddClientAuthentication("My Client App Token", UnixDay, "metrics", user)
 
 		assert.NoError(t, err)
 

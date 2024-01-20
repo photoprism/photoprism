@@ -100,7 +100,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 			if err := a.Create(); err != nil {
 				// Report unexpected error.
 				log.Errorf("album: %s (create)", err)
-				AbortUnexpected(c)
+				AbortUnexpectedError(c)
 				return
 			}
 		} else {
@@ -112,7 +112,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 			} else if err := a.Restore(); err != nil {
 				// Report unexpected error.
 				log.Errorf("album: %s (restore)", err)
-				AbortUnexpected(c)
+				AbortUnexpectedError(c)
 				return
 			}
 		}

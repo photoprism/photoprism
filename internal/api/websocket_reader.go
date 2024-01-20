@@ -35,7 +35,7 @@ func wsReader(ws *websocket.Conn, writeMutex *sync.Mutex, connId string, conf *c
 		if jsonErr := json.Unmarshal(m, &info); jsonErr != nil {
 			// Do nothing.
 		} else {
-			if s := Session(info.AuthToken); s != nil {
+			if s := Session(ws.RemoteAddr().String(), info.AuthToken); s != nil {
 				wsAuth.mutex.Lock()
 				wsAuth.sid[connId] = s.ID
 				wsAuth.rid[connId] = s.RefID

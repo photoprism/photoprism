@@ -136,8 +136,12 @@ func TestLink_Delete(t *testing.T) {
 		}
 
 	})
-	t.Run("empty token", func(t *testing.T) {
+	t.Run("emptyToken", func(t *testing.T) {
 		link := Link{ShareUID: "ls6sg6bffgtredft", LinkToken: ""}
+		assert.Error(t, link.Delete())
+	})
+	t.Run("emptyUID", func(t *testing.T) {
+		link := Link{LinkUID: "", ShareUID: "", LinkToken: "abc"}
 		assert.Error(t, link.Delete())
 	})
 }
@@ -164,18 +168,28 @@ func TestFindLink(t *testing.T) {
 	})
 }
 
+func TestDeleteShareLinks(t *testing.T) {
+	t.Run("emptyShareUID", func(t *testing.T) {
+		assert.Error(t, DeleteShareLinks(""))
+	})
+}
+
 func TestFindLinks(t *testing.T) {
-	t.Run("success", func(t *testing.T) {
+	t.Run("findByToken", func(t *testing.T) {
 		r := FindLinks("1jxf3jfn2k", "")
 		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
 	})
-	t.Run("not found", func(t *testing.T) {
+	t.Run("noTokenAndShare", func(t *testing.T) {
 		r := FindLinks("", "")
 		assert.Empty(t, r)
 	})
-	t.Run("not found", func(t *testing.T) {
+	t.Run("invalidToken", func(t *testing.T) {
 		r := FindLinks("lkjh", "")
 		assert.Empty(t, r)
+	})
+	t.Run("findBySlug", func(t *testing.T) {
+		r := FindLinks("", "holiday-2030")
+		assert.Equal(t, "as6sg6bxpogaaba8", r[0].ShareUID)
 	})
 }
 

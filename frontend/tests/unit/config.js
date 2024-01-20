@@ -4,7 +4,7 @@ const clientConfig = {
   about: "PhotoPrism® CE",
   edition: "ce",
   version: "210710-bae1f2d7-Linux-x86_64-DEBUG",
-  copyright: "(c) 2018-2023 PhotoPrism UG. All rights reserved.",
+  copyright: "(c) 2018-2024 PhotoPrism UG. All rights reserved.",
   flags: "public debug experimental settings",
   baseUri: "",
   staticUri: "/static",

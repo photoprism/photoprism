@@ -228,7 +228,7 @@ func (c *Config) ClientPublic() ClientConfig {
 
 	cfg := ClientConfig{
 		Settings: c.PublicSettings(),
-		ACL:      acl.Resources.Grants(acl.RoleUnknown),
+		ACL:      acl.Resources.Grants(acl.RoleNone),
 		Disable: ClientDisable{
 			WebDAV:         true,
 			Settings:       c.DisableSettings(),
@@ -683,12 +683,12 @@ func (c *Config) ClientRole(role acl.Role) ClientConfig {
 // ClientSession provides the client config values for the specified session.
 func (c *Config) ClientSession(sess *entity.Session) (cfg ClientConfig) {
 	if sess.NoUser() && sess.IsClient() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Resources, acl.RoleClient)
+		cfg = c.ClientUser(false).ApplyACL(acl.Resources, sess.ClientRole())
 		cfg.Settings = c.SessionSettings(sess)
 	} else if sess.User().IsVisitor() {
 		cfg = c.ClientShare()
 	} else if sess.User().IsRegistered() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Resources, sess.User().AclRole())
+		cfg = c.ClientUser(false).ApplyACL(acl.Resources, sess.UserRole())
 		cfg.Settings = c.SessionSettings(sess)
 	} else {
 		cfg = c.ClientPublic()

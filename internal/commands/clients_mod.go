@@ -16,7 +16,7 @@ import (
 var ClientsModCommand = cli.Command{
 	Name:      "mod",
 	Usage:     "Updates client application settings",
-	ArgsUsage: "[id]",
+	ArgsUsage: "[client id]",
 	Flags:     ClientModFlags,
 	Action:    clientsModAction,
 }
@@ -37,7 +37,7 @@ func clientsModAction(ctx *cli.Context) error {
 		// Find client record.
 		var client *entity.Client
 
-		client = entity.FindClient(id)
+		client = entity.FindClientByUID(id)
 
 		if client == nil {
 			return fmt.Errorf("client %s not found", clean.LogQuote(id))

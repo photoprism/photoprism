@@ -325,7 +325,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 		}
 
 		for _, label := range labels {
-			logError("labels", label.Delete())
+			logErr("labels", label.Delete())
 		}
 
 		UpdateClientConfig()
@@ -367,7 +367,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		var err error
 
 		// Abort if user wants to delete all but does not have sufficient privileges.
-		if f.All && !acl.Resources.AllowAll(acl.ResourcePhotos, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+		if f.All && !acl.Resources.AllowAll(acl.ResourcePhotos, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
 			AbortForbidden(c)
 			return
 		}

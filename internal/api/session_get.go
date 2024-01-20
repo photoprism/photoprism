@@ -5,62 +5,65 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // GetSession returns the session data as JSON if authentication was successful.
 //
+// GET /api/v1/session
 // GET /api/v1/session/:id
+// GET /api/v1/sessions/:id
 func GetSession(router *gin.RouterGroup) {
 	getSessionHandler := func(c *gin.Context) {
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			AbortNotFound(c)
+			return
+		}
+
 		id := clean.ID(c.Param("id"))
 
-		// Check authentication token.
-		if id == "" {
-			// Abort if authentication token is missing or empty.
+		if id != "" && !rnd.IsSessionID(id) {
+			// Abort if session id is provided but invalid.
 			AbortBadRequest(c)
 			return
 		}
 
 		conf := get.Config()
-		authToken := AuthToken(c)
 
-		// Skip authentication if app is running in public mode.
-		var sess *entity.Session
-		if conf.Public() {
-			sess = get.Session().Public()
-			id = sess.ID
-			authToken = sess.AuthToken()
-		} else {
-			sess = Session(authToken)
-		}
+		// Check if the session user is allowed to manage all accounts or update his/her own account.
+		s := AuthAny(c, acl.ResourceSessions, acl.Permissions{acl.ActionManage, acl.ActionView})
 
+		// Check if session is valid.
 		switch {
-		case sess == nil:
+		case s.Abort(c):
+			return
+		case s.Expired(), s.ID == "":
 			AbortUnauthorized(c)
 			return
-		case sess.Expired(), sess.ID == "":
-			AbortUnauthorized(c)
-			return
-		case sess.Invalid(), sess.ID != id && !conf.Public():
+		case s.Invalid(), id != "" && s.ID != id && !conf.Public():
 			AbortForbidden(c)
 			return
 		}
 
-		// Update user information.
-		sess.RefreshUser()
+		// Get auth token from headers.
+		authToken := AuthToken(c)
 
-		// Add session id to response headers.
-		AddSessionHeader(c, authToken)
+		// Update user information.
+		s.RefreshUser()
 
 		// Response includes user data, session data, and client config values.
-		response := GetSessionResponse(authToken, sess, get.Config().ClientSession(sess))
+		response := GetSessionResponse(authToken, s, get.Config().ClientSession(s))
 
 		// Return JSON response.
 		c.JSON(http.StatusOK, response)
 	}
 
+	router.GET("/session", getSessionHandler)
 	router.GET("/session/:id", getSessionHandler)
+	router.GET("/sessions/:id", getSessionHandler)
 }

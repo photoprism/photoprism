@@ -274,6 +274,10 @@ export const Languages = () => [
     value: "ko",
   },
   {
+    text: "Tiếng Việt", // Vietnamese
+    value: "vi",
+  },
+  {
     text: "हिन्दी", // Hindi
     value: "hi",
   },

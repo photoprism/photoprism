@@ -15,6 +15,14 @@ func TestUsername(t *testing.T) {
 			assert.Equal(t, name, s)
 		}
 	})
+	t.Run("Too Long", func(t *testing.T) {
+		name := "teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest"
+		if s, err := Username(name); err != nil {
+			assert.ErrorIs(t, err, ErrTooLong)
+		} else {
+			assert.Equal(t, name, s)
+		}
+	})
 	t.Run("Admin", func(t *testing.T) {
 		name := "admin"
 		if s, err := Username(name); err != nil {

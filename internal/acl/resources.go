@@ -61,7 +61,12 @@ var Resources = ACL{
 		RoleAdmin: GrantFullAccess,
 	},
 	ResourceUsers: Roles{
-		RoleAdmin: Grant{AccessAll: true, AccessOwn: true, ActionView: true, ActionCreate: true, ActionUpdate: true, ActionDelete: true, ActionSubscribe: true},
+		RoleAdmin:  Grant{AccessAll: true, AccessOwn: true, ActionView: true, ActionCreate: true, ActionUpdate: true, ActionDelete: true, ActionSubscribe: true},
+		RoleClient: Grant{AccessOwn: true, ActionView: true},
+	},
+	ResourceSessions: Roles{
+		RoleAdmin:   GrantFullAccess,
+		RoleDefault: Grant{AccessOwn: true, ActionView: true, ActionCreate: true, ActionUpdate: true, ActionDelete: true, ActionSubscribe: true},
 	},
 	ResourceLogs: Roles{
 		RoleAdmin:  GrantFullAccess,

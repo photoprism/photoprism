@@ -13,7 +13,7 @@ type ConvertJob struct {
 }
 
 func ConvertWorker(jobs <-chan ConvertJob) {
-	logError := func(err error, job ConvertJob) {
+	convertErr := func(err error, job ConvertJob) {
 		fileName := job.file.RelName(job.convert.conf.OriginalsPath())
 		log.Errorf("convert: %s for %s", strings.TrimSpace(err.Error()), clean.Log(fileName))
 	}
@@ -34,7 +34,7 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 
 			// Create cover image.
 			if _, err := job.convert.ToImage(f, job.force); err != nil {
-				logError(err, job)
+				convertErr(err, job)
 			}
 
 			// Check if the file has a playable format or has already been transcoded.
@@ -45,12 +45,12 @@ func ConvertWorker(jobs <-chan ConvertJob) {
 
 			// Transcode to MP4 AVC.
 			if _, err := job.convert.ToAvc(f, job.convert.conf.FFmpegEncoder(), false, false); err != nil {
-				logError(err, job)
+				convertErr(err, job)
 			}
 		default:
 			// Create preview image.
 			if _, err := job.convert.ToImage(f, job.force); err != nil {
-				logError(err, job)
+				convertErr(err, job)
 			}
 		}
 	}

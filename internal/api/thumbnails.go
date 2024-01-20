@@ -162,7 +162,7 @@ func GetThumb(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError(logPrefix, f.Update("FileMissing", true))
+			logErr(logPrefix, f.Update("FileMissing", true))
 
 			if f.AllFilesMissing() {
 				log.Infof("%s: deleting photo, all files missing for %s", logPrefix, clean.Log(f.FileName))

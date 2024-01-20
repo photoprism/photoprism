@@ -83,7 +83,7 @@ func GetVideo(router *gin.RouterGroup) {
 		// If the file has a hybrid photo/video format, try to find and send the embedded video data.
 		if f.MediaType == entity.MediaLive {
 			if info, videoErr := video.ProbeFile(videoFileName); info.VideoOffset < 0 || !info.Compatible || videoErr != nil {
-				logError("video", videoErr)
+				logErr("video", videoErr)
 				log.Warnf("video: no embedded media found in %s", clean.Log(f.FileName))
 				AddContentTypeHeader(c, video.ContentTypeAVC)
 				c.File(get.Config().StaticFile("video/404.mp4"))
@@ -121,7 +121,7 @@ func GetVideo(router *gin.RouterGroup) {
 
 		if mediaFile, mediaErr := photoprism.NewMediaFile(videoFileName); mediaErr != nil {
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError("video", f.Update("FileMissing", true))
+			logErr("video", f.Update("FileMissing", true))
 
 			// Log error and default to 404.mp4
 			log.Errorf("video: file %s is missing", clean.Log(f.FileName))

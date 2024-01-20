@@ -14,7 +14,7 @@ import (
 // AuthListCommand configures the command name, flags, and action.
 var AuthListCommand = cli.Command{
 	Name:      "ls",
-	Usage:     "Lists authenticated users and API clients",
+	Usage:     "Lists currently authenticated users and clients",
 	ArgsUsage: "[search]",
 	Flags:     append(report.CliFlags, countFlag, tokensFlag),
 	Action:    authListAction,
@@ -25,7 +25,7 @@ func authListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		var rows [][]string
 
-		cols := []string{"Session ID", "User", "Authentication", "Scope", "Identifier", "Client IP", "Last Active", "Created At", "Expires At"}
+		cols := []string{"Session ID", "Session User", "Client Name", "Authentication Method", "Scope", "Login IP", "Current IP", "Last Active", "Created At", "Expires At"}
 
 		if ctx.Bool("tokens") {
 			cols = append(cols, "Preview Token", "Download Token")
@@ -49,18 +49,13 @@ func authListAction(ctx *cli.Context) error {
 
 		// Display report.
 		for i, res := range results {
-			user := res.Username()
-
-			if user == "" {
-				user = res.User().UserRole
-			}
-
 			rows[i] = []string{
 				res.RefID,
-				user,
+				res.UserInfo(),
+				res.ClientInfo(),
 				res.AuthInfo(),
 				res.AuthScope,
-				res.AuthID,
+				res.LoginIP,
 				res.ClientIP,
 				report.UnixTime(res.LastActive),
 				report.DateTime(&res.CreatedAt),

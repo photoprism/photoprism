@@ -167,8 +167,8 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 
 		assert.Equal(t, expected, f)
 	})
-	t.Run("RoleUnknown", func(t *testing.T) {
-		cfg := c.ClientRole(acl.RoleUnknown)
+	t.Run("RoleNone", func(t *testing.T) {
+		cfg := c.ClientRole(acl.RoleNone)
 		f := cfg.Settings.Features
 
 		assert.NotEqual(t, adminFeatures, f)
@@ -355,7 +355,7 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 	})
-	t.Run("RoleUnknown", func(t *testing.T) {
+	t.Run("RoleNone", func(t *testing.T) {
 		sess := entity.SessionFixtures.Pointer("unauthorized")
 
 		cfg := c.ClientSession(sess)

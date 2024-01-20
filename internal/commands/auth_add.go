@@ -17,27 +17,28 @@ import (
 var AuthAddFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:  "name, n",
-		Usage: "arbitrary name to help identify the access `TOKEN`",
+		Usage: "`CLIENT` name to help identify the application",
 	},
 	cli.StringFlag{
 		Name:  "scope, s",
-		Usage: "authorization `SCOPE` for the access token e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all scopes)",
+		Usage: "authorization `SCOPES` e.g. \"metrics\" or \"photos albums\" (\"*\" to allow all)",
 	},
 	cli.Int64Flag{
 		Name:  "expires, e",
-		Usage: "access token lifetime in `SECONDS`, after which it expires and a new token must be created (-1 to disable)",
+		Usage: "authentication `LIFETIME` in seconds, after which access expires (-1 to disable the limit)",
 		Value: entity.UnixYear,
 	},
 }
 
 // AuthAddCommand configures the command name, flags, and action.
 var AuthAddCommand = cli.Command{
-	Name:        "add",
-	Usage:       "Creates a new client access token",
-	Description: "Specifying a username as argument creates a personal access token for a registered user account.",
-	ArgsUsage:   "[username]",
-	Flags:       AuthAddFlags,
-	Action:      authAddAction,
+	Name:  "add",
+	Usage: "Adds a new authentication secret for client applications",
+	Description: "If you specify a username as argument, an app password will be created for this user account." +
+		" It can be used as a password replacement to grant limited access to client applications.",
+	ArgsUsage: "[username]",
+	Flags:     AuthAddFlags,
+	Action:    authAddAction,
 }
 
 // authAddAction shows detailed session information.
@@ -53,10 +54,10 @@ func authAddAction(ctx *cli.Context) error {
 			return fmt.Errorf("user %s not found", clean.LogQuote(userName))
 		}
 
-		// Get token name from command flag or ask for it.
-		tokenName := ctx.String("name")
+		// Get client name from command flag or ask for it.
+		clientName := ctx.String("name")
 
-		if tokenName == "" {
+		if clientName == "" {
 			prompt := promptui.Prompt{
 				Label:   "Token Name",
 				Default: rnd.Name(),
@@ -68,7 +69,7 @@ func authAddAction(ctx *cli.Context) error {
 				return err
 			}
 
-			tokenName = clean.Name(res)
+			clientName = clean.Name(res)
 		}
 
 		// Get auth scope from command flag or ask for it.
@@ -89,22 +90,21 @@ func authAddAction(ctx *cli.Context) error {
 			authScope = clean.Scope(res)
 		}
 
-		// Create client session.
-		sess, err := entity.CreateClientAccessToken(tokenName, ctx.Int64("expires"), authScope, user)
+		// Create session and show the authentication secret.
+		sess, err := entity.AddClientAuthentication(clientName, ctx.Int64("expires"), authScope, user)
 
 		if err != nil {
-			return fmt.Errorf("failed to create access token: %s", err)
+			return fmt.Errorf("failed to create authentication secret: %s", err)
 		} else {
 			// Show client authentication credentials.
 			if sess.UserUID == "" {
-				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED CLIENT ACCESS TOKEN, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED ACCESS TOKEN, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\n%s\n", report.Credentials("Access Token", sess.AuthToken(), "Authorization Scope", sess.Scope()))
 			} else {
-				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED PERSONAL ACCESS TOKEN, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED APP PASSWORD, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\n%s\n", report.Credentials("App Password", sess.AuthToken(), "Authorization Scope", sess.Scope()))
 			}
 
-			result := report.Credentials("Access Token", sess.AuthToken(), "Authorization Scope", sess.Scope())
-
-			fmt.Printf("\n%s\n", result)
 		}
 
 		return err

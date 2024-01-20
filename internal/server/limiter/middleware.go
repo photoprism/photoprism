@@ -7,9 +7,9 @@ import (
 )
 
 // Middleware registers the IP rate limiter middleware.
-func Middleware(ip *Limit) gin.HandlerFunc {
+func Middleware(limiter *Limit) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if l := ip.IP(c.ClientIP()); !l.Allow() {
+		if l := limiter.IP(c.ClientIP()); !l.Allow() {
 			c.AbortWithStatus(http.StatusTooManyRequests)
 			return
 		}

@@ -4,7 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const UnknownIP = "0.0.0.0"
+const (
+	UnknownIP = "0.0.0.0"
+)
 
 // ClientIP returns the client IP address from the request context or a placeholder if it is unknown.
 func ClientIP(c *gin.Context) (ip string) {

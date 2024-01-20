@@ -48,6 +48,13 @@ func TestRefID(t *testing.T) {
 	assert.False(t, InvalidRefID(id6))
 	assert.Len(t, id6, 12)
 
+	id7 := RefID("abcdef")
+	t.Logf("RefID 7: %s", id7)
+	assert.NotEmpty(t, id7)
+	assert.True(t, IsRefID(id7))
+	assert.False(t, InvalidRefID(id7))
+	assert.Len(t, id7, 12)
+
 	for n := 7; n < 20; n++ {
 		id := RefID("test")
 		t.Logf("RefID %d: %s", n, id)

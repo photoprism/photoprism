@@ -100,7 +100,7 @@ func FolderCover(router *gin.RouterGroup) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			log.Warnf("%s: %s is missing", folderCover, clean.Log(f.FileName))
-			logError(folderCover, f.Update("FileMissing", true))
+			logErr(folderCover, f.Update("FileMissing", true))
 			return
 		}
 

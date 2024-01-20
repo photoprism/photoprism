@@ -22,7 +22,7 @@ func TestFindClient(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
 
-		m := FindClient("cs5gfen1bgxz7s9i")
+		m := FindClientByUID("cs5gfen1bgxz7s9i")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -36,7 +36,7 @@ func TestFindClient(t *testing.T) {
 	t.Run("Bob", func(t *testing.T) {
 		expected := ClientFixtures.Get("bob")
 
-		m := FindClient("cs5gfsvbd7ejzn8m")
+		m := FindClientByUID("cs5gfsvbd7ejzn8m")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -50,7 +50,7 @@ func TestFindClient(t *testing.T) {
 	t.Run("Metrics", func(t *testing.T) {
 		expected := ClientFixtures.Get("metrics")
 
-		m := FindClient("cs5cpu17n6gj2qo5")
+		m := FindClientByUID("cs5cpu17n6gj2qo5")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -62,7 +62,7 @@ func TestFindClient(t *testing.T) {
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		m := FindClient("123")
+		m := FindClientByUID("123")
 		assert.Nil(t, m)
 	})
 }
@@ -161,7 +161,7 @@ func TestClient_Create(t *testing.T) {
 
 func TestClient_Save(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		c := FindClient("cs5cpu17n6gj2aaa")
+		c := FindClientByUID("cs5cpu17n6gj2aaa")
 		assert.Nil(t, c)
 
 		var m = Client{ClientName: "New Client", ClientUID: "cs5cpu17n6gj2aaa"}
@@ -169,7 +169,7 @@ func TestClient_Save(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		c = FindClient("cs5cpu17n6gj2aaa")
+		c = FindClientByUID("cs5cpu17n6gj2aaa")
 
 		if c == nil {
 			t.Fatal("result should not be nil")
@@ -244,10 +244,33 @@ func TestClient_NewSecret(t *testing.T) {
 	})
 }
 
-func TestClient_Method(t *testing.T) {
+func TestClient_Provider(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		client := NewClient()
+		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+	})
 	t.Run("Alice", func(t *testing.T) {
-		alice := ClientFixtures.Get("alice")
-		assert.Equal(t, alice.Method(), authn.MethodOAuth2)
+		client := ClientFixtures.Get("alice")
+		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+	})
+	t.Run("Bob", func(t *testing.T) {
+		client := ClientFixtures.Get("bob")
+		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+	})
+}
+
+func TestClient_Method(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		client := NewClient()
+		assert.Equal(t, authn.MethodOAuth2, client.Method())
+	})
+	t.Run("Alice", func(t *testing.T) {
+		client := ClientFixtures.Get("alice")
+		assert.Equal(t, authn.MethodOAuth2, client.Method())
+	})
+	t.Run("Bob", func(t *testing.T) {
+		client := ClientFixtures.Get("bob")
+		assert.Equal(t, authn.MethodOAuth2, client.Method())
 	})
 }
 
@@ -273,11 +296,35 @@ func TestClient_UpdateLastActive(t *testing.T) {
 	})
 }
 
+func TestClient_EnforceAuthTokenLimit(t *testing.T) {
+	t.Run("EmptyUID", func(t *testing.T) {
+		var m = Client{ClientName: "No UUID"}
+
+		r := m.EnforceAuthTokenLimit()
+
+		assert.Equal(t, r, 0)
+	})
+	t.Run("NoToken", func(t *testing.T) {
+		var m = Client{ClientName: "David", ClientUID: "cs5cpu17n6gj2bbb"}
+
+		r := m.EnforceAuthTokenLimit()
+
+		assert.Equal(t, r, 0)
+	})
+	t.Run("NegativeTokenLimit", func(t *testing.T) {
+		var m = Client{ClientName: "David", ClientUID: "cs5cpu17n6gj2bbb", AuthTokens: -1}
+
+		r := m.EnforceAuthTokenLimit()
+
+		assert.Equal(t, r, 0)
+	})
+}
+
 func TestClient_HasPassword(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
 
-		m := FindClient("cs5gfen1bgxz7s9i")
+		m := FindClientByUID("cs5gfen1bgxz7s9i")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -296,7 +343,7 @@ func TestClient_HasPassword(t *testing.T) {
 	t.Run("Metrics", func(t *testing.T) {
 		expected := ClientFixtures.Get("metrics")
 
-		m := FindClient("cs5cpu17n6gj2qo5")
+		m := FindClientByUID("cs5cpu17n6gj2qo5")
 
 		if m == nil {
 			t.Fatal("result should not be nil")
@@ -331,6 +378,30 @@ func TestClient_Expires(t *testing.T) {
 	})
 }
 
+func TestClient_UserInfo(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		assert.Equal(t, "", NewClient().UserInfo())
+	})
+	t.Run("Alice", func(t *testing.T) {
+		assert.Equal(t, "alice", ClientFixtures.Pointer("alice").UserInfo())
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		assert.Equal(t, "", ClientFixtures.Pointer("metrics").UserInfo())
+	})
+}
+
+func TestClient_AuthInfo(t *testing.T) {
+	t.Run("New", func(t *testing.T) {
+		assert.Equal(t, "Client Credentials (OAuth2)", NewClient().AuthInfo())
+	})
+	t.Run("Alice", func(t *testing.T) {
+		assert.Equal(t, "Client Credentials (OAuth2)", ClientFixtures.Pointer("alice").AuthInfo())
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		assert.Equal(t, "Client Credentials (OAuth2)", ClientFixtures.Pointer("metrics").AuthInfo())
+	})
+}
+
 func TestClient_Report(t *testing.T) {
 	t.Run("Metrics", func(t *testing.T) {
 		m := ClientFixtures.Get("metrics")
@@ -348,11 +419,15 @@ func TestClient_SetFormValues(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var values = form.Client{ClientName: "New Name", AuthMethod: authn.MethodOAuth2.String(),
-			AuthScope:   "test",
-			AuthExpires: 4000,
-			AuthTokens:  3,
-			AuthEnabled: false}
+		var values = form.Client{
+			ClientName:   "New Name",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   authn.MethodOAuth2.String(),
+			AuthScope:    "test",
+			AuthExpires:  4000,
+			AuthTokens:   3,
+			AuthEnabled:  false,
+		}
 
 		c := m.SetFormValues(values)
 
@@ -368,11 +443,15 @@ func TestClient_SetFormValues(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var values = form.Client{ClientName: "Annika", AuthMethod: authn.MethodOAuth2.String(),
-			AuthScope:   "metrics",
-			AuthExpires: -4000,
-			AuthTokens:  -5,
-			AuthEnabled: true}
+		var values = form.Client{
+			ClientName:   "Annika",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   authn.MethodOAuth2.String(),
+			AuthScope:    "metrics",
+			AuthExpires:  -4000,
+			AuthTokens:   -5,
+			AuthEnabled:  true,
+		}
 
 		c := m.SetFormValues(values)
 
@@ -388,13 +467,16 @@ func TestClient_SetFormValues(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		var values = form.Client{ClientName: "Friend",
-			AuthMethod:  authn.MethodOAuth2.String(),
-			AuthScope:   "test",
-			AuthExpires: 4000000,
-			AuthTokens:  3000000000,
-			AuthEnabled: true,
-			UserUID:     "uqxqg7i1kperxvu7"}
+		var values = form.Client{
+			ClientName:   "Friend",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   authn.MethodOAuth2.String(),
+			AuthScope:    "test",
+			AuthExpires:  4000000,
+			AuthTokens:   3000000000,
+			AuthEnabled:  true,
+			UserUID:      "uqxqg7i1kperxvu7",
+		}
 
 		c := m.SetFormValues(values)
 
@@ -407,7 +489,13 @@ func TestClient_SetFormValues(t *testing.T) {
 
 func TestClient_Validate(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "basic", AuthScope: "all"}
+		m := Client{
+			ClientName:   "test",
+			ClientType:   "test",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "basic",
+			AuthScope:    "all",
+		}
 
 		err := m.Validate()
 
@@ -416,7 +504,13 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("ClientNameEmpty", func(t *testing.T) {
-		m := Client{ClientName: "", ClientType: "test", AuthMethod: "basic", AuthScope: "all"}
+		m := Client{
+			ClientName:   "",
+			ClientType:   "test",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "basic",
+			AuthScope:    "all",
+		}
 
 		err := m.Validate()
 
@@ -425,7 +519,13 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("ClientTypeEmpty", func(t *testing.T) {
-		m := Client{ClientName: "test", ClientType: "", AuthMethod: "basic", AuthScope: "all"}
+		m := Client{
+			ClientName:   "test",
+			ClientType:   "",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "basic",
+			AuthScope:    "all",
+		}
 
 		err := m.Validate()
 
@@ -434,7 +534,13 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("AuthMethodEmpty", func(t *testing.T) {
-		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "", AuthScope: "all"}
+		m := Client{
+			ClientName:   "test",
+			ClientType:   "test",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "",
+			AuthScope:    "all",
+		}
 
 		err := m.Validate()
 
@@ -443,7 +549,13 @@ func TestClient_Validate(t *testing.T) {
 		}
 	})
 	t.Run("AuthScopeEmpty", func(t *testing.T) {
-		m := Client{ClientName: "test", ClientType: "test", AuthMethod: "basic", AuthScope: ""}
+		m := Client{
+			ClientName:   "test",
+			ClientType:   "test",
+			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthMethod:   "basic",
+			AuthScope:    "",
+		}
 
 		err := m.Validate()
 

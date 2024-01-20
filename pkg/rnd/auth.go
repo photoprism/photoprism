@@ -3,18 +3,19 @@ package rnd
 import (
 	"crypto/rand"
 	"fmt"
+	"hash/crc32"
 	"log"
 	"math/big"
 )
 
 const (
-	SessionIdLength     = 64
-	AuthTokenLength     = 48
-	AuthSecretLength    = 23
-	AuthSecretSeparator = '-'
+	SessionIdLength      = 64
+	AuthTokenLength      = 48
+	AppPasswordLength    = 27
+	AppPasswordSeparator = '-'
 )
 
-// AuthToken returns a random hex encoded string that can be used for authentication.
+// AuthToken generates a random hexadecimal character token for authenticating client applications.
 //
 // Examples: 9fa8e562564dac91b96881040e98f6719212a1a364e0bb25
 func AuthToken() string {
@@ -27,7 +28,7 @@ func AuthToken() string {
 	return fmt.Sprintf("%x", b)
 }
 
-// IsAuthToken checks if the string is a session id.
+// IsAuthToken checks if the string might be a valid auth token.
 func IsAuthToken(s string) bool {
 	if l := len(s); l == AuthTokenLength {
 		return IsHex(s)
@@ -36,44 +37,70 @@ func IsAuthToken(s string) bool {
 	return false
 }
 
-// AuthSecret returns a random, human-friendly token that can be used for authentication.
-// It is separated by 3 dashes for better readability and has a total length of 23 characters.
+// AppPassword generates a random, human-friendly authentication token that can also be used as
+// password replacement for client applications. It is separated by 3 dashes for better readability
+// and has a total length of 27 characters.
 //
-// Example: iXrDz-aY16n-4IUWM-otkM3
-func AuthSecret() string {
+// Example: OXiV72-wTtiL9-d04jO7-X7XP4p
+func AppPassword() string {
 	m := big.NewInt(int64(len(CharsetBase62)))
-	b := make([]byte, AuthSecretLength)
+	b := make([]byte, 0, AppPasswordLength)
 
-	for i := range b {
-		if r, err := rand.Int(rand.Reader, m); err == nil {
-			if (i+1)%6 == 0 {
-				b[i] = AuthSecretSeparator
-			} else {
-				b[i] = CharsetBase62[r.Int64()]
-			}
+	for i := 0; i < AppPasswordLength; i++ {
+		if (i+1)%7 == 0 {
+			b = append(b, AppPasswordSeparator)
+		} else if i == AppPasswordLength-1 {
+			b = append(b, CharsetBase62[crc32.ChecksumIEEE(b)%62])
+			return string(b)
+		} else if r, err := rand.Int(rand.Reader, m); err == nil {
+			b = append(b, CharsetBase62[r.Int64()])
 		}
 	}
 
 	return string(b)
 }
 
-// IsAuthSecret returns true if the string only contains alphanumeric ascii chars without whitespace.
-func IsAuthSecret(s string) bool {
-	if len(s) != AuthSecretLength {
+// IsAppPassword checks if the string might be a valid app password.
+func IsAppPassword(s string, verifyChecksum bool) bool {
+	// Verify token length.
+	if len(s) != AppPasswordLength {
 		return false
 	}
 
+	// Check characters.
 	sep := 0
-
 	for _, r := range s {
-		if r == AuthSecretSeparator {
+		if r == AppPasswordSeparator {
 			sep++
 		} else if (r < '0' || r > '9') && (r < 'A' || r > 'Z') && (r < 'a' || r > 'z') {
 			return false
 		}
 	}
 
-	return sep == AuthSecretLength/6
+	// Check number of separators.
+	if sep != AppPasswordLength/7 {
+		return false
+	} else if !verifyChecksum {
+		return true
+	}
+
+	// Verify token checksum.
+	return s[AppPasswordLength-1] == CharsetBase62[crc32.ChecksumIEEE([]byte(s[:AppPasswordLength-1]))%62]
+}
+
+// IsAuthAny checks if the string might be a valid auth token or app password.
+func IsAuthAny(s string) bool {
+	// Check if string might be a regular auth token.
+	if IsAuthToken(s) {
+		return true
+	}
+
+	// Check if string might be a human-friendly app password.
+	if IsAppPassword(s, false) {
+		return true
+	}
+
+	return false
 }
 
 // SessionID returns the hashed session id string.

@@ -14,7 +14,7 @@ var AuthCommands = cli.Command{
 		AuthAddCommand,
 		AuthShowCommand,
 		AuthRemoveCommand,
-		AuthClearCommand,
+		AuthResetCommand,
 	},
 }
 

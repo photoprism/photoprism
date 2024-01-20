@@ -7,6 +7,14 @@ import (
 )
 
 func TestACL_Allow(t *testing.T) {
+	t.Run("ResourceSessions", func(t *testing.T) {
+		assert.True(t, Resources.Allow(ResourceSessions, RoleAdmin, AccessAll))
+		assert.True(t, Resources.Allow(ResourceSessions, RoleAdmin, AccessOwn))
+		assert.False(t, Resources.Allow(ResourceSessions, RoleVisitor, AccessAll))
+		assert.True(t, Resources.Allow(ResourceSessions, RoleVisitor, AccessOwn))
+		assert.False(t, Resources.Allow(ResourceSessions, RoleClient, AccessAll))
+		assert.True(t, Resources.Allow(ResourceSessions, RoleClient, AccessOwn))
+	})
 	t.Run("ResourcePhotosRoleAdminActionModify", func(t *testing.T) {
 		assert.True(t, Resources.Allow(ResourcePhotos, RoleAdmin, ActionUpdate))
 	})
@@ -124,6 +132,6 @@ func TestACL_DenyAll(t *testing.T) {
 func TestACL_Resources(t *testing.T) {
 	t.Run("Resources", func(t *testing.T) {
 		result := Resources.Resources()
-		assert.Len(t, result, 21)
+		assert.Len(t, result, 22)
 	})
 }

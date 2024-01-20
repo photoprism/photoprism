@@ -12,11 +12,11 @@ import (
 )
 
 const (
-	XAuthToken = "X-Auth-Token"
-	XSessionID = "X-Session-ID"
 	Auth       = "Authorization" // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization
 	AuthBasic  = "Basic"
 	AuthBearer = "Bearer"
+	XAuthToken = "X-Auth-Token"
+	XSessionID = "X-Session-ID"
 )
 
 // AuthToken returns the client authentication token from the request context,

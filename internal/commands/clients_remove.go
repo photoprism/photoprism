@@ -15,7 +15,7 @@ import (
 var ClientsRemoveCommand = cli.Command{
 	Name:      "rm",
 	Usage:     "Deletes the specified client application",
-	ArgsUsage: "[id]",
+	ArgsUsage: "[client id]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
@@ -41,7 +41,7 @@ func clientsRemoveAction(ctx *cli.Context) error {
 		// Find client record.
 		var m *entity.Client
 
-		m = entity.FindClient(id)
+		m = entity.FindClientByUID(id)
 
 		if m == nil {
 			return fmt.Errorf("client %s not found", clean.LogQuote(id))

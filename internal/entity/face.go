@@ -29,7 +29,7 @@ type Face struct {
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
 	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
 	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
-	embedding       face.Embedding  `gorm:"-"`
+	embedding       face.Embedding  `gorm:"-" yaml:"-"`
 	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
