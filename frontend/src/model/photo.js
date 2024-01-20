@@ -541,18 +541,22 @@ export class Photo extends RestModel {
     return `${config.videoUri}/videos/${this.Hash}/${config.previewToken}/${FormatAvc}`;
   }
 
-  mainFile() {
-    return this.getMainFileFromFiles(this.Files);
-  }
-
   webShareFile() {
     let file;
-    if (this.videoFile()) {
-      file = this.videoFile();
+    if (this.Type == MediaLive) {
+      file = this.Files.find((f) => f.FileType == FormatJpeg || f.FileType === FormatPng);
     } else {
-      file = this.mainFile();
+      if (this.videoFile()) {
+        file = this.videoFile();
+      } else {
+        file = this.Files.find((f) => f.FileType == FormatJpeg || f.FileType === FormatPng);
+      }
     }
     return file;
+  }
+
+  mainFile() {
+    return this.getMainFileFromFiles(this.Files);
   }
 
   getMainFileFromFiles = memoizeOne((files) => {

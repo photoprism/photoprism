@@ -400,6 +400,9 @@ export default {
         const shareData = {
           files: filesArray,
         };
+        const debugMsg = "Sharing allowed: " + navigator.canShare(shareData);
+        console.log(debugMsg);
+        this.$notify.info(debugMsg);
         return navigator.share(shareData);
       }).catch((e) => {
         this.$notify.error(this.$gettext("sharing photos failed"));
