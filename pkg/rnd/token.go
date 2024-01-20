@@ -3,10 +3,12 @@ package rnd
 import (
 	"crypto/rand"
 	"math/big"
+
+	"github.com/photoprism/photoprism/pkg/checksum"
 )
 
-const CharsetBase36 = "abcdefghijklmnopqrstuvwxyz0123456789"
-const CharsetBase62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+const CharsetBase36 = checksum.CharsetBase36
+const CharsetBase62 = checksum.CharsetBase62
 
 // Base36 generates a random token containing lowercase letters and numbers.
 func Base36(length int) string {

@@ -22,7 +22,7 @@ func registerPWARoutes(router *gin.Engine, conf *config.Config) {
 		}
 
 		values := gin.H{
-			"signUp": gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
+			"signUp": config.SignUp,
 			"config": conf.ClientPublic(),
 		}
 		c.HTML(http.StatusOK, conf.TemplateName(), values)

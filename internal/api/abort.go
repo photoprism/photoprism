@@ -47,7 +47,7 @@ var AbortNotFound = func(c *gin.Context) {
 		}
 
 		values := gin.H{
-			"signUp":   gin.H{"message": config.MsgSponsor, "url": config.SignUpURL},
+			"signUp":   config.SignUp,
 			"config":   conf.ClientPublic(),
 			"error":    i18n.Msg(i18n.ErrNotFound),
 			"code":     http.StatusNotFound,

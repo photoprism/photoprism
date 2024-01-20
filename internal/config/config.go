@@ -1,10 +1,32 @@
+/*
+Package config provides global options, command-line flags, and user settings.
+
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+
+	This program is free software: you can redistribute it and/or modify
+	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+	<https://docs.photoprism.app/license/agpl>
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	The AGPL is supplemented by our Trademark and Brand Guidelines,
+	which describe how our Brand Assets may be used:
+	<https://www.photoprism.app/trademark>
+
+Feel free to send an email to hello@photoprism.app if you have questions,
+want to support our work, or just want to say hello.
+
+Additional information can be found in our Developer Guide:
+<https://docs.photoprism.app/developer-guide/>
+*/
 package config
 
 import (
 	"crypto/tls"
-	"encoding/hex"
 	"fmt"
-	"hash/crc32"
 	"net/http"
 	"net/url"
 	"os"
@@ -34,16 +56,14 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/pkg/checksum"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// log points to the global logger.
 var log = event.Log
-var once sync.Once
-var LowMem = false
-var TotalMem uint64
-var crc32Castagnoli = crc32.MakeTable(crc32.Castagnoli)
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -357,15 +377,7 @@ func (c *Config) Serial() string {
 
 // SerialChecksum returns the CRC32 checksum of the storage serial.
 func (c *Config) SerialChecksum() string {
-	var result []byte
-
-	crc := crc32.New(crc32Castagnoli)
-
-	if _, err := crc.Write([]byte(c.Serial())); err != nil {
-		log.Warnf("config: %s", err)
-	}
-
-	return hex.EncodeToString(crc.Sum(result))
+	return checksum.Serial([]byte(c.Serial()))
 }
 
 // Name returns the app name.
@@ -402,7 +414,7 @@ func (c *Config) Version() string {
 
 // VersionChecksum returns the application version checksum.
 func (c *Config) VersionChecksum() uint32 {
-	return crc32.ChecksumIEEE([]byte(c.Version()))
+	return checksum.Crc32([]byte(c.Version()))
 }
 
 // UserAgent returns an HTTP user agent string based on the app config and version.
