@@ -15,7 +15,7 @@ var (
 )
 
 // Register registers a new package extension.
-func Register(name string, initConfig func(c *Config) error, clientConfig func(c *Config, t ClientType) Values) {
+func Register(name string, initConfig func(c *Config) error, clientConfig func(c *Config, t ClientType) Map) {
 	extMutex.Lock()
 	n, _ := extensions.Load().(Extensions)
 	extensions.Store(append(n, Extension{name: name, init: initConfig, clientValues: clientConfig}))
@@ -37,7 +37,7 @@ type Extensions []Extension
 type Extension struct {
 	name         string
 	init         func(c *Config) error
-	clientValues func(c *Config, t ClientType) Values
+	clientValues func(c *Config, t ClientType) Map
 }
 
 // Init initializes the registered extensions.

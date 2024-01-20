@@ -91,7 +91,7 @@ type ClientConfig struct {
 	Server           env.Resources       `json:"server"`
 	Settings         *customize.Settings `json:"settings,omitempty"`
 	ACL              acl.Grants          `json:"acl,omitempty"`
-	Ext              Values              `json:"ext"`
+	Ext              Map                 `json:"ext"`
 }
 
 // ApplyACL updates the client config values based on the ACL and Role provided.

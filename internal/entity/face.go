@@ -115,7 +115,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 // Matched updates the match timestamp.
 func (m *Face) Matched() error {
 	m.MatchedAt = TimePointer()
-	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Embedding returns parsed face embedding.
@@ -197,7 +197,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		m.Collisions++
 		m.CollisionRadius = dist
 		UpdateFaces.Store(true)
-		return true, m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
+		return true, m.Updates(Map{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
@@ -205,7 +205,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		UpdateFaces.Store(true)
 	}
 
-	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
+	err = m.Updates(Map{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
 
 	if err != nil {
 		return true, err
@@ -289,7 +289,7 @@ func (m *Face) SetSubjectUID(subjUid string) (err error) {
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
 		Where("marker_invalid = 0").
-		UpdateColumns(Values{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
+		UpdateColumns(Map{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
 		return err
 	}
 
@@ -354,7 +354,7 @@ func (m *Face) Delete() error {
 	// Remove face id from markers before deleting.
 	if err := Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
-		UpdateColumns(Values{"face_id": "", "face_dist": -1}).Error; err != nil {
+		UpdateColumns(Map{"face_id": "", "face_dist": -1}).Error; err != nil {
 		return err
 	}
 

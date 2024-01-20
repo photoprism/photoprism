@@ -99,7 +99,7 @@ func (m *Migration) Fail(err error, db *gorm.DB) {
 		m.Error = err.Error()
 	}
 
-	db.Model(m).Updates(Values{"FinishedAt": m.FinishedAt, "Error": m.Error})
+	db.Model(m).Updates(Map{"FinishedAt": m.FinishedAt, "Error": m.Error})
 }
 
 // Finish updates the FinishedAt timestamp and removes the error message when the migration was successful.
@@ -111,7 +111,7 @@ func (m *Migration) Finish(db *gorm.DB) error {
 	finished := time.Now().UTC().Truncate(time.Second)
 	m.FinishedAt = &finished
 	m.Error = ""
-	return db.Model(m).Updates(Values{"FinishedAt": m.FinishedAt, "Error": m.Error}).Error
+	return db.Model(m).Updates(Map{"FinishedAt": m.FinishedAt, "Error": m.Error}).Error
 }
 
 // Execute runs the migration.

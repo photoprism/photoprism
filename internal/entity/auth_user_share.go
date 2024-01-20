@@ -159,7 +159,7 @@ func (m *UserShare) UpdateLink(link Link) error {
 	m.UpdatedAt = TimeStamp()
 	m.ExpiresAt = link.ExpiresAt()
 
-	values := Values{
+	values := Map{
 		"link_uid":   m.LinkUID,
 		"expires_at": m.ExpiresAt,
 		"comment":    m.Comment,

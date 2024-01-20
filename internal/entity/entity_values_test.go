@@ -12,7 +12,7 @@ func TestModelValues(t *testing.T) {
 		values, keys, err := ModelValues(m, "ID", "PhotoUID")
 
 		assert.Error(t, err)
-		assert.IsType(t, Values{}, values)
+		assert.IsType(t, Map{}, values)
 		assert.Len(t, keys, 0)
 	})
 	t.Run("NewPhoto", func(t *testing.T) {
@@ -25,7 +25,7 @@ func TestModelValues(t *testing.T) {
 
 		assert.Len(t, keys, 0)
 		assert.NotNil(t, values)
-		assert.IsType(t, Values{}, values)
+		assert.IsType(t, Map{}, values)
 	})
 	t.Run("ExistingPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
@@ -37,7 +37,7 @@ func TestModelValues(t *testing.T) {
 
 		assert.Len(t, keys, 2)
 		assert.NotNil(t, values)
-		assert.IsType(t, Values{}, values)
+		assert.IsType(t, Map{}, values)
 	})
 	t.Run("NewFace", func(t *testing.T) {
 		m := &Face{}
@@ -49,7 +49,7 @@ func TestModelValues(t *testing.T) {
 
 		assert.Len(t, keys, 0)
 		assert.NotNil(t, values)
-		assert.IsType(t, Values{}, values)
+		assert.IsType(t, Map{}, values)
 	})
 	t.Run("ExistingFace", func(t *testing.T) {
 		m := FaceFixtures.Pointer("john-doe")
@@ -61,6 +61,6 @@ func TestModelValues(t *testing.T) {
 
 		assert.Len(t, keys, 1)
 		assert.NotNil(t, values)
-		assert.IsType(t, Values{}, values)
+		assert.IsType(t, Map{}, values)
 	})
 }
