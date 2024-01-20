@@ -545,6 +545,16 @@ export class Photo extends RestModel {
     return this.getMainFileFromFiles(this.Files);
   }
 
+  webShareFile() {
+    let file;
+    if (this.videoFile()) {
+      file = this.videoFile();
+    } else {
+      file = this.mainFile();
+    }
+    return file;
+  }
+
   getMainFileFromFiles = memoizeOne((files) => {
     if (!files) {
       return this;
@@ -698,6 +708,10 @@ export class Photo extends RestModel {
 
   getDownloadUrl() {
     return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken}`;
+  }
+
+  getWebshareDownloadUrl() {
+    return `${config.apiUri}/dl/${this.webShareFile().Hash}?t=${config.downloadToken}`;
   }
 
   downloadAll() {
@@ -1258,7 +1272,7 @@ export class Photo extends RestModel {
 
   webShare() {
     // Fetches the photo in the browser and opens the native share dialog
-    return fetch(this.getDownloadUrl())
+    return fetch(this.getWebshareDownloadUrl())
       .then((res) => res.blob())
       .then((blob) => {
         const filesArray = [Util.JSFileFromPhoto(blob, this.mainFile())];

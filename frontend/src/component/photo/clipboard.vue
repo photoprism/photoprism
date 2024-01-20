@@ -390,13 +390,13 @@ export default {
       this.busy = true;
 
       // Resolve selection into Photo objects and download them as blobs
-      const photos = this.selection.map((uid) => new Photo().find(uid).then((p) => fetch(p.getDownloadUrl()).then((res) => res.blob()).then((blob) => {
+      const photos = this.selection.map((uid) => new Photo().find(uid).then((p) => fetch(p.getWebshareDownloadUrl()).then((res) => res.blob()).then((blob) => {
         p.Blob = blob;
         return p;
       })));
       // Wait for all downloads, then open native browser share dialog
       Promise.all(photos).then((blobs) => {
-        const filesArray = blobs.map((p) => Util.JSFileFromPhoto(p.Blob, p.mainFile()));
+        const filesArray = blobs.map((p) => Util.JSFileFromPhoto(p.Blob, p.webShareFile()));
         const shareData = {
           files: filesArray,
         };
