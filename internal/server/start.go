@@ -52,6 +52,9 @@ func Start(ctx context.Context, conf *config.Config) {
 	case "gzip":
 		router.Use(gzip.Gzip(
 			gzip.DefaultCompression,
+			gzip.WithExcludedExtensions([]string{
+				".png", ".gif", ".jpeg", ".jpg", ".webp", ".mp3", ".mp4", ".zip", ".gz",
+			}),
 			gzip.WithExcludedPaths([]string{
 				conf.BaseUri(config.ApiUri + "/t"),
 				conf.BaseUri(config.ApiUri + "/folders/t"),
@@ -59,7 +62,8 @@ func Start(ctx context.Context, conf *config.Config) {
 				conf.BaseUri(config.ApiUri + "/albums"),
 				conf.BaseUri(config.ApiUri + "/labels"),
 				conf.BaseUri(config.ApiUri + "/videos"),
-			})))
+			}),
+		))
 		log.Infof("server: enabled gzip compression")
 	}
 

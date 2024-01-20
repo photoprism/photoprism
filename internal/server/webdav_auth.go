@@ -64,8 +64,12 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			return
 		}
 
-		// Set vary response header.
-		c.Header(header.Vary, header.DefaultVary)
+		// Add a vary response header for authentication, if any.
+		if c.GetHeader(header.XAuthToken) != "" {
+			c.Writer.Header().Add(header.Vary, header.XAuthToken)
+		} else if c.GetHeader(header.XSessionID) != "" {
+			c.Writer.Header().Add(header.Vary, header.XSessionID)
+		}
 
 		// Get basic authentication credentials, if any.
 		username, password, cacheKey, authorized := basicAuth(c)
