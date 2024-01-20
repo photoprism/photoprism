@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -41,11 +42,13 @@ func Start(ctx context.Context, conf *config.Config) {
 		log.Warnf("server: %s", err)
 	}
 
-	// Register common middleware.
-	router.Use(Recovery(), Security(conf), Logger())
+	// Register recovery and logger middleware.
+	router.Use(Recovery(), Logger())
 
-	// Enable HTTP compression?
+	// If enabled, register compression middleware.
 	switch conf.HttpCompression() {
+	case "br", "brotli":
+		log.Infof("server: brotli compression is currently not supported")
 	case "gzip":
 		router.Use(gzip.Gzip(
 			gzip.DefaultCompression,
@@ -59,6 +62,9 @@ func Start(ctx context.Context, conf *config.Config) {
 			})))
 		log.Infof("server: enabled gzip compression")
 	}
+
+	// Register security middleware.
+	router.Use(Security(conf))
 
 	// Create REST API router group.
 	APIv1 = router.Group(conf.BaseUri(config.ApiUri), Api(conf))
@@ -146,7 +152,7 @@ func Start(ctx context.Context, conf *config.Config) {
 // StartHttp starts the Web server in http mode.
 func StartHttp(s *http.Server, l net.Listener) {
 	if err := s.Serve(l); err != nil {
-		if err == http.ErrServerClosed {
+		if errors.Is(err, http.ErrServerClosed) {
 			log.Info("server: shutdown complete")
 		} else {
 			log.Errorf("server: %s", err)
@@ -157,7 +163,7 @@ func StartHttp(s *http.Server, l net.Listener) {
 // StartTLS starts the Web server in https mode.
 func StartTLS(s *http.Server, httpsCert, privateKey string) {
 	if err := s.ListenAndServeTLS(httpsCert, privateKey); err != nil {
-		if err == http.ErrServerClosed {
+		if errors.Is(err, http.ErrServerClosed) {
 			log.Info("server: shutdown complete")
 		} else {
 			log.Errorf("server: %s", err)
@@ -178,7 +184,7 @@ func StartAutoTLS(s *http.Server, m *autocert.Manager, conf *config.Config) {
 	})
 
 	if err := g.Wait(); err != nil {
-		if err == http.ErrServerClosed {
+		if errors.Is(err, http.ErrServerClosed) {
 			log.Info("server: shutdown complete")
 		} else {
 			log.Errorf("server: %s", err)
