@@ -8,7 +8,7 @@
           </v-flex>
           <v-flex xs9 text-xs-left align-self-center>
             <div class="subheading pr-1">
-              <translate>Download complete. Ready for sharing.</translate>
+              <translate>Download complete. Ready for sharing?</translate>
             </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
