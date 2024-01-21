@@ -543,14 +543,10 @@ export class Photo extends RestModel {
 
   webShareFile() {
     let file;
-    if (this.Type == MediaLive) {
+    if (this.Type == MediaLive || !this.videoFile()) {
       file = this.Files.find((f) => f.FileType == FormatJpeg || f.FileType === FormatPng);
     } else {
-      if (this.videoFile()) {
-        file = this.videoFile();
-      } else {
-        file = this.Files.find((f) => f.FileType == FormatJpeg || f.FileType === FormatPng);
-      }
+      file = this.videoFile();
     }
     return file;
   }
