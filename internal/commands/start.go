@@ -105,8 +105,10 @@ func startAction(ctx *cli.Context) error {
 		}
 
 		if child != nil {
-			if !fs.Overwrite(conf.PIDFilename(), []byte(strconv.Itoa(child.Pid))) {
+			if writeErr := fs.WriteString(conf.PIDFilename(), strconv.Itoa(child.Pid)); writeErr != nil {
+				log.Error(writeErr)
 				log.Fatalf("failed writing process id to %s", clean.Log(conf.PIDFilename()))
+				return nil
 			}
 
 			log.Infof("daemon started with process id %v\n", child.Pid)

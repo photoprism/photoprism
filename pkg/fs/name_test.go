@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRel(t *testing.T) {
+func TestRelName(t *testing.T) {
 	t.Run("same", func(t *testing.T) {
 		assert.Equal(t, "", RelName("/some/path", "/some/path"))
 	})
@@ -52,7 +52,7 @@ func TestFileName(t *testing.T) {
 	})
 
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
-		tempDir := filepath.Join(os.TempDir(), HiddenPath)
+		tempDir := filepath.Join(os.TempDir(), PPHiddenPathname)
 
 		// t.Logf("TEMP DIR, ABS NAME: %s, %s", tempDir, Abs("testdata/Test (4).jpg"))
 

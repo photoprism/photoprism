@@ -59,7 +59,7 @@ func authAddAction(ctx *cli.Context) error {
 
 		if clientName == "" {
 			prompt := promptui.Prompt{
-				Label:   "Token Name",
+				Label:   "Client Name",
 				Default: rnd.Name(),
 			}
 

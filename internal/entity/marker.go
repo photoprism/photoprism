@@ -132,7 +132,7 @@ func (m *Marker) UpdateFile(file *File) (updated bool) {
 
 	if !updated || m.MarkerUID == "" {
 		return false
-	} else if err := UnscopedDb().Model(m).UpdateColumns(Values{"file_uid": m.FileUID, "thumb": m.Thumb}).Error; err != nil {
+	} else if err := UnscopedDb().Model(m).UpdateColumns(Map{"file_uid": m.FileUID, "thumb": m.Thumb}).Error; err != nil {
 		log.Errorf("faces: failed assigning marker %s to file %s (%s)", m.MarkerUID, m.FileUID, err)
 		return false
 	} else {
@@ -256,7 +256,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	if m.SubjUID == f.SubjUID && m.FaceID == f.ID {
 		// Update matching timestamp.
 		m.MatchedAt = TimePointer()
-		return false, m.Updates(Values{"MatchedAt": m.MatchedAt})
+		return false, m.Updates(Map{"MatchedAt": m.MatchedAt})
 	}
 
 	// Remember current values for comparison.
@@ -302,7 +302,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	// Update matching timestamp.
 	m.MatchedAt = TimePointer()
 
-	if err := m.Updates(Values{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjUID": m.SubjUID, "SubjSrc": m.SubjSrc, "MarkerReview": false, "MatchedAt": m.MatchedAt}); err != nil {
+	if err := m.Updates(Map{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjUID": m.SubjUID, "SubjSrc": m.SubjSrc, "MarkerReview": false, "MatchedAt": m.MatchedAt}); err != nil {
 		return false, err
 	} else if !updated {
 		return false, nil
@@ -355,7 +355,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 		Where("face_id = ?", m.FaceID).
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
-		UpdateColumns(Values{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
+		UpdateColumns(Map{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else if res.RowsAffected > 0 && m.face != nil {
 		log.Debugf("markers: matched %s with %s", subj.SubjName, m.FaceID)
@@ -472,7 +472,7 @@ func (m *Marker) ClearSubject(src string) error {
 	}()
 
 	// Update index & resolve collisions.
-	if err := m.Updates(Values{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjUID": "", "SubjSrc": src}); err != nil {
+	if err := m.Updates(Map{"MarkerName": "", "FaceID": "", "FaceDist": -1.0, "SubjUID": "", "SubjSrc": src}); err != nil {
 		return err
 	} else if m.face == nil {
 		m.subject = nil
@@ -552,9 +552,9 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 	// Remove subject if set automatically.
 	if m.SubjSrc == SrcAuto {
 		m.SubjUID = ""
-		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "SubjUID": "", "MatchedAt": m.MatchedAt})
+		err = m.Updates(Map{"FaceID": "", "FaceDist": -1.0, "SubjUID": "", "MatchedAt": m.MatchedAt})
 	} else {
-		err = m.Updates(Values{"FaceID": "", "FaceDist": -1.0, "MatchedAt": m.MatchedAt})
+		err = m.Updates(Map{"FaceID": "", "FaceDist": -1.0, "MatchedAt": m.MatchedAt})
 	}
 
 	return updated, m.RefreshPhotos()
@@ -585,7 +585,7 @@ func (m *Marker) RefreshPhotos() error {
 // Matched updates the match timestamp.
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimePointer()
-	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Top returns the top Y coordinate as float64.

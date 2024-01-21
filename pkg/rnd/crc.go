@@ -2,8 +2,9 @@ package rnd
 
 import (
 	"fmt"
-	"hash/crc32"
 	"strconv"
+
+	"github.com/photoprism/photoprism/pkg/checksum"
 )
 
 // CrcToken returns a string token with checksum.
@@ -14,9 +15,8 @@ func CrcToken() string {
 	token = append(token, '-')
 	token = append(token, []byte(Base36(4))...)
 
-	checksum := crc32.ChecksumIEEE(token)
-
-	sum := strconv.FormatInt(int64(checksum), 16)
+	crc := checksum.Crc32(token)
+	sum := strconv.FormatInt(int64(crc), 16)
 
 	return fmt.Sprintf("%s-%.4s", token, sum)
 }
@@ -29,9 +29,8 @@ func ValidateCrcToken(s string) bool {
 
 	token := []byte(s[:9])
 
-	checksum := crc32.ChecksumIEEE(token)
-
-	sum := strconv.FormatInt(int64(checksum), 16)
+	crc := checksum.Crc32(token)
+	sum := strconv.FormatInt(int64(crc), 16)
 
 	return s == fmt.Sprintf("%s-%.4s", token, sum)
 }

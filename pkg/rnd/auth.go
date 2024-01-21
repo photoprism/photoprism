@@ -3,9 +3,10 @@ package rnd
 import (
 	"crypto/rand"
 	"fmt"
-	"hash/crc32"
 	"log"
 	"math/big"
+
+	"github.com/photoprism/photoprism/pkg/checksum"
 )
 
 const (
@@ -50,7 +51,7 @@ func AppPassword() string {
 		if (i+1)%7 == 0 {
 			b = append(b, AppPasswordSeparator)
 		} else if i == AppPasswordLength-1 {
-			b = append(b, CharsetBase62[crc32.ChecksumIEEE(b)%62])
+			b = append(b, checksum.Char(b))
 			return string(b)
 		} else if r, err := rand.Int(rand.Reader, m); err == nil {
 			b = append(b, CharsetBase62[r.Int64()])
@@ -85,7 +86,7 @@ func IsAppPassword(s string, verifyChecksum bool) bool {
 	}
 
 	// Verify token checksum.
-	return s[AppPasswordLength-1] == CharsetBase62[crc32.ChecksumIEEE([]byte(s[:AppPasswordLength-1]))%62]
+	return s[AppPasswordLength-1] == checksum.Char([]byte(s[:AppPasswordLength-1]))
 }
 
 // IsAuthAny checks if the string might be a valid auth token or app password.

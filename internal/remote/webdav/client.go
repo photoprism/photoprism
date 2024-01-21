@@ -267,7 +267,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 
 	if err != nil {
 		// Create local storage path.
-		if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+		if err = fs.MkdirAll(dir); err != nil {
 			return fmt.Errorf("webdav: cannot create folder %s (%s)", clean.Log(dir), err)
 		}
 	} else if !dirInfo.IsDir() {

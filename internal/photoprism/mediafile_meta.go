@@ -16,7 +16,7 @@ func (m *MediaFile) HasSidecarJson() bool {
 		return true
 	}
 
-	return fs.SidecarJSON.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) != ""
+	return fs.SidecarJSON.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) != ""
 }
 
 // SidecarJsonName returns the corresponding JSON sidecar file name as used by Google Photos (and potentially other apps).
@@ -98,7 +98,7 @@ func (m *MediaFile) MetaData() (result meta.Data) {
 
 		// Parse regular JSON sidecar files ("img_1234.json")
 		if !m.IsSidecar() {
-			if jsonFiles := fs.SidecarJSON.FindAll(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false); len(jsonFiles) == 0 {
+			if jsonFiles := fs.SidecarJSON.FindAll(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false); len(jsonFiles) == 0 {
 				log.Tracef("metadata: found no additional sidecar file for %s", clean.Log(filepath.Base(m.FileName())))
 			} else {
 				for _, jsonFile := range jsonFiles {

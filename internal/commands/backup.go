@@ -110,7 +110,7 @@ func backupAction(ctx *cli.Context) error {
 
 			// Create backup directory if not exists.
 			if dir := filepath.Dir(indexFileName); dir != "." {
-				if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+				if err = fs.MkdirAll(dir); err != nil {
 					return err
 				}
 			}

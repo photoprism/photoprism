@@ -138,12 +138,14 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 	}
 
 	// Ignore hidden folders as well as those listed in an optional ".ppignore" file.
-	ignore := NewIgnoreList(IgnoreFile, true, false)
+	ignore := NewIgnoreList(PPIgnoreFilename, true, false)
 	_ = ignore.Dir(root)
 
 	err = fastwalk.Walk(root, func(fileName string, typ os.FileMode) error {
 		if typ.IsDir() || typ == os.ModeSymlink && followLinks {
 			if ignore.Ignore(fileName) {
+				return filepath.SkipDir
+			} else if FileExists(filepath.Join(fileName, PPStorageFilename)) {
 				return filepath.SkipDir
 			}
 
@@ -187,6 +189,7 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 	return result, err
 }
 
+// FindDir checks if any of the specified directories exist and returns the absolute path of the first directory found.
 func FindDir(dirs []string) string {
 	for _, dir := range dirs {
 		absDir := Abs(dir)
@@ -196,4 +199,10 @@ func FindDir(dirs []string) string {
 	}
 
 	return ""
+}
+
+// MkdirAll creates a directory including all parent directories that might not yet exist.
+// No error is returned if the directory already exists.
+func MkdirAll(dir string) error {
+	return os.MkdirAll(dir, ModeDir)
 }

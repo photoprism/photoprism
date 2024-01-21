@@ -1,8 +1,6 @@
 package config
 
 import (
-	"os"
-
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -25,7 +23,7 @@ func (c *Config) initSettings() {
 	defaultsFile := c.SettingsYamlDefaults(settingsFile)
 
 	// Make sure that the config path exists.
-	if err := os.MkdirAll(configPath, fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(configPath); err != nil {
 		log.Errorf("settings: %s", createError(configPath, err))
 	}
 

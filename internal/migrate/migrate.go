@@ -33,5 +33,5 @@ import (
 
 var log = event.Log
 
-// Values is a shortcut for map[string]interface{}
-type Values map[string]interface{}
+// Map is an alias for map[string]interface{}.
+type Map map[string]interface{}

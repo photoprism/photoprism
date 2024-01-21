@@ -39,21 +39,25 @@ func testFastWalk(t *testing.T, files map[string]string, callback func(path stri
 		t.Fatal(err)
 	}
 	defer os.RemoveAll(tempdir)
+
 	for path, contents := range files {
 		file := filepath.Join(tempdir, "/src", path)
-		if err := os.MkdirAll(filepath.Dir(file), 0755); err != nil {
+
+		if err = os.MkdirAll(filepath.Dir(file), 0755); err != nil {
 			t.Fatal(err)
 		}
-		var err error
+
 		if strings.HasPrefix(contents, "LINK:") {
 			err = os.Symlink(strings.TrimPrefix(contents, "LINK:"), file)
 		} else {
 			err = os.WriteFile(file, []byte(contents), 0644)
 		}
+
 		if err != nil {
 			t.Fatal(err)
 		}
 	}
+
 	got := map[string]os.FileMode{}
 	var mu sync.Mutex
 	if err := fastwalk.Walk(tempdir, func(path string, typ os.FileMode) error {

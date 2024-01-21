@@ -36,9 +36,9 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 
 	// Use .mp4 file extension for animated images and .avi for videos.
 	if f.IsAnimatedImage() {
-		avcName = fs.VideoMP4.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+		avcName = fs.VideoMP4.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.PPHiddenPathname}, c.conf.OriginalsPath(), false)
 	} else {
-		avcName = fs.VideoAVC.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.HiddenPath}, c.conf.OriginalsPath(), false)
+		avcName = fs.VideoAVC.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.PPHiddenPathname}, c.conf.OriginalsPath(), false)
 	}
 
 	mediaFile, err := NewMediaFile(avcName)

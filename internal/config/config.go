@@ -1,10 +1,32 @@
+/*
+Package config provides global options, command-line flags, and user settings.
+
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
+
+	This program is free software: you can redistribute it and/or modify
+	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
+	<https://docs.photoprism.app/license/agpl>
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	The AGPL is supplemented by our Trademark and Brand Guidelines,
+	which describe how our Brand Assets may be used:
+	<https://www.photoprism.app/trademark>
+
+Feel free to send an email to hello@photoprism.app if you have questions,
+want to support our work, or just want to say hello.
+
+Additional information can be found in our Developer Guide:
+<https://docs.photoprism.app/developer-guide/>
+*/
 package config
 
 import (
 	"crypto/tls"
-	"encoding/hex"
 	"fmt"
-	"hash/crc32"
 	"net/http"
 	"net/url"
 	"os"
@@ -34,16 +56,14 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/pkg/checksum"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
+// log points to the global logger.
 var log = event.Log
-var once sync.Once
-var LowMem = false
-var TotalMem uint64
-var crc32Castagnoli = crc32.MakeTable(crc32.Castagnoli)
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
@@ -118,7 +138,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		start:   start,
 	}
 
-	// Overwrite values with options.yml from config path.
+	// WriteFile values with options.yml from config path.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
 		if err := c.options.Load(optionsYaml); err != nil {
 			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
@@ -223,17 +243,22 @@ func (c *Config) Propagate() {
 func (c *Config) Init() error {
 	start := time.Now()
 
-	// Create configured directory paths.
+	// Fail if the originals and storage path are identical.
+	if c.OriginalsPath() == c.StoragePath() {
+		return fmt.Errorf("config: originals and storage folder must be different directories")
+	}
+
+	// Make sure that the configured storage directories exist and are properly configured.
 	if err := c.CreateDirectories(); err != nil {
-		return err
+		return fmt.Errorf("config: %s", err)
 	}
 
-	// Init storage directories with a random serial.
+	// Initialize the storage path with a random serial.
 	if err := c.InitSerial(); err != nil {
-		return err
+		return fmt.Errorf("config: %s", err)
 	}
 
-	// Detect case-insensitive file system.
+	// Detect whether files are stored on a case-insensitive file system.
 	if insensitive, err := c.CaseInsensitive(); err != nil {
 		return err
 	} else if insensitive {
@@ -241,12 +266,12 @@ func (c *Config) Init() error {
 		fs.IgnoreCase()
 	}
 
-	// Detect CPU.
+	// Detect the CPU type and available memory.
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
 		log.Debugf("config: running on %s, %s memory detected", clean.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
 	}
 
-	// Exit if less than 128 MB RAM was detected.
+	// Fail if less than 128 MB of memory were detected.
 	if TotalMem < 128*Megabyte {
 		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/Gigabyte)
 	}
@@ -257,18 +282,17 @@ func (c *Config) Init() error {
 		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
 	}
 
-	// Show swap info.
+	// Show swap space disclaimer.
 	if TotalMem < RecommendedMem {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
 
-	// Show wakeup interval warning if face recognition is enabled
-	// and the worker runs less than once per hour.
+	// Show wake-up interval warning if face recognition is activated and the worker runs less than once an hour.
 	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
 	}
 
-	// Set HTTPS proxy for outgoing connections.
+	// Configure HTTPS proxy for outgoing connections.
 	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
 			InsecureSkipVerify: c.HttpsProxyInsecure(),
@@ -277,13 +301,13 @@ func (c *Config) Init() error {
 		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
 	}
 
-	// Set HTTP user agent.
+	// Configure HTTP user agent.
 	places.UserAgent = c.UserAgent()
 
 	c.initSettings()
 	c.initHub()
 
-	// Propagate configuration.
+	// Update package defaults.
 	c.Propagate()
 
 	// Connect to database.
@@ -357,15 +381,7 @@ func (c *Config) Serial() string {
 
 // SerialChecksum returns the CRC32 checksum of the storage serial.
 func (c *Config) SerialChecksum() string {
-	var result []byte
-
-	crc := crc32.New(crc32Castagnoli)
-
-	if _, err := crc.Write([]byte(c.Serial())); err != nil {
-		log.Warnf("config: %s", err)
-	}
-
-	return hex.EncodeToString(crc.Sum(result))
+	return checksum.Serial([]byte(c.Serial()))
 }
 
 // Name returns the app name.
@@ -402,7 +418,7 @@ func (c *Config) Version() string {
 
 // VersionChecksum returns the application version checksum.
 func (c *Config) VersionChecksum() uint32 {
-	return crc32.ChecksumIEEE([]byte(c.Version()))
+	return checksum.Crc32([]byte(c.Version()))
 }
 
 // UserAgent returns an HTTP user agent string based on the app config and version.

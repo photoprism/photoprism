@@ -1,8 +1,6 @@
 package config
 
 import (
-	"os"
-
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -42,7 +40,7 @@ func (c *Config) CreateDarktableCachePath() (string, error) {
 
 	if cachePath == "" {
 		return "", nil
-	} else if err := os.MkdirAll(cachePath, fs.ModeDir); err != nil {
+	} else if err := fs.MkdirAll(cachePath); err != nil {
 		return cachePath, err
 	} else {
 		c.options.DarktableCachePath = cachePath
@@ -57,7 +55,7 @@ func (c *Config) CreateDarktableConfigPath() (string, error) {
 
 	if configPath == "" {
 		return "", nil
-	} else if err := os.MkdirAll(configPath, fs.ModeDir); err != nil {
+	} else if err := fs.MkdirAll(configPath); err != nil {
 		return configPath, err
 	} else {
 		c.options.DarktableConfigPath = configPath

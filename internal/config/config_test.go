@@ -590,11 +590,18 @@ func TestConfig_Serial(t *testing.T) {
 func TestConfig_SerialChecksum(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
+	serial := "zr2g80wvjmm1zwzg"
+	expected := "c7dcdb1c"
+
+	c.serial = serial
+
 	result := c.SerialChecksum()
 
-	t.Logf("SerialChecksum: %s", result)
+	// t.Logf("Serial: %s", c.serial)
+	// t.Logf("SerialChecksum: %s", result)
 
 	assert.NotEmpty(t, result)
+	assert.Equal(t, expected, result)
 }
 
 func TestConfig_Public(t *testing.T) {

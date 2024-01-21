@@ -2,7 +2,6 @@ package fs
 
 import (
 	"fmt"
-	"os"
 	"path"
 )
 
@@ -19,7 +18,7 @@ func CachePath(basePath, fileHash, namespace string, create bool) (cachePath str
 	cachePath = path.Join(basePath, namespace, fileHash[0:1], fileHash[1:2], fileHash[2:3])
 
 	if create {
-		if err := os.MkdirAll(cachePath, ModeDir); err != nil {
+		if err = MkdirAll(cachePath); err != nil {
 			return "", err
 		}
 	}

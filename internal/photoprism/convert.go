@@ -68,7 +68,7 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 	}
 
 	done := make(fs.Done)
-	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
 
 	if err = ignore.Dir(dir); err != nil {
 		log.Infof("convert: %s", err)

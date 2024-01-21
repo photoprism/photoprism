@@ -89,7 +89,7 @@ func (m *Reaction) Save() (err error) {
 
 	reactedAt := TimePointer()
 
-	values := Values{"reaction": m.Reaction, "reacted": gorm.Expr("reacted + 1"), "reacted_at": reactedAt}
+	values := Map{"reaction": m.Reaction, "reacted": gorm.Expr("reacted + 1"), "reacted_at": reactedAt}
 
 	if err = Db().Model(Reaction{}).
 		Where("uid = ? AND user_uid = ?", m.UID, m.UserUID).

@@ -185,7 +185,7 @@ func TestConfig_OriginalsAlbumsPath(t *testing.T) {
 }
 
 func TestConfig_CreateDirectories(t *testing.T) {
-	t.Run("no error", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		testConfigMutex.Lock()
 		defer testConfigMutex.Unlock()
 
@@ -194,9 +194,21 @@ func TestConfig_CreateDirectories(t *testing.T) {
 			token:   rnd.Base36(8),
 		}
 
-		if err := c.CreateDirectories(); err != nil {
-			t.Fatal(err)
+		assert.NoError(t, c.CreateDirectories())
+	})
+	t.Run("IdenticalPaths", func(t *testing.T) {
+		testConfigMutex.Lock()
+		defer testConfigMutex.Unlock()
+
+		c := &Config{
+			options: NewTestOptions("config"),
+			token:   rnd.Base36(8),
 		}
+
+		c.options.StoragePath = "./testdata"
+		c.options.OriginalsPath = "./testdata"
+
+		assert.Error(t, c.CreateDirectories())
 	})
 }
 

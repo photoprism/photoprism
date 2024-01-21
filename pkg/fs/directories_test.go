@@ -15,10 +15,12 @@ func TestDirs(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Len(t, result, 8)
+		assert.Len(t, result, 9)
 		assert.Contains(t, result, "/directory")
 		assert.Contains(t, result, "/directory/subdirectory")
 		assert.Contains(t, result, "/directory/subdirectory/animals")
+		assert.Contains(t, result, "/originals")
+		assert.NotContains(t, result, "/originals/storage")
 		assert.Contains(t, result, "/linked")
 	})
 
@@ -79,14 +81,19 @@ func TestDirs(t *testing.T) {
 	})
 }
 
-func TestFindDirs(t *testing.T) {
-	t.Run("/directory", func(t *testing.T) {
+func TestFindDir(t *testing.T) {
+	t.Run("Found", func(t *testing.T) {
+		result := FindDir([]string{"./testdata"})
+		assert.True(t, strings.HasSuffix(result, "/pkg/fs/testdata"))
+	})
+	t.Run("NotFound", func(t *testing.T) {
 		result := FindDir([]string{"/directory", "/directory/subdirectory", "/linked"})
 		assert.Equal(t, "", result)
 	})
+}
 
-	t.Run("./testdata", func(t *testing.T) {
-		result := FindDir([]string{"./testdata"})
-		assert.True(t, strings.HasSuffix(result, "/pkg/fs/testdata"))
+func TestMkdirAll(t *testing.T) {
+	t.Run("Exists", func(t *testing.T) {
+		assert.NoError(t, MkdirAll("testdata"))
 	})
 }

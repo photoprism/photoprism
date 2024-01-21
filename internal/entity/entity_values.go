@@ -5,11 +5,11 @@ import (
 	"reflect"
 )
 
-// Values is a shortcut for map[string]interface{}
-type Values map[string]interface{}
+// Map is an alias for map[string]interface{}.
+type Map map[string]interface{}
 
 // ModelValues extracts Values from an entity model.
-func ModelValues(m interface{}, omit ...string) (result Values, omitted []interface{}, err error) {
+func ModelValues(m interface{}, omit ...string) (result Map, omitted []interface{}, err error) {
 	mustOmit := func(name string) bool {
 		for _, s := range omit {
 			if name == s {

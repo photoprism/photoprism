@@ -15,7 +15,7 @@ func Copy(src, dest string) (err error) {
 		}
 	}()
 
-	if err := os.MkdirAll(filepath.Dir(dest), ModeDir); err != nil {
+	if err = MkdirAll(filepath.Dir(dest)); err != nil {
 		return err
 	}
 
