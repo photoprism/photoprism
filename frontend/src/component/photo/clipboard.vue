@@ -161,6 +161,7 @@
                           @confirm="addToAlbum"></p-photo-album-dialog>
     <p-share-upload-dialog :show="dialog.share" :items="{photos: selection}" :model="album" @cancel="dialog.share = false"
                            @confirm="onShared"></p-share-upload-dialog>
+    <p-webshare-dialog :show="dialog.webshare" @confirm="webShareDialogInitiated" @cancel="dialog.webshare = false"></p-webshare-dialog>
   </div>
 </template>
 <script>
@@ -213,6 +214,7 @@ export default {
         delete: false,
         album: false,
         share: false,
+        webshare: false,
       },
       rtl: this.$rtl,
     };
@@ -382,6 +384,16 @@ export default {
     onDownload(path) {
       download(path, "photos.zip");
     },
+    webShareDialogInitiated() {
+      console.log("now sharing...")
+      this.dialog.webshare = false;
+      navigator.share(this.shareData).then(() => {
+        this.$notify.info(this.$gettext("sharing photos succeded"));
+      }).
+      catch(() => {
+        this.$notify.error(this.$gettext("sharing photos failed"));
+      });
+    },
     webShare() {
       if (this.busy || this.selection.length == 0) {
         return;
@@ -401,12 +413,20 @@ export default {
           files: filesArray,
         };
         const debugMsg = "Sharing allowed: " + navigator.canShare(shareData);
+        this.shareData  = shareData;
         console.log(debugMsg);
         this.$notify.info(debugMsg);
         return navigator.share(shareData);
       }).catch((e) => {
-        this.$notify.error(this.$gettext("sharing photos failed"));
-        console.warn(e);
+        if (e.name === "NotAllowedError") {
+          // Sharing requires a transient activation and might fail with a NotAllowedError.
+          // Show dialog to create transient activation and try again.
+          this.dialog.webshare = true;
+          console.log("NotAllowedError while sharing, showing dialog")
+        } else {
+          this.$notify.error(this.$gettext("sharing photos failed"));
+          console.warn(e);
+        }
       }).finally(() => {
         this.busy = false;
       })
