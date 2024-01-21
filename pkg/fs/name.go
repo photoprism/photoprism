@@ -9,19 +9,19 @@ import (
 
 // FileName returns the relative filename with the same base and a given extension in a directory.
 func FileName(fileName, dirName, baseDir, fileExt string) string {
-	fileDir := filepath.Dir(fileName)
+	dir := filepath.Dir(fileName)
 
 	if dirName == "" || dirName == "." {
-		dirName = fileDir
-	} else if fileDir != dirName {
+		dirName = dir
+	} else if dir != dirName {
 		if filepath.IsAbs(dirName) {
-			dirName = filepath.Join(dirName, RelName(fileDir, baseDir))
+			dirName = filepath.Join(dirName, RelName(dir, baseDir))
 		} else {
-			dirName = filepath.Join(fileDir, dirName)
+			dirName = filepath.Join(dir, dirName)
 		}
 	}
 
-	if err := os.MkdirAll(dirName, ModeDir); err != nil {
+	if err := MkdirAll(dirName); err != nil {
 		fmt.Println(err.Error())
 		return ""
 	}

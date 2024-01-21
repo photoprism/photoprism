@@ -189,6 +189,7 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 	return result, err
 }
 
+// FindDir checks if any of the specified directories exist and returns the absolute path of the first directory found.
 func FindDir(dirs []string) string {
 	for _, dir := range dirs {
 		absDir := Abs(dir)
@@ -198,4 +199,10 @@ func FindDir(dirs []string) string {
 	}
 
 	return ""
+}
+
+// MkdirAll creates a directory including all parent directories that might not yet exist.
+// No error is returned if the directory already exists.
+func MkdirAll(dir string) error {
+	return os.MkdirAll(dir, ModeDir)
 }

@@ -47,7 +47,7 @@ func (ext Extensions) Init(c *Config) {
 			start := time.Now()
 
 			if err := e.init(c); err != nil {
-				log.Warnf("config: %s while initializing the %s extension [%s]", err, clean.Log(e.name), time.Since(start))
+				log.Warnf("config: %s when loading %s extension", err, clean.Log(e.name))
 			} else {
 				log.Tracef("config: %s extension loaded [%s]", clean.Log(e.name), time.Since(start))
 			}

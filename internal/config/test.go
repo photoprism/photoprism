@@ -165,7 +165,7 @@ func NewTestConfig(pkg string) *Config {
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale())
 
-	if err := os.MkdirAll(c.ConfigPath(), fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(c.ConfigPath()); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 

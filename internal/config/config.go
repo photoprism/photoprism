@@ -138,7 +138,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		start:   start,
 	}
 
-	// Overwrite values with options.yml from config path.
+	// WriteFile values with options.yml from config path.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
 		if err := c.options.Load(optionsYaml); err != nil {
 			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
@@ -243,17 +243,22 @@ func (c *Config) Propagate() {
 func (c *Config) Init() error {
 	start := time.Now()
 
-	// Create configured directory paths.
+	// Fail if the originals and storage path are identical.
+	if c.OriginalsPath() == c.StoragePath() {
+		return fmt.Errorf("config: originals and storage folder must be different directories")
+	}
+
+	// Make sure that the configured storage directories exist and are properly configured.
 	if err := c.CreateDirectories(); err != nil {
 		return fmt.Errorf("config: %s", err)
 	}
 
-	// Init storage directories with a random serial.
+	// Initialize the storage path with a random serial.
 	if err := c.InitSerial(); err != nil {
 		return fmt.Errorf("config: %s", err)
 	}
 
-	// Detect case-insensitive file system.
+	// Detect whether files are stored on a case-insensitive file system.
 	if insensitive, err := c.CaseInsensitive(); err != nil {
 		return err
 	} else if insensitive {
@@ -261,12 +266,12 @@ func (c *Config) Init() error {
 		fs.IgnoreCase()
 	}
 
-	// Detect CPU.
+	// Detect the CPU type and available memory.
 	if cpuName := cpuid.CPU.BrandName; cpuName != "" {
 		log.Debugf("config: running on %s, %s memory detected", clean.Log(cpuid.CPU.BrandName), humanize.Bytes(TotalMem))
 	}
 
-	// Exit if less than 128 MB RAM was detected.
+	// Fail if less than 128 MB of memory were detected.
 	if TotalMem < 128*Megabyte {
 		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/Gigabyte)
 	}
@@ -277,18 +282,17 @@ func (c *Config) Init() error {
 		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
 	}
 
-	// Show swap info.
+	// Show swap space disclaimer.
 	if TotalMem < RecommendedMem {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
 
-	// Show wakeup interval warning if face recognition is enabled
-	// and the worker runs less than once per hour.
+	// Show wake-up interval warning if face recognition is activated and the worker runs less than once an hour.
 	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
 	}
 
-	// Set HTTPS proxy for outgoing connections.
+	// Configure HTTPS proxy for outgoing connections.
 	if httpsProxy := c.HttpsProxy(); httpsProxy != "" {
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{
 			InsecureSkipVerify: c.HttpsProxyInsecure(),
@@ -297,13 +301,13 @@ func (c *Config) Init() error {
 		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
 	}
 
-	// Set HTTP user agent.
+	// Configure HTTP user agent.
 	places.UserAgent = c.UserAgent()
 
 	c.initSettings()
 	c.initHub()
 
-	// Propagate configuration.
+	// Update package defaults.
 	c.Propagate()
 
 	// Connect to database.

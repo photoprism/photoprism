@@ -206,7 +206,7 @@ func (c *Config) ReSync(token string) (err error) {
 	c.session = nil
 
 	// Make sure storage folder exists.
-	if err = os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
+	if err = fs.MkdirAll(filepath.Dir(c.FileName)); err != nil {
 		return err
 	}
 
@@ -330,11 +330,11 @@ func (c *Config) Save() error {
 
 	c.Propagate()
 
-	if err = os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
+	if err = fs.MkdirAll(filepath.Dir(c.FileName)); err != nil {
 		return err
 	}
 
-	if err = os.WriteFile(c.FileName, data, fs.ModeFile); err != nil {
+	if err = fs.WriteFile(c.FileName, data); err != nil {
 		return err
 	}
 

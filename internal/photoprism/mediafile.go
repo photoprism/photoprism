@@ -549,7 +549,7 @@ func (m *MediaFile) HasSameName(f *MediaFile) bool {
 
 // Move file to a new destination with the filename provided in parameter.
 func (m *MediaFile) Move(dest string) error {
-	if err := os.MkdirAll(filepath.Dir(dest), fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(filepath.Dir(dest)); err != nil {
 		return err
 	}
 
@@ -576,7 +576,7 @@ func (m *MediaFile) Move(dest string) error {
 
 // Copy a MediaFile to another file by destinationFilename.
 func (m *MediaFile) Copy(dest string) error {
-	if err := os.MkdirAll(filepath.Dir(dest), fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(filepath.Dir(dest)); err != nil {
 		return err
 	}
 

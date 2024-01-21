@@ -1,7 +1,6 @@
 package photoprism
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -63,7 +62,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if fs.PathExists(destDir) {
 					// Do nothing.
-				} else if err := os.MkdirAll(destDir, fs.ModeDir); err != nil {
+				} else if err := fs.MkdirAll(destDir); err != nil {
 					log.Errorf("import: failed creating folder for %s (%s)", clean.Log(f.BaseName()), err.Error())
 				} else {
 					destDirRel := fs.RelName(destDir, imp.originalsPath())

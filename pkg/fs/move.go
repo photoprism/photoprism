@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-// Moves a file to a new destination.
+// Move moves an existing file to a new destination and returns an error if it fails.
 func Move(src, dest string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -14,19 +14,19 @@ func Move(src, dest string) (err error) {
 		}
 	}()
 
-	if err := os.MkdirAll(filepath.Dir(dest), ModeDir); err != nil {
+	if err = MkdirAll(filepath.Dir(dest)); err != nil {
 		return err
 	}
 
-	if err := os.Rename(src, dest); err == nil {
+	if err = os.Rename(src, dest); err == nil {
 		return nil
 	}
 
-	if err := Copy(src, dest); err != nil {
+	if err = Copy(src, dest); err != nil {
 		return err
 	}
 
-	if err := os.Remove(src); err != nil {
+	if err = os.Remove(src); err != nil {
 		return err
 	}
 

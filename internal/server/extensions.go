@@ -49,7 +49,7 @@ func (ext Extensions) Init(router *gin.Engine, conf *config.Config) {
 			start := time.Now()
 
 			if err := e.init(router, conf); err != nil {
-				log.Warnf("server: %s while initializing the %s extension [%s]", err, clean.Log(e.name), time.Since(start))
+				log.Warnf("server: %s when loading %s extension", err, clean.Log(e.name))
 			} else {
 				log.Tracef("server: %s extension loaded [%s]", clean.Log(e.name), time.Since(start))
 			}

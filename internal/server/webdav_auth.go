@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -122,7 +121,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			event.AuditWarn([]string{clientIp, "client %s", "session %s", "access webdav as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortUnauthorized(c)
 			return
-		} else if err := os.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath()), fs.ModeDir); err != nil {
+		} else if err := fs.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath())); err != nil {
 			// Log warning if upload path could not be created.
 			message := "failed to create user upload path"
 			event.AuditWarn([]string{clientIp, "client %s", "session %s", "access webdav as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
@@ -177,7 +176,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			message := "webdav access is disabled"
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
-		} else if err = os.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath()), fs.ModeDir); err != nil {
+		} else if err = fs.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath())); err != nil {
 			// Abort if upload path could not be created.
 			message := "failed to create user upload path"
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))

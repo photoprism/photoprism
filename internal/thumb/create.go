@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"image"
 	"image/png"
-	"os"
 	"path"
 	"path/filepath"
 
@@ -45,7 +44,7 @@ func FileName(hash, thumbPath string, width, height int, opts ...ResampleOption)
 	suffix := Suffix(width, height, opts...)
 	p := path.Join(thumbPath, hash[0:1], hash[1:2], hash[2:3])
 
-	if err := os.MkdirAll(p, fs.ModeDir); err != nil {
+	if err = fs.MkdirAll(p); err != nil {
 		return "", err
 	}
 

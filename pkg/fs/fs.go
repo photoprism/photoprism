@@ -100,17 +100,6 @@ func PathWritable(path string) bool {
 	return Writable(path)
 }
 
-// Overwrite overwrites the file with data. Creates file if not present.
-func Overwrite(fileName string, data []byte) bool {
-	f, err := os.Create(fileName)
-	if err != nil {
-		return false
-	}
-
-	_, err = f.Write(data)
-	return err == nil
-}
-
 // Abs returns the full path of a file or directory, "~" is replaced with home.
 func Abs(name string) string {
 	if name == "" {
@@ -147,7 +136,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 
 	if f.FileInfo().IsDir() {
 		// Make Folder
-		return fileName, os.MkdirAll(fileName, ModeDir)
+		return fileName, MkdirAll(fileName)
 	}
 
 	// Make File
@@ -157,8 +146,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 		fdir = fileName[:lastIndex]
 	}
 
-	err = os.MkdirAll(fdir, ModeDir)
-	if err != nil {
+	if err = MkdirAll(fdir); err != nil {
 		return fileName, err
 	}
 
@@ -181,7 +169,7 @@ func copyToFile(f *zip.File, dest string) (fileName string, err error) {
 func Download(fileName string, url string) error {
 	if dir := filepath.Dir(fileName); dir == "" || dir == "/" || dir == "." || dir == ".." {
 		return fmt.Errorf("invalid path")
-	} else if err := os.MkdirAll(dir, ModeDir); err != nil {
+	} else if err := MkdirAll(dir); err != nil {
 		return err
 	}
 
