@@ -387,11 +387,15 @@ export default {
     webShareDialogInitiated() {
       console.log("now sharing...")
       this.dialog.webshare = false;
-      navigator.share(this.shareData).then(() => {
-        this.$notify.info(this.$gettext("sharing photos succeded"));
-      }).
-      catch(() => {
-        this.$notify.error(this.$gettext("sharing photos failed"));
+      navigator.share(this.shareData).catch((e) => {
+        if (e.name === "NotAllowedError") {
+          this.navigatorCanShare = false;
+          this.$notify.error(this.$gettext("sharing photos failed - showing download button"));
+        } else if (e.name === "AbortError") {
+          console.log("Sharing aborted by user")
+        } else {
+          this.$notify.error(this.$gettext("sharing photos failed"));
+        }
       });
     },
     webShare() {
@@ -408,14 +412,14 @@ export default {
       })));
       // Wait for all downloads, then open native browser share dialog
       Promise.all(photos).then((blobs) => {
-        const filesArray = blobs.map((p) => Util.JSFileFromPhoto(p.Blob, p.webShareFile()));
+        const filesArray = blobs.map((p) => Util.JSFileForWebshare(p.Blob, p.webShareFile()));
         const shareData = {
           files: filesArray,
         };
         const debugMsg = "Sharing allowed: " + navigator.canShare(shareData);
         this.shareData  = shareData;
-        console.log(debugMsg);
-        this.$notify.info(debugMsg);
+        // console.log(debugMsg);
+        // this.$notify.info(debugMsg);
         return navigator.share(shareData);
       }).catch((e) => {
         if (e.name === "NotAllowedError") {
@@ -423,6 +427,8 @@ export default {
           // Show dialog to create transient activation and try again.
           this.dialog.webshare = true;
           console.log("NotAllowedError while sharing, showing dialog")
+        } else if (e.name === "AbortError") {
+          console.log("Sharing aborted by user")
         } else {
           this.$notify.error(this.$gettext("sharing photos failed"));
           console.warn(e);

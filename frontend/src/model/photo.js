@@ -68,6 +68,12 @@ export const MonthUnknown = -1;
 export const DayUnknown = -1;
 export const TimeZoneUTC = "UTC";
 
+export const VideoWebshareMimeType = "video/webm";
+export const VideoWebshareExtension = ".webm";
+export const TranscodeVideoForWebshare = true;
+export const WebshareFormat = "webm";
+
+
 const num = "numeric";
 const short = "short";
 const long = "long";
@@ -711,7 +717,13 @@ export class Photo extends RestModel {
   }
 
   getWebshareDownloadUrl() {
-    return `${config.apiUri}/dl/${this.webShareFile().Hash}?t=${config.downloadToken}`;
+    let url = "";
+    if (this.Type == MediaLive || !this.videoFile()) {
+      url = `${config.apiUri}/dl/${this.webShareFile().Hash}?t=${config.downloadToken}`;
+    } else {
+      url = `${config.apiUri}/videos/${this.webShareFile().Hash}/${config.previewToken}/${WebshareFormat}`;
+    }
+    return url;
   }
 
   downloadAll() {
@@ -1275,7 +1287,7 @@ export class Photo extends RestModel {
     return fetch(this.getWebshareDownloadUrl())
       .then((res) => res.blob())
       .then((blob) => {
-        const filesArray = [Util.JSFileFromPhoto(blob, this.mainFile())];
+        const filesArray = [Util.JSFileForWebshare(blob, this.webShareFile())];
         const shareData = {
           files: filesArray,
         };
