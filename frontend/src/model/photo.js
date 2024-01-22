@@ -68,10 +68,10 @@ export const MonthUnknown = -1;
 export const DayUnknown = -1;
 export const TimeZoneUTC = "UTC";
 
-export const VideoWebshareMimeType = "video/webm";
-export const VideoWebshareExtension = ".webm";
+export const VideoWebshareMimeType = "video/mp4";
+export const VideoWebshareExtension = ".mp4";
 export const TranscodeVideoForWebshare = true;
-export const WebshareFormat = "webm";
+export const WebshareFormat = "mp4";
 
 
 const num = "numeric";
