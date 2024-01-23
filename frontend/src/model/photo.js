@@ -719,9 +719,9 @@ export class Photo extends RestModel {
   getWebshareDownloadUrl() {
     let url = "";
     if (this.Type == MediaLive || !this.videoFile()) {
-      url = `${config.apiUri}/dl/${this.webShareFile().Hash}?t=${config.downloadToken}`;
+      url = `dl/${this.webShareFile().Hash}?t=${config.downloadToken}`;
     } else {
-      url = `${config.apiUri}/videos/${this.webShareFile().Hash}/${config.previewToken}/${WebshareFormat}`;
+      url = `videos/${this.webShareFile().Hash}/${config.previewToken}/${WebshareFormat}`;
     }
     return url;
   }
