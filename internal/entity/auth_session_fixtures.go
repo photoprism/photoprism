@@ -204,6 +204,23 @@ var SessionFixtures = SessionMap{
 		PreviewToken:  "py2xrgr3",
 		DownloadToken: "vgln2ffb",
 	},
+	"client_analytics": {
+		authToken:     "9d8b8801ffa23eb52e08ca7766283799ddfd8dd368212123",
+		ID:            rnd.SessionID("9d8b8801ffa23eb52e08ca7766283799ddfd8dd368212123"),
+		RefID:         "sessgh6123yt",
+		SessTimeout:   0,
+		SessExpires:   UnixTime() + UnixWeek,
+		AuthScope:     clean.Scope("statistics"),
+		AuthProvider:  authn.ProviderClientCredentials.String(),
+		AuthMethod:    authn.MethodOAuth2.String(),
+		ClientUID:     ClientFixtures.Get("analytics").ClientUID,
+		ClientName:    ClientFixtures.Get("analytics").ClientName,
+		user:          nil,
+		UserUID:       "",
+		UserName:      "",
+		PreviewToken:  "py2123yt",
+		DownloadToken: "vgl123yt",
+	},
 }
 
 // CreateSessionFixtures inserts known entities into the database for testing.
