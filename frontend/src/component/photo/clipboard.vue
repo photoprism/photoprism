@@ -161,16 +161,20 @@
                           @confirm="addToAlbum"></p-photo-album-dialog>
     <p-share-upload-dialog :show="dialog.share" :items="{photos: selection}" :model="album" @cancel="dialog.share = false"
                            @confirm="onShared"></p-share-upload-dialog>
-    <p-webshare-dialog :show="dialog.webshare" @confirm="webShareDialogInitiated" @cancel="dialog.webshare = false"></p-webshare-dialog>
+    <p-webshare-dialog :show="dialog.webshare" :items="{photos: selection}" 
+                       @completed="busy = false; dialog.webshare = false;" 
+                       @failed="onWebshareFailed">
+                      </p-webshare-dialog>
+    <!-- <p-webshare :pictures="selection" :share="triggerWebshare" @done="busy = false; triggerWebshare = false;" @failed="navigatorCanShare = false"></p-webshare> -->
   </div>
 </template>
 <script>
 import Api from "common/api";
-import Util from "common/util";
 import Notify from "common/notify";
 import Event from "pubsub-js";
 import download from "common/download";
 import Photo from "model/photo";
+import {canUseWebshareApi} from "common/caniuse";
 
 export default {
   name: 'PPhotoClipboard',
@@ -208,7 +212,7 @@ export default {
       config: this.$config.values,
       expanded: false,
       isAlbum: this.album && this.album.Type === 'album',
-      navigatorCanShare: navigator.canShare && navigator.canShare({files: [new File([], "emtpy.jpg")]}) && this.$isMobile,
+      navigatorCanShare: canUseWebshareApi && this.$isMobile,
       dialog: {
         archive: false,
         delete: false,
@@ -217,6 +221,7 @@ export default {
         webshare: false,
       },
       rtl: this.$rtl,
+      triggerWebshare: false,
     };
   },
   methods: {
@@ -384,61 +389,17 @@ export default {
     onDownload(path) {
       download(path, "photos.zip");
     },
-    webShareDialogInitiated() {
-      console.log("now sharing...")
-      this.dialog.webshare = false;
-      navigator.share(this.shareData).catch((e) => {
-        if (e.name === "NotAllowedError") {
-          this.navigatorCanShare = false;
-          this.$notify.error(this.$gettext("sharing photos failed - showing download button"));
-        } else if (e.name === "AbortError") {
-          console.log("Sharing aborted by user")
-        } else {
-          this.$notify.error(this.$gettext("sharing photos failed"));
-        }
-      });
+    onWebshareFailed() {
+      this.busy = false;
+      this.navigatorCanShare = false;
+      this.$notify.error(this.$gettext('sharing photos failed - showing download icon'));
     },
     webShare() {
       if (this.busy || this.selection.length == 0) {
         return;
       }
-
       this.busy = true;
-
-      // Resolve selection into Photo objects and download them as blobs
-      const photos = this.selection.map((uid) => new Photo().find(uid).then((p) => fetch(p.getWebshareDownloadUrl()).then((res) => res.blob()).then((blob) => {
-        p.Blob = blob;
-        return p;
-      })));
-      // Wait for all downloads, then open native browser share dialog
-      Promise.all(photos).then((blobs) => {
-        const filesArray = blobs.map((p) => Util.JSFileForWebshare(p.Blob, p.webShareFile()));
-        const shareData = {
-          files: filesArray,
-        };
-        const debugMsg = "Sharing allowed: " + navigator.canShare(shareData);
-        this.shareData  = shareData;
-        // console.log(debugMsg);
-        // this.$notify.info(debugMsg);
-        return navigator.share(shareData);
-      }).catch((e) => {
-        if (e.name === "NotAllowedError") {
-          // Sharing requires a transient activation and might fail with a NotAllowedError.
-          // Show dialog to create transient activation and try again.
-          this.dialog.webshare = true;
-          console.log("NotAllowedError while sharing, showing dialog")
-        } else if (e.name === "AbortError") {
-          console.log("Sharing aborted by user")
-        } else {
-          this.$notify.error(this.$gettext("sharing photos failed"));
-          console.warn(e);
-        }
-      }).finally(() => {
-        this.busy = false;
-      })
-
-      Notify.success(this.$gettext("Downloading & Sharing…"));
-
+      this.dialog.webshare = true;
       this.expanded = false;
     },
     edit() {

@@ -23,7 +23,7 @@
           </button>
 
           <button v-if="canDownload && navigatorCanShare" class="pswp__button action-webshare hide-mini" style="background: none;"
-                  :title="$gettext('Share')" @click.exact="onWebShare">
+                  :title="$gettext('Share')" @click.exact="onWebshare">
             <v-icon size="16" color="white">share</v-icon>
           </button>
 
@@ -85,6 +85,11 @@
                       :height="player.height" :width="player.width" :autoplay="player.autoplay" :loop="player.loop" @close="closePlayer">
       </p-video-player>
     </div>
+    <!-- <p-webshare :pictures="[item.UID]" :share="webshare" @failed="navigatorCanShare = false" @done="webshare = false"></p-webshare> -->
+    <p-webshare-dialog :show="webshare" :items="{photos: [item.UID]}" 
+                       @completed="webshare = false;" 
+                       @failed="onWebshareFailed">
+                      </p-webshare-dialog>
   </div>
 </template>
 
@@ -96,6 +101,7 @@ import Thumb from "model/thumb";
 import {Photo,DATE_FULL} from "model/photo";
 import Notify from "common/notify";
 import {DateTime} from "luxon";
+import {canUseWebshareApi} from "common/caniuse";
 
 export default {
   name: "PPhotoViewer",
@@ -104,12 +110,13 @@ export default {
       canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
       canLike: this.$config.allow("photos", "manage") && this.$config.feature("favorites"),
       canDownload: this.$config.allow("photos", "download") && this.$config.feature("download"),
-      navigatorCanShare: navigator.canShare && navigator.canShare({files: [new File([], "emtpy.jpg")]}) && this.$isMobile,
+      navigatorCanShare: canUseWebshareApi && this.$isMobile,
       selection: this.$clipboard.selection,
       config: this.$config.values,
       item: new Thumb(),
       subscriptions: [],
       interval: false,
+      webshare: false,
       slideshow: {
         active: false,
         next: 0,
@@ -254,7 +261,14 @@ export default {
 
       new Photo().find(this.item.UID).then(p => p.downloadAll());
     },
-    onWebShare() {
+    onWebshareCompleted(ev, data) {
+      // this.busy = false;
+    },
+    onWebshareFailed() {
+      this.navigatorCanShare = false;
+      this.$notify.error(this.$gettext('sharing photos failed - showing download icon'));
+    },
+    onWebshare() {
       this.onPause();
 
       if (!this.item || !this.item.DownloadUrl) {
@@ -262,12 +276,8 @@ export default {
         return;
       }
 
-      new Photo().find(this.item.UID).then(p => p.webShare()).catch(e => {
-        this.$notify.error("couldn't share photo");
-        console.warn(e);
-      });
+      this.webshare = true;
 
-      Notify.success(this.$gettext("Downloading & Sharing…"));
     },
     onEdit() {
       this.onPause();
