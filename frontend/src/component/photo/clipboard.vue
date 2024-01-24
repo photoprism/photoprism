@@ -33,6 +33,7 @@
         >
           <v-icon>cloud</v-icon>
         </v-btn>
+
         <v-btn
             v-if="canManage && context === 'review'" fab dark
             small
@@ -165,7 +166,6 @@
                        @completed="busy = false; dialog.webshare = false;" 
                        @failed="onWebshareFailed">
                       </p-webshare-dialog>
-    <!-- <p-webshare :pictures="selection" :share="triggerWebshare" @done="busy = false; triggerWebshare = false;" @failed="navigatorCanShare = false"></p-webshare> -->
   </div>
 </template>
 <script>
@@ -221,7 +221,6 @@ export default {
         webshare: false,
       },
       rtl: this.$rtl,
-      triggerWebshare: false,
     };
   },
   methods: {
