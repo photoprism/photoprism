@@ -707,7 +707,17 @@ export class Photo extends RestModel {
   }
 
 
+  getWebshareFile() {
+    const { file } = this.getWebshare();
+    return file;
+  }
+
   getWebshareDownloadUrl() {
+    const { url } = this.getWebshare();
+    return url;
+  }
+
+  getWebshare() {
     if (!this.Files) {
       return;
     }
@@ -716,26 +726,31 @@ export class Photo extends RestModel {
     if (this.Type == MediaLive || this.Type == MediaRaw) {
       // use jpeg or png (pngs are not converted to jpeg)
       file = this.Files.find((f) => f.FileType === FormatJpeg || f.FileType === FormatPng);
-    } else if (this.Type == MediaSidecar) {
+    }
+    if (this.Type == MediaSidecar) {
       // I am not sure if this could even happen
       // use first file 
       file = this.Files[0];
-    } else if (this.Type == MediaImage) {
+    }
+    if (this.Type == MediaImage) {
       // use main file
       file = this.mainFile();
-    } else if (this.Type == MediaAnimated) {
+    }
+    if (this.Type == MediaAnimated) {
       // use gif or jpeg
       file = this.Files.find((f) => f.FileType === FormatGif);
       if (!file) {
         file = this.Files.find((f) => f.FileType === FormatJpeg);
       }
-    } else if (this.Type == MediaVector) {
+    }
+    if (this.Type == MediaVector) {
       // if svg, use it, otherwise use jpeg
       file = this.Files.find((f) => f.FileType === FormatSvg);
       if (!file) {
         file = this.Files.find((f) => f.FileType === FormatJpeg);
       }
-    } else if (this.Type == MediaVideo) {
+    }
+    if (this.Type == MediaVideo) {
       // use mp4
       file = this.videoFile();
       url = `videos/${file.Hash}/${config.previewToken}/${WebshareFormat}`;
@@ -747,7 +762,7 @@ export class Photo extends RestModel {
     if (!url) {
       url = `dl/${file.Hash}?t=${config.downloadToken}`;
     }
-    return url;
+    return { url, file };
   }
 
   downloadAll() {

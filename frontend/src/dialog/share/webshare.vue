@@ -75,7 +75,7 @@ export default {
       // Wait for all downloads, then open native browser share dialog
       
       Promise.all(photos).then((blobs) => {
-        const filesArray = blobs.map((p) => Util.JSFileForWebshare(p.Blob, p.webShareFile()));
+        const filesArray = blobs.map((p) => Util.JSFileForWebshare(p.Blob, p.getWebshareFile()));
         const webshareData = {
           files: filesArray,
         };
