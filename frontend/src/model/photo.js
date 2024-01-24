@@ -716,15 +716,59 @@ export class Photo extends RestModel {
     return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken}`;
   }
 
+
   getWebshareDownloadUrl() {
-    let url = "";
-    if (this.Type == MediaLive || !this.videoFile()) {
-      url = `dl/${this.webShareFile().Hash}?t=${config.downloadToken}`;
-    } else {
-      url = `videos/${this.webShareFile().Hash}/${config.previewToken}/${WebshareFormat}`;
+    if (!this.Files) {
+      return;
+    }
+    let url = null;
+    let file = null;
+    if (this.Type == MediaLive || this.Type == MediaRaw) {
+      // use jpeg or png (pngs are not converted to jpeg)
+      file = this.Files.find((f) => f.FileType === FormatJpeg || f.FileType === FormatPng);
+    } else if (this.Type == MediaSidecar) {
+      // I am not sure if this could even happen
+      // use first file 
+      file = this.Files[0];
+    } else if (this.Type == MediaImage) {
+      // use main file
+      file = this.mainFile();
+    } else if (this.Type == MediaAnimated) {
+      // use gif or jpeg
+      file = this.Files.find((f) => f.FileType === FormatGif);
+      if (!file) {
+        file = this.Files.find((f) => f.FileType === FormatJpeg);
+      }
+    } else if (this.Type == MediaVector) {
+      // if svg, use it, otherwise use jpeg
+      file = this.Files.find((f) => f.FileType === FormatSvg);
+      if (!file) {
+        file = this.Files.find((f) => f.FileType === FormatJpeg);
+      }
+    } else if (this.Type == MediaVideo) {
+      // use mp4
+      file = this.videoFile();
+      url = `videos/${file.Hash}/${config.previewToken}/${WebshareFormat}`;
+    }
+    if (!file) {
+      file = this.mainFile();
+      console.log("No file found! Falling back to main file.")
+    }
+    if (!url) {
+      url = `dl/${file.Hash}?t=${config.downloadToken}`;
     }
     return url;
   }
+
+  // getWebshareDownloadUrl() {
+  //   let url = "";
+  //   if (this.Type == MediaLive || !this.videoFile()) {
+  //     url = `dl/${this.webShareFile().Hash}?t=${config.downloadToken}`;
+  //   } else {
+  //     url = `videos/${this.webShareFile().Hash}/${config.previewToken}/${WebshareFormat}`;
+  //   }
+  //   return url;
+  // }
 
   downloadAll() {
     const s = config.settings();
@@ -1280,19 +1324,6 @@ export class Photo extends RestModel {
 
       return Promise.resolve(this.setValues(resp.data));
     });
-  }
-
-  webShare() {
-    // Fetches the photo in the browser and opens the native share dialog
-    return fetch(this.getWebshareDownloadUrl())
-      .then((res) => res.blob())
-      .then((blob) => {
-        const filesArray = [Util.JSFileForWebshare(blob, this.webShareFile())];
-        const shareData = {
-          files: filesArray,
-        };
-        return navigator.share(shareData);
-      });
   }
 
   static batchSize() {

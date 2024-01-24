@@ -73,8 +73,8 @@ export default {
     },
     onShow() {
       // Resolve selection into Photo objects and download them as blobs
-      const photos = this.items.photos.map((uid) => new Photo().find(uid).then((p) => Api.get(p.getWebshareDownloadUrl()).then((res) => res.blob()).then((blob) => {
-        p.Blob = blob;
+      const photos = this.items.photos.map((uid) => new Photo().find(uid).then((p) => Api.get(p.getWebshareDownloadUrl(), { responseType: 'blob' }).then((resp) => {
+        p.Blob = resp.data;
         return p;
       })));
       // Wait for all downloads, then open native browser share dialog
