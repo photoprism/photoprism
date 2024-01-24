@@ -70,7 +70,7 @@ Api.interceptors.response.use(
   function (resp) {
     Notify.ajaxEnd();
 
-    if (typeof resp.data == "string") {
+    if (typeof resp.data == "string" && resp.request.responseType !== "blob") {
       Notify.error($gettext("Request failed - invalid response"));
       console.warn("WARNING: Server returned HTML instead of JSON - API not implemented?");
     }
