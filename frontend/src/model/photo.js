@@ -547,16 +547,6 @@ export class Photo extends RestModel {
     return `${config.videoUri}/videos/${this.Hash}/${config.previewToken}/${FormatAvc}`;
   }
 
-  webShareFile() {
-    let file;
-    if (this.Type == MediaLive || !this.videoFile()) {
-      file = this.Files.find((f) => f.FileType == FormatJpeg || f.FileType === FormatPng);
-    } else {
-      file = this.videoFile();
-    }
-    return file;
-  }
-
   mainFile() {
     return this.getMainFileFromFiles(this.Files);
   }
@@ -759,16 +749,6 @@ export class Photo extends RestModel {
     }
     return url;
   }
-
-  // getWebshareDownloadUrl() {
-  //   let url = "";
-  //   if (this.Type == MediaLive || !this.videoFile()) {
-  //     url = `dl/${this.webShareFile().Hash}?t=${config.downloadToken}`;
-  //   } else {
-  //     url = `videos/${this.webShareFile().Hash}/${config.previewToken}/${WebshareFormat}`;
-  //   }
-  //   return url;
-  // }
 
   downloadAll() {
     const s = config.settings();
