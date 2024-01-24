@@ -27,11 +27,6 @@
 </template>
 <script>
 
-// Das ist das Interface
-// <p-webshare-dialog :show="dialog.webshare" :items="{photos: selection}" 
-//                        @completed="busy = false; dialog.webshare = false;" 
-//                        @failed="navigatorCanShare = false"></p-webshare-dialog>
-
 import Photo from "model/photo";
 import Util from "common/util";
 import Notify from "common/notify";
