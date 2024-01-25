@@ -68,33 +68,34 @@ export default {
     },
     onShow() {
       // Resolve selection into Photo objects and download them as blobs
-      const photos = this.items.photos.map((uid) => new Photo().find(uid).then((p) => Api.get(p.getWebshareDownloadUrl(), { responseType: 'blob' }).then((resp) => {
-        p.Blob = resp.data;
-        return p;
-      })));
+      const photos = this.items.photos.map(
+        (uid) => new Photo().find(uid).then(
+          (p) => Api.get(p.getWebshareDownloadUrl(), { responseType: 'blob' }).then(
+            (resp) => {
+              p.Blob = resp.data;
+              return p;
+            }
+          )
+        )
+      );
+
       // Wait for all downloads, then open native browser share dialog
-      
       Promise.all(photos).then((blobs) => {
         const filesArray = blobs.map((p) => Util.JSFileForWebshare(p.Blob, p.getWebshareFile()));
         const webshareData = {
           files: filesArray,
         };
-        const debugMsg = "Sharing allowed: " + navigator.canShare(webshareData);
-        console.log(debugMsg);
-        // this.$notify.info(debugMsg);
         this.webshareData = webshareData;
         return navigator.share(webshareData);
       }).catch((e) => {
         if (e.name === "AbortError") {
+          // Cancelled by user
           this.$emit('cancel');
-          console.log("Sharing aborted by user")
         } else if (e.name === "NotAllowedError") {
           // Sharing requires a transient activation and might fail with a NotAllowedError.
           // Show dialog to create transient activation and try again.
           this.showConfirmationDialog = true;
-          // console.log("NotAllowedError while sharing, showing dialog")
         } else {
-          // this.$notify.error(this.$gettext("sharing photos failed"));
           this.$emit('failed');
         }
       }).finally(() => {
@@ -104,12 +105,10 @@ export default {
       Notify.success(this.$gettext("Downloading & Sharing…"));
     },
     webShareDialogInitiated() {
-      console.log("now sharing...")
       this.showConfirmationDialog = false;
       navigator.share(this.webshareData).catch((e) => {
         if (e.name === "AbortError") {
           this.$emit('cancel');
-          console.log("Sharing canceled by user")
         } else {
           this.$emit('failed');
         }

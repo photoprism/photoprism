@@ -85,11 +85,10 @@
                       :height="player.height" :width="player.width" :autoplay="player.autoplay" :loop="player.loop" @close="closePlayer">
       </p-video-player>
     </div>
-    <!-- <p-webshare :pictures="[item.UID]" :share="webshare" @failed="navigatorCanShare = false" @done="webshare = false"></p-webshare> -->
     <p-webshare-dialog :show="webshare" :items="{photos: [item.UID]}" 
                        @completed="webshare = false;" 
                        @failed="onWebshareFailed">
-                      </p-webshare-dialog>
+    </p-webshare-dialog>
   </div>
 </template>
 
