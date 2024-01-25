@@ -115,6 +115,24 @@ var ClientFixtures = ClientMap{
 		LastActive:   0,
 		DeletedAt:    TimePointer(),
 	},
+	"analytics": {
+		ClientUID:    "cs7pvt5h8rw9aaqj",
+		UserUID:      "",
+		UserName:     "",
+		user:         nil,
+		ClientName:   "Analytics",
+		ClientRole:   acl.RoleClient.String(),
+		ClientType:   authn.ClientConfidential,
+		ClientURL:    "",
+		CallbackURL:  "",
+		AuthProvider: authn.ProviderClientCredentials.String(),
+		AuthMethod:   authn.MethodOAuth2.String(),
+		AuthScope:    "statistics",
+		AuthExpires:  UnixHour,
+		AuthTokens:   2,
+		AuthEnabled:  true,
+		LastActive:   0,
+	},
 }
 
 // CreateClientFixtures inserts known entities into the database for testing.
