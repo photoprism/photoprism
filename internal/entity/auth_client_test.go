@@ -380,13 +380,13 @@ func TestClient_Expires(t *testing.T) {
 
 func TestClient_UserInfo(t *testing.T) {
 	t.Run("New", func(t *testing.T) {
-		assert.Equal(t, "", NewClient().UserInfo())
+		assert.Equal(t, "n/a", NewClient().UserInfo())
 	})
 	t.Run("Alice", func(t *testing.T) {
 		assert.Equal(t, "alice", ClientFixtures.Pointer("alice").UserInfo())
 	})
 	t.Run("Metrics", func(t *testing.T) {
-		assert.Equal(t, "", ClientFixtures.Pointer("metrics").UserInfo())
+		assert.Equal(t, "n/a", ClientFixtures.Pointer("metrics").UserInfo())
 	})
 }
 

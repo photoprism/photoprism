@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 func TestAuthSession(t *testing.T) {
@@ -275,7 +276,7 @@ func TestSessionLogIn(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	t.Run("Admin", func(t *testing.T) {
-		m := NewSession(UnixDay, UnixHour*6)
+		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
 
 		// Create login form.
@@ -295,7 +296,7 @@ func TestSessionLogIn(t *testing.T) {
 		}
 	})
 	t.Run("WrongPassword", func(t *testing.T) {
-		m := NewSession(UnixDay, UnixHour*6)
+		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
 
 		// Create login form.
@@ -315,7 +316,7 @@ func TestSessionLogIn(t *testing.T) {
 		}
 	})
 	t.Run("InvalidUser", func(t *testing.T) {
-		m := NewSession(UnixDay, UnixHour*6)
+		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
 
 		// Create login form.
@@ -335,7 +336,7 @@ func TestSessionLogIn(t *testing.T) {
 		}
 	})
 	t.Run("Unknown user with token", func(t *testing.T) {
-		m := NewSession(UnixDay, UnixHour*6)
+		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
 
 		// Create login form.
@@ -355,7 +356,7 @@ func TestSessionLogIn(t *testing.T) {
 	})
 
 	t.Run("Unknown user with invalid token", func(t *testing.T) {
-		m := NewSession(UnixDay, UnixHour*6)
+		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
 
 		// Create login form.

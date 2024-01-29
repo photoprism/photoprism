@@ -1,11 +1,12 @@
-package sev
+package level
 
 import (
 	"fmt"
 )
 
+// Severity levels.
 const (
-	Emergency Level = iota
+	Emergency Severity = iota
 	Alert
 	Critical
 	Error
@@ -15,7 +16,8 @@ const (
 	Debug
 )
 
-var Levels = []Level{
+// Levels contains the valid severity levels.
+var Levels = []Severity{
 	Emergency,
 	Alert,
 	Critical,
@@ -27,7 +29,7 @@ var Levels = []Level{
 }
 
 // UnmarshalText implements encoding.TextUnmarshaler.
-func (level *Level) UnmarshalText(text []byte) error {
+func (level *Severity) UnmarshalText(text []byte) error {
 	l, err := Parse(string(text))
 	if err != nil {
 		return err
@@ -38,7 +40,8 @@ func (level *Level) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func (level Level) MarshalText() ([]byte, error) {
+// MarshalText implements encoding.TextMarshaler.
+func (level Severity) MarshalText() ([]byte, error) {
 	switch level {
 	case Debug:
 		return []byte("debug"), nil
@@ -61,7 +64,8 @@ func (level Level) MarshalText() ([]byte, error) {
 	return nil, fmt.Errorf("not a valid severity level %d", level)
 }
 
-func (level Level) Status() string {
+// Status returns the severity level as an info string for reports.
+func (level Severity) Status() string {
 	switch level {
 	case Warning:
 		return "warning"

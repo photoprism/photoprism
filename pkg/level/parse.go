@@ -1,13 +1,13 @@
-package sev
+package level
 
 import (
 	"fmt"
 	"strings"
 )
 
-// Parse takes a string level and returns the severity constant.
-func Parse(lvl string) (Level, error) {
-	switch strings.ToLower(lvl) {
+// Parse takes a string and returns the corresponding severity, if any.
+func Parse(level string) (Severity, error) {
+	switch strings.ToLower(level) {
 	case "emergency", "emerg", "panic":
 		return Emergency, nil
 	case "fatal", "alert":
@@ -26,6 +26,6 @@ func Parse(lvl string) (Level, error) {
 		return Debug, nil
 	}
 
-	var l Level
-	return l, fmt.Errorf("not a valid Level: %q", lvl)
+	var l Severity
+	return l, fmt.Errorf("not a valid severity level: %q", level)
 }

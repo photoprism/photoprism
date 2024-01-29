@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // ClientUID is the unique ID prefix.
@@ -64,7 +65,7 @@ func NewClient() *Client {
 		AuthProvider: authn.ProviderClientCredentials.String(),
 		AuthMethod:   authn.MethodOAuth2.String(),
 		AuthScope:    "",
-		AuthExpires:  UnixHour,
+		AuthExpires:  unix.Hour,
 		AuthTokens:   5,
 		AuthEnabled:  true,
 		LastActive:   0,
@@ -113,9 +114,20 @@ func (m *Client) Name() string {
 	return m.ClientName
 }
 
+// SetName sets a custom client name.
+func (m *Client) SetName(s string) *Client {
+	if s = clean.Name(s); s != "" {
+		m.ClientName = s
+	}
+
+	return m
+}
+
 // SetRole sets the client role specified as string.
 func (m *Client) SetRole(role string) *Client {
-	m.ClientRole = acl.ClientRoles[clean.Role(role)].String()
+	if role != "" {
+		m.ClientRole = acl.ClientRoles[clean.Role(role)].String()
+	}
 
 	return m
 }
@@ -173,7 +185,7 @@ func (m *Client) UserInfo() string {
 	if m == nil {
 		return ""
 	} else if m.UserUID == "" {
-		return ""
+		return "n/a"
 	} else if m.UserName != "" {
 		return m.UserName
 	}
@@ -242,21 +254,36 @@ func (m *Client) Updates(values interface{}) error {
 	return UnscopedDb().Model(m).Updates(values).Error
 }
 
-// NewSecret sets a new secret stored as hash.
-func (m *Client) NewSecret() (s string, err error) {
+// NewSecret sets a random client secret and returns it if successful.
+func (m *Client) NewSecret() (secret string, err error) {
 	if !m.HasUID() {
 		return "", fmt.Errorf("invalid client uid")
 	}
 
-	s = rnd.Base62(32)
+	secret = rnd.ClientSecret()
 
-	pw := NewPassword(m.ClientUID, s, false)
-
-	if err = pw.Save(); err != nil {
+	if err = m.SetSecret(secret); err != nil {
 		return "", err
 	}
 
-	return s, nil
+	return secret, nil
+}
+
+// SetSecret updates the current client secret or returns an error otherwise.
+func (m *Client) SetSecret(secret string) (err error) {
+	if !m.HasUID() {
+		return fmt.Errorf("invalid client uid")
+	} else if !rnd.IsClientSecret(secret) {
+		return fmt.Errorf("invalid client secret")
+	}
+
+	pw := NewPassword(m.ClientUID, secret, false)
+
+	if err = pw.Save(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // HasSecret checks if the given client secret is correct.
@@ -296,9 +323,25 @@ func (m *Client) Provider() authn.ProviderType {
 	return authn.Provider(m.AuthProvider)
 }
 
+// SetProvider sets a custom client authentication provider.
+func (m *Client) SetProvider(provider authn.ProviderType) *Client {
+	if !provider.IsDefault() {
+		m.AuthProvider = provider.String()
+	}
+	return m
+}
+
 // Method returns the client authentication method.
 func (m *Client) Method() authn.MethodType {
 	return authn.Method(m.AuthMethod)
+}
+
+// SetMethod sets a custom client authentication method.
+func (m *Client) SetMethod(method authn.MethodType) *Client {
+	if !method.IsDefault() {
+		m.AuthMethod = method.String()
+	}
+	return m
 }
 
 // Scope returns the client authorization scope.
@@ -306,9 +349,11 @@ func (m *Client) Scope() string {
 	return clean.Scope(m.AuthScope)
 }
 
-// SetScope sets the client authorization scope.
+// SetScope sets a custom client authorization scope.
 func (m *Client) SetScope(s string) *Client {
-	m.AuthScope = clean.Scope(s)
+	if s = clean.Scope(s); s != "" {
+		m.AuthScope = clean.Scope(s)
+	}
 	return m
 }
 
@@ -318,7 +363,7 @@ func (m *Client) UpdateLastActive() *Client {
 		return m
 	}
 
-	m.LastActive = UnixTime()
+	m.LastActive = unix.Time()
 
 	if err := Db().Model(m).UpdateColumn("LastActive", m.LastActive).Error; err != nil {
 		log.Debugf("client: failed to update %s timestamp (%s)", m.ClientUID, err)
@@ -351,6 +396,29 @@ func (m *Client) Expires() time.Duration {
 	return time.Duration(m.AuthExpires) * time.Second
 }
 
+// SetExpires sets a custom auth expiration time in seconds.
+func (m *Client) SetExpires(i int64) *Client {
+	if i != 0 {
+		m.AuthExpires = i
+	}
+
+	return m
+}
+
+// Tokens returns maximum number of access tokens this client can create.
+func (m *Client) Tokens() time.Duration {
+	return time.Duration(m.AuthExpires) * time.Second
+}
+
+// SetTokens sets a custom access token limit for this client.
+func (m *Client) SetTokens(i int64) *Client {
+	if i != 0 {
+		m.AuthTokens = i
+	}
+
+	return m
+}
+
 // Report returns the entity values as rows.
 func (m *Client) Report(skipEmpty bool) (rows [][]string, cols []string) {
 	cols = []string{"Name", "Value"}
@@ -380,49 +448,48 @@ func (m *Client) Report(skipEmpty bool) (rows [][]string, cols []string) {
 // SetFormValues sets the values specified in the form.
 func (m *Client) SetFormValues(frm form.Client) *Client {
 	if frm.UserUID == "" && frm.UserName == "" {
-		// Ignore.
+		// Client does not belong to a specific user or the user remains unchanged.
 	} else if u := FindUser(User{UserUID: frm.UserUID, UserName: frm.UserName}); u != nil {
 		m.SetUser(u)
 	}
 
-	if frm.ClientName != "" {
-		m.ClientName = frm.Name()
+	// Set custom client UID?
+	if id := frm.ID(); m.ClientUID == "" && id != "" {
+		m.ClientUID = id
 	}
 
-	if frm.ClientRole != "" {
-		m.SetRole(frm.ClientRole)
-	}
+	// Set values from form.
+	m.SetName(frm.Name())
+	m.SetProvider(frm.Provider())
+	m.SetMethod(frm.Method())
+	m.SetScope(frm.Scope())
+	m.SetTokens(frm.Tokens())
+	m.SetExpires(frm.Expires())
 
-	if frm.AuthProvider != "" {
-		m.AuthProvider = frm.Provider().String()
-	}
-
-	if frm.AuthMethod != "" {
-		m.AuthMethod = frm.Method().String()
-	}
-
-	if frm.AuthScope != "" {
-		m.SetScope(frm.AuthScope)
-	}
-
-	if frm.AuthExpires > UnixMonth {
-		m.AuthExpires = UnixMonth
-	} else if frm.AuthExpires > 0 {
-		m.AuthExpires = frm.AuthExpires
-	} else if m.AuthExpires <= 0 {
-		m.AuthExpires = UnixHour
-	}
-
-	if frm.AuthTokens > 2147483647 {
-		m.AuthTokens = 2147483647
-	} else if frm.AuthTokens > 0 {
-		m.AuthTokens = frm.AuthTokens
-	} else if m.AuthTokens < 0 {
-		m.AuthTokens = -1
-	}
-
+	// Enable authentication?
 	if frm.AuthEnabled {
 		m.AuthEnabled = true
+	}
+
+	// Replace empty values with defaults.
+	if m.AuthProvider == "" {
+		m.AuthProvider = authn.ProviderClientCredentials.String()
+	}
+
+	if m.AuthMethod == "" {
+		m.AuthMethod = authn.MethodOAuth2.String()
+	}
+
+	if m.AuthScope == "" {
+		m.AuthScope = "*"
+	}
+
+	if m.AuthExpires <= 0 {
+		m.AuthExpires = unix.Hour
+	}
+
+	if m.AuthTokens <= 0 {
+		m.AuthTokens = -1
 	}
 
 	return m

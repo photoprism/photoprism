@@ -1,4 +1,4 @@
-package sev
+package level
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 
 func TestLevelJsonEncoding(t *testing.T) {
 	type X struct {
-		Level Level
+		Level Severity
 	}
 
 	var x X
@@ -24,7 +24,7 @@ func TestLevelJsonEncoding(t *testing.T) {
 }
 
 func TestLevelUnmarshalText(t *testing.T) {
-	var u Level
+	var u Severity
 	for _, level := range Levels {
 		t.Run(level.String(), func(t *testing.T) {
 			assert.NoError(t, u.UnmarshalText([]byte(level.String())))
@@ -50,7 +50,7 @@ func TestLevelMarshalText(t *testing.T) {
 	for idx, val := range Levels {
 		level := val
 		t.Run(level.String(), func(t *testing.T) {
-			var cmp Level
+			var cmp Severity
 			b, err := level.MarshalText()
 			assert.NoError(t, err)
 			assert.Equal(t, levelStrings[idx], string(b))

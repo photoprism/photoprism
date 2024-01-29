@@ -20,23 +20,74 @@ func TestNewClient(t *testing.T) {
 	})
 }
 
-func TestNewClientFromCli(t *testing.T) {
+func TestAddClientFromCli(t *testing.T) {
+	// Specify command flags.
+	flags := flag.NewFlagSet("test", 0)
+	flags.String("name", "(default)", "Usage")
+	flags.String("scope", "(default)", "Usage")
+	flags.String("provider", "(default)", "Usage")
+	flags.String("method", "(default)", "Usage")
+
 	t.Run("Success", func(t *testing.T) {
-		globalSet := flag.NewFlagSet("test", 0)
-		globalSet.String("name", "Test", "")
-		globalSet.String("scope", "*", "")
-		globalSet.String("provider", "client_credentials", "")
-		globalSet.String("method", "totp", "")
+		// Create new context with flags.
+		ctx := cli.NewContext(cli.NewApp(), flags, nil)
 
-		app := cli.NewApp()
-		app.Version = "0.0.0"
+		// Set flag values.
+		assert.NoError(t, ctx.Set("name", "Test"))
+		assert.NoError(t, ctx.Set("scope", "*"))
+		assert.NoError(t, ctx.Set("provider", "client_credentials"))
+		assert.NoError(t, ctx.Set("method", "totp"))
 
-		c := cli.NewContext(app, globalSet, nil)
+		t.Logf("ARGS: %#v", ctx.Args())
 
-		client := NewClientFromCli(c)
+		// Check flag values.
+		assert.True(t, ctx.IsSet("name"))
+		assert.Equal(t, "Test", ctx.String("name"))
+		assert.True(t, ctx.IsSet("provider"))
+		assert.Equal(t, "client_credentials", ctx.String("provider"))
+
+		// Set form values.
+		client := AddClientFromCli(ctx)
+
+		// Check form values.
 		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
 		assert.Equal(t, authn.MethodTOTP, client.Method())
-		assert.Equal(t, "webdav", client.Scope())
+		assert.Equal(t, "*", client.Scope())
+		assert.Equal(t, "Test", client.Name())
+	})
+}
+
+func TestModClientFromCli(t *testing.T) {
+	// Specify command flags.
+	flags := flag.NewFlagSet("test", 0)
+	flags.String("name", "(default)", "Usage")
+	flags.String("scope", "(default)", "Usage")
+	flags.String("provider", "(default)", "Usage")
+	flags.String("method", "(default)", "Usage")
+
+	t.Run("Success", func(t *testing.T) {
+		// Create new context with flags.
+		ctx := cli.NewContext(cli.NewApp(), flags, nil)
+
+		// Set flag values.
+		assert.NoError(t, ctx.Set("name", "Test"))
+		assert.NoError(t, ctx.Set("scope", "*"))
+		assert.NoError(t, ctx.Set("provider", "client_credentials"))
+		assert.NoError(t, ctx.Set("method", "totp"))
+
+		// Check flag values.
+		assert.True(t, ctx.IsSet("name"))
+		assert.Equal(t, "Test", ctx.String("name"))
+		assert.True(t, ctx.IsSet("provider"))
+		assert.Equal(t, "client_credentials", ctx.String("provider"))
+
+		// Set form values.
+		client := ModClientFromCli(ctx)
+
+		// Check form values.
+		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+		assert.Equal(t, authn.MethodTOTP, client.Method())
+		assert.Equal(t, "*", client.Scope())
 		assert.Equal(t, "Test", client.Name())
 	})
 }

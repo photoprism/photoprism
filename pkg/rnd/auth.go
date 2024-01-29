@@ -29,7 +29,7 @@ func AuthToken() string {
 	return fmt.Sprintf("%x", b)
 }
 
-// IsAuthToken checks if the string might be a valid auth token.
+// IsAuthToken checks if the string represents a valid auth token.
 func IsAuthToken(s string) bool {
 	if l := len(s); l == AuthTokenLength {
 		return IsHex(s)
@@ -61,7 +61,7 @@ func AppPassword() string {
 	return string(b)
 }
 
-// IsAppPassword checks if the string might be a valid app password.
+// IsAppPassword checks if the string represents a valid app password.
 func IsAppPassword(s string, verifyChecksum bool) bool {
 	// Verify token length.
 	if len(s) != AppPasswordLength {
@@ -89,7 +89,7 @@ func IsAppPassword(s string, verifyChecksum bool) bool {
 	return s[AppPasswordLength-1] == checksum.Char([]byte(s[:AppPasswordLength-1]))
 }
 
-// IsAuthAny checks if the string might be a valid auth token or app password.
+// IsAuthAny checks if the string represents a valid auth token or app password.
 func IsAuthAny(s string) bool {
 	// Check if string might be a regular auth token.
 	if IsAuthToken(s) {
@@ -109,7 +109,7 @@ func SessionID(token string) string {
 	return Sha256([]byte(token))
 }
 
-// IsSessionID checks if the string is a session id string.
+// IsSessionID checks if the string represents a valid session id.
 func IsSessionID(id string) bool {
 	if len(id) != SessionIdLength {
 		return false

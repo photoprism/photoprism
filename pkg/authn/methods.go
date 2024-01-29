@@ -21,6 +21,11 @@ const (
 	MethodUnknown  MethodType = ""
 )
 
+// IsUnknown checks if the method is unknown.
+func (t MethodType) IsUnknown() bool {
+	return t == ""
+}
+
 // IsDefault checks if this is the default method.
 func (t MethodType) IsDefault() bool {
 	return t.String() == MethodDefault.String()

@@ -11,6 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // AuthAddFlags specifies the "photoprism auth add" command flags.
@@ -26,7 +27,7 @@ var AuthAddFlags = []cli.Flag{
 	cli.Int64Flag{
 		Name:  "expires, e",
 		Usage: "authentication `LIFETIME` in seconds, after which access expires (-1 to disable the limit)",
-		Value: entity.UnixYear,
+		Value: unix.Year,
 	},
 }
 

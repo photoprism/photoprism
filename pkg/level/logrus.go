@@ -1,10 +1,10 @@
-package sev
+package level
 
 import "github.com/sirupsen/logrus"
 
-// LogLevel takes a logrus log level and returns the severity.
-func LogLevel(lvl logrus.Level) Level {
-	switch lvl {
+// Logrus takes a logrus.Level and returns the corresponding Severity.
+func Logrus(level logrus.Level) Severity {
+	switch level {
 	case logrus.PanicLevel:
 		return Alert
 	case logrus.FatalLevel:

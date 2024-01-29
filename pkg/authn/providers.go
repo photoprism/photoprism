@@ -43,6 +43,11 @@ var ClientProviders = list.List{
 	string(ProviderAccessToken),
 }
 
+// IsUnknown checks if the provider is unknown.
+func (t ProviderType) IsUnknown() bool {
+	return t == ""
+}
+
 // IsRemote checks if the provider is external.
 func (t ProviderType) IsRemote() bool {
 	return list.Contains(RemoteProviders, string(t))

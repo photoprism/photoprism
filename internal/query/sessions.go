@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // Session finds an existing session by its id.
@@ -31,7 +32,7 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 	search = strings.TrimSpace(search)
 
 	if search == "expired" {
-		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", entity.UnixTime())
+		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", unix.Time())
 	} else if rnd.IsSessionID(search) {
 		stmt = stmt.Where("id = ?", search)
 	} else if rnd.IsAuthToken(search) {

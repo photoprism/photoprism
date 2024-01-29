@@ -23,7 +23,7 @@ var ClientsListCommand = cli.Command{
 // clientsListAction lists registered client applications
 func clientsListAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
-		cols := []string{"Client ID", "Client Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Authentication Expires", "Created At"}
+		cols := []string{"Client ID", "Client Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Created At"}
 
 		// Fetch clients from database.
 		clients, err := query.Clients(ctx.Int("n"), 0, "", ctx.Args().First())
@@ -45,14 +45,17 @@ func clientsListAction(ctx *cli.Context) error {
 		// Display report.
 		for i, client := range clients {
 			var authExpires string
+
 			if client.AuthExpires > 0 {
 				authExpires = client.Expires().String()
-			} else {
-				authExpires = report.Never
 			}
 
 			if client.AuthTokens > 0 {
-				authExpires = fmt.Sprintf("%s; up to %d tokens", authExpires, client.AuthTokens)
+				if authExpires != "" {
+					authExpires = fmt.Sprintf("%s; up to %d tokens", authExpires, client.AuthTokens)
+				} else {
+					authExpires = fmt.Sprintf("up to %d tokens", client.AuthTokens)
+				}
 			}
 
 			rows[i] = []string{

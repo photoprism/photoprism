@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
@@ -20,7 +19,7 @@ import (
 var ClientsAddCommand = cli.Command{
 	Name:        "add",
 	Usage:       "Registers a new client application",
-	Description: "Specifying a username as argument will assign the client application to a registered user account.",
+	Description: "If you specify a username as argument, the new client will belong to this user and inherit its privileges.",
 	ArgsUsage:   "[username]",
 	Flags:       ClientAddFlags,
 	Action:      clientsAddAction,
@@ -31,7 +30,7 @@ func clientsAddAction(ctx *cli.Context) error {
 	return CallWithDependencies(ctx, func(conf *config.Config) error {
 		conf.MigrateDb(false, nil)
 
-		frm := form.NewClientFromCli(ctx)
+		frm := form.AddClientFromCli(ctx)
 
 		interactive := true
 
@@ -53,11 +52,6 @@ func clientsAddAction(ctx *cli.Context) error {
 			}
 
 			frm.ClientName = clean.Name(res)
-		}
-
-		// Set a default client name if no specific name has been provided.
-		if frm.ClientName == "" {
-			frm.ClientName = time.Now().UTC().Format(time.DateTime)
 		}
 
 		if interactive && frm.AuthScope == "" {
@@ -82,23 +76,26 @@ func clientsAddAction(ctx *cli.Context) error {
 		client, addErr := entity.AddClient(frm)
 
 		if addErr != nil {
-			return fmt.Errorf("failed to add client: %s", addErr)
+			return addErr
 		} else {
 			log.Infof("successfully registered new client %s", clean.LogQuote(client.ClientName))
 
 			// Display client details.
-			cols := []string{"Client ID", "Client Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Authentication Expires", "Created At"}
+			cols := []string{"Client ID", "Client Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Created At"}
 			rows := make([][]string, 1)
 
 			var authExpires string
+
 			if client.AuthExpires > 0 {
 				authExpires = client.Expires().String()
-			} else {
-				authExpires = report.Never
 			}
 
 			if client.AuthTokens > 0 {
-				authExpires = fmt.Sprintf("%s; up to %d tokens", authExpires, client.AuthTokens)
+				if authExpires != "" {
+					authExpires = fmt.Sprintf("%s; up to %d tokens", authExpires, client.AuthTokens)
+				} else {
+					authExpires = fmt.Sprintf("up to %d tokens", client.AuthTokens)
+				}
 			}
 
 			rows[0] = []string{
@@ -118,15 +115,27 @@ func clientsAddAction(ctx *cli.Context) error {
 			}
 		}
 
-		if secret, err := client.NewSecret(); err != nil {
-			// Failed to create client secret.
-			return fmt.Errorf("failed to create client secret: %s", err)
+		// Se a random secret or the secret specified in the command flags, if any.
+		var secret, message string
+		var err error
+
+		if secret = frm.Secret(); secret == "" {
+			secret, err = client.NewSecret()
+			message = fmt.Sprintf(ClientSecretInfo, "FOLLOWING RANDOMLY GENERATED")
 		} else {
-			// Show client authentication credentials.
-			fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED CLIENT SECRET, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
-			result := report.Credentials("Client ID", client.ClientUID, "Client Secret", secret)
-			fmt.Printf("\n%s\n", result)
+			err = client.SetSecret(secret)
+			message = fmt.Sprintf(ClientSecretInfo, "SPECIFIED")
 		}
+
+		// Check if the secret has been saved successfully or return an error otherwise.
+		if err != nil {
+			return fmt.Errorf("failed to set client secret: %s", err)
+		}
+
+		// Show client authentication credentials.
+		fmt.Printf(message)
+		result := report.Credentials("Client ID", client.ClientUID, "Client Secret", secret)
+		fmt.Printf("\n%s\n", result)
 
 		return nil
 	})

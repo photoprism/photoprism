@@ -19,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // SessionPrefix for RefID.
@@ -101,7 +102,7 @@ func (m *Session) Expires(t time.Time) *Session {
 func DeleteExpiredSessions() (deleted int) {
 	found := Sessions{}
 
-	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", UnixTime()).Find(&found).Error; err != nil {
+	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", unix.Time()).Find(&found).Error; err != nil {
 		event.AuditErr([]string{"failed to fetch expired sessions", "%s"}, err)
 		return deleted
 	}
@@ -782,7 +783,7 @@ func (m *Session) ExpiresIn() int64 {
 		return 0
 	}
 
-	return m.SessExpires - UnixTime()
+	return m.SessExpires - unix.Time()
 }
 
 // TimeoutAt returns the time at which the session will expire due to inactivity.
@@ -822,7 +823,7 @@ func (m *Session) UpdateLastActive() *Session {
 		return m
 	}
 
-	m.LastActive = UnixTime()
+	m.LastActive = unix.Time()
 
 	if err := Db().Model(m).UpdateColumn("LastActive", m.LastActive).Error; err != nil {
 		event.AuditWarn([]string{m.IP(), "session %s", "failed to update last active time", "%s"}, m.RefID, err)
