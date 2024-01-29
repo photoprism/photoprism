@@ -83,7 +83,7 @@ func (c *Config) CreateDirectories() error {
 	} else if err := fs.MkdirAll(dir); err != nil {
 		return createError(dir, err)
 	} else if fs.FileExists(filepath.Join(dir, fs.PPStorageFilename)) {
-		return fmt.Errorf("originals path %s contains a %s file", clean.Log(dir), fs.PPStorageFilename)
+		return fmt.Errorf("found a %s file in the originals path", fs.PPStorageFilename)
 	}
 
 	// Create import path if it does not exist yet and return an error if it could be a storage folder.
@@ -92,7 +92,7 @@ func (c *Config) CreateDirectories() error {
 	} else if err := fs.MkdirAll(dir); err != nil {
 		return createError(dir, err)
 	} else if fs.FileExists(filepath.Join(dir, fs.PPStorageFilename)) {
-		return fmt.Errorf("import path %s contains a %s file", clean.Log(dir), fs.PPStorageFilename)
+		return fmt.Errorf("found a %s file in the import path", fs.PPStorageFilename)
 	}
 
 	// Create storage path if it doesn't exist yet.
