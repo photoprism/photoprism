@@ -37,15 +37,25 @@ func (m SizeMap) All() SizeList {
 	return result
 }
 
+var (
+	SizeTile50   = Size{Tile50, Tile500, "List View", 50, 50, false, false, []ResampleOption{ResampleFillCenter, ResampleDefault}}
+	SizeTile100  = Size{Tile100, Tile500, "Places View", 100, 100, false, false, []ResampleOption{ResampleFillCenter, ResampleDefault}}
+	SizeTile224  = Size{Tile224, Tile500, "TensorFlow, Mosaic View", 224, 224, false, false, []ResampleOption{ResampleFillCenter, ResampleDefault}}
+	SizeTile500  = Size{Tile500, "", "Cards View", 500, 500, false, false, []ResampleOption{ResampleFillCenter, ResampleDefault}}
+	SizeColors   = Size{Colors, Fit720, "Color Detection", 3, 3, false, false, []ResampleOption{ResampleResize, ResampleNearestNeighbor, ResamplePng}}
+	SizeLeft224  = Size{Left224, Fit720, "TensorFlow", 224, 224, false, false, []ResampleOption{ResampleFillTopLeft, ResampleDefault}}
+	SizeRight224 = Size{Right224, Fit720, "TensorFlow", 224, 224, false, false, []ResampleOption{ResampleFillBottomRight, ResampleDefault}}
+)
+
 // Sizes contains the properties of all thumbnail sizes.
 var Sizes = SizeMap{
-	Tile50:   {Tile50, Tile500, "List View", 50, 50, false, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
-	Tile100:  {Tile100, Tile500, "Places View", 100, 100, false, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
-	Tile224:  {Tile224, Tile500, "TensorFlow, Mosaic View", 224, 224, false, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
-	Tile500:  {Tile500, "", "Cards View", 500, 500, false, false, []ResampleOption{ResampleFillCenter, ResampleDefault}},
-	Colors:   {Colors, Fit720, "Color Detection", 3, 3, false, false, []ResampleOption{ResampleResize, ResampleNearestNeighbor, ResamplePng}},
-	Left224:  {Left224, Fit720, "TensorFlow", 224, 224, false, false, []ResampleOption{ResampleFillTopLeft, ResampleDefault}},
-	Right224: {Right224, Fit720, "TensorFlow", 224, 224, false, false, []ResampleOption{ResampleFillBottomRight, ResampleDefault}},
+	Tile50:   SizeTile50,
+	Tile100:  SizeTile100,
+	Tile224:  SizeTile224,
+	Tile500:  SizeTile500,
+	Colors:   SizeColors,
+	Left224:  SizeLeft224,
+	Right224: SizeRight224,
 	Fit720:   {Fit720, "", "SD TV, Mobile", 720, 720, true, true, []ResampleOption{ResampleFit, ResampleDefault}},
 	Fit1280:  {Fit1280, Fit2048, "HD TV, SXGA", 1280, 1024, true, true, []ResampleOption{ResampleFit, ResampleDefault}},
 	Fit1920:  {Fit1920, Fit2048, "Full HD", 1920, 1200, true, true, []ResampleOption{ResampleFit, ResampleDefault}},

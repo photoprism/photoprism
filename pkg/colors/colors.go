@@ -118,6 +118,10 @@ func (c Color) ID() int16 {
 }
 
 func (c Color) Hex() string {
+	if c < 0 || c > 15 {
+		return "0"
+	}
+
 	return fmt.Sprintf("%X", c)
 }
 
