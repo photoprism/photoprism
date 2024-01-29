@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/report"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -380,13 +381,13 @@ func TestClient_Expires(t *testing.T) {
 
 func TestClient_UserInfo(t *testing.T) {
 	t.Run("New", func(t *testing.T) {
-		assert.Equal(t, "n/a", NewClient().UserInfo())
+		assert.Equal(t, report.NotAssigned, NewClient().UserInfo())
 	})
 	t.Run("Alice", func(t *testing.T) {
 		assert.Equal(t, "alice", ClientFixtures.Pointer("alice").UserInfo())
 	})
 	t.Run("Metrics", func(t *testing.T) {
-		assert.Equal(t, "n/a", ClientFixtures.Pointer("metrics").UserInfo())
+		assert.Equal(t, report.NotAssigned, ClientFixtures.Pointer("metrics").UserInfo())
 	})
 }
 

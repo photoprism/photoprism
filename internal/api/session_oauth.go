@@ -35,7 +35,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		if get.Config().Public() {
 			// Abort if running in public mode.
-			event.AuditErr([]string{clientIp, "create client session", "disabled in public mode"})
+			event.AuditErr([]string{clientIp, "client", "create session", "oauth2", "disabled in public mode"})
 			AbortForbidden(c)
 			return
 		}
@@ -50,14 +50,14 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			f.ClientID = clientId
 			f.ClientSecret = clientSecret
 		} else if err = c.ShouldBind(&f); err != nil {
-			event.AuditWarn([]string{clientIp, "create client session", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "client", "create session", "oauth2", "%s"}, err)
 			AbortBadRequest(c)
 			return
 		}
 
 		// Check the credentials for completeness and the correct format.
 		if err = f.Validate(); err != nil {
-			event.AuditWarn([]string{clientIp, "create client session", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "client", "create session", "oauth2", "%s"}, err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		}
@@ -76,20 +76,20 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		// Abort if the client ID or secret are invalid.
 		if client == nil {
-			event.AuditWarn([]string{clientIp, "client %s", "create session", "invalid client id"}, f.ClientID)
+			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "invalid client id"}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			limiter.Login.Reserve(clientIp)
 			return
 		} else if !client.AuthEnabled {
-			event.AuditWarn([]string{clientIp, "client %s", "create session", "authentication disabled"}, f.ClientID)
+			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "authentication disabled"}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if method := client.Method(); !method.IsDefault() && method != authn.MethodOAuth2 {
-			event.AuditWarn([]string{clientIp, "client %s", "create session", "method %s not supported"}, f.ClientID, clean.LogQuote(method.String()))
+			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "method %s not supported"}, f.ClientID, clean.LogQuote(method.String()))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if client.WrongSecret(f.ClientSecret) {
-			event.AuditWarn([]string{clientIp, "client %s", "create session", "invalid client secret"}, f.ClientID)
+			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "invalid client secret"}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			limiter.Login.Reserve(clientIp)
 			return
@@ -100,20 +100,20 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		// Try to log in and save session if successful.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "client %s", "create session", "%s"}, f.ClientID, err)
+			event.AuditErr([]string{clientIp, "client %s", "create session", "oauth2", "%s"}, f.ClientID, err)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "client %s", "create session", StatusFailed.String()}, f.ClientID)
+			event.AuditErr([]string{clientIp, "client %s", "create session", "oauth2", StatusFailed.String()}, f.ClientID)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrUnexpected)})
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "created"}, f.ClientID, sess.RefID)
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "oauth2", "created"}, f.ClientID, sess.RefID)
 		}
 
 		// Deletes old client sessions above the configured limit.
 		if deleted := client.EnforceAuthTokenLimit(); deleted > 0 {
-			event.AuditInfo([]string{clientIp, "client %s", "%s deleted"}, f.ClientID, english.Plural(deleted, "old session", "old sessions"))
+			event.AuditInfo([]string{clientIp, "client %s", "%s deleted"}, f.ClientID, english.Plural(deleted, "old oauth2 session", "old oauth2 sessions"))
 		}
 
 		// Response includes access token, token type, and token lifetime.
@@ -144,7 +144,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "delete client session", "disabled in public mode"})
+			event.AuditErr([]string{clientIp, "client", "delete session", "oauth2", "disabled in public mode"})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}
@@ -158,7 +158,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 
 		// Get the auth token to be revoked from the submitted form values or the request header.
 		if err = c.ShouldBind(&f); err != nil && authToken == "" {
-			event.AuditWarn([]string{clientIp, "delete client session", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "client", "delete session", "oauth2", "%s"}, err)
 			AbortBadRequest(c)
 			return
 		} else if f.Empty() {
@@ -168,7 +168,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 
 		// Check the token form values.
 		if err = f.Validate(); err != nil {
-			event.AuditWarn([]string{clientIp, "delete client session", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "client", "delete session", "oauth2", "%s"}, err)
 			AbortBadRequest(c)
 			return
 		}
@@ -180,28 +180,28 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 		sess, err := entity.FindSession(rnd.SessionID(f.AuthToken))
 
 		if err != nil {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String(), err.Error())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "%s"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String(), err.Error())
 			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
 			return
 		} else if sess.Abort(c) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			return
 		} else if !sess.IsClient() {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "delete session as %s", "granted"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "granted"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 		}
 
 		// Delete session cache and database record.
 		if err = sess.Delete(); err != nil {
 			// Log error.
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "%s"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String(), err)
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "%s"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String(), err)
 
 			// Return JSON error.
 			c.AbortWithStatusJSON(http.StatusNotFound, i18n.NewResponse(http.StatusNotFound, i18n.ErrNotFound))
@@ -209,7 +209,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 		}
 
 		// Log event.
-		event.AuditInfo([]string{clientIp, "client %s", "session %s", "deleted"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID))
+		event.AuditInfo([]string{clientIp, "client %s", "session %s", "oauth2", "deleted"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID))
 
 		// Return JSON response for confirmation.
 		c.JSON(http.StatusOK, DeleteSessionResponse(sess.ID))

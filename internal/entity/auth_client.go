@@ -13,6 +13,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/unix"
 )
@@ -185,7 +186,7 @@ func (m *Client) UserInfo() string {
 	if m == nil {
 		return ""
 	} else if m.UserUID == "" {
-		return "n/a"
+		return report.NotAssigned
 	} else if m.UserName != "" {
 		return m.UserName
 	}

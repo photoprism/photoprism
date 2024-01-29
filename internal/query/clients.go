@@ -25,7 +25,7 @@ func Clients(limit, offset int, sortOrder, search string) (result entity.Clients
 	}
 
 	if sortOrder == "" {
-		sortOrder = "user_name, client_name, created_at"
+		sortOrder = "created_at DESC, client_uid DESC"
 	}
 
 	if limit > 0 {

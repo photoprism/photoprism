@@ -195,7 +195,7 @@ services:
 
   ## Prometheus Test Server
   ## Docs: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#oauth2
-  ## Auth: photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e --scope=metrics --name=Prometheus
+  ## Auth: photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 6000
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus

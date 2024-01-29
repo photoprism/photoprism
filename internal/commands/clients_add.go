@@ -81,7 +81,7 @@ func clientsAddAction(ctx *cli.Context) error {
 			log.Infof("successfully registered new client %s", clean.LogQuote(client.ClientName))
 
 			// Display client details.
-			cols := []string{"Client ID", "Client Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Created At"}
+			cols := []string{"Client ID", "Name", "Authentication Method", "User", "Role", "Scope", "Enabled", "Access Token Lifetime", "Created At"}
 			rows := make([][]string, 1)
 
 			var authExpires string

@@ -44,7 +44,7 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 	}
 
 	if sortOrder == "" {
-		sortOrder = "last_active, user_name"
+		sortOrder = "last_active DESC, created_at DESC, user_name"
 	}
 
 	if limit > 0 {

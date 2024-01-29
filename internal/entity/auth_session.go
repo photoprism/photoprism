@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/list"
+	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/photoprism/photoprism/pkg/unix"
@@ -347,10 +348,16 @@ func (m *Session) ClientRole() acl.Role {
 // ClientInfo returns the session's client identifier string.
 func (m *Session) ClientInfo() string {
 	if m.HasClient() {
-		return m.Client().Name()
+		if uid := m.Client().UID(); uid != "" {
+			return uid
+		} else if name := m.Client().Name(); name != "" {
+			return name
+		}
+	} else if m.ClientName != "" {
+		return m.ClientName
 	}
 
-	return m.ClientName
+	return report.NotAssigned
 }
 
 // HasClient checks if a client entity is assigned to the session.

@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/report"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -413,7 +415,7 @@ func TestSession_SetClientName(t *testing.T) {
 		m := NewSession(0, 0)
 		assert.Equal(t, "", m.ClientUID)
 		assert.Equal(t, "", m.ClientName)
-		assert.Equal(t, "", m.ClientInfo())
+		assert.Equal(t, report.NotAssigned, m.ClientInfo())
 		m.SetClientName("Foo Bar!")
 		assert.Equal(t, "", m.ClientUID)
 		assert.Equal(t, "Foo Bar!", m.ClientName)
