@@ -138,7 +138,7 @@ require (
 )
 
 require (
-	github.com/emersion/go-webdav v0.4.0
+	github.com/emersion/go-webdav v0.5.0
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 )
