@@ -85,7 +85,7 @@ func Method(s string) MethodType {
 		return MethodOAuth2
 	case "sso":
 		return MethodOIDC
-	case "TOTP/2FA", "2FA", "2fa", "OTP", "otp":
+	case "TOTP/2FA", "2FA", "2fa", "MFA", "mfa", "OTP", "otp":
 		return MethodTOTP
 	case "access_token":
 		return MethodDefault

@@ -147,17 +147,31 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === ''"
-                     @click.stop="showDialog('password')">
-                <translate>Change Password</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>lock</v-icon>
-              </v-btn>
-            </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-webdav-dialog compact"
                      :disabled="isPublic || isDemo || !user.WebDAV" @click.stop="showDialog('webdav')">
                 <translate>Connect via WebDAV</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs12 sm6 class="pa-2">
+              <v-btn block depressed color="secondary-light" class="action-apps-dialog compact"
+                     :disabled="true" @click.stop="showDialog('apps')">
+                <translate>Apps and Devices</translate>
+                <v-icon :right="!rtl" :left="rtl" dark>smartphone</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs12 sm6 class="pa-2">
+              <v-btn block depressed color="secondary-light" class="action-mfa-dialog compact"
+                     :disabled="true" @click.stop="showDialog('mfa')">
+                <translate>2-Factor Authentication</translate>
+                <v-icon :right="!rtl" :left="rtl" dark>vpn_key</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs12 sm6 class="pa-2">
+              <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === ''"
+                     @click.stop="showDialog('password')">
+                <translate>Change Password</translate>
+                <v-icon :right="!rtl" :left="rtl" dark>lock</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
@@ -336,8 +350,10 @@ export default {
       user: new User(this.$session.getUser()),
       countries: countries,
       dialog: {
-        password: false,
         webdav: false,
+        apps: false,
+        mfa: false,
+        password: false,
       },
     };
   },
