@@ -2,8 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-01-19 18:51+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2024-01-29 23:09+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -47,7 +48,7 @@ msgstr "12 ure"
 
 #: src/page/settings/account.vue:66 src/page/settings/account.vue:68
 msgid "2-Factor Authentication"
-msgstr ""
+msgstr "2-faktor-verifikasie"
 
 #: src/options/options.js:428
 msgid "4 hours"
@@ -303,7 +304,7 @@ msgstr "Keur goed"
 
 #: src/page/settings/account.vue:60 src/page/settings/account.vue:62
 msgid "Apps and Devices"
-msgstr ""
+msgstr "Toepassings en toestelle"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
