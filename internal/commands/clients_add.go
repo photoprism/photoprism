@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
@@ -92,7 +93,7 @@ func clientsAddAction(ctx *cli.Context) error {
 
 			if client.AuthTokens > 0 {
 				if authExpires != "" {
-					authExpires = fmt.Sprintf("%s; up to %d tokens", authExpires, client.AuthTokens)
+					authExpires = fmt.Sprintf("%s; up to %s", authExpires, english.Plural(int(client.Tokens()), "token", "tokens"))
 				} else {
 					authExpires = fmt.Sprintf("up to %d tokens", client.AuthTokens)
 				}

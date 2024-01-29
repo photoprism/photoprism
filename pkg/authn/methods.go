@@ -31,6 +31,11 @@ func (t MethodType) IsDefault() bool {
 	return t.String() == MethodDefault.String()
 }
 
+// IsSession checks if this is the session method.
+func (t MethodType) IsSession() bool {
+	return t.String() == MethodSession.String()
+}
+
 // String returns the provider identifier as a string.
 func (t MethodType) String() string {
 	switch t {

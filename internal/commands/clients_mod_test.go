@@ -23,21 +23,6 @@ func TestClientsModCommand(t *testing.T) {
 		assert.Error(t, err)
 		assert.Empty(t, output)
 	})
-	t.Run("ModDeletedClient", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"mod", "--name=New", "--scope=test", "cs5cpu17n6gj2gf7"})
-
-		// Run command with test context.
-		output := capture.Output(func() {
-			err = ClientsModCommand.Run(ctx)
-		})
-
-		// Check command output for plausibility.
-		assert.Error(t, err)
-		assert.Empty(t, output)
-	})
 	t.Run("DisableEnableAuth", func(t *testing.T) {
 		var err error
 

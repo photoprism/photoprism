@@ -63,6 +63,11 @@ func (t ProviderType) IsClient() bool {
 	return list.Contains(ClientProviders, string(t))
 }
 
+// IsApplication checks if the authentication is provided for an application.
+func (t ProviderType) IsApplication() bool {
+	return t == ProviderApplication
+}
+
 // IsDefault checks if this is the default provider.
 func (t ProviderType) IsDefault() bool {
 	return t.String() == ProviderDefault.String()

@@ -113,7 +113,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		// Deletes old client sessions above the configured limit.
 		if deleted := client.EnforceAuthTokenLimit(); deleted > 0 {
-			event.AuditInfo([]string{clientIp, "client %s", "%s deleted"}, f.ClientID, english.Plural(deleted, "old oauth2 session", "old oauth2 sessions"))
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "oauth2", "deleted %s"}, f.ClientID, sess.RefID, english.Plural(deleted, "previously created client session", "previously created client sessions"))
 		}
 
 		// Response includes access token, token type, and token lifetime.

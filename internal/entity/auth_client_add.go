@@ -9,7 +9,7 @@ import (
 // AddClient creates a new client and returns it if successful.
 func AddClient(frm form.Client) (client *Client, err error) {
 	if found := FindClientByUID(frm.ID()); found != nil {
-		return found, fmt.Errorf("client id %s already exists", found.ClientUID)
+		return found, fmt.Errorf("client %s already exists", found.ClientUID)
 	}
 
 	client = NewClient().SetFormValues(frm)

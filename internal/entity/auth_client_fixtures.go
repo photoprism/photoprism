@@ -97,7 +97,7 @@ var ClientFixtures = ClientMap{
 		AuthEnabled:  true,
 		LastActive:   0,
 	},
-	"deleted": {
+	"disabled": {
 		ClientUID:    "cs5cpu17n6gj2gf7",
 		UserUID:      "",
 		UserName:     "",
@@ -112,9 +112,8 @@ var ClientFixtures = ClientMap{
 		AuthScope:    "metrics",
 		AuthExpires:  unix.Hour,
 		AuthTokens:   2,
-		AuthEnabled:  true,
+		AuthEnabled:  false,
 		LastActive:   0,
-		DeletedAt:    TimePointer(),
 	},
 	"analytics": {
 		ClientUID:    "cs7pvt5h8rw9aaqj",

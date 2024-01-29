@@ -19,8 +19,8 @@ func TestCientsRemoveCommand(t *testing.T) {
 
 		//t.Logf(output0)
 		assert.NoError(t, err)
-		assert.NotContains(t, output0, "| DeletedAt    | time.Date")
-		assert.Contains(t, output0, "| DeletedAt    | <nil>")
+		assert.NotContains(t, output0, "not found")
+		assert.Contains(t, output0, "client_credentials")
 
 		// Create test context with flags and arguments.
 		ctx := NewTestContext([]string{"rm", "cs7pvt5h8rw9aaqj"})
@@ -43,8 +43,8 @@ func TestCientsRemoveCommand(t *testing.T) {
 
 		//t.Logf(output2)
 		assert.NoError(t, err)
-		assert.NotContains(t, output2, "| DeletedAt    | time.Date")
-		assert.Contains(t, output2, "| DeletedAt    | <nil>")
+		assert.NotContains(t, output2, "not found")
+		assert.Contains(t, output2, "client_credentials")
 	})
 	t.Run("RemoveClient", func(t *testing.T) {
 		var err error
@@ -57,8 +57,8 @@ func TestCientsRemoveCommand(t *testing.T) {
 
 		//t.Logf(output0)
 		assert.NoError(t, err)
-		assert.NotContains(t, output0, "| DeletedAt    | time.Date")
-		assert.Contains(t, output0, "| DeletedAt    | <nil>")
+		assert.NotContains(t, output0, "not found")
+		assert.Contains(t, output0, "client_credentials")
 
 		// Create test context with flags and arguments.
 		ctx := NewTestContext([]string{"rm", "--force", "cs7pvt5h8rw9aaqj"})
@@ -69,7 +69,6 @@ func TestCientsRemoveCommand(t *testing.T) {
 		})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
 		assert.NoError(t, err)
 		assert.Empty(t, output)
 
@@ -79,10 +78,8 @@ func TestCientsRemoveCommand(t *testing.T) {
 			err = ClientsShowCommand.Run(ctx2)
 		})
 
-		//t.Logf(output2)
-		assert.NoError(t, err)
-		assert.Contains(t, output2, "| DeletedAt    | time.Date")
-		assert.NotContains(t, output2, "| DeletedAt    | <nil>")
+		assert.Error(t, err)
+		assert.Empty(t, output2)
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		var err error
@@ -96,23 +93,6 @@ func TestCientsRemoveCommand(t *testing.T) {
 		})
 
 		// Check command output for plausibility.
-		//t.Logf(output)
-		assert.Error(t, err)
-		assert.Empty(t, output)
-	})
-	t.Run("AlreadyDeleted", func(t *testing.T) {
-		var err error
-
-		// Create test context with flags and arguments.
-		ctx := NewTestContext([]string{"rm", "--force", "cs5cpu17n6gj2gf7"})
-
-		// Run command with test context.
-		output := capture.Output(func() {
-			err = ClientsRemoveCommand.Run(ctx)
-		})
-
-		// Check command output for plausibility.
-		//t.Logf(output)
 		assert.Error(t, err)
 		assert.Empty(t, output)
 	})

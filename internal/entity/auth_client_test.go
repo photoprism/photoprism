@@ -199,8 +199,17 @@ func TestClient_Delete(t *testing.T) {
 }
 
 func TestClient_Deleted(t *testing.T) {
+	var ptr *Client
 	assert.False(t, ClientFixtures.Pointer("alice").Deleted())
-	assert.True(t, ClientFixtures.Pointer("deleted").Deleted())
+	assert.False(t, ClientFixtures.Pointer("deleted").Deleted())
+	assert.True(t, ptr.Deleted())
+}
+
+func TestClient_Disabled(t *testing.T) {
+	var ptr *Client
+	assert.False(t, ClientFixtures.Pointer("alice").Disabled())
+	assert.True(t, ClientFixtures.Pointer("deleted").Disabled())
+	assert.True(t, ptr.Disabled())
 }
 
 func TestClient_Updates(t *testing.T) {
@@ -297,6 +306,31 @@ func TestClient_UpdateLastActive(t *testing.T) {
 	})
 }
 
+func TestClient_Tokens(t *testing.T) {
+	t.Run("Set", func(t *testing.T) {
+		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: 0}
+		assert.Equal(t, int64(1), m.Tokens())
+		m.SetTokens(0)
+		assert.Equal(t, int64(1), m.Tokens())
+		m.SetTokens(1)
+		assert.Equal(t, int64(1), m.Tokens())
+		m.SetTokens(10)
+		assert.Equal(t, int64(10), m.Tokens())
+	})
+	t.Run("Unlimited", func(t *testing.T) {
+		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: -1}
+		assert.Equal(t, int64(-1), m.Tokens())
+	})
+	t.Run("One", func(t *testing.T) {
+		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: 1}
+		assert.Equal(t, int64(1), m.Tokens())
+	})
+	t.Run("Many", func(t *testing.T) {
+		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: 10}
+		assert.Equal(t, int64(10), m.Tokens())
+	})
+}
+
 func TestClient_EnforceAuthTokenLimit(t *testing.T) {
 	t.Run("EmptyUID", func(t *testing.T) {
 		var m = Client{ClientName: "No UUID"}
@@ -376,6 +410,30 @@ func TestClient_Expires(t *testing.T) {
 		r := m.Expires()
 
 		assert.Equal(t, r.String(), "24h0m0s")
+	})
+}
+
+func TestClient_String(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		m := &Client{}
+		assert.Equal(t, m.String(), "n/a")
+	})
+	t.Run("NewClient", func(t *testing.T) {
+		m := NewClient()
+		assert.Equal(t, m.String(), "n/a")
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		m := ClientFixtures.Get("metrics")
+		assert.Equal(t, m.String(), "cs5cpu17n6gj2qo5")
+	})
+	t.Run("Alice", func(t *testing.T) {
+		m := ClientFixtures.Get("alice")
+		assert.Equal(t, m.String(), "cs5gfen1bgxz7s9i")
+	})
+	t.Run("Name", func(t *testing.T) {
+		m := NewClient()
+		m.ClientName = "Foo Bar"
+		assert.Equal(t, m.String(), "Foo Bar")
 	})
 }
 

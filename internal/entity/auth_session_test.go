@@ -107,13 +107,13 @@ func TestDeleteClientSessions(t *testing.T) {
 
 	// Create new test client.
 	client := NewClient()
-	client.ClientUID = "cs5gfen1bgx00000"
+	client.ClientUID = clientUID
 
 	// Make sure no sessions exist yet and test missing arguments.
-	assert.Equal(t, 0, DeleteClientSessions("", "", -1))
-	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOAuth2, -1))
-	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOAuth2, 0))
-	assert.Equal(t, 0, DeleteClientSessions("", authn.MethodDefault, 0))
+	assert.Equal(t, 0, DeleteClientSessions(&Client{}, "", -1))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0))
+	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodDefault, 0))
 
 	// Create 10 test client sessions.
 	for i := 0; i < 10; i++ {
@@ -126,11 +126,11 @@ func TestDeleteClientSessions(t *testing.T) {
 	}
 
 	// Check if the expected number of sessions is deleted until none are left.
-	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOAuth2, -1))
-	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOIDC, 1))
-	assert.Equal(t, 9, DeleteClientSessions(clientUID, authn.MethodOAuth2, 1))
-	assert.Equal(t, 1, DeleteClientSessions(clientUID, authn.MethodOAuth2, 0))
-	assert.Equal(t, 0, DeleteClientSessions(clientUID, authn.MethodOAuth2, 0))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOIDC, 1))
+	assert.Equal(t, 9, DeleteClientSessions(client, authn.MethodOAuth2, 1))
+	assert.Equal(t, 1, DeleteClientSessions(client, authn.MethodOAuth2, 0))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0))
 }
 
 func TestSessionStatusUnauthorized(t *testing.T) {

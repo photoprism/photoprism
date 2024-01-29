@@ -34,7 +34,7 @@ func authShowAction(ctx *cli.Context) error {
 		sess, err := query.Session(id)
 
 		if err != nil {
-			return fmt.Errorf("session %s not found: %s", clean.LogQuote(id), err)
+			return fmt.Errorf("session %s not found: %s", clean.Log(id), err)
 		}
 
 		// Get session information.

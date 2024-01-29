@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
@@ -120,21 +122,36 @@ func DeleteExpiredSessions() (deleted int) {
 }
 
 // DeleteClientSessions deletes client sessions above the specified limit.
-func DeleteClientSessions(clientUID string, authMethod authn.MethodType, limit int64) (deleted int) {
-	if !rnd.IsUID(clientUID, ClientUID) || limit < 0 {
+func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int64) (deleted int) {
+	if limit < 0 {
+		return 0
+	} else if client == nil {
 		return 0
 	}
 
-	found := Sessions{}
+	q := Db()
 
-	q := Db().Where("client_uid = ?", clientUID)
+	if client.HasUID() {
+		q = q.Where("client_uid = ?", client.UID())
+	} else if client.HasName() {
+		q = q.Where("client_name = ?", client.Name())
+	} else {
+		return 0
+	}
+
+	if client.HasUser() {
+		q = q.Where("user_uid = ?", client.UserUID)
+	}
 
 	if !authMethod.IsDefault() {
 		q = q.Where("auth_method = ?", authMethod.String())
 	}
 
-	if err := q.Order("created_at DESC").Limit(2147483648).Offset(limit).
-		Find(&found).Error; err != nil {
+	q = q.Order("created_at DESC").Limit(2147483648).Offset(limit)
+
+	found := Sessions{}
+
+	if err := q.Find(&found).Error; err != nil {
 		event.AuditErr([]string{"failed to fetch client sessions", "%s"}, err)
 		return deleted
 	}
@@ -255,6 +272,17 @@ func (m *Session) Save() error {
 		m.Cache()
 	}
 
+	// Limit the number of sessions that are created with an app password.
+	if !m.Method().IsSession() {
+		return nil
+	} else if !m.Provider().IsApplication() {
+		return nil
+	} else if client := m.Client(); client.NoName() || client.Tokens() < 1 {
+		return nil
+	} else if deleted := DeleteClientSessions(client, authn.MethodSession, client.Tokens()); deleted > 0 {
+		event.AuditInfo([]string{m.IP(), "session %s", "deleted %s"}, m.RefID, english.Plural(deleted, "previously created client session", "previously created client sessions"))
+	}
+
 	return nil
 }
 
@@ -348,11 +376,7 @@ func (m *Session) ClientRole() acl.Role {
 // ClientInfo returns the session's client identifier string.
 func (m *Session) ClientInfo() string {
 	if m.HasClient() {
-		if uid := m.Client().UID(); uid != "" {
-			return uid
-		} else if name := m.Client().Name(); name != "" {
-			return name
-		}
+		return m.Client().String()
 	} else if m.ClientName != "" {
 		return m.ClientName
 	}

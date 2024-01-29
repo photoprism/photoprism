@@ -40,7 +40,7 @@ func clientsModAction(ctx *cli.Context) error {
 		client = entity.FindClientByUID(frm.ID())
 
 		if client == nil {
-			return fmt.Errorf("client %s not found", clean.LogQuote(frm.ID()))
+			return fmt.Errorf("client %s not found", clean.Log(frm.ID()))
 		}
 
 		// Update client from form values.

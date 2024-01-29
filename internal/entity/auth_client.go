@@ -29,25 +29,24 @@ type Clients []Client
 
 // Client represents a client application.
 type Client struct {
-	ClientUID    string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
-	UserUID      string     `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
-	UserName     string     `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
-	user         *User      `gorm:"-" yaml:"-"`
-	ClientName   string     `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
-	ClientRole   string     `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
-	ClientType   string     `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
-	ClientURL    string     `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
-	CallbackURL  string     `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
-	AuthProvider string     `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
-	AuthMethod   string     `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
-	AuthScope    string     `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
-	AuthExpires  int64      `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
-	AuthTokens   int64      `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
-	AuthEnabled  bool       `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
-	LastActive   int64      `json:"LastActive" yaml:"LastActive,omitempty"`
-	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
-	UpdatedAt    time.Time  `json:"UpdatedAt" yaml:"-"`
-	DeletedAt    *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	ClientUID    string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
+	UserUID      string    `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
+	UserName     string    `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
+	user         *User     `gorm:"-" yaml:"-"`
+	ClientName   string    `gorm:"size:200;" json:"ClientName" yaml:"ClientName,omitempty"`
+	ClientRole   string    `gorm:"size:64;default:'';" json:"ClientRole" yaml:"ClientRole,omitempty"`
+	ClientType   string    `gorm:"type:VARBINARY(16)" json:"ClientType" yaml:"ClientType,omitempty"`
+	ClientURL    string    `gorm:"type:VARBINARY(255);default:'';column:client_url;" json:"ClientURL" yaml:"ClientURL,omitempty"`
+	CallbackURL  string    `gorm:"type:VARBINARY(255);default:'';column:callback_url;" json:"CallbackURL" yaml:"CallbackURL,omitempty"`
+	AuthProvider string    `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string    `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthScope    string    `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
+	AuthExpires  int64     `json:"AuthExpires" yaml:"AuthExpires,omitempty"`
+	AuthTokens   int64     `json:"AuthTokens" yaml:"AuthTokens,omitempty"`
+	AuthEnabled  bool      `json:"AuthEnabled" yaml:"AuthEnabled,omitempty"`
+	LastActive   int64     `json:"LastActive" yaml:"LastActive,omitempty"`
+	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -106,14 +105,42 @@ func (m *Client) UID() string {
 	return m.ClientUID
 }
 
-// HasUID tests if the entity has a valid uid.
+// HasUID tests if the client has a valid uid.
 func (m *Client) HasUID() bool {
 	return rnd.IsUID(m.ClientUID, ClientUID)
+}
+
+// NoUID tests if the client does not have a valid uid.
+func (m *Client) NoUID() bool {
+	return !m.HasUID()
 }
 
 // Name returns the client name string.
 func (m *Client) Name() string {
 	return m.ClientName
+}
+
+// HasName tests if the client has a name.
+func (m *Client) HasName() bool {
+	return m.ClientName != ""
+}
+
+// NoName tests if the client does not have a name.
+func (m *Client) NoName() bool {
+	return !m.HasName()
+}
+
+// String returns the client id or name for use in logs and reports.
+func (m *Client) String() string {
+	if m == nil {
+		return report.NotAssigned
+	} else if m.HasUID() {
+		return m.UID()
+	} else if m.HasName() {
+		return m.Name()
+	}
+
+	return report.NotAssigned
 }
 
 // SetName sets a custom client name.
@@ -152,7 +179,7 @@ func (m *Client) AclRole() acl.Role {
 	return acl.RoleNone
 }
 
-// User returns the related user account, if any.
+// User returns the user who owns the client, if any.
 func (m *Client) User() *User {
 	if m.user != nil {
 		return m.user
@@ -168,7 +195,12 @@ func (m *Client) User() *User {
 	return &User{}
 }
 
-// SetUser updates the related user account.
+// HasUser checks the client belongs to a user.
+func (m *Client) HasUser() bool {
+	return rnd.IsUID(m.UserUID, UserUID)
+}
+
+// SetUser sets the user to which the client belongs.
 func (m *Client) SetUser(u *User) *Client {
 	if u == nil {
 		return m
@@ -227,7 +259,7 @@ func (m *Client) Save() error {
 	}
 
 	// Delete related sessions if authentication is disabled.
-	if m.AuthEnabled && m.DeletedAt == nil {
+	if m.AuthEnabled {
 		return nil
 	} else if _, err := m.DeleteSessions(); err != nil {
 		return err
@@ -257,8 +289,8 @@ func (m *Client) DeleteSessions() (deleted int, err error) {
 		return 0, fmt.Errorf("client uid is missing")
 	}
 
-	if deleted = DeleteClientSessions(m.UID(), "", 0); deleted > 0 {
-		event.AuditInfo([]string{"client %s", "%s deleted"}, m.ClientUID, english.Plural(deleted, "session", "sessions"))
+	if deleted = DeleteClientSessions(m, "", 0); deleted > 0 {
+		event.AuditInfo([]string{"client %s", "deleted %s"}, m.String(), english.Plural(deleted, "session", "sessions"))
 	}
 
 	return deleted, nil
@@ -266,11 +298,20 @@ func (m *Client) DeleteSessions() (deleted int, err error) {
 
 // Deleted checks if the client has been deleted.
 func (m *Client) Deleted() bool {
-	if m.DeletedAt == nil {
-		return false
+	if m == nil {
+		return true
 	}
 
-	return !m.DeletedAt.IsZero()
+	return false
+}
+
+// Disabled checks if the client authentication has been disabled.
+func (m *Client) Disabled() bool {
+	if m == nil {
+		return true
+	}
+
+	return !m.AuthEnabled
 }
 
 // Updates multiple properties in the database.
@@ -412,7 +453,7 @@ func (m *Client) EnforceAuthTokenLimit() (deleted int) {
 		return 0
 	}
 
-	return DeleteClientSessions(m.ClientUID, authn.MethodOAuth2, m.AuthTokens)
+	return DeleteClientSessions(m, authn.MethodOAuth2, m.AuthTokens)
 }
 
 // Expires returns the auth expiration duration.
@@ -430,8 +471,12 @@ func (m *Client) SetExpires(i int64) *Client {
 }
 
 // Tokens returns maximum number of access tokens this client can create.
-func (m *Client) Tokens() time.Duration {
-	return time.Duration(m.AuthExpires) * time.Second
+func (m *Client) Tokens() int64 {
+	if m.AuthTokens == 0 {
+		return 1
+	}
+
+	return m.AuthTokens
 }
 
 // SetTokens sets a custom access token limit for this client.

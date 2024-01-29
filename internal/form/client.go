@@ -94,6 +94,9 @@ func AddClientFromCli(ctx *cli.Context) Client {
 		f.AuthScope = "*"
 	}
 
+	f.AuthExpires = ctx.Int64("expires")
+	f.AuthTokens = ctx.Int64("tokens")
+
 	return f
 }
 
