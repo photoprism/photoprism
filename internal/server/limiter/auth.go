@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	DefaultAuthInterval  = time.Second * 15 // average authentication errors per second
-	DefaultAuthLimit     = 100              // authentication error burst rate limit
+	DefaultAuthInterval  = time.Second * 10 // average authentication errors per second
+	DefaultAuthLimit     = 60               // authentication error burst rate limit
 	DefaultLoginInterval = time.Minute      // average failed logins per second
 	DefaultLoginLimit    = 10               // failed logins burst rate limit
 )

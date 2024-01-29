@@ -91,10 +91,21 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			authToken = password
 		}
 
-		// Allow webdav access based on the auth token or secret provided?
-		if sess, user, sid, cached := WebDAVAuthSession(c, authToken); user != nil && cached {
-			// Add user to request context and return to signal successful authentication.
-			c.Set(gin.AuthUserKey, user)
+		// Check webdav access authorization using an auth token or app password, if provided.
+		if limiter.Auth.Reject(clientIp) {
+			c.Header("WWW-Authenticate", BasicAuthRealm)
+			limiter.Abort(c)
+			return
+		} else if sess, user, sid, cached := WebDAVAuthSession(c, authToken); user != nil && cached {
+			// Add user to request context to signal successful authentication if username is empty or matches.
+			if username == "" || strings.EqualFold(clean.Username(username), user.Username()) {
+				c.Set(gin.AuthUserKey, user)
+				return
+			}
+
+			event.AuditErr([]string{clientIp, "access webdav as %s with authorization granted to %s", "denied"}, clean.Log(username), clean.Log(user.Username()))
+			limiter.Auth.Reserve(clientIp)
+			WebDAVAbortUnauthorized(c)
 			return
 		} else if sess == nil {
 			// Ignore and try basic auth next.
@@ -119,6 +130,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			// Log warning if WebDAV is disabled for this account.
 			message := "basic auth username does not match"
 			event.AuditWarn([]string{clientIp, "client %s", "session %s", "access webdav as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
+			limiter.Auth.Reserve(clientIp)
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if err := fs.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath())); err != nil {
@@ -128,6 +140,9 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			WebDAVAbortServerError(c)
 			return
 		} else {
+			// Update the session activity timestamp.
+			sess.UpdateLastActive()
+
 			// Cache authentication to improve performance.
 			webdavAuthCache.SetDefault(sid, user)
 
@@ -145,6 +160,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		// Check the authentication request rate to block the client after
 		// too many failed attempts (10/req per minute by default).
 		if limiter.Login.Reject(clientIp) {
+			c.Header("WWW-Authenticate", BasicAuthRealm)
 			limiter.Abort(c)
 			return
 		}
@@ -209,5 +225,6 @@ func WebDAVAbortUnauthorized(c *gin.Context) {
 
 // WebDAVAbortServerError aborts the request with the status internal server error.
 func WebDAVAbortServerError(c *gin.Context) {
+	c.Header("WWW-Authenticate", BasicAuthRealm)
 	c.AbortWithStatus(http.StatusInternalServerError)
 }
