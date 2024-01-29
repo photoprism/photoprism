@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-01-19 18:51+0000\n"
+"PO-Revision-Date: 2024-01-29 23:09+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -47,7 +47,7 @@ msgstr "12 tundi"
 
 #: src/page/settings/account.vue:66 src/page/settings/account.vue:68
 msgid "2-Factor Authentication"
-msgstr ""
+msgstr "2-faktoriline autentimine"
 
 #: src/options/options.js:428
 msgid "4 hours"
@@ -303,7 +303,7 @@ msgstr "Kinnita"
 
 #: src/page/settings/account.vue:60 src/page/settings/account.vue:62
 msgid "Apps and Devices"
-msgstr ""
+msgstr "Rakendused ja seadmed"
 
 #: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
