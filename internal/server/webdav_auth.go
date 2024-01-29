@@ -92,7 +92,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		}
 
 		// Allow webdav access based on the auth token or secret provided?
-		if sess, user, sid, cached := WebDAVAuthSession(c, authToken); cached && user != nil {
+		if sess, user, sid, cached := WebDAVAuthSession(c, authToken); user != nil && cached {
 			// Add user to request context and return to signal successful authentication.
 			c.Set(gin.AuthUserKey, user)
 			return
