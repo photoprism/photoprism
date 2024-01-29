@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
@@ -221,7 +222,18 @@ func (m *Client) Create() error {
 
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Client) Save() error {
-	return Db().Save(m).Error
+	if err := Db().Save(m).Error; err != nil {
+		return err
+	}
+
+	// Delete related sessions if authentication is disabled.
+	if m.AuthEnabled && m.DeletedAt == nil {
+		return nil
+	} else if _, err := m.DeleteSessions(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Delete marks the entity as deleted.
@@ -230,15 +242,26 @@ func (m *Client) Delete() (err error) {
 		return fmt.Errorf("client uid is missing")
 	}
 
-	if err = UnscopedDb().Delete(Session{}, "auth_id = ?", m.ClientUID).Error; err != nil {
-		event.AuditErr([]string{"client %s", "delete", "failed to remove sessions", "%s"}, m.ClientUID, err)
+	if _, err = m.DeleteSessions(); err != nil {
+		return err
 	}
 
 	err = Db().Delete(m).Error
 
-	FlushSessionCache()
-
 	return err
+}
+
+// DeleteSessions deletes all sessions that belong to this client.
+func (m *Client) DeleteSessions() (deleted int, err error) {
+	if m.ClientUID == "" {
+		return 0, fmt.Errorf("client uid is missing")
+	}
+
+	if deleted = DeleteClientSessions(m.UID(), "", 0); deleted > 0 {
+		event.AuditInfo([]string{"client %s", "%s deleted"}, m.ClientUID, english.Plural(deleted, "session", "sessions"))
+	}
+
+	return deleted, nil
 }
 
 // Deleted checks if the client has been deleted.
