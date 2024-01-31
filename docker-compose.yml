@@ -233,7 +233,7 @@ services:
 
   ## Dummy OpenID Connect Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:231015
+    image: photoprism/dummy-oidc:240131
     container_name: dummy-oidc
     labels:
       - "traefik.enable=true"
@@ -247,7 +247,7 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:231015
+    image: photoprism/dummy-webdav:240131
     container_name: dummy-webdav
     environment:
       WEBDAV_USERNAME: admin
