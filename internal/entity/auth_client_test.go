@@ -68,6 +68,35 @@ func TestFindClient(t *testing.T) {
 	})
 }
 
+func TestClient_NoUID(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		c := Client{ClientUID: ""}
+		assert.True(t, c.NoUID())
+	})
+	t.Run("False", func(t *testing.T) {
+		c := Client{ClientUID: "cs5cpu17n6gj2hgt"}
+		assert.False(t, c.NoUID())
+	})
+}
+
+func TestClient_NoName(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		c := Client{ClientName: ""}
+		assert.True(t, c.NoName())
+	})
+	t.Run("False", func(t *testing.T) {
+		c := Client{ClientName: "Test Test"}
+		assert.False(t, c.NoName())
+	})
+}
+
+func TestClient_SetRole(t *testing.T) {
+	c := Client{ClientName: "Test Test"}
+	assert.False(t, c.HasRole("admin"))
+	c.SetRole("admin")
+	assert.True(t, c.HasRole("admin"))
+}
+
 func TestClient_User(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		alice := ClientFixtures.Get("alice")
@@ -251,6 +280,23 @@ func TestClient_NewSecret(t *testing.T) {
 		assert.Error(t, err)
 		assert.False(t, m.HasSecret(s))
 		assert.Empty(t, s)
+	})
+}
+
+func TestClient_SetSecret(t *testing.T) {
+	t.Run("EmptyUID", func(t *testing.T) {
+		var m = Client{ClientName: "No UUID"}
+
+		err := m.SetSecret("123")
+
+		assert.Error(t, err)
+	})
+	t.Run("InvalidSecret", func(t *testing.T) {
+		var m = Client{ClientUID: "cs5cpu17n6gj2eee"}
+
+		err := m.SetSecret("123")
+
+		assert.Error(t, err)
 	})
 }
 
@@ -543,6 +589,33 @@ func TestClient_SetFormValues(t *testing.T) {
 		assert.Equal(t, int64(2678400), c.AuthExpires)
 		assert.Equal(t, int64(2147483647), c.AuthTokens)
 		assert.Equal(t, true, c.AuthEnabled)
+	})
+	t.Run("UseDefaults", func(t *testing.T) {
+		var m = Client{ClientName: "Default", ClientUID: "cs5cpu17n6gj7y5r"}
+
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		var values = form.Client{
+			ClientName:   "Friend",
+			AuthProvider: "",
+			AuthMethod:   "",
+			AuthScope:    "",
+			AuthExpires:  -1,
+			AuthTokens:   3000000000,
+			AuthEnabled:  true,
+			UserUID:      "uqxqg7i1kperxvu7",
+		}
+
+		c := m.SetFormValues(values)
+
+		assert.Equal(t, "Friend", c.ClientName)
+		assert.Equal(t, int64(3600), c.AuthExpires)
+		assert.Equal(t, "*", c.AuthScope)
+		assert.Equal(t, "oauth2", c.AuthMethod)
+		assert.Equal(t, "client_credentials", c.AuthProvider)
+
 	})
 }
 
