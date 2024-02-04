@@ -4,11 +4,13 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 func TestNewClientAuthentication(t *testing.T) {
 	t.Run("Anonymous", func(t *testing.T) {
-		sess := NewClientAuthentication("Anonymous", UnixDay, "metrics", nil)
+		sess := NewClientAuthentication("Anonymous", unix.Day, "metrics", nil)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -23,7 +25,7 @@ func TestNewClientAuthentication(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess := NewClientAuthentication("alice", UnixDay, "metrics", user)
+		sess := NewClientAuthentication("alice", unix.Day, "metrics", user)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -38,7 +40,7 @@ func TestNewClientAuthentication(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess := NewClientAuthentication("alice", UnixDay, "", user)
+		sess := NewClientAuthentication("alice", unix.Day, "", user)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -65,7 +67,7 @@ func TestNewClientAuthentication(t *testing.T) {
 
 func TestAddClientAuthentication(t *testing.T) {
 	t.Run("Anonymous", func(t *testing.T) {
-		sess, err := AddClientAuthentication("", UnixDay, "metrics", nil)
+		sess, err := AddClientAuthentication("", unix.Day, "metrics", nil)
 
 		assert.NoError(t, err)
 
@@ -82,7 +84,7 @@ func TestAddClientAuthentication(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess, err := AddClientAuthentication("My Client App Token", UnixDay, "metrics", user)
+		sess, err := AddClientAuthentication("My Client App Token", unix.Day, "metrics", user)
 
 		assert.NoError(t, err)
 

@@ -44,9 +44,9 @@ func clientsRemoveAction(ctx *cli.Context) error {
 		m = entity.FindClientByUID(id)
 
 		if m == nil {
-			return fmt.Errorf("client %s not found", clean.LogQuote(id))
+			return fmt.Errorf("client %s not found", clean.Log(id))
 		} else if m.Deleted() {
-			return fmt.Errorf("client %s has already been deleted", clean.LogQuote(id))
+			return fmt.Errorf("client %s has already been deleted", clean.Log(id))
 		}
 
 		if !ctx.Bool("force") {

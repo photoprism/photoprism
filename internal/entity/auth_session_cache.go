@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // Create a new session cache with an expiration time of 15 minutes.
@@ -31,7 +32,7 @@ func FindSession(id string) (*Session, error) {
 	// Find the session in the cache with a fallback to the database.
 	if cacheData, ok := sessionCache.Get(id); ok && cacheData != nil {
 		if cached := cacheData.(*Session); !cached.Expired() {
-			cached.LastActive = UnixTime()
+			cached.LastActive = unix.Time()
 			return cached, nil
 		} else if err := cached.Delete(); err != nil {
 			event.AuditErr([]string{cached.IP(), "session %s", "failed to delete after expiration", "%s"}, cached.RefID, err)

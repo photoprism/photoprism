@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/report"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -65,6 +66,35 @@ func TestFindClient(t *testing.T) {
 		m := FindClientByUID("123")
 		assert.Nil(t, m)
 	})
+}
+
+func TestClient_NoUID(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		c := Client{ClientUID: ""}
+		assert.True(t, c.NoUID())
+	})
+	t.Run("False", func(t *testing.T) {
+		c := Client{ClientUID: "cs5cpu17n6gj2hgt"}
+		assert.False(t, c.NoUID())
+	})
+}
+
+func TestClient_NoName(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		c := Client{ClientName: ""}
+		assert.True(t, c.NoName())
+	})
+	t.Run("False", func(t *testing.T) {
+		c := Client{ClientName: "Test Test"}
+		assert.False(t, c.NoName())
+	})
+}
+
+func TestClient_SetRole(t *testing.T) {
+	c := Client{ClientName: "Test Test"}
+	assert.False(t, c.HasRole("admin"))
+	c.SetRole("admin")
+	assert.True(t, c.HasRole("admin"))
 }
 
 func TestClient_User(t *testing.T) {
@@ -198,8 +228,17 @@ func TestClient_Delete(t *testing.T) {
 }
 
 func TestClient_Deleted(t *testing.T) {
+	var ptr *Client
 	assert.False(t, ClientFixtures.Pointer("alice").Deleted())
-	assert.True(t, ClientFixtures.Pointer("deleted").Deleted())
+	assert.False(t, ClientFixtures.Pointer("deleted").Deleted())
+	assert.True(t, ptr.Deleted())
+}
+
+func TestClient_Disabled(t *testing.T) {
+	var ptr *Client
+	assert.False(t, ClientFixtures.Pointer("alice").Disabled())
+	assert.True(t, ClientFixtures.Pointer("deleted").Disabled())
+	assert.True(t, ptr.Disabled())
 }
 
 func TestClient_Updates(t *testing.T) {
@@ -241,6 +280,23 @@ func TestClient_NewSecret(t *testing.T) {
 		assert.Error(t, err)
 		assert.False(t, m.HasSecret(s))
 		assert.Empty(t, s)
+	})
+}
+
+func TestClient_SetSecret(t *testing.T) {
+	t.Run("EmptyUID", func(t *testing.T) {
+		var m = Client{ClientName: "No UUID"}
+
+		err := m.SetSecret("123")
+
+		assert.Error(t, err)
+	})
+	t.Run("InvalidSecret", func(t *testing.T) {
+		var m = Client{ClientUID: "cs5cpu17n6gj2eee"}
+
+		err := m.SetSecret("123")
+
+		assert.Error(t, err)
 	})
 }
 
@@ -293,6 +349,31 @@ func TestClient_UpdateLastActive(t *testing.T) {
 		c := m.UpdateLastActive()
 
 		assert.Empty(t, c.LastActive)
+	})
+}
+
+func TestClient_Tokens(t *testing.T) {
+	t.Run("Set", func(t *testing.T) {
+		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: 0}
+		assert.Equal(t, int64(1), m.Tokens())
+		m.SetTokens(0)
+		assert.Equal(t, int64(1), m.Tokens())
+		m.SetTokens(1)
+		assert.Equal(t, int64(1), m.Tokens())
+		m.SetTokens(10)
+		assert.Equal(t, int64(10), m.Tokens())
+	})
+	t.Run("Unlimited", func(t *testing.T) {
+		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: -1}
+		assert.Equal(t, int64(-1), m.Tokens())
+	})
+	t.Run("One", func(t *testing.T) {
+		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: 1}
+		assert.Equal(t, int64(1), m.Tokens())
+	})
+	t.Run("Many", func(t *testing.T) {
+		var m = Client{ClientName: "cs5cpu17n6gj2bbb", AuthTokens: 10}
+		assert.Equal(t, int64(10), m.Tokens())
 	})
 }
 
@@ -378,15 +459,39 @@ func TestClient_Expires(t *testing.T) {
 	})
 }
 
+func TestClient_String(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		m := &Client{}
+		assert.Equal(t, m.String(), "n/a")
+	})
+	t.Run("NewClient", func(t *testing.T) {
+		m := NewClient()
+		assert.Equal(t, m.String(), "n/a")
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		m := ClientFixtures.Get("metrics")
+		assert.Equal(t, m.String(), "cs5cpu17n6gj2qo5")
+	})
+	t.Run("Alice", func(t *testing.T) {
+		m := ClientFixtures.Get("alice")
+		assert.Equal(t, m.String(), "cs5gfen1bgxz7s9i")
+	})
+	t.Run("Name", func(t *testing.T) {
+		m := NewClient()
+		m.ClientName = "Foo Bar"
+		assert.Equal(t, m.String(), "Foo Bar")
+	})
+}
+
 func TestClient_UserInfo(t *testing.T) {
 	t.Run("New", func(t *testing.T) {
-		assert.Equal(t, "", NewClient().UserInfo())
+		assert.Equal(t, report.NotAssigned, NewClient().UserInfo())
 	})
 	t.Run("Alice", func(t *testing.T) {
 		assert.Equal(t, "alice", ClientFixtures.Pointer("alice").UserInfo())
 	})
 	t.Run("Metrics", func(t *testing.T) {
-		assert.Equal(t, "", ClientFixtures.Pointer("metrics").UserInfo())
+		assert.Equal(t, report.NotAssigned, ClientFixtures.Pointer("metrics").UserInfo())
 	})
 }
 
@@ -484,6 +589,33 @@ func TestClient_SetFormValues(t *testing.T) {
 		assert.Equal(t, int64(2678400), c.AuthExpires)
 		assert.Equal(t, int64(2147483647), c.AuthTokens)
 		assert.Equal(t, true, c.AuthEnabled)
+	})
+	t.Run("UseDefaults", func(t *testing.T) {
+		var m = Client{ClientName: "Default", ClientUID: "cs5cpu17n6gj7y5r"}
+
+		if err := m.Save(); err != nil {
+			t.Fatal(err)
+		}
+
+		var values = form.Client{
+			ClientName:   "Friend",
+			AuthProvider: "",
+			AuthMethod:   "",
+			AuthScope:    "",
+			AuthExpires:  -1,
+			AuthTokens:   3000000000,
+			AuthEnabled:  true,
+			UserUID:      "uqxqg7i1kperxvu7",
+		}
+
+		c := m.SetFormValues(values)
+
+		assert.Equal(t, "Friend", c.ClientName)
+		assert.Equal(t, int64(3600), c.AuthExpires)
+		assert.Equal(t, "*", c.AuthScope)
+		assert.Equal(t, "oauth2", c.AuthMethod)
+		assert.Equal(t, "client_credentials", c.AuthProvider)
+
 	})
 }
 

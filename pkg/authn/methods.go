@@ -21,9 +21,19 @@ const (
 	MethodUnknown  MethodType = ""
 )
 
+// IsUnknown checks if the method is unknown.
+func (t MethodType) IsUnknown() bool {
+	return t == ""
+}
+
 // IsDefault checks if this is the default method.
 func (t MethodType) IsDefault() bool {
 	return t.String() == MethodDefault.String()
+}
+
+// IsSession checks if this is the session method.
+func (t MethodType) IsSession() bool {
+	return t.String() == MethodSession.String()
 }
 
 // String returns the provider identifier as a string.
@@ -75,7 +85,7 @@ func Method(s string) MethodType {
 		return MethodOAuth2
 	case "sso":
 		return MethodOIDC
-	case "TOTP/2FA", "2FA", "2fa", "OTP", "otp":
+	case "TOTP/2FA", "2FA", "2fa", "MFA", "mfa", "OTP", "otp":
 		return MethodTOTP
 	case "access_token":
 		return MethodDefault

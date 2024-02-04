@@ -1,5 +1,5 @@
 global:
-  scrape_interval: 15s
+  scrape_interval: 60s
   scrape_timeout: 10s
 scrape_configs:
   - job_name: "photoprism"

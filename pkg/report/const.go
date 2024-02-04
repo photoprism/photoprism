@@ -5,6 +5,5 @@ const (
 	Disabled    = "Disabled"
 	Yes         = "Yes"
 	No          = "No"
-	NotAssigned = "N/A"
-	Never       = "Never"
+	NotAssigned = "n/a"
 )

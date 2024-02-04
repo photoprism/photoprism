@@ -36,7 +36,7 @@ func clientsShowAction(ctx *cli.Context) error {
 		m = entity.FindClientByUID(id)
 
 		if m == nil {
-			return fmt.Errorf("client %s not found", clean.LogQuote(id))
+			return fmt.Errorf("client %s not found", clean.Log(id))
 		}
 
 		// Get client information.

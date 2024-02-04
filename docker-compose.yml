@@ -195,6 +195,8 @@ services:
 
   ## Prometheus Test Server
   ## Docs: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#oauth2
+  ## Run the following command in a terminal to grant access with the preconfigured client credentials (adjust flags as needed):
+  ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -231,7 +233,7 @@ services:
 
   ## Dummy OpenID Connect Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:231015
+    image: photoprism/dummy-oidc:240131
     container_name: dummy-oidc
     labels:
       - "traefik.enable=true"
@@ -245,7 +247,7 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:231015
+    image: photoprism/dummy-webdav:240131
     container_name: dummy-webdav
     environment:
       WEBDAV_USERNAME: admin

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-01-19 18:51+0000\n"
+"PO-Revision-Date: 2024-01-29 23:09+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -44,6 +44,10 @@ msgstr "1 ώρα"
 #: src/options/options.js:429
 msgid "12 hours"
 msgstr "12 ώρες"
+
+#: src/page/settings/account.vue:66 src/page/settings/account.vue:68
+msgid "2-Factor Authentication"
+msgstr "Αυθεντικοποίηση 2 παραγόντων"
 
 #: src/options/options.js:428
 msgid "4 hours"
@@ -297,6 +301,10 @@ msgstr "Εφαρμογή"
 msgid "Approve"
 msgstr "Έγκριση"
 
+#: src/page/settings/account.vue:60 src/page/settings/account.vue:62
+msgid "Apps and Devices"
+msgstr "Εφαρμογές και συσκευές"
+
 #: src/app/routes.js:256 src/component/navigation.vue:138
 #: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
@@ -379,7 +387,7 @@ msgstr "Όντας 100% αυτοχρηματοδοτούμενοι και ανε
 msgid "Bio"
 msgstr "Βιογραφικό"
 
-#: src/page/settings/account.vue:70 src/page/settings/account.vue:72
+#: src/page/settings/account.vue:82 src/page/settings/account.vue:84
 msgid "Birth Date"
 msgstr "Ημερομηνία γέννησης"
 
@@ -477,8 +485,8 @@ msgstr "Κατηγορία"
 msgid "Change Avatar"
 msgstr "Αλλαγή Άβαταρ"
 
-#: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
-#: src/page/settings/account.vue:56
+#: src/page/settings/account.vue:72 src/dialog/account/password.vue:8
+#: src/page/settings/account.vue:74
 msgid "Change Password"
 msgstr "Νέος κωδικός πρόσβασης"
 
@@ -498,7 +506,7 @@ msgstr "Αλλαγή ιδιωτικής κατάστασης"
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:141
 #: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
 #: src/dialog/share.vue:104 src/page/albums.vue:553
-#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
+#: src/page/settings/account.vue:116 src/page/settings/account.vue:131
 #: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
 msgid "Changes successfully saved"
@@ -566,8 +574,8 @@ msgstr "Εμπιστοσύνη"
 msgid "Connect"
 msgstr "Σύνδεση"
 
-#: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
-#: src/page/settings/account.vue:62 src/page/settings/services.vue:50
+#: src/page/settings/account.vue:54 src/dialog/webdav.vue:4
+#: src/page/settings/account.vue:56 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr "Σύνδεση μέσω WebDAV"
 
@@ -575,7 +583,7 @@ msgstr "Σύνδεση μέσω WebDAV"
 msgid "Connected"
 msgstr "Σύνδεση"
 
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:95
+#: src/page/settings/account.vue:128 src/page/settings/account.vue:107
 msgid "Contact Details"
 msgstr "Στοιχεία Επικοινωνίας"
 
@@ -615,8 +623,8 @@ msgstr "Πνευματικά δικαιώματα"
 msgid "Couldn't find anything."
 msgstr "Δεν μπόρεσα να βρω τίποτα."
 
-#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:262
-#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:612
+#: src/page/settings/account.vue:832 src/component/photo/toolbar.vue:262
+#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:686
 msgid "Country"
 msgstr "Χώρα"
 
@@ -656,7 +664,7 @@ msgstr "Κυανό"
 msgid "Daily"
 msgstr "Καθημερινά"
 
-#: src/page/settings/account.vue:478 src/dialog/photo/edit/details.vue:116
+#: src/page/settings/account.vue:552 src/dialog/photo/edit/details.vue:116
 msgid "Day"
 msgstr "Ημέρα"
 
@@ -904,7 +912,7 @@ msgid "Edited"
 msgstr "Επεξεργάστηκε"
 
 #: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
-#: src/page/settings/account.vue:222 src/page/settings/account.vue:647
+#: src/page/settings/account.vue:222 src/page/settings/account.vue:721
 msgid "Email"
 msgstr "Ηλεκτρονικό ταχυδρομείο"
 
@@ -1015,7 +1023,7 @@ msgstr "Αγαπημένα"
 msgid "Feature Request"
 msgstr "Αίτηση χαρακτηριστικών"
 
-#: src/page/settings/account.vue:849 src/page/settings/account.vue:703
+#: src/page/settings/account.vue:923 src/page/settings/account.vue:777
 msgid "Feed"
 msgstr "Ανατροφοδότηση"
 
@@ -1270,12 +1278,12 @@ msgstr "Διάστημα"
 #: src/page/settings/account.vue:117 src/page/settings/account.vue:143
 #: src/page/settings/account.vue:169 src/page/settings/account.vue:225
 #: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/page/settings/account.vue:670 src/page/settings/account.vue:696
+#: src/page/settings/account.vue:724 src/page/settings/account.vue:752
+#: src/page/settings/account.vue:816 src/page/settings/account.vue:843
+#: src/page/settings/account.vue:870 src/page/settings/account.vue:898
+#: src/page/settings/account.vue:926 src/page/settings/account.vue:697
+#: src/page/settings/account.vue:780
 msgid "Invalid"
 msgstr "Μη έγκυρη ημερομηνία"
 
@@ -1428,10 +1436,10 @@ msgstr "Τοπική ώρα"
 msgid "location"
 msgstr "τοποθεσία"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:813 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/dialog/photo/edit/info.vue:83 src/page/albums.vue:88
-#: src/page/settings/account.vue:593
+#: src/page/settings/account.vue:667
 msgid "Location"
 msgstr "Τοποθεσία"
 
@@ -1536,7 +1544,7 @@ msgstr "Στιγμές"
 msgid "Monochrome"
 msgstr "Μονοχρωμία"
 
-#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:384
+#: src/page/settings/account.vue:575 src/component/photo/toolbar.vue:384
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "Μήνας"
@@ -1741,7 +1749,7 @@ msgstr "Μια εικόνα που βρέθηκε"
 msgid "Orange"
 msgstr "Πορτοκαλί"
 
-#: src/page/settings/account.vue:619
+#: src/page/settings/account.vue:693
 msgid "Organization"
 msgstr "Οργανισμός"
 
@@ -1817,7 +1825,7 @@ msgstr "Αφαιρέστε μόνιμα αρχεία για να ελευθερ�
 msgid "Personal"
 msgstr "Προσωπικό"
 
-#: src/page/settings/account.vue:793 src/page/settings/account.vue:647
+#: src/page/settings/account.vue:867 src/page/settings/account.vue:721
 msgid "Phone"
 msgstr "Τηλέφωνο"
 
@@ -2193,7 +2201,7 @@ msgstr "Συνεδρίες"
 msgid "Settings"
 msgstr "Ρυθμίσεις"
 
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:132
+#: src/page/settings/account.vue:119 src/page/settings/account.vue:134
 msgid "Settings saved"
 msgstr "Οι ρυθμίσεις αποθηκεύτηκαν"
 
@@ -2436,7 +2444,7 @@ msgstr "Τίτλος"
 msgid "Title"
 msgstr "Τίτλος"
 
-#: src/page/settings/account.vue:593
+#: src/page/settings/account.vue:667
 msgid "Title / Position"
 msgstr "Τίτλος / Θέση"
 
@@ -2506,9 +2514,9 @@ msgstr "Μοναδικό αναγνωριστικό"
 msgid "Unknown"
 msgstr "Άγνωστος"
 
-#: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:93 src/page/settings/account.vue:35
-#: src/page/settings/account.vue:43
+#: src/page/settings/account.vue:40 src/page/settings/account.vue:48
+#: src/component/navigation.vue:93 src/page/settings/account.vue:37
+#: src/page/settings/account.vue:45
 msgid "Unregistered"
 msgstr "Μη εγγεγραμμένο"
 
@@ -2537,7 +2545,7 @@ msgstr "Ενημέρωση ευρετηρίου"
 msgid "Updating moments"
 msgstr "Ενημέρωση στιγμών"
 
-#: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
+#: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:126
 msgid "Updating picture…"
 msgstr "Ενημέρωση εικόνας…"
 
@@ -2601,7 +2609,7 @@ msgstr "Ανέβασμα %{n} του %{t}…"
 msgid "Uploading photos…"
 msgstr "Ανέβασμα φωτογραφιών…"
 
-#: src/page/settings/account.vue:127
+#: src/page/settings/account.vue:129
 msgid "Uploading…"
 msgstr "Επαναγέμισμα…"
 
@@ -2721,7 +2729,7 @@ msgstr "Οι πελάτες WebDAV, όπως ο Windows Explorer της Microsof
 msgid "WebDAV Upload"
 msgstr "Ανέβασμα WebDAV"
 
-#: src/page/settings/account.vue:675 src/page/settings/account.vue:821
+#: src/page/settings/account.vue:749 src/page/settings/account.vue:895
 msgid "Website"
 msgstr "Ιστοσελίδα"
 
@@ -2729,11 +2737,11 @@ msgstr "Ιστοσελίδα"
 msgid "White"
 msgstr "Λευκό"
 
-#: src/page/settings/account.vue:93
+#: src/page/settings/account.vue:105
 msgid "Work Details"
 msgstr "Λεπτομέρειες"
 
-#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:359
+#: src/page/settings/account.vue:598 src/component/photo/toolbar.vue:359
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:204
 msgid "Year"
 msgstr "Έτος"

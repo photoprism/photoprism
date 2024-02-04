@@ -42,6 +42,11 @@ msgstr ""
 msgid "12 hours"
 msgstr ""
 
+#: src/page/settings/account.vue:66
+#: src/page/settings/account.vue:68
+msgid "2-Factor Authentication"
+msgstr ""
+
 #: src/options/options.js:428
 msgid "4 hours"
 msgstr ""
@@ -333,6 +338,11 @@ msgstr ""
 msgid "Approve"
 msgstr ""
 
+#: src/page/settings/account.vue:60
+#: src/page/settings/account.vue:62
+msgid "Apps and Devices"
+msgstr ""
+
 #: src/app/routes.js:256
 #: src/component/navigation.vue:138
 #: src/component/photo/cards.vue:393
@@ -426,8 +436,8 @@ msgstr ""
 msgid "Bio"
 msgstr ""
 
-#: src/page/settings/account.vue:70
-#: src/page/settings/account.vue:72
+#: src/page/settings/account.vue:82
+#: src/page/settings/account.vue:84
 msgid "Birth Date"
 msgstr ""
 
@@ -555,9 +565,9 @@ msgstr ""
 msgid "Change Avatar"
 msgstr ""
 
-#: src/page/settings/account.vue:54
+#: src/page/settings/account.vue:72
 #: src/dialog/account/password.vue:8
-#: src/page/settings/account.vue:56
+#: src/page/settings/account.vue:74
 msgid "Change Password"
 msgstr ""
 
@@ -581,8 +591,8 @@ msgstr ""
 #: src/dialog/share.vue:88
 #: src/dialog/share.vue:104
 #: src/page/albums.vue:553
-#: src/page/settings/account.vue:114
-#: src/page/settings/account.vue:129
+#: src/page/settings/account.vue:116
+#: src/page/settings/account.vue:131
 #: src/page/settings/advanced.vue:51
 #: src/page/settings/general.vue:96
 #: src/page/settings/library.vue:50
@@ -661,9 +671,9 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: src/page/settings/account.vue:60
+#: src/page/settings/account.vue:54
 #: src/dialog/webdav.vue:4
-#: src/page/settings/account.vue:62
+#: src/page/settings/account.vue:56
 #: src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
 msgstr ""
@@ -673,8 +683,8 @@ msgstr ""
 msgid "Connected"
 msgstr ""
 
-#: src/page/settings/account.vue:116
-#: src/page/settings/account.vue:95
+#: src/page/settings/account.vue:128
+#: src/page/settings/account.vue:107
 msgid "Contact Details"
 msgstr ""
 
@@ -721,10 +731,10 @@ msgstr ""
 msgid "Couldn't find anything."
 msgstr ""
 
-#: src/page/settings/account.vue:758
+#: src/page/settings/account.vue:832
 #: src/component/photo/toolbar.vue:262
 #: src/dialog/photo/edit/details.vue:250
-#: src/page/settings/account.vue:612
+#: src/page/settings/account.vue:686
 msgid "Country"
 msgstr ""
 
@@ -766,9 +776,9 @@ msgstr ""
 msgid "Daily"
 msgstr ""
 
-#: src/page/settings/account.vue:478
+#: src/page/settings/account.vue:552
 #: src/dialog/photo/edit/details.vue:116
-#: src/page/settings/account.vue:478
+#: src/page/settings/account.vue:552
 msgid "Day"
 msgstr ""
 
@@ -1059,7 +1069,7 @@ msgstr ""
 #: src/dialog/admin/users/add.vue:176
 #: src/dialog/admin/users/edit.vue:317
 #: src/page/settings/account.vue:222
-#: src/page/settings/account.vue:647
+#: src/page/settings/account.vue:721
 #: src/page/settings/account.vue:222
 msgid "Email"
 msgstr ""
@@ -1184,8 +1194,8 @@ msgstr ""
 msgid "Feature Request"
 msgstr ""
 
-#: src/page/settings/account.vue:849
-#: src/page/settings/account.vue:703
+#: src/page/settings/account.vue:923
+#: src/page/settings/account.vue:777
 msgid "Feed"
 msgstr ""
 
@@ -1482,15 +1492,15 @@ msgstr ""
 #: src/page/settings/account.vue:225
 #: src/page/settings/account.vue:284
 #: src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596
-#: src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650
-#: src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742
-#: src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796
-#: src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852
+#: src/page/settings/account.vue:670
+#: src/page/settings/account.vue:696
+#: src/page/settings/account.vue:724
+#: src/page/settings/account.vue:752
+#: src/page/settings/account.vue:816
+#: src/page/settings/account.vue:843
+#: src/page/settings/account.vue:870
+#: src/page/settings/account.vue:898
+#: src/page/settings/account.vue:926
 #: src/page/settings/account.vue:91
 #: src/page/settings/account.vue:117
 #: src/page/settings/account.vue:143
@@ -1498,11 +1508,11 @@ msgstr ""
 #: src/page/settings/account.vue:225
 #: src/page/settings/account.vue:284
 #: src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596
-#: src/page/settings/account.vue:623
-#: src/page/settings/account.vue:650
-#: src/page/settings/account.vue:678
-#: src/page/settings/account.vue:706
+#: src/page/settings/account.vue:670
+#: src/page/settings/account.vue:697
+#: src/page/settings/account.vue:724
+#: src/page/settings/account.vue:752
+#: src/page/settings/account.vue:780
 msgid "Invalid"
 msgstr ""
 
@@ -1686,13 +1696,13 @@ msgstr ""
 msgid "location"
 msgstr ""
 
-#: src/page/settings/account.vue:739
+#: src/page/settings/account.vue:813
 #: src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139
 #: src/dialog/album/edit.vue:126
 #: src/dialog/photo/edit/info.vue:83
 #: src/page/albums.vue:88
-#: src/page/settings/account.vue:593
+#: src/page/settings/account.vue:667
 msgid "Location"
 msgstr ""
 
@@ -1812,10 +1822,10 @@ msgstr ""
 msgid "Monochrome"
 msgstr ""
 
-#: src/page/settings/account.vue:501
+#: src/page/settings/account.vue:575
 #: src/component/photo/toolbar.vue:384
 #: src/dialog/photo/edit/details.vue:142
-#: src/page/settings/account.vue:501
+#: src/page/settings/account.vue:575
 msgid "Month"
 msgstr ""
 
@@ -2071,7 +2081,7 @@ msgstr ""
 msgid "Orange"
 msgstr ""
 
-#: src/page/settings/account.vue:619
+#: src/page/settings/account.vue:693
 msgid "Organization"
 msgstr ""
 
@@ -2162,8 +2172,8 @@ msgstr ""
 msgid "Personal"
 msgstr ""
 
-#: src/page/settings/account.vue:793
-#: src/page/settings/account.vue:647
+#: src/page/settings/account.vue:867
+#: src/page/settings/account.vue:721
 msgid "Phone"
 msgstr ""
 
@@ -2606,8 +2616,8 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: src/page/settings/account.vue:117
-#: src/page/settings/account.vue:132
+#: src/page/settings/account.vue:119
+#: src/page/settings/account.vue:134
 msgid "Settings saved"
 msgstr ""
 
@@ -2875,7 +2885,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: src/page/settings/account.vue:593
+#: src/page/settings/account.vue:667
 msgid "Title / Position"
 msgstr ""
 
@@ -2967,11 +2977,11 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: src/page/settings/account.vue:38
-#: src/page/settings/account.vue:46
+#: src/page/settings/account.vue:40
+#: src/page/settings/account.vue:48
 #: src/component/navigation.vue:93
-#: src/page/settings/account.vue:35
-#: src/page/settings/account.vue:43
+#: src/page/settings/account.vue:37
+#: src/page/settings/account.vue:45
 msgid "Unregistered"
 msgstr ""
 
@@ -3004,7 +3014,7 @@ msgid "Updating moments"
 msgstr ""
 
 #: src/dialog/admin/users/edit.vue:160
-#: src/page/settings/account.vue:124
+#: src/page/settings/account.vue:126
 msgid "Updating picture…"
 msgstr ""
 
@@ -3081,7 +3091,7 @@ msgstr ""
 msgid "Uploading photos…"
 msgstr ""
 
-#: src/page/settings/account.vue:127
+#: src/page/settings/account.vue:129
 msgid "Uploading…"
 msgstr ""
 
@@ -3228,9 +3238,9 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr ""
 
-#: src/page/settings/account.vue:675
-#: src/page/settings/account.vue:821
-#: src/page/settings/account.vue:675
+#: src/page/settings/account.vue:749
+#: src/page/settings/account.vue:895
+#: src/page/settings/account.vue:749
 msgid "Website"
 msgstr ""
 
@@ -3238,15 +3248,15 @@ msgstr ""
 msgid "White"
 msgstr ""
 
-#: src/page/settings/account.vue:93
+#: src/page/settings/account.vue:105
 msgid "Work Details"
 msgstr ""
 
-#: src/page/settings/account.vue:524
+#: src/page/settings/account.vue:598
 #: src/component/photo/toolbar.vue:359
 #: src/dialog/photo/edit/details.vue:168
 #: src/page/albums.vue:204
-#: src/page/settings/account.vue:524
+#: src/page/settings/account.vue:598
 msgid "Year"
 msgstr ""
 

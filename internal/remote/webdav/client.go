@@ -1,6 +1,7 @@
 package webdav
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -20,6 +21,7 @@ import (
 // Client represents a webdav client.
 type Client struct {
 	client   *webdav.Client
+	ctx      context.Context
 	endpoint *url.URL
 	timeout  time.Duration
 	mkdir    map[string]bool
@@ -68,6 +70,7 @@ func NewClient(serverUrl, user, pass string, timeout Timeout) (*Client, error) {
 	// Create a new webdav.Client wrapper.
 	result := &Client{
 		client:   client,
+		ctx:      context.Background(),
 		endpoint: endpoint,
 		timeout:  Durations[timeout],
 		mkdir:    make(map[string]bool, 128),
@@ -97,7 +100,7 @@ func (c *Client) withTimeout(timeout time.Duration) *webdav.Client {
 // readDirWithTimeout returns the contents of the specified directory with a request time limit if timeout is not negative.
 func (c *Client) readDirWithTimeout(dir string, recursive bool, timeout time.Duration) ([]webdav.FileInfo, error) {
 	dir = trimPath(dir)
-	return c.withTimeout(timeout).Readdir(dir, recursive)
+	return c.withTimeout(timeout).ReadDir(c.ctx, dir, recursive)
 }
 
 // readDirWithTimeout returns the contents of the specified directory without a request timeout.
@@ -193,7 +196,7 @@ func (c *Client) Mkdir(dir string) error {
 
 	c.mkdir[dir] = true
 
-	err := c.client.Mkdir(dir)
+	err := c.client.Mkdir(c.ctx, dir)
 
 	if err == nil {
 		return nil
@@ -229,7 +232,7 @@ func (c *Client) Upload(src, dest string) (err error) {
 
 	var writer io.WriteCloser
 
-	writer, err = c.client.Create(dest)
+	writer, err = c.client.Create(c.ctx, dest)
 
 	if err != nil {
 		log.Errorf("webdav: %s", clean.Error(err))
@@ -277,7 +280,7 @@ func (c *Client) Download(src, dest string, force bool) (err error) {
 	var reader io.ReadCloser
 
 	// Start download.
-	reader, err = c.client.Open(src)
+	reader, err = c.client.Open(c.ctx, src)
 
 	// Error?
 	if err != nil {
@@ -315,18 +318,18 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 	}
 
 	for _, file := range files {
-		dest := path.Join(dest, file.Abs)
+		fileName := path.Join(dest, file.Abs)
 
-		if _, err = os.Stat(dest); err == nil {
-			// File already exists.
-			msg := fmt.Errorf("webdav: %s already exists", clean.Log(dest))
+		// Check if file already exists.
+		if _, err = os.Stat(fileName); err == nil {
+			msg := fmt.Errorf("webdav: %s already exists", clean.Log(fileName))
 			log.Warn(msg)
 			errs = append(errs, msg)
 			continue
 		}
 
-		if err = c.Download(file.Abs, dest, force); err != nil {
-			// Failed to download file.
+		// Download file from remote server.
+		if err = c.Download(file.Abs, fileName, force); err != nil {
 			errs = append(errs, err)
 			log.Error(err)
 			continue
@@ -339,5 +342,5 @@ func (c *Client) DownloadDir(src, dest string, recursive, force bool) (errs []er
 // Delete deletes a single file or directory on a remote server.
 func (c *Client) Delete(dir string) error {
 	dir = trimPath(dir)
-	return c.client.RemoveAll(dir)
+	return c.client.RemoveAll(c.ctx, dir)
 }

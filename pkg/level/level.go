@@ -1,5 +1,5 @@
 /*
-Package sev provides event importance levels and parsers.
+Package level provides constants and abstractions for log levels and severities.
 
 Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
@@ -22,16 +22,4 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package sev
-
-// Level represents the severity of an event.
-type Level uint8
-
-// String returns the severity level as a string, e.g. Alert becomes "alert".
-func (level Level) String() string {
-	if b, err := level.MarshalText(); err == nil {
-		return string(b)
-	} else {
-		return "unknown"
-	}
-}
+package level

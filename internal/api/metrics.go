@@ -29,7 +29,7 @@ func GetMetrics(router *gin.RouterGroup) {
 		}
 
 		conf := get.Config()
-		counts := conf.ClientPublic().Count
+		counts := conf.ClientUser(false).Count
 
 		c.Stream(func(w io.Writer) bool {
 			reg := prometheus.NewRegistry()

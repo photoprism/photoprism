@@ -43,6 +43,11 @@ var ClientProviders = list.List{
 	string(ProviderAccessToken),
 }
 
+// IsUnknown checks if the provider is unknown.
+func (t ProviderType) IsUnknown() bool {
+	return t == ""
+}
+
 // IsRemote checks if the provider is external.
 func (t ProviderType) IsRemote() bool {
 	return list.Contains(RemoteProviders, string(t))
@@ -56,6 +61,11 @@ func (t ProviderType) IsLocal() bool {
 // IsClient checks if the authentication is provided for a client.
 func (t ProviderType) IsClient() bool {
 	return list.Contains(ClientProviders, string(t))
+}
+
+// IsApplication checks if the authentication is provided for an application.
+func (t ProviderType) IsApplication() bool {
+	return t == ProviderApplication
 }
 
 // IsDefault checks if this is the default provider.

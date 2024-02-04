@@ -30,7 +30,7 @@ func AuthAny(c *gin.Context, resource acl.Resource, grants acl.Permissions) (s *
 
 	// Find active session to perform authorization check or deny if no session was found.
 	if s = Session(clientIp, authToken); s == nil {
-		event.AuditWarn([]string{clientIp, "unauthenticated", "%s %s", "denied"}, grants.String(), string(resource))
+		event.AuditWarn([]string{clientIp, "%s %s without authentication", "denied"}, grants.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
 	}
 

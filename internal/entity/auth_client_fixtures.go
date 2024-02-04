@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 type ClientMap map[string]Client
@@ -37,7 +38,7 @@ var ClientFixtures = ClientMap{
 		AuthProvider: authn.ProviderClientCredentials.String(),
 		AuthMethod:   authn.MethodOAuth2.String(),
 		AuthScope:    "*",
-		AuthExpires:  UnixDay,
+		AuthExpires:  unix.Day,
 		AuthTokens:   -1,
 		AuthEnabled:  true,
 		LastActive:   0,
@@ -73,7 +74,7 @@ var ClientFixtures = ClientMap{
 		AuthProvider: authn.ProviderClientCredentials.String(),
 		AuthMethod:   authn.MethodOAuth2.String(),
 		AuthScope:    "metrics",
-		AuthExpires:  UnixHour,
+		AuthExpires:  unix.Hour,
 		AuthTokens:   2,
 		AuthEnabled:  true,
 		LastActive:   0,
@@ -91,12 +92,12 @@ var ClientFixtures = ClientMap{
 		AuthProvider: authn.ProviderClientCredentials.String(),
 		AuthMethod:   authn.MethodUnknown.String(),
 		AuthScope:    "*",
-		AuthExpires:  UnixHour,
+		AuthExpires:  unix.Hour,
 		AuthTokens:   2,
 		AuthEnabled:  true,
 		LastActive:   0,
 	},
-	"deleted": {
+	"disabled": {
 		ClientUID:    "cs5cpu17n6gj2gf7",
 		UserUID:      "",
 		UserName:     "",
@@ -109,11 +110,10 @@ var ClientFixtures = ClientMap{
 		AuthProvider: authn.ProviderClientCredentials.String(),
 		AuthMethod:   authn.MethodOAuth2.String(),
 		AuthScope:    "metrics",
-		AuthExpires:  UnixHour,
+		AuthExpires:  unix.Hour,
 		AuthTokens:   2,
-		AuthEnabled:  true,
+		AuthEnabled:  false,
 		LastActive:   0,
-		DeletedAt:    TimePointer(),
 	},
 	"analytics": {
 		ClientUID:    "cs7pvt5h8rw9aaqj",
@@ -128,7 +128,7 @@ var ClientFixtures = ClientMap{
 		AuthProvider: authn.ProviderClientCredentials.String(),
 		AuthMethod:   authn.MethodOAuth2.String(),
 		AuthScope:    "statistics",
-		AuthExpires:  UnixHour,
+		AuthExpires:  unix.Hour,
 		AuthTokens:   2,
 		AuthEnabled:  true,
 		LastActive:   0,
