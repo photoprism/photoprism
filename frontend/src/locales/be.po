@@ -2,9 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"PO-Revision-Date: 2024-02-05 16:09+0000\n"
+"Last-Translator: Evgenij Spitsyn <evgeniy@spitsyn.net>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -23,7 +22,7 @@ msgstr "%{n} файлаў запампавана"
 
 #: src/page/library/browse.vue:315
 msgid "%{n} folders found"
-msgstr "%{n} тэчак знойдзена"
+msgstr "%{n} папак знойдзена"
 
 #: src/page/labels.vue:422
 msgid "%{n} labels found"
@@ -37,7 +36,7 @@ msgstr "Знойдзена %{n} чалавек"
 #: src/page/album/photos.vue:241 src/page/album/photos.vue:394
 #: src/page/photos.vue:344 src/page/photos.vue:509
 msgid "%{n} pictures found"
-msgstr "Знойдзена %{n} малюнкаў"
+msgstr "Знойдзена %{n} відарысаў"
 
 #: src/options/options.js:427
 msgid "1 hour"
@@ -75,7 +74,7 @@ msgstr "Токен доступу"
 #: src/model/user.js:165 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
 msgid "Account"
-msgstr "Рахунак"
+msgstr "Уліковы запіс"
 
 #: src/dialog/admin/users/add.vue:87 src/dialog/service/add.vue:35
 msgid "Account created"
@@ -87,7 +86,7 @@ msgstr "Уліковы запіс выдалены"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "Рахункі"
+msgstr "Уліковыя запісы"
 
 #: src/dialog/photo/edit/info.vue:175
 msgid "Accuracy"
@@ -115,7 +114,7 @@ msgstr "Дадаць"
 
 #: src/dialog/admin/users/add.vue:8 src/dialog/service/add.vue:7
 msgid "Add Account"
-msgstr "Дадаць акаўнт"
+msgstr "Дадаць уліковы запіс"
 
 #: src/page/albums.vue:145 src/page/albums.vue:146
 msgid "Add Album"
@@ -123,7 +122,7 @@ msgstr "Дадаць альбом"
 
 #: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
-msgstr "Дадайце файлы ў сваю бібліятэку праз вэб загрузку."
+msgstr "Дадайце файлы ў сваю бібліятэку праз вэб запампоўку."
 
 #: src/dialog/share.vue:79
 msgid "Add Link"
@@ -173,7 +172,9 @@ msgstr "Праз год"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Пасля выбару малюнкаў з вынікаў пошуку вы можаце дадаць іх у альбом з дапамогай кантэкстнага меню."
+msgstr ""
+"Пасля выбару відарысаў з вынікаў пошуку вы можаце дадаць іх у альбом з "
+"дапамогай кантэкстнага меню."
 
 #: src/options/options.js:442
 msgid "After two months"
@@ -212,7 +213,7 @@ msgstr "Усе %{n} альбомаў загружаны"
 
 #: src/page/labels.vue:276
 msgid "All %{n} labels loaded"
-msgstr "Усе %{n} ярлыкі загружаны"
+msgstr "Усе %{n} меткі загружаны"
 
 #: src/page/people/recognized.vue:349
 msgid "All %{n} people loaded"
@@ -241,7 +242,7 @@ msgstr "Усе палі абавязковыя для запаўнення"
 
 #: src/page/library/import.vue:12
 msgid "All files from import folder"
-msgstr "Усе файлы з тэчкі імпарту"
+msgstr "Усе файлы з папкі імпарту"
 
 #: src/component/photo/toolbar.vue:67
 msgid "All Lenses"
@@ -261,7 +262,9 @@ msgstr "Усе гады"
 
 #: src/dialog/share.vue:75
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Акрамя таго, вы можаце загружаць файлы непасрэдна на серверы WebDAV, такія як Nextcloud."
+msgstr ""
+"Акрамя таго, вы можаце запампаваць файлы непасрэдна на серверы WebDAV, такія "
+"як Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:167
 msgid "Altitude"
@@ -373,7 +376,7 @@ msgstr "Аўтаматычна стварае альбомы асаблівых 
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
-msgstr "Базавая тэчка"
+msgstr "Базавая папка"
 
 #: src/page/about/about.vue:26 src/page/about/about.vue:3
 #: src/page/connect.vue:74
@@ -415,11 +418,11 @@ msgstr "Праглядзіце"
 
 #: src/page/settings/general.vue:188
 msgid "Browse and edit image classification labels."
-msgstr "Прагляд і рэдагаванне метак класіфікацыі малюнкаў."
+msgstr "Прагляд і рэдагаванне метак класіфікацыі відарысаў."
 
 #: src/page/settings/general.vue:430
 msgid "Browse indexed files and folders in Library."
-msgstr "Прагляд праіндэксаваных файлаў і тэчак у бібліятэцы."
+msgstr "Прагляд праіндэксаваных файлаў і папак у бібліятэцы."
 
 #: src/page/about/feedback.vue:8 src/options/options.js:469
 msgid "Bug Report"
@@ -502,7 +505,7 @@ msgstr "Змяніць назвы фатаграфій, месцы і іншыя
 
 #: src/component/photo/clipboard.vue:134
 msgid "Change private flag"
-msgstr "Змяніць прыватны сцяг"
+msgstr "Змяніць прыватны тэг"
 
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:141
@@ -520,7 +523,7 @@ msgstr "Праверана"
 
 #: src/dialog/photo/edit/files.vue:199 src/dialog/photo/edit/files.vue:196
 msgid "Chroma"
-msgstr "каляровасць"
+msgstr "Каляровасць"
 
 #: src/page/library/index.vue:165
 msgid "Cleaning index and cache"
@@ -542,7 +545,7 @@ msgstr "Уліковыя даныя кліента"
 #: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
 #: src/dialog/share.vue:87 src/page/library/errors.vue:60
 msgid "Close"
-msgstr "Блізка"
+msgstr "Закрыць"
 
 #: src/dialog/photo/edit/files.vue:112 src/dialog/photo/edit/files.vue:109
 msgid "Codec"
@@ -562,7 +565,7 @@ msgstr "Колеры"
 
 #: src/page/connect.vue:88 src/page/connect.vue:89
 msgid "Compare Editions"
-msgstr "Параўнайце выданні"
+msgstr "Параўнаць выданні"
 
 #: src/page/library/index.vue:117
 msgid "Complete Rescan"
@@ -579,7 +582,7 @@ msgstr "Злучыць"
 #: src/page/settings/account.vue:54 src/dialog/webdav.vue:4
 #: src/page/settings/account.vue:56 src/page/settings/services.vue:50
 msgid "Connect via WebDAV"
-msgstr "Падключэнне праз WebDAV"
+msgstr "Злучэнне праз WebDAV"
 
 #: src/page/connect.vue:62 src/page/connect.vue:63
 msgid "Connected"
@@ -597,7 +600,7 @@ msgstr "Звяжыцеся з намі"
 #: src/page/albums.vue:116 src/page/labels.vue:77
 #: src/page/people/recognized.vue:90
 msgid "Contains %{n} pictures."
-msgstr "Змяшчае %{n} малюнкаў."
+msgstr "Змяшчае %{n} відарысаў."
 
 #: src/page/albums.vue:113 src/page/labels.vue:74
 #: src/page/people/recognized.vue:87
@@ -684,7 +687,7 @@ msgstr "Па змаўчанні"
 
 #: src/dialog/service/edit.vue:210
 msgid "Default Folder"
-msgstr "Тэчка па змаўчанні"
+msgstr "Папка па змаўчанні"
 
 #: src/dialog/admin/sessions/remove.vue:18 src/dialog/admin/users/remove.vue:18
 #: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
@@ -799,19 +802,19 @@ msgstr "Не стварайце файлы JSON ExifTool для паляпшэн
 
 #: src/page/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Не змяняйце тэчку арыгіналаў. Адключае імпарт, загрузку і выдаленне."
+msgstr "Не змяняйце папку арыгіналаў. Адключае імпарт, запампоўку і выдаленне."
 
 #: src/page/settings/advanced.vue:494
 msgid "Don't use Darktable to convert RAW images."
-msgstr "Не выкарыстоўвайце Darktable для пераўтварэння малюнкаў RAW."
+msgstr "Не выкарыстоўвайце Darktable для пераўтварэння RAW відарысаў."
 
 #: src/page/settings/advanced.vue:560
 msgid "Don't use ImageMagick to convert images."
-msgstr "Не выкарыстоўвайце ImageMagick для пераўтварэння малюнкаў."
+msgstr "Не выкарыстоўвайце ImageMagick для пераўтварэння відарысаў."
 
 #: src/page/settings/advanced.vue:516
 msgid "Don't use RawTherapee to convert RAW images."
-msgstr "Не выкарыстоўвайце RawTherapee для пераўтварэння малюнкаў RAW."
+msgstr "Не выкарыстоўвайце RawTherapee для пераўтварэння RAW відарысаў."
 
 #: src/page/settings/advanced.vue:231
 msgid "Don't use TensorFlow for image classification."
@@ -840,7 +843,9 @@ msgstr "Спампаваць"
 
 #: src/page/settings/general.vue:648
 msgid "Download only original media files, without any automatically generated files."
-msgstr "Загружайце толькі арыгінальныя мультымедыйныя файлы без аўтаматычна створаных файлаў."
+msgstr ""
+"Спампоўваць толькі арыгінальныя мультымедыйныя файлы без аўтаматычна "
+"створаных файлаў."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -940,7 +945,7 @@ msgstr "Каштарыс"
 
 #: src/page/settings/library.vue:70
 msgid "Estimate the approximate location of pictures without coordinates."
-msgstr "Ацаніце прыблізнае месцазнаходжанне малюнкаў без каардынатаў."
+msgstr "Ацаніце прыблізнае месцазнаходжанне відарысаў без каардынатаў."
 
 #: src/page/settings/library.vue:69
 msgid "Estimates"
@@ -952,7 +957,9 @@ msgstr "Кожныя два дні"
 
 #: src/page/settings/general.vue:210
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Выключыць змесціва, пазначанае як прыватнае, з вынікаў пошуку, агульных альбомаў, этыкетак і месцаў."
+msgstr ""
+"Выключыць змесціва, пазначанае як прыватнае, з вынікаў пошуку, агульных "
+"альбомаў, метак і месцаў."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
@@ -1019,7 +1026,7 @@ msgstr "Любімая"
 #: src/app/routes.js:221 src/component/navigation.vue:232
 #: src/component/navigation.vue:930 src/page/albums.vue:86
 msgid "Favorites"
-msgstr "Выбранае"
+msgstr "Абраныя"
 
 #: src/page/about/feedback.vue:7 src/options/options.js:468
 msgid "Feature Request"
@@ -1027,7 +1034,7 @@ msgstr "Запыт функцыі"
 
 #: src/page/settings/account.vue:923 src/page/settings/account.vue:777
 msgid "Feed"
-msgstr "Карміць"
+msgstr "Канал"
 
 #: src/component/navigation.vue:437 src/component/navigation.vue:35
 msgid "Feedback"
@@ -1089,7 +1096,7 @@ msgstr "Папка змяшчае %{n} файлаў"
 
 #: src/page/library/browse.vue:309
 msgid "Folder is empty"
-msgstr "Тэчка пустая"
+msgstr "Папка пустая"
 
 #: src/app/routes.js:201 src/component/navigation.vue:333
 #: src/component/navigation.vue:1285
@@ -1118,7 +1125,7 @@ msgstr "Пол"
 
 #: src/page/settings.vue:36
 msgid "General"
-msgstr "Генерал"
+msgstr "Агульныя"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:140
 msgid "Given Name"
@@ -1158,7 +1165,7 @@ msgstr "Даведка і падтрымка"
 
 #: src/component/navigation.vue:387
 msgid "Hidden"
-msgstr "Схаваны"
+msgstr "Схаваныя"
 
 #: src/app/routes.js:309
 msgid "Hidden Files"
@@ -1241,7 +1248,7 @@ msgstr "Уключайце файлы малюнкаў у фармаце RAW п�
 
 #: src/page/settings/general.vue:690
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr "Уключайце дадатковыя файлы пры спампоўцы стэкаў і архіваў."
+msgstr "Уключаць дадатковыя файлы пры спампоўцы стэкаў і архіваў."
 
 #: src/component/navigation.vue:593 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1324,18 +1331,18 @@ msgstr "Ключавыя словы"
 
 #: src/dialog/photo/edit/labels.vue:25 src/model/label.js:124
 msgid "Label"
-msgstr "Этыкетка"
+msgstr "Метка"
 
 #: src/app/routes.js:322 src/component/navigation.vue:320
 #: src/component/navigation.vue:1240 src/dialog/photo/edit.vue:39
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
 #: src/page/settings/general.vue:187
 msgid "Labels"
-msgstr "Этыкеткі"
+msgstr "Меткі"
 
 #: src/component/label/clipboard.vue:62
 msgid "Labels deleted"
-msgstr "Цэтлікі выдалены"
+msgstr "Меткі выдалены"
 
 #: src/options/options.js:476
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
@@ -1436,14 +1443,14 @@ msgstr "Мясцовы час"
 
 #: src/dialog/photo/edit/labels.vue:44
 msgid "location"
-msgstr "размяшчэнне"
+msgstr "месцазнаходжанне"
 
 #: src/page/settings/account.vue:813 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/dialog/photo/edit/info.vue:83 src/page/albums.vue:88
 #: src/page/settings/account.vue:667
 msgid "Location"
-msgstr "Размяшчэнне"
+msgstr "Месцазнаходжанне"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
@@ -1462,7 +1469,7 @@ msgstr "Выйсці з сістэмы"
 #: src/component/navigation.vue:599 src/page/library.vue:58
 #: src/page/settings/general.vue:451
 msgid "Logs"
-msgstr "Лагі"
+msgstr "Журналы"
 
 #: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:159
 msgid "Longitude"
@@ -1499,7 +1506,7 @@ msgstr "кіраўніцтва"
 
 #: src/dialog/service/edit.vue:53
 msgid "Manual Upload"
-msgstr "Ручная загрузка"
+msgstr "Ручная запампоўка"
 
 #: src/page/settings/general.vue:559
 msgid "Maps"
@@ -1527,7 +1534,7 @@ msgstr "Паведамленне адпраўлена"
 
 #: src/dialog/photo/edit/info.vue:73
 msgid "Metadata"
-msgstr "Метададзеныя"
+msgstr "Метаданыя"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1544,7 +1551,7 @@ msgstr "Моманты"
 
 #: src/component/navigation.vue:81
 msgid "Monochrome"
-msgstr "Манахромны"
+msgstr "Манахромныя"
 
 #: src/page/settings/account.vue:575 src/component/photo/toolbar.vue:384
 #: src/dialog/photo/edit/details.vue:142
@@ -1596,7 +1603,7 @@ msgstr "ніколі"
 
 #: src/page/people.vue:29
 msgid "New"
-msgstr "Новы"
+msgstr "Новыя"
 
 #: src/dialog/account/password.vue:162
 msgid "New Password"
@@ -1679,7 +1686,9 @@ msgstr "Няма"
 
 #: src/page/library/import.vue:28
 msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Звярніце ўвагу, што вы можаце ўручную кіраваць тэчкай арыгіналаў, а імпартаваць неабавязкова."
+msgstr ""
+"Звярніце ўвагу, што вы можаце ўручную кіраваць папкай арыгіналаў, а "
+"імпартаваць неабавязкова."
 
 #: src/page/settings/services.vue:38
 msgid "Note:"
@@ -1687,7 +1696,10 @@ msgstr "нататка:"
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Заўвага: толькі серверы WebDAV, такія як Nextcloud або PhotoPrism, могуць быць настроены ў якасці аддаленага сэрвісу для рэзервовага капіравання і загрузкі файлаў."
+msgstr ""
+"Увага: толькі серверы WebDAV, такія як Nextcloud або PhotoPrism, могуць быць "
+"сканфігураваныя ў якасці аддаленага сэрвісу для рэзервовага капіравання і "
+"запампоўкі файлаў."
 
 #: src/dialog/photo/edit/details.vue:659
 msgid "Notes"
@@ -1736,7 +1748,7 @@ msgstr "Знойдзена адна папка"
 
 #: src/page/labels.vue:420
 msgid "One label found"
-msgstr "Знойдзена адна этыкетка"
+msgstr "Знойдзена адна метка"
 
 #: src/page/people/new.vue:284 src/page/people/new.vue:370
 #: src/page/people/recognized.vue:495
@@ -1878,11 +1890,12 @@ msgstr "Калі ласка, пацвердзіце свой новы парол
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr "Калі ласка, не загружайце прыватныя, незаконныя або абразлівыя фатаграфіі."
+msgstr ""
+"Калі ласка, не запампоўвайце прыватныя, незаконныя або абразлівыя фатаграфіі."
 
 #: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
-msgstr "Калі ласка, не загружайце фатаграфіі з абразлівым зместам."
+msgstr "Калі ласка, не запампоўвайце фатаграфіі з абразлівым зместам."
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -1926,7 +1939,7 @@ msgstr "Папярэдні прагляд"
 
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
-msgstr "Папярэдні прагляд малюнкаў"
+msgstr "Папярэдні прагляд відарысаў"
 
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:136
 #: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:133
@@ -1938,7 +1951,7 @@ msgstr "Першасны"
 #: src/component/navigation.vue:1330 src/dialog/album/edit.vue:232
 #: src/dialog/photo/edit/info.vue:117 src/page/settings/general.vue:209
 msgid "Private"
-msgstr "Прыватны"
+msgstr "Прыватныя"
 
 #: src/page/about/feedback.vue:6 src/options/options.js:467
 msgid "Product Feedback"
@@ -2180,7 +2193,7 @@ msgstr "URL службы"
 
 #: src/page/settings.vue:72 src/page/settings/general.vue:385
 msgid "Services"
-msgstr "Паслугі"
+msgstr "Сэрвісы"
 
 #: src/model/session.js:100 src/options/auth.js:40
 msgid "Session"
@@ -2254,7 +2267,7 @@ msgstr "Паказвае больш падрабязныя паведамлен�
 
 #: src/model/file.js:213 src/page/settings/general.vue:689
 msgid "Sidecar"
-msgstr "Каляска"
+msgstr "Спадарожны файл"
 
 #: src/page/auth/login.vue:22
 msgid "Sign in"
@@ -2410,12 +2423,16 @@ msgid ""
 "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"Гэта мантуе папку арыгіналаў у якасці сеткавага дыска і дазваляе адкрываць, рэдагаваць і выдаляць файлы\n"
-"          з вашага кампутара або смартфона, як калі б яны былі мясцовымі."
+"Гэта мантуе папку арыгіналаў у якасці сеткавага дыска і дазваляе адкрываць, "
+"рэдагаваць і выдаляць файлы\n"
+"          з вашага камп'ютара або смартфона, як калі б яны былі лакальнымі."
 
 #: src/dialog/webdav.vue:26
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Гэта мантуе папку арыгіналаў у якасці сеткавага дыска і дазваляе адкрываць, рэдагаваць і выдаляць файлы з вашага кампутара або смартфона, як калі б яны былі лакальнымі."
+msgstr ""
+"Гэта мантуе папку арыгіналаў у якасці сеткавага дыска і дазваляе адкрываць, "
+"рэдагаваць і выдаляць файлы з вашага камп'ютара або смартфона, як калі б яны "
+"былі лакальнымі."
 
 #: src/page/settings/advanced.vue:252
 msgid "Thumbnail Generation"
@@ -2526,7 +2543,7 @@ msgstr "Незарэгістраваны"
 
 #: src/app/routes.js:214 src/component/navigation.vue:172
 msgid "Unsorted"
-msgstr "Несартаваны"
+msgstr "Ня адсартавана"
 
 #: src/dialog/photo/edit/files.vue:38 src/dialog/photo/edit/files.vue:35
 msgid "Unstack"
@@ -2579,7 +2596,7 @@ msgstr "Абнавіце зараз"
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
-msgstr "Загрузіць"
+msgstr "Запампаваць"
 
 #: src/dialog/upload.vue:258
 msgid "Upload complete"
@@ -2591,7 +2608,7 @@ msgstr "Запампоўка завершана. Індэксацыя…"
 
 #: src/dialog/upload.vue:34 src/dialog/upload.vue:246 src/dialog/upload.vue:262
 msgid "Upload failed"
-msgstr "Памылка загрузкі"
+msgstr "Памылка запампоўкі"
 
 #: src/dialog/admin/users/edit.vue:418
 msgid "Upload Folder"
