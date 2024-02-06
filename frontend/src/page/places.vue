@@ -1,6 +1,6 @@
 <template>
   <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
-    <div style="width: 100%; height: 100%; position: relative;">
+    <div style="width: 100%; height: 100%; position: relative; overflow: hidden;">
       <div v-if="canSearch" class="map-control search-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
           <v-text-field v-model.lazy.trim="filter.q"
@@ -18,7 +18,8 @@
         </div>
       </div>
       <div id="map" ref="map" style="width: 100%; height: 100%;"></div>
-      <div v-if="showCluster" class="cluster-control">
+      <div class="cluster-control" :style="{ height: this.showCluster ? clusterControlHeight + 'px' : 0}">
+        <div class="cluster-control-resize-handle" @mousedown="startClusterControlResize" @touchstart="startClusterControlResize"></div>
         <v-card class="cluster-control-container">
           <p-page-photos
             ref="cluster"
@@ -80,6 +81,8 @@ export default {
       config: this.$config.values,
       settings: settings,
       animate: settings.animate,
+      isClusterControlResizing: false,
+      clusterControlHeight: 0,
     };
   },
   watch: {
@@ -346,9 +349,6 @@ export default {
       });
     },
     selectClusterById: function (clusterId) {
-      if(this.showCluster) {
-        this.showCluster = false;
-      }
 
       this.getClusterFeatures(clusterId, -1, (clusterFeatures) => {
         let latNorth, lngEast, latSouth, lngWest;
@@ -744,6 +744,57 @@ export default {
       // Load pictures.
       this.search();
     },
+    clampClusterControlHeight(height) {
+      const vh = this.$refs.map.clientHeight;
+      return Math.max(Math.min(0.85*vh, height), 0.3*vh);
+    },
+    startClusterControlResize(e) {
+      this.isClusterControlResizing = true;
+      const initialY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+      const initialHeight = this.clusterControlHeight;
+
+      this.clusterControlResizeHandler = (event) => this.clusterControlResize(event, initialY, initialHeight);
+      
+      if (e.type === 'touchstart') {
+        window.addEventListener('touchmove', this.clusterControlResizeHandler);
+        window.addEventListener('touchend', this.stopClusterControlResize);
+      } else {
+        window.addEventListener('mousemove', this.clusterControlResizeHandler);
+        window.addEventListener('mouseup', this.stopClusterControlResize);
+      }
+    },
+    clusterControlResize(e, initialY, initialHeight) {
+      if (this.isClusterControlResizing) {
+        const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+        this.clusterControlHeight = this.clampClusterControlHeight(initialHeight - (currentY - initialY));
+      }
+    },
+    stopClusterControlResize(e) {
+      this.isClusterControlResizing = false;
+      const clusterControlContainer = this.$refs.clusterControlContainer;
+      if (clusterControlContainer) {
+        this.clusterControlHeight = clusterControlContainer.clientHeight;
+      }
+      localStorage.setItem('clusterControlHeight', this.clusterControlHeight);
+
+      if (e.type === 'touchend') {
+        window.removeEventListener('touchmove', this.clusterControlResizeHandler);
+        window.removeEventListener('touchend', this.stopClusterControlResize);
+      } else {
+        window.removeEventListener('mousemove', this.clusterControlResizeHandler);
+        window.removeEventListener('mouseup', this.stopClusterControlResize);
+      }
+    }
+  },
+  created() {
+    const storedClusterControlHeight = localStorage.getItem('clusterControlHeight');
+    if (storedClusterControlHeight) {
+      this.clusterControlHeight = parseInt(storedClusterControlHeight, 10);
+    }
+    if (!this.clusterControlHeight) {
+      this.clusterControlHeight = 300;
+    }
+    this.clusterControlHeight = this.clampClusterControlHeight(this.clusterControlHeight);
   },
 };
 </script>
