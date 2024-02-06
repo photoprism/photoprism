@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-02-05 16:09+0000\n"
-"Last-Translator: Evgenij Spitsyn <evgeniy@spitsyn.net>\n"
+"PO-Revision-Date: 2024-02-05 18:21+0000\n"
+"Last-Translator: Yahor <k1llo2810@gmail.com>\n"
 "Language: be\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2596,7 +2596,7 @@ msgstr "Абнавіце зараз"
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
-msgstr "Запампаваць"
+msgstr "Загрузіць"
 
 #: src/dialog/upload.vue:258
 msgid "Upload complete"
@@ -2608,7 +2608,7 @@ msgstr "Запампоўка завершана. Індэксацыя…"
 
 #: src/dialog/upload.vue:34 src/dialog/upload.vue:246 src/dialog/upload.vue:262
 msgid "Upload failed"
-msgstr "Памылка запампоўкі"
+msgstr "Памылка загрузкі"
 
 #: src/dialog/admin/users/edit.vue:418
 msgid "Upload Folder"
@@ -2796,7 +2796,7 @@ msgstr "Вы можаце спампаваць толькі адзін альб�
 
 #: src/component/label/clipboard.vue:71
 msgid "You can only download one label"
-msgstr "Вы можаце спампаваць толькі адну этыкетку"
+msgstr "Вы можаце спампаваць толькі адну метку"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
