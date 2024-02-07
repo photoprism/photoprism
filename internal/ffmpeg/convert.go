@@ -52,10 +52,11 @@ func AvcConvertCommand(fileName, avcName string, opt Options) (result *exec.Cmd,
 		// ffmpeg -hide_banner -h encoder=h264_qsv
 		result = exec.Command(
 			ffmpeg,
+			"-hwaccel", "qsv",
 			"-qsv_device", "/dev/dri/renderD128",
 			"-i", fileName,
 			"-c:a", "aac",
-			"-vf", opt.VideoFilter(FormatRGB32),
+			// "-vf", opt.VideoFilter(FormatRGB32), // TODO: Add filter for downscaling of videos with Intel QSV.
 			"-c:v", opt.Encoder.String(),
 			"-map", opt.MapVideo,
 			"-map", opt.MapAudio,
