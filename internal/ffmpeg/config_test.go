@@ -11,7 +11,7 @@ func TestOptions_VideoFilter(t *testing.T) {
 		Bin:      "",
 		Encoder:  "intel",
 		Size:     1500,
-		Bitrate:  "50",
+		Bitrate:  "50M",
 		MapVideo: "",
 		MapAudio: "",
 	}
