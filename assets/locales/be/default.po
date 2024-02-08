@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-26 21:43+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-02-05 18:21+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: none\n"
 "Language: be\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.3.1\n"
 
 #: messages.go:94
 msgid "Something went wrong, try again"
@@ -73,7 +73,7 @@ msgstr "Карыстальнік не знойдзены"
 
 #: messages.go:108
 msgid "Label not found"
-msgstr "Цэтлік не знойдзены"
+msgstr "Тэг не знойдзены"
 
 #: messages.go:109
 msgid "Album not found"
@@ -284,7 +284,7 @@ msgstr "Індэксацыя адменена"
 #: messages.go:160
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr "Выдалены файлы %d і фатаграфіі %d."
+msgstr "Выдалена %d файлаў і %d фота"
 
 #: messages.go:161
 #, c-format
@@ -298,7 +298,7 @@ msgstr "Капіраванне файлаў з %s"
 
 #: messages.go:163
 msgid "Labels deleted"
-msgstr "Цэтлікі выдалены"
+msgstr "Меткі выдалены"
 
 #: messages.go:164
 msgid "Label saved"
