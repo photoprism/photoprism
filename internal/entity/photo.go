@@ -288,6 +288,7 @@ func FindPhoto(find Photo) *Photo {
 
 	m := Photo{}
 
+	// Preload related entities if a matching record is found.
 	stmt := UnscopedDb().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
@@ -300,14 +301,14 @@ func FindPhoto(find Photo) *Photo {
 		Preload("Cell").
 		Preload("Cell.Place")
 
-	// Search for UID.
+	// Find photo by uid.
 	if rnd.IsUID(find.PhotoUID, PhotoUID) {
 		if stmt.First(&m, "photo_uid = ?", find.PhotoUID).Error == nil {
 			return &m
 		}
 	}
 
-	// Search for ID.
+	// Find photo by id.
 	if find.ID > 0 {
 		if stmt.First(&m, "id = ?", find.ID).Error == nil {
 			return &m
@@ -526,7 +527,7 @@ func (m *Photo) PreloadMany() {
 	m.PreloadAlbums()
 }
 
-// HasID tests if the photo has a database id and uid.
+// HasID checks if the photo has an id and uid assigned to it.
 func (m *Photo) HasID() bool {
 	return m.ID > 0 && m.PhotoUID != ""
 }
