@@ -1,9 +1,10 @@
 package commands
 
 import (
+	"testing"
+
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestFindCommand(t *testing.T) {
