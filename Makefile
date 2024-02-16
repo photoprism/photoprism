@@ -165,7 +165,7 @@ terminal:
 	$(DOCKER_COMPOSE) exec -u $(UID) photoprism bash
 mariadb:
 	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
-rootshell: root-terminal
+root: root-terminal
 root-terminal:
 	$(DOCKER_COMPOSE) exec -u root photoprism bash
 migrate:
@@ -644,6 +644,11 @@ tidy:
 users:
 	./photoprism users add -p photoprism -r admin -s -a test:true -n "Alice Austen" superadmin
 	./photoprism users ls
+ldap: dummy-ldap
+dummy-ldap:
+	$(info Restarting dummy-ldap service...)
+	$(DOCKER_COMPOSE) stop dummy-ldap
+	$(DOCKER_COMPOSE) up -d -V --force-recreate dummy-ldap
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make
