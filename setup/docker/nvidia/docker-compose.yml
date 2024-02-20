@@ -48,7 +48,7 @@ services:
     ## the left-hand side and keep the container port, e.g. "80:2342" (for HTTP) or "443:2342 (for HTTPS):
     ports:
       - "2342:2342"
-    ## Changes to the config options set below always require a restart to take effect:
+    ## Before you start the service, please check the following config options (and change them as needed):
     ## https://docs.photoprism.app/getting-started/config-options/
     environment:
       PHOTOPRISM_ADMIN_USER: "admin"                 # admin login username
