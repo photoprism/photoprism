@@ -43,10 +43,12 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    ## Server port mapping in the format "Host:Container". To use a different port, change the host port on
+    ## the left-hand side and keep the container port, e.g. "80:2342" (for HTTP) or "443:2342 (for HTTPS):
     ports:
-      ## Web server port mapping in the format "Host:Container". To use a different port, change the host port
-      ## on the left-hand side and keep the container port, e.g. "80:2342" (for HTTP) or "443:2342 (for HTTPS):
       - "2342:2342"
+    ## Changes to the config options set below always require a restart to take effect:
+    ## https://docs.photoprism.app/getting-started/config-options/
     environment:
       PHOTOPRISM_ADMIN_USER: "admin"                 # admin login username
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial admin password (8-72 characters)
