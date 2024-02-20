@@ -30,7 +30,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mandykoh/prism v0.35.2
 	github.com/manifoldco/promptui v0.9.0
-	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/montanaflynn/stats v0.7.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
@@ -75,7 +75,7 @@ require github.com/go-ldap/ldap/v3 v3.4.6
 
 require (
 	github.com/prometheus/client_golang v1.18.0
-	github.com/prometheus/common v0.46.0
+	github.com/prometheus/common v0.47.0
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
@@ -102,7 +102,6 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gorilla/schema v1.2.1 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
