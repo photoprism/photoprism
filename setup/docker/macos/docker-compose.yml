@@ -98,7 +98,7 @@ services:
       - apparmor:unconfined
     ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner
     ## see https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
-    command: --lower-case-table-names=1 --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --innodb-buffer-pool-size=512M --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
       - "database:/var/lib/mysql" # Named volume "database" is defined at the bottom (DO NOT REMOVE)
     environment:
