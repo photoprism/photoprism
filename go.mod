@@ -23,7 +23,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
-	github.com/klauspost/cpuid/v2 v2.2.6
+	github.com/klauspost/cpuid/v2 v2.2.7
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.5.2
 	github.com/lib/pq v1.10.9 // indirect
@@ -75,7 +75,7 @@ require github.com/go-ldap/ldap/v3 v3.4.6
 
 require (
 	github.com/prometheus/client_golang v1.18.0
-	github.com/prometheus/common v0.47.0
+	github.com/prometheus/common v0.48.0
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
