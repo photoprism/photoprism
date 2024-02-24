@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net"
@@ -102,10 +103,10 @@ func Start(ctx context.Context, conf *config.Config) {
 		var err error
 
 		if unixAddr, err = net.ResolveUnixAddr("unix", unixSocket); err != nil {
-			log.Errorf("server: resolve unix address failed (%s)", err)
+			log.Errorf("server: invalid unix socket (%s)", err)
 			return
 		} else if listener, err = net.ListenUnix("unix", unixAddr); err != nil {
-			log.Errorf("server: listen unix address failed (%s)", err)
+			log.Errorf("server: failed to listen on unix socket (%s)", err)
 			return
 		} else {
 			server = &http.Server{
@@ -118,36 +119,51 @@ func Start(ctx context.Context, conf *config.Config) {
 			go StartHttp(server, listener)
 		}
 	} else if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
+		log.Infof("server: starting in auto tls mode")
+
+		tlsSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tlsConfig := tlsManager.TLSConfig()
+		tlsConfig.MinVersion = tls.VersionTLS12
+
 		server = &http.Server{
-			Addr:      fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-			TLSConfig: tlsManager.TLSConfig(),
+			Addr:      tlsSocket,
+			TLSConfig: tlsConfig,
 			Handler:   router,
 		}
-		log.Infof("server: starting in auto tls mode on %s [%s]", server.Addr, time.Since(start))
+
+		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 		go StartAutoTLS(server, tlsManager, conf)
 	} else if publicCert, privateKey := conf.TLS(); unixSocket == "" && publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in tls mode")
-		server = &http.Server{
-			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-			Handler: router,
+
+		tlsSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tlsConfig := &tls.Config{
+			MinVersion: tls.VersionTLS12,
 		}
+
+		server = &http.Server{
+			Addr:      tlsSocket,
+			TLSConfig: tlsConfig,
+			Handler:   router,
+		}
+
 		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 		go StartTLS(server, publicCert, privateKey)
 	} else {
 		log.Infof("server: %s", tlsErr)
 
-		socket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tcpSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
 
-		if listener, err := net.Listen("tcp", socket); err != nil {
+		if listener, err := net.Listen("tcp", tcpSocket); err != nil {
 			log.Errorf("server: %s", err)
 			return
 		} else {
 			server = &http.Server{
-				Addr:    socket,
+				Addr:    tcpSocket,
 				Handler: router,
 			}
 
-			log.Infof("server: listening on %s [%s]", socket, time.Since(start))
+			log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 
 			go StartHttp(server, listener)
 		}
