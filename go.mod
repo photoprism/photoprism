@@ -18,7 +18,7 @@ require (
 	github.com/golang/geo v0.0.0-20230421003525-6adc56603217
 	github.com/google/open-location-code/go v0.0.0-20221010173056-817c0086479a
 	github.com/gorilla/websocket v1.5.1
-	github.com/gosimple/slug v1.13.1
+	github.com/gosimple/slug v1.14.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
