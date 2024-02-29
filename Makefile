@@ -358,7 +358,8 @@ docker-develop-impish:
 docker-develop-jammy:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy
+	docker pull --platform=arm ubuntu:jammy
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64,linux/arm jammy /jammy
 docker-develop-jammy-slim:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
