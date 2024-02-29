@@ -68,6 +68,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-tensorflow.sh && \
+    /scripts/install-darktable.sh && \
     /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
