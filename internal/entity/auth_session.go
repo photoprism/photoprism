@@ -147,7 +147,7 @@ func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int
 		q = q.Where("auth_method = ?", authMethod.String())
 	}
 
-	q = q.Order("created_at DESC").Limit(2147483648).Offset(limit)
+	q = q.Order("created_at DESC").Limit(1000000000).Offset(limit)
 
 	found := Sessions{}
 
