@@ -232,14 +232,14 @@ build-static:
 	scripts/build.sh static $(BINARY_NAME)
 build-libheif: build-libheif-amd64 build-libheif-arm64 build-libheif-armv7
 build-libheif-amd64:
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 --entrypoint "" photoprism/develop:mantic ./scripts/dist/build-libheif.sh
-	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 --entrypoint "" photoprism/develop:mantic ./scripts/dist/build-libheif.sh v1.17.1
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.17.1
 build-libheif-arm64:
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 --entrypoint "" photoprism/develop:mantic ./scripts/dist/build-libheif.sh
-	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 --entrypoint "" photoprism/develop:mantic ./scripts/dist/build-libheif.sh v1.17.1
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.17.1
 build-libheif-armv7:
-	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm --entrypoint "" photoprism/develop:armv7 ./scripts/dist/build-libheif.sh
-	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh
+	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm --entrypoint "" photoprism/develop:armv7 ./scripts/dist/build-libheif.sh v1.17.1
+	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.17.1
 build-tensorflow:
 	docker build -t photoprism/tensorflow:build docker/tensorflow
 	docker run -ti photoprism/tensorflow:build bash
