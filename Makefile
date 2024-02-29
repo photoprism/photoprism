@@ -351,7 +351,8 @@ docker-develop-bookworm-slim:
 docker-develop-bullseye:
 	docker pull --platform=amd64 golang:1-bullseye
 	docker pull --platform=arm64 golang:1-bullseye
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye
+	docker pull --platform=arm golang:1-bullseye
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64,linux/arm bullseye /bullseye
 docker-develop-bullseye-slim:
 	docker pull --platform=amd64 debian:bullseye-slim
 	docker pull --platform=arm64 debian:bullseye-slim
