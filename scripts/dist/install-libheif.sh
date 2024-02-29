@@ -15,7 +15,7 @@ fi
 DESTDIR=$(realpath "${1:-/usr/local}")
 
 # In addition, you can specify a custom version to be installed as the second argument.
-LIBHEIF_VERSION=${2:-v1.17.1}
+LIBHEIF_VERSION=${2:-v1.17.6}
 
 # Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
@@ -37,7 +37,6 @@ case $DESTARCH in
 
   arm | ARM | aarch | armv7l | armhf)
     DESTARCH=arm
-    LIBHEIF_VERSION="v1.13.0"
     ;;
 
   *)
