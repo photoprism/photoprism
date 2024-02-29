@@ -21,14 +21,23 @@ set -e
 
 . /etc/os-release
 
-if [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" ]]; then
-  echo "Installing MariaDB distribution packages..."
+# Determine the system architecture.
+if [[ $PHOTOPRISM_ARCH ]]; then
+  SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
-  MARIADB_VERSION="10.11"
+  SYSTEM_ARCH=$(uname -m)
+fi
+
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
+
+if [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" || $DESTARCH == "armv7l" || $DESTARCH == "arm" ]]; then
+  echo "Installing MariaDB distribution packages for ${DESTARCH^^}..."
+else
+  MARIADB_VERSION="latest"
   MARIADB_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
 
   if [ ! -f "/etc/apt/sources.list.d/mariadb.list" ]; then
-    echo "Installing MariaDB $MARIADB_VERSION package sources..."
+    echo "Installing MariaDB $MARIADB_VERSION package sources for ${DESTARCH^^}..."
     curl -Ls $MARIADB_URL | bash  -s -- --mariadb-server-version="mariadb-$MARIADB_VERSION"
   fi
 fi
