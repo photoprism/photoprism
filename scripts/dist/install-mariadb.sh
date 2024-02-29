@@ -33,7 +33,7 @@ DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 if [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" || $DESTARCH == "armv7l" || $DESTARCH == "arm" ]]; then
   echo "Installing MariaDB distribution packages for ${DESTARCH^^}..."
 else
-  MARIADB_VERSION="latest"
+  MARIADB_VERSION="11.3.2"
   MARIADB_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
 
   if [ ! -f "/etc/apt/sources.list.d/mariadb.list" ]; then
