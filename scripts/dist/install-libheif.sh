@@ -37,6 +37,7 @@ case $DESTARCH in
 
   arm | ARM | aarch | armv7l | armhf)
     DESTARCH=arm
+    LIBHEIF_VERSION="v1.13.0"
     ;;
 
   *)
