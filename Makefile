@@ -394,6 +394,14 @@ docker-develop-mantic-slim:
 	docker pull --platform=amd64 ubuntu:mantic
 	docker pull --platform=arm64 ubuntu:mantic
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic-slim /mantic-slim
+docker-develop-noble:
+	docker pull --platform=amd64 ubuntu:noble
+	docker pull --platform=arm64 ubuntu:noble
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 noble /noble
+docker-develop-noble-slim:
+	docker pull --platform=amd64 ubuntu:noble
+	docker pull --platform=arm64 ubuntu:noble
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 noble-slim /noble-slim
 unstable: docker-unstable
 docker-unstable: docker-unstable-mantic
 docker-unstable-jammy:
