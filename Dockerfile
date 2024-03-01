@@ -1,8 +1,10 @@
 # Ubuntu 23.10 (Mantic Minotaur)
-FROM photoprism/develop:240229-mantic
+FROM photoprism/develop:240301-mantic
 
 ## Alternative Environments:
 # FROM photoprism/develop:armv7    # ARMv7 (32bit)
+# FROM photoprism/develop:noble    # Ubuntu 24.04 (Noble Numbat)
+# FROM photoprism/develop:mantic   # Ubuntu 23.10 (Mantic Minotaur)
 # FROM photoprism/develop:lunar    # Ubuntu 23.04 (Lunar Lobster)
 # FROM photoprism/develop:jammy    # Ubuntu 22.04 LTS (Jammy Jellyfish)
 # FROM photoprism/develop:impish   # Ubuntu 21.10 (Impish Indri)
