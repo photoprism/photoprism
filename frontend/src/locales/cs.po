@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2024-01-29 23:09+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
-"Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
-"frontend/cs/>\n"
+"Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/frontend/cs/>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -91,7 +90,7 @@ msgstr "Účet vymazán"
 msgid "Accounts"
 msgstr "Účty"
 
-#: src/dialog/photo/edit/info.vue:175
+#: src/dialog/photo/edit/info.vue:182
 msgid "Accuracy"
 msgstr "Přesnost"
 
@@ -200,7 +199,7 @@ msgstr "Název alba"
 #: src/app/routes.js:175 src/component/album/toolbar.vue:58
 #: src/component/navigation.vue:152 src/component/navigation.vue:162
 #: src/component/navigation.vue:569 src/component/navigation.vue:4
-#: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:66
+#: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:76
 msgid "Albums"
 msgstr "Alba"
 
@@ -265,7 +264,7 @@ msgstr "Všechny roky"
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Alternativně lze nahrát soubory přímo do WebDAV serverů jako je Nextcloud."
 
-#: src/dialog/photo/edit/info.vue:167
+#: src/dialog/photo/edit/info.vue:176
 msgid "Altitude"
 msgstr "Nadmořská výška"
 
@@ -315,7 +314,7 @@ msgstr "Aplikace a zařízení"
 msgid "Archive"
 msgstr "Archivovat"
 
-#: src/dialog/photo/edit/info.vue:215
+#: src/dialog/photo/edit/info.vue:222
 msgid "Archived"
 msgstr "Archivováno"
 
@@ -445,7 +444,7 @@ msgstr "Kalendář"
 msgid "Camera"
 msgstr "Fotoaparát"
 
-#: src/dialog/photo/edit/info.vue:94
+#: src/dialog/photo/edit/info.vue:104
 msgid "Camera Serial"
 msgstr "Sériové číslo kamery"
 
@@ -464,7 +463,7 @@ msgstr "Není možné vybrat více položek"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:74 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/password.vue:39
+#: src/page/connect.vue:44 src/dialog/account/password.vue:38
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
 #: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
@@ -516,7 +515,7 @@ msgstr "Změnit soukromou vlaječku"
 msgid "Changes successfully saved"
 msgstr "Změny byly úspěšně uloženy"
 
-#: src/dialog/photo/edit/info.vue:207
+#: src/dialog/photo/edit/info.vue:214
 msgid "Checked"
 msgstr "Zkontrolováno"
 
@@ -614,7 +613,7 @@ msgstr "Přispěvatel"
 msgid "Converting"
 msgstr "Převádí se"
 
-#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/info.vue:61
+#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:58 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
 msgstr "Zkopírováno do schránky"
@@ -640,7 +639,7 @@ msgstr "Vytvořit účet"
 msgid "Create album"
 msgstr "Vytvořit album"
 
-#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:183
+#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:190
 msgid "Created"
 msgstr "Vytvořeno"
 
@@ -911,7 +910,7 @@ msgstr "Upravit účet"
 msgid "Edit Photo"
 msgstr "Upravit fotografii"
 
-#: src/dialog/photo/edit/info.vue:199
+#: src/dialog/photo/edit/info.vue:206
 msgid "Edited"
 msgstr "Upraveno"
 
@@ -936,7 +935,7 @@ msgstr "Chyba"
 msgid "Errors"
 msgstr "Chyby"
 
-#: src/dialog/photo/edit/info.vue:77
+#: src/dialog/photo/edit/info.vue:74
 msgid "Estimate"
 msgstr "Odhad"
 
@@ -989,11 +988,11 @@ msgstr "Clonové číslo"
 msgid "Face"
 msgstr "Tvář"
 
-#: src/dialog/photo/edit/info.vue:88
+#: src/dialog/photo/edit/info.vue:98
 msgid "Faces"
 msgstr "Tváře"
 
-#: src/dialog/photo/edit/files.vue:61 src/dialog/photo/edit/info.vue:63
+#: src/dialog/photo/edit/files.vue:61 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
 msgstr "Kopírování do schránky selhalo"
@@ -1014,7 +1013,7 @@ msgstr "Rodné jméno"
 msgid "Fast"
 msgstr "Rychlé"
 
-#: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:109
+#: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:118
 msgid "Favorite"
 msgstr "Oblíbené"
 
@@ -1079,7 +1078,7 @@ msgstr "Soubory s pořadovými názvy jako 'IMG_1234 (2)' a 'IMG_1234 (3)' nále
 msgid "Focal Length"
 msgstr "Ohnisková vzdálenost"
 
-#: src/dialog/photo/edit/info.vue:26 src/dialog/service/edit.vue:287
+#: src/dialog/photo/edit/info.vue:30 src/dialog/service/edit.vue:287
 #: src/dialog/service/edit.vue:293 src/dialog/share/upload.vue:141
 #: src/model/folder.js:199 src/page/library/browse.vue:72
 msgid "Folder"
@@ -1190,7 +1189,7 @@ msgstr "Jak můžeme pomoci?"
 msgid "image"
 msgstr "snímek"
 
-#: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
+#: src/dialog/photo/edit/info.vue:78 src/model/file.js:217
 #: src/options/options.js:354
 msgid "Image"
 msgstr "Snímek"
@@ -1359,7 +1358,7 @@ msgstr "Poslední přihlášení"
 msgid "Last Sync"
 msgstr "Poslední synchronizace"
 
-#: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:151
+#: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:160
 msgid "Latitude"
 msgstr "Zeměpisná šířka"
 
@@ -1442,7 +1441,7 @@ msgstr "lokalita"
 
 #: src/page/settings/account.vue:813 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
-#: src/dialog/photo/edit/info.vue:83 src/page/albums.vue:88
+#: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:88
 #: src/page/settings/account.vue:667
 msgid "Location"
 msgstr "Lokalita"
@@ -1466,7 +1465,7 @@ msgstr "Odhlásit se"
 msgid "Logs"
 msgstr "Logy"
 
-#: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:159
+#: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:168
 msgid "Longitude"
 msgstr "Zeměpisná délka"
 
@@ -1527,7 +1526,7 @@ msgstr "Sloučit %{a} s %{b}?"
 msgid "Message sent"
 msgstr "Zpráva odeslána"
 
-#: src/dialog/photo/edit/info.vue:73
+#: src/dialog/photo/edit/info.vue:70
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -1573,7 +1572,7 @@ msgstr "Musí mít alespoň %{n} znaků."
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:234
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
-#: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/info.vue:79
+#: src/dialog/photo/edit/info.vue:38 src/dialog/photo/edit/info.vue:76
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
@@ -1635,7 +1634,7 @@ msgstr "Nenalezeny žádné osoby"
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
-#: src/page/places.vue:376 src/page/places.vue:456
+#: src/page/places.vue:400 src/page/places.vue:487
 msgid "No pictures found"
 msgstr "Nenalezeny žádné obrázky"
 
@@ -1766,7 +1765,7 @@ msgid "Original file names will be stored and indexed."
 msgstr "Původní názvy souborů budou uloženy a indexovány."
 
 #: src/dialog/photo/edit/files.vue:80 src/dialog/photo/edit/files.vue:77
-#: src/dialog/photo/edit/info.vue:38
+#: src/dialog/photo/edit/info.vue:46
 msgid "Original Name"
 msgstr "Název originálu"
 
@@ -1788,7 +1787,7 @@ msgstr "Naším posláním je poskytovat uživatelsky nejpřívětivější ře�
 msgid "Outdoor"
 msgstr "Zeměpisně"
 
-#: src/dialog/photo/edit/info.vue:133
+#: src/dialog/photo/edit/info.vue:142
 msgid "Panorama"
 msgstr "Panorama"
 
@@ -1802,7 +1801,7 @@ msgstr "Panoramata"
 msgid "Password"
 msgstr "Heslo"
 
-#: src/dialog/account/password.vue:52
+#: src/dialog/account/password.vue:57
 msgid "Password changed"
 msgstr "Heslo změněno"
 
@@ -1857,7 +1856,7 @@ msgstr "Fotografie"
 msgid "Pink"
 msgstr "Růžová"
 
-#: src/dialog/photo/edit/info.vue:141
+#: src/dialog/photo/edit/info.vue:150
 msgid "Place"
 msgstr "Místo"
 
@@ -1938,7 +1937,7 @@ msgstr "Primární"
 
 #: src/app/routes.js:249 src/component/navigation.vue:346
 #: src/component/navigation.vue:1330 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:117 src/page/settings/general.vue:209
+#: src/dialog/photo/edit/info.vue:126 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "Soukromé"
 
@@ -1962,7 +1961,7 @@ msgstr "Fialová"
 msgid "Quality Filter"
 msgstr "Filtr kvality"
 
-#: src/dialog/photo/edit/info.vue:74
+#: src/dialog/photo/edit/info.vue:84
 msgid "Quality Score"
 msgstr "Hodnocení kvality"
 
@@ -2070,7 +2069,7 @@ msgstr "Požadavek selhal - neplatná odpověď"
 msgid "Required"
 msgstr "Vyžadováno"
 
-#: src/dialog/photo/edit/info.vue:82
+#: src/dialog/photo/edit/info.vue:92
 msgid "Resolution"
 msgstr "Rozlišení"
 
@@ -2105,13 +2104,13 @@ msgstr "Role"
 msgid "Satellite"
 msgstr "Satelitní"
 
-#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:42
+#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
 msgstr "Uložit"
 
-#: src/dialog/photo/edit/info.vue:125
+#: src/dialog/photo/edit/info.vue:134
 msgid "Scan"
 msgstr "Sken"
 
@@ -2300,7 +2299,7 @@ msgstr "Stohovat soubory, které sdílí stejný jedinečný snímek nebo identi
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Stohovat snímky pořízené ve stejnou chvíli a ve stejné lokalitě na základě jejich metadat."
 
-#: src/dialog/photo/edit/info.vue:101
+#: src/dialog/photo/edit/info.vue:110
 msgid "Stackable"
 msgstr "Stohovatelné"
 
@@ -2375,7 +2374,7 @@ msgid "Sync raw and video files"
 msgstr "Synchronizovat raw a video soubory"
 
 #: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
-#: src/dialog/photo/edit/info.vue:56
+#: src/dialog/photo/edit/info.vue:66
 msgid "Taken"
 msgstr "Pořízeno"
 
@@ -2444,7 +2443,7 @@ msgid "Title"
 msgstr "Titulek"
 
 #: src/page/settings/account.vue:114 src/component/photo/list.vue:136
-#: src/dialog/photo/edit/info.vue:46
+#: src/dialog/photo/edit/info.vue:54
 msgid "Title"
 msgstr "Titulek"
 
@@ -2490,7 +2489,7 @@ msgid "Try again using other filters or keywords."
 msgstr "Zkuste to znovu použitím jiného filtru nebo klíčového slova."
 
 #: src/dialog/photo/edit/files.vue:98 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:45 src/dialog/photo/edit/info.vue:16
+#: src/dialog/photo/edit/files.vue:45 src/dialog/photo/edit/info.vue:20
 #: src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "Typ"
@@ -2507,7 +2506,7 @@ msgstr "Vrátit"
 msgid "Unique ID"
 msgstr "Jedinečné ID"
 
-#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:30
+#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:28
 #: src/model/album.js:179 src/model/photo.js:796 src/model/photo.js:817
 #: src/model/photo.js:840 src/model/photo.js:858 src/model/photo.js:987
 #: src/model/photo.js:1046 src/model/photo.js:1060 src/model/user.js:151
@@ -2533,7 +2532,7 @@ msgid "Unstack"
 msgstr "Nestohovat"
 
 #: src/dialog/photo/edit/files.vue:222 src/dialog/photo/edit/files.vue:219
-#: src/dialog/photo/edit/info.vue:191
+#: src/dialog/photo/edit/info.vue:198
 msgid "Updated"
 msgstr "Aktualizováno"
 

@@ -4,8 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
@@ -91,7 +90,7 @@ msgstr "حساب کاربری حذف شد"
 msgid "Accounts"
 msgstr "حساب ها"
 
-#: src/dialog/photo/edit/info.vue:175
+#: src/dialog/photo/edit/info.vue:182
 msgid "Accuracy"
 msgstr "دقت"
 
@@ -200,7 +199,7 @@ msgstr "نام آلبوم"
 #: src/app/routes.js:175 src/component/album/toolbar.vue:58
 #: src/component/navigation.vue:152 src/component/navigation.vue:162
 #: src/component/navigation.vue:569 src/component/navigation.vue:4
-#: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:66
+#: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:76
 msgid "Albums"
 msgstr "آلبوم ها"
 
@@ -265,7 +264,7 @@ msgstr "همه سالها"
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "از طرف دیگر، می‌توانید فایل‌ها را مستقیماً در سرورهای WebDAV مانند Nextcloud آپلود کنید."
 
-#: src/dialog/photo/edit/info.vue:167
+#: src/dialog/photo/edit/info.vue:176
 msgid "Altitude"
 msgstr "ارتفاع"
 
@@ -315,7 +314,7 @@ msgstr "برنامه ها و دستگاه ها"
 msgid "Archive"
 msgstr "بایگانی"
 
-#: src/dialog/photo/edit/info.vue:215
+#: src/dialog/photo/edit/info.vue:222
 msgid "Archived"
 msgstr "بایگانی شده"
 
@@ -445,7 +444,7 @@ msgstr "تقویم"
 msgid "Camera"
 msgstr "دوربین"
 
-#: src/dialog/photo/edit/info.vue:94
+#: src/dialog/photo/edit/info.vue:104
 msgid "Camera Serial"
 msgstr "سریال دوربین"
 
@@ -464,7 +463,7 @@ msgstr "موارد بیشتری را انتخاب نمی کند"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:74 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/password.vue:39
+#: src/page/connect.vue:44 src/dialog/account/password.vue:38
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
 #: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
@@ -516,7 +515,7 @@ msgstr "تغییر پرچم خصوصی"
 msgid "Changes successfully saved"
 msgstr "تغییرات با موفقیت ذخیره شد"
 
-#: src/dialog/photo/edit/info.vue:207
+#: src/dialog/photo/edit/info.vue:214
 msgid "Checked"
 msgstr "بررسی شده"
 
@@ -614,7 +613,7 @@ msgstr "مشارکت کننده"
 msgid "Converting"
 msgstr "تبدیل"
 
-#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/info.vue:61
+#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:58 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
 msgstr "کپی شده در کلیپ بورد"
@@ -640,7 +639,7 @@ msgstr "ایجاد حساب کاربری"
 msgid "Create album"
 msgstr "ایجاد آلبوم"
 
-#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:183
+#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:190
 msgid "Created"
 msgstr "ایجاد شده"
 
@@ -911,7 +910,7 @@ msgstr "ویرایش حساب کاربری"
 msgid "Edit Photo"
 msgstr "ویرایش تصویر"
 
-#: src/dialog/photo/edit/info.vue:199
+#: src/dialog/photo/edit/info.vue:206
 msgid "Edited"
 msgstr "ویرایش شده"
 
@@ -936,7 +935,7 @@ msgstr "خطا"
 msgid "Errors"
 msgstr "خطا ها"
 
-#: src/dialog/photo/edit/info.vue:77
+#: src/dialog/photo/edit/info.vue:74
 msgid "Estimate"
 msgstr "تخمین زدن"
 
@@ -989,11 +988,11 @@ msgstr "شماره F"
 msgid "Face"
 msgstr "صورت"
 
-#: src/dialog/photo/edit/info.vue:88
+#: src/dialog/photo/edit/info.vue:98
 msgid "Faces"
 msgstr "صورت ها"
 
-#: src/dialog/photo/edit/files.vue:61 src/dialog/photo/edit/info.vue:63
+#: src/dialog/photo/edit/files.vue:61 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
 msgstr "کپی در کلیپ بورد ناموفق بود"
@@ -1014,7 +1013,7 @@ msgstr "خانواده"
 msgid "Fast"
 msgstr "سریع"
 
-#: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:109
+#: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:118
 msgid "Favorite"
 msgstr "موردعلاقه"
 
@@ -1079,7 +1078,7 @@ msgstr "فایل‌هایی با نام‌های متوالی مانند «IMG_1
 msgid "Focal Length"
 msgstr "فاصله کانونی"
 
-#: src/dialog/photo/edit/info.vue:26 src/dialog/service/edit.vue:287
+#: src/dialog/photo/edit/info.vue:30 src/dialog/service/edit.vue:287
 #: src/dialog/service/edit.vue:293 src/dialog/share/upload.vue:141
 #: src/model/folder.js:199 src/page/library/browse.vue:72
 msgid "Folder"
@@ -1190,7 +1189,7 @@ msgstr "چطور میتوانیم کمک کنیم؟"
 msgid "image"
 msgstr "تصویر"
 
-#: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
+#: src/dialog/photo/edit/info.vue:78 src/model/file.js:217
 #: src/options/options.js:354
 msgid "Image"
 msgstr "تصویر"
@@ -1359,7 +1358,7 @@ msgstr "آخرین ورود"
 msgid "Last Sync"
 msgstr "آخرین همگام سازی"
 
-#: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:151
+#: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:160
 msgid "Latitude"
 msgstr "عرض جغرافیایی"
 
@@ -1442,7 +1441,7 @@ msgstr "محل"
 
 #: src/page/settings/account.vue:813 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
-#: src/dialog/photo/edit/info.vue:83 src/page/albums.vue:88
+#: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:88
 #: src/page/settings/account.vue:667
 msgid "Location"
 msgstr "محل"
@@ -1466,7 +1465,7 @@ msgstr "خارج شدن"
 msgid "Logs"
 msgstr "گزارش ها"
 
-#: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:159
+#: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:168
 msgid "Longitude"
 msgstr "طول جغرافیایی"
 
@@ -1527,7 +1526,7 @@ msgstr "%{a} با %{b} ادغام شود؟"
 msgid "Message sent"
 msgstr "پیغام فرستاده شد"
 
-#: src/dialog/photo/edit/info.vue:73
+#: src/dialog/photo/edit/info.vue:70
 msgid "Metadata"
 msgstr "فراداده"
 
@@ -1573,7 +1572,7 @@ msgstr "باید حداقل %{n} حرف داشته باشد."
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:234
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
-#: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/info.vue:79
+#: src/dialog/photo/edit/info.vue:38 src/dialog/photo/edit/info.vue:76
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
@@ -1635,7 +1634,7 @@ msgstr "هیچ فردی پیدا نشد"
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
-#: src/page/places.vue:376 src/page/places.vue:456
+#: src/page/places.vue:400 src/page/places.vue:487
 msgid "No pictures found"
 msgstr "هیچ تصویری پیدا نشد"
 
@@ -1766,7 +1765,7 @@ msgid "Original file names will be stored and indexed."
 msgstr "نام فایل های اصلی ذخیره و نمایه می شود."
 
 #: src/dialog/photo/edit/files.vue:80 src/dialog/photo/edit/files.vue:77
-#: src/dialog/photo/edit/info.vue:38
+#: src/dialog/photo/edit/info.vue:46
 msgid "Original Name"
 msgstr "اسم اصلی"
 
@@ -1788,7 +1787,7 @@ msgstr "ماموریت ما ارائه کاربرپسندترین راه حل ب
 msgid "Outdoor"
 msgstr "بیرون"
 
-#: src/dialog/photo/edit/info.vue:133
+#: src/dialog/photo/edit/info.vue:142
 msgid "Panorama"
 msgstr "پانوراما"
 
@@ -1802,7 +1801,7 @@ msgstr "پانوراما"
 msgid "Password"
 msgstr "رمزعبور"
 
-#: src/dialog/account/password.vue:52
+#: src/dialog/account/password.vue:57
 msgid "Password changed"
 msgstr "رمز عبور تغییر کرد"
 
@@ -1857,7 +1856,7 @@ msgstr "تصاویر"
 msgid "Pink"
 msgstr "صورتی"
 
-#: src/dialog/photo/edit/info.vue:141
+#: src/dialog/photo/edit/info.vue:150
 msgid "Place"
 msgstr "مکان"
 
@@ -1938,7 +1937,7 @@ msgstr "اولیه"
 
 #: src/app/routes.js:249 src/component/navigation.vue:346
 #: src/component/navigation.vue:1330 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:117 src/page/settings/general.vue:209
+#: src/dialog/photo/edit/info.vue:126 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "خصوصی"
 
@@ -1962,7 +1961,7 @@ msgstr "بنفش"
 msgid "Quality Filter"
 msgstr "فیلتر کیفیت"
 
-#: src/dialog/photo/edit/info.vue:74
+#: src/dialog/photo/edit/info.vue:84
 msgid "Quality Score"
 msgstr "امتیاز کیفیت"
 
@@ -2070,7 +2069,7 @@ msgstr "درخواست ناموفق - پاسخ نامعتبر است"
 msgid "Required"
 msgstr "اجباری"
 
-#: src/dialog/photo/edit/info.vue:82
+#: src/dialog/photo/edit/info.vue:92
 msgid "Resolution"
 msgstr "رزولوشن"
 
@@ -2105,13 +2104,13 @@ msgstr "نقش"
 msgid "Satellite"
 msgstr "ماهواره"
 
-#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:42
+#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
 msgstr "ذخیره"
 
-#: src/dialog/photo/edit/info.vue:125
+#: src/dialog/photo/edit/info.vue:134
 msgid "Scan"
 msgstr "اسکن"
 
@@ -2300,7 +2299,7 @@ msgstr "پشته فایل هایی که همان تصویر منحصر به فر
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "عکس‌هایی را که دقیقاً در همان زمان و مکان گرفته شده‌اند، بر اساس ابرداده‌هایشان روی هم قرار دهید."
 
-#: src/dialog/photo/edit/info.vue:101
+#: src/dialog/photo/edit/info.vue:110
 msgid "Stackable"
 msgstr "قابل انباشته شدن"
 
@@ -2375,7 +2374,7 @@ msgid "Sync raw and video files"
 msgstr "همگام سازی فایل های خام و ویدیویی"
 
 #: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
-#: src/dialog/photo/edit/info.vue:56
+#: src/dialog/photo/edit/info.vue:66
 msgid "Taken"
 msgstr "گرفته شده"
 
@@ -2446,7 +2445,7 @@ msgid "Title"
 msgstr "عنوان"
 
 #: src/page/settings/account.vue:114 src/component/photo/list.vue:136
-#: src/dialog/photo/edit/info.vue:46
+#: src/dialog/photo/edit/info.vue:54
 msgid "Title"
 msgstr "عنوان"
 
@@ -2492,7 +2491,7 @@ msgid "Try again using other filters or keywords."
 msgstr "دوباره با استفاده از فیلترها یا کلمات کلیدی دیگر امتحان کنید."
 
 #: src/dialog/photo/edit/files.vue:98 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:45 src/dialog/photo/edit/info.vue:16
+#: src/dialog/photo/edit/files.vue:45 src/dialog/photo/edit/info.vue:20
 #: src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "نوع"
@@ -2509,7 +2508,7 @@ msgstr "باطل کردن"
 msgid "Unique ID"
 msgstr "شناسه منحصربفرد"
 
-#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:30
+#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:28
 #: src/model/album.js:179 src/model/photo.js:796 src/model/photo.js:817
 #: src/model/photo.js:840 src/model/photo.js:858 src/model/photo.js:987
 #: src/model/photo.js:1046 src/model/photo.js:1060 src/model/user.js:151
@@ -2535,7 +2534,7 @@ msgid "Unstack"
 msgstr "باز کردن پشته"
 
 #: src/dialog/photo/edit/files.vue:222 src/dialog/photo/edit/files.vue:219
-#: src/dialog/photo/edit/info.vue:191
+#: src/dialog/photo/edit/info.vue:198
 msgid "Updated"
 msgstr "به روز شد"
 
