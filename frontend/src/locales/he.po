@@ -4,13 +4,16 @@ msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
-"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
+"Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
+"frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && n % 10 == 0) ? 2 : 3));\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Weblate 5.3.1\n"
 "Generated-By: easygettext\n"
 
@@ -173,8 +176,12 @@ msgid "After one year"
 msgstr "אחרי שנה"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "לאחר בחירת תמונות מתוצאות החיפוש, אפשר להוסיף אותן לאלבום באמצעות תפריט ההקשר."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"לאחר בחירת תמונות מתוצאות החיפוש, אפשר להוסיף אותן לאלבום באמצעות תפריט "
+"ההקשר."
 
 #: src/options/options.js:442
 msgid "After two months"
@@ -261,7 +268,9 @@ msgid "All Years"
 msgstr "כל השנים"
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
 msgstr "לחלופין, ניתן להעלות קבצים ישירות דרך שרתי WebDAV כמו Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:176
@@ -365,8 +374,11 @@ msgid "Authentication"
 msgstr "אימות"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "צור אוטומטית תמונות ממוזערות עבור קבצים שלא ניתן לאינדקס או להציג בדרך אחרת."
+msgid ""
+"Automatically create thumbnails for files that cannot otherwise be indexed "
+"or viewed."
+msgstr ""
+"צור אוטומטית תמונות ממוזערות עבור קבצים שלא ניתן לאינדקס או להציג בדרך אחרת."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -378,13 +390,19 @@ msgstr "תיקיית בסיס"
 
 #: src/page/about/about.vue:26 src/page/about/about.vue:3
 #: src/page/connect.vue:74
-msgid "Become a member today, support our mission and enjoy our member benefits!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
 msgstr "הפוך לחבר עוד היום, תמכו במשימתנו ותיהנו מהטבות החברים שלנו!"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:5
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "בהיותנו 100% sממומנים עצמאיים ועצמאיים, אנו יכולים להבטיח לך שלעולם לא נמכור את הנתונים שלך ושתמיד נהיה שקופים לגבי התוכנה והשירותים שלנו."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"בהיותנו 100% sממומנים עצמאיים ועצמאיים, אנו יכולים להבטיח לך שלעולם לא נמכור "
+"את הנתונים שלך ושתמיד נהיה שקופים לגבי התוכנה והשירותים שלנו."
 
 #: src/dialog/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -431,8 +449,12 @@ msgid "Busy, please wait…"
 msgstr "עסוק, בבקשה המתן…"
 
 #: src/page/connect.vue:107
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "על ידי שימוש בתוכנה ובשירותים שאנו מספקים, אתה מסכים לתנאי השירות, מדיניות הפרטיות וקוד ההתנהגות שלנו."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"על ידי שימוש בתוכנה ובשירותים שאנו מספקים, אתה מסכים לתנאי השירות, מדיניות "
+"הפרטיות וקוד ההתנהגות שלנו."
 
 #: src/app/routes.js:188 src/component/navigation.vue:258
 #: src/component/navigation.vue:1020
@@ -840,7 +862,9 @@ msgid "Download"
 msgstr "הורד"
 
 #: src/page/settings/general.vue:648
-msgid "Download only original media files, without any automatically generated files."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
 msgstr "הורד רק קבצי מדיה מקוריים, ללא קבצים שנוצרו אוטומטית."
 
 #: src/dialog/service/edit.vue:338
@@ -865,8 +889,12 @@ msgid "Downscaling Filter"
 msgstr "פילטר (אלגוריתם) שנמוך"
 
 #: src/page/about/feedback.vue:16
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "בשל כמות המיילים הגבוהה שאנו מקבלים, ייתכן שהצוות שלנו לא יוכל לחזור אליך באופן מיידי."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"בשל כמות המיילים הגבוהה שאנו מקבלים, ייתכן שהצוות שלנו לא יוכל לחזור אליך "
+"באופן מיידי."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -881,8 +909,12 @@ msgid "Dynamic Previews"
 msgstr "תצוגות מקדימות דינמיות"
 
 #: src/page/settings/advanced.vue:305
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "עיבוד דינמי דורש מעבד רב עצמה ואינו מומלץ לשרתי בית קטנים יותר, או להתקני NAS."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"עיבוד דינמי דורש מעבד רב עצמה ואינו מומלץ לשרתי בית קטנים יותר, או להתקני "
+"NAS."
 
 #: src/page/settings/advanced.vue:347
 msgid "Dynamic Size Limit: %{n}px"
@@ -952,8 +984,11 @@ msgid "Every two days"
 msgstr "כל יומיים"
 
 #: src/page/settings/general.vue:210
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "אל תכלול תוכן המסומן כפרטי מתוצאות חיפוש, אלבומים משותפים, תוויות ומקומות."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"אל תכלול תוכן המסומן כפרטי מתוצאות חיפוש, אלבומים משותפים, תוויות ומקומות."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
@@ -1071,8 +1106,11 @@ msgid "Files"
 msgstr "קבצים"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "קבצים עם שמות עוקבים כמו 'IMG_1234 (2)' ו- 'IMG_1234 (3)' שייכים לאותה תמונה."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"קבצים עם שמות עוקבים כמו 'IMG_1234 (2)' ו- 'IMG_1234 (3)' שייכים לאותה תמונה."
 
 #: src/dialog/photo/edit/details.vue:487
 msgid "Focal Length"
@@ -1208,7 +1246,9 @@ msgid "Import failed"
 msgstr "הייבוא נכשל"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
 msgstr "קבצים מיובאים ימוינו לפי תאריך ויקבלו שם ייחודי כדי למנוע כפילויות."
 
 #: src/page/settings/general.vue:276
@@ -1233,8 +1273,11 @@ msgstr "ב"
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:1 src/page/labels.vue:35
 #: src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "אם חסרות תמונות שאתה מצפה, סרוק מחדש את הספרייה שלך והמתן עד להשלמת האינדקס."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"אם חסרות תמונות שאתה מצפה, סרוק מחדש את הספרייה שלך והמתן עד להשלמת האינדקס."
 
 #: src/page/settings/general.vue:669
 msgid "Include RAW image files when downloading stacks and archives."
@@ -1447,8 +1490,12 @@ msgid "Location"
 msgstr "מיקום"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "הודעות יומן מופיעות כאן בכל פעם ש- PhotoPrism נתקל בקבצים שבורים, או שיש בעיות פוטנציאליות אחרות."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"הודעות יומן מופיעות כאן בכל פעם ש- PhotoPrism נתקל בקבצים שבורים, או שיש "
+"בעיות פוטנציאליות אחרות."
 
 #: src/component/navigation.vue:475 src/component/navigation.vue:1778
 #: src/component/navigation.vue:2092
@@ -1660,7 +1707,9 @@ msgid "No video selected"
 msgstr "לא נבחר וידאו"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
 msgstr "אין אזהרות או שגיאות המכילות מילת מפתח זו. שים לב שהחיפוש תלוי רישיות."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
@@ -1670,8 +1719,12 @@ msgstr "אין אזהרות או שגיאות המכילות מילת מפתח �
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "תמונות שאינן נראות צילום או באיכות נמוכה דורשות בדיקה לפני שהן מופיעות בתוצאות החיפוש."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"תמונות שאינן נראות צילום או באיכות נמוכה דורשות בדיקה לפני שהן מופיעות "
+"בתוצאות החיפוש."
 
 #: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
@@ -1679,7 +1732,8 @@ msgid "None"
 msgstr "ללא"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
 msgstr "שים לב שאתה יכול לנהל ידנית את תיקיית המקור והייבוא הוא אופציונלי."
 
 #: src/page/settings/services.vue:38
@@ -1687,8 +1741,12 @@ msgid "Note:"
 msgstr "הערה:"
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "הערה: רק שרתי WebDAV, כמו Nextcloud או PhotoPrism, ניתנים להגדרה כשירות מרוחק לצורך גיבוי והעלאת קבצים."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"הערה: רק שרתי WebDAV, כמו Nextcloud או PhotoPrism, ניתנים להגדרה כשירות "
+"מרוחק לצורך גיבוי והעלאת קבצים."
 
 #: src/dialog/photo/edit/details.vue:659
 msgid "Notes"
@@ -1780,8 +1838,12 @@ msgid "Other"
 msgstr "אחר"
 
 #: src/page/about/about.vue:17
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "המשימה שלנו היא לספק את הפתרון הכי ידידותי למשתמש ולפרטיות כדי לשמור על התמונות שלך מאורגנות ונגישות."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
+msgstr ""
+"המשימה שלנו היא לספק את הפתרון הכי ידידותי למשתמש ולפרטיות כדי לשמור על "
+"התמונות שלך מאורגנות ונגישות."
 
 #: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
@@ -1886,7 +1948,9 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "נא לא להעלות תמונות המכילות תוכן פוגעני."
 
 #: src/dialog/account/password.vue:19
-msgid "Please note that changing your password will log you out on other devices and browsers."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
 msgstr "שים לב ששינוי הסיסמה שלך יגרום לך להתנתק ממכשירים ודפדפנים אחרים."
 
 #: src/page/connect.vue:56 src/page/connect.vue:53
@@ -1984,7 +2048,8 @@ msgstr "גלם"
 
 #: src/page/library/index.vue:118
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "צור אינדקס מחודש של כל קבצי המקור, כולל קבצים שכבר הוספו לאינדקס ולא השתנו."
+msgstr ""
+"צור אינדקס מחודש של כל קבצי המקור, כולל קבצים שכבר הוספו לאינדקס ולא השתנו."
 
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
@@ -2051,8 +2116,12 @@ msgid "Remove from album"
 msgstr "הסר מהאלבום"
 
 #: src/page/library/import.vue:121
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "הסר קבצים מיובאים כדי לחסוך שטח אחסון. סוגי קבצים שאינם נתמכים לעולם לא יימחקו, ויישארו במיקומם הנוכחי."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"הסר קבצים מיובאים כדי לחסוך שטח אחסון. סוגי קבצים שאינם נתמכים לעולם לא "
+"יימחקו, ויישארו במיקומם הנוכחי."
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
@@ -2296,8 +2365,11 @@ msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "איחוד קבצים המשתפים את אותה התמונה או מזהה מופע ייחודי."
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "איחוד תמונות שצולמו באותו זמן ומיקום מדויק, בהתבסס על המטא-נתונים שלהן."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"איחוד תמונות שצולמו באותו זמן ומיקום מדויק, בהתבסס על המטא-נתונים שלהן."
 
 #: src/dialog/photo/edit/info.vue:110
 msgid "Stackable"
@@ -2308,8 +2380,12 @@ msgid "Stacks"
 msgstr "איחודים"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "איחוד קבצים המכילים תוכן תמונה זהה, אך עם הבדלים באיכות, בפורמט, בגודל או בצבע."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"איחוד קבצים המכילים תוכן תמונה זהה, אך עם הבדלים באיכות, בפורמט, בגודל או "
+"בצבע."
 
 #: src/page/library/index.vue:35
 msgid "Start"
@@ -2357,7 +2433,8 @@ msgid "Super Admin"
 msgstr "סופר אדמין"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr "תמיכה בשירותים נוספים, כמו Google Drive, תתווסף בהמשך."
 
 #: src/component/navigation.vue:487 src/component/navigation.vue:1818
@@ -2391,15 +2468,21 @@ msgid "Thank You for Your Support!"
 msgstr "תודה על תמיכתך!"
 
 #: src/page/about/about.vue:18
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "זו הסיבה ש-PhotoPrism נבנתה מהיסוד לרוץ בכל מקום שתזדקק לו, מבלי להתפשר על חופש, פרטיות או פונקציונליות."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
+msgstr ""
+"זו הסיבה ש-PhotoPrism נבנתה מהיסוד לרוץ בכל מקום שתזדקק לו, מבלי להתפשר על "
+"חופש, פרטיות או פונקציונליות."
 
 #: src/page/library/index.vue:40
 msgid "The index currently contains %{n} hidden files."
 msgstr "האינדקס מכיל כרגע %{n} קבצים מוסתרים."
 
 #: src/page/library/index.vue:41
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
 msgstr "ייתכן שהפורמט שלהם לא נתמך, עדיין לא הומרו ל-JPEG או שיש כפילויות."
 
 #: src/page/settings/general.vue:71
@@ -2408,13 +2491,21 @@ msgstr "ערכת נושא"
 
 #: src/page/settings/services.vue:42
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "זה מגדיר את תיקיית המקור ככונן רשת ומאפשר לך לפתוח, לערוך ולמחוק קבצים מהמחשב או מהסמארטפון כל עוד מחוברים לרשת המקומית."
+msgstr ""
+"זה מגדיר את תיקיית המקור ככונן רשת ומאפשר לך לפתוח, לערוך ולמחוק קבצים "
+"מהמחשב או מהסמארטפון כל עוד מחוברים לרשת המקומית."
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "זה מגדיר את תיקיית המקור ככונן רשת ומאפשר לך לפתוח, לערוך ולמחוק קבצים מהמחשב או מהסמארטפון כל עוד מחוברים לרשת המקומית."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"זה מגדיר את תיקיית המקור ככונן רשת ומאפשר לך לפתוח, לערוך ולמחוק קבצים "
+"מהמחשב או מהסמארטפון כל עוד מחוברים לרשת המקומית."
 
 #: src/page/settings/advanced.vue:252
 msgid "Thumbnail Generation"
@@ -2456,8 +2547,12 @@ msgid "Title too long"
 msgstr "הכותרת ארוכה מדי"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי להירשם לאתר שלנו:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
+msgstr ""
+"כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי להירשם לאתר "
+"שלנו:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:95
@@ -2724,9 +2819,12 @@ msgstr "שירותי WebDAV יכולים להתחבר ל-PhotoPrism באמצעו
 
 #: src/page/settings/services.vue:39
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "שירותי WebDAV, כמו סייר Windows של מיקרוסופט או Finder של אפל, יכולים להתחבר ישירות ל-PhotoPrism."
+msgstr ""
+"שירותי WebDAV, כמו סייר Windows של מיקרוסופט או Finder של אפל, יכולים להתחבר "
+"ישירות ל-PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2767,8 +2865,12 @@ msgstr "כן"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "אתה מוזמן לפנות אלינו בכתובת membership@photoprism.app לשאלות בנוגע לחברות שלך."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
+msgstr ""
+"אתה מוזמן לפנות אלינו בכתובת membership@photoprism.app לשאלות בנוגע לחברות "
+"שלך."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2798,12 +2900,20 @@ msgstr "החשבון שלך חובר בהצלחה."
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
 #: src/page/about/about.vue:49 src/page/about/about.vue:4
 #: src/page/connect.vue:75
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "התמיכה המתמשכת שלך עוזרת לנו לספק עדכונים שוטפים ולהישאר עצמאיים, כדי שנוכל למלא את המשימה שלנו ולהגן על פרטיותך."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"התמיכה המתמשכת שלך עוזרת לנו לספק עדכונים שוטפים ולהישאר עצמאיים, כדי שנוכל "
+"למלא את המשימה שלנו ולהגן על פרטיותך."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אלבומים של רגעים מיוחדים, טיולים ומקומות באופן אוטומטי."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"הספרייה שלך מנותחת באופן רציף ליצירת אלבומים של רגעים מיוחדים, טיולים "
+"ומקומות באופן אוטומטי."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
@@ -2812,7 +2922,9 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Basic"
 #~ msgstr "בסיסי"
 
-#~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
+#~ msgid ""
+#~ "Automatically create JPEGs for other file types so that they can be "
+#~ "displayed in a browser."
 #~ msgstr "המר מסוגי קבצים אחרים, כך שניתן יהיה להציג אותם בדפדפן."
 
 #~ msgid "Convert to JPEG"
@@ -2824,8 +2936,12 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "אנא היזהר לא להעלות תוכן פרטי או פוגעני."
 
-#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
-#~ msgstr "אתה מוזמן להעלות קבצים להדגמה ציבורית זו שאתה הבעלים של זכויות היוצרים עליהן."
+#~ msgid ""
+#~ "You are welcome to upload files to this public demo for which you own the "
+#~ "copyright."
+#~ msgstr ""
+#~ "אתה מוזמן להעלות קבצים להדגמה ציבורית זו שאתה הבעלים של זכויות היוצרים "
+#~ "עליהן."
 
 #~ msgid "You may not upload more than %{n} files"
 #~ msgstr "אין להעלות יותר מ-%{n} קבצים"
@@ -2854,23 +2970,40 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Not Found"
 #~ msgstr "לא נמצא"
 
-#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-#~ msgstr "מכיוון שזה עוזר לנו לספק יותר תכונות לציבור, אנו מעודדים את כל המשתמשים לתמוך במשימתנו."
+#~ msgid ""
+#~ "As this helps us provide more features to the public, we encourage all "
+#~ "users to support our mission."
+#~ msgstr ""
+#~ "מכיוון שזה עוזר לנו לספק יותר תכונות לציבור, אנו מעודדים את כל המשתמשים "
+#~ "לתמוך במשימתנו."
 
 #~ msgid "Frequently Asked Questions"
 #~ msgstr "שאלות נפוצות"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-#~ msgstr "הצוות שלנו מחליט על כך באופן שוטף בהתאם למאמץ התמיכה הנדרש, עלויות השרת והרישוי, והאם התכונות נחוצות בדרך כלל על ידי כולם או מתבקשות בעיקר על ידי ארגונים ומשתמשים מתקדמים."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users."
+#~ msgstr ""
+#~ "הצוות שלנו מחליט על כך באופן שוטף בהתאם למאמץ התמיכה הנדרש, עלויות השרת "
+#~ "והרישוי, והאם התכונות נחוצות בדרך כלל על ידי כולם או מתבקשות בעיקר על ידי "
+#~ "ארגונים ומשתמשים מתקדמים."
 
 #~ msgid "What functionality is generally available?"
 #~ msgstr "איזו פונקציונליות זמינה בדרך כלל?"
 
-#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
+#~ msgid ""
+#~ "It is your decision whether you want to sign up to enjoy additional "
+#~ "benefits."
 #~ msgstr "זו החלטה שלך אם אתה רוצה להירשם כדי ליהנות מהטבות נוספות."
 
-#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-#~ msgstr "תרומות מרצון אינן מכסות את העלות של צוות שעובד במשרה מלאה כדי לספק לך עדכונים, תיעוד ותמיכה."
+#~ msgid ""
+#~ "Voluntary donations do not cover the cost of a team working full time to "
+#~ "provide you with updates, documentation, and support."
+#~ msgstr ""
+#~ "תרומות מרצון אינן מכסות את העלות של צוות שעובד במשרה מלאה כדי לספק לך "
+#~ "עדכונים, תיעוד ותמיכה."
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "מדוע תכונות מסוימות זמינות רק לנותני חסות?"
@@ -2881,23 +3014,41 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Proceed"
 #~ msgstr "להמשיך"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-#~ msgstr "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר האינטרנט שלנו:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on "
+#~ "\"Proceed\" to sign up on our website:"
+#~ msgstr ""
+#~ "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר "
+#~ "האינטרנט שלנו:"
 
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "משהו השתבש. האם אתה במצב לא מקוון?"
 
-#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-#~ msgstr "ב-PhotoPrism, אנו מאמינים שכל רגע שנלכד באמצעות תמונה הוא יקר ערך, והמשימה שלנו היא לאפשר לאנשים להוקיר את הרגעים הללו לדורות הבאים."
+#~ msgid ""
+#~ "At PhotoPrism, we believe that every moment captured through a photograph "
+#~ "is precious, and our mission is to enable people to cherish those moments "
+#~ "for generations to come."
+#~ msgstr ""
+#~ "ב-PhotoPrism, אנו מאמינים שכל רגע שנלכד באמצעות תמונה הוא יקר ערך, "
+#~ "והמשימה שלנו היא לאפשר לאנשים להוקיר את הרגעים הללו לדורות הבאים."
 
-#~ msgid "Become a member today to enjoy additional features and support our mission!"
+#~ msgid ""
+#~ "Become a member today to enjoy additional features and support our "
+#~ "mission!"
 #~ msgstr "הפוך לחבר עוד היום כדי ליהנות מתכונות נוספות ולתמוך במשימתנו!"
 
-#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-#~ msgstr "אנא צור איתנו קשר בכתובת hello@photoprism.app אם יש לך שאלות או שאתה זקוק לעזרה."
+#~ msgid ""
+#~ "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr ""
+#~ "אנא צור איתנו קשר בכתובת hello@photoprism.app אם יש לך שאלות או שאתה זקוק "
+#~ "לעזרה."
 
-#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
-#~ msgstr "אל תהסס לפנות אלינו בכתובת membership@photoprism.app לשאלות בנוגע לחברות שלך."
+#~ msgid ""
+#~ "Feel free to contact us at membership@photoprism.app for questions "
+#~ "regarding your membership."
+#~ msgstr ""
+#~ "אל תהסס לפנות אלינו בכתובת membership@photoprism.app לשאלות בנוגע לחברות "
+#~ "שלך."
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "קרתה תקלה נסה שוב"
@@ -2905,14 +3056,26 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "אירעה שגיאה - האם אתה במצב לא מקוון?"
 
-#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-#~ msgstr "לפני הגשת בקשת תמיכה, אנא השתמש ברשימת הבדיקות שלנו לפתרון בעיות כדי לקבוע את הגורם לבעיה שלך."
+#~ msgid ""
+#~ "Before submitting a support request, please use our Troubleshooting "
+#~ "Checklists to determine the cause of your problem."
+#~ msgstr ""
+#~ "לפני הגשת בקשת תמיכה, אנא השתמש ברשימת הבדיקות שלנו לפתרון בעיות כדי "
+#~ "לקבוע את הגורם לבעיה שלך."
 
-#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-#~ msgstr "עיין במאגר הידע לקבלת מידע מפורט על תכונות מוצר, שירותים ומשאבים קשורים ספציפיים."
+#~ msgid ""
+#~ "Browse the Knowledge Base for detailed information on specific product "
+#~ "features, services, and related resources."
+#~ msgstr ""
+#~ "עיין במאגר הידע לקבלת מידע מפורט על תכונות מוצר, שירותים ומשאבים קשורים "
+#~ "ספציפיים."
 
-#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-#~ msgstr "ניתן לאבחן ולפתור בעיות נפוצות במהירות באמצעות רשימות הבדיקה לפתרון בעיות שאנו מספקים."
+#~ msgid ""
+#~ "Common issues can be quickly diagnosed and solved using the "
+#~ "troubleshooting checklists we provide."
+#~ msgstr ""
+#~ "ניתן לאבחן ולפתור בעיות נפוצות במהירות באמצעות רשימות הבדיקה לפתרון בעיות "
+#~ "שאנו מספקים."
 
 #~ msgid "Getting Support"
 #~ msgstr "קבלת תמיכה"
@@ -2932,8 +3095,12 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "or ask in our Community Chat"
 #~ msgstr "או שאל בצ'אט הקהילתי שלנו"
 
-#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-#~ msgstr "המדריך למשתמש שלנו מכסה גם נושאים מתקדמים רבים, כגון הגירה מתמונות Google והגדרות איכות תמונות ממוזערות."
+#~ msgid ""
+#~ "Our User Guide also covers many advanced topics, such as migrating from "
+#~ "Google Photos and thumbnail quality settings."
+#~ msgstr ""
+#~ "המדריך למשתמש שלנו מכסה גם נושאים מתקדמים רבים, כגון הגירה מתמונות Google "
+#~ "והגדרות איכות תמונות ממוזערות."
 
 #~ msgid "post your question in GitHub Discussions"
 #~ msgstr "פרסם את השאלה שלך ב-GitHub Discussions"
@@ -2941,11 +3108,19 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Read the Docs"
 #~ msgstr "קרא את המסמכים"
 
-#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-#~ msgstr "בקר בכתובת docs.photoprism.app/user-guide כדי ללמוד כיצד לסנכרן, לארגן ולשתף את התמונות שלך."
+#~ msgid ""
+#~ "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+#~ "share your pictures."
+#~ msgstr ""
+#~ "בקר בכתובת docs.photoprism.app/user-guide כדי ללמוד כיצד לסנכרן, לארגן "
+#~ "ולשתף את התמונות שלך."
 
-#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-#~ msgstr "אנו נעשה כמיטב יכולתנו לענות על כל השאלות שלך. בתמורה, אנו מבקשים ממך לגבות אותנו ב-Patreon או GitHub Sponsors."
+#~ msgid ""
+#~ "We'll do our best to answer all your questions. In return, we ask you to "
+#~ "back us on Patreon or GitHub Sponsors."
+#~ msgstr ""
+#~ "אנו נעשה כמיטב יכולתנו לענות על כל השאלות שלך. בתמורה, אנו מבקשים ממך "
+#~ "לגבות אותנו ב-Patreon או GitHub Sponsors."
 
 #~ msgid "you are welcome to join us on Reddit"
 #~ msgstr "אתה מוזמן להצטרף אלינו ב-Reddit"
@@ -2998,11 +3173,16 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Connect Customer Account"
 #~ msgstr "חבר חשבון לקוח"
 
-#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-#~ msgstr "הוא עושה שימוש בטכנולוגיות העדכניות ביותר כדי לתייג ולמצוא תמונות באופן אוטומטי מבלי להפריע לך."
+#~ msgid ""
+#~ "It makes use of the latest technologies to tag and find pictures "
+#~ "automatically without getting in your way."
+#~ msgstr ""
+#~ "הוא עושה שימוש בטכנולוגיות העדכניות ביותר כדי לתייג ולמצוא תמונות באופן "
+#~ "אוטומטי מבלי להפריע לך."
 
 #~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-#~ msgstr "PhotoPrism® היא אפליקציית תמונות המופעלת על ידי AI עבור האינטרנט המבוזר."
+#~ msgstr ""
+#~ "PhotoPrism® היא אפליקציית תמונות המופעלת על ידי AI עבור האינטרנט המבוזר."
 
 #~ msgid "Uploader"
 #~ msgstr "מעלה"
@@ -3013,7 +3193,9 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Downloads"
 #~ msgstr "הורדות"
 
-#~ msgid "Download only original media files, without any automatically generated sidecar files."
+#~ msgid ""
+#~ "Download only original media files, without any automatically generated "
+#~ "sidecar files."
 #~ msgstr "הורד רק קובצי מדיה מקוריים, ללא קבצי צד שנוצרו באופן אוטומטי."
 
 #~ msgid "Base Path"
@@ -3046,20 +3228,45 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Don't use RawTherapee to convert RAW files."
 #~ msgstr "אל תשתמש ב- RawTherapee להמרת קבצי RAW."
 
-#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgid ""
+#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
 #~ msgstr "הפוך לנותן חסות היום, תמכו במשימתנו ותיהנו מהטבות החברים שלנו!"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "הצוות שלנו מעריך זאת באופן שוטף, בהתאם למאמץ התמיכה שהתכונות דורשות, העלות לנו, והאם הם נחוצים בדרך כלל על ידי כולם או מתבקשים בעיקר על ידי ארגונים ומשתמשים מתקדמים. מכיוון שהדבר מאפשר לנו לספק תכונות נוספות לציבור, אנו מעודדים את כל המשתמשים לתמוך במשימתנו."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users. As this allows us to make more features available to the "
+#~ "public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "הצוות שלנו מעריך זאת באופן שוטף, בהתאם למאמץ התמיכה שהתכונות דורשות, "
+#~ "העלות לנו, והאם הם נחוצים בדרך כלל על ידי כולם או מתבקשים בעיקר על ידי "
+#~ "ארגונים ומשתמשים מתקדמים. מכיוון שהדבר מאפשר לנו לספק תכונות נוספות "
+#~ "לציבור, אנו מעודדים את כל המשתמשים לתמוך במשימתנו."
 
-#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "PhotoPrism במימון עצמי של 100%. תרומות מרצון אינן מכסות את העלות של צוות שעובד במשרה מלאה כדי לספק לך עדכונים, תיעוד ותמיכה. זו החלטה שלך אם אתה רוצה להירשם כדי ליהנות מהטבות נוספות."
+#~ msgid ""
+#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
+#~ "of a team working full time to provide you with updates, documentation, "
+#~ "and support. It is your decision whether you want to sign up to enjoy "
+#~ "additional benefits."
+#~ msgstr ""
+#~ "PhotoPrism במימון עצמי של 100%. תרומות מרצון אינן מכסות את העלות של צוות "
+#~ "שעובד במשרה מלאה כדי לספק לך עדכונים, תיעוד ותמיכה. זו החלטה שלך אם אתה "
+#~ "רוצה להירשם כדי ליהנות מהטבות נוספות."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "האם תוכנה חינמית לא צריכה להיות ללא עלויות?"
 
-#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-#~ msgstr "חשבו על \"תוכנה חופשית\" כמו על \"חופש דיבור\", לא כמו על \"בירה חופשית\". קרן התוכנה החופשית קוראת לזה לפעמים \"תוכנה חופשית\", בהשאלה את המילה הצרפתית או הספרדית ל\"חינם\" כמו בחופש, כדי להראות שהם לא מתכוונים שהתוכנה בחינם."
+#~ msgid ""
+#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
+#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
+#~ "the French or Spanish word for “free” as in freedom, to show they do not "
+#~ "mean the software is gratis."
+#~ msgstr ""
+#~ "חשבו על \"תוכנה חופשית\" כמו על \"חופש דיבור\", לא כמו על \"בירה "
+#~ "חופשית\". קרן התוכנה החופשית קוראת לזה לפעמים \"תוכנה חופשית\", בהשאלה את "
+#~ "המילה הצרפתית או הספרדית ל\"חינם\" כמו בחופש, כדי להראות שהם לא מתכוונים "
+#~ "שהתוכנה בחינם."
 
 #~ msgid "Moonlight"
 #~ msgstr "אור ירח"
@@ -3070,8 +3277,12 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Sign Up"
 #~ msgstr "הרשם"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר האינטרנט שלנו:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "כדי לשדרג, אתה יכול להזין קוד הפעלה או ללחוץ על \"הירשם\" כדי לשדרג באתר "
+#~ "האינטרנט שלנו:"
 
 #~ msgid "Sign up"
 #~ msgstr "הרשם"
@@ -3079,11 +3290,24 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Compare Features"
 #~ msgstr "השווה תכונות"
 
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "הצוות שלנו מעריך זאת על בסיס מתמשך, בהתאם למאפייני מאמצי התמיכה ואפשרויות התצורה שגרמו או גרמו בעבר, והאם הם נחוצים בדרך כלל על ידי כולם או מתבקשים בעיקר על ידי ארגונים ומשתמשים מתקדמים. מכיוון שהדבר מאפשר לנו להפוך תכונות נוספות לזמינות לציבור, אנו מעודדים את כל המשתמשים לתמוך במשימתנו."
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "הצוות שלנו מעריך זאת על בסיס מתמשך, בהתאם למאפייני מאמצי התמיכה ואפשרויות "
+#~ "התצורה שגרמו או גרמו בעבר, והאם הם נחוצים בדרך כלל על ידי כולם או מתבקשים "
+#~ "בעיקר על ידי ארגונים ומשתמשים מתקדמים. מכיוון שהדבר מאפשר לנו להפוך "
+#~ "תכונות נוספות לזמינות לציבור, אנו מעודדים את כל המשתמשים לתמוך במשימתנו."
 
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "כמו כן, אנא השאר כוכב ב-GitHub אם אתה אוהב את הפרויקט הזה. זה מספק מוטיבציה נוספת להמשיך."
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "כמו כן, אנא השאר כוכב ב-GitHub אם אתה אוהב את הפרויקט הזה. זה מספק "
+#~ "מוטיבציה נוספת להמשיך."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "להיות ספונסר"
@@ -3091,17 +3315,30 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "I'm a sponsor"
 #~ msgstr "אני ספונסר"
 
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "נותני החסות מקבלים גישה לתכונות נוספות, מקבלים תמיכה טכנית ישירה בדוא\"ל ויכולים להצטרף לחדר הצ'אט הפרטי שלנו ב-matrix.org."
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "נותני החסות מקבלים גישה לתכונות נוספות, מקבלים תמיכה טכנית ישירה בדוא\"ל "
+#~ "ויכולים להצטרף לחדר הצ'אט הפרטי שלנו ב-matrix.org."
 
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
 #~ msgstr "זוהי תכונה המוגבלת לגישה מוקדמת כדי לפרגן לספונסרים ולתורמים שלנו."
 
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-#~ msgstr "אנו ניידע אותך כיצד להפעיל את זה כשתרשם כספונסר ב-Patreon או GitHub."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
+#~ msgstr ""
+#~ "אנו ניידע אותך כיצד להפעיל את זה כשתרשם כספונסר ב-Patreon או GitHub."
 
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "התמיכה המתמשכת שלך עוזרת לנו לממן עלויות תפעול, לספק שירותים כמו מפות לוויין ולפתח תכונות חדשות."
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "התמיכה המתמשכת שלך עוזרת לנו לממן עלויות תפעול, לספק שירותים כמו מפות "
+#~ "לוויין ולפתח תכונות חדשות."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -3168,7 +3405,9 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "כשל בייבוא קבצים שהועלו"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
 #~ msgstr "הערה: עדכון הסיסמה לא יבטל את הגישה של משתמשים שכבר אומתו."
 
 #~ msgid "Play"
@@ -3183,8 +3422,12 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "הצג ספרייה בתפריט הניווט."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "מפת הדרכים מראה אילו משימות מתבצעות, אילו טעויות בדיקה ואילו בקשות תכונה ייושמו בהמשך."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "מפת הדרכים מראה אילו משימות מתבצעות, אילו טעויות בדיקה ואילו בקשות תכונה "
+#~ "ייושמו בהמשך."
 
 #~ msgid "to"
 #~ msgstr "ל"
@@ -3273,8 +3516,11 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "PhotoPrism® is a registered trademark of Michael Mayer."
 #~ msgstr "PhotoPrism® הוא סימן מסחרי רשום של מייקל מאייר."
 
-#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
-#~ msgstr "בקשות שאושרו על ידי נותני החסות של כסף וזהב מקבלים תווית זהב ותקבל עדיפות."
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
+#~ msgstr ""
+#~ "בקשות שאושרו על ידי נותני החסות של כסף וזהב מקבלים תווית זהב ותקבל עדיפות."
 
 #~ msgid "Thank you very much!"
 #~ msgstr "תודה רבה על פנייתך!"
@@ -3282,11 +3528,22 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Trademarks"
 #~ msgstr "סימן מסחרי"
 
-#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-#~ msgstr "ניתן להשתמש כנדרש בתוכנה שלנו, לצורך הרצת שרת משלך או לצרכים חינוכיים, אך לא לצורך הצעת טובין מוצרים או שירותים מסחריים כל שהם ללא אישור בכתב מראש. במילים אחרות, אנא שאלו מראש."
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "ניתן להשתמש כנדרש בתוכנה שלנו, לצורך הרצת שרת משלך או לצרכים חינוכיים, אך "
+#~ "לא לצורך הצעת טובין מוצרים או שירותים מסחריים כל שהם ללא אישור בכתב מראש. "
+#~ "במילים אחרות, אנא שאלו מראש."
 
-#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
-#~ msgstr "אם אתה נהנה להשתמש ב- PhotoPrism, שקול לגבות אותנו בחסות Patreon או GitHub."
+#~ msgid ""
+#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
+#~ "GitHub Sponsors."
+#~ msgstr ""
+#~ "אם אתה נהנה להשתמש ב- PhotoPrism, שקול לגבות אותנו בחסות Patreon או "
+#~ "GitHub."
 
 #~ msgid "Let us know when we mistakenly label an idea as unfunded."
 #~ msgstr "יידע אותנו כאשר אנו מסמנים בטעות רעיון כבלתי ממומן."
@@ -3309,8 +3566,10 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "developing new features and keeping them free for everyone"
 #~ msgstr "פיתוח פיצ'רים חדשים לשימוש חופשי"
 
-#~ msgid "Disables simultaneous conversion of RAW files to apply Darktable presets."
-#~ msgstr "השבת המרה בו זמנית של קבצי RAW כדי להחיל קביעות מוגדרות מראש של Darktable."
+#~ msgid ""
+#~ "Disables simultaneous conversion of RAW files to apply Darktable presets."
+#~ msgstr ""
+#~ "השבת המרה בו זמנית של קבצי RAW כדי להחיל קביעות מוגדרות מראש של Darktable."
 
 #~ msgid "Let PhotoPrism create albums from past events."
 #~ msgstr "תן ל- PhotoPrism ליצור אלבומים מאירועי עבר."
@@ -3327,7 +3586,8 @@ msgstr "זום פנימה\\החוצה"
 #~ msgid "Not implemented yet"
 #~ msgstr "לא מומש עדיין"
 
-#~ msgid "Note that you can as well manage and re-index your originals manually."
+#~ msgid ""
+#~ "Note that you can as well manage and re-index your originals manually."
 #~ msgstr "שים לב שניתן גם לנהל ולהוסיף מחדש את קבצי המקור באופן ידני."
 
 #~ msgid "One result"
@@ -3355,7 +3615,8 @@ msgstr "זום פנימה\\החוצה"
 #~ msgstr "מונח החיפוש קצר מדי"
 
 #~ msgid ""
-#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "Their format may not be supported, they haven't been converted to JPEG "
+#~ "yet or there are\n"
 #~ "            duplicates."
 #~ msgstr ""
 #~ "ייתכן שהפורמט שלהם לא נתמך, הם עדיין לא הומרו ל-JPEG או שיש\n"

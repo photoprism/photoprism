@@ -4,8 +4,10 @@ msgstr ""
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
-"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
+"Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/"
+"frontend/ku/>\n"
 "Language: ku\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -173,8 +175,12 @@ msgid "After one year"
 msgstr "دوای ١ ساڵ"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Piştî hilbijartina wêneyên ji encamên lêgerînê, hûn dikarin wan bi karanîna menuya naverokê li albûmê zêde bikin."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Piştî hilbijartina wêneyên ji encamên lêgerînê, hûn dikarin wan bi karanîna "
+"menuya naverokê li albûmê zêde bikin."
 
 #: src/options/options.js:442
 msgid "After two months"
@@ -261,8 +267,12 @@ msgid "All Years"
 msgstr "هەموو ساڵەکان"
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "لە جیاتی ئەوە، دەتوانیت ڕاستەوخۆ پەڕگەکان باربکەیتە سەر ڕاژەی WebDAV وەک Nextcloud."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"لە جیاتی ئەوە، دەتوانیت ڕاستەوخۆ پەڕگەکان باربکەیتە سەر ڕاژەی WebDAV وەک "
+"Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:176
 msgid "Altitude"
@@ -365,8 +375,12 @@ msgid "Authentication"
 msgstr "Authentication"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "Ji bo pelên ku wekî din nikaribin werin navnîş kirin an jî werin dîtin, bixweber piçûkan biafirînin."
+msgid ""
+"Automatically create thumbnails for files that cannot otherwise be indexed "
+"or viewed."
+msgstr ""
+"Ji bo pelên ku wekî din nikaribin werin navnîş kirin an jî werin dîtin, "
+"bixweber piçûkan biafirînin."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -378,13 +392,22 @@ msgstr "Peldanka Bingehê"
 
 #: src/page/about/about.vue:26 src/page/about/about.vue:3
 #: src/page/connect.vue:74
-msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr "Îro bibin endam, piştgirî bidin mîsyona me û ji feydeyên endamtiya me sûd werbigirin!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+"Îro bibin endam, piştgirî bidin mîsyona me û ji feydeyên endamtiya me sûd "
+"werbigirin!"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:5
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "Ji ber ku 100% xwe-fînansedar û serbixwe ne, em dikarin soz bidin we ku em ê ti carî daneyên we nefroşin û ku em ê her gav di derheqê nermalava û karûbarên xwe de zelal bin."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"Ji ber ku 100% xwe-fînansedar û serbixwe ne, em dikarin soz bidin we ku em ê "
+"ti carî daneyên we nefroşin û ku em ê her gav di derheqê nermalava û "
+"karûbarên xwe de zelal bin."
 
 #: src/dialog/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -431,8 +454,12 @@ msgid "Busy, please wait…"
 msgstr "سەرقاڵە، تکایە چاوەڕێکە…"
 
 #: src/page/connect.vue:107
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Bi karanîna nermalava û karûbarên ku em pêşkêş dikin, hûn şertên karûbarê me, polîtîkaya nepenîtiyê, û koda tevgerê qebûl dikin."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"Bi karanîna nermalava û karûbarên ku em pêşkêş dikin, hûn şertên karûbarê "
+"me, polîtîkaya nepenîtiyê, û koda tevgerê qebûl dikin."
 
 #: src/app/routes.js:188 src/component/navigation.vue:258
 #: src/component/navigation.vue:1020
@@ -840,8 +867,11 @@ msgid "Download"
 msgstr "داگرتن"
 
 #: src/page/settings/general.vue:648
-msgid "Download only original media files, without any automatically generated files."
-msgstr "Tenê pelên medyayê yên orjînal dakêşin, bêyî pelên ku bixweber têne çêkirin."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
+msgstr ""
+"Tenê pelên medyayê yên orjînal dakêşin, bêyî pelên ku bixweber têne çêkirin."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -865,8 +895,12 @@ msgid "Downscaling Filter"
 msgstr "فلتەری کەمکردنەوە"
 
 #: src/page/about/feedback.vue:16
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Ji ber qebareya zêde ya e-nameyên ku em distînin, dibe ku tîmê me nikaribe tavilê bi we re vegere."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Ji ber qebareya zêde ya e-nameyên ku em distînin, dibe ku tîmê me nikaribe "
+"tavilê bi we re vegere."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -881,8 +915,12 @@ msgid "Dynamic Previews"
 msgstr "پێشبینینی دینامیکی"
 
 #: src/page/settings/advanced.vue:305
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "پێڕدانی دینامیکی پێویستی بە ڕاژەکاری بەهێز هەیە. پێشنیار نەکراوە بۆ ئامێرەکانی NAS."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"پێڕدانی دینامیکی پێویستی بە ڕاژەکاری بەهێز هەیە. پێشنیار نەکراوە بۆ "
+"ئامێرەکانی NAS."
 
 #: src/page/settings/advanced.vue:347
 msgid "Dynamic Size Limit: %{n}px"
@@ -952,8 +990,12 @@ msgid "Every two days"
 msgstr "هەموو دوو ڕۆژ جارێ"
 
 #: src/page/settings/general.vue:210
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Ji encamên lêgerînê, albûmên hevbeş, etîket û deveran naveroka ku wekî taybet hatî nîşankirin derxînin."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Ji encamên lêgerînê, albûmên hevbeş, etîket û deveran naveroka ku wekî "
+"taybet hatî nîşankirin derxînin."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
@@ -1071,8 +1113,11 @@ msgid "Files"
 msgstr "پەڕگەکان"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "پەڕگەکان بە ناوی زنجیرەیی وەک 'IMG_1234 (2)' و 'IMG_1234 (3)' هی هەمان وێنەن."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"پەڕگەکان بە ناوی زنجیرەیی وەک 'IMG_1234 (2)' و 'IMG_1234 (3)' هی هەمان وێنەن."
 
 #: src/dialog/photo/edit/details.vue:487
 msgid "Focal Length"
@@ -1208,8 +1253,12 @@ msgid "Import failed"
 msgstr "هاوردن شکستی هێنا"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "پەڕگە هاوردەکان بەپێی بەروار پۆلێن دەکرێت و ناوی بێهاوتای بۆ دادەندرێت بۆی پەڕگەی دووبارە بوونی نەبێت."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"پەڕگە هاوردەکان بەپێی بەروار پۆلێن دەکرێت و ناوی بێهاوتای بۆ دادەندرێت بۆی "
+"پەڕگەی دووبارە بوونی نەبێت."
 
 #: src/page/settings/general.vue:276
 msgid "Imported files will be sorted by date and given a unique name."
@@ -1233,8 +1282,12 @@ msgstr "لە"
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:1 src/page/labels.vue:35
 #: src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Ger wêneyên ku hûn li bendê ne wenda nebin, ji kerema xwe pirtûkxaneya xwe ji nû ve şeh bikin û li bendê bimînin heya ku indexing qediya."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"Ger wêneyên ku hûn li bendê ne wenda nebin, ji kerema xwe pirtûkxaneya xwe "
+"ji nû ve şeh bikin û li bendê bimînin heya ku indexing qediya."
 
 #: src/page/settings/general.vue:669
 msgid "Include RAW image files when downloading stacks and archives."
@@ -1317,7 +1370,8 @@ msgstr "سنووری قەبارەی JPEG: %{n}px"
 
 #: src/page/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr "JPEG و وێنە بچووکەکان بە شێوەیەکی خودکارانە بە پێێ پێویست پیشان دەدرێن."
+msgstr ""
+"JPEG و وێنە بچووکەکان بە شێوەیەکی خودکارانە بە پێێ پێویست پیشان دەدرێن."
 
 #: src/dialog/photo/edit/details.vue:634
 msgid "Keywords"
@@ -1447,8 +1501,12 @@ msgid "Location"
 msgstr "ناونیشان"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "لۆگ مەسجەکان لێرە دەردەکەون هەرکاتێک فۆتۆپریزم لەگەڵ فایلی شێواو بەرکەوتنی هەبوو ، یان کێشەی شاراوەی تر بوونی هەبوو."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"لۆگ مەسجەکان لێرە دەردەکەون هەرکاتێک فۆتۆپریزم لەگەڵ فایلی شێواو بەرکەوتنی "
+"هەبوو ، یان کێشەی شاراوەی تر بوونی هەبوو."
 
 #: src/component/navigation.vue:475 src/component/navigation.vue:1778
 #: src/component/navigation.vue:2092
@@ -1660,8 +1718,12 @@ msgid "No video selected"
 msgstr "Vîdyoyek nehat hilbijartin"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "هیچ ئاگادارییەک یان هەڵەیەک نیە کە ئەم وشی لەخۆ گرتبێت. تێبینی بکە کە گەڕان هەستیارە (جیاکەرەوەی پیتە گەورە و چکۆلەکان)."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"هیچ ئاگادارییەک یان هەڵەیەک نیە کە ئەم وشی لەخۆ گرتبێت. تێبینی بکە کە گەڕان "
+"هەستیارە (جیاکەرەوەی پیتە گەورە و چکۆلەکان)."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1670,8 +1732,12 @@ msgstr "هیچ ئاگادارییەک یان هەڵەیەک نیە کە ئەم �
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "وێنە نافۆتۆگرافی و کوالێتی نزمەکان پێویستی بە پێداچونەوە هەیە پێش ئەوەی لە ئەنجامی گەڕاندا دەرکەون."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"وێنە نافۆتۆگرافی و کوالێتی نزمەکان پێویستی بە پێداچونەوە هەیە پێش ئەوەی لە "
+"ئەنجامی گەڕاندا دەرکەون."
 
 #: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
@@ -1679,16 +1745,24 @@ msgid "None"
 msgstr "هیچ"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Têbînî ku hûn dikarin peldanka orîjînalên xwe bi destan birêve bibin û hinardekirin vebijarkî ye."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Têbînî ku hûn dikarin peldanka orîjînalên xwe bi destan birêve bibin û "
+"hinardekirin vebijarkî ye."
 
 #: src/page/settings/services.vue:38
 msgid "Note:"
 msgstr "تێبینی:"
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "تێبینی: تەنها ڕەژاکانی WebDAV، وەک Nextcloud یان PhotoPrism، دەتوانرێت وەک خزمەتگوزاریەکی دوور بۆ گەڕانەوەی پاڵپشت (باکئاپ) و دروستکردنی پاڵپشت ساز بکرێت."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"تێبینی: تەنها ڕەژاکانی WebDAV، وەک Nextcloud یان PhotoPrism، دەتوانرێت وەک "
+"خزمەتگوزاریەکی دوور بۆ گەڕانەوەی پاڵپشت (باکئاپ) و دروستکردنی پاڵپشت ساز "
+"بکرێت."
 
 #: src/dialog/photo/edit/details.vue:659
 msgid "Notes"
@@ -1780,8 +1854,12 @@ msgid "Other"
 msgstr "هی تر"
 
 #: src/page/about/about.vue:17
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "دنیا بینیمان ئەوەیە کە زۆرترین چارەسەری بەکارهێنەر بۆ گەڕان و ڕێکخستن و هاوبەشکردنی کۆکراوەی فۆتۆ دابین بکەین."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
+msgstr ""
+"دنیا بینیمان ئەوەیە کە زۆرترین چارەسەری بەکارهێنەر بۆ گەڕان و ڕێکخستن و "
+"هاوبەشکردنی کۆکراوەی فۆتۆ دابین بکەین."
 
 #: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
@@ -1814,7 +1892,9 @@ msgstr "خەڵك"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr "ئەو کەسانەی بەستەرێکی هاوبەشیان لەگەڵ دا دروست دەکەیت، توانای بینینی ناوەڕۆکە گشتیەکانی دەبێت."
+msgstr ""
+"ئەو کەسانەی بەستەرێکی هاوبەشیان لەگەڵ دا دروست دەکەیت، توانای بینینی "
+"ناوەڕۆکە گشتیەکانی دەبێت."
 
 #: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:155
 msgid "Permanently deleted"
@@ -1886,12 +1966,18 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "تکایە ئەو وێنانە بار مەکە کە ناوەڕۆکی سووکایەتی لەخۆ دەگرن."
 
 #: src/dialog/account/password.vue:19
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Ji kerema xwe not bikin ku guhertina şîfreya xwe dê we li ser cîhaz û gerokên din derxîne."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Ji kerema xwe not bikin ku guhertina şîfreya xwe dê we li ser cîhaz û "
+"gerokên din derxîne."
 
 #: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
-msgstr "Ji kerema xwe mînaka xwe ji nû ve bidin destpêkirin da ku guheztin bikeve meriyetê."
+msgstr ""
+"Ji kerema xwe mînaka xwe ji nû ve bidin destpêkirin da ku guheztin bikeve "
+"meriyetê."
 
 #: src/common/notify.js:98
 msgid "Please wait…"
@@ -1984,7 +2070,9 @@ msgstr "خاو"
 
 #: src/page/library/index.vue:118
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "دووبارە نیشانە (ئیندێکس) کردنی هەموو ڕەسەنەکان، بە فایلە نوانەدار و نەگۆڕاوەکانیشەوە."
+msgstr ""
+"دووبارە نیشانە (ئیندێکس) کردنی هەموو ڕەسەنەکان، بە فایلە نوانەدار و "
+"نەگۆڕاوەکانیشەوە."
 
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
@@ -2051,8 +2139,12 @@ msgid "Remove from album"
 msgstr "Ji albûmê derxe"
 
 #: src/page/library/import.vue:121
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "لابردنی پەڕگە هاوردەکان بۆ بەتاڵکردنی بیرگە. جۆرەکانی پەڕگەی پشتیوانی نەکراو هەرگیز ناسڕدرێتەوە، ئەوان لە شوێنی ئێستایان دەمێننەوە."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"لابردنی پەڕگە هاوردەکان بۆ بەتاڵکردنی بیرگە. جۆرەکانی پەڕگەی پشتیوانی نەکراو "
+"هەرگیز ناسڕدرێتەوە، ئەوان لە شوێنی ئێستایان دەمێننەوە."
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
@@ -2251,7 +2343,8 @@ msgstr "پیشاندانی لۆگەکانی ڕاژە لە کتێبخانە."
 
 #: src/page/settings/advanced.vue:77
 msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Peyamên têketinê yên bi detay nîşan dide. Ji nû ve destpêkirinê hewce dike."
+msgstr ""
+"Peyamên têketinê yên bi detay nîşan dide. Ji nû ve destpêkirinê hewce dike."
 
 #: src/model/file.js:213 src/page/settings/general.vue:689
 msgid "Sidecar"
@@ -2296,8 +2389,11 @@ msgid "Stack files sharing the same unique image or instance identifier."
 msgstr "پەڕگە کەڵەککراوەکان هەمان وێنەی بێ هاوتا یان نمونەی ناسێنەریان هەیە."
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "وێنەی کەڵەککراوەکان لەهەمان کات و شوێن دا گیراوە لەسەر بنەمای مێتاداتا."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"وێنەی کەڵەککراوەکان لەهەمان کات و شوێن دا گیراوە لەسەر بنەمای مێتاداتا."
 
 #: src/dialog/photo/edit/info.vue:110
 msgid "Stackable"
@@ -2308,8 +2404,12 @@ msgid "Stacks"
 msgstr "کەڵەکەکان"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "کەڵەکەکراوەکان کۆمەڵێ فۆتۆ لە سەر بنەمای هەمان ناوەڕۆک پێکەوە دەبەستێ بەڵام فۆتۆکان جیاوازن لە جۆرێتی، فۆرمات، قەبارە یان ڕەنگ."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"کەڵەکەکراوەکان کۆمەڵێ فۆتۆ لە سەر بنەمای هەمان ناوەڕۆک پێکەوە دەبەستێ بەڵام "
+"فۆتۆکان جیاوازن لە جۆرێتی، فۆرمات، قەبارە یان ڕەنگ."
 
 #: src/page/library/index.vue:35
 msgid "Start"
@@ -2357,7 +2457,8 @@ msgid "Super Admin"
 msgstr "Super Admin"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
 msgstr "پشتگیری بۆ خزمەتگوزاری تر وەک Google Drive، بە پێی کات زیاد دەکرێت."
 
 #: src/component/navigation.vue:487 src/component/navigation.vue:1818
@@ -2391,16 +2492,24 @@ msgid "Thank You for Your Support!"
 msgstr "Spas ji bo Piştgiriya We!"
 
 #: src/page/about/about.vue:18
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "Ji ber vê yekê PhotoPrism ji erdê ve hate çêkirin da ku li cîhê ku hûn jê re lazim bin, bêyî ku azadî, nepenî, an fonksiyonê tawîz bidin."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
+msgstr ""
+"Ji ber vê yekê PhotoPrism ji erdê ve hate çêkirin da ku li cîhê ku hûn jê re "
+"lazim bin, bêyî ku azadî, nepenî, an fonksiyonê tawîz bidin."
 
 #: src/page/library/index.vue:40
 msgid "The index currently contains %{n} hidden files."
 msgstr "نوانەکە لە ئێستادا %{n} فایلی شاراوەی لەخۆ دەگرێت."
 
 #: src/page/library/index.vue:41
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "فۆرماتەکەیان لەوانەیە پشتگیری کراو نەبێت, هێشتا نەگۆڕدراوە بۆ JPEG یان لێکچووی دووبارەبوونی هەیە."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"فۆرماتەکەیان لەوانەیە پشتگیری کراو نەبێت, هێشتا نەگۆڕدراوە بۆ JPEG یان "
+"لێکچووی دووبارەبوونی هەیە."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2408,13 +2517,23 @@ msgstr "ڕووکار"
 
 #: src/page/settings/services.vue:42
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
-msgstr "ئەمە فۆڵدەری ڕەسەنەکان وەک درایڤی ڕایەڵە هەڵدەکات و ڕێگەت پێدەدات فایلەکان لە کۆمپیوتەرەکەت یان مۆبایلەکە بکەیتەوە، بژاری بکەیت، یان بسڕیتەوە وەک ئەوەی کە خۆماڵی بن."
+msgstr ""
+"ئەمە فۆڵدەری ڕەسەنەکان وەک درایڤی ڕایەڵە هەڵدەکات و ڕێگەت پێدەدات فایلەکان "
+"لە کۆمپیوتەرەکەت یان مۆبایلەکە بکەیتەوە، بژاری بکەیت، یان بسڕیتەوە وەک ئەوەی "
+"کە خۆماڵی بن."
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "ئەمە فۆڵدەری ڕەسەنەکان وەک درایڤی ڕایەڵە هەڵدەکات و ڕێگەت پێدەدات فایلەکان لە کۆمپیوتەرەکەت یان مۆبایلەکە بکەیتەوە، بژاری بکەیت، یان بسڕیتەوە وەک ئەوەی کە خۆماڵی بن."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"ئەمە فۆڵدەری ڕەسەنەکان وەک درایڤی ڕایەڵە هەڵدەکات و ڕێگەت پێدەدات فایلەکان "
+"لە کۆمپیوتەرەکەت یان مۆبایلەکە بکەیتەوە، بژاری بکەیت، یان بسڕیتەوە وەک ئەوەی "
+"کە خۆماڵی بن."
 
 #: src/page/settings/advanced.vue:252
 msgid "Thumbnail Generation"
@@ -2456,8 +2575,12 @@ msgid "Title too long"
 msgstr "ناونیشانی زۆر درێژ"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî \"Têkilî\" bikirtînin da ku li ser malpera me têkevin:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
+msgstr ""
+"Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî \"Têkilî\" "
+"bikirtînin da ku li ser malpera me têkevin:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:95
@@ -2618,7 +2741,9 @@ msgstr "دووبارە بارکردن…"
 
 #: src/dialog/upload.vue:52
 msgid "Uploads that may contain such images will be rejected automatically."
-msgstr "بارکردنەکان کە لەوانەیە ئەم جۆرە وێنانە لەخۆە بگرێ بە شێوەیەکی خۆکار ڕەت دەکرێنەوە."
+msgstr ""
+"بارکردنەکان کە لەوانەیە ئەم جۆرە وێنانە لەخۆە بگرێ بە شێوەیەکی خۆکار ڕەت "
+"دەکرێنەوە."
 
 #: src/dialog/share.vue:157
 msgid "URL"
@@ -2706,7 +2831,8 @@ msgstr "Em spasiya nêrîna we dikin!"
 
 #: src/page/about/feedback.vue:17
 msgid "We do our best to respond within five business days or less."
-msgstr "Em çêtirîn dikin ku di nav pênc rojên karsaziyê an kêmtir de bersiv bidin."
+msgstr ""
+"Em çêtirîn dikin ku di nav pênc rojên karsaziyê an kêmtir de bersiv bidin."
 
 #: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
 #: src/page/admin/users.vue:39
@@ -2720,13 +2846,18 @@ msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:8
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "ڕاژەخوازەکانی WebDAV دەتوانن پەیوەندی بکەن بە فۆتۆپریزمەوە بە بەکارهێنانی ئەم URLەی خوارەوە:"
+msgstr ""
+"ڕاژەخوازەکانی WebDAV دەتوانن پەیوەندی بکەن بە فۆتۆپریزمەوە بە بەکارهێنانی "
+"ئەم URLەی خوارەوە:"
 
 #: src/page/settings/services.vue:39
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
-msgstr "ڕاژەخوازەکانی WebDAV، وەک Windows Explorer ی Microsoft یانFinderی Apple، دەتوانن ڕاستەوخۆ بە PhotoPrism ەوە ببەسترێنەوە."
+msgstr ""
+"ڕاژەخوازەکانی WebDAV، وەک Windows Explorer ی Microsoft یانFinderی Apple، "
+"دەتوانن ڕاستەوخۆ بە PhotoPrism ەوە ببەسترێنەوە."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
@@ -2767,8 +2898,12 @@ msgstr "بەڵێ"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "Hûn bi xêr hatin ku ji bo pirsên di derbarê endametiya xwe de bi me re têkilî daynin endamên@photoprism.app."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
+msgstr ""
+"Hûn bi xêr hatin ku ji bo pirsên di derbarê endametiya xwe de bi me re "
+"têkilî daynin endamên@photoprism.app."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2789,7 +2924,8 @@ msgstr "دەتوانیت تەنها یەک ئایتم دیاریبکەیت"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr "Hûn dikarin pirtûkxaneya xwe ji bo dîtina rûyên zêde ji nû ve şeh bikin."
+msgstr ""
+"Hûn dikarin pirtûkxaneya xwe ji bo dîtina rûyên zêde ji nû ve şeh bikin."
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
@@ -2798,12 +2934,21 @@ msgstr "Hesabê we bi serkeftî hate girêdan."
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
 #: src/page/about/about.vue:49 src/page/about/about.vue:4
 #: src/page/connect.vue:75
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Piştgiriya weya domdar ji me re dibe alîkar ku em lêçûnên xebitandinê fînanse bikin, karûbarên wekî nexşeyên satelîtê peyda bikin, û taybetmendiyên nû pêşve bixin."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Piştgiriya weya domdar ji me re dibe alîkar ku em lêçûnên xebitandinê "
+"fînanse bikin, karûbarên wekî nexşeyên satelîtê peyda bikin, û "
+"taybetmendiyên nû pêşve bixin."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên demên taybetî, rêwîtî û deveran çêdike."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên demên "
+"taybetî, rêwîtî û deveran çêdike."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
@@ -2812,8 +2957,12 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Basic"
 #~ msgstr "Bingehîn"
 
-#~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-#~ msgstr "دروستکردنی JPEGs بە شێوەیەکی خودکارانە بۆ جۆرەکانی تری پەڕگە بۆ ئەوەی نیشان بدرێت لە وێبگەڕەکە."
+#~ msgid ""
+#~ "Automatically create JPEGs for other file types so that they can be "
+#~ "displayed in a browser."
+#~ msgstr ""
+#~ "دروستکردنی JPEGs بە شێوەیەکی خودکارانە بۆ جۆرەکانی تری پەڕگە بۆ ئەوەی "
+#~ "نیشان بدرێت لە وێبگەڕەکە."
 
 #~ msgid "Convert to JPEG"
 #~ msgstr "گۆڕین بۆ JPEG"
@@ -2822,10 +2971,16 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgstr "Em mafê jêbirina van bixweber diparêzin."
 
 #~ msgid "Please be careful not to upload any private or offensive content."
-#~ msgstr "Ji kerema xwe hay ji xwe hebin ku hûn naverokek nepenî an nerast bar nekin."
+#~ msgstr ""
+#~ "Ji kerema xwe hay ji xwe hebin ku hûn naverokek nepenî an nerast bar "
+#~ "nekin."
 
-#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
-#~ msgstr "Hûn bi xêr hatin ku hûn pelan li vê demoya giştî ya ku mafê we yê çapkirinê heye bar bikin."
+#~ msgid ""
+#~ "You are welcome to upload files to this public demo for which you own the "
+#~ "copyright."
+#~ msgstr ""
+#~ "Hûn bi xêr hatin ku hûn pelan li vê demoya giştî ya ku mafê we yê "
+#~ "çapkirinê heye bar bikin."
 
 #~ msgid "You may not upload more than %{n} files"
 #~ msgstr "Hûn nikarin ji %{n} pelan zêdetir bar bikin"
@@ -2854,23 +3009,43 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Not Found"
 #~ msgstr "نەدۆزرایەوە"
 
-#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-#~ msgstr "Ji ber ku ev ji me re dibe alîkar ku bêtir taybetmendiyên ji gel re peyda bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
+#~ msgid ""
+#~ "As this helps us provide more features to the public, we encourage all "
+#~ "users to support our mission."
+#~ msgstr ""
+#~ "Ji ber ku ev ji me re dibe alîkar ku bêtir taybetmendiyên ji gel re peyda "
+#~ "bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
 
 #~ msgid "Frequently Asked Questions"
 #~ msgstr "Pirsên Pir Pir Pirs"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-#~ msgstr "Tîma me vê yekê bi domdarî li gorî hewildana piştgirî, lêçûnên server û lîsansê, û gelo taybetmendî bi gelemperî ji hêla her kesî ve hewce ne an bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin, biryar dide."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users."
+#~ msgstr ""
+#~ "Tîma me vê yekê bi domdarî li gorî hewildana piştgirî, lêçûnên server û "
+#~ "lîsansê, û gelo taybetmendî bi gelemperî ji hêla her kesî ve hewce ne an "
+#~ "bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin, "
+#~ "biryar dide."
 
 #~ msgid "What functionality is generally available?"
 #~ msgstr "Kîjan fonksiyon bi gelemperî heye?"
 
-#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd werbigirin."
+#~ msgid ""
+#~ "It is your decision whether you want to sign up to enjoy additional "
+#~ "benefits."
+#~ msgstr ""
+#~ "Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd "
+#~ "werbigirin."
 
-#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-#~ msgstr "Bexşên dilxwazî mesrefa tîmek ku bi tevahî wextê dixebite nagire da ku nûvekirin, belgekirin û piştgirî peyda bike."
+#~ msgid ""
+#~ "Voluntary donations do not cover the cost of a team working full time to "
+#~ "provide you with updates, documentation, and support."
+#~ msgstr ""
+#~ "Bexşên dilxwazî mesrefa tîmek ku bi tevahî wextê dixebite nagire da ku "
+#~ "nûvekirin, belgekirin û piştgirî peyda bike."
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Çima hin taybetmendî tenê ji sponsoran re peyda dibin?"
@@ -2881,23 +3056,44 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Proceed"
 #~ msgstr "Pêşçûn"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-#~ msgstr "Ji bo nûvekirinê, hûn dikarin kodek aktîvkirinê têkevin an jî li ser \"Bidomîne\" bikirtînin da ku hûn li ser malpera me qeyd bikin:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on "
+#~ "\"Proceed\" to sign up on our website:"
+#~ msgstr ""
+#~ "Ji bo nûvekirinê, hûn dikarin kodek aktîvkirinê têkevin an jî li ser "
+#~ "\"Bidomîne\" bikirtînin da ku hûn li ser malpera me qeyd bikin:"
 
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Tiştek xelet derket, tu negirêdayî yî?"
 
-#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-#~ msgstr "Li PhotoPrism, em bawer dikin ku her kêliya ku bi wêneyek hatî kişandin hêja ye, û mîsyona me ew e ku mirov bikaribin wan kêliyan ji bo nifşên paşerojê binirxînin."
+#~ msgid ""
+#~ "At PhotoPrism, we believe that every moment captured through a photograph "
+#~ "is precious, and our mission is to enable people to cherish those moments "
+#~ "for generations to come."
+#~ msgstr ""
+#~ "Li PhotoPrism, em bawer dikin ku her kêliya ku bi wêneyek hatî kişandin "
+#~ "hêja ye, û mîsyona me ew e ku mirov bikaribin wan kêliyan ji bo nifşên "
+#~ "paşerojê binirxînin."
 
-#~ msgid "Become a member today to enjoy additional features and support our mission!"
-#~ msgstr "Îro bibin endam da ku ji taybetmendiyên din sûd werbigirin û mîsyona me piştgirî bikin!"
+#~ msgid ""
+#~ "Become a member today to enjoy additional features and support our "
+#~ "mission!"
+#~ msgstr ""
+#~ "Îro bibin endam da ku ji taybetmendiyên din sûd werbigirin û mîsyona me "
+#~ "piştgirî bikin!"
 
-#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-#~ msgstr "تکایە پەیوەندیمان پێوە بکە hello@photoprism.app ئەگەر پرسیارت هەیە یان پێویستیت بە یارمەتیە."
+#~ msgid ""
+#~ "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr ""
+#~ "تکایە پەیوەندیمان پێوە بکە hello@photoprism.app ئەگەر پرسیارت هەیە یان "
+#~ "پێویستیت بە یارمەتیە."
 
-#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
-#~ msgstr "Ji bo pirsên di derbarê endametiya xwe de ji me re têkilî bi me re bişînin Member@photoprism.app."
+#~ msgid ""
+#~ "Feel free to contact us at membership@photoprism.app for questions "
+#~ "regarding your membership."
+#~ msgstr ""
+#~ "Ji bo pirsên di derbarê endametiya xwe de ji me re têkilî bi me re "
+#~ "bişînin Member@photoprism.app."
 
 #~ msgid "Something went wrong, try again"
 #~ msgstr "Tiştek xelet derket, dîsa biceribîne"
@@ -2905,14 +3101,27 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "An error occurred - are you offline?"
 #~ msgstr "هەڵەیەک ڕوویدا - ئایا ئۆفلاینیت؟"
 
-#~ msgid "Before submitting a support request, please use our Troubleshooting Checklists to determine the cause of your problem."
-#~ msgstr "Berî ku hûn daxwaznameyek piştgiriyê bişînin, ji kerema xwe Lîsteyên Kontrolkirina Pirsgirêkan bikar bînin da ku sedema pirsgirêka xwe diyar bikin."
+#~ msgid ""
+#~ "Before submitting a support request, please use our Troubleshooting "
+#~ "Checklists to determine the cause of your problem."
+#~ msgstr ""
+#~ "Berî ku hûn daxwaznameyek piştgiriyê bişînin, ji kerema xwe Lîsteyên "
+#~ "Kontrolkirina Pirsgirêkan bikar bînin da ku sedema pirsgirêka xwe diyar "
+#~ "bikin."
 
-#~ msgid "Browse the Knowledge Base for detailed information on specific product features, services, and related resources."
-#~ msgstr "Ji bo agahdariya berfireh li ser taybetmendiyên hilberê, karûbar û çavkaniyên têkildar li Bingeha Zanînê bigerin."
+#~ msgid ""
+#~ "Browse the Knowledge Base for detailed information on specific product "
+#~ "features, services, and related resources."
+#~ msgstr ""
+#~ "Ji bo agahdariya berfireh li ser taybetmendiyên hilberê, karûbar û "
+#~ "çavkaniyên têkildar li Bingeha Zanînê bigerin."
 
-#~ msgid "Common issues can be quickly diagnosed and solved using the troubleshooting checklists we provide."
-#~ msgstr "Pirsgirêkên hevpar bi karanîna navnîşên kontrolkirina pirsgirêkan ên ku em pêşkêş dikin zû têne tespît kirin û çareser kirin."
+#~ msgid ""
+#~ "Common issues can be quickly diagnosed and solved using the "
+#~ "troubleshooting checklists we provide."
+#~ msgstr ""
+#~ "Pirsgirêkên hevpar bi karanîna navnîşên kontrolkirina pirsgirêkan ên ku "
+#~ "em pêşkêş dikin zû têne tespît kirin û çareser kirin."
 
 #~ msgid "Getting Support"
 #~ msgstr "Piştgiriyê digirin"
@@ -2921,7 +3130,8 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgstr "Heke ev alîkarî nake, an pirsên we yên din hene:"
 
 #~ msgid "In addition, sponsors receive direct technical support via email."
-#~ msgstr "Wekî din, sponsor piştgirîya teknîkî ya rasterast bi e-nameyê distînin."
+#~ msgstr ""
+#~ "Wekî din, sponsor piştgirîya teknîkî ya rasterast bi e-nameyê distînin."
 
 #~ msgid "Knowledge Base"
 #~ msgstr "Bingeha Zanînê"
@@ -2932,8 +3142,12 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "or ask in our Community Chat"
 #~ msgstr "an jî di Sohbeta Civata me de bipirsin"
 
-#~ msgid "Our User Guide also covers many advanced topics, such as migrating from Google Photos and thumbnail quality settings."
-#~ msgstr "Rêbernameya meya Bikarhêner di heman demê de gelek mijarên pêşkeftî jî vedihewîne, wek koçkirina ji Google Photos û mîhengên kalîteya piçûkan."
+#~ msgid ""
+#~ "Our User Guide also covers many advanced topics, such as migrating from "
+#~ "Google Photos and thumbnail quality settings."
+#~ msgstr ""
+#~ "Rêbernameya meya Bikarhêner di heman demê de gelek mijarên pêşkeftî jî "
+#~ "vedihewîne, wek koçkirina ji Google Photos û mîhengên kalîteya piçûkan."
 
 #~ msgid "post your question in GitHub Discussions"
 #~ msgstr "pirsa xwe di Nîqaşên GitHub de bişînin"
@@ -2941,11 +3155,19 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Read the Docs"
 #~ msgstr "Belgeyan bixwînin"
 
-#~ msgid "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and share your pictures."
-#~ msgstr "Serdana docs.photoprism.app/user-guide bikin da ku fêr bibin ka meriv çawa wêneyên xwe senkronîze, birêxistinkirin û parvekirin."
+#~ msgid ""
+#~ "Visit docs.photoprism.app/user-guide to learn how to sync, organize, and "
+#~ "share your pictures."
+#~ msgstr ""
+#~ "Serdana docs.photoprism.app/user-guide bikin da ku fêr bibin ka meriv "
+#~ "çawa wêneyên xwe senkronîze, birêxistinkirin û parvekirin."
 
-#~ msgid "We'll do our best to answer all your questions. In return, we ask you to back us on Patreon or GitHub Sponsors."
-#~ msgstr "ئێمە پێت دەڵێین چۆن چالاکی بکەیت کاتێک خۆت تۆمار دەکەیت بۆ سپۆنسەری پاتریۆن یان گیت هاب."
+#~ msgid ""
+#~ "We'll do our best to answer all your questions. In return, we ask you to "
+#~ "back us on Patreon or GitHub Sponsors."
+#~ msgstr ""
+#~ "ئێمە پێت دەڵێین چۆن چالاکی بکەیت کاتێک خۆت تۆمار دەکەیت بۆ سپۆنسەری "
+#~ "پاتریۆن یان گیت هاب."
 
 #~ msgid "you are welcome to join us on Reddit"
 #~ msgstr "hûn bi xêr hatin ku hûn li ser Reddit beşdarî me bibin"
@@ -2998,23 +3220,34 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Connect Customer Account"
 #~ msgstr "Hesabê Mişterî girêdin"
 
-#~ msgid "It makes use of the latest technologies to tag and find pictures automatically without getting in your way."
-#~ msgstr "Ew teknolojiyên herî dawî bikar tîne da ku wêneyan bixweber etîket bike û bibîne bêyî ku rê li ber we bigire."
+#~ msgid ""
+#~ "It makes use of the latest technologies to tag and find pictures "
+#~ "automatically without getting in your way."
+#~ msgstr ""
+#~ "Ew teknolojiyên herî dawî bikar tîne da ku wêneyan bixweber etîket bike û "
+#~ "bibîne bêyî ku rê li ber we bigire."
 
 #~ msgid "PhotoPrism® is an AI-Powered Photos App for the Decentralized Web."
-#~ msgstr "PhotoPrism® ji bo Malpera Nemerkezî Serlêdana Wêneyan a bi AI-ê ve girêdayî ye."
+#~ msgstr ""
+#~ "PhotoPrism® ji bo Malpera Nemerkezî Serlêdana Wêneyan a bi AI-ê ve "
+#~ "girêdayî ye."
 
 #~ msgid "Uploader"
 #~ msgstr "Uploader"
 
 #~ msgid "You can run it at home, on a private server, or in the cloud."
-#~ msgstr "Hûn dikarin wê li malê, li ser serverek taybet, an di ewr de bimeşînin."
+#~ msgstr ""
+#~ "Hûn dikarin wê li malê, li ser serverek taybet, an di ewr de bimeşînin."
 
 #~ msgid "Downloads"
 #~ msgstr "Daxistin"
 
-#~ msgid "Download only original media files, without any automatically generated sidecar files."
-#~ msgstr "Tenê pelên medyayê yên orîjînal dakêşin, bêyî ku pelên kêlek bixweber têne hilberandin."
+#~ msgid ""
+#~ "Download only original media files, without any automatically generated "
+#~ "sidecar files."
+#~ msgstr ""
+#~ "Tenê pelên medyayê yên orîjînal dakêşin, bêyî ku pelên kêlek bixweber "
+#~ "têne hilberandin."
 
 #~ msgid "Base Path"
 #~ msgstr "Rêya bingehîn"
@@ -3040,20 +3273,50 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "RAW Conversion"
 #~ msgstr "گۆڕینی (Raw) خاو"
 
-#~ msgid "Become a sponsor today, support our mission and enjoy our member benefits!"
-#~ msgstr "Îro bibin sponsor, piştgirî bidin mîsyona me û ji feydeyên endamtiya me sûd werbigirin!"
+#~ msgid ""
+#~ "Become a sponsor today, support our mission and enjoy our member benefits!"
+#~ msgstr ""
+#~ "Îro bibin sponsor, piştgirî bidin mîsyona me û ji feydeyên endamtiya me "
+#~ "sûd werbigirin!"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Tîma me vê yekê li ser bingehek domdar dinirxîne, li gorî hewildana piştevaniyê ya ku taybetmendî hewce dike, lêçûna ji me re, û gelo ew bi gelemperî ji her kesî re hewce ne an bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin. Ji ber ku ev dihêle ku em bêtir taybetmendiyan ji gel re peyda bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users. As this allows us to make more features available to the "
+#~ "public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Tîma me vê yekê li ser bingehek domdar dinirxîne, li gorî hewildana "
+#~ "piştevaniyê ya ku taybetmendî hewce dike, lêçûna ji me re, û gelo ew bi "
+#~ "gelemperî ji her kesî re hewce ne an bi gelemperî ji hêla rêxistin û "
+#~ "bikarhênerên pêşkeftî ve têne xwestin. Ji ber ku ev dihêle ku em bêtir "
+#~ "taybetmendiyan ji gel re peyda bikin, em hemî bikarhêneran teşwîq dikin "
+#~ "ku piştgiriyê bidin mîsyona me."
 
-#~ msgid "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support. It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "PhotoPrism 100% bixwe-fînanse ye. Bexşên dilxwazî mesrefa tîmek ku bi tevahî wextê dixebitin nagire da ku nûvekirin, belgekirin û piştgirî peyda bike. Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji feydeyên zêde sûd werbigirin."
+#~ msgid ""
+#~ "PhotoPrism is 100% self-funded. Voluntary donations do not cover the cost "
+#~ "of a team working full time to provide you with updates, documentation, "
+#~ "and support. It is your decision whether you want to sign up to enjoy "
+#~ "additional benefits."
+#~ msgstr ""
+#~ "PhotoPrism 100% bixwe-fînanse ye. Bexşên dilxwazî mesrefa tîmek ku bi "
+#~ "tevahî wextê dixebitin nagire da ku nûvekirin, belgekirin û piştgirî "
+#~ "peyda bike. Biryara we ye ka hûn dixwazin xwe qeyd bikin da ku ji "
+#~ "feydeyên zêde sûd werbigirin."
 
 #~ msgid "Shouldn't free software be free of costs?"
 #~ msgstr "Ma ne divê nermalava belaş bê mesref be?"
 
-#~ msgid "Think of “free software” as in “free speech,” not as in “free beer.” The Free Software Foundation sometimes calls it “libre software,” borrowing the French or Spanish word for “free” as in freedom, to show they do not mean the software is gratis."
-#~ msgstr "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra belaş\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" peyva fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan bide ku ew ne wateya ku nermalava belaş e."
+#~ msgid ""
+#~ "Think of “free software” as in “free speech,” not as in “free beer.” The "
+#~ "Free Software Foundation sometimes calls it “libre software,” borrowing "
+#~ "the French or Spanish word for “free” as in freedom, to show they do not "
+#~ "mean the software is gratis."
+#~ msgstr ""
+#~ "\"Nermalava belaş\" wekî \"axaftina azad\" bifikire, ne wekî \"bîra "
+#~ "belaş\". Weqfa Nermalava Azad carinan jê re dibêje \"nermalava azad,\" "
+#~ "peyva fransî an spanî ji bo \"belaş\" wekî azadiyê deyn dike, da ku nîşan "
+#~ "bide ku ew ne wateya ku nermalava belaş e."
 
 #~ msgid "Moonlight"
 #~ msgstr "تیشکی مانگ"
@@ -3064,11 +3327,19 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Sign Up"
 #~ msgstr "چوونەدەرەوە"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Sign Up\" to upgrade on our website:"
-#~ msgstr "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser \"Sign Up\" bikirtînin da ku li ser malpera me nûve bikin:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Sign "
+#~ "Up\" to upgrade on our website:"
+#~ msgstr ""
+#~ "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser "
+#~ "\"Sign Up\" bikirtînin da ku li ser malpera me nûve bikin:"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Upgrade Now\" to sign up on our website:"
-#~ msgstr "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser \"Upgrade Now\" bikirtînin da ku li ser malpera me nûve bikin:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on \"Upgrade "
+#~ "Now\" to sign up on our website:"
+#~ msgstr ""
+#~ "Ji bo nûvekirinê, hûn dikarin kodek çalakkirinê binivîsin an jî li ser "
+#~ "\"Upgrade Now\" bikirtînin da ku li ser malpera me nûve bikin:"
 
 #~ msgid "Sign up"
 #~ msgstr "چوونەدەرەوە"
@@ -3076,11 +3347,26 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Compare Features"
 #~ msgstr "Taybetmendiyan berhev bikin"
 
-#~ msgid "Our team evaluates this on an ongoing basis, depending on the support effort features and config options cause or have caused in the past, and whether they are generally needed by everyone or mainly requested by organizations and advanced users. As this allows us to make more features available to the public, we encourage all users to support our mission."
-#~ msgstr "Tîma me vê yekê li ser bingehek domdar dinirxîne, li gorî taybetmendiyên hewildana piştgirî û vebijarkên mîhengê ku di paşerojê de bûne sedem an bûne sedema wan, û gelo ew bi gelemperî ji hêla her kesî ve hewce ne an bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin. Ji ber ku ev rê dide me ku em bêtir taybetmendiyên ji gel re peyda bikin, em hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
+#~ msgid ""
+#~ "Our team evaluates this on an ongoing basis, depending on the support "
+#~ "effort features and config options cause or have caused in the past, and "
+#~ "whether they are generally needed by everyone or mainly requested by "
+#~ "organizations and advanced users. As this allows us to make more features "
+#~ "available to the public, we encourage all users to support our mission."
+#~ msgstr ""
+#~ "Tîma me vê yekê li ser bingehek domdar dinirxîne, li gorî taybetmendiyên "
+#~ "hewildana piştgirî û vebijarkên mîhengê ku di paşerojê de bûne sedem an "
+#~ "bûne sedema wan, û gelo ew bi gelemperî ji hêla her kesî ve hewce ne an "
+#~ "bi gelemperî ji hêla rêxistin û bikarhênerên pêşkeftî ve têne xwestin. Ji "
+#~ "ber ku ev rê dide me ku em bêtir taybetmendiyên ji gel re peyda bikin, em "
+#~ "hemî bikarhêneran teşwîq dikin ku piştgiriyê bidin mîsyona me."
 
-#~ msgid "Also, please leave a star on GitHub if you like this project. It provides additional motivation to keep going."
-#~ msgstr "Di heman demê de, heke hûn ji vê projeyê hez dikin, ji kerema xwe stêrkek li GitHub bihêlin. Ew motîvasyonek din peyda dike ku berdewam bike."
+#~ msgid ""
+#~ "Also, please leave a star on GitHub if you like this project. It provides "
+#~ "additional motivation to keep going."
+#~ msgstr ""
+#~ "Di heman demê de, heke hûn ji vê projeyê hez dikin, ji kerema xwe stêrkek "
+#~ "li GitHub bihêlin. Ew motîvasyonek din peyda dike ku berdewam bike."
 
 #~ msgid "Become a sponsor"
 #~ msgstr "Bibe sponsor"
@@ -3088,17 +3374,34 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "I'm a sponsor"
 #~ msgstr "من سپۆنسەرم"
 
-#~ msgid "Sponsors get access to additional features, receive direct technical support via email, and can join our private chat room on matrix.org."
-#~ msgstr "Sponsor bigihîjin taybetmendiyên din, bi e-nameyê piştgirîya teknîkî ya rasterast werdigirin, û dikarin li ser matrix.org beşdarî sohbeta meya taybet bibin."
+#~ msgid ""
+#~ "Sponsors get access to additional features, receive direct technical "
+#~ "support via email, and can join our private chat room on matrix.org."
+#~ msgstr ""
+#~ "Sponsor bigihîjin taybetmendiyên din, bi e-nameyê piştgirîya teknîkî ya "
+#~ "rasterast werdigirin, û dikarin li ser matrix.org beşdarî sohbeta meya "
+#~ "taybet bibin."
 
-#~ msgid "This currently is a sponsor feature to thank everyone who supports the development of this application."
-#~ msgstr "ئەمە تایبەتمەندیەکی زووە وەک سوپاسگوزارییەک بۆ سپۆنسەر و هاوبەشکاران."
+#~ msgid ""
+#~ "This currently is a sponsor feature to thank everyone who supports the "
+#~ "development of this application."
+#~ msgstr ""
+#~ "ئەمە تایبەتمەندیەکی زووە وەک سوپاسگوزارییەک بۆ سپۆنسەر و هاوبەشکاران."
 
-#~ msgid "We'll let you know how to enable it when you sign up on Patreon or GitHub Sponsors."
-#~ msgstr "ئێمە پێت دەڵێین چۆن چالاکی بکەیت کاتێک خۆت تۆمار دەکەیت بۆ سپۆنسەری پاتریۆن یان گیت هاب."
+#~ msgid ""
+#~ "We'll let you know how to enable it when you sign up on Patreon or GitHub "
+#~ "Sponsors."
+#~ msgstr ""
+#~ "ئێمە پێت دەڵێین چۆن چالاکی بکەیت کاتێک خۆت تۆمار دەکەیت بۆ سپۆنسەری "
+#~ "پاتریۆن یان گیت هاب."
 
-#~ msgid "Your continued support helps us provide regular updates and services like world maps."
-#~ msgstr "Piştgiriya weya domdar ji me re dibe alîkar ku em lêçûnên xebitandinê fînanse bikin, karûbarên wekî nexşeyên satelîtê peyda bikin, û taybetmendiyên nû pêşve bixin."
+#~ msgid ""
+#~ "Your continued support helps us provide regular updates and services like "
+#~ "world maps."
+#~ msgstr ""
+#~ "Piştgiriya weya domdar ji me re dibe alîkar ku em lêçûnên xebitandinê "
+#~ "fînanse bikin, karûbarên wekî nexşeyên satelîtê peyda bikin, û "
+#~ "taybetmendiyên nû pêşve bixin."
 
 #~ msgctxt "Account|"
 #~ msgid "Title"
@@ -3165,8 +3468,12 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Failure while importing uploaded files"
 #~ msgstr "شکست لەکاتی هێنانی پەڕگە بارکراوەکان"
 
-#~ msgid "Note: Updating the password will not revoke access from already authenticated users."
-#~ msgstr "تێبینی: نوێکردنەوەی تێپەڕەوشە دەستگەیشتن هەڵناوەشێ بۆ بەکارهێنەرە ڕێپێدراو."
+#~ msgid ""
+#~ "Note: Updating the password will not revoke access from already "
+#~ "authenticated users."
+#~ msgstr ""
+#~ "تێبینی: نوێکردنەوەی تێپەڕەوشە دەستگەیشتن هەڵناوەشێ بۆ بەکارهێنەرە "
+#~ "ڕێپێدراو."
 
 #~ msgid "Play"
 #~ msgstr "بەگەڕ خستن"
@@ -3180,8 +3487,12 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Show Library in navigation menu."
 #~ msgstr "پیشاندانی کتێبخانە لە لیستی ڕێنیشاندەری."
 
-#~ msgid "The roadmap shows what tasks are in progress, what needs testing, and which feature requests are going to be implemented next."
-#~ msgstr "Nexşeya rê nîşan dide ka çi kar di pêş de ne, çi hewceyê ceribandinê ye, û kîjan daxwaznameyên taybetmendiyê di pêş de têne bicîh kirin."
+#~ msgid ""
+#~ "The roadmap shows what tasks are in progress, what needs testing, and "
+#~ "which feature requests are going to be implemented next."
+#~ msgstr ""
+#~ "Nexşeya rê nîşan dide ka çi kar di pêş de ne, çi hewceyê ceribandinê ye, "
+#~ "û kîjan daxwaznameyên taybetmendiyê di pêş de têne bicîh kirin."
 
 #~ msgid "to"
 #~ msgstr "بۆ"
@@ -3225,8 +3536,12 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Hindi"
 #~ msgstr "هیندی"
 
-#~ msgid "If you enjoy using PhotoPrism, please consider backing us on Patreon or GitHub Sponsors."
-#~ msgstr "Ger hûn ji karanîna PhotoPrism kêfê digirin, ji kerema xwe pişta me bidin ser Patreon an Spitorên GitHub."
+#~ msgid ""
+#~ "If you enjoy using PhotoPrism, please consider backing us on Patreon or "
+#~ "GitHub Sponsors."
+#~ msgstr ""
+#~ "Ger hûn ji karanîna PhotoPrism kêfê digirin, ji kerema xwe pişta me bidin "
+#~ "ser Patreon an Spitorên GitHub."
 
 #~ msgid "Italian"
 #~ msgstr "ئیتاڵی"
@@ -3244,7 +3559,9 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgstr "کۆتا پاڵپشت"
 
 #~ msgid "Let us know when we mistakenly label an idea as unfunded."
-#~ msgstr "Dema ku em bi xeletî ramanek wekî nefandî binav dikin bila me agahdar bikin."
+#~ msgstr ""
+#~ "Dema ku em bi xeletî ramanek wekî nefandî binav dikin bila me agahdar "
+#~ "bikin."
 
 #~ msgid "Norwegian"
 #~ msgstr "نەرویجی"
@@ -3264,8 +3581,12 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Report Bug"
 #~ msgstr "تۆمارکردنی هەڵە"
 
-#~ msgid "Requests endorsed by silver and gold sponsors receive a golden label and will be prioritized."
-#~ msgstr "Daxwazên ku ji hêla sponsorên zîv û zêr ve hatine pejirandin etîketek zêrîn werdigirin û dê bibin pêşîn."
+#~ msgid ""
+#~ "Requests endorsed by silver and gold sponsors receive a golden label and "
+#~ "will be prioritized."
+#~ msgstr ""
+#~ "Daxwazên ku ji hêla sponsorên zîv û zêr ve hatine pejirandin etîketek "
+#~ "zêrîn werdigirin û dê bibin pêşîn."
 
 #~ msgid "Russian"
 #~ msgstr "ڕووسی"
@@ -3285,8 +3606,16 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Trademarks"
 #~ msgstr "دروشمە بازرگانیەکان"
 
-#~ msgid "You may use it as required to describe our software, run your own server, for educational purposes, but not for offering commercial goods, products, or services without prior written permission. In other words, please ask."
-#~ msgstr "دەتوانیت وەک پێویست بۆ وەسفکردنی سۆفتوێرەکەمان بەکاری بهێنیت، سێرڤەرەکەت بخەیتە کار، بۆ مەبەستی پەروەردەیی، بەڵام نەک بۆ پێشکەشکردنی کاڵا و بەرهەم یان خزمەتگوزاری بازرگانی بەبێ مۆڵەتی نووسراوی پێشوەخت. بە وتەیەکی تر تکایە پرسمان پێبکە."
+#~ msgid ""
+#~ "You may use it as required to describe our software, run your own server, "
+#~ "for educational purposes, but not for offering commercial goods, "
+#~ "products, or services without prior written permission. In other words, "
+#~ "please ask."
+#~ msgstr ""
+#~ "دەتوانیت وەک پێویست بۆ وەسفکردنی سۆفتوێرەکەمان بەکاری بهێنیت، سێرڤەرەکەت "
+#~ "بخەیتە کار، بۆ مەبەستی پەروەردەیی، بەڵام نەک بۆ پێشکەشکردنی کاڵا و بەرهەم "
+#~ "یان خزمەتگوزاری بازرگانی بەبێ مۆڵەتی نووسراوی پێشوەخت. بە وتەیەکی تر "
+#~ "تکایە پرسمان پێبکە."
 
 #~ msgid "%{n} results"
 #~ msgstr "%{n} دۆزراوە"
@@ -3303,7 +3632,8 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "developing new features and keeping them free for everyone"
 #~ msgstr "پەرەپێدانی تایبەتمەندی نوێ و بەخۆڕایی هێشتنەوەیان بۆ هەموو کەسێک"
 
-#~ msgid "Disables simultaneous conversion of RAW images to apply Darktable presets."
+#~ msgid ""
+#~ "Disables simultaneous conversion of RAW images to apply Darktable presets."
 #~ msgstr " هاوکات گۆڕینی پەڕگەی RAW لە کاربخە بۆ کارپێکردنی پێش خشتەی تاریک."
 
 #~ msgid "Let PhotoPrism create albums from past events."
@@ -3321,8 +3651,11 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgid "Not implemented yet"
 #~ msgstr "هێشتا جێبەجێ نەکراوە"
 
-#~ msgid "Note that you can as well manage and re-index your originals manually."
-#~ msgstr "تێبینی بکە کە دەتوانیت بەباشی فۆتۆ ڕەسەنەکانت بە دەستی بەڕێوە ببەیت و دووبارە نیشانەیان (ئیندێکس) بکەیت."
+#~ msgid ""
+#~ "Note that you can as well manage and re-index your originals manually."
+#~ msgstr ""
+#~ "تێبینی بکە کە دەتوانیت بەباشی فۆتۆ ڕەسەنەکانت بە دەستی بەڕێوە ببەیت و "
+#~ "دووبارە نیشانەیان (ئیندێکس) بکەیت."
 
 #~ msgid "One result"
 #~ msgstr "یەك ئەنجام"
@@ -3334,8 +3667,10 @@ msgstr "گەورەکردن/بچووکردن"
 #~ msgstr "پشتگیرییە بەردەوامەکانت یارمەتیدەرە"
 
 #~ msgid ""
-#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "Their format may not be supported, they haven't been converted to JPEG "
+#~ "yet or there are\n"
 #~ "            duplicates."
 #~ msgstr ""
-#~ "Dibe ku formata wan neyê piştgirî kirin, ew hîna veneguhezîne JPEG an jî hene\n"
+#~ "Dibe ku formata wan neyê piştgirî kirin, ew hîna veneguhezîne JPEG an jî "
+#~ "hene\n"
 #~ "            dubare dike."

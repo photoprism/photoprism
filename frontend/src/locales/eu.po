@@ -3,7 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -170,8 +171,12 @@ msgid "After one year"
 msgstr "Urtebeteren buruan"
 
 #: src/page/albums.vue:59 src/page/albums.vue:1
-msgid "After selecting pictures from search results, you can add them to an album using the context menu."
-msgstr "Bilaketa-emaitzetan argazkiak hautatu ondoren, album batean gehi ditzakezu testuinguru-menua erabiliz."
+msgid ""
+"After selecting pictures from search results, you can add them to an album "
+"using the context menu."
+msgstr ""
+"Bilaketa-emaitzetan argazkiak hautatu ondoren, album batean gehi ditzakezu "
+"testuinguru-menua erabiliz."
 
 #: src/options/options.js:442
 msgid "After two months"
@@ -258,8 +263,12 @@ msgid "All Years"
 msgstr "Urte guztiak"
 
 #: src/dialog/share.vue:75
-msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Bestela, fitxategiak zuzenean igo ditzakezu Nextcloud bezalako WebDAV zerbitzarietara."
+msgid ""
+"Alternatively, you can upload files directly to WebDAV servers like "
+"Nextcloud."
+msgstr ""
+"Bestela, fitxategiak zuzenean igo ditzakezu Nextcloud bezalako WebDAV "
+"zerbitzarietara."
 
 #: src/dialog/photo/edit/info.vue:176
 msgid "Altitude"
@@ -282,7 +291,9 @@ msgstr "Animazioa"
 
 #: src/dialog/share.vue:74
 msgid "Any private photos and videos remain private and won't be shared."
-msgstr "Argazki eta bideo pribatu guztiak pribatuak izaten jarraitzen dute eta ez dira partekatuko."
+msgstr ""
+"Argazki eta bideo pribatu guztiak pribatuak izaten jarraitzen dute eta ez "
+"dira partekatuko."
 
 #: src/dialog/service/edit.vue:510
 msgid "API Key"
@@ -362,8 +373,12 @@ msgid "Authentication"
 msgstr "Autentifikazioa"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "Sortu automatikoki koadro txikiak bestela indexatu edo ikusi ezin diren fitxategietarako."
+msgid ""
+"Automatically create thumbnails for files that cannot otherwise be indexed "
+"or viewed."
+msgstr ""
+"Sortu automatikoki koadro txikiak bestela indexatu edo ikusi ezin diren "
+"fitxategietarako."
 
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
@@ -375,13 +390,22 @@ msgstr "Oinarrizko karpeta"
 
 #: src/page/about/about.vue:26 src/page/about/about.vue:3
 #: src/page/connect.vue:74
-msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr "Egin zaitez kide gaur, lagundu gure eginkizuna eta gozatu gure kideen abantailak!"
+msgid ""
+"Become a member today, support our mission and enjoy our member benefits!"
+msgstr ""
+"Egin zaitez kide gaur, lagundu gure eginkizuna eta gozatu gure kideen "
+"abantailak!"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:5
-msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "%100 autofinantziatua eta independentea izanik, zure datuak ez ditugula inoiz salduko eta gure softwareari eta zerbitzuei buruz gardenak izango garela agintzen dizugu."
+msgid ""
+"Being 100% self-funded and independent, we can promise you that we will "
+"never sell your data and that we will always be transparent about our "
+"software and services."
+msgstr ""
+"%100 autofinantziatua eta independentea izanik, zure datuak ez ditugula "
+"inoiz salduko eta gure softwareari eta zerbitzuei buruz gardenak izango "
+"garela agintzen dizugu."
 
 #: src/dialog/admin/users/edit.vue:293 src/page/settings/account.vue:285
 msgid "Bio"
@@ -428,8 +452,12 @@ msgid "Busy, please wait…"
 msgstr "Lanpetuta, itxaron mesedez…"
 
 #: src/page/connect.vue:107
-msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
-msgstr "Eskaintzen ditugun softwarea eta zerbitzuak erabiliz gero, gure zerbitzu-baldintzak, pribatutasun-politika eta jokabide-kodea onartzen dituzu."
+msgid ""
+"By using the software and services we provide, you agree to our terms of "
+"service, privacy policy, and code of conduct."
+msgstr ""
+"Eskaintzen ditugun softwarea eta zerbitzuak erabiliz gero, gure zerbitzu-"
+"baldintzak, pribatutasun-politika eta jokabide-kodea onartzen dituzu."
 
 #: src/app/routes.js:188 src/component/navigation.vue:258
 #: src/component/navigation.vue:1020
@@ -789,7 +817,8 @@ msgstr "Bistaratzeko izena"
 
 #: src/page/settings/advanced.vue:143
 msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Ez egin argazkien eta albumen metadatuen babeskopiak YAML fitxategietan."
+msgstr ""
+"Ez egin argazkien eta albumen metadatuen babeskopiak YAML fitxategietan."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -797,7 +826,9 @@ msgstr "Ez sortu ExifTool JSON fitxategiak metadatuen erauzketa hobetzeko."
 
 #: src/page/settings/advanced.vue:99
 msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Ez aldatu jatorrizkoen karpeta. Inportazioa, kargatzea eta ezabatzea desgaitzen du."
+msgstr ""
+"Ez aldatu jatorrizkoen karpeta. Inportazioa, kargatzea eta ezabatzea "
+"desgaitzen du."
 
 #: src/page/settings/advanced.vue:494
 msgid "Don't use Darktable to convert RAW images."
@@ -837,8 +868,12 @@ msgid "Download"
 msgstr "Deskargatu"
 
 #: src/page/settings/general.vue:648
-msgid "Download only original media files, without any automatically generated files."
-msgstr "Deskargatu jatorrizko multimedia fitxategiak soilik, automatikoki sortutako fitxategirik gabe."
+msgid ""
+"Download only original media files, without any automatically generated "
+"files."
+msgstr ""
+"Deskargatu jatorrizko multimedia fitxategiak soilik, automatikoki sortutako "
+"fitxategirik gabe."
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -862,8 +897,12 @@ msgid "Downscaling Filter"
 msgstr "Beherapen-iragazkia"
 
 #: src/page/about/feedback.vue:16
-msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
-msgstr "Jasotzen ditugun mezu elektronikoen bolumen handia dela eta, baliteke gure taldeak ezin izatea zurekin berehala itzuli."
+msgid ""
+"Due to the high volume of emails we receive, our team may be unable to get "
+"back to you immediately."
+msgstr ""
+"Jasotzen ditugun mezu elektronikoen bolumen handia dela eta, baliteke gure "
+"taldeak ezin izatea zurekin berehala itzuli."
 
 #: src/page/library/browse.vue:37
 msgid "Duplicates will be skipped and only appear once."
@@ -878,8 +917,12 @@ msgid "Dynamic Previews"
 msgstr "Aurrebista dinamikoak"
 
 #: src/page/settings/advanced.vue:305
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Errendatze dinamikoak zerbitzari indartsu bat behar du. Ez da gomendagarria NAS gailuetarako."
+msgid ""
+"Dynamic rendering requires a powerful server. It is not recommended for NAS "
+"devices."
+msgstr ""
+"Errendatze dinamikoak zerbitzari indartsu bat behar du. Ez da gomendagarria "
+"NAS gailuetarako."
 
 #: src/page/settings/advanced.vue:347
 msgid "Dynamic Size Limit: %{n}px"
@@ -922,7 +965,8 @@ msgstr "Gaitu funtzio berriak garatzen ari diren."
 
 #: src/page/settings/advanced.vue:538
 msgid "Enables RAW converter presets. May reduce performance."
-msgstr "RAW bihurgailuaren aurrezarpenak gaitzen ditu. Errendimendua murriztu dezake."
+msgstr ""
+"RAW bihurgailuaren aurrezarpenak gaitzen ditu. Errendimendua murriztu dezake."
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -949,8 +993,12 @@ msgid "Every two days"
 msgstr "Bi egunetik behin"
 
 #: src/page/settings/general.vue:210
-msgid "Exclude content marked as private from search results, shared albums, labels, and places."
-msgstr "Baztertu pribatu gisa markatutako edukia bilaketa-emaitzetatik, partekatutako albumetatik, etiketetatik eta tokietatik."
+msgid ""
+"Exclude content marked as private from search results, shared albums, "
+"labels, and places."
+msgstr ""
+"Baztertu pribatu gisa markatutako edukia bilaketa-emaitzetatik, "
+"partekatutako albumetatik, etiketetatik eta tokietatik."
 
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:133
 msgid "Exclude hidden"
@@ -1068,8 +1116,12 @@ msgid "Files"
 msgstr "Fitxategiak"
 
 #: src/page/settings/library.vue:214
-msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "'IMG_1234 (2)' eta 'IMG_1234 (3)' bezalako izen sekuentzialak dituzten fitxategiak irudi berekoak dira."
+msgid ""
+"Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to "
+"the same picture."
+msgstr ""
+"'IMG_1234 (2)' eta 'IMG_1234 (3)' bezalako izen sekuentzialak dituzten "
+"fitxategiak irudi berekoak dira."
 
 #: src/dialog/photo/edit/details.vue:487
 msgid "Focal Length"
@@ -1205,12 +1257,18 @@ msgid "Import failed"
 msgstr "Ezin izan da inportatu"
 
 #: src/page/library/import.vue:25
-msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
-msgstr "Inportatutako fitxategiak dataren arabera ordenatuko dira eta izen esklusibo bat emango zaie bikoiztuak saihesteko."
+msgid ""
+"Imported files will be sorted by date and given a unique name to avoid "
+"duplicates."
+msgstr ""
+"Inportatutako fitxategiak dataren arabera ordenatuko dira eta izen esklusibo "
+"bat emango zaie bikoiztuak saihesteko."
 
 #: src/page/settings/general.vue:276
 msgid "Imported files will be sorted by date and given a unique name."
-msgstr "Inportatutako fitxategiak dataren arabera ordenatuko dira eta izen esklusibo bat emango zaie."
+msgstr ""
+"Inportatutako fitxategiak dataren arabera ordenatuko dira eta izen esklusibo "
+"bat emango zaie."
 
 #: src/page/library/import.vue:5
 msgid "Importing %{name}…"
@@ -1230,8 +1288,12 @@ msgstr "urtean"
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
 #: src/component/photo/mosaic.vue:1 src/page/labels.vue:35
 #: src/page/library/browse.vue:38
-msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "Espero dituzun argazkiak falta badira, eskaneatu berriro zure liburutegia eta itxaron indexazioa amaitu arte."
+msgid ""
+"In case pictures you expect are missing, please rescan your library and wait "
+"until indexing has been completed."
+msgstr ""
+"Espero dituzun argazkiak falta badira, eskaneatu berriro zure liburutegia "
+"eta itxaron indexazioa amaitu arte."
 
 #: src/page/settings/general.vue:669
 msgid "Include RAW image files when downloading stacks and archives."
@@ -1248,7 +1310,8 @@ msgstr "Aurkibidea"
 
 #: src/page/settings/general.vue:408
 msgid "Index and import files through the user interface."
-msgstr "Fitxategiak indexatu eta inportatu erabiltzailearen interfazearen bidez."
+msgstr ""
+"Fitxategiak indexatu eta inportatu erabiltzailearen interfazearen bidez."
 
 #: src/page/library/index.vue:144 src/page/library/index.vue:150
 msgid "Indexing"
@@ -1444,8 +1507,12 @@ msgid "Location"
 msgstr "Kokapena"
 
 #: src/page/library/errors.vue:37 src/page/library/errors.vue:1
-msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "Erregistro-mezuak hemen agertzen dira PhotoPrism-ek hautsitako fitxategiak aurkitzen dituen bakoitzean edo beste arazo potentzial batzuk daudenean."
+msgid ""
+"Log messages appear here whenever PhotoPrism comes across broken files, or "
+"there are other potential issues."
+msgstr ""
+"Erregistro-mezuak hemen agertzen dira PhotoPrism-ek hautsitako fitxategiak "
+"aurkitzen dituen bakoitzean edo beste arazo potentzial batzuk daudenean."
 
 #: src/component/navigation.vue:475 src/component/navigation.vue:1778
 #: src/component/navigation.vue:2092
@@ -1657,8 +1724,12 @@ msgid "No video selected"
 msgstr "Ez da bideorik hautatu"
 
 #: src/page/library/errors.vue:34 src/page/library/errors.vue:1
-msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "Ez dago gako-hitz hau duen abisurik edo errorerik. Kontuan izan bilaketak maiuskulak eta minuskulak bereizten dituela."
+msgid ""
+"No warnings or error containing this keyword. Note that search is case-"
+"sensitive."
+msgstr ""
+"Ez dago gako-hitz hau duen abisurik edo errorerik. Kontuan izan bilaketak "
+"maiuskulak eta minuskulak bereizten dituela."
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1667,8 +1738,12 @@ msgstr "Ez dago gako-hitz hau duen abisurik edo errorerik. Kontuan izan bilaketa
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
-msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "Argazkiak ez diren eta kalitate baxuko irudiak berrikusi behar dira bilaketa-emaitzetan agertu aurretik."
+msgid ""
+"Non-photographic and low-quality images require a review before they appear "
+"in search results."
+msgstr ""
+"Argazkiak ez diren eta kalitate baxuko irudiak berrikusi behar dira bilaketa-"
+"emaitzetan agertu aurretik."
 
 #: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:297
 #: src/options/options.js:393
@@ -1676,16 +1751,24 @@ msgid "None"
 msgstr "Bat ere ez"
 
 #: src/page/library/import.vue:28
-msgid "Note you may manually manage your originals folder and importing is optional."
-msgstr "Kontuan izan jatorrizkoen karpeta eskuz kudea dezakezula eta inportatzea aukerakoa da."
+msgid ""
+"Note you may manually manage your originals folder and importing is optional."
+msgstr ""
+"Kontuan izan jatorrizkoen karpeta eskuz kudea dezakezula eta inportatzea "
+"aukerakoa da."
 
 #: src/page/settings/services.vue:38
 msgid "Note:"
 msgstr "Ohar:"
 
 #: src/dialog/service/add.vue:28
-msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "Oharra: WebDAV zerbitzariak soilik, Nextcloud edo PhotoPrism bezalakoak, urruneko zerbitzu gisa konfigura daitezke babeskopia egiteko eta fitxategiak kargatzeko."
+msgid ""
+"Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured "
+"as remote service for backup and file upload."
+msgstr ""
+"Oharra: WebDAV zerbitzariak soilik, Nextcloud edo PhotoPrism bezalakoak, "
+"urruneko zerbitzu gisa konfigura daitezke babeskopia egiteko eta fitxategiak "
+"kargatzeko."
 
 #: src/dialog/photo/edit/details.vue:659
 msgid "Notes"
@@ -1777,8 +1860,12 @@ msgid "Other"
 msgstr "Bestela"
 
 #: src/page/about/about.vue:17
-msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
-msgstr "Gure eginkizuna da erabiltzaileentzako eta pribatutasunerako irtenbiderik egokiena eskaintzea zure argazkiak antolatuta eta eskuragarri mantentzeko."
+msgid ""
+"Our mission is to provide the most user- and privacy-friendly solution to "
+"keep your pictures organized and accessible."
+msgstr ""
+"Gure eginkizuna da erabiltzaileentzako eta pribatutasunerako irtenbiderik "
+"egokiena eskaintzea zure argazkiak antolatuta eta eskuragarri mantentzeko."
 
 #: src/options/options.js:331 src/page/places.vue:158
 msgid "Outdoor"
@@ -1811,7 +1898,8 @@ msgstr "Jendea"
 
 #: src/dialog/share.vue:72
 msgid "People you share a link with will be able to view public contents."
-msgstr "Esteka partekatzen duzun pertsonek eduki publikoak ikusi ahal izango dituzte."
+msgstr ""
+"Esteka partekatzen duzun pertsonek eduki publikoak ikusi ahal izango dituzte."
 
 #: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:155
 msgid "Permanently deleted"
@@ -1883,12 +1971,17 @@ msgid "Please don't upload photos containing offensive content."
 msgstr "Mesedez, ez kargatu eduki iraingarria duten argazkirik."
 
 #: src/dialog/account/password.vue:19
-msgid "Please note that changing your password will log you out on other devices and browsers."
-msgstr "Kontuan izan pasahitza aldatzeak beste gailu eta arakatzaile batzuetan saioa amaituko duzula."
+msgid ""
+"Please note that changing your password will log you out on other devices "
+"and browsers."
+msgstr ""
+"Kontuan izan pasahitza aldatzeak beste gailu eta arakatzaile batzuetan saioa "
+"amaituko duzula."
 
 #: src/page/connect.vue:56 src/page/connect.vue:53
 msgid "Please restart your instance for the changes to take effect."
-msgstr "Mesedez, berrabiarazi zure instantzia aldaketak indarrean egon daitezen."
+msgstr ""
+"Mesedez, berrabiarazi zure instantzia aldaketak indarrean egon daitezen."
 
 #: src/common/notify.js:98
 msgid "Please wait…"
@@ -1981,7 +2074,9 @@ msgstr "GORDINA"
 
 #: src/page/library/index.vue:118
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "Berriro indexatu jatorrizko guztiak, dagoeneko indexatutako eta aldatu gabeko fitxategiak barne."
+msgstr ""
+"Berriro indexatu jatorrizko guztiak, dagoeneko indexatutako eta aldatu "
+"gabeko fitxategiak barne."
 
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
@@ -2048,8 +2143,12 @@ msgid "Remove from album"
 msgstr "Kendu albumetik"
 
 #: src/page/library/import.vue:121
-msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "Kendu inportatutako fitxategiak biltegia gordetzeko. Onartu gabeko fitxategi motak ez dira inoiz ezabatuko, uneko kokapenan geratzen dira."
+msgid ""
+"Remove imported files to save storage. Unsupported file types will never be "
+"deleted, they remain in their current location."
+msgstr ""
+"Kendu inportatutako fitxategiak biltegia gordetzeko. Onartu gabeko fitxategi "
+"motak ez dira inoiz ezabatuko, uneko kokapenan geratzen dira."
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
@@ -2248,7 +2347,8 @@ msgstr "Erakutsi zerbitzariaren erregistroak Liburutegian."
 
 #: src/page/settings/advanced.vue:77
 msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Erregistro mezu zehatzagoak erakusten ditu. Berrabiaraztea eskatzen du."
+msgstr ""
+"Erregistro mezu zehatzagoak erakusten ditu. Berrabiaraztea eskatzen du."
 
 #: src/model/file.js:213 src/page/settings/general.vue:689
 msgid "Sidecar"
@@ -2290,11 +2390,16 @@ msgstr "Pila"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "Pilatu fitxategiak irudi edo instantzia-identifikatzaile esklusibo bera partekatzen dutenak."
+msgstr ""
+"Pilatu fitxategiak irudi edo instantzia-identifikatzaile esklusibo bera "
+"partekatzen dutenak."
 
 #: src/page/settings/library.vue:172
-msgid "Stack pictures taken at the exact same time and location based on their metadata."
-msgstr "Metadatuetan oinarrituta, pilatu ordu eta kokapen berean ateratako argazkiak."
+msgid ""
+"Stack pictures taken at the exact same time and location based on their "
+"metadata."
+msgstr ""
+"Metadatuetan oinarrituta, pilatu ordu eta kokapen berean ateratako argazkiak."
 
 #: src/dialog/photo/edit/info.vue:110
 msgid "Stackable"
@@ -2305,8 +2410,12 @@ msgid "Stacks"
 msgstr "Pilak"
 
 #: src/page/settings/library.vue:138
-msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "Fitxategiak multzokatzen ditu erreferentzia-marko antzeko batekin, baina kalitate, formatu, tamaina edo kolore ezberdintasunak dituztenak."
+msgid ""
+"Stacks group files with a similar frame of reference, but differences of "
+"quality, format, size or color."
+msgstr ""
+"Fitxategiak multzokatzen ditu erreferentzia-marko antzeko batekin, baina "
+"kalitate, formatu, tamaina edo kolore ezberdintasunak dituztenak."
 
 #: src/page/library/index.vue:35
 msgid "Start"
@@ -2354,8 +2463,11 @@ msgid "Super Admin"
 msgstr "Super Administratzailea"
 
 #: src/dialog/service/add.vue:29
-msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Zerbitzu gehigarrietarako laguntza gehituko da denborarekin, Google Drive adibidez."
+msgid ""
+"Support for additional services, like Google Drive, will be added over time."
+msgstr ""
+"Zerbitzu gehigarrietarako laguntza gehituko da denborarekin, Google Drive "
+"adibidez."
 
 #: src/component/navigation.vue:487 src/component/navigation.vue:1818
 #: src/dialog/sponsor.vue:7
@@ -2388,16 +2500,24 @@ msgid "Thank You for Your Support!"
 msgstr "Eskerrik asko zure laguntzagatik!"
 
 #: src/page/about/about.vue:18
-msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "Horregatik, PhotoPrism oinarritik sortu zen behar duzun tokian exekutatzeko, askatasuna, pribatutasuna edo funtzionaltasuna arriskuan jarri gabe."
+msgid ""
+"That's why PhotoPrism was built from the ground up to run wherever you need "
+"it, without compromising freedom, privacy, or functionality."
+msgstr ""
+"Horregatik, PhotoPrism oinarritik sortu zen behar duzun tokian exekutatzeko, "
+"askatasuna, pribatutasuna edo funtzionaltasuna arriskuan jarri gabe."
 
 #: src/page/library/index.vue:40
 msgid "The index currently contains %{n} hidden files."
 msgstr "Une honetan indizeak ezkutuko %{n} fitxategi ditu."
 
 #: src/page/library/index.vue:41
-msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "Baliteke haien formatua ez onartzea, oraindik ez dira JPEG bihurtu edo bikoiztuak daude."
+msgid ""
+"Their format may not be supported, they haven't been converted to JPEG yet "
+"or there are duplicates."
+msgstr ""
+"Baliteke haien formatua ez onartzea, oraindik ez dira JPEG bihurtu edo "
+"bikoiztuak daude."
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2405,15 +2525,24 @@ msgstr "Gaia"
 
 #: src/page/settings/services.vue:42
 msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files\n"
 "          from your computer or smartphone as if they were local."
 msgstr ""
-"Honek jatorrizko karpeta sareko unitate gisa muntatzen du eta fitxategiak ireki, editatu eta ezaba ditzakezu\n"
-"          zure ordenagailutik edo telefono mugikorretik bertakoak balira bezala."
+"Honek jatorrizko karpeta sareko unitate gisa muntatzen du eta fitxategiak "
+"ireki, editatu eta ezaba ditzakezu\n"
+"          zure ordenagailutik edo telefono mugikorretik bertakoak balira "
+"bezala."
 
 #: src/dialog/webdav.vue:26
-msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "Honek jatorrizko karpeta sareko unitate gisa muntatzen du eta ordenagailutik edo telefonotik fitxategiak ireki, editatu eta ezaba ditzakezu lokalak balira bezala."
+msgid ""
+"This mounts the originals folder as a network drive and allows you to open, "
+"edit, and delete files from your computer or smartphone as if they were "
+"local."
+msgstr ""
+"Honek jatorrizko karpeta sareko unitate gisa muntatzen du eta ordenagailutik "
+"edo telefonotik fitxategiak ireki, editatu eta ezaba ditzakezu lokalak "
+"balira bezala."
 
 #: src/page/settings/advanced.vue:252
 msgid "Thumbnail Generation"
@@ -2455,8 +2584,12 @@ msgid "Title too long"
 msgstr "Izenburua luzeegia"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
-msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "Bertsio-berritzeko, aktibazio-kode bat sar dezakezu edo \"Erregistratu\" sakatu gure webgunean erregistratzeko:"
+msgid ""
+"To upgrade, you can either enter an activation code or click \"Register\" to "
+"sign up on our website:"
+msgstr ""
+"Bertsio-berritzeko, aktibazio-kode bat sar dezakezu edo \"Erregistratu\" "
+"sakatu gure webgunean erregistratzeko:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:95
@@ -2723,10 +2856,12 @@ msgstr "WebDAV bezeroak PhotoPrism-era konekta daitezke URL hau erabiliz:"
 
 #: src/page/settings/services.vue:39
 msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can "
+"connect directly to\n"
 "          PhotoPrism."
 msgstr ""
-"WebDAV bezeroak, Microsoft-en Windows Explorer edo Apple-ren Finder bezalakoak, zuzenean konekta daitezke\n"
+"WebDAV bezeroak, Microsoft-en Windows Explorer edo Apple-ren Finder "
+"bezalakoak, zuzenean konekta daitezke\n"
 "          PhotoPrism."
 
 #: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
@@ -2768,8 +2903,12 @@ msgstr "Bai"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:106
-msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "Ongi etorri gurekin harremanetan jar zaitezke membership@photoprism.app helbidera zure kidetzari buruzko galderak egiteko."
+msgid ""
+"You are welcome to contact us at membership@photoprism.app for questions "
+"regarding your membership."
+msgstr ""
+"Ongi etorri gurekin harremanetan jar zaitezke membership@photoprism.app "
+"helbidera zure kidetzari buruzko galderak egiteko."
 
 #: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2790,7 +2929,8 @@ msgstr "Elementu bakarra hauta dezakezu"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:39
 msgid "You may rescan your library to find additional faces."
-msgstr "Zure liburutegia berriro eskaneatu dezakezu aurpegi gehigarriak aurkitzeko."
+msgstr ""
+"Zure liburutegia berriro eskaneatu dezakezu aurpegi gehigarriak aurkitzeko."
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
@@ -2799,19 +2939,31 @@ msgstr "Zure kontua behar bezala konektatu da."
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
 #: src/page/about/about.vue:49 src/page/about/about.vue:4
 #: src/page/connect.vue:75
-msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "Zure etengabeko laguntzak aldizkako eguneraketak eskaintzen eta independente izaten laguntzen digu, gure eginkizuna bete eta zure pribatutasuna babesteko."
+msgid ""
+"Your continued support helps us provide regular updates and remain "
+"independent, so we can fulfill our mission and protect your privacy."
+msgstr ""
+"Zure etengabeko laguntzak aldizkako eguneraketak eskaintzen eta independente "
+"izaten laguntzen digu, gure eginkizuna bete eta zure pribatutasuna babesteko."
 
 #: src/page/albums.vue:62 src/page/albums.vue:1
-msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien albumak automatikoki sortzeko."
+msgid ""
+"Your library is continuously analyzed to automatically create albums of "
+"special moments, trips, and places."
+msgstr ""
+"Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien "
+"albumak automatikoki sortzeko."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Handitu/txikiagotu"
 
-#~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
-#~ msgstr "Sortu automatikoki JPEGak beste fitxategi mota batzuetarako, arakatzaile batean bistaratzeko."
+#~ msgid ""
+#~ "Automatically create JPEGs for other file types so that they can be "
+#~ "displayed in a browser."
+#~ msgstr ""
+#~ "Sortu automatikoki JPEGak beste fitxategi mota batzuetarako, arakatzaile "
+#~ "batean bistaratzeko."
 
 #~ msgid "Convert to JPEG"
 #~ msgstr "Bihurtu JPEG"
@@ -2822,8 +2974,12 @@ msgstr "Handitu/txikiagotu"
 #~ msgid "Please be careful not to upload any private or offensive content."
 #~ msgstr "Mesedez, kontuz eduki pribatu edo iraingarririk ez igotzeko."
 
-#~ msgid "You are welcome to upload files to this public demo for which you own the copyright."
-#~ msgstr "Ongi etorri egile eskubideen jabe zaren demo publiko honetara fitxategiak kargatzera."
+#~ msgid ""
+#~ "You are welcome to upload files to this public demo for which you own the "
+#~ "copyright."
+#~ msgstr ""
+#~ "Ongi etorri egile eskubideen jabe zaren demo publiko honetara fitxategiak "
+#~ "kargatzera."
 
 #~ msgid "You may not upload more than %{n} files"
 #~ msgstr "Ezin dituzu %{n} fitxategi baino gehiago kargatu"
@@ -2852,23 +3008,43 @@ msgstr "Handitu/txikiagotu"
 #~ msgid "Not Found"
 #~ msgstr "Ez da aurkitu"
 
-#~ msgid "As this helps us provide more features to the public, we encourage all users to support our mission."
-#~ msgstr "Honek publikoari eginbide gehiago eskaintzen laguntzen digunez, erabiltzaile guztiak animatzen ditugu gure eginkizuna laguntzera."
+#~ msgid ""
+#~ "As this helps us provide more features to the public, we encourage all "
+#~ "users to support our mission."
+#~ msgstr ""
+#~ "Honek publikoari eginbide gehiago eskaintzen laguntzen digunez, "
+#~ "erabiltzaile guztiak animatzen ditugu gure eginkizuna laguntzera."
 
 #~ msgid "Frequently Asked Questions"
 #~ msgstr "Galdera arruntak"
 
-#~ msgid "Our team decides this on an ongoing basis depending on the support effort required, server and licensing costs, and whether the features are generally needed by everyone or mainly requested by organizations and advanced users."
-#~ msgstr "Gure taldeak etengabe erabakitzen du behar den laguntza-esfortzuaren, zerbitzariaren eta lizentzien kostuen arabera, eta eginbideak oro har denek behar dituzten edo, batez ere, erakundeek eta erabiltzaile aurreratuek eskatzen dituzten ala ez."
+#~ msgid ""
+#~ "Our team decides this on an ongoing basis depending on the support effort "
+#~ "required, server and licensing costs, and whether the features are "
+#~ "generally needed by everyone or mainly requested by organizations and "
+#~ "advanced users."
+#~ msgstr ""
+#~ "Gure taldeak etengabe erabakitzen du behar den laguntza-esfortzuaren, "
+#~ "zerbitzariaren eta lizentzien kostuen arabera, eta eginbideak oro har "
+#~ "denek behar dituzten edo, batez ere, erakundeek eta erabiltzaile "
+#~ "aurreratuek eskatzen dituzten ala ez."
 
 #~ msgid "What functionality is generally available?"
 #~ msgstr "Zein funtzionalitate dago eskuragarri orokorrean?"
 
-#~ msgid "It is your decision whether you want to sign up to enjoy additional benefits."
-#~ msgstr "Zure erabakia da abantaila gehigarriez gozatzeko izena eman nahi duzun ala ez."
+#~ msgid ""
+#~ "It is your decision whether you want to sign up to enjoy additional "
+#~ "benefits."
+#~ msgstr ""
+#~ "Zure erabakia da abantaila gehigarriez gozatzeko izena eman nahi duzun "
+#~ "ala ez."
 
-#~ msgid "Voluntary donations do not cover the cost of a team working full time to provide you with updates, documentation, and support."
-#~ msgstr "Borondatezko dohaintzek ez dute estaltzen lanaldi osoko talde baten kostua eguneratzeak, dokumentazioa eta laguntza emateko."
+#~ msgid ""
+#~ "Voluntary donations do not cover the cost of a team working full time to "
+#~ "provide you with updates, documentation, and support."
+#~ msgstr ""
+#~ "Borondatezko dohaintzek ez dute estaltzen lanaldi osoko talde baten "
+#~ "kostua eguneratzeak, dokumentazioa eta laguntza emateko."
 
 #~ msgid "Why are some features only available to sponsors?"
 #~ msgstr "Zergatik daude funtzio batzuk babesleentzat soilik eskuragarri?"
@@ -2879,27 +3055,50 @@ msgstr "Handitu/txikiagotu"
 #~ msgid "Proceed"
 #~ msgstr "Jarraitu"
 
-#~ msgid "To upgrade, you may either enter an activation code or click on \"Proceed\" to sign up on our website:"
-#~ msgstr "Bertsio-berritzeko, aktibazio-kode bat sartu edo \"Jarraitu\" sakatu dezakezu gure webgunean erregistratzeko:"
+#~ msgid ""
+#~ "To upgrade, you may either enter an activation code or click on "
+#~ "\"Proceed\" to sign up on our website:"
+#~ msgstr ""
+#~ "Bertsio-berritzeko, aktibazio-kode bat sartu edo \"Jarraitu\" sakatu "
+#~ "dezakezu gure webgunean erregistratzeko:"
 
 #~ msgid "Something went wrong, are you offline?"
 #~ msgstr "Arazoren bat izan da, konexiorik gabe zaude?"
 
-#~ msgid "At PhotoPrism, we believe that every moment captured through a photograph is precious, and our mission is to enable people to cherish those moments for generations to come."
-#~ msgstr "PhotoPrism-en uste dugu argazki baten bidez ateratako une bakoitza baliotsua dela, eta gure eginkizuna da jendeak belaunaldiz belaunaldi une horiek gogoan izan ditzan."
-
-#~ msgid "Become a member today to enjoy additional features and support our mission!"
-#~ msgstr "Egin zaitez kide gaur ezaugarri osagarriez gozatzeko eta gure eginkizuna laguntzeko!"
-
-#~ msgid "Feel free to contact us at hello@photoprism.app if you have any questions."
-#~ msgstr "Galderarik baduzu, jar zaitez gurekin harremanetan hello@photoprism.app helbidera."
-
-#~ msgid "Feel free to contact us at membership@photoprism.app for questions regarding your membership."
-#~ msgstr "Jar zaitez gurekin harremanetan membership@photoprism.app helbidera zure kidetzari buruzko galderak egiteko."
+#~ msgid ""
+#~ "At PhotoPrism, we believe that every moment captured through a photograph "
+#~ "is precious, and our mission is to enable people to cherish those moments "
+#~ "for generations to come."
+#~ msgstr ""
+#~ "PhotoPrism-en uste dugu argazki baten bidez ateratako une bakoitza "
+#~ "baliotsua dela, eta gure eginkizuna da jendeak belaunaldiz belaunaldi une "
+#~ "horiek gogoan izan ditzan."
 
 #~ msgid ""
-#~ "Their format may not be supported, they haven't been converted to JPEG yet or there are\n"
+#~ "Become a member today to enjoy additional features and support our "
+#~ "mission!"
+#~ msgstr ""
+#~ "Egin zaitez kide gaur ezaugarri osagarriez gozatzeko eta gure eginkizuna "
+#~ "laguntzeko!"
+
+#~ msgid ""
+#~ "Feel free to contact us at hello@photoprism.app if you have any questions."
+#~ msgstr ""
+#~ "Galderarik baduzu, jar zaitez gurekin harremanetan hello@photoprism.app "
+#~ "helbidera."
+
+#~ msgid ""
+#~ "Feel free to contact us at membership@photoprism.app for questions "
+#~ "regarding your membership."
+#~ msgstr ""
+#~ "Jar zaitez gurekin harremanetan membership@photoprism.app helbidera zure "
+#~ "kidetzari buruzko galderak egiteko."
+
+#~ msgid ""
+#~ "Their format may not be supported, they haven't been converted to JPEG "
+#~ "yet or there are\n"
 #~ "            duplicates."
 #~ msgstr ""
-#~ "Baliteke haien formatua ez onartzea, oraindik ez dira JPEG bihurtu edo badaude\n"
+#~ "Baliteke haien formatua ez onartzea, oraindik ez dira JPEG bihurtu edo "
+#~ "badaude\n"
 #~ "            bikoiztuak."
