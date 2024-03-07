@@ -804,5 +804,11 @@ var Flags = CliFlags{
 			Usage:  "server log `FILE` *daemon-mode only*",
 			Value:  "",
 			EnvVar: EnvVar("LOG_FILENAME"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "delete-import-directory",
+			Usage:  "Delete empty folders after importing.",
+			Value:  true,
+			EnvVar: EnvVar("DELETE_IMPORT_DIRECTORY"),
 		}},
 }
