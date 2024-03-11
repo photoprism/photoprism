@@ -37,14 +37,14 @@ require (
 	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sevlyar/go-daemon v0.1.6
 	github.com/sirupsen/logrus v1.9.3
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/tensorflow/tensorflow v1.15.2
 	github.com/tidwall/gjson v1.17.1
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.14
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.20.0
-	golang.org/x/net v0.21.0
+	golang.org/x/crypto v0.21.0
+	golang.org/x/net v0.22.0
 	gonum.org/v1/gonum v0.14.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.2
 	gopkg.in/yaml.v2 v2.4.0
@@ -75,7 +75,7 @@ require github.com/go-ldap/ldap/v3 v3.4.6
 
 require (
 	github.com/prometheus/client_golang v1.19.0
-	github.com/prometheus/common v0.49.0
+	github.com/prometheus/common v0.50.0
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
@@ -123,10 +123,10 @@ require (
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/zitadel/logging v0.5.0 // indirect
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a // indirect
-	golang.org/x/oauth2 v0.17.0 // indirect
-	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/oauth2 v0.18.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.32.0 // indirect
+	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
