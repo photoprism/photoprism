@@ -1,9 +1,9 @@
 <template>
   <v-dialog :value="show" fullscreen hide-overlay scrollable
-            lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
+    lazy persistent class="p-photo-edit-dialog" @keydown.esc="close" @keydown.left="prev_if_possible" @keydown.right="next_if_possible">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
-        <v-btn icon dark class="action-close" @click.stop="close">
+        <v-btn icon dark class="action-close" ref="close_button" @click.stop="close">
           <v-icon>close</v-icon>
         </v-btn>
         <v-toolbar-title>{{ title }}
@@ -219,6 +219,14 @@ export default {
         this.find(this.selected + 1);
       }
     },
+    prev_if_possible() {
+      if (this.selected < 1 || document.activeElement.nodeName.toLowerCase() === 'input') return;
+      this.prev();
+    },
+    next_if_possible() {
+      if (this.selected >= this.selection.length - 1  || document.activeElement.nodeName.toLowerCase() === 'input') return;
+      this.next();
+    },
     find(index) {
       if (this.loading) {
         return;
@@ -238,6 +246,7 @@ export default {
         this.model = model;
         this.loading = false;
         this.uid = this.selectedId;
+        this.$nextTick(() => this.$refs.close_button.$el.focus());
       }).catch(() => this.loading = false);
     },
   },
