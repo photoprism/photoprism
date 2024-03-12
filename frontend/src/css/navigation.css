@@ -316,3 +316,50 @@ nav .v-list__tile__title.title {
     fill: #ffffff;
     color: #ffffff;
 }
+
+#photoprism .v-btn .tooltip {
+	position: absolute;
+	top: 0;
+	right: 125%;
+	margin-top: 5px;
+	margin-left: -100%;
+	background-color: #000;
+	color: #fff;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 15px;
+
+	/* Reset Vuetify CSS */
+	transform: rotate(0deg);
+	text-transform: none;
+	opacity: 0.75;
+	left: auto;
+}
+
+#photoprism .v-btn .tooltip:after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 50%;
+	width: 0;
+	height: 0;
+	border: 7px solid transparent;
+	border-left-color: #000;
+	border-right: 0;
+	margin: -7px -7px 0 0;
+}
+
+@media only screen and (min-width: 600px) {
+
+	#photoprism .v-btn .tooltip {
+		transition: opacity 0.5s;
+		visibility: hidden;
+		opacity: 0;
+	}
+
+	#photoprism .v-btn:hover .tooltip {
+		visibility: visible;
+		opacity: 0.75;
+	}
+
+}

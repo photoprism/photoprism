@@ -25,113 +25,123 @@
         <v-btn
             v-if="canShare && context !== 'archive' && context !== 'review'" fab dark
             small
-            :title="$gettext('Share')"
+									  
             color="share"
             :disabled="selection.length === 0 || busy"
             class="action-share"
             @click.stop="dialog.share = true"
         >
           <v-icon>cloud</v-icon>
+          <div class="tooltip">{{$gettext('Share')}}</div>
         </v-btn>
 
         <v-btn
             v-if="canManage && context === 'review'" fab dark
             small
-            :title="$gettext('Approve')"
+										
             color="share"
             :disabled="selection.length === 0 || busy"
             class="action-approve"
             @click.stop="batchApprove"
         >
           <v-icon>check</v-icon>
+          <div class="tooltip">{{$gettext('Approve')}}</div>
         </v-btn>
         <v-btn
             v-if="canEdit" fab dark
             small
-            :title="$gettext('Edit')"
+									 
             color="edit"
             :disabled="selection.length === 0 || busy"
             class="action-edit"
             @click.stop="edit"
         >
           <v-icon>edit</v-icon>
+          <div class="tooltip">{{$gettext('Edit')}}</div>
         </v-btn>
         <v-btn
             v-if="canTogglePrivate" fab dark
             small
-            :title="$gettext('Change private flag')"
+													
             color="private"
             :disabled="selection.length === 0 || busy"
             class="action-private"
             @click.stop="batchPrivate"
         >
           <v-icon>lock</v-icon>
+          <div class="tooltip">{{$gettext('Change private flag')}}</div>
         </v-btn>
         <v-btn
             v-if="canDownload && context !== 'archive'" fab dark
             small
-            :title="$gettext('Download')"
+										 
             :disabled="busy"
             color="download"
             class="action-download"
             @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
+          <div class="tooltip">{{$gettext('Download')}}</div>
         </v-btn>
         <v-btn
             v-if="canEditAlbum && context !== 'archive'" fab dark
             small
-            :title="$gettext('Add to album')"
+											 
             color="album"
             :disabled="selection.length === 0 || busy"
             class="action-album"
             @click.stop="dialog.album = true"
         >
           <v-icon>bookmark</v-icon>
+          <div class="tooltip">{{$gettext('Add to album')}}</div>
         </v-btn>
         <v-btn
             v-if="canArchive && !isAlbum && context !== 'archive'" fab dark
             small
             color="remove"
-            :title="$gettext('Archive')"
+										
             :disabled="selection.length === 0 || busy"
             class="action-archive"
             @click.stop="archivePhotos"
         >
           <v-icon>archive</v-icon>
+          <div class="tooltip">{{$gettext('Archive')}}</div>
         </v-btn>
         <v-btn
             v-if="canArchive && !album && context === 'archive'" fab dark
             small
             color="restore"
-            :title="$gettext('Restore')"
+										
             :disabled="selection.length === 0 || busy"
             class="action-restore"
             @click.stop="batchRestore"
         >
           <v-icon>unarchive</v-icon>
+          <div class="tooltip">{{$gettext('Restore')}}</div>
         </v-btn>
         <v-btn
             v-if="canEditAlbum && isAlbum" fab dark
             small
-            :title="$gettext('Remove from album')"
+												  
             color="remove"
             :disabled="selection.length === 0 || busy"
             class="action-remove"
             @click.stop="removeFromAlbum"
         >
           <v-icon>eject</v-icon>
+          <div class="tooltip">{{$gettext('Remove from album')}}</div>
         </v-btn>
         <v-btn
             v-if="canDelete && !album && context === 'archive'" fab dark
             small
-            :title="$gettext('Delete')"
+									   
             color="remove"
             :disabled="selection.length === 0 || busy"
             class="action-delete"
             @click.stop="deletePhotos"
         >
           <v-icon>delete</v-icon>
+          <div class="tooltip">{{$gettext('Delete')}}</div>
         </v-btn>
         <v-btn
             fab dark small

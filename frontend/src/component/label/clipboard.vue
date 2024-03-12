@@ -27,33 +27,36 @@
                 fab
                 dark
                 small
-                :title="$gettext('Download')"
+											 
                 color="download"
                 @click.stop="download()"
                 class="p-label-clipboard-download"
                 :disabled="selection.length !== 1"
         >
-            <v-icon>cloud_download</v-icon>
+          <v-icon>cloud_download</v-icon>
+          <div class="tooltip">{{$gettext('Download')}}</div>
         </v-btn -->
         <v-btn
             fab dark small
-            :title="$gettext('Add to album')"
+											 
             color="album"
             :disabled="!canAddAlbums || selection.length === 0"
             class="action-album"
             @click.stop="dialog.album = true"
         >
           <v-icon>bookmark</v-icon>
+          <div class="tooltip">{{$gettext('Add to album')}}</div>
         </v-btn>
         <v-btn
             fab dark small
             color="remove"
-            :title="$gettext('Delete')"
+									   
             :disabled="!canManage || selection.length === 0"
             class="action-delete"
             @click.stop="dialog.delete = true"
         >
           <v-icon>delete</v-icon>
+          <div class="tooltip">{{$gettext('Delete')}}</div>
         </v-btn>
 
         <v-btn

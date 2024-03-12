@@ -25,25 +25,27 @@
 
         <v-btn
             fab dark small
-            :title="$gettext('Download')"
+										 
             color="download"
             class="action-download"
             :disabled="!canDownload || selection.length !== 1"
             @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
+          <div class="tooltip">{{$gettext('Download')}}</div>
         </v-btn>
 
         <v-btn
             v-if="canAddAlbums"
             fab dark small
-            :title="$gettext('Add to album')"
+											 
             color="album"
             :disabled="selection.length === 0"
             class="action-album"
             @click.stop="dialog.album = true"
         >
           <v-icon>bookmark</v-icon>
+          <div class="tooltip">{{$gettext('Add to album')}}</div>
         </v-btn>
 
         <v-btn
