@@ -71,6 +71,7 @@ export const TimeZoneUTC = "UTC";
 const num = "numeric";
 const short = "short";
 const long = "long";
+const thumbs = window.__CONFIG__.thumbs;
 
 export const DATE_FULL = {
   year: num,
@@ -96,6 +97,51 @@ export let BatchSize = 120;
 export class Photo extends RestModel {
   constructor(values) {
     super(values);
+
+    let mainFile;
+    if (this.Files) {
+      mainFile = this.mainFile();
+    }
+    const mainFileHash = this.generateMainFileHash(mainFile, this.Hash);
+    this.Thumbs = this.generateThumbs(mainFile, mainFileHash);
+    this.DownloadUrl = this.getDownloadUrl(mainFileHash);
+  }
+
+  generateThumbs(mainFile, mainFileHash) {
+    let sourceWidth = this.Width;
+    let sourceHeight = this.Height;
+    if (mainFile) {
+      sourceWidth = mainFile.Width;
+      sourceHeight = mainFile.Height;
+    }
+
+    if (!this.Hash) {
+      return {};
+    }
+
+    const result = {};
+    for (let i = 0; i < thumbs.length; i++) {
+      let t = thumbs[i];
+      const size = this.calculateSizeFromProps(t.w, t.h, sourceWidth, sourceHeight);
+
+      // we know the thumbnail url can't be cached because the size-parameter changes on every call
+      const url = this.generateThumbnailUrlUnmemoized(
+        mainFileHash,
+        this.videoFile(),
+        config.staticUri,
+        config.contentUri,
+        config.previewToken,
+        t.size
+      );
+
+      result[t.size] = {
+        src: url,
+        w: size.width,
+        h: size.height,
+      };
+    }
+
+    return result;
   }
 
   getDefaults() {
@@ -195,6 +241,8 @@ export class Photo extends RestModel {
       EditedAt: null,
       CheckedAt: null,
       DeletedAt: null,
+      Thumbs: {},
+      DownloadUrl: "",
     };
   }
 
@@ -680,24 +728,39 @@ export class Photo extends RestModel {
     );
   }
 
-  generateThumbnailUrl = memoizeOne(
-    (mainFileHash, videoFile, staticUri, contentUri, previewToken, size) => {
-      let hash = mainFileHash;
+  /**
+   * use this one if you know the parameters changed AND yout task is so
+   * performance critical, that you benefit from skipping the parameter-changed
+   * -check from memoizeOne.
+   *
+   * If you don't know wether the parameters changed or if your task is not
+   * incredibly performance critical, use the memoized 'generateThumbnailUrl'
+   */
+  generateThumbnailUrlUnmemoized = (
+    mainFileHash,
+    videoFile,
+    staticUri,
+    contentUri,
+    previewToken,
+    size
+  ) => {
+    let hash = mainFileHash;
 
-      if (!hash) {
-        if (videoFile && videoFile.Hash) {
-          return `${contentUri}/t/${videoFile.Hash}/${previewToken}/${size}`;
-        }
-
-        return `${staticUri}/img/404.jpg`;
+    if (!hash) {
+      if (videoFile && videoFile.Hash) {
+        return `${contentUri}/t/${videoFile.Hash}/${previewToken}/${size}`;
       }
 
-      return `${contentUri}/t/${hash}/${previewToken}/${size}`;
+      return `${staticUri}/img/404.jpg`;
     }
-  );
 
-  getDownloadUrl() {
-    return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken}`;
+    return `${contentUri}/t/${hash}/${previewToken}/${size}`;
+  };
+
+  generateThumbnailUrl = memoizeOne(this.generateThumbnailUrlUnmemoized);
+
+  getDownloadUrl(mainFileHash = this.mainFileHash()) {
+    return `${config.apiUri}/dl/${mainFileHash}?t=${config.downloadToken}`;
   }
 
   downloadAll() {
@@ -758,13 +821,13 @@ export class Photo extends RestModel {
     });
   }
 
-  calculateSize(width, height) {
-    if (width >= this.Width && height >= this.Height) {
+  calculateSizeFromProps(width, height, sourceWidth, sourceHeight) {
+    if (width >= sourceWidth && height >= sourceHeight) {
       // Smaller
-      return { width: this.Width, height: this.Height };
+      return { width: sourceWidth, height: sourceHeight };
     }
 
-    const srcAspectRatio = this.Width / this.Height;
+    const srcAspectRatio = sourceWidth / sourceHeight;
     const maxAspectRatio = width / height;
 
     let newW, newH;
@@ -778,6 +841,10 @@ export class Photo extends RestModel {
     }
 
     return { width: newW, height: newH };
+  }
+
+  calculateSize(width, height) {
+    return this.calculateSizeFromProps(width, height, this.Width, this.Height);
   }
 
   getDateString(showTimeZone) {
