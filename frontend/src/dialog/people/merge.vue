@@ -1,5 +1,12 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="350" class="p-people-merge-dialog" @keydown.esc="cancel">
+  <v-dialog
+    :value="show"
+    lazy
+    persistent
+    max-width="350"
+    class="p-people-merge-dialog"
+    @keydown.esc="cancel"
+  >
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -15,8 +22,13 @@
             <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="No">No</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed dark class="action-confirm"
-                   @click.stop="confirm">
+            <v-btn
+              color="primary-button"
+              depressed
+              dark
+              class="action-confirm"
+              @click.stop="confirm"
+            >
               <translate key="Yes">Yes</translate>
             </v-btn>
           </v-flex>
@@ -29,7 +41,7 @@
 import Subject from "model/subject";
 
 export default {
-  name: 'PPeopleMergeDialog',
+  name: "PPeopleMergeDialog",
   props: {
     show: Boolean,
     subj1: {
@@ -50,16 +62,19 @@ export default {
         return "";
       }
 
-      return this.$gettextInterpolate(this.$gettext("Merge %{a} with %{b}?"), {a: this.subj1.originalValue("Name"), b: this.subj2.Name});
+      return this.$gettextInterpolate(this.$gettext("Merge %{a} with %{b}?"), {
+        a: this.subj1.originalValue("Name"),
+        b: this.subj2.Name,
+      });
     },
   },
   methods: {
     cancel() {
-      this.$emit('cancel');
+      this.$emit("cancel");
     },
     confirm() {
-      this.$emit('confirm');
+      this.$emit("confirm");
     },
-  }
+  },
 };
 </script>

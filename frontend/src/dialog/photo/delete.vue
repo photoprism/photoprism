@@ -1,5 +1,12 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="360" class="p-photo-delete-dialog" @keydown.esc="cancel">
+  <v-dialog
+    :value="show"
+    lazy
+    persistent
+    max-width="360"
+    class="p-photo-delete-dialog"
+    @keydown.esc="cancel"
+  >
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -18,12 +25,24 @@
             <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn v-if="action === ''" color="primary-button" depressed dark class="action-confirm"
-                   @click.stop="confirm">
+            <v-btn
+              v-if="action === ''"
+              color="primary-button"
+              depressed
+              dark
+              class="action-confirm"
+              @click.stop="confirm"
+            >
               <translate key="Delete">Delete</translate>
             </v-btn>
-            <v-btn v-else color="primary-button" depressed dark class="action-confirm"
-                   @click.stop="confirm">
+            <v-btn
+              v-else
+              color="primary-button"
+              depressed
+              dark
+              class="action-confirm"
+              @click.stop="confirm"
+            >
               {{ action }}
             </v-btn>
           </v-flex>
@@ -34,7 +53,7 @@
 </template>
 <script>
 export default {
-  name: 'PPhotoDeleteDialog',
+  name: "PPhotoDeleteDialog",
   props: {
     show: Boolean,
     text: {
@@ -51,11 +70,11 @@ export default {
   },
   methods: {
     cancel() {
-      this.$emit('cancel');
+      this.$emit("cancel");
     },
     confirm() {
-      this.$emit('confirm');
+      this.$emit("confirm");
     },
-  }
+  },
 };
 </script>

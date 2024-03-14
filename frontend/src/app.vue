@@ -22,7 +22,7 @@ import "css/app.css";
 import Event from "pubsub-js";
 
 export default {
-  name: 'PhotoPrism',
+  name: "PhotoPrism",
   data() {
     return {
       isRtl: this.$config.rtl(),
@@ -38,20 +38,22 @@ export default {
         this.$vuetify.breakpoint.smAndDown ? "small-screen" : "large-screen",
         this.$route.meta.hideNav ? "hide-nav" : "show-nav",
       ];
-    }
+    },
   },
   created() {
-    window.addEventListener('touchstart', (e) => this.onTouchStart(e), {passive: true});
-    window.addEventListener('touchmove', (e) => this.onTouchMove(e), {passive: true});
-    this.subscriptions['view.refresh'] = Event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
+    window.addEventListener("touchstart", (e) => this.onTouchStart(e), { passive: true });
+    window.addEventListener("touchmove", (e) => this.onTouchMove(e), { passive: true });
+    this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) =>
+      this.onRefresh(data)
+    );
     this.$config.setVuetify(this.$vuetify);
   },
   destroyed() {
     for (let i = 0; i < this.subscriptions.length; i++) {
       Event.unsubscribe(this.subscriptions[i]);
     }
-    window.removeEventListener('touchstart', (e) => this.onTouchStart(e), false);
-    window.removeEventListener('touchmove', (e) => this.onTouchMove(e), false);
+    window.removeEventListener("touchstart", (e) => this.onTouchStart(e), false);
+    window.removeEventListener("touchmove", (e) => this.onTouchMove(e), false);
   },
   methods: {
     onRefresh(config) {
@@ -63,10 +65,11 @@ export default {
     },
     onTouchMove(e) {
       if (!this.touchStart) return;
-      if (document.querySelector('.v-dialog--active') !== null) return;
+      if (document.querySelector(".v-dialog--active") !== null) return;
 
       const y = e.touches[0].pageY;
-      const h = window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
+      const h =
+        window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
 
       if (window.scrollY >= h - 200 && y < this.touchStart) {
         Event.publish("touchmove.bottom");

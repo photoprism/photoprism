@@ -2,50 +2,82 @@
   <div id="photo-viewer" class="p-viewer pswp" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="pswp__bg"></div>
     <div class="pswp__scroll-wrap">
-      <div class="pswp__container" :class="{ 'slideshow': slideshow.active }">
+      <div class="pswp__container" :class="{ slideshow: slideshow.active }">
         <div class="pswp__item"></div>
         <div class="pswp__item"></div>
         <div class="pswp__item"></div>
       </div>
 
       <div class="pswp__ui pswp__ui--hidden">
-
         <div class="pswp__top-bar">
           <div class="pswp__taken hidden-xs-only">{{ formatDate(item.TakenAtLocal) }}</div>
 
           <div class="pswp__counter"></div>
 
-          <button class="pswp__button pswp__button--close action-close" :title="$gettext('Close')"></button>
+          <button
+            class="pswp__button pswp__button--close action-close"
+            :title="$gettext('Close')"
+          ></button>
 
-          <button v-if="canDownload" class="pswp__button action-download" style="background: none;"
-                  :title="$gettext('Download')" @click.exact="onDownload">
+          <button
+            v-if="canDownload"
+            class="pswp__button action-download"
+            style="background: none"
+            :title="$gettext('Download')"
+            @click.exact="onDownload"
+          >
             <v-icon size="16" color="white">get_app</v-icon>
           </button>
 
-          <button v-if="canEdit" class="pswp__button action-edit hidden-shared-only" style="background: none;" :title="$gettext('Edit')"
-                  @click.exact="onEdit">
+          <button
+            v-if="canEdit"
+            class="pswp__button action-edit hidden-shared-only"
+            style="background: none"
+            :title="$gettext('Edit')"
+            @click.exact="onEdit"
+          >
             <v-icon size="16" color="white">edit</v-icon>
           </button>
 
-          <button class="pswp__button action-select" style="background: none;"
-                  :title="$gettext('Select')" @click.exact="onSelect">
-            <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">check_circle</v-icon>
+          <button
+            class="pswp__button action-select"
+            style="background: none"
+            :title="$gettext('Select')"
+            @click.exact="onSelect"
+          >
+            <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white"
+              >check_circle</v-icon
+            >
             <v-icon v-else size="16" color="white">radio_button_off</v-icon>
           </button>
 
-          <button v-if="canLike" class="pswp__button action-like hidden-shared-only" style="background: none;"
-                  :title="$gettext('Like')" @click.exact="onLike">
+          <button
+            v-if="canLike"
+            class="pswp__button action-like hidden-shared-only"
+            style="background: none"
+            :title="$gettext('Like')"
+            @click.exact="onLike"
+          >
             <v-icon v-if="item.Favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
 
-          <button class="pswp__button pswp__button--fs action-toggle-fullscreen"
-                  :title="$gettext('Fullscreen')"></button>
+          <button
+            class="pswp__button pswp__button--fs action-toggle-fullscreen"
+            :title="$gettext('Fullscreen')"
+          ></button>
 
-          <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
+          <button
+            class="pswp__button pswp__button--zoom action-zoom"
+            :title="$gettext('Zoom in/out')"
+          ></button>
 
-          <button class="pswp__button action-slideshow" style="background: none;" :title="$gettext('Start/Stop Slideshow')"
-                  @click.exact="onSlideshow">
+          <button
+            class="pswp__button action-slideshow"
+            style="background: none"
+            :title="$gettext('Start/Stop Slideshow')"
+            @click.exact="onSlideshow"
+          >
             <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
             <v-icon v-show="interval" size="16" color="white">pause</v-icon>
           </button>
@@ -63,34 +95,52 @@
           <div class="pswp__share-tooltip"></div>
         </div>
 
-        <button class="pswp__button pswp__button--arrow--left action-previous" title="Previous (arrow left)">
+        <button
+          class="pswp__button pswp__button--arrow--left action-previous"
+          title="Previous (arrow left)"
+        >
         </button>
 
-        <button class="pswp__button pswp__button--arrow--right action-next" title="Next (arrow right)">
+        <button
+          class="pswp__button pswp__button--arrow--right action-next"
+          title="Next (arrow right)"
+        >
         </button>
 
         <div class="pswp__caption" @click="onPlay">
           <div class="pswp__caption__center"></div>
         </div>
-
       </div>
     </div>
-    <div v-if="player.show" class="video-viewer" @click.stop.prevent="closePlayer" @keydown.esc.stop.prevent="closePlayer">
-      <p-video-player ref="player" :source="player.source" :poster="player.poster"
-                      :height="player.height" :width="player.width" :autoplay="player.autoplay" :loop="player.loop" @close="closePlayer">
+    <div
+      v-if="player.show"
+      class="video-viewer"
+      @click.stop.prevent="closePlayer"
+      @keydown.esc.stop.prevent="closePlayer"
+    >
+      <p-video-player
+        ref="player"
+        :source="player.source"
+        :poster="player.poster"
+        :height="player.height"
+        :width="player.width"
+        :autoplay="player.autoplay"
+        :loop="player.loop"
+        @close="closePlayer"
+      >
       </p-video-player>
     </div>
   </div>
 </template>
 
 <script>
-import 'photoswipe/dist/photoswipe.css';
-import 'photoswipe/dist/default-skin/default-skin.css';
+import "photoswipe/dist/photoswipe.css";
+import "photoswipe/dist/default-skin/default-skin.css";
 import Event from "pubsub-js";
 import Thumb from "model/thumb";
-import {Photo,DATE_FULL} from "model/photo";
+import { Photo, DATE_FULL } from "model/photo";
 import Notify from "common/notify";
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 
 export default {
   name: "PPhotoViewer",
@@ -116,14 +166,14 @@ export default {
         poster: "",
         width: 640,
         height: 480,
-      }
+      },
     };
   },
   created() {
-    this.subscriptions['viewer.change'] = Event.subscribe('viewer.change', this.onChange);
-    this.subscriptions['viewer.pause'] = Event.subscribe('viewer.pause', this.onPause);
-    this.subscriptions['viewer.show'] = Event.subscribe('viewer.show', this.onShow);
-    this.subscriptions['viewer.hide'] = Event.subscribe('viewer.hide', this.onHide);
+    this.subscriptions["viewer.change"] = Event.subscribe("viewer.change", this.onChange);
+    this.subscriptions["viewer.pause"] = Event.subscribe("viewer.pause", this.onPause);
+    this.subscriptions["viewer.show"] = Event.subscribe("viewer.show", this.onShow);
+    this.subscriptions["viewer.hide"] = Event.subscribe("viewer.hide", this.onHide);
   },
   destroyed() {
     this.onPause();
@@ -140,11 +190,11 @@ export default {
 
       const l = s.length;
 
-      if (l !== 20 || s[l-1] !== 'Z') {
+      if (l !== 20 || s[l - 1] !== "Z") {
         return s;
       }
 
-      return DateTime.fromISO(s, { zone:  "UTC" }).toLocaleString(DATE_FULL);
+      return DateTime.fromISO(s, { zone: "UTC" }).toLocaleString(DATE_FULL);
     },
     onShow() {
       this.$scrollbar.hide();
@@ -246,7 +296,7 @@ export default {
 
       Notify.success(this.$gettext("Downloading…"));
 
-      new Photo().find(this.item.UID).then(p => p.downloadAll());
+      new Photo().find(this.item.UID).then((p) => p.downloadAll());
     },
     onEdit() {
       this.onPause();
@@ -271,8 +321,8 @@ export default {
 
       g.close(); // Close Gallery
 
-      Event.publish("dialog.edit", {selection, album, index}); // Open Edit Dialog
-    }
-  }
+      Event.publish("dialog.edit", { selection, album, index }); // Open Edit Dialog
+    },
+  },
 };
 </script>
