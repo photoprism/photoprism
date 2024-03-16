@@ -5,8 +5,7 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: 2024-01-29 23:09+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
-"Language-Team: Bulgarian <https://translate.photoprism.app/projects/"
-"photoprism/frontend/bg/>\n"
+"Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -91,7 +90,7 @@ msgstr "Изтрит акаунт"
 msgid "Accounts"
 msgstr "Сметки"
 
-#: src/dialog/photo/edit/info.vue:175
+#: src/dialog/photo/edit/info.vue:182
 msgid "Accuracy"
 msgstr "Точност"
 
@@ -200,7 +199,7 @@ msgstr "Име на албум"
 #: src/app/routes.js:175 src/component/album/toolbar.vue:58
 #: src/component/navigation.vue:152 src/component/navigation.vue:162
 #: src/component/navigation.vue:569 src/component/navigation.vue:4
-#: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:66
+#: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:76
 msgid "Albums"
 msgstr "Албуми"
 
@@ -265,7 +264,7 @@ msgstr "Всички години"
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Освен това можете да качвате файлове директно на WebDAV сървъри като Nextcloud."
 
-#: src/dialog/photo/edit/info.vue:167
+#: src/dialog/photo/edit/info.vue:176
 msgid "Altitude"
 msgstr "Надморска височина"
 
@@ -315,7 +314,7 @@ msgstr "Приложения и устройства"
 msgid "Archive"
 msgstr "Архив"
 
-#: src/dialog/photo/edit/info.vue:215
+#: src/dialog/photo/edit/info.vue:222
 msgid "Archived"
 msgstr "Архивирано"
 
@@ -445,7 +444,7 @@ msgstr "Календар"
 msgid "Camera"
 msgstr "Камера"
 
-#: src/dialog/photo/edit/info.vue:94
+#: src/dialog/photo/edit/info.vue:104
 msgid "Camera Serial"
 msgstr "Серийна камера"
 
@@ -464,7 +463,7 @@ msgstr "Не мога да избера повече елементи"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:74 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/password.vue:39
+#: src/page/connect.vue:44 src/dialog/account/password.vue:38
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
 #: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
@@ -516,7 +515,7 @@ msgstr "Промяна на частния флаг"
 msgid "Changes successfully saved"
 msgstr "Промените са успешно записани"
 
-#: src/dialog/photo/edit/info.vue:207
+#: src/dialog/photo/edit/info.vue:214
 msgid "Checked"
 msgstr "Проверено"
 
@@ -614,7 +613,7 @@ msgstr "Донор"
 msgid "Converting"
 msgstr "Конвертиране на"
 
-#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/info.vue:61
+#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:58 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
 msgstr "Копиране в клипборда"
@@ -640,7 +639,7 @@ msgstr "Създаване на акаунт"
 msgid "Create album"
 msgstr "Създаване на албум"
 
-#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:183
+#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:190
 msgid "Created"
 msgstr "Създаден"
 
@@ -911,7 +910,7 @@ msgstr "Редактиране на акаунт"
 msgid "Edit Photo"
 msgstr "Редактиране на снимка"
 
-#: src/dialog/photo/edit/info.vue:199
+#: src/dialog/photo/edit/info.vue:206
 msgid "Edited"
 msgstr "Редактиран"
 
@@ -936,7 +935,7 @@ msgstr "Грешка"
 msgid "Errors"
 msgstr "Грешки"
 
-#: src/dialog/photo/edit/info.vue:77
+#: src/dialog/photo/edit/info.vue:74
 msgid "Estimate"
 msgstr "Прогноза"
 
@@ -989,11 +988,11 @@ msgstr "Номер F"
 msgid "Face"
 msgstr "Лице"
 
-#: src/dialog/photo/edit/info.vue:88
+#: src/dialog/photo/edit/info.vue:98
 msgid "Faces"
 msgstr "Лица"
 
-#: src/dialog/photo/edit/files.vue:61 src/dialog/photo/edit/info.vue:63
+#: src/dialog/photo/edit/files.vue:61 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:60 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
 msgstr "Неуспешно копиране в клипборда"
@@ -1014,7 +1013,7 @@ msgstr "Фамилно име"
 msgid "Fast"
 msgstr "Бърз"
 
-#: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:109
+#: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:118
 msgid "Favorite"
 msgstr "Любими"
 
@@ -1079,7 +1078,7 @@ msgstr "Файлове с последователни имена като 'IMG_
 msgid "Focal Length"
 msgstr "Фокусно разстояние"
 
-#: src/dialog/photo/edit/info.vue:26 src/dialog/service/edit.vue:287
+#: src/dialog/photo/edit/info.vue:30 src/dialog/service/edit.vue:287
 #: src/dialog/service/edit.vue:293 src/dialog/share/upload.vue:141
 #: src/model/folder.js:199 src/page/library/browse.vue:72
 msgid "Folder"
@@ -1190,7 +1189,7 @@ msgstr "Как можем да помогнем?"
 msgid "image"
 msgstr "изображение"
 
-#: src/dialog/photo/edit/info.vue:81 src/model/file.js:217
+#: src/dialog/photo/edit/info.vue:78 src/model/file.js:217
 #: src/options/options.js:354
 msgid "Image"
 msgstr "Изображение"
@@ -1359,7 +1358,7 @@ msgstr "Последно влизане"
 msgid "Last Sync"
 msgstr "Синхронизиране"
 
-#: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:151
+#: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:160
 msgid "Latitude"
 msgstr "Географска ширина"
 
@@ -1442,7 +1441,7 @@ msgstr "местоположение"
 
 #: src/page/settings/account.vue:813 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
-#: src/dialog/photo/edit/info.vue:83 src/page/albums.vue:88
+#: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:88
 #: src/page/settings/account.vue:667
 msgid "Location"
 msgstr "Местоположение"
@@ -1466,7 +1465,7 @@ msgstr "Излизане от системата"
 msgid "Logs"
 msgstr "Дневници"
 
-#: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:159
+#: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:168
 msgid "Longitude"
 msgstr "Дължина"
 
@@ -1527,7 +1526,7 @@ msgstr "Сливане на %{a} с %{b}?"
 msgid "Message sent"
 msgstr "Изпратено съобщение"
 
-#: src/dialog/photo/edit/info.vue:73
+#: src/dialog/photo/edit/info.vue:70
 msgid "Metadata"
 msgstr "Метаданни"
 
@@ -1573,7 +1572,7 @@ msgstr "Най-малко 6 символа."
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:234
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
-#: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/info.vue:79
+#: src/dialog/photo/edit/info.vue:38 src/dialog/photo/edit/info.vue:76
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
@@ -1635,7 +1634,7 @@ msgstr "Не са намерени хора"
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
 #: src/page/library/browse.vue:34 src/page/photos.vue:505
-#: src/page/places.vue:376 src/page/places.vue:456
+#: src/page/places.vue:400 src/page/places.vue:487
 msgid "No pictures found"
 msgstr "Не са намерени снимки"
 
@@ -1766,7 +1765,7 @@ msgid "Original file names will be stored and indexed."
 msgstr "Оригиналните имена на файловете ще бъдат съхранени и индексирани."
 
 #: src/dialog/photo/edit/files.vue:80 src/dialog/photo/edit/files.vue:77
-#: src/dialog/photo/edit/info.vue:38
+#: src/dialog/photo/edit/info.vue:46
 msgid "Original Name"
 msgstr "Оригинално име"
 
@@ -1788,7 +1787,7 @@ msgstr "Нашата мисия е да предоставим най-удобн
 msgid "Outdoor"
 msgstr "На открито"
 
-#: src/dialog/photo/edit/info.vue:133
+#: src/dialog/photo/edit/info.vue:142
 msgid "Panorama"
 msgstr "Панорама"
 
@@ -1802,7 +1801,7 @@ msgstr "Панорами"
 msgid "Password"
 msgstr "Парола"
 
-#: src/dialog/account/password.vue:52
+#: src/dialog/account/password.vue:57
 msgid "Password changed"
 msgstr "Паролата е променена"
 
@@ -1857,7 +1856,7 @@ msgstr "Снимки"
 msgid "Pink"
 msgstr "Розов"
 
-#: src/dialog/photo/edit/info.vue:141
+#: src/dialog/photo/edit/info.vue:150
 msgid "Place"
 msgstr "Място"
 
@@ -1938,7 +1937,7 @@ msgstr "Първичен"
 
 #: src/app/routes.js:249 src/component/navigation.vue:346
 #: src/component/navigation.vue:1330 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:117 src/page/settings/general.vue:209
+#: src/dialog/photo/edit/info.vue:126 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "Частна"
 
@@ -1962,7 +1961,7 @@ msgstr "Лилаво"
 msgid "Quality Filter"
 msgstr "Филтър за качество"
 
-#: src/dialog/photo/edit/info.vue:74
+#: src/dialog/photo/edit/info.vue:84
 msgid "Quality Score"
 msgstr "Оценка на качеството"
 
@@ -2070,7 +2069,7 @@ msgstr "Заявката е неуспешна - невалиден отгово
 msgid "Required"
 msgstr "Изисква се"
 
-#: src/dialog/photo/edit/info.vue:82
+#: src/dialog/photo/edit/info.vue:92
 msgid "Resolution"
 msgstr "Резолюция"
 
@@ -2105,13 +2104,13 @@ msgstr "Роля"
 msgid "Satellite"
 msgstr "Сателит"
 
-#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:42
+#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:61
 msgid "Save"
 msgstr "Запазете"
 
-#: src/dialog/photo/edit/info.vue:125
+#: src/dialog/photo/edit/info.vue:134
 msgid "Scan"
 msgstr "Сканиране"
 
@@ -2300,7 +2299,7 @@ msgstr "Стекиране на файлове с един и същ уника�
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Подреждайте снимки, направени по едно и също време и на едно и също място, въз основа на техните метаданни."
 
-#: src/dialog/photo/edit/info.vue:101
+#: src/dialog/photo/edit/info.vue:110
 msgid "Stackable"
 msgstr "Подвижен за стифиране"
 
@@ -2375,7 +2374,7 @@ msgid "Sync raw and video files"
 msgstr "Синхронизиране на необработени и видеофайлове"
 
 #: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
-#: src/dialog/photo/edit/info.vue:56
+#: src/dialog/photo/edit/info.vue:66
 msgid "Taken"
 msgstr "Взето"
 
@@ -2444,7 +2443,7 @@ msgid "Title"
 msgstr "Заглавие"
 
 #: src/page/settings/account.vue:114 src/component/photo/list.vue:136
-#: src/dialog/photo/edit/info.vue:46
+#: src/dialog/photo/edit/info.vue:54
 msgid "Title"
 msgstr "Заглавие"
 
@@ -2490,7 +2489,7 @@ msgid "Try again using other filters or keywords."
 msgstr "Опитайте отново, като използвате други филтри или ключови думи."
 
 #: src/dialog/photo/edit/files.vue:98 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:45 src/dialog/photo/edit/info.vue:16
+#: src/dialog/photo/edit/files.vue:45 src/dialog/photo/edit/info.vue:20
 #: src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "Тип"
@@ -2507,7 +2506,7 @@ msgstr "Отмяна на"
 msgid "Unique ID"
 msgstr "Уникален идентификатор"
 
-#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:30
+#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:28
 #: src/model/album.js:179 src/model/photo.js:796 src/model/photo.js:817
 #: src/model/photo.js:840 src/model/photo.js:858 src/model/photo.js:987
 #: src/model/photo.js:1046 src/model/photo.js:1060 src/model/user.js:151
@@ -2533,7 +2532,7 @@ msgid "Unstack"
 msgstr "Разглобяване на стека"
 
 #: src/dialog/photo/edit/files.vue:222 src/dialog/photo/edit/files.vue:219
-#: src/dialog/photo/edit/info.vue:191
+#: src/dialog/photo/edit/info.vue:198
 msgid "Updated"
 msgstr "Актуализиран"
 

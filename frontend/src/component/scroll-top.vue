@@ -1,13 +1,13 @@
 <template>
   <transition name="fade-transition">
     <v-btn
-        v-if="show"
-        color="transparent"
-        dark
-        fab
-        fixed
-        class="p-scroll-top"
-        @click.stop="scrollToTop"
+      v-if="show"
+      color="transparent"
+      dark
+      fab
+      fixed
+      class="p-scroll-top"
+      @click.stop="scrollToTop"
     >
       <v-icon>arrow_upward</v-icon>
     </v-btn>
@@ -16,7 +16,7 @@
 
 <script>
 export default {
-  name: 'PScrollTop',
+  name: "PScrollTop",
   data() {
     return {
       show: false,
@@ -24,10 +24,10 @@ export default {
     };
   },
   created() {
-    window.addEventListener('scroll', this.onScroll);
+    window.addEventListener("scroll", this.onScroll);
   },
   destroyed() {
-    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener("scroll", this.onScroll);
   },
   methods: {
     onScroll: function () {
@@ -37,13 +37,13 @@ export default {
       } else if (window.scrollY < 300) {
         this.show = false;
         this.maxY = 0;
-      } else if ((this.maxY - window.scrollY) > 75) {
+      } else if (this.maxY - window.scrollY > 75) {
         this.show = true;
       }
     },
     scrollToTop: function () {
       return this.$vuetify.goTo(0);
     },
-  }
+  },
 };
 </script>

@@ -1,5 +1,5 @@
-#### Base Image: Debian 11 (Bullseye)
-FROM debian:bullseye-slim
+#### Base Image: Ubuntu 24.04 (Noble Numbat)
+FROM ubuntu:noble
 
 # Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #
@@ -8,8 +8,8 @@ FROM debian:bullseye-slim
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
-LABEL org.opencontainers.image.title="PhotoPrism® Base Image (Debian 11)"
-LABEL org.opencontainers.image.description="Debian 11 (Bullseye)"
+LABEL org.opencontainers.image.title="PhotoPrism® Base Image (Ubuntu 24.04)"
+LABEL org.opencontainers.image.description="Ubuntu 24.04 (Noble Numbat)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/repository/docker/photoprism/develop"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/developer-guide/setup/"
@@ -32,68 +32,47 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     TF_CPP_MIN_LOG_LEVEL="2" \
     PROG="photoprism"
 
-# copy scripts and debian backports sources list
+# Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/
-COPY --chown=root:root --chmod=644 /docker/develop/bullseye/sources.list /etc/apt/sources.list.d/bullseye.list
 
-# install additional distribution packages
+# Update base image and add dependencies.
 RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Install-Recommends "false";' > /etc/apt/apt.conf.d/80recommends && \
     echo 'APT::Install-Suggests "false";' > /etc/apt/apt.conf.d/80suggests && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
-    apt-get update && apt-get -qq dist-upgrade && apt-get -qq install --no-install-recommends \
-      ca-certificates \
-      jq \
-      zip \
-      gpg \
-      lshw \
-      wget \
-      curl \
-      make \
-      sudo \
-      bash \
-      sqlite3 \
-      tzdata \
-      libc6 \
-      libatomic1 \
-      libheif-examples \
-      librsvg2-bin \
-      exiftool \
-      rawtherapee \
-      imagemagick \
-      libvips-dev \
-      ffmpeg \
-      libavcodec-extra \
-      x264 \
-      x265 \
-      libvpx6 \
-      libwebm1 \
+    apt-get update && apt-get -qq dist-upgrade && \
+    apt-get -qq install \
+        libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 \
+        exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync imagemagick libvips-dev rawtherapee \
+        ffmpeg libffmpeg-nvenc-dev libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra \
+        x264 x265 libde265-dev libaom3 libvpx-dev libwebm1 libjpeg8 libmatroska7 libdvdread8 \
     && \
     /scripts/install-mariadb.sh mariadb-client && \
     /scripts/install-darktable.sh && \
+    /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
-      /photoprism/originals \
-      /photoprism/import \
-      /photoprism/storage \
-      /photoprism/storage/sidecar \
-      /photoprism/storage/albums \
-      /photoprism/storage/backups \
-      /photoprism/storage/config \
-      /photoprism/storage/cache && \
+        /photoprism/originals \
+        /photoprism/import \
+        /photoprism/storage \
+        /photoprism/storage/sidecar \
+        /photoprism/storage/albums \
+        /photoprism/storage/backups \
+        /photoprism/storage/config \
+        /photoprism/storage/cache && \
     /scripts/cleanup.sh
 
-# define default directory and user
+# Default working directory.
 WORKDIR /photoprism
 
-# Expose HTTP(S) ports.
-EXPOSE 2342 2443
+# Expose HTTP and HTTPS ports.
+EXPOSE 2342 2442 2443
 
-# keep container running
+# Keep container running.
 CMD ["tail", "-f", "/dev/null"]

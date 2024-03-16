@@ -111,11 +111,13 @@ clean:
 tar.gz:
 	$(info Creating tar.gz archives from the directories in "$(BUILD_PATH)"...)
 	find "$(BUILD_PATH)" -maxdepth 1 -mindepth 1 -type d -name "photoprism*" -exec tar --exclude='.[^/]*' -C {} -czf {}.tar.gz . \;
-pkg: pkg-amd64 pkg-arm64
+pkg: pkg-amd64 pkg-arm64 pkg-armv7
 pkg-amd64:
 	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" --entrypoint "" photoprism/develop:jammy make all install tar.gz
 pkg-arm64:
 	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" --entrypoint "" photoprism/develop:jammy make all install tar.gz
+pkg-armv7:
+	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" --entrypoint "" photoprism/develop:jammy make all install tar.gz
 install:
 	$(info Installing in "$(DESTDIR)"...)
 	@[ ! -d "$(DESTDIR)" ] || (echo "ERROR: Install path '$(DESTDIR)' already exists!"; exit 1)
@@ -165,7 +167,7 @@ terminal:
 	$(DOCKER_COMPOSE) exec -u $(UID) photoprism bash
 mariadb:
 	$(DOCKER_COMPOSE) exec mariadb mariadb -uroot -pphotoprism photoprism
-rootshell: root-terminal
+root: root-terminal
 root-terminal:
 	$(DOCKER_COMPOSE) exec -u root photoprism bash
 migrate:
@@ -228,6 +230,16 @@ build-race:
 build-static:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh static $(BINARY_NAME)
+build-libheif: build-libheif-amd64 build-libheif-arm64 build-libheif-armv7
+build-libheif-amd64:
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 --entrypoint "" photoprism/develop:mantic ./scripts/dist/build-libheif.sh v1.17.1
+	docker run --rm -u $(UID) --platform=amd64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=amd64 -e SYSTEM_ARCH=amd64 --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.17.1
+build-libheif-arm64:
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 --entrypoint "" photoprism/develop:mantic ./scripts/dist/build-libheif.sh v1.17.1
+	docker run --rm -u $(UID) --platform=arm64 --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm64 -e SYSTEM_ARCH=arm64 --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.17.1
+build-libheif-armv7:
+	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm --entrypoint "" photoprism/develop:armv7 ./scripts/dist/build-libheif.sh v1.17.1
+	docker run --rm -u $(UID) --platform=arm --pull=always -v ".:/go/src/github.com/photoprism/photoprism" -e BUILD_ARCH=arm -e SYSTEM_ARCH=arm --entrypoint "" photoprism/develop:jammy ./scripts/dist/build-libheif.sh v1.17.1
 build-tensorflow:
 	docker build -t photoprism/tensorflow:build docker/tensorflow
 	docker run -ti photoprism/tensorflow:build bash
@@ -240,20 +252,20 @@ test-js:
 	$(info Running JS unit tests...)
 	(cd frontend && env TZ=UTC NODE_ENV=development BABEL_ENV=test npm run test)
 acceptance:
-	$(info Running public-mode tests in 'chromium:headless'...)
-	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
+	$(info Running public-mode tests in Chrome...)
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-short:
 	$(info Running JS acceptance tests in Chrome...)
-	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=public,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-firefox:
 	$(info Running JS acceptance tests in Firefox...)
 	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=public --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-short:
 	$(info Running JS acceptance-auth tests in Chrome...)
-	(cd frontend &&	npm run testcafe -- chrome:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
+	(cd frontend &&	npm run testcafe -- "chrome --headless=new" --test-grep "^(Common|Core)\:*" --test-meta mode=auth,type=short --config-file ./testcaferc.json "tests/acceptance")
 acceptance-auth-firefox:
 	$(info Running JS acceptance-auth tests in Firefox...)
 	(cd frontend &&	npm run testcafe -- firefox:headless --test-grep "^(Common|Core)\:*" --test-meta mode=auth --config-file ./testcaferc.json "tests/acceptance")
@@ -330,7 +342,8 @@ docker-develop-other: docker-develop-debian docker-develop-bullseye docker-devel
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bookworm /bookworm "-t photoprism/develop:debian"
+	docker pull --platform=arm debian:bookworm-slim
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64,linux/arm bookworm /bookworm "-t photoprism/develop:debian"
 docker-develop-bookworm-slim:
 	docker pull --platform=amd64 debian:bookworm-slim
 	docker pull --platform=arm64 debian:bookworm-slim
@@ -338,7 +351,8 @@ docker-develop-bookworm-slim:
 docker-develop-bullseye:
 	docker pull --platform=amd64 golang:1-bullseye
 	docker pull --platform=arm64 golang:1-bullseye
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 bullseye /bullseye
+	docker pull --platform=arm golang:1-bullseye
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64,linux/arm bullseye /bullseye
 docker-develop-bullseye-slim:
 	docker pull --platform=amd64 debian:bullseye-slim
 	docker pull --platform=arm64 debian:bullseye-slim
@@ -358,7 +372,8 @@ docker-develop-impish:
 docker-develop-jammy:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 jammy /jammy
+	docker pull --platform=arm ubuntu:jammy
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64,linux/arm jammy /jammy
 docker-develop-jammy-slim:
 	docker pull --platform=amd64 ubuntu:jammy
 	docker pull --platform=arm64 ubuntu:jammy
@@ -379,6 +394,14 @@ docker-develop-mantic-slim:
 	docker pull --platform=amd64 ubuntu:mantic
 	docker pull --platform=arm64 ubuntu:mantic
 	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic-slim /mantic-slim
+docker-develop-noble:
+	docker pull --platform=amd64 ubuntu:noble
+	docker pull --platform=arm64 ubuntu:noble
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 noble /noble
+docker-develop-noble-slim:
+	docker pull --platform=amd64 ubuntu:noble
+	docker pull --platform=arm64 ubuntu:noble
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 noble-slim /noble-slim
 unstable: docker-unstable
 docker-unstable: docker-unstable-mantic
 docker-unstable-jammy:
@@ -640,10 +663,15 @@ fmt-go:
 	gofmt -w -s pkg internal cmd
 	goimports -w pkg internal cmd
 tidy:
-	go mod tidy -go=1.16 && go mod tidy -go=1.17
+	go mod tidy -go=1.21
 users:
 	./photoprism users add -p photoprism -r admin -s -a test:true -n "Alice Austen" superadmin
 	./photoprism users ls
+ldap: dummy-ldap
+dummy-ldap:
+	$(info Restarting dummy-ldap service...)
+	$(DOCKER_COMPOSE) stop dummy-ldap
+	$(DOCKER_COMPOSE) up -d -V --force-recreate dummy-ldap
 
 # Declare all targets as "PHONY", see https://www.gnu.org/software/make/manual/html_node/Phony-Targets.html.
 MAKEFLAGS += --always-make

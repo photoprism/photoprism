@@ -179,7 +179,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
-    image: traefik:v2.10
+    image: traefik:v2.11
     container_name: traefik
     ports:
       - "80:80"

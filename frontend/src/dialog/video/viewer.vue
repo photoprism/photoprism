@@ -1,14 +1,29 @@
 <template>
-  <div v-if="show" class="video-viewer" role="dialog" @click.stop.prevent="onClose" @keydown.esc.stop.prevent="onClose">
-      <p-video-player v-show="show" ref="player" :source="source" :poster="poster" :height="height"
-                      :width="width" :autoplay="true" :loop="loop" @close="onClose"></p-video-player>
+  <div
+    v-if="show"
+    class="video-viewer"
+    role="dialog"
+    @click.stop.prevent="onClose"
+    @keydown.esc.stop.prevent="onClose"
+  >
+    <p-video-player
+      v-show="show"
+      ref="player"
+      :source="source"
+      :poster="poster"
+      :height="height"
+      :width="width"
+      :autoplay="true"
+      :loop="loop"
+      @close="onClose"
+    ></p-video-player>
   </div>
 </template>
 <script>
 import Event from "pubsub-js";
 
 export default {
-  name: 'PVideoViewer',
+  name: "PVideoViewer",
   data() {
     return {
       show: false,
@@ -25,9 +40,9 @@ export default {
     };
   },
   created() {
-    this.subscriptions['player.open'] = Event.subscribe('player.open', this.onOpen);
-    this.subscriptions['player.pause'] = Event.subscribe('player.pause', this.onPause);
-    this.subscriptions['player.close'] = Event.subscribe('player.close', this.onClose);
+    this.subscriptions["player.open"] = Event.subscribe("player.open", this.onOpen);
+    this.subscriptions["player.pause"] = Event.subscribe("player.pause", this.onPause);
+    this.subscriptions["player.close"] = Event.subscribe("player.close", this.onClose);
   },
   beforeDestroy() {
     for (let i = 0; i < this.subscriptions.length; i++) {

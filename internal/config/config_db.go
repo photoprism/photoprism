@@ -319,7 +319,7 @@ func (c *Config) InitTestDb() {
 	go entity.Error{}.LogEvents()
 }
 
-// connectDb checks the database server version.
+// checkDb checks the database server version.
 func (c *Config) checkDb(db *gorm.DB) error {
 	switch c.DatabaseDriver() {
 	case MySQL:
@@ -362,6 +362,8 @@ func (c *Config) connectDb() error {
 	// Open database connection.
 	db, err := gorm.Open(dbDriver, dbDsn)
 	if err != nil || db == nil {
+		log.Infof("config: waiting for the database to become available")
+
 		for i := 1; i <= 12; i++ {
 			db, err = gorm.Open(dbDriver, dbDsn)
 

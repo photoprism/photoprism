@@ -395,6 +395,8 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
 
     await photoviewer.triggerPhotoViewerAction("close");
+    await t.expect(Selector("#photo-viewer").visible).notOk();
+
     await menu.openPage("settings");
 
     await t
@@ -480,6 +482,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await photoviewer.checkPhotoViewerActionAvailability("download", false);
     await photoviewer.checkPhotoViewerActionAvailability("edit", false);
     await photoviewer.triggerPhotoViewerAction("close");
+    await t.expect(Selector("#photo-viewer").visible).notOk();
 
     await menu.openPage("settings");
     await t

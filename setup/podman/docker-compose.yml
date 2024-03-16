@@ -119,9 +119,8 @@ services:
       - apparmor:unconfined
     ## "user" starts the service with a specific non-root user and group ID (optional):
     # user: 1000:1000
-    ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner:
-    ## https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
-    command: --innodb-buffer-pool-size=2G --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=180
+    ## MariaDB config flags, see https://mariadb.com/kb/en/server-system-variables/
+    command: --innodb-buffer-pool-size=2G --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
       - "./database:/var/lib/mysql"
     environment:

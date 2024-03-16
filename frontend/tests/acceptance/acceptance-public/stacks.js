@@ -30,6 +30,7 @@ test.meta("testID", "stacks-001").meta({ type: "short", mode: "public" })(
       await photoviewer.triggerPhotoViewerAction("next");
       await photoviewer.triggerPhotoViewerAction("previous");
       await photoviewer.triggerPhotoViewerAction("close");
+      await t.expect(Selector("#photo-viewer").visible).notOk();
     }
     await photo.checkHoverActionAvailability("uid", SequentialPhotoUid, "open", true);
   }

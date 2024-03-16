@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	"net"
@@ -15,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 // Start the REST API server using the configuration provided
@@ -27,14 +29,14 @@ func Start(ctx context.Context, conf *config.Config) {
 
 	start := time.Now()
 
-	// Set HTTP server mode.
+	// Set web server mode.
 	if conf.HttpMode() != "" {
 		gin.SetMode(conf.HttpMode())
 	} else if conf.Debug() == false {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// Create new HTTP router engine without standard middleware.
+	// Create new router engine without standard middleware.
 	router := gin.New()
 
 	// Set proxy addresses from which headers related to the client and protocol can be trusted
@@ -56,6 +58,7 @@ func Start(ctx context.Context, conf *config.Config) {
 				".png", ".gif", ".jpeg", ".jpg", ".webp", ".mp3", ".mp4", ".zip", ".gz",
 			}),
 			gzip.WithExcludedPaths([]string{
+				conf.BaseUri("/health"),
 				conf.BaseUri(config.ApiUri + "/t"),
 				conf.BaseUri(config.ApiUri + "/folders/t"),
 				conf.BaseUri(config.ApiUri + "/zip"),
@@ -79,24 +82,31 @@ func Start(ctx context.Context, conf *config.Config) {
 	// Find and load templates.
 	router.LoadHTMLFiles(conf.TemplateFiles()...)
 
-	// Register HTTP route handlers.
+	// Register application routes.
 	registerRoutes(router, conf)
 
+	// Register "GET /health" route so clients can perform health checks.
+	router.GET(conf.BaseUri("/health"), func(c *gin.Context) {
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+		c.Header(header.AccessControlAllowOrigin, header.Any)
+		c.String(http.StatusOK, "OK")
+	})
+
+	// Start web server.
 	var tlsErr error
 	var tlsManager *autocert.Manager
 	var server *http.Server
 
-	// Start HTTP server.
 	if unixSocket := conf.HttpSocket(); unixSocket != "" {
 		var listener net.Listener
 		var unixAddr *net.UnixAddr
 		var err error
 
 		if unixAddr, err = net.ResolveUnixAddr("unix", unixSocket); err != nil {
-			log.Errorf("server: resolve unix address failed (%s)", err)
+			log.Errorf("server: invalid unix socket (%s)", err)
 			return
 		} else if listener, err = net.ListenUnix("unix", unixAddr); err != nil {
-			log.Errorf("server: listen unix address failed (%s)", err)
+			log.Errorf("server: failed to listen on unix socket (%s)", err)
 			return
 		} else {
 			server = &http.Server{
@@ -109,42 +119,57 @@ func Start(ctx context.Context, conf *config.Config) {
 			go StartHttp(server, listener)
 		}
 	} else if tlsManager, tlsErr = AutoTLS(conf); tlsErr == nil {
+		log.Infof("server: starting in auto tls mode")
+
+		tlsSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tlsConfig := tlsManager.TLSConfig()
+		tlsConfig.MinVersion = tls.VersionTLS12
+
 		server = &http.Server{
-			Addr:      fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-			TLSConfig: tlsManager.TLSConfig(),
+			Addr:      tlsSocket,
+			TLSConfig: tlsConfig,
 			Handler:   router,
 		}
-		log.Infof("server: starting in auto tls mode on %s [%s]", server.Addr, time.Since(start))
+
+		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 		go StartAutoTLS(server, tlsManager, conf)
 	} else if publicCert, privateKey := conf.TLS(); unixSocket == "" && publicCert != "" && privateKey != "" {
 		log.Infof("server: starting in tls mode")
-		server = &http.Server{
-			Addr:    fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort()),
-			Handler: router,
+
+		tlsSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tlsConfig := &tls.Config{
+			MinVersion: tls.VersionTLS12,
 		}
+
+		server = &http.Server{
+			Addr:      tlsSocket,
+			TLSConfig: tlsConfig,
+			Handler:   router,
+		}
+
 		log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 		go StartTLS(server, publicCert, privateKey)
 	} else {
 		log.Infof("server: %s", tlsErr)
 
-		socket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
+		tcpSocket := fmt.Sprintf("%s:%d", conf.HttpHost(), conf.HttpPort())
 
-		if listener, err := net.Listen("tcp", socket); err != nil {
+		if listener, err := net.Listen("tcp", tcpSocket); err != nil {
 			log.Errorf("server: %s", err)
 			return
 		} else {
 			server = &http.Server{
-				Addr:    socket,
+				Addr:    tcpSocket,
 				Handler: router,
 			}
 
-			log.Infof("server: listening on %s [%s]", socket, time.Since(start))
+			log.Infof("server: listening on %s [%s]", server.Addr, time.Since(start))
 
 			go StartHttp(server, listener)
 		}
 	}
 
-	// Graceful HTTP server shutdown.
+	// Graceful web server shutdown.
 	<-ctx.Done()
 	log.Info("server: shutting down")
 	err := server.Close()

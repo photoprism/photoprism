@@ -180,6 +180,7 @@ test.meta("testID", "sharing-002").meta({ type: "short", mode: "auth" })(
     await photoviewer.checkPhotoViewerActionAvailability("edit", false);
 
     await photoviewer.triggerPhotoViewerAction("close");
+    await t.expect(Selector("#photo-viewer").visible).notOk();
 
     await photo.checkHoverActionAvailability("nth", 0, "favorite", false);
     await photo.checkHoverActionAvailability("nth", 0, "select", true);

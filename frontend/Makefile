@@ -11,7 +11,7 @@ dep-list:
 install-npm:
 	sudo npm install --unsafe-perm=true --allow-root -g npm@latest npm-check-updates@latest
 install-testcafe:
-	sudo npm install --unsafe-perm=true --allow-root -g testcafe@3.4.0
+	sudo npm install --unsafe-perm=true --allow-root -g testcafe@3.5.0
 install:
 	npm install --no-update-notifier --no-audit
 update:

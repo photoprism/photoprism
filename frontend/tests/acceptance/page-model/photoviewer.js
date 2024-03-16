@@ -37,6 +37,7 @@ export default class Page {
   }
 
   async triggerPhotoViewerAction(action) {
+    await t.hover(Selector("button.pswp__button.action-" + action));
     await t.click(Selector("button.pswp__button.action-" + action));
     if (t.browser.platform === "mobile") {
       await t.wait(5000);
