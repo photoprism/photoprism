@@ -68,7 +68,7 @@
           <v-icon>lock</v-icon>
         </v-btn>
         <v-btn
-            v-if="canDownload && context !== 'archive'" fab dark
+            v-if="canDownload && !navigatorCanShare && context !== 'archive'" fab dark
             small
             :title="$gettext('Download')"
             :disabled="busy"
@@ -77,6 +77,17 @@
             @click.stop="download()"
         >
           <v-icon>get_app</v-icon>
+        </v-btn>
+        <v-btn
+            v-if="canDownload && navigatorCanShare && context !== 'archive'" fab dark
+            small
+            :title="$gettext('Share')"
+            color="download"
+            :disabled="busy"
+            class="action-webshare"
+            @click.stop="webShare()"
+        >
+          <v-icon>share</v-icon>
         </v-btn>
         <v-btn
             v-if="canEditAlbum && context !== 'archive'" fab dark
@@ -151,6 +162,10 @@
                           @confirm="addToAlbum"></p-photo-album-dialog>
     <p-share-upload-dialog :show="dialog.share" :items="{photos: selection}" :model="album" @cancel="dialog.share = false"
                            @confirm="onShared"></p-share-upload-dialog>
+    <p-webshare-dialog :show="dialog.webshare" :items="{photos: selection}" 
+                       @completed="busy = false; dialog.webshare = false;" 
+                       @failed="onWebshareFailed">
+                      </p-webshare-dialog>
   </div>
 </template>
 <script>
@@ -159,6 +174,7 @@ import Notify from "common/notify";
 import Event from "pubsub-js";
 import download from "common/download";
 import Photo from "model/photo";
+import {canUseWebshareApi} from "common/caniuse";
 
 export default {
   name: 'PPhotoClipboard',
@@ -201,9 +217,16 @@ export default {
         delete: false,
         album: false,
         share: false,
+        webshare: false,
       },
       rtl: this.$rtl,
     };
+  },
+  computed: {
+    navigatorCanShare: function () {
+      // Chrome has a limit on 10 items
+      return canUseWebshareApi && this.$isMobile && this.selection.length <= 10;
+    }
   },
   methods: {
     clearClipboard() {
@@ -369,6 +392,19 @@ export default {
     },
     onDownload(path) {
       download(path, "photos.zip");
+    },
+    onWebshareFailed() {
+      this.busy = false;
+      this.navigatorCanShare = false;
+      this.$notify.error(this.$gettext('sharing photos failed - showing download icon'));
+    },
+    webShare() {
+      if (this.busy || this.selection.length == 0) {
+        return;
+      }
+      this.busy = true;
+      this.dialog.webshare = true;
+      this.expanded = false;
     },
     edit() {
       // Open Edit Dialog

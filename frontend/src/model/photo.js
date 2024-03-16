@@ -68,6 +68,11 @@ export const MonthUnknown = -1;
 export const DayUnknown = -1;
 export const TimeZoneUTC = "UTC";
 
+export const VideoWebshareMimeType = "video/mp4";
+export const VideoWebshareExtension = ".mp4";
+export const TranscodeVideoForWebshare = true;
+export const WebshareFormat = "mp4";
+
 const num = "numeric";
 const short = "short";
 const long = "long";
@@ -698,6 +703,59 @@ export class Photo extends RestModel {
 
   getDownloadUrl() {
     return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken}`;
+  }
+
+  getWebshareFile() {
+    const { file } = this.getWebshare();
+    return file;
+  }
+
+  getWebshareDownloadUrl() {
+    const { url } = this.getWebshare();
+    return url;
+  }
+
+  getWebshare() {
+    if (!this.Files) {
+      return;
+    }
+    let url = null;
+    let file = null;
+    if (this.Type == MediaLive || this.Type == MediaRaw) {
+      // use jpeg or png (pngs are not converted to jpeg)
+      file = this.Files.find((f) => f.FileType === FormatJpeg || f.FileType === FormatPng);
+    } else if (this.Type == MediaSidecar) {
+      // I am not sure if this could even happen
+      // use first file
+      file = this.Files[0];
+    } else if (this.Type == MediaImage) {
+      // use main file
+      file = this.mainFile();
+    } else if (this.Type == MediaAnimated) {
+      // use gif or jpeg
+      file = this.Files.find((f) => f.FileType === FormatGif);
+      if (!file) {
+        file = this.Files.find((f) => f.FileType === FormatJpeg);
+      }
+    } else if (this.Type == MediaVector) {
+      // if svg, use it, otherwise use jpeg
+      file = this.Files.find((f) => f.FileType === FormatSvg);
+      if (!file) {
+        file = this.Files.find((f) => f.FileType === FormatJpeg);
+      }
+    } else if (this.Type == MediaVideo) {
+      // use mp4
+      file = this.videoFile();
+      url = `videos/${file.Hash}/${config.previewToken}/${WebshareFormat}`;
+    }
+    if (!file) {
+      file = this.mainFile();
+      console.log("No file found! Falling back to main file.");
+    }
+    if (!url) {
+      url = `dl/${file.Hash}?t=${config.downloadToken}`;
+    }
+    return { url, file };
   }
 
   downloadAll() {

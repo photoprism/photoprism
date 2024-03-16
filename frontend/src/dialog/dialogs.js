@@ -38,6 +38,7 @@ import PPeopleMergeDialog from "dialog/people/merge.vue";
 import PUploadDialog from "dialog/upload.vue";
 import PVideoViewer from "dialog/video/viewer.vue";
 import PShareDialog from "dialog/share.vue";
+import PWebshareDialog from "dialog/share/webshare.vue";
 import PShareUploadDialog from "dialog/share/upload.vue";
 import PWebdavDialog from "dialog/webdav.vue";
 import PReloadDialog from "dialog/reload.vue";
@@ -63,6 +64,7 @@ dialogs.install = (Vue) => {
   Vue.component("PUploadDialog", PUploadDialog);
   Vue.component("PVideoViewer", PVideoViewer);
   Vue.component("PShareDialog", PShareDialog);
+  Vue.component("PWebshareDialog", PWebshareDialog);
   Vue.component("PShareUploadDialog", PShareUploadDialog);
   Vue.component("PWebdavDialog", PWebdavDialog);
   Vue.component("PReloadDialog", PReloadDialog);

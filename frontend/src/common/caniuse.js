@@ -45,3 +45,6 @@ export const canUseWebM = canUseVideo // Google WebM
 export const canUseHevc = canUseVideo // HVC, Basic Support
   ? !!document.createElement("video").canPlayType('video/mp4; codecs="hvc1.1.6.L93.90"')
   : false;
+
+export const canUseWebshareApi =
+  navigator.canShare && navigator.canShare({ files: [new File([], "emtpy.jpg")] });

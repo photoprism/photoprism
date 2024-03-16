@@ -1,5 +1,11 @@
 <template>
-  <div id="photo-viewer" class="p-viewer pswp" tabindex="-1" role="dialog" aria-hidden="true">
+  <div
+    id="photo-viewer"
+    class="p-viewer pswp"
+    tabindex="-1"
+    role="dialog"
+    aria-hidden="true"
+  >
     <div class="pswp__bg"></div>
     <div class="pswp__scroll-wrap">
       <div class="pswp__container" :class="{ slideshow: slideshow.active }">
@@ -10,7 +16,9 @@
 
       <div class="pswp__ui pswp__ui--hidden">
         <div class="pswp__top-bar">
-          <div class="pswp__taken hidden-xs-only">{{ formatDate(item.TakenAtLocal) }}</div>
+          <div class="pswp__taken hidden-xs-only">
+            {{ formatDate(item.TakenAtLocal) }}
+          </div>
 
           <div class="pswp__counter"></div>
 
@@ -20,13 +28,23 @@
           ></button>
 
           <button
-            v-if="canDownload"
+            v-if="canDownload && !navigatorCanShare"
             class="pswp__button action-download"
             style="background: none"
             :title="$gettext('Download')"
             @click.exact="onDownload"
           >
             <v-icon size="16" color="white">get_app</v-icon>
+          </button>
+
+          <button
+            v-if="canDownload && navigatorCanShare"
+            class="pswp__button action-webshare hide-mini"
+            style="background: none"
+            :title="$gettext('Share')"
+            @click.exact="onWebshare"
+          >
+            <v-icon size="16" color="white">share</v-icon>
           </button>
 
           <button
@@ -45,7 +63,10 @@
             :title="$gettext('Select')"
             @click.exact="onSelect"
           >
-            <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white"
+            <v-icon
+              v-if="selection.length && $clipboard.has(item)"
+              size="16"
+              color="white"
               >check_circle</v-icon
             >
             <v-icon v-else size="16" color="white">radio_button_off</v-icon>
@@ -58,7 +79,9 @@
             :title="$gettext('Like')"
             @click.exact="onLike"
           >
-            <v-icon v-if="item.Favorite" size="16" color="white">favorite</v-icon>
+            <v-icon v-if="item.Favorite" size="16" color="white"
+              >favorite</v-icon
+            >
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
 
@@ -78,7 +101,9 @@
             :title="$gettext('Start/Stop Slideshow')"
             @click.exact="onSlideshow"
           >
-            <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
+            <v-icon v-show="!interval" size="18" color="white"
+              >play_arrow</v-icon
+            >
             <v-icon v-show="interval" size="16" color="white">pause</v-icon>
           </button>
 
@@ -91,21 +116,21 @@
           </div>
         </div>
 
-        <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+        <div
+          class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap"
+        >
           <div class="pswp__share-tooltip"></div>
         </div>
 
         <button
           class="pswp__button pswp__button--arrow--left action-previous"
           title="Previous (arrow left)"
-        >
-        </button>
+        ></button>
 
         <button
           class="pswp__button pswp__button--arrow--right action-next"
           title="Next (arrow right)"
-        >
-        </button>
+        ></button>
 
         <div class="pswp__caption" @click="onPlay">
           <div class="pswp__caption__center"></div>
@@ -130,6 +155,13 @@
       >
       </p-video-player>
     </div>
+    <p-webshare-dialog
+      :show="webshare"
+      :items="{ photos: [item.UID] }"
+      @completed="webshare = false"
+      @failed="onWebshareFailed"
+    >
+    </p-webshare-dialog>
   </div>
 </template>
 
@@ -141,19 +173,27 @@ import Thumb from "model/thumb";
 import { Photo, DATE_FULL } from "model/photo";
 import Notify from "common/notify";
 import { DateTime } from "luxon";
+import { canUseWebshareApi } from "common/caniuse";
 
 export default {
   name: "PPhotoViewer",
   data() {
     return {
-      canEdit: this.$config.allow("photos", "update") && this.$config.feature("edit"),
-      canLike: this.$config.allow("photos", "manage") && this.$config.feature("favorites"),
-      canDownload: this.$config.allow("photos", "download") && this.$config.feature("download"),
+      canEdit:
+        this.$config.allow("photos", "update") && this.$config.feature("edit"),
+      canLike:
+        this.$config.allow("photos", "manage") &&
+        this.$config.feature("favorites"),
+      canDownload:
+        this.$config.allow("photos", "download") &&
+        this.$config.feature("download"),
+      navigatorCanShare: canUseWebshareApi && this.$isMobile,
       selection: this.$clipboard.selection,
       config: this.$config.values,
       item: new Thumb(),
       subscriptions: [],
       interval: false,
+      webshare: false,
       slideshow: {
         active: false,
         next: 0,
@@ -170,10 +210,22 @@ export default {
     };
   },
   created() {
-    this.subscriptions["viewer.change"] = Event.subscribe("viewer.change", this.onChange);
-    this.subscriptions["viewer.pause"] = Event.subscribe("viewer.pause", this.onPause);
-    this.subscriptions["viewer.show"] = Event.subscribe("viewer.show", this.onShow);
-    this.subscriptions["viewer.hide"] = Event.subscribe("viewer.hide", this.onHide);
+    this.subscriptions["viewer.change"] = Event.subscribe(
+      "viewer.change",
+      this.onChange
+    );
+    this.subscriptions["viewer.pause"] = Event.subscribe(
+      "viewer.pause",
+      this.onPause
+    );
+    this.subscriptions["viewer.show"] = Event.subscribe(
+      "viewer.show",
+      this.onShow
+    );
+    this.subscriptions["viewer.hide"] = Event.subscribe(
+      "viewer.hide",
+      this.onHide
+    );
   },
   destroyed() {
     this.onPause();
@@ -297,6 +349,25 @@ export default {
       Notify.success(this.$gettext("Downloading…"));
 
       new Photo().find(this.item.UID).then((p) => p.downloadAll());
+    },
+    onWebshareCompleted(ev, data) {
+      // this.busy = false;
+    },
+    onWebshareFailed() {
+      this.navigatorCanShare = false;
+      this.$notify.error(
+        this.$gettext("sharing photos failed - showing download icon")
+      );
+    },
+    onWebshare() {
+      this.onPause();
+
+      if (!this.item || !this.item.DownloadUrl) {
+        console.warn("photo viewer: no download url");
+        return;
+      }
+
+      this.webshare = true;
     },
     onEdit() {
       this.onPause();

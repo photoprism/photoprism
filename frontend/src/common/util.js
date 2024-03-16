@@ -23,6 +23,13 @@ Additional information can be found in our Developer Guide:
 
 */
 
+import {
+  MediaVideo,
+  VideoWebshareExtension,
+  VideoWebshareMimeType,
+  TranscodeVideoForWebshare,
+} from "../model/photo";
+
 const Nanosecond = 1;
 const Microsecond = 1000 * Nanosecond;
 const Millisecond = 1000 * Microsecond;
@@ -419,6 +426,28 @@ export default class Util {
         return "Pentax PEF";
       default:
         return value.toUpperCase();
+    }
+  }
+
+  static JSFileFromPhoto(blob, photo) {
+    return new File([blob], photo.Name.replaceAll("/", "-"), {
+      type: photo.Mime,
+      lastModified: photo.ModTime,
+    });
+  }
+
+  static JSFileForWebshare(blob, photo) {
+    if (TranscodeVideoForWebshare && photo.MediaType == MediaVideo) {
+      return new File(
+        [blob],
+        photo.Name.replaceAll("/", "-").replace(/\.[^/.]+$/, "") + VideoWebshareExtension,
+        {
+          type: VideoWebshareMimeType,
+          lastModified: photo.ModTime,
+        }
+      );
+    } else {
+      return this.JSFileFromPhoto(blob, photo);
     }
   }
 
