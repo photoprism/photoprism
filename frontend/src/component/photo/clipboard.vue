@@ -212,7 +212,6 @@ export default {
       config: this.$config.values,
       expanded: false,
       isAlbum: this.album && this.album.Type === 'album',
-      navigatorCanShare: canUseWebshareApi && this.$isMobile,
       dialog: {
         archive: false,
         delete: false,
@@ -222,6 +221,12 @@ export default {
       },
       rtl: this.$rtl,
     };
+  },
+  computed: {
+    navigatorCanShare: function () {
+      // Chrome has a limit on 10 items
+      return canUseWebshareApi && this.$isMobile && this.selection.length <= 10;
+    }
   },
   methods: {
     clearClipboard() {
