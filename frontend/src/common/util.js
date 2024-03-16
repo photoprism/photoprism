@@ -23,7 +23,12 @@ Additional information can be found in our Developer Guide:
 
 */
 
-import { MediaVideo, VideoWebshareExtension, VideoWebshareMimeType, TranscodeVideoForWebshare } from "../model/photo";
+import {
+  MediaVideo,
+  VideoWebshareExtension,
+  VideoWebshareMimeType,
+  TranscodeVideoForWebshare,
+} from "../model/photo";
 
 const Nanosecond = 1;
 const Microsecond = 1000 * Nanosecond;
@@ -433,10 +438,14 @@ export default class Util {
 
   static JSFileForWebshare(blob, photo) {
     if (TranscodeVideoForWebshare && photo.MediaType == MediaVideo) {
-      return new File([blob], photo.Name.replaceAll("/", "-").replace(/\.[^/.]+$/, "") + VideoWebshareExtension, {
-        type: VideoWebshareMimeType,
-        lastModified: photo.ModTime,
-      });
+      return new File(
+        [blob],
+        photo.Name.replaceAll("/", "-").replace(/\.[^/.]+$/, "") + VideoWebshareExtension,
+        {
+          type: VideoWebshareMimeType,
+          lastModified: photo.ModTime,
+        }
+      );
     } else {
       return this.JSFileFromPhoto(blob, photo);
     }

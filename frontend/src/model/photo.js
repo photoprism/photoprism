@@ -73,7 +73,6 @@ export const VideoWebshareExtension = ".mp4";
 export const TranscodeVideoForWebshare = true;
 export const WebshareFormat = "mp4";
 
-
 const num = "numeric";
 const short = "short";
 const long = "long";
@@ -706,7 +705,6 @@ export class Photo extends RestModel {
     return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken}`;
   }
 
-
   getWebshareFile() {
     const { file } = this.getWebshare();
     return file;
@@ -728,7 +726,7 @@ export class Photo extends RestModel {
       file = this.Files.find((f) => f.FileType === FormatJpeg || f.FileType === FormatPng);
     } else if (this.Type == MediaSidecar) {
       // I am not sure if this could even happen
-      // use first file 
+      // use first file
       file = this.Files[0];
     } else if (this.Type == MediaImage) {
       // use main file
@@ -752,7 +750,7 @@ export class Photo extends RestModel {
     }
     if (!file) {
       file = this.mainFile();
-      console.log("No file found! Falling back to main file.")
+      console.log("No file found! Falling back to main file.");
     }
     if (!url) {
       url = `dl/${file.Hash}?t=${config.downloadToken}`;
