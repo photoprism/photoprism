@@ -15,6 +15,7 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    privileged: true
     ports:
       - "2342:2342"   # Default HTTP port (host:container)
       - "2443:2443"   # Default TLS port (host:container)
@@ -154,6 +155,7 @@ services:
   ## Docs: https://doc.traefik.io/traefik/
   traefik:
     image: photoprism/traefik:latest
+    privileged: true
     ports:
       - "80:80" # HTTP (redirects to HTTPS)
       - "443:443" # HTTPS (required)
