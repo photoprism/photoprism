@@ -208,12 +208,14 @@ func (m *Passcode) GenerateCode() (code string, err error) {
 		return "", errors.New("passcode is nil")
 	}
 
+	// Get authentication key.
 	key := m.Key()
 
 	if key == nil {
 		return "", authn.ErrInvalidPasscodeKey
 	}
 
+	// Generate code depending on key type.
 	switch m.Type() {
 	case authn.KeyTOTP:
 		code, err = totp.GenerateCodeCustom(
@@ -230,29 +232,34 @@ func (m *Passcode) GenerateCode() (code string, err error) {
 		return "", authn.ErrInvalidPasscodeType
 	}
 
+	// Return result.
 	return code, err
 }
 
 // Verify checks if the passcode provided is valid.
-func (m *Passcode) Verify(code string) (valid bool, err error) {
+func (m *Passcode) Verify(code string) (valid bool, recovery bool, err error) {
+	// Validate arguments.
 	if m == nil {
-		return false, errors.New("passcode is nil")
+		return false, false, errors.New("passcode is nil")
 	} else if code == "" {
-		return false, authn.ErrPasscodeRequired
+		return false, false, authn.ErrPasscodeRequired
 	} else if len(code) > 255 {
-		return false, authn.ErrInvalidPasscodeFormat
+		return false, false, authn.ErrInvalidPasscodeFormat
 	}
 
+	// Get authentication key.
 	key := m.Key()
 
 	if key == nil {
-		return false, authn.ErrInvalidPasscodeKey
+		return false, false, authn.ErrInvalidPasscodeKey
 	}
 
+	// Check if recovery code has been used.
 	if m.RecoveryCode == code {
-		return true, nil
+		return true, true, nil
 	}
 
+	// Verify passcode.
 	switch m.Type() {
 	case authn.KeyTOTP:
 		valid, err = totp.ValidateCustom(
@@ -267,19 +274,22 @@ func (m *Passcode) Verify(code string) (valid bool, err error) {
 			},
 		)
 	default:
-		return false, authn.ErrInvalidPasscodeType
+		return false, false, authn.ErrInvalidPasscodeType
 	}
 
+	// Check if an error has been returned.
 	if err != nil {
-		return valid, err
+		return valid, false, err
 	}
 
+	// Set verified timestamp if nil.
 	if valid && m.VerifiedAt == nil {
 		m.VerifiedAt = TimePointer()
 		err = m.Updates(Map{"VerifiedAt": m.VerifiedAt})
 	}
 
-	return valid, err
+	// Return result.
+	return valid, false, err
 }
 
 // Activate activates the passcode.

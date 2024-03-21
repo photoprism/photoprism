@@ -914,6 +914,8 @@ func (m *User) WrongPasscode(code string) bool {
 
 // VerifyPasscode checks if the specified passcode could be verified and is valid.
 func (m *User) VerifyPasscode(code string) (valid bool, passcode *Passcode, err error) {
+	var recovery bool
+
 	if m == nil {
 		err = errors.New("user is nil")
 	} else if passcode = m.Passcode(authn.KeyTOTP); passcode == nil {
@@ -922,8 +924,9 @@ func (m *User) VerifyPasscode(code string) (valid bool, passcode *Passcode, err 
 		err = authn.ErrPasscodeRequired
 	} else if l := len(code); l < 1 || l > 255 {
 		err = authn.ErrInvalidPasscode
-	} else {
-		valid, err = passcode.Verify(code)
+	} else if valid, recovery, err = passcode.Verify(code); recovery {
+		// Deactivate 2FA if recovery code has been used.
+		passcode, err = m.DeactivatePasscode()
 	}
 
 	return valid, passcode, err
