@@ -173,14 +173,12 @@ root-terminal:
 migrate:
 	go run cmd/photoprism/photoprism.go migrations run
 generate:
-	POT_SIZE_BEFORE=$(shell stat -L -c %s assets/locales/messages.pot)
 	go generate ./pkg/... ./internal/...
 	go fmt ./pkg/... ./internal/...
-	POT_SIZE_AFTER=$(shell stat -L -c %s assets/locales/messages.pot)
-	@if [ $(POT_SIZE_BEFORE) == $(POT_SIZE_AFTER) ]; then\
-		git checkout -- assets/locales/messages.pot;\
-		echo "Reverted unnecessary change in assets/locales/messages.pot.";\
-	fi
+gettext-revert:
+	@echo "Reverting changes in assets/locales/messages.pot..."
+	git checkout -- assets/locales/messages.pot
+	@echo "Done."
 go-generate:
 	go generate ./pkg/... ./internal/...
 	go fmt ./pkg/... ./internal/...
