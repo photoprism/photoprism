@@ -46,7 +46,7 @@
               </v-flex>
             </v-layout>
             <v-flex xs12 class="pa-2 body-1">
-              <translate>Enabling two-factor authentication means that you will need a randomly generated passcode to log in, so even if someone gains access to your password, they will not be able to access your account.</translate>
+              <translate>Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account.</translate>
             </v-flex>
           </v-card-text>
           <v-card-actions class="pa-2">
