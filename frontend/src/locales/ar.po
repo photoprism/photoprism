@@ -959,7 +959,7 @@ msgid "Enables RAW converter presets. May reduce performance."
 msgstr "لتمكين الإعدادات المسبقة لمحول RAW. قد يقلل من الأداء."
 
 #: src/dialog/account/passcode.vue:28 src/dialog/account/passcode.vue:11
-msgid "Enabling two-factor authentication means that you will need a randomly generated passcode to log in, so even if someone gains access to your password, they will not be able to access your account."
+msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr ""
 
 #: src/common/api.js:115
