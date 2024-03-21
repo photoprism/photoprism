@@ -54,10 +54,7 @@ export default class Session {
     }
 
     // Restore authentication from session storage.
-    if (
-      this.applyAuthToken(this.storage.getItem("authToken")) &&
-      this.applyId(this.storage.getItem("sessionId"))
-    ) {
+    if (this.applyAuthToken(this.storage.getItem("authToken")) && this.applyId(this.storage.getItem("sessionId"))) {
       const dataJson = this.storage.getItem("sessionData");
       if (dataJson !== "undefined") {
         this.data = JSON.parse(dataJson);
@@ -382,10 +379,10 @@ export default class Session {
     return LoginPage === window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
   }
 
-  login(username, password, token) {
+  login(username, password, passcode, token) {
     this.reset();
 
-    return Api.post("session", { username, password, token }).then((resp) => {
+    return Api.post("session", { username, password, passcode, token }).then((resp) => {
       const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
       this.onLogin();

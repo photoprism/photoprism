@@ -1,20 +1,9 @@
 <template>
-  <v-container
-    id="auth-login"
-    fluid
-    fill-height
-    class="auth-login wallpaper background-welcome pa-4"
-    :style="wallpaper()"
-  >
+  <v-container id="auth-login" fluid fill-height class="auth-login wallpaper background-welcome pa-4"
+               :style="wallpaper()">
     <v-layout id="auth-layout" class="auth-layout">
       <v-flex xs12 sm9 md6 lg4 xl3 xxl2>
-        <v-form
-          ref="form"
-          dense
-          class="auth-login-form"
-          accept-charset="UTF-8"
-          @submit.prevent="login"
-        >
+        <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="onLogin">
           <v-card id="auth-login-box" class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-4">
               <p-auth-header></p-auth-header>
@@ -31,7 +20,7 @@
                     light
                     autofocus
                     type="text"
-                    :disabled="loading"
+                    :disabled="loading || enterPasscode"
                     name="username"
                     autocorrect="off"
                     autocapitalize="none"
@@ -40,10 +29,33 @@
                     class="input-username text-selectable"
                     color="primary"
                     prepend-inner-icon="person"
-                    @keyup.enter.native="login"
+                    @keyup.enter.native="onLogin"
                   ></v-text-field>
                 </v-flex>
-                <v-flex xs12 class="pa-2">
+                <v-flex v-if="enterPasscode" xs12 class="pa-2">
+                  <v-text-field
+                    id="auth-passcode"
+                    v-model="passcode"
+                    hide-details
+                    required
+                    solo
+                    flat
+                    light
+                    type="text"
+                    :disabled="loading"
+                    name="passcode"
+                    autocorrect="off"
+                    autocapitalize="none"
+                    mask="nnn nnn nnn nnn"
+                    :label="$gettext('Verification Code')"
+                    background-color="grey lighten-5"
+                    class="input-passcode text-selectable"
+                    prepend-inner-icon="verified_user"
+                    color="primary"
+                    @keyup.enter.native="onLogin"
+                  ></v-text-field>
+                </v-flex>
+                <v-flex v-else xs12 class="pa-2">
                   <v-text-field
                     id="auth-password"
                     v-model="password"
@@ -64,30 +76,24 @@
                     prepend-inner-icon="lock"
                     color="primary"
                     @click:append="showPassword = !showPassword"
-                    @keyup.enter.native="login"
+                    @keyup.enter.native="onLogin"
                   ></v-text-field>
                 </v-flex>
                 <v-flex xs12 class="px-2 py-1 auth-actions">
                   <div class="action-buttons auth-buttons text-xs-center">
-                    <v-btn
-                      v-if="registerUri"
-                      :color="colors.secondary"
-                      outline
-                      :block="$vuetify.breakpoint.xsOnly"
-                      :style="`color: ${colors.link}!important`"
-                      class="action-register ra-6 px-3 py-2 opacity-80"
-                      @click.stop.prevent="register"
-                    >
+                    <v-btn v-if="enterPasscode" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
+                           :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-3 py-2 opacity-80"
+                           @click.stop.prevent="onCancel">
+                      <translate>Cancel</translate>
+                    </v-btn>
+                    <v-btn v-else-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
+                           :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80"
+                           @click.stop.prevent="onRegister">
                       <translate>Create Account</translate>
                     </v-btn>
-                    <v-btn
-                      :color="colors.primary"
-                      depressed
-                      :disabled="loginDisabled"
-                      :block="$vuetify.breakpoint.xsOnly"
-                      class="white--text action-confirm ra-6 py-2 px-3"
-                      @click.stop.prevent="login"
-                    >
+                    <v-btn :color="colors.primary" depressed :disabled="loginDisabled"
+                           :block="$vuetify.breakpoint.xsOnly" class="white--text action-confirm ra-6 py-2 px-3"
+                           @click.stop.prevent="onLogin">
                       <translate>Sign in</translate>
                       <v-icon v-if="rtl" left dark>navigate_before</v-icon>
                       <v-icon v-else right dark>navigate_next</v-icon>
@@ -121,9 +127,11 @@ export default {
         link: "#c8e3e7",
       },
       loading: false,
-      showPassword: false,
       username: "",
       password: "",
+      showPassword: false,
+      passcode: "",
+      enterPasscode: false,
       sponsor: this.$config.isSponsor(),
       config: this.$config.values,
       siteDescription: this.$config.getSiteDescription(),
@@ -164,12 +172,26 @@ export default {
         window.location = route.href;
       }, 100);
     },
-    register() {
+    reset() {
+      this.username = "";
+      this.password = "";
+      this.showPassword = false;
+      this.passcode = "";
+      this.enterPasscode = false;
+    },
+    onCancel() {
+      if (this.loading) {
+        return;
+      }
+      this.reset();
+    },
+    onRegister() {
       window.location = this.registerUri;
     },
-    login() {
+    onLogin() {
       const username = this.username.trim();
       const password = this.password.trim();
+      const passcode = this.passcode.trim();
 
       if (username === "" || password === "") {
         return;
@@ -177,11 +199,16 @@ export default {
 
       this.loading = true;
       this.$session
-        .login(username, password)
+        .login(username, password, passcode)
         .then(() => {
           this.load();
         })
-        .catch(() => (this.loading = false));
+        .catch((e) => {
+          if (e.response?.data?.code === 32) {
+            this.enterPasscode = true;
+          }
+          this.loading = false;
+        });
     },
   },
 };

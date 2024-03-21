@@ -90,7 +90,7 @@ var ClientFixtures = ClientMap{
 		ClientURL:    "",
 		CallbackURL:  "",
 		AuthProvider: authn.ProviderClientCredentials.String(),
-		AuthMethod:   authn.MethodUnknown.String(),
+		AuthMethod:   authn.MethodUndefined.String(),
 		AuthScope:    "*",
 		AuthExpires:  unix.Hour,
 		AuthTokens:   2,

@@ -1,12 +1,5 @@
 <template>
-  <v-dialog
-    :value="show"
-    lazy
-    persistent
-    max-width="500"
-    class="p-share-dialog"
-    @keydown.esc="close"
-  >
+  <v-dialog :value="show" lazy persistent max-width="500" class="p-share-dialog" @keydown.esc="close">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -16,15 +9,7 @@
             </h3>
           </v-flex>
           <v-flex xs3 :text-xs-right="!rtl" :text-xs-left="rtl">
-            <v-btn
-              icon
-              flat
-              dark
-              color="secondary-dark"
-              class="ma-0 action-add-link"
-              :title="$gettext('Add Link')"
-              @click.stop="add"
-            >
+            <v-btn icon flat dark color="secondary-dark" class="ma-0 action-add-link" :title="$gettext('Add Link')" @click.stop="add">
               <v-icon>add_link</v-icon>
             </v-btn>
           </v-flex>
@@ -32,20 +17,11 @@
       </v-card-title>
       <v-card-text>
         <v-expansion-panel class="pa-0 elevation-0">
-          <v-expansion-panel-content
-            v-for="(link, index) in links"
-            :key="link.UID"
-            class="pa-0 elevation-0 secondary mb-1"
-          >
+          <v-expansion-panel-content v-for="(link, index) in links" :key="link.UID" class="pa-0 elevation-0 secondary mb-1">
             <template #header>
-              <button
-                :class="`text-xs-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`"
-                style="user-select: none"
-                @click.stop="copyUrl(link)"
-              >
+              <button :class="`text-xs-${!rtl ? 'left' : 'right'} action-url ml-0 mt-0 mb-0 pa-0 mr-2`" style="user-select: none" @click.stop="copyUrl(link)">
                 <v-icon size="16" class="pr-1">link</v-icon>
-                /s/<strong v-if="link.Token" style="font-weight: 500">{{ link.getToken() }}</strong
-                ><span v-else>…</span>
+                /s/<strong v-if="link.Token" style="font-weight: 500"> {{ link.getToken() }} </strong><span v-else>…</span>
               </button>
             </template>
             <v-card>
@@ -53,53 +29,13 @@
                 <v-container fluid class="pa-0">
                   <v-layout row wrap>
                     <v-flex xs12 class="pa-2">
-                      <v-text-field
-                        :value="link.url()"
-                        hide-details
-                        box
-                        flat
-                        readonly
-                        :label="$gettext('URL')"
-                        autocorrect="off"
-                        autocapitalize="none"
-                        browser-autocomplete="off"
-                        color="secondary-dark"
-                        class="input-url"
-                        @click.stop="selectText($event)"
-                      >
-                      </v-text-field>
+                      <v-text-field :value="link.url()" hide-details box flat readonly :label="$gettext('URL')" autocorrect="off" autocapitalize="none" browser-autocomplete="off" color="secondary-dark" class="input-url" @click.stop="selectText($event)"> </v-text-field>
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
-                      <v-select
-                        v-model="link.Expires"
-                        hide-details
-                        box
-                        flat
-                        :label="expires(link)"
-                        browser-autocomplete="off"
-                        color="secondary-dark"
-                        item-text="text"
-                        item-value="value"
-                        :items="options.Expires()"
-                        class="input-expires"
-                      >
-                      </v-select>
+                      <v-select v-model="link.Expires" hide-details box flat :label="expires(link)" browser-autocomplete="off" color="secondary-dark" item-text="text" item-value="value" :items="options.Expires()" class="input-expires"> </v-select>
                     </v-flex>
                     <v-flex xs12 sm6 class="pa-2">
-                      <v-text-field
-                        v-model="link.Token"
-                        hide-details
-                        box
-                        flat
-                        required
-                        browser-autocomplete="off"
-                        autocorrect="off"
-                        autocapitalize="none"
-                        :label="$gettext('Secret')"
-                        :placeholder="$gettext('Token')"
-                        color="secondary-dark"
-                        class="input-secret"
-                      ></v-text-field>
+                      <v-text-field v-model="link.Token" hide-details box flat required browser-autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Secret')" :placeholder="$gettext('Token')" color="secondary-dark" class="input-secret"></v-text-field>
                     </v-flex>
                     <!-- v-flex xs12 sm6 class="pa-2">
                         <v-text-field
@@ -115,26 +51,12 @@
                         ></v-text-field>
                     </v-flex -->
                     <v-flex xs6 :text-xs-left="!rtl" :text-xs-right="rtl" class="pa-2">
-                      <v-btn
-                        small
-                        icon
-                        flat
-                        color="remove"
-                        class="ma-0 action-delete"
-                        :title="$gettext('Delete')"
-                        @click.stop.exact="remove(index)"
-                      >
+                      <v-btn small icon flat color="remove" class="ma-0 action-delete" :title="$gettext('Delete')" @click.stop.exact="remove(index)">
                         <v-icon>delete</v-icon>
                       </v-btn>
                     </v-flex>
                     <v-flex xs6 :text-xs-right="!rtl" :text-xs-left="rtl" class="pa-2">
-                      <v-btn
-                        depressed
-                        dark
-                        color="primary-button"
-                        class="ma-0 compact action-save"
-                        @click.stop.exact="update(link)"
-                      >
+                      <v-btn depressed dark color="primary-button" class="ma-0 compact action-save" @click.stop.exact="update(link)">
                         <translate>Save</translate>
                       </v-btn>
                     </v-flex>
@@ -145,21 +67,11 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-container
-          fluid
-          :text-xs-left="!rtl"
-          :text-xs-right="rtl"
-          class="pb-0 pt-3 pr-0 pl-0 caption"
-        >
-          <translate :translate-params="{ name: model.modelName() }"
-            >People you share a link with will be able to view public contents.</translate
-          >
+        <v-container fluid :text-xs-left="!rtl" :text-xs-right="rtl" class="pb-0 pt-3 pr-0 pl-0 caption">
+          <translate :translate-params="{ name: model.modelName() }">People you share a link with will be able to view public contents.</translate>
           <translate>A click will copy it to your clipboard.</translate>
           <translate>Any private photos and videos remain private and won't be shared.</translate>
-          <translate
-            >Alternatively, you can upload files directly to WebDAV servers like
-            Nextcloud.</translate
-          >
+          <translate>Alternatively, you can upload files directly to WebDAV servers like Nextcloud.</translate>
         </v-container>
       </v-card-text>
       <v-card-actions class="pt-0 px-3">

@@ -1,13 +1,6 @@
 <template>
   <div class="p-page p-page-discover">
-    <v-tabs
-        v-model="active"
-        flat
-        grow
-        color="secondary"
-        slider-color="secondary-dark"
-        :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
-    >
+    <v-tabs v-model="active" flat grow color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
         <translate>Colors</translate>
       </v-tab>
@@ -50,13 +43,13 @@ import tabColors from "page/discover/colors.vue";
 import tabTodo from "page/discover/todo.vue";
 
 export default {
-  name: 'PPageDiscover',
+  name: "PPageDiscover",
   components: {
-    'p-tab-discover-colors': tabColors,
-    'p-tab-discover-todo': tabTodo,
+    "p-tab-discover-colors": tabColors,
+    "p-tab-discover-todo": tabTodo,
   },
   props: {
-    tab: Number
+    tab: Number,
   },
   data() {
     return {
@@ -69,7 +62,7 @@ export default {
       if (this.$route.path !== path) {
         this.$router.replace(path);
       }
-    }
+    },
   },
 };
 </script>

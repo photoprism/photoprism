@@ -6,8 +6,8 @@
 import PPageAbout from "./about/about.vue";
 
 export default {
-  name: 'PPageAdmin',
-  components: {PPageAbout},
+  name: "PPageAdmin",
+  components: { PPageAbout },
   data() {
     return {
       rtl: this.$rtl,

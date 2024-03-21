@@ -38,7 +38,7 @@ func TestAddClientFromCli(t *testing.T) {
 		assert.NoError(t, ctx.Set("name", "Test"))
 		assert.NoError(t, ctx.Set("scope", "*"))
 		assert.NoError(t, ctx.Set("provider", "client_credentials"))
-		assert.NoError(t, ctx.Set("method", "totp"))
+		assert.NoError(t, ctx.Set("method", "oauth2"))
 
 		//t.Logf("ARGS: %#v", ctx.Args())
 
@@ -53,7 +53,7 @@ func TestAddClientFromCli(t *testing.T) {
 
 		// Check form values.
 		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
-		assert.Equal(t, authn.MethodTOTP, client.Method())
+		assert.Equal(t, authn.MethodOAuth2, client.Method())
 		assert.Equal(t, "*", client.Scope())
 		assert.Equal(t, "Test", client.Name())
 	})
@@ -109,7 +109,7 @@ func TestModClientFromCli(t *testing.T) {
 		assert.NoError(t, ctx.Set("name", "Test"))
 		assert.NoError(t, ctx.Set("scope", "*"))
 		assert.NoError(t, ctx.Set("provider", "client_credentials"))
-		assert.NoError(t, ctx.Set("method", "totp"))
+		assert.NoError(t, ctx.Set("method", "oauth2"))
 		assert.NoError(t, ctx.Set("role", "visitor"))
 		assert.NoError(t, ctx.Set("secret", "xcCbOrw6I0vcoXzhnOmXhjpVSyFq9ijh"))
 		assert.NoError(t, ctx.Set("expires", "600"))
@@ -126,7 +126,7 @@ func TestModClientFromCli(t *testing.T) {
 
 		// Check form values.
 		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
-		assert.Equal(t, authn.MethodTOTP, client.Method())
+		assert.Equal(t, authn.MethodOAuth2, client.Method())
 		assert.Equal(t, "*", client.Scope())
 		assert.Equal(t, "Test", client.Name())
 		assert.Equal(t, "visitor", client.Role())

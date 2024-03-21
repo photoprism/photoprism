@@ -42,7 +42,7 @@ export const Methods = () => {
     client: $gettext("Client"),
     access_token: $gettext("Access Token"),
     oauth2: "OAuth2",
-    totp: "TOTP/2FA",
+    "2fa": $gettext("2FA"),
     oidc: "OIDC",
   };
 };

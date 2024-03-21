@@ -1504,6 +1504,32 @@ func TestUser_Provider(t *testing.T) {
 	})
 }
 
+func TestUser_SetProvider(t *testing.T) {
+	t.Run("2FA", func(t *testing.T) {
+		m := UserFixtures.Get("alice")
+		assert.Equal(t, authn.ProviderLocal, m.Provider())
+		assert.Equal(t, authn.MethodDefault, m.Method())
+		m.SetMethod(authn.Method2FA)
+		assert.Equal(t, authn.ProviderLocal, m.Provider())
+		assert.Equal(t, authn.Method2FA, m.Method())
+		m.SetProvider(authn.ProviderNone)
+		assert.Equal(t, authn.ProviderNone, m.Provider())
+		assert.Equal(t, authn.MethodUndefined, m.Method())
+		m.SetProvider(authn.ProviderLocal)
+	})
+}
+
+func TestUser_SetMethod(t *testing.T) {
+	t.Run("2FA", func(t *testing.T) {
+		m := UserFixtures.Get("unauthorized")
+		assert.Equal(t, authn.ProviderNone, m.Provider())
+		assert.Equal(t, authn.MethodDefault, m.Method())
+		m.SetMethod(authn.Method2FA)
+		assert.Equal(t, authn.ProviderNone, m.Provider())
+		assert.Equal(t, authn.MethodDefault, m.Method())
+	})
+}
+
 func TestUser_GetBasePath(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "", Visitor.GetBasePath())
@@ -1771,9 +1797,9 @@ func TestUser_DeleteSessions(t *testing.T) {
 	})
 }
 
-func TestUser_HasPassword(t *testing.T) {
-	assert.True(t, Admin.HasPassword("photoprism"))
-	assert.False(t, Admin.HasPassword("wrong"))
+func TestUser_VerifyPassword(t *testing.T) {
+	assert.True(t, Admin.VerifyPassword("photoprism"))
+	assert.False(t, Admin.VerifyPassword("wrong"))
 }
 
 func TestUser_RegenerateTokens(t *testing.T) {
@@ -1811,7 +1837,6 @@ func TestUser_HasShare(t *testing.T) {
 	assert.True(t, m.HasShare("as6sg6bxpogaaba9"))
 	assert.False(t, m.HasShare("as6sg6bxpogaaba8"))
 	assert.False(t, Visitor.HasShare("as6sg6bxpogaaba8"))
-
 }
 
 func TestUser_RedeemToken(t *testing.T) {

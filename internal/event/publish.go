@@ -3,7 +3,7 @@ package event
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // Publish publishes a message to all subscribers.

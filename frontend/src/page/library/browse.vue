@@ -25,16 +25,12 @@
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-file-clipboard :refresh="refresh" :selection="selection"
-                        :clear-selection="clearSelection"></p-file-clipboard>
+      <p-file-clipboard :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-file-clipboard>
 
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2 p-files p-files-cards">
-        <v-alert
-            :value="results.length === 0"
-            color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
-        >
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No pictures found</translate>
           </h3>
@@ -43,45 +39,29 @@
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results file-results cards-view" :class="{'select-results': selection.length > 0}">
-          <v-flex
-              v-for="(model, index) in results"
-              :key="model.UID"
-              xs6 sm4 md3 lg2 xxl1 d-flex
-          >
-            <v-card tile
-                    :data-uid="model.UID"
-                    class="result card"
-                    :class="model.classes(selection.includes(model.UID))"
-                    @contextmenu.stop="onContextMenu($event, index)"
-            >
+        <v-layout row wrap class="search-results file-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-flex v-for="(model, index) in results" :key="model.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
+            <v-card tile :data-uid="model.UID" class="result card" :class="model.classes(selection.includes(model.UID))" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
-                  :src="model.thumbnailUrl('tile_500')"
-                  :alt="model.Name"
-                  :transition="false"
-                  loading="lazy"
-                  aspect-ratio="1"
-                  class="card darken-1 clickable"
-                  @touchstart.passive="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onClick($event, index)"
-                  @mousedown.stop.prevent="input.mouseDown($event, index)"
-                  @click.stop.prevent="onClick($event, index)"
+                :src="model.thumbnailUrl('tile_500')"
+                :alt="model.Name"
+                :transition="false"
+                loading="lazy"
+                aspect-ratio="1"
+                class="card darken-1 clickable"
+                @touchstart.passive="input.touchStart($event, index)"
+                @touchend.stop.prevent="onClick($event, index)"
+                @mousedown.stop.prevent="input.mouseDown($event, index)"
+                @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn :ripple="false"
-                       icon flat absolute
-                       class="input-select"
-                       @touchstart.stop.prevent="input.touchStart($event, index)"
-                       @touchend.stop.prevent="onSelect($event, index)"
-                       @touchmove.stop.prevent
-                       @click.stop.prevent="onSelect($event, index)">
+                <v-btn :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
                   <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title v-if="model.isFile()" primary-title class="pa-3 card-details"
-                            style="user-select: none;">
+              <v-card-title v-if="model.isFile()" primary-title class="pa-3 card-details" style="user-select: none">
                 <div>
                   <h3 class="body-2 mb-2" :title="model.Name">
                     <button @click.exact="openFile(index)">
@@ -116,14 +96,14 @@
 <script>
 import Event from "pubsub-js";
 import RestModel from "model/rest";
-import {Folder} from "model/folder";
+import { Folder } from "model/folder";
 import Notify from "common/notify";
-import {MaxItems} from "common/clipboard";
+import { MaxItems } from "common/clipboard";
 import download from "common/download";
-import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
+import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
 
 export default {
-  name: 'PPageFiles',
+  name: "PPageFiles",
   props: {
     staticFilter: {
       type: Object,
@@ -133,14 +113,14 @@ export default {
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
-    const q = query['q'] ? query['q'] : '';
-    const all = query['all'] ? query['all'] : '';
-    const filter = {q: q, all: all};
+    const q = query["q"] ? query["q"] : "";
+    const all = query["all"] ? query["all"] : "";
+    const filter = { q: q, all: all };
     const settings = {};
 
     return {
       config: this.$config.values,
-      navIcon: this.$rtl ? 'navigate_before' : 'navigate_next',
+      navIcon: this.$rtl ? "navigate_before" : "navigate_next",
       subscriptions: [],
       listen: false,
       dirty: false,
@@ -157,24 +137,24 @@ export default {
         limit: 999,
         offset: 0,
       },
-      titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
+      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
       breadcrumbs: [],
     };
   },
   watch: {
-    '$route'() {
+    $route() {
       const query = this.$route.query;
 
-      this.filter.q = query['q'] ? query['q'] : '';
-      this.filter.all = query['all'] ? query['all'] : '';
+      this.filter.q = query["q"] ? query["q"] : "";
+      this.filter.all = query["all"] ? query["all"] : "";
       this.lastFilter = {};
       this.routeName = this.$route.name;
       this.path = this.$route.params.pathMatch;
 
       this.search();
-    }
+    },
   },
   created() {
     if (this.$config.deny("files", "access_library")) {
@@ -201,10 +181,10 @@ export default {
 
       const crumbs = this.path.split("/");
 
-      crumbs.forEach(dir => {
+      crumbs.forEach((dir) => {
         if (dir) {
           path += "/" + dir;
-          result.push({path: path, name: dir});
+          result.push({ path: path, name: dir });
         }
       });
 
@@ -215,12 +195,12 @@ export default {
 
       if (model.isFile()) {
         // Open Edit Dialog
-        Event.publish("dialog.edit", {selection: [model.PhotoUID], album: null, index: 0});
+        Event.publish("dialog.edit", { selection: [model.PhotoUID], album: null, index: 0 });
       } else {
         // "#" chars in path names must be explicitly escaped,
         // see https://github.com/photoprism/photoprism/issues/3695
         const path = model.Path.replaceAll(":", "%3A").replaceAll("#", "%23");
-        this.$router.push({path: '/index/files/' + path});
+        this.$router.push({ path: "/index/files/" + path });
       }
     },
     downloadFile(index) {
@@ -252,7 +232,7 @@ export default {
         this.addSelection(models[i].getId());
       }
 
-      return (rangeEnd - rangeStart) + 1;
+      return rangeEnd - rangeStart + 1;
     },
     onSelect(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -310,7 +290,7 @@ export default {
       this.updateQuery();
     },
     clearQuery() {
-      this.filter.q = '';
+      this.filter.q = "";
       this.updateQuery();
     },
     addSelection(uid) {
@@ -358,7 +338,7 @@ export default {
       this.filter.q = this.filter.q.trim();
 
       const query = {
-        view: this.settings.view
+        view: this.settings.view,
       };
 
       Object.assign(query, this.filter);
@@ -373,7 +353,7 @@ export default {
         return;
       }
 
-      this.$router.replace({query: query});
+      this.$router.replace({ query: query });
     },
     searchParams() {
       const params = {
@@ -400,7 +380,7 @@ export default {
     },
     search() {
       // Don't query the same data more than once
-      if (!this.dirty && (JSON.stringify(this.lastFilter) === JSON.stringify(this.filter))) {
+      if (!this.dirty && JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) {
         this.loading = false;
         this.listen = true;
         return;
@@ -415,30 +395,32 @@ export default {
 
       const params = this.searchParams();
 
-      Folder.originals(this.path, params).then(response => {
-        this.files.offset = this.files.limit;
+      Folder.originals(this.path, params)
+        .then((response) => {
+          this.files.offset = this.files.limit;
 
-        this.results = response.models;
-        this.breadcrumbs = this.getBreadcrumbs();
+          this.results = response.models;
+          this.breadcrumbs = this.getBreadcrumbs();
 
-        if (response.count === 0) {
-          this.$notify.warn(this.$gettext('Folder is empty'));
-        } else if (response.files === 1) {
-          this.$notify.info(this.$gettext('One file found'));
-        } else if (response.files === 0 && response.folders === 1) {
-          this.$notify.info(this.$gettext('One folder found'));
-        } else if (response.files === 0 && response.folders > 1) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} folders found"), {n: response.folders}));
-        } else if (response.files < this.files.limit) {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("Folder contains %{n} files"), {n: response.files}));
-        } else {
-          this.$notify.warn(this.$gettextInterpolate(this.$gettext("Limit reached, showing first %{n} files"), {n: response.files}));
-        }
-      }).finally(() => {
-        this.dirty = false;
-        this.loading = false;
-        this.listen = true;
-      });
+          if (response.count === 0) {
+            this.$notify.warn(this.$gettext("Folder is empty"));
+          } else if (response.files === 1) {
+            this.$notify.info(this.$gettext("One file found"));
+          } else if (response.files === 0 && response.folders === 1) {
+            this.$notify.info(this.$gettext("One folder found"));
+          } else if (response.files === 0 && response.folders > 1) {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} folders found"), { n: response.folders }));
+          } else if (response.files < this.files.limit) {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("Folder contains %{n} files"), { n: response.files }));
+          } else {
+            this.$notify.warn(this.$gettextInterpolate(this.$gettext("Limit reached, showing first %{n} files"), { n: response.files }));
+          }
+        })
+        .finally(() => {
+          this.dirty = false;
+          this.loading = false;
+          this.listen = true;
+        });
     },
     onUpdate(ev, data) {
       if (!this.listen) return;
@@ -447,10 +429,10 @@ export default {
         return;
       }
 
-      const type = ev.split('.')[1];
+      const type = ev.split(".")[1];
 
       switch (type) {
-        case 'updated':
+        case "updated":
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
@@ -462,7 +444,7 @@ export default {
             }
           }
           break;
-        case 'deleted':
+        case "deleted":
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -477,13 +459,13 @@ export default {
           }
 
           break;
-        case 'created':
+        case "created":
           this.dirty = true;
           break;
         default:
           console.warn("unexpected event type", ev);
       }
-    }
+    },
   },
 };
 </script>

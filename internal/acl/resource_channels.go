@@ -1,5 +1,6 @@
 package acl
 
+// Events that Roles can be granted Permission to listen to.
 const (
 	ChannelUser      Resource = "user"
 	ChannelSession   Resource = "session"

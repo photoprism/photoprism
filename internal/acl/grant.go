@@ -1,5 +1,8 @@
 package acl
 
+// Grant represents permissions granted or denied.
+type Grant map[Permission]bool
+
 // Standard grants provided to simplify configuration.
 var (
 	GrantFullAccess = Grant{
@@ -47,9 +50,6 @@ var (
 	}
 	GrantNone = Grant{}
 )
-
-// Grant represents permissions granted or denied.
-type Grant map[Permission]bool
 
 // Allow checks whether the permission is granted.
 func (grant Grant) Allow(perm Permission) bool {

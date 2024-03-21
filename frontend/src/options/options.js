@@ -2,14 +2,7 @@ import { timeZonesNames } from "@vvo/tzdb";
 import { $gettext } from "common/vm";
 import { Info } from "luxon";
 import { config } from "app/session";
-import {
-  MediaImage,
-  MediaLive,
-  MediaVideo,
-  MediaAnimated,
-  MediaVector,
-  MediaRaw,
-} from "model/photo";
+import { MediaImage, MediaLive, MediaVideo, MediaAnimated, MediaVector, MediaRaw } from "model/photo";
 
 export const UtcOffsets = [
   { ID: "UTC-12", Name: "UTC-12:00" },
@@ -39,8 +32,7 @@ export const UtcOffsets = [
   { ID: "UTC+12", Name: "UTC+12:00" },
 ];
 
-export const TimeZones = () =>
-  [{ ID: "", Name: $gettext("Local Time") }].concat(UtcOffsets).concat(timeZonesNames);
+export const TimeZones = () => [{ ID: "", Name: $gettext("Local Time") }].concat(UtcOffsets).concat(timeZonesNames);
 
 export const Days = () => {
   let result = [];

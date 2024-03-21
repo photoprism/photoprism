@@ -1,24 +1,11 @@
 <template>
   <div class="p-tab p-tab-photo-details">
-    <v-form
-      ref="form"
-      lazy-validation
-      dense
-      class="p-form-photo-details-meta"
-      accept-charset="UTF-8"
-      @submit.prevent="save"
-    >
+    <v-form ref="form" lazy-validation dense class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
       <v-layout class="pa-2" row wrap align-top fill-height>
         <v-flex class="pa-2 p-photo" xs12 sm4 md2 fill-height>
           <v-card tile class="pa-0 ma-0 elevation-0" :title="model.Title">
-            <v-img
-              v-touch="{ left, right }"
-              :src="model.thumbnailUrl('tile_500')"
-              aspect-ratio="1"
-              class="card darken-1 elevation-0 clickable"
-              @click.exact="openPhoto()"
-            >
-            </v-img>
+            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card darken-1 elevation-0 clickable" @click.exact="openPhoto()">
+</v-img>
           </v-card>
         </v-flex>
         <v-flex xs12 sm8 md10 fill-height>
@@ -118,22 +105,7 @@
             </v-flex>
 
             <v-flex xs6 sm6 md6 lg3 class="pa-2">
-              <v-autocomplete
-                v-model="model.TimeZone"
-                :disabled="disabled"
-                :label="$gettext('Time Zone')"
-                browser-autocomplete="off"
-                hide-details
-                box
-                flat
-                hide-no-data
-                color="secondary-dark"
-                item-value="ID"
-                item-text="Name"
-                :items="options.TimeZones()"
-                class="input-timezone"
-                @change="updateTime"
-              >
+              <v-autocomplete v-model="model.TimeZone" :disabled="disabled" :label="$gettext('Time Zone')" browser-autocomplete="off" hide-details box flat hide-no-data color="secondary-dark" item-value="ID" item-text="Name" :items="options.TimeZones()" class="input-timezone" @change="updateTime">
               </v-autocomplete>
             </v-flex>
 
@@ -159,20 +131,7 @@
             </v-flex>
 
             <v-flex xs4 md2 lg2 class="pa-2">
-              <v-text-field
-                v-model="model.Altitude"
-                :disabled="disabled"
-                hide-details
-                box
-                flat
-                browser-autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                :label="$gettext('Altitude (m)')"
-                placeholder=""
-                color="secondary-dark"
-                class="input-altitude"
-              ></v-text-field>
+              <v-text-field v-model="model.Altitude" :disabled="disabled" hide-details box flat browser-autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Altitude (m)')" placeholder="" color="secondary-dark" class="input-altitude"></v-text-field>
             </v-flex>
 
             <v-flex xs4 sm6 md3 lg2 class="pa-2">
@@ -234,37 +193,11 @@
             </v-flex>
 
             <v-flex xs6 md3 class="pa-2">
-              <v-text-field
-                v-model="model.Iso"
-                :disabled="disabled"
-                hide-details
-                box
-                flat
-                browser-autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                label="ISO"
-                placeholder=""
-                color="secondary-dark"
-                class="input-iso"
-              ></v-text-field>
+              <v-text-field v-model="model.Iso" :disabled="disabled" hide-details box flat browser-autocomplete="off" autocorrect="off" autocapitalize="none" label="ISO" placeholder="" color="secondary-dark" class="input-iso"></v-text-field>
             </v-flex>
 
             <v-flex xs6 md3 class="pa-2">
-              <v-text-field
-                v-model="model.Exposure"
-                :disabled="disabled"
-                hide-details
-                box
-                flat
-                browser-autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                :label="$gettext('Exposure')"
-                placeholder=""
-                color="secondary-dark"
-                class="input-exposure"
-              ></v-text-field>
+              <v-text-field v-model="model.Exposure" :disabled="disabled" hide-details box flat browser-autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Exposure')" placeholder="" color="secondary-dark" class="input-exposure"></v-text-field>
             </v-flex>
 
             <v-flex xs12 md6 pa-2 class="p-lens-select">
@@ -288,36 +221,11 @@
             </v-flex>
 
             <v-flex xs6 md3 class="pa-2">
-              <v-text-field
-                v-model="model.FNumber"
-                f
-                :disabled="disabled"
-                hide-details
-                box
-                flat
-                browser-autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                :label="$gettext('F Number')"
-                placeholder=""
-                color="secondary-dark"
-                class="input-fnumber"
-              ></v-text-field>
+              <v-text-field v-model="model.FNumber" f :disabled="disabled" hide-details box flat browser-autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('F Number')" placeholder="" color="secondary-dark" class="input-fnumber"></v-text-field>
             </v-flex>
 
             <v-flex xs6 md3 class="pa-2">
-              <v-text-field
-                v-model="model.FocalLength"
-                :disabled="disabled"
-                hide-details
-                box
-                flat
-                browser-autocomplete="off"
-                :label="$gettext('Focal Length')"
-                placeholder=""
-                color="secondary-dark"
-                class="input-focal-length"
-              ></v-text-field>
+              <v-text-field v-model="model.FocalLength" :disabled="disabled" hide-details box flat browser-autocomplete="off" :label="$gettext('Focal Length')" placeholder="" color="secondary-dark" class="input-focal-length"></v-text-field>
             </v-flex>
 
             <v-flex xs12 md6 class="pa-2">
@@ -447,33 +355,14 @@
             </v-flex>
 
             <v-flex v-if="!disabled" xs12 :text-xs-right="!rtl" :text-xs-left="rtl" class="pt-3">
-              <v-btn
-                depressed
-                color="secondary-light"
-                class="compact action-close"
-                @click.stop="close"
-              >
+              <v-btn depressed color="secondary-light" class="compact action-close" @click.stop="close">
                 <translate>Close</translate>
               </v-btn>
-              <v-btn
-                color="primary-button"
-                depressed
-                dark
-                class="compact action-apply action-approve"
-                @click.stop="save(false)"
-              >
-                <span v-if="$config.feature('review') && model.Quality < 3"
-                  ><translate>Approve</translate></span
-                >
+              <v-btn color="primary-button" depressed dark class="compact action-apply action-approve" @click.stop="save(false)">
+                <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
                 <span v-else><translate>Apply</translate></span>
               </v-btn>
-              <v-btn
-                color="primary-button"
-                depressed
-                dark
-                class="compact action-done hidden-xs-only"
-                @click.stop="save(true)"
-              >
+              <v-btn color="primary-button" depressed dark class="compact action-done hidden-xs-only" @click.stop="save(true)">
                 <translate>Done</translate>
               </v-btn>
             </v-flex>

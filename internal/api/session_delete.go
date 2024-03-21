@@ -9,10 +9,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 

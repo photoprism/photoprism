@@ -19,20 +19,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
-        <v-text-field
-          autocorrect="off"
-          autocapitalize="none"
-          browser-autocomplete="off"
-          hide-details
-          readonly
-          single-line
-          outline
-          color="secondary-dark"
-          :value="webdavUrl()"
-          class="input-url"
-          @click.stop="selectText($event)"
-        >
-        </v-text-field>
+        <v-text-field autocorrect="off" autocapitalize="none" browser-autocomplete="off" hide-details readonly single-line outline color="secondary-dark" :value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
       <v-card-text class="pa-2 body-1 clickable" @click="windowsHelp($event)">
@@ -40,43 +27,16 @@
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
-        <v-text-field
-          autocorrect="off"
-          autocapitalize="none"
-          browser-autocomplete="off"
-          hide-details
-          readonly
-          single-line
-          outline
-          color="secondary-dark"
-          :value="windowsUrl()"
-          class="input-url"
-          @click.stop="selectText($event)"
-        >
-        </v-text-field>
+        <v-text-field autocorrect="off" autocapitalize="none" browser-autocomplete="off" hide-details readonly single-line outline color="secondary-dark" :value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
-        <translate
-          >This mounts the originals folder as a network drive and allows you to open, edit, and
-          delete files from your computer or smartphone as if they were local.</translate
-        >
+        <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local.</translate>
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
-        <v-alert
-          :value="true"
-          color="primary darken-2"
-          icon="info"
-          class="pa-2"
-          type="info"
-          outline
-        >
-          <a
-            style="color: inherit"
-            href="https://docs.photoprism.app/user-guide/sync/webdav/"
-            target="_blank"
-          >
+        <v-alert :value="true" color="primary darken-2" icon="info" class="pa-2" type="info" outline>
+          <a style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>
         </v-alert>
@@ -153,10 +113,7 @@ export default {
       return baseUrl;
     },
     windowsHelp(ev) {
-      window.open(
-        "https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server",
-        "_blank"
-      );
+      window.open("https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server", "_blank");
       ev.preventDefault();
       ev.stopPropagation();
     },

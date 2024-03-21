@@ -4,8 +4,8 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // initSettings initializes user settings from a config file.

@@ -1,21 +1,6 @@
 <template>
   <div class="video-wrapper" :style="style">
-    <video
-      :key="source"
-      ref="video"
-      class="video-player"
-      :height="height"
-      :width="width"
-      :autoplay="autoplay"
-      :style="style"
-      :poster="poster"
-      :loop="loop"
-      preload="auto"
-      controls
-      playsinline
-      @click.stop
-      @keydown.esc.stop.prevent="$emit('close')"
-    >
+    <video :key="source" ref="video" class="video-player" :height="height" :width="width" :autoplay="autoplay" :style="style" :poster="poster" :loop="loop" preload="auto" controls playsinline @click.stop @keydown.esc.stop.prevent="$emit('close')">
       <source :src="source" />
     </video>
   </div>

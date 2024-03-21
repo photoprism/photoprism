@@ -9,6 +9,7 @@ type Login struct {
 	UserName   string `json:"username,omitempty"`
 	UserEmail  string `json:"email,omitempty"`
 	Password   string `json:"password,omitempty"`
+	Passcode   string `json:"passcode,omitempty"`
 	ShareToken string `json:"token,omitempty"`
 }
 
@@ -28,6 +29,11 @@ func (f Login) HasUsername() bool {
 		return false
 	}
 	return true
+}
+
+// HasPasscode checks if a passcode is set.
+func (f Login) HasPasscode() bool {
+	return f.Passcode != "" && len(f.Passcode) <= 255
 }
 
 // HasPassword checks if a password is set.

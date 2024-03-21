@@ -61,9 +61,7 @@ config.update().finally(() => {
   config.progress(66);
   const viewer = new Viewer();
   const isPublic = config.isPublic();
-  const isMobile =
-    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-    (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
 
   // Initialize language and detect alignment.
   Vue.config.language = config.getLanguage();
@@ -123,20 +121,13 @@ config.update().finally(() => {
   // this is required to make scroll-pos-restore work on iOS in PWA-mode
   window.addEventListener("pagehide", (event) => {
     if (event.persisted) {
-      localStorage.setItem(
-        "lastScrollPosBeforePageHide",
-        JSON.stringify({ x: window.scrollX, y: window.scrollY })
-      );
+      localStorage.setItem("lastScrollPosBeforePageHide", JSON.stringify({ x: window.scrollX, y: window.scrollY }));
     }
   });
   window.addEventListener("pageshow", (event) => {
     if (event.persisted) {
       const lastSavedScrollPos = localStorage.getItem("lastScrollPosBeforePageHide");
-      if (
-        lastSavedScrollPos !== undefined &&
-        lastSavedScrollPos !== null &&
-        lastSavedScrollPos !== ""
-      ) {
+      if (lastSavedScrollPos !== undefined && lastSavedScrollPos !== null && lastSavedScrollPos !== "") {
         window.positionToRestore = JSON.parse(localStorage.getItem("lastScrollPosBeforePageHide"));
         // wait for other things that set the scroll-pos anywhere in the app to fire
         setTimeout(() => {
@@ -188,10 +179,7 @@ config.update().finally(() => {
     if (document.querySelector(".v-dialog--active.v-dialog--fullscreen")) {
       // Disable back button in full-screen viewers and editors.
       next(false);
-    } else if (
-      to.matched.some((record) => record.meta.settings) &&
-      config.values.disable.settings
-    ) {
+    } else if (to.matched.some((record) => record.meta.settings) && config.values.disable.settings) {
       next({ name: "home" });
     } else if (to.matched.some((record) => record.meta.admin)) {
       if (isPublic || session.isAdmin()) {

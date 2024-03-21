@@ -2,6 +2,9 @@ package acl
 
 import "strings"
 
+// Permission represents a single ability.
+type Permission string
+
 // Permissions that can be granted to roles.
 const (
 	FullAccess      Permission = "full_access"
@@ -23,9 +26,6 @@ const (
 	ActionManage    Permission = "manage"
 	ActionSubscribe Permission = "subscribe"
 )
-
-// Permission represents a single ability.
-type Permission string
 
 // String returns the type as string.
 func (p Permission) String() string {

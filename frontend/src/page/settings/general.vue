@@ -1,8 +1,6 @@
 <template>
   <div class="p-tab p-settings-general">
-    <v-form ref="form" lazy-validation
-            dense class="p-form-settings pb-1" accept-charset="UTF-8"
-            @submit.prevent="onChange">
+    <v-form ref="form" lazy-validation dense class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-2">
           <h3 class="body-2 mb-0">
@@ -13,33 +11,11 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select
-                v-model="settings.ui.theme"
-                :disabled="busy"
-                :items="themes"
-                :label="$gettext('Theme')"
-                :menu-props="{'maxHeight':346}"
-                color="secondary-dark"
-                background-color="secondary-light"
-                hide-details
-                box class="input-theme"
-                @change="onChangeTheme"
-              ></v-select>
+              <v-select v-model="settings.ui.theme" :disabled="busy" :items="themes" :label="$gettext('Theme')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" hide-details box class="input-theme" @change="onChangeTheme"></v-select>
             </v-flex>
 
             <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select
-                v-model="settings.ui.language"
-                :disabled="busy"
-                :items="languages"
-                :label="$gettext('Language')"
-                :menu-props="{'maxHeight':346}"
-                color="secondary-dark"
-                background-color="secondary-light"
-                hide-details
-                box class="input-language"
-                @change="onChange"
-              ></v-select>
+              <v-select v-model="settings.ui.language" :disabled="busy" :items="languages" :label="$gettext('Language')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" hide-details box class="input-language" @change="onChange"></v-select>
             </v-flex>
           </v-layout>
         </v-card-actions>
@@ -49,17 +25,7 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.people"
-                :disabled="busy"
-                class="ma-0 pa-0 input-people"
-                color="secondary-dark"
-                :label="$gettext('People')"
-                :hint="$gettext('Recognizes faces so that specific people can be found.')"
-                prepend-icon="person"
-                persistent-hint
-                @change="onChange"
-              >
+              <v-checkbox v-model="settings.features.people" :disabled="busy" class="ma-0 pa-0 input-people" color="secondary-dark" :label="$gettext('People')" :hint="$gettext('Recognizes faces so that specific people can be found.')" prepend-icon="person" persistent-hint @change="onChange">
               </v-checkbox>
             </v-flex>
 
@@ -79,18 +45,7 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.labels"
-                :disabled="busy"
-                class="ma-0 pa-0 input-labels"
-                color="secondary-dark"
-                :label="$gettext('Labels')"
-                :hint="$gettext('Browse and edit image classification labels.')"
-                prepend-icon="label"
-                persistent-hint
-                @change="onChange"
-              >
-              </v-checkbox>
+              <v-checkbox v-model="settings.features.labels" :disabled="busy" class="ma-0 pa-0 input-labels" color="secondary-dark" :label="$gettext('Labels')" :hint="$gettext('Browse and edit image classification labels.')" prepend-icon="label" persistent-hint @change="onChange"> </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
@@ -124,17 +79,7 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.download"
-                :disabled="busy || isDemo"
-                class="ma-0 pa-0 input-download"
-                color="secondary-dark"
-                :label="$gettext('Download')"
-                :hint="$gettext('Download single files and zip archives.')"
-                prepend-icon="get_app"
-                persistent-hint
-                @change="onChange"
-              >
+              <v-checkbox v-model="settings.features.download" :disabled="busy || isDemo" class="ma-0 pa-0 input-download" color="secondary-dark" :label="$gettext('Download')" :hint="$gettext('Download single files and zip archives.')" prepend-icon="get_app" persistent-hint @change="onChange">
               </v-checkbox>
             </v-flex>
 
@@ -154,77 +99,25 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.share"
-                :disabled="busy"
-                class="ma-0 pa-0 input-share"
-                color="secondary-dark"
-                :label="$gettext('Share')"
-                :hint="$gettext('Upload to WebDAV and share links with friends.')"
-                prepend-icon="share"
-                persistent-hint
-                @change="onChange"
-              >
+              <v-checkbox v-model="settings.features.share" :disabled="busy" class="ma-0 pa-0 input-share" color="secondary-dark" :label="$gettext('Share')" :hint="$gettext('Upload to WebDAV and share links with friends.')" prepend-icon="share" persistent-hint @change="onChange"> </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox v-model="settings.features.edit" :disabled="busy || isDemo" class="ma-0 pa-0 input-edit" color="secondary-dark" :label="$gettext('Edit')" :hint="$gettext('Change photo titles, locations, and other metadata.')" prepend-icon="edit" persistent-hint @change="onChange">
               </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.edit"
-                :disabled="busy || isDemo"
-                class="ma-0 pa-0 input-edit"
-                color="secondary-dark"
-                :label="$gettext('Edit')"
-                :hint="$gettext('Change photo titles, locations, and other metadata.')"
-                prepend-icon="edit"
-                persistent-hint
-                @change="onChange"
-              >
+              <v-checkbox v-model="settings.features.archive" :disabled="busy || isDemo" class="ma-0 pa-0 input-archive" color="secondary-dark" :label="$gettext('Archive')" :hint="$gettext('Hide photos that have been moved to archive.')" prepend-icon="archive" persistent-hint @change="onChange">
               </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.archive"
-                :disabled="busy || isDemo"
-                class="ma-0 pa-0 input-archive"
-                color="secondary-dark"
-                :label="$gettext('Archive')"
-                :hint="$gettext('Hide photos that have been moved to archive.')"
-                prepend-icon="archive"
-                persistent-hint
-                @change="onChange"
-              >
-              </v-checkbox>
+              <v-checkbox v-model="settings.features.delete" :disabled="busy" class="ma-0 pa-0 input-delete" color="secondary-dark" :label="$gettext('Delete')" :hint="$gettext('Permanently remove files to free up storage.')" prepend-icon="delete" persistent-hint @change="onChange"> </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.delete"
-                :disabled="busy"
-                class="ma-0 pa-0 input-delete"
-                color="secondary-dark"
-                :label="$gettext('Delete')"
-                :hint="$gettext('Permanently remove files to free up storage.')"
-                prepend-icon="delete"
-                persistent-hint
-                @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.services"
-                :disabled="busy"
-                class="ma-0 pa-0 input-services"
-                color="secondary-dark"
-                :label="$gettext('Services')"
-                :hint="$gettext('Share your pictures with other apps and services.')"
-                prepend-icon="sync_alt"
-                persistent-hint
-                @change="onChange"
-              >
+              <v-checkbox v-model="settings.features.services" :disabled="busy" class="ma-0 pa-0 input-services" color="secondary-dark" :label="$gettext('Services')" :hint="$gettext('Share your pictures with other apps and services.')" prepend-icon="sync_alt" persistent-hint @change="onChange">
               </v-checkbox>
             </v-flex>
 
@@ -244,33 +137,12 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.files"
-                :disabled="busy"
-                class="ma-0 pa-0 input-files"
-                color="secondary-dark"
-                :label="$gettext('Originals')"
-                :hint="$gettext('Browse indexed files and folders in Library.')"
-                prepend-icon="account_tree"
-                persistent-hint
-                @change="onChange"
-              >
+              <v-checkbox v-model="settings.features.files" :disabled="busy" class="ma-0 pa-0 input-files" color="secondary-dark" :label="$gettext('Originals')" :hint="$gettext('Browse indexed files and folders in Library.')" prepend-icon="account_tree" persistent-hint @change="onChange">
               </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.logs"
-                :disabled="busy"
-                class="ma-0 pa-0 input-logs"
-                color="secondary-dark"
-                :label="$gettext('Logs')"
-                :hint="$gettext('Show server logs in Library.')"
-                prepend-icon="grading"
-                persistent-hint
-                @change="onChange"
-              >
-              </v-checkbox>
+              <v-checkbox v-model="settings.features.logs" :disabled="busy" class="ma-0 pa-0 input-logs" color="secondary-dark" :label="$gettext('Logs')" :hint="$gettext('Show server logs in Library.')" prepend-icon="grading" persistent-hint @change="onChange"> </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
@@ -289,20 +161,8 @@
             </v-flex>
 
             <v-flex v-if="!config.disable.places" xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.features.places"
-                :disabled="busy || isDemo"
-                class="ma-0 pa-0 input-places"
-                color="secondary-dark"
-                :label="$gettext('Places')"
-                :hint="$gettext('Search and display photos on a map.')"
-                prepend-icon="place"
-                persistent-hint
-                @change="onChange"
-              >
-              </v-checkbox>
+              <v-checkbox v-model="settings.features.places" :disabled="busy || isDemo" class="ma-0 pa-0 input-places" color="secondary-dark" :label="$gettext('Places')" :hint="$gettext('Search and display photos on a map.')" prepend-icon="place" persistent-hint @change="onChange"> </v-checkbox>
             </v-flex>
-
           </v-layout>
         </v-card-actions>
       </v-card>
@@ -317,33 +177,11 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select
-                v-model="settings.maps.style"
-                :disabled="busy"
-                :items="mapsStyle"
-                :label="$gettext('Maps')"
-                :menu-props="{'maxHeight':346}"
-                color="secondary-dark"
-                background-color="secondary-light"
-                hide-details
-                box class="input-style"
-                @change="onChangeMapsStyle"
-              ></v-select>
+              <v-select v-model="settings.maps.style" :disabled="busy" :items="mapsStyle" :label="$gettext('Maps')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" hide-details box class="input-style" @change="onChangeMapsStyle"></v-select>
             </v-flex>
 
             <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-select
-                v-model="settings.maps.animate"
-                :disabled="busy"
-                :items="options.MapsAnimate()"
-                :label="$gettext('Animation')"
-                :menu-props="{'maxHeight':346}"
-                color="secondary-dark"
-                background-color="secondary-light"
-                hide-details
-                box class="input-animate"
-                @change="onChange"
-              ></v-select>
+              <v-select v-model="settings.maps.animate" :disabled="busy" :items="options.MapsAnimate()" :label="$gettext('Animation')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" hide-details box class="input-animate" @change="onChange"></v-select>
             </v-flex>
           </v-layout>
         </v-card-actions>
@@ -420,7 +258,7 @@ import * as themes from "options/themes";
 import Event from "pubsub-js";
 
 export default {
-  name: 'PSettingsGeneral',
+  name: "PSettingsGeneral",
   data() {
     return {
       isDemo: this.$config.get("demo"),
@@ -474,26 +312,28 @@ export default {
         return;
       }
 
-      const style = this.mapsStyle.find(s => s.value === value);
+      const style = this.mapsStyle.find((s) => s.value === value);
 
       if (!style) {
         return false;
       }
 
-      this.$sponsorFeatures().then(() => {
-        this.currentMapsStyle = value;
-        this.onChange();
-      }).catch(() => {
-        if (style.sponsor) {
-          this.dialog.sponsor = true;
-          this.$nextTick(() => {
-            this.settings.maps.style = this.currentMapsStyle;
-          });
-        } else {
+      this.$sponsorFeatures()
+        .then(() => {
           this.currentMapsStyle = value;
           this.onChange();
-        }
-      });
+        })
+        .catch(() => {
+          if (style.sponsor) {
+            this.dialog.sponsor = true;
+            this.$nextTick(() => {
+              this.settings.maps.style = this.currentMapsStyle;
+            });
+          } else {
+            this.currentMapsStyle = value;
+            this.onChange();
+          }
+        });
     },
     onChange() {
       const locale = this.settings.changed("ui", "language");
@@ -502,16 +342,19 @@ export default {
         this.busy = true;
       }
 
-      this.settings.save().then(() => {
-        this.$config.setSettings(this.settings);
-        if (locale) {
-          this.$notify.info(this.$gettext("Reloading…"));
-          this.$notify.blockUI();
-          setTimeout(() => window.location.reload(), 100);
-        } else {
-          this.$notify.success(this.$gettext("Changes successfully saved"));
-        }
-      }).finally(() => this.busy = false);
+      this.settings
+        .save()
+        .then(() => {
+          this.$config.setSettings(this.settings);
+          if (locale) {
+            this.$notify.info(this.$gettext("Reloading…"));
+            this.$notify.blockUI();
+            setTimeout(() => window.location.reload(), 100);
+          } else {
+            this.$notify.success(this.$gettext("Changes successfully saved"));
+          }
+        })
+        .finally(() => (this.busy = false));
     },
   },
 };

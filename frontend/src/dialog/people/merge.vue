@@ -1,12 +1,5 @@
 <template>
-  <v-dialog
-    :value="show"
-    lazy
-    persistent
-    max-width="350"
-    class="p-people-merge-dialog"
-    @keydown.esc="cancel"
-  >
+  <v-dialog :value="show" lazy persistent max-width="350" class="p-people-merge-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-container fluid class="pb-2 pr-2 pl-2">
         <v-layout row wrap>
@@ -22,13 +15,7 @@
             <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="No">No</translate>
             </v-btn>
-            <v-btn
-              color="primary-button"
-              depressed
-              dark
-              class="action-confirm"
-              @click.stop="confirm"
-            >
+            <v-btn color="primary-button" depressed dark class="action-confirm" @click.stop="confirm">
               <translate key="Yes">Yes</translate>
             </v-btn>
           </v-flex>

@@ -11,9 +11,9 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // UpdateUserPassword changes the password of the currently authenticated user.
@@ -42,14 +42,14 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the session user is has user management privileges.
+		// Check if the current user has management privileges.
 		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		isSuperAdmin := isAdmin && s.User().IsSuperAdmin()
 		uid := clean.UID(c.Param("uid"))
 
 		var u *entity.User
 
-		// Users may only change their own password.
+		// Regular users may only change their own password.
 		if !isAdmin && s.User().UserUID != uid {
 			AbortForbidden(c)
 			return
@@ -90,9 +90,12 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 			s.SetDownloadToken(u.DownloadToken)
 		}
 
-		// Invalidate all other user sessions to protect the account:
+		// Log event.
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "password", "changed"}, s.RefID)
+
+		// Invalidate any other user sessions to protect the account:
 		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
-		event.AuditInfo([]string{ClientIP(c), "session %s", "password changed", "invalidated %s"}, s.RefID,
+		event.AuditInfo([]string{ClientIP(c), "session %s", "users", u.UserName, "invalidated %s"}, s.RefID,
 			english.Plural(u.DeleteSessions([]string{s.ID}), "session", "sessions"))
 
 		AddTokenHeaders(c, s)

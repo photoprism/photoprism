@@ -75,10 +75,7 @@ export class Input {
         return InputInvalid;
       }
 
-      if (
-        Math.abs(this.touches[0].screenX - ev.changedTouches[0].screenX) > 4 ||
-        Math.abs(this.touches[0].screenY - ev.changedTouches[0].screenY) > 4
-      ) {
+      if (Math.abs(this.touches[0].screenX - ev.changedTouches[0].screenX) > 4 || Math.abs(this.touches[0].screenY - ev.changedTouches[0].screenY) > 4) {
         return InputInvalid;
       }
     }

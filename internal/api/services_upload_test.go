@@ -4,10 +4,9 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
-
-	"github.com/photoprism/photoprism/internal/i18n"
 )
 
 func TestUploadToService(t *testing.T) {

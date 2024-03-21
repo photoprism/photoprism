@@ -1,12 +1,5 @@
 <template>
-  <v-dialog
-    :value="show"
-    lazy
-    persistent
-    max-width="356"
-    class="p-photo-album-dialog"
-    @keydown.esc="cancel"
-  >
+  <v-dialog :value="show" lazy persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-text class="pt-3 px-3">
         <v-layout row wrap>
@@ -40,20 +33,10 @@
       <v-card-actions class="pt-0 pb-3 px-3">
         <v-layout row wrap class="pa-0">
           <v-flex xs12 text-xs-right>
-            <v-btn
-              depressed
-              color="secondary-light"
-              class="action-cancel mx-1"
-              @click.stop="cancel"
-            >
+            <v-btn depressed color="secondary-light" class="action-cancel mx-1" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn
-              depressed
-              color="primary-button"
-              class="action-confirm white--text compact mx-0"
-              @click.stop="confirm"
-            >
+            <v-btn depressed color="primary-button" class="action-confirm white--text compact mx-0" @click.stop="confirm">
               <span v-if="!album">{{ labels.createAlbum }}</span>
               <span v-else>{{ labels.addToAlbum }}</span>
             </v-btn>

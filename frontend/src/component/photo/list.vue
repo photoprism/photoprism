@@ -1,12 +1,7 @@
 <template>
   <div>
     <div v-if="photos.length === 0" class="pa-2">
-      <v-alert
-        :value="true"
-        color="secondary-dark"
-        :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'"
-        class="no-results ma-2 opacity-70"
-        outline>
+      <v-alert :value="true" color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outline>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -31,16 +26,16 @@
             <tr>
               <th class="p-col-select" />
               <th class="text-xs-left">
-                {{$gettext('Title')}}
+                {{ $gettext("Title") }}
               </th>
               <th class="text-xs-left hidden-xs-only">
-                {{$gettext('Taken')}}
+                {{ $gettext("Taken") }}
               </th>
               <th class="text-xs-left hidden-sm-and-down">
-                {{$gettext('Camera')}}
+                {{ $gettext("Camera") }}
               </th>
               <th class="text-xs-left hidden-xs-only">
-                {{showName ? $gettext('Name') : $gettext('Location')}}
+                {{ showName ? $gettext("Name") : $gettext("Location") }}
               </th>
               <th class="text-xs-center hidden-xs-only" />
             </tr>
@@ -48,11 +43,8 @@
           <tbody>
             <tr v-for="(photo, index) in photos" :key="photo.ID" ref="items" :data-index="index">
               <td :data-uid="photo.UID" class="result" :class="photo.classes()">
-                <div
-                  v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex"
-                  :key="photo.Hash"
-                  class="image card darken-1">
-                </div>
+                <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :key="photo.Hash" class="image card darken-1">
+</div>
                 <div
                   v-else
                   :key="photo.Hash"
@@ -62,24 +54,24 @@
                   @touchend.stop.prevent="onClick($event, index)"
                   @mousedown="onMouseDown($event, index)"
                   @contextmenu.stop="onContextMenu($event, index)"
-                  @click.stop.prevent="onClick($event, index)">
+                  @click.stop.prevent="onClick($event, index)"
+                >
                   <button v-if="selectMode" class="input-select">
-                    <i class="select-on">check_circle</i>
-                    <i class="select-off">radio_button_off</i>
+                    <i class="select-on"> check_circle </i>
+                    <i class="select-off"> radio_button_off </i>
                   </button>
-                  <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'"
-                    class="input-open"
-                    @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
-                    <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')"><icon-live-photo/></i>
-                    <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')">gif</i>
-                    <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')">font_download</i>
-                    <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')">play_arrow</i>
+                  <button v-else-if="photo.Type === 'video' || photo.Type === 'live' || photo.Type === 'animated'" class="input-open" @click.stop.prevent="openPhoto(index, false, photo.Type === 'live')">
+                    <i v-if="photo.Type === 'live'" class="action-live" :title="$gettext('Live')">
+                      <icon-live-photo />
+                    </i>
+                    <i v-if="photo.Type === 'animated'" class="action-animated" :title="$gettext('Animated')"> gif </i>
+                    <i v-if="photo.Type === 'vector'" class="action-vector" :title="$gettext('Vector')"> font_download </i>
+                    <i v-if="photo.Type === 'video'" class="action-play" :title="$gettext('Video')"> play_arrow </i>
                   </button>
                 </div>
               </td>
 
-              <td class="p-photo-desc clickable" :data-uid="photo.UID"
-                @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
+              <td class="p-photo-desc clickable" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                 {{ photo.Title }}
               </td>
               <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">
@@ -89,16 +81,14 @@
               </td>
               <td class="p-photo-desc hidden-sm-and-down">
                 <button @click.stop.prevent="editPhoto(index)">
-                  {{ photo.CameraMake }} {{ photo.CameraModel }}
-                </button>
+{{ photo.CameraMake }} {{ photo.CameraModel }}
+</button>
               </td>
               <td class="p-photo-desc hidden-xs-only">
-                <button v-if="filter.order === 'name'"
-                        :title="$gettext('Name')" @click.exact="downloadFile(index)">
+                <button v-if="filter.order === 'name'" :title="$gettext('Name')" @click.exact="downloadFile(index)">
                   {{ photo.FileName }}
                 </button>
-                <button v-else-if="photo.Country !== 'zz' && showLocation"
-                        @click.stop.prevent="openLocation(index)">
+                <button v-else-if="photo.Country !== 'zz' && showLocation" @click.stop.prevent="openLocation(index)">
                   {{ photo.locationInfo() }}
                 </button>
                 <span v-else>
@@ -113,16 +103,12 @@
                   </template>
 
                   <template v-else>
-                    <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false"
-                          :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
+                    <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
                       <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">lock</v-icon>
                       <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
                     </v-btn>
-                    <v-btn class="input-like" icon small flat :ripple="false"
-                          :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
-                      <v-icon v-if="photo.Favorite" color="pink lighten-3" :data-uid="photo.UID" class="select-on">
-                        favorite
-                      </v-icon>
+                    <v-btn class="input-like" icon small flat :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
+                      <v-icon v-if="photo.Favorite" color="pink lighten-3" :data-uid="photo.UID" class="select-on"> favorite </v-icon>
                       <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">favorite_border</v-icon>
                     </v-btn>
                   </template>
@@ -138,11 +124,11 @@
 <script>
 import download from "common/download";
 import Notify from "common/notify";
-import {virtualizationTools} from 'common/virtualization-tools';
+import { virtualizationTools } from "common/virtualization-tools";
 import IconLivePhoto from "component/icon/live-photo.vue";
 
 export default {
-  name: 'PPhotoList',
+  name: "PPhotoList",
   components: {
     IconLivePhoto,
   },
@@ -161,7 +147,7 @@ export default {
     },
     openLocation: {
       type: Function,
-      default:() => {},
+      default: () => {},
     },
     album: {
       type: Object,
@@ -193,7 +179,7 @@ export default {
     return {
       config: this.$config.values,
       notFoundMessage: m,
-      showName: this.filter.order === 'name',
+      showName: this.filter.order === "name",
       showLocation: this.$config.values.settings.features.places,
       hidePrivate: this.$config.values.settings.features.private,
       mouseDown: {
@@ -214,14 +200,17 @@ export default {
         });
       },
       immediate: true,
-    }
+    },
   },
   beforeCreate() {
-    this.intersectionObserver = new IntersectionObserver((entries) => {
-      this.visibilitiesChanged(entries);
-    }, {
-      rootMargin: "100% 0px",
-    });
+    this.intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        this.visibilitiesChanged(entries);
+      },
+      {
+        rootMargin: "100% 0px",
+      }
+    );
   },
   beforeDestroy() {
     this.intersectionObserver.disconnect();
@@ -244,14 +233,10 @@ export default {
       }
     },
     elementIndexFromIntersectionObserverEntry(entry) {
-      return parseInt(entry.target.getAttribute('data-index'));
+      return parseInt(entry.target.getAttribute("data-index"));
     },
     visibilitiesChanged(entries) {
-      const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(
-        this.visibleElementIndices,
-        entries,
-        this.elementIndexFromIntersectionObserverEntry,
-      );
+      const [smallestIndex, largestIndex] = virtualizationTools.updateVisibleElementIndices(this.visibleElementIndices, entries, this.elementIndexFromIntersectionObserverEntry);
 
       // we observe only every 5th item, so we increase the rendered
       // range here by 4 items in every directio just to be safe
@@ -277,8 +262,8 @@ export default {
       this.mouseDown.timeStamp = ev.timeStamp;
     },
     onClick(ev, index) {
-      const longClick = (this.mouseDown.index === index && (ev.timeStamp - this.mouseDown.timeStamp) > 400);
-      const scrolled = (this.mouseDown.scrollY - window.scrollY) !== 0;
+      const longClick = this.mouseDown.index === index && ev.timeStamp - this.mouseDown.timeStamp > 400;
+      const scrolled = this.mouseDown.scrollY - window.scrollY !== 0;
 
       if (scrolled) {
         return;
@@ -307,6 +292,6 @@ export default {
     selectRange(index) {
       this.$clipboard.addRange(index, this.photos);
     },
-  }
+  },
 };
 </script>

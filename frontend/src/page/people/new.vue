@@ -25,10 +25,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert
-            :value="results.length === 0"
-            color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline
-        >
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
@@ -37,25 +34,12 @@
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results face-results cards-view" :class="{'select-results': selection.length > 0}">
-          <v-flex
-              v-for="model in results"
-              :key="model.ID"
-              xs12 sm6 md4 lg3 xl2 xxl1 d-flex
-          >
-            <v-card :data-id="model.ID"
-                    tile style="user-select: none;"
-                    :class="model.classes()"
-                    class="result card">
+        <v-layout row wrap class="search-results face-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-flex v-for="model in results" :key="model.ID" xs12 sm6 md4 lg3 xl2 xxl1 d-flex>
+            <v-card :data-id="model.ID" tile style="user-select: none" :class="model.classes()" class="result card">
               <div class="card-background card"></div>
-              <v-img :src="model.thumbnailUrl('tile_320')"
-                     :transition="false"
-                     aspect-ratio="1"
-                     class="card darken-1 clickable"
-                     @click.stop.prevent="onView(model)">
-                <v-btn :ripple="false" :depressed="false" class="input-hidden"
-                       icon flat small absolute
-                       @click.stop.prevent="toggleHidden(model)">
+              <v-img :src="model.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1 clickable" @click.stop.prevent="onView(model)">
+                <v-btn :ripple="false" :depressed="false" class="input-hidden" icon flat small absolute @click.stop.prevent="toggleHidden(model)">
                   <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
                   <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
                 </v-btn>
@@ -65,43 +49,59 @@
                 <v-layout v-if="model.SubjUID" row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-text-field
-                        :value="model.Name"
-                        :rules="[textRule]"
-                        :readonly="readonly"
-                        browser-autocomplete="off"
-                        class="input-name pa-0 ma-0"
-                        hide-details
-                        single-line
-                        solo-inverted
-                        @change="(newName) => {onRename(model, newName)}"
-                        @keyup.enter.native="(event) => {onRename(model, event.target.value)}"
+                      :value="model.Name"
+                      :rules="[textRule]"
+                      :readonly="readonly"
+                      browser-autocomplete="off"
+                      class="input-name pa-0 ma-0"
+                      hide-details
+                      single-line
+                      solo-inverted
+                      @change="
+                        (newName) => {
+                          onRename(model, newName);
+                        }
+                      "
+                      @keyup.enter.native="
+                        (event) => {
+                          onRename(model, event.target.value);
+                        }
+                      "
                     ></v-text-field>
                   </v-flex>
                 </v-layout>
                 <v-layout v-else row wrap align-center>
                   <v-flex xs12 class="text-xs-left pa-0">
                     <v-combobox
-                        :value="model.Name"
-                        style="z-index: 250"
-                        :items="$config.values.people"
-                        item-value="Name"
-                        item-text="Name"
-                        :readonly="readonly"
-                        :return-object="false"
-                        :menu-props="menuProps"
-                        :allow-overflow="false"
-                        :hint="$gettext('Name')"
-                        hide-details
-                        single-line
-                        solo-inverted
-                        open-on-clear
-                        hide-no-data
-                        append-icon=""
-                        prepend-inner-icon="person_add"
-                        browser-autocomplete="off"
-                        class="input-name pa-0 ma-0"
-                        @change="(newName) => {onRename(model, newName)}"
-                        @keyup.enter.native="(event) => {onRename(model, event.target.value)}"
+                      :value="model.Name"
+                      style="z-index: 250"
+                      :items="$config.values.people"
+                      item-value="Name"
+                      item-text="Name"
+                      :readonly="readonly"
+                      :return-object="false"
+                      :menu-props="menuProps"
+                      :allow-overflow="false"
+                      :hint="$gettext('Name')"
+                      hide-details
+                      single-line
+                      solo-inverted
+                      open-on-clear
+                      hide-no-data
+                      append-icon=""
+                      prepend-inner-icon="person_add"
+                      browser-autocomplete="off"
+                      class="input-name pa-0 ma-0"
+                      @change="
+                        (newName) => {
+                          onRename(model, newName);
+                        }
+                      "
+                      @keyup.enter.native="
+                        (event) => {
+                          onRename(model, event.target.value);
+                        }
+                      "
                     >
                     </v-combobox>
                   </v-flex>
@@ -111,10 +111,7 @@
           </v-flex>
         </v-layout>
         <div class="text-xs-center mt-3 mb-2">
-          <v-btn
-              color="secondary" round depressed
-              :to="{name: 'all', query: { q: 'face:new' }}"
-          >
+          <v-btn color="secondary" round depressed :to="{ name: 'all', query: { q: 'face:new' } }">
             <translate>Show all new faces</translate>
           </v-btn>
         </div>
@@ -127,12 +124,12 @@
 import Face from "model/face";
 import Event from "pubsub-js";
 import RestModel from "model/rest";
-import {MaxItems} from "common/clipboard";
+import { MaxItems } from "common/clipboard";
 import Notify from "common/notify";
-import {ClickLong, ClickShort, Input, InputInvalid} from "common/input";
+import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
 
 export default {
-  name: 'PPageFaces',
+  name: "PPageFaces",
   props: {
     staticFilter: {
       type: Object,
@@ -143,21 +140,21 @@ export default {
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
-    const q = query['q'] ? query['q'] : '';
-    const hidden = query['hidden'] ? query['hidden'] : '';
+    const q = query["q"] ? query["q"] : "";
+    const hidden = query["hidden"] ? query["hidden"] : "";
     const order = this.sortOrder();
-    const filter = {q, hidden, order};
+    const filter = { q, hidden, order };
     const settings = {};
 
     return {
-      view: 'all',
+      view: "all",
       config: this.$config.values,
       subscriptions: [],
       listen: false,
       dirty: false,
       results: [],
       scrollDisabled: true,
-      scrollDistance: window.innerHeight*2,
+      scrollDistance: window.innerHeight * 2,
       loading: true,
       busy: false,
       batchSize: 999,
@@ -169,26 +166,26 @@ export default {
       filter: filter,
       lastFilter: {},
       routeName: routeName,
-      titleRule: v => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
+      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
-      menuProps:{"closeOnClick":false, "closeOnContentClick":true, "openOnClick":false, "maxHeight":300},
+      menuProps: { closeOnClick: false, closeOnContentClick: true, openOnClick: false, maxHeight: 300 },
       textRule: (v) => {
         if (!v || !v.length) {
           return this.$gettext("Name");
         }
 
-        return v.length <= this.$config.get('clip') || this.$gettext("Text too long");
+        return v.length <= this.$config.get("clip") || this.$gettext("Text too long");
       },
     };
   },
   computed: {
-    readonly: function() {
+    readonly: function () {
       return this.busy || this.loading;
     },
   },
   watch: {
-    '$route'() {
+    $route() {
       // Tab inactive?
       if (!this.active) {
         // Ignore event.
@@ -203,7 +200,7 @@ export default {
       this.routeName = this.$route.name;
 
       this.search();
-    }
+    },
   },
   created() {
     this.search();
@@ -265,7 +262,7 @@ export default {
         this.addSelection(models[i].getId());
       }
 
-      return (rangeEnd - rangeStart) + 1;
+      return rangeEnd - rangeStart + 1;
     },
     onSelect(ev, index) {
       const inputType = this.input.eval(ev, index);
@@ -330,7 +327,7 @@ export default {
       this.updateQuery();
     },
     clearQuery() {
-      this.filter.q = '';
+      this.filter.q = "";
       this.updateQuery();
     },
     addSelection(uid) {
@@ -399,31 +396,34 @@ export default {
         Object.assign(params, this.staticFilter);
       }
 
-      Face.search(params).then(resp => {
-        this.results = this.dirty ? resp.models : this.results.concat(resp.models);
+      Face.search(params)
+        .then((resp) => {
+          this.results = this.dirty ? resp.models : this.results.concat(resp.models);
 
-        this.setFaceCount(this.results.length);
+          this.setFaceCount(this.results.length);
 
-        if (!this.results.length) {
-          this.$notify.warn(this.$gettext("No people found"));
-        } else if (this.results.length === 1) {
-          this.$notify.info(this.$gettext("One person found"));
-        } else {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
-        }
-      }).catch(() => {
-        this.scrollDisabled = false;
-      }).finally(() => {
-        this.dirty = false;
-        this.loading = false;
-        this.listen = true;
-      });
+          if (!this.results.length) {
+            this.$notify.warn(this.$gettext("No people found"));
+          } else if (this.results.length === 1) {
+            this.$notify.info(this.$gettext("One person found"));
+          } else {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
+          }
+        })
+        .catch(() => {
+          this.scrollDisabled = false;
+        })
+        .finally(() => {
+          this.dirty = false;
+          this.loading = false;
+          this.listen = true;
+        });
     },
     updateQuery() {
       this.filter.q = this.filter.q.trim();
 
       const query = {
-        view: this.settings.view
+        view: this.settings.view,
       };
 
       Object.assign(query, this.filter);
@@ -438,7 +438,7 @@ export default {
         return;
       }
 
-      this.$router.replace({query: query});
+      this.$router.replace({ query: query });
     },
     searchParams() {
       const params = {
@@ -484,24 +484,26 @@ export default {
 
       const params = this.searchParams();
 
-      Face.search(params).then(resp => {
-        this.offset = resp.limit;
-        this.results = resp.models;
+      Face.search(params)
+        .then((resp) => {
+          this.offset = resp.limit;
+          this.results = resp.models;
 
-        this.setFaceCount(this.results.length);
+          this.setFaceCount(this.results.length);
 
-        if (!this.results.length) {
-          this.$notify.warn(this.$gettext("No people found"));
-        } else if (this.results.length === 1) {
-          this.$notify.info(this.$gettext("One person found"));
-        } else {
-          this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), {n: this.results.length}));
-        }
-      }).finally(() => {
-        this.dirty = false;
-        this.loading = false;
-        this.listen = true;
-      });
+          if (!this.results.length) {
+            this.$notify.warn(this.$gettext("No people found"));
+          } else if (this.results.length === 1) {
+            this.$notify.info(this.$gettext("One person found"));
+          } else {
+            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} people found"), { n: this.results.length }));
+          }
+        })
+        .finally(() => {
+          this.dirty = false;
+          this.loading = false;
+          this.listen = true;
+        });
     },
     onShow(model) {
       if (this.busy || !model) return;
@@ -553,11 +555,11 @@ export default {
     },
     changeFaceCount(count) {
       this.faceCount = this.faceCount + count;
-      this.$emit('updateFaceCount', this.faceCount);
+      this.$emit("updateFaceCount", this.faceCount);
     },
     setFaceCount(count) {
       this.faceCount = count;
-      this.$emit('updateFaceCount', this.faceCount);
+      this.$emit("updateFaceCount", this.faceCount);
     },
     onUpdate(ev, data) {
       if (!this.listen) return;
@@ -566,10 +568,10 @@ export default {
         return;
       }
 
-      const type = ev.split('.')[1];
+      const type = ev.split(".")[1];
 
       switch (type) {
-        case 'updated':
+        case "updated":
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
@@ -583,7 +585,7 @@ export default {
             }
           }
           break;
-        case 'deleted':
+        case "deleted":
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -598,13 +600,13 @@ export default {
           }
 
           break;
-        case 'created':
+        case "created":
           this.dirty = true;
           break;
         default:
           console.warn("unexpected event type", ev);
       }
-    }
+    },
   },
 };
 </script>

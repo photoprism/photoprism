@@ -14,10 +14,10 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -534,22 +534,6 @@ func (m *Session) SetScope(scope string) *Session {
 	return m
 }
 
-// Method returns the authentication method.
-func (m *Session) Method() authn.MethodType {
-	return authn.Method(m.AuthMethod)
-}
-
-// SetMethod sets a custom authentication method.
-func (m *Session) SetMethod(method authn.MethodType) *Session {
-	if method == "" {
-		return m
-	}
-
-	m.AuthMethod = method.String()
-
-	return m
-}
-
 // Provider returns the authentication provider.
 func (m *Session) Provider() authn.ProviderType {
 	return authn.Provider(m.AuthProvider)
@@ -562,6 +546,22 @@ func (m *Session) SetProvider(provider authn.ProviderType) *Session {
 	}
 
 	m.AuthProvider = provider.String()
+
+	return m
+}
+
+// Method returns the authentication method.
+func (m *Session) Method() authn.MethodType {
+	return authn.Method(m.AuthMethod)
+}
+
+// SetMethod sets a custom authentication method.
+func (m *Session) SetMethod(method authn.MethodType) *Session {
+	if method == "" {
+		return m
+	}
+
+	m.AuthMethod = method.String()
 
 	return m
 }

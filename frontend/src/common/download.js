@@ -26,8 +26,7 @@ Additional information can be found in our Developer Guide:
 import saveAs from "file-saver";
 
 // Detect Safari browser.
-const isSafari =
-  navigator.appVersion.indexOf("Safari/") !== -1 && navigator.appVersion.indexOf("Chrome") === -1;
+const isSafari = navigator.appVersion.indexOf("Safari/") !== -1 && navigator.appVersion.indexOf("Chrome") === -1;
 
 // Downloads a file from the server.
 export default function download(url, name) {

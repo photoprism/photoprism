@@ -1,14 +1,5 @@
 <template>
-  <v-dialog
-    :value="show"
-    fullscreen
-    hide-overlay
-    scrollable
-    lazy
-    persistent
-    class="p-upload-dialog"
-    @keydown.esc="cancel"
-  >
+  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark @click.stop="cancel">
@@ -20,13 +11,7 @@
       </v-toolbar>
       <v-container grid-list-xs ext-xs-left fluid>
         <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
-          <input
-            ref="upload"
-            type="file"
-            multiple
-            class="d-none input-upload"
-            @change.stop="onUpload()"
-          />
+          <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>
             <p class="subheading">
@@ -52,82 +37,46 @@
                   <v-list-tile>
                     <v-list-tile-content>
                       <v-list-tile-title>
-                        <translate key="Press enter to create a new album."
-                          >Press enter to create a new album.</translate
-                        >
+                        <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
                       </v-list-tile-title>
                     </v-list-tile-content>
                   </v-list-tile>
                 </template>
                 <template #selection="data">
-                  <v-chip
-                    :key="JSON.stringify(data.item)"
-                    :selected="data.selected"
-                    :disabled="data.disabled"
-                    class="v-chip--select-multi"
-                    @input="data.parent.selectItem(data.item)"
-                  >
+                  <v-chip :key="JSON.stringify(data.item)" :selected="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @input="data.parent.selectItem(data.item)">
                     <v-icon class="pr-1">bookmark</v-icon>
                     {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
                   </v-chip>
                 </template>
               </v-combobox>
-              <span v-else-if="failed"
-                ><translate key="Upload failed">Upload failed</translate></span
-              >
+              <span v-else-if="failed"><translate key="Upload failed">Upload failed</translate></span>
               <span v-else-if="total > 0 && completedTotal < 100">
-                <translate :translate-params="{ n: current, t: total }"
-                  >Uploading %{n} of %{t}…</translate
-                >
+                <translate :translate-params="{ n: current, t: total }">Uploading %{n} of %{t}…</translate>
               </span>
-              <span v-else-if="indexing"
-                ><translate key="Upload complete">Upload complete. Indexing…</translate></span
-              >
-              <span v-else-if="completedTotal === 100"
-                ><translate key="Done">Done.</translate></span
-              >
+              <span v-else-if="indexing"><translate key="Upload complete">Upload complete. Indexing…</translate></span>
+              <span v-else-if="completedTotal === 100"><translate key="Done">Done.</translate></span>
             </p>
 
-            <v-progress-linear
-              v-model="completedTotal"
-              height="1.5em"
-              color="secondary-dark"
-              :indeterminate="indexing"
-            >
+            <v-progress-linear v-model="completedTotal" height="1.5em" color="secondary-dark" :indeterminate="indexing">
               <p class="px-2 ma-0 text-xs-right opacity-85"
                 ><span v-if="eta">{{ eta }}</span></p
               >
             </v-progress-linear>
 
             <p v-if="isDemo" class="body-2">
-              <translate :translate-params="{ n: fileLimit }"
-                >You can upload up to %{n} files for test purposes.</translate
-              >
-              <translate
-                >Please do not upload any private, unlawful or offensive pictures.
-              </translate>
+              <translate :translate-params="{ n: fileLimit }">You can upload up to %{n} files for test purposes.</translate>
+              <translate>Please do not upload any private, unlawful or offensive pictures. </translate>
             </p>
             <p v-else-if="rejectNSFW" class="body-2">
               <translate>Please don't upload photos containing offensive content.</translate>
-              <translate
-                >Uploads that may contain such images will be rejected automatically.</translate
-              >
+              <translate>Uploads that may contain such images will be rejected automatically.</translate>
             </p>
 
             <p v-if="featReview" class="body-1">
-              <translate
-                >Non-photographic and low-quality images require a review before they appear in
-                search results.</translate
-              >
+              <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
-            <v-btn
-              :disabled="busy"
-              color="primary-button"
-              class="white--text ml-0 mt-2 action-upload"
-              depressed
-              @click.stop="onUploadDialog()"
-            >
+            <v-btn :disabled="busy" color="primary-button" class="white--text ml-0 mt-2 action-upload" depressed @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
               <v-icon :right="!rtl" :left="rtl" dark>cloud_upload</v-icon>
             </v-btn>

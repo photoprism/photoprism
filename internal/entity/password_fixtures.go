@@ -23,6 +23,7 @@ var PasswordFixtures = PasswordMap{
 	"bob":     NewPassword("uqxc08w3d0ej2283", "Bobbob123!", false),
 	"friend":  NewPassword("uqxqg7i1kperxvu7", "!Friend321", false),
 	"fowler":  NewPassword("urinotv3d6jedvlm", "PleaseChange$42", false),
+	"jane":    NewPassword("usamyuogp49vd4lh", "Jane123!", false),
 	"metrics": NewPassword("cs5cpu17n6gj2qo5", "xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e", false),
 }
 

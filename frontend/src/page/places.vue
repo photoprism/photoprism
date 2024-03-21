@@ -1,10 +1,5 @@
 <template>
-  <v-container
-    fluid
-    fill-height
-    :class="$config.aclClasses('places')"
-    class="pa-0 p-page p-page-places"
-  >
+  <v-container fluid fill-height :class="$config.aclClasses('places')" class="pa-0 p-page p-page-places">
     <div style="width: 100%; height: 100%; position: relative">
       <div v-if="canSearch" class="map-control search-control">
         <div class="maplibregl-ctrl maplibregl-ctrl-group map-control-search">
@@ -31,12 +26,7 @@
       <div id="map" ref="map" style="width: 100%; height: 100%"></div>
       <div v-if="showCluster" class="cluster-control">
         <v-card class="cluster-control-container">
-          <p-page-photos
-            ref="cluster"
-            :static-filter="cluster"
-            :on-close="closeCluster"
-            :embedded="true"
-          />
+          <p-page-photos ref="cluster" :static-filter="cluster" :on-close="closeCluster" :embedded="true" />
         </v-card>
       </div>
     </div>
@@ -78,8 +68,7 @@ export default {
         "outdoor-v2": "terrain-rgb",
         "414c531c-926d-4164-a057-455a215c0eee": "terrain_rgb_virtual",
       },
-      attribution:
-        '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+      attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
       maxCount: 500000,
       options: {},
       mapFont: ["Open Sans Regular"],
@@ -411,13 +400,7 @@ export default {
     },
     openPhoto(uid) {
       // Abort if uid is empty or results aren't loaded.
-      if (
-        !uid ||
-        this.loading ||
-        !this.result ||
-        !this.result.features ||
-        this.result.features.length === 0
-      ) {
+      if (!uid || this.loading || !this.result || !this.result.features || this.result.features.length === 0) {
         return;
       }
 
@@ -509,8 +492,7 @@ export default {
       }
 
       // Do not query the same data more than once unless search results need to be updated.
-      if (this.initialized && JSON.stringify(this.lastFilter) === JSON.stringify(this.filter))
-        return;
+      if (this.initialized && JSON.stringify(this.lastFilter) === JSON.stringify(this.filter)) return;
       this.loading = true;
 
       this.closeCluster();
@@ -585,10 +567,7 @@ export default {
       }
 
       // Show fullscreen control.
-      this.map.addControl(
-        new maplibregl.FullscreenControl({ container: document.querySelector("body") }),
-        controlPos
-      );
+      this.map.addControl(new maplibregl.FullscreenControl({ container: document.querySelector("body") }), controlPos);
 
       // Show locate control.
       this.map.addControl(
@@ -603,26 +582,18 @@ export default {
 
       // Map style switcher control.
       if (this.mapStyles.length > 1) {
-        this.map.addControl(
-          new MapStyleControl(this.mapStyles, this.style, this.setStyle),
-          controlPos
-        );
+        this.map.addControl(new MapStyleControl(this.mapStyles, this.style, this.setStyle), controlPos);
       }
 
       // Show map scale control.
-      this.map.addControl(
-        new maplibregl.ScaleControl({}),
-        this.$rtl ? "bottom-right" : "bottom-left"
-      );
+      this.map.addControl(new maplibregl.ScaleControl({}), this.$rtl ? "bottom-right" : "bottom-left");
 
       this.map.on("load", () => this.onMapLoad());
     },
     getClusterFeatures(clusterId, limit, callback) {
-      this.map
-        .getSource("photos")
-        .getClusterLeaves(clusterId, limit, undefined, (error, clusterFeatures) => {
-          callback(clusterFeatures);
-        });
+      this.map.getSource("photos").getClusterLeaves(clusterId, limit, undefined, (error, clusterFeatures) => {
+        callback(clusterFeatures);
+      });
     },
     getClusterSizeFromItemCount(itemCount) {
       if (itemCount >= 10000) {
@@ -686,27 +657,23 @@ export default {
             const imageContainer = document.createElement("div");
             imageContainer.className = "marker cluster-marker";
 
-            this.map
-              .getSource("photos")
-              .getClusterLeaves(props.cluster_id, 4, 0, (error, clusterFeatures) => {
-                if (error) {
-                  return;
-                }
+            this.map.getSource("photos").getClusterLeaves(props.cluster_id, 4, 0, (error, clusterFeatures) => {
+              if (error) {
+                return;
+              }
 
-                const previewImageCount =
-                  clusterFeatures.length >= 4 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
-                const images = Array(previewImageCount)
-                  .fill(null)
-                  .map((a, i) => {
-                    const feature =
-                      clusterFeatures[Math.floor((clusterFeatures.length * i) / previewImageCount)];
-                    const image = document.createElement("div");
-                    image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
-                    return image;
-                  });
+              const previewImageCount = clusterFeatures.length >= 4 ? 4 : clusterFeatures.length > 1 ? 2 : 1;
+              const images = Array(previewImageCount)
+                .fill(null)
+                .map((a, i) => {
+                  const feature = clusterFeatures[Math.floor((clusterFeatures.length * i) / previewImageCount)];
+                  const image = document.createElement("div");
+                  image.style.backgroundImage = `url(${this.$config.contentUri}/t/${feature.properties.Hash}/${token}/tile_${50})`;
+                  return image;
+                });
 
-                imageContainer.append(...images);
-              });
+              imageContainer.append(...images);
+            });
 
             const counterBubble = document.createElement("div");
 

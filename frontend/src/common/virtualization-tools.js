@@ -40,16 +40,10 @@ export const virtualizationTools = {
      */
     let firstVisibleElementIndex, lastVisibileElementIndex;
     for (const visibleElementIndex of visibleElementIndices.values()) {
-      if (
-        firstVisibleElementIndex === undefined ||
-        visibleElementIndex < firstVisibleElementIndex
-      ) {
+      if (firstVisibleElementIndex === undefined || visibleElementIndex < firstVisibleElementIndex) {
         firstVisibleElementIndex = visibleElementIndex;
       }
-      if (
-        lastVisibileElementIndex === undefined ||
-        visibleElementIndex > lastVisibileElementIndex
-      ) {
+      if (lastVisibileElementIndex === undefined || visibleElementIndex > lastVisibileElementIndex) {
         lastVisibileElementIndex = visibleElementIndex;
       }
     }

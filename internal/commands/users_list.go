@@ -51,7 +51,7 @@ func usersListAction(ctx *cli.Context) error {
 				user.UID(),
 				user.Username(),
 				user.AclRole().Pretty(),
-				user.Provider().Pretty(),
+				user.AuthInfo(),
 				report.Bool(user.SuperAdmin, report.Yes, report.No),
 				report.Bool(user.CanLogIn(), report.Enabled, report.Disabled),
 				report.DateTime(user.LoginAt),

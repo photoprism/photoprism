@@ -1,21 +1,6 @@
 <template>
-  <v-dialog
-    :value="show"
-    lazy
-    persistent
-    max-width="500"
-    class="dialog-album-edit"
-    color="application"
-    @keydown.esc="close"
-  >
-    <v-form
-      ref="form"
-      lazy-validation
-      dense
-      class="form-album-edit"
-      accept-charset="UTF-8"
-      @submit.prevent="confirm"
-    >
+  <v-dialog :value="show" lazy persistent max-width="500" class="dialog-album-edit" color="application" @keydown.esc="close">
+    <v-form ref="form" lazy-validation dense class="form-album-edit" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card raised elevation="24">
         <v-card-title primary-title class="pb-0">
           <v-layout row wrap>
@@ -31,103 +16,25 @@
           <v-container fluid class="pa-0">
             <v-layout row wrap>
               <v-flex v-if="album.Type !== 'month'" xs12 pa-2>
-                <v-text-field
-                  v-model="model.Title"
-                  hide-details
-                  autofocus
-                  box
-                  flat
-                  :rules="[titleRule]"
-                  :label="$gettext('Name')"
-                  :disabled="disabled"
-                  color="secondary-dark"
-                  class="input-title"
-                  @keyup.enter.native="confirm"
-                ></v-text-field>
+                <v-text-field v-model="model.Title" hide-details autofocus box flat :rules="[titleRule]" :label="$gettext('Name')" :disabled="disabled" color="secondary-dark" class="input-title" @keyup.enter.native="confirm"></v-text-field>
               </v-flex>
               <v-flex xs12 pa-2>
-                <v-text-field
-                  v-model="model.Location"
-                  hide-details
-                  box
-                  flat
-                  :label="$gettext('Location')"
-                  :disabled="disabled"
-                  color="secondary-dark"
-                  class="input-location"
-                ></v-text-field>
+                <v-text-field v-model="model.Location" hide-details box flat :label="$gettext('Location')" :disabled="disabled" color="secondary-dark" class="input-location"></v-text-field>
               </v-flex>
               <v-flex xs12 pa-2>
-                <v-textarea
-                  :key="growDesc"
-                  v-model="model.Description"
-                  auto-grow
-                  hide-details
-                  box
-                  flat
-                  browser-autocomplete="off"
-                  :label="$gettext('Description')"
-                  :rows="1"
-                  :disabled="disabled"
-                  class="input-description"
-                  color="secondary-dark"
-                >
-                </v-textarea>
+                <v-textarea :key="growDesc" v-model="model.Description" auto-grow hide-details box flat browser-autocomplete="off" :label="$gettext('Description')" :rows="1" :disabled="disabled" class="input-description" color="secondary-dark"></v-textarea>
               </v-flex>
               <v-flex xs12 pa-2>
-                <v-combobox
-                  v-model="model.Category"
-                  hide-details
-                  box
-                  flat
-                  :search-input.sync="model.Category"
-                  :items="categories"
-                  :disabled="disabled"
-                  :label="$gettext('Category')"
-                  :allow-overflow="false"
-                  return-masked-value
-                  color="secondary-dark"
-                  class="input-category"
-                >
-                </v-combobox>
+                <v-combobox v-model="model.Category" hide-details box flat :search-input.sync="model.Category" :items="categories" :disabled="disabled" :label="$gettext('Category')" :allow-overflow="false" return-masked-value color="secondary-dark" class="input-category"></v-combobox>
               </v-flex>
               <v-flex xs12 sm6 pa-2>
-                <v-select
-                  v-model="model.Order"
-                  :label="$gettext('Sort Order')"
-                  :menu-props="{ maxHeight: 400 }"
-                  hide-details
-                  box
-                  flat
-                  :items="sorting"
-                  :disabled="disabled"
-                  item-value="value"
-                  item-text="text"
-                  color="secondary-dark"
-                >
-                </v-select>
+                <v-select v-model="model.Order" :label="$gettext('Sort Order')" :menu-props="{ maxHeight: 400 }" hide-details box flat :items="sorting" :disabled="disabled" item-value="value" item-text="text" color="secondary-dark"></v-select>
               </v-flex>
               <v-flex sm3 pa-2>
-                <v-checkbox
-                  v-model="model.Favorite"
-                  :disabled="disabled"
-                  color="secondary-dark"
-                  :label="$gettext('Favorite')"
-                  hide-details
-                  flat
-                >
-                </v-checkbox>
+                <v-checkbox v-model="model.Favorite" :disabled="disabled" color="secondary-dark" :label="$gettext('Favorite')" hide-details flat> </v-checkbox>
               </v-flex>
               <v-flex v-if="experimental && featPrivate" sm3 pa-2>
-                <v-checkbox
-                  v-model="model.Private"
-                  :disabled="disabled"
-                  color="secondary-dark"
-                  :label="$gettext('Private')"
-                  hide-details
-                  flat
-                >
-                </v-checkbox>
+                <v-checkbox v-model="model.Private" :disabled="disabled" color="secondary-dark" :label="$gettext('Private')" hide-details flat> </v-checkbox>
               </v-flex>
             </v-layout>
           </v-container>
@@ -138,14 +45,7 @@
               <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn
-                depressed
-                dark
-                color="primary-button"
-                class="action-confirm"
-                :disabled="disabled"
-                @click.stop="confirm"
-              >
+              <v-btn depressed dark color="primary-button" class="action-confirm" :disabled="disabled" @click.stop="confirm">
                 <translate>Save</translate>
               </v-btn>
             </v-flex>

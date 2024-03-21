@@ -9,6 +9,8 @@ const (
 	ErrNotFound
 	ErrFileNotFound
 	ErrFileTooLarge
+	ErrUnsupported
+	ErrUnsupportedType
 	ErrUnsupportedFormat
 	ErrOriginalsEmpty
 	ErrSelectionNotFound
@@ -30,6 +32,8 @@ const (
 	ErrCreateFile
 	ErrCreateFolder
 	ErrConnectionFailed
+	ErrPasscodeRequired
+	ErrInvalidPasscode
 	ErrInvalidPassword
 	ErrFeatureDisabled
 	ErrNoLabelsSelected
@@ -87,6 +91,8 @@ const (
 	MsgZipCreatedIn
 	MsgPermanentlyDeleted
 	MsgRestored
+	MsgVerified
+	MsgActivated
 )
 
 var Messages = MessageMap{
@@ -99,6 +105,8 @@ var Messages = MessageMap{
 	ErrNotFound:           gettext("Not found"),
 	ErrFileNotFound:       gettext("File not found"),
 	ErrFileTooLarge:       gettext("File too large"),
+	ErrUnsupported:        gettext("Unsupported"),
+	ErrUnsupportedType:    gettext("Unsupported type"),
 	ErrUnsupportedFormat:  gettext("Unsupported format"),
 	ErrOriginalsEmpty:     gettext("Originals folder is empty"),
 	ErrSelectionNotFound:  gettext("Selection not found"),
@@ -120,6 +128,8 @@ var Messages = MessageMap{
 	ErrCreateFile:         gettext("Failed creating file, please check permissions"),
 	ErrCreateFolder:       gettext("Failed creating folder, please check permissions"),
 	ErrConnectionFailed:   gettext("Could not connect, please try again"),
+	ErrPasscodeRequired:   gettext("Enter verification code"),
+	ErrInvalidPasscode:    gettext("Invalid verification code, please try again"),
 	ErrInvalidPassword:    gettext("Invalid password, please try again"),
 	ErrFeatureDisabled:    gettext("Feature disabled"),
 	ErrNoLabelsSelected:   gettext("No labels selected"),
@@ -178,4 +188,6 @@ var Messages = MessageMap{
 	MsgZipCreatedIn:          gettext("Zip created in %d s"),
 	MsgPermanentlyDeleted:    gettext("Permanently deleted"),
 	MsgRestored:              gettext("%s has been restored"),
+	MsgVerified:              gettext("Successfully verified"),
+	MsgActivated:             gettext("Successfully activated"),
 }

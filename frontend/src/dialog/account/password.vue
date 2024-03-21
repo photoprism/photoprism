@@ -1,13 +1,6 @@
 <template>
-  <v-dialog
-    :value="show"
-    lazy
-    persistent
-    max-width="500"
-    class="modal-dialog p-account-password-dialog"
-    @keydown.esc="cancel"
-  >
-    <v-form ref="form" dense class="form-password" accept-charset="UTF-8">
+  <v-dialog :value="show" lazy persistent max-width="500" class="modal-dialog p-account-password-dialog" @keydown.esc="close">
+    <v-form ref="form" dense class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card raised elevation="24">
         <v-card-title primary-title class="pa-2">
           <v-layout row wrap class="pa-2">
@@ -86,7 +79,7 @@
                 class="input-retype-password"
                 color="secondary-dark"
                 :hint="$gettext('Please confirm your new password.')"
-                @keyup.enter.native="confirm"
+                @keyup.enter.native="onConfirm"
               ></v-text-field>
             </v-flex>
           </v-layout>
@@ -94,21 +87,10 @@
         <v-card-actions class="pt-1 pb-2 px-2">
           <v-layout row wrap class="pa-2">
             <v-flex xs12 text-xs-right>
-              <v-btn
-                depressed
-                color="secondary-light"
-                class="action-cancel ml-0"
-                @click.stop="cancel"
-              >
+              <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn
-                depressed
-                color="primary-button"
-                class="action-confirm white--text compact mr-0"
-                :disabled="disabled()"
-                @click.stop="confirm"
-              >
+              <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" :disabled="isDisabled()" @click.stop="onConfirm">
                 <translate>Save</translate>
               </v-btn>
             </v-flex>
@@ -119,7 +101,7 @@
   </v-dialog>
 </template>
 <script>
-import User from "../../model/user";
+import User from "model/user";
 
 export default {
   name: "PAccountPasswordDialog",
@@ -156,38 +138,31 @@ export default {
   },
   created() {
     if (this.isPublic && !this.isDemo) {
-      this.$emit("cancel");
+      this.$emit("close");
     }
   },
   methods: {
-    disabled() {
-      return (
-        this.isDemo ||
-        this.busy ||
-        (this.oldPassword === "" && this.oldRequired) ||
-        this.newPassword.length < this.minLength ||
-        this.newPassword.length > this.maxLength ||
-        this.newPassword !== this.confirmPassword
-      );
+    isDisabled() {
+      return this.isDemo || this.busy || (this.oldPassword === "" && this.oldRequired) || this.newPassword.length < this.minLength || this.newPassword.length > this.maxLength || this.newPassword !== this.confirmPassword;
     },
-    confirm() {
+    onConfirm() {
       this.busy = true;
       this.model
         .changePassword(this.oldPassword, this.newPassword)
         .then(() => {
           this.$notify.success(this.$gettext("Password changed"));
-          this.$emit("confirm");
+          this.$emit("close");
         })
         .finally(() => {
           this.busy = false;
         });
     },
-    cancel() {
+    close() {
       if (this.busy) {
         return;
       }
 
-      this.$emit("cancel");
+      this.$emit("close");
     },
   },
 };

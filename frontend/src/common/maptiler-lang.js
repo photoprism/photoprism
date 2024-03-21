@@ -14,15 +14,7 @@ const langFallbackDecorate = function (style, cfg) {
 
   for (let i = layers.length - 1; i >= 0; i--) {
     let layer = layers[i];
-    if (
-      !(
-        lf[0] === "in" &&
-        lfProp === "layout.text-field" &&
-        layer.layout &&
-        layer.layout["text-field"] &&
-        lfValues.indexOf(layer.layout["text-field"]) >= 0
-      )
-    ) {
+    if (!(lf[0] === "in" && lfProp === "layout.text-field" && layer.layout && layer.layout["text-field"] && lfValues.indexOf(layer.layout["text-field"]) >= 0)) {
       continue;
     }
     for (let j = decorators.length - 1; j >= 0; j--) {
@@ -95,54 +87,19 @@ maplibregl.Map.prototype.setLanguage = function (language, noAlt) {
     return;
   }
 
-  let isNonlatin =
-    [
-      "ar",
-      "hy",
-      "be",
-      "bg",
-      "zh",
-      "ka",
-      "el",
-      "he",
-      "ja",
-      "ja_kana",
-      "kn",
-      "kk",
-      "ko",
-      "mk",
-      "ru",
-      "sr",
-      "th",
-      "uk",
-    ].indexOf(language) >= 0;
+  let isNonlatin = ["ar", "hy", "be", "bg", "zh", "ka", "el", "he", "ja", "ja_kana", "kn", "kk", "ko", "mk", "ru", "sr", "th", "uk"].indexOf(language) >= 0;
 
   let style = JSON.parse(JSON.stringify(this.styleUndecorated));
   let langCfg = {
-    "layer-filter": [
-      "in",
-      "layout.text-field",
-      "{name}",
-      "{name_de}",
-      "{name_en}",
-      "{name:latin}",
-      "{name:latin} {name:nonlatin}",
-      "{name:latin}\n{name:nonlatin}",
-    ],
+    "layer-filter": ["in", "layout.text-field", "{name}", "{name_de}", "{name_en}", "{name:latin}", "{name:latin} {name:nonlatin}", "{name:latin}\n{name:nonlatin}"],
     decorators: [
       {
-        "layout.text-field": isNonlatin
-          ? "{name:nonlatin}" + (noAlt ? "" : "\n{name:latin}")
-          : "{name:latin}" + (noAlt ? "" : "\n{name:nonlatin}"),
+        "layout.text-field": isNonlatin ? "{name:nonlatin}" + (noAlt ? "" : "\n{name:latin}") : "{name:latin}" + (noAlt ? "" : "\n{name:nonlatin}"),
         "filter-all-part": ["!has", "name:" + language],
       },
       {
         "layer-name-postfix": language,
-        "layout.text-field":
-          "{name:" +
-          language +
-          "}" +
-          (noAlt ? "" : "\n{name:" + (isNonlatin ? "latin" : "nonlatin") + "}"),
+        "layout.text-field": "{name:" + language + "}" + (noAlt ? "" : "\n{name:" + (isNonlatin ? "latin" : "nonlatin") + "}"),
         "filter-all-part": ["has", "name:" + language],
       },
     ],

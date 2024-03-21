@@ -85,9 +85,7 @@ export class ConfigOptions extends Model {
   }
 
   save() {
-    return Api.post("config/options", this.getValues(true)).then((response) =>
-      Promise.resolve(this.setValues(response.data))
-    );
+    return Api.post("config/options", this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
   }
 }
 

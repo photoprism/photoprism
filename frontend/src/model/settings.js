@@ -54,9 +54,7 @@ export class Settings extends Model {
   }
 
   save() {
-    return Api.post("settings", this.getValues(true)).then((response) =>
-      Promise.resolve(this.setValues(response.data))
-    );
+    return Api.post("settings", this.getValues(true)).then((response) => Promise.resolve(this.setValues(response.data)));
   }
 }
 

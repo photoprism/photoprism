@@ -1,13 +1,7 @@
 <template>
   <div class="p-tab p-tab-photo-people">
     <v-container grid-list-xs fluid class="pa-2 p-faces">
-      <v-alert
-        :value="markers.length === 0"
-        color="secondary-dark"
-        icon="lightbulb_outline"
-        class="no-results ma-2 opacity-70"
-        outline
-      >
+      <v-alert :value="markers.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
         <h3 class="body-2 ma-0 pa-0">
           <translate>No people found</translate>
         </h3>
@@ -18,32 +12,10 @@
       </v-alert>
       <v-layout class="search-results face-results cards-view" row wrap fill-height>
         <v-flex v-for="(marker, index) in markers" :key="index" xs12 sm6 md3 xl2 d-flex>
-          <v-card
-            tile
-            :data-id="marker.UID"
-            style="user-select: none"
-            :class="marker.classes()"
-            class="result card"
-          >
+          <v-card tile :data-id="marker.UID" style="user-select: none" :class="marker.classes()" class="result card">
             <div class="card-background card"></div>
-            <v-img
-              :src="marker.thumbnailUrl('tile_320')"
-              :transition="false"
-              aspect-ratio="1"
-              class="card darken-1"
-            >
-              <v-btn
-                v-if="!marker.SubjUID && !marker.Invalid"
-                :ripple="false"
-                :depressed="false"
-                class="input-reject"
-                icon
-                flat
-                small
-                absolute
-                :title="$gettext('Remove')"
-                @click.stop.prevent="onReject(marker)"
-              >
+            <v-img :src="marker.thumbnailUrl('tile_320')" :transition="false" aspect-ratio="1" class="card darken-1">
+              <v-btn v-if="!marker.SubjUID && !marker.Invalid" :ripple="false" :depressed="false" class="input-reject" icon flat small absolute :title="$gettext('Remove')" @click.stop.prevent="onReject(marker)">
                 <v-icon color="white" class="action-reject">clear</v-icon>
               </v-btn>
             </v-img>
@@ -51,17 +23,7 @@
             <v-card-actions class="card-details pa-0">
               <v-layout v-if="marker.Invalid" row wrap align-center>
                 <v-flex xs12 class="text-xs-center pa-0">
-                  <v-btn
-                    color="transparent"
-                    :disabled="busy"
-                    large
-                    depressed
-                    block
-                    :round="false"
-                    class="action-undo text-xs-center"
-                    :title="$gettext('Undo')"
-                    @click.stop="onApprove(marker)"
-                  >
+                  <v-btn color="transparent" :disabled="busy" large depressed block :round="false" class="action-undo text-xs-center" :title="$gettext('Undo')" @click.stop="onApprove(marker)">
                     <v-icon dark>undo</v-icon>
                   </v-btn>
                 </v-flex>

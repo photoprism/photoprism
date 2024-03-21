@@ -57,6 +57,9 @@ var Resources = ACL{
 	ResourceServices: Roles{
 		RoleAdmin: GrantFullAccess,
 	},
+	ResourcePasscode: Roles{
+		RoleAdmin: GrantFullAccess,
+	},
 	ResourcePassword: Roles{
 		RoleAdmin: GrantFullAccess,
 	},

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,9 +10,10 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // CreateSession creates a new client session and returns it as JSON if authentication was successful.
@@ -75,7 +77,13 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Try to log in and save session if successful.
 		if err := sess.LogIn(f, c); err != nil {
-			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+			if sess.Method().IsNot(authn.Method2FA) {
+				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+			} else if errors.Is(err, authn.ErrPasscodeRequired) {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrPasscodeRequired, "message": i18n.Msg(i18n.ErrPasscodeRequired)})
+			} else {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrInvalidPasscode, "message": i18n.Msg(i18n.ErrInvalidPasscode)})
+			}
 			return
 		} else if sess, err = get.Session().Save(sess); err != nil {
 			event.AuditErr([]string{clientIp, "%s"}, err)

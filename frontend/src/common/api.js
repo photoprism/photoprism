@@ -111,7 +111,9 @@ Api.interceptors.response.use(
 
     // Show error notification.
     if (errorMessage) {
-      if (code === 401) {
+      if (code === 32) {
+        Notify.info($gettext("Enter verification code"));
+      } else if (code === 401) {
         Notify.logout(errorMessage);
       } else {
         Notify.error(errorMessage);

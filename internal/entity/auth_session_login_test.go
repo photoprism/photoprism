@@ -189,10 +189,11 @@ func TestAuthLocal(t *testing.T) {
 		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Check authentication result.
-		if provider, err := AuthLocal(u, frm, m, c); err != nil {
+		if provider, method, err := AuthLocal(u, frm, m, c); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Equal(t, authn.ProviderLocal, provider)
+			assert.Equal(t, provider, authn.ProviderLocal)
+			assert.Equal(t, method, authn.MethodDefault)
 		}
 	})
 	t.Run("Wrong credentials", func(t *testing.T) {
@@ -211,10 +212,11 @@ func TestAuthLocal(t *testing.T) {
 		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Check authentication result.
-		if provider, err := AuthLocal(u, frm, m, c); err == nil {
+		if provider, method, err := AuthLocal(u, frm, m, c); err == nil {
 			t.Fatal("auth should fail")
 		} else {
-			assert.Equal(t, authn.ProviderNone, provider)
+			assert.Equal(t, provider, authn.ProviderNone)
+			assert.Equal(t, method, authn.MethodUndefined)
 		}
 	})
 	t.Run("No login rights", func(t *testing.T) {
@@ -235,10 +237,11 @@ func TestAuthLocal(t *testing.T) {
 		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Check authentication result.
-		if provider, err := AuthLocal(u, frm, m, c); err == nil {
+		if provider, method, err := AuthLocal(u, frm, m, c); err == nil {
 			t.Fatal("auth should fail")
 		} else {
-			assert.Equal(t, authn.ProviderNone, provider)
+			assert.Equal(t, provider, authn.ProviderNone)
+			assert.Equal(t, method, authn.MethodUndefined)
 		}
 
 		u.CanLogin = true
@@ -261,10 +264,11 @@ func TestAuthLocal(t *testing.T) {
 		c.Request.RemoteAddr = "1.2.3.4"
 
 		// Check authentication result.
-		if provider, err := AuthLocal(u, frm, m, c); err == nil {
+		if provider, method, err := AuthLocal(u, frm, m, c); err == nil {
 			t.Fatal("auth should fail")
 		} else {
-			assert.Equal(t, authn.ProviderNone, provider)
+			assert.Equal(t, provider, authn.ProviderNone)
+			assert.Equal(t, method, authn.MethodUndefined)
 		}
 
 		u.SetProvider(authn.ProviderLocal)
@@ -290,10 +294,56 @@ func TestSessionLogIn(t *testing.T) {
 		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
 		c.Request.RemoteAddr = "1.2.3.4"
 
-		// Try to log in.
+		// Test credentials.
 		if err := m.LogIn(frm, c); err != nil {
 			t.Fatal(err)
 		}
+	})
+	t.Run("Jane", func(t *testing.T) {
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+
+		passcode, codeErr := PasscodeFixtureJane.GenerateCode()
+
+		assert.NoError(t, codeErr)
+		assert.Len(t, passcode, 6)
+
+		// Create login form.
+		frm := form.Login{
+			UserName: "jane",
+			Passcode: passcode,
+			Password: "Jane123!",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Test credentials.
+		if err := m.LogIn(frm, c); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("PasscodeRequired", func(t *testing.T) {
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+
+		// Create login form.
+		frm := form.Login{
+			UserName: "jane",
+			Password: "Jane123!",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Expect "passcode required" error after trying to log in.
+		err := m.LogIn(frm, c)
+
+		assert.ErrorIs(t, err, authn.ErrPasscodeRequired)
 	})
 	t.Run("WrongPassword", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)

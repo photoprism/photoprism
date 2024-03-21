@@ -8,8 +8,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {

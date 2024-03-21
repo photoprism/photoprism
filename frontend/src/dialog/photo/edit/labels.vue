@@ -6,122 +6,45 @@
           <p-photo-preview :model="model"></p-photo-preview>
         </v-flex>
         <v-flex class="pa-2-md-and-up ra-4-table-md-and-up" xs12 md10 xxl11 fill-width fill-height>
-          <v-data-table
-            v-model="selected"
-            :headers="listColumns"
-            :items="model.Labels"
-            hide-actions
-            class="elevation-0 p-results"
-            disable-initial-sort
-            item-key="ID"
-            :no-data-text="$gettext('No labels found')"
-          >
+          <v-data-table v-model="selected" :headers="listColumns" :items="model.Labels" hide-actions class="elevation-0 p-results" disable-initial-sort item-key="ID" :no-data-text="$gettext('No labels found')">
             <template #items="props" class="p-file">
               <td>
-                <v-edit-dialog
-                  :return-value.sync="props.item.Label.Name"
-                  lazy
-                  class="p-inline-edit"
-                  @save="renameLabel(props.item.Label)"
-                >
+                <v-edit-dialog :return-value.sync="props.item.Label.Name" lazy class="p-inline-edit" @save="renameLabel(props.item.Label)">
                   {{ props.item.Label.Name }}
                   <template #input>
-                    <v-text-field
-                      v-model="props.item.Label.Name"
-                      :rules="[nameRule]"
-                      :label="$gettext('Name')"
-                      color="secondary-dark"
-                      class="input-rename background-inherit elevation-0"
-                      single-line
-                      autofocus
-                      solo
-                      hide-details
-                    ></v-text-field>
+                    <v-text-field v-model="props.item.Label.Name" :rules="[nameRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
                   </template>
                 </v-edit-dialog>
               </td>
-              <td class="text-xs-left">{{ sourceName(props.item.LabelSrc) }}</td>
-              <td class="text-xs-center">{{ 100 - props.item.Uncertainty }}%</td>
+              <td class="text-xs-left">
+                {{ sourceName(props.item.LabelSrc) }}
+              </td>
+              <td class="text-xs-center"> {{ 100 - props.item.Uncertainty }}% </td>
               <td class="text-xs-center">
-                <v-btn
-                  v-if="disabled"
-                  icon
-                  small
-                  flat
-                  :ripple="false"
-                  class="action-view"
-                  title="Search"
-                  @click.stop.prevent="searchLabel(props.item.Label)"
-                >
+                <v-btn v-if="disabled" icon small flat :ripple="false" class="action-view" title="Search" @click.stop.prevent="searchLabel(props.item.Label)">
                   <v-icon color="secondary-dark">search</v-icon>
                 </v-btn>
-                <v-btn
-                  v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'"
-                  icon
-                  small
-                  flat
-                  :ripple="false"
-                  class="action-delete"
-                  title="Delete"
-                  @click.stop.prevent="removeLabel(props.item.Label)"
-                >
+                <v-btn v-else-if="props.item.Uncertainty < 100 && props.item.LabelSrc === 'manual'" icon small flat :ripple="false" class="action-delete" title="Delete" @click.stop.prevent="removeLabel(props.item.Label)">
                   <v-icon color="secondary-dark">delete</v-icon>
                 </v-btn>
-                <v-btn
-                  v-else-if="props.item.Uncertainty < 100"
-                  icon
-                  small
-                  flat
-                  :ripple="false"
-                  class="action-remove"
-                  title="Remove"
-                  @click.stop.prevent="removeLabel(props.item.Label)"
-                >
+                <v-btn v-else-if="props.item.Uncertainty < 100" icon small flat :ripple="false" class="action-remove" title="Remove" @click.stop.prevent="removeLabel(props.item.Label)">
                   <v-icon color="secondary-dark">remove</v-icon>
                 </v-btn>
-                <v-btn
-                  v-else
-                  icon
-                  small
-                  flat
-                  :ripple="false"
-                  class="action-on"
-                  title="Activate"
-                  @click.stop.prevent="activateLabel(props.item.Label)"
-                >
+                <v-btn v-else icon small flat :ripple="false" class="action-on" title="Activate" @click.stop.prevent="activateLabel(props.item.Label)">
                   <v-icon color="secondary-dark">add</v-icon>
                 </v-btn>
               </td>
             </template>
             <template v-if="!disabled" #footer>
               <td>
-                <v-text-field
-                  v-model="newLabel"
-                  :rules="[nameRule]"
-                  color="secondary-dark"
-                  browser-autocomplete="off"
-                  :label="$gettext('Name')"
-                  single-line
-                  flat
-                  solo
-                  hide-details
-                  autofocus
-                  class="input-label"
-                  @keyup.enter.native="addLabel"
-                ></v-text-field>
+                <v-text-field v-model="newLabel" :rules="[nameRule]" color="secondary-dark" browser-autocomplete="off" :label="$gettext('Name')" single-line flat solo hide-details autofocus class="input-label" @keyup.enter.native="addLabel"></v-text-field>
               </td>
-              <td class="text-xs-left">{{ sourceName("manual") }}</td>
-              <td class="text-xs-center">100%</td>
+              <td class="text-xs-left">
+                {{ sourceName("manual") }}
+              </td>
+              <td class="text-xs-center"> 100% </td>
               <td class="text-xs-center">
-                <v-btn
-                  icon
-                  small
-                  flat
-                  :ripple="false"
-                  title="Add"
-                  class="p-photo-label-add"
-                  @click.stop.prevent="addLabel"
-                >
+                <v-btn icon small flat :ripple="false" title="Add" class="p-photo-label-add" @click.stop.prevent="addLabel">
                   <v-icon color="secondary-dark">add</v-icon>
                 </v-btn>
               </td>

@@ -90,11 +90,7 @@ export default class Form {
   }
 
   getOptions(fieldName) {
-    if (
-      this.definition &&
-      this.definition.hasOwnProperty(fieldName) &&
-      this.definition[fieldName].hasOwnProperty("options")
-    ) {
+    if (this.definition && this.definition.hasOwnProperty(fieldName) && this.definition[fieldName].hasOwnProperty("options")) {
       return this.definition[fieldName].options;
     }
 

@@ -51,9 +51,7 @@ export class Rest extends Model {
   }
 
   find(id, params) {
-    return Api.get(this.getEntityResource(id), params).then((resp) =>
-      Promise.resolve(new this.constructor(resp.data))
-    );
+    return Api.get(this.getEntityResource(id), params).then((resp) => Promise.resolve(new this.constructor(resp.data)));
   }
 
   load() {
@@ -61,9 +59,7 @@ export class Rest extends Model {
       return;
     }
 
-    return Api.get(this.getEntityResource(this.getId())).then((resp) =>
-      Promise.resolve(this.setValues(resp.data))
-    );
+    return Api.get(this.getEntityResource(this.getId())).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
   save() {
@@ -71,9 +67,7 @@ export class Rest extends Model {
       return this.update();
     }
 
-    return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) =>
-      Promise.resolve(this.setValues(resp.data))
-    );
+    return Api.post(this.constructor.getCollectionResource(), this.getValues()).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
   update() {
@@ -86,9 +80,7 @@ export class Rest extends Model {
     }
 
     // Send PUT request.
-    return Api.put(this.getEntityResource(), values).then((resp) =>
-      Promise.resolve(this.setValues(resp.data))
-    );
+    return Api.put(this.getEntityResource(), values).then((resp) => Promise.resolve(this.setValues(resp.data)));
   }
 
   remove() {
@@ -96,9 +88,7 @@ export class Rest extends Model {
   }
 
   getEditForm() {
-    return Api.options(this.getEntityResource()).then((resp) =>
-      Promise.resolve(new Form(resp.data))
-    );
+    return Api.options(this.getEntityResource()).then((resp) => Promise.resolve(new Form(resp.data)));
   }
 
   getEntityResource(id) {
@@ -134,15 +124,11 @@ export class Rest extends Model {
       values["Password"] = link.Password;
     }
 
-    return Api.put(this.getEntityResource() + "/links/" + link.getId(), values).then((resp) =>
-      Promise.resolve(link.setValues(resp.data))
-    );
+    return Api.put(this.getEntityResource() + "/links/" + link.getId(), values).then((resp) => Promise.resolve(link.setValues(resp.data)));
   }
 
   removeLink(link) {
-    return Api.delete(this.getEntityResource() + "/links/" + link.getId()).then((resp) =>
-      Promise.resolve(link.setValues(resp.data))
-    );
+    return Api.delete(this.getEntityResource() + "/links/" + link.getId()).then((resp) => Promise.resolve(link.setValues(resp.data)));
   }
 
   links() {
@@ -172,9 +158,7 @@ export class Rest extends Model {
   }
 
   static getCreateForm() {
-    return Api.options(this.getCreateResource()).then((resp) =>
-      Promise.resolve(new Form(resp.data))
-    );
+    return Api.options(this.getCreateResource()).then((resp) => Promise.resolve(new Form(resp.data)));
   }
 
   static getModelName() {
@@ -182,9 +166,7 @@ export class Rest extends Model {
   }
 
   static getSearchForm() {
-    return Api.options(this.getCollectionResource()).then((resp) =>
-      Promise.resolve(new Form(resp.data))
-    );
+    return Api.options(this.getCollectionResource()).then((resp) => Promise.resolve(new Form(resp.data)));
   }
 
   static limit() {

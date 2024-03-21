@@ -34,7 +34,10 @@ func InitDb(opt migrate.Options) {
 	}
 
 	Entities.Migrate(Db(), opt)
-	Entities.WaitForMigration(Db())
+
+	if err := Entities.WaitForMigration(Db()); err != nil {
+		log.Errorf("migrate: %s", err)
+	}
 
 	CreateDefaultFixtures()
 

@@ -52,13 +52,7 @@ module.exports = (config) => {
     customLaunchers: {
       LocalChrome: {
         base: "ChromeHeadless",
-        flags: [
-          "--disable-translate",
-          "--disable-extensions",
-          "--no-sandbox",
-          "--disable-web-security",
-          "--disable-dev-shm-usage",
-        ],
+        flags: ["--disable-translate", "--disable-extensions", "--no-sandbox", "--disable-web-security", "--disable-dev-shm-usage"],
       },
     },
 
@@ -136,11 +130,7 @@ module.exports = (config) => {
         fallback: {
           util: require.resolve("util"),
         },
-        modules: [
-          path.join(__dirname, "src"),
-          path.join(__dirname, "node_modules"),
-          path.join(__dirname, "tests/unit"),
-        ],
+        modules: [path.join(__dirname, "src"), path.join(__dirname, "node_modules"), path.join(__dirname, "tests/unit")],
         preferRelative: true,
         alias: {
           vue: "vue/dist/vue.min.js",
@@ -157,10 +147,7 @@ module.exports = (config) => {
                 options: {
                   compact: false,
                   presets: ["@babel/preset-env"],
-                  plugins: [
-                    "@babel/plugin-transform-runtime",
-                    ["istanbul", { exclude: ["**/*_test.js"] }],
-                  ],
+                  plugins: ["@babel/plugin-transform-runtime", ["istanbul", { exclude: ["**/*_test.js"] }]],
                 },
               },
             ],

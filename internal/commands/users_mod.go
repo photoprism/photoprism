@@ -17,8 +17,11 @@ var UsersModCommand = cli.Command{
 	Name:      "mod",
 	Usage:     "Changes user account settings",
 	ArgsUsage: "[username]",
-	Flags:     UserFlags,
-	Action:    usersModAction,
+	Flags: append(UserFlags, cli.BoolFlag{
+		Name:  "disable-2fa",
+		Usage: UserDisable2FA,
+	}),
+	Action: usersModAction,
 }
 
 // usersModAction modifies an existing user account.

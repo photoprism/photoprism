@@ -54,6 +54,10 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.UploadUserFiles(APIv1)
 	api.ProcessUserUpload(APIv1)
 	api.UploadUserAvatar(APIv1)
+	api.CreateUserPasscode(APIv1)
+	api.ConfirmUserPasscode(APIv1)
+	api.ActivateUserPasscode(APIv1)
+	api.DeactivateUserPasscode(APIv1)
 	api.UpdateUserPassword(APIv1)
 	api.UpdateUser(APIv1)
 

@@ -28,11 +28,7 @@ function isObject(val) {
 }
 
 function isModel(model) {
-  return (
-    model &&
-    typeof model.getId === "function" &&
-    typeof model.constructor.getCollectionResource === "function"
-  );
+  return model && typeof model.getId === "function" && typeof model.constructor.getCollectionResource === "function";
 }
 
 class Selection {

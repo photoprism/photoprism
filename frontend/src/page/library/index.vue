@@ -15,7 +15,10 @@
           color="secondary-dark"
           class="my-3 input-index-folder"
           hide-details
-          hide-no-data flat solo browser-autocomplete="off"
+          hide-no-data
+          flat
+          solo
+          browser-autocomplete="off"
           :items="dirs"
           :loading="loading"
           :disabled="busy || !ready"
@@ -27,8 +30,7 @@
         </v-autocomplete>
 
         <p class="options">
-          <v-progress-linear color="secondary-dark" height="1.5em" :value="completed"
-                             :indeterminate="busy"></v-progress-linear>
+          <v-progress-linear color="secondary-dark" height="1.5em" :value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
         <v-layout wrap align-top class="pb-3">
@@ -47,50 +49,21 @@
             </v-checkbox>
           </v-flex>
           <v-flex v-if="isAdmin" xs12 sm6 lg3 xl2 class="px-2 pb-2 pt-2">
-            <v-checkbox
-              v-model="cleanup"
-              :disabled="busy || !ready"
-              class="ma-0 pa-0"
-              color="secondary-dark"
-              :label="$gettext('Cleanup')"
-              :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')"
-              prepend-icon="delete_sweep"
-              persistent-hint
-            >
-            </v-checkbox>
+            <v-checkbox v-model="cleanup" :disabled="busy || !ready" class="ma-0 pa-0" color="secondary-dark" :label="$gettext('Cleanup')" :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')" prepend-icon="delete_sweep" persistent-hint> </v-checkbox>
           </v-flex>
         </v-layout>
 
-        <v-btn
-          :disabled="!busy || !ready"
-          color="primary-button"
-          class="white--text ml-0 mt-2 action-cancel"
-          depressed
-          @click.stop="cancelIndexing()"
-        >
+        <v-btn :disabled="!busy || !ready" color="primary-button" class="white--text ml-0 mt-2 action-cancel" depressed @click.stop="cancelIndexing()">
           <translate>Cancel</translate>
         </v-btn>
 
-        <v-btn
-          :disabled="busy || !ready"
-          color="primary-button"
-          class="white--text ml-0 mt-2 action-index"
-          depressed
-          @click.stop="startIndexing()"
-        >
+        <v-btn :disabled="busy || !ready" color="primary-button" class="white--text ml-0 mt-2 action-index" depressed @click.stop="startIndexing()">
           <translate>Start</translate>
           <v-icon :right="!rtl" :left="rtl" dark>update</v-icon>
         </v-btn>
 
-        <v-alert
-          v-if="ready && !busy && config.count.hidden > 1"
-          :value="true"
-          color="error"
-          icon="priority_high"
-          class="mt-3"
-          outline
-        >
-          <translate :translate-params="{n: config.count.hidden}">The index currently contains %{n} hidden files.</translate>
+        <v-alert v-if="ready && !busy && config.count.hidden > 1" :value="true" color="error" icon="priority_high" class="mt-3" outline>
+          <translate :translate-params="{ n: config.count.hidden }">The index currently contains %{n} hidden files.</translate>
           <translate>Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.</translate>
         </v-alert>
       </v-container>
@@ -105,12 +78,12 @@ import Notify from "common/notify";
 import Event from "pubsub-js";
 import Settings from "model/settings";
 import Util from "common/util";
-import {Folder, RootOriginals} from "model/folder";
+import { Folder, RootOriginals } from "model/folder";
 
 export default {
-  name: 'PTabIndex',
+  name: "PTabIndex",
   data() {
-    const root = {"path": "/", "name": this.$gettext("All originals")};
+    const root = { path: "/", name: this.$gettext("All originals") };
 
     return {
       ready: !this.$config.loading(),
@@ -133,7 +106,7 @@ export default {
     };
   },
   created() {
-    this.subscriptionId = Event.subscribe('index', this.handleEvent);
+    this.subscriptionId = Event.subscribe("index", this.handleEvent);
     this.load();
   },
   destroyed() {
@@ -148,7 +121,7 @@ export default {
         if (this.settings.index.path !== this.root.path) {
           this.dirs.push({
             path: this.settings.index.path,
-            name: "/" + Util.truncate(this.settings.index.path, 100, "…")
+            name: "/" + Util.truncate(this.settings.index.path, 100, "…"),
           });
         }
 
@@ -167,38 +140,40 @@ export default {
 
       this.loading = true;
 
-      Folder.findAll(RootOriginals).then((r) => {
-        const folders = r.models ? r.models : [];
-        const currentPath = this.settings.index.path;
-        let found = currentPath === this.root.path;
+      Folder.findAll(RootOriginals)
+        .then((r) => {
+          const folders = r.models ? r.models : [];
+          const currentPath = this.settings.index.path;
+          let found = currentPath === this.root.path;
 
-        this.dirs = [this.root];
+          this.dirs = [this.root];
 
-        for (let i = 0; i < folders.length; i++) {
-          if (currentPath === folders[i].Path) {
-            found = true;
+          for (let i = 0; i < folders.length; i++) {
+            if (currentPath === folders[i].Path) {
+              found = true;
+            }
+
+            this.dirs.push({ path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…") });
           }
 
-          this.dirs.push({path: folders[i].Path, name: "/" + Util.truncate(folders[i].Path, 100, "…")});
-        }
-
-        if (!found) {
-          this.settings.index.path = this.root.path;
-        }
-      }).finally(() => this.loading = false);
+          if (!found) {
+            this.settings.index.path = this.root.path;
+          }
+        })
+        .finally(() => (this.loading = false));
     },
     submit() {
       // DO NOTHING
     },
     cancelIndexing() {
-      Api.delete('index');
+      Api.delete("index");
     },
     startIndexing() {
       this.source = Axios.CancelToken.source();
       this.started = Date.now();
       this.busy = true;
       this.completed = 0;
-      this.fileName = '';
+      this.fileName = "";
 
       const ctx = this;
       Notify.blockUI();
@@ -211,34 +186,36 @@ export default {
       };
 
       // Submit POST request.
-      Api.post('index', params, {cancelToken: this.source.token}).then(function () {
-        Notify.unblockUI();
-        ctx.busy = false;
-        ctx.completed = 100;
-        ctx.fileName = '';
-      }).catch(function (e) {
-        Notify.unblockUI();
+      Api.post("index", params, { cancelToken: this.source.token })
+        .then(function () {
+          Notify.unblockUI();
+          ctx.busy = false;
+          ctx.completed = 100;
+          ctx.fileName = "";
+        })
+        .catch(function (e) {
+          Notify.unblockUI();
 
-        if (Axios.isCancel(e)) {
-          // Run in background.
-          return;
-        }
+          if (Axios.isCancel(e)) {
+            // Run in background.
+            return;
+          }
 
-        Notify.error(ctx.$gettext("Indexing failed"));
+          Notify.error(ctx.$gettext("Indexing failed"));
 
-        ctx.busy = false;
-        ctx.completed = 0;
-        ctx.fileName = '';
-      });
+          ctx.busy = false;
+          ctx.completed = 0;
+          ctx.fileName = "";
+        });
     },
     handleEvent(ev, data) {
       if (this.source) {
-        this.source.cancel('run in background');
+        this.source.cancel("run in background");
         this.source = null;
         Notify.unblockUI();
       }
 
-      const type = ev.split('.')[1];
+      const type = ev.split(".")[1];
 
       switch (type) {
         case "folder":
@@ -284,11 +261,11 @@ export default {
           this.completed = 0;
           this.fileName = data.fileName;
           break;
-        case 'completed':
+        case "completed":
           this.action = "";
           this.busy = false;
           this.completed = 100;
-          this.fileName = '';
+          this.fileName = "";
           break;
         default:
           console.log(data);

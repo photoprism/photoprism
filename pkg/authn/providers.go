@@ -13,6 +13,7 @@ type ProviderType string
 
 // Standard authentication provider types.
 const (
+	ProviderUndefined         ProviderType = ""
 	ProviderDefault           ProviderType = "default"
 	ProviderClient            ProviderType = "client"
 	ProviderClientCredentials ProviderType = "client_credentials"
@@ -22,17 +23,23 @@ const (
 	ProviderLDAP              ProviderType = "ldap"
 	ProviderLink              ProviderType = "link"
 	ProviderNone              ProviderType = "none"
-	ProviderUnknown           ProviderType = ""
 )
 
-// RemoteProviders contains all remote auth providers.
+// RemoteProviders contains remote auth providers.
 var RemoteProviders = list.List{
 	string(ProviderLDAP),
 }
 
-// LocalProviders contains all local auth providers.
+// LocalProviders contains local auth providers.
 var LocalProviders = list.List{
 	string(ProviderLocal),
+}
+
+// Method2FAProviders contains auth providers that support Method2FA.
+var Method2FAProviders = list.List{
+	string(ProviderDefault),
+	string(ProviderLocal),
+	string(ProviderLDAP),
 }
 
 // ClientProviders contains all client auth providers.
@@ -43,8 +50,18 @@ var ClientProviders = list.List{
 	string(ProviderAccessToken),
 }
 
-// IsUnknown checks if the provider is unknown.
-func (t ProviderType) IsUnknown() bool {
+// Is compares the provider with another type.
+func (t ProviderType) Is(provider ProviderType) bool {
+	return t == provider
+}
+
+// IsNot checks if the provider is not the specified type.
+func (t ProviderType) IsNot(provider ProviderType) bool {
+	return t != provider
+}
+
+// IsUndefined checks if the provider is undefined.
+func (t ProviderType) IsUndefined() bool {
 	return t == ""
 }
 
@@ -56,6 +73,11 @@ func (t ProviderType) IsRemote() bool {
 // IsLocal checks if local authentication is possible.
 func (t ProviderType) IsLocal() bool {
 	return list.Contains(LocalProviders, string(t))
+}
+
+// Supports2FA checks if the provider supports two-factor authentication with a passcode.
+func (t ProviderType) Supports2FA() bool {
+	return list.Contains(Method2FAProviders, string(t))
 }
 
 // IsClient checks if the authentication is provided for a client.
@@ -117,6 +139,7 @@ func (t ProviderType) Pretty() string {
 
 // Provider casts a string to a normalized provider type.
 func Provider(s string) ProviderType {
+	s = clean.TypeLower(s)
 	switch s {
 	case "", "-", "null", "nil", "0", "false":
 		return ProviderDefault
@@ -129,6 +152,6 @@ func Provider(s string) ProviderType {
 	case "oauth2", "client credentials":
 		return ProviderClientCredentials
 	default:
-		return ProviderType(clean.TypeLower(s))
+		return ProviderType(s)
 	}
 }

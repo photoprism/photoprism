@@ -3,7 +3,7 @@ package search
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 var (

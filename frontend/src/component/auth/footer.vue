@@ -7,16 +7,15 @@
         </v-flex>
 
         <v-flex v-if="legalInfo" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
-          <a v-if="legalUrl" :href="legalUrl" target="_blank" class="text-link"
-             :style="`color: ${colors.link}!important`">{{ legalInfo }}</a>
+          <a v-if="legalUrl" :href="legalUrl" target="_blank" class="text-link" :style="`color: ${colors.link}!important`">{{ legalInfo }}</a>
           <span v-else>{{ legalInfo }}</span>
         </v-flex>
-        <v-flex v-else-if="caption" xs12 sm6
-                class="pa-0 body-2 text-selectable text-xs-center text-sm-right white--text">
+        <v-flex v-else-if="caption" xs12 sm6 class="pa-0 body-2 text-selectable text-xs-center text-sm-right white--text">
           <strong>{{ caption }}</strong>
         </v-flex>
         <v-flex v-else xs12 sm6 class="pa-0 body-2 text-selectable text-xs-center text-sm-right white--text">
-          <router-link to="/about" class="text-link"><span class="white--text">Made with ❤️ in Berlin</span>
+          <router-link to="/about" class="text-link">
+            <span class="white--text">Made with ❤️ in Berlin</span>
           </router-link>
         </v-flex>
       </v-layout>
@@ -24,9 +23,8 @@
   </div>
 </template>
 <script>
-
 export default {
-  name: 'PAuthFooter',
+  name: "PAuthFooter",
   props: {
     colors: {
       type: Object,
@@ -52,7 +50,6 @@ export default {
       rtl: this.$rtl,
     };
   },
-  methods: {}
+  methods: {},
 };
-
 </script>

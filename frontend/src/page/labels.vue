@@ -1,22 +1,33 @@
 <template>
-  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none"
-       :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance"
-       :infinite-scroll-listen-for-event="'scrollRefresh'">
-
+  <div v-infinite-scroll="loadMore" :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.stop.prevent="updateQuery()">
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-        <v-text-field :value="filter.q"
-                      solo hide-details clearable overflow single-line validate-on-blur
-                      class="input-search background-inherit elevation-0"
-                      :label="$gettext('Search')"
-                      prepend-inner-icon="search"
-                      browser-autocomplete="off"
-                      autocorrect="off"
-                      autocapitalize="none"
-                      color="secondary-dark"
-                      @change="(v) => {updateFilter({'q': v})}"
-                      @keyup.enter.native="(e) => updateQuery({'q': e.target.value})"
-                      @click:clear="() => {updateQuery({'q': ''})}"
+        <v-text-field
+          :value="filter.q"
+          solo
+          hide-details
+          clearable
+          overflow
+          single-line
+          validate-on-blur
+          class="input-search background-inherit elevation-0"
+          :label="$gettext('Search')"
+          prepend-inner-icon="search"
+          browser-autocomplete="off"
+          autocorrect="off"
+          autocapitalize="none"
+          color="secondary-dark"
+          @change="
+            (v) => {
+              updateFilter({ q: v });
+            }
+          "
+          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @click:clear="
+            () => {
+              updateQuery({ q: '' });
+            }
+          "
         ></v-text-field>
 
         <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
@@ -36,16 +47,12 @@
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
-      <p-label-clipboard v-if="canSelect" :refresh="refresh" :selection="selection"
-                         :clear-selection="clearSelection"></p-label-clipboard>
+      <p-label-clipboard v-if="canSelect" :refresh="refresh" :selection="selection" :clear-selection="clearSelection"></p-label-clipboard>
 
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert
-            :value="results.length === 0"
-            color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline
-        >
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No labels found</translate>
           </h3>
@@ -54,78 +61,43 @@
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results label-results cards-view" :class="{'select-results': selection.length > 0}">
-          <v-flex
-              v-for="(label, index) in results"
-              :key="label.UID"
-              xs6 sm4 md3 lg2 xxl1 d-flex
-          >
-            <v-card tile
-                    :data-uid="label.UID"
-                    style="user-select: none"
-                    class="result card"
-                    :class="label.classes(selection.includes(label.UID))"
-                    :to="label.route(view)"
-                    @contextmenu.stop="onContextMenu($event, index)"
-            >
+        <v-layout row wrap class="search-results label-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-flex v-for="(label, index) in results" :key="label.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
+            <v-card tile :data-uid="label.UID" style="user-select: none" class="result card" :class="label.classes(selection.includes(label.UID))" :to="label.route(view)" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
-                  :src="label.thumbnailUrl('tile_500')"
-                  :alt="label.Name"
-                  :transition="false"
-                  aspect-ratio="1"
-                  style="user-select: none"
-                  class="card darken-1 clickable"
-                  @touchstart.passive="input.touchStart($event, index)"
-                  @touchend.stop.prevent="onClick($event, index)"
-                  @mousedown.stop.prevent="input.mouseDown($event, index)"
-                  @click.stop.prevent="onClick($event, index)"
+                :src="label.thumbnailUrl('tile_500')"
+                :alt="label.Name"
+                :transition="false"
+                aspect-ratio="1"
+                style="user-select: none"
+                class="card darken-1 clickable"
+                @touchstart.passive="input.touchStart($event, index)"
+                @touchend.stop.prevent="onClick($event, index)"
+                @mousedown.stop.prevent="input.mouseDown($event, index)"
+                @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="canSelect" :ripple="false"
-                       icon flat absolute
-                       class="input-select"
-                       @touchstart.stop.prevent="input.touchStart($event, index)"
-                       @touchend.stop.prevent="onSelect($event, index)"
-                       @touchmove.stop.prevent
-                       @click.stop.prevent="onSelect($event, index)">
+                <v-btn v-if="canSelect" :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
                   <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false"
-                       icon flat absolute
-                       class="input-favorite"
-                       @touchstart.stop.prevent="input.touchStart($event, index)"
-                       @touchend.stop.prevent="toggleLike($event, index)"
-                       @touchmove.stop.prevent
-                       @click.stop.prevent="toggleLike($event, index)">
+                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-3 card-details" style="user-select: none;" @click.stop.prevent="">
-                <v-edit-dialog v-if="canManage"
-                    :return-value.sync="label.Name"
-                    lazy
-                    class="inline-edit"
-                    @save="onSave(label)"
-                >
+              <v-card-title primary-title class="pa-3 card-details" style="user-select: none" @click.stop.prevent="">
+                <v-edit-dialog v-if="canManage" :return-value.sync="label.Name" lazy class="inline-edit" @save="onSave(label)">
                   <span v-if="label.Name" class="body-2 ma-0">
-                      {{ label.Name }}
+                    {{ label.Name }}
                   </span>
                   <span v-else>
-                      <v-icon>edit</v-icon>
+                    <v-icon>edit</v-icon>
                   </span>
                   <template #input>
-                    <v-text-field
-                        v-model="label.Name"
-                        :rules="[titleRule]"
-                        :label="$gettext('Name')"
-                        color="secondary-dark"
-                        class="input-rename background-inherit elevation-0"
-                        single-line autofocus solo hide-details
-                    ></v-text-field>
+                    <v-text-field v-model="label.Name" :rules="[titleRule]" :label="$gettext('Name')" color="secondary-dark" class="input-rename background-inherit elevation-0" single-line autofocus solo hide-details></v-text-field>
                   </template>
                 </v-edit-dialog>
                 <span v-else class="body-2 ma-0">
@@ -133,14 +105,13 @@
                 </span>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none;"
-                           @click.stop.prevent="">
+              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div class="caption mb-2">
                   <button v-if="label.PhotoCount === 1">
                     <translate>Contains one picture.</translate>
                   </button>
                   <button v-else-if="label.PhotoCount > 0">
-                    <translate :translate-params="{n: label.PhotoCount}">Contains %{n} pictures.</translate>
+                    <translate :translate-params="{ n: label.PhotoCount }">Contains %{n} pictures.</translate>
                   </button>
                 </div>
               </v-card-text>
@@ -156,12 +127,12 @@
 import Label from "model/label";
 import Event from "pubsub-js";
 import RestModel from "model/rest";
-import {MaxItems} from "common/clipboard";
+import { MaxItems } from "common/clipboard";
 import Notify from "common/notify";
-import {Input, InputInvalid, ClickShort, ClickLong} from "common/input";
+import { Input, InputInvalid, ClickShort, ClickLong } from "common/input";
 
 export default {
-  name: 'PPageLabels',
+  name: "PPageLabels",
   props: {
     staticFilter: {
       type: Object,
@@ -171,8 +142,8 @@ export default {
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
-    const q = query['q'] ? query['q'] : '';
-    const all = query['all'] ? query['all'] : '';
+    const q = query["q"] ? query["q"] : "";
+    const all = query["all"] ? query["all"] : "";
 
     const canManage = this.$config.allow("labels", "manage");
     const canAddAlbums = this.$config.allow("albums", "create") && this.$config.feature("albums");
@@ -180,36 +151,36 @@ export default {
     return {
       canManage: canManage,
       canSelect: canManage || canAddAlbums,
-      view: 'all',
+      view: "all",
       config: this.$config.values,
       subscriptions: [],
       listen: false,
       dirty: false,
       results: [],
       scrollDisabled: true,
-      scrollDistance: window.innerHeight*2,
+      scrollDistance: window.innerHeight * 2,
       loading: true,
       batchSize: Label.batchSize(),
       offset: 0,
       page: 0,
       selection: [],
       settings: {},
-      filter: {q, all},
+      filter: { q, all },
       lastFilter: {},
       routeName: routeName,
-      titleRule: v => v.length <= this.$config.get('clip') || this.$gettext("Name too long"),
+      titleRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Name too long"),
       input: new Input(),
       lastId: "",
     };
   },
   watch: {
-    '$route'() {
+    $route() {
       const query = this.$route.query;
 
       this.routeName = this.$route.name;
       this.lastFilter = {};
-      this.filter.q = query['q'] ? query['q'] : '';
-      this.filter.all = query['all'] ? query['all'] : '';
+      this.filter.q = query["q"] ? query["q"] : "";
+      this.filter.all = query["all"] ? query["all"] : "";
 
       this.search();
     },
@@ -231,7 +202,7 @@ export default {
     searchCount() {
       const offset = parseInt(window.localStorage.getItem("labels_offset"));
 
-      if(this.offset > 0 || !offset) {
+      if (this.offset > 0 || !offset) {
         return this.batchSize;
       }
 
@@ -285,7 +256,7 @@ export default {
         this.addSelection(models[i].getId());
       }
 
-      return (rangeEnd - rangeStart) + 1;
+      return rangeEnd - rangeStart + 1;
     },
     onSelect(ev, index) {
       if (!this.canSelect) {
@@ -420,33 +391,36 @@ export default {
         this.results = [];
       }
 
-      Label.search(params).then(resp => {
-        this.results = (offset === 0) ? resp.models : this.results.concat(resp.models);
+      Label.search(params)
+        .then((resp) => {
+          this.results = offset === 0 ? resp.models : this.results.concat(resp.models);
 
-        this.scrollDisabled = (resp.count < resp.limit);
+          this.scrollDisabled = resp.count < resp.limit;
 
-        if (this.scrollDisabled) {
-          this.setOffset(resp.offset);
-          if (this.results.length > 1) {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), {n: this.results.length}));
-          }
-        } else {
-          this.setOffset(resp.offset + resp.limit);
-          this.page++;
-
-          this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-              this.$emit("scrollRefresh");
+          if (this.scrollDisabled) {
+            this.setOffset(resp.offset);
+            if (this.results.length > 1) {
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("All %{n} labels loaded"), { n: this.results.length }));
             }
-          });
-        }
-      }).catch(() => {
-        this.scrollDisabled = false;
-      }).finally(() => {
-        this.dirty = false;
-        this.loading = false;
-        this.listen = true;
-      });
+          } else {
+            this.setOffset(resp.offset + resp.limit);
+            this.page++;
+
+            this.$nextTick(() => {
+              if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
+                this.$emit("scrollRefresh");
+              }
+            });
+          }
+        })
+        .catch(() => {
+          this.scrollDisabled = false;
+        })
+        .finally(() => {
+          this.dirty = false;
+          this.loading = false;
+          this.listen = true;
+        });
     },
     updateSettings(props) {
       if (!props || typeof props !== "object" || props.target) {
@@ -465,7 +439,7 @@ export default {
             this.settings[key] = value;
         }
 
-        window.localStorage.setItem("labels_"+key, this.settings[key]);
+        window.localStorage.setItem("labels_" + key, this.settings[key]);
       }
     },
     updateFilter(props) {
@@ -492,7 +466,7 @@ export default {
       if (this.loading) return;
 
       const query = {
-        view: this.settings.view
+        view: this.settings.view,
       };
 
       Object.assign(query, this.filter);
@@ -507,7 +481,7 @@ export default {
         return;
       }
 
-      this.$router.replace({query: query});
+      this.$router.replace({ query: query });
     },
     searchParams() {
       const params = {
@@ -562,33 +536,35 @@ export default {
 
       const params = this.searchParams();
 
-      Label.search(params).then(resp => {
-        this.offset = resp.limit;
-        this.results = resp.models;
+      Label.search(params)
+        .then((resp) => {
+          this.offset = resp.limit;
+          this.results = resp.models;
 
-        this.scrollDisabled = (resp.count < resp.limit);
+          this.scrollDisabled = resp.count < resp.limit;
 
-        if (this.scrollDisabled) {
-          if (!this.results.length) {
-            this.$notify.warn(this.$gettext("No labels found"));
-          } else if (this.results.length === 1) {
-            this.$notify.info(this.$gettext("One label found"));
-          } else {
-            this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), {n: this.results.length}));
-          }
-        } else {
-          // this.$notify.info(this.$gettext('More than 20 labels found'));
-          this.$nextTick(() => {
-            if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
-              this.$emit("scrollRefresh");
+          if (this.scrollDisabled) {
+            if (!this.results.length) {
+              this.$notify.warn(this.$gettext("No labels found"));
+            } else if (this.results.length === 1) {
+              this.$notify.info(this.$gettext("One label found"));
+            } else {
+              this.$notify.info(this.$gettextInterpolate(this.$gettext("%{n} labels found"), { n: this.results.length }));
             }
-          });
-        }
-      }).finally(() => {
-        this.dirty = false;
-        this.loading = false;
-        this.listen = true;
-      });
+          } else {
+            // this.$notify.info(this.$gettext('More than 20 labels found'));
+            this.$nextTick(() => {
+              if (this.$root.$el.clientHeight <= window.document.documentElement.clientHeight + 300) {
+                this.$emit("scrollRefresh");
+              }
+            });
+          }
+        })
+        .finally(() => {
+          this.dirty = false;
+          this.loading = false;
+          this.listen = true;
+        });
     },
     onUpdate(ev, data) {
       if (!this.listen) return;
@@ -597,10 +573,10 @@ export default {
         return;
       }
 
-      const type = ev.split('.')[1];
+      const type = ev.split(".")[1];
 
       switch (type) {
-        case 'updated':
+        case "updated":
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             const model = this.results.find((m) => m.UID === values.UID);
@@ -614,7 +590,7 @@ export default {
             }
           }
           break;
-        case 'deleted':
+        case "deleted":
           this.dirty = true;
 
           for (let i = 0; i < data.entities.length; i++) {
@@ -629,13 +605,13 @@ export default {
           }
 
           break;
-        case 'created':
+        case "created":
           this.dirty = true;
           break;
         default:
           console.warn("unexpected event type", ev);
       }
-    }
+    },
   },
 };
 </script>

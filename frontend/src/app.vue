@@ -33,19 +33,13 @@ export default {
   },
   computed: {
     appClass: function () {
-      return [
-        this.$route.meta.background,
-        this.$vuetify.breakpoint.smAndDown ? "small-screen" : "large-screen",
-        this.$route.meta.hideNav ? "hide-nav" : "show-nav",
-      ];
+      return [this.$route.meta.background, this.$vuetify.breakpoint.smAndDown ? "small-screen" : "large-screen", this.$route.meta.hideNav ? "hide-nav" : "show-nav"];
     },
   },
   created() {
     window.addEventListener("touchstart", (e) => this.onTouchStart(e), { passive: true });
     window.addEventListener("touchmove", (e) => this.onTouchMove(e), { passive: true });
-    this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) =>
-      this.onRefresh(data)
-    );
+    this.subscriptions["view.refresh"] = Event.subscribe("view.refresh", (ev, data) => this.onRefresh(data));
     this.$config.setVuetify(this.$vuetify);
   },
   destroyed() {
@@ -68,8 +62,7 @@ export default {
       if (document.querySelector(".v-dialog--active") !== null) return;
 
       const y = e.touches[0].pageY;
-      const h =
-        window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
+      const h = window.document.documentElement.scrollHeight - window.document.documentElement.clientHeight;
 
       if (window.scrollY >= h - 200 && y < this.touchStart) {
         Event.publish("touchmove.bottom");

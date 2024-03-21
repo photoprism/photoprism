@@ -7,17 +7,13 @@
             <tr>
               <td>UID</td>
               <td
-                ><span class="clickable" @click.stop.prevent="copyText(model.UID)">{{
-                  model.UID | uppercase
-                }}</span></td
+                ><span class="clickable" @click.stop.prevent="copyText(model.UID)">{{ model.UID | uppercase }}</span></td
               >
             </tr>
             <tr v-if="model.DocumentID">
               <td>Document ID</td>
               <td
-                ><span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{
-                  model.DocumentID | uppercase
-                }}</span></td
+                ><span class="clickable" @click.stop.prevent="copyText(model.DocumentID)">{{ model.DocumentID | uppercase }}</span></td
               >
             </tr>
             <tr>
@@ -26,18 +22,7 @@
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td>
-                <v-select
-                  v-model="model.Type"
-                  flat
-                  solo
-                  browser-autocomplete="off"
-                  hide-details
-                  color="secondary-dark"
-                  :items="options.PhotoTypes()"
-                  class="input-type"
-                  @change="save"
-                >
-                </v-select>
+                <v-select v-model="model.Type" flat solo browser-autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @change="save"> </v-select>
               </td>
             </tr>
             <tr v-if="model.Path">
@@ -45,9 +30,7 @@
                 <translate>Folder</translate>
               </td>
               <td
-                ><span class="clickable" @click.stop.prevent="copyText(model.Path)">{{
-                  model.Path
-                }}</span></td
+                ><span class="clickable" @click.stop.prevent="copyText(model.Path)">{{ model.Path }}</span></td
               >
             </tr>
             <tr>
@@ -55,9 +38,7 @@
                 <translate>Name</translate>
               </td>
               <td
-                ><span class="clickable" @click.stop.prevent="copyText(model.Name)">{{
-                  model.Name
-                }}</span></td
+                ><span class="clickable" @click.stop.prevent="copyText(model.Name)">{{ model.Name }}</span></td
               >
             </tr>
             <tr v-if="model.OriginalName">
@@ -65,18 +46,7 @@
                 <translate>Original Name</translate>
               </td>
               <td>
-                <v-text-field
-                  v-model="model.OriginalName"
-                  flat
-                  solo
-                  dense
-                  hide-details
-                  browser-autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  color="secondary-dark"
-                  @change="save"
-                ></v-text-field>
+                <v-text-field v-model="model.OriginalName" flat solo dense hide-details browser-autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>
@@ -85,9 +55,7 @@
                 <v-icon v-if="model.TitleSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td :title="sourceName(model.TitleSrc)">
-                <span class="clickable" @click.stop.prevent="copyText(model.Title)">{{
-                  model.Title
-                }}</span>
+                <span class="clickable" @click.stop.prevent="copyText(model.Title)">{{ model.Title }}</span>
                 <v-icon v-if="model.TitleSrc === 'name'" class="src">insert_drive_file</v-icon>
               </td>
             </tr>
@@ -98,11 +66,7 @@
               </td>
               <td :title="sourceName(model.TakenSrc)">
                 {{ model.getDateString() }}
-                <v-icon
-                  v-if="model.TakenSrc === 'name' || model.TakenSrc === 'estimate'"
-                  class="src"
-                  >insights</v-icon
-                >
+                <v-icon v-if="model.TakenSrc === 'name' || model.TakenSrc === 'estimate'" class="src">insights</v-icon>
               </td>
             </tr>
             <tr v-if="albums.length > 0">
@@ -110,14 +74,7 @@
                 <translate>Albums</translate>
               </td>
               <td>
-                <a
-                  v-for="(a, i) in albums"
-                  :key="i"
-                  :href="a.url"
-                  class="primary--text text-link"
-                  target="_blank"
-                  ><span v-if="i > 0">, </span>{{ a.title }}</a
-                >
+                <a v-for="(a, i) in albums" :key="i" :href="a.url" class="primary--text text-link" target="_blank"><span v-if="i > 0">, </span>{{ a.title }}</a>
               </td>
             </tr>
             <tr>
@@ -151,15 +108,7 @@
                 <translate>Stackable</translate>
               </td>
               <td>
-                <v-switch
-                  v-model="model.Stack"
-                  hide-details
-                  class="input-stackable"
-                  :true-value="0"
-                  :false-value="-1"
-                  :label="model.Stack > -1 ? $gettext('Yes') : $gettext('No')"
-                  @change="save"
-                ></v-switch>
+                <v-switch v-model="model.Stack" hide-details class="input-stackable" :true-value="0" :false-value="-1" :label="model.Stack > -1 ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -167,13 +116,7 @@
                 <translate>Favorite</translate>
               </td>
               <td>
-                <v-switch
-                  v-model="model.Favorite"
-                  hide-details
-                  class="input-favorite"
-                  :label="model.Favorite ? $gettext('Yes') : $gettext('No')"
-                  @change="save"
-                ></v-switch>
+                <v-switch v-model="model.Favorite" hide-details class="input-favorite" :label="model.Favorite ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
               </td>
             </tr>
             <tr v-if="$config.feature('private')">
@@ -181,13 +124,7 @@
                 <translate>Private</translate>
               </td>
               <td>
-                <v-switch
-                  v-model="model.Private"
-                  hide-details
-                  class="input-private"
-                  :label="model.Private ? $gettext('Yes') : $gettext('No')"
-                  @change="save"
-                ></v-switch>
+                <v-switch v-model="model.Private" hide-details class="input-private" :label="model.Private ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -195,13 +132,7 @@
                 <translate>Scan</translate>
               </td>
               <td>
-                <v-switch
-                  v-model="model.Scan"
-                  hide-details
-                  class="input-scan"
-                  :label="model.Scan ? $gettext('Yes') : $gettext('No')"
-                  @change="save"
-                ></v-switch>
+                <v-switch v-model="model.Scan" hide-details class="input-scan" :label="model.Scan ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -209,13 +140,7 @@
                 <translate>Panorama</translate>
               </td>
               <td>
-                <v-switch
-                  v-model="model.Panorama"
-                  hide-details
-                  class="input-panorama"
-                  :label="model.Panorama ? $gettext('Yes') : $gettext('No')"
-                  @change="save"
-                ></v-switch>
+                <v-switch v-model="model.Panorama" hide-details class="input-panorama" :label="model.Panorama ? $gettext('Yes') : $gettext('No')" @change="save"></v-switch>
               </td>
             </tr>
             <tr>
@@ -255,21 +180,7 @@
                 <translate>Accuracy</translate>
               </td>
               <td>
-                <v-text-field
-                  v-model="model.CellAccuracy"
-                  flat
-                  solo
-                  dense
-                  hide-details
-                  browser-autocomplete="off"
-                  autocorrect="off"
-                  autocapitalize="none"
-                  color="secondary-dark"
-                  type="number"
-                  suffix="m"
-                  style="width: 100px"
-                  @change="save"
-                ></v-text-field>
+                <v-text-field v-model="model.CellAccuracy" flat solo dense hide-details browser-autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>

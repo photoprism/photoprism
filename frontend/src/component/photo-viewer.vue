@@ -10,74 +10,37 @@
 
       <div class="pswp__ui pswp__ui--hidden">
         <div class="pswp__top-bar">
-          <div class="pswp__taken hidden-xs-only">{{ formatDate(item.TakenAtLocal) }}</div>
+          <div class="pswp__taken hidden-xs-only">
+            {{ formatDate(item.TakenAtLocal) }}
+          </div>
 
           <div class="pswp__counter"></div>
 
-          <button
-            class="pswp__button pswp__button--close action-close"
-            :title="$gettext('Close')"
-          ></button>
+          <button class="pswp__button pswp__button--close action-close" :title="$gettext('Close')"></button>
 
-          <button
-            v-if="canDownload"
-            class="pswp__button action-download"
-            style="background: none"
-            :title="$gettext('Download')"
-            @click.exact="onDownload"
-          >
+          <button v-if="canDownload" class="pswp__button action-download" style="background: none" :title="$gettext('Download')" @click.exact="onDownload">
             <v-icon size="16" color="white">get_app</v-icon>
           </button>
 
-          <button
-            v-if="canEdit"
-            class="pswp__button action-edit hidden-shared-only"
-            style="background: none"
-            :title="$gettext('Edit')"
-            @click.exact="onEdit"
-          >
+          <button v-if="canEdit" class="pswp__button action-edit hidden-shared-only" style="background: none" :title="$gettext('Edit')" @click.exact="onEdit">
             <v-icon size="16" color="white">edit</v-icon>
           </button>
 
-          <button
-            class="pswp__button action-select"
-            style="background: none"
-            :title="$gettext('Select')"
-            @click.exact="onSelect"
-          >
-            <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white"
-              >check_circle</v-icon
-            >
+          <button class="pswp__button action-select" style="background: none" :title="$gettext('Select')" @click.exact="onSelect">
+            <v-icon v-if="selection.length && $clipboard.has(item)" size="16" color="white">check_circle</v-icon>
             <v-icon v-else size="16" color="white">radio_button_off</v-icon>
           </button>
 
-          <button
-            v-if="canLike"
-            class="pswp__button action-like hidden-shared-only"
-            style="background: none"
-            :title="$gettext('Like')"
-            @click.exact="onLike"
-          >
+          <button v-if="canLike" class="pswp__button action-like hidden-shared-only" style="background: none" :title="$gettext('Like')" @click.exact="onLike">
             <v-icon v-if="item.Favorite" size="16" color="white">favorite</v-icon>
             <v-icon v-else size="16" color="white">favorite_border</v-icon>
           </button>
 
-          <button
-            class="pswp__button pswp__button--fs action-toggle-fullscreen"
-            :title="$gettext('Fullscreen')"
-          ></button>
+          <button class="pswp__button pswp__button--fs action-toggle-fullscreen" :title="$gettext('Fullscreen')"></button>
 
-          <button
-            class="pswp__button pswp__button--zoom action-zoom"
-            :title="$gettext('Zoom in/out')"
-          ></button>
+          <button class="pswp__button pswp__button--zoom action-zoom" :title="$gettext('Zoom in/out')"></button>
 
-          <button
-            class="pswp__button action-slideshow"
-            style="background: none"
-            :title="$gettext('Start/Stop Slideshow')"
-            @click.exact="onSlideshow"
-          >
+          <button class="pswp__button action-slideshow" style="background: none" :title="$gettext('Start/Stop Slideshow')" @click.exact="onSlideshow">
             <v-icon v-show="!interval" size="18" color="white">play_arrow</v-icon>
             <v-icon v-show="interval" size="16" color="white">pause</v-icon>
           </button>
@@ -95,40 +58,20 @@
           <div class="pswp__share-tooltip"></div>
         </div>
 
-        <button
-          class="pswp__button pswp__button--arrow--left action-previous"
-          title="Previous (arrow left)"
-        >
-        </button>
+        <button class="pswp__button pswp__button--arrow--left action-previous" title="Previous (arrow left)">
+</button>
 
-        <button
-          class="pswp__button pswp__button--arrow--right action-next"
-          title="Next (arrow right)"
-        >
-        </button>
+        <button class="pswp__button pswp__button--arrow--right action-next" title="Next (arrow right)">
+</button>
 
         <div class="pswp__caption" @click="onPlay">
           <div class="pswp__caption__center"></div>
         </div>
       </div>
     </div>
-    <div
-      v-if="player.show"
-      class="video-viewer"
-      @click.stop.prevent="closePlayer"
-      @keydown.esc.stop.prevent="closePlayer"
-    >
-      <p-video-player
-        ref="player"
-        :source="player.source"
-        :poster="player.poster"
-        :height="player.height"
-        :width="player.width"
-        :autoplay="player.autoplay"
-        :loop="player.loop"
-        @close="closePlayer"
-      >
-      </p-video-player>
+    <div v-if="player.show" class="video-viewer" @click.stop.prevent="closePlayer" @keydown.esc.stop.prevent="closePlayer">
+      <p-video-player ref="player" :source="player.source" :poster="player.poster" :height="player.height" :width="player.width" :autoplay="player.autoplay" :loop="player.loop" @close="closePlayer">
+</p-video-player>
     </div>
   </div>
 </template>

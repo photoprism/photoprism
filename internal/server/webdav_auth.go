@@ -175,7 +175,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		}
 
 		// Check credentials and authorization.
-		if user, _, err := entity.Auth(f, nil, c); err != nil {
+		if user, _, _, err := entity.Auth(f, nil, c); err != nil {
 			// Abort if authentication has failed.
 			message := err.Error()
 			limiter.Login.Reserve(clientIp)

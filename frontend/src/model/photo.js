@@ -199,30 +199,21 @@ export class Photo extends RestModel {
   }
 
   classes() {
-    return this.generateClasses(
-      this.isPlayable(),
-      Clipboard.has(this),
-      this.Portrait,
-      this.Favorite,
-      this.Private,
-      this.isStack()
-    );
+    return this.generateClasses(this.isPlayable(), Clipboard.has(this), this.Portrait, this.Favorite, this.Private, this.isStack());
   }
 
-  generateClasses = memoizeOne(
-    (isPlayable, isInClipboard, portrait, favorite, isPrivate, isStack) => {
-      let classes = ["is-photo", "uid-" + this.UID, "type-" + this.Type];
+  generateClasses = memoizeOne((isPlayable, isInClipboard, portrait, favorite, isPrivate, isStack) => {
+    let classes = ["is-photo", "uid-" + this.UID, "type-" + this.Type];
 
-      if (isPlayable) classes.push("is-playable");
-      if (isInClipboard) classes.push("is-selected");
-      if (portrait) classes.push("is-portrait");
-      if (favorite) classes.push("is-favorite");
-      if (isPrivate) classes.push("is-private");
-      if (isStack) classes.push("is-stack");
+    if (isPlayable) classes.push("is-playable");
+    if (isInClipboard) classes.push("is-selected");
+    if (portrait) classes.push("is-portrait");
+    if (favorite) classes.push("is-favorite");
+    if (isPrivate) classes.push("is-private");
+    if (isStack) classes.push("is-stack");
 
-      return classes;
-    }
-  );
+    return classes;
+  });
 
   localDayString() {
     if (!this.TakenAtLocal) {
@@ -593,9 +584,7 @@ export class Photo extends RestModel {
         file = files.find((f) => f.MediaType === MediaImage && f.Root === "/");
         break;
       case MediaLive:
-        file = files.find(
-          (f) => (f.MediaType === MediaVideo || f.MediaType === MediaLive) && f.Root === "/"
-        );
+        file = files.find((f) => (f.MediaType === MediaVideo || f.MediaType === MediaLive) && f.Root === "/");
         break;
       case MediaRaw:
       case MediaVideo:
@@ -670,31 +659,22 @@ export class Photo extends RestModel {
   }
 
   thumbnailUrl(size) {
-    return this.generateThumbnailUrl(
-      this.mainFileHash(),
-      this.videoFile(),
-      config.staticUri,
-      config.contentUri,
-      config.previewToken,
-      size
-    );
+    return this.generateThumbnailUrl(this.mainFileHash(), this.videoFile(), config.staticUri, config.contentUri, config.previewToken, size);
   }
 
-  generateThumbnailUrl = memoizeOne(
-    (mainFileHash, videoFile, staticUri, contentUri, previewToken, size) => {
-      let hash = mainFileHash;
+  generateThumbnailUrl = memoizeOne((mainFileHash, videoFile, staticUri, contentUri, previewToken, size) => {
+    let hash = mainFileHash;
 
-      if (!hash) {
-        if (videoFile && videoFile.Hash) {
-          return `${contentUri}/t/${videoFile.Hash}/${previewToken}/${size}`;
-        }
-
-        return `${staticUri}/img/404.jpg`;
+    if (!hash) {
+      if (videoFile && videoFile.Hash) {
+        return `${contentUri}/t/${videoFile.Hash}/${previewToken}/${size}`;
       }
 
-      return `${contentUri}/t/${hash}/${previewToken}/${size}`;
+      return `${staticUri}/img/404.jpg`;
     }
-  );
+
+    return `${contentUri}/t/${hash}/${previewToken}/${size}`;
+  });
 
   getDownloadUrl() {
     return `${config.apiUri}/dl/${this.mainFileHash()}?t=${config.downloadToken}`;
@@ -781,14 +761,7 @@ export class Photo extends RestModel {
   }
 
   getDateString(showTimeZone) {
-    return this.generateDateString(
-      showTimeZone,
-      this.TakenAt,
-      this.Year,
-      this.Month,
-      this.Day,
-      this.TimeZone
-    );
+    return this.generateDateString(showTimeZone, this.TakenAt, this.Year, this.Month, this.Day, this.TimeZone);
   }
 
   generateDateString = memoizeOne((showTimeZone, takenAt, year, month, day, timeZone) => {
@@ -949,13 +922,7 @@ export class Photo extends RestModel {
   // Example: Apple iPhone 12 Pro Max, DNG, 4032 × 3024, 32.9 MB
   getPhotoInfo = () => {
     let file = this.originalFile() || this.videoFile();
-    return this.generatePhotoInfo(
-      this.Camera,
-      this.CameraID,
-      this.CameraMake,
-      this.CameraModel,
-      file
-    );
+    return this.generatePhotoInfo(this.Camera, this.CameraID, this.CameraMake, this.CameraModel, file);
   };
 
   generatePhotoInfo = memoizeOne((camera, cameraId, cameraMake, cameraModel, file) => {
@@ -992,63 +959,48 @@ export class Photo extends RestModel {
 
   // Example: iPhone 12 Pro Max 5.1mm ƒ/1.6, 26mm, ISO32, 1/4525
   getLensInfo = () => {
-    return this.generateLensInfo(
-      this.Lens,
-      this.LensID,
-      this.LensMake,
-      this.LensModel,
-      this.CameraModel,
-      this.FNumber,
-      this.Iso,
-      this.Exposure,
-      this.FocalLength
-    );
+    return this.generateLensInfo(this.Lens, this.LensID, this.LensMake, this.LensModel, this.CameraModel, this.FNumber, this.Iso, this.Exposure, this.FocalLength);
   };
 
-  generateLensInfo = memoizeOne(
-    (lens, lensId, lensMake, lensModel, cameraModel, fNumber, iso, exposure, focalLength) => {
-      let info = [];
-      const id = lensId ? lensId : lens && lens.ID ? lens.ID : 1;
-      const make = lensMake ? lensMake : lens && lens.Make ? lens.Make : "";
-      const model = (lensModel ? lensModel : lens && lens.Model ? lens.Model : "").replace(
-        "f/",
-        "ƒ/"
-      );
+  generateLensInfo = memoizeOne((lens, lensId, lensMake, lensModel, cameraModel, fNumber, iso, exposure, focalLength) => {
+    let info = [];
+    const id = lensId ? lensId : lens && lens.ID ? lens.ID : 1;
+    const make = lensMake ? lensMake : lens && lens.Make ? lens.Make : "";
+    const model = (lensModel ? lensModel : lens && lens.Model ? lens.Model : "").replace("f/", "ƒ/");
 
-      // Example: EF-S18-55mm f/3.5-5.6 IS STM
-      if (id > 1) {
-        if (!model && !!make) {
-          info.push(make);
-        } else if (model.length > 45) {
-          return model;
-        } else if (model) {
-          info.push(model);
-        }
+    // Example: EF-S18-55mm f/3.5-5.6 IS STM
+    if (id > 1) {
+      if (!model && !!make) {
+        info.push(make);
+      } else if (model.length > 45) {
+        return model;
+      } else if (model) {
+        info.push(model);
       }
-
-      if (focalLength) {
-        info.push(focalLength + "mm");
-      }
-
-      if (fNumber && (!model || !model.endsWith(fNumber.toString()))) {
-        info.push("ƒ/" + fNumber);
-      }
-
-      if (iso && model.length < 27) {
-        info.push("ISO " + iso);
-      }
-
-      if (exposure) {
-        info.push(exposure);
-      }
-
-      if (!info.length) {
-        return $gettext("Unknown");
-      }
-
-      return info.join(", ");
     }
-  );
+
+    if (focalLength) {
+      info.push(focalLength + "mm");
+    }
+
+    if (fNumber && (!model || !model.endsWith(fNumber.toString()))) {
+      info.push("ƒ/" + fNumber);
+    }
+
+    if (iso && model.length < 27) {
+      info.push("ISO " + iso);
+    }
+
+    if (exposure) {
+      info.push(exposure);
+    }
+
+    if (!info.length) {
+      return $gettext("Unknown");
+    }
+
+    return info.join(", ");
+  });
 
   getCamera() {
     if (this.Camera) {
@@ -1088,21 +1040,15 @@ export class Photo extends RestModel {
   }
 
   primaryFile(fileUID) {
-    return Api.post(`${this.getEntityResource()}/files/${fileUID}/primary`).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return Api.post(`${this.getEntityResource()}/files/${fileUID}/primary`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   unstackFile(fileUID) {
-    return Api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return Api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   deleteFile(fileUID) {
-    return Api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return Api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   changeFileOrientation(file) {
@@ -1120,9 +1066,7 @@ export class Photo extends RestModel {
     }
 
     // Change file orientation.
-    return Api.put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return Api.put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   like() {
@@ -1136,27 +1080,19 @@ export class Photo extends RestModel {
   }
 
   addLabel(name) {
-    return Api.post(this.getEntityResource() + "/label", { Name: name, Priority: 10 }).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return Api.post(this.getEntityResource() + "/label", { Name: name, Priority: 10 }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   activateLabel(id) {
-    return Api.put(this.getEntityResource() + "/label/" + id, { Uncertainty: 0 }).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return Api.put(this.getEntityResource() + "/label/" + id, { Uncertainty: 0 }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   renameLabel(id, name) {
-    return Api.put(this.getEntityResource() + "/label/" + id, { Label: { Name: name } }).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return Api.put(this.getEntityResource() + "/label/" + id, { Label: { Name: name } }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   removeLabel(id) {
-    return Api.delete(this.getEntityResource() + "/label/" + id).then((r) =>
-      Promise.resolve(this.setValues(r.data))
-    );
+    return Api.delete(this.getEntityResource() + "/label/" + id).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   getMarkers(valid) {
@@ -1198,25 +1134,11 @@ export class Photo extends RestModel {
       values.PlaceSrc = src.Manual;
     }
 
-    if (
-      values.TakenAt ||
-      values.TakenAtLocal ||
-      values.TimeZone ||
-      values.Day ||
-      values.Month ||
-      values.Year
-    ) {
+    if (values.TakenAt || values.TakenAtLocal || values.TimeZone || values.Day || values.Month || values.Year) {
       values.TakenSrc = src.Manual;
     }
 
-    if (
-      values.CameraID ||
-      values.LensID ||
-      values.FocalLength ||
-      values.FNumber ||
-      values.Iso ||
-      values.Exposure
-    ) {
+    if (values.CameraID || values.LensID || values.FocalLength || values.FNumber || values.Iso || values.Exposure) {
       values.CameraSrc = src.Manual;
     }
 

@@ -9,14 +9,7 @@
         <v-btn color="secondary-light" class="compact mx-2" depressed @click="close">
           <translate>Cancel</translate>
         </v-btn>
-        <v-btn
-          color="primary-button"
-          class="action-update-reload compact"
-          dark
-          small
-          depressed
-          @click="reload"
-        >
+        <v-btn color="primary-button" class="action-update-reload compact" dark small depressed @click="reload">
           <translate>Reload</translate>
         </v-btn>
       </v-card-actions>

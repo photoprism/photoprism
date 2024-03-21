@@ -71,9 +71,7 @@ export class Service extends RestModel {
   }
 
   Folders() {
-    return Api.get(this.getEntityResource() + "/folders").then((response) =>
-      Promise.resolve(response.data)
-    );
+    return Api.get(this.getEntityResource() + "/folders").then((response) => Promise.resolve(response.data));
   }
 
   Upload(selection, folder) {
@@ -85,9 +83,7 @@ export class Service extends RestModel {
       selection = { Photos: selection };
     }
 
-    return Api.post(this.getEntityResource() + "/upload", { selection, folder }).then((response) =>
-      Promise.resolve(response.data)
-    );
+    return Api.post(this.getEntityResource() + "/upload", { selection, folder }).then((response) => Promise.resolve(response.data));
   }
 
   static getCollectionResource() {

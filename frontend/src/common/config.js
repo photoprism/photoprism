@@ -231,12 +231,7 @@ export default class Config {
             .filter((m) => m.UID === values.UID)
             .forEach((m) => {
               for (let key in values) {
-                if (
-                  key !== "UID" &&
-                  values.hasOwnProperty(key) &&
-                  values[key] != null &&
-                  typeof values[key] !== "object"
-                ) {
+                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
                   m[key] = values[key];
                 }
               }
@@ -478,11 +473,7 @@ export default class Config {
       if (stored) {
         locale = stored;
       }
-    } else if (
-      this.values.settings &&
-      this.values.settings.ui &&
-      this.values.settings.ui.language
-    ) {
+    } else if (this.values.settings && this.values.settings.ui && this.values.settings.ui.language) {
       locale = this.values.settings.ui.language;
     }
 

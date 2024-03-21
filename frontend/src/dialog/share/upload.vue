@@ -1,12 +1,5 @@
 <template>
-  <v-dialog
-    :value="show"
-    lazy
-    persistent
-    max-width="400"
-    class="p-share-upload-dialog"
-    @keydown.esc="cancel"
-  >
+  <v-dialog :value="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
         <v-layout row wrap>
@@ -25,22 +18,7 @@
       <v-card-text class="pt-0">
         <v-layout row wrap>
           <v-flex xs12 text-xs-left class="pt-2">
-            <v-select
-              v-model="service"
-              color="secondary-dark"
-              hide-details
-              hide-no-data
-              box
-              flat
-              :label="$gettext('Account')"
-              item-text="AccName"
-              item-value="ID"
-              return-object
-              :disabled="loading || noServices"
-              :items="services"
-              @change="onChange"
-            >
-            </v-select>
+            <v-select v-model="service" color="secondary-dark" hide-details hide-no-data box flat :label="$gettext('Account')" item-text="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @change="onChange"> </v-select>
           </v-flex>
           <v-flex xs12 text-xs-left class="pt-2">
             <v-autocomplete
@@ -63,34 +41,13 @@
             </v-autocomplete>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-4">
-            <v-btn
-              depressed
-              color="secondary-light"
-              class="action-cancel ml-0 mt-0 mb-0 mr-2"
-              @click.stop="cancel"
-            >
+            <v-btn depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
-            <v-btn
-              v-if="noServices"
-              :disabled="isPublic && !isDemo"
-              color="primary-button"
-              depressed
-              dark
-              class="action-setup ma-0"
-              @click.stop="setup"
-            >
+            <v-btn v-if="noServices" :disabled="isPublic && !isDemo" color="primary-button" depressed dark class="action-setup ma-0" @click.stop="setup">
               <translate>Setup</translate>
             </v-btn>
-            <v-btn
-              v-else
-              :disabled="noServices"
-              color="primary-button"
-              depressed
-              dark
-              class="action-upload ma-0"
-              @click.stop="confirm"
-            >
+            <v-btn v-else :disabled="noServices" color="primary-button" depressed dark class="action-upload ma-0" @click.stop="confirm">
               <translate>Upload</translate>
             </v-btn>
           </v-flex>
@@ -179,9 +136,7 @@ export default {
           if (files.length === 1) {
             this.$notify.success(this.$gettext("One file uploaded"));
           } else {
-            this.$notify.success(
-              this.$gettextInterpolate(this.$gettext("%{n} files uploaded"), { n: files.length })
-            );
+            this.$notify.success(this.$gettextInterpolate(this.$gettext("%{n} files uploaded"), { n: files.length }));
           }
 
           this.$emit("confirm", this.service);

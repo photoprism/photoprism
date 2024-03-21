@@ -50,6 +50,15 @@ module.exports = {
     "vue/no-v-text-v-html-on-component": 0,
     "vue/valid-model-definition": 0,
     "vue/valid-attribute-name": 0,
+    "vue/singleline-html-element-content-newline": [
+      "off",
+      {
+        ignoreWhenNoAttributes: true,
+        ignoreWhenEmpty: true,
+        ignores: ["pre", "textarea", "span", "translate", "a", "v-icon", "v-text-field", "v-input", "v-select", "v-switch", "v-checkbox", "v-img"],
+        externalIgnores: [],
+      },
+    ],
     "vue/first-attribute-linebreak": [
       "error",
       {
@@ -60,7 +69,7 @@ module.exports = {
     "prettier/prettier": [
       "warn",
       {
-        printWidth: 100,
+        printWidth: 300,
         singleQuote: false,
         semi: true,
         trailingComma: "es5",

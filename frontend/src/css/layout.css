@@ -85,6 +85,10 @@
     min-width: 90%;
 }
 
+.width-100 {
+    width: 100%;
+}
+
 /* Rounded Elements */
 
 .v-progress-linear,

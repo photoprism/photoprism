@@ -132,6 +132,6 @@ func TestACL_DenyAll(t *testing.T) {
 func TestACL_Resources(t *testing.T) {
 	t.Run("Resources", func(t *testing.T) {
 		result := Resources.Resources()
-		assert.Len(t, result, 22)
+		assert.Len(t, result, len(ResourceNames)-1)
 	})
 }

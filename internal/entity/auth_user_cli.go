@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -63,6 +64,12 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	// Sub-folder for uploads.
 	if ctx.IsSet("upload-path") {
 		m.SetUploadPath(frm.UploadPath)
+		privilegeLevelChange = true
+	}
+
+	// Disable two-factor authentication.
+	if ctx.IsSet("disable-2fa") && m.Method().Is(authn.Method2FA) {
+		m.SetMethod(authn.MethodDefault)
 		privilegeLevelChange = true
 	}
 

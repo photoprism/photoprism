@@ -1,14 +1,6 @@
 <template>
   <transition name="fade-transition">
-    <v-btn
-      v-if="show"
-      color="transparent"
-      dark
-      fab
-      fixed
-      class="p-scroll-top"
-      @click.stop="scrollToTop"
-    >
+    <v-btn v-if="show" color="transparent" dark fab fixed class="p-scroll-top" @click.stop="scrollToTop">
       <v-icon>arrow_upward</v-icon>
     </v-btn>
   </transition>

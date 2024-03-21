@@ -10,8 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // UpdateUser updates the profile information of the currently authenticated user.
@@ -64,9 +64,17 @@ func UpdateUser(router *gin.RouterGroup) {
 		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		privilegeLevelChange := isAdmin && m.PrivilegeLevelChange(f)
 
+		// Get user from session.
+		u := s.User()
+
 		// Prevent super admins from locking themselves out.
-		if u := s.User(); u.IsSuperAdmin() && u.Equal(m) && !f.CanLogin {
+		if u.IsSuperAdmin() && u.Equal(m) && !f.CanLogin {
 			f.CanLogin = true
+		}
+
+		// Only allow super admins to change the authentication method.
+		if !u.IsSuperAdmin() {
+			f.AuthMethod = ""
 		}
 
 		// Save model with values from form.
@@ -84,12 +92,17 @@ func UpdateUser(router *gin.RouterGroup) {
 		if privilegeLevelChange {
 			// Prevent the current session from being deleted.
 			deleted := m.DeleteSessions([]string{s.ID})
+			// Delete active user sessions.
 			event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "invalidated %s"}, s.RefID,
 				english.Plural(deleted, "session", "sessions"))
 		}
 
-		// Clear the session cache.
-		s.ClearCache()
+		// Flush session cache.
+		if isAdmin {
+			entity.FlushSessionCache()
+		} else {
+			s.ClearCache()
+		}
 
 		// Find and return the updated user record.
 		m = entity.FindUserByUID(uid)

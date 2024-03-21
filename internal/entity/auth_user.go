@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"net/mail"
 	"path"
@@ -531,7 +532,7 @@ func (m *User) Provider() authn.ProviderType {
 
 // HasProvider checks if the user has the given auth provider.
 func (m *User) HasProvider(t authn.ProviderType) bool {
-	return t.String() == m.Provider().String()
+	return m.Provider().Is(t)
 }
 
 // SetProvider set the authentication provider.
@@ -542,7 +543,54 @@ func (m *User) SetProvider(t authn.ProviderType) *User {
 
 	m.AuthProvider = t.String()
 
+	if !m.Provider().Supports2FA() && m.Method().Is(authn.Method2FA) {
+		m.AuthMethod = ""
+	}
+
 	return m
+}
+
+// Method returns the authentication method.
+func (m *User) Method() authn.MethodType {
+	return authn.Method(m.AuthMethod)
+}
+
+// SetMethod sets a custom authentication method.
+func (m *User) SetMethod(method authn.MethodType) *User {
+	if method == "" {
+		return m
+	}
+
+	if !m.Provider().Supports2FA() && method.Is(authn.Method2FA) {
+		return m
+	}
+
+	m.AuthMethod = method.String()
+
+	return m
+}
+
+// AuthInfo returns information about the authentication type.
+func (m *User) AuthInfo() string {
+	provider := m.Provider()
+	method := m.Method()
+
+	if method.IsDefault() {
+		return provider.Pretty()
+	}
+
+	return fmt.Sprintf("%s (%s)", provider.Pretty(), method.Pretty())
+}
+
+// Passcode returns the related auth key by type, if one exists.
+func (m *User) Passcode(t authn.KeyType) *Passcode {
+	if m == nil {
+		return nil
+	} else if m.UserUID == "" {
+		return nil
+	}
+
+	return FindPasscode(Passcode{UID: m.UID(), KeyType: t.String()})
 }
 
 // Username returns the user's login name as sanitized string.
@@ -819,12 +867,7 @@ func (m *User) SetPassword(password string) error {
 	return m.RegenerateTokens()
 }
 
-// HasPassword checks if the user has the specified password and the account is registered.
-func (m *User) HasPassword(s string) bool {
-	return !m.WrongPassword(s)
-}
-
-// WrongPassword checks if the given password is incorrect or the account is not registered.
+// WrongPassword returns true if the specified password is invalid or the account is not registered.
 func (m *User) WrongPassword(s string) bool {
 	// Registered user?
 	if !m.IsRegistered() {
@@ -853,6 +896,78 @@ func (m *User) WrongPassword(s string) bool {
 	return false
 }
 
+// VerifyPassword checks if the user has the specified password and the account is registered.
+func (m *User) VerifyPassword(s string) bool {
+	return !m.WrongPassword(s)
+}
+
+// WrongPasscode returns true if the specified passcode cannot be verified or is invalid.
+func (m *User) WrongPasscode(code string) bool {
+	if m == nil {
+		return false
+	}
+
+	valid, _, _ := m.VerifyPasscode(code)
+
+	return !valid
+}
+
+// VerifyPasscode checks if the specified passcode could be verified and is valid.
+func (m *User) VerifyPasscode(code string) (valid bool, passcode *Passcode, err error) {
+	if m == nil {
+		err = errors.New("user is nil")
+	} else if passcode = m.Passcode(authn.KeyTOTP); passcode == nil {
+		err = authn.ErrPasscodeNotSetUp
+	} else if code == "" {
+		err = authn.ErrPasscodeRequired
+	} else if l := len(code); l < 1 || l > 255 {
+		err = authn.ErrInvalidPasscode
+	} else {
+		valid, err = passcode.Verify(code)
+	}
+
+	return valid, passcode, err
+}
+
+// ActivatePasscode activates two-factor authentication with a passcode.
+func (m *User) ActivatePasscode() (passcode *Passcode, err error) {
+	if m == nil {
+		err = errors.New("user is nil")
+	} else if !m.Provider().Supports2FA() {
+		err = authn.ErrPasscodeNotSupported
+	} else if passcode = m.Passcode(authn.KeyTOTP); passcode == nil {
+		// Cannot enable 2FA if user has no passcode.
+		err = authn.ErrPasscodeNotSetUp
+	} else if err = passcode.Activate(); err == nil {
+		// Enable 2FA after passcode has been activated.
+		err = m.SetMethod(authn.Method2FA).Save()
+		FlushSessionCache()
+	} else if err != nil {
+		log.Debugf("passcode: %s", clean.Error(err))
+	}
+
+	return passcode, err
+}
+
+// DeactivatePasscode disables two-factor authentication with a passcode.
+func (m *User) DeactivatePasscode() (passcode *Passcode, err error) {
+	if m == nil {
+		err = errors.New("user is nil")
+	} else if passcode = m.Passcode(authn.KeyTOTP); passcode == nil {
+		// Disable 2FA if user has no passcode.
+		err = m.SetMethod(authn.MethodDefault).Save()
+		FlushSessionCache()
+	} else if err = passcode.Delete(); err == nil {
+		// Disable 2FA after passcode has been deleted.
+		err = m.SetMethod(authn.MethodDefault).Save()
+		FlushSessionCache()
+	} else {
+		log.Debugf("passcode: %s", clean.Error(err))
+	}
+
+	return passcode, err
+}
+
 // Validate checks if username, email and role are valid and returns an error otherwise.
 func (m *User) Validate() (err error) {
 	// Validate username.
@@ -879,7 +994,7 @@ func (m *User) Validate() (err error) {
 		Where("user_name = ? AND id <> ?", m.UserName, m.ID).
 		First(&duplicate).Error; err == nil {
 		return fmt.Errorf("user %s already exists", clean.LogQuote(m.UserName))
-	} else if err != gorm.ErrRecordNotFound {
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
 
@@ -902,7 +1017,7 @@ func (m *User) Validate() (err error) {
 		Where("user_email = ? AND id <> ?", m.UserEmail, m.ID).
 		First(&duplicate).Error; err == nil {
 		return fmt.Errorf("email %s already exists", clean.Log(m.UserEmail))
-	} else if err != gorm.ErrRecordNotFound {
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
 
@@ -1054,7 +1169,8 @@ func (m *User) PrivilegeLevelChange(f form.User) bool {
 		m.CanLogin != f.CanLogin ||
 		m.WebDAV != f.WebDAV ||
 		m.UserAttr != f.Attr() ||
-		m.AuthProvider != f.Provider().String() ||
+		m.AuthProvider != f.AuthProvider ||
+		m.AuthMethod != f.AuthMethod ||
 		m.BasePath != f.BasePath ||
 		m.UploadPath != f.UploadPath
 }
@@ -1108,6 +1224,7 @@ func (m *User) SaveForm(f form.User, changePrivileges bool) error {
 		m.UserAttr = f.Attr()
 
 		m.SetProvider(f.Provider())
+		m.SetMethod(f.Method())
 		m.SetBasePath(f.BasePath)
 		m.SetUploadPath(f.UploadPath)
 	}

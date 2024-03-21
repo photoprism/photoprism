@@ -9,10 +9,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/ttl"
 	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 

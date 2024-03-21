@@ -10,10 +10,9 @@ import (
 )
 
 const (
-	GenderMale    = "male"
-	GenderFemale  = "female"
-	GenderOther   = "other"
-	GenderUnknown = ""
+	GenderMale   = "male"
+	GenderFemale = "female"
+	GenderOther  = "other"
 )
 
 // UserDetails represents user profile information.
