@@ -75,7 +75,7 @@ require github.com/go-ldap/ldap/v3 v3.4.6
 
 require (
 	github.com/prometheus/client_golang v1.19.0
-	github.com/prometheus/common v0.50.0
+	github.com/prometheus/common v0.51.0
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
