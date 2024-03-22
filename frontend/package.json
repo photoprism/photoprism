@@ -90,7 +90,7 @@
     "sockette": "^2.0.6",
     "style-loader": "^3.3.4",
     "svg-url-loader": "^8.0.0",
-    "tar": "^6.2.0",
+    "tar": "^6.2.1",
     "url-loader": "^4.1.1",
     "util": "^0.12.5",
     "vue": "^2.7.14",
