@@ -1530,6 +1530,28 @@ func TestUser_SetMethod(t *testing.T) {
 	})
 }
 
+func TestUser_AuthInfo(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		m := UserFixtures.Get("alice")
+		assert.Equal(t, "Local", m.AuthInfo())
+	})
+	t.Run("Jane", func(t *testing.T) {
+		m := UserFixtures.Get("jane")
+		assert.Equal(t, "Local (2FA)", m.AuthInfo())
+	})
+	t.Run("Unauthorized", func(t *testing.T) {
+		m := UserFixtures.Get("unauthorized")
+		assert.Equal(t, "None", m.AuthInfo())
+	})
+}
+
+func TestUser_Passcode(t *testing.T) {
+	t.Run("Jane", func(t *testing.T) {
+		m := UserFixtures.Get("jane")
+		assert.IsType(t, &Passcode{}, m.Passcode("totp"))
+	})
+}
+
 func TestUser_GetBasePath(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "", Visitor.GetBasePath())
@@ -1800,6 +1822,98 @@ func TestUser_DeleteSessions(t *testing.T) {
 func TestUser_VerifyPassword(t *testing.T) {
 	assert.True(t, Admin.VerifyPassword("photoprism"))
 	assert.False(t, Admin.VerifyPassword("wrong"))
+}
+
+func TestUser_WrongPasscode(t *testing.T) {
+	m := UserFixtures.Get("jane")
+	passcode := m.Passcode("totp")
+
+	assert.True(t, m.WrongPasscode("xxxxxx"))
+	assert.False(t, m.WrongPasscode(passcode.RecoveryCode))
+}
+func TestUser_Passcodes(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		m := UserFixtures.Get("alice")
+		assert.Equal(t, "default", m.AuthMethod)
+
+		passcode, err := m.ActivatePasscode()
+
+		assert.Error(t, err)
+
+		assert.Equal(t, "default", m.AuthMethod)
+
+		code, err := passcode.GenerateCode()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		_, _, errInvalid := m.VerifyPasscode("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+		assert.Error(t, errInvalid)
+		assert.Equal(t, authn.ErrInvalidPasscode, errInvalid)
+
+		v, _, err := m.VerifyPasscode(code)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, v)
+
+		_, errActivate := m.ActivatePasscode()
+
+		if errActivate != nil {
+			t.Fatal(errActivate)
+		}
+
+		assert.Equal(t, "2fa", m.AuthMethod)
+
+		_, errDeactivate := m.DeactivatePasscode()
+
+		if errDeactivate != nil {
+			t.Fatal(errDeactivate)
+		}
+
+		assert.Equal(t, "default", m.AuthMethod)
+
+	})
+	t.Run("PassCodeNotSetup", func(t *testing.T) {
+		m := UserFixtures.Get("bob")
+		assert.Equal(t, "default", m.AuthMethod)
+
+		passcode, err := m.ActivatePasscode()
+
+		assert.Error(t, err)
+		assert.Equal(t, authn.ErrPasscodeNotSetUp, err)
+
+		code, err := passcode.GenerateCode()
+
+		assert.Error(t, err)
+
+		v, _, err := m.VerifyPasscode(code)
+		assert.False(t, v)
+		assert.Error(t, err)
+		assert.Equal(t, authn.ErrPasscodeNotSetUp, err)
+
+		assert.Equal(t, "default", m.AuthMethod)
+
+		code2, err := m.DeactivatePasscode()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Nil(t, code2)
+
+	})
+	t.Run("PassCodeNotSupported", func(t *testing.T) {
+		m := UserFixtures.Get("unauthorized")
+		_, err := m.ActivatePasscode()
+
+		assert.Error(t, err)
+		assert.Equal(t, authn.ErrPasscodeNotSupported, err)
+
+	})
 }
 
 func TestUser_RegenerateTokens(t *testing.T) {

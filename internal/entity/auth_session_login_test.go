@@ -196,7 +196,7 @@ func TestAuthLocal(t *testing.T) {
 			assert.Equal(t, method, authn.MethodDefault)
 		}
 	})
-	t.Run("Wrong credentials", func(t *testing.T) {
+	t.Run("WrongCredentials", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
 		u := FindUserByName("alice")
 
@@ -219,7 +219,7 @@ func TestAuthLocal(t *testing.T) {
 			assert.Equal(t, method, authn.MethodUndefined)
 		}
 	})
-	t.Run("No login rights", func(t *testing.T) {
+	t.Run("NoLoginRights", func(t *testing.T) {
 		m := &Session{}
 		u := FindUserByName("friend")
 
@@ -246,7 +246,7 @@ func TestAuthLocal(t *testing.T) {
 
 		u.CanLogin = true
 	})
-	t.Run("Authentication disabled", func(t *testing.T) {
+	t.Run("AuthenticationDisabled", func(t *testing.T) {
 		m := &Session{}
 		u := FindUserByName("friend")
 
@@ -325,6 +325,27 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("InvalidPasscode", func(t *testing.T) {
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+
+		// Create login form.
+		frm := form.Login{
+			UserName: "jane",
+			Passcode: "xxxxxx",
+			Password: "Jane123!",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Expect "passcode required" error after trying to log in.
+		err := m.LogIn(frm, c)
+
+		assert.ErrorIs(t, err, authn.ErrInvalidPasscode)
+	})
 	t.Run("PasscodeRequired", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
@@ -385,7 +406,7 @@ func TestSessionLogIn(t *testing.T) {
 			t.Fatal("login should fail")
 		}
 	})
-	t.Run("Unknown user with token", func(t *testing.T) {
+	t.Run("UnknownUserWithToken", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
 
@@ -405,7 +426,7 @@ func TestSessionLogIn(t *testing.T) {
 		}
 	})
 
-	t.Run("Unknown user with invalid token", func(t *testing.T) {
+	t.Run("UnknownUserWithInvalidToken", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
 
@@ -425,7 +446,25 @@ func TestSessionLogIn(t *testing.T) {
 		}
 	})
 
-	t.Run("Known user with token", func(t *testing.T) {
+	t.Run("UnknownUserWithoutToken", func(t *testing.T) {
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+
+		// Create login form.
+		frm := form.Login{}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Try to log in.
+		if err := m.LogIn(frm, c); err == nil {
+			t.Fatal("login should fail")
+		}
+	})
+
+	t.Run("KnownUserWithToken", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
 		m.SetClientIP(clientIp)
 
@@ -445,7 +484,7 @@ func TestSessionLogIn(t *testing.T) {
 		}
 	})
 
-	t.Run("Known user with invalid token", func(t *testing.T) {
+	t.Run("KnownUserWithInvalidToken", func(t *testing.T) {
 		m := FindSessionByRefID("sessxkkcabch")
 		m.SetClientIP(clientIp)
 
@@ -462,6 +501,32 @@ func TestSessionLogIn(t *testing.T) {
 		// Try to log in.
 		if err := m.LogIn(frm, c); err == nil {
 			t.Fatal("login should fail")
+		}
+	})
+	t.Run("Jane", func(t *testing.T) {
+		m := NewSession(unix.Day, unix.Hour*6)
+		m.SetClientIP(clientIp)
+
+		passcode, codeErr := PasscodeFixtureJane.GenerateCode()
+
+		assert.NoError(t, codeErr)
+		assert.Len(t, passcode, 6)
+
+		// Create login form.
+		frm := form.Login{
+			UserName: "jane",
+			Passcode: passcode,
+			Password: "Jane123!",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(rec)
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Test credentials.
+		if err := m.LogIn(frm, c); err != nil {
+			t.Fatal(err)
 		}
 	})
 }

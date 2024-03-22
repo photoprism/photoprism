@@ -386,6 +386,28 @@ func TestSession_ClientRole(t *testing.T) {
 	})
 }
 
+func TestSession_ClientInfo(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		m := SessionFixtures.Get("alice")
+		assert.Equal(t, "n/a", m.ClientInfo())
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		m := SessionFixtures.Get("client_metrics")
+		assert.Equal(t, "cs5cpu17n6gj2qo5", m.ClientInfo())
+	})
+}
+
+func TestSession_NoClient(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		m := SessionFixtures.Get("alice")
+		assert.True(t, m.NoClient())
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		m := SessionFixtures.Get("client_metrics")
+		assert.False(t, m.NoClient())
+	})
+}
+
 func TestSession_SetClient(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		m := SessionFixtures.Get("alice")
@@ -431,6 +453,17 @@ func TestSession_User(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		m := &Session{}
 		assert.Equal(t, "", m.User().UserUID)
+	})
+}
+
+func TestSession_UserInfo(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		m := SessionFixtures.Get("alice")
+		assert.Equal(t, "alice", m.UserInfo())
+	})
+	t.Run("Metrics", func(t *testing.T) {
+		m := SessionFixtures.Get("client_metrics")
+		assert.Equal(t, "", m.UserInfo())
 	})
 }
 
