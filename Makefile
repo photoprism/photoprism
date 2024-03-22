@@ -322,14 +322,14 @@ test-coverage:
 	go tool cover -func coverage.txt  | grep total:
 docker-pull:
 	$(DOCKER_COMPOSE) pull --ignore-pull-failures
-	$(DOCKER_COMPOSE) -f docker-compose.latest.yml pull --ignore-pull-failures
+	$(DOCKER_COMPOSE) -f compose.latest.yaml pull --ignore-pull-failures
 docker-build:
 	$(DOCKER_COMPOSE) pull --ignore-pull-failures
 	$(DOCKER_COMPOSE) build
 docker-local-up:
-	$(DOCKER_COMPOSE) -f docker-compose.local.yml up --force-recreate
+	$(DOCKER_COMPOSE) -f compose.local.yaml up --force-recreate
 docker-local-down:
-	$(DOCKER_COMPOSE) -f docker-compose.local.yml down -V
+	$(DOCKER_COMPOSE) -f compose.local.yaml down -V
 develop: docker-develop
 docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
@@ -532,31 +532,31 @@ docker-release-mantic:
 	docker pull --platform=arm64 photoprism/develop:mantic-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /mantic
 start-local:
-	$(DOCKER_COMPOSE) -f docker-compose.local.yml up -d --wait
+	$(DOCKER_COMPOSE) -f compose.local.yaml up -d --wait
 stop-local:
-	$(DOCKER_COMPOSE) -f docker-compose.local.yml stop
+	$(DOCKER_COMPOSE) -f compose.local.yaml stop
 mysql:
-	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml pull mysql
-	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml stop mysql
-	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml up -d --wait mysql
+	$(DOCKER_COMPOSE) -f compose.mysql.yaml pull mysql
+	$(DOCKER_COMPOSE) -f compose.mysql.yaml stop mysql
+	$(DOCKER_COMPOSE) -f compose.mysql.yaml up -d --wait mysql
 start-mysql:
-	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml up -d --wait mysql
+	$(DOCKER_COMPOSE) -f compose.mysql.yaml up -d --wait mysql
 stop-mysql:
-	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml stop mysql
+	$(DOCKER_COMPOSE) -f compose.mysql.yaml stop mysql
 logs-mysql:
-	$(DOCKER_COMPOSE) -f docker-compose.mysql.yml logs -f mysql
+	$(DOCKER_COMPOSE) -f compose.mysql.yaml logs -f mysql
 latest:
-	$(DOCKER_COMPOSE) -f docker-compose.latest.yml pull photoprism-latest
-	$(DOCKER_COMPOSE) -f docker-compose.latest.yml stop photoprism-latest
-	$(DOCKER_COMPOSE) -f docker-compose.latest.yml up -d --wait photoprism-latest
+	$(DOCKER_COMPOSE) -f compose.latest.yaml pull photoprism-latest
+	$(DOCKER_COMPOSE) -f compose.latest.yaml stop photoprism-latest
+	$(DOCKER_COMPOSE) -f compose.latest.yaml up -d --wait photoprism-latest
 start-latest:
-	$(DOCKER_COMPOSE) -f docker-compose.latest.yml up photoprism-latest
+	$(DOCKER_COMPOSE) -f compose.latest.yaml up photoprism-latest
 stop-latest:
-	$(DOCKER_COMPOSE) -f docker-compose.latest.yml stop photoprism-latest
+	$(DOCKER_COMPOSE) -f compose.latest.yaml stop photoprism-latest
 terminal-latest:
-	$(DOCKER_COMPOSE) -f docker-compose.latest.yml exec photoprism-latest bash
+	$(DOCKER_COMPOSE) -f compose.latest.yaml exec photoprism-latest bash
 logs-latest:
-	$(DOCKER_COMPOSE) -f docker-compose.latest.yml logs -f photoprism-latest
+	$(DOCKER_COMPOSE) -f compose.latest.yaml logs -f photoprism-latest
 docker-local: docker-local-mantic
 docker-local-all: docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
