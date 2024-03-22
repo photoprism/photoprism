@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2024-03-13 17:21+0000\n"
-"Last-Translator: \"Richard A.\" <richard@main-vision.com>\n"
+"PO-Revision-Date: 2024-03-22 14:43+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/"
 "backend/fr/>\n"
 "Language: fr\n"
@@ -49,11 +49,11 @@ msgstr "Fichier trop volumineux"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Non pris en charge"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Type non pris en charge"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -141,11 +141,11 @@ msgstr "Échec lors de la connexion, veuillez réessayer"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "Entrer le code de vérification"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Code de vérification invalide, veuillez réessayer"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +389,11 @@ msgstr "%s a été restauré"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Vérifié avec succès"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Activation réussie"
 
 #~ msgid "Invalid request"
 #~ msgstr "Requête invalide"
