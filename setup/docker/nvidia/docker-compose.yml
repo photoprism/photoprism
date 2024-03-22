@@ -1,5 +1,3 @@
-version: '3.5'
-
 # Example Docker Compose config file for PhotoPrism (NVIDIA Container Toolkit / AMD64)
 #
 # For hardware transcoding with an NVIDIA graphics card, the NVIDIA Container Toolkit must be installed on

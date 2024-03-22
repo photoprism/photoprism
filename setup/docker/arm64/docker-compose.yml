@@ -1,5 +1,3 @@
-version: '3.5'
-
 # Example Docker Compose config file for PhotoPrism (Raspberry Pi 3/4 and other ARM64-based devices)
 #
 # Note:

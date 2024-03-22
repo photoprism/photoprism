@@ -1,5 +1,3 @@
-version: '3.5'
-
 # Example Docker Compose config file for PhotoPrism (ARMv7-based, 32-bit devices)
 #
 # Note:

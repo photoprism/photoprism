@@ -1,5 +1,3 @@
-version: '3.5'
-
 # DDNS is a personal DynDNS client for DigitalOcean, see https://github.com/skibish/ddns
 services:
   ddns:

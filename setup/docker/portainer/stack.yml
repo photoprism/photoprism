@@ -1,5 +1,3 @@
-version: '3.5'
-
 ## PhotoPrism Stack Configuration for Portainer
 services:
   photoprism:
