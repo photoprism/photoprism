@@ -90,7 +90,7 @@ func MimeType(filename string) (mimeType string) {
 		case ImageAVIFS:
 			return MimeTypeAVIFS
 		// High Efficiency Image Container
-		case ImageHEIC:
+		case ImageHEIC, ImageHEIF:
 			return MimeTypeHEIC
 		// High Efficiency Image Container Sequence
 		case ImageHEICS:
