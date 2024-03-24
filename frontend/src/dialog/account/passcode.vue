@@ -23,19 +23,20 @@
               </v-flex>
               <v-flex xs12 class="pa-2">
                 <v-text-field
-                  id="auth-password"
                   v-model="password"
+                  :disabled="busy"
+                  name="password"
+                  :type="showPassword ? 'text' : 'password'"
+                  :label="$gettext('Password')"
                   hide-details
                   required
                   autofocus
                   solo
                   flat
-                  :type="showPassword ? 'text' : 'password'"
-                  :disabled="busy"
-                  name="password"
                   autocorrect="off"
                   autocapitalize="none"
-                  :label="$gettext('Password')"
+                  autocomplete="current-password"
+                  browser-autocomplete="current-password"
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                   prepend-inner-icon="lock"
@@ -79,17 +80,21 @@
             <v-flex xs12 class="pa-2">
               <v-text-field
                 v-model="passcode"
+                :disabled="busy"
+                name="passcode"
+                type="text"
+                :label="$gettext('Verification Code')"
+                mask="### ###"
+                pattern="[0-9]*"
+                inputmode="numeric"
                 hide-details
                 required
                 solo
                 flat
-                type="text"
-                mask="### ###"
-                :disabled="busy"
-                browser-autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
-                :label="$gettext('Verification Code')"
+                autocomplete="one-time-code"
+                browser-autocomplete="one-time-code"
                 class="input-passcode"
                 color="secondary-dark"
                 prepend-inner-icon="verified_user"
@@ -120,17 +125,18 @@
               <v-flex xs12 class="pa-2">
                 <v-text-field
                   v-model="key.RecoveryCode"
+                  type="text"
+                  mask="nnn nnn nnn nnn"
                   hide-details
                   readonly
                   solo
                   flat
-                  type="text"
-                  mask="nnn nnn nnn nnn"
-                  browser-autocomplete="off"
                   autocorrect="off"
                   autocapitalize="none"
+                  autocomplete="off"
+                  browser-autocomplete="off"
                   append-icon="content_copy"
-                  class="input-recovery-code clickable"
+                  class="input-recoverycode"
                   color="secondary-dark"
                   @click:append="onCopyRecoveryCode"
                 ></v-text-field>
@@ -173,17 +179,18 @@
               </v-flex>
               <v-flex xs12 class="pa-2">
                 <v-text-field
-                  id="auth-password"
                   v-model="password"
+                  :disabled="busy"
+                  name="password"
+                  :type="showPassword ? 'text' : 'password'"
                   hide-details
                   required
                   solo
                   flat
-                  :type="showPassword ? 'text' : 'password'"
-                  :disabled="busy"
-                  name="password"
                   autocorrect="off"
                   autocapitalize="none"
+                  autocomplete="current-password"
+                  browser-autocomplete="current-password"
                   :label="$gettext('Password')"
                   class="input-password text-selectable"
                   :append-icon="showPassword ? 'visibility' : 'visibility_off'"

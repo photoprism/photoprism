@@ -13,18 +13,20 @@
                   <v-text-field
                     id="auth-username"
                     v-model="username"
+                    :disabled="loading || enterPasscode"
+                    name="username"
+                    type="text"
+                    :label="$gettext('Name')"
                     hide-details
                     required
                     solo
                     flat
                     light
                     autofocus
-                    type="text"
-                    :disabled="loading || enterPasscode"
-                    name="username"
                     autocorrect="off"
                     autocapitalize="none"
-                    :label="$gettext('Name')"
+                    autocomplete="username"
+                    browser-autocomplete="username"
                     background-color="grey lighten-5"
                     class="input-username text-selectable"
                     color="primary"
@@ -36,18 +38,21 @@
                   <v-text-field
                     id="auth-passcode"
                     v-model="passcode"
+                    :disabled="loading"
+                    name="passcode"
+                    type="text"
+                    :label="$gettext('Verification Code')"
+                    mask="nnn nnn nnn nnn"
+                    inputmode="text"
                     hide-details
                     required
                     solo
                     flat
                     light
-                    type="text"
-                    :disabled="loading"
-                    name="passcode"
                     autocorrect="off"
                     autocapitalize="none"
-                    mask="nnn nnn nnn nnn"
-                    :label="$gettext('Verification Code')"
+                    autocomplete="one-time-code"
+                    browser-autocomplete="one-time-code"
                     background-color="grey lighten-5"
                     class="input-passcode text-selectable"
                     prepend-inner-icon="verified_user"
@@ -59,17 +64,19 @@
                   <v-text-field
                     id="auth-password"
                     v-model="password"
+                    :disabled="loading"
+                    name="password"
+                    :type="showPassword ? 'text' : 'password'"
+                    :label="$gettext('Password')"
                     hide-details
                     required
                     solo
                     flat
                     light
-                    :type="showPassword ? 'text' : 'password'"
-                    :disabled="loading"
-                    name="password"
                     autocorrect="off"
                     autocapitalize="none"
-                    :label="$gettext('Password')"
+                    autocomplete="current-password"
+                    browser-autocomplete="current-password"
                     background-color="grey lighten-5"
                     class="input-password text-selectable"
                     :append-icon="showPassword ? 'visibility' : 'visibility_off'"
