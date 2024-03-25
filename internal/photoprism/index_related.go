@@ -49,6 +49,14 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		done[f.FileName()] = true
 
+		// Skip files that have the wrong mimetype based on their filename extension:
+		// https://github.com/photoprism/photoprism/issues/4118
+		if f.WrongType() {
+			result.Err = fmt.Errorf("index: skipped %s due to wrong extension %s for mimetype %s", clean.Log(f.RootRelName()), clean.LogQuote(f.Extension()), clean.LogQuote(f.MimeType()))
+			result.Status = IndexFailed
+			continue
+		}
+
 		// Show warning if sidecar file exceeds size or resolution limit.
 		if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
 			log.Warnf("index: %s", limitErr)
@@ -63,19 +71,22 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 		if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
+			// Skip with warning if preview image could not be created.
 			if jpg, err := ind.convert.ToImage(f, false); err != nil {
-				result.Err = fmt.Errorf("index: failed creating preview for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+				result.Err = fmt.Errorf("index: failed to create preview for %s (%s)", clean.Log(f.RootRelName()), err.Error())
 				result.Status = IndexFailed
-				return result
+				continue
 			} else {
 				log.Debugf("index: created %s", clean.Log(jpg.BaseName()))
 
-				if err := jpg.CreateThumbnails(ind.thumbPath(), false); err != nil {
-					result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+				// Skip with warning if thumbs could not be creared.
+				if thumbsErr := jpg.CreateThumbnails(ind.thumbPath(), false); thumbsErr != nil {
+					result.Err = fmt.Errorf("index: failed to create thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
 					result.Status = IndexFailed
-					return result
+					continue
 				}
 
+				// Add preview image to list of files.
 				related.Files = append(related.Files, jpg)
 			}
 		}

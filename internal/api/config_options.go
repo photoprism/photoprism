@@ -91,7 +91,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 
 		// Make sure directory exists.
 		if err = fs.MkdirAll(filepath.Dir(fileName)); err != nil {
-			log.Errorf("config: failed creating config path %s (%s)", filepath.Dir(fileName), err)
+			log.Errorf("config: failed to create config path %s (%s)", filepath.Dir(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}

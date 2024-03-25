@@ -136,7 +136,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
-		log.Infof("index: %s", clean.Error(err))
+		log.Infof("index: %s", err)
 	}
 
 	ignore.Log = func(fileName string) {
@@ -219,16 +219,23 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
+			// Skip files that have the wrong mimetype based on their filename extension:
+			// https://github.com/photoprism/photoprism/issues/4118
+			if mf.WrongType() {
+				log.Warnf("index: skipped %s due to wrong extension %s for mimetype %s", clean.Log(mf.RootRelName()), clean.LogQuote(mf.Extension()), clean.LogQuote(mf.MimeType()))
+				return nil
+			}
+
 			// Create JSON sidecar file, if needed.
 			if err = mf.CreateExifToolJson(ind.convert); err != nil {
-				log.Errorf("index: %s", clean.Error(err))
+				log.Errorf("index: %s", err)
 			}
 
 			// Find related files to index.
 			related, err := mf.RelatedFiles(ind.conf.Settings().StackSequences())
 
 			if err != nil {
-				log.Warnf("index: %s", clean.Error(err))
+				log.Warnf("index: %s", err)
 				return nil
 			}
 

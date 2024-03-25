@@ -1163,6 +1163,44 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 	})
 }
 
+func TestMediaFile_WrongType(t *testing.T) {
+	t.Run("JPEG", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/flash.jpg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, mediaFile.WrongType())
+	})
+	t.Run("SVG", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/agpl.svg")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, mediaFile.WrongType())
+	})
+	t.Run("PNG", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/orientation.png")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, mediaFile.WrongType())
+	})
+	t.Run("WebP", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/windows95.webp")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.False(t, mediaFile.WrongType())
+	})
+	t.Run("Wrong", func(t *testing.T) {
+		mediaFile, err := NewMediaFile("testdata/wrong.heic")
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.True(t, mediaFile.WrongType())
+	})
+}
+
 func TestMediaFile_IsSidecar(t *testing.T) {
 	conf := config.TestConfig()
 

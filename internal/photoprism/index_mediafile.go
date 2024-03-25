@@ -244,7 +244,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Create default thumbnails if needed.
 	if err = m.CreateThumbnails(ind.thumbPath(), false); err != nil {
 		result.Status = IndexFailed
-		result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", clean.Log(m.RootRelName()), err.Error())
+		result.Err = fmt.Errorf("index: failed to create thumbnails for %s (%s)", clean.Log(m.RootRelName()), err.Error())
 		return result
 	}
 

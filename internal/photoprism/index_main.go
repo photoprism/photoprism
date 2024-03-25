@@ -18,8 +18,14 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 
 	f := related.Main
 
-	// Enforce file size and resolution limits.
-	if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+	// Check mime type, file size, and resolution.
+	if f.WrongType() {
+		// Skip files that have the wrong mimetype based on their filename extension:
+		// https://github.com/photoprism/photoprism/issues/4118
+		result.Err = fmt.Errorf("index: skipped %s due to wrong extension %s for mimetype %s", clean.Log(f.RootRelName()), clean.LogQuote(f.Extension()), clean.LogQuote(f.MimeType()))
+		result.Status = IndexFailed
+		return result
+	} else if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
 		result.Err = fmt.Errorf("index: %s", limitErr)
 		result.Status = IndexFailed
 		return result
@@ -37,7 +43,7 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 	// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 	if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
 		if jpg, err := ind.convert.ToImage(f, false); err != nil {
-			result.Err = fmt.Errorf("index: failed creating preview for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+			result.Err = fmt.Errorf("index: failed to create a preview for %s (%s)", clean.Log(f.RootRelName()), err.Error())
 			result.Status = IndexFailed
 			return result
 		} else if limitErr, _ := jpg.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
@@ -47,8 +53,8 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		} else {
 			log.Debugf("index: created %s", clean.Log(jpg.BaseName()))
 
-			if err := jpg.CreateThumbnails(ind.thumbPath(), false); err != nil {
-				result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+			if err = jpg.CreateThumbnails(ind.thumbPath(), false); err != nil {
+				result.Err = fmt.Errorf("index: failed to create thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
 				result.Status = IndexFailed
 				return result
 			}
@@ -71,9 +77,9 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		log.Error(result.Err)
 
 		if exists {
-			log.Errorf("index: %s updating main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))
+			log.Errorf("index: %s to update main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))
 		} else {
-			log.Errorf("index: %s adding main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))
+			log.Errorf("index: %s to add main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))
 		}
 	} else {
 		log.Infof("index: %s main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))

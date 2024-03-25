@@ -48,7 +48,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		labelEntity := entity.FirstOrCreateLabel(entity.NewLabel(f.LabelName, f.LabelPriority))
 
 		if labelEntity == nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed creating label"})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to create label"})
 			return
 		}
 
@@ -60,7 +60,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		photoLabel := entity.FirstOrCreatePhotoLabel(entity.NewPhotoLabel(m.ID, labelEntity.ID, f.Uncertainty, "manual"))
 
 		if photoLabel == nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed updating photo label"})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to update photo label"})
 			return
 		}
 

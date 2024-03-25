@@ -600,7 +600,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 
 		if err := labelEntity.UpdateClassify(classifyLabel); err != nil {
-			log.Errorf("index: failed updating label %s (%s)", clean.Log(classifyLabel.Title()), err)
+			log.Errorf("index: failed to update label %s (%s)", clean.Log(classifyLabel.Title()), err)
 		}
 
 		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, classifyLabel.Source))
@@ -642,7 +642,7 @@ func (m *Photo) SetDescription(desc, source string) {
 // SetCamera updates the camera.
 func (m *Photo) SetCamera(camera *Camera, source string) {
 	if camera == nil {
-		log.Warnf("photo: %s failed updating camera from source %s", m.String(), SrcString(source))
+		log.Warnf("photo: %s failed to update camera from source %s", m.String(), SrcString(source))
 		return
 	}
 
@@ -666,7 +666,7 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 // SetLens updates the lens.
 func (m *Photo) SetLens(lens *Lens, source string) {
 	if lens == nil {
-		log.Warnf("photo: %s failed updating lens from source %s", m.String(), SrcString(source))
+		log.Warnf("photo: %s failed to update lens from source %s", m.String(), SrcString(source))
 		return
 	}
 

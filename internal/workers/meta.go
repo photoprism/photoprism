@@ -128,7 +128,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 		// Run moments worker.
 		if moments := photoprism.NewMoments(w.conf); moments == nil {
-			log.Errorf("index: failed updating moments")
+			log.Errorf("index: failed to update moments")
 		} else if err = moments.Start(); err != nil {
 			log.Warnf("moments: %s in optimization worker", err)
 		}

@@ -9,6 +9,25 @@ func Error(err error) string {
 	} else if s := strings.TrimSpace(err.Error()); s == "" {
 		return "unknown error"
 	} else {
-		return Log(s)
+		// Limit error message length.
+		if len(s) > MaxLength {
+			s = s[:MaxLength]
+		}
+
+		// Remove non-printable and other potentially problematic characters.
+		return strings.Map(func(r rune) rune {
+			if r < 32 || r == 127 {
+				return -1
+			}
+
+			switch r {
+			case '`', '"':
+				return '\''
+			case '\\', '$', '<', '>', '{', '}':
+				return '?'
+			default:
+				return r
+			}
+		}, s)
 	}
 }

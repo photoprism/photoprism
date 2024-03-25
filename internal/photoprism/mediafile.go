@@ -633,8 +633,7 @@ func (m *MediaFile) IsJpeg() bool {
 		return false
 	}
 
-	// Since mime type detection is expensive, it is only
-	// performed after other checks have passed.
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeJPEG
 }
 
@@ -644,6 +643,7 @@ func (m *MediaFile) IsJpegXL() bool {
 		return false
 	}
 
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeJPEGXL
 }
 
@@ -655,8 +655,7 @@ func (m *MediaFile) IsPNG() bool {
 		return false
 	}
 
-	// Since mime type detection is expensive, it is only
-	// performed after other checks have passed.
+	// Check the mime type after other tests have passed to improve performance.
 	mimeType := m.MimeType()
 	return mimeType == fs.MimeTypePNG || mimeType == fs.MimeTypeAPNG
 }
@@ -667,6 +666,7 @@ func (m *MediaFile) IsGIF() bool {
 		return false
 	}
 
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeGIF
 }
 
@@ -676,6 +676,7 @@ func (m *MediaFile) IsTIFF() bool {
 		return false
 	}
 
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeTIFF
 }
 
@@ -699,7 +700,9 @@ func (m *MediaFile) IsHEIC() bool {
 		return false
 	}
 
-	return m.MimeType() == fs.MimeTypeHEIC
+	// Check the mime type after other tests have passed to improve performance.
+	mimeType := m.MimeType()
+	return mimeType == fs.MimeTypeHEIC || mimeType == fs.MimeTypeHEICS
 }
 
 // IsHEICS checks if the file is a HEIC image sequence with a supported file type extension.
@@ -727,6 +730,7 @@ func (m *MediaFile) IsBMP() bool {
 		return false
 	}
 
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeBMP
 }
 
@@ -774,6 +778,29 @@ func (m *MediaFile) FileType() fs.Type {
 	default:
 		return fs.FileType(m.fileName)
 	}
+}
+
+// WrongType checks if there is a mismatch between the mimetype and the filename extension.
+func (m *MediaFile) WrongType() bool {
+	fileType := fs.FileType(m.fileName)
+	mimeType := m.MimeType()
+
+	switch fileType {
+	case fs.ImageJPEG:
+		return mimeType != fs.MimeTypeJPEG
+	case fs.ImagePNG:
+		return mimeType != fs.MimeTypePNG && mimeType != fs.MimeTypeAPNG
+	case fs.ImageGIF:
+		return mimeType != fs.MimeTypeGIF
+	case fs.ImageHEIC, fs.ImageHEIF:
+		return mimeType != fs.MimeTypeHEIC && mimeType != fs.MimeTypeHEICS
+	case fs.VideoMP4:
+		return mimeType != fs.MimeTypeMP4
+	case fs.ImageTIFF:
+		return mimeType != fs.MimeTypeTIFF
+	}
+
+	return false
 }
 
 // Media returns the media content type (video, image, raw, sidecar,...).
