@@ -780,7 +780,7 @@ func (m *MediaFile) FileType() fs.Type {
 	}
 }
 
-// WrongType checks if there is a mismatch between the mimetype and the filename extension.
+// WrongType checks if there is a mismatch between mimetype and filename extension.
 func (m *MediaFile) WrongType() bool {
 	fileType := fs.FileType(m.fileName)
 	mimeType := m.MimeType()
@@ -792,12 +792,10 @@ func (m *MediaFile) WrongType() bool {
 		return mimeType != fs.MimeTypePNG && mimeType != fs.MimeTypeAPNG
 	case fs.ImageGIF:
 		return mimeType != fs.MimeTypeGIF
-	case fs.ImageHEIC, fs.ImageHEIF:
-		return mimeType != fs.MimeTypeHEIC && mimeType != fs.MimeTypeHEICS
-	case fs.VideoMP4:
-		return mimeType != fs.MimeTypeMP4
 	case fs.ImageTIFF:
 		return mimeType != fs.MimeTypeTIFF
+	case fs.ImageHEIC, fs.ImageHEIF:
+		return mimeType != fs.MimeTypeHEIC && mimeType != fs.MimeTypeHEICS
 	}
 
 	return false
