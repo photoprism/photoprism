@@ -10,8 +10,9 @@
               </h3>
             </v-flex>
             <v-flex xs2 class="text-xs-right">
-              <v-icon v-if="page === 'deactivate'" size="28" color="primary">verified_user</v-icon>
-              <v-icon v-else size="28" color="primary">vpn_key</v-icon>
+              <v-icon v-if="page === 'setup'" size="28" color="primary">gpp_maybe</v-icon>
+              <v-icon v-else-if="page === 'deactivate'" size="28" color="primary">gpp_good</v-icon>
+              <v-icon v-else size="28" color="primary">settings</v-icon>
             </v-flex>
           </v-layout>
         </v-card-title>

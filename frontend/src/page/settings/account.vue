@@ -191,8 +191,8 @@
             <v-flex xs12 sm6 class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-passcode-dialog compact" :disabled="isPublic || isDemo || user.disable2FA()" @click.stop="showDialog('passcode')">
                 <translate>2-Factor Authentication</translate>
-                <v-icon v-if="user.AuthMethod === '2fa'" :right="!rtl" :left="rtl" dark>verified_user</v-icon>
-                <v-icon v-else :right="!rtl" :left="rtl" dark>vpn_key</v-icon>
+                <v-icon v-if="user.AuthMethod === '2fa'" :right="!rtl" :left="rtl" dark>gpp_good</v-icon>
+                <v-icon v-else :right="!rtl" :left="rtl" dark>gpp_maybe</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
