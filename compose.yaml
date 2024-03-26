@@ -164,8 +164,9 @@ services:
   ## Login: user / photoprism
   ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:23.0
+    image: quay.io/keycloak/keycloak:24.0
     container_name: keycloak
+    profiles: ["all", "auth", "keycloak"]
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"
@@ -198,6 +199,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
+    profiles: ["all", "auth", "prometheus"]
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
