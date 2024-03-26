@@ -10,7 +10,8 @@
               </h3>
             </v-flex>
             <v-flex xs2 class="text-xs-right">
-              <v-icon size="28" color="primary">vpn_key</v-icon>
+              <v-icon v-if="page === 'deactivate'" size="28" color="primary">verified_user</v-icon>
+              <v-icon v-else size="28" color="primary">vpn_key</v-icon>
             </v-flex>
           </v-layout>
         </v-card-title>
@@ -239,7 +240,6 @@
   </v-dialog>
 </template>
 <script>
-import User from "model/user";
 import Util from "common/util";
 
 export default {
@@ -248,7 +248,7 @@ export default {
     show: Boolean,
     model: {
       type: Object,
-      default: () => new User(null),
+      default: () => this.$session.getUser(),
     },
   },
   data() {
@@ -264,14 +264,13 @@ export default {
       maxLength: 72,
       rtl: this.$rtl,
       key: {},
-      user: this.$session.getUser(),
     };
   },
   computed: {
     page() {
-      if (this.user?.AuthProvider !== "default" && this.user?.AuthProvider !== "local" && this.user?.AuthProvider !== "ldap") {
+      if (this.model?.AuthProvider !== "default" && this.model?.AuthProvider !== "local" && this.model?.AuthProvider !== "ldap") {
         return "not_available";
-      } else if (this.user?.AuthMethod === "2fa") {
+      } else if (this.model?.AuthMethod === "2fa") {
         return "deactivate";
       } else if (this.key?.Type === "totp") {
         if (!this.key?.VerifiedAt) {
@@ -319,15 +318,7 @@ export default {
       this.updateUser();
     },
     updateUser() {
-      this.$notify.blockUI();
-      this.$session
-        .refresh()
-        .then(() => {
-          this.user = this.$session.getUser();
-        })
-        .finally(() => {
-          this.$notify.unblockUI();
-        });
+      this.$emit("updateUser");
     },
     setupDisabled() {
       return this.isDemo || this.busy || this.password.length < this.minLength;

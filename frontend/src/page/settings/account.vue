@@ -183,27 +183,28 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.WebDAV" @click.stop="showDialog('webdav')">
-                <translate>Connect via WebDAV</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
+              <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === '' || provider !== 'local'" @click.stop="showDialog('password')">
+                <translate>Change Password</translate>
+                <v-icon :right="!rtl" :left="rtl" dark>lock</v-icon>
+              </v-btn>
+            </v-flex>
+            <v-flex xs12 sm6 class="pa-2">
+              <v-btn block depressed color="secondary-light" class="action-passcode-dialog compact" :disabled="isPublic || isDemo || user.disable2FA()" @click.stop="showDialog('passcode')">
+                <translate>2-Factor Authentication</translate>
+                <v-icon v-if="user.AuthMethod === '2fa'" :right="!rtl" :left="rtl" dark>verified_user</v-icon>
+                <v-icon v-else :right="!rtl" :left="rtl" dark>vpn_key</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-apps-dialog compact" :disabled="true" @click.stop="showDialog('apps')">
                 <translate>Apps and Devices</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>smartphone</v-icon>
+                <v-icon :right="!rtl" :left="rtl" dark>devices</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-passcode-dialog compact" :disabled="user.disable2FA()" @click.stop="showDialog('passcode')">
-                <translate>2-Factor Authentication</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>vpn_key</v-icon>
-              </v-btn>
-            </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('password')">
-                <translate>Change Password</translate>
-                <v-icon :right="!rtl" :left="rtl" dark>lock</v-icon>
+              <v-btn block depressed color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.WebDAV" @click.stop="showDialog('webdav')">
+                <translate>Connect via WebDAV</translate>
+                <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
@@ -340,7 +341,7 @@
       </v-card>
     </v-form>
     <p-account-apps-dialog :show="dialog.apps" :model="user" @close="dialog.apps = false"></p-account-apps-dialog>
-    <p-account-passcode-dialog :show="dialog.passcode" :model="user" @close="dialog.passcode = false"></p-account-passcode-dialog>
+    <p-account-passcode-dialog :show="dialog.passcode" :model="user" @close="dialog.passcode = false" @updateUser="updateUser()"></p-account-passcode-dialog>
     <p-account-password-dialog :show="dialog.password" :model="user" @close="dialog.password = false"></p-account-password-dialog>
     <p-webdav-dialog :show="dialog.webdav" @close="dialog.webdav = false"></p-webdav-dialog>
   </div>
@@ -359,6 +360,8 @@ export default {
   data() {
     const isDemo = this.$config.isDemo();
     const isPublic = this.$config.isPublic();
+    const user = this.$session.getUser();
+
     return {
       busy: isDemo || isPublic,
       options,
@@ -366,8 +369,9 @@ export default {
       isPublic,
       valid: true,
       rtl: this.$rtl,
-      user: new User(this.$session.getUser()),
+      user: user,
       countries: countries,
+      provider: this.$session.provider ? this.$session.provider : user.AuthProvider,
       dialog: {
         apps: false,
         passcode: false,
@@ -406,8 +410,16 @@ export default {
       }
       this.dialog[name] = true;
     },
-    isDisabled() {
-      return this.isDemo || this.busy;
+    updateUser() {
+      this.$notify.blockUI();
+      this.$session
+        .refresh()
+        .then(() => {
+          this.user = this.$session.getUser();
+        })
+        .finally(() => {
+          this.$notify.unblockUI();
+        });
     },
     validEmail(v) {
       if (typeof v !== "string" || v === "") {

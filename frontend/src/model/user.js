@@ -213,6 +213,10 @@ export class User extends RestModel {
   }
 
   disable2FA() {
+    if (!this.Name) {
+      return true;
+    }
+
     switch (this.AuthProvider) {
       case "default":
         return false;
