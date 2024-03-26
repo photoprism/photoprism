@@ -800,7 +800,7 @@ func (m *MediaFile) CheckType() error {
 	// Detect mime type.
 	mimeType := m.MimeType()
 
-	// Perform mime checks for selected file types.
+	// Perform mime type checks for selected file types.
 	var valid bool
 	switch fileType {
 	case fs.ImageJPEG:
@@ -814,6 +814,8 @@ func (m *MediaFile) CheckType() error {
 	case fs.ImageHEIC, fs.ImageHEIF:
 		valid = mimeType == fs.MimeTypeHEIC || mimeType == fs.MimeTypeHEICS
 	default:
+		// Skip mime type check. Note: Checks for additional formats and/or generic
+		// checks based on the media content type can be added over time as needed.
 		return nil
 	}
 
@@ -823,7 +825,7 @@ func (m *MediaFile) CheckType() error {
 	}
 
 	// Exclude mime type from the error message if it could not be detected.
-	if mimeType != fs.MimeTypeUnknown {
+	if mimeType == fs.MimeTypeUnknown {
 		return fmt.Errorf("invalid file extension (unknown mime type)")
 	}
 
