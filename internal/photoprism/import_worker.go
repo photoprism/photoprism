@@ -34,13 +34,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 		relatedOriginalNames := make(map[string]string, len(related.Files))
 
 		if related.Main == nil {
-			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, src)))
+			log.Errorf("import: %s does not belong to a supported media file", clean.Log(fs.RelName(job.FileName, src)))
 			continue
 		}
 
 		// Create JSON sidecar file, if needed.
 		if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
-			log.Errorf("import: %s", clean.Error(jsonErr))
+			log.Warnf("import: %s", clean.Error(jsonErr))
 		}
 
 		originalName := related.Main.RelName(src)
@@ -127,7 +127,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Create JSON sidecar file, if needed.
 			if jsonErr := f.CreateExifToolJson(imp.convert); jsonErr != nil {
-				log.Errorf("import: %s", clean.Error(jsonErr))
+				log.Warnf("import: %s", clean.Error(jsonErr))
 			}
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.

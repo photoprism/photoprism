@@ -219,16 +219,16 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
-			// Skip files that have the wrong mimetype based on their filename extension:
-			// https://github.com/photoprism/photoprism/issues/4118
-			if mf.WrongType() {
-				log.Warnf("index: skipped %s due to wrong extension %s for mimetype %s", clean.Log(mf.RootRelName()), clean.LogQuote(mf.Extension()), clean.LogQuote(mf.MimeType()))
+			// Skip files if the filename extension does not match their mime type,
+			// see https://github.com/photoprism/photoprism/issues/3518 for details.
+			if typeErr := mf.CheckType(); typeErr != nil {
+				log.Errorf("index: skipped %s due to %s", clean.Log(mf.RootRelName()), typeErr)
 				return nil
 			}
 
 			// Create JSON sidecar file, if needed.
 			if err = mf.CreateExifToolJson(ind.convert); err != nil {
-				log.Errorf("index: %s", err)
+				log.Warnf("index: %s", err)
 			}
 
 			// Find related files to index.

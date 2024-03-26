@@ -1163,70 +1163,72 @@ func TestMediaFile_IsImageOther(t *testing.T) {
 	})
 }
 
-func TestMediaFile_WrongType(t *testing.T) {
+func TestMediaFile_CheckType(t *testing.T) {
 	cnf := config.TestConfig()
 
 	t.Run("JPEG", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/flash.jpg"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, f.WrongType())
+			assert.NoError(t, f.CheckType())
 		}
 	})
 	t.Run("PNG", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/orientation.png"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, f.WrongType())
+			assert.NoError(t, f.CheckType())
 		}
 	})
 	t.Run("WebP", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/windows95.webp"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, f.WrongType())
+			assert.NoError(t, f.CheckType())
 		}
 	})
 	t.Run("HEIC", func(t *testing.T) {
 		if f, err := NewMediaFile(filepath.Join(cnf.ExamplesPath(), "iphone_7.heic")); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, f.WrongType())
+			assert.NoError(t, f.CheckType())
 		}
 	})
 	t.Run("DNG", func(t *testing.T) {
 		if f, err := NewMediaFile(filepath.Join(cnf.ExamplesPath(), "canon_eos_6d.dng")); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, f.WrongType())
+			assert.NoError(t, f.CheckType())
 		}
 	})
 	t.Run("MP4", func(t *testing.T) {
 		if f, err := NewMediaFile(filepath.Join(cnf.ExamplesPath(), "christmas.mp4")); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, f.WrongType())
+			assert.NoError(t, f.CheckType())
 		}
 	})
 	t.Run("SVG", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/agpl.svg"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, f.WrongType())
+			assert.NoError(t, f.CheckType())
 		}
 	})
 	t.Run("JSON", func(t *testing.T) {
 		if f, err := NewMediaFile(filepath.Join(cnf.ExamplesPath(), "iphone_7.json")); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.False(t, f.WrongType())
+			assert.NoError(t, f.CheckType())
 		}
 	})
-	t.Run("Wrong", func(t *testing.T) {
+	t.Run("Invalid", func(t *testing.T) {
 		if f, err := NewMediaFile("testdata/wrong.heic"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.True(t, f.WrongType())
+			result := f.CheckType()
+			t.Log(result)
+			assert.Error(t, result)
 		}
 	})
 }

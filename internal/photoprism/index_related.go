@@ -49,10 +49,10 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		done[f.FileName()] = true
 
-		// Skip files that have the wrong mimetype based on their filename extension:
-		// https://github.com/photoprism/photoprism/issues/4118
-		if f.WrongType() {
-			result.Err = fmt.Errorf("index: skipped %s due to wrong extension %s for mimetype %s", clean.Log(f.RootRelName()), clean.LogQuote(f.Extension()), clean.LogQuote(f.MimeType()))
+		// Skip files if the filename extension does not match their mime type,
+		// see https://github.com/photoprism/photoprism/issues/3518 for details.
+		if typeErr := f.CheckType(); typeErr != nil {
+			result.Err = fmt.Errorf("index: skipped %s due to %w", clean.Log(f.RootRelName()), typeErr)
 			result.Status = IndexFailed
 			continue
 		}
@@ -66,7 +66,7 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 
 		// Create JSON sidecar file, if needed.
 		if jsonErr := f.CreateExifToolJson(ind.convert); jsonErr != nil {
-			log.Errorf("index: %s", clean.Error(jsonErr))
+			log.Warnf("index: %s", clean.Error(jsonErr))
 		}
 
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.

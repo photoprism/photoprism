@@ -178,16 +178,15 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return nil
 			}
 
-			// Skip files that have the wrong mimetype based on their filename extension:
-			// https://github.com/photoprism/photoprism/issues/4118
-			if mf.WrongType() {
-				log.Warnf("index: skipped %s due to wrong extension %s for mimetype %s", clean.Log(mf.RootRelName()), clean.LogQuote(mf.Extension()), clean.LogQuote(mf.MimeType()))
-				return nil
+			// Report files that have a missing or invalid filename extension,
+			// see https://github.com/photoprism/photoprism/issues/3518.
+			if typeErr := mf.CheckType(); typeErr != nil {
+				log.Warnf("import: %s has %s", clean.Log(mf.RootRelName()), typeErr)
 			}
 
 			// Create JSON sidecar file, if needed.
 			if err = mf.CreateExifToolJson(imp.convert); err != nil {
-				log.Errorf("import: %s", clean.Error(err))
+				log.Warnf("import: %s", clean.Error(err))
 			}
 
 			// Find related files to import.

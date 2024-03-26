@@ -780,25 +780,54 @@ func (m *MediaFile) FileType() fs.Type {
 	}
 }
 
-// WrongType checks if there is a mismatch between mimetype and filename extension.
-func (m *MediaFile) WrongType() bool {
-	fileType := fs.FileType(m.fileName)
-	mimeType := m.MimeType()
+// CheckType returns an error if the file extension is missing or invalid,
+// see https://github.com/photoprism/photoprism/issues/3518 for details.
+func (m *MediaFile) CheckType() error {
+	// Get extension and return error if missing.
+	extension := m.Extension()
 
-	switch fileType {
-	case fs.ImageJPEG:
-		return mimeType != fs.MimeTypeJPEG
-	case fs.ImagePNG:
-		return mimeType != fs.MimeTypePNG && mimeType != fs.MimeTypeAPNG
-	case fs.ImageGIF:
-		return mimeType != fs.MimeTypeGIF
-	case fs.ImageTIFF:
-		return mimeType != fs.MimeTypeTIFF
-	case fs.ImageHEIC, fs.ImageHEIF:
-		return mimeType != fs.MimeTypeHEIC && mimeType != fs.MimeTypeHEICS
+	if extension == "" {
+		return fmt.Errorf("missing file extension")
 	}
 
-	return false
+	// Detect file type and return error if unknown.
+	fileType := fs.FileType(m.fileName)
+
+	if fileType == fs.TypeUnknown {
+		return fmt.Errorf("unknown file type")
+	}
+
+	// Detect mime type.
+	mimeType := m.MimeType()
+
+	// Perform mime checks for selected file types.
+	var valid bool
+	switch fileType {
+	case fs.ImageJPEG:
+		valid = mimeType == fs.MimeTypeJPEG
+	case fs.ImagePNG:
+		valid = mimeType == fs.MimeTypePNG || mimeType == fs.MimeTypeAPNG
+	case fs.ImageGIF:
+		valid = mimeType == fs.MimeTypeGIF
+	case fs.ImageTIFF:
+		valid = mimeType == fs.MimeTypeTIFF
+	case fs.ImageHEIC, fs.ImageHEIF:
+		valid = mimeType == fs.MimeTypeHEIC || mimeType == fs.MimeTypeHEICS
+	default:
+		return nil
+	}
+
+	// Ok?
+	if valid {
+		return nil
+	}
+
+	// Exclude mime type from the error message if it could not be detected.
+	if mimeType != fs.MimeTypeUnknown {
+		return fmt.Errorf("invalid file extension (unknown mime type)")
+	}
+
+	return fmt.Errorf("invalid file extension for mime type %s", clean.LogQuote(mimeType))
 }
 
 // Media returns the media content type (video, image, raw, sidecar,...).
