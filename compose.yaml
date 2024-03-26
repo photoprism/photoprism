@@ -160,58 +160,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
-  ## Keycloak Test Identity Provider
-  ## Login: user / photoprism
-  ## Admin: admin / photoprism
-  keycloak:
-    image: quay.io/keycloak/keycloak:24.0
-    container_name: keycloak
-    profiles: ["all", "auth", "keycloak"]
-    command: "start-dev" # development mode, do not use this in production!
-    links:
-      - "traefik:localssl.dev"
-      - "traefik:app.localssl.dev"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
-      - "traefik.http.routers.keycloak.entrypoints=websecure"
-      - "traefik.http.routers.keycloak.rule=Host(`keycloak.localssl.dev`)"
-      - "traefik.http.routers.keycloak.priority=3"
-      - "traefik.http.routers.keycloak.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.keycloak.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.keycloak.tls=true"
-    environment: # see https://www.keycloak.org/server/all-config
-      KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD: "photoprism"
-      KC_METRICS_ENABLED: "false"
-      KC_HOSTNAME: "keycloak.localssl.dev"
-      KC_HOSTNAME_STRICT: "false"
-      KC_PROXY: "edge"
-      KC_DB: "mariadb"
-      KC_DB_URL: "jdbc:mariadb://mariadb:4001/keycloak"
-      KC_DB_USERNAME: "keycloak"
-      KC_DB_PASSWORD: "keycloak"
-
-  ## Prometheus Test Server
-  ## Docs: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#oauth2
-  ## Run the following command in a terminal to grant access with the preconfigured client credentials (adjust flags as needed):
-  ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    profiles: ["all", "auth", "prometheus"]
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
-      - "traefik.http.routers.prometheus.entrypoints=websecure"
-      - "traefik.http.routers.prometheus.rule=Host(`prometheus.localssl.dev`)"
-      - "traefik.http.routers.prometheus.priority=3"
-      - "traefik.http.routers.prometheus.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.prometheus.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.prometheus.tls=true"
-    volumes:
-      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
-
   ## Dummy LDAP Directory Server
   ## Docs: https://glauth.github.io/docs/
   dummy-ldap:
@@ -261,6 +209,58 @@ services:
       - "traefik.http.routers.dummy-webdav.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.localssl.dev"
       - "traefik.http.routers.dummy-webdav.tls=true"
+
+  ## Run "docker compose --profile keycloak up" to start your development environment with Keycloak.
+  ## Login: user / photoprism
+  ## Admin: admin / photoprism
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    container_name: keycloak
+    profiles: ["all", "auth", "keycloak"]
+    command: "start-dev" # development mode, do not use this in production!
+    links:
+      - "traefik:localssl.dev"
+      - "traefik:app.localssl.dev"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+      - "traefik.http.routers.keycloak.entrypoints=websecure"
+      - "traefik.http.routers.keycloak.rule=Host(`keycloak.localssl.dev`)"
+      - "traefik.http.routers.keycloak.priority=3"
+      - "traefik.http.routers.keycloak.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.keycloak.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.keycloak.tls=true"
+    environment: # see https://www.keycloak.org/server/all-config
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "photoprism"
+      KC_METRICS_ENABLED: "false"
+      KC_HOSTNAME: "keycloak.localssl.dev"
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY: "edge"
+      KC_DB: "mariadb"
+      KC_DB_URL: "jdbc:mariadb://mariadb:4001/keycloak"
+      KC_DB_USERNAME: "keycloak"
+      KC_DB_PASSWORD: "keycloak"
+
+  ## Run "docker compose --profile prometheus up" to start your development environment with Prometheus.
+  ## Docs: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#oauth2
+  ## The following grants API access to Prometheus with the preconfigured client credentials (adjust flags as needed):
+  ## ./photoprism client add --id=cs5cpu17n6gj2qo5 --secret=xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e -s metrics -n Prometheus -e 60 -t 1
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    profiles: ["all", "auth", "prometheus"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.http.routers.prometheus.entrypoints=websecure"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.localssl.dev`)"
+      - "traefik.http.routers.prometheus.priority=3"
+      - "traefik.http.routers.prometheus.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.prometheus.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.prometheus.tls=true"
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml"
 
 ## Create named volume for Go module cache
 volumes:
