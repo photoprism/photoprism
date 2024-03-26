@@ -54,10 +54,10 @@
           <v-card-actions class="pa-2">
             <v-layout row wrap class="pa-2">
               <v-flex xs12 text-xs-right>
-                <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
-                  <translate>Cancel</translate>
+                <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
+                  <translate>Close</translate>
                 </v-btn>
-                <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" :disabled="setupDisabled()" @click.stop="onSetup">
+                <v-btn depressed color="primary-button" class="action-setup white--text compact mr-0" :disabled="setupDisabled()" @click.stop="onSetup">
                   <translate>Setup</translate>
                 </v-btn>
               </v-flex>
@@ -154,10 +154,10 @@
                 <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
-                <v-btn v-if="recoveryCodeCopied" depressed color="primary-button" class="action-confirm white--text compact mr-0" @click.stop="onActivate">
+                <v-btn v-if="recoveryCodeCopied" depressed color="primary-button" class="action-activate white--text compact mr-0" @click.stop="onActivate">
                   <translate>Activate</translate>
                 </v-btn>
-                <v-btn v-else depressed color="primary-button" class="action-confirm white--text compact mr-0" @click.stop="onCopyRecoveryCode">
+                <v-btn v-else depressed color="primary-button" class="action-copy white--text compact mr-0" @click.stop="onCopyRecoveryCode">
                   <translate>Copy</translate>
                 </v-btn>
               </v-flex>
@@ -206,7 +206,7 @@
           <v-card-actions class="pa-2">
             <v-layout row wrap class="pa-2">
               <v-flex xs12 text-xs-right>
-                <v-btn depressed color="primary-button" class="action-confirm white--text compact ml-0" :disabled="setupDisabled()" @click.stop="onDeactivate">
+                <v-btn depressed color="primary-button" class="action-deactivate white--text compact ml-0" :disabled="setupDisabled()" @click.stop="onDeactivate">
                   <translate>Deactivate</translate>
                 </v-btn>
                 <v-btn depressed color="secondary-light" class="action-close mr-0" @click.stop="close">
