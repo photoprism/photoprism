@@ -30,7 +30,7 @@ func TestNewAuthKey(t *testing.T) {
 		assert.True(t, authn.KeyTOTP.Equal(m.KeyType))
 		assert.Equal(t, recoveryCode, m.RecoveryCode)
 	})
-	t.Run("Invalid", func(t *testing.T) {
+	t.Run("InvalidUID", func(t *testing.T) {
 		m, err := NewPasscode("foo", "", "")
 
 		t.Logf("TestNewAuthKey/Invalid: %#v", m)
@@ -38,6 +38,28 @@ func TestNewAuthKey(t *testing.T) {
 		assert.Error(t, err)
 		assert.NotNil(t, m)
 		assert.Equal(t, "foo", m.UID)
+		assert.True(t, authn.KeyTOTP.NotEqual(m.KeyType))
+		assert.Equal(t, "", m.RecoveryCode)
+	})
+	t.Run("EmptyUrl", func(t *testing.T) {
+		m, err := NewPasscode("us7gqkzx1g9axxxx", "", "")
+
+		t.Logf("TestNewAuthKey/Invalid: %#v", m)
+
+		assert.Error(t, err)
+		assert.NotNil(t, m)
+		assert.Equal(t, "us7gqkzx1g9axxxx", m.UID)
+		assert.True(t, authn.KeyTOTP.NotEqual(m.KeyType))
+		assert.Equal(t, "", m.RecoveryCode)
+	})
+	t.Run("InvalidUrl", func(t *testing.T) {
+		m, err := NewPasscode("us7gqkzx1g9axxxx", "avcgo6842485%^^&", "")
+
+		t.Logf("TestNewAuthKey/Invalid: %#v", m)
+
+		assert.Error(t, err)
+		assert.NotNil(t, m)
+		assert.Equal(t, "us7gqkzx1g9axxxx", m.UID)
 		assert.True(t, authn.KeyTOTP.NotEqual(m.KeyType))
 		assert.Equal(t, "", m.RecoveryCode)
 	})
@@ -97,4 +119,128 @@ func TestAuthKey_Key(t *testing.T) {
 		assert.Equal(t, "", m.RecoveryCode)
 	})
 
+}
+
+func TestPasscode_Delete(t *testing.T) {
+	t.Run("UidNotSet", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "",
+			KeyURL:       "otpauth://totp/PhotoPrism:bob?algorithm=SHA1&digits=6&issuer=PhotoPrism%20Pro&period=30",
+			RecoveryCode: "123",
+		}
+
+		err := m.Delete()
+
+		assert.Error(t, err)
+	})
+}
+
+func TestPasscode_SetUID(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "123",
+			KeyURL:       "",
+			RecoveryCode: "123",
+		}
+
+		assert.True(t, m.InvalidUID())
+
+		passcode := m.SetUID("uqxc08w3d0ej2283")
+
+		assert.False(t, passcode.InvalidUID())
+	})
+
+	t.Run("Invalid", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "",
+			RecoveryCode: "123",
+		}
+
+		assert.False(t, m.InvalidUID())
+
+		passcode := m.SetUID("xxx")
+
+		assert.False(t, passcode.InvalidUID())
+	})
+}
+
+func TestPasscode_SetKey(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		uid := "uqxc08w3d0ej2283"
+		keyUrl := "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP"
+		recoveryCode := "123"
+
+		m, err := NewPasscode(uid, keyUrl, recoveryCode)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP", m.Key().String())
+
+		key, err := otp.NewKeyFromURL("otpauth://totp/Example:bob?secret=JBSWY3DPEHPK3PXP")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = m.SetKey(key)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "otpauth://totp/Example:bob?secret=JBSWY3DPEHPK3PXP", m.Key().String())
+	})
+	t.Run("InvalidKeyType", func(t *testing.T) {
+		uid := "uqxc08w3d0ej2283"
+		keyUrl := "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP"
+		recoveryCode := "123"
+
+		m, err := NewPasscode(uid, keyUrl, recoveryCode)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP", m.Key().String())
+
+		key, err := otp.NewKeyFromURL("otpauth://xxx/Example:bob?secret=JBSWY3DPEHPK3PXP")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = m.SetKey(key)
+
+		assert.Error(t, err)
+		assert.Equal(t, "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP", m.Key().String())
+	})
+	t.Run("NoSecret", func(t *testing.T) {
+		uid := "uqxc08w3d0ej2283"
+		keyUrl := "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP"
+		recoveryCode := "123"
+
+		m, err := NewPasscode(uid, keyUrl, recoveryCode)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP", m.Key().String())
+
+		key, err := otp.NewKeyFromURL("otpauth://totp/Example:bob")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "", key.Secret())
+
+		err = m.SetKey(key)
+
+		assert.Error(t, err)
+		assert.Equal(t, "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP", m.Key().String())
+	})
 }
