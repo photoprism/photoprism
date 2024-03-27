@@ -11,6 +11,7 @@ import (
 type User struct {
 	UserName     string       `json:"Name,omitempty" yaml:"Name,omitempty"`
 	AuthProvider string       `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
+	AuthMethod   string       `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
 	UserEmail    string       `json:"Email,omitempty" yaml:"Email,omitempty"`
 	DisplayName  string       `json:"DisplayName,omitempty" yaml:"DisplayName,omitempty"`
 	UserRole     string       `json:"Role,omitempty" yaml:"Role,omitempty"`
@@ -50,6 +51,11 @@ func (f *User) Username() string {
 // Provider returns the sanitized auth provider name.
 func (f *User) Provider() authn.ProviderType {
 	return authn.Provider(f.AuthProvider)
+}
+
+// Method returns the sanitized auth method name.
+func (f *User) Method() authn.MethodType {
+	return authn.Method(f.AuthMethod)
 }
 
 // Email returns the sanitized email in lowercase.

@@ -7,23 +7,9 @@ import (
 // Day specified as time.Duration to improve readability.
 const Day = time.Hour * 24
 
-// UnixHour is one hour in UnixTime.
-const UnixHour int64 = 3600
-
-// UnixDay is one day in UnixTime.
-const UnixDay = UnixHour * 24
-
-// UnixWeek is one week in UnixTime.
-const UnixWeek = UnixDay * 7
-
 // UTC returns the current Coordinated Universal Time (UTC).
 func UTC() time.Time {
 	return time.Now().UTC()
-}
-
-// UnixTime returns the current time in seconds since January 1, 1970 UTC.
-func UnixTime() int64 {
-	return UTC().Unix()
 }
 
 // TimeStamp returns the current timestamp in UTC rounded to seconds.

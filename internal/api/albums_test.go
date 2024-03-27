@@ -7,14 +7,14 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
-	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func TestGetAlbum(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetAlbum(router)
-		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8")
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8")
 		val := gjson.Get(r.Body.String(), "Slug")
 		assert.Equal(t, "holiday-2030", val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -122,10 +122,10 @@ func TestLikeAlbum(t *testing.T) {
 		app, router, _ := NewApiTest()
 
 		LikeAlbum(router)
-		r := PerformRequest(app, "POST", "/api/v1/albums/at9lxuqxpogaaba7/like")
+		r := PerformRequest(app, "POST", "/api/v1/albums/as6sg6bxpogaaba7/like")
 		assert.Equal(t, http.StatusOK, r.Code)
 		GetAlbum(router)
-		r2 := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba7")
+		r2 := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba7")
 		val := gjson.Get(r2.Body.String(), "Favorite")
 		assert.Equal(t, "true", val.String())
 	})
@@ -145,10 +145,10 @@ func TestDislikeAlbum(t *testing.T) {
 
 		DislikeAlbum(router)
 
-		r := PerformRequest(app, "DELETE", "/api/v1/albums/at9lxuqxpogaaba8/like")
+		r := PerformRequest(app, "DELETE", "/api/v1/albums/as6sg6bxpogaaba8/like")
 		assert.Equal(t, http.StatusOK, r.Code)
 		GetAlbum(router)
-		r2 := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8")
+		r2 := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8")
 		val := gjson.Get(r2.Body.String(), "Favorite")
 		assert.Equal(t, "false", val.String())
 	})
@@ -164,7 +164,7 @@ func TestAddPhotosToAlbum(t *testing.T) {
 	t.Run("successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AddPhotosToAlbum(router)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["pt9jtdre2lvl0y12", "pt9jtdre2lvl0y11"]}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["ps6sg6be2lvl0y12", "ps6sg6be2lvl0y11"]}`)
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -172,7 +172,7 @@ func TestAddPhotosToAlbum(t *testing.T) {
 	t.Run("add one photo to album", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AddPhotosToAlbum(router)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["pt9jtdre2lvl0y12"]}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["ps6sg6be2lvl0y12"]}`)
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -180,13 +180,13 @@ func TestAddPhotosToAlbum(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AddPhotosToAlbum(router)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": [123, "pt9jtdre2lvl0yxx"]}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": [123, "ps6sg6be2lvl0yxx"]}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("not found", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		AddPhotosToAlbum(router)
-		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/photos", `{"photos": ["pt9jtdre2lvl0yxx"]}`)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/albums/xxx/photos", `{"photos": ["ps6sg6be2lvl0yxx"]}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }
@@ -202,13 +202,13 @@ func TestRemovePhotosFromAlbum(t *testing.T) {
 	assert.Equal(t, http.StatusOK, r.Code)
 	uid := gjson.Get(r.Body.String(), "UID").String()
 
-	r2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["pt9jtdre2lvl0y12", "pt9jtdre2lvl0y11"]}`)
+	r2 := PerformRequestWithBody(app, "POST", "/api/v1/albums/"+uid+"/photos", `{"photos": ["ps6sg6be2lvl0y12", "ps6sg6be2lvl0y11"]}`)
 	assert.Equal(t, http.StatusOK, r2.Code)
 
 	t.Run("successful request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		RemovePhotosFromAlbum(router)
-		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/"+uid+"/photos", `{"photos": ["pt9jtdre2lvl0y12", "pt9jtdre2lvl0y11"]}`)
+		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/"+uid+"/photos", `{"photos": ["ps6sg6be2lvl0y12", "ps6sg6be2lvl0y11"]}`)
 		val := gjson.Get(r.Body.String(), "message")
 		assert.Equal(t, i18n.Msg(i18n.MsgChangesSaved), val.String())
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -216,7 +216,7 @@ func TestRemovePhotosFromAlbum(t *testing.T) {
 	t.Run("no items selected", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		RemovePhotosFromAlbum(router)
-		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/at9lxuqxpogaaba7/photos", `{"photos": []}`)
+		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/as6sg6bxpogaaba7/photos", `{"photos": []}`)
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, "No items selected", val.String())
 		assert.Equal(t, http.StatusBadRequest, r.Code)
@@ -224,13 +224,13 @@ func TestRemovePhotosFromAlbum(t *testing.T) {
 	t.Run("invalid request", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		RemovePhotosFromAlbum(router)
-		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/"+uid+"/photos", `{"photos": [123, "pt9jtdre2lvl0yxx"]}`)
+		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/"+uid+"/photos", `{"photos": [123, "ps6sg6be2lvl0yxx"]}`)
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 	t.Run("album not found", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		RemovePhotosFromAlbum(router)
-		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/xxx/photos", `{"photos": ["pt9jtdre2lvl0yxx"]}`)
+		r := PerformRequestWithBody(app, "DELETE", "/api/v1/albums/xxx/photos", `{"photos": ["ps6sg6be2lvl0yxx"]}`)
 		assert.Equal(t, http.StatusNotFound, r.Code)
 	})
 }

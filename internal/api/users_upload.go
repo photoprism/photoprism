@@ -15,11 +15,11 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // UploadUserFiles adds files to the user upload folder, from where they can be moved and indexed.
@@ -197,7 +197,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Add imported files to albums if allowed.
 		if len(f.Albums) > 0 &&
-			acl.Resources.AllowAny(acl.ResourceAlbums, s.User().AclRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
+			acl.Resources.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
 			log.Debugf("upload: adding files to album %s", clean.Log(strings.Join(f.Albums, " and ")))
 			opt.Albums = f.Albums
 		}
@@ -242,7 +242,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 
 		for _, uid := range f.Albums {
-			PublishAlbumEvent(EntityUpdated, uid, c)
+			PublishAlbumEvent(StatusUpdated, uid, c)
 		}
 
 		// Update the user interface.

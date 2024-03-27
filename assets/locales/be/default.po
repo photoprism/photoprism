@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-26 21:43+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"POT-Creation-Date: 2024-03-21 13:35+0000\n"
+"PO-Revision-Date: 2024-02-05 18:21+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: none\n"
 "Language: be\n"
 "MIME-Version: 1.0\n"
@@ -12,361 +12,385 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.3.1\n"
 
-#: messages.go:94
+#: messages.go:100
 msgid "Something went wrong, try again"
 msgstr "Нешта пайшло не так, паўтарыце спробу"
 
-#: messages.go:95
+#: messages.go:101
 msgid "Unable to do that"
 msgstr "Немагчыма зрабіць гэта"
 
-#: messages.go:96
+#: messages.go:102
 msgid "Changes could not be saved"
 msgstr "Не ўдалося захаваць змены"
 
-#: messages.go:97
+#: messages.go:103
 msgid "Could not be deleted"
 msgstr "Немагчыма выдаліць"
 
-#: messages.go:98
+#: messages.go:104
 #, c-format
 msgid "%s already exists"
 msgstr "%s ужо існуе"
 
-#: messages.go:99
+#: messages.go:105
 msgid "Not found"
 msgstr "Не знойдзена"
 
-#: messages.go:100
+#: messages.go:106
 msgid "File not found"
 msgstr "Файл не знойдзены"
 
-#: messages.go:101
+#: messages.go:107
 msgid "File too large"
 msgstr "Файл занадта вялікі"
 
-#: messages.go:102
+#: messages.go:108
+msgid "Unsupported"
+msgstr ""
+
+#: messages.go:109
+msgid "Unsupported type"
+msgstr ""
+
+#: messages.go:110
 msgid "Unsupported format"
 msgstr "Фармат не падтрымліваецца"
 
-#: messages.go:103
+#: messages.go:111
 msgid "Originals folder is empty"
 msgstr "Тэчка арыгіналаў пустая"
 
-#: messages.go:104
+#: messages.go:112
 msgid "Selection not found"
 msgstr "Выбар не знойдзены"
 
-#: messages.go:105
+#: messages.go:113
 msgid "Entity not found"
 msgstr "Аб'ект не знойдзены"
 
-#: messages.go:106
+#: messages.go:114
 msgid "Account not found"
 msgstr "Уліковы запіс не знойдзены"
 
-#: messages.go:107
+#: messages.go:115
 msgid "User not found"
 msgstr "Карыстальнік не знойдзены"
 
-#: messages.go:108
+#: messages.go:116
 msgid "Label not found"
-msgstr "Цэтлік не знойдзены"
+msgstr "Тэг не знойдзены"
 
-#: messages.go:109
+#: messages.go:117
 msgid "Album not found"
 msgstr "Альбом не знойдзены"
 
-#: messages.go:110
+#: messages.go:118
 msgid "Subject not found"
 msgstr "Тэма не знойдзена"
 
-#: messages.go:111
+#: messages.go:119
 msgid "Person not found"
 msgstr "Чалавек не знойдзены"
 
-#: messages.go:112
+#: messages.go:120
 msgid "Face not found"
 msgstr "Твар не знойдзены"
 
-#: messages.go:113
+#: messages.go:121
 msgid "Not available in public mode"
 msgstr "Недаступна ў публічным рэжыме"
 
-#: messages.go:114
+#: messages.go:122
 msgid "Not available in read-only mode"
 msgstr "Недаступна ў рэжыме толькі для чытання"
 
-#: messages.go:115
+#: messages.go:123
 msgid "Please log in to your account"
 msgstr "Калі ласка, увайдзіце ў свой уліковы запіс"
 
-#: messages.go:116
+#: messages.go:124
 msgid "Permission denied"
 msgstr "У доступе адмоўлена"
 
-#: messages.go:117
+#: messages.go:125
 msgid "Upload might be offensive"
 msgstr "Запампоўка можа быць абразлівай"
 
-#: messages.go:118
+#: messages.go:126
 msgid "Upload failed"
 msgstr "Памылка загрузкі"
 
-#: messages.go:119
+#: messages.go:127
 msgid "No items selected"
 msgstr "Элементы не выбраны"
 
-#: messages.go:120
+#: messages.go:128
 msgid "Failed creating file, please check permissions"
 msgstr "Не ўдалося стварыць файл, праверце дазволы"
 
-#: messages.go:121
+#: messages.go:129
 msgid "Failed creating folder, please check permissions"
 msgstr "Не атрымалася стварыць папку, праверце дазволы"
 
-#: messages.go:122
+#: messages.go:130
 msgid "Could not connect, please try again"
 msgstr "Немагчыма падключыцца, паспрабуйце яшчэ раз"
 
-#: messages.go:123
+#: messages.go:131
+msgid "Enter verification code"
+msgstr ""
+
+#: messages.go:132
+msgid "Invalid verification code, please try again"
+msgstr ""
+
+#: messages.go:133
 msgid "Invalid password, please try again"
 msgstr "Няправільны пароль, паспрабуйце яшчэ раз"
 
-#: messages.go:124
+#: messages.go:134
 msgid "Feature disabled"
 msgstr "Функцыя адключана"
 
-#: messages.go:125
+#: messages.go:135
 msgid "No labels selected"
 msgstr "Меткі не выбраны"
 
-#: messages.go:126
+#: messages.go:136
 msgid "No albums selected"
 msgstr "Альбомы не выбраны"
 
-#: messages.go:127
+#: messages.go:137
 msgid "No files available for download"
 msgstr "Няма даступных файлаў для спампоўкі"
 
-#: messages.go:128
+#: messages.go:138
 msgid "Failed to create zip file"
 msgstr "Не ўдалося стварыць zip-файл"
 
-#: messages.go:129
+#: messages.go:139
 msgid "Invalid credentials"
 msgstr "Няправільныя ўліковыя даныя"
 
-#: messages.go:130
+#: messages.go:140
 msgid "Invalid link"
 msgstr "Няправільная спасылка"
 
-#: messages.go:131
+#: messages.go:141
 msgid "Invalid name"
 msgstr "Няправільнае імя"
 
-#: messages.go:132
+#: messages.go:142
 msgid "Busy, please try again later"
 msgstr "Заняты, паўтарыце спробу пазней"
 
-#: messages.go:133
+#: messages.go:143
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Інтэрвал абуджэння складае %s, але павінен быць не больш за 1 гадзіну"
 
-#: messages.go:134
+#: messages.go:144
 msgid "Your account could not be connected"
 msgstr "Ваш уліковы запіс не можа быць падключаны"
 
-#: messages.go:137
+#: messages.go:147
 msgid "Changes successfully saved"
 msgstr "Змены паспяхова захаваны"
 
-#: messages.go:138
+#: messages.go:148
 msgid "Album created"
 msgstr "Альбом створаны"
 
-#: messages.go:139
+#: messages.go:149
 msgid "Album saved"
 msgstr "Альбом захаваны"
 
-#: messages.go:140
+#: messages.go:150
 #, c-format
 msgid "Album %s deleted"
 msgstr "Альбом %s выдалены"
 
-#: messages.go:141
+#: messages.go:151
 msgid "Album contents cloned"
 msgstr "Змест альбома кланаваны"
 
-#: messages.go:142
+#: messages.go:152
 msgid "File removed from stack"
 msgstr "Файл выдалены са стэка"
 
-#: messages.go:143
+#: messages.go:153
 msgid "File deleted"
 msgstr "Файл выдалены"
 
-#: messages.go:144
+#: messages.go:154
 #, c-format
 msgid "Selection added to %s"
 msgstr "Выбар дададзены ў %s"
 
-#: messages.go:145
+#: messages.go:155
 #, c-format
 msgid "One entry added to %s"
 msgstr "Адзін запіс дададзены ў %s"
 
-#: messages.go:146
+#: messages.go:156
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d запісы дададзены ў %s"
 
-#: messages.go:147
+#: messages.go:157
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Адзін запіс выдалены з %s"
 
-#: messages.go:148
+#: messages.go:158
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "Запісы %d выдалены з %s"
 
-#: messages.go:149
+#: messages.go:159
 msgid "Account created"
 msgstr "Уліковы запіс створаны"
 
-#: messages.go:150
+#: messages.go:160
 msgid "Account saved"
 msgstr "Уліковы запіс захаваны"
 
-#: messages.go:151
+#: messages.go:161
 msgid "Account deleted"
 msgstr "Уліковы запіс выдалены"
 
-#: messages.go:152
+#: messages.go:162
 msgid "Settings saved"
 msgstr "Налады захаваны"
 
-#: messages.go:153
+#: messages.go:163
 msgid "Password changed"
 msgstr "Пароль зменены"
 
-#: messages.go:154
+#: messages.go:164
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Імпарт завершаны праз %d с"
 
-#: messages.go:155
+#: messages.go:165
 msgid "Import canceled"
 msgstr "Імпарт адменены"
 
-#: messages.go:156
+#: messages.go:166
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Індэксацыя завершана ў %d с"
 
-#: messages.go:157
+#: messages.go:167
 msgid "Indexing originals..."
 msgstr "Індэксаванне арыгіналаў..."
 
-#: messages.go:158
+#: messages.go:168
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Індэксацыя файлаў у %s"
 
-#: messages.go:159
+#: messages.go:169
 msgid "Indexing canceled"
 msgstr "Індэксацыя адменена"
 
-#: messages.go:160
+#: messages.go:170
 #, c-format
 msgid "Removed %d files and %d photos"
-msgstr "Выдалены файлы %d і фатаграфіі %d."
+msgstr "Выдалена %d файлаў і %d фота"
 
-#: messages.go:161
+#: messages.go:171
 #, c-format
 msgid "Moving files from %s"
 msgstr "Перамяшчэнне файлаў з %s"
 
-#: messages.go:162
+#: messages.go:172
 #, c-format
 msgid "Copying files from %s"
 msgstr "Капіраванне файлаў з %s"
 
-#: messages.go:163
+#: messages.go:173
 msgid "Labels deleted"
-msgstr "Цэтлікі выдалены"
+msgstr "Меткі выдалены"
 
-#: messages.go:164
+#: messages.go:174
 msgid "Label saved"
 msgstr "Цэтлік захаваны"
 
-#: messages.go:165
+#: messages.go:175
 msgid "Subject saved"
 msgstr "Тэма захавана"
 
-#: messages.go:166
+#: messages.go:176
 msgid "Subject deleted"
 msgstr "Тэма выдалена"
 
-#: messages.go:167
+#: messages.go:177
 msgid "Person saved"
 msgstr "Чалавек выратаваны"
 
-#: messages.go:168
+#: messages.go:178
 msgid "Person deleted"
 msgstr "Асоба выдалена"
 
-#: messages.go:169
+#: messages.go:179
 msgid "File uploaded"
 msgstr "Файл запампаваны"
 
-#: messages.go:170
+#: messages.go:180
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d файлы, загружаныя ў %d с"
 
-#: messages.go:171
+#: messages.go:181
 msgid "Processing upload..."
 msgstr "Апрацоўка запампоўкі..."
 
-#: messages.go:172
+#: messages.go:182
 msgid "Upload has been processed"
 msgstr "Загрузка апрацавана"
 
-#: messages.go:173
+#: messages.go:183
 msgid "Selection approved"
 msgstr "Выбар ухвалены"
 
-#: messages.go:174
+#: messages.go:184
 msgid "Selection archived"
 msgstr "Выбранае заархівавана"
 
-#: messages.go:175
+#: messages.go:185
 msgid "Selection restored"
 msgstr "Выбар адноўлены"
 
-#: messages.go:176
+#: messages.go:186
 msgid "Selection marked as private"
 msgstr "Выбар пазначаны як прыватны"
 
-#: messages.go:177
+#: messages.go:187
 msgid "Albums deleted"
 msgstr "Альбомы выдалены"
 
-#: messages.go:178
+#: messages.go:188
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip створаны ў %d с"
 
-#: messages.go:179
+#: messages.go:189
 msgid "Permanently deleted"
 msgstr "Выдалены назаўсёды"
 
-#: messages.go:180
+#: messages.go:190
 #, c-format
 msgid "%s has been restored"
 msgstr "%s быў адноўлены"
+
+#: messages.go:191
+msgid "Successfully verified"
+msgstr ""
+
+#: messages.go:192
+msgid "Successfully activated"
+msgstr ""

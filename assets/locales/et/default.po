@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:51+0000\n"
+"POT-Creation-Date: 2024-03-21 13:35+0000\n"
 "PO-Revision-Date: 2023-02-09 13:13+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: none\n"
@@ -13,362 +13,386 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 4.15.2\n"
 
-#: messages.go:94
+#: messages.go:100
 msgid "Something went wrong, try again"
 msgstr "Midagi läks valesti, proovige uuesti"
 
-#: messages.go:95
+#: messages.go:101
 msgid "Unable to do that"
 msgstr "Seda ei ole võimalik teha"
 
-#: messages.go:96
+#: messages.go:102
 msgid "Changes could not be saved"
 msgstr "Muudatuste salvestamine ebaõnnestus"
 
-#: messages.go:97
+#: messages.go:103
 msgid "Could not be deleted"
 msgstr "Kustutamine ebaõnnestus"
 
-#: messages.go:98
+#: messages.go:104
 #, c-format
 msgid "%s already exists"
 msgstr "%s on juba olemas"
 
-#: messages.go:99
+#: messages.go:105
 msgid "Not found"
 msgstr "Ei leitud"
 
-#: messages.go:100
+#: messages.go:106
 msgid "File not found"
 msgstr "Faili ei leitud"
 
-#: messages.go:101
+#: messages.go:107
 msgid "File too large"
 msgstr "Fail on liiga suur"
 
-#: messages.go:102
+#: messages.go:108
+msgid "Unsupported"
+msgstr ""
+
+#: messages.go:109
+msgid "Unsupported type"
+msgstr ""
+
+#: messages.go:110
 msgid "Unsupported format"
 msgstr "Mittetoetatud formaat"
 
-#: messages.go:103
+#: messages.go:111
 msgid "Originals folder is empty"
 msgstr "Originaalide kaust on tühi"
 
-#: messages.go:104
+#: messages.go:112
 msgid "Selection not found"
 msgstr "Valikut ei leitud"
 
-#: messages.go:105
+#: messages.go:113
 msgid "Entity not found"
 msgstr "Olemit ei leitud"
 
-#: messages.go:106
+#: messages.go:114
 msgid "Account not found"
 msgstr "Kontot ei leitud"
 
-#: messages.go:107
+#: messages.go:115
 msgid "User not found"
 msgstr "Kasutajat ei leitud"
 
-#: messages.go:108
+#: messages.go:116
 msgid "Label not found"
 msgstr "Silti ei leitud"
 
-#: messages.go:109
+#: messages.go:117
 msgid "Album not found"
 msgstr "Albumit ei leitud"
 
-#: messages.go:110
+#: messages.go:118
 msgid "Subject not found"
 msgstr "Teemat ei leitud"
 
-#: messages.go:111
+#: messages.go:119
 msgid "Person not found"
 msgstr "Isikut ei leitud"
 
-#: messages.go:112
+#: messages.go:120
 msgid "Face not found"
 msgstr "Nägu ei leitud"
 
-#: messages.go:113
+#: messages.go:121
 msgid "Not available in public mode"
 msgstr "Pole avalikus režiimis saadaval"
 
-#: messages.go:114
+#: messages.go:122
 msgid "Not available in read-only mode"
 msgstr "Pole kirjutuskaitstud režiimis saadaval"
 
-#: messages.go:115
+#: messages.go:123
 msgid "Please log in to your account"
 msgstr "Palun logi oma kontole sisse"
 
-#: messages.go:116
+#: messages.go:124
 msgid "Permission denied"
 msgstr "Õigused puuduvad"
 
-#: messages.go:117
+#: messages.go:125
 msgid "Upload might be offensive"
 msgstr "Fail võib olla solvav"
 
-#: messages.go:118
+#: messages.go:126
 msgid "Upload failed"
 msgstr "Üleslaadimine ebaõnnestus"
 
-#: messages.go:119
+#: messages.go:127
 msgid "No items selected"
 msgstr "Midagi pole valitud"
 
-#: messages.go:120
+#: messages.go:128
 msgid "Failed creating file, please check permissions"
 msgstr "Faili loomine ebaõnnestus, kontrolli õiguseid"
 
-#: messages.go:121
+#: messages.go:129
 msgid "Failed creating folder, please check permissions"
 msgstr "Kausta loomine ebaõnnestus, kontrolli õiguseid"
 
-#: messages.go:122
+#: messages.go:130
 msgid "Could not connect, please try again"
 msgstr "Ühendumine ebaõnnestus, palun proovi uuesti"
 
-#: messages.go:123
+#: messages.go:131
+msgid "Enter verification code"
+msgstr ""
+
+#: messages.go:132
+msgid "Invalid verification code, please try again"
+msgstr ""
+
+#: messages.go:133
 msgid "Invalid password, please try again"
 msgstr "Vale parool, palun proovi uuesti"
 
-#: messages.go:124
+#: messages.go:134
 msgid "Feature disabled"
 msgstr "Funktsioon välja lülitatud"
 
-#: messages.go:125
+#: messages.go:135
 msgid "No labels selected"
 msgstr "Ühtegi silti pole valitud"
 
-#: messages.go:126
+#: messages.go:136
 msgid "No albums selected"
 msgstr "Ühtegi albumit pole valitud"
 
-#: messages.go:127
+#: messages.go:137
 msgid "No files available for download"
 msgstr "Ühtegi faili ei ole allalaadimiseks saadaval"
 
-#: messages.go:128
+#: messages.go:138
 msgid "Failed to create zip file"
 msgstr "ZIP-faili loomine ebaõnnestus"
 
-#: messages.go:129
+#: messages.go:139
 msgid "Invalid credentials"
 msgstr "Kehtetud ligipääsuandmed"
 
-#: messages.go:130
+#: messages.go:140
 msgid "Invalid link"
 msgstr "Vigane link"
 
-#: messages.go:131
+#: messages.go:141
 msgid "Invalid name"
 msgstr "Vigane nimi"
 
-#: messages.go:132
+#: messages.go:142
 msgid "Busy, please try again later"
 msgstr "Hõivatud, palun proovi hiljem uuesti"
 
-#: messages.go:133
+#: messages.go:143
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Ärkamisintervall on %s, kuid peab olema 1 tund või vähem"
 
-#: messages.go:134
+#: messages.go:144
 msgid "Your account could not be connected"
 msgstr "Konto ühendamine ebaõnnestus"
 
-#: messages.go:137
+#: messages.go:147
 msgid "Changes successfully saved"
 msgstr "Muudatused edukalt salvestatud"
 
-#: messages.go:138
+#: messages.go:148
 msgid "Album created"
 msgstr "Album lisatud"
 
-#: messages.go:139
+#: messages.go:149
 msgid "Album saved"
 msgstr "Album salvestatud"
 
-#: messages.go:140
+#: messages.go:150
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s kustutatud"
 
-#: messages.go:141
+#: messages.go:151
 msgid "Album contents cloned"
 msgstr "Albumi sisu kloonitud"
 
-#: messages.go:142
+#: messages.go:152
 msgid "File removed from stack"
 msgstr "Fail virnast eemaldatud"
 
-#: messages.go:143
+#: messages.go:153
 msgid "File deleted"
 msgstr "Fail kustutatud"
 
-#: messages.go:144
+#: messages.go:154
 #, c-format
 msgid "Selection added to %s"
 msgstr "Valik lisatud albumisse %s"
 
-#: messages.go:145
+#: messages.go:155
 #, c-format
 msgid "One entry added to %s"
 msgstr "Üks kirje lisatud albumisse %s"
 
-#: messages.go:146
+#: messages.go:156
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d kirjet lisatud albumisse %s"
 
-#: messages.go:147
+#: messages.go:157
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Üks kirje eemaldatud albumist %s"
 
-#: messages.go:148
+#: messages.go:158
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d kirjet eemaldatud albumist %s"
 
-#: messages.go:149
+#: messages.go:159
 msgid "Account created"
 msgstr "Konto loodud"
 
-#: messages.go:150
+#: messages.go:160
 msgid "Account saved"
 msgstr "Konto salvestatud"
 
-#: messages.go:151
+#: messages.go:161
 msgid "Account deleted"
 msgstr "Konto kustutatud"
 
-#: messages.go:152
+#: messages.go:162
 msgid "Settings saved"
 msgstr "Seaded salvestatud"
 
-#: messages.go:153
+#: messages.go:163
 msgid "Password changed"
 msgstr "Parool muudetud"
 
-#: messages.go:154
+#: messages.go:164
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Import tehtud %d sekundiga"
 
-#: messages.go:155
+#: messages.go:165
 msgid "Import canceled"
 msgstr "Import tühistatud"
 
-#: messages.go:156
+#: messages.go:166
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indekseerimine lõpetatud %d sekundiga"
 
-#: messages.go:157
+#: messages.go:167
 msgid "Indexing originals..."
 msgstr "Originaalide indekseerimine..."
 
-#: messages.go:158
+#: messages.go:168
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Failide indekseerimine: %s"
 
-#: messages.go:159
+#: messages.go:169
 msgid "Indexing canceled"
 msgstr "Indekseerimine tühistatud"
 
-#: messages.go:160
+#: messages.go:170
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Eemaldatud %d faili ja %d fotot"
 
-#: messages.go:161
+#: messages.go:171
 #, c-format
 msgid "Moving files from %s"
 msgstr "Failide liigutamine asukohast %s"
 
-#: messages.go:162
+#: messages.go:172
 #, c-format
 msgid "Copying files from %s"
 msgstr "Failide kopeerimine asukohast %s"
 
-#: messages.go:163
+#: messages.go:173
 msgid "Labels deleted"
 msgstr "Sildid kustutatud"
 
-#: messages.go:164
+#: messages.go:174
 msgid "Label saved"
 msgstr "Silt salvestatud"
 
-#: messages.go:165
+#: messages.go:175
 msgid "Subject saved"
 msgstr "Teema salvestatud"
 
-#: messages.go:166
+#: messages.go:176
 msgid "Subject deleted"
 msgstr "Teema kustutatud"
 
-#: messages.go:167
+#: messages.go:177
 msgid "Person saved"
 msgstr "Isik salvestatud"
 
-#: messages.go:168
+#: messages.go:178
 msgid "Person deleted"
 msgstr "Isik kustutatud"
 
-#: messages.go:169
+#: messages.go:179
 msgid "File uploaded"
 msgstr "File üles laaditud"
 
-#: messages.go:170
+#: messages.go:180
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d faili üles laaditud %d sekundiga"
 
-#: messages.go:171
+#: messages.go:181
 msgid "Processing upload..."
 msgstr "Üleslaaditud faili töötlemine..."
 
-#: messages.go:172
+#: messages.go:182
 msgid "Upload has been processed"
 msgstr "Üleslaaditud fail on töödeldud"
 
-#: messages.go:173
+#: messages.go:183
 msgid "Selection approved"
 msgstr "Valik heaks kiidetud"
 
-#: messages.go:174
+#: messages.go:184
 msgid "Selection archived"
 msgstr "Valik arhiveeritud"
 
-#: messages.go:175
+#: messages.go:185
 msgid "Selection restored"
 msgstr "Valik taastatud"
 
-#: messages.go:176
+#: messages.go:186
 msgid "Selection marked as private"
 msgstr "Valik privaatseks märgitud"
 
-#: messages.go:177
+#: messages.go:187
 msgid "Albums deleted"
 msgstr "Albumid kustutatud"
 
-#: messages.go:178
+#: messages.go:188
 #, c-format
 msgid "Zip created in %d s"
 msgstr "ZIP-fail loodud %d sekundiga"
 
-#: messages.go:179
+#: messages.go:189
 msgid "Permanently deleted"
 msgstr "Lõplikult kustutatud"
 
-#: messages.go:180
+#: messages.go:190
 #, c-format
 msgid "%s has been restored"
 msgstr "%s on taastatud"
+
+#: messages.go:191
+msgid "Successfully verified"
+msgstr ""
+
+#: messages.go:192
+msgid "Successfully activated"
+msgstr ""
 
 #~ msgid "Invalid request"
 #~ msgstr "Vigane päring"

@@ -381,7 +381,7 @@ func (m *MediaFile) RelPath(directory string) string {
 	}
 
 	// Remove hidden sub directory if exists.
-	if path.Base(pathname) == fs.HiddenPath {
+	if path.Base(pathname) == fs.PPHiddenPathname {
 		pathname = path.Dir(pathname)
 	}
 
@@ -549,7 +549,7 @@ func (m *MediaFile) HasSameName(f *MediaFile) bool {
 
 // Move file to a new destination with the filename provided in parameter.
 func (m *MediaFile) Move(dest string) error {
-	if err := os.MkdirAll(filepath.Dir(dest), fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(filepath.Dir(dest)); err != nil {
 		return err
 	}
 
@@ -576,7 +576,7 @@ func (m *MediaFile) Move(dest string) error {
 
 // Copy a MediaFile to another file by destinationFilename.
 func (m *MediaFile) Copy(dest string) error {
-	if err := os.MkdirAll(filepath.Dir(dest), fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(filepath.Dir(dest)); err != nil {
 		return err
 	}
 
@@ -633,8 +633,7 @@ func (m *MediaFile) IsJpeg() bool {
 		return false
 	}
 
-	// Since mime type detection is expensive, it is only
-	// performed after other checks have passed.
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeJPEG
 }
 
@@ -644,6 +643,7 @@ func (m *MediaFile) IsJpegXL() bool {
 		return false
 	}
 
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeJPEGXL
 }
 
@@ -655,8 +655,7 @@ func (m *MediaFile) IsPNG() bool {
 		return false
 	}
 
-	// Since mime type detection is expensive, it is only
-	// performed after other checks have passed.
+	// Check the mime type after other tests have passed to improve performance.
 	mimeType := m.MimeType()
 	return mimeType == fs.MimeTypePNG || mimeType == fs.MimeTypeAPNG
 }
@@ -667,6 +666,7 @@ func (m *MediaFile) IsGIF() bool {
 		return false
 	}
 
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeGIF
 }
 
@@ -676,6 +676,7 @@ func (m *MediaFile) IsTIFF() bool {
 		return false
 	}
 
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeTIFF
 }
 
@@ -699,7 +700,9 @@ func (m *MediaFile) IsHEIC() bool {
 		return false
 	}
 
-	return m.MimeType() == fs.MimeTypeHEIC
+	// Check the mime type after other tests have passed to improve performance.
+	mimeType := m.MimeType()
+	return mimeType == fs.MimeTypeHEIC || mimeType == fs.MimeTypeHEICS
 }
 
 // IsHEICS checks if the file is a HEIC image sequence with a supported file type extension.
@@ -727,6 +730,7 @@ func (m *MediaFile) IsBMP() bool {
 		return false
 	}
 
+	// Check the mime type after other tests have passed to improve performance.
 	return m.MimeType() == fs.MimeTypeBMP
 }
 
@@ -774,6 +778,58 @@ func (m *MediaFile) FileType() fs.Type {
 	default:
 		return fs.FileType(m.fileName)
 	}
+}
+
+// CheckType returns an error if the file extension is missing or invalid,
+// see https://github.com/photoprism/photoprism/issues/3518 for details.
+func (m *MediaFile) CheckType() error {
+	// Get extension and return error if missing.
+	extension := m.Extension()
+
+	if extension == "" {
+		return fmt.Errorf("missing file extension")
+	}
+
+	// Detect file type and return error if unknown.
+	fileType := fs.FileType(m.fileName)
+
+	if fileType == fs.TypeUnknown {
+		return fmt.Errorf("unknown file type")
+	}
+
+	// Detect mime type.
+	mimeType := m.MimeType()
+
+	// Perform mime type checks for selected file types.
+	var valid bool
+	switch fileType {
+	case fs.ImageJPEG:
+		valid = mimeType == fs.MimeTypeJPEG
+	case fs.ImagePNG:
+		valid = mimeType == fs.MimeTypePNG || mimeType == fs.MimeTypeAPNG
+	case fs.ImageGIF:
+		valid = mimeType == fs.MimeTypeGIF
+	case fs.ImageTIFF:
+		valid = mimeType == fs.MimeTypeTIFF
+	case fs.ImageHEIC, fs.ImageHEIF:
+		valid = mimeType == fs.MimeTypeHEIC || mimeType == fs.MimeTypeHEICS
+	default:
+		// Skip mime type check. Note: Checks for additional formats and/or generic
+		// checks based on the media content type can be added over time as needed.
+		return nil
+	}
+
+	// Ok?
+	if valid {
+		return nil
+	}
+
+	// Exclude mime type from the error message if it could not be detected.
+	if mimeType == fs.MimeTypeUnknown {
+		return fmt.Errorf("invalid file extension (unknown mime type)")
+	}
+
+	return fmt.Errorf("invalid file extension for mime type %s", clean.LogQuote(mimeType))
 }
 
 // Media returns the media content type (video, image, raw, sidecar,...).
@@ -859,10 +915,10 @@ func (m *MediaFile) NeedsTranscoding() bool {
 	}
 
 	if m.IsAnimatedImage() {
-		return fs.VideoMP4.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) == ""
+		return fs.VideoMP4.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) == ""
 	}
 
-	return fs.VideoAVC.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false) == ""
+	return fs.VideoAVC.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false) == ""
 }
 
 // SkipTranscoding checks if the media file is not animated or has already been transcoded to a playable format.
@@ -921,14 +977,14 @@ func (m *MediaFile) PreviewImage() (*MediaFile, error) {
 	}
 
 	jpegName := fs.ImageJPEG.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
 
 	if jpegName != "" {
 		return NewMediaFile(jpegName)
 	}
 
 	pngName := fs.ImagePNG.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
 
 	if pngName != "" {
 		return NewMediaFile(pngName)
@@ -949,14 +1005,14 @@ func (m *MediaFile) HasPreviewImage() bool {
 	}
 
 	jpegName := fs.ImageJPEG.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
 
 	if m.hasPreviewImage = fs.MimeType(jpegName) == fs.MimeTypeJPEG; m.hasPreviewImage {
 		return true
 	}
 
 	pngName := fs.ImagePNG.FindFirst(m.FileName(),
-		[]string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), false)
+		[]string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), false)
 
 	if m.hasPreviewImage = fs.MimeType(pngName) == fs.MimeTypePNG; m.hasPreviewImage {
 		return true

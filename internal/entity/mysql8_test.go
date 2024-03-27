@@ -45,13 +45,22 @@ func TestMySQL8(t *testing.T) {
 
 	// First migration.
 	Entities.Migrate(db, migrate.Opt(true, false, nil))
-	Entities.WaitForMigration(db)
+
+	if err = Entities.WaitForMigration(db); err != nil {
+		t.Fatal(err)
+	}
 
 	// Second migration.
 	Entities.Migrate(db, migrate.Opt(true, false, nil))
-	Entities.WaitForMigration(db)
+
+	if err = Entities.WaitForMigration(db); err != nil {
+		t.Fatal(err)
+	}
 
 	// Third migration with force flag.
 	Entities.Migrate(db, migrate.Opt(true, false, []string{"20211121-094727"}))
-	Entities.WaitForMigration(db)
+
+	if err = Entities.WaitForMigration(db); err != nil {
+		t.Fatal(err)
+	}
 }

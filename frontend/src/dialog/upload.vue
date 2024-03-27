@@ -1,6 +1,5 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable
-            lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark @click.stop="cancel">
@@ -12,38 +11,39 @@
       </v-toolbar>
       <v-container grid-list-xs ext-xs-left fluid>
         <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
-          <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()">
+          <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>
             <p class="subheading">
-              <v-combobox v-if="total === 0" v-model="selectedAlbums" flat solo hide-details chips
-                          deletable-chips multiple color="secondary-dark"
-                          class="my-0 input-albums"
-                          :items="albums"
-                          item-value="UID"
-                          item-text="Title"
-                          :allow-overflow="false"
-                          :label="$gettext('Select albums or create a new one')"
-                          return-object
+              <v-combobox
+                v-if="total === 0"
+                v-model="selectedAlbums"
+                flat
+                solo
+                hide-details
+                chips
+                deletable-chips
+                multiple
+                color="secondary-dark"
+                class="my-0 input-albums"
+                :items="albums"
+                item-value="UID"
+                item-text="Title"
+                :allow-overflow="false"
+                :label="$gettext('Select albums or create a new one')"
+                return-object
               >
                 <template #no-data>
                   <v-list-tile>
                     <v-list-tile-content>
                       <v-list-tile-title>
-                        <translate
-                            key="Press enter to create a new album.">Press enter to create a new album.</translate>
+                        <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
                       </v-list-tile-title>
                     </v-list-tile-content>
                   </v-list-tile>
                 </template>
                 <template #selection="data">
-                  <v-chip
-                      :key="JSON.stringify(data.item)"
-                      :selected="data.selected"
-                      :disabled="data.disabled"
-                      class="v-chip--select-multi"
-                      @input="data.parent.selectItem(data.item)"
-                  >
+                  <v-chip :key="JSON.stringify(data.item)" :selected="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @input="data.parent.selectItem(data.item)">
                     <v-icon class="pr-1">bookmark</v-icon>
                     {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
                   </v-chip>
@@ -51,19 +51,20 @@
               </v-combobox>
               <span v-else-if="failed"><translate key="Upload failed">Upload failed</translate></span>
               <span v-else-if="total > 0 && completedTotal < 100">
-                <translate :translate-params="{n: current, t: total}">Uploading %{n} of %{t}…</translate>
+                <translate :translate-params="{ n: current, t: total }">Uploading %{n} of %{t}…</translate>
               </span>
               <span v-else-if="indexing"><translate key="Upload complete">Upload complete. Indexing…</translate></span>
               <span v-else-if="completedTotal === 100"><translate key="Done">Done.</translate></span>
             </p>
 
-            <v-progress-linear v-model="completedTotal" height="1.5em" color="secondary-dark"
-                               :indeterminate="indexing">
-              <p class="px-2 ma-0 text-xs-right opacity-85"><span v-if="eta">{{ eta }}</span></p>
+            <v-progress-linear v-model="completedTotal" height="1.5em" color="secondary-dark" :indeterminate="indexing">
+              <p class="px-2 ma-0 text-xs-right opacity-85"
+                ><span v-if="eta">{{ eta }}</span></p
+              >
             </v-progress-linear>
 
             <p v-if="isDemo" class="body-2">
-              <translate :translate-params="{n: fileLimit}">You can upload up to %{n} files for test purposes.</translate>
+              <translate :translate-params="{ n: fileLimit }">You can upload up to %{n} files for test purposes.</translate>
               <translate>Please do not upload any private, unlawful or offensive pictures. </translate>
             </p>
             <p v-else-if="rejectNSFW" class="body-2">
@@ -75,19 +76,12 @@
               <translate>Non-photographic and low-quality images require a review before they appear in search results.</translate>
             </p>
 
-            <v-btn
-                :disabled="busy"
-                color="primary-button"
-                class="white--text ml-0 mt-2 action-upload"
-                depressed
-                @click.stop="onUploadDialog()"
-            >
+            <v-btn :disabled="busy" color="primary-button" class="white--text ml-0 mt-2 action-upload" depressed @click.stop="onUploadDialog()">
               <translate key="Upload">Upload</translate>
-              <v-icon :right="!rtl" :left="rtl"  dark>cloud_upload</v-icon>
+              <v-icon :right="!rtl" :left="rtl" dark>cloud_upload</v-icon>
             </v-btn>
           </v-container>
         </v-form>
-
       </v-container>
     </v-card>
   </v-dialog>
@@ -97,10 +91,10 @@ import Api from "common/api";
 import Notify from "common/notify";
 import Album from "model/album";
 import Util from "common/util";
-import {Duration} from "luxon";
+import { Duration } from "luxon";
 
 export default {
-  name: 'PUploadDialog',
+  name: "PUploadDialog",
   props: {
     show: Boolean,
     data: {
@@ -153,7 +147,7 @@ export default {
 
       // Fetch albums from backend.
       this.findAlbums("");
-    }
+    },
   },
   methods: {
     findAlbums(q) {
@@ -167,13 +161,15 @@ export default {
         q: q,
         count: 2000,
         offset: 0,
-        type: "album"
+        type: "album",
       };
 
-      Album.search(params).then(response => {
-        this.loading = false;
-        this.albums = response.models;
-      }).catch(() => this.loading = false);
+      Album.search(params)
+        .then((response) => {
+          this.loading = false;
+          this.albums = response.models;
+        })
+        .catch(() => (this.loading = false));
     },
     cancel() {
       if (this.busy) {
@@ -181,7 +177,7 @@ export default {
         return;
       }
 
-      this.$emit('cancel');
+      this.$emit("cancel");
     },
     confirm() {
       if (this.busy) {
@@ -189,7 +185,7 @@ export default {
         return;
       }
 
-      this.$emit('confirm');
+      this.$emit("confirm");
     },
     submit() {
       // DO NOTHING
@@ -230,12 +226,12 @@ export default {
         // Show estimate after 10 seconds.
         if (elapsedTime >= 10000) {
           const rate = currentSize / elapsedTime;
-          const ms = (this.totalSize / rate) - elapsedTime;
+          const ms = this.totalSize / rate - elapsedTime;
           this.remainingTime = Math.ceil(ms * 0.001);
           const dur = Duration.fromObject({
             minutes: Math.floor(this.remainingTime / 60),
-            seconds: this.remainingTime % 60 },
-          );
+            seconds: this.remainingTime % 60,
+          });
           this.eta = dur.toHuman();
         }
       }
@@ -247,7 +243,7 @@ export default {
 
       this.completedSize += file.size;
       if (this.totalSize > 0) {
-        this.completedTotal = Math.floor(((this.completedSize) * 100) / this.totalSize);
+        this.completedTotal = Math.floor((this.completedSize * 100) / this.totalSize);
       }
     },
     onUpload() {
@@ -316,22 +312,21 @@ export default {
 
           ctx.current = i + 1;
 
-          formData.append('files', file);
+          formData.append("files", file);
 
-          await Api.post(`users/${userUid}/upload/${ctx.token}`,
-            formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              },
-              onUploadProgress: ctx.onUploadProgress,
-            }
-          ).then(() => {
-            ctx.onUploadComplete(file);
-          }).catch(() => {
-            ctx.totalFailed++;
-            ctx.onUploadComplete(file);
-          });
+          await Api.post(`users/${userUid}/upload/${ctx.token}`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+            onUploadProgress: ctx.onUploadProgress,
+          })
+            .then(() => {
+              ctx.onUploadComplete(file);
+            })
+            .catch(() => {
+              ctx.totalFailed++;
+              ctx.onUploadComplete(file);
+            });
         }
       }
 
@@ -346,16 +341,18 @@ export default {
         this.eta = "";
 
         const ctx = this;
-        Api.put(`users/${userUid}/upload/${ctx.token}`,{
+        Api.put(`users/${userUid}/upload/${ctx.token}`, {
           albums: addToAlbums,
-        }).then(() => {
-          ctx.reset();
-          Notify.success(ctx.$gettext("Upload complete"));
-          ctx.$emit('confirm');
-        }).catch(() => {
-          ctx.reset();
-          Notify.error(ctx.$gettext("Upload failed"));
-        });
+        })
+          .then(() => {
+            ctx.reset();
+            Notify.success(ctx.$gettext("Upload complete"));
+            ctx.$emit("confirm");
+          })
+          .catch(() => {
+            ctx.reset();
+            Notify.error(ctx.$gettext("Upload failed"));
+          });
       });
     },
   },

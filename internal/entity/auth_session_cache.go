@@ -9,35 +9,40 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // Create a new session cache with an expiration time of 15 minutes.
 var sessionCacheExpiration = 15 * time.Minute
 var sessionCache = gc.New(sessionCacheExpiration, 5*time.Minute)
 
-// FindSession returns an existing session or nil if not found.
+// FindSessionByAuthToken finds a session based on the auth token string or returns nil if it does not exist.
+func FindSessionByAuthToken(token string) (*Session, error) {
+	return FindSession(rnd.SessionID(token))
+}
+
+// FindSession finds a session based on the id string or returns nil if it does not exist.
 func FindSession(id string) (*Session, error) {
 	found := &Session{}
 
-	// Valid id?
 	if !rnd.IsSessionID(id) {
-		return found, fmt.Errorf("id %s is invalid", clean.LogQuote(id))
+		return found, fmt.Errorf("invalid session id")
 	}
 
 	// Find the session in the cache with a fallback to the database.
 	if cacheData, ok := sessionCache.Get(id); ok && cacheData != nil {
 		if cached := cacheData.(*Session); !cached.Expired() {
-			cached.LastActive = UnixTime()
+			cached.LastActive = unix.Time()
 			return cached, nil
 		} else if err := cached.Delete(); err != nil {
 			event.AuditErr([]string{cached.IP(), "session %s", "failed to delete after expiration", "%s"}, cached.RefID, err)
 		}
 	} else if res := Db().First(&found, "id = ?", id); res.RecordNotFound() {
-		return found, fmt.Errorf("not found")
+		return found, fmt.Errorf("invalid session")
 	} else if res.Error != nil {
 		return found, res.Error
 	} else if !rnd.IsSessionID(found.ID) {
-		return found, fmt.Errorf("has invalid id %s", clean.LogQuote(found.ID))
+		return found, fmt.Errorf("invalid session id %s", clean.LogQuote(found.ID))
 	} else if !found.Expired() {
 		found.UpdateLastActive()
 		CacheSession(found, sessionCacheExpiration)
@@ -46,7 +51,7 @@ func FindSession(id string) (*Session, error) {
 		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", "%s"}, found.RefID, err)
 	}
 
-	return found, fmt.Errorf("expired")
+	return found, fmt.Errorf("session expired")
 }
 
 // FlushSessionCache resets the session cache.

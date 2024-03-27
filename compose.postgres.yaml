@@ -1,0 +1,91 @@
+## FOR TEST AND DEVELOPMENT ONLY, DO NOT USE IN PRODUCTION   ##
+## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
+
+services:
+  ## PhotoPrism Development Environment (PostgresSQL)
+  # ATTENTION: PostgreSQL is NOT supported yet as Gorm (our ORM library) needs to be upgraded first.
+  # The current Gorm version does NOT support compatible general data types:
+  # https://github.com/photoprism/photoprism/issues/47
+  photoprism:
+    build: .
+    image: photoprism/photoprism:develop
+    depends_on:
+      - postgres
+      - dummy-webdav
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    ports:
+      - "2342:2342" # default HTTP port (host:container)
+      - "2343:2343" # acceptance Test HTTP port (host:container)
+    working_dir: "/go/src/github.com/photoprism/photoprism"
+    volumes:
+      - ".:/go/src/github.com/photoprism/photoprism"
+      - "go-mod:/go/pkg/mod"
+    shm_size: "2gb"
+    environment:
+      PHOTOPRISM_INIT: "https"
+      PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
+      PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
+      PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
+      PHOTOPRISM_SITE_URL: "http://localhost:2342/"
+      PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
+      PHOTOPRISM_SITE_DESCRIPTION: "Open-Source Photo Management"
+      PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
+      PHOTOPRISM_DEBUG: "true"
+      PHOTOPRISM_READONLY: "false"
+      PHOTOPRISM_EXPERIMENTAL: "true"
+      PHOTOPRISM_HTTP_MODE: "debug"
+      PHOTOPRISM_HTTP_HOST: "0.0.0.0"
+      PHOTOPRISM_HTTP_PORT: 2342
+      PHOTOPRISM_HTTP_COMPRESSION: "gzip"     # improves transfer speed and bandwidth utilization (none or gzip)
+      PHOTOPRISM_DATABASE_DRIVER: "postgres"
+      PHOTOPRISM_DATABASE_SERVER: "postgres:5432"
+      PHOTOPRISM_DATABASE_NAME: "photoprism"
+      PHOTOPRISM_DATABASE_USER: "photoprism"
+      PHOTOPRISM_DATABASE_PASSWORD: "photoprism"
+      PHOTOPRISM_TEST_DRIVER: "sqlite"
+      PHOTOPRISM_ASSETS_PATH: "/go/src/github.com/photoprism/photoprism/assets"
+      PHOTOPRISM_STORAGE_PATH: "/go/src/github.com/photoprism/photoprism/storage"
+      PHOTOPRISM_ORIGINALS_PATH: "/go/src/github.com/photoprism/photoprism/storage/originals"
+      PHOTOPRISM_IMPORT_PATH: "/go/src/github.com/photoprism/photoprism/storage/import"
+      PHOTOPRISM_DISABLE_CHOWN: "false"       # disables updating storage permissions via chmod and chown on startup
+      PHOTOPRISM_DISABLE_BACKUPS: "false"     # disables backing up albums and photo metadata to YAML files
+      PHOTOPRISM_DISABLE_WEBDAV: "false"      # disables built-in WebDAV server
+      PHOTOPRISM_DISABLE_SETTINGS: "false"    # disables settings UI and API
+      PHOTOPRISM_DISABLE_PLACES: "false"      # disables reverse geocoding and maps
+      PHOTOPRISM_DISABLE_EXIFTOOL: "false"    # disables creating JSON metadata sidecar files with ExifTool
+      PHOTOPRISM_DISABLE_TENSORFLOW: "false"  # disables all features depending on TensorFlow
+      PHOTOPRISM_DETECT_NSFW: "false"         # automatically flags photos as private that MAY be offensive (requires TensorFlow)
+      PHOTOPRISM_UPLOAD_NSFW: "false"         # allows uploads that MAY be offensive (no effect without TensorFlow)
+      PHOTOPRISM_RAW_PRESETS: "false"         # enables applying user presets when converting RAW images (reduces performance)
+      PHOTOPRISM_THUMB_FILTER: "lanczos"      # resample filter, best to worst: blackman, lanczos, cubic, linear
+      PHOTOPRISM_THUMB_UNCACHED: "true"       # enables on-demand thumbnail rendering (high memory and cpu usage)
+      PHOTOPRISM_THUMB_SIZE: 2048             # pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      # PHOTOPRISM_THUMB_SIZE: 4096           # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680    # on-demand rendering size limit (default 7680, min 720, max 7680)
+      PHOTOPRISM_JPEG_SIZE: 7680              # size limit for converted image files in pixels (720-30000)
+      PHOTOPRISM_JPEG_QUALITY: 85             # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
+      TF_CPP_MIN_LOG_LEVEL: 0                 # show TensorFlow log messages for development
+
+  ## PostgreSQL Database Server
+  ## Docs: https://www.postgresql.org/docs/
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - "5432:5432" # database port (host:container)
+    environment:
+      POSTGRES_DB: photoprism
+      POSTGRES_USER: photoprism
+      POSTGRES_PASSWORD: photoprism
+
+  ## Dummy WebDAV Server
+  dummy-webdav:
+    image: photoprism/dummy-webdav:231015
+    environment:
+      WEBDAV_USERNAME: admin
+      WEBDAV_PASSWORD: photoprism
+
+volumes:
+  go-mod:
+    driver: local

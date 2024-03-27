@@ -9,9 +9,9 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -46,7 +46,7 @@ func UpdateLabel(router *gin.RouterGroup) {
 
 		event.SuccessMsg(i18n.MsgLabelSaved)
 
-		PublishLabelEvent(EntityUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id, c)
 
 		c.JSON(http.StatusOK, m)
 	})
@@ -54,11 +54,11 @@ func UpdateLabel(router *gin.RouterGroup) {
 
 // LikeLabel flags a label as favorite.
 //
+// The request parameters are:
+//
+//   - uid: string Label UID
+//
 // POST /api/v1/labels/:uid/like
-//
-// Parameters:
-//
-//	uid: string Label UID
 func LikeLabel(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionUpdate)
@@ -86,7 +86,7 @@ func LikeLabel(router *gin.RouterGroup) {
 			})
 		}
 
-		PublishLabelEvent(EntityUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -94,11 +94,11 @@ func LikeLabel(router *gin.RouterGroup) {
 
 // DislikeLabel removes the favorite flag from a label.
 //
+// The request parameters are:
+//
+//   - uid: string Label UID
+//
 // DELETE /api/v1/labels/:uid/like
-//
-// Parameters:
-//
-//	uid: string Label UID
 func DislikeLabel(router *gin.RouterGroup) {
 	router.DELETE("/labels/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionUpdate)
@@ -126,7 +126,7 @@ func DislikeLabel(router *gin.RouterGroup) {
 			})
 		}
 
-		PublishLabelEvent(EntityUpdated, id, c)
+		PublishLabelEvent(StatusUpdated, id, c)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

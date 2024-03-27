@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -85,7 +86,7 @@ func (c *Config) SendFeedback(f form.Feedback) (err error) {
 	}
 
 	req.Header.Add("Accept-Language", f.UserLocales)
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add(header.ContentType, header.ContentTypeJson)
 
 	var r *http.Response
 

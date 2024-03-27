@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // Save updates the client session or creates a new one if needed.
@@ -14,8 +15,14 @@ func (s *Session) Save(m *entity.Session) (*entity.Session, error) {
 		return nil, fmt.Errorf("session is nil")
 	}
 
+	// Update last active timestamp.
+	m.LastActive = unix.Time()
+
 	// Save session.
-	return m.UpdateLastActive(), m.Save()
+	err := m.Save()
+
+	// Return session.
+	return m, err
 }
 
 // Create initializes a new client session and returns it.

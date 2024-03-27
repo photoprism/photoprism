@@ -6,6 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // Session finds an existing session by its id.
@@ -14,8 +15,10 @@ func Session(id string) (result entity.Session, err error) {
 		return result, fmt.Errorf("invalid session id")
 	} else if rnd.IsRefID(id) {
 		err = Db().Where("ref_id = ?", id).First(&result).Error
-	} else {
+	} else if rnd.IsSessionID(id) {
 		err = Db().Where("id LIKE ?", id).First(&result).Error
+	} else {
+		err = Db().Where("id LIKE ?", rnd.SessionID(id)).First(&result).Error
 	}
 
 	return result, err
@@ -29,9 +32,11 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 	search = strings.TrimSpace(search)
 
 	if search == "expired" {
-		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", entity.UnixTime())
+		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", unix.Time())
 	} else if rnd.IsSessionID(search) {
 		stmt = stmt.Where("id = ?", search)
+	} else if rnd.IsAuthToken(search) {
+		stmt = stmt.Where("id = ?", rnd.SessionID(search))
 	} else if rnd.IsUID(search, entity.UserUID) {
 		stmt = stmt.Where("user_uid = ?", search)
 	} else if search != "" {
@@ -39,7 +44,7 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 	}
 
 	if sortOrder == "" {
-		sortOrder = "last_active, user_name"
+		sortOrder = "last_active DESC, created_at DESC, user_name"
 	}
 
 	if limit > 0 {

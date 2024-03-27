@@ -35,11 +35,11 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 
 // GetDownload returns the raw file data.
 //
+// The request parameters are:
+//
+//   - hash: string The file hash as returned by the files/photos endpoint
+//
 // GET /api/v1/dl/:hash
-//
-// Parameters:
-//
-//	hash: string The file hash as returned by the files/photos endpoint
 func GetDownload(router *gin.RouterGroup) {
 	router.GET("/dl/:hash", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
@@ -63,7 +63,7 @@ func GetDownload(router *gin.RouterGroup) {
 			c.Data(404, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError("download", f.Update("FileMissing", true))
+			logErr("download", f.Update("FileMissing", true))
 
 			return
 		}

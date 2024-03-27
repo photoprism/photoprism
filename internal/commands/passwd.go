@@ -21,7 +21,7 @@ import (
 // PasswdCommand configures the command name, flags, and action.
 var PasswdCommand = cli.Command{
 	Name:      "passwd",
-	Usage:     "Changes the password of the user specified as argument",
+	Usage:     "Changes the password of a registered user",
 	ArgsUsage: "[username]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
@@ -64,7 +64,7 @@ func passwdAction(ctx *cli.Context) error {
 
 	if m == nil {
 		return fmt.Errorf("user %s not found", clean.LogQuote(id))
-	} else if m.Deleted() {
+	} else if m.IsDeleted() {
 		return fmt.Errorf("user %s has been deleted", clean.LogQuote(id))
 	}
 

@@ -2,30 +2,6 @@ package acl
 
 import "strings"
 
-// Resources that Roles can be granted Permission.
-const (
-	ResourceDefault   Resource = "default"
-	ResourcePhotos    Resource = "photos"
-	ResourceFavorites Resource = "favorites"
-	ResourceAlbums    Resource = "albums"
-	ResourcePeople    Resource = "people"
-	ResourceMoments   Resource = "moments"
-	ResourceCalendar  Resource = "calendar"
-	ResourcePlaces    Resource = "places"
-	ResourceLabels    Resource = "labels"
-	ResourceLogs      Resource = "logs"
-	ResourceConfig    Resource = "config"
-	ResourceSettings  Resource = "settings"
-	ResourcePassword  Resource = "password"
-	ResourceUsers     Resource = "users"
-	ResourceServices  Resource = "services"
-	ResourceFiles     Resource = "files"
-	ResourceFolders   Resource = "folders"
-	ResourceShares    Resource = "shares"
-	ResourceVideos    Resource = "videos"
-	ResourceFeedback  Resource = "feedback"
-)
-
 // Resource represents a resource for which roles can be granted Permission.
 type Resource string
 

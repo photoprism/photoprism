@@ -22,6 +22,7 @@ import (
 	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 type Status string
@@ -205,7 +206,7 @@ func (c *Config) ReSync(token string) (err error) {
 	c.session = nil
 
 	// Make sure storage folder exists.
-	if err = os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
+	if err = fs.MkdirAll(filepath.Dir(c.FileName)); err != nil {
 		return err
 	}
 
@@ -250,7 +251,7 @@ func (c *Config) ReSync(token string) (err error) {
 	}
 
 	// Add Content-Type header.
-	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add(header.ContentType, header.ContentTypeJson)
 
 	var r *http.Response
 
@@ -329,11 +330,11 @@ func (c *Config) Save() error {
 
 	c.Propagate()
 
-	if err = os.MkdirAll(filepath.Dir(c.FileName), fs.ModeDir); err != nil {
+	if err = fs.MkdirAll(filepath.Dir(c.FileName)); err != nil {
 		return err
 	}
 
-	if err = os.WriteFile(c.FileName, data, fs.ModeFile); err != nil {
+	if err = fs.WriteFile(c.FileName, data); err != nil {
 		return err
 	}
 

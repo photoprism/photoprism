@@ -3,74 +3,87 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2023-10-13 10:48+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-01-29 23:09+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > 19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? 1 : 2);\n"
-"X-Generator: Weblate 5.0.2\n"
+"X-Generator: Weblate 5.3.1\n"
 "Generated-By: easygettext\n"
 
-#: src/page/albums.vue:500
+#: src/page/albums.vue:509
 msgid "%{n} albums found"
 msgstr "%{n} rasti albumai"
 
-#: src/dialog/share/upload.vue:81
+#: src/dialog/share/upload.vue:80
 msgid "%{n} files uploaded"
 msgstr "%{n} įkelti failai"
 
-#: src/page/library/browse.vue:315
+#: src/page/library/browse.vue:316
 msgid "%{n} folders found"
 msgstr "rasta %{n} aplankų"
 
-#: src/page/labels.vue:422
+#: src/page/labels.vue:426
 msgid "%{n} labels found"
 msgstr "rasta %{n} etikečių"
 
-#: src/page/people/new.vue:286 src/page/people/new.vue:372
-#: src/page/people/recognized.vue:497
+#: src/page/people/new.vue:287 src/page/people/new.vue:376
+#: src/page/people/recognized.vue:501
 msgid "%{n} people found"
 msgstr "rasta %{n} žmonių"
 
-#: src/page/album/photos.vue:241 src/page/album/photos.vue:394
-#: src/page/photos.vue:344 src/page/photos.vue:509
+#: src/page/album/photos.vue:242 src/page/album/photos.vue:398
+#: src/page/photos.vue:347 src/page/photos.vue:515
 msgid "%{n} pictures found"
 msgstr "rasta %{n} paveikslėlių"
 
-#: src/options/options.js:423
+#: src/options/options.js:419
 msgid "1 hour"
 msgstr "1 val."
 
-#: src/options/options.js:425
+#: src/options/options.js:421
 msgid "12 hours"
 msgstr "12 valandų"
 
-#: src/options/options.js:424
+#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
+msgid "2-Factor Authentication"
+msgstr "2 veiksnių autentiškumo nustatymas"
+
+#: src/dialog/admin/users/edit.vue:489 src/options/auth.js:45
+msgid "2FA"
+msgstr ""
+
+#: src/options/options.js:420
 msgid "4 hours"
 msgstr "4 valandos"
 
-#: src/dialog/share.vue:73
+#: src/dialog/share.vue:71
 msgid "A click will copy it to your clipboard."
 msgstr "Paspaudę jį nukopijuosite į iškarpinę."
 
 #: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
-#: src/page/settings/account.vue:313 src/app/routes.js:60
-#: src/component/navigation.vue:461 src/component/navigation.vue:59
-#: src/page/help.vue:43 src/page/people/recognized.vue:433
+#: src/page/settings/account.vue:315 src/app/routes.js:60
+#: src/component/navigation.vue:465 src/component/navigation.vue:59
+#: src/page/help.vue:43 src/page/people/recognized.vue:441
 msgid "About"
 msgstr "Apie"
 
-#: src/component/navigation.vue:103 src/component/navigation.vue:2040
-#: src/dialog/share/upload.vue:108 src/model/service.js:98
-#: src/model/user.js:165 src/page/settings.vue:84
+#: src/options/auth.js:26 src/options/auth.js:43
+msgid "Access Token"
+msgstr "Prieigos žetonas"
+
+#: src/component/navigation.vue:104 src/component/navigation.vue:2040
+#: src/dialog/share/upload.vue:108 src/model/service.js:94
+#: src/model/user.js:168 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "Sąskaita"
 
-#: src/dialog/admin/users/add.vue:87 src/dialog/service/add.vue:35
+#: src/dialog/admin/users/add.vue:87 src/dialog/service/add.vue:34
 msgid "Account created"
 msgstr "Sukurta paskyra"
 
@@ -82,23 +95,24 @@ msgstr "Ištrinta paskyra"
 msgid "Accounts"
 msgstr "Sąskaitos"
 
-#: src/dialog/photo/edit/info.vue:175
+#: src/dialog/photo/edit/info.vue:171
 msgid "Accuracy"
 msgstr "Tikslumas"
 
-#: src/dialog/photo/edit/labels.vue:28
+#: src/dialog/photo/edit/labels.vue:32
 msgid "Action"
 msgstr "Veiksmas"
 
-#: src/dialog/photo/edit/files.vue:28 src/dialog/photo/edit/files.vue:25
+#: src/dialog/photo/edit/files.vue:31 src/dialog/photo/edit/files.vue:28
 msgid "Actions"
 msgstr "Veiksmai"
 
-#: src/page/connect.vue:97 src/page/connect.vue:98
+#: src/page/connect.vue:97 src/dialog/account/passcode.vue:100
+#: src/dialog/account/passcode.vue:22
 msgid "Activate"
 msgstr "Suaktyvinti"
 
-#: src/page/connect.vue:431 src/page/connect.vue:426
+#: src/page/connect.vue:432 src/page/connect.vue:427
 msgid "Activation Code"
 msgstr "Aktyvinimo kodas"
 
@@ -110,7 +124,7 @@ msgstr "Pridėti"
 msgid "Add Account"
 msgstr "Redaguoti paskyrą"
 
-#: src/page/albums.vue:145 src/page/albums.vue:146
+#: src/page/albums.vue:164 src/page/albums.vue:154
 msgid "Add Album"
 msgstr "Pridėti albumą"
 
@@ -122,7 +136,7 @@ msgstr "Pridėkite failų į savo biblioteką naudodami \"Web Upload\"."
 msgid "Add Link"
 msgstr "Pridėti nuorodą"
 
-#: src/page/albums.vue:119
+#: src/page/albums.vue:138
 msgid "Add pictures from search results by selecting them."
 msgstr "Pridėkite nuotraukas iš paieškos rezultatų jas pasirinkdami."
 
@@ -132,11 +146,11 @@ msgstr "Pridėkite nuotraukas iš paieškos rezultatų jas pasirinkdami."
 msgid "Add to album"
 msgstr "Pridėti į albumą"
 
-#: src/dialog/photo/edit/files.vue:213 src/dialog/photo/edit/files.vue:210
+#: src/dialog/photo/edit/files.vue:216 src/dialog/photo/edit/files.vue:213
 msgid "Added"
 msgstr "Pridėta"
 
-#: src/options/admin.js:6 src/options/admin.js:19
+#: src/options/admin.js:6 src/options/auth.js:6
 msgid "Admin"
 msgstr "Administratorius"
 
@@ -144,35 +158,39 @@ msgstr "Administratorius"
 msgid "Advanced"
 msgstr "Išplėstinė"
 
-#: src/options/options.js:433
+#: src/options/options.js:429
 msgid "After 1 day"
 msgstr "Po 1 dienos"
 
-#: src/options/options.js:434
+#: src/options/options.js:430
 msgid "After 3 days"
 msgstr "Po 3 dienų"
 
-#: src/options/options.js:435
+#: src/options/options.js:431
 msgid "After 7 days"
 msgstr "Po 7 dienų"
 
-#: src/options/options.js:437
+#: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
+msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
+msgstr ""
+
+#: src/options/options.js:433
 msgid "After one month"
 msgstr "Po vieno mėnesio"
 
-#: src/options/options.js:439
+#: src/options/options.js:435
 msgid "After one year"
 msgstr "Po vienerių metų"
 
-#: src/page/albums.vue:59 src/page/albums.vue:1
+#: src/page/albums.vue:78 src/page/albums.vue:1
 msgid "After selecting pictures from search results, you can add them to an album using the context menu."
 msgstr "Pasirinkę nuotraukas iš paieškos rezultatų, galite jas įtraukti į albumą naudodami kontekstinį meniu."
 
-#: src/options/options.js:438
+#: src/options/options.js:434
 msgid "After two months"
 msgstr "Po dviejų mėnesių"
 
-#: src/options/options.js:436
+#: src/options/options.js:432
 msgid "After two weeks"
 msgstr "Po dviejų savaičių"
 
@@ -180,7 +198,7 @@ msgstr "Po dviejų savaičių"
 msgid "Album"
 msgstr "Albumas"
 
-#: src/page/albums.vue:550
+#: src/page/albums.vue:560
 msgid "Album created"
 msgstr "Sukurtas albumas"
 
@@ -188,43 +206,43 @@ msgstr "Sukurtas albumas"
 msgid "Album Name"
 msgstr "Albumo pavadinimas"
 
-#: src/app/routes.js:175 src/component/album/toolbar.vue:58
-#: src/component/navigation.vue:152 src/component/navigation.vue:162
-#: src/component/navigation.vue:569 src/component/navigation.vue:4
-#: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:66
+#: src/app/routes.js:175 src/component/album/toolbar.vue:56
+#: src/component/navigation.vue:156 src/component/navigation.vue:166
+#: src/component/navigation.vue:572 src/component/navigation.vue:4
+#: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:65
 msgid "Albums"
 msgstr "Albumai"
 
-#: src/component/album/clipboard.vue:101
+#: src/component/album/clipboard.vue:93
 msgid "Albums deleted"
 msgstr "Ištrinti albumai"
 
-#: src/page/albums.vue:366
+#: src/page/albums.vue:372
 msgid "All %{n} albums loaded"
 msgstr "Įkelti visi %{n} albumai"
 
-#: src/page/labels.vue:276
+#: src/page/labels.vue:277
 msgid "All %{n} labels loaded"
 msgstr "Įkeltos visos %{n} etiketės"
 
-#: src/page/people/recognized.vue:349
+#: src/page/people/recognized.vue:350
 msgid "All %{n} people loaded"
 msgstr "Įkelti visi %{n} žmonės"
 
-#: src/component/album/toolbar.vue:43 src/component/photo/toolbar.vue:66
+#: src/component/album/toolbar.vue:38 src/component/photo/toolbar.vue:60
 msgid "All Cameras"
 msgstr "Visi fotoaparatai"
 
-#: src/component/photo/toolbar.vue:69 src/page/albums.vue:37
-#: src/page/albums.vue:146 src/page/albums.vue:622
+#: src/component/photo/toolbar.vue:63 src/page/albums.vue:37
+#: src/page/albums.vue:148 src/page/albums.vue:632
 msgid "All Categories"
 msgstr "Visos kategorijos"
 
-#: src/component/photo/toolbar.vue:68
+#: src/component/photo/toolbar.vue:62
 msgid "All Colors"
 msgstr "Visos spalvos"
 
-#: src/component/album/toolbar.vue:47 src/component/photo/toolbar.vue:65
+#: src/component/album/toolbar.vue:44 src/component/photo/toolbar.vue:59
 msgid "All Countries"
 msgstr "Visos šalys"
 
@@ -236,11 +254,11 @@ msgstr "Visi laukai yra privalomi"
 msgid "All files from import folder"
 msgstr "Visi failai iš importo aplanko"
 
-#: src/component/photo/toolbar.vue:67
+#: src/component/photo/toolbar.vue:61
 msgid "All Lenses"
 msgstr "Visi objektyvai"
 
-#: src/component/photo/toolbar.vue:70
+#: src/component/photo/toolbar.vue:64
 msgid "All Months"
 msgstr "Visi mėnesiai"
 
@@ -248,15 +266,15 @@ msgstr "Visi mėnesiai"
 msgid "All originals"
 msgstr "Visi originalai"
 
-#: src/component/photo/toolbar.vue:71 src/page/albums.vue:82
+#: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Visi metai"
 
-#: src/dialog/share.vue:75
+#: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
 msgstr "Taip pat galite įkelti failus tiesiai į WebDAV serverius, pvz., \"Nextcloud\"."
 
-#: src/dialog/photo/edit/info.vue:167
+#: src/dialog/photo/edit/info.vue:165
 msgid "Altitude"
 msgstr "Aukštis"
 
@@ -264,10 +282,10 @@ msgstr "Aukštis"
 msgid "Altitude (m)"
 msgstr "Aukštis (m)"
 
-#: src/component/navigation.vue:97 src/component/photo/cards.vue:313
-#: src/component/photo/cards.vue:501 src/component/photo/list.vue:192
-#: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:104
-#: src/dialog/photo/edit/files.vue:101 src/options/options.js:358
+#: src/component/navigation.vue:101 src/component/photo/cards.vue:313
+#: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
+#: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:107
+#: src/dialog/photo/edit/files.vue:104 src/options/options.js:354
 msgid "Animated"
 msgstr "Animuota"
 
@@ -275,7 +293,7 @@ msgstr "Animuota"
 msgid "Animation"
 msgstr "Animacija"
 
-#: src/dialog/share.vue:74
+#: src/dialog/share.vue:72
 msgid "Any private photos and videos remain private and won't be shared."
 msgstr "Visos privačios nuotraukos ir vaizdo įrašai išlieka privatūs ir jais nebus dalijamasi."
 
@@ -283,22 +301,35 @@ msgstr "Visos privačios nuotraukos ir vaizdo įrašai išlieka privatūs ir jai
 msgid "API Key"
 msgstr "API raktas"
 
-#: src/dialog/photo/edit/details.vue:116
+#: src/dialog/account/apps.vue:122
+msgid "App Name"
+msgstr ""
+
+#: src/options/auth.js:25
+msgid "Application"
+msgstr "Paraiška"
+
+#: src/dialog/photo/edit/details.vue:115
 msgid "Apply"
 msgstr "Taikyti"
 
 #: src/component/photo/cards.vue:422 src/component/photo/clipboard.vue:88
-#: src/dialog/photo/edit/details.vue:115
+#: src/dialog/photo/edit/details.vue:114
 msgid "Approve"
 msgstr "Patvirtinti"
 
-#: src/app/routes.js:256 src/component/navigation.vue:138
+#: src/page/settings/account.vue:68 src/dialog/account/apps.vue:8
+#: src/page/settings/account.vue:70
+msgid "Apps and Devices"
+msgstr "Programėlės ir įrenginiai"
+
+#: src/app/routes.js:256 src/component/navigation.vue:142
 #: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
 #: src/page/settings/general.vue:341
 msgid "Archive"
 msgstr "Archyvas"
 
-#: src/dialog/photo/edit/info.vue:215
+#: src/dialog/photo/edit/info.vue:211
 msgid "Archived"
 msgstr "Archyvuota"
 
@@ -306,7 +337,7 @@ msgstr "Archyvuota"
 msgid "Are you sure you want to archive the selection?"
 msgstr "Ar tikrai norite archyvuoti pasirinkimą?"
 
-#: src/component/photo/toolbar.vue:462
+#: src/component/photo/toolbar.vue:502
 msgid "Are you sure you want to delete all archived pictures?"
 msgstr "Ar tikrai norite ištrinti visas archyvuotas nuotraukas?"
 
@@ -338,12 +369,12 @@ msgstr "Ar esate tikri?"
 msgid "Artist"
 msgstr "Menininkas"
 
-#: src/dialog/photo/edit/files.vue:166 src/dialog/photo/edit/files.vue:163
+#: src/dialog/photo/edit/files.vue:169 src/dialog/photo/edit/files.vue:166
 msgid "Aspect Ratio"
 msgstr "Kraštinių santykis"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:71 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Autentiškumo nustatymas"
@@ -360,41 +391,41 @@ msgstr "Automatiškai sukuria ypatingų akimirkų, kelionių ir vietų albumus."
 msgid "Base Folder"
 msgstr "Bazinis aplankas"
 
-#: src/page/about/about.vue:26 src/page/about/about.vue:3
+#: src/page/about/about.vue:26 src/page/about/about.vue:5
 #: src/page/connect.vue:74
 msgid "Become a member today, support our mission and enjoy our member benefits!"
 msgstr "Tapkite nariu šiandien, paremkite mūsų misiją ir naudokitės nario privilegijomis!"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
-#: src/page/about/about.vue:5
+#: src/page/about/about.vue:7
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
 msgstr "Kadangi esame 100 % savarankiškai finansuojami ir nepriklausomi, galime pažadėti, kad niekada neparduosime jūsų duomenų ir visada skaidriai informuosime apie savo programinę įrangą ir paslaugas."
 
-#: src/dialog/admin/users/edit.vue:293 src/page/settings/account.vue:285
+#: src/dialog/admin/users/edit.vue:293 src/page/settings/account.vue:287
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:70 src/page/settings/account.vue:72
+#: src/page/settings/account.vue:84 src/page/settings/account.vue:86
 msgid "Birth Date"
 msgstr "Gimimo data"
 
-#: src/options/options.js:458
+#: src/options/options.js:454
 msgid "Black"
 msgstr "Juoda"
 
-#: src/options/options.js:471
+#: src/options/options.js:467
 msgid "Blackman: Lanczos Modification, Less Ringing Artifacts"
 msgstr "Blackman: Lanczos Modifikacija,Mažiau Žiedinių Artefaktų"
 
-#: src/options/options.js:454
+#: src/options/options.js:450
 msgid "Blue"
 msgstr "Mėlyna"
 
-#: src/options/options.js:455
+#: src/options/options.js:451
 msgid "Brown"
 msgstr "Ruda"
 
-#: src/component/photo/toolbar.vue:201
+#: src/component/photo/toolbar.vue:209
 msgid "Browse"
 msgstr "Naršykite"
 
@@ -406,7 +437,7 @@ msgstr "Naršykite ir redaguokite vaizdų klasifikavimo etiketes."
 msgid "Browse indexed files and folders in Library."
 msgstr "Naršykite po bibliotekos indeksuotus failus ir aplankus."
 
-#: src/page/about/feedback.vue:8 src/options/options.js:465
+#: src/page/about/feedback.vue:8 src/options/options.js:461
 msgid "Bug Report"
 msgstr "Pranešimas apie klaidą"
 
@@ -414,30 +445,34 @@ msgstr "Pranešimas apie klaidą"
 msgid "Busy, please wait…"
 msgstr "Užimtas, palaukite…"
 
-#: src/page/connect.vue:107
+#: src/page/connect.vue:106
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
 msgstr "Naudodamiesi mūsų teikiama programine įranga ir paslaugomis, sutinkate su mūsų paslaugų teikimo sąlygomis, privatumo politika ir elgesio kodeksu."
 
-#: src/app/routes.js:188 src/component/navigation.vue:258
+#: src/app/routes.js:188 src/component/navigation.vue:262
 #: src/component/navigation.vue:1020
 msgid "Calendar"
 msgstr "Kalendorius"
 
 #: src/component/photo/cards.vue:518 src/component/photo/list.vue:138
-#: src/component/photo/toolbar.vue:288 src/dialog/photo/edit/details.vue:358
+#: src/component/photo/toolbar.vue:300 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "Fotoaparatas"
 
-#: src/dialog/photo/edit/info.vue:94
+#: src/dialog/photo/edit/info.vue:93
 msgid "Camera Serial"
 msgstr "Kameros serijinis"
 
-#: src/page/album/photos.vue:247 src/page/photos.vue:350
+#: src/page/auth/login.vue:18 src/page/auth/login.vue:8
+msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
+msgstr ""
+
+#: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
 msgstr "Negalima įkelti daugiau, pasiekta riba"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
-#: src/page/albums.vue:560 src/page/albums.vue:576 src/page/labels.vue:204
+#: src/page/albums.vue:570 src/page/albums.vue:586 src/page/labels.vue:204
 #: src/page/labels.vue:224 src/page/library/browse.vue:205
 #: src/page/library/browse.vue:221 src/page/people/new.vue:215
 #: src/page/people/new.vue:231 src/page/people/recognized.vue:283
@@ -446,29 +481,32 @@ msgid "Can't select more items"
 msgstr "Negalima pasirinkti daugiau elementų"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
-#: src/dialog/admin/users/edit.vue:74 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/password.vue:39
-#: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:50
+#: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
+#: src/page/connect.vue:44 src/dialog/account/passcode.vue:68
+#: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
+#: src/dialog/account/passcode.vue:19 src/dialog/account/password.vue:38
+#: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:45
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
 #: src/dialog/label/delete.vue:15 src/dialog/photo/album.vue:18
 #: src/dialog/photo/delete.vue:18 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:29 src/page/connect.vue:41
-#: src/page/library/import.vue:34 src/page/library/index.vue:31
+#: src/dialog/share/upload.vue:28 src/page/auth/login.vue:32
+#: src/page/connect.vue:41 src/page/library/import.vue:34
+#: src/page/library/index.vue:30
 msgid "Cancel"
 msgstr "Atšaukti"
 
-#: src/component/album/toolbar.vue:65 src/component/photo/toolbar.vue:76
+#: src/component/album/toolbar.vue:63 src/component/photo/toolbar.vue:70
 msgid "Cards"
 msgstr "Kortelės"
 
-#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:434
-#: src/dialog/album/edit.vue:171 src/page/albums.vue:229
+#: src/page/about/feedback.vue:124 src/component/photo/toolbar.vue:470
+#: src/dialog/album/edit.vue:171 src/page/albums.vue:241
 msgid "Category"
 msgstr "Kategorija"
 
-#: src/dialog/admin/users/edit.vue:182 src/page/settings/account.vue:254
+#: src/dialog/admin/users/edit.vue:182 src/page/settings/account.vue:256
 msgid "Change Avatar"
 msgstr "Keisti privačią vėliavą"
 
@@ -489,25 +527,25 @@ msgstr "Keiskite nuotraukų pavadinimus, vietas ir kitus metaduomenis."
 msgid "Change private flag"
 msgstr "Keisti privačią vėliavą"
 
-#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
-#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:129
-#: src/dialog/service/edit.vue:102 src/dialog/share.vue:88
-#: src/dialog/share.vue:104 src/page/albums.vue:553
-#: src/page/settings/account.vue:114 src/page/settings/account.vue:129
-#: src/page/settings/advanced.vue:51 src/page/settings/general.vue:96
-#: src/page/settings/library.vue:50
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
+#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
+#: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
+#: src/dialog/share.vue:115 src/page/albums.vue:563
+#: src/page/settings/account.vue:129 src/page/settings/account.vue:147
+#: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
+#: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "Pakeitimai sėkmingai išsaugoti"
 
-#: src/dialog/photo/edit/info.vue:207
+#: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "Patikrinta"
 
-#: src/dialog/photo/edit/files.vue:199 src/dialog/photo/edit/files.vue:196
+#: src/dialog/photo/edit/files.vue:202 src/dialog/photo/edit/files.vue:199
 msgid "Chroma"
 msgstr "Chroma"
 
-#: src/page/library/index.vue:165
+#: src/page/library/index.vue:169
 msgid "Cleaning index and cache"
 msgstr "Indekso ir talpyklos valymas"
 
@@ -515,21 +553,33 @@ msgstr "Indekso ir talpyklos valymas"
 msgid "Cleanup"
 msgstr "Valymas"
 
-#: src/page/admin/sessions.vue:115 src/component/photo-viewer.vue:71
-#: src/component/photo/toolbar.vue:220 src/dialog/photo/edit/details.vue:112
-#: src/dialog/share.vue:87 src/page/library/errors.vue:60
+#: src/options/auth.js:11 src/options/auth.js:23 src/options/auth.js:42
+msgid "Client"
+msgstr "Klientas"
+
+#: src/options/auth.js:24
+msgid "Client Credentials"
+msgstr "Kliento įgaliojimai"
+
+#: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
+#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:34
+#: src/dialog/account/passcode.vue:37 src/dialog/account/passcode.vue:135
+#: src/dialog/account/passcode.vue:154 src/dialog/account/passcode.vue:18
+#: src/dialog/account/passcode.vue:25 src/dialog/account/passcode.vue:12
+#: src/dialog/photo/edit/details.vue:111 src/dialog/share.vue:85
+#: src/page/library/errors.vue:68
 msgid "Close"
 msgstr "Uždaryti"
 
-#: src/dialog/photo/edit/files.vue:112 src/dialog/photo/edit/files.vue:109
+#: src/dialog/photo/edit/files.vue:115 src/dialog/photo/edit/files.vue:112
 msgid "Codec"
 msgstr "Kodekas"
 
-#: src/component/photo/toolbar.vue:409
+#: src/component/photo/toolbar.vue:441
 msgid "Color"
 msgstr "Spalva"
 
-#: src/dialog/photo/edit/files.vue:187 src/dialog/photo/edit/files.vue:184
+#: src/dialog/photo/edit/files.vue:190 src/dialog/photo/edit/files.vue:187
 msgid "Color Profile"
 msgstr "Spalvų profilis"
 
@@ -537,7 +587,7 @@ msgstr "Spalvų profilis"
 msgid "Colors"
 msgstr "Spalvos"
 
-#: src/page/connect.vue:88 src/page/connect.vue:89
+#: src/page/connect.vue:88
 msgid "Compare Editions"
 msgstr "Palyginti leidimus"
 
@@ -549,20 +599,24 @@ msgstr "Visiškas pakartotinis nuskaitymas"
 msgid "Confidence"
 msgstr "Konfidencialu"
 
-#: src/dialog/service/add.vue:18 src/page/settings/services.vue:55
+#: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
+msgid "Confirm"
+msgstr ""
+
+#: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
 msgstr "Prisijungti"
 
-#: src/page/settings/account.vue:60 src/dialog/webdav.vue:4
-#: src/page/settings/account.vue:62 src/page/settings/services.vue:50
+#: src/page/settings/account.vue:74 src/dialog/webdav.vue:7
+#: src/page/settings/account.vue:76 src/page/settings/services.vue:46
 msgid "Connect via WebDAV"
 msgstr "Prisijungimas per WebDAV"
 
-#: src/page/connect.vue:62 src/page/connect.vue:63
+#: src/page/connect.vue:62 src/page/connect.vue:64
 msgid "Connected"
 msgstr "Prisijungti"
 
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:95
+#: src/page/settings/account.vue:130 src/page/settings/account.vue:106
 msgid "Contact Details"
 msgstr "Susisiekite su mumis"
 
@@ -571,27 +625,33 @@ msgstr "Susisiekite su mumis"
 msgid "Contact Us"
 msgstr "Susisiekite su mumis"
 
-#: src/page/albums.vue:116 src/page/labels.vue:77
-#: src/page/people/recognized.vue:90
+#: src/page/albums.vue:135 src/page/labels.vue:84
+#: src/page/people/recognized.vue:97
 msgid "Contains %{n} pictures."
 msgstr "Sudėtyje yra %{n} paveikslėlių."
 
-#: src/page/albums.vue:113 src/page/labels.vue:74
-#: src/page/people/recognized.vue:87
+#: src/page/albums.vue:132 src/page/labels.vue:81
+#: src/page/people/recognized.vue:94
 msgid "Contains one picture."
 msgstr "Yra vienas paveikslėlis."
 
-#: src/options/admin.js:9 src/options/admin.js:31
+#: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Pateikėjas"
 
-#: src/page/library/index.vue:175
+#: src/page/library/index.vue:179
 msgid "Converting"
 msgstr "Konvertuojama"
 
-#: src/dialog/share.vue:58 src/dialog/webdav.vue:37
+#: src/dialog/account/apps.vue:52 src/dialog/account/passcode.vue:66
+#: src/dialog/photo/edit/files.vue:64 src/dialog/photo/edit/info.vue:58
+#: src/dialog/share.vue:61 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
 msgstr "Nukopijuota į iškarpinę"
+
+#: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
+msgid "Copy"
+msgstr ""
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -601,12 +661,16 @@ msgstr "Autorinės teisės"
 msgid "Couldn't find anything."
 msgstr "Nepavyko nieko rasti."
 
-#: src/page/settings/account.vue:758 src/component/photo/toolbar.vue:262
-#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:612
+#: src/page/settings/account.vue:859 src/component/photo/toolbar.vue:270
+#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:713
 msgid "Country"
 msgstr "Šalis"
 
-#: src/page/auth/login.vue:19
+#: src/dialog/account/apps.vue:37
+msgid "Create"
+msgstr ""
+
+#: src/page/auth/login.vue:35
 msgid "Create Account"
 msgstr "Sukurti paskyrą"
 
@@ -614,46 +678,51 @@ msgstr "Sukurti paskyrą"
 msgid "Create album"
 msgstr "Sukurti albumą"
 
-#: src/page/admin/sessions.vue:77 src/dialog/photo/edit/info.vue:183
+#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Sukurta"
 
-#: src/page/library/index.vue:181
+#: src/page/library/index.vue:185
 msgid "Creating thumbnails for"
 msgstr "Miniatiūrų kūrimas"
 
-#: src/options/options.js:473
+#: src/options/options.js:469
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Kubinis: Vidutinė kokybė, geras našumas"
 
-#: src/dialog/account/password.vue:134
+#: src/dialog/account/password.vue:136
 msgid "Current Password"
 msgstr "Dabartinis slaptažodis"
 
-#: src/page/about/feedback.vue:5 src/options/options.js:462
+#: src/page/about/feedback.vue:5 src/options/options.js:458
 msgid "Customer Support"
 msgstr "Klientų aptarnavimas"
 
-#: src/options/options.js:453
+#: src/options/options.js:449
 msgid "Cyan"
 msgstr "Žydra"
 
-#: src/options/options.js:426
+#: src/options/options.js:422
 msgid "Daily"
 msgstr "Kasdien"
 
-#: src/page/settings/account.vue:478 src/dialog/photo/edit/details.vue:116
+#: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
 msgstr "Diena"
+
+#: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
+msgid "Deactivate"
+msgstr ""
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
 msgstr "Derinimo žurnalai"
 
-#: src/options/admin.js:43 src/options/admin.js:44 src/options/admin.js:57
-#: src/page/admin/sessions.vue:56 src/page/admin/users.vue:100
-#: src/options/options.js:313 src/options/options.js:377
-#: src/options/themes.js:492 src/page/places.vue:142
+#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:234
+#: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:38
+#: src/options/auth.js:39 src/options/options.js:309 src/options/options.js:373
+#: src/options/themes.js:492 src/page/places.vue:141
 msgid "Default"
 msgstr "Numatytoji"
 
@@ -665,14 +734,14 @@ msgstr "Numatytasis aplankas"
 #: src/component/album/clipboard.vue:153 src/component/label/clipboard.vue:82
 #: src/component/photo/clipboard.vue:272 src/dialog/album/delete.vue:18
 #: src/dialog/file/delete.vue:18 src/dialog/label/delete.vue:18
-#: src/dialog/photo/delete.vue:21 src/dialog/photo/edit/files.vue:41
-#: src/dialog/photo/edit/files.vue:38 src/dialog/service/remove.vue:18
-#: src/dialog/share.vue:228 src/page/library/errors.vue:88
+#: src/dialog/photo/delete.vue:21 src/dialog/photo/edit/files.vue:44
+#: src/dialog/photo/edit/files.vue:41 src/dialog/service/remove.vue:18
+#: src/dialog/share.vue:228 src/page/library/errors.vue:96
 #: src/page/settings/general.vue:363
 msgid "Delete"
 msgstr "Ištrinti"
 
-#: src/component/photo/toolbar.vue:146 src/component/photo/toolbar.vue:463
+#: src/component/photo/toolbar.vue:154 src/component/photo/toolbar.vue:503
 msgid "Delete All"
 msgstr "Ištrinti viską"
 
@@ -681,20 +750,20 @@ msgid "Delete orphaned index entries, sidecar files and thumbnails."
 msgstr "Ištrinkite našlaičių indekso įrašus, šalutinius failus ir miniatiūras."
 
 #: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
-#: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:550
+#: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:570
 msgid "Description"
 msgstr "Aprašymas"
 
-#: src/dialog/webdav.vue:32
+#: src/dialog/webdav.vue:39
 msgid "Detailed instructions can be found in our User Guide."
 msgstr "Išsamias instrukcijas rasite mūsų naudotojo vadove."
 
-#: src/dialog/photo/edit.vue:27 src/dialog/photo/edit.vue:1
+#: src/dialog/photo/edit.vue:28 src/dialog/photo/edit.vue:2
 #: src/dialog/photo/edit.vue:157
 msgid "Details"
 msgstr "Detalės"
 
-#: src/dialog/photo/edit/files.vue:43
+#: src/dialog/photo/edit/files.vue:44
 msgid "Dimensions"
 msgstr "Matmenys"
 
@@ -760,7 +829,7 @@ msgid "Discover"
 msgstr "Atraskite"
 
 #: src/dialog/admin/users/add.vue:151 src/dialog/admin/users/edit.vue:99
-#: src/page/admin/users.vue:35 src/page/settings/account.vue:193
+#: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Rodomas vardas"
 
@@ -792,11 +861,11 @@ msgstr "Nenaudokite \"RawTherapee\" RAW failams konvertuoti."
 msgid "Don't use TensorFlow for image classification."
 msgstr "Nenaudokite \"TensorFlow\" vaizdams klasifikuoti."
 
-#: src/options/options.js:466
+#: src/options/options.js:462
 msgid "Donations"
 msgstr "Dovanos"
 
-#: src/dialog/photo/edit/details.vue:119 src/dialog/share.vue:26
+#: src/dialog/photo/edit/details.vue:118 src/dialog/share.vue:26
 msgid "Done"
 msgstr "Atlikta"
 
@@ -808,8 +877,8 @@ msgstr "Atlikta."
 #: src/component/album/clipboard.vue:107 src/component/album/toolbar.vue:120
 #: src/component/file/clipboard.vue:62 src/component/photo-viewer.vue:78
 #: src/component/photo/clipboard.vue:157 src/component/subject/clipboard.vue:60
-#: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:29
-#: src/page/settings/general.vue:138 src/page/settings/general.vue:253
+#: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:32
+#: src/page/settings/general.vue:132 src/page/settings/general.vue:253
 msgid "Download"
 msgstr "Atsisiųsti"
 
@@ -825,11 +894,11 @@ msgstr "Atsisiųsti nuotolinius failus"
 msgid "Download single files and zip archives."
 msgstr "Atsisiųskite atskirus failus ir zip archyvus."
 
-#: src/component/album/clipboard.vue:110 src/component/album/toolbar.vue:120
+#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:118
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
-#: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:133
-#: src/component/photo/clipboard.vue:210 src/component/photo/list.vue:124
-#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:96
+#: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:132
+#: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:123
+#: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:112
 #: src/page/library/browse.vue:111
 msgid "Downloading…"
 msgstr "Atsisiuntimas…"
@@ -846,7 +915,7 @@ msgstr "Dėl didelio gaunamų el. laiškų kiekio mūsų komanda gali nepavykti 
 msgid "Duplicates will be skipped and only appear once."
 msgstr "Dublikatai bus praleisti ir rodomi tik vieną kartą."
 
-#: src/dialog/photo/edit/files.vue:118 src/dialog/photo/edit/files.vue:115
+#: src/dialog/photo/edit/files.vue:121 src/dialog/photo/edit/files.vue:118
 msgid "Duration"
 msgstr "Dovanos"
 
@@ -884,12 +953,12 @@ msgstr "Redaguoti paskyrą"
 msgid "Edit Photo"
 msgstr "Redaguoti nuotrauką"
 
-#: src/dialog/photo/edit/info.vue:199
+#: src/dialog/photo/edit/info.vue:195
 msgid "Edited"
 msgstr "Redaguota"
 
 #: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
-#: src/page/settings/account.vue:222 src/page/settings/account.vue:647
+#: src/page/settings/account.vue:224 src/page/settings/account.vue:748
 msgid "Email"
 msgstr "El. paštas"
 
@@ -901,15 +970,23 @@ msgstr "Įgalinkite šiuo metu kuriamas naujas funkcijas."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Įjungiamos RAW konverterio išankstinės nuostatos. Gali sumažinti našumą."
 
+#: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
+msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
+msgstr ""
+
+#: src/common/api.js:115
+msgid "Enter verification code"
+msgstr ""
+
 #: src/page/connect.vue:14
 msgid "Error"
 msgstr "Klaida"
 
-#: src/app/routes.js:316 src/component/navigation.vue:396
+#: src/app/routes.js:316 src/component/navigation.vue:400
 msgid "Errors"
 msgstr "Klaidos"
 
-#: src/dialog/photo/edit/info.vue:65
+#: src/dialog/photo/edit/info.vue:74
 msgid "Estimate"
 msgstr "Apskaičiuokite"
 
@@ -921,7 +998,7 @@ msgstr "Apytikriai įvertinkite apytikslę nuotraukų vietą be koordinačių."
 msgid "Estimates"
 msgstr "Apskaičiavimai"
 
-#: src/options/options.js:427
+#: src/options/options.js:423
 msgid "Every two days"
 msgstr "Kas dvi dienas"
 
@@ -929,7 +1006,7 @@ msgstr "Kas dvi dienas"
 msgid "Exclude content marked as private from search results, shared albums, labels, and places."
 msgstr "Neįtraukti turinio, pažymėto kaip privataus, į paieškos rezultatus, bendrinamus albumus, etiketes ir vietas."
 
-#: src/page/people/new.vue:92 src/page/people/recognized.vue:133
+#: src/page/people/new.vue:92 src/page/people/recognized.vue:141
 msgid "Exclude hidden"
 msgstr "Neįtraukti paslėptų"
 
@@ -937,7 +1014,7 @@ msgstr "Neįtraukti paslėptų"
 msgid "Expand"
 msgstr "Išplėsti"
 
-#: src/component/photo/toolbar.vue:181 src/page/albums.vue:165
+#: src/component/photo/toolbar.vue:189 src/page/albums.vue:173
 msgid "Expand Search"
 msgstr "Išplėsti paiešką"
 
@@ -945,8 +1022,8 @@ msgstr "Išplėsti paiešką"
 msgid "Experimental Features"
 msgstr "Eksperimentinės funkcijos"
 
-#: src/page/admin/sessions.vue:89 src/dialog/service/edit.vue:249
-#: src/dialog/share.vue:64
+#: src/page/admin/sessions.vue:98 src/dialog/service/edit.vue:249
+#: src/dialog/share.vue:67
 msgid "Expires"
 msgstr "Galioja iki"
 
@@ -962,61 +1039,63 @@ msgstr "F skaičius"
 msgid "Face"
 msgstr "Veidas"
 
-#: src/dialog/photo/edit/info.vue:88
+#: src/dialog/photo/edit/info.vue:87
 msgid "Faces"
 msgstr "Veidai"
 
-#: src/dialog/share.vue:60 src/dialog/webdav.vue:39
+#: src/dialog/account/apps.vue:54 src/dialog/account/passcode.vue:68
+#: src/dialog/photo/edit/files.vue:66 src/dialog/photo/edit/info.vue:60
+#: src/dialog/share.vue:63 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
 msgstr "Nepavykęs kopijavimas į iškarpinę"
 
-#: src/dialog/share.vue:97
+#: src/dialog/share.vue:106
 msgid "Failed removing link"
 msgstr "Nepavyko pašalinti nuorodos"
 
-#: src/dialog/share.vue:81
+#: src/dialog/share.vue:87
 msgid "Failed updating link"
 msgstr "Nepavyko atnaujinti nuorodos"
 
-#: src/dialog/admin/users/edit.vue:235 src/page/settings/account.vue:166
+#: src/dialog/admin/users/edit.vue:235 src/page/settings/account.vue:168
 msgid "Family Name"
 msgstr "Šeimos pavadinimas"
 
-#: src/options/options.js:297
+#: src/options/options.js:293
 msgid "Fast"
 msgstr "Greitai"
 
-#: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:109
+#: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:107
 msgid "Favorite"
 msgstr "Mėgstamiausias"
 
-#: src/app/routes.js:221 src/component/navigation.vue:232
-#: src/component/navigation.vue:930 src/page/albums.vue:86
+#: src/app/routes.js:221 src/component/navigation.vue:236
+#: src/component/navigation.vue:930 src/page/albums.vue:88
 msgid "Favorites"
 msgstr "Mėgstamiausi"
 
-#: src/page/about/feedback.vue:7 src/options/options.js:464
+#: src/page/about/feedback.vue:7 src/options/options.js:460
 msgid "Feature Request"
 msgstr "Funkcijos prašymas"
 
-#: src/page/settings/account.vue:849 src/page/settings/account.vue:703
+#: src/page/settings/account.vue:950 src/page/settings/account.vue:804
 msgid "Feed"
 msgstr "Atsiliepimai"
 
-#: src/component/navigation.vue:437 src/component/navigation.vue:35
+#: src/component/navigation.vue:441 src/component/navigation.vue:35
 msgid "Feedback"
 msgstr "Atsiliepimai"
 
-#: src/options/options.js:479
+#: src/options/options.js:475
 msgid "Female"
 msgstr "Moteris"
 
-#: src/model/file.js:295
+#: src/model/file.js:291
 msgid "File"
 msgstr "Failas"
 
-#: src/app/routes.js:303 src/dialog/photo/edit/files.vue:44
-#: src/dialog/photo/edit/files.vue:41
+#: src/app/routes.js:303 src/dialog/photo/edit/files.vue:47
+#: src/dialog/photo/edit/files.vue:44
 msgid "File Browser"
 msgstr "Failų naršyklė"
 
@@ -1024,22 +1103,22 @@ msgstr "Failų naršyklė"
 msgid "File Conversion"
 msgstr "Failų konvertavimas"
 
-#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:84
+#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
 #: src/dialog/album/edit.vue:25
 msgid "File Name"
 msgstr "Failas"
 
-#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:85
+#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
 msgid "File Size"
 msgstr "Failas"
 
-#: src/dialog/photo/edit/files.vue:68 src/dialog/photo/edit/files.vue:65
+#: src/dialog/photo/edit/files.vue:71 src/dialog/photo/edit/files.vue:68
 msgid "Filename"
 msgstr "Failas"
 
-#: src/component/navigation.vue:587 src/dialog/photo/edit.vue:65
-#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:296
+#: src/component/navigation.vue:590 src/dialog/photo/edit.vue:66
+#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:295
 msgid "Files"
 msgstr "Failai"
 
@@ -1051,34 +1130,34 @@ msgstr "Failai su nuosekliais pavadinimais, pavyzdžiui, 'IMG_1234 (2)' ir 'IMG_
 msgid "Focal Length"
 msgstr "Židinio nuotolis"
 
-#: src/dialog/photo/edit/info.vue:26 src/dialog/service/edit.vue:287
+#: src/dialog/photo/edit/info.vue:25 src/dialog/service/edit.vue:287
 #: src/dialog/service/edit.vue:293 src/dialog/share/upload.vue:141
 #: src/model/folder.js:199 src/page/library/browse.vue:72
 msgid "Folder"
 msgstr "Aplankas"
 
-#: src/page/library/browse.vue:317
+#: src/page/library/browse.vue:318
 msgid "Folder contains %{n} files"
 msgstr "Aplankale yra %{n} failų"
 
-#: src/page/library/browse.vue:309
+#: src/page/library/browse.vue:310
 msgid "Folder is empty"
 msgstr "Aplankas tuščias"
 
-#: src/app/routes.js:201 src/component/navigation.vue:333
+#: src/app/routes.js:201 src/component/navigation.vue:337
 #: src/component/navigation.vue:1285
 msgid "Folders"
 msgstr "Aplankalai"
 
-#: src/page/auth/login.vue:29
+#: src/page/auth/login.vue:45
 msgid "Forgot password?"
 msgstr "Pamiršote slaptažodį?"
 
-#: src/dialog/photo/edit/files.vue:130 src/dialog/photo/edit/files.vue:127
+#: src/dialog/photo/edit/files.vue:133 src/dialog/photo/edit/files.vue:130
 msgid "FPS"
 msgstr "FPS"
 
-#: src/dialog/photo/edit/files.vue:124 src/dialog/photo/edit/files.vue:121
+#: src/dialog/photo/edit/files.vue:127 src/dialog/photo/edit/files.vue:124
 msgid "Frames"
 msgstr "Kadrai"
 
@@ -1086,7 +1165,7 @@ msgstr "Kadrai"
 msgid "Fullscreen"
 msgstr "Viso ekrano"
 
-#: src/dialog/admin/users/edit.vue:117 src/page/settings/account.vue:81
+#: src/dialog/admin/users/edit.vue:117 src/page/settings/account.vue:83
 msgid "Gender"
 msgstr "Levandų"
 
@@ -1094,7 +1173,7 @@ msgstr "Levandų"
 msgid "General"
 msgstr "Bendra"
 
-#: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:140
+#: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
 msgstr "Originalus pavadinimas"
 
@@ -1102,23 +1181,23 @@ msgstr "Originalus pavadinimas"
 msgid "Global Options"
 msgstr "Visuotinės parinktys"
 
-#: src/options/options.js:448
+#: src/options/options.js:444
 msgid "Gold"
 msgstr "Auksinis"
 
-#: src/options/options.js:451
+#: src/options/options.js:447
 msgid "Green"
 msgstr "Žalioji"
 
-#: src/options/options.js:457
+#: src/options/options.js:453
 msgid "Grey"
 msgstr "Pilka"
 
-#: src/options/admin.js:10 src/options/admin.js:35
+#: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
 msgstr "Svečias"
 
-#: src/dialog/photo/edit/files.vue:62 src/dialog/photo/edit/files.vue:59
+#: src/dialog/photo/edit/files.vue:65 src/dialog/photo/edit/files.vue:62
 msgid "Hash"
 msgstr "Hash"
 
@@ -1130,7 +1209,7 @@ msgstr "Pagalba"
 msgid "Help & Support"
 msgstr "Paramos gavimas"
 
-#: src/component/navigation.vue:387
+#: src/component/navigation.vue:391
 msgid "Hidden"
 msgstr "Paslėptas"
 
@@ -1138,7 +1217,7 @@ msgstr "Paslėptas"
 msgid "Hidden Files"
 msgstr "Paslėpti failai"
 
-#: src/page/people/new.vue:229 src/page/people/recognized.vue:294
+#: src/page/people/new.vue:229 src/page/people/recognized.vue:302
 msgid "Hide"
 msgstr "Paslėpti"
 
@@ -1146,11 +1225,11 @@ msgstr "Paslėpti"
 msgid "Hide photos that have been moved to archive."
 msgstr "Paslėpti nuotraukas, kurios buvo perkeltos į archyvą."
 
-#: src/options/options.js:381
+#: src/options/options.js:377
 msgid "High"
 msgstr "Aukštas"
 
-#: src/dialog/photo/edit/files.vue:144 src/dialog/photo/edit/files.vue:141
+#: src/dialog/photo/edit/files.vue:147 src/dialog/photo/edit/files.vue:144
 msgid "High Dynamic Range (HDR)"
 msgstr "Didelis dinaminis diapazonas (HDR)"
 
@@ -1158,12 +1237,16 @@ msgstr "Didelis dinaminis diapazonas (HDR)"
 msgid "How can we help?"
 msgstr "Kaip galime padėti?"
 
-#: src/dialog/photo/edit/labels.vue:42
+#: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
+msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
+msgstr ""
+
+#: src/dialog/photo/edit/labels.vue:45
 msgid "image"
 msgstr "vaizdas"
 
-#: src/dialog/photo/edit/info.vue:69 src/model/file.js:217
-#: src/options/options.js:350
+#: src/dialog/photo/edit/info.vue:78 src/model/file.js:213
+#: src/options/options.js:346
 msgid "Image"
 msgstr "Vaizdas"
 
@@ -1176,7 +1259,7 @@ msgstr "Vaizdo kokybė"
 msgid "Import"
 msgstr "Importas"
 
-#: src/page/library/import.vue:116
+#: src/page/library/import.vue:120
 msgid "Import failed"
 msgstr "Importuoti nepavyko"
 
@@ -1196,15 +1279,15 @@ msgstr "Importuojame %{pavadinimas}…"
 msgid "Importing files to originals…"
 msgstr "Failų importavimas į originalus…"
 
+#: src/dialog/photo/edit/files.vue:219 src/dialog/photo/edit/files.vue:228
 #: src/dialog/photo/edit/files.vue:216 src/dialog/photo/edit/files.vue:225
-#: src/dialog/photo/edit/files.vue:213 src/dialog/photo/edit/files.vue:222
 msgid "in"
 msgstr "svetainėje"
 
 #: src/component/photo/cards.vue:13 src/component/photo/cards.vue:11
 #: src/component/photo/cards.vue:1 src/component/photo/list.vue:13
 #: src/component/photo/list.vue:1 src/component/photo/mosaic.vue:13
-#: src/component/photo/mosaic.vue:1 src/page/labels.vue:35
+#: src/component/photo/mosaic.vue:1 src/page/labels.vue:42
 #: src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
 msgstr "Jei trūksta nuotraukų, kurių tikėjotės, iš naujo nuskaitykite savo biblioteką ir palaukite, kol bus baigtas indeksavimas."
@@ -1217,7 +1300,7 @@ msgstr "Atsisiunčiant stekus ir archyvus įtraukite RAW vaizdų failus."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Atsisiunčiant stekus ir archyvus įtraukti šalutinius failus."
 
-#: src/component/navigation.vue:593 src/page/library.vue:35
+#: src/component/navigation.vue:596 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Indeksas"
@@ -1226,11 +1309,11 @@ msgstr "Indeksas"
 msgid "Index and import files through the user interface."
 msgstr "Indeksuokite ir importuokite failus per naudotojo sąsają."
 
-#: src/page/library/index.vue:144 src/page/library/index.vue:150
+#: src/page/library/index.vue:148 src/page/library/index.vue:154
 msgid "Indexing"
 msgstr "Indeksavimas"
 
-#: src/page/library/index.vue:126
+#: src/page/library/index.vue:130
 msgid "Indexing failed"
 msgstr "Indeksavimas nepavyko"
 
@@ -1238,7 +1321,7 @@ msgstr "Indeksavimas nepavyko"
 msgid "Indexing media and sidecar files…"
 msgstr "Medijos ir šalutinių failų indeksavimas…"
 
-#: src/dialog/photo/edit/files.vue:56 src/dialog/photo/edit/files.vue:53
+#: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Instance ID"
 msgstr "Atvejo ID"
 
@@ -1250,16 +1333,16 @@ msgstr "Intervalas"
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
-#: src/dialog/admin/users/edit.vue:320 src/page/settings/account.vue:91
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:143
-#: src/page/settings/account.vue:169 src/page/settings/account.vue:225
-#: src/page/settings/account.vue:284 src/page/settings/account.vue:312
-#: src/page/settings/account.vue:596 src/page/settings/account.vue:622
-#: src/page/settings/account.vue:650 src/page/settings/account.vue:678
-#: src/page/settings/account.vue:742 src/page/settings/account.vue:769
-#: src/page/settings/account.vue:796 src/page/settings/account.vue:824
-#: src/page/settings/account.vue:852 src/page/settings/account.vue:623
-#: src/page/settings/account.vue:706
+#: src/dialog/admin/users/edit.vue:320 src/page/settings/account.vue:93
+#: src/page/settings/account.vue:119 src/page/settings/account.vue:145
+#: src/page/settings/account.vue:171 src/page/settings/account.vue:227
+#: src/page/settings/account.vue:286 src/page/settings/account.vue:314
+#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
+#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
+#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
+#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
+#: src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "Neteisinga data"
 
@@ -1267,8 +1350,8 @@ msgstr "Neteisinga data"
 msgid "Invalid date"
 msgstr "Neteisinga data"
 
-#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:75
-#: src/page/connect.vue:81
+#: src/page/connect.vue:74 src/page/connect.vue:80 src/page/connect.vue:77
+#: src/page/connect.vue:84
 msgid "Invalid parameters"
 msgstr "Neteisinga data"
 
@@ -1276,7 +1359,12 @@ msgstr "Neteisinga data"
 msgid "Invalid photo selected"
 msgstr "Pasirinkta netinkama nuotrauka"
 
-#: src/model/rest.js:181
+#: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
+#: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
+msgid "It is a one-time use code that will disable 2FA for your account when you use it."
+msgstr ""
+
+#: src/model/rest.js:165
 msgid "Item"
 msgstr "Prekė"
 
@@ -1296,13 +1384,13 @@ msgstr "JPEG ir miniatiūros prireikus atvaizduojamos automatiškai."
 msgid "Keywords"
 msgstr "Raktiniai žodžiai"
 
-#: src/dialog/photo/edit/labels.vue:25 src/model/label.js:124
+#: src/dialog/photo/edit/labels.vue:24 src/model/label.js:124
 msgid "Label"
 msgstr "Etiketė"
 
-#: src/app/routes.js:322 src/component/navigation.vue:320
-#: src/component/navigation.vue:1240 src/dialog/photo/edit.vue:39
-#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:195
+#: src/app/routes.js:322 src/component/navigation.vue:324
+#: src/component/navigation.vue:1240 src/dialog/photo/edit.vue:40
+#: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:194
 #: src/page/settings/general.vue:187
 msgid "Labels"
 msgstr "Etiketės"
@@ -1311,7 +1399,7 @@ msgstr "Etiketės"
 msgid "Labels deleted"
 msgstr "Ištrintos etiketės"
 
-#: src/options/options.js:472
+#: src/options/options.js:468
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: detalių išsaugojimas, minimalūs artefaktai"
 
@@ -1319,7 +1407,7 @@ msgstr "Lanczos: detalių išsaugojimas, minimalūs artefaktai"
 msgid "Language"
 msgstr "Kalba"
 
-#: src/page/admin/sessions.vue:83 src/page/admin/sessions.vue:33
+#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "Paskutinis aktyvus"
 
@@ -1331,21 +1419,21 @@ msgstr "Paskutinis prisijungimas"
 msgid "Last Sync"
 msgstr "Sinchronizavimas"
 
-#: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:151
+#: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
 msgstr "Platuma"
 
-#: src/options/admin.js:47 src/options/admin.js:65
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
 #: src/page/connect.vue:130 src/dialog/sponsor.vue:37
-#: src/page/about/about.vue:39 src/page/about/about.vue:16
+#: src/page/about/about.vue:39 src/page/about/about.vue:18
 #: src/page/about/about.vue:273 src/page/connect.vue:100
 msgid "Learn more"
 msgstr "Sužinokite daugiau"
 
-#: src/component/navigation.vue:615
+#: src/component/navigation.vue:618
 msgid "Legal Information"
 msgstr "Teisinė informacija"
 
@@ -1354,13 +1442,13 @@ msgid "Lens"
 msgstr "Objektyvas"
 
 #: src/app/routes.js:358 src/app/routes.js:365 src/app/routes.js:372
-#: src/component/navigation.vue:359 src/component/navigation.vue:369
+#: src/component/navigation.vue:363 src/component/navigation.vue:373
 #: src/component/navigation.vue:4 src/component/navigation.vue:1377
 #: src/page/settings.vue:48 src/page/settings/general.vue:407
 msgid "Library"
 msgstr "Biblioteka"
 
-#: src/page/connect.vue:4 src/app/routes.js:66 src/component/navigation.vue:445
+#: src/page/connect.vue:4 src/app/routes.js:66 src/component/navigation.vue:449
 #: src/component/navigation.vue:43 src/dialog/photo/edit/details.vue:560
 #: src/page/about/license.vue:4
 msgid "License"
@@ -1370,104 +1458,104 @@ msgstr "Licencija"
 msgid "Like"
 msgstr "Kaip"
 
-#: src/options/options.js:450
+#: src/options/options.js:446
 msgid "Lime"
 msgstr "Lime"
 
-#: src/page/library/browse.vue:319
+#: src/page/library/browse.vue:320
 msgid "Limit reached, showing first %{n} files"
 msgstr "Limitas pasiektas, rodomi pirmieji %{n} failai"
 
-#: src/options/options.js:474
+#: src/options/options.js:470
 msgid "Linear: Very Smooth, Best Performance"
 msgstr "Linijinis: Labai sklandus, geriausias našumas"
 
-#: src/options/admin.js:48 src/options/admin.js:49 src/model/link.js:119
+#: src/model/link.js:117 src/options/auth.js:29 src/options/auth.js:30
 msgid "Link"
 msgstr "Nuoroda"
 
-#: src/component/album/toolbar.vue:66 src/component/photo/toolbar.vue:77
+#: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:71
 msgid "List"
 msgstr "Sąrašas"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
-#: src/component/photo/cards.vue:492 src/component/photo/list.vue:183
-#: src/component/photo/mosaic.vue:218 src/options/options.js:362
+#: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
+#: src/component/photo/mosaic.vue:218 src/options/options.js:358
 msgid "Live"
 msgstr "Gyvai"
 
-#: src/component/navigation.vue:205
+#: src/component/navigation.vue:209
 msgid "Live Photos"
 msgstr "Nuotraukos"
 
-#: src/options/admin.js:45 src/options/admin.js:46 src/options/admin.js:61
+#: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"
 msgstr "Vietinis"
 
-#: src/dialog/photo/edit/details.vue:193 src/options/options.js:43
+#: src/dialog/photo/edit/details.vue:193 src/options/options.js:35
 msgid "Local Time"
 msgstr "Vietinis laikas"
 
-#: src/dialog/photo/edit/labels.vue:44
+#: src/dialog/photo/edit/labels.vue:47
 msgid "location"
 msgstr "vieta"
 
-#: src/page/settings/account.vue:739 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:840 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
-#: src/dialog/photo/edit/info.vue:71 src/page/albums.vue:88
-#: src/page/settings/account.vue:593
+#: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:90
+#: src/page/settings/account.vue:694
 msgid "Location"
 msgstr "Vieta"
 
-#: src/page/library/errors.vue:37 src/page/library/errors.vue:1
+#: src/page/library/errors.vue:45 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
 msgstr "Žurnalo pranešimai čia rodomi, kai \"PhotoPrism\" susiduria su sugadintais failais arba kitomis galimomis problemomis."
 
-#: src/component/navigation.vue:475 src/component/navigation.vue:1778
+#: src/component/navigation.vue:479 src/component/navigation.vue:1778
 #: src/component/navigation.vue:2092
 msgid "Login"
 msgstr "Prisijungimas"
 
-#: src/component/navigation.vue:531 src/component/navigation.vue:1929
+#: src/component/navigation.vue:534 src/component/navigation.vue:1929
 #: src/component/navigation.vue:1960 src/component/navigation.vue:2011
 msgid "Logout"
 msgstr "Atsijungimas"
 
-#: src/component/navigation.vue:599 src/page/library.vue:58
+#: src/component/navigation.vue:602 src/page/library.vue:58
 #: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "Žurnalai"
 
-#: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:159
+#: src/dialog/photo/edit/details.vue:337 src/dialog/photo/edit/info.vue:157
 msgid "Longitude"
 msgstr "Ilguma"
 
-#: src/options/options.js:385
+#: src/options/options.js:381
 msgid "Low"
 msgstr "Žema"
 
-#: src/options/options.js:340
+#: src/options/options.js:336
 msgid "Low Resolution"
 msgstr "Maža skiriamoji geba"
 
-#: src/options/options.js:444
+#: src/options/options.js:440
 msgid "Magenta"
 msgstr "Magenta"
 
-#: src/dialog/photo/edit/files.vue:193 src/dialog/photo/edit/files.vue:190
+#: src/dialog/photo/edit/files.vue:196 src/dialog/photo/edit/files.vue:193
 msgid "Main Color"
 msgstr "Pagrindinė spalva"
 
-#: src/options/options.js:478
+#: src/options/options.js:474
 msgid "Male"
 msgstr "Vyras"
 
 #: src/page/connect.vue:62 src/page/connect.vue:85 src/page/about/about.vue:54
-#: src/page/about/about.vue:9 src/page/connect.vue:59 src/page/connect.vue:86
+#: src/page/about/about.vue:9 src/page/connect.vue:59
 msgid "Manage Account"
 msgstr "Tvarkyti paskyrą"
 
-#: src/dialog/photo/edit/labels.vue:40
+#: src/dialog/photo/edit/labels.vue:43
 msgid "manual"
 msgstr "rankinis"
 
@@ -1479,11 +1567,11 @@ msgstr "Įkėlimas rankiniu būdu"
 msgid "Maps"
 msgstr "Žemėlapiai"
 
-#: src/model/marker.js:146
+#: src/model/marker.js:142
 msgid "Marker"
 msgstr "Žymeklis"
 
-#: src/options/options.js:301
+#: src/options/options.js:297
 msgid "Medium"
 msgstr "Vidutinis"
 
@@ -1499,7 +1587,7 @@ msgstr "Sujungti %{a} su %{b}?"
 msgid "Message sent"
 msgstr "Išsiųsta žinutė"
 
-#: src/dialog/photo/edit/info.vue:61
+#: src/dialog/photo/edit/info.vue:70
 msgid "Metadata"
 msgstr "Metaduomenys"
 
@@ -1507,29 +1595,29 @@ msgstr "Metaduomenys"
 msgid "Minimize"
 msgstr "Sumažinkite"
 
-#: src/dialog/photo/edit/files.vue:205 src/dialog/photo/edit/files.vue:202
+#: src/dialog/photo/edit/files.vue:208 src/dialog/photo/edit/files.vue:205
 msgid "Missing"
 msgstr "Trūksta"
 
-#: src/app/routes.js:162 src/component/navigation.vue:245
+#: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
 msgid "Moments"
 msgstr "Akimirkos"
 
-#: src/component/navigation.vue:81
+#: src/component/navigation.vue:85
 msgid "Monochrome"
 msgstr "Vienspalvis"
 
-#: src/page/settings/account.vue:501 src/component/photo/toolbar.vue:384
+#: src/page/settings/account.vue:602 src/component/photo/toolbar.vue:412
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "Mėnuo"
 
-#: src/component/album/toolbar.vue:64 src/component/photo/toolbar.vue:75
+#: src/component/album/toolbar.vue:62 src/component/photo/toolbar.vue:69
 msgid "Mosaic"
 msgstr "Mozaika"
 
-#: src/component/album/toolbar.vue:78 src/component/photo/toolbar.vue:87
+#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
 #: src/dialog/album/edit.vue:28
 msgid "Most Relevant"
 msgstr "Aktualiausia"
@@ -1538,32 +1626,32 @@ msgstr "Aktualiausia"
 msgid "Move Files"
 msgstr "Failų perkėlimas"
 
-#: src/dialog/account/password.vue:165
+#: src/dialog/account/password.vue:168
 msgid "Must have at least %{n} characters."
 msgstr "Ne mažiau kaip 6 ženklai."
 
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
-#: src/component/photo/list.vue:139 src/component/photo/list.vue:235
+#: src/component/photo/list.vue:139 src/component/photo/list.vue:234
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
-#: src/dialog/photo/edit/info.vue:32 src/dialog/photo/edit/info.vue:67
+#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/info.vue:76
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
-#: src/dialog/photo/edit/people.vue:21 src/dialog/photo/edit/people.vue:226
+#: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:87 src/page/auth/login.vue:89 src/page/labels.vue:339
-#: src/page/people/new.vue:52 src/page/people/new.vue:297
-#: src/page/people/recognized.vue:395 src/page/settings/services.vue:26
+#: src/page/albums.vue:89 src/page/auth/login.vue:146 src/page/labels.vue:347
+#: src/page/people/new.vue:52 src/page/people/new.vue:305
+#: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "Pavadinimas"
 
-#: src/component/album/toolbar.vue:87 src/dialog/album/edit.vue:32
-#: src/dialog/photo/edit/labels.vue:30 src/dialog/photo/edit/people.vue:24
+#: src/component/album/toolbar.vue:85 src/dialog/album/edit.vue:32
+#: src/dialog/photo/edit/labels.vue:34 src/dialog/photo/edit/people.vue:29
 #: src/page/labels.vue:45 src/page/library/browse.vue:44
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
 msgid "Name too long"
 msgstr "Per ilgas vardas"
 
-#: src/page/admin/sessions.vue:69 src/page/admin/users.vue:133
-#: src/options/options.js:422 src/options/options.js:432
+#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:128
+#: src/options/options.js:418 src/options/options.js:428
 #: src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Niekada"
@@ -1572,42 +1660,42 @@ msgstr "Niekada"
 msgid "New"
 msgstr "Naujas"
 
-#: src/dialog/account/password.vue:162
+#: src/dialog/account/password.vue:165
 msgid "New Password"
 msgstr "Naujas slaptažodis"
 
-#: src/component/album/toolbar.vue:71 src/component/photo/toolbar.vue:80
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:89
+#: src/component/album/toolbar.vue:69 src/component/photo/toolbar.vue:74
+#: src/dialog/album/edit.vue:21 src/page/albums.vue:91
 msgid "Newest First"
 msgstr "Naujausias pirmas"
 
 #: src/dialog/people/merge.vue:15 src/dialog/photo/archive.vue:15
-#: src/dialog/photo/edit/info.vue:331 src/dialog/photo/edit/info.vue:352
-#: src/dialog/photo/edit/info.vue:373 src/dialog/photo/edit/info.vue:394
-#: src/dialog/photo/edit/info.vue:414
+#: src/dialog/photo/edit/info.vue:354 src/dialog/photo/edit/info.vue:375
+#: src/dialog/photo/edit/info.vue:396 src/dialog/photo/edit/info.vue:417
+#: src/dialog/photo/edit/info.vue:437
 msgid "No"
 msgstr "Ne"
 
-#: src/page/albums.vue:54 src/page/albums.vue:496
+#: src/page/albums.vue:73 src/page/albums.vue:505
 msgid "No albums found"
 msgstr "Albumų nerasta"
 
-#: src/dialog/photo/edit/labels.vue:69 src/page/labels.vue:31
-#: src/page/labels.vue:418
+#: src/dialog/photo/edit/labels.vue:69 src/page/labels.vue:38
+#: src/page/labels.vue:422
 msgid "No labels found"
 msgstr "Etikečių nerasta"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
-#: src/page/people/new.vue:282 src/page/people/new.vue:368
-#: src/page/people/recognized.vue:35 src/page/people/recognized.vue:493
+#: src/page/people/new.vue:283 src/page/people/new.vue:372
+#: src/page/people/recognized.vue:42 src/page/people/recognized.vue:497
 msgid "No people found"
 msgstr "Žmonių nerasta"
 
-#: src/common/viewer.js:263 src/component/photo/cards.vue:8
+#: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:390
-#: src/page/library/browse.vue:34 src/page/photos.vue:505
-#: src/page/places.vue:376 src/page/places.vue:456
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:394
+#: src/page/library/browse.vue:34 src/page/photos.vue:511
+#: src/page/places.vue:393 src/page/places.vue:479
 msgid "No pictures found"
 msgstr "Paveikslėlių nerasta"
 
@@ -1616,7 +1704,7 @@ msgstr "Paveikslėlių nerasta"
 msgid "No recently edited pictures"
 msgstr "Nėra neseniai redaguotų nuotraukų"
 
-#: src/dialog/share/upload.vue:66
+#: src/dialog/share/upload.vue:64
 msgid "No servers configured."
 msgstr "Nėra sukonfigūruotų serverių."
 
@@ -1632,7 +1720,7 @@ msgstr "Ne, ačiū"
 msgid "No video selected"
 msgstr "Nėra pasirinkto vaizdo įrašo"
 
-#: src/page/library/errors.vue:34 src/page/library/errors.vue:1
+#: src/page/library/errors.vue:42 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
 msgstr "Jokių įspėjimų ar klaidų su šiuo raktažodžiu nėra. Atkreipkite dėmesį, kad paieška priklauso nuo mažųjų ir didžiųjų raidžių."
 
@@ -1646,8 +1734,8 @@ msgstr "Jokių įspėjimų ar klaidų su šiuo raktažodžiu nėra. Atkreipkite 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Prieš rodant nefotografuotus ir prastos kokybės vaizdus paieškos rezultatuose, juos reikia peržiūrėti."
 
-#: src/options/admin.js:50 src/options/admin.js:69 src/options/options.js:293
-#: src/options/options.js:389
+#: src/options/admin.js:43 src/options/auth.js:31 src/options/options.js:289
+#: src/options/options.js:385
 msgid "None"
 msgstr "Nėra"
 
@@ -1655,7 +1743,7 @@ msgstr "Nėra"
 msgid "Note you may manually manage your originals folder and importing is optional."
 msgstr "Atkreipkite dėmesį, kad originalų aplanką galite tvarkyti rankiniu būdu, o importuoti neprivaloma."
 
-#: src/page/settings/services.vue:38
+#: src/page/settings/services.vue:39
 msgid "Note:"
 msgstr "Pastaba:"
 
@@ -1671,65 +1759,69 @@ msgstr "Pastabos"
 msgid "Nothing to see here yet."
 msgstr "Kol kas čia nieko nematyti. Būkite kantrūs."
 
-#: src/page/admin/sessions.vue:45 src/page/admin/users.vue:43
+#: src/page/admin/sessions.vue:46 src/page/admin/users.vue:43
 msgid "Nothing was found."
 msgstr "Nieko nerasta."
 
-#: src/component/navigation.vue:502 src/component/navigation.vue:1863
+#: src/component/navigation.vue:505 src/component/navigation.vue:1863
 msgid "Offline"
 msgstr "Neprisijungus prie interneto"
 
-#: src/component/album/toolbar.vue:72 src/component/photo/toolbar.vue:81
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:90
+#: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
+#: src/dialog/album/edit.vue:22 src/page/albums.vue:92
 msgid "Oldest First"
 msgstr "Seniausias pirmas"
 
-#: src/dialog/webdav.vue:17
+#: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "\"Windows\" sistemoje prisijungimo dialogo lange įveskite šiuos išteklius:"
 
-#: src/options/options.js:428
+#: src/options/options.js:424
 msgid "Once a week"
 msgstr "Kartą per savaitę"
 
-#: src/page/albums.vue:498
+#: src/page/albums.vue:507
 msgid "One album found"
 msgstr "Rastas vienas albumas"
 
-#: src/page/library/browse.vue:311
+#: src/page/library/browse.vue:312
 msgid "One file found"
 msgstr "Rastas vienas failas"
 
-#: src/dialog/share/upload.vue:79
+#: src/dialog/share/upload.vue:78
 msgid "One file uploaded"
 msgstr "Įkeltas vienas failas"
 
-#: src/page/library/browse.vue:313
+#: src/page/library/browse.vue:314
 msgid "One folder found"
 msgstr "Rastas vienas aplankas"
 
-#: src/page/labels.vue:420
+#: src/page/labels.vue:424
 msgid "One label found"
 msgstr "Viena rasta etiketė"
 
-#: src/page/people/new.vue:284 src/page/people/new.vue:370
-#: src/page/people/recognized.vue:495
+#: src/page/people/new.vue:285 src/page/people/new.vue:374
+#: src/page/people/recognized.vue:499
 msgid "One person found"
 msgstr "Vienas asmuo rado"
 
-#: src/page/album/photos.vue:392 src/page/photos.vue:507
+#: src/page/album/photos.vue:396 src/page/photos.vue:513
 msgid "One picture found"
 msgstr "Vienas rastas paveikslėlis"
 
-#: src/options/options.js:447
+#: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
+msgid "Only locally managed accounts can be set up for authentication with 2FA."
+msgstr ""
+
+#: src/options/options.js:443
 msgid "Orange"
 msgstr "Oranžinė"
 
-#: src/page/settings/account.vue:619
+#: src/page/settings/account.vue:720
 msgid "Organization"
 msgstr "Orientavimasis"
 
-#: src/dialog/photo/edit/files.vue:172 src/dialog/photo/edit/files.vue:169
+#: src/dialog/photo/edit/files.vue:175 src/dialog/photo/edit/files.vue:172
 msgid "Orientation"
 msgstr "Orientavimasis"
 
@@ -1737,59 +1829,60 @@ msgstr "Orientavimasis"
 msgid "Original file names will be stored and indexed."
 msgstr "Originalūs failų pavadinimai bus saugomi ir indeksuojami."
 
-#: src/dialog/photo/edit/files.vue:80 src/dialog/photo/edit/files.vue:77
-#: src/dialog/photo/edit/info.vue:38
+#: src/dialog/photo/edit/files.vue:83 src/dialog/photo/edit/files.vue:80
+#: src/dialog/photo/edit/info.vue:37
 msgid "Original Name"
 msgstr "Originalus pavadinimas"
 
-#: src/component/navigation.vue:378 src/dialog/service/edit.vue:108
+#: src/component/navigation.vue:382 src/dialog/service/edit.vue:104
 #: src/model/file.js:195 src/page/library/browse.vue:6
 #: src/page/settings/general.vue:429 src/page/settings/general.vue:647
 msgid "Originals"
 msgstr "Originalai"
 
-#: src/options/options.js:467 src/options/options.js:480
+#: src/options/options.js:463 src/options/options.js:476
 msgid "Other"
 msgstr "Kita"
 
-#: src/page/about/about.vue:17
+#: src/page/about/about.vue:15
 msgid "Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible."
 msgstr "Mūsų misija - pateikti vartotojui patogiausią ir privatumą užtikrinantį sprendimą, kad nuotraukos būtų tvarkingos ir prieinamos."
 
-#: src/options/options.js:327 src/page/places.vue:158
+#: src/options/options.js:323 src/page/places.vue:157
 msgid "Outdoor"
 msgstr "Lauko"
 
-#: src/dialog/photo/edit/info.vue:133
+#: src/dialog/photo/edit/info.vue:131
 msgid "Panorama"
 msgstr "Panorama"
 
-#: src/component/navigation.vue:89
+#: src/component/navigation.vue:93
 msgid "Panoramas"
 msgstr "Panoramos"
 
-#: src/dialog/admin/users/add.vue:123 src/dialog/service/add.vue:126
-#: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
-#: src/page/auth/login.vue:118
+#: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:150
+#: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
+#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
+#: src/dialog/share.vue:24 src/page/auth/login.vue:178
 msgid "Password"
 msgstr "Slaptažodis"
 
-#: src/dialog/account/password.vue:52
+#: src/dialog/account/password.vue:50
 msgid "Password changed"
 msgstr "Pakeistas slaptažodis"
 
-#: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:219
-#: src/component/navigation.vue:575 src/component/navigation.vue:885
-#: src/dialog/photo/edit.vue:52 src/dialog/photo/edit.vue:6
-#: src/dialog/photo/edit.vue:246 src/page/settings/general.vue:143
+#: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:223
+#: src/component/navigation.vue:578 src/component/navigation.vue:885
+#: src/dialog/photo/edit.vue:53 src/dialog/photo/edit.vue:6
+#: src/dialog/photo/edit.vue:245 src/page/settings/general.vue:143
 msgid "People"
 msgstr "Žmonės"
 
-#: src/dialog/share.vue:72
+#: src/dialog/share.vue:70
 msgid "People you share a link with will be able to view public contents."
 msgstr "Žmonės, su kuriais bendrinate nuorodą, galės peržiūrėti viešą turinį."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:155
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:149
 msgid "Permanently deleted"
 msgstr "Visam laikui ištrintas"
 
@@ -1797,11 +1890,15 @@ msgstr "Visam laikui ištrintas"
 msgid "Permanently remove files to free up storage."
 msgstr "Visam laikui pašalinkite failus, kad atlaisvintumėte saugyklą."
 
-#: src/page/settings/account.vue:793 src/page/settings/account.vue:647
+#: src/options/auth.js:41
+msgid "Personal"
+msgstr "Asmeninis"
+
+#: src/page/settings/account.vue:894 src/page/settings/account.vue:748
 msgid "Phone"
 msgstr "Telefonas"
 
-#: src/model/photo.js:1255
+#: src/model/photo.js:1197
 msgid "Photo"
 msgstr "Nuotrauka"
 
@@ -1813,7 +1910,7 @@ msgstr "\"PhotoPrism\" buvo atnaujintas…"
 msgid "PhotoPrism is 100% self-funded and independent."
 msgstr "\"PhotoPrism\" yra 100 % savarankiškai finansuojama ir nepriklausoma."
 
-#: src/page/about/about.vue:24 src/page/about/about.vue:1
+#: src/page/about/about.vue:23 src/page/about/about.vue:2
 msgid "PhotoPrism+ Membership"
 msgstr "\"PhotoPrism+\" narystė"
 
@@ -1821,11 +1918,11 @@ msgstr "\"PhotoPrism+\" narystė"
 msgid "Photos"
 msgstr "Nuotraukos"
 
-#: src/options/options.js:445
+#: src/options/options.js:441
 msgid "Pink"
 msgstr "Rožinis"
 
-#: src/dialog/photo/edit/info.vue:141
+#: src/dialog/photo/edit/info.vue:139
 msgid "Place"
 msgstr "Vieta"
 
@@ -1834,15 +1931,15 @@ msgid "Place & Time"
 msgstr "Vieta & amp; laikas"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
-#: src/app/routes.js:290 src/component/navigation.vue:285
-#: src/component/navigation.vue:295 src/component/navigation.vue:581
+#: src/app/routes.js:290 src/component/navigation.vue:289
+#: src/component/navigation.vue:299 src/component/navigation.vue:584
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
-#: src/page/settings/general.vue:118 src/page/settings/general.vue:497
+#: src/page/settings/general.vue:112 src/page/settings/general.vue:497
 msgid "Places"
 msgstr "Vietos"
 
-#: src/dialog/account/password.vue:193
+#: src/dialog/account/password.vue:197
 msgid "Please confirm your new password."
 msgstr "Patvirtinkite naująjį slaptažodį."
 
@@ -1853,6 +1950,10 @@ msgstr "Neįkelkite jokių privačių, neteisėtų ar įžeidžiančių nuotrauk
 #: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Neįkelkite nuotraukų, kuriose yra įžeidžiančio turinio."
+
+#: src/page/auth/login.vue:12 src/page/auth/login.vue:2
+msgid "Please enter a valid verification code to access your account:"
+msgstr ""
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -1870,7 +1971,7 @@ msgstr "Palaukite…"
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG dydžio riba: %{n}px"
 
-#: src/dialog/photo/edit/files.vue:152 src/dialog/photo/edit/files.vue:149
+#: src/dialog/photo/edit/files.vue:155 src/dialog/photo/edit/files.vue:152
 msgid "Portrait"
 msgstr "Portretas"
 
@@ -1890,7 +1991,7 @@ msgstr "Paspauskite mygtuką, kad pradėtumėte indeksuoti…"
 msgid "Press enter to create a new album."
 msgstr "Paspauskite Enter, kad sukurtumėte naują albumą."
 
-#: src/dialog/photo/edit/files.vue:19 src/dialog/photo/edit/files.vue:16
+#: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Peržiūra"
 
@@ -1898,27 +1999,27 @@ msgstr "Peržiūra"
 msgid "Preview Images"
 msgstr "Peržiūros vaizdai"
 
+#: src/dialog/photo/edit/files.vue:38 src/dialog/photo/edit/files.vue:139
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:136
-#: src/dialog/photo/edit/files.vue:32 src/dialog/photo/edit/files.vue:133
 #: src/dialog/photo/edit/files.vue:36
 msgid "Primary"
 msgstr "Pagrindinis"
 
-#: src/app/routes.js:249 src/component/navigation.vue:346
+#: src/app/routes.js:249 src/component/navigation.vue:350
 #: src/component/navigation.vue:1330 src/dialog/album/edit.vue:232
-#: src/dialog/photo/edit/info.vue:117 src/page/settings/general.vue:209
+#: src/dialog/photo/edit/info.vue:115 src/page/settings/general.vue:209
 msgid "Private"
 msgstr "Privatus"
 
-#: src/page/about/feedback.vue:6 src/options/options.js:463
+#: src/page/about/feedback.vue:6 src/options/options.js:459
 msgid "Product Feedback"
 msgstr "Atsiliepimai apie produktą"
 
-#: src/dialog/photo/edit/files.vue:160 src/dialog/photo/edit/files.vue:157
+#: src/dialog/photo/edit/files.vue:163 src/dialog/photo/edit/files.vue:160
 msgid "Projection"
 msgstr "Projekcija"
 
-#: src/options/options.js:443
+#: src/options/options.js:439
 msgid "Purple"
 msgstr "Violetinė"
 
@@ -1926,12 +2027,11 @@ msgstr "Violetinė"
 msgid "Quality Filter"
 msgstr "Kokybės filtras"
 
-#: src/dialog/photo/edit/info.vue:74
+#: src/dialog/photo/edit/info.vue:73
 msgid "Quality Score"
 msgstr "Kokybės balas"
 
-#: src/page/admin/sessions.vue:62 src/page/admin/users.vue:93
-#: src/page/admin/users.vue:106
+#: src/page/admin/users.vue:93
 msgid "r"
 msgstr "r"
 
@@ -1939,7 +2039,7 @@ msgstr "r"
 msgid "Random"
 msgstr "Atsitiktinis"
 
-#: src/options/options.js:354
+#: src/options/options.js:350
 msgid "Raw"
 msgstr "Neapdorotas"
 
@@ -1956,18 +2056,18 @@ msgstr "Iš naujo indeksuokite visus originalus, įskaitant jau indeksuotus ir n
 msgid "Read-Only Mode"
 msgstr "Tik skaitymo režimas"
 
-#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:82
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:91
+#: src/component/album/toolbar.vue:71 src/component/photo/toolbar.vue:76
+#: src/dialog/album/edit.vue:23 src/page/albums.vue:93
 msgid "Recently Added"
 msgstr "Neseniai pridėta"
 
-#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:83
-#: src/dialog/album/edit.vue:24 src/page/albums.vue:92
+#: src/component/album/toolbar.vue:72 src/component/photo/toolbar.vue:77
+#: src/dialog/album/edit.vue:24 src/page/albums.vue:94
 msgid "Recently Edited"
 msgstr "Neseniai redaguotas"
 
 #: src/dialog/photo/edit/people.vue:9 src/page/people/new.vue:33
-#: src/page/people/recognized.vue:40
+#: src/page/people/recognized.vue:47
 msgid "Recognition starts after indexing has been completed."
 msgstr "Atpažinimas pradedamas baigus indeksavimą."
 
@@ -1979,24 +2079,24 @@ msgstr "Pripažintas"
 msgid "Recognizes faces so that specific people can be found."
 msgstr "atpažįsta veidus, kad būtų galima rasti konkrečius žmones."
 
-#: src/options/options.js:446
+#: src/options/options.js:442
 msgid "Red"
 msgstr "Raudona"
 
-#: src/page/connect.vue:92 src/page/connect.vue:93
+#: src/page/connect.vue:92
 msgid "Register"
 msgstr "Registruotis"
 
 #: src/component/album/toolbar.vue:64 src/component/navigation.vue:2025
-#: src/component/photo/toolbar.vue:78 src/dialog/reload.vue:12
-#: src/page/albums.vue:109 src/page/labels.vue:85
-#: src/page/library/browse.vue:91 src/page/library/errors.vue:70
-#: src/page/people/new.vue:57 src/page/people/recognized.vue:96
+#: src/component/photo/toolbar.vue:86 src/dialog/reload.vue:12
+#: src/page/albums.vue:117 src/page/labels.vue:93
+#: src/page/library/browse.vue:91 src/page/library/errors.vue:78
+#: src/page/people/new.vue:57 src/page/people/recognized.vue:104
 msgid "Reload"
 msgstr "Perkrauti"
 
-#: src/component/navigation.vue:141 src/dialog/reload.vue:26
-#: src/page/settings/general.vue:92 src/page/settings/library.vue:46
+#: src/component/navigation.vue:146 src/dialog/reload.vue:26
+#: src/page/settings/general.vue:96 src/page/settings/library.vue:48
 msgid "Reloading…"
 msgstr "Perkrovimas…"
 
@@ -2031,11 +2131,11 @@ msgstr "Užklausa nepavyko - neteisingas atsakymas"
 #: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:128
 #: src/dialog/admin/users/edit.vue:102 src/page/about/feedback.vue:133
 #: src/page/about/feedback.vue:153 src/page/about/feedback.vue:196
-#: src/page/settings/account.vue:196 src/page/about/feedback.vue:195
+#: src/page/settings/account.vue:198 src/page/about/feedback.vue:195
 msgid "Required"
 msgstr "Reikalinga"
 
-#: src/dialog/photo/edit/info.vue:82
+#: src/dialog/photo/edit/info.vue:81
 msgid "Resolution"
 msgstr "Rezoliucija"
 
@@ -2052,40 +2152,48 @@ msgstr "Atkurti"
 msgid "Retry Limit"
 msgstr "Pakartojimo limitas"
 
-#: src/dialog/account/password.vue:190
+#: src/dialog/account/password.vue:194
 msgid "Retype Password"
 msgstr "Pakartokite slaptažodį"
 
-#: src/app/routes.js:242 src/component/navigation.vue:129
+#: src/app/routes.js:242 src/component/navigation.vue:133
 msgid "Review"
 msgstr "Peržiūrėkite"
 
 #: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
-#: src/page/admin/sessions.vue:64 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:67 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "Vaidmuo"
 
-#: src/options/options.js:322 src/page/places.vue:154
+#: src/options/options.js:318 src/page/places.vue:153
 msgid "Satellite"
 msgstr "Palydovas"
 
-#: src/dialog/admin/users/edit.vue:77 src/dialog/account/password.vue:42
-#: src/dialog/album/edit.vue:53 src/dialog/service/edit.vue:107
-#: src/dialog/share.vue:61
+#: src/dialog/admin/users/edit.vue:80 src/dialog/account/password.vue:41
+#: src/dialog/album/edit.vue:48 src/dialog/service/edit.vue:107
+#: src/dialog/share.vue:59
 msgid "Save"
 msgstr "Išsaugoti"
 
-#: src/dialog/photo/edit/info.vue:125
+#: src/dialog/photo/edit/info.vue:123
 msgid "Scan"
 msgstr "Skenuoti"
 
-#: src/component/navigation.vue:121
+#: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
+msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
+msgstr ""
+
+#: src/component/navigation.vue:125
 msgid "Scans"
 msgstr "Skenuoja"
 
-#: src/component/navigation.vue:61 src/component/navigation.vue:71
-#: src/component/navigation.vue:563 src/component/navigation.vue:4
+#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
+msgid "Scope"
+msgstr "Apimtis"
+
+#: src/component/navigation.vue:65 src/component/navigation.vue:75
+#: src/component/navigation.vue:566 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:49
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:77 src/page/places.vue:46
@@ -2128,7 +2236,7 @@ msgstr "Atranka archyvuota"
 msgid "Selection restored"
 msgstr "Atkurta atranka"
 
-#: src/page/about/feedback.vue:45
+#: src/page/about/feedback.vue:45 src/page/about/feedback.vue:43
 msgid "Send"
 msgstr "Siųsti"
 
@@ -2145,11 +2253,11 @@ msgstr "Paslaugos URL"
 msgid "Services"
 msgstr "Paslaugos URL"
 
-#: src/model/session.js:60
+#: src/model/session.js:100 src/options/auth.js:40
 msgid "Session"
 msgstr "Sesija"
 
-#: src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:25
 msgid "Session ID"
 msgstr "Sesijos ID"
 
@@ -2159,18 +2267,20 @@ msgstr "Sesijos"
 
 #: src/app/routes.js:100 src/app/routes.js:380 src/app/routes.js:392
 #: src/app/routes.js:405 src/app/routes.js:418 src/app/routes.js:430
-#: src/component/navigation.vue:410 src/component/navigation.vue:420
+#: src/component/navigation.vue:414 src/component/navigation.vue:424
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
 #: src/component/navigation.vue:2058
 msgid "Settings"
 msgstr "Nustatymai"
 
-#: src/page/settings/account.vue:117 src/page/settings/account.vue:132
+#: src/page/settings/account.vue:127 src/page/settings/account.vue:142
+#: src/dialog/account/passcode.vue:146
 msgid "Settings saved"
 msgstr "Išsaugoti nustatymai"
 
-#: src/dialog/share/upload.vue:32
+#: src/dialog/account/passcode.vue:40 src/dialog/account/passcode.vue:21
+#: src/dialog/share/upload.vue:31
 msgid "Setup"
 msgstr "Sąranka"
 
@@ -2187,23 +2297,23 @@ msgstr "Dalintis %{pavadinimas}"
 msgid "Share your pictures with other apps and services."
 msgstr "bendrinkite nuotraukas su kitomis programomis ir paslaugomis."
 
-#: src/page/people/new.vue:219 src/page/people/recognized.vue:284
+#: src/page/people/new.vue:219 src/page/people/recognized.vue:292
 msgid "Show"
 msgstr "Rodyti"
 
-#: src/page/people/new.vue:65
+#: src/page/people/new.vue:81
 msgid "Show all new faces"
 msgstr "Rodyti visus naujus veidus"
 
-#: src/page/people/new.vue:75 src/page/people/recognized.vue:116
+#: src/page/people/new.vue:75 src/page/people/recognized.vue:124
 msgid "Show hidden"
 msgstr "Rodyti paslėptus"
 
-#: src/page/labels.vue:120
+#: src/page/labels.vue:128
 msgid "Show less"
 msgstr "Rodyti mažiau"
 
-#: src/component/photo/toolbar.vue:60 src/page/labels.vue:103
+#: src/component/photo/toolbar.vue:68 src/page/labels.vue:111
 msgid "Show more"
 msgstr "Rodyti daugiau"
 
@@ -2215,11 +2325,11 @@ msgstr "Rodyti serverio žurnalus bibliotekoje."
 msgid "Shows more detailed log messages. Requires a restart."
 msgstr "Rodomi išsamesni žurnalo pranešimai. Reikia paleisti iš naujo."
 
-#: src/model/file.js:213 src/page/settings/general.vue:689
+#: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/auth/login.vue:22
+#: src/page/auth/login.vue:38
 msgid "Sign in"
 msgstr "Prisijunkite"
 
@@ -2227,25 +2337,25 @@ msgstr "Prisijunkite"
 msgid "Similar"
 msgstr "Panašiai"
 
-#: src/dialog/photo/edit/files.vue:86 src/dialog/photo/edit/files.vue:83
-#: src/dialog/photo/edit/files.vue:44 src/dialog/service/edit.vue:226
+#: src/dialog/photo/edit/files.vue:89 src/dialog/photo/edit/files.vue:86
+#: src/dialog/photo/edit/files.vue:49 src/dialog/service/edit.vue:226
 msgid "Size"
 msgstr "Dydis"
 
-#: src/options/options.js:305
+#: src/options/options.js:301
 msgid "Slow"
 msgstr "Lėtas"
 
-#: src/dialog/photo/edit/files.vue:92 src/dialog/photo/edit/files.vue:89
+#: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 msgid "Software"
 msgstr "Programinė įranga"
 
-#: src/component/photo/toolbar.vue:336 src/dialog/album/edit.vue:189
-#: src/page/albums.vue:251
+#: src/component/photo/toolbar.vue:356 src/dialog/album/edit.vue:189
+#: src/page/albums.vue:267
 msgid "Sort Order"
 msgstr "Rūšiavimo tvarka"
 
-#: src/dialog/photo/edit/labels.vue:26
+#: src/dialog/photo/edit/labels.vue:25
 msgid "Source"
 msgstr "Šaltinis"
 
@@ -2261,11 +2371,11 @@ msgstr "Sukaupti failus, turinčius tą patį unikalų atvaizdo arba egzempliori
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
 msgstr "Sudėkite nuotraukas, padarytas tuo pačiu laiku ir toje pačioje vietoje, remdamiesi jų metaduomenimis."
 
-#: src/dialog/photo/edit/info.vue:101
+#: src/dialog/photo/edit/info.vue:99
 msgid "Stackable"
 msgstr "Sukraunamas"
 
-#: src/component/navigation.vue:113 src/page/settings/library.vue:33
+#: src/component/navigation.vue:117 src/page/settings/library.vue:33
 msgid "Stacks"
 msgstr "Komodos"
 
@@ -2273,7 +2383,7 @@ msgstr "Komodos"
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
 msgstr "Į krūvas grupuojami failai, turintys panašų pagrindą, tačiau besiskiriantys kokybe, formatu, dydžiu ar spalva."
 
-#: src/page/library/index.vue:35
+#: src/page/library/index.vue:34
 msgid "Start"
 msgstr "Pradžia"
 
@@ -2281,7 +2391,7 @@ msgstr "Pradžia"
 msgid "Start/Stop Slideshow"
 msgstr "Pradėti / sustabdyti skaidrių peržiūrą"
 
-#: src/component/navigation.vue:271 src/component/navigation.vue:305
+#: src/component/navigation.vue:275 src/component/navigation.vue:309
 #: src/component/navigation.vue:28 src/component/navigation.vue:1067
 msgid "States"
 msgstr "Valstybės"
@@ -2290,21 +2400,25 @@ msgstr "Valstybės"
 msgid "Static Size Limit: %{n}px"
 msgstr "Statinio dydžio riba: %{n}px"
 
-#: src/dialog/photo/edit/files.vue:46
+#: src/dialog/photo/edit/files.vue:51
 msgid "Status"
 msgstr "Statusas"
 
-#: src/dialog/photo/edit/files.vue:74 src/dialog/photo/edit/files.vue:71
+#: src/dialog/photo/edit/files.vue:77 src/dialog/photo/edit/files.vue:74
 msgid "Storage"
 msgstr "Saugojimo aplankas"
 
-#: src/options/options.js:317 src/page/places.vue:150
+#: src/options/options.js:313 src/page/places.vue:149
 msgid "Streets"
 msgstr "Gatvės"
 
 #: src/dialog/photo/edit/details.vue:585 src/model/subject.js:158
 msgid "Subject"
 msgstr "Tema"
+
+#: src/dialog/account/passcode.vue:131
+msgid "Successfully activated"
+msgstr ""
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2314,6 +2428,10 @@ msgstr "Sėkmingai prijungtas"
 msgid "Successfully deleted"
 msgstr "Sėkmingai ištrintas"
 
+#: src/dialog/account/passcode.vue:107
+msgid "Successfully verified"
+msgstr ""
+
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "Super administratorius"
@@ -2322,7 +2440,7 @@ msgstr "Super administratorius"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Papildomų paslaugų, pavyzdžiui, \"Google Drive\", palaikymas bus pridėtas laikui bėgant."
 
-#: src/component/navigation.vue:487 src/component/navigation.vue:1818
+#: src/component/navigation.vue:491 src/component/navigation.vue:1818
 #: src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr "Palaikykite mūsų misiją"
@@ -2336,11 +2454,11 @@ msgid "Sync raw and video files"
 msgstr "Sinchronizuokite neapdorotus ir vaizdo failus"
 
 #: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
-#: src/dialog/photo/edit/info.vue:56
+#: src/dialog/photo/edit/info.vue:55
 msgid "Taken"
 msgstr "Paimta"
 
-#: src/options/options.js:452
+#: src/options/options.js:448
 msgid "Teal"
 msgstr "Teal"
 
@@ -2352,15 +2470,15 @@ msgstr "Per ilgas tekstas"
 msgid "Thank You for Your Support!"
 msgstr "Ačiū už paramą!"
 
-#: src/page/about/about.vue:18
+#: src/page/about/about.vue:16
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
 msgstr "Todėl \"PhotoPrism\" buvo sukurta nuo pat pradžių, kad veiktų ten, kur jums reikia, nesumažinant laisvės, privatumo ar funkcionalumo."
 
-#: src/page/library/index.vue:40
+#: src/page/library/index.vue:39
 msgid "The index currently contains %{n} hidden files."
 msgstr "Šiuo metu rodyklėje yra %{n} paslėptų failų."
 
-#: src/page/library/index.vue:41
+#: src/page/library/index.vue:40
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "Jų formatas gali būti nepalaikomas, jos dar nebuvo konvertuotos į JPEG arba yra dublikatų."
 
@@ -2368,13 +2486,7 @@ msgstr "Jų formatas gali būti nepalaikomas, jos dar nebuvo konvertuotos į JPE
 msgid "Theme"
 msgstr "Tema"
 
-#: src/page/settings/services.vue:42
-msgid ""
-"This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
-"          from your computer or smartphone as if they were local."
-msgstr "Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono taip, tarsi jie būtų vietiniai."
-
-#: src/dialog/webdav.vue:26
+#: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono taip, tarsi jie būtų vietiniai."
 
@@ -2394,7 +2506,7 @@ msgstr "Laiko juosta"
 msgid "Timeout"
 msgstr "Laiko juosta"
 
-#: src/dialog/admin/users/edit.vue:151 src/page/settings/account.vue:114
+#: src/dialog/admin/users/edit.vue:151 src/page/settings/account.vue:116
 msgctxt "Account"
 msgid "Title"
 msgstr "Pavadinimas"
@@ -2404,26 +2516,38 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "Pavadinimas"
 
-#: src/page/settings/account.vue:114 src/component/photo/list.vue:136
-#: src/dialog/photo/edit/info.vue:46
+#: src/page/settings/account.vue:116 src/component/photo/list.vue:136
+#: src/dialog/photo/edit/info.vue:45
 msgid "Title"
 msgstr "Pavadinimas"
 
-#: src/page/settings/account.vue:593
+#: src/page/settings/account.vue:694
 msgid "Title / Position"
 msgstr "Per ilga antraštė"
 
-#: src/page/albums.vue:72
+#: src/page/albums.vue:74
 msgid "Title too long"
 msgstr "Per ilga antraštė"
+
+#: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
+msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
+msgstr ""
+
+#: src/dialog/account/apps.vue:20
+msgid "To create a new app-specific password, please enter the name and type of the application and select an expiration date:"
+msgstr ""
+
+#: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
+msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
+msgstr ""
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
 msgstr "Norėdami atnaujinti, galite įvesti aktyvavimo kodą arba spustelėti \"Registruotis\" ir užsiregistruoti mūsų svetainėje:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
-#: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:95
-#: src/component/photo/toolbar.vue:112 src/component/photo/toolbar.vue:128
+#: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:103
+#: src/component/photo/toolbar.vue:120 src/component/photo/toolbar.vue:136
 msgid "Toggle View"
 msgstr "Perjungti vaizdą"
 
@@ -2431,32 +2555,36 @@ msgstr "Perjungti vaizdą"
 msgid "Token"
 msgstr "Žetonas"
 
-#: src/dialog/upload.vue:167
+#: src/dialog/upload.vue:169
 msgid "Too many files selected"
 msgstr "Pasirinkta per daug failų"
 
-#: src/options/options.js:332 src/page/places.vue:162
+#: src/options/options.js:328 src/page/places.vue:161
 msgid "Topographic"
 msgstr "Topografinis"
 
-#: src/page/library/errors.vue:107
+#: src/page/library/errors.vue:115
 msgid "Troubleshooting Checklists"
 msgstr "Trikčių šalinimo kontroliniai sąrašai"
 
 #: src/component/photo/cards.vue:11 src/component/photo/cards.vue:9
 #: src/component/photo/list.vue:11 src/component/photo/list.vue:49
-#: src/component/photo/mosaic.vue:11 src/page/albums.vue:57
-#: src/page/labels.vue:34 src/page/people/recognized.vue:38
+#: src/component/photo/mosaic.vue:11 src/page/albums.vue:76
+#: src/page/labels.vue:41 src/page/people/recognized.vue:45
 msgid "Try again using other filters or keywords."
 msgstr "Bandykite dar kartą naudoti kitus filtrus arba raktinius žodžius."
 
-#: src/dialog/photo/edit/files.vue:98 src/dialog/photo/edit/files.vue:95
-#: src/dialog/photo/edit/files.vue:45 src/dialog/photo/edit/info.vue:16
+#: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
+msgid "Two-factor authentication has been enabled for your account."
+msgstr ""
+
+#: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
+#: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
 #: src/dialog/service/edit.vue:528
 msgid "Type"
 msgstr "Tipas"
 
-#: src/options/admin.js:12
+#: src/options/auth.js:13
 msgid "Unauthorized"
 msgstr "Neteisėtas"
 
@@ -2468,81 +2596,80 @@ msgstr "Panaikinti"
 msgid "Unique ID"
 msgstr "Unikalus ID"
 
-#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:30
-#: src/model/album.js:179 src/model/photo.js:772 src/model/photo.js:793
-#: src/model/photo.js:816 src/model/photo.js:834 src/model/photo.js:963
-#: src/model/photo.js:1026 src/model/photo.js:1040 src/model/user.js:151
-#: src/options/options.js:52 src/options/options.js:66
-#: src/options/options.js:83 src/options/options.js:97
-#: src/options/options.js:109 src/page/library/errors.vue:173
-#: src/page/library/errors.vue:180 src/page/library/logs.vue:18
+#: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:28
+#: src/model/album.js:179 src/model/photo.js:769 src/model/photo.js:790
+#: src/model/photo.js:813 src/model/photo.js:831 src/model/photo.js:954
+#: src/model/photo.js:999 src/model/photo.js:1012 src/model/user.js:154
+#: src/options/options.js:44 src/options/options.js:58
+#: src/options/options.js:75 src/options/options.js:89
+#: src/options/options.js:101 src/page/library/errors.vue:177
+#: src/page/library/errors.vue:184 src/page/library/logs.vue:17
 msgid "Unknown"
 msgstr "Nežinomas"
 
-#: src/page/settings/account.vue:38 src/page/settings/account.vue:46
-#: src/component/navigation.vue:92 src/page/settings/account.vue:35
-#: src/page/settings/account.vue:43
+#: src/page/settings/account.vue:40 src/page/settings/account.vue:48
+#: src/component/navigation.vue:93
 msgid "Unregistered"
 msgstr "Neregistruotas"
 
-#: src/app/routes.js:214 src/component/navigation.vue:172
+#: src/app/routes.js:214 src/component/navigation.vue:176
 msgid "Unsorted"
 msgstr "Nerūšiuota"
 
-#: src/dialog/photo/edit/files.vue:38 src/dialog/photo/edit/files.vue:35
+#: src/dialog/photo/edit/files.vue:41 src/dialog/photo/edit/files.vue:38
 msgid "Unstack"
 msgstr "Atlaisvinkite"
 
-#: src/dialog/photo/edit/files.vue:222 src/dialog/photo/edit/files.vue:219
-#: src/dialog/photo/edit/info.vue:191
+#: src/dialog/photo/edit/files.vue:225 src/dialog/photo/edit/files.vue:222
+#: src/dialog/photo/edit/info.vue:187
 msgid "Updated"
 msgstr "Atnaujinta"
 
-#: src/page/library/index.vue:161
+#: src/page/library/index.vue:165
 msgid "Updating faces"
 msgstr "Veidų atnaujinimas"
 
-#: src/page/library/index.vue:167
+#: src/page/library/index.vue:171
 msgid "Updating index"
 msgstr "Indekso atnaujinimas"
 
-#: src/page/library/index.vue:159
+#: src/page/library/index.vue:163
 msgid "Updating moments"
 msgstr "Akimirkų atnaujinimas"
 
-#: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:124
+#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:140
 msgid "Updating picture…"
 msgstr "Peržiūrų atnaujinimas"
 
-#: src/page/library/index.vue:163
+#: src/page/library/index.vue:167
 msgid "Updating previews"
 msgstr "Peržiūrų atnaujinimas"
 
-#: src/page/library/index.vue:157
+#: src/page/library/index.vue:161
 msgid "Updating stacks"
 msgstr "Kaminų atnaujinimas"
 
-#: src/page/connect.vue:20 src/component/navigation.vue:453
-#: src/component/navigation.vue:605 src/component/navigation.vue:51
+#: src/page/connect.vue:20 src/component/navigation.vue:457
+#: src/component/navigation.vue:608 src/component/navigation.vue:51
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Atnaujinti"
 
 #: src/page/connect.vue:69 src/dialog/sponsor.vue:40
-#: src/page/about/about.vue:32 src/page/about/about.vue:9
+#: src/page/about/about.vue:32 src/page/about/about.vue:11
 #: src/page/connect.vue:66
 msgid "Upgrade Now"
 msgstr "Atnaujinti dabar"
 
 #: src/component/album/toolbar.vue:192 src/component/navigation.vue:2076
-#: src/component/photo/toolbar.vue:164 src/dialog/share/upload.vue:35
-#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:127
+#: src/component/photo/toolbar.vue:172 src/dialog/share/upload.vue:34
+#: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:135
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
 #: src/page/settings/services.vue:27
 msgid "Upload"
 msgstr "Įkelti"
 
-#: src/dialog/upload.vue:258
+#: src/dialog/upload.vue:260
 msgid "Upload complete"
 msgstr "Įkėlimas baigtas"
 
@@ -2550,7 +2677,7 @@ msgstr "Įkėlimas baigtas"
 msgid "Upload complete. Indexing…"
 msgstr "Įkėlimas baigtas. Indeksavimas…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:246 src/dialog/upload.vue:262
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:247 src/dialog/upload.vue:265
 msgid "Upload failed"
 msgstr "Įkelti nepavyko"
 
@@ -2570,11 +2697,11 @@ msgstr "Įkelkite į WebDAV ir bendrinkite nuorodas su draugais."
 msgid "Uploading %{n} of %{t}…"
 msgstr "Įkeliama %{n} iš %{t}…"
 
-#: src/dialog/upload.vue:85 src/dialog/upload.vue:93 src/dialog/upload.vue:203
+#: src/dialog/upload.vue:87 src/dialog/upload.vue:95 src/dialog/upload.vue:205
 msgid "Uploading photos…"
 msgstr "Nuotraukų įkėlimas…"
 
-#: src/page/settings/account.vue:127
+#: src/page/settings/account.vue:137
 msgid "Uploading…"
 msgstr "Perkrovimas…"
 
@@ -2590,13 +2717,17 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Naudokite išankstinius nustatymus"
 
-#: src/options/admin.js:7 src/options/admin.js:23
-#: src/page/admin/sessions.vue:56 src/page/admin/sessions.vue:2
-#: src/model/user.js:230
+#: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
+msgid "Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:"
+msgstr ""
+
+#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/model/user.js:297 src/options/auth.js:7
 msgid "User"
 msgstr "Vartotojas"
 
-#: src/component/navigation.vue:610
+#: src/component/navigation.vue:613
 msgid "User Guide"
 msgstr "Naudotojo vadovas"
 
@@ -2604,60 +2735,64 @@ msgstr "Naudotojo vadovas"
 msgid "User Interface"
 msgstr "Vartotojo sąsaja"
 
-#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:48
-#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:30
-#: src/page/admin/users.vue:34 src/dialog/service/add.vue:103
-#: src/dialog/service/edit.vue:467 src/dialog/share.vue:23
+#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:51
+#: src/page/admin/sessions.vue:2 src/page/admin/users.vue:34
+#: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
+#: src/dialog/share.vue:23
 msgid "Username"
 msgstr "Vartotojo vardas"
 
-#: src/component/navigation.vue:429 src/component/navigation.vue:27
+#: src/component/navigation.vue:433 src/component/navigation.vue:27
 msgid "Users"
 msgstr "Vartotojai"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
-#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
-#: src/model/photo.js:879 src/model/photo.js:887 src/options/options.js:370
+#: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
+#: src/model/photo.js:876 src/model/photo.js:884 src/options/options.js:366
 msgid "Vector"
 msgstr "Vektorius"
 
-#: src/component/navigation.vue:105
+#: src/component/navigation.vue:109
 msgid "Vectors"
 msgstr "Vektoriai"
 
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:97
+msgid "Verification Code"
+msgstr ""
+
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
-#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
-#: src/model/file.js:220 src/model/photo.js:903 src/model/photo.js:919
-#: src/options/options.js:366
+#: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
+#: src/model/file.js:216 src/model/photo.js:900 src/model/photo.js:916
+#: src/options/options.js:362
 msgid "Video"
 msgstr "Vaizdo įrašas"
 
-#: src/component/album/toolbar.vue:77 src/component/photo/toolbar.vue:86
+#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
 #: src/dialog/album/edit.vue:27
 msgid "Video Duration"
 msgstr "Dovanos"
 
-#: src/app/routes.js:235 src/component/navigation.vue:185
-#: src/component/navigation.vue:195 src/component/navigation.vue:4
+#: src/app/routes.js:235 src/component/navigation.vue:189
+#: src/component/navigation.vue:199 src/component/navigation.vue:4
 #: src/component/navigation.vue:769
 msgid "Videos"
 msgstr "Vaizdo įrašai"
 
 #: src/component/photo/cards.vue:336 src/component/photo/mosaic.vue:257
-#: src/component/photo/toolbar.vue:314
+#: src/component/photo/toolbar.vue:330
 msgid "View"
 msgstr "Peržiūrėti"
 
-#: src/options/admin.js:8 src/options/admin.js:27
+#: src/options/admin.js:14 src/options/auth.js:8
 msgid "Viewer"
 msgstr "Peržiūrėtojas"
 
-#: src/options/admin.js:11 src/page/admin/sessions.vue:67
-#: src/page/admin/sessions.vue:5
+#: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
+#: src/options/auth.js:12
 msgid "Visitor"
 msgstr "Lankytojas"
 
-#: src/component/album/toolbar.vue:79 src/component/photo/toolbar.vue:88
+#: src/component/album/toolbar.vue:77 src/component/photo/toolbar.vue:82
 #: src/dialog/album/edit.vue:29
 msgid "Visual Similarity"
 msgstr "Grupuokite pagal panašumą"
@@ -2680,59 +2815,57 @@ msgstr "Prisijungimas internetu"
 msgid "WebDAV"
 msgstr "WebDAV"
 
-#: src/dialog/webdav.vue:8
+#: src/dialog/webdav.vue:17
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
 msgstr "WebDAV klientai gali prisijungti prie \"PhotoPrism\" naudodami šį URL adresą:"
 
-#: src/page/settings/services.vue:39
-msgid ""
-"WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
-"          PhotoPrism."
-msgstr "WebDAV klientai, pavyzdžiui, \"Microsoft\" \"Windows Explorer\" arba \"Apple\" \"Finder\", gali tiesiogiai prisijungti prie \"PhotoPrism\"."
+#: src/page/settings/services.vue:40
+msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
+msgstr ""
 
-#: src/dialog/share.vue:82 src/dialog/share/upload.vue:7
+#: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
 msgstr "WebDAV įkėlimas"
 
-#: src/page/settings/account.vue:675 src/page/settings/account.vue:821
+#: src/page/settings/account.vue:776 src/page/settings/account.vue:922
 msgid "Website"
 msgstr "Svetainė"
 
-#: src/options/options.js:456
+#: src/options/options.js:452
 msgid "White"
 msgstr "Balta"
 
-#: src/page/settings/account.vue:93
+#: src/page/settings/account.vue:107
 msgid "Work Details"
 msgstr "Detalės"
 
-#: src/page/settings/account.vue:524 src/component/photo/toolbar.vue:359
-#: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:204
+#: src/page/settings/account.vue:625 src/component/photo/toolbar.vue:383
+#: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:212
 msgid "Year"
 msgstr "Metai"
 
-#: src/options/options.js:449
+#: src/options/options.js:445
 msgid "Yellow"
 msgstr "Geltona"
 
 #: src/dialog/confirm.vue:18 src/dialog/people/merge.vue:18
-#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:107
-#: src/dialog/photo/edit/files.vue:139 src/dialog/photo/edit/files.vue:147
-#: src/dialog/photo/edit/files.vue:155 src/dialog/photo/edit/files.vue:208
-#: src/dialog/photo/edit/files.vue:104 src/dialog/photo/edit/files.vue:136
-#: src/dialog/photo/edit/files.vue:144 src/dialog/photo/edit/files.vue:152
-#: src/dialog/photo/edit/files.vue:205 src/dialog/photo/edit/info.vue:331
-#: src/dialog/photo/edit/info.vue:352 src/dialog/photo/edit/info.vue:373
-#: src/dialog/photo/edit/info.vue:394 src/dialog/photo/edit/info.vue:414
+#: src/dialog/photo/archive.vue:18 src/dialog/photo/edit/files.vue:110
+#: src/dialog/photo/edit/files.vue:142 src/dialog/photo/edit/files.vue:150
+#: src/dialog/photo/edit/files.vue:158 src/dialog/photo/edit/files.vue:211
+#: src/dialog/photo/edit/files.vue:107 src/dialog/photo/edit/files.vue:139
+#: src/dialog/photo/edit/files.vue:147 src/dialog/photo/edit/files.vue:155
+#: src/dialog/photo/edit/files.vue:208 src/dialog/photo/edit/info.vue:354
+#: src/dialog/photo/edit/info.vue:375 src/dialog/photo/edit/info.vue:396
+#: src/dialog/photo/edit/info.vue:417 src/dialog/photo/edit/info.vue:437
 msgid "Yes"
 msgstr "Taip"
 
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
-#: src/page/about/about.vue:5 src/page/connect.vue:106
+#: src/page/about/about.vue:5 src/page/connect.vue:105
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
 msgstr "Kviečiame susisiekti su mumis el. paštu membership@photoprism.app ir užduoti klausimus, susijusius su naryste."
 
-#: src/component/album/clipboard.vue:106 src/component/subject/clipboard.vue:51
+#: src/component/album/clipboard.vue:98 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
 msgstr "Galite atsisiųsti tik vieną albumą"
 
@@ -2744,12 +2877,12 @@ msgstr "Galite atsisiųsti tik vieną etiketę"
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Bandymo tikslais galite įkelti iki %{n} failų."
 
-#: src/component/album/clipboard.vue:59 src/component/album/clipboard.vue:72
+#: src/component/album/clipboard.vue:55 src/component/album/clipboard.vue:66
 msgid "You may only select one item"
 msgstr "Galite pasirinkti tik vieną elementą"
 
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
-#: src/page/people/recognized.vue:39
+#: src/page/people/recognized.vue:46
 msgid "You may rescan your library to find additional faces."
 msgstr "Norėdami rasti papildomų veidų, galite iš naujo nuskaityti savo biblioteką."
 
@@ -2758,18 +2891,34 @@ msgid "Your account has been successfully connected."
 msgstr "Jūsų paskyra sėkmingai prijungta."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
-#: src/page/about/about.vue:49 src/page/about/about.vue:4
-#: src/page/connect.vue:75
+#: src/page/about/about.vue:49 src/page/about/about.vue:6
+#: src/page/about/about.vue:4 src/page/connect.vue:75
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
 msgstr "Jūsų nuolatinė parama padeda mums reguliariai teikti atnaujinimus ir tokias paslaugas kaip pasaulio žemėlapiai."
 
-#: src/page/albums.vue:62 src/page/albums.vue:1
+#: src/page/albums.vue:81 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
 msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai kurti ypatingų akimirkų, kelionių ir vietų albumus."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
+
+#~ msgid "providerName"
+#~ msgstr "providerName"
+
+#~ msgid ""
+#~ "This mounts the originals folder as a network drive and allows you to open, edit, and delete files\n"
+#~ "          from your computer or smartphone as if they were local."
+#~ msgstr "Taip aplankas \"Originals\" prijungiamas kaip tinklo diskas ir galite atidaryti, redaguoti ir ištrinti failus iš kompiuterio ar išmaniojo telefono taip, tarsi jie būtų vietiniai."
+
+#~ msgid ""
+#~ "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to\n"
+#~ "          PhotoPrism."
+#~ msgstr "WebDAV klientai, pavyzdžiui, \"Microsoft\" \"Windows Explorer\" arba \"Apple\" \"Finder\", gali tiesiogiai prisijungti prie \"PhotoPrism\"."
+
+#~ msgid "Basic"
+#~ msgstr "Pagrindinis"
 
 #~ msgid "Automatically create JPEGs for other file types so that they can be displayed in a browser."
 #~ msgstr "Automatiškai sukurkite kitų tipų failų JPEG, kad juos būtų galima rodyti naršyklėje."
@@ -2975,9 +3124,6 @@ msgstr "Priartinimas / atitolinimas"
 #~ msgid "Download only original media files, without any automatically generated sidecar files."
 #~ msgstr "Atsisiųskite tik originalius medijos failus be jokių automatiškai sukurtų šalutinių failų."
 
-#~ msgid "Client"
-#~ msgstr "Klientas"
-
 #~ msgid "Base Path"
 #~ msgstr "Bazinis kelias"
 
@@ -3019,9 +3165,6 @@ msgstr "Priartinimas / atitolinimas"
 
 #~ msgid "Moonlight"
 #~ msgstr "Mėnulio šviesa"
-
-#~ msgid "Basic"
-#~ msgstr "Pagrindinis"
 
 #~ msgid "Upgrade now and enjoy our member benefits!"
 #~ msgstr "Atnaujinkite dabar ir naudokitės mūsų nario privalumais!"

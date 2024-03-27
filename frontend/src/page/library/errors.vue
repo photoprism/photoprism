@@ -1,19 +1,32 @@
 <template>
-  <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled"
-       :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
+  <div v-infinite-scroll="loadMore" class="p-page p-page-errors" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
-      <v-text-field :value="filter.q"
-                    solo hide-details clearable overflow single-line validate-on-blur
-                    class="input-search background-inherit elevation-0"
-                    browser-autocomplete="off"
-                    autocorrect="off"
-                    autocapitalize="none"
-                    :label="$gettext('Search')"
-                    prepend-inner-icon="search"
-                    color="secondary-dark"
-                    @change="(v) => {updateFilter({'q': v})}"
-                    @keyup.enter.native="(e) => updateQuery({'q': e.target.value})"
-                    @click:clear="() => {updateQuery({'q': ''})}"
+      <v-text-field
+        :value="filter.q"
+        solo
+        hide-details
+        clearable
+        overflow
+        single-line
+        validate-on-blur
+        class="input-search background-inherit elevation-0"
+        browser-autocomplete="off"
+        autocorrect="off"
+        autocapitalize="none"
+        :label="$gettext('Search')"
+        prepend-inner-icon="search"
+        color="secondary-dark"
+        @change="
+          (v) => {
+            updateFilter({ q: v });
+          }
+        "
+        @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+        @click:clear="
+          () => {
+            updateQuery({ q: '' });
+          }
+        "
       ></v-text-field>
       <v-spacer></v-spacer>
       <v-btn icon class="action-reload" :title="$gettext('Reload')" @click.stop="onReload()">
@@ -22,8 +35,7 @@
       <v-btn v-if="!isPublic" icon class="action-delete" :title="$gettext('Delete')" @click.stop="onDelete()">
         <v-icon>delete</v-icon>
       </v-btn>
-      <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-bug-report"
-             :title="$gettext('Troubleshooting Checklists')">
+      <v-btn icon href="https://docs.photoprism.app/getting-started/troubleshooting/" target="_blank" class="action-bug-report" :title="$gettext('Troubleshooting Checklists')">
         <v-icon>bug_report</v-icon>
       </v-btn>
     </v-toolbar>
@@ -31,12 +43,7 @@
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-list v-else-if="errors.length > 0" dense two-line class="transparent pa-1">
-      <v-list-tile
-          v-for="err in errors" :key="err.ID"
-          avatar
-          class="rounded-4"
-          @click="showDetails(err)"
-      >
+      <v-list-tile v-for="err in errors" :key="err.ID" avatar class="rounded-4" @click="showDetails(err)">
         <v-list-tile-avatar>
           <v-icon :color="err.Level">{{ err.Level }}</v-icon>
         </v-list-tile-avatar>
@@ -48,10 +55,7 @@
       </v-list-tile>
     </v-list>
     <div v-else class="pa-2">
-      <v-alert
-          :value="true"
-          color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline
-      >
+      <v-alert :value="true" color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline>
         <p class="body-1 mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
             <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>
@@ -62,12 +66,8 @@
         </p>
       </v-alert>
     </div>
-    <p-confirm-dialog :show="dialog.delete" icon="delete_outline" @cancel="dialog.delete = false"
-                             @confirm="onConfirmDelete"></p-confirm-dialog>
-    <v-dialog
-        v-model="details.show"
-        max-width="500"
-    >
+    <p-confirm-dialog :show="dialog.delete" icon="delete_outline" @cancel="dialog.delete = false" @confirm="onConfirmDelete"></p-confirm-dialog>
+    <v-dialog v-model="details.show" max-width="500">
       <v-card class="pa-2">
         <v-card-title class="headline pa-2">
           {{ details.err.Level | capitalize }}
@@ -83,8 +83,7 @@
 
         <v-card-actions class="pa-2">
           <v-spacer></v-spacer>
-          <v-btn color="secondary-light" depressed class="action-close"
-                 @click="details.show = false">
+          <v-btn color="secondary-light" depressed class="action-close" @click="details.show = false">
             <translate>Close</translate>
           </v-btn>
         </v-card-actions>
@@ -94,11 +93,11 @@
 </template>
 
 <script>
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 import Api from "common/api";
 
 export default {
-  name: 'PPageErrors',
+  name: "PPageErrors",
   data() {
     const query = this.$route.query;
     const q = query["q"] ? query["q"] : "";
@@ -107,8 +106,8 @@ export default {
       dirty: false,
       loading: false,
       scrollDisabled: false,
-      scrollDistance: window.innerHeight*2,
-      filter: {q},
+      scrollDistance: window.innerHeight * 2,
+      filter: { q },
       isPublic: this.$config.get("public"),
       batchSize: 100,
       offset: 0,
@@ -119,16 +118,16 @@ export default {
       },
       details: {
         show: false,
-        err: {"Level": "", "Message": "", "Time": ""},
+        err: { Level: "", Message: "", Time: "" },
       },
     };
   },
   watch: {
-    '$route'() {
+    $route() {
       const query = this.$route.query;
-      this.filter.q = query['q'] ? query['q'] : '';
+      this.filter.q = query["q"] ? query["q"] : "";
       this.onReload();
-    }
+    },
   },
   created() {
     if (this.$config.deny("logs", "view")) {
@@ -176,7 +175,7 @@ export default {
         return;
       }
 
-      this.$router.replace({query});
+      this.$router.replace({ query });
     },
     showDetails(err) {
       this.details.err = err;
@@ -200,17 +199,19 @@ export default {
       this.scrollDisabled = true;
 
       // Delete error logs.
-      Api.delete("errors").then((resp) => {
-        if (resp && resp.data.code && resp.data.code === 200) {
-          this.errors = [];
-          this.dirty = false;
-          this.page = 0;
-          this.offset = 0;
-        }
-      }).finally(() => {
-        this.scrollDisabled = false;
-        this.loading = false;
-      });
+      Api.delete("errors")
+        .then((resp) => {
+          if (resp && resp.data.code && resp.data.code === 200) {
+            this.errors = [];
+            this.dirty = false;
+            this.page = 0;
+            this.offset = 0;
+          }
+        })
+        .finally(() => {
+          this.scrollDisabled = false;
+          this.loading = false;
+        });
     },
     onReload() {
       if (this.loading) {
@@ -236,30 +237,32 @@ export default {
       const offset = this.dirty ? 0 : this.offset;
       const q = this.filter.q;
 
-      const params = {count, offset, q};
+      const params = { count, offset, q };
 
       // Fetch error logs.
-      Api.get("errors", {params}).then((resp) => {
-        if (!resp.data) {
-          resp.data = [];
-        }
+      Api.get("errors", { params })
+        .then((resp) => {
+          if (!resp.data) {
+            resp.data = [];
+          }
 
-        if (offset === 0) {
-          this.errors = resp.data;
-        } else {
-          this.errors = this.errors.concat(resp.data);
-        }
+          if (offset === 0) {
+            this.errors = resp.data;
+          } else {
+            this.errors = this.errors.concat(resp.data);
+          }
 
-        this.scrollDisabled = (resp.data.length < count);
+          this.scrollDisabled = resp.data.length < count;
 
-        if (!this.scrollDisabled) {
-          this.offset = offset + count;
-          this.page++;
-        }
-      }).finally(() => {
-        this.loading = false;
-        this.dirty = false;
-      });
+          if (!this.scrollDisabled) {
+            this.offset = offset + count;
+            this.page++;
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+          this.dirty = false;
+        });
     },
     level(s) {
       return s.substr(0, 4).toUpperCase();

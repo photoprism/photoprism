@@ -43,8 +43,8 @@ var MigrationsRunCommand = cli.Command{
 	Action: migrationsRunAction,
 }
 
-// MigrationsCommand registers the "migrations" CLI command.
-var MigrationsCommand = cli.Command{
+// MigrationsCommands registers the "migrations" CLI command.
+var MigrationsCommands = cli.Command{
 	Name:  "migrations",
 	Usage: "Database schema migration subcommands",
 	Subcommands: []cli.Command{

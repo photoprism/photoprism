@@ -18,8 +18,53 @@ func TestUidType(t *testing.T) {
 		assert.Equal(t, PrefixNone, prefix)
 	})
 	t.Run("LabelUID", func(t *testing.T) {
-		result, prefix := IdType("lt9k3pw1wowuy3c2")
+		result, prefix := IdType("ls6sg1e1wowuy3c2")
 		assert.Equal(t, TypeUID, result)
 		assert.Equal(t, byte('l'), prefix)
 	})
+}
+
+func TestType_Equal(t *testing.T) {
+	assert.True(t, TypeSHA1.Equal("SHA1"))
+	assert.False(t, TypeSHA1.Equal("SHA256"))
+}
+
+func TestType_NotEqual(t *testing.T) {
+	assert.False(t, TypeSHA1.NotEqual("SHA1"))
+	assert.True(t, TypeSHA1.NotEqual("SHA256"))
+}
+
+func TestType_EntityID(t *testing.T) {
+	assert.True(t, TypeUID.EntityID())
+	assert.False(t, TypeSHA384.EntityID())
+}
+
+func TestType_SessionID(t *testing.T) {
+	assert.True(t, TypeSessionID.SessionID())
+	assert.False(t, TypeRefID.SessionID())
+}
+
+func TestType_CrcToken(t *testing.T) {
+	assert.True(t, TypeCrcToken.CrcToken())
+	assert.False(t, TypeMixed.CrcToken())
+}
+
+func TestType_Hash(t *testing.T) {
+	assert.True(t, TypeMD5.Hash())
+	assert.True(t, TypeSHA384.Hash())
+	assert.False(t, TypeUUID.Hash())
+}
+
+func TestType_SHA(t *testing.T) {
+	assert.True(t, TypeSHA1.SHA())
+	assert.True(t, TypeSHA384.SHA())
+	assert.True(t, TypeSHA224.SHA())
+	assert.False(t, TypeUID.SHA())
+}
+
+func TestType_Unknown(t *testing.T) {
+	assert.True(t, TypeUnknown.Unknown())
+	assert.False(t, TypeSHA384.Unknown())
+	assert.False(t, TypeRefID.Unknown())
+
 }

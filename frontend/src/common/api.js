@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -47,7 +47,7 @@ const Api = Axios.create({
   baseURL: c.apiUri,
   headers: {
     common: {
-      "X-Session-ID": window.localStorage.getItem("session_id"),
+      "X-Auth-Token": window.localStorage.getItem("authToken"),
       "X-Client-Uri": c.jsUri,
       "X-Client-Version": c.version,
     },
@@ -111,7 +111,9 @@ Api.interceptors.response.use(
 
     // Show error notification.
     if (errorMessage) {
-      if (code === 401) {
+      if (code === 32) {
+        Notify.info($gettext("Enter verification code"));
+      } else if (code === 401) {
         Notify.logout(errorMessage);
       } else {
         Notify.error(errorMessage);

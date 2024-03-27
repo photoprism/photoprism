@@ -35,7 +35,7 @@ install-intel-graphics: intel
 intel-graphics: intel
 install-intel:
 	@echo "Installing Intel Drivers..."
-	apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-gen-dev va-driver-all vainfo libva-dev
+	apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-dev libmfx-gen-dev va-driver-all vainfo libva-dev
 clitools: update install-clitools
 cli-tools: clitools
 nano: clitools

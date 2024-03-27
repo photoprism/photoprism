@@ -28,7 +28,7 @@ func (m UserShareMap) Pointer(name string) *UserShare {
 var UserShareFixtures = UserShareMap{
 	"AliceAlbum": {
 		UserUID:   "uqxetse3cy5eo9z2",
-		ShareUID:  "at9lxuqxpogaaba9",
+		ShareUID:  "as6sg6bxpogaaba9",
 		ExpiresAt: nil,
 		Comment:   "The quick brown fox jumps over the lazy dog.",
 		Perm:      PermShare,

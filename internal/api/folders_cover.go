@@ -21,13 +21,13 @@ const (
 
 // FolderCover returns a folder cover image.
 //
+// The request parameters are:
+//
+//   - uid: string folder uid
+//   - token: string url security token, see config
+//   - size: string thumb type, see thumb.Sizes
+//
 // GET /api/v1/folders/t/:hash/:token/:size
-//
-// Parameters:
-//
-//	uid: string folder uid
-//	token: string url security token, see config
-//	size: string thumb type, see thumb.Sizes
 func FolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -100,7 +100,7 @@ func FolderCover(router *gin.RouterGroup) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			log.Warnf("%s: %s is missing", folderCover, clean.Log(f.FileName))
-			logError(folderCover, f.Update("FileMissing", true))
+			logErr(folderCover, f.Update("FileMissing", true))
 			return
 		}
 

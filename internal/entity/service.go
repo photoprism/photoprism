@@ -83,8 +83,8 @@ func AddService(form form.Service) (model *Service, err error) {
 	return model, err
 }
 
-// LogError updates the service error count and message.
-func (m *Service) LogError(err error) error {
+// LogErr updates the service error count and message.
+func (m *Service) LogErr(err error) error {
 	if err == nil {
 		return m.ResetErrors(true, true)
 	}
@@ -113,13 +113,13 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	}
 
 	if share {
-		if err := Db().Model(FileShare{}).Where("service_id = ?", m.ID).Updates(Values{"error": "", "errors": 0}).Error; err != nil {
+		if err := Db().Model(FileShare{}).Where("service_id = ?", m.ID).Updates(Map{"error": "", "errors": 0}).Error; err != nil {
 			return err
 		}
 	}
 
 	if sync {
-		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(Values{"error": "", "errors": 0}).Error; err != nil {
+		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(Map{"error": "", "errors": 0}).Error; err != nil {
 			return err
 		}
 	}
@@ -127,7 +127,7 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	m.AccError = ""
 	m.AccErrors = 0
 
-	return m.Updates(Values{"acc_error": m.AccError, "acc_errors": m.AccErrors})
+	return m.Updates(Map{"acc_error": m.AccError, "acc_errors": m.AccErrors})
 }
 
 // SaveForm saves the entity using form data and stores it in the database.
@@ -205,8 +205,8 @@ func (m *Service) Directories() (result fs.FileInfos, err error) {
 	sort.Sort(result)
 
 	// Update error count and message.
-	if err := m.LogError(err); err != nil {
-		log.Warnf("service: %s", err)
+	if logErr := m.LogErr(err); logErr != nil {
+		log.Warnf("service: %s", logErr)
 	}
 
 	return result, err

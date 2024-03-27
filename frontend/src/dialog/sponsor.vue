@@ -31,18 +31,13 @@
       <v-card-actions class="pt-0 px-2">
         <v-layout row wrap class="px-2">
           <v-flex xs12 text-xs-right class="py-2">
-            <v-btn depressed color="secondary-light"
-                   class="action-close compact"
-                   @click.stop="close">
+            <v-btn depressed color="secondary-light" class="action-close compact" @click.stop="close">
               <translate>No thanks</translate>
             </v-btn>
-            <v-btn v-if="isPublic || !isAdmin" href="https://link.photoprism.app/personal-editions"
-                   target="_blank"
-                   depressed color="primary-button" class="white--text action-about compact">
+            <v-btn v-if="isPublic || !isAdmin" href="https://link.photoprism.app/personal-editions" target="_blank" depressed color="primary-button" class="white--text action-about compact">
               <translate>Learn more</translate>
             </v-btn>
-            <v-btn v-else depressed color="primary-button" class="white--text action-upgrade compact"
-                   @click.stop="upgrade">
+            <v-btn v-else depressed color="primary-button" class="white--text action-upgrade compact" @click.stop="upgrade">
               <translate>Upgrade Now</translate>
             </v-btn>
           </v-flex>
@@ -53,7 +48,7 @@
 </template>
 <script>
 export default {
-  name: 'PSponsorDialog',
+  name: "PSponsorDialog",
   props: {
     show: Boolean,
   },
@@ -69,11 +64,11 @@ export default {
   },
   methods: {
     close() {
-      this.$emit('close');
+      this.$emit("close");
     },
     upgrade() {
-      this.$router.push({name: "upgrade"});
-      this.$emit('close');
+      this.$router.push({ name: "upgrade" });
+      this.$emit("close");
     },
   },
 };

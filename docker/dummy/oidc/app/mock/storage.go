@@ -65,10 +65,6 @@ func (a *AuthRequest) GetClientID() string {
 	return a.ClientID
 }
 
-//func (a *AuthRequest) GetCode() string {
-//	return "GetCode"
-//}
-//
 func (a *AuthRequest) GetCodeChallenge() *oidc.CodeChallenge {
 	fmt.Println("GetCodeChallenge: ", a.CodeChallenge.Challenge, a.CodeChallenge.Method)
 	return a.CodeChallenge

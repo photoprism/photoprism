@@ -11,20 +11,20 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // PhotoUnstack removes a file from an existing photo stack.
 //
+// The request parameters are:
+//
+//   - uid: string Photo UID as returned by the API
+//   - file_uid: string File UID as returned by the API
+//
 // POST /api/v1/photos/:uid/files/:file_uid/unstack
-//
-// Parameters:
-//
-//	uid: string Photo UID as returned by the API
-//	file_uid: string File UID as returned by the API
 func PhotoUnstack(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/unstack", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -78,7 +78,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 
 		if err != nil {
 			log.Errorf("photo: cannot find primary file for %s (unstack)", clean.Log(baseName))
-			AbortUnexpected(c)
+			AbortUnexpectedError(c)
 			return
 		}
 
@@ -115,7 +115,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 
 			if err := unstackFile.Move(destName); err != nil {
 				log.Errorf("photo: cannot rename %s to %s (unstack)", clean.Log(unstackFile.BaseName()), clean.Log(filepath.Base(destName)))
-				AbortUnexpected(c)
+				AbortUnexpectedError(c)
 				return
 			}
 
@@ -182,7 +182,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		// Reset type for existing photo stack to image.
 		if err := stackPhoto.Update("PhotoType", entity.MediaImage); err != nil {
 			log.Errorf("photo: %s (unstack %s)", err, clean.Log(baseName))
-			AbortUnexpected(c)
+			AbortUnexpectedError(c)
 			return
 		}
 
@@ -194,8 +194,8 @@ func PhotoUnstack(router *gin.RouterGroup) {
 		}
 
 		// Notify clients by publishing events.
-		PublishPhotoEvent(EntityCreated, newPhoto.PhotoUID, c)
-		PublishPhotoEvent(EntityUpdated, stackPhoto.PhotoUID, c)
+		PublishPhotoEvent(StatusCreated, newPhoto.PhotoUID, c)
+		PublishPhotoEvent(StatusUpdated, stackPhoto.PhotoUID, c)
 
 		event.SuccessMsg(i18n.MsgFileUnstacked)
 

@@ -27,7 +27,7 @@ func TestPhotoByID(t *testing.T) {
 
 func TestPhotoByUID(t *testing.T) {
 	t.Run("photo found", func(t *testing.T) {
-		result, err := PhotoByUID("pt9jtdre2lvl0y12")
+		result, err := PhotoByUID("ps6sg6be2lvl0y12")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -43,7 +43,7 @@ func TestPhotoByUID(t *testing.T) {
 
 func TestPreloadPhotoByUID(t *testing.T) {
 	t.Run("photo found", func(t *testing.T) {
-		result, err := PhotoPreloadByUID("pt9jtdre2lvl0y12")
+		result, err := PhotoPreloadByUID("ps6sg6be2lvl0y12")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -79,7 +79,7 @@ func TestArchivedPhotos(t *testing.T) {
 	if len(results) > 1 {
 		result := results[0]
 		assert.Equal(t, "image", result.PhotoType)
-		assert.Equal(t, "pt9jtdre2lvl0y25", result.PhotoUID)
+		assert.Equal(t, "ps6sg6be2lvl0y25", result.PhotoUID)
 	}
 }
 

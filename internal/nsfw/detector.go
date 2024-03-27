@@ -29,7 +29,7 @@ func New(modelPath string) *Detector {
 
 // File returns matching labels for a jpeg media file.
 func (t *Detector) File(filename string) (result Labels, err error) {
-	if fs.MimeType(filename) != "image/jpeg" {
+	if fs.MimeType(filename) != fs.MimeTypeJPEG {
 		return result, fmt.Errorf("nsfw: %s is not a jpeg file", clean.Log(filepath.Base(filename)))
 	}
 

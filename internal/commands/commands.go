@@ -1,7 +1,7 @@
 /*
 Package commands provides the CLI commands of PhotoPrism.
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -48,8 +48,8 @@ var PhotoPrism = []cli.Command{
 	FindCommand,
 	ImportCommand,
 	CopyCommand,
-	FacesCommand,
-	PlacesCommand,
+	FacesCommands,
+	PlacesCommands,
 	PurgeCommand,
 	CleanUpCommand,
 	OptimizeCommand,
@@ -57,16 +57,32 @@ var PhotoPrism = []cli.Command{
 	ConvertCommand,
 	ThumbsCommand,
 	MigrateCommand,
-	MigrationsCommand,
+	MigrationsCommands,
 	BackupCommand,
 	RestoreCommand,
 	ResetCommand,
 	PasswdCommand,
-	UsersCommand,
-	ShowCommand,
+	UsersCommands,
+	ClientsCommands,
+	AuthCommands,
+	ShowCommands,
 	VersionCommand,
 	ShowConfigCommand,
 	ConnectCommand,
+}
+
+// countFlag represents a CLI flag to limit the number of report rows.
+var countFlag = cli.UintFlag{
+	Name:  "n",
+	Usage: "`LIMIT` number of results",
+	Value: 100,
+}
+
+// LogErr logs an error if the argument is not nil.
+func LogErr(err error) {
+	if err != nil {
+		log.Error(err)
+	}
 }
 
 // childAlreadyRunning tests if a .pid file at filePath is a running process.

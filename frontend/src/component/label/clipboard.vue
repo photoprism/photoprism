@@ -1,23 +1,9 @@
 <template>
   <div>
     <v-container v-if="selection.length > 0" fluid class="pa-0">
-      <v-speed-dial
-          id="t-clipboard" v-model="expanded"
-          fixed
-          bottom
-          direction="top"
-          transition="slide-y-reverse-transition"
-          :right="!rtl"
-          :left="rtl"
-          :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`"
-      >
+      <v-speed-dial id="t-clipboard" v-model="expanded" fixed bottom direction="top" transition="slide-y-reverse-transition" :right="!rtl" :left="rtl" :class="`p-clipboard ${!rtl ? '--ltr' : '--rtl'} p-label-clipboard`">
         <template #activator>
-          <v-btn
-              fab
-              dark
-              color="accent darken-2"
-              class="action-menu"
-          >
+          <v-btn fab dark color="accent darken-2" class="action-menu">
             <v-icon v-if="selection.length === 0">menu</v-icon>
             <span v-else class="count-clipboard">{{ selection.length }}</span>
           </v-btn>
@@ -35,41 +21,20 @@
         >
             <v-icon>cloud_download</v-icon>
         </v-btn -->
-        <v-btn
-            fab dark small
-            :title="$gettext('Add to album')"
-            color="album"
-            :disabled="!canAddAlbums || selection.length === 0"
-            class="action-album"
-            @click.stop="dialog.album = true"
-        >
+        <v-btn fab dark small :title="$gettext('Add to album')" color="album" :disabled="!canAddAlbums || selection.length === 0" class="action-album" @click.stop="dialog.album = true">
           <v-icon>bookmark</v-icon>
         </v-btn>
-        <v-btn
-            fab dark small
-            color="remove"
-            :title="$gettext('Delete')"
-            :disabled="!canManage || selection.length === 0"
-            class="action-delete"
-            @click.stop="dialog.delete = true"
-        >
+        <v-btn fab dark small color="remove" :title="$gettext('Delete')" :disabled="!canManage || selection.length === 0" class="action-delete" @click.stop="dialog.delete = true">
           <v-icon>delete</v-icon>
         </v-btn>
 
-        <v-btn
-            fab dark small
-            color="accent"
-            class="action-clear"
-            @click.stop="clearClipboard()"
-        >
+        <v-btn fab dark small color="accent" class="action-clear" @click.stop="clearClipboard()">
           <v-icon>clear</v-icon>
         </v-btn>
       </v-speed-dial>
     </v-container>
-    <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false"
-                          @confirm="addToAlbum"></p-photo-album-dialog>
-    <p-label-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false"
-                           @confirm="batchDelete"></p-label-delete-dialog>
+    <p-photo-album-dialog :show="dialog.album" @cancel="dialog.album = false" @confirm="addToAlbum"></p-photo-album-dialog>
+    <p-label-delete-dialog :show="dialog.delete" @cancel="dialog.delete = false" @confirm="batchDelete"></p-label-delete-dialog>
   </div>
 </template>
 <script>
@@ -78,7 +43,7 @@ import Notify from "common/notify";
 import download from "common/download";
 
 export default {
-  name: 'PLabelClipboard',
+  name: "PLabelClipboard",
   props: {
     selection: {
       type: Array,
@@ -119,7 +84,7 @@ export default {
 
       this.dialog.album = false;
 
-      Api.post(`albums/${ppid}/photos`, {"labels": this.selection}).then(() => this.onAdded());
+      Api.post(`albums/${ppid}/photos`, { labels: this.selection }).then(() => this.onAdded());
     },
     onAdded() {
       this.clearClipboard();
@@ -131,7 +96,7 @@ export default {
 
       this.dialog.delete = false;
 
-      Api.post("batch/labels/delete", {"labels": this.selection}).then(this.onDeleted.bind(this));
+      Api.post("batch/labels/delete", { labels: this.selection }).then(this.onDeleted.bind(this));
     },
     onDeleted() {
       Notify.success(this.$gettext("Labels deleted"));
@@ -156,6 +121,6 @@ export default {
 
       download(path, "label.zip");
     },
-  }
+  },
 };
 </script>

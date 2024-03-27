@@ -1,7 +1,6 @@
 package photoprism
 
 import (
-	"os"
 	"path/filepath"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -35,13 +34,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 		relatedOriginalNames := make(map[string]string, len(related.Files))
 
 		if related.Main == nil {
-			log.Warnf("import: %s belongs to no supported media file", clean.Log(fs.RelName(job.FileName, src)))
+			log.Errorf("import: %s does not belong to a supported media file", clean.Log(fs.RelName(job.FileName, src)))
 			continue
 		}
 
 		// Create JSON sidecar file, if needed.
 		if jsonErr := related.Main.CreateExifToolJson(imp.convert); jsonErr != nil {
-			log.Errorf("import: %s", clean.Log(jsonErr.Error()))
+			log.Warnf("import: %s", clean.Error(jsonErr))
 		}
 
 		originalName := related.Main.RelName(src)
@@ -63,14 +62,14 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 				if fs.PathExists(destDir) {
 					// Do nothing.
-				} else if err := os.MkdirAll(destDir, fs.ModeDir); err != nil {
-					log.Errorf("import: failed creating folder for %s (%s)", clean.Log(f.BaseName()), err.Error())
+				} else if mkdirErr := fs.MkdirAll(destDir); mkdirErr != nil {
+					log.Errorf("import: failed to create folder for %s (%s)", clean.Log(f.BaseName()), mkdirErr.Error())
 				} else {
 					destDirRel := fs.RelName(destDir, imp.originalsPath())
 
 					folder := entity.NewFolder(entity.RootOriginals, destDirRel, fs.BirthTime(destDir))
 
-					if err := folder.Create(); err == nil {
+					if createErr := folder.Create(); createErr == nil {
 						log.Infof("import: created folder /%s", folder.Path)
 					}
 				}
@@ -83,15 +82,15 @@ func ImportWorker(jobs <-chan ImportJob) {
 				}
 
 				if opt.Move {
-					if err := f.Move(destFileName); err != nil {
+					if moveErr := f.Move(destFileName); moveErr != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Debugf("import: %s", err.Error())
+						log.Debugf("import: %s", clean.Error(moveErr))
 						log.Warnf("import: failed moving file to %s, is another import running at the same time?", logRelName)
 					}
 				} else {
-					if err := f.Copy(destFileName); err != nil {
+					if copyErr := f.Copy(destFileName); copyErr != nil {
 						logRelName := clean.Log(fs.RelName(destMainFileName, imp.originalsPath()))
-						log.Debugf("import: %s", err.Error())
+						log.Debugf("import: %s", clean.Error(copyErr))
 						log.Warnf("import: failed copying file to %s, is another import running at the same time?", logRelName)
 					}
 				}
@@ -101,16 +100,16 @@ func ImportWorker(jobs <-chan ImportJob) {
 				// Try to add duplicates to selected album(s) as well, see #991.
 				if fileHash := f.Hash(); fileHash == "" {
 					// Do nothing.
-				} else if file, err := entity.FirstFileByHash(fileHash); err != nil {
+				} else if file, fileErr := entity.FirstFileByHash(fileHash); fileErr != nil {
 					// Do nothing.
-				} else if err := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, opt.UID); err != nil {
-					log.Warn(err)
+				} else if albumErr := entity.AddPhotoToUserAlbums(file.PhotoUID, opt.Albums, opt.UID); albumErr != nil {
+					log.Warn(albumErr)
 				}
 
 				// Remove duplicates to save storage.
 				if opt.RemoveExistingFiles {
-					if err := f.Remove(); err != nil {
-						log.Errorf("import: failed deleting %s (%s)", clean.Log(f.BaseName()), err.Error())
+					if removeErr := f.Remove(); removeErr != nil {
+						log.Errorf("import: failed to delete %s (%s)", clean.Log(f.BaseName()), removeErr.Error())
 					} else {
 						log.Infof("import: deleted %s (already exists)", clean.Log(relFileName))
 					}
@@ -128,13 +127,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Create JSON sidecar file, if needed.
 			if jsonErr := f.CreateExifToolJson(imp.convert); jsonErr != nil {
-				log.Errorf("import: %s", clean.Log(jsonErr.Error()))
+				log.Warnf("import: %s", clean.Error(jsonErr))
 			}
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 			if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
 				if jpegFile, err := imp.convert.ToImage(f, false); err != nil {
-					log.Errorf("import: %s in %s (convert to jpeg)", err.Error(), clean.Log(f.RootRelName()))
+					log.Errorf("import: %s in %s (convert to jpeg)", clean.Error(err), clean.Log(f.RootRelName()))
 					continue
 				} else {
 					log.Debugf("import: created %s", clean.Log(jpegFile.BaseName()))
@@ -142,13 +141,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 			}
 
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
-			if jpg, err := f.PreviewImage(); err != nil {
-				log.Error(err)
+			if jpg, convertErr := f.PreviewImage(); convertErr != nil {
+				log.Error(convertErr)
 			} else if limitErr, _ := jpg.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 				log.Errorf("index: %s", limitErr)
 				continue
-			} else if err := jpg.CreateThumbnails(imp.thumbPath(), false); err != nil {
-				log.Errorf("import: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+			} else if thumbsErr := jpg.CreateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
+				log.Errorf("import: failed to create thumbnails for %s (%s)", clean.Log(f.RootRelName()), clean.Error(thumbsErr))
 				continue
 			}
 
@@ -191,8 +190,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 					photoUID = res.PhotoUID
 
 					// Add photo to album if a list of albums was provided when importing.
-					if err := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, opt.UID); err != nil {
-						log.Warn(err)
+					if albumErr := entity.AddPhotoToUserAlbums(photoUID, opt.Albums, opt.UID); albumErr != nil {
+						log.Warn(albumErr)
 					}
 				}
 			} else {
@@ -231,14 +230,13 @@ func ImportWorker(jobs <-chan ImportJob) {
 				res := ind.UserMediaFile(f, o, relatedOriginalNames[f.FileName()], photoUID, opt.UID)
 
 				// Save file error.
-				if fileUid, err := res.FileError(); err != nil {
-					query.SetFileError(fileUid, err.Error())
+				if fileUid, fileErr := res.FileError(); fileErr != nil {
+					query.SetFileError(fileUid, clean.Error(fileErr))
 				}
 
 				// Log result.
 				log.Infof("import: %s related %s file %s", res, f.FileType(), clean.Log(f.RootRelName()))
 			}
-
 		}
 	}
 }

@@ -19,13 +19,23 @@ func TestColors_List(t *testing.T) {
 }
 
 func TestColor_Hex(t *testing.T) {
+	assert.Equal(t, "0", Color(-1).Hex())
+	assert.Equal(t, "0", Black.Hex())
 	assert.Equal(t, "C", Magenta.Hex())
 	assert.Equal(t, "7", Cyan.Hex())
+	assert.Equal(t, "F", Pink.Hex())
+	assert.Equal(t, "F", Color(15).Hex())
+	assert.Equal(t, "0", Color(16).Hex())
+	assert.Equal(t, "0", Color(17).Hex())
 }
 
 func TestColors_Hex(t *testing.T) {
-	result := Colors{Orange, Lime, Black}.Hex()
-	assert.Equal(t, "DA0", result)
+	t.Run("All", func(t *testing.T) {
+		assert.Equal(t, "5CFED3BA98762410", All.Hex())
+	})
+	t.Run("OrangeLimeBlack", func(t *testing.T) {
+		assert.Equal(t, "DA0", Colors{Orange, Lime, Black}.Hex())
+	})
 }
 
 func TestColor_ID(t *testing.T) {

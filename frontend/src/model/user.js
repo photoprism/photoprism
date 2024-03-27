@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -29,6 +29,8 @@ import Util from "common/util";
 import Api from "common/api";
 import { T, $gettext } from "common/vm";
 import { config } from "app/session";
+import memoizeOne from "memoize-one";
+import * as auth from "../options/auth";
 
 export class User extends RestModel {
   getDefaults() {
@@ -37,6 +39,7 @@ export class User extends RestModel {
       UID: "",
       UUID: "",
       AuthProvider: "",
+      AuthMethod: "",
       AuthID: "",
       Name: "",
       DisplayName: "",
@@ -170,9 +173,7 @@ export class User extends RestModel {
   }
 
   getRegisterForm() {
-    return Api.options(this.getEntityResource() + "/register").then((response) =>
-      Promise.resolve(new Form(response.data))
-    );
+    return Api.options(this.getEntityResource() + "/register").then((response) => Promise.resolve(new Form(response.data)));
   }
 
   getAvatarURL(size) {
@@ -200,25 +201,91 @@ export class User extends RestModel {
 
     formData.append("files", file);
 
-    return Api.post(this.getEntityResource() + `/avatar`, formData, formConf).then((response) =>
-      Promise.resolve(this.setValues(response.data))
-    );
+    return Api.post(this.getEntityResource() + `/avatar`, formData, formConf).then((response) => Promise.resolve(this.setValues(response.data)));
   }
 
   getProfileForm() {
-    return Api.options(this.getEntityResource() + "/profile").then((response) =>
-      Promise.resolve(new Form(response.data))
-    );
+    return Api.options(this.getEntityResource() + "/profile").then((response) => Promise.resolve(new Form(response.data)));
   }
 
   isRemote() {
     return this.AuthProvider && this.AuthProvider === "ldap";
   }
 
+  disable2FA() {
+    if (!this.Name) {
+      return true;
+    }
+
+    switch (this.AuthProvider) {
+      case "default":
+        return false;
+      case "local":
+        return false;
+      case "ldap":
+        return false;
+      default:
+        return true;
+    }
+  }
+
+  authInfo() {
+    if (!this || !this.AuthProvider) {
+      return $gettext("Default");
+    }
+
+    let providerName = memoizeOne(auth.Providers)()[this.AuthProvider];
+
+    if (providerName) {
+      providerName = T(providerName);
+    } else {
+      providerName = Util.capitalize(this.AuthProvider);
+    }
+
+    if (!this.AuthMethod || this.AuthMethod === "" || this.AuthMethod === "default") {
+      return providerName;
+    }
+
+    let methodName = memoizeOne(auth.Methods)()[this.AuthMethod];
+
+    if (!methodName) {
+      methodName = this.AuthMethod;
+    }
+
+    return `${providerName} (${methodName})`;
+  }
+
   changePassword(oldPassword, newPassword) {
     return Api.put(this.getEntityResource() + "/password", {
       old: oldPassword,
       new: newPassword,
+    }).then((response) => Promise.resolve(response.data));
+  }
+
+  createPasscode(password) {
+    return Api.post(this.getEntityResource() + "/passcode", {
+      type: "totp",
+      password: password,
+    }).then((response) => Promise.resolve(response.data));
+  }
+
+  confirmPasscode(passcode) {
+    return Api.post(this.getEntityResource() + "/passcode/confirm", {
+      type: "totp",
+      passcode: passcode,
+    }).then((response) => Promise.resolve(response.data));
+  }
+
+  activatePasscode() {
+    return Api.post(this.getEntityResource() + "/passcode/activate", {
+      type: "totp",
+    }).then((response) => Promise.resolve(response.data));
+  }
+
+  deactivatePasscode(password) {
+    return Api.post(this.getEntityResource() + "/passcode/deactivate", {
+      type: "totp",
+      password: password,
     }).then((response) => Promise.resolve(response.data));
   }
 

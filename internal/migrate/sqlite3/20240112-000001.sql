@@ -1,0 +1,1 @@
+DELETE FROM auth_sessions;

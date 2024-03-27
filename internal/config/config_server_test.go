@@ -62,30 +62,6 @@ func TestConfig_HttpCompression(t *testing.T) {
 	assert.Equal(t, "", c.HttpCompression())
 }
 
-func TestConfig_HttpCacheMaxAge(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, ttl.Duration(2592000), c.HttpCacheMaxAge())
-	c.Options().HttpCacheMaxAge = 23
-	assert.Equal(t, ttl.Duration(23), c.HttpCacheMaxAge())
-	c.Options().HttpCacheMaxAge = 41536000
-	assert.Equal(t, ttl.Limit, c.HttpCacheMaxAge())
-	c.Options().HttpCacheMaxAge = 0
-	assert.Equal(t, ttl.Duration(2592000), c.HttpCacheMaxAge())
-}
-
-func TestConfig_HttpVideoMaxAge(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, ttl.Video, c.HttpVideoMaxAge())
-	c.Options().HttpVideoMaxAge = 23
-	assert.Equal(t, ttl.Duration(23), c.HttpVideoMaxAge())
-	c.Options().HttpVideoMaxAge = 41536000
-	assert.Equal(t, ttl.Limit, c.HttpVideoMaxAge())
-	c.Options().HttpVideoMaxAge = 0
-	assert.Equal(t, ttl.Video, c.HttpVideoMaxAge())
-}
-
 func TestConfig_HttpCachePublic(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -98,4 +74,28 @@ func TestConfig_HttpCachePublic(t *testing.T) {
 	assert.True(t, c.HttpCachePublic())
 	c.Options().HttpCachePublic = false
 	assert.False(t, c.HttpCachePublic())
+}
+
+func TestConfig_HttpCacheMaxAge(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, ttl.Duration(2592000), c.HttpCacheMaxAge())
+	c.Options().HttpCacheMaxAge = 23
+	assert.Equal(t, ttl.Duration(23), c.HttpCacheMaxAge())
+	c.Options().HttpCacheMaxAge = 41536000
+	assert.Equal(t, ttl.CacheMaxAge, c.HttpCacheMaxAge())
+	c.Options().HttpCacheMaxAge = 0
+	assert.Equal(t, ttl.Duration(2592000), c.HttpCacheMaxAge())
+}
+
+func TestConfig_HttpVideoMaxAge(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, ttl.CacheVideo, c.HttpVideoMaxAge())
+	c.Options().HttpVideoMaxAge = 23
+	assert.Equal(t, ttl.Duration(23), c.HttpVideoMaxAge())
+	c.Options().HttpVideoMaxAge = 41536000
+	assert.Equal(t, ttl.CacheMaxAge, c.HttpVideoMaxAge())
+	c.Options().HttpVideoMaxAge = 0
+	assert.Equal(t, ttl.CacheVideo, c.HttpVideoMaxAge())
 }

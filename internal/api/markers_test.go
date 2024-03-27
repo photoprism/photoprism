@@ -19,7 +19,7 @@ func TestCreateMarker(t *testing.T) {
 		GetPhoto(router)
 		CreateMarker(router)
 
-		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0y11")
 
 		assert.Equal(t, http.StatusOK, r.Code)
 
@@ -61,7 +61,7 @@ func TestCreateMarker(t *testing.T) {
 		GetPhoto(router)
 		CreateMarker(router)
 
-		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0y11")
 
 		assert.Equal(t, http.StatusOK, r.Code)
 
@@ -103,7 +103,7 @@ func TestCreateMarker(t *testing.T) {
 		GetPhoto(router)
 		CreateMarker(router)
 
-		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0y11")
 
 		assert.Equal(t, http.StatusOK, r.Code)
 
@@ -148,7 +148,7 @@ func TestUpdateMarker(t *testing.T) {
 		GetPhoto(router)
 		UpdateMarker(router)
 
-		r := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+		r := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0y11")
 
 		assert.Equal(t, http.StatusOK, r.Code)
 
@@ -182,7 +182,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowu1000", "test")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/ms6sg6b1wowu1000", "test")
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -191,7 +191,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowu1000", "test")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/ms6sg6b1wowu1000", "test")
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -218,7 +218,7 @@ func TestUpdateMarker(t *testing.T) {
 
 		UpdateMarker(router)
 
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowu1000", "test")
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/ms6sg6b1wowu1000", "test")
 
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
@@ -236,13 +236,13 @@ func TestUpdateMarker(t *testing.T) {
 		if b, err := json.Marshal(m); err != nil {
 			t.Fatal(err)
 		} else {
-			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowuy666", string(b))
+			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/ms6sg6b1wowuy666", string(b))
 
 			assert.Equal(t, http.StatusOK, r.Code)
 
 			ClearMarkerSubject(router)
 
-			r = PerformRequestWithBody(app, "DELETE", "/api/v1/markers/mt9k3pw1wowuy666/subject", "")
+			r = PerformRequestWithBody(app, "DELETE", "/api/v1/markers/ms6sg6b1wowuy666/subject", "")
 
 			assert.Equal(t, http.StatusOK, r.Code)
 		}
@@ -261,13 +261,13 @@ func TestUpdateMarker(t *testing.T) {
 		if b, err := json.Marshal(m); err != nil {
 			t.Fatal(err)
 		} else {
-			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowuy666", string(b))
+			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/ms6sg6b1wowuy666", string(b))
 
 			assert.Equal(t, http.StatusOK, r.Code)
 
 			ClearMarkerSubject(router)
 
-			r = PerformRequestWithBody(app, "DELETE", "/api/v1/markers/mt9k3pw1wowuy666/subject", "")
+			r = PerformRequestWithBody(app, "DELETE", "/api/v1/markers/ms6sg6b1wowuy666/subject", "")
 
 			assert.Equal(t, http.StatusOK, r.Code)
 		}
@@ -289,13 +289,13 @@ func TestUpdateMarker(t *testing.T) {
 			Type:    "face",
 			Src:     123,
 			Name:    456,
-			SubjUID: "jqy1y111h1njaaac",
+			SubjUID: "js6sg6b1h1njaaac",
 			SubjSrc: "manual",
 			FaceID:  "GMH5NISEEULNJL6RATITOA3TMZXMTMCI"}
 		if b, err := json.Marshal(m); err != nil {
 			t.Fatal(err)
 		} else {
-			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/mt9k3pw1wowuy666", string(b))
+			r := PerformRequestWithBody(app, "PUT", "/api/v1/markers/ms6sg6b1wowuy666", string(b))
 
 			assert.Equal(t, http.StatusBadRequest, r.Code)
 		}
@@ -309,7 +309,7 @@ func TestClearMarkerSubject(t *testing.T) {
 		GetPhoto(router)
 		ClearMarkerSubject(router)
 
-		photoResp := PerformRequest(app, "GET", "/api/v1/photos/pt9jtdre2lvl0y11")
+		photoResp := PerformRequest(app, "GET", "/api/v1/photos/ps6sg6be2lvl0y11")
 
 		if photoResp == nil {
 			t.Fatal("response is nil")
@@ -342,7 +342,7 @@ func TestClearMarkerSubject(t *testing.T) {
 
 		ClearMarkerSubject(router)
 
-		r := PerformRequestWithBody(app, "DELETE", "/api/v1/markers/mt9k3pw1wowu1000/subject", "")
+		r := PerformRequestWithBody(app, "DELETE", "/api/v1/markers/ms6sg6b1wowu1000/subject", "")
 
 		assert.Equal(t, http.StatusOK, r.Code)
 	})

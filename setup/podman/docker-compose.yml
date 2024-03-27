@@ -52,7 +52,9 @@ services:
     ## "privileged" allows to run the service on ports < 1024 (see below):
     privileged: true
     ports:
-      - "2342:2342" # HTTP port (host:container)
+      ## Web server port mapping in the format "Host:Container". To use a different port, change the host port
+      ## on the left-hand side and keep the container port, e.g. "80:2342" (for HTTP) or "443:2342 (for HTTPS):
+      - "2342:2342"
     environment:
       PHOTOPRISM_ADMIN_USER: "admin"                 # admin login username
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial admin password (8-72 characters)
@@ -109,17 +111,16 @@ services:
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped
-    image: mariadb:10.11
+    image: mariadb:11
     container_name: mariadb
     ## "security_opt" specifies options for kernel security modules, it can be omitted if it is not needed or supported:
-    # security_opt:
-    #  - seccomp:unconfined
-    #  - apparmor:unconfined
+    security_opt:
+      - seccomp:unconfined
+      - apparmor:unconfined
     ## "user" starts the service with a specific non-root user and group ID (optional):
     # user: 1000:1000
-    ## --lower-case-table-names=1 stores tables in lowercase and compares names in a case-insensitive manner:
-    ## https://mariadb.com/kb/en/server-system-variables/#lower_case_table_names
-    command: --innodb-buffer-pool-size=2G --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=180
+    ## MariaDB config flags, see https://mariadb.com/kb/en/server-system-variables/
+    command: --innodb-buffer-pool-size=2G --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     volumes:
       - "./database:/var/lib/mysql"
     environment:

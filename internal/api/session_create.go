@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,42 +10,54 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // CreateSession creates a new client session and returns it as JSON if authentication was successful.
 //
 // POST /api/v1/session
+// POST /api/v1/sessions
 func CreateSession(router *gin.RouterGroup) {
-	router.POST("/session", func(c *gin.Context) {
+	createSessionHandler := func(c *gin.Context) {
+		// Prevent CDNs from caching this endpoint.
+		if header.IsCdn(c.Request) {
+			AbortNotFound(c)
+			return
+		}
+
 		var f form.Login
 
+		clientIp := ClientIP(c)
+
+		// Validate request data.
 		if err := c.BindJSON(&f); err != nil {
-			event.AuditWarn([]string{ClientIP(c), "create session", "invalid request", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "create session", "invalid request", "%s"}, err)
 			AbortBadRequest(c)
 			return
 		}
+
+		// Disable caching of responses.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
 
 		conf := get.Config()
 
 		// Skip authentication if app is running in public mode.
 		if conf.Public() {
 			sess := get.Session().Public()
-			data := gin.H{
-				"status":   "ok",
-				"id":       sess.ID,
-				"provider": sess.AuthProvider,
-				"user":     sess.User(),
-				"data":     sess.Data(),
-				"config":   conf.ClientPublic(),
-			}
-			c.JSON(http.StatusOK, data)
+
+			// Response includes admin account data, session data, and client config values.
+			response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientPublic())
+
+			// Return JSON response.
+			c.JSON(http.StatusOK, response)
 			return
 		}
 
-		// Check limit for failed auth requests (max. 10 per minute).
-		if limiter.Login.Reject(ClientIP(c)) {
+		// Fail if authentication error rate limit is exceeded.
+		if clientIp != "" && (limiter.Login.Reject(clientIp) || limiter.Auth.Reject(clientIp)) {
 			limiter.AbortJSON(c)
 			return
 		}
@@ -53,7 +66,7 @@ func CreateSession(router *gin.RouterGroup) {
 		var isNew bool
 
 		// Find existing session, if any.
-		if s := Session(SessionID(c)); s != nil {
+		if s := Session(clientIp, AuthToken(c)); s != nil {
 			// Update existing session.
 			sess = s
 		} else {
@@ -64,38 +77,34 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Try to log in and save session if successful.
 		if err := sess.LogIn(f, c); err != nil {
-			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+			if sess.Method().IsNot(authn.Method2FA) {
+				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+			} else if errors.Is(err, authn.ErrPasscodeRequired) {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrPasscodeRequired, "message": i18n.Msg(i18n.ErrPasscodeRequired)})
+			} else {
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrInvalidPasscode, "message": i18n.Msg(i18n.ErrInvalidPasscode)})
+			}
 			return
 		} else if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{ClientIP(c), "%s"}, err)
+			event.AuditErr([]string{clientIp, "%s"}, err)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if sess == nil {
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrUnexpected)})
 			return
 		} else if isNew {
-			event.AuditInfo([]string{ClientIP(c), "session %s", "created"}, sess.RefID)
+			event.AuditInfo([]string{clientIp, "session %s", "created"}, sess.RefID)
 		} else {
-			event.AuditInfo([]string{ClientIP(c), "session %s", "updated"}, sess.RefID)
+			event.AuditInfo([]string{clientIp, "session %s", "updated"}, sess.RefID)
 		}
 
-		// Add session id to response headers.
-		AddSessionHeader(c, sess.ID)
+		// Response includes user data, session data, and client config values.
+		response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
 
-		// Get config values for the UI.
-		clientConfig := conf.ClientSession(sess)
+		// Return JSON response.
+		c.JSON(sess.HttpStatus(), response)
+	}
 
-		// User information, session data, and client config values.
-		data := gin.H{
-			"status":   "ok",
-			"id":       sess.ID,
-			"provider": sess.AuthProvider,
-			"user":     sess.User(),
-			"data":     sess.Data(),
-			"config":   clientConfig,
-		}
-
-		// Send JSON response.
-		c.JSON(sess.HttpStatus(), data)
-	})
+	router.POST("/session", createSessionHandler)
+	router.POST("/sessions", createSessionHandler)
 }

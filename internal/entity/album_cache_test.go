@@ -23,31 +23,31 @@ func TestCachedAlbumByUID(t *testing.T) {
 			t.Fatal("error expected")
 		}
 	})
-	t.Run("at9lxuqxpogaaba7", func(t *testing.T) {
-		if result, err := CachedAlbumByUID("at9lxuqxpogaaba7"); err != nil {
+	t.Run("as6sg6bxpogaaba7", func(t *testing.T) {
+		if result, err := CachedAlbumByUID("as6sg6bxpogaaba7"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Equal(t, "at9lxuqxpogaaba7", result.AlbumUID)
+			assert.Equal(t, "as6sg6bxpogaaba7", result.AlbumUID)
 			assert.Equal(t, "christmas-2030", result.AlbumSlug)
 		}
-		if cached, err := CachedAlbumByUID("at9lxuqxpogaaba7"); err != nil {
+		if cached, err := CachedAlbumByUID("as6sg6bxpogaaba7"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Equal(t, "at9lxuqxpogaaba7", cached.AlbumUID)
+			assert.Equal(t, "as6sg6bxpogaaba7", cached.AlbumUID)
 			assert.Equal(t, "christmas-2030", cached.AlbumSlug)
 		}
 	})
-	t.Run("at1lxuqipotaab23", func(t *testing.T) {
-		if result, err := CachedAlbumByUID("at1lxuqipotaab23"); err != nil {
+	t.Run("as6sg6bipotaab23", func(t *testing.T) {
+		if result, err := CachedAlbumByUID("as6sg6bipotaab23"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Equal(t, "at1lxuqipotaab23", result.AlbumUID)
+			assert.Equal(t, "as6sg6bipotaab23", result.AlbumUID)
 			assert.Equal(t, "pest&dogs", result.AlbumSlug)
 		}
-		if cached, err := CachedAlbumByUID("at1lxuqipotaab23"); err != nil {
+		if cached, err := CachedAlbumByUID("as6sg6bipotaab23"); err != nil {
 			t.Fatal(err)
 		} else {
-			assert.Equal(t, "at1lxuqipotaab23", cached.AlbumUID)
+			assert.Equal(t, "as6sg6bipotaab23", cached.AlbumUID)
 			assert.Equal(t, "pest&dogs", cached.AlbumSlug)
 		}
 	})

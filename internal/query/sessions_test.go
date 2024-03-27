@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 func TestSession(t *testing.T) {
@@ -22,7 +24,7 @@ func TestSession(t *testing.T) {
 		} else {
 			t.Logf("session: %#v", result)
 			assert.NotNil(t, result)
-			assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", result.ID)
+			assert.Equal(t, rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"), result.ID)
 			assert.Equal(t, "uqxetse3cy5eo9z2", result.UserUID)
 			assert.Equal(t, "alice", result.UserName)
 		}
@@ -33,7 +35,7 @@ func TestSession(t *testing.T) {
 		} else {
 			t.Logf("session: %#v", result)
 			assert.NotNil(t, result)
-			assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1", result.ID)
+			assert.Equal(t, rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac1"), result.ID)
 			assert.Equal(t, "uqxc08w3d0ej2283", result.UserUID)
 			assert.Equal(t, "bob", result.UserName)
 		}
@@ -66,13 +68,13 @@ func TestSessions(t *testing.T) {
 		}
 	})
 	t.Run("SearchAlice", func(t *testing.T) {
-		if results, err := Sessions(100, 0, "", "alice"); err != nil {
+		if results, err := Sessions(100, 0, "sess_expires DESC, user_name", "alice"); err != nil {
 			t.Fatal(err)
 		} else {
 			t.Logf("sessions: %#v", results)
 			assert.LessOrEqual(t, 1, len(results))
 			if len(results) > 0 {
-				assert.Equal(t, "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0", results[0].ID)
+				assert.Equal(t, rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"), results[0].ID)
 				assert.Equal(t, "uqxetse3cy5eo9z2", results[0].UserUID)
 				assert.Equal(t, "alice", results[0].UserName)
 			}

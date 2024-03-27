@@ -9,19 +9,20 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // DeleteFile removes a file from storage.
+//
+// The request parameters are:
+//
+//   - uid: string Photo UID as returned by the API
+//   - file_uid: string File UID as returned by the API
+//
 // DELETE /api/v1/photos/:uid/files/:file_uid
-//
-// Parameters:
-//
-//	uid: string Photo UID as returned by the API
-//	file_uid: string File UID as returned by the API
 func DeleteFile(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/files/:file_uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionDelete)
@@ -88,7 +89,7 @@ func DeleteFile(router *gin.RouterGroup) {
 		}
 
 		// Notify clients by publishing events.
-		PublishPhotoEvent(EntityUpdated, photoUid, c)
+		PublishPhotoEvent(StatusUpdated, photoUid, c)
 
 		// Show translated success message.
 		event.SuccessMsg(i18n.MsgFileDeleted)

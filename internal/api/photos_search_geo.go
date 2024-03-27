@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -49,7 +50,7 @@ func SearchGeo(router *gin.RouterGroup) {
 		// Ignore private flag if feature is disabled.
 		if f.Scope == "" &&
 			settings.Features.Review &&
-			acl.Resources.Deny(acl.ResourcePhotos, s.User().AclRole(), acl.ActionManage) {
+			acl.Resources.Deny(acl.ResourcePhotos, s.UserRole(), acl.ActionManage) {
 			f.Quality = 3
 		}
 
@@ -84,7 +85,7 @@ func SearchGeo(router *gin.RouterGroup) {
 			return
 		}
 
-		c.Data(http.StatusOK, "application/json", resp)
+		c.Data(http.StatusOK, header.ContentTypeJsonUtf8, resp)
 	}
 
 	// Register route handlers.

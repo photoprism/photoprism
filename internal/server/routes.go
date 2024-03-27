@@ -9,29 +9,36 @@ import (
 
 var APIv1 *gin.RouterGroup
 
-// registerRoutes configures the available Web server routes.
+// registerRoutes registers the routes for handling HTTP requests with the built-in web server.
 func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Enables automatic redirection if the current route cannot be matched but a
 	// handler for the path with (without) the trailing slash exists.
 	router.RedirectTrailingSlash = true
 
-	// Static assets and templates.
+	// Register static asset and templates routes.
 	registerStaticRoutes(router, conf)
 
-	// Web app bootstrapping and configuration.
+	// Register PWA bootstrap and config routes.
 	registerPWARoutes(router, conf)
 
-	// Built-in WebDAV server.
+	// Register built-in WebDAV server routes.
 	registerWebDAVRoutes(router, conf)
 
-	// Sharing routes start with "/s".
+	// Register sharing routes starting with "/s".
 	registerSharingRoutes(router, conf)
 
-	// JSON-REST API Version 1
+	// Register ".well-known" service discovery routes.
+	registerWellknownRoutes(router, conf)
+
+	// Register JSON REST-API version 1 (APIv1) routes, grouped by functionality.
+	// Docs: https://pkg.go.dev/github.com/photoprism/photoprism/internal/api
+
 	// Authentication.
 	api.CreateSession(APIv1)
 	api.GetSession(APIv1)
 	api.DeleteSession(APIv1)
+	api.CreateOAuthToken(APIv1)
+	api.RevokeOAuthToken(APIv1)
 
 	// Server Config.
 	api.GetConfigOptions(APIv1)
@@ -47,6 +54,10 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.UploadUserFiles(APIv1)
 	api.ProcessUserUpload(APIv1)
 	api.UploadUserAvatar(APIv1)
+	api.CreateUserPasscode(APIv1)
+	api.ConfirmUserPasscode(APIv1)
+	api.ActivateUserPasscode(APIv1)
+	api.DeactivateUserPasscode(APIv1)
 	api.UpdateUserPassword(APIv1)
 	api.UpdateUser(APIv1)
 
@@ -166,4 +177,6 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	api.SendFeedback(APIv1)
 	api.Connect(APIv1)
 	api.WebSocket(APIv1)
+	api.GetMetrics(APIv1)
+	api.Echo(APIv1)
 }

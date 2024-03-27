@@ -77,7 +77,7 @@ func TestSubjects(t *testing.T) {
 		assert.LessOrEqual(t, 1, len(results))
 	})
 	t.Run("search for ID", func(t *testing.T) {
-		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, UID: "jqy3y652h8njw0sx"})
+		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, UID: "js6sg6b2h8njw0sx"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
 		assert.Equal(t, "Joe Biden", results[0].SubjName)

@@ -84,7 +84,7 @@ func (w *Thumbs) Dir(dir string, force bool) (fs.Done, error) {
 		}()
 	}
 
-	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
 	ignore.Log = func(fileName string) {
 		log.Infof(`thumbs: ignored "%s"`, fs.RelName(fileName, dir))
 	}

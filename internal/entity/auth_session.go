@@ -7,15 +7,22 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/list"
+	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // SessionPrefix for RefID.
@@ -30,14 +37,18 @@ type Sessions []Session
 // Session represents a User session.
 type Session struct {
 	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
-	ClientIP      string          `gorm:"size:64;column:client_ip;index" json:"ClientIP" yaml:"ClientIP,omitempty"`
+	authToken     string          `gorm:"-" yaml:"-"`
 	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
-	UserName      string          `gorm:"size:64;index;" json:"UserName" yaml:"UserName,omitempty"`
-	user          *User           `gorm:"-"`
+	UserName      string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
+	user          *User           `gorm:"-" yaml:"-"`
+	ClientUID     string          `gorm:"type:VARBINARY(42);index;default:'';" json:"ClientUID" yaml:"ClientUID,omitempty"`
+	ClientName    string          `gorm:"size:200;default:'';" json:"ClientName" yaml:"ClientName,omitempty"`
+	ClientIP      string          `gorm:"size:64;column:client_ip;index" json:"ClientIP" yaml:"ClientIP,omitempty"`
+	client        *Client         `gorm:"-" yaml:"-"`
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(128);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	LastActive    int64           `json:"LastActive" yaml:"LastActive,omitempty"`
 	SessExpires   int64           `gorm:"index" json:"Expires" yaml:"Expires,omitempty"`
@@ -49,7 +60,7 @@ type Session struct {
 	IdToken       string          `gorm:"type:VARBINARY(1024);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
 	UserAgent     string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
 	DataJSON      json.RawMessage `gorm:"type:VARBINARY(4096);" json:"-" yaml:"Data,omitempty"`
-	data          *SessionData    `gorm:"-"`
+	data          *SessionData    `gorm:"-" yaml:"-"`
 	RefID         string          `gorm:"type:VARBINARY(16);default:'';" json:"ID" yaml:"-"`
 	LoginIP       string          `gorm:"size:64;column:login_ip" json:"LoginIP" yaml:"-"`
 	LoginAt       time.Time       `json:"LoginAt" yaml:"-"`
@@ -64,18 +75,13 @@ func (Session) TableName() string {
 }
 
 // NewSession creates a new session using the maxAge and timeout in seconds.
-func NewSession(maxAge, timeout int64) (m *Session) {
-	created := TimeStamp()
+func NewSession(lifetime, timeout int64) (m *Session) {
+	m = &Session{}
 
-	m = &Session{
-		ID:        rnd.SessionID(),
-		RefID:     rnd.RefID(SessionPrefix),
-		CreatedAt: created,
-		UpdatedAt: created,
-	}
+	m.Regenerate()
 
-	if maxAge > 0 {
-		m.SessExpires = created.Unix() + maxAge
+	if lifetime > 0 {
+		m.SessExpires = TimeStamp().Unix() + lifetime
 	}
 
 	if timeout > 0 {
@@ -95,18 +101,64 @@ func (m *Session) Expires(t time.Time) *Session {
 	return m
 }
 
-// DeleteExpiredSessions deletes expired sessions.
+// DeleteExpiredSessions deletes all expired sessions.
 func DeleteExpiredSessions() (deleted int) {
-	expired := Sessions{}
+	found := Sessions{}
 
-	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", UnixTime()).Find(&expired).Error; err != nil {
-		event.AuditErr([]string{"failed to fetch sessions sessions", "%s"}, err)
+	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", unix.Time()).Find(&found).Error; err != nil {
+		event.AuditErr([]string{"failed to fetch expired sessions", "%s"}, err)
 		return deleted
 	}
 
-	for _, s := range expired {
-		if err := s.Delete(); err != nil {
-			event.AuditErr([]string{s.IP(), "session %s", "failed to delete", "%s"}, s.RefID, err)
+	for _, sess := range found {
+		if err := sess.Delete(); err != nil {
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
+		} else {
+			deleted++
+		}
+	}
+
+	return deleted
+}
+
+// DeleteClientSessions deletes client sessions above the specified limit.
+func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int64) (deleted int) {
+	if limit < 0 {
+		return 0
+	} else if client == nil {
+		return 0
+	}
+
+	q := Db()
+
+	if client.HasUID() {
+		q = q.Where("client_uid = ?", client.UID())
+	} else if client.HasName() {
+		q = q.Where("client_name = ?", client.Name())
+	} else {
+		return 0
+	}
+
+	if client.HasUser() {
+		q = q.Where("user_uid = ?", client.UserUID)
+	}
+
+	if !authMethod.IsDefault() {
+		q = q.Where("auth_method = ?", authMethod.String())
+	}
+
+	q = q.Order("created_at DESC").Limit(1000000000).Offset(limit)
+
+	found := Sessions{}
+
+	if err := q.Find(&found).Error; err != nil {
+		event.AuditErr([]string{"failed to fetch client sessions", "%s"}, err)
+		return deleted
+	}
+
+	for _, sess := range found {
+		if err := sess.Delete(); err != nil {
+			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
 		} else {
 			deleted++
 		}
@@ -125,6 +177,11 @@ func SessionStatusForbidden() *Session {
 	return &Session{Status: http.StatusForbidden}
 }
 
+// SessionStatusTooManyRequests returns a session with status too many requests (429).
+func SessionStatusTooManyRequests() *Session {
+	return &Session{Status: http.StatusTooManyRequests}
+}
+
 // FindSessionByRefID finds an existing session by ref ID.
 func FindSessionByRefID(refId string) *Session {
 	if !rnd.IsRefID(refId) {
@@ -141,9 +198,27 @@ func FindSessionByRefID(refId string) *Session {
 	return m
 }
 
-// RegenerateID regenerated the random session ID.
-func (m *Session) RegenerateID() *Session {
-	if m.ID == "" {
+// AuthToken returns the secret client authentication token.
+func (m *Session) AuthToken() string {
+	return m.authToken
+}
+
+// SetAuthToken sets a custom authentication token.
+func (m *Session) SetAuthToken(authToken string) *Session {
+	m.authToken = authToken
+	m.ID = rnd.SessionID(authToken)
+
+	return m
+}
+
+// AuthTokenType returns the authentication token type.
+func (m *Session) AuthTokenType() string {
+	return header.AuthBearer
+}
+
+// Regenerate (re-)initializes the session with a random auth token, ID, and RefID.
+func (m *Session) Regenerate() *Session {
+	if !rnd.IsSessionID(m.ID) {
 		// Do not delete the old session if no ID is set yet.
 	} else if err := m.Delete(); err != nil {
 		event.AuditErr([]string{m.IP(), "session %s", "failed to delete", "%s"}, m.RefID, err)
@@ -153,7 +228,7 @@ func (m *Session) RegenerateID() *Session {
 
 	generated := TimeStamp()
 
-	m.ID = rnd.SessionID()
+	m.SetAuthToken(rnd.AuthToken())
 	m.RefID = rnd.RefID(SessionPrefix)
 	m.CreatedAt = generated
 	m.UpdatedAt = generated
@@ -197,6 +272,17 @@ func (m *Session) Save() error {
 		m.Cache()
 	}
 
+	// Limit the number of sessions that are created with an app password.
+	if !m.Method().IsSession() {
+		return nil
+	} else if !m.Provider().IsApplication() {
+		return nil
+	} else if client := m.Client(); client.NoName() || client.Tokens() < 1 {
+		return nil
+	} else if deleted := DeleteClientSessions(client, authn.MethodSession, client.Tokens()); deleted > 0 {
+		event.AuditInfo([]string{m.IP(), "session %s", "deleted %s"}, m.RefID, english.Plural(deleted, "previously created client session", "previously created client sessions"))
+	}
+
 	return nil
 }
 
@@ -221,15 +307,110 @@ func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 		return nil
 	}
 
-	m.ID = rnd.SessionID()
+	m.Regenerate()
 
 	return scope.SetColumn("ID", m.ID)
 }
 
-// User returns the session's user.
+// SetClient updates the client of this session.
+func (m *Session) SetClient(c *Client) *Session {
+	if c == nil {
+		return m
+	}
+
+	m.client = c
+	m.ClientUID = c.UID()
+	m.ClientName = c.ClientName
+	m.AuthProvider = c.Provider().String()
+	m.AuthMethod = c.Method().String()
+	m.AuthScope = c.Scope()
+	m.SetUser(c.User())
+
+	return m
+}
+
+// SetClientName changes the session's client name.
+func (m *Session) SetClientName(s string) *Session {
+	if s == "" {
+		return m
+	}
+
+	m.ClientName = clean.Name(s)
+
+	return m
+}
+
+// Client returns the session's client.
+func (m *Session) Client() *Client {
+	if m == nil {
+		return &Client{}
+	} else if m.client != nil {
+		return m.client
+	} else if c := FindClientByUID(m.ClientUID); c != nil {
+		m.SetClient(c)
+		return m.client
+	}
+
+	return &Client{
+		UserUID:    m.UserUID,
+		UserName:   m.UserName,
+		ClientUID:  m.ClientUID,
+		ClientName: m.ClientName,
+		ClientRole: m.ClientRole().String(),
+		AuthScope:  m.Scope(),
+		AuthMethod: m.AuthMethod,
+	}
+}
+
+// ClientRole returns the session's client ACL role.
+func (m *Session) ClientRole() acl.Role {
+	if m.HasClient() {
+		return m.Client().AclRole()
+	} else if m.IsClient() {
+		return acl.RoleClient
+	}
+
+	return acl.RoleNone
+}
+
+// ClientInfo returns the session's client identifier string.
+func (m *Session) ClientInfo() string {
+	if m.HasClient() {
+		return m.Client().String()
+	} else if m.ClientName != "" {
+		return m.ClientName
+	}
+
+	return report.NotAssigned
+}
+
+// HasClient checks if a client entity is assigned to the session.
+func (m *Session) HasClient() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.ClientUID != ""
+}
+
+// NoClient if this session has no client entity assigned.
+func (m *Session) NoClient() bool {
+	return !m.HasClient()
+}
+
+// IsClient checks if this session authenticates an API client.
+func (m *Session) IsClient() bool {
+	return authn.Provider(m.AuthProvider).IsClient()
+}
+
+// User returns the session's user entity.
 func (m *Session) User() *User {
-	if m.user != nil {
+	if m == nil {
+		return &User{}
+	} else if m.user != nil {
 		return m.user
+	} else if m.UserUID == "" {
+		return &User{}
 	}
 
 	if u := FindUserByUID(m.UserUID); u != nil {
@@ -238,6 +419,54 @@ func (m *Session) User() *User {
 	}
 
 	return &User{}
+}
+
+// UserRole returns the session's user ACL role.
+func (m *Session) UserRole() acl.Role {
+	return m.User().AclRole()
+}
+
+// UserInfo returns the session's user information.
+func (m *Session) UserInfo() string {
+	name := m.Username()
+
+	if name != "" {
+		return name
+	}
+
+	return m.UserRole().String()
+}
+
+// SetUser updates the user entity of this session.
+func (m *Session) SetUser(u *User) *Session {
+	if u == nil {
+		return m
+	}
+
+	// Update user.
+	m.user = u
+	m.UserUID = u.UserUID
+	m.UserName = u.UserName
+
+	// Update tokens.
+	m.SetPreviewToken(u.PreviewToken)
+	m.SetDownloadToken(u.DownloadToken)
+
+	return m
+}
+
+// HasUser checks if a user entity is assigned to the session.
+func (m *Session) HasUser() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.UserUID != ""
+}
+
+// NoUser checks if this session has no user entity assigned.
+func (m *Session) NoUser() bool {
+	return !m.HasUser()
 }
 
 // RefreshUser updates the cached user data.
@@ -256,30 +485,56 @@ func (m *Session) RefreshUser() *Session {
 	return m
 }
 
-// SetUser updates the session's user.
-func (m *Session) SetUser(u *User) *Session {
-	if u == nil {
-		return m
-	}
-
-	// Update user.
-	m.user = u
-	m.UserUID = u.UserUID
-	m.UserName = u.UserName
-
-	// Update tokens.
-	m.SetPreviewToken(u.PreviewToken)
-	m.SetDownloadToken(u.DownloadToken)
-
-	return m
-}
-
 // Username returns the login name.
 func (m *Session) Username() string {
 	return m.UserName
 }
 
-// Provider returns the authentication provider name.
+// AuthInfo returns information about the authentication type.
+func (m *Session) AuthInfo() string {
+	provider := m.Provider()
+	method := m.Method()
+
+	if method.IsDefault() {
+		return provider.Pretty()
+	}
+
+	return fmt.Sprintf("%s (%s)", provider.Pretty(), method.Pretty())
+}
+
+// SetAuthID sets a custom authentication identifier.
+func (m *Session) SetAuthID(id string) *Session {
+	if id == "" {
+		return m
+	}
+
+	m.AuthID = clean.Name(id)
+
+	return m
+}
+
+// Scope returns the authorization scope as a sanitized string.
+func (m *Session) Scope() string {
+	return clean.Scope(m.AuthScope)
+}
+
+// HasScope checks if the session has the given authorization scope.
+func (m *Session) HasScope(scope string) bool {
+	return list.ParseAttr(m.Scope()).Contains(scope)
+}
+
+// SetScope sets a custom authentication scope.
+func (m *Session) SetScope(scope string) *Session {
+	if scope == "" {
+		return m
+	}
+
+	m.AuthScope = clean.Scope(scope)
+
+	return m
+}
+
+// Provider returns the authentication provider.
 func (m *Session) Provider() authn.ProviderType {
 	return authn.Provider(m.AuthProvider)
 }
@@ -291,6 +546,22 @@ func (m *Session) SetProvider(provider authn.ProviderType) *Session {
 	}
 
 	m.AuthProvider = provider.String()
+
+	return m
+}
+
+// Method returns the authentication method.
+func (m *Session) Method() authn.MethodType {
+	return authn.Method(m.AuthMethod)
+}
+
+// SetMethod sets a custom authentication method.
+func (m *Session) SetMethod(method authn.MethodType) *Session {
+	if method == "" {
+		return m
+	}
+
+	m.AuthMethod = method.String()
 
 	return m
 }
@@ -387,23 +658,56 @@ func (m *Session) SetData(data *SessionData) *Session {
 	return m
 }
 
-// SetContext updates the session's request context.
+// SetContext sets the session request context.
 func (m *Session) SetContext(c *gin.Context) *Session {
 	if c == nil || m == nil {
 		return m
 	}
 
-	// Set client ip address.
-	if ip := c.ClientIP(); ip != "" {
-		m.SetClientIP(ip)
+	// Set client ip address from request context.
+	if clientIp := header.ClientIP(c); clientIp != "" {
+		m.SetClientIP(clientIp)
 	} else if m.ClientIP == "" {
 		// Unit tests often do not set a client IP.
 		m.SetClientIP(UnknownIP)
 	}
 
-	// Set client user agent.
-	if ua := c.GetHeader("User-Agent"); ua != "" {
+	// Set client user agent from request context.
+	if ua := header.UserAgent(c); ua != "" {
 		m.SetUserAgent(ua)
+	}
+
+	return m
+}
+
+// UpdateContext sets the session request context and updates the session entry in the database if it has changed.
+func (m *Session) UpdateContext(c *gin.Context) *Session {
+	if c == nil || m == nil {
+		return m
+	}
+
+	changed := false
+
+	// Set client ip address from request context.
+	if clientIp := header.ClientIP(c); clientIp != "" && (clientIp != m.ClientIP || m.LoginIP == "") {
+		m.SetClientIP(clientIp)
+		changed = true
+	} else if m.ClientIP == "" {
+		// Unit tests often do not set a client IP.
+		m.SetClientIP(UnknownIP)
+		changed = true
+	}
+
+	// Set client user agent from request context.
+	if ua := header.UserAgent(c); ua != "" && ua != m.UserAgent {
+		m.SetUserAgent(ua)
+		changed = true
+	}
+
+	if !changed {
+		return m
+	} else if err := m.Save(); err != nil {
+		log.Debugf("auth:  %s while updating session context", err)
 	}
 
 	return m
@@ -453,6 +757,15 @@ func (m *Session) HasShares() bool {
 	}
 }
 
+// HasRegisteredUser checks if the session belongs to a registered user.
+func (m *Session) HasRegisteredUser() bool {
+	if !m.HasUser() {
+		return false
+	}
+
+	return m.User().IsRegistered()
+}
+
 // HasShare if the session includes the specified share
 func (m *Session) HasShare(uid string) bool {
 	if user := m.User(); user.IsRegistered() {
@@ -495,6 +808,15 @@ func (m *Session) ExpiresAt() time.Time {
 	return time.Unix(m.SessExpires, 0)
 }
 
+// ExpiresIn returns the expiration time in seconds.
+func (m *Session) ExpiresIn() int64 {
+	if m.SessExpires <= 0 {
+		return 0
+	}
+
+	return m.SessExpires - unix.Time()
+}
+
 // TimeoutAt returns the time at which the session will expire due to inactivity.
 func (m *Session) TimeoutAt() time.Time {
 	if m.SessTimeout <= 0 || m.LastActive <= 0 {
@@ -532,7 +854,7 @@ func (m *Session) UpdateLastActive() *Session {
 		return m
 	}
 
-	m.LastActive = UnixTime()
+	m.LastActive = unix.Time()
 
 	if err := Db().Model(m).UpdateColumn("LastActive", m.LastActive).Error; err != nil {
 		event.AuditWarn([]string{m.IP(), "session %s", "failed to update last active time", "%s"}, m.RefID, err)
@@ -548,6 +870,10 @@ func (m *Session) Invalid() bool {
 
 // Valid checks whether the session belongs to a registered user or a visitor with shares.
 func (m *Session) Valid() bool {
+	if m.IsClient() {
+		return true
+	}
+
 	return m.User().IsRegistered() || m.IsVisitor() && m.HasShares()
 }
 
@@ -561,6 +887,8 @@ func (m *Session) Abort(c *gin.Context) bool {
 	switch m.Status {
 	case http.StatusUnauthorized:
 		c.AbortWithStatusJSON(m.Status, i18n.NewResponse(m.Status, i18n.ErrUnauthorized))
+	case http.StatusTooManyRequests:
+		c.AbortWithStatusJSON(m.Status, gin.H{"error": "rate limit exceeded", "code": http.StatusTooManyRequests})
 	default:
 		c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 	}

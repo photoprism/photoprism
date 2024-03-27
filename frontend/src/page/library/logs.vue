@@ -1,7 +1,7 @@
 <template>
   <v-container fluid fill-height class="pa-0 ma-0 p-tab p-tab-logs">
     <v-layout row wrap fill-height class="pa-0 ma-3">
-      <v-flex grow xs12 class="pa-2 terminal elevation-0 p-logs" style="overflow: auto;">
+      <v-flex grow xs12 class="pa-2 terminal elevation-0 p-logs" style="overflow: auto">
         <p v-if="logs.length === 0" class="p-log-empty">
           <translate>Nothing to see here yet.</translate>
         </p>
@@ -14,17 +14,16 @@
 </template>
 
 <script>
-import {DateTime} from "luxon";
+import { DateTime } from "luxon";
 
 export default {
-  name: 'PTabLogs',
+  name: "PTabLogs",
   data() {
     return {
       logs: this.$log.logs,
     };
   },
-  created() {
-  },
+  created() {},
   methods: {
     level(log) {
       return log.level.substr(0, 4).toUpperCase();

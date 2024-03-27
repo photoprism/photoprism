@@ -14,7 +14,7 @@ import (
 // UsersResetCommand configures the command name, flags, and action.
 var UsersResetCommand = cli.Command{
 	Name:  "reset",
-	Usage: "Resets the user database to a clean state",
+	Usage: "Removes all registered user accounts",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "trace, t",
@@ -53,7 +53,7 @@ func usersResetAction(ctx *cli.Context) error {
 		db := conf.Db()
 
 		// Drop existing user management tables.
-		if err := db.DropTableIfExists(entity.User{}, entity.UserDetails{}, entity.UserSettings{}, entity.UserShare{}).Error; err != nil {
+		if err := db.DropTableIfExists(entity.User{}, entity.UserDetails{}, entity.UserSettings{}, entity.UserShare{}, entity.Passcode{}).Error; err != nil {
 			return err
 		}
 
@@ -74,6 +74,11 @@ func usersResetAction(ctx *cli.Context) error {
 
 		// Re-create auth_users_shares.
 		if err := db.CreateTable(entity.UserShare{}).Error; err != nil {
+			return err
+		}
+
+		// Re-create passcodes.
+		if err := db.CreateTable(entity.Passcode{}).Error; err != nil {
 			return err
 		}
 

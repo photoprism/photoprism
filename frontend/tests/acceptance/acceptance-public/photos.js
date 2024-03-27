@@ -51,6 +51,7 @@ test.meta("testID", "photos-002").meta({ mode: "public" })(
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
 
     await photoviewer.triggerPhotoViewerAction("close");
+    await t.expect(Selector("#photo-viewer").visible).notOk();
     await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
     await photo.triggerHoverAction("uid", FirstVideoUid, "select");
     await contextmenu.checkContextMenuCount("2");
@@ -160,7 +161,8 @@ test.meta("testID", "photos-004").meta({ type: "short", mode: "public" })(
     await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
     await photoviewer.triggerPhotoViewerAction("like");
     await photoviewer.triggerPhotoViewerAction("close");
-    if (t.browser.platform === "mobile") {
+    await t.expect(Selector("#photo-viewer").visible).notOk();
+      if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
       await toolbar.triggerToolbarAction("reload");

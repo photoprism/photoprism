@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -43,6 +43,8 @@ import PWebdavDialog from "dialog/webdav.vue";
 import PReloadDialog from "dialog/reload.vue";
 import PSponsorDialog from "dialog/sponsor.vue";
 import PConfirmDialog from "dialog/confirm.vue";
+import PAccountAppsDialog from "dialog/account/apps.vue";
+import PAccountPasscodeDialog from "dialog/account/passcode.vue";
 import PAccountPasswordDialog from "dialog/account/password.vue";
 
 const dialogs = {};
@@ -68,6 +70,8 @@ dialogs.install = (Vue) => {
   Vue.component("PReloadDialog", PReloadDialog);
   Vue.component("PSponsorDialog", PSponsorDialog);
   Vue.component("PConfirmDialog", PConfirmDialog);
+  Vue.component("PAccountAppsDialog", PAccountAppsDialog);
+  Vue.component("PAccountPasscodeDialog", PAccountPasscodeDialog);
   Vue.component("PAccountPasswordDialog", PAccountPasswordDialog);
 };
 

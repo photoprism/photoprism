@@ -1,7 +1,7 @@
 /*
 Package migrate provides database schema migrations.
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -33,5 +33,5 @@ import (
 
 var log = event.Log
 
-// Values is a shortcut for map[string]interface{}
-type Values map[string]interface{}
+// Map is an alias for map[string]interface{}.
+type Map map[string]interface{}

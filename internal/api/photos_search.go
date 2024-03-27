@@ -11,8 +11,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/search"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // SearchPhotos searches the pictures index and returns the result as JSON.
@@ -46,7 +46,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		// Ignore private flag if feature is disabled.
 		if f.Scope == "" &&
 			settings.Features.Review &&
-			acl.Resources.Deny(acl.ResourcePhotos, s.User().AclRole(), acl.ActionManage) {
+			acl.Resources.Deny(acl.ResourcePhotos, s.UserRole(), acl.ActionManage) {
 			f.Quality = 3
 		}
 

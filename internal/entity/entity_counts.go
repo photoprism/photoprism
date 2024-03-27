@@ -187,7 +187,7 @@ func UpdateCounts() (err error) {
 
 	if err = UpdatePlacesCounts(); err != nil {
 		if strings.Contains(err.Error(), "Error 1054") {
-			log.Errorf("counts: failed updating places, potentially incompatible database version")
+			log.Errorf("counts: failed to update places, potentially incompatible database version")
 			log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 			return nil
 		}
@@ -197,7 +197,7 @@ func UpdateCounts() (err error) {
 
 	if err = UpdateSubjectCounts(); err != nil {
 		if strings.Contains(err.Error(), "Error 1054") {
-			log.Errorf("counts: failed updating subjects, potentially incompatible database version")
+			log.Errorf("counts: failed to update subjects, potentially incompatible database version")
 			log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 			return nil
 		}

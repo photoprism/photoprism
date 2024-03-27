@@ -78,7 +78,7 @@ func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 		m.UpdateLocation()
 
 		if m.Place == nil {
-			log.Warnf("photo: failed updating position of %s", m)
+			log.Warnf("photo: failed to update position of %s", m)
 		} else {
 			log.Debugf("photo: approximate place of %s is %s (id %s)", m, clean.Log(m.Place.Label()), m.PlaceID)
 		}

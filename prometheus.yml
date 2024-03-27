@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 60s
+  scrape_timeout: 10s
+scrape_configs:
+  - job_name: "photoprism"
+    metrics_path: "/api/v1/metrics"
+    oauth2:
+      client_id: "cs5cpu17n6gj2qo5"
+      client_secret: "xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"
+      token_url: "http://photoprism:2342/api/v1/oauth/token"
+      scopes:
+        - 'metrics'
+      endpoint_params:
+        grant_type: "client_credentials"
+    static_configs:
+      - targets: ["photoprism:2342"]

@@ -1,12 +1,12 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable
-            lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
+  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark class="action-close" @click.stop="close">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-toolbar-title>{{ title }}
+        <v-toolbar-title
+          >{{ title }}
           <v-icon v-if="isPrivate" title="Private">lock</v-icon>
         </v-toolbar-title>
         <v-spacer></v-spacer>
@@ -22,18 +22,12 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-tabs
-          v-model="active"
-          flat grow
-          class="form"
-          color="secondary"
-          slider-color="secondary-dark"
-          :height="$vuetify.breakpoint.smAndDown ? 48 : 64"
-      >
+      <v-tabs v-model="active" flat grow class="form" color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Details')">edit</v-icon>
           <template v-else>
-            <v-icon :size="18" :left="!rtl" :right="rtl">edit</v-icon> <translate key="Details">Details</translate>
+            <v-icon :size="18" :left="!rtl" :right="rtl">edit</v-icon>
+            <translate key="Details">Details</translate>
           </template>
         </v-tab>
 
@@ -82,8 +76,7 @@
 
         <v-tabs-items touchless>
           <v-tab-item lazy>
-            <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid"
-                                 @close="close" @prev="prev" @next="next"></p-tab-photo-details>
+            <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
           </v-tab-item>
 
           <v-tab-item lazy>
@@ -116,13 +109,13 @@ import PhotoInfo from "./edit/info.vue";
 import Event from "pubsub-js";
 
 export default {
-  name: 'PPhotoEditDialog',
+  name: "PPhotoEditDialog",
   components: {
-    'p-tab-photo-details': PhotoDetails,
-    'p-tab-photo-labels': PhotoLabels,
-    'p-tab-photo-people': PhotoPeople,
-    'p-tab-photo-files': PhotoFiles,
-    'p-tab-photo-info': PhotoInfo,
+    "p-tab-photo-details": PhotoDetails,
+    "p-tab-photo-labels": PhotoLabels,
+    "p-tab-photo-people": PhotoPeople,
+    "p-tab-photo-files": PhotoFiles,
+    "p-tab-photo-info": PhotoInfo,
   },
   props: {
     index: {
@@ -143,7 +136,7 @@ export default {
     return {
       selected: 0,
       selectedId: "",
-      model: new Photo,
+      model: new Photo(),
       uid: "",
       loading: false,
       search: null,
@@ -155,14 +148,14 @@ export default {
     };
   },
   computed: {
-    title () {
+    title() {
       if (this.model && this.model.Title) {
         return this.model.Title;
       }
 
       return this.$gettext("Edit Photo");
     },
-    isPrivate () {
+    isPrivate() {
       if (this.model && this.model.Private && this.$config.settings().features.private) {
         return this.model.Private;
       }
@@ -175,7 +168,7 @@ export default {
       if (show) {
         this.find(this.index);
       }
-    }
+    },
   },
   created() {
     this.subscriptions.push(Event.subscribe("photos.updated", (ev, data) => this.onUpdate(ev, data)));
@@ -191,21 +184,21 @@ export default {
         return;
       }
 
-      const type = ev.split('.')[1];
+      const type = ev.split(".")[1];
 
       switch (type) {
-        case 'updated':
+        case "updated":
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
             if (values.UID && values.Title && this.model.UID === values.UID) {
-              this.model.setValues({Title: values.Title, Description: values.Description}, true);
+              this.model.setValues({ Title: values.Title, Description: values.Description }, true);
             }
           }
           break;
       }
     },
     close() {
-      this.$emit('close');
+      this.$emit("close");
     },
     prev() {
       if (this.selected > 0) {
@@ -233,12 +226,15 @@ export default {
       this.selected = index;
       this.selectedId = this.selection[index];
 
-      this.model.find(this.selectedId).then(model => {
-        model.refreshFileAttr();
-        this.model = model;
-        this.loading = false;
-        this.uid = this.selectedId;
-      }).catch(() => this.loading = false);
+      this.model
+        .find(this.selectedId)
+        .then((model) => {
+          model.refreshFileAttr();
+          this.model = model;
+          this.loading = false;
+          this.uid = this.selectedId;
+        })
+        .catch(() => (this.loading = false));
     },
   },
 };

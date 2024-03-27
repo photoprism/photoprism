@@ -7,7 +7,9 @@ import (
 
 // Uri removes invalid character from an uri string.
 func Uri(s string) string {
-	if s == "" || reject(s, 512) || strings.Contains(s, "..") {
+	if s == "" || len(s) > MaxLength {
+		return ""
+	} else if strings.Contains(s, "..") {
 		return ""
 	}
 

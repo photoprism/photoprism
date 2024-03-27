@@ -6,8 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 func Abort(c *gin.Context, code int, id i18n.Message, params ...interface{}) {
@@ -29,6 +31,35 @@ func Error(c *gin.Context, code int, err error, id i18n.Message, params ...inter
 	c.AbortWithStatusJSON(code, resp)
 }
 
+// AbortNotFound renders a "404 Not Found" error page or JSON response.
+var AbortNotFound = func(c *gin.Context) {
+	conf := get.Config()
+
+	switch c.NegotiateFormat(gin.MIMEHTML, gin.MIMEJSON) {
+	case gin.MIMEJSON:
+		c.JSON(http.StatusNotFound, gin.H{"error": i18n.Msg(i18n.ErrNotFound)})
+	default:
+		var redirect string
+
+		// Redirect to site root if current path is different.
+		if root, path := conf.BaseUri("/"), c.Request.URL.Path; path != "" && path != root {
+			redirect = root
+		}
+
+		values := gin.H{
+			"signUp":   config.SignUp,
+			"config":   conf.ClientPublic(),
+			"error":    i18n.Msg(i18n.ErrNotFound),
+			"code":     http.StatusNotFound,
+			"redirect": redirect,
+		}
+
+		c.HTML(http.StatusNotFound, "404.gohtml", values)
+	}
+
+	c.Abort()
+}
+
 // AbortUnauthorized aborts with status code 401.
 func AbortUnauthorized(c *gin.Context) {
 	Abort(c, http.StatusUnauthorized, i18n.ErrUnauthorized)
@@ -37,11 +68,6 @@ func AbortUnauthorized(c *gin.Context) {
 // AbortForbidden aborts with status code 403.
 func AbortForbidden(c *gin.Context) {
 	Abort(c, http.StatusForbidden, i18n.ErrForbidden)
-}
-
-// AbortNotFound aborts with status code 404.
-func AbortNotFound(c *gin.Context) {
-	Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 }
 
 // AbortEntityNotFound aborts with status code 404.
@@ -62,7 +88,7 @@ func AbortDeleteFailed(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrDeleteFailed)
 }
 
-func AbortUnexpected(c *gin.Context) {
+func AbortUnexpectedError(c *gin.Context) {
 	Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 }
 

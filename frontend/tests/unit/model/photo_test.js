@@ -113,7 +113,7 @@ describe("model/photo", () => {
     assert.include(result2, "is-portrait");
     assert.include(result2, "is-favorite");
     assert.include(result2, "is-private");
-    assert.include(result2, "is-stack");
+    assert.notInclude(result2, "is-stack");
     assert.include(result2, "is-playable");
   });
 

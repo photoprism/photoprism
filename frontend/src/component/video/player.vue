@@ -1,9 +1,7 @@
 <template>
   <div class="video-wrapper" :style="style">
-    <video :key="source" ref="video" class="video-player" :height="height" :width="width" :autoplay="autoplay"
-           :style="style" :poster="poster" :loop="loop" preload="auto" controls playsinline
-           @click.stop @keydown.esc.stop.prevent="$emit('close')">
-      <source :src="source">
+    <video :key="source" ref="video" class="video-player" :height="height" :width="width" :autoplay="autoplay" :style="style" :poster="poster" :loop="loop" preload="auto" controls playsinline @click.stop @keydown.esc.stop.prevent="$emit('close')">
+      <source :src="source" />
     </video>
   </div>
 </template>
@@ -15,42 +13,42 @@ export default {
     show: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     poster: {
       type: String,
       required: true,
-      default: ""
+      default: "",
     },
     source: {
       type: String,
       required: true,
-      default: ""
+      default: "",
     },
     width: {
       type: Number,
       required: false,
-      default: 640
+      default: 640,
     },
     height: {
       type: Number,
       required: false,
-      default: 480
+      default: 480,
     },
     preload: {
       type: String,
       required: false,
-      default: "none"
+      default: "none",
     },
     autoplay: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     loop: {
       type: Boolean,
       required: false,
-      default: false
+      default: false,
     },
     success: {
       type: Function,
@@ -59,7 +57,7 @@ export default {
     error: {
       type: Function,
       default: () => {},
-    }
+    },
   },
   data: () => ({
     refresh: false,
@@ -82,7 +80,7 @@ export default {
   },
   methods: {
     videoEl() {
-      return this.$el.getElementsByTagName('video')[0];
+      return this.$el.getElementsByTagName("video")[0];
     },
     updateStyle() {
       this.style = `width: ${this.width.toString()}px; height: ${this.height.toString()}px`;

@@ -16,11 +16,13 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// AddPhotoLabel adds a label to a photo.
+//
+// The request parameters are:
+//
+//   - uid: string PhotoUID as returned by the API
+//
 // POST /api/v1/photos/:uid/label
-//
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -38,7 +40,7 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 
 		var f form.Label
 
-		if err := c.BindJSON(&f); err != nil {
+		if err = c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -46,18 +48,19 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		labelEntity := entity.FirstOrCreateLabel(entity.NewLabel(f.LabelName, f.LabelPriority))
 
 		if labelEntity == nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed creating label"})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to create label"})
 			return
 		}
 
-		if err := labelEntity.Restore(); err != nil {
+		if err = labelEntity.Restore(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "could not restore label"})
+			return
 		}
 
 		photoLabel := entity.FirstOrCreatePhotoLabel(entity.NewPhotoLabel(m.ID, labelEntity.ID, f.Uncertainty, "manual"))
 
 		if photoLabel == nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed updating photo label"})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to update photo label"})
 			return
 		}
 
@@ -77,12 +80,12 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := p.SaveLabels(); err != nil {
+		if err = p.SaveLabels(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uid"), c)
+		PublishPhotoEvent(StatusUpdated, c.Param("uid"), c)
 
 		event.Success("label updated")
 
@@ -90,12 +93,14 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 	})
 }
 
+// RemovePhotoLabel removes a label from a photo.
+//
+// The request parameters are:
+//
+//   - uid: string PhotoUID as returned by the API
+//   - id: int LabelId as returned by the API
+//
 // DELETE /api/v1/photos/:uid/label/:id
-//
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
-//	id: int LabelId as returned by the API
 func RemovePhotoLabel(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -126,10 +131,10 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if label.LabelSrc == classify.SrcManual || label.LabelSrc == classify.SrcKeyword {
-			logError("label", entity.Db().Delete(&label).Error)
+			logErr("label", entity.Db().Delete(&label).Error)
 		} else {
 			label.Uncertainty = 100
-			logError("label", entity.Db().Save(&label).Error)
+			logErr("label", entity.Db().Save(&label).Error)
 		}
 
 		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
@@ -139,14 +144,14 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		logError("label", p.RemoveKeyword(label.Label.LabelName))
+		logErr("label", p.RemoveKeyword(label.Label.LabelName))
 
 		if err := p.SaveLabels(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label removed")
 
@@ -154,12 +159,14 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 	})
 }
 
+// UpdatePhotoLabel changes a photo labels.
+//
+// The request parameters are:
+//
+//   - uid: string PhotoUID as returned by the API
+//   - id: int LabelId as returned by the API
+//
 // PUT /api/v1/photos/:uid/label/:id
-//
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
-//	id: int LabelId as returned by the API
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -213,7 +220,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label saved")
 

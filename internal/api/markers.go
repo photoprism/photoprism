@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
@@ -17,9 +15,10 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // Checks if background worker runs less than once per hour.
@@ -74,9 +73,9 @@ func findFileMarker(c *gin.Context) (file *entity.File, marker *entity.Marker, e
 
 // CreateMarker adds a new file area marker to assign faces or other subjects.
 //
-// POST /api/v1/markers
-//
 // See internal/form/marker.go for the values required to create a new marker.
+//
+// POST /api/v1/markers
 func CreateMarker(router *gin.RouterGroup) {
 	router.POST("/markers", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
@@ -161,7 +160,7 @@ func CreateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Publish updated photo entity.
-			PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
 		}
 
 		// Display success message.
@@ -174,11 +173,11 @@ func CreateMarker(router *gin.RouterGroup) {
 
 // UpdateMarker updates an existing file area marker to assign faces or other subjects.
 //
+// The request parameters are:
+//
+//   - marker_uid: string Marker UID as returned by the API
+//
 // PUT /api/v1/markers/:marker_uid
-//
-// Parameters:
-//
-//	marker_uid: string Marker UID as returned by the API
 func UpdateMarker(router *gin.RouterGroup) {
 	router.PUT("/markers/:marker_uid", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
@@ -253,7 +252,7 @@ func UpdateMarker(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
-			PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
 		}
 
 		// Display success message.
@@ -266,13 +265,13 @@ func UpdateMarker(router *gin.RouterGroup) {
 
 // ClearMarkerSubject removes an existing marker subject association.
 //
+// The request parameters are:
+//
+//   - uid: string Photo UID as returned by the API
+//   - file_uid: string File UID as returned by the API
+//   - id: int Marker ID as returned by the API
+//
 // DELETE /api/v1/markers/:marker_uid/subject
-//
-// Parameters:
-//
-//	uid: string Photo UID as returned by the API
-//	file_uid: string File UID as returned by the API
-//	id: int Marker ID as returned by the API
 func ClearMarkerSubject(router *gin.RouterGroup) {
 	router.DELETE("/markers/:marker_uid/subject", func(c *gin.Context) {
 		// Abort if workers runs less than once per hour.
@@ -314,7 +313,7 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (update photo title)", err)
 		} else {
 			// Notify clients.
-			PublishPhotoEvent(EntityUpdated, file.PhotoUID, c)
+			PublishPhotoEvent(StatusUpdated, file.PhotoUID, c)
 		}
 
 		event.SuccessMsg(i18n.MsgChangesSaved)

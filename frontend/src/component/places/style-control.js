@@ -66,12 +66,7 @@ export default class MapStyleControl {
   }
 
   onRemove() {
-    if (
-      !this.controlContainer ||
-      !this.controlContainer.parentNode ||
-      !this.map ||
-      !this.styleButton
-    ) {
+    if (!this.controlContainer || !this.controlContainer.parentNode || !this.map || !this.styleButton) {
       return;
     }
     this.styleButton.removeEventListener("click", this.onDocumentClick);
@@ -81,12 +76,7 @@ export default class MapStyleControl {
   }
 
   onDocumentClick(event) {
-    if (
-      this.controlContainer &&
-      !this.controlContainer.contains(event.target) &&
-      this.mapStyleContainer &&
-      this.styleButton
-    ) {
+    if (this.controlContainer && !this.controlContainer.contains(event.target) && this.mapStyleContainer && this.styleButton) {
       this.mapStyleContainer.style.display = "none";
       this.styleButton.style.display = "block";
     }

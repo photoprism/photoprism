@@ -18,57 +18,43 @@
         <translate>We do our best to respond within five business days or less.</translate>
       </p>
       <p class="mt-4 text-xs-center">
-        <img src="https://cdn.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU">
+        <img src="https://cdn.photoprism.app/thank-you/colorful.png" width="100%" alt="THANK YOU" />
       </p>
     </v-container>
-    <v-form v-else ref="form" v-model="valid"
-            autocomplete="off"
-            class="pa-3" lazy-validation>
+    <v-form v-else ref="form" v-model="valid" autocomplete="off" class="pa-3" lazy-validation>
       <v-layout row wrap>
         <v-flex xs12 class="pa-2">
           <v-select
-              v-model="form.Category"
-              :disabled="busy"
-              :items="options.FeedbackCategories()"
-              :label="$gettext('Category')"
-              color="secondary-dark"
-              background-color="secondary-light"
-              flat solo hide-details required
-              browser-autocomplete="off"
-              class="input-category"
-              :rules="[v => !!v || $gettext('Required')]"
+            v-model="form.Category"
+            :disabled="busy"
+            :items="options.FeedbackCategories()"
+            :label="$gettext('Category')"
+            color="secondary-dark"
+            background-color="secondary-light"
+            flat
+            solo
+            hide-details
+            required
+            browser-autocomplete="off"
+            class="input-category"
+            :rules="[(v) => !!v || $gettext('Required')]"
           ></v-select>
         </v-flex>
 
         <v-flex xs12 class="pa-2">
-          <v-textarea v-model="form.Message" required auto-grow flat solo hide-details
-                      browser-autocomplete="off" rows="10" :rules="[v => !!v || $gettext('Required')]"
-                      :label="$gettext('How can we help?')"></v-textarea>
+          <v-textarea v-model="form.Message" required auto-grow flat solo hide-details browser-autocomplete="off" rows="10" :rules="[(v) => !!v || $gettext('Required')]" :label="$gettext('How can we help?')"></v-textarea>
         </v-flex>
 
         <v-flex xs12 sm6 class="pa-2">
-          <v-text-field v-model="form.UserName" flat solo hide-details
-                        browser-autocomplete="off"
-                        color="secondary-dark"
-                        background-color="secondary-light" :label="$gettext('Name')" type="text">
-          </v-text-field>
+          <v-text-field v-model="form.UserName" flat solo hide-details browser-autocomplete="off" color="secondary-dark" background-color="secondary-light" :label="$gettext('Name')" type="text"> </v-text-field>
         </v-flex>
 
         <v-flex xs12 sm6 class="pa-2">
-          <v-text-field v-model="form.UserEmail" flat solo hide-details required
-                        autocapitalize="none"
-                        color="secondary-dark"
-                        :rules="[v => !!v || $gettext('Required')]"
-                        background-color="secondary-light" :label="$gettext('E-Mail')" type="email">
-          </v-text-field>
+          <v-text-field v-model="form.UserEmail" flat solo hide-details required autocapitalize="none" color="secondary-dark" :rules="[(v) => !!v || $gettext('Required')]" background-color="secondary-light" :label="$gettext('E-Mail')" type="email"> </v-text-field>
         </v-flex>
 
         <v-flex xs12 grow class="px-2 py-1">
-          <v-btn color="primary-button"
-                 class="white--text ml-0"
-                 depressed
-                 :disabled="!form.Category || !form.Message || !form.UserEmail"
-                 @click.stop="send">
+          <v-btn color="primary-button" class="white--text ml-0" depressed :disabled="!form.Category || !form.Message || !form.UserEmail" @click.stop="send">
             <translate>Send</translate>
             <v-icon :right="!rtl" :left="rtl" dark>send</v-icon>
           </v-btn>
@@ -85,7 +71,7 @@ import * as options from "options/options";
 import Api from "common/api";
 
 export default {
-  name: 'PPageSupport',
+  name: "PPageSupport",
   data() {
     return {
       sent: false,
@@ -113,7 +99,6 @@ export default {
       } else {
         this.$notify.error(this.$gettext("All fields are required"));
       }
-
     },
   },
 };

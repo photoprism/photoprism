@@ -9,10 +9,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
-	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -385,16 +385,6 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("WALLPAPER_URI"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "cdn-url",
-			Usage:  "content delivery network `URL`",
-			EnvVar: EnvVar("CDN_URL"),
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "cdn-video",
-			Usage:  "stream videos over the specified CDN",
-			EnvVar: EnvVar("CDN_VIDEO"),
-		}}, {
-		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",
 			Value:  "http://localhost:2342/",
@@ -426,6 +416,34 @@ var Flags = CliFlags{
 			Name:   "site-preview",
 			Usage:  "sharing preview image `URL`",
 			EnvVar: EnvVar("SITE_PREVIEW"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cdn-url",
+			Usage:  "content delivery network `URL`",
+			EnvVar: EnvVar("CDN_URL"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "cdn-video",
+			Usage:  "stream videos over the specified CDN",
+			EnvVar: EnvVar("CDN_VIDEO"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-origin",
+			Usage:  "origin `URL` from which browsers are allowed to perform cross-origin requests (leave empty to disable or use * to allow all)",
+			EnvVar: EnvVar("CORS_ORIGIN"),
+			Value:  header.DefaultAccessControlAllowOrigin,
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-headers",
+			Usage:  "one or more `HEADERS` that browsers should see when performing a cross-origin request",
+			EnvVar: EnvVar("CORS_HEADERS"),
+			Value:  header.DefaultAccessControlAllowHeaders,
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-methods",
+			Usage:  "one or more `METHODS` that may be used when performing a cross-origin request",
+			EnvVar: EnvVar("CORS_METHODS"),
+			Value:  header.DefaultAccessControlAllowMethods,
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "https-proxy",
@@ -498,13 +516,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-cache-maxage",
-			Value:  int(ttl.Default),
+			Value:  int(ttl.CacheDefault),
 			Usage:  "time in `SECONDS` until cached content expires",
 			EnvVar: EnvVar("HTTP_CACHE_MAXAGE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-video-maxage",
-			Value:  int(ttl.Video),
+			Value:  int(ttl.CacheVideo),
 			Usage:  "time in `SECONDS` until cached videos expire",
 			EnvVar: EnvVar("HTTP_VIDEO_MAXAGE"),
 		}}, {

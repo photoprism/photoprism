@@ -81,6 +81,16 @@ describe("model/face", () => {
     const result2 = face2.thumbnailUrl();
 
     assert.equal(result2, "/api/v1/t/7ca759a2b788cc5bcc08dbbce9854ff94a2f94d1/public/tile_160");
+
+    const values3 = {
+      ID: "f123ghytrfggd",
+      Samples: 5,
+      Thumb: "",
+    };
+    const face3 = new Face(values3);
+    const result3 = face3.thumbnailUrl("tile_240");
+
+    assert.equal(result3, "/api/v1/svg/portrait");
   });
 
   it("should get date string", () => {
@@ -124,8 +134,35 @@ describe("model/face", () => {
     assert.equal(face.Hidden, true);
   });
 
+  it("should set name", (done) => {
+    const values = { ID: "f123ghytrfggd", Samples: 5, MarkerUID: "mDC123ghytr", Name: "Jane" };
+    const face = new Face(values);
+    face
+      .setName("testname")
+      .then((response) => {
+        assert.equal(response.Name, "testname");
+        done();
+      })
+      .catch((error) => {
+        done(error);
+      });
+
+    face
+      .setName("")
+      .then((response) => {
+        assert.equal(response.Name, "Jane");
+        done();
+      })
+      .catch((error) => {
+        done(error);
+      });
+  });
+
   it("should return batch size", () => {
     assert.equal(Face.batchSize(), 24);
+    Face.setBatchSize(30);
+    assert.equal(Face.batchSize(), 30);
+    Face.setBatchSize(24);
   });
 
   it("should get collection resource", () => {

@@ -24,23 +24,23 @@ steps:
         from_secret: codecov_token
     commands:
       - scripts/login.sh
-      - docker compose -f docker-compose.ci.yml pull
-      - docker compose -f docker-compose.ci.yml stop
-      - docker compose -f docker-compose.ci.yml up -d --build --force-recreate
+      - docker compose -f compose.ci.yaml pull
+      - docker compose -f compose.ci.yaml stop
+      - docker compose -f compose.ci.yaml up -d --build --force-recreate
 
   - name: test-develop
     environment:
       CODECOV_TOKEN:
         from_secret: codecov_token
     commands:
-      - docker compose -f docker-compose.ci.yml exec -e CODECOV_TOKEN=$${CODECOV_TOKEN} -T photoprism make all test-js test-codecov install migrate
+      - docker compose -f compose.ci.yaml exec -e CODECOV_TOKEN=$${CODECOV_TOKEN} -T photoprism make all test-js test-codecov install migrate
     when:
       branch:
         - develop
 
   - name: test
     commands:
-      - docker compose -f docker-compose.ci.yml exec -T photoprism make all test install migrate
+      - docker compose -f compose.ci.yaml exec -T photoprism make all test install migrate
     when:
       branch:
         - preview
@@ -48,7 +48,7 @@ steps:
 
   - name: down
     commands:
-      - docker compose -f docker-compose.ci.yml down
+      - docker compose -f compose.ci.yaml down
     when:
       status:
         - failure
@@ -119,15 +119,15 @@ trigger:
 steps:
   - name: up
     commands:
-      - docker-compose -f docker-compose.ci.yml up -d --build --force-recreate
+      - docker-compose -f compose.ci.yaml up -d --build --force-recreate
 
   - name: test
     commands:
-      - docker-compose -f docker-compose.ci.yml exec -T photoprism make all test install migrate
+      - docker-compose -f compose.ci.yaml exec -T photoprism make all test install migrate
 
   - name: down
     commands:
-      - docker-compose -f docker-compose.ci.yml down
+      - docker-compose -f compose.ci.yaml down
     when:
       status:
         - failure
@@ -159,16 +159,16 @@ steps:
         from_secret: docker_password
     commands:
       - scripts/login.sh
-      - docker-compose -f docker-compose.ci.yml stop
-      - docker-compose -f docker-compose.ci.yml up -d --build --force-recreate
+      - docker-compose -f compose.ci.yaml stop
+      - docker-compose -f compose.ci.yaml up -d --build --force-recreate
 
   - name: test
     commands:
-      - docker-compose -f docker-compose.ci.yml exec -T photoprism make all test-go install migrate
+      - docker-compose -f compose.ci.yaml exec -T photoprism make all test-go install migrate
 
   - name: down
     commands:
-      - docker-compose -f docker-compose.ci.yml down
+      - docker-compose -f compose.ci.yaml down
       - docker system prune -f
     when:
       status:

@@ -273,7 +273,7 @@ func TestFirstOrCreateFace(t *testing.T) {
 	t.Run("return existing entity", func(t *testing.T) {
 		m := FaceFixtures.Pointer("joe-biden")
 		r := FirstOrCreateFace(m)
-		assert.Equal(t, "jqy3y652h8njw0sx", r.SubjUID)
+		assert.Equal(t, "js6sg6b2h8njw0sx", r.SubjUID)
 		assert.Equal(t, 33, r.Samples)
 	})
 }

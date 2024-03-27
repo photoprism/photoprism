@@ -6,8 +6,8 @@ import (
 
 var log = event.Log
 
-// logError logs an error if err is not nil.
-func logError(prefix string, err error) {
+// logErr logs an error if err is not nil.
+func logErr(prefix string, err error) {
 	if err != nil {
 		log.Errorf("%s: %s", prefix, err.Error())
 	}

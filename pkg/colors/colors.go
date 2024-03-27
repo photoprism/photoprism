@@ -1,7 +1,7 @@
 /*
 Package colors provides types and functions for color classification.
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -118,6 +118,10 @@ func (c Color) ID() int16 {
 }
 
 func (c Color) Hex() string {
+	if c < 0 || c > 15 {
+		return "0"
+	}
+
 	return fmt.Sprintf("%X", c)
 }
 

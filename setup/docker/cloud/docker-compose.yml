@@ -1,5 +1,3 @@
-version: '3.5'
-
 #  ========================================================================
 #  PhotoPrism for Cloud Servers
 #  Based on Ubuntu 22.04 LTS (Jammy Jellyfish)
@@ -179,7 +177,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
-    image: traefik:v2.9
+    image: traefik:v2.11
     container_name: traefik
     ports:
       - "80:80"
@@ -196,7 +194,7 @@ services:
   ## Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
-    image: mariadb:10.11
+    image: mariadb:11
     container_name: mariadb
     restart: always
     stop_grace_period: 5s

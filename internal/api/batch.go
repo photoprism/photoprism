@@ -15,10 +15,10 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // BatchPhotosArchive moves multiple photos to the archive.
@@ -325,7 +325,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 		}
 
 		for _, label := range labels {
-			logError("labels", label.Delete())
+			logErr("labels", label.Delete())
 		}
 
 		UpdateClientConfig()
@@ -367,7 +367,7 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 		var err error
 
 		// Abort if user wants to delete all but does not have sufficient privileges.
-		if f.All && !acl.Resources.AllowAll(acl.ResourcePhotos, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+		if f.All && !acl.Resources.AllowAll(acl.ResourcePhotos, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
 			AbortForbidden(c)
 			return
 		}

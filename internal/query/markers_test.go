@@ -12,7 +12,7 @@ import (
 
 func TestMarkerByUID(t *testing.T) {
 	t.Run("Found", func(t *testing.T) {
-		if m, err := MarkerByUID("mt9k3pw1wowuy888"); err != nil {
+		if m, err := MarkerByUID("ms6sg6b1wowuy888"); err != nil {
 			t.Fatal(err)
 		} else if m == nil {
 			t.Fatal("result is nil")

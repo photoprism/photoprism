@@ -1,21 +1,11 @@
 <template>
   <div class="p-tab p-tab-photo-details">
-    <v-form ref="form" lazy-validation
-            dense class="p-form-photo-details-meta" accept-charset="UTF-8"
-            @submit.prevent="save">
+    <v-form ref="form" lazy-validation dense class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
       <v-layout class="pa-2" row wrap align-top fill-height>
         <v-flex class="pa-2 p-photo" xs12 sm4 md2 fill-height>
-          <v-card tile
-                  class="pa-0 ma-0 elevation-0"
-                  :title="model.Title">
-            <v-img v-touch="{left, right}"
-                   :src="model.thumbnailUrl('tile_500')"
-                   aspect-ratio="1"
-                   class="card darken-1 elevation-0 clickable"
-                   @click.exact="openPhoto()"
-            >
-            </v-img>
-
+          <v-card tile class="pa-0 ma-0 elevation-0" :title="model.Title">
+            <v-img v-touch="{ left, right }" :src="model.thumbnailUrl('tile_500')" aspect-ratio="1" class="card darken-1 elevation-0 clickable" @click.exact="openPhoto()">
+</v-img>
           </v-card>
         </v-flex>
         <v-flex xs12 sm8 md10 fill-height>
@@ -26,7 +16,9 @@
                 :append-icon="model.TitleSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 :label="$pgettext('Photo', 'Title')"
                 placeholder=""
                 color="secondary-dark"
@@ -43,11 +35,15 @@
                 :error="invalidDate"
                 :label="$gettext('Day')"
                 browser-autocomplete="off"
-                hide-details box flat hide-no-data
+                hide-details
+                box
+                flat
+                hide-no-data
                 color="secondary-dark"
                 :items="options.Days()"
                 class="input-day"
-                @change="updateTime">
+                @change="updateTime"
+              >
               </v-autocomplete>
             </v-flex>
             <v-flex xs4 md1 pa-2>
@@ -58,11 +54,15 @@
                 :error="invalidDate"
                 :label="$gettext('Month')"
                 browser-autocomplete="off"
-                hide-details box flat hide-no-data
+                hide-details
+                box
+                flat
+                hide-no-data
                 color="secondary-dark"
                 :items="options.MonthsShort()"
                 class="input-month"
-                @change="updateTime">
+                @change="updateTime"
+              >
               </v-autocomplete>
             </v-flex>
             <v-flex xs4 md2 pa-2>
@@ -73,11 +73,15 @@
                 :error="invalidDate"
                 :label="$gettext('Year')"
                 browser-autocomplete="off"
-                hide-details box flat hide-no-data
+                hide-details
+                box
+                flat
+                hide-no-data
                 color="secondary-dark"
                 :items="options.Years()"
                 class="input-year"
-                @change="updateTime">
+                @change="updateTime"
+              >
               </v-autocomplete>
             </v-flex>
 
@@ -90,26 +94,18 @@
                 browser-autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
-                hide-details box flat
-                return-masked-value mask="##:##:##"
+                hide-details
+                box
+                flat
+                return-masked-value
+                mask="##:##:##"
                 color="secondary-dark"
                 class="input-local-time"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs6 sm6 md6 lg3 class="pa-2">
-              <v-autocomplete
-                v-model="model.TimeZone"
-                :disabled="disabled"
-                :label="$gettext('Time Zone')"
-                browser-autocomplete="off"
-                hide-details box flat hide-no-data
-                color="secondary-dark"
-                item-value="ID"
-                item-text="Name"
-                :items="options.TimeZones()"
-                class="input-timezone"
-                @change="updateTime">
+              <v-autocomplete v-model="model.TimeZone" :disabled="disabled" :label="$gettext('Time Zone')" browser-autocomplete="off" hide-details box flat hide-no-data color="secondary-dark" item-value="ID" item-text="Name" :items="options.TimeZones()" class="input-timezone" @change="updateTime">
               </v-autocomplete>
             </v-flex>
 
@@ -119,30 +115,23 @@
                 :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 :readonly="!!(model.Lat || model.Lng)"
-                :label="$gettext('Country')" hide-details box flat
+                :label="$gettext('Country')"
+                hide-details
+                box
+                flat
                 hide-no-data
                 browser-autocomplete="off"
                 color="secondary-dark"
                 item-value="Code"
                 item-text="Name"
                 :items="countries"
-                class="input-country">
+                class="input-country"
+              >
               </v-autocomplete>
             </v-flex>
 
             <v-flex xs4 md2 lg2 class="pa-2">
-              <v-text-field
-                v-model="model.Altitude"
-                :disabled="disabled"
-                hide-details box flat
-                browser-autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                :label="$gettext('Altitude (m)')"
-                placeholder=""
-                color="secondary-dark"
-                class="input-altitude"
-              ></v-text-field>
+              <v-text-field v-model="model.Altitude" :disabled="disabled" hide-details box flat browser-autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Altitude (m)')" placeholder="" color="secondary-dark" class="input-altitude"></v-text-field>
             </v-flex>
 
             <v-flex xs4 sm6 md3 lg2 class="pa-2">
@@ -150,7 +139,9 @@
                 v-model="model.Lat"
                 :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
@@ -167,7 +158,9 @@
                 v-model="model.Lng"
                 :append-icon="model.PlaceSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
@@ -185,45 +178,26 @@
                 :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 :label="$gettext('Camera')"
-                :menu-props="{'maxHeight':346}"
+                :menu-props="{ maxHeight: 346 }"
                 browser-autocomplete="off"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 color="secondary-dark"
                 item-value="ID"
                 item-text="Name"
                 :items="cameraOptions"
-                class="input-camera">
+                class="input-camera"
+              >
               </v-select>
             </v-flex>
 
             <v-flex xs6 md3 class="pa-2">
-              <v-text-field
-                v-model="model.Iso"
-                :disabled="disabled"
-                hide-details box flat
-                browser-autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                label="ISO"
-                placeholder=""
-                color="secondary-dark"
-                class="input-iso"
-              ></v-text-field>
+              <v-text-field v-model="model.Iso" :disabled="disabled" hide-details box flat browser-autocomplete="off" autocorrect="off" autocapitalize="none" label="ISO" placeholder="" color="secondary-dark" class="input-iso"></v-text-field>
             </v-flex>
 
             <v-flex xs6 md3 class="pa-2">
-              <v-text-field
-                v-model="model.Exposure"
-                :disabled="disabled"
-                hide-details box flat
-                browser-autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                :label="$gettext('Exposure')"
-                placeholder=""
-                color="secondary-dark"
-                class="input-exposure"
-              ></v-text-field>
+              <v-text-field v-model="model.Exposure" :disabled="disabled" hide-details box flat browser-autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('Exposure')" placeholder="" color="secondary-dark" class="input-exposure"></v-text-field>
             </v-flex>
 
             <v-flex xs12 md6 pa-2 class="p-lens-select">
@@ -232,43 +206,26 @@
                 :append-icon="model.CameraSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 :label="$gettext('Lens')"
-                :menu-props="{'maxHeight':346}"
+                :menu-props="{ maxHeight: 346 }"
                 browser-autocomplete="off"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 color="secondary-dark"
                 item-value="ID"
                 item-text="Name"
                 :items="lensOptions"
-                class="input-lens">
+                class="input-lens"
+              >
               </v-select>
             </v-flex>
 
             <v-flex xs6 md3 class="pa-2">
-              <v-text-field
-                v-model="model.FNumber" f
-                :disabled="disabled"
-                hide-details box flat
-                browser-autocomplete="off"
-                autocorrect="off"
-                autocapitalize="none"
-                :label="$gettext('F Number')"
-                placeholder=""
-                color="secondary-dark"
-                class="input-fnumber"
-              ></v-text-field>
+              <v-text-field v-model="model.FNumber" f :disabled="disabled" hide-details box flat browser-autocomplete="off" autocorrect="off" autocapitalize="none" :label="$gettext('F Number')" placeholder="" color="secondary-dark" class="input-fnumber"></v-text-field>
             </v-flex>
 
             <v-flex xs6 md3 class="pa-2">
-              <v-text-field
-                v-model="model.FocalLength"
-                :disabled="disabled"
-                hide-details box flat
-                browser-autocomplete="off"
-                :label="$gettext('Focal Length')"
-                placeholder=""
-                color="secondary-dark"
-                class="input-focal-length"
-              ></v-text-field>
+              <v-text-field v-model="model.FocalLength" :disabled="disabled" hide-details box flat browser-autocomplete="off" :label="$gettext('Focal Length')" placeholder="" color="secondary-dark" class="input-focal-length"></v-text-field>
             </v-flex>
 
             <v-flex xs12 md6 class="pa-2">
@@ -277,7 +234,9 @@
                 :append-icon="model.Details.ArtistSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 :label="$gettext('Artist')"
                 placeholder=""
@@ -292,7 +251,9 @@
                 :append-icon="model.Details.CopyrightSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 :label="$gettext('Copyright')"
                 placeholder=""
@@ -307,7 +268,9 @@
                 :append-icon="model.Details.LicenseSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 auto-grow
                 :label="$gettext('License')"
@@ -324,7 +287,9 @@
                 :append-icon="model.Details.SubjectSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
                 :rules="[textRule]"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 auto-grow
                 :label="$gettext('Subject')"
@@ -340,7 +305,9 @@
                 v-model="model.Description"
                 :append-icon="model.DescriptionSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 auto-grow
                 :label="$gettext('Description')"
@@ -356,7 +323,9 @@
                 v-model="model.Details.Keywords"
                 :append-icon="model.Details.KeywordsSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 auto-grow
                 :label="$gettext('Keywords')"
@@ -372,7 +341,9 @@
                 v-model="model.Details.Notes"
                 :append-icon="model.Details.NotesSrc === 'manual' ? 'check' : ''"
                 :disabled="disabled"
-                hide-details box flat
+                hide-details
+                box
+                flat
                 browser-autocomplete="off"
                 auto-grow
                 :label="$gettext('Notes')"
@@ -384,17 +355,14 @@
             </v-flex>
 
             <v-flex v-if="!disabled" xs12 :text-xs-right="!rtl" :text-xs-left="rtl" class="pt-3">
-              <v-btn depressed color="secondary-light" class="compact action-close"
-                     @click.stop="close">
+              <v-btn depressed color="secondary-light" class="compact action-close" @click.stop="close">
                 <translate>Close</translate>
               </v-btn>
-              <v-btn color="primary-button" depressed dark class="compact action-apply action-approve"
-                     @click.stop="save(false)">
+              <v-btn color="primary-button" depressed dark class="compact action-apply action-approve" @click.stop="save(false)">
                 <span v-if="$config.feature('review') && model.Quality < 3"><translate>Approve</translate></span>
                 <span v-else><translate>Apply</translate></span>
               </v-btn>
-              <v-btn color="primary-button" depressed dark class="compact action-done hidden-xs-only"
-                     @click.stop="save(true)">
+              <v-btn color="primary-button" depressed dark class="compact action-done hidden-xs-only" @click.stop="save(true)">
                 <translate>Done</translate>
               </v-btn>
             </v-flex>
@@ -413,7 +381,7 @@ import Photo from "model/photo";
 import * as options from "options/options";
 
 export default {
-  name: 'PTabPhotoDetails',
+  name: "PTabPhotoDetails",
   props: {
     model: {
       type: Object,
@@ -429,7 +397,7 @@ export default {
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
       all: {
-        colors: [{label: this.$gettext("Unknown"), name: ""}],
+        colors: [{ label: this.$gettext("Unknown"), name: "" }],
       },
       readonly: this.$config.get("readonly"),
       options: options,
@@ -438,7 +406,7 @@ export default {
       showTimePicker: false,
       invalidDate: false,
       time: "",
-      textRule: v => v.length <= this.$config.get('clip') || this.$gettext("Text too long"),
+      textRule: (v) => v.length <= this.$config.get("clip") || this.$gettext("Text too long"),
       rtl: this.$rtl,
     };
   },
@@ -492,8 +460,7 @@ export default {
         const lng = parseFloat(val[1]);
 
         // Lat and long must be valid floating point numbers.
-        if (!isNaN(lat) && lat >= -90 && lat <= 90 &&
-          !isNaN(lng) && lng >= -180 && lng <= 180) {
+        if (!isNaN(lat) && lat >= -90 && lat <= 90 && !isNaN(lng) && lng >= -180 && lng <= 180) {
           // Update model values.
           this.model.Lat = lat;
           this.model.Lng = lng;
@@ -527,10 +494,11 @@ export default {
         this.model.Year = parseInt(localDate.toFormat("y"));
       }
 
-      const isoTime = localDate.toISO({
-        suppressMilliseconds: true,
-        includeOffset: false,
-      }) + "Z";
+      const isoTime =
+        localDate.toISO({
+          suppressMilliseconds: true,
+          includeOffset: false,
+        }) + "Z";
 
       this.model.TakenAtLocal = isoTime;
 
@@ -539,10 +507,10 @@ export default {
       }
     },
     left() {
-      this.$emit('next');
+      this.$emit("next");
     },
     right() {
-      this.$emit('prev');
+      this.$emit("prev");
     },
     openPhoto() {
       this.$viewer.show(Thumb.fromFiles([this.model]), 0);
@@ -557,14 +525,14 @@ export default {
 
       this.model.update().then(() => {
         if (close) {
-          this.$emit('close');
+          this.$emit("close");
         }
 
         this.updateTime();
       });
     },
     close() {
-      this.$emit('close');
+      this.$emit("close");
     },
   },
 };

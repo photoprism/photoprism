@@ -7,14 +7,13 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/query"
 )
 
-// PlacesCommand configures the command name, flags, and action.
-var PlacesCommand = cli.Command{
+// PlacesCommands configures the command name, flags, and action.
+var PlacesCommands = cli.Command{
 	Name:  "places",
 	Usage: "Maps and location details subcommands",
 	Subcommands: []cli.Command{
@@ -45,11 +44,13 @@ func placesUpdateAction(ctx *cli.Context) error {
 		return err
 	}
 
+	// Show info to non-members.
 	if !conf.Sponsor() && !conf.Test() {
-		log.Errorf(config.MsgSponsorCommand)
+		log.Errorf("Since running this command puts additional load on our infrastructure, we can unfortunately only offer it to members at this time.")
 		return nil
 	}
 
+	// Initialize database connection.
 	conf.InitDb()
 	defer conf.Shutdown()
 

@@ -2,60 +2,108 @@
   <v-container id="auth-login" fluid fill-height class="auth-login wallpaper background-welcome pa-4" :style="wallpaper()">
     <v-layout id="auth-layout" class="auth-layout">
       <v-flex xs12 sm9 md6 lg4 xl3 xxl2>
-        <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="login">
+        <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="onLogin">
           <v-card id="auth-login-box" class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-4">
               <p-auth-header></p-auth-header>
               <v-spacer></v-spacer>
               <v-layout wrap align-top>
-                <v-flex xs12 class="px-2 py-1">
-                  <v-text-field
-                      id="auth-username"
-                      v-model="username"
-                      hide-details required solo flat light autofocus
-                      type="text"
+                <template v-if="enterPasscode">
+                  <v-flex xs12 class="pa-2 body-2">
+                    <translate>Please enter a valid verification code to access your account:</translate>
+                  </v-flex>
+                  <v-flex xs12 class="pa-2">
+                    <v-text-field
+                      id="auth-passcode"
+                      v-model="passcode"
                       :disabled="loading"
-                      name="username"
+                      name="passcode"
+                      type="text"
+                      :label="$gettext('Verification Code')"
+                      mask="nnn nnn nnn nnn"
+                      inputmode="text"
+                      hide-details
+                      required
+                      solo
+                      flat
+                      light
                       autocorrect="off"
                       autocapitalize="none"
+                      autocomplete="one-time-code"
+                      browser-autocomplete="one-time-code"
+                      background-color="grey lighten-5"
+                      class="input-passcode text-selectable"
+                      prepend-inner-icon="verified_user"
+                      color="primary"
+                      @keyup.enter.native="onLogin"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 class="px-2 pt-2 pb-0 body-1">
+                    <translate>Can't access your authenticator app or device? Enter your recovery code or ask for assistance.</translate>
+                  </v-flex>
+                </template>
+                <template v-else>
+                  <v-flex xs12 class="pa-2">
+                    <v-text-field
+                      id="auth-username"
+                      v-model="username"
+                      :disabled="loading || enterPasscode"
+                      name="username"
+                      type="text"
                       :label="$gettext('Name')"
+                      hide-details
+                      required
+                      solo
+                      flat
+                      light
+                      autofocus
+                      autocorrect="off"
+                      autocapitalize="none"
+                      autocomplete="username"
+                      browser-autocomplete="username"
                       background-color="grey lighten-5"
                       class="input-username text-selectable"
                       color="primary"
                       prepend-inner-icon="person"
-                      @keyup.enter.native="login"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs12 class="pa-2">
-                  <v-text-field
+                      @keyup.enter.native="onLogin"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 class="px-2 py-1">
+                    <v-text-field
                       id="auth-password"
                       v-model="password"
-                      hide-details required solo flat light
-                      :type="showPassword ? 'text' : 'password'"
                       :disabled="loading"
                       name="password"
+                      :type="showPassword ? 'text' : 'password'"
+                      :label="$gettext('Password')"
+                      hide-details
+                      required
+                      solo
+                      flat
+                      light
                       autocorrect="off"
                       autocapitalize="none"
-                      :label="$gettext('Password')"
+                      autocomplete="current-password"
+                      browser-autocomplete="current-password"
                       background-color="grey lighten-5"
                       class="input-password text-selectable"
                       :append-icon="showPassword ? 'visibility' : 'visibility_off'"
                       prepend-inner-icon="lock"
                       color="primary"
                       @click:append="showPassword = !showPassword"
-                      @keyup.enter.native="login"
-                  ></v-text-field>
-                </v-flex>
+                      @keyup.enter.native="onLogin"
+                    ></v-text-field>
+                  </v-flex>
+                </template>
                 <v-flex xs12 class="px-2 py-1 auth-actions">
                   <div class="action-buttons auth-buttons text-xs-center">
-                    <v-btn v-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
-                           :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80"
-                           @click.stop.prevent="register">
+                    <v-btn v-if="enterPasscode" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-3 py-2 opacity-80" @click.stop.prevent="onCancel">
+                      <translate>Cancel</translate>
+                    </v-btn>
+                    <v-btn v-else-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80" @click.stop.prevent="onRegister">
                       <translate>Create Account</translate>
                     </v-btn>
-                    <v-btn :color="colors.primary" depressed :disabled="loginDisabled"
-                           :block="$vuetify.breakpoint.xsOnly"
-                           class="white--text action-confirm ra-6 py-2 px-3" @click.stop.prevent="login">
+                    <v-btn :color="colors.primary" depressed :disabled="loginDisabled" :block="$vuetify.breakpoint.xsOnly" class="white--text action-confirm ra-6 py-2 px-3" @click.stop.prevent="onLogin">
                       <translate>Sign in</translate>
                       <v-icon v-if="rtl" left dark>navigate_before</v-icon>
                       <v-icon v-else right dark>navigate_next</v-icon>
@@ -78,7 +126,6 @@
 </template>
 
 <script>
-
 export default {
   name: "PPageLogin",
   data() {
@@ -90,9 +137,11 @@ export default {
         link: "#c8e3e7",
       },
       loading: false,
-      showPassword: false,
       username: "",
       password: "",
+      showPassword: false,
+      passcode: "",
+      enterPasscode: false,
       sponsor: this.$config.isSponsor(),
       config: this.$config.values,
       siteDescription: this.$config.getSiteDescription(),
@@ -106,7 +155,7 @@ export default {
   computed: {
     loginDisabled() {
       return this.loading || this.username.trim() === "" || this.password.trim() === "";
-    }
+    },
   },
   created() {
     this.$scrollbar.hide(this.$isMobile);
@@ -133,24 +182,44 @@ export default {
         window.location = route.href;
       }, 100);
     },
-    register() {
+    reset() {
+      this.username = "";
+      this.password = "";
+      this.showPassword = false;
+      this.passcode = "";
+      this.enterPasscode = false;
+    },
+    onCancel() {
+      if (this.loading) {
+        return;
+      }
+      this.reset();
+    },
+    onRegister() {
       window.location = this.registerUri;
     },
-    login() {
+    onLogin() {
       const username = this.username.trim();
       const password = this.password.trim();
+      const passcode = this.passcode.trim();
 
       if (username === "" || password === "") {
         return;
       }
 
       this.loading = true;
-      this.$session.login(username, password).then(
-        () => {
+      this.$session
+        .login(username, password, passcode)
+        .then(() => {
           this.load();
-        }
-      ).catch(() => this.loading = false);
+        })
+        .catch((e) => {
+          if (e.response?.data?.code === 32) {
+            this.enterPasscode = true;
+          }
+          this.loading = false;
+        });
     },
-  }
+  },
 };
 </script>

@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 	"github.com/photoprism/photoprism/pkg/video"
 )
@@ -180,8 +181,17 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 	} else if fileExists {
-		// Find photo by id if file exists.
-		photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
+		// Find photo by the id or uid assigned to the file.
+		if file.PhotoID > 0 {
+			photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
+		} else if rnd.IsUID(file.PhotoUID, entity.PhotoUID) {
+			photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", file.PhotoUID)
+		} else {
+			// Should never happen.
+			result.Status = IndexFailed
+			result.Err = fmt.Errorf("index: file %s has no photo id or uid assigned - you may have found a bug, please report", logName)
+			return result
+		}
 	} else {
 		// Should never happen.
 		result.Status = IndexFailed
@@ -227,14 +237,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// Remove file from duplicates table if exists.
-	if err := entity.PurgeDuplicate(m.RootRelName(), m.Root()); err != nil {
+	if err = entity.PurgeDuplicate(m.RootRelName(), m.Root()); err != nil {
 		log.Errorf("index: %s in %s (purge duplicate)", err, m.RootRelName())
 	}
 
 	// Create default thumbnails if needed.
-	if err := m.CreateThumbnails(ind.thumbPath(), false); err != nil {
+	if err = m.CreateThumbnails(ind.thumbPath(), false); err != nil {
 		result.Status = IndexFailed
-		result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", clean.Log(m.RootRelName()), err.Error())
+		result.Err = fmt.Errorf("index: failed to create thumbnails for %s (%s)", clean.Log(m.RootRelName()), err.Error())
 		return result
 	}
 
@@ -249,8 +259,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.PhotoStack = entity.IsStackable
 		}
 
-		if yamlName := fs.SidecarYAML.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
-			if err := photo.LoadFromYaml(yamlName); err != nil {
+		if yamlName := fs.SidecarYAML.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); yamlName != "" {
+			if err = photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
 			} else {
 				photoExists = true
@@ -810,14 +820,15 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		file.SetColorProfile(m.ColorProfile())
 	}
 
-	// Update existing photo?
-	if photoExists || photo.HasID() {
-		if err := photo.Save(); err != nil {
+	// Update existing photo entity?
+	if photo.HasID() {
+		if err = photo.Save(); err != nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update existing photo)", err, logName)
 			return result
 		}
 	} else {
+		// Create a new photo entity or load the existing entity if it exists.
 		if p := photo.FirstOrCreate(); p == nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: failed to create %s", logName)
@@ -857,11 +868,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	file.PhotoUID = photo.PhotoUID
 	result.PhotoUID = photo.PhotoUID
 
-	// Main JPEG file.
+	// Set photo properties based on primary file.
 	if file.FilePrimary {
-		labels := photo.ClassifyLabels()
+		photoLabels := photo.ClassifyLabels()
 
-		if err := photo.UpdateTitle(labels); err != nil {
+		if err = photo.UpdateTitle(photoLabels); err != nil {
 			log.Debugf("%s in %s (update title)", err, logName)
 		}
 
@@ -882,7 +893,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		w = append(w, txt.FilenameKeywords(filePath)...)
 		w = append(w, locKeywords...)
 		w = append(w, file.FileMainColor)
-		w = append(w, labels.Keywords()...)
+		w = append(w, photoLabels.Keywords()...)
 
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
@@ -894,24 +905,24 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 		photo.PhotoQuality = photo.QualityScore()
 
-		if err := photo.Save(); err != nil {
+		if err = photo.Save(); err != nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update metadata)", err, logName)
 			return result
 		}
 
-		if err := photo.SyncKeywordLabels(); err != nil {
+		if err = photo.SyncKeywordLabels(); err != nil {
 			log.Errorf("index: %s in %s (sync keywords and labels)", err, logName)
 		}
 
-		if err := photo.IndexKeywords(); err != nil {
+		if err = photo.IndexKeywords(); err != nil {
 			log.Errorf("index: %s in %s (save keywords)", err, logName)
 		}
 
-		if err := query.AlbumEntryFound(photo.PhotoUID); err != nil {
+		if err = query.AlbumEntryFound(photo.PhotoUID); err != nil {
 			log.Errorf("index: %s in %s (remove missing flag from album entry)", err, logName)
 		}
-	} else if err := photo.UpdateQuality(); err != nil {
+	} else if err = photo.UpdateQuality(); err != nil {
 		result.Status = IndexFailed
 		result.Err = fmt.Errorf("index: %s in %s (update quality)", err, logName)
 		return result
@@ -922,7 +933,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if fileQuery.Error == nil {
 		file.UpdatedIn = int64(time.Since(start))
 
-		if err := file.Save(); err != nil {
+		if err = file.Save(); err != nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update existing file)", err, logName)
 			return result
@@ -930,7 +941,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	} else {
 		file.CreatedIn = int64(time.Since(start))
 
-		if err := file.Create(); err != nil {
+		if err = file.Create(); err != nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (add new file)", err, logName)
 			return result
@@ -963,7 +974,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		downloadedAs = originalName
 	}
 
-	if err := query.SetDownloadFileID(downloadedAs, file.ID); err != nil {
+	if err = query.SetDownloadFileID(downloadedAs, file.ID); err != nil {
 		log.Errorf("index: %s in %s (set download id)", err, logName)
 	}
 
@@ -985,7 +996,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Write YAML sidecar file (optional).
 		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
-		if err := photo.SaveAsYaml(yamlFile); err != nil {
+		if err = photo.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("index: %s in %s (update yaml)", err.Error(), logName)
 		} else {
 			log.Debugf("index: updated yaml file %s", clean.Log(filepath.Base(yamlFile)))

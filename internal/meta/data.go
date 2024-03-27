@@ -17,7 +17,7 @@ const (
 type Data struct {
 	FileName         string        `meta:"FileName"`
 	MimeType         string        `meta:"MIMEType" report:"-"`
-	DocumentID       string        `meta:"BurstUUID,MediaGroupUUID,ImageUniqueID,OriginalDocumentID,DocumentID,DigitalImageGUID"`
+	DocumentID       string        `meta:"ContentIdentifier,MediaGroupUUID,BurstUUID,OriginalDocumentID,DocumentID,ImageUniqueID,DigitalImageGUID"` // see https://exiftool.org/forum/index.php?topic=14874.0
 	InstanceID       string        `meta:"InstanceID,DocumentID"`
 	CreatedAt        time.Time     `meta:"SubSecCreateDate,CreationDate,CreateDate,MediaCreateDate,ContentCreateDate,TrackCreateDate"`
 	TakenAt          time.Time     `meta:"SubSecDateTimeOriginal,SubSecDateTimeCreated,DateTimeOriginal,CreationDate,DateTimeCreated,DateTime,DateTimeDigitized" xmp:"DateCreated"`

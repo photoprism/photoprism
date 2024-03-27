@@ -15,8 +15,7 @@
             <v-btn depressed color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn depressed dark color="primary-button" class="action-confirm"
-                   @click.stop="confirm">
+            <v-btn depressed dark color="primary-button" class="action-confirm" @click.stop="confirm">
               <translate key="Delete">Delete</translate>
             </v-btn>
           </v-flex>
@@ -27,7 +26,7 @@
 </template>
 <script>
 export default {
-  name: 'PAccountDeleteDialog',
+  name: "PAccountDeleteDialog",
   props: {
     show: Boolean,
     model: {
@@ -42,7 +41,7 @@ export default {
   },
   methods: {
     cancel() {
-      this.$emit('cancel');
+      this.$emit("cancel");
     },
     confirm() {
       this.loading = true;
@@ -50,9 +49,9 @@ export default {
       this.model.remove().then(() => {
         this.loading = false;
         this.$notify.success(this.$gettext("Account deleted"));
-        this.$emit('confirm');
+        this.$emit("confirm");
       });
     },
-  }
+  },
 };
 </script>

@@ -16,11 +16,11 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/face"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -108,7 +108,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	defer mutex.MainWorker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
-		log.Errorf("index: %s", err.Error())
+		log.Errorf("index: %s", clean.Error(err))
 
 		return found, updated
 	}
@@ -127,13 +127,13 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	}
 
 	if err := ind.files.Init(); err != nil {
-		log.Errorf("index: %s", err)
+		log.Errorf("index: %s", clean.Error(err))
 	}
 
 	defer ind.files.Done()
 
 	skipRaw := ind.conf.DisableRaw()
-	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
 
 	if err := ignore.Dir(originalsPath); err != nil {
 		log.Infof("index: %s", err)
@@ -168,7 +168,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 					return result
 				}
 
-				if result != filepath.SkipDir {
+				if !errors.Is(result, filepath.SkipDir) {
 					folder := entity.NewFolder(entity.RootOriginals, relName, fs.BirthTime(fileName))
 
 					if err := folder.Create(); err == nil {
@@ -202,7 +202,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 			// Check if file exists and is not empty.
 			if err != nil {
-				log.Warnf("index: %s", err)
+				log.Warnf("index: %s", clean.Error(err))
 				return nil
 			} else if mf.Empty() {
 				return nil
@@ -219,9 +219,16 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return nil
 			}
 
+			// Skip files if the filename extension does not match their mime type,
+			// see https://github.com/photoprism/photoprism/issues/3518 for details.
+			if typeErr := mf.CheckType(); typeErr != nil {
+				log.Errorf("index: skipped %s due to %s", clean.Log(mf.RootRelName()), typeErr)
+				return nil
+			}
+
 			// Create JSON sidecar file, if needed.
 			if err = mf.CreateExifToolJson(ind.convert); err != nil {
-				log.Errorf("index: %s", clean.Error(err), clean.Log(mf.BaseName()))
+				log.Warnf("index: %s", err)
 			}
 
 			// Find related files to index.

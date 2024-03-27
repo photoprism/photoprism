@@ -110,7 +110,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	indexOpt.UID = opt.UID
 	indexOpt.Action = opt.Action
 	skipRaw := imp.conf.DisableRaw()
-	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
 
 	if err := ignore.Dir(importPath); err != nil {
 		log.Infof("import: %s", err)
@@ -139,7 +139,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 			isSymlink := info.IsSymlink()
 
 			if skip, result := fs.SkipWalk(fileName, isDir, isSymlink, done, ignore); skip {
-				if !isDir || result == filepath.SkipDir {
+				if !isDir || errors.Is(result, filepath.SkipDir) {
 					return result
 				}
 
@@ -166,7 +166,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 			// Check if file exists and is not empty.
 			if err != nil {
-				log.Warnf("import: %s", err)
+				log.Warnf("import: %s", clean.Error(err))
 				return nil
 			} else if mf.Empty() {
 				return nil
@@ -178,16 +178,22 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				return nil
 			}
 
+			// Report files that have a missing or invalid filename extension,
+			// see https://github.com/photoprism/photoprism/issues/3518.
+			if typeErr := mf.CheckType(); typeErr != nil {
+				log.Warnf("import: %s has %s", clean.Log(mf.RootRelName()), typeErr)
+			}
+
 			// Create JSON sidecar file, if needed.
 			if err = mf.CreateExifToolJson(imp.convert); err != nil {
-				log.Errorf("import: %s", clean.Error(err), clean.Log(mf.BaseName()))
+				log.Warnf("import: %s", clean.Error(err))
 			}
 
 			// Find related files to import.
 			related, err := mf.RelatedFiles(imp.conf.Settings().StackSequences())
 
 			if err != nil {
-				event.Error(fmt.Sprintf("import: %s", err.Error()))
+				event.Error(fmt.Sprintf("import: %s", err))
 				return nil
 			}
 

@@ -1,12 +1,17 @@
 <template>
-  <v-dialog
-      v-model="visible"
-      lazy
-      max-width="500"
-  >
+  <v-dialog v-model="visible" lazy max-width="500">
     <v-card class="pa-2">
-      <v-card-title class="headline pa-2">
-        <translate>Connect via WebDAV</translate>
+      <v-card-title class="headline pa-0">
+        <v-layout row wrap class="pa-2">
+          <v-flex xs9 class="text-xs-left">
+            <h3 class="headline pa-0">
+              <translate>Connect via WebDAV</translate>
+            </h3>
+          </v-flex>
+          <v-flex xs3 class="text-xs-right">
+            <v-icon size="28" color="primary">sync_alt</v-icon>
+          </v-flex>
+        </v-layout>
       </v-card-title>
 
       <v-card-text class="pa-2 body-1">
@@ -14,18 +19,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
-        <v-text-field
-            autocorrect="off"
-            autocapitalize="none"
-            browser-autocomplete="off"
-            hide-details readonly
-            single-line
-            outline
-            color="secondary-dark"
-            :value="webdavUrl()"
-            class="input-url"
-            @click.stop="selectText($event)">
-        </v-text-field>
+        <v-text-field autocorrect="off" autocapitalize="none" browser-autocomplete="off" hide-details readonly single-line outline color="secondary-dark" :value="webdavUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
       <v-card-text class="pa-2 body-1 clickable" @click="windowsHelp($event)">
@@ -33,18 +27,7 @@
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
-        <v-text-field
-            autocorrect="off"
-            autocapitalize="none"
-            browser-autocomplete="off"
-            hide-details readonly
-            single-line
-            outline
-            color="secondary-dark"
-            :value="windowsUrl()"
-            class="input-url"
-            @click.stop="selectText($event)">
-        </v-text-field>
+        <v-text-field autocorrect="off" autocapitalize="none" browser-autocomplete="off" hide-details readonly single-line outline color="secondary-dark" :value="windowsUrl()" class="input-url" @click.stop="selectText($event)"> </v-text-field>
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
@@ -52,15 +35,8 @@
       </v-card-text>
 
       <v-card-text class="pa-2 body-1">
-        <v-alert
-            :value="true"
-            color="primary darken-2"
-            icon="info"
-            class="pa-2"
-            type="info"
-            outline
-        >
-          <a style="color: inherit;" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
+        <v-alert :value="true" color="primary darken-2" icon="info" class="pa-2" type="info" outline>
+          <a style="color: inherit" href="https://docs.photoprism.app/user-guide/sync/webdav/" target="_blank">
             <translate>Detailed instructions can be found in our User Guide.</translate>
           </a>
         </v-alert>
@@ -73,7 +49,7 @@
 import Util from "common/util";
 
 export default {
-  name: 'PWebdavDialog',
+  name: "PWebdavDialog",
   props: {
     show: Boolean,
   },
@@ -108,7 +84,7 @@ export default {
         await Util.copyToMachineClipboard(this.webdavUrl());
         this.$notify.success(this.$gettext("Copied to clipboard"));
       } catch (error) {
-        this.$notify.error(this.$gettext("Failed copying to clipboard"))
+        this.$notify.error(this.$gettext("Failed copying to clipboard"));
       }
     },
     webdavUrl() {
@@ -130,19 +106,19 @@ export default {
       }
 
       if (this.user.BasePath) {
-        const basePath = this.user.BasePath.replace(/\//g, '\\');
+        const basePath = this.user.BasePath.replace(/\//g, "\\");
         baseUrl = `${baseUrl}${basePath}\\`;
       }
 
       return baseUrl;
     },
     windowsHelp(ev) {
-      window.open('https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server', '_blank');
+      window.open("https://docs.photoprism.app/user-guide/sync/webdav/#connect-to-a-webdav-server", "_blank");
       ev.preventDefault();
       ev.stopPropagation();
     },
     close() {
-      this.$emit('close');
+      this.$emit("close");
     },
   },
 };

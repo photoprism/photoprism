@@ -8,7 +8,7 @@ import (
 // Attr represents a list of key-value attributes.
 type Attr []*KeyValue
 
-// ParseAttr parses a string into a new Attr since and returns it.
+// ParseAttr parses a string into a new Attr slice and returns it.
 func ParseAttr(s string) Attr {
 	fields := strings.Fields(s)
 	result := make(Attr, 0, len(fields))
@@ -67,4 +67,37 @@ func (list Attr) Sort() {
 			return list[i].Key < list[j].Key
 		}
 	})
+}
+
+// Contains tests if the list contains the attribute provided as string.
+func (list Attr) Contains(s string) bool {
+	if len(list) == 0 || s == "" {
+		return false
+	} else if s == All {
+		return true
+	}
+
+	attr := ParseKeyValue(s)
+
+	// Abort if attribute is invalid.
+	if attr.Key == "" {
+		return false
+	}
+
+	// Find matches.
+	if attr.Value == "" || attr.Value == All {
+		for i := range list {
+			if strings.EqualFold(attr.Key, list[i].Key) || list[i].Key == All {
+				return true
+			}
+		}
+	} else {
+		for i := range list {
+			if strings.EqualFold(attr.Key, list[i].Key) && (attr.Value == list[i].Value || list[i].Value == All) || list[i].Key == All {
+				return true
+			}
+		}
+	}
+
+	return false
 }

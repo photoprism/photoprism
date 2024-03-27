@@ -2,6 +2,7 @@ package limiter
 
 import (
 	"sync"
+	"time"
 
 	"golang.org/x/time/rate"
 )
@@ -61,6 +62,11 @@ func (i *Limit) Allow(ip string) bool {
 // Reserve increments the request counter and returns a rate.Reservation.
 func (i *Limit) Reserve(ip string) *rate.Reservation {
 	return i.IP(ip).Reserve()
+}
+
+// ReserveN increments the request counter by n and returns a rate.Reservation.
+func (i *Limit) ReserveN(ip string, n int) *rate.Reservation {
+	return i.IP(ip).ReserveN(time.Now(), n)
 }
 
 // Reject reports whether the request limit has been exceeded, but does not change the request counter.

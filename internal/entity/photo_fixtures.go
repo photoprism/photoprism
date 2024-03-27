@@ -30,7 +30,7 @@ var PhotoFixtures = PhotoMap{
 	"19800101_000002_D640C559": { //JPG, Imported, No Geo-information
 		ID: 1000000,
 		// UUID:
-		PhotoUID:         "pt9jtdre2lvl0yh7",
+		PhotoUID:         "ps6sg6be2lvl0yh7",
 		TakenAt:          time.Date(2008, 7, 1, 10, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2008, 7, 1, 12, 0, 0, 0, time.UTC),
 		TakenSrc:         "meta",
@@ -97,7 +97,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo01": { //DNG + XMP,  Indexed, lat/lng manually set
 		ID:               1000001,
-		PhotoUID:         "pt9jtdre2lvl0yh8",
+		PhotoUID:         "ps6sg6be2lvl0yh8",
 		TakenAt:          time.Date(2006, 1, 1, 2, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2006, 1, 1, 2, 0, 0, 0, time.UTC),
 		TakenSrc:         "meta",
@@ -158,7 +158,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo02": { //JPG, Indexed, No Geo-information
 		ID:               1000002,
-		PhotoUID:         "pt9jtdre2lvl0yh9",
+		PhotoUID:         "ps6sg6be2lvl0yh9",
 		TakenAt:          time.Date(1990, 3, 2, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(1990, 3, 2, 0, 0, 0, 0, time.UTC),
 		TakenSrc:         "manual",
@@ -217,7 +217,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo03": { // JPG + JPG (same instance ID) + MP4, Indexed, Place from metadata
 		ID:               1000003,
-		PhotoUID:         "pt9jtdre2lvl0yh0",
+		PhotoUID:         "ps6sg6be2lvl0yh0",
 		TakenAt:          time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(1990, 4, 18, 1, 0, 0, 0, time.UTC),
 		TakenSrc:         "meta",
@@ -281,7 +281,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo04": { //JPG, Indexed, Place estimated
 		ID:               1000004,
-		PhotoUID:         "pt9jtdre2lvl0y11",
+		PhotoUID:         "ps6sg6be2lvl0y11",
 		TakenAt:          time.Date(2014, 7, 17, 15, 42, 12, 0, time.UTC),
 		TakenAtLocal:     time.Date(2014, 7, 17, 17, 42, 12, 0, time.UTC),
 		TakenSrc:         "meta",
@@ -345,7 +345,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo05": { //JPG, Imported, File error, TakenAtSrc Name, titleSrc Name
 		ID:               1000005,
-		PhotoUID:         "pt9jtdre2lvl0y12",
+		PhotoUID:         "ps6sg6be2lvl0y12",
 		TakenAt:          time.Date(2015, 11, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2015, 11, 1, 0, 0, 0, 0, time.UTC),
 		TakenSrc:         "name",
@@ -404,7 +404,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo06": { // PNG + JPG, Private, Indexed
 		ID:               1000006,
-		PhotoUID:         "pt9jtdre2lvl0y13",
+		PhotoUID:         "ps6sg6be2lvl0y13",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "meta",
@@ -463,7 +463,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo07": { // Heif, Hei.JPG, Indexed
 		ID:               1000007,
-		PhotoUID:         "pt9jtdre2lvl0y14",
+		PhotoUID:         "ps6sg6be2lvl0y14",
 		TakenAt:          time.Date(2016, 11, 12, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 12, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -522,7 +522,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo08": { // JPG, Indexed, Monochrome, Places meta
 		ID:               1000008,
-		PhotoUID:         "pt9jtdre2lvl0y15",
+		PhotoUID:         "ps6sg6be2lvl0y15",
 		TakenAt:          time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -581,7 +581,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo09": { // jpg + jpg, stack sequential name, indexed
 		ID:               1000009,
-		PhotoUID:         "pt9jtdre2lvl0y16",
+		PhotoUID:         "ps6sg6be2lvl0y16",
 		TakenAt:          time.Date(2016, 11, 11, 8, 6, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 8, 6, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -640,7 +640,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo10": { //mp4 + mp4 with error + jpg in sidecar, Indexed
 		ID:               1000010,
-		PhotoUID:         "pt9jtdre2lvl0y17",
+		PhotoUID:         "ps6sg6be2lvl0y17",
 		TakenAt:          time.Date(2016, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 11, 11, 11, 7, 18, 0, time.UTC),
 		TakenSrc:         "manual",
@@ -700,7 +700,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo11": { // JPG
 		ID:               1000011,
-		PhotoUID:         "pt9jtdre2lvl0y18",
+		PhotoUID:         "ps6sg6be2lvl0y18",
 		TakenAt:          time.Date(2016, 12, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 12, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -759,7 +759,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo12": { //JPG
 		ID:               1000012,
-		PhotoUID:         "pt9jtdre2lvl0y19",
+		PhotoUID:         "ps6sg6be2lvl0y19",
 		TakenAt:          time.Date(2016, 01, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 01, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -818,7 +818,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo13": { //JPG
 		ID:               1000013,
-		PhotoUID:         "pt9jtdre2lvl0y20",
+		PhotoUID:         "ps6sg6be2lvl0y20",
 		TakenAt:          time.Date(2016, 06, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2016, 06, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -877,7 +877,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo14": { //JPG
 		ID:               1000014,
-		PhotoUID:         "pt9jtdre2lvl0y21",
+		PhotoUID:         "ps6sg6be2lvl0y21",
 		TakenAt:          time.Date(2018, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2018, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -936,7 +936,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo15": { // JPG FileMissing = true, Indexed
 		ID:               1000015,
-		PhotoUID:         "pt9jtdre2lvl0y22",
+		PhotoUID:         "ps6sg6be2lvl0y22",
 		TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcName,
@@ -995,7 +995,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo16": { //JPG
 		ID:               1000016,
-		PhotoUID:         "pt9jtdre2lvl0y23",
+		PhotoUID:         "ps6sg6be2lvl0y23",
 		TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -1054,7 +1054,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo17": { // JPG, Indexed, Favorite, Quality 1, Places from metadata
 		ID:               1000017,
-		PhotoUID:         "pt9jtdre2lvl0y24",
+		PhotoUID:         "ps6sg6be2lvl0y24",
 		TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         "",
@@ -1115,7 +1115,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo18": { // JPG, Indexed, Archived, Chroma 0
 		ID:               1000018,
-		PhotoUID:         "pt9jtdre2lvl0y25",
+		PhotoUID:         "ps6sg6be2lvl0y25",
 		TakenAt:          time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2013, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1177,7 +1177,7 @@ var PhotoFixtures = PhotoMap{
 	"Photo19": { // JPG, Indexed, Low Quality
 		ID:               1000019,
 		UUID:             "123e4567-e89b-12d3-a456-426614174000",
-		PhotoUID:         "pt9jtxrexxvl0yh0",
+		PhotoUID:         "ps6sg6bexxvl0yh0",
 		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenSrc:         "",
@@ -1236,7 +1236,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo20": { // JPG
 		ID:               1000020,
-		PhotoUID:         "pt9jtxrexxvl0y20",
+		PhotoUID:         "ps6sg6bexxvl0y20",
 		TakenAt:          time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
@@ -1295,7 +1295,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo21": { // mp4 + mp4.jpg, Imported, Estimated Location
 		ID:               1000021,
-		PhotoUID:         "pt9jtxrexxvl0y21",
+		PhotoUID:         "ps6sg6bexxvl0y21",
 		TakenAt:          time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
@@ -1354,7 +1354,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo22": { // JPG + JPG (place&time stack)
 		ID:               1000022,
-		PhotoUID:         "pt9jtxrexxvl0y22",
+		PhotoUID:         "ps6sg6bexxvl0y22",
 		TakenAt:          time.Date(2001, 1, 1, 7, 0, 0, 0, time.UTC),
 		TakenAtLocal:     time.Date(2001, 1, 1, 7, 0, 0, 0, time.UTC),
 		TakenSrc:         "",
@@ -1413,7 +1413,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo23": { //JPG, Favorite
 		ID:               1000023,
-		PhotoUID:         "pt9jtdre2lvl0y43",
+		PhotoUID:         "ps6sg6be2lvl0y43",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1474,7 +1474,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo24": { // CR2 + JPG in Sidecar, Indexed
 		ID:               1000024,
-		PhotoUID:         "pt9jtdre2lvl0y44",
+		PhotoUID:         "ps6sg6be2lvl0y44",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1535,7 +1535,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo25": { // JPG, Indexed, Photo edited, Panorama true, Unstacked
 		ID:               1000025,
-		PhotoUID:         "pt9jtdre2lvl0y45",
+		PhotoUID:         "ps6sg6be2lvl0y45",
 		TakenAt:          time.Date(2007, 1, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2007, 1, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1596,7 +1596,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo26": { // JPG, Indexed, Panorama, Unstacked
 		ID:               1000026,
-		PhotoUID:         "pt9jtdre2lvl0y90",
+		PhotoUID:         "ps6sg6be2lvl0y90",
 		TakenAt:          time.Date(2007, 1, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2007, 1, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1657,7 +1657,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"Photo27": { // live (mp4 + jpg)
 		ID:               1000027,
-		PhotoUID:         "pt9jtdre2lvl0y50",
+		PhotoUID:         "ps6sg6be2lvl0y50",
 		TakenAt:          time.Date(2000, 12, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2000, 12, 11, 4, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1718,7 +1718,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"PhotoTimeZone": {
 		ID:               1000028,
-		PhotoUID:         "pr2xmef3ki00x54g",
+		PhotoUID:         "ps6sg6b3ki00x54g",
 		TakenAt:          time.Date(2015, 5, 17, 23, 2, 46, 0, time.UTC),
 		TakenAtLocal:     time.Date(2015, 5, 17, 23, 2, 46, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1784,7 +1784,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"VideoTimeZone": {
 		ID:               1000029,
-		PhotoUID:         "pr2xu7myk7wrbk2u",
+		PhotoUID:         "ps6sg6byk7wrbk2u",
 		TakenAt:          time.Date(2015, 5, 17, 17, 48, 46, 0, time.UTC),
 		TakenAtLocal:     time.Date(2015, 5, 17, 17, 48, 46, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1850,7 +1850,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"%photo28": { //JPG, Geo from metadata, indexed
 		ID:               10000029,
-		PhotoUID:         "pr2xu7myk7wrbk21",
+		PhotoUID:         "ps6sg6byk7wrbk21",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1913,7 +1913,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo29%": { //JPG, Geo from metadata, indexed
 		ID:               1000030,
-		PhotoUID:         "pr2xu7myk7wrbk22",
+		PhotoUID:         "ps6sg6byk7wrbk22",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -1976,7 +1976,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo%30": { //JPG, Geo from metadata, indexed
 		ID:               1000031,
-		PhotoUID:         "pr2xu7myk7wrbk23",
+		PhotoUID:         "ps6sg6byk7wrbk23",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2039,7 +2039,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"&photo31": { //JPG, Geo from metadata, indexed
 		ID:               1000032,
-		PhotoUID:         "pr2xu7myk7wrbk24",
+		PhotoUID:         "ps6sg6byk7wrbk24",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2102,7 +2102,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo&32": { //JPG, Geo from metadata, indexed
 		ID:               1000033,
-		PhotoUID:         "pr2xu7myk7wrbk25",
+		PhotoUID:         "ps6sg6byk7wrbk25",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2165,7 +2165,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo33&": { //JPG, Geo from metadata, indexed
 		ID:               1000034,
-		PhotoUID:         "pr2xu7myk7wrbk26",
+		PhotoUID:         "ps6sg6byk7wrbk26",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2228,7 +2228,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"'photo34": { //JPG, Geo from metadata, indexed
 		ID:               1000035,
-		PhotoUID:         "pr2xu7myk7wrbk27",
+		PhotoUID:         "ps6sg6byk7wrbk27",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2291,7 +2291,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo'35": { //JPG, Geo from metadata, indexed
 		ID:               1000036,
-		PhotoUID:         "pr2xu7myk7wrbk28",
+		PhotoUID:         "ps6sg6byk7wrbk28",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2354,7 +2354,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo36'": { //JPG, Geo from metadata, indexed
 		ID:               1000037,
-		PhotoUID:         "pr2xu7myk7wrbk29",
+		PhotoUID:         "ps6sg6byk7wrbk29",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2417,7 +2417,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"*photo37": { //JPG, Geo from metadata, indexed
 		ID:               1000038,
-		PhotoUID:         "pr2xu7myk7wrbk30",
+		PhotoUID:         "ps6sg6byk7wrbk30",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2480,7 +2480,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo*38": { //JPG, Geo from metadata, indexed
 		ID:               1000039,
-		PhotoUID:         "pr2xu7myk7wrbk31",
+		PhotoUID:         "ps6sg6byk7wrbk31",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2543,7 +2543,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo39*": { //JPG, Geo from metadata, indexed
 		ID:               1000040,
-		PhotoUID:         "pr2xu7myk7wrbk32",
+		PhotoUID:         "ps6sg6byk7wrbk32",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2606,7 +2606,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"|photo40": { //JPG, Geo from metadata, indexed
 		ID:               1000041,
-		PhotoUID:         "pr2xu7myk7wrbk33",
+		PhotoUID:         "ps6sg6byk7wrbk33",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2669,7 +2669,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo|41": { //JPG, Geo from metadata, indexed
 		ID:               1000042,
-		PhotoUID:         "pr2xu7myk7wrbk34",
+		PhotoUID:         "ps6sg6byk7wrbk34",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2732,7 +2732,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo42|": { //JPG, Geo from metadata, indexed
 		ID:               1000043,
-		PhotoUID:         "pr2xu7myk7wrbk35",
+		PhotoUID:         "ps6sg6byk7wrbk35",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2795,7 +2795,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"43photo": { //JPG, Geo from metadata, indexed
 		ID:               1000044,
-		PhotoUID:         "pr2xu7myk7wrbk36",
+		PhotoUID:         "ps6sg6byk7wrbk36",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2858,7 +2858,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"pho44to": { //JPG, Geo from metadata, indexed
 		ID:               1000045,
-		PhotoUID:         "pr2xu7myk7wrbk37",
+		PhotoUID:         "ps6sg6byk7wrbk37",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2921,7 +2921,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo45": { //JPG, Geo from metadata, indexed
 		ID:               1000046,
-		PhotoUID:         "pr2xu7myk7wrbk38",
+		PhotoUID:         "ps6sg6byk7wrbk38",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -2984,7 +2984,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"\"photo46": { //JPG, Geo from metadata, indexed
 		ID:               1000047,
-		PhotoUID:         "pr2xu7myk7wrbk39",
+		PhotoUID:         "ps6sg6byk7wrbk39",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -3047,7 +3047,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo\"47": { //JPG, Geo from metadata, indexed
 		ID:               1000048,
-		PhotoUID:         "pr2xu7myk7wrbk40",
+		PhotoUID:         "ps6sg6byk7wrbk40",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -3110,7 +3110,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo48\"": { //JPG, Geo from metadata, indexed
 		ID:               1000049,
-		PhotoUID:         "pr2xu7myk7wrbk41",
+		PhotoUID:         "ps6sg6byk7wrbk41",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -3173,7 +3173,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	" photo49": { //JPG, Geo from metadata, indexed
 		ID:               1000050,
-		PhotoUID:         "pr2xu7myk7wrbk42",
+		PhotoUID:         "ps6sg6byk7wrbk42",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -3236,7 +3236,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo 50": { //JPG, Geo from metadata, indexed
 		ID:               1000051,
-		PhotoUID:         "pr2xu7myk7wrbk43",
+		PhotoUID:         "ps6sg6byk7wrbk43",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -3299,7 +3299,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo51 ": { //JPG, Geo from metadata, indexed
 		ID:               1000052,
-		PhotoUID:         "pr2xu7myk7wrbk44",
+		PhotoUID:         "ps6sg6byk7wrbk44",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,
@@ -3362,7 +3362,7 @@ var PhotoFixtures = PhotoMap{
 	},
 	"photo52": { //GIF + JPG, Geo from metadata, indexed
 		ID:               1000053,
-		PhotoUID:         "pr2xu7myk7wrbk45",
+		PhotoUID:         "ps6sg6byk7wrbk45",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenAtLocal:     time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
 		TakenSrc:         SrcMeta,

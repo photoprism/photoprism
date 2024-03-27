@@ -29,7 +29,7 @@ type Link struct {
 	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
 	LinkViews   uint      `json:"Views" yaml:"-"`
 	MaxViews    uint      `json:"MaxViews" yaml:"-"`
-	HasPassword bool      `json:"HasPassword" yaml:"HasPassword,omitempty"`
+	HasPassword bool      `json:"VerifyPassword" yaml:"VerifyPassword,omitempty"`
 	Comment     string    `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm        uint      `json:"Perm,omitempty" yaml:"Perm,omitempty"`
 	RefID       string    `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
@@ -69,7 +69,7 @@ func NewUserLink(shareUid, userUid string) Link {
 	result := Link{
 		LinkUID:    rnd.GenerateUID(LinkUID),
 		ShareUID:   shareUid,
-		LinkToken:  rnd.GenerateToken(10),
+		LinkToken:  rnd.Base36(10),
 		CreatedBy:  userUid,
 		CreatedAt:  now,
 		ModifiedAt: now,

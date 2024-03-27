@@ -91,7 +91,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 			Where("face_id = ?", f.ID).
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).
-			UpdateColumns(entity.Values{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
+			UpdateColumns(entity.Map{"subj_uid": f.SubjUID, "marker_review": false}); res.Error != nil {
 			return affected, err
 		} else if res.RowsAffected > 0 {
 			affected += res.RowsAffected
@@ -205,7 +205,7 @@ func MergeFaces(merge entity.Faces, ignored bool) (merged *entity.Face, err erro
 	if merged = entity.NewFace(merge[0].SubjUID, merge[0].FaceSrc, merge.Embeddings()); merged == nil {
 		return merged, fmt.Errorf("faces: new cluster is nil for subject %s", clean.Log(subjUID))
 	} else if merged = entity.FirstOrCreateFace(merged); merged == nil {
-		return merged, fmt.Errorf("faces: failed creating new cluster for subject %s", clean.Log(subjUID))
+		return merged, fmt.Errorf("faces: failed to create new cluster for subject %s", clean.Log(subjUID))
 	} else if err := merged.MatchMarkers(append(merge.IDs(), "")); err != nil {
 		return merged, err
 	}

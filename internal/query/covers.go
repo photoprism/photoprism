@@ -53,7 +53,7 @@ func UpdateAlbumDefaultCovers() (err error) {
 	if err == nil {
 		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "album", "albums"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("covers: failed updating albums, potentially incompatible database version")
+		log.Errorf("covers: failed to update albums, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -101,7 +101,7 @@ func UpdateAlbumFolderCovers() (err error) {
 	if err == nil {
 		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "folder", "folders"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("covers: failed updating folders, potentially incompatible database version")
+		log.Errorf("covers: failed to update folders, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -149,7 +149,7 @@ func UpdateAlbumMonthCovers() (err error) {
 	if err == nil {
 		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "month", "months"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("covers: failed updating calendar, potentially incompatible database version")
+		log.Errorf("covers: failed to update calendar, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -236,7 +236,7 @@ func UpdateLabelCovers() (err error) {
 	if err == nil {
 		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "label", "labels"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("covers: failed updating labels, potentially incompatible database version")
+		log.Errorf("covers: failed to update labels, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}
@@ -286,7 +286,7 @@ func UpdateSubjectCovers() (err error) {
 	if err == nil {
 		log.Debugf("covers: updated %s [%s]", english.Plural(int(res.RowsAffected), "subject", "subjects"), time.Since(start))
 	} else if strings.Contains(err.Error(), "Error 1054") {
-		log.Errorf("covers: failed updating subjects, potentially incompatible database version")
+		log.Errorf("covers: failed to update subjects, potentially incompatible database version")
 		log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)
 		return nil
 	}

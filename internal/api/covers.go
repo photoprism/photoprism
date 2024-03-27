@@ -23,13 +23,13 @@ const (
 
 // AlbumCover returns an album cover image.
 //
+// The request parameters are:
+//
+//   - uid: string album uid
+//   - token: string security token (see config)
+//   - size: string thumb type, see photoprism.ThumbnailTypes
+//
 // GET /api/v1/albums/:uid/t/:token/:size
-//
-// Parameters:
-//
-//	uid: string album uid
-//	token: string security token (see config)
-//	size: string thumb type, see photoprism.ThumbnailTypes
 func AlbumCover(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -91,7 +91,7 @@ func AlbumCover(router *gin.RouterGroup) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			log.Warnf("%s: %s is missing", albumCover, clean.Log(f.FileName))
-			logError(albumCover, f.Update("FileMissing", true))
+			logErr(albumCover, f.Update("FileMissing", true))
 			return
 		}
 
@@ -136,13 +136,13 @@ func AlbumCover(router *gin.RouterGroup) {
 
 // LabelCover returns a label cover image.
 //
+// The request parameters are:
+//
+//   - uid: string label uid
+//   - token: string security token (see config)
+//   - size: string thumb type, see photoprism.ThumbnailTypes
+//
 // GET /api/v1/labels/:uid/t/:token/:size
-//
-// Parameters:
-//
-//	uid: string label uid
-//	token: string security token (see config)
-//	size: string thumb type, see photoprism.ThumbnailTypes
 func LabelCover(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -203,7 +203,7 @@ func LabelCover(router *gin.RouterGroup) {
 			c.Data(http.StatusOK, "image/svg+xml", labelIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError(labelCover, f.Update("FileMissing", true))
+			logErr(labelCover, f.Update("FileMissing", true))
 
 			return
 		}

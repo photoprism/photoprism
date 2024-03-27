@@ -60,7 +60,7 @@ func (m *Version) Migrated(db *gorm.DB) error {
 	m.MigratedAt = &timeStamp
 	m.Error = ""
 
-	return db.Model(m).Updates(Values{"MigratedAt": m.MigratedAt, "Error": m.Error}).Error
+	return db.Model(m).Updates(Map{"MigratedAt": m.MigratedAt, "Error": m.Error}).Error
 }
 
 // NewVersion creates a Version entity from a model name and a make name.

@@ -15,10 +15,11 @@ const (
 	UserAdminUsage    = "make user super admin with full access"
 	UserNoLoginUsage  = "disable login on the web interface"
 	UserWebDAVUsage   = "allow to sync files via WebDAV"
+	UserDisable2FA    = "deactivate two-factor authentication"
 )
 
-// UsersCommand configures the user management subcommands.
-var UsersCommand = cli.Command{
+// UsersCommands configures the user management subcommands.
+var UsersCommands = cli.Command{
 	Name:    "users",
 	Aliases: []string{"user"},
 	Usage:   "User management subcommands",

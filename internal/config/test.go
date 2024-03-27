@@ -87,7 +87,7 @@ func NewTestOptions(pkg string) *Options {
 	c := &Options{
 		Name:            "PhotoPrism",
 		Version:         "0.0.0",
-		Copyright:       "(c) 2018-2023 PhotoPrism UG. All rights reserved.",
+		Copyright:       "(c) 2018-2024 PhotoPrism UG. All rights reserved.",
 		Public:          true,
 		Sponsor:         true,
 		AuthMode:        "",
@@ -160,12 +160,12 @@ func NewTestConfig(pkg string) *Config {
 	c := &Config{
 		cliCtx:  CliTestContext(),
 		options: NewTestOptions(pkg),
-		token:   rnd.GenerateToken(8),
+		token:   rnd.Base36(8),
 	}
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale())
 
-	if err := os.MkdirAll(c.ConfigPath(), fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(c.ConfigPath()); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 
@@ -225,25 +225,25 @@ func CliTestContext() *cli.Context {
 
 	c := cli.NewContext(app, globalSet, nil)
 
-	LogError(c.Set("config-path", config.ConfigPath))
-	LogError(c.Set("admin-password", config.AdminPassword))
-	LogError(c.Set("storage-path", config.StoragePath))
-	LogError(c.Set("backup-path", config.BackupPath))
-	LogError(c.Set("sidecar-path", config.SidecarPath))
-	LogError(c.Set("assets-path", config.AssetsPath))
-	LogError(c.Set("originals-path", config.OriginalsPath))
-	LogError(c.Set("import-path", config.ImportPath))
-	LogError(c.Set("temp-path", config.TempPath))
-	LogError(c.Set("cache-path", config.CachePath))
-	LogError(c.Set("darktable-cli", config.DarktableBin))
-	LogError(c.Set("darktable-blacklist", "raf,cr3"))
-	LogError(c.Set("wakeup-interval", "1h34m9s"))
-	LogError(c.Set("detect-nsfw", "true"))
-	LogError(c.Set("debug", "false"))
-	LogError(c.Set("sponsor", "true"))
-	LogError(c.Set("test", "true"))
-	LogError(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))
-	LogError(c.Set("auto-import", strconv.Itoa(config.AutoImport)))
+	LogErr(c.Set("config-path", config.ConfigPath))
+	LogErr(c.Set("admin-password", config.AdminPassword))
+	LogErr(c.Set("storage-path", config.StoragePath))
+	LogErr(c.Set("backup-path", config.BackupPath))
+	LogErr(c.Set("sidecar-path", config.SidecarPath))
+	LogErr(c.Set("assets-path", config.AssetsPath))
+	LogErr(c.Set("originals-path", config.OriginalsPath))
+	LogErr(c.Set("import-path", config.ImportPath))
+	LogErr(c.Set("temp-path", config.TempPath))
+	LogErr(c.Set("cache-path", config.CachePath))
+	LogErr(c.Set("darktable-cli", config.DarktableBin))
+	LogErr(c.Set("darktable-blacklist", "raf,cr3"))
+	LogErr(c.Set("wakeup-interval", "1h34m9s"))
+	LogErr(c.Set("detect-nsfw", "true"))
+	LogErr(c.Set("debug", "false"))
+	LogErr(c.Set("sponsor", "true"))
+	LogErr(c.Set("test", "true"))
+	LogErr(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))
+	LogErr(c.Set("auto-import", strconv.Itoa(config.AutoImport)))
 
 	return c
 }

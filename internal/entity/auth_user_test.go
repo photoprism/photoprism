@@ -588,59 +588,82 @@ func TestUser_String(t *testing.T) {
 
 func TestUser_Admin(t *testing.T) {
 	t.Run("SuperAdmin", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true}
 		assert.True(t, p.IsAdmin())
 	})
 	t.Run("RoleAdmin", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.True(t, p.IsAdmin())
 	})
+	t.Run("NoID", func(t *testing.T) {
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		assert.False(t, p.IsAdmin())
+	})
 	t.Run("False", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: ""}
 		assert.False(t, p.IsAdmin())
 	})
 }
 
-func TestUser_Anonymous(t *testing.T) {
-	t.Run("True", func(t *testing.T) {
-		p := User{UserUID: "", UserName: "Hanna", DisplayName: ""}
+func TestUser_IsUnknown(t *testing.T) {
+	t.Run("ID", func(t *testing.T) {
+		p := User{ID: UnknownUser.ID, UserUID: "u000000000000008", UserName: "", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
 		assert.True(t, p.IsUnknown())
 	})
-	t.Run("False", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true}
+	t.Run("UID", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		assert.True(t, p.IsUnknown())
+	})
+	t.Run("Name", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "u000000000000008", UserName: "", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		assert.False(t, p.IsUnknown())
+	})
+	t.Run("Role", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: ""}
+		assert.True(t, p.IsUnknown())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		assert.False(t, p.IsUnknown())
+	})
+	t.Run("SuperAdmin", func(t *testing.T) {
+		p := User{ID: 123, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true, UserRole: ""}
 		assert.False(t, p.IsUnknown())
 	})
 }
 
-func TestUser_Guest(t *testing.T) {
+func TestUser_IsVisitor(t *testing.T) {
 	t.Run("True", func(t *testing.T) {
-		p := User{UserUID: "", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleVisitor.String()}
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleVisitor.String()}
 		assert.True(t, p.IsVisitor())
 	})
-	t.Run("False", func(t *testing.T) {
-		p := User{UserUID: "", UserName: "Hanna", DisplayName: ""}
+	t.Run("Unknown", func(t *testing.T) {
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		assert.False(t, p.IsVisitor())
+	})
+	t.Run("Admin", func(t *testing.T) {
+		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.False(t, p.IsVisitor())
 	})
 }
 
 func TestUser_SetPassword(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		if err := p.SetPassword("insecure"); err != nil {
 			t.Fatal(err)
 		}
 	})
 	t.Run("NotRegistered", func(t *testing.T) {
-		p := User{UserUID: "", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 0, UserUID: "", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Error(t, p.SetPassword("insecure"))
-
 	})
 	t.Run("PasswordTooShort", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Error(t, p.SetPassword("cat"))
 	})
 	t.Run("PasswordTooLong", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Error(t, p.SetPassword("hfnoehurhgfoeuro7584othgiyruifh85hglhiryhgbbyeirygbubgirgtheuogfugfkhsbdgiyerbgeuigbdtiyrgehbik"))
 	})
 }
@@ -657,10 +680,10 @@ func TestUser_InitLogin(t *testing.T) {
 		}
 	})
 	t.Run("AlreadyExists", func(t *testing.T) {
-		p := User{UserUID: "u000000000000010", UserName: "Hans", DisplayName: ""}
+		p := User{ID: 10, UserUID: "u000000000000010", UserName: "Hans", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 
 		if err := p.Save(); err != nil {
-			t.Logf("cannot user %s: ", err)
+			t.Logf("failed to create user: %s", err)
 		}
 
 		if err := p.SetPassword("insecure"); err != nil {
@@ -691,26 +714,32 @@ func TestUser_InitLogin(t *testing.T) {
 
 func TestUser_AclRole(t *testing.T) {
 	t.Run("SuperAdmin", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true, UserRole: ""}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: true, UserRole: ""}
 		assert.Equal(t, acl.RoleAdmin, p.AclRole())
 		assert.True(t, p.IsAdmin())
 		assert.False(t, p.IsVisitor())
 	})
 	t.Run("RoleAdmin", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
 		assert.Equal(t, acl.RoleAdmin, p.AclRole())
 		assert.True(t, p.IsAdmin())
 		assert.False(t, p.IsVisitor())
 	})
 	t.Run("NoName", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "", DisplayName: "", UserRole: acl.RoleAdmin.String()}
 		assert.Equal(t, acl.RoleVisitor, p.AclRole())
 		assert.False(t, p.IsAdmin())
 		assert.True(t, p.IsVisitor())
 	})
+	t.Run("NoID", func(t *testing.T) {
+		p := User{ID: 0, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", SuperAdmin: false, UserRole: acl.RoleAdmin.String()}
+		assert.Equal(t, acl.RoleAdmin, p.AclRole())
+		assert.False(t, p.IsAdmin())
+		assert.False(t, p.IsVisitor())
+	})
 	t.Run("Unauthorized", func(t *testing.T) {
-		p := User{UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
-		assert.Equal(t, acl.RoleUnknown, p.AclRole())
+		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: ""}
+		assert.Equal(t, acl.RoleNone, p.AclRole())
 		assert.False(t, p.IsAdmin())
 		assert.False(t, p.IsVisitor())
 	})
@@ -914,7 +943,7 @@ func TestDeleteUser(t *testing.T) {
 			UserName:    "thomasdel2",
 			UserEmail:   "thomasdel2@example.com",
 			DisplayName: "Thomas Delete 2",
-			UserRole:    acl.RoleUnknown.String(),
+			UserRole:    acl.RoleNone.String(),
 		}
 
 		err := u.Delete()
@@ -931,27 +960,27 @@ func TestDeleteUser(t *testing.T) {
 }
 
 func TestUser_Deleted(t *testing.T) {
-	assert.False(t, UserFixtures.Pointer("alice").Deleted())
-	assert.True(t, UserFixtures.Pointer("deleted").Deleted())
+	assert.False(t, UserFixtures.Pointer("alice").IsDeleted())
+	assert.True(t, UserFixtures.Pointer("deleted").IsDeleted())
 }
 
 func TestUser_Expired(t *testing.T) {
 	t.Run("False", func(t *testing.T) {
-		assert.False(t, UserFixtures.Pointer("alice").Expired())
-		assert.False(t, UserFixtures.Pointer("deleted").Expired())
+		assert.False(t, UserFixtures.Pointer("alice").IsExpired())
+		assert.False(t, UserFixtures.Pointer("deleted").IsExpired())
 	})
 	t.Run("True", func(t *testing.T) {
 		u := NewUser()
 		var expired = time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC)
 		u.ExpiresAt = &expired
 
-		assert.True(t, u.Expired())
+		assert.True(t, u.IsExpired())
 	})
 }
 
 func TestUser_Disabled(t *testing.T) {
-	assert.False(t, UserFixtures.Pointer("alice").Disabled())
-	assert.True(t, UserFixtures.Pointer("deleted").Disabled())
+	assert.False(t, UserFixtures.Pointer("alice").IsDisabled())
+	assert.True(t, UserFixtures.Pointer("deleted").IsDisabled())
 }
 
 func TestUser_UpdateLoginTime(t *testing.T) {
@@ -1042,7 +1071,7 @@ func TestUser_SharedUIDs(t *testing.T) {
 		result := m.SharedUIDs()
 		assert.NotNil(t, result)
 		assert.Len(t, result, 1)
-		assert.Equal(t, UIDs{"at9lxuqxpogaaba9"}, result)
+		assert.Equal(t, UIDs{"as6sg6bxpogaaba9"}, result)
 	})
 }
 
@@ -1475,6 +1504,54 @@ func TestUser_Provider(t *testing.T) {
 	})
 }
 
+func TestUser_SetProvider(t *testing.T) {
+	t.Run("2FA", func(t *testing.T) {
+		m := UserFixtures.Get("alice")
+		assert.Equal(t, authn.ProviderLocal, m.Provider())
+		assert.Equal(t, authn.MethodDefault, m.Method())
+		m.SetMethod(authn.Method2FA)
+		assert.Equal(t, authn.ProviderLocal, m.Provider())
+		assert.Equal(t, authn.Method2FA, m.Method())
+		m.SetProvider(authn.ProviderNone)
+		assert.Equal(t, authn.ProviderNone, m.Provider())
+		assert.Equal(t, authn.MethodUndefined, m.Method())
+		m.SetProvider(authn.ProviderLocal)
+	})
+}
+
+func TestUser_SetMethod(t *testing.T) {
+	t.Run("2FA", func(t *testing.T) {
+		m := UserFixtures.Get("unauthorized")
+		assert.Equal(t, authn.ProviderNone, m.Provider())
+		assert.Equal(t, authn.MethodDefault, m.Method())
+		m.SetMethod(authn.Method2FA)
+		assert.Equal(t, authn.ProviderNone, m.Provider())
+		assert.Equal(t, authn.MethodDefault, m.Method())
+	})
+}
+
+func TestUser_AuthInfo(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		m := UserFixtures.Get("alice")
+		assert.Equal(t, "Local", m.AuthInfo())
+	})
+	t.Run("Jane", func(t *testing.T) {
+		m := UserFixtures.Get("jane")
+		assert.Equal(t, "Local (2FA)", m.AuthInfo())
+	})
+	t.Run("Unauthorized", func(t *testing.T) {
+		m := UserFixtures.Get("unauthorized")
+		assert.Equal(t, "None", m.AuthInfo())
+	})
+}
+
+func TestUser_Passcode(t *testing.T) {
+	t.Run("Jane", func(t *testing.T) {
+		m := UserFixtures.Get("jane")
+		assert.IsType(t, &Passcode{}, m.Passcode("totp"))
+	})
+}
+
 func TestUser_GetBasePath(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "", Visitor.GetBasePath())
@@ -1737,14 +1814,106 @@ func TestUser_DeleteSessions(t *testing.T) {
 	t.Run("alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
 
-		assert.Equal(t, 0, m.DeleteSessions([]string{"69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"}))
+		assert.Equal(t, 0, m.DeleteSessions([]string{rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0")}))
 		assert.Equal(t, 1, m.DeleteSessions([]string{}))
 	})
 }
 
-func TestUser_HasPassword(t *testing.T) {
-	assert.True(t, Admin.HasPassword("photoprism"))
-	assert.False(t, Admin.HasPassword("wrong"))
+func TestUser_VerifyPassword(t *testing.T) {
+	assert.True(t, Admin.VerifyPassword("photoprism"))
+	assert.False(t, Admin.VerifyPassword("wrong"))
+}
+
+func TestUser_WrongPasscode(t *testing.T) {
+	m := UserFixtures.Get("jane")
+	passcode := m.Passcode("totp")
+
+	assert.True(t, m.WrongPasscode("xxxxxx"))
+	assert.False(t, m.WrongPasscode(passcode.RecoveryCode))
+}
+func TestUser_Passcodes(t *testing.T) {
+	t.Run("Alice", func(t *testing.T) {
+		m := UserFixtures.Get("alice")
+		assert.Equal(t, "default", m.AuthMethod)
+
+		passcode, err := m.ActivatePasscode()
+
+		assert.Error(t, err)
+
+		assert.Equal(t, "default", m.AuthMethod)
+
+		code, err := passcode.GenerateCode()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		_, _, errInvalid := m.VerifyPasscode("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+		assert.Error(t, errInvalid)
+		assert.Equal(t, authn.ErrInvalidPasscode, errInvalid)
+
+		v, _, err := m.VerifyPasscode(code)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, v)
+
+		_, errActivate := m.ActivatePasscode()
+
+		if errActivate != nil {
+			t.Fatal(errActivate)
+		}
+
+		assert.Equal(t, "2fa", m.AuthMethod)
+
+		_, errDeactivate := m.DeactivatePasscode()
+
+		if errDeactivate != nil {
+			t.Fatal(errDeactivate)
+		}
+
+		assert.Equal(t, "default", m.AuthMethod)
+
+	})
+	t.Run("PassCodeNotSetup", func(t *testing.T) {
+		m := UserFixtures.Get("bob")
+		assert.Equal(t, "default", m.AuthMethod)
+
+		passcode, err := m.ActivatePasscode()
+
+		assert.Error(t, err)
+		assert.Equal(t, authn.ErrPasscodeNotSetUp, err)
+
+		code, err := passcode.GenerateCode()
+
+		assert.Error(t, err)
+
+		v, _, err := m.VerifyPasscode(code)
+		assert.False(t, v)
+		assert.Error(t, err)
+		assert.Equal(t, authn.ErrPasscodeNotSetUp, err)
+
+		assert.Equal(t, "default", m.AuthMethod)
+
+		code2, err := m.DeactivatePasscode()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Nil(t, code2)
+
+	})
+	t.Run("PassCodeNotSupported", func(t *testing.T) {
+		m := UserFixtures.Get("unauthorized")
+		_, err := m.ActivatePasscode()
+
+		assert.Error(t, err)
+		assert.Equal(t, authn.ErrPasscodeNotSupported, err)
+
+	})
 }
 
 func TestUser_RegenerateTokens(t *testing.T) {
@@ -1763,7 +1932,6 @@ func TestUser_RegenerateTokens(t *testing.T) {
 
 		assert.NotEqual(t, preview, Admin.PreviewToken)
 		assert.NotEqual(t, download, Admin.DownloadToken)
-
 	})
 }
 
@@ -1780,10 +1948,9 @@ func TestUser_HasShares(t *testing.T) {
 func TestUser_HasShare(t *testing.T) {
 	m := FindLocalUser("alice")
 	m.RefreshShares()
-	assert.True(t, m.HasShare("at9lxuqxpogaaba9"))
-	assert.False(t, m.HasShare("at9lxuqxpogaaba8"))
-	assert.False(t, Visitor.HasShare("at9lxuqxpogaaba8"))
-
+	assert.True(t, m.HasShare("as6sg6bxpogaaba9"))
+	assert.False(t, m.HasShare("as6sg6bxpogaaba8"))
+	assert.False(t, Visitor.HasShare("as6sg6bxpogaaba8"))
 }
 
 func TestUser_RedeemToken(t *testing.T) {
@@ -1793,13 +1960,13 @@ func TestUser_RedeemToken(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		m := FindLocalUser("alice")
 		m.RefreshShares()
-		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[0].ShareUID)
 		assert.Equal(t, 0, m.RedeemToken("1234"))
 		m.RefreshShares()
-		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[0].ShareUID)
 		assert.Equal(t, 1, m.RedeemToken("4jxf3jfn2k"))
 		m.RefreshShares()
-		assert.Equal(t, "at9lxuqxpogaaba7", m.UserShares[0].ShareUID)
-		assert.Equal(t, "at9lxuqxpogaaba9", m.UserShares[1].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba7", m.UserShares[0].ShareUID)
+		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[1].ShareUID)
 	})
 }

@@ -1,40 +1,37 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/session"
-	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// SessionID returns the session ID from the request context.
-func SessionID(c *gin.Context) (sessId string) {
-	if c == nil {
-		// Should never happen.
-		return ""
-	}
-
-	// Get the authentication token from the HTTP headers.
-	return clean.ID(c.GetHeader(session.Header))
-}
-
-// Session finds the client session for the given ID or returns nil otherwise.
-func Session(id string) *entity.Session {
-	// Skip authentication if app is running in public mode.
+// Session finds the client session for the specified auth token, or returns nil if not found.
+func Session(clientIp, authToken string) *entity.Session {
+	// Skip authentication when running in public mode.
 	if get.Config().Public() {
 		return get.Session().Public()
-	} else if id == "" {
+	}
+
+	// Fail if the auth token does not have a supported format.
+	if !rnd.IsAuthAny(authToken) {
 		return nil
 	}
 
-	// Find session or otherwise return nil.
-	s, err := get.Session().Get(id)
-
-	if err != nil {
+	// Fail if authentication error rate limit is exceeded.
+	if clientIp != "" && limiter.Auth.Reject(clientIp) {
 		return nil
 	}
 
-	return s
+	// Find the session based on the hashed auth token, or return nil otherwise.
+	if s, err := entity.FindSession(rnd.SessionID(authToken)); err != nil {
+		if clientIp != "" {
+			limiter.Auth.Reserve(clientIp)
+		}
+
+		return nil
+	} else {
+		return s
+	}
 }

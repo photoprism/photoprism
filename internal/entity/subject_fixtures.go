@@ -20,7 +20,7 @@ func (m SubjectMap) Pointer(name string) *Subject {
 
 var SubjectFixtures = SubjectMap{
 	"john-doe": Subject{
-		SubjUID:      "jqu0xs11qekk9jx8",
+		SubjUID:      "js6sg6b1qekk9jx8",
 		SubjSlug:     "john-doe",
 		SubjName:     "John Doe",
 		SubjType:     SubjPerson,
@@ -37,7 +37,7 @@ var SubjectFixtures = SubjectMap{
 		DeletedAt:    nil,
 	},
 	"joe-biden": Subject{
-		SubjUID:      "jqy3y652h8njw0sx",
+		SubjUID:      "js6sg6b2h8njw0sx",
 		SubjSlug:     "joe-biden",
 		SubjName:     "Joe Biden",
 		SubjType:     SubjPerson,
@@ -54,7 +54,7 @@ var SubjectFixtures = SubjectMap{
 		DeletedAt:    nil,
 	},
 	"dangling": Subject{
-		SubjUID:      "jqy1y111h1njaaaa",
+		SubjUID:      "js6sg6b1h1njaaaa",
 		SubjSlug:     "dangling-subject",
 		SubjName:     "Dangling Subject",
 		SubjAlias:    "Powell",
@@ -73,7 +73,7 @@ var SubjectFixtures = SubjectMap{
 		DeletedAt:    nil,
 	},
 	"jane-doe": Subject{
-		SubjUID:      "jqy1y111h1njaaab",
+		SubjUID:      "js6sg6b1h1njaaab",
 		SubjSlug:     "jane-doe",
 		SubjName:     "Jane Doe",
 		SubjType:     SubjPerson,
@@ -90,7 +90,7 @@ var SubjectFixtures = SubjectMap{
 		DeletedAt:    nil,
 	},
 	"actress-1": Subject{
-		SubjUID:      "jqy1y111h1njaaac",
+		SubjUID:      "js6sg6b1h1njaaac",
 		SubjSlug:     "actress-a",
 		SubjName:     "Actress A",
 		SubjType:     SubjPerson,
@@ -103,7 +103,7 @@ var SubjectFixtures = SubjectMap{
 		DeletedAt:    nil,
 	},
 	"actor-1": Subject{
-		SubjUID:      "jqy1y111h1njaaad",
+		SubjUID:      "js6sg6b1h1njaaad",
 		SubjSlug:     "actor-a",
 		SubjName:     "Actor A",
 		SubjType:     SubjPerson,

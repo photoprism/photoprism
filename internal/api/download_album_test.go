@@ -21,7 +21,7 @@ func TestDownloadAlbum(t *testing.T) {
 
 		DownloadAlbum(router)
 
-		r := PerformRequest(app, "GET", "/api/v1/albums/at9lxuqxpogaaba8/dl?t="+conf.DownloadToken())
+		r := PerformRequest(app, "GET", "/api/v1/albums/as6sg6bxpogaaba8/dl?t="+conf.DownloadToken())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }

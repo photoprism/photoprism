@@ -60,118 +60,153 @@ func findBin(configBin, defaultBin string) (binPath string) {
 
 // CreateDirectories creates directories for storing photos, metadata and cache files.
 func (c *Config) CreateDirectories() error {
-	if c.AssetsPath() == "" {
-		return notFoundError("assets")
-	} else if err := os.MkdirAll(c.AssetsPath(), fs.ModeDir); err != nil {
-		return createError(c.AssetsPath(), err)
+	// Error if the originals and storage path are identical.
+	if c.OriginalsPath() == c.StoragePath() {
+		return fmt.Errorf("originals and storage folder must be different directories")
 	}
 
-	if c.StoragePath() == "" {
+	// Make sure that the configured storage path exists and initialize it with
+	// ".ppstorage" and ".ppignore files" so that it is not accidentally indexed.
+	if dir := c.StoragePath(); dir == "" {
 		return notFoundError("storage")
-	} else if err := os.MkdirAll(c.StoragePath(), fs.ModeDir); err != nil {
-		return createError(c.StoragePath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
+	} else if _, err = fs.WriteUnixTime(filepath.Join(dir, fs.PPStorageFilename)); err != nil {
+		return fmt.Errorf("%s file in %s could not be created", fs.PPStorageFilename, clean.Log(dir))
+	} else if err = fs.WriteString(filepath.Join(dir, fs.PPIgnoreFilename), fs.PPIgnoreAll); err != nil {
+		return fmt.Errorf("%s file in %s could not be created", fs.PPIgnoreFilename, clean.Log(dir))
 	}
 
-	if c.UsersPath() == "" {
-		return notFoundError("users")
-	} else if err := os.MkdirAll(c.UsersStoragePath(), fs.ModeDir); err != nil {
-		return createError(c.UsersStoragePath(), err)
-	}
-
-	if c.CmdCachePath() == "" {
-		return notFoundError("cmd cache")
-	} else if err := os.MkdirAll(c.CmdCachePath(), fs.ModeDir); err != nil {
-		return createError(c.CmdCachePath(), err)
-	}
-
-	if c.BackupPath() == "" {
-		return notFoundError("backup")
-	} else if err := os.MkdirAll(c.BackupPath(), fs.ModeDir); err != nil {
-		return createError(c.BackupPath(), err)
-	}
-
-	if c.OriginalsPath() == "" {
+	// Create originals path if it does not exist yet and return an error if it could be a storage folder.
+	if dir := c.OriginalsPath(); dir == "" {
 		return notFoundError("originals")
-	} else if err := os.MkdirAll(c.OriginalsPath(), fs.ModeDir); err != nil {
-		return createError(c.OriginalsPath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
+	} else if fs.FileExists(filepath.Join(dir, fs.PPStorageFilename)) {
+		return fmt.Errorf("found a %s file in the originals path", fs.PPStorageFilename)
 	}
 
-	if c.ImportPath() == "" {
+	// Create import path if it does not exist yet and return an error if it could be a storage folder.
+	if dir := c.ImportPath(); dir == "" {
 		return notFoundError("import")
-	} else if err := os.MkdirAll(c.ImportPath(), fs.ModeDir); err != nil {
-		return createError(c.ImportPath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
+	} else if fs.FileExists(filepath.Join(dir, fs.PPStorageFilename)) {
+		return fmt.Errorf("found a %s file in the import path", fs.PPStorageFilename)
 	}
 
-	if filepath.IsAbs(c.SidecarPath()) {
-		if err := os.MkdirAll(c.SidecarPath(), fs.ModeDir); err != nil {
-			return createError(c.SidecarPath(), err)
+	// Create storage path if it doesn't exist yet.
+	if dir := c.UsersStoragePath(); dir == "" {
+		return notFoundError("users storage")
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
+	}
+
+	// Create assets path if it doesn't exist yet.
+	if dir := c.AssetsPath(); dir == "" {
+		return notFoundError("assets")
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
+	}
+
+	// Create command cache storage path if it doesn't exist yet.
+	if dir := c.CmdCachePath(); dir == "" {
+		return notFoundError("cmd cache")
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
+	}
+
+	// Create backup storage path if it doesn't exist yet.
+	if dir := c.BackupPath(); dir == "" {
+		return notFoundError("backup")
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
+	}
+
+	// Create sidecar storage path if it doesn't exist yet.
+	if dir := c.SidecarPath(); filepath.IsAbs(dir) {
+		if err := fs.MkdirAll(dir); err != nil {
+			return createError(dir, err)
 		}
 	}
 
-	if c.CachePath() == "" {
+	// Create and initialize cache storage directory.
+	if dir := c.CachePath(); dir == "" {
 		return notFoundError("cache")
-	} else if err := os.MkdirAll(c.CachePath(), fs.ModeDir); err != nil {
+	} else if err := fs.MkdirAll(dir); err != nil {
 		return createError(c.CachePath(), err)
+	} else if err = fs.WriteString(filepath.Join(dir, fs.PPIgnoreFilename), fs.PPIgnoreAll); err != nil {
+		return fmt.Errorf("%s file in %s could not be created", fs.PPIgnoreFilename, clean.Log(dir))
 	}
 
-	if c.MediaCachePath() == "" {
+	// Create media cache storage path if it doesn't exist yet.
+	if dir := c.MediaCachePath(); dir == "" {
 		return notFoundError("media")
-	} else if err := os.MkdirAll(c.MediaCachePath(), fs.ModeDir); err != nil {
-		return createError(c.MediaCachePath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
-	if c.ThumbCachePath() == "" {
+	// Create thumbnail cache storage path if it doesn't exist yet.
+	if dir := c.ThumbCachePath(); dir == "" {
 		return notFoundError("thumbs")
-	} else if err := os.MkdirAll(c.ThumbCachePath(), fs.ModeDir); err != nil {
-		return createError(c.ThumbCachePath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
-	if c.ConfigPath() == "" {
+	// Create and initialize config directory.
+	if dir := c.ConfigPath(); dir == "" {
 		return notFoundError("config")
-	} else if err := os.MkdirAll(c.ConfigPath(), fs.ModeDir); err != nil {
-		return createError(c.ConfigPath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
+	} else if err = fs.WriteString(filepath.Join(dir, fs.PPIgnoreFilename), fs.PPIgnoreAll); err != nil {
+		return fmt.Errorf("%s file in %s could not be created", fs.PPIgnoreFilename, clean.Log(dir))
 	}
 
-	if c.CertificatesPath() == "" {
+	// Create certificates config path if it doesn't exist yet.
+	if dir := c.CertificatesPath(); dir == "" {
 		return notFoundError("certificates")
-	} else if err := os.MkdirAll(c.CertificatesPath(), fs.ModeDir); err != nil {
-		return createError(c.CertificatesPath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
-	if c.TempPath() == "" {
+	// Create temporary file path if it doesn't exist yet.
+	if dir := c.TempPath(); dir == "" {
 		return notFoundError("temp")
-	} else if err := os.MkdirAll(c.TempPath(), fs.ModeDir); err != nil {
-		return createError(c.TempPath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
-	if c.AlbumsPath() == "" {
+	// Create albums backup path if it doesn't exist yet.
+	if dir := c.AlbumsPath(); dir == "" {
 		return notFoundError("albums")
-	} else if err := os.MkdirAll(c.AlbumsPath(), fs.ModeDir); err != nil {
-		return createError(c.AlbumsPath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
-	if c.TensorFlowModelPath() == "" {
+	// Create TensorFlow model path if it doesn't exist yet.
+	if dir := c.TensorFlowModelPath(); dir == "" {
 		return notFoundError("tensorflow model")
-	} else if err := os.MkdirAll(c.TensorFlowModelPath(), fs.ModeDir); err != nil {
-		return createError(c.TensorFlowModelPath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
-	if c.BuildPath() == "" {
+	// Create frontend build path if it doesn't exist yet.
+	if dir := c.BuildPath(); dir == "" {
 		return notFoundError("build")
-	} else if err := os.MkdirAll(c.BuildPath(), fs.ModeDir); err != nil {
-		return createError(c.BuildPath(), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
-	if filepath.Dir(c.PIDFilename()) == "" {
+	if dir := filepath.Dir(c.PIDFilename()); dir == "" {
 		return notFoundError("pid file")
-	} else if err := os.MkdirAll(filepath.Dir(c.PIDFilename()), fs.ModeDir); err != nil {
-		return createError(filepath.Dir(c.PIDFilename()), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
-	if filepath.Dir(c.LogFilename()) == "" {
+	if dir := filepath.Dir(c.LogFilename()); dir == "" {
 		return notFoundError("log file")
-	} else if err := os.MkdirAll(filepath.Dir(c.LogFilename()), fs.ModeDir); err != nil {
-		return createError(filepath.Dir(c.LogFilename()), err)
+	} else if err := fs.MkdirAll(dir); err != nil {
+		return createError(dir, err)
 	}
 
 	if c.DarktableEnabled() {
@@ -337,7 +372,7 @@ func (c *Config) UserStoragePath(userUid string) string {
 
 	dir := filepath.Join(c.UsersStoragePath(), userUid)
 
-	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(dir); err != nil {
 		return ""
 	}
 
@@ -352,7 +387,7 @@ func (c *Config) UserUploadPath(userUid, token string) (string, error) {
 
 	dir := filepath.Join(c.UserStoragePath(userUid), "upload", clean.Token(token))
 
-	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(dir); err != nil {
 		return "", err
 	}
 
@@ -391,7 +426,7 @@ func (c *Config) tempPath() string {
 	if c.options.TempPath != "" {
 		if dir := fs.Abs(c.options.TempPath); dir == "" {
 			// Ignore.
-		} else if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+		} else if err := fs.MkdirAll(dir); err != nil {
 			// Ignore.
 		} else if fs.PathWritable(dir) {
 			return dir
@@ -401,7 +436,7 @@ func (c *Config) tempPath() string {
 	// Find alternative temp path based on storage serial checksum.
 	if dir := filepath.Join(osTempDir, "photoprism_"+c.SerialChecksum()); dir == "" {
 		// Ignore.
-	} else if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+	} else if err := fs.MkdirAll(dir); err != nil {
 		// Ignore.
 	} else if fs.PathWritable(dir) {
 		return dir
@@ -410,7 +445,7 @@ func (c *Config) tempPath() string {
 	// Find alternative temp path based on built-in TempDir() function.
 	if dir, err := ioutil.TempDir(osTempDir, "photoprism_"); err != nil || dir == "" {
 		// Ignore.
-	} else if err = os.MkdirAll(dir, fs.ModeDir); err != nil {
+	} else if err = fs.MkdirAll(dir); err != nil {
 		// Ignore.
 	} else if fs.PathWritable(dir) {
 		return dir
@@ -463,7 +498,7 @@ func (c *Config) MediaFileCachePath(hash string) string {
 	}
 
 	// Ensure the subdirectory exists, or log an error otherwise.
-	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(dir); err != nil {
 		log.Errorf("cache: failed to create subdirectory for media file")
 	}
 
@@ -481,7 +516,7 @@ func (c *Config) StoragePath() string {
 		const dirName = "storage"
 
 		// Default directories.
-		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.HiddenPath, dirName))
+		originalsDir := fs.Abs(filepath.Join(c.OriginalsPath(), fs.PPHiddenPathname, dirName))
 		storageDir := fs.Abs(dirName)
 
 		// Find existing directories.
@@ -498,7 +533,7 @@ func (c *Config) StoragePath() string {
 
 		// Use .photoprism in home directory?
 		if usr, _ := user.Current(); usr.HomeDir != "" {
-			p := fs.Abs(filepath.Join(usr.HomeDir, fs.HiddenPath, dirName))
+			p := fs.Abs(filepath.Join(usr.HomeDir, fs.PPHiddenPathname, dirName))
 
 			if fs.PathWritable(p) || c.ReadOnly() {
 				return p
@@ -507,7 +542,7 @@ func (c *Config) StoragePath() string {
 
 		// Fallback directory in case nothing else works.
 		if c.ReadOnly() {
-			return fs.Abs(filepath.Join(fs.HiddenPath, dirName))
+			return fs.Abs(filepath.Join(fs.PPHiddenPathname, dirName))
 		}
 
 		// Store cache and index in "originals/.photoprism/storage".

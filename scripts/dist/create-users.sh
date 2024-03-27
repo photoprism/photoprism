@@ -48,7 +48,7 @@ echo "✅ added user videodriver (937)"
 userdel -r -f ubuntu >/dev/null 2>&1
 userdel -r -f photoprism >/dev/null 2>&1
 userdel -r -f 1000 >/dev/null 2>&1
-useradd -u 1000 -N -g 1000 -G www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/photoprism" photoprism
+useradd -u 1000 -N -g photoprism -G www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/photoprism" photoprism
 echo "✅ added user photoprism (1000)"
 
 add_user()

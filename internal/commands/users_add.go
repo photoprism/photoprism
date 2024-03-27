@@ -17,7 +17,7 @@ import (
 // UsersAddCommand configures the command name, flags, and action.
 var UsersAddCommand = cli.Command{
 	Name:      "add",
-	Usage:     "Adds a new user account",
+	Usage:     "Creates a new user account",
 	ArgsUsage: "[username]",
 	Flags:     UserFlags,
 	Action:    usersAddAction,
@@ -55,7 +55,7 @@ func usersAddAction(ctx *cli.Context) error {
 		if frm.UserName == "" {
 			return fmt.Errorf("username is required")
 		} else if m := entity.FindUserByName(frm.UserName); m != nil {
-			if !m.Deleted() {
+			if !m.IsDeleted() {
 				return fmt.Errorf("user already exists")
 			}
 

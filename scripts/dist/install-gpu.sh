@@ -51,7 +51,7 @@ for t in ${GPU_DETECTED[@]}; do
   case $t in
     i915 | i965 | intel | opencl | icd)
       echo "Installing Intel Drivers..."
-      apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-gen-dev va-driver-all vainfo libva-dev
+      apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-dev libmfx-gen-dev va-driver-all vainfo libva-dev
       ;;
 
     nvidia)

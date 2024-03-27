@@ -13,7 +13,7 @@ var CheckTokens = true
 
 // GenerateToken returns a random string token.
 func GenerateToken() string {
-	return rnd.GenerateToken(8)
+	return rnd.Base36(8)
 }
 
 // InvalidDownloadToken checks if the token is unknown.

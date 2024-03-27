@@ -9,9 +9,9 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -94,11 +94,11 @@ func UpdateSubject(router *gin.RouterGroup) {
 
 // LikeSubject flags a subject as favorite.
 //
+// The request parameters are:
+//
+//   - uid: string Subject UID
+//
 // POST /api/v1/subjects/:uid/like
-//
-// Parameters:
-//
-//	uid: string Subject UID
 func LikeSubject(router *gin.RouterGroup) {
 	router.POST("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
@@ -120,7 +120,7 @@ func LikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishSubjectEvent(EntityUpdated, uid, c)
+		PublishSubjectEvent(StatusUpdated, uid, c)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})
@@ -128,11 +128,11 @@ func LikeSubject(router *gin.RouterGroup) {
 
 // DislikeSubject removes the favorite flag from a subject.
 //
+// The request parameters are:
+//
+//   - uid: string Subject UID
+//
 // DELETE /api/v1/subjects/:uid/like
-//
-// Parameters:
-//
-//	uid: string Subject UID
 func DislikeSubject(router *gin.RouterGroup) {
 	router.DELETE("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
@@ -154,7 +154,7 @@ func DislikeSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishSubjectEvent(EntityUpdated, uid, c)
+		PublishSubjectEvent(StatusUpdated, uid, c)
 
 		c.JSON(http.StatusOK, http.Response{})
 	})

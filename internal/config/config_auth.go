@@ -165,7 +165,7 @@ func (c *Config) DownloadToken() string {
 	if c.Public() {
 		return entity.TokenPublic
 	} else if c.options.DownloadToken == "" {
-		c.options.DownloadToken = rnd.GenerateToken(8)
+		c.options.DownloadToken = rnd.Base36(8)
 	}
 
 	return c.options.DownloadToken
