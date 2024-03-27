@@ -1,6 +1,5 @@
 <template>
-  <v-container id="auth-login" fluid fill-height class="auth-login wallpaper background-welcome pa-4"
-               :style="wallpaper()">
+  <v-container id="auth-login" fluid fill-height class="auth-login wallpaper background-welcome pa-4" :style="wallpaper()">
     <v-layout id="auth-layout" class="auth-layout">
       <v-flex xs12 sm9 md6 lg4 xl3 xxl2>
         <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="onLogin">
@@ -9,98 +8,102 @@
               <p-auth-header></p-auth-header>
               <v-spacer></v-spacer>
               <v-layout wrap align-top>
-                <v-flex xs12 class="px-2 py-1">
-                  <v-text-field
-                    id="auth-username"
-                    v-model="username"
-                    :disabled="loading || enterPasscode"
-                    name="username"
-                    type="text"
-                    :label="$gettext('Name')"
-                    hide-details
-                    required
-                    solo
-                    flat
-                    light
-                    autofocus
-                    autocorrect="off"
-                    autocapitalize="none"
-                    autocomplete="username"
-                    browser-autocomplete="username"
-                    background-color="grey lighten-5"
-                    class="input-username text-selectable"
-                    color="primary"
-                    prepend-inner-icon="person"
-                    @keyup.enter.native="onLogin"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex v-if="enterPasscode" xs12 class="pa-2">
-                  <v-text-field
-                    id="auth-passcode"
-                    v-model="passcode"
-                    :disabled="loading"
-                    name="passcode"
-                    type="text"
-                    :label="$gettext('Verification Code')"
-                    mask="nnn nnn nnn nnn"
-                    inputmode="text"
-                    hide-details
-                    required
-                    solo
-                    flat
-                    light
-                    autocorrect="off"
-                    autocapitalize="none"
-                    autocomplete="one-time-code"
-                    browser-autocomplete="one-time-code"
-                    background-color="grey lighten-5"
-                    class="input-passcode text-selectable"
-                    prepend-inner-icon="verified_user"
-                    color="primary"
-                    @keyup.enter.native="onLogin"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex v-else xs12 class="pa-2">
-                  <v-text-field
-                    id="auth-password"
-                    v-model="password"
-                    :disabled="loading"
-                    name="password"
-                    :type="showPassword ? 'text' : 'password'"
-                    :label="$gettext('Password')"
-                    hide-details
-                    required
-                    solo
-                    flat
-                    light
-                    autocorrect="off"
-                    autocapitalize="none"
-                    autocomplete="current-password"
-                    browser-autocomplete="current-password"
-                    background-color="grey lighten-5"
-                    class="input-password text-selectable"
-                    :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                    prepend-inner-icon="lock"
-                    color="primary"
-                    @click:append="showPassword = !showPassword"
-                    @keyup.enter.native="onLogin"
-                  ></v-text-field>
-                </v-flex>
+                <template v-if="enterPasscode">
+                  <v-flex xs12 class="pa-2 body-2">
+                    <translate>Please enter a valid verification code to access your account:</translate>
+                  </v-flex>
+                  <v-flex xs12 class="pa-2">
+                    <v-text-field
+                      id="auth-passcode"
+                      v-model="passcode"
+                      :disabled="loading"
+                      name="passcode"
+                      type="text"
+                      :label="$gettext('Verification Code')"
+                      mask="nnn nnn nnn nnn"
+                      inputmode="text"
+                      hide-details
+                      required
+                      solo
+                      flat
+                      light
+                      autocorrect="off"
+                      autocapitalize="none"
+                      autocomplete="one-time-code"
+                      browser-autocomplete="one-time-code"
+                      background-color="grey lighten-5"
+                      class="input-passcode text-selectable"
+                      prepend-inner-icon="verified_user"
+                      color="primary"
+                      @keyup.enter.native="onLogin"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 class="px-2 pt-2 pb-0 body-1">
+                    <translate>Can't access your authenticator app or device? Enter your recovery code or ask for assistance.</translate>
+                  </v-flex>
+                </template>
+                <template v-else>
+                  <v-flex xs12 class="pa-2">
+                    <v-text-field
+                      id="auth-username"
+                      v-model="username"
+                      :disabled="loading || enterPasscode"
+                      name="username"
+                      type="text"
+                      :label="$gettext('Name')"
+                      hide-details
+                      required
+                      solo
+                      flat
+                      light
+                      autofocus
+                      autocorrect="off"
+                      autocapitalize="none"
+                      autocomplete="username"
+                      browser-autocomplete="username"
+                      background-color="grey lighten-5"
+                      class="input-username text-selectable"
+                      color="primary"
+                      prepend-inner-icon="person"
+                      @keyup.enter.native="onLogin"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 class="px-2 py-1">
+                    <v-text-field
+                      id="auth-password"
+                      v-model="password"
+                      :disabled="loading"
+                      name="password"
+                      :type="showPassword ? 'text' : 'password'"
+                      :label="$gettext('Password')"
+                      hide-details
+                      required
+                      solo
+                      flat
+                      light
+                      autocorrect="off"
+                      autocapitalize="none"
+                      autocomplete="current-password"
+                      browser-autocomplete="current-password"
+                      background-color="grey lighten-5"
+                      class="input-password text-selectable"
+                      :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                      prepend-inner-icon="lock"
+                      color="primary"
+                      @click:append="showPassword = !showPassword"
+                      @keyup.enter.native="onLogin"
+                    ></v-text-field>
+                  </v-flex>
+                </template>
                 <v-flex xs12 class="px-2 py-1 auth-actions">
                   <div class="action-buttons auth-buttons text-xs-center">
-                    <v-btn v-if="enterPasscode" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
-                           :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-3 py-2 opacity-80"
-                           @click.stop.prevent="onCancel">
+                    <v-btn v-if="enterPasscode" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-3 py-2 opacity-80" @click.stop.prevent="onCancel">
                       <translate>Cancel</translate>
                     </v-btn>
-                    <v-btn v-else-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly"
-                           :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80"
-                           @click.stop.prevent="onRegister">
+                    <v-btn v-else-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80" @click.stop.prevent="onRegister">
                       <translate>Create Account</translate>
                     </v-btn>
-                    <v-btn :color="colors.primary" depressed :disabled="loginDisabled"
-                           :block="$vuetify.breakpoint.xsOnly" class="white--text action-confirm ra-6 py-2 px-3"
-                           @click.stop.prevent="onLogin">
+                    <v-btn :color="colors.primary" depressed :disabled="loginDisabled" :block="$vuetify.breakpoint.xsOnly" class="white--text action-confirm ra-6 py-2 px-3" @click.stop.prevent="onLogin">
                       <translate>Sign in</translate>
                       <v-icon v-if="rtl" left dark>navigate_before</v-icon>
                       <v-icon v-else right dark>navigate_next</v-icon>
