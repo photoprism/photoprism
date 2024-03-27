@@ -73,3 +73,7 @@ func (c *Config) FaceMatchDist() float64 {
 
 	return c.options.FaceMatchDist
 }
+
+func (c *Config) DeleteImportDirectory() bool {
+	return c.options.DeleteImportDirectory
+}
