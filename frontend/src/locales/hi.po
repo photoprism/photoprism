@@ -48,8 +48,8 @@ msgstr "1 घंटा"
 msgid "12 hours"
 msgstr "12 घंटा"
 
-#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:66
-#: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:68
+#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "2-कारक प्रमाणीकरण"
 
@@ -107,7 +107,7 @@ msgstr "कार्य"
 msgid "Actions"
 msgstr "क्रिया"
 
-#: src/page/connect.vue:97 src/dialog/account/passcode.vue:98
+#: src/page/connect.vue:97 src/dialog/account/passcode.vue:100
 #: src/dialog/account/passcode.vue:22
 msgid "Activate"
 msgstr "सक्रिय"
@@ -170,7 +170,7 @@ msgstr "3 दिन बाद"
 msgid "After 7 days"
 msgstr "7 दिन बाद"
 
-#: src/dialog/account/passcode.vue:21 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr ""
 
@@ -301,6 +301,10 @@ msgstr "कोई भी निजी फ़ोटो और वीडियो 
 msgid "API Key"
 msgstr "एपीआई कुंजी"
 
+#: src/dialog/account/apps.vue:122
+msgid "App Name"
+msgstr ""
+
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "आवेदन"
@@ -314,8 +318,8 @@ msgstr "लागू"
 msgid "Approve"
 msgstr "मंजूर"
 
-#: src/page/settings/account.vue:60 src/dialog/account/apps.vue:8
-#: src/page/settings/account.vue:62
+#: src/page/settings/account.vue:68 src/dialog/account/apps.vue:8
+#: src/page/settings/account.vue:70
 msgid "Apps and Devices"
 msgstr "ऐप्स और डिवाइस"
 
@@ -401,7 +405,7 @@ msgstr "100% स्व-वित्त पोषित और स्वतंत
 msgid "Bio"
 msgstr "जैव"
 
-#: src/page/settings/account.vue:82 src/page/settings/account.vue:84
+#: src/page/settings/account.vue:84 src/page/settings/account.vue:86
 msgid "Birth Date"
 msgstr "जन्म तिथि"
 
@@ -459,6 +463,10 @@ msgstr "कैमरा"
 msgid "Camera Serial"
 msgstr "कैमरा सीरियल"
 
+#: src/page/auth/login.vue:18 src/page/auth/login.vue:8
+msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
+msgstr ""
+
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
 msgstr "अधिक लोड नहीं किया जा सकता, सीमा तक पहुंच गया"
@@ -474,9 +482,8 @@ msgstr "अधिक आइटम का चयन नहीं किया ज
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/passcode.vue:35
-#: src/dialog/account/passcode.vue:66 src/dialog/account/passcode.vue:95
-#: src/dialog/account/passcode.vue:18 src/dialog/account/passcode.vue:21
+#: src/page/connect.vue:44 src/dialog/account/passcode.vue:68
+#: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
 #: src/dialog/account/passcode.vue:19 src/dialog/account/password.vue:38
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:45
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
@@ -484,7 +491,7 @@ msgstr "अधिक आइटम का चयन नहीं किया ज
 #: src/dialog/photo/delete.vue:18 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:28 src/page/auth/login.vue:22
+#: src/dialog/share/upload.vue:28 src/page/auth/login.vue:32
 #: src/page/connect.vue:41 src/page/library/import.vue:34
 #: src/page/library/index.vue:30
 msgid "Cancel"
@@ -503,8 +510,8 @@ msgstr "वर्ग"
 msgid "Change Avatar"
 msgstr "अवतार परिवर्तन"
 
-#: src/page/settings/account.vue:72 src/dialog/account/password.vue:8
-#: src/page/settings/account.vue:74
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
+#: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "पासवर्ड बदलें"
 
@@ -524,7 +531,7 @@ msgstr "निजी ध्वज बदलें"
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
-#: src/page/settings/account.vue:118 src/page/settings/account.vue:136
+#: src/page/settings/account.vue:129 src/page/settings/account.vue:147
 #: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
@@ -555,8 +562,9 @@ msgid "Client Credentials"
 msgstr "ग्राहक क्रेडेंशियल"
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
-#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:25
-#: src/dialog/account/passcode.vue:133 src/dialog/account/passcode.vue:152
+#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:34
+#: src/dialog/account/passcode.vue:37 src/dialog/account/passcode.vue:135
+#: src/dialog/account/passcode.vue:154 src/dialog/account/passcode.vue:18
 #: src/dialog/account/passcode.vue:25 src/dialog/account/passcode.vue:12
 #: src/dialog/photo/edit/details.vue:111 src/dialog/share.vue:85
 #: src/page/library/errors.vue:68
@@ -591,7 +599,7 @@ msgstr "पूरा रेसकान"
 msgid "Confidence"
 msgstr "आत्मविश्वास"
 
-#: src/dialog/account/passcode.vue:69 src/dialog/account/passcode.vue:24
+#: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
 msgstr ""
 
@@ -599,8 +607,8 @@ msgstr ""
 msgid "Connect"
 msgstr "जुडिये"
 
-#: src/page/settings/account.vue:54 src/dialog/webdav.vue:7
-#: src/page/settings/account.vue:56 src/page/settings/services.vue:46
+#: src/page/settings/account.vue:74 src/dialog/webdav.vue:7
+#: src/page/settings/account.vue:76 src/page/settings/services.vue:46
 msgid "Connect via WebDAV"
 msgstr "WebDAV के माध्यम से कनेक्ट करें"
 
@@ -608,7 +616,7 @@ msgstr "WebDAV के माध्यम से कनेक्ट करें"
 msgid "Connected"
 msgstr "जुड़े हुए"
 
-#: src/page/settings/account.vue:128 src/page/settings/account.vue:104
+#: src/page/settings/account.vue:130 src/page/settings/account.vue:106
 msgid "Contact Details"
 msgstr "सम्पर्क करने का विवरण"
 
@@ -635,13 +643,13 @@ msgstr "योगदान देने वाला"
 msgid "Converting"
 msgstr "परिवर्तित"
 
-#: src/dialog/account/apps.vue:52 src/dialog/account/passcode.vue:68
+#: src/dialog/account/apps.vue:52 src/dialog/account/passcode.vue:66
 #: src/dialog/photo/edit/files.vue:64 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:61 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
 msgstr "क्लिपबोर्ड पर नकल"
 
-#: src/dialog/account/passcode.vue:101 src/dialog/account/passcode.vue:25
+#: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
 msgstr "प्रतिलिपि"
 
@@ -653,12 +661,16 @@ msgstr "कॉपीराइट"
 msgid "Couldn't find anything."
 msgstr "कुछ नहीं मिला।"
 
-#: src/page/settings/account.vue:834 src/component/photo/toolbar.vue:270
-#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:688
+#: src/page/settings/account.vue:859 src/component/photo/toolbar.vue:270
+#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:713
 msgid "Country"
 msgstr "देश"
 
-#: src/page/auth/login.vue:25
+#: src/dialog/account/apps.vue:37
+msgid "Create"
+msgstr ""
+
+#: src/page/auth/login.vue:35
 msgid "Create Account"
 msgstr "खाता बनाएं"
 
@@ -678,7 +690,7 @@ msgstr "के लिए थंबनेल बनाना"
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "घन: मध्यम गुणवत्ता, अच्छा प्रदर्शन"
 
-#: src/dialog/account/password.vue:135
+#: src/dialog/account/password.vue:136
 msgid "Current Password"
 msgstr "वर्तमान पासवर्ड"
 
@@ -694,11 +706,11 @@ msgstr "सियान"
 msgid "Daily"
 msgstr "रोज"
 
-#: src/page/settings/account.vue:554 src/dialog/photo/edit/details.vue:116
+#: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
 msgstr "दिन"
 
-#: src/dialog/account/passcode.vue:130 src/dialog/account/passcode.vue:22
+#: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
 msgstr ""
 
@@ -707,7 +719,7 @@ msgid "Debug Logs"
 msgstr "दोषमार्जन लॉग"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:230
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:234
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:38
 #: src/options/auth.js:39 src/options/options.js:309 src/options/options.js:373
 #: src/options/themes.js:492 src/page/places.vue:141
@@ -946,7 +958,7 @@ msgid "Edited"
 msgstr "संपादित"
 
 #: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
-#: src/page/settings/account.vue:224 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:224 src/page/settings/account.vue:748
 msgid "Email"
 msgstr "ईमेल"
 
@@ -958,7 +970,7 @@ msgstr "वर्तमान में विकास के तहत नई 
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "रॉ कनवर्टर प्रीसेट सक्षम करता है। प्रदर्शन को कम कर सकता है।"
 
-#: src/dialog/account/passcode.vue:28 src/dialog/account/passcode.vue:11
+#: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr ""
 
@@ -1031,7 +1043,7 @@ msgstr "चेहरा"
 msgid "Faces"
 msgstr "चेहरे के"
 
-#: src/dialog/account/apps.vue:54 src/dialog/account/passcode.vue:70
+#: src/dialog/account/apps.vue:54 src/dialog/account/passcode.vue:68
 #: src/dialog/photo/edit/files.vue:66 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:63 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
@@ -1066,7 +1078,7 @@ msgstr "पसंदीदा"
 msgid "Feature Request"
 msgstr "महत्वपूर्ण लेख मांगना"
 
-#: src/page/settings/account.vue:925 src/page/settings/account.vue:779
+#: src/page/settings/account.vue:950 src/page/settings/account.vue:804
 msgid "Feed"
 msgstr "फ़ीड"
 
@@ -1137,7 +1149,7 @@ msgstr "फ़ोल्डर खाली है"
 msgid "Folders"
 msgstr "फ़ोल्डर"
 
-#: src/page/auth/login.vue:35
+#: src/page/auth/login.vue:45
 msgid "Forgot password?"
 msgstr "पासवर्ड भूल गए?"
 
@@ -1225,7 +1237,7 @@ msgstr "उच्च गतिशील रेंज (एचडीआर)"
 msgid "How can we help?"
 msgstr "हम आपकी सहायता किस तरह से कर सकते है?"
 
-#: src/dialog/account/passcode.vue:115 src/dialog/account/passcode.vue:7
+#: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr ""
 
@@ -1325,12 +1337,12 @@ msgstr "मध्यान्तर"
 #: src/page/settings/account.vue:119 src/page/settings/account.vue:145
 #: src/page/settings/account.vue:171 src/page/settings/account.vue:227
 #: src/page/settings/account.vue:286 src/page/settings/account.vue:314
-#: src/page/settings/account.vue:672 src/page/settings/account.vue:698
-#: src/page/settings/account.vue:726 src/page/settings/account.vue:754
-#: src/page/settings/account.vue:818 src/page/settings/account.vue:845
-#: src/page/settings/account.vue:872 src/page/settings/account.vue:900
-#: src/page/settings/account.vue:928 src/page/settings/account.vue:699
-#: src/page/settings/account.vue:782
+#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
+#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
+#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
+#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
+#: src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "अमान्य"
 
@@ -1347,7 +1359,7 @@ msgstr "अमान्य मापदण्ड"
 msgid "Invalid photo selected"
 msgstr "अमान्य फ़ोटो चयनित"
 
-#: src/dialog/account/passcode.vue:87 src/dialog/account/passcode.vue:116
+#: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
 msgstr ""
@@ -1488,10 +1500,10 @@ msgstr "स्थानीय समय"
 msgid "location"
 msgstr "स्थान"
 
-#: src/page/settings/account.vue:815 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:840 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:90
-#: src/page/settings/account.vue:669
+#: src/page/settings/account.vue:694
 msgid "Location"
 msgstr "स्थान"
 
@@ -1596,7 +1608,7 @@ msgstr "लम्हें"
 msgid "Monochrome"
 msgstr "एक रंग का"
 
-#: src/page/settings/account.vue:577 src/component/photo/toolbar.vue:412
+#: src/page/settings/account.vue:602 src/component/photo/toolbar.vue:412
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "महीना"
@@ -1614,7 +1626,7 @@ msgstr "सबसे अधिक प्रासंगिक"
 msgid "Move Files"
 msgstr "फ़ाइलें ले जाएँ"
 
-#: src/dialog/account/password.vue:166
+#: src/dialog/account/password.vue:168
 msgid "Must have at least %{n} characters."
 msgstr "कम से कम %{n} अक्षर होने चाहिए।"
 
@@ -1625,7 +1637,7 @@ msgstr "कम से कम %{n} अक्षर होने चाहिए�
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:89 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:146 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1648,7 +1660,7 @@ msgstr "कभी नहीँ"
 msgid "New"
 msgstr "नई"
 
-#: src/dialog/account/password.vue:163
+#: src/dialog/account/password.vue:165
 msgid "New Password"
 msgstr "नया पासवर्ड"
 
@@ -1797,7 +1809,7 @@ msgstr "एक व्यक्ति मिला"
 msgid "One picture found"
 msgstr "एक तस्वीर मिली"
 
-#: src/dialog/account/passcode.vue:144 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr ""
 
@@ -1805,7 +1817,7 @@ msgstr ""
 msgid "Orange"
 msgstr "संतरा"
 
-#: src/page/settings/account.vue:695
+#: src/page/settings/account.vue:720
 msgid "Organization"
 msgstr "संगठन"
 
@@ -1848,10 +1860,10 @@ msgstr "चित्रमाला"
 msgid "Panoramas"
 msgstr "पैनोरामा"
 
-#: src/dialog/admin/users/add.vue:123 src/dialog/account/passcode.vue:135
-#: src/dialog/account/passcode.vue:582 src/dialog/service/add.vue:126
-#: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
-#: src/page/auth/login.vue:151
+#: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:150
+#: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
+#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
+#: src/dialog/share.vue:24 src/page/auth/login.vue:178
 msgid "Password"
 msgstr "कुंजिका"
 
@@ -1882,7 +1894,7 @@ msgstr "मेमोरी खाली करने के लिए फ़ा�
 msgid "Personal"
 msgstr "निजी"
 
-#: src/page/settings/account.vue:869 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:894 src/page/settings/account.vue:748
 msgid "Phone"
 msgstr "फ़ोन"
 
@@ -1927,7 +1939,7 @@ msgstr "स्थान और समय"
 msgid "Places"
 msgstr "स्थान"
 
-#: src/dialog/account/password.vue:194
+#: src/dialog/account/password.vue:197
 msgid "Please confirm your new password."
 msgstr "कृपया अपने नए पासवर्ड की पुष्टि करें।"
 
@@ -1938,6 +1950,10 @@ msgstr "कृपया कोई भी निजी, गैरकानून�
 #: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "कृपया आक्रामक सामग्री वाले फ़ोटो अपलोड न करें।"
+
+#: src/page/auth/login.vue:12 src/page/auth/login.vue:2
+msgid "Please enter a valid verification code to access your account:"
+msgstr ""
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2136,7 +2152,7 @@ msgstr "पुनर्स्थापित"
 msgid "Retry Limit"
 msgstr "पुनः प्रयास सीमा"
 
-#: src/dialog/account/password.vue:191
+#: src/dialog/account/password.vue:194
 msgid "Retype Password"
 msgstr "पासवर्ड फिर से लिखें"
 
@@ -2164,7 +2180,7 @@ msgstr "सहेजें"
 msgid "Scan"
 msgstr "स्कैन"
 
-#: src/dialog/account/passcode.vue:49 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
 msgstr ""
 
@@ -2258,12 +2274,12 @@ msgstr "सत्र"
 msgid "Settings"
 msgstr "समायोजन"
 
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:131
-#: src/dialog/account/passcode.vue:156
+#: src/page/settings/account.vue:127 src/page/settings/account.vue:142
+#: src/dialog/account/passcode.vue:146
 msgid "Settings saved"
 msgstr "सेटिंग्स को सहेजा गया"
 
-#: src/dialog/account/passcode.vue:38 src/dialog/account/passcode.vue:21
+#: src/dialog/account/passcode.vue:40 src/dialog/account/passcode.vue:21
 #: src/dialog/share/upload.vue:31
 msgid "Setup"
 msgstr "सेट अप"
@@ -2313,7 +2329,7 @@ msgstr "अधिक विस्तृत लॉग संदेश दिख�
 msgid "Sidecar"
 msgstr "एक प्रकार का मादक द्रव्य"
 
-#: src/page/auth/login.vue:28
+#: src/page/auth/login.vue:38
 msgid "Sign in"
 msgstr "साइन इन करें"
 
@@ -2400,7 +2416,7 @@ msgstr "सड़कें"
 msgid "Subject"
 msgstr "विषय"
 
-#: src/dialog/account/passcode.vue:141
+#: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
 msgstr ""
 
@@ -2412,7 +2428,7 @@ msgstr "सफलतापूर्वक कनेक्ट किया गय
 msgid "Successfully deleted"
 msgstr "सफलतापूर्वक हटा दिया गया"
 
-#: src/dialog/account/passcode.vue:117
+#: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
 msgstr ""
 
@@ -2505,7 +2521,7 @@ msgstr "शीर्षक"
 msgid "Title"
 msgstr "शीर्षक"
 
-#: src/page/settings/account.vue:669
+#: src/page/settings/account.vue:694
 msgid "Title / Position"
 msgstr "शीर्षक स्थिति"
 
@@ -2513,11 +2529,15 @@ msgstr "शीर्षक स्थिति"
 msgid "Title too long"
 msgstr "शीर्षक बहुत लंबा है"
 
-#: src/dialog/account/passcode.vue:86 src/dialog/account/passcode.vue:10
+#: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
 msgstr ""
 
-#: src/dialog/account/passcode.vue:119 src/dialog/account/passcode.vue:11
+#: src/dialog/account/apps.vue:20
+msgid "To create a new app-specific password, please enter the name and type of the application and select an expiration date:"
+msgstr ""
+
+#: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
 msgstr ""
 
@@ -2554,7 +2574,7 @@ msgstr "समस्या निवारण चेकलिस्ट"
 msgid "Try again using other filters or keywords."
 msgstr "अन्य फ़िल्टर या कीवर्ड का उपयोग करके फिर से प्रयास करें।"
 
-#: src/dialog/account/passcode.vue:112 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
 msgstr ""
 
@@ -2588,8 +2608,7 @@ msgid "Unknown"
 msgstr "अनजान"
 
 #: src/page/settings/account.vue:40 src/page/settings/account.vue:48
-#: src/component/navigation.vue:93 src/page/settings/account.vue:37
-#: src/page/settings/account.vue:45
+#: src/component/navigation.vue:93
 msgid "Unregistered"
 msgstr "अपंजीकृत"
 
@@ -2618,7 +2637,7 @@ msgstr "इंडेक्स अपडेट कर रहा है"
 msgid "Updating moments"
 msgstr "पल-पल का अपडेट"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:129
+#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:140
 msgid "Updating picture…"
 msgstr "चित्र अपडेट किया जा रहा है…"
 
@@ -2682,7 +2701,7 @@ msgstr "%{t} का %{n} अपलोड हो रहा है…"
 msgid "Uploading photos…"
 msgstr "फ़ोटो अपलोड हो रही हैं…"
 
-#: src/page/settings/account.vue:126
+#: src/page/settings/account.vue:137
 msgid "Uploading…"
 msgstr "अपलोड हो रहा है…"
 
@@ -2698,13 +2717,13 @@ msgstr "यूआरएल"
 msgid "Use Presets"
 msgstr "प्रीसेट का उपयोग करें"
 
-#: src/dialog/account/passcode.vue:80 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:"
 msgstr ""
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:59
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
-#: src/model/user.js:293 src/options/auth.js:7
+#: src/model/user.js:297 src/options/auth.js:7
 msgid "User"
 msgstr "उपयोगकर्ता"
 
@@ -2737,7 +2756,7 @@ msgstr "वेक्टर"
 msgid "Vectors"
 msgstr "वैक्टर"
 
-#: src/dialog/account/passcode.vue:291 src/page/auth/login.vue:121
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:97
 msgid "Verification Code"
 msgstr ""
 
@@ -2808,7 +2827,7 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr "WebDAV अपलोड करें"
 
-#: src/page/settings/account.vue:751 src/page/settings/account.vue:897
+#: src/page/settings/account.vue:776 src/page/settings/account.vue:922
 msgid "Website"
 msgstr "वेबसाइट"
 
@@ -2816,11 +2835,11 @@ msgstr "वेबसाइट"
 msgid "White"
 msgstr "सफेद"
 
-#: src/page/settings/account.vue:105
+#: src/page/settings/account.vue:107
 msgid "Work Details"
 msgstr "कार्य विवरण"
 
-#: src/page/settings/account.vue:600 src/component/photo/toolbar.vue:383
+#: src/page/settings/account.vue:625 src/component/photo/toolbar.vue:383
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:212
 msgid "Year"
 msgstr "साल"

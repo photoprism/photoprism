@@ -48,8 +48,8 @@ msgstr "1 heure"
 msgid "12 hours"
 msgstr "12 heures"
 
-#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:66
-#: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:68
+#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "Authentification à 2 facteurs"
 
@@ -107,7 +107,7 @@ msgstr "Action"
 msgid "Actions"
 msgstr "Actions"
 
-#: src/page/connect.vue:97 src/dialog/account/passcode.vue:98
+#: src/page/connect.vue:97 src/dialog/account/passcode.vue:100
 #: src/dialog/account/passcode.vue:22
 msgid "Activate"
 msgstr "Activer"
@@ -170,7 +170,7 @@ msgstr "Après 3 jours"
 msgid "After 7 days"
 msgstr "Après 7 jours"
 
-#: src/dialog/account/passcode.vue:21 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr "Après avoir saisi votre mot de passe pour confirmation, vous pourrez configurer l'authentification à deux facteurs à l'aide d'une application ou d'un dispositif d'authentification compatible :"
 
@@ -301,6 +301,10 @@ msgstr "Une photo ou vidéo privée restera privée et ne sera pas partagée."
 msgid "API Key"
 msgstr "Clé d'API"
 
+#: src/dialog/account/apps.vue:122
+msgid "App Name"
+msgstr ""
+
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "Application"
@@ -314,8 +318,8 @@ msgstr "Appliquer"
 msgid "Approve"
 msgstr "Approuver"
 
-#: src/page/settings/account.vue:60 src/dialog/account/apps.vue:8
-#: src/page/settings/account.vue:62
+#: src/page/settings/account.vue:68 src/dialog/account/apps.vue:8
+#: src/page/settings/account.vue:70
 msgid "Apps and Devices"
 msgstr "Applications et appareils"
 
@@ -401,7 +405,7 @@ msgstr "Étant 100% autofinancés et indépendants, nous pouvons vous promettre 
 msgid "Bio"
 msgstr "Biographie"
 
-#: src/page/settings/account.vue:82 src/page/settings/account.vue:84
+#: src/page/settings/account.vue:84 src/page/settings/account.vue:86
 msgid "Birth Date"
 msgstr "Date de naissance"
 
@@ -459,6 +463,10 @@ msgstr "Appareil photo"
 msgid "Camera Serial"
 msgstr "N° de série de l'appareil photo"
 
+#: src/page/auth/login.vue:18 src/page/auth/login.vue:8
+msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
+msgstr ""
+
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
 msgstr "Impossible de charger plus, limite atteinte"
@@ -474,9 +482,8 @@ msgstr "Impossible de sélectionner plus d’éléments"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/passcode.vue:35
-#: src/dialog/account/passcode.vue:66 src/dialog/account/passcode.vue:95
-#: src/dialog/account/passcode.vue:18 src/dialog/account/passcode.vue:21
+#: src/page/connect.vue:44 src/dialog/account/passcode.vue:68
+#: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
 #: src/dialog/account/passcode.vue:19 src/dialog/account/password.vue:38
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:45
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
@@ -484,7 +491,7 @@ msgstr "Impossible de sélectionner plus d’éléments"
 #: src/dialog/photo/delete.vue:18 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:28 src/page/auth/login.vue:22
+#: src/dialog/share/upload.vue:28 src/page/auth/login.vue:32
 #: src/page/connect.vue:41 src/page/library/import.vue:34
 #: src/page/library/index.vue:30
 msgid "Cancel"
@@ -503,8 +510,8 @@ msgstr "Catégorie"
 msgid "Change Avatar"
 msgstr "Changer d'avatar"
 
-#: src/page/settings/account.vue:72 src/dialog/account/password.vue:8
-#: src/page/settings/account.vue:74
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
+#: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "Changer le mot de passe"
 
@@ -524,7 +531,7 @@ msgstr "Modifier le statut privé"
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
-#: src/page/settings/account.vue:118 src/page/settings/account.vue:136
+#: src/page/settings/account.vue:129 src/page/settings/account.vue:147
 #: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
@@ -555,8 +562,9 @@ msgid "Client Credentials"
 msgstr "Références du client"
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
-#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:25
-#: src/dialog/account/passcode.vue:133 src/dialog/account/passcode.vue:152
+#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:34
+#: src/dialog/account/passcode.vue:37 src/dialog/account/passcode.vue:135
+#: src/dialog/account/passcode.vue:154 src/dialog/account/passcode.vue:18
 #: src/dialog/account/passcode.vue:25 src/dialog/account/passcode.vue:12
 #: src/dialog/photo/edit/details.vue:111 src/dialog/share.vue:85
 #: src/page/library/errors.vue:68
@@ -591,7 +599,7 @@ msgstr "Réanalyse complète"
 msgid "Confidence"
 msgstr "Confiance"
 
-#: src/dialog/account/passcode.vue:69 src/dialog/account/passcode.vue:24
+#: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
 msgstr "Confirmer"
 
@@ -599,8 +607,8 @@ msgstr "Confirmer"
 msgid "Connect"
 msgstr "Connecter"
 
-#: src/page/settings/account.vue:54 src/dialog/webdav.vue:7
-#: src/page/settings/account.vue:56 src/page/settings/services.vue:46
+#: src/page/settings/account.vue:74 src/dialog/webdav.vue:7
+#: src/page/settings/account.vue:76 src/page/settings/services.vue:46
 msgid "Connect via WebDAV"
 msgstr "Se connecter via le protocole WebDAV"
 
@@ -608,7 +616,7 @@ msgstr "Se connecter via le protocole WebDAV"
 msgid "Connected"
 msgstr "Connecté"
 
-#: src/page/settings/account.vue:128 src/page/settings/account.vue:104
+#: src/page/settings/account.vue:130 src/page/settings/account.vue:106
 msgid "Contact Details"
 msgstr "Coordonnées"
 
@@ -635,13 +643,13 @@ msgstr "Contributeur"
 msgid "Converting"
 msgstr "Conversion en cours"
 
-#: src/dialog/account/apps.vue:52 src/dialog/account/passcode.vue:68
+#: src/dialog/account/apps.vue:52 src/dialog/account/passcode.vue:66
 #: src/dialog/photo/edit/files.vue:64 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:61 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
 msgstr "Copié vers le presse-papier"
 
-#: src/dialog/account/passcode.vue:101 src/dialog/account/passcode.vue:25
+#: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
 msgstr "Copier"
 
@@ -653,12 +661,16 @@ msgstr "Copyright"
 msgid "Couldn't find anything."
 msgstr "Aucun élément trouvé."
 
-#: src/page/settings/account.vue:834 src/component/photo/toolbar.vue:270
-#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:688
+#: src/page/settings/account.vue:859 src/component/photo/toolbar.vue:270
+#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:713
 msgid "Country"
 msgstr "Pays"
 
-#: src/page/auth/login.vue:25
+#: src/dialog/account/apps.vue:37
+msgid "Create"
+msgstr ""
+
+#: src/page/auth/login.vue:35
 msgid "Create Account"
 msgstr "Créer un compte"
 
@@ -678,7 +690,7 @@ msgstr "Création des miniatures pour"
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Cubique : Qualité modérée, bonne performance"
 
-#: src/dialog/account/password.vue:135
+#: src/dialog/account/password.vue:136
 msgid "Current Password"
 msgstr "Mot de passe actuel"
 
@@ -694,11 +706,11 @@ msgstr "Cyan"
 msgid "Daily"
 msgstr "Quotidien"
 
-#: src/page/settings/account.vue:554 src/dialog/photo/edit/details.vue:116
+#: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
 msgstr "Jour"
 
-#: src/dialog/account/passcode.vue:130 src/dialog/account/passcode.vue:22
+#: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
 msgstr ""
 
@@ -707,7 +719,7 @@ msgid "Debug Logs"
 msgstr "Journaux de débogage"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:230
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:234
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:38
 #: src/options/auth.js:39 src/options/options.js:309 src/options/options.js:373
 #: src/options/themes.js:492 src/page/places.vue:141
@@ -946,7 +958,7 @@ msgid "Edited"
 msgstr "Modifié"
 
 #: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
-#: src/page/settings/account.vue:224 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:224 src/page/settings/account.vue:748
 msgid "Email"
 msgstr "Email"
 
@@ -958,7 +970,7 @@ msgstr "Activer les nouvelles fonctionnalités en cours de développement."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Active les préréglages du convertisseur RAW. Cela peut réduire les performances."
 
-#: src/dialog/account/passcode.vue:28 src/dialog/account/passcode.vue:11
+#: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr "Avec l'authentification à deux facteurs, il faut un code de vérification généré de manière aléatoire pour se connecter, si bien que personne, même connaissant votre mot de passe, ne pourra se connecter à votre compte."
 
@@ -1031,7 +1043,7 @@ msgstr "Visage"
 msgid "Faces"
 msgstr "Visages"
 
-#: src/dialog/account/apps.vue:54 src/dialog/account/passcode.vue:70
+#: src/dialog/account/apps.vue:54 src/dialog/account/passcode.vue:68
 #: src/dialog/photo/edit/files.vue:66 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:63 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
@@ -1066,7 +1078,7 @@ msgstr "Favoris"
 msgid "Feature Request"
 msgstr "Demander une fonctionnalité"
 
-#: src/page/settings/account.vue:925 src/page/settings/account.vue:779
+#: src/page/settings/account.vue:950 src/page/settings/account.vue:804
 msgid "Feed"
 msgstr "Flux"
 
@@ -1137,7 +1149,7 @@ msgstr "Le dossier est vide"
 msgid "Folders"
 msgstr "Dossiers"
 
-#: src/page/auth/login.vue:35
+#: src/page/auth/login.vue:45
 msgid "Forgot password?"
 msgstr "Mot de passe oublié ?"
 
@@ -1225,7 +1237,7 @@ msgstr "Gamme dynamique élevée (HDR)"
 msgid "How can we help?"
 msgstr "Comment pouvons nous vous aider ?"
 
-#: src/dialog/account/passcode.vue:115 src/dialog/account/passcode.vue:7
+#: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr "En cas de perte d'accès à votre application ou votre appareil d'authentification, vous pourrez utiliser votre code de récupération pour accéder à nouveau à votre compte."
 
@@ -1325,12 +1337,12 @@ msgstr "Intervalle"
 #: src/page/settings/account.vue:119 src/page/settings/account.vue:145
 #: src/page/settings/account.vue:171 src/page/settings/account.vue:227
 #: src/page/settings/account.vue:286 src/page/settings/account.vue:314
-#: src/page/settings/account.vue:672 src/page/settings/account.vue:698
-#: src/page/settings/account.vue:726 src/page/settings/account.vue:754
-#: src/page/settings/account.vue:818 src/page/settings/account.vue:845
-#: src/page/settings/account.vue:872 src/page/settings/account.vue:900
-#: src/page/settings/account.vue:928 src/page/settings/account.vue:699
-#: src/page/settings/account.vue:782
+#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
+#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
+#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
+#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
+#: src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "Invalide"
 
@@ -1347,7 +1359,7 @@ msgstr "Paramètres invalides"
 msgid "Invalid photo selected"
 msgstr "Photo non valide sélectionnée"
 
-#: src/dialog/account/passcode.vue:87 src/dialog/account/passcode.vue:116
+#: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
 msgstr "Il s'agit d'un code à usage unique qui désactivera l'authentification à deux facteurs (2FA) lors de l'usage de votre compte."
@@ -1488,10 +1500,10 @@ msgstr "Heure locale"
 msgid "location"
 msgstr "emplacement"
 
-#: src/page/settings/account.vue:815 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:840 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:90
-#: src/page/settings/account.vue:669
+#: src/page/settings/account.vue:694
 msgid "Location"
 msgstr "Emplacement"
 
@@ -1596,7 +1608,7 @@ msgstr "Moments"
 msgid "Monochrome"
 msgstr "Monochrome"
 
-#: src/page/settings/account.vue:577 src/component/photo/toolbar.vue:412
+#: src/page/settings/account.vue:602 src/component/photo/toolbar.vue:412
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "Mois"
@@ -1614,7 +1626,7 @@ msgstr "Le plus pertinent"
 msgid "Move Files"
 msgstr "Déplacer les fichiers"
 
-#: src/dialog/account/password.vue:166
+#: src/dialog/account/password.vue:168
 msgid "Must have at least %{n} characters."
 msgstr "Doit comporter au moins %{n} caractères."
 
@@ -1625,7 +1637,7 @@ msgstr "Doit comporter au moins %{n} caractères."
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:89 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:146 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1648,7 +1660,7 @@ msgstr "Jamais"
 msgid "New"
 msgstr "Nouvelles"
 
-#: src/dialog/account/password.vue:163
+#: src/dialog/account/password.vue:165
 msgid "New Password"
 msgstr "Nouveau mot de passe"
 
@@ -1797,7 +1809,7 @@ msgstr "Une personne trouvée"
 msgid "One picture found"
 msgstr "Une image trouvée"
 
-#: src/dialog/account/passcode.vue:144 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr "L'authentification à deux facteurs (2FA) ne peut être activée que pour les comptes gérés localement."
 
@@ -1805,7 +1817,7 @@ msgstr "L'authentification à deux facteurs (2FA) ne peut être activée que pou
 msgid "Orange"
 msgstr "Orange"
 
-#: src/page/settings/account.vue:695
+#: src/page/settings/account.vue:720
 msgid "Organization"
 msgstr "Organisation"
 
@@ -1848,10 +1860,10 @@ msgstr "Panorama"
 msgid "Panoramas"
 msgstr "Panoramas"
 
-#: src/dialog/admin/users/add.vue:123 src/dialog/account/passcode.vue:135
-#: src/dialog/account/passcode.vue:582 src/dialog/service/add.vue:126
-#: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
-#: src/page/auth/login.vue:151
+#: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:150
+#: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
+#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
+#: src/dialog/share.vue:24 src/page/auth/login.vue:178
 msgid "Password"
 msgstr "Mot de passe"
 
@@ -1882,7 +1894,7 @@ msgstr "Supprimer définitivement les fichiers pour récupérer de la place de s
 msgid "Personal"
 msgstr "Personnel"
 
-#: src/page/settings/account.vue:869 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:894 src/page/settings/account.vue:748
 msgid "Phone"
 msgstr "Téléphone"
 
@@ -1927,7 +1939,7 @@ msgstr "Unité de lieu et de temps"
 msgid "Places"
 msgstr "Lieux"
 
-#: src/dialog/account/password.vue:194
+#: src/dialog/account/password.vue:197
 msgid "Please confirm your new password."
 msgstr "Veuillez confirmer votre nouveau mot de passe."
 
@@ -1938,6 +1950,10 @@ msgstr "Attention à ne pas envoyer de photos privées, illégales ou offensante
 #: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Veuillez ne pas charger de photos choquantes."
+
+#: src/page/auth/login.vue:12 src/page/auth/login.vue:2
+msgid "Please enter a valid verification code to access your account:"
+msgstr ""
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2136,7 +2152,7 @@ msgstr "Restaurer"
 msgid "Retry Limit"
 msgstr "Limite de réessai"
 
-#: src/dialog/account/password.vue:191
+#: src/dialog/account/password.vue:194
 msgid "Retype Password"
 msgstr "Ressaisir le mot de passe"
 
@@ -2164,7 +2180,7 @@ msgstr "Sauvegarder"
 msgid "Scan"
 msgstr "Numérisée"
 
-#: src/dialog/account/passcode.vue:49 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
 msgstr "Scannez le code QR avec votre application d'authentification ou utilisez la clé d'installation indiquée ci-dessous, puis entrez le code généré pour la vérification :"
 
@@ -2258,12 +2274,12 @@ msgstr "Sessions"
 msgid "Settings"
 msgstr "Paramètres"
 
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:131
-#: src/dialog/account/passcode.vue:156
+#: src/page/settings/account.vue:127 src/page/settings/account.vue:142
+#: src/dialog/account/passcode.vue:146
 msgid "Settings saved"
 msgstr "Paramètres sauvegardés"
 
-#: src/dialog/account/passcode.vue:38 src/dialog/account/passcode.vue:21
+#: src/dialog/account/passcode.vue:40 src/dialog/account/passcode.vue:21
 #: src/dialog/share/upload.vue:31
 msgid "Setup"
 msgstr "Réglage"
@@ -2313,7 +2329,7 @@ msgstr "Rend les journaux plus détaillés. Requiert un redémarrage."
 msgid "Sidecar"
 msgstr "Fichier annexe"
 
-#: src/page/auth/login.vue:28
+#: src/page/auth/login.vue:38
 msgid "Sign in"
 msgstr "S'identifier"
 
@@ -2400,7 +2416,7 @@ msgstr "Rues"
 msgid "Subject"
 msgstr "Sujet"
 
-#: src/dialog/account/passcode.vue:141
+#: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
 msgstr "Activation réussie"
 
@@ -2412,7 +2428,7 @@ msgstr "Bien connecté"
 msgid "Successfully deleted"
 msgstr "Suppression réussie"
 
-#: src/dialog/account/passcode.vue:117
+#: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
 msgstr "Vérifié avec succès"
 
@@ -2505,7 +2521,7 @@ msgstr "Titre"
 msgid "Title"
 msgstr "Titre"
 
-#: src/page/settings/account.vue:669
+#: src/page/settings/account.vue:694
 msgid "Title / Position"
 msgstr "Titre / Poste"
 
@@ -2513,11 +2529,15 @@ msgstr "Titre / Poste"
 msgid "Title too long"
 msgstr "Titre trop long"
 
-#: src/dialog/account/passcode.vue:86 src/dialog/account/passcode.vue:10
+#: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
 msgstr "Pour éviter le blocage de votre compte, téléchargez, imprimez ou copiez  maintenant ce code de récupération, et conservez-le dans  un endroit sûr."
 
-#: src/dialog/account/passcode.vue:119 src/dialog/account/passcode.vue:11
+#: src/dialog/account/apps.vue:20
+msgid "To create a new app-specific password, please enter the name and type of the application and select an expiration date:"
+msgstr ""
+
+#: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
 msgstr "Pour changer d'application ou de dispositif d'authentification, commencez par désactiver l'authentification à deux facteurs, puis réactivez-la :"
 
@@ -2554,7 +2574,7 @@ msgstr "Listes de contrôle pour le dépannage"
 msgid "Try again using other filters or keywords."
 msgstr "Réessayez en utilisant d'autres filtres ou mots-clés."
 
-#: src/dialog/account/passcode.vue:112 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
 msgstr "L'authentification à deux facteurs de votre compte est désormais activée."
 
@@ -2588,8 +2608,7 @@ msgid "Unknown"
 msgstr "Inconnu"
 
 #: src/page/settings/account.vue:40 src/page/settings/account.vue:48
-#: src/component/navigation.vue:93 src/page/settings/account.vue:37
-#: src/page/settings/account.vue:45
+#: src/component/navigation.vue:93
 msgid "Unregistered"
 msgstr "Non enregistré"
 
@@ -2618,7 +2637,7 @@ msgstr "Mise à jour de l'index"
 msgid "Updating moments"
 msgstr "Mise à jour des moments"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:129
+#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:140
 msgid "Updating picture…"
 msgstr "Mise à jour de l'image…"
 
@@ -2682,7 +2701,7 @@ msgstr "Chargement de %{n} sur %{t}…"
 msgid "Uploading photos…"
 msgstr "Chargement des photos en cours…"
 
-#: src/page/settings/account.vue:126
+#: src/page/settings/account.vue:137
 msgid "Uploading…"
 msgstr "Téléchargement…"
 
@@ -2698,13 +2717,13 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Utiliser les préréglages"
 
-#: src/dialog/account/passcode.vue:80 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:"
 msgstr "Utilisez le code de récupération suivant pour accéder à votre compte si vous ne parvenez pas à générer un mot de passe valide avec votre application ou appareil d'authentification :"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:59
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
-#: src/model/user.js:293 src/options/auth.js:7
+#: src/model/user.js:297 src/options/auth.js:7
 msgid "User"
 msgstr "Utilisateur"
 
@@ -2737,7 +2756,7 @@ msgstr "Vecteur"
 msgid "Vectors"
 msgstr "Vecteurs"
 
-#: src/dialog/account/passcode.vue:291 src/page/auth/login.vue:121
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:97
 msgid "Verification Code"
 msgstr "Code de vérification"
 
@@ -2808,7 +2827,7 @@ msgstr "Les clients WebDAV, comme par exemple l'explorateur Windows de Microsoft
 msgid "WebDAV Upload"
 msgstr "Chargement via le protocole WebDAV"
 
-#: src/page/settings/account.vue:751 src/page/settings/account.vue:897
+#: src/page/settings/account.vue:776 src/page/settings/account.vue:922
 msgid "Website"
 msgstr "Site web"
 
@@ -2816,11 +2835,11 @@ msgstr "Site web"
 msgid "White"
 msgstr "Blanc"
 
-#: src/page/settings/account.vue:105
+#: src/page/settings/account.vue:107
 msgid "Work Details"
 msgstr "Détails du travail"
 
-#: src/page/settings/account.vue:600 src/component/photo/toolbar.vue:383
+#: src/page/settings/account.vue:625 src/component/photo/toolbar.vue:383
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:212
 msgid "Year"
 msgstr "Année"

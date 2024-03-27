@@ -47,8 +47,8 @@ msgstr "1 óra"
 msgid "12 hours"
 msgstr "12 óra"
 
-#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:66
-#: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:68
+#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "2-faktoros hitelesítés"
 
@@ -106,7 +106,7 @@ msgstr "Művelet"
 msgid "Actions"
 msgstr "Műveletek"
 
-#: src/page/connect.vue:97 src/dialog/account/passcode.vue:98
+#: src/page/connect.vue:97 src/dialog/account/passcode.vue:100
 #: src/dialog/account/passcode.vue:22
 msgid "Activate"
 msgstr "Aktiválja a  címet."
@@ -169,7 +169,7 @@ msgstr "Három nap után"
 msgid "After 7 days"
 msgstr "Hét nap után"
 
-#: src/dialog/account/passcode.vue:21 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
 msgstr ""
 
@@ -300,6 +300,10 @@ msgstr "Bármilyen privát fotó és videó privát marad és nem kerül megoszt
 msgid "API Key"
 msgstr "API Kulcs"
 
+#: src/dialog/account/apps.vue:122
+msgid "App Name"
+msgstr ""
+
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "Alkalmazás"
@@ -313,8 +317,8 @@ msgstr "Alkalmaz"
 msgid "Approve"
 msgstr "Jóváhagy"
 
-#: src/page/settings/account.vue:60 src/dialog/account/apps.vue:8
-#: src/page/settings/account.vue:62
+#: src/page/settings/account.vue:68 src/dialog/account/apps.vue:8
+#: src/page/settings/account.vue:70
 msgid "Apps and Devices"
 msgstr "Alkalmazások és eszközök"
 
@@ -400,7 +404,7 @@ msgstr "Mivel 100%-ban önfinanszírozók és függetlenek vagyunk, megígérhet
 msgid "Bio"
 msgstr "Bio"
 
-#: src/page/settings/account.vue:82 src/page/settings/account.vue:84
+#: src/page/settings/account.vue:84 src/page/settings/account.vue:86
 msgid "Birth Date"
 msgstr "Születési dátum"
 
@@ -458,6 +462,10 @@ msgstr "Kamera"
 msgid "Camera Serial"
 msgstr "Kamera sorozat"
 
+#: src/page/auth/login.vue:18 src/page/auth/login.vue:8
+msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
+msgstr ""
+
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
 msgstr "Nem tölthet be többet, elérte a korlátot"
@@ -473,9 +481,8 @@ msgstr "Nem lehet több elemet kiválasztani"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
 #: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
-#: src/page/connect.vue:44 src/dialog/account/passcode.vue:35
-#: src/dialog/account/passcode.vue:66 src/dialog/account/passcode.vue:95
-#: src/dialog/account/passcode.vue:18 src/dialog/account/passcode.vue:21
+#: src/page/connect.vue:44 src/dialog/account/passcode.vue:68
+#: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
 #: src/dialog/account/passcode.vue:19 src/dialog/account/password.vue:38
 #: src/dialog/album/delete.vue:15 src/dialog/album/edit.vue:45
 #: src/dialog/confirm.vue:15 src/dialog/file/delete.vue:15
@@ -483,7 +490,7 @@ msgstr "Nem lehet több elemet kiválasztani"
 #: src/dialog/photo/delete.vue:18 src/dialog/reload.vue:9
 #: src/dialog/service/add.vue:17 src/dialog/service/edit.vue:104
 #: src/dialog/service/remove.vue:15 src/dialog/share.vue:25
-#: src/dialog/share/upload.vue:28 src/page/auth/login.vue:22
+#: src/dialog/share/upload.vue:28 src/page/auth/login.vue:32
 #: src/page/connect.vue:41 src/page/library/import.vue:34
 #: src/page/library/index.vue:30
 msgid "Cancel"
@@ -502,8 +509,8 @@ msgstr "Kategória"
 msgid "Change Avatar"
 msgstr "Profilkép változtatása"
 
-#: src/page/settings/account.vue:72 src/dialog/account/password.vue:8
-#: src/page/settings/account.vue:74
+#: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
+#: src/page/settings/account.vue:56
 msgid "Change Password"
 msgstr "Új jelszó"
 
@@ -523,7 +530,7 @@ msgstr "Privát fotóként jelölés"
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
-#: src/page/settings/account.vue:118 src/page/settings/account.vue:136
+#: src/page/settings/account.vue:129 src/page/settings/account.vue:147
 #: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
@@ -554,8 +561,9 @@ msgid "Client Credentials"
 msgstr "Ügyfél hitelesítő adatok"
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
-#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:25
-#: src/dialog/account/passcode.vue:133 src/dialog/account/passcode.vue:152
+#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:34
+#: src/dialog/account/passcode.vue:37 src/dialog/account/passcode.vue:135
+#: src/dialog/account/passcode.vue:154 src/dialog/account/passcode.vue:18
 #: src/dialog/account/passcode.vue:25 src/dialog/account/passcode.vue:12
 #: src/dialog/photo/edit/details.vue:111 src/dialog/share.vue:85
 #: src/page/library/errors.vue:68
@@ -590,7 +598,7 @@ msgstr "Teljes újraolvasás"
 msgid "Confidence"
 msgstr "Pontosság"
 
-#: src/dialog/account/passcode.vue:69 src/dialog/account/passcode.vue:24
+#: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
 msgstr ""
 
@@ -598,8 +606,8 @@ msgstr ""
 msgid "Connect"
 msgstr "Csatlakozás"
 
-#: src/page/settings/account.vue:54 src/dialog/webdav.vue:7
-#: src/page/settings/account.vue:56 src/page/settings/services.vue:46
+#: src/page/settings/account.vue:74 src/dialog/webdav.vue:7
+#: src/page/settings/account.vue:76 src/page/settings/services.vue:46
 msgid "Connect via WebDAV"
 msgstr "Csatlakozás WebDAV-on keresztül"
 
@@ -607,7 +615,7 @@ msgstr "Csatlakozás WebDAV-on keresztül"
 msgid "Connected"
 msgstr "Csatlakozva"
 
-#: src/page/settings/account.vue:128 src/page/settings/account.vue:104
+#: src/page/settings/account.vue:130 src/page/settings/account.vue:106
 msgid "Contact Details"
 msgstr "Elérhetőségek"
 
@@ -634,13 +642,13 @@ msgstr "Hozzájáruló"
 msgid "Converting"
 msgstr "Konvertálás"
 
-#: src/dialog/account/apps.vue:52 src/dialog/account/passcode.vue:68
+#: src/dialog/account/apps.vue:52 src/dialog/account/passcode.vue:66
 #: src/dialog/photo/edit/files.vue:64 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:61 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
 msgstr "Vágólapra másolva"
 
-#: src/dialog/account/passcode.vue:101 src/dialog/account/passcode.vue:25
+#: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
 msgstr ""
 
@@ -652,12 +660,16 @@ msgstr "Szerzői jog"
 msgid "Couldn't find anything."
 msgstr "Nem találtunk semmit."
 
-#: src/page/settings/account.vue:834 src/component/photo/toolbar.vue:270
-#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:688
+#: src/page/settings/account.vue:859 src/component/photo/toolbar.vue:270
+#: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:713
 msgid "Country"
 msgstr "Ország"
 
-#: src/page/auth/login.vue:25
+#: src/dialog/account/apps.vue:37
+msgid "Create"
+msgstr ""
+
+#: src/page/auth/login.vue:35
 msgid "Create Account"
 msgstr "Fiók létrehozása"
 
@@ -677,7 +689,7 @@ msgstr "Miniatűrök létrehozása a következőhöz"
 msgid "Cubic: Moderate Quality, Good Performance"
 msgstr "Köbös: Közepes minőség, jó teljesítmény"
 
-#: src/dialog/account/password.vue:135
+#: src/dialog/account/password.vue:136
 msgid "Current Password"
 msgstr "Jelenlegi jelszó"
 
@@ -693,11 +705,11 @@ msgstr "Cián"
 msgid "Daily"
 msgstr "Napi"
 
-#: src/page/settings/account.vue:554 src/dialog/photo/edit/details.vue:116
+#: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
 msgstr "Nap"
 
-#: src/dialog/account/passcode.vue:130 src/dialog/account/passcode.vue:22
+#: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
 msgstr ""
 
@@ -706,7 +718,7 @@ msgid "Debug Logs"
 msgstr "Hibakeresési naplók"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:230
+#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:234
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:38
 #: src/options/auth.js:39 src/options/options.js:309 src/options/options.js:373
 #: src/options/themes.js:492 src/page/places.vue:141
@@ -945,7 +957,7 @@ msgid "Edited"
 msgstr "Szerkesztette"
 
 #: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
-#: src/page/settings/account.vue:224 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:224 src/page/settings/account.vue:748
 msgid "Email"
 msgstr "E-mail"
 
@@ -957,7 +969,7 @@ msgstr "A jelenleg fejlesztés alatt álló új funkciók engedélyezése."
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljesítményt."
 
-#: src/dialog/account/passcode.vue:28 src/dialog/account/passcode.vue:11
+#: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr ""
 
@@ -1030,7 +1042,7 @@ msgstr "Arc"
 msgid "Faces"
 msgstr "Arcok"
 
-#: src/dialog/account/apps.vue:54 src/dialog/account/passcode.vue:70
+#: src/dialog/account/apps.vue:54 src/dialog/account/passcode.vue:68
 #: src/dialog/photo/edit/files.vue:66 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:63 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
@@ -1065,7 +1077,7 @@ msgstr "Kedvencek"
 msgid "Feature Request"
 msgstr "Funkciókérés"
 
-#: src/page/settings/account.vue:925 src/page/settings/account.vue:779
+#: src/page/settings/account.vue:950 src/page/settings/account.vue:804
 msgid "Feed"
 msgstr "Visszacsatolás"
 
@@ -1136,7 +1148,7 @@ msgstr "A mappa üres"
 msgid "Folders"
 msgstr "Mappák"
 
-#: src/page/auth/login.vue:35
+#: src/page/auth/login.vue:45
 msgid "Forgot password?"
 msgstr "Elfelejtett jelszó?"
 
@@ -1224,7 +1236,7 @@ msgstr "Nagy dinamikatartomány (HDR)"
 msgid "How can we help?"
 msgstr "Hogyan segíthetünk?"
 
-#: src/dialog/account/passcode.vue:115 src/dialog/account/passcode.vue:7
+#: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
 msgstr ""
 
@@ -1324,12 +1336,12 @@ msgstr "Intervallum"
 #: src/page/settings/account.vue:119 src/page/settings/account.vue:145
 #: src/page/settings/account.vue:171 src/page/settings/account.vue:227
 #: src/page/settings/account.vue:286 src/page/settings/account.vue:314
-#: src/page/settings/account.vue:672 src/page/settings/account.vue:698
-#: src/page/settings/account.vue:726 src/page/settings/account.vue:754
-#: src/page/settings/account.vue:818 src/page/settings/account.vue:845
-#: src/page/settings/account.vue:872 src/page/settings/account.vue:900
-#: src/page/settings/account.vue:928 src/page/settings/account.vue:699
-#: src/page/settings/account.vue:782
+#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
+#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
+#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
+#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
+#: src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "Érvénytelen"
 
@@ -1346,7 +1358,7 @@ msgstr "Érvénytelen paraméterek"
 msgid "Invalid photo selected"
 msgstr "Érvénytelen fénykép kiválasztva"
 
-#: src/dialog/account/passcode.vue:87 src/dialog/account/passcode.vue:116
+#: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
 msgstr ""
@@ -1487,10 +1499,10 @@ msgstr "Helyi idő"
 msgid "location"
 msgstr "elhelyezkedés"
 
-#: src/page/settings/account.vue:815 src/component/photo/cards.vue:554
+#: src/page/settings/account.vue:840 src/component/photo/cards.vue:554
 #: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
 #: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:90
-#: src/page/settings/account.vue:669
+#: src/page/settings/account.vue:694
 msgid "Location"
 msgstr "Elhelyezkedés"
 
@@ -1595,7 +1607,7 @@ msgstr "Pillanatok"
 msgid "Monochrome"
 msgstr "Monokróm"
 
-#: src/page/settings/account.vue:577 src/component/photo/toolbar.vue:412
+#: src/page/settings/account.vue:602 src/component/photo/toolbar.vue:412
 #: src/dialog/photo/edit/details.vue:142
 msgid "Month"
 msgstr "Hónap"
@@ -1613,7 +1625,7 @@ msgstr "Legrelevánsabb"
 msgid "Move Files"
 msgstr "Fájlok áthelyezése"
 
-#: src/dialog/account/password.vue:166
+#: src/dialog/account/password.vue:168
 msgid "Must have at least %{n} characters."
 msgstr "Legalább %{n} karakteresnek kell lennie."
 
@@ -1624,7 +1636,7 @@ msgstr "Legalább %{n} karakteresnek kell lennie."
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:89 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:146 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1647,7 +1659,7 @@ msgstr "Soha"
 msgid "New"
 msgstr "Új"
 
-#: src/dialog/account/password.vue:163
+#: src/dialog/account/password.vue:165
 msgid "New Password"
 msgstr "Új jelszó"
 
@@ -1796,7 +1808,7 @@ msgstr "Egy személyt találtak"
 msgid "One picture found"
 msgstr "Egy kép található"
 
-#: src/dialog/account/passcode.vue:144 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
 msgstr ""
 
@@ -1804,7 +1816,7 @@ msgstr ""
 msgid "Orange"
 msgstr "Narancssárga"
 
-#: src/page/settings/account.vue:695
+#: src/page/settings/account.vue:720
 msgid "Organization"
 msgstr "Orientáció"
 
@@ -1847,10 +1859,10 @@ msgstr "Panoráma"
 msgid "Panoramas"
 msgstr "Panorámák"
 
-#: src/dialog/admin/users/add.vue:123 src/dialog/account/passcode.vue:135
-#: src/dialog/account/passcode.vue:582 src/dialog/service/add.vue:126
-#: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
-#: src/page/auth/login.vue:151
+#: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:150
+#: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
+#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
+#: src/dialog/share.vue:24 src/page/auth/login.vue:178
 msgid "Password"
 msgstr "Jelszó"
 
@@ -1881,7 +1893,7 @@ msgstr "A tárhely felszabadításához távolítsa el véglegesen a fájlokat."
 msgid "Personal"
 msgstr "Személyes"
 
-#: src/page/settings/account.vue:869 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:894 src/page/settings/account.vue:748
 msgid "Phone"
 msgstr "Telefon"
 
@@ -1926,7 +1938,7 @@ msgstr "Hely és idő"
 msgid "Places"
 msgstr "Helyek"
 
-#: src/dialog/account/password.vue:194
+#: src/dialog/account/password.vue:197
 msgid "Please confirm your new password."
 msgstr "Kérjük, erősítse meg új jelszavát."
 
@@ -1937,6 +1949,10 @@ msgstr "Kérjük, ne töltsön fel magánjellegű, jogellenes vagy sértő képe
 #: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
 msgstr "Kérjük, ne töltsön fel sértő tartalmat tartalmazó fotókat."
+
+#: src/page/auth/login.vue:12 src/page/auth/login.vue:2
+msgid "Please enter a valid verification code to access your account:"
+msgstr ""
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2135,7 +2151,7 @@ msgstr "Visszaállítás"
 msgid "Retry Limit"
 msgstr "Újrapróbálkozási korlát"
 
-#: src/dialog/account/password.vue:191
+#: src/dialog/account/password.vue:194
 msgid "Retype Password"
 msgstr "Gépelje be újra a jelszót"
 
@@ -2163,7 +2179,7 @@ msgstr "Mentés"
 msgid "Scan"
 msgstr "Felderítés"
 
-#: src/dialog/account/passcode.vue:49 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
 msgstr ""
 
@@ -2257,12 +2273,12 @@ msgstr "Ülések"
 msgid "Settings"
 msgstr "Beállítások"
 
-#: src/page/settings/account.vue:116 src/page/settings/account.vue:131
-#: src/dialog/account/passcode.vue:156
+#: src/page/settings/account.vue:127 src/page/settings/account.vue:142
+#: src/dialog/account/passcode.vue:146
 msgid "Settings saved"
 msgstr "Beállítások elmentve"
 
-#: src/dialog/account/passcode.vue:38 src/dialog/account/passcode.vue:21
+#: src/dialog/account/passcode.vue:40 src/dialog/account/passcode.vue:21
 #: src/dialog/share/upload.vue:31
 msgid "Setup"
 msgstr "Beállít"
@@ -2312,7 +2328,7 @@ msgstr "Részletesebb naplóüzeneteket jelenít meg. Újraindítást igényel."
 msgid "Sidecar"
 msgstr "Oldalkocsi"
 
-#: src/page/auth/login.vue:28
+#: src/page/auth/login.vue:38
 msgid "Sign in"
 msgstr "Bejelentkezés"
 
@@ -2399,7 +2415,7 @@ msgstr "Utcák"
 msgid "Subject"
 msgstr "Tantárgy"
 
-#: src/dialog/account/passcode.vue:141
+#: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
 msgstr ""
 
@@ -2411,7 +2427,7 @@ msgstr "Sikeresen csatlakoztatva"
 msgid "Successfully deleted"
 msgstr "Sikeresen törölve"
 
-#: src/dialog/account/passcode.vue:117
+#: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
 msgstr ""
 
@@ -2504,7 +2520,7 @@ msgstr "Cím"
 msgid "Title"
 msgstr "Cím"
 
-#: src/page/settings/account.vue:669
+#: src/page/settings/account.vue:694
 msgid "Title / Position"
 msgstr "Cím / Pozíció"
 
@@ -2512,11 +2528,15 @@ msgstr "Cím / Pozíció"
 msgid "Title too long"
 msgstr "A cím túl hosszú"
 
-#: src/dialog/account/passcode.vue:86 src/dialog/account/passcode.vue:10
+#: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
 msgstr ""
 
-#: src/dialog/account/passcode.vue:119 src/dialog/account/passcode.vue:11
+#: src/dialog/account/apps.vue:20
+msgid "To create a new app-specific password, please enter the name and type of the application and select an expiration date:"
+msgstr ""
+
+#: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
 msgstr ""
 
@@ -2553,7 +2573,7 @@ msgstr "Hibaelhárítási ellenőrző listák"
 msgid "Try again using other filters or keywords."
 msgstr "Próbálja újra más szűrők vagy kulcsszavak használatával."
 
-#: src/dialog/account/passcode.vue:112 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
 msgstr ""
 
@@ -2587,8 +2607,7 @@ msgid "Unknown"
 msgstr "Ismeretlen"
 
 #: src/page/settings/account.vue:40 src/page/settings/account.vue:48
-#: src/component/navigation.vue:93 src/page/settings/account.vue:37
-#: src/page/settings/account.vue:45
+#: src/component/navigation.vue:93
 msgid "Unregistered"
 msgstr "Nem regisztrált"
 
@@ -2617,7 +2636,7 @@ msgstr "Index frissítése"
 msgid "Updating moments"
 msgstr "Frissítő pillanatok"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:129
+#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:140
 msgid "Updating picture…"
 msgstr "Kép frissítése…"
 
@@ -2681,7 +2700,7 @@ msgstr "%{n}/%{t} feltöltése…"
 msgid "Uploading photos…"
 msgstr "Fényképek feltöltése…"
 
-#: src/page/settings/account.vue:126
+#: src/page/settings/account.vue:137
 msgid "Uploading…"
 msgstr "Feltöltés…"
 
@@ -2697,13 +2716,13 @@ msgstr "URL"
 msgid "Use Presets"
 msgstr "Előbeállítások használata"
 
-#: src/dialog/account/passcode.vue:80 src/dialog/account/passcode.vue:4
+#: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:"
 msgstr ""
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:59
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
-#: src/model/user.js:293 src/options/auth.js:7
+#: src/model/user.js:297 src/options/auth.js:7
 msgid "User"
 msgstr "Felhasználó"
 
@@ -2736,7 +2755,7 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vektorok"
 
-#: src/dialog/account/passcode.vue:291 src/page/auth/login.vue:121
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:97
 msgid "Verification Code"
 msgstr ""
 
@@ -2807,7 +2826,7 @@ msgstr ""
 msgid "WebDAV Upload"
 msgstr "WebDAV feltöltés"
 
-#: src/page/settings/account.vue:751 src/page/settings/account.vue:897
+#: src/page/settings/account.vue:776 src/page/settings/account.vue:922
 msgid "Website"
 msgstr "Weboldal"
 
@@ -2815,11 +2834,11 @@ msgstr "Weboldal"
 msgid "White"
 msgstr "Fehér"
 
-#: src/page/settings/account.vue:105
+#: src/page/settings/account.vue:107
 msgid "Work Details"
 msgstr "Részletek"
 
-#: src/page/settings/account.vue:600 src/component/photo/toolbar.vue:383
+#: src/page/settings/account.vue:625 src/component/photo/toolbar.vue:383
 #: src/dialog/photo/edit/details.vue:168 src/page/albums.vue:212
 msgid "Year"
 msgstr "Év"
