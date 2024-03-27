@@ -10,20 +10,70 @@
               </h3>
             </v-flex>
             <v-flex xs3 class="text-xs-right">
-              <v-icon size="28" color="primary">smartphone</v-icon>
+              <v-icon size="28" color="primary">add</v-icon>
             </v-flex>
           </v-layout>
         </v-card-title>
         <!-- Setup -->
         <v-card-text class="py-0 px-2">
           <v-layout wrap align-top>
+            <v-flex xs12 class="pa-2 body-2">
+              <translate>To create a new app-specific password, please enter the name and type of the application and select an expiration date:</translate>
+            </v-flex>
+            <v-flex xs12 class="pa-2">
+              <v-text-field
+                :disabled="busy"
+                name="appname"
+                type="text"
+                :label="$gettext('App Name')"
+                hide-details
+                required
+                autofocus
+                solo
+                flat
+                autocorrect="off"
+                autocapitalize="none"
+                autocomplete="off"
+                browser-autocomplete="off"
+                prepend-inner-icon="devices"
+                class="input-appname text-selectable"
+                color="secondary-dark"
+              ></v-text-field>
+            </v-flex>
+            <v-flex xs12 class="pa-2">
+              <v-text-field
+                v-model="password"
+                :disabled="busy"
+                name="password"
+                :type="showPassword ? 'text' : 'password'"
+                :label="$gettext('Password')"
+                hide-details
+                required
+                autofocus
+                solo
+                flat
+                autocorrect="off"
+                autocapitalize="none"
+                autocomplete="current-password"
+                browser-autocomplete="current-password"
+                class="input-password text-selectable"
+                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                prepend-inner-icon="lock"
+                color="secondary-dark"
+                @click:append="showPassword = !showPassword"
+                @keyup.enter.native="onSetup"
+              ></v-text-field>
+            </v-flex>
           </v-layout>
         </v-card-text>
         <v-card-actions class="pa-2">
           <v-layout row wrap class="pa-2">
             <v-flex xs12 text-xs-right>
-              <v-btn depressed color="secondary-light" class="action-close mr-0" @click.stop="close">
+              <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                 <translate>Close</translate>
+              </v-btn>
+              <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" @click.stop="close">
+                <translate>Create</translate>
               </v-btn>
             </v-flex>
           </v-layout>
