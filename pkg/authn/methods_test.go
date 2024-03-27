@@ -72,6 +72,7 @@ func TestMethod(t *testing.T) {
 	assert.Equal(t, MethodUndefined, Method(""))
 	assert.Equal(t, MethodDefault, Method("default"))
 	assert.Equal(t, MethodDefault, Method("access_token"))
+	assert.Equal(t, MethodDefault, Method("false"))
 	assert.Equal(t, MethodOAuth2, Method("oauth2"))
 	assert.Equal(t, MethodOIDC, Method("oidc"))
 	assert.Equal(t, MethodOIDC, Method("sso"))

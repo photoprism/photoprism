@@ -25,6 +25,22 @@ func TestAuthKey(t *testing.T) {
 		assert.Equal(t, otp.Digits(6), result.Digits())
 		assert.Equal(t, uint64(30), result.Period())
 	})
+	t.Run("EmptyIssuer", func(t *testing.T) {
+		issuer := ""
+		accountName := "Bar Baz"
+		result, err := AuthKey(issuer, accountName)
+
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+	t.Run("EmptyAccountName", func(t *testing.T) {
+		issuer := "foo"
+		accountName := ""
+		result, err := AuthKey(issuer, accountName)
+
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
 }
 
 func TestRecoveryCode(t *testing.T) {

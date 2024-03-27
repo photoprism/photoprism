@@ -32,3 +32,10 @@ func TestKeyType_NotEqual(t *testing.T) {
 	assert.True(t, KeyUnknown.NotEqual("2fa"))
 	assert.True(t, KeyUnknown.NotEqual("totp"))
 }
+
+func TestKey(t *testing.T) {
+	assert.Equal(t, KeyTOTP, Key("totp"))
+	assert.Equal(t, KeyTOTP, Key("otp"))
+	assert.Equal(t, KeyUnknown, Key("false"))
+	assert.NotEqual(t, "xxx", Key("xxx"))
+}
