@@ -42,6 +42,17 @@ func TestUser_Provider(t *testing.T) {
 	})
 }
 
+func TestUser_Method(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		form := &User{UserName: "", UserEmail: "test@test.com", Password: "passwd", AuthMethod: ""}
+		assert.Equal(t, authn.MethodUndefined, form.Method())
+	})
+	t.Run("Valid", func(t *testing.T) {
+		form := &User{UserName: "John", UserEmail: "test@test.com", Password: "passwd", AuthMethod: "2fa"}
+		assert.Equal(t, authn.Method2FA, form.Method())
+	})
+}
+
 func TestUser_Email(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		form := &User{UserName: "foobar", UserEmail: "", Password: "passwd"}

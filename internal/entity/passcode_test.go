@@ -244,3 +244,234 @@ func TestPasscode_SetKey(t *testing.T) {
 		assert.Equal(t, "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP", m.Key().String())
 	})
 }
+
+func TestPasscode_Secret(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		uid := "uqxc08w3d0ej2283"
+		keyUrl := "otpauth://totp/Example:alice?secret=JBSWY3DPEHPK3PXP"
+		recoveryCode := "123"
+
+		m, err := NewPasscode(uid, keyUrl, recoveryCode)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "JBSWY3DPEHPK3PXP", m.Secret())
+	})
+	t.Run("NoSecret", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "123",
+		}
+
+		assert.Equal(t, "", m.Secret())
+	})
+}
+
+func TestPasscode_GenerateCode(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "123",
+		}
+
+		code, err := m.GenerateCode()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 6, len(code))
+	})
+	t.Run("InvalidType", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://xxx/Example:alice",
+			KeyType:      "xxx",
+			RecoveryCode: "123",
+		}
+
+		code, err := m.GenerateCode()
+
+		assert.Error(t, err)
+
+		assert.Equal(t, 0, len(code))
+	})
+}
+
+func TestPasscode_Verify(t *testing.T) {
+	t.Run("ValidCode", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "123",
+		}
+
+		assert.Nil(t, m.VerifiedAt)
+
+		code, err := m.GenerateCode()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		valid, recoveryCode, err := m.Verify(code)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, valid)
+		assert.False(t, recoveryCode)
+		assert.NotNil(t, m.VerifiedAt)
+	})
+	t.Run("InvalidCode", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "123",
+		}
+
+		assert.Nil(t, m.VerifiedAt)
+
+		valid, recoveryCode, err := m.Verify("123456")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.False(t, valid)
+		assert.False(t, recoveryCode)
+		assert.Nil(t, m.VerifiedAt)
+	})
+	t.Run("CodeTooShort", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "123",
+		}
+
+		assert.Nil(t, m.VerifiedAt)
+
+		valid, recoveryCode, err := m.Verify("111")
+
+		assert.Error(t, err)
+		assert.False(t, valid)
+		assert.False(t, recoveryCode)
+		assert.Nil(t, m.VerifiedAt)
+	})
+	t.Run("ValidRecoveryCode", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "123",
+		}
+
+		assert.Nil(t, m.VerifiedAt)
+
+		valid, recoveryCode, err := m.Verify("123")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, valid)
+		assert.True(t, recoveryCode)
+		assert.Nil(t, m.VerifiedAt)
+	})
+	t.Run("ErrPasscodeRequired", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "123",
+		}
+
+		assert.Nil(t, m.VerifiedAt)
+
+		valid, recoveryCode, err := m.Verify("")
+
+		assert.Error(t, err)
+		assert.False(t, valid)
+		assert.False(t, recoveryCode)
+		assert.Nil(t, m.VerifiedAt)
+	})
+	t.Run("ErrInvalidPasscodeFormat", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://totp/Example:alice",
+			RecoveryCode: "123",
+		}
+
+		assert.Nil(t, m.VerifiedAt)
+
+		valid, recoveryCode, err := m.Verify("123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891")
+
+		assert.Error(t, err)
+		assert.False(t, valid)
+		assert.False(t, recoveryCode)
+		assert.Nil(t, m.VerifiedAt)
+	})
+	t.Run("ErrInvalidPasscodeType", func(t *testing.T) {
+		m := &Passcode{
+			UID:          "uqxc08w3d0ej2283",
+			KeyURL:       "otpauth://xxx/Example:alice",
+			RecoveryCode: "123",
+			KeyType:      "xxx",
+		}
+
+		assert.Nil(t, m.VerifiedAt)
+
+		valid, recoveryCode, err := m.Verify("123456")
+
+		assert.Error(t, err)
+		assert.False(t, valid)
+		assert.False(t, recoveryCode)
+		assert.Nil(t, m.VerifiedAt)
+	})
+}
+
+func TestPasscode_Activate(t *testing.T) {
+	m := &Passcode{
+		UID:          "uqxc08w3d0ej2283",
+		KeyURL:       "otpauth://totp/Example:alice",
+		RecoveryCode: "123",
+	}
+
+	assert.Nil(t, m.VerifiedAt)
+	assert.Nil(t, m.ActivatedAt)
+
+	err := m.Activate()
+
+	assert.Equal(t, authn.ErrPasscodeNotVerified, err)
+	assert.Nil(t, m.ActivatedAt)
+
+	code, err := m.GenerateCode()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, _, err = m.Verify(code)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotNil(t, m.VerifiedAt)
+	assert.Nil(t, m.ActivatedAt)
+
+	err = m.Activate()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotNil(t, m.ActivatedAt)
+
+	err = m.Activate()
+
+	assert.Equal(t, authn.ErrPasscodeAlreadyActivated, err)
+}

@@ -145,6 +145,10 @@ func TestClient_Expires(t *testing.T) {
 		c := Client{AuthExpires: 999999999}
 		assert.Equal(t, int64(2678400), c.Expires())
 	})
+	t.Run("0", func(t *testing.T) {
+		c := Client{AuthExpires: 0}
+		assert.Equal(t, int64(0), c.Expires())
+	})
 }
 
 func TestClient_Tokens(t *testing.T) {
@@ -155,5 +159,30 @@ func TestClient_Tokens(t *testing.T) {
 	t.Run("ToBig", func(t *testing.T) {
 		c := Client{AuthTokens: 9147483647}
 		assert.Equal(t, int64(2147483647), c.Tokens())
+	})
+	t.Run("0", func(t *testing.T) {
+		c := Client{AuthTokens: 0}
+		assert.Equal(t, int64(0), c.Tokens())
+	})
+}
+func TestClient_ID(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		c := Client{ClientID: "cs5cpu17n6gj2qo5"}
+		assert.Equal(t, "cs5cpu17n6gj2qo5", c.ID())
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		c := Client{ClientID: "xs5cpu17n6gj2qo5"}
+		assert.Equal(t, "", c.ID())
+	})
+}
+
+func TestClient_Secret(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		c := Client{ClientSecret: "LKHTREDSAWCVGHBNJUYTREWSDFLOIUYG"}
+		assert.Equal(t, "LKHTREDSAWCVGHBNJUYTREWSDFLOIUYG", c.Secret())
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		c := Client{ClientSecret: "xxx"}
+		assert.Equal(t, "", c.Secret())
 	})
 }
