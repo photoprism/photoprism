@@ -12,11 +12,43 @@ import (
 )
 
 func TestChangePassword(t *testing.T) {
-	t.Run("NonExistentUser", func(t *testing.T) {
+	t.Run("PublicMode", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateUserPassword(router)
 		r := PerformRequestWithBody(app, "PUT", "/api/v1/users/xxx/password", `{}`)
 		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+
+	t.Run("Unauthorized", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUserPassword(router)
+		sessId := AuthenticateUser(app, router, "jens.mander", "Alice123!")
+
+		f := form.ChangePassword{
+			OldPassword: "Alice123!",
+			NewPassword: "aliceinwonderland",
+		}
+		if pwStr, err := json.Marshal(f); err != nil {
+			log.Fatal(err)
+		} else {
+			r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2/password",
+				string(pwStr), sessId)
+			assert.Equal(t, http.StatusUnauthorized, r.Code)
+		}
+	})
+
+	t.Run("InvalidRequestBody", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUserPassword(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2/password",
+			"{OldPassword: old}", sessId)
+		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 
 	t.Run("AliceProvidesWrongPassword", func(t *testing.T) {
