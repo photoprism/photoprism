@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-03-22 14:43+0000\n"
+"PO-Revision-Date: 2024-03-28 18:49+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -303,7 +303,7 @@ msgstr "Clé d'API"
 
 #: src/dialog/account/apps.vue:122
 msgid "App Name"
-msgstr ""
+msgstr "Nom de l'application"
 
 #: src/options/auth.js:25
 msgid "Application"
@@ -465,7 +465,7 @@ msgstr "N° de série de l'appareil photo"
 
 #: src/page/auth/login.vue:18 src/page/auth/login.vue:8
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "Si vous ne parvenez pas à utiliser votre dispositif d'authentification, entrez votre code de récupération ou demandez de l'aide."
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -668,7 +668,7 @@ msgstr "Pays"
 
 #: src/dialog/account/apps.vue:37
 msgid "Create"
-msgstr ""
+msgstr "Créer"
 
 #: src/page/auth/login.vue:35
 msgid "Create Account"
@@ -712,7 +712,7 @@ msgstr "Jour"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "Désactiver"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -747,7 +747,7 @@ msgstr "Tout supprimer"
 
 #: src/page/library/index.vue:143
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr "Supprimer les entrées d'index, les fichiers sidecar et les vignettes orphelins."
+msgstr "Supprimer les entrées d'index, les fichiers side-car et les vignettes orphelins."
 
 #: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:570
@@ -1298,7 +1298,7 @@ msgstr "Inclure les fichiers d'images RAW lors du téléchargement de piles et d
 
 #: src/page/settings/general.vue:690
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr "Inclure les fichiers sidecar lors du téléchargement de piles et d'archives."
+msgstr "Inclure les fichiers side-car lors du téléchargement de piles et d'archives."
 
 #: src/component/navigation.vue:596 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1319,7 +1319,7 @@ msgstr "Échec de l'indexation"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
-msgstr "Indexation des fichiers médias et sidecar…"
+msgstr "Indexation des fichiers médias et side-car…"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Instance ID"
@@ -1953,7 +1953,7 @@ msgstr "Veuillez ne pas charger de photos choquantes."
 
 #: src/page/auth/login.vue:12 src/page/auth/login.vue:2
 msgid "Please enter a valid verification code to access your account:"
-msgstr ""
+msgstr "Pour accéder à votre compte, merci d'entrer un code de vérification valide :"
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2327,7 +2327,7 @@ msgstr "Rend les journaux plus détaillés. Requiert un redémarrage."
 
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
-msgstr "Fichier annexe"
+msgstr "Fichier side-car"
 
 #: src/page/auth/login.vue:38
 msgid "Sign in"
@@ -2531,11 +2531,11 @@ msgstr "Titre trop long"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr "Pour éviter le blocage de votre compte, téléchargez, imprimez ou copiez  maintenant ce code de récupération, et conservez-le dans  un endroit sûr."
+msgstr "Pour éviter le blocage de votre compte, téléchargez, imprimez ou copiez maintenant ce code de récupération, et conservez-le dans un endroit sûr."
 
 #: src/dialog/account/apps.vue:20
 msgid "To create a new app-specific password, please enter the name and type of the application and select an expiration date:"
-msgstr ""
+msgstr "Pour créer un nouveau mot de passe spécifique à votre application, merci d'indiquer le nom et le type de l'application ainsi que de choisir une date d'expiration :"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
