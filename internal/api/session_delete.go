@@ -49,7 +49,7 @@ func DeleteSession(router *gin.RouterGroup) {
 
 		// Only admins may delete other sessions by ref id.
 		if rnd.IsRefID(id) {
-			if !acl.Resources.AllowAll(acl.ResourceSessions, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
+			if !acl.Rules.AllowAll(acl.ResourceSessions, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
 				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", "denied"}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
 				Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 				return

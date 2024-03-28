@@ -68,7 +68,7 @@ func SearchFolders(router *gin.RouterGroup, urlPath, rootName, rootPath string) 
 		// Exclude private content?
 		if !get.Config().Settings().Features.Private {
 			f.Public = false
-		} else if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+		} else if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
 			f.Public = true
 		}
 

@@ -43,7 +43,7 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		}
 
 		// Check if the current user has management privileges.
-		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		isSuperAdmin := isAdmin && s.User().IsSuperAdmin()
 		uid := clean.UID(c.Param("uid"))
 

@@ -61,7 +61,7 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user is has user management privileges.
-		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		privilegeLevelChange := isAdmin && m.PrivilegeLevelChange(f)
 
 		// Get user from session.

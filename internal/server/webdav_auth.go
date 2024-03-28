@@ -114,7 +114,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			event.AuditErr([]string{clientIp, "session %s", "access webdav without user account", "denied"}, sess.RefID)
 			WebDAVAbortUnauthorized(c)
 			return
-		} else if sess.IsClient() && !sess.HasScope(acl.ResourceWebDAV.String()) {
+		} else if sess.IsClient() && sess.ScopeExcludes(acl.ResourceWebDAV, nil) {
 			// Log error if the client is allowed to access webdav based on its scope.
 			message := "denied"
 			event.AuditWarn([]string{clientIp, "client %s", "session %s", "access webdav as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))

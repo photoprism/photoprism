@@ -410,7 +410,7 @@ func (m *User) CanLogIn() bool {
 	} else if m.IsDisabled() || m.IsUnknown() || !m.IsRegistered() {
 		return false
 	} else {
-		return acl.Resources.Allow(acl.ResourceConfig, m.AclRole(), acl.AccessOwn)
+		return acl.Rules.Allow(acl.ResourceConfig, m.AclRole(), acl.AccessOwn)
 	}
 }
 
@@ -425,7 +425,7 @@ func (m *User) CanUseWebDAV() bool {
 		return false
 	} else {
 		// Check if the ACL allows downloading files via WebDAV based on the user role.
-		return acl.Resources.Allow(acl.ResourceWebDAV, m.AclRole(), acl.ActionDownload)
+		return acl.Rules.Allow(acl.ResourceWebDAV, m.AclRole(), acl.ActionDownload)
 	}
 }
 
@@ -439,7 +439,7 @@ func (m *User) CanUpload() bool {
 		return false
 	} else {
 		// Check if the ACL allows uploading photos based on the user role.
-		return acl.Resources.Allow(acl.ResourcePhotos, m.AclRole(), acl.ActionUpload)
+		return acl.Rules.Allow(acl.ResourcePhotos, m.AclRole(), acl.ActionUpload)
 	}
 }
 
@@ -790,11 +790,11 @@ func (m *User) IsVisitor() bool {
 
 // HasSharedAccessOnly checks if the user as only access to shared resources.
 func (m *User) HasSharedAccessOnly(resource acl.Resource) bool {
-	if acl.Resources.Deny(resource, m.AclRole(), acl.AccessShared) {
+	if acl.Rules.Deny(resource, m.AclRole(), acl.AccessShared) {
 		return false
 	}
 
-	return acl.Resources.DenyAll(resource, m.AclRole(), acl.Permissions{acl.AccessAll, acl.AccessLibrary})
+	return acl.Rules.DenyAll(resource, m.AclRole(), acl.Permissions{acl.AccessAll, acl.AccessLibrary})
 }
 
 // IsUnknown checks if the user is unknown.

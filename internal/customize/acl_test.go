@@ -45,7 +45,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 		}
 
 		assert.Equal(t, original, s.Features)
-		r := s.ApplyACL(acl.Resources, acl.RoleAdmin)
+		r := s.ApplyACL(acl.Rules, acl.RoleAdmin)
 
 		t.Logf("RoleAdmin: %#v", r)
 		assert.Equal(t, expected, r.Features)
@@ -85,7 +85,7 @@ func TestSettings_ApplyACL(t *testing.T) {
 		}
 
 		assert.Equal(t, original, s.Features)
-		r := s.ApplyACL(acl.Resources, acl.RoleVisitor)
+		r := s.ApplyACL(acl.Rules, acl.RoleVisitor)
 		t.Logf("RoleVisitor: %#v", r)
 		assert.Equal(t, expected, r.Features)
 	})

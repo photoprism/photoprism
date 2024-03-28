@@ -1,7 +1,7 @@
 package acl
 
-// Resources specifies granted permissions by Resource and Role.
-var Resources = ACL{
+// Rules specifies granted permissions by Resource and Role.
+var Rules = ACL{
 	ResourceFiles: Roles{
 		RoleAdmin:  GrantFullAccess,
 		RoleClient: GrantFullAccess,
@@ -51,8 +51,8 @@ var Resources = ACL{
 	},
 	ResourceSettings: Roles{
 		RoleAdmin:   GrantFullAccess,
-		RoleVisitor: Grant{AccessOwn: true, ActionView: true},
-		RoleClient:  Grant{AccessOwn: true, ActionView: true, ActionUpdate: true},
+		RoleVisitor: GrantViewOwn,
+		RoleClient:  GrantViewUpdateOwn,
 	},
 	ResourceServices: Roles{
 		RoleAdmin: GrantFullAccess,
@@ -64,12 +64,12 @@ var Resources = ACL{
 		RoleAdmin: GrantFullAccess,
 	},
 	ResourceUsers: Roles{
-		RoleAdmin:  Grant{AccessAll: true, AccessOwn: true, ActionView: true, ActionCreate: true, ActionUpdate: true, ActionDelete: true, ActionSubscribe: true},
-		RoleClient: Grant{AccessOwn: true, ActionView: true},
+		RoleAdmin:  GrantAll,
+		RoleClient: GrantViewOwn,
 	},
 	ResourceSessions: Roles{
 		RoleAdmin:   GrantFullAccess,
-		RoleDefault: Grant{AccessOwn: true, ActionView: true, ActionCreate: true, ActionUpdate: true, ActionDelete: true, ActionSubscribe: true},
+		RoleDefault: GrantOwn,
 	},
 	ResourceLogs: Roles{
 		RoleAdmin:  GrantFullAccess,

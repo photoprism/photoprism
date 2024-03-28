@@ -27,7 +27,7 @@ package acl
 // ACL represents an access control list based on Resource, Roles, and Permissions.
 type ACL map[Resource]Roles
 
-// Deny checks whether the role must be denied access to the specified resource.
+// Deny checks whether the Role must be denied access to the specified Resource.
 func (acl ACL) Deny(resource Resource, role Role, perm Permission) bool {
 	return !acl.Allow(resource, role, perm)
 }

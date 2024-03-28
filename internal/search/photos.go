@@ -129,31 +129,31 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		aclRole := user.AclRole()
 
 		// Exclude private content.
-		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
+		if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.AccessPrivate) {
 			f.Public = true
 			f.Private = false
 		}
 
 		// Exclude archived content.
-		if acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
+		if acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.ActionDelete) {
 			f.Archived = false
 			f.Review = false
 		}
 
 		// Exclude hidden files.
-		if acl.Resources.Deny(acl.ResourceFiles, aclRole, acl.AccessAll) {
+		if acl.Rules.Deny(acl.ResourceFiles, aclRole, acl.AccessAll) {
 			f.Hidden = false
 		}
 
 		// Visitors and other restricted users can only access shared content.
 		if f.Scope != "" && !sess.HasShare(f.Scope) && (sess.User().HasSharedAccessOnly(acl.ResourcePhotos) || sess.NotRegistered()) ||
-			f.Scope == "" && acl.Resources.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
+			f.Scope == "" && acl.Rules.Deny(acl.ResourcePhotos, aclRole, acl.ActionSearch) {
 			event.AuditErr([]string{sess.IP(), "session %s", "%s %s as %s", "denied"}, sess.RefID, acl.ActionSearch.String(), string(acl.ResourcePhotos), aclRole)
 			return PhotoResults{}, 0, ErrForbidden
 		}
 
 		// Limit results for external users.
-		if f.Scope == "" && acl.Resources.DenyAll(acl.ResourcePhotos, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
+		if f.Scope == "" && acl.Rules.DenyAll(acl.ResourcePhotos, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
 			sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND missing = 0 AND album_uid IN (?)) OR "
 
 			if sess.IsVisitor() || sess.NotRegistered() {

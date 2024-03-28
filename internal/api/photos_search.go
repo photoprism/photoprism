@@ -46,7 +46,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 		// Ignore private flag if feature is disabled.
 		if f.Scope == "" &&
 			settings.Features.Review &&
-			acl.Resources.Deny(acl.ResourcePhotos, s.UserRole(), acl.ActionManage) {
+			acl.Rules.Deny(acl.ResourcePhotos, s.UserRole(), acl.ActionManage) {
 			f.Quality = 3
 		}
 

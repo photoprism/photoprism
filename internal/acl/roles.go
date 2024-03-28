@@ -1,14 +1,5 @@
 package acl
 
-// Roles that can be assigned to users.
-const (
-	RoleDefault Role = "default"
-	RoleAdmin   Role = "admin"
-	RoleVisitor Role = "visitor"
-	RoleClient  Role = "client"
-	RoleNone    Role = ""
-)
-
 // RoleStrings represents user role names mapped to roles.
 type RoleStrings = map[string]Role
 

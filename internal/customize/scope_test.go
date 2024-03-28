@@ -10,9 +10,9 @@ import (
 
 func TestSettings_ApplyScope(t *testing.T) {
 	original := NewDefaultSettings().Features
-	admin := NewDefaultSettings().ApplyACL(acl.Resources, acl.RoleAdmin)
-	client := NewDefaultSettings().ApplyACL(acl.Resources, acl.RoleClient)
-	visitor := NewDefaultSettings().ApplyACL(acl.Resources, acl.RoleVisitor)
+	admin := NewDefaultSettings().ApplyACL(acl.Rules, acl.RoleAdmin)
+	client := NewDefaultSettings().ApplyACL(acl.Rules, acl.RoleClient)
+	visitor := NewDefaultSettings().ApplyACL(acl.Rules, acl.RoleVisitor)
 
 	t.Run("AdminUnscoped", func(t *testing.T) {
 		s := NewDefaultSettings()

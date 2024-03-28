@@ -45,7 +45,7 @@ func NewOAuthAuthorizationServer(conf *config.Config) *OAuthAuthorizationServer 
 		Issuer:                                    conf.SiteUrl(),
 		AuthorizationEndpoint:                     "",
 		TokenEndpoint:                             fmt.Sprintf("%sapi/v1/oauth/token", conf.SiteUrl()),
-		ScopesSupported:                           acl.Resources.Resources(),
+		ScopesSupported:                           acl.Rules.Resources(),
 		ResponseTypesSupported:                    OAuthResponseTypes,
 		GrantTypesSupported:                       OAuthGrantTypes,
 		TokenEndpointAuthMethodsSupported:         OAuthTokenEndpointAuthMethods,

@@ -49,7 +49,7 @@ func NewOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 		GrantTypesSupported:                       OAuthGrantTypes,
 		SubjectTypesSupported:                     []string{},
 		IdTokenSigningAlgValuesSupported:          []string{},
-		ScopesSupported:                           acl.Resources.Resources(),
+		ScopesSupported:                           acl.Rules.Resources(),
 		TokenEndpointAuthMethodsSupported:         OAuthTokenEndpointAuthMethods,
 		ClaimsSupported:                           []string{},
 		CodeChallengeMethodsSupported:             []string{},

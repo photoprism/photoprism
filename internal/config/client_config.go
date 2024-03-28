@@ -221,14 +221,14 @@ func (c *Config) Flags() (flags []string) {
 // ClientPublic returns config values for use by the JavaScript UI and other clients.
 func (c *Config) ClientPublic() ClientConfig {
 	if c.Public() {
-		return c.ClientUser(true).ApplyACL(acl.Resources, acl.RoleAdmin)
+		return c.ClientUser(true).ApplyACL(acl.Rules, acl.RoleAdmin)
 	}
 
 	a := c.ClientAssets()
 
 	cfg := ClientConfig{
 		Settings: c.PublicSettings(),
-		ACL:      acl.Resources.Grants(acl.RoleNone),
+		ACL:      acl.Rules.Grants(acl.RoleNone),
 		Disable: ClientDisable{
 			WebDAV:         true,
 			Settings:       c.DisableSettings(),
@@ -317,7 +317,7 @@ func (c *Config) ClientShare() ClientConfig {
 
 	cfg := ClientConfig{
 		Settings: c.ShareSettings(),
-		ACL:      acl.Resources.Grants(acl.RoleVisitor),
+		ACL:      acl.Rules.Grants(acl.RoleVisitor),
 		Disable: ClientDisable{
 			WebDAV:         c.DisableWebDAV(),
 			Settings:       c.DisableSettings(),
@@ -677,18 +677,18 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 
 // ClientRole provides the client config values for the specified user role.
 func (c *Config) ClientRole(role acl.Role) ClientConfig {
-	return c.ClientUser(true).ApplyACL(acl.Resources, role)
+	return c.ClientUser(true).ApplyACL(acl.Rules, role)
 }
 
 // ClientSession provides the client config values for the specified session.
 func (c *Config) ClientSession(sess *entity.Session) (cfg ClientConfig) {
 	if sess.NoUser() && sess.IsClient() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Resources, sess.ClientRole())
+		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.ClientRole())
 		cfg.Settings = c.SessionSettings(sess)
 	} else if sess.User().IsVisitor() {
 		cfg = c.ClientShare()
 	} else if sess.User().IsRegistered() {
-		cfg = c.ClientUser(false).ApplyACL(acl.Resources, sess.UserRole())
+		cfg = c.ClientUser(false).ApplyACL(acl.Rules, sess.UserRole())
 		cfg.Settings = c.SessionSettings(sess)
 	} else {
 		cfg = c.ClientPublic()
