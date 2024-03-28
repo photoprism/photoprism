@@ -78,7 +78,7 @@ func CreateSession(router *gin.RouterGroup) {
 		// Try to log in and save session if successful.
 		if err := sess.LogIn(f, c); err != nil {
 			if sess.Method().IsNot(authn.Method2FA) {
-				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			} else if errors.Is(err, authn.ErrPasscodeRequired) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrPasscodeRequired, "message": i18n.Msg(i18n.ErrPasscodeRequired)})
 			} else {
