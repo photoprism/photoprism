@@ -53,6 +53,7 @@ var TypeInfo = TypeMap{
 	SidecarJSON:     "Serialized JSON Data (Exiftool, Google Photos)",
 	SidecarYAML:     "Serialized YAML Data (Config, Metadata)",
 	SidecarText:     "Plain Text",
+	SidecarInfo:     "Info Text",
 	SidecarMarkdown: "Markdown Formatted Text",
 	TypeUnknown:     "Other",
 }

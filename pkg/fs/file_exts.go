@@ -130,6 +130,7 @@ var Extensions = FileExtensions{
 	".yaml":     SidecarYAML,
 	".json":     SidecarJSON,
 	".txt":      SidecarText,
+	".nfo":      SidecarInfo,
 	".md":       SidecarMarkdown,
 	".markdown": SidecarMarkdown,
 }

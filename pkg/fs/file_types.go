@@ -61,6 +61,7 @@ const (
 	SidecarYAML     Type = "yml"   // YAML metadata / config / sidecar file
 	SidecarJSON     Type = "json"  // JSON metadata / config / sidecar file
 	SidecarText     Type = "txt"   // Text config / sidecar file
+	SidecarInfo     Type = "nfo"   // Info text file as used by e.g. Plex Media Server
 	SidecarMarkdown Type = "md"    // Markdown text sidecar file
 	TypeUnknown     Type = ""      // Unknown file
 )
