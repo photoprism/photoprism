@@ -889,7 +889,7 @@ func (m *User) WrongPassword(s string) bool {
 	}
 
 	// Invalid?
-	if pw.IsWrong(s) {
+	if pw.Invalid(s) {
 		return true
 	}
 
@@ -924,7 +924,7 @@ func (m *User) VerifyPasscode(code string) (valid bool, passcode *Passcode, err 
 		err = authn.ErrPasscodeRequired
 	} else if l := len(code); l < 1 || l > 255 {
 		err = authn.ErrInvalidPasscode
-	} else if valid, recovery, err = passcode.Verify(code); recovery {
+	} else if valid, recovery, err = passcode.Valid(code); recovery {
 		// Deactivate 2FA if recovery code has been used.
 		passcode, err = m.DeactivatePasscode()
 	}

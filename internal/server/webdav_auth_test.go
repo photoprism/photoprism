@@ -170,7 +170,7 @@ func TestWebDAVAuthSession(t *testing.T) {
 		assert.True(t, sess.HasUser())
 		assert.Equal(t, user.UserUID, sess.UserUID)
 		assert.Equal(t, entity.UserFixtures.Get("alice").UserUID, sess.UserUID)
-		assert.True(t, sess.ScopeAllows(acl.ResourceWebDAV, acl.Permissions{acl.ActionView}))
+		assert.True(t, sess.ValidateScope(acl.ResourceWebDAV, acl.Permissions{acl.ActionView}))
 		assert.False(t, cached)
 
 		assert.Equal(t, s.ID, sid)
@@ -222,7 +222,7 @@ func TestWebDAVAuthSession(t *testing.T) {
 		assert.Equal(t, entity.UserFixtures.Get("alice").UserUID, user.UserUID)
 		assert.Equal(t, entity.UserFixtures.Get("alice").UserUID, sess.UserUID)
 		assert.True(t, user.CanUseWebDAV())
-		assert.False(t, sess.ScopeAllows(acl.ResourceWebDAV, acl.Permissions{acl.ActionView}))
+		assert.False(t, sess.ValidateScope(acl.ResourceWebDAV, acl.Permissions{acl.ActionView}))
 
 		// WebDAVAuthSession should not set a status code or any headers.
 		assert.Equal(t, http.StatusOK, c.Writer.Status())

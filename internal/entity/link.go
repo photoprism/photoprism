@@ -144,7 +144,7 @@ func (m *Link) InvalidPassword(password string) bool {
 		return password != ""
 	}
 
-	return pw.IsWrong(password)
+	return pw.Invalid(password)
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.

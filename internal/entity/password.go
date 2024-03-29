@@ -1,11 +1,11 @@
 package entity
 
 import (
-	"fmt"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -51,9 +51,9 @@ func (m *Password) SetPassword(pw string, allowHash bool) error {
 
 	// Check if password is too short or too long.
 	if len([]rune(pw)) < 1 {
-		return fmt.Errorf("password is too short")
+		return authn.ErrPasswordTooShort
 	} else if len(pw) > txt.ClipPassword {
-		return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+		return authn.ErrPasswordTooLong
 	}
 
 	// Check if string already is a bcrypt hash.
@@ -73,14 +73,14 @@ func (m *Password) SetPassword(pw string, allowHash bool) error {
 	}
 }
 
-// IsValid checks if the password is correct.
-func (m *Password) IsValid(s string) bool {
-	return !m.IsWrong(s)
+// Valid checks if the password is correct.
+func (m *Password) Valid(s string) bool {
+	return !m.Invalid(s)
 }
 
-// IsWrong checks if the specified password is incorrect.
-func (m *Password) IsWrong(s string) bool {
-	if m.IsEmpty() {
+// Invalid checks if the specified password is incorrect.
+func (m *Password) Invalid(s string) bool {
+	if m.Empty() {
 		// No password set.
 		return true
 	} else if s = clean.Password(s); s == "" {
@@ -118,15 +118,15 @@ func FindPassword(uid string) *Password {
 
 // Cost returns the hashing cost of the currently set password.
 func (m *Password) Cost() (int, error) {
-	if m.IsEmpty() {
-		return 0, fmt.Errorf("password is empty")
+	if m.Empty() {
+		return 0, authn.ErrPasswordRequired
 	}
 
 	return bcrypt.Cost([]byte(m.Hash))
 }
 
-// IsEmpty returns true if no password is set.
-func (m *Password) IsEmpty() bool {
+// Empty checks if a password has not been set yet.
+func (m *Password) Empty() bool {
 	return m.Hash == ""
 }
 

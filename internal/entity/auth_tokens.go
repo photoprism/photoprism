@@ -9,7 +9,7 @@ const TokenPublic = "public"
 
 var PreviewToken = NewStringMap(Strings{})
 var DownloadToken = NewStringMap(Strings{})
-var CheckTokens = true
+var ValidateTokens = true
 
 // GenerateToken returns a random string token.
 func GenerateToken() string {
@@ -18,10 +18,10 @@ func GenerateToken() string {
 
 // InvalidDownloadToken checks if the token is unknown.
 func InvalidDownloadToken(t string) bool {
-	return CheckTokens && DownloadToken.Missing(t)
+	return ValidateTokens && DownloadToken.Missing(t)
 }
 
 // InvalidPreviewToken checks if the preview token is unknown.
 func InvalidPreviewToken(t string) bool {
-	return CheckTokens && PreviewToken.Missing(t) && DownloadToken.Missing(t)
+	return ValidateTokens && PreviewToken.Missing(t) && DownloadToken.Missing(t)
 }

@@ -34,11 +34,11 @@ func (c *Config) SetAuthMode(mode string) {
 	case AuthModePublic:
 		c.options.AuthMode = AuthModePublic
 		c.options.Public = true
-		entity.CheckTokens = false
+		entity.ValidateTokens = false
 	default:
 		c.options.AuthMode = AuthModePasswd
 		c.options.Public = false
-		entity.CheckTokens = true
+		entity.ValidateTokens = true
 	}
 }
 

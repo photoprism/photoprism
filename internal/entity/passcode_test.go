@@ -318,7 +318,7 @@ func TestPasscode_Verify(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		valid, recoveryCode, err := m.Verify(code)
+		valid, recoveryCode, err := m.Valid(code)
 
 		if err != nil {
 			t.Fatal(err)
@@ -337,7 +337,7 @@ func TestPasscode_Verify(t *testing.T) {
 
 		assert.Nil(t, m.VerifiedAt)
 
-		valid, recoveryCode, err := m.Verify("123456")
+		valid, recoveryCode, err := m.Valid("123456")
 
 		if err != nil {
 			t.Fatal(err)
@@ -356,7 +356,7 @@ func TestPasscode_Verify(t *testing.T) {
 
 		assert.Nil(t, m.VerifiedAt)
 
-		valid, recoveryCode, err := m.Verify("111")
+		valid, recoveryCode, err := m.Valid("111")
 
 		assert.Error(t, err)
 		assert.False(t, valid)
@@ -372,7 +372,7 @@ func TestPasscode_Verify(t *testing.T) {
 
 		assert.Nil(t, m.VerifiedAt)
 
-		valid, recoveryCode, err := m.Verify("123")
+		valid, recoveryCode, err := m.Valid("123")
 
 		if err != nil {
 			t.Fatal(err)
@@ -391,7 +391,7 @@ func TestPasscode_Verify(t *testing.T) {
 
 		assert.Nil(t, m.VerifiedAt)
 
-		valid, recoveryCode, err := m.Verify("")
+		valid, recoveryCode, err := m.Valid("")
 
 		assert.Error(t, err)
 		assert.False(t, valid)
@@ -407,7 +407,7 @@ func TestPasscode_Verify(t *testing.T) {
 
 		assert.Nil(t, m.VerifiedAt)
 
-		valid, recoveryCode, err := m.Verify("123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891")
+		valid, recoveryCode, err := m.Valid("123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891123456789112345678911234567891")
 
 		assert.Error(t, err)
 		assert.False(t, valid)
@@ -424,7 +424,7 @@ func TestPasscode_Verify(t *testing.T) {
 
 		assert.Nil(t, m.VerifiedAt)
 
-		valid, recoveryCode, err := m.Verify("123456")
+		valid, recoveryCode, err := m.Valid("123456")
 
 		assert.Error(t, err)
 		assert.False(t, valid)
@@ -454,7 +454,7 @@ func TestPasscode_Activate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, _, err = m.Verify(code)
+	_, _, err = m.Valid(code)
 
 	if err != nil {
 		t.Fatal(err)

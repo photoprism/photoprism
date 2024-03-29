@@ -236,8 +236,8 @@ func (m *Passcode) GenerateCode() (code string, err error) {
 	return code, err
 }
 
-// Verify checks if the passcode provided is valid.
-func (m *Passcode) Verify(code string) (valid bool, recovery bool, err error) {
+// Valid checks if the passcode provided is valid.
+func (m *Passcode) Valid(code string) (valid bool, recovery bool, err error) {
 	// Validate arguments.
 	if m == nil {
 		return false, false, errors.New("passcode is nil")

@@ -544,7 +544,7 @@ func TestSession_SetAuthID(t *testing.T) {
 	})
 }
 
-func TestSession_ScopeAllows(t *testing.T) {
+func TestSession_ValidateScope(t *testing.T) {
 	t.Run("AnyScope", func(t *testing.T) {
 		s := &Session{
 			UserName:  "test",
@@ -552,7 +552,7 @@ func TestSession_ScopeAllows(t *testing.T) {
 			AuthScope: "*",
 		}
 
-		assert.True(t, s.ScopeAllows("", nil))
+		assert.True(t, s.ValidateScope("", nil))
 	})
 	t.Run("ReadScope", func(t *testing.T) {
 		s := &Session{
@@ -561,14 +561,14 @@ func TestSession_ScopeAllows(t *testing.T) {
 			AuthScope: "read",
 		}
 
-		assert.True(t, s.ScopeAllows("metrics", nil))
-		assert.True(t, s.ScopeAllows("sessions", nil))
-		assert.True(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionView, acl.AccessAll}))
-		assert.False(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("settings", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("settings", acl.Permissions{acl.ActionCreate}))
-		assert.False(t, s.ScopeAllows("sessions", acl.Permissions{acl.ActionDelete}))
+		assert.True(t, s.ValidateScope("metrics", nil))
+		assert.True(t, s.ValidateScope("sessions", nil))
+		assert.True(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionView, acl.AccessAll}))
+		assert.False(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("settings", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("settings", acl.Permissions{acl.ActionCreate}))
+		assert.False(t, s.ValidateScope("sessions", acl.Permissions{acl.ActionDelete}))
 	})
 	t.Run("ReadAny", func(t *testing.T) {
 		s := &Session{
@@ -577,14 +577,14 @@ func TestSession_ScopeAllows(t *testing.T) {
 			AuthScope: "read *",
 		}
 
-		assert.True(t, s.ScopeAllows("metrics", nil))
-		assert.True(t, s.ScopeAllows("sessions", nil))
-		assert.True(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionView, acl.AccessAll}))
-		assert.False(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("settings", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("settings", acl.Permissions{acl.ActionCreate}))
-		assert.False(t, s.ScopeAllows("sessions", acl.Permissions{acl.ActionDelete}))
+		assert.True(t, s.ValidateScope("metrics", nil))
+		assert.True(t, s.ValidateScope("sessions", nil))
+		assert.True(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionView, acl.AccessAll}))
+		assert.False(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("settings", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("settings", acl.Permissions{acl.ActionCreate}))
+		assert.False(t, s.ValidateScope("sessions", acl.Permissions{acl.ActionDelete}))
 	})
 	t.Run("ReadSettings", func(t *testing.T) {
 		s := &Session{
@@ -593,19 +593,19 @@ func TestSession_ScopeAllows(t *testing.T) {
 			AuthScope: "read settings",
 		}
 
-		assert.True(t, s.ScopeAllows("settings", acl.Permissions{acl.ActionView}))
-		assert.False(t, s.ScopeAllows("metrics", nil))
-		assert.False(t, s.ScopeAllows("sessions", nil))
-		assert.False(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionView, acl.AccessAll}))
-		assert.False(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("metrics", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("settings", acl.Permissions{acl.ActionUpdate}))
-		assert.False(t, s.ScopeAllows("sessions", acl.Permissions{acl.ActionDelete}))
-		assert.False(t, s.ScopeAllows("sessions", acl.Permissions{acl.ActionDelete}))
+		assert.True(t, s.ValidateScope("settings", acl.Permissions{acl.ActionView}))
+		assert.False(t, s.ValidateScope("metrics", nil))
+		assert.False(t, s.ValidateScope("sessions", nil))
+		assert.False(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionView, acl.AccessAll}))
+		assert.False(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("metrics", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("settings", acl.Permissions{acl.ActionUpdate}))
+		assert.False(t, s.ValidateScope("sessions", acl.Permissions{acl.ActionDelete}))
+		assert.False(t, s.ValidateScope("sessions", acl.Permissions{acl.ActionDelete}))
 	})
 }
 
-func TestSession_ScopeExcludes(t *testing.T) {
+func TestSession_InsufficientScope(t *testing.T) {
 	t.Run("Empty", func(t *testing.T) {
 		s := &Session{
 			UserName:  "test",
@@ -613,7 +613,7 @@ func TestSession_ScopeExcludes(t *testing.T) {
 			AuthScope: "*",
 		}
 
-		assert.False(t, s.ScopeExcludes("", nil))
+		assert.False(t, s.InsufficientScope("", nil))
 	})
 	t.Run("ReadSettings", func(t *testing.T) {
 		s := &Session{
@@ -622,15 +622,15 @@ func TestSession_ScopeExcludes(t *testing.T) {
 			AuthScope: "read settings",
 		}
 
-		assert.False(t, s.ScopeExcludes("settings", acl.Permissions{acl.ActionView}))
-		assert.True(t, s.ScopeExcludes("metrics", nil))
-		assert.True(t, s.ScopeExcludes("sessions", nil))
-		assert.True(t, s.ScopeExcludes("metrics", acl.Permissions{acl.ActionView, acl.AccessAll}))
-		assert.True(t, s.ScopeExcludes("metrics", acl.Permissions{acl.ActionUpdate}))
-		assert.True(t, s.ScopeExcludes("metrics", acl.Permissions{acl.ActionUpdate}))
-		assert.True(t, s.ScopeExcludes("settings", acl.Permissions{acl.ActionUpdate}))
-		assert.True(t, s.ScopeExcludes("sessions", acl.Permissions{acl.ActionDelete}))
-		assert.True(t, s.ScopeExcludes("sessions", acl.Permissions{acl.ActionDelete}))
+		assert.False(t, s.InsufficientScope("settings", acl.Permissions{acl.ActionView}))
+		assert.True(t, s.InsufficientScope("metrics", nil))
+		assert.True(t, s.InsufficientScope("sessions", nil))
+		assert.True(t, s.InsufficientScope("metrics", acl.Permissions{acl.ActionView, acl.AccessAll}))
+		assert.True(t, s.InsufficientScope("metrics", acl.Permissions{acl.ActionUpdate}))
+		assert.True(t, s.InsufficientScope("metrics", acl.Permissions{acl.ActionUpdate}))
+		assert.True(t, s.InsufficientScope("settings", acl.Permissions{acl.ActionUpdate}))
+		assert.True(t, s.InsufficientScope("sessions", acl.Permissions{acl.ActionDelete}))
+		assert.True(t, s.InsufficientScope("sessions", acl.Permissions{acl.ActionDelete}))
 	})
 }
 

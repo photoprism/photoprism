@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/manifoldco/promptui"
@@ -10,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -53,10 +53,10 @@ func usersAddAction(ctx *cli.Context) error {
 
 		// Check if account exists but is deleted.
 		if frm.UserName == "" {
-			return fmt.Errorf("username is required")
+			return authn.ErrUsernameRequired
 		} else if m := entity.FindUserByName(frm.UserName); m != nil {
 			if !m.IsDeleted() {
-				return fmt.Errorf("user already exists")
+				return authn.ErrAccountAlreadyExists
 			}
 
 			prompt := promptui.Prompt{
@@ -65,7 +65,7 @@ func usersAddAction(ctx *cli.Context) error {
 			}
 
 			if _, err := prompt.Run(); err != nil {
-				return fmt.Errorf("user already exists")
+				return authn.ErrAccountAlreadyExists
 			}
 
 			if err := m.RestoreFromCli(ctx, frm.Password); err != nil {
@@ -96,7 +96,7 @@ func usersAddAction(ctx *cli.Context) error {
 				if len([]rune(input)) < entity.PasswordLength {
 					return fmt.Errorf("password must have at least %d characters", entity.PasswordLength)
 				} else if len(input) > txt.ClipPassword {
-					return fmt.Errorf("password must have less than %d characters", txt.ClipPassword)
+					return authn.ErrPasswordTooLong
 				}
 				return nil
 			}
@@ -111,7 +111,7 @@ func usersAddAction(ctx *cli.Context) error {
 			}
 			validateRetype := func(input string) error {
 				if input != resPasswd {
-					return errors.New("passwords do not match")
+					return authn.ErrPasswordsDoNotMatch
 				}
 				return nil
 			}
@@ -125,7 +125,7 @@ func usersAddAction(ctx *cli.Context) error {
 				return err
 			}
 			if resConfirm != resPasswd {
-				return errors.New("password is invalid, please try again")
+				return authn.ErrInvalidPassword
 			} else {
 				frm.Password = resPasswd
 			}

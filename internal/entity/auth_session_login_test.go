@@ -110,8 +110,8 @@ func TestAuthSession(t *testing.T) {
 		assert.True(t, authSess.IsRegistered())
 		assert.True(t, authSess.HasUser())
 
-		assert.True(t, authSess.ScopeAllows(acl.ResourceWebDAV, acl.Permissions{acl.ActionCreate}))
-		assert.True(t, authSess.ScopeAllows(acl.ResourceSessions, acl.Permissions{acl.ActionCreate}))
+		assert.True(t, authSess.ValidateScope(acl.ResourceWebDAV, acl.Permissions{acl.ActionCreate}))
+		assert.True(t, authSess.ValidateScope(acl.ResourceSessions, acl.Permissions{acl.ActionCreate}))
 	})
 	t.Run("AliceTokenWebdav", func(t *testing.T) {
 		s := SessionFixtures.Get("alice_token_webdav")
@@ -148,8 +148,8 @@ func TestAuthSession(t *testing.T) {
 		assert.True(t, authSess.IsRegistered())
 		assert.True(t, authSess.HasUser())
 
-		assert.True(t, authSess.ScopeAllows(acl.ResourceWebDAV, acl.Permissions{acl.ActionCreate}))
-		assert.False(t, authSess.ScopeAllows(acl.ResourceSessions, acl.Permissions{acl.ActionCreate}))
+		assert.True(t, authSess.ValidateScope(acl.ResourceWebDAV, acl.Permissions{acl.ActionCreate}))
+		assert.False(t, authSess.ValidateScope(acl.ResourceSessions, acl.Permissions{acl.ActionCreate}))
 	})
 	t.Run("EmptyPassword", func(t *testing.T) {
 		// Create test request form.

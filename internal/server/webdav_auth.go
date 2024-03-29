@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/header"
@@ -103,7 +104,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 				return
 			}
 
-			event.AuditErr([]string{clientIp, "access webdav as %s with authorization granted to %s", "denied"}, clean.Log(username), clean.Log(user.Username()))
+			event.AuditErr([]string{clientIp, "access webdav as %s with authorization granted to %s", authn.Denied}, clean.Log(username), clean.Log(user.Username()))
 			limiter.Auth.Reserve(clientIp)
 			WebDAVAbortUnauthorized(c)
 			return
@@ -111,31 +112,31 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			// Ignore and try basic auth next.
 		} else if !sess.HasUser() || user == nil {
 			// Log error if session does not belong to an authorized user account.
-			event.AuditErr([]string{clientIp, "session %s", "access webdav without user account", "denied"}, sess.RefID)
+			event.AuditErr([]string{clientIp, "session %s", "access webdav without user account", authn.Denied}, sess.RefID)
 			WebDAVAbortUnauthorized(c)
 			return
-		} else if sess.IsClient() && sess.ScopeExcludes(acl.ResourceWebDAV, nil) {
+		} else if sess.IsClient() && sess.InsufficientScope(acl.ResourceWebDAV, nil) {
 			// Log error if the client is allowed to access webdav based on its scope.
-			message := "denied"
+			message := authn.ErrInsufficientScope.Error()
 			event.AuditWarn([]string{clientIp, "client %s", "session %s", "access webdav as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if !user.CanUseWebDAV() {
 			// Log warning if WebDAV is disabled for this account.
-			message := "webdav access is disabled"
+			message := authn.ErrWebDAVAccessDisabled.Error()
 			event.AuditWarn([]string{clientIp, "client %s", "session %s", "access webdav as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if username != "" && !strings.EqualFold(clean.Username(username), user.Username()) {
 			// Log warning if WebDAV is disabled for this account.
-			message := "basic auth username does not match"
+			message := authn.ErrBasicAuthDoesNotMatch.Error()
 			event.AuditWarn([]string{clientIp, "client %s", "session %s", "access webdav as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			limiter.Auth.Reserve(clientIp)
 			WebDAVAbortUnauthorized(c)
 			return
 		} else if err := fs.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath())); err != nil {
 			// Log warning if upload path could not be created.
-			message := "failed to create user upload path"
+			message := authn.ErrFailedToCreateUploadPath.Error()
 			event.AuditWarn([]string{clientIp, "client %s", "session %s", "access webdav as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortServerError(c)
 			return
@@ -177,24 +178,24 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		// Check credentials and authorization.
 		if user, _, _, err := entity.Auth(f, nil, c); err != nil {
 			// Abort if authentication has failed.
-			message := err.Error()
+			message := authn.ErrInvalidCredentials.Error()
 			limiter.Login.Reserve(clientIp)
 			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if user == nil {
 			// Abort if account was not found.
-			message := "account not found"
+			message := authn.ErrAccountNotFound.Error()
 			limiter.Login.Reserve(clientIp)
 			event.AuditErr([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if !user.CanUseWebDAV() {
 			// Abort if WebDAV is disabled for this account.
-			message := "webdav access is disabled"
+			message := authn.ErrWebDAVAccessDisabled.Error()
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 		} else if err = fs.MkdirAll(filepath.Join(conf.OriginalsPath(), user.GetUploadPath())); err != nil {
 			// Abort if upload path could not be created.
-			message := "failed to create user upload path"
+			message := authn.ErrFailedToCreateUploadPath.Error()
 			event.AuditWarn([]string{clientIp, "webdav login as %s", message}, clean.LogQuote(username))
 			event.LoginError(clientIp, "webdav", username, api.UserAgent(c), message)
 			WebDAVAbortServerError(c)

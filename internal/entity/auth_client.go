@@ -376,7 +376,7 @@ func (m *Client) WrongSecret(s string) bool {
 	}
 
 	// Invalid?
-	if pw.IsWrong(s) {
+	if pw.Invalid(s) {
 		return true
 	}
 

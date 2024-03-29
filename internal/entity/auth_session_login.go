@@ -83,7 +83,7 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (provider a
 
 	// Check if user account exists.
 	if user == nil {
-		message := "account not found"
+		message := authn.ErrAccountNotFound.Error()
 		limiter.Login.Reserve(clientIp)
 
 		if m != nil {
@@ -107,7 +107,7 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (provider a
 
 		return provider, method, i18n.Error(i18n.ErrInvalidCredentials)
 	} else if !user.CanLogIn() {
-		message := "account disabled"
+		message := authn.ErrAccountDisabled.Error()
 
 		if m != nil {
 			event.AuditWarn([]string{clientIp, "session %s", "login as %s", message}, m.RefID, clean.LogQuote(userName))
@@ -121,14 +121,19 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (provider a
 	// Authentication with personal access token if a valid secret has been provided as password.
 	if authSess, authUser, authErr := AuthSession(f, c); authSess != nil && authUser != nil && authErr == nil {
 		if !authUser.IsRegistered() || authUser.UserUID != user.UserUID {
-			message := "incorrect user"
+			message := authn.ErrInvalidUsername.Error()
 			limiter.Login.Reserve(clientIp)
 			event.AuditErr([]string{clientIp, "session %s", "login as %s with app password", message}, m.RefID, clean.LogQuote(userName))
 			event.LoginError(clientIp, "api", userName, m.UserAgent, message)
 			m.Status = http.StatusUnauthorized
 			return provider, method, i18n.Error(i18n.ErrInvalidCredentials)
-		} else if !authSess.IsClient() || authSess.ScopeExcludes(acl.ResourceSessions, acl.Permissions{acl.ActionCreate}) {
-			message := "unauthorized"
+		} else if insufficientScope := authSess.InsufficientScope(acl.ResourceSessions, acl.Permissions{acl.ActionCreate}); insufficientScope || !authSess.IsClient() {
+			var message string
+			if insufficientScope {
+				message = authn.ErrInsufficientScope.Error()
+			} else {
+				message = authn.ErrUnauthorized.Error()
+			}
 			limiter.Login.Reserve(clientIp)
 			event.AuditErr([]string{clientIp, "session %s", "login as %s with app password", message}, m.RefID, clean.LogQuote(userName))
 			event.LoginError(clientIp, "api", userName, m.UserAgent, message)
@@ -149,7 +154,7 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (provider a
 
 	// Otherwise, check account password.
 	if user.WrongPassword(f.Password) {
-		message := "incorrect password"
+		message := authn.ErrInvalidPassword.Error()
 		limiter.Login.Reserve(clientIp)
 
 		if m != nil {
@@ -219,8 +224,9 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 		// Redeem token.
 		if user.IsRegistered() {
 			if shares := user.RedeemToken(f.ShareToken); shares == 0 {
+				message := authn.ErrInvalidShareToken.Error()
 				limiter.Login.Reserve(m.IP())
-				event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.ShareToken))
+				event.AuditWarn([]string{m.IP(), "session %s", message}, m.RefID)
 				m.Status = http.StatusNotFound
 				return i18n.Error(i18n.ErrInvalidLink)
 			} else {
@@ -230,9 +236,10 @@ func (m *Session) LogIn(f form.Login, c *gin.Context) (err error) {
 			m.Status = http.StatusInternalServerError
 			return i18n.Error(i18n.ErrUnexpected)
 		} else if shares := data.RedeemToken(f.ShareToken); shares == 0 {
+			message := authn.ErrInvalidShareToken.Error()
 			limiter.Login.Reserve(m.IP())
-			event.AuditWarn([]string{m.IP(), "session %s", "share token %s is invalid"}, m.RefID, clean.LogQuote(f.ShareToken))
-			event.LoginError(m.IP(), "api", "", m.UserAgent, "invalid share token")
+			event.AuditWarn([]string{m.IP(), "session %s", message}, m.RefID)
+			event.LoginError(m.IP(), "api", "", m.UserAgent, message)
 			m.Status = http.StatusNotFound
 			return i18n.Error(i18n.ErrInvalidLink)
 		} else {

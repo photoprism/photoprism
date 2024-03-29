@@ -144,7 +144,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "client", "delete session", "oauth2", "disabled in public mode"})
+			event.AuditErr([]string{clientIp, "client", "delete session", "oauth2", authn.ErrDisabledInPublicMode.Error()})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}
@@ -184,18 +184,18 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", authn.Denied}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
 			return
 		} else if sess.Abort(c) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", authn.Denied}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			return
 		} else if !sess.IsClient() {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "denied"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", authn.Denied}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "granted"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", authn.Granted}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
 		}
 
 		// Delete session cache and database record.

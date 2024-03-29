@@ -6,6 +6,7 @@ import (
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
 )
@@ -30,7 +31,7 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 
 	// Find active session to perform authorization check or deny if no session was found.
 	if s = Session(clientIp, authToken); s == nil {
-		event.AuditWarn([]string{clientIp, "%s %s without authentication", "denied"}, perms.String(), string(resource))
+		event.AuditWarn([]string{clientIp, "%s %s without authentication", authn.Denied}, perms.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
 	}
 
@@ -42,32 +43,32 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 	// on the allowed scope, the ACL, and the user account it belongs to (if any).
 	if s.IsClient() {
 		// Check the resource and required permissions against the session scope.
-		if s.ScopeExcludes(resource, perms) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", "denied"}, clean.Log(s.ClientInfo()), s.RefID, string(resource))
+		if s.InsufficientScope(resource, perms) {
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "access %s", authn.ErrInsufficientScope.Error()}, clean.Log(s.ClientInfo()), s.RefID, string(resource))
 			return entity.SessionStatusForbidden()
 		}
 
 		// Check request authorization against client application ACL rules.
 		if acl.Rules.DenyAll(resource, s.ClientRole(), perms) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s", "denied"}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource))
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s", authn.Denied}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource))
 			return entity.SessionStatusForbidden()
 		}
 
 		// Also check the request authorization against the user's ACL rules?
 		if s.NoUser() {
 			// Allow access based on the ACL defaults for client applications.
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s", "granted"}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource))
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s", authn.Granted}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource))
 		} else if u := s.User(); !u.IsDisabled() && !u.IsUnknown() && u.IsRegistered() {
 			if acl.Rules.DenyAll(resource, u.AclRole(), perms) {
-				event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as %s", "denied"}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource), u.String())
+				event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as %s", authn.Denied}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource), u.String())
 				return entity.SessionStatusForbidden()
 			}
 
 			// Allow access based on the user role.
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s as %s", "granted"}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource), u.String())
+			event.AuditInfo([]string{clientIp, "client %s", "session %s", "%s %s as %s", authn.Granted}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource), u.String())
 		} else {
 			// Deny access if it is not a regular user account or the account has been disabled.
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as unauthorized user", "denied"}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource))
+			event.AuditErr([]string{clientIp, "client %s", "session %s", "%s %s as unauthorized user", authn.Denied}, clean.Log(s.ClientInfo()), s.RefID, perms.String(), string(resource))
 			return entity.SessionStatusForbidden()
 		}
 
@@ -76,13 +77,13 @@ func AuthAny(c *gin.Context, resource acl.Resource, perms acl.Permissions) (s *e
 
 	// Otherwise, perform a regular ACL authorization check based on the user role.
 	if u := s.User(); u.IsUnknown() || u.IsDisabled() {
-		event.AuditWarn([]string{clientIp, "session %s", "%s %s as unauthorized user", "denied"}, s.RefID, perms.String(), string(resource))
+		event.AuditWarn([]string{clientIp, "session %s", "%s %s as unauthorized user", authn.Denied}, s.RefID, perms.String(), string(resource))
 		return entity.SessionStatusUnauthorized()
 	} else if acl.Rules.DenyAll(resource, u.AclRole(), perms) {
-		event.AuditErr([]string{clientIp, "session %s", "%s %s as %s", "denied"}, s.RefID, perms.String(), string(resource), u.AclRole().String())
+		event.AuditErr([]string{clientIp, "session %s", "%s %s as %s", authn.Denied}, s.RefID, perms.String(), string(resource), u.AclRole().String())
 		return entity.SessionStatusForbidden()
 	} else {
-		event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", "granted"}, s.RefID, perms.String(), string(resource), u.AclRole().String())
+		event.AuditInfo([]string{clientIp, "session %s", "%s %s as %s", authn.Granted}, s.RefID, perms.String(), string(resource), u.AclRole().String())
 		return s
 	}
 }

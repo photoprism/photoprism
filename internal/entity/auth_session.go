@@ -518,8 +518,8 @@ func (m *Session) Scope() string {
 	return clean.Scope(m.AuthScope)
 }
 
-// ScopeAllows checks if the scope does not exclude access to specified resource.
-func (m *Session) ScopeAllows(resource acl.Resource, perms acl.Permissions) bool {
+// ValidateScope checks if the scope does not exclude access to specified resource.
+func (m *Session) ValidateScope(resource acl.Resource, perms acl.Permissions) bool {
 	// Get scope string.
 	scope := m.Scope()
 
@@ -556,9 +556,9 @@ func (m *Session) ScopeAllows(resource acl.Resource, perms acl.Permissions) bool
 	return true
 }
 
-// ScopeExcludes checks if the scope does not include access to specified resource.
-func (m *Session) ScopeExcludes(resource acl.Resource, perms acl.Permissions) bool {
-	return !m.ScopeAllows(resource, perms)
+// InsufficientScope checks if the scope does not include access to specified resource.
+func (m *Session) InsufficientScope(resource acl.Resource, perms acl.Permissions) bool {
+	return !m.ValidateScope(resource, perms)
 }
 
 // SetScope sets a custom authentication scope.

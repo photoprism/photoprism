@@ -10,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -50,12 +51,12 @@ func DeleteSession(router *gin.RouterGroup) {
 		// Only admins may delete other sessions by ref id.
 		if rnd.IsRefID(id) {
 			if !acl.Rules.AllowAll(acl.ResourceSessions, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage}) {
-				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", "denied"}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
+				event.AuditErr([]string{clientIp, "session %s", "delete %s as %s", authn.Denied}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
 				Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 				return
 			}
 
-			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", "granted"}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
+			event.AuditInfo([]string{clientIp, "session %s", "delete %s as %s", authn.Granted}, s.RefID, acl.ResourceSessions.String(), s.UserRole())
 
 			if s = entity.FindSessionByRefID(id); s == nil {
 				Abort(c, http.StatusNotFound, i18n.ErrNotFound)
