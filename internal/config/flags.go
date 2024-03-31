@@ -572,6 +572,12 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DATABASE_PASSWORD"),
 		}}, {
 		Flag: cli.IntFlag{
+			Name:   "database-timeout",
+			Usage:  "timeout in `SECONDS` for establishing a database connection (1-60)",
+			EnvVar: EnvVar("DATABASE_TIMEOUT"),
+			Value:  15,
+		}}, {
+		Flag: cli.IntFlag{
 			Name:   "database-conns",
 			Usage:  "maximum `NUMBER` of open database connections",
 			EnvVar: EnvVar("DATABASE_CONNS"),

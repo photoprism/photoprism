@@ -128,6 +128,7 @@ type Options struct {
 	DatabaseServer        string        `yaml:"DatabaseServer" json:"-" flag:"database-server"`
 	DatabaseUser          string        `yaml:"DatabaseUser" json:"-" flag:"database-user"`
 	DatabasePassword      string        `yaml:"DatabasePassword" json:"-" flag:"database-password"`
+	DatabaseTimeout       int           `yaml:"DatabaseTimeout" json:"-" flag:"database-timeout"`
 	DatabaseConns         int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
 	DatabaseConnsIdle     int           `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
 	SipsBin               string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`

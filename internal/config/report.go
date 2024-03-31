@@ -179,6 +179,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"database-port", c.DatabasePortString()},
 		{"database-user", c.DatabaseUser()},
 		{"database-password", strings.Repeat("*", utf8.RuneCountInString(c.DatabasePassword()))},
+		{"database-timeout", fmt.Sprintf("%d", c.DatabaseTimeout())},
 		{"database-conns", fmt.Sprintf("%d", c.DatabaseConns())},
 		{"database-conns-idle", fmt.Sprintf("%d", c.DatabaseConnsIdle())},
 		{"mariadb-bin", c.MariadbBin()},
