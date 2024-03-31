@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -19,11 +20,25 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 		return nil, nil, "", false
 	}
 
+	// Get client IP address.
+	clientIp := header.ClientIP(c)
+
+	// Check request rate limit.
+	r := limiter.Auth.Request(clientIp)
+
+	// Abort if failure rate limit is exceeded.
+	if r.Reject() {
+		return nil, nil, "", false
+	}
+
 	// Get session ID for the auth token provided.
 	sid = rnd.SessionID(authToken)
 
 	// Check if client authorization has been cached to improve performance.
 	if cacheData, found := webdavAuthCache.Get(sid); found && cacheData != nil {
+		// Return the reserved request rate limit tokens after successful authentication.
+		r.Success()
+
 		// Add cached user information to the request context.
 		user = cacheData.(*entity.User)
 		return nil, user, sid, true
@@ -39,6 +54,9 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 		event.AuditErr([]string{header.ClientIP(c), "access webdav", "invalid auth token or secret"})
 		return nil, nil, sid, false
 	}
+
+	// Return the reserved request rate limit tokens after successful authentication.
+	r.Success()
 
 	// Update the client IP and the user agent from
 	// the request context if they have changed.

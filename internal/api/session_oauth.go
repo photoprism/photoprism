@@ -35,7 +35,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		if get.Config().Public() {
 			// Abort if running in public mode.
-			event.AuditErr([]string{clientIp, "client", "create session", "oauth2", "disabled in public mode"})
+			event.AuditErr([]string{clientIp, "client", "create session", "oauth2", authn.ErrDisabledInPublicMode.Error()})
 			AbortForbidden(c)
 			return
 		}
@@ -65,8 +65,11 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 		// Disable caching of responses.
 		c.Header(header.CacheControl, header.CacheControlNoStore)
 
-		// Fail if authentication error rate limit is exceeded.
-		if clientIp != "" && (limiter.Login.Reject(clientIp) || limiter.Auth.Reject(clientIp)) {
+		// Check request rate limit.
+		r := limiter.Login.Request(clientIp)
+
+		// Abort if request rate limit is exceeded.
+		if r.Reject() || limiter.Auth.Reject(clientIp) {
 			limiter.AbortJSON(c)
 			return
 		}
@@ -76,12 +79,11 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		// Abort if the client ID or secret are invalid.
 		if client == nil {
-			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "invalid client id"}, f.ClientID)
+			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", authn.ErrInvalidClientID.Error()}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
-			limiter.Login.Reserve(clientIp)
 			return
 		} else if !client.AuthEnabled {
-			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "authentication disabled"}, f.ClientID)
+			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", authn.ErrAuthenticationDisabled.Error()}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if method := client.Method(); !method.IsDefault() && method != authn.MethodOAuth2 {
@@ -89,16 +91,18 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
 		} else if client.WrongSecret(f.ClientSecret) {
-			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "invalid client secret"}, f.ClientID)
+			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", authn.ErrInvalidClientSecret.Error()}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
-			limiter.Login.Reserve(clientIp)
 			return
 		}
+
+		// Return the reserved request rate limit tokens after successful authentication.
+		r.Success()
 
 		// Create new client session.
 		sess := client.NewSession(c)
 
-		// Try to log in and save session if successful.
+		// Save new client session.
 		if sess, err = get.Session().Save(sess); err != nil {
 			event.AuditErr([]string{clientIp, "client %s", "create session", "oauth2", "%s"}, f.ClientID, err)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})

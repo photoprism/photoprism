@@ -9,14 +9,21 @@ import (
 
 // Generic error messages for authentication and authorization:
 var (
-	ErrUnauthorized         = errors.New("unauthorized")
-	ErrAccountAlreadyExists = errors.New("account already exists")
-	ErrAccountNotFound      = errors.New("account not found")
-	ErrAccountDisabled      = errors.New("account disabled")
-	ErrInvalidCredentials   = errors.New("invalid credentials")
-	ErrInvalidShareToken    = errors.New("invalid share token")
-	ErrInsufficientScope    = errors.New("insufficient scope")
-	ErrDisabledInPublicMode = errors.New("disabled in public mode")
+	ErrUnauthorized           = errors.New("unauthorized")
+	ErrAccountAlreadyExists   = errors.New("account already exists")
+	ErrAccountNotFound        = errors.New("account not found")
+	ErrAccountDisabled        = errors.New("account disabled")
+	ErrInvalidCredentials     = errors.New("invalid credentials")
+	ErrInvalidShareToken      = errors.New("invalid share token")
+	ErrInsufficientScope      = errors.New("insufficient scope")
+	ErrDisabledInPublicMode   = errors.New("disabled in public mode")
+	ErrAuthenticationDisabled = errors.New("authentication disabled")
+)
+
+// OAuth2-related error messages:
+var (
+	ErrInvalidClientID     = errors.New("invalid client id")
+	ErrInvalidClientSecret = errors.New("invalid client secret")
 )
 
 // Username-related error messages:

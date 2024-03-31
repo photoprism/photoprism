@@ -32,12 +32,22 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
+		// Check request rate limit.
+		r := limiter.Login.Request(ClientIP(c))
+
+		if r.Reject() {
+			limiter.AbortJSON(c)
+			return
+		}
+
 		// Check if the account password is correct.
 		if user.WrongPassword(frm.Password) {
-			limiter.Login.Reserve(ClientIP(c))
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
 			return
 		}
+
+		// Return the reserved request rate limit tokens after successful authentication.
+		r.Success()
 
 		// Get config.
 		conf := get.Config()
@@ -76,7 +86,15 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		// Verify new passcode.
+		// Check request rate limit.
+		r := limiter.Login.RequestN(ClientIP(c), 3)
+
+		if r.Reject() {
+			limiter.AbortJSON(c)
+			return
+		}
+
+		// Verify passcode.
 		valid, passcode, err := user.VerifyPasscode(frm.Passcode)
 
 		if err != nil {
@@ -84,11 +102,13 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPasscode)
 			return
 		} else if !valid {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "users", user.UserName, "incorrect passcode"}, s.RefID)
-			limiter.Login.ReserveN(ClientIP(c), 3)
+			event.AuditWarn([]string{ClientIP(c), "session %s", "users", user.UserName, authn.ErrInvalidPasscode.Error()}, s.RefID)
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPasscode)
 			return
 		}
+
+		// Return the reserved request rate limit tokens after successful authentication.
+		r.Success()
 
 		event.AuditInfo([]string{ClientIP(c), "session %s", "users", user.UserName, "passcode", "verified"}, s.RefID)
 
@@ -147,12 +167,22 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
+		// Check request rate limit.
+		r := limiter.Login.Request(ClientIP(c))
+
+		if r.Reject() {
+			limiter.AbortJSON(c)
+			return
+		}
+
 		// Check if the account password is correct.
 		if user.WrongPassword(frm.Password) {
-			limiter.Login.Reserve(ClientIP(c))
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
 			return
 		}
+
+		// Return the reserved request rate limit tokens after successful authentication.
+		r.Success()
 
 		// Delete passcode.
 		if _, err := user.DeactivatePasscode(); err != nil {

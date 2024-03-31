@@ -29,16 +29,21 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check limit for failed auth requests (max. 10 per minute).
-		if limiter.Login.Reject(ClientIP(c)) {
-			limiter.AbortJSON(c)
-			return
-		}
-
 		// Get session.
 		s := Auth(c, acl.ResourcePassword, acl.ActionUpdate)
 
 		if s.Abort(c) {
+			return
+		}
+
+		// Get client IP address.
+		clientIp := ClientIP(c)
+
+		// Check request rate limit.
+		r := limiter.Login.Request(clientIp)
+
+		if r.Reject() {
+			limiter.AbortJSON(c)
 			return
 		}
 
@@ -73,10 +78,12 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 		if isSuperAdmin && f.OldPassword == "" {
 			// Do nothing.
 		} else if u.WrongPassword(f.OldPassword) {
-			limiter.Login.Reserve(ClientIP(c))
 			Abort(c, http.StatusBadRequest, i18n.ErrInvalidPassword)
 			return
 		}
+
+		// Return the reserved request rate limit tokens after successful authentication.
+		r.Success()
 
 		// Set new password.
 		if err := u.SetPassword(f.NewPassword); err != nil {

@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/internal/ttl"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/header"
@@ -120,9 +121,9 @@ func (c *Config) HttpVideoMaxAge() ttl.Duration {
 
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpHost() string {
-	// when unix socket used as host, make host as default value. or http client will act weirdly.
+	// Set http host to "0.0.0.0" if unix socket is used to serve requests.
 	if c.options.HttpHost == "" {
-		return "0.0.0.0"
+		return limiter.DefaultIP
 	}
 
 	return c.options.HttpHost

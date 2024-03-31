@@ -19,19 +19,22 @@ func Session(clientIp, authToken string) *entity.Session {
 		return nil
 	}
 
-	// Fail if authentication error rate limit is exceeded.
-	if clientIp != "" && limiter.Auth.Reject(clientIp) {
+	// Check request rate limit.
+	r := limiter.Auth.Request(clientIp)
+
+	if r.Reject() {
 		return nil
 	}
 
 	// Find the session based on the hashed auth token, or return nil otherwise.
-	if s, err := entity.FindSession(rnd.SessionID(authToken)); err != nil {
-		if clientIp != "" {
-			limiter.Auth.Reserve(clientIp)
-		}
+	s, err := entity.FindSession(rnd.SessionID(authToken))
 
+	if err != nil {
 		return nil
-	} else {
-		return s
 	}
+
+	// Return the reserved request rate limit tokens after successful authentication.
+	r.Success()
+
+	return s
 }

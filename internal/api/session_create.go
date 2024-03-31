@@ -56,8 +56,16 @@ func CreateSession(router *gin.RouterGroup) {
 			return
 		}
 
-		// Fail if authentication error rate limit is exceeded.
-		if clientIp != "" && (limiter.Login.Reject(clientIp) || limiter.Auth.Reject(clientIp)) {
+		// Check request rate limit.
+		var r *limiter.Request
+		if f.Passcode == "" {
+			r = limiter.Login.Request(clientIp)
+		} else {
+			r = limiter.Login.RequestN(clientIp, 3)
+		}
+
+		// Abort if failure rate limit is exceeded.
+		if r.Reject() || limiter.Auth.Reject(clientIp) {
 			limiter.AbortJSON(c)
 			return
 		}
@@ -81,6 +89,8 @@ func CreateSession(router *gin.RouterGroup) {
 				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			} else if errors.Is(err, authn.ErrPasscodeRequired) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrPasscodeRequired, "message": i18n.Msg(i18n.ErrPasscodeRequired)})
+				// Return the reserved request rate limit tokens if password is correct, even if the verification code is missing.
+				r.Success()
 			} else {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrInvalidPasscode, "message": i18n.Msg(i18n.ErrInvalidPasscode)})
 			}
@@ -97,6 +107,9 @@ func CreateSession(router *gin.RouterGroup) {
 		} else {
 			event.AuditInfo([]string{clientIp, "session %s", "updated"}, sess.RefID)
 		}
+
+		// Return the reserved request rate limit tokens after successful authentication.
+		r.Success()
 
 		// Response includes user data, session data, and client config values.
 		response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))

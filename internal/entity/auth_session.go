@@ -14,6 +14,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
@@ -28,7 +29,7 @@ import (
 // SessionPrefix for RefID.
 const (
 	SessionPrefix = "sess"
-	UnknownIP     = "0.0.0.0"
+	UnknownIP     = limiter.DefaultIP
 )
 
 // Sessions represents a list of sessions.
@@ -976,7 +977,7 @@ func (m *Session) IP() string {
 	if m.ClientIP != "" {
 		return m.ClientIP
 	} else {
-		return "0.0.0.0"
+		return UnknownIP
 	}
 }
 
