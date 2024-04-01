@@ -554,7 +554,7 @@ func (m *MediaFile) Move(dest string) error {
 	}
 
 	if err := os.Rename(m.fileName, dest); err != nil {
-		log.Debugf("failed renaming file, fallback to copy and delete: %s", err.Error())
+		log.Debugf("move: cannot rename file, fallback to copy and delete (%s)", clean.Error(err))
 	} else {
 		m.SetFileName(dest)
 
