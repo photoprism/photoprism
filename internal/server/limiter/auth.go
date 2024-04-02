@@ -8,9 +8,9 @@ import (
 
 const (
 	DefaultAuthInterval  = time.Second * 10 // average authentication errors per second
-	DefaultAuthLimit     = 60               // authentication error burst rate limit
+	DefaultAuthLimit     = 60               // authentication failure burst rate limit (for access tokens)
 	DefaultLoginInterval = time.Minute      // average failed logins per second
-	DefaultLoginLimit    = 10               // failed logins burst rate limit
+	DefaultLoginLimit    = 10               // login failure burst rate limit (for passwords and 2FA)
 )
 
 // Auth limits the number of authentication errors from a single IP per time interval (every 15 seconds by default).
