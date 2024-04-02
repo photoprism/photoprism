@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-06-07 08:37+0000\n"
-"Last-Translator: leosamuele221 <leosamuele221@gmail.com>\n"
+"PO-Revision-Date: 2024-04-02 08:33+0000\n"
+"Last-Translator: Andrea Risso <andry.riss@gmail.com>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/"
 "backend/it/>\n"
 "Language: it\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 5.4.2\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -49,11 +49,11 @@ msgstr "File troppo grande"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Non supportato"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Formato non supportato"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -141,11 +141,11 @@ msgstr "Impossibile connettersi, si prega di riprovare"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "Inserisci codice di verifica"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Codice di verifica errato, prova di nuovo"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +389,11 @@ msgstr "%s è stato ripristinato"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Verifica avvenuta con successo"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Attivazione avvenuta con successo"
 
 #~ msgid "Invalid request"
 #~ msgstr "Richiesta non valida"
