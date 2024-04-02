@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-04-02 08:33+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/frontend/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -172,7 +172,7 @@ msgstr "Dopo 7 giorni"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr ""
+msgstr "Dopo aver re inserito la password, potrai attivare l’autenticazione a due fattori con un’applicazione di autenticazione o un dispositivo compatibile"
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -601,7 +601,7 @@ msgstr "Confidenza"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr ""
+msgstr "Conferma"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -651,7 +651,7 @@ msgstr "Copiato negli appunti"
 
 #: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
-msgstr ""
+msgstr "Copia"
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -712,7 +712,7 @@ msgstr "Giorni"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "Disattiva"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -976,7 +976,7 @@ msgstr ""
 
 #: src/common/api.js:115
 msgid "Enter verification code"
-msgstr ""
+msgstr "Inserisci codice di verifica"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -2418,7 +2418,7 @@ msgstr "Oggetto"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr ""
+msgstr "Attivazione avvenuta con successo"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2430,7 +2430,7 @@ msgstr "Eliminato con successo"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr ""
+msgstr "Verifica avvenuta con successo"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2758,7 +2758,7 @@ msgstr "Vettori"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:97
 msgid "Verification Code"
-msgstr ""
+msgstr "Codice di verifica"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
