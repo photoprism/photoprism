@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"errors"
 	"fmt"
 	"image"
 	_ "image/gif"
@@ -116,15 +117,15 @@ func (m *MediaFile) Stat() (size int64, mod time.Time, err error) {
 		return m.fileSize, m.modTime, m.statErr
 	}
 
-	if s, err := os.Stat(m.fileNameResolved); err != nil {
-		m.statErr = err
+	if stat, statErr := os.Stat(m.fileNameResolved); statErr != nil {
+		m.statErr = statErr
 		m.modTime = time.Time{}
 		m.fileSize = -1
 	} else {
-		s.Mode()
+		stat.Mode()
 		m.statErr = nil
-		m.modTime = s.ModTime().UTC().Truncate(time.Second)
-		m.fileSize = s.Size()
+		m.modTime = stat.ModTime().UTC().Truncate(time.Second)
+		m.fileSize = stat.Size()
 	}
 
 	return m.fileSize, m.modTime, m.statErr
@@ -135,6 +136,19 @@ func (m *MediaFile) ModTime() time.Time {
 	_, modTime, _ := m.Stat()
 
 	return modTime
+}
+
+// SetModTime sets the file modification time.
+func (m *MediaFile) SetModTime(modTime time.Time) *MediaFile {
+	modTime = modTime.UTC()
+
+	if err := os.Chtimes(m.FileName(), time.Time{}, modTime); err != nil {
+		log.Debugf("media: failed to set mtime for %s (%s)", clean.Log(m.RootRelName()), clean.Error(err))
+	} else {
+		m.modTime = modTime
+	}
+
+	return m
 }
 
 // FileSize returns the file size in bytes.
@@ -549,18 +563,32 @@ func (m *MediaFile) HasSameName(f *MediaFile) bool {
 
 // Move file to a new destination with the filename provided in parameter.
 func (m *MediaFile) Move(dest string) error {
-	if err := fs.MkdirAll(filepath.Dir(dest)); err != nil {
+	destName := filepath.Base(dest)
+	destDir := filepath.Dir(dest)
+
+	// Check destination filename and create path if it does not exist yet.
+	if destName == "" {
+		return errors.New("move: invalid destination filename")
+	} else if destDir == "" {
+		return errors.New("move: invalid destination path")
+	} else if err := fs.MkdirAll(destDir); err != nil {
 		return err
 	}
 
+	// Remember file modification time.
+	modTime := m.ModTime()
+
+	// First try to rename existing file as that's faster than copying it and then deleting the original.
 	if err := os.Rename(m.fileName, dest); err != nil {
-		log.Debugf("move: cannot rename file, fallback to copy and delete (%s)", clean.Error(err))
+		log.Tracef("move: cannot rename %s, fallback to copy and delete (%s)", clean.Log(destName), clean.Error(err))
 	} else {
 		m.SetFileName(dest)
+		m.SetModTime(modTime)
 
 		return nil
 	}
 
+	// If renaming is not possible, copy the file and then delete the original.
 	if err := m.Copy(dest); err != nil {
 		return err
 	}
@@ -576,7 +604,15 @@ func (m *MediaFile) Move(dest string) error {
 
 // Copy a MediaFile to another file by destinationFilename.
 func (m *MediaFile) Copy(dest string) error {
-	if err := fs.MkdirAll(filepath.Dir(dest)); err != nil {
+	destName := filepath.Base(dest)
+	destDir := filepath.Dir(dest)
+
+	// Check destination filename and create path if it does not exist yet.
+	if destName == "" {
+		return errors.New("copy: invalid destination filename")
+	} else if destDir == "" {
+		return errors.New("copy: invalid destination path")
+	} else if err := fs.MkdirAll(destDir); err != nil {
 		return err
 	}
 
@@ -599,7 +635,13 @@ func (m *MediaFile) Copy(dest string) error {
 		return err
 	}
 
-	defer destFile.Close()
+	defer func() {
+		if err = destFile.Close(); err != nil {
+			log.Debugf("copy: failed to close %s (%s)", clean.Log(destName), clean.Error(err))
+		} else if err = os.Chtimes(dest, time.Time{}, m.ModTime()); err != nil {
+			log.Debugf("copy: failed to set mtime for %s (%s)", clean.Log(destName), clean.Error(err))
+		}
+	}()
 
 	_, err = io.Copy(destFile, thisFile)
 
