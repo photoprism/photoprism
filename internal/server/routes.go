@@ -91,6 +91,7 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Photo Search and Organization.
 	api.SearchPhotos(APIv1)
 	api.SearchGeo(APIv1)
+	api.SearchSimilar(APIv1)
 	api.GetPhoto(APIv1)
 	api.GetPhotoYaml(APIv1)
 	api.UpdatePhoto(APIv1)

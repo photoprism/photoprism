@@ -1213,6 +1213,22 @@ export class Photo extends RestModel {
 
     return results.concat(response.models);
   }
+
+  static searchSimilar(uid) {
+    return Api.get(`/photos/${uid}/similar`).then((resp) => {
+      let count = resp.data ? resp.data.length : 0;
+
+      resp.models = [];
+
+      if (count > 0) {
+        for (let i = 0; i < resp.data.length; i++) {
+          resp.models.push(new this(resp.data[i]));
+        }
+      }
+
+      return Promise.resolve(resp);
+    });
+  }
 }
 
 export default Photo;

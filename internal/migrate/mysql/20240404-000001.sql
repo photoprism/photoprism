@@ -1,0 +1,1 @@
+ALTER TABLE files ADD COLUMN IF NOT EXISTS photo_embeddings BLOB AFTER photo_taken_at;

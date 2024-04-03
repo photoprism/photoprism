@@ -141,6 +141,12 @@
 
           <div class="pa-3 card-details">
             <div>
+              <template v-if="filter.order === 'similar'">
+                  <button :title="$gettext('Similarity score')" @click.exact="downloadFile(index)">
+                    <i>image_search</i>
+                    {{ photo.SimilarityScore?.toFixed(3) }}
+                  </button>
+              </template>
               <h3 class="body-2 mb-2" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
                   {{ photo.Title | truncate(80) }}

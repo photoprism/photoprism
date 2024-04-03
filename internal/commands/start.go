@@ -120,6 +120,12 @@ func startAction(ctx *cli.Context) error {
 		log.Infof("config: enabled read-only mode")
 	}
 
+	go func() {
+		if err := photoprism.PopulateEmbeddingsIndex(conf); err != nil {
+			log.Warnf("index: %s in optimization worker", err)
+		}
+	}()
+
 	// Start Web server.
 	go server.Start(cctx, conf)
 

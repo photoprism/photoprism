@@ -36,6 +36,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/DataIntelligenceCrew/go-faiss"
 	"github.com/dustin/go-humanize"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -67,16 +68,17 @@ var log = event.Log
 
 // Config holds database, cache and all parameters of photoprism
 type Config struct {
-	once     sync.Once
-	cliCtx   *cli.Context
-	options  *Options
-	settings *customize.Settings
-	db       *gorm.DB
-	hub      *hub.Config
-	token    string
-	serial   string
-	env      string
-	start    bool
+	once            sync.Once
+	cliCtx          *cli.Context
+	options         *Options
+	settings        *customize.Settings
+	db              *gorm.DB
+	hub             *hub.Config
+	embeddingsIndex *faiss.IndexImpl
+	token           string
+	serial          string
+	env             string
+	start           bool
 }
 
 func init() {
@@ -316,6 +318,12 @@ func (c *Config) Init() error {
 	} else if !c.Sponsor() {
 		log.Info(MsgSponsor)
 		log.Info(MsgSignUp)
+	}
+
+	if !c.DisableClip() {
+		if err := c.initEmbeddingsIndex(); err != nil {
+			return err
+		}
 	}
 
 	// Show log message.
@@ -714,6 +722,10 @@ func (c *Config) Shutdown() {
 		log.Errorf("could not close database connection: %s", err)
 	} else {
 		log.Debug("closed database connection")
+	}
+
+	if c.embeddingsIndex != nil {
+		c.embeddingsIndex.Delete()
 	}
 }
 

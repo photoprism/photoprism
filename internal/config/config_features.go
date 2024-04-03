@@ -78,6 +78,14 @@ func (c *Config) DisableClassification() bool {
 	return false
 }
 
+// DisableClip tests if all features depending on TensorFlow should be disabled.
+func (c *Config) DisableClip() bool {
+	if c.DisableTensorFlow() || c.options.DisableClip {
+		return true
+	}
+	return false
+}
+
 // DisableFFmpeg checks if FFmpeg is disabled for video transcoding.
 func (c *Config) DisableFFmpeg() bool {
 	if c.options.DisableFFmpeg {

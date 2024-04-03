@@ -12,6 +12,7 @@ import (
 	"github.com/karrick/godirwalk"
 
 	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/clip_embeddings"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -26,36 +27,40 @@ import (
 
 // Index represents an indexer that indexes files in the originals directory.
 type Index struct {
-	conf         *config.Config
-	tensorFlow   *classify.TensorFlow
-	nsfwDetector *nsfw.Detector
-	faceNet      *face.Net
-	convert      *Convert
-	files        *Files
-	photos       *Photos
-	lastRun      time.Time
-	lastFound    int
-	findFaces    bool
-	findLabels   bool
+	conf             *config.Config
+	tensorFlow       *classify.TensorFlow
+	nsfwDetector     *nsfw.Detector
+	faceNet          *face.Net
+	clipEmbeddings   *clip_embeddings.TensorFlow
+	convert          *Convert
+	files            *Files
+	photos           *Photos
+	lastRun          time.Time
+	lastFound        int
+	findFaces        bool
+	findLabels       bool
+	createEmbeddings bool
 }
 
 // NewIndex returns a new indexer and expects its dependencies as arguments.
-func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, convert *Convert, files *Files, photos *Photos) *Index {
+func NewIndex(conf *config.Config, tensorFlow *classify.TensorFlow, nsfwDetector *nsfw.Detector, faceNet *face.Net, clipEmbeddings *clip_embeddings.TensorFlow, convert *Convert, files *Files, photos *Photos) *Index {
 	if conf == nil {
 		log.Errorf("index: config is not set")
 		return nil
 	}
 
 	i := &Index{
-		conf:         conf,
-		tensorFlow:   tensorFlow,
-		nsfwDetector: nsfwDetector,
-		faceNet:      faceNet,
-		convert:      convert,
-		files:        files,
-		photos:       photos,
-		findFaces:    !conf.DisableFaces(),
-		findLabels:   !conf.DisableClassification(),
+		conf:             conf,
+		tensorFlow:       tensorFlow,
+		nsfwDetector:     nsfwDetector,
+		faceNet:          faceNet,
+		clipEmbeddings:   clipEmbeddings,
+		convert:          convert,
+		files:            files,
+		photos:           photos,
+		findFaces:        !conf.DisableFaces(),
+		findLabels:       !conf.DisableClassification(),
+		createEmbeddings: !conf.DisableClip(),
 	}
 
 	return i
@@ -108,6 +113,12 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	defer mutex.MainWorker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
+		log.Errorf("index: %s", clean.Error(err))
+
+		return found, updated
+	}
+
+	if err := ind.clipEmbeddings.Init(); err != nil {
 		log.Errorf("index: %s", clean.Error(err))
 
 		return found, updated

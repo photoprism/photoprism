@@ -117,6 +117,7 @@ type ClientDisable struct {
 	TensorFlow     bool `json:"tensorflow"`
 	Faces          bool `json:"faces"`
 	Classification bool `json:"classification"`
+	Clip           bool `json:"clip"`
 	Sips           bool `json:"sips"`
 	FFmpeg         bool `json:"ffmpeg"`
 	ExifTool       bool `json:"exiftool"`
@@ -421,6 +422,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 			TensorFlow:     c.DisableTensorFlow(),
 			Faces:          c.DisableFaces(),
 			Classification: c.DisableClassification(),
+			Clip:           c.DisableClip(),
 			Sips:           c.DisableSips(),
 			FFmpeg:         c.DisableFFmpeg(),
 			ExifTool:       c.DisableExifTool(),

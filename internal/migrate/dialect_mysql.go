@@ -171,4 +171,10 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"TRUNCATE auth_sessions;"},
 	},
+	{
+		ID:         "20240404-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE files ADD COLUMN IF NOT EXISTS photo_embeddings BLOB AFTER photo_taken_at;"},
+	},
 }

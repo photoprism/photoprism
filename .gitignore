@@ -17,6 +17,7 @@
 /assets/facenet
 /assets/nasnet
 /assets/nsfw
+/assets/clip
 /assets/static/build/
 /package-lock.json
 /frontend/tests_output

@@ -756,6 +756,18 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 
+		// Create image embeddings vecor
+		if ind.createEmbeddings {
+			vector := ind.Embeddings(m)
+			if len(vector) > 0 {
+				file.PhotoEmbeddings = vector
+				err := conf.AddToEmbeddingsIndex(int64(file.PhotoID), vector)
+				if err != nil {
+					log.Warnf("embeddings: failed adding photo embeddings to index %v", err)
+				}
+			}
+		}
+
 		// Read metadata from embedded Exif and JSON sidecar file, if exists.
 		if data := m.MetaData(); data.Error == nil {
 			// Update basic metadata.

@@ -70,6 +70,14 @@
           </template>
         </v-tab>
 
+        <v-tab id="tab-similar" ripple>
+          <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Similar photos')">image_search</v-icon>
+          <template v-else>
+            <v-icon :size="18" :left="!rtl" :right="rtl">image_search</v-icon>
+            <translate key="Similar photos">Similar photos</translate>
+          </template>
+        </v-tab>
+
         <v-tab v-if="$config.feature('edit')" id="tab-info" ripple>
           <v-icon>settings</v-icon>
         </v-tab>
@@ -91,6 +99,10 @@
             <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
           </v-tab-item>
 
+          <v-tab-item lazy>
+            <p-tab-photo-similar :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-similar>
+          </v-tab-item>
+
           <v-tab-item v-if="$config.feature('edit')" lazy>
             <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
           </v-tab-item>
@@ -105,6 +117,7 @@ import PhotoDetails from "./edit/details.vue";
 import PhotoLabels from "./edit/labels.vue";
 import PhotoPeople from "./edit/people.vue";
 import PhotoFiles from "./edit/files.vue";
+import PhotoSimilar from "./edit/similar.vue";
 import PhotoInfo from "./edit/info.vue";
 import Event from "pubsub-js";
 
@@ -115,6 +128,7 @@ export default {
     "p-tab-photo-labels": PhotoLabels,
     "p-tab-photo-people": PhotoPeople,
     "p-tab-photo-files": PhotoFiles,
+    "p-tab-photo-similar": PhotoSimilar,
     "p-tab-photo-info": PhotoInfo,
   },
   props: {
