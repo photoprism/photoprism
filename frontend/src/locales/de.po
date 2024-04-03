@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-03 10:08+0000\n"
+"PO-Revision-Date: 2024-04-03 10:23+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -2196,7 +2196,7 @@ msgstr "Scans"
 #: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
 #: src/dialog/account/apps.vue:153
 msgid "Scope"
-msgstr "Umfang"
+msgstr "Berechtigung"
 
 #: src/component/navigation.vue:65 src/component/navigation.vue:75
 #: src/component/navigation.vue:566 src/component/navigation.vue:4
