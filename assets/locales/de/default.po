@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-03-29 12:10+0000\n"
+"PO-Revision-Date: 2024-04-03 10:23+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/"
 "backend/de/>\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.16.2\n"
+"X-Generator: Weblate 5.4.2\n"
 "X-Poedit-Basepath: .\n"
 
 #: messages.go:100
@@ -50,11 +50,11 @@ msgstr "Datei zu groß"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Wird nicht unterstützt"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Typ wird nicht unterstützt"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -142,11 +142,11 @@ msgstr "Verbindung fehlgeschlagen"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "Verifizierungscode eingeben"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Ungültiger Verifizierungscode, bitte erneut versuchen"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -390,11 +390,11 @@ msgstr "%s wurde wiederhergestellt"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Erfolgreich verifiziert"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Erfolgreich aktiviert"
 
 #~ msgid "Invalid request"
 #~ msgstr "Ungültige Anfrage"
