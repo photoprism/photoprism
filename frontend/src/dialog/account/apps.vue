@@ -18,51 +18,32 @@
         <v-card-text class="py-0 px-2">
           <v-layout wrap align-top>
             <v-flex xs12 class="pa-2 body-2">
-              <translate>To create a new app-specific password, please enter the name and type of the application and select an expiration date:</translate>
+              <translate>To create a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:</translate>
             </v-flex>
             <v-flex xs12 class="pa-2">
               <v-text-field
+                v-model="newApp.Name"
                 :disabled="busy"
                 name="appname"
                 type="text"
-                :label="$gettext('App Name')"
-                hide-details
+                :label="$gettext('Name')"
                 required
                 autofocus
-                solo
-                flat
+                hide-details
+                box
                 autocorrect="off"
                 autocapitalize="none"
                 autocomplete="off"
                 browser-autocomplete="off"
-                prepend-inner-icon="devices"
-                class="input-appname text-selectable"
+                class="input-name text-selectable"
                 color="secondary-dark"
               ></v-text-field>
             </v-flex>
-            <v-flex xs12 class="pa-2">
-              <v-text-field
-                v-model="password"
-                :disabled="busy"
-                name="password"
-                :type="showPassword ? 'text' : 'password'"
-                :label="$gettext('Password')"
-                hide-details
-                required
-                autofocus
-                solo
-                flat
-                autocorrect="off"
-                autocapitalize="none"
-                autocomplete="current-password"
-                browser-autocomplete="current-password"
-                class="input-password text-selectable"
-                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                prepend-inner-icon="lock"
-                color="secondary-dark"
-                @click:append="showPassword = !showPassword"
-                @keyup.enter.native="onSetup"
-              ></v-text-field>
+            <v-flex xs12 sm6 class="pa-2">
+              <v-select v-model="newApp.Scope" hide-details box :disabled="busy" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" class="input-scope"></v-select>
+            </v-flex>
+            <v-flex xs12 sm6 class="pa-2">
+              <v-select v-model="newApp.Expires" :disabled="busy" :label="$gettext('Expires')" browser-autocomplete="off" hide-details box flat color="secondary-dark" class="input-expires" item-text="text" item-value="value" :items="options.Expires()"></v-select>
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -72,7 +53,7 @@
               <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                 <translate>Close</translate>
               </v-btn>
-              <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" @click.stop="close">
+              <v-btn depressed color="primary-button" disabled class="action-create white--text compact mr-0" @click.stop="close">
                 <translate>Create</translate>
               </v-btn>
             </v-flex>
@@ -84,7 +65,9 @@
 </template>
 <script>
 import User from "model/user";
-import Util from "../../common/util";
+import Util from "common/util";
+import * as auth from "options/auth";
+import * as options from "options/options";
 
 export default {
   name: "PAccountAppsDialog",
@@ -97,6 +80,8 @@ export default {
   },
   data() {
     return {
+      auth,
+      options,
       busy: false,
       isDemo: this.$config.get("demo"),
       isPublic: this.$config.get("public"),
@@ -107,6 +92,11 @@ export default {
       rtl: this.$rtl,
       passwords: [],
       user: this.$session.getUser(),
+      newApp: {
+        Name: "",
+        Scope: "*",
+        Expires: 0,
+      },
     };
   },
   computed: {

@@ -197,7 +197,7 @@
               </v-btn>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-apps-dialog compact" :disabled="true" @click.stop="showDialog('apps')">
+              <v-btn block depressed color="secondary-light" class="action-apps-dialog compact" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
                 <translate>Apps and Devices</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>devices</v-icon>
               </v-btn>

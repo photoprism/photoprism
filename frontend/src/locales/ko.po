@@ -301,10 +301,6 @@ msgstr "모든 비공개 사진과 동영상은 비공개로 유지되며 공유
 msgid "API Key"
 msgstr "API 키"
 
-#: src/dialog/account/apps.vue:122
-msgid "App Name"
-msgstr ""
-
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "애플리케이션"
@@ -562,7 +558,7 @@ msgid "Client Credentials"
 msgstr "클라이언트 자격 증명"
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
-#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:34
+#: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:37
 #: src/dialog/account/passcode.vue:37 src/dialog/account/passcode.vue:135
 #: src/dialog/account/passcode.vue:154 src/dialog/account/passcode.vue:18
 #: src/dialog/account/passcode.vue:25 src/dialog/account/passcode.vue:12
@@ -643,7 +639,7 @@ msgstr "기여자"
 msgid "Converting"
 msgstr "변환하는 중"
 
-#: src/dialog/account/apps.vue:52 src/dialog/account/passcode.vue:66
+#: src/dialog/account/apps.vue:61 src/dialog/account/passcode.vue:66
 #: src/dialog/photo/edit/files.vue:64 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:61 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
@@ -666,7 +662,7 @@ msgstr "아무것도 찾을 수 없습니다."
 msgid "Country"
 msgstr "나라"
 
-#: src/dialog/account/apps.vue:37
+#: src/dialog/account/apps.vue:40
 msgid "Create"
 msgstr ""
 
@@ -1022,8 +1018,8 @@ msgstr "확장 검색"
 msgid "Experimental Features"
 msgstr "실험실 기능"
 
-#: src/page/admin/sessions.vue:98 src/dialog/service/edit.vue:249
-#: src/dialog/share.vue:67
+#: src/page/admin/sessions.vue:98 src/dialog/account/apps.vue:172
+#: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
 msgstr "만료"
 
@@ -1043,7 +1039,7 @@ msgstr "얼굴"
 msgid "Faces"
 msgstr "얼굴"
 
-#: src/dialog/account/apps.vue:54 src/dialog/account/passcode.vue:68
+#: src/dialog/account/apps.vue:63 src/dialog/account/passcode.vue:68
 #: src/dialog/photo/edit/files.vue:66 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:63 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
@@ -1160,6 +1156,10 @@ msgstr "FPS"
 #: src/dialog/photo/edit/files.vue:127 src/dialog/photo/edit/files.vue:124
 msgid "Frames"
 msgstr "프레임"
+
+#: src/options/auth.js:53 src/options/auth.js:63
+msgid "Full Access"
+msgstr ""
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1632,12 +1632,13 @@ msgstr "8자 이상이어야 합니다."
 
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:234
-#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
-#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/info.vue:76
-#: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
-#: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
-#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:146 src/page/labels.vue:347
+#: src/dialog/account/apps.vue:125 src/dialog/album/edit.vue:105
+#: src/dialog/photo/edit/files.vue:42 src/dialog/photo/edit/info.vue:31
+#: src/dialog/photo/edit/info.vue:76 src/dialog/photo/edit/labels.vue:84
+#: src/dialog/photo/edit/labels.vue:200 src/dialog/photo/edit/people.vue:26
+#: src/dialog/photo/edit/people.vue:226 src/dialog/service/edit.vue:427
+#: src/page/about/feedback.vue:174 src/page/albums.vue:89
+#: src/page/auth/login.vue:146 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1860,10 +1861,10 @@ msgstr "파노라마"
 msgid "Panoramas"
 msgstr "파노라마"
 
-#: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:150
-#: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
-#: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/auth/login.vue:178
+#: src/dialog/admin/users/add.vue:123 src/dialog/account/passcode.vue:150
+#: src/dialog/account/passcode.vue:612 src/dialog/service/add.vue:126
+#: src/dialog/service/edit.vue:487 src/dialog/share.vue:24
+#: src/page/auth/login.vue:178
 msgid "Password"
 msgstr "비밀번호"
 
@@ -2052,6 +2053,10 @@ msgstr "날것의"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "이미 인덱싱되고 변경되지 않은 파일을 포함하여 모든 원본을 다시 인덱싱합니다."
 
+#: src/options/auth.js:54 src/options/auth.js:67
+msgid "Read Only"
+msgstr ""
+
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "읽기 전용 모드"
@@ -2189,6 +2194,7 @@ msgid "Scans"
 msgstr "스켄"
 
 #: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
+#: src/dialog/account/apps.vue:153
 msgid "Scope"
 msgstr "범위"
 
@@ -2534,7 +2540,7 @@ msgid "To avoid being locked out of your account, please download, print or copy
 msgstr ""
 
 #: src/dialog/account/apps.vue:20
-msgid "To create a new app-specific password, please enter the name and type of the application and select an expiration date:"
+msgid "To create a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
 msgstr ""
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
@@ -2811,7 +2817,7 @@ msgid "Web Login"
 msgstr "웹 로그인"
 
 #: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
-#: src/page/admin/users.vue:47
+#: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:71
 msgid "WebDAV"
 msgstr "WebDAV"
 

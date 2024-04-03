@@ -1,6 +1,6 @@
 import { $gettext } from "common/vm";
 
-// All user role with their display name.
+// Providers maps account roles to their display name.
 export const Roles = () => {
   return {
     admin: $gettext("Admin"),
@@ -14,7 +14,7 @@ export const Roles = () => {
   };
 };
 
-// AuthProviders maps known auth providers to their display name.
+// Providers maps authentication providers to their display name.
 export const Providers = () => {
   return {
     "": $gettext("Default"),
@@ -32,7 +32,7 @@ export const Providers = () => {
   };
 };
 
-// AuthMethods maps known auth methods to their display name.
+// Methods maps authentication methods to their display name.
 export const Methods = () => {
   return {
     "": $gettext("Default"),
@@ -45,4 +45,31 @@ export const Methods = () => {
     "2fa": $gettext("2FA"),
     oidc: "OIDC",
   };
+};
+
+// Scopes maps application scope types to their display name.
+export const Scopes = () => {
+  return {
+    "*": $gettext("Full Access"),
+    read: $gettext("Read Only"),
+    webdav: $gettext("WebDAV"),
+  };
+};
+
+// ScopeOptions returns selectable application scope types.
+export const ScopeOptions = () => {
+  return [
+    {
+      text: $gettext("Full Access"),
+      value: "*",
+    },
+    {
+      text: $gettext("Read Only"),
+      value: "read",
+    },
+    {
+      text: $gettext("WebDAV"),
+      value: "webdav",
+    },
+  ];
 };
