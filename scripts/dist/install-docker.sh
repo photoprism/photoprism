@@ -20,7 +20,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 
 # Install Docker with Compose Plugin.
 sudo apt-get update
-sudo apt-get -qq install docker-ce docker-ce-cli docker-ce-rootless-extras containerd.io docker-compose-plugin cgroupfs-mount libltdl7 pigz
+sudo apt-get -qq install docker-ce docker-ce-cli docker-ce-rootless-extras containerd.io docker-buildx-plugin docker-compose-plugin cgroupfs-mount libltdl7 pigz
 
 # Add docker-compose alias for Compose Plugin.
 if [ ! -f "/bin/docker-compose" ]; then
