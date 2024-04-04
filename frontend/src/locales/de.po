@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-03 10:23+0000\n"
+"PO-Revision-Date: 2024-04-04 10:11+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -968,7 +968,7 @@ msgstr "Aktiviert benutzerdefinierte Voreinstellungen. Dateien werden möglicher
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr "Wenn die Zwei-Faktor-Authentifizierung aktiviert ist, wird ein zufällig generierter Verifizierungscode benötigt, um sich anzumelden. Selbst wenn jemand Zugang zu einem Passwort hat, kann er also nicht auf das Konto zugreifen."
+msgstr "Wenn die Zwei-Faktor-Authentifizierung aktiviert ist, wird ein zufällig generierter Verifizierungscode benötigt, um sich anzumelden. Selbst wenn jemand Zugang zu deinem Passwort hat, kann er also nicht auf das Konto zugreifen."
 
 #: src/common/api.js:115
 msgid "Enter verification code"
@@ -1239,7 +1239,7 @@ msgstr "Wie können wir helfen?"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr "Falls die Authenticator-App bzw. das Gerät verloren geht, können Sie den Wiederherstellungscode verwenden, um wieder Zugang zu Ihrem Konto zu erhalten."
+msgstr "Falls die Authenticator-App bzw. das Gerät verloren geht, kannst du den Wiederherstellungscode verwenden, um wieder Zugang zu deinem Konto zu erhalten."
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1362,7 +1362,7 @@ msgstr "Ungültiges Foto ausgewählt"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "Es handelt sich um einen einmalig verwendbaren Code, der 2FA für Ihr Konto deaktiviert, wenn er verwendet wird."
+msgstr "Es handelt sich um einen einmalig verwendbaren Code, der 2FA für dein Konto deaktiviert, wenn er verwendet wird."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -2288,7 +2288,7 @@ msgstr "Einstellungen gespeichert"
 #: src/dialog/account/passcode.vue:40 src/dialog/account/passcode.vue:21
 #: src/dialog/share/upload.vue:31
 msgid "Setup"
-msgstr "Einrichtung"
+msgstr "Einrichten"
 
 #: src/component/album/clipboard.vue:63 src/component/album/toolbar.vue:101
 #: src/component/photo/clipboard.vue:65 src/page/settings/general.vue:297
