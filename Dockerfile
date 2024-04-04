@@ -1,5 +1,5 @@
 # Ubuntu 23.10 (Mantic Minotaur)
-FROM photoprism/develop:240311-mantic
+FROM photoprism/develop:240404-mantic
 
 ## Alternative Environments:
 # FROM photoprism/develop:armv7    # ARMv7 (32bit)
