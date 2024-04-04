@@ -142,7 +142,7 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (provider a
 			m.ClientName = authSess.ClientName
 			m.SetScope(authSess.Scope())
 			m.SetMethod(authn.MethodSession)
-			event.AuditInfo([]string{clientIp, "session %s", "login as %s with app password", "succeeded"}, m.RefID, clean.LogQuote(userName))
+			event.AuditInfo([]string{clientIp, "session %s", "login as %s with app password", authn.Succeeded}, m.RefID, clean.LogQuote(userName))
 			event.LoginInfo(clientIp, "api", userName, m.UserAgent)
 			return provider, method, authErr
 		}
@@ -175,7 +175,7 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (provider a
 	}
 
 	if m != nil {
-		event.AuditInfo([]string{clientIp, "session %s", "login as %s", "succeeded"}, m.RefID, clean.LogQuote(userName))
+		event.AuditInfo([]string{clientIp, "session %s", "login as %s", authn.Succeeded}, m.RefID, clean.LogQuote(userName))
 		event.LoginInfo(clientIp, "api", userName, m.UserAgent)
 	}
 
