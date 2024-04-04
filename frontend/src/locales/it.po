@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-02 08:33+0000\n"
+"PO-Revision-Date: 2024-04-04 10:11+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Italian <https://translate.photoprism.app/projects/photoprism/frontend/it/>\n"
 "Language: it\n"
@@ -55,7 +55,7 @@ msgstr "Autenticazione a 2 fattori"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:45
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 #: src/options/options.js:420
 msgid "4 hours"
@@ -461,7 +461,7 @@ msgstr "Seriale Fotocamera"
 
 #: src/page/auth/login.vue:18 src/page/auth/login.vue:8
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "Ti è impossibile accedere alla tua app o al tuo dispositivo di autenticazione? Inserisci il tuo codice di recupero o chiedi assistenza."
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -664,7 +664,7 @@ msgstr "Nazione"
 
 #: src/dialog/account/apps.vue:40
 msgid "Create"
-msgstr ""
+msgstr "Crea"
 
 #: src/page/auth/login.vue:35
 msgid "Create Account"
@@ -968,7 +968,7 @@ msgstr "Abilita i preset del convertitore RAW. Può ridurre le prestazioni."
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr ""
+msgstr "Abilitare l’autenticazione a due fattori (2FA) significa che per accedere necessiterai di un codice di verifica generato casualmente, perciò, anche se qualcuno avesse la tua password, non potrebbe accedere al tuo account."
 
 #: src/common/api.js:115
 msgid "Enter verification code"
@@ -1159,7 +1159,7 @@ msgstr "Fotogrammi"
 
 #: src/options/auth.js:53 src/options/auth.js:63
 msgid "Full Access"
-msgstr ""
+msgstr "Accesso Totale"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1239,7 +1239,7 @@ msgstr "Come possiamo aiutarti?"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr ""
+msgstr "Se perdessi l’accesso alla tua app o al tuo dispositivo di autenticazione, puoi usare il tuo codice di recupero per riottenere l’accesso al tuo account."
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1362,7 +1362,7 @@ msgstr "Foto non valida selezionata"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr ""
+msgstr "Questo è un codice a utilizzo unico che disabiliterà l’autenticazione a due fattori (2FA) per il tuo account quando lo usi."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1812,7 +1812,7 @@ msgstr "Una foto trovata"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
+msgstr "Solamente gli account gestiti localmente possono essere configurati con autenticazione a due fattori."
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1954,7 +1954,7 @@ msgstr "Non caricare foto che contengono contenuto offensivo."
 
 #: src/page/auth/login.vue:12 src/page/auth/login.vue:2
 msgid "Please enter a valid verification code to access your account:"
-msgstr ""
+msgstr "Si prega di inserire un codice di verifica valido per accedere al proprio account:"
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2055,7 +2055,7 @@ msgstr "Reindicizza tutti gli originali, includendo sia i file già indicizzati 
 
 #: src/options/auth.js:54 src/options/auth.js:67
 msgid "Read Only"
-msgstr ""
+msgstr "Solo Visualizzazione"
 
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
@@ -2187,7 +2187,7 @@ msgstr "Scansione"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
-msgstr ""
+msgstr "Scannerizza il codice QR con la tua app di autenticazione, oppure utilizza la chiave di configurazione qui sotto. Successivamente, inserisci il codice generato per verificare:"
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2537,15 +2537,15 @@ msgstr "Titolo troppo lungo"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr ""
+msgstr "Per evitare di essere bloccatə fuori dal tuo account, scarica, stampa o copua questo codice di recupero e conservalo in un luogo sicuro."
 
 #: src/dialog/account/apps.vue:20
 msgid "To create a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "Per creare una password specificamente per un’app, si prega di inserire il nome, i premessi e una data di scadenza:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr ""
+msgstr "Per cambiare app o dispositivo di autenticazione, disattiva prima l’autenticazione a due fattori, poi riattivala:"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
@@ -2582,7 +2582,7 @@ msgstr "Riprova usando altri filtri o parole chiave."
 
 #: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
-msgstr ""
+msgstr "L’autenticazione a due fattori (2FA) è stata attivata sul tuo account"
 
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
@@ -2725,7 +2725,7 @@ msgstr "Utilizzare le preimpostazioni"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:"
-msgstr ""
+msgstr "Usa il codice di recupero seguente per accedere al tuo account quando ti è impossibile generare un codice con la tua app o il tuo dispositivo di autenticazione:"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:59
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2827,7 +2827,7 @@ msgstr "I client WebDAV possono connettersi a PhotoPrism usando il seguente URL:
 
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr ""
+msgstr "Client WebDAV, come Windows Explorer di Microsoft o Finder di Apple, possono connettersi direttamente a PhotoPrism."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
