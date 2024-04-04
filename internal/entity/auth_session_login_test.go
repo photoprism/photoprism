@@ -366,7 +366,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		assert.ErrorIs(t, err, authn.ErrPasscodeRequired)
 	})
-	t.Run("WrongPassword", func(t *testing.T) {
+	t.Run("InvalidPassword", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour*6)
 		m.SetClientIP(clientIp)
 

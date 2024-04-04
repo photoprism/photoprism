@@ -6,28 +6,27 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 // WebDAVAuthSession returns the client session that belongs to the auth token provided, or returns nil if it was not found.
 func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, user *entity.User, sid string, cached bool) {
+	// Check if an auth token in a valid format was provided.
 	if authToken == "" {
-		// Abort authentication if no token was provided.
+		// Return if no token was provided.
 		return nil, nil, "", false
 	} else if !rnd.IsAuthAny(authToken) {
-		// Abort authentication if token doesn't match expected format.
+		// Return if token does not match any of the supported formats.
 		return nil, nil, "", false
 	}
 
 	// Get client IP address.
 	clientIp := header.ClientIP(c)
 
-	// Check request rate limit.
-	r := limiter.Auth.Request(clientIp)
-
-	// Abort if failure rate limit is exceeded.
-	if r.Reject() {
+	// Check failure rate limit and return nil if it has been exceeded.
+	if limiter.Auth.Reject(clientIp) {
 		return nil, nil, "", false
 	}
 
@@ -36,9 +35,6 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 
 	// Check if client authorization has been cached to improve performance.
 	if cacheData, found := webdavAuthCache.Get(sid); found && cacheData != nil {
-		// Return the reserved request rate limit tokens after successful authentication.
-		r.Success()
-
 		// Add cached user information to the request context.
 		user = cacheData.(*entity.User)
 		return nil, user, sid, true
@@ -49,19 +45,16 @@ func WebDAVAuthSession(c *gin.Context, authToken string) (sess *entity.Session, 
 	// Find the session based on the hashed token used as session ID and return it.
 	sess, err = entity.FindSession(sid)
 
-	// Log error and return nil if no matching session was found.
+	// Count error towards failure rate limit, emits audit event, and returns nil?
 	if sess == nil || err != nil {
-		event.AuditErr([]string{header.ClientIP(c), "access webdav", "invalid auth token or secret"})
+		limiter.Auth.Reserve(clientIp)
+		event.AuditErr([]string{header.ClientIP(c), "webdav", "access with invalid auth token", authn.Denied})
 		return nil, nil, sid, false
 	}
 
-	// Return the reserved request rate limit tokens after successful authentication.
-	r.Success()
-
-	// Update the client IP and the user agent from
-	// the request context if they have changed.
+	// Update client IP and user agent of the session from the HTTP request context.
 	sess.UpdateContext(c)
 
-	// Returns session and user if all checks have passed.
+	// Return session and user.
 	return sess, sess.User(), sid, false
 }

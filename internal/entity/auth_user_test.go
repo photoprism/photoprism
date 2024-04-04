@@ -299,7 +299,7 @@ func TestUser_SetUsername(t *testing.T) {
 	})
 }
 
-func TestUser_WrongPassword(t *testing.T) {
+func TestUser_InvalidPassword(t *testing.T) {
 	t.Run("admin", func(t *testing.T) {
 		m := FindUserByName("admin")
 
@@ -307,7 +307,7 @@ func TestUser_WrongPassword(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.False(t, m.WrongPassword("photoprism"))
+		assert.False(t, m.InvalidPassword("photoprism"))
 	})
 	t.Run("admin invalid password", func(t *testing.T) {
 		m := FindUserByName("admin")
@@ -316,7 +316,7 @@ func TestUser_WrongPassword(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.True(t, m.WrongPassword("wrong-password"))
+		assert.True(t, m.InvalidPassword("wrong-password"))
 	})
 	t.Run("no password existing", func(t *testing.T) {
 		p := User{UserUID: "u000000000000010", UserName: "Hans", DisplayName: ""}
@@ -324,16 +324,16 @@ func TestUser_WrongPassword(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.True(t, p.WrongPassword("abcdef"))
+		assert.True(t, p.InvalidPassword("abcdef"))
 
 	})
 	t.Run("NotRegistered", func(t *testing.T) {
 		p := User{UserUID: "u12", UserName: "", DisplayName: ""}
-		assert.True(t, p.WrongPassword("abcdef"))
+		assert.True(t, p.InvalidPassword("abcdef"))
 	})
 	t.Run("PasswordEmpty", func(t *testing.T) {
 		p := User{UserUID: "u000000000000011", UserName: "User", DisplayName: ""}
-		assert.True(t, p.WrongPassword(""))
+		assert.True(t, p.InvalidPassword(""))
 	})
 }
 
@@ -1824,13 +1824,14 @@ func TestUser_VerifyPassword(t *testing.T) {
 	assert.False(t, Admin.VerifyPassword("wrong"))
 }
 
-func TestUser_WrongPasscode(t *testing.T) {
+func TestUser_InvalidPasscode(t *testing.T) {
 	m := UserFixtures.Get("jane")
 	passcode := m.Passcode("totp")
 
-	assert.True(t, m.WrongPasscode("xxxxxx"))
-	assert.False(t, m.WrongPasscode(passcode.RecoveryCode))
+	assert.True(t, m.InvalidPasscode("xxxxxx"))
+	assert.False(t, m.InvalidPasscode(passcode.RecoveryCode))
 }
+
 func TestUser_Passcodes(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		m := UserFixtures.Get("alice")

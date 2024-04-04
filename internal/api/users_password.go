@@ -74,10 +74,10 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 			return
 		}
 
-		// Verify that the old password is correct.
+		// Check password and abort if invalid.
 		if isSuperAdmin && f.OldPassword == "" {
-			// Do nothing.
-		} else if u.WrongPassword(f.OldPassword) {
+			// Ignore if a super admin performs the change for another account.
+		} else if u.InvalidPassword(f.OldPassword) {
 			Abort(c, http.StatusBadRequest, i18n.ErrInvalidPassword)
 			return
 		}

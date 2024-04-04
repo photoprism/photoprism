@@ -90,7 +90,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "method %s not supported"}, f.ClientID, clean.LogQuote(method.String()))
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return
-		} else if client.WrongSecret(f.ClientSecret) {
+		} else if client.InvalidSecret(f.ClientSecret) {
 			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", authn.ErrInvalidClientSecret.Error()}, f.ClientID)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return

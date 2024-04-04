@@ -867,8 +867,8 @@ func (m *User) SetPassword(password string) error {
 	return m.RegenerateTokens()
 }
 
-// WrongPassword returns true if the specified password is invalid or the account is not registered.
-func (m *User) WrongPassword(s string) bool {
+// InvalidPassword returns true if the specified password is invalid or the account is not registered.
+func (m *User) InvalidPassword(s string) bool {
 	// Registered user?
 	if !m.IsRegistered() {
 		log.Warn("only registered users can log in")
@@ -898,13 +898,13 @@ func (m *User) WrongPassword(s string) bool {
 
 // VerifyPassword checks if the user has the specified password and the account is registered.
 func (m *User) VerifyPassword(s string) bool {
-	return !m.WrongPassword(s)
+	return !m.InvalidPassword(s)
 }
 
-// WrongPasscode returns true if the specified passcode cannot be verified or is invalid.
-func (m *User) WrongPasscode(code string) bool {
+// InvalidPasscode returns true if the specified passcode cannot be verified or is invalid.
+func (m *User) InvalidPasscode(code string) bool {
 	if m == nil {
-		return false
+		return true
 	}
 
 	valid, _, _ := m.VerifyPasscode(code)

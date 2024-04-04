@@ -148,8 +148,8 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (provider a
 		}
 	}
 
-	// Otherwise, check account password.
-	if user.WrongPassword(f.Password) {
+	// Check password.
+	if user.InvalidPassword(f.Password) {
 		message := authn.ErrInvalidPassword.Error()
 
 		if m != nil {
@@ -163,7 +163,7 @@ func AuthLocal(user *User, f form.Login, m *Session, c *gin.Context) (provider a
 
 	provider = authn.ProviderLocal
 
-	// Perform two-factor authentication check, if required.
+	// Check two-factor authentication, if enabled.
 	if method = user.Method(); method.Is(authn.Method2FA) {
 		if valid, _, passcodeErr := user.VerifyPasscode(f.Passcode); passcodeErr != nil {
 			return provider, method, passcodeErr

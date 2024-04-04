@@ -81,17 +81,17 @@ func (m *Password) Valid(s string) bool {
 // Invalid checks if the specified password is incorrect.
 func (m *Password) Invalid(s string) bool {
 	if m.Empty() {
-		// No password set.
+		// Invalid, no password set.
 		return true
 	} else if s = clean.Password(s); s == "" {
-		// No password provided.
+		// Invalid, no password provided.
 		return true
 	} else if err := bcrypt.CompareHashAndPassword([]byte(m.Hash), []byte(s)); err != nil {
-		// Wrong password.
+		// Invalid, does not match.
 		return true
 	}
 
-	// Ok.
+	// Not invalid.
 	return false
 }
 

@@ -40,8 +40,8 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the account password is correct.
-		if user.WrongPassword(frm.Password) {
+		// Check password and abort if invalid.
+		if user.InvalidPassword(frm.Password) {
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
 			return
 		}
@@ -175,8 +175,8 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check if the account password is correct.
-		if user.WrongPassword(frm.Password) {
+		// Check password and abort if invalid.
+		if user.InvalidPassword(frm.Password) {
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
 			return
 		}

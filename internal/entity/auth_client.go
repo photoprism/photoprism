@@ -351,32 +351,37 @@ func (m *Client) SetSecret(secret string) (err error) {
 	return nil
 }
 
-// HasSecret checks if the given client secret is correct.
-func (m *Client) HasSecret(s string) bool {
-	return !m.WrongSecret(s)
+// VerifySecret checks if the given client secret is correct.
+func (m *Client) VerifySecret(s string) bool {
+	return !m.InvalidSecret(s)
 }
 
-// WrongSecret checks if the given client secret is incorrect.
-func (m *Client) WrongSecret(s string) bool {
+// InvalidSecret checks if the given client secret is invalid.
+func (m *Client) InvalidSecret(s string) bool {
+	// Check client UID.
 	if !m.HasUID() {
+		// Invalid, ID is missing.
 		return true
 	}
 
-	// Empty secret?
+	// Check if secret is empty.
 	if s == "" {
+		// Invalid, no secret provided.
 		return true
 	}
 
-	// Fetch secret.
+	// Find secret.
 	pw := FindPassword(m.ClientUID)
 
 	// Found?
 	if pw == nil {
+		// Invalid, not found.
 		return true
 	}
 
-	// Invalid?
+	// Matches?
 	if pw.Invalid(s) {
+		// Invalid, does not match.
 		return true
 	}
 

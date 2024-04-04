@@ -123,7 +123,7 @@ func TestCreateOAuthToken(t *testing.T) {
 		t.Logf("BODY: %s", w.Body.String())
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
-	t.Run("WrongSecret", func(t *testing.T) {
+	t.Run("InvalidSecret", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)

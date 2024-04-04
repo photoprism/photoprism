@@ -269,7 +269,7 @@ func TestClient_NewSecret(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.True(t, m.HasSecret(s))
+		assert.True(t, m.VerifySecret(s))
 		assert.NotEmpty(t, s)
 	})
 	t.Run("EmptyUID", func(t *testing.T) {
@@ -278,7 +278,7 @@ func TestClient_NewSecret(t *testing.T) {
 		s, err := m.NewSecret()
 
 		assert.Error(t, err)
-		assert.False(t, m.HasSecret(s))
+		assert.False(t, m.VerifySecret(s))
 		assert.Empty(t, s)
 	})
 }
@@ -401,7 +401,7 @@ func TestClient_EnforceAuthTokenLimit(t *testing.T) {
 	})
 }
 
-func TestClient_HasPassword(t *testing.T) {
+func TestClient_VerifySecret(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		expected := ClientFixtures.Get("alice")
 
@@ -412,12 +412,12 @@ func TestClient_HasPassword(t *testing.T) {
 		}
 
 		assert.Equal(t, expected.ClientUID, m.UID())
-		assert.False(t, m.HasSecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
-		assert.False(t, m.HasSecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
-		assert.False(t, m.HasSecret(""))
-		assert.True(t, m.WrongSecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
-		assert.True(t, m.WrongSecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
-		assert.True(t, m.WrongSecret(""))
+		assert.False(t, m.VerifySecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
+		assert.False(t, m.VerifySecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
+		assert.False(t, m.VerifySecret(""))
+		assert.True(t, m.InvalidSecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
+		assert.True(t, m.InvalidSecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
+		assert.True(t, m.InvalidSecret(""))
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
@@ -431,12 +431,12 @@ func TestClient_HasPassword(t *testing.T) {
 		}
 
 		assert.Equal(t, expected.ClientUID, m.UID())
-		assert.True(t, m.HasSecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
-		assert.False(t, m.HasSecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
-		assert.False(t, m.HasSecret(""))
-		assert.False(t, m.WrongSecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
-		assert.True(t, m.WrongSecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
-		assert.True(t, m.WrongSecret(""))
+		assert.True(t, m.VerifySecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
+		assert.False(t, m.VerifySecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
+		assert.False(t, m.VerifySecret(""))
+		assert.False(t, m.InvalidSecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
+		assert.True(t, m.InvalidSecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
+		assert.True(t, m.InvalidSecret(""))
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
