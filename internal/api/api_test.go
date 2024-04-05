@@ -103,11 +103,11 @@ func AuthenticateAdmin(app *gin.Engine, router *gin.RouterGroup) (authToken stri
 
 // AuthenticateUser Register session routes and returns valid SessionId.
 // Call this func after registering other routes and before performing other requests.
-func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, name string, password string) (authToken string) {
+func AuthenticateUser(app *gin.Engine, router *gin.RouterGroup, username string, password string) (authToken string) {
 	CreateSession(router)
 
 	r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{
-		UserName: name,
+		Username: username,
 		Password: password,
 	}))
 

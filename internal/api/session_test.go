@@ -143,7 +143,7 @@ func TestCreateSession(t *testing.T) {
 		CreateSession(router)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", form.AsJson(form.Login{
-			UserName: "admin",
+			Username: "admin",
 			Password: "xxx",
 		}))
 

@@ -269,10 +269,10 @@ export class User extends RestModel {
     }).then((response) => Promise.resolve(response.data));
   }
 
-  confirmPasscode(passcode) {
+  confirmPasscode(code) {
     return Api.post(this.getEntityResource() + "/passcode/confirm", {
       type: "totp",
-      passcode: passcode,
+      code: code,
     }).then((response) => Promise.resolve(response.data));
   }
 

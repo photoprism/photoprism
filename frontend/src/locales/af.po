@@ -524,7 +524,7 @@ msgstr "Verander privaat vlag"
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
-#: src/page/settings/account.vue:129 src/page/settings/account.vue:147
+#: src/page/settings/account.vue:128 src/page/settings/account.vue:146
 #: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
@@ -712,7 +712,7 @@ msgid "Debug Logs"
 msgstr "Ontfout logs"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:234
+#: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:234
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:38
 #: src/options/auth.js:39 src/options/options.js:309 src/options/options.js:373
 #: src/options/themes.js:492 src/page/places.vue:141
@@ -2183,7 +2183,7 @@ msgid "Scan"
 msgstr "Skandeer"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
-msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
+msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
 msgstr ""
 
 #: src/component/navigation.vue:125
@@ -2256,7 +2256,7 @@ msgstr "Diens-URL"
 msgid "Services"
 msgstr "Dienste"
 
-#: src/model/session.js:100 src/options/auth.js:40
+#: src/model/session.js:101 src/options/auth.js:40
 msgid "Session"
 msgstr "Sessie"
 
@@ -2611,7 +2611,8 @@ msgid "Unknown"
 msgstr "Onbekend"
 
 #: src/page/settings/account.vue:40 src/page/settings/account.vue:48
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:93 src/page/settings/account.vue:39
+#: src/page/settings/account.vue:47
 msgid "Unregistered"
 msgstr "Ongeregistreer"
 
@@ -2640,7 +2641,7 @@ msgstr "Dateer indeks op"
 msgid "Updating moments"
 msgstr "Dateer tans oomblikke op"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:140
+#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr "Dateer tans prent op …"
 
@@ -2721,7 +2722,7 @@ msgid "Use Presets"
 msgstr "Gebruik voorafinstellings"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
-msgid "Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:"
+msgid "Use the following recovery code to access your account when you are unable to generate a verification code with your authenticator app:"
 msgstr ""
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:59

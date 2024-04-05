@@ -352,7 +352,6 @@
 import PAccountPasswordDialog from "dialog/account/password.vue";
 import countries from "options/countries.json";
 import Notify from "common/notify";
-import User from "model/user";
 import * as options from "options/options";
 
 export default {

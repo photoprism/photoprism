@@ -6,12 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/form"
 	"github.com/pquerna/otp/totp"
+	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestCreateUserPasscode(t *testing.T) {
@@ -37,10 +37,10 @@ func TestCreateUserPasscode(t *testing.T) {
 		CreateUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "",
-			Password: "Alice123!",
+		f := form.Passcode{
 			Type:     "totp",
+			Password: "Alice123!",
+			Code:     "",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -56,10 +56,10 @@ func TestCreateUserPasscode(t *testing.T) {
 		CreateUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "",
-			Password: "abcdef",
+		f := form.Passcode{
 			Type:     "xxx",
+			Password: "abcdef",
+			Code:     "",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -75,10 +75,10 @@ func TestCreateUserPasscode(t *testing.T) {
 		CreateUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "",
-			Password: "wrong",
+		f := form.Passcode{
 			Type:     "totp",
+			Password: "wrong",
+			Code:     "",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -94,10 +94,10 @@ func TestCreateUserPasscode(t *testing.T) {
 		CreateUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "",
-			Password: "Alice123!",
+		f := form.Passcode{
 			Type:     "totp",
+			Password: "Alice123!",
+			Code:     "",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -122,10 +122,10 @@ func TestConfirmUserPasscode(t *testing.T) {
 		ConfirmUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "123",
-			Password: "Alice123!",
+		f := form.Passcode{
 			Type:     "totp",
+			Password: "Alice123!",
+			Code:     "123",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -141,10 +141,10 @@ func TestConfirmUserPasscode(t *testing.T) {
 		ConfirmUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "123456",
-			Password: "Alice123!",
+		f := form.Passcode{
 			Type:     "totp",
+			Password: "Alice123!",
+			Code:     "123456",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -163,10 +163,10 @@ func TestActivateUserPasscode(t *testing.T) {
 		ActivateUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "",
-			Password: "Alice123!",
+		f := form.Passcode{
 			Type:     "totp",
+			Password: "Alice123!",
+			Code:     "",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -182,10 +182,10 @@ func TestActivateUserPasscode(t *testing.T) {
 		ActivateUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "",
-			Password: "Alice123!",
+		f := form.Passcode{
 			Type:     "totp",
+			Password: "Alice123!",
+			Code:     "",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -213,10 +213,10 @@ func TestDeactivateUserPasscode(t *testing.T) {
 		DeactivateUserPasscode(router)
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		f := form.UserPasscode{
-			Passcode: "",
-			Password: "wrong",
+		f := form.Passcode{
 			Type:     "totp",
+			Password: "wrong",
+			Code:     "",
 		}
 		if pcStr, err := json.Marshal(f); err != nil {
 			log.Fatal(err)
@@ -235,10 +235,10 @@ func TestUserPasscode(t *testing.T) {
 	CreateUserPasscode(router)
 	sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-	f0 := form.UserPasscode{
-		Passcode: "",
-		Password: "Alice123!",
+	f0 := form.Passcode{
 		Type:     "totp",
+		Password: "Alice123!",
+		Code:     "",
 	}
 
 	pcStr, err := json.Marshal(f0)
@@ -266,11 +266,12 @@ func TestUserPasscode(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	f := form.UserPasscode{
-		Passcode: code,
-		Password: "Alice123!",
+	f := form.Passcode{
 		Type:     "totp",
+		Password: "Alice123!",
+		Code:     code,
 	}
+
 	pcStr, err = json.Marshal(f)
 
 	if err != nil {

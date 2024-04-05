@@ -443,9 +443,9 @@ func (m *Client) UpdateLastActive() *Client {
 }
 
 // NewSession creates a new client session.
-func (m *Client) NewSession(c *gin.Context) *Session {
+func (m *Client) NewSession(c *gin.Context, t authn.GrantType) *Session {
 	// Create, initialize, and return new session.
-	return NewSession(m.AuthExpires, 0).SetContext(c).SetClient(m)
+	return NewSession(m.AuthExpires, 0).SetContext(c).SetClient(m).SetGrantType(t)
 }
 
 // EnforceAuthTokenLimit deletes client sessions above the configured limit and returns the number of deleted sessions.

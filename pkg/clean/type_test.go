@@ -52,6 +52,21 @@ func TestTypeLower(t *testing.T) {
 	assert.Equal(t, ClipType, len(result))
 }
 
+func TestTypeLowerUnderscore(t *testing.T) {
+	t.Run("Undefined", func(t *testing.T) {
+		assert.Equal(t, "", TypeLowerUnderscore("    \t "))
+	})
+	t.Run("ClientCredentials", func(t *testing.T) {
+		assert.Equal(t, "client_credentials", TypeLowerUnderscore(" Client Credentials幸"))
+	})
+	t.Run("Clip", func(t *testing.T) {
+		assert.Equal(
+			t,
+			"hanzi_are_logograms_developed_for_the_writing_of_chinese!_expres",
+			TypeLowerUnderscore(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!"))
+	})
+}
+
 func TestShortType(t *testing.T) {
 	result := ShortType(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 	assert.Equal(t, "Hanzi ar", result)
@@ -62,4 +77,18 @@ func TestShortTypeLower(t *testing.T) {
 	result := ShortTypeLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 	assert.Equal(t, "hanzi ar", result)
 	assert.Equal(t, ClipShortType, len(result))
+}
+
+func TestShortTypeLowerUnderscore(t *testing.T) {
+	t.Run("Undefined", func(t *testing.T) {
+		assert.Equal(t, "", ShortTypeLowerUnderscore("    \t "))
+	})
+	t.Run("ClientCredentials", func(t *testing.T) {
+		assert.Equal(t, "client_c", ShortTypeLowerUnderscore(" Client Credentials幸"))
+	})
+	t.Run("Clip", func(t *testing.T) {
+		assert.Equal(t,
+			"hanzi_ar",
+			ShortTypeLowerUnderscore(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!"))
+	})
 }

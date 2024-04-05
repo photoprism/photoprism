@@ -527,7 +527,7 @@ msgstr "Cambiare la bandiera privata"
 #: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
-#: src/page/settings/account.vue:129 src/page/settings/account.vue:147
+#: src/page/settings/account.vue:128 src/page/settings/account.vue:146
 #: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
@@ -715,7 +715,7 @@ msgid "Debug Logs"
 msgstr "Registri di debug"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:63 src/model/user.js:234
+#: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:234
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:38
 #: src/options/auth.js:39 src/options/options.js:309 src/options/options.js:373
 #: src/options/themes.js:492 src/page/places.vue:141
@@ -2186,8 +2186,8 @@ msgid "Scan"
 msgstr "Scansione"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
-msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
-msgstr "Scannerizza il codice QR con la tua app di autenticazione, oppure utilizza la chiave di configurazione qui sotto. Successivamente, inserisci il codice generato per verificare:"
+msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
+msgstr ""
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2259,7 +2259,7 @@ msgstr "URL Servizio"
 msgid "Services"
 msgstr "Servizi"
 
-#: src/model/session.js:100 src/options/auth.js:40
+#: src/model/session.js:101 src/options/auth.js:40
 msgid "Session"
 msgstr "Sessione"
 
@@ -2614,7 +2614,8 @@ msgid "Unknown"
 msgstr "Sconosciuto"
 
 #: src/page/settings/account.vue:40 src/page/settings/account.vue:48
-#: src/component/navigation.vue:93
+#: src/component/navigation.vue:93 src/page/settings/account.vue:39
+#: src/page/settings/account.vue:47
 msgid "Unregistered"
 msgstr "Non registrato"
 
@@ -2643,7 +2644,7 @@ msgstr "Aggiornamento indici in corso"
 msgid "Updating moments"
 msgstr "Aggiornamento momenti in corso"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:140
+#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr "Aggiornamento dell'immagine…"
 
@@ -2724,8 +2725,8 @@ msgid "Use Presets"
 msgstr "Utilizzare le preimpostazioni"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
-msgid "Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:"
-msgstr "Usa il codice di recupero seguente per accedere al tuo account quando ti è impossibile generare un codice con la tua app o il tuo dispositivo di autenticazione:"
+msgid "Use the following recovery code to access your account when you are unable to generate a verification code with your authenticator app:"
+msgstr ""
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:59
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2909,6 +2910,12 @@ msgstr "La tua libreria viene continuamente analizzata per creare automaticament
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom avanti/indietro"
+
+#~ msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
+#~ msgstr "Scannerizza il codice QR con la tua app di autenticazione, oppure utilizza la chiave di configurazione qui sotto. Successivamente, inserisci il codice generato per verificare:"
+
+#~ msgid "Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:"
+#~ msgstr "Usa il codice di recupero seguente per accedere al tuo account quando ti è impossibile generare un codice con la tua app o il tuo dispositivo di autenticazione:"
 
 #~ msgid "providerName"
 #~ msgstr "nome del fornitore"

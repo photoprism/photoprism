@@ -2,51 +2,57 @@ package form
 
 import (
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Login represents a login form.
 type Login struct {
-	UserName   string `json:"username,omitempty"`
-	UserEmail  string `json:"email,omitempty"`
-	Password   string `json:"password,omitempty"`
-	Passcode   string `json:"passcode,omitempty"`
-	ShareToken string `json:"token,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	Code     string `json:"code,omitempty"`
+	Token    string `json:"token,omitempty"`
+	Email    string `json:"email,omitempty"`
 }
 
-// Username returns the sanitized username in lowercase.
-func (f Login) Username() string {
-	return clean.Username(f.UserName)
+// CleanUsername returns the sanitized and normalized username.
+func (f Login) CleanUsername() string {
+	return clean.Username(f.Username)
 }
 
-// Email returns the sanitized email in lowercase.
-func (f Login) Email() string {
-	return clean.Email(f.UserEmail)
-}
-
-// HasUsername checks if a username is set.
-func (f Login) HasUsername() bool {
-	if l := len(f.Username()); l == 0 || l > 255 {
-		return false
-	}
-	return true
-}
-
-// HasPasscode checks if a passcode is set.
-func (f Login) HasPasscode() bool {
-	return f.Passcode != "" && len(f.Passcode) <= 255
-}
-
-// HasPassword checks if a password is set.
-func (f Login) HasPassword() bool {
-	return f.Password != "" && len(f.Password) <= 255
-}
-
-// HasShareToken checks if a link share token has been provided.
-func (f Login) HasShareToken() bool {
-	return f.ShareToken != ""
+// CleanEmail returns the sanitized and normalized email.
+func (f Login) CleanEmail() string {
+	return clean.Email(f.Email)
 }
 
 // HasCredentials checks if all credentials is set.
 func (f Login) HasCredentials() bool {
 	return f.HasUsername() && f.HasPassword()
+}
+
+// HasUsername checks if a username is set.
+func (f Login) HasUsername() bool {
+	if l := len(f.CleanUsername()); l == 0 || l > txt.ClipUsername {
+		return false
+	}
+	return true
+}
+
+// HasPassword checks if a password is set.
+func (f Login) HasPassword() bool {
+	return f.Password != "" && len(f.Password) <= txt.ClipPassword
+}
+
+// HasPasscode checks if a verification passcode has been provided.
+func (f Login) HasPasscode() bool {
+	return clean.Passcode(f.Code) != ""
+}
+
+// Passcode returns the sanitized verification passcode.
+func (f Login) Passcode() string {
+	return clean.Passcode(f.Code)
+}
+
+// HasShareToken checks if a link share token has been provided.
+func (f Login) HasShareToken() bool {
+	return f.Token != ""
 }

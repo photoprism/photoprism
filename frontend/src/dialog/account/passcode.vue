@@ -70,7 +70,7 @@
           <v-card-text class="py-0 px-2">
             <v-layout wrap align-top>
               <v-flex xs12 class="pa-2 body-1">
-                <translate>Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:</translate>
+                <translate>Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:</translate>
               </v-flex>
               <v-flex xs12 class="pa-2">
                 <img :src="key.QRCode" class="width-100" alt="QR Code" />
@@ -81,9 +81,9 @@
             </v-flex>
             <v-flex xs12 class="pa-2">
               <v-text-field
-                v-model="passcode"
+                v-model="code"
                 :disabled="busy"
-                name="passcode"
+                name="one-time-code"
                 type="text"
                 :label="$gettext('Verification Code')"
                 mask="### ###"
@@ -97,7 +97,7 @@
                 autocapitalize="none"
                 autocomplete="one-time-code"
                 browser-autocomplete="one-time-code"
-                class="input-passcode"
+                class="input-code"
                 color="secondary-dark"
                 prepend-inner-icon="verified_user"
                 @keyup.enter.native="onConfirm"
@@ -110,7 +110,7 @@
                 <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
-                <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" :disabled="passcode.length !== 6" @click.stop="onConfirm">
+                <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" :disabled="code.length !== 6" @click.stop="onConfirm">
                   <translate>Confirm</translate>
                 </v-btn>
               </v-flex>
@@ -122,7 +122,7 @@
           <v-card-text class="py-0 px-2">
             <v-layout wrap align-top>
               <v-flex xs12 class="pa-2 body-2">
-                <translate>Use the following recovery code to access your account when you are unable to generate a valid passcode with your authenticator app or device:</translate>
+                <translate>Use the following recovery code to access your account when you are unable to generate a verification code with your authenticator app:</translate>
               </v-flex>
               <v-flex xs12 class="pa-2">
                 <v-text-field
@@ -257,7 +257,7 @@ export default {
       busy: false,
       isDemo: this.$config.get("demo"),
       isPublic: this.$config.get("public"),
-      passcode: "",
+      code: "",
       password: "",
       recoveryCodeCopied: false,
       showPassword: false,
@@ -312,7 +312,7 @@ export default {
       }
     },
     reset() {
-      this.passcode = "";
+      this.code = "";
       this.password = "";
       this.showPassword = false;
       this.recoveryCodeCopied = false;
@@ -339,19 +339,19 @@ export default {
         });
     },
     onConfirm() {
-      if (this.busy || this.passcode === "") {
+      if (this.busy || this.code === "") {
         return;
       }
       this.busy = true;
       this.model
-        .confirmPasscode(this.passcode)
+        .confirmPasscode(this.code)
         .then((resp) => {
           this.key = resp;
           this.$notify.success(this.$gettext("Successfully verified"));
         })
         .finally(() => {
           this.busy = false;
-          this.passcode = "";
+          this.code = "";
           this.password = "";
           this.showPassword = false;
           this.recoveryCodeCopied = false;

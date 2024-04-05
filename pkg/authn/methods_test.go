@@ -40,6 +40,11 @@ func TestMethodType_IsNot(t *testing.T) {
 	assert.Equal(t, true, MethodUndefined.IsNot(MethodDefault))
 }
 
+func TestMethodType_IsUndefined(t *testing.T) {
+	assert.True(t, MethodUndefined.IsUndefined())
+	assert.False(t, Method2FA.IsUndefined())
+}
+
 func TestMethodType_IsDefault(t *testing.T) {
 	assert.Equal(t, true, MethodDefault.IsDefault())
 	assert.Equal(t, false, MethodPersonal.IsDefault())
@@ -79,11 +84,6 @@ func TestMethod(t *testing.T) {
 	assert.Equal(t, Method2FA, Method("2fa"))
 	assert.Equal(t, Method2FA, Method("totp"))
 	assert.Equal(t, Method2FA, Method("2FA"))
-}
-
-func TestMethodType_IsUnknown(t *testing.T) {
-	assert.True(t, MethodUndefined.IsUndefined())
-	assert.False(t, Method2FA.IsUndefined())
 }
 
 func TestMethodType_IsSession(t *testing.T) {

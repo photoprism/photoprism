@@ -35,7 +35,7 @@ func Handle(s string) string {
 	}, s)
 
 	// Empty or too long?
-	if s == "" || reject(s, txt.ClipUserName) {
+	if s == "" || reject(s, txt.ClipUsername) {
 		return ""
 	}
 
@@ -112,4 +112,24 @@ func Attr(s string) string {
 // Password returns the password string with all leading and trailing white space removed.
 func Password(s string) string {
 	return strings.TrimSpace(s)
+}
+
+// Passcode sanitizes a passcode and returns it in lowercase with all whitespace removed.
+func Passcode(s string) string {
+	if s == "" || reject(s, txt.ClipPasscode) {
+		return ""
+	} else if s = strings.ToLower(strings.TrimSpace(s)); s == "" {
+		return ""
+	}
+
+	// Remove unwanted characters.
+	s = strings.Map(func(r rune) rune {
+		if (r < '0' || r > '9') && (r < 'a' || r > 'z') {
+			return -1
+		}
+
+		return r
+	}, s)
+
+	return s
 }

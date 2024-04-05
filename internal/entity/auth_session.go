@@ -51,6 +51,7 @@ type Session struct {
 	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
 	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
+	GrantType     string          `gorm:"type:VARBINARY(64);default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
 	LastActive    int64           `json:"LastActive" yaml:"LastActive,omitempty"`
 	SessExpires   int64           `gorm:"index" json:"Expires" yaml:"Expires,omitempty"`
 	SessTimeout   int64           `json:"Timeout" yaml:"Timeout,omitempty"`
@@ -514,6 +515,38 @@ func (m *Session) SetAuthID(id string) *Session {
 	return m
 }
 
+// Provider returns the authentication provider.
+func (m *Session) Provider() authn.ProviderType {
+	return authn.Provider(m.AuthProvider)
+}
+
+// SetProvider updates the session's authentication provider.
+func (m *Session) SetProvider(provider authn.ProviderType) *Session {
+	if provider == "" {
+		return m
+	}
+
+	m.AuthProvider = provider.String()
+
+	return m
+}
+
+// Method returns the authentication method.
+func (m *Session) Method() authn.MethodType {
+	return authn.Method(m.AuthMethod)
+}
+
+// SetMethod sets a custom authentication method.
+func (m *Session) SetMethod(method authn.MethodType) *Session {
+	if method == "" {
+		return m
+	}
+
+	m.AuthMethod = method.String()
+
+	return m
+}
+
 // Scope returns the authorization scope as a sanitized string.
 func (m *Session) Scope() string {
 	return clean.Scope(m.AuthScope)
@@ -573,34 +606,18 @@ func (m *Session) SetScope(scope string) *Session {
 	return m
 }
 
-// Provider returns the authentication provider.
-func (m *Session) Provider() authn.ProviderType {
-	return authn.Provider(m.AuthProvider)
+// AuthGrantType returns the session's grant type as authn.GrantType.
+func (m *Session) AuthGrantType() authn.GrantType {
+	return authn.Grant(m.GrantType)
 }
 
-// SetProvider updates the session's authentication provider.
-func (m *Session) SetProvider(provider authn.ProviderType) *Session {
-	if provider == "" {
+// SetGrantType sets the session's grant type if no type has been set yet.
+func (m *Session) SetGrantType(t authn.GrantType) *Session {
+	if t.IsUndefined() || m.GrantType != "" {
 		return m
 	}
 
-	m.AuthProvider = provider.String()
-
-	return m
-}
-
-// Method returns the authentication method.
-func (m *Session) Method() authn.MethodType {
-	return authn.Method(m.AuthMethod)
-}
-
-// SetMethod sets a custom authentication method.
-func (m *Session) SetMethod(method authn.MethodType) *Session {
-	if method == "" {
-		return m
-	}
-
-	m.AuthMethod = method.String()
+	m.GrantType = t.String()
 
 	return m
 }

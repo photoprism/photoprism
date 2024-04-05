@@ -95,7 +95,7 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 		}
 
 		// Verify passcode.
-		valid, passcode, err := user.VerifyPasscode(frm.Passcode)
+		valid, passcode, err := user.VerifyPasscode(frm.Passcode())
 
 		if err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "users", user.UserName, "failed to verify passcode", clean.Error(err)}, s.RefID)
@@ -201,7 +201,7 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 }
 
 // checkUserPasscodeAuth checks authentication and authorization for the passcode endpoints.
-func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Session, *entity.User, *form.UserPasscode, error) {
+func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Session, *entity.User, *form.Passcode, error) {
 	conf := get.Config()
 
 	// Prevent caching of API response.
@@ -244,7 +244,7 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 		return s, nil, nil, errors.New("unsupported")
 	}
 
-	frm := &form.UserPasscode{}
+	frm := &form.Passcode{}
 
 	// Validate request parameters.
 	if err := c.BindJSON(frm); err != nil {

@@ -169,7 +169,7 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 
 		// User credentials.
 		f := form.Login{
-			UserName: username,
+			Username: username,
 			Password: password,
 		}
 

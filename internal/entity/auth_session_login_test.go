@@ -19,7 +19,7 @@ func TestAuthSession(t *testing.T) {
 	t.Run("RandomAppPassword", func(t *testing.T) {
 		// Create test request form.
 		f := form.Login{
-			UserName: "alice",
+			Username: "alice",
 			Password: rnd.AppPassword(),
 		}
 
@@ -38,7 +38,7 @@ func TestAuthSession(t *testing.T) {
 	t.Run("RandomAuthToken", func(t *testing.T) {
 		// Create test request form.
 		f := form.Login{
-			UserName: "alice",
+			Username: "alice",
 			Password: rnd.AuthToken(),
 		}
 
@@ -59,7 +59,7 @@ func TestAuthSession(t *testing.T) {
 
 		// Create test request form.
 		f := form.Login{
-			UserName: "alice",
+			Username: "alice",
 			Password: s.AuthToken(),
 		}
 
@@ -81,7 +81,7 @@ func TestAuthSession(t *testing.T) {
 
 		// Create test request form.
 		f := form.Login{
-			UserName: "alice",
+			Username: "alice",
 			Password: s.AuthToken(),
 		}
 
@@ -119,7 +119,7 @@ func TestAuthSession(t *testing.T) {
 
 		// Create test request form.
 		f := form.Login{
-			UserName: "alice",
+			Username: "alice",
 			Password: s.AuthToken(),
 		}
 
@@ -154,7 +154,7 @@ func TestAuthSession(t *testing.T) {
 	t.Run("EmptyPassword", func(t *testing.T) {
 		// Create test request form.
 		f := form.Login{
-			UserName: "alice",
+			Username: "alice",
 			Password: "",
 		}
 
@@ -179,7 +179,7 @@ func TestAuthLocal(t *testing.T) {
 
 		// Create test request form.
 		frm := form.Login{
-			UserName: "alice",
+			Username: "alice",
 			Password: "Alice123!",
 		}
 
@@ -202,7 +202,7 @@ func TestAuthLocal(t *testing.T) {
 
 		// Create test request form.
 		frm := form.Login{
-			UserName: "alice",
+			Username: "alice",
 			Password: "photoprism",
 		}
 
@@ -227,7 +227,7 @@ func TestAuthLocal(t *testing.T) {
 
 		// Create test request form.
 		frm := form.Login{
-			UserName: "friend",
+			Username: "friend",
 			Password: "!Friend321",
 		}
 
@@ -254,7 +254,7 @@ func TestAuthLocal(t *testing.T) {
 
 		// Create test request form.
 		frm := form.Login{
-			UserName: "friend",
+			Username: "friend",
 			Password: "!Friend321",
 		}
 
@@ -285,7 +285,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			UserName: "admin",
+			Username: "admin",
 			Password: "photoprism",
 		}
 
@@ -310,9 +310,9 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			UserName: "jane",
-			Passcode: passcode,
+			Username: "jane",
 			Password: "Jane123!",
+			Code:     passcode,
 		}
 
 		// Create test request context.
@@ -331,9 +331,9 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			UserName: "jane",
-			Passcode: "xxxxxx",
+			Username: "jane",
 			Password: "Jane123!",
+			Code:     "xxxxxx",
 		}
 
 		// Create test request context.
@@ -352,7 +352,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			UserName: "jane",
+			Username: "jane",
 			Password: "Jane123!",
 		}
 
@@ -372,7 +372,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			UserName: "admin",
+			Username: "admin",
 			Password: "wrong",
 		}
 
@@ -392,7 +392,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			UserName: "foo",
+			Username: "foo",
 			Password: "password",
 		}
 
@@ -412,7 +412,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			ShareToken: "1jxf3jfn2k",
+			Token: "1jxf3jfn2k",
 		}
 
 		// Create test request context.
@@ -432,7 +432,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			ShareToken: "1jxf3jfxxx",
+			Token: "1jxf3jfxxx",
 		}
 
 		// Create test request context.
@@ -470,7 +470,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			ShareToken: "1jxf3jfn2k",
+			Token: "1jxf3jfn2k",
 		}
 
 		// Create test request context.
@@ -490,7 +490,7 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			ShareToken: "1jxf3jfxxx",
+			Token: "1jxf3jfxxx",
 		}
 
 		// Create test request context.
@@ -514,9 +514,9 @@ func TestSessionLogIn(t *testing.T) {
 
 		// Create login form.
 		frm := form.Login{
-			UserName: "jane",
-			Passcode: passcode,
+			Username: "jane",
 			Password: "Jane123!",
+			Code:     passcode,
 		}
 
 		// Create test request context.

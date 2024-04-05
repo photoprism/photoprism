@@ -10,14 +10,14 @@ const (
 	ClientAccessToken = "access_token"
 )
 
-// ClientToken represents a client authentication token.
-type ClientToken struct {
+// OAuthRevokeToken represents a token revokation form.
+type OAuthRevokeToken struct {
 	AuthToken string `form:"token" binding:"required" json:"token,omitempty"`
 	TypeHint  string `form:"token_type_hint" json:" token_type_hint,omitempty"`
 }
 
 // Empty checks if all form values are unset.
-func (f ClientToken) Empty() bool {
+func (f OAuthRevokeToken) Empty() bool {
 	switch {
 	case f.AuthToken != "":
 		return false
@@ -29,7 +29,7 @@ func (f ClientToken) Empty() bool {
 }
 
 // Validate checks the token and token type.
-func (f ClientToken) Validate() error {
+func (f OAuthRevokeToken) Validate() error {
 	// Check auth token.
 	if f.AuthToken == "" {
 		return fmt.Errorf("missing token")

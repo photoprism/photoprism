@@ -1,17 +1,17 @@
 package entity
 
 import (
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"testing"
 	"time"
-
-	"github.com/photoprism/photoprism/pkg/report"
 
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/unix"
 )
@@ -544,6 +544,80 @@ func TestSession_SetAuthID(t *testing.T) {
 	})
 }
 
+func TestSession_SetMethod(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		s := &Session{
+			UserName:     "test",
+			RefID:        "sessxkkcxxxz",
+			AuthProvider: authn.ProviderAccessToken.String(),
+			AuthMethod:   authn.MethodPersonal.String(),
+		}
+
+		m := s.SetMethod("")
+
+		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
+		assert.Equal(t, authn.MethodPersonal, m.Method())
+	})
+	t.Run("Test", func(t *testing.T) {
+		s := &Session{
+			UserName:     "test",
+			RefID:        "sessxkkcxxxz",
+			AuthProvider: authn.ProviderAccessToken.String(),
+			AuthMethod:   authn.MethodPersonal.String(),
+		}
+
+		m := s.SetMethod("Test")
+
+		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
+		assert.Equal(t, authn.Method("Test"), m.Method())
+	})
+	t.Run("Test", func(t *testing.T) {
+		s := &Session{
+			UserName:     "test",
+			RefID:        "sessxkkcxxxz",
+			AuthProvider: authn.ProviderAccessToken.String(),
+			AuthMethod:   authn.MethodPersonal.String(),
+		}
+
+		m := s.SetMethod(authn.MethodSession)
+
+		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
+		assert.Equal(t, authn.MethodSession, m.Method())
+	})
+}
+
+func TestSession_SetProvider(t *testing.T) {
+	m := FindSessionByRefID("sessxkkcabce")
+	assert.Equal(t, authn.ProviderDefault, m.Provider())
+	m.SetProvider("")
+	assert.Equal(t, authn.ProviderDefault, m.Provider())
+	m.SetProvider(authn.ProviderLink)
+	assert.Equal(t, authn.ProviderLink, m.Provider())
+	m.SetProvider(authn.ProviderDefault)
+	assert.Equal(t, authn.ProviderDefault, m.Provider())
+}
+
+func TestSession_ChangePassword(t *testing.T) {
+	m := FindSessionByRefID("sessxkkcabce")
+	assert.Empty(t, m.PreviewToken)
+	assert.Empty(t, m.DownloadToken)
+
+	err := m.ChangePassword("photoprism123")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.NotEmpty(t, m.PreviewToken)
+	assert.NotEmpty(t, m.DownloadToken)
+
+	err2 := m.ChangePassword("Bobbob123!")
+
+	if err2 != nil {
+		t.Fatal(err2)
+	}
+}
+
 func TestSession_ValidateScope(t *testing.T) {
 	t.Run("AnyScope", func(t *testing.T) {
 		s := &Session{
@@ -659,78 +733,37 @@ func TestSession_SetScope(t *testing.T) {
 	})
 }
 
-func TestSession_SetMethod(t *testing.T) {
-	t.Run("Empty", func(t *testing.T) {
-		s := &Session{
-			UserName:     "test",
-			RefID:        "sessxkkcxxxz",
-			AuthProvider: authn.ProviderAccessToken.String(),
-			AuthMethod:   authn.MethodPersonal.String(),
+func TestSession_SetGrantType(t *testing.T) {
+	t.Run("Password", func(t *testing.T) {
+		m := &Session{
+			UserName:  "test",
+			RefID:     "sessxkkcxxxz",
+			AuthScope: "*",
 		}
 
-		m := s.SetMethod("")
+		expected := "password"
 
-		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
-		assert.Equal(t, authn.MethodPersonal, m.Method())
+		m.SetGrantType(authn.GrantPassword)
+		assert.Equal(t, expected, m.GrantType)
+		m.SetGrantType(authn.GrantClientCredentials)
+		assert.Equal(t, expected, m.GrantType)
+		m.SetGrantType(authn.GrantUndefined)
+		assert.Equal(t, expected, m.GrantType)
+		assert.Equal(t, authn.GrantPassword, m.AuthGrantType())
 	})
-	t.Run("Test", func(t *testing.T) {
-		s := &Session{
-			UserName:     "test",
-			RefID:        "sessxkkcxxxz",
-			AuthProvider: authn.ProviderAccessToken.String(),
-			AuthMethod:   authn.MethodPersonal.String(),
-		}
+	t.Run("ClientCredentials", func(t *testing.T) {
+		client := ClientFixtures.Pointer("alice")
+		m := client.NewSession(&gin.Context{}, authn.GrantClientCredentials)
 
-		m := s.SetMethod("Test")
+		expected := "client_credentials"
 
-		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
-		assert.Equal(t, authn.Method("Test"), m.Method())
+		assert.Equal(t, expected, m.GrantType)
+		m.SetGrantType(authn.GrantPassword)
+		assert.Equal(t, expected, m.GrantType)
+		m.SetGrantType(authn.GrantUndefined)
+		assert.Equal(t, expected, m.GrantType)
+		assert.Equal(t, authn.GrantClientCredentials, m.AuthGrantType())
 	})
-	t.Run("Test", func(t *testing.T) {
-		s := &Session{
-			UserName:     "test",
-			RefID:        "sessxkkcxxxz",
-			AuthProvider: authn.ProviderAccessToken.String(),
-			AuthMethod:   authn.MethodPersonal.String(),
-		}
-
-		m := s.SetMethod(authn.MethodSession)
-
-		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
-		assert.Equal(t, authn.MethodSession, m.Method())
-	})
-}
-
-func TestSession_SetProvider(t *testing.T) {
-	m := FindSessionByRefID("sessxkkcabce")
-	assert.Equal(t, authn.ProviderDefault, m.Provider())
-	m.SetProvider("")
-	assert.Equal(t, authn.ProviderDefault, m.Provider())
-	m.SetProvider(authn.ProviderLink)
-	assert.Equal(t, authn.ProviderLink, m.Provider())
-	m.SetProvider(authn.ProviderDefault)
-	assert.Equal(t, authn.ProviderDefault, m.Provider())
-}
-
-func TestSession_ChangePassword(t *testing.T) {
-	m := FindSessionByRefID("sessxkkcabce")
-	assert.Empty(t, m.PreviewToken)
-	assert.Empty(t, m.DownloadToken)
-
-	err := m.ChangePassword("photoprism123")
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	assert.NotEmpty(t, m.PreviewToken)
-	assert.NotEmpty(t, m.DownloadToken)
-
-	err2 := m.ChangePassword("Bobbob123!")
-
-	if err2 != nil {
-		t.Fatal(err2)
-	}
 }
 
 func TestSession_SetPreviewToken(t *testing.T) {

@@ -58,10 +58,10 @@ func CreateSession(router *gin.RouterGroup) {
 
 		// Check request rate limit.
 		var r *limiter.Request
-		if f.Passcode == "" {
-			r = limiter.Login.Request(clientIp)
-		} else {
+		if f.HasPasscode() {
 			r = limiter.Login.RequestN(clientIp, 3)
+		} else {
+			r = limiter.Login.Request(clientIp)
 		}
 
 		// Abort if failure rate limit is exceeded.

@@ -8,10 +8,11 @@ const (
 	Ellipsis      = "…"
 	ClipCountry   = 2
 	ClipRole      = 32
+	ClipPasscode  = 36
 	ClipKeyword   = 40
 	ClipIP        = 48
 	ClipRealm     = 64
-	ClipUserName  = 64
+	ClipUsername  = 64
 	ClipPassword  = 72
 	ClipSlug      = 80
 	ClipCategory  = 100

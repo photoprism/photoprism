@@ -8,16 +8,16 @@
               <p-auth-header></p-auth-header>
               <v-spacer></v-spacer>
               <v-layout wrap align-top>
-                <template v-if="enterPasscode">
+                <template v-if="enterCode">
                   <v-flex xs12 class="pa-2 body-2">
                     <translate>Please enter a valid verification code to access your account:</translate>
                   </v-flex>
                   <v-flex xs12 class="pa-2">
                     <v-text-field
-                      id="auth-passcode"
-                      v-model="passcode"
+                      id="auth-code"
+                      v-model="code"
                       :disabled="loading"
-                      name="passcode"
+                      name="code"
                       type="text"
                       :label="$gettext('Verification Code')"
                       mask="nnn nnn nnn nnn"
@@ -32,7 +32,7 @@
                       autocomplete="one-time-code"
                       browser-autocomplete="one-time-code"
                       background-color="grey lighten-5"
-                      class="input-passcode text-selectable"
+                      class="input-code text-selectable"
                       prepend-inner-icon="verified_user"
                       color="primary"
                       @keyup.enter.native="onLogin"
@@ -47,7 +47,7 @@
                     <v-text-field
                       id="auth-username"
                       v-model="username"
-                      :disabled="loading || enterPasscode"
+                      :disabled="loading || enterCode"
                       name="username"
                       type="text"
                       :label="$gettext('Name')"
@@ -97,7 +97,7 @@
                 </template>
                 <v-flex xs12 class="px-2 py-1 auth-actions">
                   <div class="action-buttons auth-buttons text-xs-center">
-                    <v-btn v-if="enterPasscode" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-3 py-2 opacity-80" @click.stop.prevent="onCancel">
+                    <v-btn v-if="enterCode" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-3 py-2 opacity-80" @click.stop.prevent="onCancel">
                       <translate>Cancel</translate>
                     </v-btn>
                     <v-btn v-else-if="registerUri" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-register ra-6 px-3 py-2 opacity-80" @click.stop.prevent="onRegister">
@@ -140,8 +140,8 @@ export default {
       username: "",
       password: "",
       showPassword: false,
-      passcode: "",
-      enterPasscode: false,
+      code: "",
+      enterCode: false,
       sponsor: this.$config.isSponsor(),
       config: this.$config.values,
       siteDescription: this.$config.getSiteDescription(),
@@ -186,8 +186,8 @@ export default {
       this.username = "";
       this.password = "";
       this.showPassword = false;
-      this.passcode = "";
-      this.enterPasscode = false;
+      this.code = "";
+      this.enterCode = false;
     },
     onCancel() {
       if (this.loading) {
@@ -201,7 +201,7 @@ export default {
     onLogin() {
       const username = this.username.trim();
       const password = this.password.trim();
-      const passcode = this.passcode.trim();
+      const code = this.code.trim();
 
       if (username === "" || password === "") {
         return;
@@ -209,13 +209,13 @@ export default {
 
       this.loading = true;
       this.$session
-        .login(username, password, passcode)
+        .login(username, password, code)
         .then(() => {
           this.load();
         })
         .catch((e) => {
           if (e.response?.data?.code === 32) {
-            this.enterPasscode = true;
+            this.enterCode = true;
           }
           this.loading = false;
         });

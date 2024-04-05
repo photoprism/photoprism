@@ -41,6 +41,11 @@ func TestProviderType_IsNot(t *testing.T) {
 	assert.False(t, ProviderUndefined.IsNot(ProviderUndefined))
 }
 
+func TestProviderType_IsUndefined(t *testing.T) {
+	assert.True(t, ProviderUndefined.IsUndefined())
+	assert.False(t, ProviderLocal.IsUndefined())
+}
+
 func TestProviderType_IsRemote(t *testing.T) {
 	assert.False(t, ProviderLocal.IsRemote())
 	assert.True(t, ProviderLDAP.IsRemote())
@@ -122,11 +127,6 @@ func TestProvider(t *testing.T) {
 	assert.Equal(t, ProviderLink, Provider("url"))
 	assert.Equal(t, ProviderDefault, Provider("default"))
 	assert.Equal(t, ProviderClientCredentials, Provider("oauth2"))
-}
-
-func TestProviderType_IsUnknown(t *testing.T) {
-	assert.True(t, ProviderUndefined.IsUndefined())
-	assert.False(t, ProviderLocal.IsUndefined())
 }
 
 func TestProviderType_IsApplication(t *testing.T) {

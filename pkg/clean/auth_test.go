@@ -120,3 +120,15 @@ func TestPassword(t *testing.T) {
 		assert.Equal(t, "!#$T#)$%I#J$I", Password("!#$T#)$%I#J$I"))
 	})
 }
+
+func TestPasscode(t *testing.T) {
+	t.Run("Alnum", func(t *testing.T) {
+		assert.Equal(t, "fgdg5yw4y", Passcode("fgdg5yw4y "))
+	})
+	t.Run("Upper", func(t *testing.T) {
+		assert.Equal(t, "aabdf24245vgfrg", Passcode(" AABDF24245vgfrg "))
+	})
+	t.Run("Special", func(t *testing.T) {
+		assert.Equal(t, "tiji", Passcode("!#$T#)$%I#J$I"))
+	})
+}

@@ -16,14 +16,19 @@ var (
 	ErrInvalidCredentials     = errors.New("invalid credentials")
 	ErrInvalidShareToken      = errors.New("invalid share token")
 	ErrInsufficientScope      = errors.New("insufficient scope")
+	ErrNameRequired           = errors.New("name required")
+	ErrScopeRequired          = errors.New("scope required")
 	ErrDisabledInPublicMode   = errors.New("disabled in public mode")
 	ErrAuthenticationDisabled = errors.New("authentication disabled")
 )
 
 // OAuth2-related error messages:
 var (
-	ErrInvalidClientID     = errors.New("invalid client id")
-	ErrInvalidClientSecret = errors.New("invalid client secret")
+	ErrInvalidGrantType     = errors.New("invalid grant type")
+	ErrInvalidClientID      = errors.New("invalid client id")
+	ErrClientIDRequired     = errors.New("client id required")
+	ErrInvalidClientSecret  = errors.New("invalid client secret")
+	ErrClientSecretRequired = errors.New("client secret required")
 )
 
 // Username-related error messages:
@@ -35,7 +40,7 @@ var (
 // Passcode-related error messages:
 var (
 	ErrPasscodeRequired         = errors.New("passcode required")
-	ErrPasscodeNotSetUp         = errors.New("passcode required, but not set up")
+	ErrPasscodeNotSetUp         = errors.New("passcode required, but not configured")
 	ErrPasscodeNotVerified      = errors.New("passcode not verified")
 	ErrPasscodeAlreadyActivated = errors.New("passcode already activated")
 	ErrPasscodeNotSupported     = errors.New("passcode not supported")

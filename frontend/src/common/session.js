@@ -379,10 +379,10 @@ export default class Session {
     return LoginPage === window.location.href.substring(window.location.href.lastIndexOf("/") + 1);
   }
 
-  login(username, password, passcode, token) {
+  login(username, password, code, token) {
     this.reset();
 
-    return Api.post("session", { username, password, passcode, token }).then((resp) => {
+    return Api.post("session", { username, password, code, token }).then((resp) => {
       const reload = this.config.getLanguage() !== resp.data?.config?.settings?.ui?.language;
       this.setResp(resp);
       this.onLogin();
