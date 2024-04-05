@@ -122,7 +122,7 @@
           <v-card-text class="py-0 px-2">
             <v-layout wrap align-top>
               <v-flex xs12 class="pa-2 body-2">
-                <translate>Use the following recovery code to access your account when you are unable to generate a verification code with your authenticator app:</translate>
+                <translate>Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:</translate>
               </v-flex>
               <v-flex xs12 class="pa-2">
                 <v-text-field
