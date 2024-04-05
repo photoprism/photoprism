@@ -2725,7 +2725,7 @@ msgid "Use Presets"
 msgstr "Brug forudindstillinger"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
-msgid "Use the following recovery code to access your account when you are unable to generate a verification code with your authenticator app:"
+msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
 msgstr ""
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:59
