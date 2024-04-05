@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-03-28 18:49+0000\n"
+"PO-Revision-Date: 2024-04-05 02:30+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1159,7 +1159,7 @@ msgstr "Cadres"
 
 #: src/options/auth.js:53 src/options/auth.js:63
 msgid "Full Access"
-msgstr ""
+msgstr "Accès intégral"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -2055,11 +2055,11 @@ msgstr "Réindexer tous les originaux, en incluant ceux déjà indexés et les f
 
 #: src/options/auth.js:54 src/options/auth.js:67
 msgid "Read Only"
-msgstr ""
+msgstr "Lecture uniquement"
 
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
-msgstr "Mode lecture seule"
+msgstr "Accès en lecture seule"
 
 #: src/component/album/toolbar.vue:71 src/component/photo/toolbar.vue:76
 #: src/dialog/album/edit.vue:23 src/page/albums.vue:93
@@ -2541,7 +2541,7 @@ msgstr "Pour éviter le blocage de votre compte, téléchargez, imprimez ou copi
 
 #: src/dialog/account/apps.vue:20
 msgid "To create a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "Pour créer un nouveau mot de passe spécifique à l'application, veuillez saisir le nom et la portée d'autorisation de l'application ainsi que sélectionner une date d'expiration :"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
