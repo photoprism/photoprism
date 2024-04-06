@@ -1,8 +1,6 @@
 package authn
 
 import (
-	"strings"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -13,8 +11,10 @@ type GrantType string
 // Standard authentication grant types.
 const (
 	GrantUndefined         GrantType = ""
-	GrantClientCredentials GrantType = "client_credentials"
+	GrantCLI               GrantType = "cli"
+	GrantImplicit          GrantType = "implicit"
 	GrantPassword          GrantType = "password"
+	GrantClientCredentials GrantType = "client_credentials"
 	GrantShareToken        GrantType = "share_token"
 	GrantRefreshToken      GrantType = "refresh_token"
 	GrantAuthorizationCode GrantType = "authorization_code"
@@ -23,70 +23,22 @@ const (
 	GrantTokenExchange     GrantType = "urn:ietf:params:oauth:grant-type:token-exchange"
 )
 
-// String returns the provider identifier as a string.
-func (t GrantType) String() string {
-	return clean.TypeLowerUnderscore(string(t))
-}
-
-// Is compares the method with another type.
-func (t GrantType) Is(method GrantType) bool {
-	return t == method
-}
-
-// IsNot checks if the method is not the specified type.
-func (t GrantType) IsNot(method GrantType) bool {
-	return t != method
-}
-
-// IsUndefined checks if the method is undefined.
-func (t GrantType) IsUndefined() bool {
-	return t == ""
-}
-
-// Equal checks if the type matches.
-func (t GrantType) Equal(s string) bool {
-	return strings.EqualFold(s, t.String())
-}
-
-// NotEqual checks if the type is different.
-func (t GrantType) NotEqual(s string) bool {
-	return !t.Equal(s)
-}
-
-// Pretty returns the provider identifier in an easy-to-read format.
-func (t GrantType) Pretty() string {
-	switch t {
-	case GrantShareToken:
-		return "Share Token"
-	case GrantRefreshToken:
-		return "Refresh Token"
-	case GrantClientCredentials:
-		return "Client Credentials"
-	case GrantAuthorizationCode:
-		return "Authorization Code"
-	case GrantJwtBearer:
-		return "JWT Bearer Assertion"
-	case GrantSamlBearer:
-		return "SAML2 Bearer Assertion"
-	case GrantTokenExchange:
-		return "Token Exchange"
-	default:
-		return txt.UpperFirst(t.String())
-	}
-}
-
 // Grant casts a string to a normalized grant type.
 func Grant(s string) GrantType {
 	s = clean.TypeLowerUnderscore(s)
 	switch s {
-	case "", "-", "null", "nil", "0", "false":
+	case "", "_", "-", "null", "nil", "0", "false":
 		return GrantUndefined
-	case "client_credentials", "client":
-		return GrantClientCredentials
+	case "cli", "terminal", "command":
+		return GrantCLI
+	case "implicit":
+		return GrantImplicit
 	case "password", "passwd", "pass", "user", "username":
 		return GrantPassword
-	case "share_token", "share":
+	case "client_credentials", "client":
 		return GrantClientCredentials
+	case "share_token", "share":
+		return GrantShareToken
 	case "refresh_token", "refresh":
 		return GrantRefreshToken
 	case "authorization_code", "auth_code":
@@ -100,4 +52,62 @@ func Grant(s string) GrantType {
 	default:
 		return GrantType(s)
 	}
+}
+
+// Pretty returns the grant type in a human-readable format.
+func (t GrantType) Pretty() string {
+	switch t {
+	case GrantCLI:
+		return "CLI"
+	case GrantImplicit:
+		return "Implicit"
+	case GrantPassword:
+		return "Password"
+	case GrantClientCredentials:
+		return "Client Credentials"
+	case GrantShareToken:
+		return "Share Token"
+	case GrantRefreshToken:
+		return "Refresh Token"
+	case GrantAuthorizationCode:
+		return "Authorization Code"
+	case GrantJwtBearer:
+		return "JWT Bearer Assertion"
+	case GrantSamlBearer:
+		return "SAML2 Bearer Assertion"
+	case GrantTokenExchange:
+		return "Token Exchange"
+	default:
+		return txt.UpperFirst(t.String())
+	}
+}
+
+// String returns the grant type as a string.
+func (t GrantType) String() string {
+	return clean.TypeLowerUnderscore(string(t))
+}
+
+// Equal checks if the type matches the specified string.
+func (t GrantType) Equal(s string) bool {
+	return t == Grant(s)
+}
+
+// NotEqual checks if the type does mot match the specified string.
+func (t GrantType) NotEqual(s string) bool {
+	return !t.Equal(s)
+}
+
+// Is compares the grant with another type.
+func (t GrantType) Is(grantType GrantType) bool {
+	return t == grantType
+}
+
+// IsNot checks if the grant is not the specified type.
+func (t GrantType) IsNot(grantType GrantType) bool {
+	return t != grantType
+}
+
+// IsUndefined checks if the grant is undefined.
+func (t GrantType) IsUndefined() bool {
+	return t == ""
 }

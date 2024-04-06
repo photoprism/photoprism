@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -92,7 +93,7 @@ func authAddAction(ctx *cli.Context) error {
 		}
 
 		// Create session and show the authentication secret.
-		sess, err := entity.AddClientAuthentication(clientName, ctx.Int64("expires"), authScope, user)
+		sess, err := entity.AddClientAuthentication(clientName, ctx.Int64("expires"), authScope, authn.GrantCLI, user)
 
 		if err != nil {
 			return fmt.Errorf("failed to create authentication secret: %s", err)

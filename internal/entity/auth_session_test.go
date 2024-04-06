@@ -1,11 +1,11 @@
 package entity
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"testing"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/acl"
@@ -515,7 +515,7 @@ func TestSession_AuthInfo(t *testing.T) {
 
 		i := m.AuthInfo()
 
-		assert.Equal(t, "Access Token (Personal)", i)
+		assert.Equal(t, "Access Token", i)
 	})
 }
 
@@ -550,20 +550,20 @@ func TestSession_SetMethod(t *testing.T) {
 			UserName:     "test",
 			RefID:        "sessxkkcxxxz",
 			AuthProvider: authn.ProviderAccessToken.String(),
-			AuthMethod:   authn.MethodPersonal.String(),
+			AuthMethod:   authn.MethodDefault.String(),
 		}
 
 		m := s.SetMethod("")
 
 		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
-		assert.Equal(t, authn.MethodPersonal, m.Method())
+		assert.Equal(t, authn.MethodDefault, m.Method())
 	})
 	t.Run("Test", func(t *testing.T) {
 		s := &Session{
 			UserName:     "test",
 			RefID:        "sessxkkcxxxz",
 			AuthProvider: authn.ProviderAccessToken.String(),
-			AuthMethod:   authn.MethodPersonal.String(),
+			AuthMethod:   authn.MethodDefault.String(),
 		}
 
 		m := s.SetMethod("Test")
@@ -576,7 +576,7 @@ func TestSession_SetMethod(t *testing.T) {
 			UserName:     "test",
 			RefID:        "sessxkkcxxxz",
 			AuthProvider: authn.ProviderAccessToken.String(),
-			AuthMethod:   authn.MethodPersonal.String(),
+			AuthMethod:   authn.MethodDefault.String(),
 		}
 
 		m := s.SetMethod(authn.MethodSession)

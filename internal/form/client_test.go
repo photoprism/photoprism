@@ -13,7 +13,7 @@ import (
 func TestNewClient(t *testing.T) {
 	t.Run("Defaults", func(t *testing.T) {
 		client := NewClient()
-		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+		assert.Equal(t, authn.ProviderClient, client.Provider())
 		assert.Equal(t, authn.MethodOAuth2, client.Method())
 		assert.Equal(t, "", client.Scope())
 		assert.Equal(t, "", client.Name())
@@ -52,7 +52,7 @@ func TestAddClientFromCli(t *testing.T) {
 		client := AddClientFromCli(ctx)
 
 		// Check form values.
-		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+		assert.Equal(t, authn.ProviderClient, client.Provider())
 		assert.Equal(t, authn.MethodOAuth2, client.Method())
 		assert.Equal(t, "*", client.Scope())
 		assert.Equal(t, "Test", client.Name())
@@ -125,7 +125,7 @@ func TestModClientFromCli(t *testing.T) {
 		client := ModClientFromCli(ctx)
 
 		// Check form values.
-		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+		assert.Equal(t, authn.ProviderClient, client.Provider())
 		assert.Equal(t, authn.MethodOAuth2, client.Method())
 		assert.Equal(t, "*", client.Scope())
 		assert.Equal(t, "Test", client.Name())

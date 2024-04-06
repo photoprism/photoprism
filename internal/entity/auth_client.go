@@ -63,7 +63,7 @@ func NewClient() *Client {
 		ClientType:   authn.ClientConfidential,
 		ClientURL:    "",
 		CallbackURL:  "",
-		AuthProvider: authn.ProviderClientCredentials.String(),
+		AuthProvider: authn.ProviderClient.String(),
 		AuthMethod:   authn.MethodOAuth2.String(),
 		AuthScope:    "",
 		AuthExpires:  unix.Hour,
@@ -547,7 +547,7 @@ func (m *Client) SetFormValues(frm form.Client) *Client {
 
 	// Replace empty values with defaults.
 	if m.AuthProvider == "" {
-		m.AuthProvider = authn.ProviderClientCredentials.String()
+		m.AuthProvider = authn.ProviderClient.String()
 	}
 
 	if m.AuthMethod == "" {

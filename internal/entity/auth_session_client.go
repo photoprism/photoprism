@@ -6,7 +6,7 @@ import (
 )
 
 // NewClientAuthentication returns a new session that authenticates a client application.
-func NewClientAuthentication(clientName string, lifetime int64, scope string, user *User) *Session {
+func NewClientAuthentication(clientName string, lifetime int64, scope string, grantType authn.GrantType, user *User) *Session {
 	sess := NewSession(lifetime, 0)
 
 	if clientName == "" {
@@ -15,6 +15,7 @@ func NewClientAuthentication(clientName string, lifetime int64, scope string, us
 
 	sess.SetClientName(clientName)
 	sess.SetScope(scope)
+	sess.SetGrantType(grantType)
 
 	if user != nil {
 		sess.SetUser(user)
@@ -30,8 +31,8 @@ func NewClientAuthentication(clientName string, lifetime int64, scope string, us
 }
 
 // AddClientAuthentication creates a new session for authenticating a client application.
-func AddClientAuthentication(clientName string, lifetime int64, scope string, user *User) (*Session, error) {
-	sess := NewClientAuthentication(clientName, lifetime, scope, user)
+func AddClientAuthentication(clientName string, lifetime int64, scope string, grantType authn.GrantType, user *User) (*Session, error) {
+	sess := NewClientAuthentication(clientName, lifetime, scope, grantType, user)
 
 	if err := sess.Create(); err != nil {
 		return nil, err

@@ -63,7 +63,7 @@ var ClientAddFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "provider, p",
 		Usage:  ClientAuthProvider,
-		Value:  authn.ProviderClientCredentials.String(),
+		Value:  authn.ProviderClient.String(),
 		Hidden: true,
 	},
 	cli.StringFlag{
@@ -107,7 +107,7 @@ var ClientModFlags = []cli.Flag{
 	cli.StringFlag{
 		Name:   "provider, p",
 		Usage:  ClientAuthProvider,
-		Value:  authn.ProviderClientCredentials.String(),
+		Value:  authn.ProviderClient.String(),
 		Hidden: true,
 	},
 	cli.StringFlag{

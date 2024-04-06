@@ -20,7 +20,7 @@ func TestCientsRemoveCommand(t *testing.T) {
 		//t.Logf(output0)
 		assert.NoError(t, err)
 		assert.NotContains(t, output0, "not found")
-		assert.Contains(t, output0, "client_credentials")
+		assert.Contains(t, output0, "client")
 
 		// Create test context with flags and arguments.
 		ctx := NewTestContext([]string{"rm", "cs7pvt5h8rw9aaqj"})
@@ -44,7 +44,7 @@ func TestCientsRemoveCommand(t *testing.T) {
 		//t.Logf(output2)
 		assert.NoError(t, err)
 		assert.NotContains(t, output2, "not found")
-		assert.Contains(t, output2, "client_credentials")
+		assert.Contains(t, output2, "client")
 	})
 	t.Run("RemoveClient", func(t *testing.T) {
 		var err error
@@ -58,7 +58,7 @@ func TestCientsRemoveCommand(t *testing.T) {
 		//t.Logf(output0)
 		assert.NoError(t, err)
 		assert.NotContains(t, output0, "not found")
-		assert.Contains(t, output0, "client_credentials")
+		assert.Contains(t, output0, "client")
 
 		// Create test context with flags and arguments.
 		ctx := NewTestContext([]string{"rm", "--force", "cs7pvt5h8rw9aaqj"})

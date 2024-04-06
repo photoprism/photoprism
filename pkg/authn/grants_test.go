@@ -51,6 +51,7 @@ func TestGrantType_IsUndefined(t *testing.T) {
 
 func TestGrantType_Pretty(t *testing.T) {
 	assert.Equal(t, "", GrantUndefined.Pretty())
+	assert.Equal(t, "CLI", GrantCLI.Pretty())
 	assert.Equal(t, "Client Credentials", GrantClientCredentials.Pretty())
 	assert.Equal(t, "Password", GrantPassword.Pretty())
 	assert.Equal(t, "Refresh Token", GrantRefreshToken.Pretty())
@@ -61,33 +62,49 @@ func TestGrantType_Pretty(t *testing.T) {
 
 func TestGrantType_Equal(t *testing.T) {
 	assert.True(t, GrantClientCredentials.Equal("Client_Credentials"))
-	assert.False(t, GrantClientCredentials.Equal("Client Credentials"))
+	assert.True(t, GrantClientCredentials.Equal("Client Credentials"))
 	assert.True(t, GrantClientCredentials.Equal("client_credentials"))
-	assert.False(t, GrantClientCredentials.Equal("client"))
+	assert.True(t, GrantClientCredentials.Equal("client"))
 	assert.True(t, GrantUndefined.Equal(""))
 	assert.True(t, GrantPassword.Equal("Password"))
 	assert.True(t, GrantPassword.Equal("password"))
-	assert.False(t, GrantPassword.Equal("pass"))
+	assert.True(t, GrantPassword.Equal("pass"))
 }
 
 func TestGrantType_NotEqual(t *testing.T) {
 	assert.False(t, GrantClientCredentials.NotEqual("Client_Credentials"))
-	assert.True(t, GrantClientCredentials.NotEqual("Client Credentials"))
+	assert.False(t, GrantClientCredentials.NotEqual("Client Credentials"))
 	assert.False(t, GrantClientCredentials.NotEqual("client_credentials"))
-	assert.True(t, GrantClientCredentials.NotEqual("client"))
+	assert.False(t, GrantClientCredentials.NotEqual("client"))
+	assert.True(t, GrantClientCredentials.NotEqual("access_token"))
+	assert.True(t, GrantClientCredentials.NotEqual(""))
 	assert.False(t, GrantUndefined.NotEqual(""))
 	assert.False(t, GrantPassword.NotEqual("Password"))
 	assert.False(t, GrantPassword.NotEqual("password"))
-	assert.True(t, GrantPassword.NotEqual("pass"))
+	assert.False(t, GrantPassword.NotEqual("pass"))
+	assert.True(t, GrantPassword.NotEqual("passw"))
 }
 
 func TestGrant(t *testing.T) {
 	assert.Equal(t, GrantUndefined, Grant(""))
-	assert.Equal(t, GrantClientCredentials, Grant("client credentials"))
+	assert.Equal(t, GrantCLI, Grant("cli"))
+	assert.Equal(t, GrantImplicit, Grant("implicit"))
 	assert.Equal(t, GrantPassword, Grant("pass"))
+	assert.Equal(t, GrantPassword, Grant("password"))
+	assert.Equal(t, GrantClientCredentials, Grant("client credentials"))
+	assert.Equal(t, GrantClientCredentials, Grant("client_credentials"))
+	assert.Equal(t, GrantShareToken, Grant("share_token"))
 	assert.Equal(t, GrantRefreshToken, Grant("refresh_token"))
 	assert.Equal(t, GrantAuthorizationCode, Grant("auth_code"))
+	assert.Equal(t, GrantAuthorizationCode, Grant("authorization_code"))
+	assert.Equal(t, GrantAuthorizationCode, Grant("authorization code"))
 	assert.Equal(t, GrantJwtBearer, Grant("jwt-bearer"))
+	assert.Equal(t, GrantJwtBearer, Grant("jwt_bearer"))
+	assert.Equal(t, GrantJwtBearer, Grant("jwt bearer"))
 	assert.Equal(t, GrantSamlBearer, Grant("saml"))
+	assert.Equal(t, GrantSamlBearer, Grant("saml2"))
+	assert.Equal(t, GrantSamlBearer, Grant("saml2-bearer"))
 	assert.Equal(t, GrantTokenExchange, Grant("token-exchange"))
+	assert.Equal(t, GrantTokenExchange, Grant("token_exchange"))
+	assert.Equal(t, GrantTokenExchange, Grant("token exchange"))
 }

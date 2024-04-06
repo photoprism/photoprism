@@ -303,15 +303,15 @@ func TestClient_SetSecret(t *testing.T) {
 func TestClient_Provider(t *testing.T) {
 	t.Run("New", func(t *testing.T) {
 		client := NewClient()
-		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+		assert.Equal(t, authn.ProviderClient, client.Provider())
 	})
 	t.Run("Alice", func(t *testing.T) {
 		client := ClientFixtures.Get("alice")
-		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+		assert.Equal(t, authn.ProviderClient, client.Provider())
 	})
 	t.Run("Bob", func(t *testing.T) {
 		client := ClientFixtures.Get("bob")
-		assert.Equal(t, authn.ProviderClientCredentials, client.Provider())
+		assert.Equal(t, authn.ProviderClient, client.Provider())
 	})
 }
 
@@ -497,13 +497,13 @@ func TestClient_UserInfo(t *testing.T) {
 
 func TestClient_AuthInfo(t *testing.T) {
 	t.Run("New", func(t *testing.T) {
-		assert.Equal(t, "Client Credentials (OAuth2)", NewClient().AuthInfo())
+		assert.Equal(t, "Client (OAuth2)", NewClient().AuthInfo())
 	})
 	t.Run("Alice", func(t *testing.T) {
-		assert.Equal(t, "Client Credentials (OAuth2)", ClientFixtures.Pointer("alice").AuthInfo())
+		assert.Equal(t, "Client (OAuth2)", ClientFixtures.Pointer("alice").AuthInfo())
 	})
 	t.Run("Metrics", func(t *testing.T) {
-		assert.Equal(t, "Client Credentials (OAuth2)", ClientFixtures.Pointer("metrics").AuthInfo())
+		assert.Equal(t, "Client (OAuth2)", ClientFixtures.Pointer("metrics").AuthInfo())
 	})
 }
 
@@ -526,7 +526,7 @@ func TestClient_SetFormValues(t *testing.T) {
 
 		var values = form.Client{
 			ClientName:   "New Name",
-			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   authn.MethodOAuth2.String(),
 			AuthScope:    "test",
 			AuthExpires:  4000,
@@ -550,7 +550,7 @@ func TestClient_SetFormValues(t *testing.T) {
 
 		var values = form.Client{
 			ClientName:   "Annika",
-			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   authn.MethodOAuth2.String(),
 			AuthScope:    "metrics",
 			AuthExpires:  -4000,
@@ -574,7 +574,7 @@ func TestClient_SetFormValues(t *testing.T) {
 
 		var values = form.Client{
 			ClientName:   "Friend",
-			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   authn.MethodOAuth2.String(),
 			AuthScope:    "test",
 			AuthExpires:  4000000,
@@ -614,7 +614,7 @@ func TestClient_SetFormValues(t *testing.T) {
 		assert.Equal(t, int64(3600), c.AuthExpires)
 		assert.Equal(t, "*", c.AuthScope)
 		assert.Equal(t, "oauth2", c.AuthMethod)
-		assert.Equal(t, "client_credentials", c.AuthProvider)
+		assert.Equal(t, "client", c.AuthProvider)
 
 	})
 }
@@ -624,7 +624,7 @@ func TestClient_Validate(t *testing.T) {
 		m := Client{
 			ClientName:   "test",
 			ClientType:   "test",
-			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   "basic",
 			AuthScope:    "all",
 		}
@@ -639,7 +639,7 @@ func TestClient_Validate(t *testing.T) {
 		m := Client{
 			ClientName:   "",
 			ClientType:   "test",
-			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   "basic",
 			AuthScope:    "all",
 		}
@@ -654,7 +654,7 @@ func TestClient_Validate(t *testing.T) {
 		m := Client{
 			ClientName:   "test",
 			ClientType:   "",
-			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   "basic",
 			AuthScope:    "all",
 		}
@@ -669,7 +669,7 @@ func TestClient_Validate(t *testing.T) {
 		m := Client{
 			ClientName:   "test",
 			ClientType:   "test",
-			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   "",
 			AuthScope:    "all",
 		}
@@ -684,7 +684,7 @@ func TestClient_Validate(t *testing.T) {
 		m := Client{
 			ClientName:   "test",
 			ClientType:   "test",
-			AuthProvider: authn.ProviderClientCredentials.String(),
+			AuthProvider: authn.ProviderClient.String(),
 			AuthMethod:   "basic",
 			AuthScope:    "",
 		}
