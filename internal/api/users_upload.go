@@ -169,6 +169,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		var f form.UploadOptions
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

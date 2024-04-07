@@ -18,13 +18,13 @@
         <v-card-text class="py-0 px-2">
           <v-layout wrap align-top>
             <v-flex xs12 class="pa-2 body-2">
-              <translate>To create a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:</translate>
+              <translate>To generate a new app-specific password, please enter the name and authorization scope of the application and choose an expiration date:</translate>
             </v-flex>
             <v-flex xs12 class="pa-2">
               <v-text-field
-                v-model="newApp.Name"
+                v-model="newApp.client_name"
                 :disabled="busy"
-                name="appname"
+                name="client_name"
                 type="text"
                 :label="$gettext('Name')"
                 required
@@ -40,10 +40,10 @@
               ></v-text-field>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
-              <v-select v-model="newApp.Scope" hide-details box :disabled="busy" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" class="input-scope"></v-select>
+              <v-select v-model="newApp.scope" hide-details box :disabled="busy" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" class="input-scope"></v-select>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
-              <v-select v-model="newApp.Expires" :disabled="busy" :label="$gettext('Expires')" browser-autocomplete="off" hide-details box flat color="secondary-dark" class="input-expires" item-text="text" item-value="value" :items="options.Expires()"></v-select>
+              <v-select v-model="newApp.lifetime" :disabled="busy" :label="$gettext('Expires')" browser-autocomplete="off" hide-details box flat color="secondary-dark" class="input-expires" item-text="text" item-value="value" :items="options.Expires()"></v-select>
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -53,8 +53,8 @@
               <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                 <translate>Close</translate>
               </v-btn>
-              <v-btn depressed color="primary-button" disabled class="action-create white--text compact mr-0" @click.stop="close">
-                <translate>Create</translate>
+              <v-btn depressed color="primary-button" disabled class="action-generate white--text compact mr-0" @click.stop="close">
+                <translate>Generate</translate>
               </v-btn>
             </v-flex>
           </v-layout>
@@ -93,9 +93,11 @@ export default {
       passwords: [],
       user: this.$session.getUser(),
       newApp: {
-        Name: "",
-        Scope: "*",
-        Expires: 0,
+        grant_type: "session",
+        password: "",
+        client_name: "",
+        scope: "*",
+        lifetime: 0,
       },
     };
   },

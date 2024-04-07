@@ -110,7 +110,7 @@ func TestDeleteClientSessions(t *testing.T) {
 	client.ClientUID = clientUID
 
 	// Make sure no sessions exist yet and test missing arguments.
-	assert.Equal(t, 0, DeleteClientSessions(&Client{}, "", -1))
+	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodUndefined, -1))
 	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1))
 	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0))
 	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodDefault, 0))
@@ -127,10 +127,11 @@ func TestDeleteClientSessions(t *testing.T) {
 
 	// Check if the expected number of sessions is deleted until none are left.
 	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOIDC, 1))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodDefault, 1))
 	assert.Equal(t, 9, DeleteClientSessions(client, authn.MethodOAuth2, 1))
 	assert.Equal(t, 1, DeleteClientSessions(client, authn.MethodOAuth2, 0))
 	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0))
+	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodUndefined, 0))
 }
 
 func TestSessionStatusUnauthorized(t *testing.T) {

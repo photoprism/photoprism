@@ -45,6 +45,7 @@ func ZipCreate(router *gin.RouterGroup) {
 		var f form.Selection
 		start := time.Now()
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

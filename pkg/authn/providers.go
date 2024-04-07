@@ -17,6 +17,7 @@ const (
 	ProviderApplication ProviderType = "application"
 	ProviderAccessToken ProviderType = "access_token"
 	ProviderLocal       ProviderType = "local"
+	ProviderOIDC        ProviderType = "oidc"
 	ProviderLDAP        ProviderType = "ldap"
 	ProviderLink        ProviderType = "link"
 	ProviderNone        ProviderType = "none"
@@ -24,6 +25,7 @@ const (
 
 // RemoteProviders contains remote auth providers.
 var RemoteProviders = list.List{
+	string(ProviderOIDC),
 	string(ProviderLDAP),
 }
 
@@ -32,18 +34,25 @@ var LocalProviders = list.List{
 	string(ProviderLocal),
 }
 
-// Method2FAProviders contains auth providers that support Method2FA.
-var Method2FAProviders = list.List{
+// ClientProviders contains all client authentication providers.
+var ClientProviders = list.List{
+	string(ProviderClient),
+	string(ProviderApplication),
+	string(ProviderAccessToken),
+}
+
+// PasswordProviders contains authentication providers that allow a password to be checked for authentication.
+var PasswordProviders = list.List{
 	string(ProviderDefault),
 	string(ProviderLocal),
 	string(ProviderLDAP),
 }
 
-// ClientProviders contains all client auth providers.
-var ClientProviders = list.List{
-	string(ProviderClient),
-	string(ProviderApplication),
-	string(ProviderAccessToken),
+// PasscodeProviders contains authentication providers that support 2-Factor Authentication (2FA) with a TOTP passcode.
+var PasscodeProviders = list.List{
+	string(ProviderDefault),
+	string(ProviderLocal),
+	string(ProviderLDAP),
 }
 
 // Provider casts a string to a normalized provider type.
@@ -58,6 +67,8 @@ func Provider(s string) ProviderType {
 		return ProviderLocal
 	case "app", "application":
 		return ProviderApplication
+	case "oidc", "openid":
+		return ProviderOIDC
 	case "ldap", "ad", "ldap/ad", "ldap\\ad":
 		return ProviderLDAP
 	case "client", "client_credentials", "oauth2":
@@ -70,6 +81,8 @@ func Provider(s string) ProviderType {
 // Pretty returns the provider identifier in an easy-to-read format.
 func (t ProviderType) Pretty() string {
 	switch t {
+	case ProviderOIDC:
+		return "OIDC"
 	case ProviderLDAP:
 		return "LDAP/AD"
 	case ProviderClient:
@@ -132,11 +145,6 @@ func (t ProviderType) IsLocal() bool {
 	return list.Contains(LocalProviders, string(t))
 }
 
-// Supports2FA checks if the provider supports two-factor authentication with a passcode.
-func (t ProviderType) Supports2FA() bool {
-	return list.Contains(Method2FAProviders, string(t))
-}
-
 // IsClient checks if the authentication is provided for a client.
 func (t ProviderType) IsClient() bool {
 	return list.Contains(ClientProviders, string(t))
@@ -150,4 +158,14 @@ func (t ProviderType) IsApplication() bool {
 // IsDefault checks if this is the default provider.
 func (t ProviderType) IsDefault() bool {
 	return t.String() == ProviderDefault.String()
+}
+
+// SupportsPasswordAuthentication checks if the provider allows a password to be checked for authentication.
+func (t ProviderType) SupportsPasswordAuthentication() bool {
+	return list.Contains(PasswordProviders, string(t))
+}
+
+// SupportsPasscodeAuthentication checks if the provider supports two-factor authentication with a passcode.
+func (t ProviderType) SupportsPasscodeAuthentication() bool {
+	return list.Contains(PasscodeProviders, string(t))
 }

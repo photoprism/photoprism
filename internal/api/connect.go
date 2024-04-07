@@ -28,6 +28,7 @@ func Connect(router *gin.RouterGroup) {
 
 		var f form.Connect
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			log.Warnf("connect: invalid form values (%s)", clean.Log(name))
 			Abort(c, http.StatusBadRequest, i18n.ErrAccountConnect)

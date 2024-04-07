@@ -1,45 +1,71 @@
 package form
 
 import (
-	"fmt"
-
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 const (
-	ClientAccessToken = "access_token"
+	RefID       = "ref_id"
+	SessionID   = "session_id"
+	AccessToken = "access_token"
 )
 
 // OAuthRevokeToken represents a token revokation form.
 type OAuthRevokeToken struct {
-	AuthToken string `form:"token" binding:"required" json:"token,omitempty"`
-	TypeHint  string `form:"token_type_hint" json:" token_type_hint,omitempty"`
+	Token         string `form:"token" binding:"required" json:"token,omitempty"`
+	TokenTypeHint string `form:"token_type_hint" json:" token_type_hint,omitempty"`
 }
 
 // Empty checks if all form values are unset.
-func (f OAuthRevokeToken) Empty() bool {
+func (f *OAuthRevokeToken) Empty() bool {
 	switch {
-	case f.AuthToken != "":
+	case f.Token != "":
 		return false
-	case f.TypeHint != "":
+	case f.TokenTypeHint != "":
 		return false
 	}
 
 	return true
 }
 
-// Validate checks the token and token type.
-func (f OAuthRevokeToken) Validate() error {
-	// Check auth token.
-	if f.AuthToken == "" {
-		return fmt.Errorf("missing token")
-	} else if !rnd.IsAlnum(f.AuthToken) {
-		return fmt.Errorf("invalid token")
+// Validate checks the revoke token form values and returns an error if invalid.
+func (f *OAuthRevokeToken) Validate() error {
+	// Require a token.
+	if f.Token == "" {
+		return authn.ErrTokenRequired
 	}
 
-	// Check token type.
-	if f.TypeHint != "" && f.TypeHint != ClientAccessToken {
-		return fmt.Errorf("unsupported token type")
+	// Validate token type.
+	isRefID := rnd.IsRefID(f.Token)
+	isSessionID := rnd.IsSessionID(f.Token)
+	isAuthAny := rnd.IsAuthAny(f.Token)
+
+	switch f.TokenTypeHint {
+	case "":
+		if !isRefID && !isSessionID && !isAuthAny {
+			return authn.ErrInvalidToken
+		} else if isRefID {
+			f.TokenTypeHint = RefID
+		} else if isSessionID {
+			f.TokenTypeHint = SessionID
+		} else {
+			f.TokenTypeHint = AccessToken
+		}
+	case RefID:
+		if !isRefID {
+			return authn.ErrInvalidToken
+		}
+	case SessionID:
+		if !isSessionID {
+			return authn.ErrInvalidToken
+		}
+	case AccessToken:
+		if !isAuthAny {
+			return authn.ErrInvalidToken
+		}
+	default:
+		return authn.ErrInvalidTokenType
 	}
 
 	return nil

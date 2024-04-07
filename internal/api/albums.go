@@ -83,6 +83,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 
 		var f form.Album
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return
@@ -163,7 +164,8 @@ func UpdateAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := c.BindJSON(&f); err != nil {
+		// Assign and validate request form values.
+		if err = c.BindJSON(&f); err != nil {
 			log.Error(err)
 			AbortBadRequest(c)
 			return
@@ -328,7 +330,7 @@ func DislikeAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := a.Update("AlbumFavorite", false); err != nil {
+		if err = a.Update("AlbumFavorite", false); err != nil {
 			Abort(c, http.StatusInternalServerError, i18n.ErrSaveFailed)
 			return
 		}
@@ -374,7 +376,8 @@ func CloneAlbums(router *gin.RouterGroup) {
 
 		var f form.Selection
 
-		if err := c.BindJSON(&f); err != nil {
+		// Assign and validate request form values.
+		if err = c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -425,6 +428,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 		var f form.Selection
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return
@@ -496,6 +500,7 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 
 		var f form.Selection
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

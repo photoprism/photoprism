@@ -34,6 +34,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 
 		var f form.Selection
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

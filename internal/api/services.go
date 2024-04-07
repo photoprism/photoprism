@@ -125,6 +125,7 @@ func AddService(router *gin.RouterGroup) {
 
 		var f form.Service
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

@@ -34,6 +34,7 @@ func SendFeedback(router *gin.RouterGroup) {
 
 		var f form.Feedback
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

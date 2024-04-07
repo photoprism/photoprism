@@ -50,6 +50,7 @@ func StartImport(router *gin.RouterGroup) {
 
 		var f form.ImportOptions
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

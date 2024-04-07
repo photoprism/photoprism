@@ -68,22 +68,22 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 	})
 	t.Run("Password", func(t *testing.T) {
 		m := OAuthCreateToken{
-			GrantType: authn.GrantPassword,
-			Username:  "admin",
-			Password:  "cs5gfen1bgxz7s9i",
-			Name:      "test",
-			Scope:     "*",
+			GrantType:  authn.GrantPassword,
+			Username:   "admin",
+			Password:   "cs5gfen1bgxz7s9i",
+			ClientName: "test",
+			Scope:      "*",
 		}
 
 		assert.NoError(t, m.Validate())
 	})
 	t.Run("PasswordRequired", func(t *testing.T) {
 		m := OAuthCreateToken{
-			GrantType: authn.GrantPassword,
-			Username:  "admin",
-			Password:  "",
-			Name:      "test",
-			Scope:     "*",
+			GrantType:  authn.GrantPassword,
+			Username:   "admin",
+			Password:   "",
+			ClientName: "test",
+			Scope:      "*",
 		}
 
 		assert.Error(t, m.Validate())

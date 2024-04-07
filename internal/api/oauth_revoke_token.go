@@ -1,10 +1,12 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -27,70 +29,128 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 			return
 		}
 
+		// Disable caching of responses.
+		c.Header(header.CacheControl, header.CacheControlNoStore)
+
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
+		actor := "unknown client"
+		action := "revoke token"
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "client", "delete session", "oauth2", authn.ErrDisabledInPublicMode.Error()})
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrDisabledInPublicMode.Error()})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}
 
+		// Session and user information.
+		var s, sess *entity.Session
+		var authToken, sUserUID string
+		var role acl.Role
 		var err error
 
 		// Token revokation request form.
 		var f form.OAuthRevokeToken
 
-		// Get token from request header.
-		authToken := AuthToken(c)
+		// Get token and session from request header.
+		if authToken = AuthToken(c); authToken == "" {
+			role = acl.RoleNone
+		} else if s = Session(clientIp, authToken); s != nil {
+			// Set log role and actor based on the session referenced in request header.
+			sUserUID = s.UserUID
+			if s.IsClient() {
+				role = s.ClientRole()
+				actor = fmt.Sprintf("client %s", clean.Log(s.ClientInfo()))
+			} else if username := s.Username(); username != "" {
+				role = s.UserRole()
+				actor = fmt.Sprintf("user %s", clean.Log(username))
+			} else {
+				role = s.UserRole()
+				actor = fmt.Sprintf("unknown %s", s.UserRole().String())
+			}
+		}
 
 		// Get the auth token to be revoked from the submitted form values or the request header.
 		if err = c.ShouldBind(&f); err != nil && authToken == "" {
-			event.AuditWarn([]string{clientIp, "client", "delete session", "oauth2", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
 			AbortBadRequest(c)
 			return
 		} else if f.Empty() {
-			f.AuthToken = authToken
-			f.TypeHint = form.ClientAccessToken
+			f.Token = authToken
+			f.TokenTypeHint = form.AccessToken
 		}
 
-		// Check the token form values.
+		// Validate revokation form values.
 		if err = f.Validate(); err != nil {
-			event.AuditWarn([]string{clientIp, "client", "delete session", "oauth2", "%s"}, err)
-			AbortBadRequest(c)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
+			AbortInvalidCredentials(c)
 			return
 		}
 
-		// Disable caching of responses.
-		c.Header(header.CacheControl, header.CacheControlNoStore)
+		// Find session to be revoked.
+		switch f.TokenTypeHint {
+		case form.RefID:
+			if s == nil || sUserUID == "" || role == acl.RoleNone {
+				c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
+				return
+			} else if sess = entity.FindSessionByRefID(f.Token); sess == nil {
+				AbortInvalidCredentials(c)
+				return
+			}
+		case form.SessionID:
+			if s == nil || sUserUID == "" || role == acl.RoleNone {
+				c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
+				return
+			}
 
-		// Find session based on auth token.
-		sess, err := entity.FindSession(rnd.SessionID(f.AuthToken))
+			sess, err = entity.FindSession(f.Token)
+		case form.AccessToken:
+			sess, err = entity.FindSession(rnd.SessionID(f.Token))
+		}
 
+		// If not already set, get the log role and actor from the session to be revoked.
+		if sess != nil && role == acl.RoleNone {
+			if sess.IsClient() {
+				role = sess.ClientRole()
+				actor = fmt.Sprintf("client %s", clean.Log(sess.ClientInfo()))
+			} else if username := sess.Username(); username != "" {
+				role = s.UserRole()
+				actor = fmt.Sprintf("user %s", clean.Log(username))
+			} else {
+				role = sess.UserRole()
+				actor = fmt.Sprintf("unknown %s", sess.UserRole().String())
+			}
+		}
+
+		// Check revokation request and abort if invalid.
 		if err != nil {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "%s"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String(), err.Error())
-			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "%s"}, clean.Log(sess.RefID), role.String(), err.Error())
+			AbortInvalidCredentials(c)
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", authn.Denied}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
-			c.AbortWithStatusJSON(http.StatusUnauthorized, i18n.NewResponse(http.StatusUnauthorized, i18n.ErrUnauthorized))
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
+			AbortInvalidCredentials(c)
 			return
 		} else if sess.Abort(c) {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", authn.Denied}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
 			return
 		} else if !sess.IsClient() {
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", authn.Denied}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Denied}, clean.Log(sess.RefID), role.String())
 			c.AbortWithStatusJSON(http.StatusForbidden, i18n.NewResponse(http.StatusForbidden, i18n.ErrForbidden))
 			return
+		} else if sUserUID != "" && sess.UserUID != sUserUID {
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.ErrUnauthorized.Error()}, clean.Log(sess.RefID), role.String())
+			AbortInvalidCredentials(c)
+			return
 		} else {
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", authn.Granted}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String())
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", authn.Granted}, clean.Log(sess.RefID), role.String())
 		}
 
 		// Delete session cache and database record.
 		if err = sess.Delete(); err != nil {
 			// Log error.
-			event.AuditErr([]string{clientIp, "client %s", "session %s", "delete session as %s", "oauth2", "%s"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID), sess.ClientRole().String(), err)
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "%s"}, clean.Log(sess.RefID), role.String(), err)
 
 			// Return JSON error.
 			c.AbortWithStatusJSON(http.StatusNotFound, i18n.NewResponse(http.StatusNotFound, i18n.ErrNotFound))
@@ -98,7 +158,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 		}
 
 		// Log event.
-		event.AuditInfo([]string{clientIp, "client %s", "session %s", "oauth2", "deleted"}, clean.Log(sess.ClientInfo()), clean.Log(sess.RefID))
+		event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "deleted"}, clean.Log(sess.RefID))
 
 		// Send response.
 		c.JSON(http.StatusOK, DeleteSessionResponse(sess.ID))

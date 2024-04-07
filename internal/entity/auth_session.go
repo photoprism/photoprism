@@ -145,7 +145,7 @@ func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int
 		q = q.Where("user_uid = ?", client.UserUID)
 	}
 
-	if !authMethod.IsDefault() {
+	if !authMethod.IsUndefined() {
 		q = q.Where("auth_method = ?", authMethod.String())
 	}
 

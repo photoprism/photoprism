@@ -61,14 +61,15 @@ func UpdateSubject(router *gin.RouterGroup) {
 			return
 		}
 
-		// Initialize form.
+		// Create request value form.
 		f, err := form.NewSubject(*m)
 
+		// Assign and validate request form values.
 		if err != nil {
 			log.Errorf("subject: %s (new form)", err)
 			AbortSaveFailed(c)
 			return
-		} else if err := c.BindJSON(&f); err != nil {
+		} else if err = c.BindJSON(&f); err != nil {
 			log.Errorf("subject: %s (update form)", err)
 			AbortBadRequest(c)
 			return

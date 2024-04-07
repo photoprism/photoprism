@@ -1,6 +1,8 @@
 package api
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/dustin/go-humanize/english"
@@ -14,7 +16,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
-	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // CreateOAuthToken creates a new access token for clients that
@@ -31,10 +32,12 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
+		actor := "unknown client"
+		action := "create token"
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "client", "create session", "oauth2", authn.ErrDisabledInPublicMode.Error()})
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrDisabledInPublicMode.Error()})
 			AbortForbidden(c)
 			return
 		}
@@ -54,15 +57,15 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			f.ClientID = clientId
 			f.ClientSecret = clientSecret
 		} else if err = c.ShouldBind(&f); err != nil {
-			event.AuditWarn([]string{clientIp, "client", "create session", "oauth2", "%s"}, err)
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
 			AbortBadRequest(c)
 			return
 		}
 
 		// Check the credentials for completeness and the correct format.
 		if err = f.Validate(); err != nil {
-			event.AuditWarn([]string{clientIp, "client", "create session", "oauth2", "%s"}, err)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+			event.AuditWarn([]string{clientIp, "oauth2", actor, action, "%s"}, err)
+			AbortInvalidCredentials(c)
 			return
 		}
 
@@ -75,6 +78,14 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			return
 		}
 
+		if f.ClientID != "" {
+			actor = fmt.Sprintf("client %s", clean.Log(f.ClientID))
+		} else if f.Username != "" {
+			actor = fmt.Sprintf("user %s", clean.Log(f.Username))
+		} else if f.GrantType == authn.GrantPassword {
+			actor = "unknown user"
+		}
+
 		// Create a new session (access token) based on the grant type specified in the request.
 		switch f.GrantType {
 		case authn.GrantClientCredentials, authn.GrantUndefined:
@@ -83,20 +94,20 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 			// Check if a client has been found, it is enabled, and the credentials are valid.
 			if client == nil {
-				event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", authn.ErrInvalidClientID.Error()}, f.ClientID)
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidClientID.Error()})
+				AbortInvalidCredentials(c)
 				return
 			} else if !client.AuthEnabled {
-				event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", authn.ErrAuthenticationDisabled.Error()}, f.ClientID)
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrAuthenticationDisabled.Error()})
+				AbortInvalidCredentials(c)
 				return
 			} else if method := client.Method(); !method.IsDefault() && method != authn.MethodOAuth2 {
-				event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "method %s not supported"}, f.ClientID, clean.LogQuote(method.String()))
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, "method %s not supported"}, clean.LogQuote(method.String()))
+				AbortInvalidCredentials(c)
 				return
 			} else if client.InvalidSecret(f.ClientSecret) {
-				event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", authn.ErrInvalidClientSecret.Error()}, f.ClientID)
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+				event.AuditWarn([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidClientSecret.Error()})
+				AbortInvalidCredentials(c)
 				return
 			}
 
@@ -105,42 +116,88 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 
 			// Create new client session.
 			sess = client.NewSession(c, authn.GrantClientCredentials)
-		case authn.GrantPassword:
-			// Generate an app password for a user account and accept the password for confirmation.
-			event.AuditWarn([]string{clientIp, "client %s", "create session", "oauth2", "password grant type is not implemented yet"}, f.ClientID)
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
-			return
+		case authn.GrantPassword, authn.GrantSession:
+			// Generate an app password for a user account and check the password for confirmation.
+			s := Session(clientIp, AuthToken(c))
+
+			if s == nil {
+				AbortInvalidCredentials(c)
+				return
+			} else if s.Username() == "" || s.IsClient() || s.IsRegistered() {
+				AbortInvalidCredentials(c)
+				return
+			}
+
+			actor = fmt.Sprintf("user %s", clean.Log(s.Username()))
+
+			if s.User().Provider().SupportsPasswordAuthentication() {
+				loginForm := form.Login{
+					Username: s.Username(),
+					Password: f.Password,
+				}
+
+				authUser, authProvider, authMethod, authErr := entity.Auth(loginForm, nil, c)
+
+				if authProvider.IsClient() {
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.Denied})
+					AbortInvalidCredentials(c)
+					return
+				} else if !authUser.Equal(s.User()) {
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidUsername.Error()})
+					AbortInvalidCredentials(c)
+					return
+				} else if authMethod.Is(authn.Method2FA) && errors.Is(authErr, authn.ErrPasscodeRequired) {
+					// Ignore.
+				} else if authErr != nil {
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, "%s"}, clean.Error(authErr))
+					AbortInvalidCredentials(c)
+					return
+				}
+
+				f.GrantType = authn.GrantPassword
+			} else {
+				f.GrantType = authn.GrantSession
+			}
+
+			sess = entity.NewClientAuthentication(f.ClientName, f.Lifetime, f.Scope, f.GrantType, s.User())
+
+			// Return the reserved request rate limit tokens after successful authentication.
+			r.Success()
 		default:
-			event.AuditErr([]string{clientIp, "client %s", "create session", "oauth2", authn.ErrInvalidGrantType.Error()}, f.ClientID)
-			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()}, clean.Log(f.ClientID))
+			AbortInvalidCredentials(c)
 			return
 		}
 
 		// Save new session.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "client %s", "create session", "oauth2", err.Error()}, f.ClientID)
-			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, err.Error()}, f.ClientID)
+			AbortInvalidCredentials(c)
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "client %s", "create session", "oauth2", StatusFailed.String()}, f.ClientID)
-			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrUnexpected)})
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, StatusFailed.String()}, f.ClientID)
+			AbortUnexpectedError(c)
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "oauth2", "created"}, f.ClientID, sess.RefID)
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, authn.Created}, f.ClientID, sess.RefID)
 		}
 
 		// Delete any existing client sessions above the configured limit.
 		if client == nil {
 			// Skip deletion if not created by a client.
 		} else if deleted := client.EnforceAuthTokenLimit(); deleted > 0 {
-			event.AuditInfo([]string{clientIp, "client %s", "session %s", "oauth2", "deleted %s"}, f.ClientID, sess.RefID, english.Plural(deleted, "previously created client session", "previously created client sessions"))
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "deleted %s to enforce token limit"}, f.ClientID, sess.RefID, english.Plural(deleted, "session", "sessions"))
 		}
 
 		// Send response with access token, token type, and token lifetime.
 		response := gin.H{
+			"status":       StatusSuccess,
+			"session_id":   sess.ID,
 			"access_token": sess.AuthToken(),
 			"token_type":   sess.AuthTokenType(),
 			"expires_in":   sess.ExpiresIn(),
+			"client_name":  sess.ClientName,
+			"scope":        sess.Scope(),
 		}
 
 		c.JSON(http.StatusOK, response)

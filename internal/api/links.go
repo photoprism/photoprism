@@ -27,6 +27,7 @@ func UpdateLink(c *gin.Context) {
 
 	var f form.Link
 
+	// Assign and validate request form values.
 	if err := c.BindJSON(&f); err != nil {
 		log.Debugf("share: %s", err)
 		AbortBadRequest(c)

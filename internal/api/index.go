@@ -42,6 +42,7 @@ func StartIndexing(router *gin.RouterGroup) {
 
 		var f form.IndexOptions
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

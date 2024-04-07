@@ -39,7 +39,8 @@ func UploadToService(router *gin.RouterGroup) {
 
 		var f form.SyncUpload
 
-		if err := c.BindJSON(&f); err != nil {
+		// Assign and validate request form values.
+		if err = c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return
 		}

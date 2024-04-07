@@ -69,6 +69,7 @@ func UpdateUserPassword(router *gin.RouterGroup) {
 
 		f := form.ChangePassword{}
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
 			return

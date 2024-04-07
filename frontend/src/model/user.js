@@ -212,23 +212,6 @@ export class User extends RestModel {
     return this.AuthProvider && this.AuthProvider === "ldap";
   }
 
-  disable2FA() {
-    if (!this.Name) {
-      return true;
-    }
-
-    switch (this.AuthProvider) {
-      case "default":
-        return false;
-      case "local":
-        return false;
-      case "ldap":
-        return false;
-      default:
-        return true;
-    }
-  }
-
   authInfo() {
     if (!this || !this.AuthProvider) {
       return $gettext("Default");
@@ -287,6 +270,21 @@ export class User extends RestModel {
       type: "totp",
       password: password,
     }).then((response) => Promise.resolve(response.data));
+  }
+
+  disablePasscodeSetup() {
+    if (!this.Name || !this.CanLogin || this.ID < 1) {
+      return true;
+    }
+
+    switch (this.AuthProvider) {
+      case "":
+      case "default":
+      case "local":
+        return false;
+      default:
+        return true;
+    }
   }
 
   static getCollectionResource() {

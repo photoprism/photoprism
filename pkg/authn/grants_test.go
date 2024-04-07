@@ -9,6 +9,7 @@ import (
 func TestGrantType_String(t *testing.T) {
 	assert.Equal(t, "", GrantUndefined.String())
 	assert.Equal(t, "client_credentials", GrantClientCredentials.String())
+	assert.Equal(t, "session", GrantSession.String())
 	assert.Equal(t, "password", GrantPassword.String())
 	assert.Equal(t, "refresh_token", GrantRefreshToken.String())
 	assert.Equal(t, "authorization_code", GrantAuthorizationCode.String())
@@ -20,6 +21,7 @@ func TestGrantType_String(t *testing.T) {
 func TestGrantType_Is(t *testing.T) {
 	assert.Equal(t, true, GrantUndefined.Is(GrantUndefined))
 	assert.Equal(t, true, GrantClientCredentials.Is(GrantClientCredentials))
+	assert.Equal(t, true, GrantSession.Is(GrantSession))
 	assert.Equal(t, true, GrantPassword.Is(GrantPassword))
 	assert.Equal(t, false, GrantClientCredentials.Is(GrantPassword))
 	assert.Equal(t, false, GrantClientCredentials.Is(GrantRefreshToken))
@@ -46,6 +48,7 @@ func TestGrantType_IsNot(t *testing.T) {
 func TestGrantType_IsUndefined(t *testing.T) {
 	assert.Equal(t, true, GrantUndefined.IsUndefined())
 	assert.Equal(t, false, GrantClientCredentials.IsUndefined())
+	assert.Equal(t, false, GrantSession.IsUndefined())
 	assert.Equal(t, false, GrantPassword.IsUndefined())
 }
 
@@ -53,6 +56,7 @@ func TestGrantType_Pretty(t *testing.T) {
 	assert.Equal(t, "", GrantUndefined.Pretty())
 	assert.Equal(t, "CLI", GrantCLI.Pretty())
 	assert.Equal(t, "Client Credentials", GrantClientCredentials.Pretty())
+	assert.Equal(t, "Session", GrantSession.Pretty())
 	assert.Equal(t, "Password", GrantPassword.Pretty())
 	assert.Equal(t, "Refresh Token", GrantRefreshToken.Pretty())
 	assert.Equal(t, "Authorization Code", GrantAuthorizationCode.Pretty())
@@ -66,6 +70,7 @@ func TestGrantType_Equal(t *testing.T) {
 	assert.True(t, GrantClientCredentials.Equal("client_credentials"))
 	assert.True(t, GrantClientCredentials.Equal("client"))
 	assert.True(t, GrantUndefined.Equal(""))
+	assert.True(t, GrantSession.Equal("session"))
 	assert.True(t, GrantPassword.Equal("Password"))
 	assert.True(t, GrantPassword.Equal("password"))
 	assert.True(t, GrantPassword.Equal("pass"))
@@ -89,6 +94,7 @@ func TestGrant(t *testing.T) {
 	assert.Equal(t, GrantUndefined, Grant(""))
 	assert.Equal(t, GrantCLI, Grant("cli"))
 	assert.Equal(t, GrantImplicit, Grant("implicit"))
+	assert.Equal(t, GrantSession, Grant("session"))
 	assert.Equal(t, GrantPassword, Grant("pass"))
 	assert.Equal(t, GrantPassword, Grant("password"))
 	assert.Equal(t, GrantClientCredentials, Grant("client credentials"))

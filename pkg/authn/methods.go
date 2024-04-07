@@ -16,7 +16,6 @@ const (
 	MethodDefault   MethodType = "default"
 	MethodSession   MethodType = "session"
 	MethodOAuth2    MethodType = "oauth2"
-	MethodOIDC      MethodType = "oidc"
 	Method2FA       MethodType = "2fa"
 )
 
@@ -30,8 +29,6 @@ func Method(s string) MethodType {
 		return MethodDefault
 	case "oauth2", "oauth":
 		return MethodOAuth2
-	case "sso":
-		return MethodOIDC
 	case "2fa", "mfa", "otp", "totp":
 		return Method2FA
 	case "access_token":
@@ -46,8 +43,6 @@ func (t MethodType) Pretty() string {
 	switch t {
 	case MethodOAuth2:
 		return "OAuth2"
-	case MethodOIDC:
-		return "OIDC"
 	case Method2FA:
 		return "2FA"
 	default:
@@ -62,8 +57,6 @@ func (t MethodType) String() string {
 		return string(MethodDefault)
 	case "oauth":
 		return string(MethodOAuth2)
-	case "openid":
-		return string(MethodOIDC)
 	case "2fa", "otp", "totp":
 		return string(Method2FA)
 	default:

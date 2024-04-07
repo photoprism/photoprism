@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/dustin/go-humanize/english"
@@ -40,10 +39,13 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check password and abort if invalid.
-		if user.InvalidPassword(frm.Password) {
-			Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
-			return
+		// Check password if user authenticates with a local account.
+		switch user.Provider() {
+		case authn.ProviderDefault, authn.ProviderLocal:
+			if user.InvalidPassword(frm.Password) {
+				Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
+				return
+			}
 		}
 
 		// Return the reserved request rate limit tokens after successful authentication.
@@ -55,20 +57,20 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 		// Generate and save new passcode key.
 		var passcode *entity.Passcode
 		if key, err := rnd.AuthKey(conf.AppName(), user.UserName); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "users", user.UserName, "failed to generate passcode", clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeGenerateFailed.Error(), clean.Error(err)}, s.RefID)
 			Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 			return
 		} else if passcode, err = entity.NewPasscode(user.UID(), key.String(), rnd.RecoveryCode()); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "users", user.UserName, "failed to create passcode", clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeCreateFailed.Error(), clean.Error(err)}, s.RefID)
 			Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 			return
 		} else if err = passcode.Save(); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "users", user.UserName, "failed to save passcode", clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeSaveFailed.Error(), clean.Error(err)}, s.RefID)
 			Abort(c, http.StatusConflict, i18n.ErrSaveFailed)
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", user.UserName, "passcode", "created"}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Created}, s.RefID)
 
 		c.JSON(http.StatusOK, passcode)
 	})
@@ -98,11 +100,11 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 		valid, passcode, err := user.VerifyPasscode(frm.Passcode())
 
 		if err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "users", user.UserName, "failed to verify passcode", clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeVerificationFailed.Error(), clean.Error(err)}, s.RefID)
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPasscode)
 			return
 		} else if !valid {
-			event.AuditWarn([]string{ClientIP(c), "session %s", "users", user.UserName, authn.ErrInvalidPasscode.Error()}, s.RefID)
+			event.AuditWarn([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrInvalidPasscode.Error()}, s.RefID)
 			Abort(c, http.StatusForbidden, i18n.ErrInvalidPasscode)
 			return
 		}
@@ -110,7 +112,7 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 		// Return the reserved request rate limit tokens after successful authentication.
 		r.Success()
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", user.UserName, "passcode", "verified"}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Verified}, s.RefID)
 
 		// Clear session cache.
 		s.ClearCache()
@@ -135,18 +137,18 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 		passcode, err := user.ActivatePasscode()
 
 		if err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "users", user.UserName, "failed to activate passcode", clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeActivationFailed.Error(), clean.Error(err)}, s.RefID)
 			Abort(c, http.StatusForbidden, i18n.ErrSaveFailed)
 			return
 		}
 
 		// Log event.
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", user.UserName, "passcode", "activated"}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Activated}, s.RefID)
 
 		// Invalidate any other user sessions to protect the account:
 		// https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", user.UserName, "invalidated %s"}, s.RefID,
-			english.Plural(user.DeleteSessions([]string{s.ID}), "session", "sessions"))
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, "invalidated %s"}, s.RefID,
+			english.Plural(user.DeleteSessions([]string{s.ID}), authn.Session, authn.Sessions))
 
 		// Clear session cache.
 		s.ClearCache()
@@ -175,10 +177,14 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
-		// Check password and abort if invalid.
-		if user.InvalidPassword(frm.Password) {
-			Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
-			return
+		// Check password if user authenticates with a local account.
+		switch user.Provider() {
+		case authn.ProviderDefault, authn.ProviderLocal:
+			// Check password and abort if invalid.
+			if user.InvalidPassword(frm.Password) {
+				Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
+				return
+			}
 		}
 
 		// Return the reserved request rate limit tokens after successful authentication.
@@ -186,12 +192,12 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 
 		// Delete passcode.
 		if _, err := user.DeactivatePasscode(); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "users", user.UserName, "failed to deactivate passcode", clean.Error(err)}, s.RefID)
+			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeDeactivationFailed.Error(), clean.Error(err)}, s.RefID)
 			Abort(c, http.StatusNotFound, i18n.ErrNotFound)
 			return
 		}
 
-		event.AuditInfo([]string{ClientIP(c), "session %s", "users", user.UserName, "passcode", "deactivated"}, s.RefID)
+		event.AuditInfo([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.Passcode, authn.Deactivated}, s.RefID)
 
 		// Clear session cache.
 		s.ClearCache()
@@ -210,20 +216,20 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	// You cannot change any passwords without authentication and settings enabled.
 	if conf.Public() || conf.DisableSettings() {
 		Abort(c, http.StatusForbidden, i18n.ErrPublic)
-		return nil, nil, nil, errors.New("unsupported")
+		return nil, nil, nil, authn.ErrPasscodeNotSupported
 	}
 
 	// Check limit for failed auth requests (max. 10 per minute).
 	if limiter.Login.Reject(ClientIP(c)) {
 		limiter.AbortJSON(c)
-		return nil, nil, nil, errors.New("rate limit exceeded")
+		return nil, nil, nil, authn.ErrRateLimitExceeded
 	}
 
 	// Get session.
 	s := Auth(c, acl.ResourcePasscode, action)
 
 	if s.Abort(c) {
-		return s, nil, nil, errors.New("unauthorized")
+		return s, nil, nil, authn.ErrUnauthorized
 	}
 
 	// Check if the current user has management privileges.
@@ -235,24 +241,24 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	// Regular users can only set up a passcode for their own account.
 	if user.UserUID != uid {
 		AbortForbidden(c)
-		return s, nil, nil, errors.New("unauthorized")
+		return s, nil, nil, authn.ErrUnauthorized
 	}
 
-	// Check if the auth provider supports passcodes.
-	if !user.Provider().Supports2FA() {
+	// Check if the user's authentication provider supports 2FA passcodes.
+	if !user.Provider().SupportsPasscodeAuthentication() {
 		Abort(c, http.StatusForbidden, i18n.ErrUnsupported)
-		return s, nil, nil, errors.New("unsupported")
+		return s, nil, nil, authn.ErrPasscodeNotSupported
 	}
 
 	frm := &form.Passcode{}
 
-	// Validate request parameters.
+	// Validate request form values.
 	if err := c.BindJSON(frm); err != nil {
 		Error(c, http.StatusBadRequest, err, i18n.ErrInvalidPassword)
-		return s, nil, nil, errors.New("invalid request")
+		return s, nil, nil, authn.ErrInvalidRequest
 	} else if authn.KeyTOTP.NotEqual(frm.Type) {
 		Abort(c, http.StatusBadRequest, i18n.ErrUnsupportedType)
-		return s, nil, nil, errors.New("unsupported")
+		return s, nil, nil, authn.ErrInvalidPasscodeType
 	}
 
 	return s, user, frm, nil

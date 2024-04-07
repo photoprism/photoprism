@@ -11,6 +11,7 @@ import (
 type OAuthCreateToken struct {
 	GrantType    authn.GrantType `form:"grant_type" json:"grant_type,omitempty"`
 	ClientID     string          `form:"client_id" json:"client_id,omitempty"`
+	ClientName   string          `form:"client_name" json:"client_name,omitempty"`
 	ClientSecret string          `form:"client_secret" json:" client_secret,omitempty"`
 	Username     string          `form:"username" json:"username,omitempty"`
 	Password     string          `form:"password" json:"password,omitempty"`
@@ -19,9 +20,8 @@ type OAuthCreateToken struct {
 	CodeVerifier string          `form:"code_verifier" json:"code_verifier,omitempty"`
 	RedirectURI  string          `form:"redirect_uri" json:"redirect_uri,omitempty"`
 	Assertion    string          `form:"assertion" json:"assertion,omitempty"`
-	Name         string          `form:"name" json:"name,omitempty"`
 	Scope        string          `form:"scope" json:"scope,omitempty"`
-	Expires      int             `form:"expires" json:"expires,omitempty"`
+	Lifetime     int64           `form:"lifetime" json:"lifetime,omitempty"`
 }
 
 // Validate verifies the request parameters depending on the grant type.
@@ -51,7 +51,7 @@ func (f OAuthCreateToken) Validate() error {
 			return authn.ErrPasswordRequired
 		} else if len(f.Password) > txt.ClipPassword {
 			return authn.ErrInvalidCredentials
-		} else if f.Name == "" {
+		} else if f.ClientName == "" {
 			return authn.ErrNameRequired
 		} else if f.Scope == "" {
 			return authn.ErrScopeRequired

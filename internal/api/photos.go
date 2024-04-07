@@ -89,7 +89,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		// 2) Update form with values from request
+		// 2) Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return

@@ -60,7 +60,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 			return
 		}
 
-		// Update form with values from request
+		// Assign and validate request form values.
 		if err = c.BindJSON(&f); err != nil {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return

@@ -543,7 +543,7 @@ func (m *User) SetProvider(t authn.ProviderType) *User {
 
 	m.AuthProvider = t.String()
 
-	if !m.Provider().Supports2FA() && m.Method().Is(authn.Method2FA) {
+	if !m.Provider().SupportsPasscodeAuthentication() && m.Method().Is(authn.Method2FA) {
 		m.AuthMethod = ""
 	}
 
@@ -561,7 +561,8 @@ func (m *User) SetMethod(method authn.MethodType) *User {
 		return m
 	}
 
-	if !m.Provider().Supports2FA() && method.Is(authn.Method2FA) {
+	// It must not be possible to activate 2FA if the authentication provider does not support passcodes.
+	if !m.Provider().SupportsPasscodeAuthentication() && method.Is(authn.Method2FA) {
 		return m
 	}
 
@@ -936,7 +937,7 @@ func (m *User) VerifyPasscode(code string) (valid bool, passcode *Passcode, err 
 func (m *User) ActivatePasscode() (passcode *Passcode, err error) {
 	if m == nil {
 		err = errors.New("user is nil")
-	} else if !m.Provider().Supports2FA() {
+	} else if !m.Provider().SupportsPasscodeAuthentication() {
 		err = authn.ErrPasscodeNotSupported
 	} else if passcode = m.Passcode(authn.KeyTOTP); passcode == nil {
 		// Cannot enable 2FA if user has no passcode.

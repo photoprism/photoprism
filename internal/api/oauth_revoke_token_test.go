@@ -84,7 +84,7 @@ func TestRevokeOAuthToken(t *testing.T) {
 
 		revokeData := url.Values{
 			"token":           {authToken},
-			"token_type_hint": {form.ClientAccessToken},
+			"token_type_hint": {form.AccessToken},
 		}
 
 		revokeToken, _ := http.NewRequest("POST", revokePath, strings.NewReader(revokeData.Encode()))

@@ -7,11 +7,11 @@ import (
 
 // Login represents a login form.
 type Login struct {
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	Code     string `json:"code,omitempty"`
-	Token    string `json:"token,omitempty"`
-	Email    string `json:"email,omitempty"`
+	Username string `json:"username,omitempty"` // The local Username or LDAP user principal name (UPN).
+	Password string `json:"password,omitempty"` // The user's Password.
+	Code     string `json:"code,omitempty"`     // 2FA Verification Code (Passcodes).
+	Token    string `json:"token,omitempty"`    // Share Token.
+	Email    string `json:"email,omitempty"`    // Reserved.
 }
 
 // CleanUsername returns the sanitized and normalized username.
