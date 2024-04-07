@@ -103,7 +103,7 @@ func (c *Client) readDirWithTimeout(dir string, recursive bool, timeout time.Dur
 	return c.withTimeout(timeout).ReadDir(c.ctx, dir, recursive)
 }
 
-// readDirWithTimeout returns the contents of the specified directory without a request timeout.
+// readDir returns the contents of the specified directory without a request timeout.
 func (c *Client) readDir(dir string, recursive bool) ([]webdav.FileInfo, error) {
 	return c.readDirWithTimeout(dir, recursive, -1)
 }
