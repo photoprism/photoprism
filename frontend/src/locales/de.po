@@ -639,7 +639,7 @@ msgstr "Contributor"
 msgid "Converting"
 msgstr "Konvertiere"
 
-#: src/dialog/account/apps.vue:61 src/dialog/account/passcode.vue:66
+#: src/dialog/account/apps.vue:63 src/dialog/account/passcode.vue:66
 #: src/dialog/photo/edit/files.vue:64 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:61 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
@@ -661,10 +661,6 @@ msgstr "Leider nichts gefunden."
 #: src/dialog/photo/edit/details.vue:250 src/page/settings/account.vue:713
 msgid "Country"
 msgstr "Land"
-
-#: src/dialog/account/apps.vue:40
-msgid "Create"
-msgstr "Erstellen"
 
 #: src/page/auth/login.vue:35
 msgid "Create Account"
@@ -689,6 +685,10 @@ msgstr "Kubisch: Mittlere Qualität, gute Performance"
 #: src/dialog/account/password.vue:136
 msgid "Current Password"
 msgstr "Aktuelles Passwort"
+
+#: src/options/auth.js:79
+msgid "Custom"
+msgstr ""
 
 #: src/page/about/feedback.vue:5 src/options/options.js:458
 msgid "Customer Support"
@@ -715,7 +715,7 @@ msgid "Debug Logs"
 msgstr "Debug Logs"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:60
-#: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:234
+#: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:38
 #: src/options/auth.js:39 src/options/options.js:309 src/options/options.js:373
 #: src/options/themes.js:492 src/page/places.vue:141
@@ -1039,7 +1039,7 @@ msgstr "Gesicht"
 msgid "Faces"
 msgstr "Gesichter"
 
-#: src/dialog/account/apps.vue:63 src/dialog/account/passcode.vue:68
+#: src/dialog/account/apps.vue:65 src/dialog/account/passcode.vue:68
 #: src/dialog/photo/edit/files.vue:66 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:63 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
@@ -1172,6 +1172,10 @@ msgstr "Geschlecht"
 #: src/page/settings.vue:36
 msgid "General"
 msgstr "Allgemein"
+
+#: src/dialog/account/apps.vue:40
+msgid "Generate"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1590,6 +1594,10 @@ msgstr "Nachricht versendet"
 #: src/dialog/photo/edit/info.vue:70
 msgid "Metadata"
 msgstr "Metadaten"
+
+#: src/options/auth.js:75
+msgid "Metrics"
+msgstr ""
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -2540,8 +2548,8 @@ msgid "To avoid being locked out of your account, please download, print or copy
 msgstr "Um zu verhindern, dass du den Zugriff auf dein Konto verlierst, lade bitte diesen Wiederherstellungscode jetzt herunter, drucke ihn aus oder kopiere ihn und bewahre ihn an einem sicheren Ort auf."
 
 #: src/dialog/account/apps.vue:20
-msgid "To create a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr "Um ein neues anwendungsspezifisches Passwort zu erstellen, gib bitte den Namen und den Berechtigungsumfang der Anwendung ein und wähle ein Ablaufdatum:"
+msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and choose an expiration date:"
+msgstr ""
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
@@ -2730,7 +2738,7 @@ msgstr "Verwende den folgenden Wiederherstellungscode, um auf dein Konto zuzugre
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:59
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
-#: src/model/user.js:297 src/options/auth.js:7
+#: src/model/user.js:295 src/options/auth.js:7
 msgid "User"
 msgstr "Benutzer"
 
@@ -2910,6 +2918,12 @@ msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#~ msgid "Create"
+#~ msgstr "Erstellen"
+
+#~ msgid "To create a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
+#~ msgstr "Um ein neues anwendungsspezifisches Passwort zu erstellen, gib bitte den Namen und den Berechtigungsumfang der Anwendung ein und wähle ein Ablaufdatum:"
 
 #~ msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated passcode for verification:"
 #~ msgstr "Scanne den QR-Code mit deiner Authenticator-App oder verwende den unten gezeigten Schlüssel für die Einrichtung und gib dann den generierten Verifizierungscode ein:"
