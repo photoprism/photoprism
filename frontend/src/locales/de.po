@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-04 10:11+0000\n"
+"PO-Revision-Date: 2024-04-08 08:54+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.4.2\n"
+"X-Generator: Weblate 5.4.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -386,7 +386,7 @@ msgstr "Erstellt automatisch Alben von besonderen Momenten, Reisen und Orten."
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "Zurück"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -640,7 +640,7 @@ msgstr "Enthält ein Bild."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "Fortfahren"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -985,7 +985,7 @@ msgstr "Verifizierungscode eingeben"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr ""
+msgstr "Bitte mit Passwort bestätigen, um fortzufahren:"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1188,7 +1188,7 @@ msgstr "Allgemein"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr ""
+msgstr "Generieren"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1610,7 +1610,7 @@ msgstr "Metadaten"
 
 #: src/options/auth.js:57
 msgid "Metrics"
-msgstr ""
+msgstr "Metriken"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1792,7 +1792,7 @@ msgstr "Offline"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1972,7 +1972,7 @@ msgstr "Neues Passwort bitte bestätigen."
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Bitte kopiere das folgende, zufällig generierte App-Passwort und bewahre es an einem sicheren Ort auf, da es nicht noch einmal angezeigt werden kann:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2081,7 +2081,7 @@ msgstr "Bereits bekannte und unveränderte Dateien neu indexieren."
 
 #: src/options/auth.js:55 src/options/auth.js:69
 msgid "Read Access"
-msgstr ""
+msgstr "Lesender Zugang"
 
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
@@ -2567,7 +2567,7 @@ msgstr "Um zu verhindern, dass du den Zugriff auf dein Konto verlierst, lade bit
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "Zum Generieren eines neuen app-spezifischen Passworts gib bitte den Namen und den Berechtigungsumfang der Anwendung ein und wähle ein Ablaufdatum:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
