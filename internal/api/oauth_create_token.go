@@ -123,7 +123,8 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			if s == nil {
 				AbortInvalidCredentials(c)
 				return
-			} else if s.Username() == "" || s.IsClient() || s.IsRegistered() {
+			} else if s.Username() == "" || s.IsClient() || !s.IsRegistered() {
+				event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()})
 				AbortInvalidCredentials(c)
 				return
 			}
@@ -159,7 +160,7 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 				f.GrantType = authn.GrantSession
 			}
 
-			sess = entity.NewClientAuthentication(f.ClientName, f.Lifetime, f.Scope, f.GrantType, s.User())
+			sess = entity.NewClientSession(f.ClientName, f.ExpiresIn, f.Scope, f.GrantType, s.User())
 
 			// Return the reserved request rate limit tokens after successful authentication.
 			r.Success()

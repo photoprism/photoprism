@@ -21,7 +21,7 @@ type OAuthCreateToken struct {
 	RedirectURI  string          `form:"redirect_uri" json:"redirect_uri,omitempty"`
 	Assertion    string          `form:"assertion" json:"assertion,omitempty"`
 	Scope        string          `form:"scope" json:"scope,omitempty"`
-	Lifetime     int64           `form:"lifetime" json:"lifetime,omitempty"`
+	ExpiresIn    int64           `form:"expires_in" json:"expires_in,omitempty"`
 }
 
 // Validate verifies the request parameters depending on the grant type.
@@ -41,7 +41,7 @@ func (f OAuthCreateToken) Validate() error {
 		} else if !rnd.IsAlnum(f.ClientSecret) {
 			return authn.ErrInvalidCredentials
 		}
-	case authn.GrantPassword:
+	case authn.GrantPassword, authn.GrantSession:
 		// Validate request credentials.
 		if f.Username == "" {
 			return authn.ErrUsernameRequired

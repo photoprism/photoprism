@@ -11,7 +11,9 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/search"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/sortby"
 )
 
 // FindUserSessions finds user sessions and returns them as JSON.
@@ -38,18 +40,21 @@ func FindUserSessions(router *gin.RouterGroup) {
 			return
 		}
 
+		// Init search request form.
 		var f form.SearchSessions
-
-		// Init search form.
 		err := c.MustBindWith(&f, binding.Form)
 
+		// Abort if invalid.
 		if err != nil {
 			AbortBadRequest(c)
 			return
 		}
 
-		// Filter by user.
+		// Find applications that belong to the current user and sort them by name.
 		f.UID = s.UserUID
+		f.Order = sortby.ClientName
+		f.Provider = authn.ProviderApplication.String()
+		f.Method = authn.MethodDefault.String()
 
 		// Perform search.
 		result, err := search.Sessions(f)

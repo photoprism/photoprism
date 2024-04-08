@@ -38,6 +38,18 @@ func Method(s string) MethodType {
 	}
 }
 
+// Methods casts a string to normalized method type strings.
+func Methods(s string) []MethodType {
+	items := strings.Split(s, ",")
+	result := make([]MethodType, 0, len(items))
+
+	for i := range items {
+		result = append(result, Method(items[i]))
+	}
+
+	return result
+}
+
 // Pretty returns the provider identifier in an easy-to-read format.
 func (t MethodType) Pretty() string {
 	switch t {

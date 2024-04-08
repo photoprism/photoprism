@@ -93,17 +93,17 @@ func authAddAction(ctx *cli.Context) error {
 		}
 
 		// Create session and show the authentication secret.
-		sess, err := entity.AddClientAuthentication(clientName, ctx.Int64("expires"), authScope, authn.GrantCLI, user)
+		sess, err := entity.AddClientSession(clientName, ctx.Int64("expires"), authScope, authn.GrantCLI, user)
 
 		if err != nil {
 			return fmt.Errorf("failed to create authentication secret: %s", err)
 		} else {
 			// Show client authentication credentials.
 			if sess.UserUID == "" {
-				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED ACCESS TOKEN, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\nPLEASE COPY THE FOLLOWING RANDOMLY GENERATED ACCESS TOKEN AND KEEP IT IN A SAFE PLACE, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
 				fmt.Printf("\n%s\n", report.Credentials("Access Token", sess.AuthToken(), "Authorization Scope", sess.Scope()))
 			} else {
-				fmt.Printf("\nPLEASE WRITE DOWN THE FOLLOWING RANDOMLY GENERATED APP PASSWORD, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
+				fmt.Printf("\nPLEASE COPY THE FOLLOWING RANDOMLY GENERATED APP PASSWORD AND KEEP IT IN A SAFE PLACE, AS YOU WILL NOT BE ABLE TO SEE IT AGAIN:\n")
 				fmt.Printf("\n%s\n", report.Credentials("App Password", sess.AuthToken(), "Authorization Scope", sess.Scope()))
 			}
 

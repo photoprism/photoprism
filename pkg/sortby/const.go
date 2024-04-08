@@ -22,4 +22,8 @@ const (
 	Similar     = "similar"
 	Random      = "random"
 	Invalid     = "invalid"
+	LastActive  = "last_active"
+	SessExpires = "sess_expires"
+	ClientName  = "client_name"
+	CreatedAt   = "created_at"
 )

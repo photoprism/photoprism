@@ -25,6 +25,7 @@ export const Providers = () => {
     application: $gettext("Application"),
     access_token: $gettext("Access Token"),
     password: $gettext("Local"),
+    oidc: $gettext("OIDC"),
     ldap: $gettext("LDAP/AD"),
     link: $gettext("Link"),
     token: $gettext("Link"),
@@ -51,8 +52,9 @@ export const Methods = () => {
 export const Scopes = () => {
   return {
     "*": $gettext("Full Access"),
-    read: $gettext("Read Only"),
+    read: $gettext("Read Access"),
     webdav: $gettext("WebDAV"),
+    metrics: $gettext("Metrics"),
   };
 };
 
@@ -64,20 +66,18 @@ export const ScopeOptions = () => {
       value: "*",
     },
     {
-      text: $gettext("Read Only"),
+      text: $gettext("Read Access"),
       value: "read *",
     },
     {
       text: $gettext("WebDAV"),
       value: "webdav",
     },
-    {
-      text: $gettext("Metrics"),
-      value: "metrics",
-    },
+    /* TODO: Show additional input field so advanced users can specify a custom scope when this option is selected.
     {
       text: $gettext("Custom"),
       value: "~",
     },
+    */
   ];
 };

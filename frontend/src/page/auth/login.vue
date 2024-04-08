@@ -9,12 +9,31 @@
               <v-spacer></v-spacer>
               <v-layout wrap align-top>
                 <template v-if="enterCode">
-                  <v-flex xs12 class="pa-2 body-2">
-                    <translate>Please enter a valid verification code to access your account:</translate>
-                  </v-flex>
                   <v-flex xs12 class="pa-2">
                     <v-text-field
-                      id="auth-code"
+                      v-model="username"
+                      disabled
+                      type="text"
+                      :label="$gettext('Name')"
+                      hide-details
+                      required
+                      solo
+                      flat
+                      light
+                      autocorrect="off"
+                      autocapitalize="none"
+                      autocomplete="off"
+                      browser-autocomplete="off"
+                      background-color="grey lighten-5"
+                      class="input-username text-selectable"
+                      color="primary"
+                      prepend-inner-icon="person"
+                    ></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 class="px-2 py-1">
+                    <v-text-field
+                      id="one-time-code"
+                      ref="code"
                       v-model="code"
                       :disabled="loading"
                       name="code"
@@ -27,6 +46,7 @@
                       solo
                       flat
                       light
+                      autofocus
                       autocorrect="off"
                       autocapitalize="none"
                       autocomplete="one-time-code"
@@ -37,9 +57,6 @@
                       color="primary"
                       @keyup.enter.native="onLogin"
                     ></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 class="px-2 pt-2 pb-0 body-1">
-                    <translate>Can't access your authenticator app or device? Enter your recovery code or ask for assistance.</translate>
                   </v-flex>
                 </template>
                 <template v-else>
@@ -109,7 +126,10 @@
                       <v-icon v-else right dark>navigate_next</v-icon>
                     </v-btn>
                   </div>
-                  <div v-if="passwordResetUri" class="auth-links text-xs-center opacity-80">
+                  <div v-if="enterCode" class="auth-links text-xs-center opacity-80">
+                    <translate>Can't access your authenticator app or device? Enter your recovery code or ask for assistance.</translate>
+                  </div>
+                  <div v-else-if="passwordResetUri" class="auth-links text-xs-center opacity-80">
                     <a :href="passwordResetUri" class="text-link link--text">
                       <translate>Forgot password?</translate>
                     </a>
@@ -216,6 +236,7 @@ export default {
         .catch((e) => {
           if (e.response?.data?.code === 32) {
             this.enterCode = true;
+            this.$nextTick(() => this.$refs.code.focus());
           }
           this.loading = false;
         });

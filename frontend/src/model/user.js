@@ -287,6 +287,24 @@ export class User extends RestModel {
     }
   }
 
+  findApps() {
+    if (!this.Name || !this.CanLogin || this.ID < 1) {
+      return Promise.reject();
+    }
+
+    const params = {
+      provider: "application",
+      method: "default",
+      count: 10000,
+      offset: 0,
+      order: "client_name",
+    };
+
+    return Api.get(this.getEntityResource() + "/sessions", {
+      params,
+    }).then((response) => Promise.resolve(response.data));
+  }
+
   static getCollectionResource() {
     return "users";
   }

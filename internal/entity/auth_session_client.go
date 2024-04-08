@@ -5,9 +5,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// NewClientAuthentication returns a new session that authenticates a client application.
-func NewClientAuthentication(clientName string, lifetime int64, scope string, grantType authn.GrantType, user *User) *Session {
-	sess := NewSession(lifetime, 0)
+// NewClientSession returns a new session that authenticates a client application.
+func NewClientSession(clientName string, expiresIn int64, scope string, grantType authn.GrantType, user *User) *Session {
+	sess := NewSession(expiresIn, 0)
 
 	if clientName == "" {
 		clientName = rnd.Name()
@@ -30,9 +30,9 @@ func NewClientAuthentication(clientName string, lifetime int64, scope string, gr
 	return sess
 }
 
-// AddClientAuthentication creates a new session for authenticating a client application.
-func AddClientAuthentication(clientName string, lifetime int64, scope string, grantType authn.GrantType, user *User) (*Session, error) {
-	sess := NewClientAuthentication(clientName, lifetime, scope, grantType, user)
+// AddClientSession creates a new session for authenticating a client application.
+func AddClientSession(clientName string, expiresIn int64, scope string, grantType authn.GrantType, user *User) (*Session, error) {
+	sess := NewClientSession(clientName, expiresIn, scope, grantType, user)
 
 	if err := sess.Create(); err != nil {
 		return nil, err

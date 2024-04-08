@@ -1,6 +1,8 @@
 package authn
 
 import (
+	"strings"
+
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -76,6 +78,18 @@ func Provider(s string) ProviderType {
 	default:
 		return ProviderType(s)
 	}
+}
+
+// Providers casts a string to normalized provider type strings.
+func Providers(s string) []ProviderType {
+	items := strings.Split(s, ",")
+	result := make([]ProviderType, 0, len(items))
+
+	for i := range items {
+		result = append(result, Provider(items[i]))
+	}
+
+	return result
 }
 
 // Pretty returns the provider identifier in an easy-to-read format.

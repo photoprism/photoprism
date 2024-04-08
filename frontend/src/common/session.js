@@ -435,6 +435,31 @@ export default class Session {
     });
   }
 
+  createApp(client_name, scope, expires_in, password) {
+    if (!this.isUser() || !this.user.Name) {
+      return Promise.reject();
+    }
+
+    if (!scope) {
+      scope = "*";
+    }
+
+    return Api.post("oauth/token", {
+      grant_type: password ? "password" : "session",
+      client_name: client_name,
+      scope: scope,
+      expires_in: expires_in,
+      username: this.user.Name,
+      password: password,
+    }).then((response) => Promise.resolve(response.data));
+  }
+
+  deleteApp(token) {
+    return Api.post("oauth/revoke", {
+      token: token,
+    }).then((response) => Promise.resolve(response.data));
+  }
+
   onLogout(noRedirect) {
     // Delete all authentication and session data.
     this.reset();

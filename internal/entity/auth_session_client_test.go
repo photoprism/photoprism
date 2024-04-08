@@ -9,9 +9,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/unix"
 )
 
-func TestNewClientAuthentication(t *testing.T) {
+func TestNewClientSession(t *testing.T) {
 	t.Run("Anonymous", func(t *testing.T) {
-		sess := NewClientAuthentication("Anonymous", unix.Day, "metrics", authn.GrantClientCredentials, nil)
+		sess := NewClientSession("Anonymous", unix.Day, "metrics", authn.GrantClientCredentials, nil)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -26,7 +26,7 @@ func TestNewClientAuthentication(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess := NewClientAuthentication("alice", unix.Day, "metrics", authn.GrantPassword, user)
+		sess := NewClientSession("alice", unix.Day, "metrics", authn.GrantPassword, user)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -41,7 +41,7 @@ func TestNewClientAuthentication(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess := NewClientAuthentication("alice", unix.Day, "", authn.GrantCLI, user)
+		sess := NewClientSession("alice", unix.Day, "", authn.GrantCLI, user)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -56,7 +56,7 @@ func TestNewClientAuthentication(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess := NewClientAuthentication("", 0, "metrics", authn.GrantCLI, user)
+		sess := NewClientSession("", 0, "metrics", authn.GrantCLI, user)
 
 		if sess == nil {
 			t.Fatal("session must not be nil")
@@ -66,9 +66,9 @@ func TestNewClientAuthentication(t *testing.T) {
 	})
 }
 
-func TestAddClientAuthentication(t *testing.T) {
+func TestAddClientSession(t *testing.T) {
 	t.Run("Anonymous", func(t *testing.T) {
-		sess, err := AddClientAuthentication("", unix.Day, "metrics", authn.GrantClientCredentials, nil)
+		sess, err := AddClientSession("", unix.Day, "metrics", authn.GrantClientCredentials, nil)
 
 		assert.NoError(t, err)
 
@@ -85,7 +85,7 @@ func TestAddClientAuthentication(t *testing.T) {
 			t.Fatal("user must not be nil")
 		}
 
-		sess, err := AddClientAuthentication("My Client App Token", unix.Day, "metrics", authn.GrantCLI, user)
+		sess, err := AddClientSession("My Client App Token", unix.Day, "metrics", authn.GrantCLI, user)
 
 		assert.NoError(t, err)
 

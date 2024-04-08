@@ -76,30 +76,20 @@ func (Session) TableName() string {
 	return "auth_sessions"
 }
 
-// NewSession creates a new session using the maxAge and timeout in seconds.
-func NewSession(lifetime, timeout int64) (m *Session) {
+// NewSession creates a new session with the expiration time and timeout specified in seconds.
+func NewSession(expiresIn, timeout int64) (m *Session) {
 	m = &Session{}
 
 	m.Regenerate()
 
-	if lifetime > 0 {
-		m.SessExpires = TimeStamp().Unix() + lifetime
+	if expiresIn > 0 {
+		m.SessExpires = TimeStamp().Unix() + expiresIn
 	}
 
 	if timeout > 0 {
 		m.SessTimeout = timeout
 	}
 
-	return m
-}
-
-// Expires sets an explicit expiration time.
-func (m *Session) Expires(t time.Time) *Session {
-	if t.IsZero() {
-		return m
-	}
-
-	m.SessExpires = t.Unix()
 	return m
 }
 
@@ -855,6 +845,16 @@ func (m *Session) RedeemToken(token string) (n int) {
 	}
 }
 
+// Expires sets an explicit expiration time.
+func (m *Session) Expires(t time.Time) *Session {
+	if t.IsZero() {
+		return m
+	}
+
+	m.SessExpires = t.Unix()
+	return m
+}
+
 // ExpiresAt returns the time when the session expires.
 func (m *Session) ExpiresAt() time.Time {
 	if m.SessExpires <= 0 {
@@ -873,6 +873,17 @@ func (m *Session) ExpiresIn() int64 {
 	return m.SessExpires - unix.Time()
 }
 
+// Expired checks if the session has expired.
+func (m *Session) Expired() bool {
+	if m.SessExpires <= 0 {
+		return m.TimedOut()
+	} else if at := m.ExpiresAt(); at.IsZero() {
+		return false
+	} else {
+		return at.Before(UTC())
+	}
+}
+
 // TimeoutAt returns the time at which the session will expire due to inactivity.
 func (m *Session) TimeoutAt() time.Time {
 	if m.SessTimeout <= 0 || m.LastActive <= 0 {
@@ -887,17 +898,6 @@ func (m *Session) TimeoutAt() time.Time {
 // TimedOut checks if the session has expired due to inactivity..
 func (m *Session) TimedOut() bool {
 	if at := m.TimeoutAt(); at.IsZero() {
-		return false
-	} else {
-		return at.Before(UTC())
-	}
-}
-
-// Expired checks if the session has expired.
-func (m *Session) Expired() bool {
-	if m.SessExpires <= 0 {
-		return m.TimedOut()
-	} else if at := m.ExpiresAt(); at.IsZero() {
 		return false
 	} else {
 		return at.Before(UTC())

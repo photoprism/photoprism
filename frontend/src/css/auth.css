@@ -44,6 +44,10 @@
     color: #c8e3e7!important;
 }
 
+#photoprism main .auth-actions .auth-links {
+    min-height: 42px;
+}
+
 /* Auth Form Logo */
 
 #photoprism .auth-login .logo {
