@@ -74,13 +74,13 @@ type File struct {
 	FileHDR            bool          `gorm:"column:file_hdr;"  json:"HDR" yaml:"HDR,omitempty"`
 	FileWatermark      bool          `gorm:"column:file_watermark;"  json:"Watermark" yaml:"Watermark,omitempty"`
 	FileColorProfile   string        `gorm:"type:VARBINARY(64);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
-	FileMainColor      string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
+	FileMainColor      string        `gorm:"type:VARBINARY(16);" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors         string        `gorm:"type:VARBINARY(18);" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance      string        `gorm:"type:VARBINARY(18);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff           int           `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma         int16         `json:"Chroma" yaml:"Chroma,omitempty"`
 	FileSoftware       string        `gorm:"type:VARCHAR(64)" json:"Software" yaml:"Software,omitempty"`
-	FileError          string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
+	FileError          string        `gorm:"type:VARBINARY(512);index;" json:"Error" yaml:"Error,omitempty"`
 	ModTime            int64         `json:"ModTime" yaml:"-"`
 	CreatedAt          time.Time     `json:"CreatedAt" yaml:"-"`
 	CreatedIn          int64         `json:"CreatedIn" yaml:"-"`
