@@ -158,21 +158,23 @@ func (m *MediaFile) FileSize() int64 {
 	return fileSize
 }
 
-// DateCreated returns only the date on which the media file was probably taken in UTC.
+// DateCreated returns the media creation time in UTC.
 func (m *MediaFile) DateCreated() time.Time {
 	takenAt, _ := m.TakenAt()
 
 	return takenAt
 }
 
-// TakenAt returns the date on which the media file was taken in UTC and the source of this information.
+// TakenAt returns the media creation time in UTC and the source from which it originates.
 func (m *MediaFile) TakenAt() (time.Time, string) {
+	// Check if creation time has been cached.
 	if !m.takenAt.IsZero() {
 		return m.takenAt, m.takenAtSrc
 	}
 
 	m.takenAt = time.Now().UTC()
 
+	// First try to extract the creation time from the file metadata,
 	data := m.MetaData()
 
 	if data.Error == nil && !data.TakenAt.IsZero() && data.TakenAt.Year() > 1000 {
@@ -184,6 +186,7 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 		return m.takenAt, m.takenAtSrc
 	}
 
+	// Otherwiese, try to determine creation time from file name and path.
 	if nameTime := txt.DateFromFilePath(m.fileName); !nameTime.IsZero() {
 		m.takenAt = nameTime
 		m.takenAtSrc = entity.SrcName
@@ -198,19 +201,16 @@ func (m *MediaFile) TakenAt() (time.Time, string) {
 	fileInfo, err := times.Stat(m.FileName())
 
 	if err != nil {
-		log.Warnf("media: %s (file stat)", err.Error())
-		log.Infof("media: %s was taken at %s (now)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String())
+		log.Warnf("media: %s (stat call failed)", err.Error())
+		log.Infof("media: %s was taken at %s (unknown mod time)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String())
 
 		return m.takenAt, m.takenAtSrc
 	}
 
-	if fileInfo.HasBirthTime() {
-		m.takenAt = fileInfo.BirthTime().UTC()
-		log.Infof("media: %s was taken at %s (file birth time)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String())
-	} else {
-		m.takenAt = fileInfo.ModTime().UTC()
-		log.Infof("media: %s was taken at %s (file mod time)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String())
-	}
+	// Use file modification time as fallback.
+	m.takenAt = fileInfo.ModTime().UTC()
+
+	log.Infof("media: %s was taken at %s (file mod time)", clean.Log(filepath.Base(m.fileName)), m.takenAt.String())
 
 	return m.takenAt, m.takenAtSrc
 }

@@ -67,7 +67,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 				} else {
 					destDirRel := fs.RelName(destDir, imp.originalsPath())
 
-					folder := entity.NewFolder(entity.RootOriginals, destDirRel, fs.BirthTime(destDir))
+					folder := entity.NewFolder(entity.RootOriginals, destDirRel, fs.ModTime(destDir))
 
 					if createErr := folder.Create(); createErr == nil {
 						log.Infof("import: created folder /%s", folder.Path)

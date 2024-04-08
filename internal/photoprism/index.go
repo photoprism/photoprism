@@ -169,7 +169,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				}
 
 				if !errors.Is(result, filepath.SkipDir) {
-					folder := entity.NewFolder(entity.RootOriginals, relName, fs.BirthTime(fileName))
+					folder := entity.NewFolder(entity.RootOriginals, relName, fs.ModTime(fileName))
 
 					if err := folder.Create(); err == nil {
 						log.Infof("index: added folder /%s", folder.Path)

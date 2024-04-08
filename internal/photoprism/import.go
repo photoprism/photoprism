@@ -147,7 +147,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 					directories = append(directories, fileName)
 				}
 
-				folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.BirthTime(fileName))
+				folder := entity.NewFolder(entity.RootImport, fs.RelName(fileName, imp.conf.ImportPath()), fs.ModTime(fileName))
 
 				if err := folder.Create(); err == nil {
 					log.Infof("import: added folder /%s", folder.Path)
