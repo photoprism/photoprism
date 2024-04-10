@@ -165,29 +165,29 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 			// Return the reserved request rate limit tokens after successful authentication.
 			r.Success()
 		default:
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()}, clean.Log(f.ClientID))
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidGrantType.Error()})
 			AbortInvalidCredentials(c)
 			return
 		}
 
 		// Save new session.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, err.Error()}, f.ClientID)
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, err.Error()})
 			AbortInvalidCredentials(c)
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, StatusFailed.String()}, f.ClientID)
+			event.AuditErr([]string{clientIp, "oauth2", actor, action, StatusFailed.String()})
 			AbortUnexpectedError(c)
 			return
 		} else {
-			event.AuditInfo([]string{clientIp, "oauth2", actor, action, authn.Created}, f.ClientID, sess.RefID)
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, authn.Created})
 		}
 
 		// Delete any existing client sessions above the configured limit.
 		if client == nil {
 			// Skip deletion if not created by a client.
 		} else if deleted := client.EnforceAuthTokenLimit(); deleted > 0 {
-			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "deleted %s to enforce token limit"}, f.ClientID, sess.RefID, english.Plural(deleted, "session", "sessions"))
+			event.AuditInfo([]string{clientIp, "oauth2", actor, action, "deleted %s to enforce token limit"}, english.Plural(deleted, "session", "sessions"))
 		}
 
 		// Send response with access token, token type, and token lifetime.

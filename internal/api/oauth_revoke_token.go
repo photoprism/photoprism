@@ -158,7 +158,7 @@ func RevokeOAuthToken(router *gin.RouterGroup) {
 		}
 
 		// Log event.
-		event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "deleted"}, clean.Log(sess.RefID))
+		event.AuditInfo([]string{clientIp, "oauth2", actor, action, "delete %s as %s", "deleted"}, clean.Log(sess.RefID), role.String())
 
 		// Send response.
 		c.JSON(http.StatusOK, DeleteSessionResponse(sess.ID))
