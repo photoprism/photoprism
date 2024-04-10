@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-05 02:30+0000\n"
+"PO-Revision-Date: 2024-04-10 01:30+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 5.4.2\n"
+"X-Generator: Weblate 5.4.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -386,7 +386,7 @@ msgstr "Création automatique d'albums regroupant des moments, des voyages et de
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "Retour"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -640,11 +640,11 @@ msgstr "Contient une image."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "Poursuivre"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
-msgstr "Contributeur"
+msgstr "Saisissez votre mot de passe pour confirmer l'action et poursuivre :"
 
 #: src/page/library/index.vue:179
 msgid "Converting"
@@ -1792,7 +1792,7 @@ msgstr "Hors-ligne"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1972,7 +1972,7 @@ msgstr "Veuillez confirmer votre nouveau mot de passe."
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Veuillez copier le mot de passe suivant, généré de manière aléatoire, et le conserver dans un endroit sûr, car vous ne pourrez plus le voir :"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2081,7 +2081,7 @@ msgstr "Réindexer tous les originaux, en incluant ceux déjà indexés et les f
 
 #: src/options/auth.js:55 src/options/auth.js:69
 msgid "Read Access"
-msgstr ""
+msgstr "Accès en lecture"
 
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
@@ -2567,7 +2567,7 @@ msgstr "Pour éviter le blocage de votre compte, téléchargez, imprimez ou copi
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "Pour générer un nouveau mot de passe spécifique à l'application, veuillez saisir le nom et la portée de l'autorisation de l'application ainsi que sélectionner une date d'expiration :"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
