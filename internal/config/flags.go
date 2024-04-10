@@ -33,13 +33,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-user, login",
-			Usage:  "admin login `USERNAME`",
+			Usage:  "`USERNAME` of the superadmin account that is created on first startup",
 			Value:  "admin",
 			EnvVar: EnvVar("ADMIN_USER"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
-			Usage:  fmt.Sprintf("initial admin `PASSWORD` (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
+			Usage:  fmt.Sprintf("initial `PASSWORD` of the superadmin account (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVar: EnvVar("ADMIN_PASSWORD"),
 		}}, {
 		Flag: cli.Int64Flag{

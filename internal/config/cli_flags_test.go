@@ -52,7 +52,7 @@ func TestCliFlags_Replace(t *testing.T) {
 		{
 			Flag: cli.StringFlag{
 				Name:   "admin-user, login",
-				Usage:  "admin login `USERNAME`",
+				Usage:  "`USERNAME` of the superadmin account that is created on first startup",
 				Value:  "admin",
 				EnvVar: EnvVar("ADMIN_USER"),
 			}}}
