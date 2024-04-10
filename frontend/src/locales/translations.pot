@@ -130,8 +130,8 @@ msgstr ""
 
 #: src/dialog/admin/users/add.vue:23
 #: src/page/admin/users.vue:47
-#: src/dialog/account/apps.vue:115
-#: src/dialog/account/apps.vue:12
+#: src/dialog/account/apps.vue:140
+#: src/dialog/account/apps.vue:37
 msgid "Add"
 msgstr ""
 
@@ -663,9 +663,9 @@ msgstr ""
 #: src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228
 #: src/dialog/account/apps.vue:59
-#: src/dialog/account/apps.vue:112
+#: src/dialog/account/apps.vue:137
 #: src/dialog/account/apps.vue:15
-#: src/dialog/account/apps.vue:9
+#: src/dialog/account/apps.vue:34
 #: src/dialog/account/passcode.vue:37
 #: src/dialog/account/passcode.vue:135
 #: src/dialog/account/passcode.vue:154
@@ -769,7 +769,7 @@ msgstr ""
 msgid "Converting"
 msgstr ""
 
-#: src/dialog/account/apps.vue:61
+#: src/dialog/account/apps.vue:92
 #: src/dialog/account/passcode.vue:66
 #: src/dialog/photo/edit/files.vue:64
 #: src/dialog/photo/edit/info.vue:58
@@ -1215,7 +1215,8 @@ msgid "Experimental Features"
 msgstr ""
 
 #: src/page/admin/sessions.vue:98
-#: src/dialog/account/apps.vue:442
+#: src/dialog/account/apps.vue:61
+#: src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249
 #: src/dialog/share.vue:67
 msgid "Expires"
@@ -1237,7 +1238,7 @@ msgstr ""
 msgid "Faces"
 msgstr ""
 
-#: src/dialog/account/apps.vue:63
+#: src/dialog/account/apps.vue:94
 #: src/dialog/account/passcode.vue:68
 #: src/dialog/photo/edit/files.vue:66
 #: src/dialog/photo/edit/info.vue:60
@@ -1701,6 +1702,10 @@ msgstr ""
 msgid "Last Sync"
 msgstr ""
 
+#: src/dialog/account/apps.vue:55
+msgid "Last Used"
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:309
 #: src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1965,7 +1970,8 @@ msgstr ""
 #: src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:139
 #: src/component/photo/list.vue:234
-#: src/dialog/account/apps.vue:395
+#: src/dialog/account/apps.vue:46
+#: src/dialog/account/apps.vue:415
 #: src/dialog/album/edit.vue:105
 #: src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:31
@@ -2000,6 +2006,8 @@ msgstr ""
 
 #: src/page/admin/sessions.vue:74
 #: src/page/admin/users.vue:128
+#: src/dialog/account/apps.vue:106
+#: src/dialog/account/apps.vue:121
 #: src/options/options.js:418
 #: src/options/options.js:428
 #: src/page/settings/services.vue:54
@@ -2138,6 +2146,7 @@ msgstr ""
 
 #: src/page/admin/sessions.vue:46
 #: src/page/admin/users.vue:43
+#: src/dialog/account/apps.vue:560
 msgid "Nothing was found."
 msgstr ""
 
@@ -2256,7 +2265,7 @@ msgid "Panoramas"
 msgstr ""
 
 #: src/dialog/admin/users/add.vue:123
-#: src/dialog/account/apps.vue:150
+#: src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150
 #: src/dialog/account/passcode.vue:612
 #: src/dialog/service/add.vue:126
@@ -2651,7 +2660,8 @@ msgstr ""
 
 #: src/page/admin/sessions.vue:80
 #: src/page/admin/sessions.vue:28
-#: src/dialog/account/apps.vue:423
+#: src/dialog/account/apps.vue:48
+#: src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr ""
 
@@ -2926,6 +2936,7 @@ msgid "Successfully Connected"
 msgstr ""
 
 #: src/dialog/admin/sessions/remove.vue:23
+#: src/dialog/account/apps.vue:213
 msgid "Successfully deleted"
 msgstr ""
 

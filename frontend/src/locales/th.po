@@ -117,7 +117,7 @@ msgid "Activation Code"
 msgstr "รหัสเปิดใช้งาน"
 
 #: src/dialog/admin/users/add.vue:23 src/page/admin/users.vue:47
-#: src/dialog/account/apps.vue:115 src/dialog/account/apps.vue:12
+#: src/dialog/account/apps.vue:140 src/dialog/account/apps.vue:37
 msgid "Add"
 msgstr "เพิ่ม"
 
@@ -565,8 +565,8 @@ msgstr "ข้อมูลรับรองลูกค้า"
 
 #: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
-#: src/dialog/account/apps.vue:112 src/dialog/account/apps.vue:15
-#: src/dialog/account/apps.vue:9 src/dialog/account/passcode.vue:37
+#: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
+#: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
 #: src/dialog/account/passcode.vue:135 src/dialog/account/passcode.vue:154
 #: src/dialog/account/passcode.vue:18 src/dialog/account/passcode.vue:25
 #: src/dialog/account/passcode.vue:12 src/dialog/photo/edit/details.vue:111
@@ -650,7 +650,7 @@ msgstr "ผู้ให้ข้อมูล"
 msgid "Converting"
 msgstr "กำลังแปลง"
 
-#: src/dialog/account/apps.vue:61 src/dialog/account/passcode.vue:66
+#: src/dialog/account/apps.vue:92 src/dialog/account/passcode.vue:66
 #: src/dialog/photo/edit/files.vue:64 src/dialog/photo/edit/info.vue:58
 #: src/dialog/share.vue:61 src/dialog/webdav.vue:37
 msgid "Copied to clipboard"
@@ -1031,8 +1031,9 @@ msgstr "ขยายการค้นหา"
 msgid "Experimental Features"
 msgstr "คุณสมบัติทดลอง"
 
-#: src/page/admin/sessions.vue:98 src/dialog/account/apps.vue:442
-#: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
+#: src/page/admin/sessions.vue:98 src/dialog/account/apps.vue:61
+#: src/dialog/account/apps.vue:462 src/dialog/service/edit.vue:249
+#: src/dialog/share.vue:67
 msgid "Expires"
 msgstr "หมดอายุ"
 
@@ -1052,7 +1053,7 @@ msgstr "ใบหน้า"
 msgid "Faces"
 msgstr "ใบหน้า"
 
-#: src/dialog/account/apps.vue:63 src/dialog/account/passcode.vue:68
+#: src/dialog/account/apps.vue:94 src/dialog/account/passcode.vue:68
 #: src/dialog/photo/edit/files.vue:66 src/dialog/photo/edit/info.vue:60
 #: src/dialog/share.vue:63 src/dialog/webdav.vue:39
 msgid "Failed copying to clipboard"
@@ -1436,6 +1437,10 @@ msgstr "เข้าสู่ระบบครั้งล่าสุด"
 msgid "Last Sync"
 msgstr "ซิงค์ล่าสุด"
 
+#: src/dialog/account/apps.vue:55
+msgid "Last Used"
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
 msgstr "ละติจูด"
@@ -1653,16 +1658,16 @@ msgstr "ต้องมีอักขระอย่างน้อย %{n} ต
 
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:139 src/component/photo/list.vue:234
-#: src/dialog/account/apps.vue:395 src/dialog/album/edit.vue:105
-#: src/dialog/photo/edit/files.vue:42 src/dialog/photo/edit/info.vue:31
-#: src/dialog/photo/edit/info.vue:76 src/dialog/photo/edit/labels.vue:84
-#: src/dialog/photo/edit/labels.vue:200 src/dialog/photo/edit/people.vue:26
-#: src/dialog/photo/edit/people.vue:226 src/dialog/service/edit.vue:427
-#: src/page/about/feedback.vue:174 src/page/albums.vue:89
-#: src/page/auth/login.vue:85 src/page/auth/login.vue:152
-#: src/page/labels.vue:347 src/page/people/new.vue:52
-#: src/page/people/new.vue:305 src/page/people/recognized.vue:403
-#: src/page/settings/services.vue:26
+#: src/dialog/account/apps.vue:46 src/dialog/account/apps.vue:415
+#: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
+#: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/info.vue:76
+#: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
+#: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
+#: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
+#: src/page/albums.vue:89 src/page/auth/login.vue:85
+#: src/page/auth/login.vue:152 src/page/labels.vue:347
+#: src/page/people/new.vue:52 src/page/people/new.vue:305
+#: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
 msgstr "ชื่อ"
 
@@ -1674,6 +1679,7 @@ msgid "Name too long"
 msgstr "ชื่อยาวเกินไป"
 
 #: src/page/admin/sessions.vue:74 src/page/admin/users.vue:128
+#: src/dialog/account/apps.vue:106 src/dialog/account/apps.vue:121
 #: src/options/options.js:418 src/options/options.js:428
 #: src/page/settings/services.vue:54
 msgid "Never"
@@ -1783,6 +1789,7 @@ msgid "Nothing to see here yet."
 msgstr "ยังไม่มีอะไรให้ดูที่นี่ อดทน"
 
 #: src/page/admin/sessions.vue:46 src/page/admin/users.vue:43
+#: src/dialog/account/apps.vue:560
 msgid "Nothing was found."
 msgstr "ไม่พบสิ่งใด"
 
@@ -1887,7 +1894,7 @@ msgstr "พาโนรามา"
 msgid "Panoramas"
 msgstr "พาโนรามา"
 
-#: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:150
+#: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
 #: src/dialog/share.vue:24 src/page/auth/login.vue:184
@@ -2220,7 +2227,7 @@ msgid "Scans"
 msgstr "สแกน"
 
 #: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
-#: src/dialog/account/apps.vue:423
+#: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "ขอบเขต"
 
@@ -2456,7 +2463,7 @@ msgstr ""
 msgid "Successfully Connected"
 msgstr "เชื่อมต่อเรียบร้อยแล้ว"
 
-#: src/dialog/admin/sessions/remove.vue:23
+#: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:213
 msgid "Successfully deleted"
 msgstr "ลบเรียบร้อยแล้ว"
 
