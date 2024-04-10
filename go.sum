@@ -270,8 +270,8 @@ github.com/leandro-lugaresi/hub v1.1.1 h1:zqp0HzFvj4HtqjMBXM2QF17o6PNmR8MJOChgeK
 github.com/leandro-lugaresi/hub v1.1.1/go.mod h1:XEFWanhHv6Rt3XlteHMxuNDYi8dJcpJjodpqkU+BtIo=
 github.com/leodido/go-urn v1.4.0 h1:WT9HwE9SGECu3lg4d/dIA+jxlljEa1/ffXKmRjqdmIQ=
 github.com/leodido/go-urn v1.4.0/go.mod h1:bvxc+MVxLKB4z00jd1z+Dvzr47oO32F/QSNjSBOlFxI=
-github.com/leonelquinteros/gotext v1.5.2 h1:T2y6ebHli+rMBCjcJlHTXyUrgXqsKBhl/ormgvt7lPo=
-github.com/leonelquinteros/gotext v1.5.2/go.mod h1:AT4NpQrOmyj1L/+hLja6aR0lk81yYYL4ePnj2kp7d6M=
+github.com/leonelquinteros/gotext v1.6.0 h1:IYL2+dKsaYYvqGAOafaC7mpAGBhMrD/vKjHUGyp8V64=
+github.com/leonelquinteros/gotext v1.6.0/go.mod h1:qQRISjoonXYFdRGrTG1LARQ38Gpibad0IPeB4hpvyyM=
 github.com/lib/pq v1.1.1/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
 github.com/lib/pq v1.10.9/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
