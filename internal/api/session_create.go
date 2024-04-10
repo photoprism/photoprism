@@ -14,6 +14,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // CreateSession creates a new client session and returns it as JSON if authentication was successful.
@@ -82,6 +83,9 @@ func CreateSession(router *gin.RouterGroup) {
 			sess = get.Session().New(c)
 			isNew = true
 		}
+
+		// Set session activity timestamp.
+		sess.LastActive = unix.Time()
 
 		// Try to log in and save session if successful.
 		if err := sess.LogIn(f, c); err != nil {

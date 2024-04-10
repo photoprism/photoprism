@@ -67,7 +67,7 @@ export const ScopeOptions = () => {
     },
     {
       text: $gettext("Read Access"),
-      value: "read *",
+      value: "read",
     },
     {
       text: $gettext("WebDAV"),

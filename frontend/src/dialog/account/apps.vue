@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="500" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
+  <v-dialog :value="show" lazy persistent max-width="610" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
     <v-form ref="form" lazy-validation dense class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card raised elevation="24">
         <v-card-title primary-title class="pa-2">
@@ -156,6 +156,31 @@
         <template v-else>
           <v-card-text class="py-0 px-2">
             <v-layout wrap align-top>
+              <v-flex xs12 class="pa-2">
+                <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-actions disable-initial-sort class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
+                  <template #items="props">
+                    <tr :data-name="props.item.UserName">
+                      <td class="text-selectable text-xs-left">
+                        {{ props.item.ClientName }}
+                      </td>
+                      <td class="text-xs-left hidden-xs" nowrap>
+                        {{ scopeInfo(props.item.AuthScope) }}
+                      </td>
+                      <td class="text-xs-left" nowrap>
+                        {{ formatDateTime(props.item.LastActive) }}
+                      </td>
+                      <td class="text-xs-left hidden-sm-and-down" nowrap>
+                        {{ formatDate(props.item.Expires, "–") }}
+                      </td>
+                      <td class="text-xs-right" nowrap>
+                        <v-btn icon small flat :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
+                          <v-icon color="secondary-dark">delete</v-icon>
+                        </v-btn>
+                      </td>
+                    </tr>
+                  </template>
+                </v-data-table>
+              </v-flex>
             </v-layout>
           </v-card-text>
           <v-card-actions class="pa-2">
@@ -173,6 +198,7 @@
         </template>
       </v-card>
     </v-form>
+    <p-confirm-dialog :show="revoke.dialog" icon="delete_outline" @cancel="revoke.dialog = false" @confirm="onRevoked"></p-confirm-dialog>
   </v-dialog>
 </template>
 <script>
@@ -180,6 +206,8 @@ import User from "model/user";
 import Util from "common/util";
 import * as auth from "options/auth";
 import * as options from "options/options";
+import { DateTime } from "luxon";
+import memoizeOne from "memoize-one";
 
 export default {
   name: "PAccountAppsDialog",
@@ -205,14 +233,43 @@ export default {
       action: "",
       confirmAction: "",
       user: this.$session.getUser(),
-      apps: [],
+      results: [],
+      selected: [],
       app: {
         client_name: "",
         scope: "*",
         expires_in: 0,
       },
+      revoke: {
+        token: "",
+        dialog: false,
+      },
       appPassword: "",
       appPasswordCopied: false,
+      listColumns: [
+        { text: this.$gettext("Name"), value: "ID", sortable: false, align: "left" },
+        {
+          text: this.$gettext("Scope"),
+          class: "hidden-xs",
+          value: "AuthScope",
+          sortable: false,
+          align: "left",
+        },
+        {
+          text: this.$gettext("Last Used"),
+          value: "LastActive",
+          sortable: false,
+          align: "left",
+        },
+        {
+          text: this.$gettext("Expires"),
+          class: "hidden-sm-and-down",
+          value: "Expires",
+          sortable: false,
+          align: "left",
+        },
+        { text: "", value: "", sortable: false, align: "right" },
+      ],
     };
   },
   watch: {
@@ -245,6 +302,43 @@ export default {
       this.copyText(this.appPassword);
       this.appPasswordCopied = true;
     },
+    formatDate(d, n) {
+      if (!d) {
+        if (n) {
+          return n;
+        } else {
+          return this.$gettext("Never");
+        }
+      }
+
+      if (Number.isInteger(d)) {
+        return DateTime.fromSeconds(d).toLocaleString(DateTime.DATE_SHORT);
+      }
+
+      return DateTime.fromISO(d).toLocaleString(DateTime.DATE_SHORT);
+    },
+    formatDateTime(d, n) {
+      if (!d) {
+        if (n) {
+          return n;
+        } else {
+          return this.$gettext("Never");
+        }
+      }
+
+      if (Number.isInteger(d)) {
+        return DateTime.fromSeconds(d).toLocaleString(DateTime.DATETIME_SHORT);
+      }
+
+      return DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_SHORT);
+    },
+    scopeInfo(s) {
+      let info = memoizeOne(auth.Scopes)()[s];
+      if (info) {
+        return info;
+      }
+      return s;
+    },
     reset(action) {
       if (!action) {
         action = "apps";
@@ -259,8 +353,8 @@ export default {
       this.action = action;
       this.confirmAction = "";
       this.appPasswordCopied = false;
-
-      console.log("reset", this.action, action);
+      this.revoke.token = "";
+      this.revoke.dialog = false;
     },
     onConfirm() {
       if (this.busy) {
@@ -279,6 +373,7 @@ export default {
 
       this.appPassword = "";
       this.reset();
+      this.find();
     },
     onCancel() {
       if (this.busy) {
@@ -301,6 +396,33 @@ export default {
 
       this.action = "add";
       this.confirmAction = "";
+    },
+    onRevoke(app) {
+      if (this.busy) {
+        return;
+      }
+
+      this.revoke.token = app.ID;
+      this.revoke.dialog = true;
+    },
+    onRevoked() {
+      if (this.busy || !this.revoke.token) {
+        return;
+      }
+
+      this.busy = true;
+      this.$session
+        .deleteApp(this.revoke.token)
+        .then(() => {
+          this.$notify.info(this.$gettext("Successfully deleted"));
+          this.revoke.token = "";
+          this.find();
+          this.revoke.dialog = false;
+          this.busy = false;
+        })
+        .catch(() => {
+          this.busy = false;
+        });
     },
     onGenerate() {
       if (this.busy) {
@@ -332,8 +454,7 @@ export default {
       this.model
         .findApps()
         .then((resp) => {
-          console.log("findApps", resp);
-          this.apps = resp;
+          this.results = resp;
         })
         .finally(() => {
           this.$notify.unblockUI();
