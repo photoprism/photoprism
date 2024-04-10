@@ -45,13 +45,13 @@ var Flags = CliFlags{
 		Flag: cli.Int64Flag{
 			Name:   "session-maxage",
 			Value:  DefaultSessionMaxAge,
-			Usage:  "time in `SECONDS` until API sessions expire automatically (-1 to disable)",
+			Usage:  "standard session expiration time in `SECONDS`, use of 2FA will double it (-1 to disable)",
 			EnvVar: EnvVar("SESSION_MAXAGE"),
 		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-timeout",
 			Value:  DefaultSessionTimeout,
-			Usage:  "time in `SECONDS` until API sessions expire due to inactivity (-1 to disable)",
+			Usage:  "standard session idle time in `SECONDS`, use of 2FA will double it (-1 to disable)",
 			EnvVar: EnvVar("SESSION_TIMEOUT"),
 		}}, {
 		Flag: cli.StringFlag{

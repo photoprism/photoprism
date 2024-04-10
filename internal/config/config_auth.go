@@ -138,7 +138,7 @@ func (c *Config) LoginUri() string {
 	return c.options.LoginUri
 }
 
-// SessionMaxAge returns the time in seconds until API sessions expire automatically.
+// SessionMaxAge returns the standard session expiration time in seconds.
 func (c *Config) SessionMaxAge() int64 {
 	if c.options.SessionMaxAge < 0 {
 		return 0
@@ -149,7 +149,7 @@ func (c *Config) SessionMaxAge() int64 {
 	return c.options.SessionMaxAge
 }
 
-// SessionTimeout returns the time in seconds until API sessions expire due to inactivity
+// SessionTimeout returns the standard session idle time in seconds.
 func (c *Config) SessionTimeout() int64 {
 	if c.options.SessionTimeout < 0 {
 		return 0
