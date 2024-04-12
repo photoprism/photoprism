@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
@@ -49,7 +48,7 @@ type Session struct {
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"-" yaml:"AuthID,omitempty"`
 	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	GrantType     string          `gorm:"type:VARBINARY(64);default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
 	LastActive    int64           `json:"LastActive" yaml:"LastActive,omitempty"`
@@ -76,87 +75,19 @@ func (Session) TableName() string {
 	return "auth_sessions"
 }
 
-// NewSession creates a new session with the expiration time and timeout specified in seconds.
+// NewSession creates a new session with the expiration and idle time specified in seconds (-1 for infinite).
 func NewSession(expiresIn, timeout int64) (m *Session) {
 	m = &Session{}
 
 	m.Regenerate()
 
-	if expiresIn > 0 {
-		m.SessExpires = TimeStamp().Unix() + expiresIn
-	}
+	// Set session expiration time in seconds (-1 for infinite).
+	m.SetExpiresIn(expiresIn)
 
-	if timeout > 0 {
-		m.SessTimeout = timeout
-	}
+	// Set session idle time in seconds (-1 for infinite).
+	m.SetTimeout(timeout)
 
 	return m
-}
-
-// DeleteExpiredSessions deletes all expired sessions.
-func DeleteExpiredSessions() (deleted int) {
-	found := Sessions{}
-
-	if err := Db().Where("sess_expires > 0 AND sess_expires < ?", unix.Time()).Find(&found).Error; err != nil {
-		event.AuditErr([]string{"failed to fetch expired sessions", "%s"}, err)
-		return deleted
-	}
-
-	for _, sess := range found {
-		if err := sess.Delete(); err != nil {
-			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
-		} else {
-			deleted++
-		}
-	}
-
-	return deleted
-}
-
-// DeleteClientSessions deletes client sessions above the specified limit.
-func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int64) (deleted int) {
-	if limit < 0 {
-		return 0
-	} else if client == nil {
-		return 0
-	}
-
-	q := Db()
-
-	if client.HasUID() {
-		q = q.Where("client_uid = ?", client.UID())
-	} else if client.HasName() {
-		q = q.Where("client_name = ?", client.Name())
-	} else {
-		return 0
-	}
-
-	if client.HasUser() {
-		q = q.Where("user_uid = ?", client.UserUID)
-	}
-
-	if !authMethod.IsUndefined() {
-		q = q.Where("auth_method = ?", authMethod.String())
-	}
-
-	q = q.Order("created_at DESC").Limit(1000000000).Offset(limit)
-
-	found := Sessions{}
-
-	if err := q.Find(&found).Error; err != nil {
-		event.AuditErr([]string{"failed to fetch client sessions", "%s"}, err)
-		return deleted
-	}
-
-	for _, sess := range found {
-		if err := sess.Delete(); err != nil {
-			event.AuditErr([]string{sess.IP(), "session %s", "failed to delete", "%s"}, sess.RefID, err)
-		} else {
-			deleted++
-		}
-	}
-
-	return deleted
 }
 
 // SessionStatusUnauthorized returns a session with status unauthorized (401).
@@ -211,19 +142,25 @@ func (m *Session) AuthTokenType() string {
 // Regenerate (re-)initializes the session with a random auth token, ID, and RefID.
 func (m *Session) Regenerate() *Session {
 	if !rnd.IsSessionID(m.ID) {
-		// Do not delete the old session if no ID is set yet.
+		// Skip deleting existing session if session ID is not set (or invalid).
 	} else if err := m.Delete(); err != nil {
+		// Failed to delete existing session.
 		event.AuditErr([]string{m.IP(), "session %s", "failed to delete", "%s"}, m.RefID, err)
 	} else {
+		// Successfully deleted existing session.
 		event.AuditErr([]string{m.IP(), "session %s", "deleted"}, m.RefID)
 	}
 
-	generated := TimeStamp()
-
+	// Set new auth token and ref id.
 	m.SetAuthToken(rnd.AuthToken())
 	m.RefID = rnd.RefID(SessionPrefix)
-	m.CreatedAt = generated
-	m.UpdatedAt = generated
+
+	// Get current time.
+	now := TimeStamp()
+
+	// Set timestamps to now.
+	m.CreatedAt = now
+	m.UpdatedAt = now
 
 	return m
 }
@@ -500,7 +437,7 @@ func (m *Session) SetAuthID(id string) *Session {
 		return m
 	}
 
-	m.AuthID = clean.Name(id)
+	m.AuthID = clean.Auth(id)
 
 	return m
 }
@@ -524,6 +461,11 @@ func (m *Session) SetProvider(provider authn.ProviderType) *Session {
 // Method returns the authentication method.
 func (m *Session) Method() authn.MethodType {
 	return authn.Method(m.AuthMethod)
+}
+
+// Is2FA checks if 2-Factor Authentication (2FA) was used to log in.
+func (m *Session) Is2FA() bool {
+	return m.Method().Is(authn.Method2FA)
 }
 
 // SetMethod sets a custom authentication method.
@@ -707,7 +649,7 @@ func (m *Session) SetData(data *SessionData) *Session {
 // SetContext sets the session request context.
 func (m *Session) SetContext(c *gin.Context) *Session {
 	if c == nil || m == nil {
-		return m
+		return &Session{}
 	}
 
 	// Set client ip address from request context.
@@ -729,7 +671,7 @@ func (m *Session) SetContext(c *gin.Context) *Session {
 // UpdateContext sets the session request context and updates the session entry in the database if it has changed.
 func (m *Session) UpdateContext(c *gin.Context) *Session {
 	if c == nil || m == nil {
-		return m
+		return &Session{}
 	}
 
 	changed := false
@@ -852,6 +794,7 @@ func (m *Session) Expires(t time.Time) *Session {
 	}
 
 	m.SessExpires = t.Unix()
+
 	return m
 }
 
@@ -870,7 +813,29 @@ func (m *Session) ExpiresIn() int64 {
 		return 0
 	}
 
-	return m.SessExpires - unix.Time()
+	return m.SessExpires - unix.Now()
+}
+
+// SetExpiresIn sets the session lifetime in seconds (-1 for infinite).
+func (m *Session) SetExpiresIn(expiresIn int64) *Session {
+	if expiresIn < 0 {
+		m.SessExpires = -1
+	} else if expiresIn > 0 {
+		m.SessExpires = unix.Now() + expiresIn
+	}
+
+	return m
+}
+
+// SetTimeout sets the session idle time in seconds (-1 for infinite).
+func (m *Session) SetTimeout(timeout int64) *Session {
+	if timeout < 0 {
+		m.SessTimeout = -1
+	} else if timeout > 0 {
+		m.SessTimeout = timeout
+	}
+
+	return m
 }
 
 // Expired checks if the session has expired.
@@ -904,16 +869,29 @@ func (m *Session) TimedOut() bool {
 	}
 }
 
-// UpdateLastActive sets the last activity of the session to now.
-func (m *Session) UpdateLastActive() *Session {
-	if m.Invalid() {
+// UpdateLastActive sets the time of last activity to now and optionally also updates the auth_sessions table.
+func (m *Session) UpdateLastActive(save bool) *Session {
+	if m == nil {
+		return &Session{}
+	} else if m.Invalid() || m.ID == "" {
 		return m
 	}
 
-	m.LastActive = unix.Time()
+	// Set time of last activity to now (Unix timestamp).
+	m.LastActive = unix.Now()
 
-	if err := Db().Model(m).UpdateColumn("LastActive", m.LastActive).Error; err != nil {
-		event.AuditWarn([]string{m.IP(), "session %s", "failed to update last active time", "%s"}, m.RefID, err)
+	// Update activity timestamp of this session in the auth_sessions table.
+	if !save {
+		return m
+	} else if err := Db().Model(m).UpdateColumn("last_active", m.LastActive).Error; err != nil {
+		event.AuditWarn([]string{m.IP(), "session %s", "failed to update activity timestamp", "%s"}, m.RefID, err)
+	}
+
+	// Update the activity timestamp of the parent session, if any.
+	if m.Method().IsNot(authn.MethodSession) || m.AuthID == "" || m.AuthID == m.ID {
+		return m
+	} else if err := Db().Table(Session{}.TableName()).Where("id = ?", m.AuthID).UpdateColumn("last_active", m.LastActive).Error; err != nil {
+		event.AuditWarn([]string{m.IP(), "session %s", "failed to update activity timestamp of parent session", "%s"}, m.RefID, err)
 	}
 
 	return m

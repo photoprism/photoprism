@@ -302,6 +302,7 @@ msgstr "أي صور ومقاطع فيديو خاصة تبقى خاصة ولن ت
 msgid "API Key"
 msgstr "مفتاح API"
 
+#: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "طلب"
@@ -371,7 +372,7 @@ msgid "Aspect Ratio"
 msgstr "نسبة العرض إلى الارتفاع"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "المصادقة"
@@ -563,7 +564,7 @@ msgstr "عميل"
 msgid "Client Credentials"
 msgstr "بيانات اعتماد العميل"
 
-#: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -682,7 +683,7 @@ msgstr "إصنع حساب"
 msgid "Create album"
 msgstr "إنشاء ألبوم"
 
-#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "مخلوق"
 
@@ -722,7 +723,7 @@ msgstr ""
 msgid "Debug Logs"
 msgstr "سجلات التصحيح"
 
-#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/options/admin.js:31 src/page/admin/sessions.vue:61
 #: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
@@ -1031,9 +1032,9 @@ msgstr "قم بتوسيع البحث"
 msgid "Experimental Features"
 msgstr "الميزات التجريبية"
 
-#: src/page/admin/sessions.vue:98 src/dialog/account/apps.vue:61
-#: src/dialog/account/apps.vue:462 src/dialog/service/edit.vue:249
-#: src/dialog/share.vue:67
+#: src/page/admin/sessions.vue:109 src/page/admin/sessions.vue:31
+#: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
+#: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
 msgstr "تنتهي"
 
@@ -1171,7 +1172,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "الإطارات"
 
-#: src/options/auth.js:54 src/options/auth.js:65
+#: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
 msgstr ""
 
@@ -1425,7 +1426,7 @@ msgstr "Lanczos: الحفاظ على التفاصيل ، الحد الأدنى �
 msgid "Language"
 msgstr "لغة"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "آخر نشاط"
 
@@ -1613,7 +1614,7 @@ msgstr "تم الارسال"
 msgid "Metadata"
 msgstr "البيانات الوصفية"
 
-#: src/options/auth.js:57
+#: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr ""
 
@@ -1678,10 +1679,8 @@ msgstr "اسم"
 msgid "Name too long"
 msgstr "الاسم طويل جدًا"
 
-#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:128
-#: src/dialog/account/apps.vue:106 src/dialog/account/apps.vue:121
-#: src/options/options.js:418 src/options/options.js:428
-#: src/page/settings/services.vue:54
+#: src/page/admin/users.vue:128 src/options/options.js:418
+#: src/options/options.js:428 src/page/settings/services.vue:54
 msgid "Never"
 msgstr "أبداً"
 
@@ -1788,7 +1787,7 @@ msgstr "ملحوظات"
 msgid "Nothing to see here yet."
 msgstr "لا شيء لتراه هنا حتى الآن. كن صبوراً."
 
-#: src/page/admin/sessions.vue:46 src/page/admin/users.vue:43
+#: src/page/admin/sessions.vue:50 src/page/admin/users.vue:43
 #: src/dialog/account/apps.vue:560
 msgid "Nothing was found."
 msgstr "لم يتم العثور على شيء."
@@ -2086,10 +2085,6 @@ msgstr "الخام"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "أعد فهرسة جميع الأصول ، بما في ذلك الملفات المفهرسة بالفعل والتي لم يتم تغييرها."
 
-#: src/options/auth.js:55 src/options/auth.js:69
-msgid "Read Access"
-msgstr ""
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "وضع القراءة فقط"
@@ -2199,7 +2194,7 @@ msgid "Review"
 msgstr "إعادة النظر"
 
 #: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
-#: src/page/admin/sessions.vue:67 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "دور"
@@ -2226,7 +2221,7 @@ msgstr ""
 msgid "Scans"
 msgstr "عمليات المسح"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "نِطَاق"
@@ -2463,7 +2458,7 @@ msgstr ""
 msgid "Successfully Connected"
 msgstr "تم الاتصال بنجاح"
 
-#: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:213
+#: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:209
 msgid "Successfully deleted"
 msgstr "تم الحذف بنجاح"
 
@@ -2761,7 +2756,7 @@ msgstr "استخدم الإعدادات المسبقة"
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
 msgstr ""
 
-#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
 #: src/model/user.js:313 src/options/auth.js:7
 msgid "User"
@@ -2775,7 +2770,7 @@ msgstr "دليل المستخدم"
 msgid "User Interface"
 msgstr "واجهة المستخدم"
 
-#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:51
+#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:54
 #: src/page/admin/sessions.vue:2 src/page/admin/users.vue:34
 #: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
 #: src/dialog/share.vue:23
@@ -2827,7 +2822,7 @@ msgstr "رأي"
 msgid "Viewer"
 msgstr "مشاهد"
 
-#: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
+#: src/page/admin/sessions.vue:73 src/page/admin/sessions.vue:5
 #: src/options/auth.js:12
 msgid "Visitor"
 msgstr "زائر"
@@ -2851,7 +2846,7 @@ msgid "Web Login"
 msgstr "تسجيل الدخول عبر الويب"
 
 #: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
-#: src/page/admin/users.vue:47 src/options/auth.js:56 src/options/auth.js:73
+#: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"
 

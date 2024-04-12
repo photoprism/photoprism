@@ -302,6 +302,7 @@ msgstr "모든 비공개 사진과 동영상은 비공개로 유지되며 공유
 msgid "API Key"
 msgstr "API 키"
 
+#: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "애플리케이션"
@@ -371,7 +372,7 @@ msgid "Aspect Ratio"
 msgstr "종횡비"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "인증"
@@ -563,7 +564,7 @@ msgstr "클라이언트"
 msgid "Client Credentials"
 msgstr "클라이언트 자격 증명"
 
-#: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -682,7 +683,7 @@ msgstr "계정 만들기"
 msgid "Create album"
 msgstr "앨범 만들기"
 
-#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "만듦"
 
@@ -722,7 +723,7 @@ msgstr ""
 msgid "Debug Logs"
 msgstr "디버그 로그"
 
-#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/options/admin.js:31 src/page/admin/sessions.vue:61
 #: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
@@ -1031,9 +1032,9 @@ msgstr "확장 검색"
 msgid "Experimental Features"
 msgstr "실험실 기능"
 
-#: src/page/admin/sessions.vue:98 src/dialog/account/apps.vue:61
-#: src/dialog/account/apps.vue:462 src/dialog/service/edit.vue:249
-#: src/dialog/share.vue:67
+#: src/page/admin/sessions.vue:109 src/page/admin/sessions.vue:31
+#: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
+#: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
 msgstr "만료"
 
@@ -1171,7 +1172,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "프레임"
 
-#: src/options/auth.js:54 src/options/auth.js:65
+#: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
 msgstr ""
 
@@ -1425,7 +1426,7 @@ msgstr "Lanczos: 디테일 보존, 최소한의 인공물"
 msgid "Language"
 msgstr "언어"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "마지막 활성"
 
@@ -1613,7 +1614,7 @@ msgstr "매시지 보냄"
 msgid "Metadata"
 msgstr "메타데이터"
 
-#: src/options/auth.js:57
+#: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr ""
 
@@ -1678,10 +1679,8 @@ msgstr "이름"
 msgid "Name too long"
 msgstr "이름이 너무 깁니다"
 
-#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:128
-#: src/dialog/account/apps.vue:106 src/dialog/account/apps.vue:121
-#: src/options/options.js:418 src/options/options.js:428
-#: src/page/settings/services.vue:54
+#: src/page/admin/users.vue:128 src/options/options.js:418
+#: src/options/options.js:428 src/page/settings/services.vue:54
 msgid "Never"
 msgstr "안함"
 
@@ -1788,7 +1787,7 @@ msgstr "노트"
 msgid "Nothing to see here yet."
 msgstr "아직 볼 것이 없습니다. 인내심을 가지세요."
 
-#: src/page/admin/sessions.vue:46 src/page/admin/users.vue:43
+#: src/page/admin/sessions.vue:50 src/page/admin/users.vue:43
 #: src/dialog/account/apps.vue:560
 msgid "Nothing was found."
 msgstr "아무것도 발견되지 않았습니다."
@@ -2086,10 +2085,6 @@ msgstr "날것의"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "이미 인덱싱되고 변경되지 않은 파일을 포함하여 모든 원본을 다시 인덱싱합니다."
 
-#: src/options/auth.js:55 src/options/auth.js:69
-msgid "Read Access"
-msgstr ""
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "읽기 전용 모드"
@@ -2199,7 +2194,7 @@ msgid "Review"
 msgstr "리뷰"
 
 #: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
-#: src/page/admin/sessions.vue:67 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "역할"
@@ -2226,7 +2221,7 @@ msgstr ""
 msgid "Scans"
 msgstr "스켄"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "범위"
@@ -2463,7 +2458,7 @@ msgstr ""
 msgid "Successfully Connected"
 msgstr "성공적으로 연결됨"
 
-#: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:213
+#: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:209
 msgid "Successfully deleted"
 msgstr "삭제 성공"
 
@@ -2761,7 +2756,7 @@ msgstr "사전 설정 사용"
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
 msgstr ""
 
-#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
 #: src/model/user.js:313 src/options/auth.js:7
 msgid "User"
@@ -2775,7 +2770,7 @@ msgstr "사용자 가이드"
 msgid "User Interface"
 msgstr "사용자 인터페이스"
 
-#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:51
+#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:54
 #: src/page/admin/sessions.vue:2 src/page/admin/users.vue:34
 #: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
 #: src/dialog/share.vue:23
@@ -2827,7 +2822,7 @@ msgstr "보기"
 msgid "Viewer"
 msgstr "뷰어"
 
-#: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
+#: src/page/admin/sessions.vue:73 src/page/admin/sessions.vue:5
 #: src/options/auth.js:12
 msgid "Visitor"
 msgstr "방문자"
@@ -2851,7 +2846,7 @@ msgid "Web Login"
 msgstr "웹 로그인"
 
 #: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
-#: src/page/admin/users.vue:47 src/options/auth.js:56 src/options/auth.js:73
+#: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"
 

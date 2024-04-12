@@ -111,6 +111,9 @@ func CreateOAuthToken(router *gin.RouterGroup) {
 				return
 			}
 
+			// Update time of last activity.
+			client.UpdateLastActive(true)
+
 			// Cancel failure rate limit reservation.
 			r.Success()
 

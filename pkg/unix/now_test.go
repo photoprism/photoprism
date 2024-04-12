@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTime(t *testing.T) {
-	result := Time()
+func TestNow(t *testing.T) {
+	result := Now()
 
 	assert.Greater(t, result, int64(1706521797))
 	assert.GreaterOrEqual(t, result, time.Now().UTC().Unix())

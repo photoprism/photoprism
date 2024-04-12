@@ -14,7 +14,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
-	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // CreateSession creates a new client session and returns it as JSON if authentication was successful.
@@ -73,6 +72,7 @@ func CreateSession(router *gin.RouterGroup) {
 
 		var sess *entity.Session
 		var isNew bool
+		var err error
 
 		// Find existing session, if any.
 		if s := Session(clientIp, AuthToken(c)); s != nil {
@@ -84,11 +84,8 @@ func CreateSession(router *gin.RouterGroup) {
 			isNew = true
 		}
 
-		// Set session activity timestamp.
-		sess.LastActive = unix.Time()
-
-		// Try to log in and save session if successful.
-		if err := sess.LogIn(f, c); err != nil {
+		// Check authentication credentials.
+		if err = sess.LogIn(f, c); err != nil {
 			if sess.Method().IsNot(authn.Method2FA) {
 				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			} else if errors.Is(err, authn.ErrPasscodeRequired) {
@@ -99,7 +96,16 @@ func CreateSession(router *gin.RouterGroup) {
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrInvalidPasscode, "message": i18n.Msg(i18n.ErrInvalidPasscode)})
 			}
 			return
-		} else if sess, err = get.Session().Save(sess); err != nil {
+		}
+
+		// Extend session lifetime if 2-Factor Authentication (2FA) is enabled for the account.
+		if sess.Is2FA() && !sess.IsClient() {
+			sess.SetExpiresIn(conf.SessionMaxAge() * 2)
+			sess.SetTimeout(conf.SessionTimeout() * 2)
+		}
+
+		// Save session after successful authentication.
+		if sess, err = get.Session().Save(sess); err != nil {
 			event.AuditErr([]string{clientIp, "%s"}, err)
 			c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			return

@@ -427,16 +427,22 @@ func (m *Client) SetScope(s string) *Client {
 	return m
 }
 
-// UpdateLastActive sets the last activity of the client to now.
-func (m *Client) UpdateLastActive() *Client {
-	if !m.HasUID() {
+// UpdateLastActive sets the time of last activity to now and optionally also updates the auth_clients table.
+func (m *Client) UpdateLastActive(save bool) *Client {
+	if m == nil {
+		return &Client{}
+	} else if !m.HasUID() {
 		return m
 	}
 
-	m.LastActive = unix.Time()
+	// Set time of last activity to now (Unix timestamp).
+	m.LastActive = unix.Now()
 
-	if err := Db().Model(m).UpdateColumn("LastActive", m.LastActive).Error; err != nil {
-		log.Debugf("client: failed to update %s timestamp (%s)", m.ClientUID, err)
+	// Update activity timestamp of this client in the auth_clients table.
+	if !save {
+		return m
+	} else if err := Db().Model(m).UpdateColumn("last_active", m.LastActive).Error; err != nil {
+		event.AuditWarn([]string{"client %s", "failed to update activity timestamp", "%s"}, m.ClientUID, err)
 	}
 
 	return m

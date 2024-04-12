@@ -339,14 +339,14 @@ func TestClient_UpdateLastActive(t *testing.T) {
 
 		assert.Empty(t, m.LastActive)
 
-		c := m.UpdateLastActive()
+		c := m.UpdateLastActive(true)
 
 		assert.NotEmpty(t, c.LastActive)
 	})
 	t.Run("EmptyUID", func(t *testing.T) {
 		var m = Client{ClientName: "No UUID"}
 
-		c := m.UpdateLastActive()
+		c := m.UpdateLastActive(true)
 
 		assert.Empty(t, c.LastActive)
 	})

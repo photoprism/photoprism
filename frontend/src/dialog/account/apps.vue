@@ -163,14 +163,14 @@
                       <td class="text-selectable text-xs-left">
                         {{ props.item.ClientName }}
                       </td>
-                      <td class="text-xs-left hidden-xs" nowrap>
+                      <td class="text-xs-left hidden-xs-only" nowrap>
                         {{ scopeInfo(props.item.AuthScope) }}
                       </td>
                       <td class="text-xs-left" nowrap>
                         {{ formatDateTime(props.item.LastActive) }}
                       </td>
                       <td class="text-xs-left hidden-sm-and-down" nowrap>
-                        {{ formatDate(props.item.Expires, "–") }}
+                        {{ formatDate(props.item.Expires) }}
                       </td>
                       <td class="text-xs-right" nowrap>
                         <v-btn icon small flat :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
@@ -250,7 +250,7 @@ export default {
         { text: this.$gettext("Name"), value: "ID", sortable: false, align: "left" },
         {
           text: this.$gettext("Scope"),
-          class: "hidden-xs",
+          class: "hidden-xs-only",
           value: "AuthScope",
           sortable: false,
           align: "left",
@@ -302,35 +302,31 @@ export default {
       this.copyText(this.appPassword);
       this.appPasswordCopied = true;
     },
-    formatDate(d, n) {
+    formatDate(d) {
       if (!d) {
-        if (n) {
-          return n;
-        } else {
-          return this.$gettext("Never");
-        }
+        return "–";
       }
 
-      if (Number.isInteger(d)) {
-        return DateTime.fromSeconds(d).toLocaleString(DateTime.DATE_SHORT);
+      if (!Number.isInteger(d)) {
+        return DateTime.fromISO(d).toLocaleString(DateTime.DATE_SHORT);
+      } else if (d <= 0) {
+        return "–";
       }
 
-      return DateTime.fromISO(d).toLocaleString(DateTime.DATE_SHORT);
+      return DateTime.fromSeconds(d).toLocaleString(DateTime.DATE_SHORT);
     },
-    formatDateTime(d, n) {
+    formatDateTime(d) {
       if (!d) {
-        if (n) {
-          return n;
-        } else {
-          return this.$gettext("Never");
-        }
+        return "–";
       }
 
-      if (Number.isInteger(d)) {
-        return DateTime.fromSeconds(d).toLocaleString(DateTime.DATETIME_SHORT);
+      if (!Number.isInteger(d)) {
+        return DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_SHORT);
+      } else if (d <= 0) {
+        return "–";
       }
 
-      return DateTime.fromISO(d).toLocaleString(DateTime.DATETIME_SHORT);
+      return DateTime.fromSeconds(d).toLocaleString(DateTime.DATETIME_SHORT);
     },
     scopeInfo(s) {
       let info = memoizeOne(auth.Scopes)()[s];

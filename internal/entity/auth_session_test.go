@@ -93,47 +93,6 @@ func TestSession_Expires(t *testing.T) {
 	})
 }
 
-func TestDeleteExpiredSessions(t *testing.T) {
-	assert.Equal(t, 0, DeleteExpiredSessions())
-	m := NewSession(unix.Day, unix.Hour)
-	m.Expires(time.Date(2000, 01, 15, 12, 30, 0, 0, time.UTC))
-	m.Save()
-	assert.Equal(t, 1, DeleteExpiredSessions())
-}
-
-func TestDeleteClientSessions(t *testing.T) {
-	// Test client UID.
-	clientUID := "cs5gfen1bgx00000"
-
-	// Create new test client.
-	client := NewClient()
-	client.ClientUID = clientUID
-
-	// Make sure no sessions exist yet and test missing arguments.
-	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodUndefined, -1))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0))
-	assert.Equal(t, 0, DeleteClientSessions(&Client{}, authn.MethodDefault, 0))
-
-	// Create 10 test client sessions.
-	for i := 0; i < 10; i++ {
-		sess := NewSession(3600, 0)
-		sess.SetClient(client)
-
-		if err := sess.Save(); err != nil {
-			t.Fatal(err)
-		}
-	}
-
-	// Check if the expected number of sessions is deleted until none are left.
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, -1))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodDefault, 1))
-	assert.Equal(t, 9, DeleteClientSessions(client, authn.MethodOAuth2, 1))
-	assert.Equal(t, 1, DeleteClientSessions(client, authn.MethodOAuth2, 0))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodOAuth2, 0))
-	assert.Equal(t, 0, DeleteClientSessions(client, authn.MethodUndefined, 0))
-}
-
 func TestSessionStatusUnauthorized(t *testing.T) {
 	m := SessionStatusUnauthorized()
 	assert.Equal(t, http.StatusUnauthorized, m.Status)
@@ -166,8 +125,12 @@ func TestFindSessionByRefID(t *testing.T) {
 func TestSession_Regenerate(t *testing.T) {
 	t.Run("NewSession", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
+		assert.Equal(t, int64(0), m.LastActive)
 		initialID := m.ID
+		m.UpdateLastActive(false)
+		assert.GreaterOrEqual(t, unix.Now(), m.LastActive)
 		m.Regenerate()
+		assert.Equal(t, int64(0), m.LastActive)
 		finalID := m.ID
 		assert.NotEqual(t, initialID, finalID)
 	})
@@ -231,7 +194,7 @@ func TestSession_Create(t *testing.T) {
 		s := &Session{
 			UserName:    "charles",
 			SessExpires: unix.Day * 3,
-			SessTimeout: unix.Time() + unix.Week,
+			SessTimeout: unix.Now() + unix.Week,
 			RefID:       "sessxkkcxxxx",
 		}
 
@@ -257,7 +220,7 @@ func TestSession_Create(t *testing.T) {
 		s := &Session{
 			UserName:    "charles",
 			SessExpires: unix.Day * 3,
-			SessTimeout: unix.Time() + unix.Week,
+			SessTimeout: unix.Now() + unix.Week,
 			RefID:       "123",
 		}
 
@@ -279,7 +242,7 @@ func TestSession_Create(t *testing.T) {
 		s := &Session{
 			UserName:    "charles",
 			SessExpires: unix.Day * 3,
-			SessTimeout: unix.Time() + unix.Week,
+			SessTimeout: unix.Now() + unix.Week,
 			RefID:       "sessxkkcxxxx",
 		}
 
@@ -297,7 +260,7 @@ func TestSession_Save(t *testing.T) {
 		s := &Session{
 			UserName:    "chris",
 			SessExpires: unix.Day * 3,
-			SessTimeout: unix.Time() + unix.Week,
+			SessTimeout: unix.Now() + unix.Week,
 			RefID:       "sessxkkcxxxy",
 		}
 
@@ -584,6 +547,20 @@ func TestSession_SetMethod(t *testing.T) {
 
 		assert.Equal(t, authn.ProviderAccessToken, m.Provider())
 		assert.Equal(t, authn.MethodSession, m.Method())
+	})
+	t.Run("2FA", func(t *testing.T) {
+		s := &Session{
+			UserName:     "test",
+			RefID:        "sessxkkcxxxz",
+			AuthProvider: authn.ProviderAccessToken.String(),
+			AuthMethod:   authn.MethodDefault.String(),
+		}
+		s.Regenerate()
+		assert.False(t, s.Is2FA())
+		m := s.SetMethod(authn.Method2FA)
+		assert.True(t, s.Is2FA())
+		assert.True(t, m.Is2FA())
+		assert.Equal(t, m.ID, s.ID)
 	})
 }
 
@@ -929,7 +906,7 @@ func TestSession_TimedOut(t *testing.T) {
 	})
 	t.Run("TimedOut", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
-		utc := unix.Time()
+		utc := unix.Now()
 
 		m.LastActive = utc - (unix.Hour + 1)
 
@@ -938,12 +915,25 @@ func TestSession_TimedOut(t *testing.T) {
 	})
 	t.Run("NotTimedOut", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
-		utc := unix.Time()
+		utc := unix.Now()
 
 		m.LastActive = utc - (unix.Hour - 10)
 
 		assert.False(t, m.TimeoutAt().IsZero())
 		assert.False(t, m.TimedOut())
+	})
+}
+
+func TestSession_UpdateLastActive(t *testing.T) {
+	t.Run("NewSession", func(t *testing.T) {
+		m := NewSession(unix.Day, unix.Hour)
+		t.Logf("Timeout: %s, Expiration: %s", m.TimeoutAt().String(), m.ExpiresAt())
+
+		assert.Equal(t, int64(0), m.LastActive)
+
+		m.UpdateLastActive(false)
+
+		assert.GreaterOrEqual(t, unix.Now(), m.LastActive)
 	})
 }
 
@@ -975,7 +965,7 @@ func TestSession_Expired(t *testing.T) {
 	t.Run("Expired", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
 		t.Logf("Timeout: %s, Expiration: %s", m.TimeoutAt().String(), m.ExpiresAt())
-		utc := unix.Time()
+		utc := unix.Now()
 
 		m.SessExpires = utc - 10
 
@@ -987,7 +977,7 @@ func TestSession_Expired(t *testing.T) {
 	})
 	t.Run("NotExpired", func(t *testing.T) {
 		m := NewSession(unix.Day, unix.Hour)
-		utc := unix.Time()
+		utc := unix.Now()
 
 		m.SessExpires = utc + 10
 

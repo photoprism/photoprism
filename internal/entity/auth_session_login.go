@@ -148,10 +148,23 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 			method = authn.MethodSession
 
 			if s != nil {
+				// Set scope, client UID, and client name to that of the parent session.
 				s.ClientUID = authSess.ClientUID
 				s.ClientName = authSess.ClientName
 				s.SetScope(authSess.Scope())
-				s.SetMethod(authn.MethodSession)
+
+				// Set provider and method to help identify the session type.
+				s.SetProvider(provider)
+				s.SetMethod(method)
+
+				// Set auth ID to the ID of the parent session.
+				s.SetAuthID(authSess.ID)
+
+				// Limit lifetime of the session to that of the parent session, if any.
+				if authSess.SessExpires > 0 && s.SessExpires > authSess.SessExpires {
+					s.SessExpires = authSess.SessExpires
+				}
+
 				event.AuditInfo([]string{clientIp, "session %s", "login as %s with app password", authn.Succeeded}, s.RefID, clean.LogQuote(username))
 				event.LoginInfo(clientIp, "api", username, s.UserAgent)
 			}

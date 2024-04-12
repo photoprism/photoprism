@@ -27,9 +27,7 @@ func (s *Session) Create(u *entity.User, c *gin.Context, data *entity.SessionDat
 	m = s.New(c).SetUser(u).SetData(data)
 
 	// Create session.
-	if err = m.Create(); err != nil {
-		m.UpdateLastActive()
-	}
+	err = m.Create()
 
 	return m, err
 }

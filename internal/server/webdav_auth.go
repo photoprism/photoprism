@@ -137,8 +137,8 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			WebDAVAbortServerError(c)
 			return
 		} else {
-			// Update the session activity timestamp.
-			sess.UpdateLastActive()
+			// Update session activity.
+			sess.UpdateLastActive(true)
 
 			// Cache authentication to improve performance.
 			webdavAuthCache.SetDefault(sid, user)

@@ -52,7 +52,6 @@ export const Methods = () => {
 export const Scopes = () => {
   return {
     "*": $gettext("Full Access"),
-    read: $gettext("Read Access"),
     webdav: $gettext("WebDAV"),
     metrics: $gettext("Metrics"),
   };
@@ -66,12 +65,12 @@ export const ScopeOptions = () => {
       value: "*",
     },
     {
-      text: $gettext("Read Access"),
-      value: "read",
-    },
-    {
       text: $gettext("WebDAV"),
       value: "webdav",
+    },
+    {
+      text: $gettext("Metrics"),
+      value: "metrics",
     },
     /* TODO: Show additional input field so advanced users can specify a custom scope when this option is selected.
     {

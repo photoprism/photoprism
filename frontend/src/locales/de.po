@@ -302,6 +302,7 @@ msgstr "Als privat markierte Bilder und Videos bleiben privat und werden nicht g
 msgid "API Key"
 msgstr "API-Key"
 
+#: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "Anmeldung"
@@ -371,7 +372,7 @@ msgid "Aspect Ratio"
 msgstr "Seitenverhältnis"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:74 src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:27
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Authentifizierung"
@@ -563,7 +564,7 @@ msgstr "Kunde"
 msgid "Client Credentials"
 msgstr "Kundennachweise"
 
-#: src/page/admin/sessions.vue:124 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -682,7 +683,7 @@ msgstr "Konto erstellen"
 msgid "Create album"
 msgstr "Erstellen"
 
-#: src/page/admin/sessions.vue:86 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Hinzugefügt"
 
@@ -722,7 +723,7 @@ msgstr "Deaktivieren"
 msgid "Debug Logs"
 msgstr "Debug Logs"
 
-#: src/options/admin.js:31 src/page/admin/sessions.vue:60
+#: src/options/admin.js:31 src/page/admin/sessions.vue:61
 #: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
@@ -1031,9 +1032,9 @@ msgstr "Suche öffnen"
 msgid "Experimental Features"
 msgstr "Experimentelle Funktionen"
 
-#: src/page/admin/sessions.vue:98 src/dialog/account/apps.vue:61
-#: src/dialog/account/apps.vue:462 src/dialog/service/edit.vue:249
-#: src/dialog/share.vue:67
+#: src/page/admin/sessions.vue:109 src/page/admin/sessions.vue:31
+#: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
+#: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
 msgstr "Ablaufdatum"
 
@@ -1171,7 +1172,7 @@ msgstr "FPS"
 msgid "Frames"
 msgstr "Frames"
 
-#: src/options/auth.js:54 src/options/auth.js:65
+#: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
 msgstr "Voller Zugriff"
 
@@ -1425,7 +1426,7 @@ msgstr "Lanczos: Sehr gute Detailerhaltung, minimale Artefakte"
 msgid "Language"
 msgstr "Sprache"
 
-#: src/page/admin/sessions.vue:92 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
 msgid "Last Active"
 msgstr "Zuletzt aktiv"
 
@@ -1613,7 +1614,7 @@ msgstr "Nachricht versendet"
 msgid "Metadata"
 msgstr "Metadaten"
 
-#: src/options/auth.js:57
+#: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Metriken"
 
@@ -1678,10 +1679,8 @@ msgstr "Name"
 msgid "Name too long"
 msgstr "Name zu lang"
 
-#: src/page/admin/sessions.vue:74 src/page/admin/users.vue:128
-#: src/dialog/account/apps.vue:106 src/dialog/account/apps.vue:121
-#: src/options/options.js:418 src/options/options.js:428
-#: src/page/settings/services.vue:54
+#: src/page/admin/users.vue:128 src/options/options.js:418
+#: src/options/options.js:428 src/page/settings/services.vue:54
 msgid "Never"
 msgstr "Nie"
 
@@ -1788,7 +1787,7 @@ msgstr "Notizen"
 msgid "Nothing to see here yet."
 msgstr "Hier gibt es noch nichts zu sehen."
 
-#: src/page/admin/sessions.vue:46 src/page/admin/users.vue:43
+#: src/page/admin/sessions.vue:50 src/page/admin/users.vue:43
 #: src/dialog/account/apps.vue:560
 msgid "Nothing was found."
 msgstr "Es konnte nichts gefunden werden."
@@ -2086,10 +2085,6 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Bereits bekannte und unveränderte Dateien neu indexieren."
 
-#: src/options/auth.js:55 src/options/auth.js:69
-msgid "Read Access"
-msgstr "Lesender Zugang"
-
 #: src/page/settings/advanced.vue:98
 msgid "Read-Only Mode"
 msgstr "Schreibgeschützter Modus"
@@ -2199,7 +2194,7 @@ msgid "Review"
 msgstr "Überprüfen"
 
 #: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
-#: src/page/admin/sessions.vue:67 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
 msgstr "Rolle"
@@ -2226,7 +2221,7 @@ msgstr "Scanne den QR-Code mit deiner Authenticator-App oder verwende den unten 
 msgid "Scans"
 msgstr "Scans"
 
-#: src/page/admin/sessions.vue:80 src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "Berechtigung"
@@ -2463,7 +2458,7 @@ msgstr "Erfolgreich aktiviert"
 msgid "Successfully Connected"
 msgstr "Erfolgreich verbunden"
 
-#: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:213
+#: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:209
 msgid "Successfully deleted"
 msgstr "Erfolgreich gelöscht"
 
@@ -2761,7 +2756,7 @@ msgstr "Presets anwenden"
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
 msgstr "Verwende den folgenden Wiederherstellungscode, um auf dein Konto zuzugreifen, wenn du mit deinem Authenticator keinen gültigen Verifizierungscode generieren kannst:"
 
-#: src/options/admin.js:10 src/page/admin/sessions.vue:59
+#: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
 #: src/model/user.js:313 src/options/auth.js:7
 msgid "User"
@@ -2775,7 +2770,7 @@ msgstr "Benutzerhandbuch"
 msgid "User Interface"
 msgstr "Benutzeroberfläche"
 
-#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:51
+#: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:54
 #: src/page/admin/sessions.vue:2 src/page/admin/users.vue:34
 #: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
 #: src/dialog/share.vue:23
@@ -2827,7 +2822,7 @@ msgstr "Ansicht"
 msgid "Viewer"
 msgstr "Betrachter"
 
-#: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:5
+#: src/page/admin/sessions.vue:73 src/page/admin/sessions.vue:5
 #: src/options/auth.js:12
 msgid "Visitor"
 msgstr "Besucher"
@@ -2851,7 +2846,7 @@ msgid "Web Login"
 msgstr "Web-Login"
 
 #: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
-#: src/page/admin/users.vue:47 src/options/auth.js:56 src/options/auth.js:73
+#: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"
 
@@ -2943,6 +2938,9 @@ msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#~ msgid "Read Access"
+#~ msgstr "Lesender Zugang"
 
 #~ msgid "Please enter a valid verification code to access your account:"
 #~ msgstr "Bitte einen gültigen Verifizierungscode eingeben, um auf das Konto zuzugreifen:"

@@ -10,6 +10,39 @@ import (
 
 var EmailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
+// Auth returns the sanitized authentication identifier trimmed to a maximum length of 255 characters.
+func Auth(s string) string {
+	if s == "" || len(s) > 2048 {
+		return ""
+	}
+
+	i := 0
+
+	// Remove unwanted characters and limit string length
+	s = strings.Map(func(r rune) rune {
+		if i == 0 && r == 32 || r < 32 || r == 127 {
+			return -1
+		}
+
+		switch r {
+		case '<', '>':
+			return -1
+		}
+
+		i++
+
+		if i > 255 {
+			return -1
+		}
+
+		return r
+	}, s)
+
+	s = strings.TrimRight(s, " ")
+
+	return s
+}
+
 // Handle returns the sanitized username with trimmed whitespace and in lowercase.
 func Handle(s string) string {
 	s, _, _ = strings.Cut(s, "@")

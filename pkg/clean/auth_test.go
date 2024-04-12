@@ -6,6 +6,38 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestAuth(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, "Admin", Auth("Admin "))
+	})
+	t.Run("At", func(t *testing.T) {
+		assert.Equal(t, "Admin@foo", Auth(" Admin@foo "))
+	})
+	t.Run("Spaces", func(t *testing.T) {
+		assert.Equal(t, "Admin foo", Auth(" Admin foo "))
+	})
+	t.Run("Padding", func(t *testing.T) {
+		assert.Equal(t, "admin", Auth(" admin "))
+	})
+	t.Run("Flash", func(t *testing.T) {
+		assert.Equal(t, "admin/user", Auth("admin/user"))
+	})
+	t.Run("Windows", func(t *testing.T) {
+		assert.Equal(t, "DOMAIN\\Jens Mander", Auth("DOMAIN\\Jens Mander "))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Auth("  "))
+	})
+	t.Run("ControlCharacter", func(t *testing.T) {
+		assert.Equal(t, "admin!", Auth("admin!"+string(rune(1))))
+	})
+	t.Run("Clip", func(t *testing.T) {
+		assert.Equal(t,
+			"a34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700aa34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700",
+			Auth("a34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700aa34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700a"))
+	})
+}
+
 func TestHandle(t *testing.T) {
 	t.Run("Admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Handle("Admin "))

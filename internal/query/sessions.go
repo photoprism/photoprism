@@ -32,7 +32,7 @@ func Sessions(limit, offset int, sortOrder, search string) (result entity.Sessio
 	search = strings.TrimSpace(search)
 
 	if search == "expired" {
-		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", unix.Time())
+		stmt = stmt.Where("sess_expires > 0 AND sess_expires < ?", unix.Now())
 	} else if rnd.IsSessionID(search) {
 		stmt = stmt.Where("id = ?", search)
 	} else if rnd.IsAuthToken(search) {
