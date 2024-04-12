@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-10 01:30+0000\n"
+"PO-Revision-Date: 2024-04-12 11:30+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1439,8 +1439,9 @@ msgid "Last Sync"
 msgstr "Dernière synchro"
 
 #: src/dialog/account/apps.vue:55
+#, fuzzy
 msgid "Last Used"
-msgstr ""
+msgstr "Dernier utilisé"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
