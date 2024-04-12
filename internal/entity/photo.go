@@ -686,18 +686,22 @@ func (m *Photo) SetLens(lens *Lens, source string) {
 func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure, source string) {
 	hasPriority := SrcPriority[source] >= SrcPriority[m.CameraSrc]
 
-	if focalLength > 0 && (hasPriority || m.PhotoFocalLength <= 0) {
+	// Set focal length.
+	if focalLength > 0 && focalLength <= 128000 && (hasPriority || m.PhotoFocalLength <= 0) {
 		m.PhotoFocalLength = focalLength
 	}
 
-	if fNumber > 0 && (hasPriority || m.PhotoFNumber <= 0) {
+	// Set F number.
+	if fNumber > 0 && fNumber <= 256 && (hasPriority || m.PhotoFNumber <= 0) {
 		m.PhotoFNumber = fNumber
 	}
 
-	if iso > 0 && (hasPriority || m.PhotoIso <= 0) {
+	// Set ISO number.
+	if iso > 0 && iso <= 128000 && (hasPriority || m.PhotoIso <= 0) {
 		m.PhotoIso = iso
 	}
 
+	// Set exposure time.
 	if exposure != "" && (hasPriority || m.PhotoExposure == "") {
 		m.PhotoExposure = exposure
 	}

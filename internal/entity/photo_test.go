@@ -763,7 +763,7 @@ func TestPhoto_SetLens(t *testing.T) {
 }
 
 func TestPhoto_SetExposure(t *testing.T) {
-	t.Run("changes have priority", func(t *testing.T) {
+	t.Run("Priority", func(t *testing.T) {
 		photo := &Photo{PhotoFocalLength: 5, PhotoFNumber: 3, PhotoIso: 300, PhotoExposure: "45", CameraSrc: SrcMeta}
 		photo.SetExposure(8, 9, 500, "66", SrcManual)
 		assert.Equal(t, 8, photo.PhotoFocalLength)
@@ -771,13 +771,26 @@ func TestPhoto_SetExposure(t *testing.T) {
 		assert.Equal(t, 500, photo.PhotoIso)
 		assert.Equal(t, "66", photo.PhotoExposure)
 	})
-	t.Run("changes have no priority", func(t *testing.T) {
+	t.Run("NoPriority", func(t *testing.T) {
 		photo := &Photo{PhotoFocalLength: 5, PhotoFNumber: 3, PhotoIso: 300, PhotoExposure: "45", CameraSrc: SrcManual}
 		photo.SetExposure(8, 9, 500, "66", SrcMeta)
 		assert.Equal(t, 5, photo.PhotoFocalLength)
 		assert.Equal(t, float32(3), photo.PhotoFNumber)
 		assert.Equal(t, 300, photo.PhotoIso)
 		assert.Equal(t, "45", photo.PhotoExposure)
+	})
+	t.Run("ValidRange", func(t *testing.T) {
+		photo := &Photo{}
+		photo.SetExposure(256000, 256000, 256000, "256000", SrcManual)
+		assert.Equal(t, 0, photo.PhotoFocalLength)
+		assert.Equal(t, float32(0), photo.PhotoFNumber)
+		assert.Equal(t, 0, photo.PhotoIso)
+		assert.Equal(t, "256000", photo.PhotoExposure)
+		photo.SetExposure(1, 1, 1, "1", SrcManual)
+		assert.Equal(t, 1, photo.PhotoFocalLength)
+		assert.Equal(t, float32(1), photo.PhotoFNumber)
+		assert.Equal(t, 1, photo.PhotoIso)
+		assert.Equal(t, "1", photo.PhotoExposure)
 	})
 }
 
