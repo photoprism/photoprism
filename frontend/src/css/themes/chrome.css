@@ -146,8 +146,8 @@ body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box
 
 #photoprism.theme-chrome .search-results .input-favorite i.select-on,
 #photoprism.theme-chrome .search-results .result.is-favorite .input-favorite i {
-    color: #dd3f3e!important;
-    caret-color: #dd3f3e!important;
-    fill: #dd3f3e!important;
-    stroke: #dd3f3e!important;
+    color: #dd3f3e;
+    caret-color: #dd3f3e;
+    fill: #dd3f3e;
+    stroke: #dd3f3e;
 }
