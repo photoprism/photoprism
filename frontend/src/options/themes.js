@@ -125,7 +125,7 @@ let themes = {
       private: "#0AA9C2",
       edit: "#009FF5",
       share: "#9575cd",
-      love: "#ef5350",
+      love: "#dd3f3e",
       terminal: "#2f3131",
       navigation: "#1e2122",
       "navigation-home": "#1e2122",

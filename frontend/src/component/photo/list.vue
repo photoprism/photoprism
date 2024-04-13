@@ -43,8 +43,7 @@
           <tbody>
             <tr v-for="(photo, index) in photos" :key="photo.ID" ref="items" :data-index="index">
               <td :data-uid="photo.UID" class="result" :class="photo.classes()">
-                <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :key="photo.Hash" class="image card darken-1">
-</div>
+                <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" class="image card darken-1"></div>
                 <div
                   v-else
                   :key="photo.Hash"
@@ -80,9 +79,7 @@
                 </button>
               </td>
               <td class="p-photo-desc hidden-sm-and-down">
-                <button @click.stop.prevent="editPhoto(index)">
-{{ photo.CameraMake }} {{ photo.CameraModel }}
-</button>
+                <button @click.stop.prevent="editPhoto(index)">{{ photo.CameraMake }} {{ photo.CameraModel }}</button>
               </td>
               <td class="p-photo-desc hidden-xs-only">
                 <button v-if="filter.order === 'name'" :title="$gettext('Name')" @click.exact="downloadFile(index)">
@@ -107,8 +104,8 @@
                       <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">lock</v-icon>
                       <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
                     </v-btn>
-                    <v-btn class="input-like" icon small flat :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
-                      <v-icon v-if="photo.Favorite" color="pink lighten-3" :data-uid="photo.UID" class="select-on"> favorite </v-icon>
+                    <v-btn class="input-favorite" icon small flat :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
+                      <v-icon v-if="photo.Favorite" color="secondary-dark" :data-uid="photo.UID" class="select-on">favorite</v-icon>
                       <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">favorite_border</v-icon>
                     </v-btn>
                   </template>

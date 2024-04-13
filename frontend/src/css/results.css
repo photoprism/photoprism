@@ -330,6 +330,10 @@ body.chrome #photoprism .search-results .result {
     bottom: 4px;
 }
 
+#photoprism .search-results .result:hover .input-view,
+#photoprism .search-results .result:hover .input-open,
+#photoprism .search-results .result:hover .input-favorite,
+#photoprism .search-results .result.is-favorite .input-favorite,
 #photoprism .search-results .result:hover .input-select,
 #photoprism .search-results .result.is-selected .input-select,
 #photoprism .search-results .result:hover .input-hidden,
@@ -353,10 +357,6 @@ body.chrome #photoprism .search-results .result {
     opacity: 0.5;
     left: 4px;
     bottom: 4px;
-}
-
-#photoprism .search-results .result.is-favorite .input-favorite {
-    opacity: 0.75;
 }
 
 #photoprism .search-results .result .input-favorite .select-off,
