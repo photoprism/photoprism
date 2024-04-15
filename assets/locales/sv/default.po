@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-04-15 12:59+0000\n"
+"Last-Translator: Claes Norling <claes@cyberteam.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "backend/sv/>\n"
 "Language: sv\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -49,11 +49,11 @@ msgstr "Filen är för stor"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Ej supporterad"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Ej supporterad typ"
 
 #: messages.go:110
 msgid "Unsupported format"
