@@ -125,8 +125,8 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			return
 		} else if username != "" && !strings.EqualFold(clean.Username(username), user.Username()) {
 			limiter.Auth.Reserve(clientIp)
-			// Log warning if WebDAV is disabled for this account.
-			message := authn.ErrBasicAuthDoesNotMatch.Error()
+			// Log warning if auth token username and specified username do not match.
+			message := authn.ErrUsernameDoesNotMatch.Error()
 			event.AuditWarn([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", message}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
 			WebDAVAbortUnauthorized(c)
 			return
@@ -139,6 +139,10 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 		} else {
 			// Update session activity.
 			sess.UpdateLastActive(true)
+
+			// Log successful authentication.
+			event.AuditInfo([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", authn.Succeeded}, clean.LogQuote(username))
+			event.LoginInfo(clientIp, "webdav", username, api.UserAgent(c))
 
 			// Cache authentication to improve performance.
 			webdavAuthCache.SetDefault(sid, user)

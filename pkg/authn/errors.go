@@ -38,8 +38,9 @@ var (
 
 // User-related error messages:
 var (
-	ErrUsernameRequired = errors.New("username required")
-	ErrInvalidUsername  = errors.New("invalid username")
+	ErrUsernameRequired     = errors.New("username required")
+	ErrInvalidUsername      = errors.New("invalid username")
+	ErrUsernameDoesNotMatch = errors.New("specified username does not match")
 )
 
 // Passcode-related error messages:
@@ -74,5 +75,4 @@ var (
 var (
 	ErrWebDAVAccessDisabled     = errors.New("webdav access is disabled")
 	ErrFailedToCreateUploadPath = errors.New("failed to create upload path")
-	ErrBasicAuthDoesNotMatch    = errors.New("basic auth username does not match")
 )

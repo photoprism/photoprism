@@ -71,7 +71,7 @@ require (
 	golang.org/x/time v0.5.0
 )
 
-require github.com/go-ldap/ldap/v3 v3.4.7
+require github.com/go-ldap/ldap/v3 v3.4.8
 
 require (
 	github.com/prometheus/client_golang v1.19.0
