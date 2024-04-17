@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: none\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || "
 "n%100==4 ? 2 : 3;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -49,11 +50,11 @@ msgstr "Prevelika datoteka"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Nepodprto"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Nepodprta vrsta"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -141,11 +142,11 @@ msgstr "Ne morem vzpostaviti povezave, poskusite znova"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "vnesi potrditveno kodo"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Neveljavna koda za preverjanje, poskusite znova"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +390,11 @@ msgstr "%s je bil obnovljen"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Uspešno preverjeno"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Uspešno aktiviran"
 
 #~ msgid "Invalid request"
 #~ msgstr "Neveljavna zahteva"

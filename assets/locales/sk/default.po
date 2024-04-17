@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-06-07 08:37+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/"
 "backend/sk/>\n"
 "Language: sk\n"
@@ -12,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -49,11 +50,11 @@ msgstr "Príliš veľký súbor"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Nepodporované"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Nepodporovaný typ"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -141,11 +142,11 @@ msgstr "Nebolo možné sa pripojiť, skúste to znova"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "Zadajte overovací kód"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Neplatný overovací kód, skúste to znova"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +390,11 @@ msgstr "Označenie obnovené"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Úspešne overené"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Úspešne aktivované"
 
 #~ msgid "Invalid request"
 #~ msgstr "Neplatná požiadavka"

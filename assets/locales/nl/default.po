@@ -3,8 +3,9 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2024-04-15 12:59+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
 "Language: nl\n"
@@ -49,11 +50,11 @@ msgstr "Bestand te groot"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Niet ondersteund"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Niet-ondersteund type"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -145,7 +146,7 @@ msgstr "Verificatiecode invoeren"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Ongeldige verificatiecode. Probeer het opnieuw"
 
 #: messages.go:133
 msgid "Invalid password, please try again"

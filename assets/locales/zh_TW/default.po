@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-05-11 17:28+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -12,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -49,11 +50,11 @@ msgstr "文件過大"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "不支援"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "不支援的類型"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -141,11 +142,11 @@ msgstr "無法連線，請重試"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "輸入驗證碼"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "驗證碼無效，請重試"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +390,11 @@ msgstr "%s 已被回復"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "驗證成功"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "激活成功"
 
 #~ msgid "Invalid request"
 #~ msgstr "無效請求"

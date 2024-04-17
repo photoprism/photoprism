@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/"
 "backend/ru/>\n"
 "Language: ru\n"
@@ -13,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -50,11 +51,11 @@ msgstr "Слишком большой файл"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Не поддерживается"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Неподдерживаемый тип"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -142,11 +143,11 @@ msgstr "Нет соединения, попробуйте еще раз"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "введите код подтверждения"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Неверный код подтверждения. Повторите попытку."
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -390,11 +391,11 @@ msgstr "%s был восстановлен"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Успешно проверено"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Успешно активировано"
 
 #~ msgid "Invalid request"
 #~ msgstr "Неправильный запрос"

@@ -1,17 +1,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-10-16 16:35+0000\n"
-"Last-Translator: dtsolakis <dtsola@eranet.gr>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: none\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.0.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -48,11 +49,11 @@ msgstr "Πολύ μεγάλο αρχείο"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Ανυποστήρικτος"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Μη υποστηριζόμενος τύπος"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -140,11 +141,11 @@ msgstr "Δεν ήταν δυνατή η σύνδεση, παρακαλώ δοκ�
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "βάλτε κωδικό επιβεβαίωσης"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Μη έγκυρος κωδικός επαλήθευσης, δοκιμάστε ξανά"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -388,11 +389,11 @@ msgstr "%s έχει αποκατασταθεί"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Επαληθεύτηκε με επιτυχία"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Ενεργοποιήθηκε με επιτυχία"
 
 #~ msgid "Invalid request"
 #~ msgstr "Μη έγκυρο αίτημα"

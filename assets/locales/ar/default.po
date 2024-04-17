@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: none\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +13,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -49,11 +50,11 @@ msgstr "الملف كبير جدًا"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "غير مدعوم"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "نوع غير معتمد"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -141,11 +142,11 @@ msgstr "تعذر الاتصال ، يرجى المحاولة مرة أخرى"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "أدخل رمز التحقق"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "رمز التحقق غير صالح، يرجى المحاولة مرة أخرى"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +390,11 @@ msgstr "تمت استعادة %s"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "تم التحقق بنجاح"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "تم التنشيط بنجاح"
 
 #~ msgid "Invalid request"
 #~ msgstr "طلب غير صالح"
