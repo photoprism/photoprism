@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:09+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language: el\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -52,7 +52,7 @@ msgstr "Αυθεντικοποίηση 2 παραγόντων"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 #: src/options/options.js:420
 msgid "4 hours"
@@ -170,7 +170,7 @@ msgstr "Μετά από 7 ημέρες"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr ""
+msgstr "Αφού εισαγάγετε τον κωδικό πρόσβασής σας για επιβεβαίωση, μπορείτε να ρυθμίσετε τον έλεγχο ταυτότητας δύο παραγόντων με μια συμβατή εφαρμογή ή συσκευή ελέγχου ταυτότητας:"
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -384,7 +384,7 @@ msgstr "Δημιουργεί αυτόματα άλμπουμ με ιδιαίτε
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "Πίσω"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -464,7 +464,7 @@ msgstr "Σειριακή κάμερα"
 
 #: src/page/auth/login.vue:41
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "Δεν μπορείτε να αποκτήσετε πρόσβαση στην εφαρμογή ή τη συσκευή ελέγχου ταυτότητας; Εισαγάγετε τον κωδικό ανάκτησής σας ή ζητήστε βοήθεια."
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -602,7 +602,7 @@ msgstr "Εμπιστοσύνη"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr ""
+msgstr "Επιβεβαιώνω"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -638,7 +638,7 @@ msgstr "Περιέχει μία εικόνα."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "Να συνεχίσει"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -657,7 +657,7 @@ msgstr "Αντιγραφή στο πρόχειρο"
 #: src/dialog/account/apps.vue:65 src/dialog/account/apps.vue:21
 #: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
-msgstr ""
+msgstr "αντίγραφο"
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -714,7 +714,7 @@ msgstr "Ημέρα"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "Απενεργοποίηση"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -975,15 +975,15 @@ msgstr "Ενεργοποιεί τις προεπιλογές μετατροπέ�
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr ""
+msgstr "Η ενεργοποίηση του ελέγχου ταυτότητας δύο παραγόντων σημαίνει ότι θα χρειαστείτε έναν τυχαία δημιουργημένο κωδικό επαλήθευσης για να συνδεθείτε, επομένως ακόμα κι αν κάποιος αποκτήσει πρόσβαση στον κωδικό πρόσβασής σας, δεν θα μπορεί να έχει πρόσβαση στον λογαριασμό σας."
 
 #: src/common/api.js:115
 msgid "Enter verification code"
-msgstr ""
+msgstr "βάλτε κωδικό επιβεβαίωσης"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr ""
+msgstr "Εισαγάγετε τον κωδικό πρόσβασής σας για να επιβεβαιώσετε την ενέργεια και συνεχίστε:"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1171,7 +1171,7 @@ msgstr "Πλαίσια"
 
 #: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
-msgstr ""
+msgstr "Πλήρης πρόσβαση"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1187,7 +1187,7 @@ msgstr "Γενικά"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr ""
+msgstr "Παράγω"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1255,7 +1255,7 @@ msgstr "Πώς μπορούμε να βοηθήσουμε;"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr ""
+msgstr "Εάν χάσετε την πρόσβαση στην εφαρμογή ή τη συσκευή ελέγχου ταυτότητας, μπορείτε να χρησιμοποιήσετε τον κωδικό ανάκτησης για να ανακτήσετε την πρόσβαση στον λογαριασμό σας."
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1378,7 +1378,7 @@ msgstr "Επιλογή μη έγκυρης φωτογραφίας"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr ""
+msgstr "Είναι ένας κωδικός μίας χρήσης που θα απενεργοποιήσει το 2FA για τον λογαριασμό σας όταν τον χρησιμοποιείτε."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1437,7 +1437,7 @@ msgstr "Τελευταίος συγχρονισμός"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr ""
+msgstr "Τελευταία χρήση"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1613,7 +1613,7 @@ msgstr "Μεταδεδομένα"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr ""
+msgstr "Μετρήσεις"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1795,7 +1795,7 @@ msgstr "Offline"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1841,7 +1841,7 @@ msgstr "Μια εικόνα που βρέθηκε"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
+msgstr "Μόνο οι τοπικά διαχειριζόμενοι λογαριασμοί μπορούν να ρυθμιστούν για έλεγχο ταυτότητας με το 2FA."
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1975,7 +1975,7 @@ msgstr "Επιβεβαιώστε τον νέο σας κωδικό πρόσβα�
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Αντιγράψτε τον ακόλουθο τυχαία δημιουργημένο κωδικό πρόσβασης εφαρμογής και διατηρήστε τον σε ασφαλές μέρος, καθώς δεν θα μπορείτε να τον δείτε ξανά:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2212,7 +2212,7 @@ msgstr "Σάρωση"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr ""
+msgstr "Σαρώστε τον κωδικό QR με την εφαρμογή ελέγχου ταυτότητας ή χρησιμοποιήστε το κλειδί ρύθμισης που φαίνεται παρακάτω και, στη συνέχεια, εισαγάγετε τον κωδικό επαλήθευσης που δημιουργήθηκε:"
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2449,7 +2449,7 @@ msgstr "Θέμα"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr ""
+msgstr "Ενεργοποιήθηκε με επιτυχία"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2461,7 +2461,7 @@ msgstr "Διαγράφηκε επιτυχώς"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr ""
+msgstr "Επαληθεύτηκε με επιτυχία"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2562,15 +2562,15 @@ msgstr "Πολύ μεγάλος τίτλος"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr ""
+msgstr "Για να αποφύγετε τον αποκλεισμό του λογαριασμού σας, κάντε λήψη, εκτυπώστε ή αντιγράψτε αυτόν τον κωδικό ανάκτησης τώρα και φυλάξτε τον σε ασφαλές μέρος."
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "Για να δημιουργήσετε έναν νέο κωδικό πρόσβασης για συγκεκριμένη εφαρμογή, εισαγάγετε το όνομα και το εύρος εξουσιοδότησης της εφαρμογής και επιλέξτε μια ημερομηνία λήξης:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr ""
+msgstr "Για να μεταβείτε σε μια νέα εφαρμογή ή συσκευή ελέγχου ταυτότητας, πρώτα απενεργοποιήστε τον έλεγχο ταυτότητας δύο παραγόντων και, στη συνέχεια, ενεργοποιήστε τον ξανά:"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
@@ -2607,7 +2607,7 @@ msgstr "Δοκιμάστε ξανά χρησιμοποιώντας άλλα φί
 
 #: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
-msgstr ""
+msgstr "Ο έλεγχος ταυτότητας δύο παραγόντων έχει ενεργοποιηθεί για τον λογαριασμό σας."
 
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
@@ -2751,7 +2751,7 @@ msgstr "Χρήση Προεπιλογών"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr ""
+msgstr "Χρησιμοποιήστε τον ακόλουθο κωδικό ανάκτησης για να αποκτήσετε πρόσβαση στον λογαριασμό σας όταν δεν μπορείτε να δημιουργήσετε έναν έγκυρο κωδικό επαλήθευσης με την εφαρμογή ελέγχου ταυτότητας:"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2790,7 +2790,7 @@ msgstr "Φορείς"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:116
 msgid "Verification Code"
-msgstr ""
+msgstr "Κωδικός επαλήθευσης"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
@@ -2853,7 +2853,7 @@ msgstr "Οι πελάτες WebDAV μπορούν να συνδεθούν στο
 
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr ""
+msgstr "Οι πελάτες WebDAV, όπως ο Windows Explorer της Microsoft ή το Finder της Apple, μπορούν να συνδεθούν απευθείας στο PhotoPrism."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
