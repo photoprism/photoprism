@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 07:31+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
 "backend/cs/>\n"
 "Language: cs\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -141,7 +141,7 @@ msgstr "Nemohlo být připojeno, zkuste to prosím znovu"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "Vložte ověřovací kód"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"

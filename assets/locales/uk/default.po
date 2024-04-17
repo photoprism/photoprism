@@ -1,10 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 07:31+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: none\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -49,11 +49,11 @@ msgstr "Файл занадто великий"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Не підтримується"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Непідтримуваний тип"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -133,7 +133,7 @@ msgstr "Помилка створення файла, перевірте доз�
 
 #: messages.go:129
 msgid "Failed creating folder, please check permissions"
-msgstr "Помилка створення теки, перевірти дозволи"
+msgstr "Не вдалося створити папку, перевірте права доступу"
 
 #: messages.go:130
 msgid "Could not connect, please try again"
@@ -141,11 +141,11 @@ msgstr "Не можливо підключитися, спробуйте зно�
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "Введіть код верифікації"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Невірний код верифікації, спробуйте знову"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -169,7 +169,7 @@ msgstr "Немає доступних файлів для завантаженн
 
 #: messages.go:138
 msgid "Failed to create zip file"
-msgstr "Помилка створення zip-файла"
+msgstr "Не вдалося створити zip-файл"
 
 #: messages.go:139
 msgid "Invalid credentials"
@@ -390,11 +390,11 @@ msgstr "%s було відновлено"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Верифікація успішна"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Активація успішна"
 
 #~ msgid "Invalid request"
 #~ msgstr "Невірний запит"
