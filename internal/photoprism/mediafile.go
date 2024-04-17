@@ -871,7 +871,7 @@ func (m *MediaFile) CheckType() error {
 		return fmt.Errorf("invalid file extension (unknown mime type)")
 	}
 
-	return fmt.Errorf("invalid file extension for mime type %s", clean.LogQuote(mimeType))
+	return fmt.Errorf("invalid file extension for %s", clean.LogQuote(mimeType))
 }
 
 // Media returns the media content type (video, image, raw, sidecar,...).
