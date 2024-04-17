@@ -3,8 +3,9 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2024-04-15 12:59+0000\n"
-"Last-Translator: Claes Norling <claes@cyberteam.se>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "backend/sv/>\n"
 "Language: sv\n"
@@ -141,11 +142,11 @@ msgstr "Kunde inte ansluta, försök igen"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "Ange verifieringskod"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Ogiltig verifieringskod, försök igen"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +390,11 @@ msgstr "%s har återställts"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Verifierad"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Lyckades aktiverad"
 
 #~ msgid "Invalid request"
 #~ msgstr "Ogiltig begäran"

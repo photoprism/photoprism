@@ -3,8 +3,9 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2024-04-17 07:31+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Czech <https://translate.photoprism.app/projects/photoprism/"
 "backend/cs/>\n"
 "Language: cs\n"
@@ -49,11 +50,11 @@ msgstr "Příliš velký soubor"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Nepodporováno"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Nepodporovaný typ"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -145,7 +146,7 @@ msgstr "Vložte ověřovací kód"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Neplatný ověřovací kód, zkuste to prosím znovu"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +390,11 @@ msgstr "%s bylo obnoveno"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Úspěšně ověřeno"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Úspěšně aktivováno"
 
 #~ msgid "Invalid request"
 #~ msgstr "Neplatný požadavek"

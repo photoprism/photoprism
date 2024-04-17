@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
@@ -13,7 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
 "19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
 "1 : 2);\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -50,11 +51,11 @@ msgstr "Per didelis failas"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "Nepalaikoma"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "Nepalaikomas tipas"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -142,11 +143,11 @@ msgstr "Nepavyko prisijungti, bandykite dar kartą"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "Įveskite patvirtinimo kodą"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "Neteisingas patvirtinimo kodas, bandykite dar kartą"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -390,11 +391,11 @@ msgstr "%s buvo atkurta"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "Sėkmingai patvirtinta"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "Sėkmingai suaktyvinta"
 
 #~ msgid "Invalid request"
 #~ msgstr "Neleistina užklausa"

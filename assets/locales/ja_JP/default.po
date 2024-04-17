@@ -1,10 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-21 13:35+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
+"translate@weblate.org>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/"
 "photoprism/backend/ja/>\n"
 "Language: ja_JP\n"
@@ -12,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -49,11 +50,11 @@ msgstr "ファイルサイズが大きすぎる"
 
 #: messages.go:108
 msgid "Unsupported"
-msgstr ""
+msgstr "サポートされていません"
 
 #: messages.go:109
 msgid "Unsupported type"
-msgstr ""
+msgstr "サポートされていないタイプ"
 
 #: messages.go:110
 msgid "Unsupported format"
@@ -141,11 +142,11 @@ msgstr "接続できませんでした、再度試してみてください"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr ""
+msgstr "確認コードを入力してください"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
-msgstr ""
+msgstr "認証コードが無効です。もう一度お試しください"
 
 #: messages.go:133
 msgid "Invalid password, please try again"
@@ -389,11 +390,11 @@ msgstr "%s が復元されました"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr ""
+msgstr "検証に成功しました"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr ""
+msgstr "正常に有効化されました"
 
 #~ msgid "Invalid request"
 #~ msgstr "不正なリクエスト"
