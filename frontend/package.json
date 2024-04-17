@@ -28,7 +28,7 @@
     "@babel/register": "^7.23.7",
     "@babel/runtime": "^7.24.4",
     "@lcdp/offline-plugin": "^5.1.1",
-    "@vvo/tzdb": "^6.132.0",
+    "@vvo/tzdb": "^6.133.0",
     "axios": "^1.6.8",
     "axios-mock-adapter": "^1.22.0",
     "babel-loader": "^9.1.3",
