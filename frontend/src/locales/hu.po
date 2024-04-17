@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.3\n"
 
 #: src/page/albums.vue:509
 msgid "%{n} albums found"
@@ -54,7 +54,7 @@ msgstr "2-faktoros hitelesítés"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 #: src/options/options.js:420
 msgid "4 hours"
@@ -172,7 +172,7 @@ msgstr "Hét nap után"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr ""
+msgstr "Miután megerősítésképpen megadta jelszavát, beállíthat kétfaktoros hitelesítést egy kompatibilis hitelesítő alkalmazással vagy eszközzel:"
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -386,7 +386,7 @@ msgstr "Automatikusan albumokat hoz létre különleges pillanatokról, utazáso
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "Vissza"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -466,7 +466,7 @@ msgstr "Kamera sorozat"
 
 #: src/page/auth/login.vue:41
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "Nem fér hozzá hitelesítő alkalmazásához vagy eszközéhez? Adja meg helyreállítási kódját, vagy kérjen segítséget."
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -604,7 +604,7 @@ msgstr "Pontosság"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr ""
+msgstr "megerősít"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -640,7 +640,7 @@ msgstr "Egy képet tartalmaz."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "Folytatni"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -659,7 +659,7 @@ msgstr "Vágólapra másolva"
 #: src/dialog/account/apps.vue:65 src/dialog/account/apps.vue:21
 #: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
-msgstr ""
+msgstr "Másolat"
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -716,7 +716,7 @@ msgstr "Nap"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "Deaktiválás"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -977,15 +977,15 @@ msgstr "Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljes
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr ""
+msgstr "A kéttényezős hitelesítés engedélyezése azt jelenti, hogy a bejelentkezéshez véletlenszerűen generált ellenőrző kódra lesz szüksége, így még ha valaki hozzáfér a jelszavához, nem férhet hozzá fiókjához."
 
 #: src/common/api.js:115
 msgid "Enter verification code"
-msgstr ""
+msgstr "Adja meg a megerősítő kódot"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr ""
+msgstr "Adja meg jelszavát a művelet megerősítéséhez, és folytassa:"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1173,7 +1173,7 @@ msgstr "Keretek"
 
 #: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
-msgstr ""
+msgstr "Teljes hozzáférés"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1189,7 +1189,7 @@ msgstr "Általános"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr ""
+msgstr "generál"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1257,7 +1257,7 @@ msgstr "Hogyan segíthetünk?"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr ""
+msgstr "Ha elveszíti hozzáférését hitelesítő alkalmazásához vagy eszközéhez, a helyreállítási kód segítségével visszaszerezheti a hozzáférést fiókjához."
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1380,7 +1380,7 @@ msgstr "Érvénytelen fénykép kiválasztva"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr ""
+msgstr "Ez egy egyszer használatos kód, amely letiltja a 2FA-t a fiókjában, amikor azt használja."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1439,7 +1439,7 @@ msgstr "Utolsó szinkronizálás"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr ""
+msgstr "Utoljára használt"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1615,7 +1615,7 @@ msgstr "Metaadatok"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr ""
+msgstr "Metrikák"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1797,7 +1797,7 @@ msgstr "Offline"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1843,7 +1843,7 @@ msgstr "Egy kép található"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
+msgstr "Csak helyileg kezelt fiókok állíthatók be a 2FA-val történő hitelesítéshez."
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1977,7 +1977,7 @@ msgstr "Kérjük, erősítse meg új jelszavát."
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Kérjük, másolja ki a következő véletlenszerűen generált alkalmazásjelszót, és tartsa biztonságos helyen, mert nem fogja többé látni:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2214,7 +2214,7 @@ msgstr "Felderítés"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr ""
+msgstr "Olvassa be a QR-kódot a hitelesítő alkalmazással, vagy használja az alább látható beállítási kulcsot, majd írja be a generált ellenőrző kódot:"
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2451,7 +2451,7 @@ msgstr "Tantárgy"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr ""
+msgstr "Sikeres aktiválás"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2463,7 +2463,7 @@ msgstr "Sikeresen törölve"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr ""
+msgstr "Sikeresen ellenőrizve"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2564,15 +2564,15 @@ msgstr "A cím túl hosszú"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr ""
+msgstr "Annak elkerülése érdekében, hogy ne zárjon ki fiókjából, kérjük, töltse le, nyomtassa ki vagy másolja ki ezt a helyreállítási kódot most, és tartsa biztonságos helyen."
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "Új alkalmazásspecifikus jelszó generálásához adja meg az alkalmazás nevét és engedélyezési hatókörét, és válasszon egy lejárati dátumot:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr ""
+msgstr "Ha új hitelesítő alkalmazásra vagy eszközre szeretne váltani, először deaktiválja a kéttényezős hitelesítést, majd aktiválja újra:"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
@@ -2609,7 +2609,7 @@ msgstr "Próbálja újra más szűrők vagy kulcsszavak használatával."
 
 #: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
-msgstr ""
+msgstr "A kétlépcsős hitelesítés engedélyezve van fiókjában."
 
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
@@ -2753,7 +2753,7 @@ msgstr "Előbeállítások használata"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr ""
+msgstr "Ha nem tud érvényes ellenőrző kódot generálni a hitelesítő alkalmazással, használja a következő helyreállítási kódot a fiók eléréséhez:"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2792,7 +2792,7 @@ msgstr "Vektorok"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:116
 msgid "Verification Code"
-msgstr ""
+msgstr "Ellenőrző kód"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
@@ -2855,7 +2855,7 @@ msgstr "A WebDAV-kliensek a következő URL-címen csatlakozhatnak a PhotoPrism-
 
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr ""
+msgstr "A WebDAV-kliensek, mint például a Microsoft Windows Intézője vagy az Apple Finder, közvetlenül csatlakozhatnak a PhotoPrism-hez."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"

@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:09+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: Bulgarian <https://translate.photoprism.app/projects/photoprism/frontend/bg/>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -55,7 +55,7 @@ msgstr "Удостоверяване с 2 фактора"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 #: src/options/options.js:420
 msgid "4 hours"
@@ -173,7 +173,7 @@ msgstr "След 7 дни"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr ""
+msgstr "След като въведете паролата си за потвърждение, можете да настроите двуфакторно удостоверяване със съвместимо приложение или устройство за удостоверяване:"
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -387,7 +387,7 @@ msgstr "Автоматично създава албуми на специалн
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "обратно"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -467,7 +467,7 @@ msgstr "Серийна камера"
 
 #: src/page/auth/login.vue:41
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "Нямате достъп до вашето приложение или устройство за удостоверяване? Въведете своя код за възстановяване или поискайте помощ."
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -605,7 +605,7 @@ msgstr "Доверие"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr ""
+msgstr "Потвърдете"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -641,7 +641,7 @@ msgstr "Съдържа една снимка."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "продължи"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -660,7 +660,7 @@ msgstr "Копиране в клипборда"
 #: src/dialog/account/apps.vue:65 src/dialog/account/apps.vue:21
 #: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
-msgstr ""
+msgstr "копие"
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -717,7 +717,7 @@ msgstr "Ден"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "Деактивирайте"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -978,15 +978,15 @@ msgstr "Активира предварителните настройки на 
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr ""
+msgstr "Активирането на двуфакторно удостоверяване означава, че ще ви трябва произволно генериран код за потвърждение, за да влезете, така че дори ако някой получи достъп до вашата парола, той няма да може да влезе в акаунта ви."
 
 #: src/common/api.js:115
 msgid "Enter verification code"
-msgstr ""
+msgstr "Въведете код за верификация"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr ""
+msgstr "Въведете паролата си, за да потвърдите действието и продължете:"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1174,7 +1174,7 @@ msgstr "Рамки"
 
 #: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
-msgstr ""
+msgstr "Пълен достъп"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1190,7 +1190,7 @@ msgstr "Обща информация"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr ""
+msgstr "Генерирай"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1258,7 +1258,7 @@ msgstr "Как можем да помогнем?"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr ""
+msgstr "Ако загубите достъп до приложението или устройството си за удостоверяване, можете да използвате своя код за възстановяване, за да си възвърнете достъпа до акаунта си."
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1381,7 +1381,7 @@ msgstr "Избрана е невалидна снимка"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr ""
+msgstr "Това е код за еднократна употреба, който ще деактивира 2FA за вашия акаунт, когато го използвате."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1440,7 +1440,7 @@ msgstr "Синхронизиране"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr ""
+msgstr "Последно използван"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1616,7 +1616,7 @@ msgstr "Метаданни"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr ""
+msgstr "Метрика"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1798,7 +1798,7 @@ msgstr "Офлайн"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1844,7 +1844,7 @@ msgstr "Една намерена снимка"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
+msgstr "Само локално управлявани акаунти могат да бъдат настроени за удостоверяване с 2FA."
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1978,7 +1978,7 @@ msgstr "Моля, потвърдете новата си парола."
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Моля, копирайте следната произволно генерирана парола за приложение и я запазете на сигурно място, тъй като няма да можете да я видите отново:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2215,7 +2215,7 @@ msgstr "Сканиране"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr ""
+msgstr "Сканирайте QR кода с вашето приложение за удостоверяване или използвайте ключа за настройка, показан по-долу, и след това въведете генерирания код за потвърждение:"
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2452,7 +2452,7 @@ msgstr "Тема"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr ""
+msgstr "Успешно активиран"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2464,7 +2464,7 @@ msgstr "Успешно изтрит"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr ""
+msgstr "Успешно потвърдено"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2565,15 +2565,15 @@ msgstr "Твърде дълго заглавие"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr ""
+msgstr "За да избегнете изключване на вашия акаунт, моля, изтеглете, отпечатайте или копирайте този код за възстановяване сега и го запазете на сигурно място."
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "За да генерирате нова парола за конкретно приложение, моля, въведете името и обхвата на разрешението на приложението и изберете дата на изтичане:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr ""
+msgstr "За да превключите към ново приложение или устройство за удостоверяване, първо деактивирайте двуфакторното удостоверяване и след това го активирайте отново:"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
@@ -2610,7 +2610,7 @@ msgstr "Опитайте отново, като използвате други 
 
 #: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
-msgstr ""
+msgstr "Двуфакторното удостоверяване е активирано за вашия акаунт."
 
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
@@ -2754,7 +2754,7 @@ msgstr "Използване на предварителни настройки"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr ""
+msgstr "Използвайте следния код за възстановяване за достъп до акаунта си, когато не можете да генерирате валиден код за потвърждение с вашето приложение за удостоверяване:"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2793,7 +2793,7 @@ msgstr "Вектори"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:116
 msgid "Verification Code"
-msgstr ""
+msgstr "Код за потвърждение"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
@@ -2856,7 +2856,7 @@ msgstr "Клиентите на WebDAV могат да се свържат с Ph
 
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr ""
+msgstr "WebDAV клиенти, като Windows Explorer на Microsoft или Finder на Apple, могат да се свързват директно с PhotoPrism."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"

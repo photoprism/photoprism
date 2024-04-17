@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
+"PO-Revision-Date: 2024-04-17 08:09+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -52,7 +52,7 @@ msgstr "2-Faktoreen autentifikazioa"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 #: src/options/options.js:420
 msgid "4 hours"
@@ -170,7 +170,7 @@ msgstr "7 egun igaro ondoren"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr ""
+msgstr "Pasahitza berresteko pasahitza sartu ondoren, bi faktoreko autentifikazioa konfigura dezakezu autentifikazio-aplikazio edo gailu bateragarri batekin:"
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -384,7 +384,7 @@ msgstr "Momentu, bidai eta leku berezien albumak automatikoki sortzen ditu."
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "Itzuli"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -464,7 +464,7 @@ msgstr "Kamera seriea"
 
 #: src/page/auth/login.vue:41
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "Ezin duzu autentifikatzaile aplikazioa edo gailua atzitu? Sartu berreskuratzeko kodea edo eskatu laguntza."
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -602,7 +602,7 @@ msgstr "Konfiantza"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr ""
+msgstr "Berretsi"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -638,7 +638,7 @@ msgstr "Irudi bat dauka."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "Jarraitu"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -657,7 +657,7 @@ msgstr "Arbelean kopiatu da"
 #: src/dialog/account/apps.vue:65 src/dialog/account/apps.vue:21
 #: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
-msgstr ""
+msgstr "Kopiatu"
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -714,7 +714,7 @@ msgstr "Eguna"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "Desaktibatu"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -975,15 +975,15 @@ msgstr "RAW bihurgailuaren aurrezarpenak gaitzen ditu. Errendimendua murriztu de
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr ""
+msgstr "Bi faktoreko autentifikazioa gaitzeak esan nahi du ausaz sortutako egiaztapen-kode bat beharko duzula saioa hasteko; beraz, norbaitek zure pasahitza atzitzen badu ere, ezin izango du zure kontuan sartu."
 
 #: src/common/api.js:115
 msgid "Enter verification code"
-msgstr ""
+msgstr "Sartu egiaztapen-kodea"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr ""
+msgstr "Sartu pasahitza ekintza berresteko eta jarraitu:"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1171,7 +1171,7 @@ msgstr "Markoak"
 
 #: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
-msgstr ""
+msgstr "Sarbide osoa"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1187,7 +1187,7 @@ msgstr "Orokorra"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr ""
+msgstr "Sortu"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1255,7 +1255,7 @@ msgstr "Nola lagundu dezakegu?"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr ""
+msgstr "Zure autentifikazio-aplikaziorako edo gailurako sarbidea galtzen baduzu, berreskuratzeko kodea erabil dezakezu zure konturako sarbidea berreskuratzeko."
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1378,7 +1378,7 @@ msgstr "Argazki baliogabea hautatu da"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr ""
+msgstr "Erabilera bakarreko kodea da, erabiltzen duzunean zure konturako 2FA desgaituko duena."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1437,7 +1437,7 @@ msgstr "Azken sinkronizazioa"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr ""
+msgstr "Azken erabilia"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1613,7 +1613,7 @@ msgstr "Metadatuak"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr ""
+msgstr "Metrikak"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1795,7 +1795,7 @@ msgstr "Lineaz kanpo"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1841,7 +1841,7 @@ msgstr "Irudi bat aurkitu da"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
+msgstr "Lokalean kudeatutako kontuak soilik konfigura daitezke 2FA-rekin autentifikatzeko."
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1975,7 +1975,7 @@ msgstr "Mesedez, berretsi pasahitz berria."
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Mesedez, kopiatu ausaz sortutako aplikazioaren pasahitza eta gorde leku seguru batean, ezingo baituzu berriro ikusi:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2212,7 +2212,7 @@ msgstr "Eskaneatu"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr ""
+msgstr "Eskaneatu QR kodea zure autentifikatzaile aplikazioarekin edo erabili behean agertzen den konfigurazio-gakoa eta idatzi sortutako egiaztapen-kodea:"
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2449,7 +2449,7 @@ msgstr "Gaia"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr ""
+msgstr "Behar bezala aktibatu da"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2461,7 +2461,7 @@ msgstr "Behar bezala ezabatu da"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr ""
+msgstr "Behar bezala egiaztatu da"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2562,15 +2562,15 @@ msgstr "Izenburua luzeegia"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr ""
+msgstr "Zure kontutik kanpo gelditzea saihesteko, deskargatu, inprimatu edo kopiatu berreskuratze-kode hau orain eta gorde leku seguru batean."
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "Aplikazioaren pasahitz espezifiko berri bat sortzeko, idatzi aplikazioaren izena eta baimen-esparrua eta hautatu iraungitze-data:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr ""
+msgstr "Autentifikatzaileen aplikazio edo gailu berri batera aldatzeko, lehenik eta behin desaktibatu bi faktoreko autentifikazioa eta, ondoren, berriro aktibatu:"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
@@ -2607,7 +2607,7 @@ msgstr "Saiatu berriro beste iragazki edo gako-hitz batzuk erabiliz."
 
 #: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
-msgstr ""
+msgstr "Bi faktoreko autentifikazioa gaitu da zure kontuan."
 
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
@@ -2751,7 +2751,7 @@ msgstr "Erabili aurrezarpenak"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr ""
+msgstr "Erabili berreskuratze-kode hau zure kontura atzitzeko zure autentifikazio-aplikazioarekin baliozko egiaztapen-koderik sortu ezin duzunean:"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2790,7 +2790,7 @@ msgstr "Bektoreak"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:116
 msgid "Verification Code"
-msgstr ""
+msgstr "Egiaztapen Kodea"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
@@ -2853,7 +2853,7 @@ msgstr "WebDAV bezeroak PhotoPrism-era konekta daitezke URL hau erabiliz:"
 
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr ""
+msgstr "WebDAV bezeroak, Microsoft-en Windows Explorer edo Apple-ren Finder bezalakoak, zuzenean konekta daitezke PhotoPrism-era."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"

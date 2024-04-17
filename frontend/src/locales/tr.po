@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:09+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: Turkish <https://translate.photoprism.app/projects/photoprism/frontend/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -55,7 +55,7 @@ msgstr "2 Faktörlü Kimlik Doğrulama"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 #: src/options/options.js:420
 msgid "4 hours"
@@ -173,7 +173,7 @@ msgstr "7 gün sonra"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr ""
+msgstr "Onay için şifrenizi girdikten sonra, uyumlu bir kimlik doğrulama uygulaması veya cihazıyla iki faktörlü kimlik doğrulamayı ayarlayabilirsiniz:"
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -387,7 +387,7 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "Geri"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -467,7 +467,7 @@ msgstr "Kamera Seri"
 
 #: src/page/auth/login.vue:41
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "Kimlik doğrulayıcı uygulamanıza veya cihazınıza erişemiyor musunuz? Kurtarma kodunuzu girin veya yardım isteyin."
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -605,7 +605,7 @@ msgstr "Güven"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr ""
+msgstr "Onaylamak"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -641,7 +641,7 @@ msgstr "Tek resim içerir."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "Devam etmek"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -660,7 +660,7 @@ msgstr "Panoya kopyalandı"
 #: src/dialog/account/apps.vue:65 src/dialog/account/apps.vue:21
 #: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
-msgstr ""
+msgstr "Kopyala"
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -717,7 +717,7 @@ msgstr "Gün"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "Devre dışı bırakmak"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -978,15 +978,15 @@ msgstr "RAW dönüştürücü ön ayarlarını etkinleştirir. Performansı azal
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr ""
+msgstr "İki faktörlü kimlik doğrulamayı etkinleştirmek, oturum açmak için rastgele oluşturulmuş bir doğrulama koduna ihtiyacınız olacağı anlamına gelir; dolayısıyla birisi şifrenize erişse bile hesabınıza erişemez."
 
 #: src/common/api.js:115
 msgid "Enter verification code"
-msgstr ""
+msgstr "dogrulama kodunu giriniz"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr ""
+msgstr "İşlemi onaylamak ve devam etmek için şifrenizi girin:"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1174,7 +1174,7 @@ msgstr "Çerçeveler"
 
 #: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
-msgstr ""
+msgstr "Tam erişim"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1190,7 +1190,7 @@ msgstr "Genel"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr ""
+msgstr "Oluştur"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1258,7 +1258,7 @@ msgstr "Nasıl yardımcı olabiliriz?"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr ""
+msgstr "Kimlik doğrulayıcı uygulamanıza veya cihazınıza erişiminizi kaybederseniz, hesabınıza yeniden erişim sağlamak için kurtarma kodunuzu kullanabilirsiniz."
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1381,7 +1381,7 @@ msgstr "Geçersiz fotoğraf seçildi"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr ""
+msgstr "Bu, kullandığınızda hesabınız için 2FA'yı devre dışı bırakacak tek kullanımlık bir koddur."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1440,7 +1440,7 @@ msgstr "Son Senkronizasyon"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr ""
+msgstr "Son kullanılan"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1616,7 +1616,7 @@ msgstr "Metadata"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr ""
+msgstr "Metrikler"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1798,7 +1798,7 @@ msgstr "Çevrimdışı"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1844,7 +1844,7 @@ msgstr "Bir resim bulundu"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
+msgstr "2FA ile kimlik doğrulama için yalnızca yerel olarak yönetilen hesaplar ayarlanabilir."
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1978,7 +1978,7 @@ msgstr "Lütfen yeni şifrenizi onaylayın."
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "Lütfen aşağıdaki rastgele oluşturulmuş uygulama şifresini kopyalayın ve bir daha göremeyeceğiniz için güvenli bir yerde saklayın:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2215,7 +2215,7 @@ msgstr "Tara"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr ""
+msgstr "QR kodunu kimlik doğrulayıcı uygulamanızla tarayın veya aşağıda gösterilen kurulum anahtarını kullanın ve ardından oluşturulan doğrulama kodunu girin:"
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2452,7 +2452,7 @@ msgstr "Konu"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr ""
+msgstr "Başarıyla etkinleştirildi"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2464,7 +2464,7 @@ msgstr "Başarıyla silindi"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr ""
+msgstr "Başarıyla doğrulandı"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2565,15 +2565,15 @@ msgstr "Başlık çok uzun"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr ""
+msgstr "Hesabınızın kilitlenmesini önlemek için lütfen bu kurtarma kodunu şimdi indirin, yazdırın veya kopyalayın ve güvenli bir yerde saklayın."
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "Uygulamaya özel yeni bir şifre oluşturmak için lütfen uygulamanın adını ve yetki kapsamını girin ve bir son kullanma tarihi seçin:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr ""
+msgstr "Yeni bir kimlik doğrulama uygulamasına veya cihazına geçmek için önce iki faktörlü kimlik doğrulamayı devre dışı bırakın ve ardından yeniden etkinleştirin:"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
@@ -2610,7 +2610,7 @@ msgstr "Başka filtreler veya anahtar kelimeler kullanarak tekrar deneyin."
 
 #: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
-msgstr ""
+msgstr "Hesabınız için iki faktörlü kimlik doğrulama etkinleştirildi."
 
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
@@ -2754,7 +2754,7 @@ msgstr "Ön Ayarları Kullan"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr ""
+msgstr "Kimlik doğrulayıcı uygulamanızla geçerli bir doğrulama kodu oluşturamadığınızda hesabınıza erişmek için aşağıdaki kurtarma kodunu kullanın:"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2793,7 +2793,7 @@ msgstr "Vektörler"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:116
 msgid "Verification Code"
-msgstr ""
+msgstr "Doğrulama kodu"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
@@ -2857,6 +2857,8 @@ msgstr "WebDAV istemcileri aşağıdaki URL'yi kullanarak PhotoPrism'e bağlanab
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr ""
+"Microsoft'un Windows Explorer'ı veya Apple'ın Finder'ı gibi WebDAV istemcileri doğrudan\n"
+"          PhotoPrism."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"

@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:09+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -55,7 +55,7 @@ msgstr "双因素身份验证"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 #: src/options/options.js:420
 msgid "4 hours"
@@ -173,7 +173,7 @@ msgstr "7 天後"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr ""
+msgstr "輸入密碼進行確認後，您可以使用相容的身份驗證器應用程式或裝置設定雙重認證："
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -387,7 +387,7 @@ msgstr "自動建立特殊時刻、旅行和地點的相冊。"
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "後退"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -467,7 +467,7 @@ msgstr "相機序號"
 
 #: src/page/auth/login.vue:41
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "無法存取您的身份驗證器應用程式或裝置？輸入您的恢復代碼或尋求協助。"
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -605,7 +605,7 @@ msgstr "可信度"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr ""
+msgstr "確認"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -641,7 +641,7 @@ msgstr "包含一張圖片。"
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "繼續"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -717,7 +717,7 @@ msgstr "日"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "停用"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -978,15 +978,15 @@ msgstr "啟用 RAW 轉換器預設集。可能會降低性能。"
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr ""
+msgstr "啟用雙重認證意味著您將需要隨機生成的驗證碼才能登錄，因此即使有人獲得您的密碼，他們也無法存取您的帳戶。"
 
 #: src/common/api.js:115
 msgid "Enter verification code"
-msgstr ""
+msgstr "輸入驗證碼"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr ""
+msgstr "輸入您的密碼以確認操作並繼續："
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1174,7 +1174,7 @@ msgstr "框架"
 
 #: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
-msgstr ""
+msgstr "完全存取權限"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1190,7 +1190,7 @@ msgstr "一般"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr ""
+msgstr "產生"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1258,7 +1258,7 @@ msgstr "我們可以幫你什麼？"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr ""
+msgstr "如果您失去了對身份驗證器應用程式或裝置的存取權限，您可以使用復原代碼來重新獲得對帳戶的存取權限。"
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1381,7 +1381,7 @@ msgstr "選擇的照片無效"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr ""
+msgstr "這是一個一次性使用代碼，當您使用它時，它將停用您帳戶的 2FA。"
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1440,7 +1440,7 @@ msgstr "上次同步"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr ""
+msgstr "最後使用"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1616,7 +1616,7 @@ msgstr "元数据"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr ""
+msgstr "指標"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1798,7 +1798,7 @@ msgstr "離線"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "開放式資料中心"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1844,7 +1844,7 @@ msgstr "找到一張圖片"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
+msgstr "只能設定本機管理的帳戶以使用 2FA 進行身份驗證。"
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1978,7 +1978,7 @@ msgstr "請確認你的新密碼。"
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "請複製以下隨機產生的應用程式密碼並將其保存在安全的地方，因為您將無法再次看到它："
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2215,7 +2215,7 @@ msgstr "掃描"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr ""
+msgstr "使用身份驗證器應用程式掃描二維碼或使用如下所示的設定金鑰，然後輸入產生的驗證碼："
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2452,7 +2452,7 @@ msgstr "主題"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr ""
+msgstr "激活成功"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2464,7 +2464,7 @@ msgstr "已成功删除"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr ""
+msgstr "驗證成功"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2565,15 +2565,15 @@ msgstr "標題太長"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr ""
+msgstr "為避免您的帳戶被鎖定，請立即下載、列印或複製此恢復代碼並將其保存在安全的地方。"
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "若要產生新的應用程式專用密碼，請輸入應用程式的名稱和授權範圍並選擇到期日期："
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr ""
+msgstr "要切換到新的身份驗證器應用程式或設備，請先停用雙重認證，然後重新啟用它："
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
@@ -2610,7 +2610,7 @@ msgstr "請使用其他篩選條件或是關鍵字。"
 
 #: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
-msgstr ""
+msgstr "您的帳戶已啟用雙重認證。"
 
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
@@ -2754,7 +2754,7 @@ msgstr "使用預設"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr ""
+msgstr "當您無法使用身份驗證器應用程式產生有效的驗證碼時，請使用下列恢復代碼存取您的帳戶："
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2793,7 +2793,7 @@ msgstr "向量"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:116
 msgid "Verification Code"
-msgstr ""
+msgstr "驗證碼"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
@@ -2856,7 +2856,7 @@ msgstr "WebDAV客戶端可以使用以下URL連接到PhotoPrism："
 
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr ""
+msgstr "WebDAV客戶端（例如Microsoft的Windows資源管理器或Apple的Finder）可以直接連接到PhotoPrism。"
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"

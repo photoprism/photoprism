@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-15 12:59+0000\n"
-"Last-Translator: driesenj <driesen.joep@gmail.com>\n"
+"PO-Revision-Date: 2024-04-17 08:08+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -1440,7 +1440,7 @@ msgstr "Laatste synchronisatie"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr ""
+msgstr "Laatst gebruikt"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"

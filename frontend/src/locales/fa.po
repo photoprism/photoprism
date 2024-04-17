@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-01-29 23:09+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2024-04-17 08:09+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
 "Language-Team: \n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 5.3.1\n"
+"X-Generator: Weblate 5.4.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -55,7 +55,7 @@ msgstr "احراز هویت 2-عاملی"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
 msgid "2FA"
-msgstr ""
+msgstr "2FA"
 
 #: src/options/options.js:420
 msgid "4 hours"
@@ -173,7 +173,7 @@ msgstr "بعد از 7 روز"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr ""
+msgstr "پس از وارد کردن رمز عبور خود برای تأیید، می توانید احراز هویت دو مرحله ای را با یک برنامه یا دستگاه تأیید کننده سازگار تنظیم کنید:"
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -387,7 +387,7 @@ msgstr "به طور خودکار آلبوم هایی از لحظات، سفره�
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
-msgstr ""
+msgstr "بازگشت"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -467,7 +467,7 @@ msgstr "سریال دوربین"
 
 #: src/page/auth/login.vue:41
 msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
-msgstr ""
+msgstr "نمی توانید به برنامه یا دستگاه احراز هویت خود دسترسی پیدا کنید؟ کد بازیابی خود را وارد کنید یا درخواست کمک کنید."
 
 #: src/page/album/photos.vue:248 src/page/photos.vue:353
 msgid "Can't load more, limit reached"
@@ -605,7 +605,7 @@ msgstr "اعتماد"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr ""
+msgstr "تایید"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -641,7 +641,7 @@ msgstr "حاوی یک تصویر است."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr ""
+msgstr "ادامه هید"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -660,7 +660,7 @@ msgstr "کپی شده در کلیپ بورد"
 #: src/dialog/account/apps.vue:65 src/dialog/account/apps.vue:21
 #: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
-msgstr ""
+msgstr "کپی 🀄"
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -717,7 +717,7 @@ msgstr "روز"
 
 #: src/dialog/account/passcode.vue:132 src/dialog/account/passcode.vue:22
 msgid "Deactivate"
-msgstr ""
+msgstr "از کار انداختن"
 
 #: src/page/settings/advanced.vue:76
 msgid "Debug Logs"
@@ -978,15 +978,15 @@ msgstr "فعال کردن RAW converter presets  . ممکن است عملکرد 
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr ""
+msgstr "فعال کردن احراز هویت دو مرحله‌ای به این معنی است که برای ورود به سیستم به یک کد تأیید تصادفی تولید شده نیاز دارید، بنابراین حتی اگر شخصی به رمز عبور شما دسترسی پیدا کند، نمی‌تواند به حساب شما دسترسی پیدا کند."
 
 #: src/common/api.js:115
 msgid "Enter verification code"
-msgstr ""
+msgstr "کد تایید را وارد کنید"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr ""
+msgstr "رمز عبور خود را برای تایید عمل وارد کنید و ادامه دهید:"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1174,7 +1174,7 @@ msgstr "قاب‌ها"
 
 #: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
-msgstr ""
+msgstr "دسترسی کامل"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1190,7 +1190,7 @@ msgstr "عمومی"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr ""
+msgstr "تولید می کنند"
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1258,7 +1258,7 @@ msgstr "چطور میتوانیم کمک کنیم؟"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
-msgstr ""
+msgstr "اگر دسترسی به برنامه یا دستگاه احراز هویت خود را از دست دادید، می‌توانید از کد بازیابی برای دسترسی مجدد به حساب خود استفاده کنید."
 
 #: src/dialog/photo/edit/labels.vue:45
 msgid "image"
@@ -1381,7 +1381,7 @@ msgstr "عکس نامعتبر انتخاب شد"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr ""
+msgstr "این یک کد یکبار مصرف است که هنگام استفاده از آن، 2FA را برای حساب شما غیرفعال می کند."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1440,7 +1440,7 @@ msgstr "آخرین همگام سازی"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr ""
+msgstr "آخرین استفاده"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1616,7 +1616,7 @@ msgstr "فراداده"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr ""
+msgstr "معیارهای"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1798,7 +1798,7 @@ msgstr "آفلاین"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr ""
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1844,7 +1844,7 @@ msgstr "یک تصویر پیدا شد"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr ""
+msgstr "فقط حساب های مدیریت شده محلی را می توان برای احراز هویت با 2FA تنظیم کرد."
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1978,7 +1978,7 @@ msgstr "لطفا رمز عبور جدید خود را تایید کنید."
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr ""
+msgstr "لطفاً رمز عبور برنامه زیر را که به‌طور تصادفی تولید شده است کپی کنید و آن را در مکانی امن نگه دارید، زیرا دیگر نمی‌توانید آن را ببینید:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2215,7 +2215,7 @@ msgstr "اسکن"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr ""
+msgstr "کد QR را با برنامه احراز هویت خود اسکن کنید یا از کلید راه اندازی نشان داده شده در زیر استفاده کنید و سپس کد تأیید تولید شده را وارد کنید:"
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2452,7 +2452,7 @@ msgstr "موضوع"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr ""
+msgstr "با موفقیت فعال شد"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2464,7 +2464,7 @@ msgstr "با موفقیت حذف شد"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr ""
+msgstr "با موفقیت تأیید شد"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2565,15 +2565,15 @@ msgstr "عنوان خیلی طولانی است"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr ""
+msgstr "برای جلوگیری از قفل شدن حساب خود، لطفاً این کد بازیابی را دانلود، چاپ یا کپی کنید و آن را در مکانی امن نگهداری کنید."
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr ""
+msgstr "برای ایجاد یک رمز عبور جدید خاص، لطفاً نام و محدوده مجوز برنامه را وارد کنید و تاریخ انقضا را انتخاب کنید:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr ""
+msgstr "برای جابه‌جایی به یک برنامه یا دستگاه احراز هویت جدید، ابتدا احراز هویت دو مرحله‌ای را غیرفعال کنید و سپس دوباره فعال کنید:"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
@@ -2610,7 +2610,7 @@ msgstr "دوباره با استفاده از فیلترها یا کلمات ک�
 
 #: src/dialog/account/passcode.vue:114 src/dialog/account/passcode.vue:4
 msgid "Two-factor authentication has been enabled for your account."
-msgstr ""
+msgstr "احراز هویت دو مرحله ای برای حساب شما فعال شده است."
 
 #: src/dialog/photo/edit/files.vue:101 src/dialog/photo/edit/files.vue:98
 #: src/dialog/photo/edit/files.vue:50 src/dialog/photo/edit/info.vue:16
@@ -2754,7 +2754,7 @@ msgstr "از Presets استفاده کنید"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr ""
+msgstr "وقتی نمی‌توانید یک کد تأیید معتبر با برنامه احراز هویت خود ایجاد کنید، از کد بازیابی زیر برای دسترسی به حساب خود استفاده کنید:"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2793,7 +2793,7 @@ msgstr "بردارها"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:116
 msgid "Verification Code"
-msgstr ""
+msgstr "کد تایید"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
 #: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
@@ -2857,6 +2857,8 @@ msgstr "کلاینت های WebDAV می توانند با استفاده از UR
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
 msgstr ""
+"کلاینت های WebDAV، مانند Windows Explorer مایکروسافت یا Apple's Finder، می توانند مستقیماً به آن متصل شوند\n"
+"           PhotoPrism."
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
