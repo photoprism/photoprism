@@ -36,7 +36,7 @@ import (
 var log = event.Log
 var stop = make(chan bool, 1)
 
-// Start runs the metadata, share & sync background workers at regular intervals.
+// Start runs the sync and metadata maintenance background workers at regular intervals.
 func Start(conf *config.Config) {
 	interval := conf.WakeupInterval()
 

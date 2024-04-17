@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func TestWatch(t *testing.T) {
-	Monitor(time.Minute)
+func TestCleanup(t *testing.T) {
+	Cleanup(time.Minute)
 	Shutdown()
 }

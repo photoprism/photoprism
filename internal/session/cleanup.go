@@ -11,8 +11,8 @@ import (
 
 var stop = make(chan bool, 1)
 
-// MonitorAction deletes expired sessions.
-var MonitorAction = func() {
+// CleanupAction deletes sessions that have expired.
+var CleanupAction = func() {
 	if n := entity.DeleteExpiredSessions(); n > 0 {
 		event.AuditInfo([]string{"deleted %s"}, english.Plural(n, "expired session", "expired sessions"))
 	} else {
@@ -20,12 +20,13 @@ var MonitorAction = func() {
 	}
 }
 
-// Monitor starts a background worker that periodically deletes expired sessions.
-func Monitor(interval time.Duration) {
+// Cleanup starts a background worker that periodically deletes expired sessions.
+func Cleanup(interval time.Duration) {
+	// Immediately delete sessions that have already expired.
+	CleanupAction()
+
+	// Periodically delete expired sessions based on the specified interval.
 	ticker := time.NewTicker(interval)
-
-	MonitorAction()
-
 	go func() {
 		for {
 			select {
@@ -33,7 +34,7 @@ func Monitor(interval time.Duration) {
 				ticker.Stop()
 				return
 			case <-ticker.C:
-				MonitorAction()
+				CleanupAction()
 			}
 		}
 	}()

@@ -99,16 +99,16 @@ func startAction(ctx *cli.Context) error {
 			return nil
 		}
 
-		child, err := dctx.Reborn()
-		if err != nil {
-			log.Fatal(err)
+		child, contextErr := dctx.Reborn()
+
+		if contextErr != nil {
+			return fmt.Errorf("daemon context error: %w", contextErr)
 		}
 
 		if child != nil {
 			if writeErr := fs.WriteString(conf.PIDFilename(), strconv.Itoa(child.Pid)); writeErr != nil {
 				log.Error(writeErr)
-				log.Fatalf("failed writing process id to %s", clean.Log(conf.PIDFilename()))
-				return nil
+				return fmt.Errorf("failed writing process id to %s", clean.Log(conf.PIDFilename()))
 			}
 
 			log.Infof("daemon started with process id %v\n", child.Pid)
@@ -116,22 +116,28 @@ func startAction(ctx *cli.Context) error {
 		}
 	}
 
+	// Show info if read-only mode is enabled.
 	if conf.ReadOnly() {
 		log.Infof("config: enabled read-only mode")
 	}
 
-	// Start Web server.
+	// Start built-in web server.
 	go server.Start(cctx, conf)
 
-	if count, err := photoprism.RestoreAlbums(conf.AlbumsPath(), false); err != nil {
-		log.Errorf("restore: %s", err)
+	// Restore albums from YAML files.
+	if count, restoreErr := photoprism.RestoreAlbums(conf.AlbumsPath(), false); restoreErr != nil {
+		log.Errorf("restore: %s", restoreErr)
 	} else if count > 0 {
 		log.Infof("%d albums restored", count)
 	}
 
-	// Start background workers.
-	session.Monitor(time.Hour)
+	// Start worker that periodically deletes expired sessions.
+	session.Cleanup(conf.SessionCacheDuration() * 4)
+
+	// Start sync and metadata maintenance background workers.
 	workers.Start(conf)
+
+	// Start auto-indexing background worker.
 	auto.Start(conf)
 
 	// Wait for signal to initiate server shutdown.
@@ -149,8 +155,8 @@ func startAction(ctx *cli.Context) error {
 	log.Info("shutting down...")
 	cancel()
 
-	if err := dctx.Release(); err != nil {
-		log.Error(err)
+	if contextErr := dctx.Release(); contextErr != nil {
+		log.Error(contextErr)
 	}
 
 	// Finally, close the DB connection after a short grace period.
