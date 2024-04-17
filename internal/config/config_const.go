@@ -2,6 +2,8 @@ package config
 
 import (
 	"time"
+
+	"github.com/photoprism/photoprism/pkg/unix"
 )
 
 // ApiUri defines the standard path for handling REST requests.
@@ -43,20 +45,14 @@ const DefaultResolutionLimit = 150 // 150 Megapixels
 // serialName defines the name of the unique storage serial.
 const serialName = "serial"
 
-// UnixHour defines one hour in UnixTime.
-const UnixHour int64 = 3600
-
-// UnixDay defines one day in UnixTime.
-const UnixDay = UnixHour * 24
-
-// UnixWeek defines one week in UnixTime.
-const UnixWeek = UnixDay * 7
-
 // DefaultSessionMaxAge defines the standard session expiration time in seconds.
-const DefaultSessionMaxAge = UnixWeek * 2
+const DefaultSessionMaxAge = unix.Week * 2
 
 // DefaultSessionTimeout defines the standard session idle time in seconds.
-const DefaultSessionTimeout = UnixWeek
+const DefaultSessionTimeout = unix.Week
+
+// DefaultSessionCache defines the default session cache duration in seconds.
+const DefaultSessionCache = unix.Minute * 15
 
 // Product feature tags used to automatically generate documentation.
 const (

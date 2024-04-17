@@ -211,6 +211,9 @@ func (c *Config) Propagate() {
 	places.UserAgent = c.UserAgent()
 	entity.GeoApi = c.GeoApi()
 
+	// Set session cache duration.
+	entity.SessionCacheDuration = c.SessionCacheDuration()
+
 	// Set minimum password length.
 	entity.PasswordLength = c.PasswordLength()
 

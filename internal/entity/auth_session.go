@@ -176,7 +176,7 @@ func (m *Session) CacheDuration(d time.Duration) {
 
 // Cache caches the session with the default expiration duration.
 func (m *Session) Cache() {
-	m.CacheDuration(sessionCacheExpiration)
+	m.CacheDuration(SessionCacheDuration)
 }
 
 // ClearCache deletes the session from the cache.

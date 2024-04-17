@@ -30,6 +30,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"login-uri", c.LoginUri()},
 		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
 		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},
+		{"session-cache", fmt.Sprintf("%d", c.SessionCache())},
 
 		// Logging.
 		{"log-level", c.LogLevel().String()},

@@ -11,9 +11,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// Create a new session cache with an expiration time of 15 minutes.
-var sessionCacheExpiration = 15 * time.Minute
-var sessionCache = gc.New(sessionCacheExpiration, 5*time.Minute)
+// SessionCacheDuration specifies how long sessions are cached.
+var SessionCacheDuration = 15 * time.Minute
+var sessionCache = gc.New(SessionCacheDuration, time.Minute)
 
 // FindSessionByAuthToken finds a session based on the auth token string or returns nil if it does not exist.
 func FindSessionByAuthToken(token string) (*Session, error) {
@@ -46,7 +46,7 @@ func FindSession(id string) (*Session, error) {
 	} else if !found.Expired() {
 		// Set session activity timestamp and update the last_active column in the sessions table.
 		found.UpdateLastActive(true)
-		CacheSession(found, sessionCacheExpiration)
+		CacheSession(found, SessionCacheDuration)
 		return found, nil
 	} else if err := found.Delete(); err != nil {
 		event.AuditErr([]string{found.IP(), "session %s", "failed to delete after expiration", "%s"}, found.RefID, err)
@@ -69,7 +69,7 @@ func CacheSession(s *Session, d time.Duration) {
 	}
 
 	if d == 0 {
-		d = sessionCacheExpiration
+		d = SessionCacheDuration
 	}
 
 	if s.PreviewToken != "" {

@@ -2,6 +2,7 @@ package config
 
 import (
 	"regexp"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -158,6 +159,24 @@ func (c *Config) SessionTimeout() int64 {
 	}
 
 	return c.options.SessionTimeout
+}
+
+// SessionCache returns the default session cache duration in seconds.
+func (c *Config) SessionCache() int64 {
+	if c.options.SessionCache == 0 {
+		return DefaultSessionCache
+	} else if c.options.SessionCache < 60 {
+		return 60
+	} else if c.options.SessionCache > 3600 {
+		return 3600
+	}
+
+	return c.options.SessionCache
+}
+
+// SessionCacheDuration returns the default session cache duration.
+func (c *Config) SessionCacheDuration() time.Duration {
+	return time.Duration(c.SessionCache()) * time.Second
 }
 
 // DownloadToken returns the DOWNLOAD api token (you can optionally use a static value for permanent caching).

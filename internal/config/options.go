@@ -33,6 +33,7 @@ type Options struct {
 	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
+	SessionCache          int64         `yaml:"SessionCache" json:"-" flag:"session-cache"`
 	LogLevel              string        `yaml:"LogLevel" json:"-" flag:"log-level"`
 	Prod                  bool          `yaml:"Prod" json:"Prod" flag:"prod"`
 	Debug                 bool          `yaml:"Debug" json:"Debug" flag:"debug"`

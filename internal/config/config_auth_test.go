@@ -2,6 +2,7 @@ package config
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -81,7 +82,7 @@ func TestLoginUri(t *testing.T) {
 	assert.Equal(t, "/library/login", c.LoginUri())
 }
 
-func TestSessMaxAge(t *testing.T) {
+func TestSessionMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, DefaultSessionMaxAge, c.SessionMaxAge())
 	c.options.SessionMaxAge = -1
@@ -90,13 +91,25 @@ func TestSessMaxAge(t *testing.T) {
 	assert.Equal(t, DefaultSessionMaxAge, c.SessionMaxAge())
 }
 
-func TestSessTimeout(t *testing.T) {
+func TestSessionTimeout(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, DefaultSessionTimeout, c.SessionTimeout())
 	c.options.SessionTimeout = -1
 	assert.Equal(t, int64(0), c.SessionTimeout())
 	c.options.SessionTimeout = 0
 	assert.Equal(t, DefaultSessionTimeout, c.SessionTimeout())
+}
+
+func TestSessionCache(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, DefaultSessionCache, c.SessionCache())
+	c.options.SessionCache = -1
+	assert.Equal(t, int64(60), c.SessionCache())
+	c.options.SessionCache = 100000
+	assert.Equal(t, int64(3600), c.SessionCache())
+	c.options.SessionCache = 0
+	assert.Equal(t, DefaultSessionCache, c.SessionCache())
+	assert.Equal(t, time.Duration(DefaultSessionCache)*time.Second, c.SessionCacheDuration())
 }
 
 func TestUtils_CheckPassword(t *testing.T) {
