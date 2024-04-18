@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-04-17 08:09+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2024-04-18 14:58+0000\n"
+"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language: et\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2592,7 +2592,7 @@ msgstr "Liiga palju valitud faile"
 
 #: src/common/api.js:124
 msgid "Too many requests"
-msgstr ""
+msgstr "Liiga palju taotlusi"
 
 #: src/options/options.js:328 src/page/places.vue:161
 msgid "Topographic"
