@@ -77,4 +77,10 @@ func TestTitle(t *testing.T) {
 	t.Run("KoosVanDriemond", func(t *testing.T) {
 		assert.Equal(t, "Koos van Driemond", Title("Koos van Driemond"))
 	})
+	t.Run("NonCommercialPics", func(t *testing.T) {
+		assert.Equal(t, "Non Commercial Pics", Title("Non Commercial Pics"))
+	})
+	t.Run("ImgNonCommercialPics", func(t *testing.T) {
+		assert.Equal(t, "Non Commercial Pics", FileTitle("Img Non Commercial Pics"))
+	})
 }
