@@ -2594,9 +2594,8 @@ msgid "Too many files selected"
 msgstr "Çok fazla dosya seçildi"
 
 #: src/common/api.js:124
-#, fuzzy
 msgid "Too many requests"
-msgstr "Çok fazla dosya seçildi"
+msgstr ""
 
 #: src/options/options.js:328 src/page/places.vue:161
 msgid "Topographic"
