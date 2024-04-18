@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-17 08:08+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-memory@weblate.org>\n"
+"PO-Revision-Date: 2024-04-18 14:58+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/frontend/he/>\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
@@ -2595,7 +2595,7 @@ msgstr "נבחרו יותר מדי קבצים"
 
 #: src/common/api.js:124
 msgid "Too many requests"
-msgstr ""
+msgstr "יותר מדי בקשות"
 
 #: src/options/options.js:328 src/page/places.vue:161
 msgid "Topographic"
