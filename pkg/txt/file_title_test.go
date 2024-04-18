@@ -119,4 +119,10 @@ func TestFileTitle(t *testing.T) {
 	t.Run("HD", func(t *testing.T) {
 		assert.Equal(t, "Desktop Nebula HD Wallpapers", FileTitle("Desktop-Nebula-hd-Wallpapers.jpeg"))
 	})
+	t.Run("NonCommercialPics", func(t *testing.T) {
+		assert.Equal(t, "Non Commercial Pics", FileTitle("Non Commercial Pics"))
+	})
+	t.Run("ImgNonCommercialPics", func(t *testing.T) {
+		assert.Equal(t, "Non Commercial Pics", FileTitle("Img Non Commercial Pics"))
+	})
 }

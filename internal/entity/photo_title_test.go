@@ -142,7 +142,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "longlonglonglonglongcity / 2016", m.PhotoTitle)
+		assert.Equal(t, "Photo / Germany / 2016", m.PhotoTitle)
 	})
 	t.Run("photo with location without loc name and short city", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo12")
@@ -152,7 +152,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "shortcity / Germany / 2016", m.PhotoTitle)
+		assert.Equal(t, "Photo / shortcity / 2016", m.PhotoTitle)
 	})
 	t.Run("no location original name", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
@@ -199,7 +199,7 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, "Unknown", m.PhotoTitle)
+		assert.Equal(t, "Photo", m.PhotoTitle)
 	})
 	t.Run("OnePerson", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo10")
@@ -249,27 +249,27 @@ func TestPhoto_UpdateTitle(t *testing.T) {
 }
 
 func TestPhoto_FileTitle(t *testing.T) {
-	t.Run("non-latin", func(t *testing.T) {
+	t.Run("NonLatin", func(t *testing.T) {
 		photo := Photo{PhotoName: "桥", PhotoPath: "", OriginalName: ""}
 		result := photo.FileTitle()
 		assert.Equal(t, "桥", result)
 	})
-	t.Run("changing-of-the-guard--buckingham-palace_7925318070_o.jpg", func(t *testing.T) {
+	t.Run("Slash", func(t *testing.T) {
 		photo := Photo{PhotoName: "20200102_194030_9EFA9E5E", PhotoPath: "2000/05", OriginalName: "flickr import/changing-of-the-guard--buckingham-palace_7925318070_o.jpg"}
 		result := photo.FileTitle()
 		assert.Equal(t, "Changing of the Guard / Buckingham Palace", result)
 	})
-	t.Run("empty title", func(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
 		photo := Photo{PhotoName: "", PhotoPath: "", OriginalName: ""}
 		result := photo.FileTitle()
 		assert.Equal(t, "", result)
 	})
-	t.Run("return title", func(t *testing.T) {
+	t.Run("Name", func(t *testing.T) {
 		photo := Photo{PhotoName: "sun, beach, fun", PhotoPath: "", OriginalName: "", PhotoTitle: ""}
 		result := photo.FileTitle()
 		assert.Equal(t, "Sun, Beach, Fun", result)
 	})
-	t.Run("return title", func(t *testing.T) {
+	t.Run("Path", func(t *testing.T) {
 		photo := Photo{PhotoName: "", PhotoPath: "vacation", OriginalName: "20200102_194030_9EFA9E5E", PhotoTitle: ""}
 		result := photo.FileTitle()
 		assert.Equal(t, "Vacation", result)
