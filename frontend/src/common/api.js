@@ -100,20 +100,30 @@ Api.interceptors.response.use(
 
     // Default error message.
     let errorMessage = $gettext("Request failed - are you offline?");
-    let code = error.code;
+    let code = error.response && error.response.status ? error.response.status : 0;
 
     // Extract error details from response.
-    if (error.response && error.response.data) {
+    if (error.response && typeof error.response.data === "object") {
       let data = error.response.data;
-      code = data.code;
-      errorMessage = data.message ? data.message : data.error;
+
+      if (data.code) {
+        code = data.code;
+      }
+
+      if (data.message) {
+        errorMessage = data.message;
+      } else if (data.error) {
+        errorMessage = data.error;
+      }
     }
 
     // Show error notification.
-    if (errorMessage) {
-      if (code === 32) {
-        Notify.info($gettext("Enter verification code"));
-      } else if (code === 401) {
+    if (code === 32) {
+      Notify.info($gettext("Enter verification code"));
+    } else if (code === 429) {
+      Notify.error($gettext("Too many requests"));
+    } else if (errorMessage) {
+      if (code === 401) {
         Notify.logout(errorMessage);
       } else {
         Notify.error(errorMessage);
