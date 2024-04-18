@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-04-17 08:09+0000\n"
+"PO-Revision-Date: 2024-04-18 14:58+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2592,7 +2592,7 @@ msgstr "Fitxategi gehiegi hautatu dira"
 
 #: src/common/api.js:124
 msgid "Too many requests"
-msgstr ""
+msgstr "Eskaera gehiegi"
 
 #: src/options/options.js:328 src/page/places.vue:161
 msgid "Topographic"
