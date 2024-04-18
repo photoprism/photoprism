@@ -284,7 +284,7 @@ msgid "Altitude (m)"
 msgstr "ارتفاع (M)"
 
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:313
-#: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
+#: src/component/photo/cards.vue:501 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:107
 #: src/dialog/photo/edit/files.vue:104 src/options/options.js:354
 msgid "Animated"
@@ -456,7 +456,7 @@ msgstr "با استفاده از نرم‌افزار و خدماتی که ما �
 msgid "Calendar"
 msgstr "تقویم"
 
-#: src/component/photo/cards.vue:518 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:518 src/component/photo/list.vue:142
 #: src/component/photo/toolbar.vue:300 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "دوربین"
@@ -980,7 +980,7 @@ msgstr "فعال کردن RAW converter presets  . ممکن است عملکرد 
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr "فعال کردن احراز هویت دو مرحله‌ای به این معنی است که برای ورود به سیستم به یک کد تأیید تصادفی تولید شده نیاز دارید، بنابراین حتی اگر شخصی به رمز عبور شما دسترسی پیدا کند، نمی‌تواند به حساب شما دسترسی پیدا کند."
 
-#: src/common/api.js:115
+#: src/common/api.js:122
 msgid "Enter verification code"
 msgstr "کد تایید را وارد کنید"
 
@@ -1502,7 +1502,7 @@ msgid "List"
 msgstr "لیست"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
-#: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
+#: src/component/photo/cards.vue:492 src/component/photo/list.vue:183
 #: src/component/photo/mosaic.vue:218 src/options/options.js:358
 msgid "Live"
 msgstr "زنده"
@@ -1524,7 +1524,7 @@ msgid "location"
 msgstr "محل"
 
 #: src/page/settings/account.vue:840 src/component/photo/cards.vue:554
-#: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
+#: src/component/photo/list.vue:143 src/dialog/album/edit.vue:126
 #: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:90
 #: src/page/settings/account.vue:694
 msgid "Location"
@@ -1658,7 +1658,7 @@ msgid "Must have at least %{n} characters."
 msgstr "باید حداقل %{n} حرف داشته باشد."
 
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
-#: src/component/photo/list.vue:139 src/component/photo/list.vue:234
+#: src/component/photo/list.vue:143 src/component/photo/list.vue:235
 #: src/dialog/account/apps.vue:46 src/dialog/account/apps.vue:415
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/info.vue:76
@@ -2487,7 +2487,7 @@ msgstr "همگام سازی"
 msgid "Sync raw and video files"
 msgstr "همگام سازی فایل های خام و ویدیویی"
 
-#: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:475 src/component/photo/list.vue:141
 #: src/dialog/photo/edit/info.vue:55
 msgid "Taken"
 msgstr "گرفته شده"
@@ -2550,7 +2550,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "عنوان"
 
-#: src/page/settings/account.vue:116 src/component/photo/list.vue:136
+#: src/page/settings/account.vue:116 src/component/photo/list.vue:140
 #: src/dialog/photo/edit/info.vue:45
 msgid "Title"
 msgstr "عنوان"
@@ -2592,6 +2592,10 @@ msgstr "توکن"
 #: src/dialog/upload.vue:169
 msgid "Too many files selected"
 msgstr "تعداد زیادی فایل انتخاب شده است"
+
+#: src/common/api.js:124
+msgid "Too many requests"
+msgstr ""
 
 #: src/options/options.js:328 src/page/places.vue:161
 msgid "Topographic"
@@ -2782,7 +2786,7 @@ msgid "Users"
 msgstr "کاربران"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
-#: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
 #: src/model/photo.js:876 src/model/photo.js:884 src/options/options.js:366
 msgid "Vector"
 msgstr "بردار"
@@ -2796,7 +2800,7 @@ msgid "Verification Code"
 msgstr "کد تایید"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
-#: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
 #: src/model/file.js:216 src/model/photo.js:900 src/model/photo.js:916
 #: src/options/options.js:362
 msgid "Video"

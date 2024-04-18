@@ -284,7 +284,7 @@ msgid "Altitude (m)"
 msgstr "고도 (m)"
 
 #: src/component/navigation.vue:101 src/component/photo/cards.vue:313
-#: src/component/photo/cards.vue:501 src/component/photo/list.vue:191
+#: src/component/photo/cards.vue:501 src/component/photo/list.vue:192
 #: src/component/photo/mosaic.vue:234 src/dialog/photo/edit/files.vue:107
 #: src/dialog/photo/edit/files.vue:104 src/options/options.js:354
 msgid "Animated"
@@ -456,7 +456,7 @@ msgstr "당사가 제공하는 소프트웨어 및 서비스를 사용함으로�
 msgid "Calendar"
 msgstr "달력"
 
-#: src/component/photo/cards.vue:518 src/component/photo/list.vue:138
+#: src/component/photo/cards.vue:518 src/component/photo/list.vue:142
 #: src/component/photo/toolbar.vue:300 src/dialog/photo/edit/details.vue:358
 msgid "Camera"
 msgstr "카메라"
@@ -980,7 +980,7 @@ msgstr "RAW 변환기 사전 설정을 활성화합니다. 성능이 저하될 �
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
 msgstr "이중 인증을 활성화하면 로그인하려면 무작위로 생성된 인증 코드가 필요하므로 누군가가 귀하의 비밀번호에 접근하더라도 귀하의 계정에 접근할 수 없습니다."
 
-#: src/common/api.js:115
+#: src/common/api.js:122
 msgid "Enter verification code"
 msgstr "인증코드를 입력하세요"
 
@@ -1502,7 +1502,7 @@ msgid "List"
 msgstr "리스트"
 
 #: src/app/routes.js:228 src/component/photo/cards.vue:297
-#: src/component/photo/cards.vue:492 src/component/photo/list.vue:182
+#: src/component/photo/cards.vue:492 src/component/photo/list.vue:183
 #: src/component/photo/mosaic.vue:218 src/options/options.js:358
 msgid "Live"
 msgstr "라이브"
@@ -1524,7 +1524,7 @@ msgid "location"
 msgstr "위치"
 
 #: src/page/settings/account.vue:840 src/component/photo/cards.vue:554
-#: src/component/photo/list.vue:139 src/dialog/album/edit.vue:126
+#: src/component/photo/list.vue:143 src/dialog/album/edit.vue:126
 #: src/dialog/photo/edit/info.vue:80 src/page/albums.vue:90
 #: src/page/settings/account.vue:694
 msgid "Location"
@@ -1658,7 +1658,7 @@ msgid "Must have at least %{n} characters."
 msgstr "8자 이상이어야 합니다."
 
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
-#: src/component/photo/list.vue:139 src/component/photo/list.vue:234
+#: src/component/photo/list.vue:143 src/component/photo/list.vue:235
 #: src/dialog/account/apps.vue:46 src/dialog/account/apps.vue:415
 #: src/dialog/album/edit.vue:105 src/dialog/photo/edit/files.vue:42
 #: src/dialog/photo/edit/info.vue:31 src/dialog/photo/edit/info.vue:76
@@ -2487,7 +2487,7 @@ msgstr "동기화"
 msgid "Sync raw and video files"
 msgstr "원시 사진과 동영상 파일을 동기화하기"
 
-#: src/component/photo/cards.vue:475 src/component/photo/list.vue:137
+#: src/component/photo/cards.vue:475 src/component/photo/list.vue:141
 #: src/dialog/photo/edit/info.vue:55
 msgid "Taken"
 msgstr "찍음"
@@ -2550,7 +2550,7 @@ msgctxt "Photo"
 msgid "Title"
 msgstr "주제"
 
-#: src/page/settings/account.vue:116 src/component/photo/list.vue:136
+#: src/page/settings/account.vue:116 src/component/photo/list.vue:140
 #: src/dialog/photo/edit/info.vue:45
 msgid "Title"
 msgstr "주제"
@@ -2592,6 +2592,10 @@ msgstr "토큰"
 #: src/dialog/upload.vue:169
 msgid "Too many files selected"
 msgstr "선택한 파일이 너무 많습니다."
+
+#: src/common/api.js:124
+msgid "Too many requests"
+msgstr ""
 
 #: src/options/options.js:328 src/page/places.vue:161
 msgid "Topographic"
@@ -2782,7 +2786,7 @@ msgid "Users"
 msgstr "사용자"
 
 #: src/component/photo/cards.vue:320 src/component/photo/cards.vue:510
-#: src/component/photo/list.vue:198 src/component/photo/mosaic.vue:241
+#: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
 #: src/model/photo.js:876 src/model/photo.js:884 src/options/options.js:366
 msgid "Vector"
 msgstr "벡터"
@@ -2796,7 +2800,7 @@ msgid "Verification Code"
 msgstr "확인 코드"
 
 #: src/component/photo/cards.vue:306 src/component/photo/cards.vue:483
-#: src/component/photo/list.vue:205 src/component/photo/mosaic.vue:227
+#: src/component/photo/list.vue:206 src/component/photo/mosaic.vue:227
 #: src/model/file.js:216 src/model/photo.js:900 src/model/photo.js:916
 #: src/options/options.js:362
 msgid "Video"
