@@ -23,7 +23,7 @@ var Heuristics = []Heuristic{
 	{ServiceOneDrive, []string{"onedrive.live.com"}, []string{}, "GET"},
 	{ServiceGDrive, []string{"drive.google.com"}, []string{}, "GET"},
 	{ServiceGPhotos, []string{"photos.google.com"}, []string{}, "GET"},
-	{ServiceWebDAV, []string{}, []string{"/", "/webdav/", "/remote.php/dav/files/{user}/", "/remote.php/webdav/", "/dav/files/{user}/", "/servlet/webdav.infostore/"}, "PROPFIND"},
+	{ServiceWebDAV, []string{}, []string{"/", "/webdav/", "/originals/", "/remote.php/dav/files/{user}/", "/remote.php/webdav/", "/dav/files/{user}/", "/servlet/webdav.infostore/"}, "PROPFIND"},
 }
 
 func (h Heuristic) MatchDomain(match string) bool {
