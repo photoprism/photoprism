@@ -52,7 +52,7 @@ func showConfigOptionsAction(ctx *cli.Context) error {
 		{Start: "PHOTOPRISM_WORKERS", Title: "Index Workers"},
 		{Start: "PHOTOPRISM_READONLY", Title: "Feature Flags"},
 		{Start: "PHOTOPRISM_DEFAULT_LOCALE", Title: "Customization"},
-		{Start: "PHOTOPRISM_CDN_URL", Title: "Site Information"},
+		{Start: "PHOTOPRISM_SITE_URL", Title: "Site Information"},
 		{Start: "PHOTOPRISM_HTTPS_PROXY", Title: "Proxy Servers"},
 		{Start: "PHOTOPRISM_DISABLE_TLS", Title: "Web Server"},
 		{Start: "PHOTOPRISM_DATABASE_DRIVER", Title: "Database Connection"},

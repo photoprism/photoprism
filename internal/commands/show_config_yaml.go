@@ -47,7 +47,7 @@ func showConfigYamlAction(ctx *cli.Context) error {
 		{Start: "Workers", Title: "Index Workers"},
 		{Start: "ReadOnly", Title: "Feature Flags"},
 		{Start: "DefaultTheme", Title: "Customization"},
-		{Start: "CdnUrl", Title: "Site Information"},
+		{Start: "SiteUrl", Title: "Site Information"},
 		{Start: "HttpsProxy", Title: "Web Server"},
 		{Start: "DatabaseDriver", Title: "Database Connection"},
 		{Start: "SipsBin", Title: "File Converters"},
