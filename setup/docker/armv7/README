@@ -6,7 +6,7 @@ on ARMv7-based devices:
 
   Stable Release     : photoprism/photoprism:armv7
   Development Preview: photoprism/photoprism:preview-armv7
-  MariaDB            : linuxserver/mariadb:latest
+  MariaDB            : yobasystems/alpine-mariadb:latest
 
 Docker Hub URL:
 
