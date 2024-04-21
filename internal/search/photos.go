@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -192,7 +192,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	case sortby.Name:
 		s = s.Order("photos.photo_path, photos.photo_name, files.time_index")
 	case sortby.Random:
-		s = s.Order(sortby.RandomExpr(s.Dialect()))
+		s = s.Order(sortby.RandomExpr(s.Dialector))
 	case sortby.Default, sortby.Imported, sortby.Added:
 		s = s.Order("files.media_id")
 	default:

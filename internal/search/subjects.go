@@ -8,9 +8,9 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/txt"
 
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"gorm.io/gorm"
 )
 
 // Subjects searches subjects and returns them.

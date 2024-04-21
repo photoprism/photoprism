@@ -3,7 +3,7 @@ package query
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
@@ -118,7 +118,7 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 }
 
 // CountNewFaceMarkers counts the number of new face markers in the index.
-func CountNewFaceMarkers(size, score int) (n int) {
+func CountNewFaceMarkers(size, score int) int {
 	var f entity.Face
 
 	if err := Db().Where("face_src = ?", entity.SrcAuto).
@@ -142,11 +142,13 @@ func CountNewFaceMarkers(size, score int) (n int) {
 		q = q.Where("created_at > ?", f.CreatedAt)
 	}
 
+	n := int64(0)
+
 	if err := q.Count(&n).Error; err != nil {
 		log.Errorf("faces: %s (count new markers)", err)
 	}
 
-	return n
+	return int(n)
 }
 
 // PurgeOrphanFaces removes unused faces from the index.

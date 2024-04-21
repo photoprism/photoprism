@@ -66,3 +66,6 @@ Thumbs.db
 
 #Karma Coverage Report
 frontend/coverage/
+
+# IDE files from exotic IDEs :-)
+.vscode/

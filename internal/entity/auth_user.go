@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -44,9 +44,9 @@ type Users []User
 
 // User represents a person that may optionally log in as user.
 type User struct {
-	ID            int           `gorm:"primary_key" json:"ID" yaml:"-"`
+	ID            int           `gorm:"primaryKey" json:"ID" yaml:"-"`
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
-	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
+	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;uniqueIndex;" json:"UID" yaml:"UID"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
@@ -70,8 +70,8 @@ type User struct {
 	VerifiedAt    *time.Time    `json:"VerifiedAt,omitempty" yaml:"VerifiedAt,omitempty"`
 	ConsentAt     *time.Time    `json:"ConsentAt,omitempty" yaml:"ConsentAt,omitempty"`
 	BornAt        *time.Time    `sql:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
-	UserDetails   *UserDetails  `gorm:"PRELOAD:true;foreignkey:UserUID;association_foreignkey:UserUID;" json:"Details,omitempty" yaml:"Details,omitempty"`
-	UserSettings  *UserSettings `gorm:"PRELOAD:true;foreignkey:UserUID;association_foreignkey:UserUID;" json:"Settings,omitempty" yaml:"Settings,omitempty"`
+	UserDetails   *UserDetails  `gorm:"foreignKey:UserUID;references:UserUID;" json:"Details,omitempty" yaml:"Details,omitempty"`
+	UserSettings  *UserSettings `gorm:"foreignKey:UserUID;references:UserUID" json:"Settings,omitempty" yaml:"Settings,omitempty"`
 	UserShares    UserShares    `gorm:"-" json:"Shares,omitempty" yaml:"Shares,omitempty"`
 	ResetToken    string        `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
 	PreviewToken  string        `gorm:"type:VARBINARY(64);column:preview_token;" json:"-" yaml:"-"`
@@ -338,7 +338,7 @@ func (m *User) Updates(values interface{}) error {
 }
 
 // BeforeCreate sets a random UID if needed before inserting a new row to the database.
-func (m *User) BeforeCreate(scope *gorm.Scope) error {
+func (m *User) BeforeCreate(db *gorm.DB) (err error) {
 	if m.UserSettings != nil {
 		m.UserSettings.UserUID = m.UserUID
 	}
@@ -351,7 +351,6 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(UserPrefix)
-		Log("user", "set ref id", scope.SetColumn("RefID", m.RefID))
 	}
 
 	if rnd.IsUnique(m.UserUID, UserUID) {
@@ -359,7 +358,8 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	m.UserUID = rnd.GenerateUID(UserUID)
-	return scope.SetColumn("UserUID", m.UserUID)
+	db.Statement.SetColumn("UserUID", m.UserUID)
+	return db.Error
 }
 
 // IsExpired checks if the user account has expired.

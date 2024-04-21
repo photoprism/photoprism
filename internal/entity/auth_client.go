@@ -7,7 +7,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -29,7 +29,7 @@ type Clients []Client
 
 // Client represents a client application.
 type Client struct {
-	ClientUID    string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
+	ClientUID    string    `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false;" json:"-" yaml:"ClientUID"`
 	UserUID      string    `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName     string    `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user         *User     `gorm:"-" yaml:"-"`
@@ -74,14 +74,14 @@ func NewClient() *Client {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Client) BeforeCreate(scope *gorm.Scope) error {
+func (m *Client) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUID(m.ClientUID, ClientUID) {
 		return nil
 	}
 
 	m.ClientUID = rnd.GenerateUID(ClientUID)
-
-	return scope.SetColumn("ClientUID", m.ClientUID)
+	scope.Statement.SetColumn("ClientUID", m.ClientUID)
+	return scope.Error
 }
 
 // FindClientByUID returns the matching client or nil if it was not found.

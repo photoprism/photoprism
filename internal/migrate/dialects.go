@@ -5,7 +5,7 @@ import "sync"
 // Supported database dialects.
 const (
 	MySQL   = "mysql"
-	SQLite3 = "sqlite3"
+	SQLite3 = "sqlite"
 )
 
 var Dialects = map[string]Migrations{

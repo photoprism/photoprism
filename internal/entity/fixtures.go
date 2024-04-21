@@ -3,7 +3,7 @@ package entity
 // CreateTestFixtures inserts all known entities into the database for testing.
 func CreateTestFixtures() {
 	if err := Admin.SetPassword("photoprism"); err != nil {
-		log.Error(err)
+		log.Errorf("create fixtures: cannot set admin password: %s", err)
 	}
 
 	CreateLabelFixtures()

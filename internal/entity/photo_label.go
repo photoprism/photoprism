@@ -9,12 +9,12 @@ type PhotoLabels []PhotoLabel
 // PhotoLabel represents the many-to-many relation between Photo and label.
 // Labels are weighted by uncertainty (100 - confidence)
 type PhotoLabel struct {
-	PhotoID     uint   `gorm:"primary_key;auto_increment:false"`
-	LabelID     uint   `gorm:"primary_key;auto_increment:false;index"`
+	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false"`
+	LabelID     uint   `gorm:"primaryKey;autoIncrement:false"`
 	LabelSrc    string `gorm:"type:VARBINARY(8);"`
 	Uncertainty int    `gorm:"type:SMALLINT"`
-	Photo       *Photo `gorm:"PRELOAD:false"`
-	Label       *Label `gorm:"PRELOAD:true"`
+	Photo       *Photo
+	Label       *Label
 }
 
 // TableName returns the entity table name.
@@ -52,6 +52,9 @@ func (m *PhotoLabel) Save() error {
 
 	if m.Label != nil {
 		m.Label.SetName(m.Label.LabelName)
+		if err := m.Label.Save(); err != nil {
+			return err
+		}
 	}
 
 	return Db().Save(m).Error

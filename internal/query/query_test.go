@@ -27,7 +27,7 @@ func TestMain(m *testing.M) {
 
 func TestDbDialect(t *testing.T) {
 	t.Run("SQLite", func(t *testing.T) {
-		assert.Equal(t, "sqlite3", DbDialect())
+		assert.Equal(t, "sqlite", DbDialect())
 	})
 }
 

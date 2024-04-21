@@ -6,7 +6,7 @@ import (
 )
 
 // Map is an alias for map[string]interface{}.
-type Map map[string]interface{}
+type Map = map[string]interface{}
 
 // ModelValues extracts Values from an entity model.
 func ModelValues(m interface{}, omit ...string) (result Map, omitted []interface{}, err error) {

@@ -16,7 +16,7 @@ var DefaultPasswordCost = 12
 
 // Password represents a password hash.
 type Password struct {
-	UID       string    `gorm:"type:VARBINARY(255);primary_key;" json:"UID"`
+	UID       string    `gorm:"type:VARBINARY(255);primaryKey;" json:"UID"`
 	Hash      string    `deepcopier:"skip" gorm:"type:VARBINARY(255);" json:"Hash"`
 	CreatedAt time.Time `deepcopier:"skip" json:"CreatedAt"`
 	UpdatedAt time.Time `deepcopier:"skip" json:"UpdatedAt"`

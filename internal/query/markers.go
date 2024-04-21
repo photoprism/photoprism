@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/face"
@@ -220,31 +220,34 @@ func ResetFaceMarkerMatches() (removed int64, err error) {
 }
 
 // CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
-func CountUnmatchedFaceMarkers() (n int) {
+func CountUnmatchedFaceMarkers() int {
 	q := Db().Model(&entity.Markers{}).
 		Where("matched_at IS NULL AND marker_invalid = 0 AND embeddings_json <> ''").
 		Where("marker_type = ?", entity.MarkerFace)
 
+	n := int64(0)
 	if err := q.Count(&n).Error; err != nil {
 		log.Errorf("faces: %s (count unmatched markers)", err)
 	}
 
-	return n
+	return int(n)
 }
 
 // CountMarkers counts the number of face markers in the index.
-func CountMarkers(markerType string) (n int) {
+func CountMarkers(markerType string) int {
 	q := Db().Model(&entity.Markers{})
 
 	if markerType != "" {
 		q = q.Where("marker_type = ?", markerType)
 	}
 
+	n := int64(0)
+
 	if err := q.Count(&n).Error; err != nil {
 		log.Errorf("faces: %s (count markers)", err)
 	}
 
-	return n
+	return int(n)
 }
 
 // RemoveOrphanMarkers removes markers without an existing file.

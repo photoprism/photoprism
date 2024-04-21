@@ -32,10 +32,9 @@ func CachedAlbumByUID(uid string) (m Album, err error) {
 
 	// Find in database.
 	m = Album{}
+	r := Db().First(&m, "album_uid = ?", uid)
 
-	if r := Db().First(&m, "album_uid = ?", uid); r.RecordNotFound() {
-		return m, fmt.Errorf("album not found")
-	} else if r.Error != nil {
+	if r.Error != nil {
 		return m, r.Error
 	} else {
 		albumCache.SetDefault(m.AlbumUID, m)

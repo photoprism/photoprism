@@ -11,8 +11,9 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gosimple/slug"
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/face"
@@ -38,7 +39,7 @@ var filePrimaryMutex = sync.Mutex{}
 
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
-	ID                 uint          `gorm:"primary_key" json:"-" yaml:"-"`
+	ID                 uint          `gorm:"primaryKey" json:"-" yaml:"-"`
 	Photo              *Photo        `json:"-" yaml:"-"`
 	PhotoID            uint          `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
 	PhotoUID           string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
@@ -47,9 +48,9 @@ type File struct {
 	MediaID            *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	MediaUTC           int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
 	InstanceID         string        `gorm:"type:VARBINARY(64);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
-	FileUID            string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	FileName           string        `gorm:"type:VARBINARY(1024);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot           string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
+	FileUID            string        `gorm:"type:VARBINARY(42);uniqueIndex;" json:"UID" yaml:"UID"`
+	FileName           string        `gorm:"type:VARBINARY(1024);uniqueIndex:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileRoot           string        `gorm:"type:VARBINARY(16);default:'/';uniqueIndex:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName       string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash           string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize           int64         `json:"Size" yaml:"Size,omitempty"`
@@ -107,7 +108,7 @@ func (m File) RegenerateIndex() {
 
 	photosTable := Photo{}.TableName()
 
-	var updateWhere *gorm.SqlExpr
+	var updateWhere clause.Expr
 	var scope string
 
 	if m.PhotoID > 0 {
@@ -175,7 +176,7 @@ func PrimaryFile(photoUid string) (*File, error) {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *File) BeforeCreate(scope *gorm.Scope) error {
+func (m *File) BeforeCreate(scope *gorm.DB) error {
 	// Set MediaType based on FileName if empty.
 	if m.MediaType == "" && m.FileName != "" {
 		m.MediaType = media.FromName(m.FileName).String()
@@ -191,7 +192,9 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 		return nil
 	}
 
-	return scope.SetColumn("FileUID", rnd.GenerateUID(FileUID))
+	m.FileUID = rnd.GenerateUID(FileUID)
+	scope.Statement.SetColumn("FileUID", m.FileUID)
+	return scope.Error
 }
 
 // DownloadName returns the download file name.
@@ -378,7 +381,7 @@ func (m *File) Found() error {
 
 // AllFilesMissing returns true, if all files for the photo of this file are missing.
 func (m *File) AllFilesMissing() bool {
-	count := 0
+	count := int64(0)
 
 	if err := Db().Model(&File{}).
 		Where("photo_id = ? AND file_missing = 0", m.PhotoID).
@@ -548,7 +551,7 @@ func (m *File) RelatedPhoto() *Photo {
 
 	photo := Photo{}
 
-	UnscopedDb().Model(m).Related(&photo)
+	UnscopedDb().Model(m).Find(&photo)
 
 	return &photo
 }
@@ -766,7 +769,7 @@ func (m *File) AddFace(f face.Face, subjUid string) {
 
 // ValidFaceCount returns the number of valid face markers.
 func (m *File) ValidFaceCount() (c int) {
-	return ValidFaceCount(m.FileUID)
+	return int(ValidFaceCount(m.FileUID))
 }
 
 // UpdatePhotoFaceCount updates the faces count in the index and returns it if the file is primary.

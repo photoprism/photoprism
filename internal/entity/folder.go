@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -23,9 +23,9 @@ type Folders []Folder
 
 // Folder represents a file system directory.
 type Folder struct {
-	Path              string     `gorm:"type:VARBINARY(1024);unique_index:idx_folders_path_root;" json:"Path" yaml:"Path"`
-	Root              string     `gorm:"type:VARBINARY(16);default:'';unique_index:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
-	FolderUID         string     `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	Path              string     `gorm:"type:VARBINARY(1024);uniqueIndex:idx_folders_path_root;" json:"Path" yaml:"Path"`
+	Root              string     `gorm:"type:VARBINARY(16);default:'';uniqueIndex:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
+	FolderUID         string     `gorm:"type:VARBINARY(42);primaryKey;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderType        string     `gorm:"type:VARBINARY(16);" json:"Type" yaml:"Type,omitempty"`
 	FolderTitle       string     `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title,omitempty"`
 	FolderCategory    string     `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
@@ -53,12 +53,14 @@ func (Folder) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
+func (m *Folder) BeforeCreate(scope *gorm.DB) (err error) {
 	if rnd.IsUnique(m.FolderUID, 'd') {
-		return nil
+		return
 	}
 
-	return scope.SetColumn("FolderUID", rnd.GenerateUID('d'))
+	m.FolderUID = rnd.GenerateUID('d')
+	scope.Statement.SetColumn("FolderUID", m.FolderUID)
+	return scope.Error
 }
 
 // NewFolder creates a new file system directory entity.

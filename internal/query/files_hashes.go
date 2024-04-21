@@ -9,7 +9,7 @@ import (
 type HashMap map[string]bool
 
 // CountFileHashes counts distinct file hashes.
-func CountFileHashes() (count int) {
+func CountFileHashes() (count int64) {
 	if err := UnscopedDb().
 		Table(entity.File{}.TableName()).
 		Where("file_missing = 0 AND deleted_at IS NULL").

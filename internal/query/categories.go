@@ -8,7 +8,7 @@ type CategoryLabel struct {
 }
 
 func CategoryLabels(limit, offset int) (results []CategoryLabel) {
-	s := Db().NewScope(nil).DB()
+	s := Db()
 
 	s = s.Table("categories").
 		Select("label_name AS name").
