@@ -406,9 +406,12 @@ func (c *Config) connectDb() error {
 	}
 
 	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
 
-	sqlDB.SetMaxIdleConns(4)
-	sqlDB.SetMaxOpenConns(256)
+	sqlDB.SetMaxOpenConns(c.DatabaseConns())
+	sqlDB.SetMaxIdleConns(c.DatabaseConnsIdle())
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	// Check database server version.

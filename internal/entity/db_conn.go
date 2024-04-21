@@ -121,11 +121,11 @@ func gormConfig() *gorm.Config {
 		Logger: logger.New(
 			log,
 			logger.Config{
-				SlowThreshold:             time.Second,  // Slow SQL threshold
-				LogLevel:                  logger.Error, // Log level
-				IgnoreRecordNotFoundError: true,         // Ignore ErrRecordNotFound error for logger
-				ParameterizedQueries:      false,        // Don't include params in the SQL log
-				Colorful:                  false,        // Disable color
+				SlowThreshold:             time.Second,   // Slow SQL threshold
+				LogLevel:                  logger.Silent, // Log level
+				IgnoreRecordNotFoundError: true,          // Ignore ErrRecordNotFound error for logger
+				ParameterizedQueries:      true,          // Don't include params in the SQL log
+				Colorful:                  false,         // Disable color
 			},
 		),
 		// Set UTC as the default for created and updated timestamps.
