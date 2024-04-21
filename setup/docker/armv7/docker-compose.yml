@@ -31,6 +31,7 @@ services:
   photoprism:
     ## Use photoprism/photoprism:preview-armv7 for testing preview builds:
     image: photoprism/photoprism:armv7
+    platform: "linux/arm"
     ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
     ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
@@ -103,23 +104,29 @@ services:
       # - "~/Import:/photoprism/import"                  # *Optional* base folder from which files can be imported to originals
       - "./storage:/photoprism/storage"                  # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
 
-  ## Database Server (recommended)
+  ## MariaDB Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     image: yobasystems/alpine-mariadb:latest
+    platform: "linux/arm"
     restart: unless-stopped
     stop_grace_period: 5s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    command: --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
-      - "./database:/config" # DO NOT REMOVE
+      - "./database:/var/lib/mysql" # DO NOT REMOVE
+    ## For a list of supported environment variables, see https://hub.docker.com/r/yobasystems/alpine-mariadb/
     environment:
-      MYSQL_ROOT_PASSWORD: insecure
-      MYSQL_DATABASE: photoprism
-      MYSQL_USER: photoprism
-      MYSQL_PASSWORD: insecure
+      MYSQL_AUTO_UPGRADE: "1"
+      MYSQL_INITDB_SKIP_TZINFO: "1"
+      MYSQL_ROOT_PASSWORD: "insecure"
+      MYSQL_DATABASE: "photoprism"
+      MYSQL_USER: "photoprism"
+      MYSQL_PASSWORD: "insecure"
+      MYSQL_CHARSET: "utf8mb4"
 
   ## Watchtower upgrades services automatically (optional)
   ## see https://docs.photoprism.app/getting-started/updates/#watchtower

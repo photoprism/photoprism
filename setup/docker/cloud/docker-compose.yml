@@ -191,7 +191,7 @@ services:
       - "./traefik.yaml:/etc/traefik/traefik.yaml"
       - "./certs/:/certs/"
 
-  ## Database Server (recommended)
+  ## MariaDB Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     image: mariadb:11

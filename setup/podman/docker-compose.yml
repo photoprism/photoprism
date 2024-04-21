@@ -105,7 +105,7 @@ services:
       - "./import:/photoprism/import"          # *optional* folder from which files can be imported to originals
       - "./storage:/photoprism/storage"        # *writable* storage folder for cache, database, and sidecar files (never remove)
 
-  ## Database Server (recommended)
+  ## MariaDB Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:

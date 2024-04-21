@@ -6,7 +6,7 @@ services:
   photoprism:
     build: .
     image: photoprism/photoprism:develop
-    platform: "arm"
+    platform: "linux/arm"
     depends_on:
       - mariadb
       - dummy-webdav
@@ -87,11 +87,12 @@ services:
   ## Docs: https://mariadb.com/docs/reference/
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
-    image: mariadb:10.11
+    image: yobasystems/alpine-mariadb:latest
+    platform: "linux/arm"
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: --port=4001 --innodb-strict-mode=1 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --port=4001 --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     expose:
       - "4001"
     ports:
@@ -99,12 +100,13 @@ services:
     volumes:
       - "./scripts/sql/mariadb-init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
-      MARIADB_AUTO_UPGRADE: "1"
-      MARIADB_INITDB_SKIP_TZINFO: "1"
-      MARIADB_DATABASE: "photoprism"
-      MARIADB_USER: "photoprism"
-      MARIADB_PASSWORD: "photoprism"
-      MARIADB_ROOT_PASSWORD: "photoprism"
+      MYSQL_AUTO_UPGRADE: "1"
+      MYSQL_INITDB_SKIP_TZINFO: "1"
+      MYSQL_ROOT_PASSWORD: "photoprism"
+      MYSQL_DATABASE: "photoprism"
+      MYSQL_USER: "photoprism"
+      MYSQL_PASSWORD: "photoprism"
+      MYSQL_CHARSET: "utf8mb4"
 
   ## Dummy WebDAV Server
   dummy-webdav:
