@@ -78,7 +78,7 @@ require (
 	github.com/prometheus/common v0.53.0
 )
 
-require github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2
+require github.com/dustinkirkland/golang-petname v0.0.0-20240422154211-76c06c4bde6b
 
 require golang.org/x/text v0.14.0
 

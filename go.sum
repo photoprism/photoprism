@@ -105,8 +105,8 @@ github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 h1:DilThiXje
 github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349/go.mod h1:4GC5sXji84i/p+irqghpPFZBF8tRN/Q7+700G0/DLe8=
 github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
 github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
-github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2 h1:S6Dco8FtAhEI/qkg/00H6RdEGC+MCy5GPiQ+xweNRFE=
-github.com/dustinkirkland/golang-petname v0.0.0-20231002161417-6a283f1aaaf2/go.mod h1:8AuBTZBRSFqEYBPYULd+NN474/zZBLP+6WeT5S9xlAc=
+github.com/dustinkirkland/golang-petname v0.0.0-20240422154211-76c06c4bde6b h1:+0Xqob+onh+4l9TSWmFyZ4JHqGUiCy5P1muyH8Evfpw=
+github.com/dustinkirkland/golang-petname v0.0.0-20240422154211-76c06c4bde6b/go.mod h1:8AuBTZBRSFqEYBPYULd+NN474/zZBLP+6WeT5S9xlAc=
 github.com/emersion/go-ical v0.0.0-20220601085725-0864dccc089f/go.mod h1:2MKFUgfNMULRxqZkadG1Vh44we3y5gJAtTBlVsx1BKQ=
 github.com/emersion/go-vcard v0.0.0-20230815062825-8fda7d206ec9/go.mod h1:HMJKR5wlh/ziNp+sHEDV2ltblO4JD2+IdDOWtGcQBTM=
 github.com/emersion/go-webdav v0.5.0 h1:Ak/BQLgAihJt/UxJbCsEXDPxS5Uw4nZzgIMOq3rkKjc=
