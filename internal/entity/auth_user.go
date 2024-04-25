@@ -988,7 +988,7 @@ func (m *User) Validate() (err error) {
 
 	// Check user role.
 	if acl.UserRoles[m.UserRole] == "" {
-		return fmt.Errorf("user role %s is invalid", clean.LogQuote(m.UserRole))
+		return fmt.Errorf("unsupported user role")
 	}
 
 	// Check if the username is unique.
