@@ -483,13 +483,13 @@
         </v-list-tile>
 
         <v-list-tile v-show="featMembership" :to="{ name: 'upgrade' }" class="nav-membership" @click.stop="">
-          <v-list-tile-action :title="$gettext('Support Our Mission')">
+          <v-list-tile-action :title="$gettext('Upgrade')">
             <v-icon>diamond</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
             <v-list-tile-title>
-              <translate key="Support Our Mission">Support Our Mission</translate>
+              <translate key="Upgrade">Upgrade</translate>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -828,7 +828,7 @@ export default {
       }
     },
     onInfo() {
-      if (this.isSponsor && this.config.legalUrl) {
+      if (this.config.legalUrl) {
         window.open(this.config.legalUrl, "_blank").focus();
       } else {
         this.$router.push({ name: "about" });

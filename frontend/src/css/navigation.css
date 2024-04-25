@@ -70,7 +70,7 @@ nav .v-list__tile__title.title {
     transform: translateX(-50%);
     min-width: 120px;
     padding: 1px 8px;
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.5);
     margin: 0;
     text-align: center;
     border-radius: 5px 5px 0 0;
