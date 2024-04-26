@@ -16,6 +16,7 @@ const (
 	Favorites   = "favorites"
 	Name        = "name"
 	NameReverse = "name_reverse"
+	Title	    = "title"
 	Path        = "path"
 	Slug        = "slug"
 	Category    = "category"

@@ -136,6 +136,7 @@ export default {
           { value: "added", text: this.$gettext("Recently Added") },
           { value: "edited", text: this.$gettext("Recently Edited") },
           { value: "name", text: this.$gettext("File Name") },
+          { value: "title", text: this.$gettext("Title") },
           { value: "size", text: this.$gettext("File Size") },
           { value: "duration", text: this.$gettext("Video Duration") },
           { value: "relevance", text: this.$gettext("Most Relevant") },

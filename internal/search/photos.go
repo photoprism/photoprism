@@ -191,6 +191,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Order("photos.photo_color, photos.cell_id, files.file_diff, files.photo_id, files.time_index")
 	case sortby.Name:
 		s = s.Order("photos.photo_path, photos.photo_name, files.time_index")
+	case sortby.Title:
+		s = s.Order("photos.photo_title, photos.photo_name, files.time_index")
 	case sortby.Random:
 		s = s.Order(sortby.RandomExpr(s.Dialect()))
 	case sortby.Default, sortby.Imported, sortby.Added:
