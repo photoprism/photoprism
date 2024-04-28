@@ -22,7 +22,7 @@ import (
 )
 
 // SQL Databases.
-// TODO: PostgresSQL support requires upgrading GORM, so generic column data types can be used.
+// TODO: PostgreSQL support requires upgrading GORM, so generic column data types can be used.
 const (
 	MySQL    = "mysql"
 	MariaDB  = "mariadb"

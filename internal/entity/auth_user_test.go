@@ -238,7 +238,7 @@ func TestUser_UpdateUsername(t *testing.T) {
 		if err := m.UpdateUsername("admin"); err == nil {
 			t.Fatal("error expected")
 		} else {
-			t.Logf("expected errror: %s", err)
+			t.Logf("expected error: %s", err)
 		}
 	})
 	t.Run("Success", func(t *testing.T) {

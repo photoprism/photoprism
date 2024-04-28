@@ -185,7 +185,7 @@ func TestDuplicate_Purge(t *testing.T) {
 			t.Fatal(err)
 		}
 		if err := duplicate.Find(); err == nil {
-			t.Log("Dulicate deleted")
+			t.Log("Duplicate deleted")
 		}
 	})
 }
