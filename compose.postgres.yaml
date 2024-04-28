@@ -2,7 +2,7 @@
 ## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
-  ## PhotoPrism Development Environment (PostgresSQL)
+  ## PhotoPrism Development Environment (PostgreSQL)
   # ATTENTION: PostgreSQL is NOT supported yet as Gorm (our ORM library) needs to be upgraded first.
   # The current Gorm version does NOT support compatible general data types:
   # https://github.com/photoprism/photoprism/issues/47

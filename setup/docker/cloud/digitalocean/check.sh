@@ -481,7 +481,7 @@ function checkCloudInit {
         CI="\e[32m[PASS]\e[0m Cloud-init is installed.\n"
         ((PASS++))
     else
-        CI="\e[41m[FAIL]\e[0m No valid verison of cloud-init was found.\n"
+        CI="\e[41m[FAIL]\e[0m No valid version of cloud-init was found.\n"
         ((FAIL++))
         STATUS=2
     fi
