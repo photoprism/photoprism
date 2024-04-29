@@ -202,4 +202,63 @@ func TestCreateOAuthToken(t *testing.T) {
 		t.Logf("BODY: %s", w.Body.String())
 		assert.Equal(t, http.StatusUnauthorized, w.Code)
 	})
+	t.Run("GrantPasswordNoSession", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateOAuthToken(router)
+
+		var method = "POST"
+		var path = "/api/v1/oauth/token"
+
+		data := url.Values{
+			"grant_type":  {authn.GrantPassword.String()},
+			"client_name": {"AppPasswordAlice"},
+			"username":    {"alice"},
+			"password":    {"Alice123!"},
+			"scope":       {"*"},
+		}
+
+		req, _ := http.NewRequest(method, path, strings.NewReader(data.Encode()))
+		req.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		t.Logf("Header: %s", w.Header())
+		t.Logf("BODY: %s", w.Body.String())
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+	t.Run("GrantPasswordSuccess", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+
+		CreateOAuthToken(router)
+
+		var method = "POST"
+		var path = "/api/v1/oauth/token"
+
+		data := url.Values{
+			"grant_type":  {authn.GrantPassword.String()},
+			"client_name": {"AppPasswordAlice"},
+			"username":    {"alice"},
+			"password":    {"Alice123!"},
+			"scope":       {"*"},
+		}
+
+		req, _ := http.NewRequest(method, path, strings.NewReader(data.Encode()))
+		req.Header.Add(header.ContentType, header.ContentTypeForm)
+		req.Header.Add(header.XAuthToken, sessId)
+
+		w := httptest.NewRecorder()
+		app.ServeHTTP(w, req)
+
+		t.Logf("Header: %s", w.Header())
+		t.Logf("BODY: %s", w.Body.String())
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
 }

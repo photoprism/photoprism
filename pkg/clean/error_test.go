@@ -23,4 +23,7 @@ func TestLogError(t *testing.T) {
 	t.Run("Invalid", func(t *testing.T) {
 		assert.Equal(t, "??https://?host?:?port?/?path??", Error(errors.New("${https://<host>:<port>/<path>}")))
 	})
+	t.Run("Quotes", func(t *testing.T) {
+		assert.Equal(t, "the quick 'brown fox", Error(errors.New("the quick `brown fox")))
+	})
 }
