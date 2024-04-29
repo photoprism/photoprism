@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/face"
@@ -25,7 +25,7 @@ const (
 
 // Marker represents an image marker point.
 type Marker struct {
-	MarkerUID      string          `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	MarkerUID      string          `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
 	FileUID        string          `gorm:"type:VARBINARY(42);index;default:'';" json:"FileUID" yaml:"FileUID"`
 	MarkerType     string          `gorm:"type:VARBINARY(8);default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:VARBINARY(8);default:'';" json:"Src" yaml:"Src,omitempty"`
@@ -34,10 +34,10 @@ type Marker struct {
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	SubjUID        string          `gorm:"type:VARBINARY(42);index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`
 	SubjSrc        string          `gorm:"type:VARBINARY(8);index:idx_markers_subj_uid_src;default:'';" json:"SubjSrc" yaml:"SubjSrc,omitempty"`
-	subject        *Subject        `gorm:"foreignkey:SubjUID;association_foreignkey:SubjUID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
+	subject        *Subject        `gorm:"foreignKey:SubjUID;"`
 	FaceID         string          `gorm:"type:VARBINARY(64);index;" json:"FaceID" yaml:"FaceID,omitempty"`
 	FaceDist       float64         `gorm:"default:-1;" json:"FaceDist" yaml:"FaceDist,omitempty"`
-	face           *Face           `gorm:"foreignkey:FaceID;association_foreignkey:ID;association_autoupdate:false;association_autocreate:false;association_save_reference:false"`
+	face           *Face           `gorm:"foreignKey:FaceID;"`
 	EmbeddingsJSON json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingsJSON,omitempty"`
 	embeddings     face.Embeddings `gorm:"-" yaml:"-"`
 	LandmarksJSON  json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"LandmarksJSON,omitempty"`
@@ -60,12 +60,14 @@ func (Marker) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
+func (m *Marker) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.MarkerUID, 'm') {
 		return nil
 	}
 
-	return scope.SetColumn("MarkerUID", rnd.GenerateUID('m'))
+	m.MarkerUID = rnd.GenerateUID('m')
+	scope.Statement.SetColumn("MarkerUID", m.MarkerUID)
+	return scope.Error
 }
 
 // NewMarker creates a new entity.
@@ -585,7 +587,7 @@ func (m *Marker) RefreshPhotos() error {
 // Matched updates the match timestamp.
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimePointer()
-	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).Save(m).Error
 }
 
 // Top returns the top Y coordinate as float64.

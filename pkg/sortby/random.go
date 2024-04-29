@@ -1,19 +1,18 @@
 package sortby
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 const (
 	MySQL   = "mysql"
-	SQLite3 = "sqlite3"
+	SQLite3 = "sqlite"
 )
 
 // RandomExpr returns the name of the random function depending on the SQL dialect.
-func RandomExpr(dialect gorm.Dialect) *gorm.SqlExpr {
-	switch dialect.GetName() {
+func RandomExpr(dialect gorm.Dialector) clause.Expr {
+	switch dialect.Name() {
 	case MySQL:
 		// A seed integer can be passed as an argument, e.g. "RAND(2342)", to generate
 		// reproducible pseudo-random values, see https://mariadb.com/kb/en/rand/.

@@ -1,10 +1,10 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/maps"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"gorm.io/gorm"
 )
 
 // altCountryNames defines mapping between different names for the same country
@@ -19,8 +19,8 @@ type Countries []Country
 
 // Country represents a country location, used for labeling photos.
 type Country struct {
-	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`
-	CountrySlug        string `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
+	ID                 string `gorm:"type:VARBINARY(2);primaryKey" json:"ID" yaml:"ID"`
+	CountrySlug        string `gorm:"type:VARBINARY(160);uniqueIndex;" json:"Slug" yaml:"-"`
 	CountryName        string `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
 	CountryDescription string `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
 	CountryNotes       string `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
@@ -104,7 +104,7 @@ func FirstOrCreateCountry(m *Country) *Country {
 }
 
 // AfterCreate sets the New column used for database callback
-func (m *Country) AfterCreate(scope *gorm.Scope) error {
+func (m *Country) AfterCreate(scope *gorm.DB) error {
 	m.New = true
 	return nil
 }

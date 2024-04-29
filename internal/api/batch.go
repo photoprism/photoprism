@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/entity"

@@ -9,7 +9,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -36,7 +36,7 @@ type Sessions []Session
 
 // Session represents a User session.
 type Session struct {
-	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
+	ID            string          `gorm:"type:VARBINARY(2048);primaryKey;autoIncrement:false;" json:"-" yaml:"ID"`
 	authToken     string          `gorm:"-" yaml:"-"`
 	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName      string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
@@ -226,10 +226,9 @@ func (m *Session) Updates(values interface{}) error {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Session) BeforeCreate(scope *gorm.Scope) error {
+func (m *Session) BeforeCreate(scope *gorm.DB) error {
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(SessionPrefix)
-		Log("session", "set ref id", scope.SetColumn("RefID", m.RefID))
 	}
 
 	if rnd.IsSessionID(m.ID) {
@@ -237,8 +236,8 @@ func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	m.Regenerate()
-
-	return scope.SetColumn("ID", m.ID)
+	scope.Statement.SetColumn("ID", m.ID)
+	return scope.Error
 }
 
 // SetClient updates the client of this session.

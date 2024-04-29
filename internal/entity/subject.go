@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -19,11 +19,11 @@ var subjectMutex = sync.Mutex{}
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjUID      string     `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"UID" yaml:"UID"`
+	SubjUID      string     `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
 	SubjType     string     `gorm:"type:VARBINARY(8);default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
 	SubjSrc      string     `gorm:"type:VARBINARY(8);default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
 	SubjSlug     string     `gorm:"type:VARBINARY(160);index;default:'';" json:"Slug" yaml:"-"`
-	SubjName     string     `gorm:"size:160;unique_index;default:'';" json:"Name" yaml:"Name"`
+	SubjName     string     `gorm:"size:160;uniqueIndex;default:'';" json:"Name" yaml:"Name"`
 	SubjAlias    string     `gorm:"size:160;default:'';" json:"Alias" yaml:"Alias"`
 	SubjAbout    string     `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
 	SubjBio      string     `gorm:"size:2048;" json:"Bio" yaml:"Bio,omitempty"`
@@ -47,22 +47,24 @@ func (Subject) TableName() string {
 }
 
 // BeforeCreate creates a random uid if needed before inserting a new row to the database.
-func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
+func (m *Subject) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.SubjUID, 'j') {
 		return nil
 	}
 
-	return scope.SetColumn("SubjUID", rnd.GenerateUID('j'))
+	m.SubjUID = rnd.GenerateUID('j')
+	scope.Statement.SetColumn("SubjUID", m.SubjUID)
+	return scope.Error
 }
 
 // AfterSave is a hook that updates the name cache after saving.
-func (m *Subject) AfterSave() (err error) {
+func (m *Subject) AfterSave(db *gorm.DB) (err error) {
 	SubjNames.Set(m.SubjUID, m.SubjName)
 	return
 }
 
 // AfterFind is a hook that updates the name cache after querying.
-func (m *Subject) AfterFind() (err error) {
+func (m *Subject) AfterFind(db *gorm.DB) (err error) {
 	SubjNames.Set(m.SubjUID, m.SubjName)
 	return
 }

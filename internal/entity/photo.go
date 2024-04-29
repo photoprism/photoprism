@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/event"
@@ -52,12 +52,12 @@ func MapKey(takenAt time.Time, cellId string) string {
 
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
-	ID               uint          `gorm:"primary_key" yaml:"-"`
+	ID               uint          `gorm:"primaryKey" yaml:"-"`
 	UUID             string        `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time     `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" json:"TakenAtLocal" yaml:"TakenAtLocal"`
 	TakenSrc         string        `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	PhotoUID         string        `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
+	PhotoUID         string        `gorm:"type:VARBINARY(42);uniqueIndex;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string        `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
 	TypeSrc          string        `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
 	PhotoTitle       string        `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
@@ -97,15 +97,15 @@ type Photo struct {
 	CameraSerial     string        `gorm:"type:VARBINARY(160);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string        `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`
 	LensID           uint          `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
-	Details          *Details      `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Details" yaml:"Details"`
-	Camera           *Camera       `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Camera" yaml:"-"`
-	Lens             *Lens         `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
-	Cell             *Cell         `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Cell" yaml:"-"`
-	Place            *Place        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Place" yaml:"-"`
-	Keywords         []Keyword     `json:"-" yaml:"-"`
-	Albums           []Album       `json:"Albums" yaml:"-"`
+	Details          *Details      `json:"Details" yaml:"Details"`
+	Camera           *Camera       `json:"Camera" yaml:"-"`
+	Lens             *Lens         `json:"Lens" yaml:"-"`
+	Cell             *Cell         `json:"Cell" yaml:"-"`
+	Place            *Place        `json:"Place" yaml:"-"`
+	Keywords         []Keyword     `gorm:"many2many:photos_keywords;foreignKey:ID;joinForeignKey:PhotoID;References:ID;joinReferences:KeywordID" json:"-" yaml:"-"`
+	Albums           []Album       `gorm:"many2many:photos_albums;foreignKey:PhotoUID;References:AlbumUID" json:"Albums" yaml:"-"`
 	Files            []File        `yaml:"-"`
-	Labels           []PhotoLabel  `yaml:"-"`
+	Labels           []PhotoLabel  `gorm:"foreignKey:PhotoID" yaml:"-"`
 	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt        time.Time     `yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time     `yaml:"UpdatedAt,omitempty"`
@@ -378,17 +378,12 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
+func (m *Photo) BeforeCreate(scope *gorm.DB) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := TimeStamp()
 
-		if err := scope.SetColumn("TakenAt", now); err != nil {
-			return err
-		}
-
-		if err := scope.SetColumn("TakenAtLocal", now); err != nil {
-			return err
-		}
+		m.TakenAt = now
+		m.TakenAtLocal = now
 	}
 
 	if rnd.IsUnique(m.PhotoUID, PhotoUID) {
@@ -396,22 +391,17 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	m.PhotoUID = rnd.GenerateUID(PhotoUID)
-
-	return scope.SetColumn("PhotoUID", m.PhotoUID)
+	scope.Statement.SetColumn("PhotoUID", m.PhotoUID)
+	return scope.Error
 }
 
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
-func (m *Photo) BeforeSave(scope *gorm.Scope) error {
+func (m *Photo) BeforeSave(scope *gorm.DB) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := TimeStamp()
 
-		if err := scope.SetColumn("TakenAt", now); err != nil {
-			return err
-		}
-
-		if err := scope.SetColumn("TakenAtLocal", now); err != nil {
-			return err
-		}
+		m.TakenAt = now
+		m.TakenAtLocal = now
 	}
 
 	return nil
@@ -499,7 +489,7 @@ func (m *Photo) PreloadFiles() {
 
 // PreloadKeywords prepares gorm scope to retrieve photo keywords
 func (m *Photo) PreloadKeywords() {
-	q := Db().NewScope(nil).DB().
+	q := Db().
 		Table("keywords").
 		Select(`keywords.*`).
 		Joins("JOIN photos_keywords pk ON pk.keyword_id = keywords.id AND pk.photo_id = ?", m.ID).
@@ -510,7 +500,7 @@ func (m *Photo) PreloadKeywords() {
 
 // PreloadAlbums prepares gorm scope to retrieve photo albums
 func (m *Photo) PreloadAlbums() {
-	q := Db().NewScope(nil).DB().
+	q := Db().
 		Table("albums").
 		Select(`albums.*`).
 		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = ? AND pa.hidden = 0", m.PhotoUID).
@@ -620,7 +610,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 	}
 
-	Db().Set("gorm:auto_preload", true).Model(m).Related(&m.Labels)
+	Db().Model(m).Find(&m.Labels)
 }
 
 // SetDescription changes the photo description if not empty and from the same source.
@@ -709,7 +699,7 @@ func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure,
 
 // AllFilesMissing returns true, if all files for this photo are missing.
 func (m *Photo) AllFilesMissing() bool {
-	count := 0
+	count := int64(0)
 
 	if err := Db().Model(&File{}).
 		Where("photo_id = ? AND file_missing = 0", m.ID).

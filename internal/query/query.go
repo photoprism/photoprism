@@ -25,16 +25,16 @@ Additional information can be found in our Developer Guide:
 package query
 
 import (
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"gorm.io/gorm"
 )
 
 var log = event.Log
 
 const (
 	MySQL   = "mysql"
-	SQLite3 = "sqlite3"
+	SQLite3 = "sqlite"
 )
 
 // Cols represents a list of database columns.
@@ -71,7 +71,7 @@ func UnscopedDb() *gorm.DB {
 
 // DbDialect returns the sql database dialect name.
 func DbDialect() string {
-	return Db().Dialect().GetName()
+	return Db().Dialector.Name()
 }
 
 // BatchSize returns the maximum query parameter number based on the current sql database dialect.

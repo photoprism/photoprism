@@ -1,10 +1,10 @@
 package entity
 
 import (
+	"os"
 	"testing"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,8 +19,12 @@ func TestUTC(t *testing.T) {
 		}
 	})
 	t.Run("RunGorm", func(t *testing.T) {
+		db := InitTestDb(
+			os.Getenv("PHOTOPRISM_TEST_DRIVER"),
+			os.Getenv("PHOTOPRISM_TEST_DSN"))
+
 		utc := UTC()
-		utcGorm := gorm.NowFunc()
+		utcGorm := db.db.Config.NowFunc()
 
 		t.Logf("NOW: %s, %s", utc.String(), utcGorm.String())
 

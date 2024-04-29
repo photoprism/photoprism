@@ -3,8 +3,8 @@ package entity
 import (
 	"sync"
 
-	"github.com/jinzhu/gorm"
 	"github.com/photoprism/photoprism/pkg/rnd"
+	"gorm.io/gorm"
 )
 
 var photoMergeMutex = sync.Mutex{}

@@ -53,12 +53,12 @@ func clientsResetAction(ctx *cli.Context) error {
 		db := conf.Db()
 
 		// Drop existing auth_clients table.
-		if err := db.DropTableIfExists(entity.Client{}).Error; err != nil {
-			return err
+		if err := db.Migrator().DropTable(entity.Client{}); err != nil {
+			log.Error(err)
 		}
 
 		// Re-create auth_clients.
-		if err := db.CreateTable(entity.Client{}).Error; err != nil {
+		if err := db.Migrator().CreateTable(entity.Client{}); err != nil {
 			return err
 		}
 

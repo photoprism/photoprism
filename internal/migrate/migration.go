@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Migration represents a database schema migration.
 type Migration struct {
-	ID         string     `gorm:"size:16;primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	ID         string     `gorm:"size:16;primaryKey;autoIncrement:false;" json:"ID" yaml:"ID"`
 	Dialect    string     `gorm:"size:16;" json:"Dialect" yaml:"Dialect,omitempty"`
 	Stage      string     `gorm:"size:16;" json:"Stage" yaml:"Stage,omitempty"`
 	Error      string     `gorm:"size:255;" json:"Error" yaml:"Error,omitempty"`
@@ -111,7 +111,7 @@ func (m *Migration) Finish(db *gorm.DB) error {
 	finished := time.Now().UTC().Truncate(time.Second)
 	m.FinishedAt = &finished
 	m.Error = ""
-	return db.Model(m).Updates(Map{"FinishedAt": m.FinishedAt, "Error": m.Error}).Error
+	return db.Model(m).Save(m).Error
 }
 
 // Execute runs the migration.

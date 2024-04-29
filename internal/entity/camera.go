@@ -17,8 +17,8 @@ type Cameras []Camera
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
-	ID                uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	CameraSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
+	ID                uint       `gorm:"primaryKey" json:"ID" yaml:"ID"`
+	CameraSlug        string     `gorm:"type:VARBINARY(160);uniqueIndex;" json:"Slug" yaml:"-"`
 	CameraName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
 	CameraMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
 	CameraModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`

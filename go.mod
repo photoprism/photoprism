@@ -19,14 +19,12 @@ require (
 	github.com/google/open-location-code/go v0.0.0-20240410091707-7dc3b4c76be0
 	github.com/gorilla/websocket v1.5.1
 	github.com/gosimple/slug v1.14.0
-	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
 	github.com/klauspost/cpuid/v2 v2.2.7
 	github.com/leandro-lugaresi/hub v1.1.1
 	github.com/leonelquinteros/gotext v1.6.0
-	github.com/lib/pq v1.10.9 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mandykoh/prism v0.35.2
 	github.com/manifoldco/promptui v0.9.0
@@ -59,10 +57,7 @@ require github.com/olekukonko/tablewriter v0.0.5
 
 require github.com/google/uuid v1.6.0
 
-require (
-	github.com/chzyer/readline v1.5.1 // indirect
-	github.com/zitadel/oidc v1.13.5
-)
+require github.com/chzyer/readline v1.5.1 // indirect
 
 require github.com/gabriel-vasile/mimetype v1.4.3
 
@@ -70,8 +65,6 @@ require (
 	golang.org/x/sync v0.7.0
 	golang.org/x/time v0.5.0
 )
-
-require github.com/go-ldap/ldap/v3 v3.4.8
 
 require (
 	github.com/prometheus/client_golang v1.19.0
@@ -82,10 +75,14 @@ require github.com/dustinkirkland/golang-petname v0.0.0-20240422154211-76c06c4bd
 
 require golang.org/x/text v0.14.0
 
-require github.com/pquerna/otp v1.4.0
+require (
+	github.com/pquerna/otp v1.4.0
+	gorm.io/driver/mysql v1.5.6
+	gorm.io/driver/sqlite v1.5.5
+	gorm.io/gorm v1.25.9
+)
 
 require (
-	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/boombuler/barcode v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
@@ -96,15 +93,10 @@ require (
 	github.com/dsoprea/go-logging v0.0.0-20200710184922-b02d349568dd // indirect
 	github.com/dsoprea/go-utility/v2 v2.0.0-20221003172846-a3e1774ef349 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-asn1-ber/asn1-ber v1.5.5 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/gorilla/mux v1.8.1 // indirect
-	github.com/gorilla/schema v1.2.1 // indirect
-	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -121,13 +113,9 @@ require (
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
-	github.com/zitadel/logging v0.5.0 // indirect
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a // indirect
-	golang.org/x/oauth2 v0.18.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
-	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

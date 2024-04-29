@@ -18,8 +18,8 @@ import (
 
 // Passcode represents a two-factor authentication key.
 type Passcode struct {
-	UID          string     `gorm:"type:VARBINARY(255);primary_key;" json:"UID"`
-	KeyType      string     `gorm:"size:64;default:'';primary_key;" json:"Type" yaml:"Type"`
+	UID          string     `gorm:"type:VARBINARY(255);primaryKey;" json:"UID"`
+	KeyType      string     `gorm:"size:64;default:'';primaryKey;" json:"Type" yaml:"Type"`
 	KeyURL       string     `gorm:"size:2048;default:'';column:key_url;" json:"-" yaml:"-"`
 	key          *otp.Key   `gorm:"-" yaml:"-"`
 	RecoveryCode string     `gorm:"size:255;default:'';" json:"-" yaml:"-"`

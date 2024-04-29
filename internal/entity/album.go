@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
@@ -32,8 +32,8 @@ type Albums []Album
 
 // Album represents a photo album
 type Album struct {
-	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
-	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	ID               uint        `gorm:"primaryKey;" json:"ID" yaml:"-"`
+	AlbumUID         string      `gorm:"type:VARBINARY(42);uniqueIndex;" json:"UID" yaml:"UID"`
 	ParentUID        string      `gorm:"type:VARBINARY(42);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
 	AlbumSlug        string      `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug"`
 	AlbumPath        string      `gorm:"type:VARCHAR(1024);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
@@ -61,7 +61,7 @@ type Album struct {
 	UpdatedAt        time.Time   `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 	PublishedAt      *time.Time  `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt        *time.Time  `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
-	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID;association_foreignkey:AlbumUID;" json:"-" yaml:"Photos,omitempty"`
+	Photos           PhotoAlbums `gorm:"foreignKey:AlbumUID" json:"-" yaml:"Photos,omitempty"`
 }
 
 // AfterUpdate flushes the album cache.
@@ -419,14 +419,14 @@ func (m *Album) Find() *Album {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Album) BeforeCreate(scope *gorm.Scope) error {
+func (m *Album) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUID(m.AlbumUID, AlbumUID) {
 		return nil
 	}
 
 	m.AlbumUID = rnd.GenerateUID(AlbumUID)
-
-	return scope.SetColumn("AlbumUID", m.AlbumUID)
+	scope.Statement.SetColumn("AlbumUID", m.AlbumUID)
+	return scope.Error
 }
 
 // String returns the id or name as string.
@@ -753,7 +753,6 @@ func (m *Album) Restore() error {
 	if !m.Deleted() {
 		return nil
 	}
-
 	if err := UnscopedDb().Model(m).Update("DeletedAt", nil).Error; err != nil {
 		return err
 	}
@@ -796,7 +795,7 @@ func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
 
 		entry := PhotoAlbum{AlbumUID: m.AlbumUID, PhotoUID: uid, Hidden: false}
 
-		if err := entry.Save(); err != nil {
+		if err := entry.Create(); err != nil {
 			log.Errorf("album: %s (add to album %s)", err.Error(), m)
 		} else {
 			added = append(added, entry)

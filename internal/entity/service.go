@@ -33,7 +33,7 @@ type Services []Service
 // - AccSync enables automatic file synchronization, see SyncDownload and SyncUpload.
 // - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
 type Service struct {
-	ID            uint   `gorm:"primary_key"`
+	ID            uint   `gorm:"primaryKey"`
 	AccName       string `gorm:"type:VARCHAR(160);"`
 	AccOwner      string `gorm:"type:VARCHAR(160);"`
 	AccURL        string `gorm:"type:VARCHAR(255);"`
@@ -83,6 +83,10 @@ func AddService(form form.Service) (model *Service, err error) {
 	return model, err
 }
 
+func (m *Service) IsNew() bool {
+	return m.CreatedAt.IsZero()
+}
+
 // LogErr updates the service error count and message.
 func (m *Service) LogErr(err error) error {
 	if err == nil {
@@ -104,7 +108,7 @@ func (m *Service) LogErr(err error) error {
 
 // ResetErrors resets the service and related file error messages and counters.
 func (m *Service) ResetErrors(share, sync bool) error {
-	if !share && !sync || Db().NewRecord(m) {
+	if !share && !sync || m.IsNew() {
 		return nil
 	}
 
@@ -173,7 +177,7 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// Reset error counters if account already exists.
-	if !Db().NewRecord(m) {
+	if !m.IsNew() {
 		Log("service", "reset errors", m.ResetErrors(m.AccShare, m.AccSync))
 	}
 

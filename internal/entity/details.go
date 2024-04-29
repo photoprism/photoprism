@@ -12,7 +12,7 @@ var photoDetailsMutex = sync.Mutex{}
 
 // Details stores additional metadata fields for each photo to improve search performance.
 type Details struct {
-	PhotoID      uint      `gorm:"primary_key;auto_increment:false" yaml:"-"`
+	PhotoID      uint      `gorm:"primaryKey;autoIncrement:false" yaml:"-"`
 	Keywords     string    `gorm:"type:VARCHAR(2048);" json:"Keywords" yaml:"Keywords"`
 	KeywordsSrc  string    `gorm:"type:VARBINARY(8);" json:"KeywordsSrc" yaml:"KeywordsSrc,omitempty"`
 	Notes        string    `gorm:"type:VARCHAR(2048);" json:"Notes" yaml:"Notes,omitempty"`
