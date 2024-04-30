@@ -133,6 +133,24 @@ var ClientFixtures = ClientMap{
 		AuthEnabled:  true,
 		LastActive:   0,
 	},
+	"invalid_method": {
+		ClientUID:    "cs7pvt5h8rw9he34",
+		UserUID:      "",
+		UserName:     "",
+		user:         nil,
+		ClientName:   "Invalid",
+		ClientRole:   acl.RoleNone.String(),
+		ClientType:   authn.ClientUnknown,
+		ClientURL:    "",
+		CallbackURL:  "",
+		AuthProvider: authn.ProviderClient.String(),
+		AuthMethod:   "invalid",
+		AuthScope:    "*",
+		AuthExpires:  unix.Hour,
+		AuthTokens:   2,
+		AuthEnabled:  true,
+		LastActive:   0,
+	},
 }
 
 // CreateClientFixtures inserts known entities into the database for testing.
