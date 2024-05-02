@@ -190,10 +190,34 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 
 	// Check two-factor authentication, if enabled.
 	if method = user.Method(); method.Is(authn.Method2FA) {
-		if valid, _, passcodeErr := user.VerifyPasscode(f.Passcode()); passcodeErr != nil {
-			return provider, method, passcodeErr
+		if code := f.Passcode(); code == "" {
+			err = authn.ErrPasscodeRequired
+
+			if s != nil {
+				event.AuditInfo([]string{clientIp, "session %s", "login as %s", err.Error()}, s.RefID, clean.LogQuote(username))
+				event.LoginError(clientIp, "api", username, s.UserAgent, err.Error())
+				s.Status = http.StatusUnauthorized
+			}
+
+			return provider, method, err
+		} else if valid, _, codeErr := user.VerifyPasscode(code); codeErr != nil {
+			if s != nil {
+				event.AuditWarn([]string{clientIp, "session %s", "login as %s", codeErr.Error()}, s.RefID, clean.LogQuote(username))
+				event.LoginError(clientIp, "api", username, s.UserAgent, codeErr.Error())
+				s.Status = http.StatusUnauthorized
+			}
+
+			return provider, method, codeErr
 		} else if !valid {
-			return provider, method, authn.ErrInvalidPasscode
+			err = authn.ErrInvalidPasscode
+
+			if s != nil {
+				event.AuditErr([]string{clientIp, "session %s", "login as %s", err.Error()}, s.RefID, clean.LogQuote(username))
+				event.LoginError(clientIp, "api", username, s.UserAgent, err.Error())
+				s.Status = http.StatusUnauthorized
+			}
+
+			return provider, method, err
 		}
 	} else if method == authn.MethodUndefined {
 		method = authn.MethodDefault
