@@ -25,6 +25,7 @@ export default class Page {
     this.cardLocation = Selector("button.action-location", { timeout: 7000 });
     this.usernameInput = Selector(".input-username input", { timeout: 7000 });
     this.passwordInput = Selector(".input-password input", { timeout: 7000 });
+    this.passcodeInput = Selector(".input-code input", { timeout: 7000 });
     this.togglePasswordMode = Selector(".v-input__icon--append", { timeout: 7000 });
     this.loginAction = Selector(".action-confirm", { timeout: 7000 });
   }
