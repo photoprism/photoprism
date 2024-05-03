@@ -159,7 +159,7 @@
               <v-flex xs12 class="pa-2">
                 <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-actions disable-initial-sort class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
                   <template #items="props">
-                    <tr :data-name="props.item.UserName">
+                    <tr :data-name="props.item.ClientName">
                       <td class="text-selectable text-xs-left">
                         {{ props.item.ClientName }}
                       </td>
