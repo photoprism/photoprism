@@ -4,6 +4,7 @@ import "strings"
 
 const (
 	ClipShortType = 8
+	ClipIPv6      = 39
 	ClipType      = 64
 )
 

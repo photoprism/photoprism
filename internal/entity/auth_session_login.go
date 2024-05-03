@@ -122,7 +122,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 			message := authn.ErrInvalidUsername.Error()
 
 			if s != nil {
-				event.AuditErr([]string{clientIp, "session %s", "login as %s with app password", message}, s.RefID, clean.LogQuote(username))
+				event.AuditErr([]string{clientIp, "session %s", "login as %s", "app password", message}, s.RefID, clean.LogQuote(username))
 				event.LoginError(clientIp, "api", username, s.UserAgent, message)
 				s.Status = http.StatusUnauthorized
 			}
@@ -137,7 +137,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 			}
 
 			if s != nil {
-				event.AuditErr([]string{clientIp, "session %s", "login as %s with app password", message}, s.RefID, clean.LogQuote(username))
+				event.AuditErr([]string{clientIp, "session %s", "login as %s", "app password", message}, s.RefID, clean.LogQuote(username))
 				event.LoginError(clientIp, "api", username, s.UserAgent, message)
 				s.Status = http.StatusUnauthorized
 			}
@@ -165,7 +165,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 					s.SessExpires = authSess.SessExpires
 				}
 
-				event.AuditInfo([]string{clientIp, "session %s", "login as %s with app password", authn.Succeeded}, s.RefID, clean.LogQuote(username))
+				event.AuditInfo([]string{clientIp, "session %s", "login as %s", "app password", authn.Succeeded}, s.RefID, clean.LogQuote(username))
 				event.LoginInfo(clientIp, "api", username, s.UserAgent)
 			}
 
@@ -195,7 +195,6 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 
 			if s != nil {
 				event.AuditInfo([]string{clientIp, "session %s", "login as %s", err.Error()}, s.RefID, clean.LogQuote(username))
-				event.LoginError(clientIp, "api", username, s.UserAgent, err.Error())
 				s.Status = http.StatusUnauthorized
 			}
 
