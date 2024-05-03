@@ -11,7 +11,7 @@ import Album from "../../page-model/album";
 import Settings from "../../page-model/settings";
 import Library from "../../page-model/library";
 
-fixture`Test settings`.page`${testcafeconfig.url}`.beforeEach(async (t) => {
+fixture`Test general settings`.page`${testcafeconfig.url}`.beforeEach(async (t) => {
   await page.login("admin", "photoprism");
 });
 
