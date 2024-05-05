@@ -76,7 +76,7 @@ msgstr "เกี่ยวกับ"
 msgid "Access Token"
 msgstr "โทเค็นการเข้าถึง"
 
-#: src/component/navigation.vue:104 src/component/navigation.vue:2040
+#: src/component/navigation.vue:106 src/component/navigation.vue:2059
 #: src/dialog/share/upload.vue:108 src/model/service.js:94
 #: src/model/user.js:168 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -209,7 +209,7 @@ msgstr "ชื่ออัลบั้ม"
 
 #: src/app/routes.js:175 src/component/album/toolbar.vue:56
 #: src/component/navigation.vue:156 src/component/navigation.vue:166
-#: src/component/navigation.vue:572 src/component/navigation.vue:4
+#: src/component/navigation.vue:576 src/component/navigation.vue:4
 #: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:65
 msgid "Albums"
 msgstr "อัลบั้ม"
@@ -1128,7 +1128,7 @@ msgstr "ไฟล์"
 msgid "Filename"
 msgstr "ชื่อไฟล์"
 
-#: src/component/navigation.vue:590 src/dialog/photo/edit.vue:66
+#: src/component/navigation.vue:594 src/dialog/photo/edit.vue:66
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:295
 msgid "Files"
 msgstr "ไฟล์"
@@ -1319,7 +1319,7 @@ msgstr "รวมไฟล์ภาพ RAW เมื่อดาวน์โห�
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "รวมไฟล์ sidecar เมื่อดาวน์โหลดสแต็คและไฟล์เก็บถาวร"
 
-#: src/component/navigation.vue:596 src/page/library.vue:35
+#: src/component/navigation.vue:600 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "ดัชนี"
@@ -1456,7 +1456,7 @@ msgstr "แอลดีเอพี/ค.ศ"
 msgid "Learn more"
 msgstr "เรียนรู้เพิ่มเติม"
 
-#: src/component/navigation.vue:618
+#: src/component/navigation.vue:622
 msgid "Legal Information"
 msgstr "ข้อมูลทางกฎหมาย"
 
@@ -1535,16 +1535,16 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr "ข้อความบันทึกจะปรากฏที่นี่ทุกครั้งที่ PhotoPrism เจอไฟล์เสีย หรือมีปัญหาอื่นๆ ที่อาจเกิดขึ้น"
 
 #: src/component/navigation.vue:479 src/component/navigation.vue:1778
-#: src/component/navigation.vue:2092
+#: src/component/navigation.vue:2111
 msgid "Login"
 msgstr "เข้าสู่ระบบ"
 
-#: src/component/navigation.vue:534 src/component/navigation.vue:1929
-#: src/component/navigation.vue:1960 src/component/navigation.vue:2011
+#: src/component/navigation.vue:538 src/component/navigation.vue:1948
+#: src/component/navigation.vue:1979 src/component/navigation.vue:2030
 msgid "Logout"
 msgstr "ออกจากระบบ"
 
-#: src/component/navigation.vue:602 src/page/library.vue:58
+#: src/component/navigation.vue:606 src/page/library.vue:58
 #: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "บันทึก"
@@ -1792,7 +1792,7 @@ msgstr "ยังไม่มีอะไรให้ดูที่นี่ �
 msgid "Nothing was found."
 msgstr "ไม่พบสิ่งใด"
 
-#: src/component/navigation.vue:505 src/component/navigation.vue:1863
+#: src/component/navigation.vue:509 src/component/navigation.vue:1882
 msgid "Offline"
 msgstr "ออฟไลน์"
 
@@ -1905,7 +1905,7 @@ msgid "Password changed"
 msgstr "รหัสผ่านเปลี่ยน"
 
 #: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:223
-#: src/component/navigation.vue:578 src/component/navigation.vue:885
+#: src/component/navigation.vue:582 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:53 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:245 src/page/settings/general.vue:143
 msgid "People"
@@ -1965,7 +1965,7 @@ msgstr "สถานที่และเวลา"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
 #: src/app/routes.js:290 src/component/navigation.vue:289
-#: src/component/navigation.vue:299 src/component/navigation.vue:584
+#: src/component/navigation.vue:299 src/component/navigation.vue:588
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
 #: src/page/settings/general.vue:112 src/page/settings/general.vue:497
@@ -2120,7 +2120,7 @@ msgstr "สีแดง"
 msgid "Register"
 msgstr "ลงทะเบียน"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:2025
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:2044
 #: src/component/photo/toolbar.vue:86 src/dialog/reload.vue:12
 #: src/page/albums.vue:117 src/page/labels.vue:93
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:78
@@ -2128,7 +2128,7 @@ msgstr "ลงทะเบียน"
 msgid "Reload"
 msgstr "โหลดซ้ำ"
 
-#: src/component/navigation.vue:146 src/dialog/reload.vue:26
+#: src/component/navigation.vue:148 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:96 src/page/settings/library.vue:48
 msgid "Reloading…"
 msgstr "กำลังโหลดซ้ำ…"
@@ -2227,7 +2227,7 @@ msgid "Scope"
 msgstr "ขอบเขต"
 
 #: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:566 src/component/navigation.vue:4
+#: src/component/navigation.vue:570 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:49
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:77 src/page/places.vue:46
@@ -2304,7 +2304,7 @@ msgstr "เซสชัน"
 #: src/component/navigation.vue:414 src/component/navigation.vue:424
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
-#: src/component/navigation.vue:2058
+#: src/component/navigation.vue:2077
 msgid "Settings"
 msgstr "การตั้งค่า"
 
@@ -2474,8 +2474,7 @@ msgstr "ผู้ดูแลระบบขั้นสูง"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "การสนับสนุนบริการเพิ่มเติม เช่น Google ไดรฟ์ จะถูกเพิ่มเข้ามาเรื่อยๆ"
 
-#: src/component/navigation.vue:491 src/component/navigation.vue:1818
-#: src/dialog/sponsor.vue:7
+#: src/component/navigation.vue:495 src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr "สนับสนุนภารกิจของเรา"
 
@@ -2646,7 +2645,7 @@ msgid "Unknown"
 msgstr "ไม่รู้จัก"
 
 #: src/page/settings/account.vue:40 src/page/settings/account.vue:48
-#: src/component/navigation.vue:93 src/page/settings/account.vue:39
+#: src/component/navigation.vue:95 src/page/settings/account.vue:39
 #: src/page/settings/account.vue:47
 msgid "Unregistered"
 msgstr "ไม่ได้ลงทะเบียน"
@@ -2689,7 +2688,8 @@ msgid "Updating stacks"
 msgstr "กำลังอัปเดตกอง"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:608 src/component/navigation.vue:51
+#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "อัปเกรด"
@@ -2700,7 +2700,7 @@ msgstr "อัปเกรด"
 msgid "Upgrade Now"
 msgstr "อัพเกรดเดี๋ยวนี้"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2076
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2095
 #: src/component/photo/toolbar.vue:172 src/dialog/share/upload.vue:34
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:135
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
@@ -2766,7 +2766,7 @@ msgstr "ใช้รหัสกู้คืนต่อไปนี้เพื
 msgid "User"
 msgstr "ผู้ใช้"
 
-#: src/component/navigation.vue:613
+#: src/component/navigation.vue:617
 msgid "User Guide"
 msgstr "คู่มือผู้ใช้"
 

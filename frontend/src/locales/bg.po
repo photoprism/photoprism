@@ -76,7 +76,7 @@ msgstr "За"
 msgid "Access Token"
 msgstr "Токен за достъп"
 
-#: src/component/navigation.vue:104 src/component/navigation.vue:2040
+#: src/component/navigation.vue:106 src/component/navigation.vue:2059
 #: src/dialog/share/upload.vue:108 src/model/service.js:94
 #: src/model/user.js:168 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
@@ -209,7 +209,7 @@ msgstr "Име на албум"
 
 #: src/app/routes.js:175 src/component/album/toolbar.vue:56
 #: src/component/navigation.vue:156 src/component/navigation.vue:166
-#: src/component/navigation.vue:572 src/component/navigation.vue:4
+#: src/component/navigation.vue:576 src/component/navigation.vue:4
 #: src/component/navigation.vue:652 src/dialog/photo/edit/info.vue:65
 msgid "Albums"
 msgstr "Албуми"
@@ -1128,7 +1128,7 @@ msgstr "Файл"
 msgid "Filename"
 msgstr "Файл"
 
-#: src/component/navigation.vue:590 src/dialog/photo/edit.vue:66
+#: src/component/navigation.vue:594 src/dialog/photo/edit.vue:66
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:295
 msgid "Files"
 msgstr "Файлове"
@@ -1319,7 +1319,7 @@ msgstr "Включване на файлове с RAW изображения п�
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Включване на странични файлове при изтегляне на стекове и архиви."
 
-#: src/component/navigation.vue:596 src/page/library.vue:35
+#: src/component/navigation.vue:600 src/page/library.vue:35
 #: src/page/settings/library.vue:6
 msgid "Index"
 msgstr "Индекс"
@@ -1456,7 +1456,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Научете повече"
 
-#: src/component/navigation.vue:618
+#: src/component/navigation.vue:622
 msgid "Legal Information"
 msgstr "Правна информация"
 
@@ -1535,16 +1535,16 @@ msgid "Log messages appear here whenever PhotoPrism comes across broken files, o
 msgstr "Съобщенията в дневника се появяват тук, когато PhotoPrism се натъкне на повредени файлове или има други потенциални проблеми."
 
 #: src/component/navigation.vue:479 src/component/navigation.vue:1778
-#: src/component/navigation.vue:2092
+#: src/component/navigation.vue:2111
 msgid "Login"
 msgstr "Вход"
 
-#: src/component/navigation.vue:534 src/component/navigation.vue:1929
-#: src/component/navigation.vue:1960 src/component/navigation.vue:2011
+#: src/component/navigation.vue:538 src/component/navigation.vue:1948
+#: src/component/navigation.vue:1979 src/component/navigation.vue:2030
 msgid "Logout"
 msgstr "Излизане от системата"
 
-#: src/component/navigation.vue:602 src/page/library.vue:58
+#: src/component/navigation.vue:606 src/page/library.vue:58
 #: src/page/settings/general.vue:451
 msgid "Logs"
 msgstr "Дневници"
@@ -1792,7 +1792,7 @@ msgstr "Все още няма нищо за гледане тук. Бъдете
 msgid "Nothing was found."
 msgstr "Нищо не беше намерено."
 
-#: src/component/navigation.vue:505 src/component/navigation.vue:1863
+#: src/component/navigation.vue:509 src/component/navigation.vue:1882
 msgid "Offline"
 msgstr "Офлайн"
 
@@ -1905,7 +1905,7 @@ msgid "Password changed"
 msgstr "Паролата е променена"
 
 #: src/app/routes.js:328 src/app/routes.js:352 src/component/navigation.vue:223
-#: src/component/navigation.vue:578 src/component/navigation.vue:885
+#: src/component/navigation.vue:582 src/component/navigation.vue:885
 #: src/dialog/photo/edit.vue:53 src/dialog/photo/edit.vue:6
 #: src/dialog/photo/edit.vue:245 src/page/settings/general.vue:143
 msgid "People"
@@ -1965,7 +1965,7 @@ msgstr "Място & Време"
 
 #: src/app/routes.js:263 src/app/routes.js:269 src/app/routes.js:275
 #: src/app/routes.js:290 src/component/navigation.vue:289
-#: src/component/navigation.vue:299 src/component/navigation.vue:584
+#: src/component/navigation.vue:299 src/component/navigation.vue:588
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1120
 #: src/page/settings/general.vue:112 src/page/settings/general.vue:497
@@ -2120,7 +2120,7 @@ msgstr "Червено"
 msgid "Register"
 msgstr "Регистрация"
 
-#: src/component/album/toolbar.vue:64 src/component/navigation.vue:2025
+#: src/component/album/toolbar.vue:64 src/component/navigation.vue:2044
 #: src/component/photo/toolbar.vue:86 src/dialog/reload.vue:12
 #: src/page/albums.vue:117 src/page/labels.vue:93
 #: src/page/library/browse.vue:91 src/page/library/errors.vue:78
@@ -2128,7 +2128,7 @@ msgstr "Регистрация"
 msgid "Reload"
 msgstr "Презареждане"
 
-#: src/component/navigation.vue:146 src/dialog/reload.vue:26
+#: src/component/navigation.vue:148 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:96 src/page/settings/library.vue:48
 msgid "Reloading…"
 msgstr "Презареждане…"
@@ -2227,7 +2227,7 @@ msgid "Scope"
 msgstr "Обхват"
 
 #: src/component/navigation.vue:65 src/component/navigation.vue:75
-#: src/component/navigation.vue:566 src/component/navigation.vue:4
+#: src/component/navigation.vue:570 src/component/navigation.vue:4
 #: src/component/navigation.vue:326 src/component/photo/toolbar.vue:49
 #: src/page/albums.vue:96 src/page/labels.vue:72 src/page/library/errors.vue:59
 #: src/page/people/recognized.vue:77 src/page/places.vue:46
@@ -2304,7 +2304,7 @@ msgstr "Сесии"
 #: src/component/navigation.vue:414 src/component/navigation.vue:424
 #: src/component/navigation.vue:8 src/component/navigation.vue:18
 #: src/component/navigation.vue:4 src/component/navigation.vue:1551
-#: src/component/navigation.vue:2058
+#: src/component/navigation.vue:2077
 msgid "Settings"
 msgstr "Настройки"
 
@@ -2474,8 +2474,7 @@ msgstr "Супер администратор"
 msgid "Support for additional services, like Google Drive, will be added over time."
 msgstr "Поддръжката на допълнителни услуги, като например Google Drive, ще бъде добавена с течение на времето."
 
-#: src/component/navigation.vue:491 src/component/navigation.vue:1818
-#: src/dialog/sponsor.vue:7
+#: src/component/navigation.vue:495 src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
 msgstr "Подкрепете нашата мисия"
 
@@ -2646,7 +2645,7 @@ msgid "Unknown"
 msgstr "Неизвестно"
 
 #: src/page/settings/account.vue:40 src/page/settings/account.vue:48
-#: src/component/navigation.vue:93 src/page/settings/account.vue:39
+#: src/component/navigation.vue:95 src/page/settings/account.vue:39
 #: src/page/settings/account.vue:47
 msgid "Unregistered"
 msgstr "Нерегистриран"
@@ -2689,7 +2688,8 @@ msgid "Updating stacks"
 msgstr "Актуализиране на стекове"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:608 src/component/navigation.vue:51
+#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
 msgstr "Надграждане"
@@ -2700,7 +2700,7 @@ msgstr "Надграждане"
 msgid "Upgrade Now"
 msgstr "Актуализирайте сега"
 
-#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2076
+#: src/component/album/toolbar.vue:192 src/component/navigation.vue:2095
 #: src/component/photo/toolbar.vue:172 src/dialog/share/upload.vue:34
 #: src/dialog/upload.vue:8 src/dialog/upload.vue:60 src/page/albums.vue:135
 #: src/page/library/import.vue:38 src/page/settings/general.vue:231
@@ -2766,7 +2766,7 @@ msgstr "Използвайте следния код за възстановяв
 msgid "User"
 msgstr "Потребител"
 
-#: src/component/navigation.vue:613
+#: src/component/navigation.vue:617
 msgid "User Guide"
 msgstr "Ръководство за потребителя"
 
