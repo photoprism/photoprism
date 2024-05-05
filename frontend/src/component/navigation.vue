@@ -484,12 +484,16 @@
 
         <v-list-tile v-show="featMembership" :to="{ name: 'upgrade' }" class="nav-membership" @click.stop="">
           <v-list-tile-action :title="$gettext('Upgrade')">
-            <v-icon>diamond</v-icon>
+            <v-icon v-if="isPro">verified</v-icon>
+            <v-icon v-else>diamond</v-icon>
           </v-list-tile-action>
 
           <v-list-tile-content>
-            <v-list-tile-title>
+            <v-list-tile-title v-if="isPro">
               <translate key="Upgrade">Upgrade</translate>
+            </v-list-tile-title>
+            <v-list-tile-title v-else>
+              <translate key="Support Our Mission">Support Our Mission</translate>
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -662,6 +666,7 @@ export default {
     }
 
     const isDemo = this.$config.get("demo");
+    const isPro = !!this.$config.values?.ext["pro"];
     const isPublic = this.$config.get("public");
     const isReadOnly = this.$config.get("readonly");
     const isRestricted = this.$config.deny("photos", "access_library");
@@ -686,6 +691,7 @@ export default {
       isRestricted: isRestricted,
       isMini: localStorage.getItem("last_navigation_mode") !== "false" || isRestricted,
       isDemo: isDemo,
+      isPro: isPro,
       isPublic: isPublic,
       isReadOnly: isReadOnly,
       isAdmin: this.$session.isAdmin(),
