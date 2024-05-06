@@ -482,7 +482,7 @@
           </v-list-tile-content>
         </v-list-tile>
 
-        <v-list-tile v-show="featMembership" :to="{ name: 'upgrade' }" class="nav-membership" @click.stop="">
+        <v-list-tile v-show="featMembership" :to="{ name: 'upgrade' }" class="nav-upgrade" @click.stop="">
           <v-list-tile-action :title="$gettext('Upgrade')">
             <v-icon v-if="isPro">verified</v-icon>
             <v-icon v-else>diamond</v-icon>
@@ -607,19 +607,20 @@
               <translate>Logs</translate>
             </router-link>
           </div>
-          <div v-if="featUpgrade" class="menu-action nav-membership">
+          <div class="menu-action nav-manual">
+            <a href="https://link.photoprism.app/docs" target="_blank">
+              <v-icon>auto_stories</v-icon>
+              <translate>User Guide</translate>
+            </a>
+          </div>
+          <div v-if="featUpgrade" class="menu-action nav-upgrade">
             <router-link :to="{ name: 'upgrade' }">
-              <v-icon>diamond</v-icon>
+              <v-icon v-if="isPro">verified</v-icon>
+              <v-icon v-else>diamond</v-icon>
               <translate>Upgrade</translate>
             </router-link>
           </div>
-          <div class="menu-action nav-manual"
-            ><a href="https://link.photoprism.app/docs" target="_blank">
-              <v-icon>auto_stories</v-icon>
-              <translate>User Guide</translate>
-            </a></div
-          >
-          <div v-if="config.legalUrl && isSponsor" class="menu-action nav-legal">
+          <div v-if="config.legalUrl" class="menu-action nav-legal">
             <a :href="config.legalUrl" target="_blank">
               <v-icon>info</v-icon>
               <translate>Legal Information</translate>

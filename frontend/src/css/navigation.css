@@ -70,7 +70,7 @@ nav .v-list__tile__title.title {
     transform: translateX(-50%);
     min-width: 120px;
     padding: 1px 8px;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(255, 255, 255, 0.46);
     margin: 0;
     text-align: center;
     border-radius: 5px 5px 0 0;
@@ -78,9 +78,10 @@ nav .v-list__tile__title.title {
 
 #legal-info a,
 #legal-info span {
+    user-select: none;
     white-space: nowrap;
     text-decoration: none;
-    font-size: 12px;
+    font-size: 11px;
     color: #000;
 }
 
