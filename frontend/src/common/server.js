@@ -67,6 +67,7 @@ export function restart(uri) {
         .then(() => {
           if (uri) {
             window.location.href = uri;
+            window.location.reload();
           } else {
             window.location.reload();
           }
