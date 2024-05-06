@@ -17,7 +17,7 @@ func TestNewFeedback(t *testing.T) {
 
 func TestSendFeedback(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/new.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
+		c := NewConfig("test", "testdata/new.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 
 		feedback := Feedback{
 			Category:      "Bug Report",
@@ -27,7 +27,7 @@ func TestSendFeedback(t *testing.T) {
 			UserEmail:     "test@example.com",
 			UserAgent:     "",
 			ApiKey:        "123456",
-			ClientVersion: "0.0.0",
+			ClientVersion: "test",
 			ClientOS:      "linux",
 			ClientArch:    "amd64",
 			ClientCPU:     2,

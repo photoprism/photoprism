@@ -8,14 +8,14 @@ import (
 
 func TestConfig_MapKey(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/new.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
+		c := NewConfig("test", "testdata/new.yml", "zqkunt22r0bewti9", "test", "PhotoPrism/Test", "test")
 		assert.Equal(t, "", c.MapKey())
 	})
 }
 
 func TestConfig_Sponsor(t *testing.T) {
 	t.Run("Status", func(t *testing.T) {
-		c := NewConfig("0.0.0", "testdata/new.yml", "zr58wrg19i8jfjam", "test", "PhotoPrism/Test", "test")
+		c := NewConfig("test", "testdata/new.yml", "zr58wrg19i8jfjam", "test", "PhotoPrism/Test", "test")
 		c.Key = "0e159b773c6fb779c3bf6c8ba6e322abf559dbaf"
 		c.Secret = "23f0024975bd65ade06edcc8191f7fcc"
 		assert.False(t, c.Sponsor())
