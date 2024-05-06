@@ -52,7 +52,7 @@ require (
 
 require (
 	github.com/go-xmlfmt/xmlfmt v1.1.2 // indirect
-	golang.org/x/image v0.15.0
+	golang.org/x/image v0.16.0
 )
 
 require github.com/olekukonko/tablewriter v0.0.5
@@ -80,7 +80,7 @@ require (
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 
-require golang.org/x/text v0.14.0
+require golang.org/x/text v0.15.0
 
 require github.com/pquerna/otp v1.4.0
 
