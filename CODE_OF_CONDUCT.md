@@ -36,7 +36,7 @@ We encourage all community members to resolve problems on their own whenever pos
 
 Our community standards will be enforced as necessary to protect everyone's well-being and to ensure that our discussion forums, chat rooms, and other infrastructure can be used as intended.
 
-Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky), especially if your tone is harsh to begin with. In serious cases, we will provide a link to this Code of Conduct to avoid misunderstandings. We also reserve the right to delete rants, personal attacks, spam, and unsolicited advertising from our community forums.
+Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky), especially if you seem reckless or [surprisingly harsh](https://github.com/photoprism/photoprism/issues/281#issuecomment-1207233135). In serious cases, we will provide a link to this Code of Conduct to avoid misunderstandings. We also reserve the right to delete rants, personal attacks, spam, and unsolicited advertising from our community forums.
 
 Getting a simple **\*plonk\***[^1] in response finally signals that we have lost hope and you're being ignored according to **Rule &#35;3**. This old tradition from Usenet days is as time-saving as it is clear. It is not meant in a disrespectful way.
 
