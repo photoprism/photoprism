@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-21 20:22+0000\n"
+"PO-Revision-Date: 2024-05-02 13:40+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -273,7 +273,7 @@ msgstr "Toutes les années"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Vous pouvez également charger les fichiers directement vers un serveur WebDAV comme Nextcloud."
+msgstr "Vous pouvez également envoyer les fichiers directement vers un serveur WebDAV comme Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:165
 msgid "Altitude"
@@ -562,7 +562,7 @@ msgstr "Client"
 
 #: src/options/auth.js:24
 msgid "Client Credentials"
-msgstr "Références du client"
+msgstr "Identifiants du client"
 
 #: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
@@ -645,7 +645,7 @@ msgstr "Poursuivre"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
-msgstr "Saisissez votre mot de passe pour confirmer l'action et poursuivre :"
+msgstr "Contributeur"
 
 #: src/page/library/index.vue:179
 msgid "Converting"
@@ -752,7 +752,7 @@ msgstr "Tout supprimer"
 
 #: src/page/library/index.vue:143
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr "Supprimer les entrées d'index, les fichiers side-car et les vignettes orphelins."
+msgstr "Supprimer les entrées d'index, les vignettes, et les fichiers side-car orphelins."
 
 #: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:570
@@ -822,7 +822,7 @@ msgstr "Désactiver le géocodage inverse et les cartes."
 
 #: src/page/settings/advanced.vue:606
 msgid "Disables vector graphics support."
-msgstr "Désactive la prise en charge des graphiques vectoriels."
+msgstr "Désactive la prise en charge des images vectorielles."
 
 #: src/page/settings/advanced.vue:582
 msgid "Disables video transcoding and thumbnail extraction."
@@ -856,7 +856,7 @@ msgstr "Ne pas utiliser Darktable pour convertir les fichers RAW."
 
 #: src/page/settings/advanced.vue:560
 msgid "Don't use ImageMagick to convert images."
-msgstr "N'utilisez pas ImageMagick pour convertir les images."
+msgstr "Ne pas utiliser ImageMagick pour convertir les images."
 
 #: src/page/settings/advanced.vue:516
 msgid "Don't use RawTherapee to convert RAW images."
@@ -1428,7 +1428,7 @@ msgstr "Langue"
 
 #: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
 msgid "Last Active"
-msgstr "Dernier actif"
+msgstr "Dernière activité"
 
 #: src/page/admin/users.vue:45
 msgid "Last Login"
@@ -1616,7 +1616,7 @@ msgstr "Métadonnées"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr "Métrique"
+msgstr "Métriques"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1986,7 +1986,7 @@ msgstr "Attention à ne pas envoyer de photos privées, illégales ou offensante
 
 #: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
-msgstr "Veuillez ne pas charger de photos choquantes."
+msgstr "Veuillez ne pas envoyer de photos choquantes."
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2155,7 +2155,7 @@ msgstr "Supprimez les fichiers importés pour économiser l'espace de stockage. 
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
-msgstr "La demande a échoué - êtes-vous hors ligne ?"
+msgstr "La requête a échoué - êtes-vous hors ligne ?"
 
 #: src/common/api.js:74
 msgid "Request failed - invalid response"
@@ -2175,7 +2175,7 @@ msgstr "Résolution"
 #: src/page/connect.vue:65 src/page/connect.vue:62
 #: src/page/settings/advanced.vue:156
 msgid "Restart"
-msgstr "Redémarrage"
+msgstr "Redémarrer"
 
 #: src/component/photo/clipboard.vue:227
 msgid "Restore"
@@ -2293,7 +2293,7 @@ msgstr "Session"
 
 #: src/page/admin/sessions.vue:25
 msgid "Session ID"
-msgstr "ID de la session"
+msgstr "Identifiant de session"
 
 #: src/page/admin.vue:45
 msgid "Sessions"
@@ -2722,15 +2722,15 @@ msgstr "Échec du chargement"
 
 #: src/dialog/admin/users/edit.vue:418
 msgid "Upload Folder"
-msgstr "Télécharger le dossier"
+msgstr "Envoyer le dossier"
 
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
-msgstr "Charger des fichiers locaux"
+msgstr "Envoyer des fichiers locaux"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
-msgstr "Charger via le protocole WebDAV et partager des liens avec des amis."
+msgstr "Envoyer via le protocole WebDAV et partager des liens avec des amis."
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2758,7 +2758,7 @@ msgstr "Utiliser les préréglages"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr "Utilisez le code de récupération suivant pour accéder à votre compte si vous ne parvenez pas à obtenir de votre application d'authentification un code de vérification valide :"
+msgstr "Utilisez le code de récupération suivant pour accéder à votre compte lorsque vous ne pouvez pas générer un code de vérification valide avec l'application d'identification :"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2789,11 +2789,11 @@ msgstr "Utilisateurs"
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
 #: src/model/photo.js:876 src/model/photo.js:884 src/options/options.js:366
 msgid "Vector"
-msgstr "Vecteur"
+msgstr "Vectoriel"
 
 #: src/component/navigation.vue:109
 msgid "Vectors"
-msgstr "Vecteurs"
+msgstr "Vectoriels"
 
 #: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:116
 msgid "Verification Code"
