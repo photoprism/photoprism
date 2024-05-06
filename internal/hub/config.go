@@ -35,13 +35,13 @@ const (
 
 // Config represents backend api credentials for maps & geodata.
 type Config struct {
-	Version   string     `json:"version" yaml:"Version"`
+	Version   string     `json:"version" yaml:"-"`
 	FileName  string     `json:"-" yaml:"-"`
 	Key       string     `json:"key" yaml:"Key"`
 	Secret    string     `json:"secret" yaml:"Secret"`
 	Session   string     `json:"session" yaml:"Session"`
-	session   *Session   `json:"-" yaml:"-"`
-	sessionMu sync.Mutex `json:"-" yaml:"-"`
+	session   *Session   `yaml:"-"`
+	sessionMu sync.Mutex `yaml:"-"`
 	Status    Status     `json:"status" yaml:"Status"`
 	Serial    string     `json:"serial" yaml:"Serial"`
 	Env       string     `json:"-" yaml:"-"`
