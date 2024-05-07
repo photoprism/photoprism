@@ -62,6 +62,13 @@ func TestOAuthRevokeToken_Validate(t *testing.T) {
 		assert.NoError(t, m.Validate())
 		assert.Equal(t, AccessToken, m.TokenTypeHint)
 	})
+	t.Run("AccessTokenInvalid", func(t *testing.T) {
+		m := OAuthRevokeToken{
+			Token:         "abc",
+			TokenTypeHint: "access_token",
+		}
+		assert.Error(t, m.Validate())
+	})
 	t.Run("SessionID", func(t *testing.T) {
 		m := OAuthRevokeToken{
 			Token:         rnd.SessionID(rnd.AuthToken()),
@@ -70,6 +77,28 @@ func TestOAuthRevokeToken_Validate(t *testing.T) {
 		assert.NoError(t, m.Validate())
 		assert.Equal(t, SessionID, m.TokenTypeHint)
 	})
+	t.Run("SessionIDInvalid", func(t *testing.T) {
+		m := OAuthRevokeToken{
+			Token:         "abc",
+			TokenTypeHint: "session_id",
+		}
+		assert.Error(t, m.Validate())
+	})
+	t.Run("RefID", func(t *testing.T) {
+		m := OAuthRevokeToken{
+			Token:         "sessxkkcabce",
+			TokenTypeHint: "ref_id",
+		}
+		assert.NoError(t, m.Validate())
+		assert.Equal(t, "ref_id", m.TokenTypeHint)
+	})
+	t.Run("RefIDInvalid", func(t *testing.T) {
+		m := OAuthRevokeToken{
+			Token:         "abc",
+			TokenTypeHint: "ref_id",
+		}
+		assert.Error(t, m.Validate())
+	})
 	t.Run("NoTokenTypeHint", func(t *testing.T) {
 		m := OAuthRevokeToken{
 			Token:         rnd.AuthToken(),
@@ -77,5 +106,36 @@ func TestOAuthRevokeToken_Validate(t *testing.T) {
 		}
 		assert.NoError(t, m.Validate())
 		assert.Equal(t, AccessToken, m.TokenTypeHint)
+	})
+	t.Run("TypeHintEmptyRefID", func(t *testing.T) {
+		m := OAuthRevokeToken{
+			Token:         "sessxkkcabce",
+			TokenTypeHint: "",
+		}
+		assert.NoError(t, m.Validate())
+		assert.Equal(t, "ref_id", m.TokenTypeHint)
+	})
+	t.Run("TypeHintEmptySessionID", func(t *testing.T) {
+		m := OAuthRevokeToken{
+			Token:         rnd.SessionID(rnd.AuthToken()),
+			TokenTypeHint: "",
+		}
+		assert.NoError(t, m.Validate())
+		assert.Equal(t, SessionID, m.TokenTypeHint)
+	})
+	t.Run("TypeHintEmptyAccessToken", func(t *testing.T) {
+		m := OAuthRevokeToken{
+			Token:         rnd.AuthToken(),
+			TokenTypeHint: "",
+		}
+		assert.NoError(t, m.Validate())
+		assert.Equal(t, AccessToken, m.TokenTypeHint)
+	})
+	t.Run("TypeHintEmptyInvalidToken", func(t *testing.T) {
+		m := OAuthRevokeToken{
+			Token:         "123",
+			TokenTypeHint: "",
+		}
+		assert.Error(t, m.Validate())
 	})
 }

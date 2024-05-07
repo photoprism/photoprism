@@ -77,6 +77,28 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.NoError(t, m.Validate())
 	})
+	t.Run("UsernameRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantPassword,
+			Username:   "",
+			Password:   "abcdefg",
+			ClientName: "test",
+			Scope:      "*",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("UsernameTooLong", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantPassword,
+			Username:   "aaaaabbbbbccccdddddfffffrrrrrttttttyyyyssssssssssdddddllllloooooooooowerty",
+			Password:   "abcdefg",
+			ClientName: "test",
+			Scope:      "*",
+		}
+
+		assert.Error(t, m.Validate())
+	})
 	t.Run("PasswordRequired", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  authn.GrantPassword,
@@ -84,6 +106,50 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 			Password:   "",
 			ClientName: "test",
 			Scope:      "*",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("PasswordTooLong", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantPassword,
+			Username:   "admin",
+			Password:   "aaaaabbbbbccccdddddfffffrrrrrttttttyyyyssssssssssdddddllllloooooooooowerty",
+			ClientName: "test",
+			Scope:      "*",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("ClientNameRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantPassword,
+			Username:   "admin",
+			Password:   "cs5gfen1bgxz7s9i",
+			ClientName: "",
+			Scope:      "*",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("ScopeRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantPassword,
+			Username:   "admin",
+			Password:   "cs5gfen1bgxz7s9i",
+			ClientName: "test",
+			Scope:      "",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("InvalidGrantType", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  "invalid",
+			Username:   "admin",
+			Password:   "cs5gfen1bgxz7s9i",
+			ClientName: "test",
+			Scope:      "",
 		}
 
 		assert.Error(t, m.Validate())
