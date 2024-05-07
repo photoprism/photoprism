@@ -273,6 +273,75 @@ func TestAuthLocal(t *testing.T) {
 
 		u.SetProvider(authn.ProviderLocal)
 	})
+	t.Run("AliceToken", func(t *testing.T) {
+		m := FindSessionByRefID("sess6ey1ykya")
+		u := FindUserByName("alice")
+
+		// Create test request form.
+		frm := form.Login{
+			Username: "alice",
+			Password: "DIbS8T-uyGMe1-R3fmTv-vVaR35",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		if provider, method, err := AuthLocal(u, frm, m, c); err != nil {
+			t.Fatal(err)
+		} else {
+			assert.Equal(t, provider, authn.ProviderApplication)
+			assert.Equal(t, method, authn.MethodSession)
+		}
+	})
+	t.Run("AliceTokenInsufficientScope", func(t *testing.T) {
+		m := FindSessionByRefID("sesshjtgx8qt")
+		u := FindUserByName("alice")
+
+		// Create test request form.
+		frm := form.Login{
+			Username: "alice",
+			Password: "5d0rGx-EvsDnV-DcKtYY-HT1aWL",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		if provider, method, err := AuthLocal(u, frm, m, c); err == nil {
+			t.Fatal("auth should fail")
+		} else {
+			assert.Equal(t, provider, authn.ProviderNone)
+			assert.Equal(t, method, authn.MethodUndefined)
+		}
+	})
+	t.Run("AliceTokenWrongUser", func(t *testing.T) {
+		m := FindSessionByRefID("sess6ey1ykya")
+		u := FindUserByName("bob")
+
+		// Create test request form.
+		frm := form.Login{
+			Username: "alice",
+			Password: "DIbS8T-uyGMe1-R3fmTv-vVaR35",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		if provider, method, err := AuthLocal(u, frm, m, c); err == nil {
+			t.Fatal("auth should fail")
+		} else {
+			assert.Equal(t, provider, authn.ProviderNone)
+			assert.Equal(t, method, authn.MethodUndefined)
+		}
+	})
 }
 
 func TestSessionLogIn(t *testing.T) {

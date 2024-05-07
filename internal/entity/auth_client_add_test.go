@@ -40,4 +40,17 @@ func Test_AddClient(t *testing.T) {
 
 		assert.Equal(t, "", c.ClientName)
 	})
+	t.Run("ExistingClient", func(t *testing.T) {
+		m := form.Client{
+			ClientID: "cs5cpu17n6gj2qo5",
+		}
+
+		c, err := AddClient(m)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Equal(t, "Monitoring", c.ClientName)
+	})
 }
