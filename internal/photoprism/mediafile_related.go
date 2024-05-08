@@ -94,7 +94,7 @@ func (m *MediaFile) RelatedFiles(stripSequence bool) (result RelatedFiles, err e
 			result.Main = f
 		} else if f.IsHEIF() {
 			result.Main = f
-		} else if f.IsImage() && !f.IsPreviewImage() {
+		} else if f.IsImage() && !f.IsPreviewImage() && !f.IsThumb() {
 			result.Main = f
 		} else if f.IsVideo() && !isHEIC {
 			result.Main = f

@@ -110,8 +110,6 @@ func TestMediaFile_HEIC(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		t.Logf("JPEG FILENAME: %s", jpeg.FileName())
-
 		assert.Nil(t, err)
 
 		jpegInfo := jpeg.MetaData()

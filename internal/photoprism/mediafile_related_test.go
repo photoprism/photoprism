@@ -159,7 +159,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		}
 
 		if related.Main == nil {
-			t.Fatal("main file must not be nil")
+			t.Fatal("main media file must not be nil")
 		}
 
 		if len(related.Files) != 4 {
@@ -190,7 +190,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		}
 
 		if related.Main == nil {
-			t.Fatal("main file must not be nil")
+			t.Fatal("main media file must not be nil")
 		}
 
 		if len(related.Files) != 1 {
@@ -216,7 +216,7 @@ func TestMediaFile_RelatedFiles(t *testing.T) {
 		}
 
 		if related.Main == nil {
-			t.Fatal("main file must not be nil")
+			t.Fatal("main media file must not be nil")
 		}
 
 		if len(related.Files) != 4 {

@@ -602,7 +602,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "sips-blacklist",
 			Usage:  "do not use Sips to convert files with these `EXTENSIONS` *macOS only*",
-			Value:  "avif,avifs",
+			Value:  "avif,avifs,thm",
 			EnvVar: EnvVar("SIPS_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -656,7 +656,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "darktable-blacklist",
 			Usage:  "do not use Darktable to convert files with these `EXTENSIONS`",
-			Value:  "",
+			Value:  "thm",
 			EnvVar: EnvVar("DARKTABLE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -680,7 +680,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "rawtherapee-blacklist",
 			Usage:  "do not use RawTherapee to convert files with these `EXTENSIONS`",
-			Value:  "dng",
+			Value:  "dng,thm",
 			EnvVar: EnvVar("RAWTHERAPEE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -692,7 +692,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "imagemagick-blacklist",
 			Usage:  "do not use ImageMagick to convert files with these `EXTENSIONS`",
-			Value:  "heif,heic,heics,avif,avifs,jxl",
+			Value:  "heif,heic,heics,avif,avifs,jxl,thm",
 			EnvVar: EnvVar("IMAGEMAGICK_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{

@@ -132,21 +132,23 @@ func ImportWorker(jobs <-chan ImportJob) {
 
 			// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 			if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
-				if jpegFile, err := imp.convert.ToImage(f, false); err != nil {
-					log.Errorf("import: %s in %s (convert to jpeg)", clean.Error(err), clean.Log(f.RootRelName()))
+				if img, imgErr := imp.convert.ToImage(f, false); imgErr != nil {
+					log.Errorf("import: failed to create preview image for %s (%s)", clean.Log(f.RootRelName()), clean.Error(imgErr))
 					continue
+				} else if img == nil {
+					log.Debugf("import: skipped creating preview image for %s", clean.Log(f.RootRelName()))
 				} else {
-					log.Debugf("import: created %s", clean.Log(jpegFile.BaseName()))
+					log.Debugf("import: created %s", clean.Log(img.BaseName()))
 				}
 			}
 
 			// Ensure that a JPEG and the configured default thumbnail sizes exist.
-			if jpg, convertErr := f.PreviewImage(); convertErr != nil {
-				log.Error(convertErr)
-			} else if limitErr, _ := jpg.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
-				log.Errorf("index: %s", limitErr)
+			if img, imgErr := f.PreviewImage(); imgErr != nil {
+				log.Error(imgErr)
+			} else if limitErr, _ := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+				log.Errorf("import: %s", limitErr)
 				continue
-			} else if thumbsErr := jpg.CreateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
+			} else if thumbsErr := img.CreateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
 				log.Errorf("import: failed to create thumbnails for %s (%s)", clean.Log(f.RootRelName()), clean.Error(thumbsErr))
 				continue
 			}
@@ -195,7 +197,7 @@ func ImportWorker(jobs <-chan ImportJob) {
 					}
 				}
 			} else {
-				log.Warnf("import: found no main file for %s, conversion to jpeg may have failed", clean.Log(f.RootRelName()))
+				log.Warnf("import: no main media file found for %s, creation of a preview image may have failed", clean.Log(f.RootRelName()))
 			}
 
 			for _, f := range related.Files {

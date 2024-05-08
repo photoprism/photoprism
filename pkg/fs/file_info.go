@@ -8,6 +8,7 @@ var TypeInfo = TypeMap{
 	ImageDNG:        "Adobe Digital Negative",
 	ImageJPEG:       "Joint Photographic Experts Group (JPEG)",
 	ImageJPEGXL:     "JPEG XL",
+	ImageThumb:      "Thumbnail Image",
 	ImagePNG:        "Portable Network Graphics",
 	ImageGIF:        "Graphics Interchange Format",
 	ImageTIFF:       "Tag Image File Format",

@@ -28,6 +28,8 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 		return nil, fmt.Errorf("convert: %s not found", clean.Log(f.RootRelName()))
 	} else if f.Empty() {
 		return nil, fmt.Errorf("convert: %s is empty", clean.Log(f.RootRelName()))
+	} else if f.IsThumb() {
+		return nil, fmt.Errorf("convert: %s is a thumbnail image", clean.Log(f.RootRelName()))
 	}
 
 	if f.IsPreviewImage() {

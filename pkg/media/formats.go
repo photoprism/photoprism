@@ -8,6 +8,7 @@ var Formats = map[fs.Type]Type{
 	fs.ImageDNG:        Raw,
 	fs.ImageJPEG:       Image,
 	fs.ImageJPEGXL:     Image,
+	fs.ImageThumb:      Image,
 	fs.ImagePNG:        Image,
 	fs.ImageGIF:        Image,
 	fs.ImageTIFF:       Image,

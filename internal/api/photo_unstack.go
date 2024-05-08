@@ -96,7 +96,7 @@ func PhotoUnstack(router *gin.RouterGroup) {
 			AbortEntityNotFound(c)
 			return
 		} else if related.Main == nil {
-			log.Errorf("photo: found no main file for %s (unstack)", clean.Log(baseName))
+			log.Errorf("photo: found no main media file for %s (unstack)", clean.Log(baseName))
 			AbortEntityNotFound(c)
 			return
 		}

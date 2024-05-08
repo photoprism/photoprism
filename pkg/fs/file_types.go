@@ -23,6 +23,7 @@ const (
 const (
 	ImageJPEG   Type = "jpg"   // JPEG Image
 	ImageJPEGXL Type = "jxl"   // JPEG XL Image
+	ImageThumb  Type = "thm"   // Thumbnail Image
 	ImagePNG    Type = "png"   // PNG Image
 	ImageGIF    Type = "gif"   // GIF Image
 	ImageTIFF   Type = "tiff"  // TIFF Image

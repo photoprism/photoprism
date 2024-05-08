@@ -655,23 +655,30 @@ func (m *MediaFile) Copy(dest string) error {
 
 // Extension returns the filename extension of this media file.
 func (m *MediaFile) Extension() string {
+	if m == nil {
+		return ""
+	}
+
 	return strings.ToLower(filepath.Ext(m.fileName))
 }
 
 // IsPreviewImage return true if this media file is a JPEG or PNG image.
 func (m *MediaFile) IsPreviewImage() bool {
+	if m == nil {
+		return false
+	}
+
 	return m.IsJpeg() || m.IsPNG()
 }
 
 // IsJpeg checks if the file is a JPEG image with a supported file type extension.
 func (m *MediaFile) IsJpeg() bool {
-	if m.Extension() == fs.ExtTHM {
-		// Ignore .thm files, as some cameras automatically
-		// create them as thumbnails.
+	if m == nil {
 		return false
 	} else if fs.FileType(m.fileName) != fs.ImageJPEG {
-		// Files with an incorrect file extension are no longer
-		// recognized as JPEG to improve indexing performance.
+		// Thumbnails and other JPEGs with an unsupported file extension are no longer indexed as
+		// JPEG to improve performance (skips mime type detection) and to avoid follow-up issues
+		// with external tools that rely on a correct file extension.
 		return false
 	}
 
@@ -929,6 +936,11 @@ func (m *MediaFile) IsSidecar() bool {
 	return !m.Media().Main()
 }
 
+// IsThumb checks if the file is a thumbnail image.
+func (m *MediaFile) IsThumb() bool {
+	return m.FileType() == fs.ImageThumb
+}
+
 // IsSVG returns true if this is a SVG vector graphics.
 func (m *MediaFile) IsSVG() bool {
 	return m.FileType() == fs.VectorSVG
@@ -1004,7 +1016,7 @@ func (m *MediaFile) ExifSupported() bool {
 
 // IsMedia returns true if this is a media file (photo or video, not sidecar or other).
 func (m *MediaFile) IsMedia() bool {
-	return m.IsImage() || m.IsRaw() || m.IsVideo() || m.IsVector()
+	return !m.IsThumb() && (m.IsImage() || m.IsRaw() || m.IsVideo() || m.IsVector())
 }
 
 // PreviewImage returns a PNG or JPEG version of the media file, if exists.

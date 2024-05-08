@@ -13,7 +13,7 @@ import (
 func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result IndexResult) {
 	// Skip if main file is nil.
 	if related.Main == nil {
-		result.Err = fmt.Errorf("index: no main file for %s", clean.Log(related.String()))
+		result.Err = fmt.Errorf("index: no main media file for %s", clean.Log(related.String()))
 		result.Status = IndexFailed
 		return result
 	}
@@ -72,22 +72,24 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 		// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 		if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
 			// Skip with warning if preview image could not be created.
-			if jpg, err := ind.convert.ToImage(f, false); err != nil {
-				result.Err = fmt.Errorf("index: failed to create preview for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+			if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
+				result.Err = fmt.Errorf("index: failed to create preview image for %s (%s)", clean.Log(f.RootRelName()), clean.Error(imgErr))
 				result.Status = IndexFailed
 				continue
+			} else if img == nil {
+				log.Debugf("index: skipped creating preview image for %s", clean.Log(f.RootRelName()))
 			} else {
-				log.Debugf("index: created %s", clean.Log(jpg.BaseName()))
+				log.Debugf("index: created %s", clean.Log(img.BaseName()))
 
 				// Skip with warning if thumbs could not be creared.
-				if thumbsErr := jpg.CreateThumbnails(ind.thumbPath(), false); thumbsErr != nil {
+				if thumbsErr := img.CreateThumbnails(ind.thumbPath(), false); thumbsErr != nil {
 					result.Err = fmt.Errorf("index: failed to create thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
 					result.Status = IndexFailed
 					continue
 				}
 
 				// Add preview image to list of files.
-				related.Files = append(related.Files, jpg)
+				related.Files = append(related.Files, img)
 			}
 		}
 

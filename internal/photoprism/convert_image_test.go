@@ -34,16 +34,16 @@ func TestConvert_ToImage(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		jpegFile, err := convert.ToImage(mf, false)
+		img, err := convert.ToImage(mf, false)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, jpegFile.FileName(), outputName)
-		assert.Truef(t, fs.FileExists(jpegFile.FileName()), "output file does not exist: %s", jpegFile.FileName())
+		assert.Equal(t, img.FileName(), outputName)
+		assert.Truef(t, fs.FileExists(img.FileName()), "output file does not exist: %s", img.FileName())
 
-		t.Logf("video metadata: %+v", jpegFile.MetaData())
+		t.Logf("video metadata: %+v", img.MetaData())
 
 		_ = os.Remove(outputName)
 	})

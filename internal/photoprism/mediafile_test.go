@@ -2097,19 +2097,38 @@ func TestMediaFile_Orientation(t *testing.T) {
 }
 
 func TestMediaFile_FileType(t *testing.T) {
-	m, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "this-is-a-jpeg.png"))
+	t.Run("InvalidExtension", func(t *testing.T) {
+		m, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "this-is-a-jpeg.png"))
 
-	if err != nil {
-		t.Fatal(err)
-	}
+		if err != nil {
+			t.Fatal(err)
+		}
 
-	// No longer recognized as JPEG to improve indexing performance (skips mime type detection).
-	assert.False(t, m.IsJpeg())
-	assert.False(t, m.IsPNG())
-	assert.Equal(t, "png", string(m.FileType()))
-	assert.Equal(t, "image/jpeg", m.MimeType())
-	assert.Equal(t, fs.ImagePNG, m.FileType())
-	assert.Equal(t, ".png", m.Extension())
+		// Thumbnails and other JPEGs with an unsupported file extension are no longer indexed as
+		// JPEG to improve performance (skips mime type detection) and to avoid follow-up issues
+		// with external tools that rely on a correct file extension.
+		assert.False(t, m.IsJpeg())
+		assert.False(t, m.IsPNG())
+		assert.Equal(t, "png", string(m.FileType()))
+		assert.Equal(t, "image/jpeg", m.MimeType())
+		assert.Equal(t, fs.ImagePNG, m.FileType())
+		assert.Equal(t, ".png", m.Extension())
+	})
+	t.Run("ImageThumb", func(t *testing.T) {
+		m, err := NewMediaFile("testdata/animated-earth.thm")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, m.IsThumb())
+		assert.False(t, m.IsJpeg())
+		assert.False(t, m.IsPNG())
+		assert.Equal(t, "thm", string(m.FileType()))
+		assert.Equal(t, "image/jpeg", m.MimeType())
+		assert.Equal(t, fs.ImageThumb, m.FileType())
+		assert.Equal(t, ".thm", m.Extension())
+	})
 }
 
 func TestMediaFile_Stat(t *testing.T) {
