@@ -7,6 +7,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/rnd"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
@@ -20,7 +22,7 @@ func TestRevokeOAuthToken(t *testing.T) {
 	const tokenPath = "/api/v1/oauth/token"
 	const revokePath = "/api/v1/oauth/revoke"
 
-	t.Run("ClientSuccess", func(t *testing.T) {
+	t.Run("ClientSuccessToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -56,7 +58,7 @@ func TestRevokeOAuthToken(t *testing.T) {
 		t.Logf("BODY: %s", revokeResp.Body.String())
 		assert.Equal(t, http.StatusOK, revokeResp.Code)
 	})
-	t.Run("FormData", func(t *testing.T) {
+	t.Run("FormDataAccessToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
@@ -97,6 +99,129 @@ func TestRevokeOAuthToken(t *testing.T) {
 		t.Logf("BODY: %s", revokeResp.Body.String())
 		assert.Equal(t, http.StatusOK, revokeResp.Code)
 	})
+	t.Run("FormDataSessionId", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateOAuthToken(router)
+		RevokeOAuthToken(router)
+
+		createData := url.Values{
+			"grant_type":    {"client_credentials"},
+			"client_id":     {"cs5cpu17n6gj2qo5"},
+			"client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+			"scope":         {"metrics"},
+		}
+
+		createToken, _ := http.NewRequest("POST", tokenPath, strings.NewReader(createData.Encode()))
+		createToken.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		createResp := httptest.NewRecorder()
+		app.ServeHTTP(createResp, createToken)
+
+		t.Logf("Header: %s", createResp.Header())
+		t.Logf("BODY: %s", createResp.Body.String())
+		assert.Equal(t, http.StatusOK, createResp.Code)
+		sessId := gjson.Get(createResp.Body.String(), "session_id").String()
+
+		revokeData := url.Values{
+			"token":           {sessId},
+			"token_type_hint": {form.SessionID},
+		}
+
+		revokeToken, _ := http.NewRequest("POST", revokePath, strings.NewReader(revokeData.Encode()))
+		revokeToken.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		revokeResp := httptest.NewRecorder()
+		app.ServeHTTP(revokeResp, revokeToken)
+
+		t.Logf("Header: %s", revokeResp.Header())
+		t.Logf("BODY: %s", revokeResp.Body.String())
+		assert.Equal(t, http.StatusForbidden, revokeResp.Code)
+	})
+	t.Run("FormDataRefId", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateOAuthToken(router)
+		RevokeOAuthToken(router)
+
+		createData := url.Values{
+			"grant_type":    {"client_credentials"},
+			"client_id":     {"cs5cpu17n6gj2qo5"},
+			"client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+			"scope":         {"metrics"},
+		}
+
+		createToken, _ := http.NewRequest("POST", tokenPath, strings.NewReader(createData.Encode()))
+		createToken.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		createResp := httptest.NewRecorder()
+		app.ServeHTTP(createResp, createToken)
+
+		t.Logf("Header: %s", createResp.Header())
+		t.Logf("BODY: %s", createResp.Body.String())
+		assert.Equal(t, http.StatusOK, createResp.Code)
+		sessId := gjson.Get(createResp.Body.String(), "session_id").String()
+
+		revokeData := url.Values{
+			"token":           {rnd.RefID(sessId)},
+			"token_type_hint": {form.RefID},
+		}
+
+		revokeToken, _ := http.NewRequest("POST", revokePath, strings.NewReader(revokeData.Encode()))
+		revokeToken.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		revokeResp := httptest.NewRecorder()
+		app.ServeHTTP(revokeResp, revokeToken)
+
+		t.Logf("Header: %s", revokeResp.Header())
+		t.Logf("BODY: %s", revokeResp.Body.String())
+		assert.Equal(t, http.StatusForbidden, revokeResp.Code)
+	})
+	t.Run("WrongTokenTypeHint", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateOAuthToken(router)
+		RevokeOAuthToken(router)
+
+		createData := url.Values{
+			"grant_type":    {"client_credentials"},
+			"client_id":     {"cs5cpu17n6gj2qo5"},
+			"client_secret": {"xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"},
+			"scope":         {"metrics"},
+		}
+
+		createToken, _ := http.NewRequest("POST", tokenPath, strings.NewReader(createData.Encode()))
+		createToken.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		createResp := httptest.NewRecorder()
+		app.ServeHTTP(createResp, createToken)
+
+		t.Logf("Header: %s", createResp.Header())
+		t.Logf("BODY: %s", createResp.Body.String())
+		assert.Equal(t, http.StatusOK, createResp.Code)
+		authToken := gjson.Get(createResp.Body.String(), "access_token").String()
+
+		revokeData := url.Values{
+			"token":           {authToken},
+			"token_type_hint": {form.SessionID},
+		}
+
+		revokeToken, _ := http.NewRequest("POST", revokePath, strings.NewReader(revokeData.Encode()))
+		revokeToken.Header.Add(header.ContentType, header.ContentTypeForm)
+
+		revokeResp := httptest.NewRecorder()
+		app.ServeHTTP(revokeResp, revokeToken)
+
+		t.Logf("Header: %s", revokeResp.Header())
+		t.Logf("BODY: %s", revokeResp.Body.String())
+		assert.Equal(t, http.StatusUnauthorized, revokeResp.Code)
+	})
 	t.Run("PublicMode", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
@@ -114,7 +239,7 @@ func TestRevokeOAuthToken(t *testing.T) {
 		t.Logf("BODY: %s", revokeResp.Body.String())
 		assert.Equal(t, http.StatusForbidden, revokeResp.Code)
 	})
-	t.Run("UserSuccess", func(t *testing.T) {
+	t.Run("UserSuccessToken", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
