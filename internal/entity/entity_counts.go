@@ -72,7 +72,7 @@ func UpdatePlacesCounts() (err error) {
 }
 
 // UpdateSubjectCounts updates the subject file counts.
-func UpdateSubjectCounts() (err error) {
+func UpdateSubjectCounts(public bool) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
@@ -81,36 +81,49 @@ func UpdateSubjectCounts() (err error) {
 	var res *gorm.DB
 
 	subjTable := Subject{}.TableName()
-	filesTable := File{}.TableName()
-	markerTable := Marker{}.TableName()
+
+	var photosJoin *gorm.SqlExpr
+
+	// Count people tagged on private pictures?
+	// see https://github.com/photoprism/photoprism/issues/4238
+	// and https://github.com/photoprism/photoprism/issues/2570#issuecomment-1231690056
+	if public {
+		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0")
+	} else {
+		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL")
+	}
 
 	condition := gorm.Expr("subj_type = ?", SubjPerson)
 
 	switch DbDialect() {
 	case MySQL:
 		res = Db().Exec(`UPDATE ? LEFT JOIN (
-		SELECT m.subj_uid, COUNT(DISTINCT f.id) AS subj_files, COUNT(DISTINCT f.photo_id) AS subj_photos FROM ? f
-			JOIN ? m ON f.file_uid = m.file_uid AND m.subj_uid IS NOT NULL AND m.subj_uid <> '' AND m.subj_uid IS NOT NULL
+		SELECT m.subj_uid, COUNT(DISTINCT f.id) AS subj_files, COUNT(DISTINCT f.photo_id) AS subj_photos
+			FROM files f
+			JOIN photos p ON ?			    
+			JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid IS NOT NULL AND m.subj_uid <> '' AND m.subj_uid IS NOT NULL
 			WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL GROUP BY m.subj_uid
 		) b ON b.subj_uid = subjects.subj_uid
 		SET subjects.file_count = CASE WHEN b.subj_files IS NULL THEN 0 ELSE b.subj_files END, 
 			subjects.photo_count = CASE WHEN b.subj_photos IS NULL THEN 0 ELSE b.subj_photos END
-		WHERE ?`, gorm.Expr(subjTable), gorm.Expr(filesTable), gorm.Expr(markerTable), condition)
+		WHERE ?`, gorm.Expr(subjTable), photosJoin, condition)
 	case SQLite3:
 		// Update files count.
 		res = Db().Table(subjTable).
-			UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id) FROM files f "+
-				fmt.Sprintf("JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid = %s.subj_uid ",
-					markerTable, subjTable)+" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL) WHERE ?", condition))
+			UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id)"+
+				" FROM files f JOIN photos p ON ?"+
+				" JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = subjects.subj_uid"+
+				" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL) WHERE ?", photosJoin, condition))
 
 		// Update photo count.
 		if res.Error != nil {
 			return res.Error
 		} else {
 			photosRes := Db().Table(subjTable).
-				UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(DISTINCT f.photo_id) FROM files f "+
-					fmt.Sprintf("JOIN %s m ON f.file_uid = m.file_uid AND m.subj_uid = %s.subj_uid ",
-						markerTable, subjTable)+" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL) WHERE ?", condition))
+				UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(DISTINCT f.photo_id)"+
+					" FROM files f JOIN photos p ON ?"+
+					" JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = subjects.subj_uid"+
+					" WHERE m.marker_invalid = 0 AND f.deleted_at IS NULL) WHERE ?", photosJoin, condition))
 			res.RowsAffected += photosRes.RowsAffected
 		}
 	default:
@@ -195,7 +208,7 @@ func UpdateCounts() (err error) {
 		return fmt.Errorf("%s while updating places counts", err)
 	}
 
-	if err = UpdateSubjectCounts(); err != nil {
+	if err = UpdateSubjectCounts(true); err != nil {
 		if strings.Contains(err.Error(), "Error 1054") {
 			log.Errorf("counts: failed to update subjects, potentially incompatible database version")
 			log.Errorf("%s see https://jira.mariadb.org/browse/MDEV-25362", err)

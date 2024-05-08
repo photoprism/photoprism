@@ -142,11 +142,11 @@ func CreateMarker(router *gin.RouterGroup) {
 			AbortSaveFailed(c)
 			return
 		} else if changed {
-			if updateErr := query.UpdateSubjectCovers(); updateErr != nil {
+			if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
 				log.Errorf("faces: %s (update covers)", updateErr)
 			}
 
-			if updateErr := entity.UpdateSubjectCounts(); updateErr != nil {
+			if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
 				log.Errorf("faces: %s (update counts)", updateErr)
 			}
 		}
@@ -234,11 +234,11 @@ func UpdateMarker(router *gin.RouterGroup) {
 				}
 			}
 
-			if updateErr := query.UpdateSubjectCovers(); updateErr != nil {
+			if updateErr := query.UpdateSubjectCovers(true); updateErr != nil {
 				log.Errorf("faces: %s (update covers)", updateErr)
 			}
 
-			if updateErr := entity.UpdateSubjectCounts(); updateErr != nil {
+			if updateErr := entity.UpdateSubjectCounts(true); updateErr != nil {
 				log.Errorf("faces: %s (update counts)", updateErr)
 			}
 		}
@@ -298,9 +298,9 @@ func ClearMarkerSubject(router *gin.RouterGroup) {
 			log.Errorf("faces: %s (clear marker subject)", err)
 			AbortSaveFailed(c)
 			return
-		} else if err := query.UpdateSubjectCovers(); err != nil {
+		} else if err := query.UpdateSubjectCovers(true); err != nil {
 			log.Errorf("faces: %s (update covers)", err)
-		} else if err := entity.UpdateSubjectCounts(); err != nil {
+		} else if err := entity.UpdateSubjectCounts(true); err != nil {
 			log.Errorf("faces: %s (update counts)", err)
 		}
 

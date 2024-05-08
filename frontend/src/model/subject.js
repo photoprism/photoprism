@@ -64,7 +64,7 @@ export class Subject extends RestModel {
       return { name: view, query: { q: `person:${this.Slug}` } };
     }
 
-    return { name: view, query: { q: "subject:" + this.UID } };
+    return { name: view, query: { q: `subject:${this.UID}` } };
   }
 
   classes(selected) {

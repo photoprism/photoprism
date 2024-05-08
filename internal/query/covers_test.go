@@ -27,7 +27,8 @@ func TestUpdateLabelCovers(t *testing.T) {
 }
 
 func TestUpdateSubjectCovers(t *testing.T) {
-	assert.NoError(t, UpdateSubjectCovers())
+	assert.NoError(t, UpdateSubjectCovers(false))
+	assert.NoError(t, UpdateSubjectCovers(true))
 }
 
 func TestUpdateCovers(t *testing.T) {

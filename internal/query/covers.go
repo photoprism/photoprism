@@ -245,37 +245,57 @@ func UpdateLabelCovers() (err error) {
 }
 
 // UpdateSubjectCovers updates subject cover thumbs.
-func UpdateSubjectCovers() (err error) {
+func UpdateSubjectCovers(public bool) (err error) {
 	mutex.Index.Lock()
 	defer mutex.Index.Unlock()
 
 	start := time.Now()
 
 	var res *gorm.DB
+	var photosJoin *gorm.SqlExpr
 
-	subjTable := entity.Subject{}.TableName()
-	markerTable := entity.Marker{}.TableName()
+	// Use faces tagged on private pictures as cover images?
+	// see https://github.com/photoprism/photoprism/issues/4238
+	// and https://github.com/photoprism/photoprism/issues/2570#issuecomment-1231690056
+	if public {
+		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0")
+	} else {
+		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL")
+	}
 
-	condition := gorm.Expr(
-		fmt.Sprintf("%s.subj_type = ? AND thumb_src = ?", subjTable),
-		entity.SubjPerson, entity.SrcAuto)
+	condition := gorm.Expr("subjects.subj_type = ? AND thumb_src = ?", entity.SubjPerson, entity.SrcAuto)
 
-	// TODO: Avoid using private photos as subject covers.
-	// See https://github.com/photoprism/photoprism/issues/2570#issuecomment-1231690056
+	// Compose SQL update query.
 	switch DbDialect() {
 	case MySQL:
-		res = Db().Exec(`UPDATE ? LEFT JOIN (
-    	SELECT m.subj_uid, m.q, MAX(m.thumb) AS marker_thumb FROM ? m
+		res = Db().Exec(`UPDATE subjects LEFT JOIN (
+    	SELECT m.subj_uid, m.q, MAX(m.thumb) AS marker_thumb
+    		FROM markers m
+    	    JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
+			JOIN photos p ON ?
 			WHERE m.subj_uid <> '' AND m.subj_uid IS NOT NULL
 			  AND m.marker_invalid = 0 AND m.thumb IS NOT NULL AND m.thumb <> ''
 			GROUP BY m.subj_uid, m.q
 			) b ON b.subj_uid = subjects.subj_uid
-		SET thumb = marker_thumb WHERE ?`, gorm.Expr(subjTable), gorm.Expr(markerTable), condition)
+		SET thumb = marker_thumb WHERE ?`,
+			photosJoin,
+			condition,
+		)
 	case SQLite3:
-		from := gorm.Expr(fmt.Sprintf("%s m WHERE m.subj_uid = %s.subj_uid ", markerTable, subjTable))
-		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
-		SELECT m.thumb FROM ? AND m.thumb <> '' ORDER BY m.subj_src DESC, m.q DESC LIMIT 1
-		) WHERE ?`, from, condition))
+		// from := gorm.Expr(fmt.Sprintf("%s m WHERE m.subj_uid = %s.subj_uid ", markerTable, subjTable))
+		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb",
+			gorm.Expr(`(
+                SELECT m.thumb
+					FROM markers m 
+					JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
+					JOIN photos p ON ?
+					WHERE m.subj_uid = subjects.subj_uid AND m.thumb <> ''
+					ORDER BY m.subj_src DESC, m.q DESC LIMIT 1
+				) WHERE ?`,
+				photosJoin,
+				condition,
+			),
+		)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -309,7 +329,7 @@ func UpdateCovers() (err error) {
 	}
 
 	// Update Subjects.
-	if err = UpdateSubjectCovers(); err != nil {
+	if err = UpdateSubjectCovers(true); err != nil {
 		return fmt.Errorf("%s while updating subject covers", err)
 	}
 

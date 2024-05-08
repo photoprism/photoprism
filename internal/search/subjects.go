@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/clean"
-
-	"github.com/photoprism/photoprism/pkg/txt"
-
 	"github.com/jinzhu/gorm"
+
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // Subjects searches subjects and returns them.
