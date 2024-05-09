@@ -14,7 +14,7 @@ require (
 	github.com/dustin/go-humanize v1.0.1
 	github.com/esimov/pigo v1.4.6
 	github.com/gin-contrib/gzip v1.0.1
-	github.com/gin-gonic/gin v1.9.1
+	github.com/gin-gonic/gin v1.10.0
 	github.com/golang/geo v0.0.0-20230421003525-6adc56603217
 	github.com/google/open-location-code/go v0.0.0-20240410091707-7dc3b4c76be0
 	github.com/gorilla/websocket v1.5.1
@@ -43,8 +43,8 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.15
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.22.0
-	golang.org/x/net v0.24.0
+	golang.org/x/crypto v0.23.0
+	golang.org/x/net v0.25.0
 	gonum.org/v1/gonum v0.15.0
 	gopkg.in/photoprism/go-tz.v2 v2.1.2
 	gopkg.in/yaml.v2 v2.4.0
@@ -125,9 +125,9 @@ require (
 	github.com/zitadel/logging v0.5.0 // indirect
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.34.0 // indirect
+	google.golang.org/protobuf v1.34.1 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
@@ -139,7 +139,7 @@ require (
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/sunfish-shogi/bufseekio v0.1.0
-	golang.org/x/arch v0.7.0 // indirect
+	golang.org/x/arch v0.8.0 // indirect
 )
 
 require (
