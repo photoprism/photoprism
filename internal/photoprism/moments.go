@@ -3,7 +3,6 @@ package photoprism
 import (
 	"fmt"
 	"math"
-	"path/filepath"
 	"runtime/debug"
 	"strconv"
 
@@ -15,7 +14,6 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // Moments represents a worker that creates albums based on popular locations, dates and labels.
@@ -263,16 +261,6 @@ func (w *Moments) Start() (err error) {
 	// UpdateAlbumDates updates the year, month and day of the album based on the indexed photo metadata.
 	if queryErr := query.UpdateAlbumDates(); queryErr != nil {
 		log.Errorf("moments: %s (update album dates)", queryErr.Error())
-	}
-
-	// Make sure that the albums have been backed up before, otherwise back up all albums.
-	if fs.PathExists(filepath.Join(w.conf.AlbumsPath(), entity.AlbumManual)) {
-		// Skip backing up albums.
-		log.Tracef("moments: skipped backing up albums")
-	} else if count, backupErr := BackupAlbums(w.conf.AlbumsPath(), false); backupErr != nil {
-		log.Errorf("moments: %s (backup albums)", backupErr.Error())
-	} else if count > 0 {
-		log.Debugf("moments: %d albums saved as yaml files", count)
 	}
 
 	return nil
