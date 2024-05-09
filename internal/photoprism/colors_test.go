@@ -203,4 +203,10 @@ func TestMediaFile_Colors(t *testing.T) {
 		assert.Error(t, fileErr, "no color information: not a JPEG file")
 		t.Log(p)
 	})
+	t.Run("animated-earth.thm", func(t *testing.T) {
+		file, fileErr := NewMediaFile(c.ExamplesPath() + "/animated-earth.thm")
+		p, fileErr := file.Colors(c.ThumbCachePath())
+		assert.Error(t, fileErr, "no color information: not a JPEG file")
+		t.Log(p)
+	})
 }

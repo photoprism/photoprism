@@ -126,6 +126,25 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = imageFile.Remove()
 	})
+	t.Run("DoNotConvertThumb", func(t *testing.T) {
+		thumbFile := fs.Abs("./testdata/animated-earth.thm")
+
+		mediaFile, err := NewMediaFile(thumbFile)
+
+		t.Logf("svg: %s", mediaFile.FileName())
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToImage(mediaFile, false)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Nil(t, imageFile)
+	})
 }
 
 func TestConvert_PngConvertCommands(t *testing.T) {
