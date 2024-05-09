@@ -30,7 +30,7 @@ func TestFindClient(t *testing.T) {
 		}
 
 		assert.Equal(t, m.UserUID, UserFixtures.Get("alice").UserUID)
-		assert.Equal(t, expected.ClientUID, m.UID())
+		assert.Equal(t, expected.ClientUID, m.GetUID())
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
@@ -44,7 +44,7 @@ func TestFindClient(t *testing.T) {
 		}
 
 		assert.Equal(t, m.UserUID, UserFixtures.Get("bob").UserUID)
-		assert.Equal(t, expected.ClientUID, m.UID())
+		assert.Equal(t, expected.ClientUID, m.GetUID())
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
@@ -58,7 +58,7 @@ func TestFindClient(t *testing.T) {
 		}
 
 		assert.Empty(t, m.UserUID)
-		assert.Equal(t, expected.ClientUID, m.UID())
+		assert.Equal(t, expected.ClientUID, m.GetUID())
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
@@ -411,7 +411,7 @@ func TestClient_VerifySecret(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, expected.ClientUID, m.UID())
+		assert.Equal(t, expected.ClientUID, m.GetUID())
 		assert.False(t, m.VerifySecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
 		assert.False(t, m.VerifySecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
 		assert.False(t, m.VerifySecret(""))
@@ -430,7 +430,7 @@ func TestClient_VerifySecret(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, expected.ClientUID, m.UID())
+		assert.Equal(t, expected.ClientUID, m.GetUID())
 		assert.True(t, m.VerifySecret("xcCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
 		assert.False(t, m.VerifySecret("aaCbOrw6I0vcoXzhnOmXhjpVSyFq0l0e"))
 		assert.False(t, m.VerifySecret(""))

@@ -518,7 +518,12 @@ func TestAlbum_AddPhotos(t *testing.T) {
 			AlbumType:  AlbumManual,
 			AlbumTitle: "Test Title",
 		}
-		added := album.AddPhotos([]string{"ps6sg6be2lvl0yh7", "ps6sg6be2lvl0yh8"})
+
+		photo1 := PhotoFixtures.Get("19800101_000002_D640C559")
+		photo2 := PhotoFixtures.Get("Photo01")
+		photos := Photos{photo1, photo2}
+
+		added := album.AddPhotos(photos)
 
 		var entries PhotoAlbums
 
@@ -532,7 +537,7 @@ func TestAlbum_AddPhotos(t *testing.T) {
 		}
 
 		if len(entries) < 2 {
-			t.Error("at least one album entry expected")
+			t.Fatal("at least one album entry expected")
 		}
 
 		var a Album
@@ -542,17 +547,17 @@ func TestAlbum_AddPhotos(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		first_photo_updatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
-		second_photo_updatedAt := strings.Split(entries[1].UpdatedAt.String(), ".")[0]
-		album_updatedAt := strings.Split(a.UpdatedAt.String(), ".")[0]
+		firstUpdatedAt := strings.Split(entries[0].UpdatedAt.String(), ".")[0]
+		secondUpdatedAt := strings.Split(entries[1].UpdatedAt.String(), ".")[0]
+		albumUpdatedAt := strings.Split(a.UpdatedAt.String(), ".")[0]
 
 		assert.Truef(
-			t, first_photo_updatedAt <= album_updatedAt,
+			t, firstUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)
 		assert.Truef(
-			t, second_photo_updatedAt <= album_updatedAt,
+			t, secondUpdatedAt <= albumUpdatedAt,
 			"Expected the UpdatedAt field of an album to be updated when"+
 				" new photos are added",
 		)

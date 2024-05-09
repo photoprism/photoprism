@@ -72,7 +72,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		}
 		assert.Equal(t, "", mediaFile.metaData.Title)
 
-		result := ind.UserMediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "", entity.Admin.UID())
+		result := ind.UserMediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "", entity.Admin.GetUID())
 
 		assert.Equal(t, "Blue Gopher", mediaFile.metaData.Title)
 		assert.Equal(t, IndexStatus("added"), result.Status)

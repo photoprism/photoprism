@@ -48,7 +48,7 @@ func usersListAction(ctx *cli.Context) error {
 		// Display report.
 		for i, user := range users {
 			rows[i] = []string{
-				user.UID(),
+				user.GetUID(),
 				user.Username(),
 				user.AclRole().Pretty(),
 				user.AuthInfo(),

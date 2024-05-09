@@ -132,7 +132,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			m.RemoveLocationLabels()
 			m.EstimateCountry()
 		} else if len(mostRecent) == 1 || m.UnknownCamera() {
-			m.AdoptPlace(recentPhoto, SrcEstimate, false)
+			m.AdoptPlace(&recentPhoto, SrcEstimate, false)
 		} else {
 			p1 := mostRecent[0]
 			p2 := mostRecent[1]
@@ -143,7 +143,7 @@ func (m *Photo) EstimateLocation(force bool) {
 			if estimate := movement.EstimatePosition(m.TakenAt); movement.Km() < 100 && estimate.Accuracy < Accuracy1Km {
 				m.SetPosition(estimate, SrcEstimate, false)
 			} else {
-				m.AdoptPlace(recentPhoto, SrcEstimate, false)
+				m.AdoptPlace(&recentPhoto, SrcEstimate, false)
 			}
 		}
 	} else if recentPhoto.HasCountry() {

@@ -59,7 +59,7 @@ func clientsListAction(ctx *cli.Context) error {
 			}
 
 			rows[i] = []string{
-				client.UID(),
+				client.GetUID(),
 				client.Name(),
 				client.AuthInfo(),
 				client.UserInfo(),

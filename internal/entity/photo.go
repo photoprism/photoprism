@@ -32,19 +32,6 @@ var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
 
 var photoMutex = sync.Mutex{}
 
-type Photos []Photo
-
-// UIDs returns a slice of photo UIDs.
-func (m Photos) UIDs() []string {
-	result := make([]string, len(m))
-
-	for i, el := range m {
-		result[i] = el.PhotoUID
-	}
-
-	return result
-}
-
 // MapKey returns a key referencing time and location for indexing.
 func MapKey(takenAt time.Time, cellId string) string {
 	return path.Join(strconv.FormatInt(takenAt.Unix(), 36), cellId)
@@ -220,6 +207,21 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	}
 
 	return nil
+}
+
+// GetID returns the numeric entity ID.
+func (m *Photo) GetID() uint {
+	return m.ID
+}
+
+// HasID checks if the photo has an id and uid assigned to it.
+func (m *Photo) HasID() bool {
+	return m.ID > 0 && m.PhotoUID != ""
+}
+
+// GetUID returns the unique entity id.
+func (m *Photo) GetUID() string {
+	return m.PhotoUID
 }
 
 // String returns the id or name as string.
@@ -527,11 +529,6 @@ func (m *Photo) PreloadMany() {
 	m.PreloadAlbums()
 }
 
-// HasID checks if the photo has an id and uid assigned to it.
-func (m *Photo) HasID() bool {
-	return m.ID > 0 && m.PhotoUID != ""
-}
-
 // NoCameraSerial checks if the photo has no CameraSerial
 func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
@@ -731,11 +728,17 @@ func (m *Photo) AllFiles() (files Files) {
 
 // Archive removes the photo from albums and flags it as archived (soft delete).
 func (m *Photo) Archive() error {
+	if !m.HasID() {
+		return fmt.Errorf("photo has no id")
+	} else if m.DeletedAt != nil {
+		return nil
+	}
+
 	deletedAt := TimeStamp()
 
 	if err := Db().Model(&PhotoAlbum{}).Where("photo_uid = ?", m.PhotoUID).UpdateColumn("hidden", true).Error; err != nil {
 		return err
-	} else if err := m.Update("deleted_at", deletedAt); err != nil {
+	} else if err = m.Update("deleted_at", deletedAt); err != nil {
 		return err
 	}
 
@@ -744,8 +747,14 @@ func (m *Photo) Archive() error {
 	return nil
 }
 
-// Restore removes the archive flag (undo soft delete).
+// Restore removes the photo from the archive (reverses soft delete).
 func (m *Photo) Restore() error {
+	if !m.HasID() {
+		return fmt.Errorf("photo has no id")
+	} else if m.DeletedAt == nil {
+		return nil
+	}
+
 	if err := m.Update("deleted_at", gorm.Expr("NULL")); err != nil {
 		return err
 	}
@@ -757,7 +766,7 @@ func (m *Photo) Restore() error {
 
 // Delete deletes the photo from the index.
 func (m *Photo) Delete(permanently bool) (files Files, err error) {
-	if m.ID < 1 || m.PhotoUID == "" {
+	if !m.HasID() {
 		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, clean.Log(m.PhotoUID))
 	}
 
@@ -834,7 +843,7 @@ func (m *Photo) React(user *User, reaction react.Emoji) error {
 		return m.UnReact(user)
 	}
 
-	return NewReaction(m.PhotoUID, user.UID()).React(reaction).Save()
+	return NewReaction(m.PhotoUID, user.GetUID()).React(reaction).Save()
 }
 
 // UnReact deletes a previous user reaction, if any.
@@ -843,7 +852,7 @@ func (m *Photo) UnReact(user *User) error {
 		return fmt.Errorf("unknown user")
 	}
 
-	if r := FindReaction(m.PhotoUID, user.UID()); r != nil {
+	if r := FindReaction(m.PhotoUID, user.GetUID()); r != nil {
 		return r.Delete()
 	}
 
@@ -884,11 +893,29 @@ func (m *Photo) SetStack(stack int8) {
 	}
 }
 
-// Approve approves a photo in review.
+// Approved checks if the photo is not in review.
+func (m *Photo) Approved() bool {
+	if !m.HasID() {
+		return false
+	} else if m.PhotoQuality >= 3 || m.PhotoType != MediaImage || m.EditedAt != nil {
+		return true
+	}
+
+	return false
+}
+
+// Approve approves the photo if it is in review.
 func (m *Photo) Approve() error {
-	if m.PhotoQuality >= 3 {
+	if !m.HasID() {
+		return fmt.Errorf("photo has no id")
+	} else if m.PhotoQuality >= 3 {
 		// Nothing to do.
 		return nil
+	}
+
+	// Restore photo if archived.
+	if err := m.Restore(); err != nil {
+		return err
 	}
 
 	edited := TimeStamp()

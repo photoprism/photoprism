@@ -1,6 +1,7 @@
 package photoprism
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 
@@ -10,7 +11,11 @@ import (
 )
 
 // DeletePhoto removes a photo from the index and optionally all related media files.
-func DeletePhoto(p entity.Photo, mediaFiles bool, originals bool) (numFiles int, err error) {
+func DeletePhoto(p *entity.Photo, mediaFiles bool, originals bool) (numFiles int, err error) {
+	if p == nil {
+		return 0, errors.New("photo is nil")
+	}
+
 	yamlFileName := p.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
 
 	// Permanently remove photo from index.

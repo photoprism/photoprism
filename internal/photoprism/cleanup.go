@@ -85,9 +85,9 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 		}
 
 		// Deletes the index entry and remaining sidecar files outside the "originals" folder.
-		if n, err := DeletePhoto(p, true, false); err != nil {
+		if n, deleteErr := DeletePhoto(&p, true, false); deleteErr != nil {
 			sidecars += n
-			log.Errorf("cleanup: %s (remove orphans)", err)
+			log.Errorf("cleanup: %s (remove orphans)", deleteErr)
 		} else {
 			orphans++
 			sidecars += n

@@ -384,22 +384,22 @@ func CloneAlbums(router *gin.RouterGroup) {
 
 		var added []entity.PhotoAlbum
 
-		for _, uid := range f.Albums {
-			cloneAlbum, err := query.AlbumByUID(uid)
+		for _, albumUid := range f.Albums {
+			cloneAlbum, queryErr := query.AlbumByUID(albumUid)
 
-			if err != nil {
-				log.Errorf("album: %s", err)
+			if queryErr != nil {
+				log.Errorf("album: %s", queryErr)
 				continue
 			}
 
-			photos, err := search.AlbumPhotos(cloneAlbum, 10000, false)
+			photos, queryErr := search.AlbumPhotos(cloneAlbum, 100000, false)
 
-			if err != nil {
-				log.Errorf("album: %s", err)
+			if queryErr != nil {
+				log.Errorf("album: %s", queryErr)
 				continue
 			}
 
-			added = append(added, a.AddPhotos(photos.UIDs())...)
+			added = append(added, a.AddPhotos(photos)...)
 		}
 
 		if len(added) > 0 {
@@ -466,7 +466,9 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 			return
 		}
 
-		added := a.AddPhotos(photos.UIDs())
+		conf := get.Config()
+
+		added := a.AddPhotos(photos)
 
 		if len(added) > 0 {
 			if len(added) == 1 {
@@ -481,6 +483,34 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 			// Update album YAML backup.
 			SaveAlbumAsYaml(a)
+
+			// Auto-approve photos that have been added to an album,
+			// see https://github.com/photoprism/photoprism/issues/4229
+			if conf.Settings().Features.Review {
+				var approved entity.Photos
+
+				for _, p := range photos {
+					// Skip photos that are not in review.
+					if p.Approved() {
+						continue
+					}
+
+					// Approve photo and update YAML backup file.
+					if err = p.Approve(); err != nil {
+						log.Errorf("approve: %s", err)
+					} else {
+						approved = append(approved, p)
+						SavePhotoAsYaml(&p)
+					}
+				}
+
+				// Update client UI and counts if photos has been approved.
+				if len(approved) > 0 {
+					UpdateClientConfig()
+
+					event.EntitiesUpdated("photos", approved)
+				}
+			}
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgChangesSaved), "album": a, "photos": photos.UIDs(), "added": added})

@@ -32,7 +32,7 @@ func TestPhoto_AdoptPlace(t *testing.T) {
 	place := PlaceFixtures.Get("mexico")
 	t.Run("SrcAuto", func(t *testing.T) {
 		p := Photo{ID: 1, Place: nil, PlaceID: "", CellID: "s2:479a03fda123", PhotoLat: -1, PhotoLng: 1, PlaceSrc: SrcAuto}
-		o := Photo{ID: 1, Place: &place, PlaceID: place.ID, CellID: "s2:479a03fda18c", PhotoLat: 15, PhotoLng: -11, PlaceSrc: SrcManual}
+		o := &Photo{ID: 1, Place: &place, PlaceID: place.ID, CellID: "s2:479a03fda18c", PhotoLat: 15, PhotoLng: -11, PlaceSrc: SrcManual}
 		assert.Nil(t, p.Place)
 		assert.Equal(t, "", p.PlaceID)
 		assert.Equal(t, "s2:479a03fda123", p.CellID)
@@ -47,7 +47,7 @@ func TestPhoto_AdoptPlace(t *testing.T) {
 	})
 	t.Run("SrcManual", func(t *testing.T) {
 		p := Photo{ID: 1, Place: nil, PlaceID: "", CellID: "s2:479a03fda123", PhotoLat: 0, PhotoLng: 0, PlaceSrc: SrcManual}
-		o := Photo{ID: 1, Place: &place, PlaceID: place.ID, CellID: "s2:479a03fda18c", PhotoLat: 1, PhotoLng: -1, PlaceSrc: SrcManual}
+		o := &Photo{ID: 1, Place: &place, PlaceID: place.ID, CellID: "s2:479a03fda18c", PhotoLat: 1, PhotoLng: -1, PlaceSrc: SrcManual}
 		assert.Nil(t, p.Place)
 		assert.Equal(t, "", p.PlaceID)
 		assert.Equal(t, "s2:479a03fda123", p.CellID)
@@ -62,7 +62,7 @@ func TestPhoto_AdoptPlace(t *testing.T) {
 	})
 	t.Run("Force", func(t *testing.T) {
 		p := Photo{ID: 1, Place: nil, PlaceID: "", CellID: "s2:479a03fda123", PhotoLat: 1, PhotoLng: -1, PlaceSrc: SrcManual}
-		o := Photo{ID: 1, Place: &place, PlaceID: place.ID, CellID: "s2:479a03fda18c", PhotoLat: 0, PhotoLng: 0, PlaceSrc: SrcManual}
+		o := &Photo{ID: 1, Place: &place, PlaceID: place.ID, CellID: "s2:479a03fda18c", PhotoLat: 0, PhotoLng: 0, PlaceSrc: SrcManual}
 		assert.Nil(t, p.Place)
 		assert.Equal(t, "", p.PlaceID)
 		assert.Equal(t, "s2:479a03fda123", p.CellID)

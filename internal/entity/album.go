@@ -783,19 +783,21 @@ func (m *Album) ZipName() string {
 }
 
 // AddPhotos adds photos to an existing album.
-func (m *Album) AddPhotos(UIDs []string) (added PhotoAlbums) {
+func (m *Album) AddPhotos(photos PhotosInterface) (added PhotoAlbums) {
 	if !m.HasID() {
 		return added
 	}
 
 	// Add album entries.
-	for _, uid := range UIDs {
-		if !rnd.IsUID(uid, PhotoUID) {
+	for _, photoUid := range photos.UIDs() {
+		if !rnd.IsUID(photoUid, PhotoUID) {
 			continue
 		}
 
-		entry := PhotoAlbum{AlbumUID: m.AlbumUID, PhotoUID: uid, Hidden: false}
+		// Add photo to album.
+		entry := PhotoAlbum{AlbumUID: m.AlbumUID, PhotoUID: photoUid, Hidden: false}
 
+		// Save album entry.
 		if err := entry.Save(); err != nil {
 			log.Errorf("album: %s (add to album %s)", err.Error(), m)
 		} else {

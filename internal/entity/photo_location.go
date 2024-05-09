@@ -86,8 +86,10 @@ func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 }
 
 // AdoptPlace sets the place based on another photo.
-func (m *Photo) AdoptPlace(other Photo, source string, force bool) {
-	if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
+func (m *Photo) AdoptPlace(other *Photo, source string, force bool) {
+	if other == nil {
+		return
+	} else if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
 		return
 	} else if other.Place == nil {
 		return

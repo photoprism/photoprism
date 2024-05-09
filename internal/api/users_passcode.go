@@ -60,7 +60,7 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeGenerateFailed.Error(), clean.Error(err)}, s.RefID)
 			Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 			return
-		} else if passcode, err = entity.NewPasscode(user.UID(), key.String(), rnd.RecoveryCode()); err != nil {
+		} else if passcode, err = entity.NewPasscode(user.GetUID(), key.String(), rnd.RecoveryCode()); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", authn.Users, user.UserName, authn.ErrPasscodeCreateFailed.Error(), clean.Error(err)}, s.RefID)
 			Abort(c, http.StatusInternalServerError, i18n.ErrUnexpected)
 			return

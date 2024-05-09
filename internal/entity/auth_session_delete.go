@@ -75,7 +75,7 @@ func DeleteClientSessions(client *Client, authMethod authn.MethodType, limit int
 	q := Db()
 
 	if client.HasUID() {
-		q = q.Where("client_uid = ?", client.UID())
+		q = q.Where("client_uid = ?", client.GetUID())
 	} else if client.HasName() {
 		q = q.Where("client_name = ?", client.Name())
 	} else {

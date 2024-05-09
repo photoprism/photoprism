@@ -111,7 +111,7 @@ func wsWriter(ws *websocket.Conn, writeMutex *sync.Mutex, connId string) {
 				}
 			case 4:
 				ev = strings.Join(ch[2:4], ".")
-				if acl.ChannelUser.Equal(ch[0]) && ch[1] == user.UID() || acl.Events.AllowAll(acl.Resource(ch[2]), user.AclRole(), wsSubscribePerms) {
+				if acl.ChannelUser.Equal(ch[0]) && ch[1] == user.GetUID() || acl.Events.AllowAll(acl.Resource(ch[2]), user.AclRole(), wsSubscribePerms) {
 					// Send to matching user uid.
 					wsSendMessage(ev, msg.Fields, ws, writeMutex)
 				} else if acl.ChannelSession.Equal(ch[0]) && ch[1] == sid {

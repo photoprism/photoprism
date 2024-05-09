@@ -5,9 +5,11 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
+	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -98,14 +100,91 @@ type Photo struct {
 	UpdatedAt        time.Time     `json:"UpdatedAt" select:"photos.updated_at"`
 	EditedAt         time.Time     `json:"EditedAt,omitempty" select:"photos.edited_at"`
 	CheckedAt        time.Time     `json:"CheckedAt,omitempty" select:"photos.checked_at"`
-	DeletedAt        time.Time     `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
+	DeletedAt        *time.Time    `json:"DeletedAt,omitempty" select:"photos.deleted_at"`
 
 	Files []entity.File `json:"Files"`
 }
 
+// GetID returns the numeric entity ID.
+func (m *Photo) GetID() uint {
+	return m.ID
+}
+
+// HasID checks if the photo has an id and uid assigned to it.
+func (m *Photo) HasID() bool {
+	return m.ID > 0 && m.PhotoUID != ""
+}
+
+// GetUID returns the unique entity id.
+func (m *Photo) GetUID() string {
+	return m.PhotoUID
+}
+
+// Approve approves the photo if it is in review.
+func (m *Photo) Approve() error {
+	if !m.HasID() {
+		return fmt.Errorf("photo has no id")
+	} else if m.PhotoQuality >= 3 {
+		// Nothing to do.
+		return nil
+	}
+
+	// Restore photo if archived.
+	if err := m.Restore(); err != nil {
+		return err
+	}
+
+	edited := entity.TimeStamp()
+
+	if err := UnscopedDb().
+		Table(entity.Photo{}.TableName()).
+		Where("photo_uid = ?", m.GetUID()).
+		UpdateColumns(entity.Map{
+			"deleted_at":    gorm.Expr("NULL"),
+			"edited_at":     &edited,
+			"photo_quality": 3}).Error; err != nil {
+		return err
+	}
+
+	m.EditedAt = edited
+	m.PhotoQuality = 3
+	m.DeletedAt = nil
+
+	// Update precalculated photo and file counts.
+	if err := entity.UpdateCounts(); err != nil {
+		log.Warnf("index: %s (update counts)", err)
+	}
+
+	event.Publish("count.review", event.Data{
+		"count": -1,
+	})
+
+	return nil
+}
+
+// Restore removes the photo from the archive (reverses soft delete).
+func (m *Photo) Restore() error {
+	if !m.HasID() {
+		return fmt.Errorf("photo has no id")
+	} else if m.DeletedAt == nil {
+		return nil
+	}
+
+	if err := UnscopedDb().
+		Table(entity.Photo{}.TableName()).
+		Where("photo_uid = ?", m.GetUID()).
+		UpdateColumn("deleted_at", gorm.Expr("NULL")).Error; err != nil {
+		return err
+	}
+
+	m.DeletedAt = nil
+
+	return nil
+}
+
 // IsPlayable returns true if the photo has a related video/animation that is playable.
-func (photo *Photo) IsPlayable() bool {
-	switch photo.PhotoType {
+func (m *Photo) IsPlayable() bool {
+	switch m.PhotoType {
 	case entity.MediaVideo, entity.MediaLive, entity.MediaAnimated:
 		return true
 	default:
@@ -114,31 +193,42 @@ func (photo *Photo) IsPlayable() bool {
 }
 
 // ShareBase returns a meaningful file name for sharing.
-func (photo *Photo) ShareBase(seq int) string {
+func (m *Photo) ShareBase(seq int) string {
 	var name string
 
-	if photo.PhotoTitle != "" {
-		name = txt.Title(slug.MakeLang(photo.PhotoTitle, "en"))
+	if m.PhotoTitle != "" {
+		name = txt.Title(slug.MakeLang(m.PhotoTitle, "en"))
 	} else {
-		name = photo.PhotoUID
+		name = m.PhotoUID
 	}
 
-	taken := photo.TakenAtLocal.Format("20060102-150405")
+	taken := m.TakenAtLocal.Format("20060102-150405")
 
 	if seq > 0 {
-		return fmt.Sprintf("%s-%s (%d).%s", taken, name, seq, photo.FileType)
+		return fmt.Sprintf("%s-%s (%d).%s", taken, name, seq, m.FileType)
 	}
 
-	return fmt.Sprintf("%s-%s.%s", taken, name, photo.FileType)
+	return fmt.Sprintf("%s-%s.%s", taken, name, m.FileType)
 }
 
 type PhotoResults []Photo
 
-// UIDs returns a slice of photo UIDs.
-func (photos PhotoResults) UIDs() []string {
-	result := make([]string, len(photos))
+// Photos returns the result as a slice of Photo.
+func (m PhotoResults) Photos() []entity.PhotoInterface {
+	result := make([]entity.PhotoInterface, len(m))
 
-	for i, el := range photos {
+	for i := range m {
+		result[i] = &m[i]
+	}
+
+	return result
+}
+
+// UIDs returns a slice of photo UIDs.
+func (m PhotoResults) UIDs() []string {
+	result := make([]string, len(m))
+
+	for i, el := range m {
 		result[i] = el.PhotoUID
 	}
 
@@ -146,14 +236,14 @@ func (photos PhotoResults) UIDs() []string {
 }
 
 // Merge consecutive file results that belong to the same photo.
-func (photos PhotoResults) Merge() (merged PhotoResults, count int, err error) {
-	count = len(photos)
+func (m PhotoResults) Merge() (merged PhotoResults, count int, err error) {
+	count = len(m)
 	merged = make(PhotoResults, 0, count)
 
 	var i int
 	var photoId uint
 
-	for _, photo := range photos {
+	for _, photo := range m {
 		file := entity.File{}
 
 		if err = deepcopier.Copy(&file).From(photo); err != nil {

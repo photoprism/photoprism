@@ -203,8 +203,8 @@ func FindUserByUID(uid string) *User {
 	return FindUser(User{UserUID: uid})
 }
 
-// UID returns the unique id as string.
-func (m *User) UID() string {
+// GetUID returns the unique id as string.
+func (m *User) GetUID() string {
 	if m == nil {
 		return ""
 	}
@@ -591,7 +591,7 @@ func (m *User) Passcode(t authn.KeyType) *Passcode {
 		return nil
 	}
 
-	return FindPasscode(Passcode{UID: m.UID(), KeyType: t.String()})
+	return FindPasscode(Passcode{UID: m.GetUID(), KeyType: t.String()})
 }
 
 // Username returns the user's login name as sanitized string.
@@ -711,7 +711,7 @@ func (m *User) Settings() *UserSettings {
 	if m.UserSettings != nil {
 		m.UserSettings.UserUID = m.UserUID
 		return m.UserSettings
-	} else if m.UID() == "" {
+	} else if m.GetUID() == "" {
 		m.UserSettings = &UserSettings{}
 		return m.UserSettings
 	} else if err := CreateUserSettings(m); err != nil {
@@ -726,7 +726,7 @@ func (m *User) Details() *UserDetails {
 	if m.UserDetails != nil {
 		m.UserDetails.UserUID = m.UserUID
 		return m.UserDetails
-	} else if m.UID() == "" {
+	} else if m.GetUID() == "" {
 		m.UserDetails = &UserDetails{}
 		return m.UserDetails
 	} else if err := CreateUserDetails(m); err != nil {
@@ -1080,7 +1080,7 @@ func (m *User) RegenerateTokens() error {
 
 // RefreshShares updates the list of shares.
 func (m *User) RefreshShares() *User {
-	m.UserShares = FindUserShares(m.UID())
+	m.UserShares = FindUserShares(m.GetUID())
 	return m
 }
 
@@ -1133,8 +1133,8 @@ func (m *User) RedeemToken(token string) (n int) {
 
 	// Find shares.
 	for _, link := range links {
-		if found := FindUserShare(UserShare{UserUID: m.UID(), ShareUID: link.ShareUID}); found == nil {
-			share := NewUserShare(m.UID(), link.ShareUID, link.Perm, link.ExpiresAt())
+		if found := FindUserShare(UserShare{UserUID: m.GetUID(), ShareUID: link.ShareUID}); found == nil {
+			share := NewUserShare(m.GetUID(), link.ShareUID, link.Perm, link.ExpiresAt())
 			share.LinkUID = link.LinkUID
 			share.Comment = link.Comment
 

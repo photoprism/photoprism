@@ -808,8 +808,8 @@ func TestPhoto_AllFiles(t *testing.T) {
 }
 
 func TestPhoto_Archive(t *testing.T) {
-	t.Run("archive not yet archived photo", func(t *testing.T) {
-		m := &Photo{PhotoTitle: "HappyLilly"}
+	t.Run("NotYetArchived", func(t *testing.T) {
+		m := &Photo{ID: 10000, PhotoUID: "csd7ybn092yzcp52", PhotoTitle: "HappyLilly"}
 		assert.Empty(t, m.DeletedAt)
 		err := m.Archive()
 		if err != nil {

@@ -100,7 +100,7 @@ func clientsAddAction(ctx *cli.Context) error {
 			}
 
 			rows[0] = []string{
-				client.UID(),
+				client.GetUID(),
 				client.Name(),
 				client.AuthInfo(),
 				client.UserInfo(),

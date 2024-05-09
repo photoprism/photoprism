@@ -248,7 +248,7 @@ func (m *Session) SetClient(c *Client) *Session {
 	}
 
 	m.client = c
-	m.ClientUID = c.UID()
+	m.ClientUID = c.GetUID()
 	m.ClientName = c.ClientName
 	m.AuthProvider = c.Provider().String()
 	m.AuthMethod = c.Method().String()

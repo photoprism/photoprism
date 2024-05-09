@@ -57,10 +57,10 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 			}
 
 			for _, p := range photos {
-				if err := p.Archive(); err != nil {
-					log.Errorf("archive: %s", err)
+				if archiveErr := p.Archive(); archiveErr != nil {
+					log.Errorf("archive: %s", archiveErr)
 				} else {
-					SavePhotoAsYaml(p)
+					SavePhotoAsYaml(&p)
 				}
 			}
 		} else if err := entity.Db().Where("photo_uid IN (?)", f.Photos).Delete(&entity.Photo{}).Error; err != nil {
@@ -120,10 +120,10 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 			}
 
 			for _, p := range photos {
-				if err := p.Restore(); err != nil {
+				if err = p.Restore(); err != nil {
 					log.Errorf("restore: %s", err)
 				} else {
-					SavePhotoAsYaml(p)
+					SavePhotoAsYaml(&p)
 				}
 			}
 		} else if err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uid IN (?)", f.Photos).
@@ -187,7 +187,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 				log.Errorf("approve: %s", err)
 			} else {
 				approved = append(approved, p)
-				SavePhotoAsYaml(p)
+				SavePhotoAsYaml(&p)
 			}
 		}
 
@@ -278,7 +278,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		// Fetch selection from index.
 		if photos, err := query.SelectedPhotos(f); err == nil {
 			for _, p := range photos {
-				SavePhotoAsYaml(p)
+				SavePhotoAsYaml(&p)
 			}
 
 			event.EntitiesUpdated("photos", photos)
@@ -405,12 +405,12 @@ func BatchPhotosDelete(router *gin.RouterGroup) {
 			event.AuditWarn([]string{ClientIP(c), s.UserName, "delete", path.Join(p.PhotoPath, p.PhotoName+"*")})
 
 			// Remove all related files from storage.
-			n, err := photoprism.DeletePhoto(p, true, true)
+			n, deleteErr := photoprism.DeletePhoto(&p, true, true)
 
 			numFiles += n
 
-			if err != nil {
-				log.Errorf("delete: %s", err)
+			if deleteErr != nil {
+				log.Errorf("delete: %s", deleteErr)
 			} else {
 				deleted = append(deleted, p)
 			}

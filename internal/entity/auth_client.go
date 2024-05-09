@@ -100,8 +100,8 @@ func FindClientByUID(uid string) *Client {
 	return m
 }
 
-// UID returns the client uid string.
-func (m *Client) UID() string {
+// GetUID returns the client uid string.
+func (m *Client) GetUID() string {
 	return m.ClientUID
 }
 
@@ -135,7 +135,7 @@ func (m *Client) String() string {
 	if m == nil {
 		return report.NotAssigned
 	} else if m.HasUID() {
-		return m.UID()
+		return m.GetUID()
 	} else if m.HasName() {
 		return m.Name()
 	}

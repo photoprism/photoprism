@@ -51,12 +51,12 @@ func clientsRemoveAction(ctx *cli.Context) error {
 
 		if !ctx.Bool("force") {
 			actionPrompt := promptui.Prompt{
-				Label:     fmt.Sprintf("Delete client %s?", m.UID()),
+				Label:     fmt.Sprintf("Delete client %s?", m.GetUID()),
 				IsConfirm: true,
 			}
 
 			if _, err := actionPrompt.Run(); err != nil {
-				log.Infof("client %s was not deleted", m.UID())
+				log.Infof("client %s was not deleted", m.GetUID())
 				return nil
 			}
 		}
@@ -65,7 +65,7 @@ func clientsRemoveAction(ctx *cli.Context) error {
 			return err
 		}
 
-		log.Infof("client %s has been deleted", m.UID())
+		log.Infof("client %s has been deleted", m.GetUID())
 
 		return nil
 	})

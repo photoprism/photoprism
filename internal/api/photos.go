@@ -19,7 +19,12 @@ import (
 )
 
 // SavePhotoAsYaml saves photo data as YAML file.
-func SavePhotoAsYaml(p entity.Photo) {
+func SavePhotoAsYaml(p *entity.Photo) {
+	if p == nil {
+		log.Debugf("api: photo is nil (update yaml)")
+		return
+	}
+
 	c := get.Config()
 
 	// Write YAML sidecar file (optional).
@@ -114,7 +119,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		SavePhotoAsYaml(p)
+		SavePhotoAsYaml(&p)
 
 		UpdateClientConfig()
 
@@ -225,7 +230,7 @@ func ApprovePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		SavePhotoAsYaml(m)
+		SavePhotoAsYaml(&m)
 
 		PublishPhotoEvent(StatusUpdated, id, c)
 
