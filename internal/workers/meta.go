@@ -71,10 +71,10 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	optimized := 0
 
 	for {
-		photos, err := query.PhotosMetadataUpdate(limit, offset, delay, interval)
+		photos, queryErr := query.PhotosMetadataUpdate(limit, offset, delay, interval)
 
-		if err != nil {
-			return err
+		if queryErr != nil {
+			return queryErr
 		}
 
 		if len(photos) == 0 {
@@ -92,10 +92,10 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 
 			done[photo.PhotoUID] = true
 
-			updated, merged, err := photo.Optimize(settings.StackMeta(), settings.StackUUID(), settings.Features.Estimates, force)
+			updated, merged, optimizeErr := photo.Optimize(settings.StackMeta(), settings.StackUUID(), settings.Features.Estimates, force)
 
-			if err != nil {
-				log.Errorf("index: %s in optimization worker", err)
+			if optimizeErr != nil {
+				log.Errorf("index: %s in optimization worker", optimizeErr)
 			} else if updated {
 				optimized++
 				log.Debugf("index: updated photo %s", photo.String())

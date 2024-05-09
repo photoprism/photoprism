@@ -56,7 +56,7 @@ func NewCell(lat, lng float32) *Cell {
 	return result
 }
 
-// Refresh updates the index by retrieving the latest data from an external API.
+// Refresh updates the cell details by fetching the latest data.
 func (m *Cell) Refresh(api string) (err error) {
 	// Unknown?
 	if m.Unknown() {

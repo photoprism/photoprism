@@ -97,7 +97,7 @@ func ArchivedPhotos(limit int, offset int) (entities entity.Photos, err error) {
 }
 
 // PhotosMetadataUpdate returns photos selected for metadata maintenance.
-func PhotosMetadataUpdate(limit, offset int, delay, interval time.Duration) (entities entity.Photos, err error) {
+func PhotosMetadataUpdate(limit, offset int, delay, interval time.Duration) (photos entity.Photos, err error) {
 	err = Db().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
@@ -110,10 +110,10 @@ func PhotosMetadataUpdate(limit, offset int, delay, interval time.Duration) (ent
 		Preload("Cell").
 		Preload("Cell.Place").
 		Where("checked_at IS NULL OR checked_at < ?", time.Now().Add(-1*interval)).
-		Where("updated_at < ? OR (cell_id = 'zz' AND photo_lat <> 0)", time.Now().Add(-1*delay)).
-		Order("photos.ID ASC").Limit(limit).Offset(offset).Find(&entities).Error
+		Where("updated_at < ?", time.Now().Add(-1*delay)).
+		Order("photos.ID ASC").Limit(limit).Offset(offset).Find(&photos).Error
 
-	return entities, err
+	return photos, err
 }
 
 // OrphanPhotos finds orphan index entries that may be removed.
