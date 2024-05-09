@@ -11,7 +11,7 @@ import (
 )
 
 // BackupAlbums creates a YAML file backup of all albums.
-func BackupAlbums(backupPath string, force bool) (count int, result error) {
+func BackupAlbums(backupPath string, force bool) (count int, err error) {
 	c := Config()
 
 	if !c.BackupYaml() && !force {
@@ -19,10 +19,10 @@ func BackupAlbums(backupPath string, force bool) (count int, result error) {
 		return count, nil
 	}
 
-	albums, err := query.Albums(0, 1000000)
+	albums, queryErr := query.Albums(0, 1000000)
 
-	if err != nil {
-		return count, err
+	if queryErr != nil {
+		return count, queryErr
 	}
 
 	if !fs.PathExists(backupPath) {
@@ -32,16 +32,16 @@ func BackupAlbums(backupPath string, force bool) (count int, result error) {
 	for _, a := range albums {
 		fileName := a.YamlFileName(backupPath)
 
-		if err := a.SaveAsYaml(fileName); err != nil {
-			log.Errorf("album: %s (update yaml)", err)
-			result = err
+		if saveErr := a.SaveAsYaml(fileName); saveErr != nil {
+			log.Errorf("album: %s (update yaml)", saveErr)
+			err = saveErr
 		} else {
 			log.Tracef("backup: saved album yaml file %s", clean.Log(filepath.Base(fileName)))
 			count++
 		}
 	}
 
-	return count, result
+	return count, err
 }
 
 // RestoreAlbums restores all album YAML file backups.
