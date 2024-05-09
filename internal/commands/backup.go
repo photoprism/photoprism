@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -159,10 +160,12 @@ func backupAction(ctx *cli.Context) error {
 		log.Trace(cmd.String())
 
 		// Run backup command.
-		if err := cmd.Run(); err != nil {
-			if stderr.String() != "" {
-				return errors.New(stderr.String())
+		if cmdErr := cmd.Run(); cmdErr != nil {
+			if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
+				return errors.New(errStr)
 			}
+
+			return cmdErr
 		}
 	}
 
@@ -177,8 +180,8 @@ func backupAction(ctx *cli.Context) error {
 
 		log.Infof("saving albums in %s", clean.Log(albumsPath))
 
-		if count, err := photoprism.BackupAlbums(albumsPath, true); err != nil {
-			return err
+		if count, backupErr := photoprism.BackupAlbums(albumsPath, true); backupErr != nil {
+			return backupErr
 		} else {
 			log.Infof("created %s", english.Plural(count, "YAML album file", "YAML album files"))
 		}
