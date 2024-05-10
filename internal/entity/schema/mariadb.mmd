@@ -635,35 +635,35 @@ classDiagram
     auth_users_details --> auth_users : user_uid
     auth_users_settings --> auth_users : user_uid
     auth_users_shares --> auth_users : user_uid
-    auth_users_details  -->  cells : cell_id:id
-    auth_users_details  -->  places : place_id:id
-    categories  -->  labels : label_id:id
+    auth_users_details  -->  cells : cell_id
+    auth_users_details  -->  places : place_id
+    categories  -->  labels : label_id
     categories  -->  labels : category_id
-    cells  -->  places : place_id:id
-    details  -->  photos : photo_id:id
-    files  -->  photos : photo_id:id
-    files_share  -->  files : file_id:id
-    files_share  -->  services : service_id:id
-    files_sync  -->  files : file_id:id
-    files_sync  -->  services : service_id:id
+    cells  -->  places : place_id
+    details  -->  photos : photo_id
+    files  -->  photos : photo_id
+    files_share  -->  files : file_id
+    files_share  -->  services : service_id
+    files_sync  -->  files : file_id
+    files_sync  -->  services : service_id
     markers  -->  files : file_uid
-    markers  -->  faces : face_id:id
+    markers  -->  faces : face_id
     markers  -->  subjects : subject_uid
     faces  -->  subjects : subject_uid
-    photos  -->  cameras : camera_id:id
-    photos  -->  cells : cell_id:id
-    photos  -->  lenses : lens_id:id
-    photos  -->  places : place_id:id
+    photos  -->  cameras : camera_id
+    photos  -->  cells : cell_id
+    photos  -->  lenses : lens_id
+    photos  -->  places : place_id
     photos  -->  countries : photo_country
     albums  -->  countries : album_country
     albums  -->  folders : path
     albums  --> users : created_by
     albums_users  -->  auth_users : user_uid
     places  -->  countries : place_country
-    photos_keywords  -->  keywords : keyword_id:id
-    photos_keywords  -->  photos : photo_id:id
-    photos_labels  -->  labels : label_id:id
-    photos_labels  -->  photos : photo_id:id
+    photos_keywords  -->  keywords : keyword_id
+    photos_keywords  -->  photos : photo_id
+    photos_labels  -->  labels : label_id
+    photos_labels  -->  photos : photo_id
     photos_albums  -->  albums : album_uid
     photos_albums  -->  photos : photo_uid
     photos_users   -->  auth_users : user_uid
