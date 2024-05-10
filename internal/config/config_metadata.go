@@ -19,3 +19,8 @@ func (c *Config) ExifToolJson() bool {
 func (c *Config) BackupYaml() bool {
 	return !c.DisableBackups()
 }
+
+// BackupIndex checks if a regular index backup should be created.
+func (c *Config) BackupIndex() bool {
+	return !c.DisableBackups()
+}

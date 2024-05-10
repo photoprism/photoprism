@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
 func TestMain(m *testing.M) {
@@ -17,6 +18,7 @@ func TestMain(m *testing.M) {
 
 	c := config.TestConfig()
 	defer c.CloseDb()
+	photoprism.SetConfig(c)
 
 	code := m.Run()
 

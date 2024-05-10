@@ -1,20 +1,14 @@
 package commands
 
 import (
-	"bytes"
 	"context"
-	"errors"
 	"fmt"
-	"os"
-	"os/exec"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -61,13 +55,12 @@ var backupFlags = []cli.Flag{
 // backupAction creates a database backup.
 func backupAction(ctx *cli.Context) error {
 	// Use command argument as backup file name.
-	indexFileName := ctx.Args().First()
-	indexPath := ctx.String("index-path")
-	backupIndex := ctx.Bool("index") || indexFileName != "" || indexPath != ""
-
+	fileName := ctx.Args().First()
+	backupPath := ctx.String("index-path")
+	backupIndex := ctx.Bool("index") || fileName != "" || backupPath != ""
 	albumsPath := ctx.String("albums-path")
-
 	backupAlbums := ctx.Bool("albums") || albumsPath != ""
+	force := ctx.Bool("force")
 
 	if !backupIndex && !backupAlbums {
 		return cli.ShowSubcommandHelp(ctx)
@@ -89,83 +82,21 @@ func backupAction(ctx *cli.Context) error {
 
 	if backupIndex {
 		// If empty, use default backup file name.
-		if indexFileName == "" {
-			if !fs.PathWritable(indexPath) {
-				if indexPath != "" {
+		if fileName == "" {
+			if !fs.PathWritable(backupPath) {
+				if backupPath != "" {
 					log.Warnf("custom index backup path not writable, using default")
 				}
 
-				indexPath = filepath.Join(conf.BackupPath(), conf.DatabaseDriver())
+				backupPath = filepath.Join(conf.BackupPath(), conf.DatabaseDriver())
 			}
 
 			backupFile := time.Now().UTC().Format("2006-01-02") + ".sql"
-			indexFileName = filepath.Join(indexPath, backupFile)
+			fileName = filepath.Join(backupPath, backupFile)
 		}
 
-		if indexFileName != "-" {
-			if _, err := os.Stat(indexFileName); err == nil && !ctx.Bool("force") {
-				return fmt.Errorf("%s already exists", clean.Log(indexFileName))
-			} else if err == nil {
-				log.Warnf("replacing existing backup")
-			}
-
-			// Create backup directory if not exists.
-			if dir := filepath.Dir(indexFileName); dir != "." {
-				if err = fs.MkdirAll(dir); err != nil {
-					return err
-				}
-			}
-		}
-
-		var cmd *exec.Cmd
-
-		switch conf.DatabaseDriver() {
-		case config.MySQL, config.MariaDB:
-			cmd = exec.Command(
-				conf.MariadbDumpBin(),
-				"--protocol", "tcp",
-				"-h", conf.DatabaseHost(),
-				"-P", conf.DatabasePortString(),
-				"-u", conf.DatabaseUser(),
-				"-p"+conf.DatabasePassword(),
-				conf.DatabaseName(),
-			)
-		case config.SQLite3:
-			cmd = exec.Command(
-				conf.SqliteBin(),
-				conf.DatabaseFile(),
-				".dump",
-			)
-		default:
-			return fmt.Errorf("unsupported database type: %s", conf.DatabaseDriver())
-		}
-
-		// Write to stdout or file.
-		var f *os.File
-		if indexFileName == "-" {
-			log.Infof("writing backup to stdout")
-			f = os.Stdout
-		} else if f, err = os.OpenFile(indexFileName, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeFile); err != nil {
-			return fmt.Errorf("failed to create %s: %s", clean.Log(indexFileName), err)
-		} else {
-			log.Infof("writing backup to %s", clean.Log(indexFileName))
-			defer f.Close()
-		}
-
-		var stderr bytes.Buffer
-		cmd.Stderr = &stderr
-		cmd.Stdout = f
-
-		// Log exact command for debugging in trace mode.
-		log.Trace(cmd.String())
-
-		// Run backup command.
-		if cmdErr := cmd.Run(); cmdErr != nil {
-			if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
-				return errors.New(errStr)
-			}
-
-			return cmdErr
+		if err = photoprism.BackupIndex(backupPath, fileName, fileName == "-", force); err != nil {
+			return fmt.Errorf("failed to create %s: %w", clean.Log(fileName), err)
 		}
 	}
 

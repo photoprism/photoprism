@@ -4,6 +4,7 @@ package mutex
 var (
 	MainWorker   = Activity{}
 	SyncWorker   = Activity{}
+	BackupWorker = Activity{}
 	ShareWorker  = Activity{}
 	MetaWorker   = Activity{}
 	FacesWorker  = Activity{}
