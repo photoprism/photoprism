@@ -1,6 +1,6 @@
 # Database Schema
 
-*Please keep in mind that some information may be outdated or missing, as these docs were automatically generated from the source code.*
+*Note that this schema description is for illustrative purposes only, e.g. to create visual relationship diagrams. It should not be used to update or replace an existing production database.*
 
 ## Entity-Relationship Diagram
 
