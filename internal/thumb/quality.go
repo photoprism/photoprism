@@ -22,12 +22,17 @@ func (q Quality) String() string {
 	return strconv.Itoa(int(q))
 }
 
+// Int returns the quality as int.
+func (q Quality) Int() int {
+	return int(q)
+}
+
 // Common Quality levels.
 // see https://docs.photoprism.app/user-guide/settings/advanced/#jpeg-quality
 const (
 	QualityBest    Quality = 95
-	QualityHigh    Quality = 92
-	QualityDefault Quality = 85
+	QualityHigh    Quality = 88
+	QualityDefault Quality = 82
 	QualityLow     Quality = 80
 	QualityBad     Quality = 75
 	QualityWorst   Quality = 70

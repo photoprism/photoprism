@@ -74,7 +74,7 @@ require (
 require github.com/go-ldap/ldap/v3 v3.4.8
 
 require (
-	github.com/prometheus/client_golang v1.19.0
+	github.com/prometheus/client_golang v1.19.1
 	github.com/prometheus/common v0.53.0
 )
 
@@ -82,7 +82,10 @@ require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082
 
 require golang.org/x/text v0.15.0
 
-require github.com/pquerna/otp v1.4.0
+require (
+	github.com/davidbyttow/govips/v2 v2.14.0
+	github.com/pquerna/otp v1.4.0
+)
 
 require (
 	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect

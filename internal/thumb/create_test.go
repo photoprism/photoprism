@@ -1,6 +1,7 @@
 package thumb
 
 import (
+	"errors"
 	"os"
 	"strings"
 	"testing"
@@ -300,10 +301,9 @@ func TestFromFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, dst, fileName)
+		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
 	})
-
 	t.Run("orientation >1 ", func(t *testing.T) {
 		colorThumb := Sizes[Colors]
 		src := "testdata/example.gif"
@@ -317,10 +317,9 @@ func TestFromFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Truef(t, strings.HasSuffix(fileName, dst), fileName, dst)
+		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
 	})
-
 	t.Run("missing file", func(t *testing.T) {
 		colorThumb := Sizes[Colors]
 		src := "testdata/example.xxx"
@@ -356,11 +355,10 @@ func TestFromCache(t *testing.T) {
 
 		assert.Equal(t, "", fileName)
 
-		if err != ErrNotCached {
+		if !errors.Is(err, ErrNotCached) {
 			t.Fatal("ErrNotCached expected")
 		}
 	})
-
 	t.Run("missing file", func(t *testing.T) {
 		tile50 := Sizes[Tile50]
 		src := "testdata/example.xxx"

@@ -19,8 +19,10 @@ func TestMain(m *testing.M) {
 
 	code := m.Run()
 
-	// remove temporary test files
+	// Remove generated test files and folders.
 	_ = os.RemoveAll("testdata/1")
+	_ = os.RemoveAll("testdata/cache")
+	_ = os.RemoveAll("testdata/vips")
 
 	os.Exit(code)
 }

@@ -77,7 +77,7 @@ func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ..
 		return "", err
 	} else if fileName, err = fs.Resolve(fileName); err != nil {
 		return "", ErrNotCached
-	} else if fs.FileExists(fileName) {
+	} else if fs.FileExistsNotEmpty(fileName) {
 		return fileName, nil
 	}
 
@@ -88,7 +88,7 @@ func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ..
 func FromFile(imageFilename, hash, thumbPath string, width, height, orientation int, opts ...ResampleOption) (fileName string, err error) {
 	if fileName, err = FromCache(imageFilename, hash, thumbPath, width, height, opts...); err == nil {
 		return fileName, err
-	} else if err != ErrNotCached {
+	} else if !errors.Is(err, ErrNotCached) {
 		return "", err
 	}
 
@@ -100,7 +100,7 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 		return "", err
 	}
 
-	// Load image from storage.
+	// Load image from file.
 	img, err := Open(imageFilename, orientation)
 
 	if err != nil {
@@ -130,7 +130,7 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 
 	var quality imaging.EncodeOption
 
-	if filepath.Ext(fileName) == "."+string(fs.ImagePNG) {
+	if fs.FileType(fileName) == fs.ImagePNG {
 		quality = imaging.PNGCompressionLevel(png.DefaultCompression)
 	} else if width <= 150 && height <= 150 {
 		quality = JpegQualitySmall.EncodeOption()
