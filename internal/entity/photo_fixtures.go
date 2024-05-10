@@ -3297,7 +3297,7 @@ var PhotoFixtures = PhotoMap{
 		PhotoStack: 0,
 		PhotoFaces: 0,
 	},
-	"photo51 ": { //JPG, Geo from metadata, indexed
+	"photo51 ": { //JPG, Geo from metadata, indexed, in review
 		ID:               1000052,
 		PhotoUID:         "ps6sg6byk7wrbk44",
 		TakenAt:          time.Date(2020, 11, 11, 9, 7, 18, 0, time.UTC),
@@ -3334,7 +3334,7 @@ var PhotoFixtures = PhotoMap{
 		PhotoExposure:    "",
 		PhotoFocalLength: 0,
 		PhotoFNumber:     0,
-		PhotoQuality:     5,
+		PhotoQuality:     1,
 		PhotoResolution:  0,
 		Camera:           CameraFixtures.Pointer("canon-eos-6d"),
 		CameraID:         CameraFixtures.Pointer("canon-eos-6d").ID,
