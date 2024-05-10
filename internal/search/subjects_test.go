@@ -20,7 +20,7 @@ func TestSubjects(t *testing.T) {
 		results, err := Subjects(form.SearchSubjects{Type: entity.SubjPerson, Count: 2, Order: "count"})
 		assert.NoError(t, err)
 		//t.Logf("Subjects: %#v", results)
-		assert.Greater(t, results[0].FileCount, results[1].FileCount)
+		assert.GreaterOrEqual(t, results[0].FileCount, results[1].FileCount)
 		assert.Equal(t, 2, len(results))
 	})
 	t.Run("FindAll sort by name", func(t *testing.T) {

@@ -122,6 +122,13 @@ func TestPhoto_SaveLabels(t *testing.T) {
 	})
 }
 
+func TestPhoto_GetID(t *testing.T) {
+	t.Run("Ok", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		assert.Equal(t, uint(1000001), m.GetID())
+	})
+}
+
 func TestPhoto_ClassifyLabels(t *testing.T) {
 	t.Run("NewPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo19")
@@ -291,6 +298,12 @@ func TestPhoto_Delete(t *testing.T) {
 		}
 		assert.Len(t, files, 1)
 	})
+	t.Run("NoID", func(t *testing.T) {
+		m := Photo{}
+		_, err := m.Delete(true)
+
+		assert.Error(t, err)
+	})
 }
 
 func TestPhotos_UIDs(t *testing.T) {
@@ -310,6 +323,10 @@ func TestPhoto_String(t *testing.T) {
 	t.Run("Unknown", func(t *testing.T) {
 		photo := Photo{PhotoUID: "", PhotoName: "", OriginalName: ""}
 		assert.Equal(t, "(unknown)", photo.String())
+	})
+	t.Run("UID", func(t *testing.T) {
+		photo := Photo{PhotoUID: "ps6sg6be2lvl0k53", PhotoName: "", OriginalName: ""}
+		assert.Equal(t, "uid ps6sg6be2lvl0k53", photo.String())
 	})
 }
 
@@ -366,6 +383,10 @@ func TestFindPhoto(t *testing.T) {
 		photo := Photo{PhotoUID: "ps6sg6be2lvl0iuj"}
 		assert.Nil(t, FindPhoto(photo))
 		assert.Nil(t, photo.Find())
+	})
+	t.Run("FindByID", func(t *testing.T) {
+		photo := Photo{ID: 1000001}
+		assert.NotNil(t, FindPhoto(photo))
 	})
 }
 
@@ -587,11 +608,14 @@ func TestPhoto_Approve(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.False(t, photo.Approved())
+
 		if err := photo.Approve(); err != nil {
 			t.Fatal(err)
 		}
 
 		assert.Equal(t, 3, photo.PhotoQuality)
+		assert.True(t, photo.Approved())
 	})
 }
 
@@ -730,6 +754,16 @@ func TestPhoto_SetCamera(t *testing.T) {
 		photo.SetCamera(camera, SrcMeta)
 		assert.Equal(t, "NewCamera", photo.Camera.CameraSlug)
 	})
+	t.Run("Scanner", func(t *testing.T) {
+		cameraOld := &Camera{CameraSlug: "OldCamera", ID: 10000000111}
+		photo := &Photo{CameraSrc: SrcAuto, Camera: cameraOld, CameraID: 10000000111}
+		assert.Equal(t, "OldCamera", photo.Camera.CameraSlug)
+		assert.False(t, photo.PhotoScan)
+		camera := &Camera{CameraSlug: "MSscanner"}
+		photo.SetCamera(camera, SrcMeta)
+		assert.Equal(t, "MSscanner", photo.Camera.CameraSlug)
+		assert.True(t, photo.PhotoScan)
+	})
 }
 
 func TestPhoto_SetLens(t *testing.T) {
@@ -807,7 +841,7 @@ func TestPhoto_AllFiles(t *testing.T) {
 	})
 }
 
-func TestPhoto_Archive(t *testing.T) {
+func TestPhoto_ArchiveRestore(t *testing.T) {
 	t.Run("NotYetArchived", func(t *testing.T) {
 		m := &Photo{ID: 10000, PhotoUID: "csd7ybn092yzcp52", PhotoTitle: "HappyLilly"}
 		assert.Empty(t, m.DeletedAt)
@@ -821,6 +855,28 @@ func TestPhoto_Archive(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Empty(t, m.DeletedAt)
+	})
+	t.Run("AlreadyArchived", func(t *testing.T) {
+		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+		m := &Photo{ID: 10000, PhotoUID: "csd7ybn092yzcp52", PhotoTitle: "HappyLilly", DeletedAt: &deleteTime}
+		assert.NotEmpty(t, m.DeletedAt)
+		err := m.Archive()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.NotEmpty(t, m.DeletedAt)
+		err = m.Restore()
+		if err != nil {
+			t.Fatal(err)
+		}
+		assert.Empty(t, m.DeletedAt)
+	})
+	t.Run("NoID", func(t *testing.T) {
+		m := &Photo{PhotoTitle: "HappyLilly"}
+		err := m.Archive()
+		assert.Error(t, err)
+		err = m.Restore()
+		assert.Error(t, err)
 	})
 }
 

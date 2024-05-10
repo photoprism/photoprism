@@ -7,6 +7,187 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestPhoto_Ids(t *testing.T) {
+	r := Photo{
+		ID:           1111198,
+		CreatedAt:    time.Time{},
+		UpdatedAt:    time.Time{},
+		DeletedAt:    &time.Time{},
+		TakenAt:      time.Time{},
+		TakenAtLocal: time.Time{},
+		PhotoUID:     "ps6sg6be2lvl0o98",
+	}
+
+	assert.Equal(t, uint(1111198), r.GetID())
+	assert.True(t, r.HasID())
+	assert.Equal(t, "ps6sg6be2lvl0o98", r.GetUID())
+}
+
+func TestPhoto_Approve(t *testing.T) {
+	t.Run("EmptyPhoto", func(t *testing.T) {
+		r := Photo{}
+		err := r.Approve()
+
+		assert.Error(t, err)
+	})
+	t.Run("PhotoNotInReview", func(t *testing.T) {
+		r := Photo{
+			ID:           1111154,
+			CreatedAt:    time.Time{},
+			TakenAt:      time.Time{},
+			TakenAtLocal: time.Time{},
+			TakenSrc:     "",
+			TimeZone:     "",
+			PhotoUID:     "ps6sg6be2lvl0r41",
+			PhotoQuality: 4,
+		}
+
+		err := r.Approve()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 4, r.PhotoQuality)
+	})
+	t.Run("Approve", func(t *testing.T) {
+		r := Photo{
+			ID:           100028476,
+			CreatedAt:    time.Time{},
+			UpdatedAt:    time.Time{},
+			DeletedAt:    &time.Time{},
+			TakenAt:      time.Time{},
+			TakenAtLocal: time.Time{},
+			TakenSrc:     "",
+			TimeZone:     "",
+			PhotoUID:     "ps6sg6be2lvl0j76",
+			PhotoQuality: 2,
+		}
+
+		err := r.Approve()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, 3, r.PhotoQuality)
+		assert.Nil(t, r.DeletedAt)
+		assert.NotNil(t, r.EditedAt)
+	})
+}
+
+func TestPhoto_Restore(t *testing.T) {
+	t.Run("EmptyPhoto", func(t *testing.T) {
+		r := Photo{}
+
+		err := r.Restore()
+
+		assert.Error(t, err)
+	})
+	t.Run("PhotoNotInArchive", func(t *testing.T) {
+		r := Photo{
+			ID:           1111154,
+			CreatedAt:    time.Time{},
+			TakenAt:      time.Time{},
+			TakenAtLocal: time.Time{},
+			TakenSrc:     "",
+			TimeZone:     "",
+			PhotoUID:     "ps6sg6be2lvl0r41",
+		}
+
+		err := r.Restore()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Nil(t, r.DeletedAt)
+	})
+	t.Run("Restore", func(t *testing.T) {
+		r := Photo{
+			ID:           100028476,
+			CreatedAt:    time.Time{},
+			UpdatedAt:    time.Time{},
+			DeletedAt:    &time.Time{},
+			TakenAt:      time.Time{},
+			TakenAtLocal: time.Time{},
+			TakenSrc:     "",
+			TimeZone:     "",
+			PhotoUID:     "ps6sg6be2lvl0j76",
+			PhotoQuality: 2,
+		}
+
+		assert.NotNil(t, r.DeletedAt)
+
+		err := r.Restore()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Nil(t, r.DeletedAt)
+	})
+}
+
+func TestPhoto_IsPlayable(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		r := Photo{
+			ID:           1111154,
+			CreatedAt:    time.Time{},
+			TakenAt:      time.Time{},
+			TakenAtLocal: time.Time{},
+			TakenSrc:     "",
+			TimeZone:     "",
+			PhotoUID:     "ps6sg6be2lvl0r41",
+			PhotoType:    "live",
+		}
+
+		assert.True(t, r.IsPlayable())
+	})
+	t.Run("False", func(t *testing.T) {
+		r := Photo{
+			ID:           1111154,
+			CreatedAt:    time.Time{},
+			TakenAt:      time.Time{},
+			TakenAtLocal: time.Time{},
+			TakenSrc:     "",
+			TimeZone:     "",
+			PhotoUID:     "ps6sg6be2lvl0r41",
+			PhotoType:    "image",
+		}
+
+		assert.False(t, r.IsPlayable())
+	})
+}
+
+func TestPhotoResults_Photos(t *testing.T) {
+	photo1 := Photo{
+		ID:           1111154,
+		CreatedAt:    time.Time{},
+		TakenAt:      time.Time{},
+		TakenAtLocal: time.Time{},
+		TakenSrc:     "",
+		TimeZone:     "",
+		PhotoUID:     "ps6sg6be2lvl0r41",
+		PhotoType:    "live",
+	}
+
+	photo2 := Photo{
+		ID:           1111155,
+		CreatedAt:    time.Time{},
+		TakenAt:      time.Time{},
+		TakenAtLocal: time.Time{},
+		TakenSrc:     "",
+		TimeZone:     "",
+		PhotoUID:     "ps6sg6be2lvl0986",
+		PhotoType:    "image",
+	}
+
+	r := PhotoResults{photo1, photo2}
+
+	assert.Equal(t, 2, len(r.Photos()))
+}
+
 func TestPhotosResults_Merged(t *testing.T) {
 	result1 := Photo{
 		ID:               111111,
@@ -262,7 +443,7 @@ func TestPhotosResults_UIDs(t *testing.T) {
 }
 
 func TestPhotosResult_ShareFileName(t *testing.T) {
-	t.Run("with photo title", func(t *testing.T) {
+	t.Run("WithTitle", func(t *testing.T) {
 		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
@@ -325,7 +506,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		r := result1.ShareBase(0)
 		assert.Contains(t, r, "20131111-090718-Phototitle123")
 	})
-	t.Run("without photo title", func(t *testing.T) {
+	t.Run("NoTitle", func(t *testing.T) {
 		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
@@ -389,7 +570,7 @@ func TestPhotosResult_ShareFileName(t *testing.T) {
 		assert.Contains(t, r, "20151111-090718-uid123")
 	})
 
-	t.Run("seq > 0", func(t *testing.T) {
+	t.Run("SeqGreater0", func(t *testing.T) {
 		result1 := Photo{
 			ID:               111111,
 			CreatedAt:        time.Time{},
