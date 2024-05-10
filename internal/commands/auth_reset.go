@@ -12,10 +12,13 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 )
 
+const AuthResetDescription = "This command recreates the auth_sessions database table so that it is compatible with the current version. As a result, all users and clients must re-authenticate. Note that any client access tokens and app passwords that users may have created are also deleted and must be recreated."
+
 // AuthResetCommand configures the command name, flags, and action.
 var AuthResetCommand = cli.Command{
-	Name:  "reset",
-	Usage: "Resets the authentication of all users and clients",
+	Name:        "reset",
+	Usage:       "Resets the authentication of all users and clients",
+	Description: AuthResetDescription,
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "trace, t",
