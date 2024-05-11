@@ -552,15 +552,6 @@ func (c *Config) StoragePath() string {
 	return fs.Abs(c.options.StoragePath)
 }
 
-// BackupPath returns the backup storage path.
-func (c *Config) BackupPath() string {
-	if fs.PathWritable(c.options.BackupPath) {
-		return fs.Abs(c.options.BackupPath)
-	}
-
-	return filepath.Join(c.StoragePath(), "backup")
-}
-
 // AssetsPath returns the path to static assets for models and templates.
 func (c *Config) AssetsPath() string {
 	if c.options.AssetsPath == "" {

@@ -69,7 +69,7 @@ func Start(conf *config.Config) {
 	}()
 }
 
-// Stop stops waiting for indexing & importing opportunities.
-func Stop() {
+// Shutdown the auto indexing watchers.
+func Shutdown() {
 	stop <- true
 }

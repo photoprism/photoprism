@@ -147,8 +147,8 @@ func startAction(ctx *cli.Context) error {
 	sig := <-quit
 
 	// Stop all background activity.
-	auto.Stop()
-	workers.Stop()
+	auto.Shutdown()
+	workers.Shutdown()
 	session.Shutdown()
 	mutex.CancelAll()
 

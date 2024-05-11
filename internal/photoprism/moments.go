@@ -51,11 +51,11 @@ func (w *Moments) Start() (err error) {
 		}
 	}()
 
-	if err = mutex.MainWorker.Start(); err != nil {
+	if err = mutex.IndexWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	// Remove duplicate moments.
 	if removed, err := query.RemoveDuplicateMoments(); err != nil {
@@ -268,5 +268,5 @@ func (w *Moments) Start() (err error) {
 
 // Cancel stops the current operation.
 func (w *Moments) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.IndexWorker.Cancel()
 }

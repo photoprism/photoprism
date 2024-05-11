@@ -76,12 +76,12 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	// Make sure to run import only once, unless otherwise requested.
 	if !opt.NonBlocking {
-		if err := mutex.MainWorker.Start(); err != nil {
+		if err := mutex.IndexWorker.Start(); err != nil {
 			event.Warn(fmt.Sprintf("import: %s", err.Error()))
 			return done
 		}
 
-		defer mutex.MainWorker.Stop()
+		defer mutex.IndexWorker.Stop()
 	}
 
 	if err := ind.tensorFlow.Init(); err != nil {
@@ -93,7 +93,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 	// Start a fixed number of goroutines to import files.
 	var wg sync.WaitGroup
-	var numWorkers = imp.conf.Workers()
+	var numWorkers = imp.conf.IndexWorkers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
@@ -131,7 +131,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 				}
 			}()
 
-			if mutex.MainWorker.Canceled() {
+			if mutex.IndexWorker.Canceled() {
 				return errors.New("canceled")
 			}
 
@@ -285,7 +285,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 
 // Cancel stops the current import operation.
 func (imp *Import) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.IndexWorker.Cancel()
 }
 
 // DestinationFilename returns the destination filename of a MediaFile to be imported.

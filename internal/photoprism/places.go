@@ -37,12 +37,12 @@ func (w *Places) Start(force bool) (updated []string, err error) {
 	}()
 
 	// Check if a worker is already running.
-	if err = mutex.MainWorker.Start(); err != nil {
+	if err = mutex.IndexWorker.Start(); err != nil {
 		log.Warnf("index: %s (update locations)", err.Error())
 		return []string{}, err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	// Update existing location information?
 	if force {
@@ -172,10 +172,10 @@ func (w *Places) UpdatePhotos(force bool) (affected int, err error) {
 
 // Canceled tests if the worker should be stopped.
 func (w *Places) Canceled() bool {
-	return mutex.MainWorker.Canceled() || mutex.MetaWorker.Canceled()
+	return mutex.IndexWorker.Canceled() || mutex.MetaWorker.Canceled()
 }
 
 // Cancel stops the current operation.
 func (w *Places) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.IndexWorker.Cancel()
 }

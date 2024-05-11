@@ -51,12 +51,12 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 		return thumbs, orphans, sidecars, err
 	}
 
-	if err = mutex.MainWorker.Start(); err != nil {
+	if err = mutex.IndexWorker.Start(); err != nil {
 		log.Warnf("cleanup: %s (start)", err)
 		return thumbs, orphans, sidecars, err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	if opt.Dry {
 		log.Infof("cleanup: dry run, nothing will actually be removed")
@@ -74,7 +74,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 
 	// Delete orphaned photos from the index and remaining sidecar files from storage, if any.
 	for _, p := range photos {
-		if mutex.MainWorker.Canceled() {
+		if mutex.IndexWorker.Canceled() {
 			return thumbs, orphans, sidecars, errors.New("cleanup canceled")
 		}
 
@@ -203,5 +203,5 @@ func (w *CleanUp) Cache(opt CleanUpOptions) (deleted int, err error) {
 
 // Cancel stops the current operation.
 func (w *CleanUp) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.IndexWorker.Cancel()
 }

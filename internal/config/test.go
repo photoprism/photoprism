@@ -101,14 +101,17 @@ func NewTestOptions(pkg string) *Options {
 		ExifBruteForce:  false,
 		AssetsPath:      assetsPath,
 		AutoIndex:       -1,
+		IndexSchedule:   DefaultIndexSchedule,
 		AutoImport:      7200,
 		StoragePath:     dataPath,
 		CachePath:       dataPath + "/cache",
 		OriginalsPath:   dataPath + "/originals",
 		ImportPath:      dataPath + "/import",
-		TempPath:        dataPath + "/temp",
 		ConfigPath:      dataPath + "/config",
 		SidecarPath:     dataPath + "/sidecar",
+		TempPath:        dataPath + "/temp",
+		BackupRetain:    DefaultBackupRetain,
+		BackupSchedule:  DefaultBackupSchedule,
 		DatabaseDriver:  driver,
 		DatabaseDsn:     dsn,
 		AdminPassword:   "photoprism",
@@ -203,13 +206,15 @@ func CliTestContext() *cli.Context {
 	globalSet.String("config-path", config.ConfigPath, "doc")
 	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.String("storage-path", config.StoragePath, "doc")
-	globalSet.String("backup-path", config.StoragePath, "doc")
 	globalSet.String("sidecar-path", config.SidecarPath, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
 	globalSet.String("import-path", config.OriginalsPath, "doc")
-	globalSet.String("temp-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
+	globalSet.String("temp-path", config.OriginalsPath, "doc")
+	globalSet.String("backup-path", config.StoragePath, "doc")
+	globalSet.Int("backup-retain", config.BackupRetain, "doc")
+	globalSet.String("backup-schedule", config.BackupSchedule, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
 	globalSet.String("darktable-blacklist", config.DarktableBlacklist, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
@@ -218,6 +223,7 @@ func CliTestContext() *cli.Context {
 	globalSet.Bool("sponsor", true, "doc")
 	globalSet.Bool("test", true, "doc")
 	globalSet.Int("auto-index", config.AutoIndex, "doc")
+	globalSet.String("auto-index-schedule", config.IndexSchedule, "doc")
 	globalSet.Int("auto-import", config.AutoImport, "doc")
 
 	app := cli.NewApp()
@@ -228,13 +234,15 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("config-path", config.ConfigPath))
 	LogErr(c.Set("admin-password", config.AdminPassword))
 	LogErr(c.Set("storage-path", config.StoragePath))
-	LogErr(c.Set("backup-path", config.BackupPath))
 	LogErr(c.Set("sidecar-path", config.SidecarPath))
 	LogErr(c.Set("assets-path", config.AssetsPath))
 	LogErr(c.Set("originals-path", config.OriginalsPath))
 	LogErr(c.Set("import-path", config.ImportPath))
-	LogErr(c.Set("temp-path", config.TempPath))
 	LogErr(c.Set("cache-path", config.CachePath))
+	LogErr(c.Set("temp-path", config.TempPath))
+	LogErr(c.Set("backup-path", config.BackupPath))
+	LogErr(c.Set("backup-retain", strconv.Itoa(config.BackupRetain)))
+	LogErr(c.Set("backup-schedule", config.BackupSchedule))
 	LogErr(c.Set("darktable-cli", config.DarktableBin))
 	LogErr(c.Set("darktable-blacklist", "raf,cr3"))
 	LogErr(c.Set("wakeup-interval", "1h34m9s"))
@@ -243,6 +251,7 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("sponsor", "true"))
 	LogErr(c.Set("test", "true"))
 	LogErr(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))
+	LogErr(c.Set("auto-index-schedule", config.IndexSchedule))
 	LogErr(c.Set("auto-import", strconv.Itoa(config.AutoImport)))
 
 	return c

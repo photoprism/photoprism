@@ -133,12 +133,6 @@ func TestConfig_OptionsYaml(t *testing.T) {
 	})
 }
 
-func TestConfig_BackupPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Contains(t, c.BackupPath(), "/storage/testdata/backup")
-}
-
 func TestConfig_PIDFilename(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -313,10 +307,15 @@ func TestConfig_ImgPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/static/img", path)
 }
 
-func TestConfig_Workers(t *testing.T) {
+func TestConfig_IndexWorkers(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.GreaterOrEqual(t, c.Workers(), 1)
+	assert.GreaterOrEqual(t, c.IndexWorkers(), 1)
+}
+
+func TestConfig_IndexSchedule(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, DefaultIndexSchedule, c.IndexSchedule())
 }
 
 func TestConfig_WakeupInterval(t *testing.T) {

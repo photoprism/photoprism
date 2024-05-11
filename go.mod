@@ -84,7 +84,9 @@ require golang.org/x/text v0.15.0
 
 require (
 	github.com/davidbyttow/govips/v2 v2.14.0
+	github.com/go-co-op/gocron/v2 v2.5.0
 	github.com/pquerna/otp v1.4.0
+	github.com/robfig/cron/v3 v3.0.1
 )
 
 require (
@@ -111,6 +113,7 @@ require (
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mandykoh/go-parallel v0.1.0 // indirect
@@ -126,7 +129,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/zitadel/logging v0.5.0 // indirect
-	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a // indirect
+	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect
 	golang.org/x/oauth2 v0.18.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect

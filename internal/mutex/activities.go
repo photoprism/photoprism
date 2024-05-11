@@ -2,7 +2,7 @@ package mutex
 
 // Activities that can be started and stopped.
 var (
-	MainWorker   = Activity{}
+	IndexWorker  = Activity{}
 	SyncWorker   = Activity{}
 	BackupWorker = Activity{}
 	ShareWorker  = Activity{}
@@ -14,14 +14,14 @@ var (
 // CancelAll requests to stop all activities.
 func CancelAll() {
 	UpdatePeople.Cancel()
-	MainWorker.Cancel()
+	IndexWorker.Cancel()
 	SyncWorker.Cancel()
 	ShareWorker.Cancel()
 	MetaWorker.Cancel()
 	FacesWorker.Cancel()
 }
 
-// IndexWorkersRunning checks if a worker is currently running.
-func IndexWorkersRunning() bool {
-	return MainWorker.Running() || SyncWorker.Running() || ShareWorker.Running() || MetaWorker.Running() || FacesWorker.Running()
+// WorkersRunning checks if a worker is currently running.
+func WorkersRunning() bool {
+	return IndexWorker.Running() || SyncWorker.Running() || BackupWorker.Running() || ShareWorker.Running() || MetaWorker.Running() || FacesWorker.Running()
 }

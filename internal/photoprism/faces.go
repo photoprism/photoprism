@@ -160,7 +160,7 @@ func (w *Faces) Cancel() {
 
 // Canceled tests if face clustering and matching should be stopped.
 func (w *Faces) Canceled() bool {
-	return mutex.FacesWorker.Canceled() || mutex.MainWorker.Canceled() || mutex.MetaWorker.Canceled()
+	return mutex.FacesWorker.Canceled() || mutex.IndexWorker.Canceled() || mutex.MetaWorker.Canceled()
 }
 
 // Disabled tests if face recognition is disabled.

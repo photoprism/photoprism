@@ -50,14 +50,19 @@ type Options struct {
 	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
 	ImportDest            string        `yaml:"ImportDest" json:"-" flag:"import-dest"`
 	AssetsPath            string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
 	CustomAssetsPath      string        `yaml:"-" json:"-" flag:"custom-assets-path"`
 	TempPath              string        `yaml:"TempPath" json:"-" flag:"temp-path"`
-	Workers               int           `yaml:"Workers" json:"Workers" flag:"workers"`
+	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
+	BackupIndex           bool          `yaml:"BackupIndex" json:"BackupIndex" flag:"backup-index"`
+	BackupAlbums          bool          `yaml:"BackupAlbums" json:"BackupAlbums" flag:"backup-albums"`
+	BackupRetain          int           `yaml:"BackupRetain" json:"BackupRetain" flag:"backup-retain"`
+	BackupSchedule        string        `yaml:"BackupSchedule" json:"BackupSchedule" flag:"backup-schedule"`
+	IndexWorkers          int           `yaml:"IndexWorkers" json:"IndexWorkers" flag:"index-workers"`
+	IndexSchedule         string        `yaml:"IndexSchedule" json:"IndexSchedule" flag:"index-schedule"`
 	WakeupInterval        time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
 	AutoIndex             int           `yaml:"AutoIndex" json:"AutoIndex" flag:"auto-index"`
 	AutoImport            int           `yaml:"AutoImport" json:"AutoImport" flag:"auto-import"`
@@ -85,8 +90,9 @@ type Options struct {
 	ExifBruteForce        bool          `yaml:"ExifBruteForce" json:"ExifBruteForce" flag:"exif-bruteforce"`
 	DetectNSFW            bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
 	UploadNSFW            bool          `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
-	DefaultTheme          string        `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
 	DefaultLocale         string        `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
+	DefaultTimezone       string        `yaml:"DefaultTimezone" json:"DefaultTimezone" flag:"default-timezone"`
+	DefaultTheme          string        `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
 	AppName               string        `yaml:"AppName" json:"AppName" flag:"app-name"`
 	AppMode               string        `yaml:"AppMode" json:"AppMode" flag:"app-mode"`
 	AppIcon               string        `yaml:"AppIcon" json:"AppIcon" flag:"app-icon"`

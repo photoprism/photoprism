@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
@@ -156,11 +157,6 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("SIDECAR_PATH"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "backup-path, ba",
-			Usage:  "custom backup `PATH` for index backup files *optional*",
-			EnvVar: EnvVar("BACKUP_PATH"),
-		}}, {
-		Flag: cli.StringFlag{
 			Name:   "cache-path, ca",
 			Usage:  "custom cache `PATH` for sessions and thumbnail files *optional*",
 			EnvVar: EnvVar("CACHE_PATH"),
@@ -185,27 +181,60 @@ var Flags = CliFlags{
 			Usage:  "temporary file `PATH` *optional*",
 			EnvVar: EnvVar("TEMP_PATH"),
 		}}, {
+		Flag: cli.StringFlag{
+			Name:   "backup-path, ba",
+			Usage:  "custom backup `PATH` for index backup files *optional*",
+			EnvVar: EnvVar("BACKUP_PATH"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "backup-index",
+			Usage:  "create index SQL database dumps based on the configured schedule",
+			EnvVar: EnvVar("BACKUP_INDEX"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "backup-albums",
+			Usage:  "create album YAML file backups based on the configured schedule",
+			EnvVar: EnvVar("BACKUP_ALBUMS"),
+		}}, {
 		Flag: cli.IntFlag{
-			Name:   "workers, w",
+			Name:   "backup-retain",
+			Usage:  "maximum `NUMBER` of SQL database dumps to keep (-1 to keep all)",
+			Value:  DefaultBackupRetain,
+			EnvVar: EnvVar("BACKUP_RETAIN"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "backup-schedule",
+			Usage:  "backup `SCHEDULE` in cron format, e.g. \"0 12 * * *\" for daily at noon",
+			Value:  DefaultBackupSchedule,
+			EnvVar: EnvVar("BACKUP_SCHEDULE"),
+		}}, {
+		Flag: cli.IntFlag{
+			Name:   "index-workers, workers",
 			Usage:  "maximum `NUMBER` of indexing workers, default depends on the number of physical cores",
 			Value:  cpuid.CPU.PhysicalCores / 2,
-			EnvVar: EnvVar("WORKERS"),
+			EnvVar: EnvVar("INDEX_WORKERS") + ", " + EnvVar("WORKERS"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "index-schedule",
+			Usage:  "indexing `SCHEDULE` in cron format, e.g. \"0 */3 * * *\" for every 3 hours (leave empty to disable)",
+			Value:  DefaultIndexSchedule,
+			EnvVar: EnvVar("INDEX_SCHEDULE"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "wakeup-interval, i",
-			Usage:  "`DURATION` between worker runs required for face recognition and index maintenance (1-86400s)",
+			Usage:  "`TIME` between facial recognition, file sync, and metadata maintenance worker runs (1-86400s)",
 			Value:  DefaultWakeupInterval.String(),
 			EnvVar: EnvVar("WAKEUP_INTERVAL"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "auto-index",
-			Usage:  "WebDAV auto index safety delay in `SECONDS` (-1 to disable)",
+			Usage:  "delay before automatically indexing files in `SECONDS` (-1 to disable) when uploading files via WebDAV",
 			Value:  DefaultAutoIndexDelay,
 			EnvVar: EnvVar("AUTO_INDEX"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "auto-import",
-			Usage:  "WebDAV auto import safety delay in `SECONDS` (-1 to disable)",
+			Usage:  "delay before automatically importing files in `SECONDS` (-1 to disable) when uploading files via WebDAV",
 			Value:  DefaultAutoImportDelay,
 			EnvVar: EnvVar("AUTO_IMPORT"),
 		}}, {
@@ -326,13 +355,19 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "default-locale, lang",
-			Usage:  "standard user interface language `CODE`",
+			Usage:  "default user interface language `CODE`",
 			Value:  i18n.Default.Locale(),
 			EnvVar: EnvVar("DEFAULT_LOCALE"),
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "default-timezone, tz",
+			Usage:  "default time zone `NAME`, e.g. for scheduling backups",
+			Value:  time.UTC.String(),
+			EnvVar: EnvVar("DEFAULT_TIMEZONE"),
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "default-theme",
-			Usage:  "standard user interface theme `NAME`",
+			Usage:  "default user interface theme `NAME`",
 			EnvVar: EnvVar("DEFAULT_THEME"),
 		}}, {
 		Flag: cli.StringFlag{

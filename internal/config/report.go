@@ -64,7 +64,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"users-storage-path", c.UsersStoragePath()},
 		{"sidecar-path", c.SidecarPath()},
 		{"albums-path", c.AlbumsPath()},
-		{"backup-path", c.BackupPath()},
 		{"cache-path", c.CachePath()},
 		{"cmd-cache-path", c.CmdCachePath()},
 		{"media-cache-path", c.MediaCachePath()},
@@ -78,8 +77,16 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"templates-path", c.TemplatesPath()},
 		{"temp-path", c.TempPath()},
 
-		// Workers.
-		{"workers", fmt.Sprintf("%d", c.Workers())},
+		// Backups.
+		{"backup-path", c.BackupPath()},
+		{"backup-index", fmt.Sprintf("%t", c.BackupIndex())},
+		{"backup-albums", fmt.Sprintf("%t", c.BackupAlbums())},
+		{"backup-retain", fmt.Sprintf("%d", c.BackupRetain())},
+		{"backup-schedule", c.BackupSchedule()},
+
+		// IndexWorkers.
+		{"index-workers", fmt.Sprintf("%d", c.IndexWorkers())},
+		{"index-schedule", c.IndexSchedule()},
 		{"wakeup-interval", c.WakeupInterval().String()},
 		{"auto-index", fmt.Sprintf("%d", c.AutoIndex()/time.Second)},
 		{"auto-import", fmt.Sprintf("%d", c.AutoImport()/time.Second)},
@@ -118,6 +125,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 
 		// Customization.
 		{"default-locale", c.DefaultLocale()},
+		{"default-timezone", c.DefaultTimezone().String()},
 		{"default-theme", c.DefaultTheme()},
 		{"app-name", c.AppName()},
 		{"app-mode", c.AppMode()},

@@ -39,5 +39,5 @@ func TestStart(t *testing.T) {
 	ResetImport()
 	ResetIndex()
 
-	Stop()
+	Shutdown()
 }

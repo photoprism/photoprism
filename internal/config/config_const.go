@@ -15,6 +15,9 @@ const StaticUri = "/static"
 // CustomStaticUri defines the standard path for serving custom static content.
 const CustomStaticUri = "/c/static"
 
+// DefaultIndexSchedule defines the default indexing schedule in cron format.
+const DefaultIndexSchedule = "" // e.g. "0 */3 * * *" for every 3 hours
+
 // DefaultAutoIndexDelay and DefaultAutoImportDelay set the default safety delay duration
 // before starting to index/import in the background.
 const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes

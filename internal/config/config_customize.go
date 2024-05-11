@@ -4,20 +4,12 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
-
-// DefaultTheme returns the default user interface theme name.
-func (c *Config) DefaultTheme() string {
-	if c.options.DefaultTheme == "" {
-		return "default"
-	}
-
-	return c.options.DefaultTheme
-}
 
 // DefaultLocale returns the default user interface language locale name.
 func (c *Config) DefaultLocale() string {
@@ -26,6 +18,29 @@ func (c *Config) DefaultLocale() string {
 	}
 
 	return c.options.DefaultLocale
+}
+
+// DefaultTimezone returns the default time zone, e.g. for scheduling backups
+func (c *Config) DefaultTimezone() *time.Location {
+	if c.options.DefaultTimezone == "" {
+		return time.UTC
+	}
+
+	// Returns time zone if a valid identifier name was provided and UTC otherwise.
+	if timeZone, err := time.LoadLocation(c.options.DefaultTimezone); err != nil {
+		return time.UTC
+	} else {
+		return timeZone
+	}
+}
+
+// DefaultTheme returns the default user interface theme name.
+func (c *Config) DefaultTheme() string {
+	if c.options.DefaultTheme == "" {
+		return "default"
+	}
+
+	return c.options.DefaultTheme
 }
 
 // WallpaperUri returns the login screen background image URI.

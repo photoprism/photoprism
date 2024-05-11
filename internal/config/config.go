@@ -40,9 +40,9 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-
 	"github.com/klauspost/cpuid/v2"
 	"github.com/pbnjay/memory"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
@@ -720,8 +720,8 @@ func (c *Config) Shutdown() {
 	}
 }
 
-// Workers returns the number of workers e.g. for indexing files.
-func (c *Config) Workers() int {
+// IndexWorkers returns the number of indexing workers.
+func (c *Config) IndexWorkers() int {
 	// Use one worker on systems with less than the recommended amount of memory.
 	if TotalMem < RecommendedMem {
 		return 1
@@ -736,15 +736,15 @@ func (c *Config) Workers() int {
 	}
 
 	// Limit number of workers when using SQLite3 to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && c.options.Workers <= 0 || c.options.Workers > 4) {
+	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && c.options.IndexWorkers <= 0 || c.options.IndexWorkers > 4) {
 		return 4
 	}
 
 	// Return explicit value if set and not too large.
-	if c.options.Workers > runtime.NumCPU() {
+	if c.options.IndexWorkers > runtime.NumCPU() {
 		return runtime.NumCPU()
-	} else if c.options.Workers > 0 {
-		return c.options.Workers
+	} else if c.options.IndexWorkers > 0 {
+		return c.options.IndexWorkers
 	}
 
 	// Use half the available cores by default.
@@ -753,6 +753,18 @@ func (c *Config) Workers() int {
 	}
 
 	return 1
+}
+
+// IndexSchedule returns the indexing schedule in cron format, e.g. "0 */3 * * *" to start indexing every 3 hours.
+func (c *Config) IndexSchedule() string {
+	if c.options.IndexSchedule == "" {
+		return ""
+	} else if _, err := cron.ParseStandard(c.options.IndexSchedule); err != nil {
+		log.Tracef("config: invalid auto indexing schedule (%s)", err)
+		return ""
+	}
+
+	return c.options.IndexSchedule
 }
 
 // WakeupInterval returns the duration between background worker runs

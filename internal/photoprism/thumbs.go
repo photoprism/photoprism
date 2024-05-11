@@ -62,18 +62,18 @@ func (w *Thumbs) Start(dir string, force, originalsOnly bool) (err error) {
 func (w *Thumbs) Dir(dir string, force bool) (fs.Done, error) {
 	done := make(fs.Done)
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err := mutex.IndexWorker.Start(); err != nil {
 		return done, err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	jobs := make(chan ThumbsJob)
 	thumbnailsPath := w.conf.ThumbCachePath()
 
 	// Start a fixed number of goroutines to read and digest files.
 	var wg sync.WaitGroup
-	var numWorkers = w.conf.Workers()
+	var numWorkers = w.conf.IndexWorkers()
 
 	wg.Add(numWorkers)
 
@@ -96,7 +96,7 @@ func (w *Thumbs) Dir(dir string, force bool) (fs.Done, error) {
 			}
 		}()
 
-		if mutex.MainWorker.Canceled() {
+		if mutex.IndexWorker.Canceled() {
 			return errors.New("canceled")
 		}
 

@@ -71,7 +71,7 @@ func (ind *Index) thumbPath() string {
 
 // Cancel stops the current indexing operation.
 func (ind *Index) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.IndexWorker.Cancel()
 }
 
 // Start indexes media files in the "originals" folder.
@@ -100,12 +100,12 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 		return found, updated
 	}
 
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err := mutex.IndexWorker.Start(); err != nil {
 		event.Warn(fmt.Sprintf("index: %s", err.Error()))
 		return found, updated
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	if err := ind.tensorFlow.Init(); err != nil {
 		log.Errorf("index: %s", clean.Error(err))
@@ -117,7 +117,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 	// Start a fixed number of goroutines to index files.
 	var wg sync.WaitGroup
-	var numWorkers = ind.conf.Workers()
+	var numWorkers = ind.conf.IndexWorkers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
@@ -154,7 +154,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				}
 			}()
 
-			if mutex.MainWorker.Canceled() {
+			if mutex.IndexWorker.Canceled() {
 				return errors.New("canceled")
 			}
 

@@ -49,7 +49,7 @@ func showConfigOptionsAction(ctx *cli.Context) error {
 		{Start: "PHOTOPRISM_ADMIN_PASSWORD", Title: "Authentication"},
 		{Start: "PHOTOPRISM_LOG_LEVEL", Title: "Logging"},
 		{Start: "PHOTOPRISM_CONFIG_PATH", Title: "Storage"},
-		{Start: "PHOTOPRISM_WORKERS", Title: "Index Workers"},
+		{Start: "PHOTOPRISM_INDEX_WORKERS, PHOTOPRISM_WORKERS", Title: "Index Workers"},
 		{Start: "PHOTOPRISM_READONLY", Title: "Feature Flags"},
 		{Start: "PHOTOPRISM_DEFAULT_LOCALE", Title: "Customization"},
 		{Start: "PHOTOPRISM_SITE_URL", Title: "Site Information"},

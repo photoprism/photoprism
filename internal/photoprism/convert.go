@@ -48,17 +48,17 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 		}
 	}()
 
-	if err = mutex.MainWorker.Start(); err != nil {
+	if err = mutex.IndexWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	jobs := make(chan ConvertJob)
 
 	// Start a fixed number of goroutines to convert files.
 	var wg sync.WaitGroup
-	var numWorkers = c.conf.Workers()
+	var numWorkers = c.conf.IndexWorkers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
@@ -89,7 +89,7 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 				}
 			}()
 
-			if mutex.MainWorker.Canceled() {
+			if mutex.IndexWorker.Canceled() {
 				return errors.New("canceled")
 			}
 

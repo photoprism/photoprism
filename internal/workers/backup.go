@@ -24,6 +24,13 @@ func NewBackup(conf *config.Config) *Backup {
 	return &Backup{conf: conf}
 }
 
+// StartScheduled starts a scheduled run of the backup worker based on the current configuration.
+func (w *Backup) StartScheduled() {
+	if err := w.Start(w.conf.BackupIndex(), w.conf.BackupAlbums(), true); err != nil {
+		log.Errorf("scheduler: %s (backup)", err)
+	}
+}
+
 // Start creates index and album backups based on the current configuration.
 func (w *Backup) Start(index, albums, force bool) (err error) {
 	defer func() {
@@ -53,7 +60,7 @@ func (w *Backup) Start(index, albums, force bool) (err error) {
 		log.Infof("backup: creating index and album backups")
 	} else if index {
 		log.Infof("backup: creating index backup")
-	} else if albums {
+	} else {
 		log.Infof("backup: creating album backup")
 	}
 

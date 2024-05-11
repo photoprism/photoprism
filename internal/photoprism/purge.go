@@ -59,12 +59,12 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 	purgedFiles = make(map[string]bool)
 	purgedPhotos = make(map[string]bool)
 
-	if err = mutex.MainWorker.Start(); err != nil {
+	if err = mutex.IndexWorker.Start(); err != nil {
 		log.Warnf("purge: %s (start)", err.Error())
 		return purgedFiles, purgedPhotos, 0, err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	// Count updates.
 	updatedFiles := 0
@@ -92,7 +92,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 
 		for _, file := range files {
-			if mutex.MainWorker.Canceled() {
+			if mutex.IndexWorker.Canceled() {
 				return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 			}
 
@@ -147,7 +147,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			}
 		}
 
-		if mutex.MainWorker.Canceled() {
+		if mutex.IndexWorker.Canceled() {
 			return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 		}
 
@@ -172,7 +172,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 
 		for _, file := range files {
-			if mutex.MainWorker.Canceled() {
+			if mutex.IndexWorker.Canceled() {
 				return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 			}
 
@@ -201,7 +201,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			}
 		}
 
-		if mutex.MainWorker.Canceled() {
+		if mutex.IndexWorker.Canceled() {
 			return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 		}
 
@@ -226,7 +226,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 		}
 
 		for _, photo := range photos {
-			if mutex.MainWorker.Canceled() {
+			if mutex.IndexWorker.Canceled() {
 				return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 			}
 
@@ -260,7 +260,7 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 			}
 		}
 
-		if mutex.MainWorker.Canceled() {
+		if mutex.IndexWorker.Canceled() {
 			return purgedFiles, purgedPhotos, updates(), errors.New("purge canceled")
 		}
 
@@ -330,5 +330,5 @@ func (w *Purge) Start(opt PurgeOptions) (purgedFiles map[string]bool, purgedPhot
 
 // Cancel stops the current operation.
 func (w *Purge) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.IndexWorker.Cancel()
 }

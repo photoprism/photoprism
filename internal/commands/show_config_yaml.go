@@ -44,7 +44,7 @@ func showConfigYamlAction(ctx *cli.Context) error {
 		{Start: "AuthMode", Title: "Authentication"},
 		{Start: "LogLevel", Title: "Logging"},
 		{Start: "ConfigPath", Title: "Storage"},
-		{Start: "Workers", Title: "Index Workers"},
+		{Start: "IndexWorkers", Title: "Index Workers"},
 		{Start: "ReadOnly", Title: "Feature Flags"},
 		{Start: "DefaultTheme", Title: "Customization"},
 		{Start: "SiteUrl", Title: "Site Information"},
