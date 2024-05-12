@@ -222,7 +222,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "wakeup-interval, i",
-			Usage:  "`TIME` between facial recognition, file sync, and metadata maintenance worker runs (1-86400s)",
+			Usage:  "`TIME` between facial recognition, file sync, and metadata worker runs (1-86400s)",
 			Value:  DefaultWakeupInterval.String(),
 			EnvVar: EnvVar("WAKEUP_INTERVAL"),
 		}}, {

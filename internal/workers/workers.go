@@ -102,7 +102,7 @@ func Shutdown() {
 	}
 }
 
-// RunMeta runs the metadata maintenance worker once.
+// RunMeta runs the metadata worker once.
 func RunMeta(conf *config.Config) {
 	if !mutex.WorkersRunning() {
 		go func() {
