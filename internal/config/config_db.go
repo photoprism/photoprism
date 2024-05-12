@@ -102,7 +102,7 @@ func (c *Config) DatabaseDsn() string {
 
 // DatabaseFile returns the filename part of a sqlite database DSN.
 func (c *Config) DatabaseFile() string {
-	fileName, _, _ := strings.Cut(c.DatabaseDsn(), "?")
+	fileName, _, _ := strings.Cut(strings.TrimPrefix(c.DatabaseDsn(), "file:"), "?")
 	return fileName
 }
 

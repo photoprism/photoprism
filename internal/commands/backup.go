@@ -9,6 +9,7 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -23,7 +24,7 @@ const backupDescription = "A user-defined filename or - for stdout can be passed
 var BackupCommand = cli.Command{
 	Name:        "backup",
 	Description: backupDescription,
-	Usage:       "Creates an index backup and optionally album YAML files organized by type",
+	Usage:       "Creates an index database dump and/or album YAML file backups",
 	ArgsUsage:   "[filename]",
 	Flags:       backupFlags,
 	Action:      backupAction,
@@ -32,23 +33,28 @@ var BackupCommand = cli.Command{
 var backupFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "replace existing files",
+		Usage: "replace existing index backup files",
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "create album YAML files organized by type",
+		Usage: "create album YAML file backups in the configured backup path",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom album files `PATH`",
+		Usage: "custom `PATH` for creating album backups",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "create index backup",
+		Usage: "create index backup in the configured backup path (stdout if - is passed as first argument)",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom index backup `PATH`",
+		Usage: "custom `PATH` for creating index backups",
+	},
+	cli.IntFlag{
+		Name:  "retain, r",
+		Usage: "`NUMBER` of index backups to keep (-1 to keep all)",
+		Value: config.DefaultBackupRetain,
 	},
 }
 
@@ -61,6 +67,7 @@ func backupAction(ctx *cli.Context) error {
 	albumsPath := ctx.String("albums-path")
 	backupAlbums := ctx.Bool("albums") || albumsPath != ""
 	force := ctx.Bool("force")
+	retain := ctx.Int("retain")
 
 	if !backupIndex && !backupAlbums {
 		return cli.ShowSubcommandHelp(ctx)
@@ -95,8 +102,8 @@ func backupAction(ctx *cli.Context) error {
 			fileName = filepath.Join(backupPath, backupFile)
 		}
 
-		if err = photoprism.BackupIndex(backupPath, fileName, fileName == "-", force); err != nil {
-			return fmt.Errorf("failed to create %s: %w", clean.Log(fileName), err)
+		if err = photoprism.BackupIndex(backupPath, fileName, fileName == "-", force, retain); err != nil {
+			return fmt.Errorf("failed to create index backup: %w", err)
 		}
 	}
 

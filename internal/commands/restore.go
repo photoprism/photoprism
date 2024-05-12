@@ -1,21 +1,12 @@
 package commands
 
 import (
-	"bytes"
 	"context"
-	"fmt"
-	"io"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"regexp"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -30,7 +21,7 @@ const restoreDescription = "A user-defined filename or - for stdin can be passed
 var RestoreCommand = cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,
-	Usage:       "Restores the index from a backup and optionally albums from YAML files",
+	Usage:       "Restores the index from a database dump and/or album YAML file backups",
 	ArgsUsage:   "[filename]",
 	Flags:       restoreFlags,
 	Action:      restoreAction,
@@ -39,23 +30,23 @@ var RestoreCommand = cli.Command{
 var restoreFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "replace existing index",
+		Usage: "replace existing index schema and data",
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "restore albums from YAML files",
+		Usage: "restore album YAML file backups from the configured backup path",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom album files `PATH`",
+		Usage: "custom `PATH` for restoring album backups",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "restore index from backup",
+		Usage: "restore index from the latest backup in the configured backup path (or the file passed as first argument)",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom index backup `PATH`",
+		Usage: "custom `PATH` for restoring index backups",
 	},
 }
 
@@ -65,7 +56,7 @@ func restoreAction(ctx *cli.Context) error {
 	indexFileName := ctx.Args().First()
 	indexPath := ctx.String("index-path")
 	restoreIndex := ctx.Bool("index") || indexFileName != "" || indexPath != ""
-
+	force := ctx.Bool("force")
 	albumsPath := ctx.String("albums-path")
 	restoreAlbums := ctx.Bool("albums") || albumsPath != ""
 
@@ -87,107 +78,11 @@ func restoreAction(ctx *cli.Context) error {
 	conf.RegisterDb()
 	defer conf.Shutdown()
 
-	if restoreIndex {
-		// If empty, use default backup file name.
-		if indexFileName == "" {
-			if indexPath == "" {
-				indexPath = filepath.Join(conf.BackupPath(), conf.DatabaseDriver())
-			}
-
-			matches, err := filepath.Glob(filepath.Join(regexp.QuoteMeta(indexPath), "*.sql"))
-
-			if err != nil {
-				return err
-			}
-
-			if len(matches) == 0 {
-				log.Errorf("no backup files found in %s", indexPath)
-				return nil
-			}
-
-			indexFileName = matches[len(matches)-1]
-		}
-
-		counts := struct{ Photos int }{}
-
-		conf.Db().Unscoped().Table("photos").
-			Select("COUNT(*) AS photos").
-			Take(&counts)
-
-		if counts.Photos == 0 {
-			// Do nothing;
-		} else if !ctx.Bool("force") {
-			return fmt.Errorf("found exisisting index with %d pictures, use --force to replace it", counts.Photos)
-		} else {
-			log.Warnf("replacing existing index with %d pictures", counts.Photos)
-		}
-
-		tables := entity.Entities
-
-		var cmd *exec.Cmd
-
-		switch conf.DatabaseDriver() {
-		case config.MySQL, config.MariaDB:
-			cmd = exec.Command(
-				conf.MariadbBin(),
-				"--protocol", "tcp",
-				"-h", conf.DatabaseHost(),
-				"-P", conf.DatabasePortString(),
-				"-u", conf.DatabaseUser(),
-				"-p"+conf.DatabasePassword(),
-				"-f",
-				conf.DatabaseName(),
-			)
-		case config.SQLite3:
-			log.Infoln("dropping existing tables")
-			tables.Drop(conf.Db())
-			cmd = exec.Command(
-				conf.SqliteBin(),
-				conf.DatabaseFile(),
-			)
-		default:
-			return fmt.Errorf("unsupported database type: %s", conf.DatabaseDriver())
-		}
-
-		// Read from stdin or file.
-		var f *os.File
-		if indexFileName == "-" {
-			log.Infof("restoring index from stdin")
-			f = os.Stdin
-		} else if f, err = os.OpenFile(indexFileName, os.O_RDONLY, 0); err != nil {
-			return fmt.Errorf("failed to open %s: %s", clean.Log(indexFileName), err)
-		} else {
-			log.Infof("restoring index from %s", clean.Log(indexFileName))
-			defer f.Close()
-		}
-
-		var stderr bytes.Buffer
-		var stdin io.WriteCloser
-		cmd.Stderr = &stderr
-		cmd.Stdout = os.Stdout
-		stdin, err = cmd.StdinPipe()
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		go func() {
-			defer stdin.Close()
-			if _, err = io.Copy(stdin, f); err != nil {
-				log.Errorf(err.Error())
-			}
-		}()
-
-		// Log exact command for debugging in trace mode.
-		log.Trace(cmd.String())
-
-		// Run backup command.
-		if err := cmd.Run(); err != nil {
-			if stderr.String() != "" {
-				log.Debugln(stderr.String())
-				log.Warnf("index could not be restored completely")
-			}
-		}
+	// Restore index from specified file?
+	if !restoreIndex {
+		// Do nothing.
+	} else if err = photoprism.RestoreIndex(indexPath, indexFileName, indexFileName == "-", force); err != nil {
+		return err
 	}
 
 	log.Infoln("migrating index database schema")

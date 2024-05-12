@@ -183,12 +183,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "backup-path, ba",
-			Usage:  "custom backup `PATH` for index backup files *optional*",
+			Usage:  "custom default `PATH` for creating and restoring index backups *optional*",
 			EnvVar: EnvVar("BACKUP_PATH"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "backup-index",
-			Usage:  "create index SQL database dumps based on the configured schedule",
+			Usage:  "create index backups based on the configured schedule",
 			EnvVar: EnvVar("BACKUP_INDEX"),
 		}}, {
 		Flag: cli.BoolFlag{
@@ -198,7 +198,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "backup-retain",
-			Usage:  "maximum `NUMBER` of SQL database dumps to keep (-1 to keep all)",
+			Usage:  "`NUMBER` of index backups to keep (-1 to keep all)",
 			Value:  DefaultBackupRetain,
 			EnvVar: EnvVar("BACKUP_RETAIN"),
 		}}, {

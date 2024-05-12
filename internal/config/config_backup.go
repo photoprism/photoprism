@@ -22,7 +22,7 @@ func (c *Config) BackupPath() string {
 	return filepath.Join(c.StoragePath(), "backup")
 }
 
-// BackupIndex checks if index SQL database dumps should be created based on the configured schedule.
+// BackupIndex checks if SQL database dumps should be created based on the configured schedule.
 func (c *Config) BackupIndex() bool {
 	return c.options.BackupIndex
 }

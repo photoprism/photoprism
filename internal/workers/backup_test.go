@@ -23,19 +23,19 @@ func TestBackup_Start(t *testing.T) {
 	}
 
 	// Mutex should prevent worker from starting.
-	if err := worker.Start(true, true, true); err == nil {
+	if err := worker.Start(true, true, true, 2); err == nil {
 		t.Fatal("error expected")
 	}
 
 	mutex.BackupWorker.Stop()
 
 	// Start worker.
-	if err := worker.Start(true, true, false); err != nil {
+	if err := worker.Start(true, true, true, 2); err != nil {
 		t.Fatal(err)
 	}
 
 	// Rerun worker.
-	if err := worker.Start(true, true, false); err != nil {
+	if err := worker.Start(true, true, false, 2); err != nil {
 		t.Fatal(err)
 	}
 }

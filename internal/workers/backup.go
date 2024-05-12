@@ -26,13 +26,13 @@ func NewBackup(conf *config.Config) *Backup {
 
 // StartScheduled starts a scheduled run of the backup worker based on the current configuration.
 func (w *Backup) StartScheduled() {
-	if err := w.Start(w.conf.BackupIndex(), w.conf.BackupAlbums(), true); err != nil {
+	if err := w.Start(w.conf.BackupIndex(), w.conf.BackupAlbums(), true, w.conf.BackupRetain()); err != nil {
 		log.Errorf("scheduler: %s (backup)", err)
 	}
 }
 
 // Start creates index and album backups based on the current configuration.
-func (w *Backup) Start(index, albums, force bool) (err error) {
+func (w *Backup) Start(index, albums bool, force bool, retain int) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("backup: %s (worker panic)\nstack: %s", r, debug.Stack())
@@ -67,8 +67,8 @@ func (w *Backup) Start(index, albums, force bool) (err error) {
 	// Create index database backup.
 	if !index {
 		// Skip.
-	} else if err = photoprism.BackupIndex(backupPath, "", false, force); err != nil {
-		log.Errorf("backup: %s (backup index)", err)
+	} else if err = photoprism.BackupIndex(backupPath, "", false, force, retain); err != nil {
+		log.Errorf("backup: %s (index)", err)
 	}
 
 	if mutex.BackupWorker.Canceled() {
@@ -79,7 +79,7 @@ func (w *Backup) Start(index, albums, force bool) (err error) {
 	if !albums {
 		// Skip.
 	} else if count, backupErr := photoprism.BackupAlbums(w.conf.AlbumsPath(), force); backupErr != nil {
-		log.Errorf("backup: %s (backup albums)", backupErr.Error())
+		log.Errorf("backup: %s (albums)", backupErr.Error())
 	} else if count > 0 {
 		log.Debugf("backup: %d albums saved as yaml files", count)
 	}
