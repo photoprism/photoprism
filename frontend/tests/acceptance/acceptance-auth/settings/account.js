@@ -13,6 +13,36 @@ const account = new Account()
 const settings = new Settings();
 
 test.meta("testID", "account-001").meta({ type: "short", mode: "auth" })(
+    "Common: Sign in with recovery code",
+    async (t) => {
+        await page.login("jane", "photoprism")
+        await t
+            .typeText(page.passcodeInput, "123456", { replace: true })
+            .click(account.confirm)
+            .expect(page.passcodeInput.visible)
+            .ok()
+            .expect(Selector(".input-search input").visible)
+            .notOk()
+            .typeText(account.passcode, "pyuzjwtu8to3", { replace: true })
+            .click(account.confirm)
+            .expect(page.passcodeInput.visible)
+            .notOk();
+        await menu.openPage("settings");
+
+        await t
+            .click(settings.accountTab)
+            .click(account.MFAAction)
+            .expect(account.setup.visible)
+            .ok()
+            .click(account.close);
+        await page.logout();
+        await page.login("jane", "photoprism");
+        await t.expect(page.passcodeInput.visible)
+            .notOk();
+        await page.logout();
+    });
+
+test.meta("testID", "account-002").meta({ type: "short", mode: "auth" })(
     "Core: Create App Password",
     async (t) => {
         await page.login("admin", "photoprism");
@@ -54,7 +84,7 @@ test.meta("testID", "account-001").meta({ type: "short", mode: "auth" })(
     }
 );
 
-test.meta("testID", "account-002").meta({ type: "short", mode: "auth" })(
+test.meta("testID", "account-003").meta({ type: "short", mode: "auth" })(
     "Core: Check App Password has limited permissions and last updated is set",
     async (t) => {
         await page.login("john", "photoprism");
@@ -89,10 +119,11 @@ test.meta("testID", "account-002").meta({ type: "short", mode: "auth" })(
         await t
             .expect(Selector('tr[data-name="john-full"] td').nth(2).innerText).contains("20")
             .expect(Selector('tr[data-name="john-full"] td').nth(2).innerText).notContains("–");
+        await page.logout();
     }
 );
 
-test.meta("testID", "account-003").meta({ type: "short", mode: "auth" })(
+test.meta("testID", "account-004").meta({ type: "short", mode: "auth" })(
     "Core: Try to login with invalid credentials/insufficient scope",
     async (t) => {
         await page.login("john", "5i8yHz-YnvGrU-FMmuxd-s8ziIi")
@@ -115,7 +146,7 @@ test.meta("testID", "account-003").meta({ type: "short", mode: "auth" })(
     }
 );
 
-test.meta("testID", "account-004").meta({ type: "short", mode: "auth" })(
+test.meta("testID", "account-005").meta({ type: "short", mode: "auth" })(
     "Core: Delete App Password",
     async (t) => {
         await page.login("admin", "5i8yHz-YnvGrU-FMmuxd-s8ziIi")
@@ -154,7 +185,7 @@ test.meta("testID", "account-004").meta({ type: "short", mode: "auth" })(
     }
 );
 
-test.meta("testID", "account-005").meta({ type: "short", mode: "auth" })(
+test.meta("testID", "account-006").meta({ type: "short", mode: "auth" })(
     "Common: Try to activate 2FA with wrong password/passcode",
     async (t) => {
         await page.login("admin", "photoprism")
@@ -176,8 +207,6 @@ test.meta("testID", "account-005").meta({ type: "short", mode: "auth" })(
             .click(account.confirm)
             .expect(account.qrcode.visible)
             .ok();
+        await page.logout();
     }
 );
-
-
-
