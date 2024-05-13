@@ -1001,7 +1001,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		if err = photo.SaveAsYaml(yamlFile); err != nil {
 			log.Errorf("index: %s in %s (save as yaml)", err.Error(), logName)
 		} else {
-			log.Debugf("index: updated sidecar file %s", clean.Log(filepath.Base(yamlFile)))
+			log.Debugf("index: updated sidecar file %s", clean.Log(filepath.Join(photo.PhotoPath, photo.PhotoName)+fs.ExtYAML))
 		}
 	}
 
