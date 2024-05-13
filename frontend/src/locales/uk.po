@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-18 15:05+0000\n"
+"PO-Revision-Date: 2024-05-13 07:56+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: \n"
 "Language: uk\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.4.3\n"
+"X-Generator: Weblate 5.5.3\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -685,7 +685,7 @@ msgstr "Створити альбом"
 
 #: src/page/settings/advanced.vue:143
 msgid "Create index backups based on the configured schedule."
-msgstr ""
+msgstr "Створюйте резервні копії індексів на основі налаштованого розкладу."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -717,7 +717,7 @@ msgstr "Щоденний"
 
 #: src/page/settings/advanced.vue:142
 msgid "Database Backups"
-msgstr ""
+msgstr "Резервне копіювання бази даних"
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
