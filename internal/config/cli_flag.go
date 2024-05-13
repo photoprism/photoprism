@@ -4,14 +4,16 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/urfave/cli"
+
+	"github.com/photoprism/photoprism/pkg/list"
 )
 
 // CliFlag represents a command-line parameter.
 type CliFlag struct {
-	Flag cli.DocGenerationFlag
-	Tags []string
+	Flag       cli.DocGenerationFlag
+	Tags       []string
+	DocDefault string
 }
 
 // Skip checks if the parameter should be skipped based on a list of tags.
@@ -32,6 +34,10 @@ func (f CliFlag) Fields() reflect.Value {
 
 // Default returns the default value.
 func (f CliFlag) Default() string {
+	if f.DocDefault != "" {
+		return f.DocDefault
+	}
+
 	return f.Flag.GetValue()
 }
 

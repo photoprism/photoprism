@@ -160,7 +160,7 @@ var Flags = CliFlags{
 			Name:   "sidecar-yaml",
 			Usage:  "export picture metadata to YAML sidecar files",
 			EnvVar: EnvVar("SIDECAR_YAML"),
-		}}, {
+		}, DocDefault: "true"}, {
 		Flag: cli.StringFlag{
 			Name:   "cache-path, ca",
 			Usage:  "custom cache `PATH` for sessions and thumbnail files *optional*",
@@ -207,12 +207,12 @@ var Flags = CliFlags{
 			Name:   "backup-index",
 			Usage:  "create index database backups based on the configured schedule",
 			EnvVar: EnvVar("BACKUP_INDEX"),
-		}}, {
+		}, DocDefault: "true"}, {
 		Flag: cli.BoolFlag{
 			Name:   "backup-albums",
 			Usage:  "export album metadata to YAML backup files",
 			EnvVar: EnvVar("BACKUP_ALBUMS"),
-		}}, {
+		}, DocDefault: "true"}, {
 		Flag: cli.IntFlag{
 			Name:   "index-workers, workers",
 			Usage:  "maximum `NUMBER` of indexing workers, default depends on the number of physical cores",

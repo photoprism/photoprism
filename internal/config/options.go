@@ -50,7 +50,7 @@ type Options struct {
 	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
 	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	SidecarYaml           bool          `yaml:"SidecarYaml" json:"SidecarYaml" flag:"sidecar-yaml"`
+	SidecarYaml           bool          `yaml:"SidecarYaml" json:"SidecarYaml" flag:"sidecar-yaml" default:"true"`
 	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
 	ImportDest            string        `yaml:"ImportDest" json:"-" flag:"import-dest"`
@@ -60,8 +60,8 @@ type Options struct {
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	BackupSchedule        string        `yaml:"BackupSchedule" json:"BackupSchedule" flag:"backup-schedule"`
 	BackupRetain          int           `yaml:"BackupRetain" json:"BackupRetain" flag:"backup-retain"`
-	BackupIndex           bool          `yaml:"BackupIndex" json:"BackupIndex" flag:"backup-index"`
-	BackupAlbums          bool          `yaml:"BackupAlbums" json:"BackupAlbums" flag:"backup-albums"`
+	BackupIndex           bool          `yaml:"BackupIndex" json:"BackupIndex" flag:"backup-index" default:"true"`
+	BackupAlbums          bool          `yaml:"BackupAlbums" json:"BackupAlbums" flag:"backup-albums" default:"true"`
 	IndexWorkers          int           `yaml:"IndexWorkers" json:"IndexWorkers" flag:"index-workers"`
 	IndexSchedule         string        `yaml:"IndexSchedule" json:"IndexSchedule" flag:"index-schedule"`
 	WakeupInterval        time.Duration `yaml:"WakeupInterval" json:"WakeupInterval" flag:"wakeup-interval"`
