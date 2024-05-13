@@ -12,15 +12,6 @@ func (c *Config) DisableRestart() bool {
 	return c.options.DisableRestart
 }
 
-// DisableBackups checks if photo and album metadata files should be disabled.
-func (c *Config) DisableBackups() bool {
-	if !c.SidecarWritable() {
-		return true
-	}
-
-	return c.options.DisableBackups
-}
-
 // DisableWebDAV checks if the built-in WebDAV server should be disabled.
 func (c *Config) DisableWebDAV() bool {
 	if c.Public() || c.Demo() {

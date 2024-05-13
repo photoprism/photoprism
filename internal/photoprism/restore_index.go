@@ -22,12 +22,16 @@ const SqlBackupFileNamePattern = "[2-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9].sql
 
 // RestoreIndex restores the index from an SQL backup dump with the specified file and path name.
 func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error) {
+	// Make sure only one backup/restore operation is running at a time.
+	backupIndexMutex.Lock()
+	defer backupIndexMutex.Unlock()
+
 	c := Config()
 
 	// If empty, use default backup file name.
 	if !fromStdIn && fileName == "" {
 		if backupPath == "" {
-			backupPath = filepath.Join(c.BackupPath(), c.DatabaseDriver())
+			backupPath = c.BackupIndexPath()
 		}
 
 		files, globErr := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
@@ -58,7 +62,7 @@ func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error
 	if counts.Photos == 0 {
 		// Do nothing;
 	} else if !force {
-		return fmt.Errorf("existing index found with %d pictures, use the force option to replace it", counts.Photos)
+		return fmt.Errorf("found existing index with %d pictures, use the force option to replace it", counts.Photos)
 	} else {
 		log.Warnf("replacing the existing index with %d pictures", counts.Photos)
 	}

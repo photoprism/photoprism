@@ -3,7 +3,6 @@ package workers
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
 	"runtime/debug"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Backup represents a background backup worker.
@@ -54,7 +54,7 @@ func (w *Backup) Start(index, albums bool, force bool, retain int) (err error) {
 
 	// Start creating backups.
 	start := time.Now()
-	backupPath := filepath.Join(w.conf.BackupPath(), w.conf.DatabaseDriver())
+	backupPath := w.conf.BackupIndexPath()
 
 	if index && albums {
 		log.Infof("backup: creating index and album backups")
@@ -76,12 +76,15 @@ func (w *Backup) Start(index, albums bool, force bool, retain int) (err error) {
 	}
 
 	// Create album YAML file backup.
-	if !albums {
-		// Skip.
-	} else if count, backupErr := photoprism.BackupAlbums(w.conf.AlbumsPath(), force); backupErr != nil {
-		log.Errorf("backup: %s (albums)", backupErr.Error())
-	} else if count > 0 {
-		log.Debugf("backup: %d albums saved as yaml files", count)
+	if albums {
+		albumsBackupPath := w.conf.BackupAlbumsPath()
+		log.Infof("creating album YAML files in %s", clean.Log(albumsBackupPath))
+
+		if count, backupErr := photoprism.BackupAlbums(albumsBackupPath, force); backupErr != nil {
+			log.Errorf("backup: %s (albums)", backupErr.Error())
+		} else if count > 0 {
+			log.Debugf("backup: %d albums saved as yaml files", count)
+		}
 	}
 
 	// Update time when worker was last executed.

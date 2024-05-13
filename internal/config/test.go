@@ -198,6 +198,30 @@ func NewTestErrorConfig() *Config {
 	return c
 }
 
+// NewTestContext creates a new CLI test context with the flags and arguments provided.
+func NewTestContext(args []string) *cli.Context {
+	// Create new command-line app.
+	app := cli.NewApp()
+	app.Usage = "PhotoPrism®"
+	app.Version = "test"
+	app.Copyright = "(c) 2018-2024 PhotoPrism UG. All rights reserved."
+	app.EnableBashCompletion = true
+	app.Flags = Flags.Cli()
+	app.Metadata = map[string]interface{}{
+		"Name":    "PhotoPrism",
+		"About":   "PhotoPrism®",
+		"Edition": "ce",
+		"Version": "test",
+	}
+
+	// Parse command arguments.
+	flags := flag.NewFlagSet("test", 0)
+	LogErr(flags.Parse(args))
+
+	// Create and return new context.
+	return cli.NewContext(app, flags, nil)
+}
+
 // CliTestContext returns a CLI context for testing.
 func CliTestContext() *cli.Context {
 	config := NewTestOptions("config-cli")
@@ -207,6 +231,7 @@ func CliTestContext() *cli.Context {
 	globalSet.String("admin-password", config.DarktableBin, "doc")
 	globalSet.String("storage-path", config.StoragePath, "doc")
 	globalSet.String("sidecar-path", config.SidecarPath, "doc")
+	globalSet.Bool("sidecar-yaml", config.SidecarYaml, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
 	globalSet.String("import-path", config.OriginalsPath, "doc")
@@ -235,6 +260,7 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("admin-password", config.AdminPassword))
 	LogErr(c.Set("storage-path", config.StoragePath))
 	LogErr(c.Set("sidecar-path", config.SidecarPath))
+	LogErr(c.Set("sidecar-yaml", fmt.Sprintf("%t", config.SidecarYaml)))
 	LogErr(c.Set("assets-path", config.AssetsPath))
 	LogErr(c.Set("originals-path", config.OriginalsPath))
 	LogErr(c.Set("import-path", config.ImportPath))

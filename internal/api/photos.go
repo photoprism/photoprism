@@ -18,8 +18,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// SavePhotoAsYaml saves photo data as YAML file.
-func SavePhotoAsYaml(p *entity.Photo) {
+// SaveSidecarYaml saves picture metadata as YAML file.
+func SaveSidecarYaml(p *entity.Photo) {
 	if p == nil {
 		log.Debugf("api: photo is nil (update yaml)")
 		return
@@ -27,15 +27,16 @@ func SavePhotoAsYaml(p *entity.Photo) {
 
 	c := get.Config()
 
-	// Write YAML sidecar file (optional).
-	if !c.BackupYaml() {
+	// Check if creating and updating YAML sidecar files is enabled.
+	if !c.SidecarYaml() {
 		return
 	}
 
+	// Create or update metadata export in YAML sidecar file.
 	fileName := p.YamlFileName(c.OriginalsPath(), c.SidecarPath())
 
 	if err := p.SaveAsYaml(fileName); err != nil {
-		log.Errorf("photo: %s (update yaml)", err)
+		log.Errorf("photo: %s (save yaml)", err)
 	} else {
 		log.Debugf("photo: updated yaml file %s", clean.Log(filepath.Base(fileName)))
 	}
@@ -119,7 +120,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		SavePhotoAsYaml(&p)
+		SaveSidecarYaml(&p)
 
 		UpdateClientConfig()
 
@@ -230,7 +231,7 @@ func ApprovePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		SavePhotoAsYaml(&m)
+		SaveSidecarYaml(&m)
 
 		PublishPhotoEvent(StatusUpdated, id, c)
 

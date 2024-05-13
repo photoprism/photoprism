@@ -156,6 +156,11 @@ var Flags = CliFlags{
 			Usage:  "custom relative or absolute sidecar `PATH` *optional*",
 			EnvVar: EnvVar("SIDECAR_PATH"),
 		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "sidecar-yaml",
+			Usage:  "write picture metadata to YAML sidecar files",
+			EnvVar: EnvVar("SIDECAR_YAML"),
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "cache-path, ca",
 			Usage:  "custom cache `PATH` for sessions and thumbnail files *optional*",
@@ -183,18 +188,14 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "backup-path, ba",
-			Usage:  "custom default `PATH` for creating and restoring index backups *optional*",
+			Usage:  "custom base `PATH` for creating and restoring backups *optional*",
 			EnvVar: EnvVar("BACKUP_PATH"),
 		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "backup-index",
-			Usage:  "create index backups based on the configured schedule",
-			EnvVar: EnvVar("BACKUP_INDEX"),
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "backup-albums",
-			Usage:  "create album YAML file backups based on the configured schedule",
-			EnvVar: EnvVar("BACKUP_ALBUMS"),
+		Flag: cli.StringFlag{
+			Name:   "backup-schedule",
+			Usage:  "backup `SCHEDULE` in cron format, e.g. \"0 12 * * *\" for daily at noon",
+			Value:  DefaultBackupSchedule,
+			EnvVar: EnvVar("BACKUP_SCHEDULE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "backup-retain",
@@ -202,11 +203,15 @@ var Flags = CliFlags{
 			Value:  DefaultBackupRetain,
 			EnvVar: EnvVar("BACKUP_RETAIN"),
 		}}, {
-		Flag: cli.StringFlag{
-			Name:   "backup-schedule",
-			Usage:  "backup `SCHEDULE` in cron format, e.g. \"0 12 * * *\" for daily at noon",
-			Value:  DefaultBackupSchedule,
-			EnvVar: EnvVar("BACKUP_SCHEDULE"),
+		Flag: cli.BoolFlag{
+			Name:   "backup-index",
+			Usage:  "create index database backups based on the configured schedule",
+			EnvVar: EnvVar("BACKUP_INDEX"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "backup-albums",
+			Usage:  "write album metadata to YAML files in the backup path",
+			EnvVar: EnvVar("BACKUP_ALBUMS"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "index-workers, workers",
@@ -260,8 +265,9 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-backups",
-			Usage:  "disable backing up albums and photo metadata to YAML files",
+			Usage:  "disable creating and updating YAML sidecar files (does not affect index and album backups)",
 			EnvVar: EnvVar("DISABLE_BACKUPS"),
+			Hidden: true,
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-webdav",
@@ -345,7 +351,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "detect-nsfw",
-			Usage:  "automatically flag photos as private that MAY be offensive (requires TensorFlow)",
+			Usage:  "automatically flag pictures as private that MAY be offensive (requires TensorFlow)",
 			EnvVar: EnvVar("DETECT_NSFW"),
 		}}, {
 		Flag: cli.BoolFlag{

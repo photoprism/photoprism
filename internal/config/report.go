@@ -63,7 +63,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"storage-path", c.StoragePath()},
 		{"users-storage-path", c.UsersStoragePath()},
 		{"sidecar-path", c.SidecarPath()},
-		{"albums-path", c.AlbumsPath()},
+		{"sidecar-yaml", fmt.Sprintf("%t", c.SidecarYaml())},
 		{"cache-path", c.CachePath()},
 		{"cmd-cache-path", c.CmdCachePath()},
 		{"media-cache-path", c.MediaCachePath()},
@@ -78,11 +78,13 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"temp-path", c.TempPath()},
 
 		// Backups.
-		{"backup-path", c.BackupPath()},
-		{"backup-index", fmt.Sprintf("%t", c.BackupIndex())},
-		{"backup-albums", fmt.Sprintf("%t", c.BackupAlbums())},
-		{"backup-retain", fmt.Sprintf("%d", c.BackupRetain())},
+		{"backup-path", c.BackupBasePath()},
 		{"backup-schedule", c.BackupSchedule()},
+		{"backup-retain", fmt.Sprintf("%d", c.BackupRetain())},
+		{"backup-index", fmt.Sprintf("%t", c.BackupIndex())},
+		{"backup-index-path", c.BackupIndexPath()},
+		{"backup-albums", fmt.Sprintf("%t", c.BackupAlbums())},
+		{"backup-albums-path", c.BackupAlbumsPath()},
 
 		// IndexWorkers.
 		{"index-workers", fmt.Sprintf("%d", c.IndexWorkers())},
@@ -97,7 +99,6 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"disable-webdav", fmt.Sprintf("%t", c.DisableWebDAV())},
 		{"disable-settings", fmt.Sprintf("%t", c.DisableSettings())},
 		{"disable-places", fmt.Sprintf("%t", c.DisablePlaces())},
-		{"disable-backups", fmt.Sprintf("%t", c.DisableBackups())},
 		{"disable-tensorflow", fmt.Sprintf("%t", c.DisableTensorFlow())},
 		{"disable-faces", fmt.Sprintf("%t", c.DisableFaces())},
 		{"disable-classification", fmt.Sprintf("%t", c.DisableClassification())},

@@ -125,7 +125,7 @@ func startAction(ctx *cli.Context) error {
 	go server.Start(cctx, conf)
 
 	// Restore albums from YAML files.
-	if count, restoreErr := photoprism.RestoreAlbums(conf.AlbumsPath(), false); restoreErr != nil {
+	if count, restoreErr := photoprism.RestoreAlbums(conf.BackupAlbumsPath(), false); restoreErr != nil {
 		log.Errorf("restore: %s", restoreErr)
 	} else if count > 0 {
 		log.Infof("%d albums restored", count)

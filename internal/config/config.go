@@ -330,7 +330,7 @@ func (c *Config) Init() error {
 // readSerial reads and returns the current storage serial.
 func (c *Config) readSerial() string {
 	storageName := filepath.Join(c.StoragePath(), serialName)
-	backupName := filepath.Join(c.BackupPath(), serialName)
+	backupName := c.BackupPath(serialName)
 
 	if fs.FileExists(storageName) {
 		if data, err := os.ReadFile(storageName); err == nil && len(data) == 16 {
@@ -360,7 +360,7 @@ func (c *Config) InitSerial() (err error) {
 	c.serial = rnd.GenerateUID('z')
 
 	storageName := filepath.Join(c.StoragePath(), serialName)
-	backupName := filepath.Join(c.BackupPath(), serialName)
+	backupName := c.BackupPath(serialName)
 
 	if err = os.WriteFile(storageName, []byte(c.serial), fs.ModeFile); err != nil {
 		return fmt.Errorf("could not create %s: %s", storageName, err)

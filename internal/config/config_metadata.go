@@ -14,8 +14,3 @@ func (c *Config) ExifToolBin() string {
 func (c *Config) ExifToolJson() bool {
 	return !c.DisableExifTool()
 }
-
-// BackupYaml checks if creating YAML files is enabled.
-func (c *Config) BackupYaml() bool {
-	return !c.DisableBackups()
-}

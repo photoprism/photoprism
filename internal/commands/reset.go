@@ -137,7 +137,7 @@ func resetAction(ctx *cli.Context) error {
 	if _, err := removeAlbumYamlPrompt.Run(); err == nil {
 		start := time.Now()
 
-		matches, err := filepath.Glob(regexp.QuoteMeta(conf.AlbumsPath()) + "/**/*.yml")
+		matches, err := filepath.Glob(regexp.QuoteMeta(conf.BackupAlbumsPath()) + "/**/*.yml")
 
 		if err != nil {
 			return err

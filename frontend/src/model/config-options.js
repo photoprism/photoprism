@@ -36,6 +36,7 @@ export class ConfigOptions extends Model {
       OriginalsLimit: 0,
       Workers: 0,
       WakeupInterval: 0,
+      BackupIndex: false,
       DisableWebDAV: config.values.disable.webdav,
       DisableSettings: config.values.disable.settings,
       DisablePlaces: config.values.disable.places,

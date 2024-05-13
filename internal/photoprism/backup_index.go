@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/dustin/go-humanize/english"
@@ -19,13 +20,19 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
+var backupIndexMutex = sync.Mutex{}
+
 // BackupIndex creates an SQL backup dump with the specified file and path name.
 func BackupIndex(backupPath, fileName string, toStdOut, force bool, retain int) (err error) {
+	// Make sure only one backup/restore operation is running at a time.
+	backupIndexMutex.Lock()
+	defer backupIndexMutex.Unlock()
+
 	c := Config()
 
 	if !toStdOut {
 		if backupPath == "" {
-			backupPath = filepath.Join(c.BackupPath(), c.DatabaseDriver())
+			backupPath = c.BackupIndexPath()
 		}
 
 		// Create the backup path if it does not already exist.

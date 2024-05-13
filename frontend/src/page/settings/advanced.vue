@@ -19,7 +19,7 @@
               <v-checkbox
                 v-model="settings.ReadOnly"
                 :disabled="busy"
-                class="ma-0 pa-0 input-private"
+                class="ma-0 pa-0 input-readonly"
                 color="secondary-dark"
                 :label="$gettext('Read-Only Mode')"
                 :hint="$gettext('Don\'t modify originals folder. Disables import, upload, and delete.')"
@@ -37,12 +37,12 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                v-model="settings.DisableBackups"
+                v-model="settings.BackupIndex"
                 :disabled="busy"
-                class="ma-0 pa-0 input-private"
+                class="ma-0 pa-0 input-backup-index"
                 color="secondary-dark"
-                :label="$gettext('Disable Backups')"
-                :hint="$gettext('Don\'t backup photo and album metadata to YAML files.')"
+                :label="$gettext('Database Backups')"
+                :hint="$gettext('Create index backups based on the configured schedule.')"
                 prepend-icon="healing"
                 persistent-hint
                 @change="onChange"
@@ -54,7 +54,7 @@
               <v-checkbox
                 v-model="settings.DisableWebDAV"
                 :disabled="busy"
-                class="ma-0 pa-0 input-private"
+                class="ma-0 pa-0 input-disable-webdav"
                 color="secondary-dark"
                 :label="$gettext('Disable WebDAV')"
                 :hint="$gettext('Disable built-in WebDAV server. Requires a restart.')"
@@ -74,7 +74,7 @@
               <v-checkbox
                 v-model="settings.DisableExifTool"
                 :disabled="busy"
-                class="ma-0 pa-0 input-private"
+                class="ma-0 pa-0 input-disable-exiftool"
                 color="secondary-dark"
                 :label="$gettext('Disable ExifTool')"
                 :hint="$gettext('Don\'t create ExifTool JSON files for improved metadata extraction.')"
@@ -89,7 +89,7 @@
               <v-checkbox
                 v-model="settings.DisableTensorFlow"
                 :disabled="busy"
-                class="ma-0 pa-0 input-private"
+                class="ma-0 pa-0 input-disable-tensorflow"
                 color="secondary-dark"
                 :label="$gettext('Disable TensorFlow')"
                 :hint="$gettext('Don\'t use TensorFlow for image classification.')"

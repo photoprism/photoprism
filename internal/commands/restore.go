@@ -34,19 +34,19 @@ var restoreFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "restore album YAML file backups from the configured backup path",
+		Usage: "restore album metadata from YAML backup files",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom `PATH` for restoring album backups",
+		Usage: "custom album backup `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "restore index from the latest backup in the configured backup path (or the file passed as first argument)",
+		Usage: "restore index from the specified file or the most recent file in the backup path (from stdin if - is passed as first argument)",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom `PATH` for restoring index backups",
+		Usage: "custom index backup `PATH`",
 	},
 }
 
@@ -93,7 +93,7 @@ func restoreAction(ctx *cli.Context) error {
 		get.SetConfig(conf)
 
 		if albumsPath == "" {
-			albumsPath = conf.AlbumsPath()
+			albumsPath = conf.BackupAlbumsPath()
 		}
 
 		if !fs.PathExists(albumsPath) {

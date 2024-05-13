@@ -88,12 +88,15 @@ func Writable(path string) bool {
 	if path == "" {
 		return false
 	}
+
 	return syscall.Access(path, syscall.O_RDWR) == nil
 }
 
 // PathWritable tests if a path exists and is writable.
 func PathWritable(path string) bool {
-	if !PathExists(path) {
+	if path == "" {
+		return false
+	} else if !PathExists(path) {
 		return false
 	}
 

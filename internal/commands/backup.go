@@ -37,19 +37,19 @@ var backupFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "create album YAML file backups in the configured backup path",
+		Usage: "write album metadata to YAML files",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
-		Usage: "custom `PATH` for creating album backups",
+		Usage: "custom album backup `PATH`",
 	},
 	cli.BoolFlag{
 		Name:  "index, i",
-		Usage: "create index backup in the configured backup path (stdout if - is passed as first argument)",
+		Usage: "create index database backup (sent to stdout if - is passed as first argument)",
 	},
 	cli.StringFlag{
 		Name:  "index-path",
-		Usage: "custom `PATH` for creating index backups",
+		Usage: "custom index backup `PATH`",
 	},
 	cli.IntFlag{
 		Name:  "retain, r",
@@ -95,7 +95,7 @@ func backupAction(ctx *cli.Context) error {
 					log.Warnf("custom index backup path not writable, using default")
 				}
 
-				backupPath = filepath.Join(conf.BackupPath(), conf.DatabaseDriver())
+				backupPath = conf.BackupIndexPath()
 			}
 
 			backupFile := time.Now().UTC().Format("2006-01-02") + ".sql"
@@ -113,10 +113,10 @@ func backupAction(ctx *cli.Context) error {
 				log.Warnf("album files path not writable, using default")
 			}
 
-			albumsPath = conf.AlbumsPath()
+			albumsPath = conf.BackupAlbumsPath()
 		}
 
-		log.Infof("saving albums in %s", clean.Log(albumsPath))
+		log.Infof("creating album YAML files in %s", clean.Log(albumsPath))
 
 		if count, backupErr := photoprism.BackupAlbums(albumsPath, true); backupErr != nil {
 			return backupErr

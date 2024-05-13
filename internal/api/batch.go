@@ -47,7 +47,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 
 		log.Infof("photos: archiving %s", clean.Log(f.String()))
 
-		if get.Config().BackupYaml() {
+		if get.Config().SidecarYaml() {
 			// Fetch selection from index.
 			photos, err := query.SelectedPhotos(f)
 
@@ -60,7 +60,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 				if archiveErr := p.Archive(); archiveErr != nil {
 					log.Errorf("archive: %s", archiveErr)
 				} else {
-					SavePhotoAsYaml(&p)
+					SaveSidecarYaml(&p)
 				}
 			}
 		} else if err := entity.Db().Where("photo_uid IN (?)", f.Photos).Delete(&entity.Photo{}).Error; err != nil {
@@ -110,7 +110,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 
 		log.Infof("photos: restoring %s", clean.Log(f.String()))
 
-		if get.Config().BackupYaml() {
+		if get.Config().SidecarYaml() {
 			// Fetch selection from index.
 			photos, err := query.SelectedPhotos(f)
 
@@ -123,7 +123,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 				if err = p.Restore(); err != nil {
 					log.Errorf("restore: %s", err)
 				} else {
-					SavePhotoAsYaml(&p)
+					SaveSidecarYaml(&p)
 				}
 			}
 		} else if err := entity.Db().Unscoped().Model(&entity.Photo{}).Where("photo_uid IN (?)", f.Photos).
@@ -187,7 +187,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 				log.Errorf("approve: %s", err)
 			} else {
 				approved = append(approved, p)
-				SavePhotoAsYaml(&p)
+				SaveSidecarYaml(&p)
 			}
 		}
 
@@ -278,7 +278,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 		// Fetch selection from index.
 		if photos, err := query.SelectedPhotos(f); err == nil {
 			for _, p := range photos {
-				SavePhotoAsYaml(&p)
+				SaveSidecarYaml(&p)
 			}
 
 			event.EntitiesUpdated("photos", photos)

@@ -6,11 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfig_DisableBackups(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.False(t, c.DisableBackups())
-}
-
 func TestConfig_DisableWebDAV(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

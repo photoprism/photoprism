@@ -23,6 +23,27 @@ func TestConfig_SidecarPath(t *testing.T) {
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/sidecar", c.SidecarPath())
 }
 
+func TestConfig_SidecarYaml(t *testing.T) {
+	c := NewConfig(NewTestContext(nil))
+
+	// t.Logf("c.options.DisableBackups = %t", c.options.DisableBackups)
+	// t.Logf("c.options.SidecarYaml = %t", c.options.SidecarYaml)
+
+	assert.Equal(t, true, c.SidecarYaml())
+	assert.Equal(t, c.DisableBackups(), !c.SidecarYaml())
+
+	c.options.DisableBackups = true
+
+	assert.Equal(t, false, c.SidecarYaml())
+	assert.Equal(t, c.DisableBackups(), !c.SidecarYaml())
+
+	c.options.DisableBackups = false
+	c.options.SidecarYaml = true
+
+	assert.Equal(t, true, c.SidecarYaml())
+	assert.Equal(t, c.DisableBackups(), !c.SidecarYaml())
+}
+
 func TestConfig_UsersPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Contains(t, c.UsersPath(), "users")
@@ -175,7 +196,7 @@ func TestConfig_TestdataPath(t *testing.T) {
 func TestConfig_AlbumsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/albums", c.AlbumsPath())
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/albums", c.BackupAlbumsPath())
 }
 
 func TestConfig_OriginalsAlbumsPath(t *testing.T) {

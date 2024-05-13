@@ -44,7 +44,7 @@ func LikePhoto(router *gin.RouterGroup) {
 				return
 			}
 
-			SavePhotoAsYaml(&m)
+			SaveSidecarYaml(&m)
 			PublishPhotoEvent(StatusUpdated, id, c)
 		}
 
@@ -84,7 +84,7 @@ func DislikePhoto(router *gin.RouterGroup) {
 				return
 			}
 
-			SavePhotoAsYaml(&m)
+			SaveSidecarYaml(&m)
 			PublishPhotoEvent(StatusUpdated, id, c)
 		}
 
