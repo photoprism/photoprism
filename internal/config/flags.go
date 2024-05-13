@@ -675,13 +675,13 @@ var Flags = CliFlags{
 			Usage:  "video `STREAMS` that should be transcoded",
 			Value:  ffmpeg.MapVideoDefault,
 			EnvVar: EnvVar("FFMPEG_MAP_VIDEO"),
-		}}, {
+		}, DocDefault: fmt.Sprintf("`%s`", ffmpeg.MapVideoDefault)}, {
 		Flag: cli.StringFlag{
 			Name:   "ffmpeg-map-audio",
 			Usage:  "audio `STREAMS` that should be transcoded",
 			Value:  ffmpeg.MapAudioDefault,
 			EnvVar: EnvVar("FFMPEG_MAP_AUDIO"),
-		}}, {
+		}, DocDefault: fmt.Sprintf("`%s`", ffmpeg.MapAudioDefault)}, {
 		Flag: cli.StringFlag{
 			Name:   "exiftool-bin",
 			Usage:  "ExifTool `COMMAND` for extracting metadata",
