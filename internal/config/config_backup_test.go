@@ -38,11 +38,11 @@ func TestConfig_BackupRetain(t *testing.T) {
 
 func TestConfig_BackupIndex(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.False(t, c.BackupIndex())
-	c.options.BackupIndex = true
 	assert.True(t, c.BackupIndex())
 	c.options.BackupIndex = false
 	assert.False(t, c.BackupIndex())
+	c.options.BackupIndex = true
+	assert.True(t, c.BackupIndex())
 }
 
 func TestConfig_BackupAlbums(t *testing.T) {

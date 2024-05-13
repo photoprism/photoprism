@@ -11,7 +11,7 @@ import (
 
 const (
 	DefaultBackupSchedule = "0 12 * * *"
-	DefaultBackupRetain   = 14
+	DefaultBackupRetain   = 10
 )
 
 // BackupPath returns the backup storage path based on the specified type, or the base path if none is specified.

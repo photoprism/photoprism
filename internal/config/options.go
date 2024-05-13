@@ -214,8 +214,9 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.Copyright = ctx.App.Copyright
 	c.Version = ctx.App.Version
 
-	// Set defaults.
+	// Enable database backups and YAML exports by default.
 	c.SidecarYaml = true
+	c.BackupIndex = true
 	c.BackupAlbums = true
 
 	// Load defaults from YAML file?
