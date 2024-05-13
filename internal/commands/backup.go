@@ -37,7 +37,7 @@ var backupFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "write album metadata to YAML files",
+		Usage: "export album metadata to YAML files located in the backup path",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",

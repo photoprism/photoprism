@@ -158,7 +158,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "sidecar-yaml",
-			Usage:  "write picture metadata to YAML sidecar files",
+			Usage:  "export picture metadata to YAML sidecar files",
 			EnvVar: EnvVar("SIDECAR_YAML"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -210,7 +210,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "backup-albums",
-			Usage:  "write album metadata to YAML files in the backup path",
+			Usage:  "export album metadata to YAML backup files",
 			EnvVar: EnvVar("BACKUP_ALBUMS"),
 		}}, {
 		Flag: cli.IntFlag{

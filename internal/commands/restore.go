@@ -34,7 +34,7 @@ var restoreFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "restore album metadata from YAML backup files",
+		Usage: "restore albums from YAML files located in the backup path",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
