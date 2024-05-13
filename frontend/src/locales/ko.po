@@ -683,6 +683,10 @@ msgstr "계정 만들기"
 msgid "Create album"
 msgstr "앨범 만들기"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "만듦"
@@ -710,6 +714,10 @@ msgstr "청록색"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "매일"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "세부 사항"
 msgid "Dimensions"
 msgstr "치수"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "백업 비활성화"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "내장 WebDAV 서버 비활성화. 다시 시작 필요함."
@@ -837,10 +841,6 @@ msgstr "디스커버"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "닉네임"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "YAML 파일에 사진과 앨범 메타데이터를 백업하지 않기."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "더 보기"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "법률 정보"
 
@@ -2688,7 +2688,7 @@ msgid "Updating stacks"
 msgstr "스택을 업데이트 중"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2766,7 +2766,7 @@ msgstr "인증 앱으로 유효한 인증 코드를 생성할 수 없는 경우 
 msgid "User"
 msgstr "사용자"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "사용자 가이드"
 
@@ -2942,6 +2942,12 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "확대/축소"
+
+#~ msgid "Disable Backups"
+#~ msgstr "백업 비활성화"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "YAML 파일에 사진과 앨범 메타데이터를 백업하지 않기."
 
 #~ msgid "providerName"
 #~ msgstr "공급자 이름"

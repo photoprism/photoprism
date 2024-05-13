@@ -683,6 +683,10 @@ msgstr "Hesap Oluştur"
 msgid "Create album"
 msgstr "Albüm Oluştur"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Oluşturuldu"
@@ -710,6 +714,10 @@ msgstr "Cyan"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "Günlük"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "Detaylar"
 msgid "Dimensions"
 msgstr "Boyutlar"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "Yedekleri Devredışı Bırak"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
@@ -837,10 +841,6 @@ msgstr "Keşfetmek"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Ekran adı"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Fotoğraf ve albüm meta verilerini YAML dosyalarına yedeklemeyin."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Daha fazla bilgi edin"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "Yasal Bilgiler"
 
@@ -2688,7 +2688,7 @@ msgid "Updating stacks"
 msgstr "Yığınları güncelleme"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2766,7 +2766,7 @@ msgstr "Kimlik doğrulayıcı uygulamanızla geçerli bir doğrulama kodu oluşt
 msgid "User"
 msgstr "Kullanıcı"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "Kullanıcı rehberi"
 
@@ -2944,6 +2944,12 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
+
+#~ msgid "Disable Backups"
+#~ msgstr "Yedekleri Devredışı Bırak"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "Fotoğraf ve albüm meta verilerini YAML dosyalarına yedeklemeyin."
 
 #~ msgid "providerName"
 #~ msgstr "providerName"

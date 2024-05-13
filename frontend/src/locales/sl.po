@@ -680,6 +680,10 @@ msgstr "Ustvarjanje računa"
 msgid "Create album"
 msgstr "Ustvari album"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Ustvarjeno"
@@ -707,6 +711,10 @@ msgstr "Cyan"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "Dnevno"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -769,10 +777,6 @@ msgstr "Podrobnosti"
 msgid "Dimensions"
 msgstr "Dimenzije"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "Onemogoči varnostno kopiranje"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Onemogoči vgrajeni strežnik WebDAV. Zahteva ponovni zagon."
@@ -834,10 +838,6 @@ msgstr "Odkrijte"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Prikazno ime"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Metapodatkov fotografij in albumov ne varnostno kopirajte v datoteke YAML."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1453,7 +1453,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Preberite več"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "Pravne informacije"
 
@@ -2685,7 +2685,7 @@ msgid "Updating stacks"
 msgstr "Posodabljanje skladovnic"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2763,7 +2763,7 @@ msgstr "Uporabite naslednjo obnovitveno kodo za dostop do svojega računa, če n
 msgid "User"
 msgstr "Uporabnik"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "Uporabniški priročnik"
 
@@ -2939,6 +2939,12 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "Disable Backups"
+#~ msgstr "Onemogoči varnostno kopiranje"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "Metapodatkov fotografij in albumov ne varnostno kopirajte v datoteke YAML."
 
 #~ msgid "providerName"
 #~ msgstr "providerName"

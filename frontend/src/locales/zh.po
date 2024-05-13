@@ -683,6 +683,10 @@ msgstr "创建账户"
 msgid "Create album"
 msgstr "创建相册"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "已创建"
@@ -710,6 +714,10 @@ msgstr "青"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "每日"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "细节"
 msgid "Dimensions"
 msgstr "尺寸"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "禁用备份"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "禁用内置 WebDAV 服务器，需要重新启动。"
@@ -837,10 +841,6 @@ msgstr "探索"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "昵称"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "不备份照片和相册元数据到 YAML 文件中。"
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "进一步了解"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "法律信息"
 
@@ -2690,7 +2690,7 @@ msgid "Updating stacks"
 msgstr "更新堆"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2768,7 +2768,7 @@ msgstr "当您无法使用身份验证器应用生成有效的验证码时，请
 msgid "User"
 msgstr "用户"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "用户指南"
 
@@ -2944,6 +2944,12 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Disable Backups"
+#~ msgstr "禁用备份"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "不备份照片和相册元数据到 YAML 文件中。"
 
 #~ msgid "providerName"
 #~ msgstr "提供商名称"

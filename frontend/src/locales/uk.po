@@ -683,6 +683,10 @@ msgstr "Створити обліковий запис"
 msgid "Create album"
 msgstr "Створити альбом"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Створено"
@@ -710,6 +714,10 @@ msgstr "Блакитний"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "Щоденний"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "Подробиці"
 msgid "Dimensions"
 msgstr "Розміри"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "Вимкнути резервній копії"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Вимкнути вбудований WevDAV сервер. Необхідне перезавантаження."
@@ -837,10 +841,6 @@ msgstr "Огляд"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Ім'я користувача"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Не створювати резервні копії метаданих фотографій і альбомів у файли YAML."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Дізнатися більше"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "Юридична інформація"
 
@@ -2688,7 +2688,7 @@ msgid "Updating stacks"
 msgstr "Оновлення стеків"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2766,7 +2766,7 @@ msgstr "Використовуйте такий код відновлення, �
 msgid "User"
 msgstr "Користувач"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "Посібник користувача"
 
@@ -2942,6 +2942,12 @@ msgstr "Ваша бібліотека постійно аналізується,
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Збільшення/зменшення"
+
+#~ msgid "Disable Backups"
+#~ msgstr "Вимкнути резервній копії"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "Не створювати резервні копії метаданих фотографій і альбомів у файли YAML."
 
 #~ msgid "providerName"
 #~ msgstr "ім'я провайдера"

@@ -683,6 +683,10 @@ msgstr "Buat Akun"
 msgid "Create album"
 msgstr "Buat album"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Dibuat"
@@ -710,6 +714,10 @@ msgstr "Cyan"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "Harian"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "Detail"
 msgid "Dimensions"
 msgstr "Dimensi"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "Nonaktifkan Cadangan"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Nonaktifkan server WebDAV bawaan. Perlu dimulai ulang."
@@ -837,10 +841,6 @@ msgstr "Temukan"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Nama Tampilan"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Jangan backup foto dan metadata album ke file YAML."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Pelajari lebih lanjut"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "Informasi Hukum"
 
@@ -2688,7 +2688,7 @@ msgid "Updating stacks"
 msgstr "Memperbarui tumpukan"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2766,7 +2766,7 @@ msgstr "Gunakan kode pemulihan berikut untuk mengakses akun Anda ketika Anda tid
 msgid "User"
 msgstr "Pengguna"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "Panduan Pengguna"
 
@@ -2942,6 +2942,12 @@ msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat al
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
+
+#~ msgid "Disable Backups"
+#~ msgstr "Nonaktifkan Cadangan"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "Jangan backup foto dan metadata album ke file YAML."
 
 #~ msgid "providerName"
 #~ msgstr "nama penyedia"

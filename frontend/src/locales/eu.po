@@ -680,6 +680,10 @@ msgstr "Kontua sortu"
 msgid "Create album"
 msgstr "Sortu albuma"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Sortu"
@@ -707,6 +711,10 @@ msgstr "Zian"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "Egunero"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -769,10 +777,6 @@ msgstr "Xehetasunak"
 msgid "Dimensions"
 msgstr "Neurriak"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "Desgaitu babeskopiak"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Desgaitu integratutako WebDAV zerbitzaria. Berrabiaraztea eskatzen du."
@@ -834,10 +838,6 @@ msgstr "Ezagutu"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Bistaratzeko izena"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Ez egin argazkien eta albumen metadatuen babeskopiak YAML fitxategietan."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1453,7 +1453,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Gehiago ikasi"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "Informazio juridikoa"
 
@@ -2685,7 +2685,7 @@ msgid "Updating stacks"
 msgstr "Pilak eguneratzen"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2763,7 +2763,7 @@ msgstr "Erabili berreskuratze-kode hau zure kontura atzitzeko zure autentifikazi
 msgid "User"
 msgstr "Erabiltzailea"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "Erabiltzailearen Gida"
 
@@ -2939,6 +2939,12 @@ msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Handitu/txikiagotu"
+
+#~ msgid "Disable Backups"
+#~ msgstr "Desgaitu babeskopiak"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "Ez egin argazkien eta albumen metadatuen babeskopiak YAML fitxategietan."
 
 #~ msgid "providerName"
 #~ msgstr "hornitzailearenIzena"

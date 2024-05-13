@@ -680,6 +680,10 @@ msgstr "Luo tili"
 msgid "Create album"
 msgstr "Luo albumi"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Luotu"
@@ -707,6 +711,10 @@ msgstr "Syaani"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "Päivittäin"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -769,10 +777,6 @@ msgstr "Tarkemmat tiedot"
 msgid "Dimensions"
 msgstr "Mitat"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "Poista varmuuskopiot käytöstä"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Poista sisäänrakennettu WebDAV-palvelin käytöstä. Vaatii uudelleenkäynnistyksen."
@@ -834,10 +838,6 @@ msgstr "Tutustu"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Näytön nimi"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Älä varmuuskopioi valokuvien ja albumien metatietoja YAML-tiedostoihin."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1453,7 +1453,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Lue lisää"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "Oikeudelliset tiedot"
 
@@ -2685,7 +2685,7 @@ msgid "Updating stacks"
 msgstr "Päivitetään pinoja"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2763,7 +2763,7 @@ msgstr "Käytä seuraavaa palautuskoodia päästäksesi tilillesi, kun et pysty 
 msgid "User"
 msgstr "Käyttäjä"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "Käyttöopas"
 
@@ -2939,6 +2939,12 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
+
+#~ msgid "Disable Backups"
+#~ msgstr "Poista varmuuskopiot käytöstä"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "Älä varmuuskopioi valokuvien ja albumien metatietoja YAML-tiedostoihin."
 
 #~ msgid "providerName"
 #~ msgstr "providerName"

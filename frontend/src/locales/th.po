@@ -683,6 +683,10 @@ msgstr "สร้างบัญชี"
 msgid "Create album"
 msgstr "สร้างอัลบั้ม"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "สร้างเมื่อ"
@@ -710,6 +714,10 @@ msgstr "สีฟ้า"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "รายวัน"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "รายละเอียด"
 msgid "Dimensions"
 msgstr "ขนาด"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "ปิดการสำรองข้อมูล"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "ปิดใช้งานเซิร์ฟเวอร์ WebDAV ในตัว ต้องรีสตาร์ท"
@@ -837,10 +841,6 @@ msgstr "ค้นพบ"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "ชื่อที่แสดง"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "อย่าสำรองข้อมูลเมตาดาต้าของรูปภาพและอัลบั้มไปยังไฟล์ YAML"
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "แอลดีเอพี/ค.ศ"
 msgid "Learn more"
 msgstr "เรียนรู้เพิ่มเติม"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "ข้อมูลทางกฎหมาย"
 
@@ -2688,7 +2688,7 @@ msgid "Updating stacks"
 msgstr "กำลังอัปเดตกอง"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2766,7 +2766,7 @@ msgstr "ใช้รหัสกู้คืนต่อไปนี้เพื
 msgid "User"
 msgstr "ผู้ใช้"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "คู่มือผู้ใช้"
 
@@ -2942,6 +2942,12 @@ msgstr "คลังของคุณได้รับการวิเคร
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ซูมเข้า/ออก"
+
+#~ msgid "Disable Backups"
+#~ msgstr "ปิดการสำรองข้อมูล"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "อย่าสำรองข้อมูลเมตาดาต้าของรูปภาพและอัลบั้มไปยังไฟล์ YAML"
 
 #~ msgid "providerName"
 #~ msgstr "ชื่อผู้ให้บริการ"

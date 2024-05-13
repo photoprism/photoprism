@@ -683,6 +683,10 @@ msgstr "Crea account"
 msgid "Create album"
 msgstr "Crea album"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Creato"
@@ -710,6 +714,10 @@ msgstr "Ciano"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "Giornalmente"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "Dettagli"
 msgid "Dimensions"
 msgstr "Dimensioni"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "Disabilita Backup"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Disabilita server WebDAV integrato. Richiede riavvio."
@@ -837,10 +841,6 @@ msgstr "Scopri"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Nome visualizzato"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Non effettuare il backup dei metadata di foto e album in file YAML."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Scopri di più"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "Informazioni legali"
 
@@ -2688,7 +2688,7 @@ msgid "Updating stacks"
 msgstr "Aggiornamento delle pile"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2766,7 +2766,7 @@ msgstr "Utilizza il seguente codice di ripristino per accedere al tuo account qu
 msgid "User"
 msgstr "Utente"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "Guida per l'utente"
 
@@ -2942,6 +2942,12 @@ msgstr "La tua libreria viene continuamente analizzata per creare automaticament
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom avanti/indietro"
+
+#~ msgid "Disable Backups"
+#~ msgstr "Disabilita Backup"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "Non effettuare il backup dei metadata di foto e album in file YAML."
 
 #~ msgid "Please enter a valid verification code to access your account:"
 #~ msgstr "Si prega di inserire un codice di verifica valido per accedere al proprio account:"

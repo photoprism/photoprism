@@ -683,6 +683,10 @@ msgstr "खाता बनाएं"
 msgid "Create album"
 msgstr "एल्बम बनाओ"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "बनाया था"
@@ -710,6 +714,10 @@ msgstr "सियान"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "रोज"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "विवरण"
 msgid "Dimensions"
 msgstr "आयाम"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "पिछला बैकअप"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "अंतर्निहित WebDAV सर्वर अक्षम करें। पुनः आरंभ करने की आवश्यकता है।"
@@ -837,10 +841,6 @@ msgstr "डिस्कवर"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "प्रदर्शित होने वाला नाम"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "YAML फ़ाइलों के लिए फ़ोटो और एल्बम मेटाडेटा का बैकअप न लें।"
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "एलडीएपी/एडी"
 msgid "Learn more"
 msgstr "और अधिक जानें"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "कानूनी जानकारी"
 
@@ -2688,7 +2688,7 @@ msgid "Updating stacks"
 msgstr "ढेर अद्यतन कर रहा है"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2766,7 +2766,7 @@ msgstr "जब आप अपने प्रमाणक ऐप के साथ
 msgid "User"
 msgstr "उपयोगकर्ता"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "उपयोगकर्ता गाइड"
 
@@ -2942,6 +2942,12 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
+
+#~ msgid "Disable Backups"
+#~ msgstr "पिछला बैकअप"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "YAML फ़ाइलों के लिए फ़ोटो और एल्बम मेटाडेटा का बैकअप न लें।"
 
 #~ msgid "providerName"
 #~ msgstr "प्रदाता का नाम"

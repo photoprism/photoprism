@@ -683,6 +683,10 @@ msgstr "Skapa ett konto"
 msgid "Create album"
 msgstr "Skapa album"
 
+#: src/page/settings/advanced.vue:143
+msgid "Create index backups based on the configured schedule."
+msgstr ""
+
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Skapad"
@@ -710,6 +714,10 @@ msgstr "Cyan"
 #: src/options/options.js:422
 msgid "Daily"
 msgstr "Dagligen"
+
+#: src/page/settings/advanced.vue:142
+msgid "Database Backups"
+msgstr ""
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
@@ -772,10 +780,6 @@ msgstr "Detaljer"
 msgid "Dimensions"
 msgstr "Mått"
 
-#: src/page/settings/advanced.vue:142
-msgid "Disable Backups"
-msgstr "Inaktivera säkerhetskopiering"
-
 #: src/page/settings/advanced.vue:165
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Inaktivera den inbyggda WebDAV-servern. Kräver en omstart."
@@ -837,10 +841,6 @@ msgstr "Upptäck"
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "Visningsnamn"
-
-#: src/page/settings/advanced.vue:143
-msgid "Don't backup photo and album metadata to YAML files."
-msgstr "Säkerhetskopiera inte metadata för foton och album till YAML-filer."
 
 #: src/page/settings/advanced.vue:209
 msgid "Don't create ExifTool JSON files for improved metadata extraction."
@@ -1456,7 +1456,7 @@ msgstr "LDAP/AD"
 msgid "Learn more"
 msgstr "Läs mer"
 
-#: src/component/navigation.vue:622
+#: src/component/navigation.vue:625
 msgid "Legal Information"
 msgstr "Juridisk information"
 
@@ -2688,7 +2688,7 @@ msgid "Updating stacks"
 msgstr "Uppdatering av staplar"
 
 #: src/page/connect.vue:20 src/component/navigation.vue:457
-#: src/component/navigation.vue:492 src/component/navigation.vue:612
+#: src/component/navigation.vue:492 src/component/navigation.vue:619
 #: src/component/navigation.vue:51 src/component/navigation.vue:1818
 #: src/page/connect.vue:17
 msgid "Upgrade"
@@ -2766,7 +2766,7 @@ msgstr "Använd följande återställningskod för att komma åt ditt konto när
 msgid "User"
 msgstr "Användare"
 
-#: src/component/navigation.vue:617
+#: src/component/navigation.vue:612
 msgid "User Guide"
 msgstr "Användarhandbok"
 
@@ -2944,6 +2944,12 @@ msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
+
+#~ msgid "Disable Backups"
+#~ msgstr "Inaktivera säkerhetskopiering"
+
+#~ msgid "Don't backup photo and album metadata to YAML files."
+#~ msgstr "Säkerhetskopiera inte metadata för foton och album till YAML-filer."
 
 #~ msgid "providerName"
 #~ msgstr "leverantörsnamn"
