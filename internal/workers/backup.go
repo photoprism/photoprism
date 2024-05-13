@@ -6,11 +6,12 @@ import (
 	"runtime/debug"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // Backup represents a background backup worker.
@@ -54,36 +55,28 @@ func (w *Backup) Start(index, albums bool, force bool, retain int) (err error) {
 
 	// Start creating backups.
 	start := time.Now()
-	backupPath := w.conf.BackupIndexPath()
-
-	if index && albums {
-		log.Infof("backup: creating index and album backups")
-	} else if index {
-		log.Infof("backup: creating index backup")
-	} else {
-		log.Infof("backup: creating album backup")
-	}
 
 	// Create index database backup.
-	if !index {
-		// Skip.
-	} else if err = photoprism.BackupIndex(backupPath, "", false, force, retain); err != nil {
-		log.Errorf("backup: %s (index)", err)
+	if index {
+		backupPath := w.conf.BackupIndexPath()
+
+		if err = photoprism.BackupIndex(backupPath, "", false, force, retain); err != nil {
+			log.Errorf("backup: %s (index)", err)
+		}
 	}
 
 	if mutex.BackupWorker.Canceled() {
-		return errors.New("backup: canceled")
+		return errors.New("canceled")
 	}
 
 	// Create album YAML file backup.
 	if albums {
 		albumsBackupPath := w.conf.BackupAlbumsPath()
-		log.Infof("creating album YAML files in %s", clean.Log(albumsBackupPath))
 
-		if count, backupErr := photoprism.BackupAlbums(albumsBackupPath, force); backupErr != nil {
-			log.Errorf("backup: %s (albums)", backupErr.Error())
+		if count, backupErr := photoprism.BackupAlbums(albumsBackupPath, false); backupErr != nil {
+			log.Errorf("backup: %s (album)", backupErr.Error())
 		} else if count > 0 {
-			log.Debugf("backup: %d albums saved as yaml files", count)
+			log.Infof("exported %s", english.Plural(count, "album", "albums"))
 		}
 	}
 

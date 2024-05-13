@@ -19,7 +19,7 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 	c := Config()
 
 	if !c.BackupAlbums() && !force {
-		log.Debugf("restore: album yaml file backups are disabled")
+		log.Debugf("restore: album metadata backups are disabled")
 		return count, nil
 	}
 
@@ -30,7 +30,7 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 	}
 
 	if len(existing) > 0 && !force {
-		log.Debugf("restore: found existing albums, use the force option to overwrite")
+		log.Debugf("restore: found existing albums, backups will not be restored")
 		return count, nil
 	}
 

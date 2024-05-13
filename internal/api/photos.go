@@ -36,9 +36,9 @@ func SaveSidecarYaml(p *entity.Photo) {
 	fileName := p.YamlFileName(c.OriginalsPath(), c.SidecarPath())
 
 	if err := p.SaveAsYaml(fileName); err != nil {
-		log.Errorf("photo: %s (save yaml)", err)
+		log.Errorf("photo: %s (save as yaml)", err)
 	} else {
-		log.Debugf("photo: updated yaml file %s", clean.Log(filepath.Base(fileName)))
+		log.Debugf("photo: updated sidecar file %s", clean.Log(filepath.Base(fileName)))
 	}
 }
 

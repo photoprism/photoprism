@@ -29,7 +29,8 @@ func BackupAlbums(backupPath string, force bool) (count int, err error) {
 		backupPath = Config().BackupAlbumsPath()
 	}
 
-	log.Tracef("creating album YAML files in %s", clean.Log(filepath.Base(backupPath)))
+	log.Infof("exporting album metadata to YAML backup files")
+	log.Debugf("album backups will be created in %s", clean.Log(backupPath))
 
 	var latest time.Time
 
@@ -49,10 +50,10 @@ func BackupAlbums(backupPath string, force bool) (count int, err error) {
 		fileName := a.YamlFileName(backupPath)
 
 		if saveErr := a.SaveAsYaml(fileName); saveErr != nil {
-			log.Errorf("album: %s (update yaml)", saveErr)
+			log.Errorf("album: %s (save as yaml)", saveErr)
 			err = saveErr
 		} else {
-			log.Tracef("backup: saved album yaml file %s", clean.Log(filepath.Base(fileName)))
+			log.Tracef("album: updated backup file %s", clean.Log(filepath.Base(fileName)))
 			count++
 		}
 	}

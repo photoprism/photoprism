@@ -33,9 +33,9 @@ func SaveAlbumYaml(a entity.Album) {
 	fileName := a.YamlFileName(c.BackupAlbumsPath())
 
 	if err := a.SaveAsYaml(fileName); err != nil {
-		log.Errorf("album: %s (update yaml)", err)
+		log.Errorf("album: %s (save as yaml)", err)
 	} else {
-		log.Debugf("album: updated yaml file %s", clean.Log(filepath.Base(fileName)))
+		log.Debugf("album: updated backup file %s", clean.Log(filepath.Base(fileName)))
 	}
 }
 

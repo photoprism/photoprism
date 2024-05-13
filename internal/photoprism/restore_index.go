@@ -62,7 +62,7 @@ func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error
 	if counts.Photos == 0 {
 		// Do nothing;
 	} else if !force {
-		return fmt.Errorf("found existing index with %d pictures, use the force option to replace it", counts.Photos)
+		return fmt.Errorf("found existing index with %d pictures, backup will not be restored", counts.Photos)
 	} else {
 		log.Warnf("replacing the existing index with %d pictures", counts.Photos)
 	}

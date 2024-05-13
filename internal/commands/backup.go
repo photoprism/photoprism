@@ -11,7 +11,6 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -116,12 +115,10 @@ func backupAction(ctx *cli.Context) error {
 			albumsPath = conf.BackupAlbumsPath()
 		}
 
-		log.Infof("creating album YAML files in %s", clean.Log(albumsPath))
-
 		if count, backupErr := photoprism.BackupAlbums(albumsPath, true); backupErr != nil {
 			return backupErr
 		} else {
-			log.Infof("created %s", english.Plural(count, "YAML album file", "YAML album files"))
+			log.Infof("exported %s", english.Plural(count, "album", "albums"))
 		}
 	}
 

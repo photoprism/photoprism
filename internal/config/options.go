@@ -221,7 +221,7 @@ func NewOptions(ctx *cli.Context) *Options {
 
 	// Load defaults from YAML file?
 	if defaultsYaml := ctx.GlobalString("defaults-yaml"); defaultsYaml == "" {
-		log.Tracef("config: defaults yaml file not specified")
+		log.Tracef("config: defaults file was not specified")
 	} else if c.DefaultsYaml = fs.Abs(defaultsYaml); !fs.FileExists(c.DefaultsYaml) {
 		log.Tracef("config: defaults file %s does not exist", clean.Log(c.DefaultsYaml))
 	} else if err := c.Load(c.DefaultsYaml); err != nil {
