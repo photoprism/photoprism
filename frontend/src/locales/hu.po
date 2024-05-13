@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-04-18 14:58+0000\n"
+"PO-Revision-Date: 2024-05-13 07:56+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.4.3\n"
+"X-Generator: Weblate 5.5.3\n"
 
 #: src/page/albums.vue:509
 msgid "%{n} albums found"
@@ -684,7 +684,7 @@ msgstr "Album létrehozása"
 
 #: src/page/settings/advanced.vue:143
 msgid "Create index backups based on the configured schedule."
-msgstr ""
+msgstr "Index biztonsági mentések létrehozása a konfigurált ütemezés alapján."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -716,7 +716,7 @@ msgstr "Napi"
 
 #: src/page/settings/advanced.vue:142
 msgid "Database Backups"
-msgstr ""
+msgstr "Adatbázis biztonsági mentések"
 
 #: src/page/settings/account.vue:579 src/dialog/photo/edit/details.vue:116
 msgid "Day"
