@@ -89,15 +89,28 @@ func (m *Album) SaveBackupYaml(backupPath string) error {
 		return fmt.Errorf("backup path is empty")
 	}
 
-	// Write metadata to YAML backup file.
-	if fileName, relName, err := m.YamlFileName(backupPath); err != nil {
+	// Get album YAML backup filename.
+	fileName, relName, err := m.YamlFileName(backupPath)
+
+	if err != nil {
 		log.Warnf("album: %s (save %s)", err, clean.Log(relName))
 		return err
-	} else if err = m.SaveAsYaml(fileName); err != nil {
-		log.Warnf("album: %s (save %s)", err, clean.Log(relName))
+	}
+
+	var action string
+
+	if fs.FileExists(fileName) {
+		action = "update"
+	} else {
+		action = "create"
+	}
+
+	// Write album metadata to YAML backup file.
+	if err = m.SaveAsYaml(fileName); err != nil {
+		log.Warnf("album: %s (%s %s)", err, action, clean.Log(relName))
 		return err
 	} else {
-		log.Debugf("album: saved backup file %s", clean.Log(relName))
+		log.Debugf("album: %sd backup file %s", action, clean.Log(relName))
 	}
 
 	return nil

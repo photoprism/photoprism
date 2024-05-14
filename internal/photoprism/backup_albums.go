@@ -40,8 +40,7 @@ func BackupAlbums(backupPath string, force bool) (count int, err error) {
 	// Save albums to YAML backup files.
 	for _, a := range albums {
 		// Skip albums that have already been saved to YAML backup files.
-		if !force && !backupAlbumsLatest.IsZero() && !a.UpdatedAt.IsZero() &&
-			a.UpdatedAt.Before(backupAlbumsLatest) {
+		if !force && !backupAlbumsLatest.IsZero() && !a.UpdatedAt.IsZero() && !backupAlbumsLatest.Before(a.UpdatedAt) {
 			continue
 		}
 

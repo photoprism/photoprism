@@ -82,15 +82,28 @@ func (m *Photo) SaveSidecarYaml(originalsPath, sidecarPath string) error {
 		return fmt.Errorf("photo uid is empty")
 	}
 
-	// Write metadata to YAML sidecar file.
-	if fileName, relName, err := m.YamlFileName(originalsPath, sidecarPath); err != nil {
+	// Get photo YAML sidecar filename.
+	fileName, relName, err := m.YamlFileName(originalsPath, sidecarPath)
+
+	if err != nil {
 		log.Warnf("photo: %s (save %s)", err, clean.Log(relName))
 		return err
-	} else if err = m.SaveAsYaml(fileName); err != nil {
-		log.Warnf("photo: %s (save %s)", err, clean.Log(relName))
+	}
+
+	var action string
+
+	if fs.FileExists(fileName) {
+		action = "update"
+	} else {
+		action = "create"
+	}
+
+	// Write photo metadata to YAML sidecar file.
+	if err = m.SaveAsYaml(fileName); err != nil {
+		log.Warnf("photo: %s (%s %s)", err, action, clean.Log(relName))
 		return err
 	} else {
-		log.Infof("photo: saved sidecar file %s", clean.Log(relName))
+		log.Infof("photo: %sd sidecar file %s", action, clean.Log(relName))
 	}
 
 	return nil
