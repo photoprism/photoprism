@@ -217,24 +217,49 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 			return
 		}
 
-		if len(f.Albums) == 0 {
+		// Get album UIDs.
+		albumUIDs := f.Albums
+
+		if len(albumUIDs) == 0 {
 			Abort(c, http.StatusBadRequest, i18n.ErrNoAlbumsSelected)
 			return
 		}
 
 		log.Infof("albums: deleting %s", clean.Log(f.String()))
 
-		// Soft delete albums, can be restored.
-		entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.Album{})
+		// Fetch albums.
+		albums, queryErr := query.AlbumsByUID(albumUIDs, false)
 
-		/*
-			KEEP ENTRIES AS ALBUMS MAY NOW BE RESTORED BY NAME
-			entity.Db().Where("album_uid IN (?)", f.Albums).Delete(&entity.PhotoAlbum{})
-		*/
+		if queryErr != nil {
+			log.Errorf("albums: %s (find)", queryErr)
+		}
 
-		UpdateClientConfig()
+		// Abort if no albums with a matching UID were found.
+		if len(albums) == 0 {
+			AbortEntityNotFound(c)
+			return
+		}
 
-		event.EntitiesDeleted("albums", f.Albums)
+		deleted := 0
+		conf := get.Config()
+
+		// Flag matching albums as deleted.
+		for _, a := range albums {
+			if deleteErr := a.Delete(); deleteErr != nil {
+				log.Errorf("albums: %s (delete)", deleteErr)
+			} else {
+				if conf.BackupAlbums() {
+					SaveAlbumYaml(a)
+				}
+
+				deleted++
+			}
+		}
+
+		// Update client config if at least one album was successfully deleted.
+		if deleted > 0 {
+			UpdateClientConfig()
+		}
 
 		c.JSON(http.StatusOK, i18n.NewResponse(http.StatusOK, i18n.MsgAlbumsDeleted))
 	})

@@ -18,21 +18,21 @@ import (
 )
 
 // SaveSidecarYaml saves the photo metadata to a YAML sidecar file.
-func SaveSidecarYaml(p *entity.Photo) {
-	if p == nil {
+func SaveSidecarYaml(photo *entity.Photo) {
+	if photo == nil {
 		log.Debugf("api: photo is nil (update yaml)")
 		return
 	}
 
-	c := get.Config()
+	conf := get.Config()
 
 	// Check if saving YAML sidecar files is enabled.
-	if !c.SidecarYaml() {
+	if !conf.SidecarYaml() {
 		return
 	}
 
 	// Write photo metadata to YAML sidecar file.
-	_ = p.SaveSidecarYaml(c.OriginalsPath(), c.SidecarPath())
+	_ = photo.SaveSidecarYaml(conf.OriginalsPath(), conf.SidecarPath())
 }
 
 // GetPhoto returns photo details as JSON.

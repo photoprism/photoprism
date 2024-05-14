@@ -20,6 +20,16 @@ func Albums(offset, limit int) (results entity.Albums, err error) {
 	return results, err
 }
 
+// AlbumsByUID returns albums by UID.
+func AlbumsByUID(albumUIDs []string, includeDeleted bool) (results entity.Albums, err error) {
+	if includeDeleted {
+		err = UnscopedDb().Where("album_uid IN (?)", albumUIDs).Find(&results).Error
+	} else {
+		err = UnscopedDb().Where("album_uid IN (?) AND deleted_at IS NULL", albumUIDs).Find(&results).Error
+	}
+	return results, err
+}
+
 // AlbumByUID returns a Album based on the UID.
 func AlbumByUID(albumUID string) (album entity.Album, err error) {
 	if rnd.InvalidUID(albumUID, entity.AlbumUID) {

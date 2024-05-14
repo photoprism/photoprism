@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -14,22 +15,23 @@ import (
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 var albumMutex = sync.Mutex{}
 
 // SaveAlbumYaml saves the album metadata to a YAML backup file.
-func SaveAlbumYaml(a entity.Album) {
-	c := get.Config()
+func SaveAlbumYaml(album entity.Album) {
+	conf := get.Config()
 
 	// Check if saving YAML backup files is enabled.
-	if !c.BackupAlbums() {
+	if !conf.BackupAlbums() {
 		return
 	}
 
 	// Write album metadata to YAML backup file.
-	_ = a.SaveBackupYaml(c.BackupAlbumsPath())
+	_ = album.SaveBackupYaml(conf.BackupAlbumsPath())
 }
 
 // GetAlbum returns album details as JSON.
@@ -222,23 +224,34 @@ func DeleteAlbum(router *gin.RouterGroup) {
 		if a.IsDefault() {
 			// Soft delete manually created albums.
 			err = a.Delete()
+
+			// Also update album YAML backup.
+			if err != nil {
+				log.Errorf("album: %s (delete)", err)
+				AbortDeleteFailed(c)
+				return
+			} else {
+				SaveAlbumYaml(a)
+			}
 		} else {
 			// Permanently delete automatically created albums.
 			err = a.DeletePermanently()
-		}
 
-		if err != nil {
-			log.Errorf("album: %s (delete)", err)
-			AbortDeleteFailed(c)
-			return
+			// Also remove YAML backup file, if it exists.
+			if err != nil {
+				log.Errorf("album: %s (delete permanently)", err)
+				AbortDeleteFailed(c)
+				return
+			} else if fileName, relName, nameErr := a.YamlFileName(get.Config().BackupAlbumsPath()); nameErr != nil {
+				log.Warnf("album: %s (delete %s)", err, clean.Log(relName))
+			} else if !fs.FileExists(fileName) {
+				// Do nothing.
+			} else if removeErr := os.Remove(fileName); removeErr != nil {
+				log.Errorf("album: %s (delete %s)", err, clean.Log(relName))
+			}
 		}
-
-		// PublishAlbumEvent(StatusDeleted, uid, c)
 
 		UpdateClientConfig()
-
-		// Update album YAML backup.
-		SaveAlbumYaml(a)
 
 		c.JSON(http.StatusOK, a)
 	})

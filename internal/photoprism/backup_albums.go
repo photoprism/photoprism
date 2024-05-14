@@ -9,7 +9,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-var backupAlbumsLatest = time.Time{}
+var backupAlbumsTime = time.Time{}
 var backupAlbumsMutex = sync.Mutex{}
 
 // BackupAlbums creates a YAML file backup of all albums.
@@ -18,6 +18,7 @@ func BackupAlbums(backupPath string, force bool) (count int, err error) {
 	backupAlbumsMutex.Lock()
 	defer backupAlbumsMutex.Unlock()
 
+	// Get albums from database.
 	albums, queryErr := query.Albums(0, 1000000)
 
 	if queryErr != nil {
@@ -33,20 +34,24 @@ func BackupAlbums(backupPath string, force bool) (count int, err error) {
 
 	var latest time.Time
 
+	// Ignore the last modification timestamp if the force flag is set.
 	if !force {
-		latest = backupAlbumsLatest
+		latest = backupAlbumsTime
 	}
 
 	// Save albums to YAML backup files.
 	for _, a := range albums {
+		// Album modification timestamp.
+		changed := a.UpdatedAt
+
 		// Skip albums that have already been saved to YAML backup files.
-		if !force && !backupAlbumsLatest.IsZero() && !a.UpdatedAt.IsZero() && !backupAlbumsLatest.Before(a.UpdatedAt) {
+		if !force && !backupAlbumsTime.IsZero() && !changed.IsZero() && !backupAlbumsTime.Before(changed) {
 			continue
 		}
 
-		// Remember most recent date.
-		if a.UpdatedAt.After(latest) {
-			latest = a.UpdatedAt
+		// Remember the lastest modification timestamp.
+		if changed.After(latest) {
+			latest = changed
 		}
 
 		// Write album metadata to YAML backup file.
@@ -57,7 +62,9 @@ func BackupAlbums(backupPath string, force bool) (count int, err error) {
 		}
 	}
 
-	backupAlbumsLatest = latest
+	// Set backupAlbumsTime to latest modification timestamp,
+	// so that already saved albums can be skipped next time.
+	backupAlbumsTime = latest
 
 	return count, err
 }

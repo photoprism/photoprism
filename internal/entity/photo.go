@@ -216,6 +216,10 @@ func (m *Photo) GetID() uint {
 
 // HasID checks if the photo has an id and uid assigned to it.
 func (m *Photo) HasID() bool {
+	if m == nil {
+		return false
+	}
+
 	return m.ID > 0 && m.PhotoUID != ""
 }
 

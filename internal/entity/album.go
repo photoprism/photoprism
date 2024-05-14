@@ -70,7 +70,7 @@ func (m *Album) AfterUpdate(tx *gorm.DB) (err error) {
 	return
 }
 
-// AfterDelete flushes the album cache.
+// AfterDelete flushes the album cache when an album gets deleted.
 func (m *Album) AfterDelete(tx *gorm.DB) (err error) {
 	FlushAlbumCache()
 	return
@@ -410,6 +410,10 @@ func FindAlbum(find Album) *Album {
 
 // HasID tests if the album has a valid id and uid.
 func (m *Album) HasID() bool {
+	if m == nil {
+		return false
+	}
+
 	return m.ID > 0 && rnd.IsUID(m.AlbumUID, AlbumUID)
 }
 
@@ -705,8 +709,14 @@ func (m *Album) Delete() error {
 		return nil
 	}
 
-	if err := Db().Delete(m).Error; err != nil {
+	now := TimeStamp()
+
+	if err := UnscopedDb().Model(m).UpdateColumns(Map{"updated_at": now, "deleted_at": now}).Error; err != nil {
 		return err
+	} else {
+		m.UpdatedAt = now
+		m.DeletedAt = &now
+		FlushAlbumCache()
 	}
 
 	m.PublishCountChange(-1)
