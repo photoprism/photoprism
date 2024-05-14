@@ -55,6 +55,13 @@ fi
 
 mkdir -p "$DESTDIR"
 
+# Map codenames to find and use a compatible version.
+case $VERSION_CODENAME in
+  noble)
+    VERSION_CODENAME=mantic
+    ;;
+esac
+
 ARCHIVE="libheif-${VERSION_CODENAME}-${DESTARCH}-${LIBHEIF_VERSION}.tar.gz"
 URL="https://dl.photoprism.app/dist/libheif/${ARCHIVE}"
 
