@@ -158,7 +158,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "sidecar-yaml",
-			Usage:  "save picture metadata to YAML sidecar files",
+			Usage:  "save originals metadata to YAML sidecar files",
 			EnvVar: EnvVar("SIDECAR_YAML"),
 		}, DocDefault: "true"}, {
 		Flag: cli.StringFlag{
