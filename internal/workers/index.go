@@ -1,7 +1,9 @@
 package workers
 
 import (
+	"fmt"
 	"path/filepath"
+	"runtime/debug"
 	"time"
 
 	"github.com/photoprism/photoprism/internal/config"
@@ -13,7 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// Index represents a background backup worker.
+// Index represents a background indexing worker.
 type Index struct {
 	conf *config.Config
 }
@@ -31,7 +33,14 @@ func (w *Index) StartScheduled() {
 }
 
 // Start runs the indexing worker once.
-func (w *Index) Start() error {
+func (w *Index) Start() (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("index: %s (worker panic)\nstack: %s", r, debug.Stack())
+			log.Error(err)
+		}
+	}()
+
 	if mutex.IndexWorker.Running() || mutex.BackupWorker.Running() {
 		return nil
 	}
