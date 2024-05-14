@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 
@@ -18,7 +17,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// SaveSidecarYaml saves picture metadata as YAML file.
+// SaveSidecarYaml saves the photo metadata to a YAML sidecar file.
 func SaveSidecarYaml(p *entity.Photo) {
 	if p == nil {
 		log.Debugf("api: photo is nil (update yaml)")
@@ -27,19 +26,13 @@ func SaveSidecarYaml(p *entity.Photo) {
 
 	c := get.Config()
 
-	// Check if creating and updating YAML sidecar files is enabled.
+	// Check if saving YAML sidecar files is enabled.
 	if !c.SidecarYaml() {
 		return
 	}
 
-	// Create or update metadata export in YAML sidecar file.
-	fileName := p.YamlFileName(c.OriginalsPath(), c.SidecarPath())
-
-	if err := p.SaveAsYaml(fileName); err != nil {
-		log.Errorf("photo: %s (save as yaml)", err)
-	} else {
-		log.Debugf("photo: updated sidecar file %s", clean.Log(filepath.Join(p.PhotoPath, p.PhotoName)+fs.ExtYAML))
-	}
+	// Write photo metadata to YAML sidecar file.
+	_ = p.SaveSidecarYaml(c.OriginalsPath(), c.SidecarPath())
 }
 
 // GetPhoto returns photo details as JSON.

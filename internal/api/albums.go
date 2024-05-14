@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"path/filepath"
 	"sync"
 
 	"github.com/gin-gonic/gin"
@@ -20,23 +19,17 @@ import (
 
 var albumMutex = sync.Mutex{}
 
-// SaveAlbumYaml backs up the album metadata in YAML files.
+// SaveAlbumYaml saves the album metadata to a YAML backup file.
 func SaveAlbumYaml(a entity.Album) {
 	c := get.Config()
 
-	// Check if album YAML backups are enabled.
+	// Check if saving YAML backup files is enabled.
 	if !c.BackupAlbums() {
 		return
 	}
 
-	// Create or update album backup file.
-	fileName := a.YamlFileName(c.BackupAlbumsPath())
-
-	if err := a.SaveAsYaml(fileName); err != nil {
-		log.Errorf("album: %s (save as yaml)", err)
-	} else {
-		log.Debugf("album: updated backup file %s", clean.Log(filepath.Base(fileName)))
-	}
+	// Write album metadata to YAML backup file.
+	_ = a.SaveBackupYaml(c.BackupAlbumsPath())
 }
 
 // GetAlbum returns album details as JSON.

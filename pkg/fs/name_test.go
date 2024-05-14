@@ -34,36 +34,29 @@ func TestRelName(t *testing.T) {
 
 func TestFileName(t *testing.T) {
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
-		result := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp")
-
+		result, err := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp")
+		assert.NoError(t, err)
 		assert.Equal(t, "testdata/.photoprism/Test (4).jpg.xmp", result)
 	})
-
 	t.Run("Test (3).jpg", func(t *testing.T) {
-		result := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp")
-
+		result, err := FileName("testdata/Test (4).jpg", ".photoprism", Abs("testdata"), ".xmp")
+		assert.NoError(t, err)
 		assert.Equal(t, "testdata/.photoprism/Test (4).jpg.xmp", result)
 	})
-
 	t.Run("FOO.XMP", func(t *testing.T) {
-		result := FileName("testdata/FOO.XMP", ".photoprism/sub", Abs("testdata"), ".jpeg")
-
+		result, err := FileName("testdata/FOO.XMP", ".photoprism/sub", Abs("testdata"), ".jpeg")
+		assert.NoError(t, err)
 		assert.Equal(t, "testdata/.photoprism/sub/FOO.XMP.jpeg", result)
 	})
-
 	t.Run("Test copy 3.jpg", func(t *testing.T) {
 		tempDir := filepath.Join(os.TempDir(), PPHiddenPathname)
-
-		// t.Logf("TEMP DIR, ABS NAME: %s, %s", tempDir, Abs("testdata/Test (4).jpg"))
-
-		result := FileName(Abs("testdata/Test (4).jpg"), tempDir, Abs("testdata"), ".xmp")
-
+		result, err := FileName(Abs("testdata/Test (4).jpg"), tempDir, Abs("testdata"), ".xmp")
+		assert.NoError(t, err)
 		assert.Equal(t, tempDir+"/Test (4).jpg.xmp", result)
 	})
-
 	t.Run("empty dir", func(t *testing.T) {
-		result := FileName("testdata/FOO.XMP", "", Abs("testdata"), ".jpeg")
-
+		result, err := FileName("testdata/FOO.XMP", "", Abs("testdata"), ".jpeg")
+		assert.NoError(t, err)
 		assert.Equal(t, "testdata/FOO.XMP.jpeg", result)
 	})
 }
@@ -75,7 +68,6 @@ func TestFileNameHidden(t *testing.T) {
 	t.Run("Dot", func(t *testing.T) {
 		assert.True(t, FileNameHidden("/some/.folder"))
 	})
-
 	t.Run("Dots", func(t *testing.T) {
 		assert.False(t, FileNameHidden("/some/image.jpg."))
 		assert.False(t, FileNameHidden("./.some/foo"))

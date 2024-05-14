@@ -271,7 +271,7 @@ func (m *Client) Save() error {
 // Delete marks the entity as deleted.
 func (m *Client) Delete() (err error) {
 	if m.ClientUID == "" {
-		return fmt.Errorf("client uid is missing")
+		return fmt.Errorf("client uid is empty")
 	}
 
 	if _, err = m.DeleteSessions(); err != nil {
@@ -286,7 +286,7 @@ func (m *Client) Delete() (err error) {
 // DeleteSessions deletes all sessions that belong to this client.
 func (m *Client) DeleteSessions() (deleted int, err error) {
 	if m.ClientUID == "" {
-		return 0, fmt.Errorf("client uid is missing")
+		return 0, fmt.Errorf("client uid is empty")
 	}
 
 	if deleted = DeleteClientSessions(m, "", 0); deleted > 0 {

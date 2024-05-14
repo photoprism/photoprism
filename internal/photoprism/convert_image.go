@@ -49,8 +49,8 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 	// Replace existing sidecar if "force" is true.
 	if err == nil && mediaFile.IsPreviewImage() {
 		if force && mediaFile.InSidecar() {
-			if err := mediaFile.Remove(); err != nil {
-				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(mediaFile.RootRelName()), err)
+			if removeErr := mediaFile.Remove(); removeErr != nil {
+				return mediaFile, fmt.Errorf("convert: failed removing %s (%s)", clean.Log(mediaFile.RootRelName()), removeErr)
 			} else {
 				log.Infof("convert: replacing %s", clean.Log(mediaFile.RootRelName()))
 			}
@@ -61,9 +61,9 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 		if !c.conf.VectorEnabled() {
 			return nil, fmt.Errorf("convert: vector graphics support disabled (%s)", clean.Log(f.RootRelName()))
 		}
-		imageName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtPNG)
+		imageName, _ = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtPNG)
 	} else {
-		imageName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtJPEG)
+		imageName, _ = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtJPEG)
 	}
 
 	if !c.conf.SidecarWritable() {

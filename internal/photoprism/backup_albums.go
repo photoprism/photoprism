@@ -1,7 +1,6 @@
 package photoprism
 
 import (
-	"path/filepath"
 	"sync"
 	"time"
 
@@ -38,22 +37,23 @@ func BackupAlbums(backupPath string, force bool) (count int, err error) {
 		latest = backupAlbumsLatest
 	}
 
+	// Save albums to YAML backup files.
 	for _, a := range albums {
-		if !force && a.UpdatedAt.Before(backupAlbumsLatest) {
+		// Skip albums that have already been saved to YAML backup files.
+		if !force && !backupAlbumsLatest.IsZero() && !a.UpdatedAt.IsZero() &&
+			a.UpdatedAt.Before(backupAlbumsLatest) {
 			continue
 		}
 
+		// Remember most recent date.
 		if a.UpdatedAt.After(latest) {
 			latest = a.UpdatedAt
 		}
 
-		fileName := a.YamlFileName(backupPath)
-
-		if saveErr := a.SaveAsYaml(fileName); saveErr != nil {
-			log.Errorf("album: %s (save as yaml)", saveErr)
+		// Write album metadata to YAML backup file.
+		if saveErr := a.SaveBackupYaml(backupPath); saveErr != nil {
 			err = saveErr
 		} else {
-			log.Tracef("album: updated backup file %s", clean.Log(filepath.Base(fileName)))
 			count++
 		}
 	}

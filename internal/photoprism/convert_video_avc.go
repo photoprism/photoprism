@@ -61,14 +61,14 @@ func (c *Convert) ToAvc(f *MediaFile, encoder ffmpeg.AvcEncoder, noMutex, force 
 
 	// Use .mp4 file extension for animated images and .avi for videos.
 	if f.IsAnimatedImage() {
-		avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtMP4)
+		avcName, _ = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtMP4)
 	} else {
-		avcName = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtAVC)
+		avcName, _ = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtAVC)
 	}
 
 	cmd, useMutex, err := c.AvcConvertCommand(f, avcName, encoder)
 
-	// Failed?
+	// Return if an error occurred.
 	if err != nil {
 		log.Error(err)
 		return nil, err

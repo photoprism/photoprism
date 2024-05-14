@@ -994,14 +994,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	// Create backup of picture metadata in sidecar YAML file.
 	if file.FilePrimary && Config().SidecarYaml() {
-		// Get YAML file name.
-		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
-
-		// Save backup to file.
-		if err = photo.SaveAsYaml(yamlFile); err != nil {
-			log.Errorf("index: %s in %s (save as yaml)", err.Error(), logName)
-		} else {
-			log.Debugf("index: updated sidecar file %s", clean.Log(filepath.Join(photo.PhotoPath, photo.PhotoName)+fs.ExtYAML))
+		if err = photo.SaveSidecarYaml(Config().OriginalsPath(), Config().SidecarPath()); err != nil {
+			log.Errorf("index: %s in %s (save as yaml)", err, logName)
 		}
 	}
 

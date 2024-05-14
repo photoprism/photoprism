@@ -16,7 +16,11 @@ func DeletePhoto(p *entity.Photo, mediaFiles bool, originals bool) (numFiles int
 		return 0, errors.New("photo is nil")
 	}
 
-	yamlFileName := p.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
+	yamlFileName, yamlRelName, err := p.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
+
+	if err != nil {
+		log.Warnf("photo: %s (delete %s)", err, clean.Log(yamlRelName))
+	}
 
 	// Permanently remove photo from index.
 	files, err := p.DeletePermanently()
@@ -33,10 +37,10 @@ func DeletePhoto(p *entity.Photo, mediaFiles bool, originals bool) (numFiles int
 	if !fs.FileExists(yamlFileName) {
 		return numFiles, nil
 	} else if err := os.Remove(yamlFileName); err != nil {
-		log.Warnf("files: failed deleting sidecar %s", clean.Log(filepath.Base(yamlFileName)))
+		log.Warnf("photo: failed deleting sidecar file %s", clean.Log(yamlRelName))
 	} else {
 		numFiles++
-		log.Infof("files: deleted sidecar %s", clean.Log(filepath.Base(yamlFileName)))
+		log.Infof("photo: deleted sidecar file %s", clean.Log(yamlRelName))
 	}
 
 	return numFiles, nil
