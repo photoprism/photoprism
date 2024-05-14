@@ -9,15 +9,13 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
 // Backup represents a background backup worker.
 type Backup struct {
-	conf    *config.Config
-	lastRun time.Time
+	conf *config.Config
 }
 
 // NewBackup returns a new Backup worker.
@@ -79,9 +77,6 @@ func (w *Backup) Start(database, albums bool, force bool, retain int) (err error
 			log.Infof("backup: saved %s", english.Plural(count, "album backup", "album backups"))
 		}
 	}
-
-	// Remember time when worker was executed.
-	w.lastRun = entity.TimeStamp()
 
 	elapsed := time.Since(start)
 

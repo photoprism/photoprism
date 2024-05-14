@@ -526,13 +526,11 @@ func (m *Album) UpdateTitleAndLocation(title, location, state, country, slug str
 		changed = true
 	}
 
-	if !changed && state == m.AlbumState && country == m.AlbumCountry {
+	if !changed && state == m.AlbumState && (country == m.AlbumCountry || country == "" && m.AlbumCountry == "zz") {
 		return nil
 	}
 
-	if title != "" {
-		m.SetTitle(title)
-	}
+	m.SetTitle(title)
 
 	// Skip location?
 	if location == "" && state == "" && (country == "" || country == "zz") {
@@ -646,6 +644,9 @@ func (m *Album) UpdateFolder(albumPath, albumFilter string) error {
 
 	if albumSlug == "" || albumPath == "" || albumFilter == "" || !m.HasID() {
 		return fmt.Errorf("folder album must have a path and filter")
+	} else if m.AlbumPath == albumPath && m.AlbumFilter == albumFilter && m.AlbumSlug == albumSlug {
+		// Nothing changed.
+		return nil
 	}
 
 	if err := m.Updates(map[string]interface{}{

@@ -3,7 +3,6 @@ package workers
 import (
 	"errors"
 	"fmt"
-	"runtime"
 	"runtime/debug"
 	"time"
 
@@ -18,8 +17,7 @@ import (
 
 // Meta represents a background index and metadata optimization worker.
 type Meta struct {
-	conf    *config.Config
-	lastRun time.Time
+	conf *config.Config
 }
 
 // NewMeta returns a new Meta worker.
@@ -48,7 +46,7 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 	defer mutex.MetaWorker.Stop()
 
 	// Check time when worker was last executed.
-	updateIndex := force || w.lastRun.Before(time.Now().Add(-1*entity.IndexUpdateInterval))
+	updateIndex := force || mutex.MetaWorker.LastRun().Before(time.Now().Add(-1*entity.IndexUpdateInterval))
 
 	// Run faces worker if needed.
 	if updateIndex || entity.UpdateFaces.Load() {
@@ -143,12 +141,6 @@ func (w *Meta) Start(delay, interval time.Duration, force bool) (err error) {
 			log.Warnf("index: %s in optimization worker", err)
 		}
 	}
-
-	// Update time when worker was last executed.
-	w.lastRun = entity.TimeStamp()
-
-	// Run garbage collection.
-	runtime.GC()
 
 	return nil
 }
