@@ -27,13 +27,13 @@ func NewBackup(conf *config.Config) *Backup {
 
 // StartScheduled starts a scheduled run of the backup worker based on the current configuration.
 func (w *Backup) StartScheduled() {
-	if err := w.Start(w.conf.BackupIndex(), w.conf.BackupAlbums(), true, w.conf.BackupRetain()); err != nil {
+	if err := w.Start(w.conf.BackupDatabase(), w.conf.BackupAlbums(), true, w.conf.BackupRetain()); err != nil {
 		log.Errorf("scheduler: %s (backup)", err)
 	}
 }
 
 // Start creates index and album backups based on the current configuration.
-func (w *Backup) Start(index, albums bool, force bool, retain int) (err error) {
+func (w *Backup) Start(database, albums bool, force bool, retain int) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("backup: %s (worker panic)\nstack: %s", r, debug.Stack())
@@ -42,7 +42,7 @@ func (w *Backup) Start(index, albums bool, force bool, retain int) (err error) {
 	}()
 
 	// Return if no backups should be created.
-	if !index && !albums {
+	if !database && !albums {
 		return nil
 	}
 
@@ -56,12 +56,12 @@ func (w *Backup) Start(index, albums bool, force bool, retain int) (err error) {
 	// Start creating backups.
 	start := time.Now()
 
-	// Create index database backup.
-	if index {
-		backupPath := w.conf.BackupIndexPath()
+	// Create database backup.
+	if database {
+		databasePath := w.conf.BackupDatabasePath()
 
-		if err = photoprism.BackupIndex(backupPath, "", false, force, retain); err != nil {
-			log.Errorf("backup: %s (index)", err)
+		if err = photoprism.BackupDatabase(databasePath, "", false, force, retain); err != nil {
+			log.Errorf("backup: %s (database)", err)
 		}
 	}
 
@@ -69,23 +69,23 @@ func (w *Backup) Start(index, albums bool, force bool, retain int) (err error) {
 		return errors.New("canceled")
 	}
 
-	// Create album YAML file backup.
+	// Create albums backup.
 	if albums {
-		albumsBackupPath := w.conf.BackupAlbumsPath()
+		albumsPath := w.conf.BackupAlbumsPath()
 
-		if count, backupErr := photoprism.BackupAlbums(albumsBackupPath, false); backupErr != nil {
-			log.Errorf("backup: %s (album)", backupErr.Error())
+		if count, backupErr := photoprism.BackupAlbums(albumsPath, false); backupErr != nil {
+			log.Errorf("backup: %s (albums)", backupErr.Error())
 		} else if count > 0 {
-			log.Infof("exported %s", english.Plural(count, "album", "albums"))
+			log.Infof("backup: saved %s", english.Plural(count, "album backup", "album backups"))
 		}
 	}
 
-	// Update time when worker was last executed.
+	// Remember time when worker was executed.
 	w.lastRun = entity.TimeStamp()
 
 	elapsed := time.Since(start)
 
-	// Show success message.
+	// Log success message.
 	log.Infof("backup: completed in %s", elapsed)
 
 	return nil

@@ -60,7 +60,7 @@ type Options struct {
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	BackupSchedule        string        `yaml:"BackupSchedule" json:"BackupSchedule" flag:"backup-schedule"`
 	BackupRetain          int           `yaml:"BackupRetain" json:"BackupRetain" flag:"backup-retain"`
-	BackupIndex           bool          `yaml:"BackupIndex" json:"BackupIndex" flag:"backup-index" default:"true"`
+	BackupDatabase        bool          `yaml:"BackupDatabase" json:"BackupDatabase" flag:"backup-database" default:"true"`
 	BackupAlbums          bool          `yaml:"BackupAlbums" json:"BackupAlbums" flag:"backup-albums" default:"true"`
 	IndexWorkers          int           `yaml:"IndexWorkers" json:"IndexWorkers" flag:"index-workers"`
 	IndexSchedule         string        `yaml:"IndexSchedule" json:"IndexSchedule" flag:"index-schedule"`
@@ -216,7 +216,7 @@ func NewOptions(ctx *cli.Context) *Options {
 
 	// Enable database backups and YAML exports by default.
 	c.SidecarYaml = true
-	c.BackupIndex = true
+	c.BackupDatabase = true
 	c.BackupAlbums = true
 
 	// Load defaults from YAML file?

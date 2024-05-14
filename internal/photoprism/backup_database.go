@@ -20,19 +20,23 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-var backupIndexMutex = sync.Mutex{}
+var backupDatabaseMutex = sync.Mutex{}
 
-// BackupIndex creates an SQL backup dump with the specified file and path name.
-func BackupIndex(backupPath, fileName string, toStdOut, force bool, retain int) (err error) {
-	// Make sure only one backup/restore operation is running at a time.
-	backupIndexMutex.Lock()
-	defer backupIndexMutex.Unlock()
+// BackupDatabase creates a database backup dump with the specified file and path name.
+func BackupDatabase(backupPath, fileName string, toStdOut, force bool, retain int) (err error) {
+	// Ensure that only one database backup/restore operation is running at a time.
+	backupDatabaseMutex.Lock()
+	defer backupDatabaseMutex.Unlock()
 
+	// Backup action shown in logs.
+	backupAction := "creating"
+
+	// Get configuration.
 	c := Config()
 
 	if !toStdOut {
 		if backupPath == "" {
-			backupPath = c.BackupIndexPath()
+			backupPath = c.BackupDatabasePath()
 		}
 
 		// Create the backup path if it does not already exist.
@@ -50,10 +54,12 @@ func BackupIndex(backupPath, fileName string, toStdOut, force bool, retain int) 
 			fileName = filepath.Join(backupPath, backupFile)
 		}
 
+		log.Debugf("backup: database backups will be stored in %s", clean.Log(backupPath))
+
 		if _, err = os.Stat(fileName); err == nil && !force {
 			return fmt.Errorf("%s already exists", clean.Log(filepath.Base(fileName)))
 		} else if err == nil {
-			log.Warnf("replacing existing index backup")
+			backupAction = "replacing"
 		}
 
 		// Create backup path if not exists.
@@ -79,7 +85,7 @@ func BackupIndex(backupPath, fileName string, toStdOut, force bool, retain int) 
 		)
 	case config.SQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
-			return fmt.Errorf("sqlite database %s not found", clean.LogQuote(c.DatabaseFile()))
+			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
 		}
 
 		cmd = exec.Command(
@@ -94,12 +100,12 @@ func BackupIndex(backupPath, fileName string, toStdOut, force bool, retain int) 
 	// Write to stdout or file.
 	var f *os.File
 	if toStdOut {
-		log.Infof("writing index backup to stdout")
+		log.Infof("backup: sending database backup to stdout")
 		f = os.Stdout
 	} else if f, err = os.OpenFile(fileName, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeFile); err != nil {
-		return fmt.Errorf("failed to create %s: %s", clean.Log(fileName), err)
+		return fmt.Errorf("failed to create %s (%s)", clean.Log(fileName), err)
 	} else {
-		log.Infof("creating index backup in %s", clean.Log(filepath.Base(fileName)))
+		log.Infof("backup: %s database backup file %s", backupAction, clean.Log(filepath.Base(fileName)))
 		defer f.Close()
 	}
 
@@ -128,20 +134,20 @@ func BackupIndex(backupPath, fileName string, toStdOut, force bool, retain int) 
 		}
 
 		if len(files) == 0 {
-			return fmt.Errorf("found no index backups files in %s", backupPath)
+			return fmt.Errorf("found no database backup files in %s", backupPath)
 		} else if len(files) <= retain {
 			return nil
 		}
 
 		sort.Strings(files)
 
-		log.Infof("retaining %s", english.Plural(retain, "index backup", "index backups"))
+		log.Infof("backup: retaining %s", english.Plural(retain, "database backup", "database backups"))
 
 		for i := 0; i < len(files)-retain; i++ {
 			if err = os.Remove(files[i]); err != nil {
 				return err
 			} else {
-				log.Infof("removed old backup file %s", clean.Log(filepath.Base(files[i])))
+				log.Infof("backup: removed database backup file %s", clean.Log(filepath.Base(files[i])))
 			}
 		}
 	}

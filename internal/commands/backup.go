@@ -14,16 +14,16 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-const backupDescription = "A user-defined filename or - for stdout can be passed as the first argument. " +
-	"The -i parameter can be omitted in this case.\n" +
-	"   Make sure to run the command with exec -T when using Docker to prevent log messages from being sent to stdout.\n" +
-	"   The index backup and album file paths are automatically detected if not specified explicitly."
+const backupDescription = `A custom filename for the database backup (or - to send the backup to stdout) can optionally be passed as argument.
+   The --database flag can be omitted in this case. When using Docker, please run the docker command with the -T flag
+   to prevent log messages from being sent to stdout. If nothing else is specified, the database and album backup paths
+   will be automatically determined based on the current configuration.`
 
 // BackupCommand configures the command name, flags, and action.
 var BackupCommand = cli.Command{
 	Name:        "backup",
 	Description: backupDescription,
-	Usage:       "Creates an index database dump and/or album YAML file backups",
+	Usage:       "Creates an index database backup and/or album YAML backup files",
 	ArgsUsage:   "[filename]",
 	Flags:       backupFlags,
 	Action:      backupAction,
@@ -32,27 +32,27 @@ var BackupCommand = cli.Command{
 var backupFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "replace existing index backup files",
+		Usage: "replace the index database backup file, if it exists",
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "export album metadata to YAML files located in the backup path",
+		Usage: "create or update album YAML backup files in the album backup path",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
 		Usage: "custom album backup `PATH`",
 	},
 	cli.BoolFlag{
-		Name:  "index, i",
-		Usage: "create index database backup (sent to stdout if - is passed as first argument)",
+		Name:  "database, index, i",
+		Usage: "create a database backup in the database backup path with the date as filename, or write it to the specified file (stdout if - is passed as filename)",
 	},
 	cli.StringFlag{
-		Name:  "index-path",
-		Usage: "custom index backup `PATH`",
+		Name:  "database-path, index-path",
+		Usage: "custom database backup `PATH`",
 	},
 	cli.IntFlag{
 		Name:  "retain, r",
-		Usage: "`NUMBER` of index backups to keep (-1 to keep all)",
+		Usage: "`NUMBER` of database backups to keep (-1 to keep all)",
 		Value: config.DefaultBackupRetain,
 	},
 }
@@ -61,14 +61,14 @@ var backupFlags = []cli.Flag{
 func backupAction(ctx *cli.Context) error {
 	// Use command argument as backup file name.
 	fileName := ctx.Args().First()
-	backupPath := ctx.String("index-path")
-	backupIndex := ctx.Bool("index") || fileName != "" || backupPath != ""
+	databasePath := ctx.String("database-path")
+	backupDatabase := ctx.Bool("database") || fileName != "" || databasePath != ""
 	albumsPath := ctx.String("albums-path")
 	backupAlbums := ctx.Bool("albums") || albumsPath != ""
 	force := ctx.Bool("force")
 	retain := ctx.Int("retain")
 
-	if !backupIndex && !backupAlbums {
+	if !backupDatabase && !backupAlbums {
 		return cli.ShowSubcommandHelp(ctx)
 	}
 
@@ -86,30 +86,30 @@ func backupAction(ctx *cli.Context) error {
 	conf.RegisterDb()
 	defer conf.Shutdown()
 
-	if backupIndex {
-		// If empty, use default backup file name.
+	if backupDatabase {
+		// Use default if no explicit filename was provided.
 		if fileName == "" {
-			if !fs.PathWritable(backupPath) {
-				if backupPath != "" {
-					log.Warnf("custom index backup path not writable, using default")
+			if !fs.PathWritable(databasePath) {
+				if databasePath != "" {
+					log.Warnf("backup: specified database backup path not writable, using default backup path")
 				}
 
-				backupPath = conf.BackupIndexPath()
+				databasePath = conf.BackupDatabasePath()
 			}
 
 			backupFile := time.Now().UTC().Format("2006-01-02") + ".sql"
-			fileName = filepath.Join(backupPath, backupFile)
+			fileName = filepath.Join(databasePath, backupFile)
 		}
 
-		if err = photoprism.BackupIndex(backupPath, fileName, fileName == "-", force, retain); err != nil {
-			return fmt.Errorf("failed to create index backup: %w", err)
+		if err = photoprism.BackupDatabase(databasePath, fileName, fileName == "-", force, retain); err != nil {
+			return fmt.Errorf("failed to create database backup: %w", err)
 		}
 	}
 
 	if backupAlbums {
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
-				log.Warnf("album files path not writable, using default")
+				log.Warnf("backup: specified album backup path not writable, using default backup path")
 			}
 
 			albumsPath = conf.BackupAlbumsPath()
@@ -118,7 +118,7 @@ func backupAction(ctx *cli.Context) error {
 		if count, backupErr := photoprism.BackupAlbums(albumsPath, true); backupErr != nil {
 			return backupErr
 		} else {
-			log.Infof("exported %s", english.Plural(count, "album", "albums"))
+			log.Infof("backup: saved %s", english.Plural(count, "album backup", "album backups"))
 		}
 	}
 

@@ -81,8 +81,8 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"backup-path", c.BackupBasePath()},
 		{"backup-schedule", c.BackupSchedule()},
 		{"backup-retain", fmt.Sprintf("%d", c.BackupRetain())},
-		{"backup-index", fmt.Sprintf("%t", c.BackupIndex())},
-		{"backup-index-path", c.BackupIndexPath()},
+		{"backup-database", fmt.Sprintf("%t", c.BackupDatabase())},
+		{"backup-database-path", c.BackupDatabasePath()},
 		{"backup-albums", fmt.Sprintf("%t", c.BackupAlbums())},
 		{"backup-albums-path", c.BackupAlbumsPath()},
 

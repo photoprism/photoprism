@@ -20,18 +20,18 @@ import (
 
 const SqlBackupFileNamePattern = "[2-9][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9].sql"
 
-// RestoreIndex restores the index from an SQL backup dump with the specified file and path name.
-func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error) {
-	// Make sure only one backup/restore operation is running at a time.
-	backupIndexMutex.Lock()
-	defer backupIndexMutex.Unlock()
+// RestoreDatabase restores the database from a backup file with the specified path and name.
+func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err error) {
+	// Ensure that only one database backup/restore operation is running at a time.
+	backupDatabaseMutex.Lock()
+	defer backupDatabaseMutex.Unlock()
 
 	c := Config()
 
 	// If empty, use default backup file name.
 	if !fromStdIn && fileName == "" {
 		if backupPath == "" {
-			backupPath = c.BackupIndexPath()
+			backupPath = c.BackupDatabasePath()
 		}
 
 		files, globErr := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
@@ -41,7 +41,7 @@ func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error
 		}
 
 		if len(files) == 0 {
-			return fmt.Errorf("found no backups files in %s", backupPath)
+			return fmt.Errorf("found no database backup files in %s", backupPath)
 		}
 
 		sort.Strings(files)
@@ -49,7 +49,7 @@ func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error
 		fileName = files[len(files)-1]
 
 		if !fs.FileExistsNotEmpty(fileName) {
-			return fmt.Errorf("no backup found in %s", filepath.Base(fileName))
+			return fmt.Errorf("no database backup found in %s", filepath.Base(fileName))
 		}
 	}
 
@@ -62,9 +62,9 @@ func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error
 	if counts.Photos == 0 {
 		// Do nothing;
 	} else if !force {
-		return fmt.Errorf("found existing index with %d pictures, backup will not be restored", counts.Photos)
+		return fmt.Errorf("found an existing index with %d pictures, backup will not be restored", counts.Photos)
 	} else {
-		log.Warnf("replacing the existing index with %d pictures", counts.Photos)
+		log.Warnf("restore: existing index with %d pictures will be replaced", counts.Photos)
 	}
 
 	tables := entity.Entities
@@ -84,7 +84,7 @@ func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error
 			c.DatabaseName(),
 		)
 	case config.SQLite3:
-		log.Infoln("dropping existing tables")
+		log.Infoln("restore: dropping existing sqlite database tables")
 		tables.Drop(c.Db())
 		cmd = exec.Command(
 			c.SqliteBin(),
@@ -97,12 +97,12 @@ func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error
 	// Read from stdin or file.
 	var f *os.File
 	if fromStdIn {
-		log.Infof("restoring index from stdin")
+		log.Infof("restore: restoring database backup from stdin")
 		f = os.Stdin
 	} else if f, err = os.OpenFile(fileName, os.O_RDONLY, 0); err != nil {
 		return fmt.Errorf("failed to open %s: %s", clean.Log(fileName), err)
 	} else {
-		log.Infof("restoring index from %s", clean.Log(fileName))
+		log.Infof("restore: restoring database backup from %s", clean.Log(filepath.Base(fileName)))
 		defer f.Close()
 	}
 
@@ -128,7 +128,7 @@ func RestoreIndex(backupPath, fileName string, fromStdIn, force bool) (err error
 
 	// Run restore command.
 	if cmdErr := cmd.Run(); cmdErr != nil {
-		log.Errorf("failed to restore index")
+		log.Errorf("restore: failed to restore database backup")
 
 		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
 			return errors.New(errStr)

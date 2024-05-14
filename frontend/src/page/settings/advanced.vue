@@ -37,9 +37,9 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                v-model="settings.BackupIndex"
+                v-model="settings.BackupDatabase"
                 :disabled="busy"
-                class="ma-0 pa-0 input-backup-index"
+                class="ma-0 pa-0 input-backup-database"
                 color="secondary-dark"
                 :label="$gettext('Database Backups')"
                 :hint="$gettext('Create index backups based on the configured schedule.')"

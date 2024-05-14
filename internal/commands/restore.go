@@ -13,15 +13,15 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-const restoreDescription = "A user-defined filename or - for stdin can be passed as the first argument. " +
-	"The -i parameter can be omitted in this case.\n" +
-	"   The index backup and album file paths are automatically detected if not specified explicitly."
+const restoreDescription = `A custom filename for the database backup (or - to read the backup from stdin) can optionally be passed as argument.
+   The --database flag can be omitted in this case. If nothing else is specified, the database and album backup paths
+   will be automatically determined based on the current configuration.`
 
 // RestoreCommand configures the command name, flags, and action.
 var RestoreCommand = cli.Command{
 	Name:        "restore",
 	Description: restoreDescription,
-	Usage:       "Restores the index from a database dump and/or album YAML file backups",
+	Usage:       "Restores the index database and/or album metadata from a backup",
 	ArgsUsage:   "[filename]",
 	Flags:       restoreFlags,
 	Action:      restoreAction,
@@ -30,37 +30,37 @@ var RestoreCommand = cli.Command{
 var restoreFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "force, f",
-		Usage: "replace existing index schema and data",
+		Usage: "replace the index database with the backup, if it already exists",
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "restore albums from YAML files located in the backup path",
+		Usage: "restore albums from the YAML backup files found in the album backup path",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
 		Usage: "custom album backup `PATH`",
 	},
 	cli.BoolFlag{
-		Name:  "index, i",
-		Usage: "restore index from the specified file or the most recent file in the backup path (from stdin if - is passed as first argument)",
+		Name:  "database, index, i",
+		Usage: "restore the index database from the specified file (stdin if - is passed as filename), or the most recent backup found in the database backup path",
 	},
 	cli.StringFlag{
-		Name:  "index-path",
-		Usage: "custom index backup `PATH`",
+		Name:  "database-path, index-path",
+		Usage: "custom database backup `PATH`",
 	},
 }
 
 // restoreAction restores a database backup.
 func restoreAction(ctx *cli.Context) error {
 	// Use command argument as backup file name.
-	indexFileName := ctx.Args().First()
-	indexPath := ctx.String("index-path")
-	restoreIndex := ctx.Bool("index") || indexFileName != "" || indexPath != ""
+	databaseFile := ctx.Args().First()
+	databasePath := ctx.String("database-path")
+	restoreDatabase := ctx.Bool("database") || databaseFile != "" || databasePath != ""
 	force := ctx.Bool("force")
 	albumsPath := ctx.String("albums-path")
 	restoreAlbums := ctx.Bool("albums") || albumsPath != ""
 
-	if !restoreIndex && !restoreAlbums {
+	if !restoreDatabase && !restoreAlbums {
 		return cli.ShowSubcommandHelp(ctx)
 	}
 
@@ -78,17 +78,18 @@ func restoreAction(ctx *cli.Context) error {
 	conf.RegisterDb()
 	defer conf.Shutdown()
 
-	// Restore index from specified file?
-	if !restoreIndex {
+	// Restore database from backup dump?
+	if !restoreDatabase {
 		// Do nothing.
-	} else if err = photoprism.RestoreIndex(indexPath, indexFileName, indexFileName == "-", force); err != nil {
+	} else if err = photoprism.RestoreDatabase(databasePath, databaseFile, databaseFile == "-", force); err != nil {
 		return err
 	}
 
-	log.Infoln("migrating index database schema")
+	log.Infoln("restore: migrating index database schema")
 
 	conf.InitDb()
 
+	// Restore albums from YAML backup files?
 	if restoreAlbums {
 		get.SetConfig(conf)
 
@@ -97,21 +98,21 @@ func restoreAction(ctx *cli.Context) error {
 		}
 
 		if !fs.PathExists(albumsPath) {
-			log.Warnf("album files path %s not found", clean.Log(albumsPath))
+			log.Warnf("restore: album files path %s not found", clean.Log(albumsPath))
 		} else {
-			log.Infof("restoring albums from %s", clean.Log(albumsPath))
+			log.Infof("restore: restoring albums from %s", clean.Log(albumsPath))
 
 			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
 				return err
 			} else {
-				log.Infof("restored %s from YAML files", english.Plural(count, "album", "albums"))
+				log.Infof("restore: restored %s from YAML files", english.Plural(count, "album", "albums"))
 			}
 		}
 	}
 
 	elapsed := time.Since(start)
 
-	log.Infof("restored in %s", elapsed)
+	log.Infof("completed in %s", elapsed)
 
 	return nil
 }

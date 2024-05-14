@@ -28,8 +28,8 @@ func BackupAlbums(backupPath string, force bool) (count int, err error) {
 		backupPath = Config().BackupAlbumsPath()
 	}
 
-	log.Infof("exporting album metadata to YAML backup files")
-	log.Debugf("album backups will be created in %s", clean.Log(backupPath))
+	log.Debugf("backup: album backups will be stored in %s", clean.Log(backupPath))
+	log.Infof("backup: saving album metadata in YAML backup files")
 
 	var latest time.Time
 

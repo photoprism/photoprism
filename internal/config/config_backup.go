@@ -32,24 +32,6 @@ func (c *Config) BackupBasePath() string {
 	return filepath.Join(c.StoragePath(), "backup")
 }
 
-// BackupAlbumsPath returns the backup path for album YAML files.
-func (c *Config) BackupAlbumsPath() string {
-	if dir := filepath.Join(c.StoragePath(), "albums"); fs.PathExists(dir) {
-		return dir
-	}
-
-	return c.BackupPath("albums")
-}
-
-// BackupIndexPath returns the backup path for index database dumps.
-func (c *Config) BackupIndexPath() string {
-	if driver := c.DatabaseDriver(); driver != "" {
-		return c.BackupPath(driver)
-	}
-
-	return c.BackupPath("index")
-}
-
 // BackupSchedule returns the backup schedule in cron format, e.g. "0 12 * * *" for daily at noon.
 func (c *Config) BackupSchedule() string {
 	if c.options.BackupSchedule == "" {
@@ -73,14 +55,32 @@ func (c *Config) BackupRetain() int {
 	return c.options.BackupRetain
 }
 
-// BackupIndex checks if SQL database dumps should be created based on the configured schedule.
-func (c *Config) BackupIndex() bool {
-	return c.options.BackupIndex
+// BackupDatabase checks if index database backups should be created based on the configured schedule.
+func (c *Config) BackupDatabase() bool {
+	return c.options.BackupDatabase
+}
+
+// BackupDatabasePath returns the backup path for index database dumps.
+func (c *Config) BackupDatabasePath() string {
+	if driver := c.DatabaseDriver(); driver != "" {
+		return c.BackupPath(driver)
+	}
+
+	return c.BackupPath("index")
 }
 
 // BackupAlbums checks if album YAML file backups should be created based on the configured schedule.
 func (c *Config) BackupAlbums() bool {
 	return c.options.BackupAlbums
+}
+
+// BackupAlbumsPath returns the backup path for album YAML files.
+func (c *Config) BackupAlbumsPath() string {
+	if dir := filepath.Join(c.StoragePath(), "albums"); fs.PathExists(dir) {
+		return dir
+	}
+
+	return c.BackupPath("albums")
 }
 
 // DisableBackups checks if creating and updating sidecar YAML files should be disabled.

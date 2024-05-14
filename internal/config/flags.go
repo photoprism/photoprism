@@ -158,7 +158,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "sidecar-yaml",
-			Usage:  "export picture metadata to YAML sidecar files",
+			Usage:  "save picture metadata to YAML sidecar files",
 			EnvVar: EnvVar("SIDECAR_YAML"),
 		}, DocDefault: "true"}, {
 		Flag: cli.StringFlag{
@@ -204,13 +204,13 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("BACKUP_RETAIN"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "backup-index",
-			Usage:  "create index database backups based on the configured schedule",
-			EnvVar: EnvVar("BACKUP_INDEX"),
+			Name:   "backup-database",
+			Usage:  "create index backups based on the configured schedule",
+			EnvVar: EnvVar("BACKUP_DATABASE"),
 		}, DocDefault: "true"}, {
 		Flag: cli.BoolFlag{
 			Name:   "backup-albums",
-			Usage:  "export album metadata to YAML backup files",
+			Usage:  "save album metadata to YAML backup files",
 			EnvVar: EnvVar("BACKUP_ALBUMS"),
 		}, DocDefault: "true"}, {
 		Flag: cli.IntFlag{
