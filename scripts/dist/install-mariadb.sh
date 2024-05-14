@@ -30,7 +30,7 @@ fi
 
 DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
-if [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" || $DESTARCH == "armv7l" || $DESTARCH == "arm" ]]; then
+if [[ $VERSION_CODENAME == "noble" || $DESTARCH == "armv7l" || $DESTARCH == "arm" ]]; then
   echo "Installing MariaDB distribution packages for ${DESTARCH^^}..."
 else
   MARIADB_VERSION="11.3.2"
