@@ -1,4 +1,4 @@
-# Ubuntu 23.10 (Mantic Minotaur)
+# Ubuntu 24.04 LTS (Noble Numbat)
 FROM photoprism/develop:240515-noble
 
 ## Alternative Environments:
