@@ -8,10 +8,13 @@ all: install build
 dep: install-npm install-testcafe install
 dep-list:
 	npx npm-check-updates
+notice:
+	@echo "Creating license report for frontend dependencies..."
+	license-report --only=prod --config=.report.json > NOTICE
 install-npm:
-	sudo npm install --unsafe-perm=true --allow-root -g npm@latest npm-check-updates@latest
+	sudo npm install --unsafe-perm=true --allow-root -g npm@latest npm-check-updates@latest license-report@latest
 install-testcafe:
-	sudo npm install --unsafe-perm=true --allow-root -g testcafe@3.5.0
+	sudo npm install --unsafe-perm=true --allow-root -g testcafe@3.6.0
 install:
 	npm install --no-update-notifier --no-audit
 update:

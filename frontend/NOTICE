@@ -1,0 +1,92 @@
+Package                           License       Copyright
+-------                           -------       ---------
+@babel/cli                        MIT           The Babel Team (https://babel.dev/team)
+@babel/core                       MIT           The Babel Team (https://babel.dev/team)
+@babel/plugin-transform-runtime   MIT           The Babel Team (https://babel.dev/team)
+@babel/preset-env                 MIT           The Babel Team (https://babel.dev/team)
+@babel/register                   MIT           The Babel Team (https://babel.dev/team)
+@babel/runtime                    MIT           The Babel Team (https://babel.dev/team)
+@lcdp/offline-plugin              MIT           Le Comptoir Des Pharmacies <webmaster@lecomptoirdespharmacies.fr>
+@vvo/tzdb                         MIT           Vincent Voyer <vincent@codeagain.com>
+axios                             MIT           Matt Zabriskie
+axios-mock-adapter                MIT           Colin Timmermans <colintimmermans@gmail.com>
+babel-loader                      MIT           Luis Couto <hello@luiscouto.pt>
+babel-plugin-istanbul             BSD-3-Clause  Thai Pangsakulyanont @dtinth
+browserslist                      MIT           Andrey Sitnik <andrey@sitnik.ru>
+chai                              MIT           Jake Luer <jake@alogicalparadox.com>
+cheerio                           MIT           Matt Mueller <mattmuelle@gmail.com>
+chrome-finder                     ISC           gwuhaolin
+core-js                           MIT           Denis Pushkarev zloirock@zloirock.ru http://zloirock.ru
+cross-env                         MIT           Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
+css-loader                        MIT           Tobias Koppers @sokra
+cssnano                           MIT           Ben Briggs beneb.info@gmail.com http://beneb.info
+easygettext                       MIT           Polyconseil
+eslint                            MIT           Nicholas C. Zakas <nicholas+npm@nczconsulting.com>
+eslint-config-prettier            MIT           Simon Lydell
+eslint-config-standard            MIT           Feross Aboukhadijeh feross@feross.org https://feross.org
+eslint-formatter-pretty           MIT           Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
+eslint-plugin-html                ISC           n/a
+eslint-plugin-import              MIT           Ben Mosher <me@benmosher.com>
+eslint-plugin-node                MIT           Toru Nagashima
+eslint-plugin-prettier            MIT           Teddy Katz
+eslint-plugin-promise             ISC           jden <jason@denizac.org>
+eslint-plugin-vue                 MIT           Toru Nagashima (https://github.com/mysticatea)
+eslint-webpack-plugin             MIT           Ricardo Gobbo de Souza <ricardogobbosouza@yahoo.com.br>
+eventsource-polyfill              MIT           amvtek <devel@amvtek.com>
+file-loader                       MIT           Tobias Koppers @sokra
+file-saver                        MIT           Eli Grey <me@eligrey.com>
+hls.js                            Apache-2.0    n/a
+i                                 MIT           Pavan Kumar Sunkara <pavan.sss1991@gmail.com> (pksunkara.github.com)
+karma                             MIT           Vojta Jína <vojta.jina@gmail.com>
+karma-chrome-launcher             MIT           Vojta Jina <vojta.jina@gmail.com>
+karma-coverage-istanbul-reporter  MIT           Matt Lewis
+karma-htmlfile-reporter           MIT           Matthias Schuetz MatthiasSchuetz@gmx.de
+karma-mocha                       MIT           Vojta Jina <vojta.jina@gmail.com>
+karma-verbose-reporter            MIT           Pier Fumagalli pier@usrz.com
+karma-webpack                     MIT           Tobias Koppers @sokra
+luxon                             MIT           Isaac Cambron
+maplibre-gl                       BSD-3-Clause  n/a
+memoize-one                       MIT           Alex Reardon <alexreardon@gmail.com>
+mini-css-extract-plugin           MIT           Tobias Koppers @sokra
+minimist                          MIT           James Halliday mail@substack.net http://substack.net
+mocha                             MIT           TJ Holowaychuk <tj@vision-media.ca>
+node-storage-shim                 ISC           Michael Nahkies
+photoswipe                        MIT           Dmitry Semenov (http://dimsemenov.com)
+postcss                           MIT           Andrey Sitnik <andrey@sitnik.ru>
+postcss-import                    MIT           Maxime Thirouin
+postcss-loader                    MIT           Andrey Sitnik <andrey@sitnik.ru>
+postcss-preset-env                MIT-0         n/a
+postcss-reporter                  MIT           David Clark david.dave.clark@gmail.com https://davidtheclark.com
+postcss-url                       MIT           Maxime Thirouin
+prettier                          MIT           James Long
+pubsub-js                         MIT           Morgan Roderick morgan@roderick.dk http://roderick.dk
+regenerator-runtime               MIT           Ben Newman <bn@cs.stanford.edu>
+resolve-url-loader                MIT           bholloway
+sass                              MIT           Natalie Weizenbaum nweiz@google.com https://github.com/nex3
+sass-loader                       MIT           J. Tangelder
+server                            MIT           Francisco Presencia <public@francisco.io> (https://francisco.io/)
+sockette                          MIT           Luke Edwards luke.edwards05@gmail.com lukeed.com
+style-loader                      MIT           Tobias Koppers @sokra
+svg-url-loader                    MIT           Hovhannes Babayan
+tar                               ISC           GitHub Inc.
+url-loader                        MIT           Tobias Koppers @sokra
+util                              MIT           Joyent http://www.joyent.com
+vue                               MIT           Evan You
+vue-fullscreen                    ISC           mirari
+vue-gettext                       MIT           Marc Hertzog
+vue-infinite-scroll               MIT           long.zhang@ele.me
+vue-loader                        MIT           Evan You
+vue-loader-plugin                 ISC           Ivan liu
+vue-luxon                         MIT           Cas Bloem
+vue-router                        MIT           Evan You
+vue-style-loader                  MIT           Evan You
+vue-template-compiler             MIT           Evan You
+vue2-filters                      MIT           Arhey
+vuetify                           MIT           John Leider john@vuetifyjs.com
+webpack                           MIT           Tobias Koppers @sokra
+webpack-bundle-analyzer           MIT           Yury Grunin <grunin.ya@ya.ru>
+webpack-cli                       MIT           n/a
+webpack-hot-middleware            MIT           Glen Mailer <glen@stainlessed.co.uk>
+webpack-manifest-plugin           MIT           Dane Thurber <dane.thurber@gmail.com>
+webpack-md5-hash                  MIT           Kirill Ermolov
+webpack-merge                     MIT           Juho Vepsalainen <bebraw@gmail.com>

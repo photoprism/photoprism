@@ -15,6 +15,7 @@ GOIMPORTS=goimports
 # Build parameters.
 BUILD_PATH ?= $(shell realpath "./build")
 BUILD_DATE ?= $(shell date -u +%y%m%d)
+REPORT_DATE ?= $(shell date -u +%Y-%m-%d)
 BUILD_VERSION ?= $(shell git describe --always)
 BUILD_TAG ?= $(BUILD_DATE)-$(BUILD_VERSION)
 BUILD_OS ?= $(shell uname -s)
@@ -86,6 +87,12 @@ logs:
 	$(DOCKER_COMPOSE) logs -f
 help:
 	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
+notice:
+	@echo "Creating license report for Go dependencies..."
+	go-licenses report ./internal/... ./pkg/... --template=.report.tmpl > NOTICE
+	sed -i "s/YYYY-MM-DD/$(REPORT_DATE)/" NOTICE
+	(cd frontend && make notice)
+	tail -n +3 frontend/NOTICE >> NOTICE
 fix-permissions:
 	$(info Updating filesystem permissions...)
 	@if [ $(UID) != 0 ]; then\
