@@ -109,7 +109,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install --no-install-recommends \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
         exiftool mariadb-client sqlite3 tzdata gpg make zip unzip wget curl rsync \
-        imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
+        imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra libdav1d-dev x264 x265 libde265-dev \
         libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
     && \
     /scripts/install-libheif.sh && \
