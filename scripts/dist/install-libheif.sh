@@ -57,8 +57,8 @@ mkdir -p "$DESTDIR"
 
 # Map codenames to find and use a compatible version.
 case $VERSION_CODENAME in
-  noble)
-    VERSION_CODENAME=mantic
+  vera | virginia)
+    VERSION_CODENAME=jammy
     ;;
 esac
 

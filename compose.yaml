@@ -2,7 +2,7 @@
 ## Setup: https://docs.photoprism.app/developer-guide/setup/ ##
 
 services:
-  ## PhotoPrism Development Environment (MariaDB)
+  ## PhotoPrism (Development Environment)
   photoprism:
     build: .
     image: photoprism/photoprism:develop
@@ -30,7 +30,7 @@ services:
       - "traefik.http.services.photoprism.loadbalancer.server.port=2342"
       - "traefik.http.services.photoprism.loadbalancer.server.scheme=http"
       - "traefik.http.routers.photoprism.entrypoints=websecure"
-      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`) || HostRegexp(`{subdomain:[a-z0-9\\-]+}.localssl.dev`)"
+      - "traefik.http.routers.photoprism.rule=Host(`localssl.dev`) || HostRegexp(`^.+\\.localssl\\.dev`)"
       - "traefik.http.routers.photoprism.priority=2"
       - "traefik.http.routers.photoprism.tls.domains[0].main=localssl.dev"
       - "traefik.http.routers.photoprism.tls.domains[0].sans=*.localssl.dev"
@@ -124,7 +124,7 @@ services:
       - ".:/go/src/github.com/photoprism/photoprism"
       - "go-mod:/go/pkg/mod"
 
-  ## MariaDB Database Server
+  ## MariaDB (Database Server)
   ## Docs: https://mariadb.com/docs/reference/
   ## Release Notes: https://mariadb.com/kb/en/changes-improvements-in-mariadb-1011/
   mariadb:
@@ -147,7 +147,7 @@ services:
       MARIADB_PASSWORD: "photoprism"
       MARIADB_ROOT_PASSWORD: "photoprism"
 
-  ## HTTPS Reverse Test Proxy
+  ## Traefik v3 (Reverse Proxy)
   ## includes "*.localssl.dev" SSL certificate for test environments
   ## Docs: https://doc.traefik.io/traefik/
   traefik:

@@ -342,7 +342,7 @@ docker-develop: docker-develop-latest
 docker-develop-all: docker-develop-latest docker-develop-other
 docker-develop-latest: docker-develop-ubuntu
 docker-develop-debian: docker-develop-bookworm docker-develop-bookworm-slim
-docker-develop-ubuntu: docker-develop-mantic docker-develop-mantic-slim
+docker-develop-ubuntu: docker-develop-noble docker-develop-noble-slim
 docker-develop-other: docker-develop-debian docker-develop-bullseye docker-develop-bullseye-slim docker-develop-buster
 docker-develop-bookworm:
 	docker pull --platform=amd64 debian:bookworm-slim
@@ -394,7 +394,7 @@ docker-develop-lunar-slim:
 docker-develop-mantic:
 	docker pull --platform=amd64 ubuntu:mantic
 	docker pull --platform=arm64 ubuntu:mantic
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic /mantic "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 mantic /mantic
 docker-develop-mantic-slim:
 	docker pull --platform=amd64 ubuntu:mantic
 	docker pull --platform=arm64 ubuntu:mantic
@@ -402,7 +402,7 @@ docker-develop-mantic-slim:
 docker-develop-noble:
 	docker pull --platform=amd64 ubuntu:noble
 	docker pull --platform=arm64 ubuntu:noble
-	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 noble /noble
+	scripts/docker/buildx-multi.sh develop linux/amd64,linux/arm64 noble /noble "-t photoprism/develop:latest -t photoprism/develop:ubuntu"
 docker-develop-noble-slim:
 	docker pull --platform=amd64 ubuntu:noble
 	docker pull --platform=arm64 ubuntu:noble
@@ -424,10 +424,10 @@ docker-unstable-mantic:
 preview: docker-preview-ce
 docker-preview: docker-preview-ce
 docker-preview-all: docker-preview-latest docker-preview-other
-docker-preview-ce: docker-preview-mantic
+docker-preview-ce: docker-preview-noble
 docker-preview-latest: docker-preview-ubuntu
 docker-preview-debian: docker-preview-bookworm
-docker-preview-ubuntu: docker-preview-mantic
+docker-preview-ubuntu: docker-preview-noble
 docker-preview-other: docker-preview-debian docker-preview-bullseye
 docker-preview-arm: docker-preview-arm64 docker-preview-armv7
 docker-preview-bookworm:
@@ -480,12 +480,18 @@ docker-preview-mantic:
 	docker pull --platform=arm64 photoprism/develop:mantic
 	docker pull --platform=arm64 photoprism/develop:mantic-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /mantic
+docker-preview-noble:
+	docker pull --platform=amd64 photoprism/develop:noble
+	docker pull --platform=amd64 photoprism/develop:noble-slim
+	docker pull --platform=arm64 photoprism/develop:noble
+	docker pull --platform=arm64 photoprism/develop:noble-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 preview-ce /noble
 release: docker-release
 docker-release: docker-release-latest
 docker-release-all: docker-release-latest docker-release-other
 docker-release-latest: docker-release-ubuntu
 docker-release-debian: docker-release-bookworm
-docker-release-ubuntu: docker-release-mantic
+docker-release-ubuntu: docker-release-noble
 docker-release-other: docker-release-debian docker-release-bullseye
 docker-release-arm: docker-release-arm64 docker-release-armv7
 docker-release-bookworm:
@@ -538,6 +544,12 @@ docker-release-mantic:
 	docker pull --platform=arm64 photoprism/develop:mantic
 	docker pull --platform=arm64 photoprism/develop:mantic-slim
 	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /mantic
+docker-release-noble:
+	docker pull --platform=amd64 photoprism/develop:noble
+	docker pull --platform=amd64 photoprism/develop:noble-slim
+	docker pull --platform=arm64 photoprism/develop:noble
+	docker pull --platform=arm64 photoprism/develop:noble-slim
+	scripts/docker/buildx-multi.sh photoprism linux/amd64,linux/arm64 ce /noble
 start-local:
 	$(DOCKER_COMPOSE) -f compose.local.yaml up -d --wait
 stop-local:
@@ -564,8 +576,8 @@ terminal-latest:
 	$(DOCKER_COMPOSE) -f compose.latest.yaml exec photoprism-latest bash
 logs-latest:
 	$(DOCKER_COMPOSE) -f compose.latest.yaml logs -f photoprism-latest
-docker-local: docker-local-mantic
-docker-local-all: docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
+docker-local: docker-local-noble
+docker-local-all: docker-local-noble docker-local-mantic docker-local-lunar docker-local-jammy docker-local-bookworm docker-local-bullseye docker-local-buster
 docker-local-bookworm:
 	docker pull photoprism/develop:bookworm
 	docker pull photoprism/develop:bookworm-slim
@@ -594,6 +606,10 @@ docker-local-mantic:
 	docker pull photoprism/develop:mantic
 	docker pull ubuntu:mantic
 	scripts/docker/build.sh photoprism ce-mantic /mantic "-t photoprism/photoprism:local"
+docker-local-noble:
+	docker pull photoprism/develop:noble
+	docker pull ubuntu:noble
+	scripts/docker/build.sh photoprism ce-noble /noble "-t photoprism/photoprism:local"
 docker-local-develop: docker-local-develop-mantic
 docker-local-develop-all: docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
