@@ -29,27 +29,43 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	c := Config()
 
 	// If empty, use default backup file name.
-	if !fromStdIn && fileName == "" {
-		if backupPath == "" {
-			backupPath = c.BackupDatabasePath()
-		}
+	if !fromStdIn {
+		if fileName == "" {
+			if backupPath == "" {
+				backupPath = c.BackupDatabasePath()
+			}
 
-		files, globErr := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
+			files, globErr := filepath.Glob(filepath.Join(regexp.QuoteMeta(backupPath), SqlBackupFileNamePattern))
 
-		if globErr != nil {
-			return globErr
-		}
+			if globErr != nil {
+				return globErr
+			}
 
-		if len(files) == 0 {
-			return fmt.Errorf("found no database backup files in %s", backupPath)
-		}
+			if len(files) == 0 {
+				return fmt.Errorf("found no database backup files in %s", backupPath)
+			}
 
-		sort.Strings(files)
+			sort.Strings(files)
 
-		fileName = files[len(files)-1]
+			fileName = files[len(files)-1]
 
-		if !fs.FileExistsNotEmpty(fileName) {
-			return fmt.Errorf("no database backup found in %s", filepath.Base(fileName))
+			if !fs.FileExistsNotEmpty(fileName) {
+				return fmt.Errorf("no database backup found in %s", filepath.Base(fileName))
+			}
+		} else if backupPath == "" {
+			if absName, absErr := filepath.Abs(fileName); absErr == nil && fs.FileExists(absName) {
+				fileName = absName
+			} else if dir := filepath.Dir(fileName); dir != "" && dir != "." {
+				return fmt.Errorf("file %s not found", clean.Log(fileName))
+			} else if absName = filepath.Join(c.BackupDatabasePath(), fileName); !fs.FileExists(absName) {
+				return fmt.Errorf("file %s not found in %s backup path", clean.Log(fileName), clean.Log(filepath.Base(c.BackupDatabasePath())))
+			} else {
+				fileName = absName
+			}
+		} else if absName, absErr := filepath.Abs(filepath.Join(backupPath, fileName)); absErr == nil && fs.FileExists(absName) {
+			fileName = absName
+		} else {
+			return fmt.Errorf("file %s not found in %s", clean.Log(filepath.Base(fileName)), clean.Log(backupPath))
 		}
 	}
 
@@ -62,7 +78,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 	if counts.Photos == 0 {
 		// Do nothing;
 	} else if !force {
-		return fmt.Errorf("found an existing index with %d pictures, backup will not be restored", counts.Photos)
+		return fmt.Errorf("found an existing index with %d pictures, backup not restored", counts.Photos)
 	} else {
 		log.Warnf("restore: existing index with %d pictures will be replaced", counts.Photos)
 	}

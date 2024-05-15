@@ -30,7 +30,7 @@ func RestoreAlbums(backupPath string, force bool) (count int, result error) {
 	}
 
 	if len(existing) > 0 && !force {
-		log.Debugf("restore: found existing albums, backups will not be restored")
+		log.Debugf("restore: found existing albums, backup not restored")
 		return count, nil
 	}
 
