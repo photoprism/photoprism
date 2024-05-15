@@ -19,13 +19,13 @@ COPY . .
 RUN make all install DESTDIR=/opt/photoprism
 
 ################################################## PRODUCTION STAGE ####################################################
-#### Base Image: Ubuntu 24.04 (Noble Numbat)
+#### Base Image: Ubuntu 24.04 LTS (Noble Numbat)
 FROM photoprism/develop:noble-slim
 
 # Add Open Container Initiative (OCI) annotations.
 # See: https://github.com/opencontainers/image-spec/blob/main/annotations.md
 LABEL org.opencontainers.image.title="PhotoPrism® (Ubuntu 24.04)"
-LABEL org.opencontainers.image.description="Ubuntu 24.04 (Noble Numbat)"
+LABEL org.opencontainers.image.description="Ubuntu 24.04 LTS (Noble Numbat)"
 LABEL org.opencontainers.image.url="https://hub.docker.com/r/photoprism/photoprism"
 LABEL org.opencontainers.image.source="https://github.com/photoprism/photoprism"
 LABEL org.opencontainers.image.documentation="https://docs.photoprism.app/getting-started/"
