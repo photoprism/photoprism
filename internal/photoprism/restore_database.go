@@ -42,7 +42,7 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 			}
 
 			if len(files) == 0 {
-				return fmt.Errorf("found no database backup files in %s", backupPath)
+				return fmt.Errorf("failed to find a backup in %s, index cannot be restored", backupPath)
 			}
 
 			sort.Strings(files)
@@ -50,22 +50,22 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 			fileName = files[len(files)-1]
 
 			if !fs.FileExistsNotEmpty(fileName) {
-				return fmt.Errorf("no database backup found in %s", filepath.Base(fileName))
+				return fmt.Errorf("failed to open %s, index cannot be restored", filepath.Base(fileName))
 			}
 		} else if backupPath == "" {
 			if absName, absErr := filepath.Abs(fileName); absErr == nil && fs.FileExists(absName) {
 				fileName = absName
 			} else if dir := filepath.Dir(fileName); dir != "" && dir != "." {
-				return fmt.Errorf("file %s not found", clean.Log(fileName))
+				return fmt.Errorf("failed to find %s, index cannot be restored", clean.Log(fileName))
 			} else if absName = filepath.Join(c.BackupDatabasePath(), fileName); !fs.FileExists(absName) {
-				return fmt.Errorf("file %s not found in %s backup path", clean.Log(fileName), clean.Log(filepath.Base(c.BackupDatabasePath())))
+				return fmt.Errorf("failed to find %s in the %s backup path, index cannot be restored", clean.Log(fileName), clean.Log(filepath.Base(c.BackupDatabasePath())))
 			} else {
 				fileName = absName
 			}
 		} else if absName, absErr := filepath.Abs(filepath.Join(backupPath, fileName)); absErr == nil && fs.FileExists(absName) {
 			fileName = absName
 		} else {
-			return fmt.Errorf("file %s not found in %s", clean.Log(filepath.Base(fileName)), clean.Log(backupPath))
+			return fmt.Errorf("failed to find %s in %s, index cannot be restored", clean.Log(filepath.Base(fileName)), clean.Log(backupPath))
 		}
 	}
 
@@ -144,13 +144,15 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 
 	// Run restore command.
 	if cmdErr := cmd.Run(); cmdErr != nil {
-		log.Errorf("restore: failed to restore database backup")
+		log.Errorf("restore: failed to restore index database")
 
 		if errStr := strings.TrimSpace(stderr.String()); errStr != "" {
 			return errors.New(errStr)
 		}
 
 		return cmdErr
+	} else {
+		log.Infof("restore: index database successfully restored")
 	}
 
 	return nil

@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/dustin/go-humanize/english"
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 
@@ -126,9 +127,9 @@ func startAction(ctx *cli.Context) error {
 
 	// Restore albums from YAML files.
 	if count, restoreErr := photoprism.RestoreAlbums(conf.BackupAlbumsPath(), false); restoreErr != nil {
-		log.Errorf("restore: %s", restoreErr)
+		log.Errorf("restore: %s (albums)", restoreErr)
 	} else if count > 0 {
-		log.Infof("%d albums restored", count)
+		log.Infof("restore: %s restored", english.Plural(count, "album backup", "album backups"))
 	}
 
 	// Start worker that periodically deletes expired sessions.

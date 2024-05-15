@@ -91,7 +91,7 @@ func backupAction(ctx *cli.Context) error {
 		if fileName == "" {
 			if !fs.PathWritable(databasePath) {
 				if databasePath != "" {
-					log.Warnf("backup: specified database backup path not writable, using default backup path")
+					log.Warnf("backup: specified database backup path is not writable, using default directory instead")
 				}
 
 				databasePath = conf.BackupDatabasePath()
@@ -109,7 +109,7 @@ func backupAction(ctx *cli.Context) error {
 	if backupAlbums {
 		if !fs.PathWritable(albumsPath) {
 			if albumsPath != "" {
-				log.Warnf("backup: specified album backup path not writable, using default backup path")
+				log.Warnf("backup: specified albums backup path is not writable, using default directory instead")
 			}
 
 			albumsPath = conf.BackupAlbumsPath()

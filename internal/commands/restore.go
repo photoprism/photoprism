@@ -98,12 +98,12 @@ func restoreAction(ctx *cli.Context) error {
 		}
 
 		if !fs.PathExists(albumsPath) {
-			log.Warnf("restore: album files path %s not found", clean.Log(albumsPath))
+			log.Warnf("restore: failed to open %s, album backups cannot be restored", clean.Log(albumsPath))
 		} else {
-			log.Infof("restore: restoring albums from %s", clean.Log(albumsPath))
+			log.Infof("restore: restoring album backups from %s", clean.Log(albumsPath))
 
-			if count, err := photoprism.RestoreAlbums(albumsPath, true); err != nil {
-				return err
+			if count, restoreErr := photoprism.RestoreAlbums(albumsPath, true); restoreErr != nil {
+				return restoreErr
 			} else {
 				log.Infof("restore: restored %s from YAML files", english.Plural(count, "album", "albums"))
 			}
