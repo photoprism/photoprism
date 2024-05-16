@@ -52,7 +52,7 @@ func showConfigYamlAction(ctx *cli.Context) error {
 		{Start: "DatabaseDriver", Title: "Database Connection"},
 		{Start: "SipsBin", Title: "File Converters"},
 		{Start: "DownloadToken", Title: "Security Tokens"},
-		{Start: "ThumbColor", Title: "Image Quality"},
+		{Start: "ThumbGenerator", Title: "Thumbnail Generation"},
 		{Start: "PIDFilename", Title: "Daemon Mode",
 			Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
 	}
