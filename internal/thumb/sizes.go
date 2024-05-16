@@ -3,7 +3,6 @@ package thumb
 var (
 	SizePrecached = 2048
 	SizeUncached  = 7680
-	Filter        = ResampleLanczos
 )
 
 // MaxSize returns the max supported size in pixels.

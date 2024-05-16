@@ -709,10 +709,15 @@ func (c *Config) SetLogLevel(level logrus.Level) {
 	log.SetLevel(level)
 }
 
-// Shutdown services and workers.
+// Shutdown shuts down the active processes and closes the database connection.
 func (c *Config) Shutdown() {
+	// Send cancel signal to all workers.
 	mutex.CancelAll()
 
+	// Shutdown thumbnail library.
+	thumb.Shutdown()
+
+	// Close database connection.
 	if err := c.CloseDb(); err != nil {
 		log.Errorf("could not close database connection: %s", err)
 	} else {
