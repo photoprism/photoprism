@@ -789,7 +789,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "jpeg-quality, q",
-			Usage:  "higher values improve the image `QUALITY` and increase the file size (25-100)",
+			Usage:  "higher values increase the image `QUALITY` and file size (25-100)",
 			Value:  thumb.JpegQuality.String(),
 			EnvVar: EnvVar("JPEG_QUALITY"),
 		}}, {
