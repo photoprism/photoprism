@@ -36,7 +36,7 @@ func Vips(imageFilename, hash, thumbPath string, width, height, orientation int,
 		return "", err
 	}
 
-	// Initialize libvips before using it
+	// Initialize libvips before using it.
 	VipsInit()
 
 	// Load image from file.
