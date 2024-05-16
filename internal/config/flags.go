@@ -754,19 +754,19 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-generator",
-			Usage:  "thumbnail generator library `NAME` (auto, imaging, vips)",
+			Usage:  "thumbnail generation library `NAME` (auto, imaging, vips)",
 			Value:  "auto",
 			EnvVar: EnvVar("THUMB_GENERATOR"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-color",
-			Usage:  "color `PROFILE` to use for thumbnails (leave blank to disable normalization)",
+			Usage:  "default color `PROFILE` to use for thumbnails (leave blank to disable normalization)",
 			Value:  "auto",
 			EnvVar: EnvVar("THUMB_COLOR"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-filter, filter",
-			Usage:  "image downscaling filter `NAME` (best to worst: lanczos, cubic, linear)",
+			Usage:  "thumbnail downscaling filter `NAME` (best to worst: lanczos, cubic, linear)",
 			Value:  "lanczos",
 			EnvVar: EnvVar("THUMB_FILTER"),
 		}}, {
@@ -778,18 +778,18 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "thumb-size-uncached",
-			Usage:  "maximum size of missing thumbnails generated on demand in `PIXELS` (720-7680)",
+			Usage:  "maximum size of thumbnails generated on demand in `PIXELS` (720-7680)",
 			Value:  7680,
 			EnvVar: EnvVar("THUMB_SIZE_UNCACHED"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "thumb-uncached, u",
-			Usage:  "enable on-demand creation of missing thumbnails (high memory and cpu usage)",
+			Usage:  "generate missing thumbnails on demand (high memory and cpu usage)",
 			EnvVar: EnvVar("THUMB_UNCACHED"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "jpeg-quality, q",
-			Usage:  "a higher value increases the `QUALITY` and file size of JPEG images and thumbnails (25-100)",
+			Usage:  "higher values improve the image `QUALITY` and increase the file size (25-100)",
 			Value:  thumb.JpegQuality.String(),
 			EnvVar: EnvVar("JPEG_QUALITY"),
 		}}, {
