@@ -61,6 +61,17 @@ func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image,
 	return imaging.Open(thumbName)
 }
 
+// CreateThumbnailSize checks if the thumbnail size should be created based on the size of the original image.
+func (m *MediaFile) CreateThumbnailSize(size thumb.Size) bool {
+	if !size.Fit || size.Name == thumb.SizeFit720.Name || !m.Bounds().In(size.Bounds()) {
+		return true
+	} else if s := thumb.FitBounds(m.Bounds()); s.Width < size.Width {
+		return false
+	}
+
+	return true
+}
+
 // CreateThumbnails creates the default thumbnail sizes if the media file
 // is a JPEG and they don't exist yet (except force is true).
 func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
@@ -99,53 +110,61 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 			log.Errorf("media: failed to create %s (%s)", clean.Log(string(name)), err)
 			return err
 		} else if force || !fs.FileExists(fileName) {
-			// Open original if needed.
-			if original == nil {
-				img, imgErr := thumb.Open(m.FileName(), m.Orientation())
-
-				// Failed to open the JPEG file?
-				if imgErr != nil {
-					msg := imgErr.Error()
-
-					// Non-repairable file error?
-					if !(strings.Contains(msg, "EOF") ||
-						strings.HasPrefix(msg, "invalid JPEG")) {
-						log.Debugf("media: %s in %s", msg, clean.Log(m.RootRelName()))
-						return imgErr
-					}
-
-					// Try to repair the file by creating a properly encoded copy with ImageMagick.
-					if fixed, fixErr := NewConvert(conf).FixJpeg(m, false); fixErr != nil {
-						return fixErr
-					} else if fixedImg, openErr := thumb.Open(fixed.FileName(), m.Orientation()); openErr != nil {
-						return openErr
-					} else {
-						img = fixedImg
-					}
-				}
-
-				original = img
-
-				log.Debugf("media: opened %s [%s]", clean.Log(m.RootRelName()), thumb.MemSize(original).String())
-			}
-
-			// Thumb size too large
-			// for the original image?
-			if size.Skip(original) {
-				continue
-			}
-
-			// Reuse existing thumb to improve performance
-			// and reduce server load?
-			if size.Source != "" {
-				if size.Source == srcName && srcImg != nil {
-					_, err = size.Create(srcImg, fileName)
-				} else {
-					_, err = size.Create(original, fileName)
+			// Use libvips as thumbnail generator?
+			if thumb.Generator == thumb.LibVips {
+				// Only create a thumbnail if its size does not exceed the size of the original image.
+				if m.CreateThumbnailSize(size) {
+					_, err = thumb.Vips(m.FileName(), hash, thumbPath, size.Width, size.Height, m.Orientation(), size.Options...)
 				}
 			} else {
-				srcImg, err = size.Create(original, fileName)
-				srcName = name
+				// Open original if needed.
+				if original == nil {
+					img, imgErr := thumb.Open(m.FileName(), m.Orientation())
+
+					// Failed to open the JPEG file?
+					if imgErr != nil {
+						msg := imgErr.Error()
+
+						// Non-repairable file error?
+						if !(strings.Contains(msg, "EOF") ||
+							strings.HasPrefix(msg, "invalid JPEG")) {
+							log.Debugf("media: %s in %s", msg, clean.Log(m.RootRelName()))
+							return imgErr
+						}
+
+						// Try to repair the file by creating a properly encoded copy with ImageMagick.
+						if fixed, fixErr := NewConvert(conf).FixJpeg(m, false); fixErr != nil {
+							return fixErr
+						} else if fixedImg, openErr := thumb.Open(fixed.FileName(), m.Orientation()); openErr != nil {
+							return openErr
+						} else {
+							img = fixedImg
+						}
+					}
+
+					original = img
+
+					log.Debugf("media: opened %s [%s]", clean.Log(m.RootRelName()), thumb.MemSize(original).String())
+				}
+
+				// Thumb size too large
+				// for the original image?
+				if size.Skip(original) {
+					continue
+				}
+
+				// Reuse existing thumb to improve performance
+				// and reduce server load?
+				if size.Source != "" {
+					if size.Source == srcName && srcImg != nil {
+						_, err = size.Create(srcImg, fileName)
+					} else {
+						_, err = size.Create(original, fileName)
+					}
+				} else {
+					srcImg, err = size.Create(original, fileName)
+					srcName = name
+				}
 			}
 
 			// Failed?

@@ -113,6 +113,24 @@ func TestMediaFile_Resample(t *testing.T) {
 
 }
 
+func TestMediaFile_CreateThumbnailSize(t *testing.T) {
+	t.Run("elephants.jpg", func(t *testing.T) {
+		m, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "elephants.jpg"))
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, m.CreateThumbnailSize(thumb.SizeColors))
+		assert.True(t, m.CreateThumbnailSize(thumb.SizeTile100))
+		assert.True(t, m.CreateThumbnailSize(thumb.SizeTile224))
+		assert.True(t, m.CreateThumbnailSize(thumb.SizeTile500))
+		assert.True(t, m.CreateThumbnailSize(thumb.SizeFit720))
+		assert.False(t, m.CreateThumbnailSize(thumb.SizeFit1280))
+		assert.False(t, m.CreateThumbnailSize(thumb.SizeFit1920))
+	})
+}
+
 func TestMediaFile_CreateThumbnails(t *testing.T) {
 	c := config.TestConfig()
 

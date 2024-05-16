@@ -1,7 +1,6 @@
 package thumb
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,10 +13,12 @@ import (
 
 // Vips generates a thumbnail image file with libvips, see https://github.com/libvips/libvips.
 func Vips(imageFilename, hash, thumbPath string, width, height, orientation int, opts ...ResampleOption) (fileName string, err error) {
-	if fileName, err = FromCache(imageFilename, hash, thumbPath, width, height, opts...); err == nil {
-		return fileName, err
-	} else if !errors.Is(err, ErrNotCached) {
-		return "", err
+	if len(hash) < 4 {
+		return "", fmt.Errorf("thumb: invalid file hash %s", clean.Log(hash))
+	}
+
+	if len(imageFilename) < 4 {
+		return "", fmt.Errorf("thumb: invalid file name %s", clean.Log(imageFilename))
 	}
 
 	if InvalidSize(width) {
@@ -40,31 +41,26 @@ func Vips(imageFilename, hash, thumbPath string, width, height, orientation int,
 	VipsInit()
 
 	// Load image from file.
-	img, err := vips.NewImageFromFile(imageFilename)
+	img, err := vips.LoadImageFromFile(imageFilename, VipsImportParams())
 
 	if err != nil {
 		log.Debugf("vips: %s in %s (new image from file)", err, clean.Log(filepath.Base(imageFilename)))
 		return "", err
 	}
 
-	// Adjust orientation.
-	if img, err = VipsRotate(img, orientation); err != nil {
-		log.Debugf("vips: %s in %s (rotate image)", err, clean.Log(filepath.Base(imageFilename)))
-		return "", err
-	}
-
-	var crop vips.Interesting
-
+	// Get resample options.
 	method, _, _ := ResampleOptions(opts...)
 
+	// Choose thumbnail crop.
+	var crop vips.Interesting
 	if method == ResampleFit {
-		crop = vips.InterestingNone
+		crop = vips.InterestingAll
 	} else if method == ResampleFillCenter || method == ResampleResize {
-		crop = vips.InterestingAttention
+		crop = vips.InterestingCentre
 	} else if method == ResampleFillTopLeft {
-		crop = vips.InterestingHigh
-	} else if method == ResampleFillBottomRight {
 		crop = vips.InterestingLow
+	} else if method == ResampleFillBottomRight {
+		crop = vips.InterestingHigh
 	}
 
 	// Create thumbnail image.
@@ -111,13 +107,21 @@ func Vips(imageFilename, hash, thumbPath string, width, height, orientation int,
 	return fileName, nil
 }
 
+// VipsImportParams provides parameters for opening files with libvips.
+func VipsImportParams() *vips.ImportParams {
+	params := &vips.ImportParams{}
+	params.AutoRotate.Set(true)
+	params.FailOnError.Set(false)
+	return params
+}
+
 // VipsRotate rotates a vips image based on the Exif orientation.
-func VipsRotate(img *vips.ImageRef, o int) (*vips.ImageRef, error) {
+func VipsRotate(img *vips.ImageRef, orientation int) error {
 	var err error
 
-	switch o {
+	switch orientation {
 	case OrientationUnspecified:
-		err = img.AutoRotate()
+		// Do nothing.
 	case OrientationNormal:
 		// Do nothing.
 	case OrientationFlipH:
@@ -125,24 +129,28 @@ func VipsRotate(img *vips.ImageRef, o int) (*vips.ImageRef, error) {
 	case OrientationFlipV:
 		err = img.Flip(vips.DirectionVertical)
 	case OrientationRotate90:
-		err = img.Rotate(vips.Angle90)
+		// Rotate the image 90 degrees counter-clockwise.
+		err = img.Rotate(vips.Angle270)
 	case OrientationRotate180:
 		err = img.Rotate(vips.Angle180)
 	case OrientationRotate270:
-		err = img.Rotate(vips.Angle270)
+		// Rotate the image 270 degrees counter-clockwise.
+		err = img.Rotate(vips.Angle90)
 	case OrientationTranspose:
 		err = img.Flip(vips.DirectionHorizontal)
 		if err == nil {
+			// Rotate the image 90 degrees counter-clockwise.
 			err = img.Rotate(vips.Angle270)
 		}
 	case OrientationTransverse:
 		err = img.Flip(vips.DirectionVertical)
 		if err == nil {
+			// Rotate the image 90 degrees counter-clockwise.
 			err = img.Rotate(vips.Angle270)
 		}
 	default:
-		log.Debugf("vips: invalid orientation %d (rotate image)", o)
+		log.Debugf("vips: invalid orientation %d (rotate image)", orientation)
 	}
 
-	return img, err
+	return err
 }

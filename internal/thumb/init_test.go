@@ -10,28 +10,39 @@ import (
 
 func TestInit(t *testing.T) {
 	t.Run("Defaults", func(t *testing.T) {
-		Init(0, 0)
+		Init(0, 0, LibVips)
 		assert.Equal(t, DefaultCacheMem, MaxCacheMem)
 		assert.Equal(t, DefaultWorkers, NumWorkers)
+		assert.Equal(t, LibVips, Generator)
 	})
 	t.Run("4GiB", func(t *testing.T) {
-		Init(4*GiB, 16)
+		Init(4*GiB, 16, LibVips)
 		assert.Equal(t, 512*MiB, MaxCacheMem)
 		assert.Equal(t, 16, NumWorkers)
+		assert.Equal(t, LibVips, Generator)
 	})
 	t.Run("1GiB", func(t *testing.T) {
-		Init(GiB, 3)
+		Init(GiB, 3, LibVips)
 		assert.Equal(t, 128*MiB, MaxCacheMem)
 		assert.Equal(t, 3, NumWorkers)
+		assert.Equal(t, LibVips, Generator)
 	})
 	t.Run("LowMemory", func(t *testing.T) {
-		Init(100*MiB, 3)
+		Init(100*MiB, 3, LibVips)
 		assert.Equal(t, 32*MiB, MaxCacheMem)
 		assert.Equal(t, 1, NumWorkers)
+		assert.Equal(t, LibVips, Generator)
 	})
-	t.Run("Dynamic", func(t *testing.T) {
-		Init(memory.FreeMemory(), runtime.NumCPU())
+	t.Run("LibImaging", func(t *testing.T) {
+		Init(memory.FreeMemory(), runtime.NumCPU(), LibImaging)
 		assert.GreaterOrEqual(t, MaxCacheMem, DefaultCacheMem)
 		assert.GreaterOrEqual(t, NumWorkers, DefaultWorkers)
+		assert.Equal(t, LibImaging, Generator)
+	})
+	t.Run("Dynamic", func(t *testing.T) {
+		Init(memory.FreeMemory(), runtime.NumCPU(), LibVips)
+		assert.GreaterOrEqual(t, MaxCacheMem, DefaultCacheMem)
+		assert.GreaterOrEqual(t, NumWorkers, DefaultWorkers)
+		assert.Equal(t, LibVips, Generator)
 	})
 }

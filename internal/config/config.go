@@ -195,7 +195,8 @@ func (c *Config) Propagate() {
 	FlushCache()
 	log.SetLevel(c.LogLevel())
 
-	// Set thumbnail generation parameters.
+	// Initialize the thumb generator package.
+	thumb.Generator = c.ThumbGenerator()
 	thumb.StandardRGB = c.ThumbSRGB()
 	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
@@ -290,9 +291,6 @@ func (c *Config) Init() error {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
 
-	// Initialize thumb package based on available memory and allowed number of workers.
-	thumb.Init(memory.FreeMemory(), c.IndexWorkers())
-
 	// Show wake-up interval warning if face recognition is activated and the worker runs less than once an hour.
 	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
 		log.Warnf("config: the wakeup interval is %s, but must be 1h or less for face recognition to work", c.WakeupInterval().String())
@@ -312,6 +310,9 @@ func (c *Config) Init() error {
 
 	c.initSettings()
 	c.initHub()
+
+	// Initialize the thumb generator package.
+	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbGenerator())
 
 	// Update package defaults.
 	c.Propagate()

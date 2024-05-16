@@ -58,7 +58,7 @@ func (s Size) ResolvedName(hash, thumbPath string) (string, error) {
 
 // Skip checks if the thumbnail size is too large for the image and can be skipped.
 func (s Size) Skip(img image.Image) bool {
-	if !s.Fit || !img.Bounds().In(s.Bounds()) {
+	if !s.Fit || s.Name == SizeFit720.Name || !img.Bounds().In(s.Bounds()) {
 		return false
 	} else if newSize := FitBounds(img.Bounds()); newSize.Width < s.Width {
 		return true

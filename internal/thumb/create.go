@@ -92,6 +92,11 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 		return "", err
 	}
 
+	// Use libvips to generate thumbnails?
+	if Generator == LibVips {
+		return Vips(imageFilename, hash, thumbPath, width, height, orientation, opts...)
+	}
+
 	// Generate thumb cache filename.
 	fileName, err = FileName(hash, thumbPath, width, height, opts...)
 

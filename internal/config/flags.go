@@ -753,14 +753,20 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("PREVIEW_TOKEN"),
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "thumb-generator",
+			Usage:  "thumbnail generator library `NAME` (auto, imaging, vips)",
+			Value:  "auto",
+			EnvVar: EnvVar("THUMB_GENERATOR"),
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "thumb-color",
-			Usage:  "standard color `PROFILE` for thumbnails (leave blank to disable)",
-			Value:  "sRGB",
+			Usage:  "color `PROFILE` to use for thumbnails (leave blank to disable normalization)",
+			Value:  "auto",
 			EnvVar: EnvVar("THUMB_COLOR"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-filter, filter",
-			Usage:  "image downscaling filter `NAME` (best to worst: blackman, lanczos, cubic, linear)",
+			Usage:  "image downscaling filter `NAME` (best to worst: lanczos, cubic, linear)",
 			Value:  "lanczos",
 			EnvVar: EnvVar("THUMB_FILTER"),
 		}}, {

@@ -44,6 +44,9 @@ var (
 	SizeColors   = Size{Colors, Fit720, "Color Detection", 3, 3, false, false, []ResampleOption{ResampleResize, ResampleNearestNeighbor, ResamplePng}}
 	SizeLeft224  = Size{Left224, Fit720, "TensorFlow", 224, 224, false, false, []ResampleOption{ResampleFillTopLeft, ResampleDefault}}
 	SizeRight224 = Size{Right224, Fit720, "TensorFlow", 224, 224, false, false, []ResampleOption{ResampleFillBottomRight, ResampleDefault}}
+	SizeFit720   = Size{Fit720, "", "SD TV, Mobile", 720, 720, true, true, []ResampleOption{ResampleFit, ResampleDefault}}
+	SizeFit1280  = Size{Fit1280, Fit2048, "HD TV, SXGA", 1280, 1024, true, true, []ResampleOption{ResampleFit, ResampleDefault}}
+	SizeFit1920  = Size{Fit1920, Fit2048, "Full HD", 1920, 1200, true, true, []ResampleOption{ResampleFit, ResampleDefault}}
 )
 
 // Sizes contains the properties of all thumbnail sizes.
@@ -55,9 +58,9 @@ var Sizes = SizeMap{
 	Colors:   SizeColors,
 	Left224:  SizeLeft224,
 	Right224: SizeRight224,
-	Fit720:   {Fit720, "", "SD TV, Mobile", 720, 720, true, true, []ResampleOption{ResampleFit, ResampleDefault}},
-	Fit1280:  {Fit1280, Fit2048, "HD TV, SXGA", 1280, 1024, true, true, []ResampleOption{ResampleFit, ResampleDefault}},
-	Fit1920:  {Fit1920, Fit2048, "Full HD", 1920, 1200, true, true, []ResampleOption{ResampleFit, ResampleDefault}},
+	Fit720:   SizeFit720,
+	Fit1280:  SizeFit1280,
+	Fit1920:  SizeFit1920,
 	Fit2048:  {Fit2048, "", "DCI 2K, Tablets", 2048, 2048, true, true, []ResampleOption{ResampleFit, ResampleDefault}},
 	Fit2560:  {Fit2560, "", "Quad HD, Notebooks", 2560, 1600, true, true, []ResampleOption{ResampleFit, ResampleDefault}},
 	Fit3840:  {Fit3840, "", "4K Ultra HD", 3840, 2400, true, true, []ResampleOption{ResampleFit, ResampleDefault}}, // Deprecated in favor of fit_4096

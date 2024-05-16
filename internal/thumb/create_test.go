@@ -17,21 +17,21 @@ func TestResampleOptions(t *testing.T) {
 		method, filter, format := ResampleOptions(ResamplePng, ResampleFillCenter, ResampleDefault)
 
 		assert.Equal(t, ResampleFillCenter, method)
-		assert.Equal(t, imaging.Lanczos.Support, filter.Support)
+		assert.Equal(t, imaging.Lanczos.Support, filter.Imaging().Support)
 		assert.Equal(t, fs.ImagePNG, format)
 	})
 	t.Run("ResampleNearestNeighbor, FillTopLeft", func(t *testing.T) {
 		method, filter, format := ResampleOptions(ResampleNearestNeighbor, ResampleFillTopLeft)
 
 		assert.Equal(t, ResampleFillTopLeft, method)
-		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Support)
+		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Imaging().Support)
 		assert.Equal(t, fs.ImageJPEG, format)
 	})
 	t.Run("ResampleNearestNeighbor, FillBottomRight", func(t *testing.T) {
 		method, filter, format := ResampleOptions(ResampleNearestNeighbor, ResampleFillBottomRight)
 
 		assert.Equal(t, ResampleFillBottomRight, method)
-		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Support)
+		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Imaging().Support)
 		assert.Equal(t, fs.ImageJPEG, format)
 	})
 }

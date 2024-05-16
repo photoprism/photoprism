@@ -33,6 +33,34 @@ func (c *Config) JpegQuality() thumb.Quality {
 	return thumb.ParseQuality(c.options.JpegQuality)
 }
 
+// ThumbGenerator returns the name of the thumbnail generator library to use.
+func (c *Config) ThumbGenerator() string {
+	switch strings.ToLower(c.options.ThumbGenerator) {
+	case thumb.LibVips:
+		return thumb.LibVips
+	default:
+		return thumb.LibImaging
+	}
+}
+
+// ThumbColor returns the color profile name for thumbnails.
+func (c *Config) ThumbColor() string {
+	if c.options.ThumbColor == "auto" {
+		if c.ThumbGenerator() != thumb.LibVips {
+			return "srgb"
+		}
+
+		return c.options.ThumbColor
+	}
+
+	return strings.ToLower(c.options.ThumbColor)
+}
+
+// ThumbSRGB checks if colors should be normalized to standard RGB in thumbnails.
+func (c *Config) ThumbSRGB() bool {
+	return c.ThumbColor() == "srgb"
+}
+
 // ThumbFilter returns the thumbnail resample filter (best to worst: blackman, lanczos, cubic or linear).
 func (c *Config) ThumbFilter() thumb.ResampleFilter {
 	switch strings.ToLower(c.options.ThumbFilter) {
@@ -47,16 +75,6 @@ func (c *Config) ThumbFilter() thumb.ResampleFilter {
 	default:
 		return thumb.ResampleCubic
 	}
-}
-
-// ThumbColor returns the color profile name for thumbnails.
-func (c *Config) ThumbColor() string {
-	return c.options.ThumbColor
-}
-
-// ThumbSRGB checks if colors should be normalized to standard RGB in thumbnails.
-func (c *Config) ThumbSRGB() bool {
-	return strings.ToLower(c.ThumbColor()) == "srgb"
 }
 
 // ThumbUncached checks if on-demand thumbnail rendering is enabled (high memory and cpu usage).

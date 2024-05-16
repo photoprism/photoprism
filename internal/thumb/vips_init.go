@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	vipsStart   sync.Once
 	vipsStarted = false
+	vipsStart   = sync.Once{}
 )
 
 // VipsInit initializes libvips by checking its version and loading the ICC profiles once.
@@ -22,6 +22,7 @@ func VipsInit() {
 func VipsShutdown() {
 	if vipsStarted {
 		vipsStarted = false
+		vipsStart = sync.Once{}
 		vips.Shutdown()
 	}
 }
@@ -39,11 +40,11 @@ func vipsInit() {
 	vips.LoggingSettings(func(domain string, level vips.LogLevel, msg string) {
 		switch level {
 		case vips.LogLevelError, vips.LogLevelCritical:
-			log.Errorf("%s: %s", strings.ToLower(domain), msg)
+			log.Errorf("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
 		case vips.LogLevelWarning:
-			log.Warnf("%s: %s", strings.ToLower(domain), msg)
+			log.Warnf("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
 		default:
-			log.Tracef("%s: %s", strings.ToLower(domain), msg)
+			log.Tracef("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
 		}
 	}, vipsLogLevel())
 

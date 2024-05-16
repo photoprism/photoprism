@@ -1,7 +1,6 @@
 package thumb
 
 import (
-	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -27,9 +26,9 @@ var ResampleMethods = map[ResampleOption]string{
 }
 
 // ResampleOptions extracts filter, format, and method from resample options.
-func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imaging.ResampleFilter, format fs.Type) {
+func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter ResampleFilter, format fs.Type) {
 	method = ResampleFit
-	filter = imaging.Lanczos
+	filter = Filter
 	format = fs.ImageJPEG
 
 	for _, option := range opts {
@@ -37,9 +36,9 @@ func ResampleOptions(opts ...ResampleOption) (method ResampleOption, filter imag
 		case ResamplePng:
 			format = fs.ImagePNG
 		case ResampleNearestNeighbor:
-			filter = imaging.NearestNeighbor
+			filter = ResampleNearest
 		case ResampleDefault:
-			filter = Filter.Imaging()
+			filter = Filter
 		case ResampleFillTopLeft:
 			method = ResampleFillTopLeft
 		case ResampleFillCenter:
