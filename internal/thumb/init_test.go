@@ -17,19 +17,19 @@ func TestInit(t *testing.T) {
 	})
 	t.Run("4GiB", func(t *testing.T) {
 		Init(4*GiB, 16, LibVips)
-		assert.Equal(t, 512*MiB, MaxCacheMem)
+		assert.Equal(t, GiB, MaxCacheMem)
 		assert.Equal(t, 16, NumWorkers)
 		assert.Equal(t, LibVips, Library)
 	})
 	t.Run("1GiB", func(t *testing.T) {
 		Init(GiB, 3, LibVips)
-		assert.Equal(t, 128*MiB, MaxCacheMem)
+		assert.Equal(t, 256*MiB, MaxCacheMem)
 		assert.Equal(t, 3, NumWorkers)
 		assert.Equal(t, LibVips, Library)
 	})
 	t.Run("LowMemory", func(t *testing.T) {
 		Init(100*MiB, 3, LibVips)
-		assert.Equal(t, 32*MiB, MaxCacheMem)
+		assert.Equal(t, 64*MiB, MaxCacheMem)
 		assert.Equal(t, 1, NumWorkers)
 		assert.Equal(t, LibVips, Library)
 	})

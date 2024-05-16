@@ -5,9 +5,9 @@ import "github.com/dustin/go-humanize/english"
 const (
 	MiB               = 1024 * 1024
 	GiB               = 1024 * MiB
-	DefaultCacheMem   = 64 * MiB
-	DefaultCacheSize  = 100
-	DefaultCacheFiles = 0
+	DefaultCacheMem   = 128 * MiB
+	DefaultCacheSize  = 128
+	DefaultCacheFiles = 16
 	DefaultWorkers    = 1
 )
 
@@ -25,17 +25,17 @@ func Init(availableMemory uint64, maxWorkers int, imgLib string) {
 	// before libvips drops cached operations.
 	switch {
 	case availableMemory >= 4*GiB:
-		MaxCacheMem = 512 * MiB
+		MaxCacheMem = 1 * GiB
 	case availableMemory >= 2*GiB:
-		MaxCacheMem = 256 * MiB
+		MaxCacheMem = 512 * GiB
 	case availableMemory >= 1*GiB:
-		MaxCacheMem = 128 * MiB
+		MaxCacheMem = 256 * MiB
 	case availableMemory <= 0:
 		// Use default if free memory could not be detected.
 		MaxCacheMem = DefaultCacheMem
 	default:
 		// Reduce cache size and number of workers if the system seems low on memory.
-		MaxCacheMem = 32 * MiB
+		MaxCacheMem = 64 * MiB
 		maxWorkers = 1
 	}
 
