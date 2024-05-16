@@ -114,7 +114,15 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 			if thumb.Library == thumb.LibVips {
 				// Only create a thumbnail if its size does not exceed the size of the original image.
 				if m.CreateThumbnailSize(size) {
-					_, err = thumb.Vips(m.FileName(), hash, thumbPath, size.Width, size.Height, m.Orientation(), size.Options...)
+					srcFile := m.FileName()
+
+					// If possible, use existing thumbnail file to create smaller sizes.
+					if thumbFile, srcErr := thumb.Sizes[size.Source].FileName(hash, thumbPath); srcErr == nil && fs.FileExistsNotEmpty(thumbFile) {
+						srcFile = thumbFile
+					}
+
+					// Generate thumbnail with libvips.
+					_, err = thumb.Vips(srcFile, hash, thumbPath, size.Width, size.Height, m.Orientation(), size.Options...)
 				}
 			} else {
 				// Open original if needed.

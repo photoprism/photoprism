@@ -25,9 +25,7 @@ func Init(availableMemory uint64, maxWorkers int, imgLib string) {
 	// before libvips drops cached operations.
 	switch {
 	case availableMemory >= 4*GiB:
-		MaxCacheMem = 1 * GiB
-	case availableMemory >= 2*GiB:
-		MaxCacheMem = 512 * GiB
+		MaxCacheMem = 512 * MiB
 	case availableMemory >= 1*GiB:
 		MaxCacheMem = 256 * MiB
 	case availableMemory <= 0:

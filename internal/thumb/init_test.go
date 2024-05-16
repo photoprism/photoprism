@@ -17,7 +17,7 @@ func TestInit(t *testing.T) {
 	})
 	t.Run("4GiB", func(t *testing.T) {
 		Init(4*GiB, 16, LibVips)
-		assert.Equal(t, GiB, MaxCacheMem)
+		assert.Equal(t, 512*MiB, MaxCacheMem)
 		assert.Equal(t, 16, NumWorkers)
 		assert.Equal(t, LibVips, Library)
 	})
