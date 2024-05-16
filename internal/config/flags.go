@@ -772,13 +772,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "thumb-size",
-			Usage:  "maximum size of thumbnails created during indexing in `PIXELS` (720-7680)",
+			Usage:  "maximum size of thumbnails generated while indexing in `PIXELS` (720-7680)",
 			Value:  2048,
 			EnvVar: EnvVar("THUMB_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "thumb-size-uncached",
-			Usage:  "maximum size of missing thumbnails created on demand in `PIXELS` (720-7680)",
+			Usage:  "maximum size of missing thumbnails generated on demand in `PIXELS` (720-7680)",
 			Value:  7680,
 			EnvVar: EnvVar("THUMB_SIZE_UNCACHED"),
 		}}, {
@@ -795,13 +795,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "jpeg-size",
-			Usage:  "maximum size of created JPEG sidecar files in `PIXELS` (720-30000)",
+			Usage:  "maximum size of generated JPEG sidecar files in `PIXELS` (720-30000)",
 			Value:  7680,
 			EnvVar: EnvVar("JPEG_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "png-size",
-			Usage:  "maximum size of created PNG sidecar files in `PIXELS` (720-30000)",
+			Usage:  "maximum size of generated PNG sidecar files in `PIXELS` (720-30000)",
 			Value:  7680,
 			EnvVar: EnvVar("PNG_SIZE"),
 		}}, {
