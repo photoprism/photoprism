@@ -11,7 +11,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
-const MegaByte = 1024 * 1024
+const MiB = 1024 * 1024
 
 // FileSelection represents a selection filter to include/exclude certain files.
 type FileSelection struct {
@@ -78,7 +78,7 @@ func ShareSelection(originals bool) FileSelection {
 		Hidden:    false,
 		Private:   false,
 		Archived:  false,
-		MaxSize:   1024 * MegaByte,
+		MaxSize:   1024 * MiB,
 	}
 }
 

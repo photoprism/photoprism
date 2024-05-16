@@ -30,17 +30,17 @@ const MaxWakeupInterval = time.Hour * 24          // 1 Day
 const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
 const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
 
-// Megabyte defines a megabyte in bytes.
-const Megabyte = 1000 * 1000 // 1,000,000 Bytes
+// MegaByte defines a megabyte in bytes.
+const MegaByte = 1000 * 1000 // 1,000,000 Bytes
 
-// Gigabyte defines gigabyte in bytes.
-const Gigabyte = Megabyte * 1000 // 1,000,000,000 Bytes
+// GigaByte defines gigabyte in bytes.
+const GigaByte = MegaByte * 1000 // 1,000,000,000 Bytes
 
 // MinMem defines the minimum amount of system memory required.
-const MinMem = Gigabyte
+const MinMem = GigaByte
 
 // RecommendedMem defines the recommended amount of system memory.
-const RecommendedMem = 3 * Gigabyte // 3,000,000,000 Bytes
+const RecommendedMem = 3 * GigaByte // 3,000,000,000 Bytes
 
 // DefaultResolutionLimit defines the default resolution limit.
 const DefaultResolutionLimit = 150 // 150 Megapixels

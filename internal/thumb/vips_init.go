@@ -1,12 +1,11 @@
 package thumb
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/davidbyttow/govips/v2/vips"
 	"github.com/sirupsen/logrus"
-
-	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 var (
@@ -40,13 +39,11 @@ func vipsInit() {
 	vips.LoggingSettings(func(domain string, level vips.LogLevel, msg string) {
 		switch level {
 		case vips.LogLevelError, vips.LogLevelCritical:
-			log.Errorf("vips: %s › %s", domain, clean.Log(msg))
+			log.Errorf("%s: %s", strings.ToLower(domain), msg)
 		case vips.LogLevelWarning:
-			log.Warnf("vips: %s › %s", domain, clean.Log(msg))
-		case vips.LogLevelInfo, vips.LogLevelMessage:
-			log.Infof("vips: %s › %s", domain, clean.Log(msg))
+			log.Warnf("%s: %s", strings.ToLower(domain), msg)
 		default:
-			log.Tracef("vips: %s › %s", domain, clean.Log(msg))
+			log.Tracef("%s: %s", strings.ToLower(domain), msg)
 		}
 	}, vipsLogLevel())
 
@@ -56,16 +53,14 @@ func vipsInit() {
 
 // vipsConfig provides the config for initializing libvips.
 func vipsConfig() *vips.Config {
-	traceMode := log.GetLevel() == logrus.TraceLevel
-
 	return &vips.Config{
-		ConcurrencyLevel: ConcurrencyLevel,
-		MaxCacheFiles:    MaxCacheFiles,
 		MaxCacheMem:      MaxCacheMem,
 		MaxCacheSize:     MaxCacheSize,
-		ReportLeaks:      traceMode,
+		MaxCacheFiles:    MaxCacheFiles,
+		ConcurrencyLevel: NumWorkers,
+		ReportLeaks:      false,
 		CacheTrace:       false,
-		CollectStats:     traceMode,
+		CollectStats:     false,
 	}
 }
 
@@ -74,11 +69,9 @@ func vipsLogLevel() vips.LogLevel {
 	switch log.GetLevel() {
 	case logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel:
 		return vips.LogLevelError
-	case logrus.WarnLevel:
-		return vips.LogLevelWarning
-	case logrus.InfoLevel:
-		return vips.LogLevelMessage
-	default:
+	case logrus.TraceLevel:
 		return vips.LogLevelDebug
+	default:
+		return vips.LogLevelWarning
 	}
 }

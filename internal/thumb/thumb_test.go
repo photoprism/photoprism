@@ -1,21 +1,19 @@
 package thumb
 
 import (
-	"bytes"
 	"os"
 	"testing"
 
 	"github.com/sirupsen/logrus"
-
 	"github.com/stretchr/testify/assert"
-)
 
-var logBuffer bytes.Buffer
+	"github.com/photoprism/photoprism/internal/event"
+)
 
 func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
-	log.SetOutput(&logBuffer)
 	log.SetLevel(logrus.TraceLevel)
+	event.AuditLog = log
 
 	code := m.Run()
 
@@ -23,6 +21,8 @@ func TestMain(m *testing.M) {
 	_ = os.RemoveAll("testdata/1")
 	_ = os.RemoveAll("testdata/cache")
 	_ = os.RemoveAll("testdata/vips")
+
+	Shutdown()
 
 	os.Exit(code)
 }

@@ -275,13 +275,13 @@ func (c *Config) Init() error {
 	}
 
 	// Fail if less than 128 MB of memory were detected.
-	if TotalMem < 128*Megabyte {
-		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/Gigabyte)
+	if TotalMem < 128*MegaByte {
+		return fmt.Errorf("config: %s of memory detected, %d GB required", humanize.Bytes(TotalMem), MinMem/GigaByte)
 	}
 
 	// Show warning if less than 1 GB RAM was detected.
 	if LowMem {
-		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/Gigabyte)
+		log.Warnf(`config: less than %d GB of memory detected, please upgrade if server becomes unstable or unresponsive`, MinMem/GigaByte)
 		log.Warnf("config: tensorflow as well as indexing and conversion of RAW images have been disabled automatically")
 	}
 
@@ -289,6 +289,9 @@ func (c *Config) Init() error {
 	if TotalMem < RecommendedMem {
 		log.Infof("config: make sure your server has enough swap configured to prevent restarts when there are memory usage spikes")
 	}
+
+	// Initialize thumb package based on available memory and allowed number of workers.
+	thumb.Init(memory.FreeMemory(), c.IndexWorkers())
 
 	// Show wake-up interval warning if face recognition is activated and the worker runs less than once an hour.
 	if !c.DisableFaces() && !c.Unsafe() && c.WakeupInterval() > time.Hour {
