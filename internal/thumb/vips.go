@@ -33,7 +33,7 @@ func Vips(imageFilename, hash, thumbPath string, width, height, orientation int,
 	fileName, err = FileName(hash, thumbPath, width, height, opts...)
 
 	if err != nil {
-		log.Debugf("vips: %s in %s (generate thumbnail filename)", err, clean.Log(filepath.Base(imageFilename)))
+		log.Debugf("vips: %s in %s (generate cache filename)", err, clean.Log(filepath.Base(imageFilename)))
 		return "", err
 	}
 

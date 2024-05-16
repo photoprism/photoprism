@@ -195,8 +195,8 @@ func (c *Config) Propagate() {
 	FlushCache()
 	log.SetLevel(c.LogLevel())
 
-	// Initialize the thumb generator package.
-	thumb.Generator = c.ThumbGenerator()
+	// Initialize the thumbnail generation package.
+	thumb.Library = c.ThumbLibrary()
 	thumb.StandardRGB = c.ThumbSRGB()
 	thumb.SizePrecached = c.ThumbSizePrecached()
 	thumb.SizeUncached = c.ThumbSizeUncached()
@@ -311,8 +311,8 @@ func (c *Config) Init() error {
 	c.initSettings()
 	c.initHub()
 
-	// Initialize the thumb generator package.
-	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbGenerator())
+	// Initialize the thumbnail generation package.
+	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbLibrary())
 
 	// Update package defaults.
 	c.Propagate()

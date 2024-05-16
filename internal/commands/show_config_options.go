@@ -59,7 +59,7 @@ func showConfigOptionsAction(ctx *cli.Context) error {
 		{Start: "PHOTOPRISM_DATABASE_DRIVER", Title: "Database Connection"},
 		{Start: "PHOTOPRISM_SIPS_BIN", Title: "File Converters"},
 		{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Title: "Security Tokens"},
-		{Start: "PHOTOPRISM_THUMB_GENERATOR", Title: "Thumbnail Generation"},
+		{Start: "PHOTOPRISM_THUMB_LIBRARY", Title: "Thumbnail Generation"},
 		{Start: "PHOTOPRISM_FACE_SIZE", Title: "Face Recognition",
 			Info: faceFlagsInfo},
 		{Start: "PHOTOPRISM_PID_FILENAME", Title: "Daemon Mode",

@@ -220,7 +220,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		// Thumbnails.
 		{"download-token", c.DownloadToken()},
 		{"preview-token", c.PreviewToken()},
-		{"thumb-generator", c.ThumbGenerator()},
+		{"thumb-library", c.ThumbLibrary()},
 		{"thumb-color", c.ThumbColor()},
 		{"thumb-filter", string(c.ThumbFilter())},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},

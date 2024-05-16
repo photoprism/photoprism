@@ -33,9 +33,9 @@ func (c *Config) JpegQuality() thumb.Quality {
 	return thumb.ParseQuality(c.options.JpegQuality)
 }
 
-// ThumbGenerator returns the name of the thumbnail generator library to use.
-func (c *Config) ThumbGenerator() string {
-	switch strings.ToLower(c.options.ThumbGenerator) {
+// ThumbLibrary returns the name of the image processing library to be used for generating thumbnails.
+func (c *Config) ThumbLibrary() string {
+	switch strings.ToLower(c.options.ThumbLibrary) {
 	case thumb.LibVips:
 		return thumb.LibVips
 	default:
@@ -46,7 +46,7 @@ func (c *Config) ThumbGenerator() string {
 // ThumbColor returns the color profile name for thumbnails.
 func (c *Config) ThumbColor() string {
 	if c.options.ThumbColor == "auto" {
-		if c.ThumbGenerator() != thumb.LibVips {
+		if c.ThumbLibrary() != thumb.LibVips {
 			return "srgb"
 		}
 

@@ -753,20 +753,20 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("PREVIEW_TOKEN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "thumb-generator",
-			Usage:  "thumbnail generation library `NAME` (auto, imaging, vips)",
+			Name:   "thumb-library",
+			Usage:  "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
 			Value:  "auto",
-			EnvVar: EnvVar("THUMB_GENERATOR"),
+			EnvVar: EnvVar("THUMB_LIBRARY"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-color",
-			Usage:  "default color `PROFILE` to use for thumbnails (leave blank to disable normalization)",
+			Usage:  "default color `PROFILE` for thumbnails (leave blank to disable normalization)",
 			Value:  "auto",
 			EnvVar: EnvVar("THUMB_COLOR"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-filter, filter",
-			Usage:  "thumbnail downscaling filter `NAME` (best to worst: lanczos, cubic, linear)",
+			Usage:  "image downscaling filter `NAME` (best to worst: lanczos, cubic, linear)",
 			Value:  "lanczos",
 			EnvVar: EnvVar("THUMB_FILTER"),
 		}}, {
@@ -795,13 +795,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "jpeg-size",
-			Usage:  "maximum size of generated JPEG sidecar files in `PIXELS` (720-30000)",
+			Usage:  "maximum size of generated JPEG images in `PIXELS` (720-30000)",
 			Value:  7680,
 			EnvVar: EnvVar("JPEG_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "png-size",
-			Usage:  "maximum size of generated PNG sidecar files in `PIXELS` (720-30000)",
+			Usage:  "maximum size of generated PNG images in `PIXELS` (720-30000)",
 			Value:  7680,
 			EnvVar: EnvVar("PNG_SIZE"),
 		}}, {

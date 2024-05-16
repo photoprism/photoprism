@@ -110,8 +110,8 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 			log.Errorf("media: failed to create %s (%s)", clean.Log(string(name)), err)
 			return err
 		} else if force || !fs.FileExists(fileName) {
-			// Use libvips as thumbnail generator?
-			if thumb.Generator == thumb.LibVips {
+			// Use libvips to generate thumbnails?
+			if thumb.Library == thumb.LibVips {
 				// Only create a thumbnail if its size does not exceed the size of the original image.
 				if m.CreateThumbnailSize(size) {
 					_, err = thumb.Vips(m.FileName(), hash, thumbPath, size.Width, size.Height, m.Orientation(), size.Options...)

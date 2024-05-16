@@ -1,10 +1,10 @@
 package thumb
 
-// Supported thumbnail generator libraries.
+// Supported image processing libraries.
 const (
 	LibVips    = "vips"
 	LibImaging = "imaging"
 )
 
-// Generator specifies the thumbnail generator library to use.
-var Generator = LibImaging
+// Library specifies the image library to be used.
+var Library = LibImaging

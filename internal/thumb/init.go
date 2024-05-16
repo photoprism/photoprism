@@ -18,9 +18,9 @@ var (
 	NumWorkers    = DefaultWorkers
 )
 
-// Init configures the thumb package with the available memory,
-// allowed number of workers and image library to be used.
-func Init(availableMemory uint64, maxWorkers int, generator string) {
+// Init initializes the package config based on the the available memory,
+// the allowed number of workers and the image processing library to be used.
+func Init(availableMemory uint64, maxWorkers int, imgLib string) {
 	// Set the maximum amount of cached data allowed
 	// before libvips drops cached operations.
 	switch {
@@ -51,13 +51,13 @@ func Init(availableMemory uint64, maxWorkers int, generator string) {
 		NumWorkers = DefaultWorkers
 	}
 
-	// Set the thumbnail generator library to use.
-	switch generator {
+	// Set the image processing library.
+	switch imgLib {
 	case LibVips, "libvips":
-		Generator = LibVips
+		Library = LibVips
 		log.Debugf("vips: max cache size is %d MB, using up to %s", MaxCacheMem/MiB, english.Plural(NumWorkers, "worker", "workers"))
 	default:
-		Generator = LibImaging
+		Library = LibImaging
 	}
 }
 
