@@ -378,7 +378,7 @@ msgid "Authentication"
 msgstr "Kimlik Doğrulama"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
+msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
 msgstr "Başka türlü dizine eklenemeyen veya görüntülenemeyen dosyalar için otomatik olarak küçük resimler oluşturun."
 
 #: src/page/settings/general.vue:166

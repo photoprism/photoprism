@@ -47,7 +47,7 @@
                 class="ma-0 pa-0 input-convert"
                 color="secondary-dark"
                 :label="$gettext('Preview Images')"
-                :hint="$gettext('Automatically create thumbnails for files that cannot otherwise be indexed or viewed.')"
+                :hint="$gettext('Automatically generate thumbnails for files that cannot otherwise be indexed or viewed.')"
                 prepend-icon="image"
                 persistent-hint
                 @change="onChange"

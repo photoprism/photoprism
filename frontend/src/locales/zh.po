@@ -378,7 +378,7 @@ msgid "Authentication"
 msgstr "认证"
 
 #: src/page/settings/library.vue:112
-msgid "Automatically create thumbnails for files that cannot otherwise be indexed or viewed."
+msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
 msgstr "自动为无法索引或查看的文件创建缩略图。"
 
 #: src/page/settings/general.vue:166
