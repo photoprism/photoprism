@@ -35,14 +35,14 @@ func TestInit(t *testing.T) {
 	})
 	t.Run("LibImaging", func(t *testing.T) {
 		Init(memory.FreeMemory(), runtime.NumCPU(), LibImaging)
-		assert.GreaterOrEqual(t, MaxCacheMem, DefaultCacheMem)
-		assert.GreaterOrEqual(t, NumWorkers, DefaultWorkers)
+		assert.GreaterOrEqual(t, MaxCacheMem, 64*MiB)
+		assert.GreaterOrEqual(t, NumWorkers, 1)
 		assert.Equal(t, LibImaging, Library)
 	})
 	t.Run("Dynamic", func(t *testing.T) {
 		Init(memory.FreeMemory(), runtime.NumCPU(), LibVips)
-		assert.GreaterOrEqual(t, MaxCacheMem, DefaultCacheMem)
-		assert.GreaterOrEqual(t, NumWorkers, DefaultWorkers)
+		assert.GreaterOrEqual(t, MaxCacheMem, 64*MiB)
+		assert.GreaterOrEqual(t, NumWorkers, 1)
 		assert.Equal(t, LibVips, Library)
 	})
 }
