@@ -9,6 +9,12 @@ import (
 )
 
 func TestSkip(t *testing.T) {
+	t.Run("Tile224", func(t *testing.T) {
+		bounds := image.Rectangle{Min: image.Point{}, Max: image.Point{X: 1024, Y: 1024}}
+		assert.False(t, Skip(SizeTile224, bounds))
+		assert.True(t, Skip(SizeLeft224, bounds))
+		assert.True(t, Skip(SizeRight224, bounds))
+	})
 	t.Run("Tile500", func(t *testing.T) {
 		bounds := image.Rectangle{Min: image.Point{}, Max: image.Point{X: 1024, Y: 1024}}
 		assert.False(t, Skip(SizeTile500, bounds))

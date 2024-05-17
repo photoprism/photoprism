@@ -1261,6 +1261,18 @@ func (m *MediaFile) AspectRatio() float32 {
 	return aspectRatio
 }
 
+// Square checks if the width and height of this media file are the same.
+func (m *MediaFile) Square() bool {
+	width := m.Width()
+	height := m.Height()
+
+	if width <= 0 || height <= 0 {
+		return false
+	}
+
+	return width == height
+}
+
 // Portrait tests if the image is a portrait.
 func (m *MediaFile) Portrait() bool {
 	return m.Width() < m.Height()

@@ -15,7 +15,7 @@ func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
 
 	var sizes []thumb.Name
 
-	if jpeg.AspectRatio() == 1 {
+	if jpeg.Square() {
 		sizes = []thumb.Name{thumb.Tile224}
 	} else {
 		sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}

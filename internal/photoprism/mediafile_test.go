@@ -2032,6 +2032,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 
 		ratio := mediaFile.AspectRatio()
 		assert.Equal(t, float32(0.75), ratio)
+		assert.False(t, mediaFile.Square())
 	})
 	t.Run("fern_green.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
@@ -2044,6 +2045,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 
 		ratio := mediaFile.AspectRatio()
 		assert.Equal(t, float32(1), ratio)
+		assert.True(t, mediaFile.Square())
 	})
 	t.Run("elephants.jpg", func(t *testing.T) {
 		conf := config.TestConfig()
@@ -2056,6 +2058,7 @@ func TestMediaFile_AspectRatio(t *testing.T) {
 
 		ratio := mediaFile.AspectRatio()
 		assert.Equal(t, float32(1.5), ratio)
+		assert.False(t, mediaFile.Square())
 	})
 }
 

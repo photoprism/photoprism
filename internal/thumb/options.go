@@ -4,8 +4,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-type ResampleOption int
-
 const (
 	ResampleFillCenter ResampleOption = iota
 	ResampleFillTopLeft
@@ -23,6 +21,23 @@ var ResampleMethods = map[ResampleOption]string{
 	ResampleFillBottomRight: "right",
 	ResampleFit:             "fit",
 	ResampleResize:          "resize",
+}
+
+// ResampleOption represents a thumbnail rendering option.
+type ResampleOption int
+
+// Options represents a list of thumbnail rendering options.
+type Options []ResampleOption
+
+// Contains checks if the specified option is set.
+func (o Options) Contains(option ResampleOption) bool {
+	for _, v := range o {
+		if v == option {
+			return true
+		}
+	}
+
+	return false
 }
 
 // ResampleOptions extracts filter, format, and method from resample options.
