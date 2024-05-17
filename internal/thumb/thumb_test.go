@@ -39,12 +39,18 @@ func TestNew(t *testing.T) {
 		assert.Equal(t, 720, result.H)
 		assert.Equal(t, "/content/t/d2b4a5d18276f96f1b5a1bf17fd82d6fab3807f2/preview-token/fit_1280", result.Src)
 	})
-
 	t.Run("Fit3840", func(t *testing.T) {
 		result := New(1920, 1080, fileHash, Sizes[Fit3840], contentUri, previewToken)
 
 		assert.Equal(t, 1920, result.W)
 		assert.Equal(t, 1080, result.H)
 		assert.Equal(t, "/content/t/d2b4a5d18276f96f1b5a1bf17fd82d6fab3807f2/preview-token/fit_3840", result.Src)
+	})
+	t.Run("Fit4096", func(t *testing.T) {
+		result := New(1920, 1080, fileHash, Sizes[Fit4096], contentUri, previewToken)
+
+		assert.Equal(t, 1920, result.W)
+		assert.Equal(t, 1080, result.H)
+		assert.Equal(t, "/content/t/d2b4a5d18276f96f1b5a1bf17fd82d6fab3807f2/preview-token/fit_4096", result.Src)
 	})
 }

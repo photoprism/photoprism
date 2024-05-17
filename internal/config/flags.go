@@ -661,7 +661,7 @@ var Flags = CliFlags{
 		Flag: cli.IntFlag{
 			Name:   "ffmpeg-size, vs",
 			Usage:  "maximum video size in `PIXELS` (720-7680)",
-			Value:  thumb.Sizes[thumb.Fit3840].Width,
+			Value:  thumb.Sizes[thumb.Fit4096].Width,
 			EnvVar: EnvVar("FFMPEG_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{

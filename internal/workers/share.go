@@ -86,7 +86,7 @@ func (w *Share) Start() (err error) {
 			if s, ok := thumb.Sizes[thumb.Name(a.ShareSize)]; ok {
 				size = s
 			} else {
-				size = thumb.Sizes[thumb.Fit2048]
+				size = thumb.SizeFit1920
 			}
 		}
 

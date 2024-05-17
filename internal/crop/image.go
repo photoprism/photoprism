@@ -20,7 +20,7 @@ var thumbFileNames = []string{
 	"%s_720x720_fit.jpg",
 	"%s_1280x1024_fit.jpg",
 	"%s_1920x1200_fit.jpg",
-	"%s_2048x2048_fit.jpg",
+	"%s_2560x1600_fit.jpg",
 	"%s_4096x4096_fit.jpg",
 	"%s_7680x4320_fit.jpg",
 }
@@ -30,7 +30,7 @@ var thumbFileSizes = []thumb.Size{
 	thumb.Sizes[thumb.Fit720],
 	thumb.Sizes[thumb.Fit1280],
 	thumb.Sizes[thumb.Fit1920],
-	thumb.Sizes[thumb.Fit2048],
+	thumb.Sizes[thumb.Fit2560],
 	thumb.Sizes[thumb.Fit4096],
 	thumb.Sizes[thumb.Fit7680],
 }

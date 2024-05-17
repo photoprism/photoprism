@@ -19,7 +19,7 @@ func VideoSize(limit int) Size {
 		return Sizes[Fit7680]
 	} else if limit == 0 {
 		// Return default size.
-		return Sizes[Fit3840]
+		return Sizes[Fit4096]
 	} else if limit <= 720 {
 		// Return minimum size.
 		return Sizes[Fit720]

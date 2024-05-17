@@ -78,7 +78,7 @@ class Viewer {
         download: true,
       },
       {
-        id: "fit_2048",
+        id: "fit_1920",
         template: "Medium (size)",
         label: "Medium",
         url: "{{raw_image_url}}",
