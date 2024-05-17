@@ -55,8 +55,8 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		} else {
 			log.Debugf("index: created %s", clean.Log(img.BaseName()))
 
-			if imgErr = img.CreateThumbnails(ind.thumbPath(), false); imgErr != nil {
-				result.Err = fmt.Errorf("index: failed to create thumbnails for %s (%s)", clean.Log(f.RootRelName()), imgErr.Error())
+			if imgErr = img.GenerateThumbnails(ind.thumbPath(), false); imgErr != nil {
+				result.Err = fmt.Errorf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), imgErr.Error())
 				result.Status = IndexFailed
 				return result
 			}

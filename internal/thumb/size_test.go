@@ -1,11 +1,29 @@
 package thumb
 
 import (
+	"image"
 	"testing"
 
 	"github.com/disintegration/imaging"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestSkip(t *testing.T) {
+	t.Run("Tile500", func(t *testing.T) {
+		bounds := image.Rectangle{Min: image.Point{}, Max: image.Point{X: 1024, Y: 1024}}
+		assert.False(t, Skip(SizeTile500, bounds))
+	})
+	t.Run("Fit1600", func(t *testing.T) {
+		bounds := image.Rectangle{Min: image.Point{}, Max: image.Point{X: 2048, Y: 2048}}
+		assert.True(t, Skip(SizeFit1600, bounds))
+	})
+	t.Run("Fit1920", func(t *testing.T) {
+		large := image.Rectangle{Min: image.Point{}, Max: image.Point{X: 2048, Y: 2048}}
+		small := image.Rectangle{Min: image.Point{}, Max: image.Point{X: 1024, Y: 1024}}
+		assert.False(t, Skip(SizeFit1920, large))
+		assert.True(t, Skip(SizeFit1920, small))
+	})
+}
 
 func TestSize_Skip(t *testing.T) {
 	// Image Size: 750x500px

@@ -126,7 +126,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
 			Abort(c, http.StatusBadRequest, i18n.ErrUnsupportedFormat)
 			return
-		} else if err = mediaFile.CreateThumbnails(conf.ThumbCachePath(), false); err != nil {
+		} else if err = mediaFile.GenerateThumbnails(conf.ThumbCachePath(), false); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
 		} else if err = m.SetAvatar(mediaFile.Hash(), entity.SrcManual); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)

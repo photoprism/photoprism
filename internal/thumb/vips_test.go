@@ -19,7 +19,7 @@ func TestVips(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		fileName, err := Vips(src, "123456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, OrientationNormal, colorThumb.Options...)
+		fileName, _, err := Vips(src, nil, "123456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -28,14 +28,14 @@ func TestVips(t *testing.T) {
 		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
 	})
-	t.Run("Tile224", func(t *testing.T) {
-		thumb := Sizes[Tile224]
+	t.Run("Left224", func(t *testing.T) {
+		thumb := SizeLeft224
 		src := "testdata/fixed.jpg"
-		dst := "testdata/vips/1/2/3/123456789098765432_224x224_center.jpg"
+		dst := "testdata/vips/1/2/3/123456789098765432_224x224_left.jpg"
 
 		assert.FileExists(t, src)
 
-		fileName, err := Vips(src, "123456789098765432", "testdata/vips", thumb.Width, thumb.Height, 0, thumb.Options...)
+		fileName, _, err := Vips(src, nil, "123456789098765432", "testdata/vips", thumb.Width, thumb.Height, thumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -44,21 +44,32 @@ func TestVips(t *testing.T) {
 		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
 	})
-	t.Run("Tile500WithOrientation", func(t *testing.T) {
-		thumb := Sizes[Tile500]
-		src := "testdata/example.jpg"
-		dst := "testdata/vips/1/2/3/123456789098765432_500x500_center.jpg"
+	t.Run("TwoTiles", func(t *testing.T) {
+		large := Sizes[Tile500]
+		small := Sizes[Tile224]
+		srcName := "testdata/example.jpg"
+		dstLarge := "testdata/vips/1/2/3/123456789098765432_500x500_center.jpg"
+		dstSmall := "testdata/vips/1/2/3/123456789098765432_224x224_center.jpg"
 
-		assert.FileExists(t, src)
+		assert.FileExists(t, srcName)
 
-		fileName, err := Vips(src, "123456789098765432", "testdata/vips", thumb.Width, thumb.Height, 3, thumb.Options...)
+		thumbName, thumbBuffer, err := Vips(srcName, nil, "123456789098765432", "testdata/vips", large.Width, large.Height, large.Options...)
 
 		if err != nil {
 			t.Fatal(err)
 		}
 
-		assert.True(t, strings.HasSuffix(fileName, dst))
-		assert.FileExists(t, dst)
+		assert.True(t, strings.HasSuffix(thumbName, dstLarge))
+		assert.FileExists(t, dstLarge)
+
+		thumbName, _, err = Vips(srcName, thumbBuffer, "123456789098765432", "testdata/vips", small.Width, small.Height, small.Options...)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, strings.HasSuffix(thumbName, dstSmall))
+		assert.FileExists(t, dstSmall)
 	})
 	/* t.Run("Rotate", func(t *testing.T) {
 		thumb := Sizes[Fit1920]
@@ -67,7 +78,7 @@ func TestVips(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		fileName, err := Vips(src, "123456789098765432", "testdata/rotate", thumb.Width, thumb.Height, 0, thumb.Options...)
+		fileName, _, err := Vips(src, "123456789098765432", "testdata/rotate", thumb.Width, thumb.Height, 0, thumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -83,7 +94,7 @@ func TestVips(t *testing.T) {
 
 		assert.FileExists(t, src)
 
-		fileName, err := Vips(src, "123456789098765432", "testdata/vips", thumb.Width, thumb.Height, 0, thumb.Options...)
+		fileName, _, err := Vips(src, nil, "123456789098765432", "testdata/vips", thumb.Width, thumb.Height, thumb.Options...)
 
 		if err != nil {
 			t.Fatal(err)
@@ -98,7 +109,7 @@ func TestVips(t *testing.T) {
 
 		assert.NoFileExists(t, src)
 
-		fileName, err := Vips(src, "193456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, OrientationNormal, colorThumb.Options...)
+		fileName, _, err := Vips(src, nil, "193456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		assert.Equal(t, "", fileName)
 		assert.Error(t, err)
@@ -106,7 +117,7 @@ func TestVips(t *testing.T) {
 	t.Run("EmptyFilename", func(t *testing.T) {
 		colorThumb := Sizes[Colors]
 
-		fileName, err := Vips("", "193456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, OrientationNormal, colorThumb.Options...)
+		fileName, _, err := Vips("", nil, "193456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")

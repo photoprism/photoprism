@@ -11,76 +11,87 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// Vips generates a thumbnail image file with libvips, see https://github.com/libvips/libvips.
-func Vips(imageFilename, hash, thumbPath string, width, height, orientation int, opts ...ResampleOption) (fileName string, err error) {
+// Vips generates a new thumbnail with the requested size and returns the file name and a buffer with the image bytes,
+// or an error if thumbnail generation failed. For more information on libvips, see https://github.com/libvips/libvips.
+func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, height int, opts ...ResampleOption) (thumbName string, thumbBuffer []byte, err error) {
 	if len(hash) < 4 {
-		return "", fmt.Errorf("thumb: invalid file hash %s", clean.Log(hash))
+		return "", nil, fmt.Errorf("thumb: invalid file hash %s", clean.Log(hash))
 	}
 
-	if len(imageFilename) < 4 {
-		return "", fmt.Errorf("thumb: invalid file name %s", clean.Log(imageFilename))
+	if len(imageName) < 4 {
+		return "", nil, fmt.Errorf("thumb: invalid file name %s", clean.Log(imageName))
 	}
 
 	if InvalidSize(width) {
-		return "", fmt.Errorf("thumb: width has an invalid value (%d)", width)
+		return "", nil, fmt.Errorf("thumb: width has an invalid value (%d)", width)
 	}
 
 	if InvalidSize(height) {
-		return "", fmt.Errorf("thumb: height has an invalid value (%d)", height)
+		return "", nil, fmt.Errorf("thumb: height has an invalid value (%d)", height)
 	}
 
-	// Generate thumb cache filename.
-	fileName, err = FileName(hash, thumbPath, width, height, opts...)
+	// Get thumb cache filename.
+	thumbName, err = FileName(hash, thumbPath, width, height, opts...)
 
 	if err != nil {
-		log.Debugf("vips: %s in %s (generate cache filename)", err, clean.Log(filepath.Base(imageFilename)))
-		return "", err
+		log.Debugf("thumb: %s in %s (filename)", err, clean.Log(filepath.Base(imageName)))
+		return "", nil, err
 	}
 
 	// Initialize libvips before using it.
 	VipsInit()
 
-	// Load image from file.
-	img, err := vips.LoadImageFromFile(imageFilename, VipsImportParams())
+	// Load image from file or buffer.
+	var img *vips.ImageRef
 
-	if err != nil {
-		log.Debugf("vips: %s in %s (new image from file)", err, clean.Log(filepath.Base(imageFilename)))
-		return "", err
+	if len(imageBuffer) == 0 {
+		if img, err = vips.LoadImageFromFile(imageName, VipsImportParams()); err != nil {
+			log.Debugf("vips: %s in %s (load image from file)", err, clean.Log(filepath.Base(imageName)))
+			return "", nil, err
+		}
+	} else if img, err = vips.LoadImageFromBuffer(imageBuffer, VipsImportParams()); err != nil {
+		log.Debugf("vips: %s in %s (load image from buffer)", err, clean.Log(filepath.Base(imageName)))
+		return "", nil, err
 	}
 
-	// Get resample options.
-	method, _, _ := ResampleOptions(opts...)
+	// Set resample options.
+	var method ResampleOption
+	var size vips.Size
+
+	method, _, _ = ResampleOptions(opts...)
 
 	// Choose thumbnail crop.
 	var crop vips.Interesting
-	if method == ResampleFit {
-		crop = vips.InterestingAll
-	} else if method == ResampleFillCenter || method == ResampleResize {
-		crop = vips.InterestingCentre
-	} else if method == ResampleFillTopLeft {
+	if method == ResampleFillTopLeft {
 		crop = vips.InterestingLow
+		size = vips.SizeBoth
 	} else if method == ResampleFillBottomRight {
 		crop = vips.InterestingHigh
+		size = vips.SizeBoth
+	} else if method == ResampleFit {
+		crop = vips.InterestingNone
+		size = vips.SizeDown
+	} else if method == ResampleFillCenter || method == ResampleResize {
+		crop = vips.InterestingCentre
+		size = vips.SizeBoth
 	}
 
 	// Create thumbnail image.
-	if err = img.Thumbnail(width, height, crop); err != nil {
-		log.Debugf("vips: %s in %s (create thumbnail)", err, clean.Log(filepath.Base(imageFilename)))
-		return "", err
+	if err = img.ThumbnailWithSize(width, height, crop, size); err != nil {
+		log.Debugf("vips: %s in %s (create thumbnail)", err, clean.Log(filepath.Base(imageName)))
+		return "", nil, err
 	}
 
 	// Remove metadata from thumbnail.
 	if err = img.RemoveMetadata(); err != nil {
-		log.Debugf("vips: %s in %s (remove metadata)", err, clean.Log(filepath.Base(imageFilename)))
-		return "", err
+		log.Debugf("vips: %s in %s (remove metadata)", err, clean.Log(filepath.Base(imageName)))
+		return "", nil, err
 	}
 
-	var imageBytes []byte
-
 	// Export to PNG or JPEG.
-	if fs.FileType(fileName) == fs.ImagePNG {
+	if fs.FileType(thumbName) == fs.ImagePNG {
 		params := vips.NewPngExportParams()
-		imageBytes, _, err = img.ExportPng(params)
+		thumbBuffer, _, err = img.ExportPng(params)
 	} else {
 		params := vips.NewJpegExportParams()
 
@@ -90,21 +101,22 @@ func Vips(imageFilename, hash, thumbPath string, width, height, orientation int,
 			params.Quality = JpegQuality.Int()
 		}
 
-		imageBytes, _, err = img.ExportJpeg(params)
+		thumbBuffer, _, err = img.ExportJpeg(params)
 	}
 
+	// Check if export failed.
 	if err != nil {
-		log.Debugf("vips: %s in %s (export thumbnail)", err, clean.Log(filepath.Base(imageFilename)))
-		return "", err
+		log.Debugf("vips: %s in %s (export thumbnail)", err, clean.Log(filepath.Base(imageName)))
+		return "", thumbBuffer, err
 	}
 
 	// Write thumbnail to file.
-	if err = os.WriteFile(fileName, imageBytes, fs.ModeFile); err != nil {
-		log.Debugf("vips: %s in %s (write thumbnail to file)", err, clean.Log(filepath.Base(imageFilename)))
-		return "", err
+	if err = os.WriteFile(thumbName, thumbBuffer, fs.ModeFile); err != nil {
+		log.Debugf("vips: %s in %s (write thumbnail to file)", err, clean.Log(filepath.Base(imageName)))
+		return "", thumbBuffer, err
 	}
 
-	return fileName, nil
+	return thumbName, thumbBuffer, nil
 }
 
 // VipsImportParams provides parameters for opening files with libvips.

@@ -753,7 +753,7 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("PREVIEW_TOKEN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "thumb-library",
+			Name:   "thumb-library, thumbs",
 			Usage:  "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
 			Value:  "auto",
 			EnvVar: EnvVar("THUMB_LIBRARY"),

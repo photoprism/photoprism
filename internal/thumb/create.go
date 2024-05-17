@@ -73,7 +73,7 @@ func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ..
 	}
 
 	if fileName, err = FileName(hash, thumbPath, width, height, opts...); err != nil {
-		log.Debugf("thumb: %s in %s (get filename)", err, clean.Log(imageFilename))
+		log.Debugf("thumb: %s in %s (filename)", err, clean.Log(filepath.Base(imageFilename)))
 		return "", err
 	} else if fileName, err = fs.Resolve(fileName); err != nil {
 		return "", ErrNotCached
@@ -84,9 +84,9 @@ func FromCache(imageFilename, hash, thumbPath string, width, height int, opts ..
 	return "", ErrNotCached
 }
 
-// FromFile creates a new thumbnail with the specified size if it was not found in the cache, and returns the filename.
-func FromFile(imageFilename, hash, thumbPath string, width, height, orientation int, opts ...ResampleOption) (fileName string, err error) {
-	if fileName, err = FromCache(imageFilename, hash, thumbPath, width, height, opts...); err == nil {
+// FromFile generates a new thumbnail with the requested size, if it does not already exist, and returns its filename.
+func FromFile(imageName, hash, thumbPath string, width, height, orientation int, opts ...ResampleOption) (fileName string, err error) {
+	if fileName, err = FromCache(imageName, hash, thumbPath, width, height, opts...); err == nil {
 		return fileName, err
 	} else if !errors.Is(err, ErrNotCached) {
 		return "", err
@@ -94,22 +94,23 @@ func FromFile(imageFilename, hash, thumbPath string, width, height, orientation 
 
 	// Use libvips to generate thumbnails?
 	if Library == LibVips {
-		return Vips(imageFilename, hash, thumbPath, width, height, orientation, opts...)
+		fileName, _, err = Vips(imageName, nil, hash, thumbPath, width, height, opts...)
+		return fileName, err
 	}
 
 	// Generate thumb cache filename.
 	fileName, err = FileName(hash, thumbPath, width, height, opts...)
 
 	if err != nil {
-		log.Error(err)
+		log.Debugf("thumb: %s in %s (filename)", err, clean.Log(filepath.Base(imageName)))
 		return "", err
 	}
 
 	// Load image from file.
-	img, err := Open(imageFilename, orientation)
+	img, err := Open(imageName, orientation)
 
 	if err != nil {
-		log.Debugf("thumb: %s in %s", err, clean.Log(filepath.Base(imageFilename)))
+		log.Debugf("thumb: %s in %s", err, clean.Log(filepath.Base(imageName)))
 		return "", err
 	}
 

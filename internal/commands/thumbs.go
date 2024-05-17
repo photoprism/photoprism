@@ -14,12 +14,12 @@ import (
 // ThumbsCommand configures the command name, flags, and action.
 var ThumbsCommand = cli.Command{
 	Name:      "thumbs",
-	Usage:     "Generates thumbnails using the current settings",
+	Usage:     "(Re-)generates thumbnails based on the current configuration",
 	ArgsUsage: "[subfolder]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "force, f",
-			Usage: "replace existing thumbnail files",
+			Usage: "replace existing thumbnail images",
 		},
 		cli.BoolFlag{
 			Name:  "originals, o",
@@ -29,7 +29,7 @@ var ThumbsCommand = cli.Command{
 	Action: thumbsAction,
 }
 
-// thumbsAction generates thumbnails using the current settings.
+// thumbsAction regenerates thumbnails based on the current configuration.
 func thumbsAction(ctx *cli.Context) error {
 	start := time.Now()
 
@@ -49,13 +49,13 @@ func thumbsAction(ctx *cli.Context) error {
 	force := ctx.Bool("force")
 	originals := ctx.Bool("originals")
 
-	var action, ack string
+	var action, done string
 	if force {
 		action = "replacing"
-		ack = "replaced"
+		done = "replaced"
 	} else {
-		action = "creating"
-		ack = "created"
+		action = "generating"
+		done = "generated"
 	}
 
 	// Display info.
@@ -79,7 +79,7 @@ func thumbsAction(ctx *cli.Context) error {
 		return err
 	}
 
-	log.Infof("thumbnails %s in %s", ack, time.Since(start))
+	log.Infof("thumbnails %s in %s", done, time.Since(start))
 
 	return nil
 }

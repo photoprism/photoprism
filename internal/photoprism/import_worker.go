@@ -148,8 +148,8 @@ func ImportWorker(jobs <-chan ImportJob) {
 			} else if limitErr, _ := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 				log.Errorf("import: %s", limitErr)
 				continue
-			} else if thumbsErr := img.CreateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
-				log.Errorf("import: failed to create thumbnails for %s (%s)", clean.Log(f.RootRelName()), clean.Error(thumbsErr))
+			} else if thumbsErr := img.GenerateThumbnails(imp.thumbPath(), false); thumbsErr != nil {
+				log.Errorf("import: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), clean.Error(thumbsErr))
 				continue
 			}
 

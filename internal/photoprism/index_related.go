@@ -82,8 +82,8 @@ func IndexRelated(related RelatedFiles, ind *Index, o IndexOptions) (result Inde
 				log.Debugf("index: created %s", clean.Log(img.BaseName()))
 
 				// Skip with warning if thumbs could not be creared.
-				if thumbsErr := img.CreateThumbnails(ind.thumbPath(), false); thumbsErr != nil {
-					result.Err = fmt.Errorf("index: failed to create thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
+				if thumbsErr := img.GenerateThumbnails(ind.thumbPath(), false); thumbsErr != nil {
+					result.Err = fmt.Errorf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), thumbsErr.Error())
 					result.Status = IndexFailed
 					continue
 				}

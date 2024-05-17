@@ -113,7 +113,7 @@ func TestMediaFile_Resample(t *testing.T) {
 
 }
 
-func TestMediaFile_CreateThumbnailSize(t *testing.T) {
+func TestMediaFile_SkipThumbnailSize(t *testing.T) {
 	t.Run("elephants.jpg", func(t *testing.T) {
 		m, err := NewMediaFile(filepath.Join(conf.ExamplesPath(), "elephants.jpg"))
 
@@ -121,17 +121,17 @@ func TestMediaFile_CreateThumbnailSize(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, m.CreateThumbnailSize(thumb.SizeColors))
-		assert.True(t, m.CreateThumbnailSize(thumb.SizeTile100))
-		assert.True(t, m.CreateThumbnailSize(thumb.SizeTile224))
-		assert.True(t, m.CreateThumbnailSize(thumb.SizeTile500))
-		assert.True(t, m.CreateThumbnailSize(thumb.SizeFit720))
-		assert.False(t, m.CreateThumbnailSize(thumb.SizeFit1280))
-		assert.False(t, m.CreateThumbnailSize(thumb.SizeFit1920))
+		assert.False(t, m.SkipThumbnailSize(thumb.SizeColors))
+		assert.False(t, m.SkipThumbnailSize(thumb.SizeTile100))
+		assert.False(t, m.SkipThumbnailSize(thumb.SizeTile224))
+		assert.False(t, m.SkipThumbnailSize(thumb.SizeTile500))
+		assert.False(t, m.SkipThumbnailSize(thumb.SizeFit720))
+		assert.True(t, m.SkipThumbnailSize(thumb.SizeFit1280))
+		assert.True(t, m.SkipThumbnailSize(thumb.SizeFit1920))
 	})
 }
 
-func TestMediaFile_CreateThumbnails(t *testing.T) {
+func TestMediaFile_GenerateThumbnails(t *testing.T) {
 	c := config.TestConfig()
 
 	thumbsPath := "./.test_mediafile_createthumbnails"
@@ -157,7 +157,7 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = m.CreateThumbnails(thumbsPath, true)
+		err = m.GenerateThumbnails(thumbsPath, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -170,7 +170,7 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 		}
 
 		assert.FileExists(t, thumbFilename)
-		assert.NoError(t, m.CreateThumbnails(thumbsPath, false))
+		assert.NoError(t, m.GenerateThumbnails(thumbsPath, false))
 	})
 
 	t.Run("animated-earth.jpg", func(t *testing.T) {
@@ -180,7 +180,7 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = m.CreateThumbnails(thumbsPath, true)
+		err = m.GenerateThumbnails(thumbsPath, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -193,7 +193,7 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 		}
 
 		assert.FileExists(t, thumbFilename)
-		assert.NoError(t, m.CreateThumbnails(thumbsPath, false))
+		assert.NoError(t, m.GenerateThumbnails(thumbsPath, false))
 	})
 
 	t.Run("photoprism.png", func(t *testing.T) {
@@ -203,7 +203,7 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = m.CreateThumbnails(thumbsPath, true)
+		err = m.GenerateThumbnails(thumbsPath, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -216,7 +216,7 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 		}
 
 		assert.FileExists(t, thumbFilename)
-		assert.NoError(t, m.CreateThumbnails(thumbsPath, false))
+		assert.NoError(t, m.GenerateThumbnails(thumbsPath, false))
 	})
 
 	t.Run("broken/animated-earth.jpg", func(t *testing.T) {
@@ -226,7 +226,7 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		err = m.CreateThumbnails(thumbsPath, true)
+		err = m.GenerateThumbnails(thumbsPath, true)
 
 		if err != nil {
 			t.Fatal(err)
@@ -239,7 +239,7 @@ func TestMediaFile_CreateThumbnails(t *testing.T) {
 		}
 
 		assert.FileExists(t, thumbFilename)
-		assert.NoError(t, m.CreateThumbnails(thumbsPath, false))
+		assert.NoError(t, m.GenerateThumbnails(thumbsPath, false))
 	})
 }
 
