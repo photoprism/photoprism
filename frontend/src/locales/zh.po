@@ -377,13 +377,13 @@ msgstr "长宽比"
 msgid "Authentication"
 msgstr "认证"
 
-#: src/page/settings/library.vue:112
-msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "自动为无法索引或查看的文件创建缩略图。"
-
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "自动创建特殊时刻、旅行和地点的相册。"
+
+#: src/page/settings/library.vue:112
+msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
+msgstr "自动为无法索引或查看的文件创建缩略图。"
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
@@ -531,11 +531,11 @@ msgid "Change private flag"
 msgstr "更改私有标记"
 
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
-#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
+#: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "更改成功保存"
@@ -784,7 +784,7 @@ msgstr "尺寸"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "禁用内置 WebDAV 服务器，需要重新启动。"
 
-#: src/page/settings/advanced.vue:493
+#: src/page/settings/advanced.vue:496
 msgid "Disable Darktable"
 msgstr "禁用 Darktable"
 
@@ -792,11 +792,11 @@ msgstr "禁用 Darktable"
 msgid "Disable ExifTool"
 msgstr "禁用 ExifTool"
 
-#: src/page/settings/advanced.vue:581
+#: src/page/settings/advanced.vue:584
 msgid "Disable FFmpeg"
 msgstr "禁用 FFmpeg"
 
-#: src/page/settings/advanced.vue:559
+#: src/page/settings/advanced.vue:562
 msgid "Disable ImageMagick"
 msgstr "禁用ImageMagick"
 
@@ -804,7 +804,7 @@ msgstr "禁用ImageMagick"
 msgid "Disable Places"
 msgstr "禁用地点"
 
-#: src/page/settings/advanced.vue:515
+#: src/page/settings/advanced.vue:518
 msgid "Disable RawTherapee"
 msgstr "禁用 RawTherapee"
 
@@ -812,7 +812,7 @@ msgstr "禁用 RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "禁用 TensorFlow"
 
-#: src/page/settings/advanced.vue:605
+#: src/page/settings/advanced.vue:608
 msgid "Disable Vectors"
 msgstr "禁用载体"
 
@@ -824,11 +824,11 @@ msgstr "禁用 WebDAV"
 msgid "Disables reverse geocoding and maps."
 msgstr "禁用反向地理编码和地图。"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:609
 msgid "Disables vector graphics support."
 msgstr "禁用矢量图形支持。"
 
-#: src/page/settings/advanced.vue:582
+#: src/page/settings/advanced.vue:585
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "禁用视频转码和缩略图提取。"
 
@@ -850,15 +850,15 @@ msgstr "不创建 ExifTool JSON 文件，以改善元数据提取。"
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "不修改源文件夹，禁止导入、上传、删除。"
 
-#: src/page/settings/advanced.vue:494
+#: src/page/settings/advanced.vue:497
 msgid "Don't use Darktable to convert RAW images."
 msgstr "不使用 Darktable 转换 RAW 文件。"
 
-#: src/page/settings/advanced.vue:560
+#: src/page/settings/advanced.vue:563
 msgid "Don't use ImageMagick to convert images."
 msgstr "不要用ImageMagick来转换图像。"
 
-#: src/page/settings/advanced.vue:516
+#: src/page/settings/advanced.vue:519
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "不使用 RawTherapee 转换 RAW 文件。"
 
@@ -900,7 +900,7 @@ msgstr "下载远端文件"
 msgid "Download single files and zip archives."
 msgstr "下载单个文件并用 zip 压缩。"
 
-#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:118
+#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:119
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:132
 #: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:123
@@ -909,7 +909,7 @@ msgstr "下载单个文件并用 zip 压缩。"
 msgid "Downloading…"
 msgstr "下载中…"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:283
 msgid "Downscaling Filter"
 msgstr "缩小方法"
 
@@ -925,15 +925,15 @@ msgstr "重复项将被跳过，仅出现一次。"
 msgid "Duration"
 msgstr "持续时间"
 
-#: src/page/settings/advanced.vue:304
+#: src/page/settings/advanced.vue:307
 msgid "Dynamic Previews"
 msgstr "动态预览"
 
-#: src/page/settings/advanced.vue:305
+#: src/page/settings/advanced.vue:308
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "动态渲染需要性能较强的服务器，不建议用于 NAS 设备。"
 
-#: src/page/settings/advanced.vue:347
+#: src/page/settings/advanced.vue:350
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "动态尺寸限制：%{n}px"
 
@@ -972,7 +972,7 @@ msgstr "电子邮箱"
 msgid "Enable new features currently under development."
 msgstr "启用处于开发中的新特性。"
 
-#: src/page/settings/advanced.vue:538
+#: src/page/settings/advanced.vue:541
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "启用 RAW 转换器预设，可能会降低性能。"
 
@@ -1114,13 +1114,13 @@ msgstr "文件浏览器"
 msgid "File Conversion"
 msgstr "文件转换"
 
-#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
-#: src/dialog/album/edit.vue:25
+#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
+#: src/dialog/album/edit.vue:26
 msgid "File Name"
 msgstr "文件名"
 
-#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
-#: src/dialog/album/edit.vue:26
+#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
+#: src/dialog/album/edit.vue:27
 msgid "File Size"
 msgstr "文件大小"
 
@@ -1387,11 +1387,11 @@ msgstr "这是一个一次性使用的代码，当您使用它时将禁用您帐
 msgid "Item"
 msgstr "项目"
 
-#: src/page/settings/advanced.vue:322
+#: src/page/settings/advanced.vue:325
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG 质量：%{n}"
 
-#: src/page/settings/advanced.vue:428
+#: src/page/settings/advanced.vue:431
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG 尺寸限制：%{n}px"
 
@@ -1644,8 +1644,8 @@ msgstr "月"
 msgid "Mosaic"
 msgstr "马赛克"
 
-#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
-#: src/dialog/album/edit.vue:28
+#: src/component/album/toolbar.vue:78 src/component/photo/toolbar.vue:83
+#: src/dialog/album/edit.vue:30
 msgid "Most Relevant"
 msgstr "最相关"
 
@@ -1672,7 +1672,7 @@ msgstr "必须至少有%{n}个字符。"
 msgid "Name"
 msgstr "名称"
 
-#: src/component/album/toolbar.vue:85 src/dialog/album/edit.vue:32
+#: src/component/album/toolbar.vue:86 src/dialog/album/edit.vue:33
 #: src/dialog/photo/edit/labels.vue:34 src/dialog/photo/edit/people.vue:29
 #: src/page/labels.vue:45 src/page/library/browse.vue:44
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
@@ -1916,7 +1916,7 @@ msgstr "人物"
 msgid "People you share a link with will be able to view public contents."
 msgstr "与您共享链接的人将可以查看公共内容。"
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:149
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:150
 msgid "Permanently deleted"
 msgstr "已永久删除"
 
@@ -1951,6 +1951,11 @@ msgstr "照片棱镜+会员资格"
 #: src/app/routes.js:155
 msgid "Photos"
 msgstr "照片"
+
+#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
+#: src/dialog/album/edit.vue:25
+msgid "Picture Title"
+msgstr ""
 
 #: src/options/options.js:441
 msgid "Pink"
@@ -2001,7 +2006,7 @@ msgstr "请重新启动您的实例以使变化生效。"
 msgid "Please wait…"
 msgstr "请等待…"
 
-#: src/page/settings/advanced.vue:458
+#: src/page/settings/advanced.vue:461
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG 尺寸限制：%{n}px"
 
@@ -2432,7 +2437,7 @@ msgstr "开始/停止幻灯片"
 msgid "States"
 msgstr "省份"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:376
 msgid "Static Size Limit: %{n}px"
 msgstr "静态渲染尺寸限制： %{n}px"
 
@@ -2754,7 +2759,7 @@ msgstr "可能包含此类图像的上传将被自动拒绝。"
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:537
+#: src/page/settings/advanced.vue:540
 msgid "Use Presets"
 msgstr "使用预设"
 
@@ -2808,8 +2813,8 @@ msgstr "验证码"
 msgid "Video"
 msgstr "视频"
 
-#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
-#: src/dialog/album/edit.vue:27
+#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
+#: src/dialog/album/edit.vue:28
 msgid "Video Duration"
 msgstr "视频时长"
 

@@ -374,13 +374,13 @@ msgstr "Tỷ lệ khung hình"
 msgid "Authentication"
 msgstr "Xác thực"
 
-#: src/page/settings/library.vue:112
-msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "Tự động tạo hình thu nhỏ cho các tệp không thể lập chỉ mục hoặc xem được."
-
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Tự động tạo album về những khoảnh khắc, chuyến đi và địa điểm đặc biệt."
+
+#: src/page/settings/library.vue:112
+msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
+msgstr "Tự động tạo hình thu nhỏ cho các tệp không thể lập chỉ mục hoặc xem được."
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
@@ -528,11 +528,11 @@ msgid "Change private flag"
 msgstr "Thay đổi cờ riêng tư"
 
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
-#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
+#: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "Đã lưu thay đổi thành công"
@@ -781,7 +781,7 @@ msgstr "Kích thước"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Vô hiệu hóa máy chủ WebDAV tích hợp. Yêu cầu khởi động lại."
 
-#: src/page/settings/advanced.vue:493
+#: src/page/settings/advanced.vue:496
 msgid "Disable Darktable"
 msgstr "Tắt bảng tối"
 
@@ -789,11 +789,11 @@ msgstr "Tắt bảng tối"
 msgid "Disable ExifTool"
 msgstr "Tắt ExifTool"
 
-#: src/page/settings/advanced.vue:581
+#: src/page/settings/advanced.vue:584
 msgid "Disable FFmpeg"
 msgstr "Tắt FFmpeg"
 
-#: src/page/settings/advanced.vue:559
+#: src/page/settings/advanced.vue:562
 msgid "Disable ImageMagick"
 msgstr "Tắt ImageMagick"
 
@@ -801,7 +801,7 @@ msgstr "Tắt ImageMagick"
 msgid "Disable Places"
 msgstr "Vô hiệu hóa địa điểm"
 
-#: src/page/settings/advanced.vue:515
+#: src/page/settings/advanced.vue:518
 msgid "Disable RawTherapee"
 msgstr "Tắt RawTherapee"
 
@@ -809,7 +809,7 @@ msgstr "Tắt RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "Tắt TensorFlow"
 
-#: src/page/settings/advanced.vue:605
+#: src/page/settings/advanced.vue:608
 msgid "Disable Vectors"
 msgstr "Vô hiệu hóa vectơ"
 
@@ -821,11 +821,11 @@ msgstr "Tắt WebDAV"
 msgid "Disables reverse geocoding and maps."
 msgstr "Vô hiệu hóa mã hóa địa lý đảo ngược và bản đồ."
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:609
 msgid "Disables vector graphics support."
 msgstr "Tắt hỗ trợ đồ họa vector."
 
-#: src/page/settings/advanced.vue:582
+#: src/page/settings/advanced.vue:585
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Tắt chuyển mã video và trích xuất hình thu nhỏ."
 
@@ -847,15 +847,15 @@ msgstr "Không tạo tệp JSON ExifTool để cải thiện khả năng trích 
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Không sửa đổi thư mục gốc. Vô hiệu hóa nhập, tải lên và xóa."
 
-#: src/page/settings/advanced.vue:494
+#: src/page/settings/advanced.vue:497
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Không sử dụng Darktable để chuyển đổi ảnh RAW."
 
-#: src/page/settings/advanced.vue:560
+#: src/page/settings/advanced.vue:563
 msgid "Don't use ImageMagick to convert images."
 msgstr "Không sử dụng ImageMagick để chuyển đổi hình ảnh."
 
-#: src/page/settings/advanced.vue:516
+#: src/page/settings/advanced.vue:519
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Không sử dụng RawTherapee để chuyển đổi ảnh RAW."
 
@@ -897,7 +897,7 @@ msgstr "Tải tập tin từ xa"
 msgid "Download single files and zip archives."
 msgstr "Tải xuống các tập tin đơn lẻ và lưu trữ zip."
 
-#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:118
+#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:119
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:132
 #: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:123
@@ -906,7 +906,7 @@ msgstr "Tải xuống các tập tin đơn lẻ và lưu trữ zip."
 msgid "Downloading…"
 msgstr "Đang tải xuống…"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:283
 msgid "Downscaling Filter"
 msgstr "Bộ lọc thu nhỏ"
 
@@ -922,15 +922,15 @@ msgstr "Các bản sao sẽ bị bỏ qua và chỉ xuất hiện một lần."
 msgid "Duration"
 msgstr "Khoảng thời gian"
 
-#: src/page/settings/advanced.vue:304
+#: src/page/settings/advanced.vue:307
 msgid "Dynamic Previews"
 msgstr "Xem trước động"
 
-#: src/page/settings/advanced.vue:305
+#: src/page/settings/advanced.vue:308
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "Kết xuất động yêu cầu một máy chủ mạnh mẽ. Nó không được khuyến khích cho các thiết bị NAS."
 
-#: src/page/settings/advanced.vue:347
+#: src/page/settings/advanced.vue:350
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Giới hạn kích thước động: %{n}px"
 
@@ -969,7 +969,7 @@ msgstr "E-mail"
 msgid "Enable new features currently under development."
 msgstr "Kích hoạt các tính năng mới hiện đang được phát triển."
 
-#: src/page/settings/advanced.vue:538
+#: src/page/settings/advanced.vue:541
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Cho phép cài đặt trước bộ chuyển đổi RAW. Có thể làm giảm hiệu suất."
 
@@ -1111,13 +1111,13 @@ msgstr "Trình duyệt tệp"
 msgid "File Conversion"
 msgstr "Chuyển đổi tập tin"
 
-#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
-#: src/dialog/album/edit.vue:25
+#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
+#: src/dialog/album/edit.vue:26
 msgid "File Name"
 msgstr "Tên tệp"
 
-#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
-#: src/dialog/album/edit.vue:26
+#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
+#: src/dialog/album/edit.vue:27
 msgid "File Size"
 msgstr "Kích thước tập tin"
 
@@ -1384,11 +1384,11 @@ msgstr "Đây là mã sử dụng một lần sẽ vô hiệu hóa 2FA cho tài 
 msgid "Item"
 msgstr "Mục"
 
-#: src/page/settings/advanced.vue:322
+#: src/page/settings/advanced.vue:325
 msgid "JPEG Quality: %{n}"
 msgstr "Chất lượng JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:428
+#: src/page/settings/advanced.vue:431
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Giới hạn kích thước JPEG: %{n}px"
 
@@ -1641,8 +1641,8 @@ msgstr "Tháng"
 msgid "Mosaic"
 msgstr "Khảm"
 
-#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
-#: src/dialog/album/edit.vue:28
+#: src/component/album/toolbar.vue:78 src/component/photo/toolbar.vue:83
+#: src/dialog/album/edit.vue:30
 msgid "Most Relevant"
 msgstr "Liên quan nhất"
 
@@ -1669,7 +1669,7 @@ msgstr "Phải có ít nhất %{n} ký tự."
 msgid "Name"
 msgstr "Tên"
 
-#: src/component/album/toolbar.vue:85 src/dialog/album/edit.vue:32
+#: src/component/album/toolbar.vue:86 src/dialog/album/edit.vue:33
 #: src/dialog/photo/edit/labels.vue:34 src/dialog/photo/edit/people.vue:29
 #: src/page/labels.vue:45 src/page/library/browse.vue:44
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
@@ -1912,7 +1912,7 @@ msgstr "Mọi người"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Những người được bạn chia sẻ liên kết sẽ có thể xem nội dung công khai."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:149
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:150
 msgid "Permanently deleted"
 msgstr "Đã xóa vĩnh viễn"
 
@@ -1947,6 +1947,11 @@ msgstr "PhotoPrism+ Tư cách thành viên"
 #: src/app/routes.js:155
 msgid "Photos"
 msgstr "Ảnh"
+
+#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
+#: src/dialog/album/edit.vue:25
+msgid "Picture Title"
+msgstr ""
 
 #: src/options/options.js:441
 msgid "Pink"
@@ -1997,7 +2002,7 @@ msgstr "Vui lòng khởi động lại phiên bản của bạn để những th
 msgid "Please wait…"
 msgstr "Vui lòng chờ…"
 
-#: src/page/settings/advanced.vue:458
+#: src/page/settings/advanced.vue:461
 msgid "PNG Size Limit: %{n}px"
 msgstr "Giới hạn kích thước PNG: %{n}px"
 
@@ -2427,7 +2432,7 @@ msgstr "Bắt đầu/Dừng trình chiếu"
 msgid "States"
 msgstr "Những trạng thái"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:376
 msgid "Static Size Limit: %{n}px"
 msgstr "Giới hạn kích thước tĩnh: %{n}px"
 
@@ -2749,7 +2754,7 @@ msgstr "Những tải lên có thể chứa những hình ảnh như vậy sẽ 
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:537
+#: src/page/settings/advanced.vue:540
 msgid "Use Presets"
 msgstr "Sử dụng cài đặt trước"
 
@@ -2803,8 +2808,8 @@ msgstr "Mã xác nhận"
 msgid "Video"
 msgstr "Băng hình"
 
-#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
-#: src/dialog/album/edit.vue:27
+#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
+#: src/dialog/album/edit.vue:28
 msgid "Video Duration"
 msgstr "Thời lượng video"
 

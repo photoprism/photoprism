@@ -374,13 +374,13 @@ msgstr "Суадносіны бакоў"
 msgid "Authentication"
 msgstr "Аўтэнтыфікацыя"
 
-#: src/page/settings/library.vue:112
-msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "Аўтаматычна ствараць мініяцюры для файлаў, якія інакш нельга праіндэксаваць або праглядаць."
-
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Аўтаматычна стварае альбомы асаблівых момантаў, паездак і месцаў."
+
+#: src/page/settings/library.vue:112
+msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
+msgstr "Аўтаматычна ствараць мініяцюры для файлаў, якія інакш нельга праіндэксаваць або праглядаць."
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
@@ -528,11 +528,11 @@ msgid "Change private flag"
 msgstr "Змяніць прыватны тэг"
 
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
-#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
+#: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "Змены паспяхова захаваны"
@@ -781,7 +781,7 @@ msgstr "Памеры"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Адключыць убудаваны сервер WebDAV. Патрабуецца перазапуск."
 
-#: src/page/settings/advanced.vue:493
+#: src/page/settings/advanced.vue:496
 msgid "Disable Darktable"
 msgstr "Адключыць Darktable"
 
@@ -789,11 +789,11 @@ msgstr "Адключыць Darktable"
 msgid "Disable ExifTool"
 msgstr "Адключыць ExifTool"
 
-#: src/page/settings/advanced.vue:581
+#: src/page/settings/advanced.vue:584
 msgid "Disable FFmpeg"
 msgstr "Адключыць FFmpeg"
 
-#: src/page/settings/advanced.vue:559
+#: src/page/settings/advanced.vue:562
 msgid "Disable ImageMagick"
 msgstr "Адключыць ImageMagick"
 
@@ -801,7 +801,7 @@ msgstr "Адключыць ImageMagick"
 msgid "Disable Places"
 msgstr "Адключыць Месцы"
 
-#: src/page/settings/advanced.vue:515
+#: src/page/settings/advanced.vue:518
 msgid "Disable RawTherapee"
 msgstr "Адключыць RawTherapee"
 
@@ -809,7 +809,7 @@ msgstr "Адключыць RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "Адключыць TensorFlow"
 
-#: src/page/settings/advanced.vue:605
+#: src/page/settings/advanced.vue:608
 msgid "Disable Vectors"
 msgstr "Адключыць вектары"
 
@@ -821,11 +821,11 @@ msgstr "Адключыць WebDAV"
 msgid "Disables reverse geocoding and maps."
 msgstr "Адключае зваротнае геакадзіраванне і карты."
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:609
 msgid "Disables vector graphics support."
 msgstr "Адключае падтрымку вектарнай графікі."
 
-#: src/page/settings/advanced.vue:582
+#: src/page/settings/advanced.vue:585
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Адключае перакадзіраванне відэа і выманне мініяцюр."
 
@@ -847,15 +847,15 @@ msgstr "Не стварайце файлы JSON ExifTool для паляпшэн
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Не змяняйце папку арыгіналаў. Адключае імпарт, запампоўку і выдаленне."
 
-#: src/page/settings/advanced.vue:494
+#: src/page/settings/advanced.vue:497
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Не выкарыстоўвайце Darktable для пераўтварэння RAW відарысаў."
 
-#: src/page/settings/advanced.vue:560
+#: src/page/settings/advanced.vue:563
 msgid "Don't use ImageMagick to convert images."
 msgstr "Не выкарыстоўвайце ImageMagick для пераўтварэння відарысаў."
 
-#: src/page/settings/advanced.vue:516
+#: src/page/settings/advanced.vue:519
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Не выкарыстоўвайце RawTherapee для пераўтварэння RAW відарысаў."
 
@@ -897,7 +897,7 @@ msgstr "Спампаваць выдаленыя файлы"
 msgid "Download single files and zip archives."
 msgstr "Спампаваць асобныя файлы і zip-архівы."
 
-#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:118
+#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:119
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:132
 #: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:123
@@ -906,7 +906,7 @@ msgstr "Спампаваць асобныя файлы і zip-архівы."
 msgid "Downloading…"
 msgstr "Спампоўка…"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:283
 msgid "Downscaling Filter"
 msgstr "Фільтр памяншэння памеру"
 
@@ -922,15 +922,15 @@ msgstr "Дублікаты будуць прапушчаны і з'явяцца 
 msgid "Duration"
 msgstr "Працягласць"
 
-#: src/page/settings/advanced.vue:304
+#: src/page/settings/advanced.vue:307
 msgid "Dynamic Previews"
 msgstr "Дынамічны папярэдні прагляд"
 
-#: src/page/settings/advanced.vue:305
+#: src/page/settings/advanced.vue:308
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "Дынамічны рэндэрынг патрабуе магутнага сервера. Не рэкамендуецца для прылад NAS."
 
-#: src/page/settings/advanced.vue:347
+#: src/page/settings/advanced.vue:350
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Абмежаванне дынамічнага памеру: %{n}px"
 
@@ -969,7 +969,7 @@ msgstr "Электронная пошта"
 msgid "Enable new features currently under development."
 msgstr "Уключыць новыя функцыі, якія зараз распрацоўваюцца."
 
-#: src/page/settings/advanced.vue:538
+#: src/page/settings/advanced.vue:541
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Уключае прадусталяваныя налады канвертара RAW. Можа знізіць прадукцыйнасць."
 
@@ -1111,13 +1111,13 @@ msgstr "Файлавы браўзер"
 msgid "File Conversion"
 msgstr "Канвертацыя файлаў"
 
-#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
-#: src/dialog/album/edit.vue:25
+#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
+#: src/dialog/album/edit.vue:26
 msgid "File Name"
 msgstr "Імя файла"
 
-#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
-#: src/dialog/album/edit.vue:26
+#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
+#: src/dialog/album/edit.vue:27
 msgid "File Size"
 msgstr "Памер файла"
 
@@ -1384,11 +1384,11 @@ msgstr "Гэта аднаразовы код, які адключае 2FA для
 msgid "Item"
 msgstr "Пункт"
 
-#: src/page/settings/advanced.vue:322
+#: src/page/settings/advanced.vue:325
 msgid "JPEG Quality: %{n}"
 msgstr "Якасць JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:428
+#: src/page/settings/advanced.vue:431
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Абмежаванне памеру JPEG: %{n} пікс"
 
@@ -1641,8 +1641,8 @@ msgstr "Месяц"
 msgid "Mosaic"
 msgstr "Мазаіка"
 
-#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
-#: src/dialog/album/edit.vue:28
+#: src/component/album/toolbar.vue:78 src/component/photo/toolbar.vue:83
+#: src/dialog/album/edit.vue:30
 msgid "Most Relevant"
 msgstr "Самы актуальны"
 
@@ -1669,7 +1669,7 @@ msgstr "Павінна быць не менш за %{n} сімвалаў."
 msgid "Name"
 msgstr "Імя"
 
-#: src/component/album/toolbar.vue:85 src/dialog/album/edit.vue:32
+#: src/component/album/toolbar.vue:86 src/dialog/album/edit.vue:33
 #: src/dialog/photo/edit/labels.vue:34 src/dialog/photo/edit/people.vue:29
 #: src/page/labels.vue:45 src/page/library/browse.vue:44
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
@@ -1912,7 +1912,7 @@ msgstr "Людзі"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Людзі, з якімі вы абагульваеце спасылку, змогуць праглядаць агульнадаступнае змесціва."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:149
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:150
 msgid "Permanently deleted"
 msgstr "Выдалены назаўсёды"
 
@@ -1947,6 +1947,11 @@ msgstr "Членства ў PhotoPrism+"
 #: src/app/routes.js:155
 msgid "Photos"
 msgstr "Фатаграфіі"
+
+#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
+#: src/dialog/album/edit.vue:25
+msgid "Picture Title"
+msgstr ""
 
 #: src/options/options.js:441
 msgid "Pink"
@@ -1997,7 +2002,7 @@ msgstr "Перазапусціце асобнік, каб змены ўступ�
 msgid "Please wait…"
 msgstr "Калі ласка пачакай…"
 
-#: src/page/settings/advanced.vue:458
+#: src/page/settings/advanced.vue:461
 msgid "PNG Size Limit: %{n}px"
 msgstr "Ліміт памеру PNG: %{n}px"
 
@@ -2427,7 +2432,7 @@ msgstr "Пачаць/спыніць слайд-шоў"
 msgid "States"
 msgstr "дзяржавы"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:376
 msgid "Static Size Limit: %{n}px"
 msgstr "Ліміт статычнага памеру: %{n}px"
 
@@ -2749,7 +2754,7 @@ msgstr "Загрузкі, якія могуць утрымліваць такі�
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:537
+#: src/page/settings/advanced.vue:540
 msgid "Use Presets"
 msgstr "Выкарыстоўвайце налады"
 
@@ -2803,8 +2808,8 @@ msgstr "Код верыфікацыі"
 msgid "Video"
 msgstr "Відэа"
 
-#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
-#: src/dialog/album/edit.vue:27
+#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
+#: src/dialog/album/edit.vue:28
 msgid "Video Duration"
 msgstr "Працягласць відэа"
 

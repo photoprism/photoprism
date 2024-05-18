@@ -377,13 +377,13 @@ msgstr "نسبت ابعاد"
 msgid "Authentication"
 msgstr "احراز هویت"
 
-#: src/page/settings/library.vue:112
-msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "به طور خودکار تصاویر کوچک برای فایل هایی ایجاد کنید که در غیر این صورت نمی توان آنها را فهرست یا مشاهده کرد."
-
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "به طور خودکار آلبوم هایی از لحظات، سفرها و مکان های خاص ایجاد می کند."
+
+#: src/page/settings/library.vue:112
+msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
+msgstr "به طور خودکار تصاویر کوچک برای فایل هایی ایجاد کنید که در غیر این صورت نمی توان آنها را فهرست یا مشاهده کرد."
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
@@ -531,11 +531,11 @@ msgid "Change private flag"
 msgstr "تغییر پرچم خصوصی"
 
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
-#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
+#: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "تغییرات با موفقیت ذخیره شد"
@@ -784,7 +784,7 @@ msgstr "ابعاد"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "سرور WebDAV داخلی را غیرفعال کنید. نیاز به راه اندازی مجدد دارد."
 
-#: src/page/settings/advanced.vue:493
+#: src/page/settings/advanced.vue:496
 msgid "Disable Darktable"
 msgstr "غیرفعال کردن Darktable"
 
@@ -792,11 +792,11 @@ msgstr "غیرفعال کردن Darktable"
 msgid "Disable ExifTool"
 msgstr "غیرفعال کردن exiftool"
 
-#: src/page/settings/advanced.vue:581
+#: src/page/settings/advanced.vue:584
 msgid "Disable FFmpeg"
 msgstr "غیرفعال کردن ffmpeg"
 
-#: src/page/settings/advanced.vue:559
+#: src/page/settings/advanced.vue:562
 msgid "Disable ImageMagick"
 msgstr "ImageMagick را غیرفعال کنید"
 
@@ -804,7 +804,7 @@ msgstr "ImageMagick را غیرفعال کنید"
 msgid "Disable Places"
 msgstr "غیرفعال کردن مکان ها"
 
-#: src/page/settings/advanced.vue:515
+#: src/page/settings/advanced.vue:518
 msgid "Disable RawTherapee"
 msgstr "غیرفعال کردن Rawtherapee"
 
@@ -812,7 +812,7 @@ msgstr "غیرفعال کردن Rawtherapee"
 msgid "Disable TensorFlow"
 msgstr "غیرفعال کردن tensorflow"
 
-#: src/page/settings/advanced.vue:605
+#: src/page/settings/advanced.vue:608
 msgid "Disable Vectors"
 msgstr "غیرفعال کردن بردارها"
 
@@ -824,11 +824,11 @@ msgstr "غیرفعال کردن WebDAV"
 msgid "Disables reverse geocoding and maps."
 msgstr "غیرفعال کردن reverse geocoding و نقشه ها."
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:609
 msgid "Disables vector graphics support."
 msgstr "پشتیبانی از گرافیک برداری را غیرفعال می کند."
 
-#: src/page/settings/advanced.vue:582
+#: src/page/settings/advanced.vue:585
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "رمزگذاری ویدیو و استخراج تصاویر کوچک را غیرفعال می کند."
 
@@ -850,15 +850,15 @@ msgstr "پرونده های Exiftool JSON را برای بهبود استخرا�
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "پوشه Originals را اصلاح نکنید. واردات ، بارگذاری و حذف را غیرفعال می کند."
 
-#: src/page/settings/advanced.vue:494
+#: src/page/settings/advanced.vue:497
 msgid "Don't use Darktable to convert RAW images."
 msgstr "از DarkTable برای تبدیل پرونده های خام استفاده نکنید."
 
-#: src/page/settings/advanced.vue:560
+#: src/page/settings/advanced.vue:563
 msgid "Don't use ImageMagick to convert images."
 msgstr "برای تبدیل تصاویر از ImageMagick استفاده نکنید."
 
-#: src/page/settings/advanced.vue:516
+#: src/page/settings/advanced.vue:519
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "از rawtherapee برای تبدیل پرونده های خام استفاده نکنید."
 
@@ -900,7 +900,7 @@ msgstr "بارگیری پرونده های از راه دور"
 msgid "Download single files and zip archives."
 msgstr "بارگیری پرونده های تک و بایگانی زیپ."
 
-#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:118
+#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:119
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:132
 #: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:123
@@ -909,7 +909,7 @@ msgstr "بارگیری پرونده های تک و بایگانی زیپ."
 msgid "Downloading…"
 msgstr "درحال دانلود…"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:283
 msgid "Downscaling Filter"
 msgstr "فیلتر کاهش مقیاس"
 
@@ -925,15 +925,15 @@ msgstr "نسخه های تکراری پرش می شوند و فقط یک بار 
 msgid "Duration"
 msgstr "مدت"
 
-#: src/page/settings/advanced.vue:304
+#: src/page/settings/advanced.vue:307
 msgid "Dynamic Previews"
 msgstr "پیش نمایش پویا"
 
-#: src/page/settings/advanced.vue:305
+#: src/page/settings/advanced.vue:308
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "رندر پویا به یک سرور قدرتمند نیاز دارد. برای دستگاه های NAS توصیه نمی شود."
 
-#: src/page/settings/advanced.vue:347
+#: src/page/settings/advanced.vue:350
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "محدودیت اندازه پویا: %{n}px"
 
@@ -972,7 +972,7 @@ msgstr "پست الکترونیک"
 msgid "Enable new features currently under development."
 msgstr "فعال کردن ویژگی های جدید در حال توسعه."
 
-#: src/page/settings/advanced.vue:538
+#: src/page/settings/advanced.vue:541
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "فعال کردن RAW converter presets  . ممکن است عملکرد را کاهش دهد."
 
@@ -1114,13 +1114,13 @@ msgstr "مرورگر فایل"
 msgid "File Conversion"
 msgstr "تبدیل فایل"
 
-#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
-#: src/dialog/album/edit.vue:25
+#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
+#: src/dialog/album/edit.vue:26
 msgid "File Name"
 msgstr "نام فایل"
 
-#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
-#: src/dialog/album/edit.vue:26
+#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
+#: src/dialog/album/edit.vue:27
 msgid "File Size"
 msgstr "فایل"
 
@@ -1387,11 +1387,11 @@ msgstr "این یک کد یکبار مصرف است که هنگام استفاد
 msgid "Item"
 msgstr "مورد"
 
-#: src/page/settings/advanced.vue:322
+#: src/page/settings/advanced.vue:325
 msgid "JPEG Quality: %{n}"
 msgstr "کیفیت JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:428
+#: src/page/settings/advanced.vue:431
 msgid "JPEG Size Limit: %{n}px"
 msgstr "محدودیت اندازه JPEG: %{n}px"
 
@@ -1644,8 +1644,8 @@ msgstr "ماه"
 msgid "Mosaic"
 msgstr "موزائیک"
 
-#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
-#: src/dialog/album/edit.vue:28
+#: src/component/album/toolbar.vue:78 src/component/photo/toolbar.vue:83
+#: src/dialog/album/edit.vue:30
 msgid "Most Relevant"
 msgstr "بسیار مرتبط"
 
@@ -1672,7 +1672,7 @@ msgstr "باید حداقل %{n} حرف داشته باشد."
 msgid "Name"
 msgstr "نام"
 
-#: src/component/album/toolbar.vue:85 src/dialog/album/edit.vue:32
+#: src/component/album/toolbar.vue:86 src/dialog/album/edit.vue:33
 #: src/dialog/photo/edit/labels.vue:34 src/dialog/photo/edit/people.vue:29
 #: src/page/labels.vue:45 src/page/library/browse.vue:44
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
@@ -1915,7 +1915,7 @@ msgstr "مردم"
 msgid "People you share a link with will be able to view public contents."
 msgstr "افرادی که لینکی را با آنها به اشتراک می گذارید می توانند محتوای عمومی را مشاهده کنند."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:149
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:150
 msgid "Permanently deleted"
 msgstr "برای همیشه حذف شد"
 
@@ -1950,6 +1950,11 @@ msgstr "عضویت PhotoPrism+"
 #: src/app/routes.js:155
 msgid "Photos"
 msgstr "تصاویر"
+
+#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
+#: src/dialog/album/edit.vue:25
+msgid "Picture Title"
+msgstr ""
 
 #: src/options/options.js:441
 msgid "Pink"
@@ -2000,7 +2005,7 @@ msgstr "لطفاً نمونه خود را مجدداً راه اندازی کن�
 msgid "Please wait…"
 msgstr "لطفا صبر کنید…"
 
-#: src/page/settings/advanced.vue:458
+#: src/page/settings/advanced.vue:461
 msgid "PNG Size Limit: %{n}px"
 msgstr "محدودیت اندازه PNG: %{n}px"
 
@@ -2430,7 +2435,7 @@ msgstr "شروع/پایان اسلایدشو"
 msgid "States"
 msgstr "ایالت ها"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:376
 msgid "Static Size Limit: %{n}px"
 msgstr "محدودیت اندازه ثابت: %{n}px"
 
@@ -2752,7 +2757,7 @@ msgstr "آپلودهایی که ممکن است حاوی چنین تصاویری
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:537
+#: src/page/settings/advanced.vue:540
 msgid "Use Presets"
 msgstr "از Presets استفاده کنید"
 
@@ -2806,8 +2811,8 @@ msgstr "کد تایید"
 msgid "Video"
 msgstr "ویدیو"
 
-#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
-#: src/dialog/album/edit.vue:27
+#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
+#: src/dialog/album/edit.vue:28
 msgid "Video Duration"
 msgstr "مدت"
 

@@ -12,6 +12,18 @@ import (
 )
 
 func TestPhotos(t *testing.T) {
+	t.Run("SortByTile", func(t *testing.T) {
+		var f form.SearchPhotos
+		f.Order = sortby.Title
+
+		photos, _, err := Photos(f)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.IsType(t, PhotoResults{}, photos)
+	})
 	t.Run("OrderDuration", func(t *testing.T) {
 		var frm form.SearchPhotos
 

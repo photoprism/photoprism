@@ -377,13 +377,13 @@ msgstr "Proporção da Tela"
 msgid "Authentication"
 msgstr "Autenticação"
 
-#: src/page/settings/library.vue:112
-msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "Criar automaticamente miniaturas para ficheiros que não podem ser indexados ou visualizados de outra forma."
-
 #: src/page/settings/general.vue:166
 msgid "Automatically creates albums of special moments, trips, and places."
 msgstr "Cria automaticamente álbuns de momentos, viagens e lugares especiais."
+
+#: src/page/settings/library.vue:112
+msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
+msgstr "Criar automaticamente miniaturas para ficheiros que não podem ser indexados ou visualizados de outra forma."
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
@@ -531,11 +531,11 @@ msgid "Change private flag"
 msgstr "Mudar marcação como privado"
 
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
-#: src/dialog/album/edit.vue:56 src/dialog/photo/edit/files.vue:147
+#: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:53 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "As mudanças foram salvas com sucesso"
@@ -784,7 +784,7 @@ msgstr "Dimensões"
 msgid "Disable built-in WebDAV server. Requires a restart."
 msgstr "Desativa servidor WebDAV embutido. Requer reinicialização."
 
-#: src/page/settings/advanced.vue:493
+#: src/page/settings/advanced.vue:496
 msgid "Disable Darktable"
 msgstr "Desativar Darktable"
 
@@ -792,11 +792,11 @@ msgstr "Desativar Darktable"
 msgid "Disable ExifTool"
 msgstr "Desativar ExifTool"
 
-#: src/page/settings/advanced.vue:581
+#: src/page/settings/advanced.vue:584
 msgid "Disable FFmpeg"
 msgstr "Desativar FFmpeg"
 
-#: src/page/settings/advanced.vue:559
+#: src/page/settings/advanced.vue:562
 msgid "Disable ImageMagick"
 msgstr "Desativar ImageMagick"
 
@@ -804,7 +804,7 @@ msgstr "Desativar ImageMagick"
 msgid "Disable Places"
 msgstr "Desativar Lugares"
 
-#: src/page/settings/advanced.vue:515
+#: src/page/settings/advanced.vue:518
 msgid "Disable RawTherapee"
 msgstr "Desativar RawTherapee"
 
@@ -812,7 +812,7 @@ msgstr "Desativar RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "Desativar TensorFlow"
 
-#: src/page/settings/advanced.vue:605
+#: src/page/settings/advanced.vue:608
 msgid "Disable Vectors"
 msgstr "Desativar vetores"
 
@@ -824,11 +824,11 @@ msgstr "Desativar WebDAV"
 msgid "Disables reverse geocoding and maps."
 msgstr "Desativa geocodificação reversa e mapas."
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:609
 msgid "Disables vector graphics support."
 msgstr "Desativa o suporte a gráficos vetoriais."
 
-#: src/page/settings/advanced.vue:582
+#: src/page/settings/advanced.vue:585
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Desativa a transcodificação de vídeo e a extração de miniaturas."
 
@@ -850,15 +850,15 @@ msgstr "Não criar arquivos JSON ExifTool que melhoram a extração de metadados
 msgid "Don't modify originals folder. Disables import, upload, and delete."
 msgstr "Não modificar a pasta de originais. Desativa importação, envio e remoção."
 
-#: src/page/settings/advanced.vue:494
+#: src/page/settings/advanced.vue:497
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Não use o Darktable para converter arquivos RAW."
 
-#: src/page/settings/advanced.vue:560
+#: src/page/settings/advanced.vue:563
 msgid "Don't use ImageMagick to convert images."
 msgstr "Não use o ImageMagick para converter imagens."
 
-#: src/page/settings/advanced.vue:516
+#: src/page/settings/advanced.vue:519
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Não use RawTherapee para converter arquivos RAW."
 
@@ -900,7 +900,7 @@ msgstr "Descarregar arquivos remotos"
 msgid "Download single files and zip archives."
 msgstr "Descarregar ficheiros individuais e arquivos zip."
 
-#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:118
+#: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:119
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
 #: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:132
 #: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:123
@@ -909,7 +909,7 @@ msgstr "Descarregar ficheiros individuais e arquivos zip."
 msgid "Downloading…"
 msgstr "Descarregando…"
 
-#: src/page/settings/advanced.vue:281
+#: src/page/settings/advanced.vue:283
 msgid "Downscaling Filter"
 msgstr "Filtro de redimensionamento"
 
@@ -925,15 +925,15 @@ msgstr "Duplicações serão descarregadas e só vão aparecer uma vez."
 msgid "Duration"
 msgstr "Duração"
 
-#: src/page/settings/advanced.vue:304
+#: src/page/settings/advanced.vue:307
 msgid "Dynamic Previews"
 msgstr "Amostras dinâmicas"
 
-#: src/page/settings/advanced.vue:305
+#: src/page/settings/advanced.vue:308
 msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 msgstr "Geração dinâmica requer um servidor poderoso. Não recomendado para dispositivos NAS."
 
-#: src/page/settings/advanced.vue:347
+#: src/page/settings/advanced.vue:350
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Tamanho dinâmico limite: %{n}px"
 
@@ -972,7 +972,7 @@ msgstr "E-mail"
 msgid "Enable new features currently under development."
 msgstr "Habilitar funcionalidades atualmente em desenvolvimento."
 
-#: src/page/settings/advanced.vue:538
+#: src/page/settings/advanced.vue:541
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Permite predefinições de conversores RAW. Pode reduzir o desempenho."
 
@@ -1114,13 +1114,13 @@ msgstr "Explorador de Arquivos"
 msgid "File Conversion"
 msgstr "Conversão de arquivo"
 
-#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
-#: src/dialog/album/edit.vue:25
+#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
+#: src/dialog/album/edit.vue:26
 msgid "File Name"
 msgstr "Nome do arquivo"
 
-#: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
-#: src/dialog/album/edit.vue:26
+#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
+#: src/dialog/album/edit.vue:27
 msgid "File Size"
 msgstr "Tamanho do Arquivo"
 
@@ -1387,11 +1387,11 @@ msgstr "É um código de uso único que desativará o 2FA da sua conta quando vo
 msgid "Item"
 msgstr "Item"
 
-#: src/page/settings/advanced.vue:322
+#: src/page/settings/advanced.vue:325
 msgid "JPEG Quality: %{n}"
 msgstr "Qualidade JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:428
+#: src/page/settings/advanced.vue:431
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Tamanho JPEG limite: %{n}px"
 
@@ -1644,8 +1644,8 @@ msgstr "Mês"
 msgid "Mosaic"
 msgstr "Mosaico"
 
-#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
-#: src/dialog/album/edit.vue:28
+#: src/component/album/toolbar.vue:78 src/component/photo/toolbar.vue:83
+#: src/dialog/album/edit.vue:30
 msgid "Most Relevant"
 msgstr "Mais Relevante"
 
@@ -1672,7 +1672,7 @@ msgstr "Deve ter pelo menos %{n} caracteres."
 msgid "Name"
 msgstr "Nome"
 
-#: src/component/album/toolbar.vue:85 src/dialog/album/edit.vue:32
+#: src/component/album/toolbar.vue:86 src/dialog/album/edit.vue:33
 #: src/dialog/photo/edit/labels.vue:34 src/dialog/photo/edit/people.vue:29
 #: src/page/labels.vue:45 src/page/library/browse.vue:44
 #: src/page/people/new.vue:46 src/page/people/recognized.vue:45
@@ -1915,7 +1915,7 @@ msgstr "Pessoas"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Pessoas com as quais partilha um link poderão ver os conteúdos públicos."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:149
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:150
 msgid "Permanently deleted"
 msgstr "Permanentemente excluídas"
 
@@ -1950,6 +1950,11 @@ msgstr "Associação PhotoPrism+"
 #: src/app/routes.js:155
 msgid "Photos"
 msgstr "Fotos"
+
+#: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
+#: src/dialog/album/edit.vue:25
+msgid "Picture Title"
+msgstr ""
 
 #: src/options/options.js:441
 msgid "Pink"
@@ -2000,7 +2005,7 @@ msgstr "Reinicie sua instância para que as alterações entrem em vigor."
 msgid "Please wait…"
 msgstr "Por favor, aguarde…"
 
-#: src/page/settings/advanced.vue:458
+#: src/page/settings/advanced.vue:461
 msgid "PNG Size Limit: %{n}px"
 msgstr "Tamanho PNG limite: %{n}px"
 
@@ -2430,7 +2435,7 @@ msgstr "Iniciar/Parar Apresentação"
 msgid "States"
 msgstr "Estados"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:376
 msgid "Static Size Limit: %{n}px"
 msgstr "Tamanho estático limite: %{n}px"
 
@@ -2752,7 +2757,7 @@ msgstr "Envios que possam conter tais imagens serão rejeitados automaticamente.
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:537
+#: src/page/settings/advanced.vue:540
 msgid "Use Presets"
 msgstr "Usar pré-definições"
 
@@ -2806,8 +2811,8 @@ msgstr "Código de verificação"
 msgid "Video"
 msgstr "Vídeo"
 
-#: src/component/album/toolbar.vue:75 src/component/photo/toolbar.vue:80
-#: src/dialog/album/edit.vue:27
+#: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
+#: src/dialog/album/edit.vue:28
 msgid "Video Duration"
 msgstr "Duração Vídeo"
 
