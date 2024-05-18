@@ -34,10 +34,23 @@ func (c *Config) JpegQuality() thumb.Quality {
 
 // ThumbLibrary returns the name of the image processing library to be used for generating thumbnails.
 func (c *Config) ThumbLibrary() string {
-	switch clean.TypeLowerUnderscore(c.options.ThumbLibrary) {
-	case thumb.LibImaging, "", "imagine", "internal":
+	switch c.options.ThumbLibrary {
+	case thumb.LibVips, thumb.LibAuto:
+		return thumb.LibVips
+	case thumb.LibImaging:
 		return thumb.LibImaging
 	default:
+		c.options.ThumbLibrary = clean.TypeLowerUnderscore(c.options.ThumbLibrary)
+
+		if c.options.ThumbLibrary == "imagine" || c.options.ThumbLibrary == "" {
+			c.options.ThumbLibrary = thumb.LibImaging
+			return thumb.LibImaging
+		} else if c.options.ThumbLibrary == "vips" || c.options.ThumbLibrary == "libvips" {
+			c.options.ThumbLibrary = thumb.LibVips
+		} else {
+			c.options.ThumbLibrary = thumb.LibAuto
+		}
+
 		return thumb.LibVips
 	}
 }

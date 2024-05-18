@@ -56,6 +56,8 @@ export class ConfigOptions extends Model {
       UploadNSFW: config.values.uploadNSFW,
       RawPresets: false,
       ThumbUncached: true,
+      ThumbLibrary: "",
+      ThumbColor: "",
       ThumbFilter: "",
       ThumbSize: 0,
       ThumbSizeUncached: 0,

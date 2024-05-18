@@ -21,8 +21,8 @@ func Open(fileName string, orientation int) (result image.Image, err error) {
 		return result, err
 	}
 
-	// Open JPEG as sRGB image?
-	if Color == ColorSRGB && fs.FileType(fileName) == fs.ImageJPEG {
+	// Open JPEG image with color processing?
+	if Color != ColorNone && fs.FileType(fileName) == fs.ImageJPEG {
 		return OpenJpeg(fileName, orientation)
 	}
 

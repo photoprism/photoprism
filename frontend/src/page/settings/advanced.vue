@@ -43,7 +43,7 @@
                 color="secondary-dark"
                 :label="$gettext('Database Backups')"
                 :hint="$gettext('Create index backups based on the configured schedule.')"
-                prepend-icon="healing"
+                prepend-icon="history"
                 persistent-hint
                 @change="onChange"
               >
@@ -110,7 +110,7 @@
 
         <v-card-actions>
           <v-layout wrap align-top>
-            <v-flex xs12 class="px-2 pb-2">
+            <v-flex v-if="settings.ThumbLibrary === 'imaging'" xs12 class="px-2 pb-2">
               <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" color="secondary-dark" background-color="secondary-light" hide-details box @change="onChange"></v-select>
             </v-flex>
 
@@ -333,7 +333,10 @@ export default {
       }
 
       this.busy = true;
-      this.settings.load().finally(() => (this.busy = false));
+      this.settings.load().finally(() => {
+        this.busy = false;
+        console.log("SETTINGS", this.settings);
+      });
     },
     onChange() {
       if (this.busy || this.isDemo) {

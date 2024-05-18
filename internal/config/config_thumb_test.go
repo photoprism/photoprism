@@ -48,7 +48,7 @@ func TestConfig_JpegQuality(t *testing.T) {
 func TestConfig_ThumbFilter(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, thumb.ResampleAuto, c.ThumbFilter())
+	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
 	c.options.ThumbFilter = "blackman"
 	assert.Equal(t, thumb.ResampleBlackman, c.ThumbFilter())
 	c.options.ThumbFilter = "lanczos"
@@ -56,9 +56,9 @@ func TestConfig_ThumbFilter(t *testing.T) {
 	c.options.ThumbFilter = "linear"
 	assert.Equal(t, thumb.ResampleLinear, c.ThumbFilter())
 	c.options.ThumbFilter = "auto"
-	assert.Equal(t, thumb.ResampleAuto, c.ThumbFilter())
+	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
 	c.options.ThumbFilter = ""
-	assert.Equal(t, thumb.ResampleAuto, c.ThumbFilter())
+	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
 }
 
 func TestConfig_ThumbSizeUncached(t *testing.T) {

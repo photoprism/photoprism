@@ -75,6 +75,6 @@ func ParseFilter(name string, lib Lib) ResampleFilter {
 	case ResampleBlackman, ResampleLanczos, ResampleCubic, ResampleLinear, ResampleNearest:
 		return filter
 	default:
-		return ResampleAuto
+		return ResampleLanczos
 	}
 }
