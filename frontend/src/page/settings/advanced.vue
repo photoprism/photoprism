@@ -335,7 +335,6 @@ export default {
       this.busy = true;
       this.settings.load().finally(() => {
         this.busy = false;
-        console.log("SETTINGS", this.settings);
       });
     },
     onChange() {
