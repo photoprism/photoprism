@@ -4,7 +4,7 @@ import "github.com/photoprism/photoprism/pkg/clean"
 
 type ColorSpace = string
 
-// Supported thumbnail color profiles.
+// Supported thumbnail color profile settings.
 const (
 	ColorNone     ColorSpace = "none"
 	ColorAuto     ColorSpace = "auto"
@@ -12,7 +12,7 @@ const (
 	ColorPreserve ColorSpace = "preserve"
 )
 
-// Color sets the default color profiles for thumbnails.
+// Color sets the standard color profile for thumbnails.
 var Color = ColorAuto
 
 // ParseColor returns a ColorSpace based on the config value string and image library.

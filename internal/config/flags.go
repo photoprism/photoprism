@@ -760,7 +760,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-color",
-			Usage:  "default color `PROFILE` for thumbnails (auto, preserve, srgb, none)",
+			Usage:  "standard color `PROFILE` for thumbnails (auto, preserve, srgb, none)",
 			Value:  thumb.ColorAuto,
 			EnvVar: EnvVar("THUMB_COLOR"),
 		}}, {
