@@ -6,61 +6,79 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseQuality(t *testing.T) {
-	t.Run("Worst", func(t *testing.T) {
-		assert.Equal(t, QualityWorst, ParseQuality("worst"))
+func TestJpegQuality(t *testing.T) {
+	t.Run("Large", func(t *testing.T) {
+		assert.Equal(t, JpegQualityDefault, JpegQuality(100, 500))
 	})
-	t.Run("Lowest", func(t *testing.T) {
-		assert.Equal(t, QualityWorst, ParseQuality("lowest"))
+	t.Run("Small", func(t *testing.T) {
+		assert.Equal(t, JpegQualityDefault-5, JpegQuality(50, 150))
+	})
+}
+
+func TestJpegQualitySmall(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		assert.Equal(t, JpegQualityDefault-5, JpegQualitySmall())
+	})
+}
+
+func TestParseQuality(t *testing.T) {
+	t.Run("Max", func(t *testing.T) {
+		assert.Equal(t, QualityMax, ParseQuality("max"))
+	})
+	t.Run("Min", func(t *testing.T) {
+		assert.Equal(t, QualityMin, ParseQuality("min"))
 	})
 	t.Run("bad", func(t *testing.T) {
-		assert.Equal(t, QualityBad, ParseQuality("bad"))
+		assert.Equal(t, QualityMedium, ParseQuality("bad"))
 	})
 	t.Run("low", func(t *testing.T) {
 		assert.Equal(t, QualityLow, ParseQuality("low"))
 	})
+	t.Run("high", func(t *testing.T) {
+		assert.Equal(t, QualityHigh, ParseQuality("high"))
+	})
 	t.Run("Empty", func(t *testing.T) {
-		assert.Equal(t, QualityDefault, ParseQuality(""))
-		assert.Equal(t, QualityDefault, ParseQuality("             "))
+		assert.Equal(t, QualityMedium, ParseQuality(""))
+		assert.Equal(t, QualityMedium, ParseQuality("             "))
 	})
 	t.Run("Default", func(t *testing.T) {
-		assert.Equal(t, QualityDefault, ParseQuality("default"))
+		assert.Equal(t, QualityMedium, ParseQuality("default"))
 	})
 	t.Run("Medium", func(t *testing.T) {
-		assert.Equal(t, QualityDefault, ParseQuality("medium"))
-		assert.Equal(t, QualityDefault, ParseQuality("   \t       medium \n\r"))
-		assert.Equal(t, QualityDefault, ParseQuality("MEDIUM"))
+		assert.Equal(t, QualityMedium, ParseQuality("medium"))
+		assert.Equal(t, QualityMedium, ParseQuality("   \t       medium \n\r"))
+		assert.Equal(t, QualityMedium, ParseQuality("MEDIUM"))
 	})
 	t.Run("Good", func(t *testing.T) {
 		assert.Equal(t, QualityHigh, ParseQuality("Good"))
 		assert.Equal(t, QualityHigh, ParseQuality("GOOD"))
 	})
 	t.Run("Best", func(t *testing.T) {
-		assert.Equal(t, QualityBest, ParseQuality("Best"))
+		assert.Equal(t, QualityMax, ParseQuality("Best"))
 	})
 	t.Run("Ultra", func(t *testing.T) {
-		assert.Equal(t, QualityBest, ParseQuality("ultra"))
+		assert.Equal(t, QualityMax, ParseQuality("ultra"))
 	})
 	t.Run("0", func(t *testing.T) {
-		assert.Equal(t, QualityWorst, ParseQuality("0"))
+		assert.Equal(t, QualityMin, ParseQuality("0"))
 	})
 	t.Run("1", func(t *testing.T) {
-		assert.Equal(t, QualityBad, ParseQuality("1"))
+		assert.Equal(t, QualityMin, ParseQuality("1"))
 	})
 	t.Run("2", func(t *testing.T) {
 		assert.Equal(t, QualityLow, ParseQuality("2"))
 	})
 	t.Run("3", func(t *testing.T) {
-		assert.Equal(t, QualityDefault, ParseQuality("3"))
+		assert.Equal(t, QualityMedium, ParseQuality("3"))
 	})
 	t.Run("4", func(t *testing.T) {
 		assert.Equal(t, QualityHigh, ParseQuality("4"))
 	})
 	t.Run("5", func(t *testing.T) {
-		assert.Equal(t, QualityBest, ParseQuality("5"))
+		assert.Equal(t, QualityMax, ParseQuality("5"))
 	})
 	t.Run("6", func(t *testing.T) {
-		assert.Equal(t, QualityDefault, ParseQuality("6"))
+		assert.Equal(t, QualityMax, ParseQuality("6"))
 	})
 	t.Run("50", func(t *testing.T) {
 		assert.Equal(t, Quality(50), ParseQuality("50"))
@@ -83,9 +101,9 @@ func TestParseQuality(t *testing.T) {
 }
 
 func TestQuality_String(t *testing.T) {
-	assert.Equal(t, "95", QualityBest.String())
-	assert.Equal(t, "88", QualityHigh.String())
-	assert.Equal(t, "82", QualityDefault.String())
-	assert.Equal(t, "75", QualityBad.String())
-
+	assert.Equal(t, "90", QualityMax.String())
+	assert.Equal(t, "85", QualityHigh.String())
+	assert.Equal(t, "83", QualityMedium.String())
+	assert.Equal(t, "78", QualityLow.String())
+	assert.Equal(t, "70", QualityMin.String())
 }

@@ -1,17 +1,17 @@
 package thumb
 
 var (
-	SizePrecached = 2048
-	SizeUncached  = 7680
+	SizeCached   = SizeFit1920.Width
+	SizeOnDemand = SizeFit7680.Width
 )
 
 // MaxSize returns the max supported size in pixels.
 func MaxSize() int {
-	if SizePrecached > SizeUncached {
-		return SizePrecached
+	if SizeCached > SizeOnDemand {
+		return SizeCached
 	}
 
-	return SizeUncached
+	return SizeOnDemand
 }
 
 // InvalidSize tests if the size in pixels is invalid.

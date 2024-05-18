@@ -88,20 +88,12 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 		return "", nil, err
 	}
 
-	// Export to PNG or JPEG.
-	if fs.FileType(thumbName) == fs.ImagePNG {
-		params := vips.NewPngExportParams()
-		thumbBuffer, _, err = img.ExportPng(params)
-	} else {
-		params := vips.NewJpegExportParams()
-
-		if width <= 150 && height <= 150 {
-			params.Quality = JpegQualitySmall.Int()
-		} else {
-			params.Quality = JpegQuality.Int()
-		}
-
-		thumbBuffer, _, err = img.ExportJpeg(params)
+	// Export to standard image format.
+	switch fs.FileType(thumbName) {
+	case fs.ImagePNG:
+		thumbBuffer, _, err = img.ExportPng(VipsPngExportParams(width, height))
+	default:
+		thumbBuffer, _, err = img.ExportJpeg(VipsJpegExportParams(width, height))
 	}
 
 	// Check if export failed.
@@ -124,6 +116,44 @@ func VipsImportParams() *vips.ImportParams {
 	params := &vips.ImportParams{}
 	params.AutoRotate.Set(true)
 	params.FailOnError.Set(false)
+	return params
+}
+
+// VipsPngExportParams returns PNG image encoding parameters for libvips.
+func VipsPngExportParams(width, height int) *vips.PngExportParams {
+	params := vips.NewPngExportParams()
+	params.Filter = vips.PngFilterNone
+	params.Interlace = false
+	params.Palette = false
+
+	// Set compression depending on image size.
+	if width > 20 || height > 20 {
+		params.Compression = 6
+	} else {
+		params.Compression = 0
+	}
+
+	return params
+}
+
+// VipsJpegExportParams returns JPEG image encoding parameters for libvips.
+func VipsJpegExportParams(width, height int) *vips.JpegExportParams {
+	params := vips.NewJpegExportParams()
+	params.Quality = JpegQuality(width, height).Int()
+	params.Interlace = true
+	params.SubsampleMode = vips.VipsForeignSubsampleAuto
+
+	// Enable quality enhancements depending on image size.
+	if width > 150 || height > 150 {
+		params.OptimizeCoding = true
+		// The following options can only be set if libvips
+		// has been compiled with the "--with-mozjpeg" flag:
+		// params.QuantTable = 3
+		// params.TrellisQuant = true
+		// params.OvershootDeringing = true
+		// params.OptimizeScans = true
+	}
+
 	return params
 }
 

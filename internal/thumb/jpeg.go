@@ -42,7 +42,7 @@ func Jpeg(srcFile, jpgFile string, orientation int) (img image.Image, err error)
 	}
 
 	// Get JPEG quality setting.
-	quality := JpegQuality.EncodeOption()
+	quality := JpegQualityDefault.EncodeOption()
 
 	// Save JPEG file.
 	if err = imaging.Save(img, jpgFile, quality); err != nil {

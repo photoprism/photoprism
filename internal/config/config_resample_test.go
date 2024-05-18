@@ -20,41 +20,45 @@ func TestConfig_ConvertSize(t *testing.T) {
 func TestConfig_JpegQuality(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, thumb.QualityDefault, c.JpegQuality())
+	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
 	c.options.JpegQuality = "110"
-	assert.Equal(t, thumb.QualityDefault, c.JpegQuality())
+	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
 	c.options.JpegQuality = "98"
 	assert.Equal(t, thumb.Quality(98), c.JpegQuality())
 	c.options.JpegQuality = ""
-	assert.Equal(t, thumb.QualityDefault, c.JpegQuality())
+	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
 	c.options.JpegQuality = "best "
-	assert.Equal(t, thumb.QualityBest, c.JpegQuality())
+	assert.Equal(t, thumb.QualityMax, c.JpegQuality())
 	c.options.JpegQuality = "high"
 	assert.Equal(t, thumb.QualityHigh, c.JpegQuality())
+	c.options.JpegQuality = "med "
+	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
 	c.options.JpegQuality = "medium "
-	assert.Equal(t, thumb.QualityDefault, c.JpegQuality())
+	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
 	c.options.JpegQuality = "low "
 	assert.Equal(t, thumb.QualityLow, c.JpegQuality())
-	c.options.JpegQuality = "bad"
-	assert.Equal(t, thumb.QualityBad, c.JpegQuality())
-	c.options.JpegQuality = "worst "
-	assert.Equal(t, thumb.QualityWorst, c.JpegQuality())
+	c.options.JpegQuality = "max"
+	assert.Equal(t, thumb.QualityMax, c.JpegQuality())
+	c.options.JpegQuality = "min "
+	assert.Equal(t, thumb.QualityMin, c.JpegQuality())
 	c.options.JpegQuality = "default"
-	assert.Equal(t, thumb.QualityDefault, c.JpegQuality())
+	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
 }
 
 func TestConfig_ThumbFilter(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, thumb.ResampleFilter("cubic"), c.ThumbFilter())
+	assert.Equal(t, thumb.ResampleAuto, c.ThumbFilter())
 	c.options.ThumbFilter = "blackman"
-	assert.Equal(t, thumb.ResampleFilter("blackman"), c.ThumbFilter())
+	assert.Equal(t, thumb.ResampleBlackman, c.ThumbFilter())
 	c.options.ThumbFilter = "lanczos"
-	assert.Equal(t, thumb.ResampleFilter("lanczos"), c.ThumbFilter())
+	assert.Equal(t, thumb.ResampleLanczos, c.ThumbFilter())
 	c.options.ThumbFilter = "linear"
-	assert.Equal(t, thumb.ResampleFilter("linear"), c.ThumbFilter())
-	c.options.ThumbFilter = "cubic"
-	assert.Equal(t, thumb.ResampleFilter("cubic"), c.ThumbFilter())
+	assert.Equal(t, thumb.ResampleLinear, c.ThumbFilter())
+	c.options.ThumbFilter = "auto"
+	assert.Equal(t, thumb.ResampleAuto, c.ThumbFilter())
+	c.options.ThumbFilter = ""
+	assert.Equal(t, thumb.ResampleAuto, c.ThumbFilter())
 }
 
 func TestConfig_ThumbSizeUncached(t *testing.T) {
@@ -66,17 +70,17 @@ func TestConfig_ThumbSizeUncached(t *testing.T) {
 func TestConfig_ThumbSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int(720), c.ThumbSizePrecached())
+	assert.Equal(t, 720, c.ThumbSizePrecached())
 	c.options.ThumbSize = 7681
-	assert.Equal(t, int(7680), c.ThumbSizePrecached())
+	assert.Equal(t, 7680, c.ThumbSizePrecached())
 }
 
 func TestConfig_ThumbSizeUncached2(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, int(720), c.ThumbSizeUncached())
+	assert.Equal(t, 720, c.ThumbSizeUncached())
 	c.options.ThumbSizeUncached = 7681
-	assert.Equal(t, int(7680), c.ThumbSizeUncached())
+	assert.Equal(t, 7680, c.ThumbSizeUncached())
 	c.options.ThumbSizeUncached = 800
 	c.options.ThumbSize = 900
 	assert.Equal(t, int(900), c.ThumbSizeUncached())

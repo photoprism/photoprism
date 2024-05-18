@@ -127,6 +127,77 @@ func TestVips(t *testing.T) {
 	})
 }
 
+func TestVipsImportParams(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		result := VipsImportParams()
+
+		if result == nil {
+			t.Fatal("result is nil")
+		}
+
+		assert.True(t, result.AutoRotate.Get())
+		assert.False(t, result.FailOnError.Get())
+	})
+}
+
+func TestVipsPngExportParams(t *testing.T) {
+	t.Run("Standard", func(t *testing.T) {
+		result := VipsPngExportParams(500, 500)
+
+		if result == nil {
+			t.Fatal("result is nil")
+		}
+
+		assert.False(t, result.Interlace)
+		assert.Equal(t, vips.PngFilterNone, result.Filter)
+		assert.Equal(t, 0, result.Quality)
+		assert.Equal(t, 6, result.Compression)
+	})
+	t.Run("Small", func(t *testing.T) {
+		result := VipsPngExportParams(3, 3)
+
+		if result == nil {
+			t.Fatal("result is nil")
+		}
+
+		assert.False(t, result.Interlace)
+		assert.Equal(t, vips.PngFilterNone, result.Filter)
+		assert.Equal(t, 0, result.Quality)
+		assert.Equal(t, 0, result.Compression)
+	})
+}
+
+func TestVipsJpegExportParams(t *testing.T) {
+	t.Run("Standard", func(t *testing.T) {
+		result := VipsJpegExportParams(1920, 1200)
+
+		if result == nil {
+			t.Fatal("result is nil")
+		}
+
+		assert.True(t, result.Interlace)
+		assert.False(t, result.TrellisQuant)
+		assert.False(t, result.OptimizeScans)
+		assert.True(t, result.OptimizeCoding)
+		assert.False(t, result.OvershootDeringing)
+		assert.Equal(t, JpegQualityDefault.Int(), result.Quality)
+	})
+	t.Run("Small", func(t *testing.T) {
+		result := VipsJpegExportParams(50, 50)
+
+		if result == nil {
+			t.Fatal("result is nil")
+		}
+
+		assert.True(t, result.Interlace)
+		assert.False(t, result.TrellisQuant)
+		assert.False(t, result.OptimizeScans)
+		assert.False(t, result.OptimizeCoding)
+		assert.False(t, result.OvershootDeringing)
+		assert.Equal(t, JpegQualitySmall().Int(), result.Quality)
+	})
+}
+
 func TestVipsRotate(t *testing.T) {
 	if err := os.MkdirAll("testdata/vips/rotate", fs.ModeDir); err != nil {
 		t.Fatal(err)

@@ -760,26 +760,26 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-color",
-			Usage:  "default color `PROFILE` for thumbnails (leave blank to disable normalization)",
-			Value:  "auto",
+			Usage:  "default color `PROFILE` for thumbnails (auto, preserve, srgb, none)",
+			Value:  thumb.ColorAuto,
 			EnvVar: EnvVar("THUMB_COLOR"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-filter, filter",
-			Usage:  "image downscaling filter `NAME` (best to worst: lanczos, cubic, linear)",
-			Value:  "lanczos",
+			Usage:  "downscaling filter `NAME` (imaging best to worst: blackman, lanczos, cubic, linear, nearest)",
+			Value:  thumb.ResampleAuto.String(),
 			EnvVar: EnvVar("THUMB_FILTER"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "thumb-size",
-			Usage:  "maximum size of thumbnails generated while indexing in `PIXELS` (720-7680)",
-			Value:  2048,
+			Usage:  "maximum size of pre-generated thumbnails in `PIXELS` (720-7680)",
+			Value:  thumb.SizeCached,
 			EnvVar: EnvVar("THUMB_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "thumb-size-uncached",
 			Usage:  "maximum size of thumbnails generated on demand in `PIXELS` (720-7680)",
-			Value:  7680,
+			Value:  thumb.SizeOnDemand,
 			EnvVar: EnvVar("THUMB_SIZE_UNCACHED"),
 		}}, {
 		Flag: cli.BoolFlag{
@@ -790,7 +790,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "jpeg-quality, q",
 			Usage:  "higher values increase the image `QUALITY` and file size (25-100)",
-			Value:  thumb.JpegQuality.String(),
+			Value:  thumb.JpegQualityDefault.String(),
 			EnvVar: EnvVar("JPEG_QUALITY"),
 		}}, {
 		Flag: cli.IntFlag{

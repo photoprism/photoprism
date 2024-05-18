@@ -222,7 +222,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"preview-token", c.PreviewToken()},
 		{"thumb-library", c.ThumbLibrary()},
 		{"thumb-color", c.ThumbColor()},
-		{"thumb-filter", string(c.ThumbFilter())},
+		{"thumb-filter", c.ThumbFilter().String()},
 		{"thumb-size", fmt.Sprintf("%d", c.ThumbSizePrecached())},
 		{"thumb-size-uncached", fmt.Sprintf("%d", c.ThumbSizeUncached())},
 		{"thumb-uncached", fmt.Sprintf("%t", c.ThumbUncached())},

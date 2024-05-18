@@ -7,18 +7,18 @@ import (
 )
 
 func TestMaxSize(t *testing.T) {
-	SizePrecached = 7680
-	SizeUncached = 1024
+	SizeCached = 7680
+	SizeOnDemand = 1024
 
 	assert.Equal(t, MaxSize(), 7680)
 
-	SizePrecached = 2048
-	SizeUncached = 7680
+	SizeCached = 2048
+	SizeOnDemand = 7680
 }
 
 func TestSize_ExceedsLimit(t *testing.T) {
-	SizePrecached = 1024
-	SizeUncached = 2048
+	SizeCached = 1024
+	SizeOnDemand = 2048
 
 	fit4096 := Sizes[Fit4096]
 	assert.True(t, fit4096.ExceedsLimit())
@@ -29,13 +29,13 @@ func TestSize_ExceedsLimit(t *testing.T) {
 	tile500 := Sizes[Tile500]
 	assert.False(t, tile500.ExceedsLimit())
 
-	SizePrecached = 2048
-	SizeUncached = 7680
+	SizeCached = 2048
+	SizeOnDemand = 7680
 }
 
 func TestSize_Uncached(t *testing.T) {
-	SizePrecached = 1024
-	SizeUncached = 2048
+	SizeCached = 1024
+	SizeOnDemand = 2048
 
 	fit4096 := Sizes[Fit4096]
 	assert.True(t, fit4096.Uncached())
@@ -46,8 +46,8 @@ func TestSize_Uncached(t *testing.T) {
 	tile500 := Sizes[Tile500]
 	assert.False(t, tile500.Uncached())
 
-	SizePrecached = 2048
-	SizeUncached = 7680
+	SizeCached = 2048
+	SizeOnDemand = 7680
 }
 
 func TestResampleFilter_Imaging(t *testing.T) {

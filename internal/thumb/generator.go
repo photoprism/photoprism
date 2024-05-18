@@ -1,9 +1,11 @@
 package thumb
 
+type Lib = string
+
 // Supported image processing libraries.
 const (
-	LibVips    = "vips"
-	LibImaging = "imaging"
+	LibVips    Lib = "vips"
+	LibImaging Lib = "imaging"
 )
 
 // Library specifies the image library to be used.

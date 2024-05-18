@@ -25,7 +25,7 @@ func (s Size) Bounds() image.Rectangle {
 
 // Uncached tests if thumbnail type exceeds the cached thumbnails size limit.
 func (s Size) Uncached() bool {
-	return s.Width > SizePrecached || s.Height > SizePrecached
+	return s.Width > SizeCached || s.Height > SizeCached
 }
 
 // ExceedsLimit tests if thumbnail type is too large, and can not be rendered at all.

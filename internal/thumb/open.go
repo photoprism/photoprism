@@ -9,9 +9,6 @@ import (
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
-// StandardRGB configures whether colors in the Apple Display P3 color space should be converted to standard RGB.
-var StandardRGB = true
-
 // Open loads an image from disk, rotates it, and converts the color profile if necessary.
 func Open(fileName string, orientation int) (result image.Image, err error) {
 	// Filename missing?
@@ -24,8 +21,8 @@ func Open(fileName string, orientation int) (result image.Image, err error) {
 		return result, err
 	}
 
-	// Open JPEG?
-	if StandardRGB && fs.FileType(fileName) == fs.ImageJPEG {
+	// Open JPEG as sRGB image?
+	if Color == ColorSRGB && fs.FileType(fileName) == fs.ImageJPEG {
 		return OpenJpeg(fileName, orientation)
 	}
 

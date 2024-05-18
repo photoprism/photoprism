@@ -138,10 +138,8 @@ func Create(img image.Image, fileName string, width, height int, opts ...Resampl
 
 	if fs.FileType(fileName) == fs.ImagePNG {
 		quality = imaging.PNGCompressionLevel(png.DefaultCompression)
-	} else if width <= 150 && height <= 150 {
-		quality = JpegQualitySmall.EncodeOption()
 	} else {
-		quality = JpegQuality.EncodeOption()
+		quality = JpegQuality(width, height).EncodeOption()
 	}
 
 	err = imaging.Save(result, fileName, quality)

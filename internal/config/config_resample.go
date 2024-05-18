@@ -1,9 +1,8 @@
 package config
 
 import (
-	"strings"
-
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 // JpegSize returns the size limit for automatically converted files in `PIXELS` (720-30000).
@@ -35,46 +34,22 @@ func (c *Config) JpegQuality() thumb.Quality {
 
 // ThumbLibrary returns the name of the image processing library to be used for generating thumbnails.
 func (c *Config) ThumbLibrary() string {
-	switch strings.ToLower(c.options.ThumbLibrary) {
-	case thumb.LibVips:
-		return thumb.LibVips
-	default:
+	switch clean.TypeLowerUnderscore(c.options.ThumbLibrary) {
+	case thumb.LibImaging, "", "imagine", "internal":
 		return thumb.LibImaging
+	default:
+		return thumb.LibVips
 	}
 }
 
-// ThumbColor returns the color profile name for thumbnails.
-func (c *Config) ThumbColor() string {
-	if c.options.ThumbColor == "auto" {
-		if c.ThumbLibrary() != thumb.LibVips {
-			return "srgb"
-		}
-
-		return c.options.ThumbColor
-	}
-
-	return strings.ToLower(c.options.ThumbColor)
-}
-
-// ThumbSRGB checks if colors should be normalized to standard RGB in thumbnails.
-func (c *Config) ThumbSRGB() bool {
-	return c.ThumbColor() == "srgb"
+// ThumbColor returns the color space for thumbnails.
+func (c *Config) ThumbColor() thumb.ColorSpace {
+	return thumb.ParseColor(c.options.ThumbColor, c.ThumbLibrary())
 }
 
 // ThumbFilter returns the thumbnail resample filter (best to worst: blackman, lanczos, cubic or linear).
 func (c *Config) ThumbFilter() thumb.ResampleFilter {
-	switch strings.ToLower(c.options.ThumbFilter) {
-	case "blackman":
-		return thumb.ResampleBlackman
-	case "lanczos":
-		return thumb.ResampleLanczos
-	case "cubic":
-		return thumb.ResampleCubic
-	case "linear":
-		return thumb.ResampleLinear
-	default:
-		return thumb.ResampleCubic
-	}
+	return thumb.ParseFilter(c.options.ThumbFilter, c.ThumbLibrary())
 }
 
 // ThumbUncached checks if on-demand thumbnail rendering is enabled (high memory and cpu usage).

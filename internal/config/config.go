@@ -197,11 +197,11 @@ func (c *Config) Propagate() {
 
 	// Initialize the thumbnail generation package.
 	thumb.Library = c.ThumbLibrary()
-	thumb.StandardRGB = c.ThumbSRGB()
-	thumb.SizePrecached = c.ThumbSizePrecached()
-	thumb.SizeUncached = c.ThumbSizeUncached()
+	thumb.Color = c.ThumbColor()
 	thumb.Filter = c.ThumbFilter()
-	thumb.JpegQuality = c.JpegQuality()
+	thumb.SizeCached = c.ThumbSizePrecached()
+	thumb.SizeOnDemand = c.ThumbSizeUncached()
+	thumb.JpegQualityDefault = c.JpegQuality()
 	thumb.CachePublic = c.HttpCachePublic()
 
 	// Set cache expiration defaults.

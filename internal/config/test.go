@@ -183,10 +183,10 @@ func NewTestConfig(pkg string) *Config {
 	c.RegisterDb()
 	c.InitTestDb()
 
-	thumb.SizePrecached = c.ThumbSizePrecached()
-	thumb.SizeUncached = c.ThumbSizeUncached()
+	thumb.SizeCached = c.ThumbSizePrecached()
+	thumb.SizeOnDemand = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
-	thumb.JpegQuality = c.JpegQuality()
+	thumb.JpegQualityDefault = c.JpegQuality()
 
 	return c
 }
