@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-13 07:56+0000\n"
+"PO-Revision-Date: 2024-05-18 10:12+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Spanish <https://translate.photoprism.app/projects/photoprism/frontend/es/>\n"
 "Language: es\n"
@@ -1955,7 +1955,7 @@ msgstr "Fotos"
 #: src/component/album/toolbar.vue:73 src/component/photo/toolbar.vue:78
 #: src/dialog/album/edit.vue:25
 msgid "Picture Title"
-msgstr ""
+msgstr "Título de la imagen"
 
 #: src/options/options.js:441
 msgid "Pink"
