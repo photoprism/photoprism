@@ -3,14 +3,12 @@ package config
 import (
 	"path/filepath"
 
-	"github.com/robfig/cron/v3"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 const (
-	DefaultBackupSchedule = "0 12 * * *"
+	DefaultBackupSchedule = "daily"
 	DefaultBackupRetain   = 3
 )
 
@@ -34,14 +32,7 @@ func (c *Config) BackupBasePath() string {
 
 // BackupSchedule returns the backup schedule in cron format, e.g. "0 12 * * *" for daily at noon.
 func (c *Config) BackupSchedule() string {
-	if c.options.BackupSchedule == "" {
-		return ""
-	} else if _, err := cron.ParseStandard(c.options.BackupSchedule); err != nil {
-		log.Tracef("config: invalid backup schedule (%s)", err)
-		return ""
-	}
-
-	return c.options.BackupSchedule
+	return Schedule(c.options.BackupSchedule)
 }
 
 // BackupRetain returns the maximum number of SQL database dumps to keep, or -1 to keep all.

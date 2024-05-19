@@ -16,7 +16,7 @@ import (
 
 // Albums returns a slice of albums.
 func Albums(offset, limit int) (results entity.Albums, err error) {
-	err = UnscopedDb().Table("albums").Select("*").Offset(offset).Limit(limit).Find(&results).Error
+	err = UnscopedDb().Table("albums").Select("*").Order("album_type, album_uid").Offset(offset).Limit(limit).Find(&results).Error
 	return results, err
 }
 

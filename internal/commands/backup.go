@@ -9,8 +9,8 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/backup"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -101,7 +101,7 @@ func backupAction(ctx *cli.Context) error {
 			fileName = filepath.Join(databasePath, backupFile)
 		}
 
-		if err = photoprism.BackupDatabase(databasePath, fileName, fileName == "-", force, retain); err != nil {
+		if err = backup.Database(databasePath, fileName, fileName == "-", force, retain); err != nil {
 			return fmt.Errorf("failed to create database backup: %w", err)
 		}
 	}
@@ -115,7 +115,7 @@ func backupAction(ctx *cli.Context) error {
 			albumsPath = conf.BackupAlbumsPath()
 		}
 
-		if count, backupErr := photoprism.BackupAlbums(albumsPath, true); backupErr != nil {
+		if count, backupErr := backup.Albums(albumsPath, true); backupErr != nil {
 			return backupErr
 		} else {
 			log.Infof("backup: saved %s", english.Plural(count, "album backup", "album backups"))

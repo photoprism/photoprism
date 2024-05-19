@@ -8,9 +8,9 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
+	"github.com/photoprism/photoprism/internal/backup"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/photoprism"
 )
 
 // Backup represents a background backup worker.
@@ -58,7 +58,7 @@ func (w *Backup) Start(database, albums bool, force bool, retain int) (err error
 	if database {
 		databasePath := w.conf.BackupDatabasePath()
 
-		if err = photoprism.BackupDatabase(databasePath, "", false, force, retain); err != nil {
+		if err = backup.Database(databasePath, "", false, force, retain); err != nil {
 			log.Errorf("backup: %s (database)", err)
 		}
 	}
@@ -71,7 +71,7 @@ func (w *Backup) Start(database, albums bool, force bool, retain int) (err error
 	if albums {
 		albumsPath := w.conf.BackupAlbumsPath()
 
-		if count, backupErr := photoprism.BackupAlbums(albumsPath, false); backupErr != nil {
+		if count, backupErr := backup.Albums(albumsPath, false); backupErr != nil {
 			log.Errorf("backup: %s (albums)", backupErr.Error())
 		} else if count > 0 {
 			log.Infof("backup: saved %s", english.Plural(count, "album backup", "album backups"))

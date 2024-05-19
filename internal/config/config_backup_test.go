@@ -18,7 +18,7 @@ func TestConfig_BackupBasePath(t *testing.T) {
 
 func TestConfig_BackupSchedule(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, DefaultBackupSchedule, c.BackupSchedule())
+	assert.Contains(t, c.BackupSchedule(), " * * *")
 }
 
 func TestConfig_BackupRetain(t *testing.T) {

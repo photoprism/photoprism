@@ -42,7 +42,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/klauspost/cpuid/v2"
 	"github.com/pbnjay/memory"
-	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
@@ -766,14 +765,7 @@ func (c *Config) IndexWorkers() int {
 
 // IndexSchedule returns the indexing schedule in cron format, e.g. "0 */3 * * *" to start indexing every 3 hours.
 func (c *Config) IndexSchedule() string {
-	if c.options.IndexSchedule == "" {
-		return ""
-	} else if _, err := cron.ParseStandard(c.options.IndexSchedule); err != nil {
-		log.Tracef("config: invalid auto indexing schedule (%s)", err)
-		return ""
-	}
-
-	return c.options.IndexSchedule
+	return Schedule(c.options.IndexSchedule)
 }
 
 // WakeupInterval returns the duration between background worker runs

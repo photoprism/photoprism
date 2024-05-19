@@ -7,8 +7,8 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/backup"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -81,7 +81,7 @@ func restoreAction(ctx *cli.Context) error {
 	// Restore database from backup dump?
 	if !restoreDatabase {
 		// Do nothing.
-	} else if err = photoprism.RestoreDatabase(databasePath, databaseFile, databaseFile == "-", force); err != nil {
+	} else if err = backup.RestoreDatabase(databasePath, databaseFile, databaseFile == "-", force); err != nil {
 		return err
 	}
 
@@ -102,7 +102,7 @@ func restoreAction(ctx *cli.Context) error {
 		} else {
 			log.Infof("restore: restoring album backups from %s", clean.Log(albumsPath))
 
-			if count, restoreErr := photoprism.RestoreAlbums(albumsPath, true); restoreErr != nil {
+			if count, restoreErr := backup.RestoreAlbums(albumsPath, true); restoreErr != nil {
 				return restoreErr
 			} else {
 				log.Infof("restore: restored %s from YAML files", english.Plural(count, "album", "albums"))

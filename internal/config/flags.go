@@ -193,7 +193,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "backup-schedule",
-			Usage:  "backup `SCHEDULE` in cron format, e.g. \"0 12 * * *\" for daily at noon",
+			Usage:  "backup `SCHEDULE` in cron format (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
 			Value:  DefaultBackupSchedule,
 			EnvVar: EnvVar("BACKUP_SCHEDULE"),
 		}}, {
@@ -221,7 +221,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "index-schedule",
-			Usage:  "indexing `SCHEDULE` in cron format, e.g. \"0 */3 * * *\" for every 3 hours (leave empty to disable)",
+			Usage:  "regular indexing `SCHEDULE` in cron format (e.g. \"0 */3 * * *\" or \"@every 3h\" for every 3 hours; leave empty to disable)",
 			Value:  DefaultIndexSchedule,
 			EnvVar: EnvVar("INDEX_SCHEDULE"),
 		}}, {

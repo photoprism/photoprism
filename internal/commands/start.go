@@ -14,8 +14,8 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/auto"
+	"github.com/photoprism/photoprism/internal/backup"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/internal/workers"
@@ -126,7 +126,7 @@ func startAction(ctx *cli.Context) error {
 	go server.Start(cctx, conf)
 
 	// Restore albums from YAML files.
-	if count, restoreErr := photoprism.RestoreAlbums(conf.BackupAlbumsPath(), false); restoreErr != nil {
+	if count, restoreErr := backup.RestoreAlbums(conf.BackupAlbumsPath(), false); restoreErr != nil {
 		log.Errorf("restore: %s (albums)", restoreErr)
 	} else if count > 0 {
 		log.Infof("restore: %s restored", english.Plural(count, "album backup", "album backups"))
