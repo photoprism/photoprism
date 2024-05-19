@@ -221,7 +221,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "index-schedule",
-			Usage:  "regular indexing `SCHEDULE` in cron format (e.g. \"@every 3h\" for every 3 hours; \"\" to disable)",
+			Usage:  "indexing `SCHEDULE` in cron format (e.g. \"@every 3h\" for every 3 hours; \"\" to disable)",
 			Value:  DefaultIndexSchedule,
 			EnvVar: EnvVar("INDEX_SCHEDULE"),
 		}}, {
@@ -233,13 +233,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "auto-index",
-			Usage:  "delay before automatically indexing files in `SECONDS` (-1 to disable) when uploading files via WebDAV",
+			Usage:  "delay before automatically indexing files in `SECONDS` when uploading via WebDAV (-1 to disable)",
 			Value:  DefaultAutoIndexDelay,
 			EnvVar: EnvVar("AUTO_INDEX"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "auto-import",
-			Usage:  "delay before automatically importing files in `SECONDS` (-1 to disable) when uploading files via WebDAV",
+			Usage:  "delay before automatically importing files in `SECONDS` when uploading via WebDAV (-1 to disable)",
 			Value:  DefaultAutoImportDelay,
 			EnvVar: EnvVar("AUTO_IMPORT"),
 		}}, {
