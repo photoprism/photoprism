@@ -50,8 +50,8 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
       gpg zip unzip wget curl rsync make nano \
       jq lsof lshw sqlite3 mariadb-client imagemagick libvips-dev \
       exiftool darktable rawtherapee libheif-examples librsvg2-bin \
-      ffmpeg libavcodec-extra libdav1d-dev x264 x265 libvpx7 libwebm1 \
-      libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+      ffmpeg libavcodec-extra libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
+      libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
     && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \

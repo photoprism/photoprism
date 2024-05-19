@@ -54,7 +54,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 \
         exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync imagemagick libvips-dev rawtherapee \
         ffmpeg libffmpeg-nvenc-dev libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra \
-        x264 x265 libde265-dev libaom3 libvpx-dev libwebm1 libjpeg8 libmatroska7 libdvdread8 libdav1d-dev \
+        x264 x265 libde265-dev libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \
