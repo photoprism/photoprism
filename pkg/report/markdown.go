@@ -17,6 +17,9 @@ func MarkdownTable(rows [][]string, cols []string, opt Options) string {
 				if strings.ContainsRune(rows[i][j], '|') {
 					rows[i][j] = strings.ReplaceAll(rows[i][j], "|", "\\|")
 				}
+				if strings.ContainsRune(rows[i][j], '*') {
+					rows[i][j] = strings.ReplaceAll(rows[i][j], "* * *", "\\* \\* \\*")
+				}
 			}
 		}
 	}

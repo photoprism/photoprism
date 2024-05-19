@@ -158,7 +158,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "sidecar-yaml",
-			Usage:  "save originals metadata to YAML sidecar files",
+			Usage:  "create YAML sidecar files to back up index metadata",
 			EnvVar: EnvVar("SIDECAR_YAML"),
 		}, DocDefault: "true"}, {
 		Flag: cli.StringFlag{
@@ -210,7 +210,7 @@ var Flags = CliFlags{
 		}, DocDefault: "true"}, {
 		Flag: cli.BoolFlag{
 			Name:   "backup-albums",
-			Usage:  "save album metadata to YAML backup files",
+			Usage:  "create YAML backup files for album metadata",
 			EnvVar: EnvVar("BACKUP_ALBUMS"),
 		}, DocDefault: "true"}, {
 		Flag: cli.IntFlag{
@@ -221,7 +221,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "index-schedule",
-			Usage:  "regular indexing `SCHEDULE` in cron format (e.g. \"0 */3 * * *\" or \"@every 3h\" for every 3 hours; leave empty to disable)",
+			Usage:  "regular indexing `SCHEDULE` in cron format (e.g. \"@every 3h\" for every 3 hours; \"\" to disable)",
 			Value:  DefaultIndexSchedule,
 			EnvVar: EnvVar("INDEX_SCHEDULE"),
 		}}, {

@@ -36,7 +36,7 @@ var backupFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "albums, a",
-		Usage: "create or update album YAML backup files in the album backup path",
+		Usage: "create YAML backup files for album metadata (in the standard backup path if no other path is specified)",
 	},
 	cli.StringFlag{
 		Name:  "albums-path",
@@ -44,7 +44,7 @@ var backupFlags = []cli.Flag{
 	},
 	cli.BoolFlag{
 		Name:  "database, index, i",
-		Usage: "create a database backup in the database backup path with the date as filename, or write it to the specified file (stdout if - is passed as filename)",
+		Usage: "create index database backup (in the backup path with the date as filename if no filename is passed, or sent to stdout if - is passed as filename)",
 	},
 	cli.StringFlag{
 		Name:  "database-path, index-path",
