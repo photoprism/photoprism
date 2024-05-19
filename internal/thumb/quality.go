@@ -12,10 +12,10 @@ import (
 // Standard JPEG image quality levels,
 // see https://docs.photoprism.app/user-guide/settings/advanced/#jpeg-quality
 const (
-	QualityMax    Quality = 90
-	QualityHigh   Quality = 85
+	QualityMax    Quality = 91
+	QualityHigh   Quality = 87
 	QualityMedium Quality = 83
-	QualityLow    Quality = 78
+	QualityLow    Quality = 79
 	QualityMin    Quality = 70
 )
 
