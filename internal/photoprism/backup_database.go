@@ -102,7 +102,7 @@ func BackupDatabase(backupPath, fileName string, toStdOut, force bool, retain in
 	if toStdOut {
 		log.Infof("backup: sending database backup to stdout")
 		f = os.Stdout
-	} else if f, err = os.OpenFile(fileName, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeFile); err != nil {
+	} else if f, err = os.OpenFile(fileName, os.O_TRUNC|os.O_RDWR|os.O_CREATE, fs.ModeBackup); err != nil {
 		return fmt.Errorf("failed to create %s (%s)", clean.Log(fileName), err)
 	} else {
 		log.Infof("backup: %s database backup file %s", backupAction, clean.Log(filepath.Base(fileName)))
