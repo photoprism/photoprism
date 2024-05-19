@@ -2,8 +2,7 @@ package clusters
 
 import (
 	"math"
-	"math/rand"
-	"time"
+	"math/rand/v2"
 
 	"gonum.org/v1/gonum/floats"
 )
@@ -25,9 +24,8 @@ type kmeansEstimator struct {
 	d [][]float64
 }
 
-// Implementation of cluster number estimator using gap statistic
-// ("Estimating the number of clusters in a data set via the gap statistic", Tibshirani et al.) with k-means++ as
-// clustering algorithm
+// KMeansEstimator implements a cluster number estimator using the gap statistic ("Estimating the number of clusters
+// in a data set via the gap statistic", Tibshirani et al.) with k-means++ as clustering algorithm.
 func KMeansEstimator(iterations, clusters int, distance DistFunc) (Estimator, error) {
 	if iterations < 1 {
 		return nil, errZeroIterations
@@ -128,15 +126,13 @@ func (c *kmeansEstimator) initializeMeansWithData() {
 	c.m = make([][]float64, c.number)
 	c.n = make([][]float64, c.number)
 
-	rand.Seed(time.Now().UTC().Unix())
-
 	var (
 		k          int
 		s, t, l, f float64
 		d          []float64 = make([]float64, len(c.d))
 	)
 
-	c.m[0] = c.d[rand.Intn(len(c.d)-1)]
+	c.m[0] = c.d[rand.IntN(len(c.d)-1)]
 
 	for i := 1; i < c.number; i++ {
 		s = 0

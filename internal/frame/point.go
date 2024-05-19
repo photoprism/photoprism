@@ -2,7 +2,7 @@ package frame
 
 import (
 	"image"
-	"math/rand"
+	"math/rand/v2"
 )
 
 // RandomPoint returns a random image position within the specified range.

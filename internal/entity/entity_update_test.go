@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"testing"
 	"time"
 
@@ -11,7 +11,6 @@ import (
 )
 
 func TestUpdate(t *testing.T) {
-	var r = rand.New(rand.NewSource(time.Now().UnixNano()))
 	t.Run("IDMissing", func(t *testing.T) {
 		uid := rnd.GenerateUID(PhotoUID)
 		m := &Photo{ID: 0, PhotoUID: uid, UpdatedAt: TimeStamp(), CreatedAt: TimeStamp(), PhotoTitle: "Foo"}
@@ -27,7 +26,7 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 	})
 	t.Run("UIDMissing", func(t *testing.T) {
-		id := 99999 + r.Intn(10000)
+		id := 99999 + rand.IntN(10000)
 		m := &Photo{ID: uint(id), PhotoUID: "", UpdatedAt: TimeStamp(), CreatedAt: TimeStamp(), PhotoTitle: "Foo"}
 		updatedAt := m.UpdatedAt
 
@@ -41,7 +40,7 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(t, m.UpdatedAt.UTC(), updatedAt.UTC())
 	})
 	t.Run("NotUpdated", func(t *testing.T) {
-		id := 99999 + r.Intn(10000)
+		id := 99999 + rand.IntN(10000)
 		uid := rnd.GenerateUID(PhotoUID)
 		m := &Photo{ID: uint(id), PhotoUID: uid, UpdatedAt: time.Now(), CreatedAt: TimeStamp(), PhotoTitle: "Foo"}
 		updatedAt := m.UpdatedAt
@@ -84,7 +83,7 @@ func TestUpdate(t *testing.T) {
 	})
 	t.Run("NonExistentKeys", func(t *testing.T) {
 		m := PhotoFixtures.Pointer("Photo01")
-		m.ID = uint(10000000 + r.Intn(10000))
+		m.ID = uint(10000000 + rand.IntN(10000))
 		m.PhotoUID = rnd.GenerateUID(PhotoUID)
 		updatedAt := m.UpdatedAt
 		if err := Update(m, "ID", "PhotoUID"); err == nil {

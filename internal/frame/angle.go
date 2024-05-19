@@ -1,7 +1,7 @@
 package frame
 
 import (
-	"math/rand"
+	"math/rand/v2"
 )
 
 // RandomAngle returns a random angle between -max and max.

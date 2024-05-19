@@ -1,8 +1,7 @@
 package face
 
 import (
-	"math/rand"
-	"time"
+	"math/rand/v2"
 )
 
 type Kind int
@@ -14,8 +13,6 @@ const (
 	AmbiguousFace
 )
 
-var r = rand.New(rand.NewSource(time.Now().UnixNano()))
-
 // RandomDist returns a distance threshold for matching RandomDEmbeddings.
 func RandomDist() float64 {
 	return RandomFloat64(0.75, 0.15)
@@ -23,7 +20,7 @@ func RandomDist() float64 {
 
 // RandomFloat64 adds a random distance offset to a float64.
 func RandomFloat64(f, d float64) float64 {
-	return f + (r.Float64()-0.5)*d
+	return f + (rand.Float64()-0.5)*d
 }
 
 // RandomEmbeddings returns random embeddings for testing.
@@ -73,7 +70,7 @@ func RandomKidsEmbedding() (result Embedding) {
 	result = make(Embedding, 512)
 
 	d := 0.1 / 512.0
-	n := 1 + r.Intn(len(KidsEmbeddings)-1)
+	n := 1 + rand.IntN(len(KidsEmbeddings)-1)
 	e := KidsEmbeddings[n]
 
 	for i := range result {
@@ -88,7 +85,7 @@ func RandomIgnoredEmbedding() (result Embedding) {
 	result = make(Embedding, 512)
 
 	d := 0.1 / 512.0
-	n := 1 + r.Intn(len(IgnoredEmbeddings)-1)
+	n := 1 + rand.IntN(len(IgnoredEmbeddings)-1)
 	e := IgnoredEmbeddings[n]
 
 	for i := range result {
