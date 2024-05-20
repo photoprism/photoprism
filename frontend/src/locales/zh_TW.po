@@ -2142,7 +2142,7 @@ msgid "Recognized"
 msgstr "已辨識"
 
 #: src/page/settings/general.vue:144
-msgid "Recognizes faces so that specific people can be found."
+msgid "Recognize faces so that people can be assigned and found."
 msgstr "辨識面孔，以找到特定的人。"
 
 #: src/options/options.js:442

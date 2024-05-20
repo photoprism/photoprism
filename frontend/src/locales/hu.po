@@ -2141,7 +2141,7 @@ msgid "Recognized"
 msgstr "Elismert"
 
 #: src/page/settings/general.vue:144
-msgid "Recognizes faces so that specific people can be found."
+msgid "Recognize faces so that people can be assigned and found."
 msgstr "Felismeri az arcokat, így konkrét személyeket is meg lehet találni."
 
 #: src/options/options.js:442

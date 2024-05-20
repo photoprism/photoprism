@@ -2139,7 +2139,7 @@ msgid "Recognized"
 msgstr "Tuvastatud"
 
 #: src/page/settings/general.vue:144
-msgid "Recognizes faces so that specific people can be found."
+msgid "Recognize faces so that people can be assigned and found."
 msgstr "Tuvastab nägusid, et oleks võimalik konkreetseid inimesi leida."
 
 #: src/options/options.js:442
