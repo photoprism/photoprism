@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-20 14:09+0000\n"
+"PO-Revision-Date: 2024-05-20 14:16+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -1649,7 +1649,7 @@ msgstr "Fehlend"
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
 msgid "Moments"
-msgstr "Erlebnisse"
+msgstr "Ereignisse"
 
 #: src/component/navigation.vue:85
 msgid "Monochrome"
@@ -2706,7 +2706,7 @@ msgstr "Aktualisiere Index"
 
 #: src/page/library/index.vue:163
 msgid "Updating moments"
-msgstr "Aktualisiere Erlebnisse"
+msgstr "Aktualisiere Ereignisse"
 
 #: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
 msgid "Updating picture…"
@@ -2978,7 +2978,7 @@ msgstr "Deine Unterstützung hilft uns, regelmäßige Updates bereitzustellen un
 
 #: src/page/albums.vue:81 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
-msgstr "Deine Bilder werden kontinuierlich analysiert, um automatisch Alben von besonderen Momenten, Reisen und Orten zu erstellen."
+msgstr "Die vorhandenen Bilder werden fortlaufend analysiert, um automatisch Alben mit besonderen Momenten, Reisen und Orten zu erstellen."
 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
