@@ -201,7 +201,7 @@ msgstr "آلبوم"
 
 #: src/page/settings/advanced.vue:352
 msgid "Album Backups"
-msgstr ""
+msgstr "پشتیبان گیری از آلبوم"
 
 #: src/page/albums.vue:560
 msgid "Album created"
@@ -277,7 +277,7 @@ msgstr "همه سالها"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr ""
+msgstr "آپلودهایی را که ممکن است توهین آمیز باشند مجاز کنید. شناسایی محتوای ناامن به TensorFlow نیاز دارد."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -399,7 +399,7 @@ msgstr "بازگشت"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr ""
+msgstr "پشتیبان گیری"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -554,7 +554,7 @@ msgstr "تغییرات با موفقیت ذخیره شد"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
+msgstr "برای اعمال تغییرات در تنظیمات پیشرفته، نیاز به راه اندازی مجدد است."
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -705,11 +705,11 @@ msgstr "بر اساس زمانبندی پیکربندی شده، پشتیبان 
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr ""
+msgstr "فایل های YAML را برای پشتیبان گیری از فراداده آلبوم ایجاد کنید."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
+msgstr "فایل های YAML sidecar را برای پشتیبان گیری از متادیتای تصویر ایجاد کنید."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -814,7 +814,7 @@ msgstr "غیرفعال کردن exiftool"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr ""
+msgstr "ویژگی هایی را که به مجوز نوشتن برای پوشه اصلی نیاز دارند غیرفعال کنید."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -826,7 +826,7 @@ msgstr "ImageMagick را غیرفعال کنید"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr ""
+msgstr "غیرفعال کردن نقشه های تعاملی جهان و معکوس کردن geocoding."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -978,7 +978,7 @@ msgstr "پست الکترونیک"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
+msgstr "برای نمایش گزارش های اضافی و کمک به عیب یابی، حالت اشکال زدایی را فعال کنید."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -1632,7 +1632,7 @@ msgstr "فراداده"
 
 #: src/page/settings/advanced.vue:260
 msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
-msgstr ""
+msgstr "استخراج فراداده با ExifTool برای پشتیبانی کامل از ویدیو، عکس زنده و XMP مورد نیاز است."
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
@@ -1830,7 +1830,7 @@ msgstr "در ویندوز، منبع زیر را در گفتگوی اتصال و
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
+msgstr "تولید تصاویر بندانگشتی بر اساس تقاضا ممکن است باعث مصرف بالای CPU و حافظه شود. برای سرورهای دارای محدودیت منابع و دستگاه های NAS توصیه نمی شود."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2054,7 +2054,7 @@ msgstr "برای ایجاد یک آلبوم جدید، اینتر را فشار 
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
+msgstr "از دسترسی سایر برنامه ها به PhotoPrism به عنوان درایو شبکه مشترک جلوگیری کنید."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2394,7 +2394,7 @@ msgstr "جانبی"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr ""
+msgstr "فایل های Sidecar"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2530,7 +2530,7 @@ msgstr "آبی رنگ"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr ""
+msgstr "TensorFlow برای طبقه بندی تصویر، تشخیص چهره و تشخیص محتوای ناامن مورد نیاز است."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2763,7 +2763,7 @@ msgstr "فایل های محلی را آپلود کنید"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr ""
+msgstr "NSFW را آپلود کنید"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
@@ -2985,6 +2985,9 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
+
+#~ msgid "File Format Support"
+#~ msgstr "پشتیبانی از فرمت فایل"
 
 #~ msgid "Disable built-in WebDAV server. Requires a restart."
 #~ msgstr "سرور WebDAV داخلی را غیرفعال کنید. نیاز به راه اندازی مجدد دارد."

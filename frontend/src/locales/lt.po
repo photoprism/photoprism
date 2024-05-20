@@ -201,7 +201,7 @@ msgstr "Albumas"
 
 #: src/page/settings/advanced.vue:352
 msgid "Album Backups"
-msgstr ""
+msgstr "Albumo atsarginės kopijos"
 
 #: src/page/albums.vue:560
 msgid "Album created"
@@ -277,7 +277,7 @@ msgstr "Visi metai"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr ""
+msgstr "Leisti įkelti duomenis, kurie gali būti įžeidžiantys. Nesaugiam turiniui aptikti reikia \"TensorFlow\"."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -399,7 +399,7 @@ msgstr "Atgal"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr ""
+msgstr "Atsarginė kopija"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -554,7 +554,7 @@ msgstr "Pakeitimai sėkmingai išsaugoti"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
+msgstr "Norint, kad išplėstinių nustatymų pakeitimai įsigaliotų, juos reikia paleisti iš naujo."
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -705,11 +705,11 @@ msgstr "Kurkite indekso atsargines kopijas pagal sukonfigūruotą tvarkaraštį.
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr ""
+msgstr "Sukurkite YAML failus albumo metaduomenims kurti."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
+msgstr "Sukurkite YAML šalutinius failus paveikslėlių metaduomenims kurti."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -814,7 +814,7 @@ msgstr "Išjungti \"ExifTool"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr ""
+msgstr "Išjunkite funkcijas, kurioms reikia originalų aplanko rašymo leidimo."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -826,7 +826,7 @@ msgstr "Išjungti \"ImageMagick"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr ""
+msgstr "Išjunkite interaktyvius pasaulio žemėlapius ir atvirkštinį geokodavimą."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -978,7 +978,7 @@ msgstr "El. paštas"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
+msgstr "Įjunkite derinimo režimą, kad būtų rodomi papildomi žurnalai ir padedama šalinti triktis."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -1632,7 +1632,7 @@ msgstr "Metaduomenys"
 
 #: src/page/settings/advanced.vue:260
 msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
-msgstr ""
+msgstr "Kad būtų palaikomi visi vaizdo įrašai, tiesioginės nuotraukos ir XMP, reikia ištraukti metaduomenis su \"ExifTool\"."
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
@@ -1830,7 +1830,7 @@ msgstr "\"Windows\" sistemoje prisijungimo dialogo lange įveskite šiuos ištek
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
+msgstr "Miniatiūrų generavimas pagal pareikalavimą gali būti susijęs su dideliu procesoriaus ir atminties naudojimu. Nerekomenduojama naudoti serveriuose ir NAS įrenginiuose, kurių ištekliai yra riboti."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2054,7 +2054,7 @@ msgstr "Paspauskite Enter, kad sukurtumėte naują albumą."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
+msgstr "Neleiskite kitoms programoms pasiekti \"PhotoPrism\" kaip bendrinamąjį tinklo diską."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2394,7 +2394,7 @@ msgstr "Sidecar"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr ""
+msgstr "\"Sidecar\" failai"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2530,7 +2530,7 @@ msgstr "Teal"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr ""
+msgstr "\"TensorFlow\" reikalingas vaizdų klasifikavimui, veido atpažinimui ir nesaugaus turinio aptikimui."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2763,7 +2763,7 @@ msgstr "Įkelti vietinius failus"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr ""
+msgstr "Įkelti NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
@@ -2983,6 +2983,9 @@ msgstr "Jūsų biblioteka nuolat analizuojama, kad būtų galima automatiškai k
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priartinimas / atitolinimas"
+
+#~ msgid "File Format Support"
+#~ msgstr "Failų formatų palaikymas"
 
 #~ msgid "Disable built-in WebDAV server. Requires a restart."
 #~ msgstr "Išjunkite integruotą WebDAV serverį. Reikia paleisti iš naujo."

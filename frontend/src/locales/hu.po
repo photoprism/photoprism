@@ -200,7 +200,7 @@ msgstr "Album"
 
 #: src/page/settings/advanced.vue:352
 msgid "Album Backups"
-msgstr ""
+msgstr "Album biztonsági mentések"
 
 #: src/page/albums.vue:560
 msgid "Album created"
@@ -276,7 +276,7 @@ msgstr "Összes év"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr ""
+msgstr "Engedélyezze az esetlegesen sértő feltöltéseket. A nem biztonságos tartalom felismeréséhez TensorFlow-ra van szükség."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -398,7 +398,7 @@ msgstr "Vissza"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr ""
+msgstr "Biztonsági mentés"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -553,7 +553,7 @@ msgstr "Módosítások sikeresen mentve"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
+msgstr "A speciális beállítások módosításához újraindításra van szükség, hogy a módosítások hatályba lépjenek."
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -704,11 +704,11 @@ msgstr "Index biztonsági mentések létrehozása a konfigurált ütemezés alap
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr ""
+msgstr "YAML fájlok létrehozása az album metaadatok biztonsági mentéséhez."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
+msgstr "YAML oldalkocsis fájlok létrehozása a képek metaadatainak mentéséhez."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -813,7 +813,7 @@ msgstr "Az ExifTool letiltása"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr ""
+msgstr "Az eredeti mappa írási engedélyét igénylő funkciók letiltása."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -825,7 +825,7 @@ msgstr "ImageMagick letiltása"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr ""
+msgstr "Az interaktív világtérképek és a fordított geokódolás letiltása."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -977,7 +977,7 @@ msgstr "E-mail"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
+msgstr "A hibakeresési mód engedélyezése további naplók megjelenítéséhez és a hibaelhárítás segítéséhez."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -1631,7 +1631,7 @@ msgstr "Metaadatok"
 
 #: src/page/settings/advanced.vue:260
 msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
-msgstr ""
+msgstr "Az ExifTool segítségével történő metaadat-kivonatolás szükséges a teljes videó-, élőfotó- és XMP-támogatáshoz."
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
@@ -1829,7 +1829,7 @@ msgstr "Windows alatt adja meg a következő erőforrást a kapcsolat párbeszé
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
+msgstr "A miniatűrök igény szerinti generálása magas CPU- és memóriahasználatot okozhat. Erőforrás-korlátozott szerverek és NAS-eszközök esetében nem ajánlott."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2053,7 +2053,7 @@ msgstr "Új album létrehozásához nyomja meg az Enter billentyűt."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
+msgstr "Megakadályozza, hogy más alkalmazások hozzáférjenek a PhotoPrismhez mint megosztott hálózati meghajtóhoz."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2393,7 +2393,7 @@ msgstr "Oldalkocsi"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr ""
+msgstr "Oldalkocsis fájlok"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2529,7 +2529,7 @@ msgstr "A zöldeskék"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr ""
+msgstr "A TensorFlow-ra a képosztályozáshoz, az arcfelismeréshez és a nem biztonságos tartalom felismeréséhez van szükség."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2762,7 +2762,7 @@ msgstr "Helyi fájlok feltöltése"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr ""
+msgstr "NSFW feltöltése"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
@@ -2982,6 +2982,9 @@ msgstr "Könyvtárát folyamatosan elemzi a rendszer, hogy automatikusan létreh
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Nagyítás/kicsinyítés"
+
+#~ msgid "File Format Support"
+#~ msgstr "Fájlformátum-támogatás"
 
 #~ msgid "Disable built-in WebDAV server. Requires a restart."
 #~ msgstr "A beépített WebDAV szerver letiltása. Újraindítást igényel."

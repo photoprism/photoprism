@@ -198,7 +198,7 @@ msgstr "Album"
 
 #: src/page/settings/advanced.vue:352
 msgid "Album Backups"
-msgstr ""
+msgstr "Albumite varukoopiad"
 
 #: src/page/albums.vue:560
 msgid "Album created"
@@ -274,7 +274,7 @@ msgstr "Kõik aastad"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr ""
+msgstr "Lubage üleslaadimine, mis võib olla solvav. Ebakindla sisu tuvastamiseks on vaja TensorFlow'd."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -396,7 +396,7 @@ msgstr "tagasi"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr ""
+msgstr "Varukoopia"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -551,7 +551,7 @@ msgstr "Muudatused edukalt salvestatud"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
+msgstr "Täiustatud seadete muutmine nõuab jõustumiseks taaskäivitamist."
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -702,11 +702,11 @@ msgstr "Looge indeksi varukoopiaid vastavalt seadistatud ajakavale."
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr ""
+msgstr "Loo YAML-failid albumite metaandmete varundamiseks."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
+msgstr "Loo YAML-sidekartiifailid pildi metaandmete varundamiseks."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -811,7 +811,7 @@ msgstr "Keela ExifTool"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr ""
+msgstr "Lülitage välja funktsioonid, mis nõuavad originaalide kausta kirjutamisõigust."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -823,7 +823,7 @@ msgstr "Lülita ImageMagick välja"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr ""
+msgstr "Lülitage interaktiivsed maailmakaardid ja vastupidine geokodeerimine välja."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -975,7 +975,7 @@ msgstr "E-post"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
+msgstr "Lubage tõrjerežiim, et kuvada täiendavaid logisid ja aidata tõrkeotsingutel."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -1629,7 +1629,7 @@ msgstr "Metaandmed"
 
 #: src/page/settings/advanced.vue:260
 msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
-msgstr ""
+msgstr "Metaandmete ekstraheerimine ExifTooliga on vajalik täieliku video-, live-foto- ja XMP-toe saamiseks."
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
@@ -1827,7 +1827,7 @@ msgstr "Windowsis sisestage ühendusdialoogi järgmine ressurss:"
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
+msgstr "Väikepiltide nõudmisel genereerimine võib põhjustada suurt protsessori- ja mälukasutust. Seda ei soovitata piiratud ressurssidega serverite ja NAS-seadmete puhul."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2051,7 +2051,7 @@ msgstr "Uue albumi lisamiseks vajuta Enter."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
+msgstr "Vältida teiste rakenduste juurdepääsu PhotoPrismile kui jagatud võrgukettale."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2391,7 +2391,7 @@ msgstr "Abifail"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr ""
+msgstr "Külgkorvi failid"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2527,7 +2527,7 @@ msgstr "Sinakasroheline"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr ""
+msgstr "TensorFlow on vajalik piltide klassifitseerimiseks, näotuvastuseks ja ohtliku sisu tuvastamiseks."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2760,7 +2760,7 @@ msgstr "Laadi üles kohalikud failid"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr ""
+msgstr "Üleslaadimine NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
@@ -2982,6 +2982,9 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "File Format Support"
+#~ msgstr "Failiformaadi tugi"
 
 #~ msgid "Disable built-in WebDAV server. Requires a restart."
 #~ msgstr "Keela sisseehitatud WebDAV server. Nõuab taaskäivitamist."

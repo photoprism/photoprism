@@ -201,7 +201,7 @@ msgstr "Album"
 
 #: src/page/settings/advanced.vue:352
 msgid "Album Backups"
-msgstr ""
+msgstr "Sauvegardes d'albums"
 
 #: src/page/albums.vue:560
 msgid "Album created"
@@ -277,7 +277,7 @@ msgstr "Toutes les années"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr ""
+msgstr "Autoriser les téléchargements qui pourraient être choquants. La détection des contenus dangereux nécessite l'utilisation de TensorFlow."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -399,7 +399,7 @@ msgstr "Retour"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr ""
+msgstr "Sauvegarde"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -554,7 +554,7 @@ msgstr "Les modifications ont bien été enregistrées"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
+msgstr "Les modifications apportées aux paramètres avancés nécessitent un redémarrage pour être prises en compte."
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -705,11 +705,11 @@ msgstr "Produit des sauvegardes de l'index en suivant la planification programm�
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr ""
+msgstr "Crée des fichiers YAML pour sauvegarder les métadonnées des albums."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
+msgstr "Crée des fichiers sidecar YAML pour sauvegarder les métadonnées des images."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -814,7 +814,7 @@ msgstr "Désactiver l'outil ExifTool"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr ""
+msgstr "Désactive les fonctions qui nécessitent une autorisation d'écriture pour le dossier des originaux."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -826,7 +826,7 @@ msgstr "Désactiver ImageMagick"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr ""
+msgstr "Désactive les cartes du monde interactives et le géocodage inversé."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -978,7 +978,7 @@ msgstr "Email"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
+msgstr "Active le mode débogage pour afficher des journaux supplémentaires et aider au dépannage."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -1632,7 +1632,7 @@ msgstr "Métadonnées"
 
 #: src/page/settings/advanced.vue:260
 msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
-msgstr ""
+msgstr "L'extraction des métadonnées avec ExifTool est nécessaire pour une prise en charge complète des vidéos, des photos en direct et des XMP."
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
@@ -1830,7 +1830,7 @@ msgstr "Sous Windows, saisissez la ressource suivante dans la boîte de dialogue
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
+msgstr "La génération de vignettes à la demande peut entraîner une utilisation élevée du processeur et de la mémoire. Elle n'est pas recommandée pour les serveurs et les appareils NAS dont les ressources sont limitées."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2054,7 +2054,7 @@ msgstr "Appuyer sur la touche entrée pour créer un nouvel album."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
+msgstr "Empêche les autres applications d'accéder à PhotoPrism en tant que lecteur réseau partagé."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2394,7 +2394,7 @@ msgstr "Fichier side-car"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr ""
+msgstr "Fichiers Sidecar"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2530,7 +2530,7 @@ msgstr "Sarcelle"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr ""
+msgstr "TensorFlow est nécessaire pour la classification des images, la reconnaissance faciale et la détection des contenus dangereux."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2763,7 +2763,7 @@ msgstr "Envoyer des fichiers locaux"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr ""
+msgstr "Télécharger NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
@@ -2983,6 +2983,9 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "File Format Support"
+#~ msgstr "Prise en charge des formats de fichiers"
 
 #~ msgid "Disable built-in WebDAV server. Requires a restart."
 #~ msgstr "Désactiver le serveur WebDAV intégré. Nécessite un redémarrage."

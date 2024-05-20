@@ -201,7 +201,7 @@ msgstr "Album"
 
 #: src/page/settings/advanced.vue:352
 msgid "Album Backups"
-msgstr ""
+msgstr "Cadangan Album"
 
 #: src/page/albums.vue:560
 msgid "Album created"
@@ -277,7 +277,7 @@ msgstr "Dalam semua tahun"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr ""
+msgstr "Izinkan unggahan yang mungkin menyinggung. Mendeteksi konten yang tidak aman membutuhkan TensorFlow."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -399,7 +399,7 @@ msgstr "Kembali"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr ""
+msgstr "Cadangan"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -554,7 +554,7 @@ msgstr "Perubahan berhasil disimpan"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
+msgstr "Perubahan pada pengaturan lanjutan memerlukan pengaktifan ulang untuk menerapkannya."
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -705,11 +705,11 @@ msgstr "Membuat cadangan indeks berdasarkan jadwal yang dikonfigurasi."
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr ""
+msgstr "Buat file YAML untuk mencadangkan metadata album."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
+msgstr "Buat file sespan YAML untuk mencadangkan metadata gambar."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -814,7 +814,7 @@ msgstr "Nonaktifkan ExifTool"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr ""
+msgstr "Nonaktifkan fitur yang memerlukan izin tulis untuk folder asli."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -826,7 +826,7 @@ msgstr "Nonaktifkan ImageMagick"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr ""
+msgstr "Menonaktifkan peta dunia interaktif dan membalikkan geocoding."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -978,7 +978,7 @@ msgstr "Email"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
+msgstr "Aktifkan mode debug untuk menampilkan log tambahan dan membantu pemecahan masalah."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -1632,7 +1632,7 @@ msgstr "Metadata"
 
 #: src/page/settings/advanced.vue:260
 msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
-msgstr ""
+msgstr "Ekstraksi metadata dengan ExifTool diperlukan untuk dukungan penuh Video, Live Photo, dan XMP."
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
@@ -1830,7 +1830,7 @@ msgstr "Pada Windows, masukkan sumber daya berikut ini dalam dialog connection:"
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
+msgstr "Pembuatan gambar mini berdasarkan permintaan dapat menyebabkan penggunaan CPU dan memori yang tinggi. Tidak disarankan untuk server dan perangkat NAS yang memiliki sumber daya terbatas."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2054,7 +2054,7 @@ msgstr "Tekan enter untuk membuat album baru."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
+msgstr "Mencegah aplikasi lain mengakses PhotoPrism sebagai drive jaringan bersama."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2394,7 +2394,7 @@ msgstr "Sespan"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr ""
+msgstr "File Sespan"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2530,7 +2530,7 @@ msgstr "Teal"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr ""
+msgstr "TensorFlow diperlukan untuk klasifikasi gambar, pengenalan wajah, dan mendeteksi konten yang tidak aman."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2763,7 +2763,7 @@ msgstr "Unggah berkas lokal"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr ""
+msgstr "Unggah NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
@@ -2983,6 +2983,9 @@ msgstr "Perpustakaan Anda akan terus dianalisis secara otomatis dalam membuat al
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Memperbesar/memperkecil"
+
+#~ msgid "File Format Support"
+#~ msgstr "Dukungan Format File"
 
 #~ msgid "Disable built-in WebDAV server. Requires a restart."
 #~ msgstr "Nonaktifkan server WebDAV bawaan. Perlu dimulai ulang."

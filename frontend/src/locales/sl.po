@@ -198,7 +198,7 @@ msgstr "Album"
 
 #: src/page/settings/advanced.vue:352
 msgid "Album Backups"
-msgstr ""
+msgstr "Varnostne kopije albumov"
 
 #: src/page/albums.vue:560
 msgid "Album created"
@@ -274,7 +274,7 @@ msgstr "Vsa leta"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr ""
+msgstr "dovolite prenose, ki bi lahko bili žaljivi. Za odkrivanje nevarne vsebine je potreben TensorFlow."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -396,7 +396,7 @@ msgstr "Nazaj"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr ""
+msgstr "Varnostna kopija"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -551,7 +551,7 @@ msgstr "Spremembe so bile uspešno shranjene"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
+msgstr "Spremembe naprednih nastavitev je treba znova zagnati, da začnejo veljati."
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -702,11 +702,11 @@ msgstr "Ustvarite varnostne kopije indeksov na podlagi konfiguriranega urnika."
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr ""
+msgstr "Ustvarite datoteke YAML za varnostno kopiranje metapodatkov albuma."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
+msgstr "Ustvarite stranske datoteke YAML za varnostno kopiranje metapodatkov slik."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -811,7 +811,7 @@ msgstr "Onemogoči orodje ExifTool"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr ""
+msgstr "Onemogočite funkcije, ki zahtevajo dovoljenje za pisanje v mapo z izvirniki."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -823,7 +823,7 @@ msgstr "Onemogočite ImageMagick"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr ""
+msgstr "Onemogočite interaktivne zemljevide sveta in obratno geokodiranje."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -975,7 +975,7 @@ msgstr "E-pošta"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
+msgstr "Omogočite način za odpravljanje napak, da prikažete dodatne dnevnike in si pomagate pri odpravljanju težav."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -1629,7 +1629,7 @@ msgstr "Metapodatki"
 
 #: src/page/settings/advanced.vue:260
 msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
-msgstr ""
+msgstr "Za popolno podporo za videoposnetke, fotografije v živo in XMP je potrebno pridobivanje metapodatkov z orodjem ExifTool."
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
@@ -1827,7 +1827,7 @@ msgstr "V operacijskem sistemu Windows v pogovorno okno za povezavo vnesite nasl
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
+msgstr "Ustvarjanje sličic na zahtevo lahko povzroči veliko porabo procesorja in pomnilnika. To ni priporočljivo za strežnike in naprave NAS z omejenimi viri."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2051,7 +2051,7 @@ msgstr "Pritisnite enter, da ustvarite nov album."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
+msgstr "Preprečite drugim aplikacijam dostop do programa PhotoPrism kot do omrežnega pogona v skupni rabi."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2391,7 +2391,7 @@ msgstr "Sidecar"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr ""
+msgstr "Datoteke Sidecar"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2527,7 +2527,7 @@ msgstr "Teal"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr ""
+msgstr "TensorFlow je potreben za razvrščanje slik, prepoznavanje obrazov in zaznavanje nevarne vsebine."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2760,7 +2760,7 @@ msgstr "Prenos lokalnih datotek"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr ""
+msgstr "Naložite NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
@@ -2980,6 +2980,9 @@ msgstr "Vaša knjižnica se nenehno analizira in samodejno ustvarja albume poseb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Povečanje/pomanjšanje"
+
+#~ msgid "File Format Support"
+#~ msgstr "Podpora za format datotek"
 
 #~ msgid "Disable built-in WebDAV server. Requires a restart."
 #~ msgstr "Onemogoči vgrajeni strežnik WebDAV. Zahteva ponovni zagon."
