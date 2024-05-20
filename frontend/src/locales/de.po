@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-20 12:56+0000\n"
+"PO-Revision-Date: 2024-05-20 14:02+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -2143,7 +2143,7 @@ msgstr "Erkannt"
 
 #: src/page/settings/general.vue:144
 msgid "Recognize faces so people can be assigned and found."
-msgstr "Erkennt Gesichter, so dass bestimmte Personen gefunden werden können."
+msgstr "Erkenne Gesichter, damit Personen zugeordnet und gefunden werden können."
 
 #: src/options/options.js:442
 msgid "Red"
