@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-20 12:45+0000\n"
+"PO-Revision-Date: 2024-05-20 12:54+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -1830,7 +1830,7 @@ msgstr "Unter Windows gibst du die folgende Ressource in den Verbindungsdialog e
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr "Die On-Demand-Generierung von Miniaturansichten kann eine hohe CPU- und Speichernutzung verursachen. Sie wird nicht für ressourcenbeschränkte Server und NAS-Geräte empfohlen."
+msgstr "Die On-Demand-Generierung von Vorschaubildern kann zu einer hohen CPU- und Speicherauslastung führen. Nicht empfohlen für leistungsschwache Server und NAS-Geräte."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2530,7 +2530,7 @@ msgstr "Blaugrün"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlow wird für die Bildklassifizierung, die Gesichtserkennung und die Erkennung unsicherer Inhalte benötigt."
+msgstr "TensorFlow wird für die Bildklassifizierung sowie die Erkennung von Gesichtern und unsicheren Inhalten benötigt."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
