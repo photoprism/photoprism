@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-20 12:54+0000\n"
+"PO-Revision-Date: 2024-05-20 12:56+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -399,7 +399,7 @@ msgstr "Zurück"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr "Backup"
+msgstr "Datensicherung"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
