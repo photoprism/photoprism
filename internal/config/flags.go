@@ -255,7 +255,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-settings",
-			Usage:  "disable the user settings interface and server API, e.g. in combination with public mode",
+			Usage:  "disable the settings user interface and server API, e.g. in combination with public mode",
 			EnvVar: EnvVar("DISABLE_SETTINGS"),
 		}}, {
 		Flag: cli.BoolFlag{
