@@ -112,12 +112,12 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableExifTool"
-                :disabled="busy"
+                :disabled="busy || (!experimental && !settings.DisableExifTool)"
                 class="ma-0 pa-0 input-disable-exiftool"
                 color="secondary-dark"
                 :label="$gettext('Disable ExifTool')"
                 :hint="$gettext('Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support.')"
-                prepend-icon="filter_alt_off"
+                prepend-icon="no_photography"
                 persistent-hint
                 @change="onChange"
               >
