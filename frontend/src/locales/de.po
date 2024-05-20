@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-19 10:02+0000\n"
+"PO-Revision-Date: 2024-05-20 12:45+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5.3\n"
+"X-Generator: Weblate 5.5.5\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -277,7 +277,7 @@ msgstr "Alle Jahre"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr "Erlaube Uploads, die anstößig sein könnten. Die Erkennung von unsicheren Inhalten erfordert TensorFlow."
+msgstr "Das Hochladen von Bildern zulassen, die anstößig sein könnten. TensorFlow muss dazu aktiviert sein."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -705,11 +705,11 @@ msgstr "Erstellt Index-Backups nach dem konfigurierten Zeitplan."
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr "Erstelle YAML-Dateien, um Album-Metadaten zu sichern."
+msgstr "YAML-Dateien zum Sichern von Album-Metadaten verwenden."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr "Erstelle YAML-Sidecar-Dateien, um Bild-Metadaten zu sichern."
+msgstr "Bild-Metadaten in YAML-Sidecar-Dateien sichern."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -814,7 +814,7 @@ msgstr "ExifTool deaktivieren"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr "Deaktiviere Funktionen, die eine Schreibberechtigung für den Ordner \"Originale\" erfordern."
+msgstr "Deaktiviert Funktionen, die eine Schreibberechtigung für die Original-Ordner und -Dateien erfordern."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -826,7 +826,7 @@ msgstr "ImageMagick deaktivieren"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr "Deaktiviere interaktive Weltkarten und umgekehrte Geokodierung."
+msgstr "Deaktiviert interaktive Weltkarten und Reverse Geocoding."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -978,11 +978,11 @@ msgstr "E-Mail"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr "Aktiviere den Debug-Modus, um zusätzliche Protokolle anzuzeigen und bei der Fehlersuche zu helfen."
+msgstr "Debug-Modus aktivieren, um zusätzliche Logs anzuzeigen und die Fehlersuche zu erleichtern."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
-msgstr "Aktiviert neue Funktionen, an denen derzeit noch entwickelt wird."
+msgstr "Neue Funktionen aktivieren, die noch in der Entwicklung sind."
 
 #: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
@@ -2054,7 +2054,7 @@ msgstr "Enter drücken, um ein neues Album zu erstellen."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Verhindere, dass andere Anwendungen auf PhotoPrism als freigegebenes Netzlaufwerk zugreifen."
+msgstr "Verhindert, dass andere Anwendungen über WebDAV auf Ordner und Dateien zugreifen können."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2394,7 +2394,7 @@ msgstr "Sidecar"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr "Seitenwagen-Dateien"
+msgstr "Sidecar-Dateien"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2763,7 +2763,7 @@ msgstr "Dateien hochladen"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr "NSFW hochladen"
+msgstr "NSFW Uploads"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
