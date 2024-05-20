@@ -14,16 +14,32 @@ func TestConfig_BackupPath(t *testing.T) {
 func TestConfig_BackupBasePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Contains(t, c.BackupBasePath(), "/storage/testdata/backup")
+	path := c.options.BackupPath
+	c.options.BackupPath = "./"
+	assert.Contains(t, c.BackupBasePath(), "/photoprism/internal/config")
+	c.options.BackupPath = path
 }
 
 func TestConfig_BackupSchedule(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Contains(t, c.BackupSchedule(), " * * *")
+	schedule := c.options.BackupSchedule
+	c.options.BackupSchedule = ""
+	assert.Equal(t, "", c.BackupSchedule())
+	c.options.BackupSchedule = "invalid"
+	assert.Equal(t, "", c.BackupSchedule())
+	c.options.BackupSchedule = schedule
 }
 
 func TestConfig_BackupRetain(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, DefaultBackupRetain, c.BackupRetain())
+	retain := c.options.BackupRetain
+	c.options.BackupRetain = -3
+	assert.Equal(t, -1, c.BackupRetain())
+	c.options.BackupRetain = 0
+	assert.Equal(t, DefaultBackupRetain, c.BackupRetain())
+	c.options.BackupRetain = retain
 }
 
 func TestConfig_BackupDatabase(t *testing.T) {
@@ -47,7 +63,6 @@ func TestConfig_BackupAlbums(t *testing.T) {
 	assert.False(t, c.BackupAlbums())
 	c.options.BackupAlbums = true
 	assert.True(t, c.BackupAlbums())
-
 }
 
 func TestConfig_BackupAlbumsPath(t *testing.T) {
