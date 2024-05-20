@@ -386,7 +386,7 @@ msgid "Authentication"
 msgstr "Autenticación"
 
 #: src/page/settings/general.vue:166
-msgid "Automatically creates albums of special moments, trips, and places."
+msgid "Generate albums of special moments, journeys, and places."
 msgstr "Crea automáticamente álbumes de momentos, viajes y lugares especiales."
 
 #: src/page/settings/library.vue:112
@@ -2143,7 +2143,7 @@ msgid "Recognized"
 msgstr "Reconocida"
 
 #: src/page/settings/general.vue:144
-msgid "Recognize faces so that people can be assigned and found."
+msgid "Recognize faces so people can be assigned and found."
 msgstr "Reconoce las caras para poder encontrar a personas concretas."
 
 #: src/options/options.js:442

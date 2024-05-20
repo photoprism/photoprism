@@ -386,7 +386,7 @@ msgid "Authentication"
 msgstr "प्रमाणीकरण"
 
 #: src/page/settings/general.vue:166
-msgid "Automatically creates albums of special moments, trips, and places."
+msgid "Generate albums of special moments, journeys, and places."
 msgstr "स्वचालित रूप से विशेष क्षणों, यात्राओं और स्थानों के एल्बम बनाता है।"
 
 #: src/page/settings/library.vue:112
@@ -2142,7 +2142,7 @@ msgid "Recognized"
 msgstr "मान्यता प्राप्त"
 
 #: src/page/settings/general.vue:144
-msgid "Recognize faces so that people can be assigned and found."
+msgid "Recognize faces so people can be assigned and found."
 msgstr "चेहरों को पहचानता है ताकि विशिष्ट लोगों को ढूंढा जा सके।"
 
 #: src/options/options.js:442

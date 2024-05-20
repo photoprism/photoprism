@@ -25,7 +25,7 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.features.people" :disabled="busy" class="ma-0 pa-0 input-people" color="secondary-dark" :label="$gettext('People')" :hint="$gettext('Recognize faces so that people can be assigned and found.')" prepend-icon="person" persistent-hint @change="onChange">
+              <v-checkbox v-model="settings.features.people" :disabled="busy" class="ma-0 pa-0 input-people" color="secondary-dark" :label="$gettext('People')" :hint="$gettext('Recognize faces so people can be assigned and found.')" prepend-icon="person" persistent-hint @change="onChange">
               </v-checkbox>
             </v-flex>
 
@@ -36,7 +36,7 @@
                 class="ma-0 pa-0 input-moments"
                 color="secondary-dark"
                 :label="$gettext('Moments')"
-                :hint="$gettext('Automatically creates albums of special moments, trips, and places.')"
+                :hint="$gettext('Generate albums of special moments, journeys, and places.')"
                 prepend-icon="star"
                 persistent-hint
                 @change="onChange"

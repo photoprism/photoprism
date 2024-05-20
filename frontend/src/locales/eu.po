@@ -383,7 +383,7 @@ msgid "Authentication"
 msgstr "Autentifikazioa"
 
 #: src/page/settings/general.vue:166
-msgid "Automatically creates albums of special moments, trips, and places."
+msgid "Generate albums of special moments, journeys, and places."
 msgstr "Momentu, bidai eta leku berezien albumak automatikoki sortzen ditu."
 
 #: src/page/settings/library.vue:112
@@ -2139,7 +2139,7 @@ msgid "Recognized"
 msgstr "Aitortua"
 
 #: src/page/settings/general.vue:144
-msgid "Recognize faces so that people can be assigned and found."
+msgid "Recognize faces so people can be assigned and found."
 msgstr "Aurpegiak ezagutzen ditu, pertsona zehatzak aurkitu ahal izateko."
 
 #: src/options/options.js:442
