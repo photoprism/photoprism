@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-20 14:16+0000\n"
+"PO-Revision-Date: 2024-05-20 14:35+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -701,7 +701,7 @@ msgstr "Erstellen"
 
 #: src/page/settings/advanced.vue:374
 msgid "Create regular backups based on the configured schedule."
-msgstr "Erstellt Index-Backups nach dem konfigurierten Zeitplan."
+msgstr "Regelmäßige Backups zu den festgelegten Zeiten erstellen."
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
