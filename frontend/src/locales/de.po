@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-20 14:02+0000\n"
+"PO-Revision-Date: 2024-05-20 14:09+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -387,7 +387,7 @@ msgstr "Authentifizierung"
 
 #: src/page/settings/general.vue:166
 msgid "Generate albums of special moments, journeys, and places."
-msgstr "Erstellt automatisch Alben von besonderen Momenten, Reisen und Orten."
+msgstr "Alben von besonderen Momenten, Reisen und Orten erstellen."
 
 #: src/page/settings/library.vue:112
 msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
@@ -2143,7 +2143,7 @@ msgstr "Erkannt"
 
 #: src/page/settings/general.vue:144
 msgid "Recognize faces so people can be assigned and found."
-msgstr "Erkenne Gesichter, damit Personen zugeordnet und gefunden werden können."
+msgstr "Gesichter erkennen, damit Personen zugeordnet und gefunden werden können."
 
 #: src/options/options.js:442
 msgid "Red"
