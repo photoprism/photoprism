@@ -1124,8 +1124,8 @@ msgid "File Browser"
 msgstr "Fitxategien arakatzailea"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "Fitxategien Bihurketa"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -2998,9 +2998,6 @@ msgstr "Handitu/txikiagotu"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "Errendatze dinamikoak zerbitzari indartsu bat behar du. Ez da gomendagarria NAS gailuetarako."
-
-#~ msgid "File Conversion"
-#~ msgstr "Fitxategien Bihurketa"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Erregistro mezu zehatzagoak erakusten ditu. Berrabiaraztea eskatzen du."

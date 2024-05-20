@@ -276,7 +276,7 @@
 
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
-            <translate>File Format Support</translate>
+            <translate>File Conversion</translate>
           </h3>
         </v-card-title>
 

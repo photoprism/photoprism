@@ -1127,8 +1127,8 @@ msgid "File Browser"
 msgstr "Файловый менеджер"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "Преобразование файлов"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -3001,9 +3001,6 @@ msgstr "Увеличение/уменьшение масштаба"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "Рендеринг по требованию требует мощного процессора и не рекомендуется для небольших домашних серверов или устройств NAS."
-
-#~ msgid "File Conversion"
-#~ msgstr "Преобразование файлов"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Показывает более подробные сообщения журнала. Требуется перезапуск."

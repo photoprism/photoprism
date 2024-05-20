@@ -1124,8 +1124,8 @@ msgid "File Browser"
 msgstr "Πρόγραμμα περιήγησης αρχείων"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "Μετατροπή αρχείου"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -2998,9 +2998,6 @@ msgstr "Μεγέθυνση/ σμίκρυνση"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "Η δυναμική απόδοση απαιτεί έναν ισχυρό διακομιστή. Δεν συνιστάται για συσκευές NAS."
-
-#~ msgid "File Conversion"
-#~ msgstr "Μετατροπή αρχείου"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Εμφανίζει πιο λεπτομερή μηνύματα καταγραφής. Απαιτεί επανεκκίνηση."

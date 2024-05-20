@@ -1124,8 +1124,8 @@ msgid "File Browser"
 msgstr "Trình duyệt tệp"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "Chuyển đổi tập tin"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -3000,9 +3000,6 @@ msgstr "Phóng to / thu nhỏ"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "Kết xuất động yêu cầu một máy chủ mạnh mẽ. Nó không được khuyến khích cho các thiết bị NAS."
-
-#~ msgid "File Conversion"
-#~ msgstr "Chuyển đổi tập tin"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Hiển thị thông điệp tường trình chi tiết hơn. Yêu cầu khởi động lại."

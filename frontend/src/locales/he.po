@@ -1127,8 +1127,8 @@ msgid "File Browser"
 msgstr "סייר קבצים"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "המרת קבצים"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -3001,9 +3001,6 @@ msgstr "זום פנימה\\החוצה"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "עיבוד דינמי דורש מעבד רב עצמה ואינו מומלץ לשרתי בית קטנים יותר, או להתקני NAS."
-
-#~ msgid "File Conversion"
-#~ msgstr "המרת קבצים"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "מציג הודעות יומן מפורטות יותר. דורש הפעלה מחדש."

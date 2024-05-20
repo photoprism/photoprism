@@ -1127,8 +1127,8 @@ msgid "File Browser"
 msgstr "Bestands Browser"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "Bestandsconversie"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -3001,9 +3001,6 @@ msgstr "In-/uitzoomen"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "On-demand rendering vereist een krachtige CPU en wordt niet aanbevolen voor kleinere homeservers of NAS-apparaten."
-
-#~ msgid "File Conversion"
-#~ msgstr "Bestandsconversie"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Toont meer gedetailleerde logberichten. Vereist een herstart."

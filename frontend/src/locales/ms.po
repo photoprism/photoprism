@@ -1127,8 +1127,8 @@ msgid "File Browser"
 msgstr "Pelayar Fail"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "Penukaran Fail"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -3001,9 +3001,6 @@ msgstr "Zum masuk/keluar"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "Penyampaian dinamik memerlukan pelayan yang berkuasa. Ia tidak disyorkan untuk peranti NAS."
-
-#~ msgid "File Conversion"
-#~ msgstr "Penukaran Fail"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Menunjukkan mesej log yang lebih terperinci. Memerlukan mulakan semula."

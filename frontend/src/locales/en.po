@@ -1126,7 +1126,7 @@ msgid "File Browser"
 msgstr ""
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
+msgid "File Conversion"
 msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79

@@ -1127,8 +1127,8 @@ msgid "File Browser"
 msgstr "Filutforsker"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "Filkonvertering"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -3001,9 +3001,6 @@ msgstr "Zoom inn/ut"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "Dynamisk gjengivelse krever en kraftig server. Det anbefales ikke for NAS-enheter."
-
-#~ msgid "File Conversion"
-#~ msgstr "Filkonvertering"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Viser mer detaljerte loggmeldinger. Krever en omstart."

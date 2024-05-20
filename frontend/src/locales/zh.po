@@ -1127,8 +1127,8 @@ msgid "File Browser"
 msgstr "文件浏览器"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "文件转换"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -3003,9 +3003,6 @@ msgstr "缩放"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "动态渲染需要性能较强的服务器，不建议用于 NAS 设备。"
-
-#~ msgid "File Conversion"
-#~ msgstr "文件转换"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "显示更详细的日志信息，需要重新启动。"

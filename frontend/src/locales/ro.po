@@ -1127,8 +1127,8 @@ msgid "File Browser"
 msgstr "Browser de fișiere"
 
 #: src/page/settings/advanced.vue:161
-msgid "File Format Support"
-msgstr ""
+msgid "File Conversion"
+msgstr "Conversia fișierelor"
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -3001,9 +3001,6 @@ msgstr "Măriți/micșorați"
 
 #~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
 #~ msgstr "Redarea dinamică necesită un server puternic. Nu este recomandată pentru dispozitivele NAS."
-
-#~ msgid "File Conversion"
-#~ msgstr "Conversia fișierelor"
 
 #~ msgid "Shows more detailed log messages. Requires a restart."
 #~ msgstr "Afișează mesaje de jurnal mai detaliate. Necesită o repornire."
