@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-20 14:35+0000\n"
+"PO-Revision-Date: 2024-05-20 15:05+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -277,7 +277,7 @@ msgstr "Alle Jahre"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr "Das Hochladen von Bildern zulassen, die anstößig sein könnten. TensorFlow muss dazu aktiviert sein."
+msgstr "Erlaubt das Hochladen von Bildern, die anstößig sein könnten. TensorFlow muss dafür aktiviert sein."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -2054,7 +2054,7 @@ msgstr "Enter drücken, um ein neues Album zu erstellen."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Verhindert, dass andere Anwendungen über WebDAV auf Ordner und Dateien zugreifen können."
+msgstr "Verhindern, dass andere Anwendungen über WebDAV auf Ordner und Dateien zugreifen können."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
