@@ -198,7 +198,7 @@ msgstr "Album"
 
 #: src/page/settings/advanced.vue:352
 msgid "Album Backups"
-msgstr ""
+msgstr "Sao lưu album"
 
 #: src/page/albums.vue:560
 msgid "Album created"
@@ -274,7 +274,7 @@ msgstr "Mọi năm"
 
 #: src/page/settings/advanced.vue:194
 msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr ""
+msgstr "Cho phép tải lên những nội dung có thể gây khó chịu. Việc phát hiện nội dung không an toàn cần có TensorFlow."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -396,7 +396,7 @@ msgstr "Mặt sau"
 
 #: src/page/settings/advanced.vue:68
 msgid "Backup"
-msgstr ""
+msgstr "Hỗ trợ"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -551,7 +551,7 @@ msgstr "Đã lưu thay đổi thành công"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr ""
+msgstr "Những thay đổi đối với cài đặt nâng cao yêu cầu khởi động lại để có hiệu lực."
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -702,11 +702,11 @@ msgstr "Tạo bản sao lưu chỉ mục dựa trên lịch trình đã định 
 
 #: src/page/settings/advanced.vue:353
 msgid "Create YAML files to back up album metadata."
-msgstr ""
+msgstr "Tạo tệp YAML để sao lưu siêu dữ liệu album."
 
 #: src/page/settings/advanced.vue:332
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr ""
+msgstr "Tạo các tệp sidecar YAML để sao lưu siêu dữ liệu hình ảnh."
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -811,7 +811,7 @@ msgstr "Tắt ExifTool"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr ""
+msgstr "Tắt các tính năng yêu cầu quyền ghi đối với thư mục gốc."
 
 #: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
@@ -823,7 +823,7 @@ msgstr "Tắt ImageMagick"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr ""
+msgstr "Vô hiệu hóa bản đồ thế giới tương tác và mã hóa địa lý đảo ngược."
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -975,7 +975,7 @@ msgstr "E-mail"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr ""
+msgstr "Bật chế độ gỡ lỗi để hiển thị nhật ký bổ sung và trợ giúp khắc phục sự cố."
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -1629,7 +1629,7 @@ msgstr "metadata"
 
 #: src/page/settings/advanced.vue:260
 msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
-msgstr ""
+msgstr "Cần phải trích xuất siêu dữ liệu bằng ExifTool để hỗ trợ đầy đủ Video, Live Photo và XMP."
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
@@ -1827,7 +1827,7 @@ msgstr "Trên Windows, nhập tài nguyên sau vào hộp thoại kết nối:"
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr ""
+msgstr "Việc tạo hình thu nhỏ theo yêu cầu có thể gây ra mức sử dụng CPU và bộ nhớ cao. Nó không được khuyến khích cho các máy chủ và thiết bị NAS bị hạn chế về tài nguyên."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2051,7 +2051,7 @@ msgstr "Nhấn enter để tạo album mới."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
+msgstr "Ngăn các ứng dụng khác truy cập PhotoPrism dưới dạng ổ đĩa mạng chung."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2391,7 +2391,7 @@ msgstr "xe sidecar"
 
 #: src/page/settings/advanced.vue:331
 msgid "Sidecar Files"
-msgstr ""
+msgstr "Tập tin sidecar"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2527,7 +2527,7 @@ msgstr "màu xanh mòng két"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr ""
+msgstr "TensorFlow cần thiết để phân loại hình ảnh, nhận dạng khuôn mặt và phát hiện nội dung không an toàn."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2760,7 +2760,7 @@ msgstr "Tải lên các tập tin cục bộ"
 
 #: src/page/settings/advanced.vue:193
 msgid "Upload NSFW"
-msgstr ""
+msgstr "Tải lên NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
@@ -2982,6 +2982,9 @@ msgstr "Thư viện của bạn được phân tích liên tục để tự đ�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Phóng to / thu nhỏ"
+
+#~ msgid "File Format Support"
+#~ msgstr "Hỗ trợ định dạng tệp"
 
 #~ msgid "Disable built-in WebDAV server. Requires a restart."
 #~ msgstr "Vô hiệu hóa máy chủ WebDAV tích hợp. Yêu cầu khởi động lại."
