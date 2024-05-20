@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-19 09:51+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-05-20 08:52+0000\n"
+"Last-Translator: Poky Leung <pyleungae@connect.ust.hk>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.5.3\n"
+"X-Generator: Weblate 5.5.5\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -51,7 +51,7 @@ msgstr "12 小時"
 #: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
-msgstr "双因素身份验证"
+msgstr "雙重身份驗證"
 
 #: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
 msgid "2FA"
@@ -74,7 +74,7 @@ msgstr "關於"
 
 #: src/options/auth.js:26 src/options/auth.js:44
 msgid "Access Token"
-msgstr "访问令牌"
+msgstr "訪問令牌"
 
 #: src/component/navigation.vue:106 src/component/navigation.vue:2059
 #: src/dialog/share/upload.vue:108 src/model/service.js:94
@@ -313,7 +313,7 @@ msgstr "API鑰匙"
 #: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
-msgstr "应用"
+msgstr "應用"
 
 #: src/dialog/photo/edit/details.vue:115
 msgid "Apply"
@@ -327,7 +327,7 @@ msgstr "確認"
 #: src/page/settings/account.vue:68 src/dialog/account/apps.vue:8
 #: src/page/settings/account.vue:70
 msgid "Apps and Devices"
-msgstr "应用程序和设备"
+msgstr "應用程式和裝置"
 
 #: src/app/routes.js:256 src/component/navigation.vue:142
 #: src/component/photo/cards.vue:393 src/component/photo/clipboard.vue:204
@@ -391,7 +391,7 @@ msgstr "自動建立特殊時刻、旅行和地點的相冊。"
 
 #: src/page/settings/library.vue:112
 msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
-msgstr "自动为无法索引或查看的文件创建缩略图。"
+msgstr "自動爲無法索引或查看的文件創建縮略圖。"
 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
@@ -2257,7 +2257,7 @@ msgstr "掃描"
 #: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
-msgstr "范围"
+msgstr "範圍"
 
 #: src/component/navigation.vue:65 src/component/navigation.vue:75
 #: src/component/navigation.vue:570 src/component/navigation.vue:4
