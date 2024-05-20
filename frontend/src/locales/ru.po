@@ -1631,7 +1631,7 @@ msgid "Metadata"
 msgstr "Метаданные"
 
 #: src/page/settings/advanced.vue:260
-msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
 msgstr "Для полной поддержки Video, Live Photo и XMP требуется извлечение метаданных с помощью ExifTool."
 
 #: src/options/auth.js:56 src/options/auth.js:72

@@ -116,7 +116,7 @@
                 class="ma-0 pa-0 input-disable-exiftool"
                 color="secondary-dark"
                 :label="$gettext('Disable ExifTool')"
-                :hint="$gettext('Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support.')"
+                :hint="$gettext('ExifTool is required for full support of XMP metadata, videos and Live Photos.')"
                 prepend-icon="no_photography"
                 persistent-hint
                 @change="onChange"
