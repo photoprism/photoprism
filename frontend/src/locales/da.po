@@ -199,6 +199,10 @@ msgstr "Efter tre uger"
 msgid "Album"
 msgstr "Album"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "Album oprettet"
@@ -270,6 +274,10 @@ msgstr "Alle originaler"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Alle år"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -388,6 +396,10 @@ msgstr "Opret automatisk thumbnails til filer, der ellers ikke kan indekseres el
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "Tilbage"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -540,6 +552,10 @@ msgstr "Ændre privat flag"
 msgid "Changes successfully saved"
 msgstr "Ændringer gemt med succes"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "Kontrolleret"
@@ -683,9 +699,17 @@ msgstr "Opret konto"
 msgid "Create album"
 msgstr "Opret album"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "Opret sikkerhedskopier af indeks baseret på den konfigurerede tidsplan."
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -715,7 +739,7 @@ msgstr "Cyan"
 msgid "Daily"
 msgstr "Dagligt"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "Sikkerhedskopiering af databaser"
 
@@ -727,7 +751,7 @@ msgstr "Dag"
 msgid "Deactivate"
 msgstr "Deaktiver"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "Fejlfindingslog"
 
@@ -780,55 +804,55 @@ msgstr "Detaljer"
 msgid "Dimensions"
 msgstr "Dimensioner"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Deaktiver den indbyggede WebDAV-server. Kræver en genstart."
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Deaktivere Darktable"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "Deaktiver ExifTool"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "Deaktiver FFmpeg"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "Deaktiver ImageMagick"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "Deaktiver steder"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "Deaktivere RawTherapee"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "Deaktiver TensorFlow"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "Deaktivere vektorer"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "Deaktiver WebDAV"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "Deaktiverer omvendt geokodning og kort."
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "Deaktiverer understøttelse af vektorgrafik."
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Deaktiverer video-omkodning og udtrækning af miniaturebilleder."
 
@@ -842,29 +866,17 @@ msgstr "Opdag"
 msgid "Display Name"
 msgstr "Vis navn"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Opret ikke ExifTool JSON-filer til forbedret metadataekstraktion."
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Rediger ikke mappen med originaler. Deaktiverer import, overførsel og sletning."
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Du må ikke bruge Darktable til at konvertere RAW-filer."
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "Du må ikke bruge ImageMagick til at konvertere billeder."
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Du må ikke bruge RawTherapee til at konvertere RAW-filer."
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "Brug ikke TensorFlow til billedklassifikation."
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -909,7 +921,7 @@ msgstr "Download enkeltfiler og zip-arkiver."
 msgid "Downloading…"
 msgstr "Downloader…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "Nedskaleringsfilter"
 
@@ -925,15 +937,11 @@ msgstr "Duplikater springes over og vises kun én gang."
 msgid "Duration"
 msgstr "Varighed"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "Dynamiske miniaturebilleder"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dynamisk gengivelse kræver en effektiv server. Det anbefales ikke til NAS-enheder."
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Grænse for dynamisk størrelse: %{n}px"
 
@@ -968,11 +976,15 @@ msgstr "Redigeret"
 msgid "Email"
 msgstr "E-mail"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "Aktivér nye funktioner, der aktuelt er under udvikling."
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverer RAW-konverteringsindstillinger. Kan reducere ydeevnen."
 
@@ -1032,7 +1044,7 @@ msgstr "Udvid"
 msgid "Expand Search"
 msgstr "Udvid søgning"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "Eksperimentelle funktioner"
 
@@ -1114,9 +1126,9 @@ msgstr "Fil"
 msgid "File Browser"
 msgstr "Filbrowser"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "Konvertering af filer"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1200,7 +1212,7 @@ msgstr "Frembringe"
 msgid "Given Name"
 msgstr "Fornavn"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "Globale indstillinger"
 
@@ -1273,7 +1285,7 @@ msgstr "billede"
 msgid "Image"
 msgstr "Billede"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "Billedkvalitet"
 
@@ -1391,11 +1403,11 @@ msgstr "Det er en engangskode, der vil deaktivere 2FA for din konto, når du bru
 msgid "Item"
 msgstr "Element"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-kvalitet: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG maks størrelse: %{n}px"
 
@@ -1618,6 +1630,10 @@ msgstr "Besked sendt"
 msgid "Metadata"
 msgstr "Metadata"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Metrics"
@@ -1811,6 +1827,10 @@ msgstr "Ældste først"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "På Windows skal du indtaste følgende ressource i forbindelsesdialogboksen:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2008,7 +2028,7 @@ msgstr "Genstart din instans for at ændringerne kan træde i kraft."
 msgid "Please wait…"
 msgstr "Vent venligst…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG maks størrelse: %{n}px"
 
@@ -2032,10 +2052,15 @@ msgstr "Tryk på knappen for at starte indeksering…"
 msgid "Press enter to create a new album."
 msgstr "Tryk på enter for at oprette et nyt album."
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Forhåndsvisning"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Forhåndsvisning af billeder"
@@ -2093,7 +2118,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indeksér alle originaler igen, inklusiv allerede indekserede og uændrede filer."
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "Skrivebeskyttet tilstand"
 
@@ -2181,7 +2206,7 @@ msgid "Resolution"
 msgstr "Opløsning"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "Genstart"
 
@@ -2363,13 +2388,13 @@ msgstr "Vis mere"
 msgid "Show server logs in Library."
 msgstr "Vis serverlogfiler i biblioteket."
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Viser mere detaljerede logmeddelelser. Kræver en genstart."
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidevogn"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2438,7 +2463,7 @@ msgstr "Start/stop lysbilledshow"
 msgid "States"
 msgstr "Stater"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "Grænse for statisk størrelse: %{n}px"
 
@@ -2503,6 +2528,10 @@ msgstr "Taget"
 msgid "Teal"
 msgstr "Krikand"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Teksten er for lang"
@@ -2530,10 +2559,6 @@ msgstr "Tema"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Dette sætter originalmappen som et netværksdrev og giver dig mulighed for at åbne, redigere og slette filer fra din computer eller smartphone, som om de var lokale."
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "Miniaturegenerering"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2736,6 +2761,10 @@ msgstr "Upload mappe"
 msgid "Upload local files"
 msgstr "Upload lokale filer"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Upload til WebDAV og del links med venner."
@@ -2760,7 +2789,7 @@ msgstr "Uploads, der kan indeholde sådanne billeder, afvises automatisk."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "Brug forudindstillinger"
 
@@ -2954,6 +2983,33 @@ msgstr "Dit bibliotek analyseres løbende for automatisk at oprette album med s�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom ind/ud"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "Deaktiver den indbyggede WebDAV-server. Kræver en genstart."
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "Deaktiverer omvendt geokodning og kort."
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "Opret ikke ExifTool JSON-filer til forbedret metadataekstraktion."
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "Rediger ikke mappen med originaler. Deaktiverer import, overførsel og sletning."
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "Brug ikke TensorFlow til billedklassifikation."
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "Dynamisk gengivelse kræver en effektiv server. Det anbefales ikke til NAS-enheder."
+
+#~ msgid "File Conversion"
+#~ msgstr "Konvertering af filer"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "Viser mere detaljerede logmeddelelser. Kræver en genstart."
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "Miniaturegenerering"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Kan du ikke få adgang til din godkendelsesapp eller enhed? Indtast din gendannelseskode, eller bed om hjælp."

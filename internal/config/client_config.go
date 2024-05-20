@@ -110,6 +110,7 @@ type Years []int
 
 // ClientDisable represents disabled client features a user cannot turn back on.
 type ClientDisable struct {
+	Restart        bool `json:"restart"`
 	WebDAV         bool `json:"webdav"`
 	Settings       bool `json:"settings"`
 	Places         bool `json:"places"`
@@ -230,6 +231,7 @@ func (c *Config) ClientPublic() ClientConfig {
 		Settings: c.PublicSettings(),
 		ACL:      acl.Rules.Grants(acl.RoleNone),
 		Disable: ClientDisable{
+			Restart:        true,
 			WebDAV:         true,
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
@@ -319,6 +321,7 @@ func (c *Config) ClientShare() ClientConfig {
 		Settings: c.ShareSettings(),
 		ACL:      acl.Rules.Grants(acl.RoleVisitor),
 		Disable: ClientDisable{
+			Restart:        true,
 			WebDAV:         c.DisableWebDAV(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
@@ -414,6 +417,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	cfg := ClientConfig{
 		Settings: s,
 		Disable: ClientDisable{
+			Restart:        c.DisableRestart(),
 			WebDAV:         c.DisableWebDAV(),
 			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),

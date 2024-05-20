@@ -21,27 +21,19 @@ func TestConfig_JpegQuality(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
-	c.options.JpegQuality = "110"
-	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
-	c.options.JpegQuality = "98"
+	c.options.JpegQuality = 110
+	assert.Equal(t, thumb.QualityMax, c.JpegQuality())
+	c.options.JpegQuality = 98
 	assert.Equal(t, thumb.Quality(98), c.JpegQuality())
-	c.options.JpegQuality = ""
+	c.options.JpegQuality = -1
 	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
-	c.options.JpegQuality = "best "
-	assert.Equal(t, thumb.QualityMax, c.JpegQuality())
-	c.options.JpegQuality = "high"
-	assert.Equal(t, thumb.QualityHigh, c.JpegQuality())
-	c.options.JpegQuality = "med "
+	c.options.JpegQuality = 0
 	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
-	c.options.JpegQuality = "medium "
-	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
-	c.options.JpegQuality = "low "
-	assert.Equal(t, thumb.QualityLow, c.JpegQuality())
-	c.options.JpegQuality = "max"
-	assert.Equal(t, thumb.QualityMax, c.JpegQuality())
-	c.options.JpegQuality = "min "
-	assert.Equal(t, thumb.QualityMin, c.JpegQuality())
-	c.options.JpegQuality = "default"
+	c.options.JpegQuality = 25
+	assert.Equal(t, thumb.Quality(25), c.JpegQuality())
+	c.options.JpegQuality = 85
+	assert.Equal(t, thumb.Quality(85), c.JpegQuality())
+	c.options.JpegQuality = 0
 	assert.Equal(t, thumb.QualityMedium, c.JpegQuality())
 }
 

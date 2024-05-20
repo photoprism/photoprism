@@ -199,6 +199,10 @@ msgstr "După două săptămâni"
 msgid "Album"
 msgstr "Album"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "Album creat"
@@ -270,6 +274,10 @@ msgstr "Toate originalele"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Toți anii"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -388,6 +396,10 @@ msgstr "Creați automat miniaturi pentru fișierele care nu pot fi indexate sau 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "Înapoi"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -540,6 +552,10 @@ msgstr "Schimbarea steagului privat"
 msgid "Changes successfully saved"
 msgstr "Modificări salvate cu succes"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "Verificat"
@@ -683,9 +699,17 @@ msgstr "Creați un cont"
 msgid "Create album"
 msgstr "Creați un album"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "Creați copii de rezervă ale indexurilor pe baza programului configurat."
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -715,7 +739,7 @@ msgstr "Cyan"
 msgid "Daily"
 msgstr "Zilnic"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "Copii de rezervă ale bazei de date"
 
@@ -727,7 +751,7 @@ msgstr "Ziua"
 msgid "Deactivate"
 msgstr "Dezactivați"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "Jurnalele de depanare"
 
@@ -780,55 +804,55 @@ msgstr "Detalii"
 msgid "Dimensions"
 msgstr "Dimensiuni"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Dezactivați serverul WebDAV încorporat. Necesită o repornire."
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Dezactivați Darktable"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "Dezactivați ExifTool"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "Dezactivați FFmpeg"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "Dezactivați ImageMagick"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "Dezactivați locurile"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "Dezactivați RawTherapee"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "Dezactivați TensorFlow"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "Dezactivarea vectorilor"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "Dezactivați WebDAV"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "Dezactivează geocodarea inversă și hărțile."
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "Dezactivează suportul pentru grafica vectorială."
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Dezactivează transcodarea video și extragerea miniaturilor."
 
@@ -842,29 +866,17 @@ msgstr "Descoperiți"
 msgid "Display Name"
 msgstr "Afișați numele"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Nu creați fișiere ExifTool JSON pentru o mai bună extragere a metadatelor."
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Nu modificați dosarul originalelor. Dezactivează importul, încărcarea și ștergerea."
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Nu utilizați Darktable pentru a converti fișiere RAW."
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "Nu folosiți ImageMagick pentru a converti imaginile."
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Nu utilizați RawTherapee pentru a converti fișiere RAW."
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "Nu utilizați TensorFlow pentru clasificarea imaginilor."
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -909,7 +921,7 @@ msgstr "Descărcați fișiere individuale și arhive zip."
 msgid "Downloading…"
 msgstr "Descărcarea…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "Filtru de reducere a scării"
 
@@ -925,15 +937,11 @@ msgstr "Dublurile vor fi omise și vor apărea doar o singură dată."
 msgid "Duration"
 msgstr "Durata"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "Previziuni dinamice"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Redarea dinamică necesită un server puternic. Nu este recomandată pentru dispozitivele NAS."
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Limita dimensiunii dinamice: %{n}px"
 
@@ -968,11 +976,15 @@ msgstr "Editat"
 msgid "Email"
 msgstr "Email"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "Activați noi caracteristici aflate în curs de dezvoltare."
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Activează presetările convertorului RAW. Poate reduce performanța."
 
@@ -1032,7 +1044,7 @@ msgstr "Extindeți"
 msgid "Expand Search"
 msgstr "Extindeți căutarea"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "Caracteristici experimentale"
 
@@ -1114,9 +1126,9 @@ msgstr "Fișier"
 msgid "File Browser"
 msgstr "Browser de fișiere"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "Conversia fișierelor"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1200,7 +1212,7 @@ msgstr "Genera"
 msgid "Given Name"
 msgstr "Numele dat"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "Opțiuni globale"
 
@@ -1273,7 +1285,7 @@ msgstr "imagine"
 msgid "Image"
 msgstr "Imagine"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "Calitatea imaginii"
 
@@ -1391,11 +1403,11 @@ msgstr "Este un cod de unică folosință care va dezactiva 2FA pentru contul dv
 msgid "Item"
 msgstr "Articolul"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "Calitate JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limita dimensiunii JPEG: %{n}px"
 
@@ -1618,6 +1630,10 @@ msgstr "Mesaj trimis"
 msgid "Metadata"
 msgstr "Metadate"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Metrici"
@@ -1811,6 +1827,10 @@ msgstr "Cel mai vechi Mai întâi"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Pe Windows, introduceți următoarea resursă în fereastra de dialog de conectare:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2008,7 +2028,7 @@ msgstr "Vă rugăm să reporniți instanța pentru ca modificările să intre î
 msgid "Please wait…"
 msgstr "Vă rugăm să așteptați…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "Limita de dimensiune PNG: %{n}px"
 
@@ -2032,10 +2052,15 @@ msgstr "Apăsați butonul pentru a începe indexarea…"
 msgid "Press enter to create a new album."
 msgstr "Apăsați enter pentru a crea un album nou."
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Previzualizare"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Imagini de previzualizare"
@@ -2093,7 +2118,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Reindexarea tuturor documentelor originale, inclusiv a fișierelor deja indexate și neschimbate."
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "Mod doar pentru citire"
 
@@ -2181,7 +2206,7 @@ msgid "Resolution"
 msgstr "Rezoluție"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "Reporniți"
 
@@ -2363,13 +2388,13 @@ msgstr "Arată mai mult"
 msgid "Show server logs in Library."
 msgstr "Afișați jurnalele serverului în Bibliotecă."
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Afișează mesaje de jurnal mai detaliate. Necesită o repornire."
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidecar"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2438,7 +2463,7 @@ msgstr "Porniți/Opriți prezentarea"
 msgid "States"
 msgstr "State"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "Limita dimensiunii statice: %{n}px"
 
@@ -2503,6 +2528,10 @@ msgstr "Luat"
 msgid "Teal"
 msgstr "Turcoaz"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Text prea lung"
@@ -2530,10 +2559,6 @@ msgstr "Temă"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Acest lucru montează dosarul de originale ca unitate de rețea și vă permite să deschideți, să editați și să ștergeți fișiere de pe computer sau de pe telefonul smartphone ca și cum ar fi locale."
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "Generarea de miniaturi"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2736,6 +2761,10 @@ msgstr "Încărcați dosarul"
 msgid "Upload local files"
 msgstr "Încărcați fișiere locale"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Încărcați pe WebDAV și partajați linkuri cu prietenii."
@@ -2760,7 +2789,7 @@ msgstr "Încărcările care pot conține astfel de imagini vor fi respinse autom
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "Utilizați presetări"
 
@@ -2954,6 +2983,33 @@ msgstr "Biblioteca dvs. este analizată în permanență pentru a crea automat a
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Măriți/micșorați"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "Dezactivați serverul WebDAV încorporat. Necesită o repornire."
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "Dezactivează geocodarea inversă și hărțile."
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "Nu creați fișiere ExifTool JSON pentru o mai bună extragere a metadatelor."
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "Nu modificați dosarul originalelor. Dezactivează importul, încărcarea și ștergerea."
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "Nu utilizați TensorFlow pentru clasificarea imaginilor."
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "Redarea dinamică necesită un server puternic. Nu este recomandată pentru dispozitivele NAS."
+
+#~ msgid "File Conversion"
+#~ msgstr "Conversia fișierelor"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "Afișează mesaje de jurnal mai detaliate. Necesită o repornire."
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "Generarea de miniaturi"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Nu puteți accesa aplicația sau dispozitivul dvs. de autentificare? Introduceți codul de recuperare sau solicitați asistență."

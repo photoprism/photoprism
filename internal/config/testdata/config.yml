@@ -13,3 +13,4 @@ DatabaseDriver: sqlite
 DatabaseDsn: .photoprism.db
 Theme: lavendel
 Language: english
+JpegQuality: 87

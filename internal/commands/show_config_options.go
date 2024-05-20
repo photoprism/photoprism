@@ -39,39 +39,14 @@ func showConfigOptionsAction(ctx *cli.Context) error {
 		return err
 	}
 
-	type Section struct {
-		Start string
-		Title string
-		Info  string
-	}
-
-	s := []Section{
-		{Start: "PHOTOPRISM_ADMIN_PASSWORD", Title: "Authentication"},
-		{Start: "PHOTOPRISM_LOG_LEVEL", Title: "Logging"},
-		{Start: "PHOTOPRISM_CONFIG_PATH", Title: "Storage"},
-		{Start: "PHOTOPRISM_BACKUP_PATH", Title: "Backups"},
-		{Start: "PHOTOPRISM_INDEX_WORKERS, PHOTOPRISM_WORKERS", Title: "Index Workers"},
-		{Start: "PHOTOPRISM_READONLY", Title: "Feature Flags"},
-		{Start: "PHOTOPRISM_DEFAULT_LOCALE", Title: "Customization"},
-		{Start: "PHOTOPRISM_SITE_URL", Title: "Site Information"},
-		{Start: "PHOTOPRISM_HTTPS_PROXY", Title: "Proxy Servers"},
-		{Start: "PHOTOPRISM_DISABLE_TLS", Title: "Web Server"},
-		{Start: "PHOTOPRISM_DATABASE_DRIVER", Title: "Database Connection"},
-		{Start: "PHOTOPRISM_SIPS_BIN", Title: "File Converters"},
-		{Start: "PHOTOPRISM_DOWNLOAD_TOKEN", Title: "Security Tokens"},
-		{Start: "PHOTOPRISM_THUMB_LIBRARY", Title: "Thumbnail Generation"},
-		{Start: "PHOTOPRISM_FACE_SIZE", Title: "Face Recognition",
-			Info: faceFlagsInfo},
-		{Start: "PHOTOPRISM_PID_FILENAME", Title: "Daemon Mode",
-			Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
-	}
+	sections := config.OptionsReportSections
 
 	j := 0
 
-	for i, sec := range s {
-		fmt.Printf("### %s ###\n\n", sec.Title)
-		if sec.Info != "" && ctx.Bool("md") {
-			fmt.Printf("%s\n\n", sec.Info)
+	for i, section := range sections {
+		fmt.Printf("### %s ###\n\n", section.Title)
+		if section.Info != "" && ctx.Bool("md") {
+			fmt.Printf("%s\n\n", section.Info)
 		}
 
 		secRows := make([][]string, 0, len(rows))
@@ -83,8 +58,8 @@ func showConfigOptionsAction(ctx *cli.Context) error {
 				continue
 			}
 
-			if i < len(s)-1 {
-				if s[i+1].Start == row[0] {
+			if i < len(sections)-1 {
+				if sections[i+1].Start == row[0] {
 					break
 				}
 			}

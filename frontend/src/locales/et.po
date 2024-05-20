@@ -196,6 +196,10 @@ msgstr "Kahe nädala pärast"
 msgid "Album"
 msgstr "Album"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "Album lisatud"
@@ -267,6 +271,10 @@ msgstr "Kõik originaalid"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Kõik aastad"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -385,6 +393,10 @@ msgstr "Looge automaatselt pisipildid failidele, mida ei saa muul viisil indekse
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "tagasi"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -537,6 +549,10 @@ msgstr "Muuda isiklikkust"
 msgid "Changes successfully saved"
 msgstr "Muudatused edukalt salvestatud"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "Kontrollitud"
@@ -680,9 +696,17 @@ msgstr "Loo konto"
 msgid "Create album"
 msgstr "Lisa album"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "Looge indeksi varukoopiaid vastavalt seadistatud ajakavale."
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -712,7 +736,7 @@ msgstr "Tsüaan"
 msgid "Daily"
 msgstr "Üks kord päevas"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "Andmebaasi varukoopiad"
 
@@ -724,7 +748,7 @@ msgstr "Päev"
 msgid "Deactivate"
 msgstr "Deaktiveeri"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "Tõrkeotsingu logid"
 
@@ -777,55 +801,55 @@ msgstr "Üksikasjad"
 msgid "Dimensions"
 msgstr "Mõõtmed"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Keela sisseehitatud WebDAV server. Nõuab taaskäivitamist."
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Keela Darktable"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "Keela ExifTool"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "Keela FFmpeg"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "Lülita ImageMagick välja"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "Keela kohad"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "Keela RawTherapee"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "Keela TensorFlow"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "Vektorite väljalülitamine"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "Keela WebDAV"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "Keelab asukohatuvastuse ja kaardid."
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "Lülitab vektorgraafika toetuse välja."
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Lülitab välja video transkodeerimise ja pisipildi väljavõtte."
 
@@ -839,29 +863,17 @@ msgstr "Avasta"
 msgid "Display Name"
 msgstr "Esitusnimi"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Ära loo ExifTool JSON-faile metaandmete ekstraktimise parandamiseks."
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Ära muuda originaalide kausta. Keelab importimise, üleslaadimise ja kustutamise."
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Ärge kasutage Darktable'i RAW-piltide teisendamiseks."
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "Ärge kasutage ImageMagicki piltide teisendamiseks."
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Ärge kasutage RawTherapee't RAW-piltide teisendamiseks."
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "Ära kasuta TensorFlow'd piltide klassifitseerimiseks."
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -906,7 +918,7 @@ msgstr "Laadi alla üksikuid faile ja ZIP-arhiive."
 msgid "Downloading…"
 msgstr "Allalaadimine…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "Skaleerimisfilter"
 
@@ -922,15 +934,11 @@ msgstr "Duplikaadid jäetakse vahele ja neid kuvatakse ainult ühekordselt."
 msgid "Duration"
 msgstr "Kestus"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "Dünaamilised eelvaated"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-seadmete jaoks."
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dünaamiline suuruse limiit: %{n}px"
 
@@ -965,11 +973,15 @@ msgstr "Muudetud"
 msgid "Email"
 msgstr "E-post"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "Luba uued, veel arenduses olevad funktsioonid."
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Lubab RAW-konverteri eelseadistused. Võib vähendada jõudlust."
 
@@ -1029,7 +1041,7 @@ msgstr "Laienda"
 msgid "Expand Search"
 msgstr "Laienda otsingut"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "Eksperimentaalsed funktsioonid"
 
@@ -1111,9 +1123,9 @@ msgstr "Fail"
 msgid "File Browser"
 msgstr "Failibrauser"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "Faili konverteerimine"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1197,7 +1209,7 @@ msgstr "Genereeri"
 msgid "Given Name"
 msgstr "Eesnimi"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "Globaalsed valikud"
 
@@ -1270,7 +1282,7 @@ msgstr "pilt"
 msgid "Image"
 msgstr "Pilt"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "Pildi kvaliteet"
 
@@ -1388,11 +1400,11 @@ msgstr "See on ühekordne kood, mis keelab teie kontol 2FA, kui seda kasutate."
 msgid "Item"
 msgstr "Element"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG kvaliteet: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG suuruse limiit: %{n}px"
 
@@ -1615,6 +1627,10 @@ msgstr "Sõnum saadetud"
 msgid "Metadata"
 msgstr "Metaandmed"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Mõõdikud"
@@ -1808,6 +1824,10 @@ msgstr "Vanemad eespool"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windowsis sisestage ühendusdialoogi järgmine ressurss:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2005,7 +2025,7 @@ msgstr "Palun taaskäivitage oma instants, et muudatused jõustuksid."
 msgid "Please wait…"
 msgstr "Palun oodake…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG suuruse limiit: %{n}px"
 
@@ -2029,10 +2049,15 @@ msgstr "Indekseerimise alustamiseks vajuta nuppu…"
 msgid "Press enter to create a new album."
 msgstr "Uue albumi lisamiseks vajuta Enter."
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Eelvaade"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Eelvaatepildid"
@@ -2090,7 +2115,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indekseeri uuesti kõik originaalid, sealhulgas juba indekseeritud ja muutmata failid."
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "Kirjutuskaitserežiim"
 
@@ -2178,7 +2203,7 @@ msgid "Resolution"
 msgstr "Resolutsioon"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "Restart"
 
@@ -2360,13 +2385,13 @@ msgstr "Näita rohkem"
 msgid "Show server logs in Library."
 msgstr "Näita serverilogisid fototeegis."
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Näitab detailsemaid logisõnumeid. Nõuab taaskäivitamist."
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Abifail"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2435,7 +2460,7 @@ msgstr "Käivita/peata slaidiesitlus"
 msgid "States"
 msgstr "Osariigid"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "Staatiline suuruse limiit: %{n}px"
 
@@ -2500,6 +2525,10 @@ msgstr "Pildistatud"
 msgid "Teal"
 msgstr "Sinakasroheline"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Tekst on liiga pikk"
@@ -2527,10 +2556,6 @@ msgstr "Välimus"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "See ühendab originaalide kausta võrgukettana ja võimaldab avada, muuta ja kustutada faile arvutist või nutitelefonist, nagu oleksid need kohalikud."
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "Pisipiltide genereerimine"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2733,6 +2758,10 @@ msgstr "Upload kausta"
 msgid "Upload local files"
 msgstr "Laadi üles kohalikud failid"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Laadi üles WebDAV-i ja jaga linke sõpradega."
@@ -2757,7 +2786,7 @@ msgstr "Selliseid pilte sisaldavad üleslaadimised lükatakse automaatselt tagas
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "Kasuta eelseadistusi"
 
@@ -2953,6 +2982,33 @@ msgstr "Sinu fototeeki analüüsitakse pidevalt, et luua automaatselt albumied e
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Suumi sisse/välja"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "Keela sisseehitatud WebDAV server. Nõuab taaskäivitamist."
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "Keelab asukohatuvastuse ja kaardid."
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "Ära loo ExifTool JSON-faile metaandmete ekstraktimise parandamiseks."
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "Ära muuda originaalide kausta. Keelab importimise, üleslaadimise ja kustutamise."
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "Ära kasuta TensorFlow'd piltide klassifitseerimiseks."
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "Dünaamiline renderdamine nõuab võimsat serverit. Seda ei soovitata NAS-seadmete jaoks."
+
+#~ msgid "File Conversion"
+#~ msgstr "Faili konverteerimine"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "Näitab detailsemaid logisõnumeid. Nõuab taaskäivitamist."
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "Pisipiltide genereerimine"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Kas te ei pääse oma autentimisrakendusele või seadmele juurde? Sisestage oma taastekood või küsige abi."

@@ -158,7 +158,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "sidecar-yaml",
-			Usage:  "create YAML sidecar files to back up index metadata",
+			Usage:  "create YAML sidecar files to back up picture metadata",
 			EnvVar: EnvVar("SIDECAR_YAML"),
 		}, DocDefault: "true"}, {
 		Flag: cli.StringFlag{
@@ -205,12 +205,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "backup-database",
-			Usage:  "create index backups based on the configured schedule",
+			Usage:  "create regular backups based on the configured schedule",
 			EnvVar: EnvVar("BACKUP_DATABASE"),
 		}, DocDefault: "true"}, {
 		Flag: cli.BoolFlag{
 			Name:   "backup-albums",
-			Usage:  "create YAML backup files for album metadata",
+			Usage:  "create YAML files to back up album metadata",
 			EnvVar: EnvVar("BACKUP_ALBUMS"),
 		}, DocDefault: "true"}, {
 		Flag: cli.IntFlag{
@@ -245,22 +245,22 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "read-only, r",
-			Usage:  "disable import, upload, delete, and all other operations that require write permissions",
+			Usage:  "disable features that require write permission for the originals folder",
 			EnvVar: EnvVar("READONLY"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "experimental, e",
-			Usage:  "enable experimental features",
+			Usage:  "enable new features currently under development",
 			EnvVar: EnvVar("EXPERIMENTAL"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-settings",
-			Usage:  "disable settings UI and API",
+			Usage:  "disable the user settings interface and server API, e.g. in combination with public mode",
 			EnvVar: EnvVar("DISABLE_SETTINGS"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-restart",
-			Usage:  "disable restarting the server from the user interface",
+			Usage:  "do not allow admins to restart the server from the user interface",
 			EnvVar: EnvVar("DISABLE_RESTART"),
 		}}, {
 		Flag: cli.BoolFlag{
@@ -271,17 +271,17 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-webdav",
-			Usage:  "disable built-in WebDAV server",
+			Usage:  "prevent other apps from accessing PhotoPrism as a shared network drive",
 			EnvVar: EnvVar("DISABLE_WEBDAV"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-places",
-			Usage:  "disable reverse geocoding and maps",
+			Usage:  "disable interactive world maps and reverse geocoding",
 			EnvVar: EnvVar("DISABLE_PLACES"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-tensorflow",
-			Usage:  "disable all features depending on TensorFlow",
+			Usage:  "disable features depending on TensorFlow, e.g. image classification and face recognition",
 			EnvVar: EnvVar("DISABLE_TENSORFLOW"),
 		}}, {
 		Flag: cli.BoolFlag{
@@ -306,7 +306,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-exiftool",
-			Usage:  "disable creating JSON metadata sidecar files with ExifTool",
+			Usage:  "disable metadata extraction with ExifTool (required for full Video, Live Photo, and XMP support)",
 			EnvVar: EnvVar("DISABLE_EXIFTOOL"),
 		}}, {
 		Flag: cli.BoolFlag{
@@ -351,12 +351,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "detect-nsfw",
-			Usage:  "automatically flag pictures as private that MAY be offensive (requires TensorFlow)",
+			Usage:  "flag newly added pictures as private if they might be offensive (requires TensorFlow)",
 			EnvVar: EnvVar("DETECT_NSFW"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "upload-nsfw, n",
-			Usage:  "allow uploads that MAY be offensive (no effect without TensorFlow)",
+			Usage:  "allow uploads that might be offensive (detecting unsafe content requires TensorFlow)",
 			EnvVar: EnvVar("UPLOAD_NSFW"),
 		}}, {
 		Flag: cli.StringFlag{

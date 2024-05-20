@@ -34,35 +34,14 @@ func showConfigYamlAction(ctx *cli.Context) error {
 		return err
 	}
 
-	type Section struct {
-		Start string
-		Title string
-		Info  string
-	}
-
-	s := []Section{
-		{Start: "AuthMode", Title: "Authentication"},
-		{Start: "LogLevel", Title: "Logging"},
-		{Start: "ConfigPath", Title: "Storage"},
-		{Start: "IndexWorkers", Title: "Index Workers"},
-		{Start: "ReadOnly", Title: "Feature Flags"},
-		{Start: "DefaultTheme", Title: "Customization"},
-		{Start: "SiteUrl", Title: "Site Information"},
-		{Start: "HttpsProxy", Title: "Web Server"},
-		{Start: "DatabaseDriver", Title: "Database Connection"},
-		{Start: "SipsBin", Title: "File Converters"},
-		{Start: "DownloadToken", Title: "Security Tokens"},
-		{Start: "ThumbLibrary", Title: "Thumbnail Generation"},
-		{Start: "PIDFilename", Title: "Daemon Mode",
-			Info: "If you start the server as a *daemon* in the background, you can additionally specify a filename for the log and the process ID:"},
-	}
+	sections := config.YamlReportSections
 
 	j := 0
 
-	for i, sec := range s {
-		fmt.Printf("### %s ###\n\n", sec.Title)
-		if sec.Info != "" && ctx.Bool("md") {
-			fmt.Printf("%s\n\n", sec.Info)
+	for i, section := range sections {
+		fmt.Printf("### %s ###\n\n", section.Title)
+		if section.Info != "" && ctx.Bool("md") {
+			fmt.Printf("%s\n\n", section.Info)
 		}
 
 		secRows := make([][]string, 0, len(rows))
@@ -74,8 +53,8 @@ func showConfigYamlAction(ctx *cli.Context) error {
 				continue
 			}
 
-			if i < len(s)-1 {
-				if s[i+1].Start == row[0] {
+			if i < len(sections)-1 {
+				if sections[i+1].Start == row[0] {
 					break
 				}
 			}

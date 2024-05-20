@@ -29,7 +29,13 @@ func (c *Config) PngSize() int {
 
 // JpegQuality returns the jpeg image quality as thumb.Quality (25-100).
 func (c *Config) JpegQuality() thumb.Quality {
-	return thumb.ParseQuality(c.options.JpegQuality)
+	if c.options.JpegQuality < 25 {
+		c.options.JpegQuality = thumb.QualityMedium.Int()
+	} else if c.options.JpegQuality > 100 {
+		c.options.JpegQuality = thumb.QualityMax.Int()
+	}
+
+	return thumb.Quality(c.options.JpegQuality)
 }
 
 // ThumbLibrary returns the name of the image processing library to be used for generating thumbnails.

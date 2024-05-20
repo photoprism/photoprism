@@ -199,6 +199,10 @@ msgstr "2 星期後"
 msgid "Album"
 msgstr "相簿"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "相簿已建立"
@@ -270,6 +274,10 @@ msgstr "所有來源"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "所有年份"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -388,6 +396,10 @@ msgstr "自动为无法索引或查看的文件创建缩略图。"
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "後退"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr "備份"
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -540,6 +552,10 @@ msgstr "更改私人選項"
 msgid "Changes successfully saved"
 msgstr "成功儲存變更"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "已選擇"
@@ -683,9 +699,17 @@ msgstr "新增帳號"
 msgid "Create album"
 msgstr "新增相簿"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "根据配置的时间表创建索引备份。"
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -715,7 +739,7 @@ msgstr "青色"
 msgid "Daily"
 msgstr "每日"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "数据库备份"
 
@@ -727,7 +751,7 @@ msgstr "日"
 msgid "Deactivate"
 msgstr "停用"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "除錯紀錄"
 
@@ -780,55 +804,55 @@ msgstr "細節"
 msgid "Dimensions"
 msgstr "尺寸"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "停用內建的WebDAV伺服器。重啟以生效。"
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "停用 Darktable"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "停用 ExifTool"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "停用 FFmpeg"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "禁用ImageMagick"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "停用位置"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "停用 RawTherapee"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "停用 TensorFlow"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "停用向量"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "停用 WebDAV"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "停用逆向地理及地圖編碼。"
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "停用向量圖型支援。"
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "停用影像轉碼和縮圖擷取。"
 
@@ -842,29 +866,17 @@ msgstr "發現"
 msgid "Display Name"
 msgstr "顯示名稱"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "不要建立 ExifTool JSON 檔案來改善元數據擷取。"
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "不要修改「originals」資料夾。停用匯入，上傳和刪除。"
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "不要使用 Darktable 來轉換 RAW 檔案。"
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "不要用ImageMagick来转换图像。"
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "不要使用 RawTherapee 來轉換 RAW 檔案。"
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "不要使用 TensorFlow 來進行圖片分類。"
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -909,7 +921,7 @@ msgstr "下載單一檔案以及 zip 壓縮檔。"
 msgid "Downloading…"
 msgstr "下載中…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "縮小濾鏡"
 
@@ -925,15 +937,11 @@ msgstr "重複的項目會被跳過並只會出現一次。"
 msgid "Duration"
 msgstr "時長"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "動態預覽"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "動態渲染需要強大的伺服器，不建議用於小型家用服務器或NAS設備。"
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "動態大小限制：%{n} px"
 
@@ -968,11 +976,15 @@ msgstr "已編輯"
 msgid "Email"
 msgstr "電子郵件"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "啟用目前正在開發的新功能。"
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "啟用 RAW 轉換器預設集。可能會降低性能。"
 
@@ -1032,7 +1044,7 @@ msgstr "展開"
 msgid "Expand Search"
 msgstr "擴展搜尋"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "測試功能"
 
@@ -1114,9 +1126,9 @@ msgstr "檔案"
 msgid "File Browser"
 msgstr "檔案瀏覽器"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "檔案轉換"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1200,7 +1212,7 @@ msgstr "產生"
 msgid "Given Name"
 msgstr "名字"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "全域選項"
 
@@ -1273,7 +1285,7 @@ msgstr "圖片"
 msgid "Image"
 msgstr "圖片"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "影像品質"
 
@@ -1391,11 +1403,11 @@ msgstr "這是一個一次性使用代碼，當您使用它時，它將停用您
 msgid "Item"
 msgstr "項目"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG品質：%{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG大小限制：%{n} px"
 
@@ -1618,6 +1630,10 @@ msgstr "訊息已傳送"
 msgid "Metadata"
 msgstr "元数据"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "指標"
@@ -1811,6 +1827,10 @@ msgstr "最舊優先"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "在 Windows 上，於連接對話框中輸入以下資訊："
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2008,7 +2028,7 @@ msgstr "請重新啟動您的執行個體以使變更生效。"
 msgid "Please wait…"
 msgstr "請稍候…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG大小限制：%{n} px"
 
@@ -2032,10 +2052,15 @@ msgstr "按下按鈕以開始索引…"
 msgid "Press enter to create a new album."
 msgstr "按下按鈕以新增相簿。"
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "預覽"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "图片预览"
@@ -2093,7 +2118,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "重新索引所有原始檔案，包含已經索引過及未變更過的檔案。"
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "唯讀模式"
 
@@ -2181,7 +2206,7 @@ msgid "Resolution"
 msgstr "解析度"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "重新啟動"
 
@@ -2363,13 +2388,13 @@ msgstr "顯示更多"
 msgid "Show server logs in Library."
 msgstr "在收藏庫中顯示伺服器日誌。"
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "顯示更詳細的日誌消息。需要重新啟動。"
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidecar檔案"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2438,7 +2463,7 @@ msgstr "開始/停止 幻燈片"
 msgid "States"
 msgstr "州"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "靜態大小限制：%{n} px"
 
@@ -2503,6 +2528,10 @@ msgstr "拍攝於"
 msgid "Teal"
 msgstr "藍綠"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "文字太長了"
@@ -2530,10 +2559,6 @@ msgstr "主題"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "這會將\"originals\"資料夾安裝為網絡硬碟，並允許您從電腦或智慧型手機中打開，編輯和刪除文件，就像它們是本地文件一樣。"
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "縮圖產生"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2736,6 +2761,10 @@ msgstr "上傳資料夾"
 msgid "Upload local files"
 msgstr "上傳本機檔案"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "上傳到 WebDAV 並且分享連結給朋友。"
@@ -2760,7 +2789,7 @@ msgstr "上傳此類圖像將可能被自動拒絕。"
 msgid "URL"
 msgstr "網址"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "使用預設"
 
@@ -2954,6 +2983,33 @@ msgstr "您的資料庫會持續進行分析，以自動建立有關特殊時刻
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "縮放"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "停用內建的WebDAV伺服器。重啟以生效。"
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "停用逆向地理及地圖編碼。"
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "不要建立 ExifTool JSON 檔案來改善元數據擷取。"
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "不要修改「originals」資料夾。停用匯入，上傳和刪除。"
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "不要使用 TensorFlow 來進行圖片分類。"
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "動態渲染需要強大的伺服器，不建議用於小型家用服務器或NAS設備。"
+
+#~ msgid "File Conversion"
+#~ msgstr "檔案轉換"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "顯示更詳細的日誌消息。需要重新啟動。"
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "縮圖產生"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "無法存取您的身份驗證器應用程式或裝置？輸入您的恢復代碼或尋求協助。"
@@ -3522,9 +3578,6 @@ msgstr "縮放"
 
 #~ msgid "Unstacked"
 #~ msgstr "實體 ID"
-
-#~ msgid "Backup"
-#~ msgstr "備份"
 
 #~ msgid "Move"
 #~ msgstr "移動"

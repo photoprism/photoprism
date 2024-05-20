@@ -196,6 +196,10 @@ msgstr "Sau hai tuần"
 msgid "Album"
 msgstr "Album"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "Đã tạo album"
@@ -267,6 +271,10 @@ msgstr "Tất cả bản gốc"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Mọi năm"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -385,6 +393,10 @@ msgstr "Tự động tạo hình thu nhỏ cho các tệp không thể lập ch�
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "Mặt sau"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -537,6 +549,10 @@ msgstr "Thay đổi cờ riêng tư"
 msgid "Changes successfully saved"
 msgstr "Đã lưu thay đổi thành công"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "Đã kiểm tra"
@@ -680,9 +696,17 @@ msgstr "Tạo tài khoản"
 msgid "Create album"
 msgstr "Tạo album"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "Tạo bản sao lưu chỉ mục dựa trên lịch trình đã định cấu hình."
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -712,7 +736,7 @@ msgstr "lục lam"
 msgid "Daily"
 msgstr "Hằng ngày"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "Sao lưu cơ sở dữ liệu"
 
@@ -724,7 +748,7 @@ msgstr "Ngày"
 msgid "Deactivate"
 msgstr "Vô hiệu hóa"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "Nhật ký gỡ lỗi"
 
@@ -777,55 +801,55 @@ msgstr "Chi tiết"
 msgid "Dimensions"
 msgstr "Kích thước"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Vô hiệu hóa máy chủ WebDAV tích hợp. Yêu cầu khởi động lại."
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Tắt bảng tối"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "Tắt ExifTool"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "Tắt FFmpeg"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "Tắt ImageMagick"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "Vô hiệu hóa địa điểm"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "Tắt RawTherapee"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "Tắt TensorFlow"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "Vô hiệu hóa vectơ"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "Tắt WebDAV"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "Vô hiệu hóa mã hóa địa lý đảo ngược và bản đồ."
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "Tắt hỗ trợ đồ họa vector."
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Tắt chuyển mã video và trích xuất hình thu nhỏ."
 
@@ -839,29 +863,17 @@ msgstr "Phát hiện"
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Không tạo tệp JSON ExifTool để cải thiện khả năng trích xuất siêu dữ liệu."
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Không sửa đổi thư mục gốc. Vô hiệu hóa nhập, tải lên và xóa."
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Không sử dụng Darktable để chuyển đổi ảnh RAW."
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "Không sử dụng ImageMagick để chuyển đổi hình ảnh."
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Không sử dụng RawTherapee để chuyển đổi ảnh RAW."
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "Không sử dụng TensorFlow để phân loại hình ảnh."
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -906,7 +918,7 @@ msgstr "Tải xuống các tập tin đơn lẻ và lưu trữ zip."
 msgid "Downloading…"
 msgstr "Đang tải xuống…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "Bộ lọc thu nhỏ"
 
@@ -922,15 +934,11 @@ msgstr "Các bản sao sẽ bị bỏ qua và chỉ xuất hiện một lần."
 msgid "Duration"
 msgstr "Khoảng thời gian"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "Xem trước động"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Kết xuất động yêu cầu một máy chủ mạnh mẽ. Nó không được khuyến khích cho các thiết bị NAS."
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Giới hạn kích thước động: %{n}px"
 
@@ -965,11 +973,15 @@ msgstr "Đã chỉnh sửa"
 msgid "Email"
 msgstr "E-mail"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "Kích hoạt các tính năng mới hiện đang được phát triển."
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Cho phép cài đặt trước bộ chuyển đổi RAW. Có thể làm giảm hiệu suất."
 
@@ -1029,7 +1041,7 @@ msgstr "Mở rộng"
 msgid "Expand Search"
 msgstr "Mở rộng Tìm kiếm"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "Tính năng thử nghiệm"
 
@@ -1111,9 +1123,9 @@ msgstr "Tài liệu"
 msgid "File Browser"
 msgstr "Trình duyệt tệp"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "Chuyển đổi tập tin"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1197,7 +1209,7 @@ msgstr "Phát ra"
 msgid "Given Name"
 msgstr "Tên"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "Tùy chọn toàn cầu"
 
@@ -1270,7 +1282,7 @@ msgstr "hình ảnh"
 msgid "Image"
 msgstr "Hình ảnh"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "Chất lượng hình ảnh"
 
@@ -1388,11 +1400,11 @@ msgstr "Đây là mã sử dụng một lần sẽ vô hiệu hóa 2FA cho tài 
 msgid "Item"
 msgstr "Mục"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "Chất lượng JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Giới hạn kích thước JPEG: %{n}px"
 
@@ -1615,6 +1627,10 @@ msgstr "Đã gửi tin nhắn"
 msgid "Metadata"
 msgstr "metadata"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Số liệu"
@@ -1808,6 +1824,10 @@ msgstr "Cũ nhất đầu tiên"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Trên Windows, nhập tài nguyên sau vào hộp thoại kết nối:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2005,7 +2025,7 @@ msgstr "Vui lòng khởi động lại phiên bản của bạn để những th
 msgid "Please wait…"
 msgstr "Vui lòng chờ…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "Giới hạn kích thước PNG: %{n}px"
 
@@ -2029,10 +2049,15 @@ msgstr "Nhấn nút để bắt đầu lập chỉ mục…"
 msgid "Press enter to create a new album."
 msgstr "Nhấn enter để tạo album mới."
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Xem trước"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Xem trước hình ảnh"
@@ -2090,7 +2115,7 @@ msgstr "NGUYÊN"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Lập chỉ mục lại tất cả các bản gốc, bao gồm các tệp đã được lập chỉ mục và không thay đổi."
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "Chế độ chỉ đọc"
 
@@ -2178,7 +2203,7 @@ msgid "Resolution"
 msgstr "Nghị quyết"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "Khởi động lại"
 
@@ -2360,13 +2385,13 @@ msgstr "Cho xem nhiều hơn"
 msgid "Show server logs in Library."
 msgstr "Hiển thị nhật ký máy chủ trong Thư viện."
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Hiển thị thông điệp tường trình chi tiết hơn. Yêu cầu khởi động lại."
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "xe sidecar"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2435,7 +2460,7 @@ msgstr "Bắt đầu/Dừng trình chiếu"
 msgid "States"
 msgstr "Những trạng thái"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "Giới hạn kích thước tĩnh: %{n}px"
 
@@ -2500,6 +2525,10 @@ msgstr "Lấy"
 msgid "Teal"
 msgstr "màu xanh mòng két"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Văn bản quá dài"
@@ -2527,10 +2556,6 @@ msgstr "chủ đề"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Thao tác này sẽ gắn thư mục gốc dưới dạng ổ đĩa mạng và cho phép bạn mở, chỉnh sửa và xóa các tệp khỏi máy tính hoặc điện thoại thông minh của bạn như thể chúng là cục bộ."
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "Tạo hình thu nhỏ"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2733,6 +2758,10 @@ msgstr "Tải thư mục lên"
 msgid "Upload local files"
 msgstr "Tải lên các tập tin cục bộ"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Tải lên WebDAV và chia sẻ liên kết với bạn bè."
@@ -2757,7 +2786,7 @@ msgstr "Những tải lên có thể chứa những hình ảnh như vậy sẽ 
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "Sử dụng cài đặt trước"
 
@@ -2953,6 +2982,33 @@ msgstr "Thư viện của bạn được phân tích liên tục để tự đ�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Phóng to / thu nhỏ"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "Vô hiệu hóa máy chủ WebDAV tích hợp. Yêu cầu khởi động lại."
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "Vô hiệu hóa mã hóa địa lý đảo ngược và bản đồ."
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "Không tạo tệp JSON ExifTool để cải thiện khả năng trích xuất siêu dữ liệu."
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "Không sửa đổi thư mục gốc. Vô hiệu hóa nhập, tải lên và xóa."
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "Không sử dụng TensorFlow để phân loại hình ảnh."
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "Kết xuất động yêu cầu một máy chủ mạnh mẽ. Nó không được khuyến khích cho các thiết bị NAS."
+
+#~ msgid "File Conversion"
+#~ msgstr "Chuyển đổi tập tin"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "Hiển thị thông điệp tường trình chi tiết hơn. Yêu cầu khởi động lại."
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "Tạo hình thu nhỏ"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Không thể truy cập ứng dụng hoặc thiết bị xác thực của bạn? Nhập mã khôi phục của bạn hoặc yêu cầu hỗ trợ."

@@ -199,6 +199,10 @@ msgstr "Selepas dua minggu"
 msgid "Album"
 msgstr "Album"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "Album dibuat"
@@ -270,6 +274,10 @@ msgstr "Semua yang asal"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Semua Tahun"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -388,6 +396,10 @@ msgstr "Buat lakaran kecil untuk fail yang tidak boleh diindeks atau dilihat sec
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "belakang"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -540,6 +552,10 @@ msgstr "Tukar petanda peribadi"
 msgid "Changes successfully saved"
 msgstr "Perubahan berjaya disimpan"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "Disemak"
@@ -683,9 +699,17 @@ msgstr "Buat akaun"
 msgid "Create album"
 msgstr "Buat album"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "Buat sandaran indeks berdasarkan jadual yang dikonfigurasikan."
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -715,7 +739,7 @@ msgstr "Cyan"
 msgid "Daily"
 msgstr "Setiap hari"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "Sandaran Pangkalan Data"
 
@@ -727,7 +751,7 @@ msgstr "Hari"
 msgid "Deactivate"
 msgstr "Nyahaktifkan"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "Log Nyahpepijat"
 
@@ -780,55 +804,55 @@ msgstr "Perincian:"
 msgid "Dimensions"
 msgstr "Dimensi"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Lumpuhkan pelayan WebDAV terbina dalam. Memerlukan mulakan semula."
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Lumpuhkan Darktable"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "Lumpuhkan ExifTool"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "Lumpuhkan FFmpeg"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "Lumpuhkan ImageMagick"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "Lumpuhkan Tempat"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "Lumpuhkan RawTherapee"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "Lumpuhkan TensorFlow"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "Lumpuhkan Vektor"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "Lumpuhkan WebDAV"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "Melumpuhkan pengekodan geo terbalik dan peta."
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "Melumpuhkan sokongan grafik vektor."
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Melumpuhkan transkod video dan pengekstrakan lakaran kenit."
 
@@ -842,29 +866,17 @@ msgstr "Temui"
 msgid "Display Name"
 msgstr "Nama paparan"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Jangan buat fail JSON ExifTool untuk pengekstrakan metadata yang lebih baik."
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Jangan ubah suai folder asal. Melumpuhkan import, muat naik dan padam."
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Jangan gunakan Darktable untuk menukar imej RAW."
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "Jangan gunakan ImageMagick untuk menukar imej."
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Jangan gunakan RawTherapee untuk menukar imej RAW."
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "Jangan gunakan TensorFlow untuk klasifikasi imej."
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -909,7 +921,7 @@ msgstr "Muat turun fail tunggal dan arkib zip."
 msgid "Downloading…"
 msgstr "Memuat turun…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "Penapis Penskalaan Rendah"
 
@@ -925,15 +937,11 @@ msgstr "Pendua akan dilangkau dan hanya muncul sekali."
 msgid "Duration"
 msgstr "Tempoh"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "Pratonton Dinamik"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Penyampaian dinamik memerlukan pelayan yang berkuasa. Ia tidak disyorkan untuk peranti NAS."
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Had Saiz Dinamik: %{n}px"
 
@@ -968,11 +976,15 @@ msgstr "disunting"
 msgid "Email"
 msgstr "E-mel"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "Dayakan ciri baharu yang sedang dibangunkan."
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Mendayakan pratetap penukar RAW. Boleh mengurangkan prestasi."
 
@@ -1032,7 +1044,7 @@ msgstr "Mengembangkan"
 msgid "Expand Search"
 msgstr "Kembangkan Carian"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "Ciri-ciri Eksperimen"
 
@@ -1114,9 +1126,9 @@ msgstr "Fail"
 msgid "File Browser"
 msgstr "Pelayar Fail"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "Penukaran Fail"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1200,7 +1212,7 @@ msgstr "Menjana"
 msgid "Given Name"
 msgstr "Nama Asal"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "Pilihan Global"
 
@@ -1273,7 +1285,7 @@ msgstr "gambar"
 msgid "Image"
 msgstr "Imej"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "Kualiti gambar"
 
@@ -1391,11 +1403,11 @@ msgstr "Ia adalah kod penggunaan sekali sahaja yang akan melumpuhkan 2FA untuk a
 msgid "Item"
 msgstr "Item"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "Kualiti JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Had Saiz JPEG: %{n}px"
 
@@ -1618,6 +1630,10 @@ msgstr "Mesej telah dihantar"
 msgid "Metadata"
 msgstr "Metadata"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Metrik"
@@ -1811,6 +1827,10 @@ msgstr "Tertua dahulu"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Pada Windows, masukkan sumber berikut dalam dialog sambungan:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2008,7 +2028,7 @@ msgstr "Sila mulakan semula contoh anda untuk perubahan berkuat kuasa."
 msgid "Please wait…"
 msgstr "Sila tunggu…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "Had Saiz PNG: %{n}px"
 
@@ -2032,10 +2052,15 @@ msgstr "Tekan butang untuk mula mengindeks…"
 msgid "Press enter to create a new album."
 msgstr "Tekan enter untuk mencipta album baharu."
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Pratonton"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Pratonton Imej"
@@ -2093,7 +2118,7 @@ msgstr "MENTAH"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Indeks semula semua yang asal, termasuk fail yang telah diindeks dan tidak berubah."
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "Mod Baca Sahaja"
 
@@ -2181,7 +2206,7 @@ msgid "Resolution"
 msgstr "Resolusi"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "Mula semula"
 
@@ -2363,13 +2388,13 @@ msgstr "Tunjuk lebih banyak"
 msgid "Show server logs in Library."
 msgstr "Tunjukkan log pelayan dalam Perpustakaan."
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Menunjukkan mesej log yang lebih terperinci. Memerlukan mulakan semula."
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidecar"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2438,7 +2463,7 @@ msgstr "Mula/Hentikan Tayangan Slaid"
 msgid "States"
 msgstr "negeri"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "Had Saiz Statik: %{n}px"
 
@@ -2503,6 +2528,10 @@ msgstr "diambil"
 msgid "Teal"
 msgstr "Teal"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Teks terlalu panjang"
@@ -2530,10 +2559,6 @@ msgstr "Tema"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Ini melekapkan folder asal sebagai pemacu rangkaian dan membolehkan anda membuka, mengedit dan memadam fail daripada komputer atau telefon pintar anda seolah-olah ia adalah tempatan."
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "Penjanaan Thumbnail"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2736,6 +2761,10 @@ msgstr "Muat naik Folder"
 msgid "Upload local files"
 msgstr "Muat naik fail tempatan"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Muat naik ke WebDAV dan kongsi pautan dengan rakan."
@@ -2760,7 +2789,7 @@ msgstr "Muat naik yang mungkin mengandungi imej sedemikian akan ditolak secara a
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "Gunakan Pratetap"
 
@@ -2954,6 +2983,33 @@ msgstr "Pustaka anda dianalisis secara berterusan untuk mencipta album detik, pe
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zum masuk/keluar"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "Lumpuhkan pelayan WebDAV terbina dalam. Memerlukan mulakan semula."
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "Melumpuhkan pengekodan geo terbalik dan peta."
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "Jangan buat fail JSON ExifTool untuk pengekstrakan metadata yang lebih baik."
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "Jangan ubah suai folder asal. Melumpuhkan import, muat naik dan padam."
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "Jangan gunakan TensorFlow untuk klasifikasi imej."
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "Penyampaian dinamik memerlukan pelayan yang berkuasa. Ia tidak disyorkan untuk peranti NAS."
+
+#~ msgid "File Conversion"
+#~ msgstr "Penukaran Fail"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "Menunjukkan mesej log yang lebih terperinci. Memerlukan mulakan semula."
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "Penjanaan Thumbnail"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Tidak dapat mengakses apl atau peranti pengesah anda? Masukkan kod pemulihan anda atau minta bantuan."

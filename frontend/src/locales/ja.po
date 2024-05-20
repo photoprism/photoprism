@@ -199,6 +199,10 @@ msgstr "2週間後"
 msgid "Album"
 msgstr "アルバム"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "アルバムを作成しました"
@@ -270,6 +274,10 @@ msgstr "すべてのオリジナル"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "すべての年"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -388,6 +396,10 @@ msgstr "インデックスや表示ができないファイルのサムネイル
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "戻る"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -540,6 +552,10 @@ msgstr "プライベートであるかどうかを変更"
 msgid "Changes successfully saved"
 msgstr "正常に変更が保存されました"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "選択済み"
@@ -683,9 +699,17 @@ msgstr "アカウント作成"
 msgid "Create album"
 msgstr "アルバムを作成"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "設定したスケジュールに基づいてインデックスバックアップを作成する。"
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -715,7 +739,7 @@ msgstr "シアン"
 msgid "Daily"
 msgstr "毎日"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "データベースのバックアップ"
 
@@ -727,7 +751,7 @@ msgstr "日"
 msgid "Deactivate"
 msgstr "無効化"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "デバッグログ"
 
@@ -780,55 +804,55 @@ msgstr "詳細"
 msgid "Dimensions"
 msgstr "寸法"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "内蔵されている WebDAV サーバを無効化します。再起動が必要です。"
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Darktableの無効化"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "ExifTool を無効化"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "FFmpegの無効化"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "ImageMagickを無効にする"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "場所を無効化"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "RawTherapeeの無効化"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "TensorFlow を無効化"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "ベクターの無効化"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "WebDAV を無効化"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "住所検索と地図を無効化します。"
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "ベクターグラフィックスのサポートを無効にします。"
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "ビデオのトランスコードとサムネイル抽出を無効にします。"
 
@@ -842,29 +866,17 @@ msgstr "発見"
 msgid "Display Name"
 msgstr "表示名"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "より良いメタデータの抽出のために、ExifTool の JSON ファイルを作成しないようにします。"
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "オリジナルのフォルダを変更しません。インポートやアップロード、削除が無効化されます。"
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "RAWファイルの変換にDarktableを使用しないようにします。"
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "画像の変換にImageMagickを使わないでください。"
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "RAWファイルの変換にRawTherapeeを使用しないようにします。"
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "写真の分類に TensorFlow を使用しないようにします。"
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -909,7 +921,7 @@ msgstr "単一のファイルと zip アーカイブをダウンロードしま�
 msgid "Downloading…"
 msgstr "ダウンロードしています…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "ダウンスケーリング フィルター"
 
@@ -925,15 +937,11 @@ msgstr "重複している項目はスキップされ、1度だけ表示され�
 msgid "Duration"
 msgstr "寄付"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "動的なプレビュー"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "動的なレンダリングは強力なサーバを必要とします。NAS デバイスには推奨されません。"
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "動的サイズの制限: %{n}px"
 
@@ -968,11 +976,15 @@ msgstr "編集済み"
 msgid "Email"
 msgstr "メールアドレス"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "開発中の新しい機能を有効にします。"
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "RAW現像機のプリセットを有効にします。パフォーマンスが低下する場合があります。"
 
@@ -1032,7 +1044,7 @@ msgstr "拡張"
 msgid "Expand Search"
 msgstr "検索を展開"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "実験的な機能"
 
@@ -1114,9 +1126,9 @@ msgstr "ファイル"
 msgid "File Browser"
 msgstr "ファイルブラウザ"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "ファイル変換"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1200,7 +1212,7 @@ msgstr "生成する"
 msgid "Given Name"
 msgstr "名"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "グローバルオプション"
 
@@ -1273,7 +1285,7 @@ msgstr "写真"
 msgid "Image"
 msgstr "写真"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "画質"
 
@@ -1391,11 +1403,11 @@ msgstr "これは 1 回限りの使用コードであり、使用するとアカ
 msgid "Item"
 msgstr "項目"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG 品質: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG サイズの制限: %{n}px"
 
@@ -1618,6 +1630,10 @@ msgstr "メッセージを送信しました"
 msgid "Metadata"
 msgstr "メタデータ"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "メトリクス"
@@ -1811,6 +1827,10 @@ msgstr "古い順"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windowsの場合、接続ダイアログに以下のリソースを入力します:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2008,7 +2028,7 @@ msgstr "変更を有効にするために、インスタンスを再起動して
 msgid "Please wait…"
 msgstr "お待ちください…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG サイズの制限: %{n}px"
 
@@ -2032,10 +2052,15 @@ msgstr "ボタンを押してインデックスを開始します…"
 msgid "Press enter to create a new album."
 msgstr "Enter を押して新しいアルバムを作成します。"
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "プレビュー"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "プレビュー画像"
@@ -2093,7 +2118,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "すべての、既にインデックスされたものや変更されていないファイルを含むオリジナルのファイルを再度インデックスです。"
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "読み込み専用モード"
 
@@ -2181,7 +2206,7 @@ msgid "Resolution"
 msgstr "解像度"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "リスタート"
 
@@ -2363,13 +2388,13 @@ msgstr "表示を増やす"
 msgid "Show server logs in Library."
 msgstr "ライブラリにサーバログを表示します。"
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "より詳細なログメッセージを表示します。再起動が必要です。"
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "サイドカー"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2438,7 +2463,7 @@ msgstr "スライドショーを開始/停止"
 msgid "States"
 msgstr "状態"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "静的サイズ制限: %{n}px"
 
@@ -2503,6 +2528,10 @@ msgstr "撮影済み"
 msgid "Teal"
 msgstr "青緑"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "文章が長すぎます"
@@ -2530,10 +2559,6 @@ msgstr "テーマ"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "これは、オリジナルのフォルダをネットワークドライブとしてマウントし、まるでローカルにあるかのようにファイル開き、編集、または削除をあなたのコンピュータまたはスマートフォンからできるようにします。"
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "サムネイル生成"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2736,6 +2761,10 @@ msgstr "フォルダのアップロード"
 msgid "Upload local files"
 msgstr "ローカルファイルをアップロード"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "WebDAV にアップロードして、友達とリンクを共有できます。"
@@ -2760,7 +2789,7 @@ msgstr "そのような画像を含むアップロードは自動的に拒否さ
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "プリセットを使用"
 
@@ -2954,6 +2983,33 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "内蔵されている WebDAV サーバを無効化します。再起動が必要です。"
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "住所検索と地図を無効化します。"
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "より良いメタデータの抽出のために、ExifTool の JSON ファイルを作成しないようにします。"
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "オリジナルのフォルダを変更しません。インポートやアップロード、削除が無効化されます。"
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "写真の分類に TensorFlow を使用しないようにします。"
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "動的なレンダリングは強力なサーバを必要とします。NAS デバイスには推奨されません。"
+
+#~ msgid "File Conversion"
+#~ msgstr "ファイル変換"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "より詳細なログメッセージを表示します。再起動が必要です。"
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "サムネイル生成"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "認証アプリまたはデバイスにアクセスできない場合は、回復コードを入力するか、サポートを依頼してください。"

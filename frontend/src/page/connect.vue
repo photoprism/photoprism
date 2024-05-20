@@ -59,7 +59,7 @@
           <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outline :disabled="busy">
             <translate>Manage Account</translate>
           </v-btn>
-          <v-btn v-if="$config.values.restart" color="primary-button" :block="$vuetify.breakpoint.xsOnly" class="white--text ml-0" depressed :disabled="busy" @click.stop.p.prevent="onRestart">
+          <v-btn v-if="$config.values.restart && !$config.values.disable.restart" color="primary-button" :block="$vuetify.breakpoint.xsOnly" class="white--text ml-0" depressed :disabled="busy" @click.stop.p.prevent="onRestart">
             <translate>Restart</translate>
             <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
           </v-btn>

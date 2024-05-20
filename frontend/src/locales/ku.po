@@ -199,6 +199,10 @@ msgstr "دوای ٢ هەفتە"
 msgid "Album"
 msgstr "ئەلبوم"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "ئەلبومەکە دروستکرا"
@@ -270,6 +274,10 @@ msgstr "هەموو ڕەسەنەکان"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "هەموو ساڵەکان"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -388,6 +396,10 @@ msgstr "Ji bo pelên ku wekî din nikaribin werin navnîş kirin an jî werin d�
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "Paş"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -540,6 +552,10 @@ msgstr "گۆڕینی نیشانەنوێنی تایبەت"
 msgid "Changes successfully saved"
 msgstr "گۆڕانکاریەکان سەرکەوتوانە پاشەکەوتکرا"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "پشکنرا"
@@ -683,9 +699,17 @@ msgstr "Hesab biafirîne"
 msgid "Create album"
 msgstr "دروستکردنی ئەلبوم"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "Li ser bingeha nexşeya mîhengkirî paşvekêşên navnîşan biafirînin."
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -715,7 +739,7 @@ msgstr "شینی ئاسمانی"
 msgid "Daily"
 msgstr "ڕۆژانە"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "Backups Database"
 
@@ -727,7 +751,7 @@ msgstr "ڕۆ‌ژ"
 msgid "Deactivate"
 msgstr "Deaktîv bike"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "تۆماری هەڵەکان"
 
@@ -780,55 +804,55 @@ msgstr "زانیاری زیاتر"
 msgid "Dimensions"
 msgstr "ڕەهەندەکان"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "ناچالاککردنی ڕاژەکاری چەسپاوی WebDAV. پێویستی بە دەستپێکردنەوە هەیە."
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Darktable neçalak bike"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "ExifTool لە کاربخە"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "FFmpeg asteng bike"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "ImageMagick neçalak bike"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "لەکارخستنی شوێنەکان"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "RawTherapee neçalak bike"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "لەکاربخە TensorFlow"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "Vektoran neçalak bike"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "لەکاربخە WebDAV"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "جیوکۆدکردن و نەخشەکان ناچالاک بە."
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "Piştgiriya grafikên vektorî asteng dike."
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Veguheztina vîdyoyê û derxistina piçûkan asteng dike."
 
@@ -842,29 +866,17 @@ msgstr "دۆزینەوە"
 msgid "Display Name"
 msgstr "Navê nîşanî"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "پەڕگەکانی ExifToolی JSON دروست مەکە بۆ دەرهێنانی مێتاداتای باشکراو."
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "بوخچەی رەسەنەکان هەموار مەکە. هاوردەکردن، بارکردن و سڕینەوە لە کاربخە."
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Ji bo veguheztina pelên RAW Darktable bikar neynin."
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "Ji bo veguhertina wêneyan ImageMagick bikar neynin."
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "RawTherapee bikar neynin ku pelên RAW veguherînin."
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "TensorFlow بەکارمەهێنە بۆ پۆلێنکردنی وێنە."
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -909,7 +921,7 @@ msgstr "داگرتنی فایلە تاکەکان و ئەرشیفی زیپ."
 msgid "Downloading…"
 msgstr "دادەگیرێت…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "فلتەری کەمکردنەوە"
 
@@ -925,15 +937,11 @@ msgstr "دووبارەکراوەکان تێپەڕدەبن و تەنها یەک �
 msgid "Duration"
 msgstr "بەخشینەکان"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "پێشبینینی دینامیکی"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "پێڕدانی دینامیکی پێویستی بە ڕاژەکاری بەهێز هەیە. پێشنیار نەکراوە بۆ ئامێرەکانی NAS."
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "سنوورداری قەبارەی دینامیکی: %{n}px"
 
@@ -968,11 +976,15 @@ msgstr "دەستکاریکرا"
 msgid "Email"
 msgstr "Email"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "چالاککردنی تایبەتمەندیە نوێکان کە لە ئێستادا لە ژێر گەشەپێداندان."
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Pêşdibistanên veguheztina RAW çalak dike. Dibe ku performans kêm bike."
 
@@ -1032,7 +1044,7 @@ msgstr "فراوانکردن"
 msgid "Expand Search"
 msgstr "فراوانکردنی گەڕان"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "تایبەتمەندیە ئەزموونیەکان"
 
@@ -1114,9 +1126,9 @@ msgstr "پەڕگە"
 msgid "File Browser"
 msgstr "گەڕۆکی پەڕگە"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "Veguherîna pelê"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1200,7 +1212,7 @@ msgstr "Xûlqkirin"
 msgid "Given Name"
 msgstr "ناوی ڕەسەن"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "Vebijarkên Global"
 
@@ -1273,7 +1285,7 @@ msgstr "وێنە"
 msgid "Image"
 msgstr "وێنە"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "Kalîteya Wêne"
 
@@ -1391,11 +1403,11 @@ msgstr "Ew kodek karanîna yek-car e ku gava ku hûn wê bikar bînin dê 2FA ji
 msgid "Item"
 msgstr "ئایتم"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "کوالیتی JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "سنووری قەبارەی JPEG: %{n}px"
 
@@ -1618,6 +1630,10 @@ msgstr "پەیامەکە گەیەندرا"
 msgid "Metadata"
 msgstr "Metadata"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Metrics"
@@ -1811,6 +1827,10 @@ msgstr "یەکەم کۆنترین"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Li ser Windows-ê, di diyaloga pêwendiyê de çavkaniya jêrîn têkevin:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2008,7 +2028,7 @@ msgstr "Ji kerema xwe mînaka xwe ji nû ve bidin destpêkirin da ku guheztin bi
 msgid "Please wait…"
 msgstr "Ji kerema xwe li bendê bin…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "سنووری قەبارەی PNG: %{n}px"
 
@@ -2032,10 +2052,15 @@ msgstr "دوگمە دابگرە بۆ دەست کردن بە پێنوێن کرد�
 msgid "Press enter to create a new album."
 msgstr "بۆ دروستکردنی ئەلبومێکی نوێ، Enter دابگرە."
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "پێشبینین"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Pêşdîtina Wêneyan"
@@ -2093,7 +2118,7 @@ msgstr "خاو"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "دووبارە نیشانە (ئیندێکس) کردنی هەموو ڕەسەنەکان، بە فایلە نوانەدار و نەگۆڕاوەکانیشەوە."
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "دۆخی تەنها-خوێندنەوە"
 
@@ -2181,7 +2206,7 @@ msgid "Resolution"
 msgstr "Resolution"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "Restart"
 
@@ -2363,13 +2388,13 @@ msgstr "زیاتر ببینە"
 msgid "Show server logs in Library."
 msgstr "پیشاندانی لۆگەکانی ڕاژە لە کتێبخانە."
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Peyamên têketinê yên bi detay nîşan dide. Ji nû ve destpêkirinê hewce dike."
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "لاتەنیشت"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2438,7 +2463,7 @@ msgstr "دەستپێکردن/وەستانی سلایدشۆ"
 msgid "States"
 msgstr "ولایەتەکان"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "سنووری قەبارەی ستاتیک: %{n}px"
 
@@ -2503,6 +2528,10 @@ msgstr "وەرگیراو"
 msgid "Teal"
 msgstr "سەوزی شینباو"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "دەقی زۆر درێژ"
@@ -2530,10 +2559,6 @@ msgstr "ڕووکار"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "ئەمە فۆڵدەری ڕەسەنەکان وەک درایڤی ڕایەڵە هەڵدەکات و ڕێگەت پێدەدات فایلەکان لە کۆمپیوتەرەکەت یان مۆبایلەکە بکەیتەوە، بژاری بکەیت، یان بسڕیتەوە وەک ئەوەی کە خۆماڵی بن."
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "دروستکردنی وێنۆچکە"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2736,6 +2761,10 @@ msgstr "Peldanka barkirin"
 msgid "Upload local files"
 msgstr "بارکردنی فایلە ناوخۆییەکان"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "بارکردن بۆ WebDAV و هاوبەشکردنی بەستەرەکان لەگەڵ هاوڕێیانت."
@@ -2760,7 +2789,7 @@ msgstr "بارکردنەکان کە لەوانەیە ئەم جۆرە وێنان�
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "بەکارهێنانی پێش ڕێکخستنەکان"
 
@@ -2954,6 +2983,33 @@ msgstr "Pirtûkxaneya we bi domdarî tê analîz kirin ku bixweber albumên dem�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "گەورەکردن/بچووکردن"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "ناچالاککردنی ڕاژەکاری چەسپاوی WebDAV. پێویستی بە دەستپێکردنەوە هەیە."
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "جیوکۆدکردن و نەخشەکان ناچالاک بە."
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "پەڕگەکانی ExifToolی JSON دروست مەکە بۆ دەرهێنانی مێتاداتای باشکراو."
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "بوخچەی رەسەنەکان هەموار مەکە. هاوردەکردن، بارکردن و سڕینەوە لە کاربخە."
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "TensorFlow بەکارمەهێنە بۆ پۆلێنکردنی وێنە."
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "پێڕدانی دینامیکی پێویستی بە ڕاژەکاری بەهێز هەیە. پێشنیار نەکراوە بۆ ئامێرەکانی NAS."
+
+#~ msgid "File Conversion"
+#~ msgstr "Veguherîna pelê"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "Peyamên têketinê yên bi detay nîşan dide. Ji nû ve destpêkirinê hewce dike."
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "دروستکردنی وێنۆچکە"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Ma hûn nikarin xwe bigihînin sepan an cîhaza xweya rastgir? Koda vegerandina xwe binivîsin an jî alîkariyê bixwazin."

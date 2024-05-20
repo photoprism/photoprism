@@ -65,9 +65,9 @@ services:
       PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
-      PHOTOPRISM_SIDECAR_YAML: "true"                # creates YAML sidecar files to back up index metadata
-      PHOTOPRISM_BACKUP_ALBUMS: "true"               # creates YAML backup files for album metadata
-      PHOTOPRISM_BACKUP_DATABASE: "true"             # creates index backups based on the configured schedule
+      PHOTOPRISM_SIDECAR_YAML: "true"                # creates YAML sidecar files to back up picture metadata
+      PHOTOPRISM_BACKUP_ALBUMS: "true"               # creates YAML files to back up album metadata
+      PHOTOPRISM_BACKUP_DATABASE: "true"             # creates regular backups based on the configured schedule
       PHOTOPRISM_BACKUP_SCHEDULE: "daily"            # backup SCHEDULE in cron format (e.g. "0 12 * * *" for daily at noon) or at a random time (daily, weekly)
       PHOTOPRISM_INDEX_SCHEDULE: ""                  # indexing SCHEDULE in cron format (e.g. "@every 3h" for every 3 hours; "" to disable)
       PHOTOPRISM_AUTO_INDEX: 120                     # delay before automatically indexing files in SECONDS when uploading via WebDAV (-1 to disable)

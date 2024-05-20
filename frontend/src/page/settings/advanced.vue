@@ -2,6 +2,18 @@
   <div class="p-tab p-settings-advanced">
     <v-form ref="form" lazy-validation dense class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
+        <v-card-actions v-if="$config.values.restart">
+          <v-layout wrap align-top>
+            <v-flex xs12 class="pa-2 text-xs-left">
+              <v-alert :value="true" color="primary" icon="info" class="pa-2" type="info" outline>
+                <a style="color: inherit" href="#restart">
+                  <translate>Changes to the advanced settings require a restart to take effect.</translate>
+                </a>
+              </v-alert>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
             <translate>Global Options</translate>
@@ -11,7 +23,30 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.Debug" :disabled="busy" class="ma-0 pa-0 input-private" color="secondary-dark" :label="$gettext('Debug Logs')" :hint="$gettext('Shows more detailed log messages. Requires a restart.')" prepend-icon="pest_control" persistent-hint @change="onChange">
+              <v-checkbox
+                v-model="settings.Debug"
+                :disabled="busy"
+                class="ma-0 pa-0 input-debug"
+                color="secondary-dark"
+                :label="$gettext('Debug Logs')"
+                :hint="$gettext('Enable debug mode to display additional logs and help with troubleshooting.')"
+                prepend-icon="pest_control"
+                persistent-hint
+                @change="onChange">
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.Experimental"
+                :disabled="busy"
+                class="ma-0 pa-0 input-experimental"
+                color="secondary-dark"
+                :label="$gettext('Experimental Features')"
+                :hint="$gettext('Enable new features currently under development.')"
+                prepend-icon="science"
+                persistent-hint
+                @change="onChange">
               </v-checkbox>
             </v-flex>
 
@@ -22,7 +57,7 @@
                 class="ma-0 pa-0 input-readonly"
                 color="secondary-dark"
                 :label="$gettext('Read-Only Mode')"
-                :hint="$gettext('Don\'t modify originals folder. Disables import, upload, and delete.')"
+                :hint="$gettext('Disable features that require write permission for the originals folder.')"
                 prepend-icon="do_not_touch"
                 persistent-hint
                 @change="onChange"
@@ -31,19 +66,14 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.Experimental" :disabled="busy" class="ma-0 pa-0 input-private" color="secondary-dark" :label="$gettext('Experimental Features')" :hint="$gettext('Enable new features currently under development.')" prepend-icon="science" persistent-hint @change="onChange">
-              </v-checkbox>
-            </v-flex>
-
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                v-model="settings.BackupDatabase"
-                :disabled="busy"
-                class="ma-0 pa-0 input-backup-database"
+                v-model="settings.UploadNSFW"
+                :disabled="busy || settings.DisableTensorFlow"
+                class="ma-0 pa-0 input-upload-nsfw"
                 color="secondary-dark"
-                :label="$gettext('Database Backups')"
-                :hint="$gettext('Create index backups based on the configured schedule.')"
-                prepend-icon="history"
+                :label="$gettext('Upload NSFW')"
+                :hint="$gettext('Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow.')"
+                prepend-icon="policy"
                 persistent-hint
                 @change="onChange"
               >
@@ -57,7 +87,7 @@
                 class="ma-0 pa-0 input-disable-webdav"
                 color="secondary-dark"
                 :label="$gettext('Disable WebDAV')"
-                :hint="$gettext('Disable built-in WebDAV server. Requires a restart.')"
+                :hint="$gettext('Prevent other apps from accessing PhotoPrism as a shared network drive.')"
                 prepend-icon="sync_disabled"
                 persistent-hint
                 @change="onChange"
@@ -66,7 +96,16 @@
             </v-flex>
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
-              <v-checkbox v-model="settings.DisablePlaces" :disabled="busy" class="ma-0 pa-0 input-private" color="secondary-dark" :label="$gettext('Disable Places')" :hint="$gettext('Disables reverse geocoding and maps.')" prepend-icon="location_off" persistent-hint @change="onChange">
+              <v-checkbox
+                v-model="settings.DisablePlaces"
+                :disabled="busy"
+                class="ma-0 pa-0 input-disable-places"
+                color="secondary-dark"
+                :label="$gettext('Disable Places')"
+                :hint="$gettext('Disable interactive world maps and reverse geocoding.')"
+                prepend-icon="location_off"
+                persistent-hint
+                @change="onChange">
               </v-checkbox>
             </v-flex>
 
@@ -77,7 +116,7 @@
                 class="ma-0 pa-0 input-disable-exiftool"
                 color="secondary-dark"
                 :label="$gettext('Disable ExifTool')"
-                :hint="$gettext('Don\'t create ExifTool JSON files for improved metadata extraction.')"
+                :hint="$gettext('Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support.')"
                 prepend-icon="filter_alt_off"
                 persistent-hint
                 @change="onChange"
@@ -92,7 +131,7 @@
                 class="ma-0 pa-0 input-disable-tensorflow"
                 color="secondary-dark"
                 :label="$gettext('Disable TensorFlow')"
-                :hint="$gettext('Don\'t use TensorFlow for image classification.')"
+                :hint="$gettext('TensorFlow is required for image classification, facial recognition, and detecting unsafe content.')"
                 prepend-icon="layers_clear"
                 persistent-hint
                 @change="onChange"
@@ -103,8 +142,63 @@
         </v-card-actions>
 
         <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0" :title="$gettext('Thumbnail Generation')">
-            <translate>Image Quality</translate>
+          <h3 class="body-2 mb-0">
+            <translate>Backup</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.SidecarYaml"
+                :disabled="busy"
+                class="ma-0 pa-0 input-sidecar-yaml"
+                color="secondary-dark"
+                :label="$gettext('Sidecar Files')"
+                :hint="$gettext('Create YAML sidecar files to back up picture metadata.')"
+                prepend-icon="file_present"
+                persistent-hint
+                @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.BackupAlbums"
+                :disabled="busy"
+                class="ma-0 pa-0 input-backup-albums"
+                color="secondary-dark"
+                :label="$gettext('Album Backups')"
+                :hint="$gettext('Create YAML files to back up album metadata.')"
+                prepend-icon="bookmark"
+                persistent-hint
+                @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+
+            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-checkbox
+                v-model="settings.BackupDatabase"
+                :disabled="busy || settings.BackupSchedule === ''"
+                class="ma-0 pa-0 input-backup-database"
+                color="secondary-dark"
+                :label="$gettext('Database Backups')"
+                :hint="$gettext('Create regular backups based on the configured schedule.')"
+                prepend-icon="history"
+                persistent-hint
+                @change="onChange"
+              >
+              </v-checkbox>
+            </v-flex>
+          </v-layout>
+        </v-card-actions>
+
+        <v-card-title primary-title class="pb-0">
+          <h3 class="body-2 mb-0" :title="$gettext('Preview Images')">
+            <translate>Preview Images</translate>
           </h3>
         </v-card-title>
 
@@ -114,6 +208,20 @@
               <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" color="secondary-dark" background-color="secondary-light" hide-details box @change="onChange"></v-select>
             </v-flex>
 
+            <v-flex xs12 lg4 class="px-2 pb-2">
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: settings.ThumbSize }) }}
+              </v-subheader>
+              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
+            </v-flex>
+
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
+              <v-subheader class="pa-0">
+                {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: settings.ThumbSizeUncached }) }}
+              </v-subheader>
+              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
+            </v-flex>
+
             <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.ThumbUncached"
@@ -121,46 +229,32 @@
                 class="ma-0 pa-0"
                 color="secondary-dark"
                 :label="$gettext('Dynamic Previews')"
-                :hint="$gettext('Dynamic rendering requires a powerful server. It is not recommended for NAS devices.')"
+                :hint="$gettext('On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices.')"
                 prepend-icon="memory"
                 persistent-hint
                 @change="onChange"
               >
               </v-checkbox>
             </v-flex>
+          </v-layout>
+        </v-card-actions>
 
-            <v-flex xs12 sm6 lg8 class="px-2 pb-2">
+        <v-card-title primary-title class="pb-0">
+          <h3 class="body-2 mb-0">
+            <translate>Image Quality</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
+            <v-flex xs12 lg4 class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: settings.JpegQuality }) }}
               </v-subheader>
               <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
             </v-flex>
 
-            <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: settings.ThumbSizeUncached }) }}
-              </v-subheader>
-              <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
-            </v-flex>
-
-            <v-flex xs12 sm6 class="px-2 pb-2">
-              <v-subheader class="pa-0">
-                {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: settings.ThumbSize }) }}
-              </v-subheader>
-              <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
-            </v-flex>
-          </v-layout>
-        </v-card-actions>
-
-        <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0">
-            <translate>File Conversion</translate>
-          </h3>
-        </v-card-title>
-
-        <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 class="px-2 pb-2">
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: settings.JpegSize }) }}
               </v-subheader>
@@ -169,7 +263,7 @@
               </v-flex>
             </v-flex>
 
-            <v-flex xs12 sm6 class="px-2 pb-2">
+            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: settings.PngSize }) }}
               </v-subheader>
@@ -177,7 +271,17 @@
                 <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
               </v-flex>
             </v-flex>
+          </v-layout>
+        </v-card-actions>
 
+        <v-card-title primary-title class="pb-0">
+          <h3 class="body-2 mb-0">
+            <translate>File Format Support</translate>
+          </h3>
+        </v-card-title>
+
+        <v-card-actions>
+          <v-layout wrap align-top>
             <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableDarktable"
@@ -260,31 +364,17 @@
           </v-layout>
         </v-card-actions>
 
-        <v-card-actions class="pt-2">
+        <v-card-actions v-if="!config.disable.restart" class="pt-3">
           <v-layout wrap align-top>
-            <v-flex xs12 sm6 class="pa-2">
-              <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly" :disabled="busy || !$config.values.restart" class="white--text ml-0" depressed @click.stop.p.prevent="onRestart">
+            <v-flex xs12 class="pa-2">
+              <a id="restart"></a>
+              <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly" :disabled="busy || !$config.values.restart" class="white--text" depressed @click.stop.p.prevent="onRestart">
                 <translate>Restart</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
               </v-btn>
             </v-flex>
           </v-layout>
         </v-card-actions>
-
-        <!--
-        TODO: Remaining options
-
-        OriginalsLimit: 0,
-        Workers: 0,
-        WakeupInterval: 0,
-
-        SiteUrl: config.values.siteUrl,
-        SitePreview: config.values.siteUrl,
-        SiteTitle: config.values.siteTitle,
-        SiteCaption: config.values.siteCaption,
-        SiteDescription: config.values.siteDescription,
-        SiteAuthor: config.values.siteAuthor,
-        -->
       </v-card>
     </v-form>
 

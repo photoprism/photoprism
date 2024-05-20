@@ -199,6 +199,10 @@ msgstr "İki hafta sonra"
 msgid "Album"
 msgstr "Albüm"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "Albüm oluşturuldu"
@@ -270,6 +274,10 @@ msgstr "Tüm orijinaller"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Bütün yıllar"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -388,6 +396,10 @@ msgstr "Başka türlü dizine eklenemeyen veya görüntülenemeyen dosyalar içi
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "Geri"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -540,6 +552,10 @@ msgstr "Özel bayrağı değiştir"
 msgid "Changes successfully saved"
 msgstr "Değişiklikler başarıyla kaydedildi"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "Seçildi"
@@ -683,9 +699,17 @@ msgstr "Hesap Oluştur"
 msgid "Create album"
 msgstr "Albüm Oluştur"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "Yapılandırılan zamanlamaya göre dizin yedeklemeleri oluşturun."
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -715,7 +739,7 @@ msgstr "Cyan"
 msgid "Daily"
 msgstr "Günlük"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "Veritabanı Yedekleri"
 
@@ -727,7 +751,7 @@ msgstr "Gün"
 msgid "Deactivate"
 msgstr "Devre dışı bırakmak"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "Hata Kayıtları"
 
@@ -780,55 +804,55 @@ msgstr "Detaylar"
 msgid "Dimensions"
 msgstr "Boyutlar"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Darktable'ı devre dışı bırak"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "ExifTool'u devre dışı bırak"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "FFmpeg'i devre dışı bırak"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "ImageMagick'i devre dışı bırakın"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "Yerleri Devre Dışı Bırak"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "RawTherapee'yi devre dışı bırak"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "TensorFlow'u devre dışı bırak"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "Vektörleri Devre Dışı Bırak"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "WebDAV'ı devre dışı bırak"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "Ters coğrafi kodlamayı ve haritaları devre dışı bırakır."
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "Vektör grafikleri desteğini devre dışı bırakır."
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Video kod dönüştürmeyi ve küçük resim çıkarmayı devre dışı bırakır."
 
@@ -842,29 +866,17 @@ msgstr "Keşfetmek"
 msgid "Display Name"
 msgstr "Ekran adı"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi devre dışı bırakır."
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "RAW görüntüleri dönüştürmek için Darktable kullanmayın."
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "Görüntüleri dönüştürmek için ImageMagick kullanmayın."
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "RAW görüntüleri dönüştürmek için RawTherapee kullanmayın."
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "Görüntü sınıflandırması için TensorFlow kullanmayın."
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -909,7 +921,7 @@ msgstr "Tek dosyaları ve zip arşivlerini indirin."
 msgid "Downloading…"
 msgstr "İndiriliyor…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "Ölçek küçültme filtresi"
 
@@ -925,15 +937,11 @@ msgstr "Yinelenenler atlanacak ve yalnızca bir kez görünecek."
 msgid "Duration"
 msgstr "Süre"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "Dinamik Önizlemeler"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dinamik Boyut Sınırı: %{n}px"
 
@@ -968,11 +976,15 @@ msgstr "Düzenlendi"
 msgid "Email"
 msgstr "E-posta"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "Şu anda geliştirilmekte olan yeni özellikleri etkinleştirin."
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "RAW dönüştürücü ön ayarlarını etkinleştirir. Performansı azaltabilir."
 
@@ -1032,7 +1044,7 @@ msgstr "Genişlet"
 msgid "Expand Search"
 msgstr "Aramayı Genişlet"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "Deneysel Özellikler"
 
@@ -1114,9 +1126,9 @@ msgstr "Dosya"
 msgid "File Browser"
 msgstr "Dosya tarayıcısı"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "Dosya Dönüştürme"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1200,7 +1212,7 @@ msgstr "Oluştur"
 msgid "Given Name"
 msgstr "Verilen İsim"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "Küresel Seçenekler"
 
@@ -1273,7 +1285,7 @@ msgstr "resim"
 msgid "Image"
 msgstr "Resim"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "Görüntü Kalitesi"
 
@@ -1391,11 +1403,11 @@ msgstr "Bu, kullandığınızda hesabınız için 2FA'yı devre dışı bırakac
 msgid "Item"
 msgstr "Öğe"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG Kalitesi: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG Boyut Sınırı: %{n}px"
 
@@ -1618,6 +1630,10 @@ msgstr "Mesaj Gönderildi"
 msgid "Metadata"
 msgstr "Metadata"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Metrikler"
@@ -1811,6 +1827,10 @@ msgstr "Eskiden Yeniye"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windows'ta, bağlantı iletişim kutusuna aşağıdaki kaynağı girin:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2008,7 +2028,7 @@ msgstr "Değişikliklerin etkili olması için lütfen örneğinizi yeniden baş
 msgid "Please wait…"
 msgstr "Lütfen bekleyin…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG Boyut Sınırı: %{n}px"
 
@@ -2032,10 +2052,15 @@ msgstr "İndekslemeyi başlatmak için düğmeye basın.."
 msgid "Press enter to create a new album."
 msgstr "Yeni bir albüm oluşturmak için enter tuşuna basın."
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Önizleme"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Önizleme Görüntüleri"
@@ -2093,7 +2118,7 @@ msgstr "RAW"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Önceden indekslenmiş ve değişmemiş dosyalar da dahil olmak üzere tüm orijinalleri yeniden indeksleyin."
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "Salt Okunur Modu"
 
@@ -2181,7 +2206,7 @@ msgid "Resolution"
 msgstr "Çözünürlük"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "Yeniden Başlat"
 
@@ -2363,13 +2388,13 @@ msgstr "Daha fazla göster"
 msgid "Show server logs in Library."
 msgstr "Kütüphane'de sunucu günlüklerini gösterin."
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Daha ayrıntılı günlük mesajları gösterir. Yeniden başlatma gerektirir."
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidecar"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2438,7 +2463,7 @@ msgstr "Slayt Gösterisini Başlat/Durdur"
 msgid "States"
 msgstr "İlçeler"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "Statik Boyut Sınırı: %{n}px"
 
@@ -2503,6 +2528,10 @@ msgstr "Alınmış"
 msgid "Teal"
 msgstr "Turkuaz"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Metin çok uzun"
@@ -2530,10 +2559,6 @@ msgstr "Tema"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Bu, orijinaller klasörünü bir ağ sürücüsü olarak bağlar ve dosyaları bilgisayarınızdan veya akıllı telefonunuzdan yerelmiş gibi açmanıza, düzenlemenize ve silmenize olanak tanır."
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "Küçük Resim Oluşturma"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2736,6 +2761,10 @@ msgstr "Klasör Yükle"
 msgid "Upload local files"
 msgstr "Yerel dosyaları yükleme"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "WebDAV'a yükleyin ve bağlantıları arkadaşlarınızla paylaşın."
@@ -2760,7 +2789,7 @@ msgstr "Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedil
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "Ön Ayarları Kullan"
 
@@ -2956,6 +2985,33 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "Yerleşik WebDAV sunucusunu devre dışı bırakın. Yeniden başlatma gerektirir."
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "Ters coğrafi kodlamayı ve haritaları devre dışı bırakır."
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "Gelişmiş meta veri ayıklaması için ExifTool JSON dosyaları oluşturmayın."
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "Orijinaller klasörünü değiştirmeyin. İçe aktarmayı, yüklemeyi ve silmeyi devre dışı bırakır."
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "Görüntü sınıflandırması için TensorFlow kullanmayın."
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "Dinamik oluşturma, güçlü bir sunucu gerektirir. NAS cihazları için önerilmez."
+
+#~ msgid "File Conversion"
+#~ msgstr "Dosya Dönüştürme"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "Daha ayrıntılı günlük mesajları gösterir. Yeniden başlatma gerektirir."
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "Küçük Resim Oluşturma"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Kimlik doğrulayıcı uygulamanıza veya cihazınıza erişemiyor musunuz? Kurtarma kodunuzu girin veya yardım isteyin."

@@ -196,6 +196,10 @@ msgstr "Bi asteren ondoren"
 msgid "Album"
 msgstr "Albuma"
 
+#: src/page/settings/advanced.vue:352
+msgid "Album Backups"
+msgstr ""
+
 #: src/page/albums.vue:560
 msgid "Album created"
 msgstr "Sortu da albuma"
@@ -267,6 +271,10 @@ msgstr "Jatorrizko guztiak"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Urte guztiak"
+
+#: src/page/settings/advanced.vue:194
+msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgstr ""
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -385,6 +393,10 @@ msgstr "Sortu automatikoki koadro txikiak bestela indexatu edo ikusi ezin diren 
 #: src/dialog/account/apps.vue:34 src/dialog/account/apps.vue:15
 msgid "Back"
 msgstr "Itzuli"
+
+#: src/page/settings/advanced.vue:68
+msgid "Backup"
+msgstr ""
 
 #: src/dialog/admin/users/edit.vue:391
 msgid "Base Folder"
@@ -537,6 +549,10 @@ msgstr "Aldatu bandera pribatua"
 msgid "Changes successfully saved"
 msgstr "Aldaketak ongi gorde dira"
 
+#: src/page/settings/advanced.vue:9
+msgid "Changes to the advanced settings require a restart to take effect."
+msgstr ""
+
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
 msgstr "Egiaztatuta"
@@ -680,9 +696,17 @@ msgstr "Kontua sortu"
 msgid "Create album"
 msgstr "Sortu albuma"
 
-#: src/page/settings/advanced.vue:143
-msgid "Create index backups based on the configured schedule."
+#: src/page/settings/advanced.vue:374
+msgid "Create regular backups based on the configured schedule."
 msgstr "Sortu indizearen babeskopiak konfiguratutako ordutegian oinarrituta."
+
+#: src/page/settings/advanced.vue:353
+msgid "Create YAML files to back up album metadata."
+msgstr ""
+
+#: src/page/settings/advanced.vue:332
+msgid "Create YAML sidecar files to back up picture metadata."
+msgstr ""
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -712,7 +736,7 @@ msgstr "Zian"
 msgid "Daily"
 msgstr "Egunero"
 
-#: src/page/settings/advanced.vue:142
+#: src/page/settings/advanced.vue:373
 msgid "Database Backups"
 msgstr "Datu-basearen babeskopiak"
 
@@ -724,7 +748,7 @@ msgstr "Eguna"
 msgid "Deactivate"
 msgstr "Desaktibatu"
 
-#: src/page/settings/advanced.vue:76
+#: src/page/settings/advanced.vue:127
 msgid "Debug Logs"
 msgstr "Arazte-erregistroak"
 
@@ -777,55 +801,55 @@ msgstr "Xehetasunak"
 msgid "Dimensions"
 msgstr "Neurriak"
 
-#: src/page/settings/advanced.vue:165
-msgid "Disable built-in WebDAV server. Requires a restart."
-msgstr "Desgaitu integratutako WebDAV zerbitzaria. Berrabiaraztea eskatzen du."
-
-#: src/page/settings/advanced.vue:496
+#: src/page/settings/advanced.vue:670
 msgid "Disable Darktable"
 msgstr "Desgaitu Darktable"
 
-#: src/page/settings/advanced.vue:208
+#: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
 msgstr "Desgaitu ExifTool"
 
-#: src/page/settings/advanced.vue:584
+#: src/page/settings/advanced.vue:172
+msgid "Disable features that require write permission for the originals folder."
+msgstr ""
+
+#: src/page/settings/advanced.vue:758
 msgid "Disable FFmpeg"
 msgstr "Desgaitu FFmpeg"
 
-#: src/page/settings/advanced.vue:562
+#: src/page/settings/advanced.vue:736
 msgid "Disable ImageMagick"
 msgstr "Desgaitu ImageMagick"
 
-#: src/page/settings/advanced.vue:186
+#: src/page/settings/advanced.vue:238
+msgid "Disable interactive world maps and reverse geocoding."
+msgstr ""
+
+#: src/page/settings/advanced.vue:237
 msgid "Disable Places"
 msgstr "Desgaitu Lekuak"
 
-#: src/page/settings/advanced.vue:518
+#: src/page/settings/advanced.vue:692
 msgid "Disable RawTherapee"
 msgstr "Desgaitu RawTherapee"
 
-#: src/page/settings/advanced.vue:230
+#: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
 msgstr "Desgaitu TensorFlow"
 
-#: src/page/settings/advanced.vue:608
+#: src/page/settings/advanced.vue:782
 msgid "Disable Vectors"
 msgstr "Desgaitu bektoreak"
 
-#: src/page/settings/advanced.vue:164
+#: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
 msgstr "Desgaitu WebDAV"
 
-#: src/page/settings/advanced.vue:187
-msgid "Disables reverse geocoding and maps."
-msgstr "Alderantzizko geokodeketa eta mapak desgaitzen ditu."
-
-#: src/page/settings/advanced.vue:609
+#: src/page/settings/advanced.vue:783
 msgid "Disables vector graphics support."
 msgstr "Grafiko bektorialen euskarria desgaitzen du."
 
-#: src/page/settings/advanced.vue:585
+#: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Bideoen transkodeketa eta irudi txikien erauzketa desgaitzen ditu."
 
@@ -839,29 +863,17 @@ msgstr "Ezagutu"
 msgid "Display Name"
 msgstr "Bistaratzeko izena"
 
-#: src/page/settings/advanced.vue:209
-msgid "Don't create ExifTool JSON files for improved metadata extraction."
-msgstr "Ez sortu ExifTool JSON fitxategiak metadatuen erauzketa hobetzeko."
-
-#: src/page/settings/advanced.vue:99
-msgid "Don't modify originals folder. Disables import, upload, and delete."
-msgstr "Ez aldatu jatorrizkoen karpeta. Inportazioa, kargatzea eta ezabatzea desgaitzen du."
-
-#: src/page/settings/advanced.vue:497
+#: src/page/settings/advanced.vue:671
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Ez erabili Darktable irudi RAW bihurtzeko."
 
-#: src/page/settings/advanced.vue:563
+#: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
 msgstr "Ez erabili ImageMagick irudiak bihurtzeko."
 
-#: src/page/settings/advanced.vue:519
+#: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Ez erabili RawTherapee RAW irudiak bihurtzeko."
-
-#: src/page/settings/advanced.vue:231
-msgid "Don't use TensorFlow for image classification."
-msgstr "Ez erabili TensorFlow irudiak sailkatzeko."
 
 #: src/options/options.js:462
 msgid "Donations"
@@ -906,7 +918,7 @@ msgstr "Deskargatu fitxategi bakarrak eta zip artxiboak."
 msgid "Downloading…"
 msgstr "Deskargatzen…"
 
-#: src/page/settings/advanced.vue:283
+#: src/page/settings/advanced.vue:426
 msgid "Downscaling Filter"
 msgstr "Beherapen-iragazkia"
 
@@ -922,15 +934,11 @@ msgstr "Bikoiztuak saltatu egingo dira eta behin bakarrik agertuko dira."
 msgid "Duration"
 msgstr "Iraupena"
 
-#: src/page/settings/advanced.vue:307
+#: src/page/settings/advanced.vue:503
 msgid "Dynamic Previews"
 msgstr "Aurrebista dinamikoak"
 
-#: src/page/settings/advanced.vue:308
-msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
-msgstr "Errendatze dinamikoak zerbitzari indartsu bat behar du. Ez da gomendagarria NAS gailuetarako."
-
-#: src/page/settings/advanced.vue:350
+#: src/page/settings/advanced.vue:472
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Tamaina dinamikoaren muga: %{n}px"
 
@@ -965,11 +973,15 @@ msgstr "Editatua"
 msgid "Email"
 msgstr "Posta elektronikoa"
 
-#: src/page/settings/advanced.vue:121
+#: src/page/settings/advanced.vue:128
+msgid "Enable debug mode to display additional logs and help with troubleshooting."
+msgstr ""
+
+#: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
 msgstr "Gaitu funtzio berriak garatzen ari diren."
 
-#: src/page/settings/advanced.vue:541
+#: src/page/settings/advanced.vue:715
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "RAW bihurgailuaren aurrezarpenak gaitzen ditu. Errendimendua murriztu dezake."
 
@@ -1029,7 +1041,7 @@ msgstr "Zabaldu"
 msgid "Expand Search"
 msgstr "Zabaldu Bilaketa"
 
-#: src/page/settings/advanced.vue:120
+#: src/page/settings/advanced.vue:149
 msgid "Experimental Features"
 msgstr "Ezaugarri esperimentalak"
 
@@ -1111,9 +1123,9 @@ msgstr "Fitxategia"
 msgid "File Browser"
 msgstr "Fitxategien arakatzailea"
 
-#: src/page/settings/advanced.vue:96
-msgid "File Conversion"
-msgstr "Fitxategien Bihurketa"
+#: src/page/settings/advanced.vue:161
+msgid "File Format Support"
+msgstr ""
 
 #: src/component/album/toolbar.vue:74 src/component/photo/toolbar.vue:79
 #: src/dialog/album/edit.vue:26
@@ -1197,7 +1209,7 @@ msgstr "Sortu"
 msgid "Given Name"
 msgstr "Emandako izena"
 
-#: src/page/settings/advanced.vue:6
+#: src/page/settings/advanced.vue:18
 msgid "Global Options"
 msgstr "Aukera globalak"
 
@@ -1270,7 +1282,7 @@ msgstr "irudia"
 msgid "Image"
 msgstr "Irudia"
 
-#: src/page/settings/advanced.vue:56
+#: src/page/settings/advanced.vue:126
 msgid "Image Quality"
 msgstr "Irudiaren Kalitatea"
 
@@ -1388,11 +1400,11 @@ msgstr "Erabilera bakarreko kodea da, erabiltzen duzunean zure konturako 2FA des
 msgid "Item"
 msgstr "Elementua"
 
-#: src/page/settings/advanced.vue:325
+#: src/page/settings/advanced.vue:549
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG kalitatea: %{n}"
 
-#: src/page/settings/advanced.vue:431
+#: src/page/settings/advanced.vue:575
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG tamaina muga: %{n}px"
 
@@ -1615,6 +1627,10 @@ msgstr "Mezua bidali da"
 msgid "Metadata"
 msgstr "Metadatuak"
 
+#: src/page/settings/advanced.vue:260
+msgid "Metadata extraction with ExifTool is required for full Video, Live Photo, and XMP support."
+msgstr ""
+
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Metrikak"
@@ -1808,6 +1824,10 @@ msgstr "Zaharrena Lehen"
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windows-en, sartu baliabide hau konexio-koadroan:"
+
+#: src/page/settings/advanced.vue:504
+msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
+msgstr ""
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2005,7 +2025,7 @@ msgstr "Mesedez, berrabiarazi zure instantzia aldaketak indarrean egon daitezen.
 msgid "Please wait…"
 msgstr "Itxaron mesedez…"
 
-#: src/page/settings/advanced.vue:461
+#: src/page/settings/advanced.vue:606
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG Tamaina Muga: %{n}px"
 
@@ -2029,10 +2049,15 @@ msgstr "Sakatu botoia indexatzen hasteko…"
 msgid "Press enter to create a new album."
 msgstr "Sakatu Sartu album berri bat sortzeko."
 
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Aurrebista"
 
+#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Aurrebista Irudiak"
@@ -2090,7 +2115,7 @@ msgstr "GORDINA"
 msgid "Re-index all originals, including already indexed and unchanged files."
 msgstr "Berriro indexatu jatorrizko guztiak, dagoeneko indexatutako eta aldatu gabeko fitxategiak barne."
 
-#: src/page/settings/advanced.vue:98
+#: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
 msgstr "Irakurtzeko soilik modua"
 
@@ -2178,7 +2203,7 @@ msgid "Resolution"
 msgstr "Ebazpena"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:156
+#: src/page/settings/advanced.vue:204
 msgid "Restart"
 msgstr "Berriro hasi"
 
@@ -2360,13 +2385,13 @@ msgstr "Erakutsi gehiago"
 msgid "Show server logs in Library."
 msgstr "Erakutsi zerbitzariaren erregistroak Liburutegian."
 
-#: src/page/settings/advanced.vue:77
-msgid "Shows more detailed log messages. Requires a restart."
-msgstr "Erregistro mezu zehatzagoak erakusten ditu. Berrabiaraztea eskatzen du."
-
 #: src/model/file.js:209 src/page/settings/general.vue:689
 msgid "Sidecar"
 msgstr "Sidecar"
+
+#: src/page/settings/advanced.vue:331
+msgid "Sidecar Files"
+msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
@@ -2435,7 +2460,7 @@ msgstr "Hasi/gelditu diaporama"
 msgid "States"
 msgstr "Estatuak"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:445
 msgid "Static Size Limit: %{n}px"
 msgstr "Tamaina muga estatikoa: %{n}px"
 
@@ -2500,6 +2525,10 @@ msgstr "Hartua"
 msgid "Teal"
 msgstr "Zertzeta"
 
+#: src/page/settings/advanced.vue:282
+msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
+msgstr ""
+
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
 msgstr "Testua luzeegia"
@@ -2527,10 +2556,6 @@ msgstr "Gaia"
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
 msgstr "Honek jatorrizko karpeta sareko unitate gisa muntatzen du eta ordenagailutik edo telefonotik fitxategiak ireki, editatu eta ezaba ditzakezu lokalak balira bezala."
-
-#: src/page/settings/advanced.vue:252
-msgid "Thumbnail Generation"
-msgstr "Miniaturak sortzea"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
@@ -2733,6 +2758,10 @@ msgstr "Karpeta igo"
 msgid "Upload local files"
 msgstr "Kargatu tokiko fitxategiak"
 
+#: src/page/settings/advanced.vue:193
+msgid "Upload NSFW"
+msgstr ""
+
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
 msgstr "Kargatu WebDAV-era eta partekatu estekak lagunekin."
@@ -2757,7 +2786,7 @@ msgstr "Horrelako irudiak izan ditzaketen kargak automatikoki baztertuko dira."
 msgid "URL"
 msgstr "URLa"
 
-#: src/page/settings/advanced.vue:540
+#: src/page/settings/advanced.vue:714
 msgid "Use Presets"
 msgstr "Erabili aurrezarpenak"
 
@@ -2951,6 +2980,33 @@ msgstr "Zure liburutegia etengabe aztertzen da momentu, bidai eta leku berezien 
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Handitu/txikiagotu"
+
+#~ msgid "Disable built-in WebDAV server. Requires a restart."
+#~ msgstr "Desgaitu integratutako WebDAV zerbitzaria. Berrabiaraztea eskatzen du."
+
+#~ msgid "Disables reverse geocoding and maps."
+#~ msgstr "Alderantzizko geokodeketa eta mapak desgaitzen ditu."
+
+#~ msgid "Don't create ExifTool JSON files for improved metadata extraction."
+#~ msgstr "Ez sortu ExifTool JSON fitxategiak metadatuen erauzketa hobetzeko."
+
+#~ msgid "Don't modify originals folder. Disables import, upload, and delete."
+#~ msgstr "Ez aldatu jatorrizkoen karpeta. Inportazioa, kargatzea eta ezabatzea desgaitzen du."
+
+#~ msgid "Don't use TensorFlow for image classification."
+#~ msgstr "Ez erabili TensorFlow irudiak sailkatzeko."
+
+#~ msgid "Dynamic rendering requires a powerful server. It is not recommended for NAS devices."
+#~ msgstr "Errendatze dinamikoak zerbitzari indartsu bat behar du. Ez da gomendagarria NAS gailuetarako."
+
+#~ msgid "File Conversion"
+#~ msgstr "Fitxategien Bihurketa"
+
+#~ msgid "Shows more detailed log messages. Requires a restart."
+#~ msgstr "Erregistro mezu zehatzagoak erakusten ditu. Berrabiaraztea eskatzen du."
+
+#~ msgid "Thumbnail Generation"
+#~ msgstr "Miniaturak sortzea"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Ezin duzu autentifikatzaile aplikazioa edo gailua atzitu? Sartu berreskuratzeko kodea edo eskatu laguntza."
