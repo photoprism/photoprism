@@ -78,6 +78,52 @@ func TestUnixTime(t *testing.T) {
 	})
 }
 
+func TestParseTimeUTC(t *testing.T) {
+	t.Run("EmptyString", func(t *testing.T) {
+		result := ParseTimeUTC("")
+		assert.True(t, result.IsZero())
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("0000-00-00 00:00:00", func(t *testing.T) {
+		result := ParseTimeUTC("0000-00-00 00:00:00")
+		assert.True(t, result.IsZero())
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("0001-01-01 00:00:00 +0000 UTC", func(t *testing.T) {
+		result := ParseTimeUTC("0001-01-01 00:00:00 +0000 UTC")
+		assert.True(t, result.IsZero())
+		assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("2016: :     :  :  ", func(t *testing.T) {
+		result := ParseTimeUTC("2016: :     :  :  ")
+		assert.Equal(t, "2016-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("2020-12-29", func(t *testing.T) {
+		result := ParseTimeUTC("2020-12-29")
+		assert.Equal(t, "2020-12-29 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("2020/12/29", func(t *testing.T) {
+		result := ParseTimeUTC("2020/12/29")
+		assert.Equal(t, "2020-12-29 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("2020", func(t *testing.T) {
+		result := ParseTimeUTC("2020")
+		assert.Equal(t, "2020-01-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("2020/02", func(t *testing.T) {
+		result := ParseTimeUTC("2020/02")
+		assert.Equal(t, "2020-02-01 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("29.12.2020", func(t *testing.T) {
+		result := ParseTimeUTC("29.12.2020")
+		assert.Equal(t, "2020-12-29 00:00:00 +0000 UTC", result.String())
+	})
+	t.Run("29/12/2020", func(t *testing.T) {
+		result := ParseTimeUTC("29/12/2020")
+		assert.Equal(t, "2020-12-29 00:00:00 +0000 UTC", result.String())
+	})
+}
+
 func TestParseTime(t *testing.T) {
 	t.Run("EmptyString", func(t *testing.T) {
 		result := ParseTime("", "")

@@ -265,7 +265,7 @@ export default {
         });
     },
     level(s) {
-      return s.substr(0, 4).toUpperCase();
+      return s.substring(0, 4).toUpperCase();
     },
     localTime(s) {
       if (!s) {

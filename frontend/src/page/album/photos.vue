@@ -11,8 +11,8 @@
       <p-photo-clipboard :refresh="refresh" :selection="selection" :album="model" context="album"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'" context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :edit-photo="editPhoto" :open-photo="openPhoto" :is-shared-view="isShared"></p-photo-mosaic>
-      <p-photo-list v-else-if="settings.view === 'list'" context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :open-photo="openPhoto" :edit-photo="editPhoto" :open-location="openLocation" :is-shared-view="isShared"></p-photo-list>
-      <p-photo-cards v-else context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :open-photo="openPhoto" :edit-photo="editPhoto" :open-location="openLocation" :is-shared-view="isShared"></p-photo-cards>
+      <p-photo-list v-else-if="settings.view === 'list'" context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-list>
+      <p-photo-cards v-else context="album" :photos="results" :select-mode="selectMode" :filter="filter" :album="model" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-cards>
     </v-container>
   </div>
 </template>
@@ -153,6 +153,22 @@ export default {
       }
 
       return "cards";
+    },
+    openDate(index) {
+      if (!this.canEdit) {
+        return this.openPhoto(index);
+      }
+
+      const photo = this.results[index];
+
+      if (!photo) {
+        return;
+      } else if (!photo.TakenAt || photo.TakenAt.length < 10) {
+        this.editPhoto(index);
+        return;
+      }
+
+      this.$router.push({ query: { q: "taken:" + photo.TakenAt.substring(0, 10) }});
     },
     openLocation(index) {
       if (!this.hasPlaces) {

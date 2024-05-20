@@ -74,7 +74,7 @@
                 {{ photo.Title }}
               </td>
               <td class="p-photo-desc hidden-xs-only" :title="photo.getDateString()">
-                <button @click.stop.prevent="editPhoto(index)">
+                <button @click.stop.prevent="openDate(index)">
                   {{ photo.shortDateString() }}
                 </button>
               </td>
@@ -139,6 +139,10 @@ export default {
       default: () => {},
     },
     editPhoto: {
+      type: Function,
+      default: () => {},
+    },
+    openDate: {
       type: Function,
       default: () => {},
     },

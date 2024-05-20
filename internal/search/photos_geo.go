@@ -609,6 +609,11 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("photos.photo_altitude BETWEEN ? AND ?", rangeStart, rangeEnd)
 	}
 
+	// Find photos taken at specified date.
+	if !f.Taken.IsZero() {
+		s = s.Where("DATE(photos.taken_at) = DATE(?)", f.Taken.Format("2006-01-02"))
+	}
+
 	// Find photos taken before date.
 	if !f.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))

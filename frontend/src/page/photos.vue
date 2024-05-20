@@ -11,8 +11,8 @@
       <p-photo-clipboard :context="context" :refresh="refresh" :selection="selection"></p-photo-clipboard>
 
       <p-photo-mosaic v-if="settings.view === 'mosaic'" :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :edit-photo="editPhoto" :open-photo="openPhoto" :is-shared-view="isShared"></p-photo-mosaic>
-      <p-photo-list v-else-if="settings.view === 'list'" :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :open-photo="openPhoto" :edit-photo="editPhoto" :open-location="openLocation" :is-shared-view="isShared"></p-photo-list>
-      <p-photo-cards v-else :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :open-photo="openPhoto" :edit-photo="editPhoto" :open-location="openLocation" :is-shared-view="isShared"></p-photo-cards>
+      <p-photo-list v-else-if="settings.view === 'list'" :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-list>
+      <p-photo-cards v-else :context="context" :photos="results" :select-mode="selectMode" :filter="filter" :open-photo="openPhoto" :edit-photo="editPhoto" :open-date="openDate" :open-location="openLocation" :is-shared-view="isShared"></p-photo-cards>
     </v-container>
   </div>
 </template>
@@ -257,6 +257,27 @@ export default {
       }
 
       return "newest";
+    },
+    openDate(index) {
+      const photo = this.results[index];
+
+      if (!photo) {
+        return;
+      } else if (!photo.TakenAt || photo.TakenAt.length < 10) {
+        this.editPhoto(index);
+        return;
+      }
+
+      const takenDate = photo.TakenAt.substring(0, 10);
+
+      if (this.$isMobile) {
+        this.$router.push({ query: { q: "taken:" + takenDate } });
+      } else {
+        const routeUrl = this.$router.resolve({ name: "all", query: { q: "taken:" + takenDate } }).href;
+        if (routeUrl) {
+          window.open(routeUrl, "_blank");
+        }
+      }
     },
     openLocation(index) {
       if (!this.hasPlaces || !this.canSearchPlaces) {

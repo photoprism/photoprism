@@ -221,7 +221,7 @@ export class Photo extends RestModel {
     }
 
     if (!this.Day || this.Day <= 0) {
-      return this.TakenAtLocal.substr(8, 2);
+      return this.TakenAtLocal.substring(8, 10);
     }
 
     return this.Day.toString().padStart(2, "0");
@@ -233,7 +233,7 @@ export class Photo extends RestModel {
     }
 
     if (!this.Month || this.Month <= 0) {
-      return this.TakenAtLocal.substr(5, 2);
+      return this.TakenAtLocal.substring(5, 7);
     }
 
     return this.Month.toString().padStart(2, "0");
@@ -245,7 +245,7 @@ export class Photo extends RestModel {
     }
 
     if (!this.Year || this.Year <= 1000) {
-      return this.TakenAtLocal.substr(0, 4);
+      return this.TakenAtLocal.substring(0, 4);
     }
 
     return this.Year.toString();
@@ -259,7 +259,7 @@ export class Photo extends RestModel {
     let date = this.localYearString() + "-" + this.localMonthString() + "-" + this.localDayString();
 
     if (!time) {
-      time = this.TakenAtLocal.substr(11, 8);
+      time = this.TakenAtLocal.substring(11, 19);
     }
 
     let iso = `${date}T${time}`;

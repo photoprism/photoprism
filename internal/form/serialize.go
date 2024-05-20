@@ -8,8 +8,6 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/araddon/dateparse"
-
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -126,8 +124,8 @@ func Unserialize(f SearchForm, q string) (result error) {
 				if fieldName != "" && fieldName != "-" && field.CanSet() {
 					switch field.Interface().(type) {
 					case time.Time:
-						if timeValue, err := dateparse.ParseAny(stringValue); err != nil {
-							result = err
+						if timeValue := txt.ParseTimeUTC(stringValue); stringValue != "" && timeValue.IsZero() {
+							result = fmt.Errorf("invalid %s date", formName)
 						} else {
 							field.Set(reflect.ValueOf(timeValue))
 						}

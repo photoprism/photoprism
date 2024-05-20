@@ -26,7 +26,7 @@ export default {
   created() {},
   methods: {
     level(log) {
-      return log.level.substr(0, 4).toUpperCase();
+      return log.level.substring(0, 4).toUpperCase();
     },
     formatTime(s) {
       if (!s) {

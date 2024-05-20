@@ -655,20 +655,31 @@ func TestParseQueryString(t *testing.T) {
 
 		assert.Equal(t, "200-500", form.Alt)
 	})
-	t.Run("query for before with invalid type", func(t *testing.T) {
+	t.Run("BeforeTime", func(t *testing.T) {
+		form := &SearchPhotos{Query: "before:time"}
+
+		err := form.ParseQueryString()
+
+		t.Logf("%s", form.Before)
+
+		if err != nil {
+			assert.Equal(t, "invalid before date", err.Error())
+		} else {
+			t.Fatal("'invalid before date' error expected")
+		}
+	})
+	t.Run("BeforeCat", func(t *testing.T) {
 		form := &SearchPhotos{Query: "before:cat"}
 
 		err := form.ParseQueryString()
 
-		if err == nil {
-			t.Fatal(err)
+		if err != nil {
+			assert.Equal(t, "invalid before date", err.Error())
+		} else {
+			t.Fatal("'invalid before date' error expected")
 		}
-
-		// log.Debugf("%+v\n", form)
-
-		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
 	})
-	t.Run("query for after with invalid type", func(t *testing.T) {
+	t.Run("AfterCat", func(t *testing.T) {
 		form := &SearchPhotos{Query: "after:cat"}
 
 		err := form.ParseQueryString()
@@ -679,7 +690,7 @@ func TestParseQueryString(t *testing.T) {
 
 		// log.Debugf("%+v\n", form)
 
-		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
+		assert.Equal(t, "invalid after date", err.Error())
 	})
 	t.Run("id", func(t *testing.T) {
 		form := &SearchPhotos{Query: "id:\"ii3e4567-e89b-hdgtr\""}

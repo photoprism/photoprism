@@ -204,7 +204,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
+		assert.Equal(t, "invalid before date", err.Error())
 	})
 	t.Run("query for lat with invalid type", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "lat:&cat"}

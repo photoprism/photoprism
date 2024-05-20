@@ -152,7 +152,7 @@
                 </button>
               </div>
               <div class="caption">
-                <button class="action-date-edit" :data-uid="photo.UID" @click.exact="editPhoto(index)">
+                <button class="action-open-date" :data-uid="photo.UID" @click.exact="openDate(index)">
                   <i :title="$gettext('Taken')"> date_range </i>
                   {{ photo.getDateString(true) }}
                 </button>
@@ -225,6 +225,10 @@ export default {
       default: () => {},
     },
     editPhoto: {
+      type: Function,
+      default: () => {},
+    },
+    openDate: {
       type: Function,
       default: () => {},
     },
