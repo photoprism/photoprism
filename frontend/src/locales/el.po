@@ -272,9 +272,9 @@ msgstr "Όλα τα πρωτότυπα"
 msgid "All Years"
 msgstr "Όλα τα έτη"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Επιτρέψτε τις μεταφορτώσεις που μπορεί να είναι προσβλητικές. Η ανίχνευση μη ασφαλούς περιεχομένου απαιτεί TensorFlow."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "Ανέβασμα NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1976,6 +1976,10 @@ msgstr "Φωτογραφίες"
 msgid "Picture Title"
 msgstr "Τίτλος εικόνας"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "Επιτρέψτε τις μεταφορτώσεις που μπορεί να είναι προσβλητικές. Η ανίχνευση μη ασφαλούς περιεχομένου απαιτεί TensorFlow."
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Ροζ"
@@ -2757,10 +2761,6 @@ msgstr "Φόρτωση φακέλου"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Ανέβασμα τοπικών αρχείων"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Ανέβασμα NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

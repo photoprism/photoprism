@@ -309,8 +309,8 @@ msgstr ""
 msgid "All Years"
 msgstr ""
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
 msgstr ""
 
 #: src/dialog/share.vue:73
@@ -2366,6 +2366,10 @@ msgstr ""
 msgid "Picture Title"
 msgstr ""
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr ""
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr ""
@@ -3288,10 +3292,6 @@ msgstr ""
 
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
-msgstr ""
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
 msgstr ""
 
 #: src/page/settings/general.vue:298

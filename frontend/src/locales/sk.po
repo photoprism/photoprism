@@ -275,9 +275,9 @@ msgstr "Všetky originály"
 msgid "All Years"
 msgstr "Všetky Roky"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Povoľte nahrávanie, ktoré by mohlo byť urážlivé. Detekcia nebezpečného obsahu vyžaduje TensorFlow."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "Nahrať NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1979,6 +1979,10 @@ msgstr "Fotky"
 msgid "Picture Title"
 msgstr "Názov obrázka"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "Povoľte nahrávanie, ktoré by mohlo byť urážlivé. Detekcia nebezpečného obsahu vyžaduje TensorFlow."
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Ružová"
@@ -2760,10 +2764,6 @@ msgstr "Odoslanie priečinka"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Odovzdať lokálne súbory"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Nahrať NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

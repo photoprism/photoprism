@@ -272,9 +272,9 @@ msgstr "Kõik originaalid"
 msgid "All Years"
 msgstr "Kõik aastad"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Lubage üleslaadimine, mis võib olla solvav. Ebakindla sisu tuvastamiseks on vaja TensorFlow'd."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "Üleslaadimine NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1976,6 +1976,10 @@ msgstr "Fotod"
 msgid "Picture Title"
 msgstr "Pildi pealkiri"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "Lubage üleslaadimine, mis võib olla solvav. Ebakindla sisu tuvastamiseks on vaja TensorFlow'd."
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Roosa"
@@ -2757,10 +2761,6 @@ msgstr "Upload kausta"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Laadi üles kohalikud failid"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Üleslaadimine NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

@@ -274,9 +274,9 @@ msgstr "Összes eredeti"
 msgid "All Years"
 msgstr "Összes év"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Engedélyezze az esetlegesen sértő feltöltéseket. A nem biztonságos tartalom felismeréséhez TensorFlow-ra van szükség."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "NSFW feltöltése"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1978,6 +1978,10 @@ msgstr "Fényképek"
 msgid "Picture Title"
 msgstr "Kép címe"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "Engedélyezze az esetlegesen sértő feltöltéseket. A nem biztonságos tartalom felismeréséhez TensorFlow-ra van szükség."
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Rózsaszín"
@@ -2759,10 +2763,6 @@ msgstr "Mappa feltöltése"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Helyi fájlok feltöltése"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "NSFW feltöltése"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

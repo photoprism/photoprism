@@ -275,9 +275,9 @@ msgstr "सभी मूल"
 msgid "All Years"
 msgstr "सभी वर्ष"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "ऐसे अपलोड की अनुमति दें जो आपत्तिजनक हो सकते हैं। असुरक्षित सामग्री का पता लगाने के लिए TensorFlow की आवश्यकता होती है।"
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "NSFW अपलोड करें"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1979,6 +1979,10 @@ msgstr "तस्वीरें"
 msgid "Picture Title"
 msgstr "चित्र का शीर्षक"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "ऐसे अपलोड की अनुमति दें जो आपत्तिजनक हो सकते हैं। असुरक्षित सामग्री का पता लगाने के लिए TensorFlow की आवश्यकता होती है।"
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "गुलाबी"
@@ -2760,10 +2764,6 @@ msgstr "फ़ोल्डर अपलोड करें"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "स्थानीय फ़ाइलें अपलोड करें"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "NSFW अपलोड करें"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

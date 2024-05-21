@@ -275,9 +275,9 @@ msgstr "Semua yang asal"
 msgid "All Years"
 msgstr "Semua Tahun"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Benarkan muat naik yang mungkin menyinggung perasaan. Mengesan kandungan yang tidak selamat memerlukan TensorFlow."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "Muat naik NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1979,6 +1979,10 @@ msgstr "Foto"
 msgid "Picture Title"
 msgstr "Tajuk Gambar"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "Benarkan muat naik yang mungkin menyinggung perasaan. Mengesan kandungan yang tidak selamat memerlukan TensorFlow."
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "merah jambu"
@@ -2760,10 +2764,6 @@ msgstr "Muat naik Folder"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Muat naik fail tempatan"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Muat naik NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

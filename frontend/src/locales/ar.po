@@ -275,9 +275,9 @@ msgstr "جميع النسخ الأصلية"
 msgid "All Years"
 msgstr "جميع السنوات"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "السماح بالتحميلات التي قد تكون مسيئة. يتطلب اكتشاف المحتوى غير الآمن استخدام TensorFlow."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "تحميل NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1979,6 +1979,10 @@ msgstr "الصور"
 msgid "Picture Title"
 msgstr "عنوان الصورة"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "السماح بالتحميلات التي قد تكون مسيئة. يتطلب اكتشاف المحتوى غير الآمن استخدام TensorFlow."
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "لون القرنفل"
@@ -2760,10 +2764,6 @@ msgstr "تحميل المجلد"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "تحميل الملفات المحلية"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "تحميل NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

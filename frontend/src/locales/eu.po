@@ -272,9 +272,9 @@ msgstr "Jatorrizko guztiak"
 msgid "All Years"
 msgstr "Urte guztiak"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Baimendu iraingarriak izan daitezkeen kargak. Edukia ez-segurua detektatzeko TensorFlow behar da."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "Kargatu NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1976,6 +1976,10 @@ msgstr "Argazkiak"
 msgid "Picture Title"
 msgstr "Irudiaren izenburua"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "Baimendu iraingarriak izan daitezkeen kargak. Edukia ez-segurua detektatzeko TensorFlow behar da."
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Arrosa"
@@ -2757,10 +2761,6 @@ msgstr "Karpeta igo"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Kargatu tokiko fitxategiak"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Kargatu NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

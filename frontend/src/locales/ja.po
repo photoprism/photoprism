@@ -275,9 +275,9 @@ msgstr "すべてのオリジナル"
 msgid "All Years"
 msgstr "すべての年"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "不快かもしれないアップロードを許可する。安全でないコンテンツを検出するにはTensorFlowが必要だ。"
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "NSFWをアップロードする"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1979,6 +1979,10 @@ msgstr "写真"
 msgid "Picture Title"
 msgstr "写真のタイトル"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "不快かもしれないアップロードを許可する。安全でないコンテンツを検出するにはTensorFlowが必要だ。"
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "ピンク"
@@ -2760,10 +2764,6 @@ msgstr "フォルダのアップロード"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "ローカルファイルをアップロード"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "NSFWをアップロードする"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

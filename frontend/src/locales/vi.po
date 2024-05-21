@@ -272,9 +272,9 @@ msgstr "Tất cả bản gốc"
 msgid "All Years"
 msgstr "Mọi năm"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Cho phép tải lên những nội dung có thể gây khó chịu. Việc phát hiện nội dung không an toàn cần có TensorFlow."
+#: src/page/settings/advanced.vue:193
+msgid "Allow NSFW Uploads"
+msgstr "Tải lên NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1976,6 +1976,10 @@ msgstr "Ảnh"
 msgid "Picture Title"
 msgstr "Tiêu đề ảnh"
 
+#: src/page/settings/advanced.vue:194
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "Cho phép tải lên những nội dung có thể gây khó chịu. Việc phát hiện nội dung không an toàn cần có TensorFlow."
+
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Hồng"
@@ -2757,10 +2761,6 @@ msgstr "Tải thư mục lên"
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
 msgstr "Tải lên các tập tin cục bộ"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Tải lên NSFW"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
