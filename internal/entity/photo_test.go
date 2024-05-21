@@ -246,7 +246,7 @@ func TestPhoto_GetDetails(t *testing.T) {
 		assert.Equal(t, uint(0x0), result.PhotoID)
 	})
 	t.Run("NewPhotoWithID", func(t *testing.T) {
-		m := Photo{ID: 79550, PhotoUID: "pthkffkgk"}
+		m := Photo{ID: 79550, PhotoUID: "prjwufg1z97rcxff"}
 		result := m.GetDetails()
 		assert.Equal(t, uint(0x136be), result.PhotoID)
 	})
@@ -425,8 +425,8 @@ func TestPhoto_RemoveKeyword(t *testing.T) {
 func TestPhoto_SyncKeywordLabels(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		labelotter := Label{LabelName: "otter", LabelSlug: "otter"}
-		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		labelsnake := Label{LabelName: "snake", LabelSlug: "snake", DeletedAt: &deleteTime}
+		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+		labelsnake := Label{LabelName: "snake", LabelSlug: "snake", DeletedAt: &deletedTime}
 
 		err := labelsnake.Save()
 		if err != nil {
@@ -935,7 +935,7 @@ func TestPhoto_AllFiles(t *testing.T) {
 
 func TestPhoto_ArchiveRestore(t *testing.T) {
 	t.Run("NotYetArchived", func(t *testing.T) {
-		m := &Photo{ID: 10000, PhotoUID: "csd7ybn092yzcp52", PhotoTitle: "HappyLilly"}
+		m := &Photo{ID: 10000, PhotoUID: "prjwufg1z97rcxff", PhotoTitle: "HappyLilly"}
 		assert.Empty(t, m.DeletedAt)
 		err := m.Archive()
 		if err != nil {
@@ -949,8 +949,8 @@ func TestPhoto_ArchiveRestore(t *testing.T) {
 		assert.Empty(t, m.DeletedAt)
 	})
 	t.Run("AlreadyArchived", func(t *testing.T) {
-		var deleteTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		m := &Photo{ID: 10000, PhotoUID: "csd7ybn092yzcp52", PhotoTitle: "HappyLilly", DeletedAt: &deleteTime}
+		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
+		m := &Photo{ID: 10000, PhotoUID: "prjwufg1z97rcxff", PhotoTitle: "HappyLilly", DeletedAt: &deletedTime}
 		assert.NotEmpty(t, m.DeletedAt)
 		err := m.Archive()
 		if err != nil {
