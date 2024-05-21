@@ -32,8 +32,8 @@ msgstr "%{n} метак знойдзена"
 msgid "%{n} people found"
 msgstr "Знойдзена %{n} чалавек"
 
-#: src/page/album/photos.vue:242 src/page/album/photos.vue:398
-#: src/page/photos.vue:347 src/page/photos.vue:515
+#: src/page/album/photos.vue:258 src/page/album/photos.vue:414
+#: src/page/photos.vue:368 src/page/photos.vue:536
 msgid "%{n} pictures found"
 msgstr "Знойдзена %{n} відарысаў"
 
@@ -382,10 +382,6 @@ msgstr "Суадносіны бакоў"
 msgid "Authentication"
 msgstr "Аўтэнтыфікацыя"
 
-#: src/page/settings/general.vue:166
-msgid "Generate albums of special moments, journeys, and places."
-msgstr "Аўтаматычна стварае альбомы асаблівых момантаў, паездак і месцаў."
-
 #: src/page/settings/library.vue:112
 msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
 msgstr "Аўтаматычна ствараць мініяцюры для файлаў, якія інакш нельга праіндэксаваць або праглядаць."
@@ -478,7 +474,7 @@ msgstr "Серыял камеры"
 msgid "Can't access your authenticator app or device?"
 msgstr "Не можаце атрымаць доступ да праграмы або прылады аўтэнтыфікатара?"
 
-#: src/page/album/photos.vue:248 src/page/photos.vue:353
+#: src/page/album/photos.vue:264 src/page/photos.vue:374
 msgid "Can't load more, limit reached"
 msgstr "Немагчыма загрузіць больш, дасягнуты ліміт"
 
@@ -679,7 +675,7 @@ msgstr "Копія"
 msgid "Copyright"
 msgstr "Аўтарскае права"
 
-#: src/component/photo/list.vue:47
+#: src/component/photo/list.vue:51
 msgid "Couldn't find anything."
 msgstr "Нічога не знайшоў."
 
@@ -911,8 +907,8 @@ msgstr "Спампаваць асобныя файлы і zip-архівы."
 
 #: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:119
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
-#: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:132
-#: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:123
+#: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:136
+#: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:127
 #: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:112
 #: src/page/library/browse.vue:111
 msgid "Downloading…"
@@ -1032,6 +1028,10 @@ msgstr "Выключыць змесціва, пазначанае як прыв�
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:141
 msgid "Exclude hidden"
 msgstr "Выключыць схаванае"
+
+#: src/page/settings/advanced.vue:260
+msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
+msgstr "Выманне метаданых з дапамогай ExifTool патрабуецца для поўнай падтрымкі відэа, жывых фота і XMP."
 
 #: src/component/navigation.vue:294
 msgid "Expand"
@@ -1204,6 +1204,10 @@ msgstr "Агульныя"
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
 msgstr "Генераваць"
+
+#: src/page/settings/general.vue:166
+msgid "Generate albums of special moments, journeys, and places."
+msgstr "Аўтаматычна стварае альбомы асаблівых момантаў, паездак і месцаў."
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1627,10 +1631,6 @@ msgstr "Паведамленне адпраўлена"
 msgid "Metadata"
 msgstr "Метаданыя"
 
-#: src/page/settings/advanced.vue:260
-msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "Выманне метаданых з дапамогай ExifTool патрабуецца для поўнай падтрымкі відэа, жывых фота і XMP."
-
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Метрыка"
@@ -1737,8 +1737,8 @@ msgstr "Людзей не знойдзена"
 
 #: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:394
-#: src/page/library/browse.vue:34 src/page/photos.vue:511
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:410
+#: src/page/library/browse.vue:34 src/page/photos.vue:532
 #: src/page/places.vue:393 src/page/places.vue:479
 msgid "No pictures found"
 msgstr "Фота не знойдзена"
@@ -1771,7 +1771,7 @@ msgstr "Няма папярэджанняў або памылак з гэтым 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
-#: src/component/photo/list.vue:1 src/component/photo/list.vue:52
+#: src/component/photo/list.vue:1 src/component/photo/list.vue:56
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
@@ -1858,7 +1858,7 @@ msgstr "Знойдзена адна метка"
 msgid "One person found"
 msgstr "Знайшоўся адзін чалавек"
 
-#: src/page/album/photos.vue:396 src/page/photos.vue:513
+#: src/page/album/photos.vue:412 src/page/photos.vue:534
 msgid "One picture found"
 msgstr "Адзін здымак знойдзены"
 
@@ -2134,13 +2134,13 @@ msgstr "Нядаўна адрэдагавана"
 msgid "Recognition starts after indexing has been completed."
 msgstr "Распазнаванне пачынаецца пасля завяршэння індэксацыі."
 
-#: src/page/people.vue:17
-msgid "Recognized"
-msgstr "Прызналі"
-
 #: src/page/settings/general.vue:144
 msgid "Recognize faces so people can be assigned and found."
 msgstr "Распазнае твары, каб можна было знайсці канкрэтных людзей."
+
+#: src/page/people.vue:17
+msgid "Recognized"
+msgstr "Прызналі"
 
 #: src/options/options.js:442
 msgid "Red"
@@ -2618,7 +2618,7 @@ msgstr "Пераключыць прагляд"
 msgid "Token"
 msgstr "Жэтон"
 
-#: src/dialog/upload.vue:169
+#: src/dialog/upload.vue:173
 msgid "Too many files selected"
 msgstr "Выбрана занадта шмат файлаў"
 
@@ -2635,7 +2635,7 @@ msgid "Troubleshooting Checklists"
 msgstr "Кантрольныя спісы па ліквідацыі непаладак"
 
 #: src/component/photo/cards.vue:11 src/component/photo/cards.vue:9
-#: src/component/photo/list.vue:11 src/component/photo/list.vue:49
+#: src/component/photo/list.vue:11 src/component/photo/list.vue:53
 #: src/component/photo/mosaic.vue:11 src/page/albums.vue:76
 #: src/page/labels.vue:41 src/page/people/recognized.vue:45
 msgid "Try again using other filters or keywords."
@@ -2738,7 +2738,7 @@ msgstr "Абнавіце зараз"
 msgid "Upload"
 msgstr "Загрузіць"
 
-#: src/dialog/upload.vue:260
+#: src/dialog/upload.vue:264
 msgid "Upload complete"
 msgstr "Запампоўка завершана"
 
@@ -2746,7 +2746,7 @@ msgstr "Запампоўка завершана"
 msgid "Upload complete. Indexing…"
 msgstr "Запампоўка завершана. Індэксацыя…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:247 src/dialog/upload.vue:265
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:251 src/dialog/upload.vue:269
 msgid "Upload failed"
 msgstr "Памылка загрузкі"
 
@@ -2770,7 +2770,7 @@ msgstr "Загружайце ў WebDAV і дзяліцеся спасылкам�
 msgid "Uploading %{n} of %{t}…"
 msgstr "Загрузка %{n} з %{t}…"
 
-#: src/dialog/upload.vue:87 src/dialog/upload.vue:95 src/dialog/upload.vue:205
+#: src/dialog/upload.vue:87 src/dialog/upload.vue:95 src/dialog/upload.vue:209
 msgid "Uploading photos…"
 msgstr "Загрузка фатаграфій…"
 

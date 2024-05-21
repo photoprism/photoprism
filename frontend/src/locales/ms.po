@@ -35,8 +35,8 @@ msgstr "%{n} label ditemui"
 msgid "%{n} people found"
 msgstr "%{n} orang ditemui"
 
-#: src/page/album/photos.vue:242 src/page/album/photos.vue:398
-#: src/page/photos.vue:347 src/page/photos.vue:515
+#: src/page/album/photos.vue:258 src/page/album/photos.vue:414
+#: src/page/photos.vue:368 src/page/photos.vue:536
 msgid "%{n} pictures found"
 msgstr "%{n} gambar ditemui"
 
@@ -385,10 +385,6 @@ msgstr "Nisbah aspek"
 msgid "Authentication"
 msgstr "Pengesahan"
 
-#: src/page/settings/general.vue:166
-msgid "Generate albums of special moments, journeys, and places."
-msgstr "Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara automatik."
-
 #: src/page/settings/library.vue:112
 msgid "Automatically generate thumbnails for files that cannot otherwise be indexed or viewed."
 msgstr "Buat lakaran kecil untuk fail yang tidak boleh diindeks atau dilihat secara automatik."
@@ -481,7 +477,7 @@ msgstr "Siri Kamera"
 msgid "Can't access your authenticator app or device?"
 msgstr "Tidak dapat mengakses apl atau peranti pengesah anda?"
 
-#: src/page/album/photos.vue:248 src/page/photos.vue:353
+#: src/page/album/photos.vue:264 src/page/photos.vue:374
 msgid "Can't load more, limit reached"
 msgstr "Tidak dapat memuatkan lagi, had dicapai"
 
@@ -682,7 +678,7 @@ msgstr "Salinan"
 msgid "Copyright"
 msgstr "Hak Cipta"
 
-#: src/component/photo/list.vue:47
+#: src/component/photo/list.vue:51
 msgid "Couldn't find anything."
 msgstr "Tidak dapat mencari apa-apa."
 
@@ -914,8 +910,8 @@ msgstr "Muat turun fail tunggal dan arkib zip."
 
 #: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:119
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
-#: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:132
-#: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:123
+#: src/component/photo-viewer.vue:161 src/component/photo/cards.vue:136
+#: src/component/photo/clipboard.vue:211 src/component/photo/list.vue:127
 #: src/component/subject/clipboard.vue:55 src/dialog/photo/edit/files.vue:112
 #: src/page/library/browse.vue:111
 msgid "Downloading…"
@@ -1035,6 +1031,10 @@ msgstr "Kecualikan kandungan yang ditandai sebagai peribadi daripada hasil caria
 #: src/page/people/new.vue:92 src/page/people/recognized.vue:141
 msgid "Exclude hidden"
 msgstr "Kecualikan tersembunyi"
+
+#: src/page/settings/advanced.vue:260
+msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
+msgstr "Pengekstrakan metadata dengan ExifTool diperlukan untuk sokongan Video, Live Photo dan XMP penuh."
 
 #: src/component/navigation.vue:294
 msgid "Expand"
@@ -1207,6 +1207,10 @@ msgstr "Am"
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
 msgstr "Menjana"
+
+#: src/page/settings/general.vue:166
+msgid "Generate albums of special moments, journeys, and places."
+msgstr "Hasilkan album bagi detik-detik istimewa, lawatan dan tempat-tempat secara automatik."
 
 #: src/dialog/admin/users/edit.vue:208 src/page/settings/account.vue:142
 msgid "Given Name"
@@ -1630,10 +1634,6 @@ msgstr "Mesej telah dihantar"
 msgid "Metadata"
 msgstr "Metadata"
 
-#: src/page/settings/advanced.vue:260
-msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "Pengekstrakan metadata dengan ExifTool diperlukan untuk sokongan Video, Live Photo dan XMP penuh."
-
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
 msgstr "Metrik"
@@ -1740,8 +1740,8 @@ msgstr "Tiada orang ditemui"
 
 #: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
-#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:394
-#: src/page/library/browse.vue:34 src/page/photos.vue:511
+#: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:410
+#: src/page/library/browse.vue:34 src/page/photos.vue:532
 #: src/page/places.vue:393 src/page/places.vue:479
 msgid "No pictures found"
 msgstr "Tiada gambar ditemui"
@@ -1774,7 +1774,7 @@ msgstr "Tiada amaran atau ralat yang mengandungi kata kunci ini. Ambil perhatian
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
 #: src/component/photo/list.vue:15 src/component/photo/list.vue:3
-#: src/component/photo/list.vue:1 src/component/photo/list.vue:52
+#: src/component/photo/list.vue:1 src/component/photo/list.vue:56
 #: src/component/photo/mosaic.vue:15 src/component/photo/mosaic.vue:3
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
@@ -1861,7 +1861,7 @@ msgstr "Satu label ditemui"
 msgid "One person found"
 msgstr "Seorang ditemui"
 
-#: src/page/album/photos.vue:396 src/page/photos.vue:513
+#: src/page/album/photos.vue:412 src/page/photos.vue:534
 msgid "One picture found"
 msgstr "Satu gambar ditemui"
 
@@ -2137,13 +2137,13 @@ msgstr "Baru-baru ini disunting"
 msgid "Recognition starts after indexing has been completed."
 msgstr "Pengiktirafan bermula selepas pengindeksan telah selesai."
 
-#: src/page/people.vue:17
-msgid "Recognized"
-msgstr "Dikenali"
-
 #: src/page/settings/general.vue:144
 msgid "Recognize faces so people can be assigned and found."
 msgstr "Mengenali wajah supaya orang tertentu boleh ditemui."
+
+#: src/page/people.vue:17
+msgid "Recognized"
+msgstr "Dikenali"
 
 #: src/options/options.js:442
 msgid "Red"
@@ -2621,7 +2621,7 @@ msgstr "Togol Paparan"
 msgid "Token"
 msgstr "Token"
 
-#: src/dialog/upload.vue:169
+#: src/dialog/upload.vue:173
 msgid "Too many files selected"
 msgstr "Terlalu banyak fail dipilih"
 
@@ -2638,7 +2638,7 @@ msgid "Troubleshooting Checklists"
 msgstr "Senarai Semak Penyelesaian Masalah"
 
 #: src/component/photo/cards.vue:11 src/component/photo/cards.vue:9
-#: src/component/photo/list.vue:11 src/component/photo/list.vue:49
+#: src/component/photo/list.vue:11 src/component/photo/list.vue:53
 #: src/component/photo/mosaic.vue:11 src/page/albums.vue:76
 #: src/page/labels.vue:41 src/page/people/recognized.vue:45
 msgid "Try again using other filters or keywords."
@@ -2741,7 +2741,7 @@ msgstr "Menaiktaraf sekarang"
 msgid "Upload"
 msgstr "Muat naik"
 
-#: src/dialog/upload.vue:260
+#: src/dialog/upload.vue:264
 msgid "Upload complete"
 msgstr "Muat naik selesai"
 
@@ -2749,7 +2749,7 @@ msgstr "Muat naik selesai"
 msgid "Upload complete. Indexing…"
 msgstr "Muat naik selesai. Pengindeksan…"
 
-#: src/dialog/upload.vue:34 src/dialog/upload.vue:247 src/dialog/upload.vue:265
+#: src/dialog/upload.vue:34 src/dialog/upload.vue:251 src/dialog/upload.vue:269
 msgid "Upload failed"
 msgstr "Muat naik gagal"
 
@@ -2773,7 +2773,7 @@ msgstr "Muat naik ke WebDAV dan kongsi pautan dengan rakan."
 msgid "Uploading %{n} of %{t}…"
 msgstr "Memuat naik %{n} daripada %{t}…"
 
-#: src/dialog/upload.vue:87 src/dialog/upload.vue:95 src/dialog/upload.vue:205
+#: src/dialog/upload.vue:87 src/dialog/upload.vue:95 src/dialog/upload.vue:209
 msgid "Uploading photos…"
 msgstr "Memuat naik foto…"
 
