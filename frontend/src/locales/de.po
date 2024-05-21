@@ -2761,7 +2761,7 @@ msgstr "Upload-Ordner"
 msgid "Upload local files"
 msgstr "Dateien hochladen"
 
-#: src/page/settings/advanced.vue:193w
+#: src/page/settings/advanced.vue:193
 msgid "Allow NSFW Uploads"
 msgstr "NSFW Uploads erlauben"
 
