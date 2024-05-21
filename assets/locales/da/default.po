@@ -1,11 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-22 14:48+0000\n"
-"PO-Revision-Date: 2024-04-17 08:08+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2024-05-21 19:33+0000\n"
+"Last-Translator: sunbeam60 <bjorn@toftmadsen.org>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
 "backend/da/>\n"
 "Language: da\n"
@@ -13,11 +12,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.4.3\n"
+"X-Generator: Weblate 5.5.5\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
-msgstr "Noget gik galt, prøv igen"
+msgstr "Der gik noget galt, prøv igen"
 
 #: messages.go:101
 msgid "Unable to do that"
@@ -142,7 +141,7 @@ msgstr "Kunne ikke oprette forbindelse, prøv venligst igen"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr "indsæt verifikations kode"
+msgstr "Indtast verifikations kode"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
@@ -390,11 +389,11 @@ msgstr "%s er blevet genoprettet"
 
 #: messages.go:191
 msgid "Successfully verified"
-msgstr "Verificeret"
+msgstr "Verifikation lykkedes"
 
 #: messages.go:192
 msgid "Successfully activated"
-msgstr "Aktiveret med succes"
+msgstr "Aktivering lykkedes"
 
 #~ msgid "Invalid request"
 #~ msgstr "Ugyldig anmodning"
