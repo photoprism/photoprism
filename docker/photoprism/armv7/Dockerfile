@@ -83,8 +83,11 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_DISABLE_FACES="false" \
     PHOTOPRISM_DISABLE_CLASSIFICATION="false" \
     PHOTOPRISM_RAW_PRESETS="false" \
-    PHOTOPRISM_THUMB_FILTER="lanczos" \
+    PHOTOPRISM_THUMB_SIZE=1920 \
+    PHOTOPRISM_THUMB_SIZE_UNCACHED=7680 \
     PHOTOPRISM_THUMB_UNCACHED="false" \
+    PHOTOPRISM_JPEG_SIZE=7680 \
+    PHOTOPRISM_PNG_SIZE=7680 \
     PHOTOPRISM_WORKERS=0 \
     PHOTOPRISM_WAKEUP_INTERVAL=900 \
     PHOTOPRISM_AUTO_INDEX=120 \
@@ -105,7 +108,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install --no-install-recommends \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
-        exiftool mariadb-client sqlite3 tzdata gpg make zip unzip wget curl rsync \
+        exiftool mariadb-client sqlite3 tzdata gpg make zip unzip wget curl rsync libjxl-dev libjxl-tools \
         imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra libdav1d-dev x264 x265 libde265-dev \
         libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
     && \
