@@ -276,8 +276,8 @@ msgid "All Years"
 msgstr "Alle Jahre"
 
 #: src/page/settings/advanced.vue:194
-msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
-msgstr "Erlaubt das Hochladen von Bildern, die anstößig sein könnten. TensorFlow muss dafür aktiviert sein."
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+msgstr "Bilder, die anstößig sein könnten, werden ansonsten beim Upload über das Web abgelehnt."
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -2761,9 +2761,9 @@ msgstr "Upload-Ordner"
 msgid "Upload local files"
 msgstr "Dateien hochladen"
 
-#: src/page/settings/advanced.vue:193
-msgid "Upload NSFW"
-msgstr "NSFW Uploads"
+#: src/page/settings/advanced.vue:193w
+msgid "Allow NSFW Uploads"
+msgstr "NSFW Uploads erlauben"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."

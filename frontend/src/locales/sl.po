@@ -273,7 +273,7 @@ msgid "All Years"
 msgstr "Vsa leta"
 
 #: src/page/settings/advanced.vue:194
-msgid "Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow."
+msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
 msgstr "dovolite prenose, ki bi lahko bili žaljivi. Za odkrivanje nevarne vsebine je potreben TensorFlow."
 
 #: src/dialog/share.vue:73
@@ -2759,7 +2759,7 @@ msgid "Upload local files"
 msgstr "Prenos lokalnih datotek"
 
 #: src/page/settings/advanced.vue:193
-msgid "Upload NSFW"
+msgid "Allow NSFW Uploads"
 msgstr "Naložite NSFW"
 
 #: src/page/settings/general.vue:298

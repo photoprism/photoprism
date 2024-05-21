@@ -71,8 +71,8 @@
                 :disabled="busy || settings.DisableTensorFlow"
                 class="ma-0 pa-0 input-upload-nsfw"
                 color="secondary-dark"
-                :label="$gettext('Upload NSFW')"
-                :hint="$gettext('Allow uploads that might be offensive. Detecting unsafe content requires TensorFlow.')"
+                :label="$gettext('Allow NSFW Uploads')"
+                :hint="$gettext('Pictures that might be offensive will otherwise be rejected when using the web upload.')"
                 prepend-icon="policy"
                 persistent-hint
                 @change="onChange"
