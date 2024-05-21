@@ -3,15 +3,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-19 09:51+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-05-21 12:34+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/frontend/da/>\n"
 "Language: da\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5.3\n"
+"X-Generator: Weblate 5.5.5\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -93,7 +93,7 @@ msgstr "Konto slettet"
 
 #: src/page/admin.vue:33
 msgid "Accounts"
-msgstr "Regnskaber"
+msgstr "Konti"
 
 #: src/dialog/photo/edit/info.vue:171
 msgid "Accuracy"
@@ -277,11 +277,11 @@ msgstr "Alle år"
 
 #: src/page/settings/advanced.vue:193
 msgid "Allow NSFW Uploads"
-msgstr "Allow NSFW Uploads"
+msgstr "Tillade potentielt stødende uploads"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "Alternativt kan du uploade filer direkte til WebDAV-servere som Nextcloud."
+msgstr "Alternativt kan du uploade filer direkte til WebDAV-servere såsom Nextcloud."
 
 #: src/dialog/photo/edit/info.vue:165
 msgid "Altitude"
@@ -313,7 +313,7 @@ msgstr "API-nøgle"
 #: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
-msgstr "Anvendelse"
+msgstr "Applikation"
 
 #: src/dialog/photo/edit/details.vue:115
 msgid "Apply"
@@ -562,7 +562,7 @@ msgstr "Chroma"
 
 #: src/page/library/index.vue:169
 msgid "Cleaning index and cache"
-msgstr "Rensning af indeks og cache"
+msgstr "Oprydning af indeks og cache"
 
 #: src/page/library/index.vue:142
 msgid "Cleanup"
@@ -617,7 +617,7 @@ msgstr "Tillid"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr "Bekræfte"
+msgstr "Bekræft"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -653,7 +653,7 @@ msgstr "Indeholder et billede."
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr "Blive ved"
+msgstr "Fortsæt"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -672,7 +672,7 @@ msgstr "Kopieret til udklipsholderen"
 #: src/dialog/account/apps.vue:65 src/dialog/account/apps.vue:21
 #: src/dialog/account/passcode.vue:103 src/dialog/account/passcode.vue:25
 msgid "Copy"
-msgstr "Kopi"
+msgstr "Kopier"
 
 #: src/dialog/photo/edit/details.vue:535
 msgid "Copyright"
@@ -850,7 +850,7 @@ msgstr "Deaktiverer understøttelse af vektorgrafik."
 
 #: src/page/settings/advanced.vue:759
 msgid "Disables video transcoding and thumbnail extraction."
-msgstr "Deaktiverer video-omkodning og udtrækning af miniaturebilleder."
+msgstr "Deaktiverer video-omkodning og dannelse af miniaturebilleder."
 
 #: src/app/routes.js:441 src/app/routes.js:448 src/app/routes.js:455
 #: src/app/routes.js:462
@@ -868,7 +868,7 @@ msgstr "Du må ikke bruge Darktable til at konvertere RAW-filer."
 
 #: src/page/settings/advanced.vue:737
 msgid "Don't use ImageMagick to convert images."
-msgstr "Du må ikke bruge ImageMagick til at konvertere billeder."
+msgstr "Brug ikke ImageMagick til at konvertere billeder."
 
 #: src/page/settings/advanced.vue:693
 msgid "Don't use RawTherapee to convert RAW images."
@@ -994,7 +994,7 @@ msgstr "Indtast bekræftelseskoden, der genereres af din authenticator-app:"
 
 #: src/common/api.js:122
 msgid "Enter verification code"
-msgstr "indsæt verifikations kode"
+msgstr "Indtast verifikations kode"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
@@ -1401,7 +1401,7 @@ msgstr "Ugyldigt foto valgt"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "Det er en engangskode, der vil deaktivere 2FA for din konto, når du bruger den."
+msgstr "Det er en engangskode, der vil deaktivere tofaktorgodkendelse for din konto, når du bruger den."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1448,7 +1448,7 @@ msgstr "Sprog"
 
 #: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
 msgid "Last Active"
-msgstr "Sidste aktive"
+msgstr "Sidst aktiv"
 
 #: src/page/admin/users.vue:45
 msgid "Last Login"
@@ -1636,7 +1636,7 @@ msgstr "Metadata"
 
 #: src/options/auth.js:56 src/options/auth.js:72
 msgid "Metrics"
-msgstr "Metrics"
+msgstr "Metrikker"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
@@ -1809,7 +1809,7 @@ msgstr "Der er ikke noget at se her endnu."
 #: src/page/admin/sessions.vue:50 src/page/admin/users.vue:43
 #: src/dialog/account/apps.vue:560
 msgid "Nothing was found."
-msgstr "Der blev ikke fundet noget."
+msgstr "Intet fundet."
 
 #: src/component/navigation.vue:509 src/component/navigation.vue:1882
 msgid "Offline"
@@ -1830,7 +1830,7 @@ msgstr "På Windows skal du indtaste følgende ressource i forbindelsesdialogbok
 
 #: src/page/settings/advanced.vue:504
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr "On-demand generering af thumbnails kan medføre et højt CPU- og hukommelsesforbrug. Det anbefales ikke til ressourcebegrænsede servere og NAS-enheder."
+msgstr "Generering af miniaturebilleder efter behov kan medføre et højt CPU- og hukommelsesforbrug. Det anbefales ikke til ressourcebegrænsede servere og NAS-enheder."
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -2010,7 +2010,7 @@ msgstr "Bekræft din nye adgangskode."
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr "Kopier venligst følgende tilfældigt genererede app-adgangskode og opbevar det et sikkert sted, da du ikke vil kunne se det igen:"
+msgstr "Kopier venligst følgende tilfældigt genererede app-adgangskode og opbevar det et sikkert sted, da du ikke får muligheden for at se den igen:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
@@ -2058,7 +2058,7 @@ msgstr "Tryk på enter for at oprette et nyt album."
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Forhindre andre apps i at få adgang til PhotoPrism som et delt netværksdrev."
+msgstr "Afvis andre apps adgang til PhotoPrism som et delt netværksdrev."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2067,7 +2067,7 @@ msgstr "Forhåndsvisning"
 #: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
-msgstr "Forhåndsvisning af billeder"
+msgstr "Forhåndsvis billeder"
 
 #: src/dialog/photo/edit/files.vue:38 src/dialog/photo/edit/files.vue:139
 #: src/dialog/photo/edit/files.vue:35 src/dialog/photo/edit/files.vue:136
@@ -2489,7 +2489,7 @@ msgstr "Emne"
 
 #: src/dialog/account/passcode.vue:131
 msgid "Successfully activated"
-msgstr "Aktiveret med succes"
+msgstr "Aktivering lykkedes"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
@@ -2497,11 +2497,11 @@ msgstr "Succesfuldt tilsluttet"
 
 #: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:209
 msgid "Successfully deleted"
-msgstr "Vellykket slettet"
+msgstr "Sletning lykkedes"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
-msgstr "Verificeret"
+msgstr "Verifikation lykkedes"
 
 #: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
 msgid "Super Admin"
@@ -2534,7 +2534,7 @@ msgstr "Krikand"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlow er nødvendig til billedklassificering, ansigtsgenkendelse og til at opdage usikkert indhold."
+msgstr "TensorFlow er nødvendig til billedklassificering, ansigtsgenkendelse og til at opdage potentielt stødende indhold."
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2830,7 +2830,7 @@ msgstr "Brugere"
 #: src/component/photo/list.vue:199 src/component/photo/mosaic.vue:241
 #: src/model/photo.js:876 src/model/photo.js:884 src/options/options.js:366
 msgid "Vector"
-msgstr "Vector"
+msgstr "Vektor"
 
 #: src/component/navigation.vue:109
 msgid "Vectors"
@@ -2968,7 +2968,7 @@ msgstr "Du kan scanne dit bibliotek igen for at finde flere ansigter."
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
-msgstr "Din konto er blevet forbundet med succes."
+msgstr "Din konto er blevet forbundet."
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
 #: src/page/about/about.vue:49 src/page/about/about.vue:6
