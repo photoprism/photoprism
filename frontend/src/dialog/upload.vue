@@ -228,11 +228,15 @@ export default {
           const rate = currentSize / elapsedTime;
           const ms = this.totalSize / rate - elapsedTime;
           this.remainingTime = Math.ceil(ms * 0.001);
-          const dur = Duration.fromObject({
-            minutes: Math.floor(this.remainingTime / 60),
-            seconds: this.remainingTime % 60,
-          });
-          this.eta = dur.toHuman();
+          if (this.remainingTime > 0) {
+            const dur = Duration.fromObject({
+              minutes: Math.floor(this.remainingTime / 60),
+              seconds: this.remainingTime % 60,
+            });
+            this.eta = dur.toHuman();
+          } else {
+            this.eta = "";
+          }
         }
       }
     },
