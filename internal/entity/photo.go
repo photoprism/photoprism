@@ -220,7 +220,16 @@ func (m *Photo) HasID() bool {
 		return false
 	}
 
-	return m.ID > 0 && m.PhotoUID != ""
+	return m.ID > 0 && m.HasUID()
+}
+
+// HasUID checks if the photo has a valid UID.
+func (m *Photo) HasUID() bool {
+	if m == nil {
+		return false
+	}
+
+	return rnd.IsUID(m.PhotoUID, PhotoUID)
 }
 
 // GetUID returns the unique entity id.

@@ -122,8 +122,21 @@ func TestPhoto_SaveLabels(t *testing.T) {
 	})
 }
 
+func TestPhoto_HasUID(t *testing.T) {
+	t.Run("True", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		assert.True(t, m.HasID())
+		assert.True(t, m.HasUID())
+	})
+	t.Run("False", func(t *testing.T) {
+		m := Photo{}
+		assert.False(t, m.HasID())
+		assert.False(t, m.HasUID())
+	})
+}
+
 func TestPhoto_GetID(t *testing.T) {
-	t.Run("Ok", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo01")
 		assert.Equal(t, uint(1000001), m.GetID())
 	})
