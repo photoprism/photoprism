@@ -134,7 +134,7 @@ func (w *Thumbs) Dir(dir string, force bool) (fs.Done, error) {
 
 	log.Infof("thumbs: processing %s", clean.Log(dir))
 
-	if err := ignore.Dir(dir); err != nil {
+	if err := ignore.Path(dir); err != nil {
 		log.Infof("thumbs: %s", err)
 	}
 

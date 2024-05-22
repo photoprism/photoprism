@@ -48,7 +48,7 @@ var ErrSkipFiles = errors.New("fastwalk: skip remaining files in directory")
 //   - fastWalk can follow symlinks if walkFn returns the TraverseLink
 //     sentinel error. It is the walkFn's responsibility to prevent
 //     fastWalk from going into symlink cycles.
-func Walk(root string, walkFn func(path string, typ os.FileMode) error) error {
+func Walk(root string, walkFn func(path string, mode os.FileMode) error) error {
 	// TODO(bradfitz): make numWorkers configurable? We used a
 	// minimum of 4 to give the kernel more info about multiple
 	// things we want, in hopes its I/O scheduling can take
@@ -138,7 +138,7 @@ func (w *walker) doWork(wg *sync.WaitGroup) {
 }
 
 type walker struct {
-	fn func(path string, typ os.FileMode) error
+	fn func(path string, mode os.FileMode) error
 
 	donec    chan struct{} // closed on fastWalk's return
 	workc    chan walkItem // to workers
@@ -158,22 +158,22 @@ func (w *walker) enqueue(it walkItem) {
 	}
 }
 
-func (w *walker) onDirEnt(dirName, baseName string, typ os.FileMode) error {
+func (w *walker) onDirEnt(dirName, baseName string, mode os.FileMode) error {
 	joined := dirName + string(os.PathSeparator) + baseName
-	if typ == os.ModeDir {
+	if mode == os.ModeDir {
 		w.enqueue(walkItem{dir: joined})
 		return nil
 	}
 
-	err := w.fn(joined, typ)
-	if typ == os.ModeSymlink {
-		if err == ErrTraverseLink {
+	err := w.fn(joined, mode)
+	if mode == os.ModeSymlink {
+		if errors.Is(err, ErrTraverseLink) {
 			// Set callbackDone so we don't call it twice for both the
 			// symlink-as-symlink and the symlink-as-directory later:
 			w.enqueue(walkItem{dir: joined, callbackDone: true})
 			return nil
 		}
-		if err == filepath.SkipDir {
+		if errors.Is(err, filepath.SkipDir) {
 			// Permit SkipDir on symlinks too.
 			return nil
 		}
@@ -184,7 +184,7 @@ func (w *walker) onDirEnt(dirName, baseName string, typ os.FileMode) error {
 func (w *walker) walk(root string, runUserCallback bool) error {
 	if runUserCallback {
 		err := w.fn(root, os.ModeDir)
-		if err == filepath.SkipDir {
+		if errors.Is(err, filepath.SkipDir) {
 			return nil
 		}
 		if err != nil {

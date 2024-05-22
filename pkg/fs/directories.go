@@ -127,45 +127,46 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 	result = []string{}
 	mutex := sync.Mutex{}
 
+	// Ignore hidden folders as well as those listed in an optional ".ppignore" file.
+	ignore := NewIgnoreList(PPIgnoreFilename, true, false)
+
 	symlinks := make(map[string]bool)
 	symlinksMutex := sync.Mutex{}
 
-	appendResult := func(fileName string) {
-		fileName = strings.Replace(fileName, root, "", 1)
+	// appendResult adds the relative path of a subdirectory to the results.
+	appendResult := func(dir string) {
 		mutex.Lock()
 		defer mutex.Unlock()
-		result = append(result, fileName)
+		result = append(result, strings.Replace(dir, root, "", 1))
 	}
 
-	// Ignore hidden folders as well as those listed in an optional ".ppignore" file.
-	ignore := NewIgnoreList(PPIgnoreFilename, true, false)
-	_ = ignore.Dir(root)
-
-	err = fastwalk.Walk(root, func(fileName string, typ os.FileMode) error {
-		if typ.IsDir() || typ == os.ModeSymlink && followLinks {
-			if ignore.Ignore(fileName) {
-				return filepath.SkipDir
-			} else if FileExists(filepath.Join(fileName, PPStorageFilename)) {
-				return filepath.SkipDir
-			}
-
+	err = fastwalk.Walk(root, func(dir string, mode os.FileMode) error {
+		if mode.IsDir() || mode == os.ModeSymlink && followLinks {
 			// Skip if symlink does not point to existing directory.
-			if typ == os.ModeSymlink {
-				if info, err := os.Stat(fileName); err != nil || !info.IsDir() {
+			if mode == os.ModeSymlink {
+				if info, statErr := os.Stat(dir); statErr != nil || !info.IsDir() {
 					return filepath.SkipDir
 				}
 			}
 
-			if fileName != root {
+			// Skip if directory should be ignored.
+			if _ = ignore.Path(dir); ignore.Ignore(dir) {
+				return filepath.SkipDir
+			} else if FileExists(filepath.Join(dir, PPStorageFilename)) {
+				return filepath.SkipDir
+			}
+
+			// Only add subdirectories.
+			if dir != root {
 				if !recursive {
-					appendResult(fileName)
+					appendResult(dir)
 
 					return filepath.SkipDir
-				} else if typ != os.ModeSymlink {
-					appendResult(fileName)
+				} else if mode != os.ModeSymlink {
+					appendResult(dir)
 
 					return nil
-				} else if resolved, err := Resolve(fileName); err == nil {
+				} else if resolved, resolveErr := Resolve(dir); resolveErr == nil {
 					symlinksMutex.Lock()
 					defer symlinksMutex.Unlock()
 
@@ -173,7 +174,7 @@ func Dirs(root string, recursive bool, followLinks bool) (result []string, err e
 						return filepath.SkipDir
 					} else {
 						symlinks[resolved] = true
-						appendResult(fileName)
+						appendResult(dir)
 					}
 
 					return fastwalk.ErrTraverseLink

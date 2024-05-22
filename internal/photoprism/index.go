@@ -135,7 +135,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	skipRaw := ind.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
 
-	if err := ignore.Dir(originalsPath); err != nil {
+	if err := ignore.Path(originalsPath); err != nil {
 		log.Infof("index: %s", err)
 	}
 

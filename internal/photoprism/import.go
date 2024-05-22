@@ -112,7 +112,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	skipRaw := imp.conf.DisableRaw()
 	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
 
-	if err := ignore.Dir(importPath); err != nil {
+	if err := ignore.Path(importPath); err != nil {
 		log.Infof("import: %s", err)
 	}
 
