@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-22 05:34+0000\n"
+"PO-Revision-Date: 2024-05-22 06:06+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -278,7 +278,7 @@ msgstr "Toutes les années"
 
 #: src/page/settings/advanced.vue:193
 msgid "Allow NSFW Uploads"
-msgstr "Télécharger des photos NSFW"
+msgstr "Autoriser le chargement de contenu NSFW (visionnage en public déconseillé)"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
