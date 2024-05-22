@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-21 08:42+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"PO-Revision-Date: 2024-05-22 05:34+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -1987,7 +1987,7 @@ msgstr "Titre de l'image"
 
 #: src/page/settings/advanced.vue:194
 msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Autoriser les téléchargements dont le contenu pourrait être choquant. La détection de tels contenus requiert l'utilisation de TensorFlow."
+msgstr "Dans le cas contraire, les images potentiellement choquantes seront rejetées lors de leur envoi vers PhotoPrism."
 
 #: src/options/options.js:441
 msgid "Pink"
