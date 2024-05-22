@@ -54,7 +54,7 @@ If you used a *.deb* package for the installation, you may need to remove the cu
 
 ## Dependencies
 
-In order to use all PhotoPrism features and have [full file format support](https://www.photoprism.app/kb/file-formats), additional system dependencies **must be installed** as they are not included in the packages we provide, for example exiftool, darktable, rawtherapee, [libheif](https://dl.photoprism.app/dist/libheif/README.html), imagemagick, ffmpeg, libavcodec-extra, mariadb, sqlite3, and tzdata. The actual names may vary depending on what distribution you use.
+In order to use all PhotoPrism features and have [full file format support](https://www.photoprism.app/kb/file-formats), additional system dependencies **must be installed** as they are not included in the packages we provide, for example exiftool, darktable, rawtherapee, [libheif](https://dl.photoprism.app/dist/libheif/README.html), imagemagick, libvips, libjxl, libjxl-tools, ffmpeg, libavcodec-extra, libde265, libaom, libvpx, libwebm, mariadb, sqlite3, and tzdata. The actual names may vary depending on what distribution you use.
 
 For details on the packages installed in our official Docker images, see <https://github.com/photoprism/photoprism/tree/develop/docker/develop>.
 
