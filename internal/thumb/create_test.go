@@ -493,14 +493,13 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		resized, err := Create(img, dst, -5, tile500.Height, tile500.Options...)
+		_, err = Create(img, dst, -5, tile500.Height, tile500.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")
 		}
 
 		assert.Equal(t, "thumb: width has an invalid value (-5)", err.Error())
-		t.Log(resized)
 	})
 	t.Run("invalid height", func(t *testing.T) {
 		tile500 := Sizes[Tile500]

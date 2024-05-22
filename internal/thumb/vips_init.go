@@ -42,7 +42,7 @@ func vipsInit() {
 		case vips.LogLevelError, vips.LogLevelCritical:
 			log.Errorf("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
 		case vips.LogLevelWarning:
-			log.Warnf("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
+			log.Debugf("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
 		default:
 			log.Tracef("%s: %s", strings.TrimSpace(strings.ToLower(domain)), msg)
 		}
@@ -68,11 +68,11 @@ func vipsConfig() *vips.Config {
 // vipsLogLevel provides the libvips equivalent of the current log level.
 func vipsLogLevel() vips.LogLevel {
 	switch log.GetLevel() {
-	case logrus.PanicLevel, logrus.FatalLevel, logrus.ErrorLevel:
-		return vips.LogLevelError
+	case logrus.DebugLevel:
+		return vips.LogLevelWarning
 	case logrus.TraceLevel:
 		return vips.LogLevelDebug
 	default:
-		return vips.LogLevelWarning
+		return vips.LogLevelError
 	}
 }
