@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-var QualityBlacklist = map[string]bool{
+var NonPhotographicKeywords = map[string]bool{
 	"screenshot":  true,
 	"screenshots": true,
 	"info":        true,
@@ -40,7 +40,7 @@ func (m *Photo) QualityScore() (score int) {
 		score++
 	}
 
-	blacklisted := false
+	nonPhotographic := false
 
 	details := m.GetDetails()
 
@@ -50,14 +50,14 @@ func (m *Photo) QualityScore() (score int) {
 		for _, w := range keywords {
 			w = strings.ToLower(w)
 
-			if _, ok := QualityBlacklist[w]; ok {
-				blacklisted = true
+			if _, ok := NonPhotographicKeywords[w]; ok {
+				nonPhotographic = true
 				break
 			}
 		}
 	}
 
-	if !blacklisted {
+	if !nonPhotographic {
 		score++
 	}
 

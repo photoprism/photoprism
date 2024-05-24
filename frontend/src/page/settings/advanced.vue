@@ -67,13 +67,13 @@
 
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
-                v-model="settings.UploadNSFW"
-                :disabled="busy || settings.DisableTensorFlow"
-                class="ma-0 pa-0 input-upload-nsfw"
+                v-model="settings.DisableBackups"
+                :disabled="busy"
+                class="ma-0 pa-0 input-disable-backups"
                 color="secondary-dark"
-                :label="$gettext('Allow NSFW Uploads')"
-                :hint="$gettext('Pictures that might be offensive will otherwise be rejected when using the web upload.')"
-                prepend-icon="policy"
+                :label="$gettext('Disable Backups')"
+                :hint="$gettext('Prevent database and album backups as well as YAML sidecar files from being created.')"
+                prepend-icon="remove_moderator"
                 persistent-hint
                 @change="onChange"
               >
@@ -112,7 +112,7 @@
             <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableExifTool"
-                :disabled="busy || (!experimental && !settings.DisableExifTool)"
+                :disabled="busy || (!settings.Experimental && !settings.DisableExifTool)"
                 class="ma-0 pa-0 input-disable-exiftool"
                 color="secondary-dark"
                 :label="$gettext('Disable ExifTool')"
@@ -141,60 +141,62 @@
           </v-layout>
         </v-card-actions>
 
-        <v-card-title primary-title class="pb-0">
-          <h3 class="body-2 mb-0">
-            <translate>Backup</translate>
-          </h3>
-        </v-card-title>
+        <template v-if="!settings.DisableBackups">
+          <v-card-title primary-title class="pb-0">
+            <h3 class="body-2 mb-0">
+              <translate>Backup</translate>
+            </h3>
+          </v-card-title>
 
-        <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.SidecarYaml"
-                :disabled="busy"
-                class="ma-0 pa-0 input-sidecar-yaml"
-                color="secondary-dark"
-                :label="$gettext('Sidecar Files')"
-                :hint="$gettext('Create YAML sidecar files to back up picture metadata.')"
-                prepend-icon="file_present"
-                persistent-hint
-                @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
+          <v-card-actions>
+            <v-layout wrap align-top>
+              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+                <v-checkbox
+                  v-model="settings.BackupDatabase"
+                  :disabled="busy || settings.BackupSchedule === ''"
+                  class="ma-0 pa-0 input-backup-database"
+                  color="secondary-dark"
+                  :label="$gettext('Database Backups')"
+                  :hint="$gettext('Create regular backups based on the configured schedule.')"
+                  prepend-icon="history"
+                  persistent-hint
+                  @change="onChange"
+                >
+                </v-checkbox>
+              </v-flex>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.BackupAlbums"
-                :disabled="busy"
-                class="ma-0 pa-0 input-backup-albums"
-                color="secondary-dark"
-                :label="$gettext('Album Backups')"
-                :hint="$gettext('Create YAML files to back up album metadata.')"
-                prepend-icon="bookmark"
-                persistent-hint
-                @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
+              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+                <v-checkbox
+                  v-model="settings.BackupAlbums"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-backup-albums"
+                  color="secondary-dark"
+                  :label="$gettext('Album Backups')"
+                  :hint="$gettext('Create YAML files to back up album metadata.')"
+                  prepend-icon="photo_album"
+                  persistent-hint
+                  @change="onChange"
+                >
+                </v-checkbox>
+              </v-flex>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
-              <v-checkbox
-                v-model="settings.BackupDatabase"
-                :disabled="busy || settings.BackupSchedule === ''"
-                class="ma-0 pa-0 input-backup-database"
-                color="secondary-dark"
-                :label="$gettext('Database Backups')"
-                :hint="$gettext('Create regular backups based on the configured schedule.')"
-                prepend-icon="history"
-                persistent-hint
-                @change="onChange"
-              >
-              </v-checkbox>
-            </v-flex>
-          </v-layout>
-        </v-card-actions>
+              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+                <v-checkbox
+                  v-model="settings.SidecarYaml"
+                  :disabled="busy"
+                  class="ma-0 pa-0 input-sidecar-yaml"
+                  color="secondary-dark"
+                  :label="$gettext('Sidecar Files')"
+                  :hint="$gettext('Create YAML sidecar files to back up picture metadata.')"
+                  prepend-icon="file_present"
+                  persistent-hint
+                  @change="onChange"
+                >
+                </v-checkbox>
+              </v-flex>
+            </v-layout>
+          </v-card-actions>
+        </template>
 
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0" :title="$gettext('Preview Images')">
@@ -345,7 +347,7 @@
             <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableFFmpeg"
-                :disabled="busy || (!experimental && !settings.DisableFFmpeg)"
+                :disabled="busy || (!settings.Experimental && !settings.DisableFFmpeg)"
                 class="ma-0 pa-0 input-disable-ffmpeg"
                 color="secondary-dark"
                 :label="$gettext('Disable FFmpeg')"
@@ -396,7 +398,6 @@ export default {
       isPublic: this.$config.get("public"),
       isSponsor: this.$config.isSponsor(),
       readonly: this.$config.get("readonly"),
-      experimental: this.$config.get("experimental"),
       config: this.$config.values,
       rtl: this.$rtl,
       settings: new ConfigOptions(false),

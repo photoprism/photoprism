@@ -199,7 +199,7 @@ msgstr "אחרי שבועיים"
 msgid "Album"
 msgstr "אלבום"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "גיבויי אלבומים"
 
@@ -274,10 +274,6 @@ msgstr "כל המקורות"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "כל השנים"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "העלה את NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "צור אוטומטית תמונות ממוזערות עבור קבצי�
 msgid "Back"
 msgstr "חזור"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "גיבוי"
 
@@ -543,7 +539,7 @@ msgstr "שינוי דגל הפרטיות"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "השינויים נשמרו בהצלחה"
@@ -695,15 +691,15 @@ msgstr "צור חשבון"
 msgid "Create album"
 msgstr "צור אלבום"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "צור גיבויי אינדקס בהתבסס על לוח הזמנים שהוגדר."
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "צור קובצי YAML כדי לגבות מטא נתונים של אלבום."
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "צור קבצי YAML Sidecar כדי לגבות מטא נתונים של תמונה."
 
@@ -735,7 +731,7 @@ msgstr "טורקיז"
 msgid "Daily"
 msgstr "יומי"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "גיבויים של מסדי נתונים"
 
@@ -800,7 +796,11 @@ msgstr "פרטים"
 msgid "Dimensions"
 msgstr "מידות"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "השבת גיבויים"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "השבת את Darktable"
 
@@ -812,11 +812,11 @@ msgstr "השבת את ExifTool"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "השבת תכונות הדורשות הרשאת כתיבה עבור תיקיית המקור."
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "השבת FFmpeg"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "השבת את ImageMagick"
 
@@ -828,7 +828,7 @@ msgstr "השבת מפות עולם אינטראקטיביות וקידוד גי�
 msgid "Disable Places"
 msgstr "השבת מיקומים"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "השבת את RawTherapee"
 
@@ -836,7 +836,7 @@ msgstr "השבת את RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "השבת את TensorFlow"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "השבת וקטורים"
 
@@ -844,11 +844,11 @@ msgstr "השבת וקטורים"
 msgid "Disable WebDAV"
 msgstr "השבת את WebDAV"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "משבית תמיכה בגרפיקה וקטורית."
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "משבית את המרת קידוד וידאו וחילוץ תמונות ממוזערות."
 
@@ -862,15 +862,15 @@ msgstr "גלה"
 msgid "Display Name"
 msgstr "שם תצוגה"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "אל תשתמש ב- Darktable להמרת קבצי RAW."
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "אל תשתמש ב-ImageMagick כדי להמיר תמונות."
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "אל תשתמש ב- RawTherapee להמרת קבצי RAW."
 
@@ -917,7 +917,7 @@ msgstr "הורד קבצים בודדים וארכיוני zip."
 msgid "Downloading…"
 msgstr "מוריד…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "פילטר (אלגוריתם) שנמוך"
 
@@ -933,11 +933,11 @@ msgstr "התעלם מכפילויות, והצג רק אחד."
 msgid "Duration"
 msgstr "משך"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "תצוגות מקדימות דינמיות"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "גודל דינמי מקסימלי לשמירה במטמון: %{n} פיקסלים"
 
@@ -980,7 +980,7 @@ msgstr "אפשר מצב ניפוי באגים כדי להציג יומנים נ�
 msgid "Enable new features currently under development."
 msgstr "אפשר תכונות חדשות שנמצאות כעת בפיתוח."
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "מאפשר הגדרות קבועות מראש של ממיר RAW. עשוי להפחית את הביצועים."
 
@@ -1126,7 +1126,7 @@ msgstr "קובץ"
 msgid "File Browser"
 msgstr "סייר קבצים"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "המרת קבצים"
 
@@ -1289,7 +1289,7 @@ msgstr "תמונה"
 msgid "Image"
 msgstr "תמונה"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "איכות תמונה"
 
@@ -1407,11 +1407,11 @@ msgstr "זהו קוד לשימוש חד פעמי שישבית את 2FA עבור 
 msgid "Item"
 msgstr "פריט"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "איכות ה-JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "מגבלת גודל קבצי ה-JPEG %{n} פיקסלים"
 
@@ -1828,7 +1828,7 @@ msgstr "הישן ראשון"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "ב-Windows, הזן את המשאב הבא בתיבת הדו-שיח של החיבור:"
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "יצירת תמונות ממוזערות לפי דרישה עשויה לגרום לשימוש גבוה במעבד ובזיכרון. זה לא מומלץ עבור שרתים מוגבלי משאבים והתקני NAS."
 
@@ -1979,10 +1979,6 @@ msgstr "תמונות"
 msgid "Picture Title"
 msgstr "כותרת התמונה"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "אפשר העלאות שעלולות להיות פוגעניות. זיהוי תוכן לא בטוח דורש TensorFlow."
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "ורוד"
@@ -2032,7 +2028,7 @@ msgstr "הפעל מחדש את המופע שלך כדי שהשינויים יי�
 msgid "Please wait…"
 msgstr "המתן בבקשה…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "מגבלת גודל קבצי ה-PNG %{n} פיקסלים"
 
@@ -2060,11 +2056,15 @@ msgstr "לחץ על Enter בכדי ליצור אלבום חדש."
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "מנע מאפליקציות אחרות לגשת ל-PhotoPrism ככונן רשת משותף."
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "תצוגה מקדימה"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "תצוגה מקדימה של תמונות"
@@ -2210,7 +2210,7 @@ msgid "Resolution"
 msgstr "רזולוציה"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "איתחול"
 
@@ -2396,7 +2396,7 @@ msgstr "הצג יומני שרת בספרייה."
 msgid "Sidecar"
 msgstr "חזית רכב"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "קבצי Sidecar"
 
@@ -2467,7 +2467,7 @@ msgstr "התחל / עצור מצגת"
 msgid "States"
 msgstr "מדינות"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "מגבלת גודל סטטי במטמון: %{n} פיקסלים"
 
@@ -2789,7 +2789,7 @@ msgstr "העלאות שעשויות להכיל תמונות כאלה יידחו 
 msgid "URL"
 msgstr "נתיב אתר"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "השתמש בהגדרות קבועות מראש"
 
@@ -2984,6 +2984,12 @@ msgstr "הספרייה שלך מנותחת באופן רציף ליצירת אל
 msgid "Zoom in/out"
 msgstr "זום פנימה\\החוצה"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "העלה את NSFW"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "אפשר העלאות שעלולות להיות פוגעניות. זיהוי תוכן לא בטוח דורש TensorFlow."
+
 #~ msgid "File Format Support"
 #~ msgstr "תמיכה בפורמט קבצים"
 
@@ -3013,9 +3019,6 @@ msgstr "זום פנימה\\החוצה"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "לא מצליח לגשת לאפליקציית המאמת או למכשיר שלך? הזן את קוד השחזור שלך או בקש עזרה."
-
-#~ msgid "Disable Backups"
-#~ msgstr "השבת גיבויים"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "אל תגבה מטא נתונים של תמונות ואלבומים לקבצי YAML."

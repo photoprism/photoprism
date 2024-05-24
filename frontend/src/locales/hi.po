@@ -199,7 +199,7 @@ msgstr "दो हफ्ते बाद"
 msgid "Album"
 msgstr "एल्बम"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "एल्बम बैकअप"
 
@@ -274,10 +274,6 @@ msgstr "सभी मूल"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "सभी वर्ष"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "NSFW अपलोड करें"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "उन फ़ाइलों के लिए स्वचालित �
 msgid "Back"
 msgstr "पीछे"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "बैकअप"
 
@@ -543,7 +539,7 @@ msgstr "निजी ध्वज बदलें"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "परिवर्तन सफलतापूर्वक सहेजे गए"
@@ -695,15 +691,15 @@ msgstr "खाता बनाएं"
 msgid "Create album"
 msgstr "एल्बम बनाओ"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "कॉन्फ़िगर किए गए शेड्यूल के आधार पर इंडेक्स बैकअप बनाएं।"
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "एल्बम मेटाडेटा का बैकअप लेने के लिए YAML फ़ाइलें बनाएँ।"
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "चित्र मेटाडेटा का बैकअप लेने के लिए YAML साइडकार फ़ाइलें बनाएँ।"
 
@@ -735,7 +731,7 @@ msgstr "सियान"
 msgid "Daily"
 msgstr "रोज"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "डेटाबेस बैकअप"
 
@@ -800,7 +796,11 @@ msgstr "विवरण"
 msgid "Dimensions"
 msgstr "आयाम"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "पिछला बैकअप"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "डार्कटेबल अक्षम करें"
 
@@ -812,11 +812,11 @@ msgstr "ExifTool अक्षम करें"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "उन सुविधाओं को अक्षम करें जिनके लिए मूल फ़ोल्डर के लिए लेखन अनुमति की आवश्यकता होती है।"
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "एफएफएमपीईजी अक्षम करें"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "इमेजमैजिक को अक्षम करें"
 
@@ -828,7 +828,7 @@ msgstr "इंटरैक्टिव विश्व मानचित्र 
 msgid "Disable Places"
 msgstr "विकलांग"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "रॉ थेरेपी को अक्षम करें"
 
@@ -836,7 +836,7 @@ msgstr "रॉ थेरेपी को अक्षम करें"
 msgid "Disable TensorFlow"
 msgstr "TensorFlow अक्षम करें"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "वेक्टर अक्षम करें"
 
@@ -844,11 +844,11 @@ msgstr "वेक्टर अक्षम करें"
 msgid "Disable WebDAV"
 msgstr "विकलांग"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "वेक्टर ग्राफ़िक्स समर्थन अक्षम करता है।"
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "वीडियो ट्रांसकोडिंग और थंबनेल निष्कर्षण अक्षम करता है।"
 
@@ -862,15 +862,15 @@ msgstr "डिस्कवर"
 msgid "Display Name"
 msgstr "प्रदर्शित होने वाला नाम"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "रॉ फ़ाइलों को कनवर्ट करने के लिए डार्कटेबल का उपयोग न करें।"
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "छवियों को परिवर्तित करने के लिए ImageMagick का उपयोग न करें।"
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "RAW फ़ाइलों को कनवर्ट करने के लिए RawTherapee का उपयोग न करें।"
 
@@ -917,7 +917,7 @@ msgstr "एकल फाइलें और ज़िप अभिलेखा�
 msgid "Downloading…"
 msgstr "डाउनलोड कर रहा है …"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "गुणवत्ता फ़िल्टर"
 
@@ -933,11 +933,11 @@ msgstr "डुप्लिकेट को छोड़ दिया जाए�
 msgid "Duration"
 msgstr "अवधि"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "बिना पढ़े हुए पूर्वावलोकन"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "बिना आकार की सीमा: %{n} px"
 
@@ -980,7 +980,7 @@ msgstr "अतिरिक्त लॉग प्रदर्शित करन
 msgid "Enable new features currently under development."
 msgstr "वर्तमान में विकास के तहत नई सुविधाएँ सक्षम करें।"
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "रॉ कनवर्टर प्रीसेट सक्षम करता है। प्रदर्शन को कम कर सकता है।"
 
@@ -1126,7 +1126,7 @@ msgstr "फ़ाइल"
 msgid "File Browser"
 msgstr "फ़ाइल ब्राउज़र"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "फ़ाइल रूपांतरण"
 
@@ -1289,7 +1289,7 @@ msgstr "छवि"
 msgid "Image"
 msgstr "छवि"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "छवि के गुणवत्ता"
 
@@ -1407,11 +1407,11 @@ msgstr "यह एक बार उपयोग होने वाला को
 msgid "Item"
 msgstr "मद"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG गुणवत्ता: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG आकार सीमा: %{n} px"
 
@@ -1828,7 +1828,7 @@ msgstr "सबसे पुराना पहले"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "विंडोज़ पर, कनेक्शन संवाद में निम्न संसाधन दर्ज करें:"
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "ऑन-डिमांड थंबनेल बनाने से CPU और मेमोरी का अधिक उपयोग हो सकता है। संसाधन-सीमित सर्वर और NAS डिवाइस के लिए इसकी अनुशंसा नहीं की जाती है।"
 
@@ -1979,10 +1979,6 @@ msgstr "तस्वीरें"
 msgid "Picture Title"
 msgstr "चित्र का शीर्षक"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "ऐसे अपलोड की अनुमति दें जो आपत्तिजनक हो सकते हैं। असुरक्षित सामग्री का पता लगाने के लिए TensorFlow की आवश्यकता होती है।"
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "गुलाबी"
@@ -2032,7 +2028,7 @@ msgstr "परिवर्तनों को प्रभावी करने
 msgid "Please wait…"
 msgstr "कृपया प्रतीक्षा करें…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG आकार सीमा: %{n} px"
 
@@ -2060,11 +2056,15 @@ msgstr "एक नया एल्बम बनाने के लिए एं
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "अन्य ऐप्स को साझा नेटवर्क ड्राइव के रूप में PhotoPrism तक पहुंचने से रोकें।"
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "पूर्वावलोकन"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "छवियों का पूर्वावलोकन करें"
@@ -2210,7 +2210,7 @@ msgid "Resolution"
 msgstr "रिज़ॉल्यूशन"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "पुनः आरंभ करें"
 
@@ -2396,7 +2396,7 @@ msgstr "लायब्रेरी में सर्वर लॉग दि�
 msgid "Sidecar"
 msgstr "एक प्रकार का मादक द्रव्य"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "साइडकार फ़ाइलें"
 
@@ -2467,7 +2467,7 @@ msgstr "शुरू / बंद स्लाइड शो"
 msgid "States"
 msgstr "राज्य अमेरिका"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "प्री-रेंडर आकार सीमा: %{n} px"
 
@@ -2789,7 +2789,7 @@ msgstr "ऐसे चित्र शामिल होने वाले अ�
 msgid "URL"
 msgstr "यूआरएल"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "प्रीसेट का उपयोग करें"
 
@@ -2984,6 +2984,12 @@ msgstr "विशेष क्षणों, यात्राओं और स�
 msgid "Zoom in/out"
 msgstr "ज़ूम इन / आउट करें"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "NSFW अपलोड करें"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "ऐसे अपलोड की अनुमति दें जो आपत्तिजनक हो सकते हैं। असुरक्षित सामग्री का पता लगाने के लिए TensorFlow की आवश्यकता होती है।"
+
 #~ msgid "File Format Support"
 #~ msgstr "फ़ाइल प्रारूप समर्थन"
 
@@ -3013,9 +3019,6 @@ msgstr "ज़ूम इन / आउट करें"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "अपने प्रमाणक ऐप या डिवाइस तक पहुँच नहीं पा रहे हैं? अपना पुनर्प्राप्ति कोड दर्ज करें या सहायता के लिए पूछें।"
-
-#~ msgid "Disable Backups"
-#~ msgstr "पिछला बैकअप"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "YAML फ़ाइलों के लिए फ़ोटो और एल्बम मेटाडेटा का बैकअप न लें।"

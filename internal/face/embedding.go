@@ -43,7 +43,7 @@ func (m Embedding) SkipMatching() bool {
 	return m.KidsFace() || m.Ignored()
 }
 
-// CanMatch tests if the face embedding is not blacklisted.
+// CanMatch tests if the face embedding is not excluded.
 func (m Embedding) CanMatch() bool {
 	return !m.Ignored()
 }

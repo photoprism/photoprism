@@ -199,7 +199,7 @@ msgstr "Po dwóch tygodniach"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "Kopie zapasowe albumów"
 
@@ -274,10 +274,6 @@ msgstr "Wszystkie oryginały"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Wszystkie lata"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Prześlij NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "Automatyczne tworzenie miniatur dla plików, które nie mogą być indek
 msgid "Back"
 msgstr "Z powrotem"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "Kopia zapasowa"
 
@@ -543,7 +539,7 @@ msgstr "Zmień prywatność"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "Zmiany zostały pomyślnie zapisane"
@@ -695,15 +691,15 @@ msgstr "Utwórz konto"
 msgid "Create album"
 msgstr "Stwórz album"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "Twórz kopie zapasowe indeksów na podstawie skonfigurowanego harmonogramu."
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "Twórz pliki YAML, aby tworzyć kopie zapasowe metadanych albumów."
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Twórz pliki pomocnicze YAML, aby tworzyć kopie zapasowe metadanych obrazów."
 
@@ -735,7 +731,7 @@ msgstr "Cyjan"
 msgid "Daily"
 msgstr "Codziennie"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "Kopie zapasowe bazy danych"
 
@@ -800,7 +796,11 @@ msgstr "Szczegóły"
 msgid "Dimensions"
 msgstr "Wymiary"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "Wyłącz kopie zapasowe"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "Wyłącz Darktable"
 
@@ -812,11 +812,11 @@ msgstr "Wyłącz ExifTool"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Wyłącz funkcje wymagające uprawnień do zapisu w folderze oryginałów."
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "Wyłącz FFmpeg"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "Wyłączenie programu ImageMagick"
 
@@ -828,7 +828,7 @@ msgstr "Wyłącz interaktywne mapy świata i odwrotne geokodowanie."
 msgid "Disable Places"
 msgstr "Wyłącz miejsca"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "Wyłącz RawTherapee"
 
@@ -836,7 +836,7 @@ msgstr "Wyłącz RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "Wyłącz TensorFlow"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "Wyłączenie wektorów"
 
@@ -844,11 +844,11 @@ msgstr "Wyłączenie wektorów"
 msgid "Disable WebDAV"
 msgstr "Wyłącz WebDAV"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "Wyłącza obsługę grafiki wektorowej."
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Wyłącza transkodowanie wideo i ekstrakcję miniatur."
 
@@ -862,15 +862,15 @@ msgstr "Odkryj"
 msgid "Display Name"
 msgstr "Nazwa wyświetlana"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Nie używaj Darktable do konwersji obrazów RAW."
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "Nie używaj ImageMagick do konwersji obrazów."
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Nie używaj RawTherapee do konwersji obrazów RAW."
 
@@ -917,7 +917,7 @@ msgstr "Pobierz pojedyncze pliki i archiwa zip."
 msgid "Downloading…"
 msgstr "Pobieranie…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "Filtr skalowania rozdzielczości w dół"
 
@@ -933,11 +933,11 @@ msgstr "Duplikaty zostaną pominięte i pojawią się tylko raz."
 msgid "Duration"
 msgstr "Czas trwania"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "Dynamiczne podglądy"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Limit rozmiaru dynamicznych podglądów: %{n}px"
 
@@ -980,7 +980,7 @@ msgstr "Włącz tryb debugowania, aby wyświetlić dodatkowe dzienniki i pomóc 
 msgid "Enable new features currently under development."
 msgstr "Włącz nowe funkcje będące wciąż w fazie rozwoju."
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Włącza wstępne ustawienia konwertera RAW. Może zmniejszyć wydajność."
 
@@ -1126,7 +1126,7 @@ msgstr "Plik"
 msgid "File Browser"
 msgstr "Przeglądarka plików"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "Konwersja plików"
 
@@ -1289,7 +1289,7 @@ msgstr "obraz"
 msgid "Image"
 msgstr "Obraz"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "Jakość obrazu"
 
@@ -1407,11 +1407,11 @@ msgstr "Jest to jednorazowy kod, który wyłączy 2FA na Twoim koncie, gdy z nie
 msgid "Item"
 msgstr "Element"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "Jakość JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limit rozmiaru JPEG: %{n}px"
 
@@ -1828,7 +1828,7 @@ msgstr "Najstarsze"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "W systemie Windows wpisz następujący adres w oknie dialogowym połączenia:"
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Generowanie miniatur na żądanie może powodować wysokie zużycie procesora i pamięci. Nie jest to zalecane w przypadku serwerów i urządzeń NAS o ograniczonych zasobach."
 
@@ -1979,10 +1979,6 @@ msgstr "Zdjęcia"
 msgid "Picture Title"
 msgstr "Tytuł zdjęcia"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Zezwalaj na przesyłanie treści, które mogą być obraźliwe. Wykrywanie niebezpiecznych treści wymaga TensorFlow."
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Różowy"
@@ -2032,7 +2028,7 @@ msgstr "Proszę zrestartować swoją instancję, aby zmiany zaczęły obowiązyw
 msgid "Please wait…"
 msgstr "Proszę czekać…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "Limit rozmiaru PNG: %{n}px"
 
@@ -2060,11 +2056,15 @@ msgstr "Naciśnij enter by utworzyć nowy album."
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "Uniemożliw innym aplikacjom dostęp do PhotoPrism jako udostępnionego dysku sieciowego."
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Podgląd"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Zdjęcia podglądowe"
@@ -2210,7 +2210,7 @@ msgid "Resolution"
 msgstr "Rozdzielczość"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "Uruchom ponownie stronę"
 
@@ -2396,7 +2396,7 @@ msgstr "Pokaż logi serwera w bibliotece."
 msgid "Sidecar"
 msgstr "Plik powiązany"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "Pliki Sidecar"
 
@@ -2467,7 +2467,7 @@ msgstr "Start/Stop pokazu slajdów"
 msgid "States"
 msgstr "Region"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "Limit rozmiaru statycznych podglądów: %{n}px"
 
@@ -2789,7 +2789,7 @@ msgstr "Tego typu obrazy zostaną automatycznie odrzucone."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "Użyj ustawień wstępnych"
 
@@ -2984,6 +2984,12 @@ msgstr "Twoja biblioteka jest na bieżąco analizowana, aby automatycznie tworzy
 msgid "Zoom in/out"
 msgstr "Powiększ / Pomniejsz"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "Prześlij NSFW"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "Zezwalaj na przesyłanie treści, które mogą być obraźliwe. Wykrywanie niebezpiecznych treści wymaga TensorFlow."
+
 #~ msgid "File Format Support"
 #~ msgstr "Obsługa formatów plików"
 
@@ -3013,9 +3019,6 @@ msgstr "Powiększ / Pomniejsz"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Nie możesz uzyskać dostępu do aplikacji lub urządzenia uwierzytelniającego? Wprowadź kod odzyskiwania lub poproś o pomoc."
-
-#~ msgid "Disable Backups"
-#~ msgstr "Wyłącz kopie zapasowe"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "Nie wykonuj kopii zapasowych metadanych zdjęć i albumów do plików YAML."

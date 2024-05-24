@@ -12,6 +12,24 @@ const (
 	DefaultBackupRetain   = 3
 )
 
+// DisableBackups checks if database and album backups as well as YAML sidecar files should not be created.
+func (c *Config) DisableBackups() bool {
+	if !c.SidecarWritable() {
+		return true
+	}
+
+	return c.options.DisableBackups
+}
+
+// SidecarYaml checks if sidecar YAML files should be created and updated.
+func (c *Config) SidecarYaml() bool {
+	if c.DisableBackups() {
+		return false
+	}
+
+	return c.options.SidecarYaml
+}
+
 // BackupPath returns the backup storage path based on the specified type, or the base path if none is specified.
 func (c *Config) BackupPath(backupType string) string {
 	if s := clean.TypeLowerUnderscore(backupType); s == "" {
@@ -37,10 +55,10 @@ func (c *Config) BackupSchedule() string {
 
 // BackupRetain returns the maximum number of SQL database dumps to keep, or -1 to keep all.
 func (c *Config) BackupRetain() int {
-	if c.options.BackupRetain == 0 {
-		return DefaultBackupRetain
-	} else if c.options.BackupRetain < -1 {
+	if c.options.BackupRetain < 0 || c.DisableBackups() {
 		return -1
+	} else if c.options.BackupRetain == 0 {
+		return DefaultBackupRetain
 	}
 
 	return c.options.BackupRetain
@@ -48,6 +66,10 @@ func (c *Config) BackupRetain() int {
 
 // BackupDatabase checks if index database backups should be created based on the configured schedule.
 func (c *Config) BackupDatabase() bool {
+	if c.DisableBackups() {
+		return false
+	}
+
 	return c.options.BackupDatabase
 }
 
@@ -62,6 +84,10 @@ func (c *Config) BackupDatabasePath() string {
 
 // BackupAlbums checks if album YAML file backups should be created based on the configured schedule.
 func (c *Config) BackupAlbums() bool {
+	if c.DisableBackups() {
+		return false
+	}
+
 	return c.options.BackupAlbums
 }
 
@@ -72,13 +98,4 @@ func (c *Config) BackupAlbumsPath() string {
 	}
 
 	return c.BackupPath("albums")
-}
-
-// DisableBackups checks if creating and updating sidecar YAML files should be disabled.
-func (c *Config) DisableBackups() bool {
-	if !c.SidecarWritable() {
-		return true
-	}
-
-	return c.options.DisableBackups
 }

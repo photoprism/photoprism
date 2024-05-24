@@ -124,6 +124,11 @@ func (c *Config) DisableHeifConvert() bool {
 	return c.options.DisableHeifConvert
 }
 
+// DisableVips checks if conversion of RAW images with SIPS is disabled.
+func (c *Config) DisableVips() bool {
+	return c.options.DisableVips
+}
+
 // DisableSips checks if conversion of RAW images with SIPS is disabled.
 func (c *Config) DisableSips() bool {
 	if c.options.DisableSips {

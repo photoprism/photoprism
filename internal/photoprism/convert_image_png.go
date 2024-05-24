@@ -21,7 +21,7 @@ func (c *Convert) PngConvertCommands(f *MediaFile, pngName string) (result []*ex
 	maxSize := strconv.Itoa(c.conf.PngSize())
 
 	// Apple Scriptable image processing system: https://ss64.com/osx/sips.html
-	if (f.IsRaw() || f.IsHEIF()) && c.conf.SipsEnabled() && c.sipsBlacklist.Allow(fileExt) {
+	if (f.IsRaw() || f.IsHEIF()) && c.conf.SipsEnabled() && c.sipsSkip.Allow(fileExt) {
 		result = append(result, exec.Command(c.conf.SipsBin(), "-Z", maxSize, "-s", "format", "png", "--out", pngName, f.FileName()))
 	}
 
@@ -46,7 +46,7 @@ func (c *Convert) PngConvertCommands(f *MediaFile, pngName string) (result []*ex
 	if c.conf.RsvgConvertEnabled() && f.IsSVG() {
 		args := []string{"-a", "-f", "png", "-o", pngName, f.FileName()}
 		result = append(result, exec.Command(c.conf.RsvgConvertBin(), args...))
-	} else if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
+	} else if c.conf.ImageMagickEnabled() && c.imagemagickSkip.Allow(fileExt) &&
 		(f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsHEIF() || f.IsVector() && c.conf.VectorEnabled()) {
 		resize := fmt.Sprintf("%dx%d>", c.conf.PngSize(), c.conf.PngSize())
 		args := []string{f.FileName(), "-flatten", "-resize", resize, pngName}

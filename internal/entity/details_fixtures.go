@@ -40,11 +40,11 @@ var DetailsFixtures = DetailsMap{
 		CopyrightSrc: "manual",
 		LicenseSrc:   "manual",
 	},
-	"blacklist": {
+	"non-photographic": {
 		PhotoID:      1000001,
 		Keywords:     "screenshot, info",
 		Notes:        "notes",
-		Subject:      "Blacklist",
+		Subject:      "Non Photographic",
 		Artist:       "Hans",
 		Copyright:    "copy",
 		License:      "MIT",

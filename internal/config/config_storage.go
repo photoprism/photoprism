@@ -344,15 +344,6 @@ func (c *Config) SidecarWritable() bool {
 	return !c.ReadOnly() || c.SidecarPathIsAbs()
 }
 
-// SidecarYaml checks if sidecar YAML files should be created and updated.
-func (c *Config) SidecarYaml() bool {
-	if !c.SidecarWritable() || c.options.DisableBackups {
-		return false
-	}
-
-	return c.options.SidecarYaml
-}
-
 // UsersPath returns the relative base path for user assets.
 func (c *Config) UsersPath() string {
 	// Set default.

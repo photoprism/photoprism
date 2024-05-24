@@ -196,7 +196,7 @@ msgstr "Kahden viikon kuluttua"
 msgid "Album"
 msgstr "Albumi"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "Albumin varmuuskopiot"
 
@@ -271,10 +271,6 @@ msgstr "Kaikki alkuperäiset"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Kaikki vuodet"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Lataa NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -390,7 +386,7 @@ msgstr "Luo automaattisesti pikkukuvia tiedostoille, joita ei muuten voida indek
 msgid "Back"
 msgstr "Takaisin"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "Varmuuskopiointi"
 
@@ -540,7 +536,7 @@ msgstr "Muuta yksityisyyden tilaa"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "Muutokset tallennettu onnistuneesti"
@@ -692,15 +688,15 @@ msgstr "Luo tili"
 msgid "Create album"
 msgstr "Luo albumi"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "Luo indeksin varmuuskopiot määritetyn aikataulun mukaisesti."
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "Luo YAML-tiedostoja albumin metatietojen varmuuskopiointia varten."
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Luo YAML-sivutiedostoja kuvien metatietojen varmuuskopiointia varten."
 
@@ -732,7 +728,7 @@ msgstr "Syaani"
 msgid "Daily"
 msgstr "Päivittäin"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "Tietokannan varmuuskopiot"
 
@@ -797,7 +793,11 @@ msgstr "Tarkemmat tiedot"
 msgid "Dimensions"
 msgstr "Mitat"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "Poista varmuuskopiot käytöstä"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "Poista Darktable käytöstä"
 
@@ -809,11 +809,11 @@ msgstr "Poista ExifTool käytöstä"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Poista käytöstä ominaisuudet, jotka vaativat kirjoitusoikeutta alkuperäiskansiossa."
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "Poista FFmpeg käytöstä"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "Poista ImageMagick käytöstä"
 
@@ -825,7 +825,7 @@ msgstr "Poista interaktiiviset maailmankartat ja käänteinen geokoodaus käytö
 msgid "Disable Places"
 msgstr "Poista paikat käytöstä"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "Poista RawTherapee käytöstä"
 
@@ -833,7 +833,7 @@ msgstr "Poista RawTherapee käytöstä"
 msgid "Disable TensorFlow"
 msgstr "Poista TensorFlow käytöstä"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "Poista vektorit käytöstä"
 
@@ -841,11 +841,11 @@ msgstr "Poista vektorit käytöstä"
 msgid "Disable WebDAV"
 msgstr "Poista WebDAV käytöstä"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "Poistaa vektorigrafiikan tuen käytöstä."
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Poistaa videon transkoodauksen ja pikkukuvien poiston käytöstä."
 
@@ -859,15 +859,15 @@ msgstr "Tutustu"
 msgid "Display Name"
 msgstr "Näytön nimi"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Älä käytä Darktablea RAW-tiedostojen muuntamiseen."
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "Älä käytä ImageMagickia kuvien muuntamiseen."
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Älä käytä RawTherapeeta RAW-tiedostojen muuntamiseen."
 
@@ -914,7 +914,7 @@ msgstr "Lataa yksittäisiä tiedostoja ja zip-arkistoja."
 msgid "Downloading…"
 msgstr "Ladataan…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "Skaalaussuodatin"
 
@@ -930,11 +930,11 @@ msgstr "Kaksoiskappaleet ohitetaan ja ne näkyvät vain kerran."
 msgid "Duration"
 msgstr "Kesto"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "Dynaamiset esikatselut"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dynaaminen kokorajoitus: %{n}px"
 
@@ -977,7 +977,7 @@ msgstr "Ota debug-tila käyttöön näyttääksesi lisälokeja ja auttaaksesi vi
 msgid "Enable new features currently under development."
 msgstr "Ota käyttöön uudet ominaisuudet, joita kehitetään parhaillaan."
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Ottaa käyttöön RAW-muuntimen esiasetukset. Saattaa heikentää suorituskykyä."
 
@@ -1123,7 +1123,7 @@ msgstr "Tiedosto"
 msgid "File Browser"
 msgstr "Tiedostoselain"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "Tiedoston muuntaminen"
 
@@ -1286,7 +1286,7 @@ msgstr "kuva"
 msgid "Image"
 msgstr "Kuva"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "Kuvan laatu"
 
@@ -1404,11 +1404,11 @@ msgstr "Se on kertakäyttöinen koodi, joka poistaa 2FA:n käytöstä tililtäsi
 msgid "Item"
 msgstr "Kohde"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-laatu: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG-kokorajoitus: %{n}px"
 
@@ -1825,7 +1825,7 @@ msgstr "Vanhin ensin"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Kirjoita Windowsissa seuraava resurssi yhteysvalintaikkunaan:"
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Pienoiskuvien luominen tilauksesta voi aiheuttaa suurta suorittimen ja muistin käyttöä. Sitä ei suositella resurssirajoitteisille palvelimille ja NAS-laitteille."
 
@@ -1976,10 +1976,6 @@ msgstr "Kuvat"
 msgid "Picture Title"
 msgstr "Kuvan nimi"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Salli lataukset, jotka saattavat olla loukkaavia. Turvattoman sisällön havaitseminen vaatii TensorFlow'ta."
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Vaaleanpunainen"
@@ -2029,7 +2025,7 @@ msgstr "Käynnistä instanssisi uudelleen, jotta muutokset tulevat voimaan."
 msgid "Please wait…"
 msgstr "Odota…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG-kokorajoitus: %{n}px"
 
@@ -2057,11 +2053,15 @@ msgstr "Luo uusi albumi painamalla enteriä."
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "Estä muita sovelluksia käyttämästä PhotoPrismia jaettuna verkkoasemana."
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Esikatselu"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Esikatselukuvat"
@@ -2207,7 +2207,7 @@ msgid "Resolution"
 msgstr "Resoluutio"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "Käynnistä uudelleen"
 
@@ -2393,7 +2393,7 @@ msgstr "Näytä palvelimen lokit kirjastossa."
 msgid "Sidecar"
 msgstr "Sidecar-tiedosto"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "Sivuvaunun tiedostot"
 
@@ -2464,7 +2464,7 @@ msgstr "Aloita/lopeta diaesitys"
 msgid "States"
 msgstr "Alueet"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "Staattinen kokorajoitus: %{n}px"
 
@@ -2786,7 +2786,7 @@ msgstr "Tällaisia kuvia mahdollisesti sisältävät lataukset hylätään autom
 msgid "URL"
 msgstr "URL-osoite"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "Käytä esiasetuksia"
 
@@ -2981,6 +2981,12 @@ msgstr "Kirjastoasi analysoidaan jatkuvasti ja luodaan automaattisesti albumeita
 msgid "Zoom in/out"
 msgstr "Lähennä/loitonna"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "Lataa NSFW"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "Salli lataukset, jotka saattavat olla loukkaavia. Turvattoman sisällön havaitseminen vaatii TensorFlow'ta."
+
 #~ msgid "File Format Support"
 #~ msgstr "Tiedostomuodon tuki"
 
@@ -3010,9 +3016,6 @@ msgstr "Lähennä/loitonna"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Etkö pääse käyttämään todennussovellusta tai -laitettasi? Anna palautuskoodisi tai pyydä apua."
-
-#~ msgid "Disable Backups"
-#~ msgstr "Poista varmuuskopiot käytöstä"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "Älä varmuuskopioi valokuvien ja albumien metatietoja YAML-tiedostoihin."

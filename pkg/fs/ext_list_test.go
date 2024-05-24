@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewBlacklists(t *testing.T) {
+func TestNewExtLists(t *testing.T) {
 	t.Run("WithExtensions", func(t *testing.T) {
-		lists := NewBlacklists()
-		lists["foo"] = NewBlacklist("RAF, Cr3, aaf ")
+		lists := NewExtLists()
+		lists["foo"] = NewExtList("RAF, Cr3, aaf ")
 		assert.True(t, lists["foo"].Contains(".raf"))
 		assert.True(t, lists["foo"].Contains("cr3"))
 		assert.True(t, lists["foo"].Contains("AAF"))
@@ -19,9 +19,9 @@ func TestNewBlacklists(t *testing.T) {
 	})
 }
 
-func TestNewBlacklist(t *testing.T) {
+func TestNewExtList(t *testing.T) {
 	t.Run("WithExtensions", func(t *testing.T) {
-		list := NewBlacklist("RAF, Cr3, aaf ")
+		list := NewExtList("RAF, Cr3, aaf ")
 		assert.True(t, list.Contains(".raf"))
 		assert.True(t, list.Contains("cr3"))
 		assert.True(t, list.Contains("AAF"))
@@ -31,14 +31,14 @@ func TestNewBlacklist(t *testing.T) {
 	})
 }
 
-func TestBlacklist_Ok(t *testing.T) {
+func TestExtList_Ok(t *testing.T) {
 	t.Run("CanonCR2", func(t *testing.T) {
-		list := NewBlacklist("cr2")
+		list := NewExtList("cr2")
 		assert.False(t, list.Allow(".cr2"))
 		assert.True(t, list.Contains(".cr2"))
 	})
 	t.Run("Raw", func(t *testing.T) {
-		list := NewBlacklist("RAF, Cr3, aaf ")
+		list := NewExtList("RAF, Cr3, aaf ")
 		assert.False(t, list.Allow(".raf"))
 		assert.False(t, list.Allow("cr3"))
 		assert.False(t, list.Allow("AAF"))
@@ -48,21 +48,21 @@ func TestBlacklist_Ok(t *testing.T) {
 	})
 }
 
-func TestBlacklist_Contains(t *testing.T) {
+func TestExtList_Contains(t *testing.T) {
 	t.Run("DNG", func(t *testing.T) {
-		list := NewBlacklist("dng")
+		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
 	})
 	t.Run("Empty", func(t *testing.T) {
-		list := NewBlacklist("")
+		list := NewExtList("")
 		assert.False(t, list.Contains(""))
 	})
 }
 
-func TestBlacklist_Set(t *testing.T) {
+func TestExtList_Set(t *testing.T) {
 	t.Run("DNG, CR2", func(t *testing.T) {
-		list := NewBlacklist("dng")
+		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
 		list.Set("cr2")
@@ -70,7 +70,7 @@ func TestBlacklist_Set(t *testing.T) {
 		assert.True(t, list.Contains("cr2"))
 	})
 	t.Run("DNG", func(t *testing.T) {
-		list := NewBlacklist("dng")
+		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
 		list.Set("")
@@ -79,9 +79,9 @@ func TestBlacklist_Set(t *testing.T) {
 	})
 }
 
-func TestBlacklist_Add(t *testing.T) {
+func TestExtList_Add(t *testing.T) {
 	t.Run("DNG, CR2", func(t *testing.T) {
-		list := NewBlacklist("dng")
+		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
 		list.Add("cr2")
@@ -89,7 +89,7 @@ func TestBlacklist_Add(t *testing.T) {
 		assert.True(t, list.Contains("cr2"))
 	})
 	t.Run("DNG", func(t *testing.T) {
-		list := NewBlacklist("dng")
+		list := NewExtList("dng")
 		assert.True(t, list.Contains("dng"))
 		assert.False(t, list.Contains("cr2"))
 		list.Add("")

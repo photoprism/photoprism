@@ -19,9 +19,9 @@ func (c *Config) DarktableBin() string {
 	return findBin(c.options.DarktableBin, "darktable-cli")
 }
 
-// DarktableBlacklist returns the darktable file extension blacklist.
-func (c *Config) DarktableBlacklist() string {
-	return c.options.DarktableBlacklist
+// DarktableSkip returns the file extensions no not be used with Darktable.
+func (c *Config) DarktableSkip() string {
+	return c.options.DarktableSkip
 }
 
 // DarktableConfigPath returns the darktable config directory.
@@ -74,9 +74,9 @@ func (c *Config) RawTherapeeBin() string {
 	return findBin(c.options.RawTherapeeBin, "rawtherapee-cli")
 }
 
-// RawTherapeeBlacklist returns the RawTherapee file extension blacklist.
-func (c *Config) RawTherapeeBlacklist() string {
-	return c.options.RawTherapeeBlacklist
+// RawTherapeeSkip returns the file extensions no not be used with RawTherapee.
+func (c *Config) RawTherapeeSkip() string {
+	return c.options.RawTherapeeSkip
 }
 
 // RawTherapeeEnabled checks if RawTherapee is enabled for RAW conversion.
@@ -94,9 +94,9 @@ func (c *Config) SipsBin() string {
 	return findBin(c.options.SipsBin, "sips")
 }
 
-// SipsBlacklist returns the Sips file extension blacklist.
-func (c *Config) SipsBlacklist() string {
-	return c.options.SipsBlacklist
+// SipsSkip returns the file extensions no not be used with Sips.
+func (c *Config) SipsSkip() string {
+	return c.options.SipsSkip
 }
 
 // HeifConvertBin returns the heif-convert executable file name.

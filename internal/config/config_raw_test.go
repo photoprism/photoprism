@@ -19,13 +19,13 @@ func TestConfig_RawTherapeeBin(t *testing.T) {
 	assert.True(t, strings.Contains(c.RawTherapeeBin(), "/bin/rawtherapee-cli"))
 }
 
-func TestConfig_RawTherapeeBlacklist(t *testing.T) {
+func TestConfig_RawTherapeeSkip(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	c.options.RawTherapeeBlacklist = "foo,bar"
-	assert.Equal(t, "foo,bar", c.RawTherapeeBlacklist())
-	c.options.RawTherapeeBlacklist = ""
-	assert.Equal(t, "", c.RawTherapeeBlacklist())
+	c.options.RawTherapeeSkip = "foo,bar"
+	assert.Equal(t, "foo,bar", c.RawTherapeeSkip())
+	c.options.RawTherapeeSkip = ""
+	assert.Equal(t, "", c.RawTherapeeSkip())
 }
 
 func TestConfig_RawTherapeeEnabled(t *testing.T) {
@@ -42,10 +42,10 @@ func TestConfig_DarktableBin(t *testing.T) {
 	assert.True(t, strings.Contains(c.DarktableBin(), "/bin/darktable-cli"))
 }
 
-func TestConfig_DarktableBlacklist(t *testing.T) {
+func TestConfig_DarktableSkip(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "raf,cr3", c.DarktableBlacklist())
+	assert.Equal(t, "raf,cr3", c.DarktableSkip())
 }
 
 func TestConfig_DarktablePresets(t *testing.T) {

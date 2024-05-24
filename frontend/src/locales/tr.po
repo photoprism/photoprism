@@ -199,7 +199,7 @@ msgstr "İki hafta sonra"
 msgid "Album"
 msgstr "Albüm"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "Albüm Yedekleri"
 
@@ -274,10 +274,6 @@ msgstr "Tüm orijinaller"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Bütün yıllar"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "NSFW Yükle"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "Başka türlü dizine eklenemeyen veya görüntülenemeyen dosyalar içi
 msgid "Back"
 msgstr "Geri"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "Yedekleme"
 
@@ -543,7 +539,7 @@ msgstr "Özel bayrağı değiştir"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "Değişiklikler başarıyla kaydedildi"
@@ -695,15 +691,15 @@ msgstr "Hesap Oluştur"
 msgid "Create album"
 msgstr "Albüm Oluştur"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "Yapılandırılan zamanlamaya göre dizin yedeklemeleri oluşturun."
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "Albüm meta verilerini yedeklemek için YAML dosyaları oluşturun."
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Resim meta verilerini yedeklemek için YAML sidecar dosyaları oluşturun."
 
@@ -735,7 +731,7 @@ msgstr "Cyan"
 msgid "Daily"
 msgstr "Günlük"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "Veritabanı Yedekleri"
 
@@ -800,7 +796,11 @@ msgstr "Detaylar"
 msgid "Dimensions"
 msgstr "Boyutlar"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "Yedekleri Devredışı Bırak"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "Darktable'ı devre dışı bırak"
 
@@ -812,11 +812,11 @@ msgstr "ExifTool'u devre dışı bırak"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Orijinaller klasörü için yazma izni gerektiren özellikleri devre dışı bırakın."
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "FFmpeg'i devre dışı bırak"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "ImageMagick'i devre dışı bırakın"
 
@@ -828,7 +828,7 @@ msgstr "Etkileşimli dünya haritalarını ve ters coğrafi kodlamayı devre dı
 msgid "Disable Places"
 msgstr "Yerleri Devre Dışı Bırak"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "RawTherapee'yi devre dışı bırak"
 
@@ -836,7 +836,7 @@ msgstr "RawTherapee'yi devre dışı bırak"
 msgid "Disable TensorFlow"
 msgstr "TensorFlow'u devre dışı bırak"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "Vektörleri Devre Dışı Bırak"
 
@@ -844,11 +844,11 @@ msgstr "Vektörleri Devre Dışı Bırak"
 msgid "Disable WebDAV"
 msgstr "WebDAV'ı devre dışı bırak"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "Vektör grafikleri desteğini devre dışı bırakır."
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Video kod dönüştürmeyi ve küçük resim çıkarmayı devre dışı bırakır."
 
@@ -862,15 +862,15 @@ msgstr "Keşfetmek"
 msgid "Display Name"
 msgstr "Ekran adı"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "RAW görüntüleri dönüştürmek için Darktable kullanmayın."
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "Görüntüleri dönüştürmek için ImageMagick kullanmayın."
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "RAW görüntüleri dönüştürmek için RawTherapee kullanmayın."
 
@@ -917,7 +917,7 @@ msgstr "Tek dosyaları ve zip arşivlerini indirin."
 msgid "Downloading…"
 msgstr "İndiriliyor…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "Ölçek küçültme filtresi"
 
@@ -933,11 +933,11 @@ msgstr "Yinelenenler atlanacak ve yalnızca bir kez görünecek."
 msgid "Duration"
 msgstr "Süre"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "Dinamik Önizlemeler"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Dinamik Boyut Sınırı: %{n}px"
 
@@ -980,7 +980,7 @@ msgstr "Ek günlükleri görüntülemek ve sorun gidermeye yardımcı olmak içi
 msgid "Enable new features currently under development."
 msgstr "Şu anda geliştirilmekte olan yeni özellikleri etkinleştirin."
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "RAW dönüştürücü ön ayarlarını etkinleştirir. Performansı azaltabilir."
 
@@ -1126,7 +1126,7 @@ msgstr "Dosya"
 msgid "File Browser"
 msgstr "Dosya tarayıcısı"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "Dosya Dönüştürme"
 
@@ -1289,7 +1289,7 @@ msgstr "resim"
 msgid "Image"
 msgstr "Resim"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "Görüntü Kalitesi"
 
@@ -1407,11 +1407,11 @@ msgstr "Bu, kullandığınızda hesabınız için 2FA'yı devre dışı bırakac
 msgid "Item"
 msgstr "Öğe"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG Kalitesi: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG Boyut Sınırı: %{n}px"
 
@@ -1828,7 +1828,7 @@ msgstr "Eskiden Yeniye"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windows'ta, bağlantı iletişim kutusuna aşağıdaki kaynağı girin:"
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Küçük resimlerin isteğe bağlı olarak oluşturulması yüksek CPU ve bellek kullanımına neden olabilir. Kaynakları kısıtlı sunucular ve NAS cihazları için önerilmez."
 
@@ -1979,10 +1979,6 @@ msgstr "Fotoğraflar"
 msgid "Picture Title"
 msgstr "Resim Başlığı"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Rahatsız edici olabilecek yüklemelere izin verin. Güvenli olmayan içeriği tespit etmek için TensorFlow gerekir."
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Pembe"
@@ -2032,7 +2028,7 @@ msgstr "Değişikliklerin etkili olması için lütfen örneğinizi yeniden baş
 msgid "Please wait…"
 msgstr "Lütfen bekleyin…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG Boyut Sınırı: %{n}px"
 
@@ -2060,11 +2056,15 @@ msgstr "Yeni bir albüm oluşturmak için enter tuşuna basın."
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "Diğer uygulamaların PhotoPrism'e paylaşılan bir ağ sürücüsü olarak erişmesini engelleyin."
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Önizleme"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Önizleme Görüntüleri"
@@ -2210,7 +2210,7 @@ msgid "Resolution"
 msgstr "Çözünürlük"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "Yeniden Başlat"
 
@@ -2396,7 +2396,7 @@ msgstr "Kütüphane'de sunucu günlüklerini gösterin."
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "Sidecar Dosyaları"
 
@@ -2467,7 +2467,7 @@ msgstr "Slayt Gösterisini Başlat/Durdur"
 msgid "States"
 msgstr "İlçeler"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "Statik Boyut Sınırı: %{n}px"
 
@@ -2789,7 +2789,7 @@ msgstr "Bu tür görüntüler içerebilecek yüklemeler otomatik olarak reddedil
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "Ön Ayarları Kullan"
 
@@ -2986,6 +2986,12 @@ msgstr "Özel anların, gezilerin ve yerlerin albümlerini otomatik olarak oluş
 msgid "Zoom in/out"
 msgstr "Yakınlaştır / uzaklaştır"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "NSFW Yükle"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "Rahatsız edici olabilecek yüklemelere izin verin. Güvenli olmayan içeriği tespit etmek için TensorFlow gerekir."
+
 #~ msgid "File Format Support"
 #~ msgstr "Dosya Formatı Desteği"
 
@@ -3015,9 +3021,6 @@ msgstr "Yakınlaştır / uzaklaştır"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Kimlik doğrulayıcı uygulamanıza veya cihazınıza erişemiyor musunuz? Kurtarma kodunuzu girin veya yardım isteyin."
-
-#~ msgid "Disable Backups"
-#~ msgstr "Yedekleri Devredışı Bırak"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "Fotoğraf ve albüm meta verilerini YAML dosyalarına yedeklemeyin."

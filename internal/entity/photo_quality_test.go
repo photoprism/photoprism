@@ -19,7 +19,7 @@ func TestPhoto_QualityScore(t *testing.T) {
 	t.Run("PhotoFixturePhoto07 - score < 3 bit edited", func(t *testing.T) {
 		assert.Equal(t, 3, PhotoFixtures.Pointer("Photo07").QualityScore())
 	})
-	t.Run("PhotoFixturePhoto15 - description with blacklist", func(t *testing.T) {
+	t.Run("PhotoFixturePhoto15 - description with non-photographic", func(t *testing.T) {
 		assert.Equal(t, 2, PhotoFixtures.Pointer("Photo15").QualityScore())
 	})
 }

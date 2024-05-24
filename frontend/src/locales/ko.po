@@ -199,7 +199,7 @@ msgstr "2주 후"
 msgid "Album"
 msgstr "앨범"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "앨범 백업"
 
@@ -274,10 +274,6 @@ msgstr "모든 원본"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "모든 년도"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "NSFW 업로드"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "색인화하거나 볼 수 없는 파일에 대한 썸네일을 자동�
 msgid "Back"
 msgstr "뒤쪽에"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "백업"
 
@@ -543,7 +539,7 @@ msgstr "비공개 플래그 변경하기"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "변경사항이 성공적으로 저장되었습니다"
@@ -695,15 +691,15 @@ msgstr "계정 만들기"
 msgid "Create album"
 msgstr "앨범 만들기"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "구성된 일정에 따라 인덱스 백업을 생성합니다."
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "앨범 메타데이터를 백업할 YAML 파일을 만듭니다."
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "사진 메타데이터를 백업하는 YAML 사이드카 파일을 만듭니다."
 
@@ -735,7 +731,7 @@ msgstr "청록색"
 msgid "Daily"
 msgstr "매일"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "데이터베이스 백업"
 
@@ -800,7 +796,11 @@ msgstr "세부 사항"
 msgid "Dimensions"
 msgstr "치수"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "백업 비활성화"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "다크테이블 비활성화"
 
@@ -812,11 +812,11 @@ msgstr "ExifTool 비활성화"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "원본 폴더에 대한 쓰기 권한이 필요한 기능을 비활성화합니다."
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "FFmpeg 비활성화"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "ImageMagick 비활성화"
 
@@ -828,7 +828,7 @@ msgstr "대화형 세계 지도를 비활성화하고 지오코딩을 역방향�
 msgid "Disable Places"
 msgstr "장소 비활성화"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "RawTherapee 비활성화"
 
@@ -836,7 +836,7 @@ msgstr "RawTherapee 비활성화"
 msgid "Disable TensorFlow"
 msgstr "TensorFlow 비활성화"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "벡터 비활성화"
 
@@ -844,11 +844,11 @@ msgstr "벡터 비활성화"
 msgid "Disable WebDAV"
 msgstr "WebDAV 비활성화"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "벡터 그래픽 지원을 비활성화합니다."
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "동영상 트랜스코딩 및 썸네일 추출을 비활성화합니다."
 
@@ -862,15 +862,15 @@ msgstr "디스커버"
 msgid "Display Name"
 msgstr "닉네임"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "RAW 파일을 변환하는 데 Darktable을 사용하지 마십시오."
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "이미지 변환에 ImageMagick을 사용하지 마세요."
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "RawTherapee를 사용하여 RAW 파일을 변환하지 마십시오."
 
@@ -917,7 +917,7 @@ msgstr "단일 파일 및 ZIP 아카이브 다운로드하기."
 msgid "Downloading…"
 msgstr "다운로드 중…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "축소 필터"
 
@@ -933,11 +933,11 @@ msgstr "중복은 건너뛰고 한 번만 나타납니다."
 msgid "Duration"
 msgstr "기간"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "다이나믹 미리보기"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "다이나믹 크기 제한: %{n}px"
 
@@ -980,7 +980,7 @@ msgstr "디버그 모드를 활성화하면 추가 로그를 표시하고 문제
 msgid "Enable new features currently under development."
 msgstr "현재 개발중인 새로운 기능을 활성화하기."
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "RAW 변환기 사전 설정을 활성화합니다. 성능이 저하될 수 있습니다."
 
@@ -1126,7 +1126,7 @@ msgstr "파일"
 msgid "File Browser"
 msgstr "파일 탐색기"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "파일 변환"
 
@@ -1289,7 +1289,7 @@ msgstr "이미지"
 msgid "Image"
 msgstr "이미지"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "이미지 품질"
 
@@ -1407,11 +1407,11 @@ msgstr "이는 귀하가 사용할 때 귀하의 계정에 대한 2FA를 비활�
 msgid "Item"
 msgstr "아이템"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG 품질: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG 크기 제한: %{n}px"
 
@@ -1828,7 +1828,7 @@ msgstr "오래된 순"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "Windows의 경우 연결 대화 상자에 다음 리소스를 입력합니다."
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "썸네일을 주문형으로 생성하면 CPU 및 메모리 사용량이 높아질 수 있습니다. 리소스가 제한된 서버 및 NAS 장치에는 권장되지 않습니다."
 
@@ -1979,10 +1979,6 @@ msgstr "사진"
 msgid "Picture Title"
 msgstr "사진 제목"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "불쾌감을 줄 수 있는 업로드를 허용합니다. 안전하지 않은 콘텐츠를 감지하려면 TensorFlow가 필요합니다."
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "분홍색"
@@ -2032,7 +2028,7 @@ msgstr "변경 사항을 적용하려면 인스턴스를 다시 시작하세요.
 msgid "Please wait…"
 msgstr "잠시만 기다려주세요…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG 크기 제한: %{n}px"
 
@@ -2060,11 +2056,15 @@ msgstr "새 앨범을 만들려면 Enter 키를 누르세요."
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "다른 앱이 공유 네트워크 드라이브로서 PhotoPrism에 액세스하지 못하도록 합니다."
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "미리보기"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "이미지 미리보기"
@@ -2210,7 +2210,7 @@ msgid "Resolution"
 msgstr "해상도"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "다시 시작"
 
@@ -2396,7 +2396,7 @@ msgstr "라이브러리에 서버 로그를 표시합니다."
 msgid "Sidecar"
 msgstr "사이드카"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "사이드카 파일"
 
@@ -2467,7 +2467,7 @@ msgstr "슬라이드쇼 시작/중지"
 msgid "States"
 msgstr "상태"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "스태틱 크지 제한: %{n}px"
 
@@ -2789,7 +2789,7 @@ msgstr "이러한 이미지가 포함될 수 있는 업로드는 자동으로 �
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "사전 설정 사용"
 
@@ -2984,6 +2984,12 @@ msgstr "라이브러리는 지속적으로 분석되어 특별한 순간, 여행
 msgid "Zoom in/out"
 msgstr "확대/축소"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "NSFW 업로드"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "불쾌감을 줄 수 있는 업로드를 허용합니다. 안전하지 않은 콘텐츠를 감지하려면 TensorFlow가 필요합니다."
+
 #~ msgid "File Format Support"
 #~ msgstr "파일 형식 지원"
 
@@ -3013,9 +3019,6 @@ msgstr "확대/축소"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "인증 앱이나 기기에 액세스할 수 없나요? 복구 코드를 입력하거나 도움을 요청하세요."
-
-#~ msgid "Disable Backups"
-#~ msgstr "백업 비활성화"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "YAML 파일에 사진과 앨범 메타데이터를 백업하지 않기."

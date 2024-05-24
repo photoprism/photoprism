@@ -199,7 +199,7 @@ msgstr "Efter två veckor"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "Säkerhetskopiering av album"
 
@@ -274,10 +274,6 @@ msgstr "Alla original"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Alla år"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Ladda upp NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "Skapa automatiskt miniatyrbilder för filer som annars inte kan indexera
 msgid "Back"
 msgstr "Tillbaka"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "Säkerhetskopiering"
 
@@ -543,7 +539,7 @@ msgstr "Ändra den privata flaggan"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "Ändringarna har sparats"
@@ -695,15 +691,15 @@ msgstr "Skapa ett konto"
 msgid "Create album"
 msgstr "Skapa album"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "Skapa säkerhetskopior av index enligt det konfigurerade schemat."
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "Skapa YAML-filer för att säkerhetskopiera metadata för album."
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Skapa YAML sidecar-filer för att säkerhetskopiera metadata för bilder."
 
@@ -735,7 +731,7 @@ msgstr "Cyan"
 msgid "Daily"
 msgstr "Dagligen"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "Säkerhetskopiering av databaser"
 
@@ -800,7 +796,11 @@ msgstr "Detaljer"
 msgid "Dimensions"
 msgstr "Mått"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "Inaktivera säkerhetskopiering"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "Inaktivera Darktable"
 
@@ -812,11 +812,11 @@ msgstr "Inaktivera ExifTool"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Inaktivera funktioner som kräver skrivbehörighet för originalmappen."
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "Inaktivera FFmpeg"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "Inaktivera ImageMagick"
 
@@ -828,7 +828,7 @@ msgstr "Inaktivera interaktiva världskartor och omvänd geokodning."
 msgid "Disable Places"
 msgstr "Inaktivera platser"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "Inaktivera RawTherapee"
 
@@ -836,7 +836,7 @@ msgstr "Inaktivera RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "Inaktivera TensorFlow"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "Inaktivera vektorer"
 
@@ -844,11 +844,11 @@ msgstr "Inaktivera vektorer"
 msgid "Disable WebDAV"
 msgstr "Inaktivera WebDAV"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "Inaktiverar stöd för vektorgrafik."
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Inaktiverar omkodning av video och utvinning av miniatyrbilder."
 
@@ -862,15 +862,15 @@ msgstr "Upptäck"
 msgid "Display Name"
 msgstr "Visningsnamn"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Använd inte Darktable för att konvertera RAW-bilder."
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "Använd inte ImageMagick för att konvertera bilder."
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Använd inte RawTherapee för att konvertera RAW-bilder."
 
@@ -917,7 +917,7 @@ msgstr "Ladda ner enskilda filer och zip-arkiv."
 msgid "Downloading…"
 msgstr "Hämtar…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "Filter för nedskalning"
 
@@ -933,11 +933,11 @@ msgstr "Dubletter kommer att hoppas över och visas endast en gång."
 msgid "Duration"
 msgstr "Varaktighet"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "Dynamiska förhandsgranskningar"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Begränsning av dynamisk storlek: %{n}px"
 
@@ -980,7 +980,7 @@ msgstr "Aktivera felsökningsläget för att visa ytterligare loggar och hjälpa
 msgid "Enable new features currently under development."
 msgstr "Aktivera nya funktioner som är under utveckling."
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverar förinställningar för RAW-omvandlare. Kan minska prestandan."
 
@@ -1126,7 +1126,7 @@ msgstr "Fil"
 msgid "File Browser"
 msgstr "Filhanterare"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "Konvertering av filer"
 
@@ -1289,7 +1289,7 @@ msgstr "bild"
 msgid "Image"
 msgstr "Bild"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "Bildkvalitet"
 
@@ -1407,11 +1407,11 @@ msgstr "Det är en engångskod som kommer att inaktivera 2FA för ditt konto nä
 msgid "Item"
 msgstr "Artikel"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG-kvalitet: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Begränsning av JPEG-storlek: %{n}px"
 
@@ -1828,7 +1828,7 @@ msgstr "Äldsta först"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "I Windows anger du följande resurs i anslutningsdialogen:"
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Generering av miniatyrbilder på begäran kan orsaka hög CPU- och minnesanvändning. Det rekommenderas inte för resursbegränsade servrar och NAS-enheter."
 
@@ -1979,10 +1979,6 @@ msgstr "Foton"
 msgid "Picture Title"
 msgstr "Bildtitel"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Tillåt uppladdningar som kan vara stötande. För att upptäcka osäkert innehåll krävs TensorFlow."
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Rosa"
@@ -2032,7 +2028,7 @@ msgstr "Starta om din instans för att ändringarna ska träda i kraft."
 msgid "Please wait…"
 msgstr "Vänligen vänta…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "Begränsning av PNG-storlek: %{n}px"
 
@@ -2060,11 +2056,15 @@ msgstr "Tryck på enter för att skapa ett nytt album."
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "Hindra andra program från att komma åt PhotoPrism som en delad nätverksenhet."
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Förhandsgranska"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Förhandsbilder"
@@ -2210,7 +2210,7 @@ msgid "Resolution"
 msgstr "Upplösning"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "Starta om"
 
@@ -2396,7 +2396,7 @@ msgstr "Visa serverloggar i biblioteket."
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "Sidecar Files"
 
@@ -2467,7 +2467,7 @@ msgstr "Starta/stoppa bildspel"
 msgid "States"
 msgstr "Stater"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "Statisk storleksgräns: %{n}px"
 
@@ -2789,7 +2789,7 @@ msgstr "Uppladdningar som kan innehålla sådana bilder kommer automatiskt att a
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "Använd förinställningar"
 
@@ -2986,6 +2986,12 @@ msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "Ladda upp NSFW"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "Tillåt uppladdningar som kan vara stötande. För att upptäcka osäkert innehåll krävs TensorFlow."
+
 #~ msgid "File Format Support"
 #~ msgstr "Stöd för filformat"
 
@@ -3015,9 +3021,6 @@ msgstr "Zooma in/ut"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Kan du inte komma åt din autentiseringsapp eller enhet? Ange din återställningskod eller be om hjälp."
-
-#~ msgid "Disable Backups"
-#~ msgstr "Inaktivera säkerhetskopiering"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "Säkerhetskopiera inte metadata för foton och album till YAML-filer."

@@ -22,7 +22,7 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 	maxSize := strconv.Itoa(c.conf.JpegSize())
 
 	// Apple Scriptable image processing system: https://ss64.com/osx/sips.html
-	if (f.IsRaw() || f.IsHEIF()) && c.conf.SipsEnabled() && c.sipsBlacklist.Allow(fileExt) {
+	if (f.IsRaw() || f.IsHEIF()) && c.conf.SipsEnabled() && c.sipsSkip.Allow(fileExt) {
 		result = append(result, exec.Command(c.conf.SipsBin(), "-Z", maxSize, "-s", "format", "jpeg", "--out", jpegName, f.FileName()))
 	}
 
@@ -39,7 +39,7 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 
 	// RAW files may be concerted with Darktable and RawTherapee.
 	if f.IsRaw() && c.conf.RawEnabled() {
-		if c.conf.DarktableEnabled() && c.darktableBlacklist.Allow(fileExt) {
+		if c.conf.DarktableEnabled() && c.darktableSkip.Allow(fileExt) {
 			var args []string
 
 			// Set RAW, XMP, and JPEG filenames.
@@ -72,7 +72,7 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 			result = append(result, exec.Command(c.conf.DarktableBin(), args...))
 		}
 
-		if c.conf.RawTherapeeEnabled() && c.rawtherapeeBlacklist.Allow(fileExt) {
+		if c.conf.RawTherapeeEnabled() && c.rawtherapeeSkip.Allow(fileExt) {
 			jpegQuality := fmt.Sprintf("-j%d", c.conf.JpegQuality())
 			profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")
 
@@ -94,7 +94,7 @@ func (c *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 	}
 
 	// Try ImageMagick for other image file formats if allowed.
-	if c.conf.ImageMagickEnabled() && c.imagemagickBlacklist.Allow(fileExt) &&
+	if c.conf.ImageMagickEnabled() && c.imagemagickSkip.Allow(fileExt) &&
 		(f.IsImage() && !f.IsJpegXL() && !f.IsRaw() && !f.IsHEIF() || f.IsVector() && c.conf.VectorEnabled()) {
 		quality := fmt.Sprintf("%d", c.conf.JpegQuality())
 		resize := fmt.Sprintf("%dx%d>", c.conf.JpegSize(), c.conf.JpegSize())

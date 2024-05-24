@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/montanaflynn/stats"
+
 	"github.com/photoprism/photoprism/pkg/clusters"
 )
 

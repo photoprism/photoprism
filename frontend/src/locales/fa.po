@@ -199,7 +199,7 @@ msgstr "بعد از دو هفته"
 msgid "Album"
 msgstr "آلبوم"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "پشتیبان گیری از آلبوم"
 
@@ -274,10 +274,6 @@ msgstr "همه اصل"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "همه سالها"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "NSFW را آپلود کنید"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "به طور خودکار تصاویر کوچک برای فایل های�
 msgid "Back"
 msgstr "بازگشت"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "پشتیبان گیری"
 
@@ -543,7 +539,7 @@ msgstr "تغییر پرچم خصوصی"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "تغییرات با موفقیت ذخیره شد"
@@ -695,15 +691,15 @@ msgstr "ایجاد حساب کاربری"
 msgid "Create album"
 msgstr "ایجاد آلبوم"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "بر اساس زمانبندی پیکربندی شده، پشتیبان گیری از فهرست ایجاد کنید."
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "فایل های YAML را برای پشتیبان گیری از فراداده آلبوم ایجاد کنید."
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "فایل های YAML sidecar را برای پشتیبان گیری از متادیتای تصویر ایجاد کنید."
 
@@ -735,7 +731,7 @@ msgstr "فیروزه ای"
 msgid "Daily"
 msgstr "روزانه"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "پشتیبان گیری از پایگاه داده"
 
@@ -800,7 +796,11 @@ msgstr "جزئیات"
 msgid "Dimensions"
 msgstr "ابعاد"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "غیرفعال کردن پشتیبان گیری"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "غیرفعال کردن Darktable"
 
@@ -812,11 +812,11 @@ msgstr "غیرفعال کردن exiftool"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "ویژگی هایی را که به مجوز نوشتن برای پوشه اصلی نیاز دارند غیرفعال کنید."
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "غیرفعال کردن ffmpeg"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "ImageMagick را غیرفعال کنید"
 
@@ -828,7 +828,7 @@ msgstr "غیرفعال کردن نقشه های تعاملی جهان و معک�
 msgid "Disable Places"
 msgstr "غیرفعال کردن مکان ها"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "غیرفعال کردن Rawtherapee"
 
@@ -836,7 +836,7 @@ msgstr "غیرفعال کردن Rawtherapee"
 msgid "Disable TensorFlow"
 msgstr "غیرفعال کردن tensorflow"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "غیرفعال کردن بردارها"
 
@@ -844,11 +844,11 @@ msgstr "غیرفعال کردن بردارها"
 msgid "Disable WebDAV"
 msgstr "غیرفعال کردن WebDAV"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "پشتیبانی از گرافیک برداری را غیرفعال می کند."
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "رمزگذاری ویدیو و استخراج تصاویر کوچک را غیرفعال می کند."
 
@@ -862,15 +862,15 @@ msgstr "کشف"
 msgid "Display Name"
 msgstr "نام نمایشی"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "از DarkTable برای تبدیل پرونده های خام استفاده نکنید."
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "برای تبدیل تصاویر از ImageMagick استفاده نکنید."
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "از rawtherapee برای تبدیل پرونده های خام استفاده نکنید."
 
@@ -917,7 +917,7 @@ msgstr "بارگیری پرونده های تک و بایگانی زیپ."
 msgid "Downloading…"
 msgstr "درحال دانلود…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "فیلتر کاهش مقیاس"
 
@@ -933,11 +933,11 @@ msgstr "نسخه های تکراری پرش می شوند و فقط یک بار 
 msgid "Duration"
 msgstr "مدت"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "پیش نمایش پویا"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "محدودیت اندازه پویا: %{n}px"
 
@@ -980,7 +980,7 @@ msgstr "برای نمایش گزارش های اضافی و کمک به عیب �
 msgid "Enable new features currently under development."
 msgstr "فعال کردن ویژگی های جدید در حال توسعه."
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "فعال کردن RAW converter presets  . ممکن است عملکرد را کاهش دهد."
 
@@ -1126,7 +1126,7 @@ msgstr "فایل"
 msgid "File Browser"
 msgstr "مرورگر فایل"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "تبدیل فایل"
 
@@ -1289,7 +1289,7 @@ msgstr "تصویر"
 msgid "Image"
 msgstr "تصویر"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "کیفیت تصویر"
 
@@ -1407,11 +1407,11 @@ msgstr "این یک کد یکبار مصرف است که هنگام استفاد
 msgid "Item"
 msgstr "مورد"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "کیفیت JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "محدودیت اندازه JPEG: %{n}px"
 
@@ -1828,7 +1828,7 @@ msgstr "اول قدیمی‌تر ها"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "در ویندوز، منبع زیر را در گفتگوی اتصال وارد کنید:"
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "تولید تصاویر بندانگشتی بر اساس تقاضا ممکن است باعث مصرف بالای CPU و حافظه شود. برای سرورهای دارای محدودیت منابع و دستگاه های NAS توصیه نمی شود."
 
@@ -1979,10 +1979,6 @@ msgstr "تصاویر"
 msgid "Picture Title"
 msgstr "عنوان تصویر"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "آپلودهایی را که ممکن است توهین آمیز باشند مجاز کنید. شناسایی محتوای ناامن به TensorFlow نیاز دارد."
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "صورتی"
@@ -2032,7 +2028,7 @@ msgstr "لطفاً نمونه خود را مجدداً راه اندازی کن�
 msgid "Please wait…"
 msgstr "لطفا صبر کنید…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "محدودیت اندازه PNG: %{n}px"
 
@@ -2060,11 +2056,15 @@ msgstr "برای ایجاد یک آلبوم جدید، اینتر را فشار 
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "از دسترسی سایر برنامه ها به PhotoPrism به عنوان درایو شبکه مشترک جلوگیری کنید."
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "پیش نمایش"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "پیش نمایش تصاویر"
@@ -2210,7 +2210,7 @@ msgid "Resolution"
 msgstr "رزولوشن"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "راه اندازی مجدد"
 
@@ -2396,7 +2396,7 @@ msgstr "نمایش گزارش‌های سرور در کتابخانه."
 msgid "Sidecar"
 msgstr "جانبی"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "فایل های Sidecar"
 
@@ -2467,7 +2467,7 @@ msgstr "شروع/پایان اسلایدشو"
 msgid "States"
 msgstr "ایالت ها"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "محدودیت اندازه ثابت: %{n}px"
 
@@ -2789,7 +2789,7 @@ msgstr "آپلودهایی که ممکن است حاوی چنین تصاویری
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "از Presets استفاده کنید"
 
@@ -2986,6 +2986,12 @@ msgstr "کتابخانه شما به طور مداوم تجزیه و تحلیل 
 msgid "Zoom in/out"
 msgstr "بزرگنمایی/کوچک کردن"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "NSFW را آپلود کنید"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "آپلودهایی را که ممکن است توهین آمیز باشند مجاز کنید. شناسایی محتوای ناامن به TensorFlow نیاز دارد."
+
 #~ msgid "File Format Support"
 #~ msgstr "پشتیبانی از فرمت فایل"
 
@@ -3015,9 +3021,6 @@ msgstr "بزرگنمایی/کوچک کردن"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "نمی توانید به برنامه یا دستگاه احراز هویت خود دسترسی پیدا کنید؟ کد بازیابی خود را وارد کنید یا درخواست کمک کنید."
-
-#~ msgid "Disable Backups"
-#~ msgstr "غیرفعال کردن پشتیبان گیری"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "از ابرداده عکس و آلبوم به پرونده های YAML نسخه پشتیبان تهیه نکنید."

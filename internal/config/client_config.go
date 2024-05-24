@@ -118,9 +118,10 @@ type ClientDisable struct {
 	TensorFlow     bool `json:"tensorflow"`
 	Faces          bool `json:"faces"`
 	Classification bool `json:"classification"`
-	Sips           bool `json:"sips"`
 	FFmpeg         bool `json:"ffmpeg"`
 	ExifTool       bool `json:"exiftool"`
+	Vips           bool `json:"vips"`
+	Sips           bool `json:"sips"`
 	Darktable      bool `json:"darktable"`
 	RawTherapee    bool `json:"rawtherapee"`
 	ImageMagick    bool `json:"imagemagick"`
@@ -417,17 +418,18 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	cfg := ClientConfig{
 		Settings: s,
 		Disable: ClientDisable{
+			Settings:       c.DisableSettings(),
+			Backups:        c.DisableBackups(),
 			Restart:        c.DisableRestart(),
 			WebDAV:         c.DisableWebDAV(),
-			Settings:       c.DisableSettings(),
 			Places:         c.DisablePlaces(),
-			Backups:        c.DisableBackups(),
 			TensorFlow:     c.DisableTensorFlow(),
 			Faces:          c.DisableFaces(),
 			Classification: c.DisableClassification(),
-			Sips:           c.DisableSips(),
 			FFmpeg:         c.DisableFFmpeg(),
 			ExifTool:       c.DisableExifTool(),
+			Vips:           c.DisableVips(),
+			Sips:           c.DisableSips(),
 			Darktable:      c.DisableDarktable(),
 			RawTherapee:    c.DisableRawTherapee(),
 			ImageMagick:    c.DisableImageMagick(),

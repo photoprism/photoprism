@@ -20,9 +20,9 @@ func (c *Config) ImageMagickBin() string {
 	return findBin(c.options.ImageMagickBin, "convert")
 }
 
-// ImageMagickBlacklist returns the ImageMagick file extension blacklist.
-func (c *Config) ImageMagickBlacklist() string {
-	return c.options.ImageMagickBlacklist
+// ImageMagickSkip returns the file extensions not to be used with ImageMagick.
+func (c *Config) ImageMagickSkip() string {
+	return c.options.ImageMagickSkip
 }
 
 // ImageMagickEnabled checks if ImageMagick can be used for converting media files.

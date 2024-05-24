@@ -152,21 +152,6 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("STORAGE_PATH"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "sidecar-path, sc",
-			Usage:  "custom relative or absolute sidecar `PATH` *optional*",
-			EnvVar: EnvVar("SIDECAR_PATH"),
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "sidecar-yaml",
-			Usage:  "create YAML sidecar files to back up picture metadata",
-			EnvVar: EnvVar("SIDECAR_YAML"),
-		}, DocDefault: "true"}, {
-		Flag: cli.StringFlag{
-			Name:   "cache-path, ca",
-			Usage:  "custom cache `PATH` for sessions and thumbnail files *optional*",
-			EnvVar: EnvVar("CACHE_PATH"),
-		}}, {
-		Flag: cli.StringFlag{
 			Name:   "import-path, im",
 			Usage:  "base `PATH` from which files can be imported to originals *optional*",
 			EnvVar: EnvVar("IMPORT_PATH"),
@@ -177,15 +162,30 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("IMPORT_DEST"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "assets-path, as",
-			Usage:  "assets `PATH` containing static resources like icons, models, and translations",
-			EnvVar: EnvVar("ASSETS_PATH"),
+			Name:   "cache-path, ca",
+			Usage:  "custom cache `PATH` for sessions and thumbnail files *optional*",
+			EnvVar: EnvVar("CACHE_PATH"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "temp-path, tmp",
 			Usage:  "temporary file `PATH` *optional*",
 			EnvVar: EnvVar("TEMP_PATH"),
 		}}, {
+		Flag: cli.StringFlag{
+			Name:   "assets-path, as",
+			Usage:  "assets `PATH` containing static resources like icons, models, and translations",
+			EnvVar: EnvVar("ASSETS_PATH"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "sidecar-path, sc",
+			Usage:  "custom relative or absolute sidecar `PATH` *optional*",
+			EnvVar: EnvVar("SIDECAR_PATH"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "sidecar-yaml",
+			Usage:  "create YAML sidecar files to back up picture metadata",
+			EnvVar: EnvVar("SIDECAR_YAML"),
+		}, DocDefault: "true"}, {
 		Flag: cli.StringFlag{
 			Name:   "backup-path, ba",
 			Usage:  "custom base `PATH` for creating and restoring backups *optional*",
@@ -259,15 +259,14 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DISABLE_SETTINGS"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-restart",
-			Usage:  "do not allow admins to restart the server from the user interface",
-			EnvVar: EnvVar("DISABLE_RESTART"),
+			Name:   "disable-backups",
+			Usage:  "prevent database and album backups as well as YAML sidecar files from being created",
+			EnvVar: EnvVar("DISABLE_BACKUPS"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-backups",
-			Usage:  "disable creating and updating YAML sidecar files (does not affect index and album backups)",
-			EnvVar: EnvVar("DISABLE_BACKUPS"),
-			Hidden: true,
+			Name:   "disable-restart",
+			Usage:  "prevent admins from restarting the server through the user interface",
+			EnvVar: EnvVar("DISABLE_RESTART"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-webdav",
@@ -295,11 +294,6 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DISABLE_CLASSIFICATION"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-sips",
-			Usage:  "disable conversion of media files with Sips *macOS only*",
-			EnvVar: EnvVar("DISABLE_SIPS"),
-		}}, {
-		Flag: cli.BoolFlag{
 			Name:   "disable-ffmpeg",
 			Usage:  "disable video transcoding and thumbnail extraction with FFmpeg",
 			EnvVar: EnvVar("DISABLE_FFMPEG"),
@@ -308,6 +302,16 @@ var Flags = CliFlags{
 			Name:   "disable-exiftool",
 			Usage:  "disable metadata extraction with ExifTool (required for full Video, Live Photo, and XMP support)",
 			EnvVar: EnvVar("DISABLE_EXIFTOOL"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-vips",
+			Usage:  "disable image processing and conversion with libvips",
+			EnvVar: EnvVar("DISABLE_VIPS"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-sips",
+			Usage:  "disable file conversion using the sips command under macOS",
+			EnvVar: EnvVar("DISABLE_SIPS"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-darktable",
@@ -358,6 +362,12 @@ var Flags = CliFlags{
 			Name:   "upload-nsfw, n",
 			Usage:  "allow uploads that might be offensive (detecting unsafe content requires TensorFlow)",
 			EnvVar: EnvVar("UPLOAD_NSFW"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "upload-allow",
+			Usage:  "allow these file types for web uploads (comma-separated list of extensions; leave blank to allow all)",
+			EnvVar: EnvVar("UPLOAD_ALLOW"),
+			Hidden: true,
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "default-locale, lang",
@@ -476,7 +486,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "cors-origin",
-			Usage:  "origin `URL` from which browsers are allowed to perform cross-origin requests (leave empty to disable or use * to allow all)",
+			Usage:  "origin `URL` from which browsers are allowed to perform cross-origin requests (leave blank to disable or use * to allow all)",
 			EnvVar: EnvVar("CORS_ORIGIN"),
 			Value:  header.DefaultAccessControlAllowOrigin,
 		}}, {
@@ -635,18 +645,6 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DATABASE_CONNS_IDLE"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "sips-bin",
-			Usage:  "Sips `COMMAND` for media file conversion *macOS only*",
-			Value:  "sips",
-			EnvVar: EnvVar("SIPS_BIN"),
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "sips-blacklist",
-			Usage:  "do not use Sips to convert files with these `EXTENSIONS` *macOS only*",
-			Value:  "avif,avifs,thm",
-			EnvVar: EnvVar("SIPS_BLACKLIST"),
-		}}, {
-		Flag: cli.StringFlag{
 			Name:   "ffmpeg-bin",
 			Usage:  "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
 			Value:  ffmpeg.DefaultBin,
@@ -689,16 +687,28 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("EXIFTOOL_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "sips-bin",
+			Usage:  "Sips `COMMAND` for media file conversion *macOS only*",
+			Value:  "sips",
+			EnvVar: EnvVar("SIPS_BIN"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "sips-skip",
+			Usage:  "file `EXTENSIONS` not to be used with Sips *macOS only*",
+			Value:  "avif, avifs, thm",
+			EnvVar: EnvVar("SIPS_SKIP") + ", " + EnvVar("SIPS_BLACKLIST"),
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "darktable-bin",
 			Usage:  "Darktable CLI `COMMAND` for RAW to JPEG conversion",
 			Value:  "darktable-cli",
 			EnvVar: EnvVar("DARKTABLE_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "darktable-blacklist",
-			Usage:  "do not use Darktable to convert files with these `EXTENSIONS`",
+			Name:   "darktable-skip",
+			Usage:  "file `EXTENSIONS` not to be used with Darktable",
 			Value:  "thm",
-			EnvVar: EnvVar("DARKTABLE_BLACKLIST"),
+			EnvVar: EnvVar("DARKTABLE_SKIP") + ", " + EnvVar("DARKTABLE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "darktable-cache-path",
@@ -719,10 +729,10 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("RAWTHERAPEE_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "rawtherapee-blacklist",
-			Usage:  "do not use RawTherapee to convert files with these `EXTENSIONS`",
-			Value:  "dng,thm",
-			EnvVar: EnvVar("RAWTHERAPEE_BLACKLIST"),
+			Name:   "rawtherapee-skip",
+			Usage:  "file `EXTENSIONS` not to be used with RawTherapee",
+			Value:  "dng, thm",
+			EnvVar: EnvVar("RAWTHERAPEE_SKIP") + ", " + EnvVar("RAWTHERAPEE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "imagemagick-bin",
@@ -731,10 +741,10 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("IMAGEMAGICK_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "imagemagick-blacklist",
-			Usage:  "do not use ImageMagick to convert files with these `EXTENSIONS`",
-			Value:  "heif,heic,heics,avif,avifs,jxl,thm",
-			EnvVar: EnvVar("IMAGEMAGICK_BLACKLIST"),
+			Name:   "imagemagick-skip",
+			Usage:  "file `EXTENSIONS` not to be used with ImageMagick",
+			Value:  "heif, heic, heics, avif, avifs, jxl, thm",
+			EnvVar: EnvVar("IMAGEMAGICK_SKIP") + ", " + EnvVar("IMAGEMAGICK_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "heifconvert-bin",
@@ -744,12 +754,12 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "download-token",
-			Usage:  "`DEFAULT` download URL token for originals (leave empty for a random value)",
+			Usage:  "`DEFAULT` download URL token for originals (leave blank for a random value)",
 			EnvVar: EnvVar("DOWNLOAD_TOKEN"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "preview-token",
-			Usage:  "`DEFAULT` thumbnail and video streaming URL token (leave empty for a random value)",
+			Usage:  "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",
 			EnvVar: EnvVar("PREVIEW_TOKEN"),
 		}}, {
 		Flag: cli.StringFlag{

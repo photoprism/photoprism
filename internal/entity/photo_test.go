@@ -276,19 +276,19 @@ func TestPhoto_AddLabels(t *testing.T) {
 func TestPhoto_SetDescription(t *testing.T) {
 	t.Run("EmptyDescription", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
+		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
 		m.SetDescription("", SrcManual)
-		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
+		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
 	})
 	t.Run("DescriptionNotFromTheSameSource", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
+		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
 		m.SetDescription("new photo description", SrcName)
-		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
+		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
 	})
 	t.Run("Ok", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo15")
-		assert.Equal(t, "photo description blacklist", m.PhotoDescription)
+		assert.Equal(t, "photo description non-photographic", m.PhotoDescription)
 		m.SetDescription("new photo description", SrcMeta)
 		assert.Equal(t, "new photo description", m.PhotoDescription)
 	})

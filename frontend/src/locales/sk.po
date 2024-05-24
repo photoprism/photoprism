@@ -199,7 +199,7 @@ msgstr "Po dvoch týždňoch"
 msgid "Album"
 msgstr "Album"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "Zálohy albumov"
 
@@ -274,10 +274,6 @@ msgstr "Všetky originály"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "Všetky Roky"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "Nahrať NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "Automatické vytváranie miniatúr pre súbory, ktoré sa inak nedajú i
 msgid "Back"
 msgstr "späť"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "Záloha"
 
@@ -543,7 +539,7 @@ msgstr "Zmeniť privátne označenie"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "Zmeny boli úspešne uložené"
@@ -695,15 +691,15 @@ msgstr "Vytvoriť účet"
 msgid "Create album"
 msgstr "Vytvoriť album"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "Vytváranie záloh indexov na základe nakonfigurovaného plánu."
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "Vytvorenie súborov YAML na zálohovanie metadát albumu."
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Vytvorenie súborov YAML sidecar na zálohovanie metadát obrázkov."
 
@@ -735,7 +731,7 @@ msgstr "Tyrkysová"
 msgid "Daily"
 msgstr "Denne"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "Zálohovanie databázy"
 
@@ -800,7 +796,11 @@ msgstr "Detaily"
 msgid "Dimensions"
 msgstr "Rozmery"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "Posledná Záloha"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "Zakázať Darktable"
 
@@ -812,11 +812,11 @@ msgstr "Zakázať ExifTool"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "Zakážte funkcie, ktoré vyžadujú oprávnenie na zápis do priečinka originálov."
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "Zakázanie aplikácie FFmpeg"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "Zakázanie aplikácie ImageMagick"
 
@@ -828,7 +828,7 @@ msgstr "Zakázanie interaktívnych máp sveta a reverzného geokódovania."
 msgid "Disable Places"
 msgstr "Zakázať miesta"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "Zakázať RawTherapee"
 
@@ -836,7 +836,7 @@ msgstr "Zakázať RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "Zakázať TensorFlow"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "Zakázanie vektorov"
 
@@ -844,11 +844,11 @@ msgstr "Zakázanie vektorov"
 msgid "Disable WebDAV"
 msgstr "Zakázať WebDAV"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "Zakáže podporu vektorovej grafiky."
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "Zakáže prekódovanie videa a extrakciu miniatúr."
 
@@ -862,15 +862,15 @@ msgstr "Objaviť"
 msgid "Display Name"
 msgstr "Zobraziť meno"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "Na konverziu obrázkov RAW nepoužívajte program Darktable."
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "Na konverziu obrázkov nepoužívajte ImageMagick."
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "Na konverziu obrázkov RAW nepoužívajte program RawTherapee."
 
@@ -917,7 +917,7 @@ msgstr "Stiahnuť samostatné súbory a zip archívy."
 msgid "Downloading…"
 msgstr "Sťahovanie…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "Filter znižovania kvality"
 
@@ -933,11 +933,11 @@ msgstr "Duplikáty budú preskočené a zobrazia sa len raz."
 msgid "Duration"
 msgstr "Trvanie"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "Dynamické Ukážky"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "Limit dynamickej pamäte: %{n} px"
 
@@ -980,7 +980,7 @@ msgstr "Zapnutím režimu ladenia zobrazíte ďalšie protokoly a pomôžete pri
 msgid "Enable new features currently under development."
 msgstr "Povoliť nové funkcie, ktoré sú momentálne vo vývoji."
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Povolí predvoľby konvertora RAW. Môže znížiť výkon."
 
@@ -1126,7 +1126,7 @@ msgstr "Súbor"
 msgid "File Browser"
 msgstr "Prehliadač Súborov"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "Konverzia súborov"
 
@@ -1289,7 +1289,7 @@ msgstr "obrázok"
 msgid "Image"
 msgstr "Obrázok"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "Kvalita obrazu"
 
@@ -1407,11 +1407,11 @@ msgstr "Je to jednorazový kód, ktorý pri použití deaktivuje 2FA pre váš �
 msgid "Item"
 msgstr "Položka"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "Kvalita JPEG: %{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "Limit veľkosti JPEG: %{n} px"
 
@@ -1828,7 +1828,7 @@ msgstr "Najstaršie prvé"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "V systéme Windows zadajte do dialógového okna pripojenia nasledujúci zdroj:"
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "Generovanie miniatúr na požiadanie môže spôsobiť vysoké využitie CPU a pamäte. Neodporúča sa pre servery a zariadenia NAS s obmedzenými zdrojmi."
 
@@ -1979,10 +1979,6 @@ msgstr "Fotky"
 msgid "Picture Title"
 msgstr "Názov obrázka"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "Povoľte nahrávanie, ktoré by mohlo byť urážlivé. Detekcia nebezpečného obsahu vyžaduje TensorFlow."
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "Ružová"
@@ -2032,7 +2028,7 @@ msgstr "Reštartujte inštanciu, aby sa zmeny prejavili."
 msgid "Please wait…"
 msgstr "Počkajte, prosím…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "Limit veľkosti PNG: %{n} px"
 
@@ -2060,11 +2056,15 @@ msgstr "Stlačte enter pre vytvorenie nového albumu."
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "Zabráňte iným aplikáciám v prístupe k aplikácii PhotoPrism ako k zdieľanej sieťovej jednotke."
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "Ukážka"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "Náhľad obrázkov"
@@ -2210,7 +2210,7 @@ msgid "Resolution"
 msgstr "Rozlíšenie"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "Reštartovanie stránky"
 
@@ -2396,7 +2396,7 @@ msgstr "Zobraziť serverové záznamy v knižnici."
 msgid "Sidecar"
 msgstr "Pripojený súbor (sidecar)"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "Súbory Sidecar"
 
@@ -2467,7 +2467,7 @@ msgstr "Spustiť/Zastaviť Prezentáciu"
 msgid "States"
 msgstr "Štáty"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "Statický limit veľkosti: %{n} px"
 
@@ -2789,7 +2789,7 @@ msgstr "Odovzdávanie takéhoto typu fotiek bude automaticky odmietnuté."
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "Použiť predvoľbu"
 
@@ -2984,6 +2984,12 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "Nahrať NSFW"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "Povoľte nahrávanie, ktoré by mohlo byť urážlivé. Detekcia nebezpečného obsahu vyžaduje TensorFlow."
+
 #~ msgid "File Format Support"
 #~ msgstr "Podpora formátu súborov"
 
@@ -3013,9 +3019,6 @@ msgstr "Priblíziť/Oddialiť"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "Nemáte prístup k svojej autentifikačnej aplikácii alebo zariadeniu? Zadajte kód na obnovenie alebo požiadajte o pomoc."
-
-#~ msgid "Disable Backups"
-#~ msgstr "Posledná Záloha"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "Nezálohovať metadáta fotografií a albumov do súborov YAML."

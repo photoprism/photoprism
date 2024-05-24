@@ -199,7 +199,7 @@ msgstr "两周后"
 msgid "Album"
 msgstr "相册"
 
-#: src/page/settings/advanced.vue:352
+#: src/page/settings/advanced.vue:354
 msgid "Album Backups"
 msgstr "相册备份"
 
@@ -274,10 +274,6 @@ msgstr "全部源图"
 #: src/component/photo/toolbar.vue:65 src/page/albums.vue:84
 msgid "All Years"
 msgstr "全部年份"
-
-#: src/page/settings/advanced.vue:193
-msgid "Allow NSFW Uploads"
-msgstr "上传 NSFW"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -393,7 +389,7 @@ msgstr "自动为无法索引或查看的文件创建缩略图。"
 msgid "Back"
 msgstr "后退"
 
-#: src/page/settings/advanced.vue:68
+#: src/page/settings/advanced.vue:69 src/page/settings/advanced.vue:3
 msgid "Backup"
 msgstr "备份"
 
@@ -543,7 +539,7 @@ msgstr "更改私有标记"
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
 #: src/page/settings/account.vue:128 src/page/settings/account.vue:146
-#: src/page/settings/advanced.vue:55 src/page/settings/general.vue:100
+#: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
 msgstr "更改成功保存"
@@ -695,15 +691,15 @@ msgstr "创建账户"
 msgid "Create album"
 msgstr "创建相册"
 
-#: src/page/settings/advanced.vue:374
+#: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
 msgstr "根据配置的时间表创建索引备份。"
 
-#: src/page/settings/advanced.vue:353
+#: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
 msgstr "创建 YAML 文件来备份相册元数据。"
 
-#: src/page/settings/advanced.vue:332
+#: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "创建 YAML sidecar 文件来备份图片元数据。"
 
@@ -735,7 +731,7 @@ msgstr "青"
 msgid "Daily"
 msgstr "每日"
 
-#: src/page/settings/advanced.vue:373
+#: src/page/settings/advanced.vue:375
 msgid "Database Backups"
 msgstr "数据库备份"
 
@@ -800,7 +796,11 @@ msgstr "细节"
 msgid "Dimensions"
 msgstr "尺寸"
 
-#: src/page/settings/advanced.vue:670
+#: src/page/settings/advanced.vue:193
+msgid "Disable Backups"
+msgstr "禁用备份"
+
+#: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
 msgstr "禁用 Darktable"
 
@@ -812,11 +812,11 @@ msgstr "禁用 ExifTool"
 msgid "Disable features that require write permission for the originals folder."
 msgstr "禁用需要原件文件夹写入权限的功能。"
 
-#: src/page/settings/advanced.vue:758
+#: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
 msgstr "禁用 FFmpeg"
 
-#: src/page/settings/advanced.vue:736
+#: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
 msgstr "禁用ImageMagick"
 
@@ -828,7 +828,7 @@ msgstr "禁用交互式世界地图和反向地理编码。"
 msgid "Disable Places"
 msgstr "禁用地点"
 
-#: src/page/settings/advanced.vue:692
+#: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
 msgstr "禁用 RawTherapee"
 
@@ -836,7 +836,7 @@ msgstr "禁用 RawTherapee"
 msgid "Disable TensorFlow"
 msgstr "禁用 TensorFlow"
 
-#: src/page/settings/advanced.vue:782
+#: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
 msgstr "禁用载体"
 
@@ -844,11 +844,11 @@ msgstr "禁用载体"
 msgid "Disable WebDAV"
 msgstr "禁用 WebDAV"
 
-#: src/page/settings/advanced.vue:783
+#: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
 msgstr "禁用矢量图形支持。"
 
-#: src/page/settings/advanced.vue:759
+#: src/page/settings/advanced.vue:763
 msgid "Disables video transcoding and thumbnail extraction."
 msgstr "禁用视频转码和缩略图提取。"
 
@@ -862,15 +862,15 @@ msgstr "探索"
 msgid "Display Name"
 msgstr "昵称"
 
-#: src/page/settings/advanced.vue:671
+#: src/page/settings/advanced.vue:675
 msgid "Don't use Darktable to convert RAW images."
 msgstr "不使用 Darktable 转换 RAW 文件。"
 
-#: src/page/settings/advanced.vue:737
+#: src/page/settings/advanced.vue:741
 msgid "Don't use ImageMagick to convert images."
 msgstr "不要用ImageMagick来转换图像。"
 
-#: src/page/settings/advanced.vue:693
+#: src/page/settings/advanced.vue:697
 msgid "Don't use RawTherapee to convert RAW images."
 msgstr "不使用 RawTherapee 转换 RAW 文件。"
 
@@ -917,7 +917,7 @@ msgstr "下载单个文件并用 zip 压缩。"
 msgid "Downloading…"
 msgstr "下载中…"
 
-#: src/page/settings/advanced.vue:426
+#: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
 msgstr "缩小方法"
 
@@ -933,11 +933,11 @@ msgstr "重复项将被跳过，仅出现一次。"
 msgid "Duration"
 msgstr "持续时间"
 
-#: src/page/settings/advanced.vue:503
+#: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
 msgstr "动态预览"
 
-#: src/page/settings/advanced.vue:472
+#: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
 msgstr "动态尺寸限制：%{n}px"
 
@@ -980,7 +980,7 @@ msgstr "启用调试模式可显示更多日志，帮助排除故障。"
 msgid "Enable new features currently under development."
 msgstr "启用处于开发中的新特性。"
 
-#: src/page/settings/advanced.vue:715
+#: src/page/settings/advanced.vue:719
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "启用 RAW 转换器预设，可能会降低性能。"
 
@@ -1126,7 +1126,7 @@ msgstr "文件"
 msgid "File Browser"
 msgstr "文件浏览器"
 
-#: src/page/settings/advanced.vue:161
+#: src/page/settings/advanced.vue:163
 msgid "File Conversion"
 msgstr "文件转换"
 
@@ -1289,7 +1289,7 @@ msgstr "图片"
 msgid "Image"
 msgstr "图片"
 
-#: src/page/settings/advanced.vue:126
+#: src/page/settings/advanced.vue:128
 msgid "Image Quality"
 msgstr "图像质量"
 
@@ -1407,11 +1407,11 @@ msgstr "这是一个一次性使用的代码，当您使用它时将禁用您帐
 msgid "Item"
 msgstr "项目"
 
-#: src/page/settings/advanced.vue:549
+#: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
 msgstr "JPEG 质量：%{n}"
 
-#: src/page/settings/advanced.vue:575
+#: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
 msgstr "JPEG 尺寸限制：%{n}px"
 
@@ -1828,7 +1828,7 @@ msgstr "最旧优先"
 msgid "On Windows, enter the following resource in the connection dialog:"
 msgstr "在 Windows 上，连接对话框中使用以下资源："
 
-#: src/page/settings/advanced.vue:504
+#: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
 msgstr "按需生成缩略图可能会导致较高的 CPU 和内存使用率。不建议资源有限的服务器和 NAS 设备使用。"
 
@@ -1980,10 +1980,6 @@ msgstr "照片"
 msgid "Picture Title"
 msgstr "图片标题"
 
-#: src/page/settings/advanced.vue:194
-msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
-msgstr "允许上传可能具有攻击性的内容。检测不安全内容需要 TensorFlow。"
-
 #: src/options/options.js:441
 msgid "Pink"
 msgstr "粉红"
@@ -2033,7 +2029,7 @@ msgstr "请重新启动您的实例以使变化生效。"
 msgid "Please wait…"
 msgstr "请等待…"
 
-#: src/page/settings/advanced.vue:606
+#: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
 msgstr "PNG 尺寸限制：%{n}px"
 
@@ -2061,11 +2057,15 @@ msgstr "按下 Enter 键创建一个新相册。"
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr "防止其他应用程序将 PhotoPrism 作为共享网络驱动器访问。"
 
+#: src/page/settings/advanced.vue:194
+msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
 msgstr "预览"
 
-#: src/page/settings/advanced.vue:93 src/page/settings/advanced.vue:395
+#: src/page/settings/advanced.vue:95 src/page/settings/advanced.vue:399
 #: src/page/settings/library.vue:111
 msgid "Preview Images"
 msgstr "图片预览"
@@ -2212,7 +2212,7 @@ msgid "Resolution"
 msgstr "分辨率"
 
 #: src/page/connect.vue:65 src/page/connect.vue:62
-#: src/page/settings/advanced.vue:204
+#: src/page/settings/advanced.vue:206
 msgid "Restart"
 msgstr "重新启动"
 
@@ -2398,7 +2398,7 @@ msgstr "在库中显示服务器日志。"
 msgid "Sidecar"
 msgstr "附属"
 
-#: src/page/settings/advanced.vue:331
+#: src/page/settings/advanced.vue:333
 msgid "Sidecar Files"
 msgstr "Sidecar 文件"
 
@@ -2469,7 +2469,7 @@ msgstr "开始/停止幻灯片"
 msgid "States"
 msgstr "省份"
 
-#: src/page/settings/advanced.vue:445
+#: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
 msgstr "静态渲染尺寸限制： %{n}px"
 
@@ -2791,7 +2791,7 @@ msgstr "可能包含此类图像的上传将被自动拒绝。"
 msgid "URL"
 msgstr "URL"
 
-#: src/page/settings/advanced.vue:714
+#: src/page/settings/advanced.vue:718
 msgid "Use Presets"
 msgstr "使用预设"
 
@@ -2986,6 +2986,12 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 msgid "Zoom in/out"
 msgstr "缩放"
 
+#~ msgid "Allow NSFW Uploads"
+#~ msgstr "上传 NSFW"
+
+#~ msgid "Pictures that might be offensive will otherwise be rejected when using the web upload."
+#~ msgstr "允许上传可能具有攻击性的内容。检测不安全内容需要 TensorFlow。"
+
 #~ msgid "File Format Support"
 #~ msgstr "文件格式支持"
 
@@ -3015,9 +3021,6 @@ msgstr "缩放"
 
 #~ msgid "Can't access your authenticator app or device? Enter your recovery code or ask for assistance."
 #~ msgstr "无法访问您的身份验证器应用或设备？请输入您的恢复代码或寻求帮助。"
-
-#~ msgid "Disable Backups"
-#~ msgstr "禁用备份"
 
 #~ msgid "Don't backup photo and album metadata to YAML files."
 #~ msgstr "不备份照片和相册元数据到 YAML 文件中。"

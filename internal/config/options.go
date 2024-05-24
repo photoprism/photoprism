@@ -49,14 +49,14 @@ type Options struct {
 	ResolutionLimit       int           `yaml:"ResolutionLimit" json:"ResolutionLimit" flag:"resolution-limit"`
 	UsersPath             string        `yaml:"UsersPath" json:"-" flag:"users-path"`
 	StoragePath           string        `yaml:"StoragePath" json:"-" flag:"storage-path"`
-	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
-	SidecarYaml           bool          `yaml:"SidecarYaml" json:"SidecarYaml" flag:"sidecar-yaml" default:"true"`
-	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
 	ImportPath            string        `yaml:"ImportPath" json:"-" flag:"import-path"`
 	ImportDest            string        `yaml:"ImportDest" json:"-" flag:"import-dest"`
+	CachePath             string        `yaml:"CachePath" json:"-" flag:"cache-path"`
+	TempPath              string        `yaml:"TempPath" json:"-" flag:"temp-path"`
 	AssetsPath            string        `yaml:"AssetsPath" json:"-" flag:"assets-path"`
 	CustomAssetsPath      string        `yaml:"-" json:"-" flag:"custom-assets-path"`
-	TempPath              string        `yaml:"TempPath" json:"-" flag:"temp-path"`
+	SidecarPath           string        `yaml:"SidecarPath" json:"-" flag:"sidecar-path"`
+	SidecarYaml           bool          `yaml:"SidecarYaml" json:"SidecarYaml" flag:"sidecar-yaml" default:"true"`
 	BackupPath            string        `yaml:"BackupPath" json:"-" flag:"backup-path"`
 	BackupSchedule        string        `yaml:"BackupSchedule" json:"BackupSchedule" flag:"backup-schedule"`
 	BackupRetain          int           `yaml:"BackupRetain" json:"BackupRetain" flag:"backup-retain"`
@@ -70,8 +70,8 @@ type Options struct {
 	ReadOnly              bool          `yaml:"ReadOnly" json:"ReadOnly" flag:"read-only"`
 	Experimental          bool          `yaml:"Experimental" json:"Experimental" flag:"experimental"`
 	DisableSettings       bool          `yaml:"DisableSettings" json:"-" flag:"disable-settings"`
-	DisableRestart        bool          `yaml:"DisableRestart" json:"-" flag:"disable-restart"`
 	DisableBackups        bool          `yaml:"DisableBackups" json:"DisableBackups" flag:"disable-backups"`
+	DisableRestart        bool          `yaml:"DisableRestart" json:"-" flag:"disable-restart"`
 	DisableWebDAV         bool          `yaml:"DisableWebDAV" json:"DisableWebDAV" flag:"disable-webdav"`
 	DisablePlaces         bool          `yaml:"DisablePlaces" json:"DisablePlaces" flag:"disable-places"`
 	DisableTensorFlow     bool          `yaml:"DisableTensorFlow" json:"DisableTensorFlow" flag:"disable-tensorflow"`
@@ -79,6 +79,7 @@ type Options struct {
 	DisableClassification bool          `yaml:"DisableClassification" json:"DisableClassification" flag:"disable-classification"`
 	DisableFFmpeg         bool          `yaml:"DisableFFmpeg" json:"DisableFFmpeg" flag:"disable-ffmpeg"`
 	DisableExifTool       bool          `yaml:"DisableExifTool" json:"DisableExifTool" flag:"disable-exiftool"`
+	DisableVips           bool          `yaml:"DisableVips" json:"DisableVips" flag:"disable-vips"`
 	DisableSips           bool          `yaml:"DisableSips" json:"DisableSips" flag:"disable-sips"`
 	DisableDarktable      bool          `yaml:"DisableDarktable" json:"DisableDarktable" flag:"disable-darktable"`
 	DisableRawTherapee    bool          `yaml:"DisableRawTherapee" json:"DisableRawTherapee" flag:"disable-rawtherapee"`
@@ -90,7 +91,7 @@ type Options struct {
 	RawPresets            bool          `yaml:"RawPresets" json:"RawPresets" flag:"raw-presets"`
 	ExifBruteForce        bool          `yaml:"ExifBruteForce" json:"ExifBruteForce" flag:"exif-bruteforce"`
 	DetectNSFW            bool          `yaml:"DetectNSFW" json:"DetectNSFW" flag:"detect-nsfw"`
-	UploadNSFW            bool          `yaml:"UploadNSFW" json:"UploadNSFW" flag:"upload-nsfw"`
+	UploadNSFW            bool          `yaml:"UploadNSFW" json:"-" flag:"upload-nsfw"`
 	DefaultLocale         string        `yaml:"DefaultLocale" json:"DefaultLocale" flag:"default-locale"`
 	DefaultTimezone       string        `yaml:"DefaultTimezone" json:"DefaultTimezone" flag:"default-timezone"`
 	DefaultTheme          string        `yaml:"DefaultTheme" json:"DefaultTheme" flag:"default-theme"`
@@ -139,8 +140,6 @@ type Options struct {
 	DatabaseTimeout       int           `yaml:"DatabaseTimeout" json:"-" flag:"database-timeout"`
 	DatabaseConns         int           `yaml:"DatabaseConns" json:"-" flag:"database-conns"`
 	DatabaseConnsIdle     int           `yaml:"DatabaseConnsIdle" json:"-" flag:"database-conns-idle"`
-	SipsBin               string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
-	SipsBlacklist         string        `yaml:"SipsBlacklist" json:"-" flag:"sips-blacklist"`
 	FFmpegBin             string        `yaml:"FFmpegBin" json:"-" flag:"ffmpeg-bin"`
 	FFmpegEncoder         string        `yaml:"FFmpegEncoder" json:"FFmpegEncoder" flag:"ffmpeg-encoder"`
 	FFmpegSize            int           `yaml:"FFmpegSize" json:"FFmpegSize" flag:"ffmpeg-size"`
@@ -148,14 +147,16 @@ type Options struct {
 	FFmpegMapVideo        string        `yaml:"FFmpegMapVideo" json:"FFmpegMapVideo" flag:"ffmpeg-map-video"`
 	FFmpegMapAudio        string        `yaml:"FFmpegMapAudio" json:"FFmpegMapAudio" flag:"ffmpeg-map-audio"`
 	ExifToolBin           string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
+	SipsBin               string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
+	SipsSkip              string        `yaml:"SipsSkip" json:"-" flag:"sips-skip"`
 	DarktableBin          string        `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
 	DarktableCachePath    string        `yaml:"DarktableCachePath" json:"-" flag:"darktable-cache-path"`
 	DarktableConfigPath   string        `yaml:"DarktableConfigPath" json:"-" flag:"darktable-config-path"`
-	DarktableBlacklist    string        `yaml:"DarktableBlacklist" json:"-" flag:"darktable-blacklist"`
+	DarktableSkip         string        `yaml:"DarktableSkip" json:"-" flag:"darktable-skip"`
 	RawTherapeeBin        string        `yaml:"RawTherapeeBin" json:"-" flag:"rawtherapee-bin"`
-	RawTherapeeBlacklist  string        `yaml:"RawTherapeeBlacklist" json:"-" flag:"rawtherapee-blacklist"`
+	RawTherapeeSkip       string        `yaml:"RawTherapeeSkip" json:"-" flag:"rawtherapee-skip"`
 	ImageMagickBin        string        `yaml:"ImageMagickBin" json:"-" flag:"imagemagick-bin"`
-	ImageMagickBlacklist  string        `yaml:"ImageMagickBlacklist" json:"-" flag:"imagemagick-blacklist"`
+	ImageMagickSkip       string        `yaml:"ImageMagickSkip" json:"-" flag:"imagemagick-skip"`
 	HeifConvertBin        string        `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
 	RsvgConvertBin        string        `yaml:"RsvgConvertBin" json:"-" flag:"rsvgconvert-bin"`
 	DownloadToken         string        `yaml:"DownloadToken" json:"-" flag:"download-token"`
