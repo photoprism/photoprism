@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-20 15:21+0000\n"
+"PO-Revision-Date: 2024-05-24 07:46+0000\n"
 "Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: German <https://translate.photoprism.app/projects/photoprism/frontend/de/>\n"
 "Language: de\n"
@@ -798,7 +798,7 @@ msgstr "Auflösung"
 
 #: src/page/settings/advanced.vue:193
 msgid "Disable Backups"
-msgstr "Keine Sicherungskopien anlegen"
+msgstr "Keine Datensicherung"
 
 #: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
@@ -1753,7 +1753,7 @@ msgstr "Keine kürzlich bearbeiteten Bilder"
 
 #: src/dialog/share/upload.vue:64
 msgid "No servers configured."
-msgstr "Keine Backup-Server eingerichtet."
+msgstr "Keine Server konfiguriert."
 
 #: src/page/settings/services.vue:37
 msgid "No services configured."
@@ -2058,7 +2058,7 @@ msgstr "Verhindert, dass andere Anwendungen über WebDAV auf Ordner und Dateien 
 
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr ""
+msgstr "Deaktiviert Datenbank- und Album-Backups sowie die Erstellung von YAML-Sidecar-Dateien."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"

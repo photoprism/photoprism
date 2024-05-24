@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-19 09:51+0000\n"
+"PO-Revision-Date: 2024-05-24 07:46+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: \n"
 "Language: hr\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.5.3\n"
+"X-Generator: Weblate 5.5.5\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -2058,7 +2058,7 @@ msgstr "Spriječite drugim aplikacijama pristup PhotoPrismi kao zajedničkom mre
 
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr ""
+msgstr "Spriječite stvaranje sigurnosnih kopija baze podataka i albuma kao i YAML sidecar datoteka."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"

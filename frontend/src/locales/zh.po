@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-19 09:51+0000\n"
+"PO-Revision-Date: 2024-05-24 07:46+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.5.3\n"
+"X-Generator: Weblate 5.5.5\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -2059,7 +2059,7 @@ msgstr "防止其他应用程序将 PhotoPrism 作为共享网络驱动器访问
 
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr ""
+msgstr "防止创建数据库和相册备份以及 YAML sidecar 文件。"
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
