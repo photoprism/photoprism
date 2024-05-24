@@ -18,22 +18,22 @@ import (
 
 // Convert represents a converter that can convert RAW/HEIF images to JPEG.
 type Convert struct {
-	conf            *config.Config
-	cmdMutex        sync.Mutex
-	sipsSkip        fs.ExtList
-	darktableSkip   fs.ExtList
-	rawtherapeeSkip fs.ExtList
-	imagemagickSkip fs.ExtList
+	conf               *config.Config
+	cmdMutex           sync.Mutex
+	sipsExclude        fs.ExtList
+	darktableExclude   fs.ExtList
+	rawTherapeeExclude fs.ExtList
+	imageMagickExclude fs.ExtList
 }
 
 // NewConvert returns a new converter and expects the config as argument.
 func NewConvert(conf *config.Config) *Convert {
 	c := &Convert{
-		conf:            conf,
-		sipsSkip:        fs.NewExtList(conf.SipsSkip()),
-		darktableSkip:   fs.NewExtList(conf.DarktableSkip()),
-		rawtherapeeSkip: fs.NewExtList(conf.RawTherapeeSkip()),
-		imagemagickSkip: fs.NewExtList(conf.ImageMagickSkip()),
+		conf:               conf,
+		sipsExclude:        fs.NewExtList(conf.SipsExclude()),
+		darktableExclude:   fs.NewExtList(conf.DarktableExclude()),
+		rawTherapeeExclude: fs.NewExtList(conf.RawTherapeeExclude()),
+		imageMagickExclude: fs.NewExtList(conf.ImageMagickExclude()),
 	}
 
 	return c

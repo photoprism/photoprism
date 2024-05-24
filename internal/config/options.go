@@ -148,15 +148,15 @@ type Options struct {
 	FFmpegMapAudio        string        `yaml:"FFmpegMapAudio" json:"FFmpegMapAudio" flag:"ffmpeg-map-audio"`
 	ExifToolBin           string        `yaml:"ExifToolBin" json:"-" flag:"exiftool-bin"`
 	SipsBin               string        `yaml:"SipsBin" json:"-" flag:"sips-bin"`
-	SipsSkip              string        `yaml:"SipsSkip" json:"-" flag:"sips-skip"`
+	SipsExclude           string        `yaml:"SipsExclude" json:"-" flag:"sips-exclude"`
 	DarktableBin          string        `yaml:"DarktableBin" json:"-" flag:"darktable-bin"`
 	DarktableCachePath    string        `yaml:"DarktableCachePath" json:"-" flag:"darktable-cache-path"`
 	DarktableConfigPath   string        `yaml:"DarktableConfigPath" json:"-" flag:"darktable-config-path"`
-	DarktableSkip         string        `yaml:"DarktableSkip" json:"-" flag:"darktable-skip"`
+	DarktableExclude      string        `yaml:"DarktableExclude" json:"-" flag:"darktable-exclude"`
 	RawTherapeeBin        string        `yaml:"RawTherapeeBin" json:"-" flag:"rawtherapee-bin"`
-	RawTherapeeSkip       string        `yaml:"RawTherapeeSkip" json:"-" flag:"rawtherapee-skip"`
+	RawTherapeeExclude    string        `yaml:"RawTherapeeExclude" json:"-" flag:"rawtherapee-exclude"`
 	ImageMagickBin        string        `yaml:"ImageMagickBin" json:"-" flag:"imagemagick-bin"`
-	ImageMagickSkip       string        `yaml:"ImageMagickSkip" json:"-" flag:"imagemagick-skip"`
+	ImageMagickExclude    string        `yaml:"ImageMagickExclude" json:"-" flag:"imagemagick-exclude"`
 	HeifConvertBin        string        `yaml:"HeifConvertBin" json:"-" flag:"heifconvert-bin"`
 	RsvgConvertBin        string        `yaml:"RsvgConvertBin" json:"-" flag:"rsvgconvert-bin"`
 	DownloadToken         string        `yaml:"DownloadToken" json:"-" flag:"download-token"`

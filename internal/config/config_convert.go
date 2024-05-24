@@ -20,9 +20,9 @@ func (c *Config) ImageMagickBin() string {
 	return findBin(c.options.ImageMagickBin, "convert")
 }
 
-// ImageMagickSkip returns the file extensions not to be used with ImageMagick.
-func (c *Config) ImageMagickSkip() string {
-	return c.options.ImageMagickSkip
+// ImageMagickExclude returns the file extensions not to be used with ImageMagick.
+func (c *Config) ImageMagickExclude() string {
+	return c.options.ImageMagickExclude
 }
 
 // ImageMagickEnabled checks if ImageMagick can be used for converting media files.

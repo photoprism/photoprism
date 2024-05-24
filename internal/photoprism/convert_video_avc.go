@@ -163,7 +163,7 @@ func (c *Convert) AvcConvertCommand(f *MediaFile, avcName string, encoder ffmpeg
 	}
 
 	// Try to transcode animated WebP images with ImageMagick.
-	if c.conf.ImageMagickEnabled() && f.IsWebP() && c.imagemagickSkip.Allow(fileExt) {
+	if c.conf.ImageMagickEnabled() && f.IsWebP() && c.imageMagickExclude.Allow(fileExt) {
 		return exec.Command(c.conf.ImageMagickBin(), f.FileName(), avcName), false, nil
 	}
 

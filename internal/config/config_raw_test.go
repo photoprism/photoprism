@@ -19,13 +19,13 @@ func TestConfig_RawTherapeeBin(t *testing.T) {
 	assert.True(t, strings.Contains(c.RawTherapeeBin(), "/bin/rawtherapee-cli"))
 }
 
-func TestConfig_RawTherapeeSkip(t *testing.T) {
+func TestConfig_RawTherapeeExclude(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	c.options.RawTherapeeSkip = "foo,bar"
-	assert.Equal(t, "foo,bar", c.RawTherapeeSkip())
-	c.options.RawTherapeeSkip = ""
-	assert.Equal(t, "", c.RawTherapeeSkip())
+	c.options.RawTherapeeExclude = "foo,bar"
+	assert.Equal(t, "foo,bar", c.RawTherapeeExclude())
+	c.options.RawTherapeeExclude = ""
+	assert.Equal(t, "", c.RawTherapeeExclude())
 }
 
 func TestConfig_RawTherapeeEnabled(t *testing.T) {
@@ -42,10 +42,10 @@ func TestConfig_DarktableBin(t *testing.T) {
 	assert.True(t, strings.Contains(c.DarktableBin(), "/bin/darktable-cli"))
 }
 
-func TestConfig_DarktableSkip(t *testing.T) {
+func TestConfig_DarktableExclude(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "raf,cr3", c.DarktableSkip())
+	assert.Equal(t, "raf, cr3", c.DarktableExclude())
 }
 
 func TestConfig_DarktablePresets(t *testing.T) {
@@ -72,6 +72,12 @@ func TestConfig_SipsBin(t *testing.T) {
 func TestConfig_SipsEnabled(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.NotEqual(t, c.DisableSips(), c.SipsEnabled())
+}
+
+func TestConfig_SipsExclude(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "avif, avifs, thm", c.SipsExclude())
 }
 
 func TestConfig_HeifConvertBin(t *testing.T) {

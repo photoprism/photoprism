@@ -131,6 +131,16 @@ func TestConfig_DisableImageMagick(t *testing.T) {
 	assert.Equal(t, missing, c.DisableImageMagick())
 }
 
+func TestConfig_DisableVips(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, false, c.DisableVips())
+	c.options.DisableVips = true
+	assert.True(t, c.DisableVips())
+	c.options.DisableVips = false
+	assert.Equal(t, false, c.DisableVips())
+}
+
 func TestConfig_DisableSips(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	missing := c.SipsBin() == ""

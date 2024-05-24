@@ -21,7 +21,7 @@ func (c *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 
 	logName := clean.Log(f.RootRelName())
 
-	if c.conf.DisableImageMagick() || !c.imagemagickSkip.Allow(fs.ExtJPEG) {
+	if c.conf.DisableImageMagick() || !c.imageMagickExclude.Allow(fs.ExtJPEG) {
 		return nil, fmt.Errorf("convert: ImageMagick must be enabled to re-encode %s", logName)
 	}
 

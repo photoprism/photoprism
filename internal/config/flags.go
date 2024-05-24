@@ -693,10 +693,10 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("SIPS_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "sips-skip",
+			Name:   "sips-exclude",
 			Usage:  "file `EXTENSIONS` not to be used with Sips *macOS only*",
 			Value:  "avif, avifs, thm",
-			EnvVar: EnvVar("SIPS_SKIP") + ", " + EnvVar("SIPS_BLACKLIST"),
+			EnvVar: EnvVar("SIPS_EXCLUDE") + ", " + EnvVar("SIPS_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "darktable-bin",
@@ -705,10 +705,10 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DARKTABLE_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "darktable-skip",
+			Name:   "darktable-exclude",
 			Usage:  "file `EXTENSIONS` not to be used with Darktable",
 			Value:  "thm",
-			EnvVar: EnvVar("DARKTABLE_SKIP") + ", " + EnvVar("DARKTABLE_BLACKLIST"),
+			EnvVar: EnvVar("DARKTABLE_EXCLUDE") + ", " + EnvVar("DARKTABLE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "darktable-cache-path",
@@ -729,10 +729,10 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("RAWTHERAPEE_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "rawtherapee-skip",
+			Name:   "rawtherapee-exclude",
 			Usage:  "file `EXTENSIONS` not to be used with RawTherapee",
 			Value:  "dng, thm",
-			EnvVar: EnvVar("RAWTHERAPEE_SKIP") + ", " + EnvVar("RAWTHERAPEE_BLACKLIST"),
+			EnvVar: EnvVar("RAWTHERAPEE_EXCLUDE") + ", " + EnvVar("RAWTHERAPEE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "imagemagick-bin",
@@ -741,10 +741,10 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("IMAGEMAGICK_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "imagemagick-skip",
+			Name:   "imagemagick-exclude",
 			Usage:  "file `EXTENSIONS` not to be used with ImageMagick",
 			Value:  "heif, heic, heics, avif, avifs, jxl, thm",
-			EnvVar: EnvVar("IMAGEMAGICK_SKIP") + ", " + EnvVar("IMAGEMAGICK_BLACKLIST"),
+			EnvVar: EnvVar("IMAGEMAGICK_EXCLUDE") + ", " + EnvVar("IMAGEMAGICK_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "heifconvert-bin",

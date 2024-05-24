@@ -19,9 +19,9 @@ func (c *Config) DarktableBin() string {
 	return findBin(c.options.DarktableBin, "darktable-cli")
 }
 
-// DarktableSkip returns the file extensions no not be used with Darktable.
-func (c *Config) DarktableSkip() string {
-	return c.options.DarktableSkip
+// DarktableExclude returns the file extensions no not be used with Darktable.
+func (c *Config) DarktableExclude() string {
+	return c.options.DarktableExclude
 }
 
 // DarktableConfigPath returns the darktable config directory.
@@ -74,9 +74,9 @@ func (c *Config) RawTherapeeBin() string {
 	return findBin(c.options.RawTherapeeBin, "rawtherapee-cli")
 }
 
-// RawTherapeeSkip returns the file extensions no not be used with RawTherapee.
-func (c *Config) RawTherapeeSkip() string {
-	return c.options.RawTherapeeSkip
+// RawTherapeeExclude returns the file extensions no not be used with RawTherapee.
+func (c *Config) RawTherapeeExclude() string {
+	return c.options.RawTherapeeExclude
 }
 
 // RawTherapeeEnabled checks if RawTherapee is enabled for RAW conversion.
@@ -94,9 +94,9 @@ func (c *Config) SipsBin() string {
 	return findBin(c.options.SipsBin, "sips")
 }
 
-// SipsSkip returns the file extensions no not be used with Sips.
-func (c *Config) SipsSkip() string {
-	return c.options.SipsSkip
+// SipsExclude returns the file extensions no not be used with Sips.
+func (c *Config) SipsExclude() string {
+	return c.options.SipsExclude
 }
 
 // HeifConvertBin returns the heif-convert executable file name.

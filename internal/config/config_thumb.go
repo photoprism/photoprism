@@ -40,6 +40,10 @@ func (c *Config) JpegQuality() thumb.Quality {
 
 // ThumbLibrary returns the name of the image processing library to be used for generating thumbnails.
 func (c *Config) ThumbLibrary() string {
+	if c.DisableVips() {
+		return thumb.LibImaging
+	}
+
 	switch c.options.ThumbLibrary {
 	case thumb.LibVips, thumb.LibAuto:
 		return thumb.LibVips
