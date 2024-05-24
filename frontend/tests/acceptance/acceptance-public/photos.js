@@ -217,7 +217,7 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })(
     await t
       .typeText(photoedit.title, "Not saved photo title", { replace: true })
       .click(photoedit.detailsClose)
-      .click(Selector("button.action-date-edit").withAttribute("data-uid", FirstPhotoUid));
+      .click(Selector("button.action-title-edit").withAttribute("data-uid", FirstPhotoUid));
 
     await t.expect(photoedit.title.value).eql(FirstPhotoTitle);
 

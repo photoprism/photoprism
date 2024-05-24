@@ -13,7 +13,7 @@ const account = new Account()
 const settings = new Settings();
 
 test.meta("testID", "account-001").meta({ type: "short", mode: "auth" })(
-    "Common: Sign in with recovery code",
+    "Core: Sign in with recovery code",
     async (t) => {
         await page.login("jane", "photoprism")
         await t
