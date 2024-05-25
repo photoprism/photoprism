@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-24 07:46+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-05-25 16:41+0000\n"
+"Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -2064,7 +2064,7 @@ msgstr "Interdire à une autre application l'accès à PhotoPrism en tant que le
 
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr "Empêche la création de sauvegardes de bases de données et d'albums ainsi que de fichiers YAML sidecar."
+msgstr "Désactiver les sauvegardes de bases de données et d’albums ainsi que la création de fichiers side-car YAML."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
