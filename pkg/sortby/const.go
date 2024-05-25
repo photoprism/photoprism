@@ -9,6 +9,7 @@ const (
 	Added       = "added"
 	Imported    = "imported"
 	Edited      = "edited"
+	Updated     = "updated"
 	Newest      = "newest"
 	Oldest      = "oldest"
 	Place       = "place"

@@ -172,6 +172,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	switch f.Order {
 	case sortby.Edited:
 		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.media_id")
+	case sortby.Updated:
+		s = s.Where("photos.updated_at > photos.created_at").Order("photos.updated_at DESC, files.media_id")
 	case sortby.Relevance:
 		if f.Label != "" {
 			s = s.Order("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index")
@@ -706,17 +708,27 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.photo_altitude BETWEEN ? AND ?", rangeStart, rangeEnd)
 	}
 
-	// Find photos taken at specified date.
+	// Find pictures added at or after this time (UTC).
+	if !f.Added.IsZero() {
+		s = s.Where("photos.created_at >= ?", f.Added.Format("2006-01-02 15:04:05"))
+	}
+
+	// Find pictures updated at or after this time (UTC).
+	if !f.Updated.IsZero() {
+		s = s.Where("photos.updated_at >= ?", f.Updated.Format("2006-01-02 15:04:05"))
+	}
+
+	// Find pictures taken on the specified date.
 	if !f.Taken.IsZero() {
 		s = s.Where("DATE(photos.taken_at) = DATE(?)", f.Taken.Format("2006-01-02"))
 	}
 
-	// Find photos taken before date.
+	// Finds pictures taken on or before this date.
 	if !f.Before.IsZero() {
 		s = s.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))
 	}
 
-	// Find photos taken after date.
+	// Finds pictures taken on or after this date.
 	if !f.After.IsZero() {
 		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
 	}

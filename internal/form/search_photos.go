@@ -81,9 +81,11 @@ type SearchPhotos struct {
 	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names (combinable with & and |)"`                 // Multi search with and/or
 	Quality   int       `form:"quality" notes:"Minimum quality score (1-7)"`                                                                    // Photo quality score
 	Review    bool      `form:"review" notes:"Finds pictures in review"`                                                                        // Find photos in review
-	Taken     time.Time `form:"taken" time_format:"2006-01-02" notes:"Finds pictures taken at the specified date"`                              // Finds pictures taken at specified date
-	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken before this date"`                                  // Finds pictures taken before date
-	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken after this date"`                                    // Finds pictures taken after date
+	Added     time.Time `form:"added" time_format:"2006-01-02T20:30:00" notes:"Finds pictures added at or after this time (UTC)"`               // Finds pictures added at or after this time (UTC)
+	Updated   time.Time `form:"updated" time_format:"2006-01-02T20:30:00" notes:"Finds pictures updated at or after this time (UTC)"`           // Finds pictures updated at or after this time (UTC)
+	Taken     time.Time `form:"taken" time_format:"2006-01-02" notes:"Finds pictures taken on the specified date"`                              // Finds pictures taken on the specified date
+	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken on or before this date"`                            // Finds pictures taken on or before this date"
+	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken on or after this date"`                              // Finds pictures taken on or after this date
 	Count     int       `form:"count" binding:"required" serialize:"-"`                                                                         // Result FILE limit
 	Offset    int       `form:"offset" serialize:"-"`                                                                                           // Result FILE offset
 	Order     string    `form:"order" serialize:"-"`                                                                                            // Sort order

@@ -18,9 +18,11 @@ type SearchPhotosGeo struct {
 	Folder    string    `form:"folder"` // Alias for Path
 	Name      string    `form:"name"`
 	Title     string    `form:"title"`
-	Taken     time.Time `form:"taken" time_format:"2006-01-02" notes:"Finds pictures taken at the specified date"`
-	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken before this date"`
-	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken after this date"`
+	Added     time.Time `form:"added" time_format:"2006-01-02T20:30:00" notes:"Finds pictures added at or after this time (UTC)"`
+	Updated   time.Time `form:"updated" time_format:"2006-01-02T20:30:00" notes:"Finds pictures updated at or after this time (UTC)"`
+	Taken     time.Time `form:"taken" time_format:"2006-01-02" notes:"Finds pictures taken on the specified date"`
+	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken on or before this date"`
+	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken on or after this date"`
 	Favorite  string    `form:"favorite" example:"favorite:yes" notes:"Finds favorites only"`
 	Unsorted  bool      `form:"unsorted"`
 	Video     bool      `form:"video"`
