@@ -4,25 +4,35 @@ import (
 	"archive/zip"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
-// ZipFiles compresses one or many files into a single zip archive file.
-// Param 1: filename is the output zip file's name.
-// Param 2: files is a list of files to add to the zip.
-func Zip(filename string, files []string) error {
-	newZipFile, err := os.Create(filename)
-	if err != nil {
+// Zip compresses one or many files into a single zip archive file.
+func Zip(zipName string, files []string, compress bool) (err error) {
+	// Create zip file directory if it does not yet exist.
+	if zipDir := filepath.Dir(zipName); zipDir != "" && zipDir != "." {
+		err = os.MkdirAll(zipDir, ModeDir)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	var newZipFile *os.File
+
+	if newZipFile, err = os.Create(zipName); err != nil {
 		return err
 	}
+
 	defer newZipFile.Close()
 
 	zipWriter := zip.NewWriter(newZipFile)
 	defer zipWriter.Close()
 
-	// Add files to zip
-	for _, file := range files {
-		if err = AddToZip(zipWriter, file); err != nil {
+	// Add files to zip archive.
+	for _, fileName := range files {
+		if err = ZipFile(zipWriter, fileName, "", compress); err != nil {
 			return err
 		}
 	}
@@ -30,61 +40,122 @@ func Zip(filename string, files []string) error {
 	return nil
 }
 
-func AddToZip(zipWriter *zip.Writer, filename string) error {
-	fileToZip, err := os.Open(filename)
+// ZipFile adds a file to a zip archive, optionally with an alias and compression.
+func ZipFile(zipWriter *zip.Writer, fileName, fileAlias string, compress bool) (err error) {
+	// Open file.
+	fileToZip, err := os.Open(fileName)
 
 	if err != nil {
 		return err
 	}
 
+	// Close file when done.
 	defer fileToZip.Close()
 
-	// Get the file information
+	// Get file information.
 	info, err := fileToZip.Stat()
 	if err != nil {
 		return err
 	}
 
+	// Create file info header.
 	header, err := zip.FileInfoHeader(info)
 	if err != nil {
 		return err
 	}
 
-	// Change to deflate to gain better compression
-	// see http://golang.org/pkg/archive/zip/#pkg-constants
-	header.Method = zip.Deflate
+	// Set filename alias, if any.
+	if fileAlias != "" {
+		header.Name = fileAlias
+	}
 
+	// Set method to deflate to enable compression,
+	// see http://golang.org/pkg/archive/zip/#pkg-constants
+	if compress {
+		header.Method = zip.Deflate
+	} else {
+		header.Method = zip.Store
+	}
+
+	// Write file info header.
 	writer, err := zipWriter.CreateHeader(header)
 	if err != nil {
 		return err
 	}
+
+	// Copy file to zip.
 	_, err = io.Copy(writer, fileToZip)
+
+	// Return error, if any.
 	return err
 }
 
-// Extract Zip file in destination directory
-func Unzip(src, dest string) (fileNames []string, err error) {
-	r, err := zip.OpenReader(src)
+// Unzip extracts the contents of a zip file to the target directory.
+func Unzip(zipName, dir string) (files []string, err error) {
+	zipReader, err := zip.OpenReader(zipName)
 
 	if err != nil {
-		return fileNames, err
+		return files, err
 	}
 
-	defer r.Close()
+	defer zipReader.Close()
 
-	for _, f := range r.File {
+	for _, zipFile := range zipReader.File {
 		// Skip directories like __OSX and potentially malicious file names containing "..".
-		if strings.HasPrefix(f.Name, "__") || strings.Contains(f.Name, "..") {
+		if strings.HasPrefix(zipFile.Name, "__") || strings.Contains(zipFile.Name, "..") {
 			continue
 		}
 
-		fn, err := copyToFile(f, dest)
-		if err != nil {
-			return fileNames, err
+		fileName, unzipErr := UnzipFile(zipFile, dir)
+		if unzipErr != nil {
+			return files, unzipErr
 		}
 
-		fileNames = append(fileNames, fn)
+		files = append(files, fileName)
 	}
 
-	return fileNames, nil
+	return files, nil
+}
+
+// UnzipFile writes a file from a zip archive to the target destination.
+func UnzipFile(f *zip.File, dir string) (fileName string, err error) {
+	rc, err := f.Open()
+	if err != nil {
+		return fileName, err
+	}
+
+	defer rc.Close()
+
+	// Compose destination file or directory path.
+	fileName = filepath.Join(dir, f.Name)
+
+	// Create destination path if it is a directory.
+	if f.FileInfo().IsDir() {
+		return fileName, MkdirAll(fileName)
+	}
+
+	// If it is a file, make sure its destination directory exists.
+	var basePath string
+
+	if lastIndex := strings.LastIndex(fileName, string(os.PathSeparator)); lastIndex > -1 {
+		basePath = fileName[:lastIndex]
+	}
+
+	if err = MkdirAll(basePath); err != nil {
+		return fileName, err
+	}
+
+	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+	if err != nil {
+		return fileName, err
+	}
+
+	defer fd.Close()
+
+	_, err = io.Copy(fd, rc)
+	if err != nil {
+		return fileName, err
+	}
+
+	return fileName, nil
 }

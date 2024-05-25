@@ -1352,7 +1352,7 @@ func (m *MediaFile) RemoveSidecarFiles() (numFiles int, err error) {
 
 	for _, sidecarName := range matches {
 		if err = os.Remove(sidecarName); err != nil {
-			log.Errorf("files: failed deleting sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))
+			log.Errorf("files: failed to delete sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))
 		} else {
 			numFiles++
 			log.Infof("files: deleted sidecar %s", clean.Log(fs.RelName(sidecarName, sidecarPath)))

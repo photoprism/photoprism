@@ -410,7 +410,7 @@ func FirstOrCreateFace(m *Face) *Face {
 		}
 		return &result
 	} else {
-		log.Errorf("faces: failed adding %s (%s)", m.ID, err)
+		log.Errorf("faces: failed to add %s (%s)", m.ID, err)
 	}
 
 	return nil

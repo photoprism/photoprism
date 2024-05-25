@@ -227,7 +227,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	} else if found = FindSubjectByName(m.SubjName, true); found != nil {
 		return found
 	} else {
-		log.Errorf("subject: failed adding %s (%s)", clean.Log(m.SubjName), err)
+		log.Errorf("subject: failed to add %s (%s)", clean.Log(m.SubjName), err)
 	}
 
 	return nil

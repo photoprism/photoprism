@@ -214,7 +214,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		// Delete empty import directory.
 		if fs.DirIsEmpty(uploadPath) {
 			if err := os.Remove(uploadPath); err != nil {
-				log.Errorf("upload: failed deleting empty folder %s: %s", clean.Log(uploadPath), err)
+				log.Errorf("upload: failed to delete empty folder %s: %s", clean.Log(uploadPath), err)
 			} else {
 				log.Infof("upload: deleted empty folder %s", clean.Log(uploadPath))
 			}
@@ -222,7 +222,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Update moments if files have been imported.
 		if n := len(imported); n == 0 {
-			log.Infof("upload: no new files imported", clean.Log(uploadPath))
+			log.Infof("upload: found no new files to import from %s", clean.Log(uploadPath))
 		} else {
 			log.Infof("upload: imported %s", english.Plural(n, "file", "files"))
 			if moments := get.Moments(); moments == nil {

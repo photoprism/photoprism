@@ -25,14 +25,12 @@ Additional information can be found in our Developer Guide:
 package fs
 
 import (
-	"archive/zip"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
-	"strings"
 	"syscall"
 )
 
@@ -122,50 +120,6 @@ func Abs(name string) string {
 	}
 
 	return result
-}
-
-// copyToFile copies the zip file to destination
-// if the zip file is a directory, a directory is created at the destination.
-func copyToFile(f *zip.File, dest string) (fileName string, err error) {
-	rc, err := f.Open()
-	if err != nil {
-		return fileName, err
-	}
-
-	defer rc.Close()
-
-	// Store filename/path for returning and using later on
-	fileName = filepath.Join(dest, f.Name)
-
-	if f.FileInfo().IsDir() {
-		// Make Folder
-		return fileName, MkdirAll(fileName)
-	}
-
-	// Make File
-	var fdir string
-
-	if lastIndex := strings.LastIndex(fileName, string(os.PathSeparator)); lastIndex > -1 {
-		fdir = fileName[:lastIndex]
-	}
-
-	if err = MkdirAll(fdir); err != nil {
-		return fileName, err
-	}
-
-	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-	if err != nil {
-		return fileName, err
-	}
-
-	defer fd.Close()
-
-	_, err = io.Copy(fd, rc)
-	if err != nil {
-		return fileName, err
-	}
-
-	return fileName, nil
 }
 
 // Download downloads a file from a URL.

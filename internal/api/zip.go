@@ -3,7 +3,6 @@ package api
 import (
 	"archive/zip"
 	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"path"
@@ -108,6 +107,14 @@ func ZipCreate(router *gin.RouterGroup) {
 
 		// Add files to zip.
 		for _, file := range files {
+			if file.FileName == "" {
+				log.Warnf("download: %s cannot be downloaded (empty file name)", clean.Log(file.FileUID))
+				continue
+			} else if file.FileHash == "" {
+				log.Warnf("download: %s cannot be downloaded (empty file hash)", clean.Log(file.FileName))
+				continue
+			}
+
 			fileName := photoprism.FileName(file.FileRoot, file.FileName)
 			alias := file.DownloadName(dlName, 0)
 			key := strings.ToLower(alias)
@@ -119,22 +126,22 @@ func ZipCreate(router *gin.RouterGroup) {
 			aliases[key] += 1
 
 			if fs.FileExists(fileName) {
-				if err := addFileToZip(zipWriter, fileName, alias); err != nil {
-					log.Errorf("zip: failed adding %s to zip (%s)", clean.Log(file.FileName), err)
+				if zipErr := fs.ZipFile(zipWriter, fileName, alias, false); zipErr != nil {
+					log.Errorf("download: failed to add %s (%s)", clean.Log(file.FileName), zipErr)
 					Abort(c, http.StatusInternalServerError, i18n.ErrZipFailed)
 					return
 				}
 
-				log.Infof("zip: added %s as %s", clean.Log(file.FileName), clean.Log(alias))
+				log.Infof("download: added %s as %s", clean.Log(file.FileName), clean.Log(alias))
 			} else {
-				log.Warnf("zip: media file %s is missing", clean.Log(file.FileName))
-				logErr("zip", file.Update("FileMissing", true))
+				log.Warnf("download: %s not found", clean.Log(file.FileName))
+				logErr("download", file.Update("FileMissing", true))
 			}
 		}
 
 		elapsed := int(time.Since(start).Seconds())
 
-		log.Infof("zip: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
+		log.Infof("download: created %s [%s]", clean.Log(zipBaseName), time.Since(start))
 
 		c.JSON(http.StatusOK, gin.H{"code": http.StatusOK, "message": i18n.Msg(i18n.MsgZipCreatedIn, elapsed), "filename": zipBaseName})
 	})
@@ -146,7 +153,7 @@ func ZipCreate(router *gin.RouterGroup) {
 func ZipDownload(router *gin.RouterGroup) {
 	router.GET("/zip/:filename", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
-			log.Errorf("zip: %s", c.AbortWithError(http.StatusForbidden, fmt.Errorf("invalid download token")))
+			log.Errorf("download: %s", c.AbortWithError(http.StatusForbidden, fmt.Errorf("invalid download token")))
 			return
 		}
 
@@ -156,12 +163,12 @@ func ZipDownload(router *gin.RouterGroup) {
 		zipFileName := path.Join(zipPath, zipBaseName)
 
 		if !fs.FileExists(zipFileName) {
-			log.Errorf("zip: %s", c.AbortWithError(http.StatusNotFound, fmt.Errorf("%s not found", clean.Log(zipFileName))))
+			log.Errorf("download: %s", c.AbortWithError(http.StatusNotFound, fmt.Errorf("%s not found", clean.Log(zipFileName))))
 			return
 		}
 
 		defer func(fileName, baseName string) {
-			log.Debugf("zip: %s has been downloaded", clean.Log(baseName))
+			log.Infof("download: %s has been downloaded", clean.Log(baseName))
 
 			// Wait a moment before deleting the zip file, just to be sure:
 			// https://github.com/photoprism/photoprism/issues/2532
@@ -169,47 +176,12 @@ func ZipDownload(router *gin.RouterGroup) {
 
 			// Remove the zip file to free up disk space.
 			if err := os.Remove(fileName); err != nil {
-				log.Warnf("zip: failed deleting %s (%s)", clean.Log(fileName), err)
+				log.Warnf("download: failed to delete %s (%s)", clean.Log(fileName), err)
 			} else {
-				log.Debugf("zip: deleted %s", clean.Log(baseName))
+				log.Debugf("download: deleted %s", clean.Log(baseName))
 			}
 		}(zipFileName, zipBaseName)
 
-		log.Debugf("zip: submitting %s", clean.Log(zipBaseName))
-
 		c.FileAttachment(zipFileName, zipBaseName)
 	})
-}
-
-// addFileToZip adds a file to a zip archive.
-func addFileToZip(zipWriter *zip.Writer, fileName, fileAlias string) error {
-	fileToZip, err := os.Open(fileName)
-	if err != nil {
-		return err
-	}
-	defer fileToZip.Close()
-
-	// Get the file information
-	info, err := fileToZip.Stat()
-	if err != nil {
-		return err
-	}
-
-	header, err := zip.FileInfoHeader(info)
-	if err != nil {
-		return err
-	}
-
-	header.Name = fileAlias
-
-	// Change to deflate to gain better compression
-	// see http://golang.org/pkg/archive/zip/#pkg-constants
-	header.Method = zip.Deflate
-
-	writer, err := zipWriter.CreateHeader(header)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(writer, fileToZip)
-	return err
 }
