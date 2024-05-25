@@ -1,5 +1,7 @@
 package config
 
+import "math/bits"
+
 var Sponsor = Env(EnvDemo, EnvSponsor, EnvTest)
 
 // DisableSettings checks if users should not be allowed to change settings.
@@ -126,6 +128,10 @@ func (c *Config) DisableHeifConvert() bool {
 
 // DisableVips checks if the use of libvips is disabled.
 func (c *Config) DisableVips() bool {
+	if bits.UintSize < 64 {
+		return true
+	}
+
 	return c.options.DisableVips
 }
 
