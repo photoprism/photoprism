@@ -32,25 +32,23 @@ On servers with a **64-bit Intel or AMD CPU**, our [latest stable release](https
 
 ```
 curl -sLO https://dl.photoprism.app/pkg/linux/deb/amd64.deb
-sudo dpkg -i amd64.deb
+sudo apt install --no-install-recommends ./amd64.deb
 ```
 
 If your server has an **ARM-based CPU**, such as a [Raspberry Pi](https://docs.photoprism.app/getting-started/raspberry-pi/), use the following commands instead:
 
 ```
 curl -sLO https://dl.photoprism.app/pkg/linux/deb/arm64.deb
-sudo dpkg -i arm64.deb
+sudo apt install --no-install-recommends ./arm64.deb
 ```
 
-This will install PhotoPrism to `/opt/photoprism` and add a `/usr/local/bin/photoprism` symlink for the CLI command.
-
-Since the packages currently do not include a default configuration, we recommend that you create a [`defaults.yml`](https://docs.photoprism.app/getting-started/config-files/defaults/) in `/etc/photoprism` next, in which you configure the paths and other settings that you want to use for your instance.
+This installs PhotoPrism to `/opt/photoprism`, adds a `/usr/local/bin/photoprism` symlink for the CLI command, an `/etc/photoprism/defaults.yml` file and the required system dependencies (omit `--no-install-recommends` to also install MariaDB, Darktable, and RawTherapee).
 
 ## Updates
 
 To update your installation, please stop all running PhotoPrism instances and make sure that there are [no media, database, or custom config files](#configuration) in the `/opt/photoprism` directory. You can then delete its contents with the command `sudo rm -rf /opt/photoprism/*` and install a new version as shown above.
 
-If you used a *.deb* package for the installation, you may need to remove the currently installed `photoprism` package by running `sudo dpkg -r photoprism` before you can install a new version with `sudo dpkg -i package.deb`. This is a known issue that we hope to resolve with improved packages.
+If you have used a *.deb* package for installation, you may need to remove the currently installed `photoprism` package by running `sudo dpkg -r photoprism` before you can install a new version with `sudo apt install ./package.deb` or `sudo dpkg -i package.deb`.
 
 ## Dependencies
 
