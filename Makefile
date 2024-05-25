@@ -5,12 +5,19 @@
 
 export GO111MODULE=on
 
+-include .semver
 -include .env
 export
 
 # Binary file names.
 BINARY_NAME=photoprism
 GOIMPORTS=goimports
+
+# Build version.
+SEMVER_MAJOR ?= 0
+SEMVER_MINOR ?= $(shell date -u +%y%m)
+SEMVER_PATCH ?= $(shell date -u +%d)
+SEMVER_VERSION ?= $(SEMVER_MAJOR).$(SEMVER_MINOR).$(SEMVER_PATCH)
 
 # Build parameters.
 BUILD_PATH ?= $(shell realpath "./build")
