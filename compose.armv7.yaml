@@ -60,6 +60,7 @@ services:
       PHOTOPRISM_THUMB_UNCACHED: "true"              # Enables on-demand thumbnail rendering (high memory and cpu usage)
       PHOTOPRISM_THUMB_SIZE: 1920                    # Pre-rendered thumbnail size limit (default 1920, min 720, max 7680)
       # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      PHOTOPRISM_THUMB_LIBRARY: "imaging"            # Use the legacy image to render thumbnails. Must be set for ARMv7
       PHOTOPRISM_THUMB_SIZE_UNCACHED: 7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
       PHOTOPRISM_JPEG_SIZE: 7680                     # Size limit for converted image files in pixels (720-30000)
       TF_CPP_MIN_LOG_LEVEL: 0                        # Show TensorFlow log messages for development
