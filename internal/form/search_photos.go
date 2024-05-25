@@ -65,31 +65,31 @@ type SearchPhotos struct {
 	Keywords  string    `form:"keywords" example:"keywords:\"sand&water\"" notes:"Keywords (combinable with & and |)"`
 	Label     string    `form:"label" example:"label:cat|dog" notes:"Label Names (separate with |)"`
 	Category  string    `form:"category" example:"category:airport" notes:"Location Category"`
-	Country   string    `form:"country" example:"country:\"de|us\"" notes:"Location Country Code (separate with |)"`                            // Moments
-	State     string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"Location State (separate with |)"`                           // Moments
-	City      string    `form:"city" example:"city:\"Berlin\"" notes:"Location City (separate with |)"`                                         // Moments
-	Year      string    `form:"year" example:"year:1990|2003" notes:"Year (separate with |)"`                                                   // Moments
-	Month     string    `form:"month" example:"month:7|10" notes:"Month (1-12, separate with |)"`                                               // Moments
-	Day       string    `form:"day" example:"day:3|13" notes:"Day of Month (1-31, separate with |)"`                                            // Moments
-	Face      string    `form:"face" example:"face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZG" notes:"Face ID, yes, no, new, or kind"`                    // UIDs
-	Faces     string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of Faces (yes = 1)"`                                    // Find or exclude faces if detected.
-	Subject   string    `form:"subject" example:"subject:\"Jane Doe & John Doe\"" notes:"Alias for person"`                                     // UIDs
-	Person    string    `form:"person" example:"person:\"Jane Doe & John Doe\"" notes:"Subject Names, exact matches (combinable with & and |)"` // Alias for Subject
-	Subjects  string    `form:"subjects" example:"subjects:\"Jane & John\"" notes:"Alias for people"`                                           // People names
-	People    string    `form:"people" example:"people:\"Jane & John\"" notes:"Subject Names (combinable with & and |)"`                        // Alias for Subjects
-	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`                                   // Album UIDs or name
-	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names (combinable with & and |)"`                 // Multi search with and/or
-	Quality   int       `form:"quality" notes:"Minimum quality score (1-7)"`                                                                    // Photo quality score
-	Review    bool      `form:"review" notes:"Finds pictures in review"`                                                                        // Find photos in review
-	Added     time.Time `form:"added" time_format:"2006-01-02T20:30:00" notes:"Finds pictures added at or after this time (UTC)"`               // Finds pictures added at or after this time (UTC)
-	Updated   time.Time `form:"updated" time_format:"2006-01-02T20:30:00" notes:"Finds pictures updated at or after this time (UTC)"`           // Finds pictures updated at or after this time (UTC)
-	Taken     time.Time `form:"taken" time_format:"2006-01-02" notes:"Finds pictures taken on the specified date"`                              // Finds pictures taken on the specified date
-	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken on or before this date"`                            // Finds pictures taken on or before this date"
-	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken on or after this date"`                              // Finds pictures taken on or after this date
-	Count     int       `form:"count" binding:"required" serialize:"-"`                                                                         // Result FILE limit
-	Offset    int       `form:"offset" serialize:"-"`                                                                                           // Result FILE offset
-	Order     string    `form:"order" serialize:"-"`                                                                                            // Sort order
-	Merged    bool      `form:"merged" serialize:"-"`                                                                                           // Merge FILES in response
+	Country   string    `form:"country" example:"country:\"de|us\"" notes:"Location Country Code (separate with |)"`                                                            // Moments
+	State     string    `form:"state" example:"state:\"Baden-Württemberg\"" notes:"Location State (separate with |)"`                                                           // Moments
+	City      string    `form:"city" example:"city:\"Berlin\"" notes:"Location City (separate with |)"`                                                                         // Moments
+	Year      string    `form:"year" example:"year:1990|2003" notes:"Year (separate with |)"`                                                                                   // Moments
+	Month     string    `form:"month" example:"month:7|10" notes:"Month (1-12, separate with |)"`                                                                               // Moments
+	Day       string    `form:"day" example:"day:3|13" notes:"Day of Month (1-31, separate with |)"`                                                                            // Moments
+	Face      string    `form:"face" example:"face:PN6QO5INYTUSAATOFL43LL2ABAV5ACZG" notes:"Face ID, yes, no, new, or kind"`                                                    // UIDs
+	Faces     string    `form:"faces" example:"faces:yes faces:3" notes:"Minimum number of Faces (yes = 1)"`                                                                    // Find or exclude faces if detected.
+	Subject   string    `form:"subject" example:"subject:\"Jane Doe & John Doe\"" notes:"Alias for person"`                                                                     // UIDs
+	Person    string    `form:"person" example:"person:\"Jane Doe & John Doe\"" notes:"Subject Names, exact matches (combinable with & and |)"`                                 // Alias for Subject
+	Subjects  string    `form:"subjects" example:"subjects:\"Jane & John\"" notes:"Alias for people"`                                                                           // People names
+	People    string    `form:"people" example:"people:\"Jane & John\"" notes:"Subject Names (combinable with & and |)"`                                                        // Alias for Subjects
+	Album     string    `form:"album" example:"album:berlin" notes:"Album UID or Name, supports * wildcards"`                                                                   // Album UIDs or name
+	Albums    string    `form:"albums" example:"albums:\"South Africa & Birds\"" notes:"Album Names (combinable with & and |)"`                                                 // Multi search with and/or
+	Quality   int       `form:"quality" notes:"Minimum quality score (1-7)"`                                                                                                    // Photo quality score
+	Review    bool      `form:"review" notes:"Finds pictures in review"`                                                                                                        // Find photos in review
+	Added     time.Time `form:"added" example:"added:\"2006-01-02 15:04:05\"" time_format:"2006-01-02 15:04:05" notes:"Finds pictures added at or after this time (UTC)"`       // Finds pictures added at or after this time (UTC)
+	Updated   time.Time `form:"updated" example:"updated:\"2006-01-02 15:04:05\"" time_format:"2006-01-02 15:04:05" notes:"Finds pictures updated at or after this time (UTC)"` // Finds pictures updated at or after this time (UTC)
+	Taken     time.Time `form:"taken" time_format:"2006-01-02" notes:"Finds pictures taken on the specified date"`                                                              // Finds pictures taken on the specified date
+	Before    time.Time `form:"before" time_format:"2006-01-02" notes:"Finds pictures taken on or before this date"`                                                            // Finds pictures taken on or before this date"
+	After     time.Time `form:"after" time_format:"2006-01-02" notes:"Finds pictures taken on or after this date"`                                                              // Finds pictures taken on or after this date
+	Count     int       `form:"count" binding:"required" serialize:"-"`                                                                                                         // Result FILE limit
+	Offset    int       `form:"offset" serialize:"-"`                                                                                                                           // Result FILE offset
+	Order     string    `form:"order" serialize:"-"`                                                                                                                            // Sort order
+	Merged    bool      `form:"merged" serialize:"-"`                                                                                                                           // Merge FILES in response
 }
 
 func (f *SearchPhotos) GetQuery() string {
