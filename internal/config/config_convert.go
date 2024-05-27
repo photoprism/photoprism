@@ -37,7 +37,7 @@ func (c *Config) JpegXLDecoderBin() string {
 
 // JpegXLEnabled checks if JPEG XL file format support is enabled.
 func (c *Config) JpegXLEnabled() bool {
-	return !c.DisableImageMagick()
+	return !c.DisableJpegXL()
 }
 
 // DisableJpegXL checks if JPEG XL file format support is disabled.
