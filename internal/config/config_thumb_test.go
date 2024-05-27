@@ -77,3 +77,27 @@ func TestConfig_ThumbSizeUncached2(t *testing.T) {
 	c.options.ThumbSize = 900
 	assert.Equal(t, int(900), c.ThumbSizeUncached())
 }
+
+func TestConfig_PngSize(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, 720, c.PngSize())
+	c.options.PngSize = 700681
+	assert.Equal(t, 30000, c.PngSize())
+	c.options.PngSize = 1240
+	assert.Equal(t, 1240, c.PngSize())
+}
+
+func TestConfig_ThumbLibrary(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.DisableVips())
+	c.options.ThumbLibrary = "auto"
+	assert.Equal(t, "vips", c.ThumbLibrary())
+	c.options.DisableVips = true
+	assert.Equal(t, "imaging", c.ThumbLibrary())
+	c.options.DisableVips = false
+	c.options.ThumbLibrary = "libvips"
+	assert.Equal(t, "vips", c.ThumbLibrary())
+	c.options.ThumbLibrary = "xxx"
+	assert.Equal(t, "vips", c.ThumbLibrary())
+}

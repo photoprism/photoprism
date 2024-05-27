@@ -162,6 +162,16 @@ func TestConfig_DisableVector(t *testing.T) {
 	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
 }
 
+func TestConfig_DisableRsvgConvert(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, c.Sponsor(), !c.DisableRsvgConvert())
+	c.options.DisableVectors = true
+	assert.True(t, c.DisableRsvgConvert())
+	c.options.DisableVectors = false
+	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
+}
+
 func TestConfig_DisableRaw(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

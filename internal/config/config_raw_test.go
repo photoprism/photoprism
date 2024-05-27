@@ -109,3 +109,49 @@ func TestConfig_RsvgConvertEnabled(t *testing.T) {
 	c.options.DisableVectors = true
 	assert.False(t, c.RsvgConvertEnabled())
 }
+
+func TestConfig_CreateDarktableCachePath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	path, err := c.CreateDarktableCachePath()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, path, "")
+
+	c.options.DarktableCachePath = "test"
+
+	path, err = c.CreateDarktableCachePath()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Contains(t, path, "test")
+
+	c.options.DarktableCachePath = ""
+}
+
+func TestConfig_CreateDarktableConfigPath(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	path, err := c.CreateDarktableConfigPath()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, path, "")
+
+	c.options.DarktableConfigPath = "test"
+
+	path, err = c.CreateDarktableConfigPath()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Contains(t, path, "test")
+
+	c.options.DarktableConfigPath = ""
+}

@@ -126,6 +126,51 @@ func TestConvert_ToImage(t *testing.T) {
 
 		_ = imageFile.Remove()
 	})
+	t.Run("SvgWithVectorsDisabled", func(t *testing.T) {
+		svgFile := fs.Abs("./testdata/agpl.svg")
+
+		cnf.Options().DisableVectors = true
+
+		mediaFile, err := NewMediaFile(svgFile)
+
+		t.Logf("svg: %s", mediaFile.FileName())
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToImage(mediaFile, false)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Nil(t, imageFile)
+
+		cnf.Options().DisableVectors = false
+
+	})
+	t.Run("Webp", func(t *testing.T) {
+		webpFile := fs.Abs("./testdata/windows95.webp")
+
+		mediaFile, err := NewMediaFile(webpFile)
+
+		t.Logf("webp: %s", mediaFile.FileName())
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		imageFile, err := convert.ToImage(mediaFile, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		t.Logf("jpeg: %s", imageFile.FileName())
+
+		_ = imageFile.Remove()
+	})
 	t.Run("DoNotConvertThumb", func(t *testing.T) {
 		thumbFile := fs.Abs("./testdata/animated-earth.thm")
 
