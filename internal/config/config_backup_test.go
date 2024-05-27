@@ -45,6 +45,9 @@ func TestConfig_BackupRetain(t *testing.T) {
 func TestConfig_BackupDatabase(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.True(t, c.BackupDatabase())
+	c.options.DisableBackups = true
+	assert.False(t, c.BackupDatabase())
+	c.options.DisableBackups = false
 	c.options.BackupDatabase = false
 	assert.False(t, c.BackupDatabase())
 	c.options.BackupDatabase = true
@@ -59,6 +62,9 @@ func TestConfig_BackupDatabasePath(t *testing.T) {
 func TestConfig_BackupAlbums(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.True(t, c.BackupAlbums())
+	c.options.DisableBackups = true
+	assert.False(t, c.BackupAlbums())
+	c.options.DisableBackups = false
 	c.options.BackupAlbums = false
 	assert.False(t, c.BackupAlbums())
 	c.options.BackupAlbums = true
