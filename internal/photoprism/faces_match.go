@@ -41,7 +41,7 @@ func (w *Faces) Match(opt FacesOptions) (result FacesMatchResult, err error) {
 		log.Debugf("faces: found no unmatched markers")
 	}
 
-	matchedAt := entity.TimePointer()
+	matchedAt := entity.TimeStamp()
 
 	if opt.Force || unmatchedMarkers > 0 {
 		faces, err := query.Faces(false, false, false, false)

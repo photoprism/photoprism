@@ -41,8 +41,8 @@ func NewPasscode(uid string, keyUrl, recoveryCode string) (*Passcode, error) {
 		UID:          uid,
 		KeyURL:       keyUrl,
 		RecoveryCode: clean.Token(recoveryCode),
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 		VerifiedAt:   nil,
 		ActivatedAt:  nil,
 	}
@@ -284,7 +284,7 @@ func (m *Passcode) Valid(code string) (valid bool, recovery bool, err error) {
 
 	// Set verified timestamp if nil.
 	if valid && m.VerifiedAt == nil {
-		m.VerifiedAt = TimePointer()
+		m.VerifiedAt = TimeStamp()
 		err = m.Updates(Map{"VerifiedAt": m.VerifiedAt})
 	}
 
@@ -303,7 +303,7 @@ func (m *Passcode) Activate() (err error) {
 	} else if m.ActivatedAt != nil {
 		return authn.ErrPasscodeAlreadyActivated
 	} else {
-		m.ActivatedAt = TimePointer()
+		m.ActivatedAt = TimeStamp()
 		err = m.Updates(Map{"ActivatedAt": m.ActivatedAt})
 	}
 

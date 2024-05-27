@@ -27,7 +27,7 @@ func TestMarkerByUID(t *testing.T) {
 
 func TestMarkers(t *testing.T) {
 	t.Run("find umatched", func(t *testing.T) {
-		results, err := Markers(3, 0, entity.MarkerFace, false, false, entity.TimeStamp())
+		results, err := Markers(3, 0, entity.MarkerFace, false, false, entity.Now())
 
 		if err != nil {
 			t.Fatal(err)
@@ -87,7 +87,7 @@ func TestUnmatchedFaceMarkers(t *testing.T) {
 		assert.Equal(t, 3, len(results))
 	})
 	t.Run("before", func(t *testing.T) {
-		results, err := UnmatchedFaceMarkers(3, 0, entity.TimePointer())
+		results, err := UnmatchedFaceMarkers(3, 0, entity.TimeStamp())
 
 		if err != nil {
 			t.Fatal(err)

@@ -138,7 +138,7 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 			}
 
 			// Refresh updated timestamp.
-			err = UpdateAlbum(albumUid, Map{"updated_at": TimePointer()})
+			err = UpdateAlbum(albumUid, Map{"updated_at": TimeStamp()})
 		}
 	}
 
@@ -152,7 +152,7 @@ func NewAlbum(albumTitle, albumType string) *Album {
 
 // NewUserAlbum creates a new album owned by a user.
 func NewUserAlbum(albumTitle, albumType, userUid string) *Album {
-	now := TimeStamp()
+	now := Now()
 
 	// Set default type.
 	if albumType == "" {
@@ -182,7 +182,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 		return nil
 	}
 
-	now := TimeStamp()
+	now := Now()
 
 	result := &Album{
 		AlbumOrder:  sortby.Added,
@@ -205,7 +205,7 @@ func NewMomentsAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := TimeStamp()
+	now := Now()
 
 	result := &Album{
 		AlbumOrder:  sortby.Oldest,
@@ -230,7 +230,7 @@ func NewStateAlbum(albumTitle, albumSlug, albumFilter string) *Album {
 		return nil
 	}
 
-	now := TimeStamp()
+	now := Now()
 
 	result := &Album{
 		AlbumOrder:  sortby.Newest,
@@ -261,7 +261,7 @@ func NewMonthAlbum(albumTitle, albumSlug string, year, month int) *Album {
 		Public: true,
 	}
 
-	now := TimeStamp()
+	now := Now()
 
 	result := &Album{
 		AlbumOrder:  sortby.Oldest,
@@ -392,7 +392,7 @@ func FindAlbum(find Album) *Album {
 
 	// Filter by creator if the album has not been published yet.
 	if find.CreatedBy != "" {
-		stmt = stmt.Where("published_at > ? OR created_by = ?", TimeStamp(), find.CreatedBy)
+		stmt = stmt.Where("published_at > ? OR created_by = ?", Now(), find.CreatedBy)
 	}
 
 	// Find first matching record.
@@ -710,7 +710,7 @@ func (m *Album) Delete() error {
 		return nil
 	}
 
-	now := TimeStamp()
+	now := Now()
 
 	if err := UnscopedDb().Model(m).UpdateColumns(Map{"updated_at": now, "deleted_at": now}).Error; err != nil {
 		return err
@@ -817,7 +817,7 @@ func (m *Album) AddPhotos(photos PhotosInterface) (added PhotoAlbums) {
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Map{"updated_at": TimePointer()}); err != nil {
+	if err := UpdateAlbum(m.AlbumUID, Map{"updated_at": TimeStamp()}); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 
@@ -845,7 +845,7 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Map{"updated_at": TimePointer()}); err != nil {
+	if err := UpdateAlbum(m.AlbumUID, Map{"updated_at": TimeStamp()}); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 

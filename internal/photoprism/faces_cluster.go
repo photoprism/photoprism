@@ -78,7 +78,7 @@ func (w *Faces) Cluster(opt FacesOptions) (added entity.Faces, err error) {
 			} else if err := f.Create(); err == nil {
 				added = append(added, *f)
 				log.Debugf("faces: added cluster %s based on %s, radius %f", f.ID, english.Plural(f.Samples, "sample", "samples"), f.SampleRadius)
-			} else if err := f.Updates(entity.Map{"UpdatedAt": entity.TimeStamp()}); err != nil {
+			} else if err := f.Updates(entity.Map{"UpdatedAt": entity.Now()}); err != nil {
 				log.Errorf("faces: %s", err)
 			} else {
 				log.Debugf("faces: updated cluster %s", f.ID)

@@ -101,10 +101,10 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 			continue
 		}
 
-		deleted := TimeStamp()
+		deleted := Now()
 
 		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = 0 WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
-		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", TimeStamp(), merge.ID))
+		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", Now(), merge.ID))
 
 		switch DbDialect() {
 		case MySQL:
@@ -126,7 +126,7 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 	}
 
 	if original.ID != m.ID {
-		deleted := TimeStamp()
+		deleted := Now()
 		m.DeletedAt = &deleted
 		m.PhotoQuality = -1
 	}

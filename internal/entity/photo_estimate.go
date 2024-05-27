@@ -52,7 +52,7 @@ func (m *Photo) EstimateCountry() {
 	if countryCode != unknown {
 		m.PhotoCountry = countryCode
 		m.PlaceSrc = SrcEstimate
-		m.EstimatedAt = TimePointer()
+		m.EstimatedAt = TimeStamp()
 		log.Debugf("photo: estimated country for %s is %s", m, clean.Log(m.CountryName()))
 	}
 }
@@ -64,12 +64,12 @@ func (m *Photo) EstimateLocation(force bool) {
 		return
 	} else if force || m.EstimatedAt == nil {
 		// Proceed.
-	} else if hours := TimeStamp().Sub(*m.EstimatedAt); hours < MetadataEstimateInterval {
+	} else if hours := Now().Sub(*m.EstimatedAt); hours < MetadataEstimateInterval {
 		// Ignore if location has been estimated recently (in the last 7 days by default).
 		return
 	}
 
-	m.EstimatedAt = TimePointer()
+	m.EstimatedAt = TimeStamp()
 
 	// Don't estimate if it seems to be a non-photographic image.
 	if m.UnknownCamera() && m.PhotoType == MediaImage {

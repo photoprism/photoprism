@@ -33,8 +33,8 @@ var UserShareFixtures = UserShareMap{
 		Comment:   "The quick brown fox jumps over the lazy dog.",
 		Perm:      PermShare,
 		RefID:     rnd.RefID(SharePrefix),
-		CreatedAt: TimeStamp(),
-		UpdatedAt: TimeStamp(),
+		CreatedAt: Now(),
+		UpdatedAt: Now(),
 	},
 }
 

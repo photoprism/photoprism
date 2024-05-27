@@ -36,19 +36,19 @@ func TestUTC(t *testing.T) {
 	})
 }
 
-func TestTimeStamp(t *testing.T) {
+func TestNow(t *testing.T) {
 	t.Run("UTC", func(t *testing.T) {
-		if TimeStamp().Location() != time.UTC {
+		if Now().Location() != time.UTC {
 			t.Fatal("timestamp zone must be UTC")
 		}
 	})
 	t.Run("Past", func(t *testing.T) {
-		if TimeStamp().After(time.Now().Add(time.Second)) {
+		if Now().After(time.Now().Add(time.Second)) {
 			t.Fatal("timestamp should be in the past from now")
 		}
 	})
 	t.Run("JSON", func(t *testing.T) {
-		t1 := TimeStamp().Add(time.Nanosecond * 123456)
+		t1 := Now().Add(time.Nanosecond * 123456)
 
 		if b, err := t1.MarshalJSON(); err != nil {
 			t.Fatal(err)
@@ -58,7 +58,7 @@ func TestTimeStamp(t *testing.T) {
 	})
 	t.Run("UnixMicro", func(t *testing.T) {
 		t1 := time.Date(-3000, 1, 1, 1, 1, 1, 0, time.UTC)
-		t2 := TimeStamp().Add(time.Nanosecond * 123456)
+		t2 := Now().Add(time.Nanosecond * 123456)
 		t3 := time.Date(3000, 1, 1, 1, 1, 1, 0, time.UTC)
 
 		ms1 := t1.UnixMilli()
@@ -94,8 +94,8 @@ func TestTimeStamp(t *testing.T) {
 	})
 }
 
-func TestTimePointer(t *testing.T) {
-	result := TimePointer()
+func TestTimeStamp(t *testing.T) {
+	result := TimeStamp()
 
 	if result == nil {
 		t.Fatal("result must not be nil")
@@ -108,6 +108,16 @@ func TestTimePointer(t *testing.T) {
 	if result.After(time.Now().Add(time.Second)) {
 		t.Fatal("timestamp should be in the past from now")
 	}
+}
+
+func TestTime(t *testing.T) {
+	result := Time("2022-01-02T13:04:05+01:00")
+
+	if result == nil {
+		t.Fatal("result must not be nil")
+	}
+
+	assert.Equal(t, "2022-01-02T12:04:05Z", result.Format("2006-01-02T15:04:05Z07:00"))
 }
 
 func TestSeconds(t *testing.T) {

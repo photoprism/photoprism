@@ -134,7 +134,7 @@ func (m *Photo) Approve() error {
 		return err
 	}
 
-	edited := entity.TimeStamp()
+	edited := entity.Now()
 
 	if err := UnscopedDb().
 		Table(entity.Photo{}.TableName()).

@@ -25,7 +25,7 @@ func TestUserShares_Contains(t *testing.T) {
 }
 
 func TestNewUserShare(t *testing.T) {
-	expires := TimeStamp().Add(time.Hour * 48)
+	expires := Now().Add(time.Hour * 48)
 	m := NewUserShare(Admin.GetUID(), AlbumFixtures.Get("berlin-2019").AlbumUID, PermReact, &expires)
 
 	assert.True(t, m.HasID())

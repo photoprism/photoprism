@@ -52,7 +52,7 @@ func (m *Photo) Optimize(mergeMeta, mergeUuid, estimatePlace, force bool) (updat
 
 	m.PhotoQuality = m.QualityScore()
 
-	checked := TimeStamp()
+	checked := Now()
 
 	if reflect.DeepEqual(*m, current) {
 		return false, merged, m.Update("CheckedAt", &checked)

@@ -63,7 +63,7 @@ func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
 
 // NewFolder creates a new file system directory entity.
 func NewFolder(root, pathName string, modTime time.Time) Folder {
-	now := TimeStamp()
+	now := Now()
 
 	pathName = strings.Trim(pathName, string(os.PathSeparator))
 

@@ -19,7 +19,7 @@ func TestLink_Expired(t *testing.T) {
 
 	link := NewLink("ss6sg6bxpogaaba1", true, false)
 
-	link.ModifiedAt = TimeStamp().Add(-7 * Day)
+	link.ModifiedAt = Now().Add(-7 * Day)
 	link.LinkExpires = 0
 
 	assert.False(t, link.Expired())

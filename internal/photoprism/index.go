@@ -330,7 +330,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 
 	runtime.GC()
 
-	ind.lastRun = entity.TimeStamp()
+	ind.lastRun = entity.Now()
 	ind.lastFound = len(found)
 
 	return found, updated

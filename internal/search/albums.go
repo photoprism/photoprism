@@ -63,9 +63,9 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 		// Limit results by UID, owner and path.
 		if sess.IsVisitor() || sess.NotRegistered() {
-			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
+			s = s.Where("albums.album_uid IN (?) OR albums.published_at > ?", sess.SharedUIDs(), entity.Now())
 		} else if acl.Rules.DenyAll(aclResource, aclRole, acl.Permissions{acl.AccessAll, acl.AccessLibrary}) {
-			s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
+			s = s.Where("albums.album_uid IN (?) OR albums.created_by = ? OR albums.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.Now())
 		}
 
 		// Exclude private content?

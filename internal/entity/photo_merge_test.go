@@ -9,27 +9,27 @@ import (
 
 func TestPhoto_Stackable(t *testing.T) {
 	t.Run("IsStackable", func(t *testing.T) {
-		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsStackable, TakenAt: TimeStamp(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
+		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsStackable, TakenAt: Now(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.True(t, m.Stackable())
 	})
 	t.Run("IsStacked", func(t *testing.T) {
-		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsStacked, TakenAt: TimeStamp(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
+		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsStacked, TakenAt: Now(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.True(t, m.Stackable())
 	})
 	t.Run("NoName", func(t *testing.T) {
-		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "", TakenAt: time.Time{}, TakenAtLocal: TimeStamp(), TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
+		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "", TakenAt: time.Time{}, TakenAtLocal: Now(), TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.Stackable())
 	})
 	t.Run("IsUnstacked", func(t *testing.T) {
-		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsUnstacked, TakenAt: TimeStamp(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
+		m := Photo{ID: 1, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsUnstacked, TakenAt: Now(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.Stackable())
 	})
 	t.Run("NoID", func(t *testing.T) {
-		m := Photo{ID: 0, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsStacked, TakenAt: TimeStamp(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
+		m := Photo{ID: 0, PhotoUID: "pr32t8j3feogit2t", PhotoName: "foo", PhotoStack: IsStacked, TakenAt: Now(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.Stackable())
 	})
 	t.Run("NoPhotoUID", func(t *testing.T) {
-		m := Photo{ID: 1, PhotoUID: "", PhotoName: "foo", PhotoStack: IsStacked, TakenAt: TimeStamp(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
+		m := Photo{ID: 1, PhotoUID: "", PhotoName: "foo", PhotoStack: IsStacked, TakenAt: Now(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.Stackable())
 	})
 }

@@ -118,7 +118,7 @@ var UserFixtures = UserMap{
 		CanLogin:     false,
 		WebDAV:       true,
 		CanInvite:    false,
-		DeletedAt:    TimePointer(),
+		DeletedAt:    TimeStamp(),
 		UserSettings: &UserSettings{
 			UITheme:     "",
 			MapsStyle:   "",

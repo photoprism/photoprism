@@ -141,12 +141,12 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 			sharedAlbums := "photos.photo_uid IN (SELECT photo_uid FROM photos_albums WHERE hidden = 0 AND missing = 0 AND album_uid IN (?)) OR "
 
 			if sess.IsVisitor() || sess.NotRegistered() {
-				s = s.Where(sharedAlbums+"photos.published_at > ?", sess.SharedUIDs(), entity.TimeStamp())
+				s = s.Where(sharedAlbums+"photos.published_at > ?", sess.SharedUIDs(), entity.Now())
 			} else if basePath := user.GetBasePath(); basePath == "" {
-				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.TimeStamp())
+				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ?", sess.SharedUIDs(), user.UserUID, entity.Now())
 			} else {
 				s = s.Where(sharedAlbums+"photos.created_by = ? OR photos.published_at > ? OR photos.photo_path = ? OR photos.photo_path LIKE ?",
-					sess.SharedUIDs(), user.UserUID, entity.TimeStamp(), basePath, basePath+"/%")
+					sess.SharedUIDs(), user.UserUID, entity.Now(), basePath, basePath+"/%")
 			}
 		}
 	}
@@ -611,27 +611,32 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 
 	// Find pictures added at or after this time (UTC).
 	if !f.Added.IsZero() {
-		s = s.Where("photos.created_at >= ?", f.Added.Format("2006-01-02 15:04:05"))
+		s = s.Where("photos.created_at >= ?", f.Added.UTC().Format("2006-01-02 15:04:05"))
 	}
 
 	// Find pictures updated at or after this time (UTC).
 	if !f.Updated.IsZero() {
-		s = s.Where("photos.updated_at >= ?", f.Updated.Format("2006-01-02 15:04:05"))
+		s = s.Where("photos.updated_at >= ?", f.Updated.UTC().Format("2006-01-02 15:04:05"))
+	}
+
+	// Find pictures edited at or after this time (UTC).
+	if !f.Edited.IsZero() {
+		s = s.Where("photos.edited_at >= ?", f.Edited.UTC().Format("2006-01-02 15:04:05"))
 	}
 
 	// Find pictures taken on the specified date.
 	if !f.Taken.IsZero() {
-		s = s.Where("DATE(photos.taken_at) = DATE(?)", f.Taken.Format("2006-01-02"))
+		s = s.Where("DATE(photos.taken_at) = DATE(?)", f.Taken.UTC().Format("2006-01-02"))
 	}
 
 	// Finds pictures taken on or before this date.
 	if !f.Before.IsZero() {
-		s = s.Where("photos.taken_at <= ?", f.Before.Format("2006-01-02"))
+		s = s.Where("photos.taken_at <= ?", f.Before.UTC().Format("2006-01-02"))
 	}
 
 	// Finds pictures taken on or after this date.
 	if !f.After.IsZero() {
-		s = s.Where("photos.taken_at >= ?", f.After.Format("2006-01-02"))
+		s = s.Where("photos.taken_at >= ?", f.After.UTC().Format("2006-01-02"))
 	}
 
 	// Limit offset and count.

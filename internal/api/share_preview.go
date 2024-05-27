@@ -51,7 +51,7 @@ func SharePreview(router *gin.RouterGroup) {
 
 		previewFilename := filepath.Join(thumbPath, shared+fs.ExtJPEG)
 
-		expires := entity.TimeStamp().Add(-1 * time.Hour)
+		expires := entity.Now().Add(-1 * time.Hour)
 
 		if info, err := os.Stat(previewFilename); err != nil {
 			log.Debugf("share: creating new preview for %s", clean.Log(shared))

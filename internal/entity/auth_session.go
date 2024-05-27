@@ -156,7 +156,7 @@ func (m *Session) Regenerate() *Session {
 	m.RefID = rnd.RefID(SessionPrefix)
 
 	// Get current time.
-	now := TimeStamp()
+	now := Now()
 
 	// Set timestamps to now.
 	m.CreatedAt = now
@@ -961,7 +961,7 @@ func (m *Session) SetClientIP(ip string) {
 
 	if m.LoginIP == "" {
 		m.LoginIP = ip
-		m.LoginAt = TimeStamp()
+		m.LoginAt = Now()
 	}
 
 	return

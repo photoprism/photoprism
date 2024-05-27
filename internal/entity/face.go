@@ -114,7 +114,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 
 // Matched updates the match timestamp.
 func (m *Face) Matched() error {
-	m.MatchedAt = TimePointer()
+	m.MatchedAt = TimeStamp()
 	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
 }
 
@@ -192,7 +192,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		log.Warnf("faces: %s has ambiguous subject %s with a similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
 
 		m.FaceKind = int(face.AmbiguousFace)
-		m.UpdatedAt = TimeStamp()
+		m.UpdatedAt = Now()
 		m.MatchedAt = &m.UpdatedAt
 		m.Collisions++
 		m.CollisionRadius = dist

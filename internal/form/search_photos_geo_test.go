@@ -1,8 +1,14 @@
 package form
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"testing"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -238,6 +244,67 @@ func TestSearchPhotosGeo(t *testing.T) {
 		}
 
 		assert.Contains(t, err.Error(), "invalid syntax")
+	})
+	t.Run("Added", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "added:\"2022-01-02T13:04:05+01:00\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2022-01-02 13:04:05 +0100 UTC+01:00", form.Added.String())
+		assert.Equal(t, "2022-01-02 12:04:05 +0000 UTC", form.Added.UTC().String())
+		assert.Equal(t, "2022-01-02T13:04:05+01:00", form.Added.Format(time.RFC3339))
+		assert.Equal(t, "2022-01-02T12:04:05Z", form.Added.UTC().Format(time.RFC3339))
+	})
+	t.Run("Updated", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "updated:\"2001-01-02 17:04:05\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2001-01-02 17:04:05 +0000 UTC", form.Updated.String())
+		assert.Equal(t, "2001-01-02 17:04:05 +0000 UTC", form.Updated.UTC().String())
+		assert.Equal(t, "2001-01-02T17:04:05Z", form.Updated.Format(time.RFC3339))
+		assert.Equal(t, "2001-01-02T17:04:05Z", form.Updated.UTC().Format(time.RFC3339))
+	})
+	t.Run("MustBindWith", func(t *testing.T) {
+		form := &SearchPhotosGeo{}
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		u, err := url.Parse("https://www.photoprism.app/api/v1/photos?count=100&offset=0&order=added&added=2022-01-02T13:04:05-01:00&updated=2001-01-02T17:04:05Z&q=")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		c.Request = &http.Request{
+			Header: make(http.Header),
+			URL:    u,
+		}
+
+		// Abort if request params are invalid.
+		if err = c.MustBindWith(form, binding.Form); err != nil {
+			t.Fatal(err)
+		}
+
+		err = form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2022-01-02T13:04:05-01:00", form.Added.Format(time.RFC3339))
+		assert.Equal(t, "2022-01-02T14:04:05Z", form.Added.UTC().Format(time.RFC3339))
+		assert.Equal(t, "2001-01-02T17:04:05Z", form.Updated.Format(time.RFC3339))
+		assert.Equal(t, 100, form.Count)
+		assert.Equal(t, 0, form.Offset)
 	})
 }
 

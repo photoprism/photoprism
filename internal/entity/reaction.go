@@ -87,7 +87,7 @@ func (m *Reaction) Save() (err error) {
 		return m.Create()
 	}
 
-	reactedAt := TimePointer()
+	reactedAt := TimeStamp()
 
 	values := Map{"reaction": m.Reaction, "reacted": gorm.Expr("reacted + 1"), "reacted_at": reactedAt}
 
@@ -107,7 +107,7 @@ func (m *Reaction) Create() (err error) {
 		return fmt.Errorf("reaction invalid")
 	}
 
-	r := &Reaction{UID: m.UID, UserUID: m.UserUID, Reaction: m.Reaction, Reacted: m.Reacted, ReactedAt: TimePointer()}
+	r := &Reaction{UID: m.UID, UserUID: m.UserUID, Reaction: m.Reaction, Reacted: m.Reacted, ReactedAt: TimeStamp()}
 
 	if err = Db().Create(r).Error; err == nil {
 		m.ReactedAt = r.ReactedAt

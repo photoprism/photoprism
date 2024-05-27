@@ -64,7 +64,7 @@ func NewLink(shareUid string, canComment, canEdit bool) Link {
 
 // NewUserLink creates a sharing link owned by a user.
 func NewUserLink(shareUid, userUid string) Link {
-	now := TimeStamp()
+	now := Now()
 
 	result := Link{
 		LinkUID:    rnd.GenerateUID(LinkUID),
@@ -95,7 +95,7 @@ func (m *Link) ExpiresAt() *time.Time {
 		return nil
 	}
 
-	expires := TimeStamp()
+	expires := Now()
 	expires = m.ModifiedAt.Add(Seconds(m.LinkExpires))
 
 	return &expires
@@ -110,7 +110,7 @@ func (m *Link) Expired() bool {
 	if expires := m.ExpiresAt(); expires == nil {
 		return false
 	} else {
-		return TimeStamp().After(*expires)
+		return Now().After(*expires)
 	}
 }
 
@@ -157,7 +157,7 @@ func (m *Link) Save() error {
 		return fmt.Errorf("empty link token")
 	}
 
-	m.ModifiedAt = TimeStamp()
+	m.ModifiedAt = Now()
 
 	return Db().Save(m).Error
 }

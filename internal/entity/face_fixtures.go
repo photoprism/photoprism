@@ -4,7 +4,7 @@ package entity
 var UnknownFace = Face{
 	ID:            UnknownID,
 	FaceSrc:       SrcDefault,
-	MatchedAt:     TimePointer(),
+	MatchedAt:     TimeStamp(),
 	SubjUID:       "",
 	EmbeddingJSON: []byte{},
 }
@@ -36,8 +36,8 @@ var FaceFixtures = FaceMap{
 		SampleRadius:  0.8,
 		Samples:       5,
 		Collisions:    1,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"unknown": Face{
 		ID:            "IW2P73ISBCUFPIAWSIOZKRDCHHFHC35S",
@@ -48,8 +48,8 @@ var FaceFixtures = FaceMap{
 		Samples:       1,
 		Collisions:    0,
 		MatchedAt:     &editTime,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"joe-biden": Face{
 		ID:              "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG6",
@@ -60,8 +60,8 @@ var FaceFixtures = FaceMap{
 		Samples:         33,
 		Collisions:      0,
 		CollisionRadius: 0,
-		CreatedAt:       TimeStamp(),
-		UpdatedAt:       TimeStamp(),
+		CreatedAt:       Now(),
+		UpdatedAt:       Now(),
 	},
 	"jane-doe": Face{
 		ID:              "VF7ANLDET2BKZNT4VQWJMMC6HBEFDOG7",
@@ -72,8 +72,8 @@ var FaceFixtures = FaceMap{
 		Samples:         3,
 		Collisions:      0,
 		CollisionRadius: 0,
-		CreatedAt:       TimeStamp(),
-		UpdatedAt:       TimeStamp(),
+		CreatedAt:       Now(),
+		UpdatedAt:       Now(),
 	},
 	"fa-gr": Face{
 		ID:              "TOSCDXCS4VI3PGIUTCNIQCNI6HSFXQVZ",
@@ -84,8 +84,8 @@ var FaceFixtures = FaceMap{
 		Samples:         4,
 		Collisions:      0,
 		CollisionRadius: 0,
-		CreatedAt:       TimeStamp(),
-		UpdatedAt:       TimeStamp(),
+		CreatedAt:       Now(),
+		UpdatedAt:       Now(),
 	},
 	"actress-1": Face{
 		ID:              "GMH5NISEEULNJL6RATITOA3TMZXMTMCI",
@@ -96,8 +96,8 @@ var FaceFixtures = FaceMap{
 		Samples:         4,
 		Collisions:      0,
 		CollisionRadius: 0,
-		CreatedAt:       TimeStamp(),
-		UpdatedAt:       TimeStamp(),
+		CreatedAt:       Now(),
+		UpdatedAt:       Now(),
 	},
 	"actor-1": Face{
 		ID:              "PI6A2XGOTUXEFI7CBF4KCI5I2I3JEJHS",
@@ -108,8 +108,8 @@ var FaceFixtures = FaceMap{
 		Samples:         4,
 		Collisions:      0,
 		CollisionRadius: 0,
-		CreatedAt:       TimeStamp(),
-		UpdatedAt:       TimeStamp(),
+		CreatedAt:       Now(),
+		UpdatedAt:       Now(),
 	},
 }
 

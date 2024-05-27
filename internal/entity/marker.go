@@ -255,7 +255,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	// Skip update if the same face is already set.
 	if m.SubjUID == f.SubjUID && m.FaceID == f.ID {
 		// Update matching timestamp.
-		m.MatchedAt = TimePointer()
+		m.MatchedAt = TimeStamp()
 		return false, m.Updates(Map{"MatchedAt": m.MatchedAt})
 	}
 
@@ -300,7 +300,7 @@ func (m *Marker) SetFace(f *Face, dist float64) (updated bool, err error) {
 	updated = m.FaceID != faceID || m.SubjUID != subjUID || m.SubjSrc != subjSrc
 
 	// Update matching timestamp.
-	m.MatchedAt = TimePointer()
+	m.MatchedAt = TimeStamp()
 
 	if err := m.Updates(Map{"FaceID": m.FaceID, "FaceDist": m.FaceDist, "SubjUID": m.SubjUID, "SubjSrc": m.SubjSrc, "MarkerReview": false, "MatchedAt": m.MatchedAt}); err != nil {
 		return false, err
@@ -547,7 +547,7 @@ func (m *Marker) ClearFace() (updated bool, err error) {
 	// Remove face references.
 	m.face = nil
 	m.FaceID = ""
-	m.MatchedAt = TimePointer()
+	m.MatchedAt = TimeStamp()
 
 	// Remove subject if set automatically.
 	if m.SubjSrc == SrcAuto {
@@ -584,7 +584,7 @@ func (m *Marker) RefreshPhotos() error {
 
 // Matched updates the match timestamp.
 func (m *Marker) Matched() error {
-	m.MatchedAt = TimePointer()
+	m.MatchedAt = TimeStamp()
 	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
 }
 
