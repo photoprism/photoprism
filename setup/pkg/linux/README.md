@@ -44,6 +44,12 @@ sudo apt install --no-install-recommends ./arm64.deb
 
 This installs PhotoPrism to `/opt/photoprism`, adds a `/usr/local/bin/photoprism` symlink for the CLI command, an `/etc/photoprism/defaults.yml` file and the required system dependencies (omit `--no-install-recommends` to also install MariaDB, Darktable, and RawTherapee).
 
+### AUR Packages for Arch Linux
+
+Thomas Eizinger additionally maintains [AUR packages for installation on Arch Linux](https://aur.archlinux.org/packages/photoprism-bin). These are based on our pre-built installation packages and have a systemd integration so that PhotoPrism can be started and restarted automatically.
+
+[Learn more ›](https://aur.archlinux.org/packages/photoprism-bin)
+
 ## Updates
 
 To update your installation, please stop all running PhotoPrism instances and make sure that there are [no media, database, or custom config files](#configuration) in the `/opt/photoprism` directory. You can then delete its contents with the command `sudo rm -rf /opt/photoprism/*` and install a new version as shown above.
