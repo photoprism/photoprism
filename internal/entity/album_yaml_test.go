@@ -78,6 +78,38 @@ func TestAlbum_SaveAsYaml(t *testing.T) {
 			t.Error(err)
 		}
 	})
+	t.Run("FilenameEmpty", func(t *testing.T) {
+		m := AlbumFixtures.Get("berlin-2019")
+
+		if found := m.Find(); found == nil {
+			t.Fatal("should find album")
+		} else {
+			m = *found
+		}
+
+		backupPath := fs.Abs("testdata/TestAlbum_SaveAsYaml")
+
+		err := m.SaveAsYaml("")
+
+		assert.Error(t, err)
+
+		if err = os.RemoveAll(backupPath); err != nil {
+			t.Error(err)
+		}
+	})
+	t.Run("NoAlbumUID", func(t *testing.T) {
+		m := Album{}
+
+		backupPath := fs.Abs("testdata/TestAlbum_SaveAsYaml")
+
+		err := m.SaveAsYaml("")
+
+		assert.Error(t, err)
+
+		if err = os.RemoveAll(backupPath); err != nil {
+			t.Error(err)
+		}
+	})
 }
 
 func TestAlbum_YamlFileName(t *testing.T) {
@@ -94,6 +126,30 @@ func TestAlbum_YamlFileName(t *testing.T) {
 
 		assert.NoError(t, err)
 		assert.Equal(t, "/foo/bar/album/as6sg6bxpogaaba9.yml", fileName)
+		assert.Equal(t, "album/as6sg6bxpogaaba9.yml", relName)
+	})
+	t.Run("NoAlbumUID", func(t *testing.T) {
+		m := Album{}
+
+		fileName, relName, err := m.YamlFileName("/foo/bar")
+
+		assert.Error(t, err)
+		assert.Equal(t, "", fileName)
+		assert.Equal(t, "", relName)
+	})
+	t.Run("BackupPathEmpty", func(t *testing.T) {
+		m := AlbumFixtures.Get("berlin-2019")
+
+		if found := m.Find(); found == nil {
+			t.Fatal("should find album")
+		} else {
+			m = *found
+		}
+
+		fileName, relName, err := m.YamlFileName("")
+
+		assert.Error(t, err)
+		assert.Equal(t, "", fileName)
 		assert.Equal(t, "album/as6sg6bxpogaaba9.yml", relName)
 	})
 }
@@ -116,6 +172,31 @@ func TestAlbum_SaveBackupYaml(t *testing.T) {
 		if err := os.RemoveAll(backupPath); err != nil {
 			t.Error(err)
 		}
+	})
+	t.Run("NoAlbumUID", func(t *testing.T) {
+		m := Album{}
+
+		backupPath := fs.Abs("testdata/TestAlbum_SaveBackupYaml")
+
+		if err := fs.MkdirAll(backupPath); err != nil {
+			t.Fatal(err)
+			return
+		}
+
+		err := m.SaveBackupYaml(backupPath)
+
+		assert.Error(t, err)
+
+		if err := os.RemoveAll(backupPath); err != nil {
+			t.Error(err)
+		}
+	})
+	t.Run("BackupPathEmpty", func(t *testing.T) {
+		m := AlbumFixtures.Get("berlin-2019")
+
+		err := m.SaveBackupYaml("")
+
+		assert.Error(t, err)
 	})
 }
 
@@ -158,5 +239,12 @@ func TestAlbum_LoadFromYaml(t *testing.T) {
 			assert.Equal(t, a.UpdatedAt, m.UpdatedAt)
 			assert.Equal(t, len(a.Photos), len(m.Photos))
 		}
+	})
+	t.Run("EmptyFilename", func(t *testing.T) {
+		m := Album{}
+
+		err := m.LoadFromYaml("")
+
+		assert.Error(t, err)
 	})
 }

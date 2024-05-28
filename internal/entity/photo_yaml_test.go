@@ -43,6 +43,24 @@ func TestPhoto_SaveAsYaml(t *testing.T) {
 			t.Fatal(err)
 		}
 	})
+	t.Run("FilenameEmpty", func(t *testing.T) {
+		m := PhotoFixtures.Get("Photo01")
+		m.PreloadFiles()
+
+		err := m.SaveAsYaml("")
+
+		assert.Error(t, err)
+	})
+	t.Run("NoPhotoUID", func(t *testing.T) {
+		m := Photo{}
+		m.PreloadFiles()
+
+		fileName := filepath.Join(os.TempDir(), ".photoprism_test.yml")
+
+		err := m.SaveAsYaml(fileName)
+
+		assert.Error(t, err)
+	})
 }
 
 func TestPhoto_YamlFileName(t *testing.T) {
@@ -89,5 +107,73 @@ func TestPhoto_SaveSidecarYaml(t *testing.T) {
 		if err := os.RemoveAll(basePath); err != nil {
 			t.Error(err)
 		}
+	})
+	t.Run("PhotoNameEmpty", func(t *testing.T) {
+		m := Photo{}
+		m.PreloadFiles()
+
+		basePath := fs.Abs("testdata/yaml")
+		originalsPath := filepath.Join(basePath, "originals")
+		sidecarPath := filepath.Join(basePath, "sidecar")
+
+		t.Logf("originalsPath: %s", originalsPath)
+		t.Logf("sidecarPath: %s", sidecarPath)
+
+		if err := fs.MkdirAll(originalsPath); err != nil {
+			t.Fatal(err)
+			return
+		}
+
+		if err := fs.MkdirAll(sidecarPath); err != nil {
+			t.Fatal(err)
+			return
+		}
+
+		err := m.SaveSidecarYaml(originalsPath, sidecarPath)
+
+		assert.Error(t, err)
+
+		if err := os.RemoveAll(basePath); err != nil {
+			t.Error(err)
+		}
+	})
+	t.Run("PhotoUIDEmpty", func(t *testing.T) {
+		m := Photo{PhotoName: "testphoto"}
+		m.PreloadFiles()
+
+		basePath := fs.Abs("testdata/yaml")
+		originalsPath := filepath.Join(basePath, "originals")
+		sidecarPath := filepath.Join(basePath, "sidecar")
+
+		t.Logf("originalsPath: %s", originalsPath)
+		t.Logf("sidecarPath: %s", sidecarPath)
+
+		if err := fs.MkdirAll(originalsPath); err != nil {
+			t.Fatal(err)
+			return
+		}
+
+		if err := fs.MkdirAll(sidecarPath); err != nil {
+			t.Fatal(err)
+			return
+		}
+
+		err := m.SaveSidecarYaml(originalsPath, sidecarPath)
+
+		assert.Error(t, err)
+
+		if err := os.RemoveAll(basePath); err != nil {
+			t.Error(err)
+		}
+	})
+}
+
+func TestPhoto_LoadFromYaml(t *testing.T) {
+	t.Run("EmptyFilename", func(t *testing.T) {
+		m := Photo{}
+
+		err := m.LoadFromYaml("")
+
+		assert.Error(t, err)
 	})
 }
