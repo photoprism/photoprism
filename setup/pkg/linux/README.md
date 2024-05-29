@@ -2,9 +2,9 @@
 
 As an alternative to our [Docker images](https://docs.photoprism.app/getting-started/docker-compose/), you can use the packages available at [**dl.photoprism.app/pkg/linux/**](https://dl.photoprism.app/pkg/linux/) to install PhotoPrism on compatible Linux distributions without [building it from source](https://docs.photoprism.app/getting-started/faq/#building-from-source).
 
-We recommend that **only experienced users** choose this installation method, since these packages [need to be set up manually](#configuration) and [do not include the system dependencies](#dependencies) required to make use of all the features.
+These [binary installation packages](https://dl.photoprism.app/pkg/linux/) are intended for **experienced users** and **maintainers of third-party integrations** only, as they [require manual configuration](#configuration) and [do not include tested system dependencies](#dependencies). Since we are unable to [provide support](https://www.photoprism.app/kb/getting-support) for custom installations, we recommend using [one of our Docker images](https://docs.photoprism.app/getting-started/docker-compose/) to run PhotoPrism on a private server or NAS device.
 
-Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work with these binaries, but older Linux distributions may not be compatible.
+Also note that the minimum required glibc version is 2.35, so for example Ubuntu 22.04 and Debian Bookworm will work, but older Linux distributions may not be compatible.
 
 ## Usage
 
@@ -46,7 +46,7 @@ This installs PhotoPrism to `/opt/photoprism`, adds a `/usr/local/bin/photoprism
 
 ### AUR Packages for Arch Linux
 
-Thomas Eizinger additionally maintains [AUR packages for installation on Arch Linux](https://aur.archlinux.org/packages/photoprism-bin). These are based on our pre-built installation packages and have a systemd integration so that PhotoPrism can be started and restarted automatically.
+Thomas Eizinger additionally maintains [AUR packages for installation on Arch Linux](https://aur.archlinux.org/packages/photoprism-bin). They are based on our *tar.gz* packages and have a systemd integration so that PhotoPrism can be started and restarted automatically.
 
 [Learn more ›](https://aur.archlinux.org/packages/photoprism-bin)
 
@@ -60,7 +60,7 @@ If you have used a *.deb* package for installation, you may need to remove the c
 
 In order to use all PhotoPrism features and have [full file format support](https://www.photoprism.app/kb/file-formats), additional system dependencies **must be installed** as they are not included in the packages we provide, for example exiftool, darktable, rawtherapee, [libheif](https://dl.photoprism.app/dist/libheif/README.html), imagemagick, libvips, libjxl, libjxl-tools, ffmpeg, libavcodec-extra, libde265, libaom, libvpx, libwebm, mariadb, sqlite3, and tzdata. The actual names may vary depending on what distribution you use.
 
-For details on the packages installed in our official Docker images, see <https://github.com/photoprism/photoprism/tree/develop/docker/develop>.
+Keep in mind that even if all dependencies are installed, it is possible that you are using a version that is not fully compatible with your pictures, phone, or camera. Our team cannot [provide support](https://www.photoprism.app/kb/getting-support) in these cases if the same issue does not occur with our [official Docker images](https://docs.photoprism.app/getting-started/docker-compose/). Details on the packages and package versions we use can be found in the Dockerfiles available in our [public project repository](https://github.com/photoprism/photoprism/tree/develop/docker).
 
 ## Configuration
 
@@ -70,7 +70,7 @@ Global config defaults [can be defined in a `/etc/photoprism/defaults.yml` file]
 
 If no explicit *originals*, *import* and/or *assets* path has been configured, a list of [default directory paths](https://github.com/photoprism/photoprism/blob/develop/pkg/fs/dirs.go) will be searched and the first existing directory will be used for the respective path. To simplify [updates](#updates), we recommend **not to store** any media, database, or custom config files in the same directory where you installed PhotoPrism, e.g. `/opt/photoprism`, and to use a different base directory for them instead, for example `/photoprism`, `/var/lib/photoprism`, or a path relative to each user's home directory.
 
-Please keep in mind that any changes to the config options, either [through the UI](https://docs.photoprism.app/user-guide/settings/advanced/), [config files](https://docs.photoprism.app/getting-started/config-files/), or by [setting environment variables](https://docs.photoprism.app/getting-started/config-options/), require a restart to take effect.
+Note that all configuration changes, either [via UI](https://docs.photoprism.app/user-guide/settings/advanced/), [config files](https://docs.photoprism.app/getting-started/config-files/) or by [setting environment variables](https://docs.photoprism.app/getting-started/config-options/), **require a restart** to take effect.
 
 ### `defaults.yml`
 
