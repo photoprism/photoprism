@@ -11,10 +11,11 @@ import (
 
 // ShowThumbSizesCommand configures the command name, flags, and action.
 var ShowThumbSizesCommand = cli.Command{
-	Name:   "thumb-sizes",
-	Usage:  "Displays supported standard thumbnail sizes",
-	Flags:  report.CliFlags,
-	Action: showThumbSizesAction,
+	Name:    "thumb-sizes",
+	Aliases: []string{"thumbs"},
+	Usage:   "Displays supported thumbnail types and sizes",
+	Flags:   report.CliFlags,
+	Action:  showThumbSizesAction,
 }
 
 // showThumbSizesAction displays supported standard thumbnail sizes.
