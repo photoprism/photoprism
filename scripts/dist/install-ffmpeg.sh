@@ -32,6 +32,7 @@ case $DESTARCH in
       add-apt-repository -y ppa:ubuntuhandbook1/ffmpeg7
       apt-get update
       apt-get -qq install ffmpeg
+      apt-get -qq dist-upgrade
     else
       apt-get -qq install ffmpeg
     fi
