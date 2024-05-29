@@ -74,15 +74,27 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 
 	switch c.DatabaseDriver() {
 	case config.MySQL, config.MariaDB:
-		cmd = exec.Command(
-			c.MariadbDumpBin(),
-			"--protocol", "tcp",
-			"-h", c.DatabaseHost(),
-			"-P", c.DatabasePortString(),
-			"-u", c.DatabaseUser(),
-			"-p"+c.DatabasePassword(),
-			c.DatabaseName(),
-		)
+		// Connect via Unix Domain Socket?
+		if strings.HasPrefix(c.DatabaseServer(), "/") {
+			cmd = exec.Command(
+				c.MariadbDumpBin(),
+				"--protocol", "socket",
+				"-S", c.DatabaseServer(),
+				"-u", c.DatabaseUser(),
+				"-p"+c.DatabasePassword(),
+				c.DatabaseName(),
+			)
+		} else {
+			cmd = exec.Command(
+				c.MariadbDumpBin(),
+				"--protocol", "tcp",
+				"-h", c.DatabaseHost(),
+				"-P", c.DatabasePortString(),
+				"-u", c.DatabaseUser(),
+				"-p"+c.DatabasePassword(),
+				c.DatabaseName(),
+			)
+		}
 	case config.SQLite3:
 		if !fs.FileExistsNotEmpty(c.DatabaseFile()) {
 			return fmt.Errorf("sqlite database file %s not found", clean.LogQuote(c.DatabaseFile()))
