@@ -62,6 +62,8 @@ case $VERSION_CODENAME in
     ;;
 esac
 
+echo "Installing libheif..."
+
 ARCHIVE="libheif-${VERSION_CODENAME}-${DESTARCH}-${LIBHEIF_VERSION}.tar.gz"
 URL="https://dl.photoprism.app/dist/libheif/${ARCHIVE}"
 
