@@ -26,7 +26,7 @@ Since the packages currently do not include a default configuration, we recommen
 
 ### *.deb* Packages for Ubuntu / Debian Linux
 
-As an alternative to the plain *tar.gz* archives, that you need to unpack manually, we also offer *.deb* packages for Debian-based distributions such as Ubuntu Linux.
+As an alternative to the plain *tar.gz* archives, that you need to unpack manually, we also offer *.deb* packages for Debian-based distributions such as Ubuntu Linux. Note that these packages are not fully mature yet and will install `-dev` packages to satisfy library dependencies. This may result in more packages being installed than are actually needed in production environments.
 
 On servers with a **64-bit Intel or AMD CPU**, our [latest stable release](https://github.com/photoprism/photoprism/releases) can be installed as follows:
 
