@@ -81,7 +81,7 @@ services:
       # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbit/s (default: 50)
-      ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
+      ## Run/install on first startup (options: update https gpu ffmpeg tensorflow davfs clitools clean):
       # PHOTOPRISM_INIT: "https gpu tensorflow"
     ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
     volumes:

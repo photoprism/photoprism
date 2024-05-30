@@ -14,6 +14,9 @@ clean:
 https: install-https
 install-https:
 	@/scripts/install-https.sh
+ffmpeg: install-ffmpeg
+install-ffmpeg:
+	@/scripts/install-ffmpeg.sh
 mariadb: mariadb-client
 mariadb-client: install-mariadb-client
 install-mariadb-client:

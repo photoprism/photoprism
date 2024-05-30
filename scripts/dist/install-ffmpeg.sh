@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# This installs ffmpeg on Linux.
+# This installs FFmpeg on Ubuntu Linux.
 # bash <(curl -s https://raw.githubusercontent.com/photoprism/photoprism/develop/scripts/dist/install-ffmpeg.sh)
 
 PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:$PATH"
@@ -24,21 +24,29 @@ set -e
 
 . /etc/os-release
 
-echo "Installing ffmpeg for ${DESTARCH^^}..."
-
 case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64 | arm64 | ARM64 | aarch64)
     if [[ $VERSION_CODENAME == "noble" ]]; then
+      # Install FFmpeg 7 from a PPA on Ubuntu 24.04 LTS.
+      echo "Installing FFmpeg 7 for ${DESTARCH^^} from ppa:ubuntuhandbook1/ffmpeg7..."
+      apt-get update
+      apt-get -qq install software-properties-common pkg-config apt-utils
       add-apt-repository -y ppa:ubuntuhandbook1/ffmpeg7
       apt-get update
       apt-get -qq install ffmpeg
       apt-get -qq dist-upgrade
     else
+      # Otherwise, install the default FFmpeg package.
+      echo "Installing FFmpeg for ${DESTARCH^^}..."
+      apt-get update
       apt-get -qq install ffmpeg
     fi
     ;;
 
   *)
+    # Install the default FFmpeg package.
+    echo "Installing FFmpeg for ${DESTARCH^^}..."
+    apt-get update
     apt-get -qq install ffmpeg
     ;;
 esac

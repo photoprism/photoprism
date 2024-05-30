@@ -103,7 +103,7 @@ services:
       # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)
       # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbit/s (default: 50)
       # LIBVA_DRIVER_NAME: "i965"                    # For Intel architectures Haswell and older which do not support QSV yet but use VAAPI instead
-      ## Run/install on first startup (options: update https gpu tensorflow davfs clitools clean):
+      ## Run/install on first startup (options: update https gpu ffmpeg tensorflow davfs clitools clean):
       PHOTOPRISM_INIT: "https tensorflow"
     ## Share hardware devices with FFmpeg and TensorFlow (optional):
     # devices:
