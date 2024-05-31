@@ -1,11 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-22 14:48+0000\n"
-"PO-Revision-Date: 2024-04-17 08:08+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"PO-Revision-Date: 2024-05-31 09:03+0000\n"
+"Last-Translator: 松浦 知也 Matsuura Tomoya <me@matsuuratomoya.com>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/"
 "photoprism/backend/ja/>\n"
 "Language: ja_JP\n"
@@ -13,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.4.3\n"
+"X-Generator: Weblate 5.5.5\n"
 
 #: messages.go:100
 msgid "Something went wrong, try again"
@@ -21,7 +20,7 @@ msgstr "何か問題が発生しました、もう一度やり直してくださ
 
 #: messages.go:101
 msgid "Unable to do that"
-msgstr "できないこと"
+msgstr "実行できませんでした"
 
 #: messages.go:102
 msgid "Changes could not be saved"
@@ -38,7 +37,7 @@ msgstr "%s は既に存在します"
 
 #: messages.go:105
 msgid "Not found"
-msgstr "見つかりません"
+msgstr "見つかりませんでした"
 
 #: messages.go:106
 msgid "File not found"
@@ -46,7 +45,7 @@ msgstr "ファイルが見つかりませんでした"
 
 #: messages.go:107
 msgid "File too large"
-msgstr "ファイルサイズが大きすぎる"
+msgstr "ファイルサイズが大きすぎます"
 
 #: messages.go:108
 msgid "Unsupported"
@@ -58,7 +57,7 @@ msgstr "サポートされていないタイプ"
 
 #: messages.go:110
 msgid "Unsupported format"
-msgstr "非対応のフォーマット"
+msgstr "非対応のフォーマットです"
 
 #: messages.go:111
 msgid "Originals folder is empty"
@@ -98,7 +97,7 @@ msgstr "人が見つかりません"
 
 #: messages.go:120
 msgid "Face not found"
-msgstr "顔が見つからない"
+msgstr "顔を検出できませんでした"
 
 #: messages.go:121
 msgid "Not available in public mode"
