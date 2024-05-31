@@ -334,7 +334,7 @@ func TestConfig_WakeupInterval(t *testing.T) {
 
 func TestConfig_AutoIndex(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, time.Duration(0), c.AutoIndex())
+	assert.Equal(t, -1*time.Second, c.AutoIndex())
 }
 
 func TestConfig_AutoImport(t *testing.T) {

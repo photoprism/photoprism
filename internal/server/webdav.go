@@ -13,6 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/auto"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/header"
@@ -25,7 +26,7 @@ var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Ha
 }
 
 // WebDAV handles requests to the "/originals" and "/import" endpoints.
-func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
+func WebDAV(dir string, router *gin.RouterGroup, conf *config.Config) {
 	if router == nil {
 		log.Error("webdav: router is nil")
 		return
@@ -37,7 +38,8 @@ func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
 	}
 
 	// Native file system restricted to a specific directory.
-	fileSystem := webdav.Dir(filePath)
+	fileSystem := webdav.Dir(dir)
+	lockSystem := mutex.WebDAV(dir)
 
 	// Request logger function.
 	loggerFunc := func(request *http.Request, err error) {
@@ -83,7 +85,7 @@ func WebDAV(filePath string, router *gin.RouterGroup, conf *config.Config) {
 	srv := &webdav.Handler{
 		Prefix:     router.BasePath(),
 		FileSystem: fileSystem,
-		LockSystem: webdav.NewMemLS(),
+		LockSystem: lockSystem,
 		Logger:     loggerFunc,
 	}
 

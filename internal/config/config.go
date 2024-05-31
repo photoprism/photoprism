@@ -799,9 +799,9 @@ func (c *Config) WakeupInterval() time.Duration {
 // AutoIndex returns the auto index delay duration.
 func (c *Config) AutoIndex() time.Duration {
 	if c.options.AutoIndex < 0 {
-		return time.Duration(0)
+		return -1 * time.Second
 	} else if c.options.AutoIndex == 0 || c.options.AutoIndex > 604800 {
-		return time.Duration(DefaultAutoIndexDelay) * time.Second
+		return DefaultAutoIndexDelay * time.Second
 	}
 
 	return time.Duration(c.options.AutoIndex) * time.Second
@@ -810,9 +810,9 @@ func (c *Config) AutoIndex() time.Duration {
 // AutoImport returns the auto import delay duration.
 func (c *Config) AutoImport() time.Duration {
 	if c.options.AutoImport < 0 || c.ReadOnly() {
-		return time.Duration(0)
+		return -1 * time.Second
 	} else if c.options.AutoImport == 0 || c.options.AutoImport > 604800 {
-		return time.Duration(DefaultAutoImportDelay) * time.Second
+		return DefaultAutoImportDelay * time.Second
 	}
 
 	return time.Duration(c.options.AutoImport) * time.Second

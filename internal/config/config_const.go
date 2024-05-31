@@ -20,8 +20,8 @@ const DefaultIndexSchedule = "" // e.g. "0 */3 * * *" for every 3 hours
 
 // DefaultAutoIndexDelay and DefaultAutoImportDelay set the default safety delay duration
 // before starting to index/import in the background.
-const DefaultAutoIndexDelay = 120  // 2 Minutes
-const DefaultAutoImportDelay = 150 // 2.5 Minutes
+const DefaultAutoIndexDelay = 300 // 5 Minutes
+const DefaultAutoImportDelay = -1 // Disabled
 
 // MinWakeupInterval and MaxWakeupInterval limit the interval duration
 // in which the background worker can be invoked.
