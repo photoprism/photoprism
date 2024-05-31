@@ -12,7 +12,6 @@ import (
 
 func TestDatabase(t *testing.T) {
 	t.Run("DatabaseNotFoundToStdOut", func(t *testing.T) {
-
 		backupPath, err := filepath.Abs("./testdata/sqlite")
 
 		if err != nil {
@@ -32,7 +31,6 @@ func TestDatabase(t *testing.T) {
 		}
 	})
 	t.Run("DatabaseNotFound", func(t *testing.T) {
-
 		backupPath, err := filepath.Abs("./testdata/sqlite")
 
 		if err != nil {

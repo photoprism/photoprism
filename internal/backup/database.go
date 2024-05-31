@@ -75,11 +75,11 @@ func Database(backupPath, fileName string, toStdOut, force bool, retain int) (er
 	switch c.DatabaseDriver() {
 	case config.MySQL, config.MariaDB:
 		// Connect via Unix Domain Socket?
-		if strings.HasPrefix(c.DatabaseServer(), "/") {
+		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
 			cmd = exec.Command(
 				c.MariadbDumpBin(),
 				"--protocol", "socket",
-				"-S", c.DatabaseServer(),
+				"-S", socketName,
 				"-u", c.DatabaseUser(),
 				"-p"+c.DatabasePassword(),
 				c.DatabaseName(),
@@ -236,16 +236,29 @@ func RestoreDatabase(backupPath, fileName string, fromStdIn, force bool) (err er
 
 	switch c.DatabaseDriver() {
 	case config.MySQL, config.MariaDB:
-		cmd = exec.Command(
-			c.MariadbBin(),
-			"--protocol", "tcp",
-			"-h", c.DatabaseHost(),
-			"-P", c.DatabasePortString(),
-			"-u", c.DatabaseUser(),
-			"-p"+c.DatabasePassword(),
-			"-f",
-			c.DatabaseName(),
-		)
+		// Connect via Unix Domain Socket?
+		if socketName := c.DatabaseServer(); strings.HasPrefix(socketName, "/") {
+			cmd = exec.Command(
+				c.MariadbBin(),
+				"--protocol", "socket",
+				"-S", socketName,
+				"-u", c.DatabaseUser(),
+				"-p"+c.DatabasePassword(),
+				"-f",
+				c.DatabaseName(),
+			)
+		} else {
+			cmd = exec.Command(
+				c.MariadbBin(),
+				"--protocol", "tcp",
+				"-h", c.DatabaseHost(),
+				"-P", c.DatabasePortString(),
+				"-u", c.DatabaseUser(),
+				"-p"+c.DatabasePassword(),
+				"-f",
+				c.DatabaseName(),
+			)
+		}
 	case config.SQLite3:
 		log.Infoln("restore: dropping existing sqlite database tables")
 		tables.Drop(c.Db())
