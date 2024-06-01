@@ -69,7 +69,7 @@ services:
       PHOTOPRISM_AUTO_IMPORT: -1                     # delay before automatically importing files in SECONDS when uploading via WebDAV (-1 to disable)
       PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive (no effect without TensorFlow)
-      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # use MariaDB 10.5.12+ (MySQL successor) instead of SQLite for good indexing performance
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # MariaDB 10.5.12+ (MySQL successor) offers significantly better performance compared to SQLite
       PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
       PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB database schema name
       PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB database user name
