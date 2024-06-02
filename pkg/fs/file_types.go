@@ -45,6 +45,7 @@ const (
 	VideoAVI   Type = "avi"  // Microsoft Audio Video Interleave (AVI)
 	VideoAVC   Type = "avc"  // H.264, Advanced Video Coding (AVC, MPEG-4 Part 10)
 	VideoVVC   Type = "vvc"  // H.266, Versatile Video Coding (VVC)
+	VideoEVC   Type = "evc"  // Essential Video Coding (MPEG-5 Part 1)
 	VideoAV1   Type = "av1"  // Alliance for Open Media Video
 	VideoMPG   Type = "mpg"  // Moving Picture Experts Group (MPEG)
 	VideoMJPG  Type = "mjpg" // Motion JPEG (M-JPEG)

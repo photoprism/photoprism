@@ -46,6 +46,15 @@ var HEVC = Type{
 	Public:      false,
 }
 
+// EVC aka Essential Video Coding (MPEG-5 Part 1).
+var EVC = Type{
+	Codec:       CodecEVC,
+	FileType:    fs.VideoEVC,
+	WidthLimit:  0,
+	HeightLimit: 0,
+	Public:      false,
+}
+
 // VVC aka Versatile Video Coding (H.266).
 var VVC = Type{
 	Codec:       CodecVVC,

@@ -26,6 +26,7 @@ var TypeInfo = TypeMap{
 	VideoAVC:        "Advanced Video Coding (H.264, MPEG-4 Part 10)",
 	VideoHEVC:       "High Efficiency Video Coding (H.265)",
 	VideoVVC:        "Versatile Video Coding (H.266)",
+	VideoEVC:        "Essential Video Coding (MPEG-5 Part 1)",
 	VideoAV1:        "AOMedia Video 1",
 	VideoMOV:        "Apple QuickTime",
 	VideoMP4:        "Multimedia Container (MPEG-4 Part 14)",

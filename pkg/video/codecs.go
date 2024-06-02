@@ -14,6 +14,7 @@ const (
 	CodecAVC     Codec = "avc1"
 	CodecHVC     Codec = "hvc1"
 	CodecVVC     Codec = "vvc"
+	CodecEVC     Codec = "evc"
 	CodecAV1     Codec = "av01"
 	CodecVP8     Codec = "vp8"
 	CodecVP9     Codec = "vp9"
@@ -35,8 +36,16 @@ var Codecs = StandardCodecs{
 	"hvc1":     CodecHVC,
 	"v_hvc":    CodecHVC,
 	"v_hvc1":   CodecHVC,
+	"evc":      CodecEVC,
+	"evc1":     CodecEVC,
+	"evcC":     CodecEVC,
+	"v_evc":    CodecEVC,
+	"v_evc1":   CodecEVC,
 	"vvc":      CodecVVC,
+	"vvcC":     CodecVVC,
+	"vvc1":     CodecVVC,
 	"v_vvc":    CodecVVC,
+	"v_vvc1":   CodecVVC,
 	"av1":      CodecAV1,
 	"av01":     CodecAV1,
 	"v_av1":    CodecAV1,

@@ -286,7 +286,11 @@ export default class Util {
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
       case "vvc":
+      case "vvc1":
         return "Versatile Video Coding (VVC) / H.266";
+      case "evc":
+      case "evc1":
+        return "Essential Video Coding (MPEG-5 Part 1)";
       case "av1c":
       case "av01":
         return "AOMedia Video 1 (AV1)";
