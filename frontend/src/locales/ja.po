@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-31 09:03+0000\n"
-"Last-Translator: Suu <suu@na-cat.com>\n"
+"PO-Revision-Date: 2024-06-03 13:25+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/photoprism/frontend/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
@@ -33,12 +33,12 @@ msgstr "%{n} 個のラベルが見つかりました"
 #: src/page/people/new.vue:287 src/page/people/new.vue:376
 #: src/page/people/recognized.vue:501
 msgid "%{n} people found"
-msgstr "%{n}人が見つかりました"
+msgstr "%{n} 人が見つかりました"
 
 #: src/page/album/photos.vue:258 src/page/album/photos.vue:414
 #: src/page/photos.vue:368 src/page/photos.vue:536
 msgid "%{n} pictures found"
-msgstr "%{n}の写真が見つかりました"
+msgstr "%{n} 枚の写真が見つかりました"
 
 #: src/options/options.js:419
 msgid "1 hour"
@@ -63,7 +63,7 @@ msgstr "4時間"
 
 #: src/dialog/share.vue:71
 msgid "A click will copy it to your clipboard."
-msgstr "クリックすると、クリップボードにコピーされます。"
+msgstr "クリックするとクリップボードにコピーされます。"
 
 #: src/dialog/admin/users/edit.vue:265 src/page/about/about.vue:235
 #: src/page/settings/account.vue:315 src/app/routes.js:60
@@ -74,7 +74,7 @@ msgstr "概要"
 
 #: src/options/auth.js:26 src/options/auth.js:44
 msgid "Access Token"
-msgstr "アクセス・トークン"
+msgstr "アクセストークン"
 
 #: src/component/navigation.vue:106 src/component/navigation.vue:2059
 #: src/dialog/share/upload.vue:108 src/model/service.js:94
@@ -127,7 +127,7 @@ msgstr "アカウントを追加"
 
 #: src/page/albums.vue:164 src/page/albums.vue:154
 msgid "Add Album"
-msgstr "アルバムを作成"
+msgstr "アルバムを追加"
 
 #: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
@@ -173,7 +173,7 @@ msgstr "1週間後"
 
 #: src/dialog/account/passcode.vue:23 src/dialog/account/passcode.vue:4
 msgid "After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:"
-msgstr "確認のためにパスワードを入力した後、互換性のある認証アプリまたはデバイスを使用して 2 要素認証を設定できます。"
+msgstr "確認のためにパスワードを入力した後、互換性のある認証アプリまたはデバイスを使用して2要素認証を設定できます:"
 
 #: src/options/options.js:433
 msgid "After one month"
@@ -257,7 +257,7 @@ msgstr "すべてのフィールドが必須項目です"
 
 #: src/page/library/import.vue:12
 msgid "All files from import folder"
-msgstr "インポート フォルダからのすべてのファイル"
+msgstr "インポートフォルダ内のすべてのファイル"
 
 #: src/component/photo/toolbar.vue:61
 msgid "All Lenses"
@@ -277,7 +277,7 @@ msgstr "すべての年"
 
 #: src/dialog/share.vue:73
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
-msgstr "代わりに、Nextcloud といった WebDAV サーバから直接ファイルをアップロードすることができます。"
+msgstr "代わりに、Nextcloud などの WebDAV サーバから直接ファイルをアップロードすることができます。"
 
 #: src/dialog/photo/edit/info.vue:165
 msgid "Altitude"
@@ -309,7 +309,7 @@ msgstr "API キー"
 #: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
-msgstr "申し込み"
+msgstr "アプリケーション"
 
 #: src/dialog/photo/edit/details.vue:115
 msgid "Apply"
@@ -400,12 +400,12 @@ msgstr "ベースフォルダー"
 #: src/page/about/about.vue:26 src/page/about/about.vue:5
 #: src/page/connect.vue:74
 msgid "Become a member today, support our mission and enjoy our member benefits!"
-msgstr "今すぐ会員になって、私たちのミッションをサポートし、会員特典を享受してください！"
+msgstr "今すぐ会員になって、私たちのミッションをサポートし、会員特典を楽しんでください！"
 
 #: src/dialog/sponsor.vue:22 src/page/about/about.vue:28
 #: src/page/about/about.vue:7
 msgid "Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services."
-msgstr "100% selfが出資し、独立しているため、私たちはお客様のデータを決して販売せず、私たちのソフトウェアとサービスについて常に透明性を保つことをお約束できます。"
+msgstr "100%自己資金で運営しているため、私たちはお客様のデータを決して販売せず、私たちのソフトウェアとサービスについて常に透明性を保つことをお約束できます。"
 
 #: src/dialog/admin/users/edit.vue:293 src/page/settings/account.vue:287
 msgid "Bio"
@@ -449,7 +449,7 @@ msgstr "バグ報告"
 
 #: src/page/connect.vue:8 src/common/notify.js:101
 msgid "Busy, please wait…"
-msgstr "処理中です、しばらくお待ちください…"
+msgstr "処理中です。しばらくお待ちください…"
 
 #: src/page/connect.vue:106
 msgid "By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct."
@@ -471,11 +471,11 @@ msgstr "カメラのシリアル"
 
 #: src/page/auth/login.vue:41
 msgid "Can't access your authenticator app or device?"
-msgstr "認証アプリやデバイスにアクセスできない？"
+msgstr "認証アプリやデバイスにアクセスできませんか？"
 
 #: src/page/album/photos.vue:264 src/page/photos.vue:374
 msgid "Can't load more, limit reached"
-msgstr "更に読み込むことはできません、制限に達しました"
+msgstr "制限に達したため、これ以上読み込めません"
 
 #: src/common/clipboard.js:100 src/common/clipboard.js:137
 #: src/page/albums.vue:570 src/page/albums.vue:586 src/page/labels.vue:204
@@ -515,7 +515,7 @@ msgstr "カテゴリ"
 
 #: src/dialog/admin/users/edit.vue:182 src/page/settings/account.vue:256
 msgid "Change Avatar"
-msgstr "アバターを変更する"
+msgstr "アバターを変更"
 
 #: src/page/settings/account.vue:54 src/dialog/account/password.vue:8
 #: src/page/settings/account.vue:56
@@ -524,15 +524,15 @@ msgstr "パスワードの変更"
 
 #: src/page/settings/general.vue:474
 msgid "Change personal profile and security settings."
-msgstr "個人のプロファイルやセキュリティの設定を変更する。"
+msgstr "個人のプロファイルやセキュリティ設定を変更します。"
 
 #: src/page/settings/general.vue:320
 msgid "Change photo titles, locations, and other metadata."
-msgstr "写真のタイトルや撮影地などのメタデータを変更できます。"
+msgstr "写真のタイトルや撮影地などのメタデータを変更します。"
 
 #: src/component/photo/clipboard.vue:134
 msgid "Change private flag"
-msgstr "プライベートであるかどうかを変更"
+msgstr "プライベート状態を変更"
 
 #: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
 #: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
@@ -542,11 +542,11 @@ msgstr "プライベートであるかどうかを変更"
 #: src/page/settings/advanced.vue:54 src/page/settings/general.vue:100
 #: src/page/settings/library.vue:52
 msgid "Changes successfully saved"
-msgstr "正常に変更が保存されました"
+msgstr "変更が正常に保存されました"
 
 #: src/page/settings/advanced.vue:9
 msgid "Changes to the advanced settings require a restart to take effect."
-msgstr "詳細設定の変更を有効にするには再起動が必要である。"
+msgstr "詳細設定の変更を有効にするには再起動が必要です。"
 
 #: src/dialog/photo/edit/info.vue:203
 msgid "Checked"
@@ -570,7 +570,7 @@ msgstr "クライアント"
 
 #: src/options/auth.js:24
 msgid "Client Credentials"
-msgstr "クライアント資格"
+msgstr "クライアント資格情報"
 
 #: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
@@ -601,7 +601,7 @@ msgstr "色"
 
 #: src/page/connect.vue:88
 msgid "Compare Editions"
-msgstr "エディション比較"
+msgstr "エディションを比較"
 
 #: src/page/library/index.vue:117
 msgid "Complete Rescan"
@@ -613,7 +613,7 @@ msgstr "信頼度"
 
 #: src/dialog/account/passcode.vue:71 src/dialog/account/passcode.vue:24
 msgid "Confirm"
-msgstr "確認する"
+msgstr "確認"
 
 #: src/dialog/service/add.vue:18 src/page/settings/services.vue:51
 msgid "Connect"
@@ -640,16 +640,16 @@ msgstr "お問い合わせ"
 #: src/page/albums.vue:135 src/page/labels.vue:84
 #: src/page/people/recognized.vue:97
 msgid "Contains %{n} pictures."
-msgstr "%{n}枚の写真が含まれています。"
+msgstr "%{n} 枚の写真が含まれています。"
 
 #: src/page/albums.vue:132 src/page/labels.vue:81
 #: src/page/people/recognized.vue:94
 msgid "Contains one picture."
-msgstr "1枚の写真が入っています。"
+msgstr "1枚の写真が含まれています。"
 
 #: src/dialog/account/apps.vue:37 src/dialog/account/apps.vue:18
 msgid "Continue"
-msgstr "続く"
+msgstr "続ける"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
@@ -685,7 +685,7 @@ msgstr "国"
 
 #: src/page/auth/login.vue:32
 msgid "Create Account"
-msgstr "アカウント作成"
+msgstr "アカウントを作成"
 
 #: src/dialog/photo/album.vue:21
 msgid "Create album"
@@ -693,15 +693,15 @@ msgstr "アルバムを作成"
 
 #: src/page/settings/advanced.vue:376
 msgid "Create regular backups based on the configured schedule."
-msgstr "設定したスケジュールに基づいてインデックスバックアップを作成する。"
+msgstr "設定したスケジュールに基づいてインデックスバックアップを作成します。"
 
 #: src/page/settings/advanced.vue:355
 msgid "Create YAML files to back up album metadata."
-msgstr "アルバムのメタデータをバックアップするYAMLファイルを作成する。"
+msgstr "アルバムのメタデータをバックアップするYAMLファイルを作成します。"
 
 #: src/page/settings/advanced.vue:334
 msgid "Create YAML sidecar files to back up picture metadata."
-msgstr "画像のメタデータをバックアップするためにYAMLサイドカーファイルを作成する。"
+msgstr "画像のメタデータをバックアップするためにYAMLサイドカーファイルを作成します。"
 
 #: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
 msgid "Created"
@@ -776,7 +776,7 @@ msgstr "すべて削除"
 
 #: src/page/library/index.vue:143
 msgid "Delete orphaned index entries, sidecar files and thumbnails."
-msgstr "孤児となったインデックスエントリ、サイドカーファイル、サムネイルを削除します。"
+msgstr "独立したインデックスエントリ、サイドカーファイル、サムネイルを削除します。"
 
 #: src/component/photo/cards.vue:461 src/dialog/album/edit.vue:148
 #: src/dialog/photo/edit/details.vue:609 src/page/albums.vue:570
@@ -785,7 +785,7 @@ msgstr "概要"
 
 #: src/dialog/webdav.vue:39
 msgid "Detailed instructions can be found in our User Guide."
-msgstr "詳細な手順はユーザーガイドに記載されています。"
+msgstr "詳しい手順はユーザーガイドを参照してください。"
 
 #: src/dialog/photo/edit.vue:28 src/dialog/photo/edit.vue:2
 #: src/dialog/photo/edit.vue:157
@@ -802,27 +802,27 @@ msgstr "バックアップを無効化"
 
 #: src/page/settings/advanced.vue:674
 msgid "Disable Darktable"
-msgstr "Darktableの無効化"
+msgstr "Darktableを無効化"
 
 #: src/page/settings/advanced.vue:259
 msgid "Disable ExifTool"
-msgstr "ExifTool を無効化"
+msgstr "ExifToolを無効化"
 
 #: src/page/settings/advanced.vue:172
 msgid "Disable features that require write permission for the originals folder."
-msgstr "オリジナルフォルダの書き込み権限を必要とする機能を無効にする。"
+msgstr "オリジナルフォルダへの書き込み権限を必要とする機能を無効にします。"
 
 #: src/page/settings/advanced.vue:762
 msgid "Disable FFmpeg"
-msgstr "FFmpegの無効化"
+msgstr "FFmpegを無効化"
 
 #: src/page/settings/advanced.vue:740
 msgid "Disable ImageMagick"
-msgstr "ImageMagickを無効にする"
+msgstr "ImageMagickを無効化"
 
 #: src/page/settings/advanced.vue:238
 msgid "Disable interactive world maps and reverse geocoding."
-msgstr "インタラクティブな世界地図と逆ジオコーディングを無効にする。"
+msgstr "インタラクティブな世界地図と逆ジオコーディングを無効にします。"
 
 #: src/page/settings/advanced.vue:237
 msgid "Disable Places"
@@ -830,19 +830,19 @@ msgstr "場所を無効化"
 
 #: src/page/settings/advanced.vue:696
 msgid "Disable RawTherapee"
-msgstr "RawTherapeeの無効化"
+msgstr "RawTherapeeを無効化"
 
 #: src/page/settings/advanced.vue:281
 msgid "Disable TensorFlow"
-msgstr "TensorFlow を無効化"
+msgstr "TensorFlowを無効化"
 
 #: src/page/settings/advanced.vue:786
 msgid "Disable Vectors"
-msgstr "ベクターの無効化"
+msgstr "ベクターを無効化"
 
 #: src/page/settings/advanced.vue:215
 msgid "Disable WebDAV"
-msgstr "WebDAV を無効化"
+msgstr "WebDAVを無効化"
 
 #: src/page/settings/advanced.vue:787
 msgid "Disables vector graphics support."
@@ -898,7 +898,7 @@ msgstr "ダウンロード"
 
 #: src/page/settings/general.vue:648
 msgid "Download only original media files, without any automatically generated files."
-msgstr "自動生成されたファイルを一切使用せず、オリジナルのメディアファイルのみをダウンロードすることができます。"
+msgstr "自動生成されたファイルを使用せず、オリジナルのメディアファイルのみをダウンロードすることができます。"
 
 #: src/dialog/service/edit.vue:338
 msgid "Download remote files"
@@ -906,7 +906,7 @@ msgstr "リモートにあるファイルをダウンロード"
 
 #: src/page/settings/general.vue:254
 msgid "Download single files and zip archives."
-msgstr "単一のファイルと zip アーカイブをダウンロードします。"
+msgstr "単一のファイルとzipアーカイブをダウンロードします。"
 
 #: src/component/album/clipboard.vue:102 src/component/album/toolbar.vue:119
 #: src/component/file/clipboard.vue:46 src/component/label/clipboard.vue:80
@@ -919,7 +919,7 @@ msgstr "ダウンロードしています…"
 
 #: src/page/settings/advanced.vue:430
 msgid "Downscaling Filter"
-msgstr "ダウンスケーリング フィルター"
+msgstr "ダウンスケーリングフィルター"
 
 #: src/page/about/feedback.vue:16
 msgid "Due to the high volume of emails we receive, our team may be unable to get back to you immediately."
@@ -935,11 +935,11 @@ msgstr "寄付"
 
 #: src/page/settings/advanced.vue:507
 msgid "Dynamic Previews"
-msgstr "動的なプレビュー"
+msgstr "動的プレビュー"
 
 #: src/page/settings/advanced.vue:476
 msgid "Dynamic Size Limit: %{n}px"
-msgstr "動的サイズの制限: %{n}px"
+msgstr "動的サイズの制限: %{n} px"
 
 #: src/page/about/feedback.vue:198 src/page/about/feedback.vue:197
 msgid "E-Mail"
@@ -974,7 +974,7 @@ msgstr "メールアドレス"
 
 #: src/page/settings/advanced.vue:128
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
-msgstr "デバッグモードを有効にすると、追加のログが表示され、トラブルシューティングに役立つ。"
+msgstr "デバッグモードを有効にすると、追加のログが表示され、トラブルシューティングに役立ちます。"
 
 #: src/page/settings/advanced.vue:150
 msgid "Enable new features currently under development."
@@ -986,19 +986,19 @@ msgstr "RAW現像機のプリセットを有効にします。パフォーマン
 
 #: src/dialog/account/passcode.vue:30 src/dialog/account/passcode.vue:11
 msgid "Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account."
-msgstr "2 要素認証を有効にすると、ログイン時にランダムに生成された確認コードが必要になるため、誰かがパスワードにアクセスしたとしても、アカウントにアクセスできなくなります。"
+msgstr "2要素認証を有効にすると、ログイン時にランダムに生成された確認コードが必要になるため、誰かがパスワードを使っても、アカウントにアクセスできなくなります。"
 
 #: src/page/auth/login.vue:12 src/page/auth/login.vue:2
 msgid "Enter the verification code generated by your authenticator app:"
-msgstr "認証アプリが生成した認証コードを入力する："
+msgstr "認証アプリが生成した認証コードを入力してください:"
 
 #: src/common/api.js:122
 msgid "Enter verification code"
-msgstr "確認コードを入力してください"
+msgstr "認証コードを入力してください"
 
 #: src/dialog/account/apps.vue:23 src/dialog/account/apps.vue:4
 msgid "Enter your password to confirm the action and continue:"
-msgstr "パスワードを入力して操作を確認し、続行します。"
+msgstr "パスワードを入力して操作を確認し、続行します:"
 
 #: src/page/connect.vue:14
 msgid "Error"
@@ -1034,7 +1034,7 @@ msgstr "非表示を除く"
 
 #: src/page/settings/advanced.vue:260
 msgid "ExifTool is required for full support of XMP metadata, videos and Live Photos."
-msgstr "ビデオ、ライブフォト、XMPをフルサポートするには、ExifToolによるメタデータ抽出が必要である。"
+msgstr "ビデオ、ライブフォト、XMPを完全にサポートするには、ExifToolによるメタデータ抽出が必要です。"
 
 #: src/component/navigation.vue:294
 msgid "Expand"
@@ -1090,7 +1090,7 @@ msgstr "姓"
 
 #: src/options/options.js:293
 msgid "Fast"
-msgstr "早い"
+msgstr "高速"
 
 #: src/dialog/album/edit.vue:213 src/dialog/photo/edit/info.vue:107
 msgid "Favorite"
@@ -1142,7 +1142,7 @@ msgstr "ファイルサイズ"
 
 #: src/dialog/photo/edit/files.vue:71 src/dialog/photo/edit/files.vue:68
 msgid "Filename"
-msgstr "ファイル"
+msgstr "ファイル名"
 
 #: src/component/navigation.vue:594 src/dialog/photo/edit.vue:66
 #: src/dialog/photo/edit.vue:6 src/dialog/photo/edit.vue:295
@@ -1151,7 +1151,7 @@ msgstr "ファイル"
 
 #: src/page/settings/library.vue:214
 msgid "Files with sequential names like 'IMG_1234 (2)' and 'IMG_1234 (3)' belong to the same picture."
-msgstr "「IMG_1234 (2)」と「IMG_1234 (3)」のような連名のファイルは同じ写真に属します。"
+msgstr "「IMG_1234 (2)」や「IMG_1234 (3)」のような連名のファイルは同じ写真として扱います。"
 
 #: src/dialog/photo/edit/details.vue:487
 msgid "Focal Length"
@@ -1190,7 +1190,7 @@ msgstr "フレーム"
 
 #: src/options/auth.js:54 src/options/auth.js:64
 msgid "Full Access"
-msgstr "全権アクセス"
+msgstr "フルアクセス"
 
 #: src/component/photo-viewer.vue:172
 msgid "Fullscreen"
@@ -1206,7 +1206,7 @@ msgstr "一般"
 
 #: src/dialog/account/apps.vue:96 src/dialog/account/apps.vue:24
 msgid "Generate"
-msgstr "生成する"
+msgstr "生成"
 
 #: src/page/settings/general.vue:166
 msgid "Generate albums of special moments, journeys, and places."
@@ -1230,7 +1230,7 @@ msgstr "緑"
 
 #: src/options/options.js:453
 msgid "Grey"
-msgstr "灰"
+msgstr "グレー"
 
 #: src/options/admin.js:22 src/options/auth.js:10
 msgid "Guest"
@@ -1246,7 +1246,7 @@ msgstr "ヘルプ"
 
 #: src/app/routes.js:72 src/app/routes.js:78
 msgid "Help & Support"
-msgstr "サポートの享受"
+msgstr "ヘルプ & サポート"
 
 #: src/component/navigation.vue:391
 msgid "Hidden"
@@ -1266,7 +1266,7 @@ msgstr "アーカイブに移動された写真を隠します。"
 
 #: src/options/options.js:377
 msgid "High"
-msgstr "高い"
+msgstr "高"
 
 #: src/dialog/photo/edit/files.vue:147 src/dialog/photo/edit/files.vue:144
 msgid "High Dynamic Range (HDR)"
@@ -1274,7 +1274,7 @@ msgstr "ハイダイナミックレンジ（HDR）"
 
 #: src/page/about/feedback.vue:155 src/page/about/feedback.vue:154
 msgid "How can we help?"
-msgstr "どのように我々は助けることができますか？"
+msgstr "私達にできることはありますか？"
 
 #: src/dialog/account/passcode.vue:117 src/dialog/account/passcode.vue:7
 msgid "If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account."
@@ -1316,7 +1316,7 @@ msgstr "%{name} をインポートしています …"
 
 #: src/page/library/import.vue:6
 msgid "Importing files to originals…"
-msgstr "オリジナルにファイルをインポートしています …"
+msgstr "オリジナルフォルダにファイルをインポートしています…"
 
 #: src/dialog/photo/edit/files.vue:219 src/dialog/photo/edit/files.vue:228
 #: src/dialog/photo/edit/files.vue:216 src/dialog/photo/edit/files.vue:225
@@ -1329,15 +1329,15 @@ msgstr "次の場所で"
 #: src/component/photo/mosaic.vue:1 src/page/labels.vue:42
 #: src/page/library/browse.vue:38
 msgid "In case pictures you expect are missing, please rescan your library and wait until indexing has been completed."
-msgstr "想定していた写真が欠落していた場合は、お手持ちのライブラリーを再スキャンし、インデックス作成が完了するまでお待ちください。"
+msgstr "探している写真が見つからない場合は、ライブラリーを再スキャンし、インデックス作成が完了するまでお待ちください。"
 
 #: src/page/settings/general.vue:669
 msgid "Include RAW image files when downloading stacks and archives."
-msgstr "スタックやアーカイブのダウンロード時に、RAW画像ファイルを含める。"
+msgstr "スタックやアーカイブのダウンロード時に、RAW画像ファイルを含めます。"
 
 #: src/page/settings/general.vue:690
 msgid "Include sidecar files when downloading stacks and archives."
-msgstr "スタックやアーカイブをダウンロードする際に、サイドカーファイルを含める。"
+msgstr "スタックやアーカイブをダウンロードする際に、サイドカーファイルを含めます。"
 
 #: src/component/navigation.vue:600 src/page/library.vue:35
 #: src/page/settings/library.vue:6
@@ -1346,7 +1346,7 @@ msgstr "インデックス"
 
 #: src/page/settings/general.vue:408
 msgid "Index and import files through the user interface."
-msgstr "ユーザーインターフェースを通じて、ファイルのインデックスやインポートを行うことができます。"
+msgstr "ユーザーインターフェースを通じて、ファイルのインデックスやインポートを行います。"
 
 #: src/page/library/index.vue:148 src/page/library/index.vue:154
 msgid "Indexing"
@@ -1358,11 +1358,11 @@ msgstr "インデックスに失敗"
 
 #: src/page/library/index.vue:7
 msgid "Indexing media and sidecar files…"
-msgstr "メディアや付随するファイルをインデックスしています …"
+msgstr "メディアとサイドカーファイルをインデックスしています…"
 
 #: src/dialog/photo/edit/files.vue:59 src/dialog/photo/edit/files.vue:56
 msgid "Instance ID"
-msgstr "インスタンス ID"
+msgstr "インスタンスID"
 
 #: src/dialog/service/edit.vue:309
 msgid "Interval"
@@ -1383,7 +1383,7 @@ msgstr "間隔"
 #: src/page/settings/account.vue:953 src/page/settings/account.vue:724
 #: src/page/settings/account.vue:807
 msgid "Invalid"
-msgstr "無効"
+msgstr "不正"
 
 #: src/dialog/photo/edit/details.vue:143
 msgid "Invalid date"
@@ -1396,12 +1396,12 @@ msgstr "無効なパラメータ"
 
 #: src/dialog/photo/edit.vue:119 src/model/thumb.js:74
 msgid "Invalid photo selected"
-msgstr "選択した写真が無効"
+msgstr "無効な写真が選択されました"
 
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "これは 1 回限りの使用コードであり、使用するとアカウントの 2FA が無効になります。"
+msgstr "これは1回のみ使えるコードであり、使用するとアカウントの2FAが無効になります。"
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1409,15 +1409,15 @@ msgstr "項目"
 
 #: src/page/settings/advanced.vue:553
 msgid "JPEG Quality: %{n}"
-msgstr "JPEG 品質: %{n}"
+msgstr "JPEG品質: %{n}"
 
 #: src/page/settings/advanced.vue:579
 msgid "JPEG Size Limit: %{n}px"
-msgstr "JPEG サイズの制限: %{n}px"
+msgstr "JPEGサイズの制限: %{n} px"
 
 #: src/page/library/import.vue:26
 msgid "JPEGs and thumbnails are automatically rendered as needed."
-msgstr "JPEG やサムネイルは必要な場合に自動的に生成されます。"
+msgstr "JPEGとサムネイルは必要な場合に自動的に生成されます。"
 
 #: src/dialog/photo/edit/details.vue:634
 msgid "Keywords"
@@ -1440,7 +1440,7 @@ msgstr "ラベルが削除されました"
 
 #: src/options/options.js:468
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
-msgstr "ランチョス法: 詳細な保全、最小限の骨董品"
+msgstr "ランチョス法: 鮮明な細部、最小限のノイズ"
 
 #: src/page/settings/general.vue:94
 msgid "Language"
@@ -1448,7 +1448,7 @@ msgstr "言語"
 
 #: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
 msgid "Last Active"
-msgstr "ラストアクティブ"
+msgstr "最終アクティブ"
 
 #: src/page/admin/users.vue:45
 msgid "Last Login"
@@ -1460,7 +1460,7 @@ msgstr "最終同期"
 
 #: src/dialog/account/apps.vue:55
 msgid "Last Used"
-msgstr "最後に使用した"
+msgstr "最終利用"
 
 #: src/dialog/photo/edit/details.vue:309 src/dialog/photo/edit/info.vue:149
 msgid "Latitude"
@@ -1507,11 +1507,11 @@ msgstr "黄緑"
 
 #: src/page/library/browse.vue:320
 msgid "Limit reached, showing first %{n} files"
-msgstr "制限に達しました、最初の %{n} 個のファイルを表示しています"
+msgstr "制限に達しました。最初の %{n} 個のファイルを表示しています"
 
 #: src/options/options.js:470
 msgid "Linear: Very Smooth, Best Performance"
-msgstr "線形: とても滑らか、最高のパフォーマンス"
+msgstr "リニア: とても滑らか、ベストパフォーマンス"
 
 #: src/model/link.js:117 src/options/auth.js:30 src/options/auth.js:31
 msgid "Link"
@@ -1552,7 +1552,7 @@ msgstr "場所"
 
 #: src/page/library/errors.vue:45 src/page/library/errors.vue:1
 msgid "Log messages appear here whenever PhotoPrism comes across broken files, or there are other potential issues."
-msgstr "PhotoPrism が壊れたファイルを見つけたり、潜在的な問題を発見したときはいつでもここにログメッセージが表示されます。"
+msgstr "PhotoPrismが壊れたファイルを見つけたり、潜在的な問題が見つかったときはここにログメッセージが表示されます。"
 
 #: src/component/navigation.vue:479 src/component/navigation.vue:1778
 #: src/component/navigation.vue:2111
@@ -1575,7 +1575,7 @@ msgstr "経度"
 
 #: src/options/options.js:381
 msgid "Low"
-msgstr "低い"
+msgstr "低"
 
 #: src/options/options.js:336
 msgid "Low Resolution"
@@ -1624,7 +1624,7 @@ msgstr "メンバーシップ"
 
 #: src/dialog/people/merge.vue:25
 msgid "Merge %{a} with %{b}?"
-msgstr "%{a}を%{b}と統合しますか？"
+msgstr "%{a} を %{b} に統合しますか？"
 
 #: src/page/about/feedback.vue:34 src/page/about/feedback.vue:27
 msgid "Message sent"
@@ -1640,7 +1640,7 @@ msgstr "メトリクス"
 
 #: src/component/navigation.vue:247
 msgid "Minimize"
-msgstr "最小化する"
+msgstr "最小化"
 
 #: src/dialog/photo/edit/files.vue:208 src/dialog/photo/edit/files.vue:205
 msgid "Missing"
@@ -1675,7 +1675,7 @@ msgstr "ファイルを移動"
 
 #: src/dialog/account/password.vue:168
 msgid "Must have at least %{n} characters."
-msgstr "最低6文字。"
+msgstr "少なくとも %{n} 文字必要です。"
 
 #: src/page/about/feedback.vue:175 src/component/photo/cards.vue:542
 #: src/component/photo/list.vue:143 src/component/photo/list.vue:235
@@ -1730,13 +1730,13 @@ msgstr "アルバムが見つかりませんでした"
 #: src/dialog/photo/edit/labels.vue:69 src/page/labels.vue:38
 #: src/page/labels.vue:422
 msgid "No labels found"
-msgstr "どのラベルも見つかりませんでした"
+msgstr "ラベルが見つかりませんでした"
 
 #: src/dialog/photo/edit/people.vue:5 src/page/people/new.vue:29
 #: src/page/people/new.vue:283 src/page/people/new.vue:372
 #: src/page/people/recognized.vue:42 src/page/people/recognized.vue:497
 msgid "No people found"
-msgstr "ユーザーが見つかりません"
+msgstr "ユーザーが見つかりませんでした"
 
 #: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
@@ -1749,11 +1749,11 @@ msgstr "写真はありません"
 #: src/component/photo/cards.vue:5 src/component/photo/cards.vue:3
 #: src/component/photo/list.vue:5 src/component/photo/mosaic.vue:5
 msgid "No recently edited pictures"
-msgstr "最近編集した写真がない"
+msgstr "最近編集した写真がありません"
 
 #: src/dialog/share/upload.vue:64
 msgid "No servers configured."
-msgstr "どのサーバーも設定されていません。"
+msgstr "サーバーが設定されていません。"
 
 #: src/page/settings/services.vue:37
 msgid "No services configured."
@@ -1765,11 +1765,11 @@ msgstr "いいえ、結構です"
 
 #: src/component/photo-viewer.vue:97 src/dialog/video/viewer.vue:55
 msgid "No video selected"
-msgstr "選択した画像が表示されません"
+msgstr "動画が選択されていません"
 
 #: src/page/library/errors.vue:42 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
-msgstr "このキーワードを含む警告やエラーは1つも見つかりませんでした。この検索では大文字と小文字を区別することに気をつけてください。"
+msgstr "このキーワードを含む警告やエラーが見つかりませんでした。この検索では大文字と小文字を区別することに気をつけてください。"
 
 #: src/component/photo/cards.vue:15 src/component/photo/cards.vue:13
 #: src/component/photo/cards.vue:3 src/component/photo/cards.vue:1
@@ -1779,7 +1779,7 @@ msgstr "このキーワードを含む警告やエラーは1つも見つかり�
 #: src/component/photo/mosaic.vue:1 src/dialog/upload.vue:56
 #: src/page/settings/library.vue:91
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
-msgstr "写真ではないものや、低品質な画像は検索結果に現れる前にレビューが必要です。"
+msgstr "写真ではないものや、低品質な画像は検索結果に表示される前にレビューが必要です。"
 
 #: src/options/admin.js:43 src/options/auth.js:32 src/options/options.js:289
 #: src/options/options.js:385
@@ -1796,7 +1796,7 @@ msgstr "メモ:"
 
 #: src/dialog/service/add.vue:28
 msgid "Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload."
-msgstr "メモ: Nextcloud や PhotoPrism といった WebDAV サーバのみがバックアップやファイルのバックアップのためのリモートサービスとして設定できます。"
+msgstr "メモ: NextcloudやPhotoPrismといったWebDAVサーバのみがバックアップやファイルアップロードのリモートサービスとして設定できます。"
 
 #: src/dialog/photo/edit/details.vue:659
 msgid "Notes"
@@ -1804,7 +1804,7 @@ msgstr "メモ"
 
 #: src/page/library/logs.vue:5
 msgid "Nothing to see here yet."
-msgstr "まだここには何もありません。我慢してください。"
+msgstr "まだ何もありません。"
 
 #: src/page/admin/sessions.vue:50 src/page/admin/users.vue:43
 #: src/dialog/account/apps.vue:560
@@ -1817,7 +1817,7 @@ msgstr "オフライン"
 
 #: src/options/auth.js:28
 msgid "OIDC"
-msgstr "国際データセンター"
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1826,11 +1826,11 @@ msgstr "古い順"
 
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
-msgstr "Windowsの場合、接続ダイアログに以下のリソースを入力します:"
+msgstr "Windowsの場合、接続ダイアログに以下の内容を入力します:"
 
 #: src/page/settings/advanced.vue:508
 msgid "On-demand generation of thumbnails may cause high CPU and memory usage. It is not recommended for resource-constrained servers and NAS devices."
-msgstr "サムネイルのオンデマンド生成は、CPUとメモリーの使用率が高くなる可能性がある。リソースに制約のあるサーバーやNASデバイスには推奨されない。"
+msgstr "サムネイルのオンデマンド生成は、CPUとメモリの使用率が高くなる可能性があります。リソースに制限のあるサーバーやNASデバイスには推奨されません。"
 
 #: src/options/options.js:424
 msgid "Once a week"
@@ -1838,11 +1838,11 @@ msgstr "1週間に1度"
 
 #: src/page/albums.vue:507
 msgid "One album found"
-msgstr "1 件のアルバムが見つかりました"
+msgstr "1 つのアルバムが見つかりました"
 
 #: src/page/library/browse.vue:312
 msgid "One file found"
-msgstr "1 件のファイルが見つかりました"
+msgstr "1 個のファイルが見つかりました"
 
 #: src/dialog/share/upload.vue:78
 msgid "One file uploaded"
@@ -1850,24 +1850,24 @@ msgstr "%{n} 件のファイルをアップロードしました"
 
 #: src/page/library/browse.vue:314
 msgid "One folder found"
-msgstr "1 件のフォルダが見つかりました"
+msgstr "1 個のフォルダが見つかりました"
 
 #: src/page/labels.vue:424
 msgid "One label found"
-msgstr "1枚のラベルが見つかりました"
+msgstr "1 個のラベルが見つかりました"
 
 #: src/page/people/new.vue:285 src/page/people/new.vue:374
 #: src/page/people/recognized.vue:499
 msgid "One person found"
-msgstr "1人が見つかりました"
+msgstr "1 人が見つかりました"
 
 #: src/page/album/photos.vue:412 src/page/photos.vue:534
 msgid "One picture found"
-msgstr "1枚の写真を発見"
+msgstr "1 枚の写真が見つかりました"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr "2FA による認証を設定できるのは、ローカルで管理されているアカウントのみです。"
+msgstr "2FAによる認証を設定できるのは、ローカルで管理されているアカウントのみです。"
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -1944,7 +1944,7 @@ msgstr "永久に削除"
 
 #: src/page/settings/general.vue:364
 msgid "Permanently remove files to free up storage."
-msgstr "ファイルを永久的に削除して、ストレージを空けることができます。"
+msgstr "ファイルを永久に削除して、ストレージを空けることができます。"
 
 #: src/options/auth.js:42
 msgid "Personal"
@@ -1960,7 +1960,7 @@ msgstr "写真"
 
 #: src/dialog/reload.vue:4
 msgid "PhotoPrism has been updated…"
-msgstr "PhotoPrism はアップデートされています …"
+msgstr "PhotoPrismがアップデートされました…"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
 msgid "PhotoPrism is 100% self-funded and independent."
@@ -2002,19 +2002,19 @@ msgstr "場所"
 
 #: src/dialog/account/password.vue:197
 msgid "Please confirm your new password."
-msgstr "あなたの新しいパスワードを確認してください。"
+msgstr "新しいパスワードを再入力してください。"
 
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:4
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
-msgstr "ランダムに生成された次のアプリ パスワードをコピーして安全な場所に保管してください。このパスワードは再度表示することはできません。"
+msgstr "ランダムに生成された次のアプリパスワードをコピーして安全な場所に保存してください。このパスワードは再表示されません:"
 
 #: src/dialog/upload.vue:48
 msgid "Please do not upload any private, unlawful or offensive pictures."
-msgstr "私的、違法、または不快な写真をアップロードしないでください。"
+msgstr "私的、違法、不快な写真はアップロードしないでください。"
 
 #: src/dialog/upload.vue:51
 msgid "Please don't upload photos containing offensive content."
-msgstr "過激な内容を含む写真をアップロードしないでください。"
+msgstr "過激な内容を含む写真はアップロードしないでください。"
 
 #: src/dialog/account/password.vue:19
 msgid "Please note that changing your password will log you out on other devices and browsers."
@@ -2030,7 +2030,7 @@ msgstr "お待ちください…"
 
 #: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
-msgstr "PNG サイズの制限: %{n}px"
+msgstr "PNGサイズ制限: %{n} px"
 
 #: src/dialog/photo/edit/files.vue:155 src/dialog/photo/edit/files.vue:152
 msgid "Portrait"
@@ -2038,7 +2038,7 @@ msgstr "ポートレート"
 
 #: src/dialog/service/edit.vue:358
 msgid "Preserve filenames"
-msgstr "ファイル名を保持する"
+msgstr "ファイル名を保持"
 
 #: src/page/library/import.vue:8
 msgid "Press button to start importing…"
@@ -2050,15 +2050,15 @@ msgstr "ボタンを押してインデックスを開始します…"
 
 #: src/dialog/upload.vue:22 src/dialog/upload.vue:4
 msgid "Press enter to create a new album."
-msgstr "Enter を押して新しいアルバムを作成します。"
+msgstr "Enterキーを押して新しいアルバムを作成します。"
 
 #: src/page/settings/advanced.vue:216
 msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "他のアプリがPhotoPrismを共有ネットワークドライブとしてアクセスできないようにする。"
+msgstr "他のアプリがPhotoPrismを共有ネットワークドライブとしてアクセスできないようにします。"
 
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
-msgstr "データベースとアルバムのバックアップ、およびYAMLサイドカーファイルが作成されないようにする。"
+msgstr "データベースとアルバムのバックアップ、YAMLサイドカーファイルが作成されないようにします。"
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2120,7 +2120,7 @@ msgstr "RAW"
 
 #: src/page/library/index.vue:118
 msgid "Re-index all originals, including already indexed and unchanged files."
-msgstr "すべての、既にインデックスされたものや変更されていないファイルを含むオリジナルのファイルを再度インデックスです。"
+msgstr "既にインデックスされたものや変更されていないファイルを含むオリジナルファイルを再度インデックスします。"
 
 #: src/page/settings/advanced.vue:171
 msgid "Read-Only Mode"
@@ -2129,12 +2129,12 @@ msgstr "読み込み専用モード"
 #: src/component/album/toolbar.vue:71 src/component/photo/toolbar.vue:76
 #: src/dialog/album/edit.vue:23 src/page/albums.vue:93
 msgid "Recently Added"
-msgstr "最近追加された写真"
+msgstr "最近追加"
 
 #: src/component/album/toolbar.vue:72 src/component/photo/toolbar.vue:77
 #: src/dialog/album/edit.vue:24 src/page/albums.vue:94
 msgid "Recently Edited"
-msgstr "最近の編集"
+msgstr "最近編集"
 
 #: src/dialog/photo/edit/people.vue:9 src/page/people/new.vue:33
 #: src/page/people/recognized.vue:47
@@ -2147,7 +2147,7 @@ msgstr "顔を認識することで、特定の人を探すことができます
 
 #: src/page/people.vue:17
 msgid "Recognized"
-msgstr "レコグニッション"
+msgstr "認識済み"
 
 #: src/options/options.js:442
 msgid "Red"
@@ -2168,7 +2168,7 @@ msgstr "再読み込み"
 #: src/component/navigation.vue:148 src/dialog/reload.vue:26
 #: src/page/settings/general.vue:96 src/page/settings/library.vue:48
 msgid "Reloading…"
-msgstr "再読込しています…"
+msgstr "再読み込み中…"
 
 #: src/dialog/service/edit.vue:98
 msgid "Remote Sync"
@@ -2188,7 +2188,7 @@ msgstr "アルバムからの削除"
 
 #: src/page/library/import.vue:121
 msgid "Remove imported files to save storage. Unsupported file types will never be deleted, they remain in their current location."
-msgstr "インポートされたファイルを削除してストレージを節約します。対応していないファイルは削除されることはなく、現在の場所に保管されます。"
+msgstr "インポートされたファイルを削除してストレージを節約します。対応していないファイルは削除されることはなく、現在の場所に残ります。"
 
 #: src/common/api.js:102
 msgid "Request failed - are you offline?"
@@ -2224,7 +2224,7 @@ msgstr "リトライ回数制限"
 
 #: src/dialog/account/password.vue:194
 msgid "Retype Password"
-msgstr "再度パスワードを入力"
+msgstr "パスワード再入力"
 
 #: src/app/routes.js:242 src/component/navigation.vue:133
 msgid "Review"
@@ -2252,7 +2252,7 @@ msgstr "スキャン"
 
 #: src/dialog/account/passcode.vue:51 src/dialog/account/passcode.vue:4
 msgid "Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:"
-msgstr "認証アプリで QR コードをスキャンするか、以下に示すセットアップ キーを使用して、生成された確認コードを入力します。"
+msgstr "認証アプリでQRコードをスキャンするか、以下のセットアップキーを使用して、生成された確認コードを入力してください:"
 
 #: src/component/navigation.vue:125
 msgid "Scans"
@@ -2273,7 +2273,7 @@ msgstr "検索"
 
 #: src/page/settings/general.vue:498
 msgid "Search and display photos on a map."
-msgstr "地図上に写真を表示したり、地図の位置から写真を検索できます。"
+msgstr "地図上から写真を表示および検索できます。"
 
 #: src/page/discover.vue:12
 msgid "Season"
@@ -2281,7 +2281,7 @@ msgstr "季節"
 
 #: src/dialog/share.vue:207
 msgid "Secret"
-msgstr "秘密"
+msgstr "シークレット"
 
 #: src/page/settings/account.vue:47 src/page/settings/account.vue:49
 msgid "Security and Access"
@@ -2293,7 +2293,7 @@ msgstr "選択"
 
 #: src/dialog/upload.vue:130
 msgid "Select albums or create a new one"
-msgstr "アルバムを選択するか、新しいアルバムを作成します"
+msgstr "アルバムを選択するか、新しいアルバムを作成してください"
 
 #: src/component/photo/clipboard.vue:71
 msgid "Selection approved"
@@ -2318,7 +2318,7 @@ msgstr "連名"
 #: src/dialog/service/add.vue:82 src/dialog/service/edit.vue:447
 #: src/dialog/share.vue:22
 msgid "Service URL"
-msgstr "サービス URL"
+msgstr "サービスURL"
 
 #: src/page/settings.vue:72 src/page/settings/general.vue:385
 msgid "Services"
@@ -2374,11 +2374,11 @@ msgstr "表示"
 
 #: src/page/people/new.vue:81
 msgid "Show all new faces"
-msgstr "すべてのニューフェイスを表示"
+msgstr "すべての新しい顔を表示"
 
 #: src/page/people/new.vue:75 src/page/people/recognized.vue:124
 msgid "Show hidden"
-msgstr "非表示分を表示"
+msgstr "非表示項目を表示"
 
 #: src/page/labels.vue:128
 msgid "Show less"
@@ -2415,7 +2415,7 @@ msgstr "サイズ"
 
 #: src/options/options.js:301
 msgid "Slow"
-msgstr "遅い"
+msgstr "低速"
 
 #: src/dialog/photo/edit/files.vue:95 src/dialog/photo/edit/files.vue:92
 msgid "Software"
@@ -2436,7 +2436,7 @@ msgstr "スタック"
 
 #: src/page/settings/library.vue:193
 msgid "Stack files sharing the same unique image or instance identifier."
-msgstr "同じ一意の画像またはインスタンス識別子を共有するファイルをスタックします。"
+msgstr "同じ画像またはインスタンス識別子を共有するファイルをスタックします。"
 
 #: src/page/settings/library.vue:172
 msgid "Stack pictures taken at the exact same time and location based on their metadata."
@@ -2444,7 +2444,7 @@ msgstr "メタデータを元に、全く同じ時間と場所で撮影された
 
 #: src/dialog/photo/edit/info.vue:99
 msgid "Stackable"
-msgstr "スタックできる項目"
+msgstr "スタック可能"
 
 #: src/component/navigation.vue:117 src/page/settings/library.vue:33
 msgid "Stacks"
@@ -2452,7 +2452,7 @@ msgstr "スタック"
 
 #: src/page/settings/library.vue:138
 msgid "Stacks group files with a similar frame of reference, but differences of quality, format, size or color."
-msgstr "似ている基準のフレームだが、品質や形式、大きさや色が異なるまとまったファイルをスタックします。"
+msgstr "似ているフレームのある、ただし品質や形式、大きさや色が異なるファイルをスタックします。"
 
 #: src/page/library/index.vue:34
 msgid "Start"
@@ -2469,7 +2469,7 @@ msgstr "状態"
 
 #: src/page/settings/advanced.vue:449
 msgid "Static Size Limit: %{n}px"
-msgstr "静的サイズ制限: %{n}px"
+msgstr "静的サイズ制限: %{n} px"
 
 #: src/dialog/photo/edit/files.vue:51
 msgid "Status"
@@ -2493,11 +2493,11 @@ msgstr "正常に有効化されました"
 
 #: src/page/connect.vue:11
 msgid "Successfully Connected"
-msgstr "接続に成功"
+msgstr "接続に成功しました"
 
 #: src/dialog/admin/sessions/remove.vue:23 src/dialog/account/apps.vue:209
 msgid "Successfully deleted"
-msgstr "正常に削除されました"
+msgstr "削除に成功しました"
 
 #: src/dialog/account/passcode.vue:107
 msgid "Successfully verified"
@@ -2509,7 +2509,7 @@ msgstr "スーパーアドミン"
 
 #: src/dialog/service/add.vue:29
 msgid "Support for additional services, like Google Drive, will be added over time."
-msgstr "Google ドライブなどの追加のサービスのサポートが順次追加される予定です。"
+msgstr "Googleドライブなどの追加のサービスのサポートが順次追加される予定です。"
 
 #: src/component/navigation.vue:495 src/dialog/sponsor.vue:7
 msgid "Support Our Mission"
@@ -2521,7 +2521,7 @@ msgstr "同期"
 
 #: src/dialog/service/edit.vue:399
 msgid "Sync raw and video files"
-msgstr "Raw ファイルや動画ファイルを同期"
+msgstr "Rawファイルや動画ファイルを同期"
 
 #: src/component/photo/cards.vue:475 src/component/photo/list.vue:141
 #: src/dialog/photo/edit/info.vue:55
@@ -2534,7 +2534,7 @@ msgstr "青緑"
 
 #: src/page/settings/advanced.vue:282
 msgid "TensorFlow is required for image classification, facial recognition, and detecting unsafe content."
-msgstr "TensorFlowは画像分類、顔認識、安全でないコンテンツの検出に必要である。"
+msgstr "TensorFlowは画像分類、顔認識、安全でないコンテンツの検出に必要です。"
 
 #: src/dialog/photo/edit/details.vue:32 src/page/people/new.vue:55
 msgid "Text too long"
@@ -2546,7 +2546,7 @@ msgstr "ご支援ありがとうございます！"
 
 #: src/page/about/about.vue:16
 msgid "That's why PhotoPrism was built from the ground up to run wherever you need it, without compromising freedom, privacy, or functionality."
-msgstr "そのため、PhotoPrismは、自由、プライバシー、機能性を損なうことなく、必要な場所で動作するように一から作り上げました。"
+msgstr "そのため、PhotoPrismは自由、プライバシー、機能性を損なうことなく、必要なときに使えるように一から作り上げました。"
 
 #: src/page/library/index.vue:39
 msgid "The index currently contains %{n} hidden files."
@@ -2554,7 +2554,7 @@ msgstr "インデックスには現在 %{n} 件の隠しファイルがありま
 
 #: src/page/library/index.vue:40
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
-msgstr "それらの形式がサポートされていないか、まだ JPEG に変換されていないか、または重複している可能性があります。。"
+msgstr "それらの形式がサポートされていないか、まだJPEGに変換されていないか、重複している可能性があります。"
 
 #: src/page/settings/general.vue:71
 msgid "Theme"
@@ -2562,11 +2562,11 @@ msgstr "テーマ"
 
 #: src/dialog/webdav.vue:33 src/page/settings/services.vue:41
 msgid "This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local."
-msgstr "これは、オリジナルのフォルダをネットワークドライブとしてマウントし、まるでローカルにあるかのようにファイル開き、編集、または削除をあなたのコンピュータまたはスマートフォンからできるようにします。"
+msgstr "オリジナルのフォルダをネットワークドライブとしてマウントし、あなたのコンピュータまたはスマートフォンからまるでローカルのようにファイル開き、編集、または削除できるようにします。"
 
 #: src/dialog/photo/edit/details.vue:193
 msgid "Time UTC"
-msgstr "UTC 時間"
+msgstr "UTC時間"
 
 #: src/dialog/photo/edit/details.vue:220
 msgid "Time Zone"
@@ -2574,7 +2574,7 @@ msgstr "タイムゾーン"
 
 #: src/dialog/service/edit.vue:550
 msgid "Timeout"
-msgstr "タイムゾーン"
+msgstr "タイムアウト"
 
 #: src/dialog/admin/users/edit.vue:151 src/page/settings/account.vue:116
 msgctxt "Account"
@@ -2601,19 +2601,19 @@ msgstr "タイトルが長すぎます"
 
 #: src/dialog/account/passcode.vue:88 src/dialog/account/passcode.vue:10
 msgid "To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place."
-msgstr "アカウントがロックアウトされないようにするには、今すぐこの回復コードをダウンロード、印刷、またはコピーして、安全な場所に保管してください。"
+msgstr "アカウントがロックアウトされないようにするには、今すぐこの回復コードをダウンロード、印刷、コピーして、安全な場所に保管してください。"
 
 #: src/dialog/account/apps.vue:76 src/dialog/account/apps.vue:4
 msgid "To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:"
-msgstr "新しいアプリ固有のパスワードを生成するには、アプリケーションの名前と承認範囲を入力し、有効期限を選択してください。"
+msgstr "新しいアプリ固有のパスワードを生成するには、アプリケーションの名前と承認範囲を入力し、有効期限を選択してください:"
 
 #: src/dialog/account/passcode.vue:121 src/dialog/account/passcode.vue:11
 msgid "To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:"
-msgstr "新しい認証アプリまたはデバイスに切り替えるには、まず 2 要素認証を無効にしてから再度有効にします。"
+msgstr "新しい認証アプリまたはデバイスに切り替えるには、まず2要素認証を無効にしてから再度有効にします:"
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "アップグレードするには、アクティベーションコードを入力するか、「登録」をクリックして当社ウェブサイトからサインアップしてください："
+msgstr "アップグレードするには、アクティベーションコードを入力するか、「登録」をクリックして当社ウェブサイトからサインアップしてください:"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:103
@@ -2627,11 +2627,11 @@ msgstr "トークン"
 
 #: src/dialog/upload.vue:173
 msgid "Too many files selected"
-msgstr "選択したファイルが多すぎる"
+msgstr "選択されたファイルが多すぎます"
 
 #: src/common/api.js:124
 msgid "Too many requests"
-msgstr "リクエストが多すぎる"
+msgstr "リクエストが多すぎます"
 
 #: src/options/options.js:328 src/page/places.vue:161
 msgid "Topographic"
@@ -2702,7 +2702,7 @@ msgstr "更新日"
 
 #: src/page/library/index.vue:165
 msgid "Updating faces"
-msgstr "フェイスの更新"
+msgstr "顔を更新しています"
 
 #: src/page/library/index.vue:171
 msgid "Updating index"
@@ -2714,11 +2714,11 @@ msgstr "モーメントを更新しています"
 
 #: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
 msgid "Updating picture…"
-msgstr "画像更新中…"
+msgstr "画像を更新しています…"
 
 #: src/page/library/index.vue:167
 msgid "Updating previews"
-msgstr "プレビューの更新"
+msgstr "プレビューを更新しています"
 
 #: src/page/library/index.vue:161
 msgid "Updating stacks"
@@ -2759,7 +2759,7 @@ msgstr "アップロード失敗"
 
 #: src/dialog/admin/users/edit.vue:418
 msgid "Upload Folder"
-msgstr "フォルダのアップロード"
+msgstr "フォルダをアップロード"
 
 #: src/dialog/service/edit.vue:379
 msgid "Upload local files"
@@ -2767,7 +2767,7 @@ msgstr "ローカルファイルをアップロード"
 
 #: src/page/settings/general.vue:298
 msgid "Upload to WebDAV and share links with friends."
-msgstr "WebDAV にアップロードして、友達とリンクを共有できます。"
+msgstr "WebDAVにアップロードして、友達とリンクを共有できます。"
 
 #: src/dialog/upload.vue:36
 msgid "Uploading %{n} of %{t}…"
@@ -2795,11 +2795,11 @@ msgstr "プリセットを使用"
 
 #: src/dialog/account/passcode.vue:82 src/dialog/account/passcode.vue:4
 msgid "Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:"
-msgstr "認証アプリで有効な確認コードを生成できない場合は、次の回復コードを使用してアカウントにアクセスしてください。"
+msgstr "認証アプリで有効な確認コードを生成できない場合は、次の回復コードを使用してアカウントにアクセスしてください:"
 
 #: src/page/auth/login.vue:42
 msgid "Use your recovery code or contact an administrator for help."
-msgstr "リカバリーコードを使用するか、管理者に問い合わせる。"
+msgstr "リカバリーコードを使用するか、管理者に問い合わせてください。"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
@@ -2813,14 +2813,14 @@ msgstr "ユーザーガイド"
 
 #: src/page/settings/general.vue:6
 msgid "User Interface"
-msgstr "ユーザインタフェース"
+msgstr "ユーザーインターフェース"
 
 #: src/dialog/admin/users/add.vue:94 src/page/admin/sessions.vue:54
 #: src/page/admin/sessions.vue:2 src/page/admin/users.vue:34
 #: src/dialog/service/add.vue:103 src/dialog/service/edit.vue:467
 #: src/dialog/share.vue:23
 msgid "Username"
-msgstr "ユーザ名"
+msgstr "ユーザー名"
 
 #: src/component/navigation.vue:433 src/component/navigation.vue:27
 msgid "Users"
@@ -2850,7 +2850,7 @@ msgstr "動画"
 #: src/component/album/toolbar.vue:76 src/component/photo/toolbar.vue:81
 #: src/dialog/album/edit.vue:28
 msgid "Video Duration"
-msgstr "時間"
+msgstr "動画の長さ"
 
 #: src/app/routes.js:235 src/component/navigation.vue:189
 #: src/component/navigation.vue:199 src/component/navigation.vue:4
@@ -2893,19 +2893,19 @@ msgstr "ウェブログイン"
 #: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
 #: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
-msgstr "ウェブダブリュー"
+msgstr "WebDAV"
 
 #: src/dialog/webdav.vue:17
 msgid "WebDAV clients can connect to PhotoPrism using the following URL:"
-msgstr "WebDAV クライアントは PhotoPrism に次の URL を使用して接続することができます:"
+msgstr "WebDAVクライアントはPhotoPrismに次のURLで接続することができます:"
 
 #: src/page/settings/services.vue:40
 msgid "WebDAV clients, like Microsoft’s Windows Explorer or Apple's Finder, can connect directly to PhotoPrism."
-msgstr "Microsoft の Windows エクスプローラ や Apple の Finder のような WebDAV クライアントは、直接 PhotoPrism に接続できます。"
+msgstr "Microsoft Windows エクスプローラやApple FinderのようなWebDAVクライアントは、直接PhotoPrismに接続できます。"
 
 #: src/dialog/share.vue:80 src/dialog/share/upload.vue:7
 msgid "WebDAV Upload"
-msgstr "WebDAV アップロード"
+msgstr "WebDAVアップロード"
 
 #: src/page/settings/account.vue:776 src/page/settings/account.vue:922
 msgid "Website"
@@ -2943,7 +2943,7 @@ msgstr "はい"
 #: src/dialog/sponsor.vue:25 src/page/about/about.vue:50
 #: src/page/about/about.vue:5 src/page/connect.vue:105
 msgid "You are welcome to contact us at membership@photoprism.app for questions regarding your membership."
-msgstr "メンバーシップに関するご質問は、membership@photoprism.app までご連絡ください。"
+msgstr "メンバーシップに関するご質問は、membership@photoprism.appまでご連絡ください。"
 
 #: src/component/album/clipboard.vue:98 src/component/subject/clipboard.vue:51
 msgid "You can only download one album"
@@ -2955,7 +2955,7 @@ msgstr "1 件のラベルのみダウンロードできます"
 
 #: src/dialog/upload.vue:47
 msgid "You can upload up to %{n} files for test purposes."
-msgstr "テスト用に最大%{n}個のファイルをアップロードできます。"
+msgstr "テスト用に最大 %{n} 個のファイルをアップロードできます。"
 
 #: src/component/album/clipboard.vue:55 src/component/album/clipboard.vue:66
 msgid "You may only select one item"
@@ -2964,17 +2964,17 @@ msgstr "1 件だけ選択してください"
 #: src/dialog/photo/edit/people.vue:8 src/page/people/new.vue:32
 #: src/page/people/recognized.vue:46
 msgid "You may rescan your library to find additional faces."
-msgstr "追加の顔を見つけるために、ライブラリを再スキャンすることができます。"
+msgstr "さらに顔を見つけるには、ライブラリを再スキャンしてください。"
 
 #: src/page/connect.vue:54 src/page/connect.vue:51
 msgid "Your account has been successfully connected."
-msgstr "お客様のアカウントは正常に接続されました。"
+msgstr "アカウントが正常に接続されました。"
 
 #: src/dialog/sponsor.vue:19 src/page/about/about.vue:27
 #: src/page/about/about.vue:49 src/page/about/about.vue:6
 #: src/page/about/about.vue:4 src/page/connect.vue:75
 msgid "Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy."
-msgstr "皆様の継続的なご支援により、私たちは定期的なアップデートを提供し、独立性を保つことができ、私たちの使命を果たし、お客様のプライバシーを保護することができるのです。"
+msgstr "皆様の継続的なご支援により、私たちは定期的なアップデートを提供し、独立性を保ち、使命を果たし、お客様のプライバシーを保護することができます。"
 
 #: src/page/albums.vue:81 src/page/albums.vue:1
 msgid "Your library is continuously analyzed to automatically create albums of special moments, trips, and places."
