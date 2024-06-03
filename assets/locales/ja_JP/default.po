@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-03-22 14:48+0000\n"
-"PO-Revision-Date: 2024-05-31 09:03+0000\n"
-"Last-Translator: 松浦 知也 Matsuura Tomoya <me@matsuuratomoya.com>\n"
+"PO-Revision-Date: 2024-06-03 13:25+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Japanese <https://translate.photoprism.app/projects/"
 "photoprism/backend/ja/>\n"
 "Language: ja_JP\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 #: messages.go:100
 msgid "Something went wrong, try again"
-msgstr "何か問題が発生しました、もう一度やり直してください"
+msgstr "問題が発生しました。もう一度やり直してください"
 
 #: messages.go:101
 msgid "Unable to do that"
@@ -141,7 +141,7 @@ msgstr "接続できませんでした、再度試してみてください"
 
 #: messages.go:131
 msgid "Enter verification code"
-msgstr "確認コードを入力してください"
+msgstr "認証コードを入力してください"
 
 #: messages.go:132
 msgid "Invalid verification code, please try again"
@@ -198,7 +198,7 @@ msgstr "お客様のアカウントに接続できませんでした"
 
 #: messages.go:147
 msgid "Changes successfully saved"
-msgstr "正常に変更が保存されました"
+msgstr "変更が正常に保存されました"
 
 #: messages.go:148
 msgid "Album created"
