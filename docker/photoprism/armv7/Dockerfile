@@ -104,11 +104,12 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
     apt-get update && apt-get -qq dist-upgrade && \
-    apt-get -qq install --no-install-recommends \
-        libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
-        exiftool mariadb-client sqlite3 tzdata gpg make zip unzip wget curl rsync libjxl-dev libjxl-tools \
-        imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra libdav1d-dev x264 x265 libde265-dev \
-        libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
+    apt-get -qq install \
+        libc6 ca-certificates bash sudo nano tzdata gpg make zip unzip wget curl rsync\
+        xz-utils avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 exiftool sqlite3 \
+        ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev \
+        libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
+        libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev \
     && \
     /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
