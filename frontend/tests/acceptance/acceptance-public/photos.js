@@ -394,3 +394,20 @@ test.meta("testID", "photos-007").meta({ mode: "public" })(
     await photo.checkPhotoVisibility(FirstVideoUid, false);
   }
 );
+
+test.meta("testID", "photos-008").meta({ mode: "public" })(
+    "Common: Navigate from card view to photos taken at the same date",
+    async (t) => {
+        await toolbar.setFilter("view", "Cards");
+        await toolbar.search("flower")
+        await t.click(page.cardTaken.nth(0));
+
+        const SearchTerm = await toolbar.search1.value;
+
+        const PhotoCount = await photo.getPhotoCount("all");
+
+        await t
+            .expect(SearchTerm).eql("taken:2021-05-27")
+            .expect(PhotoCount).eql(3);
+    }
+);

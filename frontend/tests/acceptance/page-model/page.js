@@ -23,6 +23,7 @@ export default class Page {
     this.cardTitle = Selector("button.action-title-edit", { timeout: 7000 });
     this.cardDescription = Selector('div[title="Description"]', { timeout: 7000 });
     this.cardLocation = Selector("button.action-location", { timeout: 7000 });
+    this.cardTaken = Selector("div.caption button.action-open-date", { timeout: 7000 });
     this.usernameInput = Selector(".input-username input", { timeout: 7000 });
     this.passwordInput = Selector(".input-password input", { timeout: 7000 });
     this.passcodeInput = Selector(".input-code input", { timeout: 7000 });
