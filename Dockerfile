@@ -1,5 +1,5 @@
 # Ubuntu 24.04 LTS (Noble Numbat)
-FROM photoprism/develop:240531-noble
+FROM photoprism/develop:240621-noble
 
 ## Alternative Environments:
 # FROM photoprism/develop:armv7    # ARMv7 (32bit)
