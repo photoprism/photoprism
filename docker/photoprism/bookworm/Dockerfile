@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:bookworm as build
+FROM photoprism/develop:bookworm AS build
 
 # Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #

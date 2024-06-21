@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:armv7 as build
+FROM photoprism/develop:armv7 AS build
 
 # Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #

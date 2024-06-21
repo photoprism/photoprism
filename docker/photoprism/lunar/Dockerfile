@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:lunar as build
+FROM photoprism/develop:lunar AS build
 
 # Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #

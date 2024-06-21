@@ -1,4 +1,4 @@
-FROM photoprism/photoprism:preview-ce-ubuntu as build
+FROM photoprism/photoprism:preview-ce-ubuntu AS build
 
 # Set environment variables
 ENV TF_CPP_MIN_LOG_LEVEL=2 \

@@ -1,5 +1,5 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:noble as build
+FROM photoprism/develop:noble AS build
 
 # Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #
