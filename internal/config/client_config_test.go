@@ -129,6 +129,44 @@ func TestConfig_ClientRoleConfig(t *testing.T) {
 
 		assert.Equal(t, expected, f)
 	})
+	t.Run("RoleGuest", func(t *testing.T) {
+		cfg := c.ClientRole(acl.RoleGuest)
+		f := cfg.Settings.Features
+
+		assert.NotEqual(t, adminFeatures, f)
+
+		expected := customize.FeatureSettings{
+			Account:   true,
+			Albums:    true,
+			Archive:   false,
+			Delete:    false,
+			Download:  true,
+			Edit:      false,
+			Estimates: true,
+			Favorites: false,
+			Files:     false,
+			Folders:   true,
+			Import:    false,
+			Labels:    false,
+			Library:   false,
+			Logs:      false,
+			Moments:   true,
+			People:    false,
+			Places:    true,
+			Private:   false,
+			Ratings:   false,
+			Reactions: true,
+			Review:    true,
+			Search:    true,
+			Settings:  true,
+			Share:     false,
+			Services:  false,
+			Upload:    false,
+			Videos:    true,
+		}
+
+		assert.Equal(t, expected, f)
+	})
 	t.Run("RoleVisitor", func(t *testing.T) {
 		cfg := c.ClientRole(acl.RoleVisitor)
 		f := cfg.Settings.Features

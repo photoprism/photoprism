@@ -12,6 +12,7 @@ func TestSettings_ApplyScope(t *testing.T) {
 	original := NewDefaultSettings().Features
 	admin := NewDefaultSettings().ApplyACL(acl.Rules, acl.RoleAdmin)
 	client := NewDefaultSettings().ApplyACL(acl.Rules, acl.RoleClient)
+	guest := NewDefaultSettings().ApplyACL(acl.Rules, acl.RoleGuest)
 	visitor := NewDefaultSettings().ApplyACL(acl.Rules, acl.RoleVisitor)
 
 	t.Run("AdminUnscoped", func(t *testing.T) {
@@ -91,6 +92,45 @@ func TestSettings_ApplyScope(t *testing.T) {
 		result := client.ApplyScope("photos videos albums places people moments")
 
 		t.Logf("ClientScoped: %#v", result)
+		assert.Equal(t, expected, result.Features)
+	})
+
+	t.Run("GuestSettings", func(t *testing.T) {
+		s := NewDefaultSettings()
+
+		expected := FeatureSettings{
+			Account:   true,
+			Albums:    true,
+			Archive:   false,
+			Delete:    false,
+			Download:  true,
+			Edit:      false,
+			Estimates: true,
+			Favorites: false,
+			Files:     false,
+			Folders:   true,
+			Import:    false,
+			Labels:    false,
+			Library:   false,
+			Logs:      false,
+			Moments:   true,
+			People:    false,
+			Places:    true,
+			Private:   false,
+			Ratings:   false,
+			Reactions: true,
+			Review:    true,
+			Search:    true,
+			Settings:  true,
+			Share:     false,
+			Services:  false,
+			Upload:    false,
+			Videos:    true,
+		}
+
+		assert.Equal(t, original, s.Features)
+		result := guest.ApplyScope("settings")
+		t.Logf("GuestSettings: %#v", result)
 		assert.Equal(t, expected, result.Features)
 	})
 

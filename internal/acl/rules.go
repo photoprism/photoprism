@@ -8,6 +8,7 @@ var Rules = ACL{
 	},
 	ResourceFolders: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantSearchShared,
 		RoleVisitor: GrantSearchShared,
 		RoleClient:  GrantFullAccess,
 	},
@@ -23,11 +24,13 @@ var Rules = ACL{
 	ResourceAlbums: GrantDefaults,
 	ResourceMoments: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantSearchShared,
 		RoleVisitor: GrantSearchShared,
 		RoleClient:  GrantFullAccess,
 	},
 	ResourceCalendar: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantSearchShared,
 		RoleVisitor: GrantSearchShared,
 		RoleClient:  GrantFullAccess,
 	},
@@ -37,6 +40,7 @@ var Rules = ACL{
 	},
 	ResourcePlaces: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantReactShared,
 		RoleVisitor: GrantViewShared,
 		RoleClient:  GrantFullAccess,
 	},
@@ -51,6 +55,7 @@ var Rules = ACL{
 	},
 	ResourceSettings: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantViewUpdateOwn,
 		RoleVisitor: GrantViewOwn,
 		RoleClient:  GrantViewUpdateOwn,
 	},
@@ -59,12 +64,15 @@ var Rules = ACL{
 	},
 	ResourcePasscode: Roles{
 		RoleAdmin: GrantFullAccess,
+		RoleGuest: GrantConfigureOwn,
 	},
 	ResourcePassword: Roles{
 		RoleAdmin: GrantFullAccess,
+		RoleGuest: GrantUpdateOwn,
 	},
 	ResourceUsers: Roles{
 		RoleAdmin:  GrantAll,
+		RoleGuest:  GrantViewUpdateOwn,
 		RoleClient: GrantViewOwn,
 	},
 	ResourceSessions: Roles{

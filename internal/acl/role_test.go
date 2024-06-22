@@ -13,6 +13,9 @@ func TestRole_String(t *testing.T) {
 	t.Run("Client", func(t *testing.T) {
 		assert.Equal(t, "client", RoleClient.String())
 	})
+	t.Run("Guest", func(t *testing.T) {
+		assert.Equal(t, "guest", RoleGuest.String())
+	})
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "visitor", RoleVisitor.String())
 	})
@@ -25,6 +28,9 @@ func TestRole_Pretty(t *testing.T) {
 	t.Run("None", func(t *testing.T) {
 		assert.Equal(t, "None", RoleNone.Pretty())
 	})
+	t.Run("Guest", func(t *testing.T) {
+		assert.Equal(t, "Guest", RoleGuest.Pretty())
+	})
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "Visitor", RoleVisitor.Pretty())
 	})
@@ -36,6 +42,9 @@ func TestRole_LogId(t *testing.T) {
 	})
 	t.Run("Client", func(t *testing.T) {
 		assert.Equal(t, "role client", RoleClient.LogId())
+	})
+	t.Run("Guest", func(t *testing.T) {
+		assert.Equal(t, "role guest", RoleGuest.LogId())
 	})
 	t.Run("Visitor", func(t *testing.T) {
 		assert.Equal(t, "role visitor", RoleVisitor.LogId())

@@ -6,6 +6,7 @@ type RoleStrings = map[string]Role
 // UserRoles maps valid user account roles.
 var UserRoles = RoleStrings{
 	string(RoleAdmin):   RoleAdmin,
+	string(RoleGuest):   RoleGuest,
 	string(RoleVisitor): RoleVisitor,
 	string(RoleNone):    RoleNone,
 }

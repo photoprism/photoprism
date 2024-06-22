@@ -87,6 +87,13 @@ var (
 		ActionView:     true,
 		ActionDownload: true,
 	}
+	GrantReactShared = Grant{
+		AccessShared:   true,
+		ActionSearch:   true,
+		ActionView:     true,
+		ActionDownload: true,
+		ActionReact:    true,
+	}
 	GrantSearchShared = Grant{
 		AccessShared:   true,
 		ActionSearch:   true,
@@ -112,6 +119,7 @@ var (
 // GrantDefaults defines default grants for all supported roles.
 var GrantDefaults = Roles{
 	RoleAdmin:   GrantFullAccess,
+	RoleGuest:   GrantReactShared,
 	RoleVisitor: GrantViewShared,
 	RoleClient:  GrantFullAccess,
 }

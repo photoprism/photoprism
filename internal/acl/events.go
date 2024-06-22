@@ -7,10 +7,12 @@ var Events = ACL{
 	},
 	ChannelUser: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantSubscribeOwn,
 		RoleVisitor: GrantSubscribeOwn,
 	},
 	ChannelSession: Roles{
 		RoleAdmin:   GrantFullAccess,
+		RoleGuest:   GrantSubscribeOwn,
 		RoleVisitor: GrantSubscribeOwn,
 	},
 }
