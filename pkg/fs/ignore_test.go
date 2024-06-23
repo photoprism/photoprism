@@ -51,7 +51,6 @@ func TestIgnoreList_Hidden(t *testing.T) {
 
 		assert.Equal(t, expectHidden, ignore.Hidden())
 	})
-
 	t.Run("accept hidden", func(t *testing.T) {
 		testPath := "testdata/directory/subdirectory"
 		ignore := NewIgnoreList(".ppignore", false, false)
@@ -118,7 +117,6 @@ func TestIgnoreList_Ignored(t *testing.T) {
 
 		assert.Equal(t, expectIgnored, ignore.Ignored())
 	})
-
 	t.Run("no ignored", func(t *testing.T) {
 		testPath := "testdata/directory"
 		ignore := NewIgnoreList(".xyz", false, false)
@@ -140,27 +138,34 @@ func TestIgnoreList_Ignored(t *testing.T) {
 	})
 }
 
-func TestNewIgnoreItem(t *testing.T) {
+func TestNewIgnorePattern(t *testing.T) {
 	t.Run("case sensitive false", func(t *testing.T) {
 		ignore := NewIgnorePattern("testdata/directory", "Test_", false)
 		assert.Equal(t, "test_", ignore.Pattern)
 	})
-
 	t.Run("case sensitive true", func(t *testing.T) {
 		ignore := NewIgnorePattern("testdata/directory", "Test_", true)
 		assert.Equal(t, "Test_", ignore.Pattern)
 	})
 }
 
-func TestIgnoreList_AddItems(t *testing.T) {
+func TestIgnoreList_AddPatterns(t *testing.T) {
 	t.Run("Error", func(t *testing.T) {
 		ignoreList := NewIgnoreList(".xyz", false, false)
 		assert.Error(t, ignoreList.AddPatterns("", []string{"__test_"}))
 	})
-
 	t.Run("Success", func(t *testing.T) {
 		ignoreList := NewIgnoreList(".xyz", false, false)
 		assert.Nil(t, ignoreList.AddPatterns("testdata/directory", []string{"__test_"}))
+	})
+	t.Run("Trim", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".xyz", false, false)
+		assert.Nil(t, ignoreList.AddPatterns("testdata/directory", []string{"/foo/bar/", "/", "\t\n\nbaz/\t\n\r", "test "}))
+		result := ignoreList.ignore
+		assert.Len(t, result, 3)
+		assert.Equal(t, "foo/bar", result[0].Pattern)
+		assert.Equal(t, "baz", result[1].Pattern)
+		assert.Equal(t, "test ", result[2].Pattern)
 	})
 }
 
@@ -185,9 +190,11 @@ func TestIgnoreList_Path(t *testing.T) {
 
 func TestIgnoreList_Reset(t *testing.T) {
 	ignoreList := NewIgnoreList(".xyz", false, false)
+
 	if err := ignoreList.AddPatterns("testdata123/directory", []string{"__test_"}); err != nil {
 		t.Fatal(err)
 	}
+
 	assert.Equal(t, "testdata123/directory/", ignoreList.ignore[0].Dir)
 	ignoreList.Reset()
 	assert.Len(t, ignoreList.ignore, 0)

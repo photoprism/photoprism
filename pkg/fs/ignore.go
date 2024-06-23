@@ -102,7 +102,11 @@ func (l *IgnoreList) AddPatterns(dir string, patterns []string) error {
 	}
 
 	for _, pattern := range patterns {
-		if strings.TrimSpace(pattern) != "" && !strings.HasPrefix(pattern, "#") {
+		// Trim slashes and null bytes from the pattern.
+		pattern = strings.Trim(pattern, "/\x00\t\r\n")
+
+		// Skip empty patterns and comments that begin with "# ".
+		if strings.TrimSpace(pattern) != "" && !strings.HasPrefix(pattern, "# ") {
 			l.ignore = append(l.ignore, NewIgnorePattern(dir, pattern, l.caseSensitive))
 		}
 	}
