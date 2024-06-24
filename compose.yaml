@@ -56,10 +56,11 @@ services:
       PHOTOPRISM_LDAP_ROLE_DN: "ou=photoprism-*,ou=groups,dc=localssl,dc=dev"
       PHOTOPRISM_LDAP_WEBDAV_DN: "ou=photoprism-webdav,ou=groups,dc=localssl,dc=dev"
       ## OpenID Connect (pre-configured for local tests):
-      PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"
-      PHOTOPRISM_OIDC_INSECURE: "true"
+      PHOTOPRISM_OIDC_ISSUER: "https://keycloak.localssl.dev/auth/realms/master"
       PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
       PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
+      PHOTOPRISM_OIDC_SCOPES: "openid profile"
+      PHOTOPRISM_OIDC_INSECURE: "true"
       ## Site Information
       PHOTOPRISM_SITE_URL: "http://localhost:2342/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"

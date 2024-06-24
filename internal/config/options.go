@@ -31,6 +31,11 @@ type Options struct {
 	PasswordResetUri      string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri"`
 	RegisterUri           string        `yaml:"RegisterUri" json:"-" flag:"register-uri"`
 	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
+	OIDCIssuer            string        `yaml:"OIDCIssuer" json:"OIDCIssuer" flag:"oidc-issuer"`
+	OIDCClient            string        `yaml:"OIDCClient" json:"-" flag:"oidc-client"`
+	OIDCSecret            string        `yaml:"OIDCSecret" json:"-" flag:"oidc-secret"`
+	OIDCScopes            string        `yaml:"OIDCScopes" json:"-" flag:"oidc-scopes"`
+	OIDCInsecure          bool          `yaml:"OIDCInsecure" json:"-" flag:"oidc-insecure"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	SessionCache          int64         `yaml:"SessionCache" json:"-" flag:"session-cache"`

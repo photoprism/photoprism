@@ -43,6 +43,35 @@ var Flags = CliFlags{
 			Usage:  fmt.Sprintf("initial `PASSWORD` of the superadmin account (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVar: EnvVar("ADMIN_PASSWORD"),
 		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-issuer",
+			Usage:  "server `URI` for single sign-on via OpenID Connect (OIDC)",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_ISSUER"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-client",
+			Usage:  "client `ID` for single sign-on via OIDC",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_CLIENT"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-secret",
+			Usage:  "client `SECRET` for single sign-on via OIDC",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_SECRET"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-scopes",
+			Usage:  "user information `SCOPES` for single sign-on via OIDC",
+			Value:  OIDCDefaultScopes,
+			EnvVar: EnvVar("OIDC_SCOPES"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "oidc-insecure",
+			Usage:  "skip issuer SSL/TLS certificate verification",
+			EnvVar: EnvVar("OIDC_INSECURE"),
+		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-maxage",
 			Value:  DefaultSessionMaxAge,
