@@ -35,6 +35,7 @@ type Options struct {
 	OIDCClient            string        `yaml:"OIDCClient" json:"-" flag:"oidc-client"`
 	OIDCSecret            string        `yaml:"OIDCSecret" json:"-" flag:"oidc-secret"`
 	OIDCScopes            string        `yaml:"OIDCScopes" json:"-" flag:"oidc-scopes"`
+	OIDCRegister          bool          `yaml:"OIDCRegister" json:"-" flag:"oidc-register"`
 	OIDCInsecure          bool          `yaml:"OIDCInsecure" json:"-" flag:"oidc-insecure"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`

@@ -32,6 +32,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"oidc-client", c.OIDCClient()},
 		{"oidc-secret", c.OIDCSecret()},
 		{"oidc-scopes", c.OIDCScopes()},
+		{"oidc-register", fmt.Sprintf("%t", c.OIDCRegister())},
 		{"oidc-insecure", fmt.Sprintf("%t", c.OIDCInsecure())},
 		{"session-maxage", fmt.Sprintf("%d", c.SessionMaxAge())},
 		{"session-timeout", fmt.Sprintf("%d", c.SessionTimeout())},

@@ -27,6 +27,11 @@ func (c *Config) OIDCScopes() string {
 	return c.options.OIDCScopes
 }
 
+// OIDCRegister checks if new accounts may be created via OIDC.
+func (c *Config) OIDCRegister() bool {
+	return c.options.OIDCRegister
+}
+
 // OIDCInsecure checks if OIDC issuer SSL/TLS certificate verification should be skipped.
 func (c *Config) OIDCInsecure() bool {
 	return c.options.OIDCInsecure

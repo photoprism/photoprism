@@ -68,6 +68,11 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("OIDC_SCOPES"),
 		}}, {
 		Flag: cli.BoolFlag{
+			Name:   "oidc-register",
+			Usage:  "allow creating new accounts via OIDC",
+			EnvVar: EnvVar("OIDC_REGISTER"),
+		}}, {
+		Flag: cli.BoolFlag{
 			Name:   "oidc-insecure",
 			Usage:  "skip issuer SSL/TLS certificate verification",
 			EnvVar: EnvVar("OIDC_INSECURE"),

@@ -36,6 +36,12 @@ func TestConfig_OIDCScopes(t *testing.T) {
 	assert.Equal(t, "openid profile", c.OIDCScopes())
 }
 
+func TestConfig_OIDCRegister(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.OIDCRegister())
+}
+
 func TestConfig_OIDCInsecure(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
