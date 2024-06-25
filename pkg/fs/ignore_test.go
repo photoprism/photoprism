@@ -27,7 +27,7 @@ func TestIgnoreList_Ignore(t *testing.T) {
 }
 
 func TestIgnoreList_Hidden(t *testing.T) {
-	t.Run("ignore hidden", func(t *testing.T) {
+	t.Run("IgnoreHidden", func(t *testing.T) {
 		testPath := "testdata/directory/subdirectory"
 		ignore := NewIgnoreList(".ppignore", true, false)
 
@@ -51,7 +51,7 @@ func TestIgnoreList_Hidden(t *testing.T) {
 
 		assert.Equal(t, expectHidden, ignore.Hidden())
 	})
-	t.Run("accept hidden", func(t *testing.T) {
+	t.Run("AcceptHidden", func(t *testing.T) {
 		testPath := "testdata/directory/subdirectory"
 		ignore := NewIgnoreList(".ppignore", false, false)
 
@@ -117,7 +117,7 @@ func TestIgnoreList_Ignored(t *testing.T) {
 
 		assert.Equal(t, expectIgnored, ignore.Ignored())
 	})
-	t.Run("no ignored", func(t *testing.T) {
+	t.Run("NoIgnored", func(t *testing.T) {
 		testPath := "testdata/directory"
 		ignore := NewIgnoreList(".xyz", false, false)
 
@@ -139,24 +139,33 @@ func TestIgnoreList_Ignored(t *testing.T) {
 }
 
 func TestNewIgnorePattern(t *testing.T) {
-	t.Run("case sensitive false", func(t *testing.T) {
+	t.Run("CaseSensitiveFalse", func(t *testing.T) {
 		ignore := NewIgnorePattern("testdata/directory", "Test_", false)
 		assert.Equal(t, "test_", ignore.Pattern)
 	})
-	t.Run("case sensitive true", func(t *testing.T) {
+	t.Run("CaseSensitiveTrue", func(t *testing.T) {
 		ignore := NewIgnorePattern("testdata/directory", "Test_", true)
 		assert.Equal(t, "Test_", ignore.Pattern)
 	})
 }
 
 func TestIgnoreList_AddPatterns(t *testing.T) {
-	t.Run("Error", func(t *testing.T) {
+	t.Run("EmptyDir", func(t *testing.T) {
 		ignoreList := NewIgnoreList(".xyz", false, false)
 		assert.Error(t, ignoreList.AddPatterns("", []string{"__test_"}))
 	})
 	t.Run("Success", func(t *testing.T) {
 		ignoreList := NewIgnoreList(".xyz", false, false)
 		assert.Nil(t, ignoreList.AddPatterns("testdata/directory", []string{"__test_"}))
+		result := ignoreList.ignore
+		assert.Len(t, result, 1)
+		assert.Equal(t, "__test_", result[0].Pattern)
+	})
+	t.Run("EmptyPattern", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".xyz", false, false)
+		assert.Nil(t, ignoreList.AddPatterns("testdata/directory", []string{}))
+		result := ignoreList.ignore
+		assert.Len(t, result, 0)
 	})
 	t.Run("Trim", func(t *testing.T) {
 		ignoreList := NewIgnoreList(".xyz", false, false)
@@ -185,6 +194,26 @@ func TestIgnoreList_Path(t *testing.T) {
 	t.Run("EmptyFileName", func(t *testing.T) {
 		ignoreList := NewIgnoreList("", false, false)
 		assert.Error(t, ignoreList.Path("testdata"))
+	})
+}
+
+func TestIgnoreList_File(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".ppignore", false, false)
+		assert.Nil(t, ignoreList.File("./testdata/directory/subdirectory/.ppignore"))
+		result := ignoreList.ignore
+		assert.Len(t, result, 1)
+		assert.Equal(t, "bar", result[0].Pattern)
+	})
+	t.Run("FileNotFound", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".ppignore", false, false)
+		assert.Nil(t, ignoreList.File("./testdata/directory/subdirectory/.xxx"))
+		result := ignoreList.ignore
+		assert.Len(t, result, 0)
+	})
+	t.Run("EmptyFileName", func(t *testing.T) {
+		ignoreList := NewIgnoreList(".ppignore", false, false)
+		assert.Error(t, ignoreList.File(""))
 	})
 }
 
