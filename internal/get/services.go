@@ -29,6 +29,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/nsfw"
+	"github.com/photoprism/photoprism/internal/oidc"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"
@@ -58,6 +59,7 @@ var services struct {
 	Query       *query.Query
 	Thumbs      *photoprism.Thumbs
 	Session     *session.Session
+	OIDC        *oidc.Client
 }
 
 func SetConfig(c *config.Config) {

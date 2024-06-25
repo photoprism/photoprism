@@ -69,7 +69,7 @@ func (f CliFlags) Replace(name string, replacement CliFlag) CliFlags {
 	return f
 }
 
-// Insert inserts command flags, if possible after name.
+// Insert inserts command flags, if possible after the flag specified by name.
 func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
 	result = make(CliFlags, 0, len(f)+len(insert))
 
@@ -86,6 +86,29 @@ func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
 
 	if !done {
 		log.Warnf("config: failed to insert cli flags after %s", clean.Log(name))
+		result = append(result, insert...)
+	}
+
+	return result
+}
+
+// InsertBefore inserts command flags, if possible before the flag specified by name.
+func (f CliFlags) InsertBefore(name string, insert []CliFlag) (result CliFlags) {
+	result = make(CliFlags, 0, len(f)+len(insert))
+
+	done := false
+
+	for _, flag := range f {
+		if !done && flag.Name() == name {
+			result = append(result, insert...)
+			done = true
+		}
+
+		result = append(result, flag)
+	}
+
+	if !done {
+		log.Warnf("config: failed to insert cli flags before %s", clean.Log(name))
 		result = append(result, insert...)
 	}
 

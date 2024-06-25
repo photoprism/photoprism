@@ -63,19 +63,20 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-scopes",
+			Hidden: true,
 			Usage:  "user information `SCOPES` for single sign-on via OIDC",
 			Value:  OIDCDefaultScopes,
 			EnvVar: EnvVar("OIDC_SCOPES"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "oidc-register",
-			Usage:  "allow creating new accounts via OIDC",
-			EnvVar: EnvVar("OIDC_REGISTER"),
-		}}, {
-		Flag: cli.BoolFlag{
 			Name:   "oidc-insecure",
 			Usage:  "skip issuer SSL/TLS certificate verification",
 			EnvVar: EnvVar("OIDC_INSECURE"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "oidc-register",
+			Usage:  "allow user registration via OIDC",
+			EnvVar: EnvVar("OIDC_REGISTER"),
 		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-maxage",

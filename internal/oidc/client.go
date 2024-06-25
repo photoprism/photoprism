@@ -87,7 +87,7 @@ func NewClient(iss *url.URL, clientId, clientSecret, customScopes, siteUrl strin
 		}
 	}
 
-	scopes := strings.Split(strings.TrimSpace("openid profile email "+customScopes), " ")
+	scopes := strings.Split(strings.TrimSpace("openid email profile "+customScopes), " ")
 
 	provider, err := rp.NewRelyingPartyOIDC(iss.String(), clientId, clientSecret, u.String(), scopes, clientOpt...)
 

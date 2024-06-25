@@ -25,6 +25,9 @@ var ConfigReports = []Report{
 	{Title: "Global Config Options", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
 		return conf.Report()
 	}},
+	{Title: "OpenID Connect", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
+		return conf.OIDCReport()
+	}},
 }
 
 // showConfigAction shows global config option names and values.

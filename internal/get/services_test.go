@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/nsfw"
+	"github.com/photoprism/photoprism/internal/oidc"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"
@@ -71,4 +72,8 @@ func TestResample(t *testing.T) {
 
 func TestSession(t *testing.T) {
 	assert.IsType(t, &session.Session{}, Session())
+}
+
+func TestOIDC(t *testing.T) {
+	assert.IsType(t, &oidc.Client{}, OIDC())
 }
