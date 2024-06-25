@@ -23,6 +23,10 @@ func TestUsernameFromUserInfo(t *testing.T) {
 		u := &userinfo{Nickname: "testofesto", Email: "hel"}
 		assert.Equal(t, "testofesto", UsernameFromUserInfo(u))
 	})
+	t.Run("Name", func(t *testing.T) {
+		u := &userinfo{Name: "Jane Doe", Email: "hello@world.com"}
+		assert.Equal(t, "jane-doe", UsernameFromUserInfo(u))
+	})
 }
 
 func TestHasRoleAdmin(t *testing.T) {

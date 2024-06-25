@@ -80,6 +80,36 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 	assert.Equal(t, false, result.ReadOnly)
 }
 
+func TestConfig_ClientUser(t *testing.T) {
+	c := NewTestConfig("config")
+	c.SetAuthMode(AuthModePasswd)
+
+	assert.Equal(t, AuthModePasswd, c.AuthMode())
+
+	t.Run("AdminConfig", func(t *testing.T) {
+		adminFeatures := c.ClientRole(acl.RoleAdmin).Settings.Features
+		c.Settings().Features = adminFeatures
+		result := c.ClientUser(true)
+
+		assert.Equal(t, result.Settings.Features, adminFeatures)
+	})
+	t.Run("UserConfig", func(t *testing.T) {
+		userFeatures := c.ClientRole(acl.RoleUser).Settings.Features
+		c.Settings().Features = userFeatures
+		result := c.ClientUser(true)
+
+		assert.Equal(t, result.Settings.Features, userFeatures)
+	})
+	t.Run("GuestConfig", func(t *testing.T) {
+		guestFeatures := c.ClientRole(acl.RoleGuest).Settings.Features
+		c.Settings().Features = guestFeatures
+		result := c.ClientUser(true)
+
+		assert.Equal(t, result.Settings.Features.Private, false)
+		assert.Equal(t, result.Settings.Features, guestFeatures)
+	})
+}
+
 func TestConfig_ClientRoleConfig(t *testing.T) {
 	c := NewTestConfig("config")
 	c.SetAuthMode(AuthModePasswd)
@@ -514,6 +544,20 @@ func TestConfig_ClientSessionConfig(t *testing.T) {
 		assert.True(t, f.Review)
 		assert.False(t, f.Share)
 	})
+	t.Run("Public", func(t *testing.T) {
+		c.SetAuthMode(AuthModePublic)
+
+		assert.Equal(t, AuthModePublic, c.AuthMode())
+		s := &entity.Session{}
+		cfg := c.ClientSession(s)
+
+		assert.IsType(t, ClientConfig{}, cfg)
+		assert.Equal(t, cfg.PreviewToken, "public")
+		assert.Equal(t, cfg.DownloadToken, "public")
+
+		f := cfg.Settings.Features
+		assert.Equal(t, adminFeatures, f)
+	})
 }
 
 func TestConfig_Flags(t *testing.T) {
@@ -521,10 +565,12 @@ func TestConfig_Flags(t *testing.T) {
 	config.options.Experimental = true
 	config.options.ReadOnly = true
 	config.settings.UI.Scrollbar = false
+	config.options.Demo = true
 
 	result := config.Flags()
-	assert.Equal(t, []string{"public", "debug", "test", "sponsor", "experimental", "readonly", "settings", "hide-scrollbar"}, result)
+	assert.Equal(t, []string{"public", "debug", "test", "demo", "sponsor", "experimental", "readonly", "settings", "hide-scrollbar"}, result)
 
 	config.options.Experimental = false
 	config.options.ReadOnly = false
+	config.options.Demo = false
 }

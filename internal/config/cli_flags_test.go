@@ -150,6 +150,52 @@ func TestCliFlags_Insert(t *testing.T) {
 	})
 }
 
+func TestCliFlags_InsertBefore(t *testing.T) {
+	PublicFlag := CliFlag{Flag: cli.BoolFlag{
+		Name:   "public, p",
+		Hidden: true,
+		Usage:  "disable authentication, advanced settings, and WebDAV remote access",
+		EnvVar: EnvVar("PUBLIC"),
+	}}
+
+	cliFlags := CliFlags{
+		{
+			Flag: cli.StringFlag{
+				Name:   "auth-mode, a",
+				Usage:  "authentication `MODE` (public, password)",
+				Value:  "password",
+				EnvVar: EnvVar("AUTH_MODE"),
+			}},
+		{
+			Flag: cli.StringFlag{
+				Name:   "admin-user, login",
+				Usage:  "`USERNAME` of the superadmin account that is created on first startup",
+				Value:  "admin",
+				EnvVar: EnvVar("ADMIN_USER"),
+			}}}
+
+	assert.Equal(t, 2, len(cliFlags))
+
+	t.Run("Success", func(t *testing.T) {
+		r := cliFlags.InsertBefore("auth-mode, a", []CliFlag{PublicFlag})
+
+		assert.Equal(t, 3, len(r))
+
+		assert.Equal(t, "auth-mode, a", r[1].Name())
+		assert.Equal(t, PublicFlag.Name(), r[0].Name())
+		assert.Equal(t, "admin-user, login", r[2].Name())
+	})
+	t.Run("WrongName", func(t *testing.T) {
+		r := cliFlags.InsertBefore("xxx", []CliFlag{PublicFlag})
+
+		assert.Equal(t, 3, len(r))
+
+		assert.Equal(t, "auth-mode, a", r[0].Name())
+		assert.Equal(t, "admin-user, login", r[1].Name())
+		assert.Equal(t, PublicFlag.Name(), r[2].Name())
+	})
+}
+
 func TestCliFlags_Prepend(t *testing.T) {
 	PublicFlag := CliFlag{Flag: cli.BoolFlag{
 		Name:   "public, p",
