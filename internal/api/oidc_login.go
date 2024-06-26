@@ -12,11 +12,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// OAuthLogout implements a single logout for OIDC-authenticated clients.
+// OIDCLogin redirects to the login page of the configured OpenID Connect provider, if any.
 //
-// GET /api/v1/oauth/logout
-func OAuthLogout(router *gin.RouterGroup) {
-	router.GET("/oauth/logout", func(c *gin.Context) {
+// GET /api/v1/oidc/login
+func OIDCLogin(router *gin.RouterGroup) {
+	router.GET("/oidc/login", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			AbortNotFound(c)
@@ -29,11 +29,11 @@ func OAuthLogout(router *gin.RouterGroup) {
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
 		actor := "unknown client"
-		action := "logout"
+		action := "login"
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrDisabledInPublicMode.Error()})
+			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrDisabledInPublicMode.Error()})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}

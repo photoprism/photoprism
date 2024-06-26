@@ -36,10 +36,10 @@ type Options struct {
 	OIDCClient            string        `yaml:"OIDCClient" json:"-" flag:"oidc-client"`
 	OIDCSecret            string        `yaml:"OIDCSecret" json:"-" flag:"oidc-secret"`
 	OIDCScopes            string        `yaml:"OIDCScopes" json:"-" flag:"oidc-scopes"`
-	OIDCIcon              string        `yaml:"OIDCIcon" json:"-" flag:"oidc-icon"`
-	OIDCButton            string        `yaml:"OIDCButton" json:"-" flag:"oidc-button"`
 	OIDCRegister          bool          `yaml:"OIDCRegister" json:"-" flag:"oidc-register"`
-	OIDCRedirect          bool          `yaml:"OIDCRedirect" json:"-" flag:"oidc-redirect"`
+	OIDCRedirect          bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`
+	OIDCProvider          string        `yaml:"OIDCProvider" json:"OIDCProvider" flag:"oidc-provider"`
+	OIDCProviderIcon      string        `yaml:"OIDCProviderIcon" json:"OIDCProviderIcon" flag:"oidc-provider-icon"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	SessionCache          int64         `yaml:"SessionCache" json:"-" flag:"session-cache"`

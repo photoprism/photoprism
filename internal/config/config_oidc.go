@@ -50,16 +50,6 @@ func (c *Config) OIDCScopes() string {
 	return c.options.OIDCScopes
 }
 
-// OIDCIcon returns the custom issuer icon URI for single sign-on via OIDC, if any.
-func (c *Config) OIDCIcon() string {
-	return c.options.OIDCIcon
-}
-
-// OIDCButton returns the custom button text for single sign-on via OIDC, if any.
-func (c *Config) OIDCButton() string {
-	return c.options.OIDCButton
-}
-
 // OIDCRegister checks if new accounts may be created via OIDC.
 func (c *Config) OIDCRegister() bool {
 	return c.options.OIDCRegister
@@ -68,6 +58,16 @@ func (c *Config) OIDCRegister() bool {
 // OIDCRedirect checks if unauthenticated users should automatically be redirected to the OIDC login page.
 func (c *Config) OIDCRedirect() bool {
 	return c.options.OIDCRedirect
+}
+
+// OIDCProvider returns the OIDC provider name, if any.
+func (c *Config) OIDCProvider() string {
+	return c.options.OIDCProvider
+}
+
+// OIDCProviderIcon returns the OIDC provider icon URI, if any.
+func (c *Config) OIDCProviderIcon() string {
+	return c.options.OIDCProviderIcon
 }
 
 // OIDCReport returns the OpenID Connect config values as a table for reporting.
@@ -80,10 +80,10 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 		{"oidc-client", c.OIDCClient()},
 		{"oidc-secret", strings.Repeat("*", utf8.RuneCountInString(c.OIDCSecret()))},
 		{"oidc-scopes", c.OIDCScopes()},
-		{"oidc-icon", c.OIDCIcon()},
-		{"oidc-button", c.OIDCButton()},
 		{"oidc-register", fmt.Sprintf("%t", c.OIDCRegister())},
 		{"oidc-redirect", fmt.Sprintf("%t", c.OIDCRedirect())},
+		{"oidc-provider", c.OIDCProvider()},
+		{"oidc-provider-icon", c.OIDCProviderIcon()},
 	}
 
 	return rows, cols

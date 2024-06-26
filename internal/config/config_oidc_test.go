@@ -55,18 +55,6 @@ func TestConfig_OIDCScopes(t *testing.T) {
 	assert.Equal(t, OIDCDefaultScopes, c.OIDCScopes())
 }
 
-func TestConfig_OIDCIcon(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.OIDCIcon())
-}
-
-func TestConfig_OIDCButton(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.OIDCButton())
-}
-
 func TestConfig_OIDCRegister(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -77,6 +65,18 @@ func TestConfig_OIDCRedirect(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.False(t, c.OIDCRedirect())
+}
+
+func TestConfig_OIDCProvider(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.OIDCProvider())
+}
+
+func TestConfig_OIDCProviderIcon(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.OIDCProviderIcon())
 }
 
 func TestConfig_OIDCReport(t *testing.T) {

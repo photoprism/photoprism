@@ -45,13 +45,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-uri",
-			Usage:  "issuer `URI` for single sign-on via OpenID Connect (OIDC), e.g. https://accounts.google.com/o/oauth2/v2/auth",
+			Usage:  "provider `URI` for single sign-on via OpenID Connect (OIDC), e.g. https://accounts.google.com/",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_URI"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-insecure",
-			Usage:  "skip issuer SSL/TLS certificate verification",
+			Usage:  "skip provider SSL/TLS certificate verification",
 			EnvVar: EnvVar("OIDC_INSECURE"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -73,27 +73,27 @@ var Flags = CliFlags{
 			Value:  OIDCDefaultScopes,
 			EnvVar: EnvVar("OIDC_SCOPES"),
 		}}, {
-		Flag: cli.StringFlag{
-			Name:   "oidc-icon",
-			Usage:  "custom issuer icon `URI` for single sign-on via OIDC",
-			Value:  "",
-			EnvVar: EnvVar("OIDC_ICON"),
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "oidc-button",
-			Usage:  "custom login button `TEXT` for single sign-on via OIDC",
-			Value:  "",
-			EnvVar: EnvVar("OIDC_BUTTON"),
-		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-register",
-			Usage:  "allow user registration via OIDC",
+			Usage:  "allow new users to register via OIDC",
 			EnvVar: EnvVar("OIDC_REGISTER"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-redirect",
-			Usage:  "automatically redirect unauthenticated users to the OIDC login page",
+			Usage:  "automatically redirect unauthenticated users to the OIDC provider login page",
 			EnvVar: EnvVar("OIDC_REDIRECT"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-provider",
+			Usage:  "custom OIDC provider `NAME`",
+			Value:  "OpenID Connect",
+			EnvVar: EnvVar("OIDC_PROVIDER}"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-provider-icon",
+			Usage:  "custom OIDC provider icon `URI`",
+			Value:  "/static/brands/openid.svg",
+			EnvVar: EnvVar("OIDC_PROVIDER_ICON"),
 		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-maxage",
