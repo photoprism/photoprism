@@ -7,8 +7,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"
 
@@ -16,9 +14,10 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-func TestRevokeOAuthToken(t *testing.T) {
+func TestOAuthRevoke(t *testing.T) {
 	const tokenPath = "/api/v1/oauth/token"
 	const revokePath = "/api/v1/oauth/revoke"
 
@@ -27,8 +26,8 @@ func TestRevokeOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
-		RevokeOAuthToken(router)
+		OAuthToken(router)
+		OAuthRevoke(router)
 
 		data := url.Values{
 			"grant_type":    {"client_credentials"},
@@ -63,8 +62,8 @@ func TestRevokeOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
-		RevokeOAuthToken(router)
+		OAuthToken(router)
+		OAuthRevoke(router)
 
 		createData := url.Values{
 			"grant_type":    {"client_credentials"},
@@ -104,8 +103,8 @@ func TestRevokeOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
-		RevokeOAuthToken(router)
+		OAuthToken(router)
+		OAuthRevoke(router)
 
 		createData := url.Values{
 			"grant_type":    {"client_credentials"},
@@ -145,8 +144,8 @@ func TestRevokeOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
-		RevokeOAuthToken(router)
+		OAuthToken(router)
+		OAuthRevoke(router)
 
 		createData := url.Values{
 			"grant_type":    {"client_credentials"},
@@ -186,8 +185,8 @@ func TestRevokeOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
-		RevokeOAuthToken(router)
+		OAuthToken(router)
+		OAuthRevoke(router)
 
 		createData := url.Values{
 			"grant_type":    {"client_credentials"},
@@ -225,7 +224,7 @@ func TestRevokeOAuthToken(t *testing.T) {
 	t.Run("PublicMode", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
-		RevokeOAuthToken(router)
+		OAuthRevoke(router)
 
 		sess := entity.SessionFixtures.Get("alice_token")
 
@@ -246,8 +245,8 @@ func TestRevokeOAuthToken(t *testing.T) {
 
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		CreateOAuthToken(router)
-		RevokeOAuthToken(router)
+		OAuthToken(router)
+		OAuthRevoke(router)
 
 		data := url.Values{
 			"grant_type":  {"password"},

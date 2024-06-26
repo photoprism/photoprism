@@ -10,7 +10,7 @@ var onceOidc sync.Once
 
 func initOidc() {
 	services.OIDC, _ = oidc.NewClient(
-		Config().OIDCIssuerURL(),
+		Config().OIDCUri(),
 		Config().OIDCClient(),
 		Config().OIDCSecret(),
 		Config().OIDCScopes(),
@@ -20,7 +20,7 @@ func initOidc() {
 }
 
 func OIDC() *oidc.Client {
-	oncePhotos.Do(initOidc)
+	onceOidc.Do(initOidc)
 
 	return services.OIDC
 }

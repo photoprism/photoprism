@@ -15,14 +15,14 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
+	defer Shutdown()
+
 	code := m.Run()
 
 	// Remove generated test files and folders.
 	_ = os.RemoveAll("testdata/1")
 	_ = os.RemoveAll("testdata/cache")
 	_ = os.RemoveAll("testdata/vips")
-
-	Shutdown()
 
 	os.Exit(code)
 }

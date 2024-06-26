@@ -16,7 +16,11 @@ func TestMain(m *testing.M) {
 	c := config.TestConfig()
 	defer c.CloseDb()
 
+	// Run unit tests.
 	code := m.Run()
+
+	// Close database connection.
+	_ = c.CloseDb()
 
 	os.Exit(code)
 }

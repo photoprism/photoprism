@@ -229,7 +229,7 @@ func CliTestContext() *cli.Context {
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.String("config-path", config.ConfigPath, "doc")
 	globalSet.String("admin-password", config.DarktableBin, "doc")
-	globalSet.String("oidc-issuer", config.OIDCIssuer, "doc")
+	globalSet.String("oidc-uri", config.OIDCUri, "doc")
 	globalSet.String("oidc-client", config.OIDCClient, "doc")
 	globalSet.String("oidc-secret", config.OIDCSecret, "doc")
 	globalSet.String("oidc-scopes", config.OIDCScopes, "doc")
@@ -263,7 +263,7 @@ func CliTestContext() *cli.Context {
 
 	LogErr(c.Set("config-path", config.ConfigPath))
 	LogErr(c.Set("admin-password", config.AdminPassword))
-	LogErr(c.Set("oidc-issuer", config.OIDCIssuer))
+	LogErr(c.Set("oidc-uri", config.OIDCUri))
 	LogErr(c.Set("oidc-client", config.OIDCClient))
 	LogErr(c.Set("oidc-secret", config.OIDCSecret))
 	LogErr(c.Set("oidc-scopes", OIDCDefaultScopes))

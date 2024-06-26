@@ -31,12 +31,15 @@ type Options struct {
 	PasswordResetUri      string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri"`
 	RegisterUri           string        `yaml:"RegisterUri" json:"-" flag:"register-uri"`
 	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
-	OIDCIssuer            string        `yaml:"OIDCIssuer" json:"OIDCIssuer" flag:"oidc-issuer"`
+	OIDCUri               string        `yaml:"OIDCUri" json:"OIDCUri" flag:"oidc-uri"`
+	OIDCInsecure          bool          `yaml:"OIDCInsecure" json:"-" flag:"oidc-insecure"`
 	OIDCClient            string        `yaml:"OIDCClient" json:"-" flag:"oidc-client"`
 	OIDCSecret            string        `yaml:"OIDCSecret" json:"-" flag:"oidc-secret"`
 	OIDCScopes            string        `yaml:"OIDCScopes" json:"-" flag:"oidc-scopes"`
-	OIDCInsecure          bool          `yaml:"OIDCInsecure" json:"-" flag:"oidc-insecure"`
+	OIDCIcon              string        `yaml:"OIDCIcon" json:"-" flag:"oidc-icon"`
+	OIDCButton            string        `yaml:"OIDCButton" json:"-" flag:"oidc-button"`
 	OIDCRegister          bool          `yaml:"OIDCRegister" json:"-" flag:"oidc-register"`
+	OIDCRedirect          bool          `yaml:"OIDCRedirect" json:"-" flag:"oidc-redirect"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	SessionCache          int64         `yaml:"SessionCache" json:"-" flag:"session-cache"`

@@ -18,10 +18,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// RevokeOAuthToken takes an access token and deletes it. A client may only delete its own tokens.
+// OAuthRevoke takes an access token and deletes it. A client may only delete its own tokens.
 //
 // POST /api/v1/oauth/revoke
-func RevokeOAuthToken(router *gin.RouterGroup) {
+func OAuthRevoke(router *gin.RouterGroup) {
 	router.POST("/oauth/revoke", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {

@@ -25,7 +25,7 @@ var ConfigReports = []Report{
 	{Title: "Global Config Options", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
 		return conf.Report()
 	}},
-	{Title: "OpenID Connect", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
+	{Title: "OpenID Connect (OIDC)", NoWrap: true, Report: func(conf *config.Config) ([][]string, []string) {
 		return conf.OIDCReport()
 	}},
 }

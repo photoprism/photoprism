@@ -7,19 +7,20 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
-	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateOAuthToken(t *testing.T) {
+func TestOAuthToken(t *testing.T) {
 	t.Run("ClientSuccess", func(t *testing.T) {
 		app, router, conf := NewApiTest()
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -44,7 +45,7 @@ func TestCreateOAuthToken(t *testing.T) {
 	t.Run("PublicMode", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -71,7 +72,7 @@ func TestCreateOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -98,7 +99,7 @@ func TestCreateOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -124,7 +125,7 @@ func TestCreateOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -151,7 +152,7 @@ func TestCreateOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -178,7 +179,7 @@ func TestCreateOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -204,7 +205,7 @@ func TestCreateOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -234,7 +235,7 @@ func TestCreateOAuthToken(t *testing.T) {
 
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -263,7 +264,7 @@ func TestCreateOAuthToken(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -294,7 +295,7 @@ func TestCreateOAuthToken(t *testing.T) {
 
 		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"
@@ -325,7 +326,7 @@ func TestCreateOAuthToken(t *testing.T) {
 
 		sessId := AuthenticateUser(app, router, "deleted", "Deleted123!")
 
-		CreateOAuthToken(router)
+		OAuthToken(router)
 
 		var method = "POST"
 		var path = "/api/v1/oauth/token"

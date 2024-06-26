@@ -20,10 +20,9 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 
 	c := TestConfig()
+	defer c.CloseDb()
 
 	code := m.Run()
-
-	_ = c.CloseDb()
 
 	os.Exit(code)
 }

@@ -13,20 +13,24 @@ func TestConfig_OIDCEnabled(t *testing.T) {
 	assert.False(t, c.OIDCEnabled())
 }
 
-func TestConfig_OIDCIssuer(t *testing.T) {
+func TestConfig_OIDCUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "", c.OIDCIssuer())
+	assert.IsType(t, &url.URL{}, c.OIDCUri())
+	assert.Equal(t, "", c.OIDCUri().Path)
+
+	c.options.OIDCUri = "test"
+	assert.Equal(t, "test", c.OIDCUri().Path)
+	c.options.OIDCUri = ""
+
+	assert.IsType(t, &url.URL{}, c.OIDCUri())
+	assert.Equal(t, "", c.OIDCUri().String())
 }
 
-func TestConfig_OIDCIssuerURL(t *testing.T) {
+func TestConfig_OIDCInsecure(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.IsType(t, &url.URL{}, c.OIDCIssuerURL())
-	assert.Equal(t, "", c.OIDCIssuerURL().Path)
-
-	c.options.OIDCIssuer = "test"
-	assert.Equal(t, "test", c.OIDCIssuerURL().Path)
+	assert.False(t, c.OIDCInsecure())
 }
 
 func TestConfig_OIDCClient(t *testing.T) {
@@ -51,16 +55,28 @@ func TestConfig_OIDCScopes(t *testing.T) {
 	assert.Equal(t, OIDCDefaultScopes, c.OIDCScopes())
 }
 
+func TestConfig_OIDCIcon(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.OIDCIcon())
+}
+
+func TestConfig_OIDCButton(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.OIDCButton())
+}
+
 func TestConfig_OIDCRegister(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.False(t, c.OIDCRegister())
 }
 
-func TestConfig_OIDCInsecure(t *testing.T) {
+func TestConfig_OIDCRedirect(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.False(t, c.OIDCInsecure())
+	assert.False(t, c.OIDCRedirect())
 }
 
 func TestConfig_OIDCReport(t *testing.T) {
