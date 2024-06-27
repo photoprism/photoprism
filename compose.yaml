@@ -157,6 +157,37 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock" # enables Traefik to watch services
 
+  ## Dummy WebDAV Server
+  dummy-webdav:
+    image: photoprism/dummy-webdav:240627
+    container_name: dummy-webdav
+    environment:
+      WEBDAV_USERNAME: admin
+      WEBDAV_PASSWORD: photoprism
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dummy-webdav.loadbalancer.server.port=80"
+      - "traefik.http.routers.dummy-webdav.entrypoints=websecure"
+      - "traefik.http.routers.dummy-webdav.rule=Host(`dummy-webdav.localssl.dev`)"
+      - "traefik.http.routers.dummy-webdav.priority=3"
+      - "traefik.http.routers.dummy-webdav.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.dummy-webdav.tls=true"
+
+  ## Dummy OIDC Identity Provider
+  dummy-oidc:
+    image: photoprism/dummy-oidc:240627
+    container_name: dummy-oidc
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
+      - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
+      - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.localssl.dev`)"
+      - "traefik.http.routers.dummy-oidc.priority=3"
+      - "traefik.http.routers.dummy-oidc.tls.domains[0].main=localssl.dev"
+      - "traefik.http.routers.dummy-oidc.tls.domains[0].sans=*.localssl.dev"
+      - "traefik.http.routers.dummy-oidc.tls=true"
+
   ## Dummy LDAP Directory Server
   ## Docs: https://glauth.github.io/docs/
   dummy-ldap:
@@ -176,44 +207,12 @@ services:
     volumes:
       - "./.ldap.cfg:/app/config/config.cfg"
 
-  ## Dummy OpenID Connect Provider
-  dummy-oidc:
-    image: photoprism/dummy-oidc:240627
-    container_name: dummy-oidc
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.dummy-oidc.loadbalancer.server.port=9998"
-      - "traefik.http.routers.dummy-oidc.entrypoints=websecure"
-      - "traefik.http.routers.dummy-oidc.rule=Host(`dummy-oidc.localssl.dev`)"
-      - "traefik.http.routers.dummy-oidc.priority=3"
-      - "traefik.http.routers.dummy-oidc.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.dummy-oidc.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.dummy-oidc.tls=true"
-
-  ## Dummy WebDAV Server
-  dummy-webdav:
-    image: photoprism/dummy-webdav:240627
-    container_name: dummy-webdav
-    environment:
-      WEBDAV_USERNAME: admin
-      WEBDAV_PASSWORD: photoprism
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.services.dummy-webdav.loadbalancer.server.port=80"
-      - "traefik.http.routers.dummy-webdav.entrypoints=websecure"
-      - "traefik.http.routers.dummy-webdav.rule=Host(`dummy-webdav.localssl.dev`)"
-      - "traefik.http.routers.dummy-webdav.priority=3"
-      - "traefik.http.routers.dummy-webdav.tls.domains[0].main=localssl.dev"
-      - "traefik.http.routers.dummy-webdav.tls.domains[0].sans=*.localssl.dev"
-      - "traefik.http.routers.dummy-webdav.tls=true"
-
-  ## Run "docker compose --profile keycloak up" to start your development environment with Keycloak.
-  ## Login: user / photoprism
-  ## Admin: admin / photoprism
+  ## Keycloak (OIDC Identity Provider)
+  ## Docs: https://www.keycloak.org/docs/latest/server_admin/
+  ## Login with "user / photoprism" and "admin / photoprism".
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
     container_name: keycloak
-    profiles: ["all", "auth", "keycloak"]
     command: "start-dev" # development mode, do not use this in production!
     links:
       - "traefik:localssl.dev"
