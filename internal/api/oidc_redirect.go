@@ -31,16 +31,51 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		actor := "unknown client"
 		action := "redirect"
 
-		// Abort if running in public mode.
+		// Get global config.
+		conf := get.Config()
+
+		// Abort in public mode and if OIDC is disabled.
 		if get.Config().Public() {
 			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrDisabledInPublicMode.Error()})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
+		} else if !conf.OIDCEnabled() {
+			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrAuthenticationDisabled.Error()})
+			Abort(c, http.StatusMethodNotAllowed, i18n.ErrUnsupported)
+			return
 		}
 
-		// TODO
+		// Get OIDC provider.
+		provider := get.OIDC()
 
-		// Send response.
+		if provider == nil {
+			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrAuthenticationDisabled.Error()})
+			Abort(c, http.StatusInternalServerError, i18n.ErrConnectionFailed)
+			return
+		}
+
+		_, claimErr := provider.CodeExchangeUserInfo(c)
+
+		if claimErr != nil {
+			event.AuditErr([]string{clientIp, "oidc", actor, action, claimErr.Error()})
+			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
+			return
+		}
+
+		// TODO 1: Create user account if it does not exist yet.
+		/*
+			user := &entity.User{
+				DisplayName:  userInfo.GetName(),
+				UserName:     oidc.UsernameFromUserInfo(userInfo),
+				UserEmail:    userInfo.GetEmail(),
+				AuthID:       userInfo.GetSubject(),
+				AuthProvider: authn.ProviderOIDC.String(),
+			} */
+
+		// TODO 2: Create and return user session.
+
+		// TODO 3: Render HTML template to set the access token in localStorage.
+
 		c.JSON(http.StatusMethodNotAllowed, gin.H{"status": StatusFailed})
 	})
 }

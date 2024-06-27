@@ -31,16 +31,30 @@ func OIDCLogin(router *gin.RouterGroup) {
 		actor := "unknown client"
 		action := "login"
 
-		// Abort if running in public mode.
+		// Get global config.
+		conf := get.Config()
+
+		// Abort in public mode and if OIDC is disabled.
 		if get.Config().Public() {
 			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrDisabledInPublicMode.Error()})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
+		} else if !conf.OIDCEnabled() {
+			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrAuthenticationDisabled.Error()})
+			Abort(c, http.StatusMethodNotAllowed, i18n.ErrUnsupported)
+			return
 		}
 
-		// TODO
+		// Get OIDC provider.
+		provider := get.OIDC()
 
-		// Send response.
-		c.JSON(http.StatusMethodNotAllowed, gin.H{"status": StatusFailed})
+		if provider == nil {
+			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrAuthenticationDisabled.Error()})
+			Abort(c, http.StatusInternalServerError, i18n.ErrConnectionFailed)
+			return
+		}
+
+		// Handle OIDC login request.
+		provider.AuthCodeUrlHandler(c)
 	})
 }
