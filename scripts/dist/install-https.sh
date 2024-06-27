@@ -11,12 +11,9 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
-# Abort if PHOTOPRISM_DEFAULT_TLS is "false" or PHOTOPRISM_DISABLE_TLS is "true".
+# Do not proceed if PHOTOPRISM_DEFAULT_TLS is "false".
 if [[ ${PHOTOPRISM_DEFAULT_TLS} = "false" ]]; then
    echo "Creation of a default HTTPS/TLS certificate is skipped because PHOTOPRISM_DEFAULT_TLS is \"false\"."
-   exit 0
-elif [[ ${PHOTOPRISM_DISABLE_TLS} = "true" ]]; then
-   echo "Creation of a default HTTPS/TLS certificate is skipped because PHOTOPRISM_DISABLE_TLS is \"true\"."
    exit 0
 fi
 
@@ -25,13 +22,13 @@ CONF_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/openssl"
 CERTS_PATH="/etc/ssl/certs"
 KEY_PATH="/etc/ssl/private"
 
-# Abort if certificate files already exist.
+# Do not create self-signed certificate if it already exists.
 if [ -f "$CERTS_PATH/photoprism.issuer.crt" ] && [ -f "$KEY_PATH/photoprism.key" ]; then
     echo "Default HTTPS/TLS certificate already exists."
     exit 0
 fi
 
-# Start creating a self-signed certificate.
+# Create self-signed certificate.
 echo "Creating a default HTTPS/TLS certificate."
 
 mkdir -p "${CERTS_PATH}" "${KEY_PATH}"

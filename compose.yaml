@@ -39,7 +39,7 @@ services:
       ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
       PHOTOPRISM_UID: ${UID:-1000}                         # user id, should match your host user id
       PHOTOPRISM_GID: ${GID:-1000}                         # group id
-      ## Access Management
+      ## Access Management:
       PHOTOPRISM_ADMIN_USER: "admin"                       # admin login username
       PHOTOPRISM_ADMIN_PASSWORD: "photoprism"              # initial admin password (8-72 characters)
       PHOTOPRISM_AUTH_MODE: "password"                     # authentication mode (public, password)
@@ -61,8 +61,12 @@ services:
       PHOTOPRISM_LDAP_ROLE: ""
       PHOTOPRISM_LDAP_ROLE_DN: "ou=photoprism-*,ou=groups,dc=localssl,dc=dev"
       PHOTOPRISM_LDAP_WEBDAV_DN: "ou=photoprism-webdav,ou=groups,dc=localssl,dc=dev"
-      ## Site Information
-      PHOTOPRISM_SITE_URL: "http://localhost:2342/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
+      ## HTTPS/TLS Options:
+      ## see https://docs.photoprism.app/getting-started/using-https/
+      PHOTOPRISM_DISABLE_TLS: "true"
+      PHOTOPRISM_DEFAULT_TLS: "true"
+      ## Site Information:
+      PHOTOPRISM_SITE_URL: "https://app.localssl.dev/"    # server URL in the format "http(s)://domain.name(:port)/(path)"
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
       PHOTOPRISM_SITE_DESCRIPTION: "Tags and finds pictures without getting in your way!"
       PHOTOPRISM_SITE_AUTHOR: "@photoprism_app"
