@@ -20,9 +20,18 @@ func TestConfig_OIDCUri(t *testing.T) {
 	assert.Equal(t, "", c.OIDCUri().Path)
 
 	c.options.OIDCUri = "test"
-	assert.Equal(t, "test", c.OIDCUri().Path)
-	c.options.OIDCUri = ""
+	assert.Equal(t, "", c.OIDCUri().String())
+	assert.Equal(t, "", c.OIDCUri().Path)
 
+	c.options.OIDCUri = "http://test/"
+	assert.Equal(t, "", c.OIDCUri().String())
+	assert.Equal(t, "", c.OIDCUri().Path)
+
+	c.options.OIDCUri = "https://test/"
+	assert.Equal(t, "https://test/", c.OIDCUri().String())
+	assert.Equal(t, "/", c.OIDCUri().Path)
+
+	c.options.OIDCUri = ""
 	assert.IsType(t, &url.URL{}, c.OIDCUri())
 	assert.Equal(t, "", c.OIDCUri().String())
 }

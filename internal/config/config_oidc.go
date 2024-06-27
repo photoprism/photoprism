@@ -18,20 +18,29 @@ const (
 func (c *Config) OIDCEnabled() bool {
 	if c.options.DisableOIDC {
 		return false
+	} else if !c.SiteHttps() {
+		// Site URL must start with "https://".
+		return false
+	} else if !strings.HasPrefix(c.options.OIDCUri, "https://") {
+		// OIDC provider URI must start with "https://".
+		return false
 	}
 
-	return c.options.OIDCUri != "" && c.options.OIDCClient != "" && c.options.OIDCSecret != ""
+	return c.options.OIDCClient != "" && c.options.OIDCSecret != ""
 }
 
-// OIDCUri returns the OpenID Connect issuer URI as *url.URL for single sign-on via OIDC.
+// OIDCUri returns the OpenID Connect provider URI as *url.URL for single sign-on via OIDC.
 func (c *Config) OIDCUri() *url.URL {
 	if uri := c.options.OIDCUri; uri == "" {
 		return &url.URL{}
 	} else if result, err := url.Parse(uri); err != nil {
-		log.Errorf("oidc: failed to parse issuer URI (%s)", err)
+		log.Warnf("oidc: failed to parse provider URI (%s)", err)
 		return &url.URL{}
-	} else {
+	} else if result.Scheme == "https" {
 		return result
+	} else {
+		log.Warnf("oidc: insecure or unsupported provider URI (%s)", uri)
+		return &url.URL{}
 	}
 }
 
