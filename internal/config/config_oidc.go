@@ -11,7 +11,8 @@ const (
 	OIDCDefaultScopes       = "openid email profile"
 	OIDCDefaultProviderName = "OpenID Connect"
 	OIDCDefaultProviderIcon = "brands/openid.svg"
-	OIDCLoginApiEndpoint    = ApiUri + "/oidc/login"
+	OIDCLoginUri            = ApiUri + "/oidc/login"
+	OIDCRedirectUri         = ApiUri + "/oidc/redirect"
 )
 
 // OIDCEnabled checks if sign-on via OpenID Connect (OIDC) is fully configured and enabled.
@@ -103,7 +104,12 @@ func (c *Config) DisableOIDC() bool {
 
 // OIDCLoginUri returns the OIDC login API endpoint URI.
 func (c *Config) OIDCLoginUri() string {
-	return c.BaseUri(OIDCLoginApiEndpoint)
+	return c.BaseUri(OIDCLoginUri)
+}
+
+// OIDCRedirectUri returns the OIDC redirect API endpoint URI.
+func (c *Config) OIDCRedirectUri() string {
+	return c.BaseUri(OIDCRedirectUri)
 }
 
 // OIDCReport returns the OpenID Connect config values as a table for reporting.

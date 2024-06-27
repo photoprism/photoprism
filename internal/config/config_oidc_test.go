@@ -100,6 +100,12 @@ func TestConfig_OIDCLoginUri(t *testing.T) {
 	assert.Equal(t, "/api/v1/oidc/login", c.OIDCLoginUri())
 }
 
+func TestConfig_OIDCRedirectUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "/api/v1/oidc/redirect", c.OIDCRedirectUri())
+}
+
 func TestConfig_OIDCReport(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

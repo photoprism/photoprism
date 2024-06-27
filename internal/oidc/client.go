@@ -16,14 +16,14 @@ import (
 	utils "github.com/zitadel/oidc/pkg/http"
 	"github.com/zitadel/oidc/pkg/oidc"
 
+	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 const (
-	RedirectPath = "/auth/callback"
-	RoleClaim    = "photoprism_role"
-	AdminRole    = "photoprism_admin"
+	RoleClaim = "photoprism_role"
+	AdminRole = "photoprism_admin"
 )
 
 var log = event.Log
@@ -43,8 +43,8 @@ func NewClient(iss *url.URL, clientId, clientSecret, customScopes, siteUrl strin
 		return nil, err
 	}
 
-	u.Path = path.Join(u.Path, "/api/v1/", RedirectPath)
-	log.Debugf("oidc: %s", u.String())
+	u.Path = path.Join(u.Path, config.OIDCRedirectUri)
+	log.Debugf("oidc: redirect uri %s", u.String())
 
 	var hashKey, encryptKey []byte
 

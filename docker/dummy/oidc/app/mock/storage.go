@@ -80,7 +80,6 @@ func (a *AuthRequest) GetNonce() string {
 
 func (a *AuthRequest) GetRedirectURI() string {
 	return a.RedirectURI
-	// return "http://localhost:5556/auth/callback"
 }
 
 func (a *AuthRequest) GetResponseType() oidc.ResponseType {
