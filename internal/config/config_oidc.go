@@ -7,7 +7,12 @@ import (
 	"unicode/utf8"
 )
 
-const OIDCDefaultScopes = "openid email profile"
+const (
+	OIDCDefaultScopes       = "openid email profile"
+	OIDCDefaultProviderName = "OpenID Connect"
+	OIDCDefaultProviderIcon = "brands/openid.svg"
+	OIDCLoginApiEndpoint    = ApiUri + "/oidc/login"
+)
 
 // OIDCEnabled checks if login via OpenID Connect (OIDC) is enabled.
 func (c *Config) OIDCEnabled() bool {
@@ -50,6 +55,24 @@ func (c *Config) OIDCScopes() string {
 	return c.options.OIDCScopes
 }
 
+// OIDCProvider returns the OIDC provider name.
+func (c *Config) OIDCProvider() string {
+	if c.options.OIDCProvider == "" {
+		return OIDCDefaultProviderName
+	}
+
+	return c.options.OIDCProvider
+}
+
+// OIDCIcon returns the OIDC provider icon URI.
+func (c *Config) OIDCIcon() string {
+	if c.options.OIDCIcon == "" {
+		return c.StaticAssetUri(OIDCDefaultProviderIcon)
+	}
+
+	return c.options.OIDCIcon
+}
+
 // OIDCRegister checks if new accounts may be created via OIDC.
 func (c *Config) OIDCRegister() bool {
 	return c.options.OIDCRegister
@@ -60,14 +83,9 @@ func (c *Config) OIDCRedirect() bool {
 	return c.options.OIDCRedirect
 }
 
-// OIDCProvider returns the OIDC provider name, if any.
-func (c *Config) OIDCProvider() string {
-	return c.options.OIDCProvider
-}
-
-// OIDCProviderIcon returns the OIDC provider icon URI, if any.
-func (c *Config) OIDCProviderIcon() string {
-	return c.options.OIDCProviderIcon
+// OIDCLoginUri returns the OIDC login API endpoint URI.
+func (c *Config) OIDCLoginUri() string {
+	return c.BaseUri(OIDCLoginApiEndpoint)
 }
 
 // OIDCReport returns the OpenID Connect config values as a table for reporting.
@@ -80,10 +98,10 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 		{"oidc-client", c.OIDCClient()},
 		{"oidc-secret", strings.Repeat("*", utf8.RuneCountInString(c.OIDCSecret()))},
 		{"oidc-scopes", c.OIDCScopes()},
+		{"oidc-provider", c.OIDCProvider()},
+		{"oidc-icon", c.OIDCIcon()},
 		{"oidc-register", fmt.Sprintf("%t", c.OIDCRegister())},
 		{"oidc-redirect", fmt.Sprintf("%t", c.OIDCRedirect())},
-		{"oidc-provider", c.OIDCProvider()},
-		{"oidc-provider-icon", c.OIDCProviderIcon()},
 	}
 
 	return rows, cols

@@ -55,6 +55,18 @@ func TestConfig_OIDCScopes(t *testing.T) {
 	assert.Equal(t, OIDCDefaultScopes, c.OIDCScopes())
 }
 
+func TestConfig_OIDCProvider(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "OpenID Connect", c.OIDCProvider())
+}
+
+func TestConfig_OIDCIcon(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "/static/brands/openid.svg", c.OIDCIcon())
+}
+
 func TestConfig_OIDCRegister(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -67,16 +79,10 @@ func TestConfig_OIDCRedirect(t *testing.T) {
 	assert.False(t, c.OIDCRedirect())
 }
 
-func TestConfig_OIDCProvider(t *testing.T) {
+func TestConfig_OIDCLoginUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "", c.OIDCProvider())
-}
-
-func TestConfig_OIDCProviderIcon(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.OIDCProviderIcon())
+	assert.Equal(t, "/api/v1/oidc/login", c.OIDCLoginUri())
 }
 
 func TestConfig_OIDCReport(t *testing.T) {

@@ -31,15 +31,15 @@ type Options struct {
 	PasswordResetUri      string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri"`
 	RegisterUri           string        `yaml:"RegisterUri" json:"-" flag:"register-uri"`
 	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
-	OIDCUri               string        `yaml:"OIDCUri" json:"OIDCUri" flag:"oidc-uri"`
+	OIDCUri               string        `yaml:"OIDCUri" json:"-" flag:"oidc-uri"`
 	OIDCInsecure          bool          `yaml:"OIDCInsecure" json:"-" flag:"oidc-insecure"`
 	OIDCClient            string        `yaml:"OIDCClient" json:"-" flag:"oidc-client"`
 	OIDCSecret            string        `yaml:"OIDCSecret" json:"-" flag:"oidc-secret"`
 	OIDCScopes            string        `yaml:"OIDCScopes" json:"-" flag:"oidc-scopes"`
-	OIDCRegister          bool          `yaml:"OIDCRegister" json:"-" flag:"oidc-register"`
-	OIDCRedirect          bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`
 	OIDCProvider          string        `yaml:"OIDCProvider" json:"OIDCProvider" flag:"oidc-provider"`
-	OIDCProviderIcon      string        `yaml:"OIDCProviderIcon" json:"OIDCProviderIcon" flag:"oidc-provider-icon"`
+	OIDCIcon              string        `yaml:"OIDCIcon" json:"OIDCIcon" flag:"oidc-icon"`
+	OIDCRegister          bool          `yaml:"OIDCRegister" json:"OIDCRegister" flag:"oidc-register"`
+	OIDCRedirect          bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	SessionCache          int64         `yaml:"SessionCache" json:"-" flag:"session-cache"`

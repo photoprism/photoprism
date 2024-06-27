@@ -73,6 +73,18 @@ var Flags = CliFlags{
 			Value:  OIDCDefaultScopes,
 			EnvVar: EnvVar("OIDC_SCOPES"),
 		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-provider",
+			Usage:  "custom OIDC provider `NAME`",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_PROVIDER"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-icon",
+			Usage:  "custom OIDC provider icon `URI`",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_ICON"),
+		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-register",
 			Usage:  "allow new users to register via OIDC",
@@ -80,20 +92,8 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-redirect",
-			Usage:  "automatically redirect unauthenticated users to the OIDC provider login page",
+			Usage:  "automatically redirect unauthenticated users to the OIDC login page",
 			EnvVar: EnvVar("OIDC_REDIRECT"),
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "oidc-provider",
-			Usage:  "custom OIDC provider `NAME`",
-			Value:  "OpenID Connect",
-			EnvVar: EnvVar("OIDC_PROVIDER}"),
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "oidc-provider-icon",
-			Usage:  "custom OIDC provider icon `URI`",
-			Value:  "/static/brands/openid.svg",
-			EnvVar: EnvVar("OIDC_PROVIDER_ICON"),
 		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-maxage",
