@@ -14,8 +14,12 @@ const (
 	OIDCLoginApiEndpoint    = ApiUri + "/oidc/login"
 )
 
-// OIDCEnabled checks if login via OpenID Connect (OIDC) is enabled.
+// OIDCEnabled checks if sign-on via OpenID Connect (OIDC) is fully configured and enabled.
 func (c *Config) OIDCEnabled() bool {
+	if c.options.DisableOIDC {
+		return false
+	}
+
 	return c.options.OIDCUri != "" && c.options.OIDCClient != "" && c.options.OIDCSecret != ""
 }
 
@@ -83,6 +87,11 @@ func (c *Config) OIDCRedirect() bool {
 	return c.options.OIDCRedirect
 }
 
+// DisableOIDC checks if single sign-on via OpenID Connect (OIDC) should be disabled.
+func (c *Config) DisableOIDC() bool {
+	return c.options.DisableOIDC
+}
+
 // OIDCLoginUri returns the OIDC login API endpoint URI.
 func (c *Config) OIDCLoginUri() string {
 	return c.BaseUri(OIDCLoginApiEndpoint)
@@ -102,6 +111,7 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 		{"oidc-icon", c.OIDCIcon()},
 		{"oidc-register", fmt.Sprintf("%t", c.OIDCRegister())},
 		{"oidc-redirect", fmt.Sprintf("%t", c.OIDCRedirect())},
+		{"disable-oidc", fmt.Sprintf("%t", c.DisableOIDC())},
 	}
 
 	return rows, cols

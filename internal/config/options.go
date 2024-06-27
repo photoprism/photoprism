@@ -40,6 +40,7 @@ type Options struct {
 	OIDCIcon              string        `yaml:"OIDCIcon" json:"OIDCIcon" flag:"oidc-icon"`
 	OIDCRegister          bool          `yaml:"OIDCRegister" json:"OIDCRegister" flag:"oidc-register"`
 	OIDCRedirect          bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`
+	DisableOIDC           bool          `yaml:"DisableOIDC" json:"DisableOIDC" flag:"disable-oidc"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`
 	SessionCache          int64         `yaml:"SessionCache" json:"-" flag:"session-cache"`

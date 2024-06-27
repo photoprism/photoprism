@@ -95,6 +95,11 @@ var Flags = CliFlags{
 			Usage:  "automatically redirect unauthenticated users to the OIDC login page",
 			EnvVar: EnvVar("OIDC_REDIRECT"),
 		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-oidc",
+			Usage:  "disable single sign-on via OpenID Connect (OIDC)",
+			EnvVar: EnvVar("DISABLE_OIDC"),
+		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-maxage",
 			Value:  DefaultSessionMaxAge,

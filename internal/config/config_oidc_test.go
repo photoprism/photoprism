@@ -79,6 +79,12 @@ func TestConfig_OIDCRedirect(t *testing.T) {
 	assert.False(t, c.OIDCRedirect())
 }
 
+func TestConfig_DisableOIDC(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.DisableOIDC())
+}
+
 func TestConfig_OIDCLoginUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
