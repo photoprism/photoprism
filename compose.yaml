@@ -46,7 +46,8 @@ services:
       PHOTOPRISM_REGISTER_URI: "https://keycloak.localssl.dev/admin/"
       PHOTOPRISM_PASSWORD_RESET_URI: "https://keycloak.localssl.dev/realms/master/login-actions/reset-credentials"
       ## OpenID Connect (pre-configured for local tests):
-      PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/auth/realms/master"
+      ## see https://keycloak.localssl.dev/realms/master/.well-known/openid-configuration
+      PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
       PHOTOPRISM_OIDC_INSECURE: "true"
       PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
       PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
@@ -177,7 +178,7 @@ services:
 
   ## Dummy OpenID Connect Provider
   dummy-oidc:
-    image: photoprism/dummy-oidc:240131
+    image: photoprism/dummy-oidc:240627
     container_name: dummy-oidc
     labels:
       - "traefik.enable=true"
@@ -191,7 +192,7 @@ services:
 
   ## Dummy WebDAV Server
   dummy-webdav:
-    image: photoprism/dummy-webdav:240131
+    image: photoprism/dummy-webdav:240627
     container_name: dummy-webdav
     environment:
       WEBDAV_USERNAME: admin
@@ -210,7 +211,7 @@ services:
   ## Login: user / photoprism
   ## Admin: admin / photoprism
   keycloak:
-    image: quay.io/keycloak/keycloak:24.0
+    image: quay.io/keycloak/keycloak:25.0
     container_name: keycloak
     profiles: ["all", "auth", "keycloak"]
     command: "start-dev" # development mode, do not use this in production!

@@ -312,7 +312,8 @@ func (c *ConfClient) RedirectURIs() []string {
 		"https://localhost:8443/test/a/instructions-example/callback",
 		"https://op.certification.openid.net:62064/authz_cb",
 		"https://op.certification.openid.net:62064/authz_post",
-		"http://localhost:2342/api/v1/auth/callback",
+		"http://localhost:2342/api/v1/oidc/redirect",
+		"https://app.localssl.dev/api/v1/oidc/redirect",
 	}
 }
 func (c *ConfClient) PostLogoutRedirectURIs() []string {

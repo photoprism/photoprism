@@ -8,16 +8,21 @@ import (
 )
 
 // HttpClient represents a client that makes HTTP requests.
+//
+// NOTE: Timeout specifies a time limit for requests made by
+// this Client. The timeout includes connection time, any
+// redirects, and reading the response body. The timer remains
+// running after Get, Head, Post, or Do return and will
+// interrupt reading of the Response.Body.
 func HttpClient(debug bool) *http.Client {
 	if debug {
 		return &http.Client{
 			Transport: LoggingRoundTripper{http.DefaultTransport},
-			Timeout:   time.Second * 10,
+			Timeout:   time.Second * 20,
 		}
 	}
-	cl := http.DefaultClient
-	cl.Timeout = time.Second * 10
-	return cl
+
+	return &http.Client{Timeout: 20 * time.Second}
 }
 
 // LoggingRoundTripper specifies the http.RoundTripper interface.
