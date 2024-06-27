@@ -39,9 +39,9 @@ type OpenIDConfiguration struct {
 func NewOpenIDConfiguration(conf *config.Config) *OpenIDConfiguration {
 	return &OpenIDConfiguration{
 		Issuer:                                    conf.SiteUrl(),
-		AuthorizationEndpoint:                     "",
+		AuthorizationEndpoint:                     fmt.Sprintf("%sapi/v1/oauth/authorize", conf.SiteUrl()),
 		TokenEndpoint:                             fmt.Sprintf("%sapi/v1/oauth/token", conf.SiteUrl()),
-		UserinfoEndpoint:                          "",
+		UserinfoEndpoint:                          fmt.Sprintf("%sapi/v1/oauth/userinfo", conf.SiteUrl()),
 		RegistrationEndpoint:                      "",
 		JwksUri:                                   "",
 		ResponseTypesSupported:                    OAuthResponseTypes,

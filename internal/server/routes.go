@@ -33,27 +33,32 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 	// Register JSON REST-API version 1 (APIv1) routes, grouped by functionality.
 	// Docs: https://pkg.go.dev/github.com/photoprism/photoprism/internal/api
 
-	// Authentication.
+	// User Sessions.
 	api.CreateSession(APIv1)
 	api.GetSession(APIv1)
 	api.DeleteSession(APIv1)
+
+	// OAuth2 Client Endpoints.
 	api.OAuthAuthorize(APIv1)
-	api.OAuthRedirect(APIv1)
+	api.OAuthUserinfo(APIv1)
 	api.OAuthToken(APIv1)
 	api.OAuthRevoke(APIv1)
-	api.OIDCLogin(APIv1)
 
-	// Server Config.
+	// OIDC Client Endpoints.
+	api.OIDCLogin(APIv1)
+	api.OIDCRedirect(APIv1)
+
+	// Global Configuration.
 	api.GetConfigOptions(APIv1)
 	api.SaveConfigOptions(APIv1)
 	api.StopServer(APIv1)
 
-	// Custom Settings.
+	// User Settings.
 	api.GetClientConfig(APIv1)
 	api.GetSettings(APIv1)
 	api.SaveSettings(APIv1)
 
-	// Profile and Uploads.
+	// User Profile and Uploads.
 	api.UploadUserFiles(APIv1)
 	api.ProcessUserUpload(APIv1)
 	api.UploadUserAvatar(APIv1)

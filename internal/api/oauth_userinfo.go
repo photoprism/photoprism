@@ -12,11 +12,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// OAuthRedirect creates a new access token for authenticated clients and then redirects back to the application.
+// OAuthUserinfo returns information about the authenticated user.
 //
-// GET /api/v1/oauth/redirect
-func OAuthRedirect(router *gin.RouterGroup) {
-	router.GET("/oauth/redirect", func(c *gin.Context) {
+// GET /api/v1/oauth/userinfo
+func OAuthUserinfo(router *gin.RouterGroup) {
+	router.GET("/oauth/userinfo", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			AbortNotFound(c)
@@ -29,7 +29,7 @@ func OAuthRedirect(router *gin.RouterGroup) {
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
 		actor := "unknown client"
-		action := "redirect"
+		action := "userinfo"
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
@@ -41,6 +41,6 @@ func OAuthRedirect(router *gin.RouterGroup) {
 		// TODO
 
 		// Send response.
-		c.JSON(http.StatusOK, gin.H{"status": StatusSuccess})
+		c.JSON(http.StatusMethodNotAllowed, gin.H{"status": StatusFailed})
 	})
 }

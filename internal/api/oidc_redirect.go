@@ -12,11 +12,11 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// OAuthAuthorize is a starting point for browser-based OpenID Connect flows.
+// OIDCRedirect creates a new access token for authenticated users and then redirects the browser back to the app.
 //
-// GET /api/v1/oauth/authorize
-func OAuthAuthorize(router *gin.RouterGroup) {
-	router.GET("/oauth/authorize", func(c *gin.Context) {
+// GET /api/v1/oidc/redirect
+func OIDCRedirect(router *gin.RouterGroup) {
+	router.GET("/oidc/redirect", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.
 		if header.IsCdn(c.Request) {
 			AbortNotFound(c)
@@ -29,11 +29,11 @@ func OAuthAuthorize(router *gin.RouterGroup) {
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
 		actor := "unknown client"
-		action := "authorize"
+		action := "redirect"
 
 		// Abort if running in public mode.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrDisabledInPublicMode.Error()})
+			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrDisabledInPublicMode.Error()})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		}

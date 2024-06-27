@@ -43,7 +43,7 @@ type OAuthAuthorizationServer struct {
 func NewOAuthAuthorizationServer(conf *config.Config) *OAuthAuthorizationServer {
 	return &OAuthAuthorizationServer{
 		Issuer:                                    conf.SiteUrl(),
-		AuthorizationEndpoint:                     "",
+		AuthorizationEndpoint:                     fmt.Sprintf("%sapi/v1/oauth/authorize", conf.SiteUrl()),
 		TokenEndpoint:                             fmt.Sprintf("%sapi/v1/oauth/token", conf.SiteUrl()),
 		ScopesSupported:                           acl.Rules.Resources(),
 		ResponseTypesSupported:                    OAuthResponseTypes,

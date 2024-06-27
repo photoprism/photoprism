@@ -12,7 +12,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// OIDCLogin redirects to the login page of the configured OpenID Connect provider, if any.
+// OIDCLogin redirects a browser to the login page of the configured OpenID Connect provider, if any.
 //
 // GET /api/v1/oidc/login
 func OIDCLogin(router *gin.RouterGroup) {
@@ -41,6 +41,6 @@ func OIDCLogin(router *gin.RouterGroup) {
 		// TODO
 
 		// Send response.
-		c.JSON(http.StatusOK, gin.H{"status": StatusSuccess})
+		c.JSON(http.StatusMethodNotAllowed, gin.H{"status": StatusFailed})
 	})
 }
