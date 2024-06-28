@@ -45,13 +45,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-uri",
-			Usage:  "identity provider `URI` for single sign-on via OpenID Connect, e.g. https://accounts.google.com/",
+			Usage:  "identity provider `URI` for single sign-on via OpenID Connect, e.g. \"https://accounts.google.com/\"",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_URI"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-insecure",
-			Usage:  "skip identity provider SSL/TLS certificate verification (test and development only)",
+			Usage:  "skip identity provider SSL/TLS certificate verification",
 			EnvVar: EnvVar("OIDC_INSECURE"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -75,7 +75,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-provider",
-			Usage:  "custom identity provider `NAME`",
+			Usage:  "custom identity provider `NAME`, e.g. \"Google\"",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_PROVIDER"),
 		}}, {
