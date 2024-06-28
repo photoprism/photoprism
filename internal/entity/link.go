@@ -22,18 +22,18 @@ type Links []Link
 
 // Link represents a link to share content.
 type Link struct {
-	LinkUID     string    `gorm:"type:VARBINARY(42);primaryKey;" json:"UID,omitempty" yaml:"UID,omitempty"`
-	ShareUID    string    `gorm:"type:VARBINARY(42);uniqueIndex:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
-	ShareSlug   string    `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug,omitempty"`
-	LinkToken   string    `gorm:"type:VARBINARY(160);uniqueIndex:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
+	LinkUID     string    `gorm:"size:42;primaryKey;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	ShareUID    string    `gorm:"size:42;uniqueIndex:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
+	ShareSlug   string    `gorm:"size:160;index;" json:"Slug" yaml:"Slug,omitempty"`
+	LinkToken   string    `gorm:"size:160;uniqueIndex:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
 	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
 	LinkViews   uint      `json:"Views" yaml:"-"`
 	MaxViews    uint      `json:"MaxViews" yaml:"-"`
 	HasPassword bool      `json:"VerifyPassword" yaml:"VerifyPassword,omitempty"`
 	Comment     string    `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm        uint      `json:"Perm,omitempty" yaml:"Perm,omitempty"`
-	RefID       string    `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
-	CreatedBy   string    `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
+	RefID       string    `gorm:"size:16;" json:"-" yaml:"-"`
+	CreatedBy   string    `gorm:"size:42;index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt   time.Time `deepcopier:"skip" json:"CreatedAt" yaml:"CreatedAt"`
 	ModifiedAt  time.Time `deepcopier:"skip" json:"ModifiedAt" yaml:"ModifiedAt"`
 }

@@ -15,13 +15,13 @@ var cellMutex = sync.Mutex{}
 
 // Cell represents an S2 cell with metadata and reference to a place.
 type Cell struct {
-	ID           string    `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false;" json:"ID" yaml:"ID"`
+	ID           string    `gorm:"size:42;primaryKey;autoIncrement:false;" json:"ID" yaml:"ID"`
 	CellName     string    `gorm:"type:VARCHAR(200);" json:"Name" yaml:"Name,omitempty"`
 	CellStreet   string    `gorm:"type:VARCHAR(100);" json:"Street" yaml:"Street,omitempty"`
 	CellPostcode string    `gorm:"type:VARCHAR(50);" json:"Postcode" yaml:"Postcode,omitempty"`
 	CellCategory string    `gorm:"type:VARCHAR(50);" json:"Category" yaml:"Category,omitempty"`
-	PlaceID      string    `gorm:"type:VARBINARY(42);default:'zz'" json:"-" yaml:"PlaceID"`
-	Place        *Place    `gorm:"PRELOAD:true" json:"Place" yaml:"-"`
+	PlaceID      string    `gorm:"size:42;default:'zz'" json:"-" yaml:"PlaceID"`
+	Place        *Place    `json:"Place" yaml:"-"`
 	CreatedAt    time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time `json:"UpdatedAt" yaml:"-"`
 }

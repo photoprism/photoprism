@@ -29,8 +29,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 3, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("19800101_000002_D640C559"),
-		Album:     AlbumFixtures.Pointer("holiday-2030"),
 	},
 	"2": {
 		PhotoUID:  "ps6sg6be2lvl0y11",
@@ -40,8 +38,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo04"),
-		Album:     AlbumFixtures.Pointer("berlin-2019"),
 	},
 	"3": {
 		PhotoUID:  "ps6sg6be2lvl0yh8",
@@ -51,8 +47,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo01"),
-		Album:     AlbumFixtures.Pointer("berlin-2019"),
 	},
 	"4": {
 		PhotoUID:  "ps6sg6bexxvl0yh0",
@@ -62,8 +56,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo19"),
-		Album:     AlbumFixtures.Pointer("april-1990"),
 	},
 	"5": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -73,8 +65,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("berlin-2019"),
 	},
 	"6": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -84,8 +74,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("berlin-2019"),
 	},
 	"7": {
 		PhotoUID:  "ps6sg6be2lvl0y21",
@@ -95,8 +83,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     1,
 		CreatedAt: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 5, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo14"),
-		Album:     AlbumFixtures.Pointer("berlin-2019"),
 	},
 	"8": {
 		PhotoUID:  "ps6sg6be2lvl0y21",
@@ -106,8 +92,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     1,
 		CreatedAt: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 5, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo14"),
-		Album:     AlbumFixtures.Pointer("berlin-2019"),
 	},
 	"9": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -117,8 +101,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("light&"),
 	},
 	"10": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -128,8 +110,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("pets&dogs"),
 	},
 	"11": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -139,8 +119,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("&ilikefood"),
 	},
 	"12": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -150,8 +128,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("sale%"),
 	},
 	"13": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -161,8 +137,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("%gold"),
 	},
 	"14": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -172,8 +146,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("i-love-%-dog"),
 	},
 	"15": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -183,8 +155,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("'family"),
 	},
 	"16": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -194,8 +164,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("father's-day"),
 	},
 	"17": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -205,8 +173,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("ice-cream'"),
 	},
 	"18": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -216,8 +182,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("*forrest"),
 	},
 	"19": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -227,8 +191,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("my*kids"),
 	},
 	"20": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -238,8 +200,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("yoga***"),
 	},
 	"21": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -249,8 +209,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("|banana"),
 	},
 	"22": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -260,8 +218,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("red|green"),
 	},
 	"23": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -271,8 +227,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("blue|"),
 	},
 	"24": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -282,8 +236,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("345-shirt"),
 	},
 	"25": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -293,8 +245,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("color-555-blue"),
 	},
 	"26": {
 		PhotoUID:  "ps6sg6be2lvl0yh0",
@@ -304,8 +254,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo03"),
-		Album:     AlbumFixtures.Pointer("route-66"),
 	},
 	"27": {
 		PhotoUID:  "ps6sg6be2lvl0yh9",
@@ -315,8 +263,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo02"),
-		Album:     AlbumFixtures.Pointer("father's-day"),
 	},
 	"28": {
 		PhotoUID:  "ps6sg6be2lvl0yh9",
@@ -326,8 +272,6 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		Order:     0,
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
-		Photo:     PhotoFixtures.Pointer("Photo02"),
-		Album:     AlbumFixtures.Pointer("light&"),
 	},
 }
 

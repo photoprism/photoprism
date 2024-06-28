@@ -201,7 +201,7 @@ func MomentsTime(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		stmt = stmt.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = FALSE")
 	}
 
 	stmt = stmt.Group("photos.photo_year, photos.photo_month").
@@ -223,7 +223,7 @@ func MomentsCountries(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		stmt = stmt.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = FALSE")
 	}
 
 	stmt = stmt.Group("photo_year, photo_country").
@@ -245,7 +245,7 @@ func MomentsStates(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		stmt = stmt.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = FALSE")
 	}
 
 	stmt = stmt.Group("p.place_country, p.place_state").
@@ -276,7 +276,7 @@ func MomentsLabels(threshold int, public bool) (results Moments, err error) {
 
 	// Ignore private pictures?
 	if public {
-		stmt = stmt.Where("photo_private = 0")
+		stmt = stmt.Where("photo_private = FALSE")
 	}
 
 	stmt = stmt.Group("l.label_slug").
@@ -309,16 +309,16 @@ func RemoveDuplicateMoments() (removed int, err error) {
 	if res := UnscopedDb().Exec(`DELETE FROM links WHERE share_uid 
 		IN (SELECT a.album_uid FROM albums a JOIN albums b ON a.album_type <> ?
 		AND a.album_type = b.album_type AND a.id > b.id
-		WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)
-		GROUP BY a.album_uid)`, entity.AlbumManual); res.Error != nil {
+		WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter))`,
+		entity.AlbumManual); res.Error != nil {
 		return removed, res.Error
 	}
 
 	if res := UnscopedDb().Exec(`DELETE FROM albums WHERE id 
 		IN (SELECT a.id FROM albums a JOIN albums b ON a.album_type <> ?
 			AND a.album_type = b.album_type  AND a.id > b.id
-			WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter)
-			GROUP BY a.album_uid)`, entity.AlbumManual); res.Error != nil {
+			WHERE (a.album_slug = b.album_slug OR a.album_filter = b.album_filter))`,
+		entity.AlbumManual); res.Error != nil {
 		return removed, res.Error
 	} else if res.RowsAffected > 0 {
 		removed = int(res.RowsAffected)

@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -39,8 +40,9 @@ const (
 )
 
 var drivers = map[string]func(string) gorm.Dialector{
-	MySQL:   mysql.Open,
-	SQLite3: sqlite.Open,
+	MySQL:    mysql.Open,
+	SQLite3:  sqlite.Open,
+	Postgres: postgres.Open,
 }
 
 // DatabaseDriver returns the database driver name.
@@ -50,6 +52,8 @@ func (c *Config) DatabaseDriver() string {
 		c.options.DatabaseDriver = MySQL
 	case SQLite3, "sqllite", "test", "file", "":
 		c.options.DatabaseDriver = SQLite3
+	case Postgres:
+		c.options.DatabaseDriver = Postgres
 	case "tidb":
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
 		c.options.DatabaseDriver = SQLite3
@@ -153,9 +157,16 @@ func (c *Config) DatabaseHost() string {
 	return c.options.DatabaseServer
 }
 
+func (c *Config) _DefaultDatabasePort() int {
+	if c.DatabaseDriver() == Postgres {
+		return 5432
+	}
+	return 3306
+}
+
 // DatabasePort the database server port.
 func (c *Config) DatabasePort() int {
-	const defaultPort = 3306
+	defaultPort := c._DefaultDatabasePort()
 
 	if server := c.DatabaseServer(); server == "" {
 		return 0

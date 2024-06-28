@@ -10,21 +10,21 @@ import (
 
 // UserSettings represents user preferences.
 type UserSettings struct {
-	UserUID              string    `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false" json:"-" yaml:"UserUID"`
-	UITheme              string    `gorm:"type:VARBINARY(32);column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
-	UILanguage           string    `gorm:"type:VARBINARY(32);column:ui_language;" json:"UILanguage,omitempty" yaml:"UILanguage,omitempty"`
-	UITimeZone           string    `gorm:"type:VARBINARY(64);column:ui_time_zone;" json:"UITimeZone,omitempty" yaml:"UITimeZone,omitempty"`
-	MapsStyle            string    `gorm:"type:VARBINARY(32);" json:"MapsStyle,omitempty" yaml:"MapsStyle,omitempty"`
+	UserUID              string    `gorm:"size:42;uniqueIndex;" json:"-" yaml:"UserUID"`
+	UITheme              string    `gorm:"size:32;column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
+	UILanguage           string    `gorm:"size:32;column:ui_language;" json:"UILanguage,omitempty" yaml:"UILanguage,omitempty"`
+	UITimeZone           string    `gorm:"size:64;column:ui_time_zone;" json:"UITimeZone,omitempty" yaml:"UITimeZone,omitempty"`
+	MapsStyle            string    `gorm:"size:32;" json:"MapsStyle,omitempty" yaml:"MapsStyle,omitempty"`
 	MapsAnimate          int       `gorm:"default:0;" json:"MapsAnimate,omitempty" yaml:"MapsAnimate,omitempty"`
-	IndexPath            string    `gorm:"type:VARBINARY(1024);" json:"IndexPath,omitempty" yaml:"IndexPath,omitempty"`
+	IndexPath            string    `gorm:"size:1024;" json:"IndexPath,omitempty" yaml:"IndexPath,omitempty"`
 	IndexRescan          int       `gorm:"default:0;" json:"IndexRescan,omitempty" yaml:"IndexRescan,omitempty"`
-	ImportPath           string    `gorm:"type:VARBINARY(1024);" json:"ImportPath,omitempty" yaml:"ImportPath,omitempty"`
+	ImportPath           string    `gorm:"size:1024;" json:"ImportPath,omitempty" yaml:"ImportPath,omitempty"`
 	ImportMove           int       `gorm:"default:0;" json:"ImportMove,omitempty" yaml:"ImportMove,omitempty"`
 	DownloadOriginals    int       `gorm:"default:0;" json:"DownloadOriginals,omitempty" yaml:"DownloadOriginals,omitempty"`
 	DownloadMediaRaw     int       `gorm:"default:0;" json:"DownloadMediaRaw,omitempty" yaml:"DownloadMediaRaw,omitempty"`
 	DownloadMediaSidecar int       `gorm:"default:0;" json:"DownloadMediaSidecar,omitempty" yaml:"DownloadMediaSidecar,omitempty"`
-	UploadPath           string    `gorm:"type:VARBINARY(1024);" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
-	DefaultPage          string    `gorm:"type:VARBINARY(128);" json:"DefaultPage,omitempty" yaml:"DefaultPage,omitempty"`
+	UploadPath           string    `gorm:"size:1024;" json:"UploadPath,omitempty" yaml:"UploadPath,omitempty"`
+	DefaultPage          string    `gorm:"size:128;" json:"DefaultPage,omitempty" yaml:"DefaultPage,omitempty"`
 	CreatedAt            time.Time `json:"CreatedAt" yaml:"-"`
 	UpdatedAt            time.Time `json:"UpdatedAt" yaml:"-"`
 }

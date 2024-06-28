@@ -61,7 +61,7 @@ func (list Tables) WaitForMigration(db *gorm.DB) error {
 		Count int
 	}
 
-	attempts := 100
+	const attempts = 100
 	for name := range list {
 		for i := 0; i <= attempts; i++ {
 			count := RowCount{}
@@ -105,7 +105,6 @@ func (list Tables) Truncate(db *gorm.DB) {
 // Migrate migrates all database tables of registered entities.
 func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 	var name string
-	var entity interface{}
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -122,7 +121,37 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 
 	// Run ORM auto migrations.
 	if opt.AutoMigrate {
+		// Setup required explicit join tables
+		err := db.SetupJoinTable(&Photo{}, "Albums", &PhotoAlbum{})
+		if err != nil {
+			log.Error("migrate: could not setup join table for Photo - Albums: ", err)
+		}
+		err = db.SetupJoinTable(&Photo{}, "Keywords", &PhotoKeyword{})
+		if err != nil {
+			log.Error("migrate: could not setup join table for Photo - Keywords: ", err)
+		}
+		err = db.SetupJoinTable(&Label{}, "LabelCategories", &Category{})
+		if err != nil {
+			log.Error("migrate: could not setup join table for Label - Categories: ", err)
+		}
+
+		/*
+			ifaces := make([]interface{}, len(list))
+			idx := 0
+			for _, value := range list {
+				ifaces[idx] = value
+				idx++
+			}
+			log.Debugf("migrate: auto-migrating %d entity tables", len(ifaces))
+			err = db.AutoMigrate(ifaces...)
+			if err != nil {
+				log.Error("migrate: auto-migration of entities failed: ", err)
+			}*/
+
+		var entity interface{}
+
 		for name, entity = range list {
+			log.Debugf("migrate: auto-migrating %s", name)
 			if err := db.AutoMigrate(entity); err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())
 

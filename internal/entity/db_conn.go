@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -14,14 +15,16 @@ import (
 // Supported test databases.
 const (
 	MySQL           = "mysql"
+	Postgres        = "postgres"
 	SQLite3         = "sqlite"
 	SQLiteTestDB    = ".test.db"
 	SQLiteMemoryDSN = ":memory:?cache=shared"
 )
 
 var drivers = map[string]func(string) gorm.Dialector{
-	MySQL:   mysql.Open,
-	SQLite3: sqlite.Open,
+	MySQL:    mysql.Open,
+	Postgres: postgres.Open,
+	SQLite3:  sqlite.Open,
 }
 
 // dbConn is the global gorm.DB connection provider.

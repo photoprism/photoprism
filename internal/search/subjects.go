@@ -82,7 +82,7 @@ func Subjects(f form.SearchSubjects) (results SubjectResults, err error) {
 		}
 
 		if !txt.Yes(f.Hidden) {
-			s = s.Where("subj_hidden = 0")
+			s = s.Where("subj_hidden = FALSE")
 		}
 
 		if txt.Yes(f.Private) {

@@ -2,7 +2,7 @@ package migrate
 
 // Generated code, do not edit.
 
-var DialectSQLite3 = Migrations{
+var DialectSQLite = Migrations{
 	{
 		ID:         "20211121-094727",
 		Dialect:    "sqlite",

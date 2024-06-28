@@ -26,7 +26,7 @@ func PeopleCount() (count int, err error) {
 	err = Db().
 		Table(entity.Subject{}.TableName()).
 		Where("deleted_at IS NULL").
-		Where("subj_hidden = 0").
+		Where("subj_hidden = FALSE").
 		Where("subj_type = ?", entity.SubjPerson).
 		Count(&cnt).Error
 
