@@ -8,9 +8,32 @@ import (
 )
 
 func TestConfig_OIDCEnabled(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.False(t, c.OIDCEnabled())
+	t.Run("DisableForHTTP", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "http://photos.myphotos.com"
+		assert.False(t, c.OIDCEnabled())
+	})
+	t.Run("OIDCDisabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.DisableOIDC = true
+		assert.False(t, c.OIDCEnabled())
+	})
+	t.Run("InvalidOIDCUri", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://photos.myphotos.com"
+		assert.True(t, c.SiteHttps())
+		c.options.OIDCUri = "http://example.com"
+		assert.False(t, c.OIDCEnabled())
+	})
+	t.Run("Enabled", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://photos.myphotos.com"
+		assert.True(t, c.SiteHttps())
+		c.options.OIDCUri = "https://example.com"
+		c.options.OIDCClient = "test"
+		c.options.OIDCSecret = "test123467"
+		assert.True(t, c.OIDCEnabled())
+	})
 }
 
 func TestConfig_OIDCUri(t *testing.T) {
@@ -68,12 +91,20 @@ func TestConfig_OIDCProvider(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "OpenID", c.OIDCProvider())
+
+	c.options.OIDCProvider = "test"
+
+	assert.Equal(t, "test", c.OIDCProvider())
 }
 
 func TestConfig_OIDCIcon(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "/static/img/oidc.svg", c.OIDCIcon())
+
+	c.options.OIDCIcon = "./test.svg"
+
+	assert.Equal(t, "./test.svg", c.OIDCIcon())
 }
 
 func TestConfig_OIDCRegister(t *testing.T) {
