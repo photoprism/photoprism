@@ -94,7 +94,7 @@
                     ></v-text-field>
                   </v-flex>
                 </template>
-                <v-flex xs12 class="px-2 py-1 auth-actions">
+                <v-flex xs12 class="px-2 pt-1 pb-0 auth-actions">
                   <div class="action-buttons auth-buttons text-xs-center">
                     <v-btn v-if="enterCode" :color="colors.secondary" outline :block="$vuetify.breakpoint.xsOnly" :style="`color: ${colors.link}!important`" class="action-cancel ra-6 px-3 py-2 opacity-80" @click.stop.prevent="onCancel">
                       <translate>Cancel</translate>
@@ -118,6 +118,17 @@
                     </a>
                   </div>
                 </v-flex>
+                <template v-if="config.ext.oidc.enabled && !enterCode">
+                  <v-flex xs12 class="px-2 pb-3 oidc-actions">
+                    <v-divider :dark="true"></v-divider>
+                    <div class="text-xs-center oidc-buttons pt-4">
+                      <v-btn :color="colors.primary" depressed :disabled="loading" block class="white--text action-oidc-login ra-6 my-0 py-0 px-3" @click.stop.prevent="onOidcLogin">
+                        <img alt="" class="oidc-icon v-icon--left theme--dark" :src="config.ext.oidc.icon" />
+                        <translate :translate-params="{ provider: config.ext.oidc.provider }">Sign In with %{provider}</translate>
+                      </v-btn>
+                    </div>
+                  </v-flex>
+                </template>
               </v-layout>
             </v-card-text>
           </v-card>
@@ -223,6 +234,20 @@ export default {
           }
           this.loading = false;
         });
+    },
+    onOidcLogin() {
+      if (this.loading) {
+        return;
+      }
+
+      if (this.config.ext?.oidc?.loginUri) {
+        this.loading = true;
+        this.$nextTick(() => {
+          window.location = this.config.ext.oidc.loginUri;
+        });
+      } else {
+        this.$notify.warn(this.$gettext("Missing or invalid configuration"));
+      }
     },
   },
 };

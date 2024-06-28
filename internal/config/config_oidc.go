@@ -9,8 +9,8 @@ import (
 
 const (
 	OIDCDefaultScopes       = "openid email profile"
-	OIDCDefaultProviderName = "OpenID Connect"
-	OIDCDefaultProviderIcon = "brands/openid.svg"
+	OIDCDefaultProviderName = "OpenID"
+	OIDCDefaultProviderIcon = "img/oidc.svg"
 	OIDCLoginUri            = ApiUri + "/oidc/login"
 	OIDCRedirectUri         = ApiUri + "/oidc/redirect"
 )

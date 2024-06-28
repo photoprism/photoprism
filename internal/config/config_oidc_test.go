@@ -67,13 +67,13 @@ func TestConfig_OIDCScopes(t *testing.T) {
 func TestConfig_OIDCProvider(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "OpenID Connect", c.OIDCProvider())
+	assert.Equal(t, "OpenID", c.OIDCProvider())
 }
 
 func TestConfig_OIDCIcon(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/static/brands/openid.svg", c.OIDCIcon())
+	assert.Equal(t, "/static/img/oidc.svg", c.OIDCIcon())
 }
 
 func TestConfig_OIDCRegister(t *testing.T) {
