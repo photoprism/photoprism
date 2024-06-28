@@ -45,59 +45,59 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-uri",
-			Usage:  "provider `URI` for single sign-on via OpenID Connect (OIDC), e.g. https://accounts.google.com/",
+			Usage:  "identity provider `URI` for single sign-on via OpenID Connect, e.g. https://accounts.google.com/",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_URI"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-insecure",
-			Usage:  "skip provider SSL/TLS certificate verification",
+			Usage:  "skip identity provider SSL/TLS certificate verification (test and development only)",
 			EnvVar: EnvVar("OIDC_INSECURE"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-client",
-			Usage:  "client `ID` for single sign-on via OIDC",
+			Usage:  "client `ID` for single sign-on via OpenID Connect",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_CLIENT"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-secret",
-			Usage:  "client `SECRET` for single sign-on via OIDC",
+			Usage:  "client `SECRET` for single sign-on via OpenID Connect",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_SECRET"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-scopes",
 			Hidden: true,
-			Usage:  "user information `SCOPES` for single sign-on via OIDC",
+			Usage:  "user information `SCOPES` for single sign-on via OpenID Connect",
 			Value:  OIDCDefaultScopes,
 			EnvVar: EnvVar("OIDC_SCOPES"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-provider",
-			Usage:  "custom OIDC provider `NAME`",
+			Usage:  "custom identity provider `NAME`",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_PROVIDER"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-icon",
-			Usage:  "custom OIDC provider icon `URI`",
+			Usage:  "custom identity provider icon `URI`",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_ICON"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-register",
-			Usage:  "allow new users to register via OIDC",
+			Usage:  "allow new users to create an account when they sign in with OpenID Connect",
 			EnvVar: EnvVar("OIDC_REGISTER"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "oidc-redirect",
-			Usage:  "automatically redirect unauthenticated users to the OIDC login page",
+			Usage:  "automatically redirect unauthenticated users to the configured identity provider",
 			EnvVar: EnvVar("OIDC_REDIRECT"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-oidc",
-			Usage:  "disable single sign-on via OpenID Connect (OIDC)",
+			Usage:  "disable single sign-on via OpenID Connect, even if an identity provider has been configured",
 			EnvVar: EnvVar("DISABLE_OIDC"),
 		}}, {
 		Flag: cli.Int64Flag{
