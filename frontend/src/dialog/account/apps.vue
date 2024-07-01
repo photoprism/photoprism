@@ -425,7 +425,7 @@ export default {
         return;
       }
 
-      if (this.confirmAction === "") {
+      if (this.confirmAction === "" && this.$session.provider !== "oidc") {
         this.confirmAction = "onGenerate";
         return;
       }

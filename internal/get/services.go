@@ -1,5 +1,5 @@
 /*
-Package service provides a registry for common services.
+Package get provides a registry for common application services.
 
 Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
@@ -25,11 +25,11 @@ Additional information can be found in our Developer Guide:
 package get
 
 import (
+	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/nsfw"
-	"github.com/photoprism/photoprism/internal/oidc"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"

@@ -32,14 +32,16 @@ type Options struct {
 	RegisterUri           string        `yaml:"RegisterUri" json:"-" flag:"register-uri"`
 	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
 	OIDCUri               string        `yaml:"OIDCUri" json:"-" flag:"oidc-uri"`
-	OIDCInsecure          bool          `yaml:"OIDCInsecure" json:"-" flag:"oidc-insecure"`
 	OIDCClient            string        `yaml:"OIDCClient" json:"-" flag:"oidc-client"`
 	OIDCSecret            string        `yaml:"OIDCSecret" json:"-" flag:"oidc-secret"`
 	OIDCScopes            string        `yaml:"OIDCScopes" json:"-" flag:"oidc-scopes"`
 	OIDCProvider          string        `yaml:"OIDCProvider" json:"OIDCProvider" flag:"oidc-provider"`
 	OIDCIcon              string        `yaml:"OIDCIcon" json:"OIDCIcon" flag:"oidc-icon"`
-	OIDCRegister          bool          `yaml:"OIDCRegister" json:"OIDCRegister" flag:"oidc-register"`
 	OIDCRedirect          bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`
+	OIDCRegister          bool          `yaml:"OIDCRegister" json:"OIDCRegister" flag:"oidc-register"`
+	OIDCUsername          string        `yaml:"OIDCUsername" json:"-" flag:"oidc-username"`
+	OIDCRole              string        `yaml:"OIDCRole" json:"-" flag:"oidc-role"`
+	OIDCWebDAV            bool          `yaml:"OIDCWebDAV" json:"-" flag:"oidc-webdav"`
 	DisableOIDC           bool          `yaml:"DisableOIDC" json:"DisableOIDC" flag:"disable-oidc"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`
 	SessionTimeout        int64         `yaml:"SessionTimeout" json:"-" flag:"session-timeout"`

@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -57,8 +57,8 @@ type Session struct {
 	PreviewToken  string          `gorm:"type:VARBINARY(64);column:preview_token;default:'';" json:"-" yaml:"-"`
 	DownloadToken string          `gorm:"type:VARBINARY(64);column:download_token;default:'';" json:"-" yaml:"-"`
 	AccessToken   string          `gorm:"type:VARBINARY(4096);column:access_token;default:'';" json:"-" yaml:"-"`
-	RefreshToken  string          `gorm:"type:VARBINARY(512);column:refresh_token;default:'';" json:"-" yaml:"-"`
-	IdToken       string          `gorm:"type:VARBINARY(1024);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
+	RefreshToken  string          `gorm:"type:VARBINARY(2048);column:refresh_token;default:'';" json:"-" yaml:"-"`
+	IdToken       string          `gorm:"type:VARBINARY(2048);column:id_token;default:'';" json:"IdToken,omitempty" yaml:"IdToken,omitempty"`
 	UserAgent     string          `gorm:"size:512;" json:"UserAgent" yaml:"UserAgent,omitempty"`
 	DataJSON      json.RawMessage `gorm:"type:VARBINARY(4096);" json:"-" yaml:"Data,omitempty"`
 	data          *SessionData    `gorm:"-" yaml:"-"`

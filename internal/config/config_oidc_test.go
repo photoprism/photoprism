@@ -5,6 +5,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/pkg/authn"
 )
 
 func TestConfig_OIDCEnabled(t *testing.T) {
@@ -59,12 +62,6 @@ func TestConfig_OIDCUri(t *testing.T) {
 	assert.Equal(t, "", c.OIDCUri().String())
 }
 
-func TestConfig_OIDCInsecure(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.False(t, c.OIDCInsecure())
-}
-
 func TestConfig_OIDCClient(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -80,11 +77,11 @@ func TestConfig_OIDCSecret(t *testing.T) {
 func TestConfig_OIDCScopes(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, OIDCDefaultScopes, c.OIDCScopes())
+	assert.Equal(t, authn.OidcScopes, c.OIDCScopes())
 
 	c.options.OIDCScopes = ""
 
-	assert.Equal(t, OIDCDefaultScopes, c.OIDCScopes())
+	assert.Equal(t, authn.OidcScopes, c.OIDCScopes())
 }
 
 func TestConfig_OIDCProvider(t *testing.T) {
@@ -107,16 +104,42 @@ func TestConfig_OIDCIcon(t *testing.T) {
 	assert.Equal(t, "./test.svg", c.OIDCIcon())
 }
 
+func TestConfig_OIDCRedirect(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.OIDCRedirect())
+}
+
+func TestConfig_OIDCUsername(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, authn.ClaimUsername, c.OIDCUsername())
+
+	c.options.OIDCUsername = "email"
+
+	assert.Equal(t, authn.ClaimEmail, c.OIDCUsername())
+
+	c.options.OIDCUsername = ""
+
+	assert.Equal(t, authn.ClaimUsername, c.OIDCUsername())
+}
+
 func TestConfig_OIDCRegister(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.False(t, c.OIDCRegister())
 }
 
-func TestConfig_OIDCRedirect(t *testing.T) {
+func TestConfig_OIDCRole(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.False(t, c.OIDCRedirect())
+	assert.Equal(t, acl.RoleGuest, c.OIDCRole())
+}
+
+func TestConfig_OIDCWebDAV(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.False(t, c.OIDCWebDAV())
 }
 
 func TestConfig_DisableOIDC(t *testing.T) {

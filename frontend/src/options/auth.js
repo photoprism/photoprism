@@ -80,3 +80,21 @@ export const ScopeOptions = () => {
     */
   ];
 };
+
+// GrantTypes maps grant types to their display name.
+export const GrantTypes = () => {
+  return {
+    "": "Default",
+    cli: "CLI",
+    implicit: "Implicit",
+    session: $gettext("Session"),
+    password: $gettext("Password"),
+    client_credentials: "Client Credentials",
+    share_token: "Share Token",
+    refresh_token: "Refresh Token",
+    authorization_code: "Authorization Code",
+    "urn:ietf:params:oauth:grant-type:jwt-bearer": "JWT Bearer Assertion",
+    "urn:ietf:params:oauth:grant-type:saml2-bearer": "SAML2 Bearer Assertion",
+    "urn:ietf:params:oauth:grant-type:token-exchange": "Token Exchange",
+  };
+};

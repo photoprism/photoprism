@@ -1,7 +1,7 @@
 package customize
 
 import (
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 )
 
 // ApplyACL updates the current settings based on the access control list provided.

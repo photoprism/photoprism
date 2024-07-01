@@ -3,7 +3,7 @@ package customize
 import (
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/list"
 )
 

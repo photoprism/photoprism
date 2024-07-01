@@ -10,8 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	gc "github.com/patrickmn/go-cache"
 
-	"github.com/photoprism/photoprism/internal/acl"
 	"github.com/photoprism/photoprism/internal/api"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"

@@ -90,7 +90,7 @@ func TestCliFlag_Default(t *testing.T) {
 }
 
 func TestCliFlag_EnvVar(t *testing.T) {
-	hasdefault := CliFlag{
+	hasDefault := CliFlag{
 		Flag: cli.StringFlag{
 			Name:   "flag-with-default",
 			Usage:  "`STRING`",
@@ -100,7 +100,7 @@ func TestCliFlag_EnvVar(t *testing.T) {
 		Tags:       []string{"foo", "bar"},
 	}
 
-	assert.Equal(t, "PHOTOPRISM_DEFAULT", hasdefault.EnvVar())
+	assert.Equal(t, "PHOTOPRISM_DEFAULT", hasDefault.EnvVar())
 }
 
 func TestCliFlag_CommandFlag(t *testing.T) {

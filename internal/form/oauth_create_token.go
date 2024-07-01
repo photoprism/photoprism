@@ -41,7 +41,18 @@ func (f OAuthCreateToken) Validate() error {
 		} else if !rnd.IsAlnum(f.ClientSecret) {
 			return authn.ErrInvalidCredentials
 		}
-	case authn.GrantPassword, authn.GrantSession:
+	case authn.GrantSession:
+		// Validate request credentials.
+		if f.Username == "" {
+			return authn.ErrUsernameRequired
+		} else if len(f.Username) > txt.ClipUsername {
+			return authn.ErrInvalidCredentials
+		} else if f.ClientName == "" {
+			return authn.ErrNameRequired
+		} else if f.Scope == "" {
+			return authn.ErrScopeRequired
+		}
+	case authn.GrantPassword:
 		// Validate request credentials.
 		if f.Username == "" {
 			return authn.ErrUsernameRequired

@@ -43,7 +43,7 @@ func NewClient(iss *url.URL, clientId, clientSecret, customScopes, siteUrl strin
 		return nil, err
 	}
 
-	u.Path = path.Join(u.Path, config.OIDCRedirectUri)
+	u.Path = path.Join(u.Path, config.OidcRedirectUri)
 	log.Debugf("oidc: redirect uri %s", u.String())
 
 	var hashKey, encryptKey []byte
@@ -113,12 +113,10 @@ func (c *Client) AuthCodeUrlHandler(ctx *gin.Context) {
 	handle(ctx.Writer, ctx.Request)
 }
 
-func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
-	var userinfo oidc.UserInfo
-
-	userinfoClosure := func(w http.ResponseWriter, r *http.Request, tokens *oidc.Tokens, state string, rp rp.RelyingParty, info oidc.UserInfo) {
-		log.Debugf("oidc: UserInfo: %s %s %s %s %s", info.GetEmail(), info.GetSubject(), info.GetNickname(), info.GetName(), info.GetPreferredUsername())
-		userinfo = info
+func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo oidc.UserInfo, tokens *oidc.Tokens, err error) {
+	userinfoClosure := func(w http.ResponseWriter, r *http.Request, t *oidc.Tokens, state string, rp rp.RelyingParty, i oidc.UserInfo) {
+		userInfo = i
+		tokens = t
 	}
 
 	//you could also just take the access_token and id_token without calling the userinfo endpoint:
@@ -133,14 +131,14 @@ func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (oidc.UserInfo, error) {
 	//handle := rp.CodeExchangeHandler(tokeninfoClosure, c)
 	handle(ctx.Writer, ctx.Request)
 
-	log.Debugf("oidc: current request state: %v", ctx.Writer.Status())
+	// log.Debugf("oidc: current request state: %v", ctx.Writer.Status())
 	if sc := ctx.Writer.Status(); sc != 0 && sc != http.StatusOK {
-		err := ctx.Writer.Header().Get("oidc_error")
-		if err == "" {
-			return nil, errors.New("oidc: couldn't exchange auth code and thus not retrieve external user info (unknown error)")
+		if oidcErr := ctx.Writer.Header().Get("oidc_error"); oidcErr == "" {
+			return userInfo, tokens, errors.New("tailed to exchange the authentication code and retrieve the user information")
+		} else {
+			return userInfo, tokens, errors.New(oidcErr)
 		}
-		return nil, errors.New(ctx.Writer.Header().Get("oidc_error"))
 	}
 
-	return userinfo, nil
+	return userInfo, tokens, nil
 }

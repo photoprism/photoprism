@@ -11,6 +11,7 @@ const (
 	SrcEstimate = "estimate"           // Prio 2
 	SrcName     = "name"               // Prio 4
 	SrcYaml     = "yaml"               // Prio 8
+	SrcOIDC     = "oidc"               // Prio 8
 	SrcLDAP     = "ldap"               // Prio 8
 	SrcLocation = classify.SrcLocation // Prio 8
 	SrcMarker   = "marker"             // Prio 8
@@ -38,6 +39,7 @@ var SrcPriority = Priorities{
 	SrcEstimate: 2,
 	SrcName:     4,
 	SrcYaml:     8,
+	SrcOIDC:     8,
 	SrcLDAP:     8,
 	SrcLocation: 8,
 	SrcMarker:   8,

@@ -3,7 +3,7 @@ package commands
 import (
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 )
 
 // Usage hints for the user management subcommands.

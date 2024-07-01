@@ -17,6 +17,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/customize"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -266,7 +267,7 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("oidc-uri", config.OIDCUri))
 	LogErr(c.Set("oidc-client", config.OIDCClient))
 	LogErr(c.Set("oidc-secret", config.OIDCSecret))
-	LogErr(c.Set("oidc-scopes", OIDCDefaultScopes))
+	LogErr(c.Set("oidc-scopes", authn.OidcScopes))
 	LogErr(c.Set("storage-path", config.StoragePath))
 	LogErr(c.Set("sidecar-path", config.SidecarPath))
 	LogErr(c.Set("sidecar-yaml", fmt.Sprintf("%t", config.SidecarYaml)))

@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -28,7 +29,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
-		actor := "unknown client"
+		actor := "unknown user"
 		action := "login"
 
 		// Get global config.
@@ -45,6 +46,16 @@ func OIDCLogin(router *gin.RouterGroup) {
 			return
 		}
 
+		// Check request rate limit.
+		var r *limiter.Request
+		r = limiter.Login.Request(clientIp)
+
+		// Abort if failure rate limit is exceeded.
+		if r.Reject() || limiter.Auth.Reject(clientIp) {
+			limiter.AbortJSON(c)
+			return
+		}
+
 		// Get OIDC provider.
 		provider := get.OIDC()
 
@@ -53,6 +64,9 @@ func OIDCLogin(router *gin.RouterGroup) {
 			Abort(c, http.StatusInternalServerError, i18n.ErrConnectionFailed)
 			return
 		}
+
+		// Return the reserved request rate limit token.
+		r.Success()
 
 		// Handle OIDC login request.
 		provider.AuthCodeUrlHandler(c)

@@ -13,6 +13,8 @@ var (
 	ErrAccountAlreadyExists   = errors.New("account already exists")
 	ErrAccountNotFound        = errors.New("account not found")
 	ErrAccountDisabled        = errors.New("account disabled")
+	ErrAccountCreateFailed    = errors.New("failed to create account")
+	ErrAccountUpdateFailed    = errors.New("failed to update account")
 	ErrInvalidRequest         = errors.New("invalid request")
 	ErrInvalidCredentials     = errors.New("invalid credentials")
 	ErrInvalidShareToken      = errors.New("invalid share token")
@@ -27,13 +29,16 @@ var (
 	ErrRateLimitExceeded      = errors.New("rate limit exceeded")
 )
 
-// OAuth2-related error messages:
+// OIDC and OAuth2-related error messages:
 var (
 	ErrInvalidGrantType     = errors.New("invalid grant type")
 	ErrInvalidClientID      = errors.New("invalid client id")
+	ErrInvalidAuthID        = errors.New("invalid auth id")
+	ErrAuthCodeRequired     = errors.New("auth code required")
 	ErrClientIDRequired     = errors.New("client id required")
 	ErrInvalidClientSecret  = errors.New("invalid client secret")
 	ErrClientSecretRequired = errors.New("client secret required")
+	ErrRegistrationDisabled = errors.New("registration disabled")
 )
 
 // User-related error messages:

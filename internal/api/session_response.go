@@ -5,12 +5,23 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/get"
 )
 
 // CreateSessionResponse returns the authentication response data for POST requests
 // based on the session and configuration.
 func CreateSessionResponse(authToken string, sess *entity.Session, conf config.ClientConfig) gin.H {
 	return GetSessionResponse(authToken, sess, conf)
+}
+
+// CreateSessionError returns an authentication error response.
+func CreateSessionError(code int, err error) gin.H {
+	return gin.H{
+		"status": StatusFailed,
+		"code":   code,
+		"error":  err.Error(),
+		"config": get.Config().ClientPublic(),
+	}
 }
 
 // GetSessionResponse returns the authentication response data for GET requests

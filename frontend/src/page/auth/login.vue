@@ -173,6 +173,11 @@ export default {
   },
   created() {
     this.$scrollbar.hide(this.$isMobile);
+    const authError = window.localStorage.getItem("authError");
+    if (authError) {
+      this.$notify.error(authError);
+      window.localStorage.removeItem("authError");
+    }
   },
   destroyed() {
     this.$scrollbar.show();

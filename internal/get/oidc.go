@@ -3,7 +3,7 @@ package get
 import (
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/oidc"
+	"github.com/photoprism/photoprism/internal/auth/oidc"
 )
 
 var onceOidc sync.Once

@@ -10,8 +10,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
+	"github.com/zitadel/oidc/pkg/oidc"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
@@ -103,7 +104,35 @@ func NewUser() (m *User) {
 	}
 }
 
-// LdapUser creates an LDAP user entity.
+// OidcUser creates a new OIDC user entity.
+func OidcUser(userInfo oidc.UserInfo, usernameClaim string) User {
+	var userName, userEmail string
+
+	switch usernameClaim {
+	case authn.ClaimEmail:
+		userName = clean.Username(userInfo.GetEmail())
+	default:
+		userName = clean.Username(userInfo.GetPreferredUsername())
+	}
+
+	userEmail = clean.Email(userInfo.GetEmail())
+
+	authId := clean.Auth(userInfo.GetSubject())
+
+	if userName == "" || authId == "" {
+		return User{}
+	}
+
+	return User{
+		DisplayName:  userInfo.GetName(),
+		UserName:     userName,
+		UserEmail:    userEmail,
+		AuthID:       authId,
+		AuthProvider: authn.ProviderOIDC.String(),
+	}
+}
+
+// LdapUser creates a new LDAP user entity.
 func LdapUser(username, dn string) User {
 	return User{
 		UserName:     clean.Username(username),

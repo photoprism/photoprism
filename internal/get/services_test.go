@@ -6,9 +6,9 @@ import (
 	gc "github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/nsfw"
-	"github.com/photoprism/photoprism/internal/oidc"
 	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"

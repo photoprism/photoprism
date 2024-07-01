@@ -12,6 +12,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -36,7 +37,7 @@ var Flags = CliFlags{
 			Name:   "admin-user, login",
 			Usage:  "`USERNAME` of the superadmin account that is created on first startup",
 			Value:  "admin",
-			EnvVar: EnvVar("ADMIN_USER"),
+			EnvVar: EnvVar("ADMIN_USER") + "," + EnvVar("ADMIN_USERNAME"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
@@ -48,11 +49,6 @@ var Flags = CliFlags{
 			Usage:  "identity provider `URI` for single sign-on via OpenID Connect, e.g. \"https://accounts.google.com/\"",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_URI"),
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "oidc-insecure",
-			Usage:  "skip identity provider SSL/TLS certificate verification",
-			EnvVar: EnvVar("OIDC_INSECURE"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-client",
@@ -70,7 +66,7 @@ var Flags = CliFlags{
 			Name:   "oidc-scopes",
 			Hidden: true,
 			Usage:  "user information `SCOPES` for single sign-on via OpenID Connect",
-			Value:  OIDCDefaultScopes,
+			Value:  authn.OidcScopes,
 			EnvVar: EnvVar("OIDC_SCOPES"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -86,14 +82,25 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("OIDC_ICON"),
 		}}, {
 		Flag: cli.BoolFlag{
+			Name:   "oidc-redirect",
+			Usage:  "automatically redirect unauthenticated users to the configured identity provider",
+			EnvVar: EnvVar("OIDC_REDIRECT"),
+		}}, {
+		Flag: cli.BoolFlag{
 			Name:   "oidc-register",
 			Usage:  "allow new users to create an account when they sign in with OpenID Connect",
 			EnvVar: EnvVar("OIDC_REGISTER"),
 		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-username",
+			Usage:  "username `CLAIM` for OpenID Connect users (preferred_username, email)",
+			Value:  authn.ClaimUsername,
+			EnvVar: EnvVar("OIDC_USERNAME"),
+		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "oidc-redirect",
-			Usage:  "automatically redirect unauthenticated users to the configured identity provider",
-			EnvVar: EnvVar("OIDC_REDIRECT"),
+			Name:   "oidc-webdav",
+			Usage:  "enable WebDAV for new OpenID Connect users if their role allows it",
+			EnvVar: EnvVar("OIDC_WEBDAV"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-oidc",
@@ -274,7 +281,7 @@ var Flags = CliFlags{
 			Name:   "index-workers, workers",
 			Usage:  "maximum `NUMBER` of indexing workers, default depends on the number of physical cores",
 			Value:  cpuid.CPU.PhysicalCores / 2,
-			EnvVar: EnvVar("INDEX_WORKERS") + ", " + EnvVar("WORKERS"),
+			EnvVar: EnvVar("INDEX_WORKERS") + "," + EnvVar("WORKERS"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "index-schedule",
@@ -753,7 +760,7 @@ var Flags = CliFlags{
 			Name:   "sips-exclude",
 			Usage:  "file `EXTENSIONS` not to be used with Sips *macOS only*",
 			Value:  "avif, avifs, thm",
-			EnvVar: EnvVar("SIPS_EXCLUDE") + ", " + EnvVar("SIPS_BLACKLIST"),
+			EnvVar: EnvVar("SIPS_EXCLUDE") + "," + EnvVar("SIPS_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "darktable-bin",
@@ -765,7 +772,7 @@ var Flags = CliFlags{
 			Name:   "darktable-exclude",
 			Usage:  "file `EXTENSIONS` not to be used with Darktable",
 			Value:  "thm",
-			EnvVar: EnvVar("DARKTABLE_EXCLUDE") + ", " + EnvVar("DARKTABLE_BLACKLIST"),
+			EnvVar: EnvVar("DARKTABLE_EXCLUDE") + "," + EnvVar("DARKTABLE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "darktable-cache-path",
@@ -789,7 +796,7 @@ var Flags = CliFlags{
 			Name:   "rawtherapee-exclude",
 			Usage:  "file `EXTENSIONS` not to be used with RawTherapee",
 			Value:  "dng, thm",
-			EnvVar: EnvVar("RAWTHERAPEE_EXCLUDE") + ", " + EnvVar("RAWTHERAPEE_BLACKLIST"),
+			EnvVar: EnvVar("RAWTHERAPEE_EXCLUDE") + "," + EnvVar("RAWTHERAPEE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "imagemagick-bin",
@@ -801,7 +808,7 @@ var Flags = CliFlags{
 			Name:   "imagemagick-exclude",
 			Usage:  "file `EXTENSIONS` not to be used with ImageMagick",
 			Value:  "heif, heic, heics, avif, avifs, jxl, thm",
-			EnvVar: EnvVar("IMAGEMAGICK_EXCLUDE") + ", " + EnvVar("IMAGEMAGICK_BLACKLIST"),
+			EnvVar: EnvVar("IMAGEMAGICK_EXCLUDE") + "," + EnvVar("IMAGEMAGICK_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "heifconvert-bin",

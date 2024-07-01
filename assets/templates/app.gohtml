@@ -5,7 +5,8 @@
     </div>
   </noscript>
   <div id="splash-info" class="has-js splash-info">
-    {{if .config.LegalInfo}}
+    {{if .error }}<span class="legal-info">{{ .error }}</span>
+    {{else if .config.LegalInfo}}
     {{if .config.LegalUrl}}<a href="{{ .config.LegalUrl }}" target="_blank" class="legal-info">{{ .config.LegalInfo }}</a>
     {{else}}<span class="legal-info">{{ .config.LegalInfo }}</span>{{end}}
     {{else}}
