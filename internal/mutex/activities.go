@@ -13,12 +13,13 @@ var (
 
 // CancelAll requests to stop all activities.
 func CancelAll() {
-	UpdatePeople.Cancel()
 	IndexWorker.Cancel()
 	SyncWorker.Cancel()
+	BackupWorker.Cancel()
 	ShareWorker.Cancel()
 	MetaWorker.Cancel()
 	FacesWorker.Cancel()
+	UpdatePeople.Cancel()
 }
 
 // WorkersRunning checks if a worker is currently running.

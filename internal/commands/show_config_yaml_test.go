@@ -3,7 +3,6 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,9 +10,9 @@ import (
 func TestShowConfigYamlCommand(t *testing.T) {
 	var err error
 
-	ctx := config.CliTestContext()
+	ctx := NewTestContext([]string{"config-yaml", "--md"})
 
-	output := capture.Output(func() {
+	output := capture.Stdout(func() {
 		err = ShowConfigYamlCommand.Run(ctx)
 	})
 
