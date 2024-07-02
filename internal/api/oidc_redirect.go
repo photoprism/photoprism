@@ -132,9 +132,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user.Details().UserGender = clean.Name(string(userInfo.GetGender()))
 
 			// Set UI locale.
-			if locale, _, _ := userInfo.GetLocale().Raw(); len(locale.String()) == 2 {
-				user.Settings().UILanguage = locale.String()
-			}
+			user.Settings().UILanguage = clean.Locale(userInfo.GetLocale().String(), "")
 
 			// Set UI timezone.
 			user.Settings().UITimeZone = userInfo.GetZoneinfo()
