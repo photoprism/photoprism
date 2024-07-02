@@ -18,7 +18,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/unix"
 )
 
-// OIDCRedirect creates a new access token for authenticated users and then redirects the browser back to the app.
+// OIDCRedirect creates a new access token when a user has been successfully authenticated,
+// and then redirects the browser back to the app.
 //
 // GET /api/v1/oidc/redirect
 func OIDCRedirect(router *gin.RouterGroup) {
