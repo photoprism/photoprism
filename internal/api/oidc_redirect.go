@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -109,9 +110,58 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			actor = user.Username()
 
 			// Update user profile information.
-			user.SetDisplayName(userInfo.GetName(), entity.SrcOIDC)
-			user.SetGivenName(userInfo.GetGivenName())
-			user.SetFamilyName(userInfo.GetFamilyName())
+			details := user.Details()
+
+			// Update user display name.
+			if entity.SrcPriority[details.NameSrc] <= entity.SrcPriority[entity.SrcOIDC] {
+				user.SetDisplayName(userInfo.GetName(), entity.SrcOIDC)
+				user.SetGivenName(userInfo.GetGivenName())
+				user.SetFamilyName(userInfo.GetFamilyName())
+				details.UserGender = clean.Name(string(userInfo.GetGender()))
+			}
+
+			// Update nickname.
+			if name := clean.Name(userInfo.GetNickname()); name != "" {
+				details.NickName = clean.Name(userInfo.GetNickname())
+			}
+
+			// Update profile URL.
+			if u := clean.Uri(userInfo.GetProfile()); u != "" {
+				details.ProfileURL = u
+			}
+
+			// Update website URL.
+			if u := clean.Uri(userInfo.GetWebsite()); u != "" {
+				details.SiteURL = u
+			}
+
+			// Update UI locale.
+			user.Settings().UILanguage = clean.Locale(userInfo.GetLocale().String(), user.Settings().UILanguage)
+
+			// Update UI timezone.
+			if tz := userInfo.GetZoneinfo(); tz != "" && tz != time.UTC.String() {
+				user.Settings().UITimeZone = tz
+			}
+
+			// Update user location, if available.
+			if addr := userInfo.GetAddress(); addr != nil {
+				user.Details().UserLocation = clean.Name(addr.GetLocality())
+				user.Details().UserCountry = clean.TypeLowerUnderscore(addr.GetCountry())
+			}
+
+			// Update birthday, if available.
+			if birthDate := txt.ParseTime(userInfo.GetBirthdate(), userInfo.GetZoneinfo()); !birthDate.IsZero() {
+				user.BornAt = &birthDate
+				user.Details().BirthDay = birthDate.Day()
+				user.Details().BirthMonth = int(birthDate.Month())
+				user.Details().BirthYear = birthDate.Year()
+			}
+
+			// Update email, if verified.
+			if userInfo.IsEmailVerified() {
+				user.UserEmail = clean.Email(userInfo.GetEmail())
+				user.VerifiedAt = entity.TimeStamp()
+			}
 
 			// Update user account.
 			if err = user.Save(); err != nil {
@@ -120,7 +170,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				return
 			}
 
-			// Set user avatar image.
+			// Set user avatar image?
 			if avatarUrl := userInfo.GetPicture(); avatarUrl == "" || user.HasAvatar() {
 				// Do nothing.
 			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC); err != nil {
@@ -133,14 +183,18 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user = &oidcUser
 			actor = user.Username()
 
-			// Set profile information.
+			// Set user profile information.
 			user.SetDisplayName(userInfo.GetName(), entity.SrcOIDC)
 			user.SetGivenName(userInfo.GetGivenName())
 			user.SetFamilyName(userInfo.GetFamilyName())
-			user.Details().NickName = clean.Name(userInfo.GetNickname())
-			user.Details().ProfileURL = clean.Uri(userInfo.GetProfile())
-			user.Details().SiteURL = clean.Uri(userInfo.GetWebsite())
 			user.Details().UserGender = clean.Name(string(userInfo.GetGender()))
+			user.Details().NickName = clean.Name(userInfo.GetNickname())
+
+			// Set user profile URL.
+			user.Details().ProfileURL = clean.Uri(userInfo.GetProfile())
+
+			// Set user site URL.
+			user.Details().SiteURL = clean.Uri(userInfo.GetWebsite())
 
 			// Set UI locale.
 			user.Settings().UILanguage = clean.Locale(userInfo.GetLocale().String(), "")
@@ -148,7 +202,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Set UI timezone.
 			user.Settings().UITimeZone = userInfo.GetZoneinfo()
 
-			// Set address information, if available.
+			// Set user location, if available.
 			if addr := userInfo.GetAddress(); addr != nil {
 				user.Details().UserLocation = clean.Name(addr.GetLocality())
 				user.Details().UserCountry = clean.TypeLowerUnderscore(addr.GetCountry())
@@ -162,13 +216,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.Details().BirthYear = birthDate.Year()
 			}
 
-			// Flag as verified?
+			// Set email, if verified.
 			if userInfo.IsEmailVerified() {
 				user.UserEmail = clean.Email(userInfo.GetEmail())
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			// Set role and permissions.
+			// Set user role and permissions.
 			user.SetRole(conf.OIDCRole().String())
 			user.CanLogin = true
 			user.WebDAV = conf.OIDCWebDAV()
