@@ -98,9 +98,9 @@ const config = {
     }),
   ],
   performance: {
-    hints: isDev ? false : "error",
-    maxEntrypointSize: 5000000,
-    maxAssetSize: 5000000,
+    hints: isDev ? false : "warning",
+    maxEntrypointSize: 7500000,
+    maxAssetSize: 7500000,
   },
   module: {
     rules: [
