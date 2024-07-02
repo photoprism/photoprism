@@ -13,12 +13,12 @@ import (
 	"github.com/sevlyar/go-daemon"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/auto"
 	"github.com/photoprism/photoprism/internal/backup"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/server"
 	"github.com/photoprism/photoprism/internal/session"
 	"github.com/photoprism/photoprism/internal/workers"
+	"github.com/photoprism/photoprism/internal/workers/auto"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/report"

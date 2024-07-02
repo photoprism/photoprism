@@ -11,9 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/net/webdav"
 
-	"github.com/photoprism/photoprism/internal/auto"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/workers/auto"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/header"
