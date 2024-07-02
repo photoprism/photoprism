@@ -1645,7 +1645,7 @@ msgstr "Mất tích"
 
 #: src/page/auth/login.vue:112
 msgid "Missing or invalid configuration"
-msgstr ""
+msgstr "Cấu hình bị thiếu hoặc không hợp lệ"
 
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
@@ -2407,7 +2407,7 @@ msgstr "Đăng nhập"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Sign In with %{provider}"
-msgstr ""
+msgstr "Đăng nhập bằng %{provider}"
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2990,6 +2990,9 @@ msgstr "Thư viện của bạn được phân tích liên tục để tự đ�
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Phóng to / thu nhỏ"
+
+#~ msgid "Grant Type"
+#~ msgstr "Loại trợ cấp"
 
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Tải lên NSFW"

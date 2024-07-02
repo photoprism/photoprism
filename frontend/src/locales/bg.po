@@ -1648,7 +1648,7 @@ msgstr "Липсващ"
 
 #: src/page/auth/login.vue:112
 msgid "Missing or invalid configuration"
-msgstr ""
+msgstr "Липсваща или невалидна конфигурация"
 
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
@@ -2410,7 +2410,7 @@ msgstr "Влезте"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Sign In with %{provider}"
-msgstr ""
+msgstr "Влизане с %{provider}"
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2991,6 +2991,9 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Grant Type"
+#~ msgstr "Вид безвъзмездна помощ"
 
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Качване на NSFW"

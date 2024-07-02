@@ -1648,7 +1648,7 @@ msgstr "Chýba"
 
 #: src/page/auth/login.vue:112
 msgid "Missing or invalid configuration"
-msgstr ""
+msgstr "Chýbajúca alebo neplatná konfigurácia"
 
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
@@ -2410,7 +2410,7 @@ msgstr "Prihlásiť sa"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Sign In with %{provider}"
-msgstr ""
+msgstr "Prihlásiť sa pomocou %{provider}"
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2991,6 +2991,9 @@ msgstr "Vaša knižnica sa priebežne analyzuje aby mohla automaticky vytvárať
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Priblíziť/Oddialiť"
+
+#~ msgid "Grant Type"
+#~ msgstr "Typ grantu"
 
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Nahrať NSFW"
