@@ -19,7 +19,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/photoprism/photoprism/internal/hub/places"
+	"github.com/photoprism/photoprism/internal/remote/hub/places"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/header"

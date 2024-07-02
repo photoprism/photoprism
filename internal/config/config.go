@@ -36,8 +36,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config/ttl"
-
 	"github.com/dustin/go-humanize"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -48,11 +46,12 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config/customize"
+	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/hub"
-	"github.com/photoprism/photoprism/internal/hub/places"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/remote/hub"
+	"github.com/photoprism/photoprism/internal/remote/hub/places"
 	"github.com/photoprism/photoprism/internal/tensorflow/face"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/checksum"
