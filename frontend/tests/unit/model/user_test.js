@@ -286,6 +286,23 @@ describe("model/user", () => {
     const user = new User(values);
     const result = await user.isRemote();
     assert.equal(result, false);
+
+    const values2 = { ID: 51, Name: "max", DisplayName: "Max Last", AuthProvider: "oidc" };
+    const user2 = new User(values2);
+    const result2 = await user2.isRemote();
+    assert.equal(result2, true);
+  });
+
+  it("should return auth info", async () => {
+    const values = { ID: 50, Name: "max", DisplayName: "Max Last", AuthProvider: "oidc"};
+    const user = new User(values);
+    const result = await user.authInfo();
+    assert.equal(result, "OIDC");
+
+    const values2 = { ID: 52, Name: "max", DisplayName: "Max Last", AuthProvider: "oidc", AuthMethod: "session" };
+    const user2 = new User(values2);
+    const result2 = await user2.authInfo();
+    assert.equal(result2, "OIDC (Session)");
   });
 
   it("should get change password", async () => {

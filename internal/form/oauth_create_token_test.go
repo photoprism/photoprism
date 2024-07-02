@@ -66,7 +66,7 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.Error(t, m.Validate())
 	})
-	t.Run("Password", func(t *testing.T) {
+	t.Run("GrantTypePasswordSuccess", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  authn.GrantPassword,
 			Username:   "admin",
@@ -77,7 +77,7 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.NoError(t, m.Validate())
 	})
-	t.Run("UsernameRequired", func(t *testing.T) {
+	t.Run("GrantTypePasswordUsernameRequired", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  authn.GrantPassword,
 			Username:   "",
@@ -88,7 +88,7 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.Error(t, m.Validate())
 	})
-	t.Run("UsernameTooLong", func(t *testing.T) {
+	t.Run("GrantTypePasswordUsernameTooLong", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  authn.GrantPassword,
 			Username:   "aaaaabbbbbccccdddddfffffrrrrrttttttyyyyssssssssssdddddllllloooooooooowerty",
@@ -99,7 +99,7 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.Error(t, m.Validate())
 	})
-	t.Run("PasswordRequired", func(t *testing.T) {
+	t.Run("GrantTypePasswordPasswordRequired", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  authn.GrantPassword,
 			Username:   "admin",
@@ -110,7 +110,7 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.Error(t, m.Validate())
 	})
-	t.Run("PasswordTooLong", func(t *testing.T) {
+	t.Run("GrantTypePasswordPasswordTooLong", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  authn.GrantPassword,
 			Username:   "admin",
@@ -121,7 +121,7 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.Error(t, m.Validate())
 	})
-	t.Run("ClientNameRequired", func(t *testing.T) {
+	t.Run("GrantTypePasswordClientRequired", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  authn.GrantPassword,
 			Username:   "admin",
@@ -132,11 +132,61 @@ func TestOAuthCreateToken_Validate(t *testing.T) {
 
 		assert.Error(t, m.Validate())
 	})
-	t.Run("ScopeRequired", func(t *testing.T) {
+	t.Run("GrantTypePasswordScopeRequired", func(t *testing.T) {
 		m := OAuthCreateToken{
 			GrantType:  authn.GrantPassword,
 			Username:   "admin",
 			Password:   "cs5gfen1bgxz7s9i",
+			ClientName: "test",
+			Scope:      "",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("GrantTypeSessionSuccess", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantSession,
+			Username:   "admin",
+			ClientName: "test",
+			Scope:      "*",
+		}
+
+		assert.NoError(t, m.Validate())
+	})
+	t.Run("GrantTypeSessionUsernameRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantSession,
+			Username:   "",
+			ClientName: "test",
+			Scope:      "*",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("GrantTypeSessionClientRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantSession,
+			Username:   "admin",
+			ClientName: "",
+			Scope:      "*",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("GrantTypeSessionUsernameTooLong", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantSession,
+			Username:   "aaaaabbbbbccccdddddfffffrrrrrttttttyyyyssssssssssdddddllllloooooooooowert",
+			ClientName: "test",
+			Scope:      "*",
+		}
+
+		assert.Error(t, m.Validate())
+	})
+	t.Run("GrantTypeSessionScopeRequired", func(t *testing.T) {
+		m := OAuthCreateToken{
+			GrantType:  authn.GrantSession,
+			Username:   "admin",
 			ClientName: "test",
 			Scope:      "",
 		}

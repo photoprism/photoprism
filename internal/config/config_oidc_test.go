@@ -134,6 +134,14 @@ func TestConfig_OIDCRole(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, acl.RoleGuest, c.OIDCRole())
+
+	c.options.OIDCRole = "invalid"
+
+	assert.Equal(t, acl.RoleNone, c.OIDCRole())
+
+	c.options.OIDCRole = "admin"
+
+	assert.Equal(t, acl.RoleAdmin, c.OIDCRole())
 }
 
 func TestConfig_OIDCWebDAV(t *testing.T) {

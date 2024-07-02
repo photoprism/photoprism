@@ -4,6 +4,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/zitadel/oidc/pkg/oidc"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
@@ -17,6 +19,47 @@ func TestNewUser(t *testing.T) {
 
 	assert.True(t, rnd.IsRefID(m.RefID))
 	assert.True(t, rnd.IsUID(m.UserUID, UserUID))
+}
+
+func TestOidcUser(t *testing.T) {
+	t.Run("ClaimEmail", func(t *testing.T) {
+		info := oidc.NewUserInfo()
+		info.SetName("Jane")
+		info.SetFamilyName("Doe")
+		info.SetEmail("jane@doe.com", true)
+		info.SetSubject("abcd123")
+		m := OidcUser(info, authn.ClaimEmail)
+
+		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "abcd123", m.AuthID)
+		assert.Equal(t, "jane@doe.com", m.UserEmail)
+		assert.Equal(t, "jane@doe.com", m.UserName)
+		assert.Equal(t, "Jane", m.DisplayName)
+	})
+	t.Run("ClaimUsername", func(t *testing.T) {
+		info := oidc.NewUserInfo()
+		info.SetName("Jane")
+		info.SetFamilyName("Doe")
+		info.SetEmail("jane@doe.com", true)
+		info.SetSubject("abcd123")
+		info.SetPreferredUsername("Jane Doe")
+		m := OidcUser(info, authn.ClaimUsername)
+
+		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "abcd123", m.AuthID)
+		assert.Equal(t, "jane@doe.com", m.UserEmail)
+		assert.Equal(t, "jane doe", m.UserName)
+		assert.Equal(t, "Jane", m.DisplayName)
+	})
+	t.Run("AuthIdEmpty", func(t *testing.T) {
+		info := oidc.NewUserInfo()
+		info.SetName("Jane")
+		info.SetFamilyName("Doe")
+		info.SetEmail("jane@doe.com", true)
+		m := OidcUser(info, authn.ClaimUsername)
+
+		assert.Empty(t, m)
+	})
 }
 
 func TestLdapUser(t *testing.T) {
