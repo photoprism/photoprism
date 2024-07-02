@@ -1648,7 +1648,7 @@ msgstr "Mangler"
 
 #: src/page/auth/login.vue:112
 msgid "Missing or invalid configuration"
-msgstr ""
+msgstr "Mangler eller ugyldig konfigurasjon"
 
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
@@ -2410,7 +2410,7 @@ msgstr "Logg inn"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Sign In with %{provider}"
-msgstr ""
+msgstr "Logg inn med %{tilbyder}"
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2991,6 +2991,9 @@ msgstr "Biblioteket ditt blir kontinuerlig analysert for automatisk å lage albu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoom inn/ut"
+
+#~ msgid "Grant Type"
+#~ msgstr "Type tilskudd"
 
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Last opp NSFW"

@@ -1654,7 +1654,7 @@ msgstr "Manquant"
 
 #: src/page/auth/login.vue:112
 msgid "Missing or invalid configuration"
-msgstr ""
+msgstr "Configuration manquante ou invalide"
 
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
@@ -2416,7 +2416,7 @@ msgstr "S'identifier"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Sign In with %{provider}"
-msgstr ""
+msgstr "Se connecter avec %{provider}"
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2997,6 +2997,9 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "Grant Type"
+#~ msgstr "Type de subvention"
 
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Autoriser le chargement de contenu NSFW (visionnage en public déconseillé)"

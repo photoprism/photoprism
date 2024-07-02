@@ -1648,7 +1648,7 @@ msgstr "Fehlend"
 
 #: src/page/auth/login.vue:112
 msgid "Missing or invalid configuration"
-msgstr ""
+msgstr "Fehlende oder ungültige Konfiguration"
 
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
@@ -2410,7 +2410,7 @@ msgstr "Anmelden"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Sign In with %{provider}"
-msgstr ""
+msgstr "Anmeldung mit %{provider}"
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2991,6 +2991,9 @@ msgstr "Die vorhandenen Bilder werden fortlaufend analysiert, um automatisch Alb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#~ msgid "Grant Type"
+#~ msgstr "Zuschuss Typ"
 
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "NSFW Uploads erlauben"

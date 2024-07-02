@@ -1649,7 +1649,7 @@ msgstr "Desaparecido"
 
 #: src/page/auth/login.vue:112
 msgid "Missing or invalid configuration"
-msgstr ""
+msgstr "Falta configuración o no es válida"
 
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
@@ -2411,7 +2411,7 @@ msgstr "Iniciar sesión"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Sign In with %{provider}"
-msgstr ""
+msgstr "Iniciar sesión con %{provider}"
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2992,6 +2992,9 @@ msgstr "Tu biblioteca se analiza continuamente para crear automáticamente álbu
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Acercar/Alejar"
+
+#~ msgid "Grant Type"
+#~ msgstr "Tipo de subvención"
 
 #~ msgid "Allow NSFW Uploads"
 #~ msgstr "Subir NSFW"
