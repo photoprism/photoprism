@@ -7,11 +7,11 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/auth/oidc"
-	"github.com/photoprism/photoprism/internal/classify"
-	"github.com/photoprism/photoprism/internal/nsfw"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/internal/tensorflow/classify"
+	"github.com/photoprism/photoprism/internal/tensorflow/nsfw"
 )
 
 func TestConfig(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/tidwall/gjson"

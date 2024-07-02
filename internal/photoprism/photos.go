@@ -7,7 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
 // Photos represents photo id lookup table, sorted by date and S2 cell id.

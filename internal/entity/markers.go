@@ -3,8 +3,8 @@ package entity
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/tensorflow/classify"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 

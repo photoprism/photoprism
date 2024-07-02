@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
 // Files represents a list of already indexed file names and their unix modification timestamps.

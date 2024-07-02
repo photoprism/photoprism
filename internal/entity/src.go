@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/photoprism/photoprism/internal/classify"
+import "github.com/photoprism/photoprism/internal/tensorflow/classify"
 
 type Priorities map[string]int
 

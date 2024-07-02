@@ -3,7 +3,7 @@ package photoprism
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 

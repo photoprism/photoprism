@@ -26,13 +26,13 @@ package get
 
 import (
 	"github.com/photoprism/photoprism/internal/auth/oidc"
-	"github.com/photoprism/photoprism/internal/classify"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/face"
-	"github.com/photoprism/photoprism/internal/nsfw"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/internal/tensorflow/classify"
+	"github.com/photoprism/photoprism/internal/tensorflow/nsfw"
 
 	gc "github.com/patrickmn/go-cache"
 )

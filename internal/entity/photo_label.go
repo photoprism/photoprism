@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/tensorflow/classify"
 )
 
 type PhotoLabels []PhotoLabel

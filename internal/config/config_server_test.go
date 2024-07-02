@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/internal/config/ttl"
 )
 
 func TestConfig_HttpServerHost(t *testing.T) {

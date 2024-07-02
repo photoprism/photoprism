@@ -8,8 +8,8 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/query"
 )
 
 // PlacesCommands configures the command name, flags, and action.

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/customize"
+	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 

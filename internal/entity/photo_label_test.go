@@ -3,7 +3,7 @@ package entity
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/tensorflow/classify"
 	"github.com/stretchr/testify/assert"
 )
 
