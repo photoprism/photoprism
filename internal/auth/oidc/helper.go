@@ -23,7 +23,7 @@ func UsernameFromUserInfo(userinfo UserInfo) (username string) {
 	} else if len(userinfo.GetEmail()) >= 4 {
 		username = userinfo.GetEmail()
 	} else {
-		log.Error("oidc: no username found")
+		log.Debug("oidc: no username found")
 	}
 	return username
 }

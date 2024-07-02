@@ -1,8 +1,6 @@
 package oidc
 
 import (
-	"bytes"
-	"io"
 	"net/http"
 	"time"
 )
@@ -30,28 +28,16 @@ type LoggingRoundTripper struct {
 	proxy http.RoundTripper
 }
 
-func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response, e error) {
-	// Do "before sending requests" actions here.
-	log.Debugf("sending request to %s", req.URL.String())
+func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response, err error) {
+	log.Tracef("oidc: %s %s", req.Method, req.URL.String())
 
-	// Send the request, get the response (or the error)
-	res, e = lrt.proxy.RoundTrip(req)
+	// Send request.
+	res, err = lrt.proxy.RoundTrip(req)
 
-	// Handle the result.
-	if e != nil {
-		log.Errorf("http error: %s", e)
-	} else {
-		log.Debugf("http response: %s", res.Status)
-
-		// Copy body into buffer for logging
-		buf := new(bytes.Buffer)
-		_, err := io.Copy(buf, res.Body)
-		if err != nil {
-			log.Errorf("http buffer error: %s", err)
-		}
-		// log.Debugf("Header: %s\n", res.Header)
-		// log.Debugf("Reponse Body: %s\n", buf.String())
-		res.Body = io.NopCloser(buf)
+	// Log error, if any.
+	if err != nil {
+		log.Debugf("oidc: request to %s has failed (%s)", req.URL.String(), err)
 	}
-	return
+
+	return res, err
 }
