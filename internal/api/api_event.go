@@ -3,9 +3,9 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/search"
 )
 
 // Event represents an api event type.

@@ -8,8 +8,8 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/sortby"
 )

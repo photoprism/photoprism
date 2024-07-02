@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin/binding"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
