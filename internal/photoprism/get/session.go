@@ -3,7 +3,7 @@ package get
 import (
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/session"
+	"github.com/photoprism/photoprism/internal/auth/session"
 )
 
 var onceSession sync.Once

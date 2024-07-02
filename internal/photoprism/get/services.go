@@ -25,16 +25,16 @@ Additional information can be found in our Developer Guide:
 package get
 
 import (
+	gc "github.com/patrickmn/go-cache"
+
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
+	"github.com/photoprism/photoprism/internal/auth/session"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/session"
-
-	gc "github.com/patrickmn/go-cache"
 )
 
 var conf *config.Config
