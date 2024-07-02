@@ -6,11 +6,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fastwalk"
 )
 
-var modelPath, _ = filepath.Abs("../../assets/nsfw")
+var modelPath, _ = filepath.Abs("../../../assets/nsfw")
 
 var detector = New(modelPath)
 

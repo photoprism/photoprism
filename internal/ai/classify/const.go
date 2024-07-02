@@ -1,7 +1,7 @@
 package classify
 
+// Data sources.
 const (
-	// data sources
 	SrcAuto     = ""
 	SrcManual   = "manual"
 	SrcLocation = "location"

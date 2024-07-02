@@ -13,9 +13,10 @@ import (
 	"sort"
 	"strings"
 
+	tf "github.com/tensorflow/tensorflow/tensorflow/go"
+
 	"github.com/disintegration/imaging"
 	"github.com/photoprism/photoprism/pkg/clean"
-	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 )
 
 // TensorFlow is a wrapper for tensorflow low-level API.

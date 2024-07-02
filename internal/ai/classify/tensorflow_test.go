@@ -5,13 +5,14 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/fs"
 	tensorflow "github.com/tensorflow/tensorflow/tensorflow/go"
+
+	"github.com/photoprism/photoprism/pkg/fs"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var assetsPath = fs.Abs("../../assets")
+var assetsPath = fs.Abs("../../../assets")
 var modelPath = assetsPath + "/nasnet"
 var examplesPath = assetsPath + "/examples"
 var once sync.Once

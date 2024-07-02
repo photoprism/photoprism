@@ -5,11 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/fastwalk"
 )
 
-var modelPath, _ = filepath.Abs("../../assets/facenet")
+var modelPath, _ = filepath.Abs("../../../assets/facenet")
 
 func TestNet(t *testing.T) {
 	expected := map[string]int{
