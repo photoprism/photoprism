@@ -466,7 +466,7 @@ export default class Session {
 
     // Perform redirect?
     if (noRedirect !== true && !this.isLogin()) {
-      window.location = this.config.baseUri + "/";
+      window.location = this.config.loginUri;
     }
 
     return Promise.resolve();

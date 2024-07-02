@@ -14,7 +14,11 @@ import (
 func registerStaticRoutes(router *gin.Engine, conf *config.Config) {
 	// Redirects to the PWA for now, can be replaced by a template later.
 	login := func(c *gin.Context) {
-		c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
+		if conf.OIDCEnabled() && conf.OIDCRedirect() {
+			c.Redirect(http.StatusTemporaryRedirect, conf.OIDCLoginUri())
+		} else {
+			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
+		}
 	}
 
 	router.Any(conf.BaseUri("/"), login)
