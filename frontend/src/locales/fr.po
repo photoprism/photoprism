@@ -1230,10 +1230,6 @@ msgstr "Options globales"
 msgid "Gold"
 msgstr "Or"
 
-#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
-msgid "Grant Type"
-msgstr ""
-
 #: src/options/options.js:447
 msgid "Green"
 msgstr "Vert"

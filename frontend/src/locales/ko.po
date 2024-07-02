@@ -1224,10 +1224,6 @@ msgstr "글로벌 옵션"
 msgid "Gold"
 msgstr "금색"
 
-#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
-msgid "Grant Type"
-msgstr ""
-
 #: src/options/options.js:447
 msgid "Green"
 msgstr "녹색"

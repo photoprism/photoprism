@@ -1223,10 +1223,6 @@ msgstr "Globális lehetőségek"
 msgid "Gold"
 msgstr "Arany"
 
-#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
-msgid "Grant Type"
-msgstr ""
-
 #: src/options/options.js:447
 msgid "Green"
 msgstr "Zöld"

@@ -1224,10 +1224,6 @@ msgstr "Visuotinės parinktys"
 msgid "Gold"
 msgstr "Auksinis"
 
-#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
-msgid "Grant Type"
-msgstr ""
-
 #: src/options/options.js:447
 msgid "Green"
 msgstr "Žalioji"

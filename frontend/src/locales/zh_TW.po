@@ -1224,10 +1224,6 @@ msgstr "全域選項"
 msgid "Gold"
 msgstr "金色"
 
-#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
-msgid "Grant Type"
-msgstr ""
-
 #: src/options/options.js:447
 msgid "Green"
 msgstr "綠色"
