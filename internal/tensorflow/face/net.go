@@ -10,7 +10,7 @@ import (
 
 	tf "github.com/tensorflow/tensorflow/tensorflow/go"
 
-	"github.com/photoprism/photoprism/internal/crop"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 

@@ -1,7 +1,7 @@
 package face
 
 import (
-	"github.com/photoprism/photoprism/internal/crop"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
 
 var CropSize = crop.Sizes[crop.Tile160]          // Face image crop size for FaceNet.

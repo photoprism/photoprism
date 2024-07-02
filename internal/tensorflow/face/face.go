@@ -27,8 +27,8 @@ package face
 import (
 	"encoding/json"
 
-	"github.com/photoprism/photoprism/internal/crop"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/thumb/crop"
 )
 
 var log = event.Log

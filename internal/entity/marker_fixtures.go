@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/photoprism/photoprism/internal/crop"
+import "github.com/photoprism/photoprism/internal/thumb/crop"
 
 // UnknownMarker can be used as a default for unknown markers.
 var UnknownMarker = NewMarker(File{FileUID: "-", FileHash: "-"}, crop.Area{}, "", SrcDefault, MarkerUnknown, 0, 0)
