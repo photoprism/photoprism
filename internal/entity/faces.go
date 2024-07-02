@@ -3,7 +3,7 @@ package entity
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/tensorflow/face"
 )
 
 // Faces represents a Face slice.

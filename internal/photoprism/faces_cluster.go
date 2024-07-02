@@ -7,7 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/tensorflow/face"
 	"github.com/photoprism/photoprism/pkg/clusters"
 )
 

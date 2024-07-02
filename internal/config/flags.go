@@ -10,8 +10,8 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
+	"github.com/photoprism/photoprism/internal/tensorflow/face"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"

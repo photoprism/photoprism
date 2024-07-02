@@ -8,8 +8,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/query"
-	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/tensorflow/classify"
+	"github.com/photoprism/photoprism/internal/tensorflow/face"
 	"github.com/photoprism/photoprism/internal/tensorflow/nsfw"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )

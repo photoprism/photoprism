@@ -6,8 +6,8 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/tensorflow/face"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 

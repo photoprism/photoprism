@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/crop"
-	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/tensorflow/face"
 )
 
 var cropArea1 = crop.Area{Name: "face", X: 0.308333, Y: 0.206944, W: 0.355556, H: 0.355556}

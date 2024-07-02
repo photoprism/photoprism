@@ -11,8 +11,8 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"github.com/photoprism/photoprism/internal/crop"
-	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/form"
+	"github.com/photoprism/photoprism/internal/tensorflow/face"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
