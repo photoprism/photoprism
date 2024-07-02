@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/internal/thumb/avatar"
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
@@ -37,7 +38,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
 		actor := "unknown user"
-		action := "redirect"
+		action := "sign in"
 
 		// Abort in public mode and if OIDC is disabled.
 		if get.Config().Public() {
@@ -117,7 +118,16 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			}
+
+			// Set user avatar image.
+			if avatarUrl := userInfo.GetPicture(); avatarUrl == "" || user.HasAvatar() {
+				// Do nothing.
+			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC); err != nil {
+				event.AuditWarn([]string{clientIp, "oidc", actor, action, "failed to set avatar image", err.Error()})
+			}
 		} else if conf.OIDCRegister() {
+			action = "sign up"
+
 			// Create new user record.
 			user = &oidcUser
 			actor = user.Username()
@@ -167,6 +177,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrAccountCreateFailed.Error(), err.Error()})
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
+			}
+
+			// Set user avatar image.
+			if avatarUrl := userInfo.GetPicture(); avatarUrl == "" {
+				event.AuditDebug([]string{clientIp, "oidc", actor, action, "no avatar image provided"})
+			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC); err != nil {
+				event.AuditWarn([]string{clientIp, "oidc", actor, action, "failed to set avatar image", err.Error()})
 			}
 		} else {
 			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrRegistrationDisabled.Error()})

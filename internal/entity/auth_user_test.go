@@ -1487,22 +1487,27 @@ func TestUser_SetFamilyName(t *testing.T) {
 
 func TestUser_SetAvatar(t *testing.T) {
 	t.Run("Visitor", func(t *testing.T) {
+		assert.False(t, Visitor.HasAvatar())
 		err := Visitor.SetAvatar("ebfc0aea7d3fd018b5fff57c76806b35181855ed", SrcManual)
 		assert.Error(t, err)
 	})
 	t.Run("UnknownUser", func(t *testing.T) {
+		assert.False(t, UnknownUser.HasAvatar())
 		err := UnknownUser.SetAvatar("ebfc0aea7d3fd018b5fff57c76806b35181855ed", SrcManual)
 		assert.Error(t, err)
 	})
 	t.Run("Admin", func(t *testing.T) {
+		assert.False(t, Admin.HasAvatar())
 		err := Admin.SetAvatar("ebfc0aea7d3fd018b5fff57c76806b35181855ed", SrcManual)
 		assert.NoError(t, err)
 		assert.Equal(t, "ebfc0aea7d3fd018b5fff57c76806b35181855ed", Admin.Thumb)
 		assert.Equal(t, SrcManual, Admin.ThumbSrc)
+		assert.True(t, Admin.HasAvatar())
 
 		m := FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "ebfc0aea7d3fd018b5fff57c76806b35181855ed", m.Thumb)
 		assert.Equal(t, SrcManual, m.ThumbSrc)
+		assert.True(t, Admin.HasAvatar())
 	})
 	t.Run("No permissions", func(t *testing.T) {
 		err := Admin.SetAvatar("ebfc0aea7d3fd018b5fff57c76806b35181855ed", SrcAuto)

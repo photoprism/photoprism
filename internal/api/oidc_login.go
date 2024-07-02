@@ -30,7 +30,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
 		actor := "unknown user"
-		action := "login"
+		action := "sign in"
 
 		// Get global config.
 		conf := get.Config()

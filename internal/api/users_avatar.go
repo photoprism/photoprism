@@ -10,8 +10,8 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/photoprism"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/thumb/avatar"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/i18n"
@@ -121,14 +121,8 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			event.AuditInfo([]string{ClientIP(c), "session %s", "upload avatar", "saved as %s"}, s.RefID, clean.Log(filePath))
 		}
 
-		// Create avatar thumbnails.
-		if mediaFile, mediaErr := photoprism.NewMediaFile(filePath); mediaErr != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
-			Abort(c, http.StatusBadRequest, i18n.ErrUnsupportedFormat)
-			return
-		} else if err = mediaFile.GenerateThumbnails(conf.ThumbCachePath(), false); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
-		} else if err = m.SetAvatar(mediaFile.Hash(), entity.SrcManual); err != nil {
+		// Set user avatar image.
+		if err = avatar.SetUserImage(m, filePath, entity.SrcManual); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
 		}
 

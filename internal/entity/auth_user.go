@@ -1321,6 +1321,15 @@ func (m *User) SetFamilyName(name string) *User {
 	return m
 }
 
+// HasAvatar reports if a user avatar image has been set.
+func (m *User) HasAvatar() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.Thumb != ""
+}
+
 // SetAvatar updates the user avatar image.
 func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	if m.UserName == "" || m.ID <= 0 {
