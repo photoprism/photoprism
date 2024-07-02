@@ -5,9 +5,9 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 
+	"github.com/photoprism/photoprism/internal/entity/search/viewer"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/internal/viewer"
 )
 
 // PhotosViewerResults finds photos based on the search form provided and returns them as viewer.Results.
