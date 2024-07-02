@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/migrate"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
 
 	"github.com/jinzhu/gorm"
 )

@@ -12,7 +12,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/photoprism/photoprism/internal/migrate"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
 )
 
 func gen_migrations(name string) {

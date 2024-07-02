@@ -4,7 +4,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/migrate"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 

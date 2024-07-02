@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"github.com/photoprism/photoprism/internal/migrate"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
 )
 
 // CreateDefaultFixtures inserts default fixtures for test and production.
