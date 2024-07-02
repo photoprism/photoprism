@@ -376,7 +376,7 @@ msgid "Aspect Ratio"
 msgstr "长宽比"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:28
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "认证"
@@ -572,7 +572,7 @@ msgstr "客户"
 msgid "Client Credentials"
 msgstr "客户证书"
 
-#: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -691,7 +691,7 @@ msgstr "创建账户"
 msgid "Create album"
 msgstr "创建相册"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:334
 msgid "Create regular backups based on the configured schedule."
 msgstr "根据配置的时间表创建索引备份。"
 
@@ -699,11 +699,11 @@ msgstr "根据配置的时间表创建索引备份。"
 msgid "Create YAML files to back up album metadata."
 msgstr "创建 YAML 文件来备份相册元数据。"
 
-#: src/page/settings/advanced.vue:334
+#: src/page/settings/advanced.vue:376
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "创建 YAML sidecar 文件来备份图片元数据。"
 
-#: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "已创建"
 
@@ -731,7 +731,7 @@ msgstr "青"
 msgid "Daily"
 msgstr "每日"
 
-#: src/page/settings/advanced.vue:375
+#: src/page/settings/advanced.vue:333
 msgid "Database Backups"
 msgstr "数据库备份"
 
@@ -747,7 +747,7 @@ msgstr "停用"
 msgid "Debug Logs"
 msgstr "调试日志"
 
-#: src/options/admin.js:31 src/page/admin/sessions.vue:61
+#: src/options/admin.js:31 src/page/admin/sessions.vue:62
 #: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
@@ -1048,7 +1048,7 @@ msgstr "展开搜索"
 msgid "Experimental Features"
 msgstr "实验特性"
 
-#: src/page/admin/sessions.vue:109 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1223,6 +1223,10 @@ msgstr "全局选项"
 #: src/options/options.js:444
 msgid "Gold"
 msgstr "金"
+
+#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
+msgid "Grant Type"
+msgstr ""
 
 #: src/options/options.js:447
 msgid "Green"
@@ -1446,7 +1450,7 @@ msgstr "Lanczos：保留细节，虚影较小"
 msgid "Language"
 msgstr "语言"
 
-#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "最后一次活动"
 
@@ -1466,7 +1470,7 @@ msgstr "最后使用"
 msgid "Latitude"
 msgstr "纬度"
 
-#: src/options/admin.js:39 src/options/auth.js:29
+#: src/options/admin.js:43 src/options/auth.js:29
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1646,6 +1650,10 @@ msgstr "最小化"
 msgid "Missing"
 msgstr "缺失"
 
+#: src/page/auth/login.vue:112
+msgid "Missing or invalid configuration"
+msgstr ""
+
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
 msgid "Moments"
@@ -1685,7 +1693,7 @@ msgstr "必须至少有%{n}个字符。"
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:138 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:141 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1781,7 +1789,7 @@ msgstr "没有包含此关键字的警告或错误，请注意，搜索区分大
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "非照片和低质量图像出现在搜索结果中前需要进行审查。"
 
-#: src/options/admin.js:43 src/options/auth.js:32 src/options/options.js:289
+#: src/options/admin.js:47 src/options/auth.js:32 src/options/options.js:289
 #: src/options/options.js:385
 msgid "None"
 msgstr "无"
@@ -1815,7 +1823,7 @@ msgstr "没有发现任何问题。"
 msgid "Offline"
 msgstr "离线"
 
-#: src/options/auth.js:28
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "OIDC"
 msgstr "奥伊德数据中心"
 
@@ -1920,7 +1928,7 @@ msgstr "全景"
 #: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/auth/login.vue:170
+#: src/dialog/share.vue:24 src/options/auth.js:91 src/page/auth/login.vue:173
 msgid "Password"
 msgstr "密码"
 
@@ -2053,13 +2061,13 @@ msgstr "按下按钮开始索引…"
 msgid "Press enter to create a new album."
 msgstr "按下 Enter 键创建一个新相册。"
 
-#: src/page/settings/advanced.vue:216
-msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "防止其他应用程序将 PhotoPrism 作为共享网络驱动器访问。"
-
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
 msgstr "防止创建数据库和相册备份以及 YAML sidecar 文件。"
+
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr "防止其他应用程序将 PhotoPrism 作为共享网络驱动器访问。"
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2260,7 +2268,7 @@ msgstr "使用您的身份验证器应用程序扫描二维码或使用下面显
 msgid "Scans"
 msgstr "扫描"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "范围"
@@ -2326,11 +2334,11 @@ msgstr "服务 URL"
 msgid "Services"
 msgstr "服务"
 
-#: src/model/session.js:101 src/options/auth.js:41
+#: src/model/session.js:101 src/options/auth.js:41 src/options/auth.js:90
 msgid "Session"
 msgstr "会议"
 
-#: src/page/admin/sessions.vue:25
+#: src/page/admin/sessions.vue:26
 msgid "Session ID"
 msgstr "会议ID"
 
@@ -2398,13 +2406,17 @@ msgstr "在库中显示服务器日志。"
 msgid "Sidecar"
 msgstr "附属"
 
-#: src/page/settings/advanced.vue:333
+#: src/page/settings/advanced.vue:375
 msgid "Sidecar Files"
 msgstr "Sidecar 文件"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
 msgstr "登录"
+
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Sign In with %{provider}"
+msgstr ""
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2804,7 +2816,7 @@ msgid "Use your recovery code or contact an administrator for help."
 msgstr "使用恢复密码或联系管理员寻求帮助。"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
-#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:27
 #: src/model/user.js:313 src/options/auth.js:7
 msgid "User"
 msgstr "用户"
@@ -2838,7 +2850,7 @@ msgstr "矢量"
 msgid "Vectors"
 msgstr "媒介物"
 
-#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:102
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:105
 msgid "Verification Code"
 msgstr "验证码"
 

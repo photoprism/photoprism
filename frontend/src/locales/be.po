@@ -373,7 +373,7 @@ msgid "Aspect Ratio"
 msgstr "Суадносіны бакоў"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:28
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Аўтэнтыфікацыя"
@@ -569,7 +569,7 @@ msgstr "Кліент"
 msgid "Client Credentials"
 msgstr "Уліковыя даныя кліента"
 
-#: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -688,7 +688,7 @@ msgstr "Стварыць акаунт"
 msgid "Create album"
 msgstr "Стварыць альбом"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:334
 msgid "Create regular backups based on the configured schedule."
 msgstr "Стварэнне рэзервовых копій індэксаў на аснове наладжанага раскладу."
 
@@ -696,11 +696,11 @@ msgstr "Стварэнне рэзервовых копій індэксаў на
 msgid "Create YAML files to back up album metadata."
 msgstr "Стварыце файлы YAML для рэзервовага капіравання метаданых альбома."
 
-#: src/page/settings/advanced.vue:334
+#: src/page/settings/advanced.vue:376
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Стварыце пабочныя файлы YAML для рэзервовага капіравання метададзеных выявы."
 
-#: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Створана"
 
@@ -728,7 +728,7 @@ msgstr "Блакітны"
 msgid "Daily"
 msgstr "Штодня"
 
-#: src/page/settings/advanced.vue:375
+#: src/page/settings/advanced.vue:333
 msgid "Database Backups"
 msgstr "Рэзервовыя копіі баз даных"
 
@@ -744,7 +744,7 @@ msgstr "Дэактываваць"
 msgid "Debug Logs"
 msgstr "Журналы адладкі"
 
-#: src/options/admin.js:31 src/page/admin/sessions.vue:61
+#: src/options/admin.js:31 src/page/admin/sessions.vue:62
 #: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
@@ -1045,7 +1045,7 @@ msgstr "Разгарнуць Пошук"
 msgid "Experimental Features"
 msgstr "Эксперыментальныя функцыі"
 
-#: src/page/admin/sessions.vue:109 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1220,6 +1220,10 @@ msgstr "Глабальныя параметры"
 #: src/options/options.js:444
 msgid "Gold"
 msgstr "золата"
+
+#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
+msgid "Grant Type"
+msgstr ""
 
 #: src/options/options.js:447
 msgid "Green"
@@ -1443,7 +1447,7 @@ msgstr "Lanczos: Захаванне дэталяў, мінімум артэфа�
 msgid "Language"
 msgstr "мова"
 
-#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "Апошні актыўны"
 
@@ -1463,7 +1467,7 @@ msgstr "Апошняе выкарыстанне"
 msgid "Latitude"
 msgstr "Шырата"
 
-#: src/options/admin.js:39 src/options/auth.js:29
+#: src/options/admin.js:43 src/options/auth.js:29
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1643,6 +1647,10 @@ msgstr "Мінімізаваць"
 msgid "Missing"
 msgstr "Прапаў без вестак"
 
+#: src/page/auth/login.vue:112
+msgid "Missing or invalid configuration"
+msgstr ""
+
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
 msgid "Moments"
@@ -1682,7 +1690,7 @@ msgstr "Павінна быць не менш за %{n} сімвалаў."
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:138 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:141 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1778,7 +1786,7 @@ msgstr "Няма папярэджанняў або памылак з гэтым 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Нефатаграфічныя і нізкаякасныя выявы патрабуюць праверкі, перш чым яны з'явяцца ў выніках пошуку."
 
-#: src/options/admin.js:43 src/options/auth.js:32 src/options/options.js:289
+#: src/options/admin.js:47 src/options/auth.js:32 src/options/options.js:289
 #: src/options/options.js:385
 msgid "None"
 msgstr "Няма"
@@ -1812,7 +1820,7 @@ msgstr "Нічога не знайшлі."
 msgid "Offline"
 msgstr "У аўтаномным рэжыме"
 
-#: src/options/auth.js:28
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "OIDC"
 msgstr "OIDC"
 
@@ -1916,7 +1924,7 @@ msgstr "Панарамы"
 #: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/auth/login.vue:170
+#: src/dialog/share.vue:24 src/options/auth.js:91 src/page/auth/login.vue:173
 msgid "Password"
 msgstr "Пароль"
 
@@ -2049,13 +2057,13 @@ msgstr "Націсніце кнопку, каб пачаць індэксацы�
 msgid "Press enter to create a new album."
 msgstr "Націсніце enter, каб стварыць новы альбом."
 
-#: src/page/settings/advanced.vue:216
-msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Забараніць іншым праграмам доступ да PhotoPrism як да агульнага сеткавага дыска."
-
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
 msgstr "Забараніць стварэнне рэзервовых копій базы дадзеных і альбомаў, а таксама файлаў YAML."
+
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr "Забараніць іншым праграмам доступ да PhotoPrism як да агульнага сеткавага дыска."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2255,7 +2263,7 @@ msgstr "Адсканіруйце QR-код з дапамогай праграм�
 msgid "Scans"
 msgstr "Сканы"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "Вобласць прымянення"
@@ -2321,11 +2329,11 @@ msgstr "URL службы"
 msgid "Services"
 msgstr "Сэрвісы"
 
-#: src/model/session.js:101 src/options/auth.js:41
+#: src/model/session.js:101 src/options/auth.js:41 src/options/auth.js:90
 msgid "Session"
 msgstr "сесія"
 
-#: src/page/admin/sessions.vue:25
+#: src/page/admin/sessions.vue:26
 msgid "Session ID"
 msgstr "Ідэнтыфікатар сеансу"
 
@@ -2393,13 +2401,17 @@ msgstr "Паказаць журналы сервера ў бібліятэцы."
 msgid "Sidecar"
 msgstr "Спадарожны файл"
 
-#: src/page/settings/advanced.vue:333
+#: src/page/settings/advanced.vue:375
 msgid "Sidecar Files"
 msgstr "Sidecar Files"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
 msgstr "Увайсці"
+
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Sign In with %{provider}"
+msgstr ""
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2799,7 +2811,7 @@ msgid "Use your recovery code or contact an administrator for help."
 msgstr "Выкарыстоўвайце свой код аднаўлення або звярніцеся па дапамогу да адміністратара."
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
-#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:27
 #: src/model/user.js:313 src/options/auth.js:7
 msgid "User"
 msgstr "Карыстальнік"
@@ -2833,7 +2845,7 @@ msgstr "вектар"
 msgid "Vectors"
 msgstr "Вектары"
 
-#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:102
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:105
 msgid "Verification Code"
 msgstr "Код верыфікацыі"
 

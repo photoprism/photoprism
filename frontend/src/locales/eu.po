@@ -373,7 +373,7 @@ msgid "Aspect Ratio"
 msgstr "Aspektu-erlazioa"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:28
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Autentifikazioa"
@@ -569,7 +569,7 @@ msgstr "Bezeroa"
 msgid "Client Credentials"
 msgstr "Bezeroaren kredentzialak"
 
-#: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -688,7 +688,7 @@ msgstr "Kontua sortu"
 msgid "Create album"
 msgstr "Sortu albuma"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:334
 msgid "Create regular backups based on the configured schedule."
 msgstr "Sortu indizearen babeskopiak konfiguratutako ordutegian oinarrituta."
 
@@ -696,11 +696,11 @@ msgstr "Sortu indizearen babeskopiak konfiguratutako ordutegian oinarrituta."
 msgid "Create YAML files to back up album metadata."
 msgstr "Sortu YAML fitxategiak albumen metadatuen babeskopia egiteko."
 
-#: src/page/settings/advanced.vue:334
+#: src/page/settings/advanced.vue:376
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Sortu YAML sidecar fitxategiak argazkien metadatuen babeskopia egiteko."
 
-#: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Sortu"
 
@@ -728,7 +728,7 @@ msgstr "Zian"
 msgid "Daily"
 msgstr "Egunero"
 
-#: src/page/settings/advanced.vue:375
+#: src/page/settings/advanced.vue:333
 msgid "Database Backups"
 msgstr "Datu-basearen babeskopiak"
 
@@ -744,7 +744,7 @@ msgstr "Desaktibatu"
 msgid "Debug Logs"
 msgstr "Arazte-erregistroak"
 
-#: src/options/admin.js:31 src/page/admin/sessions.vue:61
+#: src/options/admin.js:31 src/page/admin/sessions.vue:62
 #: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
@@ -1045,7 +1045,7 @@ msgstr "Zabaldu Bilaketa"
 msgid "Experimental Features"
 msgstr "Ezaugarri esperimentalak"
 
-#: src/page/admin/sessions.vue:109 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1220,6 +1220,10 @@ msgstr "Aukera globalak"
 #: src/options/options.js:444
 msgid "Gold"
 msgstr "Urrea"
+
+#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
+msgid "Grant Type"
+msgstr ""
 
 #: src/options/options.js:447
 msgid "Green"
@@ -1443,7 +1447,7 @@ msgstr "Lanczos: Xehetasunen kontserbazioa, artefaktu minimoak"
 msgid "Language"
 msgstr "Hizkuntza"
 
-#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "Azken Aktiboa"
 
@@ -1463,7 +1467,7 @@ msgstr "Azken erabilia"
 msgid "Latitude"
 msgstr "Latitudea"
 
-#: src/options/admin.js:39 src/options/auth.js:29
+#: src/options/admin.js:43 src/options/auth.js:29
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1643,6 +1647,10 @@ msgstr "Minimizatu"
 msgid "Missing"
 msgstr "Falta"
 
+#: src/page/auth/login.vue:112
+msgid "Missing or invalid configuration"
+msgstr ""
+
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
 msgid "Moments"
@@ -1682,7 +1690,7 @@ msgstr "Gutxienez %{n} karaktere izan behar ditu."
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:138 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:141 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1778,7 +1786,7 @@ msgstr "Ez dago gako-hitz hau duen abisurik edo errorerik. Kontuan izan bilaketa
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Argazkiak ez diren eta kalitate baxuko irudiak berrikusi behar dira bilaketa-emaitzetan agertu aurretik."
 
-#: src/options/admin.js:43 src/options/auth.js:32 src/options/options.js:289
+#: src/options/admin.js:47 src/options/auth.js:32 src/options/options.js:289
 #: src/options/options.js:385
 msgid "None"
 msgstr "Bat ere ez"
@@ -1812,7 +1820,7 @@ msgstr "Ez da ezer aurkitu."
 msgid "Offline"
 msgstr "Lineaz kanpo"
 
-#: src/options/auth.js:28
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "OIDC"
 msgstr "OIDC"
 
@@ -1916,7 +1924,7 @@ msgstr "Panoramak"
 #: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/auth/login.vue:170
+#: src/dialog/share.vue:24 src/options/auth.js:91 src/page/auth/login.vue:173
 msgid "Password"
 msgstr "Pasahitza"
 
@@ -2049,13 +2057,13 @@ msgstr "Sakatu botoia indexatzen hasteko…"
 msgid "Press enter to create a new album."
 msgstr "Sakatu Sartu album berri bat sortzeko."
 
-#: src/page/settings/advanced.vue:216
-msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Eragotzi beste aplikazio batzuei PhotoPrism sareko unitate partekatu gisa sartzea."
-
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
 msgstr "Saihestu datu-baseen eta albumen babeskopiak eta baita YAML sidecar fitxategiak sortzea ere."
+
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr "Eragotzi beste aplikazio batzuei PhotoPrism sareko unitate partekatu gisa sartzea."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2255,7 +2263,7 @@ msgstr "Eskaneatu QR kodea zure autentifikatzaile aplikazioarekin edo erabili be
 msgid "Scans"
 msgstr "Eskaneatzea"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "Eremua"
@@ -2321,11 +2329,11 @@ msgstr "Zerbitzuaren URLa"
 msgid "Services"
 msgstr "Zerbitzuak"
 
-#: src/model/session.js:101 src/options/auth.js:41
+#: src/model/session.js:101 src/options/auth.js:41 src/options/auth.js:90
 msgid "Session"
 msgstr "Saioa"
 
-#: src/page/admin/sessions.vue:25
+#: src/page/admin/sessions.vue:26
 msgid "Session ID"
 msgstr "Saioaren ID"
 
@@ -2393,13 +2401,17 @@ msgstr "Erakutsi zerbitzariaren erregistroak Liburutegian."
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:333
+#: src/page/settings/advanced.vue:375
 msgid "Sidecar Files"
 msgstr "Sidecar fitxategiak"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
 msgstr "Hasi saioa"
+
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Sign In with %{provider}"
+msgstr ""
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2799,7 +2811,7 @@ msgid "Use your recovery code or contact an administrator for help."
 msgstr "Erabili zure berreskuratzeko kodea edo jarri harremanetan administratzaile batekin laguntza eskatzeko."
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
-#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:27
 #: src/model/user.js:313 src/options/auth.js:7
 msgid "User"
 msgstr "Erabiltzailea"
@@ -2833,7 +2845,7 @@ msgstr "Bektorea"
 msgid "Vectors"
 msgstr "Bektoreak"
 
-#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:102
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:105
 msgid "Verification Code"
 msgstr "Egiaztapen Kodea"
 

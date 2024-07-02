@@ -376,7 +376,7 @@ msgid "Aspect Ratio"
 msgstr "อัตราส่วน"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:28
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "การรับรองความถูกต้อง"
@@ -572,7 +572,7 @@ msgstr "ลูกค้า"
 msgid "Client Credentials"
 msgstr "ข้อมูลรับรองลูกค้า"
 
-#: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -691,7 +691,7 @@ msgstr "สร้างบัญชี"
 msgid "Create album"
 msgstr "สร้างอัลบั้ม"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:334
 msgid "Create regular backups based on the configured schedule."
 msgstr "สร้างการสำรองข้อมูลดัชนีตามกำหนดเวลาที่กำหนดไว้"
 
@@ -699,11 +699,11 @@ msgstr "สร้างการสำรองข้อมูลดัชนี
 msgid "Create YAML files to back up album metadata."
 msgstr "สร้างไฟล์ YAML เพื่อสำรองข้อมูลเมตาของอัลบั้ม"
 
-#: src/page/settings/advanced.vue:334
+#: src/page/settings/advanced.vue:376
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "สร้างไฟล์ช่วยเหลือ YAML เพื่อสำรองข้อมูลเมตาของรูปภาพ"
 
-#: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "สร้างเมื่อ"
 
@@ -731,7 +731,7 @@ msgstr "สีฟ้า"
 msgid "Daily"
 msgstr "รายวัน"
 
-#: src/page/settings/advanced.vue:375
+#: src/page/settings/advanced.vue:333
 msgid "Database Backups"
 msgstr "การสำรองฐานข้อมูล"
 
@@ -747,7 +747,7 @@ msgstr "ปิดการใช้งาน"
 msgid "Debug Logs"
 msgstr "บันทึกการดีบัก"
 
-#: src/options/admin.js:31 src/page/admin/sessions.vue:61
+#: src/options/admin.js:31 src/page/admin/sessions.vue:62
 #: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
@@ -1048,7 +1048,7 @@ msgstr "ขยายการค้นหา"
 msgid "Experimental Features"
 msgstr "คุณสมบัติทดลอง"
 
-#: src/page/admin/sessions.vue:109 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1223,6 +1223,10 @@ msgstr "ตัวเลือกระดับโลก"
 #: src/options/options.js:444
 msgid "Gold"
 msgstr "ทอง"
+
+#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
+msgid "Grant Type"
+msgstr ""
 
 #: src/options/options.js:447
 msgid "Green"
@@ -1446,7 +1450,7 @@ msgstr "Lanczos: การเก็บรายละเอียด สิ่�
 msgid "Language"
 msgstr "ภาษา"
 
-#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "ใช้งานล่าสุด"
 
@@ -1466,7 +1470,7 @@ msgstr "ใช้ล่าสุด"
 msgid "Latitude"
 msgstr "ละติจูด"
 
-#: src/options/admin.js:39 src/options/auth.js:29
+#: src/options/admin.js:43 src/options/auth.js:29
 msgid "LDAP/AD"
 msgstr "แอลดีเอพี/ค.ศ"
 
@@ -1646,6 +1650,10 @@ msgstr "ย่อเล็กสุด"
 msgid "Missing"
 msgstr "หายไป"
 
+#: src/page/auth/login.vue:112
+msgid "Missing or invalid configuration"
+msgstr ""
+
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
 msgid "Moments"
@@ -1685,7 +1693,7 @@ msgstr "ต้องมีอักขระอย่างน้อย %{n} ต
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:138 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:141 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1781,7 +1789,7 @@ msgstr "ไม่มีคำเตือนหรือข้อผิดพล
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "รูปภาพที่ไม่ใช่ภาพถ่ายและคุณภาพต่ำต้องได้รับการตรวจสอบก่อนที่จะปรากฏในผลการค้นหา"
 
-#: src/options/admin.js:43 src/options/auth.js:32 src/options/options.js:289
+#: src/options/admin.js:47 src/options/auth.js:32 src/options/options.js:289
 #: src/options/options.js:385
 msgid "None"
 msgstr "ไม่มี"
@@ -1815,7 +1823,7 @@ msgstr "ไม่พบสิ่งใด"
 msgid "Offline"
 msgstr "ออฟไลน์"
 
-#: src/options/auth.js:28
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "OIDC"
 msgstr "คปภ"
 
@@ -1919,7 +1927,7 @@ msgstr "พาโนรามา"
 #: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/auth/login.vue:170
+#: src/dialog/share.vue:24 src/options/auth.js:91 src/page/auth/login.vue:173
 msgid "Password"
 msgstr "รหัสผ่าน"
 
@@ -2052,13 +2060,13 @@ msgstr "กดปุ่มเพื่อเริ่มสร้างดัช
 msgid "Press enter to create a new album."
 msgstr "กด Enter เพื่อสร้างอัลบั้มใหม่"
 
-#: src/page/settings/advanced.vue:216
-msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "ป้องกันไม่ให้แอปอื่นเข้าถึง PhotoPrism เป็นไดรฟ์เครือข่ายที่ใช้ร่วมกัน"
-
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
 msgstr "ป้องกันการสำรองข้อมูลฐานข้อมูลและอัลบั้ม รวมถึงไฟล์ช่วยเหลือ YAML ไม่ให้ถูกสร้างขึ้น"
+
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr "ป้องกันไม่ให้แอปอื่นเข้าถึง PhotoPrism เป็นไดรฟ์เครือข่ายที่ใช้ร่วมกัน"
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2258,7 +2266,7 @@ msgstr "สแกนโค้ด QR ด้วยแอปยืนยันต�
 msgid "Scans"
 msgstr "สแกน"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "ขอบเขต"
@@ -2324,11 +2332,11 @@ msgstr "URL บริการ"
 msgid "Services"
 msgstr "URL บริการ"
 
-#: src/model/session.js:101 src/options/auth.js:41
+#: src/model/session.js:101 src/options/auth.js:41 src/options/auth.js:90
 msgid "Session"
 msgstr "การประชุม"
 
-#: src/page/admin/sessions.vue:25
+#: src/page/admin/sessions.vue:26
 msgid "Session ID"
 msgstr "รหัสเซสชัน"
 
@@ -2396,13 +2404,17 @@ msgstr "แสดงบันทึกเซิร์ฟเวอร์ในไ
 msgid "Sidecar"
 msgstr "ไซด์คาร์"
 
-#: src/page/settings/advanced.vue:333
+#: src/page/settings/advanced.vue:375
 msgid "Sidecar Files"
 msgstr "ไฟล์รถไซด์คาร์"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
 msgstr "เข้าสู่ระบบ"
+
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Sign In with %{provider}"
+msgstr ""
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2802,7 +2814,7 @@ msgid "Use your recovery code or contact an administrator for help."
 msgstr "ใช้รหัสกู้คืนของคุณหรือติดต่อผู้ดูแลระบบเพื่อขอความช่วยเหลือ"
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
-#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:27
 #: src/model/user.js:313 src/options/auth.js:7
 msgid "User"
 msgstr "ผู้ใช้"
@@ -2836,7 +2848,7 @@ msgstr "เวกเตอร์"
 msgid "Vectors"
 msgstr "เวกเตอร์"
 
-#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:102
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:105
 msgid "Verification Code"
 msgstr "รหัสยืนยัน"
 

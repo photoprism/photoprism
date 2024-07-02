@@ -424,7 +424,7 @@ msgstr ""
 #: src/dialog/admin/users/add.vue:219
 #: src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:77
-#: src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:28
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr ""
@@ -670,7 +670,7 @@ msgstr ""
 msgid "Client Credentials"
 msgstr ""
 
-#: src/page/admin/sessions.vue:135
+#: src/page/admin/sessions.vue:143
 #: src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228
 #: src/dialog/account/apps.vue:59
@@ -819,7 +819,7 @@ msgstr ""
 msgid "Create album"
 msgstr ""
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:334
 msgid "Create regular backups based on the configured schedule."
 msgstr ""
 
@@ -827,11 +827,11 @@ msgstr ""
 msgid "Create YAML files to back up album metadata."
 msgstr ""
 
-#: src/page/settings/advanced.vue:334
+#: src/page/settings/advanced.vue:376
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr ""
 
-#: src/page/admin/sessions.vue:97
+#: src/page/admin/sessions.vue:105
 #: src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr ""
@@ -861,7 +861,7 @@ msgstr ""
 msgid "Daily"
 msgstr ""
 
-#: src/page/settings/advanced.vue:375
+#: src/page/settings/advanced.vue:333
 msgid "Database Backups"
 msgstr ""
 
@@ -881,7 +881,7 @@ msgid "Debug Logs"
 msgstr ""
 
 #: src/options/admin.js:31
-#: src/page/admin/sessions.vue:61
+#: src/page/admin/sessions.vue:62
 #: src/page/admin/users.vue:100
 #: src/model/session.js:64
 #: src/model/user.js:217
@@ -1234,8 +1234,8 @@ msgstr ""
 msgid "Experimental Features"
 msgstr ""
 
-#: src/page/admin/sessions.vue:109
-#: src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:117
+#: src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61
 #: src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249
@@ -1440,6 +1440,11 @@ msgstr ""
 
 #: src/options/options.js:444
 msgid "Gold"
+msgstr ""
+
+#: src/page/admin/sessions.vue:98
+#: src/page/admin/sessions.vue:2
+msgid "Grant Type"
 msgstr ""
 
 #: src/options/options.js:447
@@ -1714,8 +1719,8 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: src/page/admin/sessions.vue:103
-#: src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:111
+#: src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr ""
 
@@ -1736,7 +1741,7 @@ msgstr ""
 msgid "Latitude"
 msgstr ""
 
-#: src/options/admin.js:39
+#: src/options/admin.js:43
 #: src/options/auth.js:29
 msgid "LDAP/AD"
 msgstr ""
@@ -1955,6 +1960,10 @@ msgstr ""
 msgid "Missing"
 msgstr ""
 
+#: src/page/auth/login.vue:112
+msgid "Missing or invalid configuration"
+msgstr ""
+
 #: src/app/routes.js:162
 #: src/component/navigation.vue:249
 #: src/component/navigation.vue:975
@@ -2009,7 +2018,7 @@ msgstr ""
 #: src/dialog/service/edit.vue:427
 #: src/page/about/feedback.vue:174
 #: src/page/albums.vue:89
-#: src/page/auth/login.vue:138
+#: src/page/auth/login.vue:141
 #: src/page/labels.vue:347
 #: src/page/people/new.vue:52
 #: src/page/people/new.vue:305
@@ -2139,7 +2148,7 @@ msgstr ""
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 
-#: src/options/admin.js:43
+#: src/options/admin.js:47
 #: src/options/auth.js:32
 #: src/options/options.js:289
 #: src/options/options.js:385
@@ -2177,6 +2186,7 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
+#: src/options/admin.js:39
 #: src/options/auth.js:28
 msgid "OIDC"
 msgstr ""
@@ -2297,7 +2307,8 @@ msgstr ""
 #: src/dialog/service/add.vue:126
 #: src/dialog/service/edit.vue:487
 #: src/dialog/share.vue:24
-#: src/page/auth/login.vue:170
+#: src/options/auth.js:91
+#: src/page/auth/login.vue:173
 msgid "Password"
 msgstr ""
 
@@ -2451,12 +2462,12 @@ msgstr ""
 msgid "Press enter to create a new album."
 msgstr ""
 
-#: src/page/settings/advanced.vue:216
-msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr ""
-
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
+msgstr ""
+
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
 msgstr ""
 
 #: src/dialog/photo/edit/files.vue:23
@@ -2696,7 +2707,7 @@ msgid "Scans"
 msgstr ""
 
 #: src/page/admin/sessions.vue:91
-#: src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48
 #: src/dialog/account/apps.vue:443
 msgid "Scope"
@@ -2775,10 +2786,11 @@ msgstr ""
 
 #: src/model/session.js:101
 #: src/options/auth.js:41
+#: src/options/auth.js:90
 msgid "Session"
 msgstr ""
 
-#: src/page/admin/sessions.vue:25
+#: src/page/admin/sessions.vue:26
 msgid "Session ID"
 msgstr ""
 
@@ -2861,12 +2873,17 @@ msgstr ""
 msgid "Sidecar"
 msgstr ""
 
-#: src/page/settings/advanced.vue:333
+#: src/page/settings/advanced.vue:375
 msgid "Sidecar Files"
 msgstr ""
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
+msgstr ""
+
+#: src/page/auth/login.vue:56
+#: src/page/auth/login.vue:6
+msgid "Sign In with %{provider}"
 msgstr ""
 
 #: src/page/discover.vue:8
@@ -3337,7 +3354,7 @@ msgstr ""
 #: src/options/admin.js:10
 #: src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2
-#: src/page/admin/sessions.vue:26
+#: src/page/admin/sessions.vue:27
 #: src/model/user.js:313
 #: src/options/auth.js:7
 msgid "User"
@@ -3381,7 +3398,7 @@ msgid "Vectors"
 msgstr ""
 
 #: src/dialog/account/passcode.vue:308
-#: src/page/auth/login.vue:102
+#: src/page/auth/login.vue:105
 msgid "Verification Code"
 msgstr ""
 

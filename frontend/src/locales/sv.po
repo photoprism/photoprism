@@ -376,7 +376,7 @@ msgid "Aspect Ratio"
 msgstr "Bildförhållande"
 
 #: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
-#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:27
+#: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:28
 #: src/page/admin/users.vue:37
 msgid "Authentication"
 msgstr "Autentisering"
@@ -572,7 +572,7 @@ msgstr "Kund"
 msgid "Client Credentials"
 msgstr "Klientens autentiseringsuppgifter"
 
-#: src/page/admin/sessions.vue:135 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -691,7 +691,7 @@ msgstr "Skapa ett konto"
 msgid "Create album"
 msgstr "Skapa album"
 
-#: src/page/settings/advanced.vue:376
+#: src/page/settings/advanced.vue:334
 msgid "Create regular backups based on the configured schedule."
 msgstr "Skapa säkerhetskopior av index enligt det konfigurerade schemat."
 
@@ -699,11 +699,11 @@ msgstr "Skapa säkerhetskopior av index enligt det konfigurerade schemat."
 msgid "Create YAML files to back up album metadata."
 msgstr "Skapa YAML-filer för att säkerhetskopiera metadata för album."
 
-#: src/page/settings/advanced.vue:334
+#: src/page/settings/advanced.vue:376
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Skapa YAML sidecar-filer för att säkerhetskopiera metadata för bilder."
 
-#: src/page/admin/sessions.vue:97 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Skapad"
 
@@ -731,7 +731,7 @@ msgstr "Cyan"
 msgid "Daily"
 msgstr "Dagligen"
 
-#: src/page/settings/advanced.vue:375
+#: src/page/settings/advanced.vue:333
 msgid "Database Backups"
 msgstr "Säkerhetskopiering av databaser"
 
@@ -747,7 +747,7 @@ msgstr "Avaktivera"
 msgid "Debug Logs"
 msgstr "Felsökningsloggar"
 
-#: src/options/admin.js:31 src/page/admin/sessions.vue:61
+#: src/options/admin.js:31 src/page/admin/sessions.vue:62
 #: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
@@ -1048,7 +1048,7 @@ msgstr "Utöka sökningen"
 msgid "Experimental Features"
 msgstr "Experimentella funktioner"
 
-#: src/page/admin/sessions.vue:109 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1223,6 +1223,10 @@ msgstr "Globala alternativ"
 #: src/options/options.js:444
 msgid "Gold"
 msgstr "Guld"
+
+#: src/page/admin/sessions.vue:98 src/page/admin/sessions.vue:2
+msgid "Grant Type"
+msgstr ""
 
 #: src/options/options.js:447
 msgid "Green"
@@ -1446,7 +1450,7 @@ msgstr "Lanczos: Bevarande av detaljer, minimala artefakter"
 msgid "Language"
 msgstr "Språk"
 
-#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:30
+#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "Senast aktiv"
 
@@ -1466,7 +1470,7 @@ msgstr "Senast använd"
 msgid "Latitude"
 msgstr "Latitud"
 
-#: src/options/admin.js:39 src/options/auth.js:29
+#: src/options/admin.js:43 src/options/auth.js:29
 msgid "LDAP/AD"
 msgstr "LDAP/AD"
 
@@ -1646,6 +1650,10 @@ msgstr "Minimera"
 msgid "Missing"
 msgstr "Saknas"
 
+#: src/page/auth/login.vue:112
+msgid "Missing or invalid configuration"
+msgstr ""
+
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
 msgid "Moments"
@@ -1685,7 +1693,7 @@ msgstr "Måste ha minst %{n} tecken."
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:138 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:141 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1781,7 +1789,7 @@ msgstr "Inga varningar eller fel som innehåller detta nyckelord. Observera att 
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Bilder som inte är fotografiska eller av låg kvalitet måste granskas innan de visas i sökresultaten."
 
-#: src/options/admin.js:43 src/options/auth.js:32 src/options/options.js:289
+#: src/options/admin.js:47 src/options/auth.js:32 src/options/options.js:289
 #: src/options/options.js:385
 msgid "None"
 msgstr "Ingen"
@@ -1815,7 +1823,7 @@ msgstr "Ingenting hittades."
 msgid "Offline"
 msgstr "Offline"
 
-#: src/options/auth.js:28
+#: src/options/admin.js:39 src/options/auth.js:28
 msgid "OIDC"
 msgstr "OIDC"
 
@@ -1919,7 +1927,7 @@ msgstr "Panoraman"
 #: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/page/auth/login.vue:170
+#: src/dialog/share.vue:24 src/options/auth.js:91 src/page/auth/login.vue:173
 msgid "Password"
 msgstr "Lösenord"
 
@@ -2052,13 +2060,13 @@ msgstr "Tryck på knappen för att starta indexeringen…"
 msgid "Press enter to create a new album."
 msgstr "Tryck på enter för att skapa ett nytt album."
 
-#: src/page/settings/advanced.vue:216
-msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
-msgstr "Hindra andra program från att komma åt PhotoPrism som en delad nätverksenhet."
-
 #: src/page/settings/advanced.vue:194
 msgid "Prevent database and album backups as well as YAML sidecar files from being created."
 msgstr "Förhindra att säkerhetskopior av databaser och album samt YAML-sidokarfiler skapas."
+
+#: src/page/settings/advanced.vue:216
+msgid "Prevent other apps from accessing PhotoPrism as a shared network drive."
+msgstr "Hindra andra program från att komma åt PhotoPrism som en delad nätverksenhet."
 
 #: src/dialog/photo/edit/files.vue:23 src/dialog/photo/edit/files.vue:20
 msgid "Preview"
@@ -2258,7 +2266,7 @@ msgstr "Skanna QR-koden med din autentiseringsapp eller använd inställningsnyc
 msgid "Scans"
 msgstr "Skannar"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:28
+#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "Omfattning"
@@ -2324,11 +2332,11 @@ msgstr "Tjänstens URL"
 msgid "Services"
 msgstr "Tjänstens URL"
 
-#: src/model/session.js:101 src/options/auth.js:41
+#: src/model/session.js:101 src/options/auth.js:41 src/options/auth.js:90
 msgid "Session"
 msgstr "Sammanträde"
 
-#: src/page/admin/sessions.vue:25
+#: src/page/admin/sessions.vue:26
 msgid "Session ID"
 msgstr "Sessions-ID"
 
@@ -2396,13 +2404,17 @@ msgstr "Visa serverloggar i biblioteket."
 msgid "Sidecar"
 msgstr "Sidecar"
 
-#: src/page/settings/advanced.vue:333
+#: src/page/settings/advanced.vue:375
 msgid "Sidecar Files"
 msgstr "Sidecar Files"
 
 #: src/page/auth/login.vue:35
 msgid "Sign in"
 msgstr "Logga in"
+
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Sign In with %{provider}"
+msgstr ""
 
 #: src/page/discover.vue:8
 msgid "Similar"
@@ -2802,7 +2814,7 @@ msgid "Use your recovery code or contact an administrator for help."
 msgstr "Använd din återställningskod eller kontakta en administratör för att få hjälp."
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
-#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:26
+#: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:27
 #: src/model/user.js:313 src/options/auth.js:7
 msgid "User"
 msgstr "Användare"
@@ -2836,7 +2848,7 @@ msgstr "Vektor"
 msgid "Vectors"
 msgstr "Vektorer"
 
-#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:102
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:105
 msgid "Verification Code"
 msgstr "Verifierings kod"
 
