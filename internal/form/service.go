@@ -3,7 +3,7 @@ package form
 import (
 	"github.com/ulule/deepcopier"
 
-	"github.com/photoprism/photoprism/internal/remote"
+	"github.com/photoprism/photoprism/internal/service"
 )
 
 // Service represents a remote service form for uploading, downloading or syncing media files.
@@ -40,7 +40,7 @@ func NewService(m interface{}) (f Service, err error) {
 
 // Discovery performs automatic service discovery.
 func (f *Service) Discovery() error {
-	acc, err := remote.Discover(f.AccURL, f.AccUser, f.AccPass)
+	acc, err := service.Discover(f.AccURL, f.AccUser, f.AccPass)
 
 	if err != nil {
 		return err

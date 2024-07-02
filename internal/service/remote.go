@@ -1,5 +1,5 @@
 /*
-Package remote provides detection of remote services for file sharing and synchronization.
+Package service provides detection of remote services for file sharing and synchronization.
 
 Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
@@ -22,7 +22,7 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package remote
+package service
 
 import (
 	"net/http"
@@ -30,17 +30,16 @@ import (
 )
 
 const (
-	ServiceWebDAV    = "webdav"
-	ServiceFacebook  = "facebook"
-	ServiceTwitter   = "twitter"
-	ServiceFlickr    = "flickr"
-	ServiceInstagram = "instagram"
-	ServiceEyeEm     = "eyeem"
-	ServiceTelegram  = "telegram"
-	ServiceWhatsApp  = "whatsapp"
-	ServiceGPhotos   = "gphotos"
-	ServiceGDrive    = "gdrive"
-	ServiceOneDrive  = "onedrive"
+	WebDAV    = "webdav"
+	Facebook  = "facebook"
+	Twitter   = "twitter"
+	Flickr    = "flickr"
+	Instagram = "instagram"
+	Telegram  = "telegram"
+	WhatsApp  = "whatsapp"
+	GPhotos   = "gphotos"
+	GDrive    = "gdrive"
+	OneDrive  = "onedrive"
 )
 
 func HttpOk(method, rawUrl string) bool {

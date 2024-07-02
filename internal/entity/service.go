@@ -9,8 +9,8 @@ import (
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/remote"
-	"github.com/photoprism/photoprism/internal/remote/webdav"
+	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -140,7 +140,7 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// TODO: Support for other remote services in addition to WebDAV.
-	if m.AccType != remote.ServiceWebDAV {
+	if m.AccType != service.WebDAV {
 		m.AccShare = false // Disable manual upload.
 		m.AccSync = false  // Disable background sync.
 	}
@@ -192,7 +192,7 @@ func (m *Service) Delete() error {
 
 // Directories returns a list of directories or albums in an account.
 func (m *Service) Directories() (result fs.FileInfos, err error) {
-	if m.AccType == remote.ServiceWebDAV {
+	if m.AccType == service.WebDAV {
 		var client *webdav.Client
 		if client, err = webdav.NewClient(m.AccURL, m.AccUser, m.AccPass, webdav.Timeout(m.AccTimeout)); err != nil {
 			return result, err

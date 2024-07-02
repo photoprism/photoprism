@@ -3,14 +3,14 @@ package workers
 import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/remote"
-	"github.com/photoprism/photoprism/internal/remote/webdav"
+	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // Updates the local list of remote files so that they can be downloaded in batches
 func (w *Sync) refresh(a entity.Service) (complete bool, err error) {
-	if a.AccType != remote.ServiceWebDAV {
+	if a.AccType != service.WebDAV {
 		return false, nil
 	}
 

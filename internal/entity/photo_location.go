@@ -7,7 +7,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
-	"github.com/photoprism/photoprism/internal/remote/maps"
+	"github.com/photoprism/photoprism/internal/service/maps"
 	"github.com/photoprism/photoprism/internal/tensorflow/classify"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/geo"

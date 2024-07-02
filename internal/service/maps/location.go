@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/remote/hub/places"
+	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
