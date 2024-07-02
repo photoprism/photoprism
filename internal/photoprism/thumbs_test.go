@@ -9,11 +9,11 @@ import (
 
 	"github.com/disintegration/imaging"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/tensorflow/classify"
-	"github.com/photoprism/photoprism/internal/tensorflow/face"
-	"github.com/photoprism/photoprism/internal/tensorflow/nsfw"
 	"github.com/photoprism/photoprism/internal/thumb"
 )
 

@@ -3,7 +3,7 @@ package get
 import (
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/tensorflow/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 )
 
 var onceNsfwDetector sync.Once

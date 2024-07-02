@@ -1,7 +1,7 @@
 package photoprism
 
 import (
-	"github.com/photoprism/photoprism/internal/tensorflow/nsfw"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 )

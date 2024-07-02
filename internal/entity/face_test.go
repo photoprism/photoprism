@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/tensorflow/face"
+	"github.com/photoprism/photoprism/internal/ai/face"
 
 	"github.com/stretchr/testify/assert"
 )

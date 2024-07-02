@@ -3,7 +3,7 @@ package get
 import (
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/tensorflow/face"
+	"github.com/photoprism/photoprism/internal/ai/face"
 )
 
 var onceFaceNet sync.Once

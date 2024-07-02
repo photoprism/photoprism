@@ -3,7 +3,7 @@ package get
 import (
 	"sync"
 
-	"github.com/photoprism/photoprism/internal/tensorflow/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
 )
 
 var onceClassify sync.Once

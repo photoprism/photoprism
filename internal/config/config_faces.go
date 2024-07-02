@@ -1,6 +1,6 @@
 package config
 
-import "github.com/photoprism/photoprism/internal/tensorflow/face"
+import "github.com/photoprism/photoprism/internal/ai/face"
 
 // FaceSize returns the face size threshold in pixels.
 func (c *Config) FaceSize() int {

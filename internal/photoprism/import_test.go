@@ -3,10 +3,10 @@ package photoprism
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/tensorflow/classify"
-	"github.com/photoprism/photoprism/internal/tensorflow/face"
-	"github.com/photoprism/photoprism/internal/tensorflow/nsfw"
 	"github.com/stretchr/testify/assert"
 )
 
