@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/internal/remote/maps"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
