@@ -1,5 +1,5 @@
 /*
-Package dummy provides dummy implementations for common interfaces.
+Package dummy provides dummy implementations for logger interfaces.
 
 Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 

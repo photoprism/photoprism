@@ -6,7 +6,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/photoprism/photoprism/pkg/dummy"
+	"github.com/photoprism/photoprism/pkg/log/dummy"
 )
 
 // init initializes the event package.
