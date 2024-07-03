@@ -12,7 +12,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// OAuthAuthorize is a starting point for browser-based OpenID Connect flows.
+// OAuthAuthorize should gather consent and authorization from resource owners when using the
+// Authorization Code Grant flow, see https://github.com/photoprism/photoprism/issues/4368.
 //
 // GET /api/v1/oauth/authorize
 func OAuthAuthorize(router *gin.RouterGroup) {
@@ -38,7 +39,7 @@ func OAuthAuthorize(router *gin.RouterGroup) {
 			return
 		}
 
-		// TODO
+		// TODO: see https://github.com/photoprism/photoprism/issues/4368
 
 		// Send response.
 		c.JSON(http.StatusMethodNotAllowed, gin.H{"status": StatusFailed})
