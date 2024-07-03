@@ -7,7 +7,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
-	"github.com/photoprism/photoprism/pkg/fastwalk"
+	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 	"github.com/stretchr/testify/assert"
 )
 

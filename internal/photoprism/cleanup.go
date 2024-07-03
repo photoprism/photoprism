@@ -17,8 +17,8 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
 // CleanUp represents a worker that deletes orphaned index entries, sidecar files and thumbnails.

@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/fastwalk"
+	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
 var modelPath, _ = filepath.Abs("../../../assets/facenet")

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/photoprism/photoprism/pkg/fastwalk"
+	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
 var OriginalPaths = []string{

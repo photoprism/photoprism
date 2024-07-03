@@ -17,7 +17,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/photoprism/photoprism/pkg/fastwalk"
+	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
 func formatFileModes(m map[string]os.FileMode) string {
