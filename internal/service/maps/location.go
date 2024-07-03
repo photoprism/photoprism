@@ -6,7 +6,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/service/hub/places"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 

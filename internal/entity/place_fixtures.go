@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/geo/s2"
 )
 
 type PlacesMap map[string]Place

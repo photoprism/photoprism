@@ -4,9 +4,9 @@ import (
 	"math"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/rnd"
-	"github.com/photoprism/photoprism/pkg/s2"
 )
 
 const (

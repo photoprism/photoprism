@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/stretchr/testify/assert"
 )
 
