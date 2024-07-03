@@ -12,7 +12,8 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// OAuthUserinfo returns information about the authenticated user.
+// OAuthUserinfo should return information about the authenticated user,
+// see https://github.com/photoprism/photoprism/issues/4369.
 //
 // GET /api/v1/oauth/userinfo
 func OAuthUserinfo(router *gin.RouterGroup) {
@@ -38,7 +39,7 @@ func OAuthUserinfo(router *gin.RouterGroup) {
 			return
 		}
 
-		// TODO
+		// TODO: see https://github.com/photoprism/photoprism/issues/4369
 
 		// Send response.
 		c.JSON(http.StatusMethodNotAllowed, gin.H{"status": StatusFailed})
