@@ -1,7 +1,7 @@
 package meta
 
 import (
-	"github.com/photoprism/photoprism/pkg/video"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 const CodecUnknown = ""

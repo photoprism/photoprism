@@ -12,8 +12,8 @@ import (
 	"github.com/photoprism/photoprism/internal/meta"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/projection"
-	"github.com/photoprism/photoprism/pkg/video"
 )
 
 func TestMediaFile_HasSidecarJson(t *testing.T) {

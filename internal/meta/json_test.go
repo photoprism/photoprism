@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/projection"
-	"github.com/photoprism/photoprism/pkg/video"
 )
 
 func TestJSON(t *testing.T) {
