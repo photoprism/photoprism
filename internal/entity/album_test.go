@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/pkg/sortby"
+	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
