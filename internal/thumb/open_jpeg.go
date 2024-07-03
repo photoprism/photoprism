@@ -11,7 +11,7 @@ import (
 	"github.com/mandykoh/prism/meta"
 	"github.com/mandykoh/prism/meta/autometa"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/colors"
+	"github.com/photoprism/photoprism/pkg/media/colors"
 )
 
 // decodeImage opens an image and decodes its color metadata.

@@ -9,7 +9,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/colors"
+	"github.com/photoprism/photoprism/pkg/media/colors"
 )
 
 // Colors returns the ColorPerception of an image (only JPEG supported).
