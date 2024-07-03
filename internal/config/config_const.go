@@ -3,7 +3,7 @@ package config
 import (
 	"time"
 
-	"github.com/photoprism/photoprism/pkg/unix"
+	"github.com/photoprism/photoprism/pkg/time/unix"
 )
 
 // ApiUri defines the standard path for handling REST requests.
