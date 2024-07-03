@@ -5,7 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/authn"
-	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 
 	"github.com/stretchr/testify/assert"
 )

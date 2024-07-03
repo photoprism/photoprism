@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/photoprism/photoprism/pkg/report"
+import "github.com/photoprism/photoprism/pkg/txt/report"
 
 type DetailsMap map[string]Details
 

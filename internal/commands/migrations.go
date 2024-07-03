@@ -13,7 +13,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
-	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 var MigrationsStatusCommand = cli.Command{

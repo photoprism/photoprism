@@ -21,7 +21,7 @@ import (
 	"github.com/photoprism/photoprism/internal/workers/auto"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // StartCommand configures the command name, flags, and action.

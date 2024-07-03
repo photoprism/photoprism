@@ -19,9 +19,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/list"
-	"github.com/photoprism/photoprism/pkg/report"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 	"github.com/photoprism/photoprism/pkg/unix"
 )
 

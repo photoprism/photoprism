@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // Report returns a file format documentation table.
