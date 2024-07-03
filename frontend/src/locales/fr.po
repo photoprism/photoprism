@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-06-21 21:22+0000\n"
+"PO-Revision-Date: 2024-07-03 13:55+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1654,7 +1654,7 @@ msgstr "Manquant"
 
 #: src/page/auth/login.vue:112
 msgid "Missing or invalid configuration"
-msgstr "Configuration manquante ou invalide"
+msgstr "Configuration manquante ou incorrecte"
 
 #: src/app/routes.js:162 src/component/navigation.vue:249
 #: src/component/navigation.vue:975 src/page/settings/general.vue:165
@@ -2416,7 +2416,7 @@ msgstr "S'identifier"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Sign In with %{provider}"
-msgstr "Se connecter avec %{provider}"
+msgstr "S'identifier avec %{provider}"
 
 #: src/page/discover.vue:8
 msgid "Similar"
