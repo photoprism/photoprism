@@ -83,7 +83,7 @@ require golang.org/x/text v0.16.0
 
 require (
 	github.com/davidbyttow/govips/v2 v2.14.0
-	github.com/go-co-op/gocron/v2 v2.7.1
+	github.com/go-co-op/gocron/v2 v2.8.0
 	github.com/pquerna/otp v1.4.0
 	github.com/robfig/cron/v3 v3.0.1
 )
