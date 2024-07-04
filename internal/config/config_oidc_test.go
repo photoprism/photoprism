@@ -124,6 +124,24 @@ func TestConfig_OIDCUsername(t *testing.T) {
 	assert.Equal(t, authn.ClaimUsername, c.OIDCUsername())
 }
 
+func TestConfig_OIDCDomain(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "", c.OIDCDomain())
+
+	c.options.OIDCDomain = "example.com"
+
+	assert.Equal(t, "example.com", c.OIDCDomain())
+
+	c.options.OIDCDomain = "foo"
+
+	assert.Equal(t, "", c.OIDCDomain())
+
+	c.options.OIDCDomain = ""
+
+	assert.Equal(t, "", c.OIDCDomain())
+}
+
 func TestConfig_OIDCRegister(t *testing.T) {
 	c := NewConfig(CliTestContext())
 

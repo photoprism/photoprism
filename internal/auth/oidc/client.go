@@ -30,7 +30,7 @@ type Client struct {
 	debug bool
 }
 
-func NewClient(iss *url.URL, clientId, clientSecret, customScopes, siteUrl string, debug bool) (result *Client, err error) {
+func NewClient(oidcUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl string, debug bool) (result *Client, err error) {
 	u, err := url.Parse(siteUrl)
 
 	if err != nil {
@@ -68,7 +68,7 @@ func NewClient(iss *url.URL, clientId, clientSecret, customScopes, siteUrl strin
 		}),
 	}
 
-	discover, err := client.Discover(iss.String(), httpClient)
+	discover, err := client.Discover(oidcUri.String(), httpClient)
 
 	if err != nil {
 		log.Debugf("oidc: %q (discover)", err)
@@ -81,9 +81,13 @@ func NewClient(iss *url.URL, clientId, clientSecret, customScopes, siteUrl strin
 		}
 	}
 
-	scopes := strings.Split(strings.TrimSpace("openid email profile "+customScopes), " ")
+	if oidcScopes == "" {
+		oidcScopes = "openid email profile"
+	}
 
-	provider, err := rp.NewRelyingPartyOIDC(iss.String(), clientId, clientSecret, u.String(), scopes, clientOpt...)
+	scopes := strings.Split(strings.TrimSpace(oidcScopes), " ")
+
+	provider, err := rp.NewRelyingPartyOIDC(oidcUri.String(), oidcClient, oidcSecret, u.String(), scopes, clientOpt...)
 
 	if err != nil {
 		log.Debugf("oidc: %s (issuer)", err)

@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/config/ttl"
-
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/thumb"

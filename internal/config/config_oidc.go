@@ -104,6 +104,11 @@ func (c *Config) OIDCUsername() string {
 	return authn.ClaimUsername
 }
 
+// OIDCDomain returns the email domain name for restricted single sign-on via OIDC.
+func (c *Config) OIDCDomain() string {
+	return clean.Domain(c.options.OIDCDomain)
+}
+
 // OIDCRole returns the default user role when signing up via OIDC.
 func (c *Config) OIDCRole() acl.Role {
 	if c.options.OIDCRole == "" {
@@ -153,10 +158,17 @@ func (c *Config) OIDCReport() (rows [][]string, cols []string) {
 		{"oidc-redirect", fmt.Sprintf("%t", c.OIDCRedirect())},
 		{"oidc-register", fmt.Sprintf("%t", c.OIDCRegister())},
 		{"oidc-username", c.OIDCUsername()},
+	}
+
+	if domain := c.OIDCDomain(); domain != "" {
+		rows = append(rows, []string{"oidc-domain", domain})
+	}
+
+	rows = append(rows, [][]string{
 		{"oidc-role", c.OIDCRole().String()},
 		{"oidc-webdav", fmt.Sprintf("%t", c.OIDCWebDAV())},
 		{"disable-oidc", fmt.Sprintf("%t", c.DisableOIDC())},
-	}
+	}...)
 
 	return rows, cols
 }

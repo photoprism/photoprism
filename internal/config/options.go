@@ -29,8 +29,8 @@ type Options struct {
 	AdminPassword         string        `yaml:"AdminPassword" json:"-" flag:"admin-password"`
 	PasswordLength        int           `yaml:"PasswordLength" json:"-" flag:"password-length"`
 	PasswordResetUri      string        `yaml:"PasswordResetUri" json:"-" flag:"password-reset-uri"`
-	RegisterUri           string        `yaml:"RegisterUri" json:"-" flag:"register-uri"`
-	LoginUri              string        `yaml:"LoginUri" json:"-" flag:"login-uri"`
+	RegisterUri           string        `yaml:"-" json:"-" flag:"register-uri"`
+	LoginUri              string        `yaml:"-" json:"-" flag:"login-uri"`
 	OIDCUri               string        `yaml:"OIDCUri" json:"-" flag:"oidc-uri"`
 	OIDCClient            string        `yaml:"OIDCClient" json:"-" flag:"oidc-client"`
 	OIDCSecret            string        `yaml:"OIDCSecret" json:"-" flag:"oidc-secret"`
@@ -40,7 +40,8 @@ type Options struct {
 	OIDCRedirect          bool          `yaml:"OIDCRedirect" json:"OIDCRedirect" flag:"oidc-redirect"`
 	OIDCRegister          bool          `yaml:"OIDCRegister" json:"OIDCRegister" flag:"oidc-register"`
 	OIDCUsername          string        `yaml:"OIDCUsername" json:"-" flag:"oidc-username"`
-	OIDCRole              string        `yaml:"OIDCRole" json:"-" flag:"oidc-role"`
+	OIDCDomain            string        `yaml:"-" json:"-" flag:"oidc-domain"`
+	OIDCRole              string        `yaml:"-" json:"-" flag:"oidc-role"`
 	OIDCWebDAV            bool          `yaml:"OIDCWebDAV" json:"-" flag:"oidc-webdav"`
 	DisableOIDC           bool          `yaml:"DisableOIDC" json:"DisableOIDC" flag:"disable-oidc"`
 	SessionMaxAge         int64         `yaml:"SessionMaxAge" json:"-" flag:"session-maxage"`

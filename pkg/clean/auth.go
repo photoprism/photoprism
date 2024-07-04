@@ -9,6 +9,7 @@ import (
 )
 
 var EmailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+var DomainRegexp = regexp.MustCompile("^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$")
 
 // Auth returns the sanitized authentication identifier trimmed to a maximum length of 255 characters.
 func Auth(s string) string {
@@ -109,6 +110,22 @@ func Email(s string) string {
 	s = strings.ToLower(strings.TrimSpace(s))
 
 	if EmailRegexp.MatchString(s) {
+		return s
+	}
+
+	return ""
+}
+
+// Domain returns the normalized domain name with trimmed whitespace and in lowercase.
+func Domain(s string) string {
+	// Empty or too long?
+	if s == "" || reject(s, txt.ClipName) {
+		return ""
+	}
+
+	s = strings.ToLower(strings.TrimSpace(s))
+
+	if DomainRegexp.MatchString(s) {
 		return s
 	}
 

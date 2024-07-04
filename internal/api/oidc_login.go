@@ -29,7 +29,6 @@ func OIDCLogin(router *gin.RouterGroup) {
 
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
-		actor := "unknown user"
 		action := "sign in"
 
 		// Get global config.
@@ -37,11 +36,11 @@ func OIDCLogin(router *gin.RouterGroup) {
 
 		// Abort in public mode and if OIDC is disabled.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrDisabledInPublicMode.Error()})
+			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrDisabledInPublicMode.Error()})
 			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
 			return
 		} else if !conf.OIDCEnabled() {
-			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrAuthenticationDisabled.Error()})
+			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrAuthenticationDisabled.Error()})
 			Abort(c, http.StatusMethodNotAllowed, i18n.ErrUnsupported)
 			return
 		}
@@ -60,7 +59,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 		provider := get.OIDC()
 
 		if provider == nil {
-			event.AuditErr([]string{clientIp, "oidc", actor, action, authn.ErrAuthenticationDisabled.Error()})
+			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrInvalidProvider.Error()})
 			Abort(c, http.StatusInternalServerError, i18n.ErrConnectionFailed)
 			return
 		}

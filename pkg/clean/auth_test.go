@@ -1,6 +1,7 @@
 package clean
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -104,6 +105,37 @@ func TestEmail(t *testing.T) {
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Email(""))
+	})
+}
+
+func TestDomain(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		assert.Equal(t, "photoprism.app", Domain("photoprism.app"))
+	})
+	t.Run("Whitespace", func(t *testing.T) {
+		assert.Equal(t, "photoprism.app", Domain(" photoprism.app "))
+	})
+	t.Run("Hostname", func(t *testing.T) {
+		assert.Equal(t, "foo.example.com", Domain(" FOO.example.Com   "))
+	})
+	t.Run("Example", func(t *testing.T) {
+		assert.Equal(t, "", Domain("example"))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, "", Domain(" hello-photoprism "))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Domain(""))
+	})
+	t.Run("Match", func(t *testing.T) {
+		email := "john.doe@example.com"
+		domain := Domain("example.com")
+
+		_, emailDomain, _ := strings.Cut(Email(email), "@")
+
+		assert.True(t, strings.HasSuffix("."+emailDomain, "."+domain))
+		assert.False(t, strings.HasSuffix(".my-"+emailDomain, "."+domain))
+		assert.True(t, strings.HasSuffix("my-"+emailDomain, domain))
 	})
 }
 
