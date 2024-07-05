@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-05-24 07:46+0000\n"
+"PO-Revision-Date: 2024-07-05 09:23+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/frontend/nl/>\n"
 "Language: nl\n"
@@ -653,7 +653,7 @@ msgstr "Doorgaan"
 
 #: src/page/auth/login.vue:56 src/page/auth/login.vue:6
 msgid "Continue with %{provider}"
-msgstr ""
+msgstr "Ga verder met %{provider}"
 
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
