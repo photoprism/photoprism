@@ -124,7 +124,7 @@
                     <div class="text-xs-center oidc-buttons pt-4">
                       <v-btn :color="colors.primary" depressed :disabled="loading" block class="white--text action-oidc-login ra-6 my-0 py-0 px-3" @click.stop.prevent="onOidcLogin">
                         <img alt="" class="oidc-icon v-icon--left theme--dark" :src="config.ext.oidc.icon" />
-                        <translate :translate-params="{ provider: config.ext.oidc.provider }">Sign In with %{provider}</translate>
+                        <translate :translate-params="{ provider: config.ext.oidc.provider }">Continue with %{provider}</translate>
                       </v-btn>
                     </div>
                   </v-flex>

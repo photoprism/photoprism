@@ -651,6 +651,10 @@ msgstr "Obsahuje jeden obrázek."
 msgid "Continue"
 msgstr "Pokračovat"
 
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Continue with %{provider}"
+msgstr ""
+
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Přispěvatel"
@@ -2408,10 +2412,6 @@ msgstr "Soubory Sidecar"
 msgid "Sign in"
 msgstr "Přihlásit se"
 
-#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
-msgid "Sign In with %{provider}"
-msgstr "Přihlášení pomocí %{provider}"
-
 #: src/page/discover.vue:8
 msgid "Similar"
 msgstr "Podobné"
@@ -2991,6 +2991,9 @@ msgstr "Vaše knihovna je průběžně analyzována a automaticky vytváří alb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Přiblížit/Oddálit"
+
+#~ msgid "Sign In with %{provider}"
+#~ msgstr "Přihlášení pomocí %{provider}"
 
 #~ msgid "Grant Type"
 #~ msgstr "Typ grantu"

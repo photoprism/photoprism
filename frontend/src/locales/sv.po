@@ -651,6 +651,10 @@ msgstr "Innehåller en bild."
 msgid "Continue"
 msgstr "Fortsätta"
 
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Continue with %{provider}"
+msgstr ""
+
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Bidragsgivare"
@@ -2408,10 +2412,6 @@ msgstr "Sidecar Files"
 msgid "Sign in"
 msgstr "Logga in"
 
-#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
-msgid "Sign In with %{provider}"
-msgstr "Logga in med %{provider}"
-
 #: src/page/discover.vue:8
 msgid "Similar"
 msgstr "Liknande"
@@ -2993,6 +2993,9 @@ msgstr "Ditt bibliotek analyseras kontinuerligt för att automatiskt skapa album
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zooma in/ut"
+
+#~ msgid "Sign In with %{provider}"
+#~ msgstr "Logga in med %{provider}"
 
 #~ msgid "Grant Type"
 #~ msgstr "Typ av bidrag"

@@ -648,6 +648,10 @@ msgstr "Bevat een foto."
 msgid "Continue"
 msgstr "Aanhou"
 
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Continue with %{provider}"
+msgstr ""
+
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Bydraer"
@@ -2405,10 +2409,6 @@ msgstr "Syspan lêers"
 msgid "Sign in"
 msgstr "Meld aan"
 
-#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
-msgid "Sign In with %{provider}"
-msgstr "Meld aan met %{provider}"
-
 #: src/page/discover.vue:8
 msgid "Similar"
 msgstr "Soortgelyk"
@@ -2988,6 +2988,9 @@ msgstr "Jou biblioteek word voortdurend ontleed om outomaties albums van spesial
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Zoem in/uit"
+
+#~ msgid "Sign In with %{provider}"
+#~ msgstr "Meld aan met %{provider}"
 
 #~ msgid "Grant Type"
 #~ msgstr "Soort toekenning"

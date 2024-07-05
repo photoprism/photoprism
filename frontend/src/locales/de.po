@@ -651,6 +651,10 @@ msgstr "Enthält ein Bild."
 msgid "Continue"
 msgstr "Fortfahren"
 
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Continue with %{provider}"
+msgstr ""
+
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Contributor"
@@ -2408,10 +2412,6 @@ msgstr "Sidecar-Dateien"
 msgid "Sign in"
 msgstr "Anmelden"
 
-#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
-msgid "Sign In with %{provider}"
-msgstr "Anmeldung mit %{provider}"
-
 #: src/page/discover.vue:8
 msgid "Similar"
 msgstr "Ähnlich"
@@ -2991,6 +2991,9 @@ msgstr "Die vorhandenen Bilder werden fortlaufend analysiert, um automatisch Alb
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Herein/Herauszoomen"
+
+#~ msgid "Sign In with %{provider}"
+#~ msgstr "Anmeldung mit %{provider}"
 
 #~ msgid "Grant Type"
 #~ msgstr "Zuschuss Typ"

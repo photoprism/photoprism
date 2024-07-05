@@ -651,6 +651,10 @@ msgstr "包含一张图片。"
 msgid "Continue"
 msgstr "继续"
 
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Continue with %{provider}"
+msgstr ""
+
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "撰稿人"
@@ -2410,10 +2414,6 @@ msgstr "Sidecar 文件"
 msgid "Sign in"
 msgstr "登录"
 
-#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
-msgid "Sign In with %{provider}"
-msgstr "使用 %{provider} 登录"
-
 #: src/page/discover.vue:8
 msgid "Similar"
 msgstr "相似"
@@ -2993,6 +2993,9 @@ msgstr "你的库被不断分析，以自动创建特殊时刻、旅行和地点
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "缩放"
+
+#~ msgid "Sign In with %{provider}"
+#~ msgstr "使用 %{provider} 登录"
 
 #~ msgid "Grant Type"
 #~ msgstr "资助类型"

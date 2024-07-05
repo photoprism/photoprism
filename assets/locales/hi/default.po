@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 14:48+0000\n"
+"POT-Creation-Date: 2024-07-05 07:50+0000\n"
 "PO-Revision-Date: 2024-04-17 08:08+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
 "translate@weblate.org>\n"
@@ -15,384 +15,388 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
 "X-Generator: Weblate 5.4.3\n"
 
-#: messages.go:100
+#: messages.go:101
 msgid "Something went wrong, try again"
 msgstr "कुछ गलत हुआ है, दोबारा कोशिश करें"
 
-#: messages.go:101
+#: messages.go:102
 msgid "Unable to do that"
 msgstr "ऐसा करने में असमर्थ"
 
-#: messages.go:102
+#: messages.go:103
+msgid "Too many requests"
+msgstr ""
+
+#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "परिवर्तन सहेजा नहीं जा सका"
 
-#: messages.go:103
+#: messages.go:105
 msgid "Could not be deleted"
 msgstr "हटाया नहीं जा सका"
 
-#: messages.go:104
+#: messages.go:106
 #, c-format
 msgid "%s already exists"
 msgstr "%s पहले से मौजूद है"
 
-#: messages.go:105
+#: messages.go:107
 msgid "Not found"
 msgstr "नहीं मिला"
 
-#: messages.go:106
+#: messages.go:108
 msgid "File not found"
 msgstr "फाइल नहीं मिली"
 
-#: messages.go:107
+#: messages.go:109
 msgid "File too large"
 msgstr "बहुत बड़ी फाइल"
 
-#: messages.go:108
+#: messages.go:110
 msgid "Unsupported"
 msgstr "असमर्थित"
 
-#: messages.go:109
+#: messages.go:111
 msgid "Unsupported type"
 msgstr "असमर्थित प्रकार"
 
-#: messages.go:110
+#: messages.go:112
 msgid "Unsupported format"
 msgstr "असमर्थित प्रारूप"
 
-#: messages.go:111
+#: messages.go:113
 msgid "Originals folder is empty"
 msgstr "मूल फ़ोल्डर खाली है"
 
-#: messages.go:112
+#: messages.go:114
 msgid "Selection not found"
 msgstr "चयन नहीं मिला"
 
-#: messages.go:113
+#: messages.go:115
 msgid "Entity not found"
 msgstr "इकाई नहीं मिली"
 
-#: messages.go:114
+#: messages.go:116
 msgid "Account not found"
 msgstr "खता नहीं मिला"
 
-#: messages.go:115
+#: messages.go:117
 msgid "User not found"
 msgstr "उपयोगकर्ता नहीं मिला"
 
-#: messages.go:116
+#: messages.go:118
 msgid "Label not found"
 msgstr "लेबल नहीं मिला"
 
-#: messages.go:117
+#: messages.go:119
 msgid "Album not found"
 msgstr "एल्बम नहीं मिला"
 
-#: messages.go:118
+#: messages.go:120
 msgid "Subject not found"
 msgstr "विषय नहीं मिला"
 
-#: messages.go:119
+#: messages.go:121
 msgid "Person not found"
 msgstr "व्यक्ति नहीं मिला"
 
-#: messages.go:120
+#: messages.go:122
 msgid "Face not found"
 msgstr "चेहरा नहीं मिला"
 
-#: messages.go:121
+#: messages.go:123
 msgid "Not available in public mode"
 msgstr "सार्वजनिक मोड में उपलब्ध नहीं है"
 
-#: messages.go:122
+#: messages.go:124
 msgid "Not available in read-only mode"
 msgstr "रीड ओनली मोड में उपलब्ध नहीं है"
 
-#: messages.go:123
+#: messages.go:125
 msgid "Please log in to your account"
 msgstr "कृपया अपने खाते लॉग इन करें"
 
-#: messages.go:124
+#: messages.go:126
 msgid "Permission denied"
 msgstr "अनुमति नहीं मिली"
 
-#: messages.go:125
+#: messages.go:127
 msgid "Upload might be offensive"
 msgstr "अपलोड आपत्तिजनक हो सकता है"
 
-#: messages.go:126
+#: messages.go:128
 msgid "Upload failed"
 msgstr "अपलोड विफल"
 
-#: messages.go:127
+#: messages.go:129
 msgid "No items selected"
 msgstr "कोई आइटम नहीं चुना गया"
 
-#: messages.go:128
+#: messages.go:130
 msgid "Failed creating file, please check permissions"
 msgstr "फ़ाइल बनाने में विफल, कृपया अनुमतियों की जाँच करें"
 
-#: messages.go:129
+#: messages.go:131
 msgid "Failed creating folder, please check permissions"
 msgstr "फ़ोल्डर बनाने में विफल, कृपया अनुमतियों की जाँच करें"
 
-#: messages.go:130
+#: messages.go:132
 msgid "Could not connect, please try again"
 msgstr "कनेक्ट नहीं हो सका, कृपया पुनः प्रयास करें"
 
-#: messages.go:131
+#: messages.go:133
 msgid "Enter verification code"
 msgstr "सत्यापन कोड दर्ज करें"
 
-#: messages.go:132
+#: messages.go:134
 msgid "Invalid verification code, please try again"
 msgstr "सत्यापन कोड अमान्य है, कृपया पुनः प्रयास करें"
 
-#: messages.go:133
+#: messages.go:135
 msgid "Invalid password, please try again"
 msgstr "अमान्य पासवर्ड, कृपया पुनः प्रयास करें"
 
-#: messages.go:134
+#: messages.go:136
 msgid "Feature disabled"
 msgstr "सुविधा अक्षम है"
 
-#: messages.go:135
+#: messages.go:137
 msgid "No labels selected"
 msgstr "कोई लेबल नहीं चुना गया"
 
-#: messages.go:136
+#: messages.go:138
 msgid "No albums selected"
 msgstr "कोई एल्बम नहीं चुना गया"
 
-#: messages.go:137
+#: messages.go:139
 msgid "No files available for download"
 msgstr "डाउनलोड के लिए कोई फाइल उपलब्ध नहीं है"
 
-#: messages.go:138
+#: messages.go:140
 msgid "Failed to create zip file"
 msgstr "ज़िप फ़ाइल बनाने में विफल"
 
-#: messages.go:139
+#: messages.go:141
 msgid "Invalid credentials"
 msgstr "अवैध प्रत्यय पत्र"
 
-#: messages.go:140
+#: messages.go:142
 msgid "Invalid link"
 msgstr "अमान्य लिंक"
 
-#: messages.go:141
+#: messages.go:143
 msgid "Invalid name"
 msgstr "अमान्य नाम"
 
-#: messages.go:142
+#: messages.go:144
 msgid "Busy, please try again later"
 msgstr "व्यस्त, कृपया बाद में पुन: प्रयास करें"
 
-#: messages.go:143
+#: messages.go:145
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "वेकअप अंतराल %s है, लेकिन 1h या उससे कम होना चाहिए"
 
-#: messages.go:144
+#: messages.go:146
 msgid "Your account could not be connected"
 msgstr "आपका खाता कनेक्ट नहीं किया जा सका"
 
-#: messages.go:147
+#: messages.go:149
 msgid "Changes successfully saved"
 msgstr "परिवर्तन सफलतापूर्वक सहेजे गए"
 
-#: messages.go:148
+#: messages.go:150
 msgid "Album created"
 msgstr "एल्बम बनाया गया"
 
-#: messages.go:149
+#: messages.go:151
 msgid "Album saved"
 msgstr "एल्बम सहेजा गया"
 
-#: messages.go:150
+#: messages.go:152
 #, c-format
 msgid "Album %s deleted"
 msgstr "एल्बम %s हटाया गया"
 
-#: messages.go:151
+#: messages.go:153
 msgid "Album contents cloned"
 msgstr "एल्बम सामग्री को क्लोन किया गया"
 
-#: messages.go:152
+#: messages.go:154
 msgid "File removed from stack"
 msgstr "स्टैक से फ़ाइल को निकाला गया"
 
-#: messages.go:153
+#: messages.go:155
 msgid "File deleted"
 msgstr "फ़ाइल हटा दी गई"
 
-#: messages.go:154
+#: messages.go:156
 #, c-format
 msgid "Selection added to %s"
 msgstr "चयन %s में जोड़ा गया"
 
-#: messages.go:155
+#: messages.go:157
 #, c-format
 msgid "One entry added to %s"
 msgstr "एक प्रविष्टि %s में जोड़ी गई"
 
-#: messages.go:156
+#: messages.go:158
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d प्रविष्टियों को %s में जोड़ा गया"
 
-#: messages.go:157
+#: messages.go:159
 #, c-format
 msgid "One entry removed from %s"
 msgstr "%s से एक प्रविष्टि को हटाया गया"
 
-#: messages.go:158
+#: messages.go:160
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d प्रविष्टियों को %s से हटा दिया गया"
 
-#: messages.go:159
+#: messages.go:161
 msgid "Account created"
 msgstr "खाता बन गया"
 
-#: messages.go:160
+#: messages.go:162
 msgid "Account saved"
 msgstr "खाता सहेजा गया"
 
-#: messages.go:161
+#: messages.go:163
 msgid "Account deleted"
 msgstr "खाता हटाया गया"
 
-#: messages.go:162
+#: messages.go:164
 msgid "Settings saved"
 msgstr "सेटिंग्स को सहेजा गया"
 
-#: messages.go:163
+#: messages.go:165
 msgid "Password changed"
 msgstr "पासवर्ड बदला गया"
 
-#: messages.go:164
+#: messages.go:166
 #, c-format
 msgid "Import completed in %d s"
 msgstr "%d s में आयात पूरा हुआ"
 
-#: messages.go:165
+#: messages.go:167
 msgid "Import canceled"
 msgstr "आयात रद्द कर दिया गया"
 
-#: messages.go:166
+#: messages.go:168
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "%d s में अनुक्रमण पूरा हुआ"
 
-#: messages.go:167
+#: messages.go:169
 msgid "Indexing originals..."
 msgstr "अनुक्रमण मूल ..."
 
-#: messages.go:168
+#: messages.go:170
 #, c-format
 msgid "Indexing files in %s"
 msgstr "%s में फाइलों को अनुक्रमित करना"
 
-#: messages.go:169
+#: messages.go:171
 msgid "Indexing canceled"
 msgstr "अनुक्रमण रद्द किया गया"
 
-#: messages.go:170
+#: messages.go:172
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "%d फ़ाइलों और %d फ़ोटो को हटा दिया गया"
 
-#: messages.go:171
+#: messages.go:173
 #, c-format
 msgid "Moving files from %s"
 msgstr "%s से फाइल चल रही है"
 
-#: messages.go:172
+#: messages.go:174
 #, c-format
 msgid "Copying files from %s"
 msgstr "%s से फाइल कॉपी कर रहा है"
 
-#: messages.go:173
+#: messages.go:175
 msgid "Labels deleted"
 msgstr "लेबल हटा दिए गए"
 
-#: messages.go:174
+#: messages.go:176
 msgid "Label saved"
 msgstr "लेबल सहेजा गया"
 
-#: messages.go:175
+#: messages.go:177
 msgid "Subject saved"
 msgstr "विषय सहेजा गया"
 
-#: messages.go:176
+#: messages.go:178
 msgid "Subject deleted"
 msgstr "विषय हटा दिया गया"
 
-#: messages.go:177
+#: messages.go:179
 msgid "Person saved"
 msgstr "व्यक्ति बचाया"
 
-#: messages.go:178
+#: messages.go:180
 msgid "Person deleted"
 msgstr "व्यक्ति हटाया गया"
 
-#: messages.go:179
+#: messages.go:181
 msgid "File uploaded"
 msgstr "फ़ाइल अपलोड की गई"
 
-#: messages.go:180
+#: messages.go:182
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d फाइलों को %d में अपलोड किया गया"
 
-#: messages.go:181
+#: messages.go:183
 msgid "Processing upload..."
 msgstr "अपलोड संसाधित किया जा रहा है..."
 
-#: messages.go:182
+#: messages.go:184
 msgid "Upload has been processed"
 msgstr "अपलोड संसाधित हो गया है"
 
-#: messages.go:183
+#: messages.go:185
 msgid "Selection approved"
 msgstr "चयन को संग्रहीत किया गया"
 
-#: messages.go:184
+#: messages.go:186
 msgid "Selection archived"
 msgstr "चयन को संग्रहीत किया गया"
 
-#: messages.go:185
+#: messages.go:187
 msgid "Selection restored"
 msgstr "चयन बहाल"
 
-#: messages.go:186
+#: messages.go:188
 msgid "Selection marked as private"
 msgstr "चयन निजी के रूप में चिह्नित"
 
-#: messages.go:187
+#: messages.go:189
 msgid "Albums deleted"
 msgstr "एल्बम हटाए गए"
 
-#: messages.go:188
+#: messages.go:190
 #, c-format
 msgid "Zip created in %d s"
 msgstr "%d s में बनाया गया ज़िप"
 
-#: messages.go:189
+#: messages.go:191
 msgid "Permanently deleted"
 msgstr "स्थायी रूप से हटा दिया गया"
 
-#: messages.go:190
+#: messages.go:192
 #, c-format
 msgid "%s has been restored"
 msgstr "%s बहाल कर दिया गया है"
 
-#: messages.go:191
+#: messages.go:193
 msgid "Successfully verified"
 msgstr "सफलतापूर्वक सत्यापित"
 
-#: messages.go:192
+#: messages.go:194
 msgid "Successfully activated"
 msgstr "सफलतापूर्वक सक्रिय किया गया"
 

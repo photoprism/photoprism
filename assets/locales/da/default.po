@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 14:48+0000\n"
+"POT-Creation-Date: 2024-07-05 07:50+0000\n"
 "PO-Revision-Date: 2024-05-21 19:33+0000\n"
 "Last-Translator: sunbeam60 <bjorn@toftmadsen.org>\n"
 "Language-Team: Danish <https://translate.photoprism.app/projects/photoprism/"
@@ -14,384 +14,388 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.5.5\n"
 
-#: messages.go:100
+#: messages.go:101
 msgid "Something went wrong, try again"
 msgstr "Der gik noget galt, prøv igen"
 
-#: messages.go:101
+#: messages.go:102
 msgid "Unable to do that"
 msgstr "Det kan ikke lade sig gøre"
 
-#: messages.go:102
+#: messages.go:103
+msgid "Too many requests"
+msgstr ""
+
+#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Ændringer kunne ikke gemmes"
 
-#: messages.go:103
+#: messages.go:105
 msgid "Could not be deleted"
 msgstr "Kunne ikke slettes"
 
-#: messages.go:104
+#: messages.go:106
 #, c-format
 msgid "%s already exists"
 msgstr "%s findes allerede"
 
-#: messages.go:105
+#: messages.go:107
 msgid "Not found"
 msgstr "Ikke fundet"
 
-#: messages.go:106
+#: messages.go:108
 msgid "File not found"
 msgstr "Fil ikke fundet"
 
-#: messages.go:107
+#: messages.go:109
 msgid "File too large"
 msgstr "Filen er for stor"
 
-#: messages.go:108
+#: messages.go:110
 msgid "Unsupported"
 msgstr "Ikke understøttet"
 
-#: messages.go:109
+#: messages.go:111
 msgid "Unsupported type"
 msgstr "Ikke-understøttet type"
 
-#: messages.go:110
+#: messages.go:112
 msgid "Unsupported format"
 msgstr "Ikke understøttet format"
 
-#: messages.go:111
+#: messages.go:113
 msgid "Originals folder is empty"
 msgstr "Mappen Originaler er tom"
 
-#: messages.go:112
+#: messages.go:114
 msgid "Selection not found"
 msgstr "Valg ikke fundet"
 
-#: messages.go:113
+#: messages.go:115
 msgid "Entity not found"
 msgstr "Enhed ikke fundet"
 
-#: messages.go:114
+#: messages.go:116
 msgid "Account not found"
 msgstr "Konto ikke fundet"
 
-#: messages.go:115
+#: messages.go:117
 msgid "User not found"
 msgstr "Bruger ikke fundet"
 
-#: messages.go:116
+#: messages.go:118
 msgid "Label not found"
 msgstr "Etiket ikke fundet"
 
-#: messages.go:117
+#: messages.go:119
 msgid "Album not found"
 msgstr "Album ikke fundet"
 
-#: messages.go:118
+#: messages.go:120
 msgid "Subject not found"
 msgstr "Emne ikke fundet"
 
-#: messages.go:119
+#: messages.go:121
 msgid "Person not found"
 msgstr "Person ikke fundet"
 
-#: messages.go:120
+#: messages.go:122
 msgid "Face not found"
 msgstr "Ansigt ikke fundet"
 
-#: messages.go:121
+#: messages.go:123
 msgid "Not available in public mode"
 msgstr "Ikke tilgængelig i offentlig tilstand"
 
-#: messages.go:122
+#: messages.go:124
 msgid "Not available in read-only mode"
 msgstr "Ikke tilgængelig i skrivebeskyttet tilstand"
 
-#: messages.go:123
+#: messages.go:125
 msgid "Please log in to your account"
 msgstr "Log ind på din konto"
 
-#: messages.go:124
+#: messages.go:126
 msgid "Permission denied"
 msgstr "Tilladelse nægtet"
 
-#: messages.go:125
+#: messages.go:127
 msgid "Upload might be offensive"
 msgstr "Upload kan være stødende"
 
-#: messages.go:126
+#: messages.go:128
 msgid "Upload failed"
 msgstr "Upload mislykkedes"
 
-#: messages.go:127
+#: messages.go:129
 msgid "No items selected"
 msgstr "Ingen emner valgt"
 
-#: messages.go:128
+#: messages.go:130
 msgid "Failed creating file, please check permissions"
 msgstr "Oprettelse af fil mislykkedes, tjek venligst tilladelser"
 
-#: messages.go:129
+#: messages.go:131
 msgid "Failed creating folder, please check permissions"
 msgstr "Oprettelse af mappe mislykkedes, tjek venligst tilladelser"
 
-#: messages.go:130
+#: messages.go:132
 msgid "Could not connect, please try again"
 msgstr "Kunne ikke oprette forbindelse, prøv venligst igen"
 
-#: messages.go:131
+#: messages.go:133
 msgid "Enter verification code"
 msgstr "Indtast verifikations kode"
 
-#: messages.go:132
+#: messages.go:134
 msgid "Invalid verification code, please try again"
 msgstr "Ugyldig bekræftelseskode. Prøv venligst igen"
 
-#: messages.go:133
+#: messages.go:135
 msgid "Invalid password, please try again"
 msgstr "Ugyldig adgangskode, prøv venligst igen"
 
-#: messages.go:134
+#: messages.go:136
 msgid "Feature disabled"
 msgstr "Funktion deaktiveret"
 
-#: messages.go:135
+#: messages.go:137
 msgid "No labels selected"
 msgstr "Ingen etiketter valgt"
 
-#: messages.go:136
+#: messages.go:138
 msgid "No albums selected"
 msgstr "Ingen album valgt"
 
-#: messages.go:137
+#: messages.go:139
 msgid "No files available for download"
 msgstr "Ingen filer til rådighed til download"
 
-#: messages.go:138
+#: messages.go:140
 msgid "Failed to create zip file"
 msgstr "Det lykkedes ikke at oprette zip-fil"
 
-#: messages.go:139
+#: messages.go:141
 msgid "Invalid credentials"
 msgstr "Ugyldige legitimationsoplysninger"
 
-#: messages.go:140
+#: messages.go:142
 msgid "Invalid link"
 msgstr "Ugyldigt link"
 
-#: messages.go:141
+#: messages.go:143
 msgid "Invalid name"
 msgstr "Ugyldigt navn"
 
-#: messages.go:142
+#: messages.go:144
 msgid "Busy, please try again later"
 msgstr "Optaget, prøv venligst igen senere"
 
-#: messages.go:143
+#: messages.go:145
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Vækningsintervallet er %s, men skal være 1 time eller mindre"
 
-#: messages.go:144
+#: messages.go:146
 msgid "Your account could not be connected"
 msgstr "Der kunne ikke oprettes forbindelse til din konto"
 
-#: messages.go:147
+#: messages.go:149
 msgid "Changes successfully saved"
 msgstr "Ændringer gemt med succes"
 
-#: messages.go:148
+#: messages.go:150
 msgid "Album created"
 msgstr "Album oprettet"
 
-#: messages.go:149
+#: messages.go:151
 msgid "Album saved"
 msgstr "Album gemt"
 
-#: messages.go:150
+#: messages.go:152
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s slettet"
 
-#: messages.go:151
+#: messages.go:153
 msgid "Album contents cloned"
 msgstr "Albumindhold klonet"
 
-#: messages.go:152
+#: messages.go:154
 msgid "File removed from stack"
 msgstr "Fil fjernet fra stakken"
 
-#: messages.go:153
+#: messages.go:155
 msgid "File deleted"
 msgstr "Fil slettet"
 
-#: messages.go:154
+#: messages.go:156
 #, c-format
 msgid "Selection added to %s"
 msgstr "Valg tilføjet til %s"
 
-#: messages.go:155
+#: messages.go:157
 #, c-format
 msgid "One entry added to %s"
 msgstr "En post tilføjet til %s"
 
-#: messages.go:156
+#: messages.go:158
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d poster tilføjet til %s"
 
-#: messages.go:157
+#: messages.go:159
 #, c-format
 msgid "One entry removed from %s"
 msgstr "En post fjernet fra %s"
 
-#: messages.go:158
+#: messages.go:160
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d poster fjernet fra %s"
 
-#: messages.go:159
+#: messages.go:161
 msgid "Account created"
 msgstr "Konto oprettet"
 
-#: messages.go:160
+#: messages.go:162
 msgid "Account saved"
 msgstr "Gemte konto"
 
-#: messages.go:161
+#: messages.go:163
 msgid "Account deleted"
 msgstr "Konto slettet"
 
-#: messages.go:162
+#: messages.go:164
 msgid "Settings saved"
 msgstr "Indstillinger gemt"
 
-#: messages.go:163
+#: messages.go:165
 msgid "Password changed"
 msgstr "Adgangskode ændret"
 
-#: messages.go:164
+#: messages.go:166
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Import afsluttet efter %d s"
 
-#: messages.go:165
+#: messages.go:167
 msgid "Import canceled"
 msgstr "Import annulleret"
 
-#: messages.go:166
+#: messages.go:168
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indeksering afsluttet efter %d s"
 
-#: messages.go:167
+#: messages.go:169
 msgid "Indexing originals..."
 msgstr "Indeksering af originaler..."
 
-#: messages.go:168
+#: messages.go:170
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Indeksering af filer i %s"
 
-#: messages.go:169
+#: messages.go:171
 msgid "Indexing canceled"
 msgstr "Indeksering annulleret"
 
-#: messages.go:170
+#: messages.go:172
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Fjernede %d filer og %d fotos"
 
-#: messages.go:171
+#: messages.go:173
 #, c-format
 msgid "Moving files from %s"
 msgstr "Flytter filer fra %s"
 
-#: messages.go:172
+#: messages.go:174
 #, c-format
 msgid "Copying files from %s"
 msgstr "Kopierer filer fra %s"
 
-#: messages.go:173
+#: messages.go:175
 msgid "Labels deleted"
 msgstr "Etiketter slettet"
 
-#: messages.go:174
+#: messages.go:176
 msgid "Label saved"
 msgstr "Etikette gemt"
 
-#: messages.go:175
+#: messages.go:177
 msgid "Subject saved"
 msgstr "Emne gemt"
 
-#: messages.go:176
+#: messages.go:178
 msgid "Subject deleted"
 msgstr "Emne slettet"
 
-#: messages.go:177
+#: messages.go:179
 msgid "Person saved"
 msgstr "Person gemt"
 
-#: messages.go:178
+#: messages.go:180
 msgid "Person deleted"
 msgstr "Person slettet"
 
-#: messages.go:179
+#: messages.go:181
 msgid "File uploaded"
 msgstr "Fil uploadet"
 
-#: messages.go:180
+#: messages.go:182
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d filer uploadet på %d s"
 
-#: messages.go:181
+#: messages.go:183
 msgid "Processing upload..."
 msgstr "Behandling af upload..."
 
-#: messages.go:182
+#: messages.go:184
 msgid "Upload has been processed"
 msgstr "Upload er blevet behandlet"
 
-#: messages.go:183
+#: messages.go:185
 msgid "Selection approved"
 msgstr "Udvælgelse godkendt"
 
-#: messages.go:184
+#: messages.go:186
 msgid "Selection archived"
 msgstr "Udvælgelse arkiveret"
 
-#: messages.go:185
+#: messages.go:187
 msgid "Selection restored"
 msgstr "Udvalgte gendannet"
 
-#: messages.go:186
+#: messages.go:188
 msgid "Selection marked as private"
 msgstr "Udvalgte er markeret som privat"
 
-#: messages.go:187
+#: messages.go:189
 msgid "Albums deleted"
 msgstr "Albums slettet"
 
-#: messages.go:188
+#: messages.go:190
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip filen blev lavet på %d s"
 
-#: messages.go:189
+#: messages.go:191
 msgid "Permanently deleted"
 msgstr "Permanent slettet"
 
-#: messages.go:190
+#: messages.go:192
 #, c-format
 msgid "%s has been restored"
 msgstr "%s er blevet genoprettet"
 
-#: messages.go:191
+#: messages.go:193
 msgid "Successfully verified"
 msgstr "Verifikation lykkedes"
 
-#: messages.go:192
+#: messages.go:194
 msgid "Successfully activated"
 msgstr "Aktivering lykkedes"
 

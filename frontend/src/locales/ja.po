@@ -651,6 +651,10 @@ msgstr "1枚の写真が含まれています。"
 msgid "Continue"
 msgstr "続ける"
 
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Continue with %{provider}"
+msgstr ""
+
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "投稿者"
@@ -2408,10 +2412,6 @@ msgstr "サイドカーファイル"
 msgid "Sign in"
 msgstr "サインイン"
 
-#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
-msgid "Sign In with %{provider}"
-msgstr "プロバイダ}でサインインする"
-
 #: src/page/discover.vue:8
 msgid "Similar"
 msgstr "似ている項目"
@@ -2991,6 +2991,9 @@ msgstr "あなたのライブラリは継続的に分析され、特別な瞬間
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "ズーム イン/アウト"
+
+#~ msgid "Sign In with %{provider}"
+#~ msgstr "プロバイダ}でサインインする"
 
 #~ msgid "Grant Type"
 #~ msgstr "助成金の種類"

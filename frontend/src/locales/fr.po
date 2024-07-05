@@ -652,6 +652,10 @@ msgstr "Contient une image."
 msgid "Continue"
 msgstr "Poursuivre"
 
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Continue with %{provider}"
+msgstr ""
+
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Contributeur"
@@ -2414,10 +2418,6 @@ msgstr "Fichiers side-car"
 msgid "Sign in"
 msgstr "S'identifier"
 
-#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
-msgid "Sign In with %{provider}"
-msgstr "S'identifier avec %{provider}"
-
 #: src/page/discover.vue:8
 msgid "Similar"
 msgstr "Similaire"
@@ -2997,6 +2997,9 @@ msgstr "Votre bibliothèque est analysée en permanence pour créer automatiquem
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Agrandir/Dézoomer"
+
+#~ msgid "Sign In with %{provider}"
+#~ msgstr "S'identifier avec %{provider}"
 
 #~ msgid "Grant Type"
 #~ msgstr "Type de subvention"

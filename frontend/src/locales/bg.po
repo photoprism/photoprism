@@ -651,6 +651,10 @@ msgstr "Съдържа една снимка."
 msgid "Continue"
 msgstr "продължи"
 
+#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
+msgid "Continue with %{provider}"
+msgstr ""
+
 #: src/options/admin.js:18 src/options/auth.js:9
 msgid "Contributor"
 msgstr "Донор"
@@ -2408,10 +2412,6 @@ msgstr "Файлове Sideecar"
 msgid "Sign in"
 msgstr "Влезте"
 
-#: src/page/auth/login.vue:56 src/page/auth/login.vue:6
-msgid "Sign In with %{provider}"
-msgstr "Влизане с %{provider}"
-
 #: src/page/discover.vue:8
 msgid "Similar"
 msgstr "Подобни"
@@ -2991,6 +2991,9 @@ msgstr "Библиотеката ви се анализира непрекъсн
 #: src/component/photo-viewer.vue:176
 msgid "Zoom in/out"
 msgstr "Увеличаване/намаляване на мащаба"
+
+#~ msgid "Sign In with %{provider}"
+#~ msgstr "Влизане с %{provider}"
 
 #~ msgid "Grant Type"
 #~ msgstr "Вид безвъзмездна помощ"
