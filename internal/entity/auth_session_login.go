@@ -94,7 +94,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 	}
 
 	// Login allowed?
-	if !user.Provider().IsDefault() && !user.Provider().IsLocal() {
+	if !user.Provider().IsDefault() && !user.Provider().IsLocal() && !user.Provider().Is(authn.ProviderOIDC) {
 		message := fmt.Sprintf("%s authentication disabled", authn.ProviderLocal.String())
 
 		if s != nil {

@@ -287,7 +287,7 @@ describe("model/user", () => {
     const result = await user.isRemote();
     assert.equal(result, false);
 
-    const values2 = { ID: 51, Name: "max", DisplayName: "Max Last", AuthProvider: "oidc" };
+    const values2 = { ID: 51, Name: "max", DisplayName: "Max Last", AuthProvider: "ldap" };
     const user2 = new User(values2);
     const result2 = await user2.isRemote();
     assert.equal(result2, true);

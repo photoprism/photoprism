@@ -46,9 +46,10 @@ var (
 
 // User-related error messages:
 var (
-	ErrUsernameRequired     = errors.New("username required")
-	ErrInvalidUsername      = errors.New("invalid username")
-	ErrUsernameDoesNotMatch = errors.New("specified username does not match")
+	ErrUsernameRequired           = errors.New("username required")
+	ErrUsernameRequiredToRegister = errors.New("username required to register")
+	ErrInvalidUsername            = errors.New("invalid username")
+	ErrUsernameDoesNotMatch       = errors.New("specified username does not match")
 )
 
 // Passcode-related error messages:

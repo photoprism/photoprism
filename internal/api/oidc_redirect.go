@@ -17,6 +17,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/time/unix"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -118,22 +119,27 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		} else if oidcUser.UserName == "" {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrUsernameRequired.Error()})
-			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequired.Error())
+			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrUsernameRequiredToRegister.Error()})
+			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequiredToRegister.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		} else if user = entity.FindUser(oidcUser); user != nil {
 			// Check if username and subject UID match.
-			if user.Username() == "" || oidcUser.UserName == "" || user.Username() != oidcUser.UserName {
-				event.AuditErr([]string{clientIp, "oidc", action, authn.ErrInvalidUsername.Error()})
-				event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrInvalidUsername.Error())
+			if user.Username() == "" {
+				event.AuditErr([]string{clientIp, "oidc", action, oidcUser.UserName, authn.ErrUsernameRequired.Error()})
+				event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequired.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			}
 
 			userName = user.Username()
 
-			if user.AuthID == "" || oidcUser.AuthID == "" || user.AuthID != oidcUser.AuthID {
+			if authn.ProviderOIDC.NotEqual(user.AuthProvider) {
+				event.AuditErr([]string{clientIp, "oidc", action, userName, authn.ErrAuthProviderIsNotOIDC.Error()})
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				return
+			} else if user.AuthID == "" || oidcUser.AuthID == "" || user.AuthID != oidcUser.AuthID {
 				event.AuditErr([]string{clientIp, "oidc", action, userName, authn.ErrInvalidAuthID.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrInvalidAuthID.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
@@ -209,11 +215,19 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				event.AuditWarn([]string{clientIp, "oidc", action, userName, "failed to set avatar image", err.Error()})
 			}
 		} else if conf.OIDCRegister() {
-			action = "sign up"
+			action = "register"
 
 			// Create new user record.
 			user = &oidcUser
-			userName = user.Username()
+
+			userName = oidcUser.Username()
+
+			// Resolve potential naming conflict by adding a random number to the username.
+			if found := entity.FindUserByName(userName); found != nil {
+				userName = userName + rnd.Base10(6)
+			}
+
+			user.UserName = userName
 
 			// Set user profile information.
 			user.SetDisplayName(userInfo.GetName(), entity.SrcOIDC)

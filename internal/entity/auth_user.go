@@ -189,6 +189,8 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("id = ?", find.ID)
 	} else if rnd.IsUID(find.UserUID, UserUID) {
 		stmt = stmt.Where("user_uid = ?", find.UserUID)
+	} else if authn.ProviderOIDC.Equal(find.AuthProvider) && find.AuthID != "" {
+		stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
 	} else if find.AuthProvider != "" && find.AuthID != "" && find.UserName != "" {
 		stmt = stmt.Where("auth_provider = ? AND auth_id = ? OR user_name = ?", find.AuthProvider, find.AuthID, find.UserName)
 	} else if find.UserName != "" {

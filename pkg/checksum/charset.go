@@ -1,6 +1,7 @@
 package checksum
 
 const (
+	CharsetBase10 = "0123456789"
 	CharsetBase36 = "abcdefghijklmnopqrstuvwxyz0123456789"
 	CharsetBase62 = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 )

@@ -6,6 +6,31 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestBase10(t *testing.T) {
+	t.Run("10", func(t *testing.T) {
+		s := Base10(10)
+		t.Logf("Base10 (10 chars): %s", s)
+		assert.NotEmpty(t, s)
+		assert.True(t, IsRefID(s))
+		assert.False(t, InvalidRefID(s))
+		assert.Equal(t, 10, len(s))
+
+		for n := 0; n < 10; n++ {
+			s = Base10(10)
+			t.Logf("Base10 %d: %s", n, s)
+			assert.NotEmpty(t, s)
+		}
+	})
+	t.Run("23", func(t *testing.T) {
+		s := Base10(23)
+		t.Logf("Base10 (23 chars): %s", s)
+		assert.NotEmpty(t, s)
+		assert.False(t, IsRefID(s))
+		assert.True(t, InvalidRefID(s))
+		assert.Equal(t, 23, len(s))
+	})
+}
+
 func TestBase36(t *testing.T) {
 	t.Run("10", func(t *testing.T) {
 		s := Base36(10)

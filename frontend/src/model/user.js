@@ -209,7 +209,7 @@ export class User extends RestModel {
   }
 
   isRemote() {
-    return this.AuthProvider && (this.AuthProvider === "ldap" || this.AuthProvider === "oidc");
+    return this.AuthProvider && this.AuthProvider === "ldap";
   }
 
   authInfo() {
