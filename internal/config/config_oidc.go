@@ -100,6 +100,8 @@ func (c *Config) OIDCUsername() string {
 	switch c.options.OIDCUsername {
 	case authn.ClaimEmail:
 		return authn.ClaimEmail
+	case authn.ClaimName:
+		return authn.ClaimName
 	case authn.ClaimNickname:
 		return authn.ClaimNickname
 	default:

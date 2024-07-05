@@ -93,7 +93,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-username",
-			Usage:  "preferred username `CLAIM` for new OpenID Connect users (preferred_username, email, nickname)",
+			Usage:  "preferred username `CLAIM` for new OpenID Connect users (preferred_username, email, name, nickname)",
 			Value:  authn.ClaimPreferredUsername,
 			EnvVar: EnvVar("OIDC_USERNAME"),
 		}}, {

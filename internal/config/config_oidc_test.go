@@ -119,6 +119,10 @@ func TestConfig_OIDCUsername(t *testing.T) {
 
 	assert.Equal(t, authn.ClaimEmail, c.OIDCUsername())
 
+	c.options.OIDCUsername = "name"
+
+	assert.Equal(t, authn.ClaimName, c.OIDCUsername())
+
 	c.options.OIDCUsername = "nickname"
 
 	assert.Equal(t, authn.ClaimNickname, c.OIDCUsername())

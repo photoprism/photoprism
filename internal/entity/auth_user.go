@@ -119,6 +119,16 @@ func OidcUser(userInfo oidc.UserInfo, usernameClaim string) User {
 		} else if name = clean.Handle(userInfo.GetNickname()); len(name) > 0 {
 			userName = name
 		}
+	case authn.ClaimName:
+		if name := clean.Handle(userInfo.GetName()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetPreferredUsername()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetNickname()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Email(userInfo.GetEmail()); userInfo.IsEmailVerified() && len(name) > 4 {
+			userName = name
+		}
 	case authn.ClaimNickname:
 		if name := clean.Handle(userInfo.GetNickname()); len(name) > 0 {
 			userName = name
