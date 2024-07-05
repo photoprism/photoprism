@@ -98,12 +98,12 @@ func (c *Config) OIDCRegister() bool {
 // OIDCUsername returns the preferred username claim for new users signing up via OIDC.
 func (c *Config) OIDCUsername() string {
 	switch c.options.OIDCUsername {
-	case authn.ClaimEmail:
-		return authn.ClaimEmail
 	case authn.ClaimName:
 		return authn.ClaimName
 	case authn.ClaimNickname:
 		return authn.ClaimNickname
+	case authn.ClaimEmail:
+		return authn.ClaimEmail
 	default:
 		return authn.ClaimPreferredUsername
 	}

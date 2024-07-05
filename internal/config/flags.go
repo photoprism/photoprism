@@ -46,7 +46,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-uri",
-			Usage:  "identity provider issuer `URI` for single sign-on via OpenID Connect, e.g. \"https://accounts.google.com\"",
+			Usage:  "issuer `URI` for single sign-on via OpenID Connect, e.g. \"https://accounts.google.com\"",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_URI"),
 		}}, {
@@ -93,7 +93,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-username",
-			Usage:  "preferred username `CLAIM` for new OpenID Connect users (preferred_username, email, name, nickname)",
+			Usage:  "preferred username `CLAIM` for new OpenID Connect users (preferred_username, name, nickname, email)",
 			Value:  authn.ClaimPreferredUsername,
 			EnvVar: EnvVar("OIDC_USERNAME"),
 		}}, {
