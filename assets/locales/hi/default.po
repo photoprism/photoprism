@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-07-05 07:50+0000\n"
-"PO-Revision-Date: 2024-04-17 08:08+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-"
-"translate@weblate.org>\n"
+"PO-Revision-Date: 2024-07-05 09:24+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Hindi <https://translate.photoprism.app/projects/photoprism/"
 "backend/hi/>\n"
 "Language: hi\n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 5.4.3\n"
+"X-Generator: Weblate 5.5.5\n"
 
 #: messages.go:101
 msgid "Something went wrong, try again"
@@ -25,7 +25,7 @@ msgstr "ऐसा करने में असमर्थ"
 
 #: messages.go:103
 msgid "Too many requests"
-msgstr ""
+msgstr "बहुत अधिक अनुरोध"
 
 #: messages.go:104
 msgid "Changes could not be saved"
