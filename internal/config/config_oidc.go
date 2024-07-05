@@ -95,13 +95,16 @@ func (c *Config) OIDCRegister() bool {
 	return c.options.OIDCRegister
 }
 
-// OIDCUsername returns the claim to use as username when signing up via OIDC.
+// OIDCUsername returns the preferred username claim for new users signing up via OIDC.
 func (c *Config) OIDCUsername() string {
-	if c.options.OIDCUsername == authn.ClaimEmail {
+	switch c.options.OIDCUsername {
+	case authn.ClaimEmail:
 		return authn.ClaimEmail
+	case authn.ClaimNickname:
+		return authn.ClaimNickname
+	default:
+		return authn.ClaimPreferredUsername
 	}
-
-	return authn.ClaimUsername
 }
 
 // OIDCDomain returns the email domain name for restricted single sign-on via OIDC.

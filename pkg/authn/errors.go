@@ -31,16 +31,17 @@ var (
 
 // OIDC and OAuth2-related error messages:
 var (
-	ErrInvalidProvider       = errors.New("invalid provider")
-	ErrInvalidGrantType      = errors.New("invalid grant type")
-	ErrInvalidClientID       = errors.New("invalid client id")
-	ErrInvalidAuthID         = errors.New("invalid auth id")
-	ErrAuthCodeRequired      = errors.New("auth code required")
-	ErrClientIDRequired      = errors.New("client id required")
-	ErrInvalidClientSecret   = errors.New("invalid client secret")
-	ErrClientSecretRequired  = errors.New("client secret required")
-	ErrVerifiedEmailRequired = errors.New("verified email required")
-	ErrRegistrationDisabled  = errors.New("registration disabled")
+	ErrInvalidProviderConfiguration = errors.New("invalid provider configuration")
+	ErrInvalidGrantType             = errors.New("invalid grant type")
+	ErrInvalidClientID              = errors.New("invalid client id")
+	ErrInvalidAuthID                = errors.New("invalid auth id")
+	ErrAuthProviderIsNotOIDC        = errors.New("auth provider is not oidc")
+	ErrAuthCodeRequired             = errors.New("auth code required")
+	ErrClientIDRequired             = errors.New("client id required")
+	ErrInvalidClientSecret          = errors.New("invalid client secret")
+	ErrClientSecretRequired         = errors.New("client secret required")
+	ErrVerifiedEmailRequired        = errors.New("verified email required")
+	ErrRegistrationDisabled         = errors.New("registration disabled")
 )
 
 // User-related error messages:

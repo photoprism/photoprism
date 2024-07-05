@@ -62,7 +62,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Abort if failure rate limit is exceeded.
 		if r.Reject() || limiter.Auth.Reject(clientIp) {
-			c.HTML(http.StatusTooManyRequests, "auth.gohtml", CreateSessionError(http.StatusTooManyRequests, i18n.Error(i18n.ErrForbidden)))
+			c.HTML(http.StatusTooManyRequests, "auth.gohtml", CreateSessionError(http.StatusTooManyRequests, i18n.Error(i18n.ErrTooManyRequests)))
 			return
 		}
 
@@ -112,9 +112,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		}
 
 		// Find existing user record and update it, if necessary.
-		if oidcUser := entity.OidcUser(userInfo, conf.OIDCUsername()); oidcUser.UserName == "" || authn.ProviderOIDC.NotEqual(oidcUser.AuthProvider) {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrInvalidUsername.Error()})
-			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrInvalidUsername.Error())
+		if oidcUser := entity.OidcUser(userInfo, conf.OIDCUsername()); authn.ProviderOIDC.NotEqual(oidcUser.AuthProvider) {
+			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrAuthProviderIsNotOIDC.Error()})
+			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
+			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+			return
+		} else if oidcUser.UserName == "" {
+			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrUsernameRequired.Error()})
+			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequired.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		} else if user = entity.FindUser(oidcUser); user != nil {

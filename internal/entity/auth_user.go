@@ -110,9 +110,35 @@ func OidcUser(userInfo oidc.UserInfo, usernameClaim string) User {
 
 	switch usernameClaim {
 	case authn.ClaimEmail:
-		userName = clean.Username(userInfo.GetEmail())
+		if name := clean.Email(userInfo.GetEmail()); userInfo.IsEmailVerified() && len(name) > 4 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetPreferredUsername()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetName()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetNickname()); len(name) > 0 {
+			userName = name
+		}
+	case authn.ClaimNickname:
+		if name := clean.Handle(userInfo.GetNickname()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetPreferredUsername()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetName()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Email(userInfo.GetEmail()); userInfo.IsEmailVerified() && len(name) > 4 {
+			userName = name
+		}
 	default:
-		userName = clean.Username(userInfo.GetPreferredUsername())
+		if name := clean.Handle(userInfo.GetPreferredUsername()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Email(userInfo.GetEmail()); userInfo.IsEmailVerified() && len(name) > 4 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetName()); len(name) > 0 {
+			userName = name
+		} else if name = clean.Handle(userInfo.GetNickname()); len(name) > 0 {
+			userName = name
+		}
 	}
 
 	userEmail = clean.Email(userInfo.GetEmail())

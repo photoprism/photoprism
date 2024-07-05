@@ -22,6 +22,36 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestOidcUser(t *testing.T) {
+	t.Run("ClaimPreferredUsername", func(t *testing.T) {
+		info := oidc.NewUserInfo()
+		info.SetName("Jane")
+		info.SetFamilyName("Doe")
+		info.SetEmail("jane@doe.com", true)
+		info.SetSubject("abcd123")
+		info.SetPreferredUsername("Jane Doe")
+		m := OidcUser(info, authn.ClaimPreferredUsername)
+
+		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "abcd123", m.AuthID)
+		assert.Equal(t, "jane@doe.com", m.UserEmail)
+		assert.Equal(t, "jane.doe", m.UserName)
+		assert.Equal(t, "Jane", m.DisplayName)
+	})
+	t.Run("ClaimNickname", func(t *testing.T) {
+		info := oidc.NewUserInfo()
+		info.SetName("Jane")
+		info.SetFamilyName("Doe")
+		info.SetNickname("Jens Mander")
+		info.SetEmail("jane@doe.com", true)
+		info.SetSubject("abcd123")
+		m := OidcUser(info, authn.ClaimNickname)
+
+		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "abcd123", m.AuthID)
+		assert.Equal(t, "jane@doe.com", m.UserEmail)
+		assert.Equal(t, "jens.mander", m.UserName)
+		assert.Equal(t, "Jane", m.DisplayName)
+	})
 	t.Run("ClaimEmail", func(t *testing.T) {
 		info := oidc.NewUserInfo()
 		info.SetName("Jane")
@@ -36,27 +66,12 @@ func TestOidcUser(t *testing.T) {
 		assert.Equal(t, "jane@doe.com", m.UserName)
 		assert.Equal(t, "Jane", m.DisplayName)
 	})
-	t.Run("ClaimUsername", func(t *testing.T) {
+	t.Run("EmptyAuthId", func(t *testing.T) {
 		info := oidc.NewUserInfo()
 		info.SetName("Jane")
 		info.SetFamilyName("Doe")
 		info.SetEmail("jane@doe.com", true)
-		info.SetSubject("abcd123")
-		info.SetPreferredUsername("Jane Doe")
-		m := OidcUser(info, authn.ClaimUsername)
-
-		assert.Equal(t, "oidc", m.AuthProvider)
-		assert.Equal(t, "abcd123", m.AuthID)
-		assert.Equal(t, "jane@doe.com", m.UserEmail)
-		assert.Equal(t, "jane doe", m.UserName)
-		assert.Equal(t, "Jane", m.DisplayName)
-	})
-	t.Run("AuthIdEmpty", func(t *testing.T) {
-		info := oidc.NewUserInfo()
-		info.SetName("Jane")
-		info.SetFamilyName("Doe")
-		info.SetEmail("jane@doe.com", true)
-		m := OidcUser(info, authn.ClaimUsername)
+		m := OidcUser(info, authn.ClaimPreferredUsername)
 
 		assert.Empty(t, m)
 	})

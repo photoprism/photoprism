@@ -113,15 +113,19 @@ func TestConfig_OIDCRedirect(t *testing.T) {
 func TestConfig_OIDCUsername(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, authn.ClaimUsername, c.OIDCUsername())
+	assert.Equal(t, authn.ClaimPreferredUsername, c.OIDCUsername())
 
 	c.options.OIDCUsername = "email"
 
 	assert.Equal(t, authn.ClaimEmail, c.OIDCUsername())
 
+	c.options.OIDCUsername = "nickname"
+
+	assert.Equal(t, authn.ClaimNickname, c.OIDCUsername())
+
 	c.options.OIDCUsername = ""
 
-	assert.Equal(t, authn.ClaimUsername, c.OIDCUsername())
+	assert.Equal(t, authn.ClaimPreferredUsername, c.OIDCUsername())
 }
 
 func TestConfig_OIDCDomain(t *testing.T) {

@@ -1,7 +1,8 @@
 package authn
 
 const (
-	ClaimEmail    = "email"
-	ClaimUsername = "preferred_username"
-	OidcScopes    = "openid email profile"
+	ClaimPreferredUsername = "preferred_username"
+	ClaimEmail             = "email"
+	ClaimNickname          = "nickname"
+	OidcScopes             = "openid email profile"
 )

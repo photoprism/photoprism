@@ -37,11 +37,11 @@ func OIDCLogin(router *gin.RouterGroup) {
 		// Abort in public mode and if OIDC is disabled.
 		if get.Config().Public() {
 			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrDisabledInPublicMode.Error()})
-			Abort(c, http.StatusForbidden, i18n.ErrForbidden)
+			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 			return
 		} else if !conf.OIDCEnabled() {
 			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrAuthenticationDisabled.Error()})
-			Abort(c, http.StatusMethodNotAllowed, i18n.ErrUnsupported)
+			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 			return
 		}
 
@@ -51,7 +51,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 
 		// Abort if failure rate limit is exceeded.
 		if r.Reject() || limiter.Auth.Reject(clientIp) {
-			limiter.AbortJSON(c)
+			c.HTML(http.StatusTooManyRequests, "auth.gohtml", CreateSessionError(http.StatusTooManyRequests, i18n.Error(i18n.ErrTooManyRequests)))
 			return
 		}
 
@@ -59,8 +59,8 @@ func OIDCLogin(router *gin.RouterGroup) {
 		provider := get.OIDC()
 
 		if provider == nil {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrInvalidProvider.Error()})
-			Abort(c, http.StatusInternalServerError, i18n.ErrConnectionFailed)
+			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrInvalidProviderConfiguration.Error()})
+			c.HTML(http.StatusInternalServerError, "auth.gohtml", CreateSessionError(http.StatusInternalServerError, i18n.Error(i18n.ErrConnectionFailed)))
 			return
 		}
 

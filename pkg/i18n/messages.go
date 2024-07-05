@@ -3,6 +3,7 @@ package i18n
 const (
 	ErrUnexpected Message = iota + 1
 	ErrBadRequest
+	ErrTooManyRequests
 	ErrSaveFailed
 	ErrDeleteFailed
 	ErrAlreadyExists
@@ -99,6 +100,7 @@ var Messages = MessageMap{
 	// Error messages:
 	ErrUnexpected:         gettext("Something went wrong, try again"),
 	ErrBadRequest:         gettext("Unable to do that"),
+	ErrTooManyRequests:    gettext("Too many requests"),
 	ErrSaveFailed:         gettext("Changes could not be saved"),
 	ErrDeleteFailed:       gettext("Could not be deleted"),
 	ErrAlreadyExists:      gettext("%s already exists"),
