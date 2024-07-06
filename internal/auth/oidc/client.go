@@ -1,6 +1,7 @@
 package oidc
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -9,10 +10,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/zitadel/oidc/v2/pkg/client"
-	"github.com/zitadel/oidc/v2/pkg/client/rp"
-	utils "github.com/zitadel/oidc/v2/pkg/http"
-	"github.com/zitadel/oidc/v2/pkg/oidc"
+	"github.com/zitadel/oidc/v3/pkg/client"
+	"github.com/zitadel/oidc/v3/pkg/client/rp"
+	utils "github.com/zitadel/oidc/v3/pkg/http"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -79,7 +80,7 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 	}
 
 	// Perform service discovery through the standardized /.well-known/openid-configuration endpoint.
-	discover, err := client.Discover(issuerUri.String(), httpClient)
+	discover, err := client.Discover(context.TODO(), issuerUri.String(), httpClient)
 
 	if err != nil {
 		event.AuditErr([]string{"oidc", "provider", "service discovery", "%s"}, err)
@@ -104,7 +105,7 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 	scopes := clean.Scopes(oidcScopes)
 
 	// Create RelyingParty provider.
-	provider, err := rp.NewRelyingPartyOIDC(issuerUri.String(), oidcClient, oidcSecret, redirectUrl, scopes, clientOpt...)
+	provider, err := rp.NewRelyingPartyOIDC(context.TODO(), issuerUri.String(), oidcClient, oidcSecret, redirectUrl, scopes, clientOpt...)
 
 	if err != nil {
 		event.AuditErr([]string{"oidc", "provider", "%s"}, err)

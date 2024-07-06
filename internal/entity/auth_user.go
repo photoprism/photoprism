@@ -10,7 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
-	"github.com/zitadel/oidc/v2/pkg/oidc"
+	"github.com/zitadel/oidc/v3/pkg/oidc"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
