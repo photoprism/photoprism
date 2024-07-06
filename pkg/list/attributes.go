@@ -26,6 +26,11 @@ func ParseAttr(s string) Attr {
 
 // String returns the attributes as string.
 func (list Attr) String() string {
+	return strings.Join(list.Strings(), " ")
+}
+
+// Strings returns the attributes as string slice.
+func (list Attr) Strings() []string {
 	result := make([]string, 0, len(list))
 
 	list.Sort()
@@ -55,7 +60,7 @@ func (list Attr) String() string {
 		i++
 	}
 
-	return strings.Join(result, " ")
+	return result
 }
 
 // Sort sorts the attributes by key.

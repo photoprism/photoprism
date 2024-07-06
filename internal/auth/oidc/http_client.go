@@ -3,6 +3,8 @@ package oidc
 import (
 	"net/http"
 	"time"
+
+	"github.com/photoprism/photoprism/internal/event"
 )
 
 // HttpClient represents a client that makes HTTP requests.
@@ -16,11 +18,11 @@ func HttpClient(debug bool) *http.Client {
 	if debug {
 		return &http.Client{
 			Transport: LoggingRoundTripper{http.DefaultTransport},
-			Timeout:   time.Second * 20,
+			Timeout:   time.Second * 30,
 		}
 	}
 
-	return &http.Client{Timeout: 20 * time.Second}
+	return &http.Client{Timeout: 30 * time.Second}
 }
 
 // LoggingRoundTripper specifies the http.RoundTripper interface.
@@ -28,15 +30,16 @@ type LoggingRoundTripper struct {
 	proxy http.RoundTripper
 }
 
+// RoundTrip logs the request method, URL and error, if any.
 func (lrt LoggingRoundTripper) RoundTrip(req *http.Request) (res *http.Response, err error) {
-	log.Tracef("oidc: %s %s", req.Method, req.URL.String())
-
-	// Send request.
+	// Perform HTTP request.
 	res, err = lrt.proxy.RoundTrip(req)
 
-	// Log error, if any.
+	// Log the request method, URL and error, if any.
 	if err != nil {
-		log.Debugf("oidc: request to %s has failed (%s)", req.URL.String(), err)
+		event.AuditErr([]string{"oidc", "provider", "request", "%s %s", "%s"}, req.Method, req.URL.String(), err)
+	} else {
+		event.AuditDebug([]string{"oidc", "provider", "request", "%s %s", "%s"}, req.Method, req.URL.String(), res.Status)
 	}
 
 	return res, err

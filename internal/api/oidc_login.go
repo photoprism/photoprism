@@ -29,18 +29,17 @@ func OIDCLogin(router *gin.RouterGroup) {
 
 		// Get client IP address for logs and rate limiting checks.
 		clientIp := ClientIP(c)
-		action := "sign in"
 
 		// Get global config.
 		conf := get.Config()
 
 		// Abort in public mode and if OIDC is disabled.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrDisabledInPublicMode.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrDisabledInPublicMode.Error()})
 			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 			return
 		} else if !conf.OIDCEnabled() {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrAuthenticationDisabled.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthenticationDisabled.Error()})
 			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 			return
 		}
@@ -59,7 +58,7 @@ func OIDCLogin(router *gin.RouterGroup) {
 		provider := get.OIDC()
 
 		if provider == nil {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrInvalidProviderConfiguration.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrInvalidProviderConfiguration.Error()})
 			c.HTML(http.StatusInternalServerError, "auth.gohtml", CreateSessionError(http.StatusInternalServerError, i18n.Error(i18n.ErrConnectionFailed)))
 			return
 		}

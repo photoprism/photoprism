@@ -5,56 +5,66 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"path"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/zitadel/oidc/pkg/client"
-	"github.com/zitadel/oidc/pkg/client/rp"
-	utils "github.com/zitadel/oidc/pkg/http"
-	"github.com/zitadel/oidc/pkg/oidc"
+	"github.com/zitadel/oidc/v2/pkg/client"
+	"github.com/zitadel/oidc/v2/pkg/client/rp"
+	utils "github.com/zitadel/oidc/v2/pkg/http"
+	"github.com/zitadel/oidc/v2/pkg/oidc"
 
-	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-const (
-	RoleClaim = "photoprism_role"
-	AdminRole = "photoprism_admin"
-)
-
+// Client represents an OpenID Connect (OIDC) Relying Party Client.
 type Client struct {
 	rp.RelyingParty
-	debug bool
+	insecure bool
 }
 
-func NewClient(oidcUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl string, debug bool) (result *Client, err error) {
-	u, err := url.Parse(siteUrl)
-
-	if err != nil {
-		log.Debug(err)
+// NewClient creates and returns a new OpenID Connect (OIDC) Relying Party Client based on the specified parameters.
+func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl string, insecure bool) (result *Client, err error) {
+	if issuerUri == nil {
+		err = errors.New("issuer uri required")
+		event.AuditErr([]string{"oidc", "provider", "%s"}, err)
+		return nil, errors.New("issuer uri required")
+	} else if insecure == false && issuerUri.Scheme != "https" {
+		err = errors.New("issuer uri must use https")
+		event.AuditErr([]string{"oidc", "provider", "%s"}, err)
 		return nil, err
 	}
 
-	u.Path = path.Join(u.Path, config.OidcRedirectUri)
+	// Get redirect URL based on site URL.
+	redirectUrl, urlErr := RedirectURL(siteUrl)
 
+	if urlErr != nil {
+		event.AuditErr([]string{"oidc", "redirect url", "%s"}, err)
+		return nil, err
+	}
+
+	// Generate cryptographic keys.
 	var hashKey, encryptKey []byte
 
 	if hashKey, err = rnd.RandomBytes(16); err != nil {
-		log.Debugf("oidc: %q (create hash key)", err)
+		event.AuditErr([]string{"oidc", "hash key", "%s"}, err)
 		return nil, err
 	}
 
 	if encryptKey, err = rnd.RandomBytes(16); err != nil {
-		log.Debugf("oidc: %q (create encrypt key)", err)
+		event.AuditErr([]string{"oidc", "encrypt key", "%s"}, err)
 		return nil, err
 	}
 
+	// Create cookie handler.
 	cookieHandler := utils.NewCookieHandler(hashKey, encryptKey, utils.WithUnsecure())
-	httpClient := HttpClient(debug)
 
+	// Create HTTP client.
+	httpClient := HttpClient(insecure)
+
+	// Set OIDC Relying Party client options.
 	clientOpt := []rp.Option{
 		rp.WithHTTPClient(httpClient),
 		rp.WithCookieHandler(cookieHandler),
@@ -62,77 +72,80 @@ func NewClient(oidcUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl str
 			rp.WithIssuedAtOffset(5 * time.Second),
 		),
 		rp.WithErrorHandler(func(w http.ResponseWriter, r *http.Request, errorType string, errorDesc string, state string) {
-			log.Debugf("oidc: %s: %s (state: %s)", errorType, errorDesc, state)
+			event.AuditErr([]string{"oidc", "%s", "%s (state %s)"}, errorType, errorDesc, state)
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Header().Add("oidc_error", fmt.Sprintf("oidc: %s", errorDesc))
 		}),
 	}
 
-	discover, err := client.Discover(oidcUri.String(), httpClient)
+	// Perform service discovery through the standardized /.well-known/openid-configuration endpoint.
+	discover, err := client.Discover(issuerUri.String(), httpClient)
 
 	if err != nil {
-		log.Debugf("oidc: %q (discover)", err)
+		event.AuditErr([]string{"oidc", "provider", "service discovery", "%s"}, err)
 		return nil, err
 	}
 
+	// If possible, use Proof of Key Code Exchange (PKCE).
 	for _, v := range discover.CodeChallengeMethodsSupported {
 		if v == oidc.CodeChallengeMethodS256 {
 			clientOpt = append(clientOpt, rp.WithPKCE(cookieHandler))
 		}
 	}
 
+	// Set default scopes if no scopes were specified.
 	if oidcScopes == "" {
 		oidcScopes = "openid email profile"
 	}
 
-	scopes := strings.Split(strings.TrimSpace(oidcScopes), " ")
+	event.AuditDebug([]string{"oidc", "provider", "scopes", oidcScopes})
 
-	provider, err := rp.NewRelyingPartyOIDC(oidcUri.String(), oidcClient, oidcSecret, u.String(), scopes, clientOpt...)
+	// Parse scopes into string slice.
+	scopes := clean.Scopes(oidcScopes)
+
+	// Create RelyingParty provider.
+	provider, err := rp.NewRelyingPartyOIDC(issuerUri.String(), oidcClient, oidcSecret, redirectUrl, scopes, clientOpt...)
 
 	if err != nil {
-		log.Debugf("oidc: %s (issuer)", err)
+		event.AuditErr([]string{"oidc", "provider", "%s"}, err)
 		return nil, err
 	}
 
-	log.Tracef("oidc: pkce enabled %v", provider.IsPKCE())
+	if provider.IsPKCE() {
+		event.AuditDebug([]string{"oidc", "provider", "pkce", "enabled"})
+	} else {
+		event.AuditDebug([]string{"oidc", "provider", "pkce", "disabled"})
+	}
 
+	// Return OIDC Client with RelyingParty provider.
 	return &Client{
 		provider,
-		debug,
+		insecure,
 	}, nil
 }
 
-func state() string {
-	return rnd.UUID()
-}
-
+// AuthCodeUrlHandler redirects a browser to the login page of the configured OIDC identity provider.
 func (c *Client) AuthCodeUrlHandler(ctx *gin.Context) {
-	handle := rp.AuthURLHandler(state, c)
+	handle := rp.AuthURLHandler(rnd.State, c)
 	handle(ctx.Writer, ctx.Request)
 }
 
-func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo oidc.UserInfo, tokens *oidc.Tokens, err error) {
-	userinfoClosure := func(w http.ResponseWriter, r *http.Request, t *oidc.Tokens, state string, rp rp.RelyingParty, i oidc.UserInfo) {
+// CodeExchangeUserInfo verifies a redirect auth request and returns the user information and tokens if successful.
+func (c *Client) CodeExchangeUserInfo(ctx *gin.Context) (userInfo *oidc.UserInfo, tokens *oidc.Tokens[*oidc.IDTokenClaims], err error) {
+	getInfo := func(w http.ResponseWriter, r *http.Request, t *oidc.Tokens[*oidc.IDTokenClaims], state string, rp rp.RelyingParty, i *oidc.UserInfo) {
 		userInfo = i
 		tokens = t
 	}
 
-	/*
-		You could also just take the access_token and id_token without calling the userinfo endpoint, e.g.:
-
-		tokeninfoClosure := func(w http.ResponseWriter, r *http.Request, tokens *oidc.Tokens, state string, rp rp.RelyingParty) {
-		log.Infof("IDTOKEN: %q\n\n" , tokens.IDToken)
-		log.Infof("ACCESSTOKEN: %q\n\n" , tokens.AccessToken)
-		log.Infof("REFRESHTOKEN: %q\n\n" , tokens.RefreshToken)
-	*/
-
-	handle := rp.CodeExchangeHandler(rp.UserinfoCallback(userinfoClosure), c)
+	// It would also be possible to directly get the user info from the oidc.IDTokenClaims
+	// without performing a request to the userinfo endpoint of the OIDC identity provider.
+	handle := rp.CodeExchangeHandler(rp.UserinfoCallback(getInfo), c)
 
 	handle(ctx.Writer, ctx.Request)
 
 	if sc := ctx.Writer.Status(); sc != 0 && sc != http.StatusOK {
 		if oidcErr := ctx.Writer.Header().Get("oidc_error"); oidcErr == "" {
-			return userInfo, tokens, errors.New("tailed to exchange the authentication code and retrieve the user information")
+			return userInfo, tokens, errors.New("failed to exchange token for user info")
 		} else {
 			return userInfo, tokens, errors.New(oidcErr)
 		}

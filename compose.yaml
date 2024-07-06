@@ -9,6 +9,7 @@ services:
     depends_on:
       - mariadb
       - dummy-webdav
+      - dummy-oidc
     stop_grace_period: 10s
     security_opt:
       - seccomp:unconfined

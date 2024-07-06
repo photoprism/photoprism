@@ -20,7 +20,7 @@ func TestHttpClient(t *testing.T) {
 		assert.IsType(t, LoggingRoundTripper{}, client.Transport)
 	})
 	t.Run("GetRequest", func(t *testing.T) {
-		req, err := http.NewRequest("GET", "https://www.photoprism.app/", nil)
+		req, err := http.NewRequest("GET", "https://accounts.google.com/.well-known/openid-configuration", nil)
 		assert.Nil(t, err)
 		rt := LoggingRoundTripper{http.DefaultTransport}
 		_, err = rt.RoundTrip(req)

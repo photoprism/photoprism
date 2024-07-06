@@ -15,7 +15,7 @@ func initOidc() {
 		Config().OIDCSecret(),
 		Config().OIDCScopes(),
 		Config().SiteUrl(),
-		Config().Debug(),
+		false,
 	)
 }
 

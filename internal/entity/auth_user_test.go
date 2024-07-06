@@ -4,9 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/zitadel/oidc/pkg/oidc"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/zitadel/oidc/v2/pkg/oidc"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -22,77 +21,59 @@ func TestNewUser(t *testing.T) {
 }
 
 func TestOidcUser(t *testing.T) {
-	t.Run("ClaimPreferredUsername", func(t *testing.T) {
-		info := oidc.NewUserInfo()
-		info.SetName("Jane Doe")
-		info.SetGivenName("Jane")
-		info.SetFamilyName("Doe")
-		info.SetEmail("jane@doe.com", true)
-		info.SetSubject("abcd123")
-		info.SetPreferredUsername("Jane Doe")
-		m := OidcUser(info, authn.ClaimPreferredUsername)
+	t.Run("Success", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "Jane Doe"
+		info.GivenName = "Jane"
+		info.FamilyName = "Doe"
+		info.Email = "jane@doe.com"
+		info.EmailVerified = true
+		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
+		info.PreferredUsername = "Jane Doe"
+
+		m := OidcUser(info, "jane.doe")
 
 		assert.Equal(t, "oidc", m.AuthProvider)
-		assert.Equal(t, "abcd123", m.AuthID)
+		assert.Equal(t, "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d", m.AuthID)
 		assert.Equal(t, "jane@doe.com", m.UserEmail)
 		assert.Equal(t, "jane.doe", m.UserName)
 		assert.Equal(t, "Jane Doe", m.DisplayName)
 	})
-	t.Run("ClaimName", func(t *testing.T) {
-		info := oidc.NewUserInfo()
-		info.SetName("Jane Doe")
-		info.SetGivenName("Jane")
-		info.SetFamilyName("Doe")
-		info.SetNickname("Jens Mander")
-		info.SetEmail("jane@doe.com", true)
-		info.SetSubject("abcd123")
-		m := OidcUser(info, authn.ClaimName)
+	t.Run("NoUsername", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "Jane Doe"
+		info.GivenName = "Jane"
+		info.FamilyName = "Doe"
+		info.Email = "jane@doe.com"
+		info.EmailVerified = true
+		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
+		info.PreferredUsername = "Jane Doe"
+
+		m := OidcUser(info, "")
 
 		assert.Equal(t, "oidc", m.AuthProvider)
-		assert.Equal(t, "abcd123", m.AuthID)
+		assert.Equal(t, "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d", m.AuthID)
 		assert.Equal(t, "jane@doe.com", m.UserEmail)
-		assert.Equal(t, "jane.doe", m.UserName)
+		assert.Equal(t, "", m.UserName)
 		assert.Equal(t, "Jane Doe", m.DisplayName)
 	})
-	t.Run("ClaimNickname", func(t *testing.T) {
-		info := oidc.NewUserInfo()
-		info.SetName("Jane Doe")
-		info.SetGivenName("Jane")
-		info.SetFamilyName("Doe")
-		info.SetNickname("Jens Mander")
-		info.SetEmail("jane@doe.com", true)
-		info.SetSubject("abcd123")
-		m := OidcUser(info, authn.ClaimNickname)
+	t.Run("NoSubject", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "Jane Doe"
+		info.GivenName = "Jane"
+		info.FamilyName = "Doe"
+		info.Nickname = "Jens Mander"
+		info.Email = "jane@doe.com"
+		info.EmailVerified = true
+		info.Subject = ""
 
-		assert.Equal(t, "oidc", m.AuthProvider)
-		assert.Equal(t, "abcd123", m.AuthID)
-		assert.Equal(t, "jane@doe.com", m.UserEmail)
-		assert.Equal(t, "jens.mander", m.UserName)
-		assert.Equal(t, "Jane Doe", m.DisplayName)
-	})
-	t.Run("ClaimEmail", func(t *testing.T) {
-		info := oidc.NewUserInfo()
-		info.SetName("Jane Doe")
-		info.SetGivenName("Jane")
-		info.SetFamilyName("Doe")
-		info.SetEmail("jane@doe.com", true)
-		info.SetSubject("abcd123")
-		m := OidcUser(info, authn.ClaimEmail)
+		m := OidcUser(info, "jane.doe")
 
-		assert.Equal(t, "oidc", m.AuthProvider)
-		assert.Equal(t, "abcd123", m.AuthID)
-		assert.Equal(t, "jane@doe.com", m.UserEmail)
-		assert.Equal(t, "jane@doe.com", m.UserName)
-		assert.Equal(t, "Jane Doe", m.DisplayName)
-	})
-	t.Run("EmptyAuthId", func(t *testing.T) {
-		info := oidc.NewUserInfo()
-		info.SetName("Jane")
-		info.SetFamilyName("Doe")
-		info.SetEmail("jane@doe.com", true)
-		m := OidcUser(info, authn.ClaimPreferredUsername)
-
-		assert.Empty(t, m)
+		assert.Equal(t, "", m.AuthProvider)
+		assert.Equal(t, "", m.AuthID)
+		assert.Equal(t, "", m.UserEmail)
+		assert.Equal(t, "", m.UserName)
+		assert.Equal(t, "", m.DisplayName)
 	})
 }
 

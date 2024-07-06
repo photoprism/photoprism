@@ -10,7 +10,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
-	"github.com/zitadel/oidc/pkg/oidc"
+	"github.com/zitadel/oidc/v2/pkg/oidc"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -105,64 +105,17 @@ func NewUser() (m *User) {
 }
 
 // OidcUser creates a new OIDC user entity.
-func OidcUser(userInfo oidc.UserInfo, usernameClaim string) User {
-	var userName, userEmail string
+func OidcUser(userInfo *oidc.UserInfo, userName string) User {
+	authId := clean.Auth(userInfo.Subject)
 
-	switch usernameClaim {
-	case authn.ClaimName:
-		if name := clean.Handle(userInfo.GetName()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetPreferredUsername()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetNickname()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Email(userInfo.GetEmail()); userInfo.IsEmailVerified() && len(name) > 4 {
-			userName = name
-		}
-	case authn.ClaimNickname:
-		if name := clean.Handle(userInfo.GetNickname()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetPreferredUsername()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetName()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Email(userInfo.GetEmail()); userInfo.IsEmailVerified() && len(name) > 4 {
-			userName = name
-		}
-	case authn.ClaimEmail:
-		if name := clean.Email(userInfo.GetEmail()); userInfo.IsEmailVerified() && len(name) > 4 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetPreferredUsername()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetName()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetNickname()); len(name) > 0 {
-			userName = name
-		}
-	default:
-		if name := clean.Handle(userInfo.GetPreferredUsername()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetName()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Handle(userInfo.GetNickname()); len(name) > 0 {
-			userName = name
-		} else if name = clean.Email(userInfo.GetEmail()); userInfo.IsEmailVerified() && len(name) > 4 {
-			userName = name
-		}
-	}
-
-	userEmail = clean.Email(userInfo.GetEmail())
-
-	authId := clean.Auth(userInfo.GetSubject())
-
-	if userName == "" || authId == "" {
+	if authId == "" {
 		return User{}
 	}
 
 	return User{
-		DisplayName:  userInfo.GetName(),
 		UserName:     userName,
-		UserEmail:    userEmail,
+		DisplayName:  userInfo.Name,
+		UserEmail:    clean.Email(userInfo.Email),
 		AuthID:       authId,
 		AuthProvider: authn.ProviderOIDC.String(),
 	}

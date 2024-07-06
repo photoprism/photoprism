@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
@@ -22,7 +23,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// OIDCRedirect creates a new access token when a user has been successfully authenticated,
+// OIDCRedirect creates a new API access token when a user has been successfully authenticated via OIDC,
 // and then redirects the browser back to the app.
 //
 // GET /api/v1/oidc/redirect
@@ -41,18 +42,17 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		clientIp := ClientIP(c)
 		userAgent := UserAgent(c)
 		userName := "unknown user"
-		action := "sign in"
 
 		// Get global config.
 		conf := get.Config()
 
 		// Abort in public mode and if OIDC is disabled.
 		if get.Config().Public() {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrDisabledInPublicMode.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrDisabledInPublicMode.Error()})
 			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 			return
 		} else if !conf.OIDCEnabled() {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrAuthenticationDisabled.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthenticationDisabled.Error()})
 			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 			return
 		}
@@ -69,7 +69,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Check if the required request parameters are present.
 		if c.Query("state") == "" || c.Query("code") == "" {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrAuthCodeRequired.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthCodeRequired.Error()})
 			c.Redirect(http.StatusTemporaryRedirect, conf.LoginUri())
 			return
 		}
@@ -78,15 +78,16 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		provider := get.OIDC()
 
 		if provider == nil {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrAuthenticationDisabled.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrInvalidProviderConfiguration.Error()})
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		}
 
+		// Check the auth request and, if successful, get user information and tokens.
 		userInfo, tokens, claimErr := provider.CodeExchangeUserInfo(c)
 
 		if claimErr != nil {
-			event.AuditErr([]string{clientIp, "oidc", action, claimErr.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", claimErr.Error()})
 			return
 		}
 
@@ -94,53 +95,55 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		var user *entity.User
 		var err error
 
-		userEmail := clean.Email(userInfo.GetEmail())
+		userEmail := clean.Email(userInfo.Email)
 
 		// Optionally check if the email domain matches.
 		if domain := conf.OIDCDomain(); domain == "" {
 			// Do nothing.
-		} else if _, emailDomain, _ := strings.Cut(userEmail, "@"); emailDomain == "" || !userInfo.IsEmailVerified() {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrVerifiedEmailRequired.Error()})
+		} else if _, emailDomain, _ := strings.Cut(userEmail, "@"); emailDomain == "" || !userInfo.EmailVerified {
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrVerifiedEmailRequired.Error()})
 			event.LoginError(clientIp, "oidc", userEmail, userAgent, authn.ErrVerifiedEmailRequired.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrForbidden)))
 			return
 		} else if !strings.HasSuffix("."+emailDomain, "."+domain) {
 			message := fmt.Sprintf("domain must match '%s'", domain)
-			event.AuditErr([]string{clientIp, "oidc", action, userEmail, message})
+			event.AuditErr([]string{clientIp, "create session", "oidc", userEmail, message})
 			event.LoginError(clientIp, "oidc", userEmail, userAgent, message)
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrForbidden)))
 			return
 		}
 
 		// Find existing user record and update it, if necessary.
-		if oidcUser := entity.OidcUser(userInfo, conf.OIDCUsername()); authn.ProviderOIDC.NotEqual(oidcUser.AuthProvider) {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrAuthProviderIsNotOIDC.Error()})
+		if oidcUser := entity.OidcUser(userInfo, oidc.Username(userInfo, conf.OIDCUsername())); authn.ProviderOIDC.NotEqual(oidcUser.AuthProvider) {
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthProviderIsNotOIDC.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		} else if oidcUser.UserName == "" {
-			event.AuditErr([]string{clientIp, "oidc", action, authn.ErrUsernameRequiredToRegister.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrUsernameRequiredToRegister.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequiredToRegister.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		} else if user = entity.FindUser(oidcUser); user != nil {
-			// Check if username and subject UID match.
+			// Ensure user has a username.
 			if user.Username() == "" {
-				event.AuditErr([]string{clientIp, "oidc", action, oidcUser.UserName, authn.ErrUsernameRequired.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", oidcUser.UserName, authn.ErrUsernameRequired.Error()})
 				event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrUsernameRequired.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			}
 
 			userName = user.Username()
+			event.AuditInfo([]string{clientIp, "create session", "oidc", "found user", userName})
 
+			// Check if OIDC subject identifier matches.
 			if authn.ProviderOIDC.NotEqual(user.AuthProvider) {
-				event.AuditErr([]string{clientIp, "oidc", action, userName, authn.ErrAuthProviderIsNotOIDC.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAuthProviderIsNotOIDC.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			} else if user.AuthID == "" || oidcUser.AuthID == "" || user.AuthID != oidcUser.AuthID {
-				event.AuditErr([]string{clientIp, "oidc", action, userName, authn.ErrInvalidAuthID.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrInvalidAuthID.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrInvalidAuthID.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
@@ -151,43 +154,43 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			// Update user display name.
 			if entity.SrcPriority[details.NameSrc] <= entity.SrcPriority[entity.SrcOIDC] {
-				user.SetDisplayName(userInfo.GetName(), entity.SrcOIDC)
-				user.SetGivenName(userInfo.GetGivenName())
-				user.SetFamilyName(userInfo.GetFamilyName())
-				details.UserGender = clean.Name(string(userInfo.GetGender()))
+				user.SetDisplayName(userInfo.Name, entity.SrcOIDC)
+				user.SetGivenName(userInfo.GivenName)
+				user.SetFamilyName(userInfo.FamilyName)
+				details.UserGender = clean.Name(string(userInfo.Gender))
 			}
 
 			// Update nickname.
-			if name := clean.Name(userInfo.GetNickname()); name != "" {
-				details.NickName = clean.Name(userInfo.GetNickname())
+			if name := clean.Name(userInfo.Nickname); name != "" {
+				details.NickName = clean.Name(userInfo.Nickname)
 			}
 
 			// Update profile URL.
-			if u := clean.Uri(userInfo.GetProfile()); u != "" {
+			if u := clean.Uri(userInfo.Profile); u != "" {
 				details.ProfileURL = u
 			}
 
 			// Update website URL.
-			if u := clean.Uri(userInfo.GetWebsite()); u != "" {
+			if u := clean.Uri(userInfo.Website); u != "" {
 				details.SiteURL = u
 			}
 
 			// Update UI locale.
-			user.Settings().UILanguage = clean.Locale(userInfo.GetLocale().String(), user.Settings().UILanguage)
+			user.Settings().UILanguage = clean.Locale(userInfo.Locale.String(), user.Settings().UILanguage)
 
 			// Update UI timezone.
-			if tz := userInfo.GetZoneinfo(); tz != "" && tz != time.UTC.String() {
+			if tz := userInfo.Zoneinfo; tz != "" && tz != time.UTC.String() {
 				user.Settings().UITimeZone = tz
 			}
 
 			// Update user location, if available.
 			if addr := userInfo.GetAddress(); addr != nil {
-				user.Details().UserLocation = clean.Name(addr.GetLocality())
-				user.Details().UserCountry = clean.TypeLowerUnderscore(addr.GetCountry())
+				user.Details().UserLocation = clean.Name(addr.Locality)
+				user.Details().UserCountry = clean.TypeLowerUnderscore(addr.Country)
 			}
 
 			// Update birthday, if available.
-			if birthDate := txt.ParseTime(userInfo.GetBirthdate(), userInfo.GetZoneinfo()); !birthDate.IsZero() {
+			if birthDate := txt.ParseTime(userInfo.Birthdate, userInfo.Zoneinfo); !birthDate.IsZero() {
 				user.BornAt = &birthDate
 				user.Details().BirthDay = birthDate.Day()
 				user.Details().BirthMonth = int(birthDate.Month())
@@ -195,28 +198,26 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 
 			// Update email, if verified.
-			if userInfo.IsEmailVerified() {
-				user.UserEmail = clean.Email(userInfo.GetEmail())
+			if userInfo.EmailVerified {
+				user.UserEmail = clean.Email(userInfo.Email)
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
 			// Update existing user account.
 			if err = user.Save(); err != nil {
-				event.AuditErr([]string{clientIp, "oidc", action, userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+": "+err.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			}
 
 			// Set user avatar image?
-			if avatarUrl := userInfo.GetPicture(); avatarUrl == "" || user.HasAvatar() {
+			if avatarUrl := userInfo.Picture; avatarUrl == "" || user.HasAvatar() {
 				// Do nothing.
 			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC); err != nil {
-				event.AuditWarn([]string{clientIp, "oidc", action, userName, "failed to set avatar image", err.Error()})
+				event.AuditWarn([]string{clientIp, "create session", "oidc", userName, "failed to set avatar image", err.Error()})
 			}
 		} else if conf.OIDCRegister() {
-			action = "register"
-
 			// Create new user record.
 			user = &oidcUser
 
@@ -227,35 +228,37 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				userName = userName + rnd.Base10(6)
 			}
 
+			event.AuditInfo([]string{clientIp, "create session", "oidc", "create user", userName})
+
 			user.UserName = userName
 
 			// Set user profile information.
-			user.SetDisplayName(userInfo.GetName(), entity.SrcOIDC)
-			user.SetGivenName(userInfo.GetGivenName())
-			user.SetFamilyName(userInfo.GetFamilyName())
-			user.Details().UserGender = clean.Name(string(userInfo.GetGender()))
-			user.Details().NickName = clean.Name(userInfo.GetNickname())
+			user.SetDisplayName(userInfo.Name, entity.SrcOIDC)
+			user.SetGivenName(userInfo.GivenName)
+			user.SetFamilyName(userInfo.FamilyName)
+			user.Details().UserGender = clean.Name(string(userInfo.Gender))
+			user.Details().NickName = clean.Name(userInfo.Nickname)
 
 			// Set user profile URL.
-			user.Details().ProfileURL = clean.Uri(userInfo.GetProfile())
+			user.Details().ProfileURL = clean.Uri(userInfo.Profile)
 
 			// Set user site URL.
-			user.Details().SiteURL = clean.Uri(userInfo.GetWebsite())
+			user.Details().SiteURL = clean.Uri(userInfo.Website)
 
 			// Set UI locale.
-			user.Settings().UILanguage = clean.Locale(userInfo.GetLocale().String(), "")
+			user.Settings().UILanguage = clean.Locale(userInfo.Locale.String(), "")
 
 			// Set UI timezone.
-			user.Settings().UITimeZone = userInfo.GetZoneinfo()
+			user.Settings().UITimeZone = userInfo.Zoneinfo
 
 			// Set user location, if available.
 			if addr := userInfo.GetAddress(); addr != nil {
-				user.Details().UserLocation = clean.Name(addr.GetLocality())
-				user.Details().UserCountry = clean.TypeLowerUnderscore(addr.GetCountry())
+				user.Details().UserLocation = clean.Name(addr.Locality)
+				user.Details().UserCountry = clean.TypeLowerUnderscore(addr.Country)
 			}
 
 			// Set birthday, if available.
-			if birthDate := txt.ParseTime(userInfo.GetBirthdate(), userInfo.GetZoneinfo()); !birthDate.IsZero() {
+			if birthDate := txt.ParseTime(userInfo.Birthdate, userInfo.Zoneinfo); !birthDate.IsZero() {
 				user.BornAt = &birthDate
 				user.Details().BirthDay = birthDate.Day()
 				user.Details().BirthMonth = int(birthDate.Month())
@@ -263,8 +266,8 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			}
 
 			// Set email, if verified.
-			if userInfo.IsEmailVerified() {
-				user.UserEmail = clean.Email(userInfo.GetEmail())
+			if userInfo.EmailVerified {
+				user.UserEmail = clean.Email(userInfo.Email)
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
@@ -275,20 +278,20 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 			// Create new user account.
 			if err = user.Create(); err != nil {
-				event.AuditErr([]string{clientIp, "oidc", action, userName, authn.ErrAccountCreateFailed.Error(), err.Error()})
+				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountCreateFailed.Error(), err.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error()+": "+err.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			}
 
 			// Set user avatar image.
-			if avatarUrl := userInfo.GetPicture(); avatarUrl == "" {
-				event.AuditDebug([]string{clientIp, "oidc", action, userName, "no avatar image provided"})
+			if avatarUrl := userInfo.Picture; avatarUrl == "" {
+				event.AuditDebug([]string{clientIp, "create session", "oidc", userName, "no avatar image provided"})
 			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC); err != nil {
-				event.AuditWarn([]string{clientIp, "oidc", action, userName, "failed to set avatar image", err.Error()})
+				event.AuditWarn([]string{clientIp, "create session", "oidc", userName, "failed to set avatar image", err.Error()})
 			}
 		} else {
-			event.AuditErr([]string{clientIp, "oidc", action, userName, authn.ErrRegistrationDisabled.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrRegistrationDisabled.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrRegistrationDisabled.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
@@ -296,7 +299,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Login allowed?
 		if !user.CanLogIn() {
-			event.AuditErr([]string{clientIp, "oidc", action, userName, authn.ErrAccountDisabled.Error()})
+			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountDisabled.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountDisabled.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
@@ -320,11 +323,11 @@ func OIDCRedirect(router *gin.RouterGroup) {
 
 		// Save session after successful authentication.
 		if sess, err = get.Session().Save(sess); err != nil {
-			event.AuditErr([]string{clientIp, "oidc", action, userName, "%s"}, err)
+			event.AuditErr([]string{clientIp, "create session", "oidc", userName, "%s"}, err)
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		} else if sess == nil {
-			event.AuditErr([]string{clientIp, "oidc", action, userName, "session is nil"})
+			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.Failed})
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrUnexpected)))
 			return
 		}
@@ -335,8 +338,15 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		// Response includes user data, session data, and client config values.
 		response := CreateSessionResponse(sess.AuthToken(), sess, conf.ClientSession(sess))
 
-		// Log success.
-		event.AuditInfo([]string{clientIp, "oidc", action, userName, authn.Succeeded})
+		// Log session created event.
+		event.AuditInfo([]string{clientIp, "session %s", "oidc", userName, authn.Created}, sess.RefID)
+
+		// Log session expiration time.
+		if expires := sess.ExpiresAt(); !expires.IsZero() {
+			event.AuditDebug([]string{clientIp, "session %s", "oidc", userName, "expires at %s"}, sess.RefID, txt.DateTime(&expires))
+		}
+
+		// Log successful login.
 		event.LoginInfo(clientIp, "oidc", userName, userAgent)
 
 		// Update login timestamp.

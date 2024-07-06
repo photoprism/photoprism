@@ -64,7 +64,7 @@ var services struct {
 
 func SetConfig(c *config.Config) {
 	if c == nil {
-		panic("config is nil")
+		log.Panic("panic: argument is nil in get.SetConfig(c *config.Config)")
 	}
 
 	conf = c
@@ -74,7 +74,7 @@ func SetConfig(c *config.Config) {
 
 func Config() *config.Config {
 	if conf == nil {
-		panic("config is nil")
+		log.Panic("panic: conf is nil in get.Config()")
 	}
 
 	return conf

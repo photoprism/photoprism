@@ -2,6 +2,7 @@ package authn
 
 // Generic status messages for authentication and authorization:
 const (
+	Failed      = "failed"
 	Denied      = "denied"
 	Granted     = "granted"
 	Created     = "created"

@@ -14,3 +14,12 @@ func Scope(s string) string {
 
 	return list.ParseAttr(strings.ToLower(s)).String()
 }
+
+// Scopes sanitizes authentication scope identifiers and returns them as string slice.
+func Scopes(s string) []string {
+	if s == "" {
+		return []string{}
+	}
+
+	return list.ParseAttr(strings.ToLower(s)).Strings()
+}

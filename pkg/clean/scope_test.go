@@ -20,3 +20,18 @@ func TestScope(t *testing.T) {
 		assert.Equal(t, "*", q)
 	})
 }
+
+func TestScopes(t *testing.T) {
+	t.Run("Empty", func(t *testing.T) {
+		q := Scopes("")
+		assert.Equal(t, []string{}, q)
+	})
+	t.Run("Sanitized", func(t *testing.T) {
+		q := Scopes(" foo:BAR webdav   openid metrics !")
+		assert.Equal(t, []string{"foo:bar", "metrics", "openid", "webdav"}, q)
+	})
+	t.Run("All", func(t *testing.T) {
+		q := Scopes("*")
+		assert.Equal(t, []string{"*"}, q)
+	})
+}
