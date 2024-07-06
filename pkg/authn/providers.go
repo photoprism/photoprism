@@ -25,15 +25,10 @@ const (
 	ProviderNone        ProviderType = "none"
 )
 
-// RemoteProviders contains remote auth providers.
-var RemoteProviders = list.List{
-	string(ProviderOIDC),
-	string(ProviderLDAP),
-}
-
-// LocalProviders contains local auth providers.
+// LocalProviders contains local authentication providers (signing up with OIDC creates a local user account).
 var LocalProviders = list.List{
 	string(ProviderLocal),
+	string(ProviderOIDC),
 }
 
 // ClientProviders contains all client authentication providers.
@@ -43,7 +38,7 @@ var ClientProviders = list.List{
 	string(ProviderAccessToken),
 }
 
-// PasswordProviders contains authentication providers that allow a password to be checked for authentication.
+// PasswordProviders contains authentication providers which support password authentication (local and remote).
 var PasswordProviders = list.List{
 	string(ProviderDefault),
 	string(ProviderLocal),
@@ -147,11 +142,6 @@ func (t ProviderType) IsNot(providerType ProviderType) bool {
 // IsUndefined checks if the provider is undefined.
 func (t ProviderType) IsUndefined() bool {
 	return t == ""
-}
-
-// IsRemote checks if the provider is external.
-func (t ProviderType) IsRemote() bool {
-	return list.Contains(RemoteProviders, string(t))
 }
 
 // IsLocal checks if local authentication is possible.

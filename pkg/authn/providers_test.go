@@ -51,21 +51,9 @@ func TestProviderType_IsUndefined(t *testing.T) {
 	assert.False(t, ProviderOIDC.IsUndefined())
 }
 
-func TestProviderType_IsRemote(t *testing.T) {
-	assert.False(t, ProviderLocal.IsRemote())
-	assert.True(t, ProviderOIDC.IsRemote())
-	assert.True(t, ProviderLDAP.IsRemote())
-	assert.False(t, ProviderClient.IsRemote())
-	assert.False(t, ProviderApplication.IsRemote())
-	assert.False(t, ProviderAccessToken.IsRemote())
-	assert.False(t, ProviderNone.IsRemote())
-	assert.False(t, ProviderDefault.IsRemote())
-	assert.False(t, ProviderUndefined.IsRemote())
-}
-
 func TestProviderType_IsLocal(t *testing.T) {
 	assert.True(t, ProviderLocal.IsLocal())
-	assert.False(t, ProviderOIDC.IsLocal())
+	assert.True(t, ProviderOIDC.IsLocal())
 	assert.False(t, ProviderLDAP.IsLocal())
 	assert.False(t, ProviderClient.IsLocal())
 	assert.False(t, ProviderApplication.IsLocal())

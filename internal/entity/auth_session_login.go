@@ -94,17 +94,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 	}
 
 	// Login allowed?
-	if !user.Provider().IsDefault() && !user.Provider().IsLocal() && !user.Provider().Is(authn.ProviderOIDC) {
-		message := fmt.Sprintf("%s authentication disabled", authn.ProviderLocal.String())
-
-		if s != nil {
-			event.AuditWarn([]string{clientIp, "session %s", "login as %s", message}, s.RefID, clean.LogQuote(username))
-			event.LoginError(clientIp, "api", username, s.UserAgent, message)
-			s.Status = http.StatusUnauthorized
-		}
-
-		return provider, method, i18n.Error(i18n.ErrInvalidCredentials)
-	} else if !user.CanLogIn() {
+	if !user.CanLogIn() {
 		message := authn.ErrAccountDisabled.Error()
 
 		if s != nil {
@@ -171,6 +161,19 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 
 			return provider, method, authErr
 		}
+	}
+
+	// Abort if user does not have a local authentication providers (signing up with OIDC creates a local user account).
+	if !user.Provider().IsDefault() && !user.Provider().IsLocal() {
+		message := fmt.Sprintf("%s authentication disabled", authn.ProviderLocal.String())
+
+		if s != nil {
+			event.AuditWarn([]string{clientIp, "session %s", "login as %s", message}, s.RefID, clean.LogQuote(username))
+			event.LoginError(clientIp, "api", username, s.UserAgent, message)
+			s.Status = http.StatusUnauthorized
+		}
+
+		return provider, method, i18n.Error(i18n.ErrInvalidCredentials)
 	}
 
 	// Check password.
