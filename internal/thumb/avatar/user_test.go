@@ -17,7 +17,7 @@ func TestSetUserAvatarURL(t *testing.T) {
 		assert.NoError(t, err)
 	})
 	t.Run("JPEG", func(t *testing.T) {
-		admin := entity.UserFixtures.Get("alice")
+		admin := entity.UserFixtures.Get("bob")
 		imageUrl := "https://dl.photoprism.app/img/team/avatar.jpg"
 		err := SetUserImageURL(&admin, imageUrl, entity.SrcOIDC)
 		assert.NoError(t, err)
@@ -32,7 +32,7 @@ func TestSetUserAvatarURL(t *testing.T) {
 
 func TestSetUserAvatarImage(t *testing.T) {
 	t.Run("Admin", func(t *testing.T) {
-		admin := entity.UserFixtures.Get("alice")
+		admin := entity.UserFixtures.Get("friend")
 		fileName := fs.Abs("testdata/avatar.png")
 		err := SetUserImage(&admin, fileName, entity.SrcAuto)
 		assert.NoError(t, err)
