@@ -45,7 +45,7 @@ require (
 	golang.org/x/crypto v0.25.0
 	golang.org/x/net v0.27.0
 	gonum.org/v1/gonum v0.15.0
-	gopkg.in/photoprism/go-tz.v2 v2.1.2
+	gopkg.in/photoprism/go-tz.v2 v2.1.3
 	gopkg.in/yaml.v2 v2.4.0
 )
 
