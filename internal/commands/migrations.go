@@ -64,7 +64,6 @@ func migrationsStatusAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	var ids []string
@@ -153,7 +152,6 @@ func migrationsRunAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	if ctx.Bool("trace") {

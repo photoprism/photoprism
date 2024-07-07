@@ -13,8 +13,10 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
+// FeedbackURL is the service endpoint for submitting user feedback.
 var FeedbackURL = ServiceURL + "/%s/feedback"
 
+// Feedback represents user feedback submitted through the user interface.
 type Feedback struct {
 	Category      string `json:"Category"`
 	Subject       string `json:"Subject"`

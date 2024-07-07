@@ -5,6 +5,7 @@ import (
 	"runtime"
 )
 
+// ServiceURL specifies the service endpoint URL.
 var ServiceURL = "https://my.photoprism.app/v1/hello"
 
 // Request represents basic environment specs for debugging.
@@ -15,8 +16,14 @@ type Request struct {
 	ClientArch    string `json:"ClientArch"`
 	ClientCPU     int    `json:"ClientCPU"`
 	ClientEnv     string `json:"ClientEnv"`
+	ClientOpt     string `json:"ClientOpt"`
 	PartnerID     string `json:"PartnerID"`
 	ApiToken      string `json:"ApiToken"`
+}
+
+// ClientOpt returns a custom request option.
+var ClientOpt = func() string {
+	return ""
 }
 
 // NewRequest creates a new backend key request instance.
@@ -28,6 +35,7 @@ func NewRequest(version, serial, env, partnerId, token string) *Request {
 		ClientArch:    runtime.GOARCH,
 		ClientCPU:     runtime.NumCPU(),
 		ClientEnv:     env,
+		ClientOpt:     ClientOpt(),
 		PartnerID:     partnerId,
 		ApiToken:      token,
 	}

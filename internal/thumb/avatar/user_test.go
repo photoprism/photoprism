@@ -10,31 +10,35 @@ import (
 )
 
 func TestSetUserAvatarURL(t *testing.T) {
+	thumbPath := fs.Abs("testdata/cache")
+
 	t.Run("PNG", func(t *testing.T) {
 		admin := entity.UserFixtures.Get("alice")
 		imageUrl := "https://dl.photoprism.app/icons/logo/256.png"
-		err := SetUserImageURL(&admin, imageUrl, entity.SrcAuto)
+		err := SetUserImageURL(&admin, imageUrl, entity.SrcAuto, thumbPath)
 		assert.NoError(t, err)
 	})
 	t.Run("JPEG", func(t *testing.T) {
 		admin := entity.UserFixtures.Get("bob")
 		imageUrl := "https://dl.photoprism.app/img/team/avatar.jpg"
-		err := SetUserImageURL(&admin, imageUrl, entity.SrcOIDC)
+		err := SetUserImageURL(&admin, imageUrl, entity.SrcOIDC, thumbPath)
 		assert.NoError(t, err)
 	})
 	t.Run("NotFound", func(t *testing.T) {
 		admin := entity.UserFixtures.Get("alice")
 		imageUrl := "https://dl.photoprism.app/img/team/avatar-invalid.jpg"
-		err := SetUserImageURL(&admin, imageUrl, entity.SrcAuto)
+		err := SetUserImageURL(&admin, imageUrl, entity.SrcAuto, thumbPath)
 		assert.Error(t, err)
 	})
 }
 
 func TestSetUserAvatarImage(t *testing.T) {
+	thumbPath := fs.Abs("testdata/cache")
+
 	t.Run("Admin", func(t *testing.T) {
 		admin := entity.UserFixtures.Get("friend")
 		fileName := fs.Abs("testdata/avatar.png")
-		err := SetUserImage(&admin, fileName, entity.SrcAuto)
+		err := SetUserImage(&admin, fileName, entity.SrcAuto, thumbPath)
 		assert.NoError(t, err)
 	})
 }

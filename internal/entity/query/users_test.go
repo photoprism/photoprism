@@ -19,6 +19,30 @@ func TestRegisteredUsers(t *testing.T) {
 	})
 }
 
+func TestCountUsers(t *testing.T) {
+	t.Run("All", func(t *testing.T) {
+		assert.LessOrEqual(t, CountUsers(false, false, nil, nil), 10)
+	})
+	t.Run("Registered", func(t *testing.T) {
+		assert.LessOrEqual(t, CountUsers(true, false, nil, nil), 8)
+	})
+	t.Run("Active", func(t *testing.T) {
+		assert.LessOrEqual(t, CountUsers(false, true, nil, nil), 8)
+	})
+	t.Run("RegisteredActive", func(t *testing.T) {
+		assert.LessOrEqual(t, CountUsers(true, true, nil, nil), 8)
+	})
+	t.Run("Admins", func(t *testing.T) {
+		assert.LessOrEqual(t, CountUsers(true, true, []string{"admin"}, nil), 6)
+	})
+	t.Run("NoAdmins", func(t *testing.T) {
+		assert.LessOrEqual(t, CountUsers(true, true, []string{}, []string{"admin"}), 2)
+	})
+	t.Run("Guests", func(t *testing.T) {
+		assert.LessOrEqual(t, CountUsers(true, true, []string{"guest"}, nil), 2)
+	})
+}
+
 func TestUsers(t *testing.T) {
 	t.Run("Default", func(t *testing.T) {
 		if results, err := Users(0, 0, "", ""); err != nil {

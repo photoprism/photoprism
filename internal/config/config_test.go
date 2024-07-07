@@ -11,7 +11,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/fs"
-	"github.com/photoprism/photoprism/pkg/header"
 )
 
 func TestMain(m *testing.M) {
@@ -95,20 +94,6 @@ func TestConfig_VersionChecksum(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, uint32(0x2e5b4b86), c.VersionChecksum())
-}
-
-func TestConfig_TensorFlowVersion(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	version := c.TensorFlowVersion()
-	assert.IsType(t, "1.15.0", version)
-}
-
-func TestConfig_TensorFlowDisabled(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	version := c.DisableTensorFlow()
-	assert.Equal(t, false, version)
 }
 
 func TestConfig_Copyright(t *testing.T) {
@@ -207,13 +192,6 @@ func TestConfig_CustomAssetsPath(t *testing.T) {
 	assert.Equal(t, "", c.CustomAssetsPath())
 }
 
-func TestConfig_DetectNSFW(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	result := c.DetectNSFW()
-	assert.Equal(t, true, result)
-}
-
 func TestConfig_AdminUser(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -230,30 +208,11 @@ func TestConfig_AdminPassword(t *testing.T) {
 	assert.Equal(t, "photoprism", result)
 }
 
-func TestConfig_NSFWModelPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Contains(t, c.NSFWModelPath(), "/assets/nsfw")
-}
-
-func TestConfig_FaceNetModelPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Contains(t, c.FaceNetModelPath(), "/assets/facenet")
-}
-
 func TestConfig_ExamplesPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	path := c.ExamplesPath()
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/examples", path)
-}
-
-func TestConfig_TensorFlowModelPath(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	path := c.TensorFlowModelPath()
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/assets/nasnet", path)
 }
 
 func TestConfig_TemplatesPath(t *testing.T) {
@@ -381,198 +340,6 @@ func TestConfig_ResolutionLimit(t *testing.T) {
 	assert.Equal(t, -1, c.ResolutionLimit())
 	c.options.Sponsor = true
 	assert.Equal(t, -1, c.ResolutionLimit())
-}
-
-func TestConfig_BaseUri(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.BaseUri(""))
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "", c.BaseUri(""))
-	c.options.SiteUrl = "http://foo:2342/foo bar/"
-	assert.Equal(t, "/foo%20bar", c.BaseUri(""))
-	assert.Equal(t, "/foo%20bar/baz", c.BaseUri("/baz"))
-}
-
-func TestConfig_StaticUri(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "/static", c.StaticUri())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "/static", c.StaticUri())
-	c.options.SiteUrl = "http://foo:2342/foo/"
-	assert.Equal(t, "/foo/static", c.StaticUri())
-	c.options.CdnUrl = "http://foo:2342/bar"
-	assert.Equal(t, "http://foo:2342/bar/foo"+StaticUri, c.StaticUri())
-}
-
-func TestConfig_ApiUri(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, ApiUri, c.ApiUri())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, ApiUri, c.ApiUri())
-	c.options.SiteUrl = "http://foo:2342/foo/"
-	assert.Equal(t, "/foo"+ApiUri, c.ApiUri())
-}
-
-func TestConfig_CdnUrl(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.options.SiteUrl)
-	assert.Equal(t, "", c.CdnUrl(""))
-	assert.True(t, c.NoCdn())
-	assert.False(t, c.UseCdn())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "/", c.CdnUrl("/"))
-	c.options.CdnUrl = "http://foo:2342/foo/"
-	assert.Equal(t, "http://foo:2342/foo", c.CdnUrl(""))
-	assert.Equal(t, "http://foo:2342/foo/", c.CdnUrl("/"))
-	assert.False(t, c.NoCdn())
-	assert.True(t, c.UseCdn())
-	c.options.SiteUrl = c.options.CdnUrl
-	assert.Equal(t, "/", c.CdnUrl("/"))
-	assert.Equal(t, "", c.CdnUrl(""))
-	assert.True(t, c.NoCdn())
-	assert.False(t, c.UseCdn())
-	c.options.SiteUrl = ""
-	assert.False(t, c.NoCdn())
-	assert.True(t, c.UseCdn())
-}
-
-func TestConfig_CdnDomain(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.options.SiteUrl)
-	assert.Equal(t, "", c.CdnDomain())
-	c.options.CdnUrl = "http://superhost:2342/"
-	assert.Equal(t, "superhost", c.CdnDomain())
-	c.options.CdnUrl = "https://foo.bar.com:2342/foo/"
-	assert.Equal(t, "foo.bar.com", c.CdnDomain())
-	c.options.SiteUrl = c.options.CdnUrl
-	assert.Equal(t, "", c.CdnDomain())
-	c.options.SiteUrl = ""
-	c.options.CdnUrl = "http:/invalid:2342/foo/"
-	assert.Equal(t, "", c.CdnDomain())
-	c.options.CdnUrl = ""
-	assert.Equal(t, "", c.CdnDomain())
-}
-
-func TestConfig_CdnVideo(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.False(t, c.CdnVideo())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.False(t, c.CdnVideo())
-	c.options.CdnUrl = "http://foo:2342/foo/"
-	assert.False(t, c.CdnVideo())
-	c.options.CdnVideo = true
-	assert.True(t, c.CdnVideo())
-	c.options.SiteUrl = c.options.CdnUrl
-	assert.False(t, c.CdnVideo())
-	c.options.SiteUrl = ""
-	assert.True(t, c.CdnVideo())
-	c.options.CdnVideo = false
-	assert.False(t, c.CdnVideo())
-	c.options.CdnUrl = ""
-	assert.False(t, c.CdnVideo())
-}
-
-func TestConfig_CORSOrigin(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	c.Options().CORSOrigin = ""
-	assert.Equal(t, "", c.CORSOrigin())
-	c.Options().CORSOrigin = "*"
-	assert.Equal(t, "*", c.CORSOrigin())
-	c.Options().CORSOrigin = "https://developer.mozilla.org"
-	assert.Equal(t, "https://developer.mozilla.org", c.CORSOrigin())
-	c.Options().CORSOrigin = ""
-	assert.Equal(t, "", c.CORSOrigin())
-}
-
-func TestConfig_CORSHeaders(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.CORSHeaders())
-	c.Options().CORSHeaders = header.DefaultAccessControlAllowHeaders
-	assert.Equal(t, header.DefaultAccessControlAllowHeaders, c.CORSHeaders())
-	c.Options().CORSHeaders = ""
-	assert.Equal(t, "", c.CORSHeaders())
-}
-
-func TestConfig_CORSMethods(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "", c.CORSMethods())
-	c.Options().CORSMethods = header.DefaultAccessControlAllowMethods
-	assert.Equal(t, header.DefaultAccessControlAllowMethods, c.CORSMethods())
-	c.Options().CORSMethods = ""
-	assert.Equal(t, "", c.CORSMethods())
-}
-
-func TestConfig_ContentUri(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, ApiUri, c.ContentUri())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, ApiUri, c.ContentUri())
-	c.options.CdnUrl = "http://foo:2342//"
-	assert.Equal(t, "http://foo:2342"+ApiUri, c.ContentUri())
-}
-
-func TestConfig_VideoUri(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, ApiUri, c.VideoUri())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, ApiUri, c.VideoUri())
-	c.options.CdnUrl = "http://foo:2342//"
-	c.options.CdnVideo = true
-	assert.Equal(t, "http://foo:2342"+ApiUri, c.VideoUri())
-	c.options.CdnVideo = false
-	assert.Equal(t, ApiUri, c.VideoUri())
-}
-
-func TestConfig_SiteUrl(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "http://localhost:2342/", c.SiteUrl())
-	c.options.SiteUrl = "http://superhost:2342/"
-	assert.Equal(t, "http://superhost:2342/", c.SiteUrl())
-	c.options.SiteUrl = "http://superhost"
-	assert.Equal(t, "http://superhost/", c.SiteUrl())
-}
-
-func TestConfig_SiteDomain(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "localhost", c.SiteDomain())
-	c.options.SiteUrl = "https://foo.bar.com:2342/"
-	assert.Equal(t, "foo.bar.com", c.SiteDomain())
-	c.options.SiteUrl = ""
-	assert.Equal(t, "localhost", c.SiteDomain())
-}
-
-func TestConfig_SitePreview(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, "https://i.photoprism.app/prism?cover=64&style=centered%20dark&caption=none&title=PhotoPrism", c.SitePreview())
-	c.options.SitePreview = "http://preview.jpg"
-	assert.Equal(t, "http://preview.jpg", c.SitePreview())
-	c.options.SitePreview = "preview123.jpg"
-	assert.Equal(t, "http://localhost:2342/preview123.jpg", c.SitePreview())
-	c.options.SitePreview = "foo/preview123.jpg"
-	assert.Equal(t, "http://localhost:2342/foo/preview123.jpg", c.SitePreview())
-	c.options.SitePreview = "/foo/preview123.jpg"
-	assert.Equal(t, "http://localhost:2342/foo/preview123.jpg", c.SitePreview())
-}
-
-func TestConfig_SiteTitle(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "PhotoPrism", c.SiteTitle())
-	c.options.SiteTitle = "Cats"
-	assert.Equal(t, "Cats", c.SiteTitle())
 }
 
 func TestConfig_Serial(t *testing.T) {

@@ -214,7 +214,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Set user avatar image?
 			if avatarUrl := userInfo.Picture; avatarUrl == "" || user.HasAvatar() {
 				// Do nothing.
-			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC); err != nil {
+			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC, conf.ThumbCachePath()); err != nil {
 				event.AuditWarn([]string{clientIp, "create session", "oidc", userName, "failed to set avatar image", err.Error()})
 			}
 		} else if conf.OIDCRegister() {
@@ -287,7 +287,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Set user avatar image.
 			if avatarUrl := userInfo.Picture; avatarUrl == "" {
 				event.AuditDebug([]string{clientIp, "create session", "oidc", userName, "no avatar image provided"})
-			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC); err != nil {
+			} else if err = avatar.SetUserImageURL(user, avatarUrl, entity.SrcOIDC, conf.ThumbCachePath()); err != nil {
 				event.AuditWarn([]string{clientIp, "create session", "oidc", userName, "failed to set avatar image", err.Error()})
 			}
 		} else {

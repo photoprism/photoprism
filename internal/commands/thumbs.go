@@ -42,7 +42,6 @@ func thumbsAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	dir := strings.TrimSpace(ctx.Args().First())

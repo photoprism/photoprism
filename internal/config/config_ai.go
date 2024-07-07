@@ -16,12 +16,22 @@ func (c *Config) TensorFlowModelPath() string {
 	return filepath.Join(c.AssetsPath(), "nasnet")
 }
 
+// FaceNetModelPath returns the FaceNet model path.
+func (c *Config) FaceNetModelPath() string {
+	return filepath.Join(c.AssetsPath(), "facenet")
+}
+
 // NSFWModelPath returns the "not safe for work" TensorFlow model path.
 func (c *Config) NSFWModelPath() string {
 	return filepath.Join(c.AssetsPath(), "nsfw")
 }
 
-// FaceNetModelPath returns the FaceNet model path.
-func (c *Config) FaceNetModelPath() string {
-	return filepath.Join(c.AssetsPath(), "facenet")
+// DetectNSFW checks if NSFW photos should be detected and flagged.
+func (c *Config) DetectNSFW() bool {
+	return c.options.DetectNSFW
+}
+
+// UploadNSFW checks if NSFW photos can be uploaded.
+func (c *Config) UploadNSFW() bool {
+	return c.options.UploadNSFW
 }

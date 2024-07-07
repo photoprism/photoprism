@@ -202,6 +202,35 @@ var UserFixtures = UserMap{
 			BirthYear:  2001,
 		},
 	},
+	"guest": {
+		ID:           10000025,
+		UserUID:      "usg73p55zwgr1gbq",
+		UserName:     "guest",
+		DisplayName:  "Guest User",
+		UserEmail:    "guest@example.com",
+		UserRole:     acl.RoleGuest.String(),
+		AuthProvider: authn.ProviderOIDC.String(),
+		AuthMethod:   authn.MethodDefault.String(),
+		SuperAdmin:   false,
+		CanLogin:     true,
+		WebDAV:       false,
+		CanInvite:    false,
+		InviteToken:  "",
+		UserSettings: &UserSettings{
+			UITheme:     "default",
+			MapsStyle:   "default",
+			MapsAnimate: 6250,
+			UILanguage:  "en",
+			UITimeZone:  "UTC",
+		},
+		UserDetails: &UserDetails{
+			NickName:   "Gustav",
+			UserGender: GenderMale,
+			BirthDay:   23,
+			BirthMonth: 1,
+			BirthYear:  1999,
+		},
+	},
 }
 
 // CreateUserFixtures creates the user fixtures specified above

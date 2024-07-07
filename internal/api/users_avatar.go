@@ -122,7 +122,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 		}
 
 		// Set user avatar image.
-		if err = avatar.SetUserImage(m, filePath, entity.SrcManual); err != nil {
+		if err = avatar.SetUserImage(m, filePath, entity.SrcManual, conf.ThumbCachePath()); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
 		}
 

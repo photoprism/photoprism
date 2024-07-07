@@ -83,7 +83,6 @@ func backupAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	if backupDatabase {

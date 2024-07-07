@@ -28,7 +28,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -128,7 +127,7 @@ func NewConfig(ctx *cli.Context) *Config {
 	// Initialize logger.
 	initLogger()
 
-	// Initialize options from config file and CLI context.
+	// Initialize options from the "defaults.yml" file and CLI context.
 	c := &Config{
 		cliCtx:  ctx,
 		options: NewOptions(ctx),
@@ -137,7 +136,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		start:   start,
 	}
 
-	// WriteFile values with options.yml from config path.
+	// Override options with values from the "options.yml" file, if it exists.
 	if optionsYaml := c.OptionsYaml(); fs.FileExists(optionsYaml) {
 		if err := c.options.Load(optionsYaml); err != nil {
 			log.Warnf("config: failed loading values from %s (%s)", clean.Log(optionsYaml), err)
@@ -146,100 +145,7 @@ func NewConfig(ctx *cli.Context) *Config {
 		}
 	}
 
-	Ext().Init(c)
-
 	return c
-}
-
-// Unsafe checks if unsafe settings are allowed.
-func (c *Config) Unsafe() bool {
-	return c.options.Unsafe
-}
-
-// Restart checks if the application should be restarted, e.g. after an update or a config changes.
-func (c *Config) Restart() bool {
-	return mutex.Restart.Load()
-}
-
-// CliContext returns the cli context if set.
-func (c *Config) CliContext() *cli.Context {
-	if c.cliCtx == nil {
-		log.Warnf("config: cli context not set - you may have found a bug")
-	}
-
-	return c.cliCtx
-}
-
-// CliGlobalString returns a global cli string flag value if set.
-func (c *Config) CliGlobalString(name string) string {
-	if c.cliCtx == nil {
-		return ""
-	}
-
-	return c.cliCtx.GlobalString(name)
-}
-
-// Options returns the raw config options.
-func (c *Config) Options() *Options {
-	if c.options == nil {
-		log.Warnf("config: options should not be nil - you may have found a bug")
-		c.options = NewOptions(nil)
-	}
-
-	return c.options
-}
-
-// Propagate updates config options in other packages as needed.
-func (c *Config) Propagate() {
-	FlushCache()
-	log.SetLevel(c.LogLevel())
-
-	// Initialize the thumbnail generation package.
-	thumb.Library = c.ThumbLibrary()
-	thumb.Color = c.ThumbColor()
-	thumb.Filter = c.ThumbFilter()
-	thumb.SizeCached = c.ThumbSizePrecached()
-	thumb.SizeOnDemand = c.ThumbSizeUncached()
-	thumb.JpegQualityDefault = c.JpegQuality()
-	thumb.CachePublic = c.HttpCachePublic()
-
-	// Set cache expiration defaults.
-	ttl.CacheDefault = c.HttpCacheMaxAge()
-	ttl.CacheVideo = c.HttpVideoMaxAge()
-
-	// Set geocoding parameters.
-	places.UserAgent = c.UserAgent()
-	entity.GeoApi = c.GeoApi()
-
-	// Set session cache duration.
-	entity.SessionCacheDuration = c.SessionCacheDuration()
-
-	// Set minimum password length.
-	entity.PasswordLength = c.PasswordLength()
-
-	// Set path for user assets.
-	entity.UsersPath = c.UsersPath()
-
-	// Set API preview and download default tokens.
-	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
-	entity.DownloadToken.Set(c.DownloadToken(), entity.TokenConfig)
-	entity.ValidateTokens = !c.Public()
-
-	// Set face recognition parameters.
-	face.ScoreThreshold = c.FaceScore()
-	face.OverlapThreshold = c.FaceOverlap()
-	face.ClusterScoreThreshold = c.FaceClusterScore()
-	face.ClusterSizeThreshold = c.FaceClusterSize()
-	face.ClusterCore = c.FaceClusterCore()
-	face.ClusterDist = c.FaceClusterDist()
-	face.MatchDist = c.FaceMatchDist()
-
-	// Set default theme and locale.
-	customize.DefaultTheme = c.DefaultTheme()
-	customize.DefaultLocale = c.DefaultLocale()
-
-	c.Settings().Propagate()
-	c.Hub().Propagate()
 }
 
 // Init creates directories, parses additional config files, opens a database connection and initializes dependencies.
@@ -304,11 +210,18 @@ func (c *Config) Init() error {
 		_ = os.Setenv("HTTPS_PROXY", httpsProxy)
 	}
 
-	// Configure HTTP user agent.
-	places.UserAgent = c.UserAgent()
-
+	// Load settings from the "settings.yml" config file.
 	c.initSettings()
-	c.initHub()
+
+	// Connect to database.
+	if err := c.connectDb(); err != nil {
+		return err
+	} else {
+		c.RegisterDb()
+	}
+
+	// Initialize extensions.
+	Ext().Init(c)
 
 	// Initialize the thumbnail generation package.
 	thumb.Init(memory.FreeMemory(), c.IndexWorkers(), c.ThumbLibrary())
@@ -316,10 +229,8 @@ func (c *Config) Init() error {
 	// Update package defaults.
 	c.Propagate()
 
-	// Connect to database.
-	if err := c.connectDb(); err != nil {
-		return err
-	} else if !c.Sponsor() {
+	// Show support information.
+	if !c.Sponsor() {
 		log.Info(MsgSponsor)
 		log.Info(MsgSignUp)
 	}
@@ -328,6 +239,97 @@ func (c *Config) Init() error {
 	log.Debugf("config: successfully initialized [%s]", time.Since(start))
 
 	return nil
+}
+
+// Propagate updates config options in other packages as needed.
+func (c *Config) Propagate() {
+	FlushCache()
+	log.SetLevel(c.LogLevel())
+
+	// Initialize the thumbnail generation package.
+	thumb.Library = c.ThumbLibrary()
+	thumb.Color = c.ThumbColor()
+	thumb.Filter = c.ThumbFilter()
+	thumb.SizeCached = c.ThumbSizePrecached()
+	thumb.SizeOnDemand = c.ThumbSizeUncached()
+	thumb.JpegQualityDefault = c.JpegQuality()
+	thumb.CachePublic = c.HttpCachePublic()
+
+	// Set cache expiration defaults.
+	ttl.CacheDefault = c.HttpCacheMaxAge()
+	ttl.CacheVideo = c.HttpVideoMaxAge()
+
+	// Set geocoding parameters.
+	places.UserAgent = c.UserAgent()
+	entity.GeoApi = c.GeoApi()
+
+	// Set session cache duration.
+	entity.SessionCacheDuration = c.SessionCacheDuration()
+
+	// Set minimum password length.
+	entity.PasswordLength = c.PasswordLength()
+
+	// Set path for user assets.
+	entity.UsersPath = c.UsersPath()
+
+	// Set API preview and download default tokens.
+	entity.PreviewToken.Set(c.PreviewToken(), entity.TokenConfig)
+	entity.DownloadToken.Set(c.DownloadToken(), entity.TokenConfig)
+	entity.ValidateTokens = !c.Public()
+
+	// Set face recognition parameters.
+	face.ScoreThreshold = c.FaceScore()
+	face.OverlapThreshold = c.FaceOverlap()
+	face.ClusterScoreThreshold = c.FaceClusterScore()
+	face.ClusterSizeThreshold = c.FaceClusterSize()
+	face.ClusterCore = c.FaceClusterCore()
+	face.ClusterDist = c.FaceClusterDist()
+	face.MatchDist = c.FaceMatchDist()
+
+	// Set default theme and locale.
+	customize.DefaultTheme = c.DefaultTheme()
+	customize.DefaultLocale = c.DefaultLocale()
+
+	c.Settings().Propagate()
+	c.Hub().Propagate()
+}
+
+// Options returns the raw config options.
+func (c *Config) Options() *Options {
+	if c.options == nil {
+		log.Warnf("config: options should not be nil - you may have found a bug")
+		c.options = NewOptions(nil)
+	}
+
+	return c.options
+}
+
+// Unsafe checks if unsafe settings are allowed.
+func (c *Config) Unsafe() bool {
+	return c.options.Unsafe
+}
+
+// Restart checks if the application should be restarted, e.g. after an update or a config changes.
+func (c *Config) Restart() bool {
+	return mutex.Restart.Load()
+}
+
+// CliContext returns the cli context if set.
+func (c *Config) CliContext() *cli.Context {
+	if c.cliCtx == nil {
+		log.Warnf("config: cli context not set - you may have found a bug")
+	}
+
+	return c.cliCtx
+}
+
+// CliGlobalString returns a global cli string flag value if set.
+func (c *Config) CliGlobalString(name string) string {
+	if c.cliCtx == nil {
+		return ""
+	}
+
+	return c.cliCtx.GlobalString(name)
 }
 
 // readSerial reads and returns the current storage serial.
@@ -437,192 +439,6 @@ func (c *Config) Copyright() string {
 	return c.options.Copyright
 }
 
-// BaseUri returns the site base URI for a given resource.
-func (c *Config) BaseUri(res string) string {
-	if c.SiteUrl() == "" {
-		return res
-	}
-
-	u, err := url.Parse(c.SiteUrl())
-
-	if err != nil {
-		return res
-	}
-
-	return strings.TrimRight(u.EscapedPath(), "/") + res
-}
-
-// ApiUri returns the api URI.
-func (c *Config) ApiUri() string {
-	return c.BaseUri(ApiUri)
-}
-
-// CdnUrl returns the optional content delivery network URI without trailing slash.
-func (c *Config) CdnUrl(res string) string {
-	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
-		return res
-	}
-
-	return strings.TrimRight(c.options.CdnUrl, "/") + res
-}
-
-// UseCdn checks if a Content Deliver Network (CDN) is used to serve static content.
-func (c *Config) UseCdn() bool {
-	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
-		return false
-	}
-
-	return true
-}
-
-// NoCdn checks if there is no Content Deliver Network (CDN) configured to serve static content.
-func (c *Config) NoCdn() bool {
-	return !c.UseCdn()
-}
-
-// CdnDomain returns the content delivery network domain name if specified.
-func (c *Config) CdnDomain() string {
-	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
-		return ""
-	} else if u, err := url.Parse(c.options.CdnUrl); err != nil {
-		return ""
-	} else {
-		return u.Hostname()
-	}
-}
-
-// CdnVideo checks if videos should be streamed using the configured CDN.
-func (c *Config) CdnVideo() bool {
-	if c.options.CdnUrl == "" || c.options.CdnUrl == c.options.SiteUrl {
-		return false
-	}
-
-	return c.options.CdnVideo
-}
-
-// CORSOrigin returns the value for the Access-Control-Allow-Origin header, if any.
-func (c *Config) CORSOrigin() string {
-	return clean.Header(c.options.CORSOrigin)
-}
-
-// CORSHeaders returns the value for the Access-Control-Allow-Headers header, if any.
-func (c *Config) CORSHeaders() string {
-	return clean.Header(c.options.CORSHeaders)
-}
-
-// CORSMethods returns the value for the Access-Control-Allow-Methods header, if any.
-func (c *Config) CORSMethods() string {
-	return clean.Header(c.options.CORSMethods)
-}
-
-// ContentUri returns the content delivery URI.
-func (c *Config) ContentUri() string {
-	return c.CdnUrl(c.ApiUri())
-}
-
-// VideoUri returns the video streaming URI.
-func (c *Config) VideoUri() string {
-	if c.CdnVideo() {
-		return c.ContentUri()
-	}
-
-	return c.ApiUri()
-}
-
-// StaticUri returns the static content URI.
-func (c *Config) StaticUri() string {
-	return c.CdnUrl(c.BaseUri(StaticUri))
-}
-
-// StaticAssetUri returns the resource URI of the static file asset.
-func (c *Config) StaticAssetUri(res string) string {
-	return c.StaticUri() + "/" + res
-}
-
-// SiteUrl returns the public server URL (default is "http://localhost:2342/").
-func (c *Config) SiteUrl() string {
-	if c.options.SiteUrl == "" {
-		return "http://localhost:2342/"
-	}
-
-	return strings.TrimRight(c.options.SiteUrl, "/") + "/"
-}
-
-// SiteHttps checks if the site URL uses HTTPS.
-func (c *Config) SiteHttps() bool {
-	if c.options.SiteUrl == "" {
-		return false
-	}
-
-	return strings.HasPrefix(c.options.SiteUrl, "https://")
-}
-
-// SiteDomain returns the public server domain.
-func (c *Config) SiteDomain() string {
-	if u, err := url.Parse(c.SiteUrl()); err != nil {
-		return "localhost"
-	} else {
-		return u.Hostname()
-	}
-}
-
-// SiteAuthor returns the site author / copyright.
-func (c *Config) SiteAuthor() string {
-	return c.options.SiteAuthor
-}
-
-// SiteTitle returns the main site title (default is application name).
-func (c *Config) SiteTitle() string {
-	if c.options.SiteTitle == "" {
-		return c.Name()
-	}
-
-	return c.options.SiteTitle
-}
-
-// SiteCaption returns a short site caption.
-func (c *Config) SiteCaption() string {
-	return c.options.SiteCaption
-}
-
-// SiteDescription returns a long site description.
-func (c *Config) SiteDescription() string {
-	return c.options.SiteDescription
-}
-
-// SitePreview returns the site preview image URL for sharing.
-func (c *Config) SitePreview() string {
-	if c.options.SitePreview == "" {
-		return fmt.Sprintf("https://i.photoprism.app/prism?cover=64&style=centered%%20dark&caption=none&title=%s", url.QueryEscape(c.AppName()))
-	}
-
-	if !strings.HasPrefix(c.options.SitePreview, "http") {
-		return c.SiteUrl() + strings.TrimPrefix(c.options.SitePreview, "/")
-	}
-
-	return c.options.SitePreview
-}
-
-// LegalInfo returns the legal info text for the page footer.
-func (c *Config) LegalInfo() string {
-	if s := c.CliGlobalString("imprint"); s != "" {
-		log.Warnf("config: option 'imprint' is deprecated, please use 'legal-info'")
-		return s
-	}
-
-	return c.options.LegalInfo
-}
-
-// LegalUrl returns the legal info url.
-func (c *Config) LegalUrl() string {
-	if s := c.CliGlobalString("imprint-url"); s != "" {
-		log.Warnf("config: option 'imprint-url' is deprecated, please use 'legal-url'")
-		return s
-	}
-
-	return c.options.LegalUrl
-}
-
 // Prod checks if production mode is enabled, hides non-essential log messages.
 func (c *Config) Prod() bool {
 	return c.options.Prod
@@ -677,16 +493,6 @@ func (c *Config) Experimental() bool {
 // ReadOnly checks if photo directories are write protected.
 func (c *Config) ReadOnly() bool {
 	return c.options.ReadOnly
-}
-
-// DetectNSFW checks if NSFW photos should be detected and flagged.
-func (c *Config) DetectNSFW() bool {
-	return c.options.DetectNSFW
-}
-
-// UploadNSFW checks if NSFW photos can be uploaded.
-func (c *Config) UploadNSFW() bool {
-	return c.options.UploadNSFW
 }
 
 // LogLevel returns the Logrus log level.

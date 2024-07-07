@@ -49,7 +49,6 @@ func resetAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	if !ctx.Bool("yes") {

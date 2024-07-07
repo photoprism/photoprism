@@ -75,7 +75,6 @@ func restoreAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	// Restore database from backup dump?

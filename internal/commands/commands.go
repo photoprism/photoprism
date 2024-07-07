@@ -120,7 +120,6 @@ func CallWithDependencies(ctx *cli.Context, action func(conf *config.Config) err
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	// Run command.

@@ -17,7 +17,7 @@ import (
 )
 
 // SetUserImageURL sets a new user avatar URL.
-func SetUserImageURL(m *entity.User, imageUrl, imageSrc string) error {
+func SetUserImageURL(m *entity.User, imageUrl, imageSrc, thumbPath string) error {
 	if imageUrl == "" {
 		return nil
 	}
@@ -52,7 +52,7 @@ func SetUserImageURL(m *entity.User, imageUrl, imageSrc string) error {
 		return fmt.Errorf("failed to rename avatar image (%w)", err)
 	}
 
-	if err = SetUserImage(m, imageName, imageSrc); err != nil {
+	if err = SetUserImage(m, imageName, imageSrc, thumbPath); err != nil {
 		return fmt.Errorf("failed to set avatar image (%w)", err)
 	}
 
@@ -64,14 +64,16 @@ func SetUserImageURL(m *entity.User, imageUrl, imageSrc string) error {
 }
 
 // SetUserImage sets a new user avatar image.
-func SetUserImage(m *entity.User, imageName, imageSrc string) error {
+func SetUserImage(m *entity.User, imageName, imageSrc, thumbPath string) error {
 	var conf *config.Config
 
 	if conf = get.Config(); conf == nil {
 		return fmt.Errorf("config required")
 	}
 
-	thumbPath := conf.ThumbCachePath()
+	if thumbPath == "" {
+		thumbPath = conf.ThumbCachePath()
+	}
 
 	if mediaFile, mediaErr := photoprism.NewMediaFile(imageName); mediaErr != nil {
 		return mediaErr

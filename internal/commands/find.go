@@ -38,7 +38,6 @@ func findAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	frm := form.SearchPhotos{

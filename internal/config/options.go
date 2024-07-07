@@ -234,7 +234,7 @@ func NewOptions(ctx *cli.Context) *Options {
 	c.BackupDatabase = true
 	c.BackupAlbums = true
 
-	// Load defaults from YAML file?
+	// Initialize options with the values from the "defaults.yml" file, if it exists.
 	if defaultsYaml := ctx.GlobalString("defaults-yaml"); defaultsYaml == "" {
 		log.Tracef("config: defaults file was not specified")
 	} else if c.DefaultsYaml = fs.Abs(defaultsYaml); !fs.FileExists(c.DefaultsYaml) {
@@ -243,6 +243,7 @@ func NewOptions(ctx *cli.Context) *Options {
 		log.Warnf("config: failed loading defaults from %s (%s)", clean.Log(c.DefaultsYaml), err)
 	}
 
+	// Apply options specified with environment variables and command-line flags.
 	if err := c.ApplyCliContext(ctx); err != nil {
 		log.Error(err)
 	}

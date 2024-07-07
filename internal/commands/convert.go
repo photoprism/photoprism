@@ -48,7 +48,6 @@ func convertAction(ctx *cli.Context) error {
 		return config.ErrReadOnly
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	convertPath := conf.OriginalsPath()

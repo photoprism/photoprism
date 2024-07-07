@@ -11,10 +11,35 @@ import (
 // RegisteredUsers finds all registered users.
 func RegisteredUsers() (result entity.Users) {
 	if err := Db().Where("id > 0").Find(&result).Error; err != nil {
-		log.Errorf("users: %s", err)
+		log.Errorf("users: %s (find)", err)
 	}
 
 	return result
+}
+
+// CountUsers returns the number of users based on the specified filter options.
+func CountUsers(registered, active bool, roles, excludeRoles []string) (count int) {
+	stmt := Db().Model(entity.Users{})
+
+	if registered {
+		stmt = stmt.Where("id > 0")
+	}
+
+	if active {
+		stmt = stmt.Where("(can_login > 0 OR webdav > 0) AND user_name <> ''")
+	}
+
+	if len(roles) > 0 {
+		stmt = stmt.Where("user_role IN (?)", roles)
+	} else if len(excludeRoles) > 0 {
+		stmt = stmt.Where("user_role NOT IN (?)", excludeRoles)
+	}
+
+	if err := stmt.Count(&count).Error; err != nil {
+		log.Errorf("users: %s (count)", err)
+	}
+
+	return count
 }
 
 // Users finds users and returns them.

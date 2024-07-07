@@ -8,7 +8,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// initSettings initializes user settings from a config file.
+// initSettings initializes the customization settings from the "settings.yml" file.
 func (c *Config) initSettings() {
 	if c.settings != nil {
 		return
@@ -43,6 +43,7 @@ func (c *Config) initSettings() {
 
 // Settings returns the global app settings.
 func (c *Config) Settings() *customize.Settings {
+	// Load settings from the "settings.yml" config file.
 	c.initSettings()
 
 	if c.DisablePlaces() {
