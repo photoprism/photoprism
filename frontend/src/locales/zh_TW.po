@@ -48,12 +48,12 @@ msgstr "1 小時"
 msgid "12 hours"
 msgstr "12 小時"
 
-#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/admin/users/edit.vue:520 src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "雙重身份驗證"
 
-#: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
+#: src/dialog/admin/users/edit.vue:519 src/options/auth.js:46
 msgid "2FA"
 msgstr "2FA"
 
@@ -306,7 +306,7 @@ msgstr "所有私人相片跟影片都會保持私人，不會被分享。"
 msgid "API Key"
 msgstr "API鑰匙"
 
-#: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:95 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "應用"
@@ -393,7 +393,7 @@ msgstr "後退"
 msgid "Backup"
 msgstr "備份"
 
-#: src/dialog/admin/users/edit.vue:391
+#: src/dialog/admin/users/edit.vue:421
 msgid "Base Folder"
 msgstr "基底資料夾"
 
@@ -487,7 +487,7 @@ msgid "Can't select more items"
 msgstr "無法選取更多項目"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
-#: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
+#: src/dialog/admin/users/edit.vue:80 src/dialog/admin/users/remove.vue:15
 #: src/page/connect.vue:44 src/dialog/account/apps.vue:93
 #: src/dialog/account/apps.vue:21 src/dialog/account/passcode.vue:68
 #: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
@@ -534,7 +534,7 @@ msgstr "更改照片標題，位置和其他資料。"
 msgid "Change private flag"
 msgstr "更改私人選項"
 
-#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:164
 #: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
@@ -572,7 +572,7 @@ msgstr "客户"
 msgid "Client Credentials"
 msgstr "个人"
 
-#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:154 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -707,7 +707,7 @@ msgstr "创建 YAML 文件来备份相册元数据。"
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "创建 YAML sidecar 文件来备份图片元数据。"
 
-#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:116 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "已新增"
 
@@ -1052,7 +1052,7 @@ msgstr "擴展搜尋"
 msgid "Experimental Features"
 msgstr "測試功能"
 
-#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
+#: src/page/admin/sessions.vue:128 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1376,16 +1376,16 @@ msgstr "間隔"
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
-#: src/dialog/admin/users/edit.vue:320 src/page/settings/account.vue:93
-#: src/page/settings/account.vue:119 src/page/settings/account.vue:145
-#: src/page/settings/account.vue:171 src/page/settings/account.vue:227
-#: src/page/settings/account.vue:286 src/page/settings/account.vue:314
-#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
-#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
-#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
-#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
-#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
-#: src/page/settings/account.vue:807
+#: src/dialog/admin/users/edit.vue:320 src/dialog/admin/users/edit.vue:393
+#: src/page/settings/account.vue:93 src/page/settings/account.vue:119
+#: src/page/settings/account.vue:145 src/page/settings/account.vue:171
+#: src/page/settings/account.vue:227 src/page/settings/account.vue:286
+#: src/page/settings/account.vue:314 src/page/settings/account.vue:697
+#: src/page/settings/account.vue:723 src/page/settings/account.vue:751
+#: src/page/settings/account.vue:779 src/page/settings/account.vue:843
+#: src/page/settings/account.vue:870 src/page/settings/account.vue:897
+#: src/page/settings/account.vue:925 src/page/settings/account.vue:953
+#: src/page/settings/account.vue:724 src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "無效"
 
@@ -1450,7 +1450,7 @@ msgstr "Lanczos：保留細節，減少偽像"
 msgid "Language"
 msgstr "語言"
 
-#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:122 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "最近一次活動"
 
@@ -2248,7 +2248,7 @@ msgstr "角色"
 msgid "Satellite"
 msgstr "衛星"
 
-#: src/dialog/admin/users/edit.vue:80 src/dialog/account/password.vue:41
+#: src/dialog/admin/users/edit.vue:83 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:48 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:59
 msgid "Save"
@@ -2266,7 +2266,7 @@ msgstr "使用身份驗證器應用程式掃描二維碼或使用如下所示的
 msgid "Scans"
 msgstr "掃描"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:102 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "範圍"
@@ -2511,7 +2511,7 @@ msgstr "已成功删除"
 msgid "Successfully verified"
 msgstr "驗證成功"
 
-#: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
+#: src/dialog/admin/users/edit.vue:466 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "超級管理員"
 
@@ -2720,7 +2720,7 @@ msgstr "更新索引"
 msgid "Updating moments"
 msgstr "更新時刻"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
+#: src/dialog/admin/users/edit.vue:161 src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr "正在更新圖片…"
 
@@ -2765,7 +2765,7 @@ msgstr "上傳完成。索引中…"
 msgid "Upload failed"
 msgstr "上傳失敗"
 
-#: src/dialog/admin/users/edit.vue:418
+#: src/dialog/admin/users/edit.vue:448
 msgid "Upload Folder"
 msgstr "上傳資料夾"
 
@@ -2893,12 +2893,12 @@ msgstr "感謝您的回饋！"
 msgid "We do our best to respond within five business days or less."
 msgstr "我們盡最大努力在五個工作日或更短的時間內做出回應。"
 
-#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:483
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "網頁登入"
 
-#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:500
 #: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"

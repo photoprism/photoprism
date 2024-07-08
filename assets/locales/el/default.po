@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -23,182 +23,182 @@ msgid "Unable to do that"
 msgstr "Αυτό δεν είναι εφικτό"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Πάρα πολλά αιτήματα"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Οι αλλαγές δεν μπόρεσαν να αποθηκευτούν"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Δεν μπόρεσε να διαγραφεί"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s υπάρχει ήδη"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Δεν βρέθηκε"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "Το αρχείο δεν βρέθηκε"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Πολύ μεγάλο αρχείο"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Ανυποστήρικτος"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Μη υποστηριζόμενος τύπος"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Μη υποστηριζόμενη μορφή"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Ο φάκελος Πρωτότυπα είναι άδειος"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Η επιλογή δεν βρέθηκε"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Η οντότητα δεν βρέθηκε"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Ο λογαριασμός δεν βρέθηκε"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Ο χρήστης δεν βρέθηκε"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Η ετικέτα δεν βρέθηκε"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Η Συλλογή δεν βρέθηκε"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Το Θέμα δεν βρέθηκε"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Το Άτομο δεν βρέθηκε"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Το Πρόσωπο δεν βρέθηκε"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Μη διαθέσιμο κατά τη δημόσια λειτουργία"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "μη διαθέσιμο στην κατάσταση \"μόνο για ανάγνωση\""
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Παρακαλούμε συνδεθείτε και δοκιμάστε ξανά"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Το Άτομο διαγράφηκε"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Η φόρτωση μπορεί να είναι προσβλητική"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Αποτυχία αποστολής"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Δεν έχουν επιλεγεί αντικείμενα"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Απέτυχε η δημιουργία αρχείου, παρακαλούμε ελέγξτε τα δικαιώματα"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Απέτυχε η δημιουργία φακέλου, παρακαλούμε ελέγξτε τα δικαιώματα"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Δεν ήταν δυνατή η σύνδεση, παρακαλώ δοκιμάστε ξανά"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "βάλτε κωδικό επιβεβαίωσης"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Μη έγκυρος κωδικός επαλήθευσης, δοκιμάστε ξανά"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Μη έγκυρος κωδικός πρόσβασης, παρακαλώ δοκιμάστε ξανά"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Λειτουργία απενεργοποιημένη"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Δεν έχουν επιλεγεί ετικέτες"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Δεν έχουν επιλεγεί συλλογές"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Δεν υπάρχουν διαθέσιμα αρχεία για λήψη"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Απέτυχε η δημιουργία αρχείου zip"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Μη έγκυρα διαπιστευτήρια"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Μη έγκυρος σύνδεσμος"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Μη έγκυρο όνομα"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Απασχολημένος, προσπαθήστε ξανά αργότερα"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Το διάστημα αφύπνισης είναι %s, αλλά πρέπει να είναι 1 ώρα ή λιγότερο"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Ο λογαριασμός σας δεν μπόρεσε να συνδεθεί"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Πάρα πολλά αιτήματα"
 
 #: messages.go:149
 msgid "Changes successfully saved"

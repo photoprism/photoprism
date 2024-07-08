@@ -48,12 +48,12 @@ msgstr "1 hora"
 msgid "12 hours"
 msgstr "12 horas"
 
-#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/admin/users/edit.vue:520 src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "Autenticação de 2 factores"
 
-#: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
+#: src/dialog/admin/users/edit.vue:519 src/options/auth.js:46
 msgid "2FA"
 msgstr "2FA"
 
@@ -306,7 +306,7 @@ msgstr "Qualquer foto ou vídeo privado continuará privado e não será compart
 msgid "API Key"
 msgstr "Chave API"
 
-#: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:95 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "Aplicação"
@@ -393,7 +393,7 @@ msgstr "Voltar"
 msgid "Backup"
 msgstr "Cópia de Segurança"
 
-#: src/dialog/admin/users/edit.vue:391
+#: src/dialog/admin/users/edit.vue:421
 msgid "Base Folder"
 msgstr "Pasta base"
 
@@ -487,7 +487,7 @@ msgid "Can't select more items"
 msgstr "Não é possível selecionar mais itens"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
-#: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
+#: src/dialog/admin/users/edit.vue:80 src/dialog/admin/users/remove.vue:15
 #: src/page/connect.vue:44 src/dialog/account/apps.vue:93
 #: src/dialog/account/apps.vue:21 src/dialog/account/passcode.vue:68
 #: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
@@ -534,7 +534,7 @@ msgstr "Mudar títulos, localizações e outros dados das fotos."
 msgid "Change private flag"
 msgstr "Mudar marcação como privado"
 
-#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:164
 #: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
@@ -572,7 +572,7 @@ msgstr "Cliente"
 msgid "Client Credentials"
 msgstr "Credenciais do cliente"
 
-#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:154 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -707,7 +707,7 @@ msgstr "Cria ficheiros YAML para fazer cópias de segurança dos metadados dos �
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "Cria ficheiros YAML sidecar para fazer cópias de segurança dos metadados das imagens."
 
-#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:116 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "Criado"
 
@@ -1052,7 +1052,7 @@ msgstr "Expandir Pesquisa"
 msgid "Experimental Features"
 msgstr "Funcionalidades experimentais"
 
-#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
+#: src/page/admin/sessions.vue:128 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1376,16 +1376,16 @@ msgstr "Intervalo"
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
-#: src/dialog/admin/users/edit.vue:320 src/page/settings/account.vue:93
-#: src/page/settings/account.vue:119 src/page/settings/account.vue:145
-#: src/page/settings/account.vue:171 src/page/settings/account.vue:227
-#: src/page/settings/account.vue:286 src/page/settings/account.vue:314
-#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
-#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
-#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
-#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
-#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
-#: src/page/settings/account.vue:807
+#: src/dialog/admin/users/edit.vue:320 src/dialog/admin/users/edit.vue:393
+#: src/page/settings/account.vue:93 src/page/settings/account.vue:119
+#: src/page/settings/account.vue:145 src/page/settings/account.vue:171
+#: src/page/settings/account.vue:227 src/page/settings/account.vue:286
+#: src/page/settings/account.vue:314 src/page/settings/account.vue:697
+#: src/page/settings/account.vue:723 src/page/settings/account.vue:751
+#: src/page/settings/account.vue:779 src/page/settings/account.vue:843
+#: src/page/settings/account.vue:870 src/page/settings/account.vue:897
+#: src/page/settings/account.vue:925 src/page/settings/account.vue:953
+#: src/page/settings/account.vue:724 src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "Inválido"
 
@@ -1450,7 +1450,7 @@ msgstr "Lanczos: Preserva detalhes, poucos artefactos"
 msgid "Language"
 msgstr "Idioma"
 
-#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:122 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "ativo pela última vez"
 
@@ -2248,7 +2248,7 @@ msgstr "Papel"
 msgid "Satellite"
 msgstr "Satélite"
 
-#: src/dialog/admin/users/edit.vue:80 src/dialog/account/password.vue:41
+#: src/dialog/admin/users/edit.vue:83 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:48 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:59
 msgid "Save"
@@ -2266,7 +2266,7 @@ msgstr "Digitalize o código QR com seu aplicativo autenticador ou use a chave d
 msgid "Scans"
 msgstr "Pesquisas"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:102 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "Âmbito de aplicação"
@@ -2511,7 +2511,7 @@ msgstr "Excluído com sucesso"
 msgid "Successfully verified"
 msgstr "Verificado com sucesso"
 
-#: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
+#: src/dialog/admin/users/edit.vue:466 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "superadministrador"
 
@@ -2720,7 +2720,7 @@ msgstr "Atualizando o índice"
 msgid "Updating moments"
 msgstr "Atualizando momentos"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
+#: src/dialog/admin/users/edit.vue:161 src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr "Atualizando a imagem.."
 
@@ -2765,7 +2765,7 @@ msgstr "Envio finalizado. Indexando…"
 msgid "Upload failed"
 msgstr "Envio falhou"
 
-#: src/dialog/admin/users/edit.vue:418
+#: src/dialog/admin/users/edit.vue:448
 msgid "Upload Folder"
 msgstr "Carregar Pasta"
 
@@ -2893,12 +2893,12 @@ msgstr "Agradecemos seu feedback!"
 msgid "We do our best to respond within five business days or less."
 msgstr "Fazemos nosso melhor para responder dentro de cinco dias úteis ou menos."
 
-#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:483
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "Login na Web"
 
-#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:500
 #: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"

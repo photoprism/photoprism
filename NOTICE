@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2024-07-06
+Date generated: 2024-07-08
 
 ================================================================================
 
@@ -7075,8 +7075,8 @@ License: Apache-2.0 (https://github.com/go4org/go4/blob/214862532bf5/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/crypto
-Version: v0.24.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.24.0:LICENSE)
+Version: v0.25.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/crypto/+/v0.25.0:LICENSE)
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
@@ -7177,8 +7177,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/net
-Version: v0.26.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.26.0:LICENSE)
+Version: v0.27.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/net/+/v0.27.0:LICENSE)
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
@@ -7279,8 +7279,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sys
-Version: v0.21.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.21.0:LICENSE)
+Version: v0.22.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.22.0:LICENSE)
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
@@ -7444,8 +7444,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: gopkg.in/photoprism/go-tz.v2/tz
-Version: v2.1.2
-License: MIT (https://github.com/photoprism/go-tz/blob/v2.1.2/tz/LICENSE)
+Version: v2.1.3
+License: MIT (https://github.com/photoprism/go-tz/blob/v2.1.3/tz/LICENSE)
 
 MIT License
 

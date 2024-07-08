@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -24,182 +24,182 @@ msgid "Unable to do that"
 msgstr "実行できませんでした"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "リクエストが多すぎます"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "変更を保存できませんでした"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "削除できませんでした"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s は既に存在します"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "見つかりませんでした"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "ファイルが見つかりませんでした"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "ファイルサイズが大きすぎます"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "サポートされていません"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "サポートされていないタイプ"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "非対応のフォーマットです"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Originalsフォルダーが空です"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "選択した項目は存在しません"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "エンティティが見つかりません"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "アカウントは存在しません"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "ユーザは存在しません"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "ラベルは存在しません"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "アルバムは存在しません"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "件名が見つかりません"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "人が見つかりません"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "顔を検出できませんでした"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "公開モードでは利用できません"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "読み込み専用モードでは利用できません"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "アカウントにログインしてください"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "アクセス拒否"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "アップロードされた項目に過激なものが含まれている可能性があります"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "アップロード失敗"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "項目が選択されていません"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "ファイルの作成に失敗しました、権限を確認してください"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "フォルダの作成に失敗しました、権限を確認してください"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "接続できませんでした、再度試してみてください"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "認証コードを入力してください"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "認証コードが無効です。もう一度お試しください"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "不正なパスワードです、再度試してみてください"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "機能が無効になりました"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "ラベルが選択されていません"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "アルバムが選択されていません"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "ダウンロードできるファイルはありません"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "zip ファイルの作成に失敗しました"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "不正な認証情報"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "不正なリンク"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "無効なバケット名"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "混雑しています、後で再試行してください"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "ウェイクアップ間隔は%sであるが、1h以下でなければならない"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "お客様のアカウントに接続できませんでした"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "リクエストが多すぎます"
 
 #: messages.go:149
 msgid "Changes successfully saved"

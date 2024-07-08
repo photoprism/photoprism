@@ -48,12 +48,12 @@ msgstr "1시간"
 msgid "12 hours"
 msgstr "12시간"
 
-#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/admin/users/edit.vue:520 src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "2단계 인증"
 
-#: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
+#: src/dialog/admin/users/edit.vue:519 src/options/auth.js:46
 msgid "2FA"
 msgstr "2FA"
 
@@ -306,7 +306,7 @@ msgstr "모든 비공개 사진과 동영상은 비공개로 유지되며 공유
 msgid "API Key"
 msgstr "API 키"
 
-#: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:95 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "애플리케이션"
@@ -393,7 +393,7 @@ msgstr "뒤쪽에"
 msgid "Backup"
 msgstr "백업"
 
-#: src/dialog/admin/users/edit.vue:391
+#: src/dialog/admin/users/edit.vue:421
 msgid "Base Folder"
 msgstr "기본 폴더"
 
@@ -487,7 +487,7 @@ msgid "Can't select more items"
 msgstr "더 많은 아이템을 선택할 수 없습니다"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
-#: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
+#: src/dialog/admin/users/edit.vue:80 src/dialog/admin/users/remove.vue:15
 #: src/page/connect.vue:44 src/dialog/account/apps.vue:93
 #: src/dialog/account/apps.vue:21 src/dialog/account/passcode.vue:68
 #: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
@@ -534,7 +534,7 @@ msgstr "사진 제목, 위치 및 기타 메타데이터를 변경합니다."
 msgid "Change private flag"
 msgstr "비공개 플래그 변경하기"
 
-#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:164
 #: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
@@ -572,7 +572,7 @@ msgstr "클라이언트"
 msgid "Client Credentials"
 msgstr "클라이언트 자격 증명"
 
-#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:154 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -707,7 +707,7 @@ msgstr "앨범 메타데이터를 백업할 YAML 파일을 만듭니다."
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "사진 메타데이터를 백업하는 YAML 사이드카 파일을 만듭니다."
 
-#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:116 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "만듦"
 
@@ -1052,7 +1052,7 @@ msgstr "확장 검색"
 msgid "Experimental Features"
 msgstr "실험실 기능"
 
-#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
+#: src/page/admin/sessions.vue:128 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1376,16 +1376,16 @@ msgstr "간격"
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
-#: src/dialog/admin/users/edit.vue:320 src/page/settings/account.vue:93
-#: src/page/settings/account.vue:119 src/page/settings/account.vue:145
-#: src/page/settings/account.vue:171 src/page/settings/account.vue:227
-#: src/page/settings/account.vue:286 src/page/settings/account.vue:314
-#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
-#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
-#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
-#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
-#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
-#: src/page/settings/account.vue:807
+#: src/dialog/admin/users/edit.vue:320 src/dialog/admin/users/edit.vue:393
+#: src/page/settings/account.vue:93 src/page/settings/account.vue:119
+#: src/page/settings/account.vue:145 src/page/settings/account.vue:171
+#: src/page/settings/account.vue:227 src/page/settings/account.vue:286
+#: src/page/settings/account.vue:314 src/page/settings/account.vue:697
+#: src/page/settings/account.vue:723 src/page/settings/account.vue:751
+#: src/page/settings/account.vue:779 src/page/settings/account.vue:843
+#: src/page/settings/account.vue:870 src/page/settings/account.vue:897
+#: src/page/settings/account.vue:925 src/page/settings/account.vue:953
+#: src/page/settings/account.vue:724 src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "무효한"
 
@@ -1450,7 +1450,7 @@ msgstr "Lanczos: 디테일 보존, 최소한의 인공물"
 msgid "Language"
 msgstr "언어"
 
-#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:122 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "마지막 활성"
 
@@ -2248,7 +2248,7 @@ msgstr "역할"
 msgid "Satellite"
 msgstr "위성"
 
-#: src/dialog/admin/users/edit.vue:80 src/dialog/account/password.vue:41
+#: src/dialog/admin/users/edit.vue:83 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:48 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:59
 msgid "Save"
@@ -2266,7 +2266,7 @@ msgstr "인증 앱으로 QR 코드를 스캔하거나 아래 표시된 설정 �
 msgid "Scans"
 msgstr "스켄"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:102 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "범위"
@@ -2511,7 +2511,7 @@ msgstr "삭제 성공"
 msgid "Successfully verified"
 msgstr "성공적으로 확인되었습니다"
 
-#: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
+#: src/dialog/admin/users/edit.vue:466 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "슈퍼 관리자"
 
@@ -2720,7 +2720,7 @@ msgstr "색인을 업데이트 중"
 msgid "Updating moments"
 msgstr "\"나의 순간\" 업데이트 중"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
+#: src/dialog/admin/users/edit.vue:161 src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr "사진 업데이트 중…"
 
@@ -2765,7 +2765,7 @@ msgstr "업로드 완료. 색인중…"
 msgid "Upload failed"
 msgstr "업로드 실패"
 
-#: src/dialog/admin/users/edit.vue:418
+#: src/dialog/admin/users/edit.vue:448
 msgid "Upload Folder"
 msgstr "폴더 업로드"
 
@@ -2893,12 +2893,12 @@ msgstr "귀하의 피드백에 감사드립니다!"
 msgid "We do our best to respond within five business days or less."
 msgstr "영업일 기준 5일 이내로 답변을 드리기 위해 최선을 다합니다."
 
-#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:483
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "웹 로그인"
 
-#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:500
 #: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"

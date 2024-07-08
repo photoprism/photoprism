@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -23,182 +23,182 @@ msgid "Unable to do that"
 msgstr "Incapaç de fer-ho"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Massa peticions"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "No s'han pogut desar els canvis"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "No s'ha pogut suprimir"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s El nom ja existeix"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "No trobat"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "No s'ha trobat el fitxer"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Fitxer massa gran"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Sense suport"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Tipus no compatible"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Format no compatible"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "La carpeta d'originals està buida"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "No s'ha trobat la selecció"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "No s'ha trobat l'entitat"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Compte no trobat"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Usuari no trobat"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "No s'ha trobat l'etiqueta"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "No s'ha trobat l'àlbum"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "No s'ha trobat el tema"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Persona no trobada"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "No s'ha trobat la cara"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "No disponible en mode públic"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "No disponible en mode només de lectura"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Si us plau, inicieu sessió al vostre compte"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Permís denegat"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "La càrrega pot ser ofensiva"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "La càrrega ha fallat"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "No s'ha seleccionat cap element"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "No s'ha pogut crear el fitxer, comproveu els permisos"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "No s'ha pogut crear la carpeta, comproveu els permisos"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "No s'ha pogut connectar, torna-ho a provar"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Introduïu el codi de verificació"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Codi de verificació no vàlid, torneu-ho a provar"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "La contrasenya no és vàlida, torneu-ho a provar"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Funció desactivada"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "No s'ha seleccionat cap etiqueta"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "No s'ha seleccionat cap àlbum"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "No hi ha fitxers disponibles per a la baixada"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "No s'ha pogut crear el fitxer zip"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Credencials incorrectes"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Enllaç no vàlid"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Nom no vàlid"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Ocupat, torna-ho a provar més tard"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "L'interval d'activació és %s, però ha de ser d'1 h o menys"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "No s'ha pogut connectar el vostre compte"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Massa peticions"
 
 #: messages.go:149
 msgid "Changes successfully saved"

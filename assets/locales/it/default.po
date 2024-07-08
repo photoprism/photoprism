@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -24,182 +24,182 @@ msgid "Unable to do that"
 msgstr "Impossibile farlo"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Troppe richieste"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Le modifiche non possono essere salvate"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Impossibile eliminare"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s esiste già"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Non trovato"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "File non trovato"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "File troppo grande"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Non supportato"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Formato non supportato"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Formato non supportato"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "La cartella degli originali è vuota"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Selezione non trovata"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Entità non trovata"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Account non trovato"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Utente non trovato"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Etichetta non trovata"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Album non trovato"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Soggetto non trovato"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Persona non trovata"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Faccia non trovata"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Non disponibile in modalità pubblica"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Non disponibile in modalità di sola lettura"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Accedere al proprio account"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Permesso negato"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "L'upload potrebbe essere offensivo"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Upload fallito"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Nessun elemento selezionato"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Impossibile creare il file, si prega di controllare i permessi"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Impossibile creare la cartella, si prega di controllare i permessi"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Impossibile connettersi, si prega di riprovare"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Inserisci codice di verifica"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Codice di verifica errato, prova di nuovo"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Password non valida, si prega di riprovare"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Funzionalità disabilitata"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Nessuna etichetta selezionata"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Nessun album selezionato"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Nessun file è disponibile per il download"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Impossibile creare il file zip"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Credenziali non valide"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Link non valido"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Nome non valido"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Occupato, si prega di riprovare più tardi"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "L'intervallo di risveglio è %s, ma deve essere pari o inferiore a 1h"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Non è stato possibile collegare l'account"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Troppe richieste"
 
 #: messages.go:149
 msgid "Changes successfully saved"

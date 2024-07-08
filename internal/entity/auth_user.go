@@ -116,8 +116,8 @@ func OidcUser(userInfo *oidc.UserInfo, userName string) User {
 		UserName:     userName,
 		DisplayName:  userInfo.Name,
 		UserEmail:    clean.Email(userInfo.Email),
-		AuthID:       authId,
 		AuthProvider: authn.ProviderOIDC.String(),
+		AuthID:       authId,
 	}
 }
 
@@ -559,6 +559,8 @@ func (m *User) HasProvider(t authn.ProviderType) bool {
 func (m *User) SetProvider(t authn.ProviderType) *User {
 	if m == nil {
 		return nil
+	} else if t == "" {
+		return m
 	}
 
 	m.AuthProvider = t.String()
@@ -577,7 +579,9 @@ func (m *User) Method() authn.MethodType {
 
 // SetMethod sets a custom authentication method.
 func (m *User) SetMethod(method authn.MethodType) *User {
-	if method == "" {
+	if m == nil {
+		return nil
+	} else if method == "" {
 		return m
 	}
 
@@ -587,6 +591,31 @@ func (m *User) SetMethod(method authn.MethodType) *User {
 	}
 
 	m.AuthMethod = method.String()
+
+	return m
+}
+
+// SetAuthID sets a custom authentication identifier.
+func (m *User) SetAuthID(id string) *User {
+	if m == nil {
+		return &User{}
+	}
+
+	// Update auth id if not empty.
+	if authId := clean.Auth(id); len(authId) < 4 {
+		return m
+	} else {
+		m.AuthID = authId
+	}
+
+	// Make sure other users do not use the same identifier.
+	if rnd.IsUID(m.UserUID, UserUID) && m.AuthProvider != "" {
+		if err := UnscopedDb().Model(&User{}).
+			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ?", m.UserUID, m.AuthProvider, m.AuthID).
+			Updates(map[string]interface{}{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
+			event.AuditErr([]string{"user %s", "failed to set auth id", "%s"}, m.RefID, err)
+		}
+	}
 
 	return m
 }
@@ -1195,12 +1224,13 @@ func (m *User) PrivilegeLevelChange(f form.User) bool {
 		m.UserAttr != f.Attr() ||
 		m.AuthProvider != f.AuthProvider ||
 		m.AuthMethod != f.AuthMethod ||
+		m.AuthID != f.AuthID ||
 		m.BasePath != f.BasePath ||
 		m.UploadPath != f.UploadPath
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
-func (m *User) SaveForm(f form.User, changePrivileges bool) error {
+func (m *User) SaveForm(f form.User, u *User) error {
 	if m.UserName == "" || m.ID <= 0 {
 		return fmt.Errorf("system users cannot be modified")
 	} else if (m.ID == 1 || f.SuperAdmin) && acl.RoleAdmin.NotEqual(f.Role()) {
@@ -1239,16 +1269,30 @@ func (m *User) SaveForm(f form.User, changePrivileges bool) error {
 	}
 
 	// Change user privileges only if allowed.
-	if changePrivileges {
-		m.SetRole(f.Role())
-		m.SuperAdmin = f.SuperAdmin
+	if u == nil {
+		// Do nothing.
+	} else if u.IsAdmin() {
+		// Prevent super admins from locking themselves out.
+		if u.IsSuperAdmin() && u.Equal(m) {
+			m.SetRole(acl.RoleAdmin.String())
+			m.SuperAdmin = true
+			m.CanLogin = true
+		} else {
+			m.SetRole(f.Role())
+			m.SuperAdmin = f.SuperAdmin
+			m.CanLogin = f.CanLogin
+		}
 
-		m.CanLogin = f.CanLogin
 		m.WebDAV = f.WebDAV
 		m.UserAttr = f.Attr()
 
-		m.SetProvider(f.Provider())
-		m.SetMethod(f.Method())
+		// Only allow super admins to change the authentication method.
+		if u.IsSuperAdmin() {
+			m.SetProvider(f.Provider())
+			m.SetMethod(f.Method())
+			m.SetAuthID(f.AuthID)
+		}
+
 		m.SetBasePath(f.BasePath)
 		m.SetUploadPath(f.UploadPath)
 	}

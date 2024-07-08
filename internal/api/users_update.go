@@ -67,18 +67,8 @@ func UpdateUser(router *gin.RouterGroup) {
 		// Get user from session.
 		u := s.User()
 
-		// Prevent super admins from locking themselves out.
-		if u.IsSuperAdmin() && u.Equal(m) && !f.CanLogin {
-			f.CanLogin = true
-		}
-
-		// Only allow super admins to change the authentication method.
-		if !u.IsSuperAdmin() {
-			f.AuthMethod = ""
-		}
-
 		// Save model with values from form.
-		if err = m.SaveForm(f, isAdmin); err != nil {
+		if err = m.SaveForm(f, u); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", err.Error()}, s.RefID)
 			AbortSaveFailed(c)
 			return

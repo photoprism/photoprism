@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -23,182 +23,182 @@ msgid "Unable to do that"
 msgstr "Không thể làm điều đó"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "quá nhiều yêu cầu"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Không thể lưu các thay đổi"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Không thể xóa được"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s đã tồn tại"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Không tìm thấy"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "Không tìm thấy tập tin"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Tệp quá lớn"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Không được hỗ trợ"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Loại không được hỗ trợ"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Định dạng không được hỗ trợ"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Thư mục gốc trống"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Không tìm thấy lựa chọn"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Không tìm thấy thực thể"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Tài khoản không được tìm thấy"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Không tìm thấy người dùng"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Không tìm thấy nhãn"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Không tìm thấy album"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Không tìm thấy chủ đề"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Không tìm thấy người"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Không tìm thấy khuôn mặt"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Không khả dụng ở chế độ công khai"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Không khả dụng ở chế độ chỉ đọc"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Xin hãy đăng nhập vào tài khoản của bạn"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Quyền bị từ chối"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Tải lên có thể gây khó chịu"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Tải lên không thành công"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Không có mục nào được chọn"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Không tạo được tệp, vui lòng kiểm tra quyền"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Không tạo được thư mục, vui lòng kiểm tra quyền"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Không thể kết nối, vui lòng thử lại"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Nhập mã xác nhận"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Mã xác minh không hợp lệ, vui lòng thử lại"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "mật mã không hợp lệ, vui lòng thử lại"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Tính năng bị tắt"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Không có nhãn nào được chọn"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Không có album nào được chọn"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Không có tập tin nào để tải xuống"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Không tạo được tệp zip"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Thông tin không hợp lệ"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Liên kết không hợp lệ"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Tên không hợp lệ"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Đang bận, vui lòng thử lại sau"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Khoảng thời gian đánh thức là %s nhưng phải từ 1 giờ trở xuống"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Tài khoản của bạn không thể kết nối được"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "quá nhiều yêu cầu"
 
 #: messages.go:149
 msgid "Changes successfully saved"

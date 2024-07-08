@@ -206,7 +206,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			// Update existing user account.
 			if err = user.Save(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
-				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+": "+err.Error())
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			}
@@ -305,10 +305,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			return
 		}
 
+		// Update subject identifier (auth id).
+		user.SetAuthID(userInfo.Subject)
+
 		// Step 2: Create user session.
 		sess := get.Session().New(c)
 		sess.SetProvider(authn.ProviderOIDC)
 		sess.SetMethod(authn.MethodDefault)
+		sess.SetAuthID(user.AuthID)
 		sess.SetUser(user)
 		sess.SetGrantType(authn.GrantAuthorizationCode)
 

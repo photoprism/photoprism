@@ -48,12 +48,12 @@ msgstr "1 ساعة"
 msgid "12 hours"
 msgstr "12 ساعة"
 
-#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/admin/users/edit.vue:520 src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "2-عامل المصادقة"
 
-#: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
+#: src/dialog/admin/users/edit.vue:519 src/options/auth.js:46
 msgid "2FA"
 msgstr "2FA"
 
@@ -306,7 +306,7 @@ msgstr "أي صور ومقاطع فيديو خاصة تبقى خاصة ولن ت
 msgid "API Key"
 msgstr "مفتاح API"
 
-#: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:95 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "طلب"
@@ -393,7 +393,7 @@ msgstr "خلف"
 msgid "Backup"
 msgstr "دعم"
 
-#: src/dialog/admin/users/edit.vue:391
+#: src/dialog/admin/users/edit.vue:421
 msgid "Base Folder"
 msgstr "المجلد الأساسي"
 
@@ -487,7 +487,7 @@ msgid "Can't select more items"
 msgstr "لا يمكن تحديد المزيد من العناصر"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
-#: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
+#: src/dialog/admin/users/edit.vue:80 src/dialog/admin/users/remove.vue:15
 #: src/page/connect.vue:44 src/dialog/account/apps.vue:93
 #: src/dialog/account/apps.vue:21 src/dialog/account/passcode.vue:68
 #: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
@@ -534,7 +534,7 @@ msgstr "قم بتغيير عناوين الصور والمواقع والبيا�
 msgid "Change private flag"
 msgstr "تغيير العلم الخاص"
 
-#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:164
 #: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
@@ -572,7 +572,7 @@ msgstr "عميل"
 msgid "Client Credentials"
 msgstr "بيانات اعتماد العميل"
 
-#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:154 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -707,7 +707,7 @@ msgstr "قم بإنشاء ملفات YAML لعمل نسخة احتياطية م�
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "قم بإنشاء ملفات YAML الجانبية لعمل نسخة احتياطية من بيانات تعريف الصورة."
 
-#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:116 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "مخلوق"
 
@@ -1052,7 +1052,7 @@ msgstr "قم بتوسيع البحث"
 msgid "Experimental Features"
 msgstr "الميزات التجريبية"
 
-#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
+#: src/page/admin/sessions.vue:128 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1376,16 +1376,16 @@ msgstr "فترة"
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
-#: src/dialog/admin/users/edit.vue:320 src/page/settings/account.vue:93
-#: src/page/settings/account.vue:119 src/page/settings/account.vue:145
-#: src/page/settings/account.vue:171 src/page/settings/account.vue:227
-#: src/page/settings/account.vue:286 src/page/settings/account.vue:314
-#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
-#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
-#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
-#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
-#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
-#: src/page/settings/account.vue:807
+#: src/dialog/admin/users/edit.vue:320 src/dialog/admin/users/edit.vue:393
+#: src/page/settings/account.vue:93 src/page/settings/account.vue:119
+#: src/page/settings/account.vue:145 src/page/settings/account.vue:171
+#: src/page/settings/account.vue:227 src/page/settings/account.vue:286
+#: src/page/settings/account.vue:314 src/page/settings/account.vue:697
+#: src/page/settings/account.vue:723 src/page/settings/account.vue:751
+#: src/page/settings/account.vue:779 src/page/settings/account.vue:843
+#: src/page/settings/account.vue:870 src/page/settings/account.vue:897
+#: src/page/settings/account.vue:925 src/page/settings/account.vue:953
+#: src/page/settings/account.vue:724 src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "غير صالح"
 
@@ -1450,7 +1450,7 @@ msgstr "Lanczos: الحفاظ على التفاصيل ، الحد الأدنى �
 msgid "Language"
 msgstr "لغة"
 
-#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:122 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "آخر نشاط"
 
@@ -2248,7 +2248,7 @@ msgstr "دور"
 msgid "Satellite"
 msgstr "الأقمار الصناعية"
 
-#: src/dialog/admin/users/edit.vue:80 src/dialog/account/password.vue:41
+#: src/dialog/admin/users/edit.vue:83 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:48 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:59
 msgid "Save"
@@ -2266,7 +2266,7 @@ msgstr "امسح رمز الاستجابة السريعة ضوئيًا باست�
 msgid "Scans"
 msgstr "عمليات المسح"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:102 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "نِطَاق"
@@ -2511,7 +2511,7 @@ msgstr "تم الحذف بنجاح"
 msgid "Successfully verified"
 msgstr "تم التحقق بنجاح"
 
-#: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
+#: src/dialog/admin/users/edit.vue:466 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "مشرف فائق"
 
@@ -2720,7 +2720,7 @@ msgstr "تحديث الفهرس"
 msgid "Updating moments"
 msgstr "تحديث اللحظات"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
+#: src/dialog/admin/users/edit.vue:161 src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr "جارٍ تحديث الصورة ..."
 
@@ -2765,7 +2765,7 @@ msgstr "اكتمل التحميل. جارٍ الفهرسة …"
 msgid "Upload failed"
 msgstr "التحميل فشل"
 
-#: src/dialog/admin/users/edit.vue:418
+#: src/dialog/admin/users/edit.vue:448
 msgid "Upload Folder"
 msgstr "تحميل المجلد"
 
@@ -2893,12 +2893,12 @@ msgstr "نحن نقدر ملاحظاتك!"
 msgid "We do our best to respond within five business days or less."
 msgstr "نحن نبذل قصارى جهدنا للرد في غضون خمسة أيام عمل أو أقل."
 
-#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:483
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "تسجيل الدخول عبر الويب"
 
-#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:500
 #: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"

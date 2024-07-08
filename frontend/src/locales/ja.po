@@ -48,12 +48,12 @@ msgstr "1時間"
 msgid "12 hours"
 msgstr "12時間"
 
-#: src/dialog/admin/users/edit.vue:490 src/page/settings/account.vue:60
+#: src/dialog/admin/users/edit.vue:520 src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "2要素認証"
 
-#: src/dialog/admin/users/edit.vue:489 src/options/auth.js:46
+#: src/dialog/admin/users/edit.vue:519 src/options/auth.js:46
 msgid "2FA"
 msgstr "2FA"
 
@@ -306,7 +306,7 @@ msgstr "すべてのプライベートな写真や動画はプライベートの
 msgid "API Key"
 msgstr "API キー"
 
-#: src/page/admin/sessions.vue:84 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:95 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "アプリケーション"
@@ -393,7 +393,7 @@ msgstr "戻る"
 msgid "Backup"
 msgstr "バックアップ"
 
-#: src/dialog/admin/users/edit.vue:391
+#: src/dialog/admin/users/edit.vue:421
 msgid "Base Folder"
 msgstr "ベースフォルダー"
 
@@ -487,7 +487,7 @@ msgid "Can't select more items"
 msgstr "これ以上項目を選択することはできません"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
-#: src/dialog/admin/users/edit.vue:77 src/dialog/admin/users/remove.vue:15
+#: src/dialog/admin/users/edit.vue:80 src/dialog/admin/users/remove.vue:15
 #: src/page/connect.vue:44 src/dialog/account/apps.vue:93
 #: src/dialog/account/apps.vue:21 src/dialog/account/passcode.vue:68
 #: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
@@ -534,7 +534,7 @@ msgstr "写真のタイトルや撮影地などのメタデータを変更しま
 msgid "Change private flag"
 msgstr "プライベート状態を変更"
 
-#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:160
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:164
 #: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
@@ -572,7 +572,7 @@ msgstr "クライアント"
 msgid "Client Credentials"
 msgstr "クライアント資格情報"
 
-#: src/page/admin/sessions.vue:143 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:154 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -707,7 +707,7 @@ msgstr "アルバムのメタデータをバックアップするYAMLファイ�
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "画像のメタデータをバックアップするためにYAMLサイドカーファイルを作成します。"
 
-#: src/page/admin/sessions.vue:105 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:116 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "作成日時"
 
@@ -1052,7 +1052,7 @@ msgstr "検索を展開"
 msgid "Experimental Features"
 msgstr "実験的な機能"
 
-#: src/page/admin/sessions.vue:117 src/page/admin/sessions.vue:32
+#: src/page/admin/sessions.vue:128 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1376,16 +1376,16 @@ msgstr "間隔"
 #: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
 #: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
-#: src/dialog/admin/users/edit.vue:320 src/page/settings/account.vue:93
-#: src/page/settings/account.vue:119 src/page/settings/account.vue:145
-#: src/page/settings/account.vue:171 src/page/settings/account.vue:227
-#: src/page/settings/account.vue:286 src/page/settings/account.vue:314
-#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
-#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
-#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
-#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
-#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
-#: src/page/settings/account.vue:807
+#: src/dialog/admin/users/edit.vue:320 src/dialog/admin/users/edit.vue:393
+#: src/page/settings/account.vue:93 src/page/settings/account.vue:119
+#: src/page/settings/account.vue:145 src/page/settings/account.vue:171
+#: src/page/settings/account.vue:227 src/page/settings/account.vue:286
+#: src/page/settings/account.vue:314 src/page/settings/account.vue:697
+#: src/page/settings/account.vue:723 src/page/settings/account.vue:751
+#: src/page/settings/account.vue:779 src/page/settings/account.vue:843
+#: src/page/settings/account.vue:870 src/page/settings/account.vue:897
+#: src/page/settings/account.vue:925 src/page/settings/account.vue:953
+#: src/page/settings/account.vue:724 src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "不正"
 
@@ -1450,7 +1450,7 @@ msgstr "ランチョス法: 鮮明な細部、最小限のノイズ"
 msgid "Language"
 msgstr "言語"
 
-#: src/page/admin/sessions.vue:111 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:122 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "最終アクティブ"
 
@@ -2248,7 +2248,7 @@ msgstr "役割"
 msgid "Satellite"
 msgstr "衛星"
 
-#: src/dialog/admin/users/edit.vue:80 src/dialog/account/password.vue:41
+#: src/dialog/admin/users/edit.vue:83 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:48 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:59
 msgid "Save"
@@ -2266,7 +2266,7 @@ msgstr "認証アプリでQRコードをスキャンするか、以下のセッ�
 msgid "Scans"
 msgstr "スキャン"
 
-#: src/page/admin/sessions.vue:91 src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:102 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "スコープ"
@@ -2511,7 +2511,7 @@ msgstr "削除に成功しました"
 msgid "Successfully verified"
 msgstr "検証に成功しました"
 
-#: src/dialog/admin/users/edit.vue:436 src/page/admin/users.vue:87
+#: src/dialog/admin/users/edit.vue:466 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "スーパーアドミン"
 
@@ -2720,7 +2720,7 @@ msgstr "インデックスを更新しています"
 msgid "Updating moments"
 msgstr "モーメントを更新しています"
 
-#: src/dialog/admin/users/edit.vue:157 src/page/settings/account.vue:139
+#: src/dialog/admin/users/edit.vue:161 src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr "画像を更新しています…"
 
@@ -2765,7 +2765,7 @@ msgstr "アップロードが完了しました。インデックスしていま
 msgid "Upload failed"
 msgstr "アップロード失敗"
 
-#: src/dialog/admin/users/edit.vue:418
+#: src/dialog/admin/users/edit.vue:448
 msgid "Upload Folder"
 msgstr "フォルダをアップロード"
 
@@ -2893,12 +2893,12 @@ msgstr "ご感想をお寄せいただきありがとうございました！"
 msgid "We do our best to respond within five business days or less."
 msgstr "5営業日以内に対応できるよう、最善を尽くします。"
 
-#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:453
+#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:483
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "ウェブログイン"
 
-#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:470
+#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:500
 #: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"

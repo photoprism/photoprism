@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -23,182 +23,182 @@ msgid "Unable to do that"
 msgstr "Kan dit nie doen nie"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Te veel versoeke"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Veranderinge kon nie gestoor word nie"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Kan nie verwyder word nie"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s bestaan reeds"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Nie gevind"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "Lêer nie gevind nie"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Lêer te groot"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Ongesteun"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Ongesteunde tipe"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Ongesteunde formaat"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Oorspronklike omslag is leeg"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Seleksie nie gevind nie"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Entiteit nie gevind nie"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Rekening nie gevind nie"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Verbruiker nie gevind nie"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Merker nie gevind nie"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Album nie gevind nie"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Onderwerp nie gevind nie"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Persoon nie gevind nie"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Gesig nie gevind nie"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Nie beskikbaar in publieke modus nie"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Nie beskikbaar in leesalleen modus nie"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Teken asseblief in op jou rekening"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Toegang geweier"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Oplegging mag aanstoot gee"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Oplegging misluk"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Geen items gekies nie"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Kon nie lêer skep nie. Gaan asseblief toestemmings na"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Kon nie vouer skep nie. Gaan asseblief toestemmings na"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Kon nie konnekteer nie, probeer asseblief weer"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Tik verifikasiekode"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Ongeldige verifikasiekode, probeer asseblief weer"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Ongeldige wagwoord, probeer asseblief weer"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Eienskap gedeaktiveer"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Geen merker geselekteer"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Geen albums geselekteer nie"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Geen lêers beskikbaar vir aflaai nie"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Kon nie zip-lêer skep nie"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Ongeldige magtiging"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Ongeldige skakel"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Ongeldige naam"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Besig, probeer asseblief later weer"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Die opwek tydperk is %s, maar moet 1 uur of minder wees"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Jou rekening kon nie gekoppel word nie"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Te veel versoeke"
 
 #: messages.go:149
 msgid "Changes successfully saved"

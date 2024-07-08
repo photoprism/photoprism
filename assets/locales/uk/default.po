@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -24,183 +24,183 @@ msgid "Unable to do that"
 msgstr "Неможливо це зробити"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Занадто багато запитів"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Зміни не можливо зберегти"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Не можливо видалити"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s вже існує"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Не знайдено"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "Файл не знайдено"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Файл занадто великий"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Не підтримується"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Непідтримуваний тип"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Непідтримуваний формат"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Папка з оригіналами порожня"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Вибір не знайдено"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Об'єкт не знайдено"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Обліковий запис не знайдено"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Користувача не знайдено"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Мітку не знайдено"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Альбом не знайдено"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Тема не знайдена"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Особистість не знайдена"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Обличчя не знайдено"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Недоступно в публічному режимі"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "не доступно в режимі \"тільки читання\""
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Будь ласка, увійдіть до свого облікового запису"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "В доступі відмовлено"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Завантаження може бути образливим"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Помилка вивантаження"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Нічого не вибрано"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Помилка створення файла, перевірте дозволи"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Не вдалося створити папку, перевірте права доступу"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Не можливо підключитися, спробуйте знову"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Введіть код верифікації"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Невірний код верифікації, спробуйте знову"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Невірний пароль, спробуйте знову"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Функцію вимкнено"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Мітки не вибрано"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Альбоми не вибрано"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Немає доступних файлів для завантаження"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Не вдалося створити zip-файл"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Недійсні облікові дані"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Невірне посилання"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Невірне ім'я"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Зайнято, спробуйте пізніше"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr ""
 "Інтервал пробудження становить %s, але має становити 1 годину або менше"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Ваш обліковий запис не вдалося підключити"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Занадто багато запитів"
 
 #: messages.go:149
 msgid "Changes successfully saved"

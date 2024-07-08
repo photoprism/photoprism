@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -23,182 +23,182 @@ msgid "Unable to do that"
 msgstr "ไม่สามารถทำเช่นนั้นได้"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "คำขอมากเกินไป"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "ไม่สามารถบันทึกการเปลี่ยนแปลง"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "ไม่สามารถลบได้"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s มีอยู่แล้ว"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "ไม่พบ"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "ไม่พบไฟล์"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "ไฟล์ใหญ่เกินไป"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "ไม่รองรับ"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "ประเภทที่ไม่รองรับ"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "รูปแบบที่ไม่สนับสนุน"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "โฟลเดอร์ต้นฉบับว่างเปล่า"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "ไม่พบสิ่งที่เลือก"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "ไม่พบเอนทิตี"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "ไม่พบบัญชี"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "ไม่พบผู้ใช้"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "ไม่พบป้ายกำกับ"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "ไม่พบอัลบั้ม"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "ไม่พบหัวเรื่อง"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "ไม่พบบุคคล"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "ไม่พบใบหน้า"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "ไม่พร้อมใช้งานในโหมดสาธารณะ"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "ไม่พร้อมใช้งานในโหมดอ่านอย่างเดียว"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "กรุณาเข้าสู่ระบบบัญชีของคุณ"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "ปฏิเสธการอนุญาต"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "การอัปโหลดอาจไม่เหมาะสม"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "การอัพโหลดล้มเหลว"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "ไม่มีรายการที่เลือก"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "สร้างไฟล์ไม่สำเร็จ โปรดตรวจสอบสิทธิ์"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "สร้างโฟลเดอร์ไม่สำเร็จ โปรดตรวจสอบสิทธิ์"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "ไม่สามารถเชื่อมต่อได้ โปรดลองอีกครั้ง"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "ระบุรหัสยืนยืน"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "รหัสยืนยันไม่ถูกต้อง โปรดลองอีกครั้ง"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "รหัสผ่านไม่ถูกต้อง โปรดลองอีกครั้ง"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "คุณลักษณะถูกปิดใช้งาน"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "ไม่ได้เลือกป้ายกำกับ"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "ไม่ได้เลือกอัลบั้ม"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "ไม่มีไฟล์สำหรับดาวน์โหลด"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "สร้างไฟล์ zip ไม่สำเร็จ"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "ข้อมูลประจำตัวที่ไม่ถูกต้อง"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "ลิงก์ไม่ถูกต้อง"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "ชื่อไม่ถูกต้อง"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "ไม่ว่าง โปรดลองอีกครั้งในภายหลัง"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "ช่วงเวลาปลุกคือ %s แต่ต้องเป็น 1 ชั่วโมงหรือน้อยกว่า"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "ไม่สามารถเชื่อมต่อบัญชีของคุณได้"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "คำขอมากเกินไป"
 
 #: messages.go:149
 msgid "Changes successfully saved"

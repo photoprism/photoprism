@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -24,182 +24,182 @@ msgid "Unable to do that"
 msgstr "Det går inte att göra"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "För många förfrågningar"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Ändringarna kunde inte sparas"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Kunde inte raderas"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s finns redan"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Hittades inte"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "Filen kunde inte hittas"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Filen är för stor"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Ej supporterad"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Ej supporterad typ"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Format som inte stöds"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Mappen med originalen är tom"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Urvalet kunde inte hittas"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Entitet kunde inte hittas"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Kontot kunde inte hittas"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Användaren kunde inte hittas"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Etikett saknas"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Albumet finns inte"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Ämnet finns inte"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Personen kunde inte hittas"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Ansiktet kunde inte hittas"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Inte tillgängligt i offentligt läge"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Inte tillgänglig i skrivskyddsläge"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Logga in på ditt konto"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Åtkomst nekades"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Uppladdning kan vara stötande"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Uppladdning misslyckades"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Inga objekt har valts"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Det gick inte att skapa en fil, kontrollera behörigheter"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Det gick inte att skapa en mapp, kontrollera behörigheter"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Kunde inte ansluta, försök igen"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Ange verifieringskod"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Ogiltig verifieringskod, försök igen"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Felaktigt lösenord, försök igen"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Funktionen är inaktiverad"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Inga etiketter har valts"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Inga album har valts"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Inga filer finns tillgängliga för nedladdning"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Misslyckades med att skapa en zip-fil"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Ogiltiga autentiseringsuppgifter"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Ogiltig länk"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Felaktigt namn"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Upptagen, försök igen senare"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Uppvakningsintervallet är %s, men måste vara 1 timme eller mindre"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Ditt konto kunde inte anslutas"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "För många förfrågningar"
 
 #: messages.go:149
 msgid "Changes successfully saved"

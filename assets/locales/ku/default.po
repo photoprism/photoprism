@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -24,182 +24,182 @@ msgid "Unable to do that"
 msgstr "Nikarin vê yekê bikin"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Pir daxwazî"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "گۆڕانکاریەکان پاشەکەوت نەکراوە"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "نەتوانرا بسڕێتەوە"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s پێشتر هەیە"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "نەدۆزرایەوە"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "دۆسیەکە نەدۆزرایەوە"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Pelê pir mezin e"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Piştgirî nekirin"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Cureyê ne piştgirî"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Format nayê destek kirin"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Peldanka orjînal vala ye"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "هەڵبژاردەکان نەدۆزرایەوە"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "هیچ ئەلبومێکی نەدۆزیوەتەوە"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "هەژمارەکە نەدۆزرایەوە"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "بەکارهێنەرەکە نەدۆزرایەوە"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "پێناسەکە نەدۆزرایەوە"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "ئەلبومەکە نەدۆزرایەوە"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "ناونیشان"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "هیچ ئەلبومێکی نەدۆزیوەتەوە"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "نەدۆزرایەوە"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "بەردەست نیە بۆ دۆخی گشتی"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "بەردەست نییە لە دۆخی تەنها-خوێندنەوە"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "تکایە تێپەڕبە پاشان هەوڵبدەرەوە"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "ئەلبومەکان سڕانەوە"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "بارکردن لەوانەیە سووکایەتی بێت"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "بارکردنەکە سەرکەوتوو نەبوو"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "هیچ ئایتمێک دەستنیشان نەکراوە"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "شکست لە دروستکردنی پەڕگە، تکایە مۆڵەتەکان بپشکنە"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "شکست لە دروستکردنی بوخچە، تکایە مۆڵەتەکان بپشکنە"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "نەیتوانی پەیوەندی بگرێت، تکایە دووبارە هەوڵ بدەوە"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Koda verastkirinê binivîse"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Koda verastkirinê nederbasdar e, ji kerema xwe dîsa biceribîne"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "تێپەرەوشە هەڵەیە، تکایە جارێکی تر هەوڵبدەوە"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "تایبەتمەندی ناچالاک کراوە"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "هیج لە پێناسەکان هەڵنەبژێردراوە"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "هیج لە ئەلبومەکان هەڵنەبژێردراوە"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "هیچ پەڕگەیەک ئامادە نیە بۆ داگرتن"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "دروستکردنی فایلی زیپ سەرکەوتوو نەبوو"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "زانیارییەکان نادروستە"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "بەستەرەکە نادروستە"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "بەروارێکی نادروست"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "تێپەرەوشە هەڵەیە، تکایە جارێکی تر هەوڵبدەوە"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Navbera hişyarbûnê %s ye, lê divê 1h an kêmtir be"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Hesabê te nehat girêdan"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Pir daxwazî"
 
 #: messages.go:149
 msgid "Changes successfully saved"

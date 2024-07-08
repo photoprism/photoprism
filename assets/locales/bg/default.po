@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -23,182 +23,182 @@ msgid "Unable to do that"
 msgstr "Не можете да го направите"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Твърде много заявки"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Промените не могат да бъдат запазени"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Не може да бъде изтрит"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s вече съществува"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Не е намерен"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "Файлът не е намерен"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Твърде голям файл"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Не се поддържа"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Неподдържан тип"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Неподдържан формат"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Папката с оригинали е празна"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Изборът не е намерен"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Субектът не е намерен"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Акаунтът не е намерен"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Потребителят не е намерен"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Етикетът не е намерен"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Албумът не е намерен"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Темата не е намерена"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Лицето не е намерено"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Лицето не е намерено"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Не е наличен в публичен режим"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Не е наличен в режим само за четене"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Моля, влезте в профила си"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Достъп отказан"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Качването може да е обидно"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Файловете не успяха да се качат"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Няма избрани елементи"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Неуспешно създаване на файл, моля, проверете разрешенията"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Неуспешно създаване на папка, моля, проверете разрешенията"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Не може да се свърже, опитайте отново"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Въведете код за верификация"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Невалиден код за потвърждение, моля опитайте отново"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Невалидна парола, моля, опитайте отново"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Функцията е деактивирана"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Няма избрани етикети"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Няма избрани албуми"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Няма налични файлове за изтегляне"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Неуспешно създаване на zip файл"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Невалидни креденции"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Невалидна връзка"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Невалидно име"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Заето, моля, опитайте отново по-късно"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Интервалът на събуждане е %s, но трябва да е 1 час или по-малко"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Вашият акаунт не може да бъде свързан"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Твърде много заявки"
 
 #: messages.go:149
 msgid "Changes successfully saved"

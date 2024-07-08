@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -24,182 +24,182 @@ msgid "Unable to do that"
 msgstr "Tidak dapat melakukan itu"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Terlalu banyak permintaan"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Perubahan tidak dapat disimpan"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Tidak dapat dihapus"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s sudah ada"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Tidak ditemukan"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "Berkas tidak ditemukan"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Berkas terlalu besar"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Tidak didukung"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Jenis tidak didukung"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Format yang tidak didukung"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Folder asli kosong"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Pilihan tidak ditemukan"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Entitas tidak ditemukan"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Akun tidak ditemukan"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Pengguna tidak ditemukan"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Label tidak ditemukan"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Album tidak ditemukan"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Subjek tidak ditemukan"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Orang tidak ditemukan"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Wajah tidak ditemukan"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Tidak tersedia dalam mode publik"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Tidak tersedia dalam mode hanya-baca"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Silakan masuk ke akun Anda"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Izin ditolak"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Unggahan mungkin menyinggung"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Unggahan gagal"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Tidak ada item yang dipilih"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Gagal membuat file, silakan periksa izin"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Gagal membuat folder, harap periksa izin"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Tidak dapat terhubung, silakan coba lagi"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "Masukkan kode verifikasi"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Kode verifikasi tidak valid, silakan coba lagi"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Kata sandi salah, silakan coba lagi"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Fitur dinonaktifkan"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Tidak ada label yang dipilih"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Tidak ada album yang dipilih"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Tidak ada file yang tersedia untuk diunduh"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Gagal membuat file zip"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Kredensial tidak valid"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Tautan tidak valid"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Nama tidak valid"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Sibuk, silakan coba lagi nanti"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Interval wakeup adalah %s, tetapi harus 1 jam atau kurang"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Akun Anda tidak dapat terhubung"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Terlalu banyak permintaan"
 
 #: messages.go:149
 msgid "Changes successfully saved"

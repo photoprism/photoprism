@@ -12,6 +12,7 @@ type User struct {
 	UserName     string       `json:"Name,omitempty" yaml:"Name,omitempty"`
 	AuthProvider string       `json:"AuthProvider,omitempty" yaml:"AuthProvider,omitempty"`
 	AuthMethod   string       `json:"AuthMethod,omitempty" yaml:"AuthMethod,omitempty"`
+	AuthID       string       `json:"AuthID,omitempty" yaml:"AuthMethod,omitempty"`
 	UserEmail    string       `json:"Email,omitempty" yaml:"Email,omitempty"`
 	DisplayName  string       `json:"DisplayName,omitempty" yaml:"DisplayName,omitempty"`
 	UserRole     string       `json:"Role,omitempty" yaml:"Role,omitempty"`

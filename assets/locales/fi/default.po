@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 07:50+0000\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
 "PO-Revision-Date: 2024-07-05 09:24+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -23,182 +23,182 @@ msgid "Unable to do that"
 msgstr "Se ei onnistu"
 
 #: messages.go:103
-msgid "Too many requests"
-msgstr "Liian monta pyyntöä"
-
-#: messages.go:104
 msgid "Changes could not be saved"
 msgstr "Muutoksia ei voitu tallentaa"
 
-#: messages.go:105
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Ei voitu poistaa"
 
-#: messages.go:106
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s on jo olemassa"
 
-#: messages.go:107
+#: messages.go:106
 msgid "Not found"
 msgstr "Ei löytynyt"
 
-#: messages.go:108
+#: messages.go:107
 msgid "File not found"
 msgstr "Tiedostoa ei löydy"
 
-#: messages.go:109
+#: messages.go:108
 msgid "File too large"
 msgstr "Tiedosto liian suuri"
 
-#: messages.go:110
+#: messages.go:109
 msgid "Unsupported"
 msgstr "Ei tuettu"
 
-#: messages.go:111
+#: messages.go:110
 msgid "Unsupported type"
 msgstr "Tyyppiä ei tueta"
 
-#: messages.go:112
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Ei tuettu muoto"
 
-#: messages.go:113
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Originaalit-kansio on tyhjä"
 
-#: messages.go:114
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Valintaa ei löydy"
 
-#: messages.go:115
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Entiteettiä ei löydy"
 
-#: messages.go:116
+#: messages.go:115
 msgid "Account not found"
 msgstr "Tiliä ei löydy"
 
-#: messages.go:117
+#: messages.go:116
 msgid "User not found"
 msgstr "Käyttäjää ei löydy"
 
-#: messages.go:118
+#: messages.go:117
 msgid "Label not found"
 msgstr "Tarraa ei löydy"
 
-#: messages.go:119
+#: messages.go:118
 msgid "Album not found"
 msgstr "Albumia ei löydy"
 
-#: messages.go:120
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Aihetta ei löydy"
 
-#: messages.go:121
+#: messages.go:120
 msgid "Person not found"
 msgstr "Henkilöä ei löydy"
 
-#: messages.go:122
+#: messages.go:121
 msgid "Face not found"
 msgstr "Kasvoja ei löydy"
 
-#: messages.go:123
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Ei käytettävissä julkisessa tilassa"
 
-#: messages.go:124
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Ei käytettävissä vain luku-tilassa"
 
-#: messages.go:125
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Kirjaudu sisään tilillesi"
 
-#: messages.go:126
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Lupa evätty"
 
-#: messages.go:127
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Upload saattaa olla loukkaava"
 
-#: messages.go:128
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Lataus epäonnistui"
 
-#: messages.go:129
+#: messages.go:128
 msgid "No items selected"
 msgstr "Kohdetta ei ole valittu"
 
-#: messages.go:130
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Tiedoston luominen epäonnistui, tarkista käyttöoikeudet"
 
-#: messages.go:131
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Kansion luominen epäonnistui, tarkista käyttöoikeudet"
 
-#: messages.go:132
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Yhteyttä ei saatu muodostettua, yritä uudelleen"
 
-#: messages.go:133
+#: messages.go:132
 msgid "Enter verification code"
 msgstr "syötä vahvistus koodi"
 
-#: messages.go:134
+#: messages.go:133
 msgid "Invalid verification code, please try again"
 msgstr "Virheellinen vahvistuskoodi, yritä uudelleen"
 
-#: messages.go:135
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Väärä salasana, yritä uudelleen"
 
-#: messages.go:136
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Ominaisuus poistettu käytöstä"
 
-#: messages.go:137
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Ei valittuja tarroja"
 
-#: messages.go:138
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Ei valittuja albumeita"
 
-#: messages.go:139
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Tiedostoja ei ole ladattavissa"
 
-#: messages.go:140
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Zip-tiedoston luominen epäonnistui"
 
-#: messages.go:141
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Virheelliset valtakirjat"
 
-#: messages.go:142
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Virheellinen linkki"
 
-#: messages.go:143
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Virheellinen nimi"
 
-#: messages.go:144
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Varattu, yritä myöhemmin uudelleen"
 
-#: messages.go:145
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Heräämisväli on %s, mutta sen on oltava enintään 1h"
 
-#: messages.go:146
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Tiliäsi ei voitu yhdistää"
+
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Liian monta pyyntöä"
 
 #: messages.go:149
 msgid "Changes successfully saved"

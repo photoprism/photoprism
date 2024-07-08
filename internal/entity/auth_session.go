@@ -48,7 +48,7 @@ type Session struct {
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
-	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"-" yaml:"AuthID,omitempty"`
+	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	GrantType     string          `gorm:"type:VARBINARY(64);default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
 	LastActive    int64           `json:"LastActive" yaml:"LastActive,omitempty"`

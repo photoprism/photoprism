@@ -1262,7 +1262,7 @@ func TestUser_SaveForm(t *testing.T) {
 		frm, err := UnknownUser.Form()
 		assert.NoError(t, err)
 
-		err = UnknownUser.SaveForm(frm, false)
+		err = UnknownUser.SaveForm(frm, UserFixtures.Pointer("guest"))
 		assert.Error(t, err)
 	})
 	t.Run("Admin", func(t *testing.T) {
@@ -1280,7 +1280,7 @@ func TestUser_SaveForm(t *testing.T) {
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
-		err = Admin.SaveForm(frm, false)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"))
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)
@@ -1305,7 +1305,7 @@ func TestUser_SaveForm(t *testing.T) {
 
 		frm.UserEmail = "admin@example.com"
 		frm.UserDetails.UserLocation = "GoLand"
-		err = Admin.SaveForm(frm, true)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"))
 
 		assert.NoError(t, err)
 		assert.Equal(t, "admin@example.com", Admin.UserEmail)
@@ -1329,7 +1329,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.DisplayName = "New Name"
-		err = Admin.SaveForm(frm, true)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"))
 
 		assert.NoError(t, err)
 		assert.Equal(t, "New Name", Admin.DisplayName)
@@ -1351,7 +1351,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.CanLogin = false
-		err = Admin.SaveForm(frm, true)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"))
 
 		assert.NoError(t, err)
 		assert.Equal(t, true, Admin.CanLogin)
@@ -1373,7 +1373,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.UserRole = "user"
-		err = Admin.SaveForm(frm, false)
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("guest"))
 
 		assert.Error(t, err)
 		assert.Equal(t, "super admin must not have a non-admin role", err.Error())
@@ -1395,7 +1395,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.BasePath = "//*?"
-		err = Admin.SaveForm(frm, false)
+		err = Admin.SaveForm(frm, nil)
 
 		assert.Error(t, err)
 		assert.Equal(t, "invalid base folder", err.Error())
@@ -1417,7 +1417,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.UploadPath = "//*?"
-		err = Admin.SaveForm(frm, false)
+		err = Admin.SaveForm(frm, nil)
 
 		assert.Error(t, err)
 		assert.Equal(t, "invalid upload folder", err.Error())
