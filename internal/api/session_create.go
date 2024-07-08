@@ -89,11 +89,11 @@ func CreateSession(router *gin.RouterGroup) {
 			if sess.Method().IsNot(authn.Method2FA) {
 				c.AbortWithStatusJSON(sess.HttpStatus(), gin.H{"error": i18n.Msg(i18n.ErrInvalidCredentials)})
 			} else if errors.Is(err, authn.ErrPasscodeRequired) {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrPasscodeRequired, "message": i18n.Msg(i18n.ErrPasscodeRequired)})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": 32, "message": i18n.Msg(i18n.ErrPasscodeRequired)})
 				// Return the reserved request rate limit tokens if password is correct, even if the verification code is missing.
 				r.Success()
 			} else {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": i18n.ErrInvalidPasscode, "message": i18n.Msg(i18n.ErrInvalidPasscode)})
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error(), "code": http.StatusUnauthorized, "message": i18n.Msg(i18n.ErrInvalidPasscode)})
 			}
 			return
 		}
