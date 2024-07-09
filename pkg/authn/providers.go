@@ -31,11 +31,11 @@ var LocalProviders = list.List{
 	string(ProviderOIDC),
 }
 
-// ClientProviders contains all client authentication providers.
-var ClientProviders = list.List{
-	string(ProviderClient),
-	string(ProviderApplication),
-	string(ProviderAccessToken),
+// LocalPasswordRequiredProviders contains authentication providers which require a local password.
+var LocalPasswordRequiredProviders = list.List{
+	string(ProviderUndefined),
+	string(ProviderDefault),
+	string(ProviderLocal),
 }
 
 // PasswordProviders contains authentication providers which support password authentication (local and remote).
@@ -50,6 +50,13 @@ var PasscodeProviders = list.List{
 	string(ProviderDefault),
 	string(ProviderLocal),
 	string(ProviderLDAP),
+}
+
+// ClientProviders contains all client authentication providers.
+var ClientProviders = list.List{
+	string(ProviderClient),
+	string(ProviderApplication),
+	string(ProviderAccessToken),
 }
 
 // Provider casts a string to a normalized provider type.
@@ -144,6 +151,11 @@ func (t ProviderType) IsUndefined() bool {
 	return t == ""
 }
 
+// IsOIDC checks if the provider is OpenID Connect (OIDC).
+func (t ProviderType) IsOIDC() bool {
+	return t == ProviderOIDC
+}
+
 // IsLocal checks if local authentication is possible.
 func (t ProviderType) IsLocal() bool {
 	return list.Contains(LocalProviders, string(t))
@@ -162,6 +174,11 @@ func (t ProviderType) IsApplication() bool {
 // IsDefault checks if this is the default provider.
 func (t ProviderType) IsDefault() bool {
 	return t.String() == ProviderDefault.String()
+}
+
+// RequiresLocalPassword checks if the provider allows a password to be checked for authentication.
+func (t ProviderType) RequiresLocalPassword() bool {
+	return list.Contains(LocalPasswordRequiredProviders, string(t))
 }
 
 // SupportsPasswordAuthentication checks if the provider allows a password to be checked for authentication.

@@ -23,9 +23,9 @@ func TestAuthListCommand(t *testing.T) {
 		// Check command output for plausibility.
 		// t.Logf(output)
 		assert.NoError(t, err)
-		assert.Contains(t, output, "alice")
-		assert.Contains(t, output, "bob")
-		assert.Contains(t, output, "visitor")
+		assert.Contains(t, output, "alice ")
+		assert.Contains(t, output, "bob ")
+		assert.Contains(t, output, "visitor ")
 	})
 	t.Run("Alice", func(t *testing.T) {
 		var err error
@@ -42,9 +42,9 @@ func TestAuthListCommand(t *testing.T) {
 		// t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Session ID")
-		assert.Contains(t, output, "alice")
-		assert.NotContains(t, output, "bob")
-		assert.NotContains(t, output, "visitor")
+		assert.Contains(t, output, "alice ")
+		assert.NotContains(t, output, "bob ")
+		assert.NotContains(t, output, "visitor ")
 		assert.NotContains(t, output, "| Preview Token |")
 	})
 	t.Run("CSV", func(t *testing.T) {
@@ -62,8 +62,8 @@ func TestAuthListCommand(t *testing.T) {
 		//t.Logf(output)
 		assert.NoError(t, err)
 		assert.Contains(t, output, "Session ID;")
-		assert.Contains(t, output, "alice")
-		assert.NotContains(t, output, "bob")
+		assert.Contains(t, output, "alice;")
+		assert.NotContains(t, output, "bob;")
 		assert.NotContains(t, output, "visitor")
 	})
 	t.Run("Tokens", func(t *testing.T) {
@@ -82,8 +82,8 @@ func TestAuthListCommand(t *testing.T) {
 		assert.NoError(t, err)
 		assert.Contains(t, output, "|  Session ID  |")
 		assert.Contains(t, output, "| Preview Token |")
-		assert.Contains(t, output, "alice")
-		assert.NotContains(t, output, "bob")
+		assert.Contains(t, output, "alice ")
+		assert.NotContains(t, output, "bob ")
 		assert.NotContains(t, output, "visitor")
 	})
 	t.Run("NoResult", func(t *testing.T) {

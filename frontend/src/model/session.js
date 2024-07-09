@@ -43,7 +43,7 @@ export class Session extends RestModel {
       ClientName: "",
       AuthProvider: "",
       AuthMethod: "",
-      AuthDomain: "",
+      AuthIssuer: "",
       AuthID: "",
       AuthScope: "",
       GrantType: "",

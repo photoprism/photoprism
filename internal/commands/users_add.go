@@ -77,7 +77,8 @@ func usersAddAction(ctx *cli.Context) error {
 			return nil
 		}
 
-		if interactive && frm.UserEmail == "" {
+		// Enter account email.
+		if interactive && frm.UserEmail == "" && frm.Provider().SupportsPasswordAuthentication() {
 			prompt := promptui.Prompt{
 				Label: "Email",
 			}
@@ -91,7 +92,9 @@ func usersAddAction(ctx *cli.Context) error {
 			frm.UserEmail = clean.Email(res)
 		}
 
-		if interactive && len([]rune(ctx.String("password"))) < entity.PasswordLength {
+		// Enter account password.
+		if interactive && (frm.Provider().RequiresLocalPassword() || frm.Password != "") &&
+			len([]rune(ctx.String("password"))) < entity.PasswordLength {
 			validate := func(input string) error {
 				if len([]rune(input)) < entity.PasswordLength {
 					return fmt.Errorf("password must have at least %d characters", entity.PasswordLength)

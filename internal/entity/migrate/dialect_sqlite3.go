@@ -99,4 +99,10 @@ var DialectSQLite3 = Migrations{
 		Stage:      "main",
 		Statements: []string{"DELETE FROM auth_sessions;"},
 	},
+	{
+		ID:         "20240709-000001",
+		Dialect:    "sqlite3",
+		Stage:      "pre",
+		Statements: []string{"ALTER TABLE auth_sessions RENAME COLUMN auth_domain TO auth_issuer;"},
+	},
 }

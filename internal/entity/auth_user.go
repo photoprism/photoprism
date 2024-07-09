@@ -50,6 +50,7 @@ type User struct {
 	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthIssuer    string        `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
 	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	UserName      string        `gorm:"size:200;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
@@ -105,7 +106,7 @@ func NewUser() (m *User) {
 }
 
 // OidcUser creates a new OIDC user entity.
-func OidcUser(userInfo *oidc.UserInfo, userName string) User {
+func OidcUser(userInfo *oidc.UserInfo, issuer, userName string) User {
 	authId := clean.Auth(userInfo.Subject)
 
 	if authId == "" {
@@ -117,6 +118,7 @@ func OidcUser(userInfo *oidc.UserInfo, userName string) User {
 		DisplayName:  userInfo.Name,
 		UserEmail:    clean.Email(userInfo.Email),
 		AuthProvider: authn.ProviderOIDC.String(),
+		AuthIssuer:   issuer,
 		AuthID:       authId,
 	}
 }
@@ -143,7 +145,11 @@ func FindUser(find User) *User {
 	} else if rnd.IsUID(find.UserUID, UserUID) {
 		stmt = stmt.Where("user_uid = ?", find.UserUID)
 	} else if authn.ProviderOIDC.Equal(find.AuthProvider) && find.AuthID != "" {
-		stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
+		if find.AuthIssuer == "" {
+			stmt = stmt.Where("auth_provider = ? AND auth_id = ?", find.AuthProvider, find.AuthID)
+		} else {
+			stmt = stmt.Where("auth_provider = ? AND (auth_issuer = '' OR auth_issuer = ?) AND auth_id = ?", find.AuthProvider, find.AuthIssuer, find.AuthID)
+		}
 	} else if find.AuthProvider != "" && find.AuthID != "" && find.UserName != "" {
 		stmt = stmt.Where("auth_provider = ? AND auth_id = ? OR user_name = ?", find.AuthProvider, find.AuthID, find.UserName)
 	} else if find.UserName != "" {
@@ -596,7 +602,7 @@ func (m *User) SetMethod(method authn.MethodType) *User {
 }
 
 // SetAuthID sets a custom authentication identifier.
-func (m *User) SetAuthID(id string) *User {
+func (m *User) SetAuthID(id, issuer string) *User {
 	if m == nil {
 		return &User{}
 	}
@@ -606,6 +612,7 @@ func (m *User) SetAuthID(id string) *User {
 		return m
 	} else {
 		m.AuthID = authId
+		m.AuthIssuer = clean.Uri(issuer)
 	}
 
 	// Make sure other users do not use the same identifier.
@@ -1081,6 +1088,8 @@ func (m *User) Validate() (err error) {
 func (m *User) SetFormValues(frm form.User) *User {
 	m.UserName = frm.Username()
 	m.SetProvider(frm.Provider())
+	m.SetMethod(frm.Method())
+	m.SetAuthID(frm.AuthID, frm.AuthIssuer)
 	m.UserEmail = frm.Email()
 	m.DisplayName = frm.DisplayName
 	m.SuperAdmin = frm.SuperAdmin
@@ -1224,6 +1233,7 @@ func (m *User) PrivilegeLevelChange(f form.User) bool {
 		m.UserAttr != f.Attr() ||
 		m.AuthProvider != f.AuthProvider ||
 		m.AuthMethod != f.AuthMethod ||
+		m.AuthIssuer != f.AuthIssuer ||
 		m.AuthID != f.AuthID ||
 		m.BasePath != f.BasePath ||
 		m.UploadPath != f.UploadPath
@@ -1290,7 +1300,7 @@ func (m *User) SaveForm(f form.User, u *User) error {
 		if u.IsSuperAdmin() {
 			m.SetProvider(f.Provider())
 			m.SetMethod(f.Method())
-			m.SetAuthID(f.AuthID)
+			m.SetAuthID(f.AuthID, f.AuthIssuer)
 		}
 
 		m.SetBasePath(f.BasePath)

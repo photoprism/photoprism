@@ -36,6 +36,7 @@ var (
 	ErrInvalidClientID              = errors.New("invalid client id")
 	ErrInvalidAuthID                = errors.New("invalid auth id")
 	ErrAuthProviderIsNotOIDC        = errors.New("auth provider is not oidc")
+	ErrAuthIDRequired               = errors.New("auth id required")
 	ErrAuthCodeRequired             = errors.New("auth code required")
 	ErrClientIDRequired             = errors.New("client id required")
 	ErrInvalidClientSecret          = errors.New("invalid client secret")

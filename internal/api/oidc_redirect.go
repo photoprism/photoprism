@@ -114,7 +114,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		}
 
 		// Find existing user record and update it, if necessary.
-		if oidcUser := entity.OidcUser(userInfo, oidc.Username(userInfo, conf.OIDCUsername())); authn.ProviderOIDC.NotEqual(oidcUser.AuthProvider) {
+		if oidcUser := entity.OidcUser(userInfo, provider.Issuer(), oidc.Username(userInfo, conf.OIDCUsername())); authn.ProviderOIDC.NotEqual(oidcUser.AuthProvider) {
 			event.AuditErr([]string{clientIp, "create session", "oidc", authn.ErrAuthProviderIsNotOIDC.Error()})
 			event.LoginError(clientIp, "oidc", oidcUser.UserName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
@@ -311,13 +311,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		}
 
 		// Update Subject ID (auth_id).
-		user.SetAuthID(userInfo.Subject)
+		user.SetAuthID(userInfo.Subject, provider.Issuer())
 
 		// Step 2: Create user session.
 		sess := get.Session().New(c)
 		sess.SetProvider(authn.ProviderOIDC)
 		sess.SetMethod(authn.MethodDefault)
-		sess.SetAuthID(user.AuthID)
+		sess.SetAuthID(user.AuthID, provider.Issuer())
 		sess.SetUser(user)
 		sess.SetGrantType(authn.GrantAuthorizationCode)
 		sess.IdToken = tokens.IDToken

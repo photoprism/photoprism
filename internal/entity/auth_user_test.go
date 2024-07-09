@@ -31,9 +31,10 @@ func TestOidcUser(t *testing.T) {
 		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
 		info.PreferredUsername = "Jane Doe"
 
-		m := OidcUser(info, "jane.doe")
+		m := OidcUser(info, "", "jane.doe")
 
 		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "", m.AuthIssuer)
 		assert.Equal(t, "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d", m.AuthID)
 		assert.Equal(t, "jane@doe.com", m.UserEmail)
 		assert.Equal(t, "jane.doe", m.UserName)
@@ -49,9 +50,10 @@ func TestOidcUser(t *testing.T) {
 		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d"
 		info.PreferredUsername = "Jane Doe"
 
-		m := OidcUser(info, "")
+		m := OidcUser(info, "https://accounts.google.com", "")
 
 		assert.Equal(t, "oidc", m.AuthProvider)
+		assert.Equal(t, "https://accounts.google.com", m.AuthIssuer)
 		assert.Equal(t, "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c68d", m.AuthID)
 		assert.Equal(t, "jane@doe.com", m.UserEmail)
 		assert.Equal(t, "", m.UserName)
@@ -67,9 +69,10 @@ func TestOidcUser(t *testing.T) {
 		info.EmailVerified = true
 		info.Subject = ""
 
-		m := OidcUser(info, "jane.doe")
+		m := OidcUser(info, "https://accounts.google.com", "jane.doe")
 
 		assert.Equal(t, "", m.AuthProvider)
+		assert.Equal(t, "", m.AuthIssuer)
 		assert.Equal(t, "", m.AuthID)
 		assert.Equal(t, "", m.UserEmail)
 		assert.Equal(t, "", m.UserName)

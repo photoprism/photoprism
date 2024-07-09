@@ -47,7 +47,7 @@ type Session struct {
 	client        *Client         `gorm:"-" yaml:"-"`
 	AuthProvider  string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string          `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
-	AuthDomain    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthDomain" yaml:"AuthDomain,omitempty"`
+	AuthIssuer    string          `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
 	AuthID        string          `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	AuthScope     string          `gorm:"size:1024;default:'';" json:"AuthScope" yaml:"AuthScope,omitempty"`
 	GrantType     string          `gorm:"type:VARBINARY(64);default:'';" json:"GrantType" yaml:"GrantType,omitempty"`
@@ -432,12 +432,13 @@ func (m *Session) AuthInfo() string {
 }
 
 // SetAuthID sets a custom authentication identifier.
-func (m *Session) SetAuthID(id string) *Session {
+func (m *Session) SetAuthID(id, issuer string) *Session {
 	if id == "" {
 		return m
 	}
 
 	m.AuthID = clean.Auth(id)
+	m.AuthIssuer = clean.Uri(issuer)
 
 	return m
 }

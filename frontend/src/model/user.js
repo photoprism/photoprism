@@ -40,6 +40,7 @@ export class User extends RestModel {
       UUID: "",
       AuthProvider: "",
       AuthMethod: "",
+      AuthIssuer: "",
       AuthID: "",
       Name: "",
       DisplayName: "",
@@ -210,6 +211,10 @@ export class User extends RestModel {
 
   isRemote() {
     return this.AuthProvider && this.AuthProvider === "ldap";
+  }
+
+  requiresPassword() {
+    return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
   authInfo() {

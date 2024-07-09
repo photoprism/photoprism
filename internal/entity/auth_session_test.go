@@ -491,9 +491,10 @@ func TestSession_SetAuthID(t *testing.T) {
 			AuthID:   "test-session-auth-id",
 		}
 
-		m := s.SetAuthID("")
+		m := s.SetAuthID("", "https://accounts.google.com")
 
 		assert.Equal(t, "test-session-auth-id", m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
 	})
 	t.Run("New", func(t *testing.T) {
 		s := &Session{
@@ -502,9 +503,10 @@ func TestSession_SetAuthID(t *testing.T) {
 			AuthID:   "new-id",
 		}
 
-		m := s.SetAuthID("new-id")
+		m := s.SetAuthID("new-id", "https://accounts.google.com")
 
 		assert.Equal(t, "new-id", m.AuthID)
+		assert.Equal(t, "https://accounts.google.com", m.AuthIssuer)
 	})
 }
 

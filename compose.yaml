@@ -49,9 +49,12 @@ services:
       ## OpenID Connect (pre-configured for local tests):
       ## see https://keycloak.localssl.dev/realms/master/.well-known/openid-configuration
       PHOTOPRISM_OIDC_URI: "https://keycloak.localssl.dev/realms/master"
-      PHOTOPRISM_OIDC_INSECURE: "true"
       PHOTOPRISM_OIDC_CLIENT: "photoprism-develop"
       PHOTOPRISM_OIDC_SECRET: "9d8351a0-ca01-4556-9c37-85eb634869b9"
+      PHOTOPRISM_OIDC_PROVIDER: "Keycloak"
+      PHOTOPRISM_OIDC_REGISTER: "true"
+      PHOTOPRISM_OIDC_WEBDAV: "true"
+      PHOTOPRISM_DISABLE_OIDC: "false"
       ## LDAP Authentication (pre-configured for local tests):
       PHOTOPRISM_LDAP_URI: "ldap://dummy-ldap:389"
       PHOTOPRISM_LDAP_INSECURE: "true"

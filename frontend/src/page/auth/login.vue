@@ -15,6 +15,7 @@
                   <v-flex xs12 class="px-2 py-1">
                     <v-text-field
                       id="one-time-code"
+                      key="auth-input-code"
                       ref="code"
                       v-model="code"
                       :disabled="loading"
@@ -45,6 +46,7 @@
                   <v-flex xs12 class="pa-2">
                     <v-text-field
                       id="auth-username"
+                      key="auth-input-username"
                       v-model="username"
                       :disabled="loading || enterCode"
                       name="username"
@@ -70,6 +72,7 @@
                   <v-flex xs12 class="px-2 py-1">
                     <v-text-field
                       id="auth-password"
+                      key="auth-input-password"
                       v-model="password"
                       :disabled="loading"
                       name="password"

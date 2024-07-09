@@ -148,7 +148,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 				s.SetMethod(method)
 
 				// Set auth ID to the ID of the parent session.
-				s.SetAuthID(authSess.ID)
+				s.SetAuthID(authSess.ID, user.UserUID)
 
 				// Limit lifetime of the session to that of the parent session, if any.
 				if authSess.SessExpires > 0 && s.SessExpires > authSess.SessExpires {

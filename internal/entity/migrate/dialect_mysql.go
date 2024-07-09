@@ -177,4 +177,10 @@ var DialectMySQL = Migrations{
 		Stage:      "main",
 		Statements: []string{"ALTER TABLE auth_sessions MODIFY IF EXISTS refresh_token VARBINARY(2048);", "ALTER TABLE auth_sessions MODIFY IF EXISTS id_token VARBINARY(2048);"},
 	},
+	{
+		ID:         "20240709-000001",
+		Dialect:    "mysql",
+		Stage:      "pre",
+		Statements: []string{"ALTER IGNORE TABLE auth_sessions RENAME COLUMN auth_domain TO auth_issuer;"},
+	},
 }
