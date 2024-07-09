@@ -218,7 +218,15 @@ export class User extends RestModel {
   }
 
   hasWebDAV() {
-    return this.WebDAV && this.Name && (this.Role === "admin" || this.Role === "user");
+    return this.WebDAV && this.canEnableWebDAV();
+  }
+
+  canEnableWebDAV() {
+    if (this.AuthProvider === "none" || !this.Name) {
+      return false;
+    }
+
+    return this.Role === "admin" || this.Role === "user" || this.Role === "contributor";
   }
 
   authInfo() {
