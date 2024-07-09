@@ -603,10 +603,6 @@ func (m *User) SetMethod(method authn.MethodType) *User {
 
 // SetAuthID sets a custom authentication identifier.
 func (m *User) SetAuthID(id, issuer string) *User {
-	if m == nil {
-		return &User{}
-	}
-
 	// Update auth id if not empty.
 	if authId := clean.Auth(id); len(authId) < 4 {
 		return m
@@ -625,6 +621,19 @@ func (m *User) SetAuthID(id, issuer string) *User {
 	}
 
 	return m
+}
+
+// UpdateAuthID updated the custom authentication identifier.
+func (m *User) UpdateAuthID(id, issuer string) error {
+	if !rnd.IsUID(m.UserUID, UserUID) {
+		return errors.New("invalid user uid")
+	}
+
+	// Update auth id and issuer record.
+	return m.SetAuthID(id, issuer).Updates(Map{
+		"AuthID":     m.AuthID,
+		"AuthIssuer": m.AuthIssuer,
+	})
 }
 
 // AuthInfo returns information about the authentication type.

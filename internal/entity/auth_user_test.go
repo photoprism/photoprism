@@ -1596,6 +1596,44 @@ func TestUser_SetMethod(t *testing.T) {
 	})
 }
 
+func TestUser_SetAuthID(t *testing.T) {
+	id := rnd.UUID()
+	issuer := "https://keycloak.localssl.dev/realms/master"
+
+	t.Run("UUID", func(t *testing.T) {
+		m := UserFixtures.Get("guest")
+
+		m.SetAuthID(id, issuer)
+		assert.Equal(t, id, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+		m.SetAuthID(id, "")
+		assert.Equal(t, id, m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
+		m.SetAuthID("", issuer)
+		assert.Equal(t, id, m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
+	})
+}
+
+func TestUser_UpdateAuthID(t *testing.T) {
+	id := rnd.UUID()
+	issuer := "https://keycloak.localssl.dev/realms/master"
+
+	t.Run("UUID", func(t *testing.T) {
+		m := UserFixtures.Get("friend")
+
+		m.SetAuthID("", issuer)
+		assert.Equal(t, "", m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
+		m.SetAuthID(id, issuer)
+		assert.Equal(t, id, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+		m.SetAuthID(id, "")
+		assert.Equal(t, id, m.AuthID)
+		assert.Equal(t, "", m.AuthIssuer)
+	})
+}
+
 func TestUser_AuthInfo(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
 		m := UserFixtures.Get("alice")
