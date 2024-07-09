@@ -203,7 +203,7 @@
               </v-btn>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.WebDAV" @click.stop="showDialog('webdav')">
+              <v-btn block depressed color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
                 <translate>Connect via WebDAV</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
               </v-btn>

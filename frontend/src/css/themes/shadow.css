@@ -56,7 +56,8 @@ body.dark-theme.theme-shadow {
     background: rgba(250, 250, 255, 0.1);
 }
 
-#photoprism.theme-shadow .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-shadow .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-shadow .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 

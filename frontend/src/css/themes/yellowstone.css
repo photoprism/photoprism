@@ -50,7 +50,8 @@ body.dark-theme.theme-yellowstone,
     background: rgba(250, 250, 255, 0.1);
 }
 
-#photoprism.theme-yellowstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-yellowstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-yellowstone .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 

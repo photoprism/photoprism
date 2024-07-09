@@ -55,7 +55,8 @@ body.dark-theme.theme-gemstone,
     color: #333333;
 }
 
-#photoprism.theme-gemstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-gemstone .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-gemstone .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 

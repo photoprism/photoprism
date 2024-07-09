@@ -86,7 +86,8 @@ body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box
     background: rgba(255, 255, 255, 0.04);
 }
 
-#photoprism.theme-chrome .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-chrome .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-chrome .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 

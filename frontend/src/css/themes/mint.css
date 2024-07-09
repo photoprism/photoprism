@@ -32,7 +32,8 @@ body.dark-theme.theme-mint,
     background: #2b2b2b;
 }
 
-#photoprism.theme-mint .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-mint .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-mint .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 

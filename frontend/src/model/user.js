@@ -217,6 +217,10 @@ export class User extends RestModel {
     return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
+  hasWebDAV() {
+    return this.WebDAV && this.Name && (this.Role === "admin" || this.Role === "user");
+  }
+
   authInfo() {
     if (!this || !this.AuthProvider) {
       return $gettext("Default");

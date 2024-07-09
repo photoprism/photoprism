@@ -154,7 +154,8 @@ body.dark-theme.theme-default,
     background: #4b4e4f;
 }
 
-#photoprism.theme-default .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-default .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-default .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 
