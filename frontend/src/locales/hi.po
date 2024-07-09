@@ -48,12 +48,12 @@ msgstr "1 घंटा"
 msgid "12 hours"
 msgstr "12 घंटा"
 
-#: src/dialog/admin/users/edit.vue:520 src/page/settings/account.vue:60
+#: src/dialog/admin/users/edit.vue:528 src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr "2-कारक प्रमाणीकरण"
 
-#: src/dialog/admin/users/edit.vue:519 src/options/auth.js:46
+#: src/dialog/admin/users/edit.vue:527 src/options/auth.js:46
 msgid "2FA"
 msgstr "2एफए"
 
@@ -78,12 +78,12 @@ msgstr "एक्सेस टोकन"
 
 #: src/component/navigation.vue:106 src/component/navigation.vue:2059
 #: src/dialog/share/upload.vue:108 src/model/service.js:94
-#: src/model/user.js:168 src/page/settings.vue:84
+#: src/model/user.js:169 src/page/settings.vue:84
 #: src/page/settings/general.vue:473
 msgid "Account"
 msgstr "लेखा"
 
-#: src/dialog/admin/users/add.vue:87 src/dialog/service/add.vue:34
+#: src/dialog/admin/users/add.vue:89 src/dialog/service/add.vue:34
 msgid "Account created"
 msgstr "खाता बन गया"
 
@@ -306,7 +306,7 @@ msgstr "कोई भी निजी फ़ोटो और वीडियो 
 msgid "API Key"
 msgstr "एपीआई कुंजी"
 
-#: src/page/admin/sessions.vue:95 src/page/admin/sessions.vue:2
+#: src/page/admin/sessions.vue:103 src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
 msgstr "आवेदन"
@@ -375,7 +375,7 @@ msgstr "कलाकार"
 msgid "Aspect Ratio"
 msgstr "आस्पेक्ट अनुपात"
 
-#: src/dialog/admin/users/add.vue:219 src/dialog/admin/users/edit.vue:364
+#: src/dialog/admin/users/add.vue:223 src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:77 src/page/admin/sessions.vue:28
 #: src/page/admin/users.vue:37
 msgid "Authentication"
@@ -393,7 +393,7 @@ msgstr "पीछे"
 msgid "Backup"
 msgstr "बैकअप"
 
-#: src/dialog/admin/users/edit.vue:421
+#: src/dialog/admin/users/edit.vue:425
 msgid "Base Folder"
 msgstr "बेस फोल्डर"
 
@@ -487,7 +487,7 @@ msgid "Can't select more items"
 msgstr "अधिक आइटम का चयन नहीं किया जा सकता"
 
 #: src/dialog/admin/sessions/remove.vue:15 src/dialog/admin/users/add.vue:22
-#: src/dialog/admin/users/edit.vue:80 src/dialog/admin/users/remove.vue:15
+#: src/dialog/admin/users/edit.vue:99 src/dialog/admin/users/remove.vue:15
 #: src/page/connect.vue:44 src/dialog/account/apps.vue:93
 #: src/dialog/account/apps.vue:21 src/dialog/account/passcode.vue:68
 #: src/dialog/account/passcode.vue:97 src/dialog/account/passcode.vue:21
@@ -534,7 +534,7 @@ msgstr "फोटो शीर्षक, स्थान और अन्य म
 msgid "Change private flag"
 msgstr "निजी ध्वज बदलें"
 
-#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:164
+#: src/dialog/admin/users/edit.vue:67 src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:57 src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99 src/dialog/share.vue:96
 #: src/dialog/share.vue:115 src/page/albums.vue:563
@@ -572,7 +572,7 @@ msgstr "ग्राहक"
 msgid "Client Credentials"
 msgstr "ग्राहक क्रेडेंशियल"
 
-#: src/page/admin/sessions.vue:154 src/component/photo-viewer.vue:71
+#: src/page/admin/sessions.vue:162 src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228 src/dialog/account/apps.vue:59
 #: src/dialog/account/apps.vue:137 src/dialog/account/apps.vue:15
 #: src/dialog/account/apps.vue:34 src/dialog/account/passcode.vue:37
@@ -707,7 +707,7 @@ msgstr "एल्बम मेटाडेटा का बैकअप ले�
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr "चित्र मेटाडेटा का बैकअप लेने के लिए YAML साइडकार फ़ाइलें बनाएँ।"
 
-#: src/page/admin/sessions.vue:116 src/dialog/photo/edit/info.vue:179
+#: src/page/admin/sessions.vue:124 src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr "बनाया था"
 
@@ -752,7 +752,7 @@ msgid "Debug Logs"
 msgstr "दोषमार्जन लॉग"
 
 #: src/options/admin.js:31 src/page/admin/sessions.vue:62
-#: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:217
+#: src/page/admin/users.vue:100 src/model/session.js:64 src/model/user.js:234
 #: src/options/auth.js:20 src/options/auth.js:21 src/options/auth.js:39
 #: src/options/auth.js:40 src/options/options.js:309 src/options/options.js:373
 #: src/options/themes.js:492 src/page/places.vue:141
@@ -861,7 +861,7 @@ msgstr "वीडियो ट्रांसकोडिंग और थंब
 msgid "Discover"
 msgstr "डिस्कवर"
 
-#: src/dialog/admin/users/add.vue:151 src/dialog/admin/users/edit.vue:99
+#: src/dialog/admin/users/add.vue:155 src/dialog/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35 src/page/settings/account.vue:195
 msgid "Display Name"
 msgstr "प्रदर्शित होने वाला नाम"
@@ -971,7 +971,7 @@ msgstr "फ़ोटो संपादित करें"
 msgid "Edited"
 msgstr "संपादित"
 
-#: src/dialog/admin/users/add.vue:176 src/dialog/admin/users/edit.vue:317
+#: src/dialog/admin/users/add.vue:180 src/dialog/admin/users/edit.vue:317
 #: src/page/settings/account.vue:224 src/page/settings/account.vue:748
 msgid "Email"
 msgstr "ईमेल"
@@ -1052,7 +1052,7 @@ msgstr "खोज का विस्तार करें"
 msgid "Experimental Features"
 msgstr "प्रायोगिक विशेषताएं"
 
-#: src/page/admin/sessions.vue:128 src/page/admin/sessions.vue:32
+#: src/page/admin/sessions.vue:136 src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61 src/dialog/account/apps.vue:462
 #: src/dialog/service/edit.vue:249 src/dialog/share.vue:67
 msgid "Expires"
@@ -1372,20 +1372,21 @@ msgstr "इंस्टेंस आईडी"
 msgid "Interval"
 msgstr "मध्यान्तर"
 
-#: src/dialog/admin/users/add.vue:154 src/dialog/admin/users/add.vue:179
-#: src/dialog/admin/users/edit.vue:127 src/dialog/admin/users/edit.vue:154
-#: src/dialog/admin/users/edit.vue:211 src/dialog/admin/users/edit.vue:238
-#: src/dialog/admin/users/edit.vue:264 src/dialog/admin/users/edit.vue:292
-#: src/dialog/admin/users/edit.vue:320 src/dialog/admin/users/edit.vue:393
-#: src/page/settings/account.vue:93 src/page/settings/account.vue:119
-#: src/page/settings/account.vue:145 src/page/settings/account.vue:171
-#: src/page/settings/account.vue:227 src/page/settings/account.vue:286
-#: src/page/settings/account.vue:314 src/page/settings/account.vue:697
-#: src/page/settings/account.vue:723 src/page/settings/account.vue:751
-#: src/page/settings/account.vue:779 src/page/settings/account.vue:843
-#: src/page/settings/account.vue:870 src/page/settings/account.vue:897
-#: src/page/settings/account.vue:925 src/page/settings/account.vue:953
-#: src/page/settings/account.vue:724 src/page/settings/account.vue:807
+#: src/dialog/admin/users/add.vue:158 src/dialog/admin/users/add.vue:183
+#: src/dialog/admin/users/add.vue:253 src/dialog/admin/users/edit.vue:127
+#: src/dialog/admin/users/edit.vue:154 src/dialog/admin/users/edit.vue:211
+#: src/dialog/admin/users/edit.vue:238 src/dialog/admin/users/edit.vue:264
+#: src/dialog/admin/users/edit.vue:292 src/dialog/admin/users/edit.vue:320
+#: src/dialog/admin/users/edit.vue:397 src/page/settings/account.vue:93
+#: src/page/settings/account.vue:119 src/page/settings/account.vue:145
+#: src/page/settings/account.vue:171 src/page/settings/account.vue:227
+#: src/page/settings/account.vue:286 src/page/settings/account.vue:314
+#: src/page/settings/account.vue:697 src/page/settings/account.vue:723
+#: src/page/settings/account.vue:751 src/page/settings/account.vue:779
+#: src/page/settings/account.vue:843 src/page/settings/account.vue:870
+#: src/page/settings/account.vue:897 src/page/settings/account.vue:925
+#: src/page/settings/account.vue:953 src/page/settings/account.vue:724
+#: src/page/settings/account.vue:807
 msgid "Invalid"
 msgstr "अमान्य"
 
@@ -1450,7 +1451,7 @@ msgstr "लैंक्ज़ोस: विस्तार संरक्षण
 msgid "Language"
 msgstr "भाषा"
 
-#: src/page/admin/sessions.vue:122 src/page/admin/sessions.vue:31
+#: src/page/admin/sessions.vue:130 src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr "अंतिम सक्रिय"
 
@@ -1693,7 +1694,7 @@ msgstr "कम से कम %{n} अक्षर होने चाहिए�
 #: src/dialog/photo/edit/labels.vue:84 src/dialog/photo/edit/labels.vue:200
 #: src/dialog/photo/edit/people.vue:26 src/dialog/photo/edit/people.vue:226
 #: src/dialog/service/edit.vue:427 src/page/about/feedback.vue:174
-#: src/page/albums.vue:89 src/page/auth/login.vue:141 src/page/labels.vue:347
+#: src/page/albums.vue:89 src/page/auth/login.vue:143 src/page/labels.vue:347
 #: src/page/people/new.vue:52 src/page/people/new.vue:305
 #: src/page/people/recognized.vue:403 src/page/settings/services.vue:26
 msgid "Name"
@@ -1924,10 +1925,10 @@ msgstr "चित्रमाला"
 msgid "Panoramas"
 msgstr "पैनोरामा"
 
-#: src/dialog/admin/users/add.vue:123 src/dialog/account/apps.vue:170
+#: src/dialog/admin/users/add.vue:126 src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150 src/dialog/account/passcode.vue:612
 #: src/dialog/service/add.vue:126 src/dialog/service/edit.vue:487
-#: src/dialog/share.vue:24 src/options/auth.js:91 src/page/auth/login.vue:173
+#: src/dialog/share.vue:24 src/options/auth.js:91 src/page/auth/login.vue:176
 msgid "Password"
 msgstr "कुंजिका"
 
@@ -2206,7 +2207,7 @@ msgstr "अनुरोध विफल - क्या आप ऑफ़लाइ
 msgid "Request failed - invalid response"
 msgstr "अनुरोध विफल - अमान्य प्रतिक्रिया"
 
-#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:128
+#: src/dialog/admin/users/add.vue:101 src/dialog/admin/users/add.vue:131
 #: src/dialog/admin/users/edit.vue:102 src/page/about/feedback.vue:133
 #: src/page/about/feedback.vue:153 src/page/about/feedback.vue:196
 #: src/page/settings/account.vue:198 src/page/about/feedback.vue:195
@@ -2238,7 +2239,7 @@ msgstr "पासवर्ड फिर से लिखें"
 msgid "Review"
 msgstr "समीक्षा"
 
-#: src/dialog/admin/users/add.vue:198 src/dialog/admin/users/edit.vue:341
+#: src/dialog/admin/users/add.vue:202 src/dialog/admin/users/edit.vue:341
 #: src/page/admin/sessions.vue:70 src/page/admin/sessions.vue:2
 #: src/page/admin/users.vue:36
 msgid "Role"
@@ -2248,7 +2249,7 @@ msgstr "भूमिका"
 msgid "Satellite"
 msgstr "उपग्रह"
 
-#: src/dialog/admin/users/edit.vue:83 src/dialog/account/password.vue:41
+#: src/dialog/admin/users/edit.vue:102 src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:48 src/dialog/service/edit.vue:107
 #: src/dialog/share.vue:59
 msgid "Save"
@@ -2266,7 +2267,7 @@ msgstr "अपने प्रमाणक ऐप से QR कोड को स
 msgid "Scans"
 msgstr "स्कैन"
 
-#: src/page/admin/sessions.vue:102 src/page/admin/sessions.vue:29
+#: src/page/admin/sessions.vue:110 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
 msgstr "दायरा"
@@ -2511,7 +2512,7 @@ msgstr "सफलतापूर्वक हटा दिया गया"
 msgid "Successfully verified"
 msgstr "सफलतापूर्वक सत्यापित"
 
-#: src/dialog/admin/users/edit.vue:466 src/page/admin/users.vue:87
+#: src/dialog/admin/users/edit.vue:471 src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr "सुपर एडमिन"
 
@@ -2681,7 +2682,7 @@ msgstr "एक अलग पहचान"
 #: src/dialog/photo/edit/details.vue:23 src/dialog/photo/edit/info.vue:28
 #: src/model/album.js:179 src/model/photo.js:769 src/model/photo.js:790
 #: src/model/photo.js:813 src/model/photo.js:831 src/model/photo.js:954
-#: src/model/photo.js:999 src/model/photo.js:1012 src/model/user.js:154
+#: src/model/photo.js:999 src/model/photo.js:1012 src/model/user.js:155
 #: src/options/options.js:44 src/options/options.js:58
 #: src/options/options.js:75 src/options/options.js:89
 #: src/options/options.js:101 src/page/library/errors.vue:177
@@ -2720,7 +2721,7 @@ msgstr "इंडेक्स अपडेट कर रहा है"
 msgid "Updating moments"
 msgstr "पल-पल का अपडेट"
 
-#: src/dialog/admin/users/edit.vue:161 src/page/settings/account.vue:139
+#: src/dialog/admin/users/edit.vue:160 src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr "चित्र अपडेट किया जा रहा है…"
 
@@ -2765,7 +2766,7 @@ msgstr "अपलोड पूरा हुआ। अनुक्रमण …"
 msgid "Upload failed"
 msgstr "अपलोड विफल"
 
-#: src/dialog/admin/users/edit.vue:448
+#: src/dialog/admin/users/edit.vue:452
 msgid "Upload Folder"
 msgstr "फ़ोल्डर अपलोड करें"
 
@@ -2811,7 +2812,7 @@ msgstr "सहायता के लिए अपना पुनर्प्�
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:27
-#: src/model/user.js:313 src/options/auth.js:7
+#: src/model/user.js:330 src/options/auth.js:7
 msgid "User"
 msgstr "उपयोगकर्ता"
 
@@ -2844,7 +2845,7 @@ msgstr "वेक्टर"
 msgid "Vectors"
 msgstr "वैक्टर"
 
-#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:105
+#: src/dialog/account/passcode.vue:308 src/page/auth/login.vue:106
 msgid "Verification Code"
 msgstr "सत्यापन कोड"
 
@@ -2893,12 +2894,12 @@ msgstr "हम आपके फ़ीडबैक की सराहना क�
 msgid "We do our best to respond within five business days or less."
 msgstr "हम पांच व्यावसायिक दिनों या उससे कम समय में जवाब देने की पूरी कोशिश करते हैं।"
 
-#: src/dialog/admin/users/add.vue:237 src/dialog/admin/users/edit.vue:483
+#: src/dialog/admin/users/add.vue:272 src/dialog/admin/users/edit.vue:489
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr "वेब लॉगिन"
 
-#: src/dialog/admin/users/add.vue:254 src/dialog/admin/users/edit.vue:500
+#: src/dialog/admin/users/add.vue:289 src/dialog/admin/users/edit.vue:507
 #: src/page/admin/users.vue:47 src/options/auth.js:55 src/options/auth.js:68
 msgid "WebDAV"
 msgstr "WebDAV"

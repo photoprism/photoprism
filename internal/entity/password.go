@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -103,6 +104,15 @@ func (m *Password) Create() error {
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *Password) Save() error {
 	return Db().Save(m).Error
+}
+
+// Delete removes the password record from the database.
+func (m *Password) Delete() error {
+	if m.UID == "" {
+		return fmt.Errorf("missing password uid")
+	}
+
+	return Db().Delete(m).Error
 }
 
 // FindPassword returns an entity pointer if exists.

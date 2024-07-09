@@ -599,6 +599,8 @@ func TestFindUserByUID(t *testing.T) {
 		assert.True(t, m.CanLogin)
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
+		assert.True(t, m.HasUID())
+		assert.False(t, m.InvalidUID())
 	})
 }
 
@@ -611,6 +613,8 @@ func TestUser_SameUID(t *testing.T) {
 		}
 
 		assert.True(t, m.SameUID("uqxc08w3d0ej2283"))
+		assert.True(t, m.HasUID())
+		assert.False(t, m.InvalidUID())
 	})
 	t.Run("False", func(t *testing.T) {
 		m := FindUserByUID("uqxc08w3d0ej2283")
@@ -710,22 +714,22 @@ func TestUser_IsVisitor(t *testing.T) {
 
 func TestUser_SetPassword(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
-		if err := p.SetPassword("insecure"); err != nil {
-			t.Fatal(err)
-		}
+		m := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		assert.NoError(t, m.SetPassword("insecure"))
+		assert.NoError(t, m.DeletePassword())
+		assert.NoError(t, m.SetPassword("insecure"))
 	})
 	t.Run("NotRegistered", func(t *testing.T) {
-		p := User{ID: 0, UserUID: "", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
-		assert.Error(t, p.SetPassword("insecure"))
+		m := User{ID: 0, UserUID: "", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		assert.Error(t, m.SetPassword("insecure"))
 	})
 	t.Run("PasswordTooShort", func(t *testing.T) {
-		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
-		assert.Error(t, p.SetPassword("cat"))
+		m := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		assert.Error(t, m.SetPassword("cat"))
 	})
 	t.Run("PasswordTooLong", func(t *testing.T) {
-		p := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
-		assert.Error(t, p.SetPassword("hfnoehurhgfoeuro7584othgiyruifh85hglhiryhgbbyeirygbubgirgtheuogfugfkhsbdgiyerbgeuigbdtiyrgehbik"))
+		m := User{ID: 8, UserUID: "u000000000000008", UserName: "Hanna", DisplayName: "", UserRole: acl.RoleAdmin.String()}
+		assert.Error(t, m.SetPassword("hfnoehurhgfoeuro7584othgiyruifh85hglhiryhgbbyeirygbubgirgtheuogfugfkhsbdgiyerbgeuigbdtiyrgehbik"))
 	})
 }
 

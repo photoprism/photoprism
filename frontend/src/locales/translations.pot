@@ -42,14 +42,14 @@ msgstr ""
 msgid "12 hours"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:520
+#: src/dialog/admin/users/edit.vue:528
 #: src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8
 #: src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:519
+#: src/dialog/admin/users/edit.vue:527
 #: src/options/auth.js:46
 msgid "2FA"
 msgstr ""
@@ -83,13 +83,13 @@ msgstr ""
 #: src/component/navigation.vue:2059
 #: src/dialog/share/upload.vue:108
 #: src/model/service.js:94
-#: src/model/user.js:168
+#: src/model/user.js:169
 #: src/page/settings.vue:84
 #: src/page/settings/general.vue:473
 msgid "Account"
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:87
+#: src/dialog/admin/users/add.vue:89
 #: src/dialog/service/add.vue:34
 msgid "Account created"
 msgstr ""
@@ -344,7 +344,7 @@ msgstr ""
 msgid "API Key"
 msgstr ""
 
-#: src/page/admin/sessions.vue:95
+#: src/page/admin/sessions.vue:103
 #: src/page/admin/sessions.vue:2
 #: src/options/auth.js:25
 msgid "Application"
@@ -421,7 +421,7 @@ msgstr ""
 msgid "Aspect Ratio"
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:219
+#: src/dialog/admin/users/add.vue:223
 #: src/dialog/admin/users/edit.vue:364
 #: src/page/admin/sessions.vue:77
 #: src/page/admin/sessions.vue:28
@@ -443,7 +443,7 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:421
+#: src/dialog/admin/users/edit.vue:425
 msgid "Base Folder"
 msgstr ""
 
@@ -556,7 +556,7 @@ msgstr ""
 
 #: src/dialog/admin/sessions/remove.vue:15
 #: src/dialog/admin/users/add.vue:22
-#: src/dialog/admin/users/edit.vue:80
+#: src/dialog/admin/users/edit.vue:99
 #: src/dialog/admin/users/remove.vue:15
 #: src/page/connect.vue:44
 #: src/dialog/account/apps.vue:93
@@ -624,7 +624,7 @@ msgid "Change private flag"
 msgstr ""
 
 #: src/dialog/admin/users/edit.vue:67
-#: src/dialog/admin/users/edit.vue:164
+#: src/dialog/admin/users/edit.vue:163
 #: src/dialog/album/edit.vue:57
 #: src/dialog/photo/edit/files.vue:147
 #: src/dialog/service/edit.vue:99
@@ -670,7 +670,7 @@ msgstr ""
 msgid "Client Credentials"
 msgstr ""
 
-#: src/page/admin/sessions.vue:154
+#: src/page/admin/sessions.vue:162
 #: src/component/photo-viewer.vue:71
 #: src/component/photo/toolbar.vue:228
 #: src/dialog/account/apps.vue:59
@@ -836,7 +836,7 @@ msgstr ""
 msgid "Create YAML sidecar files to back up picture metadata."
 msgstr ""
 
-#: src/page/admin/sessions.vue:116
+#: src/page/admin/sessions.vue:124
 #: src/dialog/photo/edit/info.vue:179
 msgid "Created"
 msgstr ""
@@ -889,7 +889,7 @@ msgstr ""
 #: src/page/admin/sessions.vue:62
 #: src/page/admin/users.vue:100
 #: src/model/session.js:64
-#: src/model/user.js:217
+#: src/model/user.js:234
 #: src/options/auth.js:20
 #: src/options/auth.js:21
 #: src/options/auth.js:39
@@ -1016,7 +1016,7 @@ msgstr ""
 msgid "Discover"
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:151
+#: src/dialog/admin/users/add.vue:155
 #: src/dialog/admin/users/edit.vue:99
 #: src/page/admin/users.vue:35
 #: src/page/settings/account.vue:195
@@ -1148,7 +1148,7 @@ msgstr ""
 msgid "Edited"
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:176
+#: src/dialog/admin/users/add.vue:180
 #: src/dialog/admin/users/edit.vue:317
 #: src/page/settings/account.vue:224
 #: src/page/settings/account.vue:748
@@ -1239,7 +1239,7 @@ msgstr ""
 msgid "Experimental Features"
 msgstr ""
 
-#: src/page/admin/sessions.vue:128
+#: src/page/admin/sessions.vue:136
 #: src/page/admin/sessions.vue:32
 #: src/dialog/account/apps.vue:61
 #: src/dialog/account/apps.vue:462
@@ -1609,8 +1609,9 @@ msgstr ""
 msgid "Interval"
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:154
-#: src/dialog/admin/users/add.vue:179
+#: src/dialog/admin/users/add.vue:158
+#: src/dialog/admin/users/add.vue:183
+#: src/dialog/admin/users/add.vue:253
 #: src/dialog/admin/users/edit.vue:127
 #: src/dialog/admin/users/edit.vue:154
 #: src/dialog/admin/users/edit.vue:211
@@ -1618,7 +1619,7 @@ msgstr ""
 #: src/dialog/admin/users/edit.vue:264
 #: src/dialog/admin/users/edit.vue:292
 #: src/dialog/admin/users/edit.vue:320
-#: src/dialog/admin/users/edit.vue:393
+#: src/dialog/admin/users/edit.vue:397
 #: src/page/settings/account.vue:93
 #: src/page/settings/account.vue:119
 #: src/page/settings/account.vue:145
@@ -1720,7 +1721,7 @@ msgstr ""
 msgid "Language"
 msgstr ""
 
-#: src/page/admin/sessions.vue:122
+#: src/page/admin/sessions.vue:130
 #: src/page/admin/sessions.vue:31
 msgid "Last Active"
 msgstr ""
@@ -2019,7 +2020,7 @@ msgstr ""
 #: src/dialog/service/edit.vue:427
 #: src/page/about/feedback.vue:174
 #: src/page/albums.vue:89
-#: src/page/auth/login.vue:141
+#: src/page/auth/login.vue:143
 #: src/page/labels.vue:347
 #: src/page/people/new.vue:52
 #: src/page/people/new.vue:305
@@ -2301,7 +2302,7 @@ msgstr ""
 msgid "Panoramas"
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:123
+#: src/dialog/admin/users/add.vue:126
 #: src/dialog/account/apps.vue:170
 #: src/dialog/account/passcode.vue:150
 #: src/dialog/account/passcode.vue:612
@@ -2309,7 +2310,7 @@ msgstr ""
 #: src/dialog/service/edit.vue:487
 #: src/dialog/share.vue:24
 #: src/options/auth.js:91
-#: src/page/auth/login.vue:173
+#: src/page/auth/login.vue:176
 msgid "Password"
 msgstr ""
 
@@ -2633,7 +2634,7 @@ msgid "Request failed - invalid response"
 msgstr ""
 
 #: src/dialog/admin/users/add.vue:101
-#: src/dialog/admin/users/add.vue:128
+#: src/dialog/admin/users/add.vue:131
 #: src/dialog/admin/users/edit.vue:102
 #: src/page/about/feedback.vue:133
 #: src/page/about/feedback.vue:153
@@ -2673,7 +2674,7 @@ msgstr ""
 msgid "Review"
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:198
+#: src/dialog/admin/users/add.vue:202
 #: src/dialog/admin/users/edit.vue:341
 #: src/page/admin/sessions.vue:70
 #: src/page/admin/sessions.vue:2
@@ -2686,7 +2687,7 @@ msgstr ""
 msgid "Satellite"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:83
+#: src/dialog/admin/users/edit.vue:102
 #: src/dialog/account/password.vue:41
 #: src/dialog/album/edit.vue:48
 #: src/dialog/service/edit.vue:107
@@ -2707,7 +2708,7 @@ msgstr ""
 msgid "Scans"
 msgstr ""
 
-#: src/page/admin/sessions.vue:102
+#: src/page/admin/sessions.vue:110
 #: src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48
 #: src/dialog/account/apps.vue:443
@@ -2994,7 +2995,7 @@ msgstr ""
 msgid "Successfully verified"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:466
+#: src/dialog/admin/users/edit.vue:471
 #: src/page/admin/users.vue:87
 msgid "Super Admin"
 msgstr ""
@@ -3194,7 +3195,7 @@ msgstr ""
 #: src/model/photo.js:954
 #: src/model/photo.js:999
 #: src/model/photo.js:1012
-#: src/model/user.js:154
+#: src/model/user.js:155
 #: src/options/options.js:44
 #: src/options/options.js:58
 #: src/options/options.js:75
@@ -3242,7 +3243,7 @@ msgstr ""
 msgid "Updating moments"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:161
+#: src/dialog/admin/users/edit.vue:160
 #: src/page/settings/account.vue:139
 msgid "Updating picture…"
 msgstr ""
@@ -3300,7 +3301,7 @@ msgstr ""
 msgid "Upload failed"
 msgstr ""
 
-#: src/dialog/admin/users/edit.vue:448
+#: src/dialog/admin/users/edit.vue:452
 msgid "Upload Folder"
 msgstr ""
 
@@ -3351,7 +3352,7 @@ msgstr ""
 #: src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2
 #: src/page/admin/sessions.vue:27
-#: src/model/user.js:313
+#: src/model/user.js:330
 #: src/options/auth.js:7
 msgid "User"
 msgstr ""
@@ -3394,7 +3395,7 @@ msgid "Vectors"
 msgstr ""
 
 #: src/dialog/account/passcode.vue:308
-#: src/page/auth/login.vue:105
+#: src/page/auth/login.vue:106
 msgid "Verification Code"
 msgstr ""
 
@@ -3456,14 +3457,14 @@ msgstr ""
 msgid "We do our best to respond within five business days or less."
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:237
-#: src/dialog/admin/users/edit.vue:483
+#: src/dialog/admin/users/add.vue:272
+#: src/dialog/admin/users/edit.vue:489
 #: src/page/admin/users.vue:39
 msgid "Web Login"
 msgstr ""
 
-#: src/dialog/admin/users/add.vue:254
-#: src/dialog/admin/users/edit.vue:500
+#: src/dialog/admin/users/add.vue:289
+#: src/dialog/admin/users/edit.vue:507
 #: src/page/admin/users.vue:47
 #: src/options/auth.js:55
 #: src/options/auth.js:68

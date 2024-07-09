@@ -71,11 +71,11 @@ func TestFindClient(t *testing.T) {
 func TestClient_NoUID(t *testing.T) {
 	t.Run("True", func(t *testing.T) {
 		c := Client{ClientUID: ""}
-		assert.True(t, c.NoUID())
+		assert.True(t, c.InvalidUID())
 	})
 	t.Run("False", func(t *testing.T) {
 		c := Client{ClientUID: "cs5cpu17n6gj2hgt"}
-		assert.False(t, c.NoUID())
+		assert.False(t, c.InvalidUID())
 	})
 }
 

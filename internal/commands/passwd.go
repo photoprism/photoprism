@@ -21,12 +21,16 @@ import (
 // PasswdCommand configures the command name, flags, and action.
 var PasswdCommand = cli.Command{
 	Name:      "passwd",
-	Usage:     "Changes the password of a registered user",
+	Usage:     "Changes the local account password of a registered user",
 	ArgsUsage: "[username]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
 			Name:  "show, s",
-			Usage: "show bcrypt password hash",
+			Usage: "show bcrypt hash of new password",
+		},
+		cli.BoolFlag{
+			Name:  "remove, rm",
+			Usage: "remove password to disable local authentication",
 		},
 	},
 	Action: passwdAction,
@@ -68,6 +72,18 @@ func passwdAction(ctx *cli.Context) error {
 		return fmt.Errorf("user %s has been deleted", clean.LogQuote(id))
 	}
 
+	// Remove account password if the --remove or --rm flag is set.
+	if ctx.Bool("remove") {
+		err = m.DeletePassword()
+
+		if err == nil {
+			log.Infof("password for %s has been removed", clean.Log(m.Username()))
+		}
+
+		return err
+	}
+
+	// Otherwise, update the account password.
 	log.Infof("please enter a new password for %s (%d-%d characters)\n", clean.Log(m.Username()), entity.PasswordLength, txt.ClipPassword)
 
 	newPassword := getPassword("New Password: ")
@@ -90,9 +106,9 @@ func passwdAction(ctx *cli.Context) error {
 
 	// Show bcrypt password hash?
 	if pw := entity.FindPassword(m.UserUID); ctx.Bool("show") && pw != nil {
-		log.Infof("password for %s successfully changed to %s\n", clean.Log(m.Username()), pw.Hash)
+		log.Infof("password for %s has been set to %s\n", clean.Log(m.Username()), pw.Hash)
 	} else {
-		log.Infof("password for %s successfully changed\n", clean.Log(m.Username()))
+		log.Infof("password for %s has been changed\n", clean.Log(m.Username()))
 	}
 
 	return nil

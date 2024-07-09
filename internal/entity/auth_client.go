@@ -110,8 +110,8 @@ func (m *Client) HasUID() bool {
 	return rnd.IsUID(m.ClientUID, ClientUID)
 }
 
-// NoUID tests if the client does not have a valid uid.
-func (m *Client) NoUID() bool {
+// InvalidUID tests if the client does not have a valid uid.
+func (m *Client) InvalidUID() bool {
 	return !m.HasUID()
 }
 

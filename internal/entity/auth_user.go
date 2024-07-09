@@ -142,7 +142,7 @@ func FindUser(find User) *User {
 		stmt = stmt.Where("id = ? OR user_name = ?", find.ID, find.UserName)
 	} else if find.ID != 0 {
 		stmt = stmt.Where("id = ?", find.ID)
-	} else if rnd.IsUID(find.UserUID, UserUID) {
+	} else if find.HasUID() {
 		stmt = stmt.Where("user_uid = ?", find.UserUID)
 	} else if authn.ProviderOIDC.Equal(find.AuthProvider) && find.AuthID != "" {
 		if find.AuthIssuer == "" {
@@ -236,6 +236,16 @@ func (m *User) GetUID() string {
 	}
 
 	return m.UserUID
+}
+
+// HasUID tests if the user has a valid uid.
+func (m *User) HasUID() bool {
+	return rnd.IsUID(m.UserUID, UserUID)
+}
+
+// InvalidUID tests if the user does not have a valid uid.
+func (m *User) InvalidUID() bool {
+	return !m.HasUID()
 }
 
 // SameUID checks if the given uid matches the own uid.
@@ -612,7 +622,7 @@ func (m *User) SetAuthID(id, issuer string) *User {
 	}
 
 	// Make sure other users do not use the same identifier.
-	if rnd.IsUID(m.UserUID, UserUID) && m.AuthProvider != "" {
+	if m.HasUID() && m.AuthProvider != "" {
 		if err := UnscopedDb().Model(&User{}).
 			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = 0", m.UserUID, m.AuthProvider, m.AuthID).
 			Updates(map[string]interface{}{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
@@ -625,7 +635,7 @@ func (m *User) SetAuthID(id, issuer string) *User {
 
 // UpdateAuthID updated the custom authentication identifier.
 func (m *User) UpdateAuthID(id, issuer string) error {
-	if !rnd.IsUID(m.UserUID, UserUID) {
+	if m.InvalidUID() {
 		return errors.New("invalid user uid")
 	}
 
@@ -814,7 +824,7 @@ func (m *User) IsRegistered() bool {
 	}
 
 	// Registered users must have an ID, a UID, a username and a known role, except visitor.
-	return m.ID > 0 && m.UserName != "" && rnd.IsUID(m.UserUID, UserUID) && !m.IsVisitor()
+	return m.ID > 0 && m.UserName != "" && m.HasUID() && !m.IsVisitor()
 }
 
 // NotRegistered checks if the user is not registered with an own account.
@@ -869,7 +879,7 @@ func (m *User) IsUnknown() bool {
 		return true
 	}
 
-	return !rnd.IsUID(m.UserUID, UserUID) || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID || m.HasRole(acl.RoleNone)
+	return m.InvalidUID() || m.ID == UnknownUser.ID || m.UserUID == UnknownUser.UserUID || m.HasRole(acl.RoleNone)
 }
 
 // DeleteSessions deletes all active user sessions except those passed as argument.
@@ -933,32 +943,58 @@ func (m *User) SetPassword(password string) error {
 	return m.RegenerateTokens()
 }
 
+// DeletePassword removes the password of the user account, if one has been set.
+func (m *User) DeletePassword() (err error) {
+	// Make sure the user has a valid UID.
+	if m.InvalidUID() {
+		return fmt.Errorf("invalid user uid")
+	}
+
+	// Find local account password.
+	pw := FindPassword(m.UserUID)
+
+	// Return without error if no password has been set.
+	if pw == nil {
+		return nil
+	}
+
+	// Remove local account password.
+	if err = pw.Delete(); err != nil {
+		event.AuditErr([]string{"user %s", "failed to remove password", "%s"}, m.RefID, err)
+	} else {
+		event.AuditWarn([]string{"user %s", "password has been removed"}, m.RefID)
+	}
+
+	return err
+}
+
 // InvalidPassword returns true if the specified password is invalid or the account is not registered.
 func (m *User) InvalidPassword(s string) bool {
-	// Registered user?
+	// Fail if not a registered user account.
 	if !m.IsRegistered() {
 		log.Warn("only registered users can log in")
 		return true
 	}
 
-	// Empty password?
+	// Fail if no password has been provided.
 	if s == "" {
 		return true
 	}
 
-	// Fetch password.
+	// Find local account password.
 	pw := FindPassword(m.UserUID)
 
-	// Found?
+	// Fail if no password has been set.
 	if pw == nil {
 		return true
 	}
 
-	// Invalid?
+	// Fail if the specified password is invalid.
 	if pw.Invalid(s) {
 		return true
 	}
 
+	// Password seems to be valid!
 	return false
 }
 
