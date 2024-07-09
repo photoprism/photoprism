@@ -66,7 +66,7 @@ var Flags = CliFlags{
 			Name:   "oidc-scopes",
 			Hidden: true,
 			Usage:  "user information `SCOPES` for single sign-on via OpenID Connect",
-			Value:  authn.OidcScopes,
+			Value:  authn.OidcDefaultScopes,
 			EnvVar: EnvVar("OIDC_SCOPES"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -94,7 +94,7 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "oidc-username",
 			Usage:  "preferred username `CLAIM` for new OpenID Connect users (preferred_username, name, nickname, email)",
-			Value:  authn.ClaimPreferredUsername,
+			Value:  authn.OidcClaimPreferredUsername,
 			EnvVar: EnvVar("OIDC_USERNAME"),
 		}}, {
 		Flag: cli.BoolFlag{

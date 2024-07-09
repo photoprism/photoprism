@@ -136,8 +136,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			userName = user.Username()
 			event.AuditInfo([]string{clientIp, "create session", "oidc", "found user", userName})
 
-			// Check if OIDC subject identifier matches.
-			if authn.ProviderOIDC.NotEqual(user.AuthProvider) {
+			// Check if the account is enabled and the OIDC Subject ID matches.
+			if !user.CanLogIn() {
+				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountDisabled.Error()})
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountDisabled.Error())
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				return
+			} else if authn.ProviderOIDC.NotEqual(user.AuthProvider) {
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAuthProviderIsNotOIDC.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAuthProviderIsNotOIDC.Error())
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
@@ -297,7 +302,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			return
 		}
 
-		// Login allowed?
+		// Check if login is allowed.
 		if !user.CanLogIn() {
 			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountDisabled.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountDisabled.Error())
@@ -305,7 +310,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			return
 		}
 
-		// Update subject identifier (auth id).
+		// Update Subject ID (auth_id).
 		user.SetAuthID(userInfo.Subject)
 
 		// Step 2: Create user session.

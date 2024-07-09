@@ -77,11 +77,11 @@ func TestConfig_OIDCSecret(t *testing.T) {
 func TestConfig_OIDCScopes(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, authn.OidcScopes, c.OIDCScopes())
+	assert.Equal(t, authn.OidcDefaultScopes, c.OIDCScopes())
 
 	c.options.OIDCScopes = ""
 
-	assert.Equal(t, authn.OidcScopes, c.OIDCScopes())
+	assert.Equal(t, authn.OidcDefaultScopes, c.OIDCScopes())
 }
 
 func TestConfig_OIDCProvider(t *testing.T) {
@@ -113,23 +113,23 @@ func TestConfig_OIDCRedirect(t *testing.T) {
 func TestConfig_OIDCUsername(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, authn.ClaimPreferredUsername, c.OIDCUsername())
+	assert.Equal(t, authn.OidcClaimPreferredUsername, c.OIDCUsername())
 
 	c.options.OIDCUsername = "name"
 
-	assert.Equal(t, authn.ClaimName, c.OIDCUsername())
+	assert.Equal(t, authn.OidcClaimName, c.OIDCUsername())
 
 	c.options.OIDCUsername = "nickname"
 
-	assert.Equal(t, authn.ClaimNickname, c.OIDCUsername())
+	assert.Equal(t, authn.OidcClaimNickname, c.OIDCUsername())
 
 	c.options.OIDCUsername = "email"
 
-	assert.Equal(t, authn.ClaimEmail, c.OIDCUsername())
+	assert.Equal(t, authn.OidcClaimEmail, c.OIDCUsername())
 
 	c.options.OIDCUsername = ""
 
-	assert.Equal(t, authn.ClaimPreferredUsername, c.OIDCUsername())
+	assert.Equal(t, authn.OidcClaimPreferredUsername, c.OIDCUsername())
 }
 
 func TestConfig_OIDCDomain(t *testing.T) {

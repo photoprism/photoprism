@@ -267,7 +267,7 @@ func CliTestContext() *cli.Context {
 	LogErr(c.Set("oidc-uri", config.OIDCUri))
 	LogErr(c.Set("oidc-client", config.OIDCClient))
 	LogErr(c.Set("oidc-secret", config.OIDCSecret))
-	LogErr(c.Set("oidc-scopes", authn.OidcScopes))
+	LogErr(c.Set("oidc-scopes", authn.OidcDefaultScopes))
 	LogErr(c.Set("storage-path", config.StoragePath))
 	LogErr(c.Set("sidecar-path", config.SidecarPath))
 	LogErr(c.Set("sidecar-yaml", fmt.Sprintf("%t", config.SidecarYaml)))

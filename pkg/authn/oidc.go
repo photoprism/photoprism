@@ -1,9 +1,12 @@
 package authn
 
+// OpenID Connect (OIDC) scope and claim identifiers:
+// https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims
 const (
-	ClaimPreferredUsername = "preferred_username"
-	ClaimEmail             = "email"
-	ClaimName              = "name"
-	ClaimNickname          = "nickname"
-	OidcScopes             = "openid email profile"
+	OidcClaimPreferredUsername = "preferred_username"
+	OidcClaimEmail             = "email"
+	OidcClaimName              = "name"
+	OidcClaimNickname          = "nickname"
+	OidcRequiredScopes         = "openid email profile"
+	OidcDefaultScopes          = "openid email profile address"
 )

@@ -4,6 +4,8 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/photoprism/photoprism/pkg/authn"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +19,7 @@ func TestNewClient(t *testing.T) {
 			uri,
 			"csg6yqvykh0780f9",
 			"nd09wkee0ElsMvzLGkgWS9wJAttHwF2h",
-			"openid email profile",
+			authn.OidcDefaultScopes,
 			"https://app.localssl.dev/",
 			false,
 		)
@@ -34,7 +36,7 @@ func TestNewClient(t *testing.T) {
 			uri,
 			"csg6yqvykh0780f9",
 			"nd09wkee0ElsMvzLGkgWS9wJAttHwF2h",
-			"openid email profile",
+			authn.OidcDefaultScopes,
 			"https://app.localssl.dev/",
 			true,
 		)

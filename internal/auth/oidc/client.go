@@ -16,6 +16,7 @@ import (
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
@@ -96,7 +97,7 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 
 	// Set default scopes if no scopes were specified.
 	if oidcScopes == "" {
-		oidcScopes = "openid email profile"
+		oidcScopes = authn.OidcRequiredScopes
 	}
 
 	event.AuditDebug([]string{"oidc", "provider", "scopes", oidcScopes})

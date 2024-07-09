@@ -61,7 +61,7 @@ func (c *Config) OIDCSecret() string {
 // OIDCScopes returns the user information scopes for single sign-on via OIDC.
 func (c *Config) OIDCScopes() string {
 	if c.options.OIDCScopes == "" {
-		return authn.OidcScopes
+		return authn.OidcDefaultScopes
 	}
 
 	return c.options.OIDCScopes
@@ -98,14 +98,14 @@ func (c *Config) OIDCRegister() bool {
 // OIDCUsername returns the preferred username claim for new users signing up via OIDC.
 func (c *Config) OIDCUsername() string {
 	switch c.options.OIDCUsername {
-	case authn.ClaimName:
-		return authn.ClaimName
-	case authn.ClaimNickname:
-		return authn.ClaimNickname
-	case authn.ClaimEmail:
-		return authn.ClaimEmail
+	case authn.OidcClaimName:
+		return authn.OidcClaimName
+	case authn.OidcClaimNickname:
+		return authn.OidcClaimNickname
+	case authn.OidcClaimEmail:
+		return authn.OidcClaimEmail
 	default:
-		return authn.ClaimPreferredUsername
+		return authn.OidcClaimPreferredUsername
 	}
 }
 
