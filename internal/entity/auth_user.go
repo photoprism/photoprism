@@ -118,7 +118,7 @@ func OidcUser(userInfo *oidc.UserInfo, issuer, userName string) User {
 		DisplayName:  userInfo.Name,
 		UserEmail:    clean.Email(userInfo.Email),
 		AuthProvider: authn.ProviderOIDC.String(),
-		AuthIssuer:   issuer,
+		AuthIssuer:   clean.Uri(issuer),
 		AuthID:       authId,
 	}
 }
@@ -604,7 +604,7 @@ func (m *User) SetMethod(method authn.MethodType) *User {
 // SetAuthID sets a custom authentication identifier.
 func (m *User) SetAuthID(id, issuer string) *User {
 	// Update auth id if not empty.
-	if authId := clean.Auth(id); len(authId) < 4 {
+	if authId := clean.Auth(id); authId == "" {
 		return m
 	} else {
 		m.AuthID = authId
@@ -616,7 +616,7 @@ func (m *User) SetAuthID(id, issuer string) *User {
 		if err := UnscopedDb().Model(&User{}).
 			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ?", m.UserUID, m.AuthProvider, m.AuthID).
 			Updates(map[string]interface{}{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
-			event.AuditErr([]string{"user %s", "failed to set auth id", "%s"}, m.RefID, err)
+			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", "%s"}, m.RefID, err)
 		}
 	}
 

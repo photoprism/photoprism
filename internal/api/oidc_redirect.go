@@ -208,6 +208,9 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
+			// Update Subject ID and Issuer URI.
+			user.SetAuthID(userInfo.Subject, provider.Issuer())
+
 			// Update existing user account.
 			if err = user.Save(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
@@ -281,10 +284,15 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			user.CanLogin = true
 			user.WebDAV = conf.OIDCWebDAV()
 
-			// Create new user account.
+			// Create new user account, and then update the Subject ID to make sure it is unique.
 			if err = user.Create(); err != nil {
 				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountCreateFailed.Error(), err.Error()})
 				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountCreateFailed.Error()+" ("+err.Error()+")")
+				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
+				return
+			} else if err = user.UpdateAuthID(userInfo.Subject, provider.Issuer()); err != nil {
+				event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
+				event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 				return
 			}
@@ -306,14 +314,6 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		if !user.CanLogIn() {
 			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountDisabled.Error()})
 			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountDisabled.Error())
-			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
-			return
-		}
-
-		// Update user Subject ID and Issuer URI.
-		if err = user.UpdateAuthID(userInfo.Subject, provider.Issuer()); err != nil {
-			event.AuditErr([]string{clientIp, "create session", "oidc", userName, authn.ErrAccountUpdateFailed.Error(), err.Error()})
-			event.LoginError(clientIp, "oidc", userName, userAgent, authn.ErrAccountUpdateFailed.Error()+" ("+err.Error()+")")
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrInvalidCredentials)))
 			return
 		}
