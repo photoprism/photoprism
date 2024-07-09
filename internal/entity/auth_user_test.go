@@ -1362,6 +1362,39 @@ func TestUser_SaveForm(t *testing.T) {
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, true, m.CanLogin)
 	})
+	t.Run("AliceChangeAdminRights", func(t *testing.T) {
+		user := UserFixtures.Get("alice")
+		m := FindUser(user)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, "admin", m.UserRole)
+		assert.True(t, m.SuperAdmin)
+		assert.True(t, m.CanLogin)
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "admin", frm.UserRole)
+		assert.True(t, frm.SuperAdmin)
+		assert.True(t, frm.CanLogin)
+
+		frm.UserRole = "user"
+		frm.SuperAdmin = false
+		frm.CanLogin = false
+
+		err = user.SaveForm(frm, &user)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "admin", m.UserRole)
+		assert.True(t, m.SuperAdmin)
+		assert.True(t, m.CanLogin)
+	})
 	t.Run("Try to change role of superadmin", func(t *testing.T) {
 		m := FindUser(Admin)
 

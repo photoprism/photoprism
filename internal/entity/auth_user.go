@@ -1291,23 +1291,28 @@ func (m *User) SaveForm(f form.User, u *User) error {
 	if u == nil {
 		// Do nothing.
 	} else if u.IsAdmin() {
-		// Prevent super admins from locking themselves out.
-		if u.IsSuperAdmin() && u.Equal(m) {
+		// Prevent admins from locking themselves out.
+		if u.Equal(m) {
 			m.SetRole(acl.RoleAdmin.String())
-			m.SuperAdmin = true
 			m.CanLogin = true
 		} else {
 			m.SetRole(f.Role())
-			m.SuperAdmin = f.SuperAdmin
 			m.CanLogin = f.CanLogin
 		}
 
 		m.WebDAV = f.WebDAV
 		m.UserAttr = f.Attr()
 
-		// Only allow super admins to change the authentication method.
+		// Only allow super admins to change the authentication method and make other users super admins.
 		if u.IsSuperAdmin() {
-			m.SetProvider(f.Provider())
+			if !u.Equal(m) {
+				m.SuperAdmin = f.SuperAdmin
+			}
+
+			if !u.Equal(m) || f.Provider() != authn.ProviderNone {
+				m.SetProvider(f.Provider())
+			}
+
 			m.SetMethod(f.Method())
 			m.SetAuthID(f.AuthID, f.AuthIssuer)
 		}
