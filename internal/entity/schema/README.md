@@ -6,7 +6,6 @@
 
 ↪ [docs.photoprism.app/developer-guide/database/schema/](https://docs.photoprism.app/developer-guide/database/schema/)
 
-
 ## Mermaid Markup
 
 With [Mermaid.js](https://mermaid-js.github.io/) you can generate visual diagrams from this markup file:

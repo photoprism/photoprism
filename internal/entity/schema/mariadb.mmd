@@ -63,7 +63,7 @@ classDiagram
         varchar(64) client_ip
         varbinary(128) auth_provider
         varbinary(128) auth_method
-        varbinary(255) auth_domain
+        varbinary(255) auth_issuer
         varbinary(255) auth_id
         varchar(1024) auth_scope
         varbinary(64) grant_type
@@ -89,6 +89,7 @@ classDiagram
         varbinary(42) user_uid
         varbinary(128) auth_provider
         varbinary(128) auth_method
+        varbinary(255) auth_issuer
         varbinary(255) auth_id
         varchar(200) user_name
         varchar(200) display_name
