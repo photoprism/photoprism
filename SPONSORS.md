@@ -78,6 +78,8 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 **Peter Galbavy** (Patreon, November 2023)
 
+**Andreas Kjeldsberg Pihl** (Patreon, August 2023)
+
 ## Infrastructure Sponsors ##
 
 Our project infrastructure is provided by the following companies:
