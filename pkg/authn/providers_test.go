@@ -65,7 +65,7 @@ func TestProviderType_IsLocal(t *testing.T) {
 
 func TestProviderType_SupportsPasscode(t *testing.T) {
 	assert.True(t, ProviderLocal.SupportsPasscodeAuthentication())
-	assert.False(t, ProviderOIDC.SupportsPasscodeAuthentication())
+	assert.True(t, ProviderOIDC.SupportsPasscodeAuthentication())
 	assert.True(t, ProviderLDAP.SupportsPasscodeAuthentication())
 	assert.False(t, ProviderClient.SupportsPasscodeAuthentication())
 	assert.False(t, ProviderApplication.SupportsPasscodeAuthentication())

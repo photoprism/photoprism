@@ -183,16 +183,16 @@
         <v-card-actions>
           <v-layout wrap align-top>
             <v-flex xs12 sm6 class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === '' || provider !== 'local'" @click.stop="showDialog('password')">
+              <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
                 <translate>Change Password</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>lock</v-icon>
               </v-btn>
             </v-flex>
             <v-flex xs12 sm6 class="pa-2">
-              <v-btn block depressed color="secondary-light" class="action-passcode-dialog compact" :disabled="isPublic || isDemo || user.disablePasscodeSetup()" @click.stop="showDialog('passcode')">
+              <v-btn block depressed color="secondary-light" class="action-passcode-dialog compact" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
                 <translate>2-Factor Authentication</translate>
                 <v-icon v-if="user.AuthMethod === '2fa'" :right="!rtl" :left="rtl" dark>gpp_good</v-icon>
-                <v-icon v-else-if="user.disablePasscodeSetup()" :right="!rtl" :left="rtl" dark>shield</v-icon>
+                <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" :right="!rtl" :left="rtl" dark>shield</v-icon>
                 <v-icon v-else :right="!rtl" :left="rtl" dark>gpp_maybe</v-icon>
               </v-btn>
             </v-flex>
@@ -371,7 +371,7 @@ export default {
       rtl: this.$rtl,
       user: user,
       countries: countries,
-      provider: this.$session.provider ? this.$session.provider : user.AuthProvider,
+      session: this.$session,
       dialog: {
         apps: false,
         passcode: false,
@@ -404,6 +404,9 @@ export default {
     }
   },
   methods: {
+    getProvider() {
+      return this.$session.provider ? this.$session.provider : this.user.AuthProvider;
+    },
     showDialog(name) {
       if (!name) {
         return;

@@ -1,7 +1,9 @@
 package api
 
 import (
+	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
@@ -31,21 +33,22 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
+		// Get client IP address for logs and rate limiting checks.
+		clientIp := ClientIP(c)
+
 		// Check request rate limit.
-		r := limiter.Login.Request(ClientIP(c))
+		r := limiter.Login.Request(clientIp)
 
 		if r.Reject() {
 			limiter.AbortJSON(c)
 			return
 		}
 
-		// Check password if user authenticates with a local account.
-		switch user.Provider() {
-		case authn.ProviderDefault, authn.ProviderLocal:
-			if user.InvalidPassword(frm.Password) {
-				Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
-				return
-			}
+		// Check user password and abort if invalid.
+		if code, msg, err := checkUserPasscodePassword(c, user, frm.Password); err != nil {
+			event.AuditErr([]string{clientIp, "session %s", authn.Users, user.UserName, authn.ErrPasscodeGenerateFailed.Error(), strings.ToLower(clean.Error(err))}, s.RefID)
+			Abort(c, code, msg)
+			return
 		}
 
 		// Return the reserved request rate limit tokens after successful authentication.
@@ -169,22 +172,22 @@ func DeactivateUserPasscode(router *gin.RouterGroup) {
 			return
 		}
 
+		// Get client IP address for logs and rate limiting checks.
+		clientIp := ClientIP(c)
+
 		// Check request rate limit.
-		r := limiter.Login.Request(ClientIP(c))
+		r := limiter.Login.Request(clientIp)
 
 		if r.Reject() {
 			limiter.AbortJSON(c)
 			return
 		}
 
-		// Check password if user authenticates with a local account.
-		switch user.Provider() {
-		case authn.ProviderDefault, authn.ProviderLocal:
-			// Check password and abort if invalid.
-			if user.InvalidPassword(frm.Password) {
-				Abort(c, http.StatusForbidden, i18n.ErrInvalidPassword)
-				return
-			}
+		// Check user password and abort if invalid.
+		if code, msg, err := checkUserPasscodePassword(c, user, frm.Password); err != nil {
+			event.AuditErr([]string{clientIp, "session %s", authn.Users, user.UserName, authn.ErrPasscodeDeactivationFailed.Error(), strings.ToLower(clean.Error(err))}, s.RefID)
+			Abort(c, code, msg)
+			return
 		}
 
 		// Return the reserved request rate limit tokens after successful authentication.
@@ -239,7 +242,7 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	user := s.User()
 
 	// Regular users can only set up a passcode for their own account.
-	if user.UserUID != uid {
+	if user.UserUID != uid || !user.CanLogIn() {
 		AbortForbidden(c)
 		return s, nil, nil, authn.ErrUnauthorized
 	}
@@ -262,4 +265,57 @@ func checkUserPasscodeAuth(c *gin.Context, action acl.Permission) (*entity.Sessi
 	}
 
 	return s, user, frm, nil
+}
+
+// checkUserPasscodePassword checks if the specified password is valid.
+func checkUserPasscodePassword(c *gin.Context, user *entity.User, password string) (code int, msg i18n.Message, err error) {
+	// Set result defaults.
+	code = http.StatusForbidden
+	msg = i18n.ErrInvalidPassword
+
+	if user == nil {
+		return code, msg, authn.ErrUserRequired
+	} else if c == nil {
+		return code, msg, authn.ErrContextRequired
+	}
+
+	username := user.Username()
+
+	if username == "" {
+		return code, msg, authn.ErrUsernameRequired
+	}
+
+	switch user.Provider() {
+	// Check local account password.
+	case authn.ProviderLocal:
+		if user.InvalidPassword(password) {
+			return code, msg, authn.ErrInvalidPassword
+		}
+	// Use generic authentication check.
+	default:
+		// Create user login form.
+		f := form.Login{
+			Username: username,
+			Password: password,
+		}
+
+		// Check if user login credentials are valid.
+		if authUser, provider, method, authErr := entity.Auth(f, nil, c); method == authn.Method2FA && errors.Is(authErr, authn.ErrPasscodeRequired) {
+			return http.StatusOK, i18n.MsgVerified, nil
+		} else if authErr != nil {
+			// Abort if authentication has failed otherwise.
+			return code, msg, authErr
+		} else if authUser == nil {
+			// Abort if account was not found.
+			return code, msg, authn.ErrAccountNotFound
+		} else if !authUser.Equal(user) {
+			// Abort if user accounts do not match.
+			return code, msg, authn.ErrUserDoesNotMatch
+		} else if !provider.SupportsPasscodeAuthentication() || method != authn.MethodDefault {
+			// Abort if e.g. an app password was provided.
+			return code, msg, authn.ErrInvalidCredentials
+		}
+	}
+
+	return http.StatusOK, i18n.MsgVerified, nil
 }

@@ -109,7 +109,7 @@ func AuthLocal(user *User, f form.Login, s *Session, c *gin.Context) (provider a
 	// Authentication with personal access token if a valid secret has been provided as password.
 	if authSess, authUser, authErr := AuthSession(f, c); authSess != nil && authUser != nil && authErr == nil {
 		if !authUser.IsRegistered() || authUser.UserUID != user.UserUID {
-			message := authn.ErrInvalidUsername.Error()
+			message := authn.ErrInvalidUser.Error()
 
 			if s != nil {
 				event.AuditErr([]string{clientIp, "session %s", "login as %s", "app password", message}, s.RefID, clean.LogQuote(username))

@@ -289,7 +289,7 @@ export class User extends RestModel {
     }).then((response) => Promise.resolve(response.data));
   }
 
-  disablePasscodeSetup() {
+  disablePasscodeSetup(hasPassword) {
     if (!this.Name || !this.CanLogin || this.ID < 1) {
       return true;
     }
@@ -297,6 +297,8 @@ export class User extends RestModel {
     switch (this.AuthProvider) {
       case "":
       case "default":
+      case "oidc":
+        return !hasPassword;
       case "local":
       case "ldap":
         return false;

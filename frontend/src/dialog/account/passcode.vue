@@ -261,6 +261,7 @@ export default {
       recoveryCodeCopied: false,
       password: "",
       showPassword: false,
+      session: this.$session,
       minLength: this.$config.get("passwordLength"),
       maxLength: 72,
       rtl: this.$rtl,
@@ -269,7 +270,7 @@ export default {
   },
   computed: {
     page() {
-      if (this.model?.AuthProvider !== "default" && this.model?.AuthProvider !== "local" && this.model?.AuthProvider !== "ldap") {
+      if (!this.session.hasPassword()) {
         return "not_available";
       } else if (this.model?.AuthMethod === "2fa") {
         return "deactivate";

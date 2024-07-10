@@ -43,6 +43,7 @@ export default class Session {
     this.storage_key = "sessionStorage";
     this.auth = false;
     this.config = config;
+    this.provider = "";
     this.user = new User(false);
     this.data = null;
 
@@ -63,6 +64,11 @@ export default class Session {
       const userJson = this.storage.getItem("user");
       if (userJson !== "undefined") {
         this.user = new User(JSON.parse(userJson));
+      }
+
+      const provider = this.storage.getItem("provider");
+      if (provider !== null) {
+        this.provider = provider;
       }
     }
 
@@ -200,7 +206,21 @@ export default class Session {
   }
 
   getProvider() {
+    if (!this.provider) {
+      return "";
+    }
+
     return this.provider;
+  }
+
+  hasPassword() {
+    switch (this.getProvider()) {
+      case "local":
+      case "ldap":
+        return true;
+      default:
+        return false;
+    }
   }
 
   hasProvider() {

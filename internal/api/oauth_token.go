@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
@@ -145,14 +146,14 @@ func OAuthToken(router *gin.RouterGroup) {
 					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.Denied})
 					AbortInvalidCredentials(c)
 					return
-				} else if !authUser.Equal(s.User()) {
-					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrInvalidUsername.Error()})
+				} else if authMethod.Is(authn.Method2FA) && errors.Is(authErr, authn.ErrPasscodeRequired) {
+					// Ok.
+				} else if authErr != nil {
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, "%s"}, strings.ToLower(clean.Error(authErr)))
 					AbortInvalidCredentials(c)
 					return
-				} else if authMethod.Is(authn.Method2FA) && errors.Is(authErr, authn.ErrPasscodeRequired) {
-					// Ignore.
-				} else if authErr != nil {
-					event.AuditErr([]string{clientIp, "oauth2", actor, action, "%s"}, clean.Error(authErr))
+				} else if !authUser.Equal(s.User()) {
+					event.AuditErr([]string{clientIp, "oauth2", actor, action, authn.ErrUserDoesNotMatch.Error()})
 					AbortInvalidCredentials(c)
 					return
 				}

@@ -49,6 +49,7 @@ var PasswordProviders = list.List{
 var PasscodeProviders = list.List{
 	string(ProviderDefault),
 	string(ProviderLocal),
+	string(ProviderOIDC),
 	string(ProviderLDAP),
 }
 

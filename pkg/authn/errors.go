@@ -24,6 +24,7 @@ var (
 	ErrInsufficientScope      = errors.New("insufficient scope")
 	ErrNameRequired           = errors.New("name required")
 	ErrScopeRequired          = errors.New("scope required")
+	ErrContextRequired        = errors.New("context required")
 	ErrDisabledInPublicMode   = errors.New("disabled in public mode")
 	ErrAuthenticationDisabled = errors.New("authentication disabled")
 	ErrRateLimitExceeded      = errors.New("rate limit exceeded")
@@ -47,9 +48,11 @@ var (
 
 // User-related error messages:
 var (
+	ErrUserRequired               = errors.New("user required")
 	ErrUsernameRequired           = errors.New("username required")
 	ErrUsernameRequiredToRegister = errors.New("username required to register")
-	ErrInvalidUsername            = errors.New("invalid username")
+	ErrInvalidUser                = errors.New("invalid user")
+	ErrUserDoesNotMatch           = errors.New("user does not match")
 	ErrUsernameDoesNotMatch       = errors.New("specified username does not match")
 )
 
