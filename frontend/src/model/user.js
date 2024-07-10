@@ -298,6 +298,7 @@ export class User extends RestModel {
       case "":
       case "default":
       case "local":
+      case "ldap":
         return false;
       default:
         return true;
