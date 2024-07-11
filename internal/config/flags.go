@@ -71,7 +71,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-provider",
-			Usage:  "custom identity provider `NAME`, e.g. \"Google\"",
+			Usage:  "custom identity provider `NAME`, e.g. Google",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_PROVIDER"),
 		}}, {
