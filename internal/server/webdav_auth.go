@@ -141,8 +141,8 @@ func WebDAVAuth(conf *config.Config) gin.HandlerFunc {
 			sess.UpdateLastActive(true)
 
 			// Log successful authentication.
-			event.AuditInfo([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", authn.Succeeded}, clean.LogQuote(username))
-			event.LoginInfo(clientIp, "webdav", username, api.UserAgent(c))
+			event.AuditInfo([]string{clientIp, "webdav", "client %s", "session %s", "access as %s", authn.Succeeded}, clean.Log(sess.ClientInfo()), sess.RefID, clean.LogQuote(user.Username()))
+			event.LoginInfo(clientIp, "webdav", user.Username(), api.UserAgent(c))
 
 			// Cache authentication to improve performance.
 			webdavAuthCache.SetDefault(sid, user)
