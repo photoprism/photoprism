@@ -46,7 +46,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "oidc-uri",
-			Usage:  "issuer `URI` for single sign-on via OpenID Connect, e.g. \"https://accounts.google.com\"",
+			Usage:  "issuer `URI` for single sign-on via OpenID Connect, e.g. https://accounts.google.com",
 			Value:  "",
 			EnvVar: EnvVar("OIDC_URI"),
 		}}, {
