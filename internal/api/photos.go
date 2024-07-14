@@ -37,11 +37,13 @@ func SaveSidecarYaml(photo *entity.Photo) {
 
 // GetPhoto returns photo details as JSON.
 //
-// The request parameters are:
-//
-//   - uid (string) PhotoUID as returned by the API
-//
-// GET /api/v1/photos/:uid
+//	@Summary	get photo details
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200	{object}	entity.Photo
+//	@Failure	404	{object}	i18n.Response
+//	@Param		uid	path		string	true	"Photo UID"
+//	@Router		/api/v1/photos/{uid} [get]
 func GetPhoto(router *gin.RouterGroup) {
 	router.GET("/photos/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionView)

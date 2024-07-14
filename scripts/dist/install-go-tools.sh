@@ -57,6 +57,7 @@ case $DESTARCH in
     GOBIN="/usr/local/bin" go install github.com/go-delve/delve/cmd/dlv@latest
     GOBIN="/usr/local/bin" go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
     GOBIN="/usr/local/bin" go install github.com/google/go-licenses@latest
+    GOBIN="/usr/local/bin" go install github.com/swaggo/swag/cmd/swag@latest
     ;;
 esac
 

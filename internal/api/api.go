@@ -23,3 +23,27 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
 package api
+
+import (
+	_ "net/http"
+
+	_ "github.com/gin-gonic/gin"
+
+	_ "github.com/photoprism/photoprism/internal/auth/acl"
+	_ "github.com/photoprism/photoprism/internal/entity"
+	_ "github.com/photoprism/photoprism/internal/entity/query"
+	_ "github.com/photoprism/photoprism/internal/event"
+	_ "github.com/photoprism/photoprism/internal/form"
+	_ "github.com/photoprism/photoprism/internal/photoprism"
+	_ "github.com/photoprism/photoprism/internal/photoprism/get"
+	_ "github.com/photoprism/photoprism/pkg/clean"
+	_ "github.com/photoprism/photoprism/pkg/fs"
+	_ "github.com/photoprism/photoprism/pkg/i18n"
+)
+
+//	@title						PhotoPrism API
+//	@description				API request bodies and responses are usually JSON-encoded, except for the OAuth2 and binary data endpoints. Note that the Content-Type header must be set to "application/json" for this, as the request may otherwise fail with error 400.
+//	@externalDocs.description	Learn more ›
+//	@externalDocs.url			https://docs.photoprism.app/developer-guide/api/
+//	@version					v1
+//	@query.collection.format	multi

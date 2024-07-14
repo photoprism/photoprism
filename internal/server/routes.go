@@ -8,6 +8,7 @@ import (
 )
 
 var APIv1 *gin.RouterGroup
+var registerApiDocs func(router *gin.RouterGroup)
 
 // registerRoutes registers the routes for handling HTTP requests with the built-in web server.
 func registerRoutes(router *gin.Engine, conf *config.Config) {
@@ -32,6 +33,11 @@ func registerRoutes(router *gin.Engine, conf *config.Config) {
 
 	// Register JSON REST-API version 1 (APIv1) routes, grouped by functionality.
 	// Docs: https://pkg.go.dev/github.com/photoprism/photoprism/internal/api
+
+	// API Documentation.
+	if registerApiDocs != nil {
+		registerApiDocs(APIv1)
+	}
 
 	// User Sessions.
 	api.CreateSession(APIv1)

@@ -85,7 +85,7 @@ show-rev:
 show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
-fmt: fmt-js fmt-go
+fmt: fmt-js fmt-go swag-fmt
 clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
@@ -94,6 +94,13 @@ logs:
 	$(DOCKER_COMPOSE) logs -f
 help:
 	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
+docs: swag
+swag:
+	@echo "Generating Swagger API documentation..."
+	swag init --generatedTime --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./assets/docs/api/v1
+swag-fmt:
+	@echo "Formatting Swagger API documentation..."
+	swag fmt --dir internal/api
 notice:
 	@echo "Creating license report for Go dependencies..."
 	go-licenses report ./internal/... ./pkg/... --template=.report.tmpl > NOTICE

@@ -1,6 +1,7 @@
 /photos/*
 /frontend/node_modules/*
 /node_modules
+/assets/docs
 /assets/static/build/*
 /assets/facenet
 /assets/nasnet

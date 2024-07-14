@@ -36,7 +36,13 @@ func SaveAlbumYaml(album entity.Album) {
 
 // GetAlbum returns album details as JSON.
 //
-// GET /api/v1/albums/:uid
+//	@Summary	get album details
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200	{object}	entity.Album
+//	@Failure	404	{object}	i18n.Response
+//	@Param		uid	path		string	true	"Album UID"
+//	@Router		/api/v1/albums/{uid} [get]
 func GetAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionView)
