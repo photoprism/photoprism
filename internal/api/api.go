@@ -42,7 +42,7 @@ import (
 )
 
 //	@title						PhotoPrism API
-//	@description				API request bodies and responses are usually JSON-encoded, except for the OAuth2 and binary data endpoints. Note that the Content-Type header must be set to "application/json" for this, as the request may otherwise fail with error 400.
+//	@description				API request bodies and responses are usually JSON-encoded, except for the binary data and some of the OAuth2 endpoints. Note that the Content-Type header must be set to "application/json" for this, as the request may otherwise fail with error 400.
 //	@externalDocs.description	Learn more ›
 //	@externalDocs.url			https://docs.photoprism.app/developer-guide/api/
 //	@version					v1
