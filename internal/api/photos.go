@@ -37,7 +37,8 @@ func SaveSidecarYaml(photo *entity.Photo) {
 
 // GetPhoto returns photo details as JSON.
 //
-//	@Summary	get photo details
+//	@Summary	returns photo details as JSON
+//	@Id			GetPhoto
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200	{object}	entity.Photo

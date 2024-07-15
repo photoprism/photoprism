@@ -101,6 +101,10 @@ swag:
 swag-fmt:
 	@echo "Formatting Swagger API documentation..."
 	swag fmt --dir internal/api
+swag-go:
+	docker run --rm --pull always -v ./assets/docs:/assets/docs swaggerapi/swagger-codegen-cli generate -i /assets/docs/api/v1/swagger.json -l go -o /assets/docs/api/v1/go
+swag-html:
+	docker run --rm --pull always -v ./assets/docs:/assets/docs swaggerapi/swagger-codegen-cli generate -i /assets/docs/api/v1/swagger.json -l html2 -o /assets/docs/api/v1/html
 notice:
 	@echo "Creating license report for Go dependencies..."
 	go-licenses report ./internal/... ./pkg/... --template=.report.tmpl > NOTICE

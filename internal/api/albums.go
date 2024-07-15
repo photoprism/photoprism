@@ -36,7 +36,8 @@ func SaveAlbumYaml(album entity.Album) {
 
 // GetAlbum returns album details as JSON.
 //
-//	@Summary	get album details
+//	@Summary	returns album details as JSON
+//	@Id			GetAlbum
 //	@Tags		Albums
 //	@Produce	json
 //	@Success	200	{object}	entity.Album
