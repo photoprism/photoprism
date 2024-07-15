@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-07-05 09:23+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-07-15 18:22+0000\n"
+"Last-Translator: Admin <hello@photoprism.app>\n"
 "Language-Team: Russian <https://translate.photoprism.app/projects/photoprism/frontend/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -1406,7 +1406,7 @@ msgstr "Выбрана недопустимая фотография"
 #: src/dialog/account/passcode.vue:89 src/dialog/account/passcode.vue:118
 #: src/dialog/account/passcode.vue:11 src/dialog/account/passcode.vue:8
 msgid "It is a one-time use code that will disable 2FA for your account when you use it."
-msgstr "Это одноразовый код, который отключит 2FA для вашей учетной записи, когда вы его используете."
+msgstr "Это одноразовый код, который отключит 2ФА для вашей учетной записи, когда вы его используете."
 
 #: src/model/rest.js:165
 msgid "Item"
@@ -1774,7 +1774,7 @@ msgstr "Нет, спасибо"
 
 #: src/component/photo-viewer.vue:97 src/dialog/video/viewer.vue:55
 msgid "No video selected"
-msgstr "Wideo saýlanylmady"
+msgstr "Видео не выбрано"
 
 #: src/page/library/errors.vue:42 src/page/library/errors.vue:1
 msgid "No warnings or error containing this keyword. Note that search is case-sensitive."
@@ -1826,7 +1826,7 @@ msgstr "Не в сети"
 
 #: src/options/admin.js:39 src/options/auth.js:28
 msgid "OIDC"
-msgstr "ОИДК"
+msgstr "OIDC"
 
 #: src/component/album/toolbar.vue:70 src/component/photo/toolbar.vue:75
 #: src/dialog/album/edit.vue:22 src/page/albums.vue:92
@@ -1876,7 +1876,7 @@ msgstr "Найдена одна фотография"
 
 #: src/dialog/account/passcode.vue:146 src/dialog/account/passcode.vue:4
 msgid "Only locally managed accounts can be set up for authentication with 2FA."
-msgstr "Для аутентификации с помощью 2FA можно настроить только локально управляемые учетные записи."
+msgstr "Для аутентификации с помощью 2ФА можно настроить только локально управляемые учетные записи."
 
 #: src/options/options.js:443
 msgid "Orange"
@@ -2039,7 +2039,7 @@ msgstr "Пожалуйста, подождите…"
 
 #: src/page/settings/advanced.vue:610
 msgid "PNG Size Limit: %{n}px"
-msgstr "Ограничение по размеру в формате PNG: %{n}px"
+msgstr "Ограничение размера PNG: %{n}px"
 
 #: src/dialog/photo/edit/files.vue:155 src/dialog/photo/edit/files.vue:152
 msgid "Portrait"
@@ -2588,7 +2588,7 @@ msgstr "Пауза"
 #: src/dialog/admin/users/edit.vue:151 src/page/settings/account.vue:116
 msgctxt "Account"
 msgid "Title"
-msgstr "Название"
+msgstr "Титул"
 
 #: src/dialog/photo/edit/details.vue:95
 msgctxt "Photo"
