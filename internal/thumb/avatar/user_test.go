@@ -30,6 +30,11 @@ func TestSetUserAvatarURL(t *testing.T) {
 		err := SetUserImageURL(&admin, imageUrl, entity.SrcAuto, thumbPath)
 		assert.Error(t, err)
 	})
+	t.Run("EmptyUrl", func(t *testing.T) {
+		admin := entity.UserFixtures.Get("alice")
+		err := SetUserImageURL(&admin, "", entity.SrcAuto, thumbPath)
+		assert.Nil(t, err)
+	})
 }
 
 func TestSetUserAvatarImage(t *testing.T) {
@@ -40,5 +45,17 @@ func TestSetUserAvatarImage(t *testing.T) {
 		fileName := fs.Abs("testdata/avatar.png")
 		err := SetUserImage(&admin, fileName, entity.SrcAuto, thumbPath)
 		assert.NoError(t, err)
+	})
+	t.Run("FileNotFound", func(t *testing.T) {
+		admin := entity.UserFixtures.Get("friend")
+		fileName := fs.Abs("testdata/avatar-wrong.png")
+		err := SetUserImage(&admin, fileName, entity.SrcAuto, thumbPath)
+		assert.Error(t, err)
+	})
+	t.Run("ThumbPathEmpty", func(t *testing.T) {
+		admin := entity.UserFixtures.Get("friend")
+		fileName := fs.Abs("testdata/avatar-wrong.png")
+		err := SetUserImage(&admin, fileName, entity.SrcAuto, "")
+		assert.Error(t, err)
 	})
 }
