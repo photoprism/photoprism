@@ -6,6 +6,7 @@
         "contact": {},
         "version": "v1"
     },
+    "host": "demo.photoprism.app",
     "paths": {
         "/api/v1/albums": {
             "post": {
