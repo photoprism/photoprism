@@ -25,8 +25,8 @@ import (
 //
 //   - file_uid: string File UID as returned by the API
 //
-//	@Tags	Photos
-//	@Router	/api/v1/photos/{uid}/files/{file_uid}/unstack [post]
+//     @Tags	Photos
+//     @Router	/api/v1/photos/{uid}/files/{file_uid}/unstack [post]
 func PhotoUnstack(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/unstack", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)

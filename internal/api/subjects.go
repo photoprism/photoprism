@@ -99,8 +99,8 @@ func UpdateSubject(router *gin.RouterGroup) {
 //
 //   - uid: string Subject UID
 //
-//	@Tags	Subjects
-//	@Router	/api/v1/subjects/{uid}/like [post]
+//     @Tags	Subjects
+//     @Router	/api/v1/subjects/{uid}/like [post]
 func LikeSubject(router *gin.RouterGroup) {
 	router.POST("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)

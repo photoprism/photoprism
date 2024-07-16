@@ -273,8 +273,8 @@ func DeleteAlbum(router *gin.RouterGroup) {
 //
 //   - uid: string Album UID
 //
-//	@Tags	Albums
-//	@Router	/api/v1/albums/{uid}/like [post]
+//     @Tags	Albums
+//     @Router	/api/v1/albums/{uid}/like [post]
 func LikeAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -322,8 +322,8 @@ func LikeAlbum(router *gin.RouterGroup) {
 //
 //   - uid: string Album UID
 //
-//	@Tags	Albums
-//	@Router	/api/v1/albums/{uid}/like [delete]
+//     @Tags	Albums
+//     @Router	/api/v1/albums/{uid}/like [delete]
 func DislikeAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
