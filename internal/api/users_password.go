@@ -19,7 +19,7 @@ import (
 // UpdateUserPassword changes the password of the currently authenticated user.
 //
 //	@Tags	Users, Authentication
-//	@Route /api/v1/users/{uid}/password [put]
+//	@Router /api/v1/users/{uid}/password [put]
 func UpdateUserPassword(router *gin.RouterGroup) {
 	router.PUT("/users/:uid/password", func(c *gin.Context) {
 		conf := get.Config()

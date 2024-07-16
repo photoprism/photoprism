@@ -135,8 +135,7 @@ func CreateAlbum(router *gin.RouterGroup) {
 // UpdateAlbum updates album metadata like title and description.
 //
 //	@Tags	Albums
-//
-//	@Route	/api/v1/albums/{uid} [put]
+//	@Router	/api/v1/albums/{uid} [put]
 func UpdateAlbum(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -202,8 +201,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 // DeleteAlbum deletes an existing album.
 //
 //	@Tags	Albums
-//
-//	@Route	/api/v1/albums/{uid} [delete]
+//	@Router	/api/v1/albums/{uid} [delete]
 func DeleteAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionDelete)
@@ -325,8 +323,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 //   - uid: string Album UID
 //
 //	@Tags	Albums
-//
-//	@Route	/api/v1/albums/{uid}/like [delete]
+//	@Router	/api/v1/albums/{uid}/like [delete]
 func DislikeAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -544,7 +541,7 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 // RemovePhotosFromAlbum removes photos from an album.
 //
 //	@Tags	Albums
-//	@Route	/api/v1/albums/{uid}/photos [delete]
+//	@Router	/api/v1/albums/{uid}/photos [delete]
 func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/photos", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
