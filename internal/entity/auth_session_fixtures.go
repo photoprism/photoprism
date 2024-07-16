@@ -253,6 +253,17 @@ var SessionFixtures = SessionMap{
 		PreviewToken:  "py2123uy",
 		DownloadToken: "vgl123uy",
 	},
+	"no_local_auth": {
+		authToken:   "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7iu7",
+		ID:          rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7iu7"),
+		RefID:       "sessxkkcaert",
+		SessTimeout: unix.Day * 3,
+		SessExpires: unix.Now() + unix.Week,
+		GrantType:   authn.GrantPassword.String(),
+		user:        UserFixtures.Pointer("no_local_auth"),
+		UserUID:     UserFixtures.Pointer("no_local_auth").UserUID,
+		UserName:    UserFixtures.Pointer("no_local_auth").UserName,
+	},
 }
 
 // CreateSessionFixtures inserts known entities into the database for testing.
