@@ -30,7 +30,8 @@ const (
 
 // StartImport imports media files from a directory and converts/indexes them as needed.
 //
-// POST /api/v1/import*
+//	@Tags Library
+//	@Router	/api/v1/import/{path} [post]
 func StartImport(router *gin.RouterGroup) {
 	router.POST("/import/*path", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceFiles, acl.Permissions{acl.ActionManage, acl.ActionUpload})

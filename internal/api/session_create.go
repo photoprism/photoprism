@@ -18,8 +18,9 @@ import (
 
 // CreateSession creates a new client session and returns it as JSON if authentication was successful.
 //
-// POST /api/v1/session
-// POST /api/v1/sessions
+//	@Tags	Authentication
+//	@Router	/api/v1/session [post]
+//	@Router	/api/v1/sessions [post]
 func CreateSession(router *gin.RouterGroup) {
 	createSessionHandler := func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

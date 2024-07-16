@@ -19,7 +19,8 @@ import (
 
 // UploadUserAvatar updates the avatar image of the currently authenticated user.
 //
-// POST /api/v1/users/:uid/avatar
+//	@Tags	Users
+//	@Router	/api/v1/users/{uid}/avatar [post]
 func UploadUserAvatar(router *gin.RouterGroup) {
 	router.POST("/users/:uid/avatar", func(c *gin.Context) {
 		conf := get.Config()

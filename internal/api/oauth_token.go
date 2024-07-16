@@ -21,7 +21,8 @@ import (
 
 // OAuthToken creates a new access token for clients that authenticate with valid OAuth2 client credentials.
 //
-// POST /api/v1/oauth/token
+//	@Tags	Authentication
+//	@Router	/api/v1/oauth/token [post]
 func OAuthToken(router *gin.RouterGroup) {
 	router.POST("/oauth/token", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

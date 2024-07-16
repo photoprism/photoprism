@@ -22,7 +22,8 @@ import (
 //
 //   - uid: string PhotoUID as returned by the API
 //
-// POST /api/v1/photos/:uid/label
+//	@Tags	Photos
+//	@Router	/api/v1/photos/{uid}/label [post]
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)

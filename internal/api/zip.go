@@ -25,7 +25,8 @@ import (
 
 // ZipCreate creates a zip file archive for download.
 //
-// POST /api/v1/zip
+//	@Tags	Download
+//	@Router	/api/v1/zip [post]
 func ZipCreate(router *gin.RouterGroup) {
 	router.POST("/zip", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionDownload)

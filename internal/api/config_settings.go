@@ -37,7 +37,8 @@ func GetSettings(router *gin.RouterGroup) {
 
 // SaveSettings saved the user app settings.
 //
-// POST /api/v1/settings
+//	@Tags Settings
+//	@Router	/api/v1/settings [post]
 func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.ActionView, acl.ActionUpdate, acl.ActionManage})

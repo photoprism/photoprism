@@ -20,7 +20,8 @@ import (
 
 // OAuthRevoke takes an access token and deletes it. A client may only delete its own tokens.
 //
-// POST /api/v1/oauth/revoke
+//	@Tags	Authentication
+//	@Router	/api/v1/oauth/revoke [post]
 func OAuthRevoke(router *gin.RouterGroup) {
 	router.POST("/oauth/revoke", func(c *gin.Context) {
 		// Prevent CDNs from caching this endpoint.

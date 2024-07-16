@@ -75,7 +75,8 @@ func GetAlbum(router *gin.RouterGroup) {
 
 // CreateAlbum adds a new album.
 //
-// POST /api/v1/albums
+//	@Tags	Albums
+//	@Router	/api/v1/albums [post]
 func CreateAlbum(router *gin.RouterGroup) {
 	router.POST("/albums", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionCreate)
@@ -133,7 +134,9 @@ func CreateAlbum(router *gin.RouterGroup) {
 
 // UpdateAlbum updates album metadata like title and description.
 //
-// PUT /api/v1/albums/:uid
+//	@Tags	Albums
+//
+//	@Route	/api/v1/albums/{uid} [put]
 func UpdateAlbum(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -198,7 +201,9 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 // DeleteAlbum deletes an existing album.
 //
-// DELETE /api/v1/albums/:uid
+//	@Tags	Albums
+//
+//	@Route	/api/v1/albums/{uid} [delete]
 func DeleteAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionDelete)
@@ -270,7 +275,8 @@ func DeleteAlbum(router *gin.RouterGroup) {
 //
 //   - uid: string Album UID
 //
-// POST /api/v1/albums/:uid/like
+//	@Tags	Albums
+//	@Router	/api/v1/albums/{uid}/like [post]
 func LikeAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -318,7 +324,9 @@ func LikeAlbum(router *gin.RouterGroup) {
 //
 //   - uid: string Album UID
 //
-// DELETE /api/v1/albums/:uid/like
+//	@Tags	Albums
+//
+//	@Route	/api/v1/albums/{uid}/like [delete]
 func DislikeAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -362,7 +370,8 @@ func DislikeAlbum(router *gin.RouterGroup) {
 
 // CloneAlbums creates a new album containing pictures from other albums.
 //
-// POST /api/v1/albums/:uid/clone
+//	@Tags	Albums
+//	@Router	/api/v1/albums/{uid}/clone [post]
 func CloneAlbums(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/clone", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionCreate)
@@ -431,7 +440,8 @@ func CloneAlbums(router *gin.RouterGroup) {
 
 // AddPhotosToAlbum adds photos to an album.
 //
-// POST /api/v1/albums/:uid/photos
+//	@Tags	Albums
+//	@Router	/api/v1/albums/{uid}/photos [post]
 func AddPhotosToAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/photos", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -533,7 +543,8 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 // RemovePhotosFromAlbum removes photos from an album.
 //
-// DELETE /api/v1/albums/:uid/photos
+//	@Tags	Albums
+//	@Route	/api/v1/albums/{uid}/photos [delete]
 func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/photos", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)

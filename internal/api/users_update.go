@@ -16,7 +16,8 @@ import (
 
 // UpdateUser updates the profile information of the currently authenticated user.
 //
-// PUT /api/v1/users/:uid
+//	@Tags	Users
+//	@Route /api/v1/users/{uid} [put]
 func UpdateUser(router *gin.RouterGroup) {
 	router.PUT("/users/:uid", func(c *gin.Context) {
 		conf := get.Config()

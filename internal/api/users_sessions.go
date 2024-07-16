@@ -18,7 +18,8 @@ import (
 
 // FindUserSessions finds user sessions and returns them as JSON.
 //
-// GET /api/v1/users/:uid/sessions
+//	@Tags	Users, Authentication
+//	@Route /api/v1/users/{uid}/sessions [get]
 func FindUserSessions(router *gin.RouterGroup) {
 	router.GET("/users/:uid/sessions", func(c *gin.Context) {
 		// Check if the session user is has user management privileges.

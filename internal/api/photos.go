@@ -204,7 +204,8 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 //
 //   - uid: string PhotoUID as returned by the API
 //
-// POST /api/v1/photos/:uid/approve
+//	@Tags	Photos
+//	@Router	/api/v1/photos/{uid}/approve [post]
 func ApprovePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/approve", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)

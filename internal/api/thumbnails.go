@@ -18,13 +18,13 @@ import (
 
 // GetThumb returns a thumbnail image matching the file hash, crop area, and type.
 //
-// The request parameters are:
-//
-//   - thumb: string sha1 file hash plus optional crop area
-//   - token: string url security token, see config
-//   - size: string thumb type, see thumb.Sizes
-//
-// GET /api/v1/t/:thumb/:token/:size
+//	@Summary	"returns a thumbnail image matching the file hash, crop area, and type"
+//	@Produce	"image/jpeg"
+//	@Tags		Thumbnails
+//	@Param		thumb	path	string	true	"SHA1 file hash plus optional crop area"
+//	@Param		token	path	string	true	"user-specific security token provided with session"
+//	@Param		size	path	string	true	"thumbnail size"
+//	@Route		/api/v1/t/{thumb}/{token}/{size} [get]
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:thumb/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

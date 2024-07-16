@@ -59,7 +59,8 @@ func UpdateLabel(router *gin.RouterGroup) {
 //
 //   - uid: string Label UID
 //
-// POST /api/v1/labels/:uid/like
+//	@Tags	Links
+//	@Router	/api/v1/labels/{uid}/like [post]
 func LikeLabel(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionUpdate)

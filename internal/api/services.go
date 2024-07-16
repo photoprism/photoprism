@@ -107,7 +107,8 @@ func GetServiceFolders(router *gin.RouterGroup) {
 
 // AddService creates a new remote account configuration.
 //
-// POST /api/v1/services
+//	@Tags	Services
+//	@Router	/api/v1/services [post]
 func AddService(router *gin.RouterGroup) {
 	router.POST("/services", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceServices, acl.ActionCreate)

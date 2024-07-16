@@ -14,7 +14,8 @@ import (
 
 // LikePhoto flags a photo as favorite.
 //
-// POST /api/v1/photos/:uid/like
+//	@Tags	Photos
+//	@Router	/api/v1/photos/{uid}/like [post]
 func LikePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/like", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionUpdate, acl.ActionReact})

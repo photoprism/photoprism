@@ -23,7 +23,8 @@ import (
 
 // CreateUserPasscode sets up a new two-factor authentication passcode.
 //
-// POST /api/v1/users/:uid/passcode
+//	@Tags	Users
+//	@Router	/api/v1/users/{uid}/passcode [post]
 func CreateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -81,7 +82,8 @@ func CreateUserPasscode(router *gin.RouterGroup) {
 
 // ConfirmUserPasscode checks a new passcode and flags it as verified so that it can be activated.
 //
-// POST /api/v1/users/:uid/passcode/confirm
+//	@Tags	Users
+//	@Router	/api/v1/users/{uid}/passcode/confirm [post]
 func ConfirmUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/confirm", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -126,7 +128,8 @@ func ConfirmUserPasscode(router *gin.RouterGroup) {
 
 // ActivateUserPasscode activates two-factor authentication if a passcode has been created and verified.
 //
-// POST /api/v1/users/:uid/passcode/activate
+//	@Tags	Users
+//	@Router	/api/v1/users/{uid}/passcode/activate [post]
 func ActivateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/activate", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -162,7 +165,8 @@ func ActivateUserPasscode(router *gin.RouterGroup) {
 
 // DeactivateUserPasscode disables removes a passcode key to disable two-factor authentication.
 //
-// POST /api/v1/users/:uid/passcode/deactivate
+//	@Tags	Users
+//	@Router	/api/v1/users/{uid}/passcode/deactivate [post]
 func DeactivateUserPasscode(router *gin.RouterGroup) {
 	router.POST("/users/:uid/passcode/deactivate", func(c *gin.Context) {
 		// Check authentication and authorization.

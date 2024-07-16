@@ -36,7 +36,8 @@ func GetConfigOptions(router *gin.RouterGroup) {
 
 // SaveConfigOptions updates backend config options.
 //
-// POST /api/v1/config/options
+//	@Tags Settings
+//	@Router	/api/v1/config/options [post]
 func SaveConfigOptions(router *gin.RouterGroup) {
 	router.POST("/config/options", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceConfig, acl.ActionManage)
