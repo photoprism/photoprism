@@ -69,6 +69,12 @@ func TestMethod(t *testing.T) {
 	assert.Equal(t, Method2FA, Method("2FA"))
 }
 
+func TestMethods(t *testing.T) {
+	types := Methods("oauth2, totp")
+	assert.Equal(t, MethodOAuth2, types[0])
+	assert.Equal(t, Method2FA, types[1])
+}
+
 func TestMethodType_IsSession(t *testing.T) {
 	assert.True(t, MethodSession.IsSession())
 	assert.False(t, Method2FA.IsSession())

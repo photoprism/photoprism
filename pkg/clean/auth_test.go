@@ -37,6 +37,12 @@ func TestAuth(t *testing.T) {
 			"a34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700aa34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700",
 			Auth("a34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700aa34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700a"))
 	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Auth(""))
+	})
+	t.Run("Te<s>t", func(t *testing.T) {
+		assert.Equal(t, "Test", Auth("Te<s>t"))
+	})
 }
 
 func TestHandle(t *testing.T) {
@@ -194,5 +200,11 @@ func TestPasscode(t *testing.T) {
 	})
 	t.Run("Special", func(t *testing.T) {
 		assert.Equal(t, "tiji", Passcode("!#$T#)$%I#J$I"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Passcode(""))
+	})
+	t.Run("Space", func(t *testing.T) {
+		assert.Equal(t, "", Passcode("    	"))
 	})
 }

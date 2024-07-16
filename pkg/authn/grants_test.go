@@ -62,6 +62,9 @@ func TestGrantType_Pretty(t *testing.T) {
 	assert.Equal(t, "Authorization Code", GrantAuthorizationCode.Pretty())
 	assert.Equal(t, "JWT Bearer Assertion", GrantJwtBearer.Pretty())
 	assert.Equal(t, "SAML2 Bearer Assertion", GrantSamlBearer.Pretty())
+	assert.Equal(t, "Share Token", GrantShareToken.Pretty())
+	assert.Equal(t, "Token Exchange", GrantTokenExchange.Pretty())
+	assert.Equal(t, "Implicit", GrantImplicit.Pretty())
 }
 
 func TestGrantType_Equal(t *testing.T) {

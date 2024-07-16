@@ -486,6 +486,32 @@ func TestFindUser(t *testing.T) {
 		assert.NotEmpty(t, m.CreatedAt)
 		assert.NotEmpty(t, m.UpdatedAt)
 	})
+	t.Run("OIDCUser", func(t *testing.T) {
+		info := &oidc.UserInfo{}
+		info.Name = "Jane Doe"
+		info.Email = "jane@doe.com"
+		info.EmailVerified = true
+		info.Subject = "e3a9f4a6-9d60-47cb-9bf5-02bd15b0c888"
+		info.PreferredUsername = "Jane Doe"
+
+		u := OidcUser(info, "", "jane.doe")
+
+		err := u.Save()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		m := FindUser(User{UserUID: u.UserUID})
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.NotEmpty(t, m.UserUID)
+		assert.Equal(t, "jane.doe", m.UserName)
+		assert.Equal(t, "oidc", m.AuthProvider)
+	})
 	t.Run("UserName", func(t *testing.T) {
 		m := FindUser(User{UserName: "admin"})
 
@@ -733,11 +759,11 @@ func TestUser_SetPassword(t *testing.T) {
 	})
 }
 
-func TestUser_InitLogin(t *testing.T) {
+func TestUser_InitAccount(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		p := User{UserUID: "u000000000000009", UserName: "Hanna", DisplayName: ""}
+		p := User{UserUID: "u000000000000009", UserName: "Hanna", DisplayName: "", CanLogin: true}
 		assert.Nil(t, FindPassword("u000000000000009"))
-		p.InitAccount("admin", "insecure")
+		assert.True(t, p.InitAccount("admin", "insecure"))
 		m := FindPassword("u000000000000009")
 
 		if m == nil {
@@ -756,7 +782,7 @@ func TestUser_InitLogin(t *testing.T) {
 		}
 
 		assert.NotNil(t, FindPassword("u000000000000010"))
-		p.InitAccount("admin", "insecure")
+		assert.False(t, p.InitAccount("admin", "insecure"))
 		m := FindPassword("u000000000000010")
 
 		if m == nil {
@@ -766,13 +792,13 @@ func TestUser_InitLogin(t *testing.T) {
 	t.Run("NotRegistered", func(t *testing.T) {
 		p := User{UserUID: "u12", UserName: "", DisplayName: ""}
 		assert.Nil(t, FindPassword("u12"))
-		p.InitAccount("admin", "insecure")
+		assert.False(t, p.InitAccount("admin", "insecure"))
 		assert.Nil(t, FindPassword("u12"))
 	})
 	t.Run("EmptyPassword", func(t *testing.T) {
 		p := User{UserUID: "u000000000000011", UserName: "User", DisplayName: ""}
 		assert.Nil(t, FindPassword("u000000000000011"))
-		p.InitAccount("admin", "")
+		assert.False(t, p.InitAccount("admin", ""))
 		assert.Nil(t, FindPassword("u000000000000011"))
 	})
 }
@@ -1665,9 +1691,20 @@ func TestUser_UpdateAuthID(t *testing.T) {
 		m.SetAuthID(id, issuer)
 		assert.Equal(t, id, m.AuthID)
 		assert.Equal(t, issuer, m.AuthIssuer)
-		m.SetAuthID(id, "")
+		err := m.UpdateAuthID(id, "")
+		assert.NoError(t, err)
 		assert.Equal(t, id, m.AuthID)
 		assert.Equal(t, "", m.AuthIssuer)
+	})
+	t.Run("InvalidUUID", func(t *testing.T) {
+		m := User{UserUID: "123"}
+
+		assert.Equal(t, "", m.AuthIssuer)
+		m.SetAuthID(id, issuer)
+		assert.Equal(t, id, m.AuthID)
+		assert.Equal(t, issuer, m.AuthIssuer)
+		err := m.UpdateAuthID(id, "")
+		assert.Error(t, err)
 	})
 }
 
