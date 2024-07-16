@@ -1,0 +1,1269 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API request bodies and responses are usually JSON-encoded, except for binary data and some of the OAuth2 endpoints. Note that the `Content-Type` header must be set to `application/json` for this, as the request may otherwise fail with error 400.\nWhen clients have a valid access token, e.g. obtained through the `POST /api/v1/session` or `POST /api/v1/oauth/token` endpoint, they can use a standard Bearer Authorization header to authenticate their requests. Submitting the access token with a custom `X-Auth-Token` header is supported as well.",
+        "title": "PhotoPrism API",
+        "contact": {},
+        "version": "v1"
+    },
+    "paths": {
+        "/api/v1/albums": {
+            "post": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/albums/{uid}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Albums"
+                ],
+                "summary": "returns album details as JSON",
+                "operationId": "GetAlbum",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Album UID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Album"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/albums/{uid}/clone": {
+            "post": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/albums/{uid}/like": {
+            "post": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/albums/{uid}/links": {
+            "post": {
+                "tags": [
+                    "Links",
+                    "Albums"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/albums/{uid}/photos": {
+            "post": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/batch/albums/delete": {
+            "post": {
+                "tags": [
+                    "Albums"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/batch/labels/delete": {
+            "post": {
+                "tags": [
+                    "Labels"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/batch/photos/approve": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/batch/photos/archive": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/batch/photos/delete": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/batch/photos/private": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/batch/photos/restore": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/config/options": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/import/{path}": {
+            "post": {
+                "tags": [
+                    "Library"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/index": {
+            "post": {
+                "tags": [
+                    "Library"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/labels/{uid}/like": {
+            "post": {
+                "tags": [
+                    "Links"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/markers": {
+            "post": {
+                "tags": [
+                    "Files"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/oauth/revoke": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/oauth/token": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/photos/{uid}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "returns photo details as JSON",
+                "operationId": "GetPhoto",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Photo UID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Photo"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/photos/{uid}/approve": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/photos/{uid}/files/{file_uid}/unstack": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/photos/{uid}/label": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/photos/{uid}/like": {
+            "post": {
+                "tags": [
+                    "Photos"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/services": {
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/session": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/sessions": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/settings": {
+            "post": {
+                "tags": [
+                    "Settings"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/subjects/{uid}/like": {
+            "post": {
+                "tags": [
+                    "Subjects"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/t/{hash}/{token}/{size}": {
+            "get": {
+                "produces": [
+                    "image/jpeg"
+                ],
+                "tags": [
+                    "Images",
+                    "Files"
+                ],
+                "summary": "returns a thumbnail image with the requested size",
+                "operationId": "GetThumb",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'",
+                        "name": "thumb",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user-specific security token provided with session",
+                        "name": "token",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "thumbnail size",
+                        "name": "size",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{uid}": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{uid}/avatar": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{uid}/passcode": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{uid}/passcode/activate": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{uid}/passcode/confirm": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{uid}/passcode/deactivate": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{uid}/password": {
+            "put": {
+                "tags": [
+                    "Users",
+                    "Authentication"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/users/{uid}/sessions": {
+            "get": {
+                "tags": [
+                    "Users",
+                    "Authentication"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/videos/{hash}/{token}/{format}": {
+            "get": {
+                "produces": [
+                    "video/mp4"
+                ],
+                "tags": [
+                    "Files",
+                    "Videos"
+                ],
+                "summary": "returns a video, optionally limited to a byte range for streaming",
+                "operationId": "GetVideo",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "SHA1 video file hash",
+                        "name": "thumb",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user-specific security token provided with session",
+                        "name": "token",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "video format, e.g. mp4",
+                        "name": "format",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/zip": {
+            "post": {
+                "tags": [
+                    "Download"
+                ],
+                "responses": {}
+            }
+        },
+        "/api/v1/{entity}/{uid}/links": {
+            "post": {
+                "tags": [
+                    "Links"
+                ],
+                "responses": {}
+            }
+        },
+        "/users/{uid}/upload/{token}": {
+            "post": {
+                "tags": [
+                    "Users",
+                    "Files"
+                ],
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "entity.Album": {
+            "type": "object",
+            "properties": {
+                "Caption": {
+                    "type": "string"
+                },
+                "Category": {
+                    "type": "string"
+                },
+                "Country": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "CreatedBy": {
+                    "type": "string"
+                },
+                "Day": {
+                    "type": "integer"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Filter": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Location": {
+                    "type": "string"
+                },
+                "Month": {
+                    "type": "integer"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Order": {
+                    "type": "string"
+                },
+                "ParentUID": {
+                    "type": "string"
+                },
+                "Path": {
+                    "type": "string"
+                },
+                "Private": {
+                    "type": "boolean"
+                },
+                "PublishedAt": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Template": {
+                    "type": "string"
+                },
+                "Thumb": {
+                    "type": "string"
+                },
+                "ThumbSrc": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "Year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.Camera": {
+            "type": "object",
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Cell": {
+            "type": "object",
+            "properties": {
+                "Category": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Place": {
+                    "$ref": "#/definitions/entity.Place"
+                },
+                "Postcode": {
+                    "type": "string"
+                },
+                "Street": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Details": {
+            "type": "object",
+            "properties": {
+                "Artist": {
+                    "type": "string"
+                },
+                "ArtistSrc": {
+                    "type": "string"
+                },
+                "Copyright": {
+                    "type": "string"
+                },
+                "CopyrightSrc": {
+                    "type": "string"
+                },
+                "Keywords": {
+                    "type": "string"
+                },
+                "KeywordsSrc": {
+                    "type": "string"
+                },
+                "License": {
+                    "type": "string"
+                },
+                "LicenseSrc": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "NotesSrc": {
+                    "type": "string"
+                },
+                "Software": {
+                    "type": "string"
+                },
+                "SoftwareSrc": {
+                    "type": "string"
+                },
+                "Subject": {
+                    "type": "string"
+                },
+                "SubjectSrc": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "photoID": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.File": {
+            "type": "object",
+            "properties": {
+                "AspectRatio": {
+                    "type": "number"
+                },
+                "Chroma": {
+                    "type": "integer"
+                },
+                "Codec": {
+                    "type": "string"
+                },
+                "ColorProfile": {
+                    "type": "string"
+                },
+                "Colors": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "CreatedIn": {
+                    "type": "integer"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Diff": {
+                    "type": "integer"
+                },
+                "Duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "Error": {
+                    "type": "string"
+                },
+                "FPS": {
+                    "type": "number"
+                },
+                "FileType": {
+                    "type": "string"
+                },
+                "Frames": {
+                    "type": "integer"
+                },
+                "HDR": {
+                    "type": "boolean"
+                },
+                "Hash": {
+                    "type": "string"
+                },
+                "Height": {
+                    "type": "integer"
+                },
+                "InstanceID": {
+                    "type": "string"
+                },
+                "Luminance": {
+                    "type": "string"
+                },
+                "MainColor": {
+                    "type": "string"
+                },
+                "MediaID": {
+                    "type": "string"
+                },
+                "MediaType": {
+                    "type": "string"
+                },
+                "MediaUTC": {
+                    "type": "integer"
+                },
+                "Mime": {
+                    "type": "string"
+                },
+                "Missing": {
+                    "type": "boolean"
+                },
+                "ModTime": {
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Orientation": {
+                    "type": "integer"
+                },
+                "OrientationSrc": {
+                    "type": "string"
+                },
+                "OriginalName": {
+                    "type": "string"
+                },
+                "PhotoUID": {
+                    "type": "string"
+                },
+                "Portrait": {
+                    "type": "boolean"
+                },
+                "Primary": {
+                    "type": "boolean"
+                },
+                "Projection": {
+                    "type": "string"
+                },
+                "PublishedAt": {
+                    "type": "string"
+                },
+                "Root": {
+                    "type": "string"
+                },
+                "Sidecar": {
+                    "type": "boolean"
+                },
+                "Size": {
+                    "type": "integer"
+                },
+                "Software": {
+                    "type": "string"
+                },
+                "TakenAt": {
+                    "type": "string"
+                },
+                "TimeIndex": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "UpdatedIn": {
+                    "type": "integer"
+                },
+                "Video": {
+                    "type": "boolean"
+                },
+                "Watermark": {
+                    "type": "boolean"
+                },
+                "Width": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.Label": {
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "CustomSlug": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "Priority": {
+                    "type": "integer"
+                },
+                "PublishedAt": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Thumb": {
+                    "type": "string"
+                },
+                "ThumbSrc": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Lens": {
+            "type": "object",
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Photo": {
+            "type": "object",
+            "properties": {
+                "Albums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Album"
+                    }
+                },
+                "Altitude": {
+                    "type": "integer"
+                },
+                "Camera": {
+                    "$ref": "#/definitions/entity.Camera"
+                },
+                "CameraID": {
+                    "type": "integer"
+                },
+                "CameraSerial": {
+                    "type": "string"
+                },
+                "CameraSrc": {
+                    "type": "string"
+                },
+                "Cell": {
+                    "$ref": "#/definitions/entity.Cell"
+                },
+                "CellAccuracy": {
+                    "type": "integer"
+                },
+                "CellID": {
+                    "type": "string"
+                },
+                "Color": {
+                    "type": "integer"
+                },
+                "Country": {
+                    "type": "string"
+                },
+                "CreatedBy": {
+                    "type": "string"
+                },
+                "Day": {
+                    "type": "integer"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "DescriptionSrc": {
+                    "type": "string"
+                },
+                "Details": {
+                    "$ref": "#/definitions/entity.Details"
+                },
+                "DocumentID": {
+                    "type": "string"
+                },
+                "Duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "EstimatedAt": {
+                    "type": "string"
+                },
+                "Exposure": {
+                    "type": "string"
+                },
+                "FNumber": {
+                    "type": "number"
+                },
+                "Faces": {
+                    "type": "integer"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "FocalLength": {
+                    "type": "integer"
+                },
+                "Iso": {
+                    "type": "integer"
+                },
+                "Lat": {
+                    "type": "number"
+                },
+                "Lens": {
+                    "$ref": "#/definitions/entity.Lens"
+                },
+                "LensID": {
+                    "type": "integer"
+                },
+                "Lng": {
+                    "type": "number"
+                },
+                "Month": {
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "OriginalName": {
+                    "type": "string"
+                },
+                "Panorama": {
+                    "type": "boolean"
+                },
+                "Path": {
+                    "type": "string"
+                },
+                "Place": {
+                    "$ref": "#/definitions/entity.Place"
+                },
+                "PlaceID": {
+                    "type": "string"
+                },
+                "PlaceSrc": {
+                    "type": "string"
+                },
+                "Private": {
+                    "type": "boolean"
+                },
+                "PublishedAt": {
+                    "type": "string"
+                },
+                "Quality": {
+                    "type": "integer"
+                },
+                "Resolution": {
+                    "type": "integer"
+                },
+                "Scan": {
+                    "type": "boolean"
+                },
+                "Stack": {
+                    "type": "integer"
+                },
+                "TakenAt": {
+                    "type": "string"
+                },
+                "TakenAtLocal": {
+                    "type": "string"
+                },
+                "TakenSrc": {
+                    "type": "string"
+                },
+                "TimeZone": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "TitleSrc": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "TypeSrc": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "Year": {
+                    "type": "integer"
+                },
+                "checkedAt": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "editedAt": {
+                    "type": "string"
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.File"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.PhotoLabel"
+                    }
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.PhotoLabel": {
+            "type": "object",
+            "properties": {
+                "label": {
+                    "$ref": "#/definitions/entity.Label"
+                },
+                "labelID": {
+                    "type": "integer"
+                },
+                "labelSrc": {
+                    "type": "string"
+                },
+                "photo": {
+                    "$ref": "#/definitions/entity.Photo"
+                },
+                "photoID": {
+                    "type": "integer"
+                },
+                "uncertainty": {
+                    "type": "integer"
+                }
+            }
+        },
+        "entity.Place": {
+            "type": "object",
+            "properties": {
+                "City": {
+                    "type": "string"
+                },
+                "Country": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "District": {
+                    "type": "string"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Keywords": {
+                    "type": "string"
+                },
+                "Label": {
+                    "type": "string"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "PlaceID": {
+                    "type": "string"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "i18n.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "time.Duration": {
+            "type": "integer",
+            "enum": [
+                -9223372036854775808,
+                9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000
+            ],
+            "x-enum-varnames": [
+                "minDuration",
+                "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour"
+            ]
+        }
+    },
+    "externalDocs": {
+        "description": "Learn more ›",
+        "url": "https://docs.photoprism.app/developer-guide/api/"
+    }
+}
