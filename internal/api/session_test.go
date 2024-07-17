@@ -72,7 +72,7 @@ func TestCreateSession(t *testing.T) {
 		CreateSession(router)
 
 		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "admin", "password": "photoprism"}`)
-		t.Logf("Response Body: %s", r.Body.String())
+		//t.Logf("Response Body: %s", r.Body.String())
 		userName := gjson.Get(r.Body.String(), "user.Name").String()
 		assert.Equal(t, "admin", userName)
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -190,6 +190,50 @@ func TestCreateSession(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "error")
 		assert.Equal(t, i18n.Msg(i18n.ErrInvalidCredentials), val.String())
 		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
+	t.Run("2FAPasscodeRequired", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateSession(router)
+
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "2fa", "password": "2fa-123!"}`)
+		userEmail := gjson.Get(r.Body.String(), "user.Email")
+		userName := gjson.Get(r.Body.String(), "user.Name")
+		assert.Equal(t, "", userEmail.String())
+		assert.Equal(t, "", userName.String())
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
+	t.Run("2FAInvalidPasscode", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateSession(router)
+
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "2fa", "password": "2fa-123!", "code": "123456"}`)
+
+		userEmail := gjson.Get(r.Body.String(), "user.Email")
+		userName := gjson.Get(r.Body.String(), "user.Name")
+		assert.Equal(t, "", userEmail.String())
+		assert.Equal(t, "", userName.String())
+		assert.Equal(t, http.StatusUnauthorized, r.Code)
+	})
+	t.Run("2FAUseRecoveryCode", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+
+		CreateSession(router)
+
+		r := PerformRequestWithBody(app, http.MethodPost, "/api/v1/session", `{"username": "2fa", "password": "2fa-123!", "code": "0wg68oc6jgo54"}`)
+
+		userEmail := gjson.Get(r.Body.String(), "user.Email")
+		userName := gjson.Get(r.Body.String(), "user.Name")
+		assert.Equal(t, "2FA@example.com", userEmail.String())
+		assert.Equal(t, "2fa", userName.String())
+		assert.Equal(t, http.StatusOK, r.Code)
 	})
 }
 

@@ -3,11 +3,11 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/photoprism/photoprism/internal/entity"
 	"net/http"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/stretchr/testify/assert"
 )
@@ -64,6 +64,7 @@ func TestUpdateUser(t *testing.T) {
 
 		f := form.User{
 			DisplayName: "Alicia",
+			UploadPath:  "uploads-alice",
 		}
 
 		if userForm, err := json.Marshal(f); err != nil {
@@ -73,6 +74,7 @@ func TestUpdateUser(t *testing.T) {
 				string(userForm), sessId)
 			assert.Equal(t, http.StatusOK, r.Code)
 			assert.Contains(t, r.Body.String(), "\"DisplayName\":\"Alicia\"")
+			assert.Contains(t, r.Body.String(), "\"UploadPath\":\"uploads-alice\"")
 		}
 	})
 
@@ -85,6 +87,8 @@ func TestUpdateUser(t *testing.T) {
 
 		f := form.User{
 			DisplayName: "Bobby",
+			WebDAV:      false,
+			UploadPath:  "uploads-bob",
 		}
 
 		if userForm, err := json.Marshal(f); err != nil {
@@ -94,6 +98,7 @@ func TestUpdateUser(t *testing.T) {
 				string(userForm), sessId)
 			assert.Equal(t, http.StatusOK, r.Code)
 			assert.Contains(t, r.Body.String(), "\"DisplayName\":\"Bobby\"")
+			assert.Contains(t, r.Body.String(), "\"UploadPath\":\"uploads-bob\"")
 		}
 	})
 

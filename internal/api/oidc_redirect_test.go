@@ -32,7 +32,7 @@ func TestOIDCRedirect(t *testing.T) {
 		conf.SetAuthMode(config.AuthModePasswd)
 		defer conf.SetAuthMode(config.AuthModePublic)
 
-		conf.Options().OIDCUri = "https://keycloak.localssl.dev/realms/master"
+		conf.Options().OIDCUri = "http://dummy-oidc:9998"
 		conf.Options().SiteUrl = "https://app.localssl.dev/"
 		conf.Options().OIDCClient = "photoprism-develop"
 		conf.Options().OIDCSecret = "9d8351a0-ca01-4556-9c37-85eb634869b9"
