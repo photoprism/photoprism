@@ -63,6 +63,18 @@ func TestProviderType_IsLocal(t *testing.T) {
 	assert.False(t, ProviderUndefined.IsLocal())
 }
 
+func TestProviderType_IsOIDC(t *testing.T) {
+	assert.False(t, ProviderLocal.IsOIDC())
+	assert.True(t, ProviderOIDC.IsOIDC())
+	assert.False(t, ProviderLDAP.IsOIDC())
+	assert.False(t, ProviderClient.IsOIDC())
+	assert.False(t, ProviderApplication.IsOIDC())
+	assert.False(t, ProviderAccessToken.IsOIDC())
+	assert.False(t, ProviderNone.IsOIDC())
+	assert.False(t, ProviderDefault.IsOIDC())
+	assert.False(t, ProviderUndefined.IsOIDC())
+}
+
 func TestProviderType_SupportsPasscode(t *testing.T) {
 	assert.True(t, ProviderLocal.SupportsPasscodeAuthentication())
 	assert.True(t, ProviderOIDC.SupportsPasscodeAuthentication())
@@ -73,6 +85,30 @@ func TestProviderType_SupportsPasscode(t *testing.T) {
 	assert.False(t, ProviderNone.SupportsPasscodeAuthentication())
 	assert.True(t, ProviderDefault.SupportsPasscodeAuthentication())
 	assert.False(t, ProviderUndefined.SupportsPasscodeAuthentication())
+}
+
+func TestProviderType_RequiresLocalPassword(t *testing.T) {
+	assert.True(t, ProviderLocal.RequiresLocalPassword())
+	assert.False(t, ProviderOIDC.RequiresLocalPassword())
+	assert.False(t, ProviderLDAP.RequiresLocalPassword())
+	assert.False(t, ProviderClient.RequiresLocalPassword())
+	assert.False(t, ProviderApplication.RequiresLocalPassword())
+	assert.False(t, ProviderAccessToken.RequiresLocalPassword())
+	assert.False(t, ProviderNone.RequiresLocalPassword())
+	assert.True(t, ProviderDefault.RequiresLocalPassword())
+	assert.False(t, ProviderUndefined.RequiresLocalPassword())
+}
+
+func TestProviderType_SupportsPasswordAuthentication(t *testing.T) {
+	assert.True(t, ProviderLocal.SupportsPasswordAuthentication())
+	assert.False(t, ProviderOIDC.SupportsPasswordAuthentication())
+	assert.True(t, ProviderLDAP.SupportsPasswordAuthentication())
+	assert.False(t, ProviderClient.SupportsPasswordAuthentication())
+	assert.False(t, ProviderApplication.SupportsPasswordAuthentication())
+	assert.False(t, ProviderAccessToken.SupportsPasswordAuthentication())
+	assert.False(t, ProviderNone.SupportsPasswordAuthentication())
+	assert.True(t, ProviderDefault.SupportsPasswordAuthentication())
+	assert.False(t, ProviderUndefined.SupportsPasswordAuthentication())
 }
 
 func TestProviderType_IsDefault(t *testing.T) {
@@ -126,8 +162,15 @@ func TestProvider(t *testing.T) {
 	assert.Equal(t, ProviderLDAP, Provider("ad"))
 	assert.Equal(t, ProviderDefault, Provider(""))
 	assert.Equal(t, ProviderLink, Provider("url"))
+	assert.Equal(t, ProviderApplication, Provider("app"))
 	assert.Equal(t, ProviderDefault, Provider("default"))
 	assert.Equal(t, ProviderClient, Provider("oauth2"))
+}
+
+func TestProviders(t *testing.T) {
+	types := Providers("pass, oidc")
+	assert.Equal(t, ProviderLocal, types[0])
+	assert.Equal(t, ProviderOIDC, types[1])
 }
 
 func TestProviderType_IsApplication(t *testing.T) {

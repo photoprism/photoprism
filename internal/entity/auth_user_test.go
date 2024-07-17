@@ -1003,16 +1003,42 @@ func TestAddUser(t *testing.T) {
 		err := AddUser(u)
 		assert.Error(t, err)
 	})
-	t.Run("Valid", func(t *testing.T) {
+	t.Run("ValidLocalUser", func(t *testing.T) {
 		u := form.User{
-			UserName:  "thomas2",
-			UserEmail: "thomas2@example.com",
-			Password:  "helloworld",
-			UserRole:  acl.RoleAdmin.String(),
+			UserName:     "thomas2",
+			UserEmail:    "thomas2@example.com",
+			Password:     "helloworld",
+			UserRole:     acl.RoleAdmin.String(),
+			AuthProvider: "local",
 		}
 
 		err := AddUser(u)
 		assert.Nil(t, err)
+	})
+	t.Run("ValidOidcUser", func(t *testing.T) {
+		u := form.User{
+			UserName:     "thomasoidc",
+			UserEmail:    "thomasoidc@example.com",
+			Password:     "helloworld",
+			UserRole:     acl.RoleAdmin.String(),
+			AuthProvider: "oidc",
+			AuthID:       "12378696",
+		}
+
+		err := AddUser(u)
+		assert.Nil(t, err)
+	})
+	t.Run("AuthIDMissing", func(t *testing.T) {
+		u := form.User{
+			UserName:     "thomasoidc",
+			UserEmail:    "thomasoidc@example.com",
+			Password:     "helloworld",
+			UserRole:     acl.RoleAdmin.String(),
+			AuthProvider: "oidc",
+		}
+
+		err := AddUser(u)
+		assert.Error(t, err)
 	})
 }
 
@@ -1348,7 +1374,7 @@ func TestUser_SaveForm(t *testing.T) {
 		assert.Equal(t, "admin@example.com", m.UserEmail)
 		assert.Equal(t, "GoLand", m.Details().UserLocation)
 	})
-	t.Run("Change display name", func(t *testing.T) {
+	t.Run("ChangeDisplayName", func(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
@@ -1370,7 +1396,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "New Name", m.DisplayName)
 	})
-	t.Run("Prevent log out initial admin", func(t *testing.T) {
+	t.Run("PreventDisableLoginForInitialAdmin", func(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
@@ -1391,6 +1417,74 @@ func TestUser_SaveForm(t *testing.T) {
 
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, true, m.CanLogin)
+	})
+	t.Run("PreventInitialAdminFromDisablingOwnLogin", func(t *testing.T) {
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.CanLogin = false
+		err = Admin.SaveForm(frm, &Admin)
+
+		assert.NoError(t, err)
+		assert.Equal(t, true, Admin.CanLogin)
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.Equal(t, true, m.CanLogin)
+	})
+	t.Run("PreventInitialAdminFromSettingAuthProviderNone", func(t *testing.T) {
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.AuthProvider = authn.ProviderNone.String()
+		err = Admin.SaveForm(frm, &Admin)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "local", Admin.AuthProvider)
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.Equal(t, "local", m.AuthProvider)
+	})
+	t.Run("PreventAdminFromSettingAuthProviderNone", func(t *testing.T) {
+		alice := UserFixtures.Get("alice")
+
+		m := FindUser(alice)
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.AuthProvider = authn.ProviderNone.String()
+		err = alice.SaveForm(frm, &alice)
+
+		assert.NoError(t, err)
+		assert.Equal(t, "local", alice.AuthProvider)
+
+		m = FindUserByUID(alice.UserUID)
+		assert.Equal(t, "local", m.AuthProvider)
 	})
 	t.Run("AliceChangeAdminRights", func(t *testing.T) {
 		user := UserFixtures.Get("alice")
@@ -1425,7 +1519,7 @@ func TestUser_SaveForm(t *testing.T) {
 		assert.True(t, m.SuperAdmin)
 		assert.True(t, m.CanLogin)
 	})
-	t.Run("Try to change role of superadmin", func(t *testing.T) {
+	t.Run("TryToChangeRoleOfInitialAdmin", func(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
@@ -1447,7 +1541,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "admin", m.UserRole)
 	})
-	t.Run("Invalid base path", func(t *testing.T) {
+	t.Run("InvalidBasePath", func(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
@@ -1461,7 +1555,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.BasePath = "//*?"
-		err = Admin.SaveForm(frm, nil)
+		err = Admin.SaveForm(frm, &Admin)
 
 		assert.Error(t, err)
 		assert.Equal(t, "invalid base folder", err.Error())
@@ -1469,7 +1563,7 @@ func TestUser_SaveForm(t *testing.T) {
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "", m.BasePath)
 	})
-	t.Run("Invalid upload path", func(t *testing.T) {
+	t.Run("InvalidUploadPath", func(t *testing.T) {
 		m := FindUser(Admin)
 
 		if m == nil {
@@ -1483,7 +1577,7 @@ func TestUser_SaveForm(t *testing.T) {
 		}
 
 		frm.UploadPath = "//*?"
-		err = Admin.SaveForm(frm, nil)
+		err = Admin.SaveForm(frm, &Admin)
 
 		assert.Error(t, err)
 		assert.Equal(t, "invalid upload folder", err.Error())
@@ -1661,7 +1755,7 @@ func TestUser_SetMethod(t *testing.T) {
 
 func TestUser_SetAuthID(t *testing.T) {
 	id := rnd.UUID()
-	issuer := "https://keycloak.localssl.dev/realms/master"
+	issuer := "http://dummy-oidc:9998"
 
 	t.Run("UUID", func(t *testing.T) {
 		m := UserFixtures.Get("guest")
@@ -1680,7 +1774,7 @@ func TestUser_SetAuthID(t *testing.T) {
 
 func TestUser_UpdateAuthID(t *testing.T) {
 	id := rnd.UUID()
-	issuer := "https://keycloak.localssl.dev/realms/master"
+	issuer := "http://dummy-oidc:9998"
 
 	t.Run("UUID", func(t *testing.T) {
 		m := UserFixtures.Get("friend")

@@ -342,6 +342,26 @@ func TestAuthLocal(t *testing.T) {
 			assert.Equal(t, method, authn.MethodUndefined)
 		}
 	})
+	t.Run("None", func(t *testing.T) {
+		m := FindSessionByRefID("sessxkkcaert")
+		u := FindUserByName("no_local_auth")
+
+		// Create test request form.
+		frm := form.Login{
+			Username: "no_local_auth",
+			Password: "None123!",
+		}
+
+		// Create test request context.
+		c, _ := gin.CreateTestContext(httptest.NewRecorder())
+		c.Request = httptest.NewRequest(http.MethodPost, "/api/v1/session", form.AsReader(frm))
+		c.Request.RemoteAddr = "1.2.3.4"
+
+		// Check authentication result.
+		provider, _, err := AuthLocal(u, frm, m, c)
+		assert.Error(t, err)
+		assert.Equal(t, provider, authn.ProviderNone)
+	})
 }
 
 func TestSessionLogIn(t *testing.T) {

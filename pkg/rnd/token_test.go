@@ -85,12 +85,27 @@ func TestBase62(t *testing.T) {
 }
 
 func TestCharset(t *testing.T) {
-	s := Charset(23, CharsetBase62)
-	t.Logf("CharsetBase62 (23 chars): %s", s)
-	assert.NotEmpty(t, s)
-	assert.False(t, IsRefID(s))
-	assert.True(t, InvalidRefID(s))
-	assert.Equal(t, 23, len(s))
+	t.Run("23", func(t *testing.T) {
+		s := Charset(23, CharsetBase62)
+		t.Logf("CharsetBase62 (23 chars): %s", s)
+		assert.NotEmpty(t, s)
+		assert.False(t, IsRefID(s))
+		assert.True(t, InvalidRefID(s))
+		assert.Equal(t, 23, len(s))
+	})
+	t.Run("0", func(t *testing.T) {
+		s := Charset(0, CharsetBase62)
+		t.Logf("CharsetBase62 (23 chars): %s", s)
+		assert.Empty(t, s)
+	})
+	t.Run("5000", func(t *testing.T) {
+		s := Charset(5000, CharsetBase62)
+		t.Logf("CharsetBase62 (23 chars): %s", s)
+		assert.NotEmpty(t, s)
+		assert.False(t, IsRefID(s))
+		assert.True(t, InvalidRefID(s))
+		assert.Equal(t, 4096, len(s))
+	})
 }
 
 func TestRandomToken(t *testing.T) {
