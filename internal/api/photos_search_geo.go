@@ -52,6 +52,8 @@ func SearchGeo(router *gin.RouterGroup) {
 			settings.Features.Review &&
 			acl.Rules.Deny(acl.ResourcePhotos, s.UserRole(), acl.ActionManage) {
 			f.Quality = 3
+		} else {
+			f.Quality = 1
 		}
 
 		// Find matching pictures.
