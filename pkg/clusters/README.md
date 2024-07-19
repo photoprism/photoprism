@@ -98,7 +98,7 @@ finish <- struct{}{}
 fmt.Printf("Clustered data set into %d\n", c.Sizes())
 ```
 
-The Estimator interface defines an operation of guessing an optimal number of clusters in a dataset. As of now the KMeansEstimator is implemented using gap statistic and k-means++ as the clustering algorithm (see https://dl.photoprism.app/pdf/20020106-Estimating_the_Number_of_Clusters.pdf):
+The Estimator interface defines an operation of guessing an optimal number of clusters in a dataset. As of now the KMeansEstimator is implemented using gap statistic and k-means++ as the clustering algorithm (see https://dl.photoprism.app/pdf/publications/20020106-Estimating_the_Number_of_Clusters.pdf):
 
 ```go
 var data [][]float64
