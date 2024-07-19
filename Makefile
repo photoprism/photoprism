@@ -251,10 +251,13 @@ zip-nsfw:
 	(cd assets && zip -r nsfw.zip nsfw -x "*/.*" -x "*/version.txt")
 build-js:
 	(cd frontend &&	env NODE_ENV=production npm run build)
-build-go: build-debug
-build-debug:
+build-go: build-develop
+build-develop:
 	rm -f $(BINARY_NAME)
-	scripts/build.sh debug $(BINARY_NAME)
+	scripts/build.sh develop $(BINARY_NAME)
+build-debug:
+	rm -f "$(BINARY_NAME)-debug"
+	scripts/build.sh debug "$(BINARY_NAME)-debug"
 build-prod:
 	rm -f $(BINARY_NAME)
 	scripts/build.sh prod $(BINARY_NAME)
