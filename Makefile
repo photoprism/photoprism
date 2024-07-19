@@ -95,16 +95,27 @@ logs:
 help:
 	@echo "For build instructions, visit <https://docs.photoprism.app/developer-guide/>."
 docs: swag
-swag:
-	@echo "Generating Swagger API documentation..."
-	swag init --generatedTime --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./assets/docs/api/v1
+swag: swag-json
+swag-json:
+	@echo "Generating ./internal/api/swagger.json..."
+	swag init --ot json --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./internal/api
+swag-yaml:
+	@echo "Generating ./internal/api/swagger.yaml..."
+	swag init --ot yaml --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./internal/api
+swag-clean:
+	@echo "Removing Swagger API documentation..."
+	rm -rf ./assets/docs/api
+	rm -f ./internal/api/swagger.json
+	rm -f ./internal/api/swagger.yaml
 swag-fmt:
-	@echo "Formatting Swagger API documentation..."
+	@echo "Formatting Swagger API annotations..."
 	swag fmt --dir internal/api
 swag-go:
-	docker run --rm --pull always -v ./assets/docs:/assets/docs swaggerapi/swagger-codegen-cli generate -i /assets/docs/api/v1/swagger.json -l go -o /assets/docs/api/v1/go
+	swag init --ot json --generatedTime --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./assets/docs/api/v1
+	docker run --rm -u $(UID) --pull always -v ./assets/docs:/assets/docs swaggerapi/swagger-codegen-cli generate -i /assets/docs/api/v1/swagger.json -l go -o /assets/docs/api/v1/go
 swag-html:
-	docker run --rm --pull always -v ./assets/docs:/assets/docs swaggerapi/swagger-codegen-cli generate -i /assets/docs/api/v1/swagger.json -l html2 -o /assets/docs/api/v1/html
+	swag init --ot json --generatedTime --parseDependency --parseDepth 1 --dir internal/api -g api.go -o ./assets/docs/api/v1
+	docker run --rm -u $(UID) --pull always -v ./assets/docs:/assets/docs swaggerapi/swagger-codegen-cli generate -i /assets/docs/api/v1/swagger.json -l html2 -o /assets/docs/api/v1/html
 notice:
 	@echo "Creating license report for Go dependencies..."
 	go-licenses report ./internal/... ./pkg/... --template=.report.tmpl > NOTICE

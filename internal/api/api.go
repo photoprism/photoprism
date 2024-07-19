@@ -47,4 +47,5 @@ import (
 //	@externalDocs.description	Learn more ›
 //	@externalDocs.url			https://docs.photoprism.app/developer-guide/api/
 //	@version					v1
+//	@host						demo.photoprism.app
 //	@query.collection.format	multi

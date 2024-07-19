@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+const localhost = "localhost"
+
 // BaseUri returns the site base URI for a given resource.
 func (c *Config) BaseUri(res string) string {
 	if c.SiteUrl() == "" {
@@ -68,12 +70,25 @@ func (c *Config) SiteHttps() bool {
 	return strings.HasPrefix(c.options.SiteUrl, "https://")
 }
 
-// SiteDomain returns the public server domain.
+// SiteDomain returns the public hostname without protocol or post.
 func (c *Config) SiteDomain() string {
 	if u, err := url.Parse(c.SiteUrl()); err != nil {
-		return "localhost"
+		return localhost
 	} else {
 		return u.Hostname()
+	}
+}
+
+// SiteHost returns the public hostname and port number in the format "domain:port".
+func (c *Config) SiteHost() string {
+	if u, err := url.Parse(c.SiteUrl()); err != nil {
+		return localhost
+	} else if hostname := u.Hostname(); hostname == "" {
+		return localhost
+	} else if port := u.Port(); port != "" {
+		return fmt.Sprintf("%s:%s", hostname, port)
+	} else {
+		return hostname
 	}
 }
 

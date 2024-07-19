@@ -9,6 +9,71 @@
     "host": "demo.photoprism.app",
     "paths": {
         "/api/v1/albums": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Albums"
+                ],
+                "summary": "finds albums and returns them as JSON",
+                "operationId": "SearchAlbums",
+                "parameters": [
+                    {
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "maximum number of results",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "search result offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "favorites",
+                            "name",
+                            "title",
+                            "added",
+                            "edited"
+                        ],
+                        "type": "string",
+                        "description": "sort order",
+                        "name": "order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/search.Album"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "Albums"
@@ -220,6 +285,79 @@
                 "responses": {}
             }
         },
+        "/api/v1/photos": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "finds pictures and returns them as JSON",
+                "operationId": "SearchPhotos",
+                "parameters": [
+                    {
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "maximum number of files",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "file offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "favorites",
+                            "name",
+                            "title",
+                            "added",
+                            "edited"
+                        ],
+                        "type": "string",
+                        "description": "sort order",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "groups consecutive files that belong to the same photo",
+                        "name": "merged",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/search.Photo"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/photos/{uid}": {
             "get": {
                 "produces": [
@@ -228,7 +366,7 @@
                 "tags": [
                     "Photos"
                 ],
-                "summary": "returns photo details as JSON",
+                "summary": "returns picture details as JSON",
                 "operationId": "GetPhoto",
                 "parameters": [
                     {
@@ -1203,9 +1341,315 @@
                 }
             }
         },
+        "search.Album": {
+            "type": "object",
+            "properties": {
+                "Caption": {
+                    "type": "string"
+                },
+                "Category": {
+                    "type": "string"
+                },
+                "Country": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Day": {
+                    "type": "integer"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Filter": {
+                    "type": "string"
+                },
+                "LinkCount": {
+                    "type": "integer"
+                },
+                "Location": {
+                    "type": "string"
+                },
+                "Month": {
+                    "type": "integer"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Order": {
+                    "type": "string"
+                },
+                "ParentUID": {
+                    "type": "string"
+                },
+                "Path": {
+                    "type": "string"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "Private": {
+                    "type": "boolean"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Template": {
+                    "type": "string"
+                },
+                "Thumb": {
+                    "type": "string"
+                },
+                "ThumbSrc": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "Year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "search.Photo": {
+            "type": "object",
+            "properties": {
+                "Altitude": {
+                    "type": "integer"
+                },
+                "CameraID": {
+                    "description": "Camera",
+                    "type": "integer"
+                },
+                "CameraMake": {
+                    "type": "string"
+                },
+                "CameraModel": {
+                    "type": "string"
+                },
+                "CameraSerial": {
+                    "type": "string"
+                },
+                "CameraSrc": {
+                    "type": "string"
+                },
+                "CellAccuracy": {
+                    "type": "integer"
+                },
+                "CellID": {
+                    "description": "Cell",
+                    "type": "string"
+                },
+                "CheckedAt": {
+                    "type": "string"
+                },
+                "Color": {
+                    "type": "integer"
+                },
+                "Country": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Day": {
+                    "type": "integer"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "DocumentID": {
+                    "type": "string"
+                },
+                "Duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "EditedAt": {
+                    "type": "string"
+                },
+                "Exposure": {
+                    "type": "string"
+                },
+                "FNumber": {
+                    "type": "number"
+                },
+                "Faces": {
+                    "type": "integer"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "FileName": {
+                    "type": "string"
+                },
+                "FileRoot": {
+                    "type": "string"
+                },
+                "FileUID": {
+                    "type": "string"
+                },
+                "Files": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.File"
+                    }
+                },
+                "FocalLength": {
+                    "type": "integer"
+                },
+                "Hash": {
+                    "type": "string"
+                },
+                "Height": {
+                    "type": "integer"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "InstanceID": {
+                    "type": "string"
+                },
+                "Iso": {
+                    "type": "integer"
+                },
+                "Lat": {
+                    "type": "number"
+                },
+                "LensID": {
+                    "description": "Lens",
+                    "type": "integer"
+                },
+                "LensMake": {
+                    "type": "string"
+                },
+                "LensModel": {
+                    "type": "string"
+                },
+                "Lng": {
+                    "type": "number"
+                },
+                "Merged": {
+                    "type": "boolean"
+                },
+                "Month": {
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "OriginalName": {
+                    "type": "string"
+                },
+                "Panorama": {
+                    "type": "boolean"
+                },
+                "Path": {
+                    "type": "string"
+                },
+                "PlaceCity": {
+                    "type": "string"
+                },
+                "PlaceCountry": {
+                    "type": "string"
+                },
+                "PlaceID": {
+                    "type": "string"
+                },
+                "PlaceLabel": {
+                    "type": "string"
+                },
+                "PlaceSrc": {
+                    "type": "string"
+                },
+                "PlaceState": {
+                    "type": "string"
+                },
+                "Portrait": {
+                    "type": "boolean"
+                },
+                "Private": {
+                    "type": "boolean"
+                },
+                "Quality": {
+                    "type": "integer"
+                },
+                "Resolution": {
+                    "type": "integer"
+                },
+                "Scan": {
+                    "type": "boolean"
+                },
+                "Stack": {
+                    "type": "integer"
+                },
+                "TakenAt": {
+                    "type": "string"
+                },
+                "TakenAtLocal": {
+                    "type": "string"
+                },
+                "TakenSrc": {
+                    "type": "string"
+                },
+                "TimeZone": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "TypeSrc": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "Width": {
+                    "type": "integer"
+                },
+                "Year": {
+                    "type": "integer"
+                }
+            }
+        },
         "time.Duration": {
             "type": "integer",
             "enum": [
+                -9223372036854775808,
+                9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
                 -9223372036854775808,
                 9223372036854775807,
                 1,
@@ -1218,8 +1662,6 @@
                 1000,
                 1000000,
                 1000000000,
-                60000000000,
-                3600000000000,
                 1,
                 1000,
                 1000000,
@@ -1242,12 +1684,18 @@
                 "Second",
                 "Minute",
                 "Hour",
+                "minDuration",
+                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
                 "Second",
                 "Minute",
                 "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",

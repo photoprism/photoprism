@@ -4,27 +4,34 @@
 package api
 
 import (
-	"path/filepath"
-
-	"github.com/photoprism/photoprism/pkg/fs"
+	"bytes"
+	_ "embed"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/photoprism/get"
 	files "github.com/swaggo/files"
 	swagger "github.com/swaggo/gin-swagger"
+
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/header"
 )
+
+//go:embed swagger.json
+var swaggerJSON []byte
 
 // GetDocs registers the Swagger API documentation endpoints.
 func GetDocs(router *gin.RouterGroup) {
+	// Get global configuration.
 	conf := get.Config()
-	swaggerFile := filepath.Join(conf.AssetsPath(), "docs/api/v1/swagger.json")
 
-	if !fs.FileExistsNotEmpty(swaggerFile) {
-		return
+	// Serve swagger.json, with the default host "demo.photoprism.app" being replaced by the configured hostname.
+	router.GET("swagger.json", func(c *gin.Context) {
+		c.Data(http.StatusOK, header.ContentTypeJson, bytes.ReplaceAll(swaggerJSON, []byte("demo.photoprism.app"), []byte(conf.SiteHost())))
+	})
+
+	// Serve Swagger UI.
+	if handler := swagger.WrapHandler(files.Handler, swagger.URL(conf.ApiUri()+"/swagger.json")); handler != nil {
+		router.GET("/docs", handler)
+		router.GET("/docs/*any", handler)
 	}
-
-	router.StaticFile("/swagger.json", swaggerFile)
-	handler := swagger.WrapHandler(files.Handler, swagger.URL(conf.ApiUri()+"/swagger.json"))
-	router.GET("/docs", handler)
-	router.GET("/docs/*any", handler)
 }

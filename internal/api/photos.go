@@ -35,9 +35,9 @@ func SaveSidecarYaml(photo *entity.Photo) {
 	_ = photo.SaveSidecarYaml(conf.OriginalsPath(), conf.SidecarPath())
 }
 
-// GetPhoto returns photo details as JSON.
+// GetPhoto returns picture details as JSON.
 //
-//	@Summary	returns photo details as JSON
+//	@Summary	returns picture details as JSON
 //	@Id			GetPhoto
 //	@Tags		Photos
 //	@Produce	json
@@ -64,7 +64,7 @@ func GetPhoto(router *gin.RouterGroup) {
 	})
 }
 
-// UpdatePhoto updates photo details and returns them as JSON.
+// UpdatePhoto updates picture details and returns them as JSON.
 //
 // PUT /api/v1/photos/:uid
 func UpdatePhoto(router *gin.RouterGroup) {
@@ -161,7 +161,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 	})
 }
 
-// GetPhotoYaml returns photo details as YAML.
+// GetPhotoYaml returns picture details as YAML.
 //
 // The request parameters are:
 //

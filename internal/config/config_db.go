@@ -127,7 +127,7 @@ func (c *Config) DatabaseServer() string {
 	if c.DatabaseDriver() == SQLite3 {
 		return ""
 	} else if c.options.DatabaseServer == "" {
-		return "localhost"
+		return localhost
 	}
 
 	return c.options.DatabaseServer
