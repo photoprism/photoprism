@@ -18,6 +18,16 @@ import (
 // UpdateLabel updates label properties.
 //
 // PUT /api/v1/labels/:uid
+//
+//	@Summary	updates label name
+//	@Id		UpdateLabel
+//	@Tags	Labels
+//	@Produce	json
+//	@Success	200	{object}	entity.Label
+//	@Failure	404	{object}	i18n.Response
+//	@Param	uid	path		string	true	"Label UID"
+//	@Param	label body		form.Label true	"Label Name"
+//	@Router	/api/v1/labels/{uid} [put]
 func UpdateLabel(router *gin.RouterGroup) {
 	router.PUT("/labels/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionUpdate)
@@ -55,12 +65,13 @@ func UpdateLabel(router *gin.RouterGroup) {
 
 // LikeLabel flags a label as favorite.
 //
-// The request parameters are:
-//
-//   - uid: string Label UID
-//
-//     @Tags	Links
-//     @Router	/api/v1/labels/{uid}/like [post]
+//	@Summary	sets favorite flag for a label
+//	@Id		LikeLabel
+//	@Tags	Labels
+//	@Produce	json
+//	@Failure	404	{object}	i18n.Response
+//	@Param	uid	path		string	true	"Label UID"
+//	@Router	/api/v1/labels/{uid}/like [post]
 func LikeLabel(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionUpdate)
@@ -96,11 +107,13 @@ func LikeLabel(router *gin.RouterGroup) {
 
 // DislikeLabel removes the favorite flag from a label.
 //
-// The request parameters are:
-//
-//   - uid: string Label UID
-//
-// DELETE /api/v1/labels/:uid/like
+//	@Summary	removes favorite flag from a label
+//	@Id		DislikeLabel
+//	@Tags	Labels
+//	@Produce	json
+//	@Failure	404	{object}	i18n.Response
+//	@Param	uid	path		string	true	"Label UID"
+//	@Router	/api/v1/labels/{uid}/like [delete]
 func DislikeLabel(router *gin.RouterGroup) {
 	router.DELETE("/labels/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionUpdate)

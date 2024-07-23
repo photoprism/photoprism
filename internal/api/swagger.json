@@ -183,10 +183,39 @@
         },
         "/api/v1/batch/labels/delete": {
             "post": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Labels"
                 ],
-                "responses": {}
+                "summary": "deletes multiple labels",
+                "operationId": "BatchLabelsDelete",
+                "parameters": [
+                    {
+                        "description": "Label Selection",
+                        "name": "labels",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Selection"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/batch/photos/approve": {
@@ -210,6 +239,8 @@
                 "tags": [
                     "Photos"
                 ],
+                "summary": "permanently removes multiple or all photos from the archive",
+                "operationId": "BatchPhotosDelete",
                 "responses": {}
             }
         },
@@ -253,12 +284,104 @@
                 "responses": {}
             }
         },
+        "/api/v1/labels/{uid}": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Labels"
+                ],
+                "summary": "updates label name",
+                "operationId": "UpdateLabel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Label UID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Label Name",
+                        "name": "label",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Label"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Label"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/labels/{uid}/like": {
             "post": {
-                "tags": [
-                    "Links"
+                "produces": [
+                    "application/json"
                 ],
-                "responses": {}
+                "tags": [
+                    "Labels"
+                ],
+                "summary": "sets favorite flag for a label",
+                "operationId": "LikeLabel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Label UID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Labels"
+                ],
+                "summary": "removes favorite flag from a label",
+                "operationId": "DislikeLabel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Label UID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/markers": {
@@ -1324,6 +1447,64 @@
                 }
             }
         },
+        "form.Label": {
+            "type": "object",
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "Priority": {
+                    "type": "integer"
+                },
+                "Uncertainty": {
+                    "type": "integer"
+                }
+            }
+        },
+        "form.Selection": {
+            "type": "object",
+            "properties": {
+                "albums": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "all": {
+                    "type": "boolean"
+                },
+                "files": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "labels": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "photos": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "places": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "subjects": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
         "i18n.Response": {
             "type": "object",
             "properties": {
@@ -1658,10 +1839,16 @@
                 1000000000,
                 60000000000,
                 3600000000000,
+                -9223372036854775808,
+                9223372036854775807,
                 1,
                 1000,
                 1000000,
                 1000000000,
+                60000000000,
+                3600000000000,
+                -9223372036854775808,
+                9223372036854775807,
                 1,
                 1000,
                 1000000,
@@ -1672,8 +1859,7 @@
                 1000,
                 1000000,
                 1000000000,
-                60000000000,
-                3600000000000
+                60000000000
             ],
             "x-enum-varnames": [
                 "minDuration",
@@ -1692,10 +1878,16 @@
                 "Second",
                 "Minute",
                 "Hour",
+                "minDuration",
+                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
                 "Second",
+                "Minute",
+                "Hour",
+                "minDuration",
+                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
@@ -1706,8 +1898,7 @@
                 "Microsecond",
                 "Millisecond",
                 "Second",
-                "Minute",
-                "Hour"
+                "Minute"
             ]
         }
     },

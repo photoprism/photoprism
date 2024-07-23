@@ -324,7 +324,13 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 // BatchLabelsDelete deletes multiple labels.
 //
+//	@Summary deletes multiple labels
+//	@Id		BatchLabelsDelete
 //	@Tags Labels
+//	@Produce	json
+//	@Success	200	{object}	i18n.Response
+//	@Failure	400	{object}	i18n.Response
+//	@Param	labels body	form.Selection true	"Label Selection"
 //	@Router	/api/v1/batch/labels/delete [post]
 func BatchLabelsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/labels/delete", func(c *gin.Context) {
@@ -370,8 +376,11 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 
 // BatchPhotosDelete permanently removes multiple photos from the archive.
 //
+//	@Summary permanently removes multiple or all photos from the archive
+//	@Id		BatchPhotosDelete
 //	@Tags Photos
-//	@Router	/api/v1/batch/photos/delete [post]
+//
+// @Router	/api/v1/batch/photos/delete [post]
 func BatchPhotosDelete(router *gin.RouterGroup) {
 	router.POST("/batch/photos/delete", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionDelete)
