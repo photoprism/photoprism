@@ -23,8 +23,16 @@ import (
 
 // BatchPhotosArchive moves multiple photos to the archive.
 //
-//	@Tags Photos
-//	@Router	/api/v1/batch/photos/archive [post]
+//	@Summary	moves multiple photos to the archive
+//	@Id			BatchPhotosArchive
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Failure	500		{object}	i18n.Response
+//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Router		/api/v1/batch/photos/archive [post]
 func BatchPhotosArchive(router *gin.RouterGroup) {
 	router.POST("/batch/photos/archive", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionDelete)
@@ -88,8 +96,16 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 
 // BatchPhotosRestore restores multiple photos from the archive.
 //
-//	@Tags Photos
-//	@Router	/api/v1/batch/photos/restore [post]
+//	@Summary	restores multiple photos from the archive
+//	@Id			BatchPhotosRestore
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Failure	500		{object}	i18n.Response
+//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Router		/api/v1/batch/photos/restore [post]
 func BatchPhotosRestore(router *gin.RouterGroup) {
 	router.POST("/batch/photos/restore", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionDelete)
@@ -151,8 +167,15 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 
 // BatchPhotosApprove approves multiple photos that are currently under review.
 //
-//	@Tags Photos
-//	@Router	/api/v1/batch/photos/approve [post]
+//	@Summary	approves multiple photos that are currently under review
+//	@Id			BatchPhotosApprove
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Router		/api/v1/batch/photos/approve [post]
 func BatchPhotosApprove(router *gin.RouterGroup) {
 	router.POST("batch/photos/approve", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -204,8 +227,15 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 
 // BatchAlbumsDelete permanently removes multiple albums.
 //
-//	@Tags Albums
-//	@Router	/api/v1/batch/albums/delete [post]
+//	@Summary	permanently removes multiple albums
+//	@Id			BatchAlbumsDelete
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Param		albums	body		form.Selection	true	"Album Selection"
+//	@Router		/api/v1/batch/albums/delete [post]
 func BatchAlbumsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/albums/delete", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionDelete)
@@ -269,10 +299,18 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 	})
 }
 
-// BatchPhotosPrivate flags multiple photos as private.
+// BatchPhotosPrivate toggles private state of multiple photos.
 //
-//	@Tags Photos
-//	@Router	/api/v1/batch/photos/private [post]
+//	@Summary	toggles private state of multiple photos
+//	@Id			BatchPhotosPrivate
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Failure	500		{object}	i18n.Response
+//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Router		/api/v1/batch/photos/private [post]
 func BatchPhotosPrivate(router *gin.RouterGroup) {
 	router.POST("/batch/photos/private", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.AccessPrivate)
@@ -324,14 +362,15 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 
 // BatchLabelsDelete deletes multiple labels.
 //
-//	@Summary deletes multiple labels
-//	@Id		BatchLabelsDelete
-//	@Tags Labels
+//	@Summary	deletes multiple labels
+//	@Id			BatchLabelsDelete
+//	@Tags		Labels
 //	@Produce	json
-//	@Success	200	{object}	i18n.Response
-//	@Failure	400	{object}	i18n.Response
-//	@Param	labels body	form.Selection true	"Label Selection"
-//	@Router	/api/v1/batch/labels/delete [post]
+//	@Success	200		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	500		{object}	i18n.Response
+//	@Param		labels	body		form.Selection	true	"Label Selection"
+//	@Router		/api/v1/batch/labels/delete [post]
 func BatchLabelsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/labels/delete", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionDelete)
@@ -376,11 +415,15 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 
 // BatchPhotosDelete permanently removes multiple photos from the archive.
 //
-//	@Summary permanently removes multiple or all photos from the archive
-//	@Id		BatchPhotosDelete
-//	@Tags Photos
-//
-// @Router	/api/v1/batch/photos/delete [post]
+//	@Summary	permanently removes multiple or all photos from the archive
+//	@Id			BatchPhotosDelete
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Param		photos	body		form.Selection	true	"All or Photo Selection"
+//	@Router		/api/v1/batch/photos/delete [post]
 func BatchPhotosDelete(router *gin.RouterGroup) {
 	router.POST("/batch/photos/delete", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionDelete)
