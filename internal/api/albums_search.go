@@ -25,6 +25,7 @@ import (
 //	@Param		count	query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
 //	@Param		offset	query		int		false	"search result offset"		minimum(0)	maximum(100000)
 //	@Param		order	query		string	false	"sort order"				Enums(favorites, name, title, added, edited)
+//	@Param		q		query		string	false	"search query"
 //	@Router		/api/v1/albums [get]
 func SearchAlbums(router *gin.RouterGroup) {
 	router.GET("/albums", func(c *gin.Context) {

@@ -42,6 +42,9 @@ func SaveAlbumYaml(album entity.Album) {
 //	@Produce	json
 //	@Success	200	{object}	entity.Album
 //	@Failure	404	{object}	i18n.Response
+//	@Failure	401	{object}	i18n.Response
+//	@Failure	403	{object}	i18n.Response
+//	@Failure	429	{object}	i18n.Response
 //	@Param		uid	path		string	true	"Album UID"
 //	@Router		/api/v1/albums/{uid} [get]
 func GetAlbum(router *gin.RouterGroup) {
@@ -73,10 +76,20 @@ func GetAlbum(router *gin.RouterGroup) {
 	})
 }
 
-// CreateAlbum adds a new album.
+// CreateAlbum creates a new album.
 //
-//	@Tags	Albums
-//	@Router	/api/v1/albums [post]
+//	@Summary	creates a new album
+//	@Id			CreateAlbum
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200		{object}	entity.Album
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	500		{object}	i18n.Response
+//	@Param		album	body		form.Album	true	"properties of the album to be created (currently supports Title and Favorite)"
+//	@Router		/api/v1/albums [post]
 func CreateAlbum(router *gin.RouterGroup) {
 	router.POST("/albums", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionCreate)
@@ -134,8 +147,20 @@ func CreateAlbum(router *gin.RouterGroup) {
 
 // UpdateAlbum updates album metadata like title and description.
 //
-//	@Tags	Albums
-//	@Router	/api/v1/albums/{uid} [put]
+//	@Summary	updates album metadata like title and description
+//	@Id			UpdateAlbum
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200		{object}	entity.Album
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Failure	500		{object}	i18n.Response
+//	@Param		uid		path		string		true	"Album UID"
+//	@Param		album	body		form.Album	true	"properties to be updated"
+//	@Router		/api/v1/albums/{uid} [put]
 func UpdateAlbum(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -200,8 +225,18 @@ func UpdateAlbum(router *gin.RouterGroup) {
 
 // DeleteAlbum deletes an existing album.
 //
-//	@Tags	Albums
-//	@Router	/api/v1/albums/{uid} [delete]
+//	@Summary	deletes an existing album
+//	@Id			Delete Album
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200	{object}	entity.Album
+//	@Failure	401	{object}	i18n.Response
+//	@Failure	403	{object}	i18n.Response
+//	@Failure	429	{object}	i18n.Response
+//	@Failure	404	{object}	i18n.Response
+//	@Failure	500	{object}	i18n.Response
+//	@Param		uid	path		string	true	"Album UID"
+//	@Router		/api/v1/albums/{uid} [delete]
 func DeleteAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionDelete)
@@ -269,12 +304,17 @@ func DeleteAlbum(router *gin.RouterGroup) {
 
 // LikeAlbum sets the favorite flag for an album.
 //
-// The request parameters are:
-//
-//   - uid: string Album UID
-//
-//     @Tags	Albums
-//     @Router	/api/v1/albums/{uid}/like [post]
+//	@Summary	sets the favorite flag for an album
+//	@Id			LikeAlbum
+//	@Tags		Albums
+//	@Produce	json
+//	@Failure	401	{object}	i18n.Response
+//	@Failure	403	{object}	i18n.Response
+//	@Failure	429	{object}	i18n.Response
+//	@Failure	404	{object}	i18n.Response
+//	@Failure	500	{object}	i18n.Response
+//	@Param		uid	path		string	true	"Album UID"
+//	@Router		/api/v1/albums/{uid}/like [post]
 func LikeAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -318,12 +358,17 @@ func LikeAlbum(router *gin.RouterGroup) {
 
 // DislikeAlbum removes the favorite flag from an album.
 //
-// The request parameters are:
-//
-//   - uid: string Album UID
-//
-//     @Tags	Albums
-//     @Router	/api/v1/albums/{uid}/like [delete]
+//	@Summary	removes the favorite flag from an album
+//	@Id			DislikeAlbum
+//	@Tags		Albums
+//	@Produce	json
+//	@Failure	401	{object}	i18n.Response
+//	@Failure	403	{object}	i18n.Response
+//	@Failure	429	{object}	i18n.Response
+//	@Failure	404	{object}	i18n.Response
+//	@Failure	500	{object}	i18n.Response
+//	@Param		uid	path		string	true	"Album UID"
+//	@Router		/api/v1/albums/{uid}/like [delete]
 func DislikeAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -367,8 +412,19 @@ func DislikeAlbum(router *gin.RouterGroup) {
 
 // CloneAlbums creates a new album containing pictures from other albums.
 //
-//	@Tags	Albums
-//	@Router	/api/v1/albums/{uid}/clone [post]
+//	@Summary	creates a new album containing pictures from other albums
+//	@Id			CloneAlbums
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200		{object}	gin.H
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Param		albums	body		form.Selection	true	"Album Selection"
+//	@Param		uid		path		string			true	"UID of the album to which the pictures are to be added"
+//	@Router		/api/v1/albums/{uid}/clone [post]
 func CloneAlbums(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/clone", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionCreate)
@@ -437,8 +493,19 @@ func CloneAlbums(router *gin.RouterGroup) {
 
 // AddPhotosToAlbum adds photos to an album.
 //
-//	@Tags	Albums
-//	@Router	/api/v1/albums/{uid}/photos [post]
+//	@Summary	adds photos to an album
+//	@Id			AddPhotosToAlbum
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200		{object}	gin.H
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Param		uid		path		string			true	"Album UID"
+//	@Router		/api/v1/albums/{uid}/photos [post]
 func AddPhotosToAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/photos", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)
@@ -540,8 +607,19 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 
 // RemovePhotosFromAlbum removes photos from an album.
 //
-//	@Tags	Albums
-//	@Router	/api/v1/albums/{uid}/photos [delete]
+//	@Summary	removes photos from an album
+//	@Id			RemovePhotosFromAlbum
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200		{object}	gin.H
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
+//	@Failure	404		{object}	i18n.Response
+//	@Failure	400		{object}	i18n.Response
+//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Param		uid		path		string			true	"Album UID"
+//	@Router		/api/v1/albums/{uid}/photos [delete]
 func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/photos", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionUpdate)

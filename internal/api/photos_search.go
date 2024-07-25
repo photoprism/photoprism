@@ -27,6 +27,7 @@ import (
 //	@Param		offset	query		int		false	"file offset"				minimum(0)	maximum(100000)
 //	@Param		order	query		string	false	"sort order"				Enums(favorites, name, title, added, edited)
 //	@Param		merged	query		bool	false	"groups consecutive files that belong to the same photo"
+//	@Param		q	query			string	false	"search query"
 //	@Router		/api/v1/photos [get]
 func SearchPhotos(router *gin.RouterGroup) {
 	// searchPhotos checking authorization and parses the search request.

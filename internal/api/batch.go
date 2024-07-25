@@ -28,6 +28,9 @@ import (
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
 //	@Failure	400		{object}	i18n.Response
 //	@Failure	404		{object}	i18n.Response
 //	@Failure	500		{object}	i18n.Response
@@ -101,6 +104,9 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
 //	@Failure	400		{object}	i18n.Response
 //	@Failure	404		{object}	i18n.Response
 //	@Failure	500		{object}	i18n.Response
@@ -172,6 +178,9 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
 //	@Failure	400		{object}	i18n.Response
 //	@Failure	404		{object}	i18n.Response
 //	@Param		photos	body		form.Selection	true	"Photo Selection"
@@ -232,6 +241,9 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 //	@Tags		Albums
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
 //	@Failure	400		{object}	i18n.Response
 //	@Failure	404		{object}	i18n.Response
 //	@Param		albums	body		form.Selection	true	"Album Selection"
@@ -306,6 +318,9 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
 //	@Failure	400		{object}	i18n.Response
 //	@Failure	404		{object}	i18n.Response
 //	@Failure	500		{object}	i18n.Response
@@ -367,6 +382,9 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 //	@Tags		Labels
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
 //	@Failure	400		{object}	i18n.Response
 //	@Failure	500		{object}	i18n.Response
 //	@Param		labels	body		form.Selection	true	"Label Selection"
@@ -420,6 +438,9 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
+//	@Failure	401		{object}	i18n.Response
+//	@Failure	403		{object}	i18n.Response
+//	@Failure	429		{object}	i18n.Response
 //	@Failure	400		{object}	i18n.Response
 //	@Failure	403		{object}	i18n.Response
 //	@Param		photos	body		form.Selection	true	"All or Photo Selection"
