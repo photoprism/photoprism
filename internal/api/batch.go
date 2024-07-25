@@ -28,12 +28,7 @@ import (
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
-//	@Failure	401		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
-//	@Failure	429		{object}	i18n.Response
-//	@Failure	400		{object}	i18n.Response
-//	@Failure	404		{object}	i18n.Response
-//	@Failure	500		{object}	i18n.Response
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
 //	@Param		photos	body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/archive [post]
 func BatchPhotosArchive(router *gin.RouterGroup) {
@@ -104,12 +99,7 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
-//	@Failure	401		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
-//	@Failure	429		{object}	i18n.Response
-//	@Failure	400		{object}	i18n.Response
-//	@Failure	404		{object}	i18n.Response
-//	@Failure	500		{object}	i18n.Response
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
 //	@Param		photos	body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/restore [post]
 func BatchPhotosRestore(router *gin.RouterGroup) {
@@ -178,11 +168,7 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
-//	@Failure	401		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
-//	@Failure	429		{object}	i18n.Response
-//	@Failure	400		{object}	i18n.Response
-//	@Failure	404		{object}	i18n.Response
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
 //	@Param		photos	body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/approve [post]
 func BatchPhotosApprove(router *gin.RouterGroup) {
@@ -241,11 +227,7 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 //	@Tags		Albums
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
-//	@Failure	401		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
-//	@Failure	429		{object}	i18n.Response
-//	@Failure	400		{object}	i18n.Response
-//	@Failure	404		{object}	i18n.Response
+//	@Failure	400,401,403,404,429	{object}	i18n.Response
 //	@Param		albums	body		form.Selection	true	"Album Selection"
 //	@Router		/api/v1/batch/albums/delete [post]
 func BatchAlbumsDelete(router *gin.RouterGroup) {
@@ -318,12 +300,7 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
-//	@Failure	401		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
-//	@Failure	429		{object}	i18n.Response
-//	@Failure	400		{object}	i18n.Response
-//	@Failure	404		{object}	i18n.Response
-//	@Failure	500		{object}	i18n.Response
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
 //	@Param		photos	body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/private [post]
 func BatchPhotosPrivate(router *gin.RouterGroup) {
@@ -382,11 +359,7 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 //	@Tags		Labels
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
-//	@Failure	401		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
-//	@Failure	429		{object}	i18n.Response
-//	@Failure	400		{object}	i18n.Response
-//	@Failure	500		{object}	i18n.Response
+//	@Failure	400,401,403,429,500	{object}	i18n.Response
 //	@Param		labels	body		form.Selection	true	"Label Selection"
 //	@Router		/api/v1/batch/labels/delete [post]
 func BatchLabelsDelete(router *gin.RouterGroup) {
@@ -438,11 +411,7 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 //	@Tags		Photos
 //	@Produce	json
 //	@Success	200		{object}	i18n.Response
-//	@Failure	401		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
-//	@Failure	429		{object}	i18n.Response
-//	@Failure	400		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
+//	@Failure	400,401,403,429	{object}	i18n.Response
 //	@Param		photos	body		form.Selection	true	"All or Photo Selection"
 //	@Router		/api/v1/batch/photos/delete [post]
 func BatchPhotosDelete(router *gin.RouterGroup) {

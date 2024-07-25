@@ -24,10 +24,7 @@ import (
 //	@Tags		Labels
 //	@Produce	json
 //	@Success	200		{object}	entity.Label
-//	@Failure	404		{object}	i18n.Response
-//	@Failure	401		{object}	i18n.Response
-//	@Failure	403		{object}	i18n.Response
-//	@Failure	429		{object}	i18n.Response
+//	@Failure	401,403,404,429	{object}	i18n.Response
 //	@Param		uid		path		string		true	"Label UID"
 //	@Param		label	body		form.Label	true	"Label Name"
 //	@Router		/api/v1/labels/{uid} [put]
@@ -72,10 +69,7 @@ func UpdateLabel(router *gin.RouterGroup) {
 //	@Id			LikeLabel
 //	@Tags		Labels
 //	@Produce	json
-//	@Failure	404	{object}	i18n.Response
-//	@Failure	401	{object}	i18n.Response
-//	@Failure	403	{object}	i18n.Response
-//	@Failure	429	{object}	i18n.Response
+//	@Failure	401,403,404,429	{object}	i18n.Response
 //	@Param		uid	path		string	true	"Label UID"
 //	@Router		/api/v1/labels/{uid}/like [post]
 func LikeLabel(router *gin.RouterGroup) {
@@ -117,10 +111,7 @@ func LikeLabel(router *gin.RouterGroup) {
 //	@Id			DislikeLabel
 //	@Tags		Labels
 //	@Produce	json
-//	@Failure	404	{object}	i18n.Response
-//	@Failure	401	{object}	i18n.Response
-//	@Failure	403	{object}	i18n.Response
-//	@Failure	429	{object}	i18n.Response
+//	@Failure	401,403,404,429	{object}	i18n.Response
 //	@Param		uid	path		string	true	"Label UID"
 //	@Router		/api/v1/labels/{uid}/like [delete]
 func DislikeLabel(router *gin.RouterGroup) {
