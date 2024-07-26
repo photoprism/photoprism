@@ -60,7 +60,7 @@ require github.com/google/uuid v1.6.0
 
 require github.com/chzyer/readline v1.5.1 // indirect
 
-require github.com/gabriel-vasile/mimetype v1.4.4
+require github.com/gabriel-vasile/mimetype v1.4.5
 
 require (
 	golang.org/x/sync v0.7.0
@@ -79,8 +79,8 @@ require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082
 require golang.org/x/text v0.16.0
 
 require (
-	github.com/davidbyttow/govips/v2 v2.14.0
-	github.com/go-co-op/gocron/v2 v2.10.1
+	github.com/davidbyttow/govips/v2 v2.15.0
+	github.com/go-co-op/gocron/v2 v2.11.0
 	github.com/pquerna/otp v1.4.0
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/swaggo/files v1.0.1
