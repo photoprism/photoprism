@@ -13,7 +13,7 @@
     "lint": "eslint --cache src/ *.js",
     "fmt": "eslint --cache --fix src/ *.js .eslintrc.js",
     "test": "karma start",
-    "upgrade": "npm --depth 10 update && npm audit fix",
+    "upgrade": "npm update && npm audit fix",
     "testcafe": "testcafe",
     "acceptance-local": "testcafe chromium --selector-timeout 5000 -S -s tests/acceptance/screenshots tests/acceptance",
     "gettext-extract": "gettext-extract --output src/locales/translations.pot $(find ${SRC:-src} -type f \\( -iname \\*.vue -o -iname \\*.js \\) -not -path src/common/vm.js)",
