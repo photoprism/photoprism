@@ -271,7 +271,7 @@ volumes:
   go-mod:
     driver: local
 
-## Create shared "photoprism-develop" network for connecting with services in other docker-compose.yml files
+## Create shared "photoprism-develop" network for connecting with services in other compose.yaml files
 networks:
   default:
     name: photoprism-develop
