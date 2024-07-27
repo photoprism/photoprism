@@ -13,7 +13,6 @@
 /coverage.*
 /frontend/tests/acceptance/screenshots
 /tmp/
-.dockerignore
 .idea
 .DS_Store
 .env
@@ -21,3 +20,6 @@
 *.db-journal
 Dockerfile
 docker-compose*
+compose.yaml
+compose.*.yaml
+.dockerignore

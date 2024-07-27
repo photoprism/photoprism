@@ -1,26 +1,46 @@
-# Application files and directories
+# Local build files and directories
 /photoprism
 /photoprism-*
 /photos/originals/*
 /photos/import/*
 /storage/*
 /build/*
-/node_modules
-/pro
-/plus
-/frontend/.eslintcache
-/frontend/node_modules/*
-/frontend/tests/*.html
-/frontend/tests/*.log
-/frontend/tests/screenshots
-/frontend/src/locales/*.mo
 /assets/docs
 /assets/facenet
 /assets/nasnet
 /assets/nsfw
 /assets/static/build/
-/package-lock.json
+/pro
+/plus
+*.exe
+*.dll
+*.so
+*.dylib
+/*.zip
+
+# Test output and coverage files
+*.out
+*.test
+/coverage.*
+frontend/coverage/
+
+# Frontend cache and dependencies
+/node_modules
+/frontend/node_modules/*
+/frontend/tests/*.html
+/frontend/tests/*.log
+/frontend/tests/screenshots
+/frontend/src/locales/*.mo
 /frontend/tests_output
+/frontend/.eslintcache
+/package-lock.json
+
+# Python cache and dependencies
+venv
+.venv
+__pycache__
+
+# Temporary database, log, and config files
 /tmp/
 *.log
 *.pid
@@ -31,23 +51,7 @@
 *.override.yaml
 *.tmp.yaml
 
-# Binaries for programs and plugins
-*.exe
-*.dll
-*.so
-*.dylib
-/*.zip
-# Test binary, build with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-/coverage.*
-
-# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
-.glide/
-
-# Generated files
+# Files generated automatically, e.g. by IDEs and operating systems
 .DS_Store
 .DS_Store?
 ._*
@@ -57,6 +61,7 @@ ehthumbs.db
 Thumbs.db
 .heartbeat
 .idea
+.glide
 *~
 .goutputstream*
 .c9revisions
@@ -64,6 +69,3 @@ Thumbs.db
 .swp
 .tmp
 .env
-
-#Karma Coverage Report
-frontend/coverage/
