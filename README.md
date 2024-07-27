@@ -2,8 +2,8 @@ PhotoPrism: Browse Your Life in Pictures
 ========================================
 
 [![License: AGPL](https://img.shields.io/badge/license-AGPL-blue.svg)](https://docs.photoprism.app/license/agpl/)
-[![Documentation](https://img.shields.io/badge/read-the%20docs-4aa087.svg)](https://docs.photoprism.app/)
-[![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4aa087.svg)](https://link.photoprism.app/chat)
+[![Documentation](https://img.shields.io/badge/read-the%20docs-4d6a91.svg)](https://docs.photoprism.app/)
+[![Community Chat](https://img.shields.io/badge/chat-on%20gitter-4d6a91.svg)](https://link.photoprism.app/chat)
 [![GitHub Discussions](https://img.shields.io/badge/ask-%20on%20github-4d6a91.svg)](https://link.photoprism.app/discussions)
 [![Bluesky Social](https://dl.photoprism.app/img/badges/badge-bluesky.svg)](https://bsky.app/profile/photoprism.app)
 [![Mastodon](https://dl.photoprism.app/img/badges/badge-floss-social.svg)](https://floss.social/@photoprism)
