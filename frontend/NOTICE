@@ -68,7 +68,7 @@ server                            MIT           Francisco Presencia <public@fran
 sockette                          MIT           Luke Edwards luke.edwards05@gmail.com lukeed.com
 style-loader                      MIT           Tobias Koppers @sokra
 svg-url-loader                    MIT           Hovhannes Babayan
-tar                               ISC           GitHub Inc.
+tar                               ISC           Isaac Z. Schlueter
 url-loader                        MIT           Tobias Koppers @sokra
 util                              MIT           Joyent http://www.joyent.com
 vue                               MIT           Evan You

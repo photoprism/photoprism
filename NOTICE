@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2024-07-08
+Date generated: 2024-07-26
 
 ================================================================================
 
@@ -187,8 +187,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/davidbyttow/govips/v2/vips
-Version: v2.14.0
-License: MIT (https://github.com/davidbyttow/govips/blob/v2.14.0/LICENSE)
+Version: v2.15.0
+License: MIT (https://github.com/davidbyttow/govips/blob/v2.15.0/LICENSE)
 
 The MIT License
 
@@ -762,8 +762,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gabriel-vasile/mimetype
-Version: v1.4.4
-License: MIT (https://github.com/gabriel-vasile/mimetype/blob/v1.4.4/LICENSE)
+Version: v1.4.5
+License: MIT (https://github.com/gabriel-vasile/mimetype/blob/v1.4.5/LICENSE)
 
 MIT License
 
@@ -874,8 +874,8 @@ THE SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-co-op/gocron/v2
-Version: v2.8.0
-License: MIT (https://github.com/go-co-op/gocron/blob/v2.8.0/LICENSE)
+Version: v2.11.0
+License: MIT (https://github.com/go-co-op/gocron/blob/v2.11.0/LICENSE)
 
 MIT License
 
@@ -1159,8 +1159,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-logr/logr
-Version: v1.4.1
-License: Apache-2.0 (https://github.com/go-logr/logr/blob/v1.4.1/LICENSE)
+Version: v1.4.2
+License: Apache-2.0 (https://github.com/go-logr/logr/blob/v1.4.2/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -1630,8 +1630,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/go-playground/validator/v10
-Version: v10.20.0
-License: MIT (https://github.com/go-playground/validator/blob/v10.20.0/LICENSE)
+Version: v10.22.0
+License: MIT (https://github.com/go-playground/validator/blob/v10.22.0/LICENSE)
 
 The MIT License (MIT)
 
@@ -2276,8 +2276,8 @@ License: Apache-2.0 (https://github.com/golang/geo/blob/6adc56603217/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/google/open-location-code/go
-Version: v0.0.0-20240614134602-c75343958d10
-License: Apache-2.0 (https://github.com/google/open-location-code/blob/c75343958d10/go/LICENSE)
+Version: v0.0.0-20240712113549-dfcebc905b81
+License: Apache-2.0 (https://github.com/google/open-location-code/blob/dfcebc905b81/go/LICENSE)
 
 
                                  Apache License
@@ -6000,8 +6000,8 @@ License: Apache-2.0 (https://github.com/zitadel/logging/blob/v0.6.0/LICENSE)
 --------------------------------------------------------------------------------
 
 Package: github.com/zitadel/oidc/v3/pkg
-Version: v3.25.1
-License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.25.1/LICENSE)
+Version: v3.26.0
+License: Apache-2.0 (https://github.com/zitadel/oidc/blob/v3.26.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6242,8 +6242,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel
-Version: v1.27.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.27.0/LICENSE)
+Version: v1.28.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.28.0/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6450,8 +6450,8 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/v1.
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/metric
-Version: v1.27.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.27.0/metric/LICENSE)
+Version: v1.28.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/metric/v1.28.0/metric/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -6658,8 +6658,8 @@ License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/met
 --------------------------------------------------------------------------------
 
 Package: go.opentelemetry.io/otel/trace
-Version: v1.27.0
-License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.27.0/trace/LICENSE)
+Version: v1.28.0
+License: Apache-2.0 (https://github.com/open-telemetry/opentelemetry-go/blob/trace/v1.28.0/trace/LICENSE)
 
                                  Apache License
                            Version 2.0, January 2004
@@ -7109,10 +7109,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/exp
-Version: v0.0.0-20240613232115-7f521ea00fb8
-License: BSD-3-Clause (https://cs.opensource.google/go/x/exp/+/7f521ea0:LICENSE)
+Version: v0.0.0-20240719175910-8a7402abbf56
+License: BSD-3-Clause (https://cs.opensource.google/go/x/exp/+/8a7402ab:LICENSE)
 
-Copyright (c) 2009 The Go Authors. All rights reserved.
+Copyright 2009 The Go Authors.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -7124,7 +7124,7 @@ notice, this list of conditions and the following disclaimer.
 copyright notice, this list of conditions and the following disclaimer
 in the documentation and/or other materials provided with the
 distribution.
-   * Neither the name of Google Inc. nor the names of its
+   * Neither the name of Google LLC nor the names of its
 contributors may be used to endorse or promote products derived from
 this software without specific prior written permission.
 
@@ -7814,7 +7814,7 @@ server                            MIT           Francisco Presencia <public@fran
 sockette                          MIT           Luke Edwards luke.edwards05@gmail.com lukeed.com
 style-loader                      MIT           Tobias Koppers @sokra
 svg-url-loader                    MIT           Hovhannes Babayan
-tar                               ISC           GitHub Inc.
+tar                               ISC           Isaac Z. Schlueter
 url-loader                        MIT           Tobias Koppers @sokra
 util                              MIT           Joyent http://www.joyent.com
 vue                               MIT           Evan You
