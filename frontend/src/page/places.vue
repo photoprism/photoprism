@@ -52,7 +52,25 @@ export default {
     },
   },
   data() {
-    const settings = this.$config.values.settings.maps;
+    const filter = {
+      q: this.query(),
+      s: this.scope(),
+    };
+
+    const settings = this.$config.settings();
+
+    if (settings) {
+      const features = settings.features;
+
+      if (features.private) {
+        filter.public = "true";
+      }
+
+      if (features.review && (!this.staticFilter || !("quality" in this.staticFilter))) {
+        filter.quality = "3";
+      }
+    }
+
     return {
       canSearch: this.$config.allow("places", "search"),
       initialized: false,
@@ -73,13 +91,13 @@ export default {
       options: {},
       mapFont: ["Open Sans Regular"],
       result: {},
-      filter: { q: this.query(), s: this.scope() },
+      filter: filter,
       lastFilter: {},
       cluster: {},
       showCluster: false,
       config: this.$config.values,
-      settings: settings,
-      animate: settings.animate,
+      settings: settings.maps,
+      animate: settings.maps.animate,
     };
   },
   watch: {
