@@ -19,14 +19,17 @@ import (
 
 // GetVideo returns a video, optionally limited to a byte range for streaming.
 //
-//	@Summary	returns a video, optionally limited to a byte range for streaming
-//	@Id			GetVideo
-//	@Produce	video/mp4
-//	@Tags		Files, Videos
-//	@Param		thumb path string true "SHA1 video file hash"
-//	@Param		token path string true "user-specific security token provided with session"
-//	@Param		format path string true "video format, e.g. mp4"
-//	@Router		/api/v1/videos/{hash}/{token}/{format} [get]
+//		@Summary	returns a video, optionally limited to a byte range for streaming
+//		@Description Fore more information see:
+//	 @Description - https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri
+//		@Id			GetVideo
+//		@Produce	video/mp4
+//		@Tags		Files, Videos
+//		@Failure	403	{object}	i18n.Response
+//		@Param		thumb path string true "SHA1 video file hash"
+//		@Param		token path string true "user-specific security token provided with session"
+//		@Param		format path string true "video format, e.g. mp4"
+//		@Router		/api/v1/videos/{hash}/{token}/{format} [get]
 func GetVideo(router *gin.RouterGroup) {
 	router.GET("/videos/:hash/:token/:format", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

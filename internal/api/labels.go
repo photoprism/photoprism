@@ -23,10 +23,10 @@ import (
 //	@Id			UpdateLabel
 //	@Tags		Labels
 //	@Produce	json
-//	@Success	200		{object}	entity.Label
+//	@Success	200				{object}	entity.Label
 //	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		uid		path		string		true	"Label UID"
-//	@Param		label	body		form.Label	true	"Label Name"
+//	@Param		uid				path		string		true	"Label UID"
+//	@Param		label			body		form.Label	true	"Label Name"
 //	@Router		/api/v1/labels/{uid} [put]
 func UpdateLabel(router *gin.RouterGroup) {
 	router.PUT("/labels/:uid", func(c *gin.Context) {
@@ -70,7 +70,7 @@ func UpdateLabel(router *gin.RouterGroup) {
 //	@Tags		Labels
 //	@Produce	json
 //	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		uid	path		string	true	"Label UID"
+//	@Param		uid				path		string	true	"Label UID"
 //	@Router		/api/v1/labels/{uid}/like [post]
 func LikeLabel(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/like", func(c *gin.Context) {
@@ -112,7 +112,7 @@ func LikeLabel(router *gin.RouterGroup) {
 //	@Tags		Labels
 //	@Produce	json
 //	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		uid	path		string	true	"Label UID"
+//	@Param		uid				path		string	true	"Label UID"
 //	@Router		/api/v1/labels/{uid}/like [delete]
 func DislikeLabel(router *gin.RouterGroup) {
 	router.DELETE("/labels/:uid/like", func(c *gin.Context) {

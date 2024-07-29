@@ -40,9 +40,9 @@ func SaveAlbumYaml(album entity.Album) {
 //	@Id			GetAlbum
 //	@Tags		Albums
 //	@Produce	json
-//	@Success	200	{object}	entity.Album
+//	@Success	200				{object}	entity.Album
 //	@Failure	401,403,404,429	{object}	i18n.Response
-//	@Param		uid	path		string	true	"Album UID"
+//	@Param		uid				path		string	true	"Album UID"
 //	@Router		/api/v1/albums/{uid} [get]
 func GetAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid", func(c *gin.Context) {
@@ -79,9 +79,9 @@ func GetAlbum(router *gin.RouterGroup) {
 //	@Id			CreateAlbum
 //	@Tags		Albums
 //	@Produce	json
-//	@Success	200		{object}	entity.Album
+//	@Success	200					{object}	entity.Album
 //	@Failure	400,401,403,429,500	{object}	i18n.Response
-//	@Param		album	body		form.Album	true	"properties of the album to be created (currently supports Title and Favorite)"
+//	@Param		album				body		form.Album	true	"properties of the album to be created (currently supports Title and Favorite)"
 //	@Router		/api/v1/albums [post]
 func CreateAlbum(router *gin.RouterGroup) {
 	router.POST("/albums", func(c *gin.Context) {
@@ -144,10 +144,10 @@ func CreateAlbum(router *gin.RouterGroup) {
 //	@Id			UpdateAlbum
 //	@Tags		Albums
 //	@Produce	json
-//	@Success	200		{object}	entity.Album
+//	@Success	200						{object}	entity.Album
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid		path		string		true	"Album UID"
-//	@Param		album	body		form.Album	true	"properties to be updated"
+//	@Param		uid						path		string		true	"Album UID"
+//	@Param		album					body		form.Album	true	"properties to be updated"
 //	@Router		/api/v1/albums/{uid} [put]
 func UpdateAlbum(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid", func(c *gin.Context) {
@@ -218,7 +218,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 //	@Tags		Albums
 //	@Produce	json
 //	@Failure	401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid	path		string	true	"Album UID"
+//	@Param		uid					path		string	true	"Album UID"
 //	@Router		/api/v1/albums/{uid} [delete]
 func DeleteAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid", func(c *gin.Context) {
@@ -292,7 +292,7 @@ func DeleteAlbum(router *gin.RouterGroup) {
 //	@Tags		Albums
 //	@Produce	json
 //	@Failure	401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid	path		string	true	"Album UID"
+//	@Param		uid					path		string	true	"Album UID"
 //	@Router		/api/v1/albums/{uid}/like [post]
 func LikeAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/like", func(c *gin.Context) {
@@ -342,7 +342,7 @@ func LikeAlbum(router *gin.RouterGroup) {
 //	@Tags		Albums
 //	@Produce	json
 //	@Failure	401,403,404,429,500	{object}	i18n.Response
-//	@Param		uid	path		string	true	"Album UID"
+//	@Param		uid					path		string	true	"Album UID"
 //	@Router		/api/v1/albums/{uid}/like [delete]
 func DislikeAlbum(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/like", func(c *gin.Context) {
@@ -391,10 +391,10 @@ func DislikeAlbum(router *gin.RouterGroup) {
 //	@Id			CloneAlbums
 //	@Tags		Albums
 //	@Produce	json
-//	@Success	200		{object}	gin.H
+//	@Success	200					{object}	gin.H
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
-//	@Param		albums	body		form.Selection	true	"Album Selection"
-//	@Param		uid		path		string			true	"UID of the album to which the pictures are to be added"
+//	@Param		albums				body		form.Selection	true	"Album Selection"
+//	@Param		uid					path		string			true	"UID of the album to which the pictures are to be added"
 //	@Router		/api/v1/albums/{uid}/clone [post]
 func CloneAlbums(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/clone", func(c *gin.Context) {
@@ -468,10 +468,10 @@ func CloneAlbums(router *gin.RouterGroup) {
 //	@Id			AddPhotosToAlbum
 //	@Tags		Albums
 //	@Produce	json
-//	@Success	200		{object}	gin.H
+//	@Success	200					{object}	gin.H
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
-//	@Param		photos	body		form.Selection	true	"Photo Selection"
-//	@Param		uid		path		string			true	"Album UID"
+//	@Param		photos				body		form.Selection	true	"Photo Selection"
+//	@Param		uid					path		string			true	"Album UID"
 //	@Router		/api/v1/albums/{uid}/photos [post]
 func AddPhotosToAlbum(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/photos", func(c *gin.Context) {

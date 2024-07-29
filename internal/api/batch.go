@@ -27,9 +27,9 @@ import (
 //	@Id			BatchPhotosArchive
 //	@Tags		Photos
 //	@Produce	json
-//	@Success	200		{object}	i18n.Response
+//	@Success	200						{object}	i18n.Response
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Param		photos					body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/archive [post]
 func BatchPhotosArchive(router *gin.RouterGroup) {
 	router.POST("/batch/photos/archive", func(c *gin.Context) {
@@ -98,9 +98,9 @@ func BatchPhotosArchive(router *gin.RouterGroup) {
 //	@Id			BatchPhotosRestore
 //	@Tags		Photos
 //	@Produce	json
-//	@Success	200		{object}	i18n.Response
+//	@Success	200						{object}	i18n.Response
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Param		photos					body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/restore [post]
 func BatchPhotosRestore(router *gin.RouterGroup) {
 	router.POST("/batch/photos/restore", func(c *gin.Context) {
@@ -167,9 +167,9 @@ func BatchPhotosRestore(router *gin.RouterGroup) {
 //	@Id			BatchPhotosApprove
 //	@Tags		Photos
 //	@Produce	json
-//	@Success	200		{object}	i18n.Response
+//	@Success	200					{object}	i18n.Response
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
-//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Param		photos				body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/approve [post]
 func BatchPhotosApprove(router *gin.RouterGroup) {
 	router.POST("batch/photos/approve", func(c *gin.Context) {
@@ -226,9 +226,9 @@ func BatchPhotosApprove(router *gin.RouterGroup) {
 //	@Id			BatchAlbumsDelete
 //	@Tags		Albums
 //	@Produce	json
-//	@Success	200		{object}	i18n.Response
+//	@Success	200					{object}	i18n.Response
 //	@Failure	400,401,403,404,429	{object}	i18n.Response
-//	@Param		albums	body		form.Selection	true	"Album Selection"
+//	@Param		albums				body		form.Selection	true	"Album Selection"
 //	@Router		/api/v1/batch/albums/delete [post]
 func BatchAlbumsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/albums/delete", func(c *gin.Context) {
@@ -299,9 +299,9 @@ func BatchAlbumsDelete(router *gin.RouterGroup) {
 //	@Id			BatchPhotosPrivate
 //	@Tags		Photos
 //	@Produce	json
-//	@Success	200		{object}	i18n.Response
+//	@Success	200						{object}	i18n.Response
 //	@Failure	400,401,403,404,429,500	{object}	i18n.Response
-//	@Param		photos	body		form.Selection	true	"Photo Selection"
+//	@Param		photos					body		form.Selection	true	"Photo Selection"
 //	@Router		/api/v1/batch/photos/private [post]
 func BatchPhotosPrivate(router *gin.RouterGroup) {
 	router.POST("/batch/photos/private", func(c *gin.Context) {
@@ -358,9 +358,9 @@ func BatchPhotosPrivate(router *gin.RouterGroup) {
 //	@Id			BatchLabelsDelete
 //	@Tags		Labels
 //	@Produce	json
-//	@Success	200		{object}	i18n.Response
+//	@Success	200					{object}	i18n.Response
 //	@Failure	400,401,403,429,500	{object}	i18n.Response
-//	@Param		labels	body		form.Selection	true	"Label Selection"
+//	@Param		labels				body		form.Selection	true	"Label Selection"
 //	@Router		/api/v1/batch/labels/delete [post]
 func BatchLabelsDelete(router *gin.RouterGroup) {
 	router.POST("/batch/labels/delete", func(c *gin.Context) {
@@ -410,9 +410,9 @@ func BatchLabelsDelete(router *gin.RouterGroup) {
 //	@Id			BatchPhotosDelete
 //	@Tags		Photos
 //	@Produce	json
-//	@Success	200		{object}	i18n.Response
+//	@Success	200				{object}	i18n.Response
 //	@Failure	400,401,403,429	{object}	i18n.Response
-//	@Param		photos	body		form.Selection	true	"All or Photo Selection"
+//	@Param		photos			body		form.Selection	true	"All or Photo Selection"
 //	@Router		/api/v1/batch/photos/delete [post]
 func BatchPhotosDelete(router *gin.RouterGroup) {
 	router.POST("/batch/photos/delete", func(c *gin.Context) {
