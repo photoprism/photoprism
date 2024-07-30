@@ -1,11 +1,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
+"Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: 2024-07-08 13:45+0000\n"
-"PO-Revision-Date: 2024-07-05 09:24+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"PO-Revision-Date: 2024-07-30 06:22+0000\n"
+"Last-Translator: Cotignac <jan-eric@myhrgren.se>\n"
 "Language-Team: Swedish <https://translate.photoprism.app/projects/photoprism/"
 "backend/sv/>\n"
 "Language: sv\n"
@@ -50,11 +49,11 @@ msgstr "Filen är för stor"
 
 #: messages.go:109
 msgid "Unsupported"
-msgstr "Ej supporterad"
+msgstr "Stöds ej"
 
 #: messages.go:110
 msgid "Unsupported type"
-msgstr "Ej supporterad typ"
+msgstr "Denna typ stöds ej"
 
 #: messages.go:111
 msgid "Unsupported format"
