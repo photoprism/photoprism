@@ -19,7 +19,14 @@ import (
 
 // DownloadAlbum streams the album contents as zip archive.
 //
-// GET /api/v1/albums/:uid/dl
+//	@Summary	streams the album contents as zip archiv
+//	@Id			DownloadAlbum
+//	@Tags		Images, Albums
+//	@Produce	application/zip
+//	@Failure	403,404,500	{object}	i18n.Response
+//	@Success	200			{file}		application/zip
+//	@Param		uid			path		string	true	"Album UID"
+//	@Router		/api/v1/albums/{uid}/dl [get]
 func DownloadAlbum(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {

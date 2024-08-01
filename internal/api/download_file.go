@@ -35,11 +35,14 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 
 // GetDownload returns the raw file data.
 //
-// The request parameters are:
-//
-//   - hash: string The file hash as returned by the files/photos endpoint
-//
-// GET /api/v1/dl/:hash
+//	@Summary	returns the raw file data
+//	@Id			GetDownload
+//	@Tags		Images, Files
+//	@Produce	application/octet-stream
+//	@Failure	403,404	{file}	image/svg+xml
+//	@Success	200		{file}	application/octet-stream
+//	@Param		hash	path	string	true	"File Hash"
+//	@Router		/api/v1/dl/{hash} [get]
 func GetDownload(router *gin.RouterGroup) {
 	router.GET("/dl/:hash", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
