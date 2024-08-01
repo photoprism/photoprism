@@ -18,16 +18,19 @@ import (
 
 // GetThumb returns a thumbnail image matching the file hash, crop area, and type.
 //
-//		@Summary	returns a thumbnail image with the requested size
-//		@Description Fore more information see:
-//	 	@Description - https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri
-//		@Id			GetThumb
-//		@Produce	image/jpeg
-//		@Tags		Images, Files
-//		@Param		thumb path string true "SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
-//		@Param		token path string true "user-specific security token provided with session"
-//		@Param		size path string true "thumbnail size"
-//		@Router		/api/v1/t/{hash}/{token}/{size} [get]
+//	@Summary		returns a thumbnail image with the requested size
+//	@Description	Fore more information see:
+//	@Description	- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri
+//	@Id				GetThumb
+//	@Produce		image/jpeg
+//	@Tags			Images, Files
+//	@Failure		403		{file}	image/svg+xml
+//	@Failure		200		{file}	image/svg+xml
+//	@Success		200		{file}	image/jpg
+//	@Param			thumb	path	string	true	"SHA1 file hash, optionally with a crop area suffixed, e.g. '-016014058037'"
+//	@Param			token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Param			size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_7680)
+//	@Router			/api/v1/t/{thumb}/{token}/{size} [get]
 func GetThumb(router *gin.RouterGroup) {
 	router.GET("/t/:thumb/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

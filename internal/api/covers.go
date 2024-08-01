@@ -23,13 +23,18 @@ const (
 
 // AlbumCover returns an album cover image.
 //
-// The request parameters are:
-//
-//   - uid: string album uid
-//   - token: string security token (see config)
-//   - size: string thumb type, see photoprism.ThumbnailTypes
-//
-// GET /api/v1/albums/:uid/t/:token/:size
+//	@Summary	returns an album cover image
+//	@Id			AlbumCover
+//	@Produce	image/jpeg
+//	@Produce	image/svg+xml
+//	@Tags		Images, Albums
+//	@Failure	403		{file}	image/svg+xml
+//	@Failure	200		{file}	image/svg+xml
+//	@Success	200		{file}	image/jpg
+//	@Param		uid		path	string	true	"Album UID"
+//	@Param		token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Param		size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_7680)
+//	@Router		/api/v1/albums/{uid}/t/{token}/{size} [get]
 func AlbumCover(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -136,13 +141,18 @@ func AlbumCover(router *gin.RouterGroup) {
 
 // LabelCover returns a label cover image.
 //
-// The request parameters are:
-//
-//   - uid: string label uid
-//   - token: string security token (see config)
-//   - size: string thumb type, see photoprism.ThumbnailTypes
-//
-// GET /api/v1/labels/:uid/t/:token/:size
+//	@Summary	returns a label cover image
+//	@Id			LabelCover
+//	@Produce	image/jpeg
+//	@Produce	image/svg+xml
+//	@Tags		Images, Labels
+//	@Failure	403		{file}	image/svg+xml
+//	@Failure	200		{file}	image/svg+xml
+//	@Success	200		{file}	image/jpg
+//	@Param		uid		path	string	true	"Label UID"
+//	@Param		token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Param		size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_7680)
+//	@Router		/api/v1/labels/{uid}/t/{token}/{size} [get]
 func LabelCover(router *gin.RouterGroup) {
 	router.GET("/labels/:uid/t/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {

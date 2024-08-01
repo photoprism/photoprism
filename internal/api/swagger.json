@@ -631,6 +631,75 @@
                 }
             }
         },
+        "/api/v1/albums/{uid}/t/{token}/{size}": {
+            "get": {
+                "produces": [
+                    "image/jpeg",
+                    "image/svg+xml"
+                ],
+                "tags": [
+                    "Images",
+                    "Albums"
+                ],
+                "summary": "returns an album cover image",
+                "operationId": "AlbumCover",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Album UID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user-specific security token provided with session or 'public' when running PhotoPrism in public mode",
+                        "name": "token",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "tile_50",
+                            "tile_100",
+                            "left_224",
+                            "right_224",
+                            "tile_224",
+                            "tile_500",
+                            "fit_720",
+                            "tile_1080",
+                            "fit_1280",
+                            "fit_1600",
+                            "fit_1920",
+                            "fit_2048",
+                            "fit_2560",
+                            "fit_3840",
+                            "fit_4096",
+                            "fit_7680"
+                        ],
+                        "type": "string",
+                        "description": "thumbnail size",
+                        "name": "size",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/batch/albums/delete": {
             "post": {
                 "produces": [
@@ -1070,12 +1139,110 @@
                 }
             }
         },
+        "/api/v1/config": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Config"
+                ],
+                "summary": "returns the client configuration values as JSON",
+                "operationId": "GetClientConfig",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/config.ClientConfig"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/config/options": {
-            "post": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Settings"
                 ],
-                "responses": {}
+                "summary": "returns backend config options",
+                "operationId": "GetConfigOptions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/config.Options"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "updates backend config options",
+                "operationId": "SaveConfigOptions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/config.Options"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/import/{path}": {
@@ -1248,6 +1415,75 @@
                 }
             }
         },
+        "/api/v1/labels/{uid}/t/{token}/{size}": {
+            "get": {
+                "produces": [
+                    "image/jpeg",
+                    "image/svg+xml"
+                ],
+                "tags": [
+                    "Images",
+                    "Labels"
+                ],
+                "summary": "returns a label cover image",
+                "operationId": "LabelCover",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Label UID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user-specific security token provided with session or 'public' when running PhotoPrism in public mode",
+                        "name": "token",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "tile_50",
+                            "tile_100",
+                            "left_224",
+                            "right_224",
+                            "tile_224",
+                            "tile_500",
+                            "fit_720",
+                            "tile_1080",
+                            "fit_1280",
+                            "fit_1600",
+                            "fit_1920",
+                            "fit_2048",
+                            "fit_2560",
+                            "fit_3840",
+                            "fit_4096",
+                            "fit_7680"
+                        ],
+                        "type": "string",
+                        "description": "thumbnail size",
+                        "name": "size",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/markers": {
             "post": {
                 "tags": [
@@ -1324,6 +1560,18 @@
                         "type": "string",
                         "description": "search query",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "photo path",
+                        "name": "path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is type video",
+                        "name": "video",
                         "in": "query"
                     }
                 ],
@@ -1450,11 +1698,89 @@
             }
         },
         "/api/v1/settings": {
-            "post": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Settings"
                 ],
-                "responses": {}
+                "summary": "returns the user app settings as JSON",
+                "operationId": "GetSettings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/customize.Settings"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "saves the user app settings",
+                "operationId": "SaveSettings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/customize.Settings"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/subjects/{uid}/like": {
@@ -1465,7 +1791,7 @@
                 "responses": {}
             }
         },
-        "/api/v1/t/{hash}/{token}/{size}": {
+        "/api/v1/t/{thumb}/{token}/{size}": {
             "get": {
                 "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
                 "produces": [
@@ -1487,12 +1813,30 @@
                     },
                     {
                         "type": "string",
-                        "description": "user-specific security token provided with session",
+                        "description": "user-specific security token provided with session or 'public' when running PhotoPrism in public mode",
                         "name": "token",
                         "in": "path",
                         "required": true
                     },
                     {
+                        "enum": [
+                            "tile_50",
+                            "tile_100",
+                            "left_224",
+                            "right_224",
+                            "tile_224",
+                            "tile_500",
+                            "fit_720",
+                            "tile_1080",
+                            "fit_1280",
+                            "fit_1600",
+                            "fit_1920",
+                            "fit_2048",
+                            "fit_2560",
+                            "fit_3840",
+                            "fit_4096",
+                            "fit_7680"
+                        ],
                         "type": "string",
                         "description": "thumbnail size",
                         "name": "size",
@@ -1500,7 +1844,20 @@
                         "required": true
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/users/{uid}": {
@@ -1641,6 +1998,983 @@
         }
     },
     "definitions": {
+        "acl.Grant": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "boolean"
+            }
+        },
+        "acl.Grants": {
+            "type": "object",
+            "additionalProperties": {
+                "$ref": "#/definitions/acl.Grant"
+            }
+        },
+        "config.CategoryLabel": {
+            "type": "object",
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.ClientConfig": {
+            "type": "object",
+            "properties": {
+                "about": {
+                    "type": "string"
+                },
+                "acl": {
+                    "$ref": "#/definitions/acl.Grants"
+                },
+                "albumCategories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "albums": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Album"
+                    }
+                },
+                "apiUri": {
+                    "type": "string"
+                },
+                "appColor": {
+                    "type": "string"
+                },
+                "appIcon": {
+                    "type": "string"
+                },
+                "appMode": {
+                    "type": "string"
+                },
+                "appName": {
+                    "type": "string"
+                },
+                "authMode": {
+                    "type": "string"
+                },
+                "baseUri": {
+                    "type": "string"
+                },
+                "cameras": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Camera"
+                    }
+                },
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/config.CategoryLabel"
+                    }
+                },
+                "clip": {
+                    "type": "integer"
+                },
+                "colors": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "contentUri": {
+                    "type": "string"
+                },
+                "copyright": {
+                    "type": "string"
+                },
+                "count": {
+                    "$ref": "#/definitions/config.ClientCounts"
+                },
+                "countries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Country"
+                    }
+                },
+                "cssUri": {
+                    "type": "string"
+                },
+                "customer": {
+                    "type": "string"
+                },
+                "debug": {
+                    "type": "boolean"
+                },
+                "demo": {
+                    "type": "boolean"
+                },
+                "disable": {
+                    "$ref": "#/definitions/config.ClientDisable"
+                },
+                "downloadToken": {
+                    "type": "string"
+                },
+                "edition": {
+                    "type": "string"
+                },
+                "experimental": {
+                    "type": "boolean"
+                },
+                "ext": {
+                    "$ref": "#/definitions/config.Map"
+                },
+                "flags": {
+                    "type": "string"
+                },
+                "jsUri": {
+                    "type": "string"
+                },
+                "legalInfo": {
+                    "type": "string"
+                },
+                "legalUrl": {
+                    "type": "string"
+                },
+                "lenses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Lens"
+                    }
+                },
+                "loginUri": {
+                    "type": "string"
+                },
+                "manifestUri": {
+                    "type": "string"
+                },
+                "mapKey": {
+                    "type": "string"
+                },
+                "membership": {
+                    "type": "string"
+                },
+                "mode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "passwordLength": {
+                    "type": "integer"
+                },
+                "passwordResetUri": {
+                    "type": "string"
+                },
+                "people": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Person"
+                    }
+                },
+                "pos": {
+                    "$ref": "#/definitions/config.ClientPosition"
+                },
+                "previewToken": {
+                    "type": "string"
+                },
+                "public": {
+                    "type": "boolean"
+                },
+                "readonly": {
+                    "type": "boolean"
+                },
+                "registerUri": {
+                    "type": "string"
+                },
+                "restart": {
+                    "type": "boolean"
+                },
+                "server": {
+                    "$ref": "#/definitions/env.Resources"
+                },
+                "settings": {
+                    "$ref": "#/definitions/customize.Settings"
+                },
+                "siteAuthor": {
+                    "type": "string"
+                },
+                "siteCaption": {
+                    "type": "string"
+                },
+                "siteDescription": {
+                    "type": "string"
+                },
+                "siteDomain": {
+                    "type": "string"
+                },
+                "sitePreview": {
+                    "type": "string"
+                },
+                "siteTitle": {
+                    "type": "string"
+                },
+                "siteUrl": {
+                    "type": "string"
+                },
+                "sponsor": {
+                    "type": "boolean"
+                },
+                "staticUri": {
+                    "type": "string"
+                },
+                "test": {
+                    "type": "boolean"
+                },
+                "thumbs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/config.ThumbSize"
+                    }
+                },
+                "tier": {
+                    "type": "integer"
+                },
+                "trace": {
+                    "type": "boolean"
+                },
+                "uploadNSFW": {
+                    "type": "boolean"
+                },
+                "usersPath": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                },
+                "videoUri": {
+                    "type": "string"
+                },
+                "wallpaperUri": {
+                    "type": "string"
+                },
+                "years": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "config.ClientCounts": {
+            "type": "object",
+            "properties": {
+                "albums": {
+                    "type": "integer"
+                },
+                "all": {
+                    "type": "integer"
+                },
+                "archived": {
+                    "type": "integer"
+                },
+                "cameras": {
+                    "type": "integer"
+                },
+                "countries": {
+                    "type": "integer"
+                },
+                "favorites": {
+                    "type": "integer"
+                },
+                "files": {
+                    "type": "integer"
+                },
+                "folders": {
+                    "type": "integer"
+                },
+                "hidden": {
+                    "type": "integer"
+                },
+                "labelMaxPhotos": {
+                    "type": "integer"
+                },
+                "labels": {
+                    "type": "integer"
+                },
+                "lenses": {
+                    "type": "integer"
+                },
+                "live": {
+                    "type": "integer"
+                },
+                "moments": {
+                    "type": "integer"
+                },
+                "months": {
+                    "type": "integer"
+                },
+                "people": {
+                    "type": "integer"
+                },
+                "photos": {
+                    "type": "integer"
+                },
+                "places": {
+                    "type": "integer"
+                },
+                "private": {
+                    "type": "integer"
+                },
+                "private_albums": {
+                    "type": "integer"
+                },
+                "private_folders": {
+                    "type": "integer"
+                },
+                "private_moments": {
+                    "type": "integer"
+                },
+                "private_months": {
+                    "type": "integer"
+                },
+                "private_states": {
+                    "type": "integer"
+                },
+                "review": {
+                    "type": "integer"
+                },
+                "states": {
+                    "type": "integer"
+                },
+                "stories": {
+                    "type": "integer"
+                },
+                "videos": {
+                    "type": "integer"
+                }
+            }
+        },
+        "config.ClientDisable": {
+            "type": "object",
+            "properties": {
+                "backups": {
+                    "type": "boolean"
+                },
+                "classification": {
+                    "type": "boolean"
+                },
+                "darktable": {
+                    "type": "boolean"
+                },
+                "exiftool": {
+                    "type": "boolean"
+                },
+                "faces": {
+                    "type": "boolean"
+                },
+                "ffmpeg": {
+                    "type": "boolean"
+                },
+                "heifconvert": {
+                    "type": "boolean"
+                },
+                "imagemagick": {
+                    "type": "boolean"
+                },
+                "jpegxl": {
+                    "type": "boolean"
+                },
+                "places": {
+                    "type": "boolean"
+                },
+                "raw": {
+                    "type": "boolean"
+                },
+                "rawtherapee": {
+                    "type": "boolean"
+                },
+                "restart": {
+                    "type": "boolean"
+                },
+                "settings": {
+                    "type": "boolean"
+                },
+                "sips": {
+                    "type": "boolean"
+                },
+                "tensorflow": {
+                    "type": "boolean"
+                },
+                "vectors": {
+                    "type": "boolean"
+                },
+                "vips": {
+                    "type": "boolean"
+                },
+                "webdav": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "config.ClientPosition": {
+            "type": "object",
+            "properties": {
+                "cid": {
+                    "type": "string"
+                },
+                "lat": {
+                    "type": "number"
+                },
+                "lng": {
+                    "type": "number"
+                },
+                "uid": {
+                    "type": "string"
+                },
+                "utc": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.Map": {
+            "type": "object",
+            "additionalProperties": true
+        },
+        "config.Options": {
+            "type": "object",
+            "properties": {
+                "AppColor": {
+                    "type": "string"
+                },
+                "AppIcon": {
+                    "type": "string"
+                },
+                "AppMode": {
+                    "type": "string"
+                },
+                "AppName": {
+                    "type": "string"
+                },
+                "AutoImport": {
+                    "type": "integer"
+                },
+                "AutoIndex": {
+                    "type": "integer"
+                },
+                "BackupAlbums": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "BackupDatabase": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "BackupRetain": {
+                    "type": "integer"
+                },
+                "BackupSchedule": {
+                    "type": "string"
+                },
+                "CdnUrl": {
+                    "type": "string"
+                },
+                "CdnVideo": {
+                    "type": "boolean"
+                },
+                "Debug": {
+                    "type": "boolean"
+                },
+                "DefaultLocale": {
+                    "type": "string"
+                },
+                "DefaultTLS": {
+                    "type": "boolean"
+                },
+                "DefaultTheme": {
+                    "type": "string"
+                },
+                "DefaultTimezone": {
+                    "type": "string"
+                },
+                "DetectNSFW": {
+                    "type": "boolean"
+                },
+                "DisableBackups": {
+                    "type": "boolean"
+                },
+                "DisableClassification": {
+                    "type": "boolean"
+                },
+                "DisableDarktable": {
+                    "type": "boolean"
+                },
+                "DisableExifTool": {
+                    "type": "boolean"
+                },
+                "DisableFFmpeg": {
+                    "type": "boolean"
+                },
+                "DisableFaces": {
+                    "type": "boolean"
+                },
+                "DisableHeifConvert": {
+                    "type": "boolean"
+                },
+                "DisableImageMagick": {
+                    "type": "boolean"
+                },
+                "DisableJpegXL": {
+                    "type": "boolean"
+                },
+                "DisableOIDC": {
+                    "type": "boolean"
+                },
+                "DisablePlaces": {
+                    "type": "boolean"
+                },
+                "DisableRaw": {
+                    "type": "boolean"
+                },
+                "DisableRawTherapee": {
+                    "type": "boolean"
+                },
+                "DisableSips": {
+                    "type": "boolean"
+                },
+                "DisableTLS": {
+                    "type": "boolean"
+                },
+                "DisableTensorFlow": {
+                    "type": "boolean"
+                },
+                "DisableVectors": {
+                    "type": "boolean"
+                },
+                "DisableVips": {
+                    "type": "boolean"
+                },
+                "DisableWebDAV": {
+                    "type": "boolean"
+                },
+                "ExifBruteForce": {
+                    "type": "boolean"
+                },
+                "Experimental": {
+                    "type": "boolean"
+                },
+                "FFmpegBitrate": {
+                    "type": "integer"
+                },
+                "FFmpegEncoder": {
+                    "type": "string"
+                },
+                "FFmpegMapAudio": {
+                    "type": "string"
+                },
+                "FFmpegMapVideo": {
+                    "type": "string"
+                },
+                "FFmpegSize": {
+                    "type": "integer"
+                },
+                "HttpCacheMaxAge": {
+                    "type": "integer"
+                },
+                "HttpCachePublic": {
+                    "type": "boolean"
+                },
+                "HttpVideoMaxAge": {
+                    "type": "integer"
+                },
+                "HttpsProxy": {
+                    "type": "string"
+                },
+                "HttpsProxyInsecure": {
+                    "type": "boolean"
+                },
+                "IndexSchedule": {
+                    "type": "string"
+                },
+                "IndexWorkers": {
+                    "type": "integer"
+                },
+                "JpegQuality": {
+                    "type": "integer"
+                },
+                "JpegSize": {
+                    "type": "integer"
+                },
+                "LegalInfo": {
+                    "type": "string"
+                },
+                "LegalUrl": {
+                    "type": "string"
+                },
+                "OIDCIcon": {
+                    "type": "string"
+                },
+                "OIDCProvider": {
+                    "type": "string"
+                },
+                "OIDCRedirect": {
+                    "type": "boolean"
+                },
+                "OIDCRegister": {
+                    "type": "boolean"
+                },
+                "OriginalsLimit": {
+                    "type": "integer"
+                },
+                "PngSize": {
+                    "type": "integer"
+                },
+                "Prod": {
+                    "type": "boolean"
+                },
+                "RawPresets": {
+                    "type": "boolean"
+                },
+                "ReadOnly": {
+                    "type": "boolean"
+                },
+                "ResolutionLimit": {
+                    "type": "integer"
+                },
+                "SidecarYaml": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "SiteAuthor": {
+                    "type": "string"
+                },
+                "SiteCaption": {
+                    "type": "string"
+                },
+                "SiteDescription": {
+                    "type": "string"
+                },
+                "SitePreview": {
+                    "type": "string"
+                },
+                "SiteTitle": {
+                    "type": "string"
+                },
+                "SiteUrl": {
+                    "type": "string"
+                },
+                "TLSCert": {
+                    "type": "string"
+                },
+                "TLSEmail": {
+                    "type": "string"
+                },
+                "TLSKey": {
+                    "type": "string"
+                },
+                "Test": {
+                    "type": "boolean"
+                },
+                "ThumbColor": {
+                    "type": "string"
+                },
+                "ThumbFilter": {
+                    "type": "string"
+                },
+                "ThumbLibrary": {
+                    "type": "string"
+                },
+                "ThumbSize": {
+                    "type": "integer"
+                },
+                "ThumbSizeUncached": {
+                    "type": "integer"
+                },
+                "ThumbUncached": {
+                    "type": "boolean"
+                },
+                "Trace": {
+                    "type": "boolean"
+                },
+                "WakeupInterval": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "WallpaperUri": {
+                    "type": "string"
+                }
+            }
+        },
+        "config.ThumbSize": {
+            "type": "object",
+            "properties": {
+                "h": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "string"
+                },
+                "usage": {
+                    "type": "string"
+                },
+                "w": {
+                    "type": "integer"
+                }
+            }
+        },
+        "customize.DownloadName": {
+            "type": "string",
+            "enum": [
+                "file",
+                "original",
+                "share"
+            ],
+            "x-enum-varnames": [
+                "DownloadNameFile",
+                "DownloadNameOriginal",
+                "DownloadNameShare"
+            ]
+        },
+        "customize.DownloadSettings": {
+            "type": "object",
+            "properties": {
+                "disabled": {
+                    "type": "boolean"
+                },
+                "mediaRaw": {
+                    "type": "boolean"
+                },
+                "mediaSidecar": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "$ref": "#/definitions/customize.DownloadName"
+                },
+                "originals": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "customize.FeatureSettings": {
+            "type": "object",
+            "properties": {
+                "account": {
+                    "type": "boolean"
+                },
+                "albums": {
+                    "type": "boolean"
+                },
+                "archive": {
+                    "type": "boolean"
+                },
+                "delete": {
+                    "type": "boolean"
+                },
+                "download": {
+                    "type": "boolean"
+                },
+                "edit": {
+                    "type": "boolean"
+                },
+                "estimates": {
+                    "type": "boolean"
+                },
+                "favorites": {
+                    "type": "boolean"
+                },
+                "files": {
+                    "type": "boolean"
+                },
+                "folders": {
+                    "type": "boolean"
+                },
+                "import": {
+                    "type": "boolean"
+                },
+                "labels": {
+                    "type": "boolean"
+                },
+                "library": {
+                    "type": "boolean"
+                },
+                "logs": {
+                    "type": "boolean"
+                },
+                "moments": {
+                    "type": "boolean"
+                },
+                "people": {
+                    "type": "boolean"
+                },
+                "places": {
+                    "type": "boolean"
+                },
+                "private": {
+                    "type": "boolean"
+                },
+                "ratings": {
+                    "type": "boolean"
+                },
+                "reactions": {
+                    "type": "boolean"
+                },
+                "review": {
+                    "type": "boolean"
+                },
+                "search": {
+                    "type": "boolean"
+                },
+                "services": {
+                    "type": "boolean"
+                },
+                "settings": {
+                    "type": "boolean"
+                },
+                "share": {
+                    "type": "boolean"
+                },
+                "upload": {
+                    "type": "boolean"
+                },
+                "videos": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "customize.ImportSettings": {
+            "type": "object",
+            "properties": {
+                "move": {
+                    "type": "boolean"
+                },
+                "path": {
+                    "type": "string"
+                }
+            }
+        },
+        "customize.IndexSettings": {
+            "type": "object",
+            "properties": {
+                "convert": {
+                    "type": "boolean"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "rescan": {
+                    "type": "boolean"
+                },
+                "skipArchived": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "customize.MapsSettings": {
+            "type": "object",
+            "properties": {
+                "animate": {
+                    "type": "integer"
+                },
+                "style": {
+                    "type": "string"
+                }
+            }
+        },
+        "customize.SearchSettings": {
+            "type": "object",
+            "properties": {
+                "batchSize": {
+                    "type": "integer"
+                }
+            }
+        },
+        "customize.Settings": {
+            "type": "object",
+            "properties": {
+                "download": {
+                    "$ref": "#/definitions/customize.DownloadSettings"
+                },
+                "features": {
+                    "$ref": "#/definitions/customize.FeatureSettings"
+                },
+                "import": {
+                    "$ref": "#/definitions/customize.ImportSettings"
+                },
+                "index": {
+                    "$ref": "#/definitions/customize.IndexSettings"
+                },
+                "maps": {
+                    "$ref": "#/definitions/customize.MapsSettings"
+                },
+                "search": {
+                    "$ref": "#/definitions/customize.SearchSettings"
+                },
+                "share": {
+                    "$ref": "#/definitions/customize.ShareSettings"
+                },
+                "stack": {
+                    "$ref": "#/definitions/customize.StackSettings"
+                },
+                "templates": {
+                    "$ref": "#/definitions/customize.TemplateSettings"
+                },
+                "ui": {
+                    "$ref": "#/definitions/customize.UISettings"
+                }
+            }
+        },
+        "customize.ShareSettings": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "customize.StackSettings": {
+            "type": "object",
+            "properties": {
+                "meta": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "boolean"
+                },
+                "uuid": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "customize.TemplateSettings": {
+            "type": "object",
+            "properties": {
+                "default": {
+                    "type": "string"
+                }
+            }
+        },
+        "customize.UISettings": {
+            "type": "object",
+            "properties": {
+                "language": {
+                    "type": "string"
+                },
+                "scrollbar": {
+                    "type": "boolean"
+                },
+                "theme": {
+                    "type": "string"
+                },
+                "timeZone": {
+                    "type": "string"
+                },
+                "zoom": {
+                    "type": "boolean"
+                }
+            }
+        },
         "entity.Album": {
             "type": "object",
             "properties": {
@@ -1787,6 +3121,26 @@
                     "type": "string"
                 },
                 "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Country": {
+            "type": "object",
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Slug": {
                     "type": "string"
                 }
             }
@@ -2075,6 +3429,26 @@
                 }
             }
         },
+        "entity.Person": {
+            "type": "object",
+            "properties": {
+                "Alias": {
+                    "type": "string"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Hidden": {
+                    "type": "boolean"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.Photo": {
             "type": "object",
             "properties": {
@@ -2330,6 +3704,37 @@
                 },
                 "UpdatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "env.Resources": {
+            "type": "object",
+            "properties": {
+                "cores": {
+                    "type": "integer"
+                },
+                "memory": {
+                    "type": "object",
+                    "properties": {
+                        "free": {
+                            "type": "integer"
+                        },
+                        "info": {
+                            "type": "string"
+                        },
+                        "reserved": {
+                            "type": "integer"
+                        },
+                        "total": {
+                            "type": "integer"
+                        },
+                        "used": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "routines": {
+                    "type": "integer"
                 }
             }
         },
@@ -2771,24 +4176,10 @@
                 1000000000,
                 60000000000,
                 3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
                 1,
                 1000,
                 1000000,
                 1000000000,
-                60000000000,
-                3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
                 1,
                 1000,
                 1000000,
@@ -2811,24 +4202,10 @@
                 "Second",
                 "Minute",
                 "Hour",
-                "minDuration",
-                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
                 "Second",
-                "Minute",
-                "Hour",
-                "minDuration",
-                "maxDuration",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
-                "minDuration",
-                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
