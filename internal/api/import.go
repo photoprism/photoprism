@@ -116,7 +116,7 @@ func StartImport(router *gin.RouterGroup) {
 		imported := imp.Start(opt)
 
 		// Delete empty import directory.
-		if srcFolder != "" && importPath != conf.ImportPath() && fs.DirIsEmpty(importPath) {
+		if conf.DeleteImportDirectory() && srcFolder != "" && importPath != conf.ImportPath() && fs.DirIsEmpty(importPath) {
 			if err := os.Remove(importPath); err != nil {
 				log.Errorf("import: failed to delete empty folder %s: %s", clean.Log(importPath), err)
 			} else {
