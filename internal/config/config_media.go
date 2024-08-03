@@ -1,5 +1,9 @@
 package config
 
+import (
+	"github.com/photoprism/photoprism/pkg/media"
+)
+
 // VectorEnabled checks if indexing and conversion of vector graphics is enabled.
 func (c *Config) VectorEnabled() bool {
 	return !c.DisableVectors()
@@ -49,4 +53,35 @@ func (c *Config) DisableJpegXL() bool {
 	}
 
 	return c.options.DisableJpegXL
+}
+
+// HeifConvertBin returns the name of the "heif-dec" executable ("heif-convert" in earlier libheif versions).
+// see https://github.com/photoprism/photoprism/issues/4439
+func (c *Config) HeifConvertBin() string {
+	return findBin(c.options.HeifConvertBin, "heif-dec", "heif-convert")
+}
+
+// HeifConvertOrientation returns the Exif orientation of images generated with libheif (auto, strip, keep).
+func (c *Config) HeifConvertOrientation() media.Orientation {
+	return media.ParseOrientation(c.options.HeifConvertOrientation, media.ResetOrientation)
+}
+
+// HeifConvertEnabled checks if heif-convert is enabled for HEIF conversion.
+func (c *Config) HeifConvertEnabled() bool {
+	return !c.DisableHeifConvert()
+}
+
+// SipsEnabled checks if SIPS is enabled for RAW conversion.
+func (c *Config) SipsEnabled() bool {
+	return !c.DisableSips()
+}
+
+// SipsBin returns the SIPS executable file name.
+func (c *Config) SipsBin() string {
+	return findBin(c.options.SipsBin, "sips")
+}
+
+// SipsExclude returns the file extensions no not be used with Sips.
+func (c *Config) SipsExclude() string {
+	return c.options.SipsExclude
 }

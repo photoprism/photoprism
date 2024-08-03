@@ -62,54 +62,6 @@ func TestConfig_DarktableEnabled(t *testing.T) {
 	assert.False(t, c.DarktableEnabled())
 }
 
-func TestConfig_SipsBin(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	bin := c.SipsBin()
-	assert.Equal(t, "", bin)
-}
-
-func TestConfig_SipsEnabled(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.NotEqual(t, c.DisableSips(), c.SipsEnabled())
-}
-
-func TestConfig_SipsExclude(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, "avif, avifs, thm", c.SipsExclude())
-}
-
-func TestConfig_HeifConvertBin(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	bin := c.HeifConvertBin()
-	assert.Contains(t, bin, "/bin/heif-convert")
-}
-
-func TestConfig_HeifConvertEnabled(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.True(t, c.HeifConvertEnabled())
-
-	c.options.DisableHeifConvert = true
-	assert.False(t, c.HeifConvertEnabled())
-}
-
-func TestConfig_RsvgConvertBin(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	bin := c.RsvgConvertBin()
-	assert.Contains(t, bin, "/bin/rsvg-convert")
-}
-
-func TestConfig_RsvgConvertEnabled(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.True(t, c.RsvgConvertEnabled())
-
-	c.options.DisableVectors = true
-	assert.False(t, c.RsvgConvertEnabled())
-}
-
 func TestConfig_CreateDarktableCachePath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	path, err := c.CreateDarktableCachePath()

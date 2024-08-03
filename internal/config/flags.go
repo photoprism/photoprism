@@ -813,8 +813,15 @@ var Flags = CliFlags{
 		Flag: cli.StringFlag{
 			Name:   "heifconvert-bin",
 			Usage:  "libheif HEIC image conversion `COMMAND`",
-			Value:  "heif-convert",
+			Value:  "",
 			EnvVar: EnvVar("HEIFCONVERT_BIN"),
+		},
+		DocDefault: "heif-dec"}, {
+		Flag: cli.StringFlag{
+			Name:   "heifconvert-orientation",
+			Usage:  "Exif `ORIENTATION` of images generated with libheif (reset, keep)",
+			Value:  "reset",
+			EnvVar: EnvVar("HEIFCONVERT_ORIENTATION"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "download-token",

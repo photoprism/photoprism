@@ -16,7 +16,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/list"
 )
 
-// Convert represents a converter that can convert RAW/HEIF images to JPEG.
+// Convert represents a file format conversion worker.
 type Convert struct {
 	conf               *config.Config
 	cmdMutex           sync.Mutex
@@ -26,7 +26,7 @@ type Convert struct {
 	imageMagickExclude fs.ExtList
 }
 
-// NewConvert returns a new converter and expects the config as argument.
+// NewConvert returns a new file format conversion worker.
 func NewConvert(conf *config.Config) *Convert {
 	c := &Convert{
 		conf:               conf,
@@ -39,8 +39,8 @@ func NewConvert(conf *config.Config) *Convert {
 	return c
 }
 
-// Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
+// Start converts all files in the specified directory based on the current configuration.
+func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
@@ -58,7 +58,7 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 
 	// Start a fixed number of goroutines to convert files.
 	var wg sync.WaitGroup
-	var numWorkers = c.conf.IndexWorkers()
+	var numWorkers = w.conf.IndexWorkers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
@@ -117,7 +117,7 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 			jobs <- ConvertJob{
 				force:   force,
 				file:    f,
-				convert: c,
+				convert: w,
 			}
 
 			return nil

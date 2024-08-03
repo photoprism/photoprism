@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -16,10 +15,11 @@ import (
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
 )
 
 // ToImage converts a media file to a directly supported image file format.
-func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
+func (w *Convert) ToImage(f *MediaFile, force bool) (result *MediaFile, err error) {
 	if f == nil {
 		return nil, fmt.Errorf("convert: file is nil - you may have found a bug")
 	}
@@ -36,12 +36,10 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 		return f, nil
 	}
 
-	var err error
-
-	imageName := fs.ImagePNG.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.PPHiddenPathname}, c.conf.OriginalsPath(), false)
+	imageName := fs.ImagePNG.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
 
 	if imageName == "" {
-		imageName = fs.ImageJPEG.FindFirst(f.FileName(), []string{c.conf.SidecarPath(), fs.PPHiddenPathname}, c.conf.OriginalsPath(), false)
+		imageName = fs.ImageJPEG.FindFirst(f.FileName(), []string{w.conf.SidecarPath(), fs.PPHiddenPathname}, w.conf.OriginalsPath(), false)
 	}
 
 	mediaFile, err := NewMediaFile(imageName)
@@ -58,19 +56,20 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 			return mediaFile, nil
 		}
 	} else if f.IsVector() {
-		if !c.conf.VectorEnabled() {
+		if !w.conf.VectorEnabled() {
 			return nil, fmt.Errorf("convert: vector graphics support disabled (%s)", clean.Log(f.RootRelName()))
 		}
-		imageName, _ = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtPNG)
+		imageName, _ = fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtPNG)
 	} else {
-		imageName, _ = fs.FileName(f.FileName(), c.conf.SidecarPath(), c.conf.OriginalsPath(), fs.ExtJPEG)
+		imageName, _ = fs.FileName(f.FileName(), w.conf.SidecarPath(), w.conf.OriginalsPath(), fs.ExtJPEG)
 	}
 
-	if !c.conf.SidecarWritable() {
+	if !w.conf.SidecarWritable() {
 		return nil, fmt.Errorf("convert: disabled in read-only mode (%s)", clean.Log(f.RootRelName()))
 	}
 
-	fileName := f.RelName(c.conf.OriginalsPath())
+	fileName := f.RelName(w.conf.OriginalsPath())
+	fileOrientation := media.KeepOrientation
 	xmpName := fs.SidecarXMP.Find(f.FileName(), false)
 
 	// Publish file conversion event.
@@ -109,16 +108,16 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 	}
 
 	// Run external commands for other formats.
-	var cmds []*exec.Cmd
+	var cmds ConvertCommands
 	var useMutex bool
 	var expectedMime string
 
 	switch fs.LowerExt(imageName) {
 	case fs.ExtPNG:
-		cmds, useMutex, err = c.PngConvertCommands(f, imageName)
+		cmds, useMutex, err = w.PngConvertCommands(f, imageName)
 		expectedMime = fs.MimeTypePNG
 	case fs.ExtJPEG:
-		cmds, useMutex, err = c.JpegConvertCommands(f, imageName, xmpName)
+		cmds, useMutex, err = w.JpegConvertCommands(f, imageName, xmpName)
 		expectedMime = fs.MimeTypeJPEG
 	default:
 		return nil, fmt.Errorf("convert: unspported target format %s (%s)", fs.LowerExt(imageName), clean.Log(f.RootRelName()))
@@ -133,25 +132,27 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 	if useMutex {
 		// Make sure only one command is executed at a time.
 		// See https://photo.stackexchange.com/questions/105969/darktable-cli-fails-because-of-locked-database-file
-		c.cmdMutex.Lock()
-		defer c.cmdMutex.Unlock()
+		w.cmdMutex.Lock()
+		defer w.cmdMutex.Unlock()
 	}
 
-	if fs.FileExists(imageName) {
+	if fs.FileExistsNotEmpty(imageName) {
 		return NewMediaFile(imageName)
 	}
 
 	// Try compatible converters.
-	for _, cmd := range cmds {
+	for _, c := range cmds {
 		// Fetch command output.
 		var out bytes.Buffer
 		var stderr bytes.Buffer
+
+		cmd := c.Cmd
 		cmd.Stdout = &out
 		cmd.Stderr = &stderr
-		cmd.Env = []string{
-			fmt.Sprintf("HOME=%s", c.conf.CmdCachePath()),
-			fmt.Sprintf("LD_LIBRARY_PATH=%s", c.conf.CmdLibPath()),
-		}
+		cmd.Env = append(cmd.Env, []string{
+			fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()),
+			fmt.Sprintf("LD_LIBRARY_PATH=%s", w.conf.CmdLibPath()),
+		}...)
 
 		log.Infof("convert: converting %s to %s (%s)", clean.Log(filepath.Base(fileName)), clean.Log(filepath.Base(imageName)), filepath.Base(cmd.Path))
 
@@ -168,6 +169,7 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 			continue
 		} else if fs.FileExistsNotEmpty(imageName) {
 			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
+			fileOrientation = c.Orientation
 			break
 		} else if res := out.Bytes(); len(res) < 512 || !mimetype.Detect(res).Is(expectedMime) {
 			continue
@@ -175,6 +177,8 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 			log.Tracef("convert: %s (%s)", err, filepath.Base(cmd.Path))
 			continue
 		} else {
+			log.Infof("convert: %s created in %s (%s)", clean.Log(filepath.Base(imageName)), time.Since(start), filepath.Base(cmd.Path))
+			fileOrientation = c.Orientation
 			break
 		}
 	}
@@ -184,5 +188,18 @@ func (c *Convert) ToImage(f *MediaFile, force bool) (*MediaFile, error) {
 		return nil, err
 	}
 
-	return NewMediaFile(imageName)
+	// Create a MediaFile instance from the generated file.
+	if result, err = NewMediaFile(imageName); err != nil {
+		return result, err
+	}
+
+	// Change the Exif orientation of the generated file if required.
+	switch fileOrientation {
+	case media.ResetOrientation:
+		if err = result.ChangeOrientation(1); err != nil {
+			log.Warnf("convert: %s in %s (change orientation)", err, clean.Log(result.RootRelName()))
+		}
+	}
+
+	return result, nil
 }

@@ -219,6 +219,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"imagemagick-bin", c.ImageMagickBin()},
 		{"imagemagick-exclude", c.ImageMagickExclude()},
 		{"heifconvert-bin", c.HeifConvertBin()},
+		{"heifconvert-orientation", c.HeifConvertOrientation()},
 		{"rsvgconvert-bin", c.RsvgConvertBin()},
 		{"jpegxldecoder-bin", c.JpegXLDecoderBin()},
 

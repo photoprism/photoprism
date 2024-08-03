@@ -83,28 +83,3 @@ func (c *Config) RawTherapeeExclude() string {
 func (c *Config) RawTherapeeEnabled() bool {
 	return !c.DisableRawTherapee()
 }
-
-// SipsEnabled checks if SIPS is enabled for RAW conversion.
-func (c *Config) SipsEnabled() bool {
-	return !c.DisableSips()
-}
-
-// SipsBin returns the SIPS executable file name.
-func (c *Config) SipsBin() string {
-	return findBin(c.options.SipsBin, "sips")
-}
-
-// SipsExclude returns the file extensions no not be used with Sips.
-func (c *Config) SipsExclude() string {
-	return c.options.SipsExclude
-}
-
-// HeifConvertBin returns the heif-convert executable file name.
-func (c *Config) HeifConvertBin() string {
-	return findBin(c.options.HeifConvertBin, "heif-convert")
-}
-
-// HeifConvertEnabled checks if heif-convert is enabled for HEIF conversion.
-func (c *Config) HeifConvertEnabled() bool {
-	return !c.DisableHeifConvert()
-}

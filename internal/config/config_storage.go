@@ -8,6 +8,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"sync"
 
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -23,38 +24,50 @@ var (
 )
 
 // findBin resolves the absolute file path of external binaries.
-func findBin(configBin, defaultBin string) (binPath string) {
-	cacheKey := defaultBin + configBin
+func findBin(configBin string, defaultBin ...string) (binPath string) {
+	// Binary file paths to be checked.
+	var search []string
+
+	if configBin != "" {
+		search = []string{configBin}
+	} else {
+		search = defaultBin
+	}
+
+	// Cache key for the binary file path.
+	binKey := strings.Join(append(defaultBin, configBin), ",")
+
+	// Check if file path is cached.
 	binMu.RLock()
-	cached, found := binPaths[cacheKey]
+	cached, found := binPaths[binKey]
 	binMu.RUnlock()
 
-	// Already found?
+	// Found in cache?
 	if found {
 		return cached
 	}
 
-	// Default binary name?
-	if configBin == "" {
-		binPath = defaultBin
-	} else {
-		binPath = configBin
-	}
-
-	// Search for binary.
-	if path, err := exec.LookPath(binPath); err == nil {
-		binPath = path
+	// Check binary file paths.
+	for _, binPath = range search {
+		if binPath == "" {
+			continue
+		} else if path, err := exec.LookPath(binPath); err == nil {
+			binPath = path
+			break
+		}
 	}
 
 	// Found?
 	if !fs.FileExists(binPath) {
 		binPath = ""
 	} else {
+		// Cache result if exists.
 		binMu.Lock()
-		binPaths[cacheKey] = binPath
+		binPaths[binKey] = binPath
 		binMu.Unlock()
 	}
 
+	// Return result.
 	return binPath
 }
 
