@@ -135,8 +135,8 @@ func TestMediaFile_HEIC(t *testing.T) {
 		assert.Equal(t, float32(52.459606), jpegInfo.Lat)
 		assert.Equal(t, float32(13.321841), jpegInfo.Lng)
 		assert.Equal(t, 50.0, jpegInfo.Altitude)
-		assert.Equal(t, 4032, jpegInfo.Width)
-		assert.Equal(t, 3024, jpegInfo.Height)
+		assert.Equal(t, 3024, jpegInfo.Width)
+		assert.Equal(t, 4032, jpegInfo.Height)
 		assert.Equal(t, false, jpegInfo.Flash)
 		assert.Equal(t, "", jpegInfo.Description)
 
