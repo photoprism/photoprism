@@ -56,7 +56,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         gettext libc6-dev libbsd-dev libssl-dev libxft-dev libfreetype6 libfreetype6-dev libfontconfig1 \
         libfontconfig1-dev libhdf5-serial-dev libzmq3-dev libjxl-dev libjxl-tools \
         libx264-dev libx265-dev libde265-dev libaom-dev libnss3 libxtst6 librsvg2-bin tzdata \
-        exiftool ffmpeg libavcodec-extra libdav1d-dev libvips-dev \
+        exiftool ffmpeg libavcodec-extra libdav1d-dev libvips-dev libsharpyuv-dev \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-libheif.sh && \

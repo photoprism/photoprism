@@ -55,7 +55,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         xz-utils avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 exiftool sqlite3 \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
-        libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev \
+        libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
     && \
     apt-get -qq install \
         software-properties-common pkg-config apt-utils \
@@ -64,7 +64,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
-        librsvg2-bin ghostscript gsfonts pdf2svg ps2eps \
+        librsvg2-bin ghostscript gsfonts pdf2svg ps2eps libsharpyuv-dev \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \

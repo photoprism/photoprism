@@ -54,7 +54,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
         libc6 ca-certificates sudo bash tzdata \
         gpg zip unzip wget curl rsync make nano \
-        jq lsof lshw sqlite3 mariadb-client imagemagick libvips-dev \
+        jq lsof lshw sqlite3 mariadb-client imagemagick libvips-dev libyuv0 \
         exiftool rawtherapee libheif-examples librsvg2-bin \
         ffmpeg libavcodec-extra libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
         libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
@@ -63,7 +63,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         apt-utils pkg-config software-properties-common \
         build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
         chromium chromium-driver chromium-sandbox firefox-esr \
-        libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
+        libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev libyuv-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
     && \

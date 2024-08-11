@@ -109,7 +109,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         xz-utils avahi-utils jq lsof lshw libebml5 libgav1-bin libatomic1 exiftool sqlite3 \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
-        libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev \
+        libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
     && \
     /scripts/install-libheif.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
