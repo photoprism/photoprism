@@ -62,10 +62,14 @@ echo "LATEST : $LATEST"
 echo "ARCHIVE: $ARCHIVE"
 echo "------------------------------------------------"
 
-echo "Installing build deps..."
+echo "Installing build dependencies..."
 
 sudo apt-get -qq update
 sudo apt-get -qq install build-essential gcc g++ gettext git autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev libde265-dev libaom-dev
+
+if [[ $VERSION_CODENAME == "noble" ]]; then
+  sudo apt-get -qq install libsharpyuv-dev
+fi
 
 cd "/tmp" || exit
 rm -rf "/tmp/libheif"
