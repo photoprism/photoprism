@@ -60,7 +60,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     apt-get -qq install \
         software-properties-common pkg-config apt-utils \
         build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
-        autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev \
+        autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \
         libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \

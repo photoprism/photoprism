@@ -63,7 +63,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         apt-utils pkg-config software-properties-common \
         build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
         chromium chromium-driver chromium-sandbox firefox-esr \
-        libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev libyuv-dev \
+        libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev libyuv-dev libavcodec-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
     && \
