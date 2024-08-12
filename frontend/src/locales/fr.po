@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-07-06 10:04+0000\n"
+"PO-Revision-Date: 2024-08-12 18:22+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1979,7 +1979,7 @@ msgstr "PhotoPrism a été mis à jour…"
 
 #: src/page/about/about.vue:48 src/page/about/about.vue:3
 msgid "PhotoPrism is 100% self-funded and independent."
-msgstr "PhotoPrism est 100% autofinancé et indépendant."
+msgstr "PhotoPrism est autofinancé à 100% et indépendant."
 
 #: src/page/about/about.vue:23 src/page/about/about.vue:2
 msgid "PhotoPrism+ Membership"
@@ -2276,7 +2276,7 @@ msgstr "Numérisées"
 #: src/page/admin/sessions.vue:110 src/page/admin/sessions.vue:29
 #: src/dialog/account/apps.vue:48 src/dialog/account/apps.vue:443
 msgid "Scope"
-msgstr "Champ d'application"
+msgstr "Portée"
 
 #: src/component/navigation.vue:65 src/component/navigation.vue:75
 #: src/component/navigation.vue:570 src/component/navigation.vue:4
@@ -2628,7 +2628,7 @@ msgstr "Pour changer d'application ou de dispositif d'authentification, commence
 
 #: src/page/connect.vue:79 src/page/connect.vue:80
 msgid "To upgrade, you can either enter an activation code or click \"Register\" to sign up on our website:"
-msgstr "Pour effectuer une mise à niveau, vous pouvez soit saisir un code d'activation, soit cliquer sur \"S'inscrire\" pour vous inscrire sur notre site web :"
+msgstr "Pour effectuer une mise à niveau, vous pouvez soit saisir un code d'activation, soit cliquer sur «S'inscrire» pour vous inscrire sur notre site web :"
 
 #: src/component/album/toolbar.vue:139 src/component/album/toolbar.vue:157
 #: src/component/album/toolbar.vue:174 src/component/photo/toolbar.vue:103
@@ -2814,7 +2814,7 @@ msgstr "Utilisez le code de récupération suivant pour accéder à votre compte
 
 #: src/page/auth/login.vue:42
 msgid "Use your recovery code or contact an administrator for help."
-msgstr "Utilise ton code de récupération ou contacte un administrateur pour obtenir de l'aide."
+msgstr "Utilisez votre code de récupération ou contactez un administrateur pour obtenir de l'aide."
 
 #: src/options/admin.js:10 src/page/admin/sessions.vue:62
 #: src/page/admin/sessions.vue:2 src/page/admin/sessions.vue:27
