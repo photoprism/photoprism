@@ -17,11 +17,13 @@ func TestConfig_HeifConvertBin(t *testing.T) {
 
 func TestConfig_HeifConvertOrientation(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, media.ResetOrientation, c.HeifConvertOrientation())
+	assert.Equal(t, media.KeepOrientation, c.HeifConvertOrientation())
 	c.Options().HeifConvertOrientation = media.KeepOrientation
 	assert.Equal(t, media.KeepOrientation, c.HeifConvertOrientation())
-	c.Options().HeifConvertOrientation = ""
+	c.Options().HeifConvertOrientation = media.ResetOrientation
 	assert.Equal(t, media.ResetOrientation, c.HeifConvertOrientation())
+	c.Options().HeifConvertOrientation = ""
+	assert.Equal(t, media.KeepOrientation, c.HeifConvertOrientation())
 }
 
 func TestConfig_HeifConvertEnabled(t *testing.T) {

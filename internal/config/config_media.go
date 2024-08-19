@@ -61,9 +61,9 @@ func (c *Config) HeifConvertBin() string {
 	return findBin(c.options.HeifConvertBin, "heif-dec", "heif-convert")
 }
 
-// HeifConvertOrientation returns the Exif orientation of images generated with libheif (auto, strip, keep).
+// HeifConvertOrientation returns the Exif orientation of images generated with libheif (keep, reset).
 func (c *Config) HeifConvertOrientation() media.Orientation {
-	return media.ParseOrientation(c.options.HeifConvertOrientation, media.ResetOrientation)
+	return media.ParseOrientation(c.options.HeifConvertOrientation, media.KeepOrientation)
 }
 
 // HeifConvertEnabled checks if heif-convert is enabled for HEIF conversion.

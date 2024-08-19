@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/header"
 	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -819,8 +820,8 @@ var Flags = CliFlags{
 		DocDefault: "heif-dec"}, {
 		Flag: cli.StringFlag{
 			Name:   "heifconvert-orientation",
-			Usage:  "Exif `ORIENTATION` of images generated with libheif (reset, keep)",
-			Value:  "reset",
+			Usage:  "Exif `ORIENTATION` of images generated with libheif (keep, reset)",
+			Value:  media.KeepOrientation,
 			EnvVar: EnvVar("HEIFCONVERT_ORIENTATION"),
 		}}, {
 		Flag: cli.StringFlag{
