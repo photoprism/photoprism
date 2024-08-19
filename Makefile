@@ -728,7 +728,7 @@ fmt-go:
 	gofmt -w -s pkg internal cmd
 	goimports -w pkg internal cmd
 tidy:
-	go mod tidy -go=1.21
+	go mod tidy -go=1.22
 users:
 	./photoprism users add -p photoprism -r admin -s -a test:true -n "Alice Austen" superadmin
 	./photoprism users ls
