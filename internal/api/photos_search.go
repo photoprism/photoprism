@@ -17,20 +17,25 @@ import (
 
 // SearchPhotos finds pictures and returns them as JSON.
 //
-//		@Summary	finds pictures and returns them as JSON
-//	 	@Description Fore more information see:
-//	 	@Description - https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos
-//		@Id			SearchPhotos
-//		@Tags		Photos
-//		@Produce	json
-//		@Success	200			{object}	search.PhotoResults
-//		@Failure	400,403,404	{object}	i18n.Response
-//		@Param		count		query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
-//		@Param		offset		query		int		false	"file offset"				minimum(0)	maximum(100000)
-//		@Param		order		query		string	false	"sort order"				Enums(favorites, name, title, added, edited)
-//		@Param		merged		query		bool	false	"groups consecutive files that belong to the same photo"
-//		@Param		q			query		string	false	"search query"
-//		@Router		/api/v1/photos [get]
+//	@Summary		finds pictures and returns them as JSON
+//	@Description	Fore more information see:
+//	@Description	- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos
+//	@Id				SearchPhotos
+//	@Tags			Photos
+//	@Produce		json
+//	@Success		200			{object}	search.PhotoResults
+//	@Failure		400,403,404	{object}	i18n.Response
+//	@Param			count		query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
+//	@Param			offset		query		int		false	"file offset"				minimum(0)	maximum(100000)
+//	@Param			order		query		string	false	"sort order"				Enums(favorites, name, title, added, edited)
+//	@Param			merged		query		bool	false	"groups consecutive files that belong to the same photo"
+//	@Param			public		query		bool	false	"excludes private pictures"
+//	@Param			quality		query		int	    true	"minimum quality score (1-7)"			Enums(0, 1, 2, 3, 4, 5, 6, 7)
+//	@Param			q			query		string	false	"search query"
+//	@Param			s			query		string	false	"album uid"
+//	@Param			path			query	string	false	"photo path"
+//	@Param			video			query	bool	false	"is type video"
+//	@Router			/api/v1/photos [get]
 func SearchPhotos(router *gin.RouterGroup) {
 	// searchPhotos checking authorization and parses the search request.
 	searchForm := func(c *gin.Context) (f form.SearchPhotos, s *entity.Session, err error) {

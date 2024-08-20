@@ -1323,13 +1323,13 @@
                     "403": {
                         "description": "Forbidden",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "type": "file"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/i18n.Response"
+                            "type": "file"
                         }
                     }
                 }
@@ -1647,9 +1647,38 @@
                         "in": "query"
                     },
                     {
+                        "type": "boolean",
+                        "description": "excludes private pictures",
+                        "name": "public",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7
+                        ],
+                        "type": "integer",
+                        "description": "minimum quality score (1-7)",
+                        "name": "quality",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
                         "type": "string",
                         "description": "search query",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "album uid",
+                        "name": "s",
                         "in": "query"
                     },
                     {
@@ -1724,6 +1753,78 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "updates picture details and returns them as JSON",
+                "operationId": "UpdatePhoto",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Photo UID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "properties to be updated. Only submit values that should be changed.",
+                        "name": "photo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Photo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Photo"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -3878,6 +3979,50 @@
                 }
             }
         },
+        "form.Details": {
+            "type": "object",
+            "properties": {
+                "Artist": {
+                    "type": "string"
+                },
+                "ArtistSrc": {
+                    "type": "string"
+                },
+                "Copyright": {
+                    "type": "string"
+                },
+                "CopyrightSrc": {
+                    "type": "string"
+                },
+                "Keywords": {
+                    "type": "string"
+                },
+                "KeywordsSrc": {
+                    "type": "string"
+                },
+                "License": {
+                    "type": "string"
+                },
+                "LicenseSrc": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "NotesSrc": {
+                    "type": "string"
+                },
+                "PhotoID": {
+                    "type": "integer"
+                },
+                "Subject": {
+                    "type": "string"
+                },
+                "SubjectSrc": {
+                    "type": "string"
+                }
+            }
+        },
         "form.Label": {
             "type": "object",
             "properties": {
@@ -3888,6 +4033,116 @@
                     "type": "integer"
                 },
                 "Uncertainty": {
+                    "type": "integer"
+                }
+            }
+        },
+        "form.Photo": {
+            "type": "object",
+            "properties": {
+                "Altitude": {
+                    "type": "integer"
+                },
+                "CameraID": {
+                    "type": "integer"
+                },
+                "CameraSrc": {
+                    "type": "string"
+                },
+                "CellAccuracy": {
+                    "type": "integer"
+                },
+                "CellID": {
+                    "type": "string"
+                },
+                "Country": {
+                    "type": "string"
+                },
+                "Day": {
+                    "type": "integer"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "DescriptionSrc": {
+                    "type": "string"
+                },
+                "Details": {
+                    "$ref": "#/definitions/form.Details"
+                },
+                "Exposure": {
+                    "type": "string"
+                },
+                "FNumber": {
+                    "type": "number"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "FocalLength": {
+                    "type": "integer"
+                },
+                "Iso": {
+                    "type": "integer"
+                },
+                "Lat": {
+                    "type": "number"
+                },
+                "LensID": {
+                    "type": "integer"
+                },
+                "Lng": {
+                    "type": "number"
+                },
+                "Month": {
+                    "type": "integer"
+                },
+                "OriginalName": {
+                    "type": "string"
+                },
+                "Panorama": {
+                    "type": "boolean"
+                },
+                "PlaceID": {
+                    "type": "string"
+                },
+                "PlaceSrc": {
+                    "type": "string"
+                },
+                "Private": {
+                    "type": "boolean"
+                },
+                "Scan": {
+                    "type": "boolean"
+                },
+                "Stack": {
+                    "type": "integer"
+                },
+                "TakenAt": {
+                    "type": "string"
+                },
+                "TakenAtLocal": {
+                    "type": "string"
+                },
+                "TakenSrc": {
+                    "type": "string"
+                },
+                "TimeZone": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "TitleSrc": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "TypeSrc": {
+                    "type": "string"
+                },
+                "Year": {
                     "type": "integer"
                 }
             }
@@ -4281,7 +4536,12 @@
                 1000000,
                 1000000000,
                 60000000000,
-                3600000000000
+                3600000000000,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000
             ],
             "x-enum-varnames": [
                 "minDuration",
@@ -4307,7 +4567,12 @@
                 "Millisecond",
                 "Second",
                 "Minute",
-                "Hour"
+                "Hour",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute"
             ]
         }
     },
