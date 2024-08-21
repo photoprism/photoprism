@@ -15,6 +15,9 @@ PLEASE PROCEED ONLY IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPP
 
 Please be as specific as possible and explain what part of the software is not [working as documented](https://docs.photoprism.app/). "No photos found" would not be detailed enough. Also, never report [known issues](https://docs.photoprism.app/known-issues/) or [features not yet implemented](https://github.com/photoprism/photoprism/issues) as bugs. Thank you!
 
+Links to the related documentation on [docs.photoprism.app](https://docs.photoprism.app/):
+- ...
+
 #### 2. How can we reproduce it?
 
 Steps to reproduce the behavior:
