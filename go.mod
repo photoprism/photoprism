@@ -70,7 +70,7 @@ require (
 require github.com/go-ldap/ldap/v3 v3.4.8
 
 require (
-	github.com/prometheus/client_golang v1.20.0
+	github.com/prometheus/client_golang v1.20.2
 	github.com/prometheus/common v0.55.0
 )
 
@@ -85,7 +85,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
-	github.com/zitadel/oidc/v3 v3.27.0
+	github.com/zitadel/oidc/v3 v3.28.2
 )
 
 require (
