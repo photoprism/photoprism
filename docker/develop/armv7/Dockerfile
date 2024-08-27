@@ -24,7 +24,7 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
-    PS1="\u@$DOCKER_TAG:\w\$ " \
+    PS1="\u@$BUILD_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     NODE_ENV="production" \
@@ -61,12 +61,16 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-nodejs.sh && \
     /scripts/install-libheif.sh && \
     /scripts/install-tensorflow.sh && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
+    mkdir -p /etc/skel/.config/go && \
+    echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
+    cp -r /etc/skel/.config /root/.config && \
     GOLANG_VERSION=go1.22.6 /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
-    echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
+    echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
+    cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \
     install -d -m 0777 -o 1000 -g 1000 \
         /photoprism/originals \

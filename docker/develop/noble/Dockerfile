@@ -25,7 +25,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
     NODE_ENV="production" \
-    PS1="\u@$DOCKER_TAG:\w\$ " \
+    PS1="\u@$BUILD_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     DEBIAN_FRONTEND="noninteractive" \
@@ -72,11 +72,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
+    mkdir -p /etc/skel/.config/go && \
+    echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
+    cp -r /etc/skel/.config /root/.config && \
     GOLANG_VERSION=go1.22.6 /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \

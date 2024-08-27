@@ -24,7 +24,7 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PS1="\u@$DOCKER_TAG:\w\$ " \
+    PS1="\u@$BUILD_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \

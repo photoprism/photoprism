@@ -654,8 +654,9 @@ docker-local-noble:
 	docker pull photoprism/develop:noble
 	docker pull ubuntu:noble
 	scripts/docker/build.sh photoprism ce-noble /noble "-t photoprism/photoprism:local"
-docker-local-develop: docker-local-develop-mantic
-docker-local-develop-all: docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
+local-develop: docker-local-develop
+docker-local-develop: docker-local-develop-noble
+docker-local-develop-all: docker-local-develop-noble docker-local-develop-mantic docker-local-develop-lunar docker-local-develop-jammy docker-local-develop-bookworm docker-local-develop-bullseye docker-local-develop-buster docker-local-develop-impish
 docker-local-develop-bookworm:
 	docker pull debian:bookworm-slim
 	scripts/docker/build.sh develop bookworm /bookworm
@@ -677,6 +678,9 @@ docker-local-develop-lunar:
 docker-local-develop-mantic:
 	docker pull ubuntu:mantic
 	scripts/docker/build.sh develop mantic /mantic
+docker-local-develop-noble:
+	docker pull ubuntu:noble
+	scripts/docker/build.sh develop noble /noble
 docker-ddns:
 	docker pull golang:alpine
 	scripts/docker/buildx-multi.sh ddns linux/amd64,linux/arm64 $(BUILD_DATE)
