@@ -65,7 +65,7 @@ ln -sf /usr/local/go/bin/go /usr/local/bin/go
 ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
 # Disable Go telemetry, see https://go.dev/doc/telemetry.
-echo "Disabling telemetry collection and uploading."
-go telemetry off
+# echo "Disabling telemetry collection and uploading."
+# go telemetry off
 
 echo "Done."

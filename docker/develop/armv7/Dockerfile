@@ -61,7 +61,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-nodejs.sh && \
     /scripts/install-libheif.sh && \
     /scripts/install-tensorflow.sh && \
-    /scripts/install-go.sh && \
+    GOLANG_VERSION=go1.22.6 /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
