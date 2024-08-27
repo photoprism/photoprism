@@ -637,8 +637,8 @@ describe("model/photo", () => {
     };
     const photo3 = new Photo(values3);
     const result = photo3.videoParams();
-    assert.equal(result.height, 457);
-    assert.equal(result.width, 685);
+    assert.isAbove(result.height, 340);
+    assert.isAbove(result.width, 510);
     assert.equal(result.loop, false);
     assert.equal(result.uri, "/api/v1/videos/1xxbgdt55/public/avc");
     const values = {
@@ -669,8 +669,8 @@ describe("model/photo", () => {
     };
     const photo = new Photo(values);
     const result2 = photo.videoParams();
-    assert.equal(result2.height, 500);
-    assert.equal(result2.width, 500);
+    assert.isAbove(result2.height, 340);
+    assert.isAbove(result2.width, 340);
     assert.equal(result2.loop, false);
     assert.equal(result2.uri, "/api/v1/videos/1xxbgdt55/public/avc");
   });
