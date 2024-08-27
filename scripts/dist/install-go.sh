@@ -64,7 +64,4 @@ echo "Adding symbolic links for go and gofmt."
 ln -sf /usr/local/go/bin/go /usr/local/bin/go
 ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
-# Test if it works.
-go version
-
 echo "Done."
