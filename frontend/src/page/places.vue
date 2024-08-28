@@ -169,6 +169,9 @@ export default {
         case "offline":
           this.style = "";
           break;
+        case "streets":
+          this.style = "streets-v2";
+          break;
         case "hybrid":
           this.style = "414c531c-926d-4164-a057-455a215c0eee";
           break;
