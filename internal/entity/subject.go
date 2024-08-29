@@ -329,7 +329,7 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 	if name := clean.Name(f.SubjName); name != "" && name != m.SubjName {
 		existing, err := m.UpdateName(name)
 
-		if existing.SubjUID != m.SubjUID || err != nil {
+		if err != nil || existing.SubjUID != m.SubjUID {
 			return err != nil, err
 		}
 
