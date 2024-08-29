@@ -11,7 +11,7 @@ import (
 
 // Session finds an existing session by its id.
 func Session(id string) (result entity.Session, err error) {
-	if l := len(id); l < 6 && l > 2048 {
+	if l := len(id); l < 6 || l > 2048 {
 		return result, fmt.Errorf("invalid session id")
 	} else if rnd.IsRefID(id) {
 		err = Db().Where("ref_id = ?", id).First(&result).Error

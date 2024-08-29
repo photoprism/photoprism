@@ -358,7 +358,11 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 		UpdateColumns(Map{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else if res.RowsAffected > 0 && m.face != nil {
-		log.Debugf("markers: matched %s with %s", subj.SubjName, m.FaceID)
+		subjName := ""
+		if subj != nil {
+			subjName = subj.SubjName
+		}
+		log.Debugf("markers: matched %s with %s", subjName, m.FaceID)
 		return m.face.RefreshPhotos()
 	}
 
