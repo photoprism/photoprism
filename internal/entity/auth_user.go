@@ -542,6 +542,10 @@ func (m *User) SetUploadPath(dir string) *User {
 
 // String returns an identifier that can be used in logs.
 func (m *User) String() string {
+	if m == nil {
+		return "User<nil>"
+	}
+
 	if n := m.Username(); n != "" {
 		return clean.LogQuote(n)
 	} else if n = m.FullName(); n != "" {

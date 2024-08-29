@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -661,4 +662,21 @@ func TestMarker_OverlapPercent(t *testing.T) {
 	assert.Equal(t, 100, m2.OverlapPercent(m1))
 	assert.Equal(t, 0, m1.OverlapPercent(m3))
 	assert.Equal(t, 96, m1.OverlapPercent(m4))
+}
+
+func TestMarker_String(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		var m *Marker
+		assert.Equal(t, "Marker<nil>", m.String())
+		assert.Equal(t, "Marker<nil>", fmt.Sprintf("%s", m))
+	})
+	t.Run("New", func(t *testing.T) {
+		m := &Marker{}
+		assert.Equal(t, "*Marker", m.String())
+		assert.Equal(t, "*Marker", fmt.Sprintf("%s", m))
+	})
+	t.Run("Name", func(t *testing.T) {
+		m := MarkerFixtures.Pointer("1000003-4")
+		assert.Equal(t, "Jens Mander", m.String())
+	})
 }

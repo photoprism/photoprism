@@ -530,3 +530,20 @@ func (m *Subject) MergeWith(other *Subject) error {
 func (m *Subject) Links() Links {
 	return FindLinks("", m.SubjUID)
 }
+
+// String returns the id or name as string.
+func (m *Subject) String() string {
+	if m == nil {
+		return "Subject<nil>"
+	}
+
+	if m.SubjName != "" {
+		return m.SubjName
+	} else if m.SubjSlug != "" {
+		return m.SubjSlug
+	} else if m.SubjUID != "" {
+		return m.SubjUID
+	}
+
+	return "*Subject"
+}

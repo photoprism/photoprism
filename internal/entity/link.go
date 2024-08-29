@@ -255,5 +255,9 @@ func FindValidLinks(token, shared string) (found Links) {
 
 // String returns a human-readable identifier for use in logs.
 func (m *Link) String() string {
+	if m == nil {
+		return "Link<nil>"
+	}
+
 	return clean.Log(m.LinkUID)
 }

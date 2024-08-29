@@ -435,6 +435,10 @@ func (m *Album) BeforeCreate(scope *gorm.Scope) error {
 
 // String returns the id or name as string.
 func (m *Album) String() string {
+	if m == nil {
+		return "Album<nil>"
+	}
+
 	if m.AlbumSlug != "" {
 		return clean.Log(m.AlbumSlug)
 	}
@@ -447,7 +451,7 @@ func (m *Album) String() string {
 		return clean.Log(m.AlbumUID)
 	}
 
-	return "[unknown album]"
+	return "*Album"
 }
 
 // IsMoment tests if the album is of type moment.

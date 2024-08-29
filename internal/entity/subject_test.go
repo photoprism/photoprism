@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -252,6 +253,23 @@ func TestSubject_Links(t *testing.T) {
 		m := SubjectFixtures.Pointer("john-doe")
 		links := m.Links()
 		assert.Empty(t, links)
+	})
+}
+
+func TestSubject_String(t *testing.T) {
+	t.Run("Nil", func(t *testing.T) {
+		var m *Subject
+		assert.Equal(t, "Subject<nil>", m.String())
+		assert.Equal(t, "Subject<nil>", fmt.Sprintf("%s", m))
+	})
+	t.Run("New", func(t *testing.T) {
+		m := &Subject{}
+		assert.Equal(t, "*Subject", m.String())
+		assert.Equal(t, "*Subject", fmt.Sprintf("%s", m))
+	})
+	t.Run("JohnDoe", func(t *testing.T) {
+		m := SubjectFixtures.Pointer("john-doe")
+		assert.Equal(t, "John Doe", m.String())
 	})
 }
 

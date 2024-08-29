@@ -142,5 +142,9 @@ func (m *Password) Empty() bool {
 
 // String returns the BCrypt Password Hash.
 func (m *Password) String() string {
+	if m == nil {
+		return ""
+	}
+
 	return m.Hash
 }

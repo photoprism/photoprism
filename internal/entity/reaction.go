@@ -60,6 +60,10 @@ func (m *Reaction) Emoji() react.Emoji {
 
 // String returns the user reaction as string.
 func (m *Reaction) String() string {
+	if m == nil {
+		return "Reaction<nil>"
+	}
+
 	return m.Reaction
 }
 

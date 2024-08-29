@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -329,17 +330,23 @@ func TestPhotos_UIDs(t *testing.T) {
 }
 
 func TestPhoto_String(t *testing.T) {
-	t.Run("ReturnOriginal", func(t *testing.T) {
-		photo := Photo{PhotoUID: "", PhotoName: "", OriginalName: "holidayOriginal"}
-		assert.Equal(t, "holidayOriginal", photo.String())
+	t.Run("Nil", func(t *testing.T) {
+		var m *Photo
+		assert.Equal(t, "Photo<nil>", m.String())
+		assert.Equal(t, "Photo<nil>", fmt.Sprintf("%s", m))
 	})
-	t.Run("Unknown", func(t *testing.T) {
-		photo := Photo{PhotoUID: "", PhotoName: "", OriginalName: ""}
-		assert.Equal(t, "(unknown)", photo.String())
+	t.Run("New", func(t *testing.T) {
+		m := &Photo{PhotoUID: "", PhotoName: "", OriginalName: ""}
+		assert.Equal(t, "*Photo", m.String())
+		assert.Equal(t, "*Photo", fmt.Sprintf("%s", m))
+	})
+	t.Run("Original", func(t *testing.T) {
+		m := Photo{PhotoUID: "", PhotoName: "", OriginalName: "holidayOriginal"}
+		assert.Equal(t, "holidayOriginal", m.String())
 	})
 	t.Run("UID", func(t *testing.T) {
-		photo := Photo{PhotoUID: "ps6sg6be2lvl0k53", PhotoName: "", OriginalName: ""}
-		assert.Equal(t, "uid ps6sg6be2lvl0k53", photo.String())
+		m := Photo{PhotoUID: "ps6sg6be2lvl0k53", PhotoName: "", OriginalName: ""}
+		assert.Equal(t, "uid ps6sg6be2lvl0k53", m.String())
 	})
 }
 

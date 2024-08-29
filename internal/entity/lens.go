@@ -142,6 +142,10 @@ func FirstOrCreateLens(m *Lens) *Lens {
 
 // String returns an identifier that can be used in logs.
 func (m *Lens) String() string {
+	if m == nil {
+		return "Lens<nil>"
+	}
+
 	return clean.Log(m.LensName)
 }
 

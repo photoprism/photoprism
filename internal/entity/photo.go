@@ -239,6 +239,10 @@ func (m *Photo) GetUID() string {
 
 // String returns the id or name as string.
 func (m *Photo) String() string {
+	if m == nil {
+		return "Photo<nil>"
+	}
+
 	if m.PhotoName != "" {
 		return clean.Log(path.Join(m.PhotoPath, m.PhotoName))
 	} else if m.OriginalName != "" {
@@ -249,7 +253,7 @@ func (m *Photo) String() string {
 		return fmt.Sprintf("id %d", m.ID)
 	}
 
-	return "(unknown)"
+	return "*Photo"
 }
 
 // FirstOrCreate fetches an existing row from the database or inserts a new one.

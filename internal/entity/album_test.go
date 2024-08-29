@@ -482,7 +482,7 @@ func TestAlbum_String(t *testing.T) {
 			AlbumType:  AlbumManual,
 			AlbumTitle: "",
 		}
-		assert.Equal(t, "[unknown album]", album.String())
+		assert.Equal(t, "*Album", album.String())
 	})
 }
 

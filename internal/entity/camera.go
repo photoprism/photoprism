@@ -143,6 +143,10 @@ func FirstOrCreateCamera(m *Camera) *Camera {
 
 // String returns an identifier that can be used in logs.
 func (m *Camera) String() string {
+	if m == nil {
+		return "Camera<nil>"
+	}
+
 	return clean.Log(m.CameraName)
 }
 

@@ -358,7 +358,7 @@ func (m *Marker) SyncSubject(updateRelated bool) (err error) {
 		UpdateColumns(Map{"subj_uid": m.SubjUID, "subj_src": SrcAuto, "marker_review": false}).Error; err != nil {
 		return fmt.Errorf("%s (update related markers)", err)
 	} else if res.RowsAffected > 0 && m.face != nil {
-		log.Debugf("markers: matched %s with %s", subj.SubjName, m.FaceID)
+		log.Debugf("markers: matched %s with %s", subj, m.FaceID)
 		return m.face.RefreshPhotos()
 	}
 
@@ -689,6 +689,21 @@ func (m *Marker) Uncertainty() int {
 	}
 
 	return 50
+}
+
+// String returns the id or name as string.
+func (m *Marker) String() string {
+	if m == nil {
+		return "Marker<nil>"
+	}
+
+	if m.MarkerName != "" {
+		return m.MarkerName
+	} else if m.MarkerUID != "" {
+		return m.MarkerUID
+	}
+
+	return "*Marker"
 }
 
 // FindMarker returns an existing row if exists.
