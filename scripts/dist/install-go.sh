@@ -64,8 +64,8 @@ echo "Adding symbolic links for go and gofmt."
 ln -sf /usr/local/go/bin/go /usr/local/bin/go
 ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
-# Disable Go telemetry, see https://go.dev/doc/telemetry.
-# echo "Disabling telemetry collection and uploading."
-# go telemetry off
+# Test go command by showing installed Go version. Telemetry in Go >= 1.23 should be set to "off" in
+# ~/.config/go/telemetry, see https://go.dev/doc/telemetry. You can otherwise run "go telemetry off".
+go version
 
 echo "Done."
