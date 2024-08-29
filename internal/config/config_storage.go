@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"os/user"
@@ -456,7 +455,7 @@ func (c *Config) tempPath() string {
 	}
 
 	// Find alternative temp path based on built-in TempDir() function.
-	if dir, err := ioutil.TempDir(osTempDir, "photoprism_"); err != nil || dir == "" {
+	if dir, err := os.MkdirTemp(osTempDir, "photoprism_"); err != nil || dir == "" {
 		// Ignore.
 	} else if err = fs.MkdirAll(dir); err != nil {
 		// Ignore.
