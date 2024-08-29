@@ -591,10 +591,6 @@ func (m *Album) UpdateTitleAndState(title, slug, stateName, countryCode string) 
 		return nil
 	}
 
-	if title != "" {
-		m.SetTitle(title)
-	}
-
 	return m.Updates(Map{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
 }
 
