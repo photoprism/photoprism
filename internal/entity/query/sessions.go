@@ -1,7 +1,7 @@
 package query
 
 import (
-	"fmt"
+	"errors"
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
@@ -11,8 +11,8 @@ import (
 
 // Session finds an existing session by its id.
 func Session(id string) (result entity.Session, err error) {
-	if l := len(id); l < 6 && l > 2048 {
-		return result, fmt.Errorf("invalid session id")
+	if l := len(id); l < 6 || l > 2048 {
+		return result, errors.New("invalid session id")
 	} else if rnd.IsRefID(id) {
 		err = Db().Where("ref_id = ?", id).First(&result).Error
 	} else if rnd.IsSessionID(id) {

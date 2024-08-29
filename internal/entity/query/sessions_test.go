@@ -18,6 +18,15 @@ func TestSession(t *testing.T) {
 		assert.Equal(t, "", result.UserUID)
 		assert.Equal(t, "", result.UserName)
 	})
+	t.Run("Invalid", func(t *testing.T) {
+		result, err := Session("1234")
+		assert.Error(t, err)
+		assert.Equal(t, "invalid session id", err.Error())
+		assert.NotNil(t, result)
+		assert.Equal(t, "", result.ID)
+		assert.Equal(t, "", result.UserUID)
+		assert.Equal(t, "", result.UserName)
+	})
 	t.Run("Alice", func(t *testing.T) {
 		if result, err := Session("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"); err != nil {
 			t.Fatal(err)
