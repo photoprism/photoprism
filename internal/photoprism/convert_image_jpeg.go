@@ -30,9 +30,15 @@ func (w *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 
 	// Extract a still image to be used as preview.
 	if f.IsAnimated() && !f.IsWebP() && w.conf.FFmpegEnabled() {
-		// Use "ffmpeg" to extract a JPEG still image from the video.
+		timeOffset := ffmpeg.PreviewTimeOffset(f.Duration())
+		
+		// Improved FFmpeg command for better HDR to SDR conversion
 		result = append(result, NewConvertCommand(
-			exec.Command(w.conf.FFmpegBin(), "-y", "-ss", ffmpeg.PreviewTimeOffset(f.Duration()), "-i", f.FileName(), "-vframes", "1", jpegName)),
+			exec.Command(w.conf.FFmpegBin(), "-y", "-ss", timeOffset, "-i", f.FileName(),
+				"-vframes", "1",
+				"-vf", "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p",
+				"-q:v", "2",
+				jpegName)),
 		)
 	}
 
