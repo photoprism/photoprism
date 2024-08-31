@@ -5,9 +5,32 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/photoprism/photoprism/internal/ffmpeg"
 )
+
+func (w *Convert) isHDRVideo(filename string) (bool, error) {
+	ffprobeBin := "ffprobe" // Default to using ffprobe from PATH
+
+	// Check if FFprobe binary path is explicitly set in config
+	if w.conf.FFmpegBin() != "" {
+		// Assume FFprobe is in the same directory as FFmpeg
+		ffprobeBin = strings.Replace(w.conf.FFmpegBin(), "ffmpeg", "ffprobe", 1)
+	}
+
+	cmd := exec.Command(ffprobeBin, "-v", "error", "-select_streams", "v:0", 
+		"-show_entries", "stream=color_space,color_transfer,color_primaries", 
+		"-of", "default=noprint_wrappers=1", filename)
+	
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return false, fmt.Errorf("ffprobe failed: %v", err)
+	}
+
+	outputStr := string(output)
+	return strings.Contains(outputStr, "bt2020") || strings.Contains(outputStr, "smpte2084") || strings.Contains(outputStr, "arib-std-b67"), nil
+}
 
 // JpegConvertCommands returns the supported commands for converting a MediaFile to JPEG, sorted by priority.
 func (w *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName string) (result ConvertCommands, useMutex bool, err error) {
@@ -31,14 +54,34 @@ func (w *Convert) JpegConvertCommands(f *MediaFile, jpegName string, xmpName str
 	// Extract a still image to be used as preview.
 	if f.IsAnimated() && !f.IsWebP() && w.conf.FFmpegEnabled() {
 		timeOffset := ffmpeg.PreviewTimeOffset(f.Duration())
-		
+
+		isHDR, err := w.isHDRVideo(f.FileName())
+		if err != nil {
+			log.Warnf("jpeg: failed to detect HDR status: %s", err)
+			// Fallback to non-HDR processing if detection fails
+			isHDR = false
+		}
+
+		ffmpegArgs := []string{
+			"-y", "-ss", timeOffset, "-i", f.FileName(),
+			"-vframes", "1",
+		}
+
+		if isHDR {
+			// Apply HDR to SDR conversion filters only for HDR content
+			ffmpegArgs = append(ffmpegArgs, 
+				"-vf", "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p",
+				"-q:v", "2", // Higher quality for HDR content
+			)
+		} else {
+			// For non-HDR content, just set the quality
+			ffmpegArgs = append(ffmpegArgs, "-q:v", "5")
+		}
+
+		ffmpegArgs = append(ffmpegArgs, jpegName)
 		// Improved FFmpeg command for better HDR to SDR conversion
 		result = append(result, NewConvertCommand(
-			exec.Command(w.conf.FFmpegBin(), "-y", "-ss", timeOffset, "-i", f.FileName(),
-				"-vframes", "1",
-				"-vf", "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p",
-				"-q:v", "2",
-				jpegName)),
+			exec.Command(w.conf.FFmpegBin(), ffmpegArgs...)),
 		)
 	}
 
