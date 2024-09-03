@@ -14,7 +14,13 @@ import (
 
 // GetSettings returns the user app settings as JSON.
 //
-// GET /api/v1/settings
+//	@Summary	returns the user app settings as JSON
+//	@Id			GetSettings
+//	@Tags		Settings
+//	@Produce	json
+//	@Success	200			{object}	customize.Settings
+//	@Failure	401,403,404	{object}	i18n.Response
+//	@Router		/api/v1/settings [get]
 func GetSettings(router *gin.RouterGroup) {
 	router.GET("/settings", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.AccessAll, acl.AccessOwn})
@@ -35,10 +41,16 @@ func GetSettings(router *gin.RouterGroup) {
 	})
 }
 
-// SaveSettings saved the user app settings.
+// SaveSettings saves the user app settings.
 //
-//	@Tags Settings
-//	@Router	/api/v1/settings [post]
+//	@Summary	saves the user app settings
+//	@Id			SaveSettings
+//	@Tags		Settings
+//	@Produce	json
+//	@Success	200					{object}	customize.Settings
+//	@Failure	400,401,403,404,500	{object}	i18n.Response
+//	@Param		settings			body		customize.Settings	true "user settings"
+//	@Router		/api/v1/settings [post]
 func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.ActionView, acl.ActionUpdate, acl.ActionManage})

@@ -1335,6 +1335,339 @@
                 }
             }
         },
+        "/api/v1/errors": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Errors"
+                ],
+                "summary": "searches the error logs and returns the results as JSON",
+                "operationId": "GetErrors",
+                "parameters": [
+                    {
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "maximum number of results",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "search result offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "q",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Error"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Errors"
+                ],
+                "summary": "removes all entries from the error logs",
+                "operationId": "Delete Errors",
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/faces": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Faces"
+                ],
+                "summary": "finds and returns faces as JSON",
+                "operationId": "SearchFaces",
+                "parameters": [
+                    {
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "maximum number of results",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "search result offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "subject",
+                            "added",
+                            "samples"
+                        ],
+                        "type": "string",
+                        "description": "sort order",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "type": "string",
+                        "description": "show hidden",
+                        "name": "hidden",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "type": "string",
+                        "description": "show unknown",
+                        "name": "unknown",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/search.Face"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/faces/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Faces"
+                ],
+                "summary": "returns a face as JSON",
+                "operationId": "GetFace",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "face id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Face"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Faces"
+                ],
+                "summary": "updates face properties",
+                "operationId": "UpdateFace",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "face id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "properties to be updated",
+                        "name": "face",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Face"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Face"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/import/{path}": {
             "post": {
                 "tags": [
@@ -1934,6 +2267,17 @@
                 ],
                 "summary": "saves the user app settings",
                 "operationId": "SaveSettings",
+                "parameters": [
+                    {
+                        "description": "user settings",
+                        "name": "settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/customize.Settings"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -3392,6 +3736,64 @@
                 }
             }
         },
+        "entity.Error": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "integer"
+                },
+                "Level": {
+                    "type": "string"
+                },
+                "Message": {
+                    "type": "string"
+                },
+                "Time": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Face": {
+            "type": "object",
+            "properties": {
+                "CollisionRadius": {
+                    "type": "number"
+                },
+                "Collisions": {
+                    "type": "integer"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "Hidden": {
+                    "type": "boolean"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Kind": {
+                    "type": "integer"
+                },
+                "MatchedAt": {
+                    "type": "string"
+                },
+                "SampleRadius": {
+                    "type": "number"
+                },
+                "Samples": {
+                    "type": "integer"
+                },
+                "Src": {
+                    "type": "string"
+                },
+                "SubjUID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.File": {
             "type": "object",
             "properties": {
@@ -4023,6 +4425,17 @@
                 }
             }
         },
+        "form.Face": {
+            "type": "object",
+            "properties": {
+                "Hidden": {
+                    "type": "boolean"
+                },
+                "SubjUID": {
+                    "type": "string"
+                }
+            }
+        },
         "form.Label": {
             "type": "object",
             "properties": {
@@ -4301,6 +4714,74 @@
                 }
             }
         },
+        "search.Face": {
+            "type": "object",
+            "properties": {
+                "CollisionRadius": {
+                    "type": "number"
+                },
+                "Collisions": {
+                    "type": "integer"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "FaceDist": {
+                    "type": "number"
+                },
+                "FileUID": {
+                    "type": "string"
+                },
+                "Hidden": {
+                    "type": "boolean"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "Invalid": {
+                    "type": "boolean"
+                },
+                "MarkerUID": {
+                    "type": "string"
+                },
+                "MatchedAt": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Review": {
+                    "type": "boolean"
+                },
+                "SampleRadius": {
+                    "type": "number"
+                },
+                "Samples": {
+                    "type": "integer"
+                },
+                "Score": {
+                    "type": "integer"
+                },
+                "Size": {
+                    "type": "integer"
+                },
+                "Src": {
+                    "type": "string"
+                },
+                "SubjSrc": {
+                    "type": "string"
+                },
+                "SubjUID": {
+                    "type": "string"
+                },
+                "Thumb": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "search.Photo": {
             "type": "object",
             "properties": {
@@ -4528,20 +5009,7 @@
                 1000000,
                 1000000000,
                 60000000000,
-                3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
-                3600000000000,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000
+                3600000000000
             ],
             "x-enum-varnames": [
                 "minDuration",
@@ -4559,20 +5027,7 @@
                 "Millisecond",
                 "Second",
                 "Minute",
-                "Hour",
-                "minDuration",
-                "maxDuration",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute"
+                "Hour"
             ]
         }
     },
