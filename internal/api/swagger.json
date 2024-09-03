@@ -1411,7 +1411,7 @@
                     "Errors"
                 ],
                 "summary": "removes all entries from the error logs",
-                "operationId": "Delete Errors",
+                "operationId": "DeleteErrors",
                 "responses": {
                     "401": {
                         "description": "Unauthorized",
@@ -1668,6 +1668,128 @@
                 }
             }
         },
+        "/api/v1/files/{hash}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "returns file details as JSON",
+                "operationId": "GetFile",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "hash (string) SHA-1 hash of the file",
+                        "name": "hash",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.File"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/folders/t/{uid}/{token}/{size}": {
+            "get": {
+                "produces": [
+                    "image/jpeg",
+                    "image/svg+xml"
+                ],
+                "tags": [
+                    "Images",
+                    "Folders"
+                ],
+                "summary": "returns a folder cover image",
+                "operationId": "FolderCover",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "folder uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user-specific security token provided with session or 'public' when running PhotoPrism in public mode",
+                        "name": "token",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "tile_50",
+                            "tile_100",
+                            "left_224",
+                            "right_224",
+                            "tile_224",
+                            "tile_500",
+                            "fit_720",
+                            "tile_1080",
+                            "fit_1280",
+                            "fit_1600",
+                            "fit_1920",
+                            "fit_2048",
+                            "fit_2560",
+                            "fit_3840",
+                            "fit_4096",
+                            "fit_7680"
+                        ],
+                        "type": "string",
+                        "description": "thumbnail size",
+                        "name": "size",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/import/{path}": {
             "post": {
                 "tags": [
@@ -1682,6 +1804,81 @@
                     "Library"
                 ],
                 "responses": {}
+            }
+        },
+        "/api/v1/labels": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Labels"
+                ],
+                "summary": "finds and returns labels as JSON",
+                "operationId": "SearchLabels",
+                "parameters": [
+                    {
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "maximum number of results",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "search result offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "show all",
+                        "name": "all",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "q",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/search.Label"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/labels/{uid}": {
@@ -2179,6 +2376,153 @@
                     "Photos"
                 ],
                 "responses": {}
+            }
+        },
+        "/api/v1/photos/{uid}/files/{fileuid}": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "removes a file from storage",
+                "operationId": "DeleteFile",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "photo uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "file uid",
+                        "name": "fileuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Photo"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/photos/{uid}/files/{fileuid}/orientation": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Files"
+                ],
+                "summary": "changes the orientation of a file",
+                "operationId": "ChangeFileOrientation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "photo uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "file uid",
+                        "name": "fileuid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "file orientation",
+                        "name": "file",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.File"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Photo"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/photos/{uid}/label": {
@@ -4436,6 +4780,14 @@
                 }
             }
         },
+        "form.File": {
+            "type": "object",
+            "properties": {
+                "Orientation": {
+                    "type": "integer"
+                }
+            }
+        },
         "form.Label": {
             "type": "object",
             "properties": {
@@ -4782,6 +5134,56 @@
                 }
             }
         },
+        "search.Label": {
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "CustomSlug": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "Priority": {
+                    "type": "integer"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Thumb": {
+                    "type": "string"
+                },
+                "ThumbSrc": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "search.Photo": {
             "type": "object",
             "properties": {
@@ -5009,9 +5411,41 @@
                 1000000,
                 1000000000,
                 60000000000,
+                3600000000000,
+                -9223372036854775808,
+                9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
+                3600000000000,
+                -9223372036854775808,
+                9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
                 3600000000000
             ],
             "x-enum-varnames": [
+                "minDuration",
+                "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
+                "minDuration",
+                "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
                 "minDuration",
                 "maxDuration",
                 "Nanosecond",

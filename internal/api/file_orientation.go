@@ -16,12 +16,16 @@ import (
 
 // ChangeFileOrientation changes the orientation of a file.
 //
-// The request parameters are:
-//
-//   - uid: string Photo UID as returned by the API
-//   - file_uid: string File UID as returned by the API
-//
-// PUT /api/v1/photos/:uid/files/:file_uid/orientation
+//	@Summary	changes the orientation of a file
+//	@Id			ChangeFileOrientation
+//	@Tags		Files
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string		true	"photo uid"
+//	@Param		fileuid					path		string		true	"file uid"
+//	@Param		file					body		form.File	true	"file orientation"
+//	@Router		/api/v1/photos/{uid}/files/{fileuid}/orientation [put]
 func ChangeFileOrientation(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/files/:file_uid/orientation", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)

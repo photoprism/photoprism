@@ -17,12 +17,15 @@ import (
 
 // DeleteFile removes a file from storage.
 //
-// The request parameters are:
-//
-//   - uid: string Photo UID as returned by the API
-//   - file_uid: string File UID as returned by the API
-//
-// DELETE /api/v1/photos/:uid/files/:file_uid
+//	@Summary	removes a file from storage
+//	@Id			DeleteFile
+//	@Tags		Files
+//	@Produce	json
+//	@Success	200					{object}	entity.Photo
+//	@Failure	401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid					path		string	true	"photo uid"
+//	@Param		fileuid				path		string	true	"file uid"
+//	@Router		/api/v1/photos/{uid}/files/{fileuid} [delete]
 func DeleteFile(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/files/:file_uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionDelete)
