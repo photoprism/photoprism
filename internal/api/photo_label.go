@@ -18,12 +18,15 @@ import (
 
 // AddPhotoLabel adds a label to a photo.
 //
-// The request parameters are:
-//
-//   - uid: string PhotoUID as returned by the API
-//
-//     @Tags	Photos
-//     @Router	/api/v1/photos/{uid}/label [post]
+//	@Summary	adds a label to a photo
+//	@Id			AddPhotoLabel
+//	@Tags		Labels, Photos
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		label					body		form.Label	true	"label properties"
+//	@Param		uid						path		string		true	"photo uid"
+//	@Router		/api/v1/photos/{uid}/label [post]
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -97,12 +100,15 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 
 // RemovePhotoLabel removes a label from a photo.
 //
-// The request parameters are:
-//
-//   - uid: string PhotoUID as returned by the API
-//   - id: int LabelId as returned by the API
-//
-// DELETE /api/v1/photos/:uid/label/:id
+//	@Summary	removes a label from a photo
+//	@Id			RemovePhotoLabel
+//	@Tags		Labels, Photos
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string	true	"photo uid"
+//	@Param		id						path		string	true	"label id"
+//	@Router		/api/v1/photos/{uid}/label/{id} [delete]
 func RemovePhotoLabel(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -161,14 +167,18 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 	})
 }
 
-// UpdatePhotoLabel changes a photo labels.
+// UpdatePhotoLabel changes a photo label.
 //
-// The request parameters are:
-//
-//   - uid: string PhotoUID as returned by the API
-//   - id: int LabelId as returned by the API
-//
-// PUT /api/v1/photos/:uid/label/:id
+//	@Summary	changes a photo label
+//	@Id			UpdatePhotoLabel
+//	@Tags		Labels, Photos
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string		true	"photo uid"
+//	@Param		id						path		string		true	"label id"
+//	@Param		label					body		form.Label	true	"properties to be updated (currently supports: uncertainty)"
+//	@Router		/api/v1/photos/{uid}/label/{id} [put]
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)

@@ -19,14 +19,15 @@ import (
 
 // PhotoUnstack removes a file from an existing photo stack.
 //
-// The request parameters are:
-//
-//   - uid: string Photo UID as returned by the API
-//
-//   - file_uid: string File UID as returned by the API
-//
-//     @Tags	Photos
-//     @Router	/api/v1/photos/{uid}/files/{file_uid}/unstack [post]
+//	@Summary	removes a file from an existing photo stack
+//	@Id			PhotoUnstack
+//	@Tags		Photos, Stacks
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string	true	"photo uid"
+//	@Param		fileuid					path		string	true	"file uid"
+//	@Router		/api/v1/photos/{uid}/files/{fileuid}/unstack [post]
 func PhotoUnstack(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/unstack", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
