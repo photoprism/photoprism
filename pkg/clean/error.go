@@ -10,8 +10,8 @@ func Error(err error) string {
 		return "unknown error"
 	} else {
 		// Limit error message length.
-		if len(s) > MaxLength {
-			s = s[:MaxLength]
+		if len(s) > LengthLimit {
+			s = s[:LengthLimit]
 		}
 
 		// Remove non-printable and other potentially problematic characters.

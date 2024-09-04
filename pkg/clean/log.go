@@ -3,13 +3,19 @@ package clean
 import (
 	"fmt"
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 // Log sanitizes strings created from user input in response to the log4j debacle.
 func Log(s string) string {
 	if s == "" {
 		return "''"
-	} else if reject(s, 512) {
+	}
+
+	s = clip.Shorten(s, LengthLog, clip.Ellipsis)
+
+	if reject(s, LengthLimit) {
 		return "?"
 	}
 

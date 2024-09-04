@@ -1,5 +1,5 @@
 /*
-Package clean provides validation, sanitation, and normalization of input values.
+Package clip provides functions for limiting the length of character strings.
 
 Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
@@ -22,18 +22,4 @@ want to support our work, or just want to say hello.
 Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
-package clean
-
-import "strings"
-
-func reject(s string, maxLength int) bool {
-	if maxLength > 0 && len(s) > maxLength {
-		return true
-	}
-
-	if strings.Contains(s, "${") || strings.Contains(s, "ldap://") {
-		return true
-	}
-
-	return false
-}
+package clip

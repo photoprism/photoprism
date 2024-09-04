@@ -2,6 +2,8 @@ package clean
 
 import (
 	"strings"
+
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 // Type omits invalid runes, ensures a maximum length of 32 characters, and returns the result.
@@ -10,7 +12,7 @@ func Type(s string) string {
 		return s
 	}
 
-	return Clip(ASCII(s), ClipType)
+	return clip.Chars(ASCII(s), LengthType)
 }
 
 // TypeLower converts a type string to lowercase, omits invalid runes, and shortens it if needed.
@@ -37,7 +39,7 @@ func ShortType(s string) string {
 		return s
 	}
 
-	return Clip(ASCII(s), ClipShortType)
+	return clip.Chars(ASCII(s), LengthShortType)
 }
 
 // ShortTypeLower converts a short type string to lowercase, omits invalid runes, and shortens it if needed.

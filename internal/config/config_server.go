@@ -241,3 +241,8 @@ func (c *Config) BuildPath() string {
 func (c *Config) ImgPath() string {
 	return filepath.Join(c.StaticPath(), "img")
 }
+
+// ThemePath returns the path to static theme files.
+func (c *Config) ThemePath() string {
+	return filepath.Join(c.ConfigPath(), "theme")
+}

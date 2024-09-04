@@ -17,7 +17,7 @@ func replace(subject string, search string, replace string) string {
 
 // SearchString replaces search operator with default symbols.
 func SearchString(s string) string {
-	if s == "" || reject(s, MaxLength) {
+	if s == "" || reject(s, LengthLimit) {
 		return Empty
 	}
 
@@ -32,7 +32,7 @@ func SearchString(s string) string {
 
 // SearchQuery replaces search operator with default symbols.
 func SearchQuery(s string) string {
-	if s == "" || reject(s, MaxLength) {
+	if s == "" || reject(s, LengthLimit) {
 		return Empty
 	}
 

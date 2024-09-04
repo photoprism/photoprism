@@ -368,7 +368,7 @@ func TestFile_SetProjection(t *testing.T) {
 		p := projection.New(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 		m.SetProjection(p.String())
 		assert.Equal(t, p.String(), m.FileProjection)
-		assert.GreaterOrEqual(t, clean.ClipType, len(m.FileProjection))
+		assert.GreaterOrEqual(t, clean.LengthType, len(m.FileProjection))
 	})
 }
 

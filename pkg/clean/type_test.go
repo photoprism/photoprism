@@ -5,6 +5,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 func TestToASCII(t *testing.T) {
@@ -14,27 +16,27 @@ func TestToASCII(t *testing.T) {
 
 func TestClip(t *testing.T) {
 	t.Run("Foo", func(t *testing.T) {
-		result := Clip("Foo", 16)
+		result := clip.Chars("Foo", 16)
 		assert.Equal(t, "Foo", result)
 		assert.Equal(t, 3, len(result))
 	})
 	t.Run("TrimFoo", func(t *testing.T) {
-		result := Clip(" Foo ", 16)
+		result := clip.Chars(" Foo ", 16)
 		assert.Equal(t, "Foo", result)
 		assert.Equal(t, 3, len(result))
 	})
 	t.Run("TooLong", func(t *testing.T) {
-		result := Clip(" 幸福 Hanzi are logograms developed for the writing of Chinese! ", 16)
+		result := clip.Chars(" 幸福 Hanzi are logograms developed for the writing of Chinese! ", 16)
 		assert.Equal(t, "幸福 Hanzi are", result)
 		assert.Equal(t, 16, len(result))
 	})
 	t.Run("ToASCII", func(t *testing.T) {
-		result := Clip(ASCII(strings.ToLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")), ClipType)
+		result := clip.Chars(ASCII(strings.ToLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")), LengthType)
 		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result)
 		assert.Equal(t, 64, len(result))
 	})
 	t.Run("Empty", func(t *testing.T) {
-		result := Clip("", 999)
+		result := clip.Chars("", 999)
 		assert.Equal(t, "", result)
 		assert.Equal(t, 0, len(result))
 	})
@@ -44,7 +46,7 @@ func TestType(t *testing.T) {
 	t.Run("Clip", func(t *testing.T) {
 		result := Type(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 		assert.Equal(t, "Hanzi are logograms developed for the writing of Chinese! Expres", result)
-		assert.Equal(t, ClipType, len(result))
+		assert.Equal(t, LengthType, len(result))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", Type(""))
@@ -55,7 +57,7 @@ func TestTypeLower(t *testing.T) {
 	t.Run("Clip", func(t *testing.T) {
 		result := TypeLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 		assert.Equal(t, "hanzi are logograms developed for the writing of chinese! expres", result)
-		assert.Equal(t, ClipType, len(result))
+		assert.Equal(t, LengthType, len(result))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", TypeLower(""))
@@ -84,7 +86,7 @@ func TestShortType(t *testing.T) {
 	t.Run("Clip", func(t *testing.T) {
 		result := ShortType(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 		assert.Equal(t, "Hanzi ar", result)
-		assert.Equal(t, ClipShortType, len(result))
+		assert.Equal(t, LengthShortType, len(result))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", ShortType(""))
@@ -95,7 +97,7 @@ func TestShortTypeLower(t *testing.T) {
 	t.Run("Clip", func(t *testing.T) {
 		result := ShortTypeLower(" 幸福 Hanzi are logograms developed for the writing of Chinese! Expressions in an index may not ...!")
 		assert.Equal(t, "hanzi ar", result)
-		assert.Equal(t, ClipShortType, len(result))
+		assert.Equal(t, LengthShortType, len(result))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		assert.Equal(t, "", ShortTypeLower(""))

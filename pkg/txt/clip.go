@@ -1,7 +1,7 @@
 package txt
 
 import (
-	"strings"
+	"github.com/photoprism/photoprism/pkg/txt/clip"
 )
 
 const (
@@ -31,34 +31,12 @@ const (
 	ClipLongText  = 4096
 )
 
-// Clip shortens a string to the given number of runes, and removes all leading and trailing white space.
+// Clip limits a string to the given number of runes and removes all leading and trailing spaces.
 func Clip(s string, size int) string {
-	s = strings.TrimSpace(s)
-
-	if s == "" || size <= 0 {
-		return ""
-	}
-
-	runes := []rune(s)
-
-	if len(runes) > size {
-		s = string(runes[0:size])
-	}
-
-	return strings.TrimSpace(s)
+	return clip.Runes(s, size)
 }
 
-// Shorten shortens a string with suffix.
+// Shorten limits a character string to the specified number of runes and adds a suffix if it has been shortened.
 func Shorten(s string, size int, suffix string) string {
-	if suffix == "" {
-		suffix = Ellipsis
-	}
-
-	l := len(suffix)
-
-	if len(s) < size || size < l+1 {
-		return s
-	}
-
-	return Clip(s, size-l) + suffix
+	return clip.Shorten(s, size, suffix)
 }
