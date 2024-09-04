@@ -214,7 +214,7 @@ func UpdateAlbum(router *gin.RouterGroup) {
 // DeleteAlbum deletes an existing album.
 //
 //	@Summary	deletes an existing album
-//	@Id			Delete Album
+//	@Id			DeleteAlbum
 //	@Tags		Albums
 //	@Produce	json
 //	@Failure	401,403,404,429,500	{object}	i18n.Response

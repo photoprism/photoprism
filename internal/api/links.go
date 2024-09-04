@@ -141,7 +141,14 @@ func CreateLink(c *gin.Context) {
 
 // CreateAlbumLink adds a new album share link and return it as JSON.
 //
-//	@Tags Links, Albums
+//	@Summary	adds a new album share link and return it as JSON
+//	@Id			CreateAlbumLink
+//	@Tags		Links, Albums
+//	@Produce	json
+//	@Success	200					{object}	entity.Link
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Param		uid						path		string		true	"album uid"
+//	@Param		link					body		form.Link	true	"link properties (currently supported: slug, expires)"
 //	@Router	/api/v1/albums/{uid}/links [post]
 func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
@@ -162,7 +169,16 @@ func CreateAlbumLink(router *gin.RouterGroup) {
 
 // UpdateAlbumLink updates an album share link and return it as JSON.
 //
-// PUT /api/v1/albums/:uid/links/:link
+//	@Summary	updates an album share link and return it as JSON
+//	@Id			UpdateAlbumLink
+//	@Tags		Links, Albums
+//	@Produce	json
+//	@Success	200						{object}	entity.Link
+//	@Failure	400,401,403,429,409,500	{object}	i18n.Response
+//	@Param		uid						path		string		true	"album uid"
+//	@Param		linkuid					path		string		true	"link uid"
+//	@Param		link					body		form.Link	true	"properties to be updated (currently supported: slug, expires, token)"
+//	@Router		/api/v1/albums/{uid}/links/{linkuid} [put]
 func UpdateAlbumLink(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid/links/:link", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
@@ -177,7 +193,15 @@ func UpdateAlbumLink(router *gin.RouterGroup) {
 
 // DeleteAlbumLink deletes an album share link.
 //
-// DELETE /api/v1/albums/:uid/links/:link
+//	@Summary	deletes an album share link
+//	@Id			DeleteAlbumLink
+//	@Tags		Links, Albums
+//	@Produce	json
+//	@Success	200					{object}	entity.Link
+//	@Failure	401,403,429,409	{object}	i18n.Response
+//	@Param		uid					path		string	true	"album"
+//	@Param		linkuid					path		string		true	"link uid"
+//	@Router		/api/v1/albums/{uid}/links/{linkuid} [delete]
 func DeleteAlbumLink(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/links/:link", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
@@ -192,7 +216,14 @@ func DeleteAlbumLink(router *gin.RouterGroup) {
 
 // GetAlbumLinks returns all share links for the given UID as JSON.
 //
-// GET /api/v1/albums/:uid/links
+//	@Summary	returns all share links for the given UID as JSON
+//	@Id			GetAlbumLinks
+//	@Tags		Links, Albums
+//	@Produce	json
+//	@Success	200				{object}	entity.Link
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Param		uid				path		string	true	"album uid"
+//	@Router		/api/v1/albums/{uid}/links [get]
 func GetAlbumLinks(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/links", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)

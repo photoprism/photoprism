@@ -272,7 +272,7 @@
                     "Albums"
                 ],
                 "summary": "deletes an existing album",
-                "operationId": "Delete Album",
+                "operationId": "DeleteAlbum",
                 "parameters": [
                     {
                         "type": "string",
@@ -537,12 +537,271 @@
             }
         },
         "/api/v1/albums/{uid}/links": {
-            "post": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Links",
                     "Albums"
                 ],
-                "responses": {}
+                "summary": "returns all share links for the given UID as JSON",
+                "operationId": "GetAlbumLinks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "album uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Link"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Links",
+                    "Albums"
+                ],
+                "summary": "adds a new album share link and return it as JSON",
+                "operationId": "CreateAlbumLink",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "album uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "link properties (currently supported: slug, expires)",
+                        "name": "link",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Link"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Link"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/albums/{uid}/links/{linkuid}": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Links",
+                    "Albums"
+                ],
+                "summary": "updates an album share link and return it as JSON",
+                "operationId": "UpdateAlbumLink",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "album uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "link uid",
+                        "name": "linkuid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "properties to be updated (currently supported: slug, expires, token)",
+                        "name": "link",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Link"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Link"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Links",
+                    "Albums"
+                ],
+                "summary": "deletes an album share link",
+                "operationId": "DeleteAlbumLink",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "album",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "link uid",
+                        "name": "linkuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Link"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/albums/{uid}/photos": {
@@ -2110,6 +2369,50 @@
                     "Files"
                 ],
                 "responses": {}
+            }
+        },
+        "/api/v1/moments/time": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Albums"
+                ],
+                "summary": "returns monthly albums as JSON",
+                "operationId": "GetMomentsTime",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Album"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/oauth/revoke": {
@@ -4366,6 +4669,50 @@
                 }
             }
         },
+        "entity.Link": {
+            "type": "object",
+            "properties": {
+                "Comment": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "CreatedBy": {
+                    "type": "string"
+                },
+                "Expires": {
+                    "type": "integer"
+                },
+                "MaxViews": {
+                    "type": "integer"
+                },
+                "ModifiedAt": {
+                    "type": "string"
+                },
+                "Perm": {
+                    "type": "integer"
+                },
+                "ShareUID": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Token": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "VerifyPassword": {
+                    "type": "boolean"
+                },
+                "Views": {
+                    "type": "integer"
+                }
+            }
+        },
         "entity.Person": {
             "type": "object",
             "properties": {
@@ -4799,6 +5146,32 @@
                 },
                 "Uncertainty": {
                     "type": "integer"
+                }
+            }
+        },
+        "form.Link": {
+            "type": "object",
+            "properties": {
+                "CanComment": {
+                    "type": "boolean"
+                },
+                "CanEdit": {
+                    "type": "boolean"
+                },
+                "Expires": {
+                    "type": "integer"
+                },
+                "MaxViews": {
+                    "type": "integer"
+                },
+                "Password": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Token": {
+                    "type": "string"
                 }
             }
         },
@@ -5419,25 +5792,9 @@
                 1000000,
                 1000000000,
                 60000000000,
-                3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
-                1,
-                1000,
-                1000000,
-                1000000000,
-                60000000000,
                 3600000000000
             ],
             "x-enum-varnames": [
-                "minDuration",
-                "maxDuration",
-                "Nanosecond",
-                "Microsecond",
-                "Millisecond",
-                "Second",
-                "Minute",
-                "Hour",
                 "minDuration",
                 "maxDuration",
                 "Nanosecond",
