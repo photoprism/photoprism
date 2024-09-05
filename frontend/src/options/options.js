@@ -151,6 +151,10 @@ export const Languages = () => [
     value: "fr",
   },
   {
+    text: "Gaeilge", // Irish
+    value: "ga",
+  },
+  {
     text: "Ελληνικά", // Greek
     value: "el",
   },
