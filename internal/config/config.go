@@ -410,7 +410,7 @@ func (c *Config) About() string {
 	return c.options.About
 }
 
-// Edition returns the edition nane.
+// Edition returns the edition name.
 func (c *Config) Edition() string {
 	if c.options.Edition == "" {
 		return "ce"

@@ -35,7 +35,7 @@ func (m *Album) SaveAsYaml(fileName string) error {
 	} else if m.AlbumUID == "" {
 		return fmt.Errorf("album uid is empty")
 	} else if fileName == "" {
-		return fmt.Errorf("yaml filname is empty")
+		return fmt.Errorf("yaml filename is empty")
 	}
 
 	data, err := m.Yaml()
