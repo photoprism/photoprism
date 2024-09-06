@@ -1,6 +1,6 @@
 package txt
 
-// Year tries to find a matching year for a given string e.g. from a file oder directory name.
+// Year tries to find a matching year for a given string e.g. from a file or directory name.
 func Year(s string) int {
 	b := []byte(s)
 
