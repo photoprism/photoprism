@@ -29,7 +29,7 @@ func Update(m interface{}, keyNames ...string) (err error) {
 
 	// Successful?
 	if result.Error != nil {
-		return err
+		return result.Error
 	} else if result.RowsAffected > 1 {
 		log.Debugf("entity: updated statement affected more than one record - you may have found a bug")
 		return nil
