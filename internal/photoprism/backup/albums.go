@@ -49,7 +49,7 @@ func Albums(backupPath string, force bool) (count int, err error) {
 			continue
 		}
 
-		// Remember the lastest modification timestamp.
+		// Remember the latest modification timestamp.
 		if changed.After(latest) {
 			latest = changed
 		}
