@@ -14,8 +14,14 @@ import (
 
 // LikePhoto flags a photo as favorite.
 //
-//	@Tags	Photos
-//	@Router	/api/v1/photos/{uid}/like [post]
+//	@Summary	flags a photo as favorite
+//	@Id			LikePhoto
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200				{object}	gin.H
+//	@Failure	401,403,404,500	{object}	i18n.Response
+//	@Param		uid				path		string	true	"photo uid"
+//	@Router		/api/v1/photos/{uid}/like [post]
 func LikePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/like", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionUpdate, acl.ActionReact})
@@ -55,7 +61,14 @@ func LikePhoto(router *gin.RouterGroup) {
 
 // DislikePhoto removes the favorite flags from a photo.
 //
-// DELETE /api/v1/photos/:uid/like
+//	@Summary	removes the favorite flags from a photo
+//	@Id			DislikePhoto
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200				{object}	gin.H
+//	@Failure	401,403,404,500	{object}	i18n.Response
+//	@Param		uid				path		string	true	"photo uid"
+//	@Router		/api/v1/photos/{uid}/like [delete]
 func DislikePhoto(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/like", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourcePhotos, acl.Permissions{acl.ActionUpdate, acl.ActionReact})
