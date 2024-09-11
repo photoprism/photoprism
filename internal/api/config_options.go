@@ -18,7 +18,13 @@ import (
 
 // GetConfigOptions returns backend config options.
 //
-// GET /api/v1/config/options
+//	@Summary	returns backend config options
+//	@Id			GetConfigOptions
+//	@Tags		Config, Settings
+//	@Produce	json
+//	@Success	200			{object}	config.Options
+//	@Failure	401,403,429	{object}	i18n.Response
+//	@Router		/api/v1/config/options [get]
 func GetConfigOptions(router *gin.RouterGroup) {
 	router.GET("/config/options", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceConfig, acl.AccessAll)
@@ -36,8 +42,14 @@ func GetConfigOptions(router *gin.RouterGroup) {
 
 // SaveConfigOptions updates backend config options.
 //
-//	@Tags Settings
-//	@Router	/api/v1/config/options [post]
+//	@Summary	updates backend config options
+//	@Id			SaveConfigOptions
+//	@Tags		Config, Settings
+//	@Produce	json
+//	@Success	200					{object}	config.Options
+//	@Failure	400,401,403,429,500	{object}	i18n.Response
+//	@Param		options					body		config.Options	true	"properties to be updated (only submit values that should be changed)"
+//	@Router		/api/v1/config/options [post]
 func SaveConfigOptions(router *gin.RouterGroup) {
 	router.POST("/config/options", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceConfig, acl.ActionManage)
