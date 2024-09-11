@@ -17,7 +17,14 @@ import (
 
 // GetSubject returns a subject as JSON.
 //
-// GET /api/v1/subjects/:uid
+//	@Summary	returns a subject as JSON
+//	@Id			GetSubject
+//	@Tags		Subjects
+//	@Produce	json
+//	@Success	200				{object}	entity.Subject
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Param		uid				path		string	true	"subject uid"
+//	@Router		/api/v1/subjects/{uid} [get]
 func GetSubject(router *gin.RouterGroup) {
 	router.GET("/subjects/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionView)
@@ -37,7 +44,15 @@ func GetSubject(router *gin.RouterGroup) {
 
 // UpdateSubject updates subject properties.
 //
-// PUT /api/v1/subjects/:uid
+//	@Summary	updates subject properties
+//	@Id			UpdateSubject
+//	@Tags		Subjects
+//	@Produce	json
+//	@Success	200						{object}	entity.Subject
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string			true	"subject uid"
+//	@Param		subject					body		form.Subject	true	"properties to be updated (only submit values that should be changed)"
+//	@Router		/api/v1/subjects/{uid} [put]
 func UpdateSubject(router *gin.RouterGroup) {
 	router.PUT("/subjects/:uid", func(c *gin.Context) {
 		if err := mutex.UpdatePeople.Start(); err != nil {
@@ -95,12 +110,13 @@ func UpdateSubject(router *gin.RouterGroup) {
 
 // LikeSubject flags a subject as favorite.
 //
-// The request parameters are:
-//
-//   - uid: string Subject UID
-//
-//     @Tags	Subjects
-//     @Router	/api/v1/subjects/{uid}/like [post]
+//	@Summary	flags a subject as favorite
+//	@Id			LikeSubject
+//	@Tags		Subjects
+//	@Produce	json
+//	@Failure	401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid					path		string	true	"subject uid"
+//	@Router		/api/v1/subjects/{uid}/like [post]
 func LikeSubject(router *gin.RouterGroup) {
 	router.POST("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
@@ -130,11 +146,13 @@ func LikeSubject(router *gin.RouterGroup) {
 
 // DislikeSubject removes the favorite flag from a subject.
 //
-// The request parameters are:
-//
-//   - uid: string Subject UID
-//
-// DELETE /api/v1/subjects/:uid/like
+//	@Summary	removes the favorite flag from a subject
+//	@Id			DislikeSubject
+//	@Tags		Subjects
+//	@Produce	json
+//	@Failure	401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid					path		string	true	"subject uid"
+//	@Router		/api/v1/subjects/{uid}/like [delete]
 func DislikeSubject(router *gin.RouterGroup) {
 	router.DELETE("/subjects/:uid/like", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
