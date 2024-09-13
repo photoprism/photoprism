@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-13 11:46+0000\n"
+"PO-Revision-Date: 2024-09-13 13:26+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Lithuanian <https://translate.photoprism.app/projects/photoprism/frontend/lt/>\n"
 "Language: lt\n"
@@ -2147,7 +2147,7 @@ msgstr "Neseniai pridėta"
 
 #: src/component/photo/toolbar.vue:99
 msgid "Recently Archived"
-msgstr ""
+msgstr "Neseniai archyvuota"
 
 #: src/component/photo/toolbar.vue:134 src/page/albums.vue:94
 msgid "Recently Edited"

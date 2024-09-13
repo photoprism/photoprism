@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-13 11:46+0000\n"
+"PO-Revision-Date: 2024-09-13 13:26+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -2147,7 +2147,7 @@ msgstr "最近新增"
 
 #: src/component/photo/toolbar.vue:99
 msgid "Recently Archived"
-msgstr ""
+msgstr "最近存檔"
 
 #: src/component/photo/toolbar.vue:134 src/page/albums.vue:94
 msgid "Recently Edited"
