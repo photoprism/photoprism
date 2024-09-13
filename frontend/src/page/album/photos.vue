@@ -40,7 +40,7 @@ export default {
     const camera = query["camera"] ? parseInt(query["camera"]) : 0;
     const q = query["q"] ? query["q"] : "";
     const country = query["country"] ? query["country"] : "";
-    const view = this.viewType();
+    const view = this.getViewType();
     const filter = { country: country, camera: camera, order: order, q: q };
     const settings = { view: view };
     const batchSize = Photo.batchSize();
@@ -91,7 +91,7 @@ export default {
       this.filter.q = query["q"] ? query["q"] : "";
       this.filter.camera = query["camera"] ? parseInt(query["camera"]) : 0;
       this.filter.country = query["country"] ? query["country"] : "";
-      this.settings.view = this.viewType();
+      this.settings.view = this.getViewType();
 
       /**
        * Even if the filter is unchanged, if the route is changed (for example
@@ -136,7 +136,7 @@ export default {
     }
   },
   methods: {
-    viewType() {
+    getViewType() {
       let queryParam = this.$route.query["view"] ? this.$route.query["view"] : "";
       let defaultType = window.localStorage.getItem("photos_view");
       let storedType = window.localStorage.getItem("album_photos_view");

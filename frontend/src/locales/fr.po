@@ -36,7 +36,7 @@ msgid "%{n} people found"
 msgstr "%{n} personnes trouvées"
 
 #: src/page/album/photos.vue:258 src/page/album/photos.vue:414
-#: src/page/photos.vue:395 src/page/photos.vue:563
+#: src/page/photos.vue:398 src/page/photos.vue:566
 msgid "%{n} pictures found"
 msgstr "%{n} images trouvées"
 
@@ -474,7 +474,7 @@ msgstr "N° de série de l'appareil photo"
 msgid "Can't access your authenticator app or device?"
 msgstr "Vous n'avez pas accès à votre application ou votre appareil d'authentification ?"
 
-#: src/page/album/photos.vue:264 src/page/photos.vue:401
+#: src/page/album/photos.vue:264 src/page/photos.vue:404
 msgid "Can't load more, limit reached"
 msgstr "Impossible de charger plus, limite atteinte"
 
@@ -1139,15 +1139,13 @@ msgstr "Explorateur de fichiers"
 msgid "File Conversion"
 msgstr "Conversion de fichiers"
 
-#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:112
-#: src/component/photo/toolbar.vue:123 src/component/photo/toolbar.vue:136
-#: src/dialog/album/edit.vue:25
+#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:113
+#: src/component/photo/toolbar.vue:125 src/dialog/album/edit.vue:25
 msgid "File Name"
 msgstr "Nom du fichier"
 
-#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:113
-#: src/component/photo/toolbar.vue:124 src/component/photo/toolbar.vue:137
-#: src/dialog/album/edit.vue:26
+#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:114
+#: src/component/photo/toolbar.vue:126 src/dialog/album/edit.vue:26
 msgid "File Size"
 msgstr "Taille du fichier"
 
@@ -1681,7 +1679,7 @@ msgstr "Mois"
 msgid "Mosaic"
 msgstr "Mosaïque"
 
-#: src/component/photo/toolbar.vue:140 src/dialog/album/edit.vue:28
+#: src/component/photo/toolbar.vue:129 src/dialog/album/edit.vue:28
 msgid "Most Relevant"
 msgstr "Le plus pertinent"
 
@@ -1727,9 +1725,9 @@ msgstr "Nouvelles"
 msgid "New Password"
 msgstr "Nouveau mot de passe"
 
-#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:108
-#: src/component/photo/toolbar.vue:119 src/component/photo/toolbar.vue:131
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:91
+#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:109
+#: src/component/photo/toolbar.vue:120 src/dialog/album/edit.vue:21
+#: src/page/albums.vue:91
 msgid "Newest First"
 msgstr "Le plus récent d'abord"
 
@@ -1758,7 +1756,7 @@ msgstr "Aucune personne trouvée"
 #: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:410
-#: src/page/library/browse.vue:34 src/page/photos.vue:559
+#: src/page/library/browse.vue:34 src/page/photos.vue:562
 #: src/page/places.vue:414 src/page/places.vue:500
 msgid "No pictures found"
 msgstr "Aucune image trouvée"
@@ -1836,9 +1834,9 @@ msgstr "Hors-ligne"
 msgid "OIDC"
 msgstr "OIDC"
 
-#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:109
-#: src/component/photo/toolbar.vue:120 src/component/photo/toolbar.vue:132
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:92
+#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:110
+#: src/component/photo/toolbar.vue:121 src/dialog/album/edit.vue:22
+#: src/page/albums.vue:92
 msgid "Oldest First"
 msgstr "Le plus ancien d'abord"
 
@@ -1879,7 +1877,7 @@ msgstr "Une étiquette trouvée"
 msgid "One person found"
 msgstr "Une personne trouvée"
 
-#: src/page/album/photos.vue:412 src/page/photos.vue:561
+#: src/page/album/photos.vue:412 src/page/photos.vue:564
 msgid "One picture found"
 msgstr "Une image trouvée"
 
@@ -1956,7 +1954,7 @@ msgstr "Personnes"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Les personnes avec qui vous partagez un lien pourront voir le contenu public de votre bibliothèque."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:192
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:181
 msgid "Permanently deleted"
 msgstr "Supprimé définitivement"
 
@@ -1992,9 +1990,8 @@ msgstr "Adhésion à PhotoPrism"
 msgid "Photos"
 msgstr "Photos"
 
-#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:111
-#: src/component/photo/toolbar.vue:122 src/component/photo/toolbar.vue:135
-#: src/dialog/album/edit.vue:24
+#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:112
+#: src/component/photo/toolbar.vue:124 src/dialog/album/edit.vue:24
 msgid "Picture Title"
 msgstr "Titre de l'image"
 
@@ -2145,9 +2142,9 @@ msgstr "Réindexer tous les originaux, en incluant ceux déjà indexés et les f
 msgid "Read-Only Mode"
 msgstr "Accès en lecture seule"
 
-#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:110
-#: src/component/photo/toolbar.vue:121 src/component/photo/toolbar.vue:133
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:93
+#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:111
+#: src/component/photo/toolbar.vue:122 src/dialog/album/edit.vue:23
+#: src/page/albums.vue:93
 msgid "Recently Added"
 msgstr "Récemment ajoutés"
 
@@ -2155,7 +2152,7 @@ msgstr "Récemment ajoutés"
 msgid "Recently Archived"
 msgstr "Récemment archivé"
 
-#: src/component/photo/toolbar.vue:134 src/page/albums.vue:94
+#: src/component/photo/toolbar.vue:123 src/page/albums.vue:94
 msgid "Recently Edited"
 msgstr "Récemment modifiés"
 
@@ -2870,9 +2867,8 @@ msgstr "Code de vérification"
 msgid "Video"
 msgstr "Vidéo"
 
-#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:114
-#: src/component/photo/toolbar.vue:125 src/component/photo/toolbar.vue:138
-#: src/dialog/album/edit.vue:27
+#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:115
+#: src/component/photo/toolbar.vue:127 src/dialog/album/edit.vue:27
 msgid "Video Duration"
 msgstr "Durée de la vidéo"
 
@@ -2896,7 +2892,7 @@ msgstr "Visionneuse"
 msgid "Visitor"
 msgstr "Visiteur"
 
-#: src/component/photo/toolbar.vue:126 src/component/photo/toolbar.vue:139
+#: src/component/photo/toolbar.vue:128
 msgid "Visual Similarity"
 msgstr "Similitude visuelle"
 

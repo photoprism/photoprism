@@ -36,7 +36,7 @@ msgid "%{n} people found"
 msgstr "найдено %{n} человек"
 
 #: src/page/album/photos.vue:258 src/page/album/photos.vue:414
-#: src/page/photos.vue:395 src/page/photos.vue:563
+#: src/page/photos.vue:398 src/page/photos.vue:566
 msgid "%{n} pictures found"
 msgstr "найдено %{n} изображений"
 
@@ -473,7 +473,7 @@ msgstr "Камера"
 msgid "Can't access your authenticator app or device?"
 msgstr "Не можешь получить доступ к своему приложению или устройству аутентификатора?"
 
-#: src/page/album/photos.vue:264 src/page/photos.vue:401
+#: src/page/album/photos.vue:264 src/page/photos.vue:404
 msgid "Can't load more, limit reached"
 msgstr "Не могу загрузить больше, достигнут лимит"
 
@@ -1134,15 +1134,13 @@ msgstr "Файловый менеджер"
 msgid "File Conversion"
 msgstr "Преобразование файлов"
 
-#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:112
-#: src/component/photo/toolbar.vue:123 src/component/photo/toolbar.vue:136
-#: src/dialog/album/edit.vue:25
+#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:113
+#: src/component/photo/toolbar.vue:125 src/dialog/album/edit.vue:25
 msgid "File Name"
 msgstr "Имя файла"
 
-#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:113
-#: src/component/photo/toolbar.vue:124 src/component/photo/toolbar.vue:137
-#: src/dialog/album/edit.vue:26
+#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:114
+#: src/component/photo/toolbar.vue:126 src/dialog/album/edit.vue:26
 msgid "File Size"
 msgstr "Размер файла"
 
@@ -1675,7 +1673,7 @@ msgstr "Месяц"
 msgid "Mosaic"
 msgstr "Мозайка"
 
-#: src/component/photo/toolbar.vue:140 src/dialog/album/edit.vue:28
+#: src/component/photo/toolbar.vue:129 src/dialog/album/edit.vue:28
 msgid "Most Relevant"
 msgstr "Наиболее подходящие"
 
@@ -1721,9 +1719,9 @@ msgstr "Новый"
 msgid "New Password"
 msgstr "Новый пароль"
 
-#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:108
-#: src/component/photo/toolbar.vue:119 src/component/photo/toolbar.vue:131
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:91
+#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:109
+#: src/component/photo/toolbar.vue:120 src/dialog/album/edit.vue:21
+#: src/page/albums.vue:91
 msgid "Newest First"
 msgstr "Сначала новые"
 
@@ -1752,7 +1750,7 @@ msgstr "Люди не найдены"
 #: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:410
-#: src/page/library/browse.vue:34 src/page/photos.vue:559
+#: src/page/library/browse.vue:34 src/page/photos.vue:562
 #: src/page/places.vue:414 src/page/places.vue:500
 msgid "No pictures found"
 msgstr "Фото не найдены"
@@ -1830,9 +1828,9 @@ msgstr "Не в сети"
 msgid "OIDC"
 msgstr "OIDC"
 
-#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:109
-#: src/component/photo/toolbar.vue:120 src/component/photo/toolbar.vue:132
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:92
+#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:110
+#: src/component/photo/toolbar.vue:121 src/dialog/album/edit.vue:22
+#: src/page/albums.vue:92
 msgid "Oldest First"
 msgstr "Сначала старые"
 
@@ -1873,7 +1871,7 @@ msgstr "Найдена одна метка"
 msgid "One person found"
 msgstr "Найден один человек"
 
-#: src/page/album/photos.vue:412 src/page/photos.vue:561
+#: src/page/album/photos.vue:412 src/page/photos.vue:564
 msgid "One picture found"
 msgstr "Найдена одна фотография"
 
@@ -1950,7 +1948,7 @@ msgstr "Люди"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Люди, с которыми вы поделились ссылкой, будут иметь возможность просматривать публичный контент."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:192
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:181
 msgid "Permanently deleted"
 msgstr "Удалено насовсем"
 
@@ -1986,9 +1984,8 @@ msgstr "Членство в программе PhotoPrism+"
 msgid "Photos"
 msgstr "Фотографии"
 
-#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:111
-#: src/component/photo/toolbar.vue:122 src/component/photo/toolbar.vue:135
-#: src/dialog/album/edit.vue:24
+#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:112
+#: src/component/photo/toolbar.vue:124 src/dialog/album/edit.vue:24
 msgid "Picture Title"
 msgstr "Название картинки"
 
@@ -2139,9 +2136,9 @@ msgstr "Повторное индексирование всех оригина�
 msgid "Read-Only Mode"
 msgstr "Режим только для чтения"
 
-#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:110
-#: src/component/photo/toolbar.vue:121 src/component/photo/toolbar.vue:133
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:93
+#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:111
+#: src/component/photo/toolbar.vue:122 src/dialog/album/edit.vue:23
+#: src/page/albums.vue:93
 msgid "Recently Added"
 msgstr "Недавно добавленные"
 
@@ -2149,7 +2146,7 @@ msgstr "Недавно добавленные"
 msgid "Recently Archived"
 msgstr "Недавно архивировано"
 
-#: src/component/photo/toolbar.vue:134 src/page/albums.vue:94
+#: src/component/photo/toolbar.vue:123 src/page/albums.vue:94
 msgid "Recently Edited"
 msgstr "Недавно отредактированные"
 
@@ -2864,9 +2861,8 @@ msgstr "Проверочный код"
 msgid "Video"
 msgstr "Видео"
 
-#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:114
-#: src/component/photo/toolbar.vue:125 src/component/photo/toolbar.vue:138
-#: src/dialog/album/edit.vue:27
+#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:115
+#: src/component/photo/toolbar.vue:127 src/dialog/album/edit.vue:27
 msgid "Video Duration"
 msgstr "Продолжительность видео"
 
@@ -2890,7 +2886,7 @@ msgstr "Просмотрщик"
 msgid "Visitor"
 msgstr "Посетитель"
 
-#: src/component/photo/toolbar.vue:126 src/component/photo/toolbar.vue:139
+#: src/component/photo/toolbar.vue:128
 msgid "Visual Similarity"
 msgstr "Визуальное сходство"
 

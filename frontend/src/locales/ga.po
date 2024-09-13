@@ -33,7 +33,7 @@ msgid "%{n} people found"
 msgstr "Aimsíodh %{n} duine"
 
 #: src/page/album/photos.vue:258 src/page/album/photos.vue:414
-#: src/page/photos.vue:395 src/page/photos.vue:563
+#: src/page/photos.vue:398 src/page/photos.vue:566
 msgid "%{n} pictures found"
 msgstr "Aimsíodh %{n} pictiúr"
 
@@ -470,7 +470,7 @@ msgstr "Sraith ceamara"
 msgid "Can't access your authenticator app or device?"
 msgstr "Ní féidir rochtain a fháil ar d'aip nó gléas fíordheimhnitheora?"
 
-#: src/page/album/photos.vue:264 src/page/photos.vue:401
+#: src/page/album/photos.vue:264 src/page/photos.vue:404
 msgid "Can't load more, limit reached"
 msgstr "Ní féidir níos mó a lódáil, shroich an teorainn"
 
@@ -1131,15 +1131,13 @@ msgstr "Brabhsálaí Comhad"
 msgid "File Conversion"
 msgstr "Tiontú Comhad"
 
-#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:112
-#: src/component/photo/toolbar.vue:123 src/component/photo/toolbar.vue:136
-#: src/dialog/album/edit.vue:25
+#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:113
+#: src/component/photo/toolbar.vue:125 src/dialog/album/edit.vue:25
 msgid "File Name"
 msgstr "Ainm an Chomhaid"
 
-#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:113
-#: src/component/photo/toolbar.vue:124 src/component/photo/toolbar.vue:137
-#: src/dialog/album/edit.vue:26
+#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:114
+#: src/component/photo/toolbar.vue:126 src/dialog/album/edit.vue:26
 msgid "File Size"
 msgstr "Méid an Chomhaid"
 
@@ -1672,7 +1670,7 @@ msgstr "Mí"
 msgid "Mosaic"
 msgstr "Mósáic"
 
-#: src/component/photo/toolbar.vue:140 src/dialog/album/edit.vue:28
+#: src/component/photo/toolbar.vue:129 src/dialog/album/edit.vue:28
 msgid "Most Relevant"
 msgstr "Is Ábhartha"
 
@@ -1718,9 +1716,9 @@ msgstr "Nua"
 msgid "New Password"
 msgstr "Pasfhocal Nua"
 
-#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:108
-#: src/component/photo/toolbar.vue:119 src/component/photo/toolbar.vue:131
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:91
+#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:109
+#: src/component/photo/toolbar.vue:120 src/dialog/album/edit.vue:21
+#: src/page/albums.vue:91
 msgid "Newest First"
 msgstr "Is Déanaí ar dtús"
 
@@ -1749,7 +1747,7 @@ msgstr "Níor aimsíodh daoine"
 #: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:410
-#: src/page/library/browse.vue:34 src/page/photos.vue:559
+#: src/page/library/browse.vue:34 src/page/photos.vue:562
 #: src/page/places.vue:414 src/page/places.vue:500
 msgid "No pictures found"
 msgstr "Níor aimsíodh aon phictiúir"
@@ -1827,9 +1825,9 @@ msgstr "As líne"
 msgid "OIDC"
 msgstr "OIDC"
 
-#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:109
-#: src/component/photo/toolbar.vue:120 src/component/photo/toolbar.vue:132
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:92
+#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:110
+#: src/component/photo/toolbar.vue:121 src/dialog/album/edit.vue:22
+#: src/page/albums.vue:92
 msgid "Oldest First"
 msgstr "Is sine ar dtús"
 
@@ -1870,7 +1868,7 @@ msgstr "Fuarthas lipéad amháin"
 msgid "One person found"
 msgstr "Fuair duine amháin"
 
-#: src/page/album/photos.vue:412 src/page/photos.vue:561
+#: src/page/album/photos.vue:412 src/page/photos.vue:564
 msgid "One picture found"
 msgstr "Fuarthas pictiúr amháin"
 
@@ -1947,7 +1945,7 @@ msgstr "Daoine"
 msgid "People you share a link with will be able to view public contents."
 msgstr "Beidh daoine a roinneann tú nasc leo in ann féachaint ar inneachar poiblí."
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:192
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:181
 msgid "Permanently deleted"
 msgstr "Scriosta go buan"
 
@@ -1983,9 +1981,8 @@ msgstr "Ballraíocht PhotoPrism+"
 msgid "Photos"
 msgstr "Grianghraif"
 
-#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:111
-#: src/component/photo/toolbar.vue:122 src/component/photo/toolbar.vue:135
-#: src/dialog/album/edit.vue:24
+#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:112
+#: src/component/photo/toolbar.vue:124 src/dialog/album/edit.vue:24
 msgid "Picture Title"
 msgstr "Teideal Pictiúr"
 
@@ -2136,9 +2133,9 @@ msgstr "Déan gach bunleagan a athinnéacsú, lena n-áirítear comhaid atá inn
 msgid "Read-Only Mode"
 msgstr "Mód Inléite Amháin"
 
-#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:110
-#: src/component/photo/toolbar.vue:121 src/component/photo/toolbar.vue:133
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:93
+#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:111
+#: src/component/photo/toolbar.vue:122 src/dialog/album/edit.vue:23
+#: src/page/albums.vue:93
 msgid "Recently Added"
 msgstr "Curtha leis le déanaí"
 
@@ -2146,7 +2143,7 @@ msgstr "Curtha leis le déanaí"
 msgid "Recently Archived"
 msgstr "Cartlannaithe le déanaí"
 
-#: src/component/photo/toolbar.vue:134 src/page/albums.vue:94
+#: src/component/photo/toolbar.vue:123 src/page/albums.vue:94
 msgid "Recently Edited"
 msgstr "Curtha in eagar le déanaí"
 
@@ -2861,9 +2858,8 @@ msgstr "Cód Fíoraithe"
 msgid "Video"
 msgstr "Físeán"
 
-#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:114
-#: src/component/photo/toolbar.vue:125 src/component/photo/toolbar.vue:138
-#: src/dialog/album/edit.vue:27
+#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:115
+#: src/component/photo/toolbar.vue:127 src/dialog/album/edit.vue:27
 msgid "Video Duration"
 msgstr "Fad Físeáin"
 
@@ -2887,7 +2883,7 @@ msgstr "Amharcóir"
 msgid "Visitor"
 msgstr "Cuairteoir"
 
-#: src/component/photo/toolbar.vue:126 src/component/photo/toolbar.vue:139
+#: src/component/photo/toolbar.vue:128
 msgid "Visual Similarity"
 msgstr "Cosúlacht Amharc"
 

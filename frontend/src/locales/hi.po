@@ -36,7 +36,7 @@ msgid "%{n} people found"
 msgstr "%{n} लोग मिले"
 
 #: src/page/album/photos.vue:258 src/page/album/photos.vue:414
-#: src/page/photos.vue:395 src/page/photos.vue:563
+#: src/page/photos.vue:398 src/page/photos.vue:566
 msgid "%{n} pictures found"
 msgstr "%{n} चित्र मिले"
 
@@ -473,7 +473,7 @@ msgstr "कैमरा सीरियल"
 msgid "Can't access your authenticator app or device?"
 msgstr "क्या आप अपने प्रमाणक ऐप या डिवाइस तक नहीं पहुंच पा रहे हैं?"
 
-#: src/page/album/photos.vue:264 src/page/photos.vue:401
+#: src/page/album/photos.vue:264 src/page/photos.vue:404
 msgid "Can't load more, limit reached"
 msgstr "अधिक लोड नहीं किया जा सकता, सीमा तक पहुंच गया"
 
@@ -1134,15 +1134,13 @@ msgstr "फ़ाइल ब्राउज़र"
 msgid "File Conversion"
 msgstr "फ़ाइल रूपांतरण"
 
-#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:112
-#: src/component/photo/toolbar.vue:123 src/component/photo/toolbar.vue:136
-#: src/dialog/album/edit.vue:25
+#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:113
+#: src/component/photo/toolbar.vue:125 src/dialog/album/edit.vue:25
 msgid "File Name"
 msgstr "फ़ाइल का नाम"
 
-#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:113
-#: src/component/photo/toolbar.vue:124 src/component/photo/toolbar.vue:137
-#: src/dialog/album/edit.vue:26
+#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:114
+#: src/component/photo/toolbar.vue:126 src/dialog/album/edit.vue:26
 msgid "File Size"
 msgstr "फ़ाइल का साइज़"
 
@@ -1675,7 +1673,7 @@ msgstr "महीना"
 msgid "Mosaic"
 msgstr "मौज़ेक"
 
-#: src/component/photo/toolbar.vue:140 src/dialog/album/edit.vue:28
+#: src/component/photo/toolbar.vue:129 src/dialog/album/edit.vue:28
 msgid "Most Relevant"
 msgstr "सबसे अधिक प्रासंगिक"
 
@@ -1721,9 +1719,9 @@ msgstr "नई"
 msgid "New Password"
 msgstr "नया पासवर्ड"
 
-#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:108
-#: src/component/photo/toolbar.vue:119 src/component/photo/toolbar.vue:131
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:91
+#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:109
+#: src/component/photo/toolbar.vue:120 src/dialog/album/edit.vue:21
+#: src/page/albums.vue:91
 msgid "Newest First"
 msgstr "नवीनतम पहले"
 
@@ -1752,7 +1750,7 @@ msgstr "कोई व्यक्ति नहीं मिला"
 #: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:410
-#: src/page/library/browse.vue:34 src/page/photos.vue:559
+#: src/page/library/browse.vue:34 src/page/photos.vue:562
 #: src/page/places.vue:414 src/page/places.vue:500
 msgid "No pictures found"
 msgstr "कोई चित्र नहीं मिला"
@@ -1830,9 +1828,9 @@ msgstr "ऑफलाइन"
 msgid "OIDC"
 msgstr "ओआईडीसी"
 
-#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:109
-#: src/component/photo/toolbar.vue:120 src/component/photo/toolbar.vue:132
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:92
+#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:110
+#: src/component/photo/toolbar.vue:121 src/dialog/album/edit.vue:22
+#: src/page/albums.vue:92
 msgid "Oldest First"
 msgstr "सबसे पुराना पहले"
 
@@ -1873,7 +1871,7 @@ msgstr "एक लेबल मिला"
 msgid "One person found"
 msgstr "एक व्यक्ति मिला"
 
-#: src/page/album/photos.vue:412 src/page/photos.vue:561
+#: src/page/album/photos.vue:412 src/page/photos.vue:564
 msgid "One picture found"
 msgstr "एक तस्वीर मिली"
 
@@ -1950,7 +1948,7 @@ msgstr "लोग"
 msgid "People you share a link with will be able to view public contents."
 msgstr "जिन लोगों के साथ आप लिंक साझा करते हैं, वे सार्वजनिक सामग्री देख पाएंगे।"
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:192
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:181
 msgid "Permanently deleted"
 msgstr "स्थायी रूप से हटा दिया गया"
 
@@ -1986,9 +1984,8 @@ msgstr "फोटोप्रिज्म+ सदस्यता"
 msgid "Photos"
 msgstr "तस्वीरें"
 
-#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:111
-#: src/component/photo/toolbar.vue:122 src/component/photo/toolbar.vue:135
-#: src/dialog/album/edit.vue:24
+#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:112
+#: src/component/photo/toolbar.vue:124 src/dialog/album/edit.vue:24
 msgid "Picture Title"
 msgstr "चित्र का शीर्षक"
 
@@ -2139,9 +2136,9 @@ msgstr "पहले से अनुक्रमित और अपरिव�
 msgid "Read-Only Mode"
 msgstr "पढ़ें- केवल मोड"
 
-#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:110
-#: src/component/photo/toolbar.vue:121 src/component/photo/toolbar.vue:133
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:93
+#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:111
+#: src/component/photo/toolbar.vue:122 src/dialog/album/edit.vue:23
+#: src/page/albums.vue:93
 msgid "Recently Added"
 msgstr "हाल ही में जोड़ा"
 
@@ -2149,7 +2146,7 @@ msgstr "हाल ही में जोड़ा"
 msgid "Recently Archived"
 msgstr "हाल ही में संग्रहीत"
 
-#: src/component/photo/toolbar.vue:134 src/page/albums.vue:94
+#: src/component/photo/toolbar.vue:123 src/page/albums.vue:94
 msgid "Recently Edited"
 msgstr "हाल ही में संपादित"
 
@@ -2864,9 +2861,8 @@ msgstr "सत्यापन कोड"
 msgid "Video"
 msgstr "वीडियो"
 
-#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:114
-#: src/component/photo/toolbar.vue:125 src/component/photo/toolbar.vue:138
-#: src/dialog/album/edit.vue:27
+#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:115
+#: src/component/photo/toolbar.vue:127 src/dialog/album/edit.vue:27
 msgid "Video Duration"
 msgstr "वीडियो अवधि"
 
@@ -2890,7 +2886,7 @@ msgstr "दर्शक"
 msgid "Visitor"
 msgstr "आगंतुक"
 
-#: src/component/photo/toolbar.vue:126 src/component/photo/toolbar.vue:139
+#: src/component/photo/toolbar.vue:128
 msgid "Visual Similarity"
 msgstr "दृश्य समानता"
 

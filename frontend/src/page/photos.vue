@@ -42,7 +42,6 @@ export default {
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
-    const order = this.sortOrder();
     const camera = query["camera"] ? parseInt(query["camera"]) : 0;
     const q = query["q"] ? query["q"] : "";
     const country = query["country"] ? query["country"] : "";
@@ -52,7 +51,8 @@ export default {
     const color = query["color"] ? query["color"] : "";
     const label = query["label"] ? query["label"] : "";
     const latlng = query["latlng"] ? query["latlng"] : "";
-    const view = this.viewType();
+    const view = this.getViewType();
+    const order = this.getSortOrder();
     const filter = {
       country: country,
       camera: camera,
@@ -119,21 +119,7 @@ export default {
       return this.selection.length > 0;
     },
     context: function () {
-      if (!this.staticFilter) {
-        return "photos";
-      }
-
-      if (this.staticFilter.review) {
-        return "review";
-      } else if (this.staticFilter.archived) {
-        return "archive";
-      } else if (this.staticFilter.favorite) {
-        return "favorites";
-      } else if (this.staticFilter.hidden) {
-        return "hidden";
-      }
-
-      return "";
+      return this.getContext();
     },
   },
   watch: {
@@ -161,9 +147,9 @@ export default {
       this.filter.color = query["color"] ? query["color"] : "";
       this.filter.label = query["label"] ? query["label"] : "";
       this.filter.latlng = query["latlng"] ? query["latlng"] : "";
-      this.filter.order = this.sortOrder();
+      this.filter.order = this.getSortOrder();
 
-      this.settings.view = this.viewType();
+      this.settings.view = this.getViewType();
 
       /**
        * Even if the filter is unchanged, if the route is changed (for example
@@ -224,7 +210,7 @@ export default {
       this.offset = offset;
       window.localStorage.setItem("photos_offset", offset);
     },
-    viewType() {
+    getViewType() {
       if (this.embedded) {
         return "mosaic";
       }
@@ -243,7 +229,24 @@ export default {
 
       return "cards";
     },
-    sortOrder() {
+    getContext() {
+      if (!this.staticFilter) {
+        return "photos";
+      }
+
+      if (this.staticFilter.review) {
+        return "review";
+      } else if (this.staticFilter.archived) {
+        return "archive";
+      } else if (this.staticFilter.favorite) {
+        return "favorites";
+      } else if (this.staticFilter.hidden) {
+        return "hidden";
+      }
+
+      return "";
+    },
+    getSortOrder() {
       if (this.embedded) {
         return "newest";
       }
@@ -251,7 +254,7 @@ export default {
       let storageKey;
       let defaultOrder;
 
-      switch (this.context) {
+      switch (this.getContext()) {
         case "archive":
           storageKey = "archive_order";
           defaultOrder = "archived";

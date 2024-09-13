@@ -29,8 +29,8 @@ msgstr ""
 
 #: src/page/album/photos.vue:258
 #: src/page/album/photos.vue:414
-#: src/page/photos.vue:395
-#: src/page/photos.vue:563
+#: src/page/photos.vue:398
+#: src/page/photos.vue:566
 msgid "%{n} pictures found"
 msgstr ""
 
@@ -535,7 +535,7 @@ msgid "Can't access your authenticator app or device?"
 msgstr ""
 
 #: src/page/album/photos.vue:264
-#: src/page/photos.vue:401
+#: src/page/photos.vue:404
 msgid "Can't load more, limit reached"
 msgstr ""
 
@@ -1336,17 +1336,15 @@ msgid "File Conversion"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:101
-#: src/component/photo/toolbar.vue:112
-#: src/component/photo/toolbar.vue:123
-#: src/component/photo/toolbar.vue:136
+#: src/component/photo/toolbar.vue:113
+#: src/component/photo/toolbar.vue:125
 #: src/dialog/album/edit.vue:25
 msgid "File Name"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:102
-#: src/component/photo/toolbar.vue:113
-#: src/component/photo/toolbar.vue:124
-#: src/component/photo/toolbar.vue:137
+#: src/component/photo/toolbar.vue:114
+#: src/component/photo/toolbar.vue:126
 #: src/dialog/album/edit.vue:26
 msgid "File Size"
 msgstr ""
@@ -1990,7 +1988,7 @@ msgstr ""
 msgid "Mosaic"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:140
+#: src/component/photo/toolbar.vue:129
 #: src/dialog/album/edit.vue:28
 msgid "Most Relevant"
 msgstr ""
@@ -2056,9 +2054,8 @@ msgid "New Password"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:96
-#: src/component/photo/toolbar.vue:108
-#: src/component/photo/toolbar.vue:119
-#: src/component/photo/toolbar.vue:131
+#: src/component/photo/toolbar.vue:109
+#: src/component/photo/toolbar.vue:120
 #: src/dialog/album/edit.vue:21
 #: src/page/albums.vue:91
 msgid "Newest First"
@@ -2101,7 +2098,7 @@ msgstr ""
 #: src/component/photo/mosaic.vue:8
 #: src/page/album/photos.vue:410
 #: src/page/library/browse.vue:34
-#: src/page/photos.vue:559
+#: src/page/photos.vue:562
 #: src/page/places.vue:414
 #: src/page/places.vue:500
 msgid "No pictures found"
@@ -2196,9 +2193,8 @@ msgid "OIDC"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:97
-#: src/component/photo/toolbar.vue:109
-#: src/component/photo/toolbar.vue:120
-#: src/component/photo/toolbar.vue:132
+#: src/component/photo/toolbar.vue:110
+#: src/component/photo/toolbar.vue:121
 #: src/dialog/album/edit.vue:22
 #: src/page/albums.vue:92
 msgid "Oldest First"
@@ -2243,7 +2239,7 @@ msgid "One person found"
 msgstr ""
 
 #: src/page/album/photos.vue:412
-#: src/page/photos.vue:561
+#: src/page/photos.vue:564
 msgid "One picture found"
 msgstr ""
 
@@ -2339,7 +2335,7 @@ msgid "People you share a link with will be able to view public contents."
 msgstr ""
 
 #: src/component/photo/clipboard.vue:120
-#: src/component/photo/toolbar.vue:192
+#: src/component/photo/toolbar.vue:181
 msgid "Permanently deleted"
 msgstr ""
 
@@ -2379,9 +2375,8 @@ msgid "Photos"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:100
-#: src/component/photo/toolbar.vue:111
-#: src/component/photo/toolbar.vue:122
-#: src/component/photo/toolbar.vue:135
+#: src/component/photo/toolbar.vue:112
+#: src/component/photo/toolbar.vue:124
 #: src/dialog/album/edit.vue:24
 msgid "Picture Title"
 msgstr ""
@@ -2555,9 +2550,8 @@ msgid "Read-Only Mode"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:98
-#: src/component/photo/toolbar.vue:110
-#: src/component/photo/toolbar.vue:121
-#: src/component/photo/toolbar.vue:133
+#: src/component/photo/toolbar.vue:111
+#: src/component/photo/toolbar.vue:122
 #: src/dialog/album/edit.vue:23
 #: src/page/albums.vue:93
 msgid "Recently Added"
@@ -2567,7 +2561,7 @@ msgstr ""
 msgid "Recently Archived"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:134
+#: src/component/photo/toolbar.vue:123
 #: src/page/albums.vue:94
 msgid "Recently Edited"
 msgstr ""
@@ -3421,9 +3415,8 @@ msgid "Video"
 msgstr ""
 
 #: src/component/photo/toolbar.vue:103
-#: src/component/photo/toolbar.vue:114
-#: src/component/photo/toolbar.vue:125
-#: src/component/photo/toolbar.vue:138
+#: src/component/photo/toolbar.vue:115
+#: src/component/photo/toolbar.vue:127
 #: src/dialog/album/edit.vue:27
 msgid "Video Duration"
 msgstr ""
@@ -3453,8 +3446,7 @@ msgstr ""
 msgid "Visitor"
 msgstr ""
 
-#: src/component/photo/toolbar.vue:126
-#: src/component/photo/toolbar.vue:139
+#: src/component/photo/toolbar.vue:128
 msgid "Visual Similarity"
 msgstr ""
 

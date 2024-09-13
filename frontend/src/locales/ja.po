@@ -36,7 +36,7 @@ msgid "%{n} people found"
 msgstr "%{n} 人が見つかりました"
 
 #: src/page/album/photos.vue:258 src/page/album/photos.vue:414
-#: src/page/photos.vue:395 src/page/photos.vue:563
+#: src/page/photos.vue:398 src/page/photos.vue:566
 msgid "%{n} pictures found"
 msgstr "%{n} 枚の写真が見つかりました"
 
@@ -473,7 +473,7 @@ msgstr "カメラのシリアル"
 msgid "Can't access your authenticator app or device?"
 msgstr "認証アプリやデバイスにアクセスできませんか？"
 
-#: src/page/album/photos.vue:264 src/page/photos.vue:401
+#: src/page/album/photos.vue:264 src/page/photos.vue:404
 msgid "Can't load more, limit reached"
 msgstr "制限に達したため、これ以上読み込めません"
 
@@ -1134,15 +1134,13 @@ msgstr "ファイルブラウザ"
 msgid "File Conversion"
 msgstr "ファイル変換"
 
-#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:112
-#: src/component/photo/toolbar.vue:123 src/component/photo/toolbar.vue:136
-#: src/dialog/album/edit.vue:25
+#: src/component/photo/toolbar.vue:101 src/component/photo/toolbar.vue:113
+#: src/component/photo/toolbar.vue:125 src/dialog/album/edit.vue:25
 msgid "File Name"
 msgstr "ファイル名"
 
-#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:113
-#: src/component/photo/toolbar.vue:124 src/component/photo/toolbar.vue:137
-#: src/dialog/album/edit.vue:26
+#: src/component/photo/toolbar.vue:102 src/component/photo/toolbar.vue:114
+#: src/component/photo/toolbar.vue:126 src/dialog/album/edit.vue:26
 msgid "File Size"
 msgstr "ファイルサイズ"
 
@@ -1675,7 +1673,7 @@ msgstr "月"
 msgid "Mosaic"
 msgstr "モザイク"
 
-#: src/component/photo/toolbar.vue:140 src/dialog/album/edit.vue:28
+#: src/component/photo/toolbar.vue:129 src/dialog/album/edit.vue:28
 msgid "Most Relevant"
 msgstr "最適"
 
@@ -1721,9 +1719,9 @@ msgstr "新規"
 msgid "New Password"
 msgstr "新しいパスワード"
 
-#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:108
-#: src/component/photo/toolbar.vue:119 src/component/photo/toolbar.vue:131
-#: src/dialog/album/edit.vue:21 src/page/albums.vue:91
+#: src/component/photo/toolbar.vue:96 src/component/photo/toolbar.vue:109
+#: src/component/photo/toolbar.vue:120 src/dialog/album/edit.vue:21
+#: src/page/albums.vue:91
 msgid "Newest First"
 msgstr "新しい順"
 
@@ -1752,7 +1750,7 @@ msgstr "ユーザーが見つかりませんでした"
 #: src/common/viewer.js:253 src/component/photo/cards.vue:8
 #: src/component/photo/cards.vue:6 src/component/photo/list.vue:8
 #: src/component/photo/mosaic.vue:8 src/page/album/photos.vue:410
-#: src/page/library/browse.vue:34 src/page/photos.vue:559
+#: src/page/library/browse.vue:34 src/page/photos.vue:562
 #: src/page/places.vue:414 src/page/places.vue:500
 msgid "No pictures found"
 msgstr "写真はありません"
@@ -1830,9 +1828,9 @@ msgstr "オフライン"
 msgid "OIDC"
 msgstr "OIDC"
 
-#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:109
-#: src/component/photo/toolbar.vue:120 src/component/photo/toolbar.vue:132
-#: src/dialog/album/edit.vue:22 src/page/albums.vue:92
+#: src/component/photo/toolbar.vue:97 src/component/photo/toolbar.vue:110
+#: src/component/photo/toolbar.vue:121 src/dialog/album/edit.vue:22
+#: src/page/albums.vue:92
 msgid "Oldest First"
 msgstr "古い順"
 
@@ -1873,7 +1871,7 @@ msgstr "1 個のラベルが見つかりました"
 msgid "One person found"
 msgstr "1 人が見つかりました"
 
-#: src/page/album/photos.vue:412 src/page/photos.vue:561
+#: src/page/album/photos.vue:412 src/page/photos.vue:564
 msgid "One picture found"
 msgstr "1 枚の写真が見つかりました"
 
@@ -1950,7 +1948,7 @@ msgstr "人"
 msgid "People you share a link with will be able to view public contents."
 msgstr "あなたがリンクを共有した人だけが公開された内容を閲覧できます。"
 
-#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:192
+#: src/component/photo/clipboard.vue:120 src/component/photo/toolbar.vue:181
 msgid "Permanently deleted"
 msgstr "永久に削除"
 
@@ -1986,9 +1984,8 @@ msgstr "PhotoPrism+ メンバーシップ"
 msgid "Photos"
 msgstr "写真"
 
-#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:111
-#: src/component/photo/toolbar.vue:122 src/component/photo/toolbar.vue:135
-#: src/dialog/album/edit.vue:24
+#: src/component/photo/toolbar.vue:100 src/component/photo/toolbar.vue:112
+#: src/component/photo/toolbar.vue:124 src/dialog/album/edit.vue:24
 msgid "Picture Title"
 msgstr "写真のタイトル"
 
@@ -2139,9 +2136,9 @@ msgstr "既にインデックスされたものや変更されていないファ
 msgid "Read-Only Mode"
 msgstr "読み込み専用モード"
 
-#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:110
-#: src/component/photo/toolbar.vue:121 src/component/photo/toolbar.vue:133
-#: src/dialog/album/edit.vue:23 src/page/albums.vue:93
+#: src/component/photo/toolbar.vue:98 src/component/photo/toolbar.vue:111
+#: src/component/photo/toolbar.vue:122 src/dialog/album/edit.vue:23
+#: src/page/albums.vue:93
 msgid "Recently Added"
 msgstr "最近追加"
 
@@ -2149,7 +2146,7 @@ msgstr "最近追加"
 msgid "Recently Archived"
 msgstr "最近のアーカイブ"
 
-#: src/component/photo/toolbar.vue:134 src/page/albums.vue:94
+#: src/component/photo/toolbar.vue:123 src/page/albums.vue:94
 msgid "Recently Edited"
 msgstr "最近編集"
 
@@ -2864,9 +2861,8 @@ msgstr "検証コード"
 msgid "Video"
 msgstr "動画"
 
-#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:114
-#: src/component/photo/toolbar.vue:125 src/component/photo/toolbar.vue:138
-#: src/dialog/album/edit.vue:27
+#: src/component/photo/toolbar.vue:103 src/component/photo/toolbar.vue:115
+#: src/component/photo/toolbar.vue:127 src/dialog/album/edit.vue:27
 msgid "Video Duration"
 msgstr "動画の長さ"
 
@@ -2890,7 +2886,7 @@ msgstr "ビューア"
 msgid "Visitor"
 msgstr "来場者"
 
-#: src/component/photo/toolbar.vue:126 src/component/photo/toolbar.vue:139
+#: src/component/photo/toolbar.vue:128
 msgid "Visual Similarity"
 msgstr "視覚的類似性"
 
