@@ -972,13 +972,45 @@ func TestPhotos(t *testing.T) {
 
 		assert.IsType(t, PhotoResults{}, photos)
 	})
-	t.Run("search all recently edited", func(t *testing.T) {
+	t.Run("RecentlyEdited", func(t *testing.T) {
 		var frm form.SearchPhotos
 
 		frm.Query = ""
 		frm.Count = 10
 		frm.Offset = 0
 		frm.Order = sortby.Edited
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("RecentlyDeleted", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = ""
+		frm.Count = 10
+		frm.Offset = 0
+		frm.Order = sortby.Deleted
 
 		// Parse query string and filter.
 		if err := frm.ParseQueryString(); err != nil {

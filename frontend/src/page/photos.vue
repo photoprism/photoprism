@@ -246,17 +246,34 @@ export default {
         return "newest";
       }
 
-      let queryParam = this.$route.query["order"];
-      let storedType = window.localStorage.getItem("photos_order");
+      let storageKey;
+      let defaultOrder;
 
-      if (queryParam) {
-        window.localStorage.setItem("photos_order", queryParam);
-        return queryParam;
-      } else if (storedType) {
-        return storedType;
+      switch (this.context) {
+        case "archive":
+          storageKey = "archive_order";
+          defaultOrder = "deleted";
+          break;
+        case "review":
+          storageKey = "review_order";
+          defaultOrder = "added";
+          break;
+        default:
+          storageKey = "photos_order";
+          defaultOrder = "newest";
       }
 
-      return "newest";
+      let queryOrder = this.$route.query["order"];
+      let storageOrder = window.localStorage.getItem(storageKey);
+
+      if (queryOrder) {
+        window.localStorage.setItem(storageKey, queryOrder);
+        return queryOrder;
+      } else if (storageOrder) {
+        return storageOrder;
+      }
+
+      return defaultOrder;
     },
     openDate(index) {
       const photo = this.results[index];

@@ -145,7 +145,7 @@
               hide-details
               color="secondary-dark"
               background-color="secondary"
-              :items="options.sorting"
+              :items="sortOptions"
               @change="
                 (v) => {
                   updateQuery({ order: v });
@@ -306,6 +306,7 @@ export default {
   data() {
     const features = this.$config.settings().features;
     const readonly = this.$config.get("readonly");
+
     return {
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
@@ -330,18 +331,6 @@ export default {
           { value: "cards", text: this.$gettext("Cards") },
           { value: "list", text: this.$gettext("List") },
         ],
-        sorting: [
-          { value: "newest", text: this.$gettext("Newest First") },
-          { value: "oldest", text: this.$gettext("Oldest First") },
-          { value: "added", text: this.$gettext("Recently Added") },
-          { value: "edited", text: this.$gettext("Recently Edited") },
-          { value: "title", text: this.$gettext("Picture Title") },
-          { value: "name", text: this.$gettext("File Name") },
-          { value: "size", text: this.$gettext("File Size") },
-          { value: "duration", text: this.$gettext("Video Duration") },
-          { value: "similar", text: this.$gettext("Visual Similarity") },
-          { value: "relevance", text: this.$gettext("Most Relevant") },
-        ],
       },
       dialog: {
         delete: false,
@@ -355,11 +344,53 @@ export default {
     cameraOptions() {
       return this.all.cameras.concat(this.config.cameras);
     },
-    lensOptions() {
-      return this.all.lenses.concat(this.config.lenses);
-    },
     categoryOptions() {
       return this.all.categories.concat(this.config.categories);
+    },
+    sortOptions() {
+      let result;
+
+      switch (this.context) {
+        case "archive":
+          result = [
+            { value: "newest", text: this.$gettext("Newest First") },
+            { value: "oldest", text: this.$gettext("Oldest First") },
+            { value: "added", text: this.$gettext("Recently Added") },
+            { value: "deleted", text: this.$gettext("Recently Deleted") },
+            { value: "title", text: this.$gettext("Picture Title") },
+            { value: "name", text: this.$gettext("File Name") },
+            { value: "size", text: this.$gettext("File Size") },
+            { value: "duration", text: this.$gettext("Video Duration") },
+          ];
+          break;
+        case "review":
+          result = [
+            { value: "newest", text: this.$gettext("Newest First") },
+            { value: "oldest", text: this.$gettext("Oldest First") },
+            { value: "added", text: this.$gettext("Recently Added") },
+            { value: "title", text: this.$gettext("Picture Title") },
+            { value: "name", text: this.$gettext("File Name") },
+            { value: "size", text: this.$gettext("File Size") },
+            { value: "duration", text: this.$gettext("Video Duration") },
+            { value: "similar", text: this.$gettext("Visual Similarity") },
+          ];
+          break;
+        default:
+          result = [
+            { value: "newest", text: this.$gettext("Newest First") },
+            { value: "oldest", text: this.$gettext("Oldest First") },
+            { value: "added", text: this.$gettext("Recently Added") },
+            { value: "edited", text: this.$gettext("Recently Edited") },
+            { value: "title", text: this.$gettext("Picture Title") },
+            { value: "name", text: this.$gettext("File Name") },
+            { value: "size", text: this.$gettext("File Size") },
+            { value: "duration", text: this.$gettext("Video Duration") },
+            { value: "similar", text: this.$gettext("Visual Similarity") },
+            { value: "relevance", text: this.$gettext("Most Relevant") },
+          ];
+      }
+
+      return result;
     },
   },
   methods: {

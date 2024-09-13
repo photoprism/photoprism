@@ -122,27 +122,6 @@ export default {
       collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       navIcon: this.$rtl ? "navigate_before" : "navigate_next",
       searchExpanded: false,
-      options: {
-        views: [
-          { value: "mosaic", text: this.$gettext("Mosaic") },
-          { value: "cards", text: this.$gettext("Cards") },
-          { value: "list", text: this.$gettext("List") },
-        ],
-        countries: countries,
-        cameras: cameras,
-        sorting: [
-          { value: "newest", text: this.$gettext("Newest First") },
-          { value: "oldest", text: this.$gettext("Oldest First") },
-          { value: "added", text: this.$gettext("Recently Added") },
-          { value: "edited", text: this.$gettext("Recently Edited") },
-          { value: "title", text: this.$gettext("Picture Title") },
-          { value: "name", text: this.$gettext("File Name") },
-          { value: "size", text: this.$gettext("File Size") },
-          { value: "duration", text: this.$gettext("Video Duration") },
-          { value: "similar", text: this.$gettext("Visual Similarity") },
-          { value: "relevance", text: this.$gettext("Most Relevant") },
-        ],
-      },
       dialog: {
         share: false,
         upload: false,
