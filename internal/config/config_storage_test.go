@@ -203,7 +203,12 @@ func TestConfig_TestdataPath(t *testing.T) {
 func TestConfig_AlbumsPath(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/albums", c.BackupAlbumsPath())
+	// The default albums path has changed from “albums/” to “backup/albums/”.
+	//
+	// If this test fails, please manually move “albums” to the “backup” folder
+	// in the “storage/testdata” directory within your development environment:
+	// https://github.com/photoprism/photoprism/discussions/4520
+	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/backup/albums", c.BackupAlbumsPath())
 }
 
 func TestConfig_OriginalsAlbumsPath(t *testing.T) {
