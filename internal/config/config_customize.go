@@ -75,8 +75,6 @@ func (c *Config) WallpaperUri() string {
 		wallpaperUri = c.StaticAssetUri(path.Join(wallpaperPath, fileName))
 	} else if fs.FileExists(c.CustomStaticFile(path.Join(wallpaperPath, fileName))) {
 		wallpaperUri = c.CustomStaticAssetUri(path.Join(wallpaperPath, fileName))
-	} else if fs.FileExists(path.Join(c.ThemePath(), fileName)) {
-		wallpaperUri = c.BaseUri("/" + path.Join("_theme", fileName))
 	} else {
 		return ""
 	}
