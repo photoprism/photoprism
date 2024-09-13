@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-09-09 20:05+0000\n"
-"Last-Translator: Aitor <amento@ni.eus>\n"
+"PO-Revision-Date: 2024-09-13 11:46+0000\n"
+"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2141,7 +2141,7 @@ msgstr "Duela gutxi Gehitu"
 
 #: src/component/photo/toolbar.vue:99
 msgid "Recently Deleted"
-msgstr ""
+msgstr "Duela gutxi ezabatu da"
 
 #: src/component/photo/toolbar.vue:123 src/page/albums.vue:94
 msgid "Recently Edited"
