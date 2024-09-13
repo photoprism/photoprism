@@ -129,6 +129,8 @@ export default {
         return "archive";
       } else if (this.staticFilter.favorite) {
         return "favorites";
+      } else if (this.staticFilter.hidden) {
+        return "hidden";
       }
 
       return "";
@@ -252,7 +254,15 @@ export default {
       switch (this.context) {
         case "archive":
           storageKey = "archive_order";
-          defaultOrder = "deleted";
+          defaultOrder = "archived";
+          break;
+        case "favorites":
+          storageKey = "favorites_order";
+          defaultOrder = "newest";
+          break;
+        case "hidden":
+          storageKey = "hidden_order";
+          defaultOrder = "added";
           break;
         case "review":
           storageKey = "review_order";

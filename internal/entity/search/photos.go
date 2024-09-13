@@ -174,7 +174,7 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.media_id")
 	case sortby.Updated:
 		s = s.Where("photos.updated_at > photos.created_at").Order("photos.updated_at DESC, files.media_id")
-	case sortby.Deleted:
+	case sortby.Archived:
 		s = s.Order("photos.deleted_at DESC, files.media_id")
 	case sortby.Relevance:
 		if f.Label != "" {

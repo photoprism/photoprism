@@ -356,7 +356,18 @@ export default {
             { value: "newest", text: this.$gettext("Newest First") },
             { value: "oldest", text: this.$gettext("Oldest First") },
             { value: "added", text: this.$gettext("Recently Added") },
-            { value: "deleted", text: this.$gettext("Recently Deleted") },
+            { value: "archived", text: this.$gettext("Recently Archived") },
+            { value: "title", text: this.$gettext("Picture Title") },
+            { value: "name", text: this.$gettext("File Name") },
+            { value: "size", text: this.$gettext("File Size") },
+            { value: "duration", text: this.$gettext("Video Duration") },
+          ];
+          break;
+        case "hidden":
+          result = [
+            { value: "newest", text: this.$gettext("Newest First") },
+            { value: "oldest", text: this.$gettext("Oldest First") },
+            { value: "added", text: this.$gettext("Recently Added") },
             { value: "title", text: this.$gettext("Picture Title") },
             { value: "name", text: this.$gettext("File Name") },
             { value: "size", text: this.$gettext("File Size") },

@@ -1010,7 +1010,7 @@ func TestPhotos(t *testing.T) {
 		frm.Query = ""
 		frm.Count = 10
 		frm.Offset = 0
-		frm.Order = sortby.Deleted
+		frm.Order = sortby.Archived
 
 		// Parse query string and filter.
 		if err := frm.ParseQueryString(); err != nil {
