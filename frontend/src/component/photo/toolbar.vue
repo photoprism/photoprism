@@ -364,16 +364,6 @@ export default {
           ];
           break;
         case "hidden":
-          result = [
-            { value: "newest", text: this.$gettext("Newest First") },
-            { value: "oldest", text: this.$gettext("Oldest First") },
-            { value: "added", text: this.$gettext("Recently Added") },
-            { value: "title", text: this.$gettext("Picture Title") },
-            { value: "name", text: this.$gettext("File Name") },
-            { value: "size", text: this.$gettext("File Size") },
-            { value: "duration", text: this.$gettext("Video Duration") },
-          ];
-          break;
         case "review":
           result = [
             { value: "newest", text: this.$gettext("Newest First") },
@@ -383,7 +373,6 @@ export default {
             { value: "name", text: this.$gettext("File Name") },
             { value: "size", text: this.$gettext("File Size") },
             { value: "duration", text: this.$gettext("Video Duration") },
-            { value: "similar", text: this.$gettext("Visual Similarity") },
           ];
           break;
         default:
