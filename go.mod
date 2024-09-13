@@ -42,8 +42,8 @@ require (
 	github.com/ulule/deepcopier v0.0.0-20200430083143-45decc6639b6
 	github.com/urfave/cli v1.22.15
 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
-	golang.org/x/crypto v0.26.0
-	golang.org/x/net v0.28.0
+	golang.org/x/crypto v0.27.0
+	golang.org/x/net v0.29.0
 	gonum.org/v1/gonum v0.15.1
 	gopkg.in/photoprism/go-tz.v2 v2.1.3
 	gopkg.in/yaml.v2 v2.4.0
@@ -70,8 +70,8 @@ require (
 require github.com/go-ldap/ldap/v3 v3.4.8
 
 require (
-	github.com/prometheus/client_golang v1.20.2
-	github.com/prometheus/common v0.58.0
+	github.com/prometheus/client_golang v1.20.3
+	github.com/prometheus/common v0.59.1
 )
 
 require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
@@ -85,7 +85,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
-	github.com/zitadel/oidc/v3 v3.29.0
+	github.com/zitadel/oidc/v3 v3.29.1
 )
 
 require (
@@ -143,8 +143,8 @@ require (
 	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948 // indirect
-	golang.org/x/oauth2 v0.22.0 // indirect
-	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/oauth2 v0.23.0 // indirect
+	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/tools v0.24.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

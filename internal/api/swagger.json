@@ -1472,6 +1472,7 @@
                     "application/json"
                 ],
                 "tags": [
+                    "Config",
                     "Settings"
                 ],
                 "summary": "returns backend config options",
@@ -1508,10 +1509,22 @@
                     "application/json"
                 ],
                 "tags": [
+                    "Config",
                     "Settings"
                 ],
                 "summary": "updates backend config options",
                 "operationId": "SaveConfigOptions",
+                "parameters": [
+                    {
+                        "description": "properties to be updated (only submit values that should be changed)",
+                        "name": "options",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/config.Options"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2049,6 +2062,119 @@
                 }
             }
         },
+        "/api/v1/geo": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "finds photos and returns results as JSON, so they can be displayed on a map or in a viewer",
+                "operationId": "SearchGeo",
+                "parameters": [
+                    {
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "maximum number of files",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "file offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "excludes private pictures",
+                        "name": "public",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7
+                        ],
+                        "type": "integer",
+                        "description": "minimum quality score (1-7)",
+                        "name": "quality",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "album uid",
+                        "name": "s",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "photo path",
+                        "name": "path",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "is type video",
+                        "name": "video",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/search.GeoResult"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/import/{path}": {
             "post": {
                 "tags": [
@@ -2371,6 +2497,117 @@
                 "responses": {}
             }
         },
+        "/api/v1/markers/{uid}": {
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Markers",
+                    "Subjects"
+                ],
+                "summary": "updates an existing file area marker to assign faces or other subjects",
+                "operationId": "UpdateMarker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "marker uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "properties to be updated",
+                        "name": "marker",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Marker"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Marker"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/markers/{uid}/subject": {
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Markers",
+                    "Subjects"
+                ],
+                "summary": "removes an existing marker subject association",
+                "operationId": "ClearMarkerSubject",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "marker uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Marker"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/moments/time": {
             "get": {
                 "produces": [
@@ -2543,6 +2780,12 @@
                             "$ref": "#/definitions/i18n.Response"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
@@ -2584,8 +2827,26 @@
                             "$ref": "#/definitions/entity.Photo"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
                         }
@@ -2610,7 +2871,7 @@
                         "required": true
                     },
                     {
-                        "description": "properties to be updated. Only submit values that should be changed.",
+                        "description": "properties to be updated (only submit values that should be changed)",
                         "name": "photo",
                         "in": "body",
                         "required": true,
@@ -2667,10 +2928,103 @@
         },
         "/api/v1/photos/{uid}/approve": {
             "post": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Photos"
                 ],
-                "responses": {}
+                "summary": "marks a photo in review as approved",
+                "operationId": "ApprovePhoto",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "photo uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/photos/{uid}/dl": {
+            "get": {
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "Images",
+                    "Files"
+                ],
+                "summary": "returns the primary file matching that belongs to the photo",
+                "operationId": "GetPhotoDownload",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "photo uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/photos/{uid}/files/{fileuid}": {
@@ -2785,6 +3139,73 @@
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/photos/{uid}/files/{fileuid}/primary": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos",
+                    "Stacks"
+                ],
+                "summary": "sets the primary file for a photo",
+                "operationId": "PhotoPrimary",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "photo uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "file uid",
+                        "name": "fileuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Photo"
                         }
                     },
                     "401": {
@@ -3123,18 +3544,514 @@
         },
         "/api/v1/photos/{uid}/like": {
             "post": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Photos"
                 ],
-                "responses": {}
+                "summary": "flags a photo as favorite",
+                "operationId": "LikePhoto",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "photo uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "removes the favorite flags from a photo",
+                "operationId": "DislikePhoto",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "photo uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/photos/{uid}/yaml": {
+            "get": {
+                "produces": [
+                    "text/x-yaml"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "returns picture details as YAML",
+                "operationId": "GetPhotoYaml",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "photo uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/services": {
-            "post": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Services"
                 ],
-                "responses": {}
+                "summary": "finds account settings and returns them as JSON",
+                "operationId": "SearchServices",
+                "parameters": [
+                    {
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "maximum number of results",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entity.Service"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Services"
+                ],
+                "summary": "creates a new remote account configuration",
+                "operationId": "AddService",
+                "parameters": [
+                    {
+                        "description": "properties of the service to be created",
+                        "name": "service",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Service"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Service"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/services/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Services"
+                ],
+                "summary": "returns an account as JSON",
+                "operationId": "GetService",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "service id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Service"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Services"
+                ],
+                "summary": "updates a remote account configuration",
+                "operationId": "UpdateService",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "service id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "properties to be updated (only submit values that should be changed)",
+                        "name": "service",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Service"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Service"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Services"
+                ],
+                "summary": "removes a remote account configuration",
+                "operationId": "DeleteService",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "service id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/services/{id}/folders": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Services"
+                ],
+                "summary": "returns folders that belong to an account as JSON",
+                "operationId": "GetServiceFolders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "service id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/session": {
@@ -3250,12 +4167,353 @@
                 }
             }
         },
-        "/api/v1/subjects/{uid}/like": {
-            "post": {
+        "/api/v1/status": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Server"
+                ],
+                "summary": "reports if the server is operational",
+                "operationId": "GetStatus",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/gin.H"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/subjects": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Subjects"
                 ],
-                "responses": {}
+                "summary": "finds and returns subjects as JSON",
+                "operationId": "SearchSubjects",
+                "parameters": [
+                    {
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "type": "integer",
+                        "description": "maximum number of results",
+                        "name": "count",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "type": "integer",
+                        "description": "search result offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "name",
+                            "count",
+                            "added",
+                            "relevance"
+                        ],
+                        "type": "string",
+                        "description": "sort order",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "type": "string",
+                        "description": "show hidden",
+                        "name": "hidden",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "minimum number of files",
+                        "name": "files",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "q",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/search.Subject"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/subjects/{uid}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subjects"
+                ],
+                "summary": "returns a subject as JSON",
+                "operationId": "GetSubject",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "subject uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Subject"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subjects"
+                ],
+                "summary": "updates subject properties",
+                "operationId": "UpdateSubject",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "subject uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "properties to be updated (only submit values that should be changed)",
+                        "name": "subject",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Subject"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Subject"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/subjects/{uid}/like": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subjects"
+                ],
+                "summary": "flags a subject as favorite",
+                "operationId": "LikeSubject",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "subject uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Subjects"
+                ],
+                "summary": "removes the favorite flag from a subject",
+                "operationId": "DislikeSubject",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "subject uid",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/t/{thumb}/{token}/{size}": {
@@ -3397,7 +4655,7 @@
             "get": {
                 "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
                 "produces": [
-                    "video/mp4"
+                    "application/octet-stream"
                 ],
                 "tags": [
                     "Files",
@@ -3409,7 +4667,7 @@
                     {
                         "type": "string",
                         "description": "SHA1 video file hash",
-                        "name": "thumb",
+                        "name": "hash",
                         "in": "path",
                         "required": true
                     },
@@ -3421,14 +4679,23 @@
                         "required": true
                     },
                     {
+                        "enum": [
+                            "avc"
+                        ],
                         "type": "string",
-                        "description": "video format, e.g. mp4",
+                        "description": "video format",
                         "name": "format",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
@@ -3440,10 +4707,118 @@
         },
         "/api/v1/zip": {
             "post": {
-                "tags": [
-                    "Download"
+                "produces": [
+                    "application/json"
                 ],
-                "responses": {}
+                "tags": [
+                    "Download",
+                    "Files"
+                ],
+                "summary": "creates a zip file archive for download",
+                "operationId": "ZipCreate",
+                "parameters": [
+                    {
+                        "description": "Photo Selection",
+                        "name": "photos",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Selection"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/zip/{filename}": {
+            "get": {
+                "produces": [
+                    "application/zip"
+                ],
+                "tags": [
+                    "Download",
+                    "Files"
+                ],
+                "summary": "downloads a zip file archive",
+                "operationId": "ZipDownload",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "zip filename",
+                        "name": "filename",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/{entity}/{uid}/links": {
@@ -4998,6 +6373,77 @@
                 }
             }
         },
+        "entity.Marker": {
+            "type": "object",
+            "properties": {
+                "FaceDist": {
+                    "type": "number"
+                },
+                "FaceID": {
+                    "type": "string"
+                },
+                "FileUID": {
+                    "type": "string"
+                },
+                "H": {
+                    "type": "number"
+                },
+                "Invalid": {
+                    "type": "boolean"
+                },
+                "MatchedAt": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Q": {
+                    "type": "integer"
+                },
+                "Review": {
+                    "type": "boolean"
+                },
+                "Score": {
+                    "type": "integer"
+                },
+                "Size": {
+                    "type": "integer"
+                },
+                "Src": {
+                    "type": "string"
+                },
+                "SubjSrc": {
+                    "type": "string"
+                },
+                "SubjUID": {
+                    "type": "string"
+                },
+                "Thumb": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "W": {
+                    "type": "number"
+                },
+                "X": {
+                    "type": "number"
+                },
+                "Y": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "entity.Person": {
             "type": "object",
             "properties": {
@@ -5276,6 +6722,160 @@
                 }
             }
         },
+        "entity.Service": {
+            "type": "object",
+            "properties": {
+                "accError": {
+                    "type": "string"
+                },
+                "accErrors": {
+                    "type": "integer"
+                },
+                "accKey": {
+                    "type": "string"
+                },
+                "accName": {
+                    "type": "string"
+                },
+                "accOwner": {
+                    "type": "string"
+                },
+                "accPass": {
+                    "type": "string"
+                },
+                "accShare": {
+                    "type": "boolean"
+                },
+                "accSync": {
+                    "type": "boolean"
+                },
+                "accTimeout": {
+                    "type": "string"
+                },
+                "accType": {
+                    "type": "string"
+                },
+                "accURL": {
+                    "type": "string"
+                },
+                "accUser": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "retryLimit": {
+                    "type": "integer"
+                },
+                "shareExpires": {
+                    "type": "integer"
+                },
+                "sharePath": {
+                    "type": "string"
+                },
+                "shareSize": {
+                    "type": "string"
+                },
+                "syncDate": {
+                    "$ref": "#/definitions/sql.NullTime"
+                },
+                "syncDownload": {
+                    "type": "boolean"
+                },
+                "syncFilenames": {
+                    "type": "boolean"
+                },
+                "syncInterval": {
+                    "type": "integer"
+                },
+                "syncPath": {
+                    "type": "string"
+                },
+                "syncRaw": {
+                    "type": "boolean"
+                },
+                "syncStatus": {
+                    "type": "string"
+                },
+                "syncUpload": {
+                    "type": "boolean"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "entity.Subject": {
+            "type": "object",
+            "properties": {
+                "About": {
+                    "type": "string"
+                },
+                "Alias": {
+                    "type": "string"
+                },
+                "Bio": {
+                    "type": "string"
+                },
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Excluded": {
+                    "type": "boolean"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "FileCount": {
+                    "type": "integer"
+                },
+                "Hidden": {
+                    "type": "boolean"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "Private": {
+                    "type": "boolean"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Src": {
+                    "type": "string"
+                },
+                "Thumb": {
+                    "type": "string"
+                },
+                "ThumbSrc": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "env.Resources": {
             "type": "object",
             "properties": {
@@ -5460,6 +7060,44 @@
                 }
             }
         },
+        "form.Marker": {
+            "type": "object",
+            "properties": {
+                "FileUID": {
+                    "type": "string"
+                },
+                "H": {
+                    "type": "number"
+                },
+                "Invalid": {
+                    "type": "boolean"
+                },
+                "MarkerReview": {
+                    "type": "boolean"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Src": {
+                    "type": "string"
+                },
+                "SubjSrc": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "W": {
+                    "type": "number"
+                },
+                "X": {
+                    "type": "number"
+                },
+                "Y": {
+                    "type": "number"
+                }
+            }
+        },
         "form.Photo": {
             "type": "object",
             "properties": {
@@ -5611,6 +7249,110 @@
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "form.Service": {
+            "type": "object",
+            "properties": {
+                "AccError": {
+                    "type": "string"
+                },
+                "AccKey": {
+                    "type": "string"
+                },
+                "AccName": {
+                    "type": "string"
+                },
+                "AccOwner": {
+                    "type": "string"
+                },
+                "AccPass": {
+                    "type": "string"
+                },
+                "AccShare": {
+                    "description": "Manual upload enabled, see SharePath, ShareSize, and ShareExpires.",
+                    "type": "boolean"
+                },
+                "AccSync": {
+                    "description": "Background sync enabled, see SyncDownload and SyncUpload.",
+                    "type": "boolean"
+                },
+                "AccTimeout": {
+                    "description": "Request timeout: default, high, medium, low, none",
+                    "type": "string"
+                },
+                "AccType": {
+                    "type": "string"
+                },
+                "AccURL": {
+                    "type": "string"
+                },
+                "AccUser": {
+                    "type": "string"
+                },
+                "RetryLimit": {
+                    "description": "Maximum number of failed requests.",
+                    "type": "integer"
+                },
+                "ShareExpires": {
+                    "type": "integer"
+                },
+                "SharePath": {
+                    "type": "string"
+                },
+                "ShareSize": {
+                    "type": "string"
+                },
+                "SyncDownload": {
+                    "type": "boolean"
+                },
+                "SyncFilenames": {
+                    "type": "boolean"
+                },
+                "SyncInterval": {
+                    "type": "integer"
+                },
+                "SyncPath": {
+                    "type": "string"
+                },
+                "SyncRaw": {
+                    "type": "boolean"
+                },
+                "SyncUpload": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "form.Subject": {
+            "type": "object",
+            "properties": {
+                "About": {
+                    "type": "string"
+                },
+                "Alias": {
+                    "type": "string"
+                },
+                "Bio": {
+                    "type": "string"
+                },
+                "Excluded": {
+                    "type": "boolean"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Hidden": {
+                    "type": "boolean"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Private": {
+                    "type": "boolean"
                 }
             }
         },
@@ -5789,6 +7531,47 @@
                 },
                 "UpdatedAt": {
                     "type": "string"
+                }
+            }
+        },
+        "search.GeoResult": {
+            "type": "object",
+            "properties": {
+                "Description": {
+                    "type": "string"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Hash": {
+                    "type": "string"
+                },
+                "Height": {
+                    "type": "integer"
+                },
+                "Lat": {
+                    "type": "number"
+                },
+                "Lng": {
+                    "type": "number"
+                },
+                "TakenAt": {
+                    "type": "string"
+                },
+                "TakenAtLocal": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "Width": {
+                    "type": "integer"
                 }
             }
         },
@@ -6051,6 +7834,68 @@
                 }
             }
         },
+        "search.Subject": {
+            "type": "object",
+            "properties": {
+                "Alias": {
+                    "type": "string"
+                },
+                "Excluded": {
+                    "type": "boolean"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "FileCount": {
+                    "type": "integer"
+                },
+                "Hidden": {
+                    "type": "boolean"
+                },
+                "MarkerSrc": {
+                    "type": "string"
+                },
+                "MarkerUID": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "Private": {
+                    "type": "boolean"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Thumb": {
+                    "type": "string"
+                },
+                "ThumbSrc": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                }
+            }
+        },
+        "sql.NullTime": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if Time is not NULL",
+                    "type": "boolean"
+                }
+            }
+        },
         "time.Duration": {
             "type": "integer",
             "enum": [
@@ -6070,16 +7915,12 @@
                 1000000000,
                 60000000000,
                 3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
                 1,
                 1000,
                 1000000,
                 1000000000,
                 60000000000,
                 3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
                 1,
                 1000,
                 1000000,
@@ -6104,16 +7945,12 @@
                 "Second",
                 "Minute",
                 "Hour",
-                "minDuration",
-                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
                 "Second",
                 "Minute",
                 "Hour",
-                "minDuration",
-                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",

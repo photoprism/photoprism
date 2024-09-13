@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-07-05 09:23+0000\n"
-"Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
+"PO-Revision-Date: 2024-09-09 20:05+0000\n"
+"Last-Translator: Aitor <amento@ni.eus>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.5.5\n"
+"X-Generator: Weblate 5.7.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -48,7 +48,7 @@ msgstr "12 ordu"
 #: src/dialog/admin/users/edit.vue:528 src/page/settings/account.vue:60
 #: src/dialog/account/passcode.vue:8 src/page/settings/account.vue:62
 msgid "2-Factor Authentication"
-msgstr "2-Faktoreen autentifikazioa"
+msgstr "2 faktoreko autentifikazioa"
 
 #: src/dialog/admin/users/edit.vue:527 src/options/auth.js:46
 msgid "2FA"
@@ -128,7 +128,7 @@ msgstr "Gehitu albuma"
 
 #: src/page/settings/general.vue:232
 msgid "Add files to your library via Web Upload."
-msgstr "Gehitu fitxategiak zure liburutegira Web karga bidez."
+msgstr "Gehitu fitxategiak zure liburutegian web-karga bidez."
 
 #: src/dialog/share.vue:79
 msgid "Add Link"

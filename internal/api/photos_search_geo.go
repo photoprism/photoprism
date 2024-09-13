@@ -19,7 +19,21 @@ import (
 // SearchGeo finds photos and returns results as JSON, so they can be displayed on a map or in a viewer.
 // See form.SearchPhotosGeo for supported search params and data types.
 //
-// GET /api/v1/geo
+//	@Summary	finds photos and returns results as JSON, so they can be displayed on a map or in a viewer
+//	@Id			SearchGeo
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200				{object}	search.GeoResults
+//	@Failure	400,401,403,404	{object}	i18n.Response
+//	@Param		count			query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
+//	@Param		offset			query		int		false	"file offset"				minimum(0)	maximum(100000)
+//	@Param		public			query		bool	false	"excludes private pictures"
+//	@Param		quality			query		int		true	"minimum quality score (1-7)"	Enums(0, 1, 2, 3, 4, 5, 6, 7)
+//	@Param		q				query		string	false	"search query"
+//	@Param		s				query		string	false	"album uid"
+//	@Param		path			query		string	false	"photo path"
+//	@Param		video			query		bool	false	"is type video"
+//	@Router		/api/v1/geo [get]
 func SearchGeo(router *gin.RouterGroup) {
 	handler := func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourcePlaces, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.AccessShared})
