@@ -2,13 +2,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2024-09-03 08:09+0000\n"
+"PO-Revision-Date: 2024-09-13 11:46+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: ga\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=5; plural=n==1 ? 0 : n==2 ? 1 : (n>2 && n<7) ? 2 :(n>6 && n<11) ? 3 : 4;\n"
-"X-Generator: Weblate 5.7.1\n"
+"X-Generator: Weblate 5.7.2\n"
 "Generated-By: easygettext\n"
 
 #: src/page/albums.vue:509
@@ -2141,7 +2141,7 @@ msgstr "Curtha leis le déanaí"
 
 #: src/component/photo/toolbar.vue:99
 msgid "Recently Deleted"
-msgstr ""
+msgstr "Scriosta Le Déanaí"
 
 #: src/component/photo/toolbar.vue:123 src/page/albums.vue:94
 msgid "Recently Edited"
