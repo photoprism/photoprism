@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-13 11:46+0000\n"
+"PO-Revision-Date: 2024-09-13 13:26+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -2146,7 +2146,7 @@ msgstr "Nemrég hozzáadott"
 
 #: src/component/photo/toolbar.vue:99
 msgid "Recently Archived"
-msgstr ""
+msgstr "Nemrégiben archiválva"
 
 #: src/component/photo/toolbar.vue:134 src/page/albums.vue:94
 msgid "Recently Edited"
