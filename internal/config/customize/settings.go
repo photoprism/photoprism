@@ -45,6 +45,7 @@ func NewSettings(theme, lang string) *Settings {
 		},
 		Search: SearchSettings{
 			BatchSize: 0,
+			ListView:  true,
 		},
 		Maps: MapsSettings{
 			Animate: 0,

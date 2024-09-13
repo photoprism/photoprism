@@ -29,10 +29,13 @@
         <v-icon>get_app</v-icon>
       </v-btn>
 
-      <v-btn v-if="settings.view === 'cards'" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
+      <v-btn v-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
+        <v-icon>view_comfy</v-icon>
+      </v-btn>
+      <v-btn v-else-if="settings.view === 'cards' && listView" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
         <v-icon>view_list</v-icon>
       </v-btn>
-      <v-btn v-else-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
+      <v-btn v-else-if="settings.view === 'cards'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
         <v-icon>view_comfy</v-icon>
       </v-btn>
       <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
@@ -122,6 +125,7 @@ export default {
       collectionRoute: this.$route.meta?.collectionRoute ? this.$route.meta.collectionRoute : "albums",
       navIcon: this.$rtl ? "navigate_before" : "navigate_next",
       searchExpanded: false,
+      listView: this.$config.settings()?.search?.listView,
       dialog: {
         share: false,
         upload: false,
@@ -153,6 +157,10 @@ export default {
     },
     setView(name) {
       if (name) {
+        if (name === "list" && !this.listView) {
+          name = "mosaic";
+        }
+
         this.refresh({ view: name });
       }
     },

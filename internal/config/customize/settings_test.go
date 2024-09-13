@@ -21,6 +21,8 @@ func TestNewSettings(t *testing.T) {
 	assert.IsType(t, new(Settings), s)
 	assert.Equal(t, "test", s.UI.Theme)
 	assert.Equal(t, "fr", s.UI.Language)
+	assert.Equal(t, "fr", s.UI.Language)
+	assert.Equal(t, true, s.Search.ListView)
 }
 
 func TestSettings_Load(t *testing.T) {
