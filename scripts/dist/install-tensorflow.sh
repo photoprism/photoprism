@@ -57,9 +57,11 @@ mkdir -p "$DESTDIR"
 if [[ $TF_DRIVER == "auto" ]]; then
   echo "Detecting driver..."
 
-  CPU_DETECTED=$(lshw -c processor -json 2>/dev/null)
+  CPU_DETECTED=$(lshw -c system -c processor -json 2>/dev/null)
 
-  if [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx2') == "true" ]]; then
+  if [[ $(echo "${CPU_DETECTED}" | jq -r '.[0].product') == "VirtualBox" ]]; then
+    TF_DRIVER="cpu"
+  elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx2') == "true" ]]; then
     TF_DRIVER="avx2"
   elif [[ $(echo "${CPU_DETECTED}" | jq -r '.[].capabilities.avx') == "true" ]]; then
     TF_DRIVER="avx"
