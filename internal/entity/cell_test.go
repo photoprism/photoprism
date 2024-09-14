@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestNewLocation(t *testing.T) {
-	t.Run("new label", func(t *testing.T) {
+func TestNewCell(t *testing.T) {
+	t.Run("NewCell", func(t *testing.T) {
 		l := NewCell(1, 1)
 		l.CellCategory = "restaurant"
 		l.CellName = "LocationName"
@@ -25,36 +25,39 @@ func TestNewLocation(t *testing.T) {
 		assert.Equal(t, false, l.NoCity())
 		assert.Equal(t, "KwaZulu-Natal", l.State())
 		assert.Equal(t, false, l.NoState())
+		assert.Equal(t, true, l.NoStreet())
+		assert.Equal(t, true, l.NoPostcode())
+		assert.Equal(t, "", l.Postcode())
 		assert.Equal(t, "za", l.CountryCode())
 		assert.Equal(t, "South Africa", l.CountryName())
 	})
 }
 
-func TestLocation_Keywords(t *testing.T) {
+func TestCell_Keywords(t *testing.T) {
 	t.Run("mexico", func(t *testing.T) {
 		m := CellFixtures["mexico"]
 		r := m.Keywords()
 		assert.Equal(t, []string{"adosada", "ancient", "botanical", "garden", "mexico", "platform", "pyramid", "state-of-mexico", "teotihuacán"}, r)
 	})
-	t.Run("caravan park", func(t *testing.T) {
+	t.Run("CaravanPark", func(t *testing.T) {
 		m := CellFixtures["caravan park"]
 		r := m.Keywords()
 		assert.Equal(t, []string{"camping", "caravan", "kwazulu-natal", "lobotes", "mandeni", "park", "south-africa"}, r)
 	})
-	t.Run("place id empty", func(t *testing.T) {
+	t.Run("CellIdEmpty", func(t *testing.T) {
 		m := &Cell{}
 		r := m.Keywords()
 		assert.Empty(t, r)
 	})
 }
 
-func TestLocation_Find(t *testing.T) {
-	t.Run("place in db", func(t *testing.T) {
+func TestCell_Find(t *testing.T) {
+	t.Run("CellInDb", func(t *testing.T) {
 		m := CellFixtures["mexico"]
 		r := m.Find("")
 		assert.Nil(t, r)
 	})
-	t.Run("invalid api", func(t *testing.T) {
+	t.Run("ApiEmpty", func(t *testing.T) {
 		l := NewCell(2, 1)
 		err := l.Find("")
 
@@ -66,18 +69,18 @@ func TestLocation_Find(t *testing.T) {
 	})
 }
 
-func TestFirstOrCreateLocation(t *testing.T) {
-	t.Run("id empty", func(t *testing.T) {
+func TestFirstOrCreateCell(t *testing.T) {
+	t.Run("IdEmpty", func(t *testing.T) {
 		loc := &Cell{}
 
 		assert.Nil(t, FirstOrCreateCell(loc))
 	})
-	t.Run("place id empty", func(t *testing.T) {
+	t.Run("PlaceIdEmpty", func(t *testing.T) {
 		loc := &Cell{ID: "1234jhy"}
 
 		assert.Nil(t, FirstOrCreateCell(loc))
 	})
-	t.Run("success", func(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
 		loc := CellFixtures.Pointer("caravan park")
 
 		result := FirstOrCreateCell(loc)
@@ -86,5 +89,18 @@ func TestFirstOrCreateLocation(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 		assert.NotEmpty(t, result.ID)
+	})
+}
+
+func TestCell_Refresh(t *testing.T) {
+	t.Run("ApiEmpty", func(t *testing.T) {
+		l := NewCell(2, 1)
+		err := l.Refresh("")
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Equal(t, "maps: location lookup disabled", err.Error())
 	})
 }

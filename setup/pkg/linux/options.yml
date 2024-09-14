@@ -1,0 +1,13 @@
+Debug: false
+AdminUser: "admin"
+AdminPassword: "insecure"
+DatabaseUser: "photoprism"
+DatabasePassword: "insecure"
+DatabaseName: "photoprism"
+DatabaseDriver: "mysql"
+DatabaseServer: "localhost:3306"
+HttpPort: 2342
+SiteCaption: "AI-Powered Photos App"
+SiteDescription: ""
+SiteAuthor: ""
+SiteUrl: "http://localhost:2342/"

@@ -7,13 +7,14 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // ShowFileFormatsCommand configures the command name, flags, and action.
 var ShowFileFormatsCommand = cli.Command{
-	Name:  "file-formats",
-	Usage: "Displays supported media and sidecar file formats",
+	Name:    "file-formats",
+	Aliases: []string{"formats"},
+	Usage:   "Displays supported media and sidecar file formats",
 	Flags: append(report.CliFlags, cli.BoolFlag{
 		Name:  "short, s",
 		Usage: "hide format descriptions",

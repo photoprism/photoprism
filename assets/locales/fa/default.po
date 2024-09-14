@@ -2,373 +2,402 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
+"PO-Revision-Date: 2024-07-05 09:24+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: none\n"
 "Language: fa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n==0 || n==1);\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.5.5\n"
 
-#: messages.go:94
+#: messages.go:101
 msgid "Something went wrong, try again"
 msgstr "یه چیزی اشتباه شد دوباره تلاش کن"
 
-#: messages.go:95
+#: messages.go:102
 msgid "Unable to do that"
 msgstr "قادر به انجام آن نیست"
 
-#: messages.go:96
+#: messages.go:103
 msgid "Changes could not be saved"
 msgstr "تغییرات را نمی توان ذخیره کرد"
 
-#: messages.go:97
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "نمی توان حذف کرد"
 
-#: messages.go:98
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s از قبل وجود دارد"
 
-#: messages.go:99
+#: messages.go:106
 msgid "Not found"
 msgstr "پیدا نشد"
 
-#: messages.go:100
+#: messages.go:107
 msgid "File not found"
 msgstr "فایل پیدا نشد"
 
-#: messages.go:101
+#: messages.go:108
 msgid "File too large"
 msgstr "فایل خیلی بزرگ است"
 
-#: messages.go:102
+#: messages.go:109
+msgid "Unsupported"
+msgstr "پشتیبانی نمی شود"
+
+#: messages.go:110
+msgid "Unsupported type"
+msgstr "نوع پشتیبانی نشده"
+
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "قالب پشتیبانی نشده"
 
-#: messages.go:103
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "پوشه اصلی خالی است"
 
-#: messages.go:104
+#: messages.go:113
 msgid "Selection not found"
 msgstr "انتخاب پیدا نشد"
 
-#: messages.go:105
+#: messages.go:114
 msgid "Entity not found"
 msgstr "موجودیت پیدا نشد"
 
-#: messages.go:106
+#: messages.go:115
 msgid "Account not found"
 msgstr "حساب کاربری پیدا نشد"
 
-#: messages.go:107
+#: messages.go:116
 msgid "User not found"
 msgstr "کاربر پیدا نشد"
 
-#: messages.go:108
+#: messages.go:117
 msgid "Label not found"
 msgstr "برچسب پیدا نشد"
 
-#: messages.go:109
+#: messages.go:118
 msgid "Album not found"
 msgstr "آلبوم پیدا نشد"
 
-#: messages.go:110
+#: messages.go:119
 msgid "Subject not found"
 msgstr "موضوع پیدا نشد"
 
-#: messages.go:111
+#: messages.go:120
 msgid "Person not found"
 msgstr "فرد پیدا نشد"
 
-#: messages.go:112
+#: messages.go:121
 msgid "Face not found"
 msgstr "صورت پیدا نشد"
 
-#: messages.go:113
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "در حالت عمومی در دسترس نیست"
 
-#: messages.go:114
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "در حالت فقط خواندنی در دسترس نیست"
 
-#: messages.go:115
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "لطفا وارد شوید و دوباره امتحان کنید"
 
-#: messages.go:116
+#: messages.go:125
 msgid "Permission denied"
 msgstr "فرد حذف شد"
 
-#: messages.go:117
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "آپلود ممکن است توهین آمیز باشد"
 
-#: messages.go:118
+#: messages.go:127
 msgid "Upload failed"
 msgstr "آپلود انجام نشد"
 
-#: messages.go:119
+#: messages.go:128
 msgid "No items selected"
 msgstr "هیچ موردی انتخاب نشده است"
 
-#: messages.go:120
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "فایل ایجاد نشد، لطفا مجوزها را بررسی کنید"
 
-#: messages.go:121
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "پوشه ایجاد نشد، لطفا مجوزها را بررسی کنید"
 
-#: messages.go:122
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "اتصال برقرار نشد، لطفاً دوباره امتحان کنید"
 
-#: messages.go:123
+#: messages.go:132
+msgid "Enter verification code"
+msgstr "کد تایید را وارد کنید"
+
+#: messages.go:133
+msgid "Invalid verification code, please try again"
+msgstr "کد تأیید نامعتبر است، لطفاً دوباره امتحان کنید"
+
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "رمز عبور نامعتبر است، لطفا دوباره امتحان کنید"
 
-#: messages.go:124
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "ویژگی غیرفعال است"
 
-#: messages.go:125
+#: messages.go:136
 msgid "No labels selected"
 msgstr "هیچ برچسبی انتخاب نشده است"
 
-#: messages.go:126
+#: messages.go:137
 msgid "No albums selected"
 msgstr "هیچ آلبومی انتخاب نشده است"
 
-#: messages.go:127
+#: messages.go:138
 msgid "No files available for download"
 msgstr "هیچ فایلی برای دانلود موجود نیست"
 
-#: messages.go:128
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "فایل فشرده ایجاد نشد"
 
-#: messages.go:129
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "گواهی نامه نامعتبر"
 
-#: messages.go:130
+#: messages.go:141
 msgid "Invalid link"
 msgstr "لینک نامعتبر"
 
-#: messages.go:131
+#: messages.go:142
 msgid "Invalid name"
 msgstr "نام نامعتبر"
 
-#: messages.go:132
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "مشغول است، لطفاً بعداً دوباره امتحان کنید"
 
-#: messages.go:133
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "فاصله بیداری %s است، اما باید 1 ساعت یا کمتر باشد"
 
-#: messages.go:134
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "حساب شما متصل نشد"
 
-#: messages.go:137
+#: messages.go:146
+msgid "Too many requests"
+msgstr "درخواست های خیلی زیاد"
+
+#: messages.go:149
 msgid "Changes successfully saved"
 msgstr "تغییرات با موفقیت ذخیره شد"
 
-#: messages.go:138
+#: messages.go:150
 msgid "Album created"
 msgstr "آلبوم ایجاد شد"
 
-#: messages.go:139
+#: messages.go:151
 msgid "Album saved"
 msgstr "آلبوم ذخیره شد"
 
-#: messages.go:140
+#: messages.go:152
 #, c-format
 msgid "Album %s deleted"
 msgstr "آلبوم %s حذف شد"
 
-#: messages.go:141
+#: messages.go:153
 msgid "Album contents cloned"
 msgstr "محتویات آلبوم کلون شد"
 
-#: messages.go:142
+#: messages.go:154
 msgid "File removed from stack"
 msgstr "فایل از پشته حذف شد"
 
-#: messages.go:143
+#: messages.go:155
 msgid "File deleted"
 msgstr "فایل حذف شد"
 
-#: messages.go:144
+#: messages.go:156
 #, c-format
 msgid "Selection added to %s"
 msgstr "مورد انتخابی به %s اضافه شد"
 
-#: messages.go:145
+#: messages.go:157
 #, c-format
 msgid "One entry added to %s"
 msgstr "یک مورد به %s اضافه شد"
 
-#: messages.go:146
+#: messages.go:158
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d مورد به %s اضافه شد"
 
-#: messages.go:147
+#: messages.go:159
 #, c-format
 msgid "One entry removed from %s"
 msgstr "یک مورد از %s حذف شد"
 
-#: messages.go:148
+#: messages.go:160
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d مورد از %s حذف شد"
 
-#: messages.go:149
+#: messages.go:161
 msgid "Account created"
 msgstr "حساب کاربری ایجاد شد"
 
-#: messages.go:150
+#: messages.go:162
 msgid "Account saved"
 msgstr "حساب کاربری ذخیره شد"
 
-#: messages.go:151
+#: messages.go:163
 msgid "Account deleted"
 msgstr "حساب کاربری حذف شد"
 
-#: messages.go:152
+#: messages.go:164
 msgid "Settings saved"
 msgstr "تنظیمات ذخیره شد"
 
-#: messages.go:153
+#: messages.go:165
 msgid "Password changed"
 msgstr "رمزعبور تغییر کرد"
 
-#: messages.go:154
+#: messages.go:166
 #, c-format
 msgid "Import completed in %d s"
 msgstr "وارد کردن در %d ثانیه تکمیل شد"
 
-#: messages.go:155
+#: messages.go:167
 msgid "Import canceled"
 msgstr "وارد کردن لغو شد"
 
-#: messages.go:156
+#: messages.go:168
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "نمایه سازی در %d ثانیه تکمیل شد"
 
-#: messages.go:157
+#: messages.go:169
 msgid "Indexing originals..."
 msgstr "نمایه سازی نسخه های اصلی ..."
 
-#: messages.go:158
+#: messages.go:170
 #, c-format
 msgid "Indexing files in %s"
 msgstr "نمایه سازی فایل ها در %s"
 
-#: messages.go:159
+#: messages.go:171
 msgid "Indexing canceled"
 msgstr "نمایه سازی لغو شد"
 
-#: messages.go:160
+#: messages.go:172
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "%d فایل و %d عکس حذف شد"
 
-#: messages.go:161
+#: messages.go:173
 #, c-format
 msgid "Moving files from %s"
 msgstr "انتقال فایل ها از %s"
 
-#: messages.go:162
+#: messages.go:174
 #, c-format
 msgid "Copying files from %s"
 msgstr "کپی کردن فایل ها از %s"
 
-#: messages.go:163
+#: messages.go:175
 msgid "Labels deleted"
 msgstr "برچسب ها حذف شدند"
 
-#: messages.go:164
+#: messages.go:176
 msgid "Label saved"
 msgstr "برچسب ذخیره شد"
 
-#: messages.go:165
+#: messages.go:177
 msgid "Subject saved"
 msgstr "موضوع ذخیره شد"
 
-#: messages.go:166
+#: messages.go:178
 msgid "Subject deleted"
 msgstr "موضوع حذف شد"
 
-#: messages.go:167
+#: messages.go:179
 msgid "Person saved"
 msgstr "فرد ذخیره شد"
 
-#: messages.go:168
+#: messages.go:180
 msgid "Person deleted"
 msgstr "فرد حذف شد"
 
-#: messages.go:169
+#: messages.go:181
 msgid "File uploaded"
 msgstr "فایل حذف شد"
 
-#: messages.go:170
+#: messages.go:182
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d فایل در %d ثانیه آپلود شد"
 
-#: messages.go:171
+#: messages.go:183
 msgid "Processing upload..."
 msgstr "در حال پردازش آپلود..."
 
-#: messages.go:172
+#: messages.go:184
 msgid "Upload has been processed"
 msgstr "%s بازیابی شده است"
 
-#: messages.go:173
+#: messages.go:185
 msgid "Selection approved"
 msgstr "مورد انتخابی تایید شد"
 
-#: messages.go:174
+#: messages.go:186
 msgid "Selection archived"
 msgstr "مورد انتخابی بایگانی شد"
 
-#: messages.go:175
+#: messages.go:187
 msgid "Selection restored"
 msgstr "مورد انتخابی بازیابی شد"
 
-#: messages.go:176
+#: messages.go:188
 msgid "Selection marked as private"
 msgstr "مورد انتخابی به‌عنوان خصوصی علامت‌گذاری شد"
 
-#: messages.go:177
+#: messages.go:189
 msgid "Albums deleted"
 msgstr "آلبوم حذف شد"
 
-#: messages.go:178
+#: messages.go:190
 #, c-format
 msgid "Zip created in %d s"
 msgstr "فایل فشرده در %d ثانیه ایجاد شد"
 
-#: messages.go:179
+#: messages.go:191
 msgid "Permanently deleted"
 msgstr "برای همیشه حذف شد"
 
-#: messages.go:180
+#: messages.go:192
 #, c-format
 msgid "%s has been restored"
 msgstr "%s بازیابی شده است"
+
+#: messages.go:193
+msgid "Successfully verified"
+msgstr "با موفقیت تأیید شد"
+
+#: messages.go:194
+msgid "Successfully activated"
+msgstr "با موفقیت فعال شد"
 
 #~ msgid "Invalid request"
 #~ msgstr "درخواست نامعتبر است"

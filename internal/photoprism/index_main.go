@@ -3,7 +3,7 @@ package photoprism
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -11,15 +11,21 @@ import (
 func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexResult) {
 	// Skip if main file is nil.
 	if related.Main == nil {
-		result.Err = fmt.Errorf("index: no main file for %s", clean.Log(related.String()))
+		result.Err = fmt.Errorf("index: no main media file for %s", clean.Log(related.String()))
 		result.Status = IndexFailed
 		return result
 	}
 
 	f := related.Main
 
-	// Enforce file size and resolution limits.
-	if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
+	// Check mime type, file size, and resolution.
+	if typeErr := f.CheckType(); typeErr != nil {
+		// Skip files if the filename extension does not match their mime type,
+		// see https://github.com/photoprism/photoprism/issues/3518 for details.
+		result.Err = fmt.Errorf("index: skipped %s due to %w", clean.Log(f.RootRelName()), typeErr)
+		result.Status = IndexFailed
+		return result
+	} else if limitErr, _ := f.ExceedsBytes(o.ByteLimit); limitErr != nil {
 		result.Err = fmt.Errorf("index: %s", limitErr)
 		result.Status = IndexFailed
 		return result
@@ -31,29 +37,31 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 
 	// Create JSON sidecar file, if needed.
 	if jsonErr := f.CreateExifToolJson(ind.convert); jsonErr != nil {
-		log.Errorf("index: %s", clean.Log(jsonErr.Error()))
+		log.Warnf("index: %s", clean.Error(jsonErr))
 	}
 
 	// Create JPEG sidecar for media files in other formats so that thumbnails can be created.
 	if o.Convert && f.IsMedia() && !f.HasPreviewImage() {
-		if jpg, err := ind.convert.ToImage(f, false); err != nil {
-			result.Err = fmt.Errorf("index: failed creating preview for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+		if img, imgErr := ind.convert.ToImage(f, false); imgErr != nil {
+			result.Err = fmt.Errorf("index: failed to create preview image for %s (%s)", clean.Log(f.RootRelName()), clean.Error(imgErr))
 			result.Status = IndexFailed
 			return result
-		} else if limitErr, _ := jpg.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
+		} else if img == nil {
+			log.Debugf("index: skipped creating preview image for %s", clean.Log(f.RootRelName()))
+		} else if limitErr, _ := img.ExceedsResolution(o.ResolutionLimit); limitErr != nil {
 			result.Err = fmt.Errorf("index: %s", limitErr)
 			result.Status = IndexFailed
 			return result
 		} else {
-			log.Debugf("index: created %s", clean.Log(jpg.BaseName()))
+			log.Debugf("index: created %s", clean.Log(img.BaseName()))
 
-			if err := jpg.CreateThumbnails(ind.thumbPath(), false); err != nil {
-				result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", clean.Log(f.RootRelName()), err.Error())
+			if imgErr = img.GenerateThumbnails(ind.thumbPath(), false); imgErr != nil {
+				result.Err = fmt.Errorf("index: failed to generate thumbnails for %s (%s)", clean.Log(f.RootRelName()), imgErr.Error())
 				result.Status = IndexFailed
 				return result
 			}
 
-			related.Files = append(related.Files, jpg)
+			related.Files = append(related.Files, img)
 		}
 	}
 
@@ -71,9 +79,9 @@ func IndexMain(related *RelatedFiles, ind *Index, o IndexOptions) (result IndexR
 		log.Error(result.Err)
 
 		if exists {
-			log.Errorf("index: %s updating main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))
+			log.Errorf("index: %s to update main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))
 		} else {
-			log.Errorf("index: %s adding main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))
+			log.Errorf("index: %s to add main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))
 		}
 	} else {
 		log.Infof("index: %s main %s file %s", result, f.FileType(), clean.Log(f.RootRelName()))

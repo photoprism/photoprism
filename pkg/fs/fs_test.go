@@ -57,19 +57,6 @@ func TestWritable(t *testing.T) {
 	assert.False(t, Writable(""))
 }
 
-func TestOverwrite(t *testing.T) {
-	data := make([]byte, 3)
-	data[1] = 3
-	data[2] = 8
-	tmpPath := "./testdata/_tmp"
-	os.Mkdir(tmpPath, 0777)
-
-	defer os.RemoveAll(tmpPath)
-	result := Overwrite("./testdata/_tmp/notyetexisting.jpg", data)
-	assert.FileExists(t, "./testdata/_tmp/notyetexisting.jpg")
-	assert.True(t, result)
-}
-
 func TestExpandedFilename(t *testing.T) {
 	t.Run("test.jpg", func(t *testing.T) {
 		filename := Abs("./testdata/test.jpg")

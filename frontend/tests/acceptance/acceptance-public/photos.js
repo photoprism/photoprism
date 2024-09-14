@@ -51,6 +51,7 @@ test.meta("testID", "photos-002").meta({ mode: "public" })(
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
 
     await photoviewer.triggerPhotoViewerAction("close");
+    await t.expect(Selector("#photo-viewer").visible).notOk();
     await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
     await photo.triggerHoverAction("uid", FirstVideoUid, "select");
     await contextmenu.checkContextMenuCount("2");
@@ -160,7 +161,8 @@ test.meta("testID", "photos-004").meta({ type: "short", mode: "public" })(
     await photoviewer.openPhotoViewer("uid", FirstPhotoUid);
     await photoviewer.triggerPhotoViewerAction("like");
     await photoviewer.triggerPhotoViewerAction("close");
-    if (t.browser.platform === "mobile") {
+    await t.expect(Selector("#photo-viewer").visible).notOk();
+      if (t.browser.platform === "mobile") {
       await t.eval(() => location.reload());
     } else {
       await toolbar.triggerToolbarAction("reload");
@@ -215,7 +217,7 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })(
     await t
       .typeText(photoedit.title, "Not saved photo title", { replace: true })
       .click(photoedit.detailsClose)
-      .click(Selector("button.action-date-edit").withAttribute("data-uid", FirstPhotoUid));
+      .click(Selector("button.action-title-edit").withAttribute("data-uid", FirstPhotoUid));
 
     await t.expect(photoedit.title.value).eql(FirstPhotoTitle);
 
@@ -391,4 +393,21 @@ test.meta("testID", "photos-007").meta({ mode: "public" })(
     await photo.checkPhotoVisibility(FirstPhotoUid, false);
     await photo.checkPhotoVisibility(FirstVideoUid, false);
   }
+);
+
+test.meta("testID", "photos-008").meta({ mode: "public" })(
+    "Common: Navigate from card view to photos taken at the same date",
+    async (t) => {
+        await toolbar.setFilter("view", "Cards");
+        await toolbar.search("flower")
+        await t.click(page.cardTaken.nth(0));
+
+        const SearchTerm = await toolbar.search1.value;
+
+        const PhotoCount = await photo.getPhotoCount("all");
+
+        await t
+            .expect(SearchTerm).eql("taken:2021-05-27")
+            .expect(PhotoCount).eql(3);
+    }
 );

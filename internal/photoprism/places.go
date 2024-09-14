@@ -9,8 +9,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/query"
 )
 
 // Places represents a geo data worker.
@@ -27,8 +27,8 @@ func NewPlaces(conf *config.Config) *Places {
 	return instance
 }
 
-// Start runs the Places worker.
-func (w *Places) Start() (updated []string, err error) {
+// Start runs the Places worker to update location information.
+func (w *Places) Start(force bool) (updated []string, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("index: %s (update locations)\nstack: %s", r, debug.Stack())
@@ -37,71 +37,73 @@ func (w *Places) Start() (updated []string, err error) {
 	}()
 
 	// Check if a worker is already running.
-	if err := mutex.MainWorker.Start(); err != nil {
+	if err = mutex.IndexWorker.Start(); err != nil {
 		log.Warnf("index: %s (update locations)", err.Error())
 		return []string{}, err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
-	// Fetch cell IDs from index.
-	cells, err := query.CellIDs()
+	// Update existing location information?
+	if force {
+		cells, queryErr := query.CellIDs()
 
-	// Error?
-	if err != nil {
-		return []string{}, err
-	} else if len(cells) == 0 {
-		log.Warnf("index: found no locations to update")
-		return []string{}, nil
-	}
-
-	// List of updated cells.
-	updated = make([]string, 0, len(cells))
-
-	log.Infof("index: retrieving location details")
-
-	// Update known locations.
-	for i, cell := range cells {
-		if i%10 == 0 {
-			log.Infof("index: updated %s, %s remaining",
-				english.Plural(i, "location", "locations"),
-				english.Plural(len(cells)-i, "location", "locations"))
+		// Check if query failed.
+		if queryErr != nil {
+			return []string{}, queryErr
+		} else if len(cells) == 0 {
+			log.Warnf("index: found no locations to update")
+			return []string{}, nil
 		}
 
-		if w.Canceled() {
-			return updated, nil
-		} else if cell.ID == "" || cell.ID == entity.UnknownID {
-			// Skip unknown places.
-			continue
+		// List of updated cells.
+		updated = make([]string, 0, len(cells))
+
+		log.Infof("index: fetching location details")
+
+		// Update known locations.
+		for i, cell := range cells {
+			if i%10 == 0 {
+				log.Infof("index: fetched %s, %d remaining",
+					english.Plural(i, "location", "locations"),
+					len(cells)-i)
+			}
+
+			if w.Canceled() {
+				return updated, nil
+			} else if cell.ID == "" || cell.ID == entity.UnknownID {
+				// Skip unknown places.
+				continue
+			}
+
+			// Create cell from location and place ID.
+			c := entity.Cell{ID: cell.ID, PlaceID: cell.PlaceID}
+
+			// Fetch updated cell data from backend API.
+			if queryErr = c.Refresh(entity.GeoApi); queryErr != nil {
+				log.Warnf("index: %s", queryErr)
+			} else {
+				// Append if successful.
+				updated = append(updated, cell.ID)
+			}
+
+			// Wait 20ms before fetching the next location.
+			time.Sleep(20 * time.Millisecond)
 		}
-
-		// Create cell from location and place ID.
-		c := entity.Cell{ID: cell.ID, PlaceID: cell.PlaceID}
-
-		// Fetch updated cell data from backend API.
-		if err = c.Refresh(entity.GeoApi); err != nil {
-			log.Warnf("index: %s", err)
-		} else {
-			// Append if successful.
-			updated = append(updated, cell.ID)
-		}
-
-		// Short break.
-		time.Sleep(33 * time.Millisecond)
 	}
 
 	// Remove unused entries from the places table.
-	if err := query.PurgePlaces(); err != nil {
+	if err = query.PurgePlaces(); err != nil {
 		log.Errorf("index: %s (purge places)", err)
 	}
 
 	// Update location-related photo metadata in the index.
-	if _, err := w.UpdatePhotos(); err != nil {
+	if _, err = w.UpdatePhotos(force); err != nil {
 		log.Errorf("index: %s (update photos)", err)
 	}
 
 	// Update photo counts in places.
-	if err := entity.UpdatePlacesCounts(); err != nil {
+	if err = entity.UpdatePlacesCounts(); err != nil {
 		log.Errorf("index: %s (update counts)", err)
 	}
 
@@ -109,20 +111,29 @@ func (w *Places) Start() (updated []string, err error) {
 }
 
 // UpdatePhotos updates all location-related photo metadata in the index.
-func (w *Places) UpdatePhotos() (affected int, err error) {
+func (w *Places) UpdatePhotos(force bool) (affected int, err error) {
 	start := time.Now()
 
 	var u []string
 
-	// Find photos without location.
-	if err = query.UnscopedDb().
-		Raw(`SELECT photo_uid FROM photos WHERE place_id <> 'zz' OR photo_lat <> 0 OR photo_lng <> 0 ORDER BY id`).
-		Pluck("photo_uid", &u).Error; err != nil {
+	q := query.UnscopedDb()
+
+	// Only select photos with unresolved details or force an update of all photos with location?
+	if force {
+		q = q.Raw(`SELECT photo_uid FROM photos WHERE place_id <> 'zz' OR photo_lat <> 0 OR photo_lng <> 0 ORDER BY id`)
+	} else {
+		q = q.Raw(`SELECT photo_uid FROM photos WHERE (place_id = 'zz' OR cell_id = 'zz') AND (photo_lat <> 0 OR photo_lng <> 0) ORDER BY id`)
+	}
+
+	// Run select query.
+	if err = q.Pluck("photo_uid", &u).Error; err != nil {
 		return affected, err
 	}
 
+	// Get number of results.
 	n := len(u)
 
+	// Return if no results.
 	if n == 0 {
 		log.Debugf("index: found no photos with location [%s]", time.Since(start))
 		return affected, err
@@ -161,10 +172,10 @@ func (w *Places) UpdatePhotos() (affected int, err error) {
 
 // Canceled tests if the worker should be stopped.
 func (w *Places) Canceled() bool {
-	return mutex.MainWorker.Canceled() || mutex.MetaWorker.Canceled()
+	return mutex.IndexWorker.Canceled() || mutex.MetaWorker.Canceled()
 }
 
 // Cancel stops the current operation.
 func (w *Places) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.IndexWorker.Cancel()
 }

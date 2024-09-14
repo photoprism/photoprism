@@ -15,8 +15,7 @@
             <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed dark class="action-confirm"
-                   @click.stop="confirm">
+            <v-btn color="primary-button" depressed dark class="action-confirm" @click.stop="confirm">
               <translate key="Delete">Delete</translate>
             </v-btn>
           </v-flex>
@@ -27,7 +26,7 @@
 </template>
 <script>
 export default {
-  name: 'PLabelDeleteDialog',
+  name: "PLabelDeleteDialog",
   props: {
     show: Boolean,
   },
@@ -36,11 +35,11 @@ export default {
   },
   methods: {
     cancel() {
-      this.$emit('cancel');
+      this.$emit("cancel");
     },
     confirm() {
-      this.$emit('confirm');
+      this.$emit("confirm");
     },
-  }
+  },
 };
 </script>

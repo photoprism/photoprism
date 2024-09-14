@@ -29,7 +29,7 @@ type Link struct {
 	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
 	LinkViews   uint      `json:"Views" yaml:"-"`
 	MaxViews    uint      `json:"MaxViews" yaml:"-"`
-	HasPassword bool      `json:"HasPassword" yaml:"HasPassword,omitempty"`
+	HasPassword bool      `json:"VerifyPassword" yaml:"VerifyPassword,omitempty"`
 	Comment     string    `gorm:"size:512;" json:"Comment,omitempty" yaml:"Comment,omitempty"`
 	Perm        uint      `json:"Perm,omitempty" yaml:"Perm,omitempty"`
 	RefID       string    `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
@@ -64,12 +64,12 @@ func NewLink(shareUid string, canComment, canEdit bool) Link {
 
 // NewUserLink creates a sharing link owned by a user.
 func NewUserLink(shareUid, userUid string) Link {
-	now := TimeStamp()
+	now := Now()
 
 	result := Link{
 		LinkUID:    rnd.GenerateUID(LinkUID),
 		ShareUID:   shareUid,
-		LinkToken:  rnd.GenerateToken(10),
+		LinkToken:  rnd.Base36(10),
 		CreatedBy:  userUid,
 		CreatedAt:  now,
 		ModifiedAt: now,
@@ -95,7 +95,7 @@ func (m *Link) ExpiresAt() *time.Time {
 		return nil
 	}
 
-	expires := TimeStamp()
+	expires := Now()
 	expires = m.ModifiedAt.Add(Seconds(m.LinkExpires))
 
 	return &expires
@@ -110,7 +110,7 @@ func (m *Link) Expired() bool {
 	if expires := m.ExpiresAt(); expires == nil {
 		return false
 	} else {
-		return TimeStamp().After(*expires)
+		return Now().After(*expires)
 	}
 }
 
@@ -144,7 +144,7 @@ func (m *Link) InvalidPassword(password string) bool {
 		return password != ""
 	}
 
-	return pw.IsWrong(password)
+	return pw.Invalid(password)
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.
@@ -157,7 +157,7 @@ func (m *Link) Save() error {
 		return fmt.Errorf("empty link token")
 	}
 
-	m.ModifiedAt = TimeStamp()
+	m.ModifiedAt = Now()
 
 	return Db().Save(m).Error
 }
@@ -255,5 +255,9 @@ func FindValidLinks(token, shared string) (found Links) {
 
 // String returns a human-readable identifier for use in logs.
 func (m *Link) String() string {
+	if m == nil {
+		return "Link<nil>"
+	}
+
 	return clean.Log(m.LinkUID)
 }

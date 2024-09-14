@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // SendFeedback sends a feedback message.
@@ -30,10 +30,11 @@ func SendFeedback(router *gin.RouterGroup) {
 			return
 		}
 
-		conf.UpdateHub()
+		conf.RenewApiKeys()
 
 		var f form.Feedback
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

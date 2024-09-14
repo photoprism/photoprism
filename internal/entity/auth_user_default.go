@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/authn"
 )
@@ -36,7 +36,7 @@ var UnknownUser = User{
 	UserUID:       "u000000000000001",
 	UserName:      "",
 	AuthProvider:  authn.ProviderNone.String(),
-	UserRole:      acl.RoleUnknown.String(),
+	UserRole:      acl.RoleNone.String(),
 	CanLogin:      false,
 	WebDAV:        false,
 	CanInvite:     false,

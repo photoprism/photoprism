@@ -15,6 +15,7 @@ func FileName(s string) string {
 	s = strings.TrimSpace(s)
 
 	// Remove non-printable and other potentially problematic characters.
+	// The following characters must never be used in a filename: / \ > < | : &
 	s = strings.Map(func(r rune) rune {
 		if !unicode.IsPrint(r) {
 			return -1

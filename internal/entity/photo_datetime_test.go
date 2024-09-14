@@ -4,35 +4,37 @@ import (
 	"testing"
 	"time"
 
+	"github.com/photoprism/photoprism/pkg/txt"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPhoto_TrustedTime(t *testing.T) {
 	t.Run("MissingTakenAt", func(t *testing.T) {
-		m := Photo{ID: 1, TakenAt: time.Time{}, TakenAtLocal: TimeStamp(), TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
+		m := Photo{ID: 1, TakenAt: time.Time{}, TakenAtLocal: Now(), TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.TrustedTime())
 	})
 	t.Run("MissingTakenAtLocal", func(t *testing.T) {
-		m := Photo{ID: 1, TakenAt: TimeStamp(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
+		m := Photo{ID: 1, TakenAt: Now(), TakenAtLocal: time.Time{}, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.TrustedTime())
 	})
 	t.Run("MissingTimeZone", func(t *testing.T) {
-		n := TimeStamp()
+		n := Now()
 		m := Photo{ID: 1, TakenAt: n, TakenAtLocal: n, TakenSrc: SrcMeta, TimeZone: ""}
 		assert.False(t, m.TrustedTime())
 	})
 	t.Run("SrcAuto", func(t *testing.T) {
-		n := TimeStamp()
+		n := Now()
 		m := Photo{ID: 1, TakenAt: n, TakenAtLocal: n, TakenSrc: SrcAuto, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.TrustedTime())
 	})
 	t.Run("SrcEstimate", func(t *testing.T) {
-		n := TimeStamp()
+		n := Now()
 		m := Photo{ID: 1, TakenAt: n, TakenAtLocal: n, TakenSrc: SrcEstimate, TimeZone: "Europe/Berlin"}
 		assert.False(t, m.TrustedTime())
 	})
 	t.Run("SrcMeta", func(t *testing.T) {
-		n := TimeStamp()
+		n := Now()
 		m := Photo{ID: 1, TakenAt: n, TakenAtLocal: n, TakenSrc: SrcMeta, TimeZone: "Europe/Berlin"}
 		assert.True(t, m.TrustedTime())
 	})
@@ -113,7 +115,7 @@ func TestPhoto_SetTakenAt(t *testing.T) {
 
 		zone := "Europe/Berlin"
 
-		loc, _ := time.LoadLocation(zone)
+		loc := txt.TimeZone(zone)
 
 		newTime := time.Date(2013, 11, 11, 9, 7, 18, 0, loc)
 

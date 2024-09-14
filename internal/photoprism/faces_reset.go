@@ -3,7 +3,7 @@ package photoprism
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
 // Reset removes automatically added face clusters, marker matches, and dangling subjects.

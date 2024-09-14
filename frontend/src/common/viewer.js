@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -78,7 +78,7 @@ class Viewer {
         download: true,
       },
       {
-        id: "fit_2048",
+        id: "fit_1920",
         template: "Medium (size)",
         label: "Medium",
         url: "{{raw_image_url}}",
@@ -131,18 +131,15 @@ class Viewer {
         captionEl.children[0].innerHTML = Util.encodeHTML(item.Title);
 
         if (item.Playable) {
-          captionEl.children[0].innerHTML +=
-            ' <i aria-hidden="true" class="v-icon material-icons theme--dark" title="Play">play_circle_fill</i>';
+          captionEl.children[0].innerHTML += ' <i aria-hidden="true" class="v-icon material-icons theme--dark" title="Play">play_circle_fill</i>';
         }
 
         if (item.Description) {
-          captionEl.children[0].innerHTML +=
-            '<br><span class="description">' + Util.encodeHTML(item.Description) + "</span>";
+          captionEl.children[0].innerHTML += '<br><span class="description">' + Util.encodeHTML(item.Description) + "</span>";
         }
 
         if (item.Playable) {
-          captionEl.children[0].innerHTML =
-            "<button>" + captionEl.children[0].innerHTML + "</button>";
+          captionEl.children[0].innerHTML = "<button>" + captionEl.children[0].innerHTML + "</button>";
         }
 
         return true;
@@ -169,9 +166,7 @@ class Viewer {
     gallery.listen("initialZoomIn", () => Event.publish("viewer.pause"));
     gallery.listen("initialZoomOut", () => Event.publish("viewer.pause"));
 
-    gallery.listen("beforeChange", () =>
-      Event.publish("viewer.change", { gallery: gallery, item: gallery.currItem })
-    );
+    gallery.listen("beforeChange", () => Event.publish("viewer.change", { gallery: gallery, item: gallery.currItem }));
 
     gallery.listen("beforeResize", () => {
       realViewportWidth = gallery.viewportSize.x * window.devicePixelRatio;
@@ -237,12 +232,7 @@ class Viewer {
         i = ctx.viewer.results.findIndex((p) => p.UID === selected.UID);
       }
 
-      if (
-        i > -1 &&
-        (((ctx.viewer.complete || ctx.complete) &&
-          ctx.viewer.results.length >= ctx.results.length) ||
-          i + ctx.viewer.batchSize <= ctx.viewer.results.length)
-      ) {
+      if (i > -1 && (((ctx.viewer.complete || ctx.complete) && ctx.viewer.results.length >= ctx.results.length) || i + ctx.viewer.batchSize <= ctx.viewer.results.length)) {
         ctx.$viewer.show(ctx.viewer.results, i);
         return;
       }

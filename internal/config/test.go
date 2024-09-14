@@ -15,8 +15,9 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"github.com/photoprism/photoprism/internal/customize"
+	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/thumb"
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -87,7 +88,7 @@ func NewTestOptions(pkg string) *Options {
 	c := &Options{
 		Name:            "PhotoPrism",
 		Version:         "0.0.0",
-		Copyright:       "(c) 2018-2023 PhotoPrism UG. All rights reserved.",
+		Copyright:       "(c) 2018-2024 PhotoPrism UG. All rights reserved.",
 		Public:          true,
 		Sponsor:         true,
 		AuthMode:        "",
@@ -101,14 +102,17 @@ func NewTestOptions(pkg string) *Options {
 		ExifBruteForce:  false,
 		AssetsPath:      assetsPath,
 		AutoIndex:       -1,
+		IndexSchedule:   DefaultIndexSchedule,
 		AutoImport:      7200,
 		StoragePath:     dataPath,
 		CachePath:       dataPath + "/cache",
 		OriginalsPath:   dataPath + "/originals",
 		ImportPath:      dataPath + "/import",
-		TempPath:        dataPath + "/temp",
 		ConfigPath:      dataPath + "/config",
 		SidecarPath:     dataPath + "/sidecar",
+		TempPath:        dataPath + "/temp",
+		BackupRetain:    DefaultBackupRetain,
+		BackupSchedule:  DefaultBackupSchedule,
 		DatabaseDriver:  driver,
 		DatabaseDsn:     dsn,
 		AdminPassword:   "photoprism",
@@ -160,12 +164,12 @@ func NewTestConfig(pkg string) *Config {
 	c := &Config{
 		cliCtx:  CliTestContext(),
 		options: NewTestOptions(pkg),
-		token:   rnd.GenerateToken(8),
+		token:   rnd.Base36(8),
 	}
 
 	s := customize.NewSettings(c.DefaultTheme(), c.DefaultLocale())
 
-	if err := os.MkdirAll(c.ConfigPath(), fs.ModeDir); err != nil {
+	if err := fs.MkdirAll(c.ConfigPath()); err != nil {
 		log.Fatalf("config: %s", err.Error())
 	}
 
@@ -180,10 +184,10 @@ func NewTestConfig(pkg string) *Config {
 	c.RegisterDb()
 	c.InitTestDb()
 
-	thumb.SizePrecached = c.ThumbSizePrecached()
-	thumb.SizeUncached = c.ThumbSizeUncached()
+	thumb.SizeCached = c.ThumbSizePrecached()
+	thumb.SizeOnDemand = c.ThumbSizeUncached()
 	thumb.Filter = c.ThumbFilter()
-	thumb.JpegQuality = c.JpegQuality()
+	thumb.JpegQualityDefault = c.JpegQuality()
 
 	return c
 }
@@ -195,6 +199,30 @@ func NewTestErrorConfig() *Config {
 	return c
 }
 
+// NewTestContext creates a new CLI test context with the flags and arguments provided.
+func NewTestContext(args []string) *cli.Context {
+	// Create new command-line app.
+	app := cli.NewApp()
+	app.Usage = "PhotoPrism®"
+	app.Version = "test"
+	app.Copyright = "(c) 2018-2024 PhotoPrism UG. All rights reserved."
+	app.EnableBashCompletion = true
+	app.Flags = Flags.Cli()
+	app.Metadata = map[string]interface{}{
+		"Name":    "PhotoPrism",
+		"About":   "PhotoPrism®",
+		"Edition": "ce",
+		"Version": "test",
+	}
+
+	// Parse command arguments.
+	flags := flag.NewFlagSet("test", 0)
+	LogErr(flags.Parse(args))
+
+	// Create and return new context.
+	return cli.NewContext(app, flags, nil)
+}
+
 // CliTestContext returns a CLI context for testing.
 func CliTestContext() *cli.Context {
 	config := NewTestOptions("config-cli")
@@ -202,22 +230,31 @@ func CliTestContext() *cli.Context {
 	globalSet := flag.NewFlagSet("test", 0)
 	globalSet.String("config-path", config.ConfigPath, "doc")
 	globalSet.String("admin-password", config.DarktableBin, "doc")
+	globalSet.String("oidc-uri", config.OIDCUri, "doc")
+	globalSet.String("oidc-client", config.OIDCClient, "doc")
+	globalSet.String("oidc-secret", config.OIDCSecret, "doc")
+	globalSet.String("oidc-scopes", config.OIDCScopes, "doc")
 	globalSet.String("storage-path", config.StoragePath, "doc")
-	globalSet.String("backup-path", config.StoragePath, "doc")
 	globalSet.String("sidecar-path", config.SidecarPath, "doc")
+	globalSet.Bool("sidecar-yaml", config.SidecarYaml, "doc")
 	globalSet.String("assets-path", config.AssetsPath, "doc")
 	globalSet.String("originals-path", config.OriginalsPath, "doc")
 	globalSet.String("import-path", config.OriginalsPath, "doc")
-	globalSet.String("temp-path", config.OriginalsPath, "doc")
 	globalSet.String("cache-path", config.OriginalsPath, "doc")
+	globalSet.String("temp-path", config.OriginalsPath, "doc")
+	globalSet.String("backup-path", config.StoragePath, "doc")
+	globalSet.Int("backup-retain", config.BackupRetain, "doc")
+	globalSet.String("backup-schedule", config.BackupSchedule, "doc")
 	globalSet.String("darktable-cli", config.DarktableBin, "doc")
-	globalSet.String("darktable-blacklist", config.DarktableBlacklist, "doc")
+	globalSet.String("darktable-exclude", config.DarktableExclude, "doc")
+	globalSet.String("sips-exclude", config.SipsExclude, "doc")
 	globalSet.String("wakeup-interval", "1h34m9s", "doc")
 	globalSet.Bool("detect-nsfw", config.DetectNSFW, "doc")
 	globalSet.Bool("debug", false, "doc")
 	globalSet.Bool("sponsor", true, "doc")
 	globalSet.Bool("test", true, "doc")
 	globalSet.Int("auto-index", config.AutoIndex, "doc")
+	globalSet.String("auto-index-schedule", config.IndexSchedule, "doc")
 	globalSet.Int("auto-import", config.AutoImport, "doc")
 
 	app := cli.NewApp()
@@ -225,25 +262,34 @@ func CliTestContext() *cli.Context {
 
 	c := cli.NewContext(app, globalSet, nil)
 
-	LogError(c.Set("config-path", config.ConfigPath))
-	LogError(c.Set("admin-password", config.AdminPassword))
-	LogError(c.Set("storage-path", config.StoragePath))
-	LogError(c.Set("backup-path", config.BackupPath))
-	LogError(c.Set("sidecar-path", config.SidecarPath))
-	LogError(c.Set("assets-path", config.AssetsPath))
-	LogError(c.Set("originals-path", config.OriginalsPath))
-	LogError(c.Set("import-path", config.ImportPath))
-	LogError(c.Set("temp-path", config.TempPath))
-	LogError(c.Set("cache-path", config.CachePath))
-	LogError(c.Set("darktable-cli", config.DarktableBin))
-	LogError(c.Set("darktable-blacklist", "raf,cr3"))
-	LogError(c.Set("wakeup-interval", "1h34m9s"))
-	LogError(c.Set("detect-nsfw", "true"))
-	LogError(c.Set("debug", "false"))
-	LogError(c.Set("sponsor", "true"))
-	LogError(c.Set("test", "true"))
-	LogError(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))
-	LogError(c.Set("auto-import", strconv.Itoa(config.AutoImport)))
+	LogErr(c.Set("config-path", config.ConfigPath))
+	LogErr(c.Set("admin-password", config.AdminPassword))
+	LogErr(c.Set("oidc-uri", config.OIDCUri))
+	LogErr(c.Set("oidc-client", config.OIDCClient))
+	LogErr(c.Set("oidc-secret", config.OIDCSecret))
+	LogErr(c.Set("oidc-scopes", authn.OidcDefaultScopes))
+	LogErr(c.Set("storage-path", config.StoragePath))
+	LogErr(c.Set("sidecar-path", config.SidecarPath))
+	LogErr(c.Set("sidecar-yaml", fmt.Sprintf("%t", config.SidecarYaml)))
+	LogErr(c.Set("assets-path", config.AssetsPath))
+	LogErr(c.Set("originals-path", config.OriginalsPath))
+	LogErr(c.Set("import-path", config.ImportPath))
+	LogErr(c.Set("cache-path", config.CachePath))
+	LogErr(c.Set("temp-path", config.TempPath))
+	LogErr(c.Set("backup-path", config.BackupPath))
+	LogErr(c.Set("backup-retain", strconv.Itoa(config.BackupRetain)))
+	LogErr(c.Set("backup-schedule", config.BackupSchedule))
+	LogErr(c.Set("darktable-cli", config.DarktableBin))
+	LogErr(c.Set("darktable-exclude", "raf, cr3"))
+	LogErr(c.Set("sips-exclude", "avif, avifs, thm"))
+	LogErr(c.Set("wakeup-interval", "1h34m9s"))
+	LogErr(c.Set("detect-nsfw", "true"))
+	LogErr(c.Set("debug", "false"))
+	LogErr(c.Set("sponsor", "true"))
+	LogErr(c.Set("test", "true"))
+	LogErr(c.Set("auto-index", strconv.Itoa(config.AutoIndex)))
+	LogErr(c.Set("auto-index-schedule", config.IndexSchedule))
+	LogErr(c.Set("auto-import", strconv.Itoa(config.AutoImport)))
 
 	return c
 }

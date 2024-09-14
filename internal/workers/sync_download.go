@@ -7,12 +7,12 @@ import (
 	"github.com/dustin/go-humanize/english"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/remote/webdav"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -67,7 +67,7 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 	relatedFiles, err := w.relatedDownloads(a)
 
 	if err != nil {
-		w.logError(err)
+		w.logErr(err)
 		return false, err
 	}
 
@@ -118,13 +118,13 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 
 			localName := baseDir + file.RemoteName
 
-			if _, err := os.Stat(localName); err == nil {
+			if _, err = os.Stat(localName); err == nil {
 				log.Warnf("sync: download skipped, %s already exists", localName)
 				file.Status = entity.FileSyncExists
 				file.Error = ""
 				file.Errors = 0
 			} else {
-				if err := client.Download(file.RemoteName, localName, false); err != nil {
+				if err = client.Download(file.RemoteName, localName, false); err != nil {
 					file.Errors++
 					file.Error = err.Error()
 				} else {
@@ -139,8 +139,8 @@ func (w *Sync) download(a entity.Service) (complete bool, err error) {
 				}
 			}
 
-			if err := entity.Db().Save(&file).Error; err != nil {
-				w.logError(err)
+			if err = entity.Db().Save(&file).Error; err != nil {
+				w.logErr(err)
 			} else {
 				files[i] = file
 			}

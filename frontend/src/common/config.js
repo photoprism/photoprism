@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -231,12 +231,7 @@ export default class Config {
             .filter((m) => m.UID === values.UID)
             .forEach((m) => {
               for (let key in values) {
-                if (
-                  key !== "UID" &&
-                  values.hasOwnProperty(key) &&
-                  values[key] != null &&
-                  typeof values[key] !== "object"
-                ) {
+                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
                   m[key] = values[key];
                 }
               }
@@ -326,6 +321,12 @@ export default class Config {
         break;
       case "files":
         this.values.count.files += data.count;
+        break;
+      case "hidden":
+        this.values.count.hidden += data.count;
+        break;
+      case "archived":
+        this.values.count.archived += data.count;
         break;
       case "favorites":
         this.values.count.favorites += data.count;
@@ -472,11 +473,7 @@ export default class Config {
       if (stored) {
         locale = stored;
       }
-    } else if (
-      this.values.settings &&
-      this.values.settings.ui &&
-      this.values.settings.ui.language
-    ) {
+    } else if (this.values.settings && this.values.settings.ui && this.values.settings.ui.language) {
       locale = this.values.settings.ui.language;
     }
 

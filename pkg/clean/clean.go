@@ -1,7 +1,7 @@
 /*
 Package clean provides validation, sanitation, and normalization of input values.
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -25,8 +25,6 @@ Additional information can be found in our Developer Guide:
 package clean
 
 import "strings"
-
-const MaxLength = 4096
 
 func reject(s string, maxLength int) bool {
 	if maxLength > 0 && len(s) > maxLength {

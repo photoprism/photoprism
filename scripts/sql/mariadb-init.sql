@@ -1886,7 +1886,7 @@ CREATE TABLE `REDIRECT_URIS` (
 
 LOCK TABLES `REDIRECT_URIS` WRITE;
 /*!40000 ALTER TABLE `REDIRECT_URIS` DISABLE KEYS */;
-INSERT INTO `REDIRECT_URIS` VALUES ('4e4977d6-eaa9-4245-ae4c-04d20f5436d9','/realms/master/account/*'),('54905dd0-4ade-494e-9c35-ab2d445a99f5','/realms/master/account/*'),('5a059221-51fd-434f-84a6-40fa51cda5ce','https://app.localssl.dev/api/v1/auth/callback'),('bda020f6-dd7f-4bb8-b565-bdc8edb9a8fc','/admin/master/console/*');
+INSERT INTO `REDIRECT_URIS` VALUES ('4e4977d6-eaa9-4245-ae4c-04d20f5436d9','/realms/master/account/*'),('54905dd0-4ade-494e-9c35-ab2d445a99f5','/realms/master/account/*'),('5a059221-51fd-434f-84a6-40fa51cda5ce','https://app.localssl.dev/api/v1/oidc/redirect'),('bda020f6-dd7f-4bb8-b565-bdc8edb9a8fc','/admin/master/console/*');
 /*!40000 ALTER TABLE `REDIRECT_URIS` ENABLE KEYS */;
 UNLOCK TABLES;
 

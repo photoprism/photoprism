@@ -13,13 +13,15 @@ fi
 
 set -e
 
+# Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
   SYSTEM_ARCH=$(uname -m)
 fi
 
-DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
+
 TMPDIR=${TMPDIR:-/tmp}
 
 . /etc/os-release
@@ -49,12 +51,18 @@ for t in ${GPU_DETECTED[@]}; do
   case $t in
     i915 | i965 | intel | opencl | icd)
       echo "Installing Intel Drivers..."
-      apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-gen-dev va-driver-all vainfo libva-dev
+      apt-get -qq install intel-opencl-icd intel-media-va-driver-non-free i965-va-driver-shaders mesa-va-drivers libmfx-dev libmfx-gen-dev va-driver-all vainfo libva-dev
       ;;
 
     nvidia)
       echo "NVIDIA Container Toolkit must be installed: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html"
       ;;
+      
+    amdgpu)
+      echo "Installing AMD VA-API Drivers..."
+      apt-get -qq install mesa-va-drivers vainfo libva-dev
+      ;;
+      
 
     "null")
       # ignore

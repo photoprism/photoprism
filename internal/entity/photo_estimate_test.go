@@ -68,7 +68,7 @@ func TestPhoto_EstimateLocation(t *testing.T) {
 		assert.Equal(t, "Mexico", m.CountryName())
 	})
 	t.Run("RecentlyEstimates", func(t *testing.T) {
-		m2 := Photo{CameraID: 2, TakenSrc: SrcMeta, PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", EstimatedAt: TimePointer(), TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
+		m2 := Photo{CameraID: 2, TakenSrc: SrcMeta, PhotoName: "PhotoWithoutLocation", OriginalName: "demo/xyy.jpg", EstimatedAt: TimeStamp(), TakenAt: time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
 		m2.EstimateLocation(false)
 		assert.Equal(t, "zz", m2.CountryCode())
@@ -76,7 +76,7 @@ func TestPhoto_EstimateLocation(t *testing.T) {
 		assert.Equal(t, SrcAuto, m2.PlaceSrc)
 	})
 	t.Run("NotRecentlyEstimated", func(t *testing.T) {
-		estimateTime := TimeStamp().Add(-1 * (MetadataEstimateInterval + 2*time.Hour))
+		estimateTime := Now().Add(-1 * (MetadataEstimateInterval + 2*time.Hour))
 		m2 := Photo{
 			CameraID:     2,
 			TakenSrc:     SrcMeta,
@@ -96,7 +96,7 @@ func TestPhoto_EstimateLocation(t *testing.T) {
 			TakenSrc:     SrcMeta,
 			PhotoName:    "PhotoWithoutLocation",
 			OriginalName: "demo/xyy.jpg",
-			EstimatedAt:  TimePointer(),
+			EstimatedAt:  TimeStamp(),
 			TakenAt:      time.Date(2016, 11, 11, 8, 7, 18, 0, time.UTC)}
 		assert.Equal(t, UnknownID, m2.CountryCode())
 		m2.EstimateLocation(true)

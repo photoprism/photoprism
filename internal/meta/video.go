@@ -1,13 +1,13 @@
 package meta
 
 import (
-	"github.com/photoprism/photoprism/pkg/video"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 const CodecUnknown = ""
 const CodecAv1 = string(video.CodecAV1)
 const CodecAvc1 = string(video.CodecAVC)
-const CodecHvc1 = string(video.CodecHEVC)
+const CodecHvc1 = string(video.CodecHVC)
 const CodecJpeg = "jpeg"
 const CodecHeic = "heic"
 const CodecXMP = "xmp"

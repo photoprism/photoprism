@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -67,6 +67,7 @@ export function restart(uri) {
         .then(() => {
           if (uri) {
             window.location.href = uri;
+            window.location.reload();
           } else {
             window.location.reload();
           }

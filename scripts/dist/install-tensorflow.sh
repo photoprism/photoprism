@@ -9,8 +9,14 @@ set -e
 
 TF_VERSION=${TF_VERSION:-1.15.2}
 
-SYSTEM_ARCH=$(uname -m)
-DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
+# Determine the system architecture.
+if [[ $PHOTOPRISM_ARCH ]]; then
+  SYSTEM_ARCH=$PHOTOPRISM_ARCH
+else
+  SYSTEM_ARCH=$(uname -m)
+fi
+
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
 case $DESTARCH in
   amd64 | AMD64 | x86_64 | x86-64)

@@ -12,11 +12,10 @@
             </div>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-3">
-            <v-btn depressed  color="secondary-light" class="action-cancel" @click.stop="cancel">
+            <v-btn depressed color="secondary-light" class="action-cancel" @click.stop="cancel">
               <translate key="Cancel">Cancel</translate>
             </v-btn>
-            <v-btn color="primary-button" depressed dark compact class="action-confirm"
-                   @click.stop="confirm">
+            <v-btn color="primary-button" depressed dark compact class="action-confirm" @click.stop="confirm">
               <translate key="Delete">Delete</translate>
             </v-btn>
           </v-flex>
@@ -27,7 +26,7 @@
 </template>
 <script>
 export default {
-  name: 'PFileDeleteDialog',
+  name: "PFileDeleteDialog",
   props: {
     show: Boolean,
   },
@@ -36,11 +35,11 @@ export default {
   },
   methods: {
     cancel() {
-      this.$emit('cancel');
+      this.$emit("cancel");
     },
     confirm() {
-      this.$emit('confirm');
+      this.$emit("confirm");
     },
-  }
+  },
 };
 </script>

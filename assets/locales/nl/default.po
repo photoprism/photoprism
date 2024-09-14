@@ -2,9 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-09 13:14+0000\n"
-"PO-Revision-Date: 2023-05-16 09:58+0000\n"
-"Last-Translator: Admin <hello@photoprism.app>\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
+"PO-Revision-Date: 2024-07-05 09:24+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Dutch <https://translate.photoprism.app/projects/photoprism/"
 "backend/nl/>\n"
 "Language: nl\n"
@@ -12,364 +13,392 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 5.5.5\n"
 
-#: messages.go:94
+#: messages.go:101
 msgid "Something went wrong, try again"
 msgstr "Er ging iets mis, probeer het opnieuw."
 
-#: messages.go:95
+#: messages.go:102
 msgid "Unable to do that"
 msgstr "Dat kan niet."
 
-#: messages.go:96
+#: messages.go:103
 msgid "Changes could not be saved"
 msgstr "Wijzigingen kunnen niet worden opgeslagen"
 
-#: messages.go:97
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Kan niet verwijderd worden"
 
-#: messages.go:98
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s bestaat al"
 
-#: messages.go:99
+#: messages.go:106
 msgid "Not found"
 msgstr "Niet gevonden"
 
-#: messages.go:100
+#: messages.go:107
 msgid "File not found"
 msgstr "Bestand niet gevonden"
 
-#: messages.go:101
+#: messages.go:108
 msgid "File too large"
 msgstr "Bestand te groot"
 
-#: messages.go:102
+#: messages.go:109
+msgid "Unsupported"
+msgstr "Niet ondersteund"
+
+#: messages.go:110
+msgid "Unsupported type"
+msgstr "Niet-ondersteund type"
+
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Niet ondersteund formaat"
 
-#: messages.go:103
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "De map Originelen is leeg"
 
-#: messages.go:104
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Selectie niet gevonden"
 
-#: messages.go:105
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Entiteit niet gevonden"
 
-#: messages.go:106
+#: messages.go:115
 msgid "Account not found"
 msgstr "Account niet gevonden"
 
-#: messages.go:107
+#: messages.go:116
 msgid "User not found"
 msgstr "Gebruiker niet gevonden"
 
-#: messages.go:108
+#: messages.go:117
 msgid "Label not found"
 msgstr "Label niet gevonden"
 
-#: messages.go:109
+#: messages.go:118
 msgid "Album not found"
 msgstr "Album niet gevonden"
 
-#: messages.go:110
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Onderwerp niet gevonden"
 
-#: messages.go:111
+#: messages.go:120
 msgid "Person not found"
 msgstr "Persoon niet gevonden"
 
-#: messages.go:112
+#: messages.go:121
 msgid "Face not found"
 msgstr "Gezicht niet gevonden"
 
-#: messages.go:113
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Niet beschikbaar in publieke modus"
 
-#: messages.go:114
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Niet beschikbaar in alleen-lezen modus"
 
-#: messages.go:115
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Log in op je account"
 
-#: messages.go:116
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Toegang geweigerd"
 
-#: messages.go:117
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Upload kan aanstootgevend zijn"
 
-#: messages.go:118
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Uploaden mislukt"
 
-#: messages.go:119
+#: messages.go:128
 msgid "No items selected"
 msgstr "Geen items geselecteerd"
 
-#: messages.go:120
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Bestand aanmaken mislukt, controleer alstublieft de rechten"
 
-#: messages.go:121
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Folder aanmaken mislukt, controleer alstublieft de rechten"
 
-#: messages.go:122
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Kan niet verbinden, probeer alstublieft opnieuw"
 
-#: messages.go:123
+#: messages.go:132
+msgid "Enter verification code"
+msgstr "Verificatiecode invoeren"
+
+#: messages.go:133
+msgid "Invalid verification code, please try again"
+msgstr "Ongeldige verificatiecode. Probeer het opnieuw"
+
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Fout wachtwoord, probeer alstublieft opnieuw"
 
-#: messages.go:124
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Functie uitgeschakeld"
 
-#: messages.go:125
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Geen labels geselecteerd"
 
-#: messages.go:126
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Geen albums geselecteerd"
 
-#: messages.go:127
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Geen bestanden beschikbaar om te downloaden"
 
-#: messages.go:128
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Maken van zip-bestand is mislukt"
 
-#: messages.go:129
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Ongeldige inloggegevens"
 
-#: messages.go:130
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Ongeldige link"
 
-#: messages.go:131
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Ongeldige mapnaam"
 
-#: messages.go:132
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Bezet, probeer het later nog eens"
 
-#: messages.go:133
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Het wekinterval is %s, maar moet 1 uur of minder zijn"
 
-#: messages.go:134
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Uw account kon niet worden aangesloten"
 
-#: messages.go:137
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Te veel verzoeken"
+
+#: messages.go:149
 msgid "Changes successfully saved"
 msgstr "Wijzigingen succesvol opgeslagen"
 
-#: messages.go:138
+#: messages.go:150
 msgid "Album created"
 msgstr "Album aangemaakt"
 
-#: messages.go:139
+#: messages.go:151
 msgid "Album saved"
 msgstr "Album opgeslagen"
 
-#: messages.go:140
+#: messages.go:152
 #, c-format
 msgid "Album %s deleted"
 msgstr "Album %s verwijderd"
 
-#: messages.go:141
+#: messages.go:153
 msgid "Album contents cloned"
 msgstr "Albuminhoud gekopieerd"
 
-#: messages.go:142
+#: messages.go:154
 msgid "File removed from stack"
 msgstr "Bestand uit stapel verwijderd"
 
-#: messages.go:143
+#: messages.go:155
 msgid "File deleted"
 msgstr "Bestand verwijderd"
 
-#: messages.go:144
+#: messages.go:156
 #, c-format
 msgid "Selection added to %s"
 msgstr "Selectie toegevoegd aan %s"
 
-#: messages.go:145
+#: messages.go:157
 #, c-format
 msgid "One entry added to %s"
 msgstr "Eén item toegevoegd aan %s"
 
-#: messages.go:146
+#: messages.go:158
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d items toegevoegd aan %s"
 
-#: messages.go:147
+#: messages.go:159
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Eén item verwijderd uit %s"
 
-#: messages.go:148
+#: messages.go:160
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d items verwijderd uit %s"
 
-#: messages.go:149
+#: messages.go:161
 msgid "Account created"
 msgstr "Account aangemaakt"
 
-#: messages.go:150
+#: messages.go:162
 msgid "Account saved"
 msgstr "Account opgeslagen"
 
-#: messages.go:151
+#: messages.go:163
 msgid "Account deleted"
 msgstr "Account verwijderd"
 
-#: messages.go:152
+#: messages.go:164
 msgid "Settings saved"
 msgstr "Instellingen opgeslagen"
 
-#: messages.go:153
+#: messages.go:165
 msgid "Password changed"
 msgstr "Wachtwoord gewijzigd"
 
-#: messages.go:154
+#: messages.go:166
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Importeren voltooid in %d s"
 
-#: messages.go:155
+#: messages.go:167
 msgid "Import canceled"
 msgstr "Importeren geannuleerd"
 
-#: messages.go:156
+#: messages.go:168
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indexeren voltooid in %d s"
 
-#: messages.go:157
+#: messages.go:169
 msgid "Indexing originals..."
 msgstr "Originelen indexeren…"
 
-#: messages.go:158
+#: messages.go:170
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Bestanden indexeren in %s"
 
-#: messages.go:159
+#: messages.go:171
 msgid "Indexing canceled"
 msgstr "Indexeren geannuleerd"
 
-#: messages.go:160
+#: messages.go:172
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "%d bestanden en %d foto’s verwijderd"
 
-#: messages.go:161
+#: messages.go:173
 #, c-format
 msgid "Moving files from %s"
 msgstr "Bestanden verplaatsen uit %s"
 
-#: messages.go:162
+#: messages.go:174
 #, c-format
 msgid "Copying files from %s"
 msgstr "Bestanden kopiëren uit %s"
 
-#: messages.go:163
+#: messages.go:175
 msgid "Labels deleted"
 msgstr "Labels verwijderd"
 
-#: messages.go:164
+#: messages.go:176
 msgid "Label saved"
 msgstr "Labels opgeslagen"
 
-#: messages.go:165
+#: messages.go:177
 msgid "Subject saved"
 msgstr "Onderwerp opgeslagen"
 
-#: messages.go:166
+#: messages.go:178
 msgid "Subject deleted"
 msgstr "Onderwerp verwijderd"
 
-#: messages.go:167
+#: messages.go:179
 msgid "Person saved"
 msgstr "Persoon gered"
 
-#: messages.go:168
+#: messages.go:180
 msgid "Person deleted"
 msgstr "Persoon verwijderd"
 
-#: messages.go:169
+#: messages.go:181
 msgid "File uploaded"
 msgstr "Bestand geüpload"
 
-#: messages.go:170
+#: messages.go:182
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d bestanden geüpload in %d s"
 
-#: messages.go:171
+#: messages.go:183
 msgid "Processing upload..."
 msgstr "Verwerking upload..."
 
-#: messages.go:172
+#: messages.go:184
 msgid "Upload has been processed"
 msgstr "Upload is verwerkt"
 
-#: messages.go:173
+#: messages.go:185
 msgid "Selection approved"
 msgstr "Selectie goedgekeurd"
 
-#: messages.go:174
+#: messages.go:186
 msgid "Selection archived"
 msgstr "Selectie gearchiveerd"
 
-#: messages.go:175
+#: messages.go:187
 msgid "Selection restored"
 msgstr "Selectie hersteld"
 
-#: messages.go:176
+#: messages.go:188
 msgid "Selection marked as private"
 msgstr "Selectie gemarkeerd als privé"
 
-#: messages.go:177
+#: messages.go:189
 msgid "Albums deleted"
 msgstr "Albums verwijderd"
 
-#: messages.go:178
+#: messages.go:190
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip gemaakt in %d s"
 
-#: messages.go:179
+#: messages.go:191
 msgid "Permanently deleted"
 msgstr "Permanent verwijderd"
 
-#: messages.go:180
+#: messages.go:192
 #, c-format
 msgid "%s has been restored"
 msgstr "%s is hersteld"
+
+#: messages.go:193
+msgid "Successfully verified"
+msgstr "Met succes geverifieerd"
+
+#: messages.go:194
+msgid "Successfully activated"
+msgstr "Met succes geactiveerd"
 
 #~ msgid "Invalid request"
 #~ msgstr "Ongeldige aanvraag"

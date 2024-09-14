@@ -86,5 +86,6 @@
   "DateTimeCreated": "2013:08:25 14:54:05+00:00",
   "FocalLength35efl": 3.5,
   "GPSPosition": "45.7528495555556 33.2219772222222",
-  "LightValue": 13.9150945354232
+  "LightValue": 13.9150945354232,
+  "LensModel": "135"
 }]

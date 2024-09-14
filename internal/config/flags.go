@@ -2,17 +2,20 @@ package config
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/klauspost/cpuid/v2"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/face"
 	"github.com/photoprism/photoprism/internal/ffmpeg"
-	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/server/header"
 	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/pkg/authn"
+	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/i18n"
+	"github.com/photoprism/photoprism/pkg/media"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -33,26 +36,95 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-user, login",
-			Usage:  "admin login `USERNAME`",
+			Usage:  "`USERNAME` of the superadmin account that is created on first startup",
 			Value:  "admin",
-			EnvVar: EnvVar("ADMIN_USER"),
+			EnvVar: EnvVar("ADMIN_USER") + "," + EnvVar("ADMIN_USERNAME"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "admin-password, pw",
-			Usage:  fmt.Sprintf("initial admin `PASSWORD` (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
+			Usage:  fmt.Sprintf("initial `PASSWORD` of the superadmin account (%d-%d characters)", entity.PasswordLength, txt.ClipPassword),
 			EnvVar: EnvVar("ADMIN_PASSWORD"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-uri",
+			Usage:  "issuer `URI` for single sign-on via OpenID Connect, e.g. https://accounts.google.com",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_URI"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-client",
+			Usage:  "client `ID` for single sign-on via OpenID Connect",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_CLIENT"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-secret",
+			Usage:  "client `SECRET` for single sign-on via OpenID Connect",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_SECRET"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-scopes",
+			Hidden: true,
+			Usage:  "user information `SCOPES` for single sign-on via OpenID Connect",
+			Value:  authn.OidcDefaultScopes,
+			EnvVar: EnvVar("OIDC_SCOPES"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-provider",
+			Usage:  "custom identity provider `NAME`, e.g. Google",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_PROVIDER"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-icon",
+			Usage:  "custom identity provider icon `URI`",
+			Value:  "",
+			EnvVar: EnvVar("OIDC_ICON"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "oidc-redirect",
+			Usage:  "automatically redirect unauthenticated users to the configured identity provider",
+			EnvVar: EnvVar("OIDC_REDIRECT"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "oidc-register",
+			Usage:  "allow new users to create an account when they sign in with OpenID Connect",
+			EnvVar: EnvVar("OIDC_REGISTER"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "oidc-username",
+			Usage:  "preferred username `CLAIM` for new OpenID Connect users (preferred_username, name, nickname, email)",
+			Value:  authn.OidcClaimPreferredUsername,
+			EnvVar: EnvVar("OIDC_USERNAME"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "oidc-webdav",
+			Usage:  "allow new OpenID Connect users to use WebDAV when they have a role that allows it",
+			EnvVar: EnvVar("OIDC_WEBDAV"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-oidc",
+			Usage:  "disable single sign-on via OpenID Connect, even if an identity provider has been configured",
+			EnvVar: EnvVar("DISABLE_OIDC"),
 		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-maxage",
 			Value:  DefaultSessionMaxAge,
-			Usage:  "time in `SECONDS` until API sessions expire automatically (-1 to disable)",
+			Usage:  "session expiration time in `SECONDS`, doubled for accounts with 2FA (-1 to disable)",
 			EnvVar: EnvVar("SESSION_MAXAGE"),
 		}}, {
 		Flag: cli.Int64Flag{
 			Name:   "session-timeout",
 			Value:  DefaultSessionTimeout,
-			Usage:  "time in `SECONDS` until API sessions expire due to inactivity (-1 to disable)",
+			Usage:  "session idle time in `SECONDS`, doubled for accounts with 2FA (-1 to disable)",
 			EnvVar: EnvVar("SESSION_TIMEOUT"),
+		}}, {
+		Flag: cli.Int64Flag{
+			Name:   "session-cache",
+			Value:  DefaultSessionCache,
+			Usage:  "session cache duration in `SECONDS` (60-3600)",
+			EnvVar: EnvVar("SESSION_CACHE"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "log-level, l",
@@ -145,21 +217,6 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("STORAGE_PATH"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "sidecar-path, sc",
-			Usage:  "custom relative or absolute sidecar `PATH` *optional*",
-			EnvVar: EnvVar("SIDECAR_PATH"),
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "backup-path, ba",
-			Usage:  "custom backup `PATH` for index backup files *optional*",
-			EnvVar: EnvVar("BACKUP_PATH"),
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "cache-path, ca",
-			Usage:  "custom cache `PATH` for sessions and thumbnail files *optional*",
-			EnvVar: EnvVar("CACHE_PATH"),
-		}}, {
-		Flag: cli.StringFlag{
 			Name:   "import-path, im",
 			Usage:  "base `PATH` from which files can be imported to originals *optional*",
 			EnvVar: EnvVar("IMPORT_PATH"),
@@ -170,77 +227,125 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("IMPORT_DEST"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "assets-path, as",
-			Usage:  "assets `PATH` containing static resources like icons, models, and translations",
-			EnvVar: EnvVar("ASSETS_PATH"),
+			Name:   "cache-path, ca",
+			Usage:  "custom cache `PATH` for sessions and thumbnail files *optional*",
+			EnvVar: EnvVar("CACHE_PATH"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "temp-path, tmp",
 			Usage:  "temporary file `PATH` *optional*",
 			EnvVar: EnvVar("TEMP_PATH"),
 		}}, {
+		Flag: cli.StringFlag{
+			Name:   "assets-path, as",
+			Usage:  "assets `PATH` containing static resources like icons, models, and translations",
+			EnvVar: EnvVar("ASSETS_PATH"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "sidecar-path, sc",
+			Usage:  "custom relative or absolute sidecar `PATH` *optional*",
+			EnvVar: EnvVar("SIDECAR_PATH"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "sidecar-yaml",
+			Usage:  "create YAML sidecar files to back up picture metadata",
+			EnvVar: EnvVar("SIDECAR_YAML"),
+		}, DocDefault: "true"}, {
+		Flag: cli.StringFlag{
+			Name:   "backup-path, ba",
+			Usage:  "custom base `PATH` for creating and restoring backups *optional*",
+			EnvVar: EnvVar("BACKUP_PATH"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "backup-schedule",
+			Usage:  "backup `SCHEDULE` in cron format (e.g. \"0 12 * * *\" for daily at noon) or at a random time (daily, weekly)",
+			Value:  DefaultBackupSchedule,
+			EnvVar: EnvVar("BACKUP_SCHEDULE"),
+		}}, {
 		Flag: cli.IntFlag{
-			Name:   "workers, w",
+			Name:   "backup-retain",
+			Usage:  "`NUMBER` of index backups to keep (-1 to keep all)",
+			Value:  DefaultBackupRetain,
+			EnvVar: EnvVar("BACKUP_RETAIN"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "backup-database",
+			Usage:  "create regular backups based on the configured schedule",
+			EnvVar: EnvVar("BACKUP_DATABASE"),
+		}, DocDefault: "true"}, {
+		Flag: cli.BoolFlag{
+			Name:   "backup-albums",
+			Usage:  "create YAML files to back up album metadata",
+			EnvVar: EnvVar("BACKUP_ALBUMS"),
+		}, DocDefault: "true"}, {
+		Flag: cli.IntFlag{
+			Name:   "index-workers, workers",
 			Usage:  "maximum `NUMBER` of indexing workers, default depends on the number of physical cores",
 			Value:  cpuid.CPU.PhysicalCores / 2,
-			EnvVar: EnvVar("WORKERS"),
+			EnvVar: EnvVar("INDEX_WORKERS") + "," + EnvVar("WORKERS"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "index-schedule",
+			Usage:  "indexing `SCHEDULE` in cron format (e.g. \"@every 3h\" for every 3 hours; \"\" to disable)",
+			Value:  DefaultIndexSchedule,
+			EnvVar: EnvVar("INDEX_SCHEDULE"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "wakeup-interval, i",
-			Usage:  "`DURATION` between worker runs required for face recognition and index maintenance (1-86400s)",
+			Usage:  "`TIME` between facial recognition, file sync, and metadata worker runs (1-86400s)",
 			Value:  DefaultWakeupInterval.String(),
 			EnvVar: EnvVar("WAKEUP_INTERVAL"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "auto-index",
-			Usage:  "WebDAV auto index safety delay in `SECONDS` (-1 to disable)",
+			Usage:  "delay before automatically indexing files in `SECONDS` when uploading via WebDAV (-1 to disable)",
 			Value:  DefaultAutoIndexDelay,
 			EnvVar: EnvVar("AUTO_INDEX"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "auto-import",
-			Usage:  "WebDAV auto import safety delay in `SECONDS` (-1 to disable)",
+			Usage:  "delay before automatically importing files in `SECONDS` when uploading via WebDAV (-1 to disable)",
 			Value:  DefaultAutoImportDelay,
 			EnvVar: EnvVar("AUTO_IMPORT"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "read-only, r",
-			Usage:  "disable import, upload, delete, and all other operations that require write permissions",
+			Usage:  "disable features that require write permission for the originals folder",
 			EnvVar: EnvVar("READONLY"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "experimental, e",
-			Usage:  "enable experimental features",
+			Usage:  "enable new features currently under development",
 			EnvVar: EnvVar("EXPERIMENTAL"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-settings",
-			Usage:  "disable settings UI and API",
+			Usage:  "disable the settings user interface and server API, e.g. in combination with public mode",
 			EnvVar: EnvVar("DISABLE_SETTINGS"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-restart",
-			Usage:  "disable restarting the server from the user interface",
-			EnvVar: EnvVar("DISABLE_RESTART"),
-		}}, {
-		Flag: cli.BoolFlag{
 			Name:   "disable-backups",
-			Usage:  "disable backing up albums and photo metadata to YAML files",
+			Usage:  "prevent database and album backups as well as YAML sidecar files from being created",
 			EnvVar: EnvVar("DISABLE_BACKUPS"),
 		}}, {
 		Flag: cli.BoolFlag{
+			Name:   "disable-restart",
+			Usage:  "prevent admins from restarting the server through the user interface",
+			EnvVar: EnvVar("DISABLE_RESTART"),
+		}}, {
+		Flag: cli.BoolFlag{
 			Name:   "disable-webdav",
-			Usage:  "disable built-in WebDAV server",
+			Usage:  "prevent other apps from accessing PhotoPrism as a shared network drive",
 			EnvVar: EnvVar("DISABLE_WEBDAV"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-places",
-			Usage:  "disable reverse geocoding and maps",
+			Usage:  "disable interactive world maps and reverse geocoding",
 			EnvVar: EnvVar("DISABLE_PLACES"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-tensorflow",
-			Usage:  "disable all features depending on TensorFlow",
+			Usage:  "disable features depending on TensorFlow, e.g. image classification and face recognition",
 			EnvVar: EnvVar("DISABLE_TENSORFLOW"),
 		}}, {
 		Flag: cli.BoolFlag{
@@ -254,19 +359,24 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DISABLE_CLASSIFICATION"),
 		}}, {
 		Flag: cli.BoolFlag{
-			Name:   "disable-sips",
-			Usage:  "disable conversion of media files with Sips *macOS only*",
-			EnvVar: EnvVar("DISABLE_SIPS"),
-		}}, {
-		Flag: cli.BoolFlag{
 			Name:   "disable-ffmpeg",
 			Usage:  "disable video transcoding and thumbnail extraction with FFmpeg",
 			EnvVar: EnvVar("DISABLE_FFMPEG"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-exiftool",
-			Usage:  "disable creating JSON metadata sidecar files with ExifTool",
+			Usage:  "disable metadata extraction with ExifTool (required for full Video, Live Photo, and XMP support)",
 			EnvVar: EnvVar("DISABLE_EXIFTOOL"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-vips",
+			Usage:  "disable image processing and conversion with libvips",
+			EnvVar: EnvVar("DISABLE_VIPS"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "disable-sips",
+			Usage:  "disable file conversion using the sips command under macOS",
+			EnvVar: EnvVar("DISABLE_SIPS"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "disable-darktable",
@@ -310,23 +420,35 @@ var Flags = CliFlags{
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "detect-nsfw",
-			Usage:  "automatically flag photos as private that MAY be offensive (requires TensorFlow)",
+			Usage:  "flag newly added pictures as private if they might be offensive (requires TensorFlow)",
 			EnvVar: EnvVar("DETECT_NSFW"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "upload-nsfw, n",
-			Usage:  "allow uploads that MAY be offensive (no effect without TensorFlow)",
+			Usage:  "allow uploads that might be offensive (detecting unsafe content requires TensorFlow)",
 			EnvVar: EnvVar("UPLOAD_NSFW"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "upload-allow",
+			Usage:  "allow these file types for web uploads (comma-separated list of extensions; leave blank to allow all)",
+			EnvVar: EnvVar("UPLOAD_ALLOW"),
+			Hidden: true,
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "default-locale, lang",
-			Usage:  "standard user interface language `CODE`",
+			Usage:  "default user interface language `CODE`",
 			Value:  i18n.Default.Locale(),
 			EnvVar: EnvVar("DEFAULT_LOCALE"),
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "default-timezone, tz",
+			Usage:  "default time zone `NAME`, e.g. for scheduling backups",
+			Value:  time.UTC.String(),
+			EnvVar: EnvVar("DEFAULT_TIMEZONE"),
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "default-theme",
-			Usage:  "standard user interface theme `NAME`",
+			Usage:  "default user interface theme `NAME`",
 			EnvVar: EnvVar("DEFAULT_THEME"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -385,16 +507,6 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("WALLPAPER_URI"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "cdn-url",
-			Usage:  "content delivery network `URL`",
-			EnvVar: EnvVar("CDN_URL"),
-		}}, {
-		Flag: cli.BoolFlag{
-			Name:   "cdn-video",
-			Usage:  "stream videos over the specified CDN",
-			EnvVar: EnvVar("CDN_VIDEO"),
-		}}, {
-		Flag: cli.StringFlag{
 			Name:   "site-url, url",
 			Usage:  "public site `URL`",
 			Value:  "http://localhost:2342/",
@@ -426,6 +538,34 @@ var Flags = CliFlags{
 			Name:   "site-preview",
 			Usage:  "sharing preview image `URL`",
 			EnvVar: EnvVar("SITE_PREVIEW"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cdn-url",
+			Usage:  "content delivery network `URL`",
+			EnvVar: EnvVar("CDN_URL"),
+		}}, {
+		Flag: cli.BoolFlag{
+			Name:   "cdn-video",
+			Usage:  "stream videos over the specified CDN",
+			EnvVar: EnvVar("CDN_VIDEO"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-origin",
+			Usage:  "origin `URL` from which browsers are allowed to perform cross-origin requests (leave blank to disable or use * to allow all)",
+			EnvVar: EnvVar("CORS_ORIGIN"),
+			Value:  header.DefaultAccessControlAllowOrigin,
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-headers",
+			Usage:  "one or more `HEADERS` that browsers should see when performing a cross-origin request",
+			EnvVar: EnvVar("CORS_HEADERS"),
+			Value:  header.DefaultAccessControlAllowHeaders,
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "cors-methods",
+			Usage:  "one or more `METHODS` that may be used when performing a cross-origin request",
+			EnvVar: EnvVar("CORS_METHODS"),
+			Value:  header.DefaultAccessControlAllowMethods,
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "https-proxy",
@@ -491,33 +631,33 @@ var Flags = CliFlags{
 			Usage:  "Web server compression `METHOD` (gzip, none)",
 			EnvVar: EnvVar("HTTP_COMPRESSION"),
 		}}, {
-		Flag: cli.IntFlag{
-			Name:   "http-cache-maxage",
-			Value:  int(ttl.Default),
-			Usage:  "time in `SECONDS` until cached content expires",
-			EnvVar: EnvVar("HTTP_CACHE_MAXAGE"),
-		}}, {
-		Flag: cli.IntFlag{
-			Name:   "http-video-maxage",
-			Value:  int(ttl.Video),
-			Usage:  "time in `SECONDS` until cached videos expire",
-			EnvVar: EnvVar("HTTP_VIDEO_MAXAGE"),
-		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "http-cache-public",
 			Usage:  "allow static content to be cached by a CDN or caching proxy",
 			EnvVar: EnvVar("HTTP_CACHE_PUBLIC"),
 		}}, {
+		Flag: cli.IntFlag{
+			Name:   "http-cache-maxage",
+			Value:  int(ttl.CacheDefault),
+			Usage:  "time in `SECONDS` until cached content expires",
+			EnvVar: EnvVar("HTTP_CACHE_MAXAGE"),
+		}}, {
+		Flag: cli.IntFlag{
+			Name:   "http-video-maxage",
+			Value:  int(ttl.CacheVideo),
+			Usage:  "time in `SECONDS` until cached videos expire",
+			EnvVar: EnvVar("HTTP_VIDEO_MAXAGE"),
+		}}, {
 		Flag: cli.StringFlag{
 			Name:   "http-host, ip",
 			Value:  "0.0.0.0",
-			Usage:  "web server `IP` address or Unix domain socket, e.g. unix:/var/run/photoprism.sock",
+			Usage:  "Web server `IP` address or Unix domain socket, e.g. unix:/var/run/photoprism.sock",
 			EnvVar: EnvVar("HTTP_HOST"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "http-port, port",
 			Value:  2342,
-			Usage:  "web server port `NUMBER`, ignored for Unix domain sockets",
+			Usage:  "Web server port `NUMBER`, ignored for Unix domain sockets",
 			EnvVar: EnvVar("HTTP_PORT"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -554,6 +694,12 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DATABASE_PASSWORD"),
 		}}, {
 		Flag: cli.IntFlag{
+			Name:   "database-timeout",
+			Usage:  "timeout in `SECONDS` for establishing a database connection (1-60)",
+			EnvVar: EnvVar("DATABASE_TIMEOUT"),
+			Value:  15,
+		}}, {
+		Flag: cli.IntFlag{
 			Name:   "database-conns",
 			Usage:  "maximum `NUMBER` of open database connections",
 			EnvVar: EnvVar("DATABASE_CONNS"),
@@ -564,21 +710,9 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DATABASE_CONNS_IDLE"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "sips-bin",
-			Usage:  "Sips `COMMAND` for media file conversion *macOS only*",
-			Value:  "sips",
-			EnvVar: EnvVar("SIPS_BIN"),
-		}}, {
-		Flag: cli.StringFlag{
-			Name:   "sips-blacklist",
-			Usage:  "do not use Sips to convert files with these `EXTENSIONS` *macOS only*",
-			Value:  "avif,avifs",
-			EnvVar: EnvVar("SIPS_BLACKLIST"),
-		}}, {
-		Flag: cli.StringFlag{
 			Name:   "ffmpeg-bin",
 			Usage:  "FFmpeg `COMMAND` for video transcoding and thumbnail extraction",
-			Value:  "ffmpeg",
+			Value:  ffmpeg.DefaultBin,
 			EnvVar: EnvVar("FFMPEG_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
@@ -590,7 +724,7 @@ var Flags = CliFlags{
 		Flag: cli.IntFlag{
 			Name:   "ffmpeg-size, vs",
 			Usage:  "maximum video size in `PIXELS` (720-7680)",
-			Value:  thumb.Sizes[thumb.Fit3840].Width,
+			Value:  thumb.Sizes[thumb.Fit4096].Width,
 			EnvVar: EnvVar("FFMPEG_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{
@@ -604,18 +738,30 @@ var Flags = CliFlags{
 			Usage:  "video `STREAMS` that should be transcoded",
 			Value:  ffmpeg.MapVideoDefault,
 			EnvVar: EnvVar("FFMPEG_MAP_VIDEO"),
-		}}, {
+		}, DocDefault: fmt.Sprintf("`%s`", ffmpeg.MapVideoDefault)}, {
 		Flag: cli.StringFlag{
 			Name:   "ffmpeg-map-audio",
 			Usage:  "audio `STREAMS` that should be transcoded",
 			Value:  ffmpeg.MapAudioDefault,
 			EnvVar: EnvVar("FFMPEG_MAP_AUDIO"),
-		}}, {
+		}, DocDefault: fmt.Sprintf("`%s`", ffmpeg.MapAudioDefault)}, {
 		Flag: cli.StringFlag{
 			Name:   "exiftool-bin",
 			Usage:  "ExifTool `COMMAND` for extracting metadata",
 			Value:  "exiftool",
 			EnvVar: EnvVar("EXIFTOOL_BIN"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "sips-bin",
+			Usage:  "Sips `COMMAND` for media file conversion *macOS only*",
+			Value:  "sips",
+			EnvVar: EnvVar("SIPS_BIN"),
+		}}, {
+		Flag: cli.StringFlag{
+			Name:   "sips-exclude",
+			Usage:  "file `EXTENSIONS` not to be used with Sips *macOS only*",
+			Value:  "avif, avifs, thm",
+			EnvVar: EnvVar("SIPS_EXCLUDE") + "," + EnvVar("SIPS_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "darktable-bin",
@@ -624,10 +770,10 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("DARKTABLE_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "darktable-blacklist",
-			Usage:  "do not use Darktable to convert files with these `EXTENSIONS`",
-			Value:  "",
-			EnvVar: EnvVar("DARKTABLE_BLACKLIST"),
+			Name:   "darktable-exclude",
+			Usage:  "file `EXTENSIONS` not to be used with Darktable",
+			Value:  "thm",
+			EnvVar: EnvVar("DARKTABLE_EXCLUDE") + "," + EnvVar("DARKTABLE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "darktable-cache-path",
@@ -648,10 +794,10 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("RAWTHERAPEE_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "rawtherapee-blacklist",
-			Usage:  "do not use RawTherapee to convert files with these `EXTENSIONS`",
-			Value:  "dng",
-			EnvVar: EnvVar("RAWTHERAPEE_BLACKLIST"),
+			Name:   "rawtherapee-exclude",
+			Usage:  "file `EXTENSIONS` not to be used with RawTherapee",
+			Value:  "dng, thm",
+			EnvVar: EnvVar("RAWTHERAPEE_EXCLUDE") + "," + EnvVar("RAWTHERAPEE_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "imagemagick-bin",
@@ -660,71 +806,84 @@ var Flags = CliFlags{
 			EnvVar: EnvVar("IMAGEMAGICK_BIN"),
 		}}, {
 		Flag: cli.StringFlag{
-			Name:   "imagemagick-blacklist",
-			Usage:  "do not use ImageMagick to convert files with these `EXTENSIONS`",
-			Value:  "heif,heic,heics,avif,avifs,jxl",
-			EnvVar: EnvVar("IMAGEMAGICK_BLACKLIST"),
+			Name:   "imagemagick-exclude",
+			Usage:  "file `EXTENSIONS` not to be used with ImageMagick",
+			Value:  "heif, heic, heics, avif, avifs, jxl, thm",
+			EnvVar: EnvVar("IMAGEMAGICK_EXCLUDE") + "," + EnvVar("IMAGEMAGICK_BLACKLIST"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "heifconvert-bin",
 			Usage:  "libheif HEIC image conversion `COMMAND`",
-			Value:  "heif-convert",
+			Value:  "",
 			EnvVar: EnvVar("HEIFCONVERT_BIN"),
+		},
+		DocDefault: "heif-dec"}, {
+		Flag: cli.StringFlag{
+			Name:   "heifconvert-orientation",
+			Usage:  "Exif `ORIENTATION` of images generated with libheif (keep, reset)",
+			Value:  media.KeepOrientation,
+			EnvVar: EnvVar("HEIFCONVERT_ORIENTATION"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "download-token",
-			Usage:  "`DEFAULT` download URL token for originals (leave empty for a random value)",
+			Usage:  "`DEFAULT` download URL token for originals (leave blank for a random value)",
 			EnvVar: EnvVar("DOWNLOAD_TOKEN"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "preview-token",
-			Usage:  "`DEFAULT` thumbnail and video streaming URL token (leave empty for a random value)",
+			Usage:  "`DEFAULT` thumbnail and video streaming URL token (leave blank for a random value)",
 			EnvVar: EnvVar("PREVIEW_TOKEN"),
 		}}, {
 		Flag: cli.StringFlag{
+			Name:   "thumb-library, thumbs",
+			Usage:  "image processing `LIBRARY` to be used for generating thumbnails (auto, imaging, vips)",
+			Value:  "auto",
+			EnvVar: EnvVar("THUMB_LIBRARY"),
+		}}, {
+		Flag: cli.StringFlag{
 			Name:   "thumb-color",
-			Usage:  "standard color `PROFILE` for thumbnails (leave blank to disable)",
-			Value:  "sRGB",
+			Usage:  "standard color `PROFILE` for thumbnails (auto, preserve, srgb, none)",
+			Value:  thumb.ColorAuto,
 			EnvVar: EnvVar("THUMB_COLOR"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "thumb-filter, filter",
-			Usage:  "image downscaling filter `NAME` (best to worst: blackman, lanczos, cubic, linear)",
-			Value:  "lanczos",
+			Usage:  "downscaling filter `NAME` (imaging best to worst: blackman, lanczos, cubic, linear, nearest)",
+			Value:  thumb.ResampleAuto.String(),
 			EnvVar: EnvVar("THUMB_FILTER"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "thumb-size",
-			Usage:  "maximum size of thumbnails created during indexing in `PIXELS` (720-7680)",
-			Value:  2048,
+			Usage:  "maximum size of pre-generated thumbnails in `PIXELS` (720-7680)",
+			Value:  thumb.SizeCached,
 			EnvVar: EnvVar("THUMB_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "thumb-size-uncached",
-			Usage:  "maximum size of missing thumbnails created on demand in `PIXELS` (720-7680)",
-			Value:  7680,
+			Usage:  "maximum size of thumbnails generated on demand in `PIXELS` (720-7680)",
+			Value:  thumb.SizeOnDemand,
 			EnvVar: EnvVar("THUMB_SIZE_UNCACHED"),
 		}}, {
 		Flag: cli.BoolFlag{
 			Name:   "thumb-uncached, u",
-			Usage:  "enable on-demand creation of missing thumbnails (high memory and cpu usage)",
+			Usage:  "generate missing thumbnails on demand (high memory and cpu usage)",
 			EnvVar: EnvVar("THUMB_UNCACHED"),
 		}}, {
 		Flag: cli.StringFlag{
 			Name:   "jpeg-quality, q",
-			Usage:  "a higher value increases the `QUALITY` and file size of JPEG images and thumbnails (25-100)",
-			Value:  thumb.JpegQuality.String(),
+			Usage:  "higher values increase the image `QUALITY` and file size (25-100)",
+			Value:  thumb.QualityMedium.String(),
 			EnvVar: EnvVar("JPEG_QUALITY"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "jpeg-size",
-			Usage:  "maximum size of created JPEG sidecar files in `PIXELS` (720-30000)",
+			Usage:  "maximum size of generated JPEG images in `PIXELS` (720-30000)",
 			Value:  7680,
 			EnvVar: EnvVar("JPEG_SIZE"),
 		}}, {
 		Flag: cli.IntFlag{
 			Name:   "png-size",
-			Usage:  "maximum size of created PNG sidecar files in `PIXELS` (720-30000)",
+			Usage:  "maximum size of generated PNG images in `PIXELS` (720-30000)",
 			Value:  7680,
 			EnvVar: EnvVar("PNG_SIZE"),
 		}}, {

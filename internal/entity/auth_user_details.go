@@ -10,10 +10,9 @@ import (
 )
 
 const (
-	GenderMale    = "male"
-	GenderFemale  = "female"
-	GenderOther   = "other"
-	GenderUnknown = ""
+	GenderMale   = "male"
+	GenderFemale = "female"
+	GenderOther  = "other"
 )
 
 // UserDetails represents user profile information.
@@ -70,13 +69,13 @@ func CreateUserDetails(user *User) error {
 		return fmt.Errorf("user is nil")
 	}
 
-	if user.UID() == "" {
+	if user.GetUID() == "" {
 		return fmt.Errorf("empty user uid")
 	}
 
-	user.UserDetails = NewUserDetails(user.UID())
+	user.UserDetails = NewUserDetails(user.GetUID())
 
-	if err := Db().Where("user_uid = ?", user.UID()).First(user.UserDetails).Error; err == nil {
+	if err := Db().Where("user_uid = ?", user.GetUID()).First(user.UserDetails).Error; err == nil {
 		return nil
 	}
 

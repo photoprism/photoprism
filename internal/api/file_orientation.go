@@ -4,22 +4,28 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/photoprism/photoprism/internal/acl"
+
+	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // ChangeFileOrientation changes the orientation of a file.
-// PUT /api/v1/photos/:uid/files/:file_uid/orientation
 //
-// Parameters:
-//
-//	uid: string Photo UID as returned by the API
-//	file_uid: string File UID as returned by the API
+//	@Summary	changes the orientation of a file
+//	@Id			ChangeFileOrientation
+//	@Tags		Files
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string		true	"photo uid"
+//	@Param		fileuid					path		string		true	"file uid"
+//	@Param		file					body		form.File	true	"file orientation"
+//	@Router		/api/v1/photos/{uid}/files/{fileuid}/orientation [put]
 func ChangeFileOrientation(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/files/:file_uid/orientation", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceFiles, acl.ActionUpdate)
@@ -58,7 +64,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 			return
 		}
 
-		// Update form with values from request
+		// Assign and validate request form values.
 		if err = c.BindJSON(&f); err != nil {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
@@ -99,7 +105,7 @@ func ChangeFileOrientation(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, m.PhotoUID, c)
+		PublishPhotoEvent(StatusUpdated, m.PhotoUID, c)
 
 		c.JSON(http.StatusOK, p)
 	})

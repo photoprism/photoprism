@@ -7,11 +7,11 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/remote"
-	"github.com/photoprism/photoprism/internal/search"
+	"github.com/photoprism/photoprism/internal/service"
 )
 
 // Sync represents a sync worker.
@@ -26,8 +26,8 @@ func NewSync(conf *config.Config) *Sync {
 	}
 }
 
-// logError logs an error message if err is not nil.
-func (w *Sync) logError(err error) {
+// logErr logs an error message if err is not nil.
+func (w *Sync) logErr(err error) {
 	if err != nil {
 		log.Errorf("sync: %s", err.Error())
 	}
@@ -62,7 +62,7 @@ func (w *Sync) Start() (err error) {
 	accounts, err := search.Accounts(f)
 
 	for _, a := range accounts {
-		if a.AccType != remote.ServiceWebDAV {
+		if a.AccType != service.WebDAV {
 			continue
 		}
 
@@ -71,7 +71,7 @@ func (w *Sync) Start() (err error) {
 			a.AccSync = false
 
 			if err := entity.Db().Save(&a).Error; err != nil {
-				w.logError(err)
+				w.logErr(err)
 			} else {
 				log.Warnf("sync: disabled sync, %s failed more than %d times", a.AccName, a.RetryLimit)
 			}
@@ -149,7 +149,7 @@ func (w *Sync) Start() (err error) {
 			"AccErrors":  accErrors,
 			"SyncStatus": syncStatus,
 			"SyncDate":   syncDate}); err != nil {
-			w.logError(err)
+			w.logErr(err)
 		} else if synced {
 			event.Publish("sync.synced", event.Data{"account": a})
 		}

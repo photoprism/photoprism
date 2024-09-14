@@ -15,7 +15,7 @@ import (
 // UsersRemoveCommand configures the command name, flags, and action.
 var UsersRemoveCommand = cli.Command{
 	Name:      "rm",
-	Usage:     "Removes a user account",
+	Usage:     "Deletes a registered user account",
 	ArgsUsage: "[username]",
 	Flags: []cli.Flag{
 		cli.BoolFlag{
@@ -49,7 +49,7 @@ func usersRemoveAction(ctx *cli.Context) error {
 
 		if m == nil {
 			return fmt.Errorf("user %s not found", clean.LogQuote(id))
-		} else if m.Deleted() {
+		} else if m.IsDeleted() {
 			return fmt.Errorf("user %s has already been deleted", clean.LogQuote(id))
 		}
 

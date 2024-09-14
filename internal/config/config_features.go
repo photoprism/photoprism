@@ -1,5 +1,7 @@
 package config
 
+import "math/bits"
+
 var Sponsor = Env(EnvDemo, EnvSponsor, EnvTest)
 
 // DisableSettings checks if users should not be allowed to change settings.
@@ -10,15 +12,6 @@ func (c *Config) DisableSettings() bool {
 // DisableRestart checks if users should not be allowed to restart the server from the user interface.
 func (c *Config) DisableRestart() bool {
 	return c.options.DisableRestart
-}
-
-// DisableBackups checks if photo and album metadata files should be disabled.
-func (c *Config) DisableBackups() bool {
-	if !c.SidecarWritable() {
-		return true
-	}
-
-	return c.options.DisableBackups
 }
 
 // DisableWebDAV checks if the built-in WebDAV server should be disabled.
@@ -131,6 +124,15 @@ func (c *Config) DisableHeifConvert() bool {
 	}
 
 	return c.options.DisableHeifConvert
+}
+
+// DisableVips checks if the use of libvips is disabled.
+func (c *Config) DisableVips() bool {
+	if bits.UintSize < 64 {
+		return true
+	}
+
+	return c.options.DisableVips
 }
 
 // DisableSips checks if conversion of RAW images with SIPS is disabled.

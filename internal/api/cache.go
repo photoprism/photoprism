@@ -2,13 +2,18 @@ package api
 
 import (
 	"fmt"
+	"os"
+	"path"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/config/ttl"
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
-	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
 type ThumbCache struct {
@@ -42,8 +47,13 @@ func RemoveFromFolderCache(rootName string) {
 
 // RemoveFromAlbumCoverCache removes covers by album UID e.g. after adding or removing photos.
 func RemoveFromAlbumCoverCache(uid string) {
+	if !rnd.IsAlnum(uid) {
+		return
+	}
+
 	cache := get.CoverCache()
 
+	// Flush album cover cache.
 	for thumbName := range thumb.Sizes {
 		cacheKey := CacheKey(albumCover, uid, string(thumbName))
 
@@ -52,6 +62,12 @@ func RemoveFromAlbumCoverCache(uid string) {
 		log.Debugf("removed %s from cache", cacheKey)
 	}
 
+	// Delete share preview, if exists.
+	if sharePreview := path.Join(get.Config().ThumbCachePath(), "share", uid+fs.ExtJPEG); fs.FileExists(sharePreview) {
+		_ = os.Remove(sharePreview)
+	}
+
+	// Update album cover images.
 	if err := query.UpdateAlbumCovers(); err != nil {
 		log.Error(err)
 	}
@@ -70,40 +86,20 @@ func FlushCoverCache() {
 
 // AddCacheHeader adds a cache control header to the response.
 func AddCacheHeader(c *gin.Context, maxAge ttl.Duration, public bool) {
-	if c == nil {
-		return
-	} else if maxAge <= 0 {
-		c.Header("Cache-Control", "no-cache")
-	} else if public {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s", maxAge.String()))
-	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s", maxAge.String()))
-	}
+	header.SetCacheControl(c, maxAge.Int(), public)
 }
 
 // AddCoverCacheHeader adds cover image cache control headers to the response.
 func AddCoverCacheHeader(c *gin.Context) {
-	AddCacheHeader(c, ttl.Cover, thumb.CachePublic)
+	AddCacheHeader(c, ttl.CacheCover, thumb.CachePublic)
 }
 
 // AddImmutableCacheHeader adds cache control headers to the response for immutable content like thumbnails.
 func AddImmutableCacheHeader(c *gin.Context) {
-	if c == nil {
-		return
-	} else if thumb.CachePublic {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.Default.String()))
-	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.Default.String()))
-	}
+	header.SetCacheControlImmutable(c, ttl.CacheDefault.Int(), thumb.CachePublic)
 }
 
 // AddVideoCacheHeader adds video cache control headers to the response.
 func AddVideoCacheHeader(c *gin.Context, cdn bool) {
-	if c == nil {
-		return
-	} else if cdn || thumb.CachePublic {
-		c.Header("Cache-Control", fmt.Sprintf("public, max-age=%s, immutable", ttl.Video.String()))
-	} else {
-		c.Header("Cache-Control", fmt.Sprintf("private, max-age=%s, immutable", ttl.Video.String()))
-	}
+	header.SetCacheControlImmutable(c, ttl.CacheVideo.Int(), cdn || thumb.CachePublic)
 }

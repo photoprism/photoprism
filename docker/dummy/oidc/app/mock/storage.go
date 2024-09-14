@@ -65,10 +65,6 @@ func (a *AuthRequest) GetClientID() string {
 	return a.ClientID
 }
 
-//func (a *AuthRequest) GetCode() string {
-//	return "GetCode"
-//}
-//
 func (a *AuthRequest) GetCodeChallenge() *oidc.CodeChallenge {
 	fmt.Println("GetCodeChallenge: ", a.CodeChallenge.Challenge, a.CodeChallenge.Method)
 	return a.CodeChallenge
@@ -84,7 +80,6 @@ func (a *AuthRequest) GetNonce() string {
 
 func (a *AuthRequest) GetRedirectURI() string {
 	return a.RedirectURI
-	// return "http://localhost:5556/auth/callback"
 }
 
 func (a *AuthRequest) GetResponseType() oidc.ResponseType {
@@ -316,7 +311,8 @@ func (c *ConfClient) RedirectURIs() []string {
 		"https://localhost:8443/test/a/instructions-example/callback",
 		"https://op.certification.openid.net:62064/authz_cb",
 		"https://op.certification.openid.net:62064/authz_post",
-		"http://localhost:2342/api/v1/auth/callback",
+		"http://localhost:2342/api/v1/oidc/redirect",
+		"https://app.localssl.dev/api/v1/oidc/redirect",
 	}
 }
 func (c *ConfClient) PostLogoutRedirectURIs() []string {

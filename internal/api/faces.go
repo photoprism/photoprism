@@ -5,19 +5,26 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/search"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GetFace returns a face as JSON.
 //
-// GET /api/v1/faces/:id
+//	@Summary	returns a face as JSON
+//	@Id			GetFace
+//	@Tags		Faces
+//	@Produce	json
+//	@Success	200				{object}	entity.Face
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Param		id				path		string	true	"face id"
+//	@Router		/api/v1/faces/{id} [get]
 func GetFace(router *gin.RouterGroup) {
 	router.GET("/faces/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionView)
@@ -40,7 +47,15 @@ func GetFace(router *gin.RouterGroup) {
 
 // UpdateFace updates face properties.
 //
-// PUT /api/v1/faces/:id
+//	@Summary	updates face properties
+//	@Id			UpdateFace
+//	@Tags		Faces
+//	@Produce	json
+//	@Success	200						{object}	entity.Face
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		id						path		string		true	"face id"
+//	@Param		face					body		form.Face	true	"properties to be updated"
+//	@Router		/api/v1/faces/{id} [put]
 func UpdateFace(router *gin.RouterGroup) {
 	router.PUT("/faces/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePeople, acl.ActionUpdate)
@@ -52,6 +67,7 @@ func UpdateFace(router *gin.RouterGroup) {
 
 		var f form.Face
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

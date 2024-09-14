@@ -46,7 +46,8 @@ body.dark-theme.theme-neon,
     background: #2c2b2e;
 }
 
-#photoprism.theme-neon .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-neon .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-neon .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 

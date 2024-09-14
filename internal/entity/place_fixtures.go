@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/geo/s2"
 )
 
 type PlacesMap map[string]Place
@@ -32,8 +32,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "ancient, pyramid",
 		PlaceFavorite: false,
 		PhotoCount:    1,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"zinkwazi": {
 		ID:            "za:Rc1K7dTWRzBD",
@@ -44,8 +44,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"holidaypark": {
 		ID:            "de:HFqPHxa2Hsol",
@@ -57,8 +57,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"emptyNameLongCity": {
 		ID:            s2.TokenPrefix + "1ef744d1e281",
@@ -69,8 +69,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"emptyNameShortCity": {
 		ID:            s2.TokenPrefix + "1ef744d1e282",
@@ -81,8 +81,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"veryLongLocName": {
 		ID:            s2.TokenPrefix + "1ef744d1e283",
@@ -93,8 +93,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"mediumLongLocName": {
 		ID:            s2.TokenPrefix + "1ef744d1e284",
@@ -105,8 +105,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: true,
 		PhotoCount:    2,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 	"Germany": {
 		ID:            s2.TokenPrefix + "1ef744d1e285",
@@ -117,8 +117,8 @@ var PlaceFixtures = PlacesMap{
 		PlaceKeywords: "",
 		PlaceFavorite: false,
 		PhotoCount:    1,
-		CreatedAt:     TimeStamp(),
-		UpdatedAt:     TimeStamp(),
+		CreatedAt:     Now(),
+		UpdatedAt:     Now(),
 	},
 }
 

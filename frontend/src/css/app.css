@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -38,7 +38,7 @@ Additional information can be found in our Developer Guide:
 @import url("viewer.css");
 @import url("tables.css");
 @import url("results.css");
-@import url("maps.css");
+@import url("places.css");
 @import url("labels.css");
 @import url("files.css");
 @import url("pages.css");

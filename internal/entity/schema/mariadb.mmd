@@ -1,620 +1,678 @@
 classDiagram
-class albums {
-   varbinary(42) album_uid
-   varbinary(42) parent_uid
-   varbinary(160) album_slug
-   varbinary(500) album_path
-   varbinary(8) album_type
-   varchar(160) album_title
-   varchar(160) album_location
-   varchar(100) album_category
-   varchar(1024) album_caption
-   varchar(2048) album_description
-   varchar(1024) album_notes
-   varbinary(2048) album_filter
-   varbinary(32) album_order
-   varbinary(255) album_template
-   varchar(100) album_state
-   varbinary(2) album_country
-   int(11) album_year
-   int(11) album_month
-   int(11) album_day
-   tinyint(1) album_favorite
-   tinyint(1) album_private
-   varbinary(128) thumb
-   varbinary(8) thumb_src
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   varbinary(42) created_by
-   datetime published_at
-   int(10) unsigned id
-}
-class albums_users {
-   varbinary(42) team_uid
-   int(10) unsigned perm
-   varbinary(42) uid
-   varbinary(42) user_uid
-}
-class auth_sessions {
-   varchar(64) client_ip
-   varbinary(42) user_uid
-   varchar(64) user_name
-   varbinary(128) auth_provider
-   varbinary(128) auth_method
-   varbinary(255) auth_domain
-   varbinary(128) auth_id
-   varchar(1024) auth_scope
-   bigint(20) last_active
-   bigint(20) sess_expires
-   bigint(20) sess_timeout
-   varbinary(64) preview_token
-   varbinary(64) download_token
-   varbinary(4096) access_token
-   varbinary(512) refresh_token
-   varbinary(1024) id_token
-   varchar(512) user_agent
-   varbinary(4096) data_json
-   varbinary(16) ref_id
-   varchar(64) login_ip
-   datetime login_at
-   datetime created_at
-   datetime updated_at
-   varbinary(2048) id
-}
-class auth_users {
-   varbinary(64) user_uuid
-   varbinary(42) user_uid
-   varbinary(128) auth_provider
-   varbinary(128) auth_id
-   varchar(64) user_name
-   varchar(200) display_name
-   varchar(255) user_email
-   varchar(255) backup_email
-   varchar(64) user_role
-   varchar(1024) user_attr
-   tinyint(1) super_admin
-   tinyint(1) can_login
-   datetime login_at
-   datetime expires_at
-   tinyint(1) webdav
-   varbinary(1024) base_path
-   varbinary(1024) upload_path
-   tinyint(1) can_invite
-   varbinary(64) invite_token
-   varchar(64) invited_by
-   varbinary(64) verify_token
-   datetime verified_at
-   datetime consent_at
-   datetime born_at
-   varbinary(64) reset_token
-   varbinary(64) preview_token
-   varbinary(64) download_token
-   varbinary(128) thumb
-   varbinary(8) thumb_src
-   varbinary(16) ref_id
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   int(11) id
-}
-class auth_users_details {
-   varbinary(42) subj_uid
-   varbinary(8) subj_src
-   varbinary(42) place_id
-   varbinary(8) place_src
-   varbinary(42) cell_id
-   int(11) birth_year
-   int(11) birth_month
-   int(11) birth_day
-   varchar(512) user_bio
-   varchar(512) user_location
-   varbinary(2) user_country
-   varchar(32) user_phone
-   varbinary(512) site_url
-   varbinary(512) profile_url
-   varbinary(512) feed_url
-   varbinary(512) avatar_url
-   varchar(16) user_gender
-   varchar(32) name_title
-   varchar(64) given_name
-   varchar(64) middle_name
-   varchar(64) family_name
-   varchar(32) name_suffix
-   varchar(64) nick_name
-   varchar(64) org_title
-   varchar(128) org_name
-   varbinary(512) org_url
-   varbinary(512) id_url
-   datetime created_at
-   datetime updated_at
-   varbinary(42) user_uid
-}
-class auth_users_settings {
-   varbinary(32) ui_theme
-   varbinary(32) ui_language
-   varbinary(64) ui_time_zone
-   varbinary(32) maps_style
-   int(11) maps_animate
-   varbinary(1024) index_path
-   int(11) index_rescan
-   varbinary(1024) import_path
-   int(11) import_move
-   varbinary(1024) upload_path
-   varbinary(128) default_page
-   datetime created_at
-   datetime updated_at
-   varbinary(42) user_uid
-}
-class auth_users_shares {
-   varbinary(42) link_uid
-   datetime expires_at
-   varchar(512) comment
-   int(10) unsigned perm
-   varbinary(16) ref_id
-   datetime created_at
-   datetime updated_at
-   varbinary(42) user_uid
-   varbinary(42) share_uid
-}
-class cameras {
-   varbinary(160) camera_slug
-   varchar(160) camera_name
-   varchar(160) camera_make
-   varchar(160) camera_model
-   varchar(100) camera_type
-   varchar(2048) camera_description
-   varchar(1024) camera_notes
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   int(10) unsigned id
-}
-class categories {
-   int(10) unsigned label_id
-   int(10) unsigned category_id
-}
-class cells {
-   varchar(200) cell_name
-   varchar(100) cell_street
-   varchar(50) cell_postcode
-   varchar(50) cell_category
-   varbinary(42) place_id
-   datetime created_at
-   datetime updated_at
-   varbinary(42) id
-}
-class countries {
-   varbinary(160) country_slug
-   varchar(160) country_name
-   varchar(2048) country_description
-   varchar(1024) country_notes
-   int(10) unsigned country_photo_id
-   varbinary(2) id
-}
-class details {
-   varchar(2048) keywords
-   varbinary(8) keywords_src
-   varchar(2048) notes
-   varbinary(8) notes_src
-   varchar(1024) subject
-   varbinary(8) subject_src
-   varchar(1024) artist
-   varbinary(8) artist_src
-   varchar(1024) copyright
-   varbinary(8) copyright_src
-   varchar(1024) license
-   varbinary(8) license_src
-   varchar(1024) software
-   varbinary(8) software_src
-   datetime created_at
-   datetime updated_at
-   int(10) unsigned photo_id
-}
-class duplicates {
-   varbinary(128) file_hash
-   bigint(20) file_size
-   bigint(20) mod_time
-   varbinary(755) file_name
-   varbinary(16) file_root
-}
-class errors {
-   datetime error_time
-   varbinary(32) error_level
-   varbinary(2048) error_message
-   int(10) unsigned id
-}
-class faces {
-   varbinary(8) face_src
-   int(11) face_kind
-   tinyint(1) face_hidden
-   varbinary(42) subj_uid
-   int(11) samples
-   double sample_radius
-   int(11) collisions
-   double collision_radius
-   mediumblob embedding_json
-   datetime matched_at
-   datetime created_at
-   datetime updated_at
-   varbinary(42) id
-}
-class files {
-   int(10) unsigned photo_id
-   varbinary(42) photo_uid
-   datetime photo_taken_at
-   varbinary(64) time_index
-   varbinary(32) media_id
-   bigint(20) media_utc
-   varbinary(42) instance_id
-   varbinary(42) file_uid
-   varbinary(755) file_name
-   varbinary(16) file_root
-   varbinary(755) original_name
-   varbinary(128) file_hash
-   bigint(20) file_size
-   varbinary(32) file_codec
-   varbinary(16) file_type
-   varbinary(16) media_type
-   varbinary(64) file_mime
-   tinyint(1) file_primary
-   tinyint(1) file_sidecar
-   tinyint(1) file_missing
-   tinyint(1) file_portrait
-   tinyint(1) file_video
-   bigint(20) file_duration
-   double file_fps
-   int(11) file_frames
-   int(11) file_width
-   int(11) file_height
-   int(11) file_orientation
-   varbinary(64) file_projection
-   float file_aspect_ratio
-   tinyint(1) file_hdr
-   tinyint(1) file_watermark
-   varbinary(64) file_color_profile
-   varbinary(16) file_main_color
-   varbinary(9) file_colors
-   varbinary(9) file_luminance
-   int(11) file_diff
-   smallint(6) file_chroma
-   varchar(64) file_software
-   varbinary(512) file_error
-   bigint(20) mod_time
-   datetime created_at
-   bigint(20) created_in
-   datetime updated_at
-   bigint(20) updated_in
-   datetime deleted_at
-   datetime published_at
-   int(10) unsigned id
-}
-class files_share {
-   varbinary(16) status
-   varbinary(512) error
-   int(11) errors
-   datetime created_at
-   datetime updated_at
-   int(10) unsigned file_id
-   int(10) unsigned service_id
-   varbinary(255) remote_name
-}
-class files_sync {
-   int(10) unsigned file_id
-   datetime remote_date
-   bigint(20) remote_size
-   varbinary(16) status
-   varbinary(512) error
-   int(11) errors
-   datetime created_at
-   datetime updated_at
-   varbinary(255) remote_name
-   int(10) unsigned service_id
-}
-class folders {
-   varbinary(500) path
-   varbinary(16) root
-   varbinary(16) folder_type
-   varchar(200) folder_title
-   varchar(100) folder_category
-   varchar(2048) folder_description
-   varbinary(32) folder_order
-   varbinary(2) folder_country
-   int(11) folder_year
-   int(11) folder_month
-   int(11) folder_day
-   tinyint(1) folder_favorite
-   tinyint(1) folder_private
-   tinyint(1) folder_ignore
-   tinyint(1) folder_watch
-   datetime created_at
-   datetime updated_at
-   datetime modified_at
-   datetime deleted_at
-   datetime published_at
-   varbinary(42) folder_uid
-}
-class keywords {
-   varchar(64) keyword
-   tinyint(1) skip
-   int(10) unsigned id
-}
-class labels {
-   varbinary(42) label_uid
-   varbinary(160) label_slug
-   varbinary(160) custom_slug
-   varchar(160) label_name
-   int(11) label_priority
-   tinyint(1) label_favorite
-   varchar(2048) label_description
-   varchar(1024) label_notes
-   int(11) photo_count
-   varbinary(128) thumb
-   varbinary(8) thumb_src
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   datetime published_at
-   int(10) unsigned id
-}
-class lenses {
-   varbinary(160) lens_slug
-   varchar(160) lens_name
-   varchar(160) lens_make
-   varchar(160) lens_model
-   varchar(100) lens_type
-   varchar(2048) lens_description
-   varchar(1024) lens_notes
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   int(10) unsigned id
-}
-class links {
-   varbinary(42) share_uid
-   varbinary(160) share_slug
-   varbinary(160) link_token
-   int(11) link_expires
-   int(10) unsigned link_views
-   int(10) unsigned max_views
-   tinyint(1) has_password
-   datetime created_at
-   datetime modified_at
-   varchar(512) comment
-   int(10) unsigned perm
-   varbinary(16) ref_id
-   varbinary(42) created_by
-   varbinary(42) link_uid
-}
-class markers {
-   varbinary(42) file_uid
-   varbinary(8) marker_type
-   varbinary(8) marker_src
-   varchar(160) marker_name
-   tinyint(1) marker_review
-   tinyint(1) marker_invalid
-   varbinary(42) subj_uid
-   varbinary(8) subj_src
-   varbinary(42) face_id
-   double face_dist
-   mediumblob embeddings_json
-   mediumblob landmarks_json
-   float x
-   float y
-   float w
-   float h
-   int(11) q
-   int(11) size
-   smallint(6) score
-   varbinary(128) thumb
-   datetime matched_at
-   datetime created_at
-   datetime updated_at
-   varbinary(42) marker_uid
-}
-class migrations {
-   varchar(16) dialect
-   varchar(255) error
-   varchar(16) source
-   datetime started_at
-   datetime finished_at
-   varchar(16) stage
-   varchar(16) id
-}
-class passwords {
-   varbinary(255) hash
-   datetime created_at
-   datetime updated_at
-   varbinary(255) uid
-}
-class photos {
-   varbinary(42) uuid
-   datetime taken_at
-   datetime taken_at_local
-   varbinary(8) taken_src
-   varbinary(42) photo_uid
-   varbinary(8) photo_type
-   varbinary(8) type_src
-   varchar(200) photo_title
-   varbinary(8) title_src
-   varchar(4096) photo_description
-   varbinary(8) description_src
-   varbinary(500) photo_path
-   varbinary(255) photo_name
-   varbinary(755) original_name
-   tinyint(4) photo_stack
-   tinyint(1) photo_favorite
-   tinyint(1) photo_private
-   tinyint(1) photo_scan
-   tinyint(1) photo_panorama
-   varbinary(64) time_zone
-   varbinary(42) place_id
-   varbinary(8) place_src
-   varbinary(42) cell_id
-   int(11) cell_accuracy
-   int(11) photo_altitude
-   float photo_lat
-   float photo_lng
-   varbinary(2) photo_country
-   int(11) photo_year
-   int(11) photo_month
-   int(11) photo_day
-   int(11) photo_iso
-   varbinary(64) photo_exposure
-   float photo_f_number
-   int(11) photo_focal_length
-   smallint(6) photo_quality
-   int(11) photo_faces
-   smallint(6) photo_resolution
-   smallint(6) photo_color
-   int(10) unsigned camera_id
-   varbinary(160) camera_serial
-   varbinary(8) camera_src
-   int(10) unsigned lens_id
-   datetime created_at
-   datetime updated_at
-   datetime edited_at
-   datetime checked_at
-   datetime estimated_at
-   datetime deleted_at
-   bigint(20) photo_duration
-   varbinary(42) created_by
-   datetime published_at
-   int(10) unsigned id
-}
-class photos_albums {
-   int(11) order
-   tinyint(1) hidden
-   tinyint(1) missing
-   datetime created_at
-   datetime updated_at
-   varbinary(42) photo_uid
-   varbinary(42) album_uid
-}
-class photos_keywords {
-   int(10) unsigned photo_id
-   int(10) unsigned keyword_id
-}
-class photos_labels {
-   varbinary(8) label_src
-   smallint(6) uncertainty
-   int(10) unsigned photo_id
-   int(10) unsigned label_id
-}
-class photos_users {
-   varbinary(42) team_uid
-   int(10) unsigned perm
-   varbinary(42) uid
-   varbinary(42) user_uid
-}
-class places {
-   varchar(400) place_label
-   varchar(100) place_district
-   varchar(100) place_city
-   varchar(100) place_state
-   varbinary(2) place_country
-   varchar(300) place_keywords
-   tinyint(1) place_favorite
-   int(11) photo_count
-   datetime created_at
-   datetime updated_at
-   varbinary(42) id
-}
-class reactions {
-   int(11) reacted
-   datetime reacted_at
-   varbinary(42) uid
-   varbinary(42) user_uid
-   varbinary(64) reaction
-}
-class services {
-   varchar(160) acc_name
-   varchar(160) acc_owner
-   varchar(255) acc_url
-   varbinary(255) acc_type
-   varbinary(255) acc_key
-   varbinary(255) acc_user
-   varbinary(255) acc_pass
-   varbinary(16) acc_timeout
-   varbinary(512) acc_error
-   int(11) acc_errors
-   tinyint(1) acc_share
-   tinyint(1) acc_sync
-   int(11) retry_limit
-   varbinary(500) share_path
-   varbinary(16) share_size
-   int(11) share_expires
-   varbinary(500) sync_path
-   varbinary(16) sync_status
-   int(11) sync_interval
-   datetime sync_date
-   tinyint(1) sync_upload
-   tinyint(1) sync_download
-   tinyint(1) sync_filenames
-   tinyint(1) sync_raw
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   int(10) unsigned id
-}
-class subjects {
-   varbinary(8) subj_type
-   varbinary(8) subj_src
-   varbinary(160) subj_slug
-   varchar(160) subj_name
-   varchar(160) subj_alias
-   varchar(2048) subj_bio
-   varchar(1024) subj_notes
-   tinyint(1) subj_favorite
-   tinyint(1) subj_hidden
-   tinyint(1) subj_private
-   tinyint(1) subj_excluded
-   int(11) file_count
-   int(11) photo_count
-   varbinary(128) thumb
-   varbinary(8) thumb_src
-   mediumblob metadata_json
-   datetime created_at
-   datetime updated_at
-   datetime deleted_at
-   varbinary(42) subj_uid
-}
+    class albums {
+        varbinary(42) album_uid
+        varbinary(42) parent_uid
+        varbinary(160) album_slug
+        varchar(1024) album_path
+        varbinary(8) album_type
+        varchar(160) album_title
+        varchar(160) album_location
+        varchar(100) album_category
+        varchar(1024) album_caption
+        varchar(2048) album_description
+        varchar(1024) album_notes
+        varbinary(2048) album_filter
+        varbinary(32) album_order
+        varbinary(255) album_template
+        varchar(100) album_state
+        varbinary(2) album_country
+        int(11) album_year
+        int(11) album_month
+        int(11) album_day
+        tinyint(1) album_favorite
+        tinyint(1) album_private
+        varbinary(128) thumb
+        varbinary(8) thumb_src
+        varbinary(42) created_by
+        datetime created_at
+        datetime updated_at
+        datetime published_at
+        datetime deleted_at
+        int(10) unsigned id
+    }
+    class albums_users {
+        varbinary(42) team_uid
+        int(10) unsigned perm
+        varbinary(42) uid
+        varbinary(42) user_uid
+    }
+    class auth_clients {
+        varbinary(42) user_uid
+        varchar(200) user_name
+        varchar(200) client_name
+        varchar(64) client_role
+        varbinary(16) client_type
+        varbinary(255) client_url
+        varbinary(255) callback_url
+        varbinary(128) auth_provider
+        varbinary(128) auth_method
+        varchar(1024) auth_scope
+        bigint(20) auth_expires
+        bigint(20) auth_tokens
+        tinyint(1) auth_enabled
+        bigint(20) last_active
+        datetime created_at
+        datetime updated_at
+        varbinary(42) client_uid
+    }
+    class auth_sessions {
+        varbinary(42) user_uid
+        varchar(200) user_name
+        varbinary(42) client_uid
+        varchar(200) client_name
+        varchar(64) client_ip
+        varbinary(128) auth_provider
+        varbinary(128) auth_method
+        varbinary(255) auth_issuer
+        varbinary(255) auth_id
+        varchar(1024) auth_scope
+        varbinary(64) grant_type
+        bigint(20) last_active
+        bigint(20) sess_expires
+        bigint(20) sess_timeout
+        varbinary(64) preview_token
+        varbinary(64) download_token
+        varbinary(4096) access_token
+        varbinary(512) refresh_token
+        varbinary(1024) id_token
+        varchar(512) user_agent
+        varbinary(4096) data_json
+        varbinary(16) ref_id
+        varchar(64) login_ip
+        datetime login_at
+        datetime created_at
+        datetime updated_at
+        varbinary(2048) id
+    }
+    class auth_users {
+        varbinary(64) user_uuid
+        varbinary(42) user_uid
+        varbinary(128) auth_provider
+        varbinary(128) auth_method
+        varbinary(255) auth_issuer
+        varbinary(255) auth_id
+        varchar(200) user_name
+        varchar(200) display_name
+        varchar(255) user_email
+        varchar(255) backup_email
+        varchar(64) user_role
+        varchar(1024) user_attr
+        tinyint(1) super_admin
+        tinyint(1) can_login
+        datetime login_at
+        datetime expires_at
+        tinyint(1) webdav
+        varbinary(1024) base_path
+        varbinary(1024) upload_path
+        tinyint(1) can_invite
+        varbinary(64) invite_token
+        varchar(64) invited_by
+        varbinary(64) verify_token
+        datetime verified_at
+        datetime consent_at
+        datetime born_at
+        varbinary(64) reset_token
+        varbinary(64) preview_token
+        varbinary(64) download_token
+        varbinary(128) thumb
+        varbinary(8) thumb_src
+        varbinary(16) ref_id
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+        int(11) id
+    }
+    class auth_users_details {
+        varbinary(42) subj_uid
+        varbinary(8) subj_src
+        varbinary(42) place_id
+        varbinary(8) place_src
+        varbinary(42) cell_id
+        int(11) birth_year
+        int(11) birth_month
+        int(11) birth_day
+        varchar(32) name_title
+        varchar(64) given_name
+        varchar(64) middle_name
+        varchar(64) family_name
+        varchar(32) name_suffix
+        varchar(64) nick_name
+        varbinary(8) name_src
+        varchar(16) user_gender
+        varchar(512) user_about
+        varchar(2048) user_bio
+        varchar(512) user_location
+        varbinary(2) user_country
+        varchar(32) user_phone
+        varbinary(512) site_url
+        varbinary(512) profile_url
+        varbinary(512) feed_url
+        varbinary(512) avatar_url
+        varchar(64) org_title
+        varchar(128) org_name
+        varchar(255) org_email
+        varchar(32) org_phone
+        varbinary(512) org_url
+        varbinary(512) id_url
+        datetime created_at
+        datetime updated_at
+        varbinary(42) user_uid
+    }
+    class auth_users_settings {
+        varbinary(32) ui_theme
+        varbinary(32) ui_language
+        varbinary(64) ui_time_zone
+        varbinary(32) maps_style
+        int(11) maps_animate
+        varbinary(1024) index_path
+        int(11) index_rescan
+        varbinary(1024) import_path
+        int(11) import_move
+        int(11) download_originals
+        int(11) download_media_raw
+        int(11) download_media_sidecar
+        varbinary(1024) upload_path
+        varbinary(128) default_page
+        datetime created_at
+        datetime updated_at
+        varbinary(42) user_uid
+    }
+    class auth_users_shares {
+        varbinary(42) link_uid
+        datetime expires_at
+        varchar(512) comment
+        int(10) unsigned perm
+        varbinary(16) ref_id
+        datetime created_at
+        datetime updated_at
+        varbinary(42) user_uid
+        varbinary(42) share_uid
+    }
+    class cameras {
+        varbinary(160) camera_slug
+        varchar(160) camera_name
+        varchar(160) camera_make
+        varchar(160) camera_model
+        varchar(100) camera_type
+        varchar(2048) camera_description
+        varchar(1024) camera_notes
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+        int(10) unsigned id
+    }
+    class categories {
+        int(10) unsigned label_id
+        int(10) unsigned category_id
+    }
+    class cells {
+        varchar(200) cell_name
+        varchar(100) cell_street
+        varchar(50) cell_postcode
+        varchar(50) cell_category
+        varbinary(42) place_id
+        datetime created_at
+        datetime updated_at
+        varbinary(42) id
+    }
+    class countries {
+        varbinary(160) country_slug
+        varchar(160) country_name
+        varchar(2048) country_description
+        varchar(1024) country_notes
+        int(10) unsigned country_photo_id
+        varbinary(2) id
+    }
+    class details {
+        varchar(2048) keywords
+        varbinary(8) keywords_src
+        varchar(2048) notes
+        varbinary(8) notes_src
+        varchar(1024) subject
+        varbinary(8) subject_src
+        varchar(1024) artist
+        varbinary(8) artist_src
+        varchar(1024) copyright
+        varbinary(8) copyright_src
+        varchar(1024) license
+        varbinary(8) license_src
+        varchar(1024) software
+        varbinary(8) software_src
+        datetime created_at
+        datetime updated_at
+        int(10) unsigned photo_id
+    }
+    class duplicates {
+        varbinary(128) file_hash
+        bigint(20) file_size
+        bigint(20) mod_time
+        varbinary(755) file_name
+        varbinary(16) file_root
+    }
+    class errors {
+        datetime error_time
+        varbinary(32) error_level
+        varbinary(2048) error_message
+        int(10) unsigned id
+    }
+    class faces {
+        varbinary(8) face_src
+        int(11) face_kind
+        tinyint(1) face_hidden
+        varbinary(42) subj_uid
+        int(11) samples
+        double sample_radius
+        int(11) collisions
+        double collision_radius
+        mediumblob embedding_json
+        datetime matched_at
+        datetime created_at
+        datetime updated_at
+        varbinary(64) id
+    }
+    class files {
+        int(10) unsigned photo_id
+        varbinary(42) photo_uid
+        datetime photo_taken_at
+        varbinary(64) time_index
+        varbinary(32) media_id
+        bigint(20) media_utc
+        varbinary(64) instance_id
+        varbinary(42) file_uid
+        varbinary(1024) file_name
+        varbinary(16) file_root
+        varbinary(755) original_name
+        varbinary(128) file_hash
+        bigint(20) file_size
+        varbinary(32) file_codec
+        varbinary(16) file_type
+        varbinary(16) media_type
+        varbinary(64) file_mime
+        tinyint(1) file_primary
+        tinyint(1) file_sidecar
+        tinyint(1) file_missing
+        tinyint(1) file_portrait
+        tinyint(1) file_video
+        bigint(20) file_duration
+        double file_fps
+        int(11) file_frames
+        int(11) file_width
+        int(11) file_height
+        int(11) file_orientation
+        varbinary(8) file_orientation_src
+        varbinary(64) file_projection
+        float file_aspect_ratio
+        tinyint(1) file_hdr
+        tinyint(1) file_watermark
+        varbinary(64) file_color_profile
+        varbinary(16) file_main_color
+        varbinary(18) file_colors
+        varbinary(18) File_luminance
+        int(11) file_diff
+        smallint(6) file_chroma
+        varchar(64) file_software
+        varbinary(512) file_error
+        bigint(20) mod_time
+        datetime created_at
+        bigint(20) created_in
+        datetime updated_at
+        bigint(20) updated_in
+        datetime published_at
+        datetime deleted_at
+        int(10) unsigned id
+    }
+    class files_share {
+        varbinary(16) status
+        varbinary(512) error
+        int(11) errors
+        datetime created_at
+        datetime updated_at
+        int(10) unsigned file_id
+        int(10) unsigned service_id
+        varbinary(255) remote_name
+    }
+    class files_sync {
+        int(10) unsigned file_id
+        datetime remote_date
+        bigint(20) remote_size
+        varbinary(16) status
+        varbinary(512) error
+        int(11) errors
+        datetime created_at
+        datetime updated_at
+        varbinary(255) remote_name
+        int(10) unsigned service_id
+    }
+    class folders {
+        varbinary(1024) path
+        varbinary(16) root
+        varbinary(16) folder_type
+        varchar(200) folder_title
+        varchar(100) folder_category
+        varchar(2048) folder_description
+        varbinary(32) folder_order
+        varbinary(2) folder_country
+        int(11) folder_year
+        int(11) folder_month
+        int(11) folder_day
+        tinyint(1) folder_favorite
+        tinyint(1) folder_private
+        tinyint(1) folder_ignore
+        tinyint(1) folder_watch
+        datetime created_at
+        datetime updated_at
+        datetime modified_at
+        datetime published_at
+        datetime deleted_at
+        varbinary(42) folder_uid
+    }
+    class keywords {
+        varchar(64) keyword
+        tinyint(1) skip
+        int(10) unsigned id
+    }
+    class labels {
+        varbinary(42) label_uid
+        varbinary(160) label_slug
+        varbinary(160) custom_slug
+        varchar(160) label_name
+        int(11) label_priority
+        tinyint(1) label_favorite
+        varchar(2048) label_description
+        varchar(1024) label_notes
+        int(11) photo_count
+        varbinary(128) thumb
+        varbinary(8) thumb_src
+        datetime created_at
+        datetime updated_at
+        datetime published_at
+        datetime deleted_at
+        int(10) unsigned id
+    }
+    class lenses {
+        varbinary(160) lens_slug
+        varchar(160) lens_name
+        varchar(160) lens_make
+        varchar(160) lens_model
+        varchar(100) lens_type
+        varchar(2048) lens_description
+        varchar(1024) lens_notes
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+        int(10) unsigned id
+    }
+    class links {
+        varbinary(42) share_uid
+        varbinary(160) share_slug
+        varbinary(160) link_token
+        int(11) link_expires
+        int(10) unsigned link_views
+        int(10) unsigned max_views
+        tinyint(1) has_password
+        varchar(512) comment
+        int(10) unsigned perm
+        varbinary(16) ref_id
+        varbinary(42) created_by
+        datetime created_at
+        datetime modified_at
+        varbinary(42) link_uid
+    }
+    class markers {
+        varbinary(42) file_uid
+        varbinary(8) marker_type
+        varbinary(8) marker_src
+        varchar(160) marker_name
+        tinyint(1) marker_review
+        tinyint(1) marker_invalid
+        varbinary(42) subj_uid
+        varbinary(8) subj_src
+        varbinary(64) face_id
+        double face_dist
+        mediumblob embeddings_json
+        mediumblob landmarks_json
+        float x
+        float y
+        float w
+        float h
+        int(11) q
+        int(11) size
+        smallint(6) score
+        varbinary(128) thumb
+        datetime matched_at
+        datetime created_at
+        datetime updated_at
+        varbinary(42) marker_uid
+    }
+    class migrations {
+        varchar(16) dialect
+        varchar(16) stage
+        varchar(255) error
+        varchar(16) source
+        datetime started_at
+        datetime finished_at
+        varchar(16) id
+    }
+    class passcodes {
+        varchar(2048) key_url
+        varchar(255) recovery_code
+        datetime verified_at
+        datetime activated_at
+        datetime created_at
+        datetime updated_at
+        varbinary(255) uid
+        varchar(64) key_type
+    }
+    class passwords {
+        varbinary(255) hash
+        datetime created_at
+        datetime updated_at
+        varbinary(255) uid
+    }
+    class photos {
+        varbinary(64) uuid
+        datetime taken_at
+        datetime taken_at_local
+        varbinary(8) taken_src
+        varbinary(42) photo_uid
+        varbinary(8) photo_type
+        varbinary(8) type_src
+        varchar(200) photo_title
+        varbinary(8) title_src
+        varchar(4096) photo_description
+        varbinary(8) description_src
+        varbinary(1024) photo_path
+        varbinary(255) photo_name
+        varbinary(755) original_name
+        tinyint(4) photo_stack
+        tinyint(1) photo_favorite
+        tinyint(1) photo_private
+        tinyint(1) photo_scan
+        tinyint(1) photo_panorama
+        varbinary(64) time_zone
+        varbinary(42) place_id
+        varbinary(8) place_src
+        varbinary(42) cell_id
+        int(11) cell_accuracy
+        int(11) photo_altitude
+        float photo_lat
+        float photo_lng
+        varbinary(2) photo_country
+        int(11) photo_year
+        int(11) photo_month
+        int(11) photo_day
+        int(11) photo_iso
+        varbinary(64) photo_exposure
+        float photo_f_number
+        int(11) photo_focal_length
+        smallint(6) photo_quality
+        int(11) photo_faces
+        smallint(6) photo_resolution
+        bigint(20) photo_duration
+        smallint(6) photo_color
+        int(10) unsigned camera_id
+        varbinary(160) camera_serial
+        varbinary(8) camera_src
+        int(10) unsigned lens_id
+        varbinary(42) created_by
+        datetime created_at
+        datetime updated_at
+        datetime edited_at
+        datetime published_at
+        datetime checked_at
+        datetime estimated_at
+        datetime deleted_at
+        int(10) unsigned id
+    }
+    class photos_albums {
+        int(11) order
+        tinyint(1) hidden
+        tinyint(1) missing
+        datetime created_at
+        datetime updated_at
+        varbinary(42) photo_uid
+        varbinary(42) album_uid
+    }
+    class photos_keywords {
+        int(10) unsigned photo_id
+        int(10) unsigned keyword_id
+    }
+    class photos_labels {
+        varbinary(8) label_src
+        smallint(6) uncertainty
+        int(10) unsigned photo_id
+        int(10) unsigned label_id
+    }
+    class photos_users {
+        varbinary(42) team_uid
+        int(10) unsigned perm
+        varbinary(42) uid
+        varbinary(42) user_uid
+    }
+    class places {
+        varchar(400) place_label
+        varchar(100) place_district
+        varchar(100) place_city
+        varchar(100) place_state
+        varbinary(2) place_country
+        varchar(300) place_keywords
+        tinyint(1) place_favorite
+        int(11) photo_count
+        datetime created_at
+        datetime updated_at
+        varbinary(42) id
+    }
+    class reactions {
+        int(11) reacted
+        datetime reacted_at
+        varbinary(42) uid
+        varbinary(42) user_uid
+        varbinary(64) reaction
+    }
+    class services {
+        varchar(160) acc_name
+        varchar(160) acc_owner
+        varchar(255) acc_url
+        varbinary(255) acc_type
+        varbinary(255) acc_key
+        varbinary(255) acc_user
+        varbinary(255) acc_pass
+        varbinary(16) acc_timeout
+        varbinary(512) acc_error
+        int(11) acc_errors
+        tinyint(1) acc_share
+        tinyint(1) acc_sync
+        int(11) retry_limit
+        varbinary(1024) share_path
+        varbinary(16) share_size
+        int(11) share_expires
+        varbinary(1024) sync_path
+        varbinary(16) sync_status
+        int(11) sync_interval
+        datetime sync_date
+        tinyint(1) sync_upload
+        tinyint(1) sync_download
+        tinyint(1) sync_filenames
+        tinyint(1) sync_raw
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+        int(10) unsigned id
+    }
+    class subjects {
+        varbinary(8) subj_type
+        varbinary(8) subj_src
+        varbinary(160) subj_slug
+        varchar(160) subj_name
+        varchar(160) subj_alias
+        varchar(512) subj_about
+        varchar(2048) subj_bio
+        varchar(1024) subj_notes
+        tinyint(1) subj_favorite
+        tinyint(1) subj_hidden
+        tinyint(1) subj_private
+        tinyint(1) subj_excluded
+        int(11) file_count
+        int(11) photo_count
+        varbinary(128) thumb
+        varbinary(8) thumb_src
+        datetime created_at
+        datetime updated_at
+        datetime deleted_at
+        varbinary(42) subj_uid
+    }
+    class versions {
+        varchar(255) version
+        varchar(255) edition
+        varchar(255) error
+        datetime created_at
+        datetime updated_at
+        datetime migrated_at
+        int(10) unsigned id
+    }
 
-auth_sessions  -->  auth_users : user_uid
-auth_users_details --> auth_users : user_uid
-auth_users_settings --> auth_users : user_uid
-auth_users_shares --> auth_users : user_uid
-auth_users_details  -->  cells : cell_id
-auth_users_details  -->  places : place_id
-categories  -->  labels : label_id
-categories  -->  labels : category_id
-cells  -->  places : place_id
-details  -->  photos : photo_id
-files  -->  photos : photo_id
-files_share  -->  files : file_id
-files_share  -->  services : service_id
-files_sync  -->  files : file_id
-files_sync  -->  services : service_id
-markers  -->  faces : face_id
-markers  -->  subjects : subject_uid
-faces  -->  subjects : subject_uid
-photos  -->  cameras : camera_id
-photos  -->  cells : cell_id
-photos  -->  lenses : lens_id
-photos  -->  places : place_id
-photos  -->  countries : photo_country
-albums  -->  countries : album_country
-albums  -->  folders : path
-albums  --> users : created_by
-albums_users  -->  auth_users : user_uid
-places  -->  countries : place_country
-photos_keywords  -->  keywords : keyword_id
-photos_keywords  -->  photos : photo_id
-photos_labels  -->  labels : label_id
-photos_labels  -->  photos : photo_id
-photos_albums  -->  albums : album_uid
-photos_albums  -->  photos : photo_uid
-photos_users   -->  auth_users : user_uid
-photos --> users : created_by
-links  -->  albums : uid
-duplicates -- files
+    auth_sessions  -->  auth_users : user_uid
+    auth_users_details --> auth_users : user_uid
+    auth_users_settings --> auth_users : user_uid
+    auth_users_shares --> auth_users : user_uid
+    auth_users_details  -->  cells : cell_id
+    auth_users_details  -->  places : place_id
+    categories  -->  labels : label_id
+    categories  -->  labels : category_id
+    cells  -->  places : place_id
+    details  -->  photos : photo_id
+    files  -->  photos : photo_id
+    files_share  -->  files : file_id
+    files_share  -->  services : service_id
+    files_sync  -->  files : file_id
+    files_sync  -->  services : service_id
+    markers  -->  files : file_uid
+    markers  -->  faces : face_id
+    markers  -->  subjects : subject_uid
+    faces  -->  subjects : subject_uid
+    photos  -->  cameras : camera_id
+    photos  -->  cells : cell_id
+    photos  -->  lenses : lens_id
+    photos  -->  places : place_id
+    photos  -->  countries : photo_country
+    albums  -->  countries : album_country
+    albums  -->  folders : path
+    albums  --> users : created_by
+    albums_users  -->  auth_users : user_uid
+    places  -->  countries : place_country
+    photos_keywords  -->  keywords : keyword_id
+    photos_keywords  -->  photos : photo_id
+    photos_labels  -->  labels : label_id
+    photos_labels  -->  photos : photo_id
+    photos_albums  -->  albums : album_uid
+    photos_albums  -->  photos : photo_uid
+    photos_users   -->  auth_users : user_uid
+    photos --> users : created_by
+    links  -->  albums : uid
+    duplicates -- files
+    passwords --> users : user_uid
+    passwords --> auth_clients : client_uid
+    reactions --> users : user_uid
+    reactions --> photos : photo_uid
+    reactions --> albums : album_uid
+    auth_clients --> users : user_uid

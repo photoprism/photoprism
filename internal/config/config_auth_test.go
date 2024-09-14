@@ -2,8 +2,12 @@ package config
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 func TestAuth(t *testing.T) {
@@ -46,19 +50,21 @@ func TestAuthMode(t *testing.T) {
 	c.options.Debug = false
 }
 
-func TestLoginUri(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, "/library/login", c.LoginUri())
-}
-
-func TestRegisterUri(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, "", c.RegisterUri())
-}
-
 func TestPasswordLength(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 4, c.PasswordLength())
+	assert.Equal(t, 8, c.PasswordLength())
+	c.options.PasswordLength = 2
+	assert.Equal(t, 2, c.PasswordLength())
+	c.options.PasswordLength = 30
+	assert.Equal(t, 30, c.PasswordLength())
+	c.options.PasswordLength = 10000
+	assert.Equal(t, 72, c.PasswordLength())
+	assert.Equal(t, txt.ClipPassword, c.PasswordLength())
+	c.options.PasswordLength = -1
+	assert.Equal(t, 8, c.PasswordLength())
+	assert.Equal(t, entity.PasswordLengthDefault, c.PasswordLength())
+	c.options.PasswordLength = 0
+	assert.Equal(t, 8, c.PasswordLength())
 }
 
 func TestPasswordResetUri(t *testing.T) {
@@ -66,7 +72,17 @@ func TestPasswordResetUri(t *testing.T) {
 	assert.Equal(t, "", c.PasswordResetUri())
 }
 
-func TestSessMaxAge(t *testing.T) {
+func TestRegisterUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "", c.RegisterUri())
+}
+
+func TestLoginUri(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, "/library/login", c.LoginUri())
+}
+
+func TestSessionMaxAge(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, DefaultSessionMaxAge, c.SessionMaxAge())
 	c.options.SessionMaxAge = -1
@@ -75,13 +91,25 @@ func TestSessMaxAge(t *testing.T) {
 	assert.Equal(t, DefaultSessionMaxAge, c.SessionMaxAge())
 }
 
-func TestSessTimeout(t *testing.T) {
+func TestSessionTimeout(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	assert.Equal(t, DefaultSessionTimeout, c.SessionTimeout())
 	c.options.SessionTimeout = -1
 	assert.Equal(t, int64(0), c.SessionTimeout())
 	c.options.SessionTimeout = 0
 	assert.Equal(t, DefaultSessionTimeout, c.SessionTimeout())
+}
+
+func TestSessionCache(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.Equal(t, DefaultSessionCache, c.SessionCache())
+	c.options.SessionCache = -1
+	assert.Equal(t, int64(60), c.SessionCache())
+	c.options.SessionCache = 100000
+	assert.Equal(t, int64(3600), c.SessionCache())
+	c.options.SessionCache = 0
+	assert.Equal(t, DefaultSessionCache, c.SessionCache())
+	assert.Equal(t, time.Duration(DefaultSessionCache)*time.Second, c.SessionCacheDuration())
 }
 
 func TestUtils_CheckPassword(t *testing.T) {

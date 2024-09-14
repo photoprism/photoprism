@@ -1,10 +1,49 @@
 package clean
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func TestAuth(t *testing.T) {
+	t.Run("Admin", func(t *testing.T) {
+		assert.Equal(t, "Admin", Auth("Admin "))
+	})
+	t.Run("At", func(t *testing.T) {
+		assert.Equal(t, "Admin@foo", Auth(" Admin@foo "))
+	})
+	t.Run("Spaces", func(t *testing.T) {
+		assert.Equal(t, "Admin foo", Auth(" Admin foo "))
+	})
+	t.Run("Padding", func(t *testing.T) {
+		assert.Equal(t, "admin", Auth(" admin "))
+	})
+	t.Run("Flash", func(t *testing.T) {
+		assert.Equal(t, "admin/user", Auth("admin/user"))
+	})
+	t.Run("Windows", func(t *testing.T) {
+		assert.Equal(t, "DOMAIN\\Jens Mander", Auth("DOMAIN\\Jens Mander "))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Auth("  "))
+	})
+	t.Run("ControlCharacter", func(t *testing.T) {
+		assert.Equal(t, "admin!", Auth("admin!"+string(rune(1))))
+	})
+	t.Run("Clip", func(t *testing.T) {
+		assert.Equal(t,
+			"a34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700aa34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700",
+			Auth("a34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700aa34fd47a7ecd9967a89330a3f92cb55513d5eca79b6c4999dc910818c29d5b9925a3a04ed91a4e57a2c25cbfdab3a751bb8d7f3635092b9242d154f389d9700a"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Auth(""))
+	})
+	t.Run("Te<s>t", func(t *testing.T) {
+		assert.Equal(t, "Test", Auth("Te<s>t"))
+	})
+}
 
 func TestHandle(t *testing.T) {
 	t.Run("Admin ", func(t *testing.T) {
@@ -75,6 +114,37 @@ func TestEmail(t *testing.T) {
 	})
 }
 
+func TestDomain(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		assert.Equal(t, "photoprism.app", Domain("photoprism.app"))
+	})
+	t.Run("Whitespace", func(t *testing.T) {
+		assert.Equal(t, "photoprism.app", Domain(" photoprism.app "))
+	})
+	t.Run("Hostname", func(t *testing.T) {
+		assert.Equal(t, "foo.example.com", Domain(" FOO.example.Com   "))
+	})
+	t.Run("Example", func(t *testing.T) {
+		assert.Equal(t, "", Domain("example"))
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		assert.Equal(t, "", Domain(" hello-photoprism "))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Domain(""))
+	})
+	t.Run("Match", func(t *testing.T) {
+		email := "john.doe@example.com"
+		domain := Domain("example.com")
+
+		_, emailDomain, _ := strings.Cut(Email(email), "@")
+
+		assert.True(t, strings.HasSuffix("."+emailDomain, "."+domain))
+		assert.False(t, strings.HasSuffix(".my-"+emailDomain, "."+domain))
+		assert.True(t, strings.HasSuffix("my-"+emailDomain, domain))
+	})
+}
+
 func TestRole(t *testing.T) {
 	t.Run("Admin ", func(t *testing.T) {
 		assert.Equal(t, "admin", Role("Admin "))
@@ -118,5 +188,23 @@ func TestPassword(t *testing.T) {
 	})
 	t.Run("Special", func(t *testing.T) {
 		assert.Equal(t, "!#$T#)$%I#J$I", Password("!#$T#)$%I#J$I"))
+	})
+}
+
+func TestPasscode(t *testing.T) {
+	t.Run("Alnum", func(t *testing.T) {
+		assert.Equal(t, "fgdg5yw4y", Passcode("fgdg5yw4y "))
+	})
+	t.Run("Upper", func(t *testing.T) {
+		assert.Equal(t, "aabdf24245vgfrg", Passcode(" AABDF24245vgfrg "))
+	})
+	t.Run("Special", func(t *testing.T) {
+		assert.Equal(t, "tiji", Passcode("!#$T#)$%I#J$I"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", Passcode(""))
+	})
+	t.Run("Space", func(t *testing.T) {
+		assert.Equal(t, "", Passcode("    	"))
 	})
 }

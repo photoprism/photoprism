@@ -13,7 +13,7 @@ func LoginData(level logrus.Level, ip, realm, name, browser, message string) Dat
 		"level":   level.String(),
 		"ip":      txt.Clip(ip, txt.ClipIP),
 		"realm":   txt.Clip(realm, txt.ClipRealm),
-		"name":    txt.Clip(name, txt.ClipUserName),
+		"name":    txt.Clip(name, txt.ClipUsername),
 		"browser": txt.Clip(browser, txt.ClipLog),
 		"message": txt.Clip(message, txt.ClipLog),
 	}

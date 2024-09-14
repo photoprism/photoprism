@@ -1,8 +1,6 @@
 <template>
   <div class="p-tab p-settings-library">
-    <v-form ref="form" lazy-validation
-            dense class="p-form-settings pb-1" accept-charset="UTF-8"
-            @submit.prevent="onChange">
+    <v-form ref="form" lazy-validation dense class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-title primary-title class="pb-0">
           <h3 class="body-2 mb-0">
@@ -14,45 +12,45 @@
           <v-layout wrap align-top>
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.features.estimates"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-estimates"
-                  color="secondary-dark"
-                  :label="$gettext('Estimates')"
-                  :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
-                  prepend-icon="timeline"
-                  persistent-hint
-                  @change="onChange"
+                v-model="settings.features.estimates"
+                :disabled="busy"
+                class="ma-0 pa-0 input-estimates"
+                color="secondary-dark"
+                :label="$gettext('Estimates')"
+                :hint="$gettext('Estimate the approximate location of pictures without coordinates.')"
+                prepend-icon="insights"
+                persistent-hint
+                @change="onChange"
               >
               </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.features.review"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-review"
-                  color="secondary-dark"
-                  :label="$gettext('Quality Filter')"
-                  :hint="$gettext('Non-photographic and low-quality images require a review before they appear in search results.')"
-                  prepend-icon="remove_red_eye"
-                  persistent-hint
-                  @change="onChange"
+                v-model="settings.features.review"
+                :disabled="busy"
+                class="ma-0 pa-0 input-review"
+                color="secondary-dark"
+                :label="$gettext('Quality Filter')"
+                :hint="$gettext('Non-photographic and low-quality images require a review before they appear in search results.')"
+                prepend-icon="remove_red_eye"
+                persistent-hint
+                @change="onChange"
               >
               </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.index.convert"
-                  :disabled="busy || demo"
-                  class="ma-0 pa-0 input-convert"
-                  color="secondary-dark"
-                  :label="$gettext('Convert to JPEG')"
-                  :hint="$gettext('Automatically create JPEGs for other file types so that they can be displayed in a browser.')"
-                  prepend-icon="photo_camera"
-                  persistent-hint
-                  @change="onChange"
+                v-model="settings.index.convert"
+                :disabled="busy || demo || (!experimental && settings.index.convert)"
+                class="ma-0 pa-0 input-convert"
+                color="secondary-dark"
+                :label="$gettext('Preview Images')"
+                :hint="$gettext('Automatically generate thumbnails for files that cannot otherwise be indexed or viewed.')"
+                prepend-icon="image"
+                persistent-hint
+                @change="onChange"
               >
               </v-checkbox>
             </v-flex>
@@ -61,8 +59,7 @@
       </v-card>
 
       <v-card flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-0"
-                      :title="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')">
+        <v-card-title primary-title class="pb-0" :title="$gettext('Stacks group files with a similar frame of reference, but differences of quality, format, size or color.')">
           <h3 class="body-2 mb-0">
             <translate>Stacks</translate>
           </h3>
@@ -72,45 +69,45 @@
           <v-layout wrap align-top>
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.stack.meta"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-stack-meta"
-                  color="secondary-dark"
-                  :label="$gettext('Place & Time')"
-                  :hint="$gettext('Stack pictures taken at the exact same time and location based on their metadata.')"
-                  prepend-icon="schedule"
-                  persistent-hint
-                  @change="onChange"
+                v-model="settings.stack.meta"
+                :disabled="busy"
+                class="ma-0 pa-0 input-stack-meta"
+                color="secondary-dark"
+                :label="$gettext('Place & Time')"
+                :hint="$gettext('Stack pictures taken at the exact same time and location based on their metadata.')"
+                prepend-icon="schedule"
+                persistent-hint
+                @change="onChange"
               >
               </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.stack.uuid"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-stack-uuid"
-                  color="secondary-dark"
-                  :label="$gettext('Unique ID')"
-                  :hint="$gettext('Stack files sharing the same unique image or instance identifier.')"
-                  prepend-icon="fingerprint"
-                  persistent-hint
-                  @change="onChange"
+                v-model="settings.stack.uuid"
+                :disabled="busy"
+                class="ma-0 pa-0 input-stack-uuid"
+                color="secondary-dark"
+                :label="$gettext('Unique ID')"
+                :hint="$gettext('Stack files sharing the same unique image or instance identifier.')"
+                prepend-icon="fingerprint"
+                persistent-hint
+                @change="onChange"
               >
               </v-checkbox>
             </v-flex>
 
             <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
               <v-checkbox
-                  v-model="settings.stack.name"
-                  :disabled="busy"
-                  class="ma-0 pa-0 input-stack-name"
-                  color="secondary-dark"
-                  :label="$gettext('Sequential Name')"
-                  :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
-                  prepend-icon="format_list_numbered_rtl"
-                  persistent-hint
-                  @change="onChange"
+                v-model="settings.stack.name"
+                :disabled="busy"
+                class="ma-0 pa-0 input-stack-name"
+                color="secondary-dark"
+                :label="$gettext('Sequential Name')"
+                :hint="$gettext('Files with sequential names like \'IMG_1234 (2)\' and \'IMG_1234 (3)\' belong to the same picture.')"
+                prepend-icon="format_list_numbered_rtl"
+                persistent-hint
+                @change="onChange"
               >
               </v-checkbox>
             </v-flex>
@@ -129,7 +126,7 @@ import * as options from "options/options";
 import Event from "pubsub-js";
 
 export default {
-  name: 'PSettingsLibrary',
+  name: "PSettingsLibrary",
   data() {
     const isDemo = this.$config.get("demo");
 
@@ -167,15 +164,18 @@ export default {
         this.busy = true;
       }
 
-      this.settings.save().then(() => {
-        if (reload) {
-          this.$notify.info(this.$gettext("Reloading…"));
-          this.$notify.blockUI();
-          setTimeout(() => window.location.reload(), 100);
-        } else {
-          this.$notify.success(this.$gettext("Changes successfully saved"));
-        }
-      }).finally(() => this.busy = false);
+      this.settings
+        .save()
+        .then(() => {
+          if (reload) {
+            this.$notify.info(this.$gettext("Reloading…"));
+            this.$notify.blockUI();
+            setTimeout(() => window.location.reload(), 100);
+          } else {
+            this.$notify.success(this.$gettext("Changes successfully saved"));
+          }
+        })
+        .finally(() => (this.busy = false));
     },
   },
 };

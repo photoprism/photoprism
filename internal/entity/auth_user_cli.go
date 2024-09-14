@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/pkg/authn"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/form"
@@ -27,6 +28,23 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	// User role.
 	if ctx.IsSet("role") {
 		m.SetRole(frm.Role())
+		privilegeLevelChange = true
+	}
+
+	// Authentication Provider.
+	if ctx.IsSet("auth") {
+		m.SetProvider(frm.Provider())
+		privilegeLevelChange = true
+	}
+
+	// Authentication ID.
+	if ctx.IsSet("auth-id") {
+		if frm.AuthID == "" {
+			m.AuthID = ""
+			m.AuthIssuer = ""
+		} else {
+			m.SetAuthID(frm.AuthID, m.AuthIssuer)
+		}
 		privilegeLevelChange = true
 	}
 
@@ -63,6 +81,12 @@ func (m *User) SetValuesFromCli(ctx *cli.Context) error {
 	// Sub-folder for uploads.
 	if ctx.IsSet("upload-path") {
 		m.SetUploadPath(frm.UploadPath)
+		privilegeLevelChange = true
+	}
+
+	// Disable two-factor authentication.
+	if ctx.IsSet("disable-2fa") && m.Method().Is(authn.Method2FA) {
+		m.SetMethod(authn.MethodDefault)
 		privilegeLevelChange = true
 	}
 

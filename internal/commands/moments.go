@@ -6,7 +6,7 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 // MomentsCommand configures the command name, flags, and action.
@@ -38,7 +38,7 @@ func momentsAction(ctx *cli.Context) error {
 
 	w := get.Moments()
 
-	if err := w.Start(); err != nil {
+	if err = w.Start(); err != nil {
 		return err
 	} else {
 		elapsed := time.Since(start)

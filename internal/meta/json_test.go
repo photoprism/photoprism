@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/projection"
-	"github.com/photoprism/photoprism/pkg/video"
+	"github.com/photoprism/photoprism/pkg/media/projection"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 func TestJSON(t *testing.T) {
@@ -29,6 +29,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2023-06-02 10:01:51 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 0, data.TakenNs)
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "", data.TimeOffset)
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, 1440, data.Height)
 		assert.Equal(t, 1920, data.ActualWidth())
@@ -58,6 +59,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2018-09-08 17:20:14 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 0, data.TakenNs)
 		assert.Equal(t, "Europe/Berlin", data.TimeZone)
+		assert.Equal(t, "", data.TimeOffset)
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, 1080, data.Height)
 		assert.Equal(t, 1080, data.ActualWidth())
@@ -165,6 +167,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2020-05-11 14:18:35 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 0, data.TakenNs)
 		assert.Equal(t, time.UTC.String(), data.TimeZone)
+		assert.Equal(t, "", data.TimeOffset)
 		assert.Equal(t, 270, data.Width)
 		assert.Equal(t, 480, data.Height)
 		assert.Equal(t, 270, data.ActualWidth())
@@ -707,6 +710,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2015-12-06 18:22:29 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2015-12-06 15:22:29 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "Europe/Moscow", data.TimeZone)
+		assert.Equal(t, "", data.TimeOffset)
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, 1080, data.Height)
 		assert.Equal(t, 1920, data.ActualWidth())
@@ -726,11 +730,11 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(video.CodecHEVC), data.Codec)
+		assert.Equal(t, string(video.CodecHVC), data.Codec)
 		assert.Equal(t, "6.83s", data.Duration.String())
 		assert.Equal(t, "2020-12-22 02:45:43 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2020-12-22 01:45:43 +0000 UTC", data.TakenAt.String())
-		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, "UTC+1", data.TimeZone)
 		assert.Equal(t, 1920, data.Width)
 		assert.Equal(t, 1080, data.Height)
 		assert.Equal(t, 1080, data.ActualWidth())
@@ -750,7 +754,7 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, string(video.CodecHEVC), data.Codec)
+		assert.Equal(t, string(video.CodecHVC), data.Codec)
 		assert.Equal(t, "2.15s", data.Duration.String())
 		assert.Equal(t, "2019-12-12 20:47:21 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2019-12-13 01:47:21 +0000 UTC", data.TakenAt.String())
@@ -761,6 +765,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone X", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
+		assert.Equal(t, "ca20385d-6106-49c9-acf5-2f8098f4b390", data.DocumentID)
 	})
 
 	t.Run("aurora.jpg.json", func(t *testing.T) {
@@ -791,7 +796,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "6.09s", data.Duration.String())
 		assert.Equal(t, "2022-06-25 06:50:58 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2022-06-25 04:50:58 +0000 UTC", data.TakenAt.String())
-		assert.Equal(t, "", data.TimeZone) // Local Time
+		assert.Equal(t, "UTC+2", data.TimeZone) // Local Time
 		assert.Equal(t, 1, data.Orientation)
 		assert.Equal(t, float32(0), data.Lat)
 		assert.Equal(t, float32(0), data.Lng)
@@ -823,6 +828,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "OLYMPUS IMAGING CORP.", data.CameraMake)
 		assert.Equal(t, "TG-830", data.CameraModel)
 		assert.Equal(t, "", data.LensModel)
+		assert.Equal(t, "Bad PrintIM data", data.Warning)
 	})
 
 	t.Run("datetime-zero.json", func(t *testing.T) {
@@ -913,7 +919,7 @@ func TestJSON(t *testing.T) {
 		// t.Logf("all: %+v", data.json)
 
 		assert.Equal(t, "Jens\r\tMander", data.Artist)
-		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, "UTC+2", data.TimeZone)
 		assert.Equal(t, "2004-10-07 20:49:16 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, "2004-10-07 22:49:16 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "This is the title", data.Title)
@@ -1255,7 +1261,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2022-11-02 12:54:16 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2022-11-02 11:54:16 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 698000000, data.TakenNs)
-		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, "UTC+1", data.TimeZone)
 		assert.Equal(t, 4032, data.Width)
 		assert.Equal(t, 3024, data.Height)
 		assert.Equal(t, 6, data.Orientation)
@@ -1280,7 +1286,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "2022-09-23 13:30:04 +0000 UTC", data.TakenAtLocal.String())
 		assert.Equal(t, "2022-09-23 12:30:04 +0000 UTC", data.TakenAt.String())
 		assert.Equal(t, 630000000, data.TakenNs)
-		assert.Equal(t, "", data.TimeZone)
+		assert.Equal(t, "UTC+1", data.TimeZone)
 		assert.Equal(t, 4032, data.Width)
 		assert.Equal(t, 3024, data.Height)
 		assert.Equal(t, 1, data.Orientation)
@@ -1289,6 +1295,7 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, "Apple", data.CameraMake)
 		assert.Equal(t, "iPhone 14 Pro Max", data.CameraModel)
 		assert.Equal(t, "iPhone 14 Pro Max back triple camera 9mm f/2.8", data.LensModel)
+		assert.Equal(t, "e5f10d35-06c3-4f75-a00c-50b793a6c325", data.DocumentID)
 	})
 
 	t.Run("buggy_panorama.json", func(t *testing.T) {
@@ -1317,9 +1324,32 @@ func TestJSON(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.Equal(t, "", data.LensModel)
 		assert.Equal(t, float32(45.75285), data.Lat)
 		assert.Equal(t, float32(33.221977), data.Lng)
 		assert.InEpsilon(t, 4294967284, data.Altitude, 1000)
 		assert.Equal(t, 0, clean.Altitude(data.Altitude))
+	})
+
+	t.Run("timeoffset.json", func(t *testing.T) {
+		data, err := JSON("testdata/timeoffset.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// t.Logf("DATA: %#v", data)
+
+		assert.Equal(t, "IMG_9395.heic", data.FileName)
+		assert.Equal(t, "2023-10-02 13:20:17 +0000 UTC", data.TakenAtLocal.String())
+		assert.Equal(t, "2023-10-02 11:20:17 +0000 UTC", data.TakenAt.String())
+		assert.Equal(t, 568000000, data.TakenNs)
+		assert.Equal(t, "UTC+2", data.TimeZone)
+		assert.Equal(t, "+02:00", data.TimeOffset)
+		assert.Equal(t, float32(0), data.Lat)
+		assert.Equal(t, float32(0), data.Lng)
+		assert.Equal(t, "Apple", data.CameraMake)
+		assert.Equal(t, "iPhone 13", data.CameraModel)
+		assert.Equal(t, "iPhone 13 back dual wide camera 5.1mm f/1.6", data.LensModel)
 	})
 }

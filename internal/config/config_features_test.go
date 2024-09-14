@@ -6,11 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfig_DisableBackups(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.False(t, c.DisableBackups())
-}
-
 func TestConfig_DisableWebDAV(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
@@ -136,6 +131,16 @@ func TestConfig_DisableImageMagick(t *testing.T) {
 	assert.Equal(t, missing, c.DisableImageMagick())
 }
 
+func TestConfig_DisableVips(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, false, c.DisableVips())
+	c.options.DisableVips = true
+	assert.True(t, c.DisableVips())
+	c.options.DisableVips = false
+	assert.Equal(t, false, c.DisableVips())
+}
+
 func TestConfig_DisableSips(t *testing.T) {
 	c := NewConfig(CliTestContext())
 	missing := c.SipsBin() == ""
@@ -153,6 +158,16 @@ func TestConfig_DisableVector(t *testing.T) {
 	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
 	c.options.DisableVectors = true
 	assert.True(t, c.DisableVectors())
+	c.options.DisableVectors = false
+	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
+}
+
+func TestConfig_DisableRsvgConvert(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, c.Sponsor(), !c.DisableRsvgConvert())
+	c.options.DisableVectors = true
+	assert.True(t, c.DisableRsvgConvert())
 	c.options.DisableVectors = false
 	assert.Equal(t, c.Sponsor(), !c.DisableVectors())
 }

@@ -6,15 +6,10 @@ module.exports = {
     node: true,
     mocha: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:vue/recommended",
-    "prettier",
-    "plugin:prettier-vue/recommended",
-  ],
+  extends: ["eslint:recommended", "plugin:vue/recommended", "plugin:prettier/recommended"],
 
   settings: {
-    "prettier-vue": {
+    "prettier/prettier": {
       // Settings for how to process Vue SFC Blocks
       SFCBlocks: {
         template: false,
@@ -55,6 +50,15 @@ module.exports = {
     "vue/no-v-text-v-html-on-component": 0,
     "vue/valid-model-definition": 0,
     "vue/valid-attribute-name": 0,
+    "vue/singleline-html-element-content-newline": [
+      "off",
+      {
+        ignoreWhenNoAttributes: true,
+        ignoreWhenEmpty: true,
+        ignores: ["pre", "textarea", "span", "translate", "a", "v-icon", "v-text-field", "v-input", "v-select", "v-switch", "v-checkbox", "v-img"],
+        externalIgnores: [],
+      },
+    ],
     "vue/first-attribute-linebreak": [
       "error",
       {
@@ -62,12 +66,10 @@ module.exports = {
         multiline: "ignore",
       },
     ],
-    "prettier-vue/prettier": [
-      "error",
+    "prettier/prettier": [
+      "warn",
       {
-        // Override all options of `prettier` here
-        // @see https://prettier.io/docs/en/options.html
-        printWidth: 100,
+        printWidth: 300,
         singleQuote: false,
         semi: true,
         trailingComma: "es5",

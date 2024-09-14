@@ -7,7 +7,7 @@ import (
 )
 
 func TestIsAsciiID(t *testing.T) {
-	assert.False(t, IsAsciiID("lt9k3pw1wowuy3c2"))
+	assert.False(t, IsAsciiID("ls6sg6b1wowuy3c2"))
 	assert.False(t, IsAsciiID("dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"))
 	assert.False(t, IsAsciiID("6ba7b810-9dad-11d1-80b4-00c04fd430c8"))
 	assert.True(t, IsAsciiID("55785BAC-9A4B-4747-B090-EE123FFEE437"))
@@ -37,7 +37,7 @@ func TestIsInt(t *testing.T) {
 }
 
 func TestIsUniqueName(t *testing.T) {
-	assert.False(t, IsUniqueName("lt9k3pw1wowuy3c2"))
+	assert.False(t, IsUniqueName("ls6sg6b1wowuy3c2"))
 	assert.True(t, IsUniqueName("dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"))
 	assert.True(t, IsUniqueName("6ba7b810-9dad-11d1-80b4-00c04fd430c8"))
 	assert.True(t, IsUniqueName("55785BAC-9A4B-4747-B090-EE123FFEE437"))
@@ -65,7 +65,7 @@ func TestIsUniqueName(t *testing.T) {
 }
 
 func TestIsDscName(t *testing.T) {
-	assert.False(t, IsDscName("lt9k3pw1wowuy3c2"))
+	assert.False(t, IsDscName("ls6sg6b1wowuy3c2"))
 	assert.False(t, IsDscName("dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"))
 	assert.False(t, IsDscName("6ba7b810-9dad-11d1-80b4-00c04fd430c8"))
 	assert.False(t, IsDscName("55785BAC-9A4B-4747-B090-EE123FFEE437"))
@@ -98,7 +98,7 @@ func TestIsDscName(t *testing.T) {
 }
 
 func TestIsGenerated(t *testing.T) {
-	assert.True(t, IsGenerated("lt9k3pw1wowuy3c2"))
+	assert.True(t, IsGenerated("loj2qo01wowuy3c2"))
 	assert.True(t, IsGenerated("dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"))
 	assert.True(t, IsGenerated("6ba7b810-9dad-11d1-80b4-00c04fd430c8"))
 	assert.True(t, IsGenerated("55785BAC-9A4B-4747-B090-EE123FFEE437"))

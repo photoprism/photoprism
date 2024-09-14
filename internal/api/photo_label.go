@@ -6,21 +6,27 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// POST /api/v1/photos/:uid/label
+// AddPhotoLabel adds a label to a photo.
 //
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
+//	@Summary	adds a label to a photo
+//	@Id			AddPhotoLabel
+//	@Tags		Labels, Photos
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		label					body		form.Label	true	"label properties"
+//	@Param		uid						path		string		true	"photo uid"
+//	@Router		/api/v1/photos/{uid}/label [post]
 func AddPhotoLabel(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/label", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -38,7 +44,8 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 
 		var f form.Label
 
-		if err := c.BindJSON(&f); err != nil {
+		// Assign and validate request form values.
+		if err = c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return
 		}
@@ -46,18 +53,19 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 		labelEntity := entity.FirstOrCreateLabel(entity.NewLabel(f.LabelName, f.LabelPriority))
 
 		if labelEntity == nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed creating label"})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to create label"})
 			return
 		}
 
-		if err := labelEntity.Restore(); err != nil {
+		if err = labelEntity.Restore(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "could not restore label"})
+			return
 		}
 
 		photoLabel := entity.FirstOrCreatePhotoLabel(entity.NewPhotoLabel(m.ID, labelEntity.ID, f.Uncertainty, "manual"))
 
 		if photoLabel == nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed updating photo label"})
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to update photo label"})
 			return
 		}
 
@@ -77,12 +85,12 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		if err := p.SaveLabels(); err != nil {
+		if err = p.SaveLabels(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, c.Param("uid"), c)
+		PublishPhotoEvent(StatusUpdated, c.Param("uid"), c)
 
 		event.Success("label updated")
 
@@ -90,12 +98,17 @@ func AddPhotoLabel(router *gin.RouterGroup) {
 	})
 }
 
-// DELETE /api/v1/photos/:uid/label/:id
+// RemovePhotoLabel removes a label from a photo.
 //
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
-//	id: int LabelId as returned by the API
+//	@Summary	removes a label from a photo
+//	@Id			RemovePhotoLabel
+//	@Tags		Labels, Photos
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string	true	"photo uid"
+//	@Param		id						path		string	true	"label id"
+//	@Router		/api/v1/photos/{uid}/label/{id} [delete]
 func RemovePhotoLabel(router *gin.RouterGroup) {
 	router.DELETE("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -126,10 +139,10 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 		}
 
 		if label.LabelSrc == classify.SrcManual || label.LabelSrc == classify.SrcKeyword {
-			logError("label", entity.Db().Delete(&label).Error)
+			logErr("label", entity.Db().Delete(&label).Error)
 		} else {
 			label.Uncertainty = 100
-			logError("label", entity.Db().Save(&label).Error)
+			logErr("label", entity.Db().Save(&label).Error)
 		}
 
 		p, err := query.PhotoPreloadByUID(clean.UID(c.Param("uid")))
@@ -139,14 +152,14 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		logError("label", p.RemoveKeyword(label.Label.LabelName))
+		logErr("label", p.RemoveKeyword(label.Label.LabelName))
 
 		if err := p.SaveLabels(); err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": txt.UpperFirst(err.Error())})
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label removed")
 
@@ -154,12 +167,18 @@ func RemovePhotoLabel(router *gin.RouterGroup) {
 	})
 }
 
-// PUT /api/v1/photos/:uid/label/:id
+// UpdatePhotoLabel changes a photo label.
 //
-// Parameters:
-//
-//	uid: string PhotoUID as returned by the API
-//	id: int LabelId as returned by the API
+//	@Summary	changes a photo label
+//	@Id			UpdatePhotoLabel
+//	@Tags		Labels, Photos
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string		true	"photo uid"
+//	@Param		id						path		string		true	"label id"
+//	@Param		label					body		form.Label	true	"properties to be updated (currently supports: uncertainty)"
+//	@Router		/api/v1/photos/{uid}/label/{id} [put]
 func UpdatePhotoLabel(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid/label/:id", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -213,7 +232,7 @@ func UpdatePhotoLabel(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, clean.UID(c.Param("uid")), c)
+		PublishPhotoEvent(StatusUpdated, clean.UID(c.Param("uid")), c)
 
 		event.Success("label saved")
 

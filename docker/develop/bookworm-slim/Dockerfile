@@ -1,7 +1,7 @@
 #### Base Image: Debian 12 (Bookworm)
 FROM debian:bookworm-slim
 
-# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -24,12 +24,13 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PS1="\u@$DOCKER_TAG:\w\$ " \
+    PS1="\u@$BUILD_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
+    MALLOC_ARENA_MAX="4" \
     PROG="photoprism"
 
 # Copy scripts and package sources config.
@@ -43,21 +44,20 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
-    apt-get update && apt-get -qq upgrade && \
+    apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
       libc6 ca-certificates sudo bash tzdata \
       gpg zip unzip wget curl rsync make nano \
-      jq lsof lshw sqlite3 mariadb-client imagemagick libvips-dev \
-      exiftool darktable rawtherapee libheif-examples librsvg2-bin \
-      ffmpeg libavcodec-extra x264 x265 libvpx7 libwebm1 \
-      libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+      jq lsof lshw sqlite3 mariadb-client imagemagick libvips-dev libyuv0 \
+      exiftool darktable rawtherapee libheif-examples librsvg2-bin ibrav1e-dev \
+      ffmpeg libavcodec-extra libdav1d-dev x264 x265 libvpx-dev libwebm-dev \
+      libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
     && \
     echo 'alias ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
       /photoprism/originals \
       /photoprism/import \

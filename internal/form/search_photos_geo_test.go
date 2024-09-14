@@ -1,8 +1,14 @@
 package form
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"net/url"
 	"testing"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -107,8 +113,8 @@ func TestSearchPhotosGeo(t *testing.T) {
 
 		assert.Equal(t, "fooBar baz", form.Query)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
-		assert.Equal(t, uint(0x61a8), form.Dist)
-		assert.Equal(t, float32(33.45343), form.Lat)
+		assert.Equal(t, 25000.0, form.Dist)
+		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query path empty folder not empty", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "q:\"fooBar baz\" before:2019-01-15 dist:25000 lat:33.45343166666667 folder:test"}
@@ -125,8 +131,8 @@ func TestSearchPhotosGeo(t *testing.T) {
 		assert.Equal(t, "test", form.Path)
 		assert.Equal(t, "", form.Folder)
 		assert.Equal(t, time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), form.Before)
-		assert.Equal(t, uint(0x61a8), form.Dist)
-		assert.Equal(t, float32(33.45343), form.Lat)
+		assert.Equal(t, 25000.0, form.Dist)
+		assert.Equal(t, 33.45343166666667, form.Lat)
 	})
 	t.Run("valid query with filter", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "keywords:cat title:\"fooBar baz\"", Filter: "keywords:dog"}
@@ -193,7 +199,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.True(t, form.Favorite)
+		assert.Equal(t, "cat", form.Favorite)
 	})
 	t.Run("query for before with invalid type", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "before:cat"}
@@ -204,7 +210,7 @@ func TestSearchPhotosGeo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "Could not find format for \"cat\"", err.Error())
+		assert.Equal(t, "invalid before date", err.Error())
 	})
 	t.Run("query for lat with invalid type", func(t *testing.T) {
 		form := &SearchPhotosGeo{Query: "lat:&cat"}
@@ -239,16 +245,87 @@ func TestSearchPhotosGeo(t *testing.T) {
 
 		assert.Contains(t, err.Error(), "invalid syntax")
 	})
+	t.Run("Added", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "added:\"2022-01-02T13:04:05+01:00\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2022-01-02 13:04:05 +0100 UTC+01:00", form.Added.String())
+		assert.Equal(t, "2022-01-02 12:04:05 +0000 UTC", form.Added.UTC().String())
+		assert.Equal(t, "2022-01-02T13:04:05+01:00", form.Added.Format(time.RFC3339))
+		assert.Equal(t, "2022-01-02T12:04:05Z", form.Added.UTC().Format(time.RFC3339))
+	})
+	t.Run("Updated", func(t *testing.T) {
+		form := &SearchPhotosGeo{Query: "updated:\"2001-01-02 17:04:05\""}
+
+		err := form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2001-01-02 17:04:05 +0000 UTC", form.Updated.String())
+		assert.Equal(t, "2001-01-02 17:04:05 +0000 UTC", form.Updated.UTC().String())
+		assert.Equal(t, "2001-01-02T17:04:05Z", form.Updated.Format(time.RFC3339))
+		assert.Equal(t, "2001-01-02T17:04:05Z", form.Updated.UTC().Format(time.RFC3339))
+	})
+	t.Run("MustBindWith", func(t *testing.T) {
+		form := &SearchPhotosGeo{}
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		u, err := url.Parse("https://www.photoprism.app/api/v1/photos?count=100&offset=0&order=added&added=2022-01-02T13:04:05-01:00&updated=2001-01-02T17:04:05Z&q=")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		c.Request = &http.Request{
+			Header: make(http.Header),
+			URL:    u,
+		}
+
+		// Abort if request params are invalid.
+		if err = c.MustBindWith(form, binding.Form); err != nil {
+			t.Fatal(err)
+		}
+
+		err = form.ParseQueryString()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.Equal(t, "2022-01-02T13:04:05-01:00", form.Added.Format(time.RFC3339))
+		assert.Equal(t, "2022-01-02T14:04:05Z", form.Added.UTC().Format(time.RFC3339))
+		assert.Equal(t, "2001-01-02T17:04:05Z", form.Updated.Format(time.RFC3339))
+		assert.Equal(t, 100, form.Count)
+		assert.Equal(t, 0, form.Offset)
+	})
 }
 
 func TestSearchPhotosGeo_Serialize(t *testing.T) {
-	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: true}
+	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: "true"}
 
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.Serialize())
 }
 
+func TestSearchPhotosGeo_Unserialize(t *testing.T) {
+	filter := "public:true label:bay|beach|cape|seashore"
+	frm := SearchPhotosGeo{}
+	err := Unserialize(&frm, filter)
+	assert.Equal(t, true, frm.Public)
+	assert.Equal(t, "bay|beach|cape|seashore", frm.Label)
+	assert.NoError(t, err)
+}
+
+// public:true label:bay|beach|cape|seashore
 func TestSearchPhotosGeo_SerializeAll(t *testing.T) {
-	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: true}
+	form := &SearchPhotosGeo{Query: "q:\"fooBar baz\"", Favorite: "true"}
 
 	assert.Equal(t, "q:\"q:fooBar baz\" favorite:true", form.SerializeAll())
 }

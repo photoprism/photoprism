@@ -21,7 +21,7 @@ func TestShowThumbSizesCommand(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Contains(t, output, "fit_2048")
+	assert.Contains(t, output, "fit_1920")
 	assert.Contains(t, output, "Mosaic View")
 	assert.Contains(t, output, "Color Detection")
 }

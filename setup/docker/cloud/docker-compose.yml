@@ -1,5 +1,3 @@
-version: '3.5'
-
 #  ========================================================================
 #  PhotoPrism for Cloud Servers
 #  Based on Ubuntu 22.04 LTS (Jammy Jellyfish)
@@ -156,11 +154,11 @@ services:
       PHOTOPRISM_JPEG_QUALITY: 85                      # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
       PHOTOPRISM_DETECT_NSFW: "false"                  # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                   # allows uploads that MAY be offensive (no effect without TensorFlow)
-      PHOTOPRISM_DATABASE_DRIVER: "mysql"              # use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"       # MariaDB or MySQL database server (hostname:port)
-      PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB or MySQL database schema name
-      PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB or MySQL database user name
-      PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB or MySQL database user password
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"              # MariaDB 10.5.12+ (MySQL successor) offers significantly better performance compared to SQLite
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"       # MariaDB database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"           # MariaDB database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"           # MariaDB database user name
+      PHOTOPRISM_DATABASE_PASSWORD: "_admin_password_" # MariaDB database user password
       ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
       # PHOTOPRISM_FFMPEG_ENCODER: "software"          # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
       # PHOTOPRISM_FFMPEG_SIZE: "1920"                 # video size limit in pixels (720-7680) (default: 3840)
@@ -179,7 +177,7 @@ services:
   ## see https://docs.photoprism.app/getting-started/proxies/traefik/
   traefik:
     restart: always
-    image: traefik:v2.9
+    image: traefik:v2.11
     container_name: traefik
     ports:
       - "80:80"
@@ -193,17 +191,17 @@ services:
       - "./traefik.yaml:/etc/traefik/traefik.yaml"
       - "./certs/:/certs/"
 
-  ## Database Server (recommended)
+  ## MariaDB Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
-    image: mariadb:10.11
+    image: mariadb:11
     container_name: mariadb
     restart: always
     stop_grace_period: 5s
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mariadbd --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
       - "./database:/var/lib/mysql" # DO NOT REMOVE

@@ -46,10 +46,10 @@ func TestConfig_FFmpegBitrate(t *testing.T) {
 
 func TestConfig_FFmpegSize(t *testing.T) {
 	c := NewConfig(CliTestContext())
-	assert.Equal(t, 3840, c.FFmpegSize())
+	assert.Equal(t, 4096, c.FFmpegSize())
 
 	c.options.FFmpegSize = 0
-	assert.Equal(t, 3840, c.FFmpegSize())
+	assert.Equal(t, 4096, c.FFmpegSize())
 
 	c.options.FFmpegSize = -1
 	assert.Equal(t, 7680, c.FFmpegSize())

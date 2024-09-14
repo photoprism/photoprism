@@ -2,162 +2,207 @@ package fs
 
 import (
 	"errors"
-	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 )
 
 type IgnoreLogFunc func(fileName string)
 
-// IgnoreItem represents a file name pattern to be ignored.
-type IgnoreItem struct {
+// IgnorePattern represents a name pattern to be ignored.
+type IgnorePattern struct {
 	Dir     string
 	Pattern string
 }
 
-// NewIgnoreItem returns a pointer to a new IgnoreItem instance.
-func NewIgnoreItem(dir, pattern string, caseSensitive bool) IgnoreItem {
+// NewIgnorePattern returns a new IgnorePattern.
+func NewIgnorePattern(dir, pattern string, caseSensitive bool) IgnorePattern {
 	if caseSensitive {
-		return IgnoreItem{Dir: dir + PathSeparator, Pattern: pattern}
+		return IgnorePattern{Dir: dir + PathSeparator, Pattern: pattern}
 	} else {
-		return IgnoreItem{Dir: strings.ToLower(dir) + PathSeparator, Pattern: strings.ToLower(pattern)}
+		return IgnorePattern{Dir: strings.ToLower(dir) + PathSeparator, Pattern: strings.ToLower(pattern)}
 	}
 }
 
-// Ignore returns true if the file name "base" in the directory "dir" should be ignored.
-func (i IgnoreItem) Ignore(dir, base string) bool {
+// Ignore checks if the specified file or path name in the directory should be ignored.
+func (i IgnorePattern) Ignore(dir, name string) bool {
+	if i.Pattern == "*" {
+		// Ignore directories in which all files are ignored.
+		if pathName := filepath.Join(dir, name) + PathSeparator; pathName == i.Dir {
+			return true
+		}
+	}
+
 	if !strings.HasPrefix(dir+PathSeparator, i.Dir) {
-		// different directory prefix: don't look any further
+		// Skip check if directory does not match.
 		return false
-	} else if i.Pattern == base {
-		// file name is the same as pattern (no wildcard)
+	} else if i.Pattern == name {
+		// Ignore if the name exactly matches.
 		return true
 	}
 
 	if strings.ContainsRune(i.Pattern, filepath.Separator) {
-		base = filepath.Join(RelName(dir, i.Dir), base)
+		name = filepath.Join(RelName(dir, i.Dir), name)
 	}
 
-	if ignore, err := filepath.Match(i.Pattern, base); ignore && err == nil {
+	if ignore, err := filepath.Match(i.Pattern, name); ignore && err == nil {
 		return true
 	}
 
 	return false
 }
 
-// IgnoreList represents a list of name patterns to be ignored.
+// IgnoreList checks a list of configurable name patterns to see whether they should be ignored.
 type IgnoreList struct {
 	Log           IgnoreLogFunc
-	items         []IgnoreItem
-	hiddenFiles   []string
-	ignoredFiles  []string
-	configFiles   map[string][]string
-	configFile    string
+	ignore        []IgnorePattern
+	ignored       []string
+	ignoredMutex  sync.Mutex
 	ignoreHidden  bool
+	hidden        []string
 	caseSensitive bool
+	configFile    string
+	configFiles   map[string][]string
+	configMutex   sync.Mutex
 }
 
 // NewIgnoreList returns a pointer to a new IgnoreList instance.
 func NewIgnoreList(configFile string, ignoreHidden bool, caseSensitive bool) *IgnoreList {
 	return &IgnoreList{
+		Log:           func(fileName string) {},
 		configFile:    configFile,
+		ignored:       make([]string, 0, 256),
+		ignoredMutex:  sync.Mutex{},
+		hidden:        make([]string, 0, 256),
 		ignoreHidden:  ignoreHidden,
 		caseSensitive: caseSensitive,
 		configFiles:   make(map[string][]string),
+		configMutex:   sync.Mutex{},
 	}
 }
 
 // Hidden returns hidden files that were ignored.
 func (l *IgnoreList) Hidden() []string {
-	return l.hiddenFiles
+	return l.hidden
 }
 
 // Ignored returns files that were ignored in addition to hidden files.
 func (l *IgnoreList) Ignored() []string {
-	return l.ignoredFiles
+	return l.ignored
 }
 
-// AppendItems adds items to the list of ignored items.
-func (l *IgnoreList) AppendItems(dir string, patterns []string) error {
+// AddPatterns adds items to the list of ignored items.
+func (l *IgnoreList) AddPatterns(dir string, patterns []string) error {
 	if dir == "" {
 		return errors.New("empty directory name")
+	} else if len(patterns) == 0 {
+		// Nothing to add.
+		return nil
 	}
 
 	for _, pattern := range patterns {
-		if pattern != "" && !strings.HasPrefix(pattern, "#") {
-			l.items = append(l.items, NewIgnoreItem(dir, pattern, l.caseSensitive))
+		// Trim slashes and null bytes from the pattern.
+		pattern = strings.Trim(pattern, "/\x00\t\r\n")
+
+		// Skip empty patterns and comments that begin with "# ".
+		if strings.TrimSpace(pattern) != "" && !strings.HasPrefix(pattern, "# ") {
+			l.ignore = append(l.ignore, NewIgnorePattern(dir, pattern, l.caseSensitive))
 		}
 	}
 
 	return nil
 }
 
-// ConfigFile adds items in fileName to the list of ignored items.
-func (l *IgnoreList) ConfigFile(fileName string) error {
+// File adds ignore patterns from the specified config file if it exists and is not empty.
+func (l *IgnoreList) File(fileName string) error {
+	// Return if no config file name was provided.
+	if fileName == "" {
+		return errors.New("empty config file name")
+	}
+
+	l.configMutex.Lock()
+	defer l.configMutex.Unlock()
+
+	// Return if config file was already added.
+	if _, done := l.configFiles[fileName]; done {
+		return nil
+	}
+
+	// Check if file exists and is not empty,
+	// return otherwise.
+	info, err := os.Stat(fileName)
+
+	if err != nil || info.IsDir() || info.Size() == 0 {
+		l.configFiles[fileName] = []string{}
+		return nil
+	}
+
+	// Parse ignore config file.
 	items, err := ReadLines(fileName)
 
+	// Return error if unsuccessful,
 	if err != nil {
 		return err
 	}
 
+	// Add ignore patterns.
 	l.configFiles[fileName] = items
 
-	return l.AppendItems(filepath.Dir(fileName), items)
+	return l.AddPatterns(filepath.Dir(fileName), items)
 }
 
-// Dir adds the ignore file in dirName to the list of ignored items.
-func (l *IgnoreList) Dir(dir string) error {
+// Path adds the ignore patterns found in the ignore config file of the specified directory, if any.
+func (l *IgnoreList) Path(dir string) error {
 	if dir == "" {
-		return errors.New("empty directory name")
+		return errors.New("missing directory name")
+	} else if l.configFile == "" {
+		return errors.New("missing config file name")
 	}
 
-	if l.configFile == "" {
-		return errors.New("empty ignore file name")
-	}
-
-	fileName := filepath.Join(dir, l.configFile)
-
-	if _, ok := l.configFiles[fileName]; ok {
-		return nil
-	}
-
-	if !FileExists(fileName) {
-		return fmt.Errorf("found no %s file", l.configFile)
-	}
-
-	return l.ConfigFile(fileName)
+	return l.File(filepath.Join(dir, l.configFile))
 }
 
-// Ignore returns true if the file name should be ignored.
-func (l *IgnoreList) Ignore(fileName string) bool {
-	dir := filepath.Dir(fileName)
-	base := filepath.Base(fileName)
+// Ignore checks if the file or folder name should be ignored.
+func (l *IgnoreList) Ignore(name string) bool {
+	// Determine the parent directory path
+	// and the base name without the path.
+	dir := filepath.Dir(name)
+	baseName := filepath.Base(name)
 
+	// Change name to lowercase for case-insensitive comparison.
 	if l.caseSensitive == false {
 		dir = strings.ToLower(dir)
-		base = strings.ToLower(base)
+		baseName = strings.ToLower(baseName)
 	}
 
-	if l.configFile != "" && base == l.configFile {
-		_ = l.ConfigFile(fileName)
-
+	// Ignore if name matches the config file name.
+	if l.configFile != "" && baseName == l.configFile {
+		_ = l.File(name)
 		return true
 	}
 
-	for _, item := range l.items {
-		if item.Ignore(dir, base) {
-			l.ignoredFiles = append(l.ignoredFiles, fileName)
+	// Use mutex for thread safety.
+	l.ignoredMutex.Lock()
+	defer l.ignoredMutex.Unlock()
+
+	// Iterate through configured patterns to determine if the name should be ignored.
+	for _, pattern := range l.ignore {
+		if pattern.Ignore(dir, baseName) {
+			l.ignored = append(l.ignored, name)
 
 			if l.Log != nil {
-				l.Log(fileName)
+				l.Log(name)
 			}
 
 			return true
 		}
 	}
 
-	if l.ignoreHidden && FileNameHidden(fileName) {
-		l.hiddenFiles = append(l.hiddenFiles, fileName)
+	// Ignore hidden files and folders whose name e.g. starts with a "."?
+	if l.ignoreHidden && FileNameHidden(name) {
+		l.hidden = append(l.hidden, name)
+
 		return true
 	}
 
@@ -166,8 +211,10 @@ func (l *IgnoreList) Ignore(fileName string) bool {
 
 // Reset resets ignored and hidden files.
 func (l *IgnoreList) Reset() {
-	l.items = []IgnoreItem{}
-	l.hiddenFiles = []string{}
-	l.ignoredFiles = []string{}
+	l.ignore = []IgnorePattern{}
+	l.ignored = make([]string, 0, 256)
+	l.ignoredMutex = sync.Mutex{}
+	l.hidden = make([]string, 0, 256)
 	l.configFiles = make(map[string][]string)
+	l.configMutex = sync.Mutex{}
 }

@@ -13,7 +13,12 @@ PLEASE PROCEED ONLY IF YOU ARE ABSOLUTELY SURE THAT THIS IS NOT A TECHNICAL SUPP
 
 #### 1. What is not working as documented?
 
-Please be as specific as possible and explain what part of the software is not [working as documented](https://docs.photoprism.app/). "No photos found" would not be detailed enough. Also, never report [known issues](https://docs.photoprism.app/known-issues/) or [features not yet implemented](https://github.com/photoprism/photoprism/issues) as bugs. Thank you!
+Be as specific as possible and explain which part of the software is not [working as documented](https://docs.photoprism.app/), e.g. "image not found" or "wrong thumbnail" would not be detailed enough.
+
+Links to the related documentation on [docs.photoprism.app](https://docs.photoprism.app/):
+- ...
+
+*Please never report [known issues](https://docs.photoprism.app/known-issues/) or [missing features](https://github.com/photoprism/photoprism/issues) as bugs, and do not submit bug reports for the purpose of getting [technical support](https://www.photoprism.app/kb/getting-support) or because you have not received a response in our [public community forums](https://github.com/photoprism/photoprism/discussions). Thank you very much!*
 
 #### 2. How can we reproduce it?
 

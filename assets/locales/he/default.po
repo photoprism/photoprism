@@ -2,9 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
+"PO-Revision-Date: 2024-07-05 09:24+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Hebrew <https://translate.photoprism.app/projects/photoprism/"
 "backend/he/>\n"
 "Language: he\n"
@@ -13,364 +14,392 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.5.5\n"
 
-#: messages.go:94
+#: messages.go:101
 msgid "Something went wrong, try again"
 msgstr "קרתה תקלה נסה שוב"
 
-#: messages.go:95
+#: messages.go:102
 msgid "Unable to do that"
 msgstr "לא מסוגל לעשות את זה"
 
-#: messages.go:96
+#: messages.go:103
 msgid "Changes could not be saved"
 msgstr "לא ניתן לשמור שינויים"
 
-#: messages.go:97
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "לא ניתן למחיקה"
 
-#: messages.go:98
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s כבר קיים"
 
-#: messages.go:99
+#: messages.go:106
 msgid "Not found"
 msgstr "לא נמצא"
 
-#: messages.go:100
+#: messages.go:107
 msgid "File not found"
 msgstr "הקובץ לא נמצא"
 
-#: messages.go:101
+#: messages.go:108
 msgid "File too large"
 msgstr "קובץ גדול מדי"
 
-#: messages.go:102
+#: messages.go:109
+msgid "Unsupported"
+msgstr "אינו נתמך"
+
+#: messages.go:110
+msgid "Unsupported type"
+msgstr "סוג לא נתמך"
+
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "פורמט לא נתמך"
 
-#: messages.go:103
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "תיקיית המקור ריקה"
 
-#: messages.go:104
+#: messages.go:113
 msgid "Selection not found"
 msgstr "הבחירה לא נמצאה"
 
-#: messages.go:105
+#: messages.go:114
 msgid "Entity not found"
 msgstr "הישות לא נמצאה"
 
-#: messages.go:106
+#: messages.go:115
 msgid "Account not found"
 msgstr "החשבון לא נמצא"
 
-#: messages.go:107
+#: messages.go:116
 msgid "User not found"
 msgstr "המשתמש לא נמצא"
 
-#: messages.go:108
+#: messages.go:117
 msgid "Label not found"
 msgstr "התווית לא נמצאה"
 
-#: messages.go:109
+#: messages.go:118
 msgid "Album not found"
 msgstr "האלבום לא נמצא"
 
-#: messages.go:110
+#: messages.go:119
 msgid "Subject not found"
 msgstr "הנושא לא נמצא"
 
-#: messages.go:111
+#: messages.go:120
 msgid "Person not found"
 msgstr "אדם לא נמצא"
 
-#: messages.go:112
+#: messages.go:121
 msgid "Face not found"
 msgstr "הפנים לא נמצאו"
 
-#: messages.go:113
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "לא זמין במצב ציבורי"
 
-#: messages.go:114
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "לא זמין במצב קריאה בלבד"
 
-#: messages.go:115
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "אנא היכנס לחשבון שלך"
 
-#: messages.go:116
+#: messages.go:125
 msgid "Permission denied"
 msgstr "גישה נדחתה"
 
-#: messages.go:117
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "ההעלאה עשויה להיות פוגענית"
 
-#: messages.go:118
+#: messages.go:127
 msgid "Upload failed"
 msgstr "העלאה נכשלה"
 
-#: messages.go:119
+#: messages.go:128
 msgid "No items selected"
 msgstr "לא נבחרו פריטים"
 
-#: messages.go:120
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "יצירת הקובץ נכשלה, אנא בדוק את ההרשאות"
 
-#: messages.go:121
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "יצירת התיקיה נכשלה, אנא בדוק את ההרשאות"
 
-#: messages.go:122
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "לא ניתן היה להתחבר, נסה שוב"
 
-#: messages.go:123
+#: messages.go:132
+msgid "Enter verification code"
+msgstr "הכנס קוד אימות"
+
+#: messages.go:133
+msgid "Invalid verification code, please try again"
+msgstr "קוד אימות לא חוקי, אנא נסה שוב"
+
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "סיסמה לא תקינה, נסה שוב"
 
-#: messages.go:124
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "התכונה מושבתת"
 
-#: messages.go:125
+#: messages.go:136
 msgid "No labels selected"
 msgstr "לא נבחרו תוויות"
 
-#: messages.go:126
+#: messages.go:137
 msgid "No albums selected"
 msgstr "לא נבחרו אלבומים"
 
-#: messages.go:127
+#: messages.go:138
 msgid "No files available for download"
 msgstr "אין קבצים זמינים להורדה"
 
-#: messages.go:128
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "יצירת קובץ ה-zip נכשלה"
 
-#: messages.go:129
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "אישורים לא תקינים"
 
-#: messages.go:130
+#: messages.go:141
 msgid "Invalid link"
 msgstr "קישור לא תקין"
 
-#: messages.go:131
+#: messages.go:142
 msgid "Invalid name"
 msgstr "מספר לא תקף"
 
-#: messages.go:132
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "עסוק, אנא נסה שוב מאוחר יותר"
 
-#: messages.go:133
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "מרווח ההשכמה הוא %s, אך חייב להיות שעה אחת או פחות"
 
-#: messages.go:134
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "לא ניתן היה לחבר את החשבון שלך"
 
-#: messages.go:137
+#: messages.go:146
+msgid "Too many requests"
+msgstr "יותר מדי בקשות"
+
+#: messages.go:149
 msgid "Changes successfully saved"
 msgstr "השינויים נשמרו בהצלחה"
 
-#: messages.go:138
+#: messages.go:150
 msgid "Album created"
 msgstr "האלבום נוצר"
 
-#: messages.go:139
+#: messages.go:151
 msgid "Album saved"
 msgstr "האלבום נשמר"
 
-#: messages.go:140
+#: messages.go:152
 #, c-format
 msgid "Album %s deleted"
 msgstr "האלבום %s נמחק"
 
-#: messages.go:141
+#: messages.go:153
 msgid "Album contents cloned"
 msgstr "תוכן האלבום שוכפל"
 
-#: messages.go:142
+#: messages.go:154
 msgid "File removed from stack"
 msgstr "הקובץ הוסר מהאיחוד"
 
-#: messages.go:143
+#: messages.go:155
 msgid "File deleted"
 msgstr "הקובץ נמחק"
 
-#: messages.go:144
+#: messages.go:156
 #, c-format
 msgid "Selection added to %s"
 msgstr "הבחירה נוספה ל-%s"
 
-#: messages.go:145
+#: messages.go:157
 #, c-format
 msgid "One entry added to %s"
 msgstr "רשומה אחת נוספה ל-%s"
 
-#: messages.go:146
+#: messages.go:158
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d רשומות נוספו ל-%s"
 
-#: messages.go:147
+#: messages.go:159
 #, c-format
 msgid "One entry removed from %s"
 msgstr "רשומה אחת הוסרה מ-%s"
 
-#: messages.go:148
+#: messages.go:160
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d רשומות הוסרו מ-%s"
 
-#: messages.go:149
+#: messages.go:161
 msgid "Account created"
 msgstr "החשבון נוצר"
 
-#: messages.go:150
+#: messages.go:162
 msgid "Account saved"
 msgstr "החשבון נשמר"
 
-#: messages.go:151
+#: messages.go:163
 msgid "Account deleted"
 msgstr "החשבון נמחק"
 
-#: messages.go:152
+#: messages.go:164
 msgid "Settings saved"
 msgstr "ההגדרות נשמרו"
 
-#: messages.go:153
+#: messages.go:165
 msgid "Password changed"
 msgstr "סיסמא שונתה"
 
-#: messages.go:154
+#: messages.go:166
 #, c-format
 msgid "Import completed in %d s"
 msgstr "הייבוא הושלם ב-%d שניות"
 
-#: messages.go:155
+#: messages.go:167
 msgid "Import canceled"
 msgstr "הייבוא בוטל"
 
-#: messages.go:156
+#: messages.go:168
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "האינדוקס הושלם ב-%d שניות"
 
-#: messages.go:157
+#: messages.go:169
 msgid "Indexing originals..."
 msgstr "מאנדקס קבצי מקור..."
 
-#: messages.go:158
+#: messages.go:170
 #, c-format
 msgid "Indexing files in %s"
 msgstr "מאנדקס קבצים תוך %s"
 
-#: messages.go:159
+#: messages.go:171
 msgid "Indexing canceled"
 msgstr "יצירת האינדקס בוטלה"
 
-#: messages.go:160
+#: messages.go:172
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "הוסרו %d קבצים ו-%d תמונות"
 
-#: messages.go:161
+#: messages.go:173
 #, c-format
 msgid "Moving files from %s"
 msgstr "מעביר קבצים מ-%s"
 
-#: messages.go:162
+#: messages.go:174
 #, c-format
 msgid "Copying files from %s"
 msgstr "מעתיק קבצים מ-%s"
 
-#: messages.go:163
+#: messages.go:175
 msgid "Labels deleted"
 msgstr "תוויות נמחקו"
 
-#: messages.go:164
+#: messages.go:176
 msgid "Label saved"
 msgstr "התווית נשמרה"
 
-#: messages.go:165
+#: messages.go:177
 msgid "Subject saved"
 msgstr "הנושא נשמר"
 
-#: messages.go:166
+#: messages.go:178
 msgid "Subject deleted"
 msgstr "הנושא נמחק"
 
-#: messages.go:167
+#: messages.go:179
 msgid "Person saved"
 msgstr "אדם נשמר"
 
-#: messages.go:168
+#: messages.go:180
 msgid "Person deleted"
 msgstr "אדם נמחק"
 
-#: messages.go:169
+#: messages.go:181
 msgid "File uploaded"
 msgstr "הקובץ הועלה"
 
-#: messages.go:170
+#: messages.go:182
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d קבצים הועלו תוך %d שניות"
 
-#: messages.go:171
+#: messages.go:183
 msgid "Processing upload..."
 msgstr "מעבד העלאה..."
 
-#: messages.go:172
+#: messages.go:184
 msgid "Upload has been processed"
 msgstr "ההעלאה עובדה"
 
-#: messages.go:173
+#: messages.go:185
 msgid "Selection approved"
 msgstr "הבחירה אושרה"
 
-#: messages.go:174
+#: messages.go:186
 msgid "Selection archived"
 msgstr "הבחירה הועברה לארכיון"
 
-#: messages.go:175
+#: messages.go:187
 msgid "Selection restored"
 msgstr "הבחירה שוחזרה"
 
-#: messages.go:176
+#: messages.go:188
 msgid "Selection marked as private"
 msgstr "הבחירה סומנה כפרטית"
 
-#: messages.go:177
+#: messages.go:189
 msgid "Albums deleted"
 msgstr "אלבומים נמחקו"
 
-#: messages.go:178
+#: messages.go:190
 #, c-format
 msgid "Zip created in %d s"
 msgstr "ה-ZIP נוצר תוך %d שניות"
 
-#: messages.go:179
+#: messages.go:191
 msgid "Permanently deleted"
 msgstr "נמחק לצמיתות"
 
-#: messages.go:180
+#: messages.go:192
 #, c-format
 msgid "%s has been restored"
 msgstr "%s שוחזר"
+
+#: messages.go:193
+msgid "Successfully verified"
+msgstr "אומת בהצלחה"
+
+#: messages.go:194
+msgid "Successfully activated"
+msgstr "הופעל בהצלחה"
 
 #~ msgid "Invalid request"
 #~ msgstr "בקשה לא תקינה"

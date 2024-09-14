@@ -17,15 +17,17 @@ func (n Name) String() string {
 
 // Names of thumbnail sizes.
 const (
+	Colors   Name = "colors"
 	Tile50   Name = "tile_50"
 	Tile100  Name = "tile_100"
-	Tile224  Name = "tile_224"
-	Tile500  Name = "tile_500"
-	Colors   Name = "colors"
 	Left224  Name = "left_224"
 	Right224 Name = "right_224"
+	Tile224  Name = "tile_224"
 	Fit720   Name = "fit_720"
+	Tile500  Name = "tile_500"
+	Tile1080 Name = "tile_1080"
 	Fit1280  Name = "fit_1280"
+	Fit1600  Name = "fit_1600"
 	Fit1920  Name = "fit_1920"
 	Fit2048  Name = "fit_2048"
 	Fit2560  Name = "fit_2560"
@@ -38,19 +40,17 @@ const (
 var Names = []Name{
 	Fit7680,
 	Fit4096,
-	Fit3840,
 	Fit2560,
-	Fit2048,
 	Fit1920,
 	Fit1280,
+	Tile500,
 	Fit720,
+	Tile224,
 	Right224,
 	Left224,
-	Colors,
-	Tile500,
-	Tile224,
 	Tile100,
 	Tile50,
+	Colors,
 }
 
 // Find returns the largest default thumbnail type for the given size limit.

@@ -15,21 +15,21 @@ set -e
 
 . /etc/os-release
 
-if [[ $VERSION_CODENAME == "lunar" ]]; then
-  echo "Installing NodeJS and NPM distribution packages..."
-  apt-get update && apt-get -qq install nodejs npm
-else
-  SETUP_URL="https://deb.nodesource.com/setup_18.x"
+# NodeJS version.
+NODE_MAJOR=20
 
-  echo "Fetching packages from \"$SETUP_URL\"..."
-  wget --inet4-only -c -qO- $SETUP_URL | bash -
+# Create /etc/apt/keyrings/nodesource.gpg
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 
-  echo "Installing NodeJS, NPM, and TestCafe..."
-  apt-get update && apt-get -qq install nodejs
-fi
+# Create /etc/apt/sources.list.d/nodesource.list
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
-npm install --unsafe-perm=true --allow-root -g npm testcafe
+echo "Installing NodeJS and NPM from deb.nodesource.com..."
+apt-get update && apt-get -qq install nodejs
+
+echo "Installing TestCafe..."
 npm config set cache ~/.cache/npm
-npm update --unsafe-perm=true --allow-root -g
+npm install --unsafe-perm=true --allow-root -g npm@latest npm-check-updates@latest license-report@latest n@latest testcafe@3.6.0
 
 echo "Done."

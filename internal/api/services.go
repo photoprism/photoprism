@@ -7,15 +7,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/workers"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // Namespaces for caching and logs.
@@ -107,7 +107,8 @@ func GetServiceFolders(router *gin.RouterGroup) {
 
 // AddService creates a new remote account configuration.
 //
-// POST /api/v1/services
+//	@Tags	Services
+//	@Router	/api/v1/services [post]
 func AddService(router *gin.RouterGroup) {
 	router.POST("/services", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceServices, acl.ActionCreate)
@@ -125,6 +126,7 @@ func AddService(router *gin.RouterGroup) {
 
 		var f form.Service
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return

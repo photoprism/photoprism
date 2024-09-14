@@ -1,6 +1,6 @@
 package photoprism
 
-import "github.com/photoprism/photoprism/internal/face"
+import "github.com/photoprism/photoprism/internal/ai/face"
 
 type FacesOptions struct {
 	Force     bool

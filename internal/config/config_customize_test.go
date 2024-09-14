@@ -40,13 +40,27 @@ func TestConfig_DefaultLocale(t *testing.T) {
 	assert.Equal(t, "en", c.DefaultLocale())
 }
 
+func TestConfig_DefaultTimezone(t *testing.T) {
+	c := NewConfig(CliTestContext())
+
+	assert.Equal(t, "UTC", c.DefaultTimezone().String())
+
+	c.options.DefaultTimezone = "Europe/Berlin"
+
+	assert.Equal(t, "Europe/Berlin", c.DefaultTimezone().String())
+
+	c.options.DefaultTimezone = ""
+
+	assert.Equal(t, "UTC", c.DefaultTimezone().String())
+}
+
 func TestConfig_WallpaperUri(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.Equal(t, "", c.WallpaperUri())
 	assert.Equal(t, "", c.Options().WallpaperUri)
-	c.SetWallpaperUri("kashmir")
-	assert.Equal(t, "/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
+	c.SetWallpaperUri("default")
+	assert.Equal(t, "/static/img/wallpaper/default.jpg", c.WallpaperUri())
 	c.SetWallpaperUri("https://cdn.photoprism.app/wallpaper/welcome.jpg")
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.Test = false
@@ -57,15 +71,15 @@ func TestConfig_WallpaperUri(t *testing.T) {
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
 	c.options.Sponsor = true
 	assert.Equal(t, "https://cdn.photoprism.app/wallpaper/welcome.jpg", c.WallpaperUri())
-	c.SetWallpaperUri("kashmir")
-	assert.Equal(t, "/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
-	c.SetWallpaperUri("kashmir")
+	c.SetWallpaperUri("default")
+	assert.Equal(t, "/static/img/wallpaper/default.jpg", c.WallpaperUri())
+	c.SetWallpaperUri("default")
 	c.options.CdnUrl = "https://bunny.net/cdn/"
-	assert.Equal(t, "https://bunny.net/cdn/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
-	assert.Equal(t, "kashmir", c.Options().WallpaperUri)
-	c.SetWallpaperUri("kashmir")
+	assert.Equal(t, "https://bunny.net/cdn/static/img/wallpaper/default.jpg", c.WallpaperUri())
+	assert.Equal(t, "default", c.Options().WallpaperUri)
+	c.SetWallpaperUri("default")
 	c.options.CdnUrl = ""
-	assert.Equal(t, "/static/img/wallpaper/kashmir.jpg", c.WallpaperUri())
+	assert.Equal(t, "/static/img/wallpaper/default.jpg", c.WallpaperUri())
 	c.SetWallpaperUri("")
 	assert.Equal(t, "", c.WallpaperUri())
 	assert.Equal(t, "", c.Options().WallpaperUri)

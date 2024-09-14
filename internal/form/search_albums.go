@@ -10,9 +10,9 @@ type SearchAlbums struct {
 	Slug     string `form:"slug"`
 	Title    string `form:"title"`
 	Country  string `json:"country"`
-	Year     string `form:"year" example:"year:1990|2003" notes:"Year Number, OR search with |"`
-	Month    string `form:"month" example:"month:7|10" notes:"Month (1-12), OR search with |"`
-	Day      string `form:"day" example:"day:3|13" notes:"Day of Month (1-31), OR search with |"`
+	Year     string `form:"year" example:"year:1990|2003" notes:"Year (separate with |)"`
+	Month    string `form:"month" example:"month:7|10" notes:"Month (1-12, separate with |)"`
+	Day      string `form:"day" example:"day:3|13" notes:"Day of Month (1-31, separate with |)"`
 	Favorite bool   `form:"favorite"`
 	Public   bool   `form:"public"`
 	Private  bool   `form:"private"`

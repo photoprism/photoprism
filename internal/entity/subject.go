@@ -150,7 +150,7 @@ func (m *Subject) DeletePermanently() error {
 
 // AfterDelete resets file and photo counters when the entity was deleted.
 func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
-	tx.Model(m).Updates(Values{
+	tx.Model(m).Updates(Map{
 		"FileCount":  0,
 		"PhotoCount": 0,
 	})
@@ -227,7 +227,7 @@ func FirstOrCreateSubject(m *Subject) *Subject {
 	} else if found = FindSubjectByName(m.SubjName, true); found != nil {
 		return found
 	} else {
-		log.Errorf("subject: failed adding %s (%s)", clean.Log(m.SubjName), err)
+		log.Errorf("subject: failed to add %s (%s)", clean.Log(m.SubjName), err)
 	}
 
 	return nil
@@ -366,7 +366,7 @@ func (m *Subject) SaveForm(f form.Subject) (changed bool, err error) {
 
 	// Update index?
 	if changed {
-		values := Values{
+		values := Map{
 			"SubjFavorite": m.SubjFavorite,
 			"SubjHidden":   m.SubjHidden,
 			"SubjPrivate":  m.SubjPrivate,
@@ -422,7 +422,7 @@ func (m *Subject) UpdateName(name string) (*Subject, error) {
 	// Update subject record.
 	if err := m.SetName(name); err != nil {
 		return m, err
-	} else if err = m.Updates(Values{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err != nil {
+	} else if err = m.Updates(Map{"SubjName": m.SubjName, "SubjSlug": m.SubjSlug}); err != nil {
 		return m, err
 	} else {
 		SubjNames.Set(m.SubjUID, m.SubjName)
@@ -507,7 +507,7 @@ func (m *Subject) MergeWith(other *Subject) error {
 	}
 
 	// Updated subject entity values.
-	updates := Values{
+	updates := Map{
 		"FileCount":  other.FileCount + m.FileCount,
 		"PhotoCount": other.PhotoCount + m.PhotoCount,
 	}
@@ -529,4 +529,21 @@ func (m *Subject) MergeWith(other *Subject) error {
 // Links returns all share links for this entity.
 func (m *Subject) Links() Links {
 	return FindLinks("", m.SubjUID)
+}
+
+// String returns the id or name as string.
+func (m *Subject) String() string {
+	if m == nil {
+		return "Subject<nil>"
+	}
+
+	if m.SubjName != "" {
+		return m.SubjName
+	} else if m.SubjSlug != "" {
+		return m.SubjSlug
+	} else if m.SubjUID != "" {
+		return m.SubjUID
+	}
+
+	return "*Subject"
 }

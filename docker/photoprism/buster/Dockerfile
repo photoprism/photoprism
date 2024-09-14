@@ -1,7 +1,7 @@
 ##################################################### BUILD STAGE ######################################################
-FROM photoprism/develop:buster as build
+FROM photoprism/develop:buster AS build
 
-# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -39,12 +39,13 @@ ARG BUILD_TAG
 ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="prod" \
-    PS1="\u@$DOCKER_TAG:\w\$ " \
+    PS1="\u@$BUILD_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     TMPDIR="/tmp" \
     DEBIAN_FRONTEND="noninteractive" \
     TF_CPP_MIN_LOG_LEVEL="2" \
+    MALLOC_ARENA_MAX="4" \
     PROG="photoprism" \
     PHOTOPRISM_ASSETS_PATH="/opt/photoprism/assets" \
     PHOTOPRISM_IMPORT_PATH="/photoprism/import" \
@@ -80,16 +81,9 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     PHOTOPRISM_DISABLE_FACES="false" \
     PHOTOPRISM_DISABLE_CLASSIFICATION="false" \
     PHOTOPRISM_RAW_PRESETS="false" \
-    PHOTOPRISM_THUMB_FILTER="lanczos" \
     PHOTOPRISM_THUMB_UNCACHED="false" \
-    PHOTOPRISM_THUMB_SIZE=2048 \
-    PHOTOPRISM_THUMB_SIZE_UNCACHED=7680 \
-    PHOTOPRISM_JPEG_SIZE=7680 \
-    PHOTOPRISM_JPEG_QUALITY=85 \
-    PHOTOPRISM_WORKERS=0 \
-    PHOTOPRISM_WAKEUP_INTERVAL=900 \
-    PHOTOPRISM_AUTO_INDEX=300 \
-    PHOTOPRISM_AUTO_IMPORT=300 \
+    PHOTOPRISM_AUTO_INDEX="300" \
+    PHOTOPRISM_AUTO_IMPORT="-1" \
     PHOTOPRISM_INIT="https"
 
 # Copy dist files, scripts, and debian backports sources list.
@@ -131,7 +125,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: /scripts/entrypoint-init.sh" >> /etc/sudoers.d/init && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     /scripts/create-users.sh && \
-    cp /scripts/heif-convert.sh /usr/local/bin/heif-convert && \
     install -d -m 0777 -o 1000 -g 1000 \
       /photoprism/originals \
       /photoprism/import \

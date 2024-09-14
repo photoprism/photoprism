@@ -1,6 +1,7 @@
 package thumb
 
 import (
+	"errors"
 	"os"
 	"strings"
 	"testing"
@@ -16,21 +17,21 @@ func TestResampleOptions(t *testing.T) {
 		method, filter, format := ResampleOptions(ResamplePng, ResampleFillCenter, ResampleDefault)
 
 		assert.Equal(t, ResampleFillCenter, method)
-		assert.Equal(t, imaging.Lanczos.Support, filter.Support)
+		assert.Equal(t, imaging.Lanczos.Support, filter.Imaging().Support)
 		assert.Equal(t, fs.ImagePNG, format)
 	})
 	t.Run("ResampleNearestNeighbor, FillTopLeft", func(t *testing.T) {
 		method, filter, format := ResampleOptions(ResampleNearestNeighbor, ResampleFillTopLeft)
 
 		assert.Equal(t, ResampleFillTopLeft, method)
-		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Support)
+		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Imaging().Support)
 		assert.Equal(t, fs.ImageJPEG, format)
 	})
 	t.Run("ResampleNearestNeighbor, FillBottomRight", func(t *testing.T) {
 		method, filter, format := ResampleOptions(ResampleNearestNeighbor, ResampleFillBottomRight)
 
 		assert.Equal(t, ResampleFillBottomRight, method)
-		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Support)
+		assert.Equal(t, imaging.NearestNeighbor.Support, filter.Imaging().Support)
 		assert.Equal(t, fs.ImageJPEG, format)
 	})
 }
@@ -300,10 +301,9 @@ func TestFromFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, dst, fileName)
+		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
 	})
-
 	t.Run("orientation >1 ", func(t *testing.T) {
 		colorThumb := Sizes[Colors]
 		src := "testdata/example.gif"
@@ -317,10 +317,9 @@ func TestFromFile(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Truef(t, strings.HasSuffix(fileName, dst), fileName, dst)
+		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
 	})
-
 	t.Run("missing file", func(t *testing.T) {
 		colorThumb := Sizes[Colors]
 		src := "testdata/example.xxx"
@@ -356,11 +355,10 @@ func TestFromCache(t *testing.T) {
 
 		assert.Equal(t, "", fileName)
 
-		if err != ErrNotCached {
+		if !errors.Is(err, ErrNotCached) {
 			t.Fatal("ErrNotCached expected")
 		}
 	})
-
 	t.Run("missing file", func(t *testing.T) {
 		tile50 := Sizes[Tile50]
 		src := "testdata/example.xxx"
@@ -495,14 +493,13 @@ func TestCreate(t *testing.T) {
 		assert.Equal(t, 750, bounds.Max.X)
 		assert.Equal(t, 500, bounds.Max.Y)
 
-		resized, err := Create(img, dst, -5, tile500.Height, tile500.Options...)
+		_, err = Create(img, dst, -5, tile500.Height, tile500.Options...)
 
 		if err == nil {
 			t.Fatal("error expected")
 		}
 
 		assert.Equal(t, "thumb: width has an invalid value (-5)", err.Error())
-		t.Log(resized)
 	})
 	t.Run("invalid height", func(t *testing.T) {
 		tile500 := Sizes[Tile500]

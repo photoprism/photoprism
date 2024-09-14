@@ -5,9 +5,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/server/header"
-	"github.com/photoprism/photoprism/internal/ttl"
+	"github.com/photoprism/photoprism/internal/config/ttl"
+	"github.com/photoprism/photoprism/internal/server/limiter"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/header"
 )
 
 const (
@@ -83,11 +84,20 @@ func (c *Config) HttpCompression() string {
 	return strings.ToLower(strings.TrimSpace(c.options.HttpCompression))
 }
 
+// HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
+func (c *Config) HttpCachePublic() bool {
+	if c.options.HttpCachePublic {
+		return true
+	}
+
+	return c.options.CdnUrl != ""
+}
+
 // HttpCacheMaxAge returns the time in seconds until cached content expires.
 func (c *Config) HttpCacheMaxAge() ttl.Duration {
 	// Return default cache maxage?
 	if c.options.HttpCacheMaxAge < 1 {
-		return ttl.Default
+		return ttl.CacheDefault
 	} else if c.options.HttpCacheMaxAge > 31536000 {
 		return ttl.Duration(31536000)
 	}
@@ -100,7 +110,7 @@ func (c *Config) HttpCacheMaxAge() ttl.Duration {
 func (c *Config) HttpVideoMaxAge() ttl.Duration {
 	// Return default video maxage?
 	if c.options.HttpVideoMaxAge < 1 {
-		return ttl.Video
+		return ttl.CacheVideo
 	} else if c.options.HttpVideoMaxAge > 31536000 {
 		return ttl.Duration(31536000)
 	}
@@ -109,20 +119,11 @@ func (c *Config) HttpVideoMaxAge() ttl.Duration {
 	return ttl.Duration(c.options.HttpVideoMaxAge)
 }
 
-// HttpCachePublic checks whether static content may be cached by a CDN or caching proxy.
-func (c *Config) HttpCachePublic() bool {
-	if c.options.HttpCachePublic {
-		return true
-	}
-
-	return c.options.CdnUrl != ""
-}
-
 // HttpHost returns the built-in HTTP server host name or IP address (empty for all interfaces).
 func (c *Config) HttpHost() string {
-	// when unix socket used as host, make host as default value. or http client will act weirdly.
+	// Set http host to "0.0.0.0" if unix socket is used to serve requests.
 	if c.options.HttpHost == "" {
-		return "0.0.0.0"
+		return limiter.DefaultIP
 	}
 
 	return c.options.HttpHost
@@ -239,4 +240,9 @@ func (c *Config) BuildPath() string {
 // ImgPath returns the path to static image files.
 func (c *Config) ImgPath() string {
 	return filepath.Join(c.StaticPath(), "img")
+}
+
+// ThemePath returns the path to static theme files.
+func (c *Config) ThemePath() string {
+	return filepath.Join(c.ConfigPath(), "theme")
 }

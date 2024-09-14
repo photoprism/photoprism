@@ -24,5 +24,8 @@ GOBIN="/usr/local/bin" go install github.com/muesli/duf@latest
 echo "Installing muffet, a fast website link checker..."
 GOBIN="/usr/local/bin" go install github.com/raviqqe/muffet@latest
 
+echo "Installing petname, an RFC1178 implementation to generate pronounceable names..."
+GOBIN="/usr/local/bin" go install github.com/dustinkirkland/golang-petname/cmd/petname@latest
+
 # Create a symbolic link for "duf" so that it is used instead of the original "df".
 ln -sf /usr/local/bin/duf /usr/local/bin/df

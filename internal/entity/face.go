@@ -10,7 +10,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -29,7 +29,7 @@ type Face struct {
 	Collisions      int             `json:"Collisions" yaml:"Collisions,omitempty"`
 	CollisionRadius float64         `json:"CollisionRadius" yaml:"CollisionRadius,omitempty"`
 	EmbeddingJSON   json.RawMessage `gorm:"type:MEDIUMBLOB;" json:"-" yaml:"EmbeddingJSON,omitempty"`
-	embedding       face.Embedding  `gorm:"-"`
+	embedding       face.Embedding  `gorm:"-" yaml:"-"`
 	MatchedAt       *time.Time      `json:"MatchedAt" yaml:"MatchedAt,omitempty"`
 	CreatedAt       time.Time       `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt       time.Time       `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
@@ -114,8 +114,8 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 
 // Matched updates the match timestamp.
 func (m *Face) Matched() error {
-	m.MatchedAt = TimePointer()
-	return UnscopedDb().Model(m).UpdateColumns(Values{"MatchedAt": m.MatchedAt}).Error
+	m.MatchedAt = TimeStamp()
+	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Embedding returns parsed face embedding.
@@ -192,12 +192,12 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		log.Warnf("faces: %s has ambiguous subject %s with a similar face at dist %f with source %s", m.ID, SubjNames.Log(m.SubjUID), dist, SrcString(m.FaceSrc))
 
 		m.FaceKind = int(face.AmbiguousFace)
-		m.UpdatedAt = TimeStamp()
+		m.UpdatedAt = Now()
 		m.MatchedAt = &m.UpdatedAt
 		m.Collisions++
 		m.CollisionRadius = dist
 		UpdateFaces.Store(true)
-		return true, m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
+		return true, m.Updates(Map{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
@@ -205,7 +205,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		UpdateFaces.Store(true)
 	}
 
-	err = m.Updates(Values{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
+	err = m.Updates(Map{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
 
 	if err != nil {
 		return true, err
@@ -289,7 +289,7 @@ func (m *Face) SetSubjectUID(subjUid string) (err error) {
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
 		Where("marker_invalid = 0").
-		UpdateColumns(Values{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
+		UpdateColumns(Map{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
 		return err
 	}
 
@@ -354,7 +354,7 @@ func (m *Face) Delete() error {
 	// Remove face id from markers before deleting.
 	if err := Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
-		UpdateColumns(Values{"face_id": "", "face_dist": -1}).Error; err != nil {
+		UpdateColumns(Map{"face_id": "", "face_dist": -1}).Error; err != nil {
 		return err
 	}
 
@@ -410,7 +410,7 @@ func FirstOrCreateFace(m *Face) *Face {
 		}
 		return &result
 	} else {
-		log.Errorf("faces: failed adding %s (%s)", m.ID, err)
+		log.Errorf("faces: failed to add %s (%s)", m.ID, err)
 	}
 
 	return nil

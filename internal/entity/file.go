@@ -14,13 +14,13 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
-	"github.com/photoprism/photoprism/internal/customize"
-	"github.com/photoprism/photoprism/internal/face"
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/colors"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
-	"github.com/photoprism/photoprism/pkg/projection"
+	"github.com/photoprism/photoprism/pkg/media/colors"
+	"github.com/photoprism/photoprism/pkg/media/projection"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -74,13 +74,13 @@ type File struct {
 	FileHDR            bool          `gorm:"column:file_hdr;"  json:"HDR" yaml:"HDR,omitempty"`
 	FileWatermark      bool          `gorm:"column:file_watermark;"  json:"Watermark" yaml:"Watermark,omitempty"`
 	FileColorProfile   string        `gorm:"type:VARBINARY(64);" json:"ColorProfile,omitempty" yaml:"ColorProfile,omitempty"`
-	FileMainColor      string        `gorm:"type:VARBINARY(16);index;" json:"MainColor" yaml:"MainColor,omitempty"`
+	FileMainColor      string        `gorm:"type:VARBINARY(16);" json:"MainColor" yaml:"MainColor,omitempty"`
 	FileColors         string        `gorm:"type:VARBINARY(18);" json:"Colors" yaml:"Colors,omitempty"`
 	FileLuminance      string        `gorm:"type:VARBINARY(18);" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff           int           `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma         int16         `json:"Chroma" yaml:"Chroma,omitempty"`
 	FileSoftware       string        `gorm:"type:VARCHAR(64)" json:"Software" yaml:"Software,omitempty"`
-	FileError          string        `gorm:"type:VARBINARY(512)" json:"Error" yaml:"Error,omitempty"`
+	FileError          string        `gorm:"type:VARBINARY(512);index;" json:"Error" yaml:"Error,omitempty"`
 	ModTime            int64         `json:"ModTime" yaml:"-"`
 	CreatedAt          time.Time     `json:"CreatedAt" yaml:"-"`
 	CreatedIn          int64         `json:"CreatedIn" yaml:"-"`
@@ -362,7 +362,7 @@ func (m *File) Delete(permanently bool) error {
 
 // Purge removes a file from the index by marking it as missing.
 func (m *File) Purge() error {
-	deletedAt := TimeStamp()
+	deletedAt := Now()
 	m.FileMissing = true
 	m.FilePrimary = false
 	m.DeletedAt = &deletedAt
@@ -446,7 +446,7 @@ func (m *File) Save() error {
 	return m.ResolvePrimary()
 }
 
-// UpdateVideoInfos updates missing video metadata from the primary image.
+// UpdateVideoInfos updated related video files so they are properly grouped with the primary image in search results.
 // see https://github.com/photoprism/photoprism/pull/3588#issuecomment-1683429455
 func (m *File) UpdateVideoInfos() error {
 	if m.PhotoID <= 0 {
@@ -469,7 +469,7 @@ func (m *File) UpdateVideoInfos() error {
 
 	if err := deepcopier.Copy(&appearance).From(m); err != nil {
 		return err
-	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1 AND file_diff <= 0", m.PhotoID).Updates(appearance).Error; err != nil {
+	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1", m.PhotoID).Updates(appearance).Error; err != nil {
 		return err
 	}
 
@@ -683,7 +683,7 @@ func (m *File) SetDuration(d time.Duration) {
 
 // Bitrate returns the average bitrate in MBit/s if the file has a duration.
 func (m *File) Bitrate() float64 {
-	// Make sure size and duration have a positive value.
+	// Return 0 if file size or video duration are unknown.
 	if m.FileSize <= 0 || m.FileDuration <= 0 {
 		return 0
 	}

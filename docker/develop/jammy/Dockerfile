@@ -1,7 +1,7 @@
 #### Base Image: Ubuntu 22.04 LTS (Jammy Jellyfish)
 FROM ubuntu:jammy
 
-# Copyright © 2018 - 2023 PhotoPrism UG. All rights reserved.
+# Copyright © 2018 - 2024 PhotoPrism UG. All rights reserved.
 #
 # Questions? Email us at hello@photoprism.app or visit our website to learn
 # more about our team, products and services: https://www.photoprism.app/
@@ -25,12 +25,13 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     DOCKER_TAG=$BUILD_TAG \
     DOCKER_ENV="develop" \
     NODE_ENV="production" \
-    PS1="\u@$DOCKER_TAG:\w\$ " \
+    PS1="\u@$BUILD_TAG:\w\$ " \
     PATH="/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin:/scripts:/usr/local/go/bin:/go/bin:/opt/photoprism/bin" \
     LD_LIBRARY_PATH="/usr/local/lib:/usr/lib" \
     DEBIAN_FRONTEND="noninteractive" \
     TMPDIR="/tmp" \
     TF_CPP_MIN_LOG_LEVEL="0" \
+    MALLOC_ARENA_MAX="4" \
     GOPATH="/go" \
     GOBIN="/usr/local/bin" \
     GO111MODULE="on" \
@@ -48,21 +49,21 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/80forceyes && \
     echo 'APT::Get::Fix-Missing "true";' > /etc/apt/apt.conf.d/80fixmissing && \
     echo 'force-confold' > /etc/dpkg/dpkg.cfg.d/force-confold && \
-    apt-get update && apt-get -qq upgrade && \
+    apt-get update && apt-get -qq dist-upgrade && \
     apt-get -qq install \
         libc6 ca-certificates bash sudo nano avahi-utils jq lsof lshw \
         exiftool sqlite3 tzdata gpg make zip unzip wget curl rsync \
         imagemagick libvips-dev rawtherapee ffmpeg libavcodec-extra x264 x265 libde265-dev \
-        libaom3 libvpx7 libwebm1 libjpeg8 libmatroska7 libdvdread8 libebml5 libgav1-bin libatomic1 \
+        libaom-dev libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libebml5 libgav1-bin libatomic1 \
     && \
     apt-get -qq install \
         apt-utils pkg-config software-properties-common \
         build-essential gcc g++ git gettext davfs2 chrpath apache2-utils \
-        autoconf automake cmake libtool libjpeg8-dev \
-        libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libpng-dev libxft-dev \
+        autoconf automake cmake libtool libjpeg-dev libpng-dev libwebp-dev libavcodec-dev \
+        libx264-dev libx265-dev libaom-dev libvpx-dev libwebm-dev libxft-dev \
         libc6-dev libhdf5-serial-dev libzmq3-dev libssl-dev libnss3 \
         libfreetype6 libfreetype6-dev libfontconfig1 libfontconfig1-dev fonts-roboto \
-        librsvg2-bin ghostscript gsfonts \
+        librsvg2-bin ghostscript gsfonts pdf2svg ps2eps \
     && \
     /scripts/install-nodejs.sh && \
     /scripts/install-mariadb.sh mariadb-client && \
@@ -70,11 +71,14 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-darktable.sh && \
     /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \
-    /scripts/install-go.sh && \
+    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
+    mkdir -p /etc/skel/.config/go && \
+    echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
+    cp -r /etc/skel/.config /root/.config && \
+    GOLANG_VERSION=go1.22.7 /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \
-    echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     cp /etc/skel/.bashrc /root/.bashrc && \
     cp /scripts/convert/policy.xml /etc/ImageMagick-6/policy.xml && \
     /scripts/create-users.sh && \

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/customize"
+	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -45,13 +45,13 @@ func CreateUserSettings(user *User) error {
 		return fmt.Errorf("user is nil")
 	}
 
-	if user.UID() == "" {
+	if user.GetUID() == "" {
 		return fmt.Errorf("empty user uid")
 	}
 
 	user.UserSettings = &UserSettings{}
 
-	if err := Db().Where("user_uid = ?", user.UID()).First(user.UserSettings).Error; err == nil {
+	if err := Db().Where("user_uid = ?", user.GetUID()).First(user.UserSettings).Error; err == nil {
 		return nil
 	}
 

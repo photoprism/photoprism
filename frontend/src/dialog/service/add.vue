@@ -13,39 +13,25 @@
       <v-card-text class="pb-0 pt-0 px-2">
         <v-layout row wrap>
           <v-flex xs12 class="pa-2">
-            <v-text-field
-                v-model="model.AccURL"
-                hide-details autofocus box flat
-                :label="$gettext('Service URL')"
-                placeholder="https://www.example.com/"
-                color="secondary-dark"
-                autocorrect="off"
-                autocapitalize="none"
-            ></v-text-field>
+            <v-text-field v-model="model.AccURL" hide-details autofocus box flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
+          </v-flex>
+          <v-flex xs12 sm6 class="pa-2">
+            <v-text-field v-model="model.AccUser" hide-details box flat :label="$gettext('Username')" placeholder="optional" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
           </v-flex>
           <v-flex xs12 sm6 class="pa-2">
             <v-text-field
-                v-model="model.AccUser"
-                hide-details box flat
-                :label="$gettext('Username')"
-                placeholder="optional"
-                color="secondary-dark"
-                autocorrect="off"
-                autocapitalize="none"
-            ></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
-            <v-text-field
-                v-model="model.AccPass"
-                hide-details box flat
-                browser-autocomplete="new-password"
-                autocapitalize="none"
-                :label="$gettext('Password')"
-                placeholder="optional"
-                color="secondary-dark"
-                :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-                :type="showPassword ? 'text' : 'password'"
-                @click:append="showPassword = !showPassword"
+              v-model="model.AccPass"
+              hide-details
+              box
+              flat
+              browser-autocomplete="new-password"
+              autocapitalize="none"
+              :label="$gettext('Password')"
+              placeholder="optional"
+              color="secondary-dark"
+              :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+              :type="showPassword ? 'text' : 'password'"
+              @click:append="showPassword = !showPassword"
             ></v-text-field>
           </v-flex>
         </v-layout>
@@ -57,12 +43,10 @@
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
           </v-flex>
           <v-flex xs12 text-xs-right class="pt-2">
-            <v-btn depressed color="secondary-light" class="action-cancel ml-2"
-                   @click.stop="cancel">
+            <v-btn depressed color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
               <span>{{ label.cancel }}</span>
             </v-btn>
-            <v-btn depressed dark color="primary-button" class="action-confirm compact mr-0"
-                   @click.stop="confirm">
+            <v-btn depressed dark color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">
               <span>{{ label.confirm }}</span>
             </v-btn>
           </v-flex>
@@ -76,7 +60,7 @@ import Service from "model/service";
 import * as options from "options/options";
 
 export default {
-  name: 'PAccountAddDialog',
+  name: "PAccountAddDialog",
   props: {
     show: Boolean,
   },
@@ -90,16 +74,15 @@ export default {
       label: {
         cancel: this.$gettext("Cancel"),
         confirm: this.$gettext("Connect"),
-      }
+      },
     };
   },
   watch: {
-    show: function () {
-    }
+    show: function () {},
   },
   methods: {
     cancel() {
-      this.$emit('cancel');
+      this.$emit("cancel");
     },
     confirm() {
       this.loading = true;
@@ -107,7 +90,7 @@ export default {
       this.model.save().then((a) => {
         this.loading = false;
         this.$notify.success(this.$gettext("Account created"));
-        this.$emit('confirm', a.UID);
+        this.$emit("confirm", a.UID);
       });
     },
   },

@@ -12,10 +12,11 @@ func TestFit(t *testing.T) {
 	assert.Equal(t, Sizes[Fit720], Fit(54, 453))
 	assert.Equal(t, Sizes[Fit1280], Fit(1000, 1000))
 	assert.Equal(t, Sizes[Fit1280], Fit(1250, 1000))
-	assert.Equal(t, Sizes[Fit2048], Fit(1300, 1300))
-	assert.Equal(t, Sizes[Fit2048], Fit(1600, 1600))
+	assert.Equal(t, Sizes[Fit1920], Fit(1300, 1200))
+	assert.Equal(t, Sizes[Fit2560], Fit(1300, 1300))
+	assert.Equal(t, Sizes[Fit2560], Fit(1600, 1600))
 	assert.Equal(t, Sizes[Fit4096], Fit(1000, 3000))
-	assert.Equal(t, Sizes[Fit3840], Fit(2300, 2000))
+	assert.Equal(t, Sizes[Fit4096], Fit(2300, 2000))
 	assert.Equal(t, Sizes[Fit7680], Fit(5000, 5000))
 }
 

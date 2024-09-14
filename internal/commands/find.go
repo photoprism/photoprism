@@ -8,10 +8,10 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/internal/entity/search"
+	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/search"
-	"github.com/photoprism/photoprism/pkg/report"
-	"github.com/photoprism/photoprism/pkg/sortby"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // FindCommand configures the command name, flags, and action.
@@ -38,7 +38,6 @@ func findAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	frm := form.SearchPhotos{

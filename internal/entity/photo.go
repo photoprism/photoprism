@@ -12,7 +12,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/ulule/deepcopier"
 
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -31,19 +31,6 @@ var MetadataUpdateInterval = 24 * 3 * time.Hour   // 3 Days
 var MetadataEstimateInterval = 24 * 7 * time.Hour // 7 Days
 
 var photoMutex = sync.Mutex{}
-
-type Photos []Photo
-
-// UIDs returns a slice of photo UIDs.
-func (m Photos) UIDs() []string {
-	result := make([]string, len(m))
-
-	for i, el := range m {
-		result[i] = el.PhotoUID
-	}
-
-	return result
-}
 
 // MapKey returns a key referencing time and location for indexing.
 func MapKey(takenAt time.Time, cellId string) string {
@@ -206,7 +193,7 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 		log.Errorf("photo: %s %s while indexing keywords", model.String(), err.Error())
 	}
 
-	edited := TimeStamp()
+	edited := Now()
 	model.EditedAt = &edited
 	model.PhotoQuality = model.QualityScore()
 
@@ -222,8 +209,40 @@ func SavePhotoForm(model Photo, form form.Photo) error {
 	return nil
 }
 
+// GetID returns the numeric entity ID.
+func (m *Photo) GetID() uint {
+	return m.ID
+}
+
+// HasID checks if the photo has an id and uid assigned to it.
+func (m *Photo) HasID() bool {
+	if m == nil {
+		return false
+	}
+
+	return m.ID > 0 && m.HasUID()
+}
+
+// HasUID checks if the photo has a valid UID.
+func (m *Photo) HasUID() bool {
+	if m == nil {
+		return false
+	}
+
+	return rnd.IsUID(m.PhotoUID, PhotoUID)
+}
+
+// GetUID returns the unique entity id.
+func (m *Photo) GetUID() string {
+	return m.PhotoUID
+}
+
 // String returns the id or name as string.
 func (m *Photo) String() string {
+	if m == nil {
+		return "Photo<nil>"
+	}
+
 	if m.PhotoName != "" {
 		return clean.Log(path.Join(m.PhotoPath, m.PhotoName))
 	} else if m.OriginalName != "" {
@@ -234,7 +253,7 @@ func (m *Photo) String() string {
 		return fmt.Sprintf("id %d", m.ID)
 	}
 
-	return "(unknown)"
+	return "*Photo"
 }
 
 // FirstOrCreate fetches an existing row from the database or inserts a new one.
@@ -288,6 +307,7 @@ func FindPhoto(find Photo) *Photo {
 
 	m := Photo{}
 
+	// Preload related entities if a matching record is found.
 	stmt := UnscopedDb().
 		Preload("Labels", func(db *gorm.DB) *gorm.DB {
 			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
@@ -300,14 +320,14 @@ func FindPhoto(find Photo) *Photo {
 		Preload("Cell").
 		Preload("Cell.Place")
 
-	// Search for UID.
+	// Find photo by uid.
 	if rnd.IsUID(find.PhotoUID, PhotoUID) {
 		if stmt.First(&m, "photo_uid = ?", find.PhotoUID).Error == nil {
 			return &m
 		}
 	}
 
-	// Search for ID.
+	// Find photo by id.
 	if find.ID > 0 {
 		if stmt.First(&m, "id = ?", find.ID).Error == nil {
 			return &m
@@ -379,7 +399,7 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
 func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
-		now := TimeStamp()
+		now := Now()
 
 		if err := scope.SetColumn("TakenAt", now); err != nil {
 			return err
@@ -395,13 +415,14 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	m.PhotoUID = rnd.GenerateUID(PhotoUID)
+
 	return scope.SetColumn("PhotoUID", m.PhotoUID)
 }
 
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
 func (m *Photo) BeforeSave(scope *gorm.Scope) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
-		now := TimeStamp()
+		now := Now()
 
 		if err := scope.SetColumn("TakenAt", now); err != nil {
 			return err
@@ -525,11 +546,6 @@ func (m *Photo) PreloadMany() {
 	m.PreloadAlbums()
 }
 
-// HasID tests if the photo has a database id and uid.
-func (m *Photo) HasID() bool {
-	return m.ID > 0 && m.PhotoUID != ""
-}
-
 // NoCameraSerial checks if the photo has no CameraSerial
 func (m *Photo) NoCameraSerial() bool {
 	return m.CameraSerial == ""
@@ -598,7 +614,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 
 		if err := labelEntity.UpdateClassify(classifyLabel); err != nil {
-			log.Errorf("index: failed updating label %s (%s)", clean.Log(classifyLabel.Title()), err)
+			log.Errorf("index: failed to update label %s (%s)", clean.Log(classifyLabel.Title()), err)
 		}
 
 		photoLabel := FirstOrCreatePhotoLabel(NewPhotoLabel(m.ID, labelEntity.ID, classifyLabel.Uncertainty, classifyLabel.Source))
@@ -640,7 +656,7 @@ func (m *Photo) SetDescription(desc, source string) {
 // SetCamera updates the camera.
 func (m *Photo) SetCamera(camera *Camera, source string) {
 	if camera == nil {
-		log.Warnf("photo: %s failed updating camera from source %s", m.String(), SrcString(source))
+		log.Warnf("photo: %s failed to update camera from source %s", m.String(), SrcString(source))
 		return
 	}
 
@@ -664,7 +680,7 @@ func (m *Photo) SetCamera(camera *Camera, source string) {
 // SetLens updates the lens.
 func (m *Photo) SetLens(lens *Lens, source string) {
 	if lens == nil {
-		log.Warnf("photo: %s failed updating lens from source %s", m.String(), SrcString(source))
+		log.Warnf("photo: %s failed to update lens from source %s", m.String(), SrcString(source))
 		return
 	}
 
@@ -684,18 +700,22 @@ func (m *Photo) SetLens(lens *Lens, source string) {
 func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure, source string) {
 	hasPriority := SrcPriority[source] >= SrcPriority[m.CameraSrc]
 
-	if focalLength > 0 && (hasPriority || m.PhotoFocalLength <= 0) {
+	// Set focal length.
+	if focalLength > 0 && focalLength <= 128000 && (hasPriority || m.PhotoFocalLength <= 0) {
 		m.PhotoFocalLength = focalLength
 	}
 
-	if fNumber > 0 && (hasPriority || m.PhotoFNumber <= 0) {
+	// Set F number.
+	if fNumber > 0 && fNumber <= 256 && (hasPriority || m.PhotoFNumber <= 0) {
 		m.PhotoFNumber = fNumber
 	}
 
-	if iso > 0 && (hasPriority || m.PhotoIso <= 0) {
+	// Set ISO number.
+	if iso > 0 && iso <= 128000 && (hasPriority || m.PhotoIso <= 0) {
 		m.PhotoIso = iso
 	}
 
+	// Set exposure time.
 	if exposure != "" && (hasPriority || m.PhotoExposure == "") {
 		m.PhotoExposure = exposure
 	}
@@ -725,11 +745,17 @@ func (m *Photo) AllFiles() (files Files) {
 
 // Archive removes the photo from albums and flags it as archived (soft delete).
 func (m *Photo) Archive() error {
-	deletedAt := TimeStamp()
+	if !m.HasID() {
+		return fmt.Errorf("photo has no id")
+	} else if m.DeletedAt != nil {
+		return nil
+	}
+
+	deletedAt := Now()
 
 	if err := Db().Model(&PhotoAlbum{}).Where("photo_uid = ?", m.PhotoUID).UpdateColumn("hidden", true).Error; err != nil {
 		return err
-	} else if err := m.Update("deleted_at", deletedAt); err != nil {
+	} else if err = m.Update("deleted_at", deletedAt); err != nil {
 		return err
 	}
 
@@ -738,8 +764,14 @@ func (m *Photo) Archive() error {
 	return nil
 }
 
-// Restore removes the archive flag (undo soft delete).
+// Restore removes the photo from the archive (reverses soft delete).
 func (m *Photo) Restore() error {
+	if !m.HasID() {
+		return fmt.Errorf("photo has no id")
+	} else if m.DeletedAt == nil {
+		return nil
+	}
+
 	if err := m.Update("deleted_at", gorm.Expr("NULL")); err != nil {
 		return err
 	}
@@ -751,7 +783,7 @@ func (m *Photo) Restore() error {
 
 // Delete deletes the photo from the index.
 func (m *Photo) Delete(permanently bool) (files Files, err error) {
-	if m.ID < 1 || m.PhotoUID == "" {
+	if !m.HasID() {
 		return files, fmt.Errorf("invalid photo id %d / uid %s", m.ID, clean.Log(m.PhotoUID))
 	}
 
@@ -767,7 +799,7 @@ func (m *Photo) Delete(permanently bool) (files Files, err error) {
 		}
 	}
 
-	return files, m.Updates(map[string]interface{}{"DeletedAt": TimeStamp(), "PhotoQuality": -1})
+	return files, m.Updates(map[string]interface{}{"DeletedAt": Now(), "PhotoQuality": -1})
 }
 
 // DeletePermanently permanently removes a photo from the index.
@@ -828,7 +860,7 @@ func (m *Photo) React(user *User, reaction react.Emoji) error {
 		return m.UnReact(user)
 	}
 
-	return NewReaction(m.PhotoUID, user.UID()).React(reaction).Save()
+	return NewReaction(m.PhotoUID, user.GetUID()).React(reaction).Save()
 }
 
 // UnReact deletes a previous user reaction, if any.
@@ -837,7 +869,7 @@ func (m *Photo) UnReact(user *User) error {
 		return fmt.Errorf("unknown user")
 	}
 
-	if r := FindReaction(m.PhotoUID, user.UID()); r != nil {
+	if r := FindReaction(m.PhotoUID, user.GetUID()); r != nil {
 		return r.Delete()
 	}
 
@@ -878,14 +910,32 @@ func (m *Photo) SetStack(stack int8) {
 	}
 }
 
-// Approve approves a photo in review.
+// Approved checks if the photo is not in review.
+func (m *Photo) Approved() bool {
+	if !m.HasID() {
+		return false
+	} else if m.PhotoQuality >= 3 || m.PhotoType != MediaImage || m.EditedAt != nil {
+		return true
+	}
+
+	return false
+}
+
+// Approve approves the photo if it is in review.
 func (m *Photo) Approve() error {
-	if m.PhotoQuality >= 3 {
+	if !m.HasID() {
+		return fmt.Errorf("photo has no id")
+	} else if m.PhotoQuality >= 3 {
 		// Nothing to do.
 		return nil
 	}
 
-	edited := TimeStamp()
+	// Restore photo if archived.
+	if err := m.Restore(); err != nil {
+		return err
+	}
+
+	edited := Now()
 	m.EditedAt = &edited
 	m.PhotoQuality = m.QualityScore()
 

@@ -10,24 +10,24 @@ type FileExtensions map[string]Type
 
 // Extensions contains the filename extensions of file formats known to PhotoPrism.
 var Extensions = FileExtensions{
-	".jpg":      ImageJPEG,
+	ExtJPEG:     ImageJPEG, // .jpg
 	".jpeg":     ImageJPEG,
 	".jpe":      ImageJPEG,
 	".jif":      ImageJPEG,
 	".jfif":     ImageJPEG,
 	".jfi":      ImageJPEG,
-	".thm":      ImageJPEG,
 	".jxl":      ImageJPEGXL,
+	ExtTHM:      ImageThumb,
 	".tif":      ImageTIFF,
 	".tiff":     ImageTIFF,
 	".psd":      ImagePSD,
-	".png":      ImagePNG,
+	ExtPNG:      ImagePNG, // .png
 	".apng":     ImagePNG,
 	".pnga":     ImagePNG,
 	".pn":       ImagePNG,
 	".gif":      ImageGIF,
 	".bmp":      ImageBMP,
-	".dng":      ImageDNG,
+	ExtDNG:      ImageDNG, // .dng
 	".avif":     ImageAVIF,
 	".avis":     ImageAVIFS,
 	".avifs":    ImageAVIFS,
@@ -80,13 +80,14 @@ var Extensions = FileExtensions{
 	".srw":      ImageRaw,
 	".sr2":      ImageRaw,
 	".x3f":      ImageRaw,
-	".hevc":     VideoHEVC,
+	ExtAVC:      VideoAVC,  // .avc
+	ExtHEVC:     VideoHEVC, // .hevc
+	ExtVVC:      VideoVVC,  // .vvc
+	ExtEVC:      VideoEVC,  // .evc
 	".mov":      VideoMOV,
 	".qt":       VideoMOV,
 	".avi":      VideoAVI,
 	".av1":      VideoAV1,
-	".avc":      VideoAVC,
-	".vvc":      VideoVVC,
 	".mpg":      VideoMPG,
 	".mpeg":     VideoMPG,
 	".mjpg":     VideoMJPG,
@@ -94,8 +95,9 @@ var Extensions = FileExtensions{
 	".mp2":      VideoMP2,
 	".mpv":      VideoMP2,
 	".mp":       VideoMP4,
-	".mp4":      VideoMP4,
+	ExtMP4:      VideoMP4, // .mp4
 	".m4v":      VideoM4V,
+	".mxf":      VideoMXF,
 	".3gp":      Video3GP,
 	".3g2":      Video3G2,
 	".flv":      VideoFlash,
@@ -125,10 +127,11 @@ var Extensions = FileExtensions{
 	".xmp":      SidecarXMP,
 	".aae":      SidecarAAE,
 	".xml":      SidecarXML,
-	".yml":      SidecarYAML,
+	ExtYAML:     SidecarYAML, // .yml
 	".yaml":     SidecarYAML,
 	".json":     SidecarJSON,
 	".txt":      SidecarText,
+	".nfo":      SidecarInfo,
 	".md":       SidecarMarkdown,
 	".markdown": SidecarMarkdown,
 }

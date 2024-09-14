@@ -7,13 +7,13 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
-	"github.com/photoprism/photoprism/internal/remote"
-	"github.com/photoprism/photoprism/internal/remote/webdav"
-	"github.com/photoprism/photoprism/internal/search"
+	"github.com/photoprism/photoprism/internal/service"
+	"github.com/photoprism/photoprism/internal/service/webdav"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -29,8 +29,8 @@ func NewShare(conf *config.Config) *Share {
 	return &Share{conf: conf}
 }
 
-// logError logs an error message if err is not nil.
-func (w *Share) logError(err error) {
+// logErr logs an error message if err is not nil.
+func (w *Share) logErr(err error) {
 	if err != nil {
 		log.Errorf("share: %s", err.Error())
 	}
@@ -64,14 +64,14 @@ func (w *Share) Start() (err error) {
 			return nil
 		}
 
-		if a.AccType != remote.ServiceWebDAV {
+		if a.AccType != service.WebDAV {
 			continue
 		}
 
 		files, err := query.FileShares(a.ID, entity.FileShareNew)
 
 		if err != nil {
-			w.logError(err)
+			w.logErr(err)
 			continue
 		}
 
@@ -86,7 +86,7 @@ func (w *Share) Start() (err error) {
 			if s, ok := thumb.Sizes[thumb.Name(a.ShareSize)]; ok {
 				size = s
 			} else {
-				size = thumb.Sizes[thumb.Fit2048]
+				size = thumb.SizeFit1920
 			}
 		}
 
@@ -107,7 +107,7 @@ func (w *Share) Start() (err error) {
 				file.Status = entity.FileShareError
 				file.Error = "file not found"
 				file.Errors++
-				w.logError(entity.Db().Save(&file).Error)
+				w.logErr(entity.Db().Save(&file).Error)
 				continue
 			}
 
@@ -124,13 +124,13 @@ func (w *Share) Start() (err error) {
 				srcFileName, err = thumb.FromFile(srcFileName, file.File.FileHash, w.conf.ThumbCachePath(), size.Width, size.Height, file.File.FileOrientation, size.Options...)
 
 				if err != nil {
-					w.logError(err)
+					w.logErr(err)
 					continue
 				}
 			}
 
 			if err := client.Upload(srcFileName, file.RemoteName); err != nil {
-				w.logError(err)
+				w.logErr(err)
 				file.Errors++
 				file.Error = err.Error()
 			} else {
@@ -149,7 +149,7 @@ func (w *Share) Start() (err error) {
 				return nil
 			}
 
-			w.logError(entity.Db().Save(&file).Error)
+			w.logErr(entity.Db().Save(&file).Error)
 		}
 	}
 
@@ -159,14 +159,14 @@ func (w *Share) Start() (err error) {
 			return nil
 		}
 
-		if a.AccType != remote.ServiceWebDAV {
+		if a.AccType != service.WebDAV {
 			continue
 		}
 
 		files, err := query.ExpiredFileShares(a)
 
 		if err != nil {
-			w.logError(err)
+			w.logErr(err)
 			continue
 		}
 
@@ -197,7 +197,7 @@ func (w *Share) Start() (err error) {
 			}
 
 			if err := entity.Db().Save(&file).Error; err != nil {
-				w.logError(err)
+				w.logErr(err)
 			}
 		}
 	}

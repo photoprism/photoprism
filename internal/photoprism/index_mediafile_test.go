@@ -5,11 +5,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/face"
-	"github.com/photoprism/photoprism/internal/nsfw"
 )
 
 func TestIndex_MediaFile(t *testing.T) {
@@ -72,7 +72,7 @@ func TestIndex_MediaFile(t *testing.T) {
 		}
 		assert.Equal(t, "", mediaFile.metaData.Title)
 
-		result := ind.UserMediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "", entity.Admin.UID())
+		result := ind.UserMediaFile(mediaFile, indexOpt, "blue-go-video.mp4", "", entity.Admin.GetUID())
 
 		assert.Equal(t, "Blue Gopher", mediaFile.metaData.Title)
 		assert.Equal(t, IndexStatus("added"), result.Status)

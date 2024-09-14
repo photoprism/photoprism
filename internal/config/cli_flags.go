@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/urfave/cli"
 
+	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/list"
 )
 
@@ -50,7 +51,25 @@ func (f CliFlags) Remove(names []string) (result CliFlags) {
 	return result
 }
 
-// Insert inserts command flags, if possible after name.
+// Replace replaces an existing command flag by name and returns true if successful.
+func (f CliFlags) Replace(name string, replacement CliFlag) CliFlags {
+	done := false
+
+	for i, flag := range f {
+		if !done && flag.Name() == name {
+			f[i] = replacement
+			done = true
+		}
+	}
+
+	if !done {
+		log.Warnf("config: failed to replace cli flag %s", clean.Log(name))
+	}
+
+	return f
+}
+
+// Insert inserts command flags, if possible after the flag specified by name.
 func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
 	result = make(CliFlags, 0, len(f)+len(insert))
 
@@ -66,6 +85,30 @@ func (f CliFlags) Insert(name string, insert []CliFlag) (result CliFlags) {
 	}
 
 	if !done {
+		log.Warnf("config: failed to insert cli flags after %s", clean.Log(name))
+		result = append(result, insert...)
+	}
+
+	return result
+}
+
+// InsertBefore inserts command flags, if possible before the flag specified by name.
+func (f CliFlags) InsertBefore(name string, insert []CliFlag) (result CliFlags) {
+	result = make(CliFlags, 0, len(f)+len(insert))
+
+	done := false
+
+	for _, flag := range f {
+		if !done && flag.Name() == name {
+			result = append(result, insert...)
+			done = true
+		}
+
+		result = append(result, flag)
+	}
+
+	if !done {
+		log.Warnf("config: failed to insert cli flags before %s", clean.Log(name))
 		result = append(result, insert...)
 	}
 
@@ -78,5 +121,4 @@ func (f CliFlags) Prepend(el []CliFlag) (result CliFlags) {
 
 	result = append(result, el...)
 	return append(result, f...)
-
 }

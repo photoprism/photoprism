@@ -2,20 +2,37 @@ import { timeZonesNames } from "@vvo/tzdb";
 import { $gettext } from "common/vm";
 import { Info } from "luxon";
 import { config } from "app/session";
-import {
-  MediaImage,
-  MediaLive,
-  MediaVideo,
-  MediaAnimated,
-  MediaVector,
-  MediaRaw,
-} from "model/photo";
+import { MediaImage, MediaLive, MediaVideo, MediaAnimated, MediaVector, MediaRaw } from "model/photo";
 
-export const TimeZones = () =>
-  [
-    { ID: "UTC", Name: "UTC" },
-    { ID: "", Name: $gettext("Local Time") },
-  ].concat(timeZonesNames);
+export const UtcOffsets = [
+  { ID: "UTC-12", Name: "UTC-12:00" },
+  { ID: "UTC-11", Name: "UTC-11:00" },
+  { ID: "UTC-10", Name: "UTC-10:00" },
+  { ID: "UTC-9", Name: "UTC-09:00" },
+  { ID: "UTC-8", Name: "UTC-08:00" },
+  { ID: "UTC-7", Name: "UTC-07:00" },
+  { ID: "UTC-6", Name: "UTC-06:00" },
+  { ID: "UTC-5", Name: "UTC-05:00" },
+  { ID: "UTC-4", Name: "UTC-04:00" },
+  { ID: "UTC-3", Name: "UTC-03:00" },
+  { ID: "UTC-2", Name: "UTC-02:00" },
+  { ID: "UTC-1", Name: "UTC-01:00" },
+  { ID: "UTC", Name: "UTC" },
+  { ID: "UTC+1", Name: "UTC+01:00" },
+  { ID: "UTC+2", Name: "UTC+02:00" },
+  { ID: "UTC+3", Name: "UTC+03:00" },
+  { ID: "UTC+4", Name: "UTC+04:00" },
+  { ID: "UTC+5", Name: "UTC+05:00" },
+  { ID: "UTC+6", Name: "UTC+06:00" },
+  { ID: "UTC+7", Name: "UTC+07:00" },
+  { ID: "UTC+8", Name: "UTC+08:00" },
+  { ID: "UTC+9", Name: "UTC+09:00" },
+  { ID: "UTC+10", Name: "UTC+10:00" },
+  { ID: "UTC+11", Name: "UTC+11:00" },
+  { ID: "UTC+12", Name: "UTC+12:00" },
+];
+
+export const TimeZones = () => [{ ID: "", Name: $gettext("Local Time") }].concat(UtcOffsets).concat(timeZonesNames);
 
 export const Days = () => {
   let result = [];
@@ -134,6 +151,10 @@ export const Languages = () => [
     value: "fr",
   },
   {
+    text: "Gaeilge", // Irish
+    value: "ga",
+  },
+  {
     text: "Ελληνικά", // Greek
     value: "el",
   },
@@ -247,6 +268,10 @@ export const Languages = () => [
   {
     text: "한국어", // Korean
     value: "ko",
+  },
+  {
+    text: "Tiếng Việt", // Vietnamese
+    value: "vi",
   },
   {
     text: "हिन्दी", // Hindi

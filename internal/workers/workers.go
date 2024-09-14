@@ -1,7 +1,7 @@
 /*
 Package workers provides index, sync, and metadata optimization background workers.
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -27,6 +27,8 @@ package workers
 import (
 	"time"
 
+	"github.com/go-co-op/gocron/v2"
+
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -36,11 +38,32 @@ import (
 var log = event.Log
 var stop = make(chan bool, 1)
 
-// Start runs the metadata, share & sync background workers at regular intervals.
+// Start starts the execution of background workers and scheduled tasks based on the current configuration.
 func Start(conf *config.Config) {
+	if scheduler, err := gocron.NewScheduler(gocron.WithLocation(conf.DefaultTimezone())); err != nil {
+		log.Errorf("scheduler: %s (start)", err)
+		return
+	} else if scheduler != nil {
+		Scheduler = scheduler
+
+		// Schedule backup job.
+		if err = NewJob("backup", conf.BackupSchedule(), NewBackup(conf).StartScheduled); err != nil {
+			log.Errorf("scheduler: %s (backup)", err)
+		}
+
+		// Schedule indexing job.
+		if err = NewJob("index", conf.IndexSchedule(), NewIndex(conf).StartScheduled); err != nil {
+			log.Errorf("scheduler: %s (index)", err)
+		}
+
+		// Start the scheduler.
+		Scheduler.Start()
+	}
+
+	// Start the other background workers.
 	interval := conf.WakeupInterval()
 
-	// Disabled in safe mode?
+	// Other workers can be disabled in safe mode by setting the execution interval to a value < 1.
 	if interval.Seconds() <= 0 {
 		log.Warnf("config: disabled metadata, share & sync background workers")
 		return
@@ -52,7 +75,6 @@ func Start(conf *config.Config) {
 		for {
 			select {
 			case <-stop:
-				log.Info("shutting down workers")
 				ticker.Stop()
 				mutex.MetaWorker.Cancel()
 				mutex.ShareWorker.Cancel()
@@ -67,14 +89,22 @@ func Start(conf *config.Config) {
 	}()
 }
 
-// Stop shuts down all service workers.
-func Stop() {
+// Shutdown stops the background workers and scheduled tasks.
+func Shutdown() {
+	log.Info("shutting down workers")
+
 	stop <- true
+
+	if Scheduler != nil {
+		if err := Scheduler.Shutdown(); err != nil {
+			log.Warnf("scheduler: %s (shutdown)", err)
+		}
+	}
 }
 
 // RunMeta runs the metadata worker once.
 func RunMeta(conf *config.Config) {
-	if !mutex.IndexWorkersRunning() {
+	if !mutex.WorkersRunning() {
 		go func() {
 			worker := NewMeta(conf)
 

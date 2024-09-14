@@ -111,6 +111,22 @@ func TestStripKnownExt(t *testing.T) {
 		result := StripKnownExt("my/jpg/avi.foo.bar.baz")
 		assert.Equal(t, "my/jpg/avi.foo.bar.baz", result)
 	})
+	t.Run("eps.heic", func(t *testing.T) {
+		result := StripKnownExt("eps.heic")
+		assert.Equal(t, "eps", result)
+	})
+	t.Run("jpg.eps.heic", func(t *testing.T) {
+		result := StripKnownExt("jpg.eps.heic")
+		assert.Equal(t, "jpg", result)
+	})
+	t.Run("eps.jpg.heic", func(t *testing.T) {
+		result := StripKnownExt("eps.jpg.heic")
+		assert.Equal(t, "eps", result)
+	})
+	t.Run("/testdata/eps.heic", func(t *testing.T) {
+		result := StripKnownExt("/testdata/eps.heic")
+		assert.Equal(t, "/testdata/eps", result)
+	})
 }
 
 func TestExt(t *testing.T) {

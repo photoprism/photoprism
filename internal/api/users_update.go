@@ -6,17 +6,18 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // UpdateUser updates the profile information of the currently authenticated user.
 //
-// PUT /api/v1/users/:uid
+//	@Tags	Users
+//	@Router /api/v1/users/{uid} [put]
 func UpdateUser(router *gin.RouterGroup) {
 	router.PUT("/users/:uid", func(c *gin.Context) {
 		conf := get.Config()
@@ -53,7 +54,7 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
-		// Update form with values from request.
+		// Assign and validate request form values.
 		if err = c.BindJSON(&f); err != nil {
 			log.Error(err)
 			AbortBadRequest(c)
@@ -61,16 +62,14 @@ func UpdateUser(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user is has user management privileges.
-		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		privilegeLevelChange := isAdmin && m.PrivilegeLevelChange(f)
 
-		// Prevent super admins from locking themselves out.
-		if u := s.User(); u.IsSuperAdmin() && u.Equal(m) && !f.CanLogin {
-			f.CanLogin = true
-		}
+		// Get user from session.
+		u := s.User()
 
 		// Save model with values from form.
-		if err = m.SaveForm(f, isAdmin); err != nil {
+		if err = m.SaveForm(f, u); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update", err.Error()}, s.RefID)
 			AbortSaveFailed(c)
 			return
@@ -84,12 +83,17 @@ func UpdateUser(router *gin.RouterGroup) {
 		if privilegeLevelChange {
 			// Prevent the current session from being deleted.
 			deleted := m.DeleteSessions([]string{s.ID})
+			// Delete active user sessions.
 			event.AuditInfo([]string{ClientIP(c), "session %s", "users", m.UserName, "invalidated %s"}, s.RefID,
 				english.Plural(deleted, "session", "sessions"))
 		}
 
-		// Clear the session cache.
-		s.ClearCache()
+		// Flush session cache.
+		if isAdmin {
+			entity.FlushSessionCache()
+		} else {
+			s.ClearCache()
+		}
 
 		// Find and return the updated user record.
 		m = entity.FindUserByUID(uid)

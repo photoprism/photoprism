@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="dark" data-light-theme="light" data-dark-theme="dark" class="overflow-y-hidden">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0{{if not .config.Settings.UI.Zoom }}, maximum-scale=1.0, user-scalable=no{{end}}">
+  <title>{{if and .config.SiteCaption .config.Sponsor }}{{ .config.SiteCaption }}{{else}}{{ .config.Name }}{{end}}</title>
+    {{template "favicons.gohtml" .}}
+  <link rel="stylesheet" href="{{ .config.CssUri }}">
+  <link rel="manifest" href="{{ .config.ManifestUri }}" crossorigin="use-credentials">
+</head>
+<body class="{{ .config.Flags }} nojs">
+
+{{template "app.gohtml" .}}
+
+<script>{{ if eq .status "success" }}
+  window.localStorage.setItem("sessionId", {{ .session_id }});
+  window.localStorage.setItem("authToken", {{ .access_token }});
+  window.localStorage.setItem("provider", {{ .provider }});
+  window.localStorage.setItem("user", JSON.stringify({{ .user }}));
+  window.localStorage.removeItem("authError");
+  {{ else if eq .status "failed" }}
+  window.localStorage.setItem("authError", {{ .error }});
+  {{ else }}
+  window.localStorage.removeItem("sessionId");
+  window.localStorage.removeItem("authToken");
+  window.localStorage.removeItem("provider");
+  window.localStorage.removeItem("user");
+  window.localStorage.removeItem("authError");
+  {{ end }}
+  window.location.href = {{ .config.LoginUri }};
+</script>
+</body>
+</html>

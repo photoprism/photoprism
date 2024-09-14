@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -98,9 +98,9 @@ const config = {
     }),
   ],
   performance: {
-    hints: isDev ? false : "error",
-    maxEntrypointSize: 5000000,
-    maxAssetSize: 5000000,
+    hints: isDev ? false : "warning",
+    maxEntrypointSize: 7500000,
+    maxAssetSize: 7500000,
   },
   module: {
     rules: [
@@ -130,10 +130,7 @@ const config = {
               sourceMap: isDev,
               compact: false,
               presets: ["@babel/preset-env"],
-              plugins: [
-                "@babel/plugin-proposal-object-rest-spread",
-                "@babel/plugin-proposal-class-properties",
-              ],
+              plugins: [],
             },
           },
         ],
@@ -253,12 +250,13 @@ if (isDev) {
 
   config.plugins.push(devToolPlugin);
 
-  const esLintPlugin = new ESLintPlugin({
-    formatter: require("eslint-formatter-pretty"),
-    extensions: ["js"],
+  import("eslint-formatter-pretty").then(() => {
+    const esLintPlugin = new ESLintPlugin({
+      formatter: "eslint-formatter-pretty",
+      extensions: ["js"],
+    });
+    config.plugins.push(esLintPlugin);
   });
-
-  config.plugins.push(esLintPlugin);
 }
 
 module.exports = config;

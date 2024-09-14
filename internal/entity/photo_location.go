@@ -7,8 +7,8 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
-	"github.com/photoprism/photoprism/internal/classify"
-	"github.com/photoprism/photoprism/internal/maps"
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/service/maps"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -78,7 +78,7 @@ func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 		m.UpdateLocation()
 
 		if m.Place == nil {
-			log.Warnf("photo: failed updating position of %s", m)
+			log.Warnf("photo: failed to update position of %s", m)
 		} else {
 			log.Debugf("photo: approximate place of %s is %s (id %s)", m, clean.Log(m.Place.Label()), m.PlaceID)
 		}
@@ -86,8 +86,10 @@ func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 }
 
 // AdoptPlace sets the place based on another photo.
-func (m *Photo) AdoptPlace(other Photo, source string, force bool) {
-	if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
+func (m *Photo) AdoptPlace(other *Photo, source string, force bool) {
+	if other == nil {
+		return
+	} else if SrcPriority[m.PlaceSrc] > SrcPriority[source] && !force {
 		return
 	} else if other.Place == nil {
 		return
@@ -330,9 +332,9 @@ func (m *Photo) CountryCode() string {
 
 // GetTakenAt returns UTC time for TakenAtLocal.
 func (m *Photo) GetTakenAt() time.Time {
-	location, err := time.LoadLocation(m.TimeZone)
+	location := txt.TimeZone(m.TimeZone)
 
-	if err != nil {
+	if location == nil {
 		return m.TakenAt
 	}
 
@@ -345,9 +347,9 @@ func (m *Photo) GetTakenAt() time.Time {
 
 // GetTakenAtLocal returns local time for TakenAt.
 func (m *Photo) GetTakenAtLocal() time.Time {
-	location, err := time.LoadLocation(m.TimeZone)
+	location := txt.TimeZone(m.TimeZone)
 
-	if err != nil {
+	if location == nil {
 		return m.TakenAtLocal
 	}
 

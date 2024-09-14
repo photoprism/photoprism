@@ -8,14 +8,13 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/migrate"
-
 	"github.com/manifoldco/promptui"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
 )
 
 // ResetCommand configures the command name, flags, and action.
@@ -50,7 +49,6 @@ func resetAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	if !ctx.Bool("yes") {
@@ -137,7 +135,7 @@ func resetAction(ctx *cli.Context) error {
 	if _, err := removeAlbumYamlPrompt.Run(); err == nil {
 		start := time.Now()
 
-		matches, err := filepath.Glob(regexp.QuoteMeta(conf.AlbumsPath()) + "/**/*.yml")
+		matches, err := filepath.Glob(regexp.QuoteMeta(conf.BackupAlbumsPath()) + "/**/*.yml")
 
 		if err != nil {
 			return err

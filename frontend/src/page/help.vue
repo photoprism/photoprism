@@ -24,9 +24,9 @@
 import PHelpWebsockets from "./help/websockets.vue";
 
 export default {
-  name: 'PPageHelp',
+  name: "PPageHelp",
   components: {
-    PHelpWebsockets
+    PHelpWebsockets,
   },
   data() {
     return {

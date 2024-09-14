@@ -70,7 +70,7 @@ func FirstOrCreateDetails(m *Details) *Details {
 		return m
 	} else if err := Db().Where("photo_id = ?", m.PhotoID).First(&result).Error; err == nil {
 		if m.CreatedAt.IsZero() {
-			m.CreatedAt = TimeStamp()
+			m.CreatedAt = Now()
 		}
 
 		return &result

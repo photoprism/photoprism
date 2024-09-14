@@ -14,7 +14,7 @@ func TestGetFace(t *testing.T) {
 		app, router, _ := NewApiTest()
 		GetFace(router)
 		// Example:
-		// {"ID":"PN6QO5INYTUSAATOFL43LL2ABAV5ACZK","Src":"","SubjUID":"jqu0xs11qekk9jx8","Samples":5,"SampleRadius":0.8,"Collisions":1,"CollisionRadius":0,"MatchedAt":null,"CreatedAt":"2021-09-18T12:06:39Z","UpdatedAt":"2021-09-18T12:06:39Z"}
+		// {"ID":"PN6QO5INYTUSAATOFL43LL2ABAV5ACZK","Src":"","SubjUID":"js6sg6b1qekk9jx8","Samples":5,"SampleRadius":0.8,"Collisions":1,"CollisionRadius":0,"MatchedAt":null,"CreatedAt":"2021-09-18T12:06:39Z","UpdatedAt":"2021-09-18T12:06:39Z"}
 		r := PerformRequest(app, "GET", "/api/v1/faces/TOSCDXCS4VI3PGIUTCNIQCNI6HSFXQVZ")
 		t.Logf("GET /api/v1/faces/TOSCDXCS4VI3PGIUTCNIQCNI6HSFXQVZ: %s", r.Body.String())
 		val := gjson.Get(r.Body.String(), "ID")
@@ -31,7 +31,7 @@ func TestGetFace(t *testing.T) {
 		val := gjson.Get(r.Body.String(), "ID")
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", val.String())
 		val2 := gjson.Get(r.Body.String(), "SubjUID")
-		assert.Equal(t, "jqu0xs11qekk9jx8", val2.String())
+		assert.Equal(t, "js6sg6b1qekk9jx8", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 
@@ -49,12 +49,12 @@ func TestUpdateFace(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		app, router, _ := NewApiTest()
 		UpdateFace(router)
-		r := PerformRequestWithBody(app, "PUT", "/api/v1/faces/PN6QO5INYTUSAATOFL43LL2ABAV5ACzk", `{"SubjUID": "jqu0xs11qekk9jx8"}`)
+		r := PerformRequestWithBody(app, "PUT", "/api/v1/faces/PN6QO5INYTUSAATOFL43LL2ABAV5ACzk", `{"SubjUID": "js6sg6b1qekk9jx8"}`)
 		t.Logf("PUT /api/v1/faces/PN6QO5INYTUSAATOFL43LL2ABAV5ACzk: %s", r.Body.String())
 		val := gjson.Get(r.Body.String(), "ID")
 		assert.Equal(t, "PN6QO5INYTUSAATOFL43LL2ABAV5ACZK", val.String())
 		val2 := gjson.Get(r.Body.String(), "SubjUID")
-		assert.Equal(t, "jqu0xs11qekk9jx8", val2.String())
+		assert.Equal(t, "js6sg6b1qekk9jx8", val2.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 	})
 

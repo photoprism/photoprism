@@ -1,5 +1,7 @@
 package config
 
+import "strings"
+
 // Report returns global config values as a table for reporting.
 func (f CliFlags) Report() (rows [][]string, cols []string) {
 	cols = []string{"Environment", "CLI Flag", "Default", "Description"}
@@ -11,7 +13,7 @@ func (f CliFlags) Report() (rows [][]string, cols []string) {
 			continue
 		}
 
-		rows = append(rows, []string{flag.EnvVar(), flag.CommandFlag(), flag.Default(), flag.Usage()})
+		rows = append(rows, []string{strings.ReplaceAll(flag.EnvVar(), ",", ", "), flag.CommandFlag(), flag.Default(), flag.Usage()})
 	}
 
 	return rows, cols

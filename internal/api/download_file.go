@@ -3,13 +3,13 @@ package api
 import (
 	"net/http"
 
-	"github.com/photoprism/photoprism/internal/customize"
+	"github.com/photoprism/photoprism/internal/config/customize"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -35,11 +35,14 @@ func DownloadName(c *gin.Context) customize.DownloadName {
 
 // GetDownload returns the raw file data.
 //
-// GET /api/v1/dl/:hash
-//
-// Parameters:
-//
-//	hash: string The file hash as returned by the files/photos endpoint
+//	@Summary	returns the raw file data
+//	@Id			GetDownload
+//	@Tags		Images, Files
+//	@Produce	application/octet-stream
+//	@Failure	403,404	{file}	image/svg+xml
+//	@Success	200		{file}	application/octet-stream
+//	@Param		hash	path	string	true	"File Hash"
+//	@Router		/api/v1/dl/{hash} [get]
 func GetDownload(router *gin.RouterGroup) {
 	router.GET("/dl/:hash", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
@@ -63,7 +66,7 @@ func GetDownload(router *gin.RouterGroup) {
 			c.Data(404, "image/svg+xml", brokenIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError("download", f.Update("FileMissing", true))
+			logErr("download", f.Update("FileMissing", true))
 
 			return
 		}

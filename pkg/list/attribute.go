@@ -27,6 +27,9 @@ func Key(s string) string {
 		switch r {
 		case '.', '@', '-', '+', '_', '#':
 			return r
+		case '*':
+			i++
+			return r
 		}
 		if r >= '0' && r <= '9' {
 			return r
@@ -52,7 +55,7 @@ func Value(s string) string {
 			return -1
 		}
 		switch r {
-		case '(', ')', '<', '>', '\'', '"':
+		case '(', ')', '<', '>', '\'', '"', '*':
 			return r
 		}
 		return r
@@ -71,7 +74,9 @@ func (f *KeyValue) Parse(s string) *KeyValue {
 	}
 
 	// Default?
-	if v = Value(v); v == "" {
+	if f.Key == All {
+		return f
+	} else if v = Value(v); v == "" {
 		f.Value = True
 		return f
 	}
@@ -90,6 +95,10 @@ func (f *KeyValue) Parse(s string) *KeyValue {
 func (f *KeyValue) String() string {
 	if f == nil {
 		return ""
+	}
+
+	if f.Key == All {
+		return All
 	}
 
 	if Bool[strings.ToLower(f.Value)] == True {

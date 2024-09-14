@@ -19,7 +19,7 @@ type IndexOptions struct {
 // NewIndexOptions returns new index options instance.
 func NewIndexOptions(path string, rescan, convert, stack, facesOnly, skipArchived bool) IndexOptions {
 	result := IndexOptions{
-		UID:             entity.Admin.UID(),
+		UID:             entity.Admin.GetUID(),
 		Action:          ActionIndex,
 		Path:            path,
 		Rescan:          rescan,
@@ -42,7 +42,7 @@ func (o *IndexOptions) SkipUnchanged() bool {
 // SetUser sets the user who performs the index operation.
 func (o *IndexOptions) SetUser(user *entity.User) *IndexOptions {
 	if o != nil && user != nil {
-		o.UID = user.UID()
+		o.UID = user.GetUID()
 	}
 
 	return o

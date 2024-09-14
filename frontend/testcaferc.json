@@ -3,6 +3,7 @@
   "quarantineMode": false,
   "selectorTimeout": 5000,
   "hostname": "localhost",
+  "disableNativeAutomation": "true",
   "screenshots": {
     "path": "tests/acceptance/screenshots",
     "takeOnFails": true

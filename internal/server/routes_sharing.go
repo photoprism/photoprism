@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config"
 )
 
-// registerSharingRoutes configures link sharing routes.
+// registerSharingRoutes adds routes for link sharing.
 func registerSharingRoutes(router *gin.Engine, conf *config.Config) {
 	s := router.Group(conf.BaseUri("/s"))
 	{

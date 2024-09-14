@@ -3,20 +3,19 @@ package commands
 import (
 	"fmt"
 
-	"github.com/photoprism/photoprism/pkg/rnd"
-
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/rnd"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // UsersShowCommand configures the command name, flags, and action.
 var UsersShowCommand = cli.Command{
 	Name:      "show",
-	Usage:     "Shows user account information",
+	Usage:     "Shows detailed account information",
 	ArgsUsage: "[username]",
 	Flags:     report.CliFlags,
 	Action:    usersShowAction,

@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/maps"
-	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/internal/service/maps"
+	"github.com/photoprism/photoprism/pkg/geo/s2"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -56,7 +56,7 @@ func NewCell(lat, lng float32) *Cell {
 	return result
 }
 
-// Refresh updates the index by retrieving the latest data from an external API.
+// Refresh updates the cell details by fetching the latest data.
 func (m *Cell) Refresh(api string) (err error) {
 	// Unknown?
 	if m.Unknown() {

@@ -16,31 +16,31 @@ import (
 	"github.com/photoprism/photoprism/pkg/list"
 )
 
-// Convert represents a converter that can convert RAW/HEIF images to JPEG.
+// Convert represents a file format conversion worker.
 type Convert struct {
-	conf                 *config.Config
-	cmdMutex             sync.Mutex
-	sipsBlacklist        fs.Blacklist
-	darktableBlacklist   fs.Blacklist
-	rawtherapeeBlacklist fs.Blacklist
-	imagemagickBlacklist fs.Blacklist
+	conf               *config.Config
+	cmdMutex           sync.Mutex
+	sipsExclude        fs.ExtList
+	darktableExclude   fs.ExtList
+	rawTherapeeExclude fs.ExtList
+	imageMagickExclude fs.ExtList
 }
 
-// NewConvert returns a new converter and expects the config as argument.
+// NewConvert returns a new file format conversion worker.
 func NewConvert(conf *config.Config) *Convert {
 	c := &Convert{
-		conf:                 conf,
-		sipsBlacklist:        fs.NewBlacklist(conf.SipsBlacklist()),
-		darktableBlacklist:   fs.NewBlacklist(conf.DarktableBlacklist()),
-		rawtherapeeBlacklist: fs.NewBlacklist(conf.RawTherapeeBlacklist()),
-		imagemagickBlacklist: fs.NewBlacklist(conf.ImageMagickBlacklist()),
+		conf:               conf,
+		sipsExclude:        fs.NewExtList(conf.SipsExclude()),
+		darktableExclude:   fs.NewExtList(conf.DarktableExclude()),
+		rawTherapeeExclude: fs.NewExtList(conf.RawTherapeeExclude()),
+		imageMagickExclude: fs.NewExtList(conf.ImageMagickExclude()),
 	}
 
 	return c
 }
 
-// Start converts all files in a directory to JPEG if possible.
-func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
+// Start converts all files in the specified directory based on the current configuration.
+func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = fmt.Errorf("convert: %s (panic)\nstack: %s", r, debug.Stack())
@@ -48,17 +48,17 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 		}
 	}()
 
-	if err = mutex.MainWorker.Start(); err != nil {
+	if err = mutex.IndexWorker.Start(); err != nil {
 		return err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	jobs := make(chan ConvertJob)
 
 	// Start a fixed number of goroutines to convert files.
 	var wg sync.WaitGroup
-	var numWorkers = c.conf.Workers()
+	var numWorkers = w.conf.IndexWorkers()
 	wg.Add(numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		go func() {
@@ -68,9 +68,9 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 	}
 
 	done := make(fs.Done)
-	ignore := fs.NewIgnoreList(fs.IgnoreFile, true, false)
+	ignore := fs.NewIgnoreList(fs.PPIgnoreFilename, true, false)
 
-	if err = ignore.Dir(dir); err != nil {
+	if err = ignore.Path(dir); err != nil {
 		log.Infof("convert: %s", err)
 	}
 
@@ -89,7 +89,7 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 				}
 			}()
 
-			if mutex.MainWorker.Canceled() {
+			if mutex.IndexWorker.Canceled() {
 				return errors.New("canceled")
 			}
 
@@ -117,7 +117,7 @@ func (c *Convert) Start(dir string, ext []string, force bool) (err error) {
 			jobs <- ConvertJob{
 				force:   force,
 				file:    f,
-				convert: c,
+				convert: w,
 			}
 
 			return nil

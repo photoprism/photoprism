@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"time"
 
@@ -16,14 +14,14 @@ import (
 )
 
 // FixJpeg tries to re-encode a broken JPEG and returns the cached image file.
-func (c *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
+func (w *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	if f == nil {
 		return nil, fmt.Errorf("convert: file is nil - you may have found a bug")
 	}
 
 	logName := clean.Log(f.RootRelName())
 
-	if c.conf.DisableImageMagick() || !c.imagemagickBlacklist.Allow(fs.ExtJPEG) {
+	if w.conf.DisableImageMagick() || !w.imageMagickExclude.Allow(fs.ExtJPEG) {
 		return nil, fmt.Errorf("convert: ImageMagick must be enabled to re-encode %s", logName)
 	}
 
@@ -37,14 +35,14 @@ func (c *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 
 	var err error
 
-	hash := f.Hash()
-	dir := path.Join(c.conf.MediaCachePath(), hash[0:1], hash[1:2], hash[2:3])
+	// Get SHA1 file hash.
+	fileHash := f.Hash()
 
-	if err := os.MkdirAll(dir, fs.ModeDir); err != nil {
-		return nil, fmt.Errorf("convert: failed to create cache directory")
-	}
+	// Get cache path based on config and file hash.
+	cacheDir := w.conf.MediaFileCachePath(fileHash)
 
-	cacheName := filepath.Join(dir, hash+fs.ExtJPEG)
+	// Compose cache filename.
+	cacheName := filepath.Join(cacheDir, fileHash+fs.ExtJPEG)
 
 	mediaFile, err := NewMediaFile(cacheName)
 
@@ -61,7 +59,7 @@ func (c *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 		}
 	}
 
-	fileName := f.RelName(c.conf.OriginalsPath())
+	fileName := f.RelName(w.conf.OriginalsPath())
 
 	// Publish file conversion event.
 	event.Publish("index.converting", event.Data{
@@ -74,10 +72,10 @@ func (c *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	start := time.Now()
 
 	// Try ImageMagick for other image file formats if allowed.
-	quality := fmt.Sprintf("%d", c.conf.JpegQuality())
-	resize := fmt.Sprintf("%dx%d>", c.conf.JpegSize(), c.conf.JpegSize())
+	quality := fmt.Sprintf("%d", w.conf.JpegQuality())
+	resize := fmt.Sprintf("%dx%d>", w.conf.JpegSize(), w.conf.JpegSize())
 	args := []string{f.FileName(), "-flatten", "-resize", resize, "-quality", quality, cacheName}
-	cmd := exec.Command(c.conf.ImageMagickBin(), args...)
+	cmd := exec.Command(w.conf.ImageMagickBin(), args...)
 
 	if fs.FileExists(cacheName) {
 		return NewMediaFile(cacheName)
@@ -88,10 +86,10 @@ func (c *Convert) FixJpeg(f *MediaFile, force bool) (*MediaFile, error) {
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
-	cmd.Env = []string{
-		fmt.Sprintf("HOME=%s", c.conf.CmdCachePath()),
-		fmt.Sprintf("LD_LIBRARY_PATH=%s", c.conf.CmdLibPath()),
-	}
+	cmd.Env = append(cmd.Env, []string{
+		fmt.Sprintf("HOME=%s", w.conf.CmdCachePath()),
+		fmt.Sprintf("LD_LIBRARY_PATH=%s", w.conf.CmdLibPath()),
+	}...)
 
 	log.Infof("convert: re-encoding %s to %s (%s)", logName, clean.Log(filepath.Base(cacheName)), filepath.Base(cmd.Path))
 

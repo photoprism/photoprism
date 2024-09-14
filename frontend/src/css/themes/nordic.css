@@ -76,7 +76,8 @@ body.theme-nordic,
     color: #333333;
 }
 
-#photoprism.theme-nordic .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-nordic .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-nordic .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 

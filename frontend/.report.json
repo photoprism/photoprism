@@ -1,0 +1,20 @@
+{
+  "output": "table",
+  "fields": [
+    "name",
+    "licenseType",
+    "author"
+  ],
+  "name": {
+    "label": "Package"
+  },
+  "installedVersion": {
+    "label": "Version"
+  },
+  "licenseType": {
+    "label": "License"
+  },
+  "author": {
+    "label": "Copyright"
+  }
+}

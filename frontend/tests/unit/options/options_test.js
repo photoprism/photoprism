@@ -7,8 +7,10 @@ let assert = chai.assert;
 describe("options/options", () => {
   it("should get timezones", () => {
     const timezones = options.TimeZones();
-    assert.equal(timezones[0].Name, "UTC");
-    assert.equal(timezones[1].Name, "Local Time");
+    assert.equal(timezones[0].ID, "");
+    assert.equal(timezones[0].Name, "Local Time");
+    assert.equal(timezones[1].ID, "UTC-12");
+    assert.equal(timezones[1].Name, "UTC-12:00");
   });
 
   it("should get days", () => {

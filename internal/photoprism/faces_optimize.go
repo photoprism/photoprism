@@ -3,9 +3,9 @@ package photoprism
 import (
 	"fmt"
 
+	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/face"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
 )
 
 // FacesOptimizeResult represents the outcome of Faces.Optimize().

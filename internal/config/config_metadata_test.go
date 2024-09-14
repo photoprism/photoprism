@@ -29,15 +29,3 @@ func TestConfig_ExifToolJson(t *testing.T) {
 	assert.Equal(t, false, c.ExifToolJson())
 	assert.Equal(t, c.DisableExifTool(), !c.ExifToolJson())
 }
-
-func TestConfig_SidecarYaml(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, true, c.BackupYaml())
-	assert.Equal(t, c.DisableBackups(), !c.BackupYaml())
-
-	c.options.DisableBackups = true
-
-	assert.Equal(t, false, c.BackupYaml())
-	assert.Equal(t, c.DisableBackups(), !c.BackupYaml())
-}

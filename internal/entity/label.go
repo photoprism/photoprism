@@ -6,7 +6,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/event"
 
 	"github.com/photoprism/photoprism/pkg/clean"

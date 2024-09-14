@@ -7,19 +7,20 @@ import (
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/photoprism"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/thumb/avatar"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // UploadUserAvatar updates the avatar image of the currently authenticated user.
 //
-// POST /api/v1/users/:uid/avatar
+//	@Tags	Users
+//	@Router	/api/v1/users/{uid}/avatar [post]
 func UploadUserAvatar(router *gin.RouterGroup) {
 	router.POST("/users/:uid/avatar", func(c *gin.Context) {
 		conf := get.Config()
@@ -36,7 +37,7 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 		}
 
 		// Check if the session user is has user management privileges.
-		isAdmin := acl.Resources.AllowAll(acl.ResourceUsers, s.User().AclRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.UserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		uid := clean.UID(c.Param("uid"))
 
 		// Users may only change their own avatar.
@@ -121,14 +122,8 @@ func UploadUserAvatar(router *gin.RouterGroup) {
 			event.AuditInfo([]string{ClientIP(c), "session %s", "upload avatar", "saved as %s"}, s.RefID, clean.Log(filePath))
 		}
 
-		// Create avatar thumbnails.
-		if mediaFile, mediaErr := photoprism.NewMediaFile(filePath); mediaErr != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
-			Abort(c, http.StatusBadRequest, i18n.ErrUnsupportedFormat)
-			return
-		} else if err = mediaFile.CreateThumbnails(conf.ThumbCachePath(), false); err != nil {
-			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
-		} else if err = m.SetAvatar(mediaFile.Hash(), entity.SrcManual); err != nil {
+		// Set user avatar image.
+		if err = avatar.SetUserImage(m, filePath, entity.SrcManual, conf.ThumbCachePath()); err != nil {
 			event.AuditErr([]string{ClientIP(c), "session %s", "upload avatar", "%s"}, s.RefID, err)
 		}
 

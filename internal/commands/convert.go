@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -48,7 +48,6 @@ func convertAction(ctx *cli.Context) error {
 		return config.ErrReadOnly
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	convertPath := conf.OriginalsPath()

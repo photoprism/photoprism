@@ -1,7 +1,7 @@
 /*
 Package fs provides filesystem related constants and functions.
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
 	This program is free software: you can redistribute it and/or modify
 	it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -25,24 +25,22 @@ Additional information can be found in our Developer Guide:
 package fs
 
 import (
-	"archive/zip"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"os/user"
 	"path/filepath"
-	"strings"
 	"syscall"
 )
 
 var ignoreCase bool
 
-const IgnoreFile = ".ppignore"
-const HiddenPath = ".photoprism"
-const PathSeparator = string(filepath.Separator)
-const Home = "~"
-const HomePath = Home + PathSeparator
+const (
+	PathSeparator = string(filepath.Separator)
+	Home          = "~"
+	HomePath      = Home + PathSeparator
+)
 
 // FileExists returns true if file exists and is not a directory.
 func FileExists(fileName string) bool {
@@ -88,27 +86,19 @@ func Writable(path string) bool {
 	if path == "" {
 		return false
 	}
+
 	return syscall.Access(path, syscall.O_RDWR) == nil
 }
 
 // PathWritable tests if a path exists and is writable.
 func PathWritable(path string) bool {
-	if !PathExists(path) {
+	if path == "" {
+		return false
+	} else if !PathExists(path) {
 		return false
 	}
 
 	return Writable(path)
-}
-
-// Overwrite overwrites the file with data. Creates file if not present.
-func Overwrite(fileName string, data []byte) bool {
-	f, err := os.Create(fileName)
-	if err != nil {
-		return false
-	}
-
-	_, err = f.Write(data)
-	return err == nil
 }
 
 // Abs returns the full path of a file or directory, "~" is replaced with home.
@@ -132,57 +122,16 @@ func Abs(name string) string {
 	return result
 }
 
-// copyToFile copies the zip file to destination
-// if the zip file is a directory, a directory is created at the destination.
-func copyToFile(f *zip.File, dest string) (fileName string, err error) {
-	rc, err := f.Open()
-	if err != nil {
-		return fileName, err
-	}
-
-	defer rc.Close()
-
-	// Store filename/path for returning and using later on
-	fileName = filepath.Join(dest, f.Name)
-
-	if f.FileInfo().IsDir() {
-		// Make Folder
-		return fileName, os.MkdirAll(fileName, ModeDir)
-	}
-
-	// Make File
-	var fdir string
-
-	if lastIndex := strings.LastIndex(fileName, string(os.PathSeparator)); lastIndex > -1 {
-		fdir = fileName[:lastIndex]
-	}
-
-	err = os.MkdirAll(fdir, ModeDir)
-	if err != nil {
-		return fileName, err
-	}
-
-	fd, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-	if err != nil {
-		return fileName, err
-	}
-
-	defer fd.Close()
-
-	_, err = io.Copy(fd, rc)
-	if err != nil {
-		return fileName, err
-	}
-
-	return fileName, nil
-}
-
 // Download downloads a file from a URL.
-func Download(filepath string, url string) error {
-	os.MkdirAll("/tmp/photoprism", ModeDir)
+func Download(fileName string, url string) error {
+	if dir := filepath.Dir(fileName); dir == "" || dir == "/" || dir == "." || dir == ".." {
+		return fmt.Errorf("invalid path")
+	} else if err := MkdirAll(dir); err != nil {
+		return err
+	}
 
 	// Create the file
-	out, err := os.Create(filepath)
+	out, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}

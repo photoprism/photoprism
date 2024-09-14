@@ -7,13 +7,14 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/meta"
-	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 // ShowMetadataCommand configures the command name, flags, and action.
 var ShowMetadataCommand = cli.Command{
-	Name:  "metadata",
-	Usage: "Displays supported metadata tags and standards",
+	Name:    "metadata",
+	Aliases: []string{"meta"},
+	Usage:   "Displays supported metadata tags and standards",
 	Flags: append(report.CliFlags, cli.BoolFlag{
 		Name:  "short, s",
 		Usage: "hide links to documentation",

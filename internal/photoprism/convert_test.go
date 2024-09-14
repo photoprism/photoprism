@@ -23,19 +23,19 @@ func TestConvert_Start(t *testing.T) {
 		t.Skip("skipping test in short mode.")
 	}
 
-	conf := config.TestConfig()
+	c := config.TestConfig()
 
-	conf.InitializeTestData()
+	c.InitializeTestData()
 
-	convert := NewConvert(conf)
+	convert := NewConvert(c)
 
-	err := convert.Start(conf.ImportPath(), nil, false)
+	err := convert.Start(c.ImportPath(), nil, false)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	jpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "raw/canon_eos_6d.dng.jpg")
+	jpegFilename := filepath.Join(c.SidecarPath(), c.ImportPath(), "raw/canon_eos_6d.dng.jpg")
 
 	assert.True(t, fs.FileExists(jpegFilename), "Primary file was not found - is Darktable installed?")
 
@@ -51,13 +51,13 @@ func TestConvert_Start(t *testing.T) {
 
 	assert.Equal(t, "Canon EOS 6D", infoRaw.CameraModel, "UpdateCamera model should be Canon EOS M10")
 
-	existingJpegFilename := filepath.Join(conf.SidecarPath(), conf.ImportPath(), "/raw/IMG_2567.CR2.jpg")
+	existingJpegFilename := filepath.Join(c.SidecarPath(), c.ImportPath(), "/raw/IMG_2567.CR2.jpg")
 
 	oldHash := fs.Hash(existingJpegFilename)
 
 	_ = os.Remove(existingJpegFilename)
 
-	if err := convert.Start(conf.ImportPath(), nil, false); err != nil {
+	if err = convert.Start(c.ImportPath(), nil, false); err != nil {
 		t.Fatal(err)
 	}
 

@@ -15,14 +15,14 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/migrate"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SQL Databases.
-// TODO: PostgresSQL support requires upgrading GORM, so generic column data types can be used.
+// TODO: PostgreSQL support requires upgrading GORM, so generic column data types can be used.
 const (
 	MySQL    = "mysql"
 	MariaDB  = "mariadb"
@@ -61,31 +61,33 @@ func (c *Config) DatabaseDsn() string {
 	if c.options.DatabaseDsn == "" {
 		switch c.DatabaseDriver() {
 		case MySQL, MariaDB:
-			address := c.DatabaseServer()
+			databaseServer := c.DatabaseServer()
 
-			// Connect via TCP or Unix Domain Socket?
-			if strings.HasPrefix(address, "/") {
+			// Connect via Unix Domain Socket?
+			if strings.HasPrefix(databaseServer, "/") {
 				log.Debugf("mariadb: connecting via Unix domain socket")
-				address = fmt.Sprintf("unix(%s)", address)
+				databaseServer = fmt.Sprintf("unix(%s)", databaseServer)
 			} else {
-				address = fmt.Sprintf("tcp(%s)", address)
+				databaseServer = fmt.Sprintf("tcp(%s)", databaseServer)
 			}
 
 			return fmt.Sprintf(
-				"%s:%s@%s/%s?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true",
+				"%s:%s@%s/%s?charset=utf8mb4,utf8&collation=utf8mb4_unicode_ci&parseTime=true&timeout=%ds",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
-				address,
+				databaseServer,
 				c.DatabaseName(),
+				c.DatabaseTimeout(),
 			)
 		case Postgres:
 			return fmt.Sprintf(
-				"user=%s password=%s dbname=%s host=%s port=%d sslmode=disable TimeZone=UTC",
+				"user=%s password=%s dbname=%s host=%s port=%d connect_timeout=%d sslmode=disable TimeZone=UTC",
 				c.DatabaseUser(),
 				c.DatabasePassword(),
 				c.DatabaseName(),
 				c.DatabaseHost(),
 				c.DatabasePort(),
+				c.DatabaseTimeout(),
 			)
 		case SQLite3:
 			return filepath.Join(c.StoragePath(), "index.db?_busy_timeout=5000")
@@ -100,7 +102,7 @@ func (c *Config) DatabaseDsn() string {
 
 // DatabaseFile returns the filename part of a sqlite database DSN.
 func (c *Config) DatabaseFile() string {
-	fileName, _, _ := strings.Cut(c.DatabaseDsn(), "?")
+	fileName, _, _ := strings.Cut(strings.TrimPrefix(c.DatabaseDsn(), "file:"), "?")
 	return fileName
 }
 
@@ -125,7 +127,7 @@ func (c *Config) DatabaseServer() string {
 	if c.DatabaseDriver() == SQLite3 {
 		return ""
 	} else if c.options.DatabaseServer == "" {
-		return "localhost"
+		return localhost
 	}
 
 	return c.options.DatabaseServer
@@ -207,6 +209,21 @@ func (c *Config) DatabasePassword() string {
 	c.ParseDatabaseDsn()
 
 	return c.options.DatabasePassword
+}
+
+// DatabaseTimeout returns the TCP timeout in seconds for establishing a database connection:
+// - https://github.com/photoprism/photoprism/issues/4059#issuecomment-1989119004
+// - https://github.com/go-sql-driver/mysql/blob/master/README.md#timeout
+func (c *Config) DatabaseTimeout() int {
+	// Ensure that the timeout is between 1 and a maximum
+	// of 60 seconds, with a default of 15 seconds.
+	if c.options.DatabaseTimeout <= 0 {
+		return 15
+	} else if c.options.DatabaseTimeout > 60 {
+		return 60
+	}
+
+	return c.options.DatabaseTimeout
 }
 
 // DatabaseConns returns the maximum number of open connections to the database.
@@ -319,7 +336,7 @@ func (c *Config) InitTestDb() {
 	go entity.Error{}.LogEvents()
 }
 
-// connectDb checks the database server version.
+// checkDb checks the database server version.
 func (c *Config) checkDb(db *gorm.DB) error {
 	switch c.DatabaseDriver() {
 	case MySQL:
@@ -362,6 +379,8 @@ func (c *Config) connectDb() error {
 	// Open database connection.
 	db, err := gorm.Open(dbDriver, dbDsn)
 	if err != nil || db == nil {
+		log.Infof("config: waiting for the database to become available")
+
 		for i := 1; i <= 12; i++ {
 			db, err = gorm.Open(dbDriver, dbDsn)
 

@@ -154,7 +154,8 @@ body.dark-theme.theme-default,
     background: #4b4e4f;
 }
 
-#photoprism.theme-default .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon {
+#photoprism.theme-default .theme--light.v-input--selection-controls.v-input--is-disabled .v-icon,
+#photoprism.theme-default .theme--light.v-input--selection-controls.v-input--is-disabled .accent--text {
     color: #999 !important;
 }
 
@@ -205,15 +206,14 @@ body.dark-theme.theme-default,
 
 #photoprism.theme-default .cards-view .card.is-selected .card-details {
     color: #fff;
-    background-color: #4b4e4f;
+    background-color: #636869;
 }
 
 #photoprism.theme-default .cards-view .card.is-selected,
 #photoprism.theme-default .cards-view .card.is-selected .card-background {
-    background-color: #4b4e4f !important;
+    background-color: #636869 !important;
 }
 
 #photoprism.theme-default .cards-view .card.is-selected .card-details .v-icon {
     color: #fff;
 }
-

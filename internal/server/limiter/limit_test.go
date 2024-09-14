@@ -73,4 +73,47 @@ func TestNewLimit(t *testing.T) {
 			assert.True(t, l.Reject(clientIp))
 		}
 	})
+	t.Run("Request", func(t *testing.T) {
+		// 10 per minute.
+		l := NewLimit(0.166, 10)
+
+		// Request counter not increased.
+		for i := 0; i < 20; i++ {
+			assert.False(t, l.Reject(clientIp))
+		}
+
+		// Request not exceeded and tokens returned by calling Success().
+		for i := 1; i <= 20; i++ {
+			reject := l.Reject(clientIp)
+			r := l.Request(clientIp)
+			allow := r.Allow()
+			r.Success()
+			t.Logf("(1.%d) Reject: %t, Allow: %t, Tokens: %d", i, reject, allow, r.Tokens)
+			assert.False(t, reject)
+			assert.True(t, allow)
+			assert.False(t, r.Reject())
+		}
+
+		// Limit not exceeded, but tokens not returned.
+		for i := 1; i <= 10; i++ {
+			reject := l.Reject(clientIp)
+			r := l.Request(clientIp)
+			allow := r.Allow()
+			t.Logf("(2.%d) Reject: %t, Allow: %t, Tokens: %d", i, reject, allow, r.Tokens)
+			assert.False(t, reject)
+			assert.True(t, allow)
+			assert.False(t, r.Reject())
+		}
+
+		// Limit exceeded and tokens not returned.
+		for i := 1; i <= 20; i++ {
+			reject := l.Reject(clientIp)
+			r := l.Request(clientIp)
+			allow := r.Allow()
+			t.Logf("(3.%d) Reject: %t, Allow: %t, Tokens: %d", i, reject, allow, r.Tokens)
+			assert.True(t, reject)
+			assert.False(t, allow)
+			assert.True(t, r.Reject())
+		}
+	})
 }

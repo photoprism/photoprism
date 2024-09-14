@@ -8,17 +8,23 @@ import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v2"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/get"
 	"github.com/photoprism/photoprism/internal/mutex"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 // GetConfigOptions returns backend config options.
 //
-// GET /api/v1/config/options
+//	@Summary	returns backend config options
+//	@Id			GetConfigOptions
+//	@Tags		Config, Settings
+//	@Produce	json
+//	@Success	200			{object}	config.Options
+//	@Failure	401,403,429	{object}	i18n.Response
+//	@Router		/api/v1/config/options [get]
 func GetConfigOptions(router *gin.RouterGroup) {
 	router.GET("/config/options", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceConfig, acl.AccessAll)
@@ -36,7 +42,14 @@ func GetConfigOptions(router *gin.RouterGroup) {
 
 // SaveConfigOptions updates backend config options.
 //
-// POST /api/v1/config/options
+//	@Summary	updates backend config options
+//	@Id			SaveConfigOptions
+//	@Tags		Config, Settings
+//	@Produce	json
+//	@Success	200					{object}	config.Options
+//	@Failure	400,401,403,429,500	{object}	i18n.Response
+//	@Param		options					body		config.Options	true	"properties to be updated (only submit values that should be changed)"
+//	@Router		/api/v1/config/options [post]
 func SaveConfigOptions(router *gin.RouterGroup) {
 	router.POST("/config/options", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceConfig, acl.ActionManage)
@@ -68,7 +81,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 				return
 			}
 
-			if err := yaml.Unmarshal(yamlData, v); err != nil {
+			if err = yaml.Unmarshal(yamlData, v); err != nil {
 				log.Warnf("config: failed parsing values in %s (%s)", clean.Log(fileName), err)
 				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 				return
@@ -90,21 +103,21 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		}
 
 		// Make sure directory exists.
-		if err := os.MkdirAll(filepath.Dir(fileName), fs.ModeDir); err != nil {
-			log.Errorf("config: failed creating config path %s (%s)", filepath.Dir(fileName), err)
+		if err = fs.MkdirAll(filepath.Dir(fileName)); err != nil {
+			log.Errorf("config: failed to create config path %s (%s)", filepath.Dir(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
 		// Write YAML data to file.
-		if err := os.WriteFile(fileName, yamlData, fs.ModeFile); err != nil {
+		if err = fs.WriteFile(fileName, yamlData); err != nil {
 			log.Errorf("config: failed writing values to %s (%s)", clean.Log(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
 		}
 
 		// Reload options.
-		if err := conf.Options().Load(fileName); err != nil {
+		if err = conf.Options().Load(fileName); err != nil {
 			log.Warnf("config: failed loading values from %s (%s)", clean.Log(fileName), err)
 			c.AbortWithStatusJSON(http.StatusInternalServerError, err)
 			return
@@ -113,7 +126,7 @@ func SaveConfigOptions(router *gin.RouterGroup) {
 		// Set restart flag.
 		mutex.Restart.Store(true)
 
-		// Propagate changes.
+		// Update package defaults.
 		conf.Propagate()
 
 		// Flush session cache and update client config.

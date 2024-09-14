@@ -2,7 +2,7 @@
 
 **By using the software and services we provide, you agree to our [Terms of Service](https://www.photoprism.app/terms), including our [Privacy Policy](https://www.photoprism.app/privacy) and the following Code of Conduct. It explains the "dos and don’ts" when interacting with our team and other community members.**
 
-*Last Updated: July 5, 2023*
+*This Code of Conduct was last updated on May 6, 2024. A German translation is available at [photoprism.app/de/code-of-conduct](https://www.photoprism.app/de/code-of-conduct).*
 
 ## Rules
 
@@ -18,9 +18,9 @@ Because we want our Code of Conduct to be easy to understand and implement, we h
 
 Not everyone has experience with Open Source communities and intuitively knows what is acceptable. In that case, the following guidelines and examples are meant to provide a quick overview and help you avoid the most common pitfalls:
 
-(a) Do not [feel entitled](https://www.reddit.com/r/photoprism/comments/13emwf0/did_you_guys_really_nerf_hardware_transcoding/) to free software, support, or advice, especially if you are not a contributor, [member](https://link.photoprism.app/membership), or business customer. Don't expect contributors to [give status reports](https://docs.photoprism.app/developer-guide/code-quality/#go-slow-before-you-go-fast) as if they work for you or owe you something, even if you have donated a small amount. We also ask that you do not use GitHub Issues or other development tools to start general discussions, get technical support, or express personal opinions.
+(a) Do not [feel entitled](https://www.reddit.com/r/photoprism/comments/13emwf0/did_you_guys_really_nerf_hardware_transcoding/) to free software, support, or advice, especially if you are not a [contributor](https://docs.photoprism.app/developer-guide/), [member](https://link.photoprism.app/membership), or [business customer](https://link.photoprism.app/team-editions). Don't expect others to [give you status reports](https://docs.photoprism.app/developer-guide/code-quality/#go-slow-before-you-go-fast) as if they work for you or owe you something, even if you've made a donation. We also ask that you do not use GitHub Issues or other development tools to start [general discussions](https://link.photoprism.app/discussions), get [technical support](https://link.photoprism.app/support), or express personal opinions.
 
-(b) Honor **Rule &#35;2**, [read the docs](https://docs.photoprism.app) and [determine the cause of your problem](https://docs.photoprism.app/getting-started/troubleshooting/) before opening invalid bug reports, starting a public "shitstorm", or insulting other community members in our chat rooms. Aside from being annoying for everyone, it also keeps our team from working on features and enhancements that users like you are waiting for.
+(b) Honor **Rule &#35;2**, [read our documentation](https://docs.photoprism.app/) and use the [troubleshooting checklists](https://docs.photoprism.app/getting-started/troubleshooting/) we provide to find the root cause of a problem before opening invalid bug reports, starting a public "shitstorm", or insulting other community members in our chat rooms. Apart from being annoying for everyone, it also keeps our team from working on features and improvements that users like you are waiting for.
 
 (c) Reckless, [surprisingly harsh](https://github.com/photoprism/photoprism/issues/281#issuecomment-1207233135) or ignorant communication that disregards **Rule &#35;1** is unacceptable, whether public or private. If you are having a bad day and want to offend someone, please go somewhere else.
 
@@ -36,7 +36,7 @@ We encourage all community members to resolve problems on their own whenever pos
 
 Our community standards will be enforced as necessary to protect everyone's well-being and to ensure that our discussion forums, chat rooms, and other infrastructure can be used as intended.
 
-Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky), especially if your tone is harsh to begin with. In serious cases, we will provide a link to this Code of Conduct to avoid misunderstandings. We also reserve the right to delete rants, personal attacks, spam, and unsolicited advertising from our community forums.
+Initial warnings may be issued in the form of a [snarky comment](https://www.urbandictionary.com/define.php?term=snarky), especially if you seem reckless or [surprisingly harsh](https://github.com/photoprism/photoprism/issues/281#issuecomment-1207233135). In serious cases, we will provide a link to this Code of Conduct to avoid misunderstandings. We also reserve the right to delete rants, personal attacks, spam, and unsolicited advertising from our community forums.
 
 Getting a simple **\*plonk\***[^1] in response finally signals that we have lost hope and you're being ignored according to **Rule &#35;3**. This old tradition from Usenet days is as time-saving as it is clear. It is not meant in a disrespectful way.
 

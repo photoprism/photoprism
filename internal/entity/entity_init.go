@@ -4,7 +4,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/migrate"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -34,7 +34,10 @@ func InitDb(opt migrate.Options) {
 	}
 
 	Entities.Migrate(Db(), opt)
-	Entities.WaitForMigration(Db())
+
+	if err := Entities.WaitForMigration(Db()); err != nil {
+		log.Errorf("migrate: %s", err)
+	}
 
 	CreateDefaultFixtures()
 

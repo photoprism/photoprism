@@ -2,9 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
+"PO-Revision-Date: 2024-07-05 09:24+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/"
 "projects/photoprism/backend/zh_Hans/>\n"
 "Language: zh\n"
@@ -12,364 +13,392 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.5.5\n"
 
-#: messages.go:94
+#: messages.go:101
 msgid "Something went wrong, try again"
 msgstr "出错了，再试一次"
 
-#: messages.go:95
+#: messages.go:102
 msgid "Unable to do that"
 msgstr "无法做到这一点"
 
-#: messages.go:96
+#: messages.go:103
 msgid "Changes could not be saved"
 msgstr "无法保存变更"
 
-#: messages.go:97
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "无法删除"
 
-#: messages.go:98
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s 已存在"
 
-#: messages.go:99
+#: messages.go:106
 msgid "Not found"
 msgstr "未找到"
 
-#: messages.go:100
+#: messages.go:107
 msgid "File not found"
 msgstr "未找到文件"
 
-#: messages.go:101
+#: messages.go:108
 msgid "File too large"
 msgstr "文件过大"
 
-#: messages.go:102
+#: messages.go:109
+msgid "Unsupported"
+msgstr "不支持"
+
+#: messages.go:110
+msgid "Unsupported type"
+msgstr "不支持的类型"
+
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "不支持的格式"
 
-#: messages.go:103
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "原件文件夹是空的"
 
-#: messages.go:104
+#: messages.go:113
 msgid "Selection not found"
 msgstr "未找到所选内容"
 
-#: messages.go:105
+#: messages.go:114
 msgid "Entity not found"
 msgstr "未找到实体"
 
-#: messages.go:106
+#: messages.go:115
 msgid "Account not found"
 msgstr "未找到账户"
 
-#: messages.go:107
+#: messages.go:116
 msgid "User not found"
 msgstr "未找到用户"
 
-#: messages.go:108
+#: messages.go:117
 msgid "Label not found"
 msgstr "未找到标签"
 
-#: messages.go:109
+#: messages.go:118
 msgid "Album not found"
 msgstr "未找到相册"
 
-#: messages.go:110
+#: messages.go:119
 msgid "Subject not found"
 msgstr "未找到主题"
 
-#: messages.go:111
+#: messages.go:120
 msgid "Person not found"
 msgstr "未找到人物"
 
-#: messages.go:112
+#: messages.go:121
 msgid "Face not found"
 msgstr "未找到面孔"
 
-#: messages.go:113
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "在公开模式下不可用"
 
-#: messages.go:114
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "在只读模式下不可用"
 
-#: messages.go:115
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "请登录你的账户"
 
-#: messages.go:116
+#: messages.go:125
 msgid "Permission denied"
 msgstr "没有权限"
 
-#: messages.go:117
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "上传内容可能具有冒犯性"
 
-#: messages.go:118
+#: messages.go:127
 msgid "Upload failed"
 msgstr "上传失败"
 
-#: messages.go:119
+#: messages.go:128
 msgid "No items selected"
 msgstr "未选择任何项目"
 
-#: messages.go:120
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "创建文件失败，请检查权限"
 
-#: messages.go:121
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "创建目录失败，请检查权限"
 
-#: messages.go:122
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "无法连接，请重试"
 
-#: messages.go:123
+#: messages.go:132
+msgid "Enter verification code"
+msgstr "输入验证码"
+
+#: messages.go:133
+msgid "Invalid verification code, please try again"
+msgstr "验证码无效，请重试"
+
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "无效密码，请重试"
 
-#: messages.go:124
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "功能已禁用"
 
-#: messages.go:125
+#: messages.go:136
 msgid "No labels selected"
 msgstr "未选择标签"
 
-#: messages.go:126
+#: messages.go:137
 msgid "No albums selected"
 msgstr "未选择相册"
 
-#: messages.go:127
+#: messages.go:138
 msgid "No files available for download"
 msgstr "没有可供下载的文件"
 
-#: messages.go:128
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "创建压缩文件失败"
 
-#: messages.go:129
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "无效凭证"
 
-#: messages.go:130
+#: messages.go:141
 msgid "Invalid link"
 msgstr "无效链接"
 
-#: messages.go:131
+#: messages.go:142
 msgid "Invalid name"
 msgstr "无效名称"
 
-#: messages.go:132
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "忙碌中，请稍后重试"
 
-#: messages.go:133
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "唤醒间隔为 %s，但必须小于等于 1 小时"
 
-#: messages.go:134
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "你的账户无法连接"
 
-#: messages.go:137
+#: messages.go:146
+msgid "Too many requests"
+msgstr "请求太多"
+
+#: messages.go:149
 msgid "Changes successfully saved"
 msgstr "更改成功保存"
 
-#: messages.go:138
+#: messages.go:150
 msgid "Album created"
 msgstr "相册已创建"
 
-#: messages.go:139
+#: messages.go:151
 msgid "Album saved"
 msgstr "相册已保存"
 
-#: messages.go:140
+#: messages.go:152
 #, c-format
 msgid "Album %s deleted"
 msgstr "相册 %s 已删除"
 
-#: messages.go:141
+#: messages.go:153
 msgid "Album contents cloned"
 msgstr "相册内容已复制"
 
-#: messages.go:142
+#: messages.go:154
 msgid "File removed from stack"
 msgstr "文件已从堆中移除"
 
-#: messages.go:143
+#: messages.go:155
 msgid "File deleted"
 msgstr "文件已删除"
 
-#: messages.go:144
+#: messages.go:156
 #, c-format
 msgid "Selection added to %s"
 msgstr "所选项目已加入 %s"
 
-#: messages.go:145
+#: messages.go:157
 #, c-format
 msgid "One entry added to %s"
 msgstr "条目已添加到 %s"
 
-#: messages.go:146
+#: messages.go:158
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d 个条目已添加到 %s"
 
-#: messages.go:147
+#: messages.go:159
 #, c-format
 msgid "One entry removed from %s"
 msgstr "条目已从 %s 移除"
 
-#: messages.go:148
+#: messages.go:160
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d 个条目已从 %s 移除"
 
-#: messages.go:149
+#: messages.go:161
 msgid "Account created"
 msgstr "账户已创建"
 
-#: messages.go:150
+#: messages.go:162
 msgid "Account saved"
 msgstr "账户已保存"
 
-#: messages.go:151
+#: messages.go:163
 msgid "Account deleted"
 msgstr "账户已删除"
 
-#: messages.go:152
+#: messages.go:164
 msgid "Settings saved"
 msgstr "设置已保存"
 
-#: messages.go:153
+#: messages.go:165
 msgid "Password changed"
 msgstr "密码已更改"
 
-#: messages.go:154
+#: messages.go:166
 #, c-format
 msgid "Import completed in %d s"
 msgstr "导入成功，耗时 %d 秒"
 
-#: messages.go:155
+#: messages.go:167
 msgid "Import canceled"
 msgstr "导入已取消"
 
-#: messages.go:156
+#: messages.go:168
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "索引成功，耗时 %d 秒"
 
-#: messages.go:157
+#: messages.go:169
 msgid "Indexing originals..."
 msgstr "索引源文件..."
 
-#: messages.go:158
+#: messages.go:170
 #, c-format
 msgid "Indexing files in %s"
 msgstr "索引 %s 中的文件"
 
-#: messages.go:159
+#: messages.go:171
 msgid "Indexing canceled"
 msgstr "索引已取消"
 
-#: messages.go:160
+#: messages.go:172
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "移除了 %d 个文件和 %d 张照片"
 
-#: messages.go:161
+#: messages.go:173
 #, c-format
 msgid "Moving files from %s"
 msgstr "正在从 %s 中移动文件"
 
-#: messages.go:162
+#: messages.go:174
 #, c-format
 msgid "Copying files from %s"
 msgstr "正在从 %s 中复制文件"
 
-#: messages.go:163
+#: messages.go:175
 msgid "Labels deleted"
 msgstr "标签已移除"
 
-#: messages.go:164
+#: messages.go:176
 msgid "Label saved"
 msgstr "标签已保存"
 
-#: messages.go:165
+#: messages.go:177
 msgid "Subject saved"
 msgstr "主题已保存"
 
-#: messages.go:166
+#: messages.go:178
 msgid "Subject deleted"
 msgstr "主题已删除"
 
-#: messages.go:167
+#: messages.go:179
 msgid "Person saved"
 msgstr "人物已保存"
 
-#: messages.go:168
+#: messages.go:180
 msgid "Person deleted"
 msgstr "人物已删除"
 
-#: messages.go:169
+#: messages.go:181
 msgid "File uploaded"
 msgstr "已上传文件"
 
-#: messages.go:170
+#: messages.go:182
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "已上传 %d 个文件，耗时 %d 秒"
 
-#: messages.go:171
+#: messages.go:183
 msgid "Processing upload..."
 msgstr "处理上传..."
 
-#: messages.go:172
+#: messages.go:184
 msgid "Upload has been processed"
 msgstr "上传已被处理"
 
-#: messages.go:173
+#: messages.go:185
 msgid "Selection approved"
 msgstr "所选项已批准"
 
-#: messages.go:174
+#: messages.go:186
 msgid "Selection archived"
 msgstr "所选项已归档"
 
-#: messages.go:175
+#: messages.go:187
 msgid "Selection restored"
 msgstr "所选项已恢复"
 
-#: messages.go:176
+#: messages.go:188
 msgid "Selection marked as private"
 msgstr "所选项已设为私有"
 
-#: messages.go:177
+#: messages.go:189
 msgid "Albums deleted"
 msgstr "相册已删除"
 
-#: messages.go:178
+#: messages.go:190
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip 文件创建成功，耗时 %d 秒"
 
-#: messages.go:179
+#: messages.go:191
 msgid "Permanently deleted"
 msgstr "已永久删除"
 
-#: messages.go:180
+#: messages.go:192
 #, c-format
 msgid "%s has been restored"
 msgstr "%s 已恢复"
+
+#: messages.go:193
+msgid "Successfully verified"
+msgstr "验证成功"
+
+#: messages.go:194
+msgid "Successfully activated"
+msgstr "已成功激活"
 
 #~ msgid "Invalid request"
 #~ msgstr "无效请求"

@@ -7,25 +7,28 @@ import (
 	"github.com/manifoldco/promptui"
 	"github.com/urfave/cli"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
-// PlacesCommand configures the command name, flags, and action.
-var PlacesCommand = cli.Command{
+// PlacesCommands configures the command name, flags, and action.
+var PlacesCommands = cli.Command{
 	Name:  "places",
-	Usage: "Maps and location details subcommands",
+	Usage: "Maps and location information subcommands",
 	Subcommands: []cli.Command{
 		{
-			Name:  "update",
-			Usage: "Retrieves updated location details",
+			Name:        "update",
+			Usage:       "Updates location information",
+			Description: "Updates missing location information only if used without the --force flag.",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
-					Name:   "yes, y",
-					Hidden: true,
-					Usage:  "assume \"yes\" as answer to all prompts and run non-interactively",
+					Name:  "force, f",
+					Usage: "forces the location of all pictures to be updated",
+				},
+				cli.BoolFlag{
+					Name:  "yes, y",
+					Usage: "assume \"yes\" and run non-interactively",
 				},
 			},
 			Action: placesUpdateAction,
@@ -33,7 +36,7 @@ var PlacesCommand = cli.Command{
 	},
 }
 
-// placesUpdateAction fetches updated location data.
+// placesUpdateAction updates the location information.
 func placesUpdateAction(ctx *cli.Context) error {
 	// Load config.
 	conf, err := InitConfig(ctx)
@@ -45,22 +48,27 @@ func placesUpdateAction(ctx *cli.Context) error {
 		return err
 	}
 
-	if !conf.Sponsor() && !conf.Test() {
-		log.Errorf(config.MsgSponsorCommand)
+	// Force update of all locations?
+	force := ctx.Bool("force")
+
+	// Show info in case the force option is used without support.
+	if force && !conf.Sponsor() && !conf.Test() {
+		log.Errorf("Since updating the location details of all pictures puts a high load on our infrastructure, this option cannot be used with our Community Edition.")
 		return nil
 	}
 
+	// Initialize database connection.
 	conf.InitDb()
 	defer conf.Shutdown()
 
 	if !ctx.Bool("yes") {
 		confirmPrompt := promptui.Prompt{
-			Label:     "Interrupting the update may result in inconsistent location details. Proceed?",
+			Label:     "Interrupting the update may lead to inconsistent location information. Continue?",
 			IsConfirm: true,
 		}
 
 		// Abort?
-		if _, err := confirmPrompt.Run(); err != nil {
+		if _, confirmErr := confirmPrompt.Run(); confirmErr != nil {
 			return nil
 		}
 	}
@@ -69,7 +77,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 
 	// Run places worker.
 	if w := get.Places(); w != nil {
-		_, err := w.Start()
+		_, err = w.Start(force)
 
 		if err != nil {
 			return err
@@ -78,7 +86,7 @@ func placesUpdateAction(ctx *cli.Context) error {
 
 	// Run moments worker.
 	if w := get.Moments(); w != nil {
-		err := w.Start()
+		err = w.Start()
 
 		if err != nil {
 			return err
@@ -86,17 +94,17 @@ func placesUpdateAction(ctx *cli.Context) error {
 	}
 
 	// Hide missing album contents.
-	if err := query.UpdateMissingAlbumEntries(); err != nil {
+	if err = query.UpdateMissingAlbumEntries(); err != nil {
 		log.Errorf("index: %s (update album entries)", err)
 	}
 
 	// Update precalculated photo and file counts.
-	if err := entity.UpdateCounts(); err != nil {
+	if err = entity.UpdateCounts(); err != nil {
 		log.Warnf("index: %s (update counts)", err)
 	}
 
 	// Update album, subject, and label cover thumbs.
-	if err := query.UpdateCovers(); err != nil {
+	if err = query.UpdateCovers(); err != nil {
 		log.Warnf("index: %s (update covers)", err)
 	}
 

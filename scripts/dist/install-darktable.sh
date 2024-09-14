@@ -11,13 +11,14 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
+# Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
   SYSTEM_ARCH=$(uname -m)
 fi
 
-DESTARCH=${2:-$SYSTEM_ARCH}
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
 set -e
 
@@ -56,7 +57,7 @@ case $DESTARCH in
     ;;
 
   *)
-    echo "Unsupported Machine Architecture: \"$BUILD_ARCH\"" 1>&2
+    echo "Unsupported Machine Architecture: \"$DESTARCH\"" 1>&2
     exit 0
     ;;
 esac

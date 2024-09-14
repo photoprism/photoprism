@@ -8,8 +8,8 @@ import (
 
 func TestContainsUID(t *testing.T) {
 	assert.False(t, ContainsUID([]string{}, 'l'))
-	assert.True(t, ContainsUID([]string{"lt9k3pw1wowuy3c2", "ltxk3pwawowuy0c0"}, 'l'))
-	assert.False(t, ContainsUID([]string{"lt9k3pw1wowuy3c2", "atxk3pwawowuy0c0"}, 'l'))
+	assert.True(t, ContainsUID([]string{"ls6sg341wowuy3c2", "loj2qo0awowuy0c0"}, 'l'))
+	assert.False(t, ContainsUID([]string{"ls6sg341wowuy3c2", "aoj2qo0awowuy0c0"}, 'l'))
 	assert.True(t, ContainsUID([]string{"dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"}, PrefixNone))
 	assert.False(t, ContainsUID([]string{"dafbfeb8-a129-4e7c-9cf0-e7996a701cdb"}, 'l'))
 	assert.False(t, ContainsUID([]string{"_"}, '_'))
@@ -28,12 +28,12 @@ func TestContainsType(t *testing.T) {
 		assert.Equal(t, PrefixNone, prefix)
 	})
 	t.Run("LabelUID", func(t *testing.T) {
-		result, prefix := ContainsType([]string{"lt9k3pw1wowuy3c2", "ltxk3pwawowuy0c0"})
+		result, prefix := ContainsType([]string{"ls6sg341wowuy3c2", "loj2qo0awowuy0c0"})
 		assert.Equal(t, TypeUID, result)
 		assert.Equal(t, byte('l'), prefix)
 	})
 	t.Run("MixedUID", func(t *testing.T) {
-		result, prefix := ContainsType([]string{"lt9k3pw1wowuy3c2", "atxk3pwawowuy0c0"})
+		result, prefix := ContainsType([]string{"ls6sg341wowuy3c2", "aoj2qo0awowuy0c0"})
 		assert.Equal(t, TypeUID, result)
 		assert.Equal(t, PrefixMixed, prefix)
 	})

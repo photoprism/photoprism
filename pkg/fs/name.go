@@ -7,28 +7,35 @@ import (
 	"strings"
 )
 
-// FileName returns the relative filename with the same base and a given extension in a directory.
-func FileName(fileName, dirName, baseDir, fileExt string) string {
-	fileDir := filepath.Dir(fileName)
+// FileName returns the file path for a sidecar file with the specified extension.
+func FileName(fileName, dirName, baseDir, fileExt string) (string, error) {
+	if fileName == "" {
+		return "", fmt.Errorf("file name is empty")
+	} else if fileExt == "" {
+		return "", fmt.Errorf("file extension is empty")
+	}
+
+	dir := filepath.Dir(fileName)
 
 	if dirName == "" || dirName == "." {
-		dirName = fileDir
-	} else if fileDir != dirName {
+		dirName = dir
+	} else if dir != dirName {
 		if filepath.IsAbs(dirName) {
-			dirName = filepath.Join(dirName, RelName(fileDir, baseDir))
+			dirName = filepath.Join(dirName, RelName(dir, baseDir))
 		} else {
-			dirName = filepath.Join(fileDir, dirName)
+			dirName = filepath.Join(dir, dirName)
 		}
 	}
 
-	if err := os.MkdirAll(dirName, ModeDir); err != nil {
-		fmt.Println(err.Error())
-		return ""
+	// Create parent directories if they do not exist yet.
+	if err := MkdirAll(dirName); err != nil {
+		return "", err
 	}
 
+	// Compose and return file path.
 	result := filepath.Join(dirName, filepath.Base(fileName)) + fileExt
 
-	return result
+	return result, nil
 }
 
 // RelName returns the file name relative to a directory.
@@ -41,11 +48,11 @@ func RelName(fileName, dir string) string {
 		return fileName
 	}
 
-	if index := strings.Index(fileName, dir); index == 0 {
-		if index := strings.LastIndex(dir, string(os.PathSeparator)); index == len(dir)-1 {
+	if i := strings.Index(fileName, dir); i == 0 {
+		if i = strings.LastIndex(dir, string(os.PathSeparator)); i == len(dir)-1 {
 			pos := len(dir)
 			return fileName[pos:]
-		} else if index := strings.LastIndex(dir, string(os.PathSeparator)); index != len(dir) {
+		} else if i = strings.LastIndex(dir, string(os.PathSeparator)); i != len(dir) {
 			pos := len(dir) + 1
 			return fileName[pos:]
 		}

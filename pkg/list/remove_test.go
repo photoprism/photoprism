@@ -8,6 +8,7 @@ import (
 
 func TestRemove(t *testing.T) {
 	assert.Equal(t, []string{}, Remove([]string{}, ""))
+	assert.Equal(t, []string{}, Remove([]string{"foo", "bar"}, "*"))
 	assert.Equal(t, []string{}, Remove([]string{}, "bar"))
 	assert.Equal(t, []string{"foo", "bar"}, Remove([]string{"foo", "bar"}, ""))
 	assert.Equal(t, []string{"bar"}, Remove([]string{"foo", "bar"}, "foo"))

@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"flag"
 	"os"
 	"testing"
 
@@ -9,7 +10,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 func TestMain(m *testing.M) {
@@ -20,11 +21,40 @@ func TestMain(m *testing.M) {
 	c := config.NewTestConfig("commands")
 	get.SetConfig(c)
 
+	// Init config and connect to database.
 	InitConfig = func(ctx *cli.Context) (*config.Config, error) {
 		return c, c.Init()
 	}
 
+	// Run unit tests.
 	code := m.Run()
 
+	// Close database connection.
+	c.CloseDb()
+
 	os.Exit(code)
+}
+
+// NewTestContext creates a new CLI test context with the flags and arguments provided.
+func NewTestContext(args []string) *cli.Context {
+	// Create new command-line app.
+	app := cli.NewApp()
+	app.Usage = "PhotoPrism®"
+	app.Version = "test"
+	app.Copyright = "(c) 2018-2024 PhotoPrism UG. All rights reserved."
+	app.EnableBashCompletion = true
+	app.Flags = config.Flags.Cli()
+	app.Metadata = map[string]interface{}{
+		"Name":    "PhotoPrism",
+		"About":   "PhotoPrism®",
+		"Edition": "ce",
+		"Version": "test",
+	}
+
+	// Parse command arguments.
+	flags := flag.NewFlagSet("test", 0)
+	LogErr(flags.Parse(args))
+
+	// Create and return new context.
+	return cli.NewContext(app, flags, nil)
 }

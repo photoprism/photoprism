@@ -15,7 +15,7 @@ func ThumbsWorker(jobs <-chan ThumbsJob) {
 			continue
 		}
 
-		if err := mf.CreateThumbnails(job.path, job.force); err != nil {
+		if err := mf.GenerateThumbnails(job.path, job.force); err != nil {
 			log.Errorf("thumbs: %s", err)
 		}
 	}

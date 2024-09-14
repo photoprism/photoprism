@@ -12,8 +12,8 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/migrate"
-	"github.com/photoprism/photoprism/pkg/report"
+	"github.com/photoprism/photoprism/internal/entity/migrate"
+	"github.com/photoprism/photoprism/pkg/txt/report"
 )
 
 var MigrationsStatusCommand = cli.Command{
@@ -43,8 +43,8 @@ var MigrationsRunCommand = cli.Command{
 	Action: migrationsRunAction,
 }
 
-// MigrationsCommand registers the "migrations" CLI command.
-var MigrationsCommand = cli.Command{
+// MigrationsCommands registers the "migrations" CLI command.
+var MigrationsCommands = cli.Command{
 	Name:  "migrations",
 	Usage: "Database schema migration subcommands",
 	Subcommands: []cli.Command{
@@ -64,7 +64,6 @@ func migrationsStatusAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	var ids []string
@@ -153,7 +152,6 @@ func migrationsRunAction(ctx *cli.Context) error {
 		return err
 	}
 
-	conf.RegisterDb()
 	defer conf.Shutdown()
 
 	if ctx.Bool("trace") {

@@ -11,22 +11,22 @@ import (
 
 func TestUserShares_Contains(t *testing.T) {
 	t.Run("False", func(t *testing.T) {
-		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "at9lxuqxpogaaba9"}}
-		assert.False(t, m.Contains("at9lxuqxpogaaxxx"))
+		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "as6sg6bxpogaaba9"}}
+		assert.False(t, m.Contains("as6sg6bxpogaaxxx"))
 	})
 	t.Run("True", func(t *testing.T) {
-		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "at9lxuqxpogaaba9"}}
-		assert.True(t, m.Contains("at9lxuqxpogaaba9"))
+		m := UserShares{UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "as6sg6bxpogaaba9"}}
+		assert.True(t, m.Contains("as6sg6bxpogaaba9"))
 	})
 	t.Run("Empty", func(t *testing.T) {
 		m := UserShares{}
-		assert.False(t, m.Contains("at9lxuqxpogaaxxx"))
+		assert.False(t, m.Contains("as6sg6bxpogaaxxx"))
 	})
 }
 
 func TestNewUserShare(t *testing.T) {
-	expires := TimeStamp().Add(time.Hour * 48)
-	m := NewUserShare(Admin.UID(), AlbumFixtures.Get("berlin-2019").AlbumUID, PermReact, &expires)
+	expires := Now().Add(time.Hour * 48)
+	m := NewUserShare(Admin.GetUID(), AlbumFixtures.Get("berlin-2019").AlbumUID, PermReact, &expires)
 
 	assert.True(t, m.HasID())
 	assert.True(t, rnd.IsRefID(m.RefID))
@@ -52,7 +52,7 @@ func TestPerm(t *testing.T) {
 
 func TestFindUserShare(t *testing.T) {
 	t.Run("AliceAlbum", func(t *testing.T) {
-		m := FindUserShare(UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "at9lxuqxpogaaba9"})
+		m := FindUserShare(UserShare{UserUID: "uqxetse3cy5eo9z2", ShareUID: "as6sg6bxpogaaba9"})
 
 		expected := UserShareFixtures.Get("AliceAlbum")
 
@@ -76,7 +76,7 @@ func TestFindUserShare(t *testing.T) {
 
 func TestFindUserShares(t *testing.T) {
 	t.Run("Alice", func(t *testing.T) {
-		found := FindUserShares(UserFixtures.Pointer("alice").UID())
+		found := FindUserShares(UserFixtures.Pointer("alice").GetUID())
 		assert.NotNil(t, found)
 		assert.Len(t, found, 1)
 
@@ -114,15 +114,15 @@ func TestUserShare_Create(t *testing.T) {
 func TestUserShare_UpdateLink(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := UserShare{
-			ShareUID: "at9lxuqxpogaaba9",
+			ShareUID: "as6sg6bxpogaaba9",
 		}
 
 		assert.Equal(t, "", m.LinkUID)
 		assert.Equal(t, "", m.Comment)
 
 		l := Link{
-			LinkUID:  "sqn2xpryd1ob8xxx",
-			ShareUID: "at9lxuqxpogaaba9",
+			LinkUID:  "ss62xpryd1ob8xxx",
+			ShareUID: "as6sg6bxpogaaba9",
 			Comment:  "Wedding",
 		}
 		err := m.UpdateLink(l)
@@ -131,20 +131,20 @@ func TestUserShare_UpdateLink(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, "sqn2xpryd1ob8xxx", m.LinkUID)
+		assert.Equal(t, "ss62xpryd1ob8xxx", m.LinkUID)
 		assert.Equal(t, "Wedding", m.Comment)
 	})
 	t.Run("UID mismatch", func(t *testing.T) {
 		m := UserShare{
-			ShareUID: "at9lxuqxpogaaba9",
+			ShareUID: "as6sg6bxpogaaba9",
 		}
 
 		assert.Equal(t, "", m.LinkUID)
 		assert.Equal(t, "", m.Comment)
 
 		l := Link{
-			LinkUID:  "sqn2xpryd1ob8xxx",
-			ShareUID: "at9lxuqxpogaaba8",
+			LinkUID:  "ss62xpryd1ob8xxx",
+			ShareUID: "as6sg6bxpogaaba8",
 			Comment:  "Wedding",
 		}
 		err := m.UpdateLink(l)

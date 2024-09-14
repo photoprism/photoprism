@@ -6,6 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWorkersBusy(t *testing.T) {
-	assert.False(t, IndexWorkersRunning())
+func TestWorkersRunning(t *testing.T) {
+	assert.False(t, WorkersRunning())
 }

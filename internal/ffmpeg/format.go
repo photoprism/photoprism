@@ -11,6 +11,6 @@ func (f PixelFormat) String() string {
 // Standard pixel formats.
 const (
 	FormatYUV420P PixelFormat = "yuv420p"
-	FormatRGB32   PixelFormat = "rgb32"
 	FormatNV12    PixelFormat = "nv12,hwupload"
+	FormatQSV     PixelFormat = "qsv"
 )

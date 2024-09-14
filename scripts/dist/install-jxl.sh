@@ -11,15 +11,17 @@ if [[ $(id -u) != "0" ]]; then
   exit 1
 fi
 
+# Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
   SYSTEM_ARCH=$(uname -m)
 fi
 
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
+
 LIB_VERSION=${2:-v0.8.1}
 SYSTEM_ARCH=$("$(dirname "$0")/arch.sh")
-DESTARCH=${DESTARCH:-$SYSTEM_ARCH}
 
 set -e
 
@@ -48,7 +50,7 @@ case $DESTARCH in
       (cd "$TMPDIR" && dpkg -i jxl_0.8.1_amd64.deb libjxl_0.8.1_amd64.deb libjxl-dev_0.8.1_amd64.deb)
       apt --fix-broken install
       rm -rf /tmp/jpegxl
-    elif [[ $VERSION_CODENAME == "lunar" ]]; then
+    elif [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" || $VERSION_CODENAME == "noble" ]]; then
       echo "Installing JPEG XL distribution packages for amd64 (Intel 64-bit)"
       apt-get -qq install libjxl-dev libjxl-tools
     else
@@ -57,7 +59,7 @@ case $DESTARCH in
     ;;
 
   arm64 | ARM64 | aarch64)
-    if [[ $VERSION_CODENAME == "lunar" ]]; then
+    if [[ $VERSION_CODENAME == "lunar" || $VERSION_CODENAME == "mantic" || $VERSION_CODENAME == "noble" ]]; then
       echo "Installing JPEG XL distribution packages for arm64 (ARM 64-bit)"
       apt-get -qq install libjxl-dev libjxl-tools
     else
@@ -66,7 +68,7 @@ case $DESTARCH in
     ;;
 
   *)
-    echo "Unsupported Machine Architecture: \"$BUILD_ARCH\"" 1>&2
+    echo "Unsupported Machine Architecture: \"$DESTARCH\"" 1>&2
     exit 0
     ;;
 esac

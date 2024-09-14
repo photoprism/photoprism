@@ -24,8 +24,8 @@ func connectAction(ctx *cli.Context) error {
 			return cli.ShowSubcommandHelp(ctx)
 		}
 
-		// Connect to hub.
-		if err := conf.ResyncHub(token); err != nil {
+		// Renew API keys with token.
+		if err := conf.RenewApiKeysWithToken(token); err != nil {
 			return err
 		}
 

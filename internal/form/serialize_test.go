@@ -23,11 +23,10 @@ type TestForm struct {
 	Lat      float32   `form:"lat"`
 	Lng      float32   `form:"lng"`
 	Dist     uint      `form:"dist"`
-	Fmin     float32   `form:"fmin"`
-	Fmax     float32   `form:"fmax"`
+	Color    string    `form:"color"`
 	Chroma   int16     `form:"chroma"`
-	Diff     uint32    `form:"diff"`
 	Mono     bool      `form:"mono"`
+	Diff     uint32    `form:"diff"`
 	Portrait bool      `form:"portrait"`
 	Location bool      `form:"location"`
 	Album    string    `form:"album"`
@@ -35,7 +34,6 @@ type TestForm struct {
 	Country  string    `form:"country"`
 	Year     int       `form:"year"`
 	Month    int       `form:"month"`
-	Color    string    `form:"color"`
 	Quality  int       `form:"quality"`
 	Review   bool      `form:"review"`
 	Camera   int       `form:"camera"`

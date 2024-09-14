@@ -1,20 +1,27 @@
 package config
 
-import "time"
+import (
+	"time"
 
-// ApiUri is the relative path for handling REST requests.
+	"github.com/photoprism/photoprism/pkg/time/unix"
+)
+
+// ApiUri defines the standard path for handling REST requests.
 const ApiUri = "/api/v1"
 
-// StaticUri is the relative path for serving static content.
+// StaticUri defines the standard path for serving static content.
 const StaticUri = "/static"
 
-// CustomStaticUri is the relative path for serving custom static content.
+// CustomStaticUri defines the standard path for serving custom static content.
 const CustomStaticUri = "/c/static"
+
+// DefaultIndexSchedule defines the default indexing schedule in cron format.
+const DefaultIndexSchedule = "" // e.g. "0 */3 * * *" for every 3 hours
 
 // DefaultAutoIndexDelay and DefaultAutoImportDelay set the default safety delay duration
 // before starting to index/import in the background.
-const DefaultAutoIndexDelay = int(5 * 60)  // 5 Minutes
-const DefaultAutoImportDelay = int(3 * 60) // 3 Minutes
+const DefaultAutoIndexDelay = 300 // 5 Minutes
+const DefaultAutoImportDelay = -1 // Disabled
 
 // MinWakeupInterval and MaxWakeupInterval limit the interval duration
 // in which the background worker can be invoked.
@@ -23,38 +30,32 @@ const MaxWakeupInterval = time.Hour * 24          // 1 Day
 const DefaultWakeupIntervalSeconds = int(15 * 60) // 15 Minutes
 const DefaultWakeupInterval = time.Second * time.Duration(DefaultWakeupIntervalSeconds)
 
-// Megabyte in bytes.
-const Megabyte = 1000 * 1000 // 1,000,000 Bytes
+// MegaByte defines a megabyte in bytes.
+const MegaByte = 1000 * 1000 // 1,000,000 Bytes
 
-// Gigabyte in bytes.
-const Gigabyte = Megabyte * 1000 // 1,000,000,000 Bytes
+// GigaByte defines gigabyte in bytes.
+const GigaByte = MegaByte * 1000 // 1,000,000,000 Bytes
 
-// MinMem is the minimum amount of system memory required.
-const MinMem = Gigabyte
+// MinMem defines the minimum amount of system memory required.
+const MinMem = GigaByte
 
-// RecommendedMem is the recommended amount of system memory.
-const RecommendedMem = 3 * Gigabyte // 3,000,000,000 Bytes
+// RecommendedMem defines the recommended amount of system memory.
+const RecommendedMem = 3 * GigaByte // 3,000,000,000 Bytes
 
 // DefaultResolutionLimit defines the default resolution limit.
 const DefaultResolutionLimit = 150 // 150 Megapixels
 
-// serialName is the name of the unique storage serial.
+// serialName defines the name of the unique storage serial.
 const serialName = "serial"
 
-// UnixHour is one hour in UnixTime.
-const UnixHour int64 = 3600
+// DefaultSessionMaxAge defines the standard session expiration time in seconds.
+const DefaultSessionMaxAge = unix.Week * 2
 
-// UnixDay is one day in UnixTime.
-const UnixDay = UnixHour * 24
+// DefaultSessionTimeout defines the standard session idle time in seconds.
+const DefaultSessionTimeout = unix.Week
 
-// UnixWeek is one week in UnixTime.
-const UnixWeek = UnixDay * 7
-
-// DefaultSessionMaxAge is the default session expiration time in seconds.
-const DefaultSessionMaxAge = UnixWeek * 2
-
-// DefaultSessionTimeout is the default session timeout time in seconds.
-const DefaultSessionTimeout = UnixWeek
+// DefaultSessionCache defines the default session cache duration in seconds.
+const DefaultSessionCache = unix.Minute * 15
 
 // Product feature tags used to automatically generate documentation.
 const (

@@ -9,6 +9,40 @@ import (
 )
 
 var EmailRegexp = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+var DomainRegexp = regexp.MustCompile("^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$")
+
+// Auth returns the sanitized authentication identifier trimmed to a maximum length of 255 characters.
+func Auth(s string) string {
+	if s == "" || len(s) > 2048 {
+		return ""
+	}
+
+	i := 0
+
+	// Remove unwanted characters and limit string length
+	s = strings.Map(func(r rune) rune {
+		if i == 0 && r == 32 || r < 32 || r == 127 {
+			return -1
+		}
+
+		switch r {
+		case '<', '>':
+			return -1
+		}
+
+		i++
+
+		if i > 255 {
+			return -1
+		}
+
+		return r
+	}, s)
+
+	s = strings.TrimRight(s, " ")
+
+	return s
+}
 
 // Handle returns the sanitized username with trimmed whitespace and in lowercase.
 func Handle(s string) string {
@@ -35,7 +69,7 @@ func Handle(s string) string {
 	}, s)
 
 	// Empty or too long?
-	if s == "" || reject(s, txt.ClipUserName) {
+	if s == "" || reject(s, txt.ClipUsername) {
 		return ""
 	}
 
@@ -82,6 +116,22 @@ func Email(s string) string {
 	return ""
 }
 
+// Domain returns the normalized domain name with trimmed whitespace and in lowercase.
+func Domain(s string) string {
+	// Empty or too long?
+	if s == "" || reject(s, txt.ClipName) {
+		return ""
+	}
+
+	s = strings.ToLower(strings.TrimSpace(s))
+
+	if DomainRegexp.MatchString(s) {
+		return s
+	}
+
+	return ""
+}
+
 // Role returns the sanitized role with trimmed whitespace and in lowercase.
 func Role(s string) string {
 	// Remove unwanted characters.
@@ -112,4 +162,24 @@ func Attr(s string) string {
 // Password returns the password string with all leading and trailing white space removed.
 func Password(s string) string {
 	return strings.TrimSpace(s)
+}
+
+// Passcode sanitizes a passcode and returns it in lowercase with all whitespace removed.
+func Passcode(s string) string {
+	if s == "" || reject(s, txt.ClipPasscode) {
+		return ""
+	} else if s = strings.ToLower(strings.TrimSpace(s)); s == "" {
+		return ""
+	}
+
+	// Remove unwanted characters.
+	s = strings.Map(func(r rune) rune {
+		if (r < '0' || r > '9') && (r < 'a' || r > 'z') {
+			return -1
+		}
+
+		return r
+	}, s)
+
+	return s
 }

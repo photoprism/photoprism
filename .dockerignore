@@ -1,6 +1,7 @@
 /photos/*
 /frontend/node_modules/*
 /node_modules
+/assets/docs
 /assets/static/build/*
 /assets/facenet
 /assets/nasnet
@@ -12,7 +13,6 @@
 /coverage.*
 /frontend/tests/acceptance/screenshots
 /tmp/
-.dockerignore
 .idea
 .DS_Store
 .env
@@ -20,3 +20,6 @@
 *.db-journal
 Dockerfile
 docker-compose*
+compose.yaml
+compose.*.yaml
+.dockerignore

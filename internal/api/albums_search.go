@@ -6,17 +6,27 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity/search"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/search"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SearchAlbums finds albums and returns them as JSON.
 //
-// GET /api/v1/albums
+//	@Summary	finds albums and returns them as JSON
+//	@Id			SearchAlbums
+//	@Tags		Albums
+//	@Produce	json
+//	@Success	200		{object}	search.AlbumResults
+//	@Failure	400,404	{object}	i18n.Response
+//	@Param		count	query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
+//	@Param		offset	query		int		false	"search result offset"		minimum(0)	maximum(100000)
+//	@Param		order	query		string	false	"sort order"				Enums(favorites, name, title, added, edited)
+//	@Param		q		query		string	false	"search query"
+//	@Router		/api/v1/albums [get]
 func SearchAlbums(router *gin.RouterGroup) {
 	router.GET("/albums", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceAlbums, acl.Permissions{acl.ActionSearch, acl.ActionView, acl.AccessShared})

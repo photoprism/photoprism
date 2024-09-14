@@ -42,7 +42,7 @@ func (m *MediaFile) Thumbnail(path string, sizeName thumb.Name) (filename string
 	thumbName, err := size.FromFile(m.FileName(), m.Hash(), path, m.Orientation())
 
 	if err != nil {
-		err = fmt.Errorf("media: failed creating thumbnail for %s (%s)", clean.Log(m.BaseName()), err)
+		err = fmt.Errorf("media: failed to create thumbnail for %s (%s)", clean.Log(m.BaseName()), err)
 		log.Debug(err)
 		return "", err
 	}
@@ -61,9 +61,15 @@ func (m *MediaFile) Resample(path string, sizeName thumb.Name) (img image.Image,
 	return imaging.Open(thumbName)
 }
 
-// CreateThumbnails creates the default thumbnail sizes if the media file
-// is a JPEG and they don't exist yet (except force is true).
-func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
+// SkipThumbnailSize tests if the thumbnail size can be skipped,
+// e.g. because it is larger than the original.
+func (m *MediaFile) SkipThumbnailSize(size thumb.Size) bool {
+	return thumb.Skip(size, m.Bounds())
+}
+
+// GenerateThumbnails generates thumbnails in the specified storage path,
+// existing images are only replaced if the force flag is set to true.
+func (m *MediaFile) GenerateThumbnails(thumbPath string, force bool) (err error) {
 	if !m.IsPreviewImage() {
 		// Skip.
 		return
@@ -75,17 +81,17 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 	defer func() {
 		switch count {
 		case 0:
-			log.Debug(capture.Time(start, fmt.Sprintf("media: created no new thumbnails for %s", clean.Log(m.RootRelName()))))
+			log.Debug(capture.Time(start, fmt.Sprintf("media: generated no new thumbnails for %s", clean.Log(m.RootRelName()))))
 		default:
-			log.Info(capture.Time(start, fmt.Sprintf("media: created %s for %s", english.Plural(count, "thumbnail", "thumbnails"), clean.Log(m.RootRelName()))))
+			log.Info(capture.Time(start, fmt.Sprintf("media: generated %s for %s", english.Plural(count, "thumbnail", "thumbnails"), clean.Log(m.RootRelName()))))
 		}
 	}()
 
 	hash := m.Hash()
 
 	var original image.Image
-
-	var srcImg image.Image
+	var srcImage image.Image
+	var srcBuffer []byte
 	var srcName thumb.Name
 
 	for _, name := range thumb.Names {
@@ -93,63 +99,99 @@ func (m *MediaFile) CreateThumbnails(thumbPath string, force bool) (err error) {
 		var fileName string
 
 		if size = thumb.Sizes[name]; size.Uncached() {
-			// Skip, exceeds pre-cached size limit.
+			// Exceeds the maximum size of thumbnails to be generated while indexing (--thumb-size).
 			continue
 		} else if fileName, err = size.FileName(hash, thumbPath); err != nil {
-			log.Errorf("media: failed creating %s (%s)", clean.Log(string(name)), err)
+			log.Errorf("media: failed to create %s (%s)", clean.Log(string(name)), err)
 			return err
 		} else if force || !fs.FileExists(fileName) {
-			// Open original if needed.
-			if original == nil {
-				img, imgErr := thumb.Open(m.FileName(), m.Orientation())
+			// Use libvips to generate thumbnails?
+			if thumb.Library == thumb.LibVips {
+				// Only create a thumbnail if its size does not exceed the size of the original image.
+				if m.SkipThumbnailSize(size) {
+					continue
+				} else if size.Source != "" {
+					// Original image filename.
+					srcFile := m.FileName()
 
-				// Try to fix broken JPEGs if possible, fail otherwise.
-				if imgErr != nil {
-					msg := imgErr.Error()
-
-					// Fixable file error?
-					if !(strings.HasPrefix(msg, "EOF") || strings.HasPrefix(msg, "invalid JPEG")) {
-						log.Debugf("media: %s in %s", msg, clean.Log(m.RootRelName()))
-						return imgErr
+					// If possible, use existing thumbnail file to create smaller sizes.
+					if thumbFile, srcErr := thumb.Sizes[size.Source].FileName(hash, thumbPath); srcErr == nil && fs.FileExistsNotEmpty(thumbFile) {
+						srcFile = thumbFile
 					}
 
-					// Try to fix image.
-					if fixed, fixErr := NewConvert(conf).FixJpeg(m, false); fixErr != nil {
-						return fixErr
-					} else if fixedImg, openErr := thumb.Open(fixed.FileName(), m.Orientation()); openErr != nil {
-						return openErr
+					// Generate thumbnail with libvips.
+					if size.Source == srcName && srcName != "" && srcBuffer != nil {
+						_, _, err = thumb.Vips(srcFile, srcBuffer, hash, thumbPath, size.Width, size.Height, size.Options...)
 					} else {
-						img = fixedImg
+						_, _, err = thumb.Vips(srcFile, nil, hash, thumbPath, size.Width, size.Height, size.Options...)
 					}
-				}
 
-				original = img
-
-				log.Debugf("media: opened %s [%s]", clean.Log(m.RootRelName()), thumb.MemSize(original).String())
-			}
-
-			// Thumb size too large
-			// for the original image?
-			if size.Skip(original) {
-				continue
-			}
-
-			// Reuse existing thumb to improve performance
-			// and reduce server load?
-			if size.Source != "" {
-				if size.Source == srcName && srcImg != nil {
-					_, err = size.Create(srcImg, fileName)
+					// Log error, if any.
+					if err != nil {
+						log.Debugf("vips: %s in %s (generate thumbnail from %s)", err, clean.Log(m.RootRelName()), size.Source)
+					}
+				} else if _, srcBuffer, err = thumb.Vips(m.FileName(), nil, hash, thumbPath, size.Width, size.Height, size.Options...); err != nil || srcBuffer == nil {
+					log.Debugf("vips: failed to generate thumbnail from %s", clean.Log(m.RootRelName()))
+					// Clear thumbnail image cache.
+					srcBuffer = nil
+					srcName = ""
 				} else {
-					_, err = size.Create(original, fileName)
+					// Remember cached thumbnail size.
+					srcName = name
 				}
 			} else {
-				srcImg, err = size.Create(original, fileName)
-				srcName = name
+				// Open original if needed.
+				if original == nil {
+					img, imgErr := thumb.Open(m.FileName(), m.Orientation())
+
+					// Failed to open the JPEG file?
+					if imgErr != nil {
+						msg := imgErr.Error()
+
+						// Non-repairable file error?
+						if !(strings.Contains(msg, "EOF") ||
+							strings.HasPrefix(msg, "invalid JPEG")) {
+							log.Debugf("media: %s in %s", msg, clean.Log(m.RootRelName()))
+							return imgErr
+						}
+
+						// Try to repair the file by creating a properly encoded copy with ImageMagick.
+						if fixed, fixErr := NewConvert(conf).FixJpeg(m, false); fixErr != nil {
+							return fixErr
+						} else if fixedImg, openErr := thumb.Open(fixed.FileName(), m.Orientation()); openErr != nil {
+							return openErr
+						} else {
+							img = fixedImg
+						}
+					}
+
+					original = img
+
+					log.Debugf("media: opened %s [%s]", clean.Log(m.RootRelName()), thumb.MemSize(original).String())
+				}
+
+				// Thumb size too large
+				// for the original image?
+				if size.Skip(original) {
+					continue
+				}
+
+				// Reuse existing thumbnails to improve rendering performance.
+				if size.Source != "" {
+					if size.Source == srcName && srcImage != nil {
+						_, err = size.Create(srcImage, fileName)
+					} else {
+						_, err = size.Create(original, fileName)
+					}
+				} else {
+					srcImage, err = size.Create(original, fileName)
+					srcName = name
+				}
 			}
 
 			// Failed?
 			if err != nil {
-				log.Errorf("media: failed creating %s (%s)", name.String(), err)
+				log.Errorf("media: failed to create %s (%s)", name.String(), err)
 				return err
 			}
 
@@ -175,7 +217,9 @@ func (m *MediaFile) ChangeOrientation(val int) (err error) {
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
-	cmd.Env = []string{fmt.Sprintf("HOME=%s", cnf.CmdCachePath())}
+	cmd.Env = append(cmd.Env, []string{
+		fmt.Sprintf("HOME=%s", cnf.CmdCachePath()),
+	}...)
 
 	// Log exact command for debugging in trace mode.
 	log.Trace(cmd.String())

@@ -4,7 +4,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -15,7 +15,7 @@ func (ind *Index) Labels(jpeg *MediaFile) (results classify.Labels) {
 
 	var sizes []thumb.Name
 
-	if jpeg.AspectRatio() == 1 {
+	if jpeg.Square() {
 		sizes = []thumb.Name{thumb.Tile224}
 	} else {
 		sizes = []thumb.Name{thumb.Tile224, thumb.Left224, thumb.Right224}

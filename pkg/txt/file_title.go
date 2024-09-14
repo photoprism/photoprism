@@ -25,14 +25,12 @@ func FileTitle(s string) string {
 	for _, w := range words {
 		w = strings.ToLower(w)
 
+		// Ignore ASCII strings < 3 characters at the beginning.
 		if IsASCII(w) && (len(w) < 3 && found == 0 || len(w) == 1) {
 			continue
 		}
 
-		if _, ok := StopWords[w]; ok && found == 0 {
-			continue
-		}
-
+		// Ignore short strings that are not a known word.
 		if UnknownWord(w) {
 			continue
 		}

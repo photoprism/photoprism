@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/photoprism/photoprism/pkg/s2"
+	"github.com/photoprism/photoprism/pkg/geo/s2"
 )
 
 type CellMap map[string]Cell
@@ -29,8 +29,8 @@ var CellFixtures = CellMap{
 		CellName:     "Adosada Platform",
 		CellCategory: "botanical garden",
 		Place:        PlaceFixtures.Pointer("mexico"),
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 	"caravan park": {
 		ID:      s2.TokenPrefix + "1ef75a71a36c",
@@ -41,13 +41,13 @@ var CellFixtures = CellMap{
 			PlaceCity:    "Mandeni",
 			PlaceState:   "KwaZulu-Natal",
 			PlaceCountry: "za",
-			CreatedAt:    TimeStamp(),
-			UpdatedAt:    TimeStamp(),
+			CreatedAt:    Now(),
+			UpdatedAt:    Now(),
 		},
 		CellName:     "Lobotes Caravan Park",
 		CellCategory: "camping",
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 	"zinkwazi": {
 		ID:           s2.TokenPrefix + "1ef744d1e28c",
@@ -55,8 +55,8 @@ var CellFixtures = CellMap{
 		Place:        PlaceFixtures.Pointer("zinkwazi"),
 		CellName:     "Zinkwazi Beach",
 		CellCategory: "beach",
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 	"hassloch": {
 		ID:           s2.TokenPrefix + "1ef744d1e280",
@@ -64,8 +64,8 @@ var CellFixtures = CellMap{
 		Place:        PlaceFixtures.Pointer("holidaypark"),
 		CellName:     "Holiday Park",
 		CellCategory: "park",
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 	"emptyNameLongCity": {
 		ID:           s2.TokenPrefix + "1ef744d1e281",
@@ -73,8 +73,8 @@ var CellFixtures = CellMap{
 		Place:        PlaceFixtures.Pointer("emptyNameLongCity"),
 		CellName:     "",
 		CellCategory: "botanical garden",
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 	"emptyNameShortCity": {
 		ID:           s2.TokenPrefix + "1ef744d1e282",
@@ -82,8 +82,8 @@ var CellFixtures = CellMap{
 		Place:        PlaceFixtures.Pointer("emptyNameShortCity"),
 		CellName:     "",
 		CellCategory: "botanical garden",
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 	"veryLongLocName": {
 		ID:           s2.TokenPrefix + "1ef744d1e283",
@@ -91,8 +91,8 @@ var CellFixtures = CellMap{
 		Place:        PlaceFixtures.Pointer("veryLongLocName"),
 		CellName:     "longlonglonglonglonglonglonglonglonglonglonglonglongName",
 		CellCategory: "cape",
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 	"mediumLongLocName": {
 		ID:           s2.TokenPrefix + "1ef744d1e283",
@@ -100,8 +100,8 @@ var CellFixtures = CellMap{
 		Place:        PlaceFixtures.Pointer("mediumLongLocName"),
 		CellName:     "longlonglonglonglonglongName",
 		CellCategory: "botanical garden",
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 	"Neckarbrücke": {
 		ID:           s2.TokenPrefix + "1ef744d1e284",
@@ -109,8 +109,8 @@ var CellFixtures = CellMap{
 		Place:        PlaceFixtures.Pointer("Germany"),
 		CellName:     "Neckarbrücke",
 		CellCategory: "",
-		CreatedAt:    TimeStamp(),
-		UpdatedAt:    TimeStamp(),
+		CreatedAt:    Now(),
+		UpdatedAt:    Now(),
 	},
 }
 

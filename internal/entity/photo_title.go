@@ -8,7 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -173,7 +173,7 @@ func (m *Photo) UpdateTitle(labels classify.Labels) error {
 // UpdateAndSaveTitle updates the photo title and saves it.
 func (m *Photo) UpdateAndSaveTitle() error {
 	if !m.HasID() {
-		return fmt.Errorf("cannot save photo whithout id")
+		return fmt.Errorf("cannot save photo without id")
 	}
 
 	m.PhotoFaces = m.FaceCount()

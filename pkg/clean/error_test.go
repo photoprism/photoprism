@@ -18,9 +18,12 @@ func TestLogError(t *testing.T) {
 		assert.Equal(t, "simple", Error(errors.New("simple")))
 	})
 	t.Run("Spaces", func(t *testing.T) {
-		assert.Equal(t, "'the quick brown fox'", Error(errors.New("the quick brown fox")))
+		assert.Equal(t, "the quick brown fox", Error(errors.New("the quick brown fox")))
 	})
 	t.Run("Invalid", func(t *testing.T) {
-		assert.Equal(t, "?", Error(errors.New("${https://<host>:<port>/<path>}")))
+		assert.Equal(t, "??https://?host?:?port?/?path??", Error(errors.New("${https://<host>:<port>/<path>}")))
+	})
+	t.Run("Quotes", func(t *testing.T) {
+		assert.Equal(t, "the quick 'brown fox", Error(errors.New("the quick `brown fox")))
 	})
 }

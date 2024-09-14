@@ -17,21 +17,20 @@ then
     exit 1
 fi
 
+# Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
   SYSTEM_ARCH=$(uname -m)
 fi
 
-DESTARCH=${2:-$SYSTEM_ARCH}
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
 if [ -d "/go" ]; then
   GOPATH="/go"
 elif [[ -z $GOPATH ]]; then
   GOPATH=$(go env GOPATH)
 fi
-
-echo "Installing Go tools for ${DESTARCH^^} in $GOPATH..."
 
 set -e
 
@@ -40,18 +39,25 @@ mkdir -p "$GOPATH/src"
 # Install remaining tools in "/usr/local/bin".
 case $DESTARCH in
   arm | ARM | aarch | armv7l | armhf)
-    # no additional tools on ARMv7 to reduce build time
-    echo "Skipping installation of Go tools."
+    echo "Installing Go tools for ${DESTARCH^^} in /usr/local/bin..."
+    GOBIN="/usr/local/bin" go install golang.org/x/tools/cmd/goimports@latest
+    GOBIN="/usr/local/bin" go install github.com/psampaz/go-mod-outdated@latest
+    GOBIN="/usr/local/bin" go install github.com/kyoh86/richgo@latest
+    GOBIN="/usr/local/bin" go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
     ;;
 
   *)
-    echo "Installing Go tools in /usr/local/bin..."
+    echo "Installing Go tools for ${DESTARCH^^} in /usr/local/bin..."
     GOBIN="/usr/local/bin" go install golang.org/x/tools/cmd/goimports@latest
+    GOBIN="/usr/local/bin" go install golang.org/x/tools/cmd/godoc@latest
     GOBIN="/usr/local/bin" go install github.com/psampaz/go-mod-outdated@latest
     GOBIN="/usr/local/bin" go install github.com/mikefarah/yq/v4@latest
     GOBIN="/usr/local/bin" go install github.com/kyoh86/richgo@latest
     GOBIN="/usr/local/bin" go install github.com/muesli/duf@latest
     GOBIN="/usr/local/bin" go install github.com/go-delve/delve/cmd/dlv@latest
+    GOBIN="/usr/local/bin" go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+    GOBIN="/usr/local/bin" go install github.com/google/go-licenses@latest
+    GOBIN="/usr/local/bin" go install github.com/swaggo/swag/cmd/swag@latest
     ;;
 esac
 

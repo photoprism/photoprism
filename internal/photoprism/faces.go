@@ -9,8 +9,8 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/query"
 )
 
 // Faces represents a worker for face clustering and matching.
@@ -160,7 +160,7 @@ func (w *Faces) Cancel() {
 
 // Canceled tests if face clustering and matching should be stopped.
 func (w *Faces) Canceled() bool {
-	return mutex.FacesWorker.Canceled() || mutex.MainWorker.Canceled() || mutex.MetaWorker.Canceled()
+	return mutex.FacesWorker.Canceled() || mutex.IndexWorker.Canceled() || mutex.MetaWorker.Canceled()
 }
 
 // Disabled tests if face recognition is disabled.

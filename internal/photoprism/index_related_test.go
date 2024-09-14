@@ -6,11 +6,11 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
+	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/ai/nsfw"
 	"github.com/photoprism/photoprism/internal/config"
-	"github.com/photoprism/photoprism/internal/face"
-	"github.com/photoprism/photoprism/internal/nsfw"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -30,7 +30,7 @@ func TestIndexRelated(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		testToken := rnd.GenerateToken(8)
+		testToken := rnd.Base36(8)
 		testPath := filepath.Join(conf.OriginalsPath(), testToken)
 
 		for _, f := range testRelated.Files {
@@ -91,7 +91,7 @@ func TestIndexRelated(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		testToken := rnd.GenerateToken(8)
+		testToken := rnd.Base36(8)
 		testPath := filepath.Join(conf.OriginalsPath(), testToken)
 
 		for _, f := range testRelated.Files {

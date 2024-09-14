@@ -11,7 +11,7 @@ import Album from "../../page-model/album";
 import Settings from "../../page-model/settings";
 import Library from "../../page-model/library";
 
-fixture`Test settings`.page`${testcafeconfig.url}`.beforeEach(async (t) => {
+fixture`Test general settings`.page`${testcafeconfig.url}`.beforeEach(async (t) => {
   await page.login("admin", "photoprism");
 });
 
@@ -30,14 +30,14 @@ test.meta("testID", "settings-general-001").meta({ type: "short", mode: "auth" }
   "Common: Disable delete",
   async (t) => {
     await menu.openPage("archive");
-    await toolbar.checkToolbarActionAvailability("delete", true);
+    await toolbar.checkToolbarActionAvailability("delete-all", true);
     await photo.triggerHoverAction("nth", 0, "select");
     await contextmenu.checkContextMenuActionAvailability("delete", true);
     await contextmenu.clearSelection();
     await menu.openPage("settings");
     await t.click(settings.deleteCheckbox);
     await menu.openPage("archive");
-    await toolbar.checkToolbarActionAvailability("delete", false);
+    await toolbar.checkToolbarActionAvailability("delete-all", false);
 
     await photo.triggerHoverAction("nth", 0, "select");
 
@@ -303,6 +303,9 @@ test.meta("testID", "settings-general-005").meta({ type: "short", mode: "auth" }
 
     await photo.checkPhotoVisibility("pqnah1k2frui6p63", false);
 
+    await t.navigateTo("/library/archive");
+    await toolbar.checkToolbarActionAvailability("delete-all", true);
+
     await menu.openPage("settings");
     await t
       .click(settings.archiveCheckbox)
@@ -340,6 +343,9 @@ test.meta("testID", "settings-general-005").meta({ type: "short", mode: "auth" }
     await toolbar.search("Archive / 2020");
 
     await photo.checkPhotoVisibility("pqnah1k2frui6p63", true);
+
+    await t.navigateTo("/library/archive");
+    await toolbar.checkToolbarActionAvailability("delete-all", false);
 
     await menu.openPage("settings");
     await t
@@ -389,6 +395,8 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await photoviewer.checkPhotoViewerActionAvailability("download", true);
 
     await photoviewer.triggerPhotoViewerAction("close");
+    await t.expect(Selector("#photo-viewer").visible).notOk();
+
     await menu.openPage("settings");
 
     await t
@@ -474,6 +482,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
     await photoviewer.checkPhotoViewerActionAvailability("download", false);
     await photoviewer.checkPhotoViewerActionAvailability("edit", false);
     await photoviewer.triggerPhotoViewerAction("close");
+    await t.expect(Selector("#photo-viewer").visible).notOk();
 
     await menu.openPage("settings");
     await t

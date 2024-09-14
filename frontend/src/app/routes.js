@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -164,9 +164,9 @@ export default [
   },
   {
     name: "moment",
-    path: "/moments/:uid/:slug",
+    path: "/moments/:album/:slug",
     component: AlbumPhotos,
-    meta: { collName: "Moments", collRoute: "moments", auth: true },
+    meta: { collectionTitle: "Moments", collectionRoute: "moments", auth: true },
   },
   {
     name: "albums",
@@ -177,9 +177,9 @@ export default [
   },
   {
     name: "album",
-    path: "/albums/:uid/:slug",
+    path: "/albums/:album/:slug",
     component: AlbumPhotos,
-    meta: { collName: "Albums", collRoute: "albums", auth: true },
+    meta: { collectionTitle: "Albums", collectionRoute: "albums", auth: true },
   },
   {
     name: "calendar",
@@ -190,9 +190,9 @@ export default [
   },
   {
     name: "month",
-    path: "/calendar/:uid/:slug",
+    path: "/calendar/:album/:slug",
     component: AlbumPhotos,
-    meta: { collName: "Calendar", collRoute: "calendar", auth: true },
+    meta: { collectionTitle: "Calendar", collectionRoute: "calendar", auth: true },
   },
   {
     name: "folders",
@@ -203,9 +203,9 @@ export default [
   },
   {
     name: "folder",
-    path: "/folders/:uid/:slug",
+    path: "/folders/:album/:slug",
     component: AlbumPhotos,
-    meta: { collName: "Folders", collRoute: "folders", auth: true },
+    meta: { collectionTitle: "Folders", collectionRoute: "folders", auth: true },
   },
   {
     name: "unsorted",
@@ -263,16 +263,25 @@ export default [
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "places_query",
-    path: "/places/:q",
+    name: "places_view",
+    path: "/places/view/:s",
     component: Places,
     meta: { title: $gettext("Places"), auth: true },
   },
   {
-    name: "places_scope",
-    path: "/places/:s/:q",
-    component: Places,
+    name: "places_browse",
+    path: "/places/browse",
+    component: Photos,
     meta: { title: $gettext("Places"), auth: true },
+    beforeEnter: (to, from, next) => {
+      if (session.loginRequired()) {
+        next({ name: "login" });
+      } else if (config.deny("photos", "search")) {
+        next({ name: "albums" });
+      } else {
+        next();
+      }
+    },
   },
   {
     name: "states",
@@ -283,9 +292,9 @@ export default [
   },
   {
     name: "state",
-    path: "/states/:uid/:slug",
+    path: "/states/:album/:slug",
     component: AlbumPhotos,
-    meta: { collName: "Places", collRoute: "states", auth: true },
+    meta: { collectionTitle: "Places", collectionRoute: "states", auth: true },
   },
   {
     name: "files",

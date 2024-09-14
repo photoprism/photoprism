@@ -22,14 +22,14 @@ echo "Installing ${GOLANG_VERSION} in \"${DESTDIR}\"..."
 
 set -e
 
-# Query architecture.
+# Determine the system architecture.
 if [[ $PHOTOPRISM_ARCH ]]; then
   SYSTEM_ARCH=$PHOTOPRISM_ARCH
 else
   SYSTEM_ARCH=$(uname -m)
 fi
 
-DESTARCH=${2:-$SYSTEM_ARCH}
+DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 
 mkdir -p "$DESTDIR"
 
@@ -49,7 +49,7 @@ case $DESTARCH in
     ;;
 
   *)
-    echo "Unsupported Machine Architecture: \"$BUILD_ARCH\"" 1>&2
+    echo "Unsupported Machine Architecture: \"$DESTARCH\"" 1>&2
     exit 1
     ;;
 esac
@@ -64,7 +64,8 @@ echo "Adding symbolic links for go and gofmt."
 ln -sf /usr/local/go/bin/go /usr/local/bin/go
 ln -sf /usr/local/go/bin/gofmt /usr/local/bin/gofmt
 
-# Test if it works.
+# Test go command by showing installed Go version. Telemetry in Go >= 1.23 should be set to "off" in
+# ~/.config/go/telemetry, see https://go.dev/doc/telemetry. You can otherwise run "go telemetry off".
 go version
 
 echo "Done."

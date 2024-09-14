@@ -6,10 +6,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -27,6 +27,7 @@ func UpdateLink(c *gin.Context) {
 
 	var f form.Link
 
+	// Assign and validate request form values.
 	if err := c.BindJSON(&f); err != nil {
 		log.Debugf("share: %s", err)
 		AbortBadRequest(c)
@@ -57,7 +58,7 @@ func UpdateLink(c *gin.Context) {
 
 	UpdateClientConfig()
 
-	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
+	PublishAlbumEvent(StatusUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }
@@ -82,14 +83,15 @@ func DeleteLink(c *gin.Context) {
 
 	UpdateClientConfig()
 
-	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
+	PublishAlbumEvent(StatusUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }
 
 // CreateLink adds a new share link and return it as JSON.
 //
-// POST /api/v1/:entity/:uid/links
+//	@Tags	Links
+//	@Router	/api/v1/{entity}/{uid}/links [post]
 func CreateLink(c *gin.Context) {
 	s := Auth(c, acl.ResourceShares, acl.ActionCreate)
 
@@ -132,14 +134,22 @@ func CreateLink(c *gin.Context) {
 
 	UpdateClientConfig()
 
-	PublishAlbumEvent(EntityUpdated, link.ShareUID, c)
+	PublishAlbumEvent(StatusUpdated, link.ShareUID, c)
 
 	c.JSON(http.StatusOK, link)
 }
 
 // CreateAlbumLink adds a new album share link and return it as JSON.
 //
-// POST /api/v1/albums/:uid/links
+//	@Summary	adds a new album share link and return it as JSON
+//	@Id			CreateAlbumLink
+//	@Tags		Links, Albums
+//	@Produce	json
+//	@Success	200						{object}	entity.Link
+//	@Failure	400,401,403,404,409,429	{object}	i18n.Response
+//	@Param		uid						path		string		true	"album uid"
+//	@Param		link					body		form.Link	true	"link properties (currently supported: slug, expires)"
+//	@Router		/api/v1/albums/{uid}/links [post]
 func CreateAlbumLink(router *gin.RouterGroup) {
 	router.POST("/albums/:uid/links", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
@@ -159,7 +169,16 @@ func CreateAlbumLink(router *gin.RouterGroup) {
 
 // UpdateAlbumLink updates an album share link and return it as JSON.
 //
-// PUT /api/v1/albums/:uid/links/:link
+//	@Summary	updates an album share link and return it as JSON
+//	@Id			UpdateAlbumLink
+//	@Tags		Links, Albums
+//	@Produce	json
+//	@Success	200						{object}	entity.Link
+//	@Failure	400,401,403,429,409,500	{object}	i18n.Response
+//	@Param		uid						path		string		true	"album uid"
+//	@Param		linkuid					path		string		true	"link uid"
+//	@Param		link					body		form.Link	true	"properties to be updated (currently supported: slug, expires, token)"
+//	@Router		/api/v1/albums/{uid}/links/{linkuid} [put]
 func UpdateAlbumLink(router *gin.RouterGroup) {
 	router.PUT("/albums/:uid/links/:link", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
@@ -174,7 +193,15 @@ func UpdateAlbumLink(router *gin.RouterGroup) {
 
 // DeleteAlbumLink deletes an album share link.
 //
-// DELETE /api/v1/albums/:uid/links/:link
+//	@Summary	deletes an album share link
+//	@Id			DeleteAlbumLink
+//	@Tags		Links, Albums
+//	@Produce	json
+//	@Success	200				{object}	entity.Link
+//	@Failure	401,403,429,409	{object}	i18n.Response
+//	@Param		uid				path		string	true	"album"
+//	@Param		linkuid			path		string	true	"link uid"
+//	@Router		/api/v1/albums/{uid}/links/{linkuid} [delete]
 func DeleteAlbumLink(router *gin.RouterGroup) {
 	router.DELETE("/albums/:uid/links/:link", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
@@ -189,7 +216,14 @@ func DeleteAlbumLink(router *gin.RouterGroup) {
 
 // GetAlbumLinks returns all share links for the given UID as JSON.
 //
-// GET /api/v1/albums/:uid/links
+//	@Summary	returns all share links for the given UID as JSON
+//	@Id			GetAlbumLinks
+//	@Tags		Links, Albums
+//	@Produce	json
+//	@Success	200				{object}	entity.Link
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Param		uid				path		string	true	"album uid"
+//	@Router		/api/v1/albums/{uid}/links [get]
 func GetAlbumLinks(router *gin.RouterGroup) {
 	router.GET("/albums/:uid/links", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceAlbums, acl.ActionShare)
@@ -213,7 +247,8 @@ func GetAlbumLinks(router *gin.RouterGroup) {
 
 // CreatePhotoLink adds a new photo share link and return it as JSON.
 //
-// POST /api/v1/photos/:uid/links
+//	@Tags 		Links, Photos
+//	@Router		/api/v1/photos/{uid}/links [post]
 func CreatePhotoLink(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/links", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionShare)
@@ -285,7 +320,8 @@ func GetPhotoLinks(router *gin.RouterGroup) {
 
 // CreateLabelLink adds a new label share link and return it as JSON.
 //
-// POST /api/v1/labels/:uid/links
+//	@Tags 		Links, Labels
+//	@Router		/api/v1/labels/{uid}/links [post]
 func CreateLabelLink(router *gin.RouterGroup) {
 	router.POST("/labels/:uid/links", func(c *gin.Context) {
 		s := Auth(c, acl.ResourceLabels, acl.ActionShare)

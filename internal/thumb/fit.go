@@ -7,9 +7,7 @@ import "image"
 var FitSizes = SizeList{
 	Sizes[Fit7680],
 	Sizes[Fit4096],
-	Sizes[Fit3840],
 	Sizes[Fit2560],
-	Sizes[Fit2048],
 	Sizes[Fit1920],
 	Sizes[Fit1280],
 	Sizes[Fit720],

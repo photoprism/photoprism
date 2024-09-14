@@ -2,45 +2,49 @@ package api
 
 import (
 	"net/http"
-	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
-// SavePhotoAsYaml saves photo data as YAML file.
-func SavePhotoAsYaml(p entity.Photo) {
-	c := get.Config()
-
-	// Write YAML sidecar file (optional).
-	if !c.BackupYaml() {
+// SaveSidecarYaml saves the photo metadata to a YAML sidecar file.
+func SaveSidecarYaml(photo *entity.Photo) {
+	if photo == nil {
+		log.Debugf("api: photo is nil (update yaml)")
 		return
 	}
 
-	fileName := p.YamlFileName(c.OriginalsPath(), c.SidecarPath())
+	conf := get.Config()
 
-	if err := p.SaveAsYaml(fileName); err != nil {
-		log.Errorf("photo: %s (update yaml)", err)
-	} else {
-		log.Debugf("photo: updated yaml file %s", clean.Log(filepath.Base(fileName)))
+	// Check if saving YAML sidecar files is enabled.
+	if !conf.SidecarYaml() {
+		return
 	}
+
+	// Write photo metadata to YAML sidecar file.
+	_ = photo.SaveSidecarYaml(conf.OriginalsPath(), conf.SidecarPath())
 }
 
-// GetPhoto returns photo details as JSON.
+// GetPhoto returns picture details as JSON.
 //
-// Route : GET /api/v1/photos/:uid
-// Params:
-// - uid (string) PhotoUID as returned by the API
+//	@Summary	returns picture details as JSON
+//	@Id			GetPhoto
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200				{object}	entity.Photo
+//	@Failure	401,403,404,429	{object}	i18n.Response
+//	@Param		uid				path		string	true	"Photo UID"
+//	@Router		/api/v1/photos/{uid} [get]
 func GetPhoto(router *gin.RouterGroup) {
 	router.GET("/photos/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionView)
@@ -60,9 +64,17 @@ func GetPhoto(router *gin.RouterGroup) {
 	})
 }
 
-// UpdatePhoto updates photo details and returns them as JSON.
+// UpdatePhoto updates picture details and returns them as JSON.
 //
-// PUT /api/v1/photos/:uid
+//	@Summary	updates picture details and returns them as JSON
+//	@Id			UpdatePhoto
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200						{object}	entity.Photo
+//	@Failure	400,401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid						path		string		true	"Photo UID"
+//	@Param		photo					body		form.Photo	true	"properties to be updated (only submit values that should be changed)"
+//	@Router		/api/v1/photos/{uid} [put]
 func UpdatePhoto(router *gin.RouterGroup) {
 	router.PUT("/photos/:uid", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -87,7 +99,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		// 2) Update form with values from request
+		// 2) Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			Abort(c, http.StatusBadRequest, i18n.ErrBadRequest)
 			return
@@ -101,7 +113,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			FlushCoverCache()
 		}
 
-		PublishPhotoEvent(EntityUpdated, uid, c)
+		PublishPhotoEvent(StatusUpdated, uid, c)
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 
@@ -112,7 +124,7 @@ func UpdatePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		SavePhotoAsYaml(p)
+		SaveSidecarYaml(&p)
 
 		UpdateClientConfig()
 
@@ -122,9 +134,14 @@ func UpdatePhoto(router *gin.RouterGroup) {
 
 // GetPhotoDownload returns the primary file matching that belongs to the photo.
 //
-// Route :GET /api/v1/photos/:uid/dl
-// Params:
-// - uid (string) PhotoUID as returned by the API
+//	@Summary	returns the primary file matching that belongs to the photo
+//	@Id			GetPhotoDownload
+//	@Tags		Images, Files
+//	@Produce	application/octet-stream
+//	@Failure	403,404	{file}	image/svg+xml
+//	@Success	200		{file}	application/octet-stream
+//	@Param		uid		path	string	true	"photo uid"
+//	@Router		/api/v1/photos/{uid}/dl [get]
 func GetPhotoDownload(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/dl", func(c *gin.Context) {
 		if InvalidDownloadToken(c) {
@@ -146,7 +163,7 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 			c.Data(http.StatusNotFound, "image/svg+xml", photoIconSvg)
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
-			logError("photo", f.Update("FileMissing", true))
+			logErr("photo", f.Update("FileMissing", true))
 
 			return
 		}
@@ -155,12 +172,16 @@ func GetPhotoDownload(router *gin.RouterGroup) {
 	})
 }
 
-// GetPhotoYaml returns photo details as YAML.
+// GetPhotoYaml returns picture details as YAML.
 //
-// GET /api/v1/photos/:uid/yaml
-// Params:
-//
-//	uid: string PhotoUID as returned by the API
+//	@Summary	returns picture details as YAML
+//	@Id			GetPhotoYaml
+//	@Tags		Photos
+//	@Produce	text/x-yaml
+//	@Failure	401,403,404,429,500	{object}	i18n.Response
+//	@Success	200					{file}		text/x-yaml
+//	@Param		uid					path		string	true	"photo uid"
+//	@Router		/api/v1/photos/{uid}/yaml [get]
 func GetPhotoYaml(router *gin.RouterGroup) {
 	router.GET("/photos/:uid/yaml", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.AccessAll)
@@ -193,10 +214,14 @@ func GetPhotoYaml(router *gin.RouterGroup) {
 
 // ApprovePhoto marks a photo in review as approved.
 //
-// POST /api/v1/photos/:uid/approve
-// Params:
-//
-//	uid: string PhotoUID as returned by the API
+//	@Summary	marks a photo in review as approved
+//	@Id			ApprovePhoto
+//	@Tags		Photos
+//	@Produce	json
+//	@Success	200					{object}	gin.H
+//	@Failure	401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid					path		string	true	"photo uid"
+//	@Router		/api/v1/photos/{uid}/approve [post]
 func ApprovePhoto(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/approve", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -219,9 +244,9 @@ func ApprovePhoto(router *gin.RouterGroup) {
 			return
 		}
 
-		SavePhotoAsYaml(m)
+		SaveSidecarYaml(&m)
 
-		PublishPhotoEvent(EntityUpdated, id, c)
+		PublishPhotoEvent(StatusUpdated, id, c)
 
 		c.JSON(http.StatusOK, gin.H{"photo": m})
 	})
@@ -229,11 +254,15 @@ func ApprovePhoto(router *gin.RouterGroup) {
 
 // PhotoPrimary sets the primary file for a photo.
 //
-// POST /photos/:uid/files/:file_uid/primary
-// Params:
-//
-//	uid: string PhotoUID as returned by the API
-//	file_uid: string File UID as returned by the API
+//	@Summary	sets the primary file for a photo
+//	@Id			PhotoPrimary
+//	@Tags		Photos, Stacks
+//	@Produce	json
+//	@Success	200					{object}	entity.Photo
+//	@Failure	401,403,404,429,500	{object}	i18n.Response
+//	@Param		uid					path		string	true	"photo uid"
+//	@Param		fileuid				path		string	true	"file uid"
+//	@Router		/api/v1/photos/{uid}/files/{fileuid}/primary [post]
 func PhotoPrimary(router *gin.RouterGroup) {
 	router.POST("/photos/:uid/files/:file_uid/primary", func(c *gin.Context) {
 		s := Auth(c, acl.ResourcePhotos, acl.ActionUpdate)
@@ -251,7 +280,7 @@ func PhotoPrimary(router *gin.RouterGroup) {
 			return
 		}
 
-		PublishPhotoEvent(EntityUpdated, uid, c)
+		PublishPhotoEvent(StatusUpdated, uid, c)
 
 		event.SuccessMsg(i18n.MsgChangesSaved)
 

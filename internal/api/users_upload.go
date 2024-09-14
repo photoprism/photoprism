@@ -11,20 +11,21 @@ import (
 	"github.com/dustin/go-humanize/english"
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
+	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/form"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // UploadUserFiles adds files to the user upload folder, from where they can be moved and indexed.
 //
-// POST /users/:uid/upload/:token
+//	@Tags	Users, Files
+//	@Router /users/{uid}/upload/{token} [post]
 func UploadUserFiles(router *gin.RouterGroup) {
 	router.POST("/users/:uid/upload/:token", func(c *gin.Context) {
 		conf := get.Config()
@@ -169,6 +170,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		var f form.UploadOptions
 
+		// Assign and validate request form values.
 		if err := c.BindJSON(&f); err != nil {
 			AbortBadRequest(c)
 			return
@@ -197,7 +199,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Add imported files to albums if allowed.
 		if len(f.Albums) > 0 &&
-			acl.Resources.AllowAny(acl.ResourceAlbums, s.User().AclRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
+			acl.Rules.AllowAny(acl.ResourceAlbums, s.UserRole(), acl.Permissions{acl.ActionCreate, acl.ActionUpload}) {
 			log.Debugf("upload: adding files to album %s", clean.Log(strings.Join(f.Albums, " and ")))
 			opt.Albums = f.Albums
 		}
@@ -213,7 +215,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		// Delete empty import directory.
 		if fs.DirIsEmpty(uploadPath) {
 			if err := os.Remove(uploadPath); err != nil {
-				log.Errorf("upload: failed deleting empty folder %s: %s", clean.Log(uploadPath), err)
+				log.Errorf("upload: failed to delete empty folder %s: %s", clean.Log(uploadPath), err)
 			} else {
 				log.Infof("upload: deleted empty folder %s", clean.Log(uploadPath))
 			}
@@ -221,7 +223,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 
 		// Update moments if files have been imported.
 		if n := len(imported); n == 0 {
-			log.Infof("upload: no new files imported", clean.Log(uploadPath))
+			log.Infof("upload: found no new files to import from %s", clean.Log(uploadPath))
 		} else {
 			log.Infof("upload: imported %s", english.Plural(n, "file", "files"))
 			if moments := get.Moments(); moments == nil {
@@ -242,7 +244,7 @@ func ProcessUserUpload(router *gin.RouterGroup) {
 		event.Publish("upload.completed", event.Data{"uid": opt.UID, "path": uploadPath, "seconds": elapsed})
 
 		for _, uid := range f.Albums {
-			PublishAlbumEvent(EntityUpdated, uid, c)
+			PublishAlbumEvent(StatusUpdated, uid, c)
 		}
 
 		// Update the user interface.

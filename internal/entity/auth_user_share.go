@@ -86,8 +86,8 @@ func NewUserShare(userUID, shareUid string, perm uint, expires *time.Time) *User
 		ShareUID:  shareUid,
 		Perm:      perm,
 		RefID:     rnd.RefID(SharePrefix),
-		CreatedAt: TimeStamp(),
-		UpdatedAt: TimeStamp(),
+		CreatedAt: Now(),
+		UpdatedAt: Now(),
 		ExpiresAt: expires,
 	}
 
@@ -119,7 +119,7 @@ func FindUserShares(userUid string) UserShares {
 	}
 
 	// Find matching record.
-	if err := UnscopedDb().Find(&found, "user_uid = ? AND (expires_at IS NULL OR expires_at > ?)", userUid, TimeStamp()).Error; err != nil {
+	if err := UnscopedDb().Find(&found, "user_uid = ? AND (expires_at IS NULL OR expires_at > ?)", userUid, Now()).Error; err != nil {
 		event.AuditWarn([]string{"user %s", "find shares", "%s"}, clean.Log(userUid), err)
 		return nil
 	}
@@ -156,10 +156,10 @@ func (m *UserShare) UpdateLink(link Link) error {
 	m.LinkUID = link.LinkUID
 	m.Comment = link.Comment
 	m.Perm = link.Perm
-	m.UpdatedAt = TimeStamp()
+	m.UpdatedAt = Now()
 	m.ExpiresAt = link.ExpiresAt()
 
-	values := Values{
+	values := Map{
 		"link_uid":   m.LinkUID,
 		"expires_at": m.ExpiresAt,
 		"comment":    m.Comment,

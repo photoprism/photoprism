@@ -29,7 +29,9 @@ func CreateTestFixtures() {
 	CreateFaceFixtures()
 	CreateUserFixtures()
 	CreateSessionFixtures()
+	CreateClientFixtures()
 	CreateReactionFixtures()
+	CreatePasscodeFixtures()
 	CreatePasswordFixtures()
 	CreateUserShareFixtures()
 }

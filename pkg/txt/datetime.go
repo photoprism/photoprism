@@ -17,6 +17,8 @@ var DateIntRegexp = regexp.MustCompile("\\d{1,4}")
 var YearRegexp = regexp.MustCompile("\\d{4,5}")
 var IsDateRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}")
 var IsDateTimeRegexp = regexp.MustCompile("\\d{4}[\\-_]?\\d{2}[\\-_]?\\d{2}.{1,4}\\d{2}\\D?\\d{2}\\D?\\d{2}")
+var HumanDateTimeRegexp = regexp.MustCompile("((?P<day>\\d{2})|\\D{2})\\D((?P<month>\\d{2})|\\D{2})\\D((?P<year>\\d{4})|\\D{4})\\D((?P<h>\\d{2})|\\D{2})\\D((?P<m>\\d{2})|\\D{2})\\D((?P<s>\\d{2})|\\D{2})(\\.(?P<subsec>\\d+))?(?P<z>\\D)?(?P<zh>\\d{2})?\\D?(?P<zm>\\d{2})?")
+var HumanDateTimeMatch = make(map[string]int)
 var ExifDateTimeRegexp = regexp.MustCompile("((?P<year>\\d{4})|\\D{4})\\D((?P<month>\\d{2})|\\D{2})\\D((?P<day>\\d{2})|\\D{2})\\D((?P<h>\\d{2})|\\D{2})\\D((?P<m>\\d{2})|\\D{2})\\D((?P<s>\\d{2})|\\D{2})(\\.(?P<subsec>\\d+))?(?P<z>\\D)?(?P<zh>\\d{2})?\\D?(?P<zm>\\d{2})?")
 var ExifDateTimeMatch = make(map[string]int)
 
@@ -24,10 +26,17 @@ var ExifDateTimeMatch = make(map[string]int)
 const OneYear = time.Hour * 24 * 365
 
 func init() {
-	names := ExifDateTimeRegexp.SubexpNames()
-	for i := 0; i < len(names); i++ {
-		if name := names[i]; name != "" {
+	en := ExifDateTimeRegexp.SubexpNames()
+	for i := 0; i < len(en); i++ {
+		if name := en[i]; name != "" {
 			ExifDateTimeMatch[name] = i
+		}
+	}
+
+	hn := HumanDateTimeRegexp.SubexpNames()
+	for i := 0; i < len(hn); i++ {
+		if name := hn[i]; name != "" {
+			HumanDateTimeMatch[name] = i
 		}
 	}
 }
@@ -52,8 +61,52 @@ const (
 	SecMax   = 59
 )
 
-// DateTime parses a time string and returns a valid time.Time if possible.
-func DateTime(s, timeZone string) (t time.Time) {
+// IsTime tests if the string looks like a date and/or time.
+func IsTime(s string) bool {
+	if s == "" {
+		return false
+	} else if m := IsDateRegexp.FindString(s); m == s {
+		return true
+	} else if m = IsDateTimeRegexp.FindString(s); m == s {
+		return true
+	}
+
+	return false
+}
+
+// DateTime formats a time pointer as a human-readable datetime string.
+func DateTime(t *time.Time) string {
+	if t == nil {
+		return ""
+	} else if t.IsZero() {
+		return ""
+	}
+
+	return t.UTC().Format("2006-01-02 15:04:05")
+}
+
+// UnixTime formats a unix time as a human-readable datetime string.
+func UnixTime(t int64) string {
+	if t == 0 {
+		return ""
+	}
+
+	timeStamp := time.Unix(t, 0)
+
+	if timeStamp.IsZero() {
+		return ""
+	}
+
+	return timeStamp.UTC().Format("2006-01-02 15:04:05")
+}
+
+// ParseTimeUTC parses a UTC timestamp and returns a valid time.Time if possible.
+func ParseTimeUTC(s string) (t time.Time) {
+	return ParseTime(s, "")
+}
+
+// ParseTime parses a timestamp and returns a valid time.Time if possible.
+func ParseTime(s, timeZone string) (t time.Time) {
 	defer func() {
 		if r := recover(); r != nil {
 			// Panic? Return unknown time.
@@ -79,11 +132,23 @@ func DateTime(s, timeZone string) (t time.Time) {
 	// Pad short timestamp with whitespace at the end.
 	s = fmt.Sprintf("%-19s", s)
 
-	v := ExifDateTimeMatch
+	var v map[string]int
+
 	m := ExifDateTimeRegexp.FindStringSubmatch(s)
 
 	// Pattern doesn't match? Return unknown time.
 	if len(m) == 0 {
+		if m = HumanDateTimeRegexp.FindStringSubmatch(s); len(m) == 0 {
+			return time.Time{}
+		} else {
+			v = HumanDateTimeMatch
+		}
+	} else {
+		v = ExifDateTimeMatch
+	}
+
+	// Ignore timestamps without year, month, and day.
+	if Int(m[v["year"]]) == 0 && Int(m[v["month"]]) == 0 && Int(m[v["day"]]) == 0 {
 		return time.Time{}
 	}
 
@@ -96,10 +161,10 @@ func DateTime(s, timeZone string) (t time.Time) {
 	}
 
 	// Set time zone.
-	loc, err := time.LoadLocation(timeZone)
+	loc := TimeZone(timeZone)
 
 	// Location found?
-	if err == nil && timeZone != "" && tz != time.Local {
+	if loc != nil && timeZone != "" && tz != time.Local {
 		tz = loc
 		timeZone = tz.String()
 	} else {
@@ -139,10 +204,14 @@ func DateTime(s, timeZone string) (t time.Time) {
 	if year == 0 {
 		year = 1
 	}
+
+	month := IntVal(m[v["month"]], 1, 12, 1)
+	day := IntVal(m[v["day"]], 1, 31, 1)
+
 	t = time.Date(
 		year,
-		time.Month(IntVal(m[v["month"]], 1, 12, 1)),
-		IntVal(m[v["day"]], 1, 31, 1),
+		time.Month(month),
+		day,
 		IntVal(m[v["h"]], 0, 23, 0),
 		IntVal(m[v["m"]], 0, 59, 0),
 		IntVal(m[v["s"]], 0, 59, 0),
@@ -154,17 +223,4 @@ func DateTime(s, timeZone string) (t time.Time) {
 	}
 
 	return t
-}
-
-// IsTime tests if the string looks like a date and/or time.
-func IsTime(s string) bool {
-	if s == "" {
-		return false
-	} else if m := IsDateRegexp.FindString(s); m == s {
-		return true
-	} else if m := IsDateTimeRegexp.FindString(s); m == s {
-		return true
-	}
-
-	return false
 }

@@ -3,7 +3,6 @@ package commands
 import (
 	"testing"
 
-	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/pkg/capture"
 	"github.com/stretchr/testify/assert"
 )
@@ -11,17 +10,12 @@ import (
 func TestShowConfigOptionsCommand(t *testing.T) {
 	var err error
 
-	ctx := config.CliTestContext()
+	ctx := NewTestContext([]string{"config-options", "--md"})
 
-	output := capture.Output(func() {
+	output := capture.Stdout(func() {
 		err = ShowConfigOptionsCommand.Run(ctx)
 	})
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
+	assert.NoError(t, err)
 	assert.Contains(t, output, "PHOTOPRISM_IMPORT_PATH")
-	assert.Contains(t, output, "--sidecar-path")
-	assert.Contains(t, output, "sidecar `PATH` *optional*")
 }

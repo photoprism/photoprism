@@ -7,9 +7,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/photoprism"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -21,13 +21,18 @@ const (
 
 // FolderCover returns a folder cover image.
 //
-// GET /api/v1/folders/t/:hash/:token/:size
-//
-// Parameters:
-//
-//	uid: string folder uid
-//	token: string url security token, see config
-//	size: string thumb type, see thumb.Sizes
+//	@Summary	returns a folder cover image
+//	@Id			FolderCover
+//	@Produce	image/jpeg
+//	@Produce	image/svg+xml
+//	@Tags		Images, Folders
+//	@Failure	403		{file}	image/svg+xml
+//	@Failure	200		{file}	image/svg+xml
+//	@Success	200		{file}	image/jpg
+//	@Param		uid		path	string	true	"folder uid"
+//	@Param		token	path	string	true	"user-specific security token provided with session or 'public' when running PhotoPrism in public mode"
+//	@Param		size	path	string	true	"thumbnail size"	Enums(tile_50, tile_100, left_224, right_224, tile_224, tile_500, fit_720, tile_1080, fit_1280, fit_1600, fit_1920, fit_2048, fit_2560, fit_3840, fit_4096, fit_7680)
+//	@Router		/api/v1/folders/t/{uid}/{token}/{size} [get]
 func FolderCover(router *gin.RouterGroup) {
 	router.GET("/folders/t/:uid/:token/:size", func(c *gin.Context) {
 		if InvalidPreviewToken(c) {
@@ -87,7 +92,7 @@ func FolderCover(router *gin.RouterGroup) {
 		f, err := query.FolderCoverByUID(uid)
 
 		if err != nil {
-			log.Debugf("%s: %s contains no photos, using generic cover", folderCover, uid)
+			log.Debugf("%s: %s contains no pictures, using generic cover", folderCover, uid)
 			c.Data(http.StatusOK, "image/svg+xml", folderIconSvg)
 			return
 		}
@@ -100,7 +105,7 @@ func FolderCover(router *gin.RouterGroup) {
 
 			// Set missing flag so that the file doesn't show up in search results anymore.
 			log.Warnf("%s: %s is missing", folderCover, clean.Log(f.FileName))
-			logError(folderCover, f.Update("FileMissing", true))
+			logErr(folderCover, f.Update("FileMissing", true))
 			return
 		}
 

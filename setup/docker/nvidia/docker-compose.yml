@@ -1,5 +1,3 @@
-version: '3.5'
-
 # Example Docker Compose config file for PhotoPrism (NVIDIA Container Toolkit / AMD64)
 #
 # For hardware transcoding with an NVIDIA graphics card, the NVIDIA Container Toolkit must be installed on
@@ -44,8 +42,12 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    ## Server port mapping in the format "Host:Container". To use a different port, change the host port on
+    ## the left-hand side and keep the container port, e.g. "80:2342" (for HTTP) or "443:2342 (for HTTPS):
     ports:
-      - "2342:2342" # HTTP port (host:container)
+      - "2342:2342"
+    ## Before you start the service, please check the following config options (and change them as needed):
+    ## https://docs.photoprism.app/getting-started/config-options/
     environment:
       PHOTOPRISM_ADMIN_USER: "admin"                 # admin login username
       PHOTOPRISM_ADMIN_PASSWORD: "insecure"          # initial admin password (8-72 characters)
@@ -67,15 +69,21 @@ services:
       PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
       PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
       PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
-      PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
+      PHOTOPRISM_SIDECAR_YAML: "true"                # creates YAML sidecar files to back up picture metadata
+      PHOTOPRISM_BACKUP_ALBUMS: "true"               # creates YAML files to back up album metadata
+      PHOTOPRISM_BACKUP_DATABASE: "true"             # creates regular backups based on the configured schedule
+      PHOTOPRISM_BACKUP_SCHEDULE: "daily"            # backup SCHEDULE in cron format (e.g. "0 12 * * *" for daily at noon) or at a random time (daily, weekly)
+      PHOTOPRISM_INDEX_SCHEDULE: ""                  # indexing SCHEDULE in cron format (e.g. "@every 3h" for every 3 hours; "" to disable)
+      PHOTOPRISM_AUTO_INDEX: 300                     # delay before automatically indexing files in SECONDS when uploading via WebDAV (-1 to disable)
+      PHOTOPRISM_AUTO_IMPORT: -1                     # delay before automatically importing files in SECONDS when uploading via WebDAV (-1 to disable)
       PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
       PHOTOPRISM_UPLOAD_NSFW: "true"                 # allows uploads that MAY be offensive (no effect without TensorFlow)
-      # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
-      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
-      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB or MySQL database server (hostname:port)
-      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB or MySQL database schema name
-      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB or MySQL database user name
-      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB or MySQL database user password
+      # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that does not require a separate database server
+      PHOTOPRISM_DATABASE_DRIVER: "mysql"            # MariaDB 10.5.12+ (MySQL successor) offers significantly better performance compared to SQLite
+      PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB database server (hostname:port)
+      PHOTOPRISM_DATABASE_NAME: "photoprism"         # MariaDB database schema name
+      PHOTOPRISM_DATABASE_USER: "photoprism"         # MariaDB database user name
+      PHOTOPRISM_DATABASE_PASSWORD: "insecure"       # MariaDB database user password
       PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
       PHOTOPRISM_SITE_AUTHOR: ""                     # meta site author
       PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
@@ -109,10 +117,10 @@ services:
               count: 1
               capabilities: [gpu]
 
-  ## Database Server (recommended)
+  ## MariaDB Database Server (recommended)
   ## see https://docs.photoprism.app/getting-started/faq/#should-i-use-sqlite-mariadb-or-mysql
   mariadb:
-    image: mariadb:10.11
+    image: mariadb:11
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped
@@ -120,7 +128,7 @@ services:
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mariadbd --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
       - "./database:/var/lib/mysql" # DO NOT REMOVE

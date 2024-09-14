@@ -4,7 +4,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/photoprism/photoprism/internal/pwa"
+	"github.com/photoprism/photoprism/internal/config/pwa"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/txt"
@@ -95,11 +95,14 @@ func (c *Config) AppManifest() *pwa.Manifest {
 
 		return cacheData.(*pwa.Manifest)
 	}
+
 	result := pwa.NewManifest(c.AppConfig())
+
 	if result != nil {
 		Cache.SetDefault(CacheKeyAppManifest, result)
 	} else {
 		log.Warnf("config: web app manifest is nil - you may have found a bug")
 	}
+
 	return result
 }

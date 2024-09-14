@@ -37,6 +37,6 @@ func ContainsAny(l, s []string) bool {
 		}
 	}
 
-	// Nothing found.
+	// Not found.
 	return false
 }

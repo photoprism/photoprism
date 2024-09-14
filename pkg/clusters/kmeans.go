@@ -2,9 +2,8 @@ package clusters
 
 import (
 	"math"
-	"math/rand"
+	"math/rand/v2"
 	"sync"
-	"time"
 
 	"gonum.org/v1/gonum/floats"
 )
@@ -221,15 +220,13 @@ func (c *kmeansClusterer) initializeMeansWithData() {
 	c.m = make([][]float64, c.number)
 	c.n = make([][]float64, c.number)
 
-	rand.Seed(time.Now().UTC().Unix())
-
 	var (
 		k          int
 		s, t, l, f float64
 		d          []float64 = make([]float64, len(c.d))
 	)
 
-	c.m[0] = c.d[rand.Intn(len(c.d)-1)]
+	c.m[0] = c.d[rand.IntN(len(c.d)-1)]
 
 	for i := 1; i < c.number; i++ {
 		s = 0
@@ -263,8 +260,6 @@ func (c *kmeansClusterer) initializeMeansWithData() {
 
 func (c *kmeansClusterer) initializeMeans() {
 	c.m = make([][]float64, c.number)
-
-	rand.Seed(time.Now().UTC().Unix())
 
 	for i := 0; i < c.number; i++ {
 		c.m[i] = make([]float64, c.dimension)

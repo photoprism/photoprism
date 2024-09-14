@@ -5,16 +5,22 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
-	"github.com/photoprism/photoprism/internal/customize"
+	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
 // GetSettings returns the user app settings as JSON.
 //
-// GET /api/v1/settings
+//	@Summary	returns the user app settings as JSON
+//	@Id			GetSettings
+//	@Tags		Settings
+//	@Produce	json
+//	@Success	200			{object}	customize.Settings
+//	@Failure	401,403,404	{object}	i18n.Response
+//	@Router		/api/v1/settings [get]
 func GetSettings(router *gin.RouterGroup) {
 	router.GET("/settings", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.AccessAll, acl.AccessOwn})
@@ -35,9 +41,16 @@ func GetSettings(router *gin.RouterGroup) {
 	})
 }
 
-// SaveSettings saved the user app settings.
+// SaveSettings saves the user app settings.
 //
-// POST /api/v1/settings
+//	@Summary	saves the user app settings
+//	@Id			SaveSettings
+//	@Tags		Settings
+//	@Produce	json
+//	@Success	200					{object}	customize.Settings
+//	@Failure	400,401,403,404,500	{object}	i18n.Response
+//	@Param		settings			body		customize.Settings	true "user settings"
+//	@Router		/api/v1/settings [post]
 func SaveSettings(router *gin.RouterGroup) {
 	router.POST("/settings", func(c *gin.Context) {
 		s := AuthAny(c, acl.ResourceSettings, acl.Permissions{acl.ActionView, acl.ActionUpdate, acl.ActionManage})
@@ -80,7 +93,7 @@ func SaveSettings(router *gin.RouterGroup) {
 			user := s.User()
 
 			if user == nil {
-				AbortUnexpected(c)
+				AbortUnexpectedError(c)
 				return
 			}
 
@@ -91,8 +104,8 @@ func SaveSettings(router *gin.RouterGroup) {
 				return
 			}
 
-			if acl.Resources.DenyAll(acl.ResourceSettings, s.User().AclRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
-				c.JSON(http.StatusOK, user.Settings().Apply(settings).ApplyTo(conf.Settings().ApplyACL(acl.Resources, user.AclRole())))
+			if acl.Rules.DenyAll(acl.ResourceSettings, s.UserRole(), acl.Permissions{acl.ActionUpdate, acl.ActionManage}) {
+				c.JSON(http.StatusOK, user.Settings().Apply(settings).ApplyTo(conf.Settings().ApplyACL(acl.Rules, user.AclRole())))
 				return
 			} else if err := user.Settings().Apply(settings).Save(); err != nil {
 				log.Debugf("config: %s (save user settings)", err)

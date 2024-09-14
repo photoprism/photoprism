@@ -3,6 +3,7 @@ package mutex
 import (
 	"errors"
 	"sync"
+	"time"
 )
 
 // Activity represents work that can be started and stopped.
@@ -10,6 +11,7 @@ type Activity struct {
 	busy     bool
 	canceled bool
 	mutex    sync.Mutex
+	lastRun  time.Time
 }
 
 // Running checks if the Activity is currently running.
@@ -46,6 +48,7 @@ func (b *Activity) Stop() {
 
 	b.busy = false
 	b.canceled = false
+	b.lastRun = time.Now().UTC()
 }
 
 // Cancel requests to stop the Activity.
@@ -64,4 +67,12 @@ func (b *Activity) Canceled() bool {
 	defer b.mutex.Unlock()
 
 	return b.canceled
+}
+
+// LastRun returns the time of last activity.
+func (b *Activity) LastRun() time.Time {
+	b.mutex.Lock()
+	defer b.mutex.Unlock()
+
+	return b.lastRun
 }

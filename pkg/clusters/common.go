@@ -2,7 +2,7 @@ package clusters
 
 import (
 	"container/heap"
-	"math/rand"
+	"math/rand/v2"
 	"sync"
 )
 

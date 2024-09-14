@@ -6,7 +6,7 @@ import (
 
 // Token returns the sanitized token string with a length of up to 4096 characters.
 func Token(s string) string {
-	if s == "" || reject(s, MaxLength) {
+	if s == "" || reject(s, LengthLimit) {
 		return ""
 	}
 

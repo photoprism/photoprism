@@ -14,10 +14,9 @@ func TestMain(m *testing.M) {
 
 	c := config.NewTestConfig("photoprism")
 	SetConfig(c)
+	defer c.CloseDb()
 
 	code := m.Run()
-
-	_ = c.CloseDb()
 
 	os.Exit(code)
 }

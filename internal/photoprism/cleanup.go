@@ -13,15 +13,15 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/mutex"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/fastwalk"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/fastwalk"
 )
 
-// CleanUp represents a worker that deletes unneeded data and files.
+// CleanUp represents a worker that deletes orphaned index entries, sidecar files and thumbnails.
 type CleanUp struct {
 	conf *config.Config
 }
@@ -35,7 +35,7 @@ func NewCleanUp(conf *config.Config) *CleanUp {
 	return instance
 }
 
-// Start removes orphan index entries and thumbnails.
+// Start index and cache cleanup.
 func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars int, err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -51,12 +51,12 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 		return thumbs, orphans, sidecars, err
 	}
 
-	if err = mutex.MainWorker.Start(); err != nil {
+	if err = mutex.IndexWorker.Start(); err != nil {
 		log.Warnf("cleanup: %s (start)", err)
 		return thumbs, orphans, sidecars, err
 	}
 
-	defer mutex.MainWorker.Stop()
+	defer mutex.IndexWorker.Stop()
 
 	if opt.Dry {
 		log.Infof("cleanup: dry run, nothing will actually be removed")
@@ -74,7 +74,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 
 	// Delete orphaned photos from the index and remaining sidecar files from storage, if any.
 	for _, p := range photos {
-		if mutex.MainWorker.Canceled() {
+		if mutex.IndexWorker.Canceled() {
 			return thumbs, orphans, sidecars, errors.New("cleanup canceled")
 		}
 
@@ -85,9 +85,9 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 		}
 
 		// Deletes the index entry and remaining sidecar files outside the "originals" folder.
-		if n, err := DeletePhoto(p, true, false); err != nil {
+		if n, deleteErr := DeletePhoto(&p, true, false); deleteErr != nil {
 			sidecars += n
-			log.Errorf("cleanup: %s (remove orphans)", err)
+			log.Errorf("cleanup: %s (remove orphans)", deleteErr)
 		} else {
 			orphans++
 			sidecars += n
@@ -96,7 +96,7 @@ func (w *CleanUp) Start(opt CleanUpOptions) (thumbs int, orphans int, sidecars i
 		}
 	}
 
-	log.Infof("cleanup: removed %s and %s [%s]", english.Plural(orphans, "index entry", "index entries"), english.Plural(sidecars, "sidecar file", "sidecar files"), time.Since(cleanupStart))
+	log.Infof("cleanup: removed %s and deleted %s [%s]", english.Plural(orphans, "index entry", "index entries"), english.Plural(sidecars, "sidecar file", "sidecar files"), time.Since(cleanupStart))
 
 	// Remove orphan index entries.
 	if opt.Dry {
@@ -159,7 +159,7 @@ func (w *CleanUp) Cache(opt CleanUpOptions) (deleted int, err error) {
 
 	log.Info("cleanup: searching for orphaned cache files")
 
-	// Find and remove orphan thumbnail files.
+	// Find and delete orphaned thumbnail files.
 	for _, dir := range dirs {
 		err = fastwalk.Walk(dir, func(fileName string, info os.FileMode) error {
 			base := filepath.Base(fileName)
@@ -184,24 +184,24 @@ func (w *CleanUp) Cache(opt CleanUpOptions) (deleted int, err error) {
 				// Do nothing.
 			} else if opt.Dry {
 				deleted++
-				log.Debugf("cleanup: %s would be removed", logName)
+				log.Debugf("cleanup: %s would be deleted", logName)
 			} else if err := os.Remove(fileName); err != nil {
 				log.Warnf("cleanup: %s in %s", err, logName)
 			} else {
 				deleted++
-				log.Debugf("cleanup: removed %s from cache", logName)
+				log.Debugf("cleanup: deleted %s from cache", logName)
 			}
 
 			return nil
 		})
 	}
 
-	log.Infof("cleanup: removed %s from cache [%s]", english.Plural(deleted, "file", "files"), time.Since(cleanupStart))
+	log.Infof("cleanup: deleted %s from cache [%s]", english.Plural(deleted, "file", "files"), time.Since(cleanupStart))
 
 	return deleted, err
 }
 
 // Cancel stops the current operation.
 func (w *CleanUp) Cancel() {
-	mutex.MainWorker.Cancel()
+	mutex.IndexWorker.Cancel()
 }

@@ -1,5 +1,3 @@
-version: '3.5'
-
 ## PhotoPrism Stack Configuration for Portainer
 services:
   photoprism:
@@ -14,8 +12,12 @@ services:
     security_opt:
       - seccomp:unconfined
       - apparmor:unconfined
+    ## Server port mapping in the format "Host:Container". To use a different port, change the host port on
+    ## the left-hand side and keep the container port, e.g. "80:2342" (for HTTP) or "443:2342 (for HTTPS):
     ports:
-      - "2342:2342" # HTTP port (host:container)
+      - "2342:2342"
+    ## Changes to the config options in stack.env always require a restart to take effect:
+    ## https://docs.photoprism.app/getting-started/config-options/
     env_file:
       - stack.env
     working_dir: "/photoprism" # do not change or remove
@@ -25,7 +27,7 @@ services:
       - "./storage:/photoprism/storage"     # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
 
   mariadb:
-    image: mariadb:10.11
+    image: mariadb:11
     ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
     ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
     restart: unless-stopped
@@ -33,7 +35,7 @@ services:
     security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
       - seccomp:unconfined
       - apparmor:unconfined
-    command: mariadbd --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
+    command: --innodb-buffer-pool-size=512M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
     ## Never store database files on an unreliable device such as a USB flash drive, an SD card, or a shared network folder:
     volumes:
       - "./database:/var/lib/mysql" # DO NOT REMOVE

@@ -1,40 +1,38 @@
 package api
 
 import (
-	"github.com/gin-gonic/gin"
-
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/session"
-	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/internal/server/limiter"
+	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
-// SessionID returns the session ID from the request context.
-func SessionID(c *gin.Context) (sessId string) {
-	if c == nil {
-		// Should never happen.
-		return ""
-	}
-
-	// Get the authentication token from the HTTP headers.
-	return clean.ID(c.GetHeader(session.Header))
-}
-
-// Session finds the client session for the given ID or returns nil otherwise.
-func Session(id string) *entity.Session {
-	// Skip authentication if app is running in public mode.
+// Session finds the client session for the specified auth token, or returns nil if not found.
+func Session(clientIp, authToken string) (sess *entity.Session) {
+	// Skip authentication and return the default session when public mode is enabled.
 	if get.Config().Public() {
 		return get.Session().Public()
-	} else if id == "" {
+	}
+
+	// Check auth token format and return nil if it is invalid.
+	if !rnd.IsAuthAny(authToken) {
 		return nil
 	}
 
-	// Find session or otherwise return nil.
-	s, err := get.Session().Get(id)
+	// Check failure rate limit and return nil if it has been exceeded.
+	if limiter.Auth.Reject(clientIp) {
+		return nil
+	}
 
+	// Try to find an active session based on the hashed auth token.
+	sess, err := entity.FindSession(rnd.SessionID(authToken))
+
+	// Count error towards failure rate limit and return nil.
 	if err != nil {
+		limiter.Auth.Reserve(clientIp)
 		return nil
 	}
 
-	return s
+	// Return session.
+	return sess
 }

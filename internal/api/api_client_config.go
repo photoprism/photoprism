@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/event"
-	"github.com/photoprism/photoprism/internal/get"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
 )
 
 // UpdateClientConfig publishes updated client configuration values over the websocket connections.
@@ -19,13 +19,13 @@ func UpdateClientConfig() {
 // GET /api/v1/config
 func GetClientConfig(router *gin.RouterGroup) {
 	router.GET("/config", func(c *gin.Context) {
-		s := Session(SessionID(c))
+		sess := Session(ClientIP(c), AuthToken(c))
 		conf := get.Config()
 
-		if s == nil {
+		if sess == nil {
 			c.JSON(http.StatusOK, conf.ClientPublic())
 		} else {
-			c.JSON(http.StatusOK, conf.ClientSession(s))
+			c.JSON(http.StatusOK, conf.ClientSession(sess))
 		}
 	})
 }

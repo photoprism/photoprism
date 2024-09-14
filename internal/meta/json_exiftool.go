@@ -13,10 +13,12 @@ import (
 	"gopkg.in/photoprism/go-tz.v2/tz"
 
 	"github.com/photoprism/photoprism/pkg/clean"
-	"github.com/photoprism/photoprism/pkg/projection"
+	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/projection"
+	"github.com/photoprism/photoprism/pkg/media/video"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
-	"github.com/photoprism/photoprism/pkg/video"
 )
 
 const MimeVideoMP4 = "video/mp4"
@@ -92,7 +94,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					continue
 				}
 
-				if dateTime := txt.DateTime(jsonValue.String(), ""); !dateTime.IsZero() {
+				if dateTime := txt.ParseTime(jsonValue.String(), ""); !dateTime.IsZero() {
 					fieldValue.Set(reflect.ValueOf(dateTime))
 				}
 			case time.Duration:
@@ -154,7 +156,20 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 					continue
 				}
 
-				fieldValue.SetBool(jsonValue.Bool())
+				boolVal := false
+				strVal := jsonValue.String()
+
+				// Cast string to bool.
+				switch strVal {
+				case "1", "true":
+					boolVal = true
+				case "", "0", "false":
+					boolVal = false
+				default:
+					boolVal = txt.NotEmpty(strVal)
+				}
+
+				fieldValue.SetBool(boolVal)
 			default:
 				log.Warnf("metadata: cannot assign value of type %s to %s (exiftool)", t, tagValue)
 			}
@@ -220,7 +235,7 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	} else if mt, ok := data.json["MIMEType"]; ok && data.TakenAtLocal.IsZero() && (mt == MimeVideoMP4 || mt == MimeQuicktime) {
 		// Assume default time zone for MP4 & Quicktime videos is UTC.
 		// see https://exiftool.org/TagNames/QuickTime.html
-		log.Debugf("metadata: %s uses utc by default (%s)", logName, clean.Log(mt))
+		log.Debugf("metadata: default time zone for %s is UTC (%s)", logName, clean.Log(mt))
 		data.TimeZone = time.UTC.String()
 		data.TakenAt = data.TakenAt.UTC()
 		data.TakenAtLocal = time.Time{}
@@ -228,46 +243,56 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 
 	// Set time zone and calculate UTC time.
 	if data.Lat != 0 && data.Lng != 0 {
-		zones, err := tz.GetZone(tz.Point{
+		zones, zoneErr := tz.GetZone(tz.Point{
 			Lat: float64(data.Lat),
 			Lon: float64(data.Lng),
 		})
 
-		if err == nil && len(zones) > 0 {
+		if zoneErr == nil && len(zones) > 0 {
 			data.TimeZone = zones[0]
 		}
 
-		if loc, err := time.LoadLocation(data.TimeZone); err != nil {
-			log.Warnf("metadata: unknown time zone %s (exiftool)", data.TimeZone)
+		if loc := txt.TimeZone(data.TimeZone); loc == nil {
+			log.Warnf("metadata: %s has invalid time zone %s (exiftool)", logName)
 		} else if !data.TakenAtLocal.IsZero() {
-			if tl, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); err == nil {
+			if tl, parseErr := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), loc); parseErr == nil {
 				if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
 					data.TakenAtLocal = localUtc
 				}
 
 				data.TakenAt = tl.Truncate(time.Second).UTC()
 			} else {
-				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
+				log.Errorf("metadata: %s (exiftool)", parseErr.Error()) // this should never happen
 			}
 		} else if !data.TakenAt.IsZero() {
-			if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAt.In(loc).Format("2006:01:02 15:04:05"), time.UTC); err == nil {
+			if localUtc, parseErr := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAt.In(loc).Format("2006:01:02 15:04:05"), time.UTC); parseErr == nil {
 				data.TakenAtLocal = localUtc
 				data.TakenAt = data.TakenAt.UTC()
 			} else {
-				log.Errorf("metadata: %s (exiftool)", err.Error()) // this should never happen
+				log.Errorf("metadata: %s (exiftool)", parseErr.Error()) // this should never happen
 			}
 		}
 	} else if hasTimeOffset {
-		if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); err == nil {
-			data.TakenAtLocal = localUtc
+		if localUtc, parseErr := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAtLocal.Format("2006:01:02 15:04:05"), time.UTC); parseErr == nil {
+			data.TakenAtLocal = localUtc.Truncate(time.Second).UTC()
 		}
 
 		data.TakenAt = data.TakenAt.Truncate(time.Second).UTC()
 	}
 
+	// Set UTC offset as time zone?
+	if data.TimeZone != "" && data.TimeZone != "UTC" || data.TakenAt.IsZero() {
+		// Don't change existing time zone.
+	} else if utcOffset := txt.UtcOffset(data.TakenAtLocal, data.TakenAt, data.TimeOffset); utcOffset != "" {
+		data.TimeZone = utcOffset
+		log.Infof("metadata: %s has time offset %s (exiftool)", logName, clean.Log(utcOffset))
+	} else if data.TimeOffset != "" {
+		log.Infof("metadata: %s has invalid time offset %s (exiftool)", logName, clean.Log(data.TimeOffset))
+	}
+
 	// Set local time if still empty.
 	if data.TakenAtLocal.IsZero() && !data.TakenAt.IsZero() {
-		if loc, err := time.LoadLocation(data.TimeZone); data.TimeZone == "" || err != nil {
+		if loc := txt.TimeZone(data.TimeZone); data.TimeZone == "" || loc == nil {
 			data.TakenAtLocal = data.TakenAt
 		} else if localUtc, err := time.ParseInLocation("2006:01:02 15:04:05", data.TakenAt.In(loc).Format("2006:01:02 15:04:05"), time.UTC); err == nil {
 			data.TakenAtLocal = localUtc
@@ -365,11 +390,14 @@ func (data *Data) Exiftool(jsonData []byte, originalName string) (err error) {
 	data.Subject = SanitizeMeta(data.Subject)
 	data.Artist = SanitizeMeta(data.Artist)
 
-	// Set the name of the embedded video data field, if any.
-	if embeddedVideo, ok := data.json["EmbeddedVideoFile"]; ok && embeddedVideo != "" {
-		data.EmbeddedVideo = "EmbeddedVideoFile"
-	} else if embeddedVideo, ok = data.json["MotionPhotoVideo"]; ok && embeddedVideo != "" {
-		data.EmbeddedVideo = "MotionPhotoVideo"
+	// Ignore numeric model names as they are probably invalid.
+	if txt.IsUInt(data.LensModel) {
+		data.LensModel = ""
+	}
+
+	// Flag Samsung/Google Motion Photos as live media.
+	if data.HasVideoEmbedded && (data.MimeType == fs.MimeTypeJPEG || data.MimeType == fs.MimeTypeHEIC) {
+		data.MediaType = media.Live
 	}
 
 	return nil

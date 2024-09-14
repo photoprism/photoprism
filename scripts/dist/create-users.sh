@@ -48,7 +48,7 @@ echo "✅ added user videodriver (937)"
 userdel -r -f ubuntu >/dev/null 2>&1
 userdel -r -f photoprism >/dev/null 2>&1
 userdel -r -f 1000 >/dev/null 2>&1
-useradd -u 1000 -N -g 1000 -G www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/photoprism" photoprism
+useradd -u 1000 -N -g photoprism -G www-data,video,davfs2,renderd,render,ssl-cert,videodriver -s /bin/bash -m -d "/home/photoprism" photoprism
 echo "✅ added user photoprism (1000)"
 
 add_user()
@@ -60,13 +60,14 @@ add_user()
   printf "."
 }
 
-printf "👥 adding user/group id ranges 50-99, 500-600, 900-936, 938-999, and 1001-1200"
+printf "👥 adding user/group id ranges 50-99, 500-600, 900-936, 938-999, 1001-1250, and 2000-2100"
 
 for i in $(seq 50 99); do add_user "$i"; done
 for i in $(seq 500 600); do add_user "$i"; done
 for i in $(seq 900 936); do add_user "$i"; done
 for i in $(seq 938 999); do add_user "$i"; done
-for i in $(seq 1001 1200); do add_user "$i"; done
+for i in $(seq 1001 1250); do add_user "$i"; done
+for i in $(seq 2000 2100); do add_user "$i"; done
 
 printf " ✔\n"
 

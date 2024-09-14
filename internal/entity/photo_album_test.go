@@ -23,7 +23,7 @@ func TestPhotoAlbum_TableName(t *testing.T) {
 
 func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 	t.Run("existing album", func(t *testing.T) {
-		model := PhotoAlbumFixtures.Get("1", "pt9jtdre2lvl0yh7", "at9lxuqxpogaaba8")
+		model := PhotoAlbumFixtures.Get("1", "ps6sg6be2lvl0yh7", "as6sg6bxpogaaba8")
 		result := FirstOrCreatePhotoAlbum(&model)
 
 		if result == nil {

@@ -1,0 +1,7 @@
+# DDNS is a personal DynDNS client for DigitalOcean, see https://github.com/skibish/ddns
+services:
+  ddns:
+    image: photoprism/ddns:latest
+    user: "1000:1000"
+    volumes:
+      - "./config:/config" # edit "config/ddns.yml" before starting the service

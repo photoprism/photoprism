@@ -5,16 +5,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/photoprism/photoprism/internal/acl"
-	"github.com/photoprism/photoprism/internal/get"
-	"github.com/photoprism/photoprism/internal/i18n"
-	"github.com/photoprism/photoprism/internal/query"
+	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/entity/query"
+	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // GetErrors searches the error logs and returns the results as JSON.
 //
-// GET /api/v1/errors
+//	@Summary	searches the error logs and returns the results as JSON
+//	@Id			GetErrors
+//	@Tags		Errors
+//	@Produce	json
+//	@Success	200				{object}	entity.Error
+//	@Failure	401,403,429,400	{object}	i18n.Response
+//	@Param		count			query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
+//	@Param		offset			query		int		false	"search result offset"		minimum(0)	maximum(100000)
+//	@Param		q				query		string	false	"search query"
+//	@Router		/api/v1/errors [get]
 func GetErrors(router *gin.RouterGroup) {
 	router.GET("/errors", func(c *gin.Context) {
 		// Check authentication and authorization.
@@ -43,7 +52,12 @@ func GetErrors(router *gin.RouterGroup) {
 
 // DeleteErrors removes all entries from the error logs.
 //
-// DELETE /api/v1/errors
+//	@Summary	removes all entries from the error logs
+//	@Id			DeleteErrors
+//	@Tags		Errors
+//	@Produce	json
+//	@Failure	401,403,429,500	{object}	i18n.Response
+//	@Router		/api/v1/errors [delete]
 func DeleteErrors(router *gin.RouterGroup) {
 	router.DELETE("/errors", func(c *gin.Context) {
 		conf := get.Config()

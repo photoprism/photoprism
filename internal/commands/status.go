@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net"
@@ -20,7 +21,7 @@ var StatusCommand = cli.Command{
 	Action: statusAction,
 }
 
-// statusAction checks if the web server is running.
+// statusAction checks if the Web server is running.
 func statusAction(ctx *cli.Context) error {
 	conf := config.NewConfig(ctx)
 
@@ -36,7 +37,7 @@ func statusAction(ctx *cli.Context) error {
 	// Connect to unix socket?
 	if unixSocket := conf.HttpSocket(); unixSocket != "" {
 		client.Transport = &http.Transport{
-			Dial: func(network, addr string) (net.Conn, error) {
+			DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
 				return net.Dial("unix", unixSocket)
 			},
 		}

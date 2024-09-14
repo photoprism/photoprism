@@ -20,6 +20,12 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 
 **Vitold Romanovski** (May 2023)
 
+**Aaron C. de Bruyn** (September 2023)
+
+[**Patrick Kvaksrud**](https://github.com/Kvaksrud) (October 2023)
+
+[**Lars Kusch**](https://github.com/LarsK1) (December 2023)
+
 ## Gold Sponsors ##
 
 [**Simen Eriksen**](https://github.com/dennorske) (GitHub Sponsors, December 2019)
@@ -69,6 +75,10 @@ You are [welcome to contact us](https://www.photoprism.app/contact) for change r
 [**Yongho Lee**](https://github.com/lyh16) (Patreon, May 2023)
 
 **Albert R** (Patreon, August 2023)
+
+**Peter Galbavy** (Patreon, November 2023)
+
+**Andreas Kjeldsberg Pihl** (Patreon, August 2023)
 
 ## Infrastructure Sponsors ##
 

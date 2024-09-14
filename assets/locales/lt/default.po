@@ -2,9 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-02-09 12:51+0000\n"
-"PO-Revision-Date: 2023-02-09 13:13+0000\n"
-"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"POT-Creation-Date: 2024-07-08 13:45+0000\n"
+"PO-Revision-Date: 2024-07-05 09:24+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: none\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
@@ -13,364 +14,392 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n % 10 == 1 && (n % 100 < 11 || n % 100 > "
 "19)) ? 0 : ((n % 10 >= 2 && n % 10 <= 9 && (n % 100 < 11 || n % 100 > 19)) ? "
 "1 : 2);\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 5.5.5\n"
 
-#: messages.go:94
+#: messages.go:101
 msgid "Something went wrong, try again"
 msgstr "Kažkas nepavyko, bandykite dar kartą"
 
-#: messages.go:95
+#: messages.go:102
 msgid "Unable to do that"
 msgstr "Nepavyksta to padaryti"
 
-#: messages.go:96
+#: messages.go:103
 msgid "Changes could not be saved"
 msgstr "Pakeitimų nepavyko išsaugoti"
 
-#: messages.go:97
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr "Negalima ištrinti"
 
-#: messages.go:98
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr "%s jau egzistuoja"
 
-#: messages.go:99
+#: messages.go:106
 msgid "Not found"
 msgstr "Nerasta"
 
-#: messages.go:100
+#: messages.go:107
 msgid "File not found"
 msgstr "Failo rasti nepavyko"
 
-#: messages.go:101
+#: messages.go:108
 msgid "File too large"
 msgstr "Per didelis failas"
 
-#: messages.go:102
+#: messages.go:109
+msgid "Unsupported"
+msgstr "Nepalaikoma"
+
+#: messages.go:110
+msgid "Unsupported type"
+msgstr "Nepalaikomas tipas"
+
+#: messages.go:111
 msgid "Unsupported format"
 msgstr "Nepalaikomas formatas"
 
-#: messages.go:103
+#: messages.go:112
 msgid "Originals folder is empty"
 msgstr "Originalų aplankas tuščias"
 
-#: messages.go:104
+#: messages.go:113
 msgid "Selection not found"
 msgstr "Pasirinkimas nerastas"
 
-#: messages.go:105
+#: messages.go:114
 msgid "Entity not found"
 msgstr "Subjektas nerastas"
 
-#: messages.go:106
+#: messages.go:115
 msgid "Account not found"
 msgstr "Paskyra nerasta"
 
-#: messages.go:107
+#: messages.go:116
 msgid "User not found"
 msgstr "Vartotojas nerastas"
 
-#: messages.go:108
+#: messages.go:117
 msgid "Label not found"
 msgstr "Etiketė nerasta"
 
-#: messages.go:109
+#: messages.go:118
 msgid "Album not found"
 msgstr "Albumas nerastas"
 
-#: messages.go:110
+#: messages.go:119
 msgid "Subject not found"
 msgstr "Tema nerasta"
 
-#: messages.go:111
+#: messages.go:120
 msgid "Person not found"
 msgstr "Asmuo nerastas"
 
-#: messages.go:112
+#: messages.go:121
 msgid "Face not found"
 msgstr "Veidas nerastas"
 
-#: messages.go:113
+#: messages.go:122
 msgid "Not available in public mode"
 msgstr "Negalima naudoti viešuoju režimu"
 
-#: messages.go:114
+#: messages.go:123
 msgid "Not available in read-only mode"
 msgstr "Negalima naudoti tik skaitymo režimu"
 
-#: messages.go:115
+#: messages.go:124
 msgid "Please log in to your account"
 msgstr "Prisijunkite prie savo paskyros"
 
-#: messages.go:116
+#: messages.go:125
 msgid "Permission denied"
 msgstr "Priėjimas neimanomas"
 
-#: messages.go:117
+#: messages.go:126
 msgid "Upload might be offensive"
 msgstr "Įkėlimas gali būti įžeidžiantis"
 
-#: messages.go:118
+#: messages.go:127
 msgid "Upload failed"
 msgstr "Įkelti nepavyko"
 
-#: messages.go:119
+#: messages.go:128
 msgid "No items selected"
 msgstr "Nėra pasirinktų elementų"
 
-#: messages.go:120
+#: messages.go:129
 msgid "Failed creating file, please check permissions"
 msgstr "Nepavyko sukurti failo, patikrinkite leidimus"
 
-#: messages.go:121
+#: messages.go:130
 msgid "Failed creating folder, please check permissions"
 msgstr "Nepavyko sukurti aplanko, patikrinkite leidimus"
 
-#: messages.go:122
+#: messages.go:131
 msgid "Could not connect, please try again"
 msgstr "Nepavyko prisijungti, bandykite dar kartą"
 
-#: messages.go:123
+#: messages.go:132
+msgid "Enter verification code"
+msgstr "Įveskite patvirtinimo kodą"
+
+#: messages.go:133
+msgid "Invalid verification code, please try again"
+msgstr "Neteisingas patvirtinimo kodas, bandykite dar kartą"
+
+#: messages.go:134
 msgid "Invalid password, please try again"
 msgstr "Netinkamas slaptažodis, bandykite dar kartą"
 
-#: messages.go:124
+#: messages.go:135
 msgid "Feature disabled"
 msgstr "Funkcija išjungta"
 
-#: messages.go:125
+#: messages.go:136
 msgid "No labels selected"
 msgstr "Nėra pasirinktų etikečių"
 
-#: messages.go:126
+#: messages.go:137
 msgid "No albums selected"
 msgstr "Nėra pasirinktų albumų"
 
-#: messages.go:127
+#: messages.go:138
 msgid "No files available for download"
 msgstr "Nėra parsisiunčiamų failų"
 
-#: messages.go:128
+#: messages.go:139
 msgid "Failed to create zip file"
 msgstr "Nepavyko sukurti zip failo"
 
-#: messages.go:129
+#: messages.go:140
 msgid "Invalid credentials"
 msgstr "Neteisingi įgaliojimai"
 
-#: messages.go:130
+#: messages.go:141
 msgid "Invalid link"
 msgstr "Netinkama nuoroda"
 
-#: messages.go:131
+#: messages.go:142
 msgid "Invalid name"
 msgstr "Netinkamas pavadinimas"
 
-#: messages.go:132
+#: messages.go:143
 msgid "Busy, please try again later"
 msgstr "Užimta, bandykite vėliau"
 
-#: messages.go:133
+#: messages.go:144
 #, c-format
 msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr "Budinimo intervalas yra %s, bet turi būti ne ilgesnis kaip 1 val"
 
-#: messages.go:134
+#: messages.go:145
 msgid "Your account could not be connected"
 msgstr "Nepavyko prisijungti prie jūsų paskyros"
 
-#: messages.go:137
+#: messages.go:146
+msgid "Too many requests"
+msgstr "Per daug prašymų"
+
+#: messages.go:149
 msgid "Changes successfully saved"
 msgstr "Pakeitimai sėkmingai išsaugoti"
 
-#: messages.go:138
+#: messages.go:150
 msgid "Album created"
 msgstr "Sukurtas albumas"
 
-#: messages.go:139
+#: messages.go:151
 msgid "Album saved"
 msgstr "Išsaugotas albumas"
 
-#: messages.go:140
+#: messages.go:152
 #, c-format
 msgid "Album %s deleted"
 msgstr "Albumas %s pašalintas"
 
-#: messages.go:141
+#: messages.go:153
 msgid "Album contents cloned"
 msgstr "Klonuotas albumo turinys"
 
-#: messages.go:142
+#: messages.go:154
 msgid "File removed from stack"
 msgstr "Failas pašalintas iš kamino"
 
-#: messages.go:143
+#: messages.go:155
 msgid "File deleted"
 msgstr "Ištrintas failas"
 
-#: messages.go:144
+#: messages.go:156
 #, c-format
 msgid "Selection added to %s"
 msgstr "Pasirinkimas pridėtas prie %s"
 
-#: messages.go:145
+#: messages.go:157
 #, c-format
 msgid "One entry added to %s"
 msgstr "Vienas įrašas pridėtas prie %s"
 
-#: messages.go:146
+#: messages.go:158
 #, c-format
 msgid "%d entries added to %s"
 msgstr "%d įrašai, įtraukti į %s"
 
-#: messages.go:147
+#: messages.go:159
 #, c-format
 msgid "One entry removed from %s"
 msgstr "Vienas įrašas pašalintas iš %s"
 
-#: messages.go:148
+#: messages.go:160
 #, c-format
 msgid "%d entries removed from %s"
 msgstr "%d įrašai pašalinti iš %s"
 
-#: messages.go:149
+#: messages.go:161
 msgid "Account created"
 msgstr "Sukurta paskyra"
 
-#: messages.go:150
+#: messages.go:162
 msgid "Account saved"
 msgstr "Išsaugota paskyra"
 
-#: messages.go:151
+#: messages.go:163
 msgid "Account deleted"
 msgstr "Ištrinta paskyra"
 
-#: messages.go:152
+#: messages.go:164
 msgid "Settings saved"
 msgstr "Nustatymai išsaugoti"
 
-#: messages.go:153
+#: messages.go:165
 msgid "Password changed"
 msgstr "Slaptažodis pakeistas"
 
-#: messages.go:154
+#: messages.go:166
 #, c-format
 msgid "Import completed in %d s"
 msgstr "Importas baigtas per %d s"
 
-#: messages.go:155
+#: messages.go:167
 msgid "Import canceled"
 msgstr "Importas atšauktas"
 
-#: messages.go:156
+#: messages.go:168
 #, c-format
 msgid "Indexing completed in %d s"
 msgstr "Indeksavimas baigtas per %d s"
 
-#: messages.go:157
+#: messages.go:169
 msgid "Indexing originals..."
 msgstr "Originalų indeksavimas..."
 
-#: messages.go:158
+#: messages.go:170
 #, c-format
 msgid "Indexing files in %s"
 msgstr "Failų indeksavimas %s"
 
-#: messages.go:159
+#: messages.go:171
 msgid "Indexing canceled"
 msgstr "Indeksavimas atšauktas"
 
-#: messages.go:160
+#: messages.go:172
 #, c-format
 msgid "Removed %d files and %d photos"
 msgstr "Pašalinti %d failai ir %d nuotraukos"
 
-#: messages.go:161
+#: messages.go:173
 #, c-format
 msgid "Moving files from %s"
 msgstr "Failų perkėlimas iš %s"
 
-#: messages.go:162
+#: messages.go:174
 #, c-format
 msgid "Copying files from %s"
 msgstr "Failų kopijavimas iš %s"
 
-#: messages.go:163
+#: messages.go:175
 msgid "Labels deleted"
 msgstr "Ištrintos etiketės"
 
-#: messages.go:164
+#: messages.go:176
 msgid "Label saved"
 msgstr "Išsaugota etiketė"
 
-#: messages.go:165
+#: messages.go:177
 msgid "Subject saved"
 msgstr "Tema - išsaugotas"
 
-#: messages.go:166
+#: messages.go:178
 msgid "Subject deleted"
 msgstr "Išbrauktas objektas"
 
-#: messages.go:167
+#: messages.go:179
 msgid "Person saved"
 msgstr "Išsaugotas asmuo"
 
-#: messages.go:168
+#: messages.go:180
 msgid "Person deleted"
 msgstr "Išbrauktas asmuo"
 
-#: messages.go:169
+#: messages.go:181
 msgid "File uploaded"
 msgstr "Įkeltas failas"
 
-#: messages.go:170
+#: messages.go:182
 #, c-format
 msgid "%d files uploaded in %d s"
 msgstr "%d failai įkelti per %d s"
 
-#: messages.go:171
+#: messages.go:183
 msgid "Processing upload..."
 msgstr "Įkėlimo apdorojimas..."
 
-#: messages.go:172
+#: messages.go:184
 msgid "Upload has been processed"
 msgstr "Įkėlimas apdorotas"
 
-#: messages.go:173
+#: messages.go:185
 msgid "Selection approved"
 msgstr "Patvirtinta atranka"
 
-#: messages.go:174
+#: messages.go:186
 msgid "Selection archived"
 msgstr "Atranka archyvuota"
 
-#: messages.go:175
+#: messages.go:187
 msgid "Selection restored"
 msgstr "Atkurta atranka"
 
-#: messages.go:176
+#: messages.go:188
 msgid "Selection marked as private"
 msgstr "Atranka pažymėta kaip privati"
 
-#: messages.go:177
+#: messages.go:189
 msgid "Albums deleted"
 msgstr "Ištrinti albumai"
 
-#: messages.go:178
+#: messages.go:190
 #, c-format
 msgid "Zip created in %d s"
 msgstr "Zip sukurta %d s"
 
-#: messages.go:179
+#: messages.go:191
 msgid "Permanently deleted"
 msgstr "Visam laikui ištrintas"
 
-#: messages.go:180
+#: messages.go:192
 #, c-format
 msgid "%s has been restored"
 msgstr "%s buvo atkurta"
+
+#: messages.go:193
+msgid "Successfully verified"
+msgstr "Sėkmingai patvirtinta"
+
+#: messages.go:194
+msgid "Successfully activated"
+msgstr "Sėkmingai suaktyvinta"
 
 #~ msgid "Invalid request"
 #~ msgstr "Neleistina užklausa"

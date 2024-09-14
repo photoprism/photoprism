@@ -6,6 +6,8 @@ import (
 	"hash/crc32"
 	"io"
 	"os"
+
+	"github.com/photoprism/photoprism/pkg/checksum"
 )
 
 // Hash returns the SHA1 hash of a file as string.
@@ -41,7 +43,7 @@ func Checksum(fileName string) string {
 
 	defer file.Close()
 
-	hash := crc32.New(crc32.MakeTable(crc32.Castagnoli))
+	hash := crc32.New(checksum.Crc32Castagnoli)
 
 	if _, err := io.Copy(hash, file); err != nil {
 		return ""

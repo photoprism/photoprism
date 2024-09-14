@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-// Copies a file to a destination.
+// Copy copies a file to a destination.
 func Copy(src, dest string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -15,7 +15,7 @@ func Copy(src, dest string) (err error) {
 		}
 	}()
 
-	if err := os.MkdirAll(filepath.Dir(dest), ModeDir); err != nil {
+	if err = MkdirAll(filepath.Dir(dest)); err != nil {
 		return err
 	}
 

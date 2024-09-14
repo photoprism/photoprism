@@ -9,14 +9,16 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"github.com/photoprism/photoprism/internal/classify"
+	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/entity/query"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/meta"
-	"github.com/photoprism/photoprism/internal/query"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"github.com/photoprism/photoprism/pkg/media/video"
+	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
@@ -52,7 +54,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	file, primaryFile := entity.File{}, entity.File{}
 
 	photo := entity.NewUserPhoto(o.Stack, userUID)
-	metaData := meta.New()
+	metaData := meta.NewData()
 	labels := classify.Labels{}
 	stripSequence := Config().Settings().StackSequences() && o.Stack
 
@@ -179,8 +181,17 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 	} else if fileExists {
-		// Find photo by id if file exists.
-		photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
+		// Find photo by the id or uid assigned to the file.
+		if file.PhotoID > 0 {
+			photoQuery = entity.UnscopedDb().First(&photo, "id = ?", file.PhotoID)
+		} else if rnd.IsUID(file.PhotoUID, entity.PhotoUID) {
+			photoQuery = entity.UnscopedDb().First(&photo, "photo_uid = ?", file.PhotoUID)
+		} else {
+			// Should never happen.
+			result.Status = IndexFailed
+			result.Err = fmt.Errorf("index: file %s has no photo id or uid assigned - you may have found a bug, please report", logName)
+			return result
+		}
 	} else {
 		// Should never happen.
 		result.Status = IndexFailed
@@ -226,14 +237,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// Remove file from duplicates table if exists.
-	if err := entity.PurgeDuplicate(m.RootRelName(), m.Root()); err != nil {
+	if err = entity.PurgeDuplicate(m.RootRelName(), m.Root()); err != nil {
 		log.Errorf("index: %s in %s (purge duplicate)", err, m.RootRelName())
 	}
 
 	// Create default thumbnails if needed.
-	if err := m.CreateThumbnails(ind.thumbPath(), false); err != nil {
+	if err = m.GenerateThumbnails(ind.thumbPath(), false); err != nil {
 		result.Status = IndexFailed
-		result.Err = fmt.Errorf("index: failed creating thumbnails for %s (%s)", clean.Log(m.RootRelName()), err.Error())
+		result.Err = fmt.Errorf("index: failed to generate thumbnails for %s (%s)", clean.Log(m.RootRelName()), err.Error())
 		return result
 	}
 
@@ -248,12 +259,12 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.PhotoStack = entity.IsStackable
 		}
 
-		if yamlName := fs.SidecarYAML.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.HiddenPath}, Config().OriginalsPath(), stripSequence); yamlName != "" {
-			if err := photo.LoadFromYaml(yamlName); err != nil {
+		if yamlName := fs.SidecarYAML.FindFirst(m.FileName(), []string{Config().SidecarPath(), fs.PPHiddenPathname}, Config().OriginalsPath(), stripSequence); yamlName != "" {
+			if err = photo.LoadFromYaml(yamlName); err != nil {
 				log.Errorf("index: %s in %s (restore from yaml)", err.Error(), logName)
-			} else {
+			} else if photo.HasUID() {
 				photoExists = true
-				log.Infof("index: uid %s restored from %s", photo.PhotoUID, clean.Log(filepath.Base(yamlName)))
+				log.Infof("index: metadata of photo uid %s restored from %s", photo.PhotoUID, clean.Log(filepath.Base(yamlName)))
 			}
 		}
 	}
@@ -358,151 +369,191 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	// Reset file perceptive diff and chroma percent.
 	file.FileDiff = -1
 	file.FileChroma = -1
+	file.FileVideo = m.IsVideo()
+	file.MediaType = m.Media().String()
 
 	// Handle file types.
 	switch {
 	case m.IsPreviewImage():
-		// Color information
-		if p, err := m.Colors(Config().ThumbCachePath()); err != nil {
-			log.Debugf("%s while detecting colors", err.Error())
-			file.FileError = err.Error()
+		// Update color information, if available.
+		if color, colorErr := m.Colors(Config().ThumbCachePath()); colorErr != nil {
+			log.Debugf("%s while detecting colors", colorErr.Error())
+			file.FileError = colorErr.Error()
 			file.FilePrimary = false
 		} else {
-			file.FileMainColor = p.MainColor.Name()
-			file.FileColors = p.Colors.Hex()
-			file.FileLuminance = p.Luminance.Hex()
-			file.FileDiff = p.Luminance.Diff()
-			file.FileChroma = p.Chroma.Percent()
+			file.FileMainColor = color.MainColor.Name()
+			file.FileColors = color.Colors.Hex()
+			file.FileLuminance = color.Luminance.Hex()
+			file.FileDiff = color.Luminance.Diff()
+			file.FileChroma = color.Chroma.Percent()
 
 			if file.FilePrimary {
-				photo.PhotoColor = p.MainColor.ID()
+				photo.PhotoColor = color.MainColor.ID()
 			}
 		}
 
+		// Update resolution and aspect ratio.
 		if m.Width() > 0 && m.Height() > 0 {
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
 
-			megapixels := m.Megapixels()
-
-			if megapixels > photo.PhotoResolution {
-				photo.PhotoResolution = megapixels
+			// Set photo resolution based on the largest media file.
+			if res := m.Megapixels(); res > photo.PhotoResolution {
+				photo.PhotoResolution = res
 			}
 		}
 
-		if metaData := m.MetaData(); metaData.Error == nil {
-			file.FileCodec = metaData.Codec
-			file.SetMediaUTC(metaData.TakenAt)
-			file.SetDuration(metaData.Duration)
-			file.SetFPS(metaData.FPS)
-			file.SetFrames(metaData.Frames)
-			file.SetProjection(metaData.Projection)
-			file.SetHDR(metaData.IsHDR())
-			file.SetColorProfile(metaData.ColorProfile)
-			file.SetSoftware(metaData.Software)
+		// Update file metadata.
+		if data := m.MetaData(); data.Error == nil {
+			file.FileCodec = data.Codec
+			file.SetMediaUTC(data.TakenAt)
+			file.SetProjection(data.Projection)
+			file.SetHDR(data.IsHDR())
+			file.SetColorProfile(data.ColorProfile)
+			file.SetSoftware(data.Software)
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != metaData.FileName {
-				file.OriginalName = metaData.FileName
+			// Get video metadata from embedded file?
+			if !data.HasVideoEmbedded {
+				file.SetDuration(data.Duration)
+				file.SetFPS(data.FPS)
+				file.SetFrames(data.Frames)
+			} else if info := m.VideoInfo(); info.Compatible {
+				file.SetDuration(info.Duration)
+				file.SetFPS(info.FPS)
+				file.SetFrames(info.Frames)
+
+				// Change file and photo type to "live" if the file has a video embedded.
+				file.FileVideo = true
+				file.MediaType = entity.MediaLive
+				if photo.TypeSrc == entity.SrcAuto {
+					photo.PhotoType = entity.MediaLive
+				}
+			} else if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaLive {
+				// Image does not include a compatible video.
+				photo.PhotoType = entity.MediaImage
+			}
+
+			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
+				file.OriginalName = data.FileName
 				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(metaData.FileName)
+					photo.OriginalName = fs.StripKnownExt(data.FileName)
 				}
 			}
 
-			if metaData.HasInstanceID() {
-				log.Infof("index: %s has instance_id %s", logName, clean.Log(metaData.InstanceID))
+			if data.HasInstanceID() {
+				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = metaData.InstanceID
+				file.InstanceID = data.InstanceID
 			}
 		}
 
-		// Set the photo type to animated if it is an animated PNG.
+		// Change the photo type to animated if it is an animated PNG.
 		if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaImage && m.IsAnimatedImage() {
 			photo.PhotoType = entity.MediaAnimated
 		}
 	case m.IsXMP():
-		if metaData, err := meta.XMP(m.FileName()); err == nil {
+		if data, dataErr := meta.XMP(m.FileName()); dataErr == nil {
 			// Update basic metadata.
-			photo.SetTitle(metaData.Title, entity.SrcXmp)
-			photo.SetDescription(metaData.Description, entity.SrcXmp)
-			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcXmp)
-			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcXmp)
+			photo.SetTitle(data.Title, entity.SrcXmp)
+			photo.SetDescription(data.Description, entity.SrcXmp)
+			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcXmp)
+			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcXmp)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords.String(), entity.SrcXmp)
-			details.SetNotes(metaData.Notes, entity.SrcXmp)
-			details.SetSubject(metaData.Subject, entity.SrcXmp)
-			details.SetArtist(metaData.Artist, entity.SrcXmp)
-			details.SetCopyright(metaData.Copyright, entity.SrcXmp)
-			details.SetLicense(metaData.License, entity.SrcXmp)
-			details.SetSoftware(metaData.Software, entity.SrcXmp)
+			details.SetKeywords(data.Keywords.String(), entity.SrcXmp)
+			details.SetNotes(data.Notes, entity.SrcXmp)
+			details.SetSubject(data.Subject, entity.SrcXmp)
+			details.SetArtist(data.Artist, entity.SrcXmp)
+			details.SetCopyright(data.Copyright, entity.SrcXmp)
+			details.SetLicense(data.License, entity.SrcXmp)
+			details.SetSoftware(data.Software, entity.SrcXmp)
 
 			// Update externally marked as favorite.
-			if metaData.Favorite {
-				photo.SetFavorite(metaData.Favorite)
+			if data.Favorite {
+				_ = photo.SetFavorite(data.Favorite)
 			}
 		} else {
-			log.Warn(err.Error())
-			file.FileError = err.Error()
+			log.Warn(dataErr.Error())
+			file.FileError = dataErr.Error()
 		}
 	case m.IsRaw(), m.IsImage():
-		if metaData := m.MetaData(); metaData.Error == nil {
+		if data := m.MetaData(); data.Error == nil {
 			// Update basic metadata.
-			photo.SetTitle(metaData.Title, entity.SrcMeta)
-			photo.SetDescription(metaData.Description, entity.SrcMeta)
-			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
-			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
-			photo.SetCameraSerial(metaData.CameraSerial)
+			photo.SetTitle(data.Title, entity.SrcMeta)
+			photo.SetDescription(data.Description, entity.SrcMeta)
+			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
+			photo.SetCameraSerial(data.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
-			details.SetNotes(metaData.Notes, entity.SrcMeta)
-			details.SetSubject(metaData.Subject, entity.SrcMeta)
-			details.SetArtist(metaData.Artist, entity.SrcMeta)
-			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
-			details.SetLicense(metaData.License, entity.SrcMeta)
-			details.SetSoftware(metaData.Software, entity.SrcMeta)
+			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
+			details.SetNotes(data.Notes, entity.SrcMeta)
+			details.SetSubject(data.Subject, entity.SrcMeta)
+			details.SetArtist(data.Artist, entity.SrcMeta)
+			details.SetCopyright(data.Copyright, entity.SrcMeta)
+			details.SetLicense(data.License, entity.SrcMeta)
+			details.SetSoftware(data.Software, entity.SrcMeta)
 
-			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Infof("index: %s has document_id %s", logName, clean.Log(metaData.DocumentID))
+			if data.HasDocumentID() && photo.UUID == "" {
+				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = metaData.DocumentID
+				photo.UUID = data.DocumentID
 			}
 
-			if metaData.HasInstanceID() {
-				log.Infof("index: %s has instance_id %s", logName, clean.Log(metaData.InstanceID))
+			if data.HasInstanceID() {
+				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = metaData.InstanceID
+				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != metaData.FileName {
-				file.OriginalName = metaData.FileName
+			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
+				file.OriginalName = data.FileName
 				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(metaData.FileName)
+					photo.OriginalName = fs.StripKnownExt(data.FileName)
 				}
 			}
 
-			file.FileCodec = metaData.Codec
+			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(metaData.TakenAt)
-			file.SetDuration(metaData.Duration)
-			file.SetFPS(metaData.FPS)
-			file.SetFrames(metaData.Frames)
-			file.SetProjection(metaData.Projection)
-			file.SetHDR(metaData.IsHDR())
-			file.SetColorProfile(metaData.ColorProfile)
-			file.SetSoftware(metaData.Software)
+			file.SetMediaUTC(data.TakenAt)
+			file.SetProjection(data.Projection)
+			file.SetHDR(data.IsHDR())
+			file.SetColorProfile(data.ColorProfile)
+			file.SetSoftware(data.Software)
 
+			// Get video metadata from embedded file?
+			if !m.IsHEIC() || !data.HasVideoEmbedded {
+				file.SetDuration(data.Duration)
+				file.SetFPS(data.FPS)
+				file.SetFrames(data.Frames)
+			} else if info := m.VideoInfo(); info.Compatible {
+				file.SetDuration(info.Duration)
+				file.SetFPS(info.FPS)
+				file.SetFrames(info.Frames)
+
+				// Change file and photo type to "live" if the file has a video embedded.
+				file.FileVideo = true
+				file.MediaType = entity.MediaLive
+				if photo.TypeSrc == entity.SrcAuto {
+					photo.PhotoType = entity.MediaLive
+				}
+			} else if photo.TypeSrc == entity.SrcAuto && photo.PhotoType == entity.MediaLive {
+				// HEIC does not include a compatible video.
+				photo.PhotoType = entity.MediaImage
+			}
+
+			// Set photo resolution based on the largest media file.
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
 			}
 
-			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
-			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraMake(), m.CameraModel())), entity.SrcMeta)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensMake(), m.LensModel())), entity.SrcMeta)
 			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
@@ -519,54 +570,55 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			}
 		}
 	case m.IsVector():
-		if metaData := m.MetaData(); metaData.Error == nil {
+		if data := m.MetaData(); data.Error == nil {
 			// Update basic metadata.
-			photo.SetTitle(metaData.Title, entity.SrcMeta)
-			photo.SetDescription(metaData.Description, entity.SrcMeta)
-			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
+			photo.SetTitle(data.Title, entity.SrcMeta)
+			photo.SetDescription(data.Description, entity.SrcMeta)
+			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
-			details.SetNotes(metaData.Notes, entity.SrcMeta)
-			details.SetSubject(metaData.Subject, entity.SrcMeta)
-			details.SetArtist(metaData.Artist, entity.SrcMeta)
-			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
-			details.SetLicense(metaData.License, entity.SrcMeta)
-			details.SetSoftware(metaData.Software, entity.SrcMeta)
+			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
+			details.SetNotes(data.Notes, entity.SrcMeta)
+			details.SetSubject(data.Subject, entity.SrcMeta)
+			details.SetArtist(data.Artist, entity.SrcMeta)
+			details.SetCopyright(data.Copyright, entity.SrcMeta)
+			details.SetLicense(data.License, entity.SrcMeta)
+			details.SetSoftware(data.Software, entity.SrcMeta)
 
-			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Infof("index: %s has document_id %s", logName, clean.Log(metaData.DocumentID))
+			if data.HasDocumentID() && photo.UUID == "" {
+				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = metaData.DocumentID
+				photo.UUID = data.DocumentID
 			}
 
-			if metaData.HasInstanceID() {
-				log.Infof("index: %s has instance_id %s", logName, clean.Log(metaData.InstanceID))
+			if data.HasInstanceID() {
+				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = metaData.InstanceID
+				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != metaData.FileName {
-				file.OriginalName = metaData.FileName
+			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
+				file.OriginalName = data.FileName
 				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(metaData.FileName)
+					photo.OriginalName = fs.StripKnownExt(data.FileName)
 				}
 			}
 
-			file.FileCodec = metaData.Codec
+			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(metaData.TakenAt)
-			file.SetDuration(metaData.Duration)
-			file.SetFPS(metaData.FPS)
-			file.SetFrames(metaData.Frames)
-			file.SetProjection(metaData.Projection)
-			file.SetHDR(metaData.IsHDR())
-			file.SetColorProfile(metaData.ColorProfile)
-			file.SetSoftware(metaData.Software)
+			file.SetMediaUTC(data.TakenAt)
+			file.SetDuration(data.Duration)
+			file.SetFPS(data.FPS)
+			file.SetFrames(data.Frames)
+			file.SetProjection(data.Projection)
+			file.SetHDR(data.IsHDR())
+			file.SetColorProfile(data.ColorProfile)
+			file.SetSoftware(data.Software)
 
+			// Set photo resolution based on the largest media file.
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
 			}
@@ -577,55 +629,56 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 			photo.PhotoType = entity.MediaVector
 		}
 	case m.IsVideo():
-		if metaData := m.MetaData(); metaData.Error == nil {
-			photo.SetTitle(metaData.Title, entity.SrcMeta)
-			photo.SetDescription(metaData.Description, entity.SrcMeta)
-			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
-			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
-			photo.SetCameraSerial(metaData.CameraSerial)
+		if data := m.MetaData(); data.Error == nil {
+			photo.SetTitle(data.Title, entity.SrcMeta)
+			photo.SetDescription(data.Description, entity.SrcMeta)
+			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
+			photo.SetCameraSerial(data.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
-			details.SetNotes(metaData.Notes, entity.SrcMeta)
-			details.SetSubject(metaData.Subject, entity.SrcMeta)
-			details.SetArtist(metaData.Artist, entity.SrcMeta)
-			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
-			details.SetLicense(metaData.License, entity.SrcMeta)
-			details.SetSoftware(metaData.Software, entity.SrcMeta)
+			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
+			details.SetNotes(data.Notes, entity.SrcMeta)
+			details.SetSubject(data.Subject, entity.SrcMeta)
+			details.SetArtist(data.Artist, entity.SrcMeta)
+			details.SetCopyright(data.Copyright, entity.SrcMeta)
+			details.SetLicense(data.License, entity.SrcMeta)
+			details.SetSoftware(data.Software, entity.SrcMeta)
 
-			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Infof("index: %s has document_id %s", logName, clean.Log(metaData.DocumentID))
+			if data.HasDocumentID() && photo.UUID == "" {
+				log.Infof("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = metaData.DocumentID
+				photo.UUID = data.DocumentID
 			}
 
-			if metaData.HasInstanceID() {
-				log.Infof("index: %s has instance_id %s", logName, clean.Log(metaData.InstanceID))
+			if data.HasInstanceID() {
+				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
-				file.InstanceID = metaData.InstanceID
+				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != metaData.FileName {
-				file.OriginalName = metaData.FileName
+			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
+				file.OriginalName = data.FileName
 				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(metaData.FileName)
+					photo.OriginalName = fs.StripKnownExt(data.FileName)
 				}
 			}
 
-			file.FileCodec = metaData.Codec
+			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
 			file.FileAspectRatio = m.AspectRatio()
 			file.FilePortrait = m.Portrait()
-			file.SetMediaUTC(metaData.TakenAt)
-			file.SetDuration(metaData.Duration)
-			file.SetFPS(metaData.FPS)
-			file.SetFrames(metaData.Frames)
-			file.SetProjection(metaData.Projection)
-			file.SetHDR(metaData.IsHDR())
-			file.SetColorProfile(metaData.ColorProfile)
-			file.SetSoftware(metaData.Software)
+			file.SetMediaUTC(data.TakenAt)
+			file.SetDuration(data.Duration)
+			file.SetFPS(data.FPS)
+			file.SetFrames(data.Frames)
+			file.SetProjection(data.Projection)
+			file.SetHDR(data.IsHDR())
+			file.SetColorProfile(data.ColorProfile)
+			file.SetSoftware(data.Software)
 
+			// Set photo resolution based on the largest media file.
 			if res := m.Megapixels(); res > photo.PhotoResolution {
 				photo.PhotoResolution = res
 			}
@@ -634,14 +687,14 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				photo.PhotoDuration = file.FileDuration
 			}
 
-			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
-			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+			photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraMake(), m.CameraModel())), entity.SrcMeta)
+			photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensMake(), m.LensModel())), entity.SrcMeta)
 			photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 		}
 
 		if photo.TypeSrc == entity.SrcAuto {
 			// Update photo type only if not manually modified.
-			if file.FileDuration == 0 || file.FileDuration > LivePhotoDurationLimit {
+			if file.FileDuration == 0 || file.FileDuration > video.LiveDuration {
 				photo.PhotoType = entity.MediaVideo
 			} else {
 				photo.PhotoType = entity.MediaLive
@@ -704,32 +757,32 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 
 		// Read metadata from embedded Exif and JSON sidecar file, if exists.
-		if metaData := m.MetaData(); metaData.Error == nil {
+		if data := m.MetaData(); data.Error == nil {
 			// Update basic metadata.
-			photo.SetTitle(metaData.Title, entity.SrcMeta)
-			photo.SetDescription(metaData.Description, entity.SrcMeta)
-			photo.SetTakenAt(metaData.TakenAt, metaData.TakenAtLocal, metaData.TimeZone, entity.SrcMeta)
-			photo.SetCoordinates(metaData.Lat, metaData.Lng, metaData.Altitude, entity.SrcMeta)
-			photo.SetCameraSerial(metaData.CameraSerial)
+			photo.SetTitle(data.Title, entity.SrcMeta)
+			photo.SetDescription(data.Description, entity.SrcMeta)
+			photo.SetTakenAt(data.TakenAt, data.TakenAtLocal, data.TimeZone, entity.SrcMeta)
+			photo.SetCoordinates(data.Lat, data.Lng, data.Altitude, entity.SrcMeta)
+			photo.SetCameraSerial(data.CameraSerial)
 
 			// Update metadata details.
-			details.SetKeywords(metaData.Keywords.String(), entity.SrcMeta)
-			details.SetNotes(metaData.Notes, entity.SrcMeta)
-			details.SetSubject(metaData.Subject, entity.SrcMeta)
-			details.SetArtist(metaData.Artist, entity.SrcMeta)
-			details.SetCopyright(metaData.Copyright, entity.SrcMeta)
-			details.SetLicense(metaData.License, entity.SrcMeta)
-			details.SetSoftware(metaData.Software, entity.SrcMeta)
+			details.SetKeywords(data.Keywords.String(), entity.SrcMeta)
+			details.SetNotes(data.Notes, entity.SrcMeta)
+			details.SetSubject(data.Subject, entity.SrcMeta)
+			details.SetArtist(data.Artist, entity.SrcMeta)
+			details.SetCopyright(data.Copyright, entity.SrcMeta)
+			details.SetLicense(data.License, entity.SrcMeta)
+			details.SetSoftware(data.Software, entity.SrcMeta)
 
-			if metaData.HasDocumentID() && photo.UUID == "" {
-				log.Debugf("index: %s has document_id %s", logName, clean.Log(metaData.DocumentID))
+			if data.HasDocumentID() && photo.UUID == "" {
+				log.Debugf("index: %s has document_id %s", logName, clean.Log(data.DocumentID))
 
-				photo.UUID = metaData.DocumentID
+				photo.UUID = data.DocumentID
 			}
 		}
 
-		photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraModel(), m.CameraMake())), entity.SrcMeta)
-		photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensModel(), m.LensMake())), entity.SrcMeta)
+		photo.SetCamera(entity.FirstOrCreateCamera(entity.NewCamera(m.CameraMake(), m.CameraModel())), entity.SrcMeta)
+		photo.SetLens(entity.FirstOrCreateLens(entity.NewLens(m.LensMake(), m.LensModel())), entity.SrcMeta)
 		photo.SetExposure(m.FocalLength(), m.FNumber(), m.Iso(), m.Exposure(), entity.SrcMeta)
 
 		var locLabels classify.Labels
@@ -755,11 +808,9 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		photo.PhotoPanorama = true
 	}
 
-	// Set remaining file properties.
+	// Update file properties.
 	file.FileSidecar = m.IsSidecar()
-	file.FileVideo = m.IsVideo()
 	file.FileType = m.FileType().String()
-	file.MediaType = m.Media().String()
 	file.FileMime = m.MimeType()
 	file.SetOrientation(m.Orientation(), entity.SrcMeta)
 	file.ModTime = modTime.UTC().Truncate(time.Second).Unix()
@@ -769,14 +820,15 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		file.SetColorProfile(m.ColorProfile())
 	}
 
-	// Update existing photo?
-	if photoExists || photo.HasID() {
-		if err := photo.Save(); err != nil {
+	// Update existing photo entity?
+	if photo.HasID() {
+		if err = photo.Save(); err != nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update existing photo)", err, logName)
 			return result
 		}
 	} else {
+		// Create a new photo entity or load the existing entity if it exists.
 		if p := photo.FirstOrCreate(); p == nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: failed to create %s", logName)
@@ -816,11 +868,11 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	file.PhotoUID = photo.PhotoUID
 	result.PhotoUID = photo.PhotoUID
 
-	// Main JPEG file.
+	// Set photo properties based on primary file.
 	if file.FilePrimary {
-		labels := photo.ClassifyLabels()
+		photoLabels := photo.ClassifyLabels()
 
-		if err := photo.UpdateTitle(labels); err != nil {
+		if err = photo.UpdateTitle(photoLabels); err != nil {
 			log.Debugf("%s in %s (update title)", err, logName)
 		}
 
@@ -841,7 +893,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		w = append(w, txt.FilenameKeywords(filePath)...)
 		w = append(w, locKeywords...)
 		w = append(w, file.FileMainColor)
-		w = append(w, labels.Keywords()...)
+		w = append(w, photoLabels.Keywords()...)
 
 		details.Keywords = strings.Join(txt.UniqueWords(w), ", ")
 
@@ -853,24 +905,24 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 		photo.PhotoQuality = photo.QualityScore()
 
-		if err := photo.Save(); err != nil {
+		if err = photo.Save(); err != nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update metadata)", err, logName)
 			return result
 		}
 
-		if err := photo.SyncKeywordLabels(); err != nil {
+		if err = photo.SyncKeywordLabels(); err != nil {
 			log.Errorf("index: %s in %s (sync keywords and labels)", err, logName)
 		}
 
-		if err := photo.IndexKeywords(); err != nil {
+		if err = photo.IndexKeywords(); err != nil {
 			log.Errorf("index: %s in %s (save keywords)", err, logName)
 		}
 
-		if err := query.AlbumEntryFound(photo.PhotoUID); err != nil {
+		if err = query.AlbumEntryFound(photo.PhotoUID); err != nil {
 			log.Errorf("index: %s in %s (remove missing flag from album entry)", err, logName)
 		}
-	} else if err := photo.UpdateQuality(); err != nil {
+	} else if err = photo.UpdateQuality(); err != nil {
 		result.Status = IndexFailed
 		result.Err = fmt.Errorf("index: %s in %s (update quality)", err, logName)
 		return result
@@ -881,7 +933,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	if fileQuery.Error == nil {
 		file.UpdatedIn = int64(time.Since(start))
 
-		if err := file.Save(); err != nil {
+		if err = file.Save(); err != nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (update existing file)", err, logName)
 			return result
@@ -889,7 +941,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	} else {
 		file.CreatedIn = int64(time.Since(start))
 
-		if err := file.Create(); err != nil {
+		if err = file.Create(); err != nil {
 			result.Status = IndexFailed
 			result.Err = fmt.Errorf("index: %s in %s (add new file)", err, logName)
 			return result
@@ -906,9 +958,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		}
 	}
 
+	// Update related video files so they are properly grouped with the primary image in search results.
 	if (photo.PhotoType == entity.MediaVideo || photo.PhotoType == entity.MediaLive) && file.FilePrimary {
-		if err := file.UpdateVideoInfos(); err != nil {
-			log.Errorf("index: %s in %s (update video infos)", err, logName)
+		if updateErr := file.UpdateVideoInfos(); updateErr != nil {
+			log.Errorf("index: %s in %s (update video infos)", updateErr, logName)
 		}
 	}
 
@@ -921,7 +974,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		downloadedAs = originalName
 	}
 
-	if err := query.SetDownloadFileID(downloadedAs, file.ID); err != nil {
+	if err = query.SetDownloadFileID(downloadedAs, file.ID); err != nil {
 		log.Errorf("index: %s in %s (set download id)", err, logName)
 	}
 
@@ -939,14 +992,10 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		return result
 	}
 
-	if file.FilePrimary && Config().BackupYaml() {
-		// Write YAML sidecar file (optional).
-		yamlFile := photo.YamlFileName(Config().OriginalsPath(), Config().SidecarPath())
-
-		if err := photo.SaveAsYaml(yamlFile); err != nil {
-			log.Errorf("index: %s in %s (update yaml)", err.Error(), logName)
-		} else {
-			log.Debugf("index: updated yaml file %s", clean.Log(filepath.Base(yamlFile)))
+	// Create backup of picture metadata in sidecar YAML file.
+	if file.FilePrimary && Config().SidecarYaml() {
+		if err = photo.SaveSidecarYaml(Config().OriginalsPath(), Config().SidecarPath()); err != nil {
+			log.Errorf("index: %s in %s (save as yaml)", err, logName)
 		}
 	}
 

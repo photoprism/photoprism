@@ -1,8 +1,14 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-09 13:14+0000\n"
+"POT-Creation-Date: 2024-07-09 06:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -11,359 +17,387 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: messages.go:94
+#: messages.go:101
 msgid "Something went wrong, try again"
 msgstr ""
 
-#: messages.go:95
+#: messages.go:102
 msgid "Unable to do that"
 msgstr ""
 
-#: messages.go:96
+#: messages.go:103
 msgid "Changes could not be saved"
 msgstr ""
 
-#: messages.go:97
+#: messages.go:104
 msgid "Could not be deleted"
 msgstr ""
 
-#: messages.go:98
+#: messages.go:105
 #, c-format
 msgid "%s already exists"
 msgstr ""
 
-#: messages.go:99
+#: messages.go:106
 msgid "Not found"
 msgstr ""
 
-#: messages.go:100
+#: messages.go:107
 msgid "File not found"
 msgstr ""
 
-#: messages.go:101
+#: messages.go:108
 msgid "File too large"
 msgstr ""
 
-#: messages.go:102
-msgid "Unsupported format"
-msgstr ""
-
-#: messages.go:103
-msgid "Originals folder is empty"
-msgstr ""
-
-#: messages.go:104
-msgid "Selection not found"
-msgstr ""
-
-#: messages.go:105
-msgid "Entity not found"
-msgstr ""
-
-#: messages.go:106
-msgid "Account not found"
-msgstr ""
-
-#: messages.go:107
-msgid "User not found"
-msgstr ""
-
-#: messages.go:108
-msgid "Label not found"
-msgstr ""
-
 #: messages.go:109
-msgid "Album not found"
+msgid "Unsupported"
 msgstr ""
 
 #: messages.go:110
-msgid "Subject not found"
+msgid "Unsupported type"
 msgstr ""
 
 #: messages.go:111
-msgid "Person not found"
+msgid "Unsupported format"
 msgstr ""
 
 #: messages.go:112
-msgid "Face not found"
+msgid "Originals folder is empty"
 msgstr ""
 
 #: messages.go:113
-msgid "Not available in public mode"
+msgid "Selection not found"
 msgstr ""
 
 #: messages.go:114
-msgid "Not available in read-only mode"
+msgid "Entity not found"
 msgstr ""
 
 #: messages.go:115
-msgid "Please log in to your account"
+msgid "Account not found"
 msgstr ""
 
 #: messages.go:116
-msgid "Permission denied"
+msgid "User not found"
 msgstr ""
 
 #: messages.go:117
-msgid "Upload might be offensive"
+msgid "Label not found"
 msgstr ""
 
 #: messages.go:118
-msgid "Upload failed"
+msgid "Album not found"
 msgstr ""
 
 #: messages.go:119
-msgid "No items selected"
+msgid "Subject not found"
 msgstr ""
 
 #: messages.go:120
-msgid "Failed creating file, please check permissions"
+msgid "Person not found"
 msgstr ""
 
 #: messages.go:121
-msgid "Failed creating folder, please check permissions"
+msgid "Face not found"
 msgstr ""
 
 #: messages.go:122
-msgid "Could not connect, please try again"
+msgid "Not available in public mode"
 msgstr ""
 
 #: messages.go:123
-msgid "Invalid password, please try again"
+msgid "Not available in read-only mode"
 msgstr ""
 
 #: messages.go:124
-msgid "Feature disabled"
+msgid "Please log in to your account"
 msgstr ""
 
 #: messages.go:125
-msgid "No labels selected"
+msgid "Permission denied"
 msgstr ""
 
 #: messages.go:126
-msgid "No albums selected"
+msgid "Upload might be offensive"
 msgstr ""
 
 #: messages.go:127
-msgid "No files available for download"
+msgid "Upload failed"
 msgstr ""
 
 #: messages.go:128
-msgid "Failed to create zip file"
+msgid "No items selected"
 msgstr ""
 
 #: messages.go:129
-msgid "Invalid credentials"
+msgid "Failed creating file, please check permissions"
 msgstr ""
 
 #: messages.go:130
-msgid "Invalid link"
+msgid "Failed creating folder, please check permissions"
 msgstr ""
 
 #: messages.go:131
-msgid "Invalid name"
+msgid "Could not connect, please try again"
 msgstr ""
 
 #: messages.go:132
-msgid "Busy, please try again later"
+msgid "Enter verification code"
 msgstr ""
 
 #: messages.go:133
-#, c-format
-msgid "The wakeup interval is %s, but must be 1h or less"
+msgid "Invalid verification code, please try again"
 msgstr ""
 
 #: messages.go:134
-msgid "Your account could not be connected"
+msgid "Invalid password, please try again"
+msgstr ""
+
+#: messages.go:135
+msgid "Feature disabled"
+msgstr ""
+
+#: messages.go:136
+msgid "No labels selected"
 msgstr ""
 
 #: messages.go:137
-msgid "Changes successfully saved"
+msgid "No albums selected"
 msgstr ""
 
 #: messages.go:138
-msgid "Album created"
+msgid "No files available for download"
 msgstr ""
 
 #: messages.go:139
-msgid "Album saved"
+msgid "Failed to create zip file"
 msgstr ""
 
 #: messages.go:140
-#, c-format
-msgid "Album %s deleted"
+msgid "Invalid credentials"
 msgstr ""
 
 #: messages.go:141
-msgid "Album contents cloned"
+msgid "Invalid link"
 msgstr ""
 
 #: messages.go:142
-msgid "File removed from stack"
+msgid "Invalid name"
 msgstr ""
 
 #: messages.go:143
-msgid "File deleted"
+msgid "Busy, please try again later"
 msgstr ""
 
 #: messages.go:144
 #, c-format
-msgid "Selection added to %s"
+msgid "The wakeup interval is %s, but must be 1h or less"
 msgstr ""
 
 #: messages.go:145
-#, c-format
-msgid "One entry added to %s"
+msgid "Your account could not be connected"
 msgstr ""
 
 #: messages.go:146
-#, c-format
-msgid "%d entries added to %s"
-msgstr ""
-
-#: messages.go:147
-#, c-format
-msgid "One entry removed from %s"
-msgstr ""
-
-#: messages.go:148
-#, c-format
-msgid "%d entries removed from %s"
+msgid "Too many requests"
 msgstr ""
 
 #: messages.go:149
-msgid "Account created"
+msgid "Changes successfully saved"
 msgstr ""
 
 #: messages.go:150
-msgid "Account saved"
+msgid "Album created"
 msgstr ""
 
 #: messages.go:151
-msgid "Account deleted"
+msgid "Album saved"
 msgstr ""
 
 #: messages.go:152
-msgid "Settings saved"
+#, c-format
+msgid "Album %s deleted"
 msgstr ""
 
 #: messages.go:153
-msgid "Password changed"
+msgid "Album contents cloned"
 msgstr ""
 
 #: messages.go:154
-#, c-format
-msgid "Import completed in %d s"
+msgid "File removed from stack"
 msgstr ""
 
 #: messages.go:155
-msgid "Import canceled"
+msgid "File deleted"
 msgstr ""
 
 #: messages.go:156
 #, c-format
-msgid "Indexing completed in %d s"
+msgid "Selection added to %s"
 msgstr ""
 
 #: messages.go:157
-msgid "Indexing originals..."
+#, c-format
+msgid "One entry added to %s"
 msgstr ""
 
 #: messages.go:158
 #, c-format
-msgid "Indexing files in %s"
+msgid "%d entries added to %s"
 msgstr ""
 
 #: messages.go:159
-msgid "Indexing canceled"
+#, c-format
+msgid "One entry removed from %s"
 msgstr ""
 
 #: messages.go:160
 #, c-format
-msgid "Removed %d files and %d photos"
+msgid "%d entries removed from %s"
 msgstr ""
 
 #: messages.go:161
-#, c-format
-msgid "Moving files from %s"
+msgid "Account created"
 msgstr ""
 
 #: messages.go:162
-#, c-format
-msgid "Copying files from %s"
+msgid "Account saved"
 msgstr ""
 
 #: messages.go:163
-msgid "Labels deleted"
+msgid "Account deleted"
 msgstr ""
 
 #: messages.go:164
-msgid "Label saved"
+msgid "Settings saved"
 msgstr ""
 
 #: messages.go:165
-msgid "Subject saved"
+msgid "Password changed"
 msgstr ""
 
 #: messages.go:166
-msgid "Subject deleted"
+#, c-format
+msgid "Import completed in %d s"
 msgstr ""
 
 #: messages.go:167
-msgid "Person saved"
+msgid "Import canceled"
 msgstr ""
 
 #: messages.go:168
-msgid "Person deleted"
+#, c-format
+msgid "Indexing completed in %d s"
 msgstr ""
 
 #: messages.go:169
-msgid "File uploaded"
+msgid "Indexing originals..."
 msgstr ""
 
 #: messages.go:170
 #, c-format
-msgid "%d files uploaded in %d s"
+msgid "Indexing files in %s"
 msgstr ""
 
 #: messages.go:171
-msgid "Processing upload..."
+msgid "Indexing canceled"
 msgstr ""
 
 #: messages.go:172
-msgid "Upload has been processed"
+#, c-format
+msgid "Removed %d files and %d photos"
 msgstr ""
 
 #: messages.go:173
-msgid "Selection approved"
+#, c-format
+msgid "Moving files from %s"
 msgstr ""
 
 #: messages.go:174
-msgid "Selection archived"
+#, c-format
+msgid "Copying files from %s"
 msgstr ""
 
 #: messages.go:175
-msgid "Selection restored"
+msgid "Labels deleted"
 msgstr ""
 
 #: messages.go:176
-msgid "Selection marked as private"
+msgid "Label saved"
 msgstr ""
 
 #: messages.go:177
-msgid "Albums deleted"
+msgid "Subject saved"
 msgstr ""
 
 #: messages.go:178
+msgid "Subject deleted"
+msgstr ""
+
+#: messages.go:179
+msgid "Person saved"
+msgstr ""
+
+#: messages.go:180
+msgid "Person deleted"
+msgstr ""
+
+#: messages.go:181
+msgid "File uploaded"
+msgstr ""
+
+#: messages.go:182
+#, c-format
+msgid "%d files uploaded in %d s"
+msgstr ""
+
+#: messages.go:183
+msgid "Processing upload..."
+msgstr ""
+
+#: messages.go:184
+msgid "Upload has been processed"
+msgstr ""
+
+#: messages.go:185
+msgid "Selection approved"
+msgstr ""
+
+#: messages.go:186
+msgid "Selection archived"
+msgstr ""
+
+#: messages.go:187
+msgid "Selection restored"
+msgstr ""
+
+#: messages.go:188
+msgid "Selection marked as private"
+msgstr ""
+
+#: messages.go:189
+msgid "Albums deleted"
+msgstr ""
+
+#: messages.go:190
 #, c-format
 msgid "Zip created in %d s"
 msgstr ""
 
-#: messages.go:179
+#: messages.go:191
 msgid "Permanently deleted"
 msgstr ""
 
-#: messages.go:180
+#: messages.go:192
 #, c-format
 msgid "%s has been restored"
+msgstr ""
+
+#: messages.go:193
+msgid "Successfully verified"
+msgstr ""
+
+#: messages.go:194
+msgid "Successfully activated"
 msgstr ""

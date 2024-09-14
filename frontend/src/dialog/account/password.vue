@@ -1,7 +1,6 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="500" class="modal-dialog p-account-password-dialog"
-            @keydown.esc="cancel">
-    <v-form ref="form" dense class="form-password" accept-charset="UTF-8">
+  <v-dialog :value="show" lazy persistent max-width="500" class="modal-dialog p-account-password-dialog" @keydown.esc="close">
+    <v-form ref="form" dense class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card raised elevation="24">
         <v-card-title primary-title class="pa-2">
           <v-layout row wrap class="pa-2">
@@ -18,19 +17,22 @@
         <v-card-text class="py-0 px-2">
           <v-layout wrap align-top>
             <v-flex v-if="oldRequired" xs12 class="px-2 pb-2 caption">
-              <translate>Please note that changing your password will log you out on other devices and browsers.
-              </translate>
+              <translate>Please note that changing your password will log you out on other devices and browsers.</translate>
             </v-flex>
             <v-flex v-if="oldRequired" xs12 class="px-2 py-1">
               <v-text-field
                 v-model="oldPassword"
-                hide-details required box flat
+                hide-details
+                required
+                box
+                flat
                 type="password"
-                :disabled="busy"
-                :maxlength="maxLength"
-                browser-autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
+                autocomplete="current-password"
+                browser-autocomplete="current-password"
+                :disabled="busy"
+                :maxlength="maxLength"
                 :label="$gettext('Current Password')"
                 class="input-current-password"
                 color="secondary-dark"
@@ -40,37 +42,47 @@
             <v-flex xs12 class="px-2 py-1">
               <v-text-field
                 v-model="newPassword"
-                required counter persistent-hint box flat
+                required
+                counter
+                persistent-hint
+                box
+                flat
                 type="password"
                 :disabled="busy"
                 :minlength="minLength"
                 :maxlength="maxLength"
-                browser-autocomplete="new-password"
                 autocorrect="off"
                 autocapitalize="none"
+                autocomplete="new-password"
+                browser-autocomplete="new-password"
                 :label="$gettext('New Password')"
                 class="input-new-password"
                 color="secondary-dark"
-                :hint="$gettextInterpolate($gettext('Must have at least %{n} characters.'), {n: minLength})"
+                :hint="$gettextInterpolate($gettext('Must have at least %{n} characters.'), { n: minLength })"
               ></v-text-field>
             </v-flex>
 
             <v-flex xs12 class="px-2 py-1">
               <v-text-field
                 v-model="confirmPassword"
-                required counter persistent-hint box flat
+                required
+                counter
+                persistent-hint
+                box
+                flat
                 type="password"
                 :disabled="busy"
                 :minlength="minLength"
                 :maxlength="maxLength"
-                browser-autocomplete="new-password"
                 autocorrect="off"
                 autocapitalize="none"
+                autocomplete="new-password"
+                browser-autocomplete="new-password"
                 :label="$gettext('Retype Password')"
                 class="input-retype-password"
                 color="secondary-dark"
                 :hint="$gettext('Please confirm your new password.')"
-                @keyup.enter.native="confirm"
+                @keyup.enter.native="onConfirm"
               ></v-text-field>
             </v-flex>
           </v-layout>
@@ -78,15 +90,10 @@
         <v-card-actions class="pt-1 pb-2 px-2">
           <v-layout row wrap class="pa-2">
             <v-flex xs12 text-xs-right>
-              <v-btn depressed color="secondary-light"
-                     class="action-cancel ml-0"
-                     @click.stop="cancel">
+              <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                 <translate>Cancel</translate>
               </v-btn>
-              <v-btn depressed color="primary-button"
-                     class="action-confirm white--text compact mr-0"
-                     :disabled="disabled()"
-                     @click.stop="confirm">
+              <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" :disabled="isDisabled()" @click.stop="onConfirm">
                 <translate>Save</translate>
               </v-btn>
             </v-flex>
@@ -97,10 +104,10 @@
   </v-dialog>
 </template>
 <script>
-import User from "../../model/user";
+import User from "model/user";
 
 export default {
-  name: 'PAccountPasswordDialog',
+  name: "PAccountPasswordDialog",
   props: {
     show: Boolean,
     model: {
@@ -134,32 +141,31 @@ export default {
   },
   created() {
     if (this.isPublic && !this.isDemo) {
-      this.$emit('cancel');
+      this.$emit("close");
     }
   },
   methods: {
-    disabled() {
-      return (this.isDemo || this.busy
-        || this.oldPassword === "" && this.oldRequired
-        || this.newPassword.length < this.minLength
-        || this.newPassword.length > this.maxLength
-        || (this.newPassword !== this.confirmPassword));
+    isDisabled() {
+      return this.isDemo || this.busy || (this.oldPassword === "" && this.oldRequired) || this.newPassword.length < this.minLength || this.newPassword.length > this.maxLength || this.newPassword !== this.confirmPassword;
     },
-    confirm() {
+    onConfirm() {
       this.busy = true;
-      this.model.changePassword(this.oldPassword, this.newPassword).then(() => {
-        this.$notify.success(this.$gettext("Password changed"));
-        this.$emit('confirm');
-      }).finally(() => {
-        this.busy = false;
-      });
+      this.model
+        .changePassword(this.oldPassword, this.newPassword)
+        .then(() => {
+          this.$notify.success(this.$gettext("Password changed"));
+          this.$emit("close");
+        })
+        .finally(() => {
+          this.busy = false;
+        });
     },
-    cancel() {
+    close() {
       if (this.busy) {
         return;
       }
 
-      this.$emit('cancel');
+      this.$emit("close");
     },
   },
 };

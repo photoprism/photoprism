@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2018 - 2023 PhotoPrism UG. All rights reserved.
+Copyright (c) 2018 - 2024 PhotoPrism UG. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
     it under Version 3 of the GNU Affero General Public License (the "AGPL"):
@@ -127,12 +127,7 @@ export default class Util {
   }
 
   static encodeHTML(text) {
-    return text
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#x27;");
+    return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
   }
 
   static resetTimer() {
@@ -153,6 +148,14 @@ export default class Util {
     return s.replace(/\w\S*/g, (w) => w.replace(/^\w/, (c) => c.toUpperCase()));
   }
 
+  static ucFirst(s) {
+    if (!s || s === "") {
+      return "";
+    }
+
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
   static generateToken() {
     return (Math.random() + 1).toString(36).substring(6);
   }
@@ -171,6 +174,7 @@ export default class Util {
         return "Unprocessed Sensor Data (RAW)";
       case "mov":
       case "qt":
+      case "qt  ":
         return "Apple QuickTime";
       case "bmp":
         return "Bitmap";
@@ -193,8 +197,9 @@ export default class Util {
         return "AOMedia Video 1 (AV1)";
       case "avifs":
         return "AVIF Image Sequence";
-      case "hevc":
       case "hvc":
+      case "hevc":
+      case "hev1":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
       case "m4v":
@@ -235,6 +240,31 @@ export default class Util {
     }
   }
 
+  static formatCodec(codec) {
+    if (!codec) {
+      return "";
+    }
+
+    switch (codec) {
+      case "webp":
+      case "extended webp":
+        return "WebP";
+      case "webm":
+        return "WebM";
+      case "av1c":
+      case "av01":
+        return "AV1";
+      case "avc1":
+        return "AVC";
+      case "hvc":
+      case "hev1":
+      case "hvc1":
+        return "HEVC";
+      default:
+        return codec.toUpperCase();
+    }
+  }
+
   static codecName(value) {
     if (!value || typeof value !== "string") {
       return "";
@@ -245,16 +275,23 @@ export default class Util {
         return "Unprocessed Sensor Data (RAW)";
       case "mov":
       case "qt":
+      case "qt  ":
         return "Apple QuickTime (MOV)";
       case "avc":
       case "avc1":
         return "Advanced Video Coding (AVC) / H.264";
-      case "hevc":
       case "hvc":
+      case "hevc":
+      case "hev1":
       case "hvc1":
         return "High Efficiency Video Coding (HEVC) / H.265";
       case "vvc":
+      case "vvc1":
         return "Versatile Video Coding (VVC) / H.266";
+      case "evc":
+      case "evc1":
+        return "Essential Video Coding (MPEG-5 Part 1)";
+      case "av1c":
       case "av01":
         return "AOMedia Video 1 (AV1)";
       case "gif":
@@ -263,6 +300,8 @@ export default class Util {
         return "Matroska Multimedia Container (MKV)";
       case "webp":
         return "Google WebP";
+      case "extended webp":
+        return "Extended WebP";
       case "webm":
         return "Google WebM";
       case "mpeg":
@@ -387,7 +426,7 @@ export default class Util {
       await window.navigator.clipboard.writeText(text);
     } else if (document.execCommand) {
       // Clipboard is available only in HTTPS pages. see https://web.dev/async-clipboard/
-      // So if the the official 'clipboard' doesn't supported and the 'document.execCommand' is supported.
+      // So if the official 'clipboard' doesn't supported and the 'document.execCommand' is supported.
       // copy by a work-around by creating a textarea in the DOM and execute copy command from him.
 
       // Create the text area element (to copy from)
