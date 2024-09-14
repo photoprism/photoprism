@@ -12,57 +12,57 @@ import (
 
 func TestWriteFile(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		pathName := "./testdata/_WriteFile_Success"
-		fileName := filepath.Join(pathName, "notyetexisting.jpg")
+		dir := "./testdata/_WriteFile_Success"
+		filePath := filepath.Join(dir, "notyetexisting.jpg")
 		fileData := []byte("foobar")
 
-		if err := MkdirAll(pathName); err != nil {
+		if err := MkdirAll(dir); err != nil {
 			t.Fatal(err)
 		}
 
 		defer func() {
-			_ = os.Remove(fileName)
+			_ = os.Remove(filePath)
 
-			if err := os.RemoveAll(pathName); err != nil {
+			if err := os.RemoveAll(dir); err != nil {
 				t.Fatal(err)
 			}
 		}()
 
-		assert.True(t, PathExists(pathName))
+		assert.True(t, PathExists(dir))
 
-		fileErr := WriteFile(fileName, fileData)
+		fileErr := WriteFile(filePath, fileData)
 
 		assert.NoError(t, fileErr)
-		assert.FileExists(t, fileName)
+		assert.FileExists(t, filePath)
 	})
 }
 
 func TestWriteString(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		pathName := "./testdata/_WriteString_Success"
-		fileName := filepath.Join(pathName, PPIgnoreFilename)
+		dir := "./testdata/_WriteString_Success"
+		filePath := filepath.Join(dir, PPIgnoreFilename)
 		fileData := "*"
 
-		if err := MkdirAll(pathName); err != nil {
+		if err := MkdirAll(dir); err != nil {
 			t.Fatal(err)
 		}
 
 		defer func() {
-			_ = os.Remove(fileName)
+			_ = os.Remove(filePath)
 
-			if err := os.RemoveAll(pathName); err != nil {
+			if err := os.RemoveAll(dir); err != nil {
 				t.Fatal(err)
 			}
 		}()
 
-		assert.True(t, PathExists(pathName))
+		assert.True(t, PathExists(dir))
 
-		fileErr := WriteString(fileName, fileData)
+		fileErr := WriteString(filePath, fileData)
 
 		assert.NoError(t, fileErr)
-		assert.FileExists(t, fileName)
+		assert.FileExists(t, filePath)
 
-		readLines, readErr := ReadLines(fileName)
+		readLines, readErr := ReadLines(filePath)
 
 		assert.NoError(t, readErr)
 		assert.Len(t, readLines, 1)
@@ -72,29 +72,29 @@ func TestWriteString(t *testing.T) {
 
 func TestWriteUnixTime(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		pathName := "./testdata/_WriteUnixTime_Success"
-		fileName := filepath.Join(pathName, PPStorageFilename)
+		dir := "./testdata/_WriteUnixTime_Success"
+		filePath := filepath.Join(dir, PPStorageFilename)
 
-		if err := MkdirAll(pathName); err != nil {
+		if err := MkdirAll(dir); err != nil {
 			t.Fatal(err)
 		}
 
 		defer func() {
-			_ = os.Remove(fileName)
+			_ = os.Remove(filePath)
 
-			if err := os.RemoveAll(pathName); err != nil {
+			if err := os.RemoveAll(dir); err != nil {
 				t.Fatal(err)
 			}
 		}()
 
-		assert.True(t, PathExists(pathName))
+		assert.True(t, PathExists(dir))
 
-		unixTime, fileErr := WriteUnixTime(fileName)
+		unixTime, fileErr := WriteUnixTime(filePath)
 
 		assert.NoError(t, fileErr)
-		assert.FileExists(t, fileName)
+		assert.FileExists(t, filePath)
 
-		readLines, readErr := ReadLines(fileName)
+		readLines, readErr := ReadLines(filePath)
 
 		assert.NoError(t, readErr)
 		assert.Len(t, readLines, 1)
@@ -104,38 +104,38 @@ func TestWriteUnixTime(t *testing.T) {
 
 func TestWriteFileFromReader(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		pathName := "./testdata/_WriteFileFromReader_Success"
+		dir := "./testdata/_WriteFileFromReader_Success"
 
-		fileName1 := filepath.Join(pathName, "1.txt")
-		fileName2 := filepath.Join(pathName, "2.txt")
+		filePath1 := filepath.Join(dir, "1.txt")
+		filePath2 := filepath.Join(dir, "2.txt")
 
-		if err := MkdirAll(pathName); err != nil {
+		if err := MkdirAll(dir); err != nil {
 			t.Fatal(err)
 		}
 
 		defer func() {
-			_ = os.Remove(fileName1)
-			_ = os.Remove(fileName2)
+			_ = os.Remove(filePath1)
+			_ = os.Remove(filePath2)
 
-			if err := os.RemoveAll(pathName); err != nil {
+			if err := os.RemoveAll(dir); err != nil {
 				t.Fatal(err)
 			}
 		}()
 
-		assert.True(t, PathExists(pathName))
+		assert.True(t, PathExists(dir))
 
-		unixTime, writeErr := WriteUnixTime(fileName1)
+		unixTime, writeErr := WriteUnixTime(filePath1)
 		assert.NoError(t, writeErr)
 		assert.True(t, unixTime >= time.Now().Unix())
 
-		fileReader, readerErr := os.Open(fileName1)
+		fileReader, readerErr := os.Open(filePath1)
 		assert.NoError(t, readerErr)
 
-		fileErr := WriteFileFromReader(fileName2, fileReader)
+		fileErr := WriteFileFromReader(filePath2, fileReader)
 
 		assert.NoError(t, fileErr)
 
-		readLines, readErr := ReadLines(fileName2)
+		readLines, readErr := ReadLines(filePath2)
 
 		assert.NoError(t, readErr)
 		assert.Len(t, readLines, 1)
@@ -145,39 +145,39 @@ func TestWriteFileFromReader(t *testing.T) {
 
 func TestCacheFileFromReader(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
-		pathName := "./testdata/_CacheFileFromReader_Success"
+		dir := "./testdata/_CacheFileFromReader_Success"
 
-		fileName1 := filepath.Join(pathName, "1.txt")
-		fileName2 := filepath.Join(pathName, "2.txt")
-		fileName3 := filepath.Join(pathName, "3.txt")
+		filePath1 := filepath.Join(dir, "1.txt")
+		filePath2 := filepath.Join(dir, "2.txt")
+		filePath3 := filepath.Join(dir, "3.txt")
 
-		if err := MkdirAll(pathName); err != nil {
+		if err := MkdirAll(dir); err != nil {
 			t.Fatal(err)
 		}
 
 		defer func() {
-			_ = os.Remove(fileName1)
-			_ = os.Remove(fileName2)
-			_ = os.Remove(fileName3)
+			_ = os.Remove(filePath1)
+			_ = os.Remove(filePath2)
+			_ = os.Remove(filePath3)
 
-			if err := os.RemoveAll(pathName); err != nil {
+			if err := os.RemoveAll(dir); err != nil {
 				t.Fatal(err)
 			}
 		}()
 
-		assert.True(t, PathExists(pathName))
+		assert.True(t, PathExists(dir))
 
-		unixTime, writeErr := WriteUnixTime(fileName1)
+		unixTime, writeErr := WriteUnixTime(filePath1)
 		assert.NoError(t, writeErr)
 		assert.True(t, unixTime >= time.Now().Unix())
 
-		fileReader, readerErr := os.Open(fileName1)
+		fileReader, readerErr := os.Open(filePath1)
 		assert.NoError(t, readerErr)
 
-		cacheFile, cacheErr := CacheFileFromReader(fileName2, fileReader)
+		cacheFile, cacheErr := CacheFileFromReader(filePath2, fileReader)
 
 		assert.NoError(t, cacheErr)
-		assert.Equal(t, fileName2, cacheFile)
+		assert.Equal(t, filePath2, cacheFile)
 
 		readLines, readErr := ReadLines(cacheFile)
 
@@ -185,14 +185,14 @@ func TestCacheFileFromReader(t *testing.T) {
 		assert.Len(t, readLines, 1)
 		assert.Equal(t, strconv.FormatInt(unixTime, 10), readLines[0])
 
-		if err := WriteString(fileName3, "0"); err != nil {
+		if err := WriteString(filePath3, "0"); err != nil {
 			t.Fatal(err)
 		}
 
-		cacheFile, cacheErr = CacheFileFromReader(fileName3, fileReader)
+		cacheFile, cacheErr = CacheFileFromReader(filePath3, fileReader)
 
 		assert.NoError(t, cacheErr)
-		assert.Equal(t, fileName3, cacheFile)
+		assert.Equal(t, filePath3, cacheFile)
 
 		readLines, readErr = ReadLines(cacheFile)
 

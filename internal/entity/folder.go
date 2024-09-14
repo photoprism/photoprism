@@ -62,13 +62,13 @@ func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
 }
 
 // NewFolder creates a new file system directory entity.
-func NewFolder(root, pathName string, modTime time.Time) Folder {
+func NewFolder(root, dir string, modTime time.Time) Folder {
 	now := Now()
 
-	pathName = strings.Trim(pathName, string(os.PathSeparator))
+	dir = strings.Trim(dir, string(os.PathSeparator))
 
-	if pathName == RootPath {
-		pathName = ""
+	if dir == RootPath {
+		dir = ""
 	}
 
 	year := 0
@@ -82,7 +82,7 @@ func NewFolder(root, pathName string, modTime time.Time) Folder {
 	result := Folder{
 		FolderUID:     rnd.GenerateUID('d'),
 		Root:          root,
-		Path:          pathName,
+		Path:          dir,
 		FolderType:    MediaUnknown,
 		FolderOrder:   sortby.Name,
 		FolderCountry: UnknownCountry.ID,
@@ -195,17 +195,17 @@ func (m *Folder) Create() error {
 	return nil
 }
 
-// FindFolder returns an existing row if exists.
-func FindFolder(root, pathName string) *Folder {
-	pathName = strings.Trim(pathName, string(os.PathSeparator))
+// FindFolder returns an existing folder if it exists.
+func FindFolder(root, dir string) *Folder {
+	dir = strings.Trim(dir, string(os.PathSeparator))
 
-	if pathName == RootPath {
-		pathName = ""
+	if dir == RootPath {
+		dir = ""
 	}
 
 	result := Folder{}
 
-	if err := Db().Where("path = ? AND root = ?", pathName, root).First(&result).Error; err == nil {
+	if err := Db().Where("path = ? AND root = ?", dir, root).First(&result).Error; err == nil {
 		return &result
 	}
 

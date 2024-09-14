@@ -11,16 +11,16 @@ import (
 )
 
 // FilesByPath returns a slice of files in a given originals folder.
-func FilesByPath(limit, offset int, rootName, pathName string, public bool) (files entity.Files, err error) {
-	if strings.HasPrefix(pathName, "/") {
-		pathName = pathName[1:]
+func FilesByPath(limit, offset int, root, dir string, public bool) (files entity.Files, err error) {
+	if strings.HasPrefix(dir, "/") {
+		dir = dir[1:]
 	}
 
 	stmt := Db().
 		Table("files").Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
-		Where("files.file_missing = 0 AND files.file_root = ?", rootName).
-		Where("photos.photo_path = ?", pathName)
+		Where("files.file_missing = 0 AND files.file_root = ?", root).
+		Where("photos.photo_path = ?", dir)
 
 	if public {
 		stmt = stmt.Where("photos.photo_private = 0")
@@ -34,9 +34,9 @@ func FilesByPath(limit, offset int, rootName, pathName string, public bool) (fil
 }
 
 // Files returns not-missing and not-deleted file entities in the range of limit and offset sorted by id.
-func Files(limit, offset int, pathName string, includeMissing bool) (files entity.Files, err error) {
-	if strings.HasPrefix(pathName, "/") {
-		pathName = pathName[1:]
+func Files(limit, offset int, dir string, includeMissing bool) (files entity.Files, err error) {
+	if strings.HasPrefix(dir, "/") {
+		dir = dir[1:]
 	}
 
 	stmt := Db()
@@ -45,8 +45,8 @@ func Files(limit, offset int, pathName string, includeMissing bool) (files entit
 		stmt = stmt.Where("file_missing = 0")
 	}
 
-	if pathName != "" {
-		stmt = stmt.Where("files.file_name LIKE ?", pathName+"/%")
+	if dir != "" {
+		stmt = stmt.Where("files.file_name LIKE ?", dir+"/%")
 	}
 
 	err = stmt.Order("id").Limit(limit).Offset(offset).Find(&files).Error

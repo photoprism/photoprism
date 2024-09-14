@@ -174,6 +174,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 		s = s.Where("photos.edited_at IS NOT NULL").Order("photos.edited_at DESC, files.media_id")
 	case sortby.Updated:
 		s = s.Where("photos.updated_at > photos.created_at").Order("photos.updated_at DESC, files.media_id")
+	case sortby.Archived:
+		s = s.Order("photos.deleted_at DESC, files.media_id")
 	case sortby.Relevance:
 		if f.Label != "" {
 			s = s.Order("photos.photo_quality DESC, photos_labels.uncertainty ASC, files.time_index")
@@ -215,6 +217,8 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 	// Find primary files only?
 	if f.Primary {
 		s = s.Where("files.file_primary = 1")
+	} else if f.Order == sortby.Size {
+		s = s.Where("files.file_root <> 'sidecar' AND files.file_sidecar = 0")
 	} else if f.Order == sortby.Similar {
 		s = s.Where("files.file_primary = 1 OR files.media_type = ?", media.Video)
 	} else if f.Order == sortby.Random {

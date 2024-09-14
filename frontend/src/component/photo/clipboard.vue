@@ -9,29 +9,28 @@
           </v-btn>
         </template>
 
-        <v-btn v-if="canShare && context !== 'archive' && context !== 'review'" fab dark small :title="$gettext('Share')" color="share" :disabled="selection.length === 0 || busy" class="action-share" @click.stop="dialog.share = true">
+        <v-btn v-if="canShare && context !== 'archive' && context !== 'hidden' && context !== 'review'" fab dark small :title="$gettext('Share')" color="share" :disabled="selection.length === 0 || busy" class="action-share" @click.stop="dialog.share = true">
           <v-icon>cloud</v-icon>
         </v-btn>
-
         <v-btn v-if="canManage && context === 'review'" fab dark small :title="$gettext('Approve')" color="share" :disabled="selection.length === 0 || busy" class="action-approve" @click.stop="batchApprove">
           <v-icon>check</v-icon>
         </v-btn>
         <v-btn v-if="canEdit" fab dark small :title="$gettext('Edit')" color="edit" :disabled="selection.length === 0 || busy" class="action-edit" @click.stop="edit">
           <v-icon>edit</v-icon>
         </v-btn>
-        <v-btn v-if="canTogglePrivate" fab dark small :title="$gettext('Change private flag')" color="private" :disabled="selection.length === 0 || busy" class="action-private" @click.stop="batchPrivate">
+        <v-btn v-if="canTogglePrivate && context !== 'archive' && context !== 'hidden'" fab dark small :title="$gettext('Change private flag')" color="private" :disabled="selection.length === 0 || busy" class="action-private" @click.stop="batchPrivate">
           <v-icon>lock</v-icon>
         </v-btn>
         <v-btn v-if="canDownload && context !== 'archive'" fab dark small :title="$gettext('Download')" :disabled="busy" color="download" class="action-download" @click.stop="download()">
           <v-icon>get_app</v-icon>
         </v-btn>
-        <v-btn v-if="canEditAlbum && context !== 'archive'" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0 || busy" class="action-album" @click.stop="dialog.album = true">
+        <v-btn v-if="canEditAlbum && context !== 'archive' && context !== 'hidden'" fab dark small :title="$gettext('Add to album')" color="album" :disabled="selection.length === 0 || busy" class="action-album" @click.stop="dialog.album = true">
           <v-icon>bookmark</v-icon>
         </v-btn>
-        <v-btn v-if="canArchive && !isAlbum && context !== 'archive'" fab dark small color="remove" :title="$gettext('Archive')" :disabled="selection.length === 0 || busy" class="action-archive" @click.stop="archivePhotos">
+        <v-btn v-if="canArchive && !isAlbum && context !== 'archive' && context !== 'hidden'" fab dark small color="remove" :title="$gettext('Archive')" :disabled="selection.length === 0 || busy" class="action-archive" @click.stop="archivePhotos">
           <v-icon>archive</v-icon>
         </v-btn>
-        <v-btn v-if="canArchive && !album && context === 'archive'" fab dark small color="restore" :title="$gettext('Restore')" :disabled="selection.length === 0 || busy" class="action-restore" @click.stop="batchRestore">
+        <v-btn v-if="canArchive && !album && context === 'archive' && context !== 'hidden'" fab dark small color="restore" :title="$gettext('Restore')" :disabled="selection.length === 0 || busy" class="action-restore" @click.stop="batchRestore">
           <v-icon>unarchive</v-icon>
         </v-btn>
         <v-btn v-if="canEditAlbum && isAlbum" fab dark small :title="$gettext('Remove from album')" color="remove" :disabled="selection.length === 0 || busy" class="action-remove" @click.stop="removeFromAlbum">
@@ -82,7 +81,7 @@ export default {
     const features = this.$config.settings().features;
 
     return {
-      canTogglePrivate: this.$config.allow("photos", "manage") && this.context !== "archive" && features.private,
+      canTogglePrivate: this.$config.allow("photos", "manage") && features.private,
       canArchive: this.$config.allow("photos", "delete") && features.archive,
       canDelete: this.$config.allow("photos", "delete") && features.delete,
       canDownload: this.$config.allow("photos", "download") && features.download,

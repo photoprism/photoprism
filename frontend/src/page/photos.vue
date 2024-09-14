@@ -42,7 +42,6 @@ export default {
   data() {
     const query = this.$route.query;
     const routeName = this.$route.name;
-    const order = this.sortOrder();
     const camera = query["camera"] ? parseInt(query["camera"]) : 0;
     const q = query["q"] ? query["q"] : "";
     const country = query["country"] ? query["country"] : "";
@@ -52,7 +51,8 @@ export default {
     const color = query["color"] ? query["color"] : "";
     const label = query["label"] ? query["label"] : "";
     const latlng = query["latlng"] ? query["latlng"] : "";
-    const view = this.viewType();
+    const view = this.getViewType();
+    const order = this.getSortOrder();
     const filter = {
       country: country,
       camera: camera,
@@ -119,19 +119,7 @@ export default {
       return this.selection.length > 0;
     },
     context: function () {
-      if (!this.staticFilter) {
-        return "photos";
-      }
-
-      if (this.staticFilter.review) {
-        return "review";
-      } else if (this.staticFilter.archived) {
-        return "archive";
-      } else if (this.staticFilter.favorite) {
-        return "favorites";
-      }
-
-      return "";
+      return this.getContext();
     },
   },
   watch: {
@@ -159,9 +147,9 @@ export default {
       this.filter.color = query["color"] ? query["color"] : "";
       this.filter.label = query["label"] ? query["label"] : "";
       this.filter.latlng = query["latlng"] ? query["latlng"] : "";
-      this.filter.order = this.sortOrder();
+      this.filter.order = this.getSortOrder();
 
-      this.settings.view = this.viewType();
+      this.settings.view = this.getViewType();
 
       /**
        * Even if the filter is unchanged, if the route is changed (for example
@@ -222,7 +210,7 @@ export default {
       this.offset = offset;
       window.localStorage.setItem("photos_offset", offset);
     },
-    viewType() {
+    getViewType() {
       if (this.embedded) {
         return "mosaic";
       }
@@ -241,22 +229,64 @@ export default {
 
       return "cards";
     },
-    sortOrder() {
+    getContext() {
+      if (!this.staticFilter) {
+        return "photos";
+      }
+
+      if (this.staticFilter.review) {
+        return "review";
+      } else if (this.staticFilter.archived) {
+        return "archive";
+      } else if (this.staticFilter.favorite) {
+        return "favorites";
+      } else if (this.staticFilter.hidden) {
+        return "hidden";
+      }
+
+      return "";
+    },
+    getSortOrder() {
       if (this.embedded) {
         return "newest";
       }
 
-      let queryParam = this.$route.query["order"];
-      let storedType = window.localStorage.getItem("photos_order");
+      let storageKey;
+      let defaultOrder;
 
-      if (queryParam) {
-        window.localStorage.setItem("photos_order", queryParam);
-        return queryParam;
-      } else if (storedType) {
-        return storedType;
+      switch (this.getContext()) {
+        case "archive":
+          storageKey = "archive_order";
+          defaultOrder = "archived";
+          break;
+        case "favorites":
+          storageKey = "favorites_order";
+          defaultOrder = "newest";
+          break;
+        case "hidden":
+          storageKey = "hidden_order";
+          defaultOrder = "added";
+          break;
+        case "review":
+          storageKey = "review_order";
+          defaultOrder = "added";
+          break;
+        default:
+          storageKey = "photos_order";
+          defaultOrder = "newest";
       }
 
-      return "newest";
+      let queryOrder = this.$route.query["order"];
+      let storageOrder = window.localStorage.getItem(storageKey);
+
+      if (queryOrder) {
+        window.localStorage.setItem(storageKey, queryOrder);
+        return queryOrder;
+      } else if (storageOrder) {
+        return storageOrder;
+      }
+
+      return defaultOrder;
     },
     openDate(index) {
       const photo = this.results[index];

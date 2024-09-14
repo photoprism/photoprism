@@ -390,6 +390,7 @@ export default {
 
       this.getClusterFeatures(clusterId, -1, (clusterFeatures) => {
         let latNorth, lngEast, latSouth, lngWest;
+
         for (const feature of clusterFeatures) {
           const [lng, lat] = feature.geometry.coordinates;
           if (latNorth === undefined || lat > latNorth) {
@@ -404,6 +405,18 @@ export default {
           if (lngWest === undefined || lng < lngWest) {
             lngWest = lng;
           }
+        }
+
+        // Expand the GPS coordinates if they represent a point or line:
+        // https://github.com/photoprism/photoprism/issues/3953
+        if (latNorth === latSouth) {
+          latNorth = latNorth + 0.0003;
+          latSouth = latSouth - 0.0003;
+        }
+
+        if (lngEast === lngWest) {
+          lngEast = lngEast + 0.0003;
+          lngWest = lngWest - 0.0003;
         }
 
         this.selectClusterByCoords(latNorth, lngEast, latSouth, lngWest);

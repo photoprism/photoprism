@@ -64,7 +64,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, "gb", folder.FolderCountry)
 	})
 
-	t.Run("empty", func(t *testing.T) {
+	t.Run("RootOriginalsNoDir", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, "", time.Time{})
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
@@ -73,7 +73,7 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
 
-	t.Run("root", func(t *testing.T) {
+	t.Run("RootOriginalsRootDir", func(t *testing.T) {
 		folder := NewFolder(RootOriginals, RootPath, time.Time{})
 		assert.Equal(t, "", folder.Path)
 		assert.Equal(t, "Originals", folder.FolderTitle)
@@ -82,9 +82,11 @@ func TestNewFolder(t *testing.T) {
 		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
 
-	t.Run("pathName equals root path", func(t *testing.T) {
+	t.Run("NoRootWithRootDir", func(t *testing.T) {
 		folder := NewFolder("", RootPath, time.Now().UTC())
 		assert.Equal(t, "", folder.Path)
+		assert.Equal(t, "", folder.FolderTitle)
+		assert.Equal(t, UnknownID, folder.FolderCountry)
 	})
 }
 
@@ -142,16 +144,17 @@ func TestFolder_Title(t *testing.T) {
 }
 
 func TestFolder_RootPath(t *testing.T) {
-	t.Run("/rainbow", func(t *testing.T) {
+	t.Run("Rainbow", func(t *testing.T) {
 		folder := Folder{FolderTitle: "Beautiful beach", Root: "/", Path: "rainbow"}
 		assert.Equal(t, "/rainbow", folder.RootPath())
 	})
 }
+
 func TestFindFolder(t *testing.T) {
-	t.Run("nil", func(t *testing.T) {
+	t.Run("NotFound", func(t *testing.T) {
 		assert.Nil(t, FindFolder("vvfgt", "jgfuyf"))
 	})
-	t.Run("pathName === rootPath", func(t *testing.T) {
+	t.Run("PathNameIsRootPath", func(t *testing.T) {
 		assert.Nil(t, FindFolder("vvfgt", RootPath))
 	})
 }

@@ -6,6 +6,7 @@ UI:
   TimeZone: ""
 Search:
   BatchSize: 0
+  ListView: true
 Maps:
   Animate: 0
   Style: ""

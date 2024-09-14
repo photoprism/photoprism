@@ -307,8 +307,8 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 	// Find and return available filename.
 	iteration := 0
-	pathName := filepath.Join(imp.originalsPath(), folder, dateCreated.Format("2006/01"))
-	result := filepath.Join(pathName, fileName+fileExtension)
+	dir := filepath.Join(imp.originalsPath(), folder, dateCreated.Format("2006/01"))
+	result := filepath.Join(dir, fileName+fileExtension)
 
 	for fs.FileExists(result) {
 		if mediaFile.Hash() == fs.Hash(result) {
@@ -317,7 +317,7 @@ func (imp *Import) DestinationFilename(mainFile *MediaFile, mediaFile *MediaFile
 
 		iteration++
 
-		result = filepath.Join(pathName, fileName+"."+fmt.Sprintf("%05d", iteration)+fileExtension)
+		result = filepath.Join(dir, fileName+"."+fmt.Sprintf("%05d", iteration)+fileExtension)
 	}
 
 	return result, nil

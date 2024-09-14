@@ -65,7 +65,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     mkdir -p /etc/skel/.config/go && \
     echo 'off 2024-08-27' > '/etc/skel/.config/go/telemetry' && \
     cp -r /etc/skel/.config /root/.config && \
-    GOLANG_VERSION=go1.22.6 /scripts/install-go.sh && \
+    GOLANG_VERSION=go1.22.7 /scripts/install-go.sh && \
     /scripts/install-go-tools.sh && \
     echo 'alias go=richgo ll="ls -alh"' >> /etc/skel/.bashrc && \
     echo 'export PS1="\u@$DOCKER_TAG:\w\$ "' >> /etc/skel/.bashrc && \

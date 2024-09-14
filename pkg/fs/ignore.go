@@ -153,39 +153,42 @@ func (l *IgnoreList) File(fileName string) error {
 }
 
 // Path adds the ignore patterns found in the ignore config file of the specified directory, if any.
-func (l *IgnoreList) Path(pathName string) error {
-	if pathName == "" {
-		return errors.New("empty config path name")
+func (l *IgnoreList) Path(dir string) error {
+	if dir == "" {
+		return errors.New("missing directory name")
 	} else if l.configFile == "" {
-		return errors.New("empty config file name")
+		return errors.New("missing config file name")
 	}
 
-	return l.File(filepath.Join(pathName, l.configFile))
+	return l.File(filepath.Join(dir, l.configFile))
 }
 
-// Ignore returns true if the file name should be ignored.
+// Ignore checks if the file or folder name should be ignored.
 func (l *IgnoreList) Ignore(name string) bool {
-	pathName := filepath.Dir(name)
+	// Determine the parent directory path
+	// and the base name without the path.
+	dir := filepath.Dir(name)
 	baseName := filepath.Base(name)
 
 	// Change name to lowercase for case-insensitive comparison.
 	if l.caseSensitive == false {
-		pathName = strings.ToLower(pathName)
+		dir = strings.ToLower(dir)
 		baseName = strings.ToLower(baseName)
 	}
 
-	// Check if name matches the config file name.
+	// Ignore if name matches the config file name.
 	if l.configFile != "" && baseName == l.configFile {
 		_ = l.File(name)
 		return true
 	}
 
+	// Use mutex for thread safety.
 	l.ignoredMutex.Lock()
 	defer l.ignoredMutex.Unlock()
 
-	// Check if any name patterns should be ignored.
+	// Iterate through configured patterns to determine if the name should be ignored.
 	for _, pattern := range l.ignore {
-		if pattern.Ignore(pathName, baseName) {
+		if pattern.Ignore(dir, baseName) {
 			l.ignored = append(l.ignored, name)
 
 			if l.Log != nil {
@@ -196,8 +199,10 @@ func (l *IgnoreList) Ignore(name string) bool {
 		}
 	}
 
+	// Ignore hidden files and folders whose name e.g. starts with a "."?
 	if l.ignoreHidden && FileNameHidden(name) {
 		l.hidden = append(l.hidden, name)
+
 		return true
 	}
 

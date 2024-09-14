@@ -38,13 +38,16 @@
           <v-icon>refresh</v-icon>
         </v-btn>
 
-        <v-btn v-if="settings.view === 'cards'" icon :title="$gettext('Toggle View')" @click.stop="setView('list')">
-          <v-icon>view_list</v-icon>
-        </v-btn>
-        <v-btn v-else-if="settings.view === 'list'" icon :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
+        <v-btn v-if="settings.view === 'list'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
           <v-icon>view_comfy</v-icon>
         </v-btn>
-        <v-btn v-else icon :title="$gettext('Toggle View')" @click.stop="setView('cards')">
+        <v-btn v-else-if="settings.view === 'cards' && listView" icon class="action-view-list" :title="$gettext('Toggle View')" @click.stop="setView('list')">
+          <v-icon>view_list</v-icon>
+        </v-btn>
+        <v-btn v-else-if="settings.view === 'cards'" icon class="action-view-mosaic" :title="$gettext('Toggle View')" @click.stop="setView('mosaic')">
+          <v-icon>view_comfy</v-icon>
+        </v-btn>
+        <v-btn v-else icon class="action-view-cards" :title="$gettext('Toggle View')" @click.stop="setView('cards')">
           <v-icon>view_column</v-icon>
         </v-btn>
 
@@ -126,7 +129,7 @@
               hide-details
               color="secondary-dark"
               background-color="secondary"
-              :items="options.views"
+              :items="viewOptions"
               @change="
                 (v) => {
                   setView(v);
@@ -145,7 +148,7 @@
               hide-details
               color="secondary-dark"
               background-color="secondary"
-              :items="options.sorting"
+              :items="sortOptions"
               @change="
                 (v) => {
                   updateQuery({ order: v });
@@ -306,6 +309,7 @@ export default {
   data() {
     const features = this.$config.settings().features;
     const readonly = this.$config.get("readonly");
+
     return {
       experimental: this.$config.get("experimental"),
       isFullScreen: !!document.fullscreenElement,
@@ -315,6 +319,7 @@ export default {
       canDelete: !readonly && !this.embedded && this.$config.allow("photos", "delete") && features.delete,
       canAccessLibrary: this.$config.allow("photos", "access_library"),
       searchExpanded: false,
+      listView: this.$config.settings()?.search?.listView,
       all: {
         countries: [{ ID: "", Name: this.$gettext("All Countries") }],
         cameras: [{ ID: 0, Name: this.$gettext("All Cameras") }],
@@ -323,25 +328,6 @@ export default {
         categories: [{ Slug: "", Name: this.$gettext("All Categories") }],
         months: [{ value: 0, text: this.$gettext("All Months") }],
         years: [{ value: 0, text: this.$gettext("All Years") }],
-      },
-      options: {
-        views: [
-          { value: "mosaic", text: this.$gettext("Mosaic") },
-          { value: "cards", text: this.$gettext("Cards") },
-          { value: "list", text: this.$gettext("List") },
-        ],
-        sorting: [
-          { value: "newest", text: this.$gettext("Newest First") },
-          { value: "oldest", text: this.$gettext("Oldest First") },
-          { value: "added", text: this.$gettext("Recently Added") },
-          { value: "edited", text: this.$gettext("Recently Edited") },
-          { value: "title", text: this.$gettext("Picture Title") },
-          { value: "name", text: this.$gettext("File Name") },
-          { value: "size", text: this.$gettext("File Size") },
-          { value: "duration", text: this.$gettext("Video Duration") },
-          { value: "similar", text: this.$gettext("Visual Similarity") },
-          { value: "relevance", text: this.$gettext("Most Relevant") },
-        ],
       },
       dialog: {
         delete: false,
@@ -355,11 +341,61 @@ export default {
     cameraOptions() {
       return this.all.cameras.concat(this.config.cameras);
     },
-    lensOptions() {
-      return this.all.lenses.concat(this.config.lenses);
-    },
     categoryOptions() {
       return this.all.categories.concat(this.config.categories);
+    },
+    viewOptions() {
+      if (this.$config.settings()?.search?.listView) {
+        return [
+          { value: "mosaic", text: this.$gettext("Mosaic") },
+          { value: "cards", text: this.$gettext("Cards") },
+          { value: "list", text: this.$gettext("List") },
+        ];
+      } else {
+        return [
+          { value: "mosaic", text: this.$gettext("Mosaic") },
+          { value: "cards", text: this.$gettext("Cards") },
+        ];
+      }
+    },
+    sortOptions() {
+      switch (this.context) {
+        case "archive":
+          return [
+            { value: "newest", text: this.$gettext("Newest First") },
+            { value: "oldest", text: this.$gettext("Oldest First") },
+            { value: "added", text: this.$gettext("Recently Added") },
+            { value: "archived", text: this.$gettext("Recently Archived") },
+            { value: "title", text: this.$gettext("Picture Title") },
+            { value: "name", text: this.$gettext("File Name") },
+            { value: "size", text: this.$gettext("File Size") },
+            { value: "duration", text: this.$gettext("Video Duration") },
+          ];
+        case "hidden":
+        case "review":
+          return [
+            { value: "newest", text: this.$gettext("Newest First") },
+            { value: "oldest", text: this.$gettext("Oldest First") },
+            { value: "added", text: this.$gettext("Recently Added") },
+            { value: "title", text: this.$gettext("Picture Title") },
+            { value: "name", text: this.$gettext("File Name") },
+            { value: "size", text: this.$gettext("File Size") },
+            { value: "duration", text: this.$gettext("Video Duration") },
+          ];
+        default:
+          return [
+            { value: "newest", text: this.$gettext("Newest First") },
+            { value: "oldest", text: this.$gettext("Oldest First") },
+            { value: "added", text: this.$gettext("Recently Added") },
+            { value: "edited", text: this.$gettext("Recently Edited") },
+            { value: "title", text: this.$gettext("Picture Title") },
+            { value: "name", text: this.$gettext("File Name") },
+            { value: "size", text: this.$gettext("File Size") },
+            { value: "duration", text: this.$gettext("Video Duration") },
+            { value: "similar", text: this.$gettext("Visual Similarity") },
+            { value: "relevance", text: this.$gettext("Most Relevant") },
+          ];
+      }
     },
   },
   methods: {
@@ -374,6 +410,10 @@ export default {
     },
     setView(name) {
       if (name) {
+        if (name === "list" && !this.listView) {
+          name = "mosaic";
+        }
+
         this.refresh({ view: name });
       }
     },
