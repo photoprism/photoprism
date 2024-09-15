@@ -57,8 +57,8 @@ type Photo struct {
 	LensMake         string        `json:"LensMake,omitempty" select:"lenses.lens_model"`
 	LensModel        string        `json:"LensModel,omitempty" select:"lenses.lens_make"`
 	PhotoAltitude    int           `json:"Altitude,omitempty" select:"photos.photo_altitude"`
-	PhotoLat         float32       `json:"Lat" select:"photos.photo_lat"`
-	PhotoLng         float32       `json:"Lng" select:"photos.photo_lng"`
+	PhotoLat         float64       `json:"Lat" select:"photos.photo_lat"`
+	PhotoLng         float64       `json:"Lng" select:"photos.photo_lng"`
 	CellID           string        `json:"CellID" select:"photos.cell_id"` // Cell
 	CellAccuracy     int           `json:"CellAccuracy,omitempty" select:"photos.cell_accuracy"`
 	PlaceID          string        `json:"PlaceID" select:"photos.place_id"`

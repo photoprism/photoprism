@@ -183,4 +183,10 @@ var DialectMySQL = Migrations{
 		Stage:      "pre",
 		Statements: []string{"ALTER IGNORE TABLE auth_sessions RENAME COLUMN auth_domain TO auth_issuer;"},
 	},
+	{
+		ID:         "20240915-000001",
+		Dialect:    "mysql",
+		Stage:      "main",
+		Statements: []string{"ALTER TABLE photos MODIFY photo_lat DOUBLE;", "ALTER TABLE photos MODIFY photo_lng DOUBLE;"},
+	},
 }

@@ -600,7 +600,7 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 	}
 
 	// Filter by GPS Longitude range (from -180 to +180 degrees).
-	if lngE, lngW, lngErr := clean.GPSLngRange(f.Lng, f.Dist); lngErr == nil {
+	if lngE, lngW, lngErr := clean.GPSLngRange(f.Lat, f.Lng, f.Dist); lngErr == nil {
 		s = s.Where("photos.photo_lng BETWEEN ? AND ?", lngW, lngE)
 	}
 

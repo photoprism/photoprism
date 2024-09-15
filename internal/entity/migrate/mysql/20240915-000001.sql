@@ -1,0 +1,2 @@
+ALTER TABLE photos MODIFY photo_lat DOUBLE;
+ALTER TABLE photos MODIFY photo_lng DOUBLE;

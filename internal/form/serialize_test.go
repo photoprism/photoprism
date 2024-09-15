@@ -20,8 +20,8 @@ type TestForm struct {
 	Photo    bool      `form:"photo"`
 	Archived bool      `form:"archived"`
 	Error    bool      `form:"error"`
-	Lat      float32   `form:"lat"`
-	Lng      float32   `form:"lng"`
+	Lat      float64   `form:"lat"`
+	Lng      float64   `form:"lng"`
 	Dist     uint      `form:"dist"`
 	Color    string    `form:"color"`
 	Chroma   int16     `form:"chroma"`

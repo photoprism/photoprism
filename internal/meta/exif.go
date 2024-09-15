@@ -261,8 +261,8 @@ func (data *Data) Exif(fileName string, fileFormat fs.Type, bruteForce bool) (er
 
 	if data.Lat != 0 && data.Lng != 0 {
 		zones, err := tz.GetZone(tz.Point{
-			Lat: float64(data.Lat),
-			Lon: float64(data.Lng),
+			Lat: data.Lat,
+			Lon: data.Lng,
 		})
 
 		if err == nil && len(zones) > 0 {

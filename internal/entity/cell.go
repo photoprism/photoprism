@@ -48,10 +48,10 @@ func CreateUnknownLocation() {
 }
 
 // NewCell creates a location using a token extracted from coordinate
-func NewCell(lat, lng float32) *Cell {
+func NewCell(lat, lng float64) *Cell {
 	result := &Cell{}
 
-	result.ID = s2.PrefixedToken(float64(lat), float64(lng))
+	result.ID = s2.PrefixedToken(lat, lng)
 
 	return result
 }

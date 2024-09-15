@@ -2,25 +2,24 @@ package clean
 
 import (
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/photoprism/photoprism/pkg/geo"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// gpsCeil converts a GPS coordinate to a rounded float32 for use in queries.
-func gpsCeil(f float64) float32 {
-	return float32((math.Ceil(f*10000) / 10000) + 0.0001)
+// GPSBoundsDefaultPadding specifies the default padding of the GPS coordinates in meters.
+const GPSBoundsDefaultPadding = 5.0
+
+// GPSBounds parses the GPS bounds (Lat N, Lng E, Lat S, Lng W)
+// and returns the coordinates with default padding.
+func GPSBounds(bounds string) (latN, lngE, latS, lngW float64, err error) {
+	return GPSBoundsWithPadding(bounds, GPSBoundsDefaultPadding)
 }
 
-// gpsFloor converts a GPS coordinate to a rounded float32 for use in queries.
-func gpsFloor(f float64) float32 {
-	return float32((math.Floor(f*10000) / 10000) - 0.0001)
-}
-
-// GPSBounds parses the GPS bounds (Lat N, Lng E, Lat S, Lng W) and returns the coordinates if any.
-func GPSBounds(bounds string) (latN, lngE, latS, lngW float32, err error) {
+// GPSBoundsWithPadding parses the GPS bounds (Lat N, Lng E, Lat S, Lng W)
+// and returns the coordinates with a custom padding in meters.
+func GPSBoundsWithPadding(bounds string, padding float64) (latN, lngE, latS, lngW float64, err error) {
 	// Bounds string not long enough?
 	if len(bounds) < 7 {
 		return 0, 0, 0, 0, fmt.Errorf("no coordinates found")
@@ -29,19 +28,19 @@ func GPSBounds(bounds string) (latN, lngE, latS, lngW float32, err error) {
 	// Trim whitespace and invalid characters.
 	bounds = strings.Trim(bounds, " |\\<>\n\r\t\"'#$%!^*()[]{}")
 
-	// Split string into values.
+	// Split bounding box string into coordinate values.
 	values := strings.SplitN(bounds, ",", 5)
 	found := len(values)
 
-	// Invalid number of values?
+	// Return error if number of coordinates is invalid.
 	if found != 4 {
 		return 0, 0, 0, 0, fmt.Errorf("invalid number of coordinates")
 	}
 
-	// Parse floating point coordinates.
+	// Convert coordinate strings to floating point values.
 	latNorth, lngEast, latSouth, lngWest := txt.Float(values[0]), txt.Float(values[1]), txt.Float(values[2]), txt.Float(values[3])
 
-	// Latitudes (from +90 to -90 degrees).
+	// Latitudes have a valid range of +90 to -90 degrees.
 	if latNorth > 90 {
 		latNorth = 90
 	} else if latNorth < -90 {
@@ -54,12 +53,12 @@ func GPSBounds(bounds string) (latN, lngE, latS, lngW float32, err error) {
 		latSouth = -90
 	}
 
-	// latSouth must be smaller.
+	// Make sure latSouth is smaller than latNorth.
 	if latSouth > latNorth {
 		latNorth, latSouth = latSouth, latNorth
 	}
 
-	// Longitudes (from -180 to +180 degrees).
+	// Longitudes have a valid range of -180 to +180 degrees.
 	if lngEast > 180 {
 		lngEast = 180
 	} else if lngEast < -180 {
@@ -72,17 +71,20 @@ func GPSBounds(bounds string) (latN, lngE, latS, lngW float32, err error) {
 		lngWest = -180
 	}
 
-	// lngWest must be smaller.
+	// Make sure lngWest is smaller than lngEast.
 	if lngWest > lngEast {
 		lngEast, lngWest = lngWest, lngEast
 	}
 
-	// Return rounded coordinates.
-	return gpsCeil(latNorth), gpsCeil(lngEast), gpsFloor(latSouth), gpsFloor(lngWest), nil
+	// Calculate the latitude and longitude padding in degrees.
+	dLat, dLng := geo.Deg((latNorth+latSouth)/2.0, padding)
+
+	// Return the coordinates of the bounding box with padding applied.
+	return latNorth + dLat, lngEast + dLng, latSouth - dLat, lngWest - dLng, nil
 }
 
 // GPSLatRange returns a range based on the specified latitude and distance in km, or an error otherwise.
-func GPSLatRange(lat float64, km float64) (latN, latS float32, err error) {
+func GPSLatRange(lat float64, km float64) (latN, latS float64, err error) {
 	// Latitude (from +90 to -90 degrees).
 	if lat == 0 || lat < -90 || lat > 90 {
 		return 0, 0, fmt.Errorf("invalid latitude")
@@ -93,8 +95,10 @@ func GPSLatRange(lat float64, km float64) (latN, latS float32, err error) {
 
 	// Approximate longitude range,
 	// see https://en.wikipedia.org/wiki/Decimal_degrees
-	latN = gpsCeil(lat + geo.Deg(r))
-	latS = gpsFloor(lat - geo.Deg(r))
+	dLat, _ := geo.DegKm(lat, r)
+
+	latN = lat + dLat
+	latS = lat - dLat
 
 	if latN > 90 {
 		latN = 90
@@ -108,7 +112,7 @@ func GPSLatRange(lat float64, km float64) (latN, latS float32, err error) {
 }
 
 // GPSLngRange returns a range based on the specified longitude and distance in km, or an error otherwise.
-func GPSLngRange(lng float64, km float64) (lngE, lngW float32, err error) {
+func GPSLngRange(lat, lng float64, km float64) (lngE, lngW float64, err error) {
 	// Longitude (from -180 to +180 degrees).
 	if lng == 0 || lng < -180 || lng > 180 {
 		return 0, 0, fmt.Errorf("invalid longitude")
@@ -119,8 +123,10 @@ func GPSLngRange(lng float64, km float64) (lngE, lngW float32, err error) {
 
 	// Approximate longitude range,
 	// see https://en.wikipedia.org/wiki/Decimal_degrees
-	lngE = gpsCeil(lng + geo.Deg(r))
-	lngW = gpsFloor(lng - geo.Deg(r))
+	_, dLng := geo.DegKm(lat, r)
+
+	lngE = lng + dLng
+	lngW = lng - dLng
 
 	if lngE > 180 {
 		lngE = 180

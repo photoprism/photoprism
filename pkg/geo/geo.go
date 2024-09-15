@@ -25,5 +25,8 @@ Additional information can be found in our Developer Guide:
 package geo
 
 const (
-	EarthRadiusKm = 6371 // Earth radius in km
+	AverageEarthRadiusKm    = 6371.0                        // Global-average earth radius in km
+	AverageEarthRadiusMeter = AverageEarthRadiusKm * 1000.0 // Global-average earth radius in m
+	WGS84EarthRadiusKm      = 6378.137                      // WGS84 earth radius in km
+	WGS84EarthRadiusMeter   = WGS84EarthRadiusKm * 1000.0   // WGS84 earth radius in m
 )

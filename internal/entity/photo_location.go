@@ -16,7 +16,7 @@ import (
 )
 
 // SetCoordinates changes the photo lat, lng and altitude if not empty and from an acceptable source.
-func (m *Photo) SetCoordinates(lat, lng float32, altitude float64, source string) {
+func (m *Photo) SetCoordinates(lat, lng, altitude float64, source string) {
 	m.SetAltitude(altitude, source)
 
 	if lat == 0.0 && lng == 0.0 {
@@ -60,15 +60,15 @@ func (m *Photo) SetPosition(pos geo.Position, source string, force bool) {
 		return
 	}
 
-	if m.CellID != UnknownID && pos.InRange(float64(m.PhotoLat), float64(m.PhotoLng), geo.Meter*50) {
+	if m.CellID != UnknownID && pos.InRange(m.PhotoLat, m.PhotoLng, geo.Meter*50) {
 		log.Debugf("photo: %s keeps position %f, %f", m.String(), m.PhotoLat, m.PhotoLng)
 	} else {
 		if pos.Estimate {
 			pos.Randomize(geo.Meter * 5)
 		}
 
-		m.PhotoLat = float32(pos.Lat)
-		m.PhotoLng = float32(pos.Lng)
+		m.PhotoLat = pos.Lat
+		m.PhotoLng = pos.Lng
 		m.PlaceSrc = source
 		m.CellAccuracy = pos.Accuracy
 		m.SetAltitude(pos.Altitude, source)
@@ -261,7 +261,7 @@ func (m *Photo) LoadPlace() error {
 // Position returns the coordinates as geo.Position.
 func (m *Photo) Position() geo.Position {
 	return geo.Position{Name: m.String(), Time: m.TakenAt.UTC(),
-		Lat: float64(m.PhotoLat), Lng: float64(m.PhotoLng), Altitude: float64(m.PhotoAltitude)}
+		Lat: m.PhotoLat, Lng: m.PhotoLng, Altitude: float64(m.PhotoAltitude)}
 }
 
 // HasLatLng checks if the photo has a latitude and longitude.

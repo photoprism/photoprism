@@ -127,8 +127,8 @@ func (data *Data) GPhoto(jsonData []byte) (err error) {
 
 	if p.Geo.Exists() {
 		if data.Lat == 0 && data.Lng == 0 {
-			data.Lat = float32(p.Geo.Lat)
-			data.Lng = float32(p.Geo.Lng)
+			data.Lat = p.Geo.Lat
+			data.Lng = p.Geo.Lng
 		}
 
 		if data.Altitude == 0 {
