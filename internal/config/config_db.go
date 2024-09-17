@@ -10,26 +10,27 @@ import (
 	"strings"
 	"time"
 
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"gorm.io/gorm/driver/mysql"
-	"gorm.io/gorm/driver/postgres"
-	"gorm.io/gorm/driver/sqlite"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
+	"github.com/photoprism/photoprism/pkg/log/dummy"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
 // SQL Databases.
-// TODO: PostgreSQL support requires upgrading GORM, so generic column data types can be used.
+// TODO: PostgresSQL support requires upgrading GORM, so generic column data types can be used.
 const (
 	MySQL    = "mysql"
 	MariaDB  = "mariadb"
 	Postgres = "postgres"
-	SQLite3  = "sqlite3"
+	SQLite3  = "sqlite"
 )
 
 // SQLite default DSNs.
@@ -38,13 +39,21 @@ const (
 	SQLiteMemoryDSN = ":memory:"
 )
 
+var drivers = map[string]func(string) gorm.Dialector{
+	MySQL:    mysql.Open,
+	SQLite3:  sqlite.Open,
+	Postgres: postgres.Open,
+}
+
 // DatabaseDriver returns the database driver name.
 func (c *Config) DatabaseDriver() string {
 	switch strings.ToLower(c.options.DatabaseDriver) {
 	case MySQL, MariaDB:
 		c.options.DatabaseDriver = MySQL
-	case SQLite3, "sqlite", "sqllite", "test", "file", "":
+	case SQLite3, "sqllite", "test", "file", "":
 		c.options.DatabaseDriver = SQLite3
+	case Postgres:
+		c.options.DatabaseDriver = Postgres
 	case "tidb":
 		log.Warnf("config: database driver 'tidb' is deprecated, using sqlite")
 		c.options.DatabaseDriver = SQLite3
@@ -148,9 +157,17 @@ func (c *Config) DatabaseHost() string {
 	return c.options.DatabaseServer
 }
 
+// Get the port based on the database driver Postgres vs MySQL/MariaDB
+func (c *Config) _DefaultDatabasePort() int {
+	if c.DatabaseDriver() == Postgres {
+		return 5432
+	}
+	return 3306
+}
+
 // DatabasePort the database server port.
 func (c *Config) DatabasePort() int {
-	const defaultPort = 3306
+	defaultPort := c._DefaultDatabasePort()
 
 	if server := c.DatabaseServer(); server == "" {
 		return 0
@@ -270,10 +287,12 @@ func (c *Config) Db() *gorm.DB {
 // CloseDb closes the db connection (if any).
 func (c *Config) CloseDb() error {
 	if c.db != nil {
-		if err := c.db.Close(); err == nil {
+		sqldb, dberr := c.db.DB()
+		if dberr != nil {
+			sqldb.Close()
 			c.db = nil
 		} else {
-			return err
+			return dberr
 		}
 	}
 
@@ -360,6 +379,26 @@ func (c *Config) checkDb(db *gorm.DB) error {
 	return nil
 }
 
+// Configure database logging.
+func gormConfig() *gorm.Config {
+	return &gorm.Config{
+		Logger: logger.New(
+			/* log, */ dummy.NewLogger(),
+			logger.Config{
+				SlowThreshold:             time.Second,   // Slow SQL threshold
+				LogLevel:                  logger.Silent, // Log level
+				IgnoreRecordNotFoundError: true,          // Ignore ErrRecordNotFound error for logger
+				ParameterizedQueries:      true,          // Don't include params in the SQL log
+				Colorful:                  false,         // Disable color
+			},
+		),
+		// Set UTC as the default for created and updated timestamps.
+		NowFunc: func() time.Time {
+			return time.Now().UTC()
+		},
+	}
+}
+
 // connectDb establishes a database connection.
 func (c *Config) connectDb() error {
 	// Make sure this is not running twice.
@@ -379,12 +418,12 @@ func (c *Config) connectDb() error {
 	}
 
 	// Open database connection.
-	db, err := gorm.Open(dbDriver, dbDsn)
+	db, err := gorm.Open(drivers[dbDriver](dbDsn), gormConfig())
 	if err != nil || db == nil {
 		log.Infof("config: waiting for the database to become available")
 
 		for i := 1; i <= 12; i++ {
-			db, err = gorm.Open(dbDriver, dbDsn)
+			db, err := gorm.Open(drivers[dbDriver](dbDsn), gormConfig())
 
 			if db != nil && err == nil {
 				break
@@ -399,13 +438,17 @@ func (c *Config) connectDb() error {
 	}
 
 	// Configure database logging.
-	db.LogMode(false)
-	db.SetLogger(log)
+	//db.LogMode(false)
+	//db.SetLogger(log)
 
 	// Set database connection parameters.
-	db.DB().SetMaxOpenConns(c.DatabaseConns())
-	db.DB().SetMaxIdleConns(c.DatabaseConnsIdle())
-	db.DB().SetConnMaxLifetime(time.Hour)
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+	sqlDB.SetMaxOpenConns(c.DatabaseConns())
+	sqlDB.SetMaxIdleConns(c.DatabaseConnsIdle())
+	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	// Check database server version.
 	if err = c.checkDb(db); err != nil {

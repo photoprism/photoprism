@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
@@ -120,6 +121,7 @@ func RemoveAutoFaceClusters() (removed int, err error) {
 // CountNewFaceMarkers counts the number of new face markers in the index.
 func CountNewFaceMarkers(size, score int) (n int) {
 	var f entity.Face
+	nData := int64(0)
 
 	if err := Db().Where("face_src = ?", entity.SrcAuto).
 		Order("created_at DESC").Limit(1).Take(&f).Error; err != nil {
@@ -142,11 +144,11 @@ func CountNewFaceMarkers(size, score int) (n int) {
 		q = q.Where("created_at > ?", f.CreatedAt)
 	}
 
-	if err := q.Count(&n).Error; err != nil {
+	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count new markers)", err)
 	}
 
-	return n
+	return functions.SafeInt64toint(nData)
 }
 
 // PurgeOrphanFaces removes unused faces from the index.

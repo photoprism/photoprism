@@ -25,7 +25,7 @@ func Existing(db *gorm.DB, stage string) MigrationMap {
 	}
 
 	// Get SQL dialect name.
-	name := db.Dialect().GetName()
+	name := db.Dialector.Name()
 
 	if name == "" {
 		return make(MigrationMap)
@@ -33,10 +33,11 @@ func Existing(db *gorm.DB, stage string) MigrationMap {
 
 	// Make sure a "migrations" table exists.
 	once[name].Do(func() {
-		err = db.AutoMigrate(&Migration{}).Error
+		err = db.AutoMigrate(&Migration{})
 	})
 
 	if err != nil {
+		log.Errorf("migrate: Cannot create / update migrations table: %s", err)
 		return make(MigrationMap)
 	}
 

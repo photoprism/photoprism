@@ -36,14 +36,11 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	"gorm.io/gorm"
-	"gorm.io/gorm/driver/mysql"
-	"gorm.io/gorm/driver/postgres"
-	"gorm.io/gorm/driver/sqlite"
 	"github.com/klauspost/cpuid/v2"
 	"github.com/pbnjay/memory"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"

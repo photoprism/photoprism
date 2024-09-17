@@ -123,12 +123,12 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 	// Run ORM auto migrations.
 	if opt.AutoMigrate {
 		for name, entity = range list {
-			if err := db.AutoMigrate(entity).Error; err != nil {
+			if err := db.AutoMigrate(entity); err != nil {
 				log.Debugf("migrate: %s (waiting 1s)", err.Error())
 
 				time.Sleep(time.Second)
 
-				if err = db.AutoMigrate(entity).Error; err != nil {
+				if err = db.AutoMigrate(entity); err != nil {
 					log.Errorf("migrate: failed migrating %s", clean.Log(name))
 					panic(err)
 				}
@@ -145,7 +145,7 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 // Drop drops all database tables of registered entities.
 func (list Tables) Drop(db *gorm.DB) {
 	for _, entity := range list {
-		if err := db.DropTableIfExists(entity).Error; err != nil {
+		if err := db.Migrator().DropTable(entity); err != nil {
 			panic(err)
 		}
 	}

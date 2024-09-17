@@ -11,8 +11,9 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gosimple/slug"
-	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -107,7 +108,7 @@ func (m File) RegenerateIndex() {
 
 	photosTable := Photo{}.TableName()
 
-	var updateWhere *gorm.SqlExpr
+	var updateWhere clause.Expr
 	var scope string
 
 	if m.PhotoID > 0 {
@@ -125,13 +126,13 @@ func (m File) RegenerateIndex() {
 	}
 
 	switch DbDialect() {
-	case MySQL:
+	case MySQL, Postgres:
 		Log("files", "regenerate photo_taken_at",
 			Db().Exec("UPDATE files JOIN ? p ON p.id = files.photo_id SET files.photo_taken_at = p.taken_at_local WHERE ?",
 				gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN CONCAT((10000000000 - photo_id), '-', 1 + file_sidecar - file_primary, '-', file_uid) ELSE NULL END WHERE ?",
 				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
@@ -143,7 +144,7 @@ func (m File) RegenerateIndex() {
 				gorm.Expr(photosTable), updateWhere).Error)
 
 		Log("files", "regenerate media_id",
-			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = 0 AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
+			Db().Exec("UPDATE files SET media_id = CASE WHEN file_missing = FALSE AND deleted_at IS NULL THEN ((10000000000 - photo_id) || '-' || (1 + file_sidecar - file_primary) || '-' || file_uid) ELSE NULL END WHERE ?",
 				updateWhere).Error)
 
 		Log("files", "regenerate time_index",
@@ -169,13 +170,13 @@ func FirstFileByHash(fileHash string) (File, error) {
 func PrimaryFile(photoUid string) (*File, error) {
 	file := File{}
 
-	res := Db().Unscoped().First(&file, "file_primary = 1 AND photo_uid = ?", photoUid)
+	res := Db().Unscoped().First(&file, "file_primary = TRUE AND photo_uid = ?", photoUid)
 
 	return &file, res.Error
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *File) BeforeCreate(scope *gorm.Scope) error {
+func (m *File) BeforeCreate(scope *gorm.DB) error {
 	// Set MediaType based on FileName if empty.
 	if m.MediaType == "" && m.FileName != "" {
 		m.MediaType = media.FromName(m.FileName).String()
@@ -191,7 +192,8 @@ func (m *File) BeforeCreate(scope *gorm.Scope) error {
 		return nil
 	}
 
-	return scope.SetColumn("FileUID", rnd.GenerateUID(FileUID))
+	scope.Statement.SetColumn("FileUID", rnd.GenerateUID(FileUID))
+	return scope.Error
 }
 
 // DownloadName returns the download file name.
@@ -366,27 +368,27 @@ func (m *File) Purge() error {
 	m.FileMissing = true
 	m.FilePrimary = false
 	m.DeletedAt = &deletedAt
-	return UnscopedDb().Exec("UPDATE files SET file_missing = 1, file_primary = 0, deleted_at = ? WHERE id = ?", &deletedAt, m.ID).Error
+	return UnscopedDb().Exec("UPDATE files SET file_missing = TRUE, file_primary = FALSE, deleted_at = ? WHERE id = ?", &deletedAt, m.ID).Error
 }
 
 // Found restores a previously purged file.
 func (m *File) Found() error {
 	m.FileMissing = false
 	m.DeletedAt = nil
-	return UnscopedDb().Exec("UPDATE files SET file_missing = 0, deleted_at = NULL WHERE id = ?", m.ID).Error
+	return UnscopedDb().Exec("UPDATE files SET file_missing = FALSE, deleted_at = NULL WHERE id = ?", m.ID).Error
 }
 
 // AllFilesMissing returns true, if all files for the photo of this file are missing.
 func (m *File) AllFilesMissing() bool {
-	count := 0
+	count := int64(0)
 
 	if err := Db().Model(&File{}).
-		Where("photo_id = ? AND file_missing = 0", m.PhotoID).
+		Where("photo_id = ? AND file_missing = FALSE", m.PhotoID).
 		Count(&count).Error; err != nil {
 		log.Errorf("file: %s", err.Error())
 	}
 
-	return count == 0
+	return count == int64(0)
 }
 
 // Create inserts a new row to the database.
@@ -548,7 +550,7 @@ func (m *File) RelatedPhoto() *Photo {
 
 	photo := Photo{}
 
-	UnscopedDb().Model(m).Related(&photo)
+	UnscopedDb().Model(m).Find(&photo)
 
 	return &photo
 }

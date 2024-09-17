@@ -10,10 +10,11 @@ func Update(m interface{}, keyNames ...string) (err error) {
 	// soft-deleted database records can also be updated.
 	db := UnscopedDb()
 
+	// We now let this fallthrough and fail in the .Updates() call (no NewRecord() anymore)
 	// Return if the record has not been created yet.
-	if db.NewRecord(m) {
-		return fmt.Errorf("new record")
-	}
+	// if db.NewRecord(m) {
+	// 	return fmt.Errorf("new record")
+	// }
 
 	// Extract interface slice with all values including zero.
 	values, keys, err := ModelValues(m, keyNames...)

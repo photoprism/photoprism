@@ -12,10 +12,6 @@ import (
 
 	"github.com/urfave/cli"
 
-	"gorm.io/gorm/driver/mysql"
-	"gorm.io/gorm/driver/postgres"
-	"gorm.io/gorm/driver/sqlite"
-
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/authn"

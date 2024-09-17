@@ -74,14 +74,14 @@ func NewClient() *Client {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Client) BeforeCreate(scope *gorm.Scope) error {
+func (m *Client) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUID(m.ClientUID, ClientUID) {
 		return nil
 	}
 
 	m.ClientUID = rnd.GenerateUID(ClientUID)
-
-	return scope.SetColumn("ClientUID", m.ClientUID)
+	scope.Statement.SetColumn("ClientUID", m.ClientUID)
+	return scope.Error
 }
 
 // FindClientByUID returns the matching client or nil if it was not found.

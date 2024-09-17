@@ -161,7 +161,7 @@ func (m *Version) CreateTable(db *gorm.DB) (err error) {
 	}
 
 	versionOnce.Do(func() {
-		err = db.AutoMigrate(&Version{}).Error
+		err = db.AutoMigrate(&Version{})
 	})
 
 	return err

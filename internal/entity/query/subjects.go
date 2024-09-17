@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -22,14 +23,15 @@ func People() (people entity.People, err error) {
 
 // PeopleCount returns the total number of people in the index.
 func PeopleCount() (count int, err error) {
+	countData := int64(0)
 	err = Db().
 		Table(entity.Subject{}.TableName()).
 		Where("deleted_at IS NULL").
 		Where("subj_hidden = 0").
 		Where("subj_type = ?", entity.SubjPerson).
-		Count(&count).Error
+		Count(&countData).Error
 
-	return count, err
+	return functions.SafeInt64toint(countData), err
 }
 
 // Subjects returns subjects from the index.

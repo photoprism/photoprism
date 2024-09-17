@@ -8,7 +8,7 @@ type Deprecated []string
 // Drop drops all deprecated tables.
 func (list Deprecated) Drop(db *gorm.DB) {
 	for _, tableName := range list {
-		if err := db.DropTableIfExists(tableName).Error; err != nil {
+		if err := db.Migrator().DropTable(tableName); err != nil {
 			log.Debugf("drop %s: %s", tableName, err)
 		}
 	}

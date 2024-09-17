@@ -8,7 +8,7 @@ import (
 
 // Set UTC as the default for created and updated timestamps.
 func init() {
-	gorm.NowFunc = func() time.Time {
+	gormConfig().NowFunc = func() time.Time {
 		return UTC()
 	}
 }

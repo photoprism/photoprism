@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/functions"
 )
 
 // MarkerByUID returns a Marker based on the UID.
@@ -221,30 +222,32 @@ func ResetFaceMarkerMatches() (removed int64, err error) {
 
 // CountUnmatchedFaceMarkers counts the number of unmatched face markers in the index.
 func CountUnmatchedFaceMarkers() (n int) {
+	nData := int64(0)
 	q := Db().Model(&entity.Markers{}).
 		Where("matched_at IS NULL AND marker_invalid = 0 AND embeddings_json <> ''").
 		Where("marker_type = ?", entity.MarkerFace)
 
-	if err := q.Count(&n).Error; err != nil {
+	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count unmatched markers)", err)
 	}
 
-	return n
+	return functions.SafeInt64toint(nData)
 }
 
 // CountMarkers counts the number of face markers in the index.
 func CountMarkers(markerType string) (n int) {
+	nData := int64(0)
 	q := Db().Model(&entity.Markers{})
 
 	if markerType != "" {
 		q = q.Where("marker_type = ?", markerType)
 	}
 
-	if err := q.Count(&n).Error; err != nil {
+	if err := q.Count(&nData).Error; err != nil {
 		log.Errorf("faces: %s (count markers)", err)
 	}
 
-	return n
+	return functions.SafeInt64toint(nData)
 }
 
 // RemoveOrphanMarkers removes markers without an existing file.

@@ -226,10 +226,11 @@ func (m *Session) Updates(values interface{}) error {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Session) BeforeCreate(scope *gorm.Scope) error {
+func (m *Session) BeforeCreate(scope *gorm.DB) error {
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(SessionPrefix)
-		Log("session", "set ref id", scope.SetColumn("RefID", m.RefID))
+		scope.Statement.SetColumn("RefID", m.RefID)
+		Log("session", "set ref id", scope.Error)
 	}
 
 	if rnd.IsSessionID(m.ID) {
@@ -237,8 +238,8 @@ func (m *Session) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	m.Regenerate()
-
-	return scope.SetColumn("ID", m.ID)
+	scope.Statement.SetColumn("ID", m.ID)
+	return scope.Error
 }
 
 // SetClient updates the client of this session.

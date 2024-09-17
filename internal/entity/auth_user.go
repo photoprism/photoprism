@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
 	"github.com/zitadel/oidc/v3/pkg/oidc"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/event"
@@ -374,7 +374,7 @@ func (m *User) Updates(values interface{}) error {
 }
 
 // BeforeCreate sets a random UID if needed before inserting a new row to the database.
-func (m *User) BeforeCreate(scope *gorm.Scope) error {
+func (m *User) BeforeCreate(db *gorm.DB) (err error) {
 	if m.UserSettings != nil {
 		m.UserSettings.UserUID = m.UserUID
 	}
@@ -387,7 +387,8 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(UserPrefix)
-		Log("user", "set ref id", scope.SetColumn("RefID", m.RefID))
+		db.Statement.SetColumn("RefID", m.RefID)
+		Log("user", "set ref id", db.Error)
 	}
 
 	if rnd.IsUnique(m.UserUID, UserUID) {
@@ -395,7 +396,8 @@ func (m *User) BeforeCreate(scope *gorm.Scope) error {
 	}
 
 	m.UserUID = rnd.GenerateUID(UserUID)
-	return scope.SetColumn("UserUID", m.UserUID)
+	db.Statement.SetColumn("UserUID", m.UserUID)
+	return db.Error
 }
 
 // IsExpired checks if the user account has expired.

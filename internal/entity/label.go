@@ -51,12 +51,13 @@ func (Label) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Label) BeforeCreate(scope *gorm.Scope) error {
+func (m *Label) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.LabelUID, LabelUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LabelUID", rnd.GenerateUID(LabelUID))
+	scope.Statement.SetColumn("LabelUID", rnd.GenerateUID(LabelUID))
+	return scope.Error
 }
 
 // NewLabel returns a new label.
@@ -166,7 +167,7 @@ func FindLabel(s string) *Label {
 }
 
 // AfterCreate sets the New column used for database callback
-func (m *Label) AfterCreate(scope *gorm.Scope) error {
+func (m *Label) AfterCreate(scope *gorm.DB) error {
 	m.New = true
 	return nil
 }

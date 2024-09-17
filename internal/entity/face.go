@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -433,6 +434,7 @@ func FindFace(id string) *Face {
 
 // ValidFaceCount counts the number of valid face markers for a file uid.
 func ValidFaceCount(fileUid string) (c int) {
+	cValue := int64(0)
 	if !rnd.IsUID(fileUid, FileUID) {
 		return
 	}
@@ -440,10 +442,10 @@ func ValidFaceCount(fileUid string) (c int) {
 	if err := Db().Model(Marker{}).
 		Where("file_uid = ? AND marker_type = ?", fileUid, MarkerFace).
 		Where("marker_invalid = 0").
-		Count(&c).Error; err != nil {
+		Count(&cValue).Error; err != nil {
 		log.Errorf("file: %s (count faces)", err)
 		return 0
 	} else {
-		return c
+		return functions.SafeInt64toint(cValue)
 	}
 }

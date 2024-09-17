@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"github.com/photoprism/photoprism/internal/functions"
 	"gorm.io/gorm"
 )
 
@@ -11,7 +12,7 @@ func Count(m interface{}, keys []string, values []interface{}) int {
 		return -1
 	}
 
-	db, count := UnscopedDb(), 0
+	db, count := UnscopedDb(), int64(0)
 
 	stmt := db.Model(m)
 
@@ -26,5 +27,5 @@ func Count(m interface{}, keys []string, values []interface{}) int {
 		return -1
 	}
 
-	return count
+	return functions.SafeInt64toint(count)
 }

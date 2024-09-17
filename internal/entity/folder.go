@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
@@ -53,12 +53,13 @@ func (Folder) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Folder) BeforeCreate(scope *gorm.Scope) error {
+func (m *Folder) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.FolderUID, 'd') {
 		return nil
 	}
 
-	return scope.SetColumn("FolderUID", rnd.GenerateUID('d'))
+	scope.Statement.SetColumn("FolderUID", rnd.GenerateUID('d'))
+	return scope.Error
 }
 
 // NewFolder creates a new file system directory entity.

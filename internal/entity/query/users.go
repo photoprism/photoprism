@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/functions"
 	"github.com/photoprism/photoprism/pkg/rnd"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
@@ -19,6 +20,7 @@ func RegisteredUsers() (result entity.Users) {
 
 // CountUsers returns the number of users based on the specified filter options.
 func CountUsers(registered, active bool, roles, excludeRoles []string) (count int) {
+	countData := int64(0)
 	stmt := Db().Model(entity.Users{})
 
 	if registered {
@@ -35,11 +37,11 @@ func CountUsers(registered, active bool, roles, excludeRoles []string) (count in
 		stmt = stmt.Where("user_role NOT IN (?)", excludeRoles)
 	}
 
-	if err := stmt.Count(&count).Error; err != nil {
+	if err := stmt.Count(&countData).Error; err != nil {
 		log.Errorf("users: %s (count)", err)
 	}
 
-	return count
+	return functions.SafeInt64toint(countData)
 }
 
 // Users finds users and returns them.

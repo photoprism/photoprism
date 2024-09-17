@@ -44,17 +44,19 @@ func (Link) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Link) BeforeCreate(scope *gorm.Scope) error {
+func (m *Link) BeforeCreate(scope *gorm.DB) error {
 	if rnd.InvalidRefID(m.RefID) {
 		m.RefID = rnd.RefID(LinkPrefix)
-		Log("link", "set ref id", scope.SetColumn("RefID", m.RefID))
+		scope.Statement.SetColumn("RefID", m.RefID)
+		Log("link", "set ref id", scope.Error)
 	}
 
 	if rnd.IsUnique(m.LinkUID, LinkUID) {
 		return nil
 	}
 
-	return scope.SetColumn("LinkUID", rnd.GenerateUID(LinkUID))
+	scope.Statement.SetColumn("LinkUID", rnd.GenerateUID(LinkUID))
+	return scope.Error
 }
 
 // NewLink creates a sharing link.

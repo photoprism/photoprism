@@ -83,6 +83,11 @@ func AddService(form form.Service) (model *Service, err error) {
 	return model, err
 }
 
+// Equivalent to the NewRecord of Gorm V1
+func (m *Service) IsNew() bool {
+	return m.CreatedAt.IsZero()
+}
+
 // LogErr updates the service error count and message.
 func (m *Service) LogErr(err error) error {
 	if err == nil {
@@ -104,7 +109,7 @@ func (m *Service) LogErr(err error) error {
 
 // ResetErrors resets the service and related file error messages and counters.
 func (m *Service) ResetErrors(share, sync bool) error {
-	if !share && !sync || Db().NewRecord(m) {
+	if !share && !sync || m.IsNew() {
 		return nil
 	}
 
@@ -173,7 +178,7 @@ func (m *Service) SaveForm(form form.Service) error {
 	}
 
 	// Reset error counters if account already exists.
-	if !Db().NewRecord(m) {
+	if !m.IsNew() {
 		Log("service", "reset errors", m.ResetErrors(m.AccShare, m.AccSync))
 	}
 

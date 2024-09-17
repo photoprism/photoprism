@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/event"
@@ -423,14 +423,14 @@ func (m *Album) Find() *Album {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Album) BeforeCreate(scope *gorm.Scope) error {
+func (m *Album) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUID(m.AlbumUID, AlbumUID) {
 		return nil
 	}
 
 	m.AlbumUID = rnd.GenerateUID(AlbumUID)
-
-	return scope.SetColumn("AlbumUID", m.AlbumUID)
+	scope.Statement.SetColumn("AlbumUID", m.AlbumUID)
+	return scope.Error
 }
 
 // String returns the id or name as string.

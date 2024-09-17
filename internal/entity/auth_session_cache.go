@@ -1,10 +1,12 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	gc "github.com/patrickmn/go-cache"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -37,7 +39,7 @@ func FindSession(id string) (*Session, error) {
 		} else if err := cached.Delete(); err != nil {
 			event.AuditErr([]string{cached.IP(), "session %s", "failed to delete after expiration", "%s"}, cached.RefID, err)
 		}
-	} else if res := Db().First(&found, "id = ?", id); res.RecordNotFound() {
+	} else if res := Db().First(&found, "id = ?", id); errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return found, fmt.Errorf("invalid session")
 	} else if res.Error != nil {
 		return found, res.Error

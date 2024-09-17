@@ -56,37 +56,37 @@ func usersResetAction(ctx *cli.Context) error {
 		db := conf.Db()
 
 		// Drop existing user management tables.
-		if err := db.DropTableIfExists(entity.User{}, entity.UserDetails{}, entity.UserSettings{}, entity.UserShare{}, entity.Passcode{}, entity.Session{}).Error; err != nil {
+		if err := db.Migrator().DropTable(entity.User{}, entity.UserDetails{}, entity.UserSettings{}, entity.UserShare{}, entity.Passcode{}, entity.Session{}); err != nil {
 			return err
 		}
 
 		// Re-create auth_users.
-		if err := db.CreateTable(entity.User{}).Error; err != nil {
+		if err := db.Migrator().CreateTable(entity.User{}); err != nil {
 			return err
 		}
 
 		// Re-create auth_users_details.
-		if err := db.CreateTable(entity.UserDetails{}).Error; err != nil {
+		if err := db.Migrator().CreateTable(entity.UserDetails{}); err != nil {
 			return err
 		}
 
 		// Re-create auth_users_settings.
-		if err := db.CreateTable(entity.UserSettings{}).Error; err != nil {
+		if err := db.Migrator().CreateTable(entity.UserSettings{}); err != nil {
 			return err
 		}
 
 		// Re-create auth_users_shares.
-		if err := db.CreateTable(entity.UserShare{}).Error; err != nil {
+		if err := db.Migrator().CreateTable(entity.UserShare{}); err != nil {
 			return err
 		}
 
 		// Re-create passcodes.
-		if err := db.CreateTable(entity.Passcode{}).Error; err != nil {
+		if err := db.Migrator().CreateTable(entity.Passcode{}); err != nil {
 			return err
 		}
 
 		// Re-create auth_sessions.
-		if err := db.CreateTable(entity.Session{}).Error; err != nil {
+		if err := db.Migrator().CreateTable(entity.Session{}); err != nil {
 			return err
 		}
 

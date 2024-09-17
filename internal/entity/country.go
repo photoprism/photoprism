@@ -105,7 +105,7 @@ func FirstOrCreateCountry(m *Country) *Country {
 }
 
 // AfterCreate sets the New column used for database callback
-func (m *Country) AfterCreate(scope *gorm.Scope) error {
+func (m *Country) AfterCreate(scope *gorm.DB) error {
 	m.New = true
 	return nil
 }

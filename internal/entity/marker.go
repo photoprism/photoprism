@@ -60,12 +60,13 @@ func (Marker) TableName() string {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Marker) BeforeCreate(scope *gorm.Scope) error {
+func (m *Marker) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.MarkerUID, 'm') {
 		return nil
 	}
 
-	return scope.SetColumn("MarkerUID", rnd.GenerateUID('m'))
+	scope.Statement.SetColumn("MarkerUID", rnd.GenerateUID('m'))
+	return scope.Error
 }
 
 // NewMarker creates a new entity.

@@ -47,12 +47,13 @@ func (Subject) TableName() string {
 }
 
 // BeforeCreate creates a random uid if needed before inserting a new row to the database.
-func (m *Subject) BeforeCreate(scope *gorm.Scope) error {
+func (m *Subject) BeforeCreate(scope *gorm.DB) error {
 	if rnd.IsUnique(m.SubjUID, 'j') {
 		return nil
 	}
 
-	return scope.SetColumn("SubjUID", rnd.GenerateUID('j'))
+	scope.Statement.SetColumn("SubjUID", rnd.GenerateUID('j'))
+	return scope.Error
 }
 
 // AfterSave is a hook that updates the name cache after saving.

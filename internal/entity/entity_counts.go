@@ -7,6 +7,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/mutex"
 )
@@ -82,7 +83,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 
 	subjTable := Subject{}.TableName()
 
-	var photosJoin *gorm.SqlExpr
+	var photosJoin clause.Expr
 
 	// Count people tagged on private pictures?
 	// see https://github.com/photoprism/photoprism/issues/4238

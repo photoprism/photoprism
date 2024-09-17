@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/event"
@@ -397,15 +397,17 @@ func (m *Photo) ClassifyLabels() classify.Labels {
 }
 
 // BeforeCreate creates a random UID if needed before inserting a new row to the database.
-func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
+func (m *Photo) BeforeCreate(scope *gorm.DB) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := Now()
 
-		if err := scope.SetColumn("TakenAt", now); err != nil {
+		scope.Statement.SetColumn("TakenAt", now)
+		if err := scope.Error; err != nil {
 			return err
 		}
 
-		if err := scope.SetColumn("TakenAtLocal", now); err != nil {
+		scope.Statement.SetColumn("TakenAtLocal", now)
+		if err := scope.Error; err != nil {
 			return err
 		}
 	}
@@ -416,19 +418,22 @@ func (m *Photo) BeforeCreate(scope *gorm.Scope) error {
 
 	m.PhotoUID = rnd.GenerateUID(PhotoUID)
 
-	return scope.SetColumn("PhotoUID", m.PhotoUID)
+	scope.Statement.SetColumn("PhotoUID", m.PhotoUID)
+	return scope.Error
 }
 
 // BeforeSave ensures the existence of TakenAt properties before indexing or updating a photo
-func (m *Photo) BeforeSave(scope *gorm.Scope) error {
+func (m *Photo) BeforeSave(scope *gorm.DB) error {
 	if m.TakenAt.IsZero() || m.TakenAtLocal.IsZero() {
 		now := Now()
 
-		if err := scope.SetColumn("TakenAt", now); err != nil {
+		scope.Statement.SetColumn("TakenAt", now)
+		if err := scope.Error; err != nil {
 			return err
 		}
 
-		if err := scope.SetColumn("TakenAtLocal", now); err != nil {
+		scope.Statement.SetColumn("TakenAtLocal", now)
+		if err := scope.Error; err != nil {
 			return err
 		}
 	}
@@ -518,7 +523,7 @@ func (m *Photo) PreloadFiles() {
 
 // PreloadKeywords prepares gorm scope to retrieve photo keywords
 func (m *Photo) PreloadKeywords() {
-	q := Db().NewScope(nil).DB().
+	q := Db().
 		Table("keywords").
 		Select(`keywords.*`).
 		Joins("JOIN photos_keywords pk ON pk.keyword_id = keywords.id AND pk.photo_id = ?", m.ID).
@@ -529,10 +534,10 @@ func (m *Photo) PreloadKeywords() {
 
 // PreloadAlbums prepares gorm scope to retrieve photo albums
 func (m *Photo) PreloadAlbums() {
-	q := Db().NewScope(nil).DB().
+	q := Db().
 		Table("albums").
 		Select(`albums.*`).
-		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = ? AND pa.hidden = 0", m.PhotoUID).
+		Joins("JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = ? AND pa.hidden = FALSE", m.PhotoUID).
 		Where("albums.deleted_at IS NULL").
 		Order("albums.album_title ASC")
 
@@ -634,7 +639,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 	}
 
-	Db().Set("gorm:auto_preload", true).Model(m).Related(&m.Labels)
+	Db().Set("gorm:auto_preload", true).Model(m).Find(&m.Labels)
 }
 
 // SetDescription changes the photo description if not empty and from the same source.
@@ -723,15 +728,15 @@ func (m *Photo) SetExposure(focalLength int, fNumber float32, iso int, exposure,
 
 // AllFilesMissing returns true, if all files for this photo are missing.
 func (m *Photo) AllFilesMissing() bool {
-	count := 0
+	count := int64(0)
 
 	if err := Db().Model(&File{}).
-		Where("photo_id = ? AND file_missing = 0", m.ID).
+		Where("photo_id = ? AND file_missing = FALSE", m.ID).
 		Count(&count).Error; err != nil {
 		log.Error(err)
 	}
 
-	return count == 0
+	return count == int64(0)
 }
 
 // AllFiles returns all files of this photo.
@@ -976,7 +981,7 @@ func (m *Photo) SetPrimary(fileUid string) (err error) {
 	if fileUid != "" {
 		// Do nothing.
 	} else if err = Db().Model(File{}).
-		Where("photo_uid = ? AND file_type IN (?) AND file_missing = 0 AND file_error = ''", m.PhotoUID, media.PreviewExpr).
+		Where("photo_uid = ? AND file_type IN (?) AND file_missing = FALSE AND file_error = ''", m.PhotoUID, media.PreviewExpr).
 		Order("file_width DESC, file_hdr DESC").Limit(1).
 		Pluck("file_uid", &files).Error; err != nil {
 		return err

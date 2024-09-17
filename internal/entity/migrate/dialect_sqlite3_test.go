@@ -4,15 +4,14 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 
+	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"gorm.io/gorm/driver/mysql"
-	"gorm.io/gorm/driver/postgres"
-	"gorm.io/gorm/driver/sqlite"
 
 	"github.com/photoprism/photoprism/pkg/fs"
 )
@@ -36,9 +35,19 @@ func TestDialectSQLite3(t *testing.T) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	db, err := gorm.Open(
-		"sqlite3",
-		dumpName,
+	db, err := gorm.Open(sqlite.Open(dumpName),
+		&gorm.Config{
+			Logger: logger.New(
+				log,
+				logger.Config{
+					SlowThreshold:             time.Second,  // Slow SQL threshold
+					LogLevel:                  logger.Error, // Log level
+					IgnoreRecordNotFoundError: true,         // Ignore ErrRecordNotFound error for logger
+					ParameterizedQueries:      true,         // Don't include params in the SQL log
+					Colorful:                  false,        // Disable color
+				},
+			),
+		},
 	)
 
 	if err != nil || db == nil {
@@ -49,10 +58,8 @@ func TestDialectSQLite3(t *testing.T) {
 		return
 	}
 
-	defer db.Close()
-
-	db.LogMode(false)
-	db.SetLogger(log)
+	sqldb, _ := db.DB()
+	defer sqldb.Close()
 
 	opt := Opt(true, true, nil)
 
@@ -68,12 +75,12 @@ func TestDialectSQLite3(t *testing.T) {
 
 	stmt := db.Table("photos").Where("photo_description = '' OR photo_description IS NULL")
 
-	count := 0
+	count := int64(0)
 
 	// Fetch count from database.
 	if err = stmt.Count(&count).Error; err != nil {
 		t.Error(err)
 	} else {
-		assert.Equal(t, 0, count)
+		assert.Equal(t, int64(0), count)
 	}
 }
