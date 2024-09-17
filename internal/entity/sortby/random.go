@@ -1,9 +1,10 @@
 package sortby
 
 import (
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/driver/mysql"
+	"gorm.io/gorm/driver/postgres"
+	"gorm.io/gorm/driver/sqlite"
 )
 
 const (

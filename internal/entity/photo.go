@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"

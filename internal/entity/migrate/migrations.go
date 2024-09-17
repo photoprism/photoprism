@@ -7,7 +7,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/list"
 
 	"github.com/dustin/go-humanize/english"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Migrations represents a sorted list of migrations.

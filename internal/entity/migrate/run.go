@@ -3,7 +3,7 @@ package migrate
 import (
 	"fmt"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Run automatically migrates the schema of the database passed as argument.

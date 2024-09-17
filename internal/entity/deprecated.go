@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/jinzhu/gorm"
+import "gorm.io/gorm"
 
 // Deprecated represents a list of deprecated database tables.
 type Deprecated []string

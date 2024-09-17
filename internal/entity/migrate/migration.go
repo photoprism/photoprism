@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Migration represents a database schema migration.

@@ -3,7 +3,7 @@ package sortby
 import (
 	"testing"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 
 	"github.com/stretchr/testify/assert"
 )

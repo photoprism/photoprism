@@ -3,7 +3,7 @@ package entity
 import (
 	"sync"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 

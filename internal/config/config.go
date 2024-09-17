@@ -36,9 +36,10 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
+	"gorm.io/gorm/driver/mysql"
+	"gorm.io/gorm/driver/postgres"
+	"gorm.io/gorm/driver/sqlite"
 	"github.com/klauspost/cpuid/v2"
 	"github.com/pbnjay/memory"
 	"github.com/sirupsen/logrus"

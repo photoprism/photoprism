@@ -3,7 +3,7 @@ package entity
 import (
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Set UTC as the default for created and updated timestamps.

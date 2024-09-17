@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // Count returns the number of records for a given a model and key values.

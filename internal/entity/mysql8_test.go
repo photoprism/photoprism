@@ -7,7 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity/migrate"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 func TestMySQL8(t *testing.T) {

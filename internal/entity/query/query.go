@@ -25,7 +25,7 @@ Additional information can be found in our Developer Guide:
 package query
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 )

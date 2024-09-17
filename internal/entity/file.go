@@ -11,7 +11,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"github.com/gosimple/slug"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
 
 	"github.com/photoprism/photoprism/internal/ai/face"

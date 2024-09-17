@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 

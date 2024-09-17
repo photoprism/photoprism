@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli"

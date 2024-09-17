@@ -18,7 +18,6 @@ require (
 	github.com/google/open-location-code/go v0.0.0-20240712113549-dfcebc905b81
 	github.com/gorilla/websocket v1.5.3
 	github.com/gosimple/slug v1.14.0
-	github.com/jinzhu/gorm v1.9.16
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/karrick/godirwalk v1.17.0
@@ -29,7 +28,6 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.2.0
 	github.com/mandykoh/prism v0.35.3
 	github.com/manifoldco/promptui v0.9.0
-	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/montanaflynn/stats v0.7.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/paulmach/go.geojson v1.5.0
@@ -79,6 +77,13 @@ require github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082
 require golang.org/x/text v0.18.0
 
 require (
+	gorm.io/driver/mysql v1.5.7
+	gorm.io/driver/postgress v1.5.9
+	gorm.io/driver/sqlite v1.5.6
+	gorm.io/gorm v1.25.12
+)
+
+require (
 	github.com/davidbyttow/govips/v2 v2.15.0
 	github.com/go-co-op/gocron/v2 v2.11.0
 	github.com/pquerna/otp v1.4.0
@@ -112,7 +117,6 @@ require (
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
-	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
