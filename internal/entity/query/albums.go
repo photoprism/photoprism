@@ -95,9 +95,9 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 	}
 
 	// Build query.
-	stmt := Db().Where("files.file_primary = 1 AND files.file_missing = 0 AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
+	stmt := Db().Where("files.file_primary = TRUE AND files.file_missing = FALSE AND files.file_type IN (?) AND files.deleted_at IS NULL", media.PreviewExpr).
 		Joins("JOIN albums a ON a.album_uid = ?", uid).
-		Joins("JOIN photos_albums pa ON pa.album_uid = a.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = 0 AND pa.missing = 0").
+		Joins("JOIN photos_albums pa ON pa.album_uid = a.album_uid AND pa.photo_uid = files.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL")
 
 	// Public pictures only?
@@ -154,7 +154,7 @@ func AlbumEntryFound(uid string) error {
 
 	switch DbDialect() {
 	default:
-		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 0 WHERE photo_uid = ?`, uid).Error
+		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = FALSE WHERE photo_uid = ?`, uid).Error
 	}
 }
 

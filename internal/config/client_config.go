@@ -534,9 +534,9 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 				"SUM(photo_quality = -1) AS hidden, " +
 				"SUM(photo_type NOT IN ('live', 'video') AND photo_quality > -1 AND photo_private = 0) AS photos, " +
 				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
-				"SUM(photo_favorite = 1 AND photo_private = 0 AND photo_quality > -1) AS favorites, " +
-				"SUM(photo_private = 1 AND photo_quality > -1) AS private").
-			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
+				"SUM(photo_favorite = TRUE AND photo_private = FALSE AND photo_quality > -1) AS favorites, " +
+				"SUM(photo_private = TRUE AND photo_quality > -1) AS private").
+			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = TRUE AND (file_missing = TRUE OR file_error <> ''))").
 			Where("deleted_at IS NULL").
 			Take(&cfg.Count)
 	} else {
@@ -547,9 +547,9 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 				"SUM(photo_quality = -1) AS hidden, " +
 				"SUM(photo_type NOT IN ('live', 'video') AND photo_quality > -1) AS photos, " +
 				"SUM(photo_quality BETWEEN 0 AND 2) AS review, " +
-				"SUM(photo_favorite = 1 AND photo_quality > -1) AS favorites, " +
+				"SUM(photo_favorite = TRUE AND photo_quality > -1) AS favorites, " +
 				"0 AS private").
-			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND (file_missing = 1 OR file_error <> ''))").
+			Where("photos.id NOT IN (SELECT photo_id FROM files WHERE file_primary = TRUE AND (file_missing = TRUE OR file_error <> ''))").
 			Where("deleted_at IS NULL").
 			Take(&cfg.Count)
 	}
@@ -594,7 +594,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 				"SUM(album_type = ? AND album_private = 1) AS private_folders",
 				entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder,
 				entity.AlbumManual, entity.AlbumMoment, entity.AlbumMonth, entity.AlbumState, entity.AlbumFolder).
-			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.photo_private = 0 AND photos.deleted_at IS NULL))").
+			Where("deleted_at IS NULL AND (albums.album_type <> 'folder' OR albums.album_path IN (SELECT photos.photo_path FROM photos WHERE photos.photo_private = FALSE AND photos.deleted_at IS NULL))").
 			Take(&cfg.Count)
 	} else {
 		c.Db().
@@ -612,7 +612,7 @@ func (c *Config) ClientUser(withSettings bool) ClientConfig {
 	c.Db().
 		Table("files").
 		Select("COUNT(*) AS files").
-		Where("file_missing = 0 AND file_root = ? AND deleted_at IS NULL", entity.RootOriginals).
+		Where("file_missing = FALSE AND file_root = ? AND deleted_at IS NULL", entity.RootOriginals).
 		Take(&cfg.Count)
 
 	c.Db().

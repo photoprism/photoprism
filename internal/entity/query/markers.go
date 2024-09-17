@@ -127,7 +127,7 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 func RemoveInvalidMarkerReferences() (removed int64, err error) {
 	result := Db().
 		Model(&entity.Marker{}).
-		Where("marker_invalid = 1 AND (subj_uid <> '' OR face_id <> '')").
+		Where("marker_invalid = TRUE AND (subj_uid <> '' OR face_id <> '')").
 		UpdateColumns(entity.Map{"subj_uid": "", "face_id": "", "face_dist": -1.0, "matched_at": nil})
 
 	return result.RowsAffected, result.Error
@@ -224,7 +224,7 @@ func ResetFaceMarkerMatches() (removed int64, err error) {
 func CountUnmatchedFaceMarkers() (n int) {
 	nData := int64(0)
 	q := Db().Model(&entity.Markers{}).
-		Where("matched_at IS NULL AND marker_invalid = 0 AND embeddings_json <> ''").
+		Where("matched_at IS NULL AND marker_invalid = FALSE AND embeddings_json <> ''").
 		Where("marker_type = ?", entity.MarkerFace)
 
 	if err := q.Count(&nData).Error; err != nil {

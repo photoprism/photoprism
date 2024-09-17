@@ -461,7 +461,7 @@ func (m *File) UpdateVideoInfos() error {
 
 	if err := deepcopier.Copy(&dimensions).From(m); err != nil {
 		return err
-	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = 1 AND file_width <= 0", m.PhotoID).Updates(dimensions).Error; err != nil {
+	} else if err = Db().Model(File{}).Where("photo_id = ? AND file_video = TRUE AND file_width <= 0", m.PhotoID).Updates(dimensions).Error; err != nil {
 		return err
 	}
 

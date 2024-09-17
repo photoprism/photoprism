@@ -19,7 +19,7 @@ func FilesByPath(limit, offset int, root, dir string, public bool) (files entity
 	stmt := Db().
 		Table("files").Select("files.*").
 		Joins("JOIN photos ON photos.id = files.photo_id AND photos.deleted_at IS NULL").
-		Where("files.file_missing = 0 AND files.file_root = ?", root).
+		Where("files.file_missing = FALSE AND files.file_root = ?", root).
 		Where("photos.photo_path = ?", dir)
 
 	if public {
@@ -85,7 +85,7 @@ func VideoByPhotoUID(photoUID string) (*entity.File, error) {
 	}
 
 	err := Db().Where("photo_uid = ? AND file_missing = 0", photoUID).
-		Where("file_video = 1 OR file_duration > 0 OR file_frames > 0 OR file_type = ?", fs.ImageGIF).
+		Where("file_video = TRUE OR file_duration > 0 OR file_frames > 0 OR file_type = ?", fs.ImageGIF).
 		Order("file_error ASC, file_video DESC, file_duration DESC, file_frames DESC").
 		Preload("Photo").First(&f).Error
 
@@ -138,7 +138,7 @@ func SetPhotoPrimary(photoUID, fileUID string) (err error) {
 	if fileUID != "" {
 		// Do nothing.
 	} else if err = Db().Model(entity.File{}).
-		Where("photo_uid = ? AND file_missing = 0 AND file_type IN (?)", photoUID, media.PreviewExpr).
+		Where("photo_uid = ? AND file_missing = FALSE AND file_type IN (?)", photoUID, media.PreviewExpr).
 		Order("file_width DESC, file_hdr DESC").Limit(1).Pluck("file_uid", &files).Error; err != nil {
 		return err
 	} else if len(files) == 0 {
@@ -199,7 +199,7 @@ func IndexedFiles() (result FileMap, err error) {
 	// Query indexed files.
 	var files []File
 
-	if err := UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM files WHERE file_missing = 0 AND deleted_at IS NULL").Scan(&files).Error; err != nil {
+	if err := UnscopedDb().Raw("SELECT file_root, file_name, mod_time FROM files WHERE file_missing = FALSE AND deleted_at IS NULL").Scan(&files).Error; err != nil {
 		return result, err
 	}
 

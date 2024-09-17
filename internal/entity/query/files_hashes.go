@@ -14,7 +14,7 @@ func CountFileHashes() (count int) {
 	countData := int64(0)
 	if err := UnscopedDb().
 		Table(entity.File{}.TableName()).
-		Where("file_missing = 0 AND deleted_at IS NULL").
+		Where("file_missing = FALSE AND deleted_at IS NULL").
 		Select("COUNT(DISTINCT(file_hash))").Count(&countData).Error; err != nil {
 		log.Errorf("files: %s (count hashes)", err)
 	}
@@ -51,7 +51,7 @@ func FileHashMap() (result HashMap, err error) {
 
 	if rows, err := UnscopedDb().
 		Table(entity.File{}.TableName()).
-		Where("file_missing = 0 AND deleted_at IS NULL").
+		Where("file_missing = FALSE AND deleted_at IS NULL").
 		Where("file_hash IS NOT NULL AND file_hash <> ''").
 		Select("file_hash").Rows(); err != nil {
 		return result, err

@@ -80,7 +80,7 @@ func CreateMarkerSubjects() (affected int64, err error) {
 
 	if err := Db().
 		Where("subj_uid = '' AND marker_name <> '' AND subj_src <> ?", entity.SrcAuto).
-		Where("marker_invalid = 0 AND marker_type = ?", entity.MarkerFace).
+		Where("marker_invalid = FALSE AND marker_type = ?", entity.MarkerFace).
 		Order("marker_name").
 		Find(&markers).Error; err != nil {
 		return affected, err

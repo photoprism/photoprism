@@ -275,7 +275,7 @@ func UpdateSubjectCovers(public bool) (err error) {
     	    JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
 			JOIN photos p ON ?
 			WHERE m.subj_uid <> '' AND m.subj_uid IS NOT NULL
-			  AND m.marker_invalid = 0 AND m.thumb IS NOT NULL AND m.thumb <> ''
+			  AND m.marker_invalid = FALSE AND m.thumb IS NOT NULL AND m.thumb <> ''
 			GROUP BY m.subj_uid, m.q
 			) b ON b.subj_uid = subjects.subj_uid
 		SET thumb = marker_thumb WHERE ?`,

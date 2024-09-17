@@ -77,7 +77,7 @@ func PhotoPreloadByUID(photoUID string) (photo entity.Photo, err error) {
 func MissingPhotos(limit int, offset int) (entities entity.Photos, err error) {
 	err = Db().
 		Select("photos.*").
-		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = 0 AND file_root = '/' AND deleted_at IS NULL)").
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_missing = FALSE AND file_root = '/' AND deleted_at IS NULL)").
 		Order("photos.id").
 		Limit(limit).Offset(offset).Find(&entities).Error
 
@@ -188,7 +188,7 @@ func FlagHiddenPhotos() (err error) {
 
 	// Find and flag hidden photos.
 	if err = Db().Table(entity.Photo{}.TableName()).
-		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1 AND file_missing = 0 AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
+		Where("id NOT IN (SELECT photo_id FROM files WHERE file_primary = TRUE AND file_missing = FALSE AND file_error = '' AND deleted_at IS NULL) AND photo_quality > -1").
 		Pluck("id", &hidden).Error; err != nil {
 		// Find query failed.
 		return err

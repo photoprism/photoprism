@@ -254,7 +254,7 @@ func (m *Face) MatchMarkers(faceIds []string) error {
 	var markers Markers
 
 	err := Db().
-		Where("marker_invalid = 0 AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
+		Where("marker_invalid = FALSE AND marker_type = ? AND face_id IN (?)", MarkerFace, faceIds).
 		Find(&markers).Error
 
 	if err != nil {
