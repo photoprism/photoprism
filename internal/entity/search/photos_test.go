@@ -4,10 +4,11 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity/sortby"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/entity"
-	"github.com/photoprism/photoprism/internal/entity/sortby"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
@@ -1865,5 +1866,260 @@ func TestPhotos(t *testing.T) {
 		t.Logf("results: %+v", photos)
 		assert.Equal(t, 1, len(photos))
 		assert.Equal(t, photos[0].PhotoTitle, "Neckarbrücke")
+	})
+	t.Run("SortByFileSize", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = ""
+		frm.Count = 50
+		frm.Offset = 0
+		frm.Order = sortby.Size
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+		assert.GreaterOrEqual(t, photos[0].FileSize, photos[3].FileSize)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.False(t, r.FileSidecar)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("SortBySimilarity", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = ""
+		frm.Count = 50
+		frm.Offset = 0
+		frm.Order = sortby.Similar
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("SearchNearPhotos", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = ""
+		frm.Count = 50
+		frm.Offset = 0
+		frm.Order = sortby.Newest
+		frm.Near = "ps6sg6be2lvl0yh0"
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+		assert.Equal(t, photos[0].PlaceCountry, photos[3].PlaceCountry)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+			assert.NotEmpty(t, r.PlaceID)
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("SearchNearPhotosInvalidUID", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = ""
+		frm.Count = 50
+		frm.Offset = 0
+		frm.Order = sortby.Newest
+		frm.Near = "pxxx"
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err == nil {
+			t.Fatal("error expected")
+		}
+
+		assert.Equal(t, len(photos), 0)
+	})
+	t.Run("SearchGif", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = "gif"
+		frm.Count = 50
+		frm.Offset = 0
+		frm.Order = sortby.Newest
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+			assert.Equal(t, r.PhotoType, "animated")
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("SearchGifs", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = "gifs"
+		frm.Count = 50
+		frm.Offset = 0
+		frm.Order = sortby.Newest
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+			assert.Equal(t, r.PhotoType, "animated")
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("SearchAnimated", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = "animated"
+		frm.Count = 50
+		frm.Offset = 0
+		frm.Order = sortby.Newest
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+			assert.Equal(t, r.PhotoType, "animated")
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
+	})
+	t.Run("SearchRaw", func(t *testing.T) {
+		var frm form.SearchPhotos
+
+		frm.Query = "raw"
+		frm.Count = 50
+		frm.Offset = 0
+		frm.Order = sortby.Newest
+
+		// Parse query string and filter.
+		if err := frm.ParseQueryString(); err != nil {
+			t.Fatal(err)
+		}
+
+		photos, _, err := Photos(frm)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.GreaterOrEqual(t, len(photos), 1)
+
+		for _, r := range photos {
+			assert.IsType(t, Photo{}, r)
+			assert.NotEmpty(t, r.ID)
+			assert.NotEmpty(t, r.CameraID)
+			assert.NotEmpty(t, r.LensID)
+			assert.Equal(t, r.PhotoType, "raw")
+
+			if fix, ok := entity.PhotoFixtures[r.PhotoName]; ok {
+				assert.Equal(t, fix.PhotoName, r.PhotoName)
+			}
+		}
 	})
 }
