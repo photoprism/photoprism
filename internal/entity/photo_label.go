@@ -11,10 +11,10 @@ type PhotoLabels []PhotoLabel
 type PhotoLabel struct {
 	PhotoID     uint   `gorm:"primaryKey;autoIncrement:false"`
 	LabelID     uint   `gorm:"primaryKey;autoIncrement:false"`
-	LabelSrc    string `gorm:"type:VARBINARY(8);"`
+	LabelSrc    string `gorm:"size:8;"`
 	Uncertainty int    `gorm:"type:SMALLINT"`
-	Photo       *Photo
-	Label       *Label
+	Photo       *Photo `gorm:"foreignKey:PhotoID;references:ID;" yaml:"-"`
+	Label       *Label `gorm:"foreignKey:LabelID;references:ID;"`
 }
 
 // TableName returns the entity table name.

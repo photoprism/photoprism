@@ -88,7 +88,7 @@ func MatchFaceMarkers() (affected int64, err error) {
 
 	for _, f := range faces {
 		if res := Db().Model(&entity.Marker{}).
-			Where("marker_invalid = 0").
+			Where("marker_invalid = FALSE").
 			Where("face_id = ?", f.ID).
 			Where("subj_src = ?", entity.SrcAuto).
 			Where("subj_uid <> ?", f.SubjUID).

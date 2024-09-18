@@ -14,13 +14,13 @@ const (
 
 // FileSync represents a one-to-many relation between File and Account for syncing with remote services.
 type FileSync struct {
-	RemoteName string `gorm:"primaryKey;autoIncrement:false;type:VARBINARY(255)"`
+	RemoteName string `gorm:"size:255;primaryKey;autoIncrement:false"`
 	ServiceID  uint   `gorm:"primaryKey;autoIncrement:false"`
 	FileID     uint   `gorm:"index;"`
 	RemoteDate time.Time
 	RemoteSize int64
-	Status     string `gorm:"type:VARBINARY(16);"`
-	Error      string `gorm:"type:VARBINARY(512);"`
+	Status     string `gorm:"size:16;"`
+	Error      string `gorm:"size:512;"`
 	Errors     int
 	File       *File    `gorm:"foreignKey:FileID"`
 	Account    *Service `gorm:"foreignKey:ServiceID"`

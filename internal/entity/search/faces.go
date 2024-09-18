@@ -91,7 +91,7 @@ func Faces(f form.SearchFaces) (results FaceResults, err error) {
 
 	// Show hidden faces?
 	if !txt.Yes(f.Hidden) {
-		s = s.Where(fmt.Sprintf("%s.face_hidden = 0", facesTable))
+		s = s.Where(fmt.Sprintf("%s.face_hidden = FALSE", facesTable))
 	}
 
 	// Perform query.

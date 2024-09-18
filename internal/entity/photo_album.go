@@ -8,15 +8,13 @@ type PhotoAlbums []PhotoAlbum
 
 // PhotoAlbum represents the many_to_many relation between Photo and Album
 type PhotoAlbum struct {
-	PhotoUID  string    `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false" json:"PhotoUID" yaml:"UID"`
-	AlbumUID  string    `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false;index" json:"AlbumUID" yaml:"-"`
+	PhotoUID  string    `gorm:"size:42;primaryKey;pk_pa" json:"PhotoUID" yaml:"UID"`
+	AlbumUID  string    `gorm:"size:42;primaryKey;pk_pa" json:"AlbumUID" yaml:"-"`
 	Order     int       `json:"Order" yaml:"Order,omitempty"`
 	Hidden    bool      `json:"Hidden" yaml:"Hidden,omitempty"`
 	Missing   bool      `json:"Missing" yaml:"Missing,omitempty"`
 	CreatedAt time.Time `json:"CreatedAt" yaml:"CreatedAt,omitempty"`
 	UpdatedAt time.Time `json:"UpdatedAt" yaml:"-"`
-	Photo     *Photo    `gorm:"foreignKey:PhotoUID;references:PhotoUID;" yaml:"-"`
-	Album     *Album    `gorm:"foreignKey:AlbumUID;references:AlbumUID;" yaml:"-"`
 }
 
 // TableName returns the entity table name.

@@ -445,12 +445,12 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 
 	// Find panoramic pictures only.
 	if f.Panorama {
-		s = s.Where("photos.photo_panorama = 1")
+		s = s.Where("photos.photo_panorama = TRUE")
 	}
 
 	// Find portrait/landscape/square pictures only.
 	if f.Portrait {
-		s = s.Where("files.file_portrait = 1")
+		s = s.Where("files.file_portrait = TRUE")
 	} else if f.Landscape {
 		s = s.Where("files.file_aspect_ratio > 1.25")
 	} else if f.Square {
@@ -473,16 +473,16 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 
 	// Filter by favorite flag.
 	if txt.No(f.Favorite) {
-		s = s.Where("photos.photo_favorite = 0")
+		s = s.Where("photos.photo_favorite = FALSE")
 	} else if txt.NotEmpty(f.Favorite) {
-		s = s.Where("photos.photo_favorite = 1")
+		s = s.Where("photos.photo_favorite = TRUE")
 	}
 
 	// Filter by scan flag.
 	if txt.No(f.Scan) {
-		s = s.Where("photos.photo_scan = 0")
+		s = s.Where("photos.photo_scan = FALSE")
 	} else if txt.NotEmpty(f.Scan) {
-		s = s.Where("photos.photo_scan = 1")
+		s = s.Where("photos.photo_scan = TRUE")
 	}
 
 	// Filter by location country.
@@ -565,9 +565,9 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 		s = s.Where("photos.deleted_at IS NULL")
 
 		if f.Private {
-			s = s.Where("photos.photo_private = 1")
+			s = s.Where("photos.photo_private = TRUE")
 		} else if f.Public {
-			s = s.Where("photos.photo_private = 0")
+			s = s.Where("photos.photo_private = FALSE")
 		}
 
 		if f.Review {

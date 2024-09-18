@@ -72,7 +72,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 			return file, err
 		} else if len(photos) > 0 {
 			for _, photo := range photos {
-				if err := Db().Where("photo_uid = ? AND file_primary = 1", photo.PhotoUID).First(&file).Error; err != nil {
+				if err := Db().Where("photo_uid = ? AND file_primary = TRUE", photo.PhotoUID).First(&file).Error; err != nil {
 					return file, err
 				} else {
 					return file, nil
@@ -102,7 +102,7 @@ func AlbumCoverByUID(uid string, public bool) (file entity.File, err error) {
 
 	// Public pictures only?
 	if public {
-		stmt = stmt.Where("photos.photo_private = 0")
+		stmt = stmt.Where("photos.photo_private = FALSE")
 	}
 
 	// Find first picture.
@@ -140,7 +140,7 @@ func UpdateMissingAlbumEntries() error {
 
 	switch DbDialect() {
 	default:
-		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = 1
+		return UnscopedDb().Exec(`UPDATE photos_albums SET missing = TRUE
             WHERE photo_uid IN (SELECT photo_uid FROM photos WHERE deleted_at IS NOT NULL OR photo_quality < 0)
             OR photo_uid IN (SELECT pa.photo_uid FROM photos_albums pa LEFT JOIN photos p ON pa.photo_uid = p.photo_uid WHERE p.photo_uid IS NULL)`).Error
 	}

@@ -139,7 +139,7 @@ func FixPrimaries() error {
 
 	// Remove primary file flag from broken or missing files.
 	if err := UnscopedDb().Table(entity.File{}.TableName()).
-		Where("(file_error <> '' OR file_missing = 1) AND file_primary <> 0").
+		Where("(file_error <> '' OR file_missing = TRUE) AND file_primary <> 0").
 		UpdateColumn("file_primary", 0).Error; err != nil {
 		return err
 	}
@@ -148,7 +148,7 @@ func FixPrimaries() error {
 	if err := UnscopedDb().
 		Raw(`SELECT * FROM photos 
 			WHERE deleted_at IS NULL 
-			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = 1)`).
+			AND id NOT IN (SELECT photo_id FROM files WHERE file_primary = TRUE)`).
 		Find(&photos).Error; err != nil {
 		return err
 	}

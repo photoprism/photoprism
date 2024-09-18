@@ -7,7 +7,7 @@ import (
 
 // AccountUploads a list of files for uploading to a remote account.
 func AccountUploads(a entity.Service, limit int) (results entity.Files, err error) {
-	s := Db().Where("files.file_missing = 0").
+	s := Db().Where("files.file_missing = FALSE").
 		Where("files.id NOT IN (SELECT file_id FROM files_sync WHERE file_id > 0 AND service_id = ?)", a.ID)
 
 	if !a.SyncRaw {

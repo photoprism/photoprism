@@ -10,11 +10,11 @@ func Accounts(f form.SearchServices) (result entity.Services, err error) {
 	s := Db().Where(&entity.Service{})
 
 	if f.Share {
-		s = s.Where("acc_share = 1")
+		s = s.Where("acc_share = TRUE")
 	}
 
 	if f.Sync {
-		s = s.Where("acc_sync = 1")
+		s = s.Where("acc_sync = TRUE")
 	}
 
 	if f.Status != "" {

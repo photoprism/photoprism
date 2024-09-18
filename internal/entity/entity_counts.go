@@ -30,7 +30,7 @@ func LabelCounts() LabelPhotoCounts {
 		JOIN photos ph ON pl.photo_id = ph.id
 		WHERE pl.uncertainty < 100
 		AND ph.photo_quality > -1
-		AND ph.photo_private = 0
+		AND ph.photo_private = FALSE
 		AND ph.deleted_at IS NULL GROUP BY l.id
 		UNION ALL
 		SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l
@@ -39,7 +39,7 @@ func LabelCounts() LabelPhotoCounts {
 		JOIN photos ph ON pl.photo_id = ph.id
 		WHERE pl.uncertainty < 100
 		AND ph.photo_quality > -1
-		AND ph.photo_private = 0
+		AND ph.photo_private = FALSE
 		AND ph.deleted_at IS NULL GROUP BY l.id) counts GROUP BY label_id
 		`).Scan(&result).Error; err != nil {
 		log.Errorf("label-count: %s", err.Error())
@@ -89,7 +89,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 	// see https://github.com/photoprism/photoprism/issues/4238
 	// and https://github.com/photoprism/photoprism/issues/2570#issuecomment-1231690056
 	if public {
-		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0")
+		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = FALSE")
 	} else {
 		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL")
 	}
@@ -97,7 +97,7 @@ func UpdateSubjectCounts(public bool) (err error) {
 	condition := gorm.Expr("subj_type = ?", SubjPerson)
 
 	switch DbDialect() {
-	case MySQL:
+	case MySQL, Postgres:
 		res = Db().Exec(`UPDATE ? LEFT JOIN (
 		SELECT m.subj_uid, COUNT(DISTINCT f.id) AS subj_files, COUNT(DISTINCT f.photo_id) AS subj_photos
 			FROM files f
@@ -147,7 +147,7 @@ func UpdateLabelCounts() (err error) {
 
 	start := time.Now()
 	var res *gorm.DB
-	if IsDialect(MySQL) {
+	if IsDialect(MySQL) || IsDialect(Postgres) {
 		res = Db().Exec(`UPDATE labels LEFT JOIN (
 		SELECT p2.label_id, COUNT(DISTINCT photo_id) AS label_photos FROM (
 			SELECT pl.label_id as label_id, p.id AS photo_id FROM photos p
@@ -171,7 +171,7 @@ func UpdateLabelCounts() (err error) {
 					JOIN photos ph ON pl.photo_id = ph.id
 					WHERE pl.uncertainty < 100
 					AND ph.photo_quality > -1
-					AND ph.photo_private = 0
+					AND ph.photo_private = FALSE
 					AND ph.deleted_at IS NULL GROUP BY l.id
 					UNION ALL
 					SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l
@@ -180,7 +180,7 @@ func UpdateLabelCounts() (err error) {
 					JOIN photos ph ON pl.photo_id = ph.id
 					WHERE pl.uncertainty < 100
 					AND ph.photo_quality > -1
-					AND ph.photo_private = 0
+					AND ph.photo_private = FALSE
 					AND ph.deleted_at IS NULL GROUP BY l.id) counts GROUP BY label_id) label_counts WHERE label_id = labels.id)`))
 	} else {
 		return fmt.Errorf("sql: unsupported dialect %s", DbDialect())

@@ -46,12 +46,12 @@ type Users []User
 // User represents a person that may optionally log in as user.
 type User struct {
 	ID            int           `gorm:"primaryKey;" json:"ID" yaml:"-"`
-	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
-	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;uniqueIndex;" json:"UID" yaml:"UID"`
-	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
-	AuthMethod    string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
-	AuthIssuer    string        `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
-	AuthID        string        `gorm:"type:VARBINARY(255);index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	UUID          string        `gorm:"size:64;column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
+	UserUID       string        `gorm:"size:42;column:user_uid;uniqueIndex;" json:"UID" yaml:"UID"`
+	AuthProvider  string        `gorm:"size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod    string        `gorm:"size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthIssuer    string        `gorm:"size:255;default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
+	AuthID        string        `gorm:"size:255;index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
 	UserName      string        `gorm:"size:200;index;" json:"Name" yaml:"Name,omitempty"`
 	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
 	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
@@ -63,24 +63,24 @@ type User struct {
 	LoginAt       *time.Time    `json:"LoginAt" yaml:"LoginAt,omitempty"`
 	ExpiresAt     *time.Time    `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
 	WebDAV        bool          `gorm:"column:webdav;" json:"WebDAV" yaml:"WebDAV,omitempty"`
-	BasePath      string        `gorm:"type:VARBINARY(1024);" json:"BasePath" yaml:"BasePath,omitempty"`
-	UploadPath    string        `gorm:"type:VARBINARY(1024);" json:"UploadPath" yaml:"UploadPath,omitempty"`
+	BasePath      string        `gorm:"size:1024;" json:"BasePath" yaml:"BasePath,omitempty"`
+	UploadPath    string        `gorm:"size:1024;" json:"UploadPath" yaml:"UploadPath,omitempty"`
 	CanInvite     bool          `json:"CanInvite" yaml:"CanInvite,omitempty"`
-	InviteToken   string        `gorm:"type:VARBINARY(64);index;" json:"-" yaml:"-"`
+	InviteToken   string        `gorm:"size:64;index;" json:"-" yaml:"-"`
 	InvitedBy     string        `gorm:"size:64;" json:"-" yaml:"-"`
-	VerifyToken   string        `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
+	VerifyToken   string        `gorm:"size:64;" json:"-" yaml:"-"`
 	VerifiedAt    *time.Time    `json:"VerifiedAt,omitempty" yaml:"VerifiedAt,omitempty"`
 	ConsentAt     *time.Time    `json:"ConsentAt,omitempty" yaml:"ConsentAt,omitempty"`
 	BornAt        *time.Time    `sql:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
-	UserDetails   *UserDetails  `gorm:"foreignkey:UserUID;" json:"Details,omitempty" yaml:"Details,omitempty"`
-	UserSettings  *UserSettings `gorm:"foreignkey:UserUID;" json:"Settings,omitempty" yaml:"Settings,omitempty"`
-	UserShares    UserShares    `gorm:"-" json:"Shares,omitempty" yaml:"Shares,omitempty"`
-	ResetToken    string        `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
-	PreviewToken  string        `gorm:"type:VARBINARY(64);column:preview_token;" json:"-" yaml:"-"`
-	DownloadToken string        `gorm:"type:VARBINARY(64);column:download_token;" json:"-" yaml:"-"`
-	Thumb         string        `gorm:"type:VARBINARY(128);index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc      string        `gorm:"type:VARBINARY(8);default:'';" json:"ThumbSrc" yaml:"ThumbSrc,omitempty"`
-	RefID         string        `gorm:"type:VARBINARY(16);" json:"-" yaml:"-"`
+	UserDetails   *UserDetails  `gorm:"foreignKey:UserUID;references:UserUID;constraint:OnDelete:CASCADE" json:"Details,omitempty" yaml:"Details,omitempty"`
+	UserSettings  *UserSettings `gorm:"foreignKey:UserUID;references:UserUID;constraint:OnDelete:CASCADE" json:"Settings,omitempty" yaml:"Settings,omitempty"`
+	UserShares    []UserShare   `gorm:"foreignKey:UserUID;references:UserUID" json:"Shares,omitempty" yaml:"Shares,omitempty"`
+	ResetToken    string        `gorm:"size:64;" json:"-" yaml:"-"`
+	PreviewToken  string        `gorm:"size:64;column:preview_token;" json:"-" yaml:"-"`
+	DownloadToken string        `gorm:"size:64;column:download_token;" json:"-" yaml:"-"`
+	Thumb         string        `gorm:"size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc      string        `gorm:"size:8;default:'';" json:"ThumbSrc" yaml:"ThumbSrc,omitempty"`
+	RefID         string        `gorm:"size:16;" json:"-" yaml:"-"`
 	CreatedAt     time.Time     `json:"CreatedAt" yaml:"-"`
 	UpdatedAt     time.Time     `json:"UpdatedAt" yaml:"-"`
 	DeletedAt     *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
@@ -630,7 +630,7 @@ func (m *User) SetAuthID(id, issuer string) *User {
 	// Make sure other users do not use the same identifier.
 	if m.HasUID() && m.AuthProvider != "" {
 		if err := UnscopedDb().Model(&User{}).
-			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = 0", m.UserUID, m.AuthProvider, m.AuthID).
+			Where("user_uid <> ? AND auth_provider = ? AND auth_id = ? AND super_admin = FALSE", m.UserUID, m.AuthProvider, m.AuthID).
 			Updates(map[string]interface{}{"auth_id": "", "auth_provider": authn.ProviderNone}).Error; err != nil {
 			event.AuditErr([]string{"user %s", "failed to resolve auth id conflicts", "%s"}, m.RefID, err)
 		}
@@ -1199,7 +1199,7 @@ func (m *User) NoShares() bool {
 		return true
 	}
 
-	return m.UserShares.Empty()
+	return UserShares(m.UserShares).Empty()
 }
 
 // HasShares checks if the user has any shares.
@@ -1214,7 +1214,7 @@ func (m *User) HasShare(uid string) bool {
 	}
 
 	// Check if the share list contains the specified UID.
-	return m.UserShares.Contains(uid)
+	return UserShares(m.UserShares).Contains(uid)
 }
 
 // SharedUIDs returns shared entity UIDs.
@@ -1223,7 +1223,7 @@ func (m *User) SharedUIDs() UIDs {
 		m.RefreshShares()
 	}
 
-	return m.UserShares.UIDs()
+	return UserShares(m.UserShares).UIDs()
 }
 
 // RedeemToken updates shared entity UIDs using the specified token.

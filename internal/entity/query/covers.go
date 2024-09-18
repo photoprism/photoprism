@@ -26,7 +26,7 @@ func UpdateAlbumDefaultCovers() (err error) {
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto)
 
 	switch DbDialect() {
-	case MySQL:
+	case MySQL, Postgres:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
     	SELECT p2.album_uid, f.file_hash FROM files f, (
         	SELECT pa.album_uid, max(p.id) AS photo_id FROM photos p
@@ -74,7 +74,7 @@ func UpdateAlbumFolderCovers() (err error) {
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumFolder, entity.SrcAuto)
 
 	switch DbDialect() {
-	case MySQL:
+	case MySQL, Postgres:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_path, f.file_hash FROM files f, (
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
@@ -122,7 +122,7 @@ func UpdateAlbumMonthCovers() (err error) {
 	condition := gorm.Expr("album_type = ? AND thumb_src = ?", entity.AlbumMonth, entity.SrcAuto)
 
 	switch DbDialect() {
-	case MySQL:
+	case MySQL, Postgres:
 		res = Db().Exec(`UPDATE albums LEFT JOIN (
 		SELECT p2.photo_year, p2.photo_month, f.file_hash FROM files f, (
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
@@ -190,7 +190,7 @@ func UpdateLabelCovers() (err error) {
 	condition := gorm.Expr("thumb_src = ?", entity.SrcAuto)
 
 	switch DbDialect() {
-	case MySQL:
+	case MySQL, Postgres:
 		res = Db().Exec(`UPDATE labels LEFT JOIN (
 		SELECT p2.label_id, f.file_hash FROM files f, (
 			SELECT pl.label_id as label_id, max(p.id) AS photo_id FROM photos p
@@ -259,7 +259,7 @@ func UpdateSubjectCovers(public bool) (err error) {
 	// see https://github.com/photoprism/photoprism/issues/4238
 	// and https://github.com/photoprism/photoprism/issues/2570#issuecomment-1231690056
 	if public {
-		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = 0")
+		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL AND p.photo_private = FALSE")
 	} else {
 		photosJoin = gorm.Expr("p.id = f.photo_id AND p.deleted_at IS NULL")
 	}
@@ -268,7 +268,7 @@ func UpdateSubjectCovers(public bool) (err error) {
 
 	// Compose SQL update query.
 	switch DbDialect() {
-	case MySQL:
+	case MySQL, Postgres:
 		res = Db().Exec(`UPDATE subjects LEFT JOIN (
     	SELECT m.subj_uid, m.q, MAX(m.thumb) AS marker_thumb
     		FROM markers m

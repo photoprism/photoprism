@@ -153,7 +153,7 @@ func SelectedFiles(f form.Selection, o FileSelection) (results entity.Files, err
 
 	// Previews files only?
 	if o.Primary {
-		s = s.Where("files.file_primary = 1")
+		s = s.Where("files.file_primary = TRUE")
 	}
 
 	// Files in originals only?

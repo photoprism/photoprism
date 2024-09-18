@@ -176,7 +176,7 @@ func UserAlbums(f form.SearchAlbums, sess *entity.Session) (results AlbumResults
 
 	// Favorites only?
 	if f.Favorite {
-		s = s.Where("albums.album_favorite = 1")
+		s = s.Where("albums.album_favorite = TRUE")
 	}
 
 	// Filter by year?

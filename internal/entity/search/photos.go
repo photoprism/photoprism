@@ -540,12 +540,12 @@ func searchPhotos(f form.SearchPhotos, sess *entity.Session, resultCols string) 
 
 	// Find panoramic pictures only.
 	if f.Panorama {
-		s = s.Where("photos.photo_panorama = 1")
+		s = s.Where("photos.photo_panorama = TRUE")
 	}
 
 	// Find portrait/landscape/square pictures only.
 	if f.Portrait {
-		s = s.Where("files.file_portrait = 1")
+		s = s.Where("files.file_portrait = TRUE")
 	} else if f.Landscape {
 		s = s.Where("files.file_aspect_ratio > 1.25")
 	} else if f.Square {

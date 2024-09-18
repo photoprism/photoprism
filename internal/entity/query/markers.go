@@ -51,7 +51,7 @@ func Markers(limit, offset int, markerType string, embeddings, subjects bool, ma
 func UnmatchedFaceMarkers(limit, offset int, matchedBefore *time.Time) (result entity.Markers, err error) {
 	db := Db().
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where("embeddings_json <> ''")
 
 	if matchedBefore == nil {
@@ -84,7 +84,7 @@ func Embeddings(single, unclustered bool, size, score int) (result face.Embeddin
 	stmt := Db().
 		Model(&entity.Marker{}).
 		Where("marker_type = ?", entity.MarkerFace).
-		Where("marker_invalid = 0").
+		Where("marker_invalid = FALSE").
 		Where("embeddings_json <> ''").
 		Order("marker_uid")
 

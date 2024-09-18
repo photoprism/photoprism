@@ -116,7 +116,8 @@ func gen_migrations(name string) {
 
 func main() {
 	gen_migrations("MySQL")
-	gen_migrations("SQLite3")
+	gen_migrations("SQLite")
+	gen_migrations("Postgres")
 }
 
 var migrationsTemplate = template.Must(template.New("").Parse(`
