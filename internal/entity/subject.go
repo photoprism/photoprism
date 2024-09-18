@@ -58,13 +58,13 @@ func (m *Subject) BeforeCreate(scope *gorm.DB) error {
 }
 
 // AfterSave is a hook that updates the name cache after saving.
-func (m *Subject) AfterSave() (err error) {
+func (m *Subject) AfterSave(scope *gorm.DB) (err error) {
 	SubjNames.Set(m.SubjUID, m.SubjName)
 	return
 }
 
 // AfterFind is a hook that updates the name cache after querying.
-func (m *Subject) AfterFind() (err error) {
+func (m *Subject) AfterFind(scope *gorm.DB) (err error) {
 	SubjNames.Set(m.SubjUID, m.SubjName)
 	return
 }
