@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-13 13:26+0000\n"
-"Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
+"PO-Revision-Date: 2024-09-16 13:58+0000\n"
+"Last-Translator: Daolong <ahlongxp@qq.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hans/>\n"
 "Language: zh\n"
 "MIME-Version: 1.0\n"
@@ -1530,11 +1530,11 @@ msgstr "列表"
 #: src/component/photo/cards.vue:465 src/component/photo/list.vue:177
 #: src/component/photo/mosaic.vue:192 src/options/options.js:362
 msgid "Live"
-msgstr "现场"
+msgstr "实况"
 
 #: src/component/navigation.vue:209
 msgid "Live Photos"
-msgstr "现场照片"
+msgstr "实况照片"
 
 #: src/options/admin.js:35 src/options/auth.js:22 src/options/auth.js:27
 msgid "Local"

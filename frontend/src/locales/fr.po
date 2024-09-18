@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2024-09-15 15:27+0000\n"
+"PO-Revision-Date: 2024-09-16 13:58+0000\n"
 "Last-Translator: jean-louis67 <jean-louis.frenkel@orange.fr>\n"
 "Language-Team: French <https://translate.photoprism.app/projects/photoprism/frontend/fr/>\n"
 "Language: fr\n"
@@ -1729,7 +1729,7 @@ msgstr "Nouveau mot de passe"
 #: src/component/photo/toolbar.vue:120 src/dialog/album/edit.vue:21
 #: src/page/albums.vue:91
 msgid "Newest First"
-msgstr "Le plus récent d'abord"
+msgstr "La plus récente d'abord"
 
 #: src/dialog/people/merge.vue:15 src/dialog/photo/archive.vue:15
 #: src/dialog/photo/edit/info.vue:352 src/dialog/photo/edit/info.vue:373
@@ -1764,7 +1764,7 @@ msgstr "Aucune image trouvée"
 #: src/component/photo/cards.vue:5 src/component/photo/cards.vue:3
 #: src/component/photo/list.vue:5 src/component/photo/mosaic.vue:5
 msgid "No recently edited pictures"
-msgstr "Aucune image récemment éditée"
+msgstr "Aucune image modifiée récemment"
 
 #: src/dialog/share/upload.vue:64
 msgid "No servers configured."
@@ -1838,7 +1838,7 @@ msgstr "OIDC"
 #: src/component/photo/toolbar.vue:121 src/dialog/album/edit.vue:22
 #: src/page/albums.vue:92
 msgid "Oldest First"
-msgstr "Le plus ancien d'abord"
+msgstr "La plus ancienne d'abord"
 
 #: src/dialog/webdav.vue:25
 msgid "On Windows, enter the following resource in the connection dialog:"
@@ -2146,15 +2146,15 @@ msgstr "Accès en lecture seule"
 #: src/component/photo/toolbar.vue:122 src/dialog/album/edit.vue:23
 #: src/page/albums.vue:93
 msgid "Recently Added"
-msgstr "Récemment ajoutés"
+msgstr "Ajoutées récemment"
 
 #: src/component/photo/toolbar.vue:99
 msgid "Recently Archived"
-msgstr "Archivé récemment"
+msgstr "Archivées récemment"
 
 #: src/component/photo/toolbar.vue:123 src/page/albums.vue:94
 msgid "Recently Edited"
-msgstr "Récemment modifiés"
+msgstr "Modifiées récemment"
 
 #: src/dialog/photo/edit/people.vue:9 src/page/people/new.vue:33
 #: src/page/people/recognized.vue:47
