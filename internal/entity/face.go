@@ -20,7 +20,7 @@ var UpdateFaces = atomic.Bool{}
 
 // Face represents the face of a Subject.
 type Face struct {
-	ID              string          `gorm:"type:VARBINARY(64);primary_key;auto_increment:false;" json:"ID" yaml:"ID"`
+	ID              string          `gorm:"type:VARBINARY(64);primaryKey;autoIncrement:false;" json:"ID" yaml:"ID"`
 	FaceSrc         string          `gorm:"type:VARBINARY(8);" json:"Src" yaml:"Src,omitempty"`
 	FaceKind        int             `json:"Kind" yaml:"Kind,omitempty"`
 	FaceHidden      bool            `json:"Hidden" yaml:"Hidden,omitempty"`

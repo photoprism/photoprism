@@ -11,9 +11,9 @@ type Users []User
 
 // User represents a person that may optionally log in as user.
 type User struct {
-	ID             int        `gorm:"primary_key" json:"-" yaml:"-"`
+	ID             int        `gorm:"primaryKey;" json:"-" yaml:"-"`
 	AddressID      int        `gorm:"default:1" json:"-" yaml:"-"`
-	UserUID        string     `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	UserUID        string     `gorm:"type:VARBINARY(42);uniqueIndex;" json:"UID" yaml:"UID"`
 	MotherUID      string     `gorm:"type:VARBINARY(42);" json:"MotherUID" yaml:"MotherUID,omitempty"`
 	FatherUID      string     `gorm:"type:VARBINARY(42);" json:"FatherUID" yaml:"FatherUID,omitempty"`
 	GlobalUID      string     `gorm:"type:VARBINARY(42);index;" json:"GlobalUID" yaml:"GlobalUID,omitempty"`

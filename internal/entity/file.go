@@ -39,7 +39,7 @@ var filePrimaryMutex = sync.Mutex{}
 
 // File represents an image or sidecar file that belongs to a photo.
 type File struct {
-	ID                 uint          `gorm:"primary_key" json:"-" yaml:"-"`
+	ID                 uint          `gorm:"primaryKey;" json:"-" yaml:"-"`
 	Photo              *Photo        `json:"-" yaml:"-"`
 	PhotoID            uint          `gorm:"index:idx_files_photo_id;" json:"-" yaml:"-"`
 	PhotoUID           string        `gorm:"type:VARBINARY(42);index;" json:"PhotoUID" yaml:"PhotoUID"`
@@ -48,9 +48,9 @@ type File struct {
 	MediaID            *string       `gorm:"type:VARBINARY(32);" json:"MediaID" yaml:"MediaID"`
 	MediaUTC           int64         `gorm:"column:media_utc;index;"  json:"MediaUTC" yaml:"MediaUTC,omitempty"`
 	InstanceID         string        `gorm:"type:VARBINARY(64);index;" json:"InstanceID,omitempty" yaml:"InstanceID,omitempty"`
-	FileUID            string        `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
-	FileName           string        `gorm:"type:VARBINARY(1024);unique_index:idx_files_name_root;" json:"Name" yaml:"Name"`
-	FileRoot           string        `gorm:"type:VARBINARY(16);default:'/';unique_index:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
+	FileUID            string        `gorm:"type:VARBINARY(42);uniqueIndex;" json:"UID" yaml:"UID"`
+	FileName           string        `gorm:"type:VARBINARY(1024);uniqueIndex:idx_files_name_root;" json:"Name" yaml:"Name"`
+	FileRoot           string        `gorm:"type:VARBINARY(16);default:'/';uniqueIndex:idx_files_name_root;" json:"Root" yaml:"Root,omitempty"`
 	OriginalName       string        `gorm:"type:VARBINARY(755);" json:"OriginalName" yaml:"OriginalName,omitempty"`
 	FileHash           string        `gorm:"type:VARBINARY(128);index" json:"Hash" yaml:"Hash,omitempty"`
 	FileSize           int64         `json:"Size" yaml:"Size,omitempty"`

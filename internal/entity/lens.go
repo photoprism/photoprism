@@ -17,8 +17,8 @@ type Lenses []Lens
 
 // Lens represents camera lens (as extracted from UpdateExif metadata)
 type Lens struct {
-	ID              uint       `gorm:"primary_key" json:"ID" yaml:"ID"`
-	LensSlug        string     `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"Slug,omitempty"`
+	ID              uint       `gorm:"primaryKey;" json:"ID" yaml:"ID"`
+	LensSlug        string     `gorm:"type:VARBINARY(160);uniqueIndex;" json:"Slug" yaml:"Slug,omitempty"`
 	LensName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
 	LensMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
 	LensModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`

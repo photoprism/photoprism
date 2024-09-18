@@ -32,8 +32,8 @@ type Albums []Album
 
 // Album represents a photo album
 type Album struct {
-	ID               uint        `gorm:"primary_key" json:"ID" yaml:"-"`
-	AlbumUID         string      `gorm:"type:VARBINARY(42);unique_index;" json:"UID" yaml:"UID"`
+	ID               uint        `gorm:"primaryKey;" json:"ID" yaml:"-"`
+	AlbumUID         string      `gorm:"type:VARBINARY(42);uniqueIndex;" json:"UID" yaml:"UID"`
 	ParentUID        string      `gorm:"type:VARBINARY(42);default:'';" json:"ParentUID,omitempty" yaml:"ParentUID,omitempty"`
 	AlbumSlug        string      `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug"`
 	AlbumPath        string      `gorm:"type:VARCHAR(1024);index;" json:"Path,omitempty" yaml:"Path,omitempty"`
@@ -61,7 +61,7 @@ type Album struct {
 	UpdatedAt        time.Time   `json:"UpdatedAt" yaml:"UpdatedAt,omitempty"`
 	PublishedAt      *time.Time  `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
 	DeletedAt        *time.Time  `sql:"index" json:"DeletedAt" yaml:"DeletedAt,omitempty"`
-	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID;association_foreignkey:AlbumUID;" json:"-" yaml:"Photos,omitempty"`
+	Photos           PhotoAlbums `gorm:"foreignkey:AlbumUID" json:"-" yaml:"Photos,omitempty"`
 }
 
 // AfterUpdate flushes the album cache.

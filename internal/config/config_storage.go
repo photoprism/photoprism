@@ -648,7 +648,7 @@ func (c *Config) MariadbDumpBin() string {
 
 // SqliteBin returns the sqlite executable file name.
 func (c *Config) SqliteBin() string {
-	return findBin("", "sqlite3")
+	return findBin("", "sqlite")
 }
 
 // OriginalsAlbumsPath returns the optional album YAML file path inside originals.

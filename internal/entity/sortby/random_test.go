@@ -20,8 +20,8 @@ func TestRandomExpr(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	sqlite3 := sqlite.Open(dumpName)
+	sqlite := sqlite.Open(dumpName)
 
 	assert.Equal(t, gorm.Expr("RAND()"), RandomExpr(mysql))
-	assert.Equal(t, gorm.Expr("RANDOM()"), RandomExpr(sqlite3))
+	assert.Equal(t, gorm.Expr("RANDOM()"), RandomExpr(sqlite))
 }

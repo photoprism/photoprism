@@ -2,7 +2,33 @@ package entity
 
 import (
 	"fmt"
+	"reflect"
 )
+
+// Checks if the primary key is populated
+func NewRecord(m interface{}) (result bool, err error) {
+	tx := UnscopedDb()
+	tx.Statement.Dest = m
+
+	reflectValue := reflect.Indirect(reflect.ValueOf(m))
+	for reflectValue.Kind() == reflect.Ptr || reflectValue.Kind() == reflect.Interface {
+		reflectValue = reflect.Indirect(reflectValue)
+	}
+
+	switch reflectValue.Kind() {
+	case reflect.Struct:
+		if err := tx.Statement.Parse(m); err == nil && tx.Statement.Schema != nil {
+			for _, pf := range tx.Statement.Schema.PrimaryFields {
+				if _, isZero := pf.ValueOf(tx.Statement.Context, reflectValue); isZero {
+					return true, nil
+				}
+			}
+		}
+		return false, nil
+	default:
+		return true, fmt.Errorf("interface %s not recognised", reflectValue.Kind().String())
+	}
+}
 
 // Update updates the values of an existing database record.
 func Update(m interface{}, keyNames ...string) (err error) {
@@ -10,11 +36,14 @@ func Update(m interface{}, keyNames ...string) (err error) {
 	// soft-deleted database records can also be updated.
 	db := UnscopedDb()
 
-	// We now let this fallthrough and fail in the .Updates() call (no NewRecord() anymore)
 	// Return if the record has not been created yet.
-	// if db.NewRecord(m) {
-	// 	return fmt.Errorf("new record")
-	// }
+	if newrec, err := NewRecord(m); newrec == true || err != nil {
+		if err != nil {
+			return err
+		} else {
+			return fmt.Errorf("new record")
+		}
+	}
 
 	// Extract interface slice with all values including zero.
 	values, keys, err := ModelValues(m, keyNames...)

@@ -16,9 +16,9 @@ var versionMutex = sync.Mutex{}
 
 // Version represents the application version.
 type Version struct {
-	ID         uint       `gorm:"primary_key" yaml:"-"`
-	Version    string     `gorm:"size:255;unique_index:idx_version_edition;" json:"Version" yaml:"Version,omitempty"`
-	Edition    string     `gorm:"size:255;unique_index:idx_version_edition;" json:"Edition" yaml:"Edition,omitempty"`
+	ID         uint       `gorm:"primaryKey;" yaml:"-"`
+	Version    string     `gorm:"size:255;uniqueIndex:idx_version_edition;" json:"Version" yaml:"Version,omitempty"`
+	Edition    string     `gorm:"size:255;uniqueIndex:idx_version_edition;" json:"Edition" yaml:"Edition,omitempty"`
 	Error      string     `gorm:"size:255;" json:"Error" yaml:"Error,omitempty"`
 	CreatedAt  time.Time  `yaml:"CreatedAt,omitempty"`
 	UpdatedAt  time.Time  `yaml:"UpdatedAt,omitempty"`

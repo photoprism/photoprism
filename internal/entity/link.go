@@ -22,10 +22,10 @@ type Links []Link
 
 // Link represents a link to share content.
 type Link struct {
-	LinkUID     string    `gorm:"type:VARBINARY(42);primary_key;" json:"UID,omitempty" yaml:"UID,omitempty"`
-	ShareUID    string    `gorm:"type:VARBINARY(42);unique_index:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
+	LinkUID     string    `gorm:"type:VARBINARY(42);primaryKey;" json:"UID,omitempty" yaml:"UID,omitempty"`
+	ShareUID    string    `gorm:"type:VARBINARY(42);uniqueIndex:idx_links_uid_token;" json:"ShareUID" yaml:"ShareUID"`
 	ShareSlug   string    `gorm:"type:VARBINARY(160);index;" json:"Slug" yaml:"Slug,omitempty"`
-	LinkToken   string    `gorm:"type:VARBINARY(160);unique_index:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
+	LinkToken   string    `gorm:"type:VARBINARY(160);uniqueIndex:idx_links_uid_token;" json:"Token" yaml:"Token,omitempty"`
 	LinkExpires int       `json:"Expires" yaml:"Expires,omitempty"`
 	LinkViews   uint      `json:"Views" yaml:"-"`
 	MaxViews    uint      `json:"MaxViews" yaml:"-"`

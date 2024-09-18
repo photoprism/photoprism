@@ -45,9 +45,9 @@ type Users []User
 
 // User represents a person that may optionally log in as user.
 type User struct {
-	ID            int           `gorm:"primary_key" json:"ID" yaml:"-"`
+	ID            int           `gorm:"primaryKey;" json:"ID" yaml:"-"`
 	UUID          string        `gorm:"type:VARBINARY(64);column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
-	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;unique_index;" json:"UID" yaml:"UID"`
+	UserUID       string        `gorm:"type:VARBINARY(42);column:user_uid;uniqueIndex;" json:"UID" yaml:"UID"`
 	AuthProvider  string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
 	AuthMethod    string        `gorm:"type:VARBINARY(128);default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
 	AuthIssuer    string        `gorm:"type:VARBINARY(255);default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
@@ -72,8 +72,8 @@ type User struct {
 	VerifiedAt    *time.Time    `json:"VerifiedAt,omitempty" yaml:"VerifiedAt,omitempty"`
 	ConsentAt     *time.Time    `json:"ConsentAt,omitempty" yaml:"ConsentAt,omitempty"`
 	BornAt        *time.Time    `sql:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
-	UserDetails   *UserDetails  `gorm:"PRELOAD:true;foreignkey:UserUID;association_foreignkey:UserUID;" json:"Details,omitempty" yaml:"Details,omitempty"`
-	UserSettings  *UserSettings `gorm:"PRELOAD:true;foreignkey:UserUID;association_foreignkey:UserUID;" json:"Settings,omitempty" yaml:"Settings,omitempty"`
+	UserDetails   *UserDetails  `gorm:"foreignkey:UserUID;" json:"Details,omitempty" yaml:"Details,omitempty"`
+	UserSettings  *UserSettings `gorm:"foreignkey:UserUID;" json:"Settings,omitempty" yaml:"Settings,omitempty"`
 	UserShares    UserShares    `gorm:"-" json:"Shares,omitempty" yaml:"Shares,omitempty"`
 	ResetToken    string        `gorm:"type:VARBINARY(64);" json:"-" yaml:"-"`
 	PreviewToken  string        `gorm:"type:VARBINARY(64);column:preview_token;" json:"-" yaml:"-"`

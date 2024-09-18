@@ -36,7 +36,7 @@ type Sessions []Session
 
 // Session represents a User session.
 type Session struct {
-	ID            string          `gorm:"type:VARBINARY(2048);primary_key;auto_increment:false;" json:"-" yaml:"ID"`
+	ID            string          `gorm:"type:VARBINARY(2048);primaryKey;autoIncrement:false;" json:"-" yaml:"ID"`
 	authToken     string          `gorm:"-" yaml:"-"`
 	UserUID       string          `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName      string          `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`

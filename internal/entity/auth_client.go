@@ -29,7 +29,7 @@ type Clients []Client
 
 // Client represents a client application.
 type Client struct {
-	ClientUID    string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"-" yaml:"ClientUID"`
+	ClientUID    string    `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false;" json:"-" yaml:"ClientUID"`
 	UserUID      string    `gorm:"type:VARBINARY(42);index;default:'';" json:"UserUID" yaml:"UserUID,omitempty"`
 	UserName     string    `gorm:"size:200;index;" json:"UserName" yaml:"UserName,omitempty"`
 	user         *User     `gorm:"-" yaml:"-"`

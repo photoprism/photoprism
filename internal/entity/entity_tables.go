@@ -146,6 +146,8 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 func (list Tables) Drop(db *gorm.DB) {
 	for _, entity := range list {
 		if err := db.Migrator().DropTable(entity); err != nil {
+			// Migrator().DropTable(table) is doing a DROP TABLE IF EXISTS under the covers.
+			// Testing will show if we need a panic here or a log.Error(err)
 			panic(err)
 		}
 	}

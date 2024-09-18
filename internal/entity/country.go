@@ -20,8 +20,8 @@ type Countries []Country
 
 // Country represents a country location, used for labeling photos.
 type Country struct {
-	ID                 string `gorm:"type:VARBINARY(2);primary_key" json:"ID" yaml:"ID"`
-	CountrySlug        string `gorm:"type:VARBINARY(160);unique_index;" json:"Slug" yaml:"-"`
+	ID                 string `gorm:"type:VARBINARY(2);primaryKey;" json:"ID" yaml:"ID"`
+	CountrySlug        string `gorm:"type:VARBINARY(160);uniqueIndex;" json:"Slug" yaml:"-"`
 	CountryName        string `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
 	CountryDescription string `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
 	CountryNotes       string `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`

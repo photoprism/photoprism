@@ -81,8 +81,8 @@ func (g *DbConn) Open() {
 
 	sqlDB, err := db.DB()
 
-	sqlDB.SetMaxIdleConns(4)
-	sqlDB.SetMaxOpenConns(256)
+	sqlDB.SetMaxIdleConns(4)   // in config_db it uses c.DatabaseConnsIdle(), but we don't have the c here.
+	sqlDB.SetMaxOpenConns(256) // in config_db it uses c.DatabaseConns(), but we don't have the c here.
 
 	g.db = db
 }

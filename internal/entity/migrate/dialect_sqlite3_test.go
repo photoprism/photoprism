@@ -17,7 +17,7 @@ import (
 )
 
 func TestDialectSQLite3(t *testing.T) {
-	// Prepare temporary sqlite3 db.
+	// Prepare temporary sqlite db.
 	testDbOriginal := "./testdata/migrate_sqlite3"
 	testDbTemp := "./testdata/migrate_sqlite3.db"
 	if !fs.FileExists(testDbOriginal) {

@@ -39,12 +39,12 @@ func MapKey(takenAt time.Time, cellId string) string {
 
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
-	ID               uint          `gorm:"primary_key" yaml:"-"`
+	ID               uint          `gorm:"primaryKey;" yaml:"-"`
 	UUID             string        `gorm:"type:VARBINARY(64);index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
 	TakenAt          time.Time     `gorm:"type:DATETIME;index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
 	TakenAtLocal     time.Time     `gorm:"type:DATETIME;" json:"TakenAtLocal" yaml:"TakenAtLocal"`
 	TakenSrc         string        `gorm:"type:VARBINARY(8);" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	PhotoUID         string        `gorm:"type:VARBINARY(42);unique_index;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
+	PhotoUID         string        `gorm:"type:VARBINARY(42);uniqueIndex;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string        `gorm:"type:VARBINARY(8);default:'image';" json:"Type" yaml:"Type"`
 	TypeSrc          string        `gorm:"type:VARBINARY(8);" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
 	PhotoTitle       string        `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
@@ -84,15 +84,15 @@ type Photo struct {
 	CameraSerial     string        `gorm:"type:VARBINARY(160);" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
 	CameraSrc        string        `gorm:"type:VARBINARY(8);" json:"CameraSrc" yaml:"-"`
 	LensID           uint          `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
-	Details          *Details      `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Details" yaml:"Details"`
-	Camera           *Camera       `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Camera" yaml:"-"`
-	Lens             *Lens         `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Lens" yaml:"-"`
-	Cell             *Cell         `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Cell" yaml:"-"`
-	Place            *Place        `gorm:"association_autoupdate:false;association_autocreate:false;association_save_reference:false" json:"Place" yaml:"-"`
-	Keywords         []Keyword     `json:"-" yaml:"-"`
-	Albums           []Album       `json:"Albums" yaml:"-"`
+	Details          *Details      `json:"Details" yaml:"Details"`
+	Camera           *Camera       `json:"Camera" yaml:"-"`
+	Lens             *Lens         `json:"Lens" yaml:"-"`
+	Cell             *Cell         `json:"Cell" yaml:"-"`
+	Place            *Place        `json:"Place" yaml:"-"`
+	Keywords         []Keyword     `gorm:"many2many:photos_keywords;foreignKey:ID;joinForeignKey:PhotoID;References:ID;joinReferences:KeywordID" json:"-" yaml:"-"`
+	Albums           []Album       `gorm:"many2many:photos_albums;foreignKey:PhotoUID;References:AlbumUID" json:"Albums" yaml:"-"`
 	Files            []File        `yaml:"-"`
-	Labels           []PhotoLabel  `yaml:"-"`
+	Labels           []PhotoLabel  `gorm:"foreignKey:PhotoID" yaml:"-"`
 	CreatedBy        string        `gorm:"type:VARBINARY(42);index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
 	CreatedAt        time.Time     `yaml:"CreatedAt,omitempty"`
 	UpdatedAt        time.Time     `yaml:"UpdatedAt,omitempty"`

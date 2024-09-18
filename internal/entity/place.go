@@ -13,7 +13,7 @@ var placeMutex = sync.Mutex{}
 
 // Place represents a distinct region identified by city, district, state, and country.
 type Place struct {
-	ID            string    `gorm:"type:VARBINARY(42);primary_key;auto_increment:false;" json:"PlaceID" yaml:"PlaceID"`
+	ID            string    `gorm:"type:VARBINARY(42);primaryKey;autoIncrement:false;" json:"PlaceID" yaml:"PlaceID"`
 	PlaceLabel    string    `gorm:"type:VARCHAR(400);" json:"Label" yaml:"Label"`
 	PlaceDistrict string    `gorm:"type:VARCHAR(100);index;" json:"District" yaml:"District,omitempty"`
 	PlaceCity     string    `gorm:"type:VARCHAR(100);index;" json:"City" yaml:"City,omitempty"`
@@ -46,7 +46,10 @@ var UnknownPlace = Place{
 
 // CreateUnknownPlace creates the default place if not exists.
 func CreateUnknownPlace() {
-	UnknownPlace = *FirstOrCreatePlace(&UnknownPlace)
+	pRef := FirstOrCreatePlace(&UnknownPlace)
+	if pRef != nil {
+		UnknownPlace = *pRef
+	}
 }
 
 // FindPlace finds a matching place or returns nil.
