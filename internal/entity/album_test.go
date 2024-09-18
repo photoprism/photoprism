@@ -14,7 +14,7 @@ import (
 
 func TestUpdateAlbum(t *testing.T) {
 	t.Run("InvalidUID", func(t *testing.T) {
-		err := UpdateAlbum("xxx", Map{"album_title": "New Title", "album_slug": "new-slug"})
+		err := UpdateAlbum("xxx", map[string]interface{}{"album_title": "New Title", "album_slug": "new-slug"})
 
 		assert.Error(t, err)
 	})
@@ -792,7 +792,7 @@ func TestAlbum_Updates(t *testing.T) {
 
 		assert.Equal(t, "test-title", album.AlbumSlug)
 
-		if err := album.Updates(Map{"album_title": "New Title", "album_slug": "new-slug"}); err != nil {
+		if err := album.Updates(map[string]interface{}{"album_title": "New Title", "album_slug": "new-slug"}); err != nil {
 			t.Fatal(err)
 		}
 
@@ -805,7 +805,7 @@ func TestAlbum_Updates(t *testing.T) {
 	t.Run("NoUID", func(t *testing.T) {
 		album := Album{}
 
-		err := album.Updates(Map{"album_title": "New Title", "album_slug": "new-slug"})
+		err := album.Updates(map[string]interface{}{"album_title": "New Title", "album_slug": "new-slug"})
 
 		assert.Error(t, err)
 	})

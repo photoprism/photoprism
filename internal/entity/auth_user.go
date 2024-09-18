@@ -646,7 +646,7 @@ func (m *User) UpdateAuthID(id, issuer string) error {
 	}
 
 	// Update auth id and issuer record.
-	return m.SetAuthID(id, issuer).Updates(Map{
+	return m.SetAuthID(id, issuer).Updates(map[string]interface{}{
 		"AuthID":     m.AuthID,
 		"AuthIssuer": m.AuthIssuer,
 	})
@@ -723,7 +723,7 @@ func (m *User) UpdateUsername(login string) (err error) {
 	}
 
 	// Save to database.
-	return m.Updates(Map{
+	return m.Updates(map[string]interface{}{
 		"UserName":    m.UserName,
 		"DisplayName": m.DisplayName,
 	})
@@ -1184,7 +1184,7 @@ func (m *User) RegenerateTokens() error {
 
 	m.GenerateTokens(true)
 
-	return m.Updates(Map{"PreviewToken": m.PreviewToken, "DownloadToken": m.DownloadToken})
+	return m.Updates(map[string]interface{}{"PreviewToken": m.PreviewToken, "DownloadToken": m.DownloadToken})
 }
 
 // RefreshShares updates the list of shares.
@@ -1444,5 +1444,5 @@ func (m *User) SetAvatar(thumb, thumbSrc string) error {
 	m.Thumb = thumb
 	m.ThumbSrc = thumbSrc
 
-	return m.Updates(Map{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
+	return m.Updates(map[string]interface{}{"Thumb": m.Thumb, "ThumbSrc": m.ThumbSrc})
 }

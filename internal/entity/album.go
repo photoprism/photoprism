@@ -138,7 +138,7 @@ func AddPhotoToUserAlbums(photoUid string, albums []string, userUid string) (err
 			}
 
 			// Refresh updated timestamp.
-			err = UpdateAlbum(albumUid, Map{"updated_at": TimeStamp()})
+			err = UpdateAlbum(albumUid, map[string]interface{}{"updated_at": TimeStamp()})
 		}
 	}
 
@@ -538,7 +538,7 @@ func (m *Album) UpdateTitleAndLocation(title, location, state, country, slug str
 
 	// Skip location?
 	if location == "" && state == "" && (country == "" || country == "zz") {
-		return m.Updates(Map{
+		return m.Updates(map[string]interface{}{
 			"album_title": m.AlbumTitle,
 			"album_slug":  m.AlbumSlug,
 		})
@@ -546,7 +546,7 @@ func (m *Album) UpdateTitleAndLocation(title, location, state, country, slug str
 
 	m.SetLocation(location, state, country)
 
-	return m.Updates(Map{
+	return m.Updates(map[string]interface{}{
 		"album_title":    m.AlbumTitle,
 		"album_location": m.AlbumLocation,
 		"album_state":    m.AlbumState,
@@ -599,7 +599,7 @@ func (m *Album) UpdateTitleAndState(title, slug, stateName, countryCode string) 
 		m.SetTitle(title)
 	}
 
-	return m.Updates(Map{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
+	return m.Updates(map[string]interface{}{"album_title": m.AlbumTitle, "album_slug": m.AlbumSlug, "album_location": m.AlbumLocation, "album_country": m.AlbumCountry, "album_state": m.AlbumState})
 }
 
 // SaveForm updates the entity using form data and stores it in the database.
@@ -716,7 +716,7 @@ func (m *Album) Delete() error {
 
 	now := Now()
 
-	if err := UnscopedDb().Model(m).UpdateColumns(Map{"updated_at": now, "deleted_at": now}).Error; err != nil {
+	if err := UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{"updated_at": now, "deleted_at": now}).Error; err != nil {
 		return err
 	} else {
 		m.UpdatedAt = now
@@ -821,7 +821,7 @@ func (m *Album) AddPhotos(photos PhotosInterface) (added PhotoAlbums) {
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Map{"updated_at": TimeStamp()}); err != nil {
+	if err := UpdateAlbum(m.AlbumUID, map[string]interface{}{"updated_at": TimeStamp()}); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 
@@ -849,7 +849,7 @@ func (m *Album) RemovePhotos(UIDs []string) (removed PhotoAlbums) {
 	}
 
 	// Refresh updated timestamp.
-	if err := UpdateAlbum(m.AlbumUID, Map{"updated_at": TimeStamp()}); err != nil {
+	if err := UpdateAlbum(m.AlbumUID, map[string]interface{}{"updated_at": TimeStamp()}); err != nil {
 		log.Errorf("album: %s (update %s)", err.Error(), m)
 	}
 

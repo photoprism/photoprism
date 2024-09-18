@@ -124,13 +124,13 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	}
 
 	if share {
-		if err := Db().Model(FileShare{}).Where("service_id = ?", m.ID).Updates(Map{"error": "", "errors": 0}).Error; err != nil {
+		if err := Db().Model(FileShare{}).Where("service_id = ?", m.ID).Updates(map[string]interface{}{"error": "", "errors": 0}).Error; err != nil {
 			return err
 		}
 	}
 
 	if sync {
-		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(Map{"error": "", "errors": 0}).Error; err != nil {
+		if err := Db().Model(FileSync{}).Where("service_id = ?", m.ID).Updates(map[string]interface{}{"error": "", "errors": 0}).Error; err != nil {
 			return err
 		}
 	}
@@ -138,7 +138,7 @@ func (m *Service) ResetErrors(share, sync bool) error {
 	m.AccError = ""
 	m.AccErrors = 0
 
-	return m.Updates(Map{"acc_error": m.AccError, "acc_errors": m.AccErrors})
+	return m.Updates(map[string]interface{}{"acc_error": m.AccError, "acc_errors": m.AccErrors})
 }
 
 // SaveForm saves the entity using form data and stores it in the database.

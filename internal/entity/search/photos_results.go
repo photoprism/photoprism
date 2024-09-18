@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/gosimple/slug"
-	"gorm.io/gorm"
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -139,7 +139,7 @@ func (m *Photo) Approve() error {
 	if err := UnscopedDb().
 		Table(entity.Photo{}.TableName()).
 		Where("photo_uid = ?", m.GetUID()).
-		UpdateColumns(entity.Map{
+		UpdateColumns(map[string]interface{}{
 			"deleted_at":    gorm.Expr("NULL"),
 			"edited_at":     &edited,
 			"photo_quality": 3}).Error; err != nil {

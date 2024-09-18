@@ -116,7 +116,7 @@ func (m *Face) SetEmbeddings(embeddings face.Embeddings) (err error) {
 // Matched updates the match timestamp.
 func (m *Face) Matched() error {
 	m.MatchedAt = TimeStamp()
-	return UnscopedDb().Model(m).UpdateColumns(Map{"MatchedAt": m.MatchedAt}).Error
+	return UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{"MatchedAt": m.MatchedAt}).Error
 }
 
 // Embedding returns parsed face embedding.
@@ -198,7 +198,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		m.Collisions++
 		m.CollisionRadius = dist
 		UpdateFaces.Store(true)
-		return true, m.Updates(Map{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
+		return true, m.Updates(map[string]interface{}{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "FaceKind": m.FaceKind, "UpdatedAt": m.UpdatedAt, "MatchedAt": m.MatchedAt})
 	} else {
 		m.MatchedAt = nil
 		m.Collisions++
@@ -206,7 +206,7 @@ func (m *Face) ResolveCollision(embeddings face.Embeddings) (resolved bool, err 
 		UpdateFaces.Store(true)
 	}
 
-	err = m.Updates(Map{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
+	err = m.Updates(map[string]interface{}{"Collisions": m.Collisions, "CollisionRadius": m.CollisionRadius, "MatchedAt": m.MatchedAt})
 
 	if err != nil {
 		return true, err
@@ -290,7 +290,7 @@ func (m *Face) SetSubjectUID(subjUid string) (err error) {
 		Where("subj_src = ?", SrcAuto).
 		Where("subj_uid <> ?", m.SubjUID).
 		Where("marker_invalid = 0").
-		UpdateColumns(Map{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
+		UpdateColumns(map[string]interface{}{"subj_uid": m.SubjUID, "marker_review": false}).Error; err != nil {
 		return err
 	}
 
@@ -355,7 +355,7 @@ func (m *Face) Delete() error {
 	// Remove face id from markers before deleting.
 	if err := Db().Model(&Marker{}).
 		Where("face_id = ?", m.ID).
-		UpdateColumns(Map{"face_id": "", "face_dist": -1}).Error; err != nil {
+		UpdateColumns(map[string]interface{}{"face_id": "", "face_dist": -1}).Error; err != nil {
 		return err
 	}
 

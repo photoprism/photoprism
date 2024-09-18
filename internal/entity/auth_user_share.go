@@ -159,7 +159,7 @@ func (m *UserShare) UpdateLink(link Link) error {
 	m.UpdatedAt = Now()
 	m.ExpiresAt = link.ExpiresAt()
 
-	values := Map{
+	values := map[string]interface{}{
 		"link_uid":   m.LinkUID,
 		"expires_at": m.ExpiresAt,
 		"comment":    m.Comment,

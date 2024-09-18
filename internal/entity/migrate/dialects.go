@@ -11,7 +11,7 @@ const (
 
 var Dialects = map[string]Migrations{
 	MySQL:    DialectMySQL,
-	SQLite3:  DialectSQLite3,
+	SQLite3:  DialectSQLite,
 	Postgres: DialectPostgres,
 }
 
