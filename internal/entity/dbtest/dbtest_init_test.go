@@ -3,14 +3,15 @@ package entity
 import (
 	"testing"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInit(t *testing.T) {
 
 	t.Run("UserCounts", func(t *testing.T) {
-		m := &User{}
-		stmt := UnscopedDb()
+		m := &entity.User{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -19,8 +20,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("PlaceCounts", func(t *testing.T) {
-		m := &Place{}
-		stmt := UnscopedDb()
+		m := &entity.Place{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -29,8 +30,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("Cell-Location-Counts", func(t *testing.T) {
-		m := &Cell{}
-		stmt := UnscopedDb()
+		m := &entity.Cell{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -39,8 +40,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("CountryCounts", func(t *testing.T) {
-		m := &Country{}
-		stmt := UnscopedDb()
+		m := &entity.Country{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -49,8 +50,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("CameraCounts", func(t *testing.T) {
-		m := &Camera{}
-		stmt := UnscopedDb()
+		m := &entity.Camera{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -59,8 +60,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("LensCounts", func(t *testing.T) {
-		m := &Lens{}
-		stmt := UnscopedDb()
+		m := &entity.Lens{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -69,8 +70,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("LabelCounts", func(t *testing.T) {
-		m := &Label{}
-		stmt := UnscopedDb()
+		m := &entity.Label{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -79,8 +80,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("PhotoCounts", func(t *testing.T) {
-		m := &Photo{}
-		stmt := UnscopedDb()
+		m := &entity.Photo{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -89,8 +90,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("AlbumCounts", func(t *testing.T) {
-		m := &Album{}
-		stmt := UnscopedDb()
+		m := &entity.Album{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -99,8 +100,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("ServiceCounts", func(t *testing.T) {
-		m := &Service{}
-		stmt := UnscopedDb()
+		m := &entity.Service{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -109,8 +110,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("LinkCounts", func(t *testing.T) {
-		m := &Link{}
-		stmt := UnscopedDb()
+		m := &entity.Link{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -119,8 +120,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("PhotoAlbumCounts", func(t *testing.T) {
-		m := &PhotoAlbum{}
-		stmt := UnscopedDb()
+		m := &entity.PhotoAlbum{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -129,8 +130,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("FolderCounts", func(t *testing.T) {
-		m := &Folder{}
-		stmt := UnscopedDb()
+		m := &entity.Folder{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -139,8 +140,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("FileCounts", func(t *testing.T) {
-		m := &File{}
-		stmt := UnscopedDb()
+		m := &entity.File{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -149,8 +150,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("KeywordCounts", func(t *testing.T) {
-		m := &Keyword{}
-		stmt := UnscopedDb()
+		m := &entity.Keyword{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -159,8 +160,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("PhotoKeywordCounts", func(t *testing.T) {
-		m := &PhotoKeyword{}
-		stmt := UnscopedDb()
+		m := &entity.PhotoKeyword{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -169,8 +170,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("CategoryCounts", func(t *testing.T) {
-		m := &Category{}
-		stmt := UnscopedDb()
+		m := &entity.Category{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -179,8 +180,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("FileShareCounts", func(t *testing.T) {
-		m := &FileShare{}
-		stmt := UnscopedDb()
+		m := &entity.FileShare{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -189,8 +190,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("FileSyncCounts", func(t *testing.T) {
-		m := &FileSync{}
-		stmt := UnscopedDb()
+		m := &entity.FileSync{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -199,8 +200,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("SubjectCounts", func(t *testing.T) {
-		m := &Subject{}
-		stmt := UnscopedDb()
+		m := &entity.Subject{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -209,8 +210,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("MarkerCounts", func(t *testing.T) {
-		m := &Marker{}
-		stmt := UnscopedDb()
+		m := &entity.Marker{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -219,8 +220,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("FaceCounts", func(t *testing.T) {
-		m := &Face{}
-		stmt := UnscopedDb()
+		m := &entity.Face{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -229,8 +230,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("SessionCounts", func(t *testing.T) {
-		m := &Session{}
-		stmt := UnscopedDb()
+		m := &entity.Session{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -239,8 +240,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("ClientCounts", func(t *testing.T) {
-		m := &Client{}
-		stmt := UnscopedDb()
+		m := &entity.Client{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -249,8 +250,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("ReactionCounts", func(t *testing.T) {
-		m := &Reaction{}
-		stmt := UnscopedDb()
+		m := &entity.Reaction{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -259,8 +260,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("PasscodeCounts", func(t *testing.T) {
-		m := &Passcode{}
-		stmt := UnscopedDb()
+		m := &entity.Passcode{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -269,8 +270,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("PasswordCounts", func(t *testing.T) {
-		m := &Password{}
-		stmt := UnscopedDb()
+		m := &entity.Password{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
@@ -279,8 +280,8 @@ func TestInit(t *testing.T) {
 	})
 
 	t.Run("UserShareCounts", func(t *testing.T) {
-		m := &UserShare{}
-		stmt := UnscopedDb()
+		m := &entity.UserShare{}
+		stmt := entity.UnscopedDb()
 		count := int64(0)
 
 		stmt.Model(m).Count(&count)
