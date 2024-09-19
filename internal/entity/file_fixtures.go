@@ -2811,6 +2811,6 @@ var FileFixturesExampleBridgeVideo = FileFixtures["bridge2.mp4"]
 // CreateFileFixtures inserts known entities into the database for testing.
 func CreateFileFixtures() {
 	for _, entity := range FileFixtures {
-		Db().Create(&entity)
+		Db().Save(&entity)
 	}
 }

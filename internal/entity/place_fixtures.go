@@ -125,6 +125,6 @@ var PlaceFixtures = PlacesMap{
 // CreatePlaceFixtures inserts known entities into the database for testing.
 func CreatePlaceFixtures() {
 	for _, entity := range PlaceFixtures {
-		Db().Create(&entity)
+		Db().Save(&entity)
 	}
 }
