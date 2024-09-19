@@ -370,7 +370,7 @@ var FileFixtures = FileMap{
 		PhotoID:         PhotoFixtures.Pointer("Photo10").ID,
 		PhotoUID:        PhotoFixtures.Pointer("Photo10").PhotoUID,
 		InstanceID:      "a698ac56-6e7e-42b9-9c3e-a79ec96080ag",
-		FileUID:         "fs6sg6bw45bn0007",
+		FileUID:         "fs6sg6bw45bn0017",
 		FileName:        "Holiday/Video.mp4",
 		FileRoot:        RootOriginals,
 		OriginalName:    "",
