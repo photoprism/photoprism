@@ -10,7 +10,7 @@ import (
 
 // UserSettings represents user preferences.
 type UserSettings struct {
-	UserUID              string    `gorm:"size:42;uniqueIndex;" json:"-" yaml:"UserUID"`
+	UserUID              string    `gorm:"size:42;primaryKey;autoIncrement:false" json:"-" yaml:"UserUID"`
 	UITheme              string    `gorm:"size:32;column:ui_theme;" json:"UITheme,omitempty" yaml:"UITheme,omitempty"`
 	UILanguage           string    `gorm:"size:32;column:ui_language;" json:"UILanguage,omitempty" yaml:"UILanguage,omitempty"`
 	UITimeZone           string    `gorm:"size:64;column:ui_time_zone;" json:"UITimeZone,omitempty" yaml:"UITimeZone,omitempty"`

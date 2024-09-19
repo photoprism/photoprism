@@ -17,7 +17,7 @@ const (
 
 // UserDetails represents user profile information.
 type UserDetails struct {
-	UserUID      string    `gorm:"size:42;uniqueIndex;" json:"-" yaml:"-"`
+	UserUID      string    `gorm:"size:42;primaryKey;autoIncrement:false" json:"-" yaml:"-"`
 	SubjUID      string    `gorm:"size:42;index;" json:"SubjUID,omitempty" yaml:"SubjUID,omitempty"`
 	SubjSrc      string    `gorm:"size:8;default:'';" json:"-" yaml:"SubjSrc,omitempty"`
 	PlaceID      string    `gorm:"size:42;index;default:'zz'" json:"-" yaml:"-"`
