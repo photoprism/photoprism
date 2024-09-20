@@ -26,7 +26,7 @@ func TestFindLegacyUser(t *testing.T) {
 		}
 	}
 
-	Db().Save(legacy.Admin)
+	Db().Save(&legacy.Admin)
 
 	found := FindLegacyUser(Admin)
 	assert.NotNil(t, found)
@@ -56,7 +56,7 @@ func TestFindLegacyUsers(t *testing.T) {
 		}
 	}
 
-	Db().Save(legacy.Admin)
+	Db().Save(&legacy.Admin)
 
 	found := FindLegacyUsers("all")
 
