@@ -24,9 +24,21 @@ func TestMain(m *testing.M) {
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
 
+	driver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
+	dsn := ""
+
+	if driver == "mysql" {
+		dsn = os.Getenv("PHOTOPRISM_DATABASE_USER") + ":" + os.Getenv("PHOTOPRISM_DATABASE_PASSWORD") + "@(mariadb:4001)/pptest?charset=utf8mb4&parseTime=True&loc=Local"
+	} else if driver == "sqlite" {
+		dsn = os.Getenv("PHOTOPRISM_TEST_DSN")
+	} else {
+		driver = os.Getenv("PHOTOPRISM_TEST_DRIVER")
+		dsn = os.Getenv("PHOTOPRISM_TEST_DSN")
+	}
+
 	db := entity.InitTestDb(
-		os.Getenv("PHOTOPRISM_TEST_DRIVER"),
-		os.Getenv("PHOTOPRISM_TEST_DSN"))
+		driver,
+		dsn)
 
 	defer db.Close()
 
