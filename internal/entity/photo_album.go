@@ -8,8 +8,8 @@ type PhotoAlbums []PhotoAlbum
 
 // PhotoAlbum represents the many_to_many relation between Photo and Album
 type PhotoAlbum struct {
-	PhotoUID  string    `gorm:"size:42;primaryKey;pk_pa" json:"PhotoUID" yaml:"UID"`
-	AlbumUID  string    `gorm:"size:42;primaryKey;pk_pa" json:"AlbumUID" yaml:"-"`
+	PhotoUID  string    `gorm:"type:bytes;size:42;primaryKey;pk_pa" json:"PhotoUID" yaml:"UID"`
+	AlbumUID  string    `gorm:"type:bytes;size:42;primaryKey;pk_pa" json:"AlbumUID" yaml:"-"`
 	Order     int       `json:"Order" yaml:"Order,omitempty"`
 	Hidden    bool      `json:"Hidden" yaml:"Hidden,omitempty"`
 	Missing   bool      `json:"Missing" yaml:"Missing,omitempty"`

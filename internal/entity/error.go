@@ -11,8 +11,8 @@ import (
 type Error struct {
 	ID           uint      `gorm:"primaryKey;" json:"ID" yaml:"ID"`
 	ErrorTime    time.Time `sql:"index" json:"Time" yaml:"Time"`
-	ErrorLevel   string    `gorm:"size:32" json:"Level" yaml:"Level"`
-	ErrorMessage string    `gorm:"size:2048" json:"Message" yaml:"Message"`
+	ErrorLevel   string    `gorm:"type:bytes;size:32" json:"Level" yaml:"Level"`
+	ErrorMessage string    `gorm:"type:bytes;size:2048" json:"Message" yaml:"Message"`
 }
 
 // Errors represents a list of error log messages.

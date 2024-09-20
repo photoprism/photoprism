@@ -13,12 +13,12 @@ var placeMutex = sync.Mutex{}
 
 // Place represents a distinct region identified by city, district, state, and country.
 type Place struct {
-	ID            string    `gorm:"size:42;primaryKey;autoIncrement:false;" json:"PlaceID" yaml:"PlaceID"`
+	ID            string    `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"PlaceID" yaml:"PlaceID"`
 	PlaceLabel    string    `gorm:"type:VARCHAR(400);" json:"Label" yaml:"Label"`
 	PlaceDistrict string    `gorm:"type:VARCHAR(100);index;" json:"District" yaml:"District,omitempty"`
 	PlaceCity     string    `gorm:"type:VARCHAR(100);index;" json:"City" yaml:"City,omitempty"`
 	PlaceState    string    `gorm:"type:VARCHAR(100);index;" json:"State" yaml:"State,omitempty"`
-	PlaceCountry  string    `gorm:"size:2;" json:"Country" yaml:"Country,omitempty"`
+	PlaceCountry  string    `gorm:"type:bytes;size:2;" json:"Country" yaml:"Country,omitempty"`
 	PlaceKeywords string    `gorm:"type:VARCHAR(300);" json:"Keywords" yaml:"Keywords,omitempty"`
 	PlaceFavorite bool      `json:"Favorite" yaml:"Favorite,omitempty"`
 	PhotoCount    int       `gorm:"default:1" json:"PhotoCount" yaml:"-"`

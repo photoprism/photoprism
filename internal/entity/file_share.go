@@ -15,9 +15,9 @@ const (
 type FileShare struct {
 	FileID     uint   `gorm:"primaryKey;autoIncrement:false"`
 	ServiceID  uint   `gorm:"primaryKey;autoIncrement:false"`
-	RemoteName string `gorm:"size:255;primaryKey;autoIncrement:false"`
-	Status     string `gorm:"size:16;"`
-	Error      string `gorm:"size:512;"`
+	RemoteName string `gorm:"type:bytes;size:255;primaryKey;autoIncrement:false"`
+	Status     string `gorm:"type:bytes;size:16;"`
+	Error      string `gorm:"type:bytes;size:512;"`
 	Errors     int
 	File       *File    `gorm:"foreignKey:FileID"`
 	Account    *Service `gorm:"foreignKey:ServiceID"`

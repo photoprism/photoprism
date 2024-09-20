@@ -37,21 +37,21 @@ type Service struct {
 	AccName       string `gorm:"type:VARCHAR(160);"`
 	AccOwner      string `gorm:"type:VARCHAR(160);"`
 	AccURL        string `gorm:"type:VARCHAR(255);"`
-	AccType       string `gorm:"size:255;"`
-	AccKey        string `gorm:"size:255;"`
-	AccUser       string `gorm:"size:255;"`
-	AccPass       string `gorm:"size:255;"`
-	AccTimeout    string `gorm:"size:16;"`
-	AccError      string `gorm:"size:512;"`
+	AccType       string `gorm:"type:bytes;size:255;"`
+	AccKey        string `gorm:"type:bytes;size:255;"`
+	AccUser       string `gorm:"type:bytes;size:255;"`
+	AccPass       string `gorm:"type:bytes;size:255;"`
+	AccTimeout    string `gorm:"type:bytes;size:16;"`
+	AccError      string `gorm:"type:bytes;size:512;"`
 	AccErrors     int
 	AccShare      bool
 	AccSync       bool
 	RetryLimit    int
-	SharePath     string `gorm:"size:1024;"`
-	ShareSize     string `gorm:"size:16;"`
+	SharePath     string `gorm:"type:bytes;size:1024;"`
+	ShareSize     string `gorm:"type:bytes;size:16;"`
 	ShareExpires  int
-	SyncPath      string `gorm:"size:1024;"`
-	SyncStatus    string `gorm:"size:16;"`
+	SyncPath      string `gorm:"type:bytes;size:1024;"`
+	SyncStatus    string `gorm:"type:bytes;size:16;"`
 	SyncInterval  int
 	SyncDate      sql.NullTime `deepcopier:"skip"`
 	SyncUpload    bool

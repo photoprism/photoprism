@@ -19,10 +19,10 @@ var subjectMutex = sync.Mutex{}
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjUID      string     `gorm:"size:42;primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
-	SubjType     string     `gorm:"size:8;default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
-	SubjSrc      string     `gorm:"size:8;default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
-	SubjSlug     string     `gorm:"size:160;index;default:'';" json:"Slug" yaml:"-"`
+	SubjUID      string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
+	SubjType     string     `gorm:"type:bytes;size:8;default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjSrc      string     `gorm:"type:bytes;size:8;default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjSlug     string     `gorm:"type:bytes;size:160;index;default:'';" json:"Slug" yaml:"-"`
 	SubjName     string     `gorm:"size:160;uniqueIndex;default:'';" json:"Name" yaml:"Name"`
 	SubjAlias    string     `gorm:"size:160;default:'';" json:"Alias" yaml:"Alias"`
 	SubjAbout    string     `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
@@ -34,8 +34,8 @@ type Subject struct {
 	SubjExcluded bool       `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
 	FileCount    int        `gorm:"default:0;" json:"FileCount" yaml:"-"`
 	PhotoCount   int        `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
-	Thumb        string     `gorm:"size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc     string     `gorm:"size:8;default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	Thumb        string     `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc     string     `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
 	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
 	UpdatedAt    time.Time  `json:"UpdatedAt" yaml:"-"`
 	DeletedAt    *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
