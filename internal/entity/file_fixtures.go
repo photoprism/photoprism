@@ -5,6 +5,7 @@ import (
 
 	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/media"
+	"gorm.io/gorm/clause"
 )
 
 type FileMap map[string]File
@@ -2811,6 +2812,6 @@ var FileFixturesExampleBridgeVideo = FileFixtures["bridge2.mp4"]
 // CreateFileFixtures inserts known entities into the database for testing.
 func CreateFileFixtures() {
 	for _, entity := range FileFixtures {
-		Db().Save(&entity)
+		Db().Omit(clause.Associations).Save(&entity)
 	}
 }

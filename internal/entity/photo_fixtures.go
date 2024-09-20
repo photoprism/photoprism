@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"gorm.io/gorm/clause"
 )
 
 var editTime = time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC)
@@ -3424,6 +3426,6 @@ var PhotoFixtures = PhotoMap{
 // CreatePhotoFixtures inserts known entities into the database for testing.
 func CreatePhotoFixtures() {
 	for _, entity := range PhotoFixtures {
-		Db().Create(&entity)
+		Db().Omit(clause.Associations).Save(&entity)
 	}
 }
