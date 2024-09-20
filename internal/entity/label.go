@@ -230,7 +230,7 @@ func (m *Label) UpdateClassify(label classify.Label) error {
 				continue
 			}
 
-			if err := db.Model(m).Association("LabelCategories").Append(sn).Error; err != nil {
+			if err := db.Model(m).Association("LabelCategories").Append(sn); err != nil {
 				log.Debugf("index: failed saving label category %s (%s)", clean.Log(category), err)
 			}
 		}
