@@ -37,19 +37,19 @@ var PhotoKeywordFixtures = PhotoKeywordMap{
 	},
 	"9": {
 		PhotoID:   10000029,
-		KeywordID: 10000005,
+		KeywordID: 1000005,
 	},
 	"10": {
 		PhotoID:   1000031,
-		KeywordID: 10000006,
+		KeywordID: 1000006,
 	},
 	"11": {
 		PhotoID:   1000032,
-		KeywordID: 10000008,
+		KeywordID: 1000008,
 	},
 	"12": {
 		PhotoID:   1000033,
-		KeywordID: 10000009,
+		KeywordID: 1000009,
 	},
 	"13": {
 		PhotoID:   1000034,
