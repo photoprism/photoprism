@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/face"
 	"github.com/photoprism/photoprism/internal/config/customize"
@@ -103,7 +104,7 @@ func TestFile_ShareFileName(t *testing.T) {
 }
 
 func TestFile_Changed(t *testing.T) {
-	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+	var deletedAt = gorm.DeletedAt{Valid: true, Time: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
 	t.Run("different modified times", func(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		d := time.Date(2020, 01, 15, 0, 0, 0, 0, time.UTC)
@@ -120,27 +121,27 @@ func TestFile_Changed(t *testing.T) {
 		assert.Equal(t, false, file.Changed(500, d))
 	})
 	t.Run("deleted", func(t *testing.T) {
-		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
+		file := &File{Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: deletedAt}
 		d := time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
 		assert.Equal(t, false, file.Changed(500, d))
 	})
 }
 
 func TestFile_Missing(t *testing.T) {
-	var deletedAt = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+	var deletedAt = gorm.DeletedAt{Valid: true, Time: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
 
 	t.Run("deleted", func(t *testing.T) {
-		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: &deletedAt}
+		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: deletedAt}
 		assert.Equal(t, true, file.Missing())
 	})
 
 	t.Run("missing", func(t *testing.T) {
-		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
+		file := &File{FileMissing: true, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: gorm.DeletedAt{Valid: false}}
 		assert.Equal(t, true, file.Missing())
 	})
 
 	t.Run("not_missing", func(t *testing.T) {
-		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: nil}
+		file := &File{FileMissing: false, Photo: nil, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix(), DeletedAt: gorm.DeletedAt{Valid: false}}
 		assert.Equal(t, false, file.Missing())
 	})
 }
@@ -480,6 +481,7 @@ func TestFile_Undelete(t *testing.T) {
 		file := &File{Photo: nil, FileType: "jpg", FileSize: 500}
 		assert.Equal(t, nil, file.Purge())
 		assert.Equal(t, true, file.FileMissing)
+
 		err := file.Undelete()
 
 		if err != nil {
@@ -560,7 +562,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
 		assert.Equal(t, RootOriginals, m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 
 		p := m.RelatedPhoto()
 
@@ -574,7 +576,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "x/y/newName.jpg", m.FileName)
 		assert.Equal(t, "newRoot", m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 		assert.Equal(t, "x/y", p.PhotoPath)
 		assert.Equal(t, "newBase", p.PhotoName)
 
@@ -585,7 +587,7 @@ func TestFile_Rename(t *testing.T) {
 		assert.Equal(t, "2790/07/27900704_070228_D6D51B6C.jpg", m.FileName)
 		assert.Equal(t, RootOriginals, m.FileRoot)
 		assert.Equal(t, false, m.FileMissing)
-		assert.Nil(t, m.DeletedAt)
+		assert.False(t, m.DeletedAt.Valid)
 		assert.Equal(t, "2790/07", p.PhotoPath)
 		assert.Equal(t, "27900704_070228_D6D51B6C", p.PhotoName)
 	})
