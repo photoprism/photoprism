@@ -146,7 +146,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(65), count)
+		assert.Equal(t, int64(66), count)
 	})
 
 	t.Run("KeywordCounts", func(t *testing.T) {
