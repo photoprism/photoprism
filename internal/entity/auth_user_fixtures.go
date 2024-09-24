@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/authn"
+	"gorm.io/gorm"
 )
 
 type UserMap map[string]User
@@ -118,7 +119,7 @@ var UserFixtures = UserMap{
 		CanLogin:     false,
 		WebDAV:       true,
 		CanInvite:    false,
-		DeletedAt:    TimeStamp(),
+		DeletedAt:    gorm.DeletedAt{Time: Now(), Valid: true},
 		UserSettings: &UserSettings{
 			UITheme:     "",
 			MapsStyle:   "",

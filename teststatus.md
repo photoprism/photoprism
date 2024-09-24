@@ -33,6 +33,7 @@ The following is the status of unit testing.
 | PASS | github.com/photoprism/photoprism/internal/auth/acl |
 | PASS | github.com/photoprism/photoprism/internal/auth/oidc |
 | PASS | github.com/photoprism/photoprism/internal/auth/session |
+| PASS | github.com/photoprism/photoprism/internal/commands |
 | PASS | github.com/photoprism/photoprism/internal/config/customize |
 | PASS | github.com/photoprism/photoprism/internal/config/pwa |
 | PASS | github.com/photoprism/photoprism/internal/config/ttl |
@@ -73,27 +74,33 @@ The following is the status of unit testing.
 | FAIL |   BatchAlbumsDelete/successful_request|
 | FAIL | BatchPhotosPrivate|
 | FAIL |   BatchPhotosPrivate/successful_request|
-| FAIL | BatchPhotosApprove|
-| FAIL |   BatchPhotosApprove/successful_request|
+| FAIL | AddPhotoLabel|
+| FAIL |   AddPhotoLabel/add_new_label|
+| FAIL |   AddPhotoLabel/add_existing_label|
+| FAIL |   AddPhotoLabel/invalid_request|
 | FAIL | RemovePhotoLabel|
 | FAIL |   RemovePhotoLabel/photo_with_label|
 | FAIL |   RemovePhotoLabel/remove_manually_added_label|
+| FAIL |   RemovePhotoLabel/try_to_remove_wrong_label|
 | FAIL | UpdatePhotoLabel|
 | FAIL |   UpdatePhotoLabel/successful_request|
 | FAIL |   UpdatePhotoLabel/bad_request|
+| FAIL | GetPhoto|
+| FAIL |   GetPhoto/Ok|
+| FAIL | DislikePhoto|
+| FAIL |   DislikePhoto/Ok|
+| FAIL | PhotoPrimary|
+| FAIL |   PhotoPrimary/Ok|
+| FAIL | GetPhotoYaml|
+| FAIL |   GetPhotoYaml/Ok|
 | FAIL | GetSubject|
 | FAIL |   GetSubject/Ok|
 | FAIL | LikeSubject|
 | FAIL |   LikeSubject/ExistingSubject|
 | FAIL | 	github.com/photoprism/photoprism/internal/api|
-| FAIL | UsersCommand|
-| FAIL |   UsersCommand/AddModifyAndRemoveJohn|
-| FAIL | 	github.com/photoprism/photoprism/internal/commands|
 | FAIL | Config_DatabaseDsn|
 | FAIL | Config_SqliteBin|
 | FAIL | 	github.com/photoprism/photoprism/internal/config|
-| FAIL | FirstOrCreateUser|
-| FAIL |   FirstOrCreateUser/Existing|
 | FAIL | Count|
 | FAIL | LabelCounts|
 | FAIL | UpdateCounts|
@@ -132,12 +139,6 @@ The following is the status of unit testing.
 | FAIL | MomentsCategories|
 | FAIL |   MomentsCategories/PublicOnly|
 | FAIL |   MomentsCategories/IncludePrivate|
-| FAIL | CountUsers|
-| FAIL |   CountUsers/All|
-| FAIL |   CountUsers/Registered|
-| FAIL |   CountUsers/Active|
-| FAIL |   CountUsers/RegisteredActive|
-| FAIL |   CountUsers/NoAdmins|
 | FAIL | 	github.com/photoprism/photoprism/internal/entity/query|
 | FAIL | PhotosFilterFilter|
 | FAIL |   PhotosFilterFilter/CenterPercent|

@@ -45,45 +45,45 @@ type Users []User
 
 // User represents a person that may optionally log in as user.
 type User struct {
-	ID            int           `gorm:"primaryKey;" json:"ID" yaml:"-"`
-	UUID          string        `gorm:"type:bytes;size:64;column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
-	UserUID       string        `gorm:"type:bytes;size:42;column:user_uid;uniqueIndex;" json:"UID" yaml:"UID"`
-	AuthProvider  string        `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
-	AuthMethod    string        `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
-	AuthIssuer    string        `gorm:"type:bytes;size:255;default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
-	AuthID        string        `gorm:"type:bytes;size:255;index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
-	UserName      string        `gorm:"size:200;index;" json:"Name" yaml:"Name,omitempty"`
-	DisplayName   string        `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
-	UserEmail     string        `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
-	BackupEmail   string        `gorm:"size:255;" json:"BackupEmail,omitempty" yaml:"BackupEmail,omitempty"`
-	UserRole      string        `gorm:"size:64;default:'';" json:"Role" yaml:"Role,omitempty"`
-	UserAttr      string        `gorm:"size:1024;" json:"Attr" yaml:"Attr,omitempty"`
-	SuperAdmin    bool          `json:"SuperAdmin" yaml:"SuperAdmin,omitempty"`
-	CanLogin      bool          `json:"CanLogin" yaml:"CanLogin,omitempty"`
-	LoginAt       *time.Time    `json:"LoginAt" yaml:"LoginAt,omitempty"`
-	ExpiresAt     *time.Time    `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
-	WebDAV        bool          `gorm:"column:webdav;" json:"WebDAV" yaml:"WebDAV,omitempty"`
-	BasePath      string        `gorm:"type:bytes;size:1024;" json:"BasePath" yaml:"BasePath,omitempty"`
-	UploadPath    string        `gorm:"type:bytes;size:1024;" json:"UploadPath" yaml:"UploadPath,omitempty"`
-	CanInvite     bool          `json:"CanInvite" yaml:"CanInvite,omitempty"`
-	InviteToken   string        `gorm:"type:bytes;size:64;index;" json:"-" yaml:"-"`
-	InvitedBy     string        `gorm:"size:64;" json:"-" yaml:"-"`
-	VerifyToken   string        `gorm:"type:bytes;size:64;" json:"-" yaml:"-"`
-	VerifiedAt    *time.Time    `json:"VerifiedAt,omitempty" yaml:"VerifiedAt,omitempty"`
-	ConsentAt     *time.Time    `json:"ConsentAt,omitempty" yaml:"ConsentAt,omitempty"`
-	BornAt        *time.Time    `sql:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
-	UserDetails   *UserDetails  `gorm:"foreignKey:UserUID;references:UserUID;constraint:OnDelete:CASCADE" json:"Details,omitempty" yaml:"Details,omitempty"`
-	UserSettings  *UserSettings `gorm:"foreignKey:UserUID;references:UserUID;constraint:OnDelete:CASCADE" json:"Settings,omitempty" yaml:"Settings,omitempty"`
-	UserShares    []UserShare   `gorm:"foreignKey:UserUID;references:UserUID" json:"Shares,omitempty" yaml:"Shares,omitempty"`
-	ResetToken    string        `gorm:"type:bytes;size:64;" json:"-" yaml:"-"`
-	PreviewToken  string        `gorm:"type:bytes;size:64;column:preview_token;" json:"-" yaml:"-"`
-	DownloadToken string        `gorm:"type:bytes;size:64;column:download_token;" json:"-" yaml:"-"`
-	Thumb         string        `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc      string        `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc" yaml:"ThumbSrc,omitempty"`
-	RefID         string        `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
-	CreatedAt     time.Time     `json:"CreatedAt" yaml:"-"`
-	UpdatedAt     time.Time     `json:"UpdatedAt" yaml:"-"`
-	DeletedAt     *time.Time    `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	ID            int            `gorm:"primaryKey;" json:"ID" yaml:"-"`
+	UUID          string         `gorm:"type:bytes;size:64;column:user_uuid;index;" json:"UUID,omitempty" yaml:"UUID,omitempty"`
+	UserUID       string         `gorm:"type:bytes;size:42;column:user_uid;uniqueIndex;" json:"UID" yaml:"UID"`
+	AuthProvider  string         `gorm:"type:bytes;size:128;default:'';" json:"AuthProvider" yaml:"AuthProvider,omitempty"`
+	AuthMethod    string         `gorm:"type:bytes;size:128;default:'';" json:"AuthMethod" yaml:"AuthMethod,omitempty"`
+	AuthIssuer    string         `gorm:"type:bytes;size:255;default:'';" json:"AuthIssuer,omitempty" yaml:"AuthIssuer,omitempty"`
+	AuthID        string         `gorm:"type:bytes;size:255;index;default:'';" json:"AuthID" yaml:"AuthID,omitempty"`
+	UserName      string         `gorm:"size:200;index;" json:"Name" yaml:"Name,omitempty"`
+	DisplayName   string         `gorm:"size:200;" json:"DisplayName" yaml:"DisplayName,omitempty"`
+	UserEmail     string         `gorm:"size:255;index;" json:"Email" yaml:"Email,omitempty"`
+	BackupEmail   string         `gorm:"size:255;" json:"BackupEmail,omitempty" yaml:"BackupEmail,omitempty"`
+	UserRole      string         `gorm:"size:64;default:'';" json:"Role" yaml:"Role,omitempty"`
+	UserAttr      string         `gorm:"size:1024;" json:"Attr" yaml:"Attr,omitempty"`
+	SuperAdmin    bool           `json:"SuperAdmin" yaml:"SuperAdmin,omitempty"`
+	CanLogin      bool           `json:"CanLogin" yaml:"CanLogin,omitempty"`
+	LoginAt       *time.Time     `json:"LoginAt" yaml:"LoginAt,omitempty"`
+	ExpiresAt     *time.Time     `sql:"index" json:"ExpiresAt,omitempty" yaml:"ExpiresAt,omitempty"`
+	WebDAV        bool           `gorm:"column:webdav;" json:"WebDAV" yaml:"WebDAV,omitempty"`
+	BasePath      string         `gorm:"type:bytes;size:1024;" json:"BasePath" yaml:"BasePath,omitempty"`
+	UploadPath    string         `gorm:"type:bytes;size:1024;" json:"UploadPath" yaml:"UploadPath,omitempty"`
+	CanInvite     bool           `json:"CanInvite" yaml:"CanInvite,omitempty"`
+	InviteToken   string         `gorm:"type:bytes;size:64;index;" json:"-" yaml:"-"`
+	InvitedBy     string         `gorm:"size:64;" json:"-" yaml:"-"`
+	VerifyToken   string         `gorm:"type:bytes;size:64;" json:"-" yaml:"-"`
+	VerifiedAt    *time.Time     `json:"VerifiedAt,omitempty" yaml:"VerifiedAt,omitempty"`
+	ConsentAt     *time.Time     `json:"ConsentAt,omitempty" yaml:"ConsentAt,omitempty"`
+	BornAt        *time.Time     `sql:"index" json:"BornAt,omitempty" yaml:"BornAt,omitempty"`
+	UserDetails   *UserDetails   `gorm:"foreignKey:UserUID;references:UserUID;constraint:OnDelete:CASCADE" json:"Details,omitempty" yaml:"Details,omitempty"`
+	UserSettings  *UserSettings  `gorm:"foreignKey:UserUID;references:UserUID;constraint:OnDelete:CASCADE" json:"Settings,omitempty" yaml:"Settings,omitempty"`
+	UserShares    []UserShare    `gorm:"foreignKey:UserUID;references:UserUID" json:"Shares,omitempty" yaml:"Shares,omitempty"`
+	ResetToken    string         `gorm:"type:bytes;size:64;" json:"-" yaml:"-"`
+	PreviewToken  string         `gorm:"type:bytes;size:64;column:preview_token;" json:"-" yaml:"-"`
+	DownloadToken string         `gorm:"type:bytes;size:64;column:download_token;" json:"-" yaml:"-"`
+	Thumb         string         `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc      string         `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc" yaml:"ThumbSrc,omitempty"`
+	RefID         string         `gorm:"type:bytes;size:16;" json:"-" yaml:"-"`
+	CreatedAt     time.Time      `json:"CreatedAt" yaml:"-"`
+	UpdatedAt     time.Time      `json:"UpdatedAt" yaml:"-"`
+	DeletedAt     gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -310,7 +310,12 @@ func (m *User) Create() (err error) {
 func (m *User) Save() (err error) {
 	m.GenerateTokens(false)
 
-	err = UnscopedDb().Save(m).Error
+	// Gormv2 doesn't call BeforeCreate, so check that UserUID is populated as a validity check.
+	if len(m.UserUID) == 0 {
+		err = UnscopedDb().Create(m).Error
+	} else {
+		err = UnscopedDb().Save(m).Error
+	}
 
 	if err == nil {
 		m.SaveRelated()
@@ -340,11 +345,7 @@ func (m *User) Delete() (err error) {
 
 // IsDeleted checks if the user account has been deleted.
 func (m *User) IsDeleted() bool {
-	if m.DeletedAt == nil {
-		return false
-	}
-
-	return !m.DeletedAt.IsZero()
+	return m.DeletedAt.Valid
 }
 
 // LoadRelated loads related settings and details.

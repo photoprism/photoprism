@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zitadel/oidc/v3/pkg/oidc"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -1115,8 +1116,8 @@ func TestUser_UpdateLoginTime(t *testing.T) {
 	})
 	t.Run("User deleted", func(t *testing.T) {
 		u := NewUser()
-		var deleted = time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC)
-		u.DeletedAt = &deleted
+		var deleted = gorm.DeletedAt{Time: time.Date(2020, 3, 6, 2, 6, 51, 0, time.UTC), Valid: true}
+		u.DeletedAt = deleted
 		assert.Nil(t, u.UpdateLoginTime())
 	})
 }
