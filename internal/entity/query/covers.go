@@ -37,13 +37,14 @@ func UpdateAlbumDefaultCovers() (err error) {
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case SQLite3:
 		res = Db().Table(entity.Album{}.TableName()).
+			Where("album_type = ? AND thumb_src = ?", entity.AlbumManual, entity.SrcAuto).
 			UpdateColumn("thumb", gorm.Expr(`(
-		SELECT f.file_hash FROM files f 
-			JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = FALSE AND pa.missing = FALSE
-			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
-			WHERE f.deleted_at IS NULL AND f.file_missing = FALSE AND f.file_hash <> '' AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
-			ORDER BY p.taken_at DESC LIMIT 1
-		) WHERE ?`, media.PreviewExpr, condition))
+				SELECT f.file_hash FROM files f 
+					JOIN photos_albums pa ON pa.album_uid = albums.album_uid AND pa.photo_uid = f.photo_uid AND pa.hidden = 0 AND pa.missing = 0
+					JOIN photos p ON p.id = f.photo_id AND p.photo_private = 0 AND p.deleted_at IS NULL AND p.photo_quality > 0
+					WHERE f.deleted_at IS NULL AND f.file_missing = 0 AND f.file_hash <> '' AND f.file_primary = 1 AND f.file_error = '' AND f.file_type IN (?)
+					ORDER BY p.taken_at DESC LIMIT 1
+				)`, media.PreviewExpr))
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -83,7 +84,9 @@ func UpdateAlbumFolderCovers() (err error) {
 			) b ON b.photo_path = albums.album_path
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case SQLite3:
-		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Album{}.TableName()).
+			Where("album_type = ? AND thumb_src = ?", entity.AlbumFolder, entity.SrcAuto).
+			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_path, max(p.id) AS photo_id FROM photos p
 			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
@@ -91,7 +94,7 @@ func UpdateAlbumFolderCovers() (err error) {
 			) b
 		WHERE f.photo_id = b.photo_id  AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_path = albums.album_path LIMIT 1)
-		WHERE ?`, media.PreviewExpr, condition))
+		`, media.PreviewExpr))
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -131,7 +134,9 @@ func UpdateAlbumMonthCovers() (err error) {
 			) b ON b.photo_year = albums.album_year AND b.photo_month = albums.album_month
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case SQLite3:
-		res = Db().Table(entity.Album{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Album{}.TableName()).
+			Where("album_type = ? AND thumb_src = ?", entity.AlbumMonth, entity.SrcAuto).
+			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f,(
 			SELECT p.photo_year, p.photo_month, max(p.id) AS photo_id FROM photos p
 			  WHERE p.photo_quality > 0 AND p.photo_private = FALSE AND p.deleted_at IS NULL
@@ -139,7 +144,7 @@ func UpdateAlbumMonthCovers() (err error) {
 			) b
 		WHERE f.photo_id = b.photo_id AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 		AND b.photo_year = albums.album_year AND b.photo_month = albums.album_month LIMIT 1)
-		WHERE ?`, media.PreviewExpr, condition))
+		`, media.PreviewExpr))
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
@@ -207,23 +212,27 @@ func UpdateLabelCovers() (err error) {
 		) b ON b.label_id = labels.id
 		SET thumb = b.file_hash WHERE ?`, media.PreviewExpr, condition)
 	case SQLite3:
-		res = Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+		res = Db().Table(entity.Label{}.TableName()).
+			Where("thumb_src = ?", entity.SrcAuto).
+			UpdateColumn("thumb", gorm.Expr(`(
 		SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.label_id = labels.id AND pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = FALSE AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-		) WHERE ?`, media.PreviewExpr, condition))
+		) `, media.PreviewExpr))
 
 		if res.Error == nil {
-			catRes := Db().Table(entity.Label{}.TableName()).UpdateColumn("thumb", gorm.Expr(`(
+			catRes := Db().Table(entity.Label{}.TableName()).
+				Where("thumb IS NULL").
+				UpdateColumn("thumb", gorm.Expr(`(
 			SELECT f.file_hash FROM files f 
 			JOIN photos_labels pl ON pl.photo_id = f.photo_id AND pl.uncertainty < 100
 			JOIN categories c ON c.label_id = pl.label_id AND c.category_id = labels.id
 			JOIN photos p ON p.id = f.photo_id AND p.photo_private = FALSE AND p.deleted_at IS NULL AND p.photo_quality > 0
 			WHERE f.deleted_at IS NULL AND f.file_hash <> '' AND f.file_missing = FALSE AND f.file_primary = TRUE AND f.file_error = '' AND f.file_type IN (?)
 			ORDER BY p.photo_quality DESC, pl.uncertainty ASC, p.taken_at DESC LIMIT 1
-			) WHERE thumb IS NULL`, media.PreviewExpr))
+			) `, media.PreviewExpr))
 
 			res.RowsAffected += catRes.RowsAffected
 		}
@@ -284,19 +293,20 @@ func UpdateSubjectCovers(public bool) (err error) {
 		)
 	case SQLite3:
 		// from := gorm.Expr(fmt.Sprintf("%s m WHERE m.subj_uid = %s.subj_uid ", markerTable, subjTable))
-		res = Db().Table(entity.Subject{}.TableName()).UpdateColumn("thumb",
-			gorm.Expr(`(
+		res = Db().Table(entity.Subject{}.TableName()).
+			Where("subjects.subj_type = ? AND thumb_src = ?", entity.SubjPerson, entity.SrcAuto).
+			UpdateColumn("thumb",
+				gorm.Expr(`(
                 SELECT m.thumb
 					FROM markers m 
 					JOIN files f ON f.file_uid = m.file_uid AND f.deleted_at IS NULL
 					JOIN photos p ON ?
 					WHERE m.subj_uid = subjects.subj_uid AND m.thumb <> ''
 					ORDER BY m.subj_src DESC, m.q DESC LIMIT 1
-				) WHERE ?`,
-				photosJoin,
-				condition,
-			),
-		)
+				) `,
+					photosJoin,
+				),
+			)
 	default:
 		log.Warnf("sql: unsupported dialect %s", DbDialect())
 		return nil
