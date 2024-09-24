@@ -175,7 +175,7 @@ func (m *Folder) Create() error {
 	}
 
 	if a := FindFolderAlbum(m.Path); a != nil {
-		if a.DeletedAt != nil {
+		if a.DeletedAt.Valid {
 			// Ignore.
 		} else if err := a.UpdateFolder(m.Path, f.Serialize()); err != nil {
 			log.Errorf("folder: %s (update album)", err.Error())

@@ -47,6 +47,7 @@ The following is the status of unit testing.
 | PASS | github.com/photoprism/photoprism/internal/functions |
 | PASS | github.com/photoprism/photoprism/internal/meta |
 | PASS | github.com/photoprism/photoprism/internal/mutex |
+| PASS | github.com/photoprism/photoprism/internal/photoprism/backup |
 | PASS | github.com/photoprism/photoprism/internal/photoprism/get |
 | PASS | github.com/photoprism/photoprism/internal/server |
 | PASS | github.com/photoprism/photoprism/internal/server/limiter |
@@ -66,114 +67,103 @@ The following is the status of unit testing.
 
 | Status | Path/Test |
 | ------ | --------------------------------------------------------------------- |
-| FAIL | BatchPhotosArchive|
-| FAIL |   BatchPhotosArchive/successful_request|
-| FAIL | BatchPhotosRestore|
-| FAIL |   BatchPhotosRestore/successful_request|
-| FAIL | BatchAlbumsDelete|
-| FAIL |   BatchAlbumsDelete/successful_request|
-| FAIL | BatchPhotosPrivate|
-| FAIL |   BatchPhotosPrivate/successful_request|
-| FAIL | AddPhotoLabel|
-| FAIL |   AddPhotoLabel/add_new_label|
-| FAIL |   AddPhotoLabel/add_existing_label|
-| FAIL |   AddPhotoLabel/invalid_request|
-| FAIL | RemovePhotoLabel|
-| FAIL |   RemovePhotoLabel/photo_with_label|
-| FAIL |   RemovePhotoLabel/remove_manually_added_label|
-| FAIL |   RemovePhotoLabel/try_to_remove_wrong_label|
-| FAIL | UpdatePhotoLabel|
-| FAIL |   UpdatePhotoLabel/successful_request|
-| FAIL |   UpdatePhotoLabel/bad_request|
-| FAIL | GetPhoto|
-| FAIL |   GetPhoto/Ok|
-| FAIL | DislikePhoto|
-| FAIL |   DislikePhoto/Ok|
-| FAIL | PhotoPrimary|
-| FAIL |   PhotoPrimary/Ok|
-| FAIL | GetPhotoYaml|
-| FAIL |   GetPhotoYaml/Ok|
-| FAIL | GetSubject|
-| FAIL |   GetSubject/Ok|
-| FAIL | LikeSubject|
-| FAIL |   LikeSubject/ExistingSubject|
-| FAIL | 	github.com/photoprism/photoprism/internal/api|
-| FAIL | Config_DatabaseDsn|
-| FAIL | Config_SqliteBin|
-| FAIL | 	github.com/photoprism/photoprism/internal/config|
-| FAIL | Count|
-| FAIL | LabelCounts|
-| FAIL | UpdateCounts|
-| FAIL | Keyword_Updates|
-| FAIL |   Keyword_Updates/success|
-| FAIL | Keyword_Update|
-| FAIL |   Keyword_Update/success|
-| FAIL | Marker_ClearFace|
-| FAIL |   Marker_ClearFace/empty_face_id|
-| FAIL | PhotoAlbum_Save|
-| FAIL |   PhotoAlbum_Save/success|
-| FAIL | Photo_UpdateQuality|
-| FAIL |   Photo_UpdateQuality/low_quality_expected|
-| FAIL | Photo_AddLabels|
-| FAIL |   Photo_AddLabels/Add|
-| FAIL |   Photo_AddLabels/Update|
-| FAIL | 	github.com/photoprism/photoprism/internal/entity|
-| FAIL | UpdateAlbumDefaultCovers|
-| FAIL | UpdateAlbumFolderCovers|
-| FAIL | UpdateAlbumMonthCovers|
-| FAIL | UpdateAlbumCovers|
-| FAIL | UpdateLabelCovers|
-| FAIL | UpdateSubjectCovers|
-| FAIL | UpdateCovers|
-| FAIL | FileSelection|
-| FAIL |   FileSelection/ShareSelectionOriginals|
-| FAIL |   FileSelection/ShareFolders|
-| FAIL | FilesByUID|
-| FAIL |   FilesByUID/error|
-| FAIL | LabelThumbBySlug|
-| FAIL |   LabelThumbBySlug/file_found|
-| FAIL | LabelThumbByUID|
-| FAIL |   LabelThumbByUID/file_found|
-| FAIL | PhotoLabel|
-| FAIL |   PhotoLabel/photo_label_found|
-| FAIL | MomentsCategories|
-| FAIL |   MomentsCategories/PublicOnly|
-| FAIL |   MomentsCategories/IncludePrivate|
-| FAIL | 	github.com/photoprism/photoprism/internal/entity/query|
-| FAIL | PhotosFilterFilter|
-| FAIL |   PhotosFilterFilter/CenterPercent|
-| FAIL | PhotosQueryFilter|
-| FAIL |   PhotosQueryFilter/CenterPercent|
-| FAIL | PhotosFilterLabel|
-| FAIL |   PhotosFilterLabel/flower|
-| FAIL |   PhotosFilterLabel/cake|
-| FAIL |   PhotosFilterLabel/cake_pipe_flower|
-| FAIL |   PhotosFilterLabel/cake_whitespace_pipe_whitespace_flower|
-| FAIL |   PhotosFilterLabel/StartsWithNumber|
-| FAIL |   PhotosFilterLabel/CenterNumber|
-| FAIL |   PhotosFilterLabel/EndsWithNumber|
-| FAIL |   PhotosFilterLabel/OrSearch|
-| FAIL | PhotosQueryLabel|
-| FAIL |   PhotosQueryLabel/flower|
-| FAIL |   PhotosQueryLabel/cake|
-| FAIL |   PhotosQueryLabel/cake_pipe_flower|
-| FAIL |   PhotosQueryLabel/cake_whitespace_pipe_whitespace_flower|
-| FAIL |   PhotosQueryLabel/StartsWithNumber|
-| FAIL |   PhotosQueryLabel/CenterNumber|
-| FAIL |   PhotosQueryLabel/EndsWithNumber|
-| FAIL |   PhotosQueryLabel/OrSearch|
-| FAIL | Photos|
-| FAIL |   Photos/label_query_landscape|
-| FAIL |   Photos/search_for_label_in_query|
-| FAIL |   Photos/search_for_labels|
-| FAIL |   Photos/search_for_landscape|
-| FAIL | 	github.com/photoprism/photoprism/internal/entity/search|
-| FAIL | Places|
-| FAIL |   Places/Unresolved|
-| FAIL |   Places/Force|
-| FAIL | 	github.com/photoprism/photoprism/internal/photoprism|
-| FAIL | Albums|
-| FAIL | 	github.com/photoprism/photoprism/internal/photoprism/backup|
+| FAIL | BatchPhotosArchive |
+| FAIL |   BatchPhotosArchive/successful_request |
+| FAIL | BatchPhotosRestore |
+| FAIL |   BatchPhotosRestore/successful_request |
+| FAIL | BatchPhotosPrivate |
+| FAIL |   BatchPhotosPrivate/successful_request |
+| FAIL | AddPhotoLabel |
+| FAIL |   AddPhotoLabel/add_new_label |
+| FAIL |   AddPhotoLabel/add_existing_label |
+| FAIL |   AddPhotoLabel/invalid_request |
+| FAIL | RemovePhotoLabel |
+| FAIL |   RemovePhotoLabel/photo_with_label |
+| FAIL |   RemovePhotoLabel/remove_manually_added_label |
+| FAIL |   RemovePhotoLabel/try_to_remove_wrong_label |
+| FAIL | UpdatePhotoLabel |
+| FAIL |   UpdatePhotoLabel/successful_request |
+| FAIL |   UpdatePhotoLabel/bad_request |
+| FAIL | GetPhoto |
+| FAIL |   GetPhoto/Ok |
+| FAIL | DislikePhoto |
+| FAIL |   DislikePhoto/Ok |
+| FAIL | PhotoPrimary |
+| FAIL |   PhotoPrimary/Ok |
+| FAIL | GetPhotoYaml |
+| FAIL |   GetPhotoYaml/Ok |
+| FAIL | GetSubject |
+| FAIL |   GetSubject/Ok |
+| FAIL | LikeSubject |
+| FAIL |   LikeSubject/ExistingSubject |
+| FAIL | 	github.com/photoprism/photoprism/internal/api |
+| FAIL | Config_DatabaseDsn |
+| FAIL | Config_SqliteBin |
+| FAIL | 	github.com/photoprism/photoprism/internal/config |
+| FAIL | Count |
+| FAIL | LabelCounts |
+| FAIL | UpdateCounts |
+| FAIL | Keyword_Updates |
+| FAIL |   Keyword_Updates/success |
+| FAIL | Keyword_Update |
+| FAIL |   Keyword_Update/success |
+| FAIL | Marker_ClearFace |
+| FAIL |   Marker_ClearFace/empty_face_id |
+| FAIL | PhotoAlbum_Save |
+| FAIL |   PhotoAlbum_Save/success |
+| FAIL | Photo_UpdateQuality |
+| FAIL |   Photo_UpdateQuality/low_quality_expected |
+| FAIL | Photo_AddLabels |
+| FAIL |   Photo_AddLabels/Add |
+| FAIL |   Photo_AddLabels/Update |
+| FAIL | 	github.com/photoprism/photoprism/internal/entity |
+| FAIL | FileSelection |
+| FAIL |   FileSelection/ShareSelectionOriginals |
+| FAIL |   FileSelection/ShareFolders |
+| FAIL | FilesByUID |
+| FAIL |   FilesByUID/error |
+| FAIL | LabelThumbBySlug |
+| FAIL |   LabelThumbBySlug/file_found |
+| FAIL | LabelThumbByUID |
+| FAIL |   LabelThumbByUID/file_found |
+| FAIL | PhotoLabel |
+| FAIL |   PhotoLabel/photo_label_found |
+| FAIL | MomentsCategories |
+| FAIL |   MomentsCategories/PublicOnly |
+| FAIL |   MomentsCategories/IncludePrivate |
+| FAIL | 	github.com/photoprism/photoprism/internal/entity/query |
+| FAIL | PhotosFilterFilter |
+| FAIL |   PhotosFilterFilter/CenterPercent |
+| FAIL | PhotosQueryFilter |
+| FAIL |   PhotosQueryFilter/CenterPercent |
+| FAIL | PhotosFilterLabel |
+| FAIL |   PhotosFilterLabel/flower |
+| FAIL |   PhotosFilterLabel/cake |
+| FAIL |   PhotosFilterLabel/cake_pipe_flower |
+| FAIL |   PhotosFilterLabel/cake_whitespace_pipe_whitespace_flower |
+| FAIL |   PhotosFilterLabel/StartsWithNumber |
+| FAIL |   PhotosFilterLabel/CenterNumber |
+| FAIL |   PhotosFilterLabel/EndsWithNumber |
+| FAIL |   PhotosFilterLabel/OrSearch |
+| FAIL | PhotosQueryLabel |
+| FAIL |   PhotosQueryLabel/flower |
+| FAIL |   PhotosQueryLabel/cake |
+| FAIL |   PhotosQueryLabel/cake_pipe_flower |
+| FAIL |   PhotosQueryLabel/cake_whitespace_pipe_whitespace_flower |
+| FAIL |   PhotosQueryLabel/StartsWithNumber |
+| FAIL |   PhotosQueryLabel/CenterNumber |
+| FAIL |   PhotosQueryLabel/EndsWithNumber |
+| FAIL |   PhotosQueryLabel/OrSearch |
+| FAIL | Photos |
+| FAIL |   Photos/label_query_landscape |
+| FAIL |   Photos/search_for_label_in_query |
+| FAIL |   Photos/search_for_labels |
+| FAIL |   Photos/search_for_landscape |
+| FAIL | 	github.com/photoprism/photoprism/internal/entity/search |
+| FAIL | Places |
+| FAIL |   Places/Unresolved |
+| FAIL |   Places/Force |
+| FAIL | 	github.com/photoprism/photoprism/internal/photoprism |
 
 
 Issues found in tests that don't cause a failure:

@@ -735,7 +735,7 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 	}
 
 	// File obviously exists: remove deleted and missing flags.
-	file.DeletedAt = nil
+	file.DeletedAt = gorm.DeletedAt{}
 	file.FileMissing = false
 
 	// Previews files are used for rendering thumbnails and image classification, plus sidecar files if they exist.
