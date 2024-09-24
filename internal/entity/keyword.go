@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"errors"
+	"reflect"
 	"strings"
 	"sync"
 
@@ -32,14 +34,46 @@ func NewKeyword(keyword string) *Keyword {
 	return result
 }
 
+// Retrieves the ID value from the values interface
+func getIDInValuesOrZero(values any) (result any) {
+	switch reflect.TypeOf(values).Kind() {
+	case reflect.Struct:
+		t := reflect.TypeOf(values)
+		v := reflect.ValueOf(values)
+		for i := 0; i < t.NumField(); i++ {
+			if t.Field(i).Name == "ID" {
+				return v.Field(i).Interface()
+			}
+		}
+	default:
+		log.Errorf("Unsupported Type %v in getIDInValuesOrZero", reflect.TypeOf(values).Kind())
+	}
+	return 0
+}
+
 // Updates multiple columns in the database.
 func (m *Keyword) Updates(values interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumns(values).Error
+	if m.ID == 0 {
+		id := getIDInValuesOrZero(values)
+		if id != 0 {
+			return UnscopedDb().Model(m).
+				Where("id = ?", id).
+				UpdateColumns(values).Error
+		} else {
+			return errors.New("PK value not provided")
+		}
+	} else {
+		return UnscopedDb().Model(m).UpdateColumns(values).Error
+	}
 }
 
 // Update a column in the database.
 func (m *Keyword) Update(attr string, value interface{}) error {
-	return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	if m.ID == 0 {
+		return errors.New("PK value not provided in model")
+	} else {
+		return UnscopedDb().Model(m).UpdateColumn(attr, value).Error
+	}
 }
 
 // Save updates the record in the database or inserts a new record if it does not already exist.

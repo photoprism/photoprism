@@ -53,6 +53,7 @@ func TestKeyword_Update(t *testing.T) {
 		keyword := NewKeyword("KeywordBeforeUpdate2")
 		assert.Equal(t, "keywordbeforeupdate2", keyword.Keyword)
 
+		keyword.ID = 99966 // Gorm2 requires PK to be set on Model if not using Where clause.
 		err := keyword.Update("Keyword", "new-name")
 
 		if err != nil {
@@ -60,6 +61,17 @@ func TestKeyword_Update(t *testing.T) {
 		}
 		assert.Equal(t, "new-name", keyword.Keyword)
 
+	})
+}
+
+func TestKeyword_UpdateNoID(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		keyword := NewKeyword("KeywordBeforeUpdate2")
+		assert.Equal(t, "keywordbeforeupdate2", keyword.Keyword)
+
+		err := keyword.Update("Keyword", "new-name")
+		assert.Error(t, err)
+		assert.ErrorContains(t, err, "PK value not provided")
 	})
 }
 
