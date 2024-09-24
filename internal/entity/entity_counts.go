@@ -57,11 +57,9 @@ func UpdatePlacesCounts() (err error) {
 
 	// Update places.
 	res := Db().Table("places").
-		UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(*) FROM photos p "+
-			"WHERE places.id = p.place_id "+
-			"AND p.photo_quality > -1 "+
-			"AND p.photo_private = FALSE "+
-			"AND p.deleted_at IS NULL)"))
+		Where("id is not null").
+		UpdateColumn("photo_count", Db().Model(&Photos{}).Select("count(*)").
+			Where("places.id = photos.place_id AND photos.photo_quality > -1 AND photos.photo_private = FALSE AND photos.deleted_at IS NULL"))
 
 	if res.Error != nil {
 		return res.Error
@@ -111,20 +109,22 @@ func UpdateSubjectCounts(public bool) (err error) {
 	case SQLite3:
 		// Update files count.
 		res = Db().Table(subjTable).
+			Where("subj_type = ?", SubjPerson).
 			UpdateColumn("file_count", gorm.Expr("(SELECT COUNT(DISTINCT f.id)"+
 				" FROM files f JOIN photos p ON ?"+
 				" JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = subjects.subj_uid"+
-				" WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL) WHERE ?", photosJoin, condition))
+				" WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL)", photosJoin))
 
 		// Update photo count.
 		if res.Error != nil {
 			return res.Error
 		} else {
 			photosRes := Db().Table(subjTable).
+				Where("subj_type = ?", SubjPerson).
 				UpdateColumn("photo_count", gorm.Expr("(SELECT COUNT(DISTINCT f.photo_id)"+
 					" FROM files f JOIN photos p ON ?"+
 					" JOIN markers m ON f.file_uid = m.file_uid AND m.subj_uid = subjects.subj_uid"+
-					" WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL) WHERE ?", photosJoin, condition))
+					" WHERE m.marker_invalid = FALSE AND f.deleted_at IS NULL)", photosJoin))
 			res.RowsAffected += photosRes.RowsAffected
 		}
 	default:
@@ -164,6 +164,7 @@ func UpdateLabelCounts() (err error) {
 	} else if IsDialect(SQLite3) {
 		res = Db().
 			Table("labels").
+			Where("id is not null").
 			UpdateColumn("photo_count",
 				gorm.Expr(`(SELECT photo_count FROM (SELECT label_id, SUM(photo_count) AS photo_count FROM (
 				SELECT l.id AS label_id, COUNT(*) AS photo_count FROM labels l
