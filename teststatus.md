@@ -176,6 +176,3 @@ The following is the status of unit testing.
 
 
 Issues found in tests that don't cause a failure:
-
-2024/09/23 09:10:56 /go/src/github.com/photoprism/photoprism/internal/entity/query/subjects.go:19  
-[warn] Model github.com/photoprism/photoprism/internal/entity.Person don't match AfterFindInterface, should be `AfterFind(*gorm.DB) error`. Please see https://gorm.io/docs/hooks.html

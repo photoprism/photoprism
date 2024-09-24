@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/photoprism/photoprism/pkg/txt"
+	"gorm.io/gorm"
 )
 
 const (
@@ -23,7 +24,7 @@ type Person struct {
 }
 
 // AfterFind is a hook that updates the name cache after querying.
-func (m *Person) AfterFind() (err error) {
+func (m *Person) AfterFind(scope *gorm.DB) (err error) {
 	SubjNames.Set(m.SubjUID, m.SubjName)
 	return
 }
