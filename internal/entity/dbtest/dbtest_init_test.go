@@ -79,6 +79,16 @@ func TestInit(t *testing.T) {
 		assert.Equal(t, int64(32), count)
 	})
 
+	t.Run("PhotoLabelCounts", func(t *testing.T) {
+		m := &entity.PhotoLabel{}
+		stmt := entity.UnscopedDb()
+		count := int64(0)
+
+		stmt.Model(m).Count(&count)
+
+		assert.Equal(t, int64(64), count)
+	})
+
 	t.Run("PhotoCounts", func(t *testing.T) {
 		m := &entity.Photo{}
 		stmt := entity.UnscopedDb()

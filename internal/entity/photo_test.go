@@ -958,8 +958,8 @@ func TestPhoto_ArchiveRestore(t *testing.T) {
 		assert.Empty(t, m.DeletedAt)
 	})
 	t.Run("AlreadyArchived", func(t *testing.T) {
-		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		m := &Photo{ID: 10000, PhotoUID: "prjwufg1z97rcxff", PhotoTitle: "HappyLilly", DeletedAt: &deletedTime}
+		var deletedTime = gorm.DeletedAt{Time: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), Valid: true}
+		m := &Photo{ID: 10000, PhotoUID: "prjwufg1z97rcxff", PhotoTitle: "HappyLilly", DeletedAt: deletedTime}
 		assert.NotEmpty(t, m.DeletedAt)
 		err := m.Archive()
 		if err != nil {

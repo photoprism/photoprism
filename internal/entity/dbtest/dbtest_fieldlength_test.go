@@ -7,6 +7,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
 )
@@ -81,7 +82,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -175,7 +176,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -273,7 +274,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -371,7 +372,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -468,7 +469,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -565,7 +566,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -662,7 +663,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -759,7 +760,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -856,7 +857,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -953,7 +954,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -1050,7 +1051,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -1147,7 +1148,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -1244,7 +1245,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -1341,7 +1342,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -1438,7 +1439,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -1536,7 +1537,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}
@@ -1634,7 +1635,7 @@ func TestInitDBLengths(t *testing.T) {
 			UpdatedAt:  time.Date(2008, 1, 1, 0, 0, 0, 0, time.UTC),
 			EditedAt:   nil,
 			CheckedAt:  &checkedTime,
-			DeletedAt:  nil,
+			DeletedAt:  gorm.DeletedAt{},
 			PhotoColor: 9,
 			PhotoStack: 0,
 			PhotoFaces: 3}

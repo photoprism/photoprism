@@ -324,8 +324,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 
 	if photo.PhotoQuality == -1 && (file.FilePrimary || fileChanged) {
 		// Restore pictures that have been purged automatically.
-		photo.DeletedAt = nil
-	} else if o.SkipArchived && photo.DeletedAt != nil {
+		photo.DeletedAt = gorm.DeletedAt{}
+	} else if o.SkipArchived && photo.DeletedAt.Valid {
 		// Skip archived pictures for faster indexing.
 		result.Status = IndexArchived
 		return result

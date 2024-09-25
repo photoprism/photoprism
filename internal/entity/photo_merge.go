@@ -101,7 +101,7 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 			continue
 		}
 
-		deleted := Now()
+		deleted := gorm.DeletedAt{Time: Now(), Valid: true}
 
 		logResult(UnscopedDb().Exec("UPDATE files SET photo_id = ?, photo_uid = ?, file_primary = FALSE WHERE photo_id = ?", original.ID, original.PhotoUID, merge.ID))
 		logResult(UnscopedDb().Exec("UPDATE photos SET photo_quality = -1, deleted_at = ? WHERE id = ?", Now(), merge.ID))
@@ -119,15 +119,15 @@ func (m *Photo) Merge(mergeMeta, mergeUuid bool) (original Photo, merged Photos,
 			log.Warnf("sql: unsupported dialect %s", DbDialect())
 		}
 
-		merge.DeletedAt = &deleted
+		merge.DeletedAt = deleted
 		merge.PhotoQuality = -1
 
 		merged = append(merged, merge)
 	}
 
 	if original.ID != m.ID {
-		deleted := Now()
-		m.DeletedAt = &deleted
+		deleted := gorm.DeletedAt{Time: Now(), Valid: true}
+		m.DeletedAt = deleted
 		m.PhotoQuality = -1
 	}
 

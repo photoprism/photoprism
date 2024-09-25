@@ -39,68 +39,68 @@ func MapKey(takenAt time.Time, cellId string) string {
 
 // Photo represents a photo, all its properties, and link to all its images and sidecar files.
 type Photo struct {
-	ID               uint          `gorm:"primaryKey;" yaml:"-"`
-	UUID             string        `gorm:"type:bytes;size:64;index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
-	TakenAt          time.Time     `gorm:"index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
-	TakenAtLocal     time.Time     `json:"TakenAtLocal" yaml:"TakenAtLocal"`
-	TakenSrc         string        `gorm:"type:bytes;size:8;" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
-	PhotoUID         string        `gorm:"type:bytes;size:42;uniqueIndex;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
-	PhotoType        string        `gorm:"type:bytes;size:8;default:'image';" json:"Type" yaml:"Type"`
-	TypeSrc          string        `gorm:"type:bytes;size:8;" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
-	PhotoTitle       string        `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
-	TitleSrc         string        `gorm:"type:bytes;size:8;" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
-	PhotoDescription string        `gorm:"type:VARCHAR(4096);" json:"Description" yaml:"Description,omitempty"`
-	DescriptionSrc   string        `gorm:"type:bytes;size:8;" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
-	PhotoPath        string        `gorm:"type:bytes;size:1024;index:idx_photos_path_name;" json:"Path" yaml:"-"`
-	PhotoName        string        `gorm:"type:bytes;size:255;index:idx_photos_path_name;" json:"Name" yaml:"-"`
-	OriginalName     string        `gorm:"type:bytes;size:755;" json:"OriginalName" yaml:"OriginalName,omitempty"`
-	PhotoStack       int8          `json:"Stack" yaml:"Stack,omitempty"`
-	PhotoFavorite    bool          `json:"Favorite" yaml:"Favorite,omitempty"`
-	PhotoPrivate     bool          `json:"Private" yaml:"Private,omitempty"`
-	PhotoScan        bool          `json:"Scan" yaml:"Scan,omitempty"`
-	PhotoPanorama    bool          `json:"Panorama" yaml:"Panorama,omitempty"`
-	TimeZone         string        `gorm:"type:bytes;size:64;" json:"TimeZone" yaml:"TimeZone,omitempty"`
-	PlaceID          string        `gorm:"type:bytes;size:42;index;default:'zz'" json:"PlaceID" yaml:"-"`
-	PlaceSrc         string        `gorm:"type:bytes;size:8;" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
-	CellID           string        `gorm:"type:bytes;size:42;index;default:'zz'" json:"CellID" yaml:"-"`
-	CellAccuracy     int           `json:"CellAccuracy" yaml:"CellAccuracy,omitempty"`
-	PhotoAltitude    int           `json:"Altitude" yaml:"Altitude,omitempty"`
-	PhotoLat         float64       `gorm:"type:DOUBLE;index;" json:"Lat" yaml:"Lat,omitempty"`
-	PhotoLng         float64       `gorm:"type:DOUBLE;index;" json:"Lng" yaml:"Lng,omitempty"`
-	PhotoCountry     string        `gorm:"type:bytes;size:2;index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
-	PhotoYear        int           `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
-	PhotoMonth       int           `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`
-	PhotoDay         int           `gorm:"index:idx_photos_ymd" json:"Day" yaml:"Day"`
-	PhotoIso         int           `json:"Iso" yaml:"ISO,omitempty"`
-	PhotoExposure    string        `gorm:"type:bytes;size:64;" json:"Exposure" yaml:"Exposure,omitempty"`
-	PhotoFNumber     float32       `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
-	PhotoFocalLength int           `json:"FocalLength" yaml:"FocalLength,omitempty"`
-	PhotoQuality     int           `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
-	PhotoFaces       int           `json:"Faces,omitempty" yaml:"Faces,omitempty"`
-	PhotoResolution  int           `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
-	PhotoDuration    time.Duration `json:"Duration,omitempty" yaml:"Duration,omitempty"`
-	PhotoColor       int16         `json:"Color" yaml:"-"`
-	CameraID         uint          `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
-	CameraSerial     string        `gorm:"type:bytes;size:160;" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
-	CameraSrc        string        `gorm:"type:bytes;size:8;" json:"CameraSrc" yaml:"-"`
-	LensID           uint          `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
-	Details          *Details      `gorm:"foreignKey:PhotoID" json:"Details" yaml:"Details"`
-	Camera           *Camera       `json:"Camera" yaml:"-"`
-	Lens             *Lens         `json:"Lens" yaml:"-"`
-	Cell             *Cell         `json:"Cell" yaml:"-"`
-	Place            *Place        `json:"Place" yaml:"-"`
-	Keywords         []Keyword     `gorm:"many2many:photos_keywords;foreignKey:ID;joinForeignKey:PhotoID;References:ID;joinReferences:KeywordID" json:"-" yaml:"-"`
-	Albums           []Album       `gorm:"many2many:photos_albums;foreignKey:PhotoUID;joinForeignKey:photo_uid;References:AlbumUID;joinReferences:album_uid" json:"Albums" yaml:"-"`
-	Files            []File        `yaml:"-"`
-	Labels           []PhotoLabel  `yaml:"-"`
-	CreatedBy        string        `gorm:"type:bytes;size:42;index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
-	CreatedAt        time.Time     `yaml:"CreatedAt,omitempty"`
-	UpdatedAt        time.Time     `yaml:"UpdatedAt,omitempty"`
-	EditedAt         *time.Time    `yaml:"EditedAt,omitempty"`
-	PublishedAt      *time.Time    `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	CheckedAt        *time.Time    `sql:"index" yaml:"-"`
-	EstimatedAt      *time.Time    `json:"EstimatedAt,omitempty" yaml:"-"`
-	DeletedAt        *time.Time    `sql:"index" yaml:"DeletedAt,omitempty"`
+	ID               uint           `gorm:"primaryKey;" yaml:"-"`
+	UUID             string         `gorm:"type:bytes;size:64;index;" json:"DocumentID,omitempty" yaml:"DocumentID,omitempty"`
+	TakenAt          time.Time      `gorm:"index:idx_photos_taken_uid;" json:"TakenAt" yaml:"TakenAt"`
+	TakenAtLocal     time.Time      `json:"TakenAtLocal" yaml:"TakenAtLocal"`
+	TakenSrc         string         `gorm:"type:bytes;size:8;" json:"TakenSrc" yaml:"TakenSrc,omitempty"`
+	PhotoUID         string         `gorm:"type:bytes;size:42;uniqueIndex;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
+	PhotoType        string         `gorm:"type:bytes;size:8;default:'image';" json:"Type" yaml:"Type"`
+	TypeSrc          string         `gorm:"type:bytes;size:8;" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
+	PhotoTitle       string         `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
+	TitleSrc         string         `gorm:"type:bytes;size:8;" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
+	PhotoDescription string         `gorm:"type:VARCHAR(4096);" json:"Description" yaml:"Description,omitempty"`
+	DescriptionSrc   string         `gorm:"type:bytes;size:8;" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
+	PhotoPath        string         `gorm:"type:bytes;size:1024;index:idx_photos_path_name;" json:"Path" yaml:"-"`
+	PhotoName        string         `gorm:"type:bytes;size:255;index:idx_photos_path_name;" json:"Name" yaml:"-"`
+	OriginalName     string         `gorm:"type:bytes;size:755;" json:"OriginalName" yaml:"OriginalName,omitempty"`
+	PhotoStack       int8           `json:"Stack" yaml:"Stack,omitempty"`
+	PhotoFavorite    bool           `json:"Favorite" yaml:"Favorite,omitempty"`
+	PhotoPrivate     bool           `json:"Private" yaml:"Private,omitempty"`
+	PhotoScan        bool           `json:"Scan" yaml:"Scan,omitempty"`
+	PhotoPanorama    bool           `json:"Panorama" yaml:"Panorama,omitempty"`
+	TimeZone         string         `gorm:"type:bytes;size:64;" json:"TimeZone" yaml:"TimeZone,omitempty"`
+	PlaceID          string         `gorm:"type:bytes;size:42;index;default:'zz'" json:"PlaceID" yaml:"-"`
+	PlaceSrc         string         `gorm:"type:bytes;size:8;" json:"PlaceSrc" yaml:"PlaceSrc,omitempty"`
+	CellID           string         `gorm:"type:bytes;size:42;index;default:'zz'" json:"CellID" yaml:"-"`
+	CellAccuracy     int            `json:"CellAccuracy" yaml:"CellAccuracy,omitempty"`
+	PhotoAltitude    int            `json:"Altitude" yaml:"Altitude,omitempty"`
+	PhotoLat         float64        `gorm:"type:DOUBLE;index;" json:"Lat" yaml:"Lat,omitempty"`
+	PhotoLng         float64        `gorm:"type:DOUBLE;index;" json:"Lng" yaml:"Lng,omitempty"`
+	PhotoCountry     string         `gorm:"type:bytes;size:2;index:idx_photos_country_year_month;default:'zz'" json:"Country" yaml:"-"`
+	PhotoYear        int            `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Year" yaml:"Year"`
+	PhotoMonth       int            `gorm:"index:idx_photos_ymd;index:idx_photos_country_year_month;" json:"Month" yaml:"Month"`
+	PhotoDay         int            `gorm:"index:idx_photos_ymd" json:"Day" yaml:"Day"`
+	PhotoIso         int            `json:"Iso" yaml:"ISO,omitempty"`
+	PhotoExposure    string         `gorm:"type:bytes;size:64;" json:"Exposure" yaml:"Exposure,omitempty"`
+	PhotoFNumber     float32        `gorm:"type:FLOAT;" json:"FNumber" yaml:"FNumber,omitempty"`
+	PhotoFocalLength int            `json:"FocalLength" yaml:"FocalLength,omitempty"`
+	PhotoQuality     int            `gorm:"type:SMALLINT" json:"Quality" yaml:"Quality,omitempty"`
+	PhotoFaces       int            `json:"Faces,omitempty" yaml:"Faces,omitempty"`
+	PhotoResolution  int            `gorm:"type:SMALLINT" json:"Resolution" yaml:"-"`
+	PhotoDuration    time.Duration  `json:"Duration,omitempty" yaml:"Duration,omitempty"`
+	PhotoColor       int16          `json:"Color" yaml:"-"`
+	CameraID         uint           `gorm:"index:idx_photos_camera_lens;default:1" json:"CameraID" yaml:"-"`
+	CameraSerial     string         `gorm:"type:bytes;size:160;" json:"CameraSerial" yaml:"CameraSerial,omitempty"`
+	CameraSrc        string         `gorm:"type:bytes;size:8;" json:"CameraSrc" yaml:"-"`
+	LensID           uint           `gorm:"index:idx_photos_camera_lens;default:1" json:"LensID" yaml:"-"`
+	Details          *Details       `gorm:"foreignKey:PhotoID" json:"Details" yaml:"Details"`
+	Camera           *Camera        `json:"Camera" yaml:"-"`
+	Lens             *Lens          `json:"Lens" yaml:"-"`
+	Cell             *Cell          `json:"Cell" yaml:"-"`
+	Place            *Place         `json:"Place" yaml:"-"`
+	Keywords         []Keyword      `gorm:"many2many:photos_keywords;foreignKey:ID;joinForeignKey:PhotoID;References:ID;joinReferences:KeywordID" json:"-" yaml:"-"`
+	Albums           []Album        `gorm:"many2many:photos_albums;foreignKey:PhotoUID;joinForeignKey:photo_uid;References:AlbumUID;joinReferences:album_uid" json:"Albums" yaml:"-"`
+	Files            []File         `yaml:"-"`
+	Labels           []PhotoLabel   `yaml:"-"`
+	CreatedBy        string         `gorm:"type:bytes;size:42;index" json:"CreatedBy,omitempty" yaml:"CreatedBy,omitempty"`
+	CreatedAt        time.Time      `yaml:"CreatedAt,omitempty"`
+	UpdatedAt        time.Time      `yaml:"UpdatedAt,omitempty"`
+	EditedAt         *time.Time     `yaml:"EditedAt,omitempty"`
+	PublishedAt      *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	CheckedAt        *time.Time     `sql:"index" yaml:"-"`
+	EstimatedAt      *time.Time     `json:"EstimatedAt,omitempty" yaml:"-"`
+	DeletedAt        gorm.DeletedAt `sql:"index" yaml:"DeletedAt,omitempty"`
 }
 
 // TableName returns the entity table name.
@@ -639,7 +639,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 	}
 
-	Db().Preload("Labels").Find(&m)
+	Db().Preload("Labels").Select("Id").Find(&m)
 }
 
 // SetDescription changes the photo description if not empty and from the same source.
@@ -752,7 +752,7 @@ func (m *Photo) AllFiles() (files Files) {
 func (m *Photo) Archive() error {
 	if !m.HasID() {
 		return fmt.Errorf("photo has no id")
-	} else if m.DeletedAt != nil {
+	} else if m.DeletedAt.Valid {
 		return nil
 	}
 
@@ -764,7 +764,7 @@ func (m *Photo) Archive() error {
 		return err
 	}
 
-	m.DeletedAt = &deletedAt
+	m.DeletedAt = gorm.DeletedAt{Time: deletedAt, Valid: true}
 
 	return nil
 }
@@ -773,7 +773,7 @@ func (m *Photo) Archive() error {
 func (m *Photo) Restore() error {
 	if !m.HasID() {
 		return fmt.Errorf("photo has no id")
-	} else if m.DeletedAt == nil {
+	} else if !m.DeletedAt.Valid {
 		return nil
 	}
 
@@ -781,7 +781,7 @@ func (m *Photo) Restore() error {
 		return err
 	}
 
-	m.DeletedAt = nil
+	m.DeletedAt = gorm.DeletedAt{}
 
 	return nil
 }
@@ -892,7 +892,7 @@ func (m *Photo) SetFavorite(favorite bool) error {
 	}
 
 	// Update counters if changed and not deleted.
-	if changed && m.PhotoPrivate == false && m.DeletedAt == nil {
+	if changed && m.PhotoPrivate == false && !m.DeletedAt.Valid {
 		if favorite {
 			event.Publish("count.favorites", event.Data{
 				"count": 1,

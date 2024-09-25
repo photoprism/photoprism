@@ -4,7 +4,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
@@ -38,6 +40,11 @@ func TestPhotosFilterFilter(t *testing.T) {
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
+		// Make the test data look like Gorm V1
+		p := entity.Photo{}
+		Db().Model(Photo{}).First(&p, Photo{ID: entity.PhotoFixtures.Pointer("photo&32").ID})
+		p.Delete(false)
+
 		f.Filter = "I love % dog"
 		f.Merged = true
 
@@ -47,6 +54,9 @@ func TestPhotosFilterFilter(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 0, len(photos))
+
+		UnscopedDb().Model(entity.Photo{ID: p.ID}).UpdateColumn("DeletedAt", gorm.DeletedAt{})
+
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos
@@ -278,6 +288,11 @@ func TestPhotosQueryFilter(t *testing.T) {
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotos
 
+		// Make the test data look like Gorm V1
+		p := entity.Photo{}
+		Db().Model(Photo{}).First(&p, Photo{ID: entity.PhotoFixtures.Pointer("photo&32").ID})
+		p.Delete(false)
+
 		f.Filter = "\"I love % dog\""
 		f.Merged = true
 
@@ -287,6 +302,9 @@ func TestPhotosQueryFilter(t *testing.T) {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 0, len(photos))
+
+		UnscopedDb().Model(entity.Photo{ID: p.ID}).UpdateColumn("DeletedAt", gorm.DeletedAt{})
+
 	})
 	t.Run("EndsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotos

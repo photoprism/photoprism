@@ -60,12 +60,16 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 // TODO fails on mariadb
 func TestPhotoAlbum_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		p := PhotoAlbum{}
+		p := PhotoAlbum{PhotoUID: "IShouldntBeInTheDB", AlbumUID: "IShouldntBeInTheDB"} // Prevent Unique Constraint violation.
 
 		err := p.Create()
 
 		if err != nil {
 			t.Fatal(err)
 		}
+		// Cleanup
+		result := UnscopedDb().Model(PhotoAlbum{}).Delete(p)
+		assert.Equal(t, int64(1), result.RowsAffected)
+
 	})
 }

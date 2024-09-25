@@ -26,7 +26,7 @@ func TestPhoto_QualityScore(t *testing.T) {
 
 func TestPhoto_UpdateQuality(t *testing.T) {
 	t.Run("nil", func(t *testing.T) {
-		p := &Photo{PhotoQuality: -1}
+		p := &Photo{ID: 1, PhotoQuality: -1}
 		err := p.UpdateQuality()
 		if err != nil {
 			t.Fatal(err)
@@ -34,11 +34,17 @@ func TestPhoto_UpdateQuality(t *testing.T) {
 		assert.Equal(t, -1, p.PhotoQuality)
 	})
 	t.Run("low quality expected", func(t *testing.T) {
-		p := &Photo{PhotoQuality: 0, PhotoFavorite: true}
+		p := &Photo{ID: 1, PhotoQuality: 0, PhotoFavorite: true}
 		err := p.UpdateQuality()
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 5, p.PhotoQuality)
+	})
+
+	t.Run("no PK provided", func(t *testing.T) {
+		p := &Photo{PhotoQuality: 0, PhotoFavorite: true}
+		err := p.UpdateQuality()
+		assert.ErrorContains(t, err, "No PK provided")
 	})
 }
