@@ -19,26 +19,26 @@ var subjectMutex = sync.Mutex{}
 
 // Subject represents a named photo subject, typically a person.
 type Subject struct {
-	SubjUID      string     `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
-	SubjType     string     `gorm:"type:bytes;size:8;default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
-	SubjSrc      string     `gorm:"type:bytes;size:8;default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
-	SubjSlug     string     `gorm:"type:bytes;size:160;index;default:'';" json:"Slug" yaml:"-"`
-	SubjName     string     `gorm:"size:160;uniqueIndex;default:'';" json:"Name" yaml:"Name"`
-	SubjAlias    string     `gorm:"size:160;default:'';" json:"Alias" yaml:"Alias"`
-	SubjAbout    string     `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
-	SubjBio      string     `gorm:"size:2048;" json:"Bio" yaml:"Bio,omitempty"`
-	SubjNotes    string     `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	SubjFavorite bool       `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
-	SubjHidden   bool       `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
-	SubjPrivate  bool       `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
-	SubjExcluded bool       `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
-	FileCount    int        `gorm:"default:0;" json:"FileCount" yaml:"-"`
-	PhotoCount   int        `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
-	Thumb        string     `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc     string     `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
-	CreatedAt    time.Time  `json:"CreatedAt" yaml:"-"`
-	UpdatedAt    time.Time  `json:"UpdatedAt" yaml:"-"`
-	DeletedAt    *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	SubjUID      string         `gorm:"type:bytes;size:42;primaryKey;autoIncrement:false;" json:"UID" yaml:"UID"`
+	SubjType     string         `gorm:"type:bytes;size:8;default:'';" json:"Type,omitempty" yaml:"Type,omitempty"`
+	SubjSrc      string         `gorm:"type:bytes;size:8;default:'';" json:"Src,omitempty" yaml:"Src,omitempty"`
+	SubjSlug     string         `gorm:"type:bytes;size:160;index;default:'';" json:"Slug" yaml:"-"`
+	SubjName     string         `gorm:"size:160;uniqueIndex;default:'';" json:"Name" yaml:"Name"`
+	SubjAlias    string         `gorm:"size:160;default:'';" json:"Alias" yaml:"Alias"`
+	SubjAbout    string         `gorm:"size:512;" json:"About" yaml:"About,omitempty"`
+	SubjBio      string         `gorm:"size:2048;" json:"Bio" yaml:"Bio,omitempty"`
+	SubjNotes    string         `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	SubjFavorite bool           `gorm:"default:false;" json:"Favorite" yaml:"Favorite,omitempty"`
+	SubjHidden   bool           `gorm:"default:false;" json:"Hidden" yaml:"Hidden,omitempty"`
+	SubjPrivate  bool           `gorm:"default:false;" json:"Private" yaml:"Private,omitempty"`
+	SubjExcluded bool           `gorm:"default:false;" json:"Excluded" yaml:"Excluded,omitempty"`
+	FileCount    int            `gorm:"default:0;" json:"FileCount" yaml:"-"`
+	PhotoCount   int            `gorm:"default:0;" json:"PhotoCount" yaml:"-"`
+	Thumb        string         `gorm:"type:bytes;size:128;index;default:'';" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc     string         `gorm:"type:bytes;size:8;default:'';" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	CreatedAt    time.Time      `json:"CreatedAt" yaml:"-"`
+	UpdatedAt    time.Time      `json:"UpdatedAt" yaml:"-"`
+	DeletedAt    gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -164,17 +164,13 @@ func (m *Subject) AfterDelete(tx *gorm.DB) (err error) {
 
 // Deleted returns true if the entity is deleted.
 func (m *Subject) Deleted() bool {
-	if m.DeletedAt == nil {
-		return false
-	}
-
-	return !m.DeletedAt.IsZero()
+	return m.DeletedAt.Valid
 }
 
 // Restore restores the entity in the database.
 func (m *Subject) Restore() error {
 	if m.Deleted() {
-		m.DeletedAt = nil
+		m.DeletedAt = gorm.DeletedAt{}
 
 		log.Infof("subject: restoring %s %s", TypeString(m.SubjType), clean.Log(m.SubjName))
 
@@ -318,7 +314,7 @@ func (m *Subject) SetName(name string) error {
 
 // Visible tests if the subject is generally visible and not hidden in any way.
 func (m *Subject) Visible() bool {
-	return m.DeletedAt == nil && !m.SubjHidden && !m.SubjExcluded && !m.SubjPrivate
+	return m.DeletedAt.Valid == false && !m.SubjHidden && !m.SubjExcluded && !m.SubjPrivate
 }
 
 // SaveForm updates the subject from form values.
