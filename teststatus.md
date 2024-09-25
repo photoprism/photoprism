@@ -30,14 +30,18 @@ The following is the status of unit testing.
 | PASS | github.com/photoprism/photoprism/internal/ai/classify |
 | PASS | github.com/photoprism/photoprism/internal/ai/face |
 | PASS | github.com/photoprism/photoprism/internal/ai/nsfw |
+| PASS | github.com/photoprism/photoprism/internal/api |
 | PASS | github.com/photoprism/photoprism/internal/auth/acl |
 | PASS | github.com/photoprism/photoprism/internal/auth/oidc |
 | PASS | github.com/photoprism/photoprism/internal/auth/session |
 | PASS | github.com/photoprism/photoprism/internal/commands |
+| PASS | github.com/photoprism/photoprism/internal/config |
 | PASS | github.com/photoprism/photoprism/internal/config/customize |
 | PASS | github.com/photoprism/photoprism/internal/config/pwa |
 | PASS | github.com/photoprism/photoprism/internal/config/ttl |
+| PASS | github.com/photoprism/photoprism/internal/entity |
 | PASS | github.com/photoprism/photoprism/internal/entity/migrate |
+| PASS | github.com/photoprism/photoprism/internal/entity/query |
 | PASS | github.com/photoprism/photoprism/internal/entity/search |
 | PASS | github.com/photoprism/photoprism/internal/entity/search/viewer |
 | PASS | github.com/photoprism/photoprism/internal/entity/sortby |
@@ -65,37 +69,11 @@ The following is the status of unit testing.
 | PASS | github.com/photoprism/photoprism/internal/workers |
 | PASS | github.com/photoprism/photoprism/internal/workers/auto |
 
-
 | Status | Path/Test |
 | ------ | --------------------------------------------------------------------- |
-| FAIL | UpdateMarker |
-| FAIL |   UpdateMarker/update_cluster_with_existing_subject |
-| FAIL |   UpdateMarker/update_cluster_with_existing_subject_2 |
-| FAIL | GetSubject |
-| FAIL |   GetSubject/Ok |
-| FAIL | LikeSubject |
-| FAIL |   LikeSubject/ExistingSubject |
-| FAIL | 	github.com/photoprism/photoprism/internal/api |
-| FAIL | Config_DatabaseDsn |
-| FAIL | Config_SqliteBin |
-| FAIL | 	github.com/photoprism/photoprism/internal/config |
-| FAIL | Count |
-| FAIL | Marker_ClearFace |
-| FAIL |   Marker_ClearFace/empty_face_id |
-| FAIL | 	github.com/photoprism/photoprism/internal/entity |
-| FAIL | InitPhotoKeyword |
-| FAIL |   InitPhotoKeyword/PhotoKeywordCount-1000004 |
-| FAIL |   InitPhotoKeyword/PhotoKeywordList-1000004 |
 | FAIL | Init |
 | FAIL |   Init/PhotoLabelCounts |
 | FAIL |   Init/PhotoKeywordCounts |
 | FAIL | 	github.com/photoprism/photoprism/internal/entity/dbtest |
-| FAIL | FileSelection |
-| FAIL |   FileSelection/ShareSelectionOriginals |
-| FAIL |   FileSelection/ShareFolders |
-| FAIL | FilesByUID |
-| FAIL |   FilesByUID/error |
-| FAIL | 	github.com/photoprism/photoprism/internal/entity/query |
-
 
 Issues found in tests that don't cause a failure:
