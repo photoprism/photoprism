@@ -72,7 +72,7 @@ func TestPhoto_Approve(t *testing.T) {
 		}
 
 		assert.Equal(t, 3, r.PhotoQuality)
-		assert.Nil(t, r.DeletedAt)
+		assert.False(t, r.DeletedAt.Valid)
 		assert.NotNil(t, r.EditedAt)
 	})
 }
@@ -102,14 +102,14 @@ func TestPhoto_Restore(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Nil(t, r.DeletedAt)
+		assert.False(t, r.DeletedAt.Valid)
 	})
 	t.Run("Restore", func(t *testing.T) {
 		r := Photo{
 			ID:           100028476,
 			CreatedAt:    time.Time{},
 			UpdatedAt:    time.Time{},
-			DeletedAt:    gorm.DeletedAt{},
+			DeletedAt:    gorm.DeletedAt{Time: time.Now(), Valid: true},
 			TakenAt:      time.Time{},
 			TakenAtLocal: time.Time{},
 			TakenSrc:     "",
@@ -118,7 +118,7 @@ func TestPhoto_Restore(t *testing.T) {
 			PhotoQuality: 2,
 		}
 
-		assert.NotNil(t, r.DeletedAt)
+		assert.True(t, r.DeletedAt.Valid)
 
 		err := r.Restore()
 
@@ -126,7 +126,7 @@ func TestPhoto_Restore(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Nil(t, r.DeletedAt)
+		assert.False(t, r.DeletedAt.Valid)
 	})
 }
 
