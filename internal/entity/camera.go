@@ -8,6 +8,7 @@ import (
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/txt"
+	"gorm.io/gorm"
 )
 
 var cameraMutex = sync.Mutex{}
@@ -17,17 +18,17 @@ type Cameras []Camera
 
 // Camera model and make (as extracted from UpdateExif metadata)
 type Camera struct {
-	ID                uint       `gorm:"primaryKey;" json:"ID" yaml:"ID"`
-	CameraSlug        string     `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"-"`
-	CameraName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	CameraMake        string     `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
-	CameraModel       string     `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
-	CameraType        string     `gorm:"type:VARCHAR(100);" json:"Type,omitempty" yaml:"Type,omitempty"`
-	CameraDescription string     `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CameraNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
-	CreatedAt         time.Time  `json:"-" yaml:"-"`
-	UpdatedAt         time.Time  `json:"-" yaml:"-"`
-	DeletedAt         *time.Time `sql:"index" json:"-" yaml:"-"`
+	ID                uint           `gorm:"primaryKey;" json:"ID" yaml:"ID"`
+	CameraSlug        string         `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"-"`
+	CameraName        string         `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
+	CameraMake        string         `gorm:"type:VARCHAR(160);" json:"Make" yaml:"Make,omitempty"`
+	CameraModel       string         `gorm:"type:VARCHAR(160);" json:"Model" yaml:"Model,omitempty"`
+	CameraType        string         `gorm:"type:VARCHAR(100);" json:"Type,omitempty" yaml:"Type,omitempty"`
+	CameraDescription string         `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CameraNotes       string         `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CreatedAt         time.Time      `json:"-" yaml:"-"`
+	UpdatedAt         time.Time      `json:"-" yaml:"-"`
+	DeletedAt         gorm.DeletedAt `sql:"index" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.
