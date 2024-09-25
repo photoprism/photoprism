@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/ulule/deepcopier"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/internal/service"
@@ -58,9 +59,9 @@ type Service struct {
 	SyncDownload  bool
 	SyncFilenames bool
 	SyncRaw       bool
-	CreatedAt     time.Time  `deepcopier:"skip"`
-	UpdatedAt     time.Time  `deepcopier:"skip"`
-	DeletedAt     *time.Time `deepcopier:"skip" sql:"index"`
+	CreatedAt     time.Time      `deepcopier:"skip"`
+	UpdatedAt     time.Time      `deepcopier:"skip"`
+	DeletedAt     gorm.DeletedAt `deepcopier:"skip" sql:"index"`
 }
 
 // TableName returns the entity table name.
