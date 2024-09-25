@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/photoprism/photoprism/internal/entity"
+	"gorm.io/gorm"
 )
 
 func TestPhotoResults_ViewerJSON(t *testing.T) {
@@ -12,7 +13,7 @@ func TestPhotoResults_ViewerJSON(t *testing.T) {
 		ID:               111111,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
+		DeletedAt:        gorm.DeletedAt{},
 		TakenAt:          time.Time{},
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
@@ -71,7 +72,7 @@ func TestPhotoResults_ViewerJSON(t *testing.T) {
 		ID:               22222,
 		CreatedAt:        time.Time{},
 		UpdatedAt:        time.Time{},
-		DeletedAt:        &time.Time{},
+		DeletedAt:        gorm.DeletedAt{},
 		TakenAt:          time.Time{},
 		TakenAtLocal:     time.Time{},
 		TakenSrc:         "",
