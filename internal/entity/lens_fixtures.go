@@ -2,6 +2,8 @@ package entity
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type LensMap map[string]Lens
@@ -34,7 +36,7 @@ var LensFixtures = LensMap{
 		LensNotes:       "Notes",
 		CreatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 	"4.15mm-f/2.2": {
 		ID:              1000001,
@@ -47,7 +49,7 @@ var LensFixtures = LensMap{
 		LensNotes:       "Notes",
 		CreatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
 		UpdatedAt:       time.Date(2019, 1, 1, 0, 0, 0, 0, time.UTC),
-		DeletedAt:       nil,
+		DeletedAt:       gorm.DeletedAt{},
 	},
 }
 
