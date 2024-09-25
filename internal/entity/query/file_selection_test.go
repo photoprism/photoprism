@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/form"
 )
 
@@ -53,12 +54,22 @@ func TestFileSelection(t *testing.T) {
 		}
 	})
 	t.Run("ShareSelectionOriginals", func(t *testing.T) {
+		f := entity.File{}
+
+		// Handle data difference due to gorm2
+		Db().Model(entity.File{}).Find(&f, entity.File{ID: 1000000})
+		mediaType := f.MediaType
+		result := Db().Model(entity.File{}).Where(entity.File{ID: 1000000}).UpdateColumn("MediaType", "")
+		assert.Equal(t, int64(1), result.RowsAffected)
+
 		sel := ShareSelection(false)
 		if results, err := SelectedFiles(many, sel); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.Len(t, results, 3)
 		}
+		// Revert change
+		Db().Model(entity.File{}).UpdateColumn("MediaType", mediaType).Where(entity.File{ID: 1000000})
 	})
 	t.Run("ShareSelectionPrimary", func(t *testing.T) {
 		sel := ShareSelection(true)
