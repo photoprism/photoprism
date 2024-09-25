@@ -376,7 +376,7 @@ func TestMarker_ClearFace(t *testing.T) {
 		assert.Empty(t, m.FaceID)
 	})
 	t.Run("empty face id", func(t *testing.T) {
-		m := Marker{FaceID: ""}
+		m := Marker{FaceID: "", MarkerUID: "IShouldntBeInDB"}
 
 		updated, err := m.ClearFace()
 
@@ -384,6 +384,16 @@ func TestMarker_ClearFace(t *testing.T) {
 			t.Fatal(err)
 		}
 
+		assert.False(t, updated)
+		assert.Empty(t, m.FaceID)
+	})
+
+	t.Run("missing markeruid", func(t *testing.T) {
+		m := Marker{FaceID: ""}
+
+		updated, err := m.ClearFace()
+
+		assert.ErrorContains(t, err, "PK not provided")
 		assert.False(t, updated)
 		assert.Empty(t, m.FaceID)
 	})

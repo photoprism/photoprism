@@ -2,6 +2,7 @@ package entity
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
 	"strings"
@@ -586,6 +587,9 @@ func (m *Marker) RefreshPhotos() error {
 // Matched updates the match timestamp.
 func (m *Marker) Matched() error {
 	m.MatchedAt = TimeStamp()
+	if m.MarkerUID == "" {
+		return errors.New("PK not provided for Update")
+	}
 	return UnscopedDb().Model(m).UpdateColumns(map[string]interface{}{"MatchedAt": m.MatchedAt}).Error
 }
 
