@@ -800,6 +800,6 @@ var AlbumFixtures = AlbumMap{
 // CreateAlbumFixtures inserts known entities into the database for testing.
 func CreateAlbumFixtures() {
 	for _, entity := range AlbumFixtures {
-		Db().Save(&entity)
+		Db().Create(&entity)
 	}
 }

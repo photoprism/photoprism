@@ -2,8 +2,6 @@ package entity
 
 import (
 	"time"
-
-	"gorm.io/gorm/clause"
 )
 
 type FileSyncMap map[string]FileSync
@@ -72,6 +70,6 @@ var FileSyncFixtures = FileSyncMap{
 // CreateFileSyncFixtures inserts known entities into the database for testing.
 func CreateFileSyncFixtures() {
 	for _, entity := range FileSyncFixtures {
-		Db().Omit(clause.Associations).Create(&entity)
+		Db().Create(&entity)
 	}
 }

@@ -56,6 +56,6 @@ var LensFixtures = LensMap{
 // CreateLensFixtures inserts known entities into the database for testing.
 func CreateLensFixtures() {
 	for _, entity := range LensFixtures {
-		Db().Save(&entity)
+		Db().Create(&entity)
 	}
 }

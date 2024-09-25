@@ -52,6 +52,6 @@ var FileShareFixtures = FileShareMap{
 // CreateFileShareFixtures inserts known entities into the database for testing.
 func CreateFileShareFixtures() {
 	for _, entity := range FileShareFixtures {
-		Db().Save(&entity)
+		Db().Create(&entity)
 	}
 }
