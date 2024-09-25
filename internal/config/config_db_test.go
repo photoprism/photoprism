@@ -100,7 +100,7 @@ func TestConfig_DatabaseDsn(t *testing.T) {
 	c.options.DatabaseDriver = "tidb"
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDsn())
 	c.options.DatabaseDriver = "Postgres"
-	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDsn())
+	assert.Equal(t, "user=photoprism password= dbname=photoprism host=localhost port=5432 connect_timeout=15 sslmode=disable TimeZone=UTC", c.DatabaseDsn())
 	c.options.DatabaseDriver = "SQLite"
 	assert.Equal(t, "/go/src/github.com/photoprism/photoprism/storage/testdata/index.db?_busy_timeout=5000", c.DatabaseDsn())
 	c.options.DatabaseDriver = ""
