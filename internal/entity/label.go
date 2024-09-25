@@ -25,24 +25,24 @@ type Labels []Label
 
 // Label is used for photo, album and location categorization
 type Label struct {
-	ID               uint       `gorm:"primaryKey;" json:"ID" yaml:"-"`
-	LabelUID         string     `gorm:"type:bytes;size:42;uniqueIndex;" json:"UID" yaml:"UID"`
-	LabelSlug        string     `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"-"`
-	CustomSlug       string     `gorm:"type:bytes;size:160;index;" json:"CustomSlug" yaml:"-"`
-	LabelName        string     `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
-	LabelPriority    int        `json:"Priority" yaml:"Priority,omitempty"`
-	LabelFavorite    bool       `json:"Favorite" yaml:"Favorite,omitempty"`
-	LabelDescription string     `gorm:"type:VARCHAR(2048);" json:"Description" yaml:"Description,omitempty"`
-	LabelNotes       string     `gorm:"type:VARCHAR(1024);" json:"Notes" yaml:"Notes,omitempty"`
-	LabelCategories  []*Label   `gorm:"many2many:categories;foreignKey:ID;joinForeignKey:LabelID;References:ID;joinReferences:CategoryID" json:"-" yaml:"-"`
-	PhotoCount       int        `gorm:"default:1" json:"PhotoCount" yaml:"-"`
-	Thumb            string     `gorm:"type:bytes;size:128;index;default:''" json:"Thumb" yaml:"Thumb,omitempty"`
-	ThumbSrc         string     `gorm:"type:bytes;size:8;default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
-	CreatedAt        time.Time  `json:"CreatedAt" yaml:"-"`
-	UpdatedAt        time.Time  `json:"UpdatedAt" yaml:"-"`
-	PublishedAt      *time.Time `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
-	DeletedAt        *time.Time `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
-	New              bool       `gorm:"-" json:"-" yaml:"-"`
+	ID               uint           `gorm:"primaryKey;" json:"ID" yaml:"-"`
+	LabelUID         string         `gorm:"type:bytes;size:42;uniqueIndex;" json:"UID" yaml:"UID"`
+	LabelSlug        string         `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"-"`
+	CustomSlug       string         `gorm:"type:bytes;size:160;index;" json:"CustomSlug" yaml:"-"`
+	LabelName        string         `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name"`
+	LabelPriority    int            `json:"Priority" yaml:"Priority,omitempty"`
+	LabelFavorite    bool           `json:"Favorite" yaml:"Favorite,omitempty"`
+	LabelDescription string         `gorm:"type:VARCHAR(2048);" json:"Description" yaml:"Description,omitempty"`
+	LabelNotes       string         `gorm:"type:VARCHAR(1024);" json:"Notes" yaml:"Notes,omitempty"`
+	LabelCategories  []*Label       `gorm:"many2many:categories;foreignKey:ID;joinForeignKey:LabelID;References:ID;joinReferences:CategoryID" json:"-" yaml:"-"`
+	PhotoCount       int            `gorm:"default:1" json:"PhotoCount" yaml:"-"`
+	Thumb            string         `gorm:"type:bytes;size:128;index;default:''" json:"Thumb" yaml:"Thumb,omitempty"`
+	ThumbSrc         string         `gorm:"type:bytes;size:8;default:''" json:"ThumbSrc,omitempty" yaml:"ThumbSrc,omitempty"`
+	CreatedAt        time.Time      `json:"CreatedAt" yaml:"-"`
+	UpdatedAt        time.Time      `json:"UpdatedAt" yaml:"-"`
+	PublishedAt      *time.Time     `sql:"index" json:"PublishedAt,omitempty" yaml:"PublishedAt,omitempty"`
+	DeletedAt        gorm.DeletedAt `sql:"index" json:"DeletedAt,omitempty" yaml:"-"`
+	New              bool           `gorm:"-" json:"-" yaml:"-"`
 }
 
 // TableName returns the entity table name.
@@ -107,11 +107,7 @@ func (m *Label) Delete() error {
 
 // Deleted returns true if the label is deleted.
 func (m *Label) Deleted() bool {
-	if m.DeletedAt == nil {
-		return false
-	}
-
-	return !m.DeletedAt.IsZero()
+	return m.DeletedAt.Valid
 }
 
 // Restore restores the label in the database.

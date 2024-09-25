@@ -639,7 +639,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 	}
 
-	Db().Set("gorm:auto_preload", true).Model(m).Find(&m.Labels)
+	Db().Preload("Labels").Find(&m)
 }
 
 // SetDescription changes the photo description if not empty and from the same source.

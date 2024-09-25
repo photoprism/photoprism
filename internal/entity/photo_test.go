@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"gorm.io/gorm"
 
 	"github.com/photoprism/photoprism/internal/ai/classify"
 	"github.com/photoprism/photoprism/internal/form"
@@ -269,7 +270,7 @@ func TestPhoto_AddLabels(t *testing.T) {
 		assert.Equal(t, SrcImage, m.Labels[0].LabelSrc)
 		len1 := len(m.Labels)
 		m.AddLabels(classifyLabels)
-		assert.Equal(t, len(m.Labels), len1)
+		assert.Equal(t, len1, len(m.Labels))
 		assert.Equal(t, 10, m.Labels[0].Uncertainty)
 		assert.Equal(t, SrcManual, m.Labels[0].LabelSrc)
 	})
@@ -433,8 +434,8 @@ func TestPhoto_RemoveKeyword(t *testing.T) {
 func TestPhoto_SyncKeywordLabels(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
 		labelotter := Label{LabelName: "otter", LabelSlug: "otter"}
-		var deletedTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-		labelsnake := Label{LabelName: "snake", LabelSlug: "snake", DeletedAt: &deletedTime}
+		var deletedAt = gorm.DeletedAt{Time: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC), Valid: true}
+		labelsnake := Label{LabelName: "snake", LabelSlug: "snake", DeletedAt: deletedAt}
 
 		err := labelsnake.Save()
 		if err != nil {
