@@ -1,53 +1,53 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="500" class="p-account-edit-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" persistent max-width="500" class="p-account-edit-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pa-2">
-        <v-layout v-if="scope === 'sharing'" row wrap class="py-2 pr-0 pl-2">
-          <v-flex xs9>
+        <v-row v-if="scope === 'sharing'" class="py-2 pr-0 pl-2">
+          <v-col cols="9">
             <h3 class="headline ma-0 pa-0">
               {{ $gettext("Manual Upload") }}
             </h3>
-          </v-flex>
-          <v-flex xs3 text-xs-right>
+          </v-col>
+          <v-col cols="3" class="text-xs-right">
             <v-switch v-model="model.AccShare" color="secondary-dark" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="ma-0 hidden-xs-only float-right" hide-details></v-switch>
             <v-switch v-model="model.AccShare" color="secondary-dark" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="ma-0 hidden-sm-and-up float-right" hide-details></v-switch>
-          </v-flex>
-        </v-layout>
-        <v-layout v-else-if="scope === 'sync'" row wrap class="pa-2">
-          <v-flex xs9>
+          </v-col>
+        </v-row>
+        <v-row v-else-if="scope === 'sync'" class="pa-2">
+          <v-col cols="9">
             <h3 class="headline ma-0 pa-0">
               {{ $gettext("Remote Sync") }}
             </h3>
-          </v-flex>
-          <v-flex xs3 text-xs-right>
-            <v-switch v-model="model.AccSync" color="secondary-dark" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="mt-0 hidden-xs-only float-right" hide-details box flat></v-switch>
-            <v-switch v-model="model.AccSync" color="secondary-dark" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="mt-0 hidden-sm-and-up float-right" hide-details box flat></v-switch>
-          </v-flex>
-        </v-layout>
-        <v-layout v-else row wrap class="pt-2 pr-0 pl-2">
-          <v-flex xs10>
+          </v-col>
+          <v-col cols="3" class="text-xs-right">
+            <v-switch v-model="model.AccSync" color="secondary-dark" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="mt-0 hidden-xs-only float-right" hide-details flat></v-switch>
+            <v-switch v-model="model.AccSync" color="secondary-dark" :true-value="true" :false-value="false" :disabled="model.AccType !== 'webdav'" class="mt-0 hidden-sm-and-up float-right" hide-details flat></v-switch>
+          </v-col>
+        </v-row>
+        <v-row v-else class="pt-2 pr-0 pl-2">
+          <v-col cols="10">
             <h3 class="headline ma-0 pa-0">
               {{ $gettext("Edit Account") }}
             </h3>
-          </v-flex>
-          <v-flex xs2 text-xs-right>
-            <v-btn icon flat :ripple="false" class="action-remove mt-0" @click.stop.prevent="remove()">
+          </v-col>
+          <v-col cols="2" class="text-xs-right">
+            <v-btn icon text :ripple="false" class="action-remove mt-0" @click.stop.prevent="remove()">
               <v-icon color="secondary-dark">delete</v-icon>
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-title>
       <v-card-text class="py-0 px-2">
-        <v-layout v-if="scope === 'sharing'" row wrap>
-          <v-flex xs12 class="pa-2">
+        <v-row v-if="scope === 'sharing'">
+          <v-col cols="12" class="pa-2">
             <v-autocomplete
               v-model="model.SharePath"
               color="secondary-dark"
               hide-details
               hide-no-data
-              box
+              filled
               flat
-              browser-autocomplete="off"
+              autocomplete="off"
               hint="Folder"
               :search-input.sync="search"
               :items="pathItems"
@@ -58,24 +58,24 @@
               :disabled="!model.AccShare || loading"
             >
             </v-autocomplete>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2 input-share-size">
-            <v-select v-model="model.ShareSize" :disabled="!model.AccShare" :label="$gettext('Size')" browser-autocomplete="off" hide-details box flat color="secondary-dark" item-text="text" item-value="value" :items="items.sizes"></v-select>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
-            <v-select v-model="model.ShareExpires" :disabled="!model.AccShare" :label="$gettext('Expires')" browser-autocomplete="off" hide-details box flat color="secondary-dark" item-text="text" item-value="value" :items="options.Expires()"></v-select>
-          </v-flex>
-        </v-layout>
-        <v-layout v-else-if="scope === 'sync'" row wrap>
-          <v-flex xs12 sm6 class="pa-2">
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2 input-share-size">
+            <v-select v-model="model.ShareSize" :disabled="!model.AccShare" :label="$gettext('Size')" autocomplete="off" hide-details filled flat color="secondary-dark" item-text="text" item-value="value" :items="items.sizes"></v-select>
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2">
+            <v-select v-model="model.ShareExpires" :disabled="!model.AccShare" :label="$gettext('Expires')" autocomplete="off" hide-details filled flat color="secondary-dark" item-text="text" item-value="value" :items="options.Expires()"></v-select>
+          </v-col>
+        </v-row>
+        <v-row v-else-if="scope === 'sync'">
+          <v-col cols="12" sm="6" class="pa-2">
             <v-autocomplete
               v-model="model.SyncPath"
               color="secondary-dark"
               hide-details
               hide-no-data
-              box
+              filled
               flat
-              browser-autocomplete="off"
+              autocomplete="off"
               :hint="$gettext('Folder')"
               :search-input.sync="search"
               :items="pathItems"
@@ -86,73 +86,73 @@
               :disabled="!model.AccSync || loading"
             >
             </v-autocomplete>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
-            <v-select v-model="model.SyncInterval" :disabled="!model.AccSync" :label="$gettext('Interval')" browser-autocomplete="off" hide-details box flat color="secondary-dark" item-text="text" item-value="value" :items="options.Intervals()"></v-select>
-          </v-flex>
-          <v-flex xs12 sm6 class="px-2">
-            <v-checkbox v-model="model.SyncDownload" :disabled="!model.AccSync || readonly" hide-details box flat color="secondary-dark" on-icon="radio_button_checked" off-icon="radio_button_unchecked" :label="$gettext('Download remote files')" @change="onChangeSync('download')"></v-checkbox>
-          </v-flex>
-          <v-flex xs12 sm6 class="px-2">
-            <v-checkbox v-model="model.SyncFilenames" :disabled="!model.AccSync" hide-details box flat color="secondary-dark" :label="$gettext('Preserve filenames')"></v-checkbox>
-          </v-flex>
-          <v-flex xs12 sm6 class="px-2">
-            <v-checkbox v-model="model.SyncUpload" :disabled="!model.AccSync" hide-details box flat color="secondary-dark" on-icon="radio_button_checked" off-icon="radio_button_unchecked" :label="$gettext('Upload local files')" @change="onChangeSync('upload')"></v-checkbox>
-          </v-flex>
-          <v-flex xs12 sm6 class="px-2">
-            <v-checkbox v-model="model.SyncRaw" :disabled="!model.AccSync" hide-details box flat color="secondary-dark" :label="$gettext('Sync raw and video files')"></v-checkbox>
-          </v-flex>
-        </v-layout>
-        <v-layout v-else row wrap class="pt-0">
-          <v-flex xs12 class="pa-2">
-            <v-text-field v-model="model.AccName" hide-details autofocus box flat browser-autocomplete="off" :label="$gettext('Name')" placeholder="" color="secondary-dark" required></v-text-field>
-          </v-flex>
-          <v-flex xs12 class="pa-2">
-            <v-text-field v-model="model.AccURL" hide-details box flat browser-autocomplete="off" :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark"></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
-            <v-text-field v-model="model.AccUser" hide-details box flat browser-autocomplete="off" :label="$gettext('Username')" placeholder="optional" color="secondary-dark"></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2">
+            <v-select v-model="model.SyncInterval" :disabled="!model.AccSync" :label="$gettext('Interval')" autocomplete="off" hide-details filled flat color="secondary-dark" item-text="text" item-value="value" :items="options.Intervals()"></v-select>
+          </v-col>
+          <v-col cols="12" sm="6" class="px-2">
+            <v-checkbox v-model="model.SyncDownload" :disabled="!model.AccSync || readonly" hide-details flat color="secondary-dark" on-icon="radio_button_checked" off-icon="radio_button_unchecked" :label="$gettext('Download remote files')" @change="onChangeSync('download')"></v-checkbox>
+          </v-col>
+          <v-col cols="12" sm="6" class="px-2">
+            <v-checkbox v-model="model.SyncFilenames" :disabled="!model.AccSync" hide-details flat color="secondary-dark" :label="$gettext('Preserve filenames')"></v-checkbox>
+          </v-col>
+          <v-col cols="12" sm="6" class="px-2">
+            <v-checkbox v-model="model.SyncUpload" :disabled="!model.AccSync" hide-details flat color="secondary-dark" on-icon="radio_button_checked" off-icon="radio_button_unchecked" :label="$gettext('Upload local files')" @change="onChangeSync('upload')"></v-checkbox>
+          </v-col>
+          <v-col cols="12" sm="6" class="px-2">
+            <v-checkbox v-model="model.SyncRaw" :disabled="!model.AccSync" hide-details flat color="secondary-dark" :label="$gettext('Sync raw and video files')"></v-checkbox>
+          </v-col>
+        </v-row>
+        <v-row v-else class="pt-0">
+          <v-col cols="12" class="pa-2">
+            <v-text-field v-model="model.AccName" hide-details autofocus filled flat autocomplete="off" :label="$gettext('Name')" placeholder="" color="secondary-dark" required></v-text-field>
+          </v-col>
+          <v-col cols="12" class="pa-2">
+            <v-text-field v-model="model.AccURL" hide-details filled flat autocomplete="off" :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark"></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2">
+            <v-text-field v-model="model.AccUser" hide-details filled flat autocomplete="off" :label="$gettext('Username')" placeholder="optional" color="secondary-dark"></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2">
             <v-text-field
               v-model="model.AccPass"
               hide-details
-              box
+              filled
               flat
-              browser-autocomplete="new-password"
+              autocomplete="new-password"
               :label="$gettext('Password')"
               placeholder="optional"
               color="secondary-dark"
-              :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
               @click:append="showPassword = !showPassword"
             ></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
-            <v-text-field v-model="model.AccKey" hide-details box flat browser-autocomplete="off" :label="$gettext('API Key')" placeholder="optional" color="secondary-dark" required></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 pa-2 class="input-account-type">
-            <v-select v-model="model.AccType" :label="$gettext('Type')" browser-autocomplete="off" hide-details box flat color="secondary-dark" item-text="text" item-value="value" :items="items.types"> </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 class="px-2">
-            <v-select v-model="model.AccTimeout" :label="$gettext('Timeout')" browser-autocomplete="off" hide-details box flat color="secondary-dark" item-text="text" item-value="value" :items="options.Timeouts()"> </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 class="px-2">
-            <v-select v-model="model.RetryLimit" :label="$gettext('Retry Limit')" browser-autocomplete="off" hide-details box flat color="secondary-dark" item-text="text" item-value="value" :items="options.RetryLimits()"> </v-select>
-          </v-flex>
-        </v-layout>
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2">
+            <v-text-field v-model="model.AccKey" hide-details filled flat autocomplete="off" :label="$gettext('API Key')" placeholder="optional" color="secondary-dark" required></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2 input-account-type">
+            <v-select v-model="model.AccType" :label="$gettext('Type')" autocomplete="off" hide-details filled flat color="secondary-dark" item-text="text" item-value="value" :items="items.types"> </v-select>
+          </v-col>
+          <v-col cols="12" sm="6" class="px-2">
+            <v-select v-model="model.AccTimeout" :label="$gettext('Timeout')" autocomplete="off" hide-details filled flat color="secondary-dark" item-text="text" item-value="value" :items="options.Timeouts()"> </v-select>
+          </v-col>
+          <v-col cols="12" sm="6" class="px-2">
+            <v-select v-model="model.RetryLimit" :label="$gettext('Retry Limit')" autocomplete="off" hide-details filled flat color="secondary-dark" item-text="text" item-value="value" :items="options.RetryLimits()"> </v-select>
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-card-actions class="pt-0 pb-2 px-2">
-        <v-layout row wrap class="pa-2">
-          <v-flex xs12 text-xs-right class="pt-3 pb-0">
+        <v-row class="pa-2">
+          <v-col cols="12" class="text-xs-right pt-6 pb-0">
             <v-btn depressed color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
             <v-btn depressed dark color="primary-button" class="action-save compact" @click.stop="save">
               <translate>Save</translate>
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-actions>
     </v-card>
   </v-dialog>

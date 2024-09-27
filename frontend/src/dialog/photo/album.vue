@@ -1,23 +1,23 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" persistent max-width="356" class="p-photo-album-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
-      <v-card-text class="pt-3 px-3">
-        <v-layout row wrap>
-          <v-flex xs3 text-xs-left>
+      <v-card-text class="pt-6 px-6">
+        <v-row>
+          <v-col cols="3" class="text-xs-left">
             <v-icon size="60" color="secondary-dark lighten-1">photo_album</v-icon>
-          </v-flex>
-          <v-flex xs9 text-xs-left align-self-center>
+          </v-col>
+          <v-col cols="9" class="text-xs-left" align-self="center">
             <v-autocomplete
               ref="input"
               v-model="album"
-              browser-autocomplete="off"
+              autocomplete="off"
               :hint="$gettext('Album Name')"
               :items="items"
               :search-input.sync="search"
               :loading="loading"
               hide-no-data
               hide-details
-              box
+              filled
               flat
               item-text="Title"
               item-value="UID"
@@ -27,12 +27,12 @@
               @keyup.enter.native="confirm"
             >
             </v-autocomplete>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
-      <v-card-actions class="pt-0 pb-3 px-3">
-        <v-layout row wrap class="pa-0">
-          <v-flex xs12 text-xs-right>
+      <v-card-actions class="pt-0 pb-6 px-6">
+        <v-row class="pa-0">
+          <v-col cols="12" class="text-xs-right">
             <v-btn depressed color="secondary-light" class="action-cancel mx-1" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
@@ -40,8 +40,8 @@
               <span v-if="!album">{{ labels.createAlbum }}</span>
               <span v-else>{{ labels.addToAlbum }}</span>
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-actions>
     </v-card>
   </v-dialog>

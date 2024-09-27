@@ -1,21 +1,21 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="575" class="modal-dialog sponsor-dialog" @keydown.esc="close">
+  <v-dialog :value="show" persistent max-width="575" class="modal-dialog sponsor-dialog" @keydown.esc="close">
     <v-card raised elevation="24">
       <v-card-title primary-title class="px-2 pb-0">
-        <v-layout row wrap class="px-2">
-          <v-flex xs10>
+        <v-row class="px-2">
+          <v-col cols="10">
             <h3 class="title mb-0">
               <translate>Support Our Mission</translate>
             </h3>
-          </v-flex>
-          <v-flex xs2 text-xs-right>
+          </v-col>
+          <v-col cols="2" class="text-xs-right">
             <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-title>
       <v-card-text class="px-2">
-        <v-layout row wrap class="px-2">
-          <v-flex xs12 class="py-1">
+        <v-row class="px-2">
+          <v-col cols="12" class="py-1">
             <p class="body-2">
               <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
             </p>
@@ -25,12 +25,12 @@
             <p class="body-1">
               <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
             </p>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-card-actions class="pt-0 px-2">
-        <v-layout row wrap class="px-2">
-          <v-flex xs12 text-xs-right class="py-2">
+        <v-row class="px-2">
+          <v-col cols="12"  class="text-xs-right py-2">
             <v-btn depressed color="secondary-light" class="action-close compact" @click.stop="close">
               <translate>No thanks</translate>
             </v-btn>
@@ -40,8 +40,8 @@
             <v-btn v-else depressed color="primary-button" class="white--text action-upgrade compact" @click.stop="upgrade">
               <translate>Upgrade Now</translate>
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-actions>
     </v-card>
   </v-dialog>

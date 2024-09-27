@@ -4,7 +4,7 @@ body.theme-nordic #p-navigation.theme--dark,
 body.theme-nordic #p-navigation .theme--dark.v-icon,
 body.theme-nordic #p-navigation .theme--dark.v-list,
 body.theme-nordic #p-navigation .theme--dark.v-toolbar,
-#photoprism.theme-nordic .v-navigation-drawer>.theme--dark.v-list .v-list__tile__sub-title,
+#photoprism.theme-nordic .v-navigation-drawer>.theme--dark.v-list .v-list__item__sub-title,
 body.theme-nordic .theme--light.application {
     color: #4C566A;
 }
@@ -19,10 +19,10 @@ body.theme-nordic #p-navigation .navigation-home.theme--dark .nav-logo {
 }
 
 body.theme-nordic,
-.theme-nordic .v-content__wrap,
+.theme-nordic .v-main__wrap,
 .theme-nordic .p-page,
 .theme-nordic .form,
-.theme-nordic .v-content {
+.theme-nordic .v-main {
     background: #f7f8fa !important;
 }
 
@@ -51,7 +51,7 @@ body.theme-nordic,
 }
 
 #photoprism.theme-nordic .theme--dark.v-toolbar,
-#photoprism.theme-nordic .v-list__tile.theme--dark,
+#photoprism.theme-nordic .v-list__item.theme--dark,
 #photoprism.theme-nordic .theme--dark.v-toolbar .v-icon,
 #photoprism.theme-nordic .theme--light.v-table thead th,
 #photoprism.theme-nordic .theme--light.v-table tbody td {
@@ -91,7 +91,7 @@ body.theme-nordic,
 #photoprism.theme-nordic,
 #photoprism.theme-nordic .p-page a,
 #photoprism.theme-nordic .v-datatable a,
-#photoprism.theme-nordic .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-nordic .theme--light.v-expansion-panels .v-expansion-panel__container,
 #photoprism.theme-nordic .theme--light.v-tabs__bar .v-tabs__div,
 #photoprism.theme-nordic .theme--light {
     color: #333333;
@@ -109,7 +109,7 @@ body.theme-nordic,
     color: #4C566A;
 }
 
-#photoprism.theme-nordic .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-nordic .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-nordic .accent--text {
     color: #326f80 !important;
 }
@@ -125,7 +125,7 @@ body.theme-nordic,
     color: #999 !important;
 }
 
-#photoprism.theme-nordic .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-nordic .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

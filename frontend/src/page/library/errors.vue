@@ -10,7 +10,7 @@
         single-line
         validate-on-blur
         class="input-search background-inherit elevation-0"
-        browser-autocomplete="off"
+        autocomplete="off"
         autocorrect="off"
         autocapitalize="none"
         :label="$gettext('Search')"
@@ -21,7 +21,7 @@
             updateFilter({ q: v });
           }
         "
-        @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+        @keyup.enter="(e) => updateQuery({ q: e.target.value })"
         @click:clear="
           () => {
             updateQuery({ q: '' });
@@ -39,23 +39,23 @@
         <v-icon>bug_report</v-icon>
       </v-btn>
     </v-toolbar>
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-list v-else-if="errors.length > 0" dense two-line class="transparent pa-1">
-      <v-list-tile v-for="err in errors" :key="err.ID" avatar class="rounded-4" @click="showDetails(err)">
-        <v-list-tile-avatar>
+      <v-list-item v-for="err in errors" :key="err.ID" avatar class="rounded-4" @click="showDetails(err)">
+        <v-list-item-avatar>
           <v-icon :color="err.Level">{{ err.Level }}</v-icon>
-        </v-list-tile-avatar>
+        </v-list-item-avatar>
 
-        <v-list-tile-content class="text-selectable">
-          <v-list-tile-title>{{ err.Message }}</v-list-tile-title>
-          <v-list-tile-sub-title>{{ formatTime(err.Time) }}</v-list-tile-sub-title>
-        </v-list-tile-content>
-      </v-list-tile>
+        <v-list-item-content class="text-selectable">
+          <v-list-item-title>{{ err.Message }}</v-list-item-title>
+          <v-list-item-subtitle>{{ formatTime(err.Time) }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
     <div v-else class="pa-2">
-      <v-alert :value="true" color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outline>
+      <v-alert color="secondary-dark" icon="check_circle_outline" class="no-results ma-2 opacity-70" outlined>
         <p class="body-1 mt-0 mb-0 pa-0">
           <template v-if="filter.q !== ''">
             <translate>No warnings or error containing this keyword. Note that search is case-sensitive.</translate>

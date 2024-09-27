@@ -1,10 +1,10 @@
 /* Lavender Theme */
 
 body.dark-theme.theme-lavender,
-.theme-lavender .v-content__wrap,
+.theme-lavender .v-main__wrap,
 .theme-lavender .p-page,
 .theme-lavender .form,
-.theme-lavender .v-content {
+.theme-lavender .v-main {
     background: #fafafa !important;
 }
 

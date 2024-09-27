@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-upload-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" fullscreen hide-overlay scrollable persistent class="p-upload-dialog" @keydown.esc="cancel">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark @click.stop="cancel">
@@ -14,7 +14,8 @@
           <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>
-            <p class="subheading">
+            <p class="subtitle-1">
+              <!-- TODO: check property allow-overflow -->
               <v-combobox
                 v-if="total === 0"
                 v-model="selectedAlbums"
@@ -34,16 +35,16 @@
                 return-object
               >
                 <template #no-data>
-                  <v-list-tile>
-                    <v-list-tile-content>
-                      <v-list-tile-title>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title>
                         <translate key="Press enter to create a new album.">Press enter to create a new album.</translate>
-                      </v-list-tile-title>
-                    </v-list-tile-content>
-                  </v-list-tile>
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
                 </template>
                 <template #selection="data">
-                  <v-chip :key="JSON.stringify(data.item)" :selected="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @input="data.parent.selectItem(data.item)">
+                  <v-chip :key="JSON.stringify(data.item)" :input-value="data.selected" :disabled="data.disabled" class="v-chip--select-multi" @click="data.parent.selectItem(data.item)">
                     <v-icon class="pr-1">bookmark</v-icon>
                     {{ data.item.Title ? data.item.Title : data.item | truncate(40) }}
                   </v-chip>

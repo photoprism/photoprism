@@ -13,7 +13,7 @@
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
           prepend-inner-icon="search"
-          browser-autocomplete="off"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
           color="secondary-dark"
@@ -22,7 +22,7 @@
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -43,7 +43,7 @@
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
@@ -52,7 +52,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No labels found</translate>
           </h3>
@@ -61,9 +61,9 @@
             <translate>In case pictures you expect are missing, please rescan your library and wait until indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results label-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(label, index) in results" :key="label.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
-            <v-card tile :data-uid="label.UID" style="user-select: none" class="result card" :class="label.classes(selection.includes(label.UID))" :to="label.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results label-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(label, index) in results" :key="label.UID" cols="6" sm="4" md="3" lg="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="label.UID" style="user-select: none" class="result card flex-grow-1" :class="label.classes(selection.includes(label.UID))" :to="label.route(view)" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
                 :src="label.thumbnailUrl('tile_500')"
@@ -77,19 +77,19 @@
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="canSelect" :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <v-btn v-if="canSelect" :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
                   <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-3 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-edit-dialog v-if="canManage" :return-value.sync="label.Name" lazy class="inline-edit" @save="onSave(label)">
+              <v-card-title primary-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
+                <v-edit-dialog v-if="canManage" :return-value.sync="label.Name" class="inline-edit" @save="onSave(label)">
                   <span v-if="label.Name" class="body-2 ma-0">
                     {{ label.Name }}
                   </span>
@@ -116,8 +116,8 @@
                 </div>
               </v-card-text>
             </v-card>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-container>
   </div>

@@ -1,29 +1,29 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="610" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
+  <v-dialog :value="show" persistent max-width="610" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
     <v-form ref="form" lazy-validation dense class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card raised elevation="24">
         <v-card-title primary-title class="pa-2">
-          <v-layout row wrap class="pa-2">
-            <v-flex xs9 class="text-xs-left">
+          <v-row class="pa-2">
+            <v-col cols="9" class="text-xs-left">
               <h3 class="headline pa-0">
                 <translate>Apps and Devices</translate>
               </h3>
-            </v-flex>
-            <v-flex xs3 class="text-xs-right">
+            </v-col>
+            <v-col cols="3" class="text-xs-right">
               <v-icon v-if="action === 'add'" size="28" color="primary">add</v-icon>
               <v-icon v-else-if="action === 'copy'" size="28" color="primary">password</v-icon>
               <v-icon v-else size="28" color="primary">devices</v-icon>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-title>
         <!-- Confirm -->
         <template v-if="confirmAction !== ''">
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2 body-1">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2 body-1">
                 <translate>Enter your password to confirm the action and continue:</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2">
+              </v-col>
+              <v-col cols="12" class="pa-2">
                 <v-text-field
                   v-model="password"
                   :disabled="busy"
@@ -38,38 +38,37 @@
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="current-password"
-                  browser-autocomplete="current-password"
                   class="input-password text-selectable"
-                  :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="lock"
                   color="secondary-dark"
                   @click:append="showPassword = !showPassword"
-                  @keyup.enter.native="onConfirm"
+                  @keyup.enter="onConfirm"
                 ></v-text-field>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="secondary-light" class="action-back ml-0" @click.stop="onBack">
                   <translate>Back</translate>
                 </v-btn>
                 <v-btn depressed color="primary-button" :disabled="!password || password.length < 4" class="action-confirm white--text compact mr-0" @click.stop="onConfirm">
                   <translate>Continue</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
         <!-- Copy -->
         <template v-else-if="action === 'copy'">
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2 body-1">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2 body-1">
                 <translate>Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2">
+              </v-col>
+              <v-col cols="12" class="pa-2">
                 <v-text-field
                   v-model="appPassword"
                   type="text"
@@ -80,18 +79,17 @@
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="off"
-                  browser-autocomplete="off"
-                  append-icon="content_copy"
+                  append-icon="mdi-content-copy"
                   class="input-app-password text-selectable"
                   color="secondary-dark"
                   @click:append="onCopyAppPassword"
                 ></v-text-field>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
@@ -101,18 +99,18 @@
                 <v-btn v-else depressed color="primary-button" class="action-copy white--text compact mr-0" @click.stop="onCopyAppPassword">
                   <translate>Copy</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
         <!-- Add -->
         <template v-else-if="action === 'add'">
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2 body-1">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2 body-1">
                 <translate>To generate a new app-specific password, please enter the name and authorization scope of the application and select an expiration date:</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2">
+              </v-col>
+              <v-col cols="12" class="pa-2">
                 <v-text-field
                   v-model="app.client_name"
                   :disabled="busy"
@@ -122,42 +120,41 @@
                   required
                   autofocus
                   hide-details
-                  box
+                  filled
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="off"
-                  browser-autocomplete="off"
                   class="input-name text-selectable"
                   color="secondary-dark"
                 ></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 class="pa-2">
-                <v-select v-model="app.scope" hide-details box :disabled="busy" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" class="input-scope"></v-select>
-              </v-flex>
-              <v-flex xs12 sm6 class="pa-2">
-                <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" browser-autocomplete="off" hide-details box flat color="secondary-dark" class="input-expires" item-text="text" item-value="value" :items="options.Expires()"></v-select>
-              </v-flex>
-            </v-layout>
+              </v-col>
+              <v-col cols="12" sm="6" class="pa-2">
+                <v-select v-model="app.scope" hide-details filled :disabled="busy" :items="auth.ScopeOptions()" :label="$gettext('Scope')" :menu-props="{ maxHeight: 346 }" color="secondary-dark" background-color="secondary-light" class="input-scope"></v-select>
+              </v-col>
+              <v-col cols="12" sm="6" class="pa-2">
+                <v-select v-model="app.expires_in" :disabled="busy" :label="$gettext('Expires')" autocomplete="off" hide-details filled flat color="secondary-dark" class="input-expires" item-text="text" item-value="value" :items="options.Expires()"></v-select>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="onCancel">
                   <translate>Cancel</translate>
                 </v-btn>
                 <v-btn depressed color="primary-button" :disabled="app.client_name === '' || app.scope === ''" class="action-generate white--text compact mr-0" @click.stop="onGenerate">
                   <translate>Generate</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
         <!-- Apps -->
         <template v-else>
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2">
-                <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-actions disable-initial-sort class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2">
+                <v-data-table v-model="selected" :headers="listColumns" :items="results" hide-default-footer class="elevation-0 user-results list-view" item-key="ID" :no-data-text="$gettext('Nothing was found.')">
                   <template #items="props">
                     <tr :data-name="props.item.ClientName">
                       <td class="text-selectable text-xs-left">
@@ -173,27 +170,27 @@
                         {{ formatDate(props.item.Expires) }}
                       </td>
                       <td class="text-xs-right" nowrap>
-                        <v-btn icon small flat :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
+                        <v-btn icon small text :ripple="false" class="action-remove action-secondary" color="transparent" @click.stop.prevent="onRevoke(props.item)">
                           <v-icon color="secondary-dark">delete</v-icon>
                         </v-btn>
                       </td>
                     </tr>
                   </template>
                 </v-data-table>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
                 <v-btn depressed color="primary-button" class="action-add white--text compact mr-0" @click.stop="onAdd">
                   <translate>Add</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
       </v-card>

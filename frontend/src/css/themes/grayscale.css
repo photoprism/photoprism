@@ -17,10 +17,10 @@ body.dark-theme.theme-grayscale {
     stroke: rgba(200, 189, 177, 0.3);
 }
 
-.theme-grayscale .v-content__wrap,
+.theme-grayscale .v-main__wrap,
 .theme-grayscale .p-page,
 .theme-grayscale .form,
-.theme-grayscale .v-content {
+.theme-grayscale .v-main {
     background: #525252 !important;
 }
 
@@ -71,7 +71,7 @@ body.dark-theme.theme-grayscale {
 #photoprism.theme-grayscale,
 #photoprism.theme-grayscale .p-page a,
 #photoprism.theme-grayscale .v-datatable a,
-#photoprism.theme-grayscale .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-grayscale .theme--light.v-expansion-panels .v-expansion-panel__container,
 #photoprism.theme-grayscale .theme--light.v-tabs__bar .v-tabs__div,
 #photoprism.theme-grayscale .theme--light {
     color: #fff;
@@ -89,7 +89,7 @@ body.dark-theme.theme-grayscale {
     color: #e3d5c3;
 }
 
-#photoprism.theme-grayscale .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-grayscale .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-grayscale .accent--text {
     color: #e3d5c3 !important;
 }
@@ -105,7 +105,7 @@ body.dark-theme.theme-grayscale {
     color: #999 !important;
 }
 
-#photoprism.theme-grayscale .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-grayscale .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

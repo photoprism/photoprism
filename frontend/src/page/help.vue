@@ -12,7 +12,7 @@
       </v-btn>
     </v-toolbar>
 
-    <v-container fluid class="px-4 py-2">
+    <v-container fluid class="px-6 py-2">
       <p-help-websockets></p-help-websockets>
     </v-container>
 

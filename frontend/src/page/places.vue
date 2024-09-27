@@ -14,12 +14,12 @@
             class="input-search pa-0 ma-0"
             :label="$gettext('Search')"
             prepend-inner-icon="search"
-            browser-autocomplete="off"
+            autocomplete="off"
             autocorrect="off"
             autocapitalize="none"
             color="secondary-dark"
             @click:clear="clearQuery"
-            @keyup.enter.native="formChange"
+            @keyup.enter="formChange"
           ></v-text-field>
         </div>
       </div>

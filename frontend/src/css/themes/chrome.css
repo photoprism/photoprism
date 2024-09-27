@@ -1,10 +1,10 @@
 /* Chrome Dark Theme */
 
 body.dark-theme.theme-chrome,
-.theme-chrome .v-content__wrap,
+.theme-chrome .v-main__wrap,
 .theme-chrome .p-page,
 .theme-chrome .form,
-.theme-chrome .v-content {
+.theme-chrome .v-main {
     background: #1d1d1d !important;
 }
 
@@ -25,7 +25,7 @@ body.dark-theme.theme-chrome,
 
 body.dark-theme #photoprism.theme-chrome,
 body.dark-theme #photoprism.theme-chrome .v-datatable a,
-body.dark-theme #photoprism.theme-chrome .theme--light.v-expansion-panel .v-expansion-panel__container,
+body.dark-theme #photoprism.theme-chrome .theme--light.v-expansion-panels .v-expansion-panel__container,
 body.dark-theme #photoprism.theme-chrome .theme--light.v-tabs__bar .v-tabs__div {
     color: #ffffff;
     caret-color: #ffffff;
@@ -110,7 +110,7 @@ body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box
     color: #ffffff !important;
 }
 
-#photoprism.theme-chrome .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-chrome .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-chrome .accent--text {
     color: #ffffff !important;
 }
@@ -126,7 +126,7 @@ body.dark-theme #photoprism.theme-chrome .v-card .theme--light.v-text-field--box
     color: #999 !important;
 }
 
-#photoprism.theme-chrome .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-chrome .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

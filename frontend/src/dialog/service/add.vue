@@ -1,56 +1,56 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pa-2">
-        <v-layout row wrap>
-          <v-flex xs12 class="pa-2">
+        <v-row>
+          <v-col cols="12" class="pa-2">
             <h3 class="headline pa-0">
               <translate>Add Account</translate>
             </h3>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-title>
       <v-card-text class="pb-0 pt-0 px-2">
-        <v-layout row wrap>
-          <v-flex xs12 class="pa-2">
-            <v-text-field v-model="model.AccURL" hide-details autofocus box flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
-            <v-text-field v-model="model.AccUser" hide-details box flat :label="$gettext('Username')" placeholder="optional" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
-          </v-flex>
-          <v-flex xs12 sm6 class="pa-2">
+        <v-row>
+          <v-col cols="12" class="pa-2">
+            <v-text-field v-model="model.AccURL" hide-details autofocus filled flat :label="$gettext('Service URL')" placeholder="https://www.example.com/" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2">
+            <v-text-field v-model="model.AccUser" hide-details filled flat :label="$gettext('Username')" placeholder="optional" color="secondary-dark" autocorrect="off" autocapitalize="none"></v-text-field>
+          </v-col>
+          <v-col cols="12" sm="6" class="pa-2">
             <v-text-field
               v-model="model.AccPass"
               hide-details
-              box
+              filled
               flat
-              browser-autocomplete="new-password"
+              autocomplete="new-password"
               autocapitalize="none"
               :label="$gettext('Password')"
               placeholder="optional"
               color="secondary-dark"
-              :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
               :type="showPassword ? 'text' : 'password'"
               @click:append="showPassword = !showPassword"
             ></v-text-field>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-card-actions class="pt-1 pb-2 px-2">
-        <v-layout row wrap class="pa-2">
-          <v-flex xs12 text-xs-left class="caption">
+        <v-row class="pa-2">
+          <v-col cols="12" class="text-xs-left caption">
             <translate>Note: Only WebDAV servers, like Nextcloud or PhotoPrism, can be configured as remote service for backup and file upload.</translate>
             <translate>Support for additional services, like Google Drive, will be added over time.</translate>
-          </v-flex>
-          <v-flex xs12 text-xs-right class="pt-2">
+          </v-col>
+          <v-col cols="12" class="text-xs-right pt-2">
             <v-btn depressed color="secondary-light" class="action-cancel ml-2" @click.stop="cancel">
               <span>{{ label.cancel }}</span>
             </v-btn>
             <v-btn depressed dark color="primary-button" class="action-confirm compact mr-0" @click.stop="confirm">
               <span>{{ label.confirm }}</span>
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-actions>
     </v-card>
   </v-dialog>

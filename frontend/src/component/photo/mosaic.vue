@@ -1,7 +1,7 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-mosaic">
     <div v-if="photos.length === 0" class="pa-0">
-      <v-alert :value="true" color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outline>
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outlined>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -19,7 +19,7 @@
         </p>
       </v-alert>
     </div>
-    <v-layout row wrap class="search-results photo-results mosaic-view" :class="{ 'select-results': selectMode }">
+    <v-row class="search-results photo-results mosaic-view" :class="{ 'select-results': selectMode }">
       <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" class="flex xs4 sm3 md2 lg1" :data-index="index">
         <!--
          The following div is the layout + size container. It makes the browser not
@@ -45,11 +45,11 @@
             @mouseover="playLive(photo)"
             @mouseleave="pauseLive(photo)"
           >
-            <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
+            <v-row v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="224" height="224" preload="none" loop muted playsinline>
                 <source :src="photo.videoUrl()" />
               </video>
-            </v-layout>
+            </v-row>
 
             <button
               v-if="photo.Type !== 'image' || photo.isStack()"
@@ -99,7 +99,7 @@
           </div>
         </div>
       </div>
-    </v-layout>
+    </v-row>
   </v-container>
 </template>
 <script>

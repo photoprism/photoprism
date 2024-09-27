@@ -1,8 +1,8 @@
 <template>
   <v-card flat tile class="application footer">
     <v-card-actions class="footer-actions">
-      <v-layout wrap align-top pt-3>
-        <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-selectable text-xs-left">
+      <v-row align="start" class="pt-6">
+        <v-col cols="12" sm="6" class="px-0 pb-2 body-1 text-selectable text-xs-left">
           <strong
             ><router-link to="/about" class="text-link text-selectable">
 {{ about }}{{ getMembership() }}
@@ -11,15 +11,15 @@
           <span class="body-link text-selectable"
             >Build&nbsp;<a href="https://docs.photoprism.app/release-notes/" target="_blank" :title="version" class="body-link">{{ build }}</a></span
           >
-        </v-flex>
+        </v-col>
 
-        <v-flex xs12 sm6 class="px-0 pb-2 body-1 text-xs-center text-sm-right">
+        <v-col cols="12" sm="6" class="px-0 pb-2 body-1 text-xs-center text-sm-right">
           <div class="hidden-xs-only">
             <a href="https://raw.githubusercontent.com/photoprism/photoprism/develop/NOTICE" target="_blank" class="text-link">3rd-party software packages</a>
             <a href="https://www.photoprism.app/about/team/" target="_blank" class="body-link">© 2018-2024 PhotoPrism UG</a>
           </div>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-card-actions>
   </v-card>
 </template>

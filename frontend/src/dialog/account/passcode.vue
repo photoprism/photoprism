@@ -1,29 +1,29 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="500" class="modal-dialog p-account-passcode-dialog" @keydown.esc="close">
+  <v-dialog :value="show" persistent max-width="500" class="modal-dialog p-account-passcode-dialog" @keydown.esc="close">
     <v-form ref="form" lazy-validation dense accept-charset="UTF-8" class="form-password" @submit.prevent>
       <v-card raised elevation="24">
         <v-card-title primary-title class="pa-2">
-          <v-layout row wrap class="pa-2">
-            <v-flex xs10 class="text-xs-left">
+          <v-row class="pa-2">
+            <v-col cols="10" class="text-xs-left">
               <h3 class="headline pa-0">
                 <translate>2-Factor Authentication</translate>
               </h3>
-            </v-flex>
-            <v-flex xs2 class="text-xs-right">
+            </v-col>
+            <v-col cols="2" class="text-xs-right">
               <v-icon v-if="page === 'setup'" size="28" color="primary">gpp_maybe</v-icon>
               <v-icon v-else-if="page === 'deactivate'" size="28" color="primary">gpp_good</v-icon>
               <v-icon v-else size="28" color="primary">settings</v-icon>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-title>
         <!-- Setup -->
         <template v-if="page === 'setup'">
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2 body-2">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2 body-2">
                 <translate>After entering your password for confirmation, you can set up two-factor authentication with a compatible authenticator app or device:</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2">
+              </v-col>
+              <v-col cols="12" class="pa-2">
                 <v-text-field
                   v-model="password"
                   :disabled="busy"
@@ -38,93 +38,94 @@
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="current-password"
-                  browser-autocomplete="current-password"
                   class="input-password text-selectable"
-                  :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="lock"
                   color="secondary-dark"
                   @click:append="showPassword = !showPassword"
-                  @keyup.enter.native="onSetup"
+                  @keyup.enter="onSetup"
                 ></v-text-field>
-              </v-flex>
-            </v-layout>
-            <v-flex xs12 class="pa-2 body-1">
-              <translate>Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account.</translate>
-            </v-flex>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="pa-2 body-1">
+                <translate>Enabling two-factor authentication means that you will need a randomly generated verification code to log in, so even if someone gains access to your password, they will not be able to access your account.</translate>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="secondary-light" class="action-close ml-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
                 <v-btn depressed color="primary-button" class="action-setup white--text compact mr-0" :disabled="setupDisabled()" @click.stop="onSetup">
                   <translate>Setup</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
         <!-- Confirm -->
         <template v-else-if="page === 'confirm'">
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2 body-1">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2 body-1">
                 <translate>Scan the QR code with your authenticator app or use the setup key shown below and then enter the generated verification code:</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2">
+              </v-col>
+              <v-col cols="12" class="pa-2">
                 <img :src="key.QRCode" class="width-100" alt="QR Code" />
-              </v-flex>
-            </v-layout>
-            <v-flex xs12 class="pa-2 subheading text-xs-center">
-              <pre class="clickable" @click.stop.prevent="copyText(key.Secret)">{{ key.Secret }}</pre>
-            </v-flex>
-            <v-flex xs12 class="pa-2">
-              <v-text-field
-                v-model="code"
-                :disabled="busy"
-                name="one-time-code"
-                type="text"
-                :label="$gettext('Verification Code')"
-                mask="### ###"
-                pattern="[0-9]*"
-                inputmode="numeric"
-                hide-details
-                required
-                solo
-                flat
-                autocorrect="off"
-                autocapitalize="none"
-                autocomplete="one-time-code"
-                browser-autocomplete="one-time-code"
-                class="input-code"
-                color="secondary-dark"
-                prepend-inner-icon="verified_user"
-                @keyup.enter.native="onConfirm"
-              ></v-text-field>
-            </v-flex>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" class="pa-2 subtitle-1 text-xs-center">
+                <pre class="clickable" @click.stop.prevent="copyText(key.Secret)">{{ key.Secret }}</pre>
+              </v-col>
+              <v-col cols="12" class="pa-2">
+                <v-text-field
+                  v-model="code"
+                  :disabled="busy"
+                  name="one-time-code"
+                  type="text"
+                  :label="$gettext('Verification Code')"
+                  mask="### ###"
+                  pattern="[0-9]*"
+                  inputmode="numeric"
+                  hide-details
+                  required
+                  solo
+                  autocorrect="off"
+                  autocapitalize="none"
+                  autocomplete="one-time-code"
+                  class="input-code"
+                  color="secondary-dark"
+                  prepend-inner-icon="verified_user"
+                  @keyup.enter="onConfirm"
+                ></v-text-field>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
                 <v-btn depressed color="primary-button" class="action-confirm white--text compact mr-0" :disabled="code.length !== 6" @click.stop="onConfirm">
                   <translate>Confirm</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
         <!-- Activate -->
         <template v-else-if="page === 'activate'">
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2 body-2">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2 body-2">
                 <translate>Use the following recovery code to access your account when you are unable to generate a valid verification code with your authenticator app:</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2">
+              </v-col>
+              <v-col cols="12" class="pa-2">
                 <v-text-field
                   v-model="key.RecoveryCode"
                   type="text"
@@ -136,22 +137,21 @@
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="off"
-                  browser-autocomplete="off"
-                  append-icon="content_copy"
+                  append-icon="mdi-content-copy"
                   class="input-recoverycode"
                   color="secondary-dark"
                   @click:append="onCopyRecoveryCode"
                 ></v-text-field>
-              </v-flex>
-              <v-flex xs12 class="pa-2 body-1">
+              </v-col>
+              <v-col cols="12" class="pa-2 body-1">
                 <translate>To avoid being locked out of your account, please download, print or copy this recovery code now and keep it in a safe place.</translate>
                 <translate>It is a one-time use code that will disable 2FA for your account when you use it.</translate>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="secondary-light" class="action-cancel ml-0" @click.stop="close">
                   <translate>Cancel</translate>
                 </v-btn>
@@ -161,25 +161,25 @@
                 <v-btn v-else depressed color="primary-button" class="action-copy white--text compact mr-0" @click.stop="onCopyRecoveryCode">
                   <translate>Copy</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
         <!-- Deactivate -->
         <template v-else-if="page === 'deactivate'">
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2 body-2">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2 body-2">
                 <translate>Two-factor authentication has been enabled for your account.</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2 body-1">
+              </v-col>
+              <v-col cols="12" class="pa-2 body-1">
                 <translate>If you lose access to your authenticator app or device, you can use your recovery code to regain access to your account.</translate>
                 <translate>It is a one-time use code that will disable 2FA for your account when you use it.</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2 body-1">
+              </v-col>
+              <v-col cols="12" class="pa-2 body-1">
                 <translate>To switch to a new authenticator app or device, first deactivate two-factor authentication and then reactivate it:</translate>
-              </v-flex>
-              <v-flex xs12 class="pa-2">
+              </v-col>
+              <v-col cols="12" class="pa-2">
                 <v-text-field
                   v-model="password"
                   :disabled="busy"
@@ -192,48 +192,47 @@
                   autocorrect="off"
                   autocapitalize="none"
                   autocomplete="current-password"
-                  browser-autocomplete="current-password"
                   :label="$gettext('Password')"
                   class="input-password text-selectable"
-                  :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+                  :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                   prepend-inner-icon="lock"
                   color="secondary-dark"
                   @click:append="showPassword = !showPassword"
-                  @keyup.enter.native="onDeactivate"
+                  @keyup.enter="onDeactivate"
                 ></v-text-field>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="primary-button" class="action-deactivate white--text compact ml-0" :disabled="setupDisabled()" @click.stop="onDeactivate">
                   <translate>Deactivate</translate>
                 </v-btn>
                 <v-btn depressed color="secondary-light" class="action-close mr-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
         <!-- Not Available -->
         <template v-else-if="page === 'not_available'">
           <v-card-text class="py-0 px-2">
-            <v-layout wrap align-top>
-              <v-flex xs12 class="pa-2 body-2">
+            <v-row align="start">
+              <v-col cols="12" class="pa-2 body-2">
                 <translate>Only locally managed accounts can be set up for authentication with 2FA.</translate>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-text>
           <v-card-actions class="pa-2">
-            <v-layout row wrap class="pa-2">
-              <v-flex xs12 text-xs-right>
+            <v-row class="pa-2">
+              <v-col cols="12" class="text-xs-right">
                 <v-btn depressed color="secondary-light" class="action-close mr-0" @click.stop="close">
                   <translate>Close</translate>
                 </v-btn>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
       </v-card>

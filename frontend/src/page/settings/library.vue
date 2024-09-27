@@ -9,8 +9,8 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+          <v-row align="start">
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.estimates"
                 :disabled="busy"
@@ -23,9 +23,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.features.review"
                 :disabled="busy"
@@ -38,9 +38,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.index.convert"
                 :disabled="busy || demo || (!experimental && settings.index.convert)"
@@ -53,8 +53,8 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
 
@@ -66,8 +66,8 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+          <v-row align="start">
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.stack.meta"
                 :disabled="busy"
@@ -80,9 +80,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.stack.uuid"
                 :disabled="busy"
@@ -95,9 +95,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.stack.name"
                 :disabled="busy"
@@ -110,8 +110,8 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-form>

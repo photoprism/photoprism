@@ -12,7 +12,7 @@
           validate-on-blur
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
-          browser-autocomplete="off"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
           prepend-inner-icon="search"
@@ -22,7 +22,7 @@
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -48,8 +48,8 @@
       </v-toolbar>
       <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
         <v-card-text>
-          <v-layout row wrap>
-            <v-flex xs12 sm4 pa-2 class="p-year-select">
+          <v-row>
+            <v-col cols="12" sm="4" class="pa-2 p-year-select">
               <v-select
                 :value="filter.year"
                 :label="$gettext('Year')"
@@ -70,8 +70,8 @@
                 "
               >
               </v-select>
-            </v-flex>
-            <v-flex xs12 sm4 pa-2 class="p-category-select">
+            </v-col>
+            <v-col cols="12" sm="4" class="pa-2 p-category-select">
               <v-select
                 :value="filter.category"
                 :label="$gettext('Category')"
@@ -89,8 +89,8 @@
                 "
               >
               </v-select>
-            </v-flex>
-            <v-flex xs12 sm4 pa-2 class="p-sort-select">
+            </v-col>
+            <v-col cols="12" sm="4" class="pa-2 p-sort-select">
               <v-select
                 :value="filter.order"
                 :label="$gettext('Sort Order')"
@@ -108,13 +108,13 @@
                 "
               >
               </v-select>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
@@ -123,7 +123,7 @@
       <p-album-clipboard :refresh="refresh" :selection="selection" :share="share" :edit="edit" :clear-selection="clearSelection" :context="context"></p-album-clipboard>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No albums found</translate>
           </h3>
@@ -138,9 +138,9 @@
           </p>
         </v-alert>
 
-        <v-layout row wrap class="search-results album-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(album, index) in results" :key="album.UID" xs6 sm4 md3 xlg2 xxl1 d-flex>
-            <v-card tile :data-uid="album.UID" style="user-select: none" class="result card" :class="album.classes(selection.includes(album.UID))" :to="album.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results album-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(album, index) in results" :key="album.UID" cols="6" sm="4" md="3" xl="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="album.UID" style="user-select: none" class="result card flex-grow-1" :class="album.classes(selection.includes(album.UID))" :to="album.route(view)" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card" style="user-select: none"></div>
               <v-img
                 :src="album.thumbnailUrl('tile_500')"
@@ -154,16 +154,16 @@
                 @mousedown.stop.prevent="input.mouseDown($event, index)"
                 @click.stop.prevent="onClick($event, index)"
               >
-                <v-btn v-if="canShare && album.LinkCount > 0" :ripple="false" icon flat absolute class="action-share" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onShare($event, index)" @touchmove.stop.prevent @click.stop.prevent="onShare($event, index)">
+                <v-btn v-if="canShare && album.LinkCount > 0" :ripple="false" icon text absolute class="action-share" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onShare($event, index)" @touchmove.stop.prevent @click.stop.prevent="onShare($event, index)">
                   <v-icon color="white">share</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
                   <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
@@ -172,7 +172,7 @@
                   v-if="canManage && experimental && featPrivate && album.Private"
                   :ripple="false"
                   icon
-                  flat
+                  text
                   absolute
                   class="input-private"
                   @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -184,7 +184,7 @@
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pl-3 pt-3 pr-3 pb-2 card-details" style="user-select: none">
+              <v-card-title primary-title class="pl-4 pt-4 pr-4 pb-2 card-details" style="user-select: none">
                 <div>
                   <h3 class="body-2 mb-0">
                     <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
@@ -234,10 +234,10 @@
                 </div>
               </v-card-text>
             </v-card>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
         <div v-if="canManage && staticFilter.type === 'album' && config.count.albums === 0" class="text-xs-center my-2">
-          <v-btn class="action-add" color="secondary" round @click.prevent="create">
+          <v-btn class="action-add" color="secondary" rounded @click.prevent="create">
             <translate>Add Album</translate>
           </v-btn>
         </div>

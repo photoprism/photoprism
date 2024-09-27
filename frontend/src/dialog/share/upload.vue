@@ -1,34 +1,34 @@
 <template>
-  <v-dialog :value="show" lazy persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
+  <v-dialog :value="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
       <v-card-title primary-title class="pb-0">
-        <v-layout row wrap>
-          <v-flex xs8>
+        <v-row>
+          <v-col cols="8">
             <h3 class="headline mb-0">
               <translate>WebDAV Upload</translate>
             </h3>
-          </v-flex>
-          <v-flex xs4 text-xs-right>
-            <v-btn icon flat dark color="secondary-dark" class="ma-0" @click.stop="setup">
+          </v-col>
+          <v-col cols="4" class="text-xs-right">
+            <v-btn icon text dark color="secondary-dark" class="ma-0" @click.stop="setup">
               <v-icon>cloud</v-icon>
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-title>
       <v-card-text class="pt-0">
-        <v-layout row wrap>
-          <v-flex xs12 text-xs-left class="pt-2">
-            <v-select v-model="service" color="secondary-dark" hide-details hide-no-data box flat :label="$gettext('Account')" item-text="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @change="onChange"> </v-select>
-          </v-flex>
-          <v-flex xs12 text-xs-left class="pt-2">
+        <v-row>
+          <v-col cols="12" class="text-xs-left pt-2">
+            <v-select v-model="service" color="secondary-dark" hide-details hide-no-data filled flat :label="$gettext('Account')" item-text="AccName" item-value="ID" return-object :disabled="loading || noServices" :items="services" @change="onChange"> </v-select>
+          </v-col>
+          <v-col cols="12" class="text-xs-left pt-2">
             <v-autocomplete
               v-model="path"
               color="secondary-dark"
               hide-details
               hide-no-data
-              box
+              filled
               flat
-              browser-autocomplete="off"
+              autocomplete="off"
               hint="Folder"
               :search-input.sync="search"
               :items="pathItems"
@@ -39,8 +39,8 @@
               :label="$gettext('Folder')"
             >
             </v-autocomplete>
-          </v-flex>
-          <v-flex xs12 text-xs-right class="pt-4">
+          </v-col>
+          <v-col cols="12" class="text-xs-right pt-6">
             <v-btn depressed color="secondary-light" class="action-cancel ml-0 mt-0 mb-0 mr-2" @click.stop="cancel">
               <translate>Cancel</translate>
             </v-btn>
@@ -50,8 +50,8 @@
             <v-btn v-else :disabled="noServices" color="primary-button" depressed dark class="action-upload ma-0" @click.stop="confirm">
               <translate>Upload</translate>
             </v-btn>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
   </v-dialog>

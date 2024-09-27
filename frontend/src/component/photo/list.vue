@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="photos.length === 0" class="pa-2">
-      <v-alert :value="true" color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outline>
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outlined>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -100,11 +100,11 @@
                   </template>
 
                   <template v-else>
-                    <v-btn v-if="hidePrivate" class="input-private" icon small flat :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
+                    <v-btn v-if="hidePrivate" class="input-private" icon small text :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.togglePrivate()">
                       <v-icon v-if="photo.Private" color="secondary-dark" class="select-on">lock</v-icon>
                       <v-icon v-else color="secondary" class="select-off">lock_open</v-icon>
                     </v-btn>
-                    <v-btn class="input-favorite" icon small flat :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
+                    <v-btn class="input-favorite" icon small text :ripple="false" :data-uid="photo.UID" @click.stop.prevent="photo.toggleLike()">
                       <v-icon v-if="photo.Favorite" color="secondary-dark" :data-uid="photo.UID" class="select-on">favorite</v-icon>
                       <v-icon v-else color="secondary" :data-uid="photo.UID" class="select-off">favorite_border</v-icon>
                     </v-btn>

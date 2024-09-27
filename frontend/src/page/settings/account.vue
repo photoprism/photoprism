@@ -1,18 +1,18 @@
 <template>
   <div class="p-tab p-settings-account">
-    <v-form ref="form" v-model="valid" lazy-validation dense class="p-form-account pb-4 width-lg" accept-charset="UTF-8" @submit.prevent="onChange">
+    <v-form ref="form" v-model="valid" lazy-validation dense class="p-form-account pb-6 width-lg" accept-charset="UTF-8" @submit.prevent="onChange">
       <input ref="upload" type="file" class="d-none input-upload" accept="image/png, image/jpeg" @change.stop="onUploadAvatar()" />
       <v-card flat tile class="mt-2 px-1 application">
         <v-card-actions>
-          <v-layout row wrap align-top>
-            <v-flex xs8 sm9 md10 fill-height class="pa-0">
-              <v-layout wrap align-top>
-                <v-flex md2 class="pa-2 hidden-sm-and-down">
+          <v-row align="start">
+            <v-col cols="8" sm="9" md="10" class="pa-0 d-flex" align-self="stretch">
+              <v-row align="start" class="flex-grow-1">
+                <v-col md="2" class="pa-2 hidden-sm-and-down">
                   <v-select
                     v-model="user.Details.Gender"
                     :label="$gettext('Gender')"
                     hide-details
-                    box
+                    filled
                     flat
                     :disabled="busy"
                     item-text="text"
@@ -24,17 +24,17 @@
                     @change="onChange"
                   >
                   </v-select>
-                </v-flex>
-                <v-flex md2 class="pa-2 hidden-sm-and-down">
+                </v-col>
+                <v-col md="2" class="pa-2 hidden-sm-and-down">
                   <v-text-field
                     v-model="user.Details.NameTitle"
                     hide-details
                     required
-                    box
+                    filled
                     flat
                     :disabled="busy"
                     maxlength="32"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
                     :label="$pgettext('Account', 'Title')"
@@ -43,17 +43,17 @@
                     :rules="[(v) => validLength(v, 0, 32) || $gettext('Invalid')]"
                     @change="onChangeName"
                   ></v-text-field>
-                </v-flex>
-                <v-flex md4 class="pa-2 hidden-sm-and-down">
+                </v-col>
+                <v-col md="4" class="pa-2 hidden-sm-and-down">
                   <v-text-field
                     v-model="user.Details.GivenName"
                     hide-details
                     required
-                    box
+                    filled
                     flat
                     :disabled="busy"
                     maxlength="64"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
                     :label="$gettext('Given Name')"
@@ -62,17 +62,17 @@
                     :rules="[(v) => validLength(v, 0, 64) || $gettext('Invalid')]"
                     @change="onChangeName"
                   ></v-text-field>
-                </v-flex>
-                <v-flex md4 class="pa-2 hidden-sm-and-down">
+                </v-col>
+                <v-col md="4" class="pa-2 hidden-sm-and-down">
                   <v-text-field
                     v-model="user.Details.FamilyName"
                     hide-details
                     required
-                    box
+                    filled
                     flat
                     :disabled="busy"
                     maxlength="64"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
                     :label="$gettext('Family Name')"
@@ -81,17 +81,17 @@
                     :rules="[(v) => validLength(v, 0, 64) || $gettext('Invalid')]"
                     @change="onChangeName"
                   ></v-text-field>
-                </v-flex>
-                <v-flex xs12 md4 class="pa-2">
+                </v-col>
+                <v-col cols="12" md="4" class="pa-2">
                   <v-text-field
                     v-model="user.DisplayName"
                     hide-details
                     required
-                    box
+                    filled
                     flat
                     :disabled="busy"
                     maxlength="200"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
                     :label="$gettext('Display Name')"
@@ -100,19 +100,19 @@
                     :rules="[(v) => validLength(v, 1, 200) || $gettext('Required')]"
                     @change="onChange"
                   ></v-text-field>
-                </v-flex>
-                <v-flex xs12 md8 class="pa-2">
+                </v-col>
+                <v-col cols="12" md="8" class="pa-2">
                   <v-text-field
                     v-model="user.Email"
                     hide-details
                     required
-                    box
+                    filled
                     flat
                     validate-on-blur
                     type="email"
                     maxlength="250"
                     :disabled="busy"
-                    browser-autocomplete="off"
+                    autocomplete="off"
                     autocorrect="off"
                     autocapitalize="none"
                     :label="$gettext('Email')"
@@ -121,57 +121,57 @@
                     :rules="[(v) => (!!v && validEmail(v)) || $gettext('Invalid')]"
                     @change="onChange"
                   ></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-flex>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
 
-            <v-flex class="pa-2 text-xs-center" xs4 sm3 md2 align-self-center>
+          <v-row>
+            <v-col class="pa-2 text-xs-center" cols="4" sm="3" md="2" align-self="center">
               <v-avatar :size="$vuetify.breakpoint.xsOnly ? 100 : 128" :class="{ clickable: !busy }" @click.stop.prevent="onChangeAvatar()">
                 <img :src="$vuetify.breakpoint.xsOnly ? user.getAvatarURL('tile_100') : user.getAvatarURL('tile_224')" :alt="accountInfo" :title="$gettext('Change Avatar')" />
               </v-avatar>
-            </v-flex>
+            </v-col>
 
-            <v-flex v-if="user.Details.Bio" xs12 class="pa-2">
+            <v-col v-if="user.Details.Bio" cols="12" class="pa-2">
               <v-textarea
                 v-model="user.Details.Bio"
                 auto-grow
-                flat
-                box
+                solo
                 hide-details
                 rows="2"
                 class="input-bio"
                 color="secondary-dark"
                 autocorrect="off"
                 autocapitalize="none"
-                browser-autocomplete="off"
+                autocomplete="off"
                 :disabled="busy"
                 maxlength="2000"
                 :rules="[(v) => validLength(v, 0, 2000) || $gettext('Invalid')]"
                 :label="$gettext('Bio')"
                 @change="onChange"
               ></v-textarea>
-            </v-flex>
-            <v-flex xs12 class="pa-2">
+            </v-col>
+            <v-col cols="12" class="pa-2">
               <v-textarea
                 v-model="user.Details.About"
                 auto-grow
-                flat
-                box
+                solo
                 hide-details
                 rows="2"
                 class="input-about"
                 color="secondary-dark"
                 autocorrect="off"
                 autocapitalize="none"
-                browser-autocomplete="off"
+                autocomplete="off"
                 :disabled="busy"
                 maxlength="500"
                 :rules="[(v) => validLength(v, 0, 500) || $gettext('Invalid')]"
                 :label="$gettext('About')"
                 @change="onChange"
               ></v-textarea>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
@@ -181,34 +181,34 @@
           </h3>
         </v-card-title>
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 class="pa-2">
+          <v-row align="start">
+            <v-col cols="12" sm="6" class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-change-password compact" :disabled="isPublic || isDemo || user.Name === '' || getProvider() !== 'local'" @click.stop="showDialog('password')">
                 <translate>Change Password</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>lock</v-icon>
               </v-btn>
-            </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
+            </v-col>
+            <v-col cols="12" sm="6" class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-passcode-dialog compact" :disabled="isPublic || isDemo || user.disablePasscodeSetup(session.hasPassword())" @click.stop="showDialog('passcode')">
                 <translate>2-Factor Authentication</translate>
                 <v-icon v-if="user.AuthMethod === '2fa'" :right="!rtl" :left="rtl" dark>gpp_good</v-icon>
                 <v-icon v-else-if="user.disablePasscodeSetup(session.hasPassword())" :right="!rtl" :left="rtl" dark>shield</v-icon>
                 <v-icon v-else :right="!rtl" :left="rtl" dark>gpp_maybe</v-icon>
               </v-btn>
-            </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
+            </v-col>
+            <v-col cols="12" sm="6" class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-apps-dialog compact" :disabled="isPublic || isDemo || user.Name === ''" @click.stop="showDialog('apps')">
                 <translate>Apps and Devices</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>devices</v-icon>
               </v-btn>
-            </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
+            </v-col>
+            <v-col cols="12" sm="6" class="pa-2">
               <v-btn block depressed color="secondary-light" class="action-webdav-dialog compact" :disabled="isPublic || isDemo || !user.hasWebDAV()" @click.stop="showDialog('webdav')">
                 <translate>Connect via WebDAV</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>
               </v-btn>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
@@ -218,17 +218,17 @@
           </h3>
         </v-card-title>
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs3 class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthDay" :disabled="busy" :label="$gettext('Day')" browser-autocomplete="off" hide-no-data hide-details box flat color="secondary-dark" :items="options.Days()" class="input-birth-day" @change="onChange"> </v-autocomplete>
-            </v-flex>
-            <v-flex xs3 class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthMonth" :disabled="busy" :label="$gettext('Month')" browser-autocomplete="off" hide-no-data hide-details box flat color="secondary-dark" :items="options.MonthsShort()" class="input-birth-month" @change="onChange"> </v-autocomplete>
-            </v-flex>
-            <v-flex xs6 class="pa-2">
-              <v-autocomplete v-model="user.Details.BirthYear" :disabled="busy" :label="$gettext('Year')" browser-autocomplete="off" hide-no-data hide-details box flat color="secondary-dark" :items="options.Years()" class="input-birth-year" @change="onChange"> </v-autocomplete>
-            </v-flex>
-          </v-layout>
+          <v-row align="start">
+            <v-col cols="3" class="pa-2">
+              <v-autocomplete v-model="user.Details.BirthDay" :disabled="busy" :label="$gettext('Day')" autocomplete="off" hide-no-data hide-details filled flat color="secondary-dark" :items="options.Days()" class="input-birth-day" @change="onChange"> </v-autocomplete>
+            </v-col>
+            <v-col cols="3" class="pa-2">
+              <v-autocomplete v-model="user.Details.BirthMonth" :disabled="busy" :label="$gettext('Month')" autocomplete="off" hide-no-data hide-details filled flat color="secondary-dark" :items="options.MonthsShort()" class="input-birth-month" @change="onChange"> </v-autocomplete>
+            </v-col>
+            <v-col cols="6" class="pa-2">
+              <v-autocomplete v-model="user.Details.BirthYear" :disabled="busy" :label="$gettext('Year')" autocomplete="off" hide-no-data hide-details filled flat color="secondary-dark" :items="options.Years()" class="input-birth-year" @change="onChange"> </v-autocomplete>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
@@ -238,17 +238,17 @@
           </h3>
         </v-card-title>
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 class="pa-2">
+          <v-row align="start">
+            <v-col cols="12" class="pa-2">
               <v-text-field
                 v-model="user.Details.Location"
                 hide-details
                 required
-                box
+                filled
                 flat
                 :disabled="busy"
                 maxlength="500"
-                browser-autocomplete="off"
+                autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
                 :label="$gettext('Location')"
@@ -257,17 +257,17 @@
                 :rules="[(v) => validLength(v, 0, 500) || $gettext('Invalid')]"
                 @change="onChange"
               ></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm4 class="pa-2">
+            </v-col>
+            <v-col cols="12" sm="4" class="pa-2">
               <v-autocomplete
                 v-model="user.Details.Country"
                 :disabled="busy"
                 :label="$gettext('Country')"
                 hide-no-data
                 hide-details
-                box
+                filled
                 flat
-                browser-autocomplete="off"
+                autocomplete="off"
                 color="secondary-dark"
                 item-value="Code"
                 item-text="Name"
@@ -277,17 +277,17 @@
                 @change="onChange"
               >
               </v-autocomplete>
-            </v-flex>
-            <v-flex xs12 sm8 class="pa-2">
+            </v-col>
+            <v-col cols="12" sm="8" class="pa-2">
               <v-text-field
                 v-model="user.Details.Phone"
                 hide-details
                 required
-                box
+                filled
                 flat
                 :disabled="busy"
                 maxlength="32"
-                browser-autocomplete="off"
+                autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
                 :label="$gettext('Phone')"
@@ -296,18 +296,18 @@
                 :rules="[(v) => validLength(v, 0, 32) || $gettext('Invalid')]"
                 @change="onChange"
               ></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
+            </v-col>
+            <v-col cols="12" sm="6" class="pa-2">
               <v-text-field
                 v-model="user.Details.SiteURL"
                 hide-details
                 required
-                box
+                filled
                 flat
                 :disabled="busy"
                 type="url"
                 maxlength="500"
-                browser-autocomplete="off"
+                autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
                 :label="$gettext('Website')"
@@ -316,18 +316,18 @@
                 :rules="[(v) => validUrl(v) || $gettext('Invalid')]"
                 @change="onChange"
               ></v-text-field>
-            </v-flex>
-            <v-flex xs12 sm6 class="pa-2">
+            </v-col>
+            <v-col cols="12" sm="6" class="pa-2">
               <v-text-field
                 v-model="user.Details.FeedURL"
                 hide-details
                 required
-                box
+                filled
                 flat
                 :disabled="busy"
                 type="url"
                 maxlength="500"
-                browser-autocomplete="off"
+                autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
                 :label="$gettext('Feed')"
@@ -336,8 +336,8 @@
                 :rules="[(v) => validUrl(v) || $gettext('Invalid')]"
                 @change="onChange"
               ></v-text-field>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-form>

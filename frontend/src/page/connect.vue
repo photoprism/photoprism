@@ -25,38 +25,38 @@
         <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
       </v-btn>
     </v-toolbar>
-    <v-form ref="form" v-model="valid" autocomplete="off" class="px-3 pt-3 pb-0" lazy-validation @submit.prevent>
-      <v-layout v-if="busy" row wrap>
-        <v-flex xs12 d-flex class="text-sm-center pa-2">
-          <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
-        </v-flex>
-      </v-layout>
-      <v-layout v-else-if="error" row wrap>
-        <v-flex xs12 class="text-sm-left pa-2">
-          <v-alert :value="true" color="error" icon="gpp_bad" class="mt-3" outline>
+    <v-form ref="form" v-model="valid" autocomplete="off" class="px-6 pt-6 pb-0" lazy-validation @submit.prevent>
+      <v-row v-if="busy">
+        <v-col cols="12" class="d-flex text-sm-center pa-2">
+          <v-progress-linear color="secondary-dark flex-grow-1" :indeterminate="true"></v-progress-linear>
+        </v-col>
+      </v-row>
+      <v-row v-else-if="error">
+        <v-col cols="12" class="text-sm-left pa-2">
+          <v-alert color="error" icon="gpp_bad" class="mt-6" outlined>
             {{ error }}
           </v-alert>
-        </v-flex>
-        <v-flex xs12 class="pa-2">
-          <v-btn color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outline :disabled="busy" @click.stop="reset">
+        </v-col>
+        <v-col cols="12" class="pa-2">
+          <v-btn color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outlined :disabled="busy" @click.stop="reset">
             <translate>Cancel</translate>
           </v-btn>
           <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly" class="white--text ml-0" href="https://www.photoprism.app/contact" target="_blank" depressed>
             <translate>Contact Us</translate>
           </v-btn>
-        </v-flex>
-      </v-layout>
-      <v-layout v-else-if="success" row wrap>
-        <v-flex xs12 d-flex class="pa-2">
-          <p class="subheading text-xs-left">
+        </v-col>
+      </v-row>
+      <v-row v-else-if="success">
+        <v-col cols="12" class="pa-2 d-flex">
+          <p class="subtitle-1 text-xs-left flex-grow-1">
             <translate>Your account has been successfully connected.</translate>
             <span v-if="$config.values.restart">
               <translate>Please restart your instance for the changes to take effect.</translate>
             </span>
           </p>
-        </v-flex>
-        <v-flex xs12 grow class="pa-2">
-          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outline :disabled="busy">
+        </v-col>
+        <v-col cols="12" class="d-flex grow pa-2">
+          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2 flex-grow-1" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outlined :disabled="busy">
             <translate>Manage Account</translate>
           </v-btn>
           <v-btn v-if="$config.values.restart && !$config.values.disable.restart" color="primary-button" :block="$vuetify.breakpoint.xsOnly" class="white--text ml-0" depressed :disabled="busy" @click.stop.p.prevent="onRestart">
@@ -68,24 +68,24 @@
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
             <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
-        </v-flex>
-      </v-layout>
-      <v-layout v-else row wrap>
-        <v-flex v-if="$config.getTier() < 4" xs12 grow align-center justify-center class="px-2 pt-1 pb-3 subheading text-selectable">
+        </v-col>
+      </v-row>
+      <v-row v-else>
+        <v-col v-if="$config.getTier() < 4" cols="12" class="d-flex align-center justify-center px-2 pt-1 pb-6 subtitle-1 text-selectable">
           <translate>Become a member today, support our mission and enjoy our member benefits!</translate>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
-        </v-flex>
-        <v-flex xs12 grow align-center justify-center class="px-2 py-1">
-          <v-alert :value="true" color="secondary-dark" outline>
-            <p class="subheading text-selectable">
+        </v-col>
+        <v-col cols="12" class="grow align-center justify-center px-2 py-1">
+          <v-alert color="secondary-dark" outlined>
+            <p class="subtitle-1 text-selectable">
               <strong><translate>To upgrade, you can either enter an activation code or click "Register" to sign up on our website:</translate></strong>
             </p>
-            <v-text-field v-model="form.token" flat solo hide-details return-masked-value :mask="tokenMask" browser-autocomplete="off" color="secondary-dark" background-color="secondary-light" :label="$gettext('Activation Code')" type="text"> </v-text-field>
-            <div class="action-buttons text-xs-left mt-3">
-              <v-btn v-if="$config.getTier() >= 4" href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outline :disabled="busy">
+            <v-text-field v-model="form.token" flat solo hide-details return-masked-value :mask="tokenMask" autocomplete="off" color="secondary-dark" background-color="secondary-light" :label="$gettext('Activation Code')" type="text"> </v-text-field>
+            <div class="action-buttons text-xs-left mt-6">
+              <v-btn v-if="$config.getTier() >= 4" href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outlined :disabled="busy">
                 <translate>Manage Account</translate>
               </v-btn>
-              <v-btn v-else color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outline :disabled="busy" @click.stop="compare">
+              <v-btn v-else color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outlined :disabled="busy" @click.stop="compare">
                 <translate>Compare Editions</translate>
               </v-btn>
 
@@ -101,12 +101,12 @@
               </v-btn>
             </div>
           </v-alert>
-        </v-flex>
-        <v-flex xs12 class="px-2 pt-3 pb-0 body-1 text-selectable">
+        </v-col>
+        <v-col cols="12" class="px-2 pt-6 pb-0 body-1 text-selectable">
           <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
           <translate>By using the software and services we provide, you agree to our terms of service, privacy policy, and code of conduct.</translate>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </v-form>
     <p-about-footer></p-about-footer>
   </div>

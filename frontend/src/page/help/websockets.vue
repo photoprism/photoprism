@@ -3,8 +3,8 @@
     <h3>PhotoPrism uses <a target="_blank" href="https://en.wikipedia.org/wiki/WebSocket">WebSockets</a> for two-way interactive communication between your browser and the server</h3>
     <p>If the connection fails and can't be reestablished, your browser won't receive photo counts, log messages, or metadata updates.</p>
     <p>To fix this issue, please make sure you didn't block WebSocket connections in your browser or firewall and check the configuration of any Web server that is in front of PhotoPrism:</p>
-    <v-expansion-panel class="elevation-0">
-      <v-expansion-panel-content class="secondary mb-1">
+    <v-expansion-panels class="elevation-0">
+      <v-expansion-panel class="secondary mb-1">
         <template #header>
           <div>How to configure NGINX to proxy WebSockets</div>
         </template>
@@ -35,8 +35,8 @@ http {
             <p>Please refer to the <a target="_blank" href="https://nginx.org/en/docs/" class="text-link">official documentation</a> for more details.</p>
           </v-card-text>
         </v-card>
-      </v-expansion-panel-content>
-      <v-expansion-panel-content class="secondary mb-1">
+      </v-expansion-panel>
+      <v-expansion-panel class="secondary mb-1">
         <template #header>
           <div>How to configure Caddy 1 to proxy WebSockets</div>
         </template>
@@ -54,8 +54,8 @@ example.com {
             <p>Please refer to the <a target="_blank" href="https://caddyserver.com/v1/docs/websocket" class="text-link">official documentation</a> for more details.</p>
           </v-card-text>
         </v-card>
-      </v-expansion-panel-content>
-      <v-expansion-panel-content class="secondary mb-1">
+      </v-expansion-panel>
+      <v-expansion-panel class="secondary mb-1">
         <template #header>
           <div>How to configure Caddy 2 to proxy WebSockets</div>
         </template>
@@ -71,8 +71,8 @@ example.com {
             <p>In addition, Caddy 2 may automatically create and update Let's Encrypt HTTPS certificates. Please refer to the <a target="_blank" href="https://caddyserver.com/docs/v2-upgrade#proxy" class="text-link">official documentation</a> for more details.</p>
           </v-card-text>
         </v-card>
-      </v-expansion-panel-content>
-      <v-expansion-panel-content class="secondary mb-1">
+      </v-expansion-panel>
+      <v-expansion-panel class="secondary mb-1">
         <template #header>
           <div>How to reverse proxy WebSockets with Apache 2.4</div>
         </template>
@@ -97,8 +97,8 @@ ProxyRequests off
             <p>The <a target="_blank" href="https://httpd.apache.org/docs/2.4/mod/mod_proxy_wstunnel.html" class="text-link">official documentation</a> explains in detail, how to configure Apache Web Server 2.4 to reverse proxy WebSockets.</p>
           </v-card-text>
         </v-card>
-      </v-expansion-panel-content>
-    </v-expansion-panel>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </div>
 </template>
 

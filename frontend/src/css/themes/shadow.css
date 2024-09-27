@@ -17,10 +17,10 @@ body.dark-theme.theme-shadow {
     stroke: rgba(196, 241, 229, 0.3);
 }
 
-.theme-shadow .v-content__wrap,
+.theme-shadow .v-main__wrap,
 .theme-shadow .p-page,
 .theme-shadow .form,
-.theme-shadow .v-content {
+.theme-shadow .v-main {
     background: #444 !important;
 }
 
@@ -71,7 +71,7 @@ body.dark-theme.theme-shadow {
 #photoprism.theme-shadow,
 #photoprism.theme-shadow .p-page a,
 #photoprism.theme-shadow .v-datatable a,
-#photoprism.theme-shadow .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-shadow .theme--light.v-expansion-panels .v-expansion-panel__container,
 #photoprism.theme-shadow .theme--light.v-tabs__bar .v-tabs__div,
 #photoprism.theme-shadow .theme--light {
     color: #fff;
@@ -89,7 +89,7 @@ body.dark-theme.theme-shadow {
     color: #eee;
 }
 
-#photoprism.theme-shadow .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-shadow .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-shadow .accent--text {
     color: #c4f1e5 !important;
 }
@@ -105,7 +105,7 @@ body.dark-theme.theme-shadow {
     color: #999 !important;
 }
 
-#photoprism.theme-shadow .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-shadow .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

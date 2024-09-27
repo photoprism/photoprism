@@ -12,7 +12,7 @@ body.dark-theme #photoprism .v-table .theme--light.v-text-field--solo>.v-input__
     background: transparent;
 }
 
-body.dark-theme .theme--light.v-list .v-list__tile--highlighted,
+body.dark-theme .theme--light.v-list .v-list__item--highlighted,
 body.dark-theme .theme--light.v-list a:hover {
     background: rgba(255,255,255,0.3) !important;
 }
@@ -29,7 +29,7 @@ body.dark-theme .theme--light.v-table tbody tr:hover {
     background: #343434;
 }
 
-.theme--light.v-list .v-list__tile--highlighted,
+.theme--light.v-list .v-list__item--highlighted,
 .theme--light.v-list a:hover {
     background: rgba(155,155,155,0.3) !important;
 }
@@ -47,7 +47,7 @@ body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__co
 body.dark-theme #photoprism,
 body.dark-theme #photoprism .p-page a,
 body.dark-theme #photoprism .v-datatable a,
-body.dark-theme #photoprism .theme--light.v-expansion-panel .v-expansion-panel__container,
+body.dark-theme #photoprism .theme--light.v-expansion-panels .v-expansion-panel__container,
 body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
 body.dark-theme #photoprism .theme--light {
     color: #ffffff;
@@ -86,7 +86,7 @@ body.dark-theme #photoprism .v-card .theme--light.v-text-field--box>.v-input__co
 body.dark-theme #photoprism,
 body.dark-theme #photoprism .p-page a,
 body.dark-theme #photoprism .v-datatable a,
-body.dark-theme #photoprism .theme--light.v-expansion-panel .v-expansion-panel__container,
+body.dark-theme #photoprism .theme--light.v-expansion-panels .v-expansion-panel__container,
 body.dark-theme #photoprism .theme--light.v-tabs__bar .v-tabs__div,
 body.dark-theme #photoprism .theme--light,
 body.dark-theme #photoprism .theme--light.v-table thead th,
@@ -114,10 +114,10 @@ body.dark-theme #photoprism .v-tabs .v-badge__badge {
 /* Default Theme */
 
 body.dark-theme.theme-default,
-.theme-default .v-content__wrap,
+.theme-default .v-main__wrap,
 .theme-default .p-page,
 .theme-default .form,
-.theme-default .v-content {
+.theme-default .v-main {
     background: #2f3031 !important;
 }
 
@@ -183,7 +183,7 @@ body.dark-theme.theme-default,
     color: #f6f7e8 !important;
 }
 
-#photoprism.theme-default .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-default .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-default .accent--text {
     color: #8F4FE3 !important;
 }
@@ -199,7 +199,7 @@ body.dark-theme.theme-default,
     color: #999 !important;
 }
 
-#photoprism.theme-default .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-default .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

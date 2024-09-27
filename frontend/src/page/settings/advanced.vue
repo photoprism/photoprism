@@ -3,15 +3,15 @@
     <v-form ref="form" lazy-validation dense class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-actions v-if="$config.values.restart">
-          <v-layout wrap align-top>
-            <v-flex xs12 class="pa-2 text-xs-left">
-              <v-alert :value="true" color="primary" icon="info" class="pa-2" type="info" outline>
+          <v-row align="start">
+            <v-col cols="12" class="pa-2 text-xs-left">
+              <v-alert color="primary" icon="info" class="pa-2" type="info" outlined>
                 <a style="color: inherit" href="#restart">
                   <translate>Changes to the advanced settings require a restart to take effect.</translate>
                 </a>
               </v-alert>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
         <v-card-title primary-title class="pb-0">
@@ -21,8 +21,8 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+          <v-row align="start">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.Debug"
                 :disabled="busy"
@@ -34,9 +34,9 @@
                 persistent-hint
                 @change="onChange">
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.Experimental"
                 :disabled="busy"
@@ -48,9 +48,9 @@
                 persistent-hint
                 @change="onChange">
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.ReadOnly"
                 :disabled="busy"
@@ -63,9 +63,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableBackups"
                 :disabled="busy"
@@ -78,9 +78,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableWebDAV"
                 :disabled="busy"
@@ -93,9 +93,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisablePlaces"
                 :disabled="busy"
@@ -107,9 +107,9 @@
                 persistent-hint
                 @change="onChange">
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableExifTool"
                 :disabled="busy || (!settings.Experimental && !settings.DisableExifTool)"
@@ -122,9 +122,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg3 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="3" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableTensorFlow"
                 :disabled="busy"
@@ -137,8 +137,8 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
         <template v-if="!settings.DisableBackups">
@@ -149,8 +149,8 @@
           </v-card-title>
 
           <v-card-actions>
-            <v-layout wrap align-top>
-              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+            <v-row align="start">
+              <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
                 <v-checkbox
                   v-model="settings.BackupDatabase"
                   :disabled="busy || settings.BackupSchedule === ''"
@@ -163,9 +163,9 @@
                   @change="onChange"
                 >
                 </v-checkbox>
-              </v-flex>
+              </v-col>
 
-              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
                 <v-checkbox
                   v-model="settings.BackupAlbums"
                   :disabled="busy"
@@ -178,9 +178,9 @@
                   @change="onChange"
                 >
                 </v-checkbox>
-              </v-flex>
+              </v-col>
 
-              <v-flex xs12 sm4 class="px-2 pb-2 pt-2">
+              <v-col cols="12" sm="4" class="px-2 pb-2 pt-2">
                 <v-checkbox
                   v-model="settings.SidecarYaml"
                   :disabled="busy"
@@ -193,8 +193,8 @@
                   @change="onChange"
                 >
                 </v-checkbox>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-card-actions>
         </template>
 
@@ -205,26 +205,26 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex v-if="settings.ThumbLibrary === 'imaging'" xs12 class="px-2 pb-2">
-              <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" color="secondary-dark" background-color="secondary-light" hide-details box @change="onChange"></v-select>
-            </v-flex>
+          <v-row align="start">
+            <v-col v-if="settings.ThumbLibrary === 'imaging'" cols="12" class="px-2 pb-2">
+              <v-select v-model="settings.ThumbFilter" :disabled="busy" :items="options.ThumbFilters()" :label="$gettext('Downscaling Filter')" color="secondary-dark" background-color="secondary-light" hide-details filled @change="onChange"></v-select>
+            </v-col>
 
-            <v-flex xs12 lg4 class="px-2 pb-2">
+            <v-col cols="12" lg="4" class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Static Size Limit: %{n}px"), { n: settings.ThumbSize }) }}
               </v-subheader>
               <v-slider v-model="settings.ThumbSize" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("Dynamic Size Limit: %{n}px"), { n: settings.ThumbSizeUncached }) }}
               </v-subheader>
               <v-slider v-model="settings.ThumbSizeUncached" :min="720" :max="7680" :step="4" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.ThumbUncached"
                 :disabled="busy"
@@ -237,8 +237,8 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
         <v-card-title primary-title class="pb-0">
@@ -248,32 +248,32 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 lg4 class="px-2 pb-2">
+          <v-row align="start">
+            <v-col cols="12" lg="4" class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Quality: %{n}"), { n: settings.JpegQuality }) }}
               </v-subheader>
               <v-slider v-model="settings.JpegQuality" :min="25" :max="100" :disabled="busy" hide-details class="mt-0" @change="onChange"></v-slider>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("JPEG Size Limit: %{n}px"), { n: settings.JpegSize }) }}
               </v-subheader>
-              <v-flex class="pr-3">
+              <v-col class="pr-6">
                 <v-slider v-model="settings.JpegSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
-              </v-flex>
-            </v-flex>
+              </v-col>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2">
               <v-subheader class="pa-0">
                 {{ $gettextInterpolate($gettext("PNG Size Limit: %{n}px"), { n: settings.PngSize }) }}
               </v-subheader>
-              <v-flex class="pr-3">
+              <v-col class="pr-6">
                 <v-slider v-model="settings.PngSize" :min="720" :max="30000" :step="20" :disabled="busy" class="mt-0" @change="onChange"></v-slider>
-              </v-flex>
-            </v-flex>
-          </v-layout>
+              </v-col>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
         <v-card-title primary-title class="pb-0">
@@ -283,8 +283,8 @@
         </v-card-title>
 
         <v-card-actions>
-          <v-layout wrap align-top>
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+          <v-row align="start">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableDarktable"
                 :disabled="busy || settings.DisableRaw"
@@ -297,9 +297,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableRawTherapee"
                 :disabled="busy || settings.DisableRaw"
@@ -312,9 +312,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.RawPresets"
                 :disabled="busy || settings.DisableRaw"
@@ -327,9 +327,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableImageMagick"
                 :disabled="busy"
@@ -342,9 +342,9 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox
                 v-model="settings.DisableFFmpeg"
                 :disabled="busy || (!settings.Experimental && !settings.DisableFFmpeg)"
@@ -357,25 +357,25 @@
                 @change="onChange"
               >
               </v-checkbox>
-            </v-flex>
+            </v-col>
 
-            <v-flex v-if="isSponsor" xs12 sm6 lg4 class="px-2 pb-2 pt-2">
+            <v-col v-if="isSponsor" cols="12" sm="6" lg="4" class="px-2 pb-2 pt-2">
               <v-checkbox v-model="settings.DisableVectors" :disabled="busy" class="ma-0 pa-0 input-disable-vectors" color="secondary-dark" :label="$gettext('Disable Vectors')" :hint="$gettext('Disables vector graphics support.')" prepend-icon="font_download_off" persistent-hint @change="onChange">
               </v-checkbox>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
 
-        <v-card-actions v-if="!config.disable.restart" class="pt-3">
-          <v-layout wrap align-top>
-            <v-flex xs12 class="pa-2">
+        <v-card-actions v-if="!config.disable.restart" class="pt-6">
+          <v-row align="start">
+            <v-col cols="12" class="pa-2">
               <a id="restart"></a>
               <v-btn color="primary-button" :block="$vuetify.breakpoint.xsOnly" :disabled="busy || !$config.values.restart" class="white--text" depressed @click.stop.p.prevent="onRestart">
                 <translate>Restart</translate>
                 <v-icon :right="!rtl" :left="rtl" dark>restart_alt</v-icon>
               </v-btn>
-            </v-flex>
-          </v-layout>
+            </v-col>
+          </v-row>
         </v-card-actions>
       </v-card>
     </v-form>

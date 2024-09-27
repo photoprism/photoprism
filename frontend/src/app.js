@@ -99,7 +99,8 @@ config.update().finally(() => {
   };
 
   // Register Vuetify.
-  Vue.use(Vuetify, { rtl, icons, theme });
+  Vue.use(Vuetify);
+  const vuetify = new Vuetify({ rtl, icons, theme });
 
   // Register other VueJS plugins.
   Vue.use(GetTextPlugin, {
@@ -236,7 +237,7 @@ config.update().finally(() => {
   }
 
   // Start application.
-  Mount(Vue, PhotoPrism, router);
+  Mount(Vue, PhotoPrism, router, vuetify);
   if (config.baseUri === "") {
     offline.install();
   }

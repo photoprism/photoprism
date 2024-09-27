@@ -1,7 +1,7 @@
 <template>
   <v-container grid-list-xs fluid class="pa-2 p-photos p-photo-cards">
     <template v-if="photos.length === 0">
-      <v-alert :value="true" color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outline>
+      <v-alert color="secondary-dark" :icon="isSharedView ? 'image_not_supported' : 'lightbulb_outline'" class="no-results ma-2 opacity-70" outlined>
         <h3 v-if="filter.order === 'edited'" class="body-2 ma-0 pa-0">
           <translate>No recently edited pictures</translate>
         </h3>
@@ -19,12 +19,12 @@
         </p>
       </v-alert>
     </template>
-    <v-layout row wrap class="search-results photo-results cards-view" :class="{ 'select-results': selectMode }">
+    <v-row class="search-results photo-results cards-view" :class="{ 'select-results': selectMode }">
       <div v-for="(photo, index) in photos" ref="items" :key="photo.ID" :data-index="index" class="flex xs12 sm6 md4 lg3 xlg2 ul1 d-flex">
-        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="card result placeholder">
+        <div v-if="index < firstVisibleElementIndex || index > lastVisibileElementIndex" :data-uid="photo.UID" class="card result placeholder flex-grow-1">
           <div class="card darken-1 image" />
           <div v-if="photo.Quality < 3 && context === 'review'" style="width: 100%; height: 34px" />
-          <div class="pa-3 card-details">
+          <div class="pa-6 card-details">
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
                 {{ photo.Title | truncate(80) }}
@@ -57,7 +57,7 @@
             </div>
           </div>
         </div>
-        <div v-else :data-id="photo.ID" :data-uid="photo.UID" class="result card" :class="photo.classes()" @contextmenu.stop="onContextMenu($event, index)">
+        <div v-else :data-id="photo.ID" :data-uid="photo.UID" class="result card flex-grow-1" :class="photo.classes()" @contextmenu.stop="onContextMenu($event, index)">
           <div class="card-background card"></div>
           <div
             :key="photo.Hash"
@@ -71,11 +71,11 @@
             @mouseover="playLive(photo)"
             @mouseleave="pauseLive(photo)"
           >
-            <v-layout v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
+            <v-row v-if="photo.Type === 'live' || photo.Type === 'animated'" class="live-player">
               <video :id="'live-player-' + photo.ID" :key="photo.ID" width="500" height="500" preload="none" loop muted playsinline>
                 <source :src="photo.videoUrl()" />
               </video>
-            </v-layout>
+            </v-row>
 
             <button
               v-if="photo.Type !== 'image' || photo.isStack()"
@@ -125,21 +125,21 @@
           </div>
 
           <v-card-actions v-if="!isSharedView && photo.Quality < 3 && context === 'review'" class="card-details pa-0">
-            <v-layout row wrap align-center>
-              <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="card darken-1" small depressed dark block :round="false" class="action-archive text-xs-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
-                  <v-icon dark>clear</v-icon>
-                </v-btn>
-              </v-flex>
-              <v-flex xs6 class="text-xs-center pa-1">
-                <v-btn color="card darken-1" small depressed dark block :round="false" class="action-approve text-xs-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
-                  <v-icon dark>check</v-icon>
-                </v-btn>
-              </v-flex>
-            </v-layout>
+            <v-row align="center">
+                <v-col cols="6" class="text-xs-center pa-1">
+                  <v-btn color="card darken-1" small depressed dark block :rounded="false" class="action-archive text-xs-center" :title="$gettext('Archive')" @click.stop="photo.archive()">
+                    <v-icon dark>clear</v-icon>
+                  </v-btn>
+                </v-col>
+                <v-col cols="6" class="text-xs-center pa-1">
+                  <v-btn color="card darken-1" small depressed dark block :rounded="false" class="action-approve text-xs-center" :title="$gettext('Approve')" @click.stop="photo.approve()">
+                    <v-icon dark>check</v-icon>
+                  </v-btn>
+                </v-col>
+            </v-row>
           </v-card-actions>
 
-          <div class="pa-3 card-details">
+          <div class="pa-6 card-details">
             <div>
               <h3 class="body-2 mb-2" :title="photo.Title">
                 <button class="action-title-edit" :data-uid="photo.UID" @click.exact="isSharedView ? openPhoto(index) : editPhoto(index)">
@@ -200,7 +200,7 @@
           </div>
         </div>
       </div>
-    </v-layout>
+    </v-row>
   </v-container>
 </template>
 <script>

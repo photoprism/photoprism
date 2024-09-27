@@ -13,7 +13,7 @@
           validate-on-blur
           autocorrect="off"
           autocapitalize="none"
-          browser-autocomplete="off"
+          autocomplete="off"
           :label="$gettext('Search')"
           prepend-inner-icon="search"
           color="secondary-dark"
@@ -22,7 +22,7 @@
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -75,8 +75,8 @@
 
     <v-card v-show="searchExpanded" class="pt-1 page-toolbar-expanded" flat color="secondary-light">
       <v-card-text>
-        <v-layout row wrap>
-          <v-flex xs12 sm6 md3 pa-2 class="p-countries-select">
+        <v-row>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-countries-select">
             <v-select
               :value="filter.country"
               :label="$gettext('Country')"
@@ -97,8 +97,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-camera-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-camera-select">
             <v-select
               :value="filter.camera"
               :label="$gettext('Camera')"
@@ -118,8 +118,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-view-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-view-select">
             <v-select
               id="viewSelect"
               :value="settings.view"
@@ -137,8 +137,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-time-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-time-select">
             <v-select
               :value="filter.order"
               :label="$gettext('Sort Order')"
@@ -156,8 +156,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-year-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-year-select">
             <v-select
               :value="filter.year"
               :label="$gettext('Year')"
@@ -177,8 +177,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-month-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-month-select">
             <v-select
               :value="filter.month"
               :label="$gettext('Month')"
@@ -198,8 +198,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <!-- v-flex xs12 sm6 md3 pa-2 class="p-lens-select">
+          </v-col>
+          <!-- v-col cols="12" sm="6" md="3" class="pa-2 p-lens-select">
               <v-select @change="dropdownChange"
                         :label="labels.lens"
                         flat solo hide-details
@@ -210,8 +210,8 @@
                         v-model="filter.lens"
                         :items="lensOptions">
               </v-select>
-          </v-flex -->
-          <v-flex xs12 sm6 md3 pa-2 class="p-color-select">
+          </v-col -->
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-color-select">
             <v-select
               :value="filter.color"
               :label="$gettext('Color')"
@@ -231,8 +231,8 @@
               "
             >
             </v-select>
-          </v-flex>
-          <v-flex xs12 sm6 md3 pa-2 class="p-category-select">
+          </v-col>
+          <v-col cols="12" sm="6" md="3" class="pa-2 p-category-select">
             <v-select
               :value="filter.label"
               :label="$gettext('Category')"
@@ -252,8 +252,8 @@
               "
             >
             </v-select>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
     <p-photo-delete-dialog :show="dialog.delete" :text="$gettext('Are you sure you want to delete all archived pictures?')" :action="$gettext('Delete All')" @cancel="dialog.delete = false" @confirm="batchDelete">

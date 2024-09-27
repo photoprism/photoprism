@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-import">
     <v-form ref="form" class="p-photo-import" lazy-validation dense @submit.prevent="submit">
       <v-container fluid>
-        <p class="subheading">
+        <p class="subtitle-1">
           <span v-if="fileName" class="break-word"><translate :translate-params="{ name: fileName }">Importing %{name}…</translate></span>
           <span v-else-if="busy"><translate>Importing files to originals…</translate></span>
           <span v-else-if="completed"><translate>Done.</translate></span>
@@ -12,12 +12,12 @@
         <v-autocomplete
           v-model="settings.import.path"
           color="secondary-dark"
-          class="my-3 input-import-folder"
+          class="my-6 input-import-folder"
           hide-details
           hide-no-data
           flat
           solo
-          browser-autocomplete="off"
+          autocomplete="off"
           :items="dirs"
           :loading="loading"
           :disabled="busy || !ready"
@@ -32,8 +32,8 @@
           <v-progress-linear color="secondary-dark" height="1.5em" :value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
-        <v-layout wrap align-top class="pb-2">
-          <v-flex xs12 class="px-2 pb-2 pt-2">
+        <v-row align="start" class="pb-2">
+          <v-col cols="12" class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="settings.import.move"
               :disabled="busy || !ready"
@@ -46,16 +46,16 @@
               @change="onChange"
             >
             </v-checkbox>
-          </v-flex>
-          <v-flex xs12 class="px-2 pb-2 pt-2">
+          </v-col>
+          <v-col cols="12" class="px-2 pb-2 pt-2">
             <p class="body-1 pt-2">
               <translate>Imported files will be sorted by date and given a unique name to avoid duplicates.</translate>
               <translate>JPEGs and thumbnails are automatically rendered as needed.</translate>
               <translate>Original file names will be stored and indexed.</translate>
               <translate>Note you may manually manage your originals folder and importing is optional.</translate>
             </p>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
 
         <v-btn :disabled="!busy || !ready" color="primary-button" class="white--text ml-0 action-cancel" depressed @click.stop="cancelImport()">
           <translate>Cancel</translate>

@@ -1,10 +1,10 @@
 <template>
   <v-dialog :value="show" max-width="300">
     <v-card>
-      <v-card-title class="subheading pa-3">
+      <v-card-title class="subtitle-1 pa-6">
         <translate>PhotoPrism has been updated…</translate>
       </v-card-title>
-      <v-card-actions class="pa-3">
+      <v-card-actions class="pa-6">
         <v-spacer></v-spacer>
         <v-btn color="secondary-light" class="compact mx-2" depressed @click="close">
           <translate>Cancel</translate>

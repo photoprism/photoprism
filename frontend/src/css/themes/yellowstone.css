@@ -1,10 +1,10 @@
 /* Yellowstone Dark Theme */
 
 body.dark-theme.theme-yellowstone,
-.theme-yellowstone .v-content__wrap,
+.theme-yellowstone .v-main__wrap,
 .theme-yellowstone .p-page,
 .theme-yellowstone .form,
-.theme-yellowstone .v-content {
+.theme-yellowstone .v-main {
     background: #32312f !important;
 }
 
@@ -65,7 +65,7 @@ body.dark-theme.theme-yellowstone,
 #photoprism.theme-yellowstone,
 #photoprism.theme-yellowstone .p-page a,
 #photoprism.theme-yellowstone .v-datatable a,
-#photoprism.theme-yellowstone .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-yellowstone .theme--light.v-expansion-panels .v-expansion-panel__container,
 #photoprism.theme-yellowstone .theme--light.v-tabs__bar .v-tabs__div,
 #photoprism.theme-yellowstone .theme--light {
     color: #fff;
@@ -83,7 +83,7 @@ body.dark-theme.theme-yellowstone,
     color: #eee;
 }
 
-#photoprism.theme-yellowstone .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-yellowstone .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-yellowstone .accent--text {
     color: #ffb700 !important;
 }
@@ -99,7 +99,7 @@ body.dark-theme.theme-yellowstone,
     color: #999 !important;
 }
 
-#photoprism.theme-yellowstone .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-yellowstone .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

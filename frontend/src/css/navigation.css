@@ -4,11 +4,11 @@
     z-index: 10;
 }
 
-nav .v-list__tile__title.title {
+nav .v-list__item__title.title {
     line-height: normal!important;
 }
 
-.v-navigation-drawer>.theme--dark.v-list .v-list__tile__sub-title {
+.v-navigation-drawer>.theme--dark.v-list .v-list__item__sub-title {
     color: #ffffff77;
 }
 
@@ -44,7 +44,7 @@ nav .v-list__tile__title.title {
 }
 
 #p-navigation .menu-item.--rtl {
-    /* Margin title from right 72px, the calc is the 72px minus the original "v-list-tile" right margin 16px */
+    /* Margin title from right 72px, the calc is the 72px minus the original "v-list-item" right margin 16px */
     margin-right: calc(72px - 16px);
 }
 
@@ -85,7 +85,7 @@ nav .v-list__tile__title.title {
     color: #000;
 }
 
-#app.small-screen.show-nav main div.v-content__wrap {
+#app.small-screen.show-nav main div.v-main__wrap {
     padding-top: 48px;
 }
 
@@ -158,7 +158,7 @@ nav .v-list__tile__title.title {
     margin-right: 0;
 }
 
-#photoprism .nav-logo .v-list__tile__action {
+#photoprism .nav-logo .v-list__item__action {
     min-width: 35px;
 }
 

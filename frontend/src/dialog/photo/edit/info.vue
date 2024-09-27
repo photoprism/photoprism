@@ -22,7 +22,7 @@
                 <v-icon v-if="model.TypeSrc === 'manual'" class="src">check</v-icon>
               </td>
               <td>
-                <v-select v-model="model.Type" flat solo browser-autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @change="save"> </v-select>
+                <v-select v-model="model.Type" flat solo autocomplete="off" hide-details color="secondary-dark" :items="options.PhotoTypes()" class="input-type" @change="save"> </v-select>
               </td>
             </tr>
             <tr v-if="model.Path">
@@ -46,7 +46,7 @@
                 <translate>Original Name</translate>
               </td>
               <td>
-                <v-text-field v-model="model.OriginalName" flat solo dense hide-details browser-autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
+                <v-text-field v-model="model.OriginalName" flat solo dense hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>
@@ -180,7 +180,7 @@
                 <translate>Accuracy</translate>
               </td>
               <td>
-                <v-text-field v-model="model.CellAccuracy" flat solo dense hide-details browser-autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
+                <v-text-field v-model="model.CellAccuracy" flat solo dense hide-details autocomplete="off" autocorrect="off" autocapitalize="none" color="secondary-dark" type="number" suffix="m" style="width: 100px" @change="save"></v-text-field>
               </td>
             </tr>
             <tr>

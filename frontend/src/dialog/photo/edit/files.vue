@@ -1,8 +1,8 @@
 <template>
   <div class="p-tab p-tab-photo-files">
-    <v-expansion-panel expand class="pa-0 elevation-0 secondary" :value="state">
+    <v-expansion-panels v-model="state" class="pa-0 elevation-0 secondary">
       <template v-for="file in model.fileModels()">
-        <v-expansion-panel-content v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
+        <v-expansion-panel v-if="!file.Missing" :key="file.UID" class="pa-0 elevation-0 secondary-light" style="margin-top: 1px">
           <template #header>
             <div class="caption filename">
               {{ file.baseName(70) }}
@@ -14,8 +14,8 @@
                 <v-alert :value="file.Error" type="error" class="my-0 text-capitalize">
                   {{ file.Error }}
                 </v-alert>
-                <v-layout row wrap fill-height align-center justify-center>
-                  <v-flex xs12 class="pa-0">
+                <v-row class="d-flex align-stretch" align="center" justify="center">
+                  <v-col cols="12" class="pa-0 flex-grow-1">
                     <div class="v-table__overflow">
                       <table class="v-datatable v-table theme--light photo-files">
                         <tbody>
@@ -188,7 +188,7 @@
                                 v-model="file.Orientation"
                                 flat
                                 solo
-                                browser-autocomplete="off"
+                                autocomplete="off"
                                 hide-details
                                 color="secondary-dark"
                                 :items="options.Orientations()"
@@ -255,14 +255,14 @@
                         </tbody>
                       </table>
                     </div>
-                  </v-flex>
-                </v-layout>
+                  </v-col>
+                </v-row>
               </v-container>
             </v-card-text>
           </v-card>
-        </v-expansion-panel-content>
+        </v-expansion-panel>
       </template>
-    </v-expansion-panel>
+    </v-expansion-panels>
     <p-file-delete-dialog :show="deleteFile.dialog" @cancel="closeDeleteDialog" @confirm="confirmDeleteFile"></p-file-delete-dialog>
   </div>
 </template>
@@ -288,7 +288,7 @@ export default {
   },
   data() {
     return {
-      state: [true],
+      state: [0],
       deleteFile: {
         dialog: false,
         file: null,

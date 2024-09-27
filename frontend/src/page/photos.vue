@@ -2,7 +2,7 @@
   <div v-infinite-scroll="loadMore" :class="$config.aclClasses('photos')" class="p-page p-page-photos" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
     <p-photo-toolbar :context="context" :filter="filter" :static-filter="staticFilter" :settings="settings" :refresh="refresh" :update-filter="updateFilter" :update-query="updateQuery" :on-close="onClose" :embedded="embedded" />
 
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">

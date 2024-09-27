@@ -1,7 +1,7 @@
 <template>
-  <v-snackbar id="p-notify" v-model="visible" :color="color" :timeout="0" :class="textColor" :bottom="true">
+  <v-snackbar id="p-notify" v-model="visible" :color="color" :timeout="-1" :class="textColor" :bottom="true">
     <span :dir="!rtl ? 'let' : 'rtl'">{{ text }}</span>
-    <v-btn :class="textColor + ' pr-0'" icon flat @click="close">
+    <v-btn :class="textColor + ' pr-0'" icon text @click="close">
       <v-icon :class="textColor">close</v-icon>
     </v-btn>
   </v-snackbar>

@@ -9,8 +9,8 @@
         <v-icon size="26" color="secondary-dark" v-html="'$vuetify.icons.prism'"></v-icon>
       </v-btn>
     </v-toolbar>
-    <v-container fluid class="px-4 pt-4 pb-1">
-      <p class="subheading py-1 pb-2">
+    <v-container fluid class="px-6 pt-6 pb-1">
+      <p class="subtitle-1 py-1 pb-2">
         <a href="https://www.photoprism.app/" target="_blank">
           <strong>
             <translate>Our mission is to provide the most user- and privacy-friendly solution to keep your pictures organized and accessible.</translate>
@@ -20,7 +20,7 @@
       </p>
 
       <template v-if="canUpgrade">
-        <h3 class="subheading py-2">
+        <h3 class="subtitle-1 py-2">
           <translate>PhotoPrism+ Membership</translate>
         </h3>
         <p class="text-selectable">
@@ -28,15 +28,15 @@
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
           <translate>Being 100% self-funded and independent, we can promise you that we will never sell your data and that we will always be transparent about our software and services.</translate>
         </p>
-        <p v-if="isSuperAdmin" class="text-xs-center my-4">
-          <v-btn to="/upgrade" color="primary-button" class="white--text px-3 py-2 action-membership" round depressed>
+        <p v-if="isSuperAdmin" class="text-xs-center my-6">
+          <v-btn to="/upgrade" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Upgrade Now</translate>
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
             <v-icon v-else right dark>navigate_next</v-icon>
           </v-btn>
         </p>
-        <p v-else class="text-xs-center my-4">
-          <v-btn href="https://link.photoprism.app/membership" target="_blank" color="primary-button" class="white--text px-3 py-2 action-membership" round depressed>
+        <p v-else class="text-xs-center my-6">
+          <v-btn href="https://link.photoprism.app/membership" target="_blank" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Learn more</translate>
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
             <v-icon v-else right dark>navigate_next</v-icon>
@@ -44,14 +44,14 @@
         </p>
       </template>
       <template v-else-if="isSuperAdmin">
-        <h3 class="subheading py-2"> <translate>Thank You for Your Support!</translate> <v-icon size="20" color="primary">favorite</v-icon> </h3>
+        <h3 class="subtitle-1 py-2"> <translate>Thank You for Your Support!</translate> <v-icon size="20" color="primary">favorite</v-icon> </h3>
         <p class="text-selectable">
           <translate>PhotoPrism is 100% self-funded and independent.</translate>
           <translate>Your continued support helps us provide regular updates and remain independent, so we can fulfill our mission and protect your privacy.</translate>
           <translate>You are welcome to contact us at membership@photoprism.app for questions regarding your membership.</translate>
         </p>
-        <p class="text-xs-center my-4">
-          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button" class="white--text px-3 py-2 action-membership" round depressed>
+        <p class="text-xs-center my-6">
+          <v-btn href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button" class="white--text px-4 py-2 action-membership" rounded depressed>
             <translate>Manage Account</translate>
             <v-icon v-if="rtl" left dark>navigate_before</v-icon>
             <v-icon v-else right dark>navigate_next</v-icon>
@@ -60,13 +60,13 @@
       </template>
 
       <div class="text-columns py-2">
-        <h3 class="subheading pb-2"> Getting Started </h3>
+        <h3 class="subtitle-1 pb-2"> Getting Started </h3>
         <p class="text-selectable">
           Follow our <a href="https://docs.photoprism.app/user-guide/first-steps/" class="text-link" target="_blank">First Steps 👣</a> tutorial to learn how to navigate the user interface and ensure your library is indexed according to your individual preferences. Additional help and
           product-specific information can be found in our <a href="https://www.photoprism.app/plus/kb" class="text-link" target="_blank">Knowledge Base</a>.
         </p>
 
-        <h3 class="subheading pb-2"> User Guide </h3>
+        <h3 class="subtitle-1 pb-2"> User Guide </h3>
         <p>
           Visit <a href="https://link.photoprism.app/docs" class="text-link" target="_blank">docs.photoprism.app/user-guide</a> to learn how to sync, organize, and share your pictures. Our <a href="https://docs.photoprism.app/user-guide/" class="text-link" target="_blank">User Guide</a> also covers
           many advanced topics, such as <a href="https://docs.photoprism.app/user-guide/use-cases/google/" class="text-link" target="_blank">migrating from Google Photos</a> and
@@ -74,7 +74,7 @@
           <a href="https://docs.photoprism.app/getting-started/troubleshooting/" class="text-link" target="_blank">docs.photoprism.app/getting-started/troubleshooting</a>.
         </p>
 
-        <h3 class="subheading pb-2"> Getting Support </h3>
+        <h3 class="subtitle-1 pb-2"> Getting Support </h3>
         <p
           >Before reporting a bug, please use our <a href="https://docs.photoprism.app/getting-started/troubleshooting/" class="text-link" target="_blank">Troubleshooting Checklists</a> to determine the cause of your problem. If you have a general question, need help, it could be a local
           configuration issue, or a misunderstanding in how the software works, you are welcome to ask in our <a href="https://link.photoprism.app/chat" class="text-link" target="_blank">Community Chat</a> or post your question in
@@ -86,7 +86,7 @@
         >
         <p>We kindly ask you not to report bugs via GitHub Issues unless you are certain to have found a fully reproducible and previously unreported issue that must be fixed directly in the app.</p>
 
-        <h3 class="subheading pb-2"> Developer Guide </h3>
+        <h3 class="subtitle-1 pb-2"> Developer Guide </h3>
         <p
           >Our <a href="https://docs.photoprism.app/developer-guide/" class="text-link" target="_blank">Developer Guide</a> contains all the information you need to get started as a developer. It guides you from
           <a href="https://docs.photoprism.app/developer-guide/setup/" class="text-link" target="_blank">setting up your development environment</a> and <a href="https://docs.photoprism.app/developer-guide/pull-requests/" class="text-link" target="_blank">creating pull requests</a> to
@@ -94,7 +94,7 @@
           on specific features and links to external resources for further information.</p
         >
 
-        <h3 class="subheading pb-2"> Terms &amp; Privacy </h3>
+        <h3 class="subtitle-1 pb-2"> Terms &amp; Privacy </h3>
         <p
           >Visit <a href="https://www.photoprism.app/terms" class="text-link" target="_blank"><strong>photoprism.app/terms</strong></a> to learn how we work, what you can expect from us, and what we expect from you. What information we collect, how we use it, and under what circumstances we share it
           is explained in our <a href="https://www.photoprism.app/privacy" class="text-link" target="_blank">Privacy Policy</a>.</p
@@ -111,7 +111,7 @@
         >
       </div>
 
-      <p class="text-xs-center pt-4 ma-0 pb-0">
+      <p class="text-xs-center pt-6 ma-0 pb-0">
         <router-link to="/license">
           <img :src="$config.staticUri + '/img/badge-agpl.svg'" alt="License AGPL v3" style="max-width: 100%" />
         </router-link>
@@ -122,7 +122,7 @@
         <a target="_blank" href="https://link.photoprism.app/reddit" rel="nofollow"><img :src="$config.staticUri + '/img/badge-reddit.svg'" alt="Reddit" style="max-width: 100%" /></a>
       </p>
 
-      <p class="caption mt-4 text-xs-center">
+      <p class="caption mt-6 text-xs-center">
         PhotoPrism® is a <a href="https://www.photoprism.app/trademark" target="_blank" class="text-link">registered trademark</a>. By using the software and services we provide, you agree to our <a href="https://www.photoprism.app/terms" target="_blank" class="text-link">Terms of Service</a>,
         <a href="https://www.photoprism.app/privacy" target="_blank" class="text-link">Privacy Policy</a>, and <a href="https://www.photoprism.app/code-of-conduct" target="_blank" class="text-link">Code of Conduct</a>.
       </p>

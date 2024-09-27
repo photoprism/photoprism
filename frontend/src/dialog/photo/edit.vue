@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="show" fullscreen hide-overlay scrollable lazy persistent class="p-photo-edit-dialog" @keydown.esc="close">
+  <v-dialog :value="show" fullscreen hide-overlay scrollable persistent class="p-photo-edit-dialog" @keydown.esc="close">
     <v-card color="application">
       <v-toolbar dark flat color="navigation" :dense="$vuetify.breakpoint.smAndDown">
         <v-btn icon dark class="action-close" @click.stop="close">
@@ -22,7 +22,7 @@
           </v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-tabs v-model="active" flat grow class="form" color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+      <v-tabs v-model="active" elevation="0" grow class="form transparent" background-color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
         <v-tab id="tab-details" ripple>
           <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="$gettext('Details')">edit</v-icon>
           <template v-else>
@@ -74,24 +74,24 @@
           <v-icon>settings</v-icon>
         </v-tab>
 
-        <v-tabs-items touchless>
-          <v-tab-item lazy>
+        <v-tabs-items touchless v-model="active">
+          <v-tab-item>
             <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>
           </v-tab-item>
 
-          <v-tab-item lazy>
+          <v-tab-item>
             <p-tab-photo-labels :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-labels>
           </v-tab-item>
 
-          <v-tab-item lazy>
+          <v-tab-item>
             <p-tab-photo-people :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-people>
           </v-tab-item>
 
-          <v-tab-item lazy>
+          <v-tab-item>
             <p-tab-photo-files :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-files>
           </v-tab-item>
 
-          <v-tab-item v-if="$config.feature('edit')" lazy>
+          <v-tab-item v-if="$config.feature('edit')">
             <p-tab-photo-info :key="uid" :model="model" :uid="uid" @close="close"></p-tab-photo-info>
           </v-tab-item>
         </v-tabs-items>

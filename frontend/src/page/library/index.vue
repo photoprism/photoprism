@@ -2,7 +2,7 @@
   <div class="p-tab p-tab-index">
     <v-form ref="form" class="p-photo-index" lazy-validation dense @submit.prevent="submit">
       <v-container fluid>
-        <p class="subheading">
+        <p class="subtitle-1">
           <span v-if="fileName" class="break-word">{{ action }} {{ fileName }}…</span>
           <span v-else-if="action">{{ action }}…</span>
           <span v-else-if="busy"><translate>Indexing media and sidecar files…</translate></span>
@@ -13,12 +13,12 @@
         <v-autocomplete
           v-model="settings.index.path"
           color="secondary-dark"
-          class="my-3 input-index-folder"
+          class="my-6 input-index-folder"
           hide-details
           hide-no-data
           flat
           solo
-          browser-autocomplete="off"
+          autocomplete="off"
           :items="dirs"
           :loading="loading"
           :disabled="busy || !ready"
@@ -33,8 +33,8 @@
           <v-progress-linear color="secondary-dark" height="1.5em" :value="completed" :indeterminate="busy"></v-progress-linear>
         </p>
 
-        <v-layout wrap align-top class="pb-3">
-          <v-flex xs12 sm6 lg3 xl2 class="px-2 pb-2 pt-2">
+        <v-row align="start" class="pb-6">
+          <v-col cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
             <v-checkbox
               v-model="settings.index.rescan"
               :disabled="busy || !ready"
@@ -47,11 +47,11 @@
               @change="onChange"
             >
             </v-checkbox>
-          </v-flex>
-          <v-flex v-if="isAdmin" xs12 sm6 lg3 xl2 class="px-2 pb-2 pt-2">
+          </v-col>
+          <v-col v-if="isAdmin" cols="12" sm="6" lg="3" xl="2" class="px-2 pb-2 pt-2">
             <v-checkbox v-model="cleanup" :disabled="busy || !ready" class="ma-0 pa-0" color="secondary-dark" :label="$gettext('Cleanup')" :hint="$gettext('Delete orphaned index entries, sidecar files and thumbnails.')" prepend-icon="delete_sweep" persistent-hint> </v-checkbox>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
 
         <v-btn :disabled="!busy || !ready" color="primary-button" class="white--text ml-0 mt-2 action-cancel" depressed @click.stop="cancelIndexing()">
           <translate>Cancel</translate>
@@ -62,7 +62,7 @@
           <v-icon :right="!rtl" :left="rtl" dark>update</v-icon>
         </v-btn>
 
-        <v-alert v-if="ready && !busy && config.count.hidden > 1" :value="true" color="error" icon="priority_high" class="mt-3" outline>
+        <v-alert v-if="ready && !busy && config.count.hidden > 1" color="error" icon="priority_high" class="mt-6" outlined>
           <translate :translate-params="{ n: config.count.hidden }">The index currently contains %{n} hidden files.</translate>
           <translate>Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates.</translate>
         </v-alert>

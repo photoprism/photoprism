@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-discover">
-    <v-tabs v-model="active" flat grow color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
+    <v-tabs v-model="active" elevation="0" grow class="transparent" background-color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ?  48 : 64">
       <v-tab id="tab-discover-colors" ripple @click="changePath('/discover')">
         <translate>Colors</translate>
       </v-tab>
@@ -17,7 +17,7 @@
         <translate>Random</translate>
       </v-tab>
 
-      <v-tabs-items touchless>
+      <v-tabs-items touchless v-model="active">
         <v-tab-item>
           <p-tab-discover-colors></p-tab-discover-colors>
         </v-tab-item>

@@ -1,10 +1,10 @@
 /* Gemstone Dark Theme */
 
 body.dark-theme.theme-gemstone,
-.theme-gemstone .v-content__wrap,
+.theme-gemstone .v-main__wrap,
 .theme-gemstone .p-page,
 .theme-gemstone .form,
-.theme-gemstone .v-content {
+.theme-gemstone .v-main {
     background: #2f2f31 !important;
 }
 
@@ -70,7 +70,7 @@ body.dark-theme.theme-gemstone,
 #photoprism.theme-gemstone,
 #photoprism.theme-gemstone .p-page a,
 #photoprism.theme-gemstone .v-datatable a,
-#photoprism.theme-gemstone .theme--light.v-expansion-panel .v-expansion-panel__container,
+#photoprism.theme-gemstone .theme--light.v-expansion-panels .v-expansion-panel__container,
 #photoprism.theme-gemstone .theme--light.v-tabs__bar .v-tabs__div,
 #photoprism.theme-gemstone .theme--light {
     color: #fff;
@@ -88,7 +88,7 @@ body.dark-theme.theme-gemstone,
     color: #eee;
 }
 
-#photoprism.theme-gemstone .theme--light.v-list .v-list__tile__sub-title,
+#photoprism.theme-gemstone .theme--light.v-list .v-list__item__sub-title,
 #photoprism.theme-gemstone .accent--text {
     color: #BABEDC !important;
 }
@@ -104,7 +104,7 @@ body.dark-theme.theme-gemstone,
     color: #999 !important;
 }
 
-#photoprism.theme-gemstone .theme--light.v-list .v-list__tile__mask {
+#photoprism.theme-gemstone .theme--light.v-list .v-list__item__mask {
     color: #cccccc;
     background: transparent;
 }

@@ -14,7 +14,7 @@
           class="input-search background-inherit elevation-0"
           :label="$gettext('Search')"
           prepend-inner-icon="search"
-          browser-autocomplete="off"
+          autocomplete="off"
           autocorrect="off"
           autocapitalize="none"
           color="secondary-dark"
@@ -23,7 +23,7 @@
               updateFilter({ q: v });
             }
           "
-          @keyup.enter.native="(e) => updateQuery({ q: e.target.value })"
+          @keyup.enter="(e) => updateQuery({ q: e.target.value })"
           @click:clear="
             () => {
               updateQuery({ q: '' });
@@ -33,7 +33,7 @@
 
         <v-divider vertical></v-divider>
 
-        <v-btn icon overflow flat depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
+        <v-btn icon text depressed color="secondary-dark" class="action-reload" :title="$gettext('Reload')" @click.stop="refresh()">
           <v-icon>refresh</v-icon>
         </v-btn>
 
@@ -48,7 +48,7 @@
       </v-toolbar>
     </v-form>
 
-    <v-container v-if="loading" fluid class="pa-4">
+    <v-container v-if="loading" fluid class="pa-6">
       <v-progress-linear color="secondary-dark" :indeterminate="true"></v-progress-linear>
     </v-container>
     <v-container v-else fluid class="pa-0">
@@ -57,7 +57,7 @@
       <p-scroll-top></p-scroll-top>
 
       <v-container grid-list-xs fluid class="pa-2">
-        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outline>
+        <v-alert :value="results.length === 0" color="secondary-dark" icon="lightbulb_outline" class="no-results ma-2 opacity-70" outlined>
           <h3 class="body-2 ma-0 pa-0">
             <translate>No people found</translate>
           </h3>
@@ -67,9 +67,9 @@
             <translate>Recognition starts after indexing has been completed.</translate>
           </p>
         </v-alert>
-        <v-layout row wrap class="search-results subject-results cards-view" :class="{ 'select-results': selection.length > 0 }">
-          <v-flex v-for="(model, index) in results" :key="model.UID" xs6 sm4 md3 lg2 xxl1 d-flex>
-            <v-card tile :data-uid="model.UID" style="user-select: none" class="result card" :class="model.classes(selection.includes(model.UID))" :to="model.route(view)" @contextmenu.stop="onContextMenu($event, index)">
+        <v-row class="search-results subject-results cards-view" :class="{ 'select-results': selection.length > 0 }">
+          <v-col v-for="(model, index) in results" :key="model.UID" cols="6" sm="4" md="3" lg="2" xxl="1" class="d-flex">
+            <v-card tile :data-uid="model.UID" style="user-select: none" class="result card flex-grow-1" :class="model.classes(selection.includes(model.UID))" :to="model.route(view)" @contextmenu.stop="onContextMenu($event, index)">
               <div class="card-background card"></div>
               <v-img
                 :src="model.thumbnailUrl('tile_320')"
@@ -89,7 +89,7 @@
                   :depressed="false"
                   class="input-hidden"
                   icon
-                  flat
+                  text
                   small
                   absolute
                   @touchstart.stop.prevent="input.touchStart($event, index)"
@@ -100,19 +100,19 @@
                   <v-icon color="white" class="select-on" :title="$gettext('Show')">visibility_off</v-icon>
                   <v-icon color="white" class="select-off" :title="$gettext('Hide')">clear</v-icon>
                 </v-btn>
-                <v-btn :ripple="false" icon flat absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
+                <v-btn :ripple="false" icon text absolute class="input-select" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="onSelect($event, index)" @touchmove.stop.prevent @click.stop.prevent="onSelect($event, index)">
                   <v-icon color="white" class="select-on">check_circle</v-icon>
                   <v-icon color="white" class="select-off">radio_button_off</v-icon>
                 </v-btn>
 
-                <v-btn :ripple="false" icon flat absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
+                <v-btn :ripple="false" icon text absolute class="input-favorite" @touchstart.stop.prevent="input.touchStart($event, index)" @touchend.stop.prevent="toggleLike($event, index)" @touchmove.stop.prevent @click.stop.prevent="toggleLike($event, index)">
                   <v-icon color="#FFD600" class="select-on">star</v-icon>
                   <v-icon color="white" class="select-off">star_border</v-icon>
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-3 card-details" style="user-select: none" @click.stop.prevent="">
-                <v-edit-dialog v-if="canManage" :return-value.sync="model.Name" lazy class="inline-edit" @save="onSave(model)">
+              <v-card-title primary-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
+                <v-edit-dialog v-if="canManage" :return-value.sync="model.Name" class="inline-edit" @save="onSave(model)">
                   <span v-if="model.Name" class="body-2 ma-0">
                     {{ model.Name }}
                   </span>
@@ -143,11 +143,11 @@
                 </div>
               </v-card-text>
             </v-card>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
       </v-container>
     </v-container>
-    <p-people-merge-dialog lazy :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
+    <p-people-merge-dialog :show="merge.show" :subj1="merge.subj1" :subj2="merge.subj2" @cancel="onCancelMerge" @confirm="onMerge"></p-people-merge-dialog>
   </div>
 </template>
 

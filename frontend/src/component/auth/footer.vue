@@ -1,24 +1,24 @@
 <template>
   <div class="auth-footer">
     <footer>
-      <v-layout wrap align-top pa-0 ma-0>
-        <v-flex xs12 sm6 class="pa-0 body-2 text-selectable text-xs-center white--text text-sm-left">
+      <v-row align="start" class="pa-0 ma-0">
+        <v-col cols="12" sm="6" class="pa-0 body-2 text-selectable text-xs-center white--text text-sm-left">
           {{ about }}
-        </v-flex>
+        </v-col>
 
-        <v-flex v-if="legalInfo" xs12 sm6 class="pa-0 body-2 text-xs-center text-sm-right white--text">
+        <v-col v-if="legalInfo" cols="12" sm="6" class="pa-0 body-2 text-xs-center text-sm-right white--text">
           <a v-if="legalUrl" :href="legalUrl" target="_blank" class="text-link" :style="`color: ${colors.link}!important`">{{ legalInfo }}</a>
           <span v-else>{{ legalInfo }}</span>
-        </v-flex>
-        <v-flex v-else-if="caption" xs12 sm6 class="pa-0 body-2 text-selectable text-xs-center text-sm-right white--text">
+        </v-col>
+        <v-col v-else-if="caption" cols="12" sm="6" class="pa-0 body-2 text-selectable text-xs-center text-sm-right white--text">
           <strong>{{ caption }}</strong>
-        </v-flex>
-        <v-flex v-else xs12 sm6 class="pa-0 body-2 text-selectable text-xs-center text-sm-right white--text">
+        </v-col>
+        <v-col v-else cols="12" sm="6" class="pa-0 body-2 text-selectable text-xs-center text-sm-right white--text">
           <router-link to="/about" class="text-link">
             <span class="white--text">Made with ❤️ in Berlin</span>
           </router-link>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
     </footer>
   </div>
 </template>
