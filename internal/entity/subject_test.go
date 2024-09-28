@@ -291,7 +291,6 @@ func TestSubject_Update(t *testing.T) {
 
 }
 
-// TODO fails on mariadb
 func TestSubject_Updates(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		m := NewSubject("Update Me", SubjPerson, SrcAuto)
@@ -300,11 +299,11 @@ func TestSubject_Updates(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		if err := m.Updates(Subject{SubjName: "UpdatedName", SubjType: "UpdatedType"}); err != nil {
+		if err := m.Updates(Subject{SubjName: "UpdatedName", SubjType: "UpdatedT"}); err != nil {
 			t.Fatal(err)
 		} else {
 			assert.Equal(t, "UpdatedName", m.SubjName)
-			assert.Equal(t, "UpdatedType", m.SubjType)
+			assert.Equal(t, "UpdatedT", m.SubjType)
 		}
 	})
 
