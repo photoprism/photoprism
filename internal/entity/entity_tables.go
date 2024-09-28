@@ -162,6 +162,15 @@ func (list Tables) Migrate(db *gorm.DB, opt migrate.Options) {
 					panic(err)
 				}
 			}
+			counter := int64(0)
+			if res := db.Model(entity).Count(&counter); res.Error != nil {
+				log.Warningf("migrate: automigrate failure on %v, retrying in 1s", name)
+				time.Sleep(time.Second)
+				if err = db.AutoMigrate(entity); err != nil {
+					log.Errorf("migrate: failed migrating %s", clean.Log(name))
+					panic(err)
+				}
+			}
 		}
 	}
 
