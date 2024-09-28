@@ -1,6 +1,8 @@
 package entity
 
 import (
+	"errors"
+
 	"github.com/photoprism/photoprism/internal/ai/classify"
 )
 
@@ -47,7 +49,13 @@ func (m *PhotoLabel) Update(attr string, value interface{}) error {
 // Save updates the record in the database or inserts a new record if it does not already exist.
 func (m *PhotoLabel) Save() error {
 	if m.Photo != nil {
+		if m.PhotoID == 0 {
+			m.PhotoID = m.Photo.ID
+		}
 		m.Photo = nil
+	}
+	if m.PhotoID == 0 {
+		return errors.New("PK value not provided")
 	}
 
 	if m.Label != nil {
