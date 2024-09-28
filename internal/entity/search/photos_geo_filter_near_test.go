@@ -13,13 +13,12 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		var f form.SearchPhotosGeo
 
 		f.Near = "ps6sg6be2lvl0y24"
-
 		photos, err := PhotosGeo(f)
 
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 8)
+		assert.Equal(t, 9, len(photos)) // Photo08 and Photo09 shared an id value.
 	})
 	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -31,7 +30,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 26)
+		assert.Equal(t, 26, len(photos))
 	})
 	t.Run("StartsWithPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -39,7 +38,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		f.Near = "%gold"
 		_, err := PhotosGeo(f)
 
-		assert.Equal(t, err.Error(), "Not found")
+		assert.Equal(t, "Not found", err.Error())
 	})
 	t.Run("CenterPercent", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -47,7 +46,7 @@ func TestPhotosGeoFilterNear(t *testing.T) {
 		f.Near = "I love % dog"
 		_, err := PhotosGeo(f)
 
-		assert.Equal(t, err.Error(), "Not found")
+		assert.Equal(t, "Not found", err.Error())
 	})
 	//TODO error
 	/*t.Run("EndsWithPercent", func(t *testing.T) {
@@ -259,7 +258,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		assert.Equal(t, len(photos), 8)
+		assert.Equal(t, 9, len(photos))
 	})
 	t.Run("ps6sg6byk7wrbk30", func(t *testing.T) {
 		var f form.SearchPhotosGeo
@@ -271,7 +270,7 @@ func TestPhotosGeoQueryNear(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, len(photos), 26)
+		assert.Equal(t, 26, len(photos))
 	})
 	//TODO error
 	/*t.Run("ps6sg6be2lvl0y24 pipe ps6sg6byk7wrbk30", func(t *testing.T) {
