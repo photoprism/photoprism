@@ -156,14 +156,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		if entity.DbDialect() == "sqlite" {
-			// sqlite allows "" as a FK value, which equates to NULL
-			// See file_fixture 1000031
-			assert.Equal(t, int64(67), count)
-		} else {
-			assert.Equal(t, int64(66), count)
-		}
-
+		assert.Equal(t, int64(66), count)
 	})
 
 	t.Run("KeywordCounts", func(t *testing.T) {
