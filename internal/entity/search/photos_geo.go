@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize/english"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/entity"
@@ -149,14 +150,6 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 					sess.SharedUIDs(), user.UserUID, entity.Now(), basePath, basePath+"/%")
 			}
 		}
-	}
-
-	// Set sort order.
-	if f.Near == "" {
-		s = s.Order("taken_at, photos.photo_uid")
-	} else {
-		// Sort by distance to UID.
-		s = s.Order(gorm.Expr("(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", f.Near, f.Lat, f.Lng))
 	}
 
 	// Find specific UIDs only.
@@ -637,6 +630,14 @@ func UserPhotosGeo(f form.SearchPhotosGeo, sess *entity.Session) (results GeoRes
 	// Finds pictures taken on or after this date.
 	if !f.After.IsZero() {
 		s = s.Where("photos.taken_at >= ?", f.After.UTC().Format("2006-01-02"))
+	}
+
+	// Set sort order.
+	if f.Near == "" {
+		s = s.Order("taken_at, photos.photo_uid")
+	} else {
+		// Sort by distance to UID.
+		s = s.Order(clause.OrderBy{Expression: clause.Expr{SQL: "(photos.photo_uid = ?) DESC, ABS(? - photos.photo_lat)+ABS(? - photos.photo_lng)", Vars: []interface{}{f.Near, f.Lat, f.Lng}}})
 	}
 
 	// Limit offset and count.
