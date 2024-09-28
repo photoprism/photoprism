@@ -273,6 +273,15 @@ var PhotoAlbumFixtures = PhotoAlbumMap{
 		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
 		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
 	},
+	"29": {
+		PhotoUID:  "ps6sg6be2lvl0yh0",
+		AlbumUID:  "as6sg6bipogaab11", // Ensure that there is a record left behind by RemoveDuplicateMoments
+		Hidden:    false,
+		Missing:   false,
+		Order:     0,
+		CreatedAt: time.Date(2020, 2, 6, 2, 6, 51, 0, time.UTC),
+		UpdatedAt: time.Date(2020, 4, 28, 14, 6, 0, 0, time.UTC),
+	},
 }
 
 // CreatePhotoAlbumFixtures inserts known entities into the database for testing.

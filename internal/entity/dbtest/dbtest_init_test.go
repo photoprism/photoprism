@@ -136,7 +136,7 @@ func TestInit(t *testing.T) {
 
 		stmt.Model(m).Count(&count)
 
-		assert.Equal(t, int64(28), count)
+		assert.Equal(t, int64(29), count)
 	})
 
 	t.Run("FolderCounts", func(t *testing.T) {
