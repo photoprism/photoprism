@@ -639,7 +639,7 @@ func (m *Photo) AddLabels(labels classify.Labels) {
 		}
 	}
 
-	Db().Preload("Labels").Select("Id").Find(&m)
+	Db().Preload("Labels").Select("id").Find(&m)
 }
 
 // SetDescription changes the photo description if not empty and from the same source.
