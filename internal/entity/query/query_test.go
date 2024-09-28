@@ -27,12 +27,25 @@ func TestMain(m *testing.M) {
 
 func TestDbDialect(t *testing.T) {
 	t.Run("SQLite", func(t *testing.T) {
+		if DbDialect() != SQLite3 {
+			t.SkipNow()
+		}
 		assert.Equal(t, "sqlite", DbDialect())
+	})
+
+	t.Run("MariaDB", func(t *testing.T) {
+		if DbDialect() != MySQL {
+			t.SkipNow()
+		}
+		assert.Equal(t, MySQL, DbDialect())
 	})
 }
 
 func TestBatchSize(t *testing.T) {
 	t.Run("SQLite", func(t *testing.T) {
+		if DbDialect() != SQLite3 {
+			t.SkipNow()
+		}
 		assert.Equal(t, 333, BatchSize())
 	})
 }
