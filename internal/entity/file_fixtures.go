@@ -1161,7 +1161,7 @@ var FileFixtures = FileMap{
 	},
 	"FileWithoutPhoto.mp4": {
 		ID:              1000031,
-		PhotoUID:        "",
+		PhotoUID:        "", // This is NOT valid in MariaDB
 		InstanceID:      "",
 		FileUID:         "fs6sg6bqhhinlpln",
 		FileName:        "FileWithoutPhoto.mp4",
@@ -1404,7 +1404,7 @@ var FileFixtures = FileMap{
 		DeletedAt:       gorm.DeletedAt{Valid: false},
 	},
 	"Photo09.jpg": {
-		ID:              1000036,
+		ID:              10000036, // Was a duplicate PK.
 		Photo:           PhotoFixtures.Pointer("Photo09"),
 		PhotoID:         PhotoFixtures.Pointer("Photo09").ID,
 		PhotoUID:        PhotoFixtures.Pointer("Photo09").PhotoUID,
