@@ -16,7 +16,7 @@ const (
 type FileSync struct {
 	RemoteName string `gorm:"type:bytes;size:255;primaryKey;autoIncrement:false"`
 	ServiceID  uint   `gorm:"primaryKey;autoIncrement:false"`
-	FileID     uint   `gorm:"index;"`
+	FileID     *uint  `gorm:"index;"` // This field is optional...
 	RemoteDate time.Time
 	RemoteSize int64
 	Status     string `gorm:"type:bytes;size:16;"`
