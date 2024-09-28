@@ -1,12 +1,15 @@
 package entity
 
 import (
+	"bytes"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zitadel/oidc/v3/pkg/oidc"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/form"
@@ -2242,5 +2245,107 @@ func TestUser_RedeemToken(t *testing.T) {
 		m.RefreshShares()
 		assert.Equal(t, "as6sg6bxpogaaba7", m.UserShares[0].ShareUID)
 		assert.Equal(t, "as6sg6bxpogaaba9", m.UserShares[1].ShareUID)
+	})
+}
+
+func TestUser_ValidatePreload(t *testing.T) {
+	t.Run("FindUser_UserDetails", func(t *testing.T) {
+		// Setup and capture SQL Logging output
+		beforeLogMode := Db().Config.Logger
+		buffer := bytes.Buffer{}
+		Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
+		log.SetOutput(&buffer)
+
+		m := FindUser(User{ID: 7}) // User = Bob
+
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		Db().Config.Logger = beforeLogMode
+
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Robert Rich", m.DisplayName)
+		assert.NotEmpty(t, m.UserDetails)
+		assert.Equal(t, "Bob", m.UserDetails.NickName)
+		assert.Equal(t, 1981, m.UserDetails.BirthYear)
+		assert.Contains(t, buffer.String(), "auth_users_details")
+		// Verify that Preload loaded the data
+		assert.NotContains(t, buffer.String(), "auth_user_details.go")
+	})
+
+	t.Run("FindUser_UserSettings", func(t *testing.T) {
+		// Setup and capture SQL Logging output
+		beforeLogMode := Db().Config.Logger
+		buffer := bytes.Buffer{}
+		Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
+		log.SetOutput(&buffer)
+
+		m := FindUser(User{ID: 7}) // User = Bob
+
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		Db().Config.Logger = beforeLogMode
+
+		assert.Equal(t, "bob", m.UserName)
+		assert.Equal(t, "Robert Rich", m.DisplayName)
+		assert.NotEmpty(t, m.UserSettings)
+		assert.Equal(t, "grayscale", m.UserSettings.UITheme)
+		assert.Equal(t, "topographique", m.UserSettings.MapsStyle)
+		assert.Contains(t, buffer.String(), "auth_users_settings")
+		// Verify that Preload loaded the data
+		assert.NotContains(t, buffer.String(), "auth_users_settings.go")
+	})
+
+	t.Run("FindLocalUser_UserSettings", func(t *testing.T) {
+		// Setup and capture SQL Logging output
+		beforeLogMode := Db().Config.Logger
+		buffer := bytes.Buffer{}
+		Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
+		log.SetOutput(&buffer)
+
+		m := FindLocalUser("jane")
+
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		Db().Config.Logger = beforeLogMode
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, "jane", m.UserName)
+		assert.Equal(t, "Jane Dow", m.DisplayName)
+		assert.NotEmpty(t, m.UserSettings)
+		assert.Equal(t, "default", m.UserSettings.UITheme)
+		assert.Equal(t, "hybrid", m.UserSettings.MapsStyle)
+		assert.Contains(t, buffer.String(), "auth_users_settings")
+		// Verify that Preload loaded the data
+		assert.NotContains(t, buffer.String(), "auth_users_settings.go")
+	})
+
+	t.Run("FindLocalUser_UserDetails", func(t *testing.T) {
+		// Setup and capture SQL Logging output
+		beforeLogMode := Db().Config.Logger
+		buffer := bytes.Buffer{}
+		Db().Config.Logger = Db().Config.Logger.LogMode(logger.Info)
+		log.SetOutput(&buffer)
+
+		m := FindLocalUser("jane")
+
+		// Reset logger
+		log.SetOutput(os.Stdout)
+		Db().Config.Logger = beforeLogMode
+
+		if m == nil {
+			t.Fatal("result should not be nil")
+		}
+
+		assert.Equal(t, "jane", m.UserName)
+		assert.Equal(t, "Jane Dow", m.DisplayName)
+		assert.NotEmpty(t, m.UserDetails)
+		assert.Equal(t, "Jane", m.UserDetails.NickName)
+		assert.Equal(t, 2001, m.UserDetails.BirthYear)
+		assert.Contains(t, buffer.String(), "auth_users_details")
+		// Verify that Preload loaded the data
+		assert.NotContains(t, buffer.String(), "auth_users_details.go")
 	})
 }

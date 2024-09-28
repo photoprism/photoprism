@@ -163,7 +163,10 @@ func FindUser(find User) *User {
 	}
 
 	// Find matching record.
-	if err := stmt.First(m).Error; err != nil {
+	if err := stmt.
+		Preload("UserDetails").
+		Preload("UserSettings").
+		First(m).Error; err != nil {
 		return nil
 	}
 
@@ -212,6 +215,8 @@ func FindLocalUser(userName string) *User {
 	// Build query.
 	if err := UnscopedDb().
 		Where("user_name = ? AND auth_provider IN (?)", name, providers).
+		Preload("UserDetails").
+		Preload("UserSettings").
 		First(m).Error; err != nil {
 		return nil
 	}
