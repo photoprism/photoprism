@@ -59,7 +59,6 @@ func (g *DbConn) Db() *gorm.DB {
 func (g *DbConn) Open() {
 	log.Infof("Opening DB connection with driver %s", g.Driver)
 	db, err := gorm.Open(drivers[g.Driver](g.Dsn), gormConfig())
-	log.Info("DB connection established successfully")
 
 	if err != nil || db == nil {
 		for i := 1; i <= 12; i++ {
@@ -77,6 +76,13 @@ func (g *DbConn) Open() {
 			fmt.Println(err)
 			log.Fatal(err)
 		}
+	}
+	log.Info("DB connection established successfully")
+
+	// Enable Foreign Keys on sqlite
+	if db.Dialector.Name() == SQLite3 {
+		db.Exec("PRAGMA foreign_keys = ON")
+		log.Info("sqlite foreign keys enabled")
 	}
 
 	sqlDB, err := db.DB()

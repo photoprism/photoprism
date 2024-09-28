@@ -441,6 +441,12 @@ func (c *Config) connectDb() error {
 	//db.LogMode(false)
 	//db.SetLogger(log)
 
+	// Enable Foreign Keys on sqlite
+	if db.Dialector.Name() == SQLite3 {
+		db.Exec("PRAGMA foreign_keys = ON")
+		log.Info("sqlite foreign keys enabled")
+	}
+
 	// Set database connection parameters.
 	sqlDB, err := db.DB()
 	if err != nil {
