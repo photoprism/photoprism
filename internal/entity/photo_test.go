@@ -450,7 +450,7 @@ func TestPhoto_SyncKeywordLabels(t *testing.T) {
 		details := &Details{Keywords: "cow, flower, snake, otter"}
 		photo := Photo{ID: 34567, Details: details}
 
-		err = photo.Save()
+		err = photo.Create() // Save doesn't work as in Gorm2 it doesn't call BeforeCreate on fall back.
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -468,6 +468,10 @@ func TestPhoto_SyncKeywordLabels(t *testing.T) {
 
 		assert.Equal(t, 25, len(p.Details.Keywords))
 		assert.Equal(t, 3, len(p.Labels))
+		UnscopedDb().Delete(details)
+		UnscopedDb().Delete(p)
+		UnscopedDb().Delete(labelotter)
+		UnscopedDb().Delete(labelsnake)
 	})
 }
 
