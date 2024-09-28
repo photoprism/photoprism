@@ -22,7 +22,7 @@ func TestPhotoAlbum_TableName(t *testing.T) {
 }
 
 func TestFirstOrCreatePhotoAlbum(t *testing.T) {
-	t.Run("existing album", func(t *testing.T) {
+	t.Run("existing photo_album", func(t *testing.T) {
 		model := PhotoAlbumFixtures.Get("1", "ps6sg6be2lvl0yh7", "as6sg6bxpogaaba8")
 		result := FirstOrCreatePhotoAlbum(&model)
 
@@ -38,9 +38,14 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 			t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
 		}
 	})
-	//TODO fails on mariadb
-	t.Run("not yet existing album", func(t *testing.T) {
-		model := &PhotoAlbum{}
+
+	t.Run("not yet existing photo_album", func(t *testing.T) {
+		newPhoto := &Photo{ID: 56789} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+		newAlbum := &Album{ID: 56789} // Can't add details if there isn't a photo in the database.
+		Db().Create(newAlbum)
+
+		model := &PhotoAlbum{PhotoUID: newPhoto.PhotoUID, AlbumUID: newAlbum.AlbumUID}
 		result := FirstOrCreatePhotoAlbum(model)
 
 		if result == nil {
@@ -54,13 +59,20 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 		if result.PhotoUID != model.PhotoUID {
 			t.Errorf("PhotoUID should be the same: %s %s", result.PhotoUID, model.PhotoUID)
 		}
+		UnscopedDb().Delete(model)
+		UnscopedDb().Delete(newAlbum)
+		UnscopedDb().Delete(newPhoto)
 	})
 }
 
-// TODO fails on mariadb
 func TestPhotoAlbum_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		p := PhotoAlbum{PhotoUID: "IShouldntBeInTheDB", AlbumUID: "IShouldntBeInTheDB"} // Prevent Unique Constraint violation.
+		newPhoto := &Photo{ID: 56786} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+		newAlbum := &Album{ID: 56783}
+		Db().Create(newAlbum)
+
+		p := PhotoAlbum{PhotoUID: newPhoto.PhotoUID, AlbumUID: newAlbum.AlbumUID} // Prevent Unique Constraint violation.
 
 		err := p.Create()
 
@@ -70,6 +82,7 @@ func TestPhotoAlbum_Save(t *testing.T) {
 		// Cleanup
 		result := UnscopedDb().Model(PhotoAlbum{}).Delete(p)
 		assert.Equal(t, int64(1), result.RowsAffected)
-
+		UnscopedDb().Delete(newAlbum)
+		UnscopedDb().Delete(newPhoto)
 	})
 }

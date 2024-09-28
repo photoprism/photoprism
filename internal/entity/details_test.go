@@ -9,12 +9,18 @@ import (
 
 func TestFirstOrCreateDetails(t *testing.T) {
 	t.Run("not existing details", func(t *testing.T) {
+		newPhoto := &Photo{ID: 123} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
 		details := &Details{PhotoID: 123, Keywords: ""}
 		details = FirstOrCreateDetails(details)
 
 		if details == nil {
 			t.Fatal("details should not be nil")
+		} else {
+			UnscopedDb().Delete(details)
 		}
+		UnscopedDb().Delete(newPhoto)
 	})
 	t.Run("existing details", func(t *testing.T) {
 		details := &Details{PhotoID: 1000000}
@@ -143,7 +149,6 @@ func TestNewDetails(t *testing.T) {
 	})
 }
 
-// TODO fails on mariadb
 func TestDetails_Create(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		details := Details{PhotoID: 0}
@@ -151,19 +156,27 @@ func TestDetails_Create(t *testing.T) {
 		assert.Error(t, details.Create())
 	})
 	t.Run("success", func(t *testing.T) {
+		newPhoto := &Photo{ID: 1236799955432} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
 		details := Details{PhotoID: 1236799955432}
 
 		err := details.Create()
-
 		if err != nil {
 			t.Fatal(err)
+		} else {
+			UnscopedDb().Delete(details)
 		}
+		UnscopedDb().Delete(newPhoto)
+
 	})
 }
 
-// TODO fails on mariadb
 func TestDetails_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
+		newPhoto := &Photo{ID: 123678955432} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
+
 		details := Details{PhotoID: 123678955432, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
 		initialDate := details.UpdatedAt
 
@@ -175,6 +188,8 @@ func TestDetails_Save(t *testing.T) {
 		afterDate := details.UpdatedAt
 
 		assert.True(t, afterDate.After(initialDate))
+		UnscopedDb().Delete(details)
+		UnscopedDb().Delete(newPhoto)
 	})
 
 	t.Run("error", func(t *testing.T) {

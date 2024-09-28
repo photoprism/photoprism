@@ -15,6 +15,7 @@ func TestCreateUserSettings(t *testing.T) {
 	})
 	t.Run("Success", func(t *testing.T) {
 		m := &User{UserUID: "1234"}
+		Db().Create(m) // Have to create a user BEFORE adding settings to it.
 		err := CreateUserSettings(m)
 
 		if err != nil {
