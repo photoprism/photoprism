@@ -365,14 +365,18 @@ func (c *Config) checkDb(db *gorm.DB) error {
 			Value string `gorm:"column:Value;"`
 		}
 		var res Res
-		if err := db.Raw("SHOW VARIABLES LIKE 'innodb_version'").Scan(&res).Error; err != nil {
+		if err := db.Raw("SHOW VARIABLES LIKE 'version'").Scan(&res).Error; err != nil {
 			return nil
 		} else if v := strings.Split(res.Value, "."); len(v) < 3 {
-			log.Warnf("config: unknown database server version")
-		} else if major := txt.UInt(v[0]); major < 10 {
-			return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
-		} else if sub := txt.UInt(v[1]); sub < 5 || sub == 5 && txt.UInt(v[2]) < 12 {
-			return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+			log.Warnf("config: unknown database server version %v", v)
+		} else {
+			major := txt.UInt(v[0])
+			sub := txt.UInt(v[1])
+			if major < 10 {
+				return fmt.Errorf("config: MySQL %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+			} else if major == 10 && (sub < 5 || sub == 5 && txt.UInt(v[2]) < 12) {
+				return fmt.Errorf("config: MariaDB %s is not supported, see https://docs.photoprism.app/getting-started/#databases", res.Value)
+			}
 		}
 	}
 
