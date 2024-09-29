@@ -7,11 +7,15 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
 func TestDatabase(t *testing.T) {
 	t.Run("DatabaseNotFoundToStdOut", func(t *testing.T) {
+		if os.Getenv("PHOTOPRISM_TEST_DRIVER") != entity.SQLite3 {
+			t.Skip("Not executing against sqlite")
+		}
 		backupPath, err := filepath.Abs("./testdata/sqlite")
 
 		if err != nil {
@@ -31,6 +35,9 @@ func TestDatabase(t *testing.T) {
 		}
 	})
 	t.Run("DatabaseNotFound", func(t *testing.T) {
+		if os.Getenv("PHOTOPRISM_TEST_DRIVER") != entity.SQLite3 {
+			t.Skip("Not executing against sqlite")
+		}
 		backupPath, err := filepath.Abs("./testdata/sqlite")
 
 		if err != nil {
