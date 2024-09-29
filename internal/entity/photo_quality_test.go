@@ -35,16 +35,23 @@ func TestPhoto_UpdateQuality(t *testing.T) {
 		assert.Equal(t, -1, p.PhotoQuality)
 	})
 	t.Run("low quality expected", func(t *testing.T) {
-		p := &Photo{ID: 1, PhotoQuality: 0, PhotoFavorite: true}
-		Db().Create(p)
+		p := NewPhoto(false)
+		p.ID = 1
+		p.PhotoQuality = 0
+		p.PhotoFavorite = true
+		p.TakenAt = time.Date(1875, 1, 1, 0, 0, 0, 0, time.UTC)
+		p.TakenAtLocal = time.Date(1975, 1, 1, 11, 0, 0, 0, time.UTC)
+		Db().Debug().Create(&p)
+		assert.Equal(t, time.Date(1875, 1, 1, 0, 0, 0, 0, time.UTC), p.TakenAt)
 		// Make it look like the gorm1 tests as they aren't updated by BeforeCreate
-		p.TakenAt = time.Date(0000, 1, 1, 0, 0, 0, 0, time.UTC)
+		// p.TakenAt = time.Date(0000, 1, 1, 0, 0, 0, 0, time.UTC)
 		err := p.UpdateQuality()
 		if err != nil {
 			t.Fatal(err)
 		}
 		assert.Equal(t, 5, p.PhotoQuality)
-		UnscopedDb().Delete(p)
+		UnscopedDb().Where("photo_id = ?", p.ID).Delete(&Details{})
+		UnscopedDb().Delete(&p)
 	})
 
 	t.Run("no PK provided", func(t *testing.T) {

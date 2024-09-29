@@ -40,8 +40,9 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 	})
 
 	t.Run("not yet existing photo_album", func(t *testing.T) {
-		newPhoto := &Photo{ID: 56789} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
+		newPhoto := NewPhoto(false)
+		newPhoto.ID = 56789 // Can't add details if there isn't a photo in the database.
+		Db().Create(&newPhoto)
 		newAlbum := &Album{ID: 56789} // Can't add details if there isn't a photo in the database.
 		Db().Create(newAlbum)
 
@@ -61,14 +62,15 @@ func TestFirstOrCreatePhotoAlbum(t *testing.T) {
 		}
 		UnscopedDb().Delete(model)
 		UnscopedDb().Delete(newAlbum)
-		UnscopedDb().Delete(newPhoto)
+		UnscopedDb().Delete(&newPhoto)
 	})
 }
 
 func TestPhotoAlbum_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		newPhoto := &Photo{ID: 56786} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
+		newPhoto := NewPhoto(false)
+		newPhoto.ID = 56786 // Can't add details if there isn't a photo in the database.
+		Db().Create(&newPhoto)
 		newAlbum := &Album{ID: 56783}
 		Db().Create(newAlbum)
 
@@ -83,6 +85,6 @@ func TestPhotoAlbum_Save(t *testing.T) {
 		result := UnscopedDb().Model(PhotoAlbum{}).Delete(p)
 		assert.Equal(t, int64(1), result.RowsAffected)
 		UnscopedDb().Delete(newAlbum)
-		UnscopedDb().Delete(newPhoto)
+		UnscopedDb().Delete(&newPhoto)
 	})
 }

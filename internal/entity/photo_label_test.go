@@ -58,8 +58,10 @@ func TestPhotoLabel_ClassifyLabel(t *testing.T) {
 
 func TestPhotoLabel_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		newPhoto := &Photo{ID: 567286} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
+		newPhoto := NewPhoto(false) // Can't add details if there isn't a photo in the database.
+		newPhoto.ID = 567286
+		newPhoto.PhotoUID = ""
+		Db().Create(&newPhoto)
 		newLabel := &Label{ID: 567383, LabelSlug: "MustBeUnique"}
 		Db().Create(newLabel)
 
@@ -70,26 +72,28 @@ func TestPhotoLabel_Save(t *testing.T) {
 		}
 		UnscopedDb().Delete(photoLabel)
 		UnscopedDb().Delete(newLabel)
-		UnscopedDb().Delete(newPhoto)
+		UnscopedDb().Delete(&newPhoto)
 	})
 
 	t.Run("photo not nil and label not nil", func(t *testing.T) {
 		newLabel := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
-		Db().Create(newLabel) // Foreign keys require the data to be saved.
-		newPhoto := &Photo{}
-		Db().Create(newPhoto)
+		Db().Create(newLabel)       // Foreign keys require the data to be saved.
+		newPhoto := NewPhoto(false) // Can't add details if there isn't a photo in the database.
+		newPhoto.ID = 0
+		newPhoto.PhotoUID = ""
+		Db().Create(&newPhoto)
 
 		assert.NotEqual(t, 0, newPhoto.ID)
 		assert.NotEqual(t, 0, newLabel.ID)
 
-		photoLabel := PhotoLabel{Photo: newPhoto, Label: newLabel}
+		photoLabel := PhotoLabel{Photo: &newPhoto, Label: newLabel}
 		err := photoLabel.Save()
 		if err != nil {
 			t.Fatal(err)
 		}
 		UnscopedDb().Delete(photoLabel)
 		UnscopedDb().Delete(newLabel)
-		UnscopedDb().Delete(newPhoto)
+		UnscopedDb().Delete(&newPhoto)
 	})
 
 	t.Run("photo nil and label not nil", func(t *testing.T) {
@@ -105,8 +109,10 @@ func TestPhotoLabel_Save(t *testing.T) {
 	})
 	t.Run("photo zero ID and label not nil", func(t *testing.T) {
 		newLabel := &Label{LabelName: "LabelSaveUnique", LabelSlug: "unique-slug"}
-		Db().Create(newLabel) // Foreign keys require the data to be saved.
-		newPhoto := &Photo{PhotoUID: "Ameaninglessstring"}
+		Db().Create(newLabel)                        // Foreign keys require the data to be saved.
+		newPhoto := PhotoFixtures.Pointer("Photo08") // Can't add details if there isn't a photo in the database.
+		newPhoto.ID = 0
+		newPhoto.PhotoUID = "Ameaninglessstring"
 
 		assert.NotEqual(t, 0, newLabel.ID)
 		assert.Equal(t, uint(0), newPhoto.ID)

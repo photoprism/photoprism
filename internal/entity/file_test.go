@@ -153,15 +153,16 @@ func TestFile_Create(t *testing.T) {
 		assert.Error(t, file.Create())
 	})
 	t.Run("file already exists", func(t *testing.T) {
-		newPhoto := &Photo{ID: 123} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
+		newPhoto := NewPhoto(false)
+		newPhoto.ID = 123 // Can't add details if there isn't a photo in the database.
+		Db().Create(&newPhoto)
 
 		file := &File{PhotoID: 123, FileType: "jpg", FileSize: 500, ModTime: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC).Unix()}
 		assert.Nil(t, file.Create())
 		newID := file.ID
 		assert.Error(t, file.Create())
 		UnscopedDb().Where("id = ?", newID).Delete(&File{})
-		UnscopedDb().Delete(newPhoto)
+		UnscopedDb().Delete(&newPhoto)
 	})
 	t.Run("success", func(t *testing.T) {
 		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
@@ -224,9 +225,12 @@ func TestFile_Save(t *testing.T) {
 		assert.Equal(t, "file 123: cannot save file with empty photo id", err.Error())
 	})
 	t.Run("success", func(t *testing.T) {
-		photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
+		photo := NewPhoto(false)
+		photo.TakenAtLocal = time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)
+		photo.PhotoTitle = "Berlin / Morning Mood"
+		//photo := &Photo{TakenAtLocal: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC), PhotoTitle: "Berlin / Morning Mood"}
 
-		file := &File{Photo: photo, FileType: "jpg", FileSize: 500, PhotoID: 766, FileName: "Food", FileRoot: "", UpdatedAt: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
+		file := &File{Photo: &photo, FileType: "jpg", FileSize: 500, PhotoID: 766, FileName: "Food", FileRoot: "", UpdatedAt: time.Date(2019, 01, 15, 0, 0, 0, 0, time.UTC)}
 
 		err := file.Save()
 
@@ -266,8 +270,9 @@ func TestFile_UpdateVideoInfos(t *testing.T) {
 
 func TestFile_Update(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		newPhoto := &Photo{ID: 5678} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
+		newPhoto := NewPhoto(false)
+		newPhoto.ID = 5678 // Can't add details if there isn't a photo in the database.
+		Db().Create(&newPhoto)
 
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBeUpdated", FileRoot: "", PhotoID: 5678}
 
@@ -287,7 +292,7 @@ func TestFile_Update(t *testing.T) {
 		assert.Equal(t, "Happy", file.FileName)
 
 		UnscopedDb().Delete(file)
-		UnscopedDb().Delete(newPhoto)
+		UnscopedDb().Delete(&newPhoto)
 	})
 }
 
@@ -387,8 +392,9 @@ func TestFile_SetProjection(t *testing.T) {
 
 func TestFile_Delete(t *testing.T) {
 	t.Run("permanently", func(t *testing.T) {
-		newPhoto := &Photo{ID: 5678} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
+		newPhoto := NewPhoto(false)
+		newPhoto.ID = 5678 // Can't add details if there isn't a photo in the database.
+		Db().Create(&newPhoto)
 
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBePermanentlyDeleted", FileRoot: "", PhotoID: 5678}
 
@@ -402,11 +408,12 @@ func TestFile_Delete(t *testing.T) {
 		err2 := file.Delete(true)
 
 		assert.Nil(t, err2)
-		UnscopedDb().Delete(newPhoto)
+		UnscopedDb().Delete(&newPhoto)
 	})
 	t.Run("not permanently", func(t *testing.T) {
-		newPhoto := &Photo{ID: 5678} // Can't add details if there isn't a photo in the database.
-		Db().Create(newPhoto)
+		newPhoto := NewPhoto(false)
+		newPhoto.ID = 5678 // Can't add details if there isn't a photo in the database.
+		Db().Create(&newPhoto)
 
 		file := &File{FileType: "jpg", FileSize: 500, FileName: "ToBeDeleted", FileRoot: "", PhotoID: 5678}
 
@@ -420,7 +427,7 @@ func TestFile_Delete(t *testing.T) {
 		err2 := file.Delete(false)
 
 		assert.Nil(t, err2)
-		UnscopedDb().Delete(newPhoto)
+		UnscopedDb().Delete(&newPhoto)
 	})
 }
 
