@@ -18,7 +18,7 @@ const (
 	Postgres        = "postgres"
 	SQLite3         = "sqlite"
 	SQLiteTestDB    = ".test.db"
-	SQLiteMemoryDSN = ":memory:?cache=shared"
+	SQLiteMemoryDSN = ":memory:?cache=shared&_foreign_keys=on"
 )
 
 var drivers = map[string]func(string) gorm.Dialector{
@@ -78,12 +78,6 @@ func (g *DbConn) Open() {
 		}
 	}
 	log.Info("DB connection established successfully")
-
-	// Enable Foreign Keys on sqlite
-	if db.Dialector.Name() == SQLite3 {
-		db.Exec("PRAGMA foreign_keys = ON")
-		log.Info("sqlite foreign keys enabled")
-	}
 
 	sqlDB, err := db.DB()
 

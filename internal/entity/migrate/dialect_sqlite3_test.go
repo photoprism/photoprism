@@ -1,6 +1,7 @@
 package migrate
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -35,7 +36,9 @@ func TestDialectSQLite3(t *testing.T) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 
-	db, err := gorm.Open(sqlite.Open(dumpName),
+	dsn := fmt.Sprintf("%v?_foreign_keys=on&_busy_timeout=5000", dumpName)
+
+	db, err := gorm.Open(sqlite.Open(dsn),
 		&gorm.Config{
 			Logger: logger.New(
 				log,

@@ -101,7 +101,7 @@ func (c *Config) DatabaseDsn() string {
 				c.DatabaseTimeout(),
 			)
 		case SQLite3:
-			return filepath.Join(c.StoragePath(), "index.db?_busy_timeout=5000")
+			return filepath.Join(c.StoragePath(), "index.db?_busy_timeout=5000&_foreign_keys=on")
 		default:
 			log.Errorf("config: empty database dsn")
 			return ""
@@ -444,12 +444,6 @@ func (c *Config) connectDb() error {
 	// Configure database logging.
 	//db.LogMode(false)
 	//db.SetLogger(log)
-
-	// Enable Foreign Keys on sqlite
-	if db.Dialector.Name() == SQLite3 {
-		db.Exec("PRAGMA foreign_keys = ON")
-		log.Info("sqlite foreign keys enabled")
-	}
 
 	// Set database connection parameters.
 	sqlDB, err := db.DB()
