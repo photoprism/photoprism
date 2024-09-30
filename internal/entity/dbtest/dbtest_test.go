@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/pkg/clean"
 )
 
 var log = event.Log
@@ -25,15 +26,22 @@ func TestMain(m *testing.M) {
 	event.AuditLog = log
 
 	driver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
-	dsn := ""
+	dsn := os.Getenv("PHOTOPRISM_TEST_DSN")
 
-	if driver == "mysql" {
-		dsn = os.Getenv("PHOTOPRISM_DATABASE_USER") + ":" + os.Getenv("PHOTOPRISM_DATABASE_PASSWORD") + "@(mariadb:4001)/pptest?charset=utf8mb4&parseTime=True&loc=Local"
-	} else if driver == "sqlite" {
-		dsn = os.Getenv("PHOTOPRISM_TEST_DSN")
-	} else {
-		driver = os.Getenv("PHOTOPRISM_TEST_DRIVER")
-		dsn = os.Getenv("PHOTOPRISM_TEST_DSN")
+	// Set default test database driver.
+	if driver == "test" || driver == "sqlite" || driver == "" || dsn == "" {
+		driver = entity.SQLite3
+	}
+
+	// Set default database DSN.
+	if driver == entity.SQLite3 {
+		if dsn == "" {
+			dsn = entity.SQLiteMemoryDSN
+		} else if dsn != entity.SQLiteTestDB {
+			// Continue.
+		} else if err := os.Remove(dsn); err == nil {
+			log.Debugf("sqlite: test file %s removed", clean.Log(dsn))
+		}
 	}
 
 	db := entity.InitTestDb(
