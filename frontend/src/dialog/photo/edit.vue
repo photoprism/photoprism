@@ -74,6 +74,7 @@
           <v-icon>settings</v-icon>
         </v-tab>
 
+        <!-- TODO: check property touchless TEST -->
         <v-tabs-items touchless v-model="active">
           <v-tab-item>
             <p-tab-photo-details :key="uid" ref="details" :model="model" :uid="uid" @close="close" @prev="prev" @next="next"></p-tab-photo-details>

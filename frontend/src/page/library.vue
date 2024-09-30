@@ -8,6 +8,7 @@
         </template>
       </v-tab>
 
+       <!-- TODO: check property touchless TEST -->
       <v-tabs-items touchless v-model="active">
         <v-tab-item v-for="(item, index) in tabs" :key="index">
           <component :is="item.component"></component>

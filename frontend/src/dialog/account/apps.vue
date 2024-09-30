@@ -1,8 +1,8 @@
 <template>
   <v-dialog :value="show" persistent max-width="610" class="modal-dialog p-account-apps-dialog" @keydown.esc="close">
-    <v-form ref="form" lazy-validation dense class="form-password" accept-charset="UTF-8" @submit.prevent>
+    <v-form ref="form" lazy-validation class="form-password" accept-charset="UTF-8" @submit.prevent>
       <v-card raised elevation="24">
-        <v-card-title primary-title class="pa-2">
+        <v-card-title class="pa-2">
           <v-row class="pa-2">
             <v-col cols="9" class="text-xs-left">
               <h3 class="headline pa-0">

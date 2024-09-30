@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-labels">
-    <v-form ref="form" lazy-validation dense accept-charset="UTF-8" @submit.prevent>
+    <v-form ref="form" lazy-validation accept-charset="UTF-8" @submit.prevent>
       <v-row class="pa-2-md-and-up d-flex align-stretch" align="start">
         <v-col class="pa-2 hidden-sm-and-down d-flex" cols="12" md="2" xxl="1" align-self="stretch">
           <p-photo-preview :model="model"></p-photo-preview>

@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-faces" style="user-select: none">
-    <v-form ref="form" class="p-faces-search" lazy-validation dense @submit.prevent="updateQuery">
+    <v-form ref="form" class="p-faces-search" lazy-validation @submit.prevent="updateQuery">
       <v-toolbar dense class="page-toolbar" flat color="secondary-light pa-0">
         <v-spacer></v-spacer>
         <v-divider vertical></v-divider>
@@ -72,6 +72,7 @@
                 </v-row>
                 <v-row align="center">
                   <v-col cols="12" class="text-xs-left pa-0">
+                    <!-- TODO: check property allow-overflow TEST -->
                     <v-combobox
                       :value="model.Name"
                       style="z-index: 250"

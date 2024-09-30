@@ -1,7 +1,7 @@
 <template>
   <v-dialog :value="show" persistent max-width="500" class="p-account-add-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
-      <v-card-title primary-title class="pa-2">
+      <v-card-title class="pa-2">
         <v-row>
           <v-col cols="12" class="pa-2">
             <h3 class="headline pa-0">

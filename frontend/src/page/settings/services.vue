@@ -42,7 +42,7 @@
         <translate>This mounts the originals folder as a network drive and allows you to open, edit, and delete files from your computer or smartphone as if they were local. </translate>
       </p>
 
-      <v-form ref="form" lazy-validation dense class="p-form-settings mt-2" accept-charset="UTF-8" @submit.prevent="add">
+      <v-form ref="form" lazy-validation class="p-form-settings mt-2" accept-charset="UTF-8" @submit.prevent="add">
         <v-btn v-if="user.hasWebDAV()" depressed color="secondary-light" class="action-webdav-dialog compact ml-0 my-2 mr-2" :block="$vuetify.breakpoint.xsOnly" :disabled="isPublic || isDemo" @click.stop="webdavDialog">
           <translate>Connect via WebDAV</translate>
           <v-icon :right="!rtl" :left="rtl" dark>sync_alt</v-icon>

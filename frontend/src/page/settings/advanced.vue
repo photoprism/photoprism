@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-settings-advanced">
-    <v-form ref="form" lazy-validation dense class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
+    <v-form ref="form" lazy-validation class="p-form-settings pb-1" accept-charset="UTF-8" @submit.prevent="onChange">
       <v-card flat tile class="mt-0 px-1 application">
         <v-card-actions v-if="$config.values.restart">
           <v-row align="start">
@@ -14,7 +14,7 @@
           </v-row>
         </v-card-actions>
 
-        <v-card-title primary-title class="pb-0">
+        <v-card-title class="pb-0">
           <h3 class="body-2 mb-0">
             <translate>Global Options</translate>
           </h3>
@@ -142,7 +142,7 @@
         </v-card-actions>
 
         <template v-if="!settings.DisableBackups">
-          <v-card-title primary-title class="pb-0">
+          <v-card-title class="pb-0">
             <h3 class="body-2 mb-0">
               <translate>Backup</translate>
             </h3>
@@ -198,7 +198,7 @@
           </v-card-actions>
         </template>
 
-        <v-card-title primary-title class="pb-0">
+        <v-card-title class="pb-0">
           <h3 class="body-2 mb-0" :title="$gettext('Preview Images')">
             <translate>Preview Images</translate>
           </h3>
@@ -241,7 +241,7 @@
           </v-row>
         </v-card-actions>
 
-        <v-card-title primary-title class="pb-0">
+        <v-card-title class="pb-0">
           <h3 class="body-2 mb-0">
             <translate>Image Quality</translate>
           </h3>
@@ -276,7 +276,7 @@
           </v-row>
         </v-card-actions>
 
-        <v-card-title primary-title class="pb-0">
+        <v-card-title class="pb-0">
           <h3 class="body-2 mb-0">
             <translate>File Conversion</translate>
           </h3>

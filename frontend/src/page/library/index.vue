@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-index">
-    <v-form ref="form" class="p-photo-index" lazy-validation dense @submit.prevent="submit">
+    <v-form ref="form" class="p-photo-index" lazy-validation @submit.prevent="submit">
       <v-container fluid>
         <p class="subtitle-1">
           <span v-if="fileName" class="break-word">{{ action }} {{ fileName }}…</span>

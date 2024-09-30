@@ -1,7 +1,7 @@
 <template>
   <v-dialog :value="show" persistent max-width="575" class="modal-dialog sponsor-dialog" @keydown.esc="close">
     <v-card raised elevation="24">
-      <v-card-title primary-title class="px-2 pb-0">
+      <v-card-title class="px-2 pb-0">
         <v-row class="px-2">
           <v-col cols="10">
             <h3 class="title mb-0">

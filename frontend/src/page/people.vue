@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-people" :class="$config.aclClasses('people')">
-    <!-- TODO: check property touchless -->
+    <!-- TODO: check property touchless TEST -->
     <v-tabs v-model="active" elevation="0" class="transparent" grow touchless background-color="secondary" slider-color="secondary-dark" :height="$vuetify.breakpoint.smAndDown ? 48 : 64">
       <v-tab v-for="(item, index) in tabs" :id="'tab-' + item.name" :key="index" :class="item.class" ripple @click.stop.prevent="changePath(item.path)">
         <v-icon v-if="$vuetify.breakpoint.smAndDown" :title="item.label">{{ item.icon }}</v-icon>
@@ -15,6 +15,7 @@
         </template>
       </v-tab>
 
+       <!-- TODO: check property touchless TEST -->
       <v-tabs-items touchless v-model="active">
         <v-tab-item v-for="(item, index) in tabs" :key="index">
           <component :is="item.component" :static-filter="item.filter" :active="active === index" @updateFaceCount="onUpdateFaceCount"></component>

@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" :class="$config.aclClasses('albums')" class="p-page p-page-albums" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-albums-search" lazy-validation dense @submit.prevent="updateQuery()">
+    <v-form ref="form" class="p-albums-search" lazy-validation @submit.prevent="updateQuery()">
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field
           :value="filter.q"
@@ -184,7 +184,7 @@
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pl-4 pt-4 pr-4 pb-2 card-details" style="user-select: none">
+              <v-card-title class="pl-4 pt-4 pr-4 pb-2 card-details" style="user-select: none">
                 <div>
                   <h3 class="body-2 mb-0">
                     <button v-if="album.Type !== 'month'" class="action-title-edit" :data-uid="album.UID" @click.stop.prevent="edit(album)">
@@ -197,7 +197,7 @@
                 </div>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
+              <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div v-if="album.Description" class="caption mb-2" :title="$gettext('Description')">
                   <button @click.exact="edit(album)">
                     {{ album.Description | truncate(100) }}

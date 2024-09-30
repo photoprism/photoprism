@@ -10,12 +10,12 @@
         </v-toolbar-title>
       </v-toolbar>
       <v-container grid-list-xs ext-xs-left fluid>
-        <v-form ref="form" class="p-photo-upload" lazy-validation dense @submit.prevent="submit">
+        <v-form ref="form" class="p-photo-upload" lazy-validation @submit.prevent="submit">
           <input ref="upload" type="file" multiple class="d-none input-upload" @change.stop="onUpload()" />
 
           <v-container fluid>
             <p class="subtitle-1">
-              <!-- TODO: check property allow-overflow -->
+              <!-- TODO: check property allow-overflow TEST -->
               <v-combobox
                 v-if="total === 0"
                 v-model="selectedAlbums"

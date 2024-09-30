@@ -17,6 +17,7 @@
         <translate>Random</translate>
       </v-tab>
 
+       <!-- TODO: check property touchless TEST -->
       <v-tabs-items touchless v-model="active">
         <v-tab-item>
           <p-tab-discover-colors></p-tab-discover-colors>

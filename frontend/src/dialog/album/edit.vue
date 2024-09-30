@@ -1,8 +1,8 @@
 <template>
   <v-dialog :value="show" persistent max-width="500" class="dialog-album-edit" color="application" @keydown.esc="close">
-    <v-form ref="form" lazy-validation dense class="form-album-edit" accept-charset="UTF-8" @submit.prevent="confirm">
+    <v-form ref="form" lazy-validation class="form-album-edit" accept-charset="UTF-8" @submit.prevent="confirm">
       <v-card raised elevation="24">
-        <v-card-title primary-title class="pb-0">
+        <v-card-title class="pb-0">
           <v-row>
             <v-col cols="12">
               <h3 class="headline mx-2 mb-0">
@@ -25,14 +25,15 @@
                 <v-textarea :key="growDesc" v-model="model.Description" auto-grow hide-details filled flat autocomplete="off" :label="$gettext('Description')" :rows="1" :disabled="disabled" class="input-description" color="secondary-dark"></v-textarea>
               </v-col>
               <v-col cols="12" class="pa-2">
-                <!-- TODO: check property return-masked-value -->
+                <!-- TODO: check property return-masked-value TEST -->
+                <!-- TODO: check property allow-overflow TEST -->
                 <v-combobox v-model="model.Category" hide-details filled flat :search-input.sync="model.Category" :items="categories" :disabled="disabled" :label="$gettext('Category')" :allow-overflow="false" return-masked-value color="secondary-dark" class="input-category"></v-combobox>
               </v-col>
               <v-col cols="12" sm="6" class="pa-2">
                 <v-select v-model="model.Order" :label="$gettext('Sort Order')" :menu-props="{ maxHeight: 400 }" hide-details filled flat :items="sorting" :disabled="disabled" item-value="value" item-text="text" color="secondary-dark"></v-select>
               </v-col>
               <v-col sm="3" class="pa-2">
-                <!-- TODO: check property flat -->
+                <!-- TODO: check property flat TEST -->
                 <v-checkbox v-model="model.Favorite" :disabled="disabled" color="secondary-dark" :label="$gettext('Favorite')" hide-details flat> </v-checkbox>
               </v-col>
               <v-col v-if="experimental && featPrivate" sm="3" class="pa-2">

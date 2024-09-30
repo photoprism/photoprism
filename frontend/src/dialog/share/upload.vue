@@ -1,7 +1,7 @@
 <template>
   <v-dialog :value="show" persistent max-width="400" class="p-share-upload-dialog" @keydown.esc="cancel">
     <v-card raised elevation="24">
-      <v-card-title primary-title class="pb-0">
+      <v-card-title class="pb-0">
         <v-row>
           <v-col cols="8">
             <h3 class="headline mb-0">

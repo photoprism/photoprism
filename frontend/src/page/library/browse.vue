@@ -1,6 +1,6 @@
 <template>
   <div class="p-page p-page-files">
-    <v-form ref="form" class="p-files-search" lazy-validation dense @submit.prevent="updateQuery">
+    <v-form ref="form" class="p-files-search" lazy-validation @submit.prevent="updateQuery">
       <v-toolbar flat color="secondary" :dense="$vuetify.breakpoint.smAndDown">
         <v-toolbar-title>
           <router-link to="/index/files">
@@ -61,7 +61,7 @@
                 </v-btn>
               </v-img>
 
-              <v-card-title v-if="model.isFile()" primary-title class="pa-4 card-details" style="user-select: none">
+              <v-card-title v-if="model.isFile()" class="pa-4 card-details" style="user-select: none">
                 <div>
                   <h3 class="body-2 mb-2" :title="model.Name">
                     <button @click.exact="openFile(index)">
@@ -73,7 +73,7 @@
                   </div>
                 </div>
               </v-card-title>
-              <v-card-title v-else primary-title class="pa-4 card-details">
+              <v-card-title v-else class="pa-4 card-details">
                 <div>
                   <h3 class="body-2 mb-2" :title="model.Title">
                     <button @click.exact="openFile(index)">

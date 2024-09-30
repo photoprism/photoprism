@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" class="p-page p-page-subjects" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-people-search" lazy-validation dense @submit.prevent="updateQuery()">
+    <v-form ref="form" class="p-people-search" lazy-validation @submit.prevent="updateQuery()">
       <v-toolbar dense flat class="page-toolbar" color="secondary-light pa-0">
         <v-text-field
           v-if="canSearch"
@@ -111,7 +111,7 @@
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
+              <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
                 <v-edit-dialog v-if="canManage" :return-value.sync="model.Name" class="inline-edit" @save="onSave(model)">
                   <span v-if="model.Name" class="body-2 ma-0">
                     {{ model.Name }}
@@ -128,7 +128,7 @@
                 </span>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
+              <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div v-if="model.About" class="caption mb-2" :title="$gettext('About')">
                   {{ model.About | truncate(100) }}
                 </div>

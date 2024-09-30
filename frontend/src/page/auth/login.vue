@@ -2,7 +2,7 @@
   <v-container id="auth-login" fluid fill-height class="auth-login wallpaper background-welcome pa-6" :style="wallpaper()">
     <v-row id="auth-layout" class="auth-layout">
       <v-col cols="12" sm="9" md="6" lg="4" xl="3">
-        <v-form ref="form" dense class="auth-login-form" accept-charset="UTF-8" @submit.prevent="onLogin">
+        <v-form ref="form" class="auth-login-form" accept-charset="UTF-8" @submit.prevent="onLogin">
           <v-card id="auth-login-box" class="elevation-12 auth-login-box blur-7">
             <v-card-text class="pa-6">
               <p-auth-header></p-auth-header>

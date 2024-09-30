@@ -1,6 +1,6 @@
 <template>
   <div v-infinite-scroll="loadMore" :class="$config.aclClasses('labels')" class="p-page p-page-labels" style="user-select: none" :infinite-scroll-disabled="scrollDisabled" :infinite-scroll-distance="scrollDistance" :infinite-scroll-listen-for-event="'scrollRefresh'">
-    <v-form ref="form" class="p-labels-search" lazy-validation dense @submit.stop.prevent="updateQuery()">
+    <v-form ref="form" class="p-labels-search" lazy-validation @submit.stop.prevent="updateQuery()">
       <v-toolbar flat :dense="$vuetify.breakpoint.smAndDown" class="page-toolbar" color="secondary">
         <v-text-field
           :value="filter.q"
@@ -88,7 +88,7 @@
                 </v-btn>
               </v-img>
 
-              <v-card-title primary-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
+              <v-card-title class="pa-4 card-details" style="user-select: none" @click.stop.prevent="">
                 <v-edit-dialog v-if="canManage" :return-value.sync="label.Name" class="inline-edit" @save="onSave(label)">
                   <span v-if="label.Name" class="body-2 ma-0">
                     {{ label.Name }}
@@ -105,7 +105,7 @@
                 </span>
               </v-card-title>
 
-              <v-card-text primary-title class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
+              <v-card-text class="pb-2 pt-0 card-details" style="user-select: none" @click.stop.prevent="">
                 <div class="caption mb-2">
                   <button v-if="label.PhotoCount === 1">
                     <translate>Contains one picture.</translate>

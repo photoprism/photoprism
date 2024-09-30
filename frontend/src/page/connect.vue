@@ -80,6 +80,7 @@
             <p class="subtitle-1 text-selectable">
               <strong><translate>To upgrade, you can either enter an activation code or click "Register" to sign up on our website:</translate></strong>
             </p>
+            <!-- TODO: check property return-masked-value TEST -->
             <v-text-field v-model="form.token" flat solo hide-details return-masked-value :mask="tokenMask" autocomplete="off" color="secondary-dark" background-color="secondary-light" :label="$gettext('Activation Code')" type="text"> </v-text-field>
             <div class="action-buttons text-xs-left mt-6">
               <v-btn v-if="$config.getTier() >= 4" href="https://my.photoprism.app/dashboard" target="_blank" color="primary-button lighten-2" :block="$vuetify.breakpoint.xsOnly" class="ml-0" outlined :disabled="busy">

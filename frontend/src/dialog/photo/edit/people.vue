@@ -51,6 +51,7 @@
               </v-row>
               <v-row v-else align="center">
                 <v-col cols="12" class="text-xs-left pa-0">
+                  <!-- TODO: check property allow-overflow TEST -->
                   <v-combobox
                     v-model="marker.Name"
                     style="z-index: 250"

@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-details">
-    <v-form ref="form" lazy-validation dense class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
+    <v-form ref="form" lazy-validation class="p-form-photo-details-meta" accept-charset="UTF-8" @submit.prevent="save">
       <v-row class="pa-2 d-flex align-stretch" align="start">
         <v-col class="pa-2 p-photo d-flex" cols="12" sm="4" md="2" align-self="stretch">
           <v-card tile class="pa-0 ma-0 elevation-0 flex-grow-1" :title="model.Title">
@@ -86,6 +86,7 @@
             </v-col>
 
             <v-col cols="6" md="2" class="pa-2">
+              <!-- TODO: check property return-masked-value TEST -->
               <v-text-field
                 v-model="time"
                 :append-icon="model.TakenSrc === 'mdi-human-male' ? 'mdi-check' : ''"

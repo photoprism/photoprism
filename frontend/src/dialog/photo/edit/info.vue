@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-tab-photo-advanced">
-    <v-form ref="form" lazy-validation dense accept-charset="UTF-8" @submit.prevent>
+    <v-form ref="form" lazy-validation accept-charset="UTF-8" @submit.prevent>
       <div class="v-table__overflow">
         <table class="v-datatable v-table theme--light">
           <tbody>

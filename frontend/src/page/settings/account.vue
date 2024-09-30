@@ -1,6 +1,6 @@
 <template>
   <div class="p-tab p-settings-account">
-    <v-form ref="form" v-model="valid" lazy-validation dense class="p-form-account pb-6 width-lg" accept-charset="UTF-8" @submit.prevent="onChange">
+    <v-form ref="form" v-model="valid" lazy-validation class="p-form-account pb-6 width-lg" accept-charset="UTF-8" @submit.prevent="onChange">
       <input ref="upload" type="file" class="d-none input-upload" accept="image/png, image/jpeg" @change.stop="onUploadAvatar()" />
       <v-card flat tile class="mt-2 px-1 application">
         <v-card-actions>
@@ -175,7 +175,7 @@
         </v-card-actions>
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-1">
+        <v-card-title class="pb-1">
           <h3 class="body-2 mb-0">
             <translate>Security and Access</translate>
           </h3>
@@ -212,7 +212,7 @@
         </v-card-actions>
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-1">
+        <v-card-title class="pb-1">
           <h3 class="body-2 mb-0">
             <translate>Birth Date</translate>
           </h3>
@@ -232,7 +232,7 @@
         </v-card-actions>
       </v-card>
       <v-card flat tile class="mt-0 px-1 application">
-        <v-card-title primary-title class="pb-1">
+        <v-card-title class="pb-1">
           <h3 class="body-2 mb-0">
             <translate>Contact Details</translate>
           </h3>
