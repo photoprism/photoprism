@@ -82,6 +82,23 @@ func (list Tables) WaitForMigration(db *gorm.DB) error {
 	return nil
 }
 
+// Reset the ID increment to 1
+func resetIDToOne(tableName string) {
+	sqlCommand := ""
+	if UnscopedDb().Dialector.Name() == MySQL {
+		sqlCommand = fmt.Sprintf("ALTER TABLE `%v` AUTO_INCREMENT = 1", tableName)
+	} else if UnscopedDb().Dialector.Name() == Postgres {
+		sqlCommand = fmt.Sprintf("ALTER SEQUENCE %v_id_seq RESTART WITH 1", tableName)
+	} else if UnscopedDb().Dialector.Name() == SQLite3 {
+		sqlCommand = fmt.Sprintf("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='%v'", tableName)
+	} else {
+		return
+	}
+	if res := UnscopedDb().Exec(sqlCommand); res.Error != nil {
+		log.Errorf("Reset Auto Increment failed with %v", res.Error)
+	}
+}
+
 // Truncate removes all data from tables without dropping them.
 func (list Tables) Truncate(db *gorm.DB) {
 	var name string
@@ -111,6 +128,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 	if res := UnscopedDb().Where("1=1").Delete(File{}); res.Error != nil {
 		log.Errorf("Delete of Files failed with %v", res.Error)
 	}
+	resetIDToOne(File{}.TableName())
 	log.Info("migrate: truncate PhotoKeyword")
 	if res := UnscopedDb().Where("1=1").Delete(PhotoKeyword{}); res.Error != nil {
 		log.Errorf("Delete of PhotoKeyword failed with %v", res.Error)
@@ -127,10 +145,12 @@ func (list Tables) Truncate(db *gorm.DB) {
 	if res := UnscopedDb().Where("1=1").Delete(Photo{}); res.Error != nil {
 		log.Errorf("Delete of Photo failed with %v", res.Error)
 	}
+	resetIDToOne(Photo{}.TableName())
 	log.Info("migrate: truncate Error")
 	if res := UnscopedDb().Where("1=1").Delete(Error{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
+	resetIDToOne(Error{}.TableName())
 	log.Info("migrate: truncate Password")
 	if res := UnscopedDb().Where("1=1").Delete(Password{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
@@ -155,6 +175,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 	if res := UnscopedDb().Where("1=1").Delete(User{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
+	resetIDToOne(User{}.TableName())
 	log.Info("migrate: truncate Session")
 	if res := UnscopedDb().Where("1=1").Delete(Session{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
@@ -167,6 +188,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 	if res := UnscopedDb().Where("1=1").Delete(Service{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
+	resetIDToOne(Service{}.TableName())
 	log.Info("migrate: truncate Folder")
 	if res := UnscopedDb().Where("1=1").Delete(Folder{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
@@ -191,10 +213,12 @@ func (list Tables) Truncate(db *gorm.DB) {
 	if res := UnscopedDb().Where("1=1").Delete(Camera{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
+	resetIDToOne(Camera{}.TableName())
 	log.Info("migrate: truncate Lens")
 	if res := UnscopedDb().Where("1=1").Delete(Lens{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
+	resetIDToOne(Lens{}.TableName())
 	log.Info("migrate: truncate Country")
 	if res := UnscopedDb().Where("1=1").Delete(Country{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
@@ -207,6 +231,7 @@ func (list Tables) Truncate(db *gorm.DB) {
 	if res := UnscopedDb().Where("1=1").Delete(Albums{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
+	resetIDToOne(Album{}.TableName())
 	log.Info("migrate: truncate Category")
 	if res := UnscopedDb().Where("1=1").Delete(Category{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
@@ -215,10 +240,12 @@ func (list Tables) Truncate(db *gorm.DB) {
 	if res := UnscopedDb().Where("1=1").Delete(Label{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
+	resetIDToOne(Label{}.TableName())
 	log.Info("migrate: truncate Keyword")
 	if res := UnscopedDb().Where("1=1").Delete(Keyword{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
 	}
+	resetIDToOne(Keyword{}.TableName())
 	log.Info("migrate: truncate Link")
 	if res := UnscopedDb().Where("1=1").Delete(Link{}); res.Error != nil {
 		log.Errorf("Delete failed with %v", res.Error)
