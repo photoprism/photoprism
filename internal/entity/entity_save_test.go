@@ -12,12 +12,7 @@ import (
 func TestSave(t *testing.T) {
 	t.Run("HasCreatedUpdatedAt", func(t *testing.T) {
 		id := 99999 + rand.IntN(10000)
-		m := NewPhoto(false)
-		m.ID = uint(id)
-		m.PhotoUID = rnd.GenerateUID(PhotoUID)
-		m.UpdatedAt = Now()
-		m.CreatedAt = Now()
-		//m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), UpdatedAt: Now(), CreatedAt: Now()}
+		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), UpdatedAt: Now(), CreatedAt: Now()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
@@ -28,11 +23,7 @@ func TestSave(t *testing.T) {
 	})
 	t.Run("HasCreatedAt", func(t *testing.T) {
 		id := 99999 + rand.IntN(10000)
-		m := NewPhoto(false)
-		m.ID = uint(id)
-		m.PhotoUID = rnd.GenerateUID(PhotoUID)
-		m.CreatedAt = Now()
-		//m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), CreatedAt: Now()}
+		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), CreatedAt: Now()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)
@@ -43,10 +34,7 @@ func TestSave(t *testing.T) {
 	})
 	t.Run("NoCreatedAt", func(t *testing.T) {
 		id := 99999 + rand.IntN(10000)
-		m := NewPhoto(false)
-		m.ID = uint(id)
-		m.PhotoUID = rnd.GenerateUID(PhotoUID)
-		//m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), CreatedAt: Now()}
+		m := Photo{ID: uint(id), PhotoUID: rnd.GenerateUID(PhotoUID), CreatedAt: Now()}
 
 		if err := m.Save(); err != nil {
 			t.Fatal(err)

@@ -354,11 +354,7 @@ func TestPhoto_String(t *testing.T) {
 
 func TestPhoto_Create(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		photo := NewPhoto(false)
-		photo.PhotoUID = "567"
-		photo.PhotoName = "Holiday"
-		photo.OriginalName = "holidayOriginal2"
-		// photo := Photo{PhotoUID: "567", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
+		photo := Photo{PhotoUID: "567", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Create()
 		if err != nil {
 			t.Fatal(err)
@@ -368,11 +364,7 @@ func TestPhoto_Create(t *testing.T) {
 
 func TestPhoto_Save(t *testing.T) {
 	t.Run("Ok", func(t *testing.T) {
-		photo := NewPhoto(false)
-		photo.PhotoUID = "567"
-		photo.PhotoName = "Holiday"
-		photo.OriginalName = "holidayOriginal2"
-		// photo := Photo{PhotoUID: "567", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
+		photo := Photo{PhotoUID: "567", PhotoName: "Holiday", OriginalName: "holidayOriginal2"}
 		err := photo.Save()
 		if err != nil {
 			t.Fatal(err)

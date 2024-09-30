@@ -10,8 +10,7 @@ func TestFirstOrCreateCamera(t *testing.T) {
 	t.Run("UnknownCamera", func(t *testing.T) {
 		m := UnknownCamera
 
-		cameraID := m.ID
-		assert.NotEqual(t, uint(0), m.ID) // MariaDB may not have this as 1 if the database isn't brand new.
+		assert.Equal(t, uint(1), m.ID)
 		assert.Equal(t, UnknownID, m.CameraSlug)
 
 		result := FirstOrCreateCamera(&m)
@@ -20,9 +19,9 @@ func TestFirstOrCreateCamera(t *testing.T) {
 			t.Fatal("result should not be nil")
 		}
 
-		assert.Equal(t, uint(cameraID), m.ID)
+		assert.Equal(t, uint(1), m.ID)
 		assert.Equal(t, UnknownID, m.CameraSlug)
-		assert.Equal(t, uint(cameraID), result.ID)
+		assert.Equal(t, uint(1), result.ID)
 		assert.Equal(t, UnknownID, result.CameraSlug)
 	})
 	t.Run("existing camera", func(t *testing.T) {

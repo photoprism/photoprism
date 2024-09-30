@@ -7,11 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFirstOrCreateDetails(t *testing.T) {
+func TestDetails_FirstOrCreateDetails(t *testing.T) {
 	t.Run("not existing details", func(t *testing.T) {
-		newPhoto := NewPhoto(false)
-		newPhoto.ID = 123
-		Db().Create(&newPhoto)
+		newPhoto := &Photo{ID: 123} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
 
 		details := &Details{PhotoID: 123, Keywords: ""}
 		details = FirstOrCreateDetails(details)
@@ -21,7 +20,7 @@ func TestFirstOrCreateDetails(t *testing.T) {
 		} else {
 			UnscopedDb().Delete(details)
 		}
-		UnscopedDb().Delete(&newPhoto)
+		UnscopedDb().Delete(newPhoto)
 	})
 	t.Run("existing details", func(t *testing.T) {
 		details := &Details{PhotoID: 1000000}
@@ -128,7 +127,7 @@ func TestDetails_NoLicense(t *testing.T) {
 	})
 }
 
-func TestNewDetails(t *testing.T) {
+func TestDetails_NewDetails(t *testing.T) {
 	t.Run("add to photo", func(t *testing.T) {
 		p := NewPhoto(true)
 
@@ -157,9 +156,8 @@ func TestDetails_Create(t *testing.T) {
 		assert.Error(t, details.Create())
 	})
 	t.Run("success", func(t *testing.T) {
-		newPhoto := NewPhoto(false)
-		newPhoto.ID = 1236799955432 // Can't add details if there isn't a photo in the database.
-		Db().Create(&newPhoto)
+		newPhoto := &Photo{ID: 1236799955432} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
 
 		details := Details{PhotoID: 1236799955432}
 
@@ -169,16 +167,15 @@ func TestDetails_Create(t *testing.T) {
 		} else {
 			UnscopedDb().Delete(details)
 		}
-		UnscopedDb().Delete(&newPhoto)
+		UnscopedDb().Delete(newPhoto)
 
 	})
 }
 
 func TestDetails_Save(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		newPhoto := NewPhoto(false)
-		newPhoto.ID = 123678955432 // Can't add details if there isn't a photo in the database.
-		Db().Create(&newPhoto)
+		newPhoto := &Photo{ID: 123678955432} // Can't add details if there isn't a photo in the database.
+		Db().Create(newPhoto)
 
 		details := Details{PhotoID: 123678955432, UpdatedAt: time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC)}
 		initialDate := details.UpdatedAt
@@ -192,7 +189,7 @@ func TestDetails_Save(t *testing.T) {
 
 		assert.True(t, afterDate.After(initialDate))
 		UnscopedDb().Delete(details)
-		UnscopedDb().Delete(&newPhoto)
+		UnscopedDb().Delete(newPhoto)
 	})
 
 	t.Run("error", func(t *testing.T) {
