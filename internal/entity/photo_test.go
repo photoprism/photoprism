@@ -148,13 +148,33 @@ func TestPhoto_GetID(t *testing.T) {
 func TestPhoto_ClassifyLabels(t *testing.T) {
 	t.Run("NewPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Get("Photo19")
-		Db().Set("gorm:auto_preload", true).Model(&m).Find(&m.Labels)
+		Db().Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+			Preload("Labels.Label").
+			Preload("Camera").
+			Preload("Lens").
+			Preload("Details").
+			Preload("Place").
+			Preload("Cell").
+			Preload("Cell.Place").
+			Model(&m).Find(&m.Labels)
 		labels := m.ClassifyLabels()
 		assert.Empty(t, labels)
 	})
 	t.Run("ExistingPhoto", func(t *testing.T) {
 		m := PhotoFixtures.Get("19800101_000002_D640C559")
-		Db().Set("gorm:auto_preload", true).Model(&m).Find(&m.Labels)
+		Db().Preload("Labels", func(db *gorm.DB) *gorm.DB {
+			return db.Order("photos_labels.uncertainty ASC, photos_labels.label_id DESC")
+		}).
+			Preload("Labels.Label").
+			Preload("Camera").
+			Preload("Lens").
+			Preload("Details").
+			Preload("Place").
+			Preload("Cell").
+			Preload("Cell.Place").
+			Model(&m).Find(&m.Labels)
 		labels := m.ClassifyLabels()
 		assert.LessOrEqual(t, 2, labels.Len())
 	})
