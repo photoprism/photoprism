@@ -8,6 +8,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/testextras"
 	"github.com/photoprism/photoprism/pkg/clean"
 )
 
@@ -24,6 +25,14 @@ func TestMain(m *testing.M) {
 	log = logrus.StandardLogger()
 	log.SetLevel(logrus.TraceLevel)
 	event.AuditLog = log
+
+	caller := "internal/entity/dbtest/dbtest_test.go/TestMain"
+	dbc, err := testextras.AcquireDBMutex(log, caller)
+	if err != nil {
+		log.Error("FAIL")
+		os.Exit(1)
+	}
+	defer testextras.UnlockDBMutex(dbc.Db())
 
 	driver := os.Getenv("PHOTOPRISM_TEST_DRIVER")
 	dsn := os.Getenv("PHOTOPRISM_TEST_DSN")
@@ -51,6 +60,8 @@ func TestMain(m *testing.M) {
 	defer db.Close()
 
 	code := m.Run()
+
+	testextras.ReleaseDBMutex(dbc.Db(), log, caller, code)
 
 	os.Exit(code)
 }
