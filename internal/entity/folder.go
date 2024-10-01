@@ -27,9 +27,9 @@ type Folder struct {
 	Root              string         `gorm:"type:bytes;size:16;default:'';uniqueIndex:idx_folders_path_root;" json:"Root" yaml:"Root,omitempty"`
 	FolderUID         string         `gorm:"type:bytes;size:42;primaryKey;" json:"UID,omitempty" yaml:"UID,omitempty"`
 	FolderType        string         `gorm:"type:bytes;size:16;" json:"Type" yaml:"Type,omitempty"`
-	FolderTitle       string         `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title,omitempty"`
-	FolderCategory    string         `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
-	FolderDescription string         `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
+	FolderTitle       string         `gorm:"size:200;" json:"Title" yaml:"Title,omitempty"`
+	FolderCategory    string         `gorm:"size:100;index;" json:"Category" yaml:"Category,omitempty"`
+	FolderDescription string         `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
 	FolderOrder       string         `gorm:"type:bytes;size:32;" json:"Order" yaml:"Order,omitempty"`
 	FolderCountry     string         `gorm:"type:bytes;size:2;index:idx_folders_country_year_month;default:'zz'" json:"Country" yaml:"Country,omitempty"`
 	FolderYear        int            `gorm:"index:idx_folders_country_year_month;" json:"Year" yaml:"Year,omitempty"`

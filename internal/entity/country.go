@@ -22,9 +22,9 @@ type Countries []Country
 type Country struct {
 	ID                 string `gorm:"type:bytes;size:2;primaryKey;" json:"ID" yaml:"ID"`
 	CountrySlug        string `gorm:"type:bytes;size:160;uniqueIndex;" json:"Slug" yaml:"-"`
-	CountryName        string `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
-	CountryDescription string `gorm:"type:VARCHAR(2048);" json:"Description,omitempty" yaml:"Description,omitempty"`
-	CountryNotes       string `gorm:"type:VARCHAR(1024);" json:"Notes,omitempty" yaml:"Notes,omitempty"`
+	CountryName        string `gorm:"size:160;" json:"Name" yaml:"Name,omitempty"`
+	CountryDescription string `gorm:"size:2048;" json:"Description,omitempty" yaml:"Description,omitempty"`
+	CountryNotes       string `gorm:"size:1024;" json:"Notes,omitempty" yaml:"Notes,omitempty"`
 	CountryPhoto       *Photo `json:"-" yaml:"-"`
 	CountryPhotoID     *uint  `json:"-" yaml:"-"`
 	New                bool   `gorm:"-" json:"-" yaml:"-"`

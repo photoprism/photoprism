@@ -14,7 +14,7 @@ var keywordMutex = sync.Mutex{}
 // Keyword used for full text search
 type Keyword struct {
 	ID      uint   `gorm:"primaryKey;"`
-	Keyword string `gorm:"type:VARCHAR(64);index;"`
+	Keyword string `gorm:"size:64;index;"`
 	Skip    bool
 }
 

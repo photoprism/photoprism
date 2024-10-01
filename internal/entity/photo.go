@@ -47,9 +47,9 @@ type Photo struct {
 	PhotoUID         string         `gorm:"type:bytes;size:42;uniqueIndex;index:idx_photos_taken_uid;" json:"UID" yaml:"UID"`
 	PhotoType        string         `gorm:"type:bytes;size:8;default:'image';" json:"Type" yaml:"Type"`
 	TypeSrc          string         `gorm:"type:bytes;size:8;" json:"TypeSrc" yaml:"TypeSrc,omitempty"`
-	PhotoTitle       string         `gorm:"type:VARCHAR(200);" json:"Title" yaml:"Title"`
+	PhotoTitle       string         `gorm:"size:200;" json:"Title" yaml:"Title"`
 	TitleSrc         string         `gorm:"type:bytes;size:8;" json:"TitleSrc" yaml:"TitleSrc,omitempty"`
-	PhotoDescription string         `gorm:"type:VARCHAR(4096);" json:"Description" yaml:"Description,omitempty"`
+	PhotoDescription string         `gorm:"size:4096;" json:"Description" yaml:"Description,omitempty"`
 	DescriptionSrc   string         `gorm:"type:bytes;size:8;" json:"DescriptionSrc" yaml:"DescriptionSrc,omitempty"`
 	PhotoPath        string         `gorm:"type:bytes;size:1024;index:idx_photos_path_name;" json:"Path" yaml:"-"`
 	PhotoName        string         `gorm:"type:bytes;size:255;index:idx_photos_path_name;" json:"Name" yaml:"-"`

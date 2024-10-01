@@ -38,16 +38,16 @@ type Album struct {
 	AlbumSlug        string         `gorm:"type:bytes;size:160;index;" json:"Slug" yaml:"Slug"`
 	AlbumPath        string         `gorm:"size:1024;index;" json:"Path,omitempty" yaml:"Path,omitempty"`
 	AlbumType        string         `gorm:"type:bytes;size:8;default:'album';" json:"Type" yaml:"Type,omitempty"`
-	AlbumTitle       string         `gorm:"type:VARCHAR(160);index;" json:"Title" yaml:"Title"`
-	AlbumLocation    string         `gorm:"type:VARCHAR(160);" json:"Location" yaml:"Location,omitempty"`
-	AlbumCategory    string         `gorm:"type:VARCHAR(100);index;" json:"Category" yaml:"Category,omitempty"`
-	AlbumCaption     string         `gorm:"type:VARCHAR(1024);" json:"Caption" yaml:"Caption,omitempty"`
-	AlbumDescription string         `gorm:"type:VARCHAR(2048);" json:"Description" yaml:"Description,omitempty"`
-	AlbumNotes       string         `gorm:"type:VARCHAR(1024);" json:"Notes" yaml:"Notes,omitempty"`
+	AlbumTitle       string         `gorm:"size:160;index;" json:"Title" yaml:"Title"`
+	AlbumLocation    string         `gorm:"size:160;" json:"Location" yaml:"Location,omitempty"`
+	AlbumCategory    string         `gorm:"size:100;index;" json:"Category" yaml:"Category,omitempty"`
+	AlbumCaption     string         `gorm:"size:1024;" json:"Caption" yaml:"Caption,omitempty"`
+	AlbumDescription string         `gorm:"size:2048;" json:"Description" yaml:"Description,omitempty"`
+	AlbumNotes       string         `gorm:"size:1024;" json:"Notes" yaml:"Notes,omitempty"`
 	AlbumFilter      string         `gorm:"type:bytes;size:2048;" json:"Filter" yaml:"Filter,omitempty"`
 	AlbumOrder       string         `gorm:"type:bytes;size:32;" json:"Order" yaml:"Order,omitempty"`
 	AlbumTemplate    string         `gorm:"type:bytes;size:255;" json:"Template" yaml:"Template,omitempty"`
-	AlbumState       string         `gorm:"type:VARCHAR(100);index;" json:"State" yaml:"State,omitempty"`
+	AlbumState       string         `gorm:"size:100;index;" json:"State" yaml:"State,omitempty"`
 	AlbumCountry     string         `gorm:"type:bytes;size:2;index:idx_albums_country_year_month;default:'zz';" json:"Country" yaml:"Country,omitempty"`
 	AlbumYear        int            `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Year" yaml:"Year,omitempty"`
 	AlbumMonth       int            `gorm:"index:idx_albums_ymd;index:idx_albums_country_year_month;" json:"Month" yaml:"Month,omitempty"`

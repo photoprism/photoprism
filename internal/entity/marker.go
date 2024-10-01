@@ -30,7 +30,7 @@ type Marker struct {
 	FileUID        string          `gorm:"type:bytes;size:42;index;default:'';" json:"FileUID" yaml:"FileUID"`
 	MarkerType     string          `gorm:"type:bytes;size:8;default:'';" json:"Type" yaml:"Type"`
 	MarkerSrc      string          `gorm:"type:bytes;size:8;default:'';" json:"Src" yaml:"Src,omitempty"`
-	MarkerName     string          `gorm:"type:VARCHAR(160);" json:"Name" yaml:"Name,omitempty"`
+	MarkerName     string          `gorm:"size:160;" json:"Name" yaml:"Name,omitempty"`
 	MarkerReview   bool            `json:"Review" yaml:"Review,omitempty"`
 	MarkerInvalid  bool            `json:"Invalid" yaml:"Invalid,omitempty"`
 	SubjUID        string          `gorm:"type:bytes;size:42;index:idx_markers_subj_uid_src;" json:"SubjUID" yaml:"SubjUID,omitempty"`

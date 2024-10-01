@@ -80,7 +80,7 @@ type File struct {
 	FileLuminance      string         `gorm:"type:bytes;size:18;" json:"Luminance" yaml:"Luminance,omitempty"`
 	FileDiff           int            `json:"Diff" yaml:"Diff,omitempty"`
 	FileChroma         int16          `json:"Chroma" yaml:"Chroma,omitempty"`
-	FileSoftware       string         `gorm:"type:VARCHAR(64)" json:"Software" yaml:"Software,omitempty"`
+	FileSoftware       string         `gorm:"size:64" json:"Software" yaml:"Software,omitempty"`
 	FileError          string         `gorm:"type:bytes;size:512;index;" json:"Error" yaml:"Error,omitempty"`
 	ModTime            int64          `json:"ModTime" yaml:"-"`
 	CreatedAt          time.Time      `json:"CreatedAt" yaml:"-"`

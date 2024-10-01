@@ -35,9 +35,9 @@ type Services []Service
 // - RetryLimit specifies the number of retry attempts, a negative value disables the limit.
 type Service struct {
 	ID            uint   `gorm:"primaryKey;"`
-	AccName       string `gorm:"type:VARCHAR(160);"`
-	AccOwner      string `gorm:"type:VARCHAR(160);"`
-	AccURL        string `gorm:"type:VARCHAR(255);"`
+	AccName       string `gorm:"size:160;"`
+	AccOwner      string `gorm:"size:160;"`
+	AccURL        string `gorm:"size:255;"`
 	AccType       string `gorm:"type:bytes;size:255;"`
 	AccKey        string `gorm:"type:bytes;size:255;"`
 	AccUser       string `gorm:"type:bytes;size:255;"`
